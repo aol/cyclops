@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/main/resources"/>
+	<classpathentry kind="src" path="src/test/java"/>
+	<classpathentry kind="src" path="src/test/resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER" exported="true"/>
+	<classpathentry sourcepath="/Users/johnmcclean/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.14.2/e50a502ec2dc2115924f4e59472aed9ae58237c0/lombok-1.14.2-sources.jar" kind="lib" path="/Users/johnmcclean/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.14.2/100d73a4cd25ae3c78ab8176a48c1d40b0e8afff/lombok-1.14.2.jar" exported="true"/>
+	<classpathentry sourcepath="/Users/johnmcclean/.gradle/caches/modules-2/files-2.1/junit/junit/4.12-beta-3/5c08dba94dd98c6aba3d80edea9e34f1e84f2629/junit-4.12-beta-3-sources.jar" kind="lib" path="/Users/johnmcclean/.gradle/caches/modules-2/files-2.1/junit/junit/4.12-beta-3/c3b3e612612fcbb9faa46d10d2d69e3b21a062fe/junit-4.12-beta-3.jar" exported="true"/>
+	<classpathentry sourcepath="/Users/johnmcclean/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-all/1.1/aba64ad8b0365a08ed4435c32e3ee2b2ff16f0a5/hamcrest-all-1.1-sources.jar" kind="lib" path="/Users/johnmcclean/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-all/1.1/2ddcad726ed88eab63eb6666c60970db0ac6d44e/hamcrest-all-1.1.jar" exported="true"/>
+	<classpathentry sourcepath="/Users/johnmcclean/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/1dc37250fbc78e23a65a67fbbaf71d2e9cbc3c0b/hamcrest-core-1.3-sources.jar" kind="lib" path="/Users/johnmcclean/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/42a25dc3219429f0e5d060061f71acb49bf010a0/hamcrest-core-1.3.jar" exported="true"/>
+</classpath>
