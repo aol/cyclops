@@ -9,37 +9,83 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import lombok.Getter;
 
+/**
+ * Entry point for creating a concurrent dataflow.
+ * 
+ * 
+ * @author johnmcclean
+ *
+ * @param <T>
+ *            Return type of object created by initial Suppliers
+ */
 public class SimpleReact<T> {
 
-	static public final ForkJoinPool forkJoinPool = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
+	@Getter
+	static private final ForkJoinPool forkJoinPool = new ForkJoinPool(Runtime
+			.getRuntime().availableProcessors());
 
+	/**
+	 * 
+	 * Start a reactive dataflow with a list of one-off-suppliers
+	 * 
+	 * @param actions
+	 *            List of Suppliers to provide data (and thus events) that
+	 *            downstream jobs will react too
+	 * @return Next stage in the reactive flow
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T, U> Stage<T, U> react(List<Supplier<T>> actions) {
 
 		return react((Supplier[]) actions.toArray(new Supplier[] {}));
 	}
 
+	/**
+	 * Start a reactive dataflow with a list of one-off-suppliers and an Executor
+	 * 
+	 * 
+	 * @param executor All downstream concurrent tasks will be submitted to this executor
+	 * @param actions List of Suppliers to provide data (and thus events) that
+	 *            downstream jobs will react too
+	 *            
+	 * @return Next stage in the reactive flow
+	 */
 	@SuppressWarnings("unchecked")
-	public static <T, U> Stage<T, U> react(Executor executor, List<Supplier<T>> actions) {
+	public static <T, U> Stage<T, U> react(Executor executor,
+			List<Supplier<T>> actions) {
 
 		return react(executor, (Supplier[]) actions.toArray(new Supplier[] {}));
 	}
 
-	
-	
+	/**
+	 * 
+	 * Start a reactive dataflow with an array of one-off-suppliers
+	 * 
+	 * @param actions Array of Suppliers to provide data (and thus events) that
+	 *            downstream jobs will react too
+	 * @return Next stage in the reactive flow
+	 */
 	@SafeVarargs
-	public static<T,U> Stage<T,U> react(final Supplier<T>... actions){
-		
-		return new SimpleReact<T>().<U>reactI(actions);
-				
+	public static <T, U> Stage<T, U> react(final Supplier<T>... actions) {
+
+		return new SimpleReact<T>().<U> reactI(actions);
+
 	}
 	
-
-
-	
+	/**
+	 * Start a reactive dataflow with an array of one-off-suppliers and an Executor
+	 * 
+	 * 
+	 * @param executor All downstream concurrent tasks will be submitted to this executor
+	 * @param actions Array of Suppliers to provide data (and thus events) that
+	 *            downstream jobs will react too
+	 *            
+	 * @return Next stage in the reactive flow
+	 */
 	@SafeVarargs
-	public static <T, U> Stage<T, U> react(Executor executor, final Supplier<T>... actions) {
+	public static <T, U> Stage<T, U> react(Executor executor,
+			final Supplier<T>... actions) {
 		return new SimpleReact<T>().<U> reactI(executor, actions);
 
 	}
@@ -48,43 +94,13 @@ public class SimpleReact<T> {
 		return reactI(forkJoinPool, actions);
 	}
 
-	private <U> Stage<T, U> reactI(Executor executor, final Supplier<T>... actions) {
-		return new Stage(Stream.of(actions).map(next -> CompletableFuture.supplyAsync(next, executor)), executor);
+	private <U> Stage<T, U> reactI(Executor executor,
+			final Supplier<T>... actions) {
+		return new Stage(Stream.of(actions).map(
+				next -> CompletableFuture.supplyAsync(next, executor)),
+				executor);
 	}
 
-	@SafeVarargs
-	public static <T> List<T> block(final Callable<T>... fns) {
-		return new SimpleReact<T>().blockI(fns);
-	}
-
-	@SafeVarargs
-	private final List<T> blockI(final Callable<T>... fns) { //should delegate to Stage block
-		return Stream.of(fns).map(fn -> forkJoinPool.submit(fn)).map((future) -> {
-
-			try {
-				T t = future.get();
-				return t;
-			} catch (Exception e) {
-				return null;
-			}
-
-		}).collect(Collectors.toList());
-	}
-
-	public static <T> List<T> sequence(final Callable<T>... fns) {
-		return new SimpleReact<T>().sequenceI(fns);
-	}
-
-	@SafeVarargs
-	private final List<T> sequenceI(final Callable<T>... fns) {
-		return Stream.of(fns).map((fn) -> {
-			try {
-				return fn.call();
-			} catch (Exception e) {
-
-			}
-			return null;
-		}).collect(Collectors.toList());
-	}
-
+	
+	
 }
