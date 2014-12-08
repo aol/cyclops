@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -24,25 +25,38 @@ import sun.misc.Unsafe;
 
 public class Stage<T, U> {
 
-	private final Logger logger = Logger.getLogger(this.getClass().getName());
+	private final static Logger logger = Logger.getLogger(Stage.class.getName());
 	private final Stream<CompletableFuture<T>> stream;
-	private volatile List<CompletableFuture> lastActive;
 	private final Executor forkJoinPool;
-	private volatile Optional<Consumer<Throwable>> errorHandler = Optional.empty();
-	private final  Unsafe unsafe = getUnsafe();
 	
-	public Stage(Stream<CompletableFuture<T>> stream, Executor forkJoinPool) {
-
+	@SuppressWarnings("rawtypes")
+	private volatile List<CompletableFuture> lastActive;
+	private volatile Optional<Consumer<Throwable>> errorHandler = Optional.empty();
+	
+	
+	/**
+	 * 
+	 * Construct a SimpleReact stage - this acts as a fluent SimpleReact builder
+	 * 
+	 * @param stream  Stream that will generate the events that will be reacted to.
+	 * @param executor The next stage's tasks will be submitted to this executor
+	 */
+	public Stage(Stream<CompletableFuture<T>> stream, Executor executor) {
 		this.stream = stream;
-		this.forkJoinPool = forkJoinPool;
+		this.forkJoinPool = executor;
 	}
 
+	/**
+	 * @param fn
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
 	public List<CompletableFuture<U>> with(Function<T, ? extends Object> fn) {
 		
 		return stream.map(future -> (CompletableFuture<U>) future.thenApplyAsync(fn, forkJoinPool)).collect(Collectors.toList());
 	}
 	
-	
+	@SuppressWarnings("unchecked")
 	public <R> Stage<U, R> then(Function<T, U> fn) {
 		if (lastActive != null) {
 			lastActive = lastActive.stream().map((ft) -> ft.thenApplyAsync(fn, forkJoinPool)).collect(Collectors.toList());
@@ -51,6 +65,7 @@ public class Stage<T, U> {
 		return (Stage<U, R>)this;
 	}
 
+	@SuppressWarnings("unchecked")
 	public<R> Stage<T, R> onFail(Function<? extends Throwable, T> fn) {
 		if (lastActive != null) {
 			lastActive = lastActive.stream().map((ft) -> ft.exceptionally(fn)).collect(Collectors.toList());
@@ -59,11 +74,16 @@ public class Stage<T, U> {
 		return (Stage<T, R>)this;
 	}
 
+	@SuppressWarnings("unchecked")
 	public Stage<T, U> capture(Consumer<? extends Throwable> error) {
 		this.errorHandler = Optional.of((Consumer<Throwable>) error);
 		return this;
 	}
+	
+	@SuppressWarnings("unchecked")
 	public<R> Stage<U, R> allOf(Function<List<T>, U> fn) {
+		
+		@SuppressWarnings("rawtypes")
 		List<CompletableFuture> completedFutures =lastActive;
 		lastActive = Arrays.asList(CompletableFuture.allOf(lastActive.toArray(new CompletableFuture[0])));
 		
@@ -77,20 +97,22 @@ public class Stage<T, U> {
 		return (Stage<U, R>)this;
 	}
 
-	private Object getSafe(CompletableFuture next) {
-		try {
-			return next.get();
-		} catch (InterruptedException | ExecutionException e) {
-			Thread.currentThread().interrupt();
-			errorHandler.ifPresent((handler) -> handler.accept(e.getCause()));
-		}
-		return null;
-	}
+	
 
+	@SuppressWarnings("hiding")
 	public <U> List<U> block() {
 		return block(lastActive);
 	}
 	
+	
+	
+	
+	@SuppressWarnings("hiding")
+	public <U> List<U> block(final Predicate<Status> breakout) {
+		return new Blocker<U>(lastActive,errorHandler).block(breakout);		
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked", "hiding" })
 	private <U> List<U> block(List<CompletableFuture> lastActive) {
 		return lastActive.stream().map((future) -> {
 
@@ -109,27 +131,65 @@ public class Stage<T, U> {
 
 		}).filter(v -> v != null).collect(Collectors.toList());
 	}
-
-	private void capture(Exception e) {
+	
+	private void capture(final Exception e) {
 		errorHandler.ifPresent((handler) -> handler.accept(e.getCause()));
 	}
- 
+	
+	@SuppressWarnings("rawtypes")
+	private Object getSafe( CompletableFuture next) {
+		try {
+			return next.get();
+		} catch (InterruptedException | ExecutionException e) {
+			Thread.currentThread().interrupt();
+			errorHandler.ifPresent((handler) -> handler.accept(e.getCause()));
+		}
+		return null;
+	}
+	
 	
 
 	
-	@SuppressWarnings("unchecked")
-	public <U> List<U> block(Predicate<Status> breakout) {
-		
-		final CompletableFuture<List<U>> promise = new CompletableFuture<>();
-		
-		SimpleTimer timer = new SimpleTimer();
-		AtomicInteger completed = new AtomicInteger();
-		AtomicInteger errors = new AtomicInteger();
-		
-		Queue<U> currentResults = new  ConcurrentLinkedQueue<U>();
+	@AllArgsConstructor
+	private static class Blocker<U> {
 		
 		
-		lastActive.forEach( f -> f.whenComplete(  (result,ex) ->{
+		private final  Optional<Unsafe> unsafe = getUnsafe();
+		@SuppressWarnings("rawtypes")
+		private final List<CompletableFuture> lastActive;
+		private final Optional<Consumer<Throwable>> errorHandler;
+		private final CompletableFuture<List<U>> promise = new CompletableFuture<>();
+		
+		private final SimpleTimer timer = new SimpleTimer();
+		private final AtomicInteger completed = new AtomicInteger();
+		private final AtomicInteger errors = new AtomicInteger();
+		
+		private final Queue<U> currentResults = new  ConcurrentLinkedQueue<U>();
+		
+		@SuppressWarnings("unchecked")
+		public  List<U> block( final Predicate<Status> breakout) {
+			
+			lastActive.forEach( f -> f.whenComplete(  (result,ex) ->{
+				testBreakoutConditionsBeforeUnblockingCurrentThread(breakout, result, ex);
+				
+			}));
+			
+			try {
+				return promise.get();
+			}catch (ExecutionException e) {
+				unsafe.ifPresent( u -> u.throwException(e));
+				throw new RuntimeException(e);
+			}
+			catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				unsafe.ifPresent( u -> u.throwException(e));
+				throw new RuntimeException(e);
+			}
+			
+		}
+
+		private void testBreakoutConditionsBeforeUnblockingCurrentThread(final Predicate<Status> breakout,
+				Object result, Object ex) {
 			if(result!=null)
 				currentResults.add((U)result);
 			int localComplete = completed.incrementAndGet();
@@ -140,55 +200,37 @@ public class Stage<T, U> {
 			}
 			Status status = new Status(localComplete,localErrors,lastActive.size(),timer.getElapsedMilliseconds());
 			if(breakoutConditionsMet(breakout,status) || allResultsReturned(localComplete)){
-				promise.complete(new LinkedList(currentResults));
+				promise.complete(new LinkedList<U>(currentResults));
 			}
-			
-		}));
+		}
 		
-		try {
-			return promise.get();
-		}catch (ExecutionException e) {
-			
-			unsafe.throwException(e);
+		private boolean allResultsReturned(int localComplete) {
+			return localComplete==lastActive.size();
 		}
-		catch (InterruptedException e) {
-			
-			Thread.currentThread().interrupt();
-			unsafe.throwException(e);
+		
+		private boolean breakoutConditionsMet(Predicate<Status> breakout, Status  status) {
+			return breakout.test(status);
 		}
-		throw new RuntimeException("No result");
+		
+		private static Optional<Unsafe> getUnsafe (){
+
+		    try {
+
+		        Field field = Unsafe.class.getDeclaredField("theUnsafe");
+
+		        field.setAccessible(true);
+
+		        return Optional.of((Unsafe)field.get(null));
+
+		    } catch (Exception ex) {
+
+		       logger.log(Level.SEVERE, ex.getMessage());
+
+		    }
+		    return Optional.empty();
+
+		}
 	}
-
-	private static Unsafe getUnsafe ()
-
-	{
-
-	    try {
-
-	        Field field = Unsafe.class.getDeclaredField("theUnsafe");
-
-	        field.setAccessible(true);
-
-	        return (Unsafe)field.get(null);
-
-	    } catch (Exception ex) {
-
-	        throw new RuntimeException("can't get Unsafe instance", ex);
-
-	    }
-
-	}
-	
-
-	private boolean allResultsReturned(int localComplete) {
-		return localComplete==lastActive.size();
-	}
-	@SuppressWarnings("unchecked")
-	private boolean breakoutConditionsMet(Predicate<Status> breakout, Status  status) {
-		return breakout.test(status);
-	}
-	
-	
 	
 	@AllArgsConstructor
 	@Getter
