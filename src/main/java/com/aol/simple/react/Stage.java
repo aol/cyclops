@@ -48,7 +48,7 @@ public class Stage<T, U> {
 	private final static Logger logger = Logger
 			.getLogger(Stage.class.getName());
 	private final Stream<CompletableFuture<T>> stream;
-	private final Executor forkJoinPool;
+	private final Executor taskExecutor;
 
 	@SuppressWarnings("rawtypes")
 	private final List<CompletableFuture> lastActive;
@@ -65,7 +65,7 @@ public class Stage<T, U> {
 	 */
 	public Stage(Stream<CompletableFuture<T>> stream, Executor executor) {
 		this.stream = stream;
-		this.forkJoinPool = executor;
+		this.taskExecutor = executor;
 		lastActive = null;
 		errorHandler = Optional.empty();
 	}
@@ -105,7 +105,7 @@ public class Stage<T, U> {
 
 		return stream.map(
 				future -> (CompletableFuture<U>) future.thenApplyAsync(fn,
-						forkJoinPool)).collect(Collectors.toList());
+						taskExecutor)).collect(Collectors.toList());
 	}
 
 	/**
@@ -148,11 +148,11 @@ public class Stage<T, U> {
 	public <R> Stage<U, R> then(Function<T, U> fn) {
 		if (lastActive != null) {
 			return (Stage<U, R>) this.withLastActive(lastActive.stream()
-					.map((ft) -> ft.thenApplyAsync(fn, forkJoinPool))
+					.map((ft) -> ft.thenApplyAsync(fn, taskExecutor))
 					.collect(Collectors.toList()));
 		} else
 			return (Stage<U, R>) this.withLastActive(stream.map(
-					future -> future.thenApplyAsync(fn, forkJoinPool)).collect(
+					future -> future.thenApplyAsync(fn, taskExecutor)).collect(
 					Collectors.toList()));
 
 	}
@@ -356,7 +356,7 @@ public class Stage<T, U> {
 
 			return fn.apply(aggregateResults(completedFutures));
 
-		}, forkJoinPool)));
+		}, taskExecutor)));
 
 	}
 	
