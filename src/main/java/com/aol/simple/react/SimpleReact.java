@@ -94,6 +94,7 @@ public class SimpleReact<T> {
 		return reactI(forkJoinPool, actions);
 	}
 
+	@SuppressWarnings("unchecked")
 	private <U> Stage<T, U> reactI(final Executor executor,
 			final Supplier<T>... actions) {
 		return new Stage(Stream.of(actions).map(

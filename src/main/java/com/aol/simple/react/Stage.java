@@ -417,7 +417,6 @@ public class Stage<T, U> {
 			lastActive.forEach(f -> f.whenComplete((result, ex) -> {
 				testBreakoutConditionsBeforeUnblockingCurrentThread(breakout,
 						result, ex);
-
 			}));
 
 			try {
