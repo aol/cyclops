@@ -66,8 +66,8 @@ public class Stage<T, U> {
 	public Stage(Stream<CompletableFuture<T>> stream, Executor executor) {
 		this.stream = stream;
 		this.taskExecutor = executor;
-		lastActive = null;
-		errorHandler = Optional.empty();
+		this.lastActive = null;
+		this.errorHandler = Optional.empty();
 	}
 
 	/**
