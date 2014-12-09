@@ -36,7 +36,7 @@ public class SimpleReact<T> {
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T, U> Stage<T, U> react(List<Supplier<T>> actions) {
+	public static <T, U> Stage<T, U> react(final List<Supplier<T>> actions) {
 
 		return react((Supplier[]) actions.toArray(new Supplier[] {}));
 	}
@@ -52,8 +52,8 @@ public class SimpleReact<T> {
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T, U> Stage<T, U> react(Executor executor,
-			List<Supplier<T>> actions) {
+	public static <T, U> Stage<T, U> react(final Executor executor,
+			final List<Supplier<T>> actions) {
 
 		return react(executor, (Supplier[]) actions.toArray(new Supplier[] {}));
 	}
@@ -84,7 +84,7 @@ public class SimpleReact<T> {
 	 * @return Next stage in the reactive flow
 	 */
 	@SafeVarargs
-	public static <T, U> Stage<T, U> react(Executor executor,
+	public static <T, U> Stage<T, U> react(final Executor executor,
 			final Supplier<T>... actions) {
 		return new SimpleReact<T>().<U> reactI(executor, actions);
 
@@ -94,7 +94,7 @@ public class SimpleReact<T> {
 		return reactI(forkJoinPool, actions);
 	}
 
-	private <U> Stage<T, U> reactI(Executor executor,
+	private <U> Stage<T, U> reactI(final Executor executor,
 			final Supplier<T>... actions) {
 		return new Stage(Stream.of(actions).map(
 				next -> CompletableFuture.supplyAsync(next, executor)),

@@ -3,7 +3,6 @@ package com.aol.simple.react;
 import static java.util.Arrays.asList;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -63,7 +62,7 @@ public class Stage<T, U> {
 	 * @param executor
 	 *            The next stage's tasks will be submitted to this executor
 	 */
-	public Stage(Stream<CompletableFuture<T>> stream, Executor executor) {
+	public Stage(final Stream<CompletableFuture<T>> stream, final Executor executor) {
 		this.stream = stream;
 		this.taskExecutor = executor;
 		this.lastActive = null;
@@ -101,7 +100,7 @@ public class Stage<T, U> {
 	 *         application of the supplied function
 	 */
 	@SuppressWarnings("unchecked")
-	public List<CompletableFuture<U>> with(Function<T, ? extends Object> fn) {
+	public List<CompletableFuture<U>> with(final Function<T, ? extends Object> fn) {
 
 		return stream.map(
 				future -> (CompletableFuture<U>) future.thenApplyAsync(fn,
@@ -145,7 +144,7 @@ public class Stage<T, U> {
 	 *         the dataflow
 	 */
 	@SuppressWarnings("unchecked")
-	public <R> Stage<U, R> then(Function<T, U> fn) {
+	public <R> Stage<U, R> then(final Function<T, U> fn) {
 		if (lastActive != null) {
 			return (Stage<U, R>) this.withLastActive(lastActive.stream()
 					.map((ft) -> ft.thenApplyAsync(fn, taskExecutor))
@@ -197,7 +196,7 @@ public class Stage<T, U> {
 	 *         the dataflow
 	 */
 	@SuppressWarnings("unchecked")
-	public <R> Stage<T, R> onFail(Function<? extends Throwable, T> fn) {
+	public <R> Stage<T, R> onFail(final Function<? extends Throwable, T> fn) {
 		if (lastActive != null) {
 			return (Stage<T, R>) this.withLastActive(lastActive.stream()
 					.map((ft) -> ft.exceptionally(fn))
@@ -253,7 +252,7 @@ public class Stage<T, U> {
 	 *         the dataflow
 	 */
 	@SuppressWarnings("unchecked")
-	public Stage<T, U> capture(Consumer<? extends Throwable> errorHandler) {
+	public Stage<T, U> capture(final Consumer<? extends Throwable> errorHandler) {
 		return this.withErrorHandler(Optional
 				.of((Consumer<Throwable>) errorHandler));
 	}
@@ -346,10 +345,10 @@ public class Stage<T, U> {
 	 *         the dataflow
 	 */
 	@SuppressWarnings("unchecked")
-	public <R> Stage<U, R> allOf(Function<List<T>, U> fn) {
+	public <R> Stage<U, R> allOf(final Function<List<T>, U> fn) {
 
 		@SuppressWarnings("rawtypes")
-		List<CompletableFuture> completedFutures = lastActive;
+		final List<CompletableFuture> completedFutures = lastActive;
 
 		return (Stage<U, R>) withLastActive(asList(CompletableFuture.allOf(
 				lastActiveArray()).thenApplyAsync((result) -> {
@@ -361,14 +360,14 @@ public class Stage<T, U> {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked", "hiding" })
-	private <U> List<U> block(List<CompletableFuture> lastActive) {
+	private <U> List<U> block(final List<CompletableFuture> lastActive) {
 		return lastActive.stream().map((future) -> {
 			return (U)getSafe(future);
 		}).filter(v -> v != null).collect(Collectors.toList());
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private List<T> aggregateResults(List<CompletableFuture> completedFutures) {
+	private List<T> aggregateResults(final List<CompletableFuture> completedFutures) {
 		return (List<T>) completedFutures.stream().map(next -> getSafe(next))
 				.collect(Collectors.toList());
 	}
@@ -383,7 +382,7 @@ public class Stage<T, U> {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private Object getSafe(CompletableFuture next) {
+	private Object getSafe(final CompletableFuture next) {
 		try {
 			return next.get();
 		} catch (InterruptedException e){
@@ -434,22 +433,23 @@ public class Stage<T, U> {
 
 		}
 
-		private void throwSoftenedException(Exception e) {
+		private void throwSoftenedException(final Exception e) {
 			unsafe.ifPresent(u -> u.throwException(e));
 		}
 
 		private void testBreakoutConditionsBeforeUnblockingCurrentThread(
-				final Predicate<Status> breakout, Object result, Object ex) {
+				final Predicate<Status> breakout, final Object result, final Object ex) {
 			if (result != null)
 				currentResults.add((U) result);
-			int localComplete = completed.incrementAndGet();
-			int localErrors = errors.get();
+			final int localComplete = completed.incrementAndGet();
+			
 			if (ex != null) {
-				localErrors = errors.incrementAndGet();
+				errors.incrementAndGet();
 				errorHandler.ifPresent((handler) -> handler
 						.accept(((Exception) ex).getCause()));
 			}
-			Status status = new Status(localComplete, localErrors,
+			final int localErrors = errors.get();
+			final Status status = new Status(localComplete, localErrors,
 					lastActive.size(), timer.getElapsedMilliseconds());
 			if (breakoutConditionsMet(breakout, status)
 					|| allResultsReturned(localComplete)) {
@@ -457,12 +457,12 @@ public class Stage<T, U> {
 			}
 		}
 
-		private boolean allResultsReturned(int localComplete) {
+		private boolean allResultsReturned(final int localComplete) {
 			return localComplete == lastActive.size();
 		}
 
-		private boolean breakoutConditionsMet(Predicate<Status> breakout,
-				Status status) {
+		private boolean breakoutConditionsMet(final Predicate<Status> breakout,
+				final Status status) {
 			return breakout.test(status);
 		}
 
@@ -470,7 +470,7 @@ public class Stage<T, U> {
 
 			try {
 
-				Field field = Unsafe.class.getDeclaredField("theUnsafe");
+				final Field field = Unsafe.class.getDeclaredField("theUnsafe");
 
 				field.setAccessible(true);
 
