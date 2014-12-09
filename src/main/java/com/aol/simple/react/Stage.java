@@ -363,19 +363,7 @@ public class Stage<T, U> {
 	@SuppressWarnings({ "rawtypes", "unchecked", "hiding" })
 	private <U> List<U> block(List<CompletableFuture> lastActive) {
 		return lastActive.stream().map((future) -> {
-
-			try {
-				return (U) future.get();
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				capture(e);
-				return null;
-			} catch (Exception e) {
-
-				capture(e);
-				return null;
-			}
-
+			return (U)getSafe(future);
 		}).filter(v -> v != null).collect(Collectors.toList());
 	}
 
@@ -398,12 +386,16 @@ public class Stage<T, U> {
 	private Object getSafe(CompletableFuture next) {
 		try {
 			return next.get();
-		} catch (InterruptedException | ExecutionException e) {
+		} catch (InterruptedException e){
 			Thread.currentThread().interrupt();
-			errorHandler.ifPresent((handler) -> handler.accept(e.getCause()));
+			capture(e);
+		}catch(Exception e) {
+			capture(e);
 		}
 		return null;
 	}
+
+	
 
 	@AllArgsConstructor
 	private static class Blocker<U> {
