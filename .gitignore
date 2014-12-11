@@ -5,6 +5,8 @@
 ### Eclipse ###
 *.pydevproject
 .metadata
+.classpath
+.project
 .gradle
 bin/
 tmp/
