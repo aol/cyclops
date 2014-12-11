@@ -19,19 +19,19 @@ public class SimpleTimerTest {
 
 	@Test
 	public void testNonZero() {
-		assertThat(timer.getElapsedMilliseconds(), is(greaterThanOrEqualTo(0l)));
+		assertThat(timer.getElapsedNanoseconds(), is(greaterThanOrEqualTo(0l)));
 	}
 	
 	@Test
 	public void testContinueCounting() {
-		Long elapsed = timer.getElapsedMilliseconds();
-		assertThat(timer.getElapsedMilliseconds(), is(greaterThanOrEqualTo(elapsed)));
+		Long elapsed = timer.getElapsedNanoseconds();
+		assertThat(timer.getElapsedNanoseconds(), is(greaterThanOrEqualTo(elapsed)));
 		
 	}
 	
 	@Test
 	public void testLessThanFifty() {
-		assertThat(timer.getElapsedMilliseconds(), is(lessThan(50l)));
+		assertThat(timer.getElapsedNanoseconds(), is(lessThan(50l*1000l)));
 	}
 
 }

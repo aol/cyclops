@@ -449,7 +449,7 @@ public class Stage<T, U> {
 			}
 			final int localErrors = errors.get();
 			final Status status = new Status(localComplete, localErrors,
-					lastActive.size(), timer.getElapsedMilliseconds());
+					lastActive.size(), timer.getElapsedNanoseconds());
 			if (breakoutConditionsMet(breakout, status)
 					|| allResultsReturned(localComplete)) {
 				promise.complete(new LinkedList<U>(currentResults));
@@ -491,7 +491,7 @@ public class Stage<T, U> {
 		private final int completed;
 		private final int errors;
 		private final int total;
-		private final long elapsedMillis;
+		private final long elapsedNanos;
 	}
 
 }

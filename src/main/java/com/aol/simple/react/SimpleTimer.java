@@ -10,14 +10,14 @@ package com.aol.simple.react;
  */
 public final class SimpleTimer {
 
-	private final long startMilliseconds =System.currentTimeMillis();
+	private final long startMilliseconds =System.nanoTime();
 	
 	
 	/**
-	 * @return Time elapsed in milliseconds since object construction
+	 * @return Time elapsed in nanoseconds since object construction
 	 */
-	public final long getElapsedMilliseconds() {
-		return System.currentTimeMillis() - startMilliseconds;
+	public final long getElapsedNanoseconds() {
+		return System.nanoTime() - startMilliseconds;
 	}
 }
 
