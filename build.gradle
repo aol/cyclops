@@ -16,6 +16,7 @@ repositories {
 dependencies {
    
 	compile group: 'org.projectlombok', name: 'lombok', version:'1.14.2'
+	compile group: 'org.slf4j', name: 'jcl-over-slf4j', version:'1.6.1'
     testCompile group: 'junit', name: 'junit', version: '4.+'
 	testCompile group: 'org.hamcrest', name: 'hamcrest-all', version:'1.1'
 }

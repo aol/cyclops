@@ -16,13 +16,13 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
+import lombok.extern.slf4j.Slf4j;
 import sun.misc.Unsafe;
 
 /**
@@ -42,10 +42,10 @@ import sun.misc.Unsafe;
  */
 @Wither
 @AllArgsConstructor
+@Slf4j
 public class Stage<T, U> {
 
-	private final static Logger logger = Logger
-			.getLogger(Stage.class.getName());
+
 	private final Stream<CompletableFuture<T>> stream;
 	private final Executor taskExecutor;
 
@@ -477,7 +477,7 @@ public class Stage<T, U> {
 
 			} catch (Exception ex) {
 
-				logger.log(Level.SEVERE, ex.getMessage());
+				log.error(ex.getMessage());
 
 			}
 			return Optional.empty();

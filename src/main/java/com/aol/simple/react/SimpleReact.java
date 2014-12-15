@@ -1,15 +1,15 @@
 package com.aol.simple.react;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * Entry point for creating a concurrent dataflow.
@@ -20,12 +20,25 @@ import lombok.Getter;
  * @param <T>
  *            Return type of object created by initial Suppliers
  */
-public class SimpleReact<T> {
+public class SimpleReact {
 
 	@Getter
-	static private final ForkJoinPool forkJoinPool = new ForkJoinPool(Runtime
-			.getRuntime().availableProcessors());
+	private final Executor executor;
 
+	/**
+	 * Construct a new SimpleReact that will use a ForkJoinPool with parrellism set to the number of processors on the host
+	 */
+	public SimpleReact(){
+		this.executor = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
+	}
+	
+	/**
+	 * @param executor Executor this SimpleReact instance will use to execute concurrent tasks.
+	 */
+	public SimpleReact(Executor executor) {
+	
+		this.executor = executor;
+	}
 	/**
 	 * 
 	 * Start a reactive dataflow with a list of one-off-suppliers
@@ -36,27 +49,12 @@ public class SimpleReact<T> {
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T, U> Stage<T, U> react(final List<Supplier<T>> actions) {
+	public <T, U> Stage<T, U> react(final List<Supplier<T>> actions) {
 
 		return react((Supplier[]) actions.toArray(new Supplier[] {}));
 	}
 
-	/**
-	 * Start a reactive dataflow with a list of one-off-suppliers and an Executor
-	 * 
-	 * 
-	 * @param executor All downstream concurrent tasks will be submitted to this executor
-	 * @param actions List of Suppliers to provide data (and thus events) that
-	 *            downstream jobs will react too
-	 *            
-	 * @return Next stage in the reactive flow
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T, U> Stage<T, U> react(final Executor executor,
-			final List<Supplier<T>> actions) {
-
-		return react(executor, (Supplier[]) actions.toArray(new Supplier[] {}));
-	}
+	
 
 	/**
 	 * 
@@ -67,40 +65,31 @@ public class SimpleReact<T> {
 	 * @return Next stage in the reactive flow
 	 */
 	@SafeVarargs
-	public static <T, U> Stage<T, U> react(final Supplier<T>... actions) {
+	public final <T, U> Stage<T, U> react(final Supplier<T>... actions) {
 
-		return new SimpleReact<T>().<U> reactI(actions);
+		return this.<T,U> reactI(actions);
 
 	}
 	
 	/**
-	 * Start a reactive dataflow with an array of one-off-suppliers and an Executor
+	 * This internal method has been left protected, so it can be mocked / stubbed as some of the entry points are final
 	 * 
-	 * 
-	 * @param executor All downstream concurrent tasks will be submitted to this executor
-	 * @param actions Array of Suppliers to provide data (and thus events) that
-	 *            downstream jobs will react too
-	 *            
-	 * @return Next stage in the reactive flow
 	 */
-	@SafeVarargs
-	public static <T, U> Stage<T, U> react(final Executor executor,
-			final Supplier<T>... actions) {
-		return new SimpleReact<T>().<U> reactI(executor, actions);
-
-	}
-
-	private <U> Stage<T, U> reactI(final Supplier<T>... actions) {
-		return reactI(forkJoinPool, actions);
-	}
-
 	@SuppressWarnings("unchecked")
-	private <U> Stage<T, U> reactI(final Executor executor,
+	@VisibleForTesting
+	protected <T,U> Stage<T, U> reactI(final Executor executor,
 			final Supplier<T>... actions) {
 		return new Stage(Stream.of(actions).map(
 				next -> CompletableFuture.supplyAsync(next, executor)),
 				executor);
 	}
+
+	private <T,U> Stage<T, U> reactI(final Supplier<T>... actions) {
+		return reactI(executor, actions);
+	}
+
+	
+
 
 	
 	

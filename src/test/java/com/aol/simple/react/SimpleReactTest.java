@@ -20,7 +20,7 @@ public class SimpleReactTest {
 	public void testReact() throws InterruptedException, ExecutionException {
 		
 		
-		List<CompletableFuture<Integer>> futures = SimpleReact.<Integer, Integer> 
+		List<CompletableFuture<Integer>> futures = new SimpleReact().<Integer, Integer> 
 				react(() -> 1, () -> 2, () -> 3)
 				.with((it) -> it * 100);
 		
@@ -32,7 +32,7 @@ public class SimpleReactTest {
 
 	@Test
 	public void testReactString() throws InterruptedException, ExecutionException {
-		List<CompletableFuture<String>> futures = SimpleReact.<Integer, String> react(() -> 1, () -> 2, () -> 3)
+		List<CompletableFuture<String>> futures = new SimpleReact().<Integer, String> react(() -> 1, () -> 2, () -> 3)
 				.with((it) -> "*" + it);
 
 		assertThat(futures.get(0).get(), is(containsString("*")));
@@ -44,7 +44,7 @@ public class SimpleReactTest {
 
 	@Test
 	public void testReactChain() throws InterruptedException, ExecutionException {
-		List<String> strings = SimpleReact.<Integer, Integer> 
+		List<String> strings = new SimpleReact().<Integer, Integer> 
 				react(() -> 1, () -> 2, () -> 3)
 				.then((it) -> it * 100)
 				.then((it) -> "*" + it)
@@ -61,7 +61,7 @@ public class SimpleReactTest {
 		
 		boolean blocked[] = {false};
 		
-		SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+		new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
 				
 				.then(it -> {
 					try {
@@ -80,7 +80,7 @@ public class SimpleReactTest {
 	@Test
 	public void testAllOfParallelStreams() throws InterruptedException, ExecutionException {
 		
-		List<Integer> result =SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
+		List<Integer> result = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 				.<Integer>then(it -> {
 					return it*200;
 				}).then((Integer it) -> {
@@ -107,7 +107,7 @@ public class SimpleReactTest {
 	public void testBlockStreams() throws InterruptedException, ExecutionException {
 		
 		
-		Integer result = SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+		Integer result = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
 				.then((it) -> it * 200)
 				.<Integer>block()
 				.parallelStream()
@@ -123,7 +123,7 @@ public class SimpleReactTest {
 	public void testBlock() throws InterruptedException, ExecutionException {
 		
 		
-		List<String> strings = SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+		List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
 				.then((it) -> it * 100)
 				.then((it) -> "*" + it)
 				.block();
@@ -135,7 +135,7 @@ public class SimpleReactTest {
 	@Test
 	public void testOnFail() throws InterruptedException, ExecutionException {
 		
-		List<String> strings = SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+		List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
 				.then((it) -> it * 100)
 				.then((it) -> {
 					if (it == 100)
@@ -161,7 +161,7 @@ public class SimpleReactTest {
 
 	@Test
 	public void testOnFailFirst() throws InterruptedException, ExecutionException {
-		List<String> strings = SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> { throw new RuntimeException("boo!");} )
+		List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> { throw new RuntimeException("boo!");} )
 				.onFail(e -> 1)
 				.then((it) -> "*" + it)
 				.block();
@@ -180,7 +180,7 @@ public class SimpleReactTest {
 	@Test
 	public void testCaptureNull() throws InterruptedException, ExecutionException {
 		Throwable[] error = { null };
-		List<String> strings = SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+		List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
 				.then((it) -> it * 100)
 				.then((it) -> {
 					if (it == 100)
@@ -209,7 +209,7 @@ public class SimpleReactTest {
 	@Test
 	public void testCapture() throws InterruptedException, ExecutionException {
 		Throwable[] error = { null };
-		List<String> strings = SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+		List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 					if (it == 100)
@@ -242,7 +242,7 @@ public class SimpleReactTest {
 	@Test
 	public void testBreakout() throws InterruptedException, ExecutionException{
 			Throwable[] error = {null};
-			List<String> strings = SimpleReact.<Integer,Integer>react(() -> 1,() -> 2,() -> 3)
+			List<String> strings = new SimpleReact().<Integer,Integer>react(() -> 1,() -> 2,() -> 3)
 					.then( (it) ->  it *100 )
 					.then( (it) ->  {
 						if(it==100)
@@ -261,7 +261,7 @@ public class SimpleReactTest {
 	@Test
 	public void testBreakoutException() throws InterruptedException, ExecutionException{
 			Throwable[] error = {null};
-			List<String> strings = SimpleReact.<Integer,Integer>react(() -> 1,() -> 2,() -> 3)
+			List<String> strings = new SimpleReact().<Integer,Integer>react(() -> 1,() -> 2,() -> 3)
 					.then( (it) ->  it *100 )
 					.then( (it) -> {
 						
@@ -278,7 +278,7 @@ public class SimpleReactTest {
 	@Test
 	public void testBreakoutInEffective() throws InterruptedException, ExecutionException{
 			Throwable[] error = {null};
-			List<String> strings = SimpleReact.<Integer,Integer>react(() -> 1,() -> 2,() -> 3)
+			List<String> strings = new SimpleReact().<Integer,Integer>react(() -> 1,() -> 2,() -> 3)
 					.then( (it) ->  it *100 )
 					.then( (it) ->  {
 						if(it==100)
