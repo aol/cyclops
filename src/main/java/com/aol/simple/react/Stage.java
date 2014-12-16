@@ -45,10 +45,7 @@ import sun.misc.Unsafe;
 @Slf4j
 public class Stage<T, U> {
 
-
-	private final Stream<CompletableFuture<T>> stream;
 	private final Executor taskExecutor;
-
 	@SuppressWarnings("rawtypes")
 	private final List<CompletableFuture> lastActive;
 	private final Optional<Consumer<Throwable>> errorHandler;
@@ -62,10 +59,11 @@ public class Stage<T, U> {
 	 * @param executor
 	 *            The next stage's tasks will be submitted to this executor
 	 */
-	public Stage(final Stream<CompletableFuture<T>> stream, final Executor executor) {
-		this.stream = stream;
+	public Stage(final Stream<CompletableFuture<T>> stream,
+			final Executor executor) {
+
 		this.taskExecutor = executor;
-		this.lastActive = null;
+		this.lastActive = stream.collect(Collectors.toList());
 		this.errorHandler = Optional.empty();
 	}
 
@@ -100,10 +98,12 @@ public class Stage<T, U> {
 	 *         application of the supplied function
 	 */
 	@SuppressWarnings("unchecked")
-	public List<CompletableFuture<U>> with(final Function<T, ? extends Object> fn) {
+	public List<CompletableFuture<U>> with(
+			final Function<T, ? extends Object> fn) {
 
-		return stream.map(
-				future -> (CompletableFuture<U>) future.thenApplyAsync(fn,
+		return lastActive
+				.stream()
+				.map(future -> (CompletableFuture<U>) future.thenApplyAsync(fn,
 						taskExecutor)).collect(Collectors.toList());
 	}
 
@@ -134,8 +134,8 @@ public class Stage<T, U> {
 	 * 
 	 * See this blog post for examples of what can be achieved via
 	 * CompleteableFuture :- <a href=
-	 * 'http://www.nurkiewicz.com/2013/12/promises-and-completablefuture.html'>http://www.nurkiewicz.com/2013/12/promises-and-completablefuture.htm
-	 * l < / a >
+	 * 'http://www.nurkiewicz.com/2013/12/promises-and-completablefuture.html'>http://www.nurkiewicz.com/2013/12/promises-and-completablefuture.h
+	 * t m l < / a >
 	 * 
 	 * @param fn
 	 *            Function to be applied to the results of the currently active
@@ -145,14 +145,10 @@ public class Stage<T, U> {
 	 */
 	@SuppressWarnings("unchecked")
 	public <R> Stage<U, R> then(final Function<T, U> fn) {
-		if (lastActive != null) {
-			return (Stage<U, R>) this.withLastActive(lastActive.stream()
-					.map((ft) -> ft.thenApplyAsync(fn, taskExecutor))
-					.collect(Collectors.toList()));
-		} else
-			return (Stage<U, R>) this.withLastActive(stream.map(
-					future -> future.thenApplyAsync(fn, taskExecutor)).collect(
-					Collectors.toList()));
+
+		return (Stage<U, R>) this.withLastActive(lastActive.stream()
+				.map((ft) -> ft.thenApplyAsync(fn, taskExecutor))
+				.collect(Collectors.toList()));
 
 	}
 
@@ -197,16 +193,11 @@ public class Stage<T, U> {
 	 */
 	@SuppressWarnings("unchecked")
 	public <R> Stage<T, R> onFail(final Function<? extends Throwable, T> fn) {
-		if (lastActive != null) {
-			return (Stage<T, R>) this.withLastActive(lastActive.stream()
-					.map((ft) -> ft.exceptionally(fn))
-					.collect(Collectors.toList()));
-		} else
-			return (Stage<T, R>) this
-					.withLastActive(stream
-							.map(future -> future
-									.exceptionally((Function<Throwable, ? extends T>) fn))
-							.collect(Collectors.toList()));
+
+		return (Stage<T, R>) this
+				.withLastActive(lastActive.stream()
+						.map((ft) -> ft.exceptionally(fn))
+						.collect(Collectors.toList()));
 
 	}
 
@@ -296,17 +287,18 @@ public class Stage<T, U> {
 	  </code>
 	 * 
 	 * In this example the current thread will unblock once more than one result
-	 * has been returned. 
+	 * has been returned.
 	 * 
-	 * @param breakout Predicate that determines whether the block should be continued or remvoed
-	 * @return  Competed results of currently active stage at full completion point or when breakout triggered (which ever comes first).
+	 * @param breakout
+	 *            Predicate that determines whether the block should be
+	 *            continued or remvoed
+	 * @return Competed results of currently active stage at full completion
+	 *         point or when breakout triggered (which ever comes first).
 	 */
 	@SuppressWarnings("hiding")
 	public <U> List<U> block(final Predicate<Status> breakout) {
 		return new Blocker<U>(lastActive, errorHandler).block(breakout);
 	}
-
-	
 
 	/**
 	 * React and <b>allOf</b>
@@ -358,16 +350,17 @@ public class Stage<T, U> {
 		}, taskExecutor)));
 
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked", "hiding" })
 	private <U> List<U> block(final List<CompletableFuture> lastActive) {
 		return lastActive.stream().map((future) -> {
-			return (U)getSafe(future);
+			return (U) getSafe(future);
 		}).filter(v -> v != null).collect(Collectors.toList());
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private List<T> aggregateResults(final List<CompletableFuture> completedFutures) {
+	private List<T> aggregateResults(
+			final List<CompletableFuture> completedFutures) {
 		return (List<T>) completedFutures.stream().map(next -> getSafe(next))
 				.collect(Collectors.toList());
 	}
@@ -385,16 +378,14 @@ public class Stage<T, U> {
 	private Object getSafe(final CompletableFuture next) {
 		try {
 			return next.get();
-		} catch (InterruptedException e){
+		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			capture(e);
-		}catch(Exception e) {
+		} catch (Exception e) {
 			capture(e);
 		}
 		return null;
 	}
-
-	
 
 	@AllArgsConstructor
 	private static class Blocker<U> {
@@ -437,11 +428,12 @@ public class Stage<T, U> {
 		}
 
 		private void testBreakoutConditionsBeforeUnblockingCurrentThread(
-				final Predicate<Status> breakout, final Object result, final Object ex) {
+				final Predicate<Status> breakout, final Object result,
+				final Object ex) {
 			if (result != null)
 				currentResults.add((U) result);
 			final int localComplete = completed.incrementAndGet();
-			
+
 			if (ex != null) {
 				errors.incrementAndGet();
 				errorHandler.ifPresent((handler) -> handler

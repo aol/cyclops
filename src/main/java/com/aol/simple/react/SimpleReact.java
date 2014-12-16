@@ -79,7 +79,7 @@ public class SimpleReact {
 	@VisibleForTesting
 	protected <T,U> Stage<T, U> reactI(final Executor executor,
 			final Supplier<T>... actions) {
-		return new Stage(Stream.of(actions).map(
+		return new Stage<T, U>(Stream.of(actions).map(
 				next -> CompletableFuture.supplyAsync(next, executor)),
 				executor);
 	}
