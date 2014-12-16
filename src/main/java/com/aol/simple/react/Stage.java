@@ -40,6 +40,8 @@ import sun.misc.Unsafe;
  * @param <U>
  *            Return parameter for this stage
  */
+
+//lombok annotations to aid Immutability (Wither and AllArgsConstructor)
 @Wither
 @AllArgsConstructor
 @Slf4j
