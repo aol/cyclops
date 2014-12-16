@@ -339,15 +339,10 @@ public class Stage<T, U> {
 	@SuppressWarnings("unchecked")
 	public <R> Stage<U, R> allOf(final Function<List<T>, U> fn) {
 
-		@SuppressWarnings("rawtypes")
-		final List<CompletableFuture> completedFutures = lastActive;
-
 		return (Stage<U, R>) withLastActive(asList(CompletableFuture.allOf(
 				lastActiveArray()).thenApplyAsync((result) -> {
-
-			return fn.apply(aggregateResults(completedFutures));
-
-		}, taskExecutor)));
+						return fn.apply(aggregateResults(lastActive));
+					}, taskExecutor)));
 
 	}
 
