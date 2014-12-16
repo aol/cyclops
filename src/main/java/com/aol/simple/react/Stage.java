@@ -270,7 +270,7 @@ public class Stage<T, U> {
 	 * @return Results of currently active stage in aggregated in form determined by collector
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
-	public <U,R> R block(Collector collector) {
+	public <U,R> R block(final Collector collector) {
 		return (R)block(collector,lastActive);
 	}
 	/**
@@ -299,7 +299,7 @@ public class Stage<T, U> {
 	 * @return Value determined by the supplied extractor
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
-	public <U,R> R blockAndExtract(Extractor extractor) {
+	public <U,R> R blockAndExtract(final Extractor extractor) {
 		return blockAndExtract(extractor, status -> false);
 	}
 	/**
@@ -311,7 +311,7 @@ public class Stage<T, U> {
 	 * @return Value determined by the supplied extractor
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
-	public <U,R> R blockAndExtract(Extractor extractor,Predicate<Status> breakout) {
+	public <U,R> R blockAndExtract(final Extractor extractor,final Predicate<Status> breakout) {
 		return (R)extractor.extract(block());
 	}
 
@@ -456,11 +456,6 @@ public class Stage<T, U> {
 	private static class MissingValue {
 		
 	}
-
-	
-
-	
-
 	
 
 }
