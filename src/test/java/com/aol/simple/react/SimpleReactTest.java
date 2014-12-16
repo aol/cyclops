@@ -12,9 +12,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
@@ -75,12 +77,76 @@ public class SimpleReactTest {
 
 		assertThat(blocked[0], is(false));
 	}
+	
+	@Test
+	public void testLast() throws InterruptedException, ExecutionException {
+
+		Integer result = new SimpleReact()
+		.<Integer, Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
+		.then( it -> it*100)
+		.then( it -> sleep(it))
+		.last();
+
+		assertThat(result,is(500));
+	}
+	 
+	private Object sleep(Integer it) {
+		try {
+			Thread.sleep(it);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return it;
+	}
+
+	@Test
+	public void testFirst() throws InterruptedException, ExecutionException {
+
+		Set<Integer> result = new SimpleReact()
+		.<Integer, Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
+		.then( it -> it*100)
+		.allOf(Collectors.toSet(), it -> {
+			assertThat (it,is( Set.class));
+			return it;
+		}).first();
+
+		assertThat(result.size(),is(4));
+	}
+	@Test
+	public void testGenericExtract() throws InterruptedException, ExecutionException {
+
+		Set<Integer> result = new SimpleReact()
+		.<Integer, Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
+		.then( it -> it*100)
+		.allOf(Collectors.toSet(), it -> {
+			assertThat (it,is( Set.class));
+			return it;
+		}).blockAndExtract(Extractors.last(), status -> false);
+
+		assertThat(result.size(),is(4));
+	}
+	
+	@Test
+	public void testAllOfToSet() throws InterruptedException, ExecutionException {
+
+		Set<Integer> result = new SimpleReact()
+		.<Integer, Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
+		.then( it -> it*100)
+		.allOf(Collectors.toSet(), it -> {
+			assertThat (it,is( Set.class));
+			return it;
+		}).blockAndExtract(Extractors.first());
+
+		assertThat(result.size(),is(4));
+	}
+	
 
 	@Test
 	public void testAllOfParallelStreams() throws InterruptedException,
 			ExecutionException {
 
-		List<Integer> result = new SimpleReact()
+		Integer result = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 				.<Integer> then(it -> {
 					return it * 200;
@@ -93,13 +159,14 @@ public class SimpleReactTest {
 				})
 				.onFail(e -> 100)
 				.allOf(it -> {
+					
 					return it.parallelStream().filter(f -> f > 300)
 							.map(m -> m - 5)
 							.reduce(0, (acc, next) -> acc + next);
-				}).block();
+				}).block(Collectors.reducing(0, (acc,next)-> next));
 
-		assertThat(result.size(), is(1));
-		assertThat(result.get(0), is(990));
+	
+		assertThat(result, is(990));
 	}
 
 	@Test
@@ -123,6 +190,16 @@ public class SimpleReactTest {
 				.then((it) -> it * 100).then((it) -> "*" + it).block();
 
 		assertThat(strings.size(), is(3));
+
+	}
+	@Test
+	public void testBlockToSet() throws InterruptedException, ExecutionException {
+
+		Set<String> strings = new SimpleReact()
+				.<Integer, Integer> react(() -> 1, () -> 1, () -> 3)
+				.then((it) -> it * 100).then((it) -> "*" + it).block(Collectors.toSet());
+
+		assertThat(strings.size(), is(2));
 
 	}
 
@@ -240,6 +317,22 @@ public class SimpleReactTest {
 		assertThat(strings.size(), is(2));
 
 	}
+	@Test
+	public void testBreakoutToSet() throws InterruptedException, ExecutionException {
+		Throwable[] error = { null };
+		Set<String> strings = new SimpleReact()
+				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.then((it) -> it * 100).then((it) -> {
+					if (it == 100)
+						throw new RuntimeException("boo!");
+
+					return it;
+				}).onFail(e -> 1).then((it) -> "*" + it)
+				.block(Collectors.toSet(),status -> status.getCompleted() > 1);
+
+		assertThat(strings.size(), is(2));
+
+	}
 
 	@Test
 	public void testBreakoutException() throws InterruptedException,
@@ -252,11 +345,12 @@ public class SimpleReactTest {
 					throw new RuntimeException("boo!");
 
 				}).capture(e -> error[0] = e)
-				.block(status -> status.getCompleted() > 1);
+				.block(status -> status.getCompleted() >= 1);
 
 		assertThat(strings.size(), is(0));
 		assertThat(error[0], is(RuntimeException.class));
 	}
+	
 
 	@Test
 	public void testBreakoutInEffective() throws InterruptedException,
@@ -299,6 +393,25 @@ public class SimpleReactTest {
 		 
 		 List<String> completeResults =builder.block();
 		 assertThat( completeResults.get(0).length(),greaterThan(100));
+	}
+	
+	@Test
+	public void testReactNull(){
+		List<String> result = new SimpleReact().react(() -> null,()-> "Hello").block();
+		assertThat(result.size(),is(2));
+	
+	}
+	@Test
+	public void testThenNull(){
+		List<String> result = new SimpleReact().react(() -> "World",()-> "Hello").then( in -> null).block();
+		assertThat(result.size(),is(2));
+	
+	}
+	@Test
+	public void testReactExceptionRecovery(){
+		List<String> result = new SimpleReact().react(() -> {throw new RuntimeException();},()-> "Hello").onFail( e -> "World").block();
+		assertThat(result.size(),is(2));
+	
 	}
 	
 	@Test

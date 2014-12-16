@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
@@ -15,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.logging.Level;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -66,7 +67,10 @@ public class Stage<T, U> {
 
 		this.taskExecutor = executor;
 		this.lastActive = stream.collect(Collectors.toList());
-		this.errorHandler = Optional.empty();
+		this.errorHandler = Optional.of( (e)-> { e.printStackTrace(); });
+				
+			//	log.error(e.getMessage(),e));
+		//}
 	}
 
 	/**
@@ -147,13 +151,13 @@ public class Stage<T, U> {
 	 */
 	@SuppressWarnings("unchecked")
 	public <R> Stage<U, R> then(final Function<T, U> fn) {
-
 		return (Stage<U, R>) this.withLastActive(lastActive.stream()
 				.map((ft) -> ft.thenApplyAsync(fn, taskExecutor))
 				.collect(Collectors.toList()));
-
 	}
 
+	
+	
 	/**
 	 * React <b>onFail</b>
 	 * 
@@ -195,12 +199,10 @@ public class Stage<T, U> {
 	 */
 	@SuppressWarnings("unchecked")
 	public <R> Stage<T, R> onFail(final Function<? extends Throwable, T> fn) {
-
 		return (Stage<T, R>) this
 				.withLastActive(lastActive.stream()
 						.map((ft) -> ft.exceptionally(fn))
 						.collect(Collectors.toList()));
-
 	}
 
 	/**
@@ -266,11 +268,61 @@ public class Stage<T, U> {
 	 * Suppliers are non-blocking, and are not impacted by the block method
 	 * until they are complete. Block, only blocks the current thread.
 	 * 
-	 * @return Results of currently active stage
+	 * @return Results of currently active stage aggregated in a List
 	 */
 	@SuppressWarnings("hiding")
 	public <U> List<U> block() {
-		return block(lastActive);
+		return block(Collectors.toList(),lastActive);
+	}
+	
+	/**
+	 * @param collector to perform aggregation / reduction operation on the results (e.g. to Collect into a List or String)
+	 * @return Results of currently active stage in aggregated in form determined by collector
+	 */
+	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
+	public <U,R> R block(Collector collector) {
+		return (R)block(collector,lastActive);
+	}
+	/**
+	 * Block until first result recieved
+	 * 
+	 * @return  first result.
+	 */
+	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
+	public <U,R> R first() {
+		return blockAndExtract(Extractors.first(),status -> status.getCompleted() > 1);
+	}
+	/**
+	 * Block until all results recieved.
+	 * 
+	 * @return  last result
+	 */
+	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
+	public <U,R> R last() {
+		return blockAndExtract(Extractors.last());
+	}
+	
+	/**
+	 * Block until tasks complete and return a value determined by the extractor supplied.
+	 * 
+	 * @param extractor used to determine which value should be returned, recieves current collected input and extracts a return value
+	 * @return Value determined by the supplied extractor
+	 */
+	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
+	public <U,R> R blockAndExtract(Extractor extractor) {
+		return blockAndExtract(extractor, status -> false);
+	}
+	/**
+	 *  Block until tasks complete, or breakout conditions met and return a value determined by the extractor supplied.
+	 * 
+	 * @param extractor used to determine which value should be returned, recieves current collected input and extracts a return value 
+	 * @param breakout Predicate that determines whether the block should be
+	 *            continued or removed
+	 * @return Value determined by the supplied extractor
+	 */
+	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
+	public <U,R> R blockAndExtract(Extractor extractor,Predicate<Status> breakout) {
+		return (R)extractor.extract(block());
 	}
 
 	/**
@@ -293,14 +345,27 @@ public class Stage<T, U> {
 	 * 
 	 * @param breakout
 	 *            Predicate that determines whether the block should be
-	 *            continued or remvoed
-	 * @return Competed results of currently active stage at full completion
+	 *            continued or removed
+	 * @return List of Completed results of currently active stage at full completion
 	 *         point or when breakout triggered (which ever comes first).
 	 */
 	@SuppressWarnings("hiding")
 	public <U> List<U> block(final Predicate<Status> breakout) {
 		return new Blocker<U>(lastActive, errorHandler).block(breakout);
 	}
+	
+	/**
+	 * @param collector to perform aggregation / reduction operation on the results (e.g. to Collect into a List or String)
+	 * @param breakout  Predicate that determines whether the block should be
+	 *            continued or removed
+	 * @return Completed results of currently active stage at full completion
+	 *         point or when breakout triggered (which ever comes first), in aggregated in form determined by collector
+	 */
+	@SuppressWarnings({ "hiding", "unchecked","rawtypes" })
+	public <U,R> R block(final Collector collector,final Predicate<Status> breakout) {
+		return (R)block(breakout).stream().collect(collector);
+	}
+	
 
 	/**
 	 * React and <b>allOf</b>
@@ -341,25 +406,38 @@ public class Stage<T, U> {
 	@SuppressWarnings("unchecked")
 	public <R> Stage<U, R> allOf(final Function<List<T>, U> fn) {
 
-		return (Stage<U, R>) withLastActive(asList(CompletableFuture.allOf(
+		return allOf(Collectors.toList(), (Function<R, U>)fn);
+
+	}
+	/**
+	 * @param collector to perform aggregation / reduction operation on the results from active stage (e.g. to Collect into a List or String)
+	 * @param fn  Function that recieves the results of all currently active
+	 *            tasks as input
+	 * @return A new builder object that can be used to define the next stage in
+	 *         the dataflow
+	 */
+	@SuppressWarnings({"unchecked","rawtypes"})
+	public <R> Stage<U, R> allOf(final Collector collector,final Function<R, U> fn) {
+
+		return (Stage<U, R>) withLastActive(asList( CompletableFuture.allOf(
 				lastActiveArray()).thenApplyAsync((result) -> {
-						return fn.apply(aggregateResults(lastActive));
+						return fn.apply(aggregateResults(collector, lastActive));
 					}, taskExecutor)));
 
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked", "hiding" })
-	private <U> List<U> block(final List<CompletableFuture> lastActive) {
-		return lastActive.stream().map((future) -> {
+	private <U,R> R block(final Collector collector,final List<CompletableFuture> lastActive) {
+		return (R)lastActive.stream().map((future) -> {
 			return (U) getSafe(future);
-		}).filter(v -> v != null).collect(Collectors.toList());
+		}).filter(v -> v != MISSING_VALUE).collect(collector);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private List<T> aggregateResults(
+	private<R> R aggregateResults(final  Collector collector,
 			final List<CompletableFuture> completedFutures) {
-		return (List<T>) completedFutures.stream().map(next -> getSafe(next))
-				.collect(Collectors.toList());
+		return (R) completedFutures.stream().map(next -> getSafe(next)).filter(v -> v != MISSING_VALUE)
+				.collect(collector);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -381,7 +459,12 @@ public class Stage<T, U> {
 		} catch (Exception e) {
 			capture(e);
 		}
-		return null;
+		return MISSING_VALUE;
+	}
+	
+	private final static MissingValue MISSING_VALUE =new MissingValue();
+	private static class MissingValue {
+		
 	}
 
 	@AllArgsConstructor
@@ -404,7 +487,7 @@ public class Stage<T, U> {
 
 			lastActive.forEach(f -> f.whenComplete((result, ex) -> {
 				testBreakoutConditionsBeforeUnblockingCurrentThread(breakout,
-						result, ex);
+						result, (Throwable)ex);
 			}));
 
 			try {
@@ -424,23 +507,34 @@ public class Stage<T, U> {
 			unsafe.ifPresent(u -> u.throwException(e));
 		}
 
-		private void testBreakoutConditionsBeforeUnblockingCurrentThread(
-				final Predicate<Status> breakout, final Object result,
-				final Object ex) {
-			if (result != null)
-				currentResults.add((U) result);
-			final int localComplete = completed.incrementAndGet();
-
+		private synchronized Status buildStatus(Throwable ex){
 			if (ex != null) {
 				errors.incrementAndGet();
+				
+			}else{
+				completed.incrementAndGet();
+			}
+			
+			return new Status(completed.get(), errors.get(),
+					lastActive.size(), timer.getElapsedNanoseconds());
+			
+		}
+		private void testBreakoutConditionsBeforeUnblockingCurrentThread(
+				final Predicate<Status> breakout, final Object result,
+				final Throwable ex) {
+			if (result != null)
+				currentResults.add((U) result);
+			
+
+			final Status status = buildStatus(ex);
+			if (ex != null) {
 				errorHandler.ifPresent((handler) -> handler
 						.accept(((Exception) ex).getCause()));
 			}
-			final int localErrors = errors.get();
-			final Status status = new Status(localComplete, localErrors,
-					lastActive.size(), timer.getElapsedNanoseconds());
+			
+			
 			if (breakoutConditionsMet(breakout, status)
-					|| allResultsReturned(localComplete)) {
+					|| allResultsReturned(status.completed + status.errors)) {
 				promise.complete(new LinkedList<U>(currentResults));
 			}
 		}
@@ -482,5 +576,7 @@ public class Stage<T, U> {
 		private final int total;
 		private final long elapsedNanos;
 	}
+
+	
 
 }
