@@ -35,6 +35,8 @@ public class ResultCollectionTest {
 		assertThat(result, is(990));
 		assertThat(threadGroup.size(), is(1));
 	}
+
+	
 	@Test
 	public void testBlock() throws InterruptedException, ExecutionException {
 

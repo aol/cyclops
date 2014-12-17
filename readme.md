@@ -80,7 +80,7 @@ In this example, should the first "then" phase fail, the default value of 1 will
 
 React and **allOf**
 
-allOf is a non-blocking equivalent of block. The current thread is not impacted by the calculations, but the reactive chain does not continue until all currently alloted tasks complete. The allOf task is then provided with a list of the results from the previous tasks in the chain.
+allOf is a non-blocking equivalent of block. The current thread is not impacted by the calculations, but the reactive chain does not continue until all currently alloted tasks complete. The allOf task is then provided with a list of the results from the previous tasks in the chain. Any parallelStreams used inside allOf will reuse the SimpleReact ExecutorService - if it is a ForkJoinPool (which it is by default), rather than the Common ForkJoinPool parallelStreams use by default. 
 
         	boolean blocked[] = {false};
 			SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)	
@@ -99,6 +99,25 @@ allOf is a non-blocking equivalent of block. The current thread is not impacted 
 			assertThat(blocked[0],is(false));
 
 In this example, the current thread will continue and assert that it is not blocked, allOf could continue and be executed in a separate thread.
+
+first() is a useful method to extract a single value from a dataflow that ends in allOf. E.g. 
+
+
+        	boolean blocked[] = {false};
+			int size = SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)	
+				.then(it -> {
+					try {
+						Thread.sleep(50000);
+					} catch (Exception e) {
+						
+					}
+					blocked[0] =true;
+					return 10;
+				})
+				.allOf( it -> it.size()).first();
+
+		
+			assertThat(blocked[0],is(false));
 
 ##Example 7: non-blocking with the Stream api
 
@@ -152,6 +171,22 @@ In this case, strings will only contain the two successful results (for ()->1 an
 ##Example 7 : using the Streams Api
 
 React and the *Streams Api*
+
+If you wish to reuse the SimpleReact ExecutorService for parallelStreams - make sure you use a ForkJoinPool (which is the default ExecutorService for SimpleReact), then leverage the collectResults mechanism to submit a function that will execute against the current completed results. E.g.
+
+		 Integer result = new SimpleReact()
+				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.then((it) -> { it * 200)
+				.collectResults()
+				.<List<Integer>>block()
+				.submit( 
+						it -> it.orElse(new ArrayList())
+								.parallelStream()
+								.filter(f -> f > 300)
+								.map(m -> m - 5)
+								.reduce(0, (acc, next) -> acc + next));
+								
+To use a different ExecutorService than SimpleReact's internal ExecutorService leverae parallelStream directly from block() 
 
 			ImmutableMap<String,Integer> dataSizes = SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 30,()->400)
 				.then(it -> it * 100)
