@@ -58,6 +58,7 @@ public class BlockingTest {
 		assertThat(strings.size(), is(3));
 
 	}
+	
 	@Test
 	public void testBlockToSet() throws InterruptedException, ExecutionException {
 

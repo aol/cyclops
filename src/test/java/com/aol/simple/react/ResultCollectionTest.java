@@ -1,6 +1,6 @@
 package com.aol.simple.react;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
@@ -16,6 +16,53 @@ import org.junit.Test;
 public class ResultCollectionTest {
 	
 	@Test
+	public void testBlockThen() throws InterruptedException, ExecutionException {
+
+		List<String> strings = new SimpleReact()
+				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.then((it) -> it * 100).then((it) -> "*" + it).collectResults().block()
+				.then(it -> it +"*").block();
+
+		assertThat(strings.size(), is(3));
+		assertThat(strings.get(0), endsWith("*"));
+		assertThat(strings.get(0), startsWith("*"));
+
+	}
+	@Test
+	public void testBlockThenResultReset() throws InterruptedException, ExecutionException {
+
+		assertThat( new SimpleReact()
+				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.then((it) -> it * 100).then((it) -> "*" + it).collectResults().block()
+				.then(it -> it +"*").getResults().isPresent(), not(true));
+
+		
+
+	}
+	@Test
+	public void testBlockThenResultResetAndCorrect() throws InterruptedException, ExecutionException {
+
+		List<String> strings = new SimpleReact()
+				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.then((it) -> it * 100).then((it) -> "*" + it).collectResults().block()
+				.then(it -> it +"*").extractResults();
+
+		assertThat(strings.size(), is(3));
+		assertThat(strings.get(0), endsWith("*"));
+		assertThat(strings.get(0), startsWith("*"));
+
+	}
+	
+	@Test
+	public void testBlockOnFailResultReset() throws InterruptedException, ExecutionException {
+
+		assertThat( new SimpleReact()
+				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.then((it) -> it * 100).then((it) -> "*" + it).collectResults().block()
+				.onFail(it -> 1).getResults().isPresent(), not(true));
+	}
+	
+	@Test
 	public void testBlockStreamsSameForkJoinPool() throws InterruptedException,
 			ExecutionException {
 		Set<String> threadGroup = Collections.synchronizedSet(new TreeSet());
@@ -25,6 +72,26 @@ public class ResultCollectionTest {
 				.then((it) -> { threadGroup.add(Thread.currentThread().getThreadGroup().getName()); return it * 200;})
 				.collectResults().<List<Integer>>block().submit( 
 						it -> it.orElse(new ArrayList())
+								.parallelStream()
+								.filter(f -> f > 300)
+								.map(m ->{ threadGroup.add(Thread.currentThread().getThreadGroup().getName());return m - 5; })
+								.reduce(0, (acc, next) -> acc + next));
+
+		
+
+		assertThat(result, is(990));
+		assertThat(threadGroup.size(), is(1));
+	}
+	@Test
+	public void testBlockStreamsSameForkJoinPoolImplicit() throws InterruptedException,
+			ExecutionException {
+		Set<String> threadGroup = Collections.synchronizedSet(new TreeSet());
+
+		Integer result = new SimpleReact()
+				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.then((it) -> { threadGroup.add(Thread.currentThread().getThreadGroup().getName()); return it * 200;})
+				.<List<Integer>,Integer>submitAndBlock( 
+						it -> it
 								.parallelStream()
 								.filter(f -> f > 300)
 								.map(m ->{ threadGroup.add(Thread.currentThread().getThreadGroup().getName());return m - 5; })
