@@ -185,12 +185,9 @@ If you wish to reuse the SimpleReact ExecutorService for parallelStreams - make 
 
 		 Integer result = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> { it * 200)
-				.collectResults()
-				.<List<Integer>>block()
-				.submit( 
-						it -> it.orElse(new ArrayList())
-								.parallelStream()
+				.then(it -> { it * 200)
+				.<List<Integer>,Integer>submitAndblock(
+						it -> it.parallelStream()
 								.filter(f -> f > 300)
 								.map(m -> m - 5)
 								.reduce(0, (acc, next) -> acc + next));
