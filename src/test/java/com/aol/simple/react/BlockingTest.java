@@ -1,6 +1,6 @@
 package com.aol.simple.react;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 import java.util.Collections;
@@ -98,7 +98,7 @@ public class BlockingTest {
 				}).onFail(e -> 1).then((it) -> "*" + it)
 				.block(Collectors.toSet(),status -> status.getCompleted() > 1);
 
-		assertThat(strings.size(), is(2));
+		assertThat(strings.size(), greaterThan(1));
 
 	}
 

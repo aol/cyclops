@@ -93,25 +93,7 @@ public class Stage<T, U> {
 	 * @param callable that contains code
 	 */
 	public <R> R submit(Function <Optional<U>,R> fn){
-		if(taskExecutor instanceof ForkJoinPool){
-			log.debug("Submited callable to SimpleReact ForkJoinPool. JDK ParallelStreams will reuse SimpleReact ForkJoinPool.");
-			try {
-				return (R)taskExecutor.submit(()-> (R)fn.apply(this.results)).get();
-			} catch (ExecutionException e) {
-				exceptionSoftener.throwSoftenedException(e);
-				throw new RuntimeException(e);
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				exceptionSoftener.throwSoftenedException(e);
-				throw new RuntimeException(e);
-			}
-		}
-		try {
-			log.debug("Submited callable but do not have a ForkJoinPool. JDK ParallelStreams will use Common ForkJoinPool not SimpleReact ExecutorService.");
-			return (R)fn.apply(this.results);
-		} catch (Exception e) {
-			throw new RuntimeException(e); 
-		}
+		return submit (() -> (R)fn.apply(this.results));
 	}
 	
 	/**
@@ -152,7 +134,7 @@ public class Stage<T, U> {
 	 * the underlying CompletableFutures.
 	 * 
 	 * <code>
-	 	List<CompletableFuture<Integer>> futures = SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+	 	List<CompletableFuture<Integer>> futures = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
 				.with((it) -> it * 100);
 			</code>
 	 * 
@@ -189,7 +171,7 @@ public class Stage<T, U> {
 	 * that can represent the next stage in the dataflow.
 	 * 
 	 * <code>
-	  SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+	  new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
 				.then((it) -> it * 100)
 				.then((it) -> "*" + it)
 	</code>
@@ -242,7 +224,7 @@ public class Stage<T, U> {
 	 * dataflow.
 	 * 
 	 * <code>
-	  	List<String> strings = SimpleReact.<Integer, Integer> react(() -> 100, () -> 2, () -> 3)
+	  	List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 100, () -> 2, () -> 3)
 					.then(it -> {
 						if (it == 100)
 							throw new RuntimeException("boo!");
@@ -280,7 +262,7 @@ public class Stage<T, U> {
 	 * pipeline has failed and is unrecoverable.
 	 * 
 	 * <code>
-	 * List<String> strings = SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+	 * List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
 			.then(it -> it * 100)
 			.then(it -> {
 				if (it == 100)
@@ -319,6 +301,30 @@ public class Stage<T, U> {
 				.of((Consumer<Throwable>) errorHandler));
 	}
 	
+	/**
+	 * This provides a mechanism to collect all of the results of active tasks inside a dataflow stage.
+	 * This can then be used to provide those results to a function. Inside that function client code can leverage
+	 * JDK 8 parallel Streams that will be executed within the SimpleReact ExecutorService if that service is an instance
+	 * of ForkJoinPool (the default setting). 
+	 * 
+	 * Example :
+	 * <code>
+	 * Integer result = new SimpleReact()
+				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.then((it) -> { it * 200)
+				.collectResults()
+				.<List<Integer>>block()
+				.submit( 
+						it -> it.orElse(new ArrayList())
+								.parallelStream()
+								.filter(f -> f > 300)
+								.map(m -> m - 5)
+								.reduce(0, (acc, next) -> acc + next));
+								
+	 * </code>
+	 * 
+	 * @return A builder that allows the blocking mechanism for results collection to be set
+	 */
 	public ReactCollector<T,U> collectResults(){
 		return new ReactCollector(this);
 	}
@@ -354,6 +360,7 @@ public class Stage<T, U> {
 	public <U,R> R block(final Collector collector) {
 		return (R)block(collector,lastActive);
 	}
+	
 	/**
 	 * Block until first result recieved
 	 * 
@@ -363,6 +370,7 @@ public class Stage<T, U> {
 	public <U,R> R first() {
 		return blockAndExtract(Extractors.first(),status -> status.getCompleted() > 1);
 	}
+	
 	/**
 	 * Block until all results recieved.
 	 * 
@@ -383,6 +391,7 @@ public class Stage<T, U> {
 	public <U,R> R blockAndExtract(final Extractor extractor) {
 		return blockAndExtract(extractor, status -> false);
 	}
+	
 	/**
 	 *  Block until tasks complete, or breakout conditions met and return a value determined by the extractor supplied.
 	 * 
