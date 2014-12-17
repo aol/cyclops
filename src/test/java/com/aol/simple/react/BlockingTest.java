@@ -30,23 +30,7 @@ public class BlockingTest {
 
 	
 	
-	@Test
-	public void testBlockStreamsSameForkJoinPool() throws InterruptedException,
-			ExecutionException {
-		
-		//See same test in ResultCollectionTest for a better way to do this
-		Set<String> threadGroup = Collections.synchronizedSet(new TreeSet());
-		Stage<Integer,Integer> builder = new SimpleReact()
-		.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-		.then((it) -> { threadGroup.add(Thread.currentThread().getThreadGroup().getName()); return it * 200;});
-		int result = builder.submit (  () -> 
-				 builder.<Integer>block().parallelStream()
-				.filter(f -> f > 300).map(m ->{ threadGroup.add(Thread.currentThread().getThreadGroup().getName());return m - 5; })
-				.reduce(0, (acc, next) -> acc + next));
-
-		assertThat(result, is(990));
-		assertThat(threadGroup.size(), is(1));
-	}
+	
 	
 	@Test
 	public void testBlock() throws InterruptedException, ExecutionException {

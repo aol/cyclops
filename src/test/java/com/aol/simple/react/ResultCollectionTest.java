@@ -91,8 +91,7 @@ public class ResultCollectionTest {
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
 				.then((it) -> { threadGroup.add(Thread.currentThread().getThreadGroup().getName()); return it * 200;})
 				.<List<Integer>,Integer>submitAndBlock( 
-						it -> it
-								.parallelStream()
+						it -> it.parallelStream()
 								.filter(f -> f > 300)
 								.map(m ->{ threadGroup.add(Thread.currentThread().getThreadGroup().getName());return m - 5; })
 								.reduce(0, (acc, next) -> acc + next));

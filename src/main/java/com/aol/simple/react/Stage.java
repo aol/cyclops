@@ -96,7 +96,8 @@ public class Stage<T, U> {
 
 	
 	/**
-	 * This method allows the SimpleReact ExecutorService to be reused by JDK parallel streams
+	 * This method allows the SimpleReact ExecutorService to be reused by JDK parallel streams. It is best used when
+	 * collectResults and block are called explicitly for finer grained control over the blocking conditions.
 	 * 
 	 * @param Function that contains parallelStream code to be executed by the SimpleReact ForkJoinPool (if configured)
 	 */
@@ -105,7 +106,8 @@ public class Stage<T, U> {
 	}
 	
 	/**
-	 * This method allows the SimpleReact ExecutorService to be reused by JDK parallel streams
+	 * This method allows the SimpleReact ExecutorService to be reused by JDK parallel streams.
+	 * This offers less control over blocking than raw submit, with the parameterless block() method called.
 	 * 
 	 * @param Function that contains parallelStream code to be executed by the SimpleReact ForkJoinPool (if configured)
 	 */
@@ -118,7 +120,7 @@ public class Stage<T, U> {
 	 * 
 	 * @param callable that contains code
 	 */
-	public <T> T submit(Callable<T> callable){
+	private <T> T submit(Callable<T> callable){
 		if(taskExecutor instanceof ForkJoinPool){
 			log.debug("Submited callable to SimpleReact ForkJoinPool. JDK ParallelStreams will reuse SimpleReact ForkJoinPool.");
 			try {
