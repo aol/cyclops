@@ -30,7 +30,7 @@ public class ResultCollectionTest {
 								.map(m ->{ threadGroup.add(Thread.currentThread().getThreadGroup().getName());return m - 5; })
 								.reduce(0, (acc, next) -> acc + next));
 
-		assertThat(result, is(990));
+		
 
 		assertThat(result, is(990));
 		assertThat(threadGroup.size(), is(1));

@@ -29,13 +29,13 @@ public class BlockingTest {
 	}
 
 	
-	Set<String> threadGroup;
+	
 	@Test
 	public void testBlockStreamsSameForkJoinPool() throws InterruptedException,
 			ExecutionException {
 		
 		//See same test in ResultCollectionTest for a better way to do this
-		threadGroup = Collections.synchronizedSet(new TreeSet());
+		Set<String> threadGroup = Collections.synchronizedSet(new TreeSet());
 		Stage<Integer,Integer> builder = new SimpleReact()
 		.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
 		.then((it) -> { threadGroup.add(Thread.currentThread().getThreadGroup().getName()); return it * 200;});
