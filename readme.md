@@ -181,11 +181,15 @@ In this case, strings will only contain the two successful results (for ()->1 an
 
 React and the *Streams Api*
 
-If you wish to reuse the SimpleReact ExecutorService for parallelStreams - make sure you use a ForkJoinPool (which is the default ExecutorService for SimpleReact), then leverage the collectResults mechanism to submit a function that will execute against the current completed results. E.g.
+It is possible to reuse the internal SimpleReact ExecutorService for JDK 8 parallelStreams. SimpleReact uses a ForkJoinPool as the ExecutorService by default, and to reuse the ExecutorService with parallelStreams it must be a ForkJoinPool - so if you want to supply your own make sure it is also a ForkJoinPool. 
+
+A mechamism to share ExecutorServices is provided via the *collectResults* method, this collects the results from the current active tasks, and clients are given the full range of SimpleReact blocking options.  The results will then be provided to a function provided by client code when the *submit* is called. A way to merge all these steps into a single method is also provided (submitAndBlock). The easiest way to do this is via the submitAndBlock method 
+
+Example :
 
 		 Integer result = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then(it -> { it * 200)
+				.then(it -> it * 200)
 				.<List<Integer>,Integer>submitAndblock(
 						it -> it.parallelStream()
 								.filter(f -> f > 300)
