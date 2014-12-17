@@ -3,13 +3,12 @@ package com.aol.simple.react;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 /**
  * Entry point for creating a concurrent dataflow.
@@ -23,7 +22,7 @@ import lombok.NoArgsConstructor;
 public class SimpleReact {
 
 	@Getter
-	private final Executor executor;
+	private final ExecutorService executor;
 
 	/**
 	 * Construct a new SimpleReact that will use a ForkJoinPool with parrellism set to the number of processors on the host
@@ -35,7 +34,7 @@ public class SimpleReact {
 	/**
 	 * @param executor Executor this SimpleReact instance will use to execute concurrent tasks.
 	 */
-	public SimpleReact(Executor executor) {
+	public SimpleReact(ExecutorService executor) {
 	
 		this.executor = executor;
 	}
@@ -77,20 +76,13 @@ public class SimpleReact {
 	 */
 	@SuppressWarnings("unchecked")
 	@VisibleForTesting
-	protected <T,U> Stage<T, U> reactI(final Executor executor,
-			final Supplier<T>... actions) {
+	protected <T,U> Stage<T, U> reactI(final Supplier<T>... actions) {
+		
 		return new Stage<T, U>(Stream.of(actions).map(
 				next -> CompletableFuture.supplyAsync(next, executor)),
 				executor);
 	}
 
-	private <T,U> Stage<T, U> reactI(final Supplier<T>... actions) {
-		return reactI(executor, actions);
-	}
-
-	
-
-
-	
+		
 	
 }

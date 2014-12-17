@@ -1,6 +1,5 @@
 package com.aol.simple.react;
 
-import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -14,13 +13,12 @@ import java.util.function.Predicate;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import sun.misc.Unsafe;
 
 @AllArgsConstructor
 @Slf4j
 class Blocker<U> {
 
-	private final Optional<Unsafe> unsafe = getUnsafe();
+	private final ExceptionSoftener exceptionSoftener = ExceptionSoftener.singleton.factory.getInstance();
 	@SuppressWarnings("rawtypes")
 	private final List<CompletableFuture> lastActive;
 	private final Optional<Consumer<Throwable>> errorHandler;
@@ -43,19 +41,17 @@ class Blocker<U> {
 		try {
 			return promise.get();
 		} catch (ExecutionException e) {
-			throwSoftenedException(e);
+			exceptionSoftener.throwSoftenedException(e);
 			throw new RuntimeException(e);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
-			throwSoftenedException(e);
+			exceptionSoftener.throwSoftenedException(e);
 			throw new RuntimeException(e);
 		}
 
 	}
 
-	private void throwSoftenedException(final Exception e) {
-		unsafe.ifPresent(u -> u.throwException(e));
-	}
+	
 
 	private synchronized Status buildStatus(Throwable ex){
 		if (ex != null) {
@@ -98,22 +94,5 @@ class Blocker<U> {
 		return breakout.test(status);
 	}
 
-	private static Optional<Unsafe> getUnsafe() {
-
-		try {
-
-			final Field field = Unsafe.class.getDeclaredField("theUnsafe");
-
-			field.setAccessible(true);
-
-			return Optional.of((Unsafe) field.get(null));
-
-		} catch (Exception ex) {
-
-			log.error(ex.getMessage());
-
-		}
-		return Optional.empty();
-
-	}
+	
 }

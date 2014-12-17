@@ -4,8 +4,11 @@ import static java.util.Arrays.asList;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -15,6 +18,7 @@ import java.util.stream.Stream;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,10 +44,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Stage<T, U> {
 
-	private final Executor taskExecutor;
+	private final ExceptionSoftener exceptionSoftener = ExceptionSoftener.singleton.factory.getInstance();
+	private final ExecutorService taskExecutor;
 	@SuppressWarnings("rawtypes")
 	private final List<CompletableFuture> lastActive;
 	private final Optional<Consumer<Throwable>> errorHandler;
+	@Getter
+	private final Optional<U> results;
 
 	/**
 	 * 
@@ -55,14 +62,84 @@ public class Stage<T, U> {
 	 *            The next stage's tasks will be submitted to this executor
 	 */
 	Stage(final Stream<CompletableFuture<T>> stream,
-			final Executor executor) {
+			final ExecutorService executor) {
 
 		this.taskExecutor = executor;
 		this.lastActive = stream.collect(Collectors.toList());
 		this.errorHandler = Optional.of( (e)-> log.error(e.getMessage(),e));
-		
+		this.results = Optional.empty();
+	}
+	
+	/**
+	 * @return Results for this stage in the dataflow
+	 */
+	public <U> Optional<U> getResults(){
+		return (Optional<U>)results;
+	}
+	
+	/**
+	 * @return Unwrapped results for this stage in the dataflow - may be null
+	 */
+	public <U> U extractResults(){
+		if(!results.isPresent())
+			return null;
+		return (U)results.get();
 	}
 
+	
+	/**
+	 * This method allows the SimpleReact ExecutorService to be reused by JDK parallel streams
+	 * 
+	 * @param callable that contains code
+	 */
+	public <R> R submit(Function <Optional<U>,R> fn){
+		if(taskExecutor instanceof ForkJoinPool){
+			log.debug("Submited callable to SimpleReact ForkJoinPool. JDK ParallelStreams will reuse SimpleReact ForkJoinPool.");
+			try {
+				return (R)taskExecutor.submit(()-> (R)fn.apply(this.results)).get();
+			} catch (ExecutionException e) {
+				exceptionSoftener.throwSoftenedException(e);
+				throw new RuntimeException(e);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				exceptionSoftener.throwSoftenedException(e);
+				throw new RuntimeException(e);
+			}
+		}
+		try {
+			log.debug("Submited callable but do not have a ForkJoinPool. JDK ParallelStreams will use Common ForkJoinPool not SimpleReact ExecutorService.");
+			return (R)fn.apply(this.results);
+		} catch (Exception e) {
+			throw new RuntimeException(e); 
+		}
+	}
+	
+	/**
+	 * This method allows the SimpleReact ExecutorService to be reused by JDK parallel streams
+	 * 
+	 * @param callable that contains code
+	 */
+	public <T> T submit(Callable<T> callable){
+		if(taskExecutor instanceof ForkJoinPool){
+			log.debug("Submited callable to SimpleReact ForkJoinPool. JDK ParallelStreams will reuse SimpleReact ForkJoinPool.");
+			try {
+				return taskExecutor.submit(callable).get();
+			} catch (ExecutionException e) {
+				exceptionSoftener.throwSoftenedException(e);
+				throw new RuntimeException(e);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				exceptionSoftener.throwSoftenedException(e);
+				throw new RuntimeException(e);
+			}
+		}
+		try {
+			log.debug("Submited callable but do not have a ForkJoinPool. JDK ParallelStreams will use Common ForkJoinPool not SimpleReact ExecutorService.");
+			return callable.call();
+		} catch (Exception e) {
+			throw new RuntimeException(e); 
+		}
+	}
 	/**
 	 * 
 	 * React <b>with</b>
@@ -241,6 +318,10 @@ public class Stage<T, U> {
 		return this.withErrorHandler(Optional
 				.of((Consumer<Throwable>) errorHandler));
 	}
+	
+	public ReactCollector<T,U> collectResults(){
+		return new ReactCollector(this);
+	}
 
 	/**
 	 * React and <b>block</b>
@@ -340,9 +421,10 @@ public class Stage<T, U> {
 	 *         point or when breakout triggered (which ever comes first).
 	 */
 	@SuppressWarnings("hiding")
-	public <U> List<U> block(final Predicate<Status> breakout) {
-		return new Blocker<U>(lastActive, errorHandler).block(breakout);
+	public <X> List<X> block(final Predicate<Status> breakout) {
+		return new Blocker<X>(lastActive, errorHandler).block(breakout);
 	}
+	
 	
 	/**
 	 * @param collector to perform aggregation / reduction operation on the results (e.g. to Collect into a List or String)
@@ -411,7 +493,7 @@ public class Stage<T, U> {
 
 		return (Stage<U, R>) withLastActive(asList( CompletableFuture.allOf(
 				lastActiveArray()).thenApplyAsync((result) -> {
-						return fn.apply(aggregateResults(collector, lastActive));
+						return submit( () -> fn.apply(aggregateResults(collector, lastActive)));
 					}, taskExecutor)));
 
 	}
