@@ -13,7 +13,8 @@ Simple react starts with an array of Suppliers which generate data other functio
 
 React **with**
 
-			List<CompletableFuture<Integer>> futures = SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+			List<CompletableFuture<Integer>> futures = new SimpleReact()
+				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
 				.with((it) -> it * 100);
 
 In this instance, 3 suppliers generate 3 numbers. These may be executed in parallel, when they complete each number will be multiplied by 100 - as a separate parrellel task (handled by a ForkJoinPool or configurable task executor). A List of Future objects will be returned immediately from Simple React and the tasks will be executed asynchronously.
@@ -22,7 +23,8 @@ React with does not block.
 
 React **then**
 
-	 	SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+	 	new SimpleReact()
+	 			.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
 				.then((it) -> it * 100)
 				.then((it) -> "*" + it)
 
@@ -36,7 +38,8 @@ See this blog post for examples of what can be achieved via CompleteableFuture :
 
 React and **block**
 
-			List<String> strings = SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+			List<String> strings = new SimpleReact()
+				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
 				.then((it) -> it * 100)
 				.then((it) -> "*" + it)
 				.block();
@@ -47,7 +50,8 @@ In this example, once the current thread of execution meets the React block meth
 
 Sometimes you may not need to block until all the work is complete, one result or a subset may be enough. To faciliate this, block can accept a Predicate functional interface that will allow SimpleReact to stop blocking the current thread when the Predicate has been fulfilled. E.g.
 
-			List<String> strings = SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+			List<String> strings = new SimpleReact()
+				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.block(status -> status.getCompleted()>1);
@@ -63,7 +67,8 @@ elapsedMillis
 React **onFail**
 onFail allows disaster recovery for each task (a separate onFail should be configured for each react phase that can fail). E.g. if reading data from an external service fails, but default value is acceptable - onFail is a suitable mechanism to set the default value.
 
-			List<String> strings = SimpleReact.<Integer, Integer> react(() -> 100, () -> 2, () -> 3)
+			List<String> strings = new SimpleReact()
+				.<Integer, Integer> react(() -> 100, () -> 2, () -> 3)
 				.then(it -> {
 					if (it == 100)
 						throw new RuntimeException("boo!");
@@ -83,7 +88,8 @@ React and **allOf**
 allOf is a non-blocking equivalent of block. The current thread is not impacted by the calculations, but the reactive chain does not continue until all currently alloted tasks complete. The allOf task is then provided with a list of the results from the previous tasks in the chain. Any parallelStreams used inside allOf will reuse the SimpleReact ExecutorService - if it is a ForkJoinPool (which it is by default), rather than the Common ForkJoinPool parallelStreams use by default. 
 
         	boolean blocked[] = {false};
-			SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)	
+			new SimpleReact()
+				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)	
 				.then(it -> {
 					try {
 						Thread.sleep(50000);
@@ -104,7 +110,8 @@ first() is a useful method to extract a single value from a dataflow that ends i
 
 
         	boolean blocked[] = {false};
-			int size = SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)	
+			int size = new SimpleReact()
+				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)	
 				.then(it -> {
 					try {
 						Thread.sleep(50000);
@@ -121,7 +128,8 @@ first() is a useful method to extract a single value from a dataflow that ends i
 
 ##Example 7: non-blocking with the Stream api
 
-             List<Integer> result =SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+             List<Integer> result =new SimpleReact()
+             	.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> {
 					return it*200;
 				})
@@ -145,7 +153,8 @@ React *capture*
 
 onFail is used for disaster recovery (when it is possible to recover) - capture is used to capture those occasions where the full pipeline has failed and is unrecoverable.
 
-			List<String> strings = SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+			List<String> strings = new SimpleReact()
+				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 					if (it == 100)
@@ -188,7 +197,8 @@ If you wish to reuse the SimpleReact ExecutorService for parallelStreams - make 
 								
 To use a different ExecutorService than SimpleReact's internal ExecutorService leverae parallelStream directly from block() 
 
-			ImmutableMap<String,Integer> dataSizes = SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 30,()->400)
+			ImmutableMap<String,Integer> dataSizes = new SimpleReact()
+				.<Integer, Integer> react(() -> 1, () -> 2, () -> 30,()->400)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.<String>block()
