@@ -23,6 +23,7 @@ import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
@@ -37,6 +38,19 @@ public class SimpleReactTest {
 						(it) -> it * 100);
 
 		assertThat(futures.get(0).get(), is(greaterThan(99)));
+
+	}
+	@Test
+	public void testMultithreading() throws InterruptedException, ExecutionException {
+		Set<Long> threads = Collections.synchronizedSet(new TreeSet());
+		
+		new SimpleReact(new ForkJoinPool(10))
+				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3).then(
+						(it) -> {
+							threads.add(Thread.currentThread().getId());
+							return it * 100;}).block();
+
+		assertThat(threads.size(), is(greaterThan(2)));
 
 	}
 

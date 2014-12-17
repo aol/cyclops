@@ -70,6 +70,7 @@ public class SimpleReact {
 
 	}
 	
+	
 	/**
 	 * This internal method has been left protected, so it can be mocked / stubbed as some of the entry points are final
 	 * 
