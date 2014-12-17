@@ -20,7 +20,10 @@ public class ResultCollectionTest {
 
 		List<String> strings = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100).then((it) -> "*" + it).collectResults().block()
+				.then(it -> it * 100)
+				.then(it -> "*" + it)
+				.collectResults()
+				.block()
 				.then(it -> it +"*").block();
 
 		assertThat(strings.size(), is(3));
@@ -33,8 +36,12 @@ public class ResultCollectionTest {
 
 		assertThat( new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100).then((it) -> "*" + it).collectResults().block()
-				.then(it -> it +"*").getResults().isPresent(), not(true));
+				.then(it -> it * 100)
+				.then(it -> "*" + it)
+				.collectResults()
+				.block()
+				.then(it -> it +"*")
+				.getResults().isPresent(), not(true));
 
 		
 
@@ -44,8 +51,12 @@ public class ResultCollectionTest {
 
 		List<String> strings = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100).then((it) -> "*" + it).collectResults().block()
-				.then(it -> it +"*").block();
+				.then(it -> it * 100)
+				.then(it -> "*" + it)
+				.collectResults()
+				.block()
+				.then(it -> it +"*")
+				.block();
 
 		assertThat(strings.size(), is(3));
 		assertThat(strings.get(0), endsWith("*"));
@@ -58,8 +69,12 @@ public class ResultCollectionTest {
 
 		assertThat( new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100).then((it) -> "*" + it).collectResults().block()
-				.onFail(it -> 1).getResults().isPresent(), not(true));
+				.then(it -> it * 100)
+				.then(it -> "*" + it)
+				.collectResults()
+				.block()
+				.onFail(it -> 1)
+				.getResults().isPresent(), not(true));
 	}
 	
 	@Test
@@ -108,7 +123,8 @@ public class ResultCollectionTest {
 
 		List<String> strings = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100).then((it) -> "*" + it)
+				.then(it -> it * 100)
+				.then(it -> "*" + it)
 				.collectResults()
 				.block()
 				.<List<String>>getResults().get();
@@ -121,7 +137,8 @@ public class ResultCollectionTest {
 
 		Set<String> strings = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 1, () -> 3)
-				.then((it) -> it * 100).then((it) -> "*" + it)
+				.then(it -> it * 100)
+				.then(it -> "*" + it)
 				.collectResults()
 				.block(Collectors.toSet())
 				.<Set<String>>getResults().get();
@@ -134,7 +151,8 @@ public class ResultCollectionTest {
 		Throwable[] error = { null };
 		List<String> strings = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100).then((it) -> {
+				.then(it -> it * 100)
+				.then(it -> {
 					if (it == 100)
 						throw new RuntimeException("boo!");
 
@@ -152,7 +170,8 @@ public class ResultCollectionTest {
 		Throwable[] error = { null };
 		Set<String> strings = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100).then((it) -> {
+				.then(it -> it * 100)
+				.then(it -> {
 					if (it == 100)
 						throw new RuntimeException("boo!");
 
@@ -172,7 +191,8 @@ public class ResultCollectionTest {
 		Throwable[] error = { null };
 		List<String> strings = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100).then((it) -> {
+				.then(it -> it * 100)
+				.then(it -> {
 
 					throw new RuntimeException("boo!");
 
@@ -191,7 +211,8 @@ public class ResultCollectionTest {
 		count =0;
 		List<String> strings = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100).then((it) -> {
+				.then(it -> it * 100)
+				.then(it -> {
 
 					throw new RuntimeException("boo!");
 
@@ -209,7 +230,8 @@ public class ResultCollectionTest {
 		count =0;
 		List<String> strings = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100).then((it) -> {
+				.then(it -> it * 100)
+				.then(it -> {
 					if(it==100)
 						throw new RuntimeException("boo!");
 					else
@@ -228,7 +250,8 @@ public class ResultCollectionTest {
 		count =0;
 		List<String> strings = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100).then((it) -> {
+				.then(it -> it * 100)
+				.then(it -> {
 					sleep(it);
 					return it;
 
@@ -246,12 +269,14 @@ public class ResultCollectionTest {
 		Throwable[] error = { null };
 		List<String> strings = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100).then((it) -> {
+				.then(it -> it * 100)
+				.then(it -> {
 					if (it == 100)
 						throw new RuntimeException("boo!");
 
 					return it;
-				}).onFail(e -> 1).then((it) -> "*" + it)
+				}).onFail(e -> 1)
+				.then(it -> "*" + it)
 				.block(status -> status.getCompleted() > 5);
 
 		assertThat(strings.size(), is(3));
@@ -262,7 +287,7 @@ public class ResultCollectionTest {
 		try {
 			Thread.sleep(it);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		return it;

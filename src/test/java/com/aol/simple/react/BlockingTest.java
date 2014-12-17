@@ -21,8 +21,11 @@ public class BlockingTest {
 
 		Integer result = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 200).<Integer> block().parallelStream()
-				.filter(f -> f > 300).map(m -> m - 5)
+				.then(it -> it * 200)
+				.<Integer> block()
+				.parallelStream()
+				.filter(f -> f > 300)
+				.map(m -> m - 5)
 				.reduce(0, (acc, next) -> acc + next);
 
 		assertThat(result, is(990));
@@ -37,7 +40,9 @@ public class BlockingTest {
 
 		List<String> strings = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100).then((it) -> "*" + it).block();
+				.then(it -> it * 100)
+				.then(it -> "*" + it)
+				.block();
 
 		assertThat(strings.size(), is(3));
 
@@ -48,7 +53,9 @@ public class BlockingTest {
 
 		Set<String> strings = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 1, () -> 3)
-				.then((it) -> it * 100).then((it) -> "*" + it).block(Collectors.toSet());
+				.then(it -> it * 100)
+				.then(it -> "*" + it)
+				.block(Collectors.toSet());
 
 		assertThat(strings.size(), is(2));
 
@@ -59,12 +66,15 @@ public class BlockingTest {
 		Throwable[] error = { null };
 		List<String> strings = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100).then((it) -> {
+				.then(it -> it * 100)
+				.then(it -> {
 					if (it == 100)
 						throw new RuntimeException("boo!");
 
 					return it;
-				}).onFail(e -> 1).then((it) -> "*" + it)
+				})
+				.onFail(e -> 1)
+				.then(it -> "*" + it)
 				.block(status -> status.getCompleted() > 1);
 
 		assertThat(strings.size(), is(2));
@@ -75,12 +85,15 @@ public class BlockingTest {
 		Throwable[] error = { null };
 		Set<String> strings = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100).then((it) -> {
+				.then(it -> it * 100)
+				.then(it -> {
 					if (it == 100)
 						throw new RuntimeException("boo!");
 
 					return it;
-				}).onFail(e -> 1).then((it) -> "*" + it)
+				})
+				.onFail(e -> 1)
+				.then(it -> "*" + it)
 				.block(Collectors.toSet(),status -> status.getCompleted() > 1);
 
 		assertThat(strings.size(), greaterThan(1));
@@ -93,7 +106,8 @@ public class BlockingTest {
 		Throwable[] error = { null };
 		List<String> strings = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100).then((it) -> {
+				.then(it -> it * 100)
+				.then(it -> {
 
 					throw new RuntimeException("boo!");
 
@@ -110,7 +124,8 @@ public class BlockingTest {
 		count =0;
 		List<String> strings = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100).then((it) -> {
+				.then(it -> it * 100)
+				.then(it -> {
 
 					throw new RuntimeException("boo!");
 
@@ -126,7 +141,8 @@ public class BlockingTest {
 		count =0;
 		List<String> strings = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100).then((it) -> {
+				.then(it -> it * 100)
+				.then(it -> {
 					if(it==100)
 						throw new RuntimeException("boo!");
 					else
@@ -145,7 +161,8 @@ public class BlockingTest {
 		count =0;
 		List<String> strings = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100).then((it) -> {
+				.then(it -> it * 100)
+				.then(it -> {
 					sleep(it);
 					return it;
 
@@ -163,12 +180,14 @@ public class BlockingTest {
 		Throwable[] error = { null };
 		List<String> strings = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100).then((it) -> {
+				.then(it -> it * 100)
+				.then(it -> {
 					if (it == 100)
 						throw new RuntimeException("boo!");
 
 					return it;
-				}).onFail(e -> 1).then((it) -> "*" + it)
+				}).onFail(e -> 1)
+				.then(it -> "*" + it)
 				.block(status -> status.getCompleted() > 5);
 
 		assertThat(strings.size(), is(3));
