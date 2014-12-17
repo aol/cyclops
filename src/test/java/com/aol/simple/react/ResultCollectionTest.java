@@ -45,7 +45,7 @@ public class ResultCollectionTest {
 		List<String> strings = new SimpleReact()
 				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
 				.then((it) -> it * 100).then((it) -> "*" + it).collectResults().block()
-				.then(it -> it +"*").extractResults();
+				.then(it -> it +"*").block();
 
 		assertThat(strings.size(), is(3));
 		assertThat(strings.get(0), endsWith("*"));

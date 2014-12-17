@@ -51,7 +51,7 @@ public class Stage<T, U> {
 	private final Optional<Consumer<Throwable>> errorHandler;
 	@Getter
 	private final Optional<U> results;
-	private final boolean noResults;
+	
 
 	/**
 	 * 
@@ -69,26 +69,26 @@ public class Stage<T, U> {
 		this.lastActive = stream.collect(Collectors.toList());
 		this.errorHandler = Optional.of( (e)-> log.error(e.getMessage(),e));
 		this.results = Optional.empty();
-		noResults = true;
+		
 	}
 	
 	
 	/**
-	 * @return Results for this stage in the dataflow
+	 * @return Results, collected via collectResults, for this stage in the dataflow
 	 */
 	public <U> Optional<U> getResults(){
 		return (Optional<U>)results;
 	}
 	
 	/**
-	 * @return Unwrapped results for this stage in the dataflow - may be null
 	 * 
-	 * This method will also invoke collectResults and block to extract the results, if no results present
+	 * 
+	 * @return Unwrapped results, collected via collectResults, for this stage in the dataflow - may be null
+	 * 
+	 * 
 	 * 
 	 */
 	public <U> U extractResults(){
-		if(noResults)
-			return collectResults().block().extractResults();
 		if(!results.isPresent())
 			return null;
 		return (U)results.get();
@@ -112,7 +112,7 @@ public class Stage<T, U> {
 	 * @param Function that contains parallelStream code to be executed by the SimpleReact ForkJoinPool (if configured)
 	 */
 	public <U,R> R submitAndBlock(Function <U,R> fn){
-		return submit (() -> (R)fn.apply(this.extractResults()));
+		return submit (() -> (R)fn.apply((U)this.block()));
 	}
 	
 	/**
@@ -563,7 +563,7 @@ public class Stage<T, U> {
 	}
 	
 	Stage<T,U> withLastActive(List<CompletableFuture> lastActive){
-		return new Stage<T,U>(taskExecutor, lastActive, errorHandler, Optional.<U>empty(), true);
+		return new Stage<T,U>(taskExecutor, lastActive, errorHandler, Optional.<U>empty());
 	}
 	
 	

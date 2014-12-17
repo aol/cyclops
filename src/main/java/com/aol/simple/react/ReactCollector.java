@@ -127,7 +127,7 @@ class ReactCollector<T,U> {
 		return (Stage<T,U>)this.packageResults( builder.block(collector,breakout));
 	}
 	private <Y> Stage<T,U> packageResults(Y results){
-		return builder.withNoResults(false).withResults(Optional.of((U)results));
+		return builder.withResults(Optional.of((U)results));
 	}
 	
 }
