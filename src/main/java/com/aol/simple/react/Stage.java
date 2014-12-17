@@ -333,7 +333,7 @@ public class Stage<T, U> {
 	 * React and <b>block</b>
 	 * 
 	 * <code>
-	 	List<String> strings = SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+	 	List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
 				.then((it) -> it * 100)
 				.then((it) -> "*" + it)
 				.block();
@@ -362,7 +362,7 @@ public class Stage<T, U> {
 	}
 	
 	/**
-	 * Block until first result recieved
+	 * Block until first result received
 	 * 
 	 * @return  first result.
 	 */
@@ -372,7 +372,7 @@ public class Stage<T, U> {
 	}
 	
 	/**
-	 * Block until all results recieved.
+	 * Block until all results received.
 	 * 
 	 * @return  last result
 	 */
@@ -414,7 +414,7 @@ public class Stage<T, U> {
 	 * blocking the current thread when the Predicate has been fulfilled. E.g.
 	 * 
 	 * <code>
-	  	List<String> strings = SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+	  	List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.block(status -> status.getCompleted()>1);
@@ -458,7 +458,7 @@ public class Stage<T, U> {
 	 * 
 	 * <code>
 	  boolean blocked[] = {false};
-		SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+		new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
 				
 				.then(it -> {
 					try {
@@ -492,7 +492,7 @@ public class Stage<T, U> {
 	}
 	/**
 	 * @param collector to perform aggregation / reduction operation on the results from active stage (e.g. to Collect into a List or String)
-	 * @param fn  Function that recieves the results of all currently active
+	 * @param fn  Function that receives the results of all currently active
 	 *            tasks as input
 	 * @return A new builder object that can be used to define the next stage in
 	 *         the dataflow
