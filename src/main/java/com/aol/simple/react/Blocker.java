@@ -29,8 +29,10 @@ class Blocker<U> {
 	private final AtomicInteger errors = new AtomicInteger();
 
 	private final Queue<U> currentResults = new ConcurrentLinkedQueue<U>();
+	
 
 	@SuppressWarnings("unchecked")
+	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public List<U> block(final Predicate<Status> breakout) {
 
 		lastActive.forEach(f -> f.whenComplete((result, ex) -> {
@@ -42,18 +44,18 @@ class Blocker<U> {
 			return promise.get();
 		} catch (ExecutionException e) {
 			exceptionSoftener.throwSoftenedException(e);
-			throw new RuntimeException(e);
+			
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			exceptionSoftener.throwSoftenedException(e);
-			throw new RuntimeException(e);
+			
 		}
-
+		throw new RuntimeException("Unreachable code reached!");
 	}
 
 	
 
-	private synchronized Status buildStatus(Throwable ex){
+	private Status buildStatus(Throwable ex){
 		if (ex != null) {
 			errors.incrementAndGet();
 			
@@ -69,10 +71,10 @@ class Blocker<U> {
 			final Predicate<Status> breakout, final Object result,
 			final Throwable ex) {
 		if (result != null)
-			currentResults.add((U) result);
+			currentResults.add((U) result); 
 		
 
-		final Status status = buildStatus(ex);
+		final Status status = buildStatus(ex); //new results may be added after status object is created
 		if (ex != null) {
 			errorHandler.ifPresent((handler) -> handler
 					.accept(((Exception) ex).getCause()));

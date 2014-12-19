@@ -1,9 +1,9 @@
 package com.aol.simple.react;
 
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
 
@@ -29,8 +29,10 @@ class ReactCollector<T,U> {
 	 * until they are complete. Block, only blocks the current thread.
 	 * 
 	 * @return Results of currently active stage aggregated in a List
+	 * @throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({ "hiding", "unchecked" })
+	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public <U> Stage<T,U> block() {
 		return (Stage<T,U>)this.packageResults(builder.block());
 	}
@@ -38,8 +40,10 @@ class ReactCollector<T,U> {
 	/**
 	 * @param collector to perform aggregation / reduction operation on the results (e.g. to Collect into a List or String)
 	 * @return Results of currently active stage in aggregated in form determined by collector
+	 * @throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
+	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public <U> Stage<T,U> block(final Collector collector) {
 		return (Stage<T,U>)this.packageResults(builder.block(collector));
 	}
@@ -47,8 +51,10 @@ class ReactCollector<T,U> {
 	 * Block until first result recieved
 	 * 
 	 * @return  first result.
+	 * @throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
+	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public <U> Stage<T,U> first() {
 		return (Stage<T,U>)packageResults(builder.first());
 	}
@@ -56,8 +62,10 @@ class ReactCollector<T,U> {
 	 * Block until all results recieved.
 	 * 
 	 * @return  last result
+	 * @throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
+	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public <U> Stage<T,U> last() {
 		return (Stage<T,U>)packageResults(builder.last());
 	}
@@ -67,8 +75,10 @@ class ReactCollector<T,U> {
 	 * 
 	 * @param extractor used to determine which value should be returned, recieves current collected input and extracts a return value
 	 * @return Value determined by the supplied extractor
+	 * @throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
+	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public <U> Stage<T,U>blockAndExtract(final Extractor extractor) {
 		return (Stage<T,U>)this.packageResults(builder.blockAndExtract(extractor));
 	}
@@ -79,8 +89,10 @@ class ReactCollector<T,U> {
 	 * @param breakout Predicate that determines whether the block should be
 	 *            continued or removed
 	 * @return Value determined by the supplied extractor
+	 * @throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
+	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public <U> Stage<T,U> blockAndExtract(final Extractor extractor,final Predicate<Status> breakout) {
 		return (Stage<T,U>)this.packageResults(builder.blockAndExtract(extractor,breakout));
 	}
@@ -108,8 +120,10 @@ class ReactCollector<T,U> {
 	 *            continued or removed
 	 * @return List of Completed results of currently active stage at full completion
 	 *         point or when breakout triggered (which ever comes first).
+	 * @throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({ "hiding", "rawtypes", "unchecked" })
+	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public  Stage<T,U> block(final Predicate<Status> breakout) {
 		return (Stage<T,U>)packageResults(builder.block(breakout) );
 	}
@@ -121,8 +135,11 @@ class ReactCollector<T,U> {
 	 *            continued or removed
 	 * @return Completed results of currently active stage at full completion
 	 *         point or when breakout triggered (which ever comes first), in aggregated in form determined by collector
+	 *         
+	 * @throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes" })
+	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public <U> Stage<T,U> block(final Collector collector,final Predicate<Status> breakout) {
 		return (Stage<T,U>)this.packageResults( builder.block(collector,breakout));
 	}

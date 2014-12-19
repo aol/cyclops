@@ -99,6 +99,7 @@ public class ResultCollectionTest {
 	}
 	@Test
 	public void testBlockStreamsSameForkJoinPoolImplicit() throws InterruptedException,
+	
 			ExecutionException {
 		Set<String> threadGroup = Collections.synchronizedSet(new TreeSet());
 

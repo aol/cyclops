@@ -127,11 +127,11 @@ public class Stage<T, U> {
 				return taskExecutor.submit(callable).get();
 			} catch (ExecutionException e) {
 				exceptionSoftener.throwSoftenedException(e);
-				throw new RuntimeException(e);
+				
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 				exceptionSoftener.throwSoftenedException(e);
-				throw new RuntimeException(e);
+				
 			}
 		}
 		try {
@@ -365,8 +365,10 @@ public class Stage<T, U> {
 	 * until they are complete. Block, only blocks the current thread.
 	 * 
 	 * @return Results of currently active stage aggregated in a List
+	 * @throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings("hiding")
+	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public <U> List<U> block() {
 		return block(Collectors.toList(),lastActive);
 	}
@@ -374,8 +376,10 @@ public class Stage<T, U> {
 	/**
 	 * @param collector to perform aggregation / reduction operation on the results (e.g. to Collect into a List or String)
 	 * @return Results of currently active stage in aggregated in form determined by collector
+	 * @throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
+	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public <U,R> R block(final Collector collector) {
 		return (R)block(collector,lastActive);
 	}
@@ -384,8 +388,10 @@ public class Stage<T, U> {
 	 * Block until first result received
 	 * 
 	 * @return  first result.
+	 * @throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
+	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public <U,R> R first() {
 		return blockAndExtract(Extractors.first(),status -> status.getCompleted() > 1);
 	}
@@ -394,8 +400,10 @@ public class Stage<T, U> {
 	 * Block until all results received.
 	 * 
 	 * @return  last result
+	 * @throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
+	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public <U,R> R last() {
 		return blockAndExtract(Extractors.last());
 	}
@@ -405,8 +413,10 @@ public class Stage<T, U> {
 	 * 
 	 * @param extractor used to determine which value should be returned, recieves current collected input and extracts a return value
 	 * @return Value determined by the supplied extractor
+	 * @throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
+	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public <U,R> R blockAndExtract(final Extractor extractor) {
 		return blockAndExtract(extractor, status -> false);
 	}
@@ -418,8 +428,10 @@ public class Stage<T, U> {
 	 * @param breakout Predicate that determines whether the block should be
 	 *            continued or removed
 	 * @return Value determined by the supplied extractor
+	 * @throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
+	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public <U,R> R blockAndExtract(final Extractor extractor,final Predicate<Status> breakout) {
 		return (R)extractor.extract(block());
 	}
@@ -447,8 +459,10 @@ public class Stage<T, U> {
 	 *            continued or removed
 	 * @return List of Completed results of currently active stage at full completion
 	 *         point or when breakout triggered (which ever comes first).
+	 * @throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings("hiding")
+	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public <X> List<X> block(final Predicate<Status> breakout) {
 		return new Blocker<X>(lastActive, errorHandler).block(breakout);
 	}
@@ -460,8 +474,10 @@ public class Stage<T, U> {
 	 *            continued or removed
 	 * @return Completed results of currently active stage at full completion
 	 *         point or when breakout triggered (which ever comes first), in aggregated in form determined by collector
+	 * @throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes" })
+	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public <U,R> R block(final Collector collector,final Predicate<Status> breakout) {
 		return (R)block(breakout).stream().collect(collector);
 	}
@@ -556,6 +572,7 @@ public class Stage<T, U> {
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			capture(e);
+			exceptionSoftener.throwSoftenedException(e);
 		} catch (Exception e) {
 			capture(e);
 		}

@@ -21,9 +21,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
@@ -291,4 +293,49 @@ public class SimpleReactTest {
 		new SimpleReact(executor).react(() -> "Hello", () -> "World").block();
 		verify(executor, times(2)).execute(any(Runnable.class));
 	}
+	
+	@Test
+    public void testBlockInterruption() {
+        final AtomicBoolean isRunning = new AtomicBoolean(true);
+        final CountDownLatch startBarier = new CountDownLatch(1);
+
+        final Stage<Integer, Integer> stage = new SimpleReact().<Integer, Integer>react(
+                () -> 1,
+                () -> 2,
+                () -> 3
+                ).then((it) -> {
+                    try {
+                       Thread.sleep(it * 5000);
+                    } catch (InterruptedException e) {
+                        System.err.println("InterruptedException");
+                        Thread.currentThread().interrupt();
+                    }
+                    return it * 100;
+                });
+
+        Thread t = new Thread(() -> {
+            while (isRunning.get()) { //worker thread termination condition
+                startBarier.countDown();
+                try {
+                    while (true) { //random condition
+                        stage.block();
+                       // Thread.sleep(2 * 5000);
+                    }
+                } catch (Exception e) {
+                    System.err.println("InterruptedException " + e.getMessage());
+                }
+            }
+        });
+
+        t.start();
+
+        try {
+            startBarier.await();
+            isRunning.getAndSet(false);
+            t.interrupt();
+            t.join();
+        } catch (InterruptedException e) {
+            //you know I don't care
+        }
+    }
 }
