@@ -19,6 +19,8 @@ public class SequentialGenerator<T> implements Generator<T>{
 		return withOffset(offset);
 	}
 	public  Stream<CompletableFuture<T>> generate(Supplier<T> s){
-		return Stream.<CompletableFuture<T>>generate(() -> CompletableFuture.supplyAsync(s)).skip(offset).limit(size);
+		return Stream.<CompletableFuture<T>>generate(() -> CompletableFuture.supplyAsync(s))
+				.skip(offset)
+				.limit(size);
 	}
 }
