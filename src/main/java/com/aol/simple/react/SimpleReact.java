@@ -2,13 +2,18 @@ package com.aol.simple.react;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import lombok.Getter;
+
+import com.aol.simple.react.generators.Generator;
+import com.aol.simple.react.generators.ReactIterator;
+import com.aol.simple.react.generators.SequentialGenerator;
+import com.aol.simple.react.generators.SequentialIterator;
 
 /**
  * Entry point for creating a concurrent dataflow.
@@ -53,8 +58,30 @@ public class SimpleReact {
 		return react((Supplier[]) actions.toArray(new Supplier[] {}));
 	}
 
-	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public <T, U> Stage<T, U> react(final Supplier<T> s, Generator t) {
 
+		return new Stage<T, U>(t.generate(s),
+				executor);
+
+	}
+	@SuppressWarnings("rawtypes")
+	public static Generator times(int times){
+		return new  SequentialGenerator(times,0);
+	
+		
+	}
+	public <T, U> Stage<T, U> react(final Function<T,T> f,ReactIterator<T> t) {
+
+		return new Stage<T, U>(t.iterate(f),
+				executor);
+
+	}
+	public static <T> ReactIterator<T> iterate(T seed){
+		return new  SequentialIterator<T>(seed);
+	
+		
+	}
 	/**
 	 * 
 	 * Start a reactive dataflow with an array of one-off-suppliers
