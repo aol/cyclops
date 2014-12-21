@@ -12,6 +12,7 @@ import org.junit.Test;
 
 public class GeneratorTest {
 	volatile int  count;
+	volatile int  second;
 	@Test
 	public void testGenerate() throws InterruptedException, ExecutionException {
 		count =0;
@@ -27,6 +28,7 @@ public class GeneratorTest {
 	@Test
 	public void testGenerateOffset() throws InterruptedException, ExecutionException {
 		count =0;
+		
 		List<String> strings = new SimpleReact()
 				.<Integer, Integer> react(() -> count++ ,times(1).offset(2))
 				.then(it -> it * 100)
@@ -36,6 +38,30 @@ public class GeneratorTest {
 		assertThat(strings.size(), is(1));
 		assertThat(count,greaterThan(1)); 
 				//can't guarantee skip completablefutures will have completed
+		
+	}
+	@Test
+	public void testGenerateDataflowMovingConcurrently() throws InterruptedException, ExecutionException {
+		count =0;
+		second =0;
+		new SimpleReact()
+				.<Integer, Integer> react(() -> {
+					sleep(count++);
+					return count;
+				} ,times(100))
+				.then(it -> it * 100)
+				.then(it -> {
+					
+					second ++;
+					return it;
+				})
+				.<String>then(it -> "*" + it);
+				
+		//generation has not complete / but chain has complete for some flows
+		
+		assertThat(count,greaterThan(2));
+		assertThat(count,lessThan(100)); 
+		assertThat(second,greaterThan(0)); 
 		
 	}
 	@Test
@@ -62,5 +88,39 @@ public class GeneratorTest {
 		
 		assertThat(results.get(0),is(1000));
 
+	}
+	@Test
+	public void testIterateDataflowMovingConcurrently() throws InterruptedException, ExecutionException {
+		count =0;
+		second =0;
+		new SimpleReact()
+				.<Integer, Integer> react((input) -> {
+					sleep(count++);
+					return count;
+				} ,iterate(0).times(100))
+				.then(it -> it * 100)
+				.then(it -> {
+					
+					second ++;
+					return it;
+				})
+				.<String>then(it -> "*" + it);
+				
+		//generation has not complete / but chain has complete for some flows
+		
+		assertThat(count,greaterThan(2));
+		assertThat(count,lessThan(100)); 
+		assertThat(second,greaterThan(0)); 
+		
+	}
+	
+	private Object sleep(Integer it) {
+		try {
+			Thread.sleep(it);
+		} catch (InterruptedException e) {
+			
+			e.printStackTrace();
+		}
+		return it;
 	}
 }
