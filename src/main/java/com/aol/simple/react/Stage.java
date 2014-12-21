@@ -592,7 +592,7 @@ public class Stage<T, U> {
 
 	private void capture(final Exception e) {
 		errorHandler.ifPresent((handler) -> { 
-		if(!(e instanceof FilteredExecutionPathException && !(e.getCause() instanceof FilteredExecutionPathException))){
+		if(!(e.getCause() instanceof FilteredExecutionPathException)){
 			handler.accept(e.getCause());
 		}});
 	}
