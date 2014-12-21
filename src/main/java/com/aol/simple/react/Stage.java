@@ -223,6 +223,10 @@ public class Stage<T, U> {
 				.map((ft) -> ft.thenApplyAsync(fn, taskExecutor))
 				.collect(Collectors.toList()));
 	}
+	@SuppressWarnings("unchecked")
+	public <R> Stage<T, R> peek(final Consumer<T> consumer) {
+		return (Stage<T, R>)then( (t) -> {  consumer.accept(t); return (U)t;});
+	}
 	
 	@SuppressWarnings("unchecked")
 	public <R> Stage<U, R> filter(final Predicate<T> p) {
@@ -235,6 +239,7 @@ public class Stage<T, U> {
 		})).collect(Collectors.toList()));
 				
 	}
+	
 	
 	
 	@SuppressWarnings({ "unchecked", "hiding" })
@@ -586,7 +591,10 @@ public class Stage<T, U> {
 	}
 
 	private void capture(final Exception e) {
-		errorHandler.ifPresent((handler) -> { if(!(e instanceof FilteredExecutionPathException)){handler.accept(e.getCause());}});
+		errorHandler.ifPresent((handler) -> { 
+		if(!(e instanceof FilteredExecutionPathException && !(e.getCause() instanceof FilteredExecutionPathException))){
+			handler.accept(e.getCause());
+		}});
 	}
 
 	@SuppressWarnings("rawtypes")

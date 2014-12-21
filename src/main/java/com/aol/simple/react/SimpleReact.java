@@ -1,11 +1,12 @@
 package com.aol.simple.react;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -65,7 +66,20 @@ public class SimpleReact {
 
 		return react((Supplier[]) actions.toArray(new Supplier[] {}));
 	}
+	private final Object iterationLock = "iterationLock";
 	
+	@SuppressWarnings("unchecked")
+	public <T, U> Stage<T, U> react(final Iterator<T> iterator, int maxTimes){
+		return (Stage<T, U>) this.<Optional<T>, Optional<T>>react(() -> {
+			synchronized(iterationLock) {
+				if(!iterator.hasNext()) 
+					return Optional.empty();
+			return Optional.of(iterator.next());
+			}
+		},SimpleReact.times(maxTimes))
+		.<T>filter(it -> it.isPresent())
+		.<T>then(it -> it.get());
+	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public <T, U> Stage<T, U> react(final Supplier<T> s, Generator t) {
