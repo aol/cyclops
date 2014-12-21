@@ -5,6 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -43,6 +44,13 @@ public class SimpleReact {
 	
 		this.executor = executor;
 	}
+	
+	public <T, U> Stage<T, U> fromStream(final Stream<CompletableFuture<T>> stream) {
+
+		return  new Stage<T, U>(stream,executor);
+	}
+
+	
 	/**
 	 * 
 	 * Start a reactive dataflow with a list of one-off-suppliers
@@ -57,7 +65,8 @@ public class SimpleReact {
 
 		return react((Supplier[]) actions.toArray(new Supplier[] {}));
 	}
-
+	
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public <T, U> Stage<T, U> react(final Supplier<T> s, Generator t) {
 
@@ -82,6 +91,8 @@ public class SimpleReact {
 	
 		
 	}
+	
+	
 	/**
 	 * 
 	 * Start a reactive dataflow with an array of one-off-suppliers

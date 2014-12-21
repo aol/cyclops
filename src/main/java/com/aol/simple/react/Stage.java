@@ -102,7 +102,7 @@ public class Stage<T, U> {
 	 * @param Function that contains parallelStream code to be executed by the SimpleReact ForkJoinPool (if configured)
 	 */
 	public <R> R submit(Function <Optional<U>,R> fn){
-		return submit (() -> (R)fn.apply(this.results));
+		return submit (() -> fn.apply(this.results));
 	}
 	
 	/**
@@ -112,7 +112,7 @@ public class Stage<T, U> {
 	 * @param Function that contains parallelStream code to be executed by the SimpleReact ForkJoinPool (if configured)
 	 */
 	public <U,R> R submitAndBlock(Function <U,R> fn){
-		return submit (() -> (R)fn.apply((U)this.block()));
+		return submit (() -> fn.apply((U)this.block()));
 	}
 	
 	/**
@@ -229,11 +229,18 @@ public class Stage<T, U> {
 		return (Stage<U, R>) this.withLastActive(lastActive.stream().map( ft ->
 			ft.thenApplyAsync( (in) -> {
 				if(!p.test((T)in)) { 
-					throw new RuntimeException(); 
+					throw new FilteredExecutionPathException(); 
 				}
 				return in;
 		})).collect(Collectors.toList()));
 				
+	}
+	
+	
+	@SuppressWarnings({ "unchecked", "hiding" })
+	public <T> Stream<CompletableFuture<T>> stream(){
+		return Stream.of(this.lastActive.toArray(new CompletableFuture[0]));
+		
 	}
 
 	
@@ -281,7 +288,12 @@ public class Stage<T, U> {
 	public <R> Stage<T, R> onFail(final Function<? extends Throwable, T> fn) {
 		return (Stage<T, R>) this
 				.withLastActive(lastActive.stream()
-						.map((ft) -> ft.exceptionally(fn))
+						.map((ft) -> ft.exceptionally( (t) -> { 
+							if(t instanceof FilteredExecutionPathException)
+								throw (FilteredExecutionPathException)t;
+							
+							return	((Function)fn).apply(t); 
+						}))
 						.collect(Collectors.toList()));
 	}
 
@@ -574,7 +586,7 @@ public class Stage<T, U> {
 	}
 
 	private void capture(final Exception e) {
-		errorHandler.ifPresent((handler) -> handler.accept(e.getCause()));
+		errorHandler.ifPresent((handler) -> { if(!(e instanceof FilteredExecutionPathException)){handler.accept(e.getCause());}});
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -599,6 +611,11 @@ public class Stage<T, U> {
 
 	private final static MissingValue MISSING_VALUE =new MissingValue();
 	private static class MissingValue {
+		
+	}
+	private static class FilteredExecutionPathException extends RuntimeException{
+
+		private static final long serialVersionUID = 1L;
 		
 	}
 	
