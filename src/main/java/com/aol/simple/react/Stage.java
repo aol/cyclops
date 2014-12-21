@@ -223,6 +223,18 @@ public class Stage<T, U> {
 				.map((ft) -> ft.thenApplyAsync(fn, taskExecutor))
 				.collect(Collectors.toList()));
 	}
+	
+	@SuppressWarnings("unchecked")
+	public <R> Stage<U, R> filter(final Predicate<T> p) {
+		return (Stage<U, R>) this.withLastActive(lastActive.stream().map( ft ->
+			ft.thenApplyAsync( (in) -> {
+				if(!p.test((T)in)) { 
+					throw new RuntimeException(); 
+				}
+				return in;
+		})).collect(Collectors.toList()));
+				
+	}
 
 	
 	

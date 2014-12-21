@@ -13,6 +13,7 @@ import org.junit.Test;
 public class GeneratorTest {
 	volatile int  count;
 	volatile int  second;
+	
 	@Test
 	public void testGenerate() throws InterruptedException, ExecutionException {
 		count =0;
