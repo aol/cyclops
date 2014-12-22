@@ -11,7 +11,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
@@ -173,6 +175,18 @@ public class GeneratorTest {
 		
 	}
 	
+	@Test
+	public void testGenerateParellel() throws InterruptedException, ExecutionException {
+		Set<Long> threads = new SimpleReact()
+				.<Long> react(() ->Thread.currentThread().getId() ,SimpleReact.timesInParallel(4))
+				.then(it -> it * 100)
+				.then(it -> "*" + it)
+				.capture(e -> capture++)
+				.block(Collectors.toSet());
+
+		assertThat(threads.size(), is(greaterThan(1)));
+	
+	}
 	private Object sleep(Integer it) {
 		try {
 			Thread.sleep(it);
