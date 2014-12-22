@@ -82,10 +82,7 @@ public class Stage<U> {
 	
 	/**
 	 * 
-	 * 
 	 * @return Unwrapped results, collected via collectResults, for this stage in the dataflow - may be null
-	 * 
-	 * 
 	 * 
 	 */
 	public <U> U extractResults(){
@@ -223,13 +220,28 @@ public class Stage<U> {
 				.map((ft) -> ft.thenApplyAsync(fn, taskExecutor))
 				.collect(Collectors.toList()));
 	}
+	/**
+	 * Peek asynchronously at the results in the current stage. Current results are passed through to the next stage.
+	 * 
+	 * @param consumer That will recieve current results
+	 * @return   A new builder object that can be used to define the next stage in
+	 *         the dataflow
+	 */
 	@SuppressWarnings("unchecked")
 	public Stage<U> peek(final Consumer<U> consumer) {
 		return (Stage<U>)then( (t) -> {  consumer.accept(t); return (U)t;});
 	}
 	
+	/**
+	 * Removes elements that do not match the supplied predicate from the dataflow
+	 * 
+	 * @param p Predicate that will be used to filter elements from the dataflow
+	 * @return A new builder object that can be used to define the next stage in
+	 *         the dataflow
+	 */
 	@SuppressWarnings("unchecked")
 	public  Stage<U> filter(final Predicate<U> p) {
+		
 		return (Stage<U>) this.withLastActive(lastActive.stream().map( ft ->
 			ft.thenApplyAsync( (in) -> {
 				if(!p.test((U)in)) { 
@@ -242,6 +254,9 @@ public class Stage<U> {
 	
 	
 	
+	/**
+	 * @return A Stream of CompletableFutures that represent this stage in the dataflow
+	 */
 	@SuppressWarnings({ "unchecked", "hiding" })
 	public <T> Stream<CompletableFuture<T>> stream(){
 		return Stream.of(this.lastActive.toArray(new CompletableFuture[0]));
