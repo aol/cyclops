@@ -19,7 +19,7 @@ public class ResultCollectionTest {
 	public void testBlockThen() throws InterruptedException, ExecutionException {
 
 		List<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.collectResults()
@@ -35,7 +35,7 @@ public class ResultCollectionTest {
 	public void testBlockThenResultReset() throws InterruptedException, ExecutionException {
 
 		assertThat( new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.collectResults()
@@ -50,7 +50,7 @@ public class ResultCollectionTest {
 	public void testBlockThenResultResetAndCorrect() throws InterruptedException, ExecutionException {
 
 		List<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.collectResults()
@@ -68,7 +68,7 @@ public class ResultCollectionTest {
 	public void testBlockOnFailResultReset() throws InterruptedException, ExecutionException {
 
 		assertThat( new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.collectResults()
@@ -83,7 +83,7 @@ public class ResultCollectionTest {
 		Set<String> threadGroup = Collections.synchronizedSet(new TreeSet());
 
 		Integer result = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then((it) -> { threadGroup.add(Thread.currentThread().getThreadGroup().getName()); return it * 200;})
 				.collectResults().<List<Integer>>block().submit( 
 						it -> it.orElse(new ArrayList())
@@ -104,7 +104,7 @@ public class ResultCollectionTest {
 		Set<String> threadGroup = Collections.synchronizedSet(new TreeSet());
 
 		Integer result = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then((it) -> { threadGroup.add(Thread.currentThread().getThreadGroup().getName()); return it * 200;})
 				.<List<Integer>,Integer>submitAndBlock( 
 						it -> it.parallelStream()
@@ -123,7 +123,7 @@ public class ResultCollectionTest {
 	public void testBlock() throws InterruptedException, ExecutionException {
 
 		List<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.collectResults()
@@ -137,7 +137,7 @@ public class ResultCollectionTest {
 	public void testBlockToSet() throws InterruptedException, ExecutionException {
 
 		Set<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 1, () -> 3)
+				.<Integer> react(() -> 1, () -> 1, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.collectResults()
@@ -151,7 +151,7 @@ public class ResultCollectionTest {
 	public void testBreakout() throws InterruptedException, ExecutionException {
 		Throwable[] error = { null };
 		List<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 					if (it == 100)
@@ -170,7 +170,7 @@ public class ResultCollectionTest {
 	public void testBreakoutToSet() throws InterruptedException, ExecutionException {
 		Throwable[] error = { null };
 		Set<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 					if (it == 100)
@@ -191,7 +191,7 @@ public class ResultCollectionTest {
 			ExecutionException {
 		Throwable[] error = { null };
 		List<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 
@@ -211,7 +211,7 @@ public class ResultCollectionTest {
 			ExecutionException {
 		count =0;
 		List<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 
@@ -230,7 +230,7 @@ public class ResultCollectionTest {
 			ExecutionException {
 		count =0;
 		List<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 					if(it==100)
@@ -250,7 +250,7 @@ public class ResultCollectionTest {
 			ExecutionException {
 		count =0;
 		List<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 					sleep(it);
@@ -269,7 +269,7 @@ public class ResultCollectionTest {
 			ExecutionException {
 		Throwable[] error = { null };
 		List<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 					if (it == 100)

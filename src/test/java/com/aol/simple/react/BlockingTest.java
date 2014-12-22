@@ -21,7 +21,7 @@ public class BlockingTest {
 			ExecutionException {
 
 		Integer result = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 200)
 				.<Integer> block()
 				.parallelStream()
@@ -40,7 +40,7 @@ public class BlockingTest {
 	public void testBlock() throws InterruptedException, ExecutionException {
 
 		List<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.block();
@@ -53,7 +53,7 @@ public class BlockingTest {
 	public void testBlockToSet() throws InterruptedException, ExecutionException {
 
 		Set<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 1, () -> 3)
+				.<Integer> react(() -> 1, () -> 1, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.block(Collectors.toSet());
@@ -66,7 +66,7 @@ public class BlockingTest {
 	public void testBreakout() throws InterruptedException, ExecutionException {
 		Throwable[] error = { null };
 		List<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 					if (it == 100)
@@ -85,7 +85,7 @@ public class BlockingTest {
 	public void testBreakoutToSet() throws InterruptedException, ExecutionException {
 		Throwable[] error = { null };
 		Set<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 					if (it == 100)
@@ -106,7 +106,7 @@ public class BlockingTest {
 			ExecutionException {
 		Throwable[] error = { null };
 		List<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 
@@ -124,7 +124,7 @@ public class BlockingTest {
 			ExecutionException {
 		count =0;
 		List<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 
@@ -141,7 +141,7 @@ public class BlockingTest {
 			ExecutionException {
 		count =0;
 		List<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 					if(it==100)
@@ -161,7 +161,7 @@ public class BlockingTest {
 			ExecutionException {
 		count =0;
 		List<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 					sleep(it);
@@ -180,7 +180,7 @@ public class BlockingTest {
 			ExecutionException {
 		Throwable[] error = { null };
 		List<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 					if (it == 100)
@@ -198,7 +198,7 @@ public class BlockingTest {
 	public void testLast() throws InterruptedException, ExecutionException {
 
 		Integer result = new SimpleReact()
-		.<Integer, Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
+		.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
 		.then( it -> sleep(it))
 		.last();
@@ -212,7 +212,7 @@ public class BlockingTest {
 	public void testFirst() throws InterruptedException, ExecutionException {
 
 		Set<Integer> result = new SimpleReact()
-		.<Integer, Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
+		.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
 		.allOf(Collectors.toSet(), it -> {
 			assertThat (it,is( Set.class));

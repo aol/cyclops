@@ -42,7 +42,7 @@ import lombok.extern.slf4j.Slf4j;
 @Wither(value=AccessLevel.PACKAGE)
 @AllArgsConstructor
 @Slf4j
-public class Stage<T, U> {
+public class Stage<U> {
 
 	private final ExceptionSoftener exceptionSoftener = ExceptionSoftener.singleton.factory.getInstance();
 	private final ExecutorService taskExecutor;
@@ -62,7 +62,7 @@ public class Stage<T, U> {
 	 * @param executor
 	 *            The next stage's tasks will be submitted to this executor
 	 */
-	Stage(final Stream<CompletableFuture<T>> stream,
+	Stage(final Stream<CompletableFuture<U>> stream,
 			final ExecutorService executor) {
 
 		this.taskExecutor = executor;
@@ -172,12 +172,12 @@ public class Stage<T, U> {
 	 *         application of the supplied function
 	 */
 	@SuppressWarnings("unchecked")
-	public List<CompletableFuture<U>> with(
-			final Function<T, ? extends Object> fn) {
+	public <R> List<CompletableFuture<R>> with(
+			final Function<U,R> fn) {
 
 		return lastActive
 				.stream()
-				.map(future -> (CompletableFuture<U>) future.thenApplyAsync(fn,
+				.map(future -> (CompletableFuture<R>) future.thenApplyAsync(fn,
 						taskExecutor)).collect(Collectors.toList());
 	}
 
@@ -218,21 +218,21 @@ public class Stage<T, U> {
 	 *         the dataflow
 	 */
 	@SuppressWarnings("unchecked")
-	public <R> Stage<U, R> then(final Function<T, U> fn) {
-		return (Stage<U, R>) this.withLastActive(lastActive.stream()
+	public <R> Stage<R> then(final Function<U, R> fn) {
+		return (Stage<R>) this.withLastActive(lastActive.stream()
 				.map((ft) -> ft.thenApplyAsync(fn, taskExecutor))
 				.collect(Collectors.toList()));
 	}
 	@SuppressWarnings("unchecked")
-	public <R> Stage<T, R> peek(final Consumer<T> consumer) {
-		return (Stage<T, R>)then( (t) -> {  consumer.accept(t); return (U)t;});
+	public Stage<U> peek(final Consumer<U> consumer) {
+		return (Stage<U>)then( (t) -> {  consumer.accept(t); return (U)t;});
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <R> Stage<U, R> filter(final Predicate<T> p) {
-		return (Stage<U, R>) this.withLastActive(lastActive.stream().map( ft ->
+	public  Stage<U> filter(final Predicate<U> p) {
+		return (Stage<U>) this.withLastActive(lastActive.stream().map( ft ->
 			ft.thenApplyAsync( (in) -> {
-				if(!p.test((T)in)) { 
+				if(!p.test((U)in)) { 
 					throw new FilteredExecutionPathException(); 
 				}
 				return in;
@@ -290,8 +290,8 @@ public class Stage<T, U> {
 	 *         the dataflow
 	 */
 	@SuppressWarnings("unchecked")
-	public <R> Stage<T, R> onFail(final Function<? extends Throwable, T> fn) {
-		return (Stage<T, R>) this
+	public Stage<U> onFail(final Function<? extends Throwable, U> fn) {
+		return (Stage<U>) this
 				.withLastActive(lastActive.stream()
 						.map((ft) -> ft.exceptionally( (t) -> { 
 							if(t instanceof FilteredExecutionPathException)
@@ -344,7 +344,7 @@ public class Stage<T, U> {
 	 *         the dataflow
 	 */
 	@SuppressWarnings("unchecked")
-	public Stage<T, U> capture(final Consumer<? extends Throwable> errorHandler) {
+	public Stage <U> capture(final Consumer<? extends Throwable> errorHandler) {
 		return this.withErrorHandler(Optional
 				.of((Consumer<Throwable>) errorHandler));
 	}
@@ -373,7 +373,7 @@ public class Stage<T, U> {
 	 * 
 	 * @return A builder that allows the blocking mechanism for results collection to be set
 	 */
-	public ReactCollector<T,U> collectResults(){
+	public ReactCollector<U> collectResults(){
 		return new ReactCollector(this);
 	}
 
@@ -549,9 +549,9 @@ public class Stage<T, U> {
 	 *         the dataflow
 	 */
 	@SuppressWarnings("unchecked")
-	public <R> Stage<U, R> allOf(final Function<List<T>, U> fn) {
+	public <T,R> Stage<R> allOf(final Function<List<T>, R> fn) {
 
-		return allOf(Collectors.toList(), (Function<R, U>)fn);
+		return (Stage<R>)allOf(Collectors.toList(), (Function<R, U>)fn);
 
 	}
 	/**
@@ -562,9 +562,9 @@ public class Stage<T, U> {
 	 *         the dataflow
 	 */
 	@SuppressWarnings({"unchecked","rawtypes"})
-	public <R> Stage<U, R> allOf(final Collector collector,final Function<R, U> fn) {
+	public <T,R> Stage<R> allOf(final Collector collector,final Function<T,R> fn) {
 
-		return (Stage<U, R>) withLastActive(asList( CompletableFuture.allOf(
+		return (Stage<R>) withLastActive(asList( CompletableFuture.allOf(
 				lastActiveArray()).thenApplyAsync((result) -> {
 						return submit( () -> fn.apply(aggregateResults(collector, lastActive)));
 					}, taskExecutor)));
@@ -611,8 +611,8 @@ public class Stage<T, U> {
 		return MISSING_VALUE;
 	}
 	
-	Stage<T,U> withLastActive(List<CompletableFuture> lastActive){
-		return new Stage<T,U>(taskExecutor, lastActive, errorHandler, Optional.<U>empty());
+	Stage<U> withLastActive(List<CompletableFuture> lastActive){
+		return new Stage<U>(taskExecutor, lastActive, errorHandler, Optional.<U>empty());
 	}
 	
 	

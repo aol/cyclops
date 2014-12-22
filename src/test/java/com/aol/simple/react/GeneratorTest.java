@@ -18,6 +18,7 @@ import org.junit.Test;
 public class GeneratorTest {
 	volatile int  count;
 	volatile int  second;
+	volatile int  capture;
 	
 	private Object lock1= "lock1";
 	private Object lock2= "lock2";
@@ -25,14 +26,16 @@ public class GeneratorTest {
 	@Test
 	public void testGenerate() throws InterruptedException, ExecutionException {
 		count =0;
+		capture =0;
 		List<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> count++ ,SimpleReact.times(4))
+				.<Integer> react(() -> count++ ,SimpleReact.times(4))
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
+				.capture(e -> capture++)
 				.block();
 
-		assertThat(strings.size(), is(4));
-		assertThat(count,is(4));
+		assertThat("Capture is " +  capture,strings.size(), is(4));
+		assertThat("Capture is " +  capture,count,is(4));
 	}
 	
 	@Test
@@ -40,7 +43,7 @@ public class GeneratorTest {
 		count =0;
 		
 		List<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> count++ ,times(1).offset(2))
+				.<Integer> react(() -> count++ ,times(1).offset(2))
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.block();
@@ -55,7 +58,7 @@ public class GeneratorTest {
 		count =0;
 		second =0;
 		new SimpleReact()
-				.<Integer, Integer> react(() -> {
+				.<Integer> react(() -> {
 					sleep(count++);
 					return count;
 				} ,times(100))
@@ -69,16 +72,19 @@ public class GeneratorTest {
 				
 		//generation has not complete / but chain has complete for some flows
 		
-		assertThat(count,greaterThan(2));
-		assertThat(count,lessThan(100)); 
+		while(count<10){ }
 		assertThat(second,greaterThan(0)); 
+		assertThat(count,lessThan(100)); 
+		assertThat(count,greaterThan(2));
+		
+		
 		
 	}
 	@Test
 	public void testIterate() throws InterruptedException, ExecutionException {
 		count =0;
 		List<String> strings = new SimpleReact()
-				.<String, String> react((input) -> input + count++,iterate("hello").times(10))
+				.<String> react((input) -> input + count++,iterate("hello").times(10))
 				.then(it -> "*" + it)
 				.block();
 
@@ -90,7 +96,7 @@ public class GeneratorTest {
 	public void testIterateWithOffset() throws InterruptedException, ExecutionException {
 		
 		List<Integer> results = new SimpleReact()
-				.<Integer, Integer> react((input) -> input + 1,iterate(0).times(1).offset(10))
+				.<Integer> react((input) -> input + 1,iterate(0).times(1).offset(10))
 				.then(it -> it*100)
 				.block();
 
@@ -104,7 +110,7 @@ public class GeneratorTest {
 		count =0;
 		second =0;
 		new SimpleReact()
-				.<Integer, Integer> react((input) -> {
+				.<Integer> react((input) -> {
 					sleep(count++);
 					return count;
 				} ,iterate(0).times(100))
@@ -117,10 +123,12 @@ public class GeneratorTest {
 				.<String>then(it -> "*" + it);
 				
 		//generation has not complete / but chain has complete for some flows
-		
-		assertThat(count,greaterThan(2));
+		while(count<3){ }
+		assertThat(second,greaterThan(0));
 		assertThat(count,lessThan(100)); 
-		assertThat(second,greaterThan(0)); 
+		assertThat(count,greaterThan(2));
+		
+		
 		
 	}
 	@Test
@@ -128,7 +136,7 @@ public class GeneratorTest {
 		List<Integer> list = Arrays.asList(1,2,3,4);
 		Iterator<Integer> iterator = list.iterator();
 		List<String> strings = new SimpleReact()
-				.<Optional<Integer>, Optional<Integer>> react(() -> {
+				.<Optional<Integer>> react(() -> {
 						synchronized(lock1) {
 							if(!iterator.hasNext()) 
 								return Optional.empty();
@@ -149,7 +157,7 @@ public class GeneratorTest {
 		List<Integer> list = Arrays.asList(1,2,3,4);
 		Iterator<Integer> iterator = list.iterator();
 		List<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> {
+				.<Integer> react(() -> {
 					synchronized(lock2) {
 						if(!iterator.hasNext()) 
 							return null;

@@ -46,9 +46,9 @@ public class SimpleReact {
 		this.executor = executor;
 	}
 	
-	public <T, U> Stage<T, U> fromStream(final Stream<CompletableFuture<T>> stream) {
+	public <U> Stage<U> fromStream(final Stream<CompletableFuture<U>> stream) {
 
-		return  new Stage<T, U>(stream,executor);
+		return  new Stage<U>(stream,executor);
 	}
 
 	
@@ -62,29 +62,29 @@ public class SimpleReact {
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public <T, U> Stage<T, U> react(final List<Supplier<T>> actions) {
+	public <U> Stage<U> react(final List<Supplier<U>> actions) {
 
 		return react((Supplier[]) actions.toArray(new Supplier[] {}));
 	}
 	private final Object iterationLock = "iterationLock";
 	
 	@SuppressWarnings("unchecked")
-	public <T, U> Stage<T, U> react(final Iterator<T> iterator, int maxTimes){
-		return (Stage<T, U>) this.<Optional<T>, Optional<T>>react(() -> {
+	public <U> Stage<U> react(final Iterator<U> iterator, int maxTimes){
+		return (Stage<U>) this.<Optional<U>>react(() -> {
 			synchronized(iterationLock) {
 				if(!iterator.hasNext()) 
 					return Optional.empty();
 			return Optional.of(iterator.next());
 			}
 		},SimpleReact.times(maxTimes))
-		.<T>filter(it -> it.isPresent())
-		.<T>then(it -> it.get());
+		.<U>filter(it -> it.isPresent())
+		.<U>then(it -> it.get());
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public <T, U> Stage<T, U> react(final Supplier<T> s, Generator t) {
+	public <U> Stage< U> react(final Supplier<U> s, Generator t) {
 
-		return new Stage<T, U>(t.generate(s),
+		return new Stage<U>(t.generate(s),
 				executor);
 
 	}
@@ -94,9 +94,9 @@ public class SimpleReact {
 	
 		
 	}
-	public <T, U> Stage<T, U> react(final Function<T,T> f,ReactIterator<T> t) {
+	public <U> Stage<U> react(final Function<U,U> f,ReactIterator<U> t) {
 
-		return new Stage<T, U>(t.iterate(f),
+		return new Stage<U>(t.iterate(f),
 				executor);
 
 	}
@@ -116,9 +116,9 @@ public class SimpleReact {
 	 * @return Next stage in the reactive flow
 	 */
 	@SafeVarargs
-	public final <T, U> Stage<T, U> react(final Supplier<T>... actions) {
+	public final <U> Stage<U> react(final Supplier<U>... actions) {
 
-		return this.<T,U> reactI(actions);
+		return this.<U> reactI(actions);
 
 	}
 	
@@ -129,9 +129,9 @@ public class SimpleReact {
 	 */
 	@SuppressWarnings("unchecked")
 	@VisibleForTesting
-	protected <T,U> Stage<T, U> reactI(final Supplier<T>... actions) {
+	protected <U> Stage<U> reactI(final Supplier<U>... actions) {
 		
-		return new Stage<T, U>(Stream.of(actions).map(
+		return new Stage<U>(Stream.of(actions).map(
 				next -> CompletableFuture.supplyAsync(next, executor)),
 				executor);
 	}

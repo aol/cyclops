@@ -18,7 +18,7 @@ public class AllOfTest {
 	public void testAllOfToSet() throws InterruptedException, ExecutionException {
 
 		Set<Integer> result = new SimpleReact()
-		.<Integer, Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
+		.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
 		.allOf(Collectors.toSet(), it -> {
 			assertThat (it,is( Set.class));
@@ -28,13 +28,13 @@ public class AllOfTest {
 		assertThat(result.size(),is(4));
 	}
 	
-
+	
 	@Test
 	public void testAllOfParallelStreams() throws InterruptedException,
 			ExecutionException {
 
 		Integer result = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
+				.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 				.<Integer> then(it -> {
 					return it * 200;
 				})
@@ -45,7 +45,7 @@ public class AllOfTest {
 					return it;
 				})
 				.onFail(e -> 100)
-				.allOf(it -> {
+				.<Integer,Integer>allOf(it -> {
 					
 					return it.parallelStream().filter(f -> f > 300)
 							.map(m -> m - 5)
@@ -55,12 +55,13 @@ public class AllOfTest {
 	
 		assertThat(result, is(990));
 	}
+	
 	@Test
 	public void testAllOfParallelStreamsSkip() throws InterruptedException,
 			ExecutionException {
 
 		List<Integer> result = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
+				.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 				.<Integer> then(it -> {
 					return it * 200;
 				})
@@ -71,7 +72,7 @@ public class AllOfTest {
 					return it;
 				})
 				.onFail(e -> 100)
-				.allOf(it -> {
+				.<Integer,List<Integer>>allOf(it -> {
 					
 					return it.parallelStream().skip(1).limit(3).collect(Collectors.toList());
 				}).first();
@@ -85,7 +86,7 @@ public class AllOfTest {
 			ExecutionException {
 		Set<String> threadGroup = Collections.synchronizedSet(new TreeSet());
 		Integer result = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
+				.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 				.<Integer> then(it -> {
 					threadGroup.add(Thread.currentThread().getThreadGroup().getName());
 					return it * 200;
@@ -97,7 +98,7 @@ public class AllOfTest {
 					return it;
 				})
 				.onFail(e -> 100)
-				.allOf(it -> {
+				.<Integer,Integer>allOf(it -> {
 					
 					return it.parallelStream().filter(f -> f > 300)
 							.map(m ->{ threadGroup.add(Thread.currentThread().getThreadGroup().getName());return m - 5; })
@@ -113,7 +114,7 @@ public class AllOfTest {
 
 		boolean blocked[] = { false };
 
-		new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+		new SimpleReact().<Integer> react(() -> 1, () -> 2, () -> 3)
 
 		.then(it -> {
 			try {
