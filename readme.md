@@ -291,7 +291,7 @@ SimpleReact provides a mechanism for starting a dataflow an iterator.
 				
 ##Example 11 : 'Infinite' generators & iterators
 
-SimpleReact provides a mechanism over JDK Stream iterate and generate which will create 'infinite' Streams of data to react to. Because SimpleReact eagerly converts these Streams into Streams of active CompletableFutures, the SimpleReact api always requires a maximum size parameter to be set.
+SimpleReact provides a mechanism over JDK Stream iterate and generate which will create 'infinite' Streams of data to react to. Because SimpleReact eagerly collects these Streams (when converting to *active* CompletableFutures), the SimpleReact api always requires a maximum size parameter to be set.
 
 	List<String> strings = new SimpleReact()
 				.<Integer> react(() -> count++ ,SimpleReact.times(4))
