@@ -27,11 +27,23 @@ There a few core differences
 
 Pure ParallelStreams :-
 
-new ForkJoinPool(50).submit( () -> Arrays.asList( () -> restCall(url1), () -> restCall(url2)).parallelStream().map(  sp -> try { return sp.supply(); } catch(Exception e) { return new ErrorCase(e);    }).map( case -> publish(case)).collect(Collectors.toList()));
+	new ForkJoinPool(50)
+			.submit( () -> Arrays.asList( () -> restCall(url1), () -> restCall(url2), {..})
+				.parallelStream()
+				.map(  sp -> try { 
+									return sp.supply(); 
+								 } catch(Exception e) { 
+									return new ErrorCase(e);    
+								 })
+				.map( case -> publish(case))
+				.collect(Collectors.toList()));
 
 With SimpleReact (& the current thread able to continue processing) :-
 
-new SimpleReact(new ForkJoinPool(50)).react( () -> restCall(url1), () -> restCall(url2)).onFail( e -> new ErrorCase(e)).then( case -> publish(case));
+	new SimpleReact(new ForkJoinPool(50))
+		.react( () -> restCall(url1), () -> restCall(url2), {..})
+		.onFail( e -> new ErrorCase(e))
+		.then( case -> publish(case));
 
 ##Data flow
 
