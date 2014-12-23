@@ -1,14 +1,24 @@
 package com.aol.simple.react;
 
+import static com.aol.simple.react.SimpleReact.iterate;
+
+import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import lombok.Getter;
+
+import com.aol.simple.react.generators.Generator;
+import com.aol.simple.react.generators.ParallelGenerator;
+import com.aol.simple.react.generators.ReactIterator;
+import com.aol.simple.react.generators.SequentialGenerator;
+import com.aol.simple.react.generators.SequentialIterator;
 
 /**
  * Entry point for creating a concurrent dataflow.
@@ -38,6 +48,19 @@ public class SimpleReact {
 	
 		this.executor = executor;
 	}
+	
+	/**
+	 * Start a reactive dataflow from a stream of CompletableFutures.
+	 * 
+	 * @param stream of CompletableFutures that will be used to drive the reactive dataflow
+	 * @return Next stage in the reactive flow
+	 */
+	public <U> Stage<U> fromStream(final Stream<CompletableFuture<U>> stream) {
+
+		return  new Stage<U>(stream,executor);
+	}
+
+	
 	/**
 	 * 
 	 * Start a reactive dataflow with a list of one-off-suppliers
@@ -48,13 +71,120 @@ public class SimpleReact {
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public <T, U> Stage<T, U> react(final List<Supplier<T>> actions) {
+	public <U> Stage<U> react(final List<Supplier<U>> actions) {
 
 		return react((Supplier[]) actions.toArray(new Supplier[] {}));
 	}
-
+	private final Object iterationLock = "iterationLock";
 	
+	/**
+	 * Start a reactive flow from a JDK Iterator
+	 * 
+	 * @param iterator SimpleReact will iterate over this iterator concurrently to start the reactive dataflow
+	 * @param maxTimes Maximum number of iterations
+	 * @return Next stage in the reactive flow
+	 */
+	@SuppressWarnings("unchecked")
+	public <U> Stage<U> react(final Iterator<U> iterator, int maxTimes){
+		return (Stage<U>) this.<Optional<U>>react(() -> {
+			synchronized(iterationLock) {
+				if(!iterator.hasNext()) 
+					return Optional.empty();
+			return Optional.of(iterator.next());
+			}
+		},SimpleReact.times(maxTimes))
+		.<U>filter(it -> it.isPresent())
+		.<U>then(it -> it.get());
+	}
+	
+	/**
+	 * Start a reactive dataflow from a single Supplier, which will be executed repeatedly according to rules defined by the generator.
+	 * 
+	 * Example : 
+	 * To execute the same Supplier 4 times use :
+	 * <code>
+	 * List<String> strings = new SimpleReact()
+				.<Integer> react(() -> count++ ,SimpleReact.times(4))
+	 * </code>
+	 * To skip the first 5 iterations and take the next 5
+	 *  * <code>
+	 * List<String> strings = new SimpleReact()
+				.<Integer> react(() -> count++ ,SimpleReact.times(5).offset(5))
+	 * </code>
+	 * 
+	 * The supplier will be called 10 times, in the above example, but only the last 5 results will be passed into the 
+	 * reactive dataflow.
+	 * 
+	 * @param s Supplier to provide data (and thus events) that
+	 *            downstream jobs will react too
+	 * @param t Generator implementation that will determine how the Supplier is executed
+	 * @return Next stage in the reactive flow
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public <U> Stage< U> react(final Supplier<U> s, Generator t) {
 
+		return new Stage<U>(t.generate(s),
+				executor);
+
+	}
+	/**
+	 * Create a Sequential Generator that will trigger a Supplier to be called the specified number of times
+	 * 
+	 * @param times Number of times the Supplier should be called at the start of the reactive dataflow
+	 * @return Sequential Generator
+	 */
+	@SuppressWarnings("rawtypes")
+	public static SequentialGenerator times(int times){
+		return new  SequentialGenerator(times,0);
+	
+		
+	}
+	/**
+	 * Create a Parallel Generator that will trigger a Supplier to be called the specified number of times
+	 * 
+	 * @param times Number of times the Supplier should be called at the start of the reactive dataflow
+	 * @return Parellel Generator
+	 */
+	@SuppressWarnings("rawtypes")
+	public static ParallelGenerator timesInParallel(int times){
+		return new  ParallelGenerator(times,0);
+	
+		
+	}
+	/**
+	 * Start a reactive dataflow that calls the supplied function iteratively, with each output, feeding into the next input
+	 *
+	 * Example :-
+	 * 
+	 * <code>
+	 * List<Integer> results = new SimpleReact()
+				.<Integer> react((input) -> input + 1,iterate(0).times(1).offset(10))
+	 * </code>
+	 * 
+	 * 
+	 * @param f Function to be called iteratively
+	 * @param t Iterator that manages function call
+	 * @return Next stage in the reactive flow
+	 */
+	public <U> Stage<U> react(final Function<U,U> f,ReactIterator<U> t) {
+
+		return new Stage<U>(t.iterate(f),
+				executor);
+
+	}
+	/**
+	 * Create an iterator that manages a function call starting with the supplied seed value
+	 * 
+	 * @param seed Initial value that iterator will apply to the function it iterates over
+	 * @return Populated ReactIterator
+	 */
+	public static <T> ReactIterator<T> iterate(T seed){
+		return new  SequentialIterator<T>(seed);
+	
+		
+	}
+	
+	
 	/**
 	 * 
 	 * Start a reactive dataflow with an array of one-off-suppliers
@@ -64,9 +194,9 @@ public class SimpleReact {
 	 * @return Next stage in the reactive flow
 	 */
 	@SafeVarargs
-	public final <T, U> Stage<T, U> react(final Supplier<T>... actions) {
+	public final <U> Stage<U> react(final Supplier<U>... actions) {
 
-		return this.<T,U> reactI(actions);
+		return this.<U> reactI(actions);
 
 	}
 	
@@ -77,9 +207,9 @@ public class SimpleReact {
 	 */
 	@SuppressWarnings("unchecked")
 	@VisibleForTesting
-	protected <T,U> Stage<T, U> reactI(final Supplier<T>... actions) {
+	protected <U> Stage<U> reactI(final Supplier<U>... actions) {
 		
-		return new Stage<T, U>(Stream.of(actions).map(
+		return new Stage<U>(Stream.of(actions).map(
 				next -> CompletableFuture.supplyAsync(next, executor)),
 				executor);
 	}

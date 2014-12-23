@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
@@ -36,21 +37,22 @@ public class SimpleReactTest {
 	public void testReact() throws InterruptedException, ExecutionException {
 
 		List<CompletableFuture<Integer>> futures = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3).with(
-						(it) -> it * 100);
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.with(it -> it * 100);
 
 		assertThat(futures.get(0).get(), is(greaterThan(99)));
+		
+		new SimpleReact().fromStream(futures.stream()).block();
 
 	}
 	@Test
 	public void testMultithreading() throws InterruptedException, ExecutionException {
-		Set<Long> threads = Collections.synchronizedSet(new TreeSet());
 		
-		new SimpleReact(new ForkJoinPool(10))
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3).then(
-						(it) -> {
-							threads.add(Thread.currentThread().getId());
-							return it * 100;}).block();
+		
+		 Set<Long> threads = new SimpleReact(new ForkJoinPool(10))
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.then(it -> Thread.currentThread().getId())
+				.block(Collectors.toSet());
 
 		assertThat(threads.size(), is(greaterThan(2)));
 
@@ -60,10 +62,13 @@ public class SimpleReactTest {
 	public void testReactString() throws InterruptedException,
 			ExecutionException {
 		List<CompletableFuture<String>> futures = new SimpleReact()
-				.<Integer, String> react(() -> 1, () -> 2, () -> 3).with(
-						(it) -> "*" + it);
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.with(it -> "*" + it);
 
+		System.out.println(futures.get(0).get());
 		assertThat(futures.get(0).get(), is(containsString("*")));
+		
+		new SimpleReact().fromStream(futures.stream()).block();
 
 	}
 
@@ -71,7 +76,7 @@ public class SimpleReactTest {
 	public void testReactChain() throws InterruptedException,
 			ExecutionException {
 		List<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then((it) -> it * 100).then((it) -> "*" + it)
 				.block(status -> status.getCompleted() > 1);
 
@@ -87,12 +92,13 @@ public class SimpleReactTest {
 	public void testGenericExtract() throws InterruptedException, ExecutionException {
 
 		Set<Integer> result = new SimpleReact()
-		.<Integer, Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
+		.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
-		.allOf(Collectors.toSet(), it -> {
+		.<Set<Integer>,Set<Integer>>allOf(Collectors.toSet(), (Set<Integer> it) -> {
 			assertThat (it,is( Set.class));
 			return it;
-		}).blockAndExtract(Extractors.last(), status -> false);
+		}).capture(e -> e.printStackTrace())
+		.blockAndExtract(Extractors.last(), status -> false);
 
 		assertThat(result.size(),is(4));
 	}
@@ -104,7 +110,7 @@ public class SimpleReactTest {
 	public void testOnFail() throws InterruptedException, ExecutionException {
 
 		List<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then((it) -> it * 100).then((it) -> {
 					if (it == 100)
 						throw new RuntimeException("boo!");
@@ -127,7 +133,7 @@ public class SimpleReactTest {
 	public void testOnFailFirst() throws InterruptedException,
 			ExecutionException {
 		List<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> {
+				.<Integer> react(() -> 1, () -> 2, () -> {
 					throw new RuntimeException("boo!");
 				}).onFail(e -> 1).then((it) -> "*" + it).block();
 
@@ -147,7 +153,7 @@ public class SimpleReactTest {
 			ExecutionException {
 		Throwable[] error = { null };
 		List<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then((it) -> it * 100).then((it) -> {
 					if (it == 100)
 						throw new RuntimeException("boo!");
@@ -172,7 +178,7 @@ public class SimpleReactTest {
 	public void testCapture() throws InterruptedException, ExecutionException {
 		Throwable[] error = { null };
 		List<String> strings = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100).then(it -> {
 					if (it == 100)
 						throw new RuntimeException("boo!");
@@ -270,7 +276,7 @@ public class SimpleReactTest {
 	}
 	@Test
 	public void testThenNull(){
-		List<String> result = new SimpleReact().react(() -> "World",()-> "Hello").then( in -> null).block();
+		List<String> result = new SimpleReact().react(() -> "World",()-> "Hello").then( in -> (String)null).block();
 		assertThat(result.size(),is(2));
 		assertThat(result.get(0),is(nullValue()));
 	
@@ -299,7 +305,7 @@ public class SimpleReactTest {
         final AtomicBoolean isRunning = new AtomicBoolean(true);
         final CountDownLatch startBarier = new CountDownLatch(1);
 
-        final Stage<Integer, Integer> stage = new SimpleReact().<Integer, Integer>react(
+        final Stage<Integer> stage = new SimpleReact().<Integer>react(
                 () -> 1,
                 () -> 2,
                 () -> 3

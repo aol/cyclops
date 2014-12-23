@@ -8,9 +8,9 @@ import java.util.stream.Collector;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-class ReactCollector<T,U> {
+class ReactCollector<U> {
 
-	private final Stage<T,U> builder;
+	private final Stage<U> builder;
 	
 	/**
 	 * React and <b>block</b>
@@ -33,8 +33,8 @@ class ReactCollector<T,U> {
 	 */
 	@SuppressWarnings({ "hiding", "unchecked" })
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public <U> Stage<T,U> block() {
-		return (Stage<T,U>)this.packageResults(builder.block());
+	public <U> Stage<U> block() {
+		return (Stage<U>)this.packageResults(builder.block());
 	}
 	
 	/**
@@ -44,8 +44,8 @@ class ReactCollector<T,U> {
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public <U> Stage<T,U> block(final Collector collector) {
-		return (Stage<T,U>)this.packageResults(builder.block(collector));
+	public <U> Stage<U> block(final Collector collector) {
+		return (Stage<U>)this.packageResults(builder.block(collector));
 	}
 	/**
 	 * Block until first result recieved
@@ -55,8 +55,8 @@ class ReactCollector<T,U> {
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public <U> Stage<T,U> first() {
-		return (Stage<T,U>)packageResults(builder.first());
+	public <U> Stage<U> first() {
+		return (Stage<U>)packageResults(builder.first());
 	}
 	/**
 	 * Block until all results recieved.
@@ -66,8 +66,8 @@ class ReactCollector<T,U> {
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public <U> Stage<T,U> last() {
-		return (Stage<T,U>)packageResults(builder.last());
+	public <U> Stage<U> last() {
+		return (Stage<U>)packageResults(builder.last());
 	}
 	
 	/**
@@ -79,8 +79,8 @@ class ReactCollector<T,U> {
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public <U> Stage<T,U>blockAndExtract(final Extractor extractor) {
-		return (Stage<T,U>)this.packageResults(builder.blockAndExtract(extractor));
+	public <U> Stage<U>blockAndExtract(final Extractor extractor) {
+		return (Stage<U>)this.packageResults(builder.blockAndExtract(extractor));
 	}
 	/**
 	 *  Block until tasks complete, or breakout conditions met and return a value determined by the extractor supplied.
@@ -93,8 +93,8 @@ class ReactCollector<T,U> {
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public <U> Stage<T,U> blockAndExtract(final Extractor extractor,final Predicate<Status> breakout) {
-		return (Stage<T,U>)this.packageResults(builder.blockAndExtract(extractor,breakout));
+	public <U> Stage<U> blockAndExtract(final Extractor extractor,final Predicate<Status> breakout) {
+		return (Stage<U>)this.packageResults(builder.blockAndExtract(extractor,breakout));
 	}
 
 	/**
@@ -124,8 +124,8 @@ class ReactCollector<T,U> {
 	 */
 	@SuppressWarnings({ "hiding", "rawtypes", "unchecked" })
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public  Stage<T,U> block(final Predicate<Status> breakout) {
-		return (Stage<T,U>)packageResults(builder.block(breakout) );
+	public  Stage<U> block(final Predicate<Status> breakout) {
+		return (Stage<U>)packageResults(builder.block(breakout) );
 	}
 	
 	
@@ -140,10 +140,10 @@ class ReactCollector<T,U> {
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes" })
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public <U> Stage<T,U> block(final Collector collector,final Predicate<Status> breakout) {
-		return (Stage<T,U>)this.packageResults( builder.block(collector,breakout));
+	public <U> Stage<U> block(final Collector collector,final Predicate<Status> breakout) {
+		return (Stage<U>)this.packageResults( builder.block(collector,breakout));
 	}
-	private <Y> Stage<T,U> packageResults(Y results){
+	private <Y> Stage<U> packageResults(Y results){
 		return builder.withResults(Optional.of((U)results));
 	}
 	
