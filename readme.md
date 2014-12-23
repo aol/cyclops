@@ -1,6 +1,6 @@
 #Simple React : Simple Fluent Api for Functional Reactive Programming with Java 8
 
-Simple React is the new Java 8 based concurrency mechanism for LANA. It is a fluent API built on top of Java 8 CompletableFuture. It provides a focused, simple and limited Reactive API aimed at solving the 90% use case - but without adding complexity.
+Simple React is the new Java 8 based concurrency mechanism for LANA. It is a fluent API built on top of Java 8 CompletableFutures and the Stream API. It provides a focused, simple and limited Reactive API aimed at solving the 90% use case - but without adding complexity.
 
 ##Why Simple React
 
