@@ -220,9 +220,11 @@ In this case, strings will only contain the two successful results (for ()->1 an
 
 React and the *Streams Api*
 
-It is possible to reuse the internal SimpleReact ExecutorService for JDK 8 parallelStreams. SimpleReact uses a ForkJoinPool as the ExecutorService by default, and to reuse the ExecutorService with parallelStreams it must be a ForkJoinPool - so if you want to supply your own make sure it is also a ForkJoinPool. 
+It is possible to reuse the internal SimpleReact ExecutorService for JDK 8 parallelStreams. SimpleReact uses a ForkJoinPool as the ExecutorService by default, and to reuse the ExecutorService with parallelStreams it must be a ForkJoinPool - so if you want to supply your own make sure it is also a ForkJoinPool. The easiest way to do this is via the submitAndBlock method.
 
-A mechamism to share ExecutorServices is provided via the *collectResults* method, this collects the results from the current active tasks, and clients are given the full range of SimpleReact blocking options.  The results will then be provided to a function provided by client code when the *submit* is called. A way to merge all these steps into a single method is also provided (submitAndBlock). The easiest way to do this is via the submitAndBlock method 
+*Detailed Explanation* A mechanism to share the SimpleReact ExecutorService with JDK Parallel Streams is provided via the *collectResults* method. NB This will only actually share the ExecutorService if it is an instance of ForkJoinPool (limitation imposed on JDK side). This method collects the results from the current active tasks, and clients are given the full range of SimpleReact blocking options.  The results will then be made available to a user provided function when the *submit* method is called. The submit method will ensure that the user function is executed in such a way that the SimpleReact ExecutorService will also be used by ParallelStreams. It does this by submiting the user function & results to the ForkJoinPool and ParallelStreams has been written in such away to resuse any ForkJoinPool it is executed inside.
+ 
+A way to merge all these steps into a single method is also provided (submitAndBlock). 
 
 Example :
 
