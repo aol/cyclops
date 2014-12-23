@@ -51,8 +51,7 @@ public class Stage<U> {
 	@SuppressWarnings("rawtypes")
 	private final List<CompletableFuture> lastActive;
 	private final Optional<Consumer<Throwable>> errorHandler;
-	//@Getter
-//	private final Optional<U> results;
+
 	
 
 	/**

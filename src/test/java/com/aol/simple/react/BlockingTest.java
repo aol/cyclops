@@ -24,7 +24,7 @@ public class BlockingTest {
 		Integer result = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 200)
-				.<Integer> block()
+				.block()
 				.parallelStream()
 				.filter(f -> f > 300)
 				.map(m -> m - 5)
