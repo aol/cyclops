@@ -54,7 +54,7 @@ React **with**
 
 			List<CompletableFuture<Integer>> futures = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
-				.with((it) -> it * 100);
+				.with(it -> it * 100);
 
 In this instance, 3 suppliers generate 3 numbers. These may be executed in parallel, when they complete each number will be multiplied by 100 - as a separate parrellel task (handled by a ForkJoinPool or configurable task executor). A List of Future objects will be returned immediately from Simple React and the tasks will be executed asynchronously.
 React with does not block.
@@ -64,8 +64,8 @@ React **then**
 
 	 	new SimpleReact()
 	 			.<Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100)
-				.then((it) -> "*" + it)
+				.then(it -> it * 100)
+				.then(it -> "*" + it)
 
 
 React then allows event reactors to be chained. Unlike React with, which returns a collection of Future references, React then is a fluent interface that returns the React builder - allowing further reactors to be added to the chain.
@@ -79,8 +79,8 @@ React and **block**
 
 			List<String> strings = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100)
-				.then((it) -> "*" + it)
+				.then(it -> it * 100)
+				.then(it -> "*" + it)
 				.block();
 						
 In this example, once the current thread of execution meets the React block method, it will block until all tasks have been completed. The result will be returned as a List. The Reactive tasks triggered by the Suppliers are non-blocking, and are not impacted by the block method until they are complete. Block, only blocks the current thread.
