@@ -5,11 +5,9 @@ import static java.util.Arrays.asList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -48,12 +46,13 @@ import lombok.extern.slf4j.Slf4j;
 public class Stage<U> {
 
 	private final ExceptionSoftener exceptionSoftener = ExceptionSoftener.singleton.factory.getInstance();
+	@Getter(AccessLevel.PACKAGE)
 	private final ExecutorService taskExecutor;
 	@SuppressWarnings("rawtypes")
 	private final List<CompletableFuture> lastActive;
 	private final Optional<Consumer<Throwable>> errorHandler;
-	@Getter
-	private final Optional<U> results;
+	//@Getter
+//	private final Optional<U> results;
 	
 
 	/**
@@ -71,38 +70,7 @@ public class Stage<U> {
 		this.taskExecutor = executor;
 		this.lastActive = stream.collect(Collectors.toList());
 		this.errorHandler = Optional.of( (e)-> log.error(e.getMessage(),e));
-		this.results = Optional.empty();
 		
-	}
-	
-	
-	/**
-	 * @return Results, collected via collectResults, for this stage in the dataflow
-	 */
-	public <U> Optional<U> getResults(){
-		return (Optional<U>)results;
-	}
-	
-	/**
-	 * 
-	 * @return Unwrapped results, collected via collectResults, for this stage in the dataflow - may be null
-	 * 
-	 */
-	public <U> U extractResults(){
-		if(!results.isPresent())
-			return null;
-		return (U)results.get();
-	}
-
-	
-	/**
-	 * This method allows the SimpleReact ExecutorService to be reused by JDK parallel streams. It is best used when
-	 * collectResults and block are called explicitly for finer grained control over the blocking conditions.
-	 * 
-	 * @param Function that contains parallelStream code to be executed by the SimpleReact ForkJoinPool (if configured)
-	 */
-	public <R> R submit(Function <Optional<U>,R> fn){
-		return submit (() -> fn.apply(this.results));
 	}
 	
 	/**
@@ -111,36 +79,10 @@ public class Stage<U> {
 	 * 
 	 * @param Function that contains parallelStream code to be executed by the SimpleReact ForkJoinPool (if configured)
 	 */
-	public <U,R> R submitAndBlock(Function <U,R> fn){
-		return submit (() -> fn.apply((U)this.block()));
+	public <R> R submitAndBlock(Function <List<U>,R> fn){
+		return collectResults().block().submit (r -> fn.apply(r));
 	}
-	
-	/**
-	 * This method allows the SimpleReact ExecutorService to be reused by JDK parallel streams
-	 * 
-	 * @param callable that contains code
-	 */
-	private <T> T submit(Callable<T> callable){
-		if(taskExecutor instanceof ForkJoinPool){
-			log.debug("Submited callable to SimpleReact ForkJoinPool. JDK ParallelStreams will reuse SimpleReact ForkJoinPool.");
-			try {
-				return taskExecutor.submit(callable).get();
-			} catch (ExecutionException e) {
-				exceptionSoftener.throwSoftenedException(e);
-				
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				exceptionSoftener.throwSoftenedException(e);
-				
-			}
-		}
-		try {
-			log.debug("Submited callable but do not have a ForkJoinPool. JDK ParallelStreams will use Common ForkJoinPool not SimpleReact ExecutorService.");
-			return callable.call();
-		} catch (Exception e) {
-			throw new RuntimeException(e); 
-		}
-	}
+
 	/**
 	 * 
 	 * React <b>with</b>
@@ -230,7 +172,6 @@ public class Stage<U> {
 	 * @return   A new builder object that can be used to define the next stage in
 	 *         the dataflow
 	 */
-	@SuppressWarnings("unchecked")
 	public Stage<U> peek(final Consumer<U> consumer) {
 		return (Stage<U>)then( (t) -> {  consumer.accept(t); return (U)t;});
 	}
@@ -260,7 +201,7 @@ public class Stage<U> {
 	/**
 	 * @return A Stream of CompletableFutures that represent this stage in the dataflow
 	 */
-	@SuppressWarnings({ "unchecked", "hiding" })
+	@SuppressWarnings({ "unchecked"})
 	public <T> Stream<CompletableFuture<T>> stream(){
 		return Stream.of(this.lastActive.toArray(new CompletableFuture[0]));
 		
@@ -338,7 +279,7 @@ public class Stage<U> {
 	 * @return A new builder object that can be used to define the next stage in
 	 *         the dataflow
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Stage<U> onFail(final Function<? extends Throwable, U> fn) {
 		return (Stage<U>) this
 				.withLastActive(lastActive.stream()
@@ -422,6 +363,7 @@ public class Stage<U> {
 	 * 
 	 * @return A builder that allows the blocking mechanism for results collection to be set
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public ReactCollector<U> collectResults(){
 		return new ReactCollector(this);
 	}
@@ -447,7 +389,7 @@ public class Stage<U> {
 	 * @throws InterruptedException,ExecutionException
 	 */
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public  List<U> block() {
+	public List<U> block() {
 		return block(Collectors.toList(),lastActive);
 	}
 	
@@ -456,7 +398,7 @@ public class Stage<U> {
 	 * @return Results of currently active stage in aggregated in form determined by collector
 	 * @throws InterruptedException,ExecutionException
 	 */
-	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
+	@SuppressWarnings({ "unchecked","rawtypes"})
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public <R> R block(final Collector collector) {
 		return (R)block(collector,lastActive);
@@ -468,9 +410,9 @@ public class Stage<U> {
 	 * @return  first result.
 	 * @throws InterruptedException,ExecutionException
 	 */
-	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
+	
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public <R> R first() {
+	public U first() {
 		return blockAndExtract(Extractors.first(),status -> status.getCompleted() > 1);
 	}
 	
@@ -480,9 +422,8 @@ public class Stage<U> {
 	 * @return  last result
 	 * @throws InterruptedException,ExecutionException
 	 */
-	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public <R> R last() {
+	public U last() {
 		return blockAndExtract(Extractors.last());
 	}
 	
@@ -493,9 +434,8 @@ public class Stage<U> {
 	 * @return Value determined by the supplied extractor
 	 * @throws InterruptedException,ExecutionException
 	 */
-	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public <U,R> R blockAndExtract(final Extractor extractor) {
+	public <R> R blockAndExtract(@SuppressWarnings("rawtypes") final Extractor extractor) {
 		return blockAndExtract(extractor, status -> false);
 	}
 	
@@ -508,9 +448,9 @@ public class Stage<U> {
 	 * @return Value determined by the supplied extractor
 	 * @throws InterruptedException,ExecutionException
 	 */
-	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
+	@SuppressWarnings({"unchecked","rawtypes"})
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public <U,R> R blockAndExtract(final Extractor extractor,final Predicate<Status> breakout) {
+	public <R> R blockAndExtract(final Extractor extractor,final Predicate<Status> breakout) {
 		return (R)extractor.extract(block());
 	}
 
@@ -539,10 +479,9 @@ public class Stage<U> {
 	 *         point or when breakout triggered (which ever comes first).
 	 * @throws InterruptedException,ExecutionException
 	 */
-	@SuppressWarnings("hiding")
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public <X> List<X> block(final Predicate<Status> breakout) {
-		return new Blocker<X>(lastActive, errorHandler).block(breakout);
+	public  List<U> block(final Predicate<Status> breakout) {
+		return new Blocker<U>(lastActive, errorHandler).block(breakout);
 	}
 	
 	
@@ -554,9 +493,9 @@ public class Stage<U> {
 	 *         point or when breakout triggered (which ever comes first), in aggregated in form determined by collector
 	 * @throws InterruptedException,ExecutionException
 	 */
-	@SuppressWarnings({ "hiding", "unchecked","rawtypes" })
+	@SuppressWarnings({ "unchecked","rawtypes" })
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public <U,R> R block(final Collector collector,final Predicate<Status> breakout) {
+	public <R> R block(final Collector collector,final Predicate<Status> breakout) {
 		return (R)block(breakout).stream().collect(collector);
 	}
 	
@@ -615,13 +554,13 @@ public class Stage<U> {
 
 		return (Stage<R>) withLastActive(asList( CompletableFuture.allOf(
 				lastActiveArray()).thenApplyAsync((result) -> {
-						return submit( () -> fn.apply(aggregateResults(collector, lastActive)));
+						return new StageWithResults(this,result).submit( () -> fn.apply(aggregateResults(collector, lastActive)));
 					}, taskExecutor)));
 
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked", "hiding" })
-	private <U,R> R block(final Collector collector,final List<CompletableFuture> lastActive) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private <R> R block(final Collector collector,final List<CompletableFuture> lastActive) {
 		return (R)lastActive.stream().map((future) -> {
 			return (U) getSafe(future);
 		}).filter(v -> v != MISSING_VALUE).collect(collector);
@@ -659,10 +598,10 @@ public class Stage<U> {
 		}
 		return MISSING_VALUE;
 	}
-	
-	Stage<U> withLastActive(List<CompletableFuture> lastActive){
-		return new Stage<U>(taskExecutor, lastActive, errorHandler, Optional.<U>empty());
-	}
+	/**
+	Stage<U> withLastActive(@SuppressWarnings("rawtypes") List<CompletableFuture> lastActive){
+		return new Stage<U>(taskExecutor, lastActive, errorHandler);
+	}**/
 	
 	
 

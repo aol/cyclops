@@ -24,6 +24,7 @@ public class ResultCollectionTest {
 				.then(it -> "*" + it)
 				.collectResults()
 				.block()
+				.proceed()
 				.then(it -> it +"*").block();
 
 		assertThat(strings.size(), is(3));
@@ -31,21 +32,7 @@ public class ResultCollectionTest {
 		assertThat(strings.get(0), startsWith("*"));
 
 	}
-	@Test
-	public void testBlockThenResultReset() throws InterruptedException, ExecutionException {
-
-		assertThat( new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
-				.then(it -> it * 100)
-				.then(it -> "*" + it)
-				.collectResults()
-				.block()
-				.then(it -> it +"*")
-				.getResults().isPresent(), not(true));
-
-		
-
-	}
+	
 	@Test
 	public void testBlockThenResultResetAndCorrect() throws InterruptedException, ExecutionException {
 
@@ -55,6 +42,7 @@ public class ResultCollectionTest {
 				.then(it -> "*" + it)
 				.collectResults()
 				.block()
+				.proceed()
 				.then(it -> it +"*")
 				.block();
 
@@ -64,18 +52,7 @@ public class ResultCollectionTest {
 
 	}
 	
-	@Test
-	public void testBlockOnFailResultReset() throws InterruptedException, ExecutionException {
-
-		assertThat( new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
-				.then(it -> it * 100)
-				.then(it -> "*" + it)
-				.collectResults()
-				.block()
-				.onFail(it -> 1)
-				.getResults().isPresent(), not(true));
-	}
+	
 	
 	@Test
 	public void testBlockStreamsSameForkJoinPool() throws InterruptedException,
@@ -85,9 +62,8 @@ public class ResultCollectionTest {
 		Integer result = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then((it) -> { threadGroup.add(Thread.currentThread().getThreadGroup().getName()); return it * 200;})
-				.collectResults().<List<Integer>>block().submit( 
-						it -> it.orElse(new ArrayList())
-								.parallelStream()
+				.collectResults().block().<Integer>submit( 
+						it -> it.parallelStream()
 								.filter(f -> f > 300)
 								.map(m ->{ threadGroup.add(Thread.currentThread().getThreadGroup().getName());return m - 5; })
 								.reduce(0, (acc, next) -> acc + next));
@@ -106,7 +82,7 @@ public class ResultCollectionTest {
 		Integer result = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then((it) -> { threadGroup.add(Thread.currentThread().getThreadGroup().getName()); return it * 200;})
-				.<List<Integer>,Integer>submitAndBlock( 
+				.submitAndBlock( 
 						it -> it.parallelStream()
 								.filter(f -> f > 300)
 								.map(m ->{ threadGroup.add(Thread.currentThread().getThreadGroup().getName());return m - 5; })
@@ -122,13 +98,14 @@ public class ResultCollectionTest {
 	@Test
 	public void testBlock() throws InterruptedException, ExecutionException {
 
+		
 		List<String> strings = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.collectResults()
 				.block()
-				.<List<String>>getResults().get();
+				.getResults();
 
 		assertThat(strings.size(), is(3));
 
@@ -141,8 +118,8 @@ public class ResultCollectionTest {
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.collectResults()
-				.block(Collectors.toSet())
-				.<Set<String>>getResults().get();
+				.<Set<String>>block(Collectors.toSet())
+				.getResults();
 
 		assertThat(strings.size(), is(2));
 
@@ -161,7 +138,7 @@ public class ResultCollectionTest {
 				}).onFail(e -> 1).then((it) -> "*" + it)
 				.collectResults()
 				.block(status -> status.getCompleted() > 1)
-				.extractResults();
+				.getResults();
 
 		assertThat(strings.size(), is(2));
 
@@ -179,8 +156,8 @@ public class ResultCollectionTest {
 					return it;
 				}).onFail(e -> 1).then((it) -> "*" + it)
 				.collectResults()
-				.block(Collectors.toSet(),status -> status.getCompleted() > 1)
-				.extractResults();
+				.<Set<String>>block(Collectors.toSet(),status -> status.getCompleted() > 1)
+				.getResults();
 
 		assertThat(strings.size(), is(2));
 
@@ -193,14 +170,14 @@ public class ResultCollectionTest {
 		List<String> strings = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
-				.then(it -> {
+				.<String>then(it -> {
 
 					throw new RuntimeException("boo!");
 
 				}).capture(e -> error[0] = e)
 				.collectResults()
 				.block(status -> status.getCompleted() >= 1)
-				.extractResults();
+				.getResults();
 
 		assertThat(strings.size(), is(0));
 		assertThat(error[0], is(RuntimeException.class));
@@ -213,14 +190,14 @@ public class ResultCollectionTest {
 		List<String> strings = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
-				.then(it -> {
+				.<String>then(it -> {
 
 					throw new RuntimeException("boo!");
 
 				}).capture(e -> count++)
 				.collectResults()
 				.block(status -> status.getCompleted() >= 1)
-				.extractResults();
+				.getResults();
 
 		assertThat(strings.size(), is(0));
 		assertThat(count, is(3));
@@ -229,7 +206,7 @@ public class ResultCollectionTest {
 	public void testBreakoutAllCompleted() throws InterruptedException,
 			ExecutionException {
 		count =0;
-		List<String> strings = new SimpleReact()
+		List<Integer> results = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
@@ -242,14 +219,14 @@ public class ResultCollectionTest {
 				}).capture(e -> count++)
 				.block(status -> status.getAllCompleted() >0);
 
-		assertThat(strings.size(), is(0));
+		assertThat(results.size(), is(0));
 		assertThat(count, is(1));
 	}
 	@Test
 	public void testBreakoutAllCompletedAndTime() throws InterruptedException,
 			ExecutionException {
 		count =0;
-		List<String> strings = new SimpleReact()
+		List<Integer> results = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
@@ -259,7 +236,7 @@ public class ResultCollectionTest {
 				}).capture(e -> count++)
 				.block(status -> status.getAllCompleted() >1 && status.getElapsedMillis()>200);
 
-		assertThat(strings.size(), is(2));
+		assertThat(results.size(), is(2));
 		assertThat(count, is(0));
 	}
 	

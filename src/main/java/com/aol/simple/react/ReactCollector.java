@@ -1,5 +1,6 @@
 package com.aol.simple.react;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
@@ -33,8 +34,8 @@ class ReactCollector<U> {
 	 */
 	@SuppressWarnings({ "hiding", "unchecked" })
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public <U> Stage<U> block() {
-		return (Stage<U>)this.packageResults(builder.block());
+	public  StageWithResults<List<U>,U> block() {
+		return (StageWithResults<List<U>,U>)this.packageResults(builder.block());
 	}
 	
 	/**
@@ -44,8 +45,8 @@ class ReactCollector<U> {
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public <U> Stage<U> block(final Collector collector) {
-		return (Stage<U>)this.packageResults(builder.block(collector));
+	public <X> StageWithResults<X,U> block(final Collector collector) {
+		return (StageWithResults<X,U>)this.packageResults(builder.block(collector));
 	}
 	/**
 	 * Block until first result recieved
@@ -55,8 +56,8 @@ class ReactCollector<U> {
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public <U> Stage<U> first() {
-		return (Stage<U>)packageResults(builder.first());
+	public StageWithResults<U,U> first() {
+		return (StageWithResults<U,U>)packageResults(builder.first());
 	}
 	/**
 	 * Block until all results recieved.
@@ -66,8 +67,8 @@ class ReactCollector<U> {
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public <U> Stage<U> last() {
-		return (Stage<U>)packageResults(builder.last());
+	public StageWithResults<U,U> last() {
+		return (StageWithResults<U,U>)packageResults(builder.last());
 	}
 	
 	/**
@@ -79,8 +80,8 @@ class ReactCollector<U> {
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public <U> Stage<U>blockAndExtract(final Extractor extractor) {
-		return (Stage<U>)this.packageResults(builder.blockAndExtract(extractor));
+	public <X> StageWithResults<X,U> blockAndExtract(final Extractor extractor) {
+		return (StageWithResults<X,U>)this.packageResults(builder.blockAndExtract(extractor));
 	}
 	/**
 	 *  Block until tasks complete, or breakout conditions met and return a value determined by the extractor supplied.
@@ -93,8 +94,8 @@ class ReactCollector<U> {
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public <U> Stage<U> blockAndExtract(final Extractor extractor,final Predicate<Status> breakout) {
-		return (Stage<U>)this.packageResults(builder.blockAndExtract(extractor,breakout));
+	public <X> StageWithResults<X,U> blockAndExtract(final Extractor extractor,final Predicate<Status> breakout) {
+		return (StageWithResults<X,U>)this.packageResults(builder.blockAndExtract(extractor,breakout));
 	}
 
 	/**
@@ -124,8 +125,8 @@ class ReactCollector<U> {
 	 */
 	@SuppressWarnings({ "hiding", "rawtypes", "unchecked" })
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public  Stage<U> block(final Predicate<Status> breakout) {
-		return (Stage<U>)packageResults(builder.block(breakout) );
+	public  StageWithResults<List<U>,U> block(final Predicate<Status> breakout) {
+		return (StageWithResults<List<U>,U>)packageResults(builder.block(breakout) );
 	}
 	
 	
@@ -140,11 +141,11 @@ class ReactCollector<U> {
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes" })
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public <U> Stage<U> block(final Collector collector,final Predicate<Status> breakout) {
-		return (Stage<U>)this.packageResults( builder.block(collector,breakout));
+	public <X> StageWithResults<X,U> block(final Collector collector,final Predicate<Status> breakout) {
+		return (StageWithResults<X,U>)this.packageResults( builder.block(collector,breakout));
 	}
-	private <Y> Stage<U> packageResults(Y results){
-		return builder.withResults(Optional.of((U)results));
+	private <Y> StageWithResults<Y,U> packageResults(Y results){
+		return new StageWithResults(builder,results);
 	}
 	
 }
