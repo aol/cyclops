@@ -2,6 +2,7 @@ package com.aol.simple.react;
 
 import static java.util.Arrays.asList;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
@@ -29,6 +30,8 @@ import lombok.extern.slf4j.Slf4j;
  * 
  * Access the underlying CompletableFutures via the 'with' method. Return to
  * using JDK Collections and (parrellel) Streams via 'allOf' or 'block'
+ * 
+ * 
  * 
  * @author johnmcclean
  *
@@ -264,6 +267,37 @@ public class Stage<U> {
 	}
 
 	
+	/**
+	 * Merge this reactive dataflow with another of the same type.
+	 * To merge flows of different types use the static method merge and merge to a common ancestor.
+	 * 
+	 * @param s Reactive stage builder to merge with
+	 * @return Merged dataflow
+	 */
+	@SuppressWarnings({"unchecked","rawtypes"})
+	public Stage<U> merge(Stage<U> s){
+		List merged = Stream.of(this.lastActive,s.lastActive)
+				.flatMap(Collection::stream)
+				.collect(Collectors.toList());
+		return (Stage<U>)this.withLastActive(merged);
+	}
+	
+	/**
+	 * Merge this reactive dataflow with another - recommended for merging different types.
+	 *  To merge flows of the same type the instance method merge is more appropriate.
+	 * 
+	 * @param s1 Reactive stage builder to merge 
+	 * @param s2 Reactive stage builder to merge 
+	 * @return Merged dataflow
+	 */
+	@SuppressWarnings({"unchecked","rawtypes"})
+	public static <R> Stage<R> merge(Stage s1, Stage s2){
+		List merged = Stream.of(s1.lastActive,s2.lastActive)
+				.flatMap(Collection::stream)
+				.collect(Collectors.toList());
+		return (Stage<R>)s1.withLastActive(merged);
+	}
+	
 	
 	/**
 	 * React <b>onFail</b>
@@ -408,12 +442,12 @@ public class Stage<U> {
 	 * Suppliers are non-blocking, and are not impacted by the block method
 	 * until they are complete. Block, only blocks the current thread.
 	 * 
+	 * 
 	 * @return Results of currently active stage aggregated in a List
 	 * @throws InterruptedException,ExecutionException
 	 */
-	@SuppressWarnings("hiding")
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public <U> List<U> block() {
+	public  List<U> block() {
 		return block(Collectors.toList(),lastActive);
 	}
 	
@@ -424,7 +458,7 @@ public class Stage<U> {
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public <U,R> R block(final Collector collector) {
+	public <R> R block(final Collector collector) {
 		return (R)block(collector,lastActive);
 	}
 	
@@ -436,7 +470,7 @@ public class Stage<U> {
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public <U,R> R first() {
+	public <R> R first() {
 		return blockAndExtract(Extractors.first(),status -> status.getCompleted() > 1);
 	}
 	
@@ -448,7 +482,7 @@ public class Stage<U> {
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public <U,R> R last() {
+	public <R> R last() {
 		return blockAndExtract(Extractors.last());
 	}
 	

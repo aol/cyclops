@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
@@ -59,11 +60,11 @@ public class GeneratorTest {
 	public void testGenerateDataflowMovingConcurrently() throws InterruptedException, ExecutionException {
 		count =0;
 		second =0;
-		new SimpleReact()
+		Stage s = new SimpleReact()
 				.<Integer> react(() -> {
 					sleep(count++);
 					return count;
-				} ,times(100))
+				} ,times(50))
 				.then(it -> it * 100)
 				.then(it -> {
 					
@@ -76,10 +77,10 @@ public class GeneratorTest {
 		
 		while(count<10){ }
 		assertThat(second,greaterThan(0)); 
-		assertThat(count,lessThan(100)); 
+		assertThat(count,lessThan(50)); 
 		assertThat(count,greaterThan(2));
 		
-		
+		s.block();
 		
 	}
 	@Test
@@ -111,11 +112,11 @@ public class GeneratorTest {
 	public void testIterateDataflowMovingConcurrently() throws InterruptedException, ExecutionException {
 		count =0;
 		second =0;
-		new SimpleReact()
+		Stage s = new SimpleReact()
 				.<Integer> react((input) -> {
 					sleep(count++);
 					return count;
-				} ,iterate(0).times(100))
+				} ,iterate(0).times(50))
 				.then(it -> it * 100)
 				.then(it -> {
 					
@@ -127,11 +128,11 @@ public class GeneratorTest {
 		//generation has not complete / but chain has complete for some flows
 		while(count<3){ }
 		assertThat(second,greaterThan(0));
-		assertThat(count,lessThan(100)); 
+		assertThat(count,lessThan(50)); 
 		assertThat(count,greaterThan(2));
 		
 		
-		
+		s.block();
 	}
 	@Test
 	public void testGenerateOverIteratorOptional() throws InterruptedException, ExecutionException {
@@ -177,8 +178,8 @@ public class GeneratorTest {
 	
 	@Test
 	public void testGenerateParellel() throws InterruptedException, ExecutionException {
-		Set<Long> threads = new SimpleReact()
-				.<Long> react(() ->Thread.currentThread().getId() ,SimpleReact.timesInParallel(4))
+		Set<Long> threads = new SimpleReact(new ForkJoinPool(10))
+				.<Long> react(() ->Thread.currentThread().getId() ,SimpleReact.timesInParallel(10))
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.capture(e -> capture++)

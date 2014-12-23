@@ -2,6 +2,7 @@ package com.aol.simple.react;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
@@ -32,7 +33,12 @@ public class BlockingTest {
 		assertThat(result, is(990));
 	}
 
+	@Test
+	public void testTypeInferencing(){
+		List<String> result = new SimpleReact().react(() -> "World",()-> "Hello").then( in -> "hello").block();
+		assertThat(result.size(),is(2));
 	
+	}
 	
 	
 	

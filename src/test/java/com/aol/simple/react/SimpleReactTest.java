@@ -41,17 +41,18 @@ public class SimpleReactTest {
 				.with(it -> it * 100);
 
 		assertThat(futures.get(0).get(), is(greaterThan(99)));
+		
+		new SimpleReact().fromStream(futures.stream()).block();
 
 	}
 	@Test
 	public void testMultithreading() throws InterruptedException, ExecutionException {
-		Set<Long> threads = Collections.synchronizedSet(new TreeSet());
 		
-		new SimpleReact(new ForkJoinPool(10))
-				.<Integer> react(() -> 1, () -> 2, () -> 3).then(
-						(it) -> {
-							threads.add(Thread.currentThread().getId());
-							return it * 100;}).block();
+		
+		 Set<Long> threads = new SimpleReact(new ForkJoinPool(10))
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.then(it -> Thread.currentThread().getId())
+				.block(Collectors.toSet());
 
 		assertThat(threads.size(), is(greaterThan(2)));
 
@@ -66,6 +67,8 @@ public class SimpleReactTest {
 
 		System.out.println(futures.get(0).get());
 		assertThat(futures.get(0).get(), is(containsString("*")));
+		
+		new SimpleReact().fromStream(futures.stream()).block();
 
 	}
 
@@ -273,7 +276,7 @@ public class SimpleReactTest {
 	}
 	@Test
 	public void testThenNull(){
-		List<String> result = new SimpleReact().react(() -> "World",()-> "Hello").then( in -> null).block();
+		List<String> result = new SimpleReact().react(() -> "World",()-> "Hello").then( in -> (String)null).block();
 		assertThat(result.size(),is(2));
 		assertThat(result.get(0),is(nullValue()));
 	

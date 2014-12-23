@@ -14,11 +14,11 @@ Because of this, it is often possible, but more complex to use parallelStreams f
 
 There a few core differences
 
-*	With parallelStreams evaluation is lazy, it won’t be triggered until something like collect is called, which will then block the current thread. 
-*	With SimpleReact, the async processing starts as soon as react is called, and won’t block the current thread unless the user asks for it (via block()).
-*	Selection of ExecutorService - with parallelStreams you are limited to using a ForkJoinPool, and changing away from the common ForkJoinPool is awkward
+*	With parallelStreams evaluation is lazy, it won’t be triggered until something like collect is called, which will then block the current thread
+*	With SimpleReact, the async processing starts as soon as react is called, and won’t block the current thread unless the user asks for it (via block())
 *	A Stream will be closed and can’t be resused at a given stage (you can’t take a copy of the stream and rerun the same task over and over from that point)
-*	A SimpleReact stage can be split and invoked multiple times if needed (e.g. do expensive preprocessing on startup, and continue from a cached point during an application request)
+*	A SimpleReact stage can be forked and merged at will
+*	Selection of ExecutorService - with parallelStreams you are limited to using a ForkJoinPool, and changing away from the common ForkJoinPool is awkward
 *	With a SimpleReact data flow you can also access the underlying concurrency primitives (Streams of CompletableFutures) at any point and build something tailored to your own use case for the next stage. SimpleReact also makes it straightforward to return back into the reactive dataflow.
 *	It’s very obvious that your code is concurrent  with SimpleReact - it can be easy to miss the parallelStream method call, and may not always be apparent which steps are executed concurrently and which are blocking.	
 
@@ -288,3 +288,19 @@ SimpleReact provides a mechanism over JDK Stream iterate and generate which will
 				.capture(e -> capture++)
 				.block();
 
+##Example 12 : Splitting and merging SimpleReact dataflows
+
+A simple example below where a dataflow is split into 3, processed separately then merged back into a single flow.
+
+	Stage<String> stage = new SimpleReact()
+				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.then(it -> "*" + it);
+		Stage<String> stage1 = stage.filter(it -> it.startsWith("*1"));
+		Stage<String> stage2 = stage.filter(it -> it.startsWith("*2"));
+		Stage<String> stage3 = stage.filter(it -> it.startsWith("*3"));
+		
+		stage1 = stage1.then(it -> it+"!");
+		stage2 = stage2.then(it -> it+"*");
+		stage3 = stage3.then(it -> it+"%");
+		
+		List<String> result = stage1.merge(stage2).merge(stage3).block();
