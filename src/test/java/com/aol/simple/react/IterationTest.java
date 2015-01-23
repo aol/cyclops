@@ -39,6 +39,20 @@ public class IterationTest {
 		assertThat(strings.size(), is(4));
 		
 	}
+	
+	@Test
+	public void testReactWithCollectionOfStrings() throws InterruptedException, ExecutionException {
+		List<String> list = Arrays.asList("hello","world","$da^","along");
+		int count  = new SimpleReact()
+				.reactToCollection(list)
+				.filter(it -> !it.startsWith("$"))
+				.then(it -> it.length())
+				.block().stream().reduce(0, (acc,next) -> acc+next );
+
+		assertThat(count, is(15));
+		
+	}
+	
 	@Test
 	public void testIterateLargeMaxSize() throws InterruptedException, ExecutionException {
 		List<Integer> list = Arrays.asList(1,2,3,4);
