@@ -1,8 +1,9 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
 
 sourceCompatibility = 1.8
-version = '1.0'
+version = '0.6'
 jar {
     manifest {
         attributes 'Implementation-Title': 'Simple React', 'Implementation-Version': version
@@ -25,6 +26,18 @@ dependencies {
 test {
     systemProperties 'property': 'value'
 }
+
+publishing {
+        publications {
+            maven(MavenPublication) {
+                groupId 'com.aol.simple.react'
+                artifactId 'simple-react'
+               version '0.6'
+
+                from components.java
+            }
+        }
+    }
 
 uploadArchives {
     repositories {
