@@ -1,7 +1,8 @@
 package com.aol.simple.react;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -17,6 +18,19 @@ public class IterationTest {
 		List<Integer> list = Arrays.asList(1,2,3,4);
 		List<String> strings = new SimpleReact()
 				.<Integer> react(list.iterator() ,list.size())
+				.peek(it -> System.out.println(it))
+				.then(it -> it * 100)
+				.then(it -> "*" + it)
+				.block();
+
+		assertThat(strings.size(), is(4));
+		
+	}
+	@Test
+	public void testReactWithCollection() throws InterruptedException, ExecutionException {
+		List<Integer> list = Arrays.asList(1,2,3,4);
+		List<String> strings = new SimpleReact()
+				.<Integer> reactToCollection(list)
 				.peek(it -> System.out.println(it))
 				.then(it -> it * 100)
 				.then(it -> "*" + it)

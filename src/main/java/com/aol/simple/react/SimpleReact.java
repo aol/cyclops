@@ -1,7 +1,6 @@
 package com.aol.simple.react;
 
-import static com.aol.simple.react.SimpleReact.iterate;
-
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -96,6 +95,18 @@ public class SimpleReact {
 		.<U>filter(it -> it.isPresent())
 		.<U>then(it -> it.get());
 	}
+	/**
+	 * Start a reactive flow from a Collection using an Iterator
+	 * 
+	 * @param collection - Collection SimpleReact will iterate over at the start of the flow
+	 *
+	 * @return Next stage in the reactive flow
+	 */
+	@SuppressWarnings("unchecked")
+	public <R> Stage<R> reactToCollection(final Collection<R> collection){
+		return react(collection.iterator(),collection.size());
+	}
+	
 	
 	/**
 	 * Start a reactive dataflow from a single Supplier, which will be executed repeatedly according to rules defined by the generator.
