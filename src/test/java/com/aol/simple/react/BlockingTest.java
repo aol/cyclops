@@ -202,19 +202,19 @@ public class BlockingTest {
 	@Test
 	public void testBreakoutAllCompletedAndTime() throws InterruptedException,
 			ExecutionException {
-		count =0;
-		List<Integer> result = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
-				.then(it -> it * 100)
-				.then(it -> {
-					sleep(it);
-					return it;
-
-				}).capture(e -> count++)
-				.block(status -> status.getAllCompleted() >1 && status.getElapsedMillis()>200);
-
-		assertThat(result.size(), is(2));
-		assertThat(count, is(0));
+			count =0;
+			List<Integer> result = new SimpleReact()
+					.<Integer> react(() -> 1, () -> 2, () -> 3)
+					.then(it -> it * 100)
+					.then(it -> {
+						sleep(it);
+						return it;
+	
+					}).capture(e -> count++)
+					.block(status -> status.getAllCompleted() >1 && status.getElapsedMillis()>200);
+	
+			assertThat(result.size(), is(2));
+			assertThat(count, is(0));
 	}
 	
 

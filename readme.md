@@ -3,17 +3,17 @@
 SimpleReact is an easy to use reactive programming library for JDK 8. It is a fluent API built on top of Java 8 CompletableFutures and the Stream API. It provides a focused, simple and limited Reactive API aimed at solving the 90% use case - but without adding complexity.
 
 See getting started example : https://github.com/aol/simple-react/wiki/Getting-started-with-a-simple-example
-What does Simple React do : https://github.com/aol/simple-react/wiki/What-does-Simple-React-do%3F
+What does Simple React do : https://github.com/aol/simple-react/wiki/What-does-SimpleReact-do%3F
 
 ##Why SimpleReact
 
 
-SimpleReact is built on top of JDK standard libraries and unlike other Reactive implementations for Java, specifically targets Java 8 and thus does reuses rather than reinvents  Streams, Functional interfaces etc. SimpleReact augments the parallel Streams functionality in JDK by providing a facade over both the Streams and CompletableFuture apis. Under-the-hood, SimpleReact *is* a Stream of CompletableFutures, and presents that externally as an api somewhat inspired by the Javascript Promises / A+ Spec (https://promisesaplus.com/).
+SimpleReact is built on top of JDK standard libraries and unlike other Reactive implementations for Java, specifically targets JDK 8 and thus reuses rather than reinvents  Streams, Functional interfaces etc. SimpleReact augments the parallel Streams functionality in JDK by providing a facade over both the Streams and CompletableFuture apis. Under-the-hood, SimpleReact *is* a Stream of CompletableFutures, and presents that externally as an api somewhat inspired by the Javascript Promises / A+ Spec (https://promisesaplus.com/).
 
 
 ##Data flow
 
-Simple react starts with an array of Suppliers which generate data other functions will react to. Each supplier will be passed to an Executor to be executed, potentially on a separate thread. Each additional step defined when calling Simple React will also be added as a linked task, also to be executed, potentially on a separate thread.
+SimpleReact starts with an array of Suppliers which generate data other functions will react to. Each supplier will be passed to an Executor to be executed, potentially on a separate thread. Each additional step defined when calling Simple React will also be added as a linked task, also to be executed, potentially on a separate thread.
 
 ##Example 1 : reacting with completablefutures
 

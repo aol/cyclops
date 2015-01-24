@@ -71,4 +71,9 @@ public class MergeTest {
 		
 
 	}
+	
+	@Test 
+	public void mergeAndContinueProcessing(){
+		//fail("not implemented");
+	}
 }

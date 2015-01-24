@@ -42,14 +42,18 @@ public class IterationTest {
 	
 	@Test
 	public void testReactWithCollectionOfStrings() throws InterruptedException, ExecutionException {
-		List<String> list = Arrays.asList("hello","world","$da^","along");
+		List<String> list = Arrays.asList("hello","world","$da^","along","$orrupted",null);
 		int count  = new SimpleReact()
 				.reactToCollection(list)
+				.capture(e -> e.printStackTrace())
 				.filter(it -> !it.startsWith("$"))
+			
+				.onFail(e -> { if(e.getCause() instanceof NullPointerException) { return "null"; } return "";})
+
 				.then(it -> it.length())
 				.block().stream().reduce(0, (acc,next) -> acc+next );
 
-		assertThat(count, is(15));
+		assertThat(count, is(19));
 		
 	}
 	
