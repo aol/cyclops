@@ -10,44 +10,6 @@ What does Simple React do : https://github.com/aol/simple-react/wiki/What-does-S
 
 Simple React is built on top of JDK standard libraries and unlike other Reactive implementations for Java, specifically targets Java 8 and thus does reuses rather than reinvents  Streams, Functional interfaces etc. SimpleReact augments the parallel Streams functionality in JDK by providing a facade over both the Streams and CompletableFuture apis. Under-the-hood, SimpleReact *is* a Stream of CompletableFutures, and presents that externally as an api somewhat inspired by the Javascript Promises / A+ Spec (https://promisesaplus.com/).
 
-##When to use ParallelStreams and when to use SimpleReact
-
-It is a core goal of SimpleReact to integrate tightly with JDK ParallelStreams, and is itself built on top of the Streams Api.
-
-Because of this, it is often possible, but more complex to use parallelStreams for the same task as SimpleReact. But where this turns into an exercise in hacking parallelStreams to make it work they way needed - SimpleReact is a better choice. In practice we recommend using  whichever is simpler for the portion of the problem being solved. 
-
-There a few core differences
-
-*	With parallelStreams evaluation is lazy, it won’t be triggered until something like collect is called, which will then block the current thread
-*	With SimpleReact, the async processing starts as soon as react is called, and won’t block the current thread unless the user asks for it (via block())
-*	A Stream will be closed and can’t be resused at a given stage (you can’t take a copy of the stream and rerun the same task over and over from that point)
-*	A SimpleReact stage can be forked and merged at will
-*	Selection of ExecutorService - with parallelStreams you are limited to using a ForkJoinPool, and changing away from the common ForkJoinPool is awkward
-*	With a SimpleReact data flow you can also access the underlying concurrency primitives (Streams of CompletableFutures) at any point and build something tailored to your own use case for the next stage. SimpleReact also makes it straightforward to return back into the reactive dataflow.
-*	It’s very obvious that your code is concurrent  with SimpleReact - it can be easy to miss the parallelStream method call, and may not always be apparent which steps are executed concurrently and which are blocking.	
-
-
-**Example** : Making a call to ~ 50 servers, on a 16 core box, which will handle errors, process the responses, and then publish each processed result .
-
-Pure ParallelStreams :-
-
-	new ForkJoinPool(50)
-			.submit( () -> Arrays.asList( () -> restCall(url1), () -> restCall(url2), {..})
-				.parallelStream()
-				.map(  sp -> try { 
-									return sp.supply(); 
-								 } catch(Exception e) { 
-									return new ErrorCase(e);    
-								 })
-				.map( case -> publish(case))
-				.collect(Collectors.toList()));
-
-With SimpleReact (& the current thread able to continue processing) :-
-
-	new SimpleReact(new ForkJoinPool(50))
-		.react( () -> restCall(url1), () -> restCall(url2), {..})
-		.onFail( e -> new ErrorCase(e))
-		.then( case -> publish(case));
 
 ##Data flow
 
