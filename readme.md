@@ -2,9 +2,9 @@
 
 SimpleReact is an easy to use reactive programming library for JDK 8. It is a fluent API built on top of Java 8 CompletableFutures and the Stream API. It provides a focused, simple and limited Reactive API aimed at solving the 90% use case - but without adding complexity.
 
-*See getting started example : https://github.com/aol/simple-react/wiki/Getting-started-with-a-simple-example
+* See getting started example : https://github.com/aol/simple-react/wiki/Getting-started-with-a-simple-example
 
-*What does Simple React do : https://github.com/aol/simple-react/wiki/What-does-SimpleReact-do%3F
+* What does Simple React do : https://github.com/aol/simple-react/wiki/What-does-SimpleReact-do%3F
 
 ##Why SimpleReact
 
