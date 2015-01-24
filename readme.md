@@ -1,11 +1,14 @@
 #Simple React : Simple Fluent Api for Functional Reactive Programming with Java 8
 
-Simple React is the new Java 8 based concurrency mechanism for LANA. It is a fluent API built on top of Java 8 CompletableFutures and the Stream API. It provides a focused, simple and limited Reactive API aimed at solving the 90% use case - but without adding complexity.
+Simple React is an easy to use reactive programming library for JDK 8. It is a fluent API built on top of Java 8 CompletableFutures and the Stream API. It provides a focused, simple and limited Reactive API aimed at solving the 90% use case - but without adding complexity.
+
+See getting started example : https://github.com/aol/simple-react/wiki/Getting-started-with-a-simple-example
+What does Simple React do : https://github.com/aol/simple-react/wiki/What-does-Simple-React-do%3F
 
 ##Why Simple React
 
 
-Simple React is built on top of JDK standard libraries and unlike other Reactive implementations for Java does not re-invent Streams, Functional interfaces etc, rather the goal is to reuse them. SimpleReact augments the parallel Streams functionality in JDK by providing a facade over both the Streams and CompletableFuture apis. Under-the-hood, SimpleReact *is* a Stream of CompletableFutures, and presents that externally as an api somewhat inspired by the Javascript Promises / A+ Spec (https://promisesaplus.com/).
+Simple React is built on top of JDK standard libraries and unlike other Reactive implementations for Java, specifically targets Java 8 and thus does reuses rather than reinvents  Streams, Functional interfaces etc. SimpleReact augments the parallel Streams functionality in JDK by providing a facade over both the Streams and CompletableFuture apis. Under-the-hood, SimpleReact *is* a Stream of CompletableFutures, and presents that externally as an api somewhat inspired by the Javascript Promises / A+ Spec (https://promisesaplus.com/).
 
 ##When to use ParallelStreams and when to use SimpleReact
 
