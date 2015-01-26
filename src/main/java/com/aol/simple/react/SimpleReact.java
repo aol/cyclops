@@ -145,8 +145,8 @@ public class SimpleReact {
 	 * @return Sequential Generator
 	 */
 	@SuppressWarnings("rawtypes")
-	public static SequentialGenerator times(int times){
-		return new  SequentialGenerator(times,0);
+	public static ParallelGenerator times(int times){
+		return new  ParallelGenerator(times,0);
 	
 		
 	}
@@ -157,7 +157,7 @@ public class SimpleReact {
 	 * @return Parellel Generator
 	 */
 	@SuppressWarnings("rawtypes")
-	public static ParallelGenerator timesInParallel(int times){
+	public static ParallelGenerator timesInSequence(int times){
 		return new  ParallelGenerator(times,0);
 	
 		

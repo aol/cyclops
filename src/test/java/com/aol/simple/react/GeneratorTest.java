@@ -1,7 +1,7 @@
 package com.aol.simple.react;
 
 import static com.aol.simple.react.SimpleReact.iterate;
-import static com.aol.simple.react.SimpleReact.times;
+import static com.aol.simple.react.SimpleReact.*;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
@@ -46,14 +46,17 @@ public class GeneratorTest {
 		count =0;
 		
 		List<String> strings = new SimpleReact()
-				.<Integer> react(() -> count++ ,times(1).offset(2))
+				.<Integer> react(() -> count++ ,timesInSequence(1).offset(2))
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.block();
 
+		System.out.println(strings.get(0));
+		System.out.println(count);
 		assertThat(strings.size(), is(1));
-		assertThat(count,greaterThan(1)); 
-				//can't guarantee skip completablefutures will have completed
+		
+		assertThat(count,is(3)); 
+				
 		
 	}
 	@Test
@@ -179,7 +182,7 @@ public class GeneratorTest {
 	@Test
 	public void testGenerateParellel() throws InterruptedException, ExecutionException {
 		Set<Long> threads = new SimpleReact(new ForkJoinPool(10))
-				.<Long> react(() ->Thread.currentThread().getId() ,SimpleReact.timesInParallel(10))
+				.<Long> react(() ->Thread.currentThread().getId() ,SimpleReact.times(10))
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.capture(e -> capture++)

@@ -50,7 +50,7 @@ public class SimpleReactTest {
 		
 		
 		 Set<Long> threads = new SimpleReact(new ForkJoinPool(10))
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> react(() -> 1, () -> 2, () -> 3,() -> 3,() -> 3,() -> 3,() -> 3)
 				.then(it -> Thread.currentThread().getId())
 				.block(Collectors.toSet());
 

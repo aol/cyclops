@@ -5,10 +5,9 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Stream;
 
 import org.junit.Test;
 
@@ -36,11 +35,12 @@ public class StreamTest {
 	public void testStreamOf() throws InterruptedException,
 			ExecutionException {
 		
+		Stream<CompletableFuture<String>> stream = new SimpleReact()
+													.<Integer> react(() -> 1, () -> 2, () -> 3)
+													.then(it -> "*" + it).stream();
 		
 		List<String> strings = new SimpleReact()
-								.<String>fromStream(new SimpleReact()
-												.<Integer> react(() -> 1, () -> 2, () -> 3)
-												.then(it -> "*" + it).stream())
+								.<String>fromStream(stream)
 								.then(it ->  it + "*")
 								.block();
 

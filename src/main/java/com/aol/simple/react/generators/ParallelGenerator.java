@@ -20,7 +20,6 @@ public class ParallelGenerator<T> implements Generator<T>{
 	}
 	public  Stream<CompletableFuture<T>> generate(Supplier<T> s){
 		return Stream.<CompletableFuture<T>>generate(() -> CompletableFuture.supplyAsync(s))
-				.parallel()
 				.skip(offset)
 				.limit(size);
 	}
