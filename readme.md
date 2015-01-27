@@ -286,3 +286,9 @@ A simple example below where a dataflow is split into 3, processed separately th
 		stage3 = stage3.then(it -> it+"%");
 		
 		List<String> result = stage1.merge(stage2).merge(stage3).block();
+		
+# License
+
+Simple React is licensed under the Apache 2.0 license.		
+
+http://www.apache.org/licenses/LICENSE-2.0

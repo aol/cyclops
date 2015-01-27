@@ -3,16 +3,22 @@ package com.aol.simple.react;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.experimental.Wither;
 import lombok.experimental.Builder;
+import lombok.experimental.Wither;
+
 import org.junit.Test;
+
+
 
 
 
@@ -39,6 +45,9 @@ public class AlgorithmCompareTest {
 		
 		assertThat(result.getName(),is("approach1"));
 	}
+	
+	
+
 	@Test
 	public void testFastestLessBlocking() throws InterruptedException, ExecutionException {
 
