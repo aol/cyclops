@@ -3,12 +3,19 @@ package com.aol.simple.react;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.Builder;
+import lombok.experimental.Wither;
 
 import org.junit.Test;
 
@@ -27,6 +34,7 @@ public class AllOfTest {
 
 		assertThat(result.size(),is(4));
 	}
+
 	
 	
 	@Test

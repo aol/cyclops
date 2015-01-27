@@ -412,7 +412,7 @@ public class Stage<U> {
 	
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public U first() {
-		return blockAndExtract(Extractors.first(),status -> status.getCompleted() > 1);
+		return blockAndExtract(Extractors.first(),status -> status.getCompleted() > 0);
 	}
 	
 	/**
