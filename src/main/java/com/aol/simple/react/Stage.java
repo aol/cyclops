@@ -33,8 +33,6 @@ import lombok.extern.slf4j.Slf4j;
  * 
  * @author johnmcclean
  *
- * @param <T>
- *            Input parameter for this stage
  * @param <U>
  *            Return parameter for this stage
  */
@@ -76,7 +74,7 @@ public class Stage<U> {
 	 * This method allows the SimpleReact ExecutorService to be reused by JDK parallel streams.
 	 * This offers less control over blocking than raw submit, with the parameterless block() method called.
 	 * 
-	 * @param Function that contains parallelStream code to be executed by the SimpleReact ForkJoinPool (if configured)
+	 * @param fn Function that contains parallelStream code to be executed by the SimpleReact ForkJoinPool (if configured)
 	 */
 	public <R> R submitAndBlock(Function <List<U>,R> fn){
 		return collectResults().block().submit (r -> fn.apply(r));
@@ -94,8 +92,8 @@ public class Stage<U> {
 	 * the underlying CompletableFutures.
 	 * 
 	 * <code>
-	 	List<CompletableFuture<Integer>> futures = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.with((it) -> it * 100);
+	 	List&lt;CompletableFuture&lt;Integer&gt;&gt; futures = new SimpleReact().&lt;Integer, Integer&gt; react(() -&gt; 1, () -&gt; 2, () -&gt; 3)
+				.with((it) -&gt; it * 100);
 			</code>
 	 * 
 	 * In this instance, 3 suppliers generate 3 numbers. These may be executed
@@ -131,9 +129,9 @@ public class Stage<U> {
 	 * that can represent the next stage in the dataflow.
 	 * 
 	 * <code>
-	  new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100)
-				.then((it) -> "*" + it)
+	  new SimpleReact().&lt;Integer, Integer&gt; react(() -&gt; 1, () -&gt; 2, () -&gt; 3)
+				.then((it) -&gt; it * 100)
+				.then((it) -&gt; "*" + it)
 	</code>
 	 *
 	 * React then allows event reactors to be chained. Unlike React with, which
@@ -148,9 +146,7 @@ public class Stage<U> {
 	 * SimpleReact via SimpleReact.react(streamOfCompleteableFutures);
 	 * 
 	 * See this blog post for examples of what can be achieved via
-	 * CompleteableFuture :- <a href=
-	 * 'http://www.nurkiewicz.com/2013/12/promises-and-completablefuture.html'>http://www.nurkiewicz.com/2013/12/promises-and-completablefuture.h
-	 * t m l < / a >
+	 * CompleteableFuture :- <a href='http://www.nurkiewicz.com/2013/12/promises-and-completablefuture.html'>http://www.nurkiewicz.com/2013/12/promises-and-completablefuture.html </a>
 	 * 
 	 * @param fn
 	 *            Function to be applied to the results of the currently active
@@ -256,15 +252,15 @@ public class Stage<U> {
 	 * dataflow.
 	 * 
 	 * <code>
-	  	List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 100, () -> 2, () -> 3)
-					.then(it -> {
+	  	List&lt;String&gt; strings = new SimpleReact().&lt;Integer, Integer&gt; react(() -&gt; 100, () -&gt; 2, () -&gt; 3)
+					.then(it -&gt; {
 						if (it == 100)
 							throw new RuntimeException("boo!");
 			
 						return it;
 					})
-					.onFail(e -> 1)
-					.then(it -> "*" + it)
+					.onFail(e -&gt; 1)
+					.then(it -&gt; "*" + it)
 					.block();
 		  </code>
 	 * 
@@ -299,29 +295,29 @@ public class Stage<U> {
 	 * pipeline has failed and is unrecoverable.
 	 * 
 	 * <code>
-	 * List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-			.then(it -> it * 100)
-			.then(it -> {
+	 * List&lt;String&gt; strings = new SimpleReact().&lt;Integer, Integer&gt; react(() -&gt; 1, () -&gt; 2, () -&gt; 3)
+			.then(it -&gt; it * 100)
+			.then(it -&gt; {
 				if (it == 100)
 					throw new RuntimeException("boo!");
 	
 				return it;
 			})
-			.onFail(e -> 1)
-			.then(it -> "*" + it)
-			.then(it -> {
+			.onFail(e -&gt; 1)
+			.then(it -&gt; "*" + it)
+			.then(it -&gt; {
 				
 				if ("*200".equals(it))
 					throw new RuntimeException("boo!");
 	
 				return it;
 			})
-			.capture(e -> logger.error(e.getMessage(),e))
+			.capture(e -&gt; logger.error(e.getMessage(),e))
 			.block();
 		</code>
 	 * 
 	 * In this case, strings will only contain the two successful results (for
-	 * ()->1 and ()->3), an exception for the chain starting from Supplier ()->2
+	 * ()-&gt;1 and ()-&gt;3), an exception for the chain starting from Supplier ()-&gt;2
 	 * will be logged by capture. Capture will not capture the exception thrown
 	 * when an Integer value of 100 is found, but will catch the exception when
 	 * the String value "*200" is passed along the chain.
@@ -347,16 +343,16 @@ public class Stage<U> {
 	 * Example :
 	 * <code>
 	 * Integer result = new SimpleReact()
-				.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> { it * 200)
+				.&lt;Integer, Integer&gt; react(() -&gt; 1, () -&gt; 2, () -&gt; 3)
+				.then((it) -&gt; { it * 200)
 				.collectResults()
-				.<List<Integer>>block()
+				.&lt;List&lt;Integer&gt;&gt;block()
 				.submit( 
-						it -> it.orElse(new ArrayList())
+						it -&gt; it.orElse(new ArrayList())
 								.parallelStream()
-								.filter(f -> f > 300)
-								.map(m -> m - 5)
-								.reduce(0, (acc, next) -> acc + next));
+								.filter(f -&gt; f &gt; 300)
+								.map(m -&gt; m - 5)
+								.reduce(0, (acc, next) -&gt; acc + next));
 								
 	 * </code>
 	 * 
@@ -371,9 +367,9 @@ public class Stage<U> {
 	 * React and <b>block</b>
 	 * 
 	 * <code>
-	 	List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100)
-				.then((it) -> "*" + it)
+	 	List&lt;String&gt; strings = new SimpleReact().&lt;Integer, Integer&gt; react(() -&gt; 1, () -&gt; 2, () -&gt; 3)
+				.then((it) -&gt; it * 100)
+				.then((it) -&gt; "*" + it)
 				.block();
 	  </code>
 	 * 
@@ -385,7 +381,7 @@ public class Stage<U> {
 	 * 
 	 * 
 	 * @return Results of currently active stage aggregated in a List
-	 * @throws InterruptedException,ExecutionException
+	 * throws InterruptedException,ExecutionException
 	 */
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public List<U> block() {
@@ -395,7 +391,7 @@ public class Stage<U> {
 	/**
 	 * @param collector to perform aggregation / reduction operation on the results (e.g. to Collect into a List or String)
 	 * @return Results of currently active stage in aggregated in form determined by collector
-	 * @throws InterruptedException,ExecutionException
+	 * throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({ "unchecked","rawtypes"})
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
@@ -407,7 +403,7 @@ public class Stage<U> {
 	 * Block until first result received
 	 * 
 	 * @return  first result.
-	 * @throws InterruptedException,ExecutionException
+	 * throws InterruptedException,ExecutionException
 	 */
 	
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
@@ -419,7 +415,7 @@ public class Stage<U> {
 	 * Block until all results received.
 	 * 
 	 * @return  last result
-	 * @throws InterruptedException,ExecutionException
+	 * throws InterruptedException,ExecutionException
 	 */
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public U last() {
@@ -431,7 +427,7 @@ public class Stage<U> {
 	 * 
 	 * @param extractor used to determine which value should be returned, recieves current collected input and extracts a return value
 	 * @return Value determined by the supplied extractor
-	 * @throws InterruptedException,ExecutionException
+	 * throws InterruptedException,ExecutionException
 	 */
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public <R> R blockAndExtract(@SuppressWarnings("rawtypes") final Extractor extractor) {
@@ -445,7 +441,7 @@ public class Stage<U> {
 	 * @param breakout Predicate that determines whether the block should be
 	 *            continued or removed
 	 * @return Value determined by the supplied extractor
-	 * @throws InterruptedException,ExecutionException
+	 * throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({"unchecked","rawtypes"})
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
@@ -462,10 +458,10 @@ public class Stage<U> {
 	 * blocking the current thread when the Predicate has been fulfilled. E.g.
 	 * 
 	 * <code>
-	  	List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then(it -> it * 100)
-				.then(it -> "*" + it)
-				.block(status -> status.getCompleted()>1);
+	  	List&lt;String&gt; strings = new SimpleReact().&lt;Integer, Integer&gt; react(() -&gt; 1, () -&gt; 2, () -&gt; 3)
+				.then(it -&gt; it * 100)
+				.then(it -&gt; "*" + it)
+				.block(status -&gt; status.getCompleted()&gt;1);
 	  </code>
 	 * 
 	 * In this example the current thread will unblock once more than one result
@@ -476,7 +472,7 @@ public class Stage<U> {
 	 *            continued or removed
 	 * @return List of Completed results of currently active stage at full completion
 	 *         point or when breakout triggered (which ever comes first).
-	 * @throws InterruptedException,ExecutionException
+	 * throws InterruptedException,ExecutionException
 	 */
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public  List<U> block(final Predicate<Status> breakout) {
@@ -490,7 +486,7 @@ public class Stage<U> {
 	 *            continued or removed
 	 * @return Completed results of currently active stage at full completion
 	 *         point or when breakout triggered (which ever comes first), in aggregated in form determined by collector
-	 * @throws InterruptedException,ExecutionException
+	 * throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({ "unchecked","rawtypes" })
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
@@ -509,9 +505,9 @@ public class Stage<U> {
 	 * 
 	 * <code>
 	  boolean blocked[] = {false};
-		new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+		new SimpleReact().&lt;Integer, Integer&gt; react(() -&gt; 1, () -&gt; 2, () -&gt; 3)
 				
-				.then(it -> {
+				.then(it -&gt; {
 					try {
 						Thread.sleep(50000);
 					} catch (Exception e) {
@@ -520,7 +516,7 @@ public class Stage<U> {
 					blocked[0] =true;
 					return 10;
 				})
-				.allOf( it -> it.size());
+				.allOf( it -&gt; it.size());
 
 		
 		assertThat(blocked[0],is(false));

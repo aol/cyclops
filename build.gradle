@@ -1,24 +1,39 @@
+import org.gradle.api.artifacts.maven.MavenDeployment
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
+apply plugin: 'com.bmuschko.nexus'
+
 
 sourceCompatibility = 1.8
-version = '0.6'
+version = '0.1'
 jar {
     manifest {
         attributes 'Implementation-Title': 'Simple React', 'Implementation-Version': version
     }
 }
 
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.bmuschko:gradle-nexus-plugin:2.2'
+    }
+}
 repositories {
     mavenCentral()
+
 }
 
 dependencies {
    
+	
 	compile group: 'org.projectlombok', name: 'lombok', version:'1.14.2'
 	compile group: 'org.slf4j', name: 'jcl-over-slf4j', version:'1.6.1'
-    testCompile group: 'junit', name: 'junit', version: '4.+'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
 	testCompile group: 'org.hamcrest', name: 'hamcrest-all', version:'1.1'
 	testCompile group: 'org.mockito', name: 'mockito-all', version:'1.9.5'
 }
@@ -27,22 +42,50 @@ test {
     systemProperties 'property': 'value'
 }
 
-publishing {
-        publications {
-            maven(MavenPublication) {
-                groupId 'com.aol.simple.react'
-                artifactId 'simple-react'
-               version '0.6'
+modifyPom {
+	project {
+		name 'SimpleReact'
+		description 'Simple Fluent Api for Functional Reactive Programming with Java 8'
+		url 'https://github.com/aol/simple-react'
+		inceptionYear '2015'
 
-                from components.java
-            }
-        }
-    }
+		groupId 'com.aol.simplereact'
+		artifactId 'simple-react'
+		version '0.1'
+		
+		scm {
+			url 'scm:git@github.com:aol/simple-react.git'
+            connection 'scm:git@github.com:aol/simple-react.git'
+            developerConnection 'scm:git@github.com:aol/simple-react.git'
+		}
 
-uploadArchives {
-    repositories {
-       flatDir {
-           dirs 'repos'
-       }
-    }
+		licenses {
+			license {
+				name 'The Apache Software License, Version 2.0'
+				url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+				distribution 'repo'
+			}
+		}
+
+		developers {
+			developer {
+				id 'johnmcclean-aol'
+				name 'John McClean'
+				email 'john.mcclean@teamaol.com'
+			}
+		}
+	}
 }
+
+extraArchive {
+	sources = true
+	tests = true
+	javadoc = true
+}
+
+nexus {
+	sign = true
+	repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+	snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
+}
+

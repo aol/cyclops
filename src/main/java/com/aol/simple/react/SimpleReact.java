@@ -25,8 +25,7 @@ import com.aol.simple.react.generators.SequentialIterator;
  * 
  * @author johnmcclean
  *
- * @param <T>
- *            Return type of object created by initial Suppliers
+ *
  */
 public class SimpleReact {
 
@@ -114,13 +113,13 @@ public class SimpleReact {
 	 * Example : 
 	 * To execute the same Supplier 4 times use :
 	 * <code>
-	 * List<String> strings = new SimpleReact()
-				.<Integer> react(() -> count++ ,SimpleReact.times(4))
+	 * List&lt;String&gt; strings = new SimpleReact()
+				.&lt;Integer&gt; react(() -&gt; count++ ,SimpleReact.times(4))
 	 * </code>
 	 * To skip the first 5 iterations and take the next 5
 	 *  * <code>
-	 * List<String> strings = new SimpleReact()
-				.<Integer> react(() -> count++ ,SimpleReact.times(5).offset(5))
+	 * List&lt;String&gt; strings = new SimpleReact()
+				.&lt;Integer&gt; react(() -&gt; count++ ,SimpleReact.times(5).offset(5))
 	 * </code>
 	 * 
 	 * The supplier will be called 10 times, in the above example, but only the last 5 results will be passed into the 
@@ -168,8 +167,8 @@ public class SimpleReact {
 	 * Example :-
 	 * 
 	 * <code>
-	 * List<Integer> results = new SimpleReact()
-				.<Integer> react((input) -> input + 1,iterate(0).times(1).offset(10))
+	 * List&lt;Integer&gt; results = new SimpleReact()
+				.&lt;Integer&gt; react((input) -&gt; input + 1,iterate(0).times(1).offset(10))
 	 * </code>
 	 * 
 	 * 

@@ -44,7 +44,7 @@ public class StageWithResults<RS,U> {
 	 * This method allows the SimpleReact ExecutorService to be reused by JDK parallel streams. It is best used when
 	 * collectResults and block are called explicitly for finer grained control over the blocking conditions.
 	 * 
-	 * @param Function that contains parallelStream code to be executed by the SimpleReact ForkJoinPool (if configured)
+	 * @param fn Function that contains parallelStream code to be executed by the SimpleReact ForkJoinPool (if configured)
 	 */
 	public <R> R submit(Function <RS,R> fn){
 		return submit (() -> fn.apply(this.results));
