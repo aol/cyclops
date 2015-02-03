@@ -1,6 +1,6 @@
 #SimpleReact : Simple Fluent Api for Functional Reactive Programming with Java 8
 
-SimpleReact is an easy to use reactive programming library for JDK 8. It is a fluent API built on top of Java 8 CompletableFutures and the Stream API. It provides a focused, simple and limited Reactive API aimed at solving the 90% use case - but without adding complexity.
+SimpleReact is an easy to use, *always concurrent*, reactive programming library for JDK 8. It is a fluent API built on top of Java 8 CompletableFutures and the Stream API. It provides a focused, simple and limited Reactive API aimed at solving the 90% use case - but without adding complexity.
 
 * Adding SimpleReact as a dependency : https://github.com/aol/simple-react/wiki/Adding-SimpleReact-as-a-dependency
 
@@ -11,8 +11,9 @@ SimpleReact is an easy to use reactive programming library for JDK 8. It is a fl
 ##Why SimpleReact
 
 
-SimpleReact is built on top of JDK standard libraries and unlike other Reactive implementations for Java, specifically targets JDK 8 and thus reuses rather than reinvents  Streams, Functional interfaces etc. SimpleReact augments the parallel Streams functionality in JDK by providing a facade over both the Streams and CompletableFuture apis. Under-the-hood, SimpleReact *is* a Stream of CompletableFutures, and presents that externally as an api somewhat inspired by the Javascript Promises / A+ Spec (https://promisesaplus.com/).
+SimpleReact is built on top of JDK standard libraries and unlike other Reactive implementations for Java, specifically targets JDK 8 and thus reuses rather than reinvents  Streams, Functional interfaces etc. SimpleReact augments the *parallel* Streams functionality in JDK by providing a facade over both the Streams and CompletableFuture apis. Under-the-hood, SimpleReact *is* a Stream of CompletableFutures, and presents that externally as an api somewhat inspired by the Javascript Promises / A+ Spec (https://promisesaplus.com/).
 
+Everything is concurrent in SimpleReact, this does limit some of the syntax-sugar we can provide, but the SimpleReact Api together with the Apis of the underlying JDK 8 primitives offer often surprising levels of power and flexibility.
 
 ##Data flow
 
