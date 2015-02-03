@@ -13,7 +13,9 @@ SimpleReact is an easy to use, *always concurrent*, reactive programming library
 
 SimpleReact is built on top of JDK standard libraries and unlike other Reactive implementations for Java, specifically targets JDK 8 and thus reuses rather than reinvents  Streams, Functional interfaces etc. SimpleReact augments the *parallel* Streams functionality in JDK by providing a facade over both the Streams and CompletableFuture apis. Under-the-hood, SimpleReact *is* a Stream of CompletableFutures, and presents that externally as an api somewhat inspired by the Javascript Promises / A+ Spec (https://promisesaplus.com/).
 
-Everything is concurrent in SimpleReact, this does limit some of the syntax-sugar we can provide, but the SimpleReact Api together with the Apis of the underlying JDK 8 primitives offer often surprising levels of power and flexibility.
+Everything is concurrent in SimpleReact. While this does limit some of the syntax-sugar we can provide directly, the small & focused SimpleReact Api together with the Apis of the underlying JDK 8 primitives offer often surprising levels of power and flexibility.
+
+* See an example of using CompletableFuture directly with SimpleReact : https://github.com/aol/simple-react/wiki/Example-:-Reacting-to-Asynchronous-Events-with-a-Stream-of-CompletableFutures
 
 ##Data flow
 
