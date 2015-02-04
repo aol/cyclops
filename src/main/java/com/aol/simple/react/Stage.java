@@ -479,7 +479,6 @@ public class Stage<U> {
 		return new Blocker<U>(lastActive, errorHandler).block(breakout);
 	}
 	
-	
 	/**
 	 * @param collector to perform aggregation / reduction operation on the results (e.g. to Collect into a List or String)
 	 * @param breakout  Predicate that determines whether the block should be
@@ -593,10 +592,7 @@ public class Stage<U> {
 		}
 		return MISSING_VALUE;
 	}
-	/**
-	Stage<U> withLastActive(@SuppressWarnings("rawtypes") List<CompletableFuture> lastActive){
-		return new Stage<U>(taskExecutor, lastActive, errorHandler);
-	}**/
+	
 	
 	
 
