@@ -16,7 +16,7 @@ For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:
 
 * Example : Scaling microservices with NIO and SimpleReact : https://medium.com/@johnmcclean/scaling-up-microservices-with-nio-and-simplereact-b2e8f41fdd68 
 
- 			Building a non blocking NIO rest client : https://github.com/aol/simple-react/wiki/Example-:-Building-a-non-blocking-NIO-rest-client
+ Building a non blocking NIO rest client : https://github.com/aol/simple-react/wiki/Example-:-Building-a-non-blocking-NIO-rest-client
 
 * Example : Bulk loading files : https://github.com/aol/simple-react/wiki/Example-:-Bulk-loading-files
 
