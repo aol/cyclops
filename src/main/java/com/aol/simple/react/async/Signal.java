@@ -2,6 +2,7 @@ package com.aol.simple.react.async;
 
 import java.util.Objects;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Stream;
 
 import lombok.Getter;
 
@@ -10,10 +11,27 @@ public class Signal<T> {
 
 	private volatile T value;
 	@Getter
-	private final Queue<T> continuous = new Queue(new LinkedBlockingQueue());
+	private final Adapter<T> continuous;
 	@Getter
-	private final Queue<T> discrete = new Queue(new LinkedBlockingQueue());
-
+	private final Adapter<T> discrete;
+	
+	public Signal(Adapter<T> continuous, Adapter<T> discrete) {
+		super();
+		this.continuous = continuous;
+		this.discrete = discrete;
+	}
+	
+	public static <T> Signal<T> queueBackedSignal(){
+		return new Signal(new Queue<>(),new Queue<>());
+	}
+	public static <T> Signal<T> topicBackedSignal(){
+		return new Signal(new Topic<>(),new Topic<>());
+	}
+	
+	public void fromStream(Stream<T> stream){
+		stream.forEach(next -> set(next));
+	}
+	
 	public T set(T newValue){
 		continuous.add(newValue);
 		
@@ -30,8 +48,10 @@ public class Signal<T> {
 	}
 
 	public void close(){
-		continuous.setOpen(false);
-		discrete.setOpen(false);
+		continuous.close();
+		discrete.close();
 	}
+
+	
 	
 }

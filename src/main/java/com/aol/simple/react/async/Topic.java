@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 import lombok.Getter;
 
-public class Topic<T> {
+public class Topic<T> implements Adapter<T> {
 	
 	
 	private final List<Queue<T>> queues= new ArrayList<Queue<T>>();
@@ -25,30 +25,36 @@ public class Topic<T> {
 		distributor.getTargets().add(q.getQueue());	
 	}
 
-	public void enqueue(Stream<T> stream){
+	public void fromStream(Stream<T> stream){
 		stream.collect(Collectors.toCollection(()->distributor));
 		
 	}
-	public Stream<CompletableFuture<T>> dequeueForSimpleReact(){
+	public Stream<CompletableFuture<T>> provideStreamCompletableFutures(){
 		Queue<T> q = new Queue<>();
 		queues.add(q);
 		distributor.getTargets().add(q.getQueue());
-		return q.dequeueForSimpleReact();
+		return q.provideStreamCompletableFutures();
 		
 	}
-	public Stream<T> dequeue(){
+	public Stream<T> provideStream(){
 		Queue<T> q = new Queue<>();
 		queues.add(q);
 		distributor.getTargets().add(q.getQueue());
-		return q.dequeue();
+		return q.provideStream();
 		
 	}
 
 	public void close() {
-		queues.forEach(it -> it.setOpen(false));
+		queues.forEach(it -> it.close());
 		
 	}
 	
+	@Override
+	public T add(T data) {
+		fromStream(Stream.of(data));
+		return data;
+		
+	}
 	
 	static class DistributingCollection<T> extends ArrayList<T>{
 		
@@ -72,6 +78,9 @@ public class Topic<T> {
 		
 		
 	}
+
+
+	
 
 
 	

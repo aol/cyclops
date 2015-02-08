@@ -11,9 +11,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import com.aol.simple.react.async.Queue;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -688,7 +691,7 @@ public class Stage<U> {
 	private static class MissingValue {
 		
 	}
-	private static class FilteredExecutionPathException extends RuntimeException{
+	private static class FilteredExecutionPathException extends SimpleReactProcessingException{
 
 		private static final long serialVersionUID = 1L;
 		
@@ -696,13 +699,30 @@ public class Stage<U> {
 
 
 
+	
 
 	public void run() {
+		run(()->null);
+		
+	}
+	public <C extends Collection<U>>  C run(Supplier<C> collector) {
+	
+		C result = (C)collector.get();
 		try{
-			block();
-		}catch(RuntimeException e){
+		  this.lastActive.stream().forEach(n-> {
+			
+				if(result!=null){
+					try {
+						result.add((U)n.get());
+					} catch (Exception e) {
+						capture(e);
+					}
+				}
+			});
+		}catch(SimpleReactProcessingException e){
 			
 		}
+		return result;
 		
 	}
 	

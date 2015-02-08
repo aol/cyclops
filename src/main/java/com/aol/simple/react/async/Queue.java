@@ -10,17 +10,18 @@ import java.util.stream.Stream;
 
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Delegate;
+
+import com.aol.simple.react.SimpleReactProcessingException;
 
 
-public class Queue<T> {
+public class Queue<T> implements Adapter<T>{
 
-	@Setter
+	
 	private volatile boolean open=true;
-	@Delegate
+	
 	@Getter(AccessLevel.PACKAGE)
 	private final BlockingQueue<T> queue;
+	
 	public Queue(){
 		this(new LinkedBlockingQueue<>());
 	}
@@ -28,15 +29,15 @@ public class Queue<T> {
 		this.queue = queue;
 	}
 	
-	public Stream<T> dequeue(){
+	public Stream<T> provideStream(){
 		
 		return Stream.generate(  ()->  ensureOpen()).flatMap(it -> it.stream());
 	}
 	
-	public Stream<CompletableFuture<T>> dequeueForSimpleReact(){
-		return dequeue().map(it -> CompletableFuture.<T>completedFuture(it));
+	public Stream<CompletableFuture<T>> provideStreamCompletableFutures(){
+		return provideStream().map(it -> CompletableFuture.<T>completedFuture(it));
 	}
-	public void enqueue(Stream<T> stream){
+	public void fromStream(Stream<T> stream){
 		stream.collect(Collectors.toCollection(()->queue));
 	}
 	
@@ -47,7 +48,17 @@ public class Queue<T> {
 			throw new ClosedQueueException();
 		return data;
 	}
-	public static class ClosedQueueException extends RuntimeException{
+	public static class ClosedQueueException extends SimpleReactProcessingException{
+		private static final long serialVersionUID = 1L;
+	}
+	@Override
+	public T add(T data) {
+		this.queue.add(data);
+		return data;
+	}
+	@Override
+	public void close() {
+		this.open = false;
 		
 	}
 }

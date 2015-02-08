@@ -3,11 +3,15 @@ package com.aol.simple.react.async;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.simple.react.SimpleReact;
-import com.aol.simple.react.async.Signal;
+import com.aol.simple.react.Stage;
 
 public class SignalTest {
 
@@ -21,20 +25,32 @@ public class SignalTest {
 	}
 	
 	@Test
+	public void signalFromStream(){
+		Signal<Integer> q = Signal.topicBackedSignal();
+		Stream<Integer> stage =q.getDiscrete().provideStream().limit(2);
+		q.fromStream(Stream.of(1,1,1,2,2));
+		
+		 
+		int sum  = stage.map(it -> it*100).reduce(0, (acc,n) -> { return acc+n;});
+		
+		 assertThat(sum,is(300));
+	}
+	
+	@Test
 	public void signalDiscrete3(){
 		try{
-			Signal<Integer> q = new Signal<Integer>();
+			Signal<Integer> q = Signal.queueBackedSignal();
 			
 			
-			new SimpleReact().react(() -> q.set(1), ()-> q.set(2),()-> {sleep(200); return q.set(4); }, ()-> { sleep(400); q.getDiscrete().setOpen(false); return 1;});
+			new SimpleReact().react(() -> q.set(1), ()-> q.set(2),()-> {sleep(200); return q.set(4); }, ()-> { sleep(400); q.getDiscrete().close(); return 1;});
 			
 			
 			
-			new SimpleReact(false).fromStream(q.getDiscrete().dequeueForSimpleReact())
+			List<String> result = new SimpleReact(false).fromStream(q.getDiscrete().provideStreamCompletableFutures())
 					.then(it -> "*" +it)
 					.peek(it -> incrementFound())
 					.peek(it -> System.out.println(it))
-					.run();
+					.run(() -> new ArrayList<String>());
 			
 			
 			
@@ -49,14 +65,14 @@ public class SignalTest {
 	@Test
 	public void signalDiscrete1(){
 		try{
-			Signal<Integer> q = new Signal<Integer>();
+			Signal<Integer> q = Signal.queueBackedSignal();
 			
 			
-			new SimpleReact().react(() -> q.set(1), ()-> q.set(1),()-> {sleep(200); return q.set(1); }, ()-> { sleep(400); q.getDiscrete().setOpen(false); return 1;});
+			new SimpleReact().react(() -> q.set(1), ()-> q.set(1),()-> {sleep(200); return q.set(1); }, ()-> { sleep(400); q.getDiscrete().close(); return 1;});
 			
 			
 			
-			new SimpleReact(false).fromStream(q.getDiscrete().dequeueForSimpleReact())
+			new SimpleReact(false).fromStream(q.getDiscrete().provideStreamCompletableFutures())
 					.then(it -> "*" +it)
 					.peek(it -> incrementFound())
 					.peek(it -> System.out.println(it))
@@ -75,14 +91,14 @@ public class SignalTest {
 	@Test
 	public void signalContinuous3(){
 		try{
-			Signal<Integer> q = new Signal<Integer>();
+			Signal<Integer> q =Signal.queueBackedSignal();
 			
 			
 			new SimpleReact().react(() -> q.set(1), ()-> q.set(1),()-> {sleep(200); return q.set(1); }, ()-> { sleep(400); q.close(); return 1;});
 			
 			
 			
-			new SimpleReact(false).fromStream(q.getContinuous().dequeueForSimpleReact())
+			new SimpleReact(false).fromStream(q.getContinuous().provideStreamCompletableFutures())
 					.then(it -> "*" +it)
 					.peek(it -> incrementFound())
 					.peek(it -> System.out.println(it))

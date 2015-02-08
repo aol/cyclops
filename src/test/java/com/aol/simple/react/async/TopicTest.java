@@ -22,9 +22,9 @@ public class TopicTest {
 		Topic t = new Topic(new Queue());
 
 		Stream<String> input = Stream.of("hello", "world");
-		Stream<String> data1 = t.dequeue();
-		Stream<String> data2 = t.dequeue();
-		t.enqueue(input);
+		Stream<String> data1 = t.provideStream();
+		Stream<String> data2 = t.provideStream();
+		t.fromStream(input);
 
 		assertThat(data1.limit(1).findFirst().get(), is("hello"));
 		assertThat(data2.limit(2).reduce("", (acc, next) -> acc + ' ' + next),
@@ -36,9 +36,9 @@ public class TopicTest {
 		Topic t = new Topic(new Queue());
 
 		Stream<String> input = Stream.of("hello", "world");
-		Stream<CompletableFuture<String>> data1 = t.dequeueForSimpleReact();
-		Stream<CompletableFuture<String>> data2 = t.dequeueForSimpleReact();
-		t.enqueue(input);
+		Stream<CompletableFuture<String>> data1 = t.provideStreamCompletableFutures();
+		Stream<CompletableFuture<String>> data2 = t.provideStreamCompletableFutures();
+		t.fromStream(input);
 		
 
 		new SimpleReact().react(()-> { sleep(400); t.close(); return 1;}); //Topic Manager
