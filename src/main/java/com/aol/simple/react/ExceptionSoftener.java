@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import sun.misc.Unsafe;
 
 @Slf4j
-class ExceptionSoftener {
+public class ExceptionSoftener {
 
 	static enum singleton { factory;
 		@Getter

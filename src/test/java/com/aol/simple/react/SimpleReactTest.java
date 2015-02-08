@@ -49,7 +49,7 @@ public class SimpleReactTest {
 	public void testMultithreading() throws InterruptedException, ExecutionException {
 		
 		
-		 Set<Long> threads = new SimpleReact(new ForkJoinPool(10))
+		 Set<Long> threads = new SimpleReact(new ForkJoinPool(10),true)
 				.<Integer> react(() -> 1, () -> 2, () -> 3,() -> 3,() -> 3,() -> 3,() -> 3)
 				.then(it -> Thread.currentThread().getId())
 				.block(Collectors.toSet());
@@ -219,7 +219,7 @@ public class SimpleReactTest {
 	}
 	@Test
 	public void testSeparatedChains(){
-		 Stage orgBuilder= new SimpleReact().react(() -> "Hello", () -> "World"); 
+		 Stage<String> orgBuilder= new SimpleReact().react(() -> "Hello", () -> "World");//.split(2); 
 		 Stage builder = orgBuilder;
 		 for(int i =0;i<1000;i++){
 			 builder = builder.then( input -> input + " " + counter++);

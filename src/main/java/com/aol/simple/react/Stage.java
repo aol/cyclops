@@ -1,7 +1,6 @@
 package com.aol.simple.react;
 
-import static java.util.Arrays.asList;
-
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +17,7 @@ import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,10 +46,76 @@ public class Stage<U> {
 	private final ExceptionSoftener exceptionSoftener = ExceptionSoftener.singleton.factory.getInstance();
 	@Getter(AccessLevel.PACKAGE)
 	private final ExecutorService taskExecutor;
-	@SuppressWarnings("rawtypes")
-	private final List<CompletableFuture> lastActive;
+	
 	private final Optional<Consumer<Throwable>> errorHandler;
 
+	private final StreamWrapper lastActive;
+	private final boolean eager;
+	
+	@Wither
+	@AllArgsConstructor
+	@Builder
+	static class StreamWrapper{
+		@SuppressWarnings("rawtypes")
+		private final List<CompletableFuture> list;
+		private final Stream<CompletableFuture> stream;
+		private final boolean eager;
+		
+		public StreamWrapper(List<CompletableFuture> list){
+			this.list = list;
+			this.stream = null;
+			this.eager = true;
+		}
+		public StreamWrapper(Stream<CompletableFuture> stream,boolean eager){
+			this.stream = stream;
+			if(eager){
+				list = stream.collect(Collectors.toList());
+			}else{
+				list = null;
+			}
+			this.eager = eager;
+		}
+		public StreamWrapper(Stream<CompletableFuture> stream,Collector c,boolean eager){
+			this.stream = stream;
+			if(eager){
+				list = (List<CompletableFuture>)stream.collect(c);
+			}else{
+				list = null;
+			}
+			this.eager = eager;
+		}
+		public StreamWrapper(CompletableFuture cf, boolean eager) {
+			if(eager){
+				list = Arrays.asList(cf);
+				stream = null;
+			}else{
+				list = null;
+				stream = Stream.of(cf);
+			}
+			this.eager = eager;
+				
+		}
+		
+		public Stream<CompletableFuture> stream(){
+			if(eager)
+				return list.stream();
+			else
+				return stream;
+		}
+		public List<CompletableFuture> list(){
+			if(eager)
+				return list;
+			else
+				return stream.collect(Collectors.toList());
+		}
+		
+		StreamWrapper permutate(Stream<CompletableFuture> stream, Collector c){
+			return new StreamWrapper(stream,eager);
+		}
+		
+	}
+	
+	
 	
 
 	/**
@@ -62,12 +128,13 @@ public class Stage<U> {
 	 *            The next stage's tasks will be submitted to this executor
 	 */
 	Stage(final Stream<CompletableFuture<U>> stream,
-			final ExecutorService executor) {
+			final ExecutorService executor,boolean eager) {
 
 		this.taskExecutor = executor;
-		this.lastActive = stream.collect(Collectors.toList());
+		Stream s = stream;
+		this.lastActive = new StreamWrapper(s,eager);
 		this.errorHandler = Optional.of( (e)-> log.error(e.getMessage(),e));
-		
+		this.eager = eager;
 	}
 	
 	/**
@@ -156,9 +223,9 @@ public class Stage<U> {
 	 */
 	@SuppressWarnings("unchecked")
 	public <R> Stage<R> then(final Function<U, R> fn) {
-		return (Stage<R>) this.withLastActive(lastActive.stream()
+		return (Stage<R>) this.withLastActive( lastActive.permutate(lastActive.stream()
 				.map((ft) -> ft.thenApplyAsync(fn, taskExecutor))
-				.collect(Collectors.toList()));
+				,Collectors.toList()));
 	}
 	/**
 	 * Peek asynchronously at the results in the current stage. Current results are passed through to the next stage.
@@ -181,13 +248,13 @@ public class Stage<U> {
 	@SuppressWarnings("unchecked")
 	public  Stage<U> filter(final Predicate<U> p) {
 		
-		return (Stage<U>) this.withLastActive(lastActive.stream().map( ft ->
+		return (Stage<U>) this.withLastActive(lastActive.permutate(lastActive.stream().map( ft ->
 			ft.thenApplyAsync( (in) -> {
 				if(!p.test((U)in)) { 
 					throw new FilteredExecutionPathException(); 
 				}
 				return in;
-		})).collect(Collectors.toList()));
+		})),Collectors.toList()));
 				
 	}
 	
@@ -198,7 +265,8 @@ public class Stage<U> {
 	 */
 	@SuppressWarnings({ "unchecked"})
 	public <T> Stream<CompletableFuture<T>> stream(){
-		return Stream.of(this.lastActive.toArray(new CompletableFuture[0]));
+		Stream s  = this.lastActive.stream();
+		return s;
 		
 	}
 
@@ -212,10 +280,10 @@ public class Stage<U> {
 	 */
 	@SuppressWarnings({"unchecked","rawtypes"})
 	public Stage<U> merge(Stage<U> s){
-		List merged = Stream.of(this.lastActive,s.lastActive)
+		List merged = Stream.of(this.lastActive.list(),s.lastActive.list())
 				.flatMap(Collection::stream)
 				.collect(Collectors.toList());
-		return (Stage<U>)this.withLastActive(merged);
+		return (Stage<U>)this.withLastActive(new StreamWrapper(merged));
 	}
 	
 	/**
@@ -228,10 +296,10 @@ public class Stage<U> {
 	 */
 	@SuppressWarnings({"unchecked","rawtypes"})
 	public static <R> Stage<R> merge(Stage s1, Stage s2){
-		List merged = Stream.of(s1.lastActive,s2.lastActive)
+		List merged = Stream.of(s1.lastActive.list(),s2.lastActive.list())
 				.flatMap(Collection::stream)
 				.collect(Collectors.toList());
-		return (Stage<R>)s1.withLastActive(merged);
+		return (Stage<R>)s1.withLastActive(new StreamWrapper(merged));
 	}
 	
 	
@@ -277,14 +345,14 @@ public class Stage<U> {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Stage<U> onFail(final Function<? extends Throwable, U> fn) {
 		return (Stage<U>) this
-				.withLastActive(lastActive.stream()
+				.withLastActive(lastActive.permutate(lastActive.stream()
 						.map((ft) -> ft.exceptionally( (t) -> { 
 							if(t instanceof FilteredExecutionPathException)
 								throw (FilteredExecutionPathException)t;
 							
 							return	((Function)fn).apply(t); 
 						}))
-						.collect(Collectors.toList()));
+						,Collectors.toList()));
 	}
 
 	/**
@@ -476,7 +544,7 @@ public class Stage<U> {
 	 */
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public  List<U> block(final Predicate<Status> breakout) {
-		return new Blocker<U>(lastActive, errorHandler).block(breakout);
+		return new Blocker<U>(lastActive.list(), errorHandler).block(breakout);
 	}
 	
 	/**
@@ -546,18 +614,19 @@ public class Stage<U> {
 	@SuppressWarnings({"unchecked","rawtypes"})
 	public <T,R> Stage<R> allOf(final Collector collector,final Function<T,R> fn) {
 
-		return (Stage<R>) withLastActive(asList( CompletableFuture.allOf(
+		return (Stage<R>) withLastActive(new StreamWrapper( CompletableFuture.allOf(
 				lastActiveArray()).thenApplyAsync((result) -> {
-						return new StageWithResults(this,result).submit( () -> fn.apply(aggregateResults(collector, lastActive)));
-					}, taskExecutor)));
+						return new StageWithResults(this,result).submit( () -> fn.apply(aggregateResults(collector, lastActive.stream().collect(Collectors.toList()))));
+					}, taskExecutor),eager));
 
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private <R> R block(final Collector collector,final List<CompletableFuture> lastActive) {
-		return (R)lastActive.stream().map((future) -> {
+	private <R> R block(final Collector collector,final StreamWrapper lastActive) {
+		return (R) lastActive.stream().map((future) -> {
 			return (U) getSafe(future);
-		}).filter(v -> v != MISSING_VALUE).collect(collector);
+		}).filter(v -> v != MISSING_VALUE)
+		.collect(collector);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -569,7 +638,7 @@ public class Stage<U> {
 
 	@SuppressWarnings("rawtypes")
 	private CompletableFuture[] lastActiveArray() {
-		return lastActive.toArray(new CompletableFuture[0]);
+		return lastActive.list().toArray(new CompletableFuture[0]);
 	}
 
 	private void capture(final Exception e) {
@@ -587,9 +656,13 @@ public class Stage<U> {
 			Thread.currentThread().interrupt();
 			capture(e);
 			exceptionSoftener.throwSoftenedException(e);
-		} catch (Exception e) {
+		}catch (RuntimeException e) {
 			capture(e);
 		}
+		catch (Exception e) {
+			capture(e);
+		}
+		
 		return MISSING_VALUE;
 	}
 	
@@ -603,6 +676,18 @@ public class Stage<U> {
 	private static class FilteredExecutionPathException extends RuntimeException{
 
 		private static final long serialVersionUID = 1L;
+		
+	}
+
+
+
+
+	public void run() {
+		try{
+			block();
+		}catch(RuntimeException e){
+			e.printStackTrace();
+		}
 		
 	}
 	

@@ -25,14 +25,17 @@ public class CompletableFutureTest {
 		
 		Queue<CompletableFuture<Integer>> queue = buildQueueOfAsyncEvents();
 		
-		Stage<String> convertedToStrings = new SimpleReact()
+		
+		
+		Stage<String> convertedToStrings = new SimpleReact(true)
 								.fromStream(queue.stream())
 								.<String>then(it ->  it + "*");
+								
 								
 
 		convertedToStrings.stream().forEach(f -> assertFalse(f.isDone()));
 		
-		new SimpleReact(new ForkJoinPool(3)).react( ()-> 100, ()->200, ()->400).then( it-> sleep(it)).then(it -> queue.poll().complete(it));
+		new SimpleReact(new ForkJoinPool(3),true).react( ()-> 100, ()->200, ()->400).then( it-> sleep(it)).then(it -> queue.poll().complete(it));
 		
 		List<String> result = convertedToStrings.block();
 		

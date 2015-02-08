@@ -3,24 +3,71 @@ package com.aol.simple.react;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.experimental.Builder;
-import lombok.experimental.Wither;
 
 import org.junit.Test;
 
 public class AllOfTest {
 
+	@Test
+	public void testAllOfFailure(){
+		new SimpleReact().react(()-> { throw new RuntimeException();},()->"hello",()->"world")
+				//.onFail(it -> it.getMessage())
+				.capture(e -> 
+				  e.printStackTrace())
+				.peek(it -> 
+				System.out.println(it))
+				.allOf((List<String> data) -> {
+					System.out.println(data);
+						return "hello"; }).block();
+	}
+	@Test
+	public void testAllOfCompletableFutureOneFailsAllFail(){
+		List<String> urls = Arrays.asList("hello","world","2");
+		List<String> result = new SimpleReact().fromStream(urls.stream()
+				.<CompletableFuture<String>>map(it ->  handle(it)))
+				
+				.capture(e -> 
+				  e.printStackTrace())
+				.peek(it -> 
+				System.out.println(it))
+				.allOf((List<String> data) -> {
+					System.out.println(data);
+						return "hello"; }).block();
+		
+		assertThat(result.size(),is(0));
+	}
+	@Test
+	public void testBlockompletableFuture(){
+		List<String> urls = Arrays.asList("hello","world","2");
+		List<String> result = new SimpleReact().fromStream(urls.stream()
+				.<CompletableFuture<String>>map(it ->  handle(it)))
+				
+				.capture(e -> 
+				  e.printStackTrace())
+				.peek(it -> 
+				System.out.println(it))
+				.block();
+		
+		assertThat(result.size(),is(2));
+	}
+	
+	private CompletableFuture<String> handle(String it) {
+		if("hello".equals(it))
+		{
+			 CompletableFuture f= new CompletableFuture();
+			 f.completeExceptionally(new RuntimeException());
+			 return f;
+		}
+		return CompletableFuture.completedFuture(it);
+	}
 	@Test
 	public void testAllOfToSet() throws InterruptedException, ExecutionException {
 

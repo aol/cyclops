@@ -31,12 +31,18 @@ public class SimpleReact {
 
 	@Getter
 	private final ExecutorService executor;
+	private final boolean immediate;
 
 	/**
 	 * Construct a new SimpleReact that will use a ForkJoinPool with parrellism set to the number of processors on the host
 	 */
 	public SimpleReact(){
 		this.executor = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
+		this.immediate =true;
+	}
+	public SimpleReact(boolean eager){
+		this.executor = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
+		this.immediate =eager;
 	}
 	
 	/**
@@ -45,6 +51,12 @@ public class SimpleReact {
 	public SimpleReact(ExecutorService executor) {
 	
 		this.executor = executor;
+		this.immediate =true;
+	}
+	public SimpleReact(ExecutorService executor,boolean eager) {
+		
+		this.executor = executor;
+		this.immediate =eager;
 	}
 	
 	/**
@@ -55,7 +67,8 @@ public class SimpleReact {
 	 */
 	public <U> Stage<U> fromStream(final Stream<CompletableFuture<U>> stream) {
 
-		return  new Stage<U>(stream,executor);
+		Stream s = stream;
+		return  new Stage<U>( s,executor, immediate);
 	}
 
 	
@@ -134,7 +147,7 @@ public class SimpleReact {
 	public <U> Stage< U> react(final Supplier<U> s, Generator t) {
 
 		return new Stage<U>(t.generate(s),
-				executor);
+				executor,immediate);
 
 	}
 	/**
@@ -178,8 +191,8 @@ public class SimpleReact {
 	 */
 	public <U> Stage<U> react(final Function<U,U> f,ReactIterator<U> t) {
 
-		return new Stage<U>(t.iterate(f),
-				executor);
+		Stream s = t.iterate(f);
+		return new Stage<U>(s,executor,immediate);
 
 	}
 	/**
@@ -221,7 +234,8 @@ public class SimpleReact {
 		
 		return new Stage<U>(Stream.of(actions).map(
 				next -> CompletableFuture.supplyAsync(next, executor)),
-				executor);
+				executor,immediate);
+		
 	}
 
 		

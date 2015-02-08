@@ -36,7 +36,7 @@ public class ResultCollectionTest {
 	@Test
 	public void testBlockThenResultResetAndCorrect() throws InterruptedException, ExecutionException {
 
-		List<String> strings = new SimpleReact()
+		List<String> strings = new SimpleReact(true)
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)

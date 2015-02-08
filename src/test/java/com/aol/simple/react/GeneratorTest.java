@@ -26,6 +26,9 @@ public class GeneratorTest {
 	private Object lock1= "lock1";
 	private Object lock2= "lock2";
 	
+	public synchronized void incrementCapture(){
+		capture++;
+	}
 	@Test
 	public void testGenerate() throws InterruptedException, ExecutionException {
 		count =0;
@@ -34,7 +37,7 @@ public class GeneratorTest {
 				.<Integer> react(() -> count++ ,SimpleReact.times(4))
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
-				.capture(e -> capture++)
+				.capture(e -> incrementCapture())
 				.block();
 
 		assertThat("Capture is " +  capture,strings.size(), is(4));
