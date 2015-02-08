@@ -150,6 +150,12 @@ public class SimpleReact {
 				executor,immediate);
 
 	}
+	public <U> Stage< U> reactInfinitely(final Supplier<U> s) {
+
+		return new Stage<U>(Stream.generate(() -> CompletableFuture.completedFuture(s.get())),
+				executor,false);
+
+	}
 	/**
 	 * Create a Sequential Generator that will trigger a Supplier to be called the specified number of times
 	 * 
