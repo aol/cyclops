@@ -1,4 +1,4 @@
-package com.aol.simple.react;
+package com.aol.simple.react.async;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.aol.simple.react.SimpleReact;
 import com.aol.simple.react.async.Signal;
 
 public class SignalTest {

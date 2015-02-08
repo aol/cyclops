@@ -1,4 +1,4 @@
-package com.aol.simple.react;
+package com.aol.simple.react.async;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.aol.simple.react.SimpleReact;
 import com.aol.simple.react.async.Queue;
 
 public class QueueTest {

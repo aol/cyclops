@@ -1,5 +1,6 @@
 package com.aol.simple.react;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -115,6 +116,15 @@ public class Stage<U> {
 		
 	}
 	
+	public List<Stage<U>> split(int times){
+		List<Stage<U>> result = new ArrayList<>();
+		List<CompletableFuture> activeList = lastActive.list();
+		for(int i=0;i<times;i++){
+			result.add(this.withLastActive(new StreamWrapper(activeList.stream(),eager)));
+		}
+		return result;
+	}
+
 	
 	
 
@@ -691,7 +701,7 @@ public class Stage<U> {
 		try{
 			block();
 		}catch(RuntimeException e){
-			e.printStackTrace();
+			
 		}
 		
 	}

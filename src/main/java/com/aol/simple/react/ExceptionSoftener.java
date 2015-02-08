@@ -10,7 +10,7 @@ import sun.misc.Unsafe;
 @Slf4j
 public class ExceptionSoftener {
 
-	static enum singleton { factory;
+	public static enum singleton { factory;
 		@Getter
 	    private final ExceptionSoftener instance;
 	    private singleton(){
@@ -20,7 +20,7 @@ public class ExceptionSoftener {
 	
 	private final Optional<Unsafe> unsafe = getUnsafe();
 	
-	void throwSoftenedException(final Exception e) {
+	public void throwSoftenedException(final Exception e) {
 		unsafe.ifPresent(u -> u.throwException(e));
 		throw new RuntimeException(e);
 	}
