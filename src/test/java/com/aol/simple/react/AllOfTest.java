@@ -1,6 +1,6 @@
 package com.aol.simple.react;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
@@ -29,7 +29,7 @@ public class AllOfTest {
 						return "hello"; }).block();
 	}
 	@Test
-	public void testAllOfCompletableFutureOneFailsAllFail(){
+	public void testAllOfCompletableFutureOneFailsContinue(){
 		List<String> urls = Arrays.asList("hello","world","2");
 		List<String> result = new SimpleReact().fromStream(urls.stream()
 				.<CompletableFuture<String>>map(it ->  handle(it)))
@@ -40,9 +40,44 @@ public class AllOfTest {
 				System.out.println(it))
 				.allOf((List<String> data) -> {
 					System.out.println(data);
-						return "hello"; }).block();
+						return data; }).first();
 		
-		assertThat(result.size(),is(0));
+		assertThat(result.size(),is(2));
+	}
+	@Test
+	public void testAllOfCompletableOnFail(){
+		List<String> urls = Arrays.asList("hello","world","2");
+		List<String> result = new SimpleReact().fromStream(urls.stream()
+				.<CompletableFuture<String>>map(it ->  handle(it)))
+				.onFail(it ->"hello")
+				.capture(e -> 
+				  e.printStackTrace())
+				.peek(it -> 
+				System.out.println(it))
+				.allOf((List<String> data) -> {
+					System.out.println(data);
+						return data; }).first();
+		
+		assertThat(result.size(),is(3));
+	}
+	@Test
+	public void testAllOfCompletableFilter(){
+		List<String> urls = Arrays.asList("hello","world","2");
+		List<String> result = new SimpleReact().fromStream(urls.stream()
+				.<CompletableFuture<String>>map(it ->  handle(it)))
+				.onFail(it ->"hello")
+				.filter(it-> !"2".equals(it))
+				.capture(e -> 
+				  e.printStackTrace())
+				.peek(it -> 
+				System.out.println(it))
+				.allOf((List<String> data) -> {
+					System.out.println(data);
+						return data; }).first();
+		
+		assertThat(result.size(),is(2));
+		assertThat(result,hasItem("hello"));
+		assertThat(result,hasItem("world"));
 	}
 	@Test
 	public void testBlockompletableFuture(){

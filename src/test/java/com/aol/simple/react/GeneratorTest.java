@@ -29,6 +29,9 @@ public class GeneratorTest {
 	public synchronized void incrementCapture(){
 		capture++;
 	}
+	public synchronized int incrementCount(){
+		return count++;
+	}
 	@Test
 	public void testGenerate() throws InterruptedException, ExecutionException {
 		count =0;
@@ -49,7 +52,7 @@ public class GeneratorTest {
 		count =0;
 		
 		List<String> strings = new SimpleReact()
-				.<Integer> react(() -> count++ ,timesInSequence(1).offset(2))
+				.<Integer> react(() -> incrementCount() ,timesInSequence(1).offset(2))
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.block();

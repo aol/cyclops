@@ -601,6 +601,8 @@ public class Stage<U> {
 	@SuppressWarnings("unchecked")
 	public <T,R> Stage<R> allOf(final Function<List<T>, R> fn) {
 
+		
+		
 		return (Stage<R>)allOf(Collectors.toList(), (Function<R, U>)fn);
 
 	}
@@ -613,11 +615,14 @@ public class Stage<U> {
 	 */
 	@SuppressWarnings({"unchecked","rawtypes"})
 	public <T,R> Stage<R> allOf(final Collector collector,final Function<T,R> fn) {
-
-		return (Stage<R>) withLastActive(new StreamWrapper( CompletableFuture.allOf(
-				lastActiveArray()).thenApplyAsync((result) -> {
-						return new StageWithResults(this,result).submit( () -> fn.apply(aggregateResults(collector, lastActive.stream().collect(Collectors.toList()))));
-					}, taskExecutor),eager));
+		CompletableFuture cf = CompletableFuture.allOf(
+				lastActiveArray());  
+		Function<Exception,T> f = (Exception e) -> {  capture(e); return block(Collectors.toList(),lastActive);};
+		CompletableFuture onFail = cf.exceptionally(f);
+		CompletableFuture onSuccess = onFail.thenApplyAsync((result) -> {
+			return new StageWithResults(this,result).submit( () -> fn.apply(aggregateResults(collector, lastActive.stream().collect(Collectors.toList()))));
+		}, taskExecutor);
+		return (Stage<R>) withLastActive(new StreamWrapper(onSuccess ,eager));
 
 	}
 
