@@ -42,6 +42,19 @@ public class QueueTest {
 	}
 	volatile	int  count =0;
 	volatile	int  count1 =10000;
+	
+	@Test 
+	public void simpleMergingTestLazyIndividualMerge(){
+		Queue<Integer> q = new Queue(new LinkedBlockingQueue());
+		q.add(0);
+		q.add(100000);
+		
+		List<Integer> result = q.stream().limit(2).peek(it->System.out.println(it)).collect(Collectors.toList());
+		assertThat(result,hasItem(100000));
+		assertThat(result,hasItem(0));
+	
+	}
+	
 	@Test @Ignore //too non-deterministic to run regularly - relying on population from competing threads
 	public void mergingTestLazyIndividualMerge(){
 		count = 0;
@@ -58,7 +71,27 @@ public class QueueTest {
 		assertThat(result,hasItem(0));
 	
 	}
-	@Test
+	
+	@Test 
+	public void simpleMergingTestEagerStreamMerge(){
+		
+	
+		Queue<Integer> q = new Queue(new LinkedBlockingQueue());
+
+		q.add(0);
+		q.add(100000);
+		
+		
+		
+		
+		List<Integer> result = q.stream().limit(2).peek(it->System.out.println(it)).collect(Collectors.toList());
+		assertThat(result,hasItem(100000));
+		assertThat(result,hasItem(0));
+	
+	}
+	
+	
+	@Test @Ignore //too non-deterministic to run regularly - relying on population from competing threads
 	public void mergingTestEagerStreamMerge(){
 		count = 0;
 		count1 = 100000;
@@ -77,6 +110,7 @@ public class QueueTest {
 		assertThat(result,hasItem(0));
 	
 	}
+	
 	
 	@Test(expected=Queue.ClosedQueueException.class)
 	public void queueTestBlock(){

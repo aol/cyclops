@@ -111,6 +111,30 @@ public class TopicTest {
 		}
 	
 	}
+	@Test 
+	public void simpleMergingAndSplitting(){
+		
+		
+		Topic<Integer> topic = new Topic<>();
+
+		Stream<Integer> stream1 = topic.stream();
+		Stream<Integer> stream2 = topic.stream();
+		
+		topic.add(count);
+		topic.add(count1);
+
+		
+		
+		
+		for(Stream<Integer> stream : Arrays.asList(stream1,stream2)){
+			List<Integer> result = stream.limit(2)
+										.peek(it->System.out.println(it))
+										.collect(Collectors.toList());
+			assertThat(result,hasItem(100000));
+			assertThat(result,hasItem(0));
+		}
+	
+	}
 	
 	@Test @Ignore //too non-deterministic to run regularly - relying on population from competing threads
 	public void mergingAndSplittingSimpleReact(){
@@ -157,6 +181,50 @@ public class TopicTest {
 	
 	}
 	
+	@Test 
+	public void simpleMergingAndSplittingSimpleReact(){
+	
+		
+		Topic<Integer> topic = new Topic<>();
+		
+		 Stage<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
+			.react(()->SimpleReact.lazy()
+				.fromStream(topic.streamCompletableFutures())
+				.then(it -> it + "*")
+				.<Collection<String>>run(()->new ArrayList<>() ),
+				
+				()->SimpleReact.lazy()
+					.fromStream(topic.streamCompletableFutures())
+					.then(it -> it + "!")
+				
+					.<Collection<String>>run( ()->new HashSet<>() )
+				
+				);
+		
+		 
+		    sleep(50);//make sure streams are set up
+			
+		    topic.add(count);
+		    topic.add(count1);
+			
+			sleep(40); //wait until Topic has been read from
+			System.out.println("Closing!");
+			topic.close();
+			System.out.println("Closed! Blocking..");
+			List<Collection<String>> result = stage.block();
+			System.out.println("Completed " + result.size());
+			
+		
+			assertThat(extract1(result),hasItem("0*"));
+			assertThat(extract1(result),hasItem("100000*"));
+
+			
+			assertThat(extract2(result),hasItem("0!"));
+			assertThat(extract2(result),hasItem("100000!"));
+		
+		
+	
+	}
 	private Collection<String> extract1(List<Collection<String>> result) {
 		for(Collection next : result){
 			if(next instanceof ArrayList)
