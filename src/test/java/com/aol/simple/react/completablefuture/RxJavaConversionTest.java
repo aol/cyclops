@@ -24,7 +24,7 @@ public class RxJavaConversionTest {
 	
 	@Test
 	public void rxConversion() throws InterruptedException, ExecutionException{
-		//conversion of RxJava code here :- http://blog.danlew.net/2014/09/22/grokking-rxjava-part-2/
+		//conversion of non-concurrent RxJava code here :- http://blog.danlew.net/2014/09/22/grokking-rxjava-part-2/
 		
 		
 		

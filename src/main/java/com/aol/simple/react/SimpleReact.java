@@ -58,7 +58,7 @@ public class SimpleReact {
 	 * @return Lazy SimpleReact for handling infinite streams
 	 */
 	public static SimpleReact lazy(ExecutorService executor){
-		return new SimpleReact(false);
+		return new SimpleReact(executor,false);
 	}
 	
 	/**

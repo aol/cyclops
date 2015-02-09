@@ -13,97 +13,102 @@ import lombok.Getter;
 
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 
-
 /**
  * Inspired by scalaz-streams async.Queue
  * 
- * A Queue that takes data from one or more input Streams and provides them to one or more output Streams
+ * A Queue that takes data from one or more input Streams and provides them to
+ * one or more output Streams
  * 
  * @author johnmcclean
  *
- * @param <T> Type of data stored in Queue
+ * @param <T>
+ *            Type of data stored in Queue
  */
-public class Queue<T> implements Adapter<T>{
+public class Queue<T> implements Adapter<T> {
 
-	
-	private volatile boolean open=true;
-	
+	private volatile boolean open = true;
+
 	@Getter(AccessLevel.PACKAGE)
 	private final BlockingQueue<T> queue;
-	
+
 	/**
 	 * Construct a Queue backed by a LinkedBlockingQueue
 	 */
-	public Queue(){
+	public Queue() {
 		this(new LinkedBlockingQueue<>());
 	}
-	
+
 	/**
-    * @param queue BlockingQueue to back this Queue
+	 * @param queue
+	 *            BlockingQueue to back this Queue
 	 */
-	public Queue(BlockingQueue<T> queue){
+	public Queue(BlockingQueue<T> queue) {
 		this.queue = queue;
 	}
-	
+
 	/**
-	 * @return Sequential Infinite (until Queue is closed) Stream of data from this Queue
+	 * @return Sequential Infinite (until Queue is closed) Stream of data from
+	 *         this Queue
 	 * 
-	 * use 
-	 * queue.stream().parallel() to convert to a parallel Stream
+	 *         use queue.stream().parallel() to convert to a parallel Stream
 	 * 
 	 */
-	public Stream<T> stream(){
-		
-		return Stream.generate(  ()->  ensureOpen()).flatMap(it -> it.stream());
+	public Stream<T> stream() {
+
+		return Stream.generate(() -> ensureOpen()).flatMap(it -> it.stream());
 	}
-	
+
 	/**
-	 * @return Infinite (until Queue is closed) Stream of CompletableFutures that can be used as input into a SimpleReact concurrent dataflow
+	 * @return Infinite (until Queue is closed) Stream of CompletableFutures
+	 *         that can be used as input into a SimpleReact concurrent dataflow
 	 * 
-	 * This Stream itself is Sequential, SimpleReact will apply concurrency / parralellism via the constituent CompletableFutures
+	 *         This Stream itself is Sequential, SimpleReact will apply
+	 *         concurrency / parralellism via the constituent CompletableFutures
 	 * 
 	 */
-	public Stream<CompletableFuture<T>> streamCompletableFutures(){
-		return stream().map(it -> CompletableFuture.<T>completedFuture(it));
+	public Stream<CompletableFuture<T>> streamCompletableFutures() {
+		return stream().map(it -> CompletableFuture.<T> completedFuture(it));
 	}
-	
+
 	/**
-	 * @param stream Input data from provided Stream
+	 * @param stream
+	 *            Input data from provided Stream
 	 */
-	public boolean fromStream(Stream<T> stream){
-		stream.collect(Collectors.toCollection(()->queue));
+	public boolean fromStream(Stream<T> stream) {
+		stream.collect(Collectors.toCollection(() -> queue));
 		return true;
 	}
-	
+
 	private final Object closeLock = new Object();
-	
-	private Collection<T> ensureOpen(){
-		synchronized(closeLock){
-			if(!open)
-				throw new ClosedQueueException();
-		
-		
-			Collection<T> data= new ArrayList<>();
-			queue.drainTo(data); 
-			
-			return data;
-		}
+
+	private Collection<T> ensureOpen() {
+
+		if (!open)
+			throw new ClosedQueueException();
+
+		Collection<T> data = new ArrayList<>();
+		queue.drainTo(data);
+
+		return data;
+
 	}
-	
+
 	/**
 	 * Exception thrown if Queue closed
-	 *  
+	 * 
 	 * @author johnmcclean
 	 *
 	 */
-	public static class ClosedQueueException extends SimpleReactProcessingException{
+	public static class ClosedQueueException extends
+			SimpleReactProcessingException {
 		private static final long serialVersionUID = 1L;
 	}
-	
+
 	/**
 	 * Add a single datapoint to this Queue
 	 * 
-	 * @param data data to add
+	 * @param data
+	 *            data to add
 	 * @return self
 	 */
 	@Override
@@ -111,6 +116,7 @@ public class Queue<T> implements Adapter<T>{
 		this.queue.add(data);
 		return data;
 	}
+
 	/**
 	 * Close this Queue
 	 * 
@@ -118,9 +124,9 @@ public class Queue<T> implements Adapter<T>{
 	 */
 	@Override
 	public boolean close() {
-		synchronized(closeLock){
-			this.open = false;
-		}
+
+		this.open = false;
+
 		return true;
 	}
 }
