@@ -1,4 +1,4 @@
-package com.aol.simple.react;
+package com.aol.simple.react.util;
 
 
 /**

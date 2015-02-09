@@ -31,6 +31,8 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
+import com.aol.simple.react.extractors.Extractors;
+
 public class SimpleReactTest {
 
 	@Test
@@ -49,7 +51,7 @@ public class SimpleReactTest {
 	public void testMultithreading() throws InterruptedException, ExecutionException {
 		
 		
-		 Set<Long> threads = new SimpleReact(new ForkJoinPool(10),true)
+		 Set<Long> threads = new SimpleReact(new ForkJoinPool(10))
 				.<Integer> react(() -> 1, () -> 2, () -> 3,() -> 3,() -> 3,() -> 3,() -> 3)
 				.then(it -> Thread.currentThread().getId())
 				.block(Collectors.toSet());

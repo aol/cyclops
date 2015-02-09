@@ -7,6 +7,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
 
+import com.aol.simple.react.exceptions.ExceptionSoftener;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +24,7 @@ public class StageWithResults<RS,U> {
 	private final RS results;
 	
 
-	StageWithResults(Stage<U> stage, RS results) {
+	public StageWithResults(Stage<U> stage, RS results) {
 		
 		this.taskExecutor = stage.getTaskExecutor();
 		this.stage = stage;

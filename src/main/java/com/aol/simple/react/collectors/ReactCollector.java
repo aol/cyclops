@@ -1,4 +1,4 @@
-package com.aol.simple.react;
+package com.aol.simple.react.collectors;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,10 +6,16 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 
+import com.aol.simple.react.Stage;
+import com.aol.simple.react.StageWithResults;
+import com.aol.simple.react.Status;
+import com.aol.simple.react.exceptions.ThrowsSoftened;
+import com.aol.simple.react.extractors.Extractor;
+
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-class ReactCollector<U> {
+public class ReactCollector<U> {
 
 	private final Stage<U> builder;
 	

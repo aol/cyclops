@@ -6,12 +6,14 @@ import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
-
 
 import com.aol.simple.react.SimpleReact;
 
@@ -31,13 +33,51 @@ public class QueueTest {
 		Stream<String> stream  = Stream.of("1","2","3");
 		Queue<String> q = new Queue(new LinkedBlockingQueue());
 		q.fromStream(stream);
-		Stream<String> dq = q.provideStream();
+		Stream<String> dq = q.stream();
 	
 		
-		Integer dequeued = q.provideStream().limit(3).map(it -> Integer.valueOf(it)).reduce(0,(acc,next) -> acc+next);
+		Integer dequeued = q.stream().limit(3).map(it -> Integer.valueOf(it)).reduce(0,(acc,next) -> acc+next);
 		
 		assertThat(dequeued,is(6));
 	}
+	volatile	int  count =0;
+	volatile	int  count1 =10000;
+	@Test @Ignore //too non-deterministic to run regularly - relying on population from competing threads
+	public void mergingTestLazyIndividualMerge(){
+		count = 0;
+		count1 = 100000;
+		
+		Queue<Integer> q = new Queue(new LinkedBlockingQueue());
+		SimpleReact.lazy().reactInfinitely(() ->  count++).then(it->q.add(it)).run(new ForkJoinPool(1));
+		SimpleReact.lazy().reactInfinitely(() -> count1++).then(it->q.add(it)).run(new ForkJoinPool(1));
+		
+		
+		
+		List<Integer> result = q.stream().limit(1000).peek(it->System.out.println(it)).collect(Collectors.toList());
+		assertThat(result,hasItem(100000));
+		assertThat(result,hasItem(0));
+	
+	}
+	@Test
+	public void mergingTestEagerStreamMerge(){
+		count = 0;
+		count1 = 100000;
+		
+		
+		Queue<Integer> q = new Queue(new LinkedBlockingQueue());
+
+		new SimpleReact().react(()-> q.fromStream(Stream.generate(()->count++)));
+		new SimpleReact().react(()-> q.fromStream(Stream.generate(()->count1++)));
+
+		
+		
+		
+		List<Integer> result = q.stream().limit(1000).peek(it->System.out.println(it)).collect(Collectors.toList());
+		assertThat(result,hasItem(100000));
+		assertThat(result,hasItem(0));
+	
+	}
+	
 	@Test(expected=Queue.ClosedQueueException.class)
 	public void queueTestBlock(){
 		
@@ -45,11 +85,11 @@ public class QueueTest {
 			Queue q = new Queue<>(new LinkedBlockingQueue<>());
 			
 			
-			new SimpleReact().react(() -> q.add(1), ()-> q.add(2),()-> {sleep(200); return q.add(4); }, ()-> { sleep(400); q.close(); return 1;});
+			new SimpleReact().react(() -> q.add(1), ()-> q.add(2),()-> {sleep(50); return q.add(4); }, ()-> { sleep(400); q.close(); return 1;});
 			
 			
 			
-			new SimpleReact(false).fromStream(q.provideStreamCompletableFutures())
+			SimpleReact.lazy().fromStream(q.streamCompletableFutures())
 					.then(it -> "*" +it)
 					.peek(it -> incrementFound())
 					.peek(it -> System.out.println(it))
@@ -66,16 +106,12 @@ public class QueueTest {
 	@Test
 	public void queueTestRun(){
 		try{
-			Queue<Integer> q = new Queue(new LinkedBlockingQueue());
-			
-			
-			
+			Queue<Integer> q = new Queue<>(new LinkedBlockingQueue<>());
+						
 			new SimpleReact().react(() -> q.add(1), ()-> q.add(2),()-> {sleep(200); return q.add(4); }, ()-> { sleep(400); q.close(); return 1;});
 			
 			
-			
-			
-			List<String> result = new SimpleReact(false).fromStream(q.provideStreamCompletableFutures())
+			List<String> result = SimpleReact.lazy().fromStream(q.streamCompletableFutures())
 					.then(it -> "*" +it)
 					.peek(it -> incrementFound())
 					.peek(it -> System.out.println(it))
@@ -90,13 +126,14 @@ public class QueueTest {
 		
 	}
 
-	private void sleep(int i) {
+	private int sleep(int i) {
 		try {
 			Thread.sleep(i);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return i;
 		
 	}
 }

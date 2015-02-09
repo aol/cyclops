@@ -9,46 +9,89 @@ import java.util.stream.Stream;
 
 import lombok.Getter;
 
+/**
+ * A class that can accept input streams and generate output streams where data sent in the Topic is guaranteed to be
+ * provided to all Topic subsribers
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Data type for the Topic
+ */
 public class Topic<T> implements Adapter<T> {
 	
 	
 	private final List<Queue<T>> queues= new ArrayList<Queue<T>>();
 	private final DistributingCollection<T> distributor = new DistributingCollection<T>();
 
-	public Topic(Queue<T> q) {
-		queues.add(q);
-		distributor.getTargets().add(q.getQueue());	
-	}
+	/**
+	 * Construct a new Topic
+	 */
 	public Topic() {
 		Queue<T> q = new Queue<T>();
 		queues.add(q);
 		distributor.getTargets().add(q.getQueue());	
 	}
+	
+	/**
+	 * Construct a Topic using the Queue provided
+	 * @param q Queue to back this Topic with
+	 */
+	public Topic(Queue<T> q) {
+		queues.add(q);
+		distributor.getTargets().add(q.getQueue());	
+	}
+	
+	
 
-	public void fromStream(Stream<T> stream){
+	/**
+	 * @param stream Input data from provided Stream
+	 */
+	public boolean fromStream(Stream<T> stream){
 		stream.collect(Collectors.toCollection(()->distributor));
-		
-	}
-	public Stream<CompletableFuture<T>> provideStreamCompletableFutures(){
-		Queue<T> q = new Queue<>();
-		queues.add(q);
-		distributor.getTargets().add(q.getQueue());
-		return q.provideStreamCompletableFutures();
-		
-	}
-	public Stream<T> provideStream(){
-		Queue<T> q = new Queue<>();
-		queues.add(q);
-		distributor.getTargets().add(q.getQueue());
-		return q.provideStream();
-		
-	}
-
-	public void close() {
-		queues.forEach(it -> it.close());
+		return true;
 		
 	}
 	
+	/**
+	 * @return Stream of CompletableFutures that can be used as input into a SimpleReact concurrent dataflow
+	 */
+	public Stream<CompletableFuture<T>> streamCompletableFutures(){
+		Queue<T> q = new Queue<>();
+		queues.add(q);
+		distributor.getTargets().add(q.getQueue());
+		return q.streamCompletableFutures();
+		
+	}
+	
+	/**
+	 * @return Stream of data
+	 */
+	public Stream<T> stream(){
+		Queue<T> q = new Queue<>();
+		queues.add(q);
+		distributor.getTargets().add(q.getQueue());
+		return q.stream();
+		
+	}
+	
+	
+	/**
+	 * Close this Topic
+	 * 
+	 * @return true if closed
+	 */
+	public boolean close() {
+		queues.forEach(it -> it.close());
+		return true;
+		
+	}
+	
+	/**
+	 * Add a single datapoint to this Queue
+	 * 
+	 * @param data data to add
+	 * @return self
+	 */
 	@Override
 	public T add(T data) {
 		fromStream(Stream.of(data));
@@ -56,9 +99,10 @@ public class Topic<T> implements Adapter<T> {
 		
 	}
 	
-	static class DistributingCollection<T> extends ArrayList<T>{
+	private static class DistributingCollection<T> extends ArrayList<T>{
 		
 
+		private static final long serialVersionUID = 1L;
 		@Getter
 		private final List<Collection<T>> targets = new ArrayList<>();
 		

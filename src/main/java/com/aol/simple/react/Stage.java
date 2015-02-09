@@ -16,7 +16,13 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.simple.react.async.Queue;
+import com.aol.simple.react.blockers.Blocker;
+import com.aol.simple.react.collectors.ReactCollector;
+import com.aol.simple.react.exceptions.ExceptionSoftener;
+import com.aol.simple.react.exceptions.SimpleReactProcessingException;
+import com.aol.simple.react.exceptions.ThrowsSoftened;
+import com.aol.simple.react.extractors.Extractor;
+import com.aol.simple.react.extractors.Extractors;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -56,78 +62,6 @@ public class Stage<U> {
 	private final StreamWrapper lastActive;
 	private final boolean eager;
 	
-	@Wither
-	@AllArgsConstructor
-	@Builder
-	static class StreamWrapper{
-		@SuppressWarnings("rawtypes")
-		private final List<CompletableFuture> list;
-		private final Stream<CompletableFuture> stream;
-		private final boolean eager;
-		
-		public StreamWrapper(List<CompletableFuture> list){
-			this.list = list;
-			this.stream = null;
-			this.eager = true;
-		}
-		public StreamWrapper(Stream<CompletableFuture> stream,boolean eager){
-			this.stream = stream;
-			if(eager){
-				list = stream.collect(Collectors.toList());
-			}else{
-				list = null;
-			}
-			this.eager = eager;
-		}
-		public StreamWrapper(Stream<CompletableFuture> stream,Collector c,boolean eager){
-			this.stream = stream;
-			if(eager){
-				list = (List<CompletableFuture>)stream.collect(c);
-			}else{
-				list = null;
-			}
-			this.eager = eager;
-		}
-		public StreamWrapper(CompletableFuture cf, boolean eager) {
-			if(eager){
-				list = Arrays.asList(cf);
-				stream = null;
-			}else{
-				list = null;
-				stream = Stream.of(cf);
-			}
-			this.eager = eager;
-				
-		}
-		
-		public Stream<CompletableFuture> stream(){
-			if(eager)
-				return list.stream();
-			else
-				return stream;
-		}
-		public List<CompletableFuture> list(){
-			if(eager)
-				return list;
-			else
-				return stream.collect(Collectors.toList());
-		}
-		
-		StreamWrapper permutate(Stream<CompletableFuture> stream, Collector c){
-			return new StreamWrapper(stream,eager);
-		}
-		
-	}
-	
-	public List<Stage<U>> split(int times){
-		List<Stage<U>> result = new ArrayList<>();
-		List<CompletableFuture> activeList = lastActive.list();
-		for(int i=0;i<times;i++){
-			result.add(this.withLastActive(new StreamWrapper(activeList.stream(),eager)));
-		}
-		return result;
-	}
-
 	
 	
 
@@ -699,12 +633,32 @@ public class Stage<U> {
 
 
 
-	
+	/**
+	 * Trigger a lazy stream as a task on the provided ExecutorService
+	 * 
+	 * @param e Executor service to trigger lazy stream on (Stream CompletableFutures will use ExecutorService associated with this Stage
+	 * may not be the same one).
+	 * 
+	 * 
+	 */
+	public void run(ExecutorService e) {
+		new SimpleReact(e).react(()->run(()->null));
+		
+	}
 
+	/**
+	 * Trigger a lazy stream
+	 */
 	public void run() {
 		run(()->null);
 		
 	}
+	/**
+	 * Trigger a lazy stream and return the results in the Collection created by the collector
+	 * 
+	 * @param collector Supplier that creates a collection to store results in
+	 * @return Collection of results
+	 */
 	public <C extends Collection<U>>  C run(Supplier<C> collector) {
 	
 		C result = (C)collector.get();

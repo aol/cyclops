@@ -76,9 +76,9 @@ public class MergeTest {
 	}
 	@Test
 	public void mergeAndForkProcessing() {
-		Stage<String> stage1 = new SimpleReact(true).<Integer> react(() -> 1,
+		Stage<String> stage1 = new SimpleReact().<Integer> react(() -> 1,
 				() -> 2, () -> 3).then(it -> "*" + it);
-		Stage<String> stage2 = new SimpleReact(true).<Integer> react(() -> 4,
+		Stage<String> stage2 = new SimpleReact().<Integer> react(() -> 4,
 				() -> 5, () -> 6).then(it -> "*" + it);
 
 		List<String> result1 = stage1.merge(stage2).then(it -> it +"*").block();

@@ -37,7 +37,7 @@ public class GeneratorTest {
 		count =0;
 		capture =0;
 		List<String> strings = new SimpleReact()
-				.<Integer> react(() -> count++ ,SimpleReact.times(4))
+				.<Integer> react(() -> incrementCount() ,SimpleReact.times(4))
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.capture(e -> incrementCapture())

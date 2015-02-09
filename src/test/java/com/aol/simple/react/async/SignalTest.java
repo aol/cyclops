@@ -27,7 +27,7 @@ public class SignalTest {
 	@Test
 	public void signalFromStream(){
 		Signal<Integer> q = Signal.topicBackedSignal();
-		Stream<Integer> stage =q.getDiscrete().provideStream().limit(2);
+		Stream<Integer> stage =q.getDiscrete().stream().limit(2);
 		q.fromStream(Stream.of(1,1,1,2,2));
 		
 		 
@@ -46,7 +46,7 @@ public class SignalTest {
 			
 			
 			
-			List<String> result = new SimpleReact(false).fromStream(q.getDiscrete().provideStreamCompletableFutures())
+			List<String> result = SimpleReact.lazy().fromStream(q.getDiscrete().streamCompletableFutures())
 					.then(it -> "*" +it)
 					.peek(it -> incrementFound())
 					.peek(it -> System.out.println(it))
@@ -72,7 +72,7 @@ public class SignalTest {
 			
 			
 			
-			new SimpleReact(false).fromStream(q.getDiscrete().provideStreamCompletableFutures())
+			SimpleReact.lazy().fromStream(q.getDiscrete().streamCompletableFutures())
 					.then(it -> "*" +it)
 					.peek(it -> incrementFound())
 					.peek(it -> System.out.println(it))
@@ -98,7 +98,7 @@ public class SignalTest {
 			
 			
 			
-			new SimpleReact(false).fromStream(q.getContinuous().provideStreamCompletableFutures())
+			SimpleReact.lazy().fromStream(q.getContinuous().streamCompletableFutures())
 					.then(it -> "*" +it)
 					.peek(it -> incrementFound())
 					.peek(it -> System.out.println(it))
