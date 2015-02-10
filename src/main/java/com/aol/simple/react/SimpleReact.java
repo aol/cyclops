@@ -17,7 +17,6 @@ import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.generators.Generator;
 import com.aol.simple.react.generators.ParallelGenerator;
 import com.aol.simple.react.generators.ReactIterator;
-import com.aol.simple.react.generators.SequentialGenerator;
 import com.aol.simple.react.generators.SequentialIterator;
 import com.aol.simple.react.util.VisibleForTesting;
 
@@ -84,6 +83,17 @@ public class SimpleReact {
 	public <U> Stage<U> fromStream(final Stream<CompletableFuture<U>> stream) {
 
 		Stream s = stream;
+		return  new Stage<U>( s,executor, immediate);
+	}
+	/**
+	 * Start a reactive dataflow from a stream.
+	 * 
+	 * @param stream that will be used to drive the reactive dataflow
+	 * @return Next stage in the reactive flow
+	 */
+	public <U> Stage<U> fromStreamWithoutFutures(final Stream<U> stream) {
+		
+		Stream s = stream.map(it -> CompletableFuture.completedFuture(it));
 		return  new Stage<U>( s,executor, immediate);
 	}
 

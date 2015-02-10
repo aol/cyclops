@@ -1,16 +1,21 @@
 package com.aol.simple.react.async;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.experimental.Wither;
 
+import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 
 /**
@@ -24,9 +29,18 @@ import com.aol.simple.react.exceptions.SimpleReactProcessingException;
  * @param <T>
  *            Type of data stored in Queue
  */
+@Wither
+@AllArgsConstructor
 public class Queue<T> implements Adapter<T> {
 
+	private final static PoisonPill POISON_PILL = new PoisonPill();
+	private final ExceptionSoftener softener = ExceptionSoftener.singleton.factory
+			.getInstance();
 	private volatile boolean open = true;
+	private volatile AtomicInteger listeningStreams = new AtomicInteger();
+	private final int timeout;
+	private final TimeUnit unit;
+	private final int maxPoisonPills;
 
 	@Getter(AccessLevel.PACKAGE)
 	private final BlockingQueue<T> queue;
@@ -44,6 +58,9 @@ public class Queue<T> implements Adapter<T> {
 	 */
 	public Queue(BlockingQueue<T> queue) {
 		this.queue = queue;
+		timeout = -1;
+		unit = TimeUnit.MILLISECONDS;
+		maxPoisonPills = 90000;
 	}
 
 	/**
@@ -54,9 +71,12 @@ public class Queue<T> implements Adapter<T> {
 	 * 
 	 */
 	public Stream<T> stream() {
-
+		
+		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
 		return Stream.generate(() -> ensureOpen()).flatMap(it -> it.stream());
 	}
+
+	
 
 	/**
 	 * @return Infinite (until Queue is closed) Stream of CompletableFutures
@@ -79,19 +99,41 @@ public class Queue<T> implements Adapter<T> {
 		return true;
 	}
 
-	private final Object closeLock = new Object();
+	
 
-	private Collection<T> ensureOpen() {
-
-		if (!open)
+	private  Collection<T>  ensureOpen() {
+		
+		if(!open)
 			throw new ClosedQueueException();
+		T data = null;
+		try {
+			if (timeout == -1)
+				data = queue.take(); 
+			else {
 
-		Collection<T> data = new ArrayList<>();
-		queue.drainTo(data);
+				T next = queue.poll(timeout, unit);
+				if (next != null)
+					data = next;
+				else
+					throw new QueueTimeoutException();
 
-		return data;
+			}
 
-	}
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			softener.throwSoftenedException(e);
+
+		}
+		if(data instanceof PoisonPill)
+			throw new ClosedQueueException();
+		return Arrays.asList(data);
+
+	};
+	
+	
+	
+	
+	
 
 	/**
 	 * Exception thrown if Queue closed
@@ -104,6 +146,20 @@ public class Queue<T> implements Adapter<T> {
 		private static final long serialVersionUID = 1L;
 	}
 
+	/**
+	 * Exception thrown if Queue polling timesout
+	 * 
+	 * @author johnmcclean
+	 *
+	 */
+	public static class QueueTimeoutException extends
+			SimpleReactProcessingException {
+		private static final long serialVersionUID = 1L;
+	}
+
+	private static class PoisonPill{
+		
+	}
 	/**
 	 * Add a single datapoint to this Queue
 	 * 
@@ -126,6 +182,8 @@ public class Queue<T> implements Adapter<T> {
 	public boolean close() {
 
 		this.open = false;
+		for(int i=0;i<Math.max(maxPoisonPills, listeningStreams.get());i++)
+			queue.add((T)POISON_PILL);
 
 		return true;
 	}

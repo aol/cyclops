@@ -42,7 +42,7 @@ public class SignalTest {
 			Signal<Integer> q = Signal.queueBackedSignal();
 			
 			
-			new SimpleReact().react(() -> q.set(1), ()-> q.set(2),()-> {sleep(200); return q.set(4); }, ()-> { sleep(400); q.getDiscrete().close(); return 1;});
+			new SimpleReact().react(() -> q.set(1), ()-> q.set(2),()-> {sleep(20); return q.set(4); }, ()-> { sleep(400); q.getDiscrete().close(); return 1;});
 			
 			
 			
