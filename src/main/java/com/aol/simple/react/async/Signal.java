@@ -83,7 +83,7 @@ public class Signal<T> {
 	/**
 	 * Close this Signal
 	 * 
-	 * @return true if closed
+	 * 
 	 */
 	public void close(){
 		continuous.close();

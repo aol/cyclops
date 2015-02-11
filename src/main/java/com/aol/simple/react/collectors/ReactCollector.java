@@ -23,9 +23,9 @@ public class ReactCollector<U> {
 	 * React and <b>block</b>
 	 * 
 	 * <code>
-	 	List<String> strings = SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then((it) -> it * 100)
-				.then((it) -> "*" + it)
+	 	List&lt;String&gt; strings = SimpleReact.&lt;Integer, Integer&gt; react(() -&gt; 1, () -&gt; 2, () -&gt; 3)
+				.then((it) -&gt; it * 100)
+				.then((it) -&gt; "*" + it)
 				.block();
 	  </code>
 	 * 
@@ -36,7 +36,7 @@ public class ReactCollector<U> {
 	 * until they are complete. Block, only blocks the current thread.
 	 * 
 	 * @return Results of currently active stage aggregated in a List
-	 * @throws InterruptedException,ExecutionException
+	 * throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({ "hiding", "unchecked" })
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
@@ -47,7 +47,7 @@ public class ReactCollector<U> {
 	/**
 	 * @param collector to perform aggregation / reduction operation on the results (e.g. to Collect into a List or String)
 	 * @return Results of currently active stage in aggregated in form determined by collector
-	 * @throws InterruptedException,ExecutionException
+	 * throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
@@ -58,7 +58,7 @@ public class ReactCollector<U> {
 	 * Block until first result recieved
 	 * 
 	 * @return  first result.
-	 * @throws InterruptedException,ExecutionException
+	 * throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
@@ -69,7 +69,7 @@ public class ReactCollector<U> {
 	 * Block until all results recieved.
 	 * 
 	 * @return  last result
-	 * @throws InterruptedException,ExecutionException
+	 * throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
@@ -82,7 +82,7 @@ public class ReactCollector<U> {
 	 * 
 	 * @param extractor used to determine which value should be returned, recieves current collected input and extracts a return value
 	 * @return Value determined by the supplied extractor
-	 * @throws InterruptedException,ExecutionException
+	 * throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
@@ -96,7 +96,7 @@ public class ReactCollector<U> {
 	 * @param breakout Predicate that determines whether the block should be
 	 *            continued or removed
 	 * @return Value determined by the supplied extractor
-	 * @throws InterruptedException,ExecutionException
+	 * throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes"})
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
@@ -113,10 +113,10 @@ public class ReactCollector<U> {
 	 * blocking the current thread when the Predicate has been fulfilled. E.g.
 	 * 
 	 * <code>
-	  	List<String> strings = SimpleReact.<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				.then(it -> it * 100)
-				.then(it -> "*" + it)
-				.block(status -> status.getCompleted()>1);
+	  	List&lt;String&gt; strings = SimpleReact.&lt;Integer, Integer&gt; react(() -&gt; 1, () -&gt; 2, () -&gt; 3)
+				.then(it -&gt; it * 100)
+				.then(it -&gt; "*" + it)
+				.block(status -&gt; status.getCompleted()&gt;1);
 	  </code>
 	 * 
 	 * In this example the current thread will unblock once more than one result
@@ -127,7 +127,7 @@ public class ReactCollector<U> {
 	 *            continued or removed
 	 * @return List of Completed results of currently active stage at full completion
 	 *         point or when breakout triggered (which ever comes first).
-	 * @throws InterruptedException,ExecutionException
+	 * throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({ "hiding", "rawtypes", "unchecked" })
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
@@ -143,7 +143,7 @@ public class ReactCollector<U> {
 	 * @return Completed results of currently active stage at full completion
 	 *         point or when breakout triggered (which ever comes first), in aggregated in form determined by collector
 	 *         
-	 * @throws InterruptedException,ExecutionException
+	 * throws InterruptedException,ExecutionException
 	 */
 	@SuppressWarnings({ "hiding", "unchecked","rawtypes" })
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})

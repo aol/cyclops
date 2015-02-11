@@ -4,9 +4,9 @@ SimpleReact is an easy to use, *always concurrent*, reactive programming library
 
 * Adding SimpleReact as a dependency : https://github.com/aol/simple-react/wiki/Adding-SimpleReact-as-a-dependency
 
-For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:'0.1'
+For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:'0.2'
 
-* Javadoc http://www.javadoc.io/doc/com.aol.simplereact/simple-react/0.1
+* Javadoc http://www.javadoc.io/doc/com.aol.simplereact/simple-react/0.2
 
 * See an illustrative getting started example : https://github.com/aol/simple-react/wiki/Getting-started-with-a-simple-example
 
@@ -278,7 +278,13 @@ SimpleReact provides a mechanism for starting a dataflow an iterator.
 				.then(it -> "*" + it)
 				.block(); 
 				
-##Example 11 : 'Infinite' generators & iterators
+##Example 11 : Infinite generators & iterators
+
+Since v0.2 SimpleReact supports fully Infinite Streams, See :- 
+
+https://github.com/aol/simple-react/wiki/Infinite-Streams-in-SimpleReact
+https://medium.com/@johnmcclean/plumbing-java-8-streams-with-queues-topics-and-signals-d9a71eafbbcc
+
 
 SimpleReact provides a mechanism over JDK Stream iterate and generate which will create 'infinite' Streams of data to react to. Because SimpleReact eagerly collects these Streams (when converting to *active* CompletableFutures), the SimpleReact api always requires a maximum size parameter to be set.
 
