@@ -18,7 +18,7 @@ import com.aol.simple.react.generators.Generator;
 import com.aol.simple.react.generators.ParallelGenerator;
 import com.aol.simple.react.generators.ReactIterator;
 import com.aol.simple.react.generators.SequentialIterator;
-import com.aol.simple.react.util.VisibleForTesting;
+import com.google.common.annotations.VisibleForTesting;
 
 /**
  * Entry point for creating a concurrent dataflow.

@@ -12,7 +12,6 @@ import java.util.function.Predicate;
 
 import org.junit.Test;
 
-import rx.Observable;
 
 import com.aol.simple.react.SimpleReact;
 import com.aol.simple.react.predicates.Predicates;

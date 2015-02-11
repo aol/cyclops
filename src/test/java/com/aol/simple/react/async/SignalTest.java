@@ -114,6 +114,39 @@ public class SignalTest {
 		
 		
 	}
+	
+	@Test
+	public void testDiscreteMultipleStreamsQueue(){
+		 Signal<Integer> s = Signal.queueBackedSignal();
+		 s.set(1);
+		 s.set(2);
+		s.getDiscrete().stream().limit( 1);
+		s.getDiscrete().stream().limit( 1);
+	}
+	@Test
+	public void testContinuousMultipleStreamsQueue(){
+		 Signal<Integer> s = Signal.queueBackedSignal();
+		 s.set(1);
+		 s.set(2);
+		s.getContinuous().stream().limit( 1);
+		s.getContinuous().stream().limit( 1);
+	}
+	@Test
+	public void testDiscreteMultipleStreamsTopic(){
+		 Signal<Integer> s = Signal.topicBackedSignal();
+		 s.set(1);
+		 s.set(2);
+		s.getDiscrete().stream().limit( 1);
+		s.getDiscrete().stream().limit( 1);
+	}
+	@Test
+	public void testContinuousMultipleStreamsTopic(){
+		 Signal<Integer> s = Signal.topicBackedSignal();
+		 s.set(1);
+		 s.set(2);
+		s.getContinuous().stream().limit( 1);
+		s.getContinuous().stream().limit( 1);
+	}
 
 	private void sleep(int i) {
 		try {

@@ -225,6 +225,82 @@ public class TopicTest {
 		
 	
 	}
+	
+	@Test
+	public void multipleQueues(){
+		Topic<Integer> topic = new Topic<>();
+		topic.stream();
+		topic.stream(); //3 Queues
+		
+		assertThat(topic.getDistributor().getSubscribers().size(),is(2));
+		assertThat(topic.getStreamToQueue().size(),is(2));
+	}
+	@Test
+	public void disconnectStreams(){
+		Topic<Integer> topic = new Topic<>();
+		Stream s1 = topic.stream();
+		Stream s2 = topic.stream(); //3 Queues
+		
+		
+		topic.disconnect(s1);
+		assertThat(topic.getDistributor().getSubscribers().size(),is(1));
+		assertThat(topic.getStreamToQueue().size(),is(1));
+	}
+	@Test
+	public void disconnectAllStreams(){
+		Topic<Integer> topic = new Topic<>();
+		Stream s1 = topic.stream();
+		Stream s2 = topic.stream(); //3 Queues
+		
+		
+		topic.disconnect(s1);
+		topic.disconnect(s2);
+		assertThat(topic.getDistributor().getSubscribers().size(),is(0));
+		assertThat(topic.getStreamToQueue().size(),is(0));
+	}
+	@Test
+	public void disconnectAllStreamsAndReconnect(){
+		Topic<Integer> topic = new Topic<>();
+		Stream s1 = topic.stream();
+		Stream s2 = topic.stream(); //3 Queues
+		
+		
+		topic.disconnect(s1);
+		topic.disconnect(s2);
+		assertThat(topic.getDistributor().getSubscribers().size(),is(0));
+		assertThat(topic.getStreamToQueue().size(),is(0));
+		
+		topic.stream();
+		
+		assertThat(topic.getDistributor().getSubscribers().size(),is(1));
+		assertThat(topic.getStreamToQueue().size(),is(1));
+	}
+	
+	@Test 
+	public void testSizeSignal(){
+		
+		Topic<Integer> t = new Topic<Integer>();
+		Signal<Integer> s = t.getSizeSignal();
+		
+		t.offer(1);
+		t.offer(1);
+		t.offer(1);
+		t.stream().limit(3).forEach(it -> System.out.println(it)); //drain the queue
+		t.offer(1); //queue size is 1
+		sleep(50); 
+	   List<Integer> sizes = s.getDiscrete().stream().limit(7).collect(Collectors.toList());
+	   assertThat(sizes.get(0),is(1));
+	   assertThat(sizes.get(1),is(2));
+	   assertThat(sizes.get(2),is(3));
+	   assertThat(sizes.get(3),is(2));
+	   assertThat(sizes.get(4),is(1));
+	   assertThat(sizes.get(5),is(0));
+	   assertThat(sizes.get(6),is(1));
+	   
+	  
+	   
+	}
+	
 	private Collection<String> extract1(List<Collection<String>> result) {
 		for(Collection next : result){
 			if(next instanceof ArrayList)

@@ -4,11 +4,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -17,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
 
+import com.aol.simple.react.SimpleReact;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 
@@ -49,6 +49,9 @@ public class Queue<T> implements Adapter<T> {
 
 	@Getter(AccessLevel.PACKAGE)
 	private final BlockingQueue<T> queue;
+	
+	@Getter
+	private final Signal<Integer> sizeSignal;
 
 	/**
 	 * Construct a Queue backed by a LinkedBlockingQueue
@@ -56,18 +59,21 @@ public class Queue<T> implements Adapter<T> {
 	public Queue() {
 		this(new LinkedBlockingQueue<>());
 	}
-
-	/**
-	 * @param queue
-	 *            BlockingQueue to back this Queue
-	 */
-	public Queue(BlockingQueue<T> queue) {
+	Queue(BlockingQueue<T> queue,Signal<Integer> sizeSignal) {
 		this.queue = queue;
 		timeout = -1;
 		timeUnit = TimeUnit.MILLISECONDS;
 		maxPoisonPills = 90000;
 		offerTimeout= Integer.MAX_VALUE;
 		offerTimeUnit = TimeUnit.DAYS;
+		this.sizeSignal = sizeSignal;
+	}
+	/**
+	 * @param queue
+	 *            BlockingQueue to back this Queue
+	 */
+	public Queue(BlockingQueue<T> queue) {
+		this(queue,Signal.queueBackedSignal());
 	}
 
 	/**
@@ -134,7 +140,8 @@ public class Queue<T> implements Adapter<T> {
 		}
 		if(data instanceof PoisonPill)
 			throw new ClosedQueueException();
-		
+		if(sizeSignal!=null)
+			this.sizeSignal.set(queue.size());
 		return Arrays.asList(data);
 
 	};
@@ -181,7 +188,11 @@ public class Queue<T> implements Adapter<T> {
 	 */
 	public boolean add(T data){
 		try{
-			return queue.add(data);
+			boolean result = queue.add(data);
+			if(sizeSignal!=null)
+				this.sizeSignal.set(queue.size());
+			return result;
+			
 		}catch(IllegalStateException e){
 			return false;
 		}
@@ -197,16 +208,22 @@ public class Queue<T> implements Adapter<T> {
 	 * @return self
 	 */
 	@Override
-	public T offer(T data) {
+	public boolean offer(T data) {
 		try {
-			this.queue.offer(data,this.offerTimeout,this.offerTimeUnit);
+			boolean result =  this.queue.offer(data,this.offerTimeout,this.offerTimeUnit);
+			if(sizeSignal!=null)
+				this.sizeSignal.set(queue.size());
+			return result;
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			this.softener.throwSoftenedException(e);
 		}
-		return data;
+		return false;
+		
 	}
 
+	
+	
 	/**
 	 * Close this Queue
 	 * 

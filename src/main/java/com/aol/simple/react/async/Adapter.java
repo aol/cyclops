@@ -13,13 +13,14 @@ import java.util.stream.Stream;
  */
 public interface Adapter<T> {
 
+	
 	/**
-	 * Add a single datapoint to this adapter
+	 * Offer a single datapoint to this adapter
 	 * 
 	 * @param data data to add
 	 * @return self
 	 */
-	public T offer(T data);
+	public boolean offer(T data);
 	
 	/**
 	 * @param stream Input data from provided Stream
