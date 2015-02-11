@@ -58,6 +58,23 @@ public class QueueTest {
 		assertThat(found, is(2));
 		assertThat(q.stream().limit(2).collect(Collectors.toList()).size(),
 				is(2));
+		
+		assertThat(q.stream().limit(2).collect(Collectors.toList()).size(),
+				is(2));
+		assertThat(found, is(4));
+	}
+	@Test
+	public void backPressureJDKTest() {
+		Queue<String> q = new Queue<>(new LinkedBlockingQueue<>(2));
+		new SimpleReact().react(() -> {
+				Stream.of("1","2","3","4").forEach(it -> {q.offer(it); found++;});
+				return 1;
+			});
+
+		sleep(10);
+		assertThat(found, is(2));
+		assertThat(q.stream().limit(2).collect(Collectors.toList()).size(),
+				is(2));
 
 		assertThat(q.stream().limit(2).collect(Collectors.toList()).size(),
 				is(2));
