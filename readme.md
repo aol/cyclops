@@ -18,6 +18,8 @@ For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:
 
  Building a non blocking NIO rest client : https://github.com/aol/simple-react/wiki/Example-:-Building-a-non-blocking-NIO-rest-client
 
+* Example : Plumbing Java 8 Streams with Queues, Topics and Signals : https://medium.com/@johnmcclean/plumbing-java-8-streams-with-queues-topics-and-signals-d9a71eafbbcc
+
 * Example : Bulk loading files : https://github.com/aol/simple-react/wiki/Example-:-Bulk-loading-files
 
 * Example : Implementing a Quorum : https://github.com/aol/simple-react/wiki/Example-:-Implementing-a-Quorum
