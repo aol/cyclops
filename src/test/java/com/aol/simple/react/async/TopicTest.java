@@ -120,8 +120,8 @@ public class TopicTest {
 		Stream<Integer> stream1 = topic.stream();
 		Stream<Integer> stream2 = topic.stream();
 		
-		topic.add(count);
-		topic.add(count1);
+		topic.offer(count);
+		topic.offer(count1);
 
 		
 		
@@ -204,8 +204,8 @@ public class TopicTest {
 		 
 		    sleep(50);//make sure streams are set up
 			
-		    topic.add(count);
-		    topic.add(count1);
+		    topic.offer(count);
+		    topic.offer(count1);
 			
 			sleep(40); //wait until Topic has been read from
 			System.out.println("Closing!");

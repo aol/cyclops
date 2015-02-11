@@ -93,7 +93,7 @@ public class Topic<T> implements Adapter<T> {
 	 * @return self
 	 */
 	@Override
-	public T add(T data) {
+	public T offer(T data) {
 		fromStream(Stream.of(data));
 		return data;
 		

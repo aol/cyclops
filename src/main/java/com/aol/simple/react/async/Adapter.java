@@ -19,7 +19,7 @@ public interface Adapter<T> {
 	 * @param data data to add
 	 * @return self
 	 */
-	public T add(T data);
+	public T offer(T data);
 	
 	/**
 	 * @param stream Input data from provided Stream

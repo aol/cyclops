@@ -7,6 +7,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -40,6 +42,9 @@ public class Queue<T> implements Adapter<T> {
 	private volatile AtomicInteger listeningStreams = new AtomicInteger();
 	private final int timeout;
 	private final TimeUnit timeUnit;
+	
+	private final int offerTimeout;
+	private final TimeUnit offerTimeUnit;
 	private final int maxPoisonPills;
 
 	@Getter(AccessLevel.PACKAGE)
@@ -61,6 +66,8 @@ public class Queue<T> implements Adapter<T> {
 		timeout = -1;
 		timeUnit = TimeUnit.MILLISECONDS;
 		maxPoisonPills = 90000;
+		offerTimeout= Integer.MAX_VALUE;
+		offerTimeUnit = TimeUnit.DAYS;
 	}
 
 	/**
@@ -118,6 +125,7 @@ public class Queue<T> implements Adapter<T> {
 					throw new QueueTimeoutException();
 
 			}
+			
 
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
@@ -126,6 +134,7 @@ public class Queue<T> implements Adapter<T> {
 		}
 		if(data instanceof PoisonPill)
 			throw new ClosedQueueException();
+		
 		return Arrays.asList(data);
 
 	};
@@ -160,16 +169,41 @@ public class Queue<T> implements Adapter<T> {
 	private static class PoisonPill{
 		
 	}
+	
+	
 	/**
-	 * Add a single datapoint to this Queue
+	 * Add a single data point to the queue
+	 * 
+	 * If the queue is a bounded queue and is full, will return false
+	 * 
+	 * @param data Data to add
+	 * @return true if successfully added.
+	 */
+	public boolean add(T data){
+		try{
+			return queue.add(data);
+		}catch(IllegalStateException e){
+			return false;
+		}
+	}
+	/**
+	 * Offer a single datapoint to this Queue
+	 * 
+	 * If the queue is a bounded queue and is full it will block until space comes available or until
+	 * offer time out is reached (default is Integer.MAX_VALUE DAYS).
 	 * 
 	 * @param data
 	 *            data to add
 	 * @return self
 	 */
 	@Override
-	public T add(T data) {
-		this.queue.add(data);
+	public T offer(T data) {
+		try {
+			this.queue.offer(data,this.offerTimeout,this.offerTimeUnit);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			this.softener.throwSoftenedException(e);
+		}
 		return data;
 	}
 

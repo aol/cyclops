@@ -66,7 +66,7 @@ public class Signal<T> {
 	 * @return newValue
 	 */
 	public T set(T newValue){
-		continuous.add(newValue);
+		continuous.offer(newValue);
 		
 		swap(value,newValue);
 		return newValue;
@@ -74,7 +74,7 @@ public class Signal<T> {
 
 	private synchronized void swap(T value2, T newValue) {
 		if(!Objects.equals(value,newValue)){
-			discrete.add(newValue);
+			discrete.offer(newValue);
 			value = newValue;
 		}
 		

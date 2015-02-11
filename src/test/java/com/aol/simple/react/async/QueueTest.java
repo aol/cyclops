@@ -2,7 +2,7 @@ package com.aol.simple.react.async;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,6 +31,44 @@ public class QueueTest {
 	}
 	
 	@Test
+	public void backPressureTest(){
+		Queue<Integer> q = new Queue<>(new LinkedBlockingQueue<>(2));
+		new SimpleReact().react(() -> { q.offer(1); return found++;}, ()-> { q.offer(1); return found++;},()-> { q.offer(6); return found++;}, ()-> { q.offer(5); return found++;});
+		
+		sleep(10);
+		assertThat(found,is(2));
+		assertThat(q.stream().limit(2).collect(Collectors.toList()).size(),is(2));
+		
+		
+		
+		assertThat(q.stream().limit(2).collect(Collectors.toList()).size(),is(2));
+		assertThat(found,is(4));
+	}
+	
+	@Test
+	public void testAdd(){
+		Queue<Integer> q = new Queue<>(new LinkedBlockingQueue<>(2));
+		new SimpleReact().react(() -> { q.add(1); return found++;}, ()-> { q.add(1); return found++;},()-> { q.add(6); return found++;}, ()-> { q.add(5); return found++;});
+		
+		sleep(10);
+		assertThat(found,is(4));
+		
+		
+		
+	}
+	@Test
+	public void testAddFull(){
+		Queue<Integer> q = new Queue<>(new LinkedBlockingQueue<>(2));
+		
+		assertTrue(q.add(1));
+		assertTrue(q.add(2));
+		assertFalse(q.add(3));
+		
+		
+		
+	}
+	
+	@Test
 	public void enqueueTest(){
 		Stream<String> stream  = Stream.of("1","2","3");
 		Queue<String> q = new Queue(new LinkedBlockingQueue());
@@ -48,8 +86,8 @@ public class QueueTest {
 	@Test 
 	public void simpleMergingTestLazyIndividualMerge(){
 		Queue<Integer> q = new Queue(new LinkedBlockingQueue());
-		q.add(0);
-		q.add(100000);
+		q.offer(0);
+		q.offer(100000);
 		
 		List<Integer> result = q.stream().limit(2).peek(it->System.out.println(it)).collect(Collectors.toList());
 		assertThat(result,hasItem(100000));
@@ -63,8 +101,8 @@ public class QueueTest {
 		count1 = 100000;
 		
 		Queue<Integer> q = new Queue(new LinkedBlockingQueue());
-		SimpleReact.lazy().reactInfinitely(() ->  count++).then(it->q.add(it)).run(new ForkJoinPool(1));
-		SimpleReact.lazy().reactInfinitely(() -> count1++).then(it->q.add(it)).run(new ForkJoinPool(1));
+		SimpleReact.lazy().reactInfinitely(() ->  count++).then(it->q.offer(it)).run(new ForkJoinPool(1));
+		SimpleReact.lazy().reactInfinitely(() -> count1++).then(it->q.offer(it)).run(new ForkJoinPool(1));
 		
 		
 		
@@ -80,8 +118,8 @@ public class QueueTest {
 	
 		Queue<Integer> q = new Queue(new LinkedBlockingQueue());
 
-		q.add(0);
-		q.add(100000);
+		q.offer(0);
+		q.offer(100000);
 		
 		
 		
@@ -121,7 +159,7 @@ public class QueueTest {
 			Queue q = new Queue<>(new LinkedBlockingQueue<>());
 			
 			
-			new SimpleReact().react(() -> q.add(1), ()-> q.add(2),()-> {sleep(50); return q.add(4); }, ()-> { sleep(400); q.close(); return 1;});
+			new SimpleReact().react(() -> q.offer(1), ()-> q.offer(2),()-> {sleep(50); return q.offer(4); }, ()-> { sleep(400); q.close(); return 1;});
 			
 			
 			
@@ -146,7 +184,7 @@ public class QueueTest {
 			Queue q = new Queue<>(new LinkedBlockingQueue<>()).withTimeout(1).withTimeUnit(TimeUnit.MILLISECONDS);
 			
 			
-			new SimpleReact().react(() -> q.add(1), ()-> q.add(2),()-> {sleep(500); return q.add(4); }, ()-> q.add(5));
+			new SimpleReact().react(() -> q.offer(1), ()-> q.offer(2),()-> {sleep(500); return q.offer(4); }, ()-> q.offer(5));
 			
 			
 			
@@ -168,7 +206,7 @@ public class QueueTest {
 		try{
 			Queue<Integer> q = new Queue<>(new LinkedBlockingQueue<>());
 						
-			new SimpleReact().react(() -> q.add(1), ()-> q.add(2),()-> {sleep(200); return q.add(4); }, ()-> { sleep(400); q.close(); return 1;});
+			new SimpleReact().react(() -> q.offer(1), ()-> q.offer(2),()-> {sleep(200); return q.offer(4); }, ()-> { sleep(400); q.close(); return 1;});
 			
 			
 			List<String> result = SimpleReact.lazy().fromStream(q.streamCompletableFutures())
