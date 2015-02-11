@@ -14,25 +14,35 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
 
+import com.aol.simple.react.extractors.Extractors;
+
 public class SimpleReactTest {
 
+	@Test
+	public void testLazyParameters(){
+		ForkJoinPool fjp = new ForkJoinPool();
+		assertThat(SimpleReact.lazy(fjp).getExecutor(),is(fjp));
+	}
+	@Test
+	public void testEagetParameters(){
+		ForkJoinPool fjp = new ForkJoinPool();
+		assertThat(new SimpleReact(fjp).getExecutor(),is(fjp));
+	}
+	
 	@Test
 	public void testReact() throws InterruptedException, ExecutionException {
 
@@ -49,7 +59,7 @@ public class SimpleReactTest {
 	public void testMultithreading() throws InterruptedException, ExecutionException {
 		
 		
-		 Set<Long> threads = new SimpleReact(new ForkJoinPool(10),true)
+		 Set<Long> threads = new SimpleReact(new ForkJoinPool(10))
 				.<Integer> react(() -> 1, () -> 2, () -> 3,() -> 3,() -> 3,() -> 3,() -> 3)
 				.then(it -> Thread.currentThread().getId())
 				.block(Collectors.toSet());

@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
+import com.aol.simple.react.extractors.Extractors;
+
 public class AllOfTest {
 
 	@Test

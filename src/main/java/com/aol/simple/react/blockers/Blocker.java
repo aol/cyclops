@@ -1,4 +1,4 @@
-package com.aol.simple.react;
+package com.aol.simple.react.blockers;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,12 +11,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import com.aol.simple.react.Status;
+import com.aol.simple.react.exceptions.ExceptionSoftener;
+import com.aol.simple.react.exceptions.ThrowsSoftened;
+import com.aol.simple.react.util.SimpleTimer;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @AllArgsConstructor
 @Slf4j
-class Blocker<U> {
+public class Blocker<U> {
 
 	private final ExceptionSoftener exceptionSoftener = ExceptionSoftener.singleton.factory.getInstance();
 	@SuppressWarnings("rawtypes")

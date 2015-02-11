@@ -36,7 +36,7 @@ public class ResultCollectionTest {
 	@Test
 	public void testBlockThenResultResetAndCorrect() throws InterruptedException, ExecutionException {
 
-		List<String> strings = new SimpleReact(true)
+		List<String> strings = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
@@ -140,7 +140,7 @@ public class ResultCollectionTest {
 				.block(status -> status.getCompleted() > 1)
 				.getResults();
 
-		assertThat(strings.size(), is(2));
+		assertThat(strings.size(), greaterThan(1));
 
 	}
 	@Test
@@ -236,7 +236,7 @@ public class ResultCollectionTest {
 				}).capture(e -> count++)
 				.block(status -> status.getAllCompleted() >1 && status.getElapsedMillis()>200);
 
-		assertThat(results.size(), is(2));
+		assertThat(results.size(), greaterThan(1));
 		assertThat(count, is(0));
 	}
 	

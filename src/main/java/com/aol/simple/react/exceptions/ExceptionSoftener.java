@@ -1,4 +1,4 @@
-package com.aol.simple.react;
+package com.aol.simple.react.exceptions;
 
 import java.lang.reflect.Field;
 import java.util.Optional;

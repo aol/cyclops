@@ -27,7 +27,7 @@ public class SignalTest {
 	@Test
 	public void signalFromStream(){
 		Signal<Integer> q = Signal.topicBackedSignal();
-		Stream<Integer> stage =q.getDiscrete().provideStream().limit(2);
+		Stream<Integer> stage =q.getDiscrete().stream().limit(2);
 		q.fromStream(Stream.of(1,1,1,2,2));
 		
 		 
@@ -42,11 +42,11 @@ public class SignalTest {
 			Signal<Integer> q = Signal.queueBackedSignal();
 			
 			
-			new SimpleReact().react(() -> q.set(1), ()-> q.set(2),()-> {sleep(200); return q.set(4); }, ()-> { sleep(400); q.getDiscrete().close(); return 1;});
+			new SimpleReact().react(() -> q.set(1), ()-> q.set(2),()-> {sleep(20); return q.set(4); }, ()-> { sleep(400); q.getDiscrete().close(); return 1;});
 			
 			
 			
-			List<String> result = new SimpleReact(false).fromStream(q.getDiscrete().provideStreamCompletableFutures())
+			List<String> result = SimpleReact.lazy().fromStream(q.getDiscrete().streamCompletableFutures())
 					.then(it -> "*" +it)
 					.peek(it -> incrementFound())
 					.peek(it -> System.out.println(it))
@@ -72,7 +72,7 @@ public class SignalTest {
 			
 			
 			
-			new SimpleReact(false).fromStream(q.getDiscrete().provideStreamCompletableFutures())
+			SimpleReact.lazy().fromStream(q.getDiscrete().streamCompletableFutures())
 					.then(it -> "*" +it)
 					.peek(it -> incrementFound())
 					.peek(it -> System.out.println(it))
@@ -98,7 +98,7 @@ public class SignalTest {
 			
 			
 			
-			new SimpleReact(false).fromStream(q.getContinuous().provideStreamCompletableFutures())
+			SimpleReact.lazy().fromStream(q.getContinuous().streamCompletableFutures())
 					.then(it -> "*" +it)
 					.peek(it -> incrementFound())
 					.peek(it -> System.out.println(it))
@@ -113,6 +113,39 @@ public class SignalTest {
 		}
 		
 		
+	}
+	
+	@Test
+	public void testDiscreteMultipleStreamsQueue(){
+		 Signal<Integer> s = Signal.queueBackedSignal();
+		 s.set(1);
+		 s.set(2);
+		s.getDiscrete().stream().limit( 1);
+		s.getDiscrete().stream().limit( 1);
+	}
+	@Test
+	public void testContinuousMultipleStreamsQueue(){
+		 Signal<Integer> s = Signal.queueBackedSignal();
+		 s.set(1);
+		 s.set(2);
+		s.getContinuous().stream().limit( 1);
+		s.getContinuous().stream().limit( 1);
+	}
+	@Test
+	public void testDiscreteMultipleStreamsTopic(){
+		 Signal<Integer> s = Signal.topicBackedSignal();
+		 s.set(1);
+		 s.set(2);
+		s.getDiscrete().stream().limit( 1);
+		s.getDiscrete().stream().limit( 1);
+	}
+	@Test
+	public void testContinuousMultipleStreamsTopic(){
+		 Signal<Integer> s = Signal.topicBackedSignal();
+		 s.set(1);
+		 s.set(2);
+		s.getContinuous().stream().limit( 1);
+		s.getContinuous().stream().limit( 1);
 	}
 
 	private void sleep(int i) {

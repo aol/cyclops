@@ -1,4 +1,4 @@
-package com.aol.simple.react;
+package com.aol.simple.react.extractors;
 
 import java.util.Collection;
 import java.util.List;

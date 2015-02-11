@@ -13,11 +13,12 @@ import java.util.stream.Stream;
 
 import lombok.Getter;
 
+import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.generators.Generator;
 import com.aol.simple.react.generators.ParallelGenerator;
 import com.aol.simple.react.generators.ReactIterator;
-import com.aol.simple.react.generators.SequentialGenerator;
 import com.aol.simple.react.generators.SequentialIterator;
+import com.google.common.annotations.VisibleForTesting;
 
 /**
  * Entry point for creating a concurrent dataflow.
@@ -40,9 +41,20 @@ public class SimpleReact {
 		this.executor = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
 		this.immediate =true;
 	}
-	public SimpleReact(boolean eager){
-		this.executor = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
-		this.immediate =eager;
+	
+	
+	/**
+	 * @return Lazy SimpleReact for handling infinite streams
+	 */
+	public static SimpleReact lazy(){
+		return new SimpleReact(false);
+	}
+	/**
+	 * @param executor Executor this SimpleReact instance will use to execute concurrent tasks.
+	 * @return Lazy SimpleReact for handling infinite streams
+	 */
+	public static SimpleReact lazy(ExecutorService executor){
+		return new SimpleReact(executor,false);
 	}
 	
 	/**
@@ -53,11 +65,7 @@ public class SimpleReact {
 		this.executor = executor;
 		this.immediate =true;
 	}
-	public SimpleReact(ExecutorService executor,boolean eager) {
-		
-		this.executor = executor;
-		this.immediate =eager;
-	}
+	
 	
 	/**
 	 * Start a reactive dataflow from a stream of CompletableFutures.
@@ -68,6 +76,17 @@ public class SimpleReact {
 	public <U> Stage<U> fromStream(final Stream<CompletableFuture<U>> stream) {
 
 		Stream s = stream;
+		return  new Stage<U>( s,executor, immediate);
+	}
+	/**
+	 * Start a reactive dataflow from a stream.
+	 * 
+	 * @param stream that will be used to drive the reactive dataflow
+	 * @return Next stage in the reactive flow
+	 */
+	public <U> Stage<U> fromStreamWithoutFutures(final Stream<U> stream) {
+		
+		Stream s = stream.map(it -> CompletableFuture.completedFuture(it));
 		return  new Stage<U>( s,executor, immediate);
 	}
 
@@ -150,8 +169,19 @@ public class SimpleReact {
 				executor,immediate);
 
 	}
+	/**
+	 * Generate an infinite reactive flow. Requires a lazy flow.
+	 * 
+	 * The flow will run indefinitely unless / until the provided Supplier throws an Exception
+	 * 
+	 * @see com.aol.simple.react.async.Queue   SimpleReact Queue for a way to create a more managable infinit flow
+	 * 
+	 * @param s Supplier to generate the infinite flow
+	 * @return Next stage in the flow
+	 */
 	public <U> Stage< U> reactInfinitely(final Supplier<U> s) {
-
+		if(immediate)
+			throw new InfiniteProcessingException("To reactInfinitely use a lazy flow");
 		return new Stage<U>(Stream.generate(() -> CompletableFuture.completedFuture(s.get())),
 				executor,false);
 
@@ -243,7 +273,24 @@ public class SimpleReact {
 				executor,immediate);
 		
 	}
+	
+	private SimpleReact(boolean eager){
+		this.executor = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
+		this.immediate =eager;
+	}
+	private SimpleReact(ExecutorService executor,boolean eager) {
+		
+		this.executor = executor;
+		this.immediate =eager;
+	}
+	
+	public static class InfiniteProcessingException extends SimpleReactProcessingException{
 
+		public InfiniteProcessingException(String message) {
+			super(message);
+		}
+		
+	}
 		
 	
 }
