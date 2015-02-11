@@ -59,6 +59,13 @@ public class Topic<T> implements Adapter<T> {
 	
 	
 	
+	/**
+	 * Topic will maintain a queue for each Subscribing Stream
+	 * If a Stream is finished with a Topic it is good practice to disconnect from the Topic 
+	 * so messages will no longer be stored for that Stream
+	 * 
+	 * @param stream
+	 */
 	@Synchronized("lock")
 	public void disconnect(Stream<T> stream){
 		
@@ -89,6 +96,9 @@ public class Topic<T> implements Adapter<T> {
 	}
 	
 	/**
+	 * Generating a streamCompletableFutures will register the Stream as a subscriber to this topic.
+	 * It will be provided with an internal Queue as a mailbox. @see Topic.disconnect to disconnect from the topic
+	 * 
 	 * @return Stream of CompletableFutures that can be used as input into a SimpleReact concurrent dataflow
 	 */
 	public Stream<CompletableFuture<T>> streamCompletableFutures(){
@@ -96,6 +106,8 @@ public class Topic<T> implements Adapter<T> {
 	}
 	
 	/**
+	 * Generating a stream will register the Stream as a subscriber to this topic.
+	 * It will be provided with an internal Queue as a mailbox. @see Topic.disconnect to disconnect from the topic
 	 * @return Stream of data
 	 */
 	public Stream<T> stream(){
@@ -128,6 +140,9 @@ public class Topic<T> implements Adapter<T> {
 		
 	}
 	
+	/**
+	 * @return Track changes in size in the Topic's data
+	 */
 	public Signal<Integer> getSizeSignal(){
 		return this.distributor.getSubscribers().get(0).getSizeSignal();
 	}

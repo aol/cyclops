@@ -42,10 +42,7 @@ public class SimpleReact {
 		this.immediate =true;
 	}
 	
-	private SimpleReact(boolean eager){
-		this.executor = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
-		this.immediate =eager;
-	}
+	
 	/**
 	 * @return Lazy SimpleReact for handling infinite streams
 	 */
@@ -68,11 +65,7 @@ public class SimpleReact {
 		this.executor = executor;
 		this.immediate =true;
 	}
-	private SimpleReact(ExecutorService executor,boolean eager) {
-		
-		this.executor = executor;
-		this.immediate =eager;
-	}
+	
 	
 	/**
 	 * Start a reactive dataflow from a stream of CompletableFutures.
@@ -280,7 +273,16 @@ public class SimpleReact {
 				executor,immediate);
 		
 	}
-
+	
+	private SimpleReact(boolean eager){
+		this.executor = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
+		this.immediate =eager;
+	}
+	private SimpleReact(ExecutorService executor,boolean eager) {
+		
+		this.executor = executor;
+		this.immediate =eager;
+	}
 	
 	public static class InfiniteProcessingException extends SimpleReactProcessingException{
 

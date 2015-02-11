@@ -59,6 +59,7 @@ public class Queue<T> implements Adapter<T> {
 	public Queue() {
 		this(new LinkedBlockingQueue<>());
 	}
+	
 	Queue(BlockingQueue<T> queue,Signal<Integer> sizeSignal) {
 		this.queue = queue;
 		timeout = -1;

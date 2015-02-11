@@ -27,7 +27,7 @@ public class Signal<T> {
 	
 	/**
 	 * 
-	 * Construct a new Single
+	 * Construct a new Signal
 	 * 
 	 * @param continuous Adapter to handle the continuous flow (not only different values)
 	 * @param discrete  Adapter to handle the discrete (changed) flow
