@@ -1,13 +1,15 @@
 package com.aol.simple.react.async;
 
-import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -134,6 +136,30 @@ public class QueueTest {
 		}finally{
 			assertThat(found,is(3));
 		}
+		
+		
+	}
+	@Test
+	public void queueTestTimeout(){
+		
+		
+			Queue q = new Queue<>(new LinkedBlockingQueue<>()).withTimeout(1).withTimeUnit(TimeUnit.MILLISECONDS);
+			
+			
+			new SimpleReact().react(() -> q.add(1), ()-> q.add(2),()-> {sleep(500); return q.add(4); }, ()-> q.add(5));
+			
+			
+			
+			Collection<String> results = SimpleReact.lazy().fromStream(q.streamCompletableFutures())
+					.then(it -> "*" +it)
+					.run(() -> new ArrayList<String>());
+		
+			assertThat(results.size(),is(3));
+			assertThat(results,not(hasItem("*4")));
+			assertThat(results,hasItem("*5"));
+			
+				
+	
 		
 		
 	}

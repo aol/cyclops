@@ -39,7 +39,7 @@ public class Queue<T> implements Adapter<T> {
 	private volatile boolean open = true;
 	private volatile AtomicInteger listeningStreams = new AtomicInteger();
 	private final int timeout;
-	private final TimeUnit unit;
+	private final TimeUnit timeUnit;
 	private final int maxPoisonPills;
 
 	@Getter(AccessLevel.PACKAGE)
@@ -59,7 +59,7 @@ public class Queue<T> implements Adapter<T> {
 	public Queue(BlockingQueue<T> queue) {
 		this.queue = queue;
 		timeout = -1;
-		unit = TimeUnit.MILLISECONDS;
+		timeUnit = TimeUnit.MILLISECONDS;
 		maxPoisonPills = 90000;
 	}
 
@@ -111,7 +111,7 @@ public class Queue<T> implements Adapter<T> {
 				data = queue.take(); 
 			else {
 
-				T next = queue.poll(timeout, unit);
+				T next = queue.poll(timeout, timeUnit);
 				if (next != null)
 					data = next;
 				else
