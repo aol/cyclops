@@ -11,13 +11,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import com.aol.simple.react.Status;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.ThrowsSoftened;
 import com.aol.simple.react.util.SimpleTimer;
-
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import com.google.common.collect.ImmutableList;
 
 @AllArgsConstructor
 @Slf4j
@@ -69,7 +70,7 @@ public class Blocker<U> {
 		}
 		
 		return new Status(completed.get(), errors.get(),
-				lastActive.size(), timer.getElapsedNanoseconds());
+				lastActive.size(), timer.getElapsedNanoseconds(),ImmutableList.copyOf(currentResults));
 		
 	}
 	private void testBreakoutConditionsBeforeUnblockingCurrentThread(

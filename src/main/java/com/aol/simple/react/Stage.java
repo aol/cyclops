@@ -1,7 +1,5 @@
 package com.aol.simple.react;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +14,12 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.Wither;
+import lombok.extern.slf4j.Slf4j;
+
 import com.aol.simple.react.blockers.Blocker;
 import com.aol.simple.react.collectors.ReactCollector;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
@@ -23,13 +27,7 @@ import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.exceptions.ThrowsSoftened;
 import com.aol.simple.react.extractors.Extractor;
 import com.aol.simple.react.extractors.Extractors;
-
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.experimental.Builder;
-import lombok.experimental.Wither;
-import lombok.extern.slf4j.Slf4j;
+import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
  * 
@@ -55,7 +53,10 @@ public class Stage<U> {
 
 	private final ExceptionSoftener exceptionSoftener = ExceptionSoftener.singleton.factory.getInstance();
 	@Getter(AccessLevel.PACKAGE)
+	@Wither(value=AccessLevel.PUBLIC)
 	private final ExecutorService taskExecutor;
+	@Wither(value=AccessLevel.PUBLIC)
+	private final RetryExecutor retrier;
 	
 	private final Optional<Consumer<Throwable>> errorHandler;
 
@@ -75,13 +76,15 @@ public class Stage<U> {
 	 *            The next stage's tasks will be submitted to this executor
 	 */
 	Stage(final Stream<CompletableFuture<U>> stream,
-			final ExecutorService executor,boolean eager) {
+			final ExecutorService executor,final RetryExecutor retrier, final boolean eager) {
 
 		this.taskExecutor = executor;
 		Stream s = stream;
-		this.lastActive = new StreamWrapper(s,eager);
+		this.lastActive = new StreamWrapper(s,Optional.ofNullable(eager).orElse(true));
 		this.errorHandler = Optional.of( (e)-> log.error(e.getMessage(),e));
 		this.eager = eager;
+		this.retrier=retrier;
+		
 	}
 	
 	/**
@@ -172,6 +175,14 @@ public class Stage<U> {
 	public <R> Stage<R> then(final Function<U, R> fn) {
 		return (Stage<R>) this.withLastActive( lastActive.permutate(lastActive.stream()
 				.map((ft) -> ft.thenApplyAsync(fn, taskExecutor))
+				,Collectors.toList()));
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <R> Stage<R> retry(final Function<U, R> fn) {
+
+		return (Stage<R>) this.withLastActive( lastActive.permutate(lastActive.stream()
+				.map((ft) ->  ft.thenApplyAsync((res)->getSafe(retrier.getWithRetry(()->fn.apply((U) res))), taskExecutor))
 				,Collectors.toList()));
 	}
 	/**
