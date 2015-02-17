@@ -2,6 +2,7 @@ package com.aol.simple.react.async;
 
 import java.util.Objects;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 import lombok.Getter;
@@ -19,7 +20,8 @@ import lombok.Getter;
  */
 public class Signal<T> {
 
-	private volatile T value;
+	private final AtomicReference<T> discreteState = new AtomicReference<>(null);
+	
 	@Getter
 	private final Adapter<T> continuous;
 	@Getter
@@ -68,16 +70,18 @@ public class Signal<T> {
 	public T set(T newValue){
 		continuous.offer(newValue);
 		
-		swap(value,newValue);
+		setDiscreteIfDiff(newValue);
 		return newValue;
 	}
 
-	private synchronized void swap(T value2, T newValue) {
-		if(!Objects.equals(value,newValue)){
-			discrete.offer(newValue);
-			value = newValue;
+	private void setDiscreteIfDiff(T newValue) {
+		T oldVal = discreteState.get();
+		while (!discreteState.compareAndSet(oldVal, newValue)) {
+			oldVal = discreteState.get();
 		}
-		
+
+		if (!Objects.equals(oldVal, newValue))
+			discrete.offer(newValue);
 	}
 
 	/**
@@ -90,6 +94,4 @@ public class Signal<T> {
 		discrete.close();
 	}
 
-	
-	
 }

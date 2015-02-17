@@ -31,7 +31,7 @@ public class SignalTest {
 		q.fromStream(Stream.of(1,1,1,2,2));
 		
 		 
-		int sum  = stage.map(it -> it*100).reduce(0, (acc,n) -> { return acc+n;});
+		int sum  = stage.map(it -> it*100).reduce(0, (acc,n) -> acc+n);
 		
 		 assertThat(sum,is(300));
 	}
@@ -40,28 +40,30 @@ public class SignalTest {
 	public void signalDiscrete3(){
 		try{
 			Signal<Integer> q = Signal.queueBackedSignal();
+
+			new SimpleReact().react(
+					() -> q.set(1), 
+					() -> q.set(2),
+					()-> { 
+						sleep(20); 
+						return q.set(4); 
+					}, 
+					()-> { 
+						sleep(400); 
+						q.getDiscrete().close(); 
+						return 1;
+					});
 			
-			
-			new SimpleReact().react(() -> q.set(1), ()-> q.set(2),()-> {sleep(20); return q.set(4); }, ()-> { sleep(400); q.getDiscrete().close(); return 1;});
-			
-			
-			
-			List<String> result = SimpleReact.lazy().fromStream(q.getDiscrete().streamCompletableFutures())
+			SimpleReact.lazy().fromStream(q.getDiscrete().streamCompletableFutures())
 					.then(it -> "*" +it)
 					.peek(it -> incrementFound())
 					.peek(it -> System.out.println(it))
 					.run(() -> new ArrayList<String>());
-			
-			
-			
-			
-				
-		}finally{
-			assertThat(found,is(3));
+		} finally{
+			assertThat(found, is(3));
 		}
-		
-		
 	}
+	
 	@Test
 	public void signalDiscrete1(){
 		try{
