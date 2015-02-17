@@ -1,10 +1,12 @@
 package com.aol.simple.react;
 
 import lombok.AllArgsConstructor;
+import lombok.experimental.Builder;
 
 import com.google.common.collect.ImmutableList;
 
 @AllArgsConstructor
+@Builder
 public class Status<T> {
 	private final int completed;
 	private final int errors;

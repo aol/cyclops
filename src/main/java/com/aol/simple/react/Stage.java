@@ -1,5 +1,6 @@
 package com.aol.simple.react;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +29,7 @@ import com.aol.simple.react.exceptions.ThrowsSoftened;
 import com.aol.simple.react.extractors.Extractor;
 import com.aol.simple.react.extractors.Extractors;
 import com.nurkiewicz.asyncretry.RetryExecutor;
+
 
 /**
  * 
@@ -673,6 +675,7 @@ public class Stage<U> {
 	public <C extends Collection<U>>  C run(Supplier<C> collector) {
 	
 		C result = (C)collector.get();
+		List<CompletableFuture> list = new ArrayList<>(Runtime.getRuntime().availableProcessors()+2);
 		try{
 		  this.lastActive.stream().forEach(n-> {
 			
@@ -682,6 +685,13 @@ public class Stage<U> {
 					} catch (Exception e) {
 						capture(e);
 					}
+				}else{
+					list.add(n);
+					
+				}
+				while(list.size()>Runtime.getRuntime().availableProcessors()){
+					List<CompletableFuture> toRemove = list.stream().filter(cf -> cf.isDone()).collect(Collectors.toList());
+					list.removeAll(toRemove);
 				}
 			});
 		}catch(SimpleReactProcessingException e){

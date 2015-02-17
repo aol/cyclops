@@ -19,6 +19,7 @@ import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.ThrowsSoftened;
 import com.aol.simple.react.util.SimpleTimer;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 @AllArgsConstructor
 @Slf4j
@@ -41,6 +42,8 @@ public class Blocker<U> {
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public List<U> block(final Predicate<Status> breakout) {
 
+		if(lastActive.size()==0)
+			return ImmutableList.of();
 		lastActive.forEach(f -> f.whenComplete((result, ex) -> {
 			testBreakoutConditionsBeforeUnblockingCurrentThread(breakout,
 					result, (Throwable)ex);

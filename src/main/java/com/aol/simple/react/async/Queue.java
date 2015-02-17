@@ -115,7 +115,7 @@ public class Queue<T> implements Adapter<T> {
 
 	private  Collection<T>  ensureOpen() {
 		
-		if(!open)
+		if(!open && queue.size()==0)
 			throw new ClosedQueueException();
 		T data = null;
 		try {
