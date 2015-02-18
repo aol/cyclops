@@ -1,14 +1,14 @@
 package com.aol.simple.react.async;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -84,9 +84,14 @@ public class Queue<T> implements Adapter<T> {
 	 */
 	public Stream<T> stream() {
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
-		return Stream.generate(this::ensureOpen);
+		return closingStream(this::ensureOpen);
 	}
 
+	private Stream<T> closingStream(Supplier<T> s){
+		
+		 return StreamSupport.stream(
+	                new ClosingSpliterator(Long.MAX_VALUE, s), false);
+	}
 	
 
 	/**

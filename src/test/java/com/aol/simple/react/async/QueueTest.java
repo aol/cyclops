@@ -275,7 +275,7 @@ public class QueueTest {
 
 	}
 
-	@Test(expected = Queue.ClosedQueueException.class)
+	@Test
 	public void queueTestBlock() {
 
 		try {

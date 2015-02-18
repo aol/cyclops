@@ -33,7 +33,7 @@ public class CompletableFutureTest {
 								
 								
 
-		convertedToStrings.stream().forEach(f -> assertFalse(f.isDone()));
+		convertedToStrings.streamCompletableFutures().forEach(f -> assertFalse(f.isDone()));
 		
 		new SimpleReact(new ForkJoinPool(3)).react( ()-> 100, ()->200, ()->400).then( it-> sleep(it)).then(it -> queue.poll().complete(it));
 		

@@ -1,18 +1,31 @@
 package com.aol.simple.react;
 
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Spliterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntFunction;
+import java.util.function.ToLongFunction;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import lombok.AccessLevel;
@@ -21,13 +34,13 @@ import lombok.Getter;
 import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
 
+import org.jooq.lambda.Seq;
+
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.blockers.Blocker;
 import com.aol.simple.react.collectors.ReactCollector;
 import com.aol.simple.react.collectors.lazy.LazyCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
-import com.aol.simple.react.collectors.lazy.SamplingCollector;
-import com.aol.simple.react.config.MaxActive;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.exceptions.ThrowsSoftened;
@@ -57,7 +70,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 @Wither(value=AccessLevel.PACKAGE)
 @AllArgsConstructor
 @Slf4j
-public class Stage<U> {
+public class Stage<U> implements Seq<U>{
 
 	private final ExceptionSoftener exceptionSoftener = ExceptionSoftener.singleton.factory.getInstance();
 	@Getter(AccessLevel.PACKAGE)
@@ -191,16 +204,21 @@ public class Stage<U> {
 				,Collectors.toList()));
 	}
 	
-	public <R> Stage<R> flatten(Function<Collection<U>,Stream<R>> flatFn) {
+	public <R> Stage<R> flatMap(Function<? super U,? extends Stream<? extends R>> flatFn) {
 		Queue q = new Queue();
 		Stage flattened = SimpleReact.builder().eager(eager).executor(taskExecutor).retrier(retrier).build().fromStream(q.stream());
-		new SimpleReact(new ForkJoinPool(1))
-				.react(()->block())
-				.then(it -> q.fromStream(flatFn.apply(it)))
-						.then(it -> q.close());
+		if(!eager){
+			allOf(it -> q.fromStream(flatFn.apply((U)it.get(0)))).run(new ForkJoinPool(1));
+		}else{
+			allOf(it -> q.fromStream(flatFn.apply((U)it.get(0))));
+		}
+						
+		
 		return flattened;
 		
 	}
+
+	
 	
 	@SuppressWarnings("unchecked")
 	public <R> Stage<R> retry(final Function<U, R> fn) {
@@ -216,7 +234,7 @@ public class Stage<U> {
 	 * @return   A new builder object that can be used to define the next stage in
 	 *         the dataflow
 	 */
-	public Stage<U> peek(final Consumer<U> consumer) {
+	public Stage<U> peek(final Consumer<? super U> consumer) {
 		return (Stage<U>)then( (t) -> {  consumer.accept(t); return (U)t;});
 	}
 	
@@ -228,7 +246,7 @@ public class Stage<U> {
 	 *         the dataflow
 	 */
 	@SuppressWarnings("unchecked")
-	public  Stage<U> filter(final Predicate<U> p) {
+	public  Stage<U> filter(final Predicate<? super U> p) {
 		
 		return (Stage<U>) this.withLastActive(lastActive.permutate(lastActive.stream().map( ft ->
 			ft.thenApplyAsync( (in) -> {
@@ -246,7 +264,7 @@ public class Stage<U> {
 	 * @return A Stream of CompletableFutures that represent this stage in the dataflow
 	 */
 	@SuppressWarnings({ "unchecked"})
-	public <T> Stream<CompletableFuture<T>> stream(){
+	public <T> Stream<CompletableFuture<T>> streamCompletableFutures(){
 		Stream s  = this.lastActive.stream();
 		return s;
 		
@@ -724,6 +742,239 @@ public class Stage<U> {
 		return  (C)batcher.get().getResults();
 		
 	}
+
+	
+	@Override
+	public Iterator<U> iterator() {
+		
+		
+		return buildQueue().stream().iterator();
+	}
+
+	@Override
+	public Spliterator<U> spliterator() {
+		return buildQueue().stream().spliterator();
+	}
+
+	@Override
+	public boolean isParallel() {
+		return true;
+	}
+
+	@Override
+	public Seq<U> sequential() {
+		Queue q = new Queue();
+		q.fromStream(lastActive.stream().map(it -> it.join()));
+		q.close();
+		return Seq.seq(q.stream());
+	}
+
+	@Override
+	public Stage<U> parallel() {
+		return this;
+	}
+
+	@Override
+	public Stage<U> unordered() {
+		return this;
+	}
+
+	@Override
+	public Seq<U> onClose(Runnable closeHandler) {
+		
+		return Seq.seq(lastActive.stream().onClose(closeHandler).map(it -> (U)it.join()));
+	}
+
+	@Override
+	public void close() {
+		lastActive.stream().close();
+		
+	}
+
+	
+	@Override
+	public <R> Stage<R> map(Function<? super U, ? extends R> mapper) {
+		return then((Function)mapper);
+	}
+
+	
+	@Override
+	public IntStream mapToInt(ToIntFunction<? super U> mapper) {
+		return buildQueue().stream().mapToInt(mapper);
+	}
+
+	
+	@Override
+	public LongStream mapToLong(ToLongFunction<? super U> mapper) {
+		return buildQueue().stream().mapToLong(mapper);
+	}
+
+	
+	@Override
+	public DoubleStream mapToDouble(ToDoubleFunction<? super U> mapper) {
+		return buildQueue().stream().mapToDouble(mapper);
+	}
+
+	
+	@Override
+	public IntStream flatMapToInt(
+			Function<? super U, ? extends IntStream> mapper) {
+		return buildQueue().stream().flatMapToInt(mapper);
+	}
+
+	
+	@Override
+	public LongStream flatMapToLong(
+			Function<? super U, ? extends LongStream> mapper) {
+		return buildQueue().stream().flatMapToLong(mapper);
+	}
+
+	
+	@Override
+	public DoubleStream flatMapToDouble(
+			Function<? super U, ? extends DoubleStream> mapper) {
+		return buildQueue().stream().flatMapToDouble(mapper);
+	}
+
+	
+	@Override
+	public Seq<U> distinct() {
+		return Seq.seq(buildQueue().stream().distinct());
+		
+	}
+
+	@Override
+	public Seq<U> sorted() {
+		return Seq.seq(buildQueue().stream().sorted());
+	}
+
+	@Override
+	public Seq<U> sorted(Comparator<? super U> comparator) {
+		return Seq.seq(buildQueue().stream().sorted(comparator));
+	}
+
+	private Queue<U> buildQueue(){
+		Queue<U> queue = new Queue<>();
+		if(eager)
+			then(it -> queue.offer(it)).allOf(it -> queue.close());
+		else
+			then(it -> queue.offer(it)).allOf(it -> queue.close()).run(new ForkJoinPool(1));
+		return queue;
+	}
+	
+	@Override
+	public Seq<U> limit(long maxSize) {
+		return Seq.seq(buildQueue().stream().limit(maxSize));
+	}
+
+	@Override
+	public  Seq<U> skip(long n) {
+		return Seq.seq(buildQueue().stream().skip(n));
+	}
+
+	@Override
+	public void forEach(Consumer<? super U> action) {
+		buildQueue().stream().forEach((Consumer)action);
+		
+	}
+
+	@Override
+	public void forEachOrdered(Consumer<? super U> action) {
+		buildQueue().stream().forEachOrdered((Consumer)action);
+		
+	}
+
+	@Override
+	public Object[] toArray() {
+		return buildQueue().stream().toArray();
+	}
+
+	@Override
+	public <A> A[] toArray(IntFunction<A[]> generator) {
+		return buildQueue().stream().toArray(generator);
+	}
+
+	@Override
+	public U reduce(U identity, BinaryOperator<U> accumulator) {
+		
+	return (U)buildQueue().stream().reduce(identity, accumulator);
+	}
+
+	@Override
+	public Optional<U> reduce(BinaryOperator<U> accumulator) {
+		return buildQueue().stream().reduce(accumulator);
+	}
+
+	
+
+	@Override
+	public <R> R collect(Supplier<R> supplier,
+			BiConsumer<R, ? super U> accumulator, BiConsumer<R, R> combiner) {
+		
+		return (R)buildQueue().stream().collect(supplier,accumulator,combiner);
+	}
+
+	@Override
+	public <R, A> R collect(Collector<? super U, A, R> collector) {
+	
+		return block(collector);
+	}
+
+	@Override
+	public Optional<U> min(Comparator<? super U> comparator) {
+		
+		return buildQueue().stream().min(comparator);
+	}
+
+	@Override
+	public Optional<U> max(Comparator<? super U> comparator) {
+		return buildQueue().stream().max(comparator);
+	}
+
+	@Override
+	public long count() {
+		
+		return lastActive.stream().count();
+	}
+
+	@Override
+	public boolean anyMatch(Predicate<? super U> predicate) {
+		return buildQueue().stream().anyMatch(predicate);
+	}
+
+	@Override
+	public boolean allMatch(Predicate<? super U> predicate) {
+		return buildQueue().stream().allMatch(predicate);
+	}
+
+	@Override
+	public boolean noneMatch(Predicate<? super U> predicate) {
+		return buildQueue().stream().noneMatch(predicate);
+	}
+
+	@Override
+	public Optional<U> findFirst() {
+		return buildQueue().stream().findFirst();
+	}
+
+	@Override
+	public Optional<U> findAny() {
+		return buildQueue().stream().findAny();
+	}
+
+	@Override
+	public <R> R reduce(R identity, BiFunction<R, ? super U, R> accumulator,
+			BinaryOperator<R> combiner) {
+		
+		return buildQueue().stream().reduce(identity, accumulator, combiner);
+	}
+
+	@Override
+	public Stream<U> stream() {
+		return buildQueue().stream();
+	}
+
+	
 	
 
 }
