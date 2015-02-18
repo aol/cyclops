@@ -1,12 +1,12 @@
 package com.aol.simple.react;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -21,6 +21,7 @@ import lombok.Getter;
 import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
 
+import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.blockers.Blocker;
 import com.aol.simple.react.collectors.ReactCollector;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
@@ -28,6 +29,7 @@ import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.exceptions.ThrowsSoftened;
 import com.aol.simple.react.extractors.Extractor;
 import com.aol.simple.react.extractors.Extractors;
+import com.aol.simple.react.waiter.DoNothingWaiter;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 
@@ -64,6 +66,8 @@ public class Stage<U> {
 
 	private final StreamWrapper lastActive;
 	private final boolean eager;
+	@Wither(value=AccessLevel.PUBLIC)
+	private final Consumer<CompletableFuture> waitStrategy;
 	
 	
 	
@@ -86,7 +90,7 @@ public class Stage<U> {
 		this.errorHandler = Optional.of( (e)-> log.error(e.getMessage(),e));
 		this.eager = eager;
 		this.retrier=retrier;
-		
+		this.waitStrategy = new DoNothingWaiter();
 	}
 	
 	/**
@@ -178,6 +182,17 @@ public class Stage<U> {
 		return (Stage<R>) this.withLastActive( lastActive.permutate(lastActive.stream()
 				.map((ft) -> ft.thenApplyAsync(fn, taskExecutor))
 				,Collectors.toList()));
+	}
+	
+	public <R> Stage<R> flatten(Function<Collection<U>,Stream<R>> flatFn) {
+		Queue q = new Queue();
+		Stage flattened = SimpleReact.builder().eager(eager).executor(taskExecutor).retrier(retrier).build().fromStream(q.stream());
+		new SimpleReact(new ForkJoinPool(1))
+				.react(()->block())
+				.then(it -> q.fromStream(flatFn.apply(it)))
+						.then(it -> q.close());
+		return flattened;
+		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -675,24 +690,21 @@ public class Stage<U> {
 	public <C extends Collection<U>>  C run(Supplier<C> collector) {
 	
 		C result = (C)collector.get();
-		List<CompletableFuture> list = new ArrayList<>(Runtime.getRuntime().availableProcessors()+2);
+		
+		
 		try{
 		  this.lastActive.stream().forEach(n-> {
 			
+			  		  	
+			  
 				if(result!=null){
 					try {
-						result.add((U)n.get());
+						result.add((U)n.join()); 
 					} catch (Exception e) {
 						capture(e);
 					}
-				}else{
-					list.add(n);
-					
 				}
-				while(list.size()>Runtime.getRuntime().availableProcessors()){
-					List<CompletableFuture> toRemove = list.stream().filter(cf -> cf.isDone()).collect(Collectors.toList());
-					list.removeAll(toRemove);
-				}
+				this.waitStrategy.accept(n);
 			});
 		}catch(SimpleReactProcessingException e){
 			

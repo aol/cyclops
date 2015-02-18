@@ -4,6 +4,7 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'com.bmuschko.nexus'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 
 sourceCompatibility = 1.8
@@ -21,10 +22,12 @@ buildscript {
 
     dependencies {
         classpath 'com.bmuschko:gradle-nexus-plugin:2.2'
+		classpath 'com.github.jengelman.gradle.plugins:shadow:1.1.1'
     }
 }
 repositories {
     mavenCentral()
+	jcenter()
 
 }
 
@@ -91,4 +94,3 @@ nexus {
 	repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
 	snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
 }
-
