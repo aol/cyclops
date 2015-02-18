@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,57 +29,53 @@ public class QueueTest {
 
 	@Before
 	public void setup() {
-		found = 0;
+		found.set(0);
 	}
 
-	int found = 0;
-
-	public synchronized void incrementFound() {
-		found++;
-	}
+	private final AtomicInteger found = new AtomicInteger(0);
 
 	@Test
 	public void backPressureTest() {
 		Queue<Integer> q = new Queue<>(new LinkedBlockingQueue<>(2));
 		new SimpleReact().react(() -> {
 			q.offer(1);
-			return found++;
+			return found.getAndAdd(1);
 		}, () -> {
 			q.offer(1);
-			return found++;
+			return found.getAndAdd(1);
 		}, () -> {
 			q.offer(6);
-			return found++;
+			return found.getAndAdd(1);
 		}, () -> {
 			q.offer(5);
-			return found++;
+			return found.getAndAdd(1);
 		});
 
 		sleep(10);
-		assertThat(found, is(2));
+		assertThat(found.get(), is(2));
 		assertThat(q.stream().limit(2).collect(Collectors.toList()).size(),
 				is(2));
 		
 		assertThat(q.stream().limit(2).collect(Collectors.toList()).size(),
 				is(2));
-		assertThat(found, is(4));
+		assertThat(found.get(), is(4));
 	}
 	@Test
 	public void backPressureJDKTest() {
 		Queue<String> q = new Queue<>(new LinkedBlockingQueue<>(2));
 		new SimpleReact().react(() -> {
-				Stream.of("1","2","3","4").forEach(it -> {q.offer(it); found++;});
+				Stream.of("1","2","3","4").forEach(it -> {q.offer(it); found.getAndAdd(1);});
 				return 1;
 			});
 
 		sleep(10);
-		assertThat(found, is(2));
+		assertThat(found.get(), is(2));
 		assertThat(q.stream().limit(2).collect(Collectors.toList()).size(),
 				is(2));
 
 		assertThat(q.stream().limit(2).collect(Collectors.toList()).size(),
 				is(2));
-		assertThat(found, is(4));
+		assertThat(found.get(), is(4));
 	}
 
 	@Test
@@ -92,7 +89,7 @@ public class QueueTest {
 				() -> offerAndIncrementFound(q)).block(Collectors.toSet());
 
 		sleep(10);
-		assertThat(found, is(4));
+		assertThat(found.get(), is(4));
 
 		assertThat(results.size(), is(2));
 		assertThat(results, hasItem(false)); // some offers failed.
@@ -110,13 +107,13 @@ public class QueueTest {
 				() -> offerAndIncrementFound(q));
 
 		sleep(10);
-		assertThat(found, is(2));
+		assertThat(found.get(), is(2));
 		assertThat(q.stream().limit(4).collect(Collectors.toList()).size(),
 				is(4));
 
 		Set<Boolean> results = s.block(Collectors.toSet());
 
-		assertThat(found, is(4));
+		assertThat(found.get(), is(4));
 		assertThat(results.size(), is(1));
 		assertThat(results, not(hasItem(false))); // some offers failed.
 
@@ -124,7 +121,7 @@ public class QueueTest {
 
 	private Boolean offerAndIncrementFound(Queue<Integer> q) {
 		boolean ret = q.offer(1);
-		found++;
+		found.getAndAdd(1);
 		return ret;
 	}
 
@@ -158,20 +155,20 @@ public class QueueTest {
 		Queue<Integer> q = new Queue<>(new LinkedBlockingQueue<>(2));
 		new SimpleReact().react(() -> {
 			q.add(1);
-			return found++;
+			return found.getAndAdd(1);
 		}, () -> {
 			q.add(1);
-			return found++;
+			return found.getAndAdd(1);
 		}, () -> {
 			q.add(6);
-			return found++;
+			return found.getAndAdd(1);
 		}, () -> {
 			q.add(5);
-			return found++;
+			return found.getAndAdd(1);
 		});
 
 		sleep(10);
-		assertThat(found, is(4));
+		assertThat(found.get(), is(4));
 
 	}
 
@@ -292,11 +289,11 @@ public class QueueTest {
 			});
 
 			SimpleReact.lazy().fromStream(q.streamCompletableFutures())
-					.then(it -> "*" + it).peek(it -> incrementFound())
+					.then(it -> "*" + it).peek(it -> found.getAndAdd(1))
 					.peek(it -> System.out.println(it)).block();
 
 		} finally {
-			assertThat(found, is(3));
+			assertThat(found.get(), is(3));
 		}
 
 	}
@@ -304,7 +301,7 @@ public class QueueTest {
 	@Test
 	public void queueTestTimeout() {
 
-		Queue q = new Queue<>(new LinkedBlockingQueue<>()).withTimeout(1)
+		Queue<Integer> q = new Queue<>(new LinkedBlockingQueue<Integer>()).withTimeout(1)
 				.withTimeUnit(TimeUnit.MILLISECONDS);
 
 		new SimpleReact().react(() -> q.offer(1), () -> q.offer(2), () -> {
@@ -338,14 +335,15 @@ public class QueueTest {
 
 			List<String> result = SimpleReact.lazy()
 					.fromStream(q.streamCompletableFutures())
-					.then(it -> "*" + it).peek(it -> incrementFound())
+					.then(it -> "*" + it)
+					.peek(it -> found.getAndAdd(1))
 					.peek(it -> System.out.println(it))
 					.run(() -> new ArrayList<String>());
 
 			assertThat(result, hasItem("*1"));
 
 		} finally {
-			assertThat(found, is(3));
+			assertThat(found.get(), is(3));
 		}
 
 	}

@@ -24,7 +24,7 @@ import com.aol.simple.react.exceptions.SimpleReactProcessingException;
  * A Queue that takes data from one or more input Streams and provides them to
  * one or more output Streams
  * 
- * @author johnmcclean
+ * @author johnmcclean, thomas kountis
  *
  * @param <T>
  *            Type of data stored in Queue
@@ -37,7 +37,7 @@ public class Queue<T> implements Adapter<T> {
 	private final ExceptionSoftener softener = ExceptionSoftener.singleton.factory
 			.getInstance();
 	private volatile boolean open = true;
-	private volatile AtomicInteger listeningStreams = new AtomicInteger();
+	private final AtomicInteger listeningStreams = new AtomicInteger();
 	private final int timeout;
 	private final TimeUnit timeUnit;
 	
@@ -83,9 +83,8 @@ public class Queue<T> implements Adapter<T> {
 	 * 
 	 */
 	public Stream<T> stream() {
-		
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
-		return Stream.generate(() -> ensureOpen()).flatMap(it -> it.stream());
+		return Stream.generate(this::ensureOpen);
 	}
 
 	
@@ -99,7 +98,7 @@ public class Queue<T> implements Adapter<T> {
 	 * 
 	 */
 	public Stream<CompletableFuture<T>> streamCompletableFutures() {
-		return stream().map(it -> CompletableFuture.<T> completedFuture(it));
+		return stream().map(CompletableFuture::completedFuture);
 	}
 
 	/**
@@ -111,44 +110,32 @@ public class Queue<T> implements Adapter<T> {
 		return true;
 	}
 
-	
-
-	private  Collection<T>  ensureOpen() {
-		
+	private T ensureOpen() {
 		if(!open && queue.size()==0)
 			throw new ClosedQueueException();
+		
 		T data = null;
 		try {
 			if (timeout == -1)
-				data = queue.take(); 
+				data = queue.take();
 			else {
-
-				T next = queue.poll(timeout, timeUnit);
-				if (next != null)
-					data = next;
-				else
+				data = queue.poll(timeout, timeUnit);
+				if (data == null)
 					throw new QueueTimeoutException();
-
 			}
-			
-
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			softener.throwSoftenedException(e);
-
 		}
+			
 		if(data instanceof PoisonPill)
 			throw new ClosedQueueException();
+		
 		if(sizeSignal!=null)
 			this.sizeSignal.set(queue.size());
-		return Arrays.asList(data);
 
-	};
-	
-	
-	
-	
-	
+		return data;
+	}
 
 	/**
 	 * Exception thrown if Queue closed
@@ -172,11 +159,9 @@ public class Queue<T> implements Adapter<T> {
 		private static final long serialVersionUID = 1L;
 	}
 
-	private static class PoisonPill{
-		
-	}
-	
-	
+	private static class PoisonPill { }
+
+
 	/**
 	 * Add a single data point to the queue
 	 * 
@@ -230,7 +215,6 @@ public class Queue<T> implements Adapter<T> {
 	 */
 	@Override
 	public boolean close() {
-
 		this.open = false;
 		for(int i=0;i<Math.max(maxPoisonPills, listeningStreams.get());i++)
 			queue.add((T)POISON_PILL);
