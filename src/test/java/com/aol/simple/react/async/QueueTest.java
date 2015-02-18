@@ -58,6 +58,7 @@ public class QueueTest {
 		
 		assertThat(q.stream().limit(2).collect(Collectors.toList()).size(),
 				is(2));
+		sleep(10);
 		assertThat(found.get(), is(4));
 	}
 	@Test
@@ -75,6 +76,7 @@ public class QueueTest {
 
 		assertThat(q.stream().limit(2).collect(Collectors.toList()).size(),
 				is(2));
+		sleep(10);
 		assertThat(found.get(), is(4));
 	}
 

@@ -3,6 +3,7 @@ package com.aol.simple.react.exceptions;
 import java.lang.reflect.Field;
 import java.util.Optional;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import sun.misc.Unsafe;
@@ -10,12 +11,11 @@ import sun.misc.Unsafe;
 @Slf4j
 public class ExceptionSoftener {
 
-	public static enum singleton { factory;
-		@Getter
-	    private final ExceptionSoftener instance;
-	    private singleton(){
-	    	instance = new  ExceptionSoftener ();
-	    }
+	@Getter @AllArgsConstructor
+	public static enum singleton { factory( new  ExceptionSoftener ());
+		
+		private final ExceptionSoftener instance;
+	    
 	}
 	
 	private final Optional<Unsafe> unsafe = getUnsafe();

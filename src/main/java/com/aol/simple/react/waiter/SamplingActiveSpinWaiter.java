@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 
-import com.aol.simple.react.waiter.ActiveSpinWaiter.ActiveSpinWaiterBuilder;
+import com.aol.simple.react.config.MaxActive;
 
 @Wither
 @AllArgsConstructor
@@ -19,15 +19,13 @@ import com.aol.simple.react.waiter.ActiveSpinWaiter.ActiveSpinWaiterBuilder;
 public class SamplingActiveSpinWaiter implements Consumer<CompletableFuture>{
 
 	private final List<CompletableFuture> active = new ArrayList<>(1000);
-	private final int maxActive;
-	private final int reduceTo;
+	private final MaxActive maxActive;
 	private final int sampleRate;
 
 	private volatile int count =0;
 	
 	public SamplingActiveSpinWaiter(){
-		maxActive = 70;
-		reduceTo = 30;
+		maxActive = MaxActive.defaultValue.factory.getInstance();
 		sampleRate =3;
 	}
 	
@@ -39,9 +37,9 @@ public class SamplingActiveSpinWaiter implements Consumer<CompletableFuture>{
 			
 		
 		
-			if(active.size()>maxActive){
+			if(active.size()>maxActive.getMaxActive()){
 				
-				while(active.size()>reduceTo){
+				while(active.size()>maxActive.getReduceTo()){
 					LockSupport.parkNanos(0l);
 					List<CompletableFuture> toRemove = active.stream().filter(cf -> cf.isDone()).collect(Collectors.toList());
 					active.removeAll(toRemove);

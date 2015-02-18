@@ -24,6 +24,10 @@ import lombok.extern.slf4j.Slf4j;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.blockers.Blocker;
 import com.aol.simple.react.collectors.ReactCollector;
+import com.aol.simple.react.collectors.lazy.LazyCollector;
+import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
+import com.aol.simple.react.collectors.lazy.SamplingCollector;
+import com.aol.simple.react.config.MaxActive;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.exceptions.ThrowsSoftened;
@@ -68,6 +72,8 @@ public class Stage<U> {
 	private final boolean eager;
 	@Wither(value=AccessLevel.PUBLIC)
 	private final Consumer<CompletableFuture> waitStrategy;
+	private final LazyResultConsumer<U> lazyCollector;
+	
 	
 	
 	
@@ -91,6 +97,7 @@ public class Stage<U> {
 		this.eager = eager;
 		this.retrier=retrier;
 		this.waitStrategy = new DoNothingWaiter();
+		this.lazyCollector = new LazyCollector<>();
 	}
 	
 	/**
@@ -691,25 +698,30 @@ public class Stage<U> {
 	
 		C result = (C)collector.get();
 		
+		Optional<LazyResultConsumer<U>> batcher = result!=null ? 
+					Optional.of(lazyCollector.withResults(result)) : Optional.empty();
 		
 		try{
 		  this.lastActive.stream().forEach(n-> {
 			
 			  		  	
-			  
+			  batcher.ifPresent(c -> c.accept(n));
+			  /**
 				if(result!=null){
 					try {
 						result.add((U)n.join()); 
 					} catch (Exception e) {
 						capture(e);
 					}
-				}
+				}**/
 				this.waitStrategy.accept(n);
 			});
 		}catch(SimpleReactProcessingException e){
 			
 		}
-		return result;
+		if(result==null)
+			return null;
+		return  (C)batcher.get().getResults();
 		
 	}
 	
