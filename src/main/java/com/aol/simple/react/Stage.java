@@ -748,12 +748,12 @@ public class Stage<U> implements Seq<U>{
 	public Iterator<U> iterator() {
 		
 		
-		return buildQueue().stream().iterator();
+		return toQueue().stream().iterator();
 	}
 
 	@Override
 	public Spliterator<U> spliterator() {
-		return buildQueue().stream().spliterator();
+		return toQueue().stream().spliterator();
 	}
 
 	@Override
@@ -800,60 +800,60 @@ public class Stage<U> implements Seq<U>{
 	
 	@Override
 	public IntStream mapToInt(ToIntFunction<? super U> mapper) {
-		return buildQueue().stream().mapToInt(mapper);
+		return toQueue().stream().mapToInt(mapper);
 	}
 
 	
 	@Override
 	public LongStream mapToLong(ToLongFunction<? super U> mapper) {
-		return buildQueue().stream().mapToLong(mapper);
+		return toQueue().stream().mapToLong(mapper);
 	}
 
 	
 	@Override
 	public DoubleStream mapToDouble(ToDoubleFunction<? super U> mapper) {
-		return buildQueue().stream().mapToDouble(mapper);
+		return toQueue().stream().mapToDouble(mapper);
 	}
 
 	
 	@Override
 	public IntStream flatMapToInt(
 			Function<? super U, ? extends IntStream> mapper) {
-		return buildQueue().stream().flatMapToInt(mapper);
+		return toQueue().stream().flatMapToInt(mapper);
 	}
 
 	
 	@Override
 	public LongStream flatMapToLong(
 			Function<? super U, ? extends LongStream> mapper) {
-		return buildQueue().stream().flatMapToLong(mapper);
+		return toQueue().stream().flatMapToLong(mapper);
 	}
 
 	
 	@Override
 	public DoubleStream flatMapToDouble(
 			Function<? super U, ? extends DoubleStream> mapper) {
-		return buildQueue().stream().flatMapToDouble(mapper);
+		return toQueue().stream().flatMapToDouble(mapper);
 	}
 
 	
 	@Override
 	public Seq<U> distinct() {
-		return Seq.seq(buildQueue().stream().distinct());
+		return Seq.seq(toQueue().stream().distinct());
 		
 	}
 
 	@Override
 	public Seq<U> sorted() {
-		return Seq.seq(buildQueue().stream().sorted());
+		return Seq.seq(toQueue().stream().sorted());
 	}
 
 	@Override
 	public Seq<U> sorted(Comparator<? super U> comparator) {
-		return Seq.seq(buildQueue().stream().sorted(comparator));
+		return Seq.seq(toQueue().stream().sorted(comparator));
 	}
 
-	private Queue<U> buildQueue(){
+	public Queue<U> toQueue(){
 		Queue<U> queue = new Queue<>();
 		if(eager)
 			then(it -> queue.offer(it)).allOf(it -> queue.close());
@@ -864,45 +864,45 @@ public class Stage<U> implements Seq<U>{
 	
 	@Override
 	public Seq<U> limit(long maxSize) {
-		return Seq.seq(buildQueue().stream().limit(maxSize));
+		return Seq.seq(toQueue().stream().limit(maxSize));
 	}
 
 	@Override
 	public  Seq<U> skip(long n) {
-		return Seq.seq(buildQueue().stream().skip(n));
+		return Seq.seq(toQueue().stream().skip(n));
 	}
 
 	@Override
 	public void forEach(Consumer<? super U> action) {
-		buildQueue().stream().forEach((Consumer)action);
+		toQueue().stream().forEach((Consumer)action);
 		
 	}
 
 	@Override
 	public void forEachOrdered(Consumer<? super U> action) {
-		buildQueue().stream().forEachOrdered((Consumer)action);
+		toQueue().stream().forEachOrdered((Consumer)action);
 		
 	}
 
 	@Override
 	public Object[] toArray() {
-		return buildQueue().stream().toArray();
+		return toQueue().stream().toArray();
 	}
 
 	@Override
 	public <A> A[] toArray(IntFunction<A[]> generator) {
-		return buildQueue().stream().toArray(generator);
+		return toQueue().stream().toArray(generator);
 	}
 
 	@Override
 	public U reduce(U identity, BinaryOperator<U> accumulator) {
 		
-	return (U)buildQueue().stream().reduce(identity, accumulator);
+	return (U)toQueue().stream().reduce(identity, accumulator);
 	}
 
 	@Override
 	public Optional<U> reduce(BinaryOperator<U> accumulator) {
-		return buildQueue().stream().reduce(accumulator);
+		return toQueue().stream().reduce(accumulator);
 	}
 
 	
@@ -911,7 +911,7 @@ public class Stage<U> implements Seq<U>{
 	public <R> R collect(Supplier<R> supplier,
 			BiConsumer<R, ? super U> accumulator, BiConsumer<R, R> combiner) {
 		
-		return (R)buildQueue().stream().collect(supplier,accumulator,combiner);
+		return (R)toQueue().stream().collect(supplier,accumulator,combiner);
 	}
 
 	@Override
@@ -923,12 +923,12 @@ public class Stage<U> implements Seq<U>{
 	@Override
 	public Optional<U> min(Comparator<? super U> comparator) {
 		
-		return buildQueue().stream().min(comparator);
+		return toQueue().stream().min(comparator);
 	}
 
 	@Override
 	public Optional<U> max(Comparator<? super U> comparator) {
-		return buildQueue().stream().max(comparator);
+		return toQueue().stream().max(comparator);
 	}
 
 	@Override
@@ -939,39 +939,39 @@ public class Stage<U> implements Seq<U>{
 
 	@Override
 	public boolean anyMatch(Predicate<? super U> predicate) {
-		return buildQueue().stream().anyMatch(predicate);
+		return toQueue().stream().anyMatch(predicate);
 	}
 
 	@Override
 	public boolean allMatch(Predicate<? super U> predicate) {
-		return buildQueue().stream().allMatch(predicate);
+		return toQueue().stream().allMatch(predicate);
 	}
 
 	@Override
 	public boolean noneMatch(Predicate<? super U> predicate) {
-		return buildQueue().stream().noneMatch(predicate);
+		return toQueue().stream().noneMatch(predicate);
 	}
 
 	@Override
 	public Optional<U> findFirst() {
-		return buildQueue().stream().findFirst();
+		return toQueue().stream().findFirst();
 	}
 
 	@Override
 	public Optional<U> findAny() {
-		return buildQueue().stream().findAny();
+		return toQueue().stream().findAny();
 	}
 
 	@Override
 	public <R> R reduce(R identity, BiFunction<R, ? super U, R> accumulator,
 			BinaryOperator<R> combiner) {
 		
-		return buildQueue().stream().reduce(identity, accumulator, combiner);
+		return toQueue().stream().reduce(identity, accumulator, combiner);
 	}
 
 	@Override
 	public Stream<U> stream() {
-		return buildQueue().stream();
+		return toQueue().stream();
 	}
 
 	
