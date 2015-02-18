@@ -6,12 +6,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import lombok.Getter;
+import lombok.experimental.Builder;
+import lombok.experimental.Wither;
 
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.generators.Generator;
@@ -19,6 +22,8 @@ import com.aol.simple.react.generators.ParallelGenerator;
 import com.aol.simple.react.generators.ReactIterator;
 import com.aol.simple.react.generators.SequentialIterator;
 import com.google.common.annotations.VisibleForTesting;
+import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
+import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
  * Entry point for creating a concurrent dataflow.
@@ -28,20 +33,18 @@ import com.google.common.annotations.VisibleForTesting;
  *
  *
  */
+
+@Builder
 public class SimpleReact {
 
 	@Getter
+	@Wither
 	private final ExecutorService executor;
-	private final boolean immediate;
+	@Getter
+	@Wither	
+	private final RetryExecutor retrier;
+	private final Boolean eager;
 
-	/**
-	 * Construct a new SimpleReact that will use a ForkJoinPool with parrellism set to the number of processors on the host
-	 */
-	public SimpleReact(){
-		this.executor = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
-		this.immediate =true;
-	}
-	
 	
 	/**
 	 * @return Lazy SimpleReact for handling infinite streams
@@ -58,12 +61,68 @@ public class SimpleReact {
 	}
 	
 	/**
+	 * @param executor RetryExecutor this SimpleReact instance will use to retry concurrent tasks.
+	 * @return Lazy SimpleReact for handling infinite streams
+	 */
+	public static SimpleReact lazy(RetryExecutor retry){
+		return SimpleReact.builder().eager(false).retrier(retry).build();
+	}
+	/**
+	 *  @param executor Executor this SimpleReact instance will use to execute concurrent tasks.
+	 * @param retry RetryExecutor this SimpleReact instance will use to retry concurrent tasks.
+	 * @return Lazy SimpleReact for handling infinite streams
+	 */
+	public static SimpleReact lazy(ExecutorService executor, RetryExecutor retry){
+		return SimpleReact.builder().eager(false).executor(executor).retrier(retry).build();
+	}
+	
+	
+	/**
+	 * @return Eager SimpleReact for handling finite streams
+	 */
+	public static SimpleReact eager(){
+		return new SimpleReact(true);
+	}
+	/**
+	 * @param executor Executor this SimpleReact instance will use to execute concurrent tasks.
+	 * @return Eager SimpleReact for handling finite streams
+	 */
+	public static SimpleReact eager(ExecutorService executor){
+		return new SimpleReact(executor,true);
+	}
+	/**
+	 * @param executor RetryExecutor this SimpleReact instance will use to retry concurrent tasks.
+	 * @return Eager SimpleReact for handling finite streams
+	 */
+	public static SimpleReact eager(RetryExecutor retry){
+		return SimpleReact.builder().retrier(retry).build();
+	}
+	/**
+	 *  @param executor Executor this SimpleReact instance will use to execute concurrent tasks.
+	 * @param retry RetryExecutor this SimpleReact instance will use to retry concurrent tasks.
+	 * @return Eager SimpleReact for handling finite streams
+	 */
+	public static SimpleReact eager(ExecutorService executor, RetryExecutor retry){
+		return SimpleReact.builder().executor(executor).retrier(retry).build();
+	}
+	
+	/**
+	 * Construct a new SimpleReact that will use a ForkJoinPool with parrellism set to the number of processors on the host
+	 */
+	public SimpleReact(){
+		this.executor = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
+		this.eager =true;
+		retrier= null;
+	}
+	
+	/**
 	 * @param executor Executor this SimpleReact instance will use to execute concurrent tasks.
 	 */
 	public SimpleReact(ExecutorService executor) {
 	
 		this.executor = executor;
-		this.immediate =true;
+		this.eager =true;
+		retrier= null;
 	}
 	
 	
@@ -76,7 +135,7 @@ public class SimpleReact {
 	public <U> Stage<U> fromStream(final Stream<CompletableFuture<U>> stream) {
 
 		Stream s = stream;
-		return  new Stage<U>( s,executor, immediate);
+		return  new Stage<U>( s,executor,retrier, eager);
 	}
 	/**
 	 * Start a reactive dataflow from a stream.
@@ -87,7 +146,7 @@ public class SimpleReact {
 	public <U> Stage<U> fromStreamWithoutFutures(final Stream<U> stream) {
 		
 		Stream s = stream.map(it -> CompletableFuture.completedFuture(it));
-		return  new Stage<U>( s,executor, immediate);
+		return  new Stage<U>( s,executor, retrier,eager);
 	}
 
 	
@@ -166,7 +225,7 @@ public class SimpleReact {
 	public <U> Stage< U> react(final Supplier<U> s, Generator t) {
 
 		return new Stage<U>(t.generate(s),
-				executor,immediate);
+				executor,retrier,eager);
 
 	}
 	/**
@@ -180,10 +239,10 @@ public class SimpleReact {
 	 * @return Next stage in the flow
 	 */
 	public <U> Stage< U> reactInfinitely(final Supplier<U> s) {
-		if(immediate)
+		if(eager)
 			throw new InfiniteProcessingException("To reactInfinitely use a lazy flow");
 		return new Stage<U>(Stream.generate(() -> CompletableFuture.completedFuture(s.get())),
-				executor,false);
+				executor,retrier,false);
 
 	}
 	/**
@@ -228,7 +287,7 @@ public class SimpleReact {
 	public <U> Stage<U> react(final Function<U,U> f,ReactIterator<U> t) {
 
 		Stream s = t.iterate(f);
-		return new Stage<U>(s,executor,immediate);
+		return new Stage<U>(s,executor,retrier,eager);
 
 	}
 	/**
@@ -270,18 +329,20 @@ public class SimpleReact {
 		
 		return new Stage<U>(Stream.of(actions).map(
 				next -> CompletableFuture.supplyAsync(next, executor)),
-				executor,immediate);
+				executor,retrier,eager);
 		
 	}
 	
 	private SimpleReact(boolean eager){
 		this.executor = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
-		this.immediate =eager;
+		this.eager =eager;
+		retrier= null;
 	}
 	private SimpleReact(ExecutorService executor,boolean eager) {
 		
 		this.executor = executor;
-		this.immediate =eager;
+		this.eager =eager;
+		retrier= null;
 	}
 	
 	public static class InfiniteProcessingException extends SimpleReactProcessingException{
@@ -290,6 +351,19 @@ public class SimpleReact {
 			super(message);
 		}
 		
+	}
+
+	private SimpleReact(ExecutorService executor, RetryExecutor retrier,
+			Boolean eager) {
+		
+		this.executor = Optional.ofNullable(executor).orElse(new ForkJoinPool(Runtime.getRuntime().availableProcessors()));
+		this.retrier = Optional.ofNullable(retrier).orElse(new AsyncRetryExecutor(Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors())).
+			    retryOn(Throwable.class).
+			    withExponentialBackoff(500, 2).     //500ms times 2 after each retry
+			    withMaxDelay(10_000).               //10 seconds
+			    withUniformJitter().                //add between +/- 100 ms randomly
+			    withMaxRetries(20));
+		this.eager = Optional.ofNullable(eager).orElse(true);
 	}
 		
 	

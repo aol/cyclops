@@ -1,13 +1,12 @@
 package com.aol.simple.react;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -16,6 +15,13 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.Wither;
+import lombok.extern.slf4j.Slf4j;
+
+import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.blockers.Blocker;
 import com.aol.simple.react.collectors.ReactCollector;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
@@ -23,13 +29,9 @@ import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.exceptions.ThrowsSoftened;
 import com.aol.simple.react.extractors.Extractor;
 import com.aol.simple.react.extractors.Extractors;
+import com.aol.simple.react.waiter.DoNothingWaiter;
+import com.nurkiewicz.asyncretry.RetryExecutor;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.experimental.Builder;
-import lombok.experimental.Wither;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
@@ -55,12 +57,17 @@ public class Stage<U> {
 
 	private final ExceptionSoftener exceptionSoftener = ExceptionSoftener.singleton.factory.getInstance();
 	@Getter(AccessLevel.PACKAGE)
+	@Wither(value=AccessLevel.PUBLIC)
 	private final ExecutorService taskExecutor;
+	@Wither(value=AccessLevel.PUBLIC)
+	private final RetryExecutor retrier;
 	
 	private final Optional<Consumer<Throwable>> errorHandler;
 
 	private final StreamWrapper lastActive;
 	private final boolean eager;
+	@Wither(value=AccessLevel.PUBLIC)
+	private final Consumer<CompletableFuture> waitStrategy;
 	
 	
 	
@@ -75,13 +82,15 @@ public class Stage<U> {
 	 *            The next stage's tasks will be submitted to this executor
 	 */
 	Stage(final Stream<CompletableFuture<U>> stream,
-			final ExecutorService executor,boolean eager) {
+			final ExecutorService executor,final RetryExecutor retrier, final boolean eager) {
 
 		this.taskExecutor = executor;
 		Stream s = stream;
-		this.lastActive = new StreamWrapper(s,eager);
+		this.lastActive = new StreamWrapper(s,Optional.ofNullable(eager).orElse(true));
 		this.errorHandler = Optional.of( (e)-> log.error(e.getMessage(),e));
 		this.eager = eager;
+		this.retrier=retrier;
+		this.waitStrategy = new DoNothingWaiter();
 	}
 	
 	/**
@@ -172,6 +181,25 @@ public class Stage<U> {
 	public <R> Stage<R> then(final Function<U, R> fn) {
 		return (Stage<R>) this.withLastActive( lastActive.permutate(lastActive.stream()
 				.map((ft) -> ft.thenApplyAsync(fn, taskExecutor))
+				,Collectors.toList()));
+	}
+	
+	public <R> Stage<R> flatten(Function<Collection<U>,Stream<R>> flatFn) {
+		Queue q = new Queue();
+		Stage flattened = SimpleReact.builder().eager(eager).executor(taskExecutor).retrier(retrier).build().fromStream(q.stream());
+		new SimpleReact(new ForkJoinPool(1))
+				.react(()->block())
+				.then(it -> q.fromStream(flatFn.apply(it)))
+						.then(it -> q.close());
+		return flattened;
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <R> Stage<R> retry(final Function<U, R> fn) {
+
+		return (Stage<R>) this.withLastActive( lastActive.permutate(lastActive.stream()
+				.map((ft) ->  ft.thenApplyAsync((res)->getSafe(retrier.getWithRetry(()->fn.apply((U) res))), taskExecutor))
 				,Collectors.toList()));
 	}
 	/**
@@ -662,16 +690,21 @@ public class Stage<U> {
 	public <C extends Collection<U>>  C run(Supplier<C> collector) {
 	
 		C result = (C)collector.get();
+		
+		
 		try{
 		  this.lastActive.stream().forEach(n-> {
 			
+			  		  	
+			  
 				if(result!=null){
 					try {
-						result.add((U)n.get());
+						result.add((U)n.join()); 
 					} catch (Exception e) {
 						capture(e);
 					}
 				}
+				this.waitStrategy.accept(n);
 			});
 		}catch(SimpleReactProcessingException e){
 			

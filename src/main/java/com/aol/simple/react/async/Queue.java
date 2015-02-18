@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -16,17 +15,16 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
 
-import com.aol.simple.react.SimpleReact;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 
 /**
- * Inspired by scalaz-streams async.Queue
+ * Inspired by scalaz-streams async.Queue (functionally similar, but Blocking)
  * 
  * A Queue that takes data from one or more input Streams and provides them to
  * one or more output Streams
  * 
- * @author johnmcclean
+ * @author johnmcclean, thomas kountis
  *
  * @param <T>
  *            Type of data stored in Queue
@@ -113,7 +111,7 @@ public class Queue<T> implements Adapter<T> {
 	}
 
 	private T ensureOpen() {
-		if (!open)
+		if(!open && queue.size()==0)
 			throw new ClosedQueueException();
 		
 		T data = null;

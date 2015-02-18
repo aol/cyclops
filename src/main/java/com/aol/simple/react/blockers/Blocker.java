@@ -11,13 +11,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import com.aol.simple.react.Status;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.ThrowsSoftened;
 import com.aol.simple.react.util.SimpleTimer;
-
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 @AllArgsConstructor
 @Slf4j
@@ -40,6 +42,8 @@ public class Blocker<U> {
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
 	public List<U> block(final Predicate<Status> breakout) {
 
+		if(lastActive.size()==0)
+			return ImmutableList.of();
 		lastActive.forEach(f -> f.whenComplete((result, ex) -> {
 			testBreakoutConditionsBeforeUnblockingCurrentThread(breakout,
 					result, (Throwable)ex);
@@ -69,7 +73,7 @@ public class Blocker<U> {
 		}
 		
 		return new Status(completed.get(), errors.get(),
-				lastActive.size(), timer.getElapsedNanoseconds());
+				lastActive.size(), timer.getElapsedNanoseconds(),ImmutableList.copyOf(currentResults));
 		
 	}
 	private void testBreakoutConditionsBeforeUnblockingCurrentThread(

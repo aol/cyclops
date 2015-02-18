@@ -21,6 +21,7 @@ public class ExceptionSoftener {
 	private final Optional<Unsafe> unsafe = getUnsafe();
 	
 	public void throwSoftenedException(final Exception e) {
+
 		unsafe.ifPresent(u -> u.throwException(e));
 		throw new RuntimeException(e);
 	}

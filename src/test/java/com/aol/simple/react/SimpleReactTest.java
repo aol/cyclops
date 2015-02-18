@@ -13,6 +13,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,18 +24,43 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
 
 import com.aol.simple.react.extractors.Extractors;
+import com.aol.simple.react.generators.ParallelGenerator;
+import com.aol.simple.react.util.SimpleTimer;
+import com.google.common.collect.Lists;
 
 public class SimpleReactTest {
 
 	@Test
+	public void whenChainEmptyBlockReturns(){
+		new SimpleReact(new ForkJoinPool(1))
+		.react(Lists.newArrayList())
+		.block();
+	}
+
+	@Test
+	public void whenChainEmptyBlockReturnsWithBreakout(){
+		new SimpleReact(new ForkJoinPool(1))
+		.react(Lists.newArrayList())
+		.block(status->false);
+	}
+	
+	
+	@Test
 	public void testLazyParameters(){
+		
 		ForkJoinPool fjp = new ForkJoinPool();
 		assertThat(SimpleReact.lazy(fjp).getExecutor(),is(fjp));
 	}
