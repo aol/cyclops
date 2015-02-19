@@ -1,6 +1,6 @@
 #SimpleReact : Simple Fluent Api for Functional Reactive Programming with Java 8
 
-SimpleReact is an easy to use, concurrent, reactive programming library for JDK 8. It is a fluent API, that implements java.util.stream.Stream, built on top of Java 8 CompletableFutures and the Stream API. It provides a focused, simple and limited Reactive API aimed at solving the 90% use case - but without adding complexity.
+SimpleReact is an easy to use, concurrent, reactive programming library for JDK 8. It is a fluent API, that implements java.util.stream.Stream, and is built on top of Java 8 CompletableFutures and the Stream API. It provides a focused, simple and limited Reactive API aimed at solving the 90% use case - but without adding complexity.
 
 Since v0.3 SimpleReact also provides Scala Seq like functionality via jOOλ's Seq, which is implemented by SimpleReact Stage.
 
