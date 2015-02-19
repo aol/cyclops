@@ -1,12 +1,14 @@
 #SimpleReact : Simple Fluent Api for Functional Reactive Programming with Java 8
 
-SimpleReact is an easy to use, *always concurrent*, reactive programming library for JDK 8. It is a fluent API built on top of Java 8 CompletableFutures and the Stream API. It provides a focused, simple and limited Reactive API aimed at solving the 90% use case - but without adding complexity.
+SimpleReact is an easy to use, concurrent, reactive programming library for JDK 8. It is a fluent API, that implements java.util.stream.Stream, built on top of Java 8 CompletableFutures and the Stream API. It provides a focused, simple and limited Reactive API aimed at solving the 90% use case - but without adding complexity.
+
+Since v0.3 SimpleReact also provides Scala Seq like functionality via jOOλ's Seq, which is implemented by SimpleReact Stage.
 
 * Adding SimpleReact as a dependency : https://github.com/aol/simple-react/wiki/Adding-SimpleReact-as-a-dependency
 
-For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:'0.2'
+For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:'0.3'
 
-* Javadoc http://www.javadoc.io/doc/com.aol.simplereact/simple-react/0.2
+* Javadoc http://www.javadoc.io/doc/com.aol.simplereact/simple-react/0.3
 
 * See an illustrative getting started example : https://github.com/aol/simple-react/wiki/Getting-started-with-a-simple-example
 
@@ -62,6 +64,37 @@ React then does not block.
 React with can be called after React then which gives access to the full CompleteableFuture api. CompleteableFutures can be passed back into SimpleReact via SimpleReact.react(streamOfCompleteableFutures);
 See this blog post for examples of what can be achieved via CompleteableFuture :- http://www.nurkiewicz.com/2013/12/promises-and-completablefuture.html
 
+React **retry**
+
+	 	new SimpleReact()
+	 			.<Integer> react(() -> url1, () -> url2, () -> url3)
+				.retry(it -> readRemoteService(it))
+				.then(it ->  extractData(it))
+				.then(it -> writeToQueue(it))
+
+
+Retry allows a stage to be retried a configurable number of times. Retry functionlity is provided by async-retry (https://github.com/nurkiewicz/async-retry), that provides a very configurable mechanism for asynchronous retrying based on CompletableFutures.
+In SimpleReact a RetryExecutors can be plugged in at any stage. Once plugged in it will be used for the current and subsequent stages of the Stream (until replaced).
+
+e.g.  
+
+	new SimpleReact()
+		.<Integer> react(() -> url1, () -> url2, () -> url3)
+		.withRetrier(retryExecutor)
+		.retry(it -> readRemoteService(it))
+
+To configure a retry executor follow the instructions on https://github.com/nurkiewicz/async-retry. E.g :-
+
+		
+    ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    RetryExecutor executor = new AsyncRetryExecutor(scheduler).
+       retryOn(SocketException.class).
+       withExponentialBackoff(500, 2).     //500ms times 2 after each retry
+       withMaxDelay(10_000).               //10 seconds
+       withUniformJitter().                //add between +/- 100 ms randomly
+       withMaxRetries(20);
+       
+       
 ##Example 3: blocking
 
 React and **block**
