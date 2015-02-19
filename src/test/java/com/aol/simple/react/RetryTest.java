@@ -33,6 +33,7 @@ import com.nurkiewicz.asyncretry.RetryContext;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.nurkiewicz.asyncretry.policy.AbortRetryException;
 import com.nurkiewicz.asyncretry.policy.RetryPolicy;
+//async retry test repurposed for simple react
 public class RetryTest {
 	
 

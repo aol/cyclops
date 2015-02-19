@@ -205,17 +205,9 @@ public class Stage<U> implements Seq<U>{
 	}
 	
 	public <R> Stage<R> flatMap(Function<? super U,? extends Stream<? extends R>> flatFn) {
-		Queue q = new Queue();
-		Stage flattened = SimpleReact.builder().eager(eager).executor(taskExecutor).retrier(retrier).build().fromStream(q.stream());
-		if(!eager){
-			allOf(it -> q.fromStream(flatFn.apply((U)it.get(0)))).run(new ForkJoinPool(1));
-		}else{
-			allOf(it -> q.fromStream(flatFn.apply((U)it.get(0))));
-		}
-						
 		
-		return flattened;
-		
+		return  SimpleReact.builder().eager(eager).executor(taskExecutor).retrier(retrier).build().fromStream(
+				toQueue().stream().flatMap(flatFn).map(it -> CompletableFuture.completedFuture(it)));
 	}
 
 	
@@ -724,18 +716,12 @@ public class Stage<U> implements Seq<U>{
 			
 			  		  	
 			  batcher.ifPresent(c -> c.accept(n));
-			  /**
-				if(result!=null){
-					try {
-						result.add((U)n.join()); 
-					} catch (Exception e) {
-						capture(e);
-					}
-				}**/
 				this.waitStrategy.accept(n);
 			});
 		}catch(SimpleReactProcessingException e){
-			
+			e.printStackTrace();
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 		if(result==null)
 			return null;
@@ -853,12 +839,22 @@ public class Stage<U> implements Seq<U>{
 		return Seq.seq(toQueue().stream().sorted(comparator));
 	}
 
+	private Stage<U> self(Function<Stage<U>,?> fn){
+		fn.apply(this);
+		return this;
+	}
+	
 	public Queue<U> toQueue(){
 		Queue<U> queue = new Queue<>();
+		
 		if(eager)
 			then(it -> queue.offer(it)).allOf(it -> queue.close());
-		else
-			then(it -> queue.offer(it)).allOf(it -> queue.close()).run(new ForkJoinPool(1));
+		else{
+			
+			then(it -> queue.offer(it))
+			.self(it -> { it.block();  return queue.close(); });
+		
+		}
 		return queue;
 	}
 	
