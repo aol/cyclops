@@ -2,7 +2,7 @@
 
 SimpleReact is an easy to use, concurrent, reactive programming library for JDK 8. It is a fluent API, that implements java.util.stream.Stream, and is built on top of Java 8 CompletableFutures and the Stream API. It provides a focused, simple and limited Reactive API aimed at solving the 90% use case - but without adding complexity.
 
-Since v0.3 SimpleReact also provides Scala Seq like functionality via jOOλ's Seq, which is implemented by SimpleReact Stage.
+Since v0.3 SimpleReact also provides Scala Seq like functionality via [jOOλ's Seq](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.5/org/jooq/lambda/Seq.html Seq), which is implemented by SimpleReact Stage.
 
 * Adding SimpleReact as a dependency : https://github.com/aol/simple-react/wiki/Adding-SimpleReact-as-a-dependency
 
@@ -241,6 +241,8 @@ In this case, strings will only contain the two successful results (for ()->1 an
 ##Example 7 : using the Streams Api
 
 React and the *Streams Api*
+
+A SimpleReact Stage implements both [java.util.stream.Stream](http://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html Stream) and [org.jooq.lambda](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.5/org/jooq/lambda/Seq.html Seq) Streaming interfaces. This section describes how to interact with the JDK implementation of java.util.stream.Stream. 
 
 It is possible to reuse the internal SimpleReact ExecutorService for JDK 8 parallelStreams. SimpleReact uses a ForkJoinPool as the ExecutorService by default, and to reuse the ExecutorService with parallelStreams it must be a ForkJoinPool - so if you want to supply your own make sure it is also a ForkJoinPool. The easiest way to do this is via the submitAndBlock method.
 
