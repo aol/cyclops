@@ -37,7 +37,7 @@ public class StreamTest {
 		
 		Stream<CompletableFuture<String>> stream = new SimpleReact()
 													.<Integer> react(() -> 1, () -> 2, () -> 3)
-													.then(it -> "*" + it).stream();
+													.then(it -> "*" + it).streamCompletableFutures();
 
 		List<String> strings = new SimpleReact()
 								.<String>fromStream(stream)

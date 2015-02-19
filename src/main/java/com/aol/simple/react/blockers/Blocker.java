@@ -79,6 +79,7 @@ public class Blocker<U> {
 	private void testBreakoutConditionsBeforeUnblockingCurrentThread(
 			final Predicate<Status> breakout, final Object result,
 			final Throwable ex) {
+	
 		if (result != null)
 			currentResults.add((U) result); 
 		

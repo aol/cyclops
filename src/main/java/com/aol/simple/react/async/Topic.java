@@ -13,6 +13,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Synchronized;
 
+import org.jooq.lambda.Seq;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
@@ -35,7 +37,7 @@ public class Topic<T> implements Adapter<T> {
 	@Getter(AccessLevel.PACKAGE) @VisibleForTesting
 	private final DistributingCollection<T> distributor = new DistributingCollection<T>();
 	@Getter(AccessLevel.PACKAGE) @VisibleForTesting
-	private volatile ImmutableMap<Stream,Queue<T>> streamToQueue = ImmutableMap.of();
+	private volatile ImmutableMap<Seq,Queue<T>> streamToQueue = ImmutableMap.of();
 	private final Object lock = new Object();
 	private volatile int index=0;
 
@@ -70,17 +72,17 @@ public class Topic<T> implements Adapter<T> {
 	public void disconnect(Stream<T> stream){
 		
 		distributor.removeQueue(streamToQueue.get(stream));
-		Map<Stream,Queue<T>> mutable = new HashMap<>(streamToQueue);
+		Map<Seq,Queue<T>> mutable = new HashMap<>(streamToQueue);
 		mutable.remove(stream);
 		this.streamToQueue = ImmutableMap.copyOf(mutable);
 		this.index--;
 	}
 	
 	@Synchronized("lock")
-	private<R> Stream<R> connect(Function<Queue<T>,Stream<R>> streamCreator){
+	private<R> Seq<R> connect(Function<Queue<T>,Seq<R>> streamCreator){
 		Queue<T> queue = this.getNextQueue();
-		Stream<R> stream = streamCreator.apply(queue);
-		Map<Stream,Queue<T>> mutable = new HashMap<>(streamToQueue);
+		Seq<R> stream = streamCreator.apply(queue);
+		Map<Seq,Queue<T>> mutable = new HashMap<>(streamToQueue);
 		mutable.put(stream,queue);
 		this.streamToQueue = ImmutableMap.copyOf(mutable);
 		return stream;
@@ -101,7 +103,7 @@ public class Topic<T> implements Adapter<T> {
 	 * 
 	 * @return Stream of CompletableFutures that can be used as input into a SimpleReact concurrent dataflow
 	 */
-	public Stream<CompletableFuture<T>> streamCompletableFutures(){
+	public Seq<CompletableFuture<T>> streamCompletableFutures(){
 		return connect(q -> q.streamCompletableFutures());
 	}
 	
@@ -110,7 +112,7 @@ public class Topic<T> implements Adapter<T> {
 	 * It will be provided with an internal Queue as a mailbox. @see Topic.disconnect to disconnect from the topic
 	 * @return Stream of data
 	 */
-	public Stream<T> stream(){
+	public Seq<T> stream(){
 		
 		
 		return connect(q -> q.stream());

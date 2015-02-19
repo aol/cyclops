@@ -34,7 +34,7 @@ repositories {
 dependencies {
    
 	
-	
+	compile 'org.jooq:jool:0.9.6'
 	compile group: 'org.projectlombok', name: 'lombok', version:'1.14.2'
 	compile group: 'com.google.guava', name: 'guava', version:'18.0'
 	compile 'com.nurkiewicz.asyncretry:asyncretry:0.0.6'

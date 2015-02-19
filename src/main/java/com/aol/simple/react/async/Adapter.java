@@ -3,6 +3,8 @@ package com.aol.simple.react.async;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.Seq;
+
 /**
  * 
  * Interface for an Adapter that inputs data from 1 or more input Streams and sends it to 1 or more output Streams
@@ -30,11 +32,11 @@ public interface Adapter<T> {
 	/**
 	 * @return Stream of data
 	 */
-	public Stream<T> stream();
+	public Seq<T> stream();
 	/**
 	 * @return Stream of CompletableFutures that can be used as input into a SimpleReact concurrent dataflow
 	 */
-	public Stream<CompletableFuture<T>> streamCompletableFutures();
+	public Seq<CompletableFuture<T>> streamCompletableFutures();
 	
 	/**
 	 * Close this adapter

@@ -5,9 +5,17 @@ import lombok.experimental.Builder;
 
 import com.google.common.collect.ImmutableList;
 
+/**
+ * Class that returned to blocking predicates for short circuiting result collection
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Result type
+ */
 @AllArgsConstructor
 @Builder
 public class Status<T> {
+	
 	private final int completed;
 	private final int errors;
 	private final int total;

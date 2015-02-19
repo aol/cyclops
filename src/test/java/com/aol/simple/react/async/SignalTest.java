@@ -1,5 +1,6 @@
 package com.aol.simple.react.async;
 
+import static com.aol.simple.react.ReactStream.*;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -54,7 +55,7 @@ public class SignalTest {
 						return 1;
 					});
 			
-			SimpleReact.lazy().fromStream(q.getDiscrete().streamCompletableFutures())
+			lazy().fromStream(q.getDiscrete().streamCompletableFutures())
 					.then(it -> "*" +it)
 					.peek(it -> incrementFound())
 					.peek(it -> System.out.println(it))
@@ -74,7 +75,7 @@ public class SignalTest {
 			
 			
 			
-			SimpleReact.lazy().fromStream(q.getDiscrete().streamCompletableFutures())
+			lazy().fromStream(q.getDiscrete().streamCompletableFutures())
 					.then(it -> "*" +it)
 					.peek(it -> incrementFound())
 					.peek(it -> System.out.println(it))
@@ -100,7 +101,7 @@ public class SignalTest {
 			
 			
 			
-			SimpleReact.lazy().fromStream(q.getContinuous().streamCompletableFutures())
+			lazy().fromStream(q.getContinuous().streamCompletableFutures())
 					.then(it -> "*" +it)
 					.peek(it -> incrementFound())
 					.peek(it -> System.out.println(it))

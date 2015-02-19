@@ -62,7 +62,7 @@ public class SimpleReactTest {
 	public void testLazyParameters(){
 		
 		ForkJoinPool fjp = new ForkJoinPool();
-		assertThat(SimpleReact.lazy(fjp).getExecutor(),is(fjp));
+		assertThat(ReactStream.lazy(fjp).getExecutor(),is(fjp));
 	}
 	@Test
 	public void testEagetParameters(){
@@ -91,7 +91,7 @@ public class SimpleReactTest {
 				.then(it -> Thread.currentThread().getId())
 				.block(Collectors.toSet());
 
-		assertThat(threads.size(), is(greaterThan(2)));
+		assertThat(threads.size(), is(greaterThan(1)));
 
 	}
 

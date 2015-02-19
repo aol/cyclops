@@ -4,14 +4,14 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import org.junit.Test;
-
 
 import com.aol.simple.react.SimpleReact;
 import com.aol.simple.react.predicates.Predicates;
@@ -27,7 +27,8 @@ public class RxJavaConversionTest {
 		
 		
 		
-		List<String> titles = new SimpleReact().reactToCollection(query("Hello, world!").get())
+		List<String> titles = new SimpleReact().fromStream(Stream.of(query("Hello, world!")))
+								.flatMap(Collection::stream)
 								.<String>then(url -> getTitle(url))
 								.filter(Objects::nonNull)
 								.filter(Predicates.take(5))

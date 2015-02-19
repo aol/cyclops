@@ -1,5 +1,6 @@
 package com.aol.simple.react;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -11,6 +12,8 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import org.jooq.lambda.Seq;
 
 import lombok.Getter;
 import lombok.experimental.Builder;
@@ -45,66 +48,6 @@ public class SimpleReact {
 	private final RetryExecutor retrier;
 	private final Boolean eager;
 
-	
-	/**
-	 * @return Lazy SimpleReact for handling infinite streams
-	 */
-	public static SimpleReact lazy(){
-		return new SimpleReact(false);
-	}
-	/**
-	 * @param executor Executor this SimpleReact instance will use to execute concurrent tasks.
-	 * @return Lazy SimpleReact for handling infinite streams
-	 */
-	public static SimpleReact lazy(ExecutorService executor){
-		return new SimpleReact(executor,false);
-	}
-	
-	/**
-	 * @param executor RetryExecutor this SimpleReact instance will use to retry concurrent tasks.
-	 * @return Lazy SimpleReact for handling infinite streams
-	 */
-	public static SimpleReact lazy(RetryExecutor retry){
-		return SimpleReact.builder().eager(false).retrier(retry).build();
-	}
-	/**
-	 *  @param executor Executor this SimpleReact instance will use to execute concurrent tasks.
-	 * @param retry RetryExecutor this SimpleReact instance will use to retry concurrent tasks.
-	 * @return Lazy SimpleReact for handling infinite streams
-	 */
-	public static SimpleReact lazy(ExecutorService executor, RetryExecutor retry){
-		return SimpleReact.builder().eager(false).executor(executor).retrier(retry).build();
-	}
-	
-	
-	/**
-	 * @return Eager SimpleReact for handling finite streams
-	 */
-	public static SimpleReact eager(){
-		return new SimpleReact(true);
-	}
-	/**
-	 * @param executor Executor this SimpleReact instance will use to execute concurrent tasks.
-	 * @return Eager SimpleReact for handling finite streams
-	 */
-	public static SimpleReact eager(ExecutorService executor){
-		return new SimpleReact(executor,true);
-	}
-	/**
-	 * @param executor RetryExecutor this SimpleReact instance will use to retry concurrent tasks.
-	 * @return Eager SimpleReact for handling finite streams
-	 */
-	public static SimpleReact eager(RetryExecutor retry){
-		return SimpleReact.builder().retrier(retry).build();
-	}
-	/**
-	 *  @param executor Executor this SimpleReact instance will use to execute concurrent tasks.
-	 * @param retry RetryExecutor this SimpleReact instance will use to retry concurrent tasks.
-	 * @return Eager SimpleReact for handling finite streams
-	 */
-	public static SimpleReact eager(ExecutorService executor, RetryExecutor retry){
-		return SimpleReact.builder().executor(executor).retrier(retry).build();
-	}
 	
 	/**
 	 * Construct a new SimpleReact that will use a ForkJoinPool with parrellism set to the number of processors on the host
@@ -333,12 +276,12 @@ public class SimpleReact {
 		
 	}
 	
-	private SimpleReact(boolean eager){
+	SimpleReact(boolean eager){
 		this.executor = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
 		this.eager =eager;
 		retrier= null;
 	}
-	private SimpleReact(ExecutorService executor,boolean eager) {
+	SimpleReact(ExecutorService executor,boolean eager) {
 		
 		this.executor = executor;
 		this.eager =eager;
