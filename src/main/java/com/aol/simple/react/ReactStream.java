@@ -40,7 +40,7 @@ public class ReactStream {
 	}
 	
 	/**
-	 * @param executor RetryExecutor this SimpleReact instance will use to retry concurrent tasks.
+	 * @param retry RetryExecutor this SimpleReact instance will use to retry concurrent tasks.
 	 * @return Lazy SimpleReact for handling infinite streams
 	 */
 	public static SimpleReact lazy(RetryExecutor retry){
@@ -78,7 +78,7 @@ public class ReactStream {
 		return new SimpleReact(executor,true);
 	}
 	/**
-	 * @param executor RetryExecutor this SimpleReact instance will use to retry concurrent tasks.
+	 * @param retry RetryExecutor this SimpleReact instance will use to retry concurrent tasks.
 	 * @return Eager SimpleReact for handling finite streams
 	 */
 	public static SimpleReact eager(RetryExecutor retry){
