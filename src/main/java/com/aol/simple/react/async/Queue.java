@@ -15,6 +15,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
 
+import org.jooq.lambda.Seq;
+
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 
@@ -82,9 +84,9 @@ public class Queue<T> implements Adapter<T> {
 	 *         use queue.stream().parallel() to convert to a parallel Stream
 	 * 
 	 */
-	public Stream<T> stream() {
+	public Seq<T> stream() {
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
-		return closingStream(this::ensureOpen);
+		return Seq.seq(closingStream(this::ensureOpen));
 	}
 
 	private Stream<T> closingStream(Supplier<T> s){
@@ -102,7 +104,7 @@ public class Queue<T> implements Adapter<T> {
 	 *         concurrency / parralellism via the constituent CompletableFutures
 	 * 
 	 */
-	public Stream<CompletableFuture<T>> streamCompletableFutures() {
+	public Seq<CompletableFuture<T>> streamCompletableFutures() {
 		return stream().map(CompletableFuture::completedFuture);
 	}
 
@@ -133,9 +135,11 @@ public class Queue<T> implements Adapter<T> {
 			softener.throwSoftenedException(e);
 		}
 			
-		if(data instanceof PoisonPill)
+		if(data instanceof PoisonPill){
+			this.queue.stream().forEach(it -> System.out.println("dta left" + it));
 			throw new ClosedQueueException();
 		
+		}
 		if(sizeSignal!=null)
 			this.sizeSignal.set(queue.size());
 
@@ -176,6 +180,7 @@ public class Queue<T> implements Adapter<T> {
 	 * @return true if successfully added.
 	 */
 	public boolean add(T data){
+		System.out.println("add  " + data);
 		try{
 			boolean result = queue.add(data);
 			if(sizeSignal!=null)
@@ -198,6 +203,8 @@ public class Queue<T> implements Adapter<T> {
 	 */
 	@Override
 	public boolean offer(T data) {
+		if(!open)
+			throw new ClosedQueueException();
 		try {
 			boolean result =  this.queue.offer(data,this.offerTimeout,this.offerTimeUnit);
 			if(sizeSignal!=null)
@@ -221,8 +228,9 @@ public class Queue<T> implements Adapter<T> {
 	@Override
 	public boolean close() {
 		this.open = false;
-		for(int i=0;i<Math.max(maxPoisonPills, listeningStreams.get());i++)
+		for(int i=0;i<Math.min(maxPoisonPills, listeningStreams.get());i++){
 			queue.add((T)POISON_PILL);
+		}
 
 		return true;
 	}

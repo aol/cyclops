@@ -12,23 +12,17 @@ import lombok.Getter;
 import lombok.experimental.Wither;
 
 import com.aol.simple.react.config.MaxActive;
-
 @Wither
 @AllArgsConstructor
-public class LazyCollector<T> implements LazyResultConsumer<T>{
-
+public class EmptyCollector<T> implements LazyResultConsumer<T> {
 	
-	private final Collection<T> results;
+
 	private final List<CompletableFuture<T>> active = new ArrayList<>();
+	@Getter
 	private final MaxActive maxActive;
 	
-	public LazyCollector(MaxActive maxActive){
-		this.maxActive = maxActive;
-		this.results =null;
-	}
-	public LazyCollector(){
-		this.maxActive = MaxActive.defaultValue.factory.getInstance();
-		this.results =null;
+	public EmptyCollector(){
+		maxActive = MaxActive.defaultValue.factory.getInstance();
 	}
 	
 	@Override
@@ -41,22 +35,25 @@ public class LazyCollector<T> implements LazyResultConsumer<T>{
 				LockSupport.parkNanos(0l);
 				List<CompletableFuture> toRemove = active.stream().filter(cf -> cf.isDone()).collect(Collectors.toList());
 				active.removeAll(toRemove);
-				results.addAll((Collection<? extends T>) toRemove.stream().map(cf -> cf.join()).collect(Collectors.toList()));
-				
+					
 			}
 		}
 		
 		
 		
 	}
-	public Collection<T> getResults(){
-		moveBatchToResult();
-		return results;
+
+	@Override
+	public LazyResultConsumer<T> withResults(Collection<T> t) {
+		
+		return this.withMaxActive(maxActive);
 	}
 
-	private void moveBatchToResult() {
-		results.addAll(active.stream().map(cf -> cf.join()).collect(Collectors.toList()));
+	@Override
+	public Collection<T> getResults() {
+		active.stream().forEach(cf -> cf.join());
+		active.clear();
+		return new ArrayList<>();
 	}
-	
 	
 }

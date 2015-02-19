@@ -91,7 +91,7 @@ public class SimpleReactTest {
 				.then(it -> Thread.currentThread().getId())
 				.block(Collectors.toSet());
 
-		assertThat(threads.size(), is(greaterThan(2)));
+		assertThat(threads.size(), is(greaterThan(1)));
 
 	}
 

@@ -1,4 +1,4 @@
-package com.aol.simple.react.waiter;
+package com.aol.simple.react.capacity.monitor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,20 +13,33 @@ import lombok.experimental.Wither;
 
 import com.aol.simple.react.config.MaxActive;
 
+/**
+ * Class to be used to limit the number of active CompletableFuture Streams, in an infinite SimpleReact stream.
+ * Can be used alongside Garbage Collector configuration (e.g. G1) to assure constant throughput rates.
+ * 
+ * @author johnmcclean
+ *
+ */
 @Wither
 @AllArgsConstructor
 @Builder
-public class ActiveSpinWaiter implements Consumer<CompletableFuture>{
+public class LimitingMonitor implements Consumer<CompletableFuture>{
 
 	private final List<CompletableFuture> active = new ArrayList<>(1000);
 	private final MaxActive maxActive;
 	
 
-	public ActiveSpinWaiter(){
+	/**
+	 * Limiting Monitor with default capacity settings
+	 */
+	public LimitingMonitor(){
 		maxActive = MaxActive.defaultValue.factory.getInstance();
 		
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.util.function.Consumer#accept(java.lang.Object)
+	 */
 	@Override
 	public void accept(CompletableFuture n) {
 		

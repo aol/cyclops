@@ -1,5 +1,6 @@
 package com.aol.simple.react;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -11,6 +12,8 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import org.jooq.lambda.Seq;
 
 import lombok.Getter;
 import lombok.experimental.Builder;
@@ -45,7 +48,9 @@ public class SimpleReact {
 	private final RetryExecutor retrier;
 	private final Boolean eager;
 
-	
+	public static <U> Seq<U> lazy(U... array){
+		return new SimpleReact(false).reactToCollection(Arrays.asList(array));
+	}
 	/**
 	 * @return Lazy SimpleReact for handling infinite streams
 	 */
@@ -76,7 +81,9 @@ public class SimpleReact {
 		return SimpleReact.builder().eager(false).executor(executor).retrier(retry).build();
 	}
 	
-	
+	public static <U> Seq<U> eager(U... array){
+		return new SimpleReact().reactToCollection(Arrays.asList(array));
+	}
 	/**
 	 * @return Eager SimpleReact for handling finite streams
 	 */

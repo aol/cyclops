@@ -18,7 +18,7 @@ public class MaxActive {
 	@AllArgsConstructor
 	@Getter
 	public enum defaultValue {
-		factory(new MaxActive(70,30));
+		factory(new MaxActive(Runtime.getRuntime().availableProcessors()*2,Runtime.getRuntime().availableProcessors()));
 		private final MaxActive instance;
 	}
 }
