@@ -1,5 +1,6 @@
 package com.aol.simple.react.async;
 
+import static com.aol.simple.react.ReactStream.*;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -56,12 +57,12 @@ public class TopicTest {
 		//read from the topic concurrently in 2 threads
 		
 		 Stage<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
-			.react(()->SimpleReact.lazy()
+			.react(()->lazy()
 				.fromStream(topic.streamCompletableFutures())
 				.then(it -> it + "*")
 				.<Collection<String>>run(()->new ArrayList<>() ),
 				
-				()->SimpleReact.lazy()
+				()->lazy()
 					.fromStream(topic.streamCompletableFutures())
 					.then(it -> it + "!")
 					.peek(it->sleep(10)) //make sure takes slightly longer to complete
@@ -143,12 +144,12 @@ public class TopicTest {
 		Topic<Integer> topic = new Topic<>();
 		
 		 Stage<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
-			.react(()->SimpleReact.lazy()
+			.react(()->lazy()
 				.fromStream(topic.streamCompletableFutures())
 				.then(it -> it + "*")
 				.<Collection<String>>run(()->new ArrayList<>() ),
 				
-				()->SimpleReact.lazy()
+				()->lazy()
 					.fromStream(topic.streamCompletableFutures())
 					.then(it -> it + "!")
 				
@@ -188,12 +189,12 @@ public class TopicTest {
 		Topic<Integer> topic = new Topic<>();
 		
 		 Stage<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
-			.react(()->SimpleReact.lazy()
+			.react(()->lazy()
 				.fromStream(topic.streamCompletableFutures())
 				.then(it -> it + "*")
 				.<Collection<String>>run(()->new ArrayList<>() ),
 				
-				()->SimpleReact.lazy()
+				()->lazy()
 					.fromStream(topic.streamCompletableFutures())
 					.then(it -> it + "!")
 				

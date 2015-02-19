@@ -1,6 +1,6 @@
 package com.aol.simple.react;
 
-import static com.aol.simple.react.SimpleReact.eager;
+import static com.aol.simple.react.ReactStream.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
@@ -37,8 +37,8 @@ public class SeqTest {
 	}
 	@Test
 	public void zipInOrder(){
-		List<Tuple2<Integer,Integer>> list =  eager(1,2,3,4,5,6).sorted()
-													.zip( eager(100,200,300,400).sorted())
+		List<Tuple2<Integer,Integer>> list =  ReactStream.eager(1,2,3,4,5,6).sorted()
+													.zip( ReactStream.eager(100,200,300,400).sorted())
 													.collect(Collectors.toList());
 		
 		assertThat(list.get(0).v1,is(1));
@@ -49,8 +49,8 @@ public class SeqTest {
 	@Test
 	public void zipFastSlow(){
 		Queue q = new Queue();
-		SimpleReact.lazy().reactInfinitely(()->sleep(100)).then(it -> q.add("100")).run(new ForkJoinPool(1));
-		 eager(1,2,3,4,5,6).zip(q.stream()).peek(it -> System.out.println(it)).collect(Collectors.toList());
+		ReactStream.lazy().reactInfinitely(()->sleep(100)).then(it -> q.add("100")).run(new ForkJoinPool(1));
+		ReactStream.eager(1,2,3,4,5,6).zip(q.stream()).peek(it -> System.out.println(it)).collect(Collectors.toList());
 		
 		
 	}
@@ -58,10 +58,10 @@ public class SeqTest {
 	@Test 
 	public void testBackPressureWhenZippingUnevenStreams(){
 	
-		Queue fast = SimpleReact.lazy().reactInfinitely(()-> "100").withQueueFactory(QueueFactories.boundedQueue(10))
+		Queue fast = lazy().reactInfinitely(()-> "100").withQueueFactory(QueueFactories.boundedQueue(10))
 					.toQueue();
 		
-		 new Thread(() -> { SimpleReact.lazy().react(()->1,SimpleReact.times(1000)).peek(c -> sleep(10))
+		 new Thread(() -> { lazy().react(()->1,SimpleReact.times(1000)).peek(c -> sleep(10))
 		 			.zip(fast.stream())
 		 			.forEach(it->{}); }).start();;
 		

@@ -792,7 +792,7 @@ public class Stage<U> implements Seq<U> {
 				this.waitStrategy.accept(n);
 			});
 		} catch (SimpleReactProcessingException e) {
-			e.printStackTrace();
+			
 		}
 		if (result == null)
 			return null;
@@ -985,25 +985,11 @@ public class Stage<U> implements Seq<U> {
 			then(it -> queue.offer(it)).allOf(it -> queue.close());
 		else {
 
-			//peek(it-> System.out.println("adding to queue -" + it))
-					then(it -> queue.offer(it))
-					.peek(it-> System.out.println("added to queue-" + it))
-					.run(new ForkJoinPool(1),()->{ System.out.println("!!Closed!"); queue.close();});
 			
-					/**
-					peek(it-> System.out.println("added to queue-" + it)).self(it -> {
-						
-						it.lastActive.stream().forEach( cf -> System.out.println(cf.isDone()));
-				System.out.println("blocking..");
-				Collection r = null;
-						try{
-							 r = it.block(status -> {System.out.println(status.getAllCompleted()); 
-							 				return true;});
-						}finally{
-							System.out.println("closing -" + r.size());
-							queue.close();
-						}
-				}).run(new ForkJoinPool(1));	**/	
+					then(it -> queue.offer(it))
+					.run(new ForkJoinPool(1),()-> queue.close());
+			
+					
 			
 
 		}

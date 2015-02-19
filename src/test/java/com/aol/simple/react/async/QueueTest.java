@@ -1,5 +1,6 @@
 package com.aol.simple.react.async;
 
+import static com.aol.simple.react.ReactStream.*;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -223,9 +224,9 @@ public class QueueTest {
 		count1 = 100000;
 
 		Queue<Integer> q = new Queue(new LinkedBlockingQueue());
-		SimpleReact.lazy().reactInfinitely(() -> count++)
+		lazy().reactInfinitely(() -> count++)
 				.then(it -> q.offer(it)).run(new ForkJoinPool(1));
-		SimpleReact.lazy().reactInfinitely(() -> count1++)
+		lazy().reactInfinitely(() -> count1++)
 				.then(it -> q.offer(it)).run(new ForkJoinPool(1));
 
 		List<Integer> result = q.stream().limit(1000)
@@ -290,7 +291,7 @@ public class QueueTest {
 				return 1;
 			});
 
-			SimpleReact.lazy().fromStream(q.streamCompletableFutures())
+			lazy().fromStream(q.streamCompletableFutures())
 					.then(it -> "*" + it).peek(it -> found.getAndAdd(1))
 					.peek(it -> System.out.println(it)).block();
 
@@ -311,7 +312,7 @@ public class QueueTest {
 			return q.offer(4);
 		}, () -> q.offer(5));
 
-		Collection<String> results = SimpleReact.lazy()
+		Collection<String> results = lazy()
 				.fromStream(q.streamCompletableFutures()).then(it -> "*" + it)
 				.run(() -> new ArrayList<String>());
 
@@ -335,7 +336,7 @@ public class QueueTest {
 				return 1;
 			});
 
-			List<String> result = SimpleReact.lazy()
+			List<String> result = lazy()
 					.fromStream(q.streamCompletableFutures())
 					.then(it -> "*" + it)
 					.peek(it -> found.getAndAdd(1))

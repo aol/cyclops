@@ -136,7 +136,6 @@ public class Queue<T> implements Adapter<T> {
 		}
 			
 		if(data instanceof PoisonPill){
-			this.queue.stream().forEach(it -> System.out.println("dta left" + it));
 			throw new ClosedQueueException();
 		
 		}
@@ -180,7 +179,6 @@ public class Queue<T> implements Adapter<T> {
 	 * @return true if successfully added.
 	 */
 	public boolean add(T data){
-		System.out.println("add  " + data);
 		try{
 			boolean result = queue.add(data);
 			if(sizeSignal!=null)
