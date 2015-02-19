@@ -9,7 +9,6 @@ import java.util.Spliterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ForkJoinPool;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
@@ -46,7 +45,7 @@ import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.exceptions.ThrowsSoftened;
 import com.aol.simple.react.extractors.Extractor;
 import com.aol.simple.react.extractors.Extractors;
-import com.aol.simple.react.waiter.DoNothingWaiter;
+import com.aol.simple.react.waiter.ActiveSpinWaiter;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 
@@ -109,7 +108,7 @@ public class Stage<U> implements Seq<U>{
 		this.errorHandler = Optional.of( (e)-> log.error(e.getMessage(),e));
 		this.eager = eager;
 		this.retrier=retrier;
-		this.waitStrategy = new DoNothingWaiter();
+		this.waitStrategy = new ActiveSpinWaiter();
 		this.lazyCollector = new LazyCollector<>();
 	}
 	
