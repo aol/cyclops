@@ -1,8 +1,10 @@
 #SimpleReact : Simple Fluent Api for Functional Reactive Programming with Java 8
 
-SimpleReact is an easy to use, concurrent, reactive programming library for JDK 8. It is a fluent API, that implements java.util.stream.Stream, and is built on top of Java 8 CompletableFutures and the Stream API. It provides a focused, simple and limited Reactive API aimed at solving the 90% use case - but without adding complexity.
+SimpleReact is a parallel Stream library that implements java.util.stream.Stream. Under the hood, SimpleReact manages parallel streams as a stream of CompletableFutures. SimpleReact provides a simple core API based on the Promises / A++ spec, while also providing a full rich range of options by implementing both JDK 8 Stream, and the scala-like [jOOλ Seq](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.5/org/jooq/lambda/Seq.html).
 
-Since v0.3 SimpleReact also provides Scala Seq like functionality via [jOOλ's Seq](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.5/org/jooq/lambda/Seq.html), which is implemented by SimpleReact Stage. See [A Simple Api, and a Rich Api](https://github.com/aol/simple-react/wiki/A-simple-API,-and-a-Rich-API) for details on SimpleReact core and the java Streaming interfaces.
+It is an easy to use, concurrent, reactive programming library for JDK 8.  It provides a focused, simple and limited core Reactive API aimed at solving the 90% use case - but without adding complexity. It is a core goal of SimpleReact to integrate with JDK 8 Stream libraries for maximum reuse and plugability.
+
+See [A Simple Api, and a Rich Api](https://github.com/aol/simple-react/wiki/A-simple-API,-and-a-Rich-API) for details on SimpleReact core and the java Streaming interfaces.
 
 * Adding SimpleReact as a dependency : https://github.com/aol/simple-react/wiki/Adding-SimpleReact-as-a-dependency
 
