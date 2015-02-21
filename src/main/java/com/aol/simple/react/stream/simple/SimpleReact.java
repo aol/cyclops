@@ -21,10 +21,10 @@ import com.aol.simple.react.generators.ParallelGenerator;
 import com.aol.simple.react.generators.ReactIterator;
 import com.aol.simple.react.generators.SequentialIterator;
 import com.aol.simple.react.stream.BaseSimpleReact;
-import com.aol.simple.react.stream.FutureStreamImpl;
 import com.aol.simple.react.stream.InfiniteProcessingException;
+import com.aol.simple.react.stream.MissingValue;
 import com.aol.simple.react.stream.ThreadPools;
-import com.aol.simple.react.stream.api.SimpleReactStream;
+import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.google.common.annotations.VisibleForTesting;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -129,10 +129,10 @@ public class SimpleReact  extends BaseSimpleReact{
 		return (SimpleReactStream<U>) this.react(() -> {
 			synchronized(iterationLock) {
 				if(!iterator.hasNext()) 
-					return FutureStreamImpl.MISSING_VALUE;
+					return MissingValue.MISSING_VALUE;
 			return iterator.next();
 			}
-		},SimpleReact.times(maxTimes)).filter(it->it!=FutureStreamImpl.MISSING_VALUE);
+		},SimpleReact.times(maxTimes)).filter(it->it!=MissingValue.MISSING_VALUE);
 	
 	}
 	/**

@@ -5,7 +5,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
@@ -21,11 +20,8 @@ import com.aol.simple.react.async.QueueFactory;
 import com.aol.simple.react.capacity.monitor.LimitingMonitor;
 import com.aol.simple.react.collectors.lazy.BatchingCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
-import com.aol.simple.react.stream.FutureStreamImpl;
+import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.StreamWrapper;
-import com.aol.simple.react.stream.api.FutureStream;
-import com.aol.simple.react.stream.eager.EagerFutureStreamImpl;
-import com.aol.simple.react.stream.eager.EagerFutureStreamImpl.EagerFutureStreamImplBuilder;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 @Wither
@@ -33,7 +29,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 @Getter
 @Slf4j
 @AllArgsConstructor
-public class LazyFutureStreamImpl<U> extends FutureStreamImpl<U> implements LazyFutureStream<U>{
+public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	
 	
 
@@ -45,9 +41,12 @@ public class LazyFutureStreamImpl<U> extends FutureStreamImpl<U> implements Lazy
 	private final Consumer<CompletableFuture> waitStrategy;
 	private final LazyResultConsumer<U> lazyCollector;
 	private final QueueFactory<U> queueFactory;
+	private final BaseSimpleReact simpleReact;
 	
 	LazyFutureStreamImpl(final Stream<CompletableFuture<U>> stream,
 			final ExecutorService executor, final RetryExecutor retrier) {
+		
+		this.simpleReact = new LazyReact();
 		this.taskExecutor = Optional.ofNullable(executor).orElse(
 				new ForkJoinPool(Runtime.getRuntime().availableProcessors()));
 		Stream s = stream;
@@ -66,66 +65,6 @@ public class LazyFutureStreamImpl<U> extends FutureStreamImpl<U> implements Lazy
 	public <R, A> R collect(Collector<? super U, A, R> collector) {
 		return block(collector);
 	}
-	
-	/* (non-Javadoc)
-	 * @see com.aol.simple.react.stream.FutureStreamImpl#then(java.util.function.Function)
-	 */
-	@Override
-	public <R> LazyFutureStream<R> then(Function<U, R> fn) {
-		// TODO Auto-generated method stub
-		return (LazyFutureStream)super.then(fn);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.aol.simple.react.stream.FutureStreamImpl#flatMap(java.util.function.Function)
-	 */
-	@Override
-	public <R> LazyFutureStream<R> flatMap(
-			Function<? super U, ? extends Stream<? extends R>> flatFn) {
-		// TODO Auto-generated method stub
-		return (LazyFutureStream)super.flatMap(flatFn);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.aol.simple.react.stream.FutureStreamImpl#retry(java.util.function.Function)
-	 */
-	@Override
-	public <R> LazyFutureStream<R> retry(Function<U, R> fn) {
-		
-		return (LazyFutureStream)super.retry(fn);
-	}
-
-
-
-	/* (non-Javadoc)
-	 * @see com.aol.simple.react.stream.FutureStreamImpl#allOf(java.util.stream.Collector, java.util.function.Function)
-	 */
-	@Override
-	public <T, R> FutureStream<R> allOf(Collector collector, Function<T, R> fn) {
-		// TODO Auto-generated method stub
-		return (LazyFutureStream)super.allOf(collector, fn);
-	}
-
-
-	/* (non-Javadoc)
-	 * @see com.aol.simple.react.stream.FutureStreamImpl#fromStream(java.util.stream.Stream)
-	 */
-	@Override
-	public <R> LazyFutureStream<R> fromStream(Stream<R> stream) {
-		// TODO Auto-generated method stub
-		return (LazyFutureStream)super.fromStream(stream);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.aol.simple.react.stream.FutureStreamImpl#fromStreamCompletableFuture(java.util.stream.Stream)
-	 */
-	@Override
-	public <R> LazyFutureStream<R> fromStreamCompletableFuture(
-			Stream<CompletableFuture<R>> stream) {
-		
-		return (LazyFutureStream)super.fromStreamCompletableFuture(stream);
-	}
-	
 	
   
 	

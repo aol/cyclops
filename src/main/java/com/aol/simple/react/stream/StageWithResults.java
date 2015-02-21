@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import com.aol.simple.react.exceptions.ExceptionSoftener;
-import com.aol.simple.react.stream.api.SimpleReactStream;
+import com.aol.simple.react.stream.traits.ConfigurableStream;
 
 @AllArgsConstructor
 @Slf4j
@@ -19,26 +19,19 @@ public class StageWithResults<RS,U> {
 	private final ExceptionSoftener exceptionSoftener = ExceptionSoftener.singleton.factory.getInstance();
 	private final ExecutorService taskExecutor;
 	
-	private final FutureStreamImpl<U> stage;
+	private final ConfigurableStream<U> stage;
 	@Getter
 	private final RS results;
 	
 
-	public StageWithResults(FutureStreamImpl<U> stage, RS results) {
+	public StageWithResults(ConfigurableStream<U> stage, RS results) {
 		
 		this.taskExecutor = stage.getTaskExecutor();
 		this.stage = stage;
 		this.results = results;
 	}
 	
-	/**
-	 * Continue building the reactive dataflow
-	 * 
-	 * @return Builder for the current Stage in the reactive flow
-	 */
-	public SimpleReactStream<U> proceed(){
-		return stage;
-	}
+	
 	
 
 	
@@ -59,7 +52,7 @@ public class StageWithResults<RS,U> {
 	 * 
 	 * @param callable that contains code
 	 */
-	<T> T submit(Callable<T> callable){
+	public <T> T submit(Callable<T> callable){
 		if(taskExecutor instanceof ForkJoinPool){
 			log.debug("Submited callable to SimpleReact ForkJoinPool. JDK ParallelStreams will reuse SimpleReact ForkJoinPool.");
 			try {

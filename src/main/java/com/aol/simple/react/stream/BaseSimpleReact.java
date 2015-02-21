@@ -19,8 +19,8 @@ import com.aol.simple.react.generators.Generator;
 import com.aol.simple.react.generators.ParallelGenerator;
 import com.aol.simple.react.generators.ReactIterator;
 import com.aol.simple.react.generators.SequentialIterator;
-import com.aol.simple.react.stream.api.SimpleReactStream;
 import com.aol.simple.react.stream.simple.SimpleReact;
+import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.google.common.annotations.VisibleForTesting;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -31,7 +31,7 @@ public abstract class BaseSimpleReact {
 	protected abstract boolean isEager();
 	protected abstract  RetryExecutor getRetrier();
 	
-	protected abstract <U>  SimpleReactStream<U> construct(Stream s, ExecutorService e, RetryExecutor r, boolean eager);
+	public abstract <U>  SimpleReactStream<U> construct(Stream s, ExecutorService e, RetryExecutor r, boolean eager);
 
 	
 	
@@ -92,10 +92,10 @@ public abstract class BaseSimpleReact {
 		return (SimpleReactStream<U>) this.react(() -> {
 			synchronized(iterationLock) {
 				if(!iterator.hasNext()) 
-					return FutureStreamImpl.MISSING_VALUE;
+					return MissingValue.MISSING_VALUE;
 			return iterator.next();
 			}
-		},SimpleReact.times(maxTimes)).filter(it->it!=FutureStreamImpl.MISSING_VALUE);
+		},SimpleReact.times(maxTimes)).filter(it->it!=MissingValue.MISSING_VALUE);
 	
 	}
 	/**

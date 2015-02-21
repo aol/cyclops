@@ -19,10 +19,9 @@ import com.aol.simple.react.async.QueueFactory;
 import com.aol.simple.react.capacity.monitor.LimitingMonitor;
 import com.aol.simple.react.collectors.lazy.BatchingCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
-import com.aol.simple.react.stream.FutureStreamImpl;
+import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.StreamWrapper;
-import com.aol.simple.react.stream.eager.EagerFutureStreamImpl;
-import com.aol.simple.react.stream.eager.EagerFutureStreamImpl.EagerFutureStreamImplBuilder;
+import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 @Wither
@@ -30,7 +29,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 @Getter
 @Slf4j
 @AllArgsConstructor
-public class SimpleReactStreamImpl<U> extends FutureStreamImpl<U>{
+public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>{
 	
 
 	private final ExecutorService taskExecutor;
@@ -41,9 +40,11 @@ public class SimpleReactStreamImpl<U> extends FutureStreamImpl<U>{
 	private final Consumer<CompletableFuture> waitStrategy;
 	private final LazyResultConsumer<U> lazyCollector;
 	private final QueueFactory<U> queueFactory;
+	private final BaseSimpleReact simpleReact;
 	
-	SimpleReactStreamImpl(final Stream<CompletableFuture<U>> stream,
+	public SimpleReactStreamImpl(final Stream<CompletableFuture<U>> stream,
 			final ExecutorService executor, final RetryExecutor retrier,boolean isEager) {
+		this.simpleReact = new SimpleReact();
 		this.taskExecutor = Optional.ofNullable(executor).orElse(
 				new ForkJoinPool(Runtime.getRuntime().availableProcessors()));
 		Stream s = stream;

@@ -11,8 +11,8 @@ import java.util.stream.Stream;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.simple.react.stream.api.FutureStream;
 import com.aol.simple.react.stream.simple.SimpleReact;
+import com.aol.simple.react.stream.traits.FutureStream;
 
 public class SignalTest {
 
