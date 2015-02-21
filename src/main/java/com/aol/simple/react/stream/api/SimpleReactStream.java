@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -12,7 +13,6 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.simple.react.collectors.ReactCollector;
 import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.StreamWrapper;
@@ -186,11 +186,20 @@ public interface SimpleReactStream <U>{
 				.stream().map((ft) -> ft.exceptionally((t) -> {
 					if (t instanceof FilteredExecutionPathException)
 						throw (FilteredExecutionPathException) t;
-
-					return ((Function) fn).apply(t);
+					Throwable throwable =(Throwable)t;
+					if(t instanceof CompletionException)
+						throwable = ((Exception)t).getCause();
+					
+					SimpleReactFailedStageException simpleReactException = assureSimpleReactException( throwable);//exceptions from initial supplier won't be wrapper in SimpleReactFailedStageException
+						return ((Function) fn).apply(simpleReactException);
+						
 				})), Collectors.toList()));
 	}
 
+	static SimpleReactFailedStageException assureSimpleReactException(
+			Throwable throwable){
+		return new SimpleReactFailedStageException(null,(throwable));
+	}
 	/**
 	 * React <b>capture</b>
 	 * 

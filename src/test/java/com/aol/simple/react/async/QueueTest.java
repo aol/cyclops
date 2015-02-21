@@ -313,7 +313,7 @@ public class QueueTest {
 		}, () -> q.offer(5));
 
 		Collection<String> results = parallel()
-				.fromStream(q.streamCompletableFutures()).then(it -> "*" + it)
+				.fromStream(q.stream()).then(it -> "*" + it)
 				.run(() -> new ArrayList<String>());
 
 		assertThat(results.size(), is(3));
@@ -337,7 +337,7 @@ public class QueueTest {
 			});
 
 			List<String> result = parallel()
-					.fromStream(q.streamCompletableFutures())
+					.fromStream(q.stream())
 					.then(it -> "*" + it)
 					.peek(it -> found.getAndAdd(1))
 					.peek(it -> System.out.println(it))

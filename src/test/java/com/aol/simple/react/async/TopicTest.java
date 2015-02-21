@@ -57,12 +57,12 @@ public class TopicTest {
 		
 		 FutureStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
 			.react(()->parallel()
-				.fromStream(topic.streamCompletableFutures())
+				.fromStream(topic.stream())
 				.then(it -> it + "*")
 				.<Collection<String>>run(()->new ArrayList<>() ),
 				
 				()->parallel()
-					.fromStream(topic.streamCompletableFutures())
+					.fromStream(topic.stream())
 					.then(it -> it + "!")
 					.peek(it->sleep(10)) //make sure takes slightly longer to complete
 					.<Collection<String>>run( ()->new HashSet<>() )
@@ -189,12 +189,12 @@ public class TopicTest {
 		
 		 FutureStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
 			.react(()->parallel()
-				.fromStream(topic.streamCompletableFutures())
+				.fromStream(topic.stream())
 				.then(it -> it + "*")
 				.<Collection<String>>run(()->new ArrayList<>() ),
 				
 				()->parallel()
-					.fromStream(topic.streamCompletableFutures())
+					.fromStream(topic.stream())
 					.then(it -> it + "!")
 				
 					.<Collection<String>>run( ()->new HashSet<>() )

@@ -278,9 +278,14 @@ public class SimpleReact {
 	@VisibleForTesting
 	protected <U> FutureStream<U> reactI(final Supplier<U>... actions) {
 		
-		return new FutureStreamImpl<U>(Stream.of(actions).map(
+		if(eager)
+			return new EagerFutureStreamImpl<U>(Stream.of(actions).map(
 				next -> CompletableFuture.supplyAsync(next, executor)),
-				executor,retrier,eager);
+				executor,retrier);
+		else
+			return new LazyFutureStreamImpl<U>(Stream.of(actions).map(
+					next -> CompletableFuture.supplyAsync(next, executor)),
+					executor,retrier);
 		
 	}
 	
@@ -307,7 +312,8 @@ public class SimpleReact {
 	private SimpleReact(ExecutorService executor, RetryExecutor retrier,
 			Boolean eager) {
 		
-		this.executor = executor;
+		this.executor = Optional.ofNullable(executor).orElse(
+				new ForkJoinPool(Runtime.getRuntime().availableProcessors()));
 		this.retrier = retrier;
 		this.eager = Optional.ofNullable(eager).orElse(true);
 	}

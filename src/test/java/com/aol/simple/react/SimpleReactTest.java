@@ -26,6 +26,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -87,11 +88,21 @@ public class SimpleReactTest {
 		
 		 Set<Long> threads = new SimpleReact(new ForkJoinPool(10))
 				.<Integer> react(() -> 1, () -> 2, () -> 3,() -> 3,() -> 3,() -> 3,() -> 3)
+				.peek(it -> sleep(50l))
 				.then(it -> Thread.currentThread().getId())
 				.block(Collectors.toSet());
 
 		assertThat(threads.size(), is(greaterThan(1)));
 
+	}
+
+	private void sleep(long l) {
+		try {
+			Thread.sleep(l);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Test
@@ -319,7 +330,11 @@ public class SimpleReactTest {
 	}
 	@Test
 	public void testReactExceptionRecovery(){
-		List<String> result = new SimpleReact().react(() -> {throw new RuntimeException();},()-> "Hello").onFail( e -> "World").block();
+		List<String> result = new SimpleReact()
+									.react(() -> {throw new RuntimeException();},()-> "Hello")
+									.onFail( e ->{ System.out.println(e);return "World";})
+									.block();
+		
 		assertThat(result.size(),is(2));
 	
 	}

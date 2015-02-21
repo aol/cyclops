@@ -135,11 +135,11 @@ public class BlockingTest {
 					throw new RuntimeException("boo!");
 					
 
-				}).capture(e -> error[0] = e)
+				}).capture(e -> error[0] = e.getCause())
 				.block(status -> status.getCompleted() >= 1);
 
 		assertThat(results.size(), is(0));
-		assertThat(error[0], equalTo(RuntimeException.class));
+		assertThat(error[0], instanceOf(RuntimeException.class));
 	}
 	volatile int count =0;
 	@Test

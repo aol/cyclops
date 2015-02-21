@@ -113,7 +113,7 @@ public class AllOfTest {
 		.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
 		.allOf(Collectors.toSet(), it -> {
-			assertThat (it,equalTo( Set.class));
+			assertThat (it,instanceOf( Set.class));
 			return it;
 		}).blockAndExtract(Extractors.first());
 
