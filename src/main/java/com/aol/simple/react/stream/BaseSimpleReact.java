@@ -1,4 +1,4 @@
-package com.aol.simple.react.stream.simple;
+package com.aol.simple.react.stream;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -14,64 +14,26 @@ import java.util.stream.Stream;
 
 import lombok.Getter;
 import lombok.experimental.Builder;
-import lombok.experimental.Wither;
 
 import com.aol.simple.react.generators.Generator;
 import com.aol.simple.react.generators.ParallelGenerator;
 import com.aol.simple.react.generators.ReactIterator;
 import com.aol.simple.react.generators.SequentialIterator;
-import com.aol.simple.react.stream.BaseSimpleReact;
-import com.aol.simple.react.stream.FutureStreamImpl;
-import com.aol.simple.react.stream.InfiniteProcessingException;
-import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.api.SimpleReactStream;
+import com.aol.simple.react.stream.simple.SimpleReact;
 import com.google.common.annotations.VisibleForTesting;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
-/**
- * Builder class for FutureStream
- * 
- * 
- * @author johnmcclean
- *
- *
- */
 
-@Builder
-@Wither
-public class SimpleReact  extends BaseSimpleReact{
+public abstract class BaseSimpleReact {
 
-	@Getter
-	private final ExecutorService executor;
-	@Getter
-	private final RetryExecutor retrier;
-	@Getter
-	private final boolean eager;
+	protected abstract ExecutorService getExecutor();
+	protected abstract boolean isEager();
+	protected abstract  RetryExecutor getRetrier();
+	
+	protected abstract <U>  SimpleReactStream<U> construct(Stream s, ExecutorService e, RetryExecutor r, boolean eager);
 
 	
-	@Override
-	public <U> SimpleReactStream<U> construct(Stream s,
-			ExecutorService executor, RetryExecutor retrier, boolean eager) {
-		return  new SimpleReactStreamImpl<U>( s,executor, retrier,eager);
-	}
-	
-
-	/**
-	 * Construct a new SimpleReact that will use a ForkJoinPool with parrellism set to the number of processors on the host
-	 */
-	public SimpleReact(){
-		this( ThreadPools.getStandard());
-	}
-	
-	/**
-	 * @param executor Executor this SimpleReact instance will use to execute concurrent tasks.
-	 */
-	public SimpleReact(ExecutorService executor) {
-	
-		this.executor = executor;
-		this.retrier = null;
-		this.eager =true;
-	}
 	
 	
 	/**
@@ -81,8 +43,9 @@ public class SimpleReact  extends BaseSimpleReact{
 	 * @return Next stage in the reactive flow
 	 */
 	public <U> SimpleReactStream<U> fromStream(final Stream<CompletableFuture<U>> stream) {
-		return super.fromStream(stream);
-		
+
+		Stream s = stream;
+		return  construct( s,getExecutor(),getRetrier(), isEager());
 	}
 	/**
 	 * Start a reactive dataflow from a stream.
@@ -93,7 +56,7 @@ public class SimpleReact  extends BaseSimpleReact{
 	public <U> SimpleReactStream<U> fromStreamWithoutFutures(final Stream<U> stream) {
 		
 		Stream s = stream.map(it -> CompletableFuture.completedFuture(it));
-		return  new SimpleReactStreamImpl<U>( s,executor, retrier,eager);
+		return construct( s,this.getExecutor(), getRetrier(),isEager());
 	}
 
 	public <U> SimpleReactStream<U> of(U...array){
@@ -174,8 +137,8 @@ public class SimpleReact  extends BaseSimpleReact{
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public <U> SimpleReactStream< U> react(final Supplier<U> s, Generator t) {
 
-		return new SimpleReactStreamImpl<U>(t.generate(s),
-				executor,retrier,eager);
+		return construct(t.generate(s),
+				this.getExecutor(),getRetrier(),isEager());
 
 	}
 	/**
@@ -189,18 +152,18 @@ public class SimpleReact  extends BaseSimpleReact{
 	 * @return Next stage in the flow
 	 */
 	public <U> SimpleReactStream< U> reactInfinitely(final Supplier<U> s) {
-		if(eager)
+		if(isEager())
 			throw new InfiniteProcessingException("To reactInfinitely use a lazy stream");
-		return new SimpleReactStreamImpl<U>(Stream.generate(() -> CompletableFuture.completedFuture(s.get())),
-				executor,retrier,false);
+		return construct(Stream.generate(() -> CompletableFuture.completedFuture(s.get())),
+				this.getExecutor(),getRetrier(),false);
 
 	}
 	
 	public <U> SimpleReactStream<U> iterateInfinitely(final U seed, final UnaryOperator<U> f){
-		if(eager)
+		if(isEager())
 			throw new InfiniteProcessingException("To iterateInfinitely use a lazy stream");
-		return new SimpleReactStreamImpl<U>(Stream.iterate(seed, it -> f.apply(it)).map(it -> CompletableFuture.completedFuture(it)),
-				executor,retrier,false);
+		return construct(Stream.iterate(seed, it -> f.apply(it)).map(it -> CompletableFuture.completedFuture(it)),
+				this.getExecutor(),getRetrier(),false);
 	}
 	/**
 	 * Create a Sequential Generator that will trigger a Supplier to be called the specified number of times
@@ -244,7 +207,7 @@ public class SimpleReact  extends BaseSimpleReact{
 	public <U> SimpleReactStream<U> react(final Function<U,U> f,ReactIterator<U> t) {
 
 		Stream s = t.iterate(f);
-		return new SimpleReactStreamImpl<U>(s,executor,retrier,eager);
+		return construct(s,this.getExecutor(),getRetrier(),isEager());
 
 	}
 	/**
@@ -268,8 +231,7 @@ public class SimpleReact  extends BaseSimpleReact{
 	 *            downstream jobs will react too
 	 * @return Next stage in the reactive flow
 	 */
-	@SafeVarargs
-	public final <U> SimpleReactStream<U> react(final Supplier<U>... actions) {
+	public <U> SimpleReactStream<U> react(final Supplier<U>... actions) {
 
 		return this.<U> reactI(actions);
 
@@ -285,33 +247,16 @@ public class SimpleReact  extends BaseSimpleReact{
 	protected <U> SimpleReactStream<U> reactI(final Supplier<U>... actions) {
 		
 		
-			return new SimpleReactStreamImpl<U>(Stream.of(actions).map(
-				next -> CompletableFuture.supplyAsync(next, executor)),
-				executor,retrier,eager);
+			return construct(Stream.of(actions).map(
+				next -> CompletableFuture.supplyAsync(next, this.getExecutor())),
+				this.getExecutor(),getRetrier(),isEager());
 		
 		
 	}
 	
-	SimpleReact(boolean eager){
-		this.executor = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
-		this.eager =eager;
-		retrier= null;
-	}
-	SimpleReact(ExecutorService executor,boolean eager) {
-		
-		this.executor = executor;
-		this.eager =eager;
-		retrier=  null;
-	}
 	
-	private SimpleReact(ExecutorService executor, RetryExecutor retrier,
-			Boolean eager) {
-		
-		this.executor = Optional.ofNullable(executor).orElse(
-				new ForkJoinPool(Runtime.getRuntime().availableProcessors()));
-		this.retrier = retrier;
-		this.eager = Optional.ofNullable(eager).orElse(true);
-	}
+	
+	
 		
 	
 }

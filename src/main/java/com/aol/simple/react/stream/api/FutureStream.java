@@ -1,18 +1,11 @@
 package com.aol.simple.react.stream.api;
 
-import static java.util.Spliterator.ORDERED;
-import static java.util.Spliterators.spliteratorUnknownSize;
-
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.Spliterator;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
@@ -24,19 +17,15 @@ import java.util.function.Supplier;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
-import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple2;
 
-import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.stream.StreamWrapper;
 
@@ -61,9 +50,16 @@ public interface FutureStream<U> extends Seq<U>,
 	 * Stream and Seq supporting methods
 	 */
 
+	abstract <R> FutureStream<R> flatMap(
+			Function<? super U, ? extends Stream<? extends R>> flatFn);
+
 	
-
-
+	default FutureStream<U> peek(final Consumer<? super U> consumer){
+		return (FutureStream)SimpleReactStream.super.peek(consumer);
+	}
+	default FutureStream<U> filter(final Predicate<? super U> p){
+		return (FutureStream)SimpleReactStream.super.filter(p);
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.jooq.lambda.Seq#forEach(java.util.function.Consumer)

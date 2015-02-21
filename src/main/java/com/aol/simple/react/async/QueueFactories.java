@@ -9,7 +9,7 @@ public class QueueFactories {
 	public static<T> QueueFactory<T> boundedQueue(int queueSize){
 		return () -> new Queue<T>(new LinkedBlockingQueue<>(queueSize));
 	}
-	public static<T> QueueFactory<T> unBoundedQueue(){
+	public static<T> QueueFactory<T> unboundedQueue(){
 		return () -> new Queue<T>();
 	}
 	

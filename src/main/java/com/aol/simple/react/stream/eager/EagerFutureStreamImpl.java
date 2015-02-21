@@ -1,35 +1,84 @@
 package com.aol.simple.react.stream.eager;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.Builder;
+import lombok.experimental.Wither;
+import lombok.extern.slf4j.Slf4j;
+
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 
+import com.aol.simple.react.RetryBuilder;
+import com.aol.simple.react.async.Queue;
+import com.aol.simple.react.async.QueueFactories;
 import com.aol.simple.react.async.QueueFactory;
+import com.aol.simple.react.capacity.monitor.LimitingMonitor;
+import com.aol.simple.react.collectors.ReactCollector;
+import com.aol.simple.react.collectors.lazy.BatchingCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.stream.FutureStreamImpl;
 import com.aol.simple.react.stream.StreamWrapper;
-import com.aol.simple.react.stream.api.AsyncToQueue;
+import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.api.FutureStream;
 import com.aol.simple.react.stream.api.SimpleReactStream;
-import com.aol.simple.react.stream.simple.SimpleReact;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 
+@Wither
+@Builder
+@Getter
+@Slf4j
+@AllArgsConstructor
 public class EagerFutureStreamImpl<U> extends FutureStreamImpl<U> implements EagerFutureStream<U>{
 	
-	EagerFutureStreamImpl(final Stream<CompletableFuture<U>> stream,
+
+	private final ExecutorService taskExecutor;
+	private final RetryExecutor retrier;
+	private final Optional<Consumer<Throwable>> errorHandler;
+	private final StreamWrapper lastActive;
+	private final boolean eager;
+	private final Consumer<CompletableFuture> waitStrategy;
+	private final LazyResultConsumer<U> lazyCollector;
+	private final QueueFactory<U> queueFactory;
+	
+	/**
+	 * 
+	 * Construct a SimpleReact stage - this acts as a fluent SimpleReact builder
+	 * 
+	 * @param stream
+	 *            Stream that will generate the events that will be reacted to.
+	 * @param executor
+	 *            The next stage's tasks will be submitted to this executor
+	 */
+	public EagerFutureStreamImpl(final Stream<CompletableFuture<U>> stream,
 			final ExecutorService executor, final RetryExecutor retrier) {
-		super(stream,executor,retrier,true);
+
+		this.taskExecutor = Optional.ofNullable(executor).orElse(
+				new ForkJoinPool(Runtime.getRuntime().availableProcessors()));
+		Stream s = stream;
+		this.lastActive = new StreamWrapper(s, true);
+		this.errorHandler = Optional.of((e) -> log.error(e.getMessage(), e));
+		this.eager = true;
+		this.retrier = Optional.ofNullable(retrier).orElse(
+				RetryBuilder.getDefaultInstance());
+		this.waitStrategy = new LimitingMonitor();
+		this.lazyCollector = new BatchingCollector<>();
+		this.queueFactory = QueueFactories.unboundedQueue();
 	}
 
 	@Override
@@ -305,8 +354,8 @@ public class EagerFutureStreamImpl<U> extends FutureStreamImpl<U> implements Eag
 	 * @param array Values to react to
 	 * @return Next SimpleReact stage
 	 */
-	public static <U> FutureStream<U> parallel(U... array){
-		return new SimpleReact().reactToCollection(Arrays.asList(array));
+	public static <U> EagerFutureStream<U> parallel(U... array){
+		return new EagerReact(ThreadPools.getStandard()).reactToCollection(Arrays.asList(array));
 	}
 	
 	/* (non-Javadoc)
@@ -377,31 +426,71 @@ public class EagerFutureStreamImpl<U> extends FutureStreamImpl<U> implements Eag
     public Tuple2<Optional<U>, Seq<U>> splitAtHead() {
     	 return EagerFutureStream.super.splitAtHead();
     }
+
 	
-    public EagerFutureStream<U> withTaskExecutor(ExecutorService e){
-		return null;
+
+	/* (non-Javadoc)
+	 * @see com.aol.simple.react.stream.FutureStreamImpl#then(java.util.function.Function)
+	 */
+	@Override
+	public <R> FutureStream<R> then(Function<U, R> fn) {
+		// TODO Auto-generated method stub
+		return (FutureStream)super.then(fn);
 	}
-	public EagerFutureStream<U> withRetrier(RetryExecutor retry){
-		return null;
+
+	/* (non-Javadoc)
+	 * @see com.aol.simple.react.stream.FutureStreamImpl#flatMap(java.util.function.Function)
+	 */
+	@Override
+	public <R> FutureStream<R> flatMap(
+			Function<? super U, ? extends Stream<? extends R>> flatFn) {
+		// TODO Auto-generated method stub
+		return (FutureStream)super.flatMap(flatFn);
 	}
-	public EagerFutureStream<U> withWaitStrategy(Consumer<CompletableFuture> c){
-		return null;
+
+	/* (non-Javadoc)
+	 * @see com.aol.simple.react.stream.FutureStreamImpl#retry(java.util.function.Function)
+	 */
+	@Override
+	public <R> FutureStream<R> retry(Function<U, R> fn) {
+		
+		return (FutureStream)super.retry(fn);
 	}
-	public EagerFutureStream<U> withEager(boolean eager){
-		return null;
+
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.simple.react.stream.FutureStreamImpl#allOf(java.util.stream.Collector, java.util.function.Function)
+	 */
+	@Override
+	public <T, R> FutureStream<R> allOf(Collector collector, Function<T, R> fn) {
+		// TODO Auto-generated method stub
+		return (FutureStream)super.allOf(collector, fn);
 	}
-	public SimpleReactStream<U> withLazyCollector(LazyResultConsumer<U> lazy){
-		return null;
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.simple.react.stream.FutureStreamImpl#fromStream(java.util.stream.Stream)
+	 */
+	@Override
+	public <R> FutureStream<R> fromStream(Stream<R> stream) {
+		// TODO Auto-generated method stub
+		return (FutureStream)super.fromStream(stream);
 	}
-	public EagerFutureStream<U> withQueueFactory(QueueFactory<U> queue){
-		return null;
+
+	/* (non-Javadoc)
+	 * @see com.aol.simple.react.stream.FutureStreamImpl#fromStreamCompletableFuture(java.util.stream.Stream)
+	 */
+	@Override
+	public <R> FutureStream<R> fromStreamCompletableFuture(
+			Stream<CompletableFuture<R>> stream) {
+		
+		return (FutureStream)super.fromStreamCompletableFuture(stream);
 	}
-	public EagerFutureStream<U>  withErrorHandler(Optional<Consumer<Throwable>> errorHandler){
-		return null;
-	}
-	public EagerFutureStream<U> withLastActive(StreamWrapper streamWrapper){
-		return null;
-	}
+	
+  
+    
+    
 	
 	
 }

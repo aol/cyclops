@@ -303,8 +303,8 @@ public interface LazyFutureStream<U> extends FutureStream<U>{
 	 * @param array Values to react to
 	 * @return Next SimpleReact stage
 	 */
-	public static <U> FutureStream<U> parallel(U... array){
-		return new SimpleReact(false).reactToCollection(Arrays.asList(array));
+	public static <U> LazyFutureStream<U> parallel(U... array){
+		return new LazyReact().reactToCollection(Arrays.asList(array));
 	}
 	
 	/* (non-Javadoc)
@@ -357,28 +357,28 @@ public interface LazyFutureStream<U> extends FutureStream<U>{
 	 * @param array Array of value to form the reactive stream / sequence
 	 * @return SimpleReact Stage
 	 */
-	public static <U> FutureStream<U> parallelOf(U... array){
-		return new SimpleReact(false).reactToCollection(Arrays.asList(array));
+	public static <U> LazyFutureStream<U> parallelOf(U... array){
+		return new LazyReact().reactToCollection(Arrays.asList(array));
 	}
 	/**
 	 * @return Lazy SimpleReact for handling infinite streams
 	 */
-	public static SimpleReact parallelBuilder(){
-		return new SimpleReact(false);
+	public static LazyReact parallelBuilder(){
+		return new LazyReact();
 	}
 	
-	public static SimpleReact parallelBuilder(int parallelism){
-		return  SimpleReact.builder().executor(new ForkJoinPool(parallelism)).retrier(new RetryBuilder().parallelism( parallelism)).eager(false).build();
+	public static LazyReact parallelBuilder(int parallelism){
+		return  LazyReact.builder().executor(new ForkJoinPool(parallelism)).retrier(new RetryBuilder().parallelism( parallelism)).build();
 	}
 		
-	public static SimpleReact parallelCommonBuilder(){
-		return new SimpleReact(ForkJoinPool.commonPool(),false);
+	public static LazyReact parallelCommonBuilder(){
+		return new LazyReact(ForkJoinPool.commonPool());
 	}
 	
-	public static SimpleReact sequentialBuilder(){
+	public static LazyReact sequentialBuilder(){
 		return lazy(new ForkJoinPool(1));
 	}
-	public static SimpleReact sequentialCommonBuilder(){
+	public static LazyReact sequentialCommonBuilder(){
 		return lazy(ThreadPools.getCommonFreeThread());
 	}
 	
@@ -386,30 +386,30 @@ public interface LazyFutureStream<U> extends FutureStream<U>{
 	 * @param executor Executor this SimpleReact instance will use to execute concurrent tasks.
 	 * @return Lazy SimpleReact for handling infinite streams
 	 */
-	public static SimpleReact lazy(ExecutorService executor){
-		return new SimpleReact(executor,false);
+	public static LazyReact lazy(ExecutorService executor){
+		return new LazyReact(executor);
 	}
 	
 	/**
 	 * @param retry RetryExecutor this SimpleReact instance will use to retry concurrent tasks.
 	 * @return Lazy SimpleReact for handling infinite streams
 	 */
-	public static SimpleReact lazy(RetryExecutor retry){
-		return SimpleReact.builder().eager(false).retrier(retry).build();
+	public static LazyReact lazy(RetryExecutor retry){
+		return LazyReact.builder().retrier(retry).build();
 	}
 	/**
 	 *  @param executor Executor this SimpleReact instance will use to execute concurrent tasks.
 	 * @param retry RetryExecutor this SimpleReact instance will use to retry concurrent tasks.
 	 * @return Lazy SimpleReact for handling infinite streams
 	 */
-	public static SimpleReact lazy(ExecutorService executor, RetryExecutor retry){
-		return SimpleReact.builder().eager(false).executor(executor).retrier(retry).build();
+	public static LazyReact lazy(ExecutorService executor, RetryExecutor retry){
+		return LazyReact.builder().executor(executor).retrier(retry).build();
 	}
 	  
     /**
      * @see Stream#of(Object)
      */
-    static <T> FutureStream<T> of(T value) {
+    static <T> LazyFutureStream<T> of(T value) {
         return futureStream((Stream)Seq.of(value));
     }
 
@@ -424,44 +424,46 @@ public interface LazyFutureStream<U> extends FutureStream<U>{
     /**
      * @see Stream#empty()
      */
-    static <T> FutureStream<T> empty() {
+    static <T> LazyFutureStream<T> empty() {
         return futureStream((Stream)Seq.empty());
     }
 
     /**
      * @see Stream#iterate(Object, UnaryOperator)
      */
-    static <T> FutureStream<T> iterate(final T seed, final UnaryOperator<T> f) {
+    static <T> LazyFutureStream<T> iterate(final T seed, final UnaryOperator<T> f) {
         return futureStream((Stream)Seq.iterate(seed, f));
     }
 
     /**
      * @see Stream#generate(Supplier)
      */
-    static FutureStream<Void> generate() {
+    static LazyFutureStream<Void> generate() {
         return generate(() -> null);
     }
 
     /**
      * @see Stream#generate(Supplier)
      */
-    static <T> FutureStream<T> generate(T value) {
+    static <T> LazyFutureStream<T> generate(T value) {
         return generate(() -> value);
     }
 
     /**
      * @see Stream#generate(Supplier)
      */
-    static <T> FutureStream<T> generate(Supplier<T> s) {
+    static <T> LazyFutureStream<T> generate(Supplier<T> s) {
         return futureStream(Stream.generate(s));
     }
 
     /**
      * Wrap a Stream into a FutureStream.
      */
-    static <T> FutureStream<T> futureStream(Stream<T> stream) {
-        if (stream instanceof FutureStream)
-            return (FutureStream<T>) stream;
+    static <T> LazyFutureStream<T> futureStream(Stream<T> stream) {
+        if (stream instanceof LazyFutureStream)
+            return (LazyFutureStream<T>) stream;
+        if(stream instanceof FutureStream)
+        	stream = ((FutureStream) stream).toQueue().stream();
 
         return new LazyFutureStreamImpl<T>(stream.map(CompletableFuture::completedFuture), Executors.newFixedThreadPool(1),
         		RetryBuilder.getDefaultInstance().withScheduler(Executors.newScheduledThreadPool(1)));

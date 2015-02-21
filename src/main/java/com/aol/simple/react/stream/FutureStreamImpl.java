@@ -14,7 +14,6 @@ import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
 
 import com.aol.simple.react.RetryBuilder;
@@ -28,11 +27,12 @@ import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.exceptions.ThrowsSoftened;
-import com.aol.simple.react.stream.api.AsyncToQueue;
+import com.aol.simple.react.stream.api.EagerToQueue;
+import com.aol.simple.react.stream.api.Blockable;
 import com.aol.simple.react.stream.api.Configuration;
 import com.aol.simple.react.stream.api.FutureStream;
 import com.aol.simple.react.stream.api.SimpleReactStream;
-import com.aol.simple.react.stream.simple.SimpleReact;
+import com.aol.simple.react.stream.eager.EagerReact;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -56,57 +56,16 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 @AllArgsConstructor
 @Slf4j
 //@Wither
-public  class FutureStreamImpl<U> implements SimpleReactStream<U>, Configuration<U>,AsyncToQueue<U>{
+public abstract class FutureStreamImpl<U> implements SimpleReactStream<U>, 
+										Configuration<U>,Blockable<U>,
+										EagerToQueue<U>{
 
 	private final ExceptionSoftener exceptionSoftener = ExceptionSoftener.singleton.factory
 			.getInstance();
-	@Getter
-//	@Wither(value = AccessLevel.PUBLIC)
-	private final ExecutorService taskExecutor;
-//	@Wither(value = AccessLevel.PUBLIC)
-	private final RetryExecutor retrier;
 
-	@Getter
-	private final Optional<Consumer<Throwable>> errorHandler;
+	
 
-	@Getter
-	private final StreamWrapper lastActive;
-	@Getter
-	private final boolean eager;
-//	@Wither(value = AccessLevel.PUBLIC)
-	@Getter
-	private final Consumer<CompletableFuture> waitStrategy;
-	@Getter
-	private final LazyResultConsumer<U> lazyCollector;
-	@Getter
-	private final QueueFactory<U> queueFactory;
-
-	/**
-	 * 
-	 * Construct a SimpleReact stage - this acts as a fluent SimpleReact builder
-	 * 
-	 * @param stream
-	 *            Stream that will generate the events that will be reacted to.
-	 * @param executor
-	 *            The next stage's tasks will be submitted to this executor
-	 */
-	protected FutureStreamImpl(final Stream<CompletableFuture<U>> stream,
-			final ExecutorService executor, final RetryExecutor retrier,
-			final boolean eager) {
-
-		this.taskExecutor = Optional.ofNullable(executor).orElse(
-				new ForkJoinPool(Runtime.getRuntime().availableProcessors()));
-		Stream s = stream;
-		this.lastActive = new StreamWrapper(s, Optional.ofNullable(eager)
-				.orElse(true));
-		this.errorHandler = Optional.of((e) -> log.error(e.getMessage(), e));
-		this.eager = eager;
-		this.retrier = Optional.ofNullable(retrier).orElse(
-				RetryBuilder.getDefaultInstance());
-		this.waitStrategy = new LimitingMonitor();
-		this.lazyCollector = new BatchingCollector<>();
-		this.queueFactory = QueueFactories.boundedQueue(1000);
-	}
+	
 
 	/**
 	 * React <b>then</b>
@@ -145,11 +104,11 @@ public  class FutureStreamImpl<U> implements SimpleReactStream<U>, Configuration
 	 *         the dataflow
 	 */
 	@SuppressWarnings("unchecked")
-	public <R> FutureStream<R> then(final Function<U, R> fn) {
-		return (FutureStream<R>) this.withLastActive(lastActive.permutate(
-				lastActive.stream().map(
+	public <R> SimpleReactStream<R> then(final Function<U, R> fn) {
+		return (FutureStream<R>) this.withLastActive(getLastActive().permutate(
+				getLastActive().stream().map(
 						(ft) -> ft.thenApplyAsync(handleExceptions(fn),
-								taskExecutor)), Collectors.toList()));
+								getTaskExecutor())), Collectors.toList()));
 	}
 
 	private <R> Function<U, R> handleExceptions(Function<U, R> fn) {
@@ -169,15 +128,15 @@ public  class FutureStreamImpl<U> implements SimpleReactStream<U>, Configuration
 	 * @see org.jooq.lambda.Seq#flatMap(java.util.function.Function)
 	 */
 	@Override
-	public <R> FutureStream<R> flatMap(
+	public <R> SimpleReactStream<R> flatMap(
 			Function<? super U, ? extends Stream<? extends R>> flatFn) {
 
 		//need to pass in a builder in the constructor and build using it
-		return SimpleReact
+		return EagerReact
 				.builder()
-				.eager(eager)
-				.executor(taskExecutor)
-				.retrier(retrier)
+				//.eager(eager)
+				.executor(getTaskExecutor())
+				.retrier(getRetrier())
 				.build()
 				.fromStream(
 						toQueue()
@@ -201,13 +160,13 @@ public  class FutureStreamImpl<U> implements SimpleReactStream<U>, Configuration
 	 * @return Next Stage in the Strea,
 	 */
 	@SuppressWarnings("unchecked")
-	public <R> FutureStream<R> retry(final Function<U, R> fn) {
+	public <R> SimpleReactStream<R> retry(final Function<U, R> fn) {
 
-		return (FutureStream<R>) this.withLastActive(lastActive.permutate(
-				lastActive.stream().map(
-						(ft) -> ft.thenApplyAsync((res) -> getSafe(retrier
+		return (SimpleReactStream<R>) this.withLastActive(getLastActive().permutate(
+				getLastActive().stream().map(
+						(ft) -> ft.thenApplyAsync((res) -> getSafe(getRetrier()
 								.getWithRetry(() -> fn.apply((U) res))),
-								taskExecutor)), Collectors.toList()));
+								getTaskExecutor())), Collectors.toList()));
 	}
 
 	/**
@@ -252,7 +211,7 @@ public  class FutureStreamImpl<U> implements SimpleReactStream<U>, Configuration
 	 *         the dataflow
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public <T, R> FutureStream<R> allOf(final Collector collector,
+	public <T, R> SimpleReactStream<R> allOf(final Collector collector,
 			final Function<T, R> fn) {
 		CompletableFuture[] array = lastActiveArray();
 		CompletableFuture cf = CompletableFuture.allOf(array);
@@ -266,9 +225,9 @@ public  class FutureStreamImpl<U> implements SimpleReactStream<U>, Configuration
 			return new StageWithResults(this, result).submit(() -> fn
 					.apply(aggregateResults(collector, Stream.of(array)
 							.collect(Collectors.toList()))));
-		}, taskExecutor);
+		}, getTaskExecutor());
 		return (FutureStream<R>) withLastActive(new StreamWrapper(onSuccess,
-				eager));
+				isEager()));
 
 	}
 
@@ -328,11 +287,11 @@ public  class FutureStreamImpl<U> implements SimpleReactStream<U>, Configuration
 
 	@SuppressWarnings("rawtypes")
 	private CompletableFuture[] lastActiveArray() {
-		return lastActive.list().toArray(new CompletableFuture[0]);
+		return getLastActive().list().toArray(new CompletableFuture[0]);
 	}
 
 	private void capture(final Exception e) {
-		errorHandler.ifPresent((handler) -> {
+		getErrorHandler().ifPresent((handler) -> {
 			if (!(e.getCause() instanceof FilteredExecutionPathException)) {
 				handler.accept(e.getCause());
 			}
@@ -365,40 +324,40 @@ public  class FutureStreamImpl<U> implements SimpleReactStream<U>, Configuration
 
 	
 
-	public <R> FutureStream<R> fromStream(Stream<R> stream) {
-		return (FutureStream<R>) this.withLastActive(lastActive
+	public <R> SimpleReactStream<R> fromStream(Stream<R> stream) {
+		return (SimpleReactStream<R>) this.withLastActive(getLastActive()
 				.withNewStream(stream.map(CompletableFuture::completedFuture)));
 	}
 
-	public <R> FutureStream<R> fromStreamCompletableFuture(
+	public <R> SimpleReactStream<R> fromStreamCompletableFuture(
 			Stream<CompletableFuture<R>> stream) {
 		Stream noType = stream;
-		return (FutureStream<R>) this.withLastActive(lastActive
+		return (FutureStream<R>) this.withLastActive(getLastActive()
 				.withStream(noType));
 	}
-	public SimpleReactStream<U> withTaskExecutor(ExecutorService e){
-		return null;
-	}
-	public SimpleReactStream<U> withRetrier(RetryExecutor retry){
-		return null;
-	}
-	public SimpleReactStream<U> withWaitStrategy(Consumer<CompletableFuture> c){
-		return null;
-	}
-	public SimpleReactStream<U> withEager(boolean eager){
-		return null;
-	}
-	public SimpleReactStream<U> withLazyCollector(LazyResultConsumer<U> lazy){
-		return null;
-	}
-	public SimpleReactStream<U> withQueueFactory(QueueFactory<U> queue){
-		return null;
-	}
-	public SimpleReactStream<U>  withErrorHandler(Optional<Consumer<Throwable>> errorHandler){
-		return null;
-	}
-	public SimpleReactStream<U> withLastActive(StreamWrapper streamWrapper){
-		return null;
-	}
+	public abstract SimpleReactStream<U> withTaskExecutor(ExecutorService e);
+	public abstract SimpleReactStream<U> withRetrier(RetryExecutor retry);
+	public abstract SimpleReactStream<U> withWaitStrategy(Consumer<CompletableFuture> c);
+	public abstract SimpleReactStream<U> withEager(boolean eager);
+	public abstract SimpleReactStream<U> withLazyCollector(LazyResultConsumer<U> lazy);
+	public abstract SimpleReactStream<U> withQueueFactory(QueueFactory<U> queue);
+	public abstract SimpleReactStream<U>  withErrorHandler(Optional<Consumer<Throwable>> errorHandler);
+	public abstract SimpleReactStream<U> withLastActive(StreamWrapper streamWrapper);
+
+	abstract public ExecutorService getTaskExecutor() ;
+
+	abstract public boolean isEager() ;
+
+	abstract public RetryExecutor getRetrier() ;
+
+	abstract public Optional<Consumer<Throwable>> getErrorHandler();
+
+	abstract public StreamWrapper getLastActive();
+
+	abstract  public Consumer<CompletableFuture> getWaitStrategy();
+
+	abstract public LazyResultConsumer<U> getLazyCollector() ;
+
+	abstract public QueueFactory<U> getQueueFactory() ;
 
 }

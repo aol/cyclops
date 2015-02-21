@@ -18,7 +18,7 @@ import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.StreamWrapper;
 
 
-public interface SimpleReactStream <U>{
+public interface SimpleReactStream<U> extends LazyStream<U>{
 	
 	
 	abstract StreamWrapper getLastActive();
@@ -27,14 +27,14 @@ public interface SimpleReactStream <U>{
 	abstract ExecutorService getTaskExecutor();
 	
 	
-	public <T, R> FutureStream<R> allOf(final Collector collector,
+	public <T, R> SimpleReactStream<R> allOf(final Collector collector,
 			final Function<T, R> fn);
 		
 	
-	public <R> FutureStream<R> then(final Function<U, R> fn);
-	public <R> FutureStream<R> flatMap(
+	public <R> SimpleReactStream<R> then(final Function<U, R> fn);
+	public <R> SimpleReactStream<R> flatMap(
 			Function<? super U, ? extends Stream<? extends R>> flatFn);
-	public <R> FutureStream<R> retry(final Function<U, R> fn);
+	public <R> SimpleReactStream<R> retry(final Function<U, R> fn);
 	
 
 	/**
@@ -86,8 +86,8 @@ public interface SimpleReactStream <U>{
 	 * @return A new builder object that can be used to define the next stage in
 	 *         the dataflow
 	 */
-	default FutureStream<U> peek(final Consumer<? super U> consumer) {
-		return (FutureStream<U>) then((t) -> {
+	default SimpleReactStream<U> peek(final Consumer<? super U> consumer) {
+		return (SimpleReactStream<U>) then((t) -> {
 			consumer.accept(t);
 			return (U) t;
 		});
@@ -103,9 +103,9 @@ public interface SimpleReactStream <U>{
 	 *         the dataflow
 	 */
 	@SuppressWarnings("unchecked")
-	default FutureStream<U> filter(final Predicate<? super U> p) {
+	default SimpleReactStream<U> filter(final Predicate<? super U> p) {
 
-		return (FutureStream<U>) this.withLastActive(getLastActive().permutate(getLastActive()
+		return (SimpleReactStream<U>) this.withLastActive(getLastActive().permutate(getLastActive()
 				.stream().map(ft -> ft.thenApplyAsync((in) -> {
 					if (!p.test((U) in)) {
 						throw new FilteredExecutionPathException();
@@ -135,10 +135,10 @@ public interface SimpleReactStream <U>{
 	 * @return Merged dataflow
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	default FutureStream<U> merge(FutureStream<U> s) {
+	default SimpleReactStream<U> merge(SimpleReactStream<U> s) {
 		List merged = Stream.of(this.getLastActive().list(), s.getLastActive().list())
 				.flatMap(Collection::stream).collect(Collectors.toList());
-		return (FutureStream<U>) this.withLastActive(new StreamWrapper(merged));
+		return (SimpleReactStream<U>) this.withLastActive(new StreamWrapper(merged));
 	}
 	
 	/**
@@ -181,8 +181,8 @@ public interface SimpleReactStream <U>{
 	 *         the dataflow
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	default <U> FutureStream<U> onFail(final Function<? extends SimpleReactFailedStageException, U> fn) {
-		return (FutureStream<U>) this.withLastActive(getLastActive().permutate(getLastActive()
+	default <U> SimpleReactStream<U> onFail(final Function<? extends SimpleReactFailedStageException, U> fn) {
+		return (SimpleReactStream<U>) this.withLastActive(getLastActive().permutate(getLastActive()
 				.stream().map((ft) -> ft.exceptionally((t) -> {
 					if (t instanceof FilteredExecutionPathException)
 						throw (FilteredExecutionPathException) t;
@@ -242,8 +242,8 @@ public interface SimpleReactStream <U>{
 	 *         the dataflow
 	 */
 	@SuppressWarnings("unchecked")
-	default FutureStream<U> capture(final Consumer<? extends Throwable> errorHandler) {
-		return (FutureStream)this.withErrorHandler(Optional
+	default SimpleReactStream<U> capture(final Consumer<? extends Throwable> errorHandler) {
+		return (SimpleReactStream)this.withErrorHandler(Optional
 				.of((Consumer<Throwable>) errorHandler));
 	}
 	
@@ -286,9 +286,9 @@ public interface SimpleReactStream <U>{
 	 *         the dataflow
 	 */
 	@SuppressWarnings("unchecked")
-	default <T, R> FutureStream<R> allOf(final Function<List<T>, R> fn) {
+	default <T, R> SimpleReactStream<R> allOf(final Function<List<T>, R> fn) {
 
-		return (FutureStream<R>) allOf(Collectors.toList(), (Function<R, U>) fn);
+		return (SimpleReactStream<R>) allOf(Collectors.toList(), (Function<R, U>) fn);
 
 	}
 

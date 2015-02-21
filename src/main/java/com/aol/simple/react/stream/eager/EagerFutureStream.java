@@ -307,7 +307,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>{
 	 * @return Next SimpleReact stage
 	 */
 	public static <U> FutureStream<U> parallel(U... array){
-		return new SimpleReact().reactToCollection(Arrays.asList(array));
+		return new EagerReact().reactToCollection(Arrays.asList(array));
 	}
 	
 	/* (non-Javadoc)
@@ -404,20 +404,20 @@ public interface EagerFutureStream<U> extends FutureStream<U>{
 	/**
 	 * @return Eager SimpleReact for handling finite streams
 	 */
-	public static SimpleReact parallelBuilder(){
-		return new SimpleReact(true);
+	public static EagerReact parallelBuilder(){
+		return new EagerReact();
 	}
-	public static SimpleReact parallelBuilder(int parallelism){
+	public static EagerReact parallelBuilder(int parallelism){
 		return eagerBuilder(new ForkJoinPool(parallelism), new RetryBuilder().parallelism( parallelism));
 	}
-	public static SimpleReact paraellelCommonBuilder(){
-		return new SimpleReact(ForkJoinPool.commonPool(),true);
+	public static EagerReact paraellelCommonBuilder(){
+		return new EagerReact(ForkJoinPool.commonPool());
 	}
 	
-	public static SimpleReact sequentialBuilder(){
+	public static EagerReact sequentialBuilder(){
 		return eagerBuilder(new ForkJoinPool(1), new RetryBuilder().parallelism(1));
 	}
-	public static SimpleReact sequentialCommonBuilder(){
+	public static EagerReact sequentialCommonBuilder(){
 		return eagerBuilder(ThreadPools.getCommonFreeThread());
 	}
 	
@@ -426,23 +426,23 @@ public interface EagerFutureStream<U> extends FutureStream<U>{
 	 * @param executor Executor this SimpleReact instance will use to execute concurrent tasks.
 	 * @return Eager SimpleReact for handling finite streams
 	 */
-	public static SimpleReact eagerBuilder(ExecutorService executor){
-		return new SimpleReact(executor,true);
+	public static EagerReact eagerBuilder(ExecutorService executor){
+		return new EagerReact(executor);
 	}
 	/**
 	 * @param retry RetryExecutor this SimpleReact instance will use to retry concurrent tasks.
 	 * @return Eager SimpleReact for handling finite streams
 	 */
-	public static SimpleReact eagerBuilder(RetryExecutor retry){
-		return SimpleReact.builder().retrier(retry).build();
+	public static EagerReact eagerBuilder(RetryExecutor retry){
+		return EagerReact.builder().retrier(retry).build();
 	}
 	/**
 	 *  @param executor Executor this SimpleReact instance will use to execute concurrent tasks.
 	 * @param retry RetryExecutor this SimpleReact instance will use to retry concurrent tasks.
 	 * @return Eager SimpleReact for handling finite streams
 	 */
-	public static SimpleReact eagerBuilder(ExecutorService executor, RetryExecutor retry){
-		return SimpleReact.builder().executor(executor).retrier(retry).build();
+	public static EagerReact eagerBuilder(ExecutorService executor, RetryExecutor retry){
+		return EagerReact.builder().executor(executor).retrier(retry).build();
 	}
 	
 	  
