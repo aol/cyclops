@@ -1,6 +1,6 @@
 package com.aol.simple.react.async;
 
-import static com.aol.simple.react.ReactStream.*;
+import static com.aol.simple.react.stream.EagerFutureStream.*;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -23,8 +23,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.simple.react.SimpleReact;
-import com.aol.simple.react.Stage;
+import com.aol.simple.react.stream.FutureStream;
+import com.aol.simple.react.stream.SimpleReact;
 
 public class QueueTest {
 
@@ -103,7 +103,7 @@ public class QueueTest {
 	public void backPressureTimeoutTestVeryHigh() {
 		Queue<Integer> q = new Queue<Integer>(new LinkedBlockingQueue<>(2))
 				.withOfferTimeout(1).withOfferTimeUnit(TimeUnit.DAYS);
-		Stage<Boolean> s = new SimpleReact().react(
+		FutureStream<Boolean> s = new SimpleReact().react(
 				() -> offerAndIncrementFound(q),
 				() -> offerAndIncrementFound(q),
 				() -> offerAndIncrementFound(q),
@@ -224,9 +224,9 @@ public class QueueTest {
 		count1 = 100000;
 
 		Queue<Integer> q = new Queue(new LinkedBlockingQueue());
-		lazy().reactInfinitely(() -> count++)
+		parallel().reactInfinitely(() -> count++)
 				.then(it -> q.offer(it)).run(new ForkJoinPool(1));
-		lazy().reactInfinitely(() -> count1++)
+		parallel().reactInfinitely(() -> count1++)
 				.then(it -> q.offer(it)).run(new ForkJoinPool(1));
 
 		List<Integer> result = q.stream().limit(1000)
@@ -291,7 +291,7 @@ public class QueueTest {
 				return 1;
 			});
 
-			lazy().fromStream(q.streamCompletableFutures())
+			parallel().fromStream(q.streamCompletableFutures())
 					.then(it -> "*" + it).peek(it -> found.getAndAdd(1))
 					.peek(it -> System.out.println(it)).block();
 
@@ -312,7 +312,7 @@ public class QueueTest {
 			return q.offer(4);
 		}, () -> q.offer(5));
 
-		Collection<String> results = lazy()
+		Collection<String> results = parallel()
 				.fromStream(q.streamCompletableFutures()).then(it -> "*" + it)
 				.run(() -> new ArrayList<String>());
 
@@ -336,7 +336,7 @@ public class QueueTest {
 				return 1;
 			});
 
-			List<String> result = lazy()
+			List<String> result = parallel()
 					.fromStream(q.streamCompletableFutures())
 					.then(it -> "*" + it)
 					.peek(it -> found.getAndAdd(1))

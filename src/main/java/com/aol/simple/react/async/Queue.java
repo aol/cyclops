@@ -142,7 +142,8 @@ public class Queue<T> implements Adapter<T> {
 		if(sizeSignal!=null)
 			this.sizeSignal.set(queue.size());
 
-		return data;
+		return (T)nillSafe(data);
+		
 	}
 
 	/**
@@ -180,7 +181,7 @@ public class Queue<T> implements Adapter<T> {
 	 */
 	public boolean add(T data){
 		try{
-			boolean result = queue.add(data);
+			boolean result = queue.add((T)nullSafe(data));
 			if(sizeSignal!=null)
 				this.sizeSignal.set(queue.size());
 			return result;
@@ -204,7 +205,7 @@ public class Queue<T> implements Adapter<T> {
 		if(!open)
 			throw new ClosedQueueException();
 		try {
-			boolean result =  this.queue.offer(data,this.offerTimeout,this.offerTimeUnit);
+			boolean result =  this.queue.offer((T)nullSafe(data),this.offerTimeout,this.offerTimeUnit);
 			if(sizeSignal!=null)
 				this.sizeSignal.set(queue.size());
 			return result;
@@ -217,7 +218,19 @@ public class Queue<T> implements Adapter<T> {
 	}
 
 	
-	
+	private Object nillSafe(T data) {
+		if(NILL==data)
+			return null;
+		else
+			return data;
+	}
+	private Object nullSafe(T data) {
+		if(data==null)
+			return NILL;
+		else
+			return data;
+	}
+
 	/**
 	 * Close this Queue
 	 * 
@@ -232,4 +245,7 @@ public class Queue<T> implements Adapter<T> {
 
 		return true;
 	}
+	
+	private final NIL NILL = new NIL();
+	private static class NIL {}
 }

@@ -13,8 +13,8 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.simple.react.SimpleReact;
 import com.aol.simple.react.predicates.Predicates;
+import com.aol.simple.react.stream.SimpleReact;
 
 
 public class RxJavaConversionTest {

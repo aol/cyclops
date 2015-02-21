@@ -15,8 +15,8 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.simple.react.SimpleReact;
-import com.aol.simple.react.Stage;
+import com.aol.simple.react.stream.FutureStream;
+import com.aol.simple.react.stream.SimpleReact;
 
 public class CompletableFutureTest {
 	@Test
@@ -27,7 +27,7 @@ public class CompletableFutureTest {
 		
 		
 		
-		Stage<String> convertedToStrings = new SimpleReact()
+		FutureStream<String> convertedToStrings = new SimpleReact()
 								.fromStream(queue.stream())
 								.<String>then(it ->  it + "*");
 								

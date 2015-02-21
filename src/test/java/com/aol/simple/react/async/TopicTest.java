@@ -1,8 +1,7 @@
 package com.aol.simple.react.async;
 
-import static com.aol.simple.react.ReactStream.*;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.is;
+import static com.aol.simple.react.stream.EagerFutureStream.*;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
@@ -19,8 +18,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.simple.react.SimpleReact;
-import com.aol.simple.react.Stage;
+import com.aol.simple.react.stream.FutureStream;
+import com.aol.simple.react.stream.SimpleReact;
 
 public class TopicTest {
 
@@ -56,13 +55,13 @@ public class TopicTest {
 			
 		//read from the topic concurrently in 2 threads
 		
-		 Stage<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
-			.react(()->lazy()
+		 FutureStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
+			.react(()->parallel()
 				.fromStream(topic.streamCompletableFutures())
 				.then(it -> it + "*")
 				.<Collection<String>>run(()->new ArrayList<>() ),
 				
-				()->lazy()
+				()->parallel()
 					.fromStream(topic.streamCompletableFutures())
 					.then(it -> it + "!")
 					.peek(it->sleep(10)) //make sure takes slightly longer to complete
@@ -76,13 +75,13 @@ public class TopicTest {
 		topic.close();
 		
 		List<Collection<String>> result = stage.block();
-		assertThat(result.get(0),is(ArrayList.class));
+		assertThat(result.get(0),instanceOf(ArrayList.class));
 		assertThat(result.get(0),hasItem("hello*"));
 		assertThat(result.get(0),hasItem("world*"));
 
 		
 		
-		assertThat(result.get(1),is(HashSet.class));
+		assertThat(result.get(1),instanceOf(HashSet.class));
 		assertThat(result.get(1),hasItem("hello!"));
 		assertThat(result.get(1),hasItem("world!"));
 		
@@ -143,13 +142,13 @@ public class TopicTest {
 		
 		Topic<Integer> topic = new Topic<>();
 		
-		 Stage<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
-			.react(()->lazy()
+		 FutureStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
+			.react(()->parallel()
 				.fromStream(topic.streamCompletableFutures())
 				.then(it -> it + "*")
 				.<Collection<String>>run(()->new ArrayList<>() ),
 				
-				()->lazy()
+				()->parallel()
 					.fromStream(topic.streamCompletableFutures())
 					.then(it -> it + "!")
 				
@@ -188,13 +187,13 @@ public class TopicTest {
 		
 		Topic<Integer> topic = new Topic<>();
 		
-		 Stage<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
-			.react(()->lazy()
+		 FutureStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
+			.react(()->parallel()
 				.fromStream(topic.streamCompletableFutures())
 				.then(it -> it + "*")
 				.<Collection<String>>run(()->new ArrayList<>() ),
 				
-				()->lazy()
+				()->parallel()
 					.fromStream(topic.streamCompletableFutures())
 					.then(it -> it + "!")
 				

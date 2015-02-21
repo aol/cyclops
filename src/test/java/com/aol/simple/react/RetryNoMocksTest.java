@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
 
+import com.aol.simple.react.stream.SimpleReact;
 import com.google.common.collect.Lists;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
@@ -46,7 +47,7 @@ public class RetryNoMocksTest {
 												.block();
 		 
 		assertThat(result.size(),is(2));
-		assertThat(errors.iterator().next(),is(AbortRetryException.class));
+		assertThat(errors.iterator().next(),instanceOf(AbortRetryException.class));
 	}
 	@Test
 	public void testRetryEnds() {

@@ -1,23 +1,22 @@
 package com.aol.simple.react.collectors;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 
-import com.aol.simple.react.Stage;
-import com.aol.simple.react.StageWithResults;
-import com.aol.simple.react.Status;
+import lombok.AllArgsConstructor;
+
 import com.aol.simple.react.exceptions.ThrowsSoftened;
 import com.aol.simple.react.extractors.Extractor;
-
-import lombok.AllArgsConstructor;
+import com.aol.simple.react.stream.FutureStreamImpl;
+import com.aol.simple.react.stream.StageWithResults;
+import com.aol.simple.react.stream.Status;
 
 @AllArgsConstructor
 public class ReactCollector<U> {
 
-	private final Stage<U> builder;
+	private final FutureStreamImpl<U> builder;
 	
 	/**
 	 * React and <b>block</b>

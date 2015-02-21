@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
+import com.aol.simple.react.stream.SimpleReact;
+
 public class FilterTest {
 
 	@Test

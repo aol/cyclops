@@ -1,4 +1,4 @@
-package com.aol.simple.react;
+package com.aol.simple.react.stream;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -19,12 +19,12 @@ public class StageWithResults<RS,U> {
 	private final ExceptionSoftener exceptionSoftener = ExceptionSoftener.singleton.factory.getInstance();
 	private final ExecutorService taskExecutor;
 	
-	private final Stage<U> stage;
+	private final FutureStream<U> stage;
 	@Getter
 	private final RS results;
 	
 
-	public StageWithResults(Stage<U> stage, RS results) {
+	public StageWithResults(FutureStreamImpl<U> stage, RS results) {
 		
 		this.taskExecutor = stage.getTaskExecutor();
 		this.stage = stage;
@@ -36,7 +36,7 @@ public class StageWithResults<RS,U> {
 	 * 
 	 * @return Builder for the current Stage in the reactive flow
 	 */
-	public Stage<U> proceed(){
+	public FutureStream<U> proceed(){
 		return stage;
 	}
 	

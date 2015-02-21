@@ -1,7 +1,5 @@
 package com.aol.simple.react;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
@@ -11,6 +9,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 
 import org.junit.Test;
+
+import com.aol.simple.react.stream.SimpleReact;
 
 public class PeekTest {
 

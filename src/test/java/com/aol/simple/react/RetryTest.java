@@ -1,7 +1,7 @@
 package com.aol.simple.react;
 
 import static com.nurkiewicz.asyncretry.backoff.FixedIntervalBackoff.DEFAULT_PERIOD_MILLIS;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyInt;
@@ -25,6 +25,7 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.aol.simple.react.stream.SimpleReact;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.nurkiewicz.asyncretry.policy.AbortRetryException;
@@ -137,7 +138,7 @@ public class RetryTest {
 		
 		assertThat(result.size(), is(0));
 
-		assertThat(error, is(AbortRetryException.class));
+		assertThat(error, instanceOf(AbortRetryException.class));
 	}
 
 	@Test
@@ -157,7 +158,7 @@ public class RetryTest {
 		
 		assertThat(result.size(), is(0));
 
-		assertThat(error, is(IllegalArgumentException.class));
+		assertThat(error, instanceOf(IllegalArgumentException.class));
 		assertThat(error.getMessage(), is("DONT PANIC"));
 	}
 

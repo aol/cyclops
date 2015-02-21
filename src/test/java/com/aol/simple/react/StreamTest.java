@@ -11,6 +11,8 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
+import com.aol.simple.react.stream.SimpleReact;
+
 public class StreamTest {
 
 	@Test

@@ -1,4 +1,4 @@
-package com.aol.simple.react;
+package com.aol.simple.react.stream;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,7 +15,7 @@ import lombok.experimental.Wither;
 @Wither
 @AllArgsConstructor
 @Builder
-class StreamWrapper{
+public class StreamWrapper{
 	@SuppressWarnings("rawtypes")
 	private final List<CompletableFuture> list;
 	private final Stream<CompletableFuture> stream;
@@ -56,6 +56,13 @@ class StreamWrapper{
 			
 	}
 	
+	
+	public StreamWrapper withNewStream(Stream<CompletableFuture> stream){
+		if(!eager)
+			return withStream(stream);
+		else
+			return new StreamWrapper(stream,eager);
+	}
 	public Stream<CompletableFuture> stream(){
 		if(eager)
 			return list.stream();
@@ -69,7 +76,7 @@ class StreamWrapper{
 			return stream.collect(Collectors.toList());
 	}
 	
-	StreamWrapper permutate(Stream<CompletableFuture> stream, Collector c){
+	public StreamWrapper permutate(Stream<CompletableFuture> stream, Collector c){
 		return new StreamWrapper(stream,eager);
 	}
 	

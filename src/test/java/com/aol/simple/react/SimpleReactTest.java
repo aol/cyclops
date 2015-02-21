@@ -1,11 +1,7 @@
 package com.aol.simple.react;
 
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
@@ -38,6 +34,9 @@ import org.junit.Test;
 
 import com.aol.simple.react.extractors.Extractors;
 import com.aol.simple.react.generators.ParallelGenerator;
+import com.aol.simple.react.stream.FutureStream;
+import com.aol.simple.react.stream.LazyFutureStream;
+import com.aol.simple.react.stream.SimpleReact;
 import com.aol.simple.react.util.SimpleTimer;
 import com.google.common.collect.Lists;
 
@@ -62,7 +61,7 @@ public class SimpleReactTest {
 	public void testLazyParameters(){
 		
 		ForkJoinPool fjp = new ForkJoinPool();
-		assertThat(ReactStream.lazy(fjp).getExecutor(),is(fjp));
+		assertThat(LazyFutureStream.lazy(fjp).getExecutor(),is(fjp));
 	}
 	@Test
 	public void testEagetParameters(){
@@ -237,7 +236,7 @@ public class SimpleReactTest {
 		});
 
 		assertThat(foundTwoHundred[0], is(false));
-		assertThat(error[0], is(RuntimeException.class));
+		assertThat(error[0], instanceOf(RuntimeException.class));
 
 	}
 
@@ -247,7 +246,7 @@ public class SimpleReactTest {
 	
 	@Test
 	public void testLargeChain(){
-		 Stage builder= new SimpleReact().react(() -> "Hello", () -> "World"); 
+		 FutureStream builder= new SimpleReact().react(() -> "Hello", () -> "World"); 
 		 for(int i =0;i<1000;i++){
 			 builder = builder.then( input -> input + " " + counter++);
 		 }
@@ -256,8 +255,8 @@ public class SimpleReactTest {
 	}
 	@Test
 	public void testSeparatedChains(){
-		 Stage<String> orgBuilder= new SimpleReact().react(() -> "Hello", () -> "World");//.split(2); 
-		 Stage builder = orgBuilder;
+		 FutureStream<String> orgBuilder= new SimpleReact().react(() -> "Hello", () -> "World");//.split(2); 
+		 FutureStream builder = orgBuilder;
 		 for(int i =0;i<1000;i++){
 			 builder = builder.then( input -> input + " " + counter++);
 		 }
@@ -342,7 +341,7 @@ public class SimpleReactTest {
         final AtomicBoolean isRunning = new AtomicBoolean(true);
         final CountDownLatch startBarier = new CountDownLatch(1);
 
-        final Stage<Integer> stage = new SimpleReact().<Integer>react(
+        final FutureStream<Integer> stage = new SimpleReact().<Integer>react(
                 () -> 1,
                 () -> 2,
                 () -> 3

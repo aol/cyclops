@@ -1,7 +1,6 @@
 package com.aol.simple.react;
 
-import static com.aol.simple.react.SimpleReact.iterate;
-import static com.aol.simple.react.SimpleReact.*;
+import static com.aol.simple.react.stream.SimpleReact.*;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
@@ -17,6 +16,9 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
+
+import com.aol.simple.react.stream.FutureStream;
+import com.aol.simple.react.stream.SimpleReact;
 
 public class GeneratorTest {
 	volatile int  count;
@@ -69,7 +71,7 @@ public class GeneratorTest {
 	public void testGenerateDataflowMovingConcurrently() throws InterruptedException, ExecutionException {
 		count =0;
 		second =0;
-		Stage s = new SimpleReact()
+		FutureStream s = new SimpleReact()
 				.<Integer> react(() -> {
 					sleep(count++);
 					return count;
@@ -121,7 +123,7 @@ public class GeneratorTest {
 	public void testIterateDataflowMovingConcurrently() throws InterruptedException, ExecutionException {
 		count =0;
 		second =0;
-		Stage s = new SimpleReact()
+		FutureStream s = new SimpleReact()
 				.<Integer> react((input) -> {
 					sleep(count++);
 					return count;

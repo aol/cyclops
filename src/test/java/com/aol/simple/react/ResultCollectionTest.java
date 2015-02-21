@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
+import com.aol.simple.react.stream.SimpleReact;
+
 public class ResultCollectionTest {
 	
 	@Test
@@ -180,7 +182,7 @@ public class ResultCollectionTest {
 				.getResults();
 
 		assertThat(strings.size(), is(0));
-		assertThat(error[0], is(RuntimeException.class));
+		assertThat(error[0], instanceOf(RuntimeException.class));
 	}
 	volatile int count =0;
 	@Test

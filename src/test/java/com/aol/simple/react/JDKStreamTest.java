@@ -16,9 +16,12 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
+import com.aol.simple.react.stream.SimpleReact;
+
 public class JDKStreamTest extends BaseJDKStreamTest{
 
 	<U> Stream<U> of(U... array){
+		
 		return new SimpleReact().reactToCollection(Arrays.asList(array));
 	}
 	

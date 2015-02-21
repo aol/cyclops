@@ -1,6 +1,5 @@
 package com.aol.simple.react;
 
-import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
@@ -9,14 +8,17 @@ import java.util.concurrent.ExecutionException;
 
 import org.junit.Test;
 
+import com.aol.simple.react.stream.FutureStream;
+import com.aol.simple.react.stream.SimpleReact;
+
 public class MergeTest {
 
 	@Test
 	public void testMerge() throws InterruptedException, ExecutionException {
 
-		Stage<String> stage1 = new SimpleReact().<Integer> react(() -> 1,
+		FutureStream<String> stage1 = new SimpleReact().<Integer> react(() -> 1,
 				() -> 2, () -> 3).then(it -> "*" + it);
-		Stage<String> stage2 = new SimpleReact().<Integer> react(() -> 4,
+		FutureStream<String> stage2 = new SimpleReact().<Integer> react(() -> 4,
 				() -> 5, () -> 6).then(it -> "*" + it);
 
 		List<String> result = stage1.merge(stage2).block();
@@ -29,12 +31,12 @@ public class MergeTest {
 	public void testMergeTypes() throws InterruptedException,
 			ExecutionException {
 
-		Stage<Integer> stage1 = new SimpleReact().<Integer> react(() -> 1,
+		FutureStream<Integer> stage1 = new SimpleReact().<Integer> react(() -> 1,
 				() -> 2, () -> 3);
-		Stage<String> stage2 = new SimpleReact().<Integer> react(() -> 4,
+		FutureStream<String> stage2 = new SimpleReact().<Integer> react(() -> 4,
 				() -> 5, () -> 6).then(it -> "*" + it);
 
-		List<Object> result = Stage.<Object> merge(stage1, stage2).block();
+		List<Object> result = FutureStream.<Object> merge(stage1, stage2).block();
 
 		assertThat(result.size(), is(6));
 
@@ -44,11 +46,11 @@ public class MergeTest {
 	public void testSplitAndMerge() throws InterruptedException,
 			ExecutionException {
 
-		Stage<String> stage = new SimpleReact().<Integer> react(() -> 1,
+		FutureStream<String> stage = new SimpleReact().<Integer> react(() -> 1,
 				() -> 2, () -> 3).then(it -> "*" + it);
-		Stage<String> stage1 = stage.filter(it -> it.startsWith("*1"));
-		Stage<String> stage2 = stage.filter(it -> it.startsWith("*2"));
-		Stage<String> stage3 = stage.filter(it -> it.startsWith("*3"));
+		FutureStream<String> stage1 = stage.filter(it -> it.startsWith("*1"));
+		FutureStream<String> stage2 = stage.filter(it -> it.startsWith("*2"));
+		FutureStream<String> stage3 = stage.filter(it -> it.startsWith("*3"));
 
 		stage1 = stage1.then(it -> it + "!");
 		stage2 = stage2.then(it -> it + "*");
@@ -65,9 +67,9 @@ public class MergeTest {
 
 	@Test
 	public void mergeAndContinueProcessing() {
-		Stage<String> stage1 = new SimpleReact().<Integer> react(() -> 1,
+		FutureStream<String> stage1 = new SimpleReact().<Integer> react(() -> 1,
 				() -> 2, () -> 3).then(it -> "*" + it);
-		Stage<String> stage2 = new SimpleReact().<Integer> react(() -> 4,
+		FutureStream<String> stage2 = new SimpleReact().<Integer> react(() -> 4,
 				() -> 5, () -> 6).then(it -> "*" + it);
 
 		List<String> result = stage1.merge(stage2).then(it -> it +"*").block();
@@ -76,9 +78,9 @@ public class MergeTest {
 	}
 	@Test
 	public void mergeAndForkProcessing() {
-		Stage<String> stage1 = new SimpleReact().<Integer> react(() -> 1,
+		FutureStream<String> stage1 = new SimpleReact().<Integer> react(() -> 1,
 				() -> 2, () -> 3).then(it -> "*" + it);
-		Stage<String> stage2 = new SimpleReact().<Integer> react(() -> 4,
+		FutureStream<String> stage2 = new SimpleReact().<Integer> react(() -> 4,
 				() -> 5, () -> 6).then(it -> "*" + it);
 
 		List<String> result1 = stage1.merge(stage2).then(it -> it +"*").block();

@@ -1,8 +1,6 @@
 package com.aol.simple.react;
 
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
@@ -12,6 +10,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
+
+import com.aol.simple.react.stream.FutureStream;
+import com.aol.simple.react.stream.SimpleReact;
 
 public class BlockingTest {
 
@@ -138,7 +139,7 @@ public class BlockingTest {
 				.block(status -> status.getCompleted() >= 1);
 
 		assertThat(results.size(), is(0));
-		assertThat(error[0], is(RuntimeException.class));
+		assertThat(error[0], equalTo(RuntimeException.class));
 	}
 	volatile int count =0;
 	@Test
@@ -251,7 +252,7 @@ public class BlockingTest {
 	@Test
 	public void testFirstSimple() throws InterruptedException, ExecutionException {
 
-		Stage<Integer> stage = new SimpleReact()
+		FutureStream<Integer> stage = new SimpleReact()
 		.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
 		.then( it -> sleep(it));

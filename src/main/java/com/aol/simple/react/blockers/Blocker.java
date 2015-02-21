@@ -14,9 +14,9 @@ import java.util.function.Predicate;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import com.aol.simple.react.Status;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.ThrowsSoftened;
+import com.aol.simple.react.stream.Status;
 import com.aol.simple.react.util.SimpleTimer;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;

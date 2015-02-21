@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 
 import com.aol.simple.react.extractors.Extractors;
+import com.aol.simple.react.stream.SimpleReact;
 
 public class AllOfTest {
 
@@ -112,7 +113,7 @@ public class AllOfTest {
 		.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
 		.allOf(Collectors.toSet(), it -> {
-			assertThat (it,is( Set.class));
+			assertThat (it,equalTo( Set.class));
 			return it;
 		}).blockAndExtract(Extractors.first());
 

@@ -1,6 +1,6 @@
 package com.aol.simple.react.async;
 
-import static com.aol.simple.react.ReactStream.*;
+import static com.aol.simple.react.stream.EagerFutureStream.*;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -11,8 +11,8 @@ import java.util.stream.Stream;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.simple.react.SimpleReact;
-import com.aol.simple.react.Stage;
+import com.aol.simple.react.stream.FutureStream;
+import com.aol.simple.react.stream.SimpleReact;
 
 public class SignalTest {
 
@@ -55,7 +55,7 @@ public class SignalTest {
 						return 1;
 					});
 			
-			lazy().fromStream(q.getDiscrete().streamCompletableFutures())
+			parallel().fromStream(q.getDiscrete().streamCompletableFutures())
 					.then(it -> "*" +it)
 					.peek(it -> incrementFound())
 					.peek(it -> System.out.println(it))
@@ -75,11 +75,11 @@ public class SignalTest {
 			
 			
 			
-			lazy().fromStream(q.getDiscrete().streamCompletableFutures())
+			parallel().fromStream(q.getDiscrete().streamCompletableFutures())
 					.then(it -> "*" +it)
 					.peek(it -> incrementFound())
 					.peek(it -> System.out.println(it))
-					.run();
+					.runOnCurrent();
 			
 			
 			
@@ -101,11 +101,11 @@ public class SignalTest {
 			
 			
 			
-			lazy().fromStream(q.getContinuous().streamCompletableFutures())
+			parallel().fromStream(q.getContinuous().streamCompletableFutures())
 					.then(it -> "*" +it)
 					.peek(it -> incrementFound())
 					.peek(it -> System.out.println(it))
-					.run();
+					.runOnCurrent();
 			
 			
 			

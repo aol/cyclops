@@ -1,4 +1,4 @@
-package com.aol.simple.react;
+package com.aol.simple.react.stream;
 
 import lombok.AllArgsConstructor;
 import lombok.experimental.Builder;
