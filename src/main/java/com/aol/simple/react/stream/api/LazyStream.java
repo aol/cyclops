@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -44,6 +45,13 @@ public interface LazyStream<U> {
 	 */
 	default void runOnCurrent() {
 		run(() -> null);
+
+	}
+	/**
+	 * Trigger a lazy stream
+	 */
+	default void run() {
+		run(new ForkJoinPool(1));
 
 	}
 
