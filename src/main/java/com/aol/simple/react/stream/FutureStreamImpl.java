@@ -1,6 +1,5 @@
 package com.aol.simple.react.stream;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -13,14 +12,12 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
 
 import com.aol.simple.react.RetryBuilder;
-import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.QueueFactories;
 import com.aol.simple.react.async.QueueFactory;
 import com.aol.simple.react.capacity.monitor.LimitingMonitor;
@@ -31,6 +28,7 @@ import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.exceptions.ThrowsSoftened;
+import com.aol.simple.react.stream.api.AsyncToQueue;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -50,17 +48,18 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  */
 
 // lombok annotations to aid Immutability (Wither and AllArgsConstructor)
-@Wither
+
 @AllArgsConstructor
 @Slf4j
-public class FutureStreamImpl<U> implements FutureStream<U> {
+@Wither
+public  class FutureStreamImpl<U> implements LazyFutureStream<U>, AsyncToQueue<U>{
 
 	private final ExceptionSoftener exceptionSoftener = ExceptionSoftener.singleton.factory
 			.getInstance();
 	@Getter
-	@Wither(value = AccessLevel.PUBLIC)
+//	@Wither(value = AccessLevel.PUBLIC)
 	private final ExecutorService taskExecutor;
-	@Wither(value = AccessLevel.PUBLIC)
+//	@Wither(value = AccessLevel.PUBLIC)
 	private final RetryExecutor retrier;
 
 	@Getter
@@ -70,11 +69,12 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
 	private final StreamWrapper lastActive;
 	@Getter
 	private final boolean eager;
-	@Wither(value = AccessLevel.PUBLIC)
+//	@Wither(value = AccessLevel.PUBLIC)
 	@Getter
 	private final Consumer<CompletableFuture> waitStrategy;
 	@Getter
 	private final LazyResultConsumer<U> lazyCollector;
+	@Getter
 	private final QueueFactory<U> queueFactory;
 
 	/**
@@ -362,24 +362,7 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
 		return block(collector);
 	}
 
-	/**
-	 * Convert the current Stream to a SimpleReact Queue
-	 * 
-	 * @return Queue populated asynchrnously by this Stream
-	 */
-	public Queue<U> toQueue() {
-		Queue<U> queue = this.queueFactory.build();
-
-		if (eager)
-			then(it -> queue.offer(it)).allOf(it -> queue.close());
-		else {
-
-			then(it -> queue.offer(it)).run(new ForkJoinPool(1),
-					() -> queue.close());
-
-		}
-		return queue;
-	}
+	
 
 	public <R> FutureStream<R> fromStream(Stream<R> stream) {
 		return (FutureStream<R>) this.withLastActive(lastActive

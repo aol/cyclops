@@ -1,6 +1,6 @@
 package com.aol.simple.react;
 
-import static com.aol.simple.react.stream.LazyFutureStream.parallel;
+import static com.aol.simple.react.stream.LazyFutureStream.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -20,12 +20,13 @@ import com.aol.simple.react.async.QueueFactories;
 import com.aol.simple.react.stream.FutureStream;
 import com.aol.simple.react.stream.LazyFutureStream;
 import com.aol.simple.react.stream.SimpleReact;
+import com.aol.simple.react.stream.EagerFutureStreamImpl;
 
-public class LazySeqTest {//extends BaseSeqTest {
+public class LazySeqTest extends BaseSeqTest {
 	@Test
 	public void zipFastSlow() {
 		Queue q = new Queue();
-		LazyFutureStream.parallel().reactInfinitely(() -> sleep(100))
+		LazyFutureStream.parallelBuilder().reactInfinitely(() -> sleep(100))
 				.then(it -> q.add("100")).run(new ForkJoinPool(1));
 		parallel(1, 2, 3, 4, 5, 6).zip(q.stream())
 				.peek(it -> System.out.println(it))
@@ -36,11 +37,11 @@ public class LazySeqTest {//extends BaseSeqTest {
 	@Test
 	public void testBackPressureWhenZippingUnevenStreams() throws InterruptedException {
 
-		Queue fast = parallel().reactInfinitely(() -> "100")
+		Queue fast = parallelBuilder().reactInfinitely(() -> "100")
 				.withQueueFactory(QueueFactories.boundedQueue(2)).toQueue();
 
 		Thread t = new Thread(() -> {
-			parallel().react(() -> 1, SimpleReact.times(10)).peek(c -> sleep(10))
+			parallelBuilder().react(() -> 1, SimpleReact.times(10)).peek(c -> sleep(10))
 					.zip(fast.stream()).forEach(it -> {
 					});
 		});
@@ -56,11 +57,11 @@ public class LazySeqTest {//extends BaseSeqTest {
 	@Test 
 	public void testBackPressureWhenZippingUnevenStreams2() {
 
-		Queue fast = parallel().reactInfinitely(() -> "100")
+		Queue fast = parallelBuilder().reactInfinitely(() -> "100")
 				.withQueueFactory(QueueFactories.boundedQueue(10)).toQueue();
 
 		new Thread(() -> {
-			parallel().react(() -> 1, SimpleReact.times(1000)).peek(c -> sleep(10))
+			parallelBuilder().react(() -> 1, SimpleReact.times(1000)).peek(c -> sleep(10))
 					.zip(fast.stream()).forEach(it -> {
 					});
 		}).start();
@@ -82,8 +83,8 @@ public class LazySeqTest {//extends BaseSeqTest {
 	@Test @Ignore
 	public void shouldZipTwoInfiniteSequences() throws Exception {
 		
-		final FutureStream<Integer> units = FutureStream.iterate(1,n -> n+1);
-		final FutureStream<Integer> hundreds = FutureStream.iterate(100,n-> n+100);
+		final FutureStream<Integer> units = LazyFutureStream.iterate(1,n -> n+1);
+		final FutureStream<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100);
 		final Seq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
 
 		
@@ -93,8 +94,8 @@ public class LazySeqTest {//extends BaseSeqTest {
 	@Test
 	public void shouldZipFiniteWithInfiniteSeq() throws Exception {
 		
-		final Seq<Integer> units = FutureStream.iterate(1,n -> n+1).limit(5);
-		final FutureStream<Integer> hundreds = FutureStream.iterate(100,n-> n+100);
+		final Seq<Integer> units = LazyFutureStream.iterate(1,n -> n+1).limit(5);
+		final FutureStream<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100);
 		final Seq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
 		
 		assertThat(zipped.limit(5).join(),equalTo(of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
@@ -102,8 +103,8 @@ public class LazySeqTest {//extends BaseSeqTest {
 
 	@Test
 	public void shouldZipInfiniteWithFiniteSeq() throws Exception {
-		final FutureStream<Integer> units = FutureStream.iterate(1,n -> n+1);
-		final Seq<Integer> hundreds = FutureStream.iterate(100,n-> n+100).limit(5);
+		final FutureStream<Integer> units = LazyFutureStream.iterate(1,n -> n+1);
+		final Seq<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100).limit(5);
 		final Seq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
 		assertThat(zipped.limit(5).join(),equalTo(of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
 	}

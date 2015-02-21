@@ -87,8 +87,8 @@ public abstract class BaseSequentialSeqTest {
 	public void zipEmpty() throws Exception {
 		
 		
-		final FutureStream<Integer> zipped = empty.zip(empty, (a, b) -> a + b);
-		assertTrue(zipped.block().isEmpty());
+		final Seq<Integer> zipped = empty.zip(empty, (a, b) -> a + b);
+		assertTrue(zipped.collect(Collectors.toList()).isEmpty());
 	}
 
 	@Test
@@ -96,18 +96,18 @@ public abstract class BaseSequentialSeqTest {
 		
 		
 		
-		final FutureStream<Integer> zipped = empty.zip(nonEmpty, (a, b) -> a + b);
-		assertTrue(zipped.block().isEmpty());
+		final Seq<Integer> zipped = empty.zip(nonEmpty, (a, b) -> a + b);
+		assertTrue(zipped.collect(Collectors.toList()).isEmpty());
 	}
 
 	@Test
 	public void shouldReturnEmptySeqWhenZipNonEmptyWithEmpty() throws Exception {
 		
 		
-		final FutureStream<Integer> zipped = nonEmpty.zip(empty, (a, b) -> a + b);
+		final Seq<Integer> zipped = nonEmpty.zip(empty, (a, b) -> a + b);
 
 		
-		assertTrue(zipped.block().isEmpty());
+		assertTrue(zipped.collect(Collectors.toList()).isEmpty());
 	}
 
 	@Test
@@ -117,10 +117,10 @@ public abstract class BaseSequentialSeqTest {
 		final FutureStream<Integer> second = of(1, 2, 3);
 
 		
-		final FutureStream<String> zipped = first.zip(second, (a, b) -> a + b);
+		final Seq<String> zipped = first.zip(second, (a, b) -> a + b);
 
 		
-		assertThat(zipped.block(),equalTo(asList("A1", "B2", "C3")));
+		assertThat(zipped.collect(Collectors.toList()),equalTo(asList("A1", "B2", "C3")));
 	}
 
 	
@@ -131,19 +131,19 @@ public abstract class BaseSequentialSeqTest {
 		final FutureStream<Integer> second = of(1, 2, 3, 4);
 
 		
-		final FutureStream<String> zipped = first.zip(second, (a, b) -> a + b);
+		final Seq<String> zipped = first.zip(second, (a, b) -> a + b);
 
-		assertThat(zipped.block(),equalTo(asList("A1", "B2", "C3")));
+		assertThat(zipped.collect(Collectors.toList()),equalTo(asList("A1", "B2", "C3")));
 	}
 
 	@Test
 	public void shouldTrimFirstFixedSeqIfLonger() throws Exception {
 		final FutureStream<String> first = of("A", "B", "C","D");
 		final FutureStream<Integer> second = of(1, 2, 3);
-		final FutureStream<String> zipped = first.zip(second, (a, b) -> a + b);
+		final Seq<String> zipped = first.zip(second, (a, b) -> a + b);
 
 		
-		assertThat(zipped.block(),equalTo(asList("A1", "B2", "C3")));
+		assertThat(zipped.collect(Collectors.toList()),equalTo(asList("A1", "B2", "C3")));
 	}
 
 	@Test
