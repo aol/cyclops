@@ -1,4 +1,4 @@
-package com.aol.simple.react.stream;
+package com.aol.simple.react.stream.api;
 
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
@@ -38,11 +38,7 @@ import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.stream.api.Blockable;
-import com.aol.simple.react.stream.api.Configuration;
-import com.aol.simple.react.stream.api.LazyStream;
-import com.aol.simple.react.stream.api.SimpleReactStream;
-import com.aol.simple.react.stream.api.ToQueue;
+import com.aol.simple.react.stream.StreamWrapper;
 
 public interface FutureStream<U> extends Seq<U>,
 										Configuration<U>, 

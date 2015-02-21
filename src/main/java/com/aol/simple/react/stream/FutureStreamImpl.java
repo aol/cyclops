@@ -29,6 +29,7 @@ import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.exceptions.ThrowsSoftened;
 import com.aol.simple.react.stream.api.AsyncToQueue;
+import com.aol.simple.react.stream.api.FutureStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**

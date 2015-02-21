@@ -17,10 +17,10 @@ import org.junit.Test;
 
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.QueueFactories;
-import com.aol.simple.react.stream.FutureStream;
 import com.aol.simple.react.stream.LazyFutureStream;
 import com.aol.simple.react.stream.SimpleReact;
 import com.aol.simple.react.stream.EagerFutureStreamImpl;
+import com.aol.simple.react.stream.api.FutureStream;
 
 public class LazySeqTest extends BaseSeqTest {
 	@Test

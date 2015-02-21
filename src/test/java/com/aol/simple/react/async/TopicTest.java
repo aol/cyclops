@@ -18,8 +18,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.simple.react.stream.FutureStream;
 import com.aol.simple.react.stream.SimpleReact;
+import com.aol.simple.react.stream.api.FutureStream;
 
 public class TopicTest {
 

@@ -15,7 +15,6 @@ import java.util.stream.Stream;
 import com.aol.simple.react.collectors.ReactCollector;
 import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
-import com.aol.simple.react.stream.FutureStream;
 import com.aol.simple.react.stream.StreamWrapper;
 
 

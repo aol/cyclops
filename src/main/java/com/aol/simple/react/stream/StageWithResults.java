@@ -8,6 +8,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
 
 import com.aol.simple.react.exceptions.ExceptionSoftener;
+import com.aol.simple.react.stream.api.FutureStream;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -21,6 +21,7 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.RetryBuilder;
+import com.aol.simple.react.stream.api.FutureStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**

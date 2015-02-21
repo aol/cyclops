@@ -6,7 +6,6 @@ import java.util.function.Consumer;
 
 import com.aol.simple.react.async.QueueFactory;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
-import com.aol.simple.react.stream.FutureStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 public interface Configuration<T> {

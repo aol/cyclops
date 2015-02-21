@@ -6,7 +6,6 @@ import java.util.stream.Collector;
 
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.QueueFactory;
-import com.aol.simple.react.stream.FutureStream;
 
 public interface AsyncToQueue<U> extends ToQueue<U>{
 

@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import com.aol.simple.react.stream.FutureStream;
 import com.aol.simple.react.stream.SimpleReact;
+import com.aol.simple.react.stream.api.FutureStream;
 
 public class GeneratorTest {
 	volatile int  count;

@@ -23,8 +23,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.simple.react.stream.FutureStream;
 import com.aol.simple.react.stream.SimpleReact;
+import com.aol.simple.react.stream.api.FutureStream;
 
 public class QueueTest {
 
@@ -224,9 +224,9 @@ public class QueueTest {
 		count1 = 100000;
 
 		Queue<Integer> q = new Queue(new LinkedBlockingQueue());
-		parallel().reactInfinitely(() -> count++)
+		parallelBuilder().reactInfinitely(() -> count++)
 				.then(it -> q.offer(it)).run(new ForkJoinPool(1));
-		parallel().reactInfinitely(() -> count1++)
+		parallelBuilder().reactInfinitely(() -> count1++)
 				.then(it -> q.offer(it)).run(new ForkJoinPool(1));
 
 		List<Integer> result = q.stream().limit(1000)
