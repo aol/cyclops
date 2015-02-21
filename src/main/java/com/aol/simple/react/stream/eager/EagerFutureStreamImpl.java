@@ -1,37 +1,40 @@
-package com.aol.simple.react.stream;
-
-import static java.util.Spliterator.ORDERED;
-import static java.util.Spliterators.spliteratorUnknownSize;
+package com.aol.simple.react.stream.eager;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 
-import com.aol.simple.react.RetryBuilder;
-import com.aol.simple.react.async.Queue;
+import com.aol.simple.react.async.QueueFactory;
+import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
+import com.aol.simple.react.stream.FutureStreamImpl;
+import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.stream.api.AsyncToQueue;
 import com.aol.simple.react.stream.api.FutureStream;
-import com.aol.simple.react.stream.api.SyncToQueue;
+import com.aol.simple.react.stream.api.SimpleReactStream;
+import com.aol.simple.react.stream.simple.SimpleReact;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 
-public class EagerFutureStreamImpl<U> extends FutureStreamImpl<U> implements EagerFutureStream<U> {
+public class EagerFutureStreamImpl<U> extends FutureStreamImpl<U> implements EagerFutureStream<U>{
 	
 	EagerFutureStreamImpl(final Stream<CompletableFuture<U>> stream,
 			final ExecutorService executor, final RetryExecutor retrier) {
 		super(stream,executor,retrier,true);
+	}
+
+	@Override
+	public <R, A> R collect(Collector<? super U, A, R> collector) {
+		return block(collector);
 	}
 	/* (non-Javadoc)
 	 * @see org.jooq.lambda.Seq#limit(long)
@@ -375,6 +378,30 @@ public class EagerFutureStreamImpl<U> extends FutureStreamImpl<U> implements Eag
     	 return EagerFutureStream.super.splitAtHead();
     }
 	
+    public EagerFutureStream<U> withTaskExecutor(ExecutorService e){
+		return null;
+	}
+	public EagerFutureStream<U> withRetrier(RetryExecutor retry){
+		return null;
+	}
+	public EagerFutureStream<U> withWaitStrategy(Consumer<CompletableFuture> c){
+		return null;
+	}
+	public EagerFutureStream<U> withEager(boolean eager){
+		return null;
+	}
+	public SimpleReactStream<U> withLazyCollector(LazyResultConsumer<U> lazy){
+		return null;
+	}
+	public EagerFutureStream<U> withQueueFactory(QueueFactory<U> queue){
+		return null;
+	}
+	public EagerFutureStream<U>  withErrorHandler(Optional<Consumer<Throwable>> errorHandler){
+		return null;
+	}
+	public EagerFutureStream<U> withLastActive(StreamWrapper streamWrapper){
+		return null;
+	}
 	
 	
 }

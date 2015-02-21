@@ -29,7 +29,10 @@ import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.exceptions.ThrowsSoftened;
 import com.aol.simple.react.stream.api.AsyncToQueue;
+import com.aol.simple.react.stream.api.Configuration;
 import com.aol.simple.react.stream.api.FutureStream;
+import com.aol.simple.react.stream.api.SimpleReactStream;
+import com.aol.simple.react.stream.simple.SimpleReact;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -52,8 +55,8 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 
 @AllArgsConstructor
 @Slf4j
-@Wither
-public  class FutureStreamImpl<U> implements LazyFutureStream<U>, AsyncToQueue<U>{
+//@Wither
+public  class FutureStreamImpl<U> implements SimpleReactStream<U>, Configuration<U>,AsyncToQueue<U>{
 
 	private final ExceptionSoftener exceptionSoftener = ExceptionSoftener.singleton.factory
 			.getInstance();
@@ -87,7 +90,7 @@ public  class FutureStreamImpl<U> implements LazyFutureStream<U>, AsyncToQueue<U
 	 * @param executor
 	 *            The next stage's tasks will be submitted to this executor
 	 */
-	FutureStreamImpl(final Stream<CompletableFuture<U>> stream,
+	protected FutureStreamImpl(final Stream<CompletableFuture<U>> stream,
 			final ExecutorService executor, final RetryExecutor retrier,
 			final boolean eager) {
 
@@ -169,6 +172,7 @@ public  class FutureStreamImpl<U> implements LazyFutureStream<U>, AsyncToQueue<U
 	public <R> FutureStream<R> flatMap(
 			Function<? super U, ? extends Stream<? extends R>> flatFn) {
 
+		//need to pass in a builder in the constructor and build using it
 		return SimpleReact
 				.builder()
 				.eager(eager)
@@ -352,16 +356,12 @@ public  class FutureStreamImpl<U> implements LazyFutureStream<U>, AsyncToQueue<U
 		return MISSING_VALUE;
 	}
 
-	final static MissingValue MISSING_VALUE = new MissingValue();
+	public final static MissingValue MISSING_VALUE = new MissingValue();
 
 	private static class MissingValue {
 
 	}
 
-	@Override
-	public <R, A> R collect(Collector<? super U, A, R> collector) {
-		return block(collector);
-	}
 
 	
 
@@ -375,6 +375,30 @@ public  class FutureStreamImpl<U> implements LazyFutureStream<U>, AsyncToQueue<U
 		Stream noType = stream;
 		return (FutureStream<R>) this.withLastActive(lastActive
 				.withStream(noType));
+	}
+	public SimpleReactStream<U> withTaskExecutor(ExecutorService e){
+		return null;
+	}
+	public SimpleReactStream<U> withRetrier(RetryExecutor retry){
+		return null;
+	}
+	public SimpleReactStream<U> withWaitStrategy(Consumer<CompletableFuture> c){
+		return null;
+	}
+	public SimpleReactStream<U> withEager(boolean eager){
+		return null;
+	}
+	public SimpleReactStream<U> withLazyCollector(LazyResultConsumer<U> lazy){
+		return null;
+	}
+	public SimpleReactStream<U> withQueueFactory(QueueFactory<U> queue){
+		return null;
+	}
+	public SimpleReactStream<U>  withErrorHandler(Optional<Consumer<Throwable>> errorHandler){
+		return null;
+	}
+	public SimpleReactStream<U> withLastActive(StreamWrapper streamWrapper){
+		return null;
 	}
 
 }

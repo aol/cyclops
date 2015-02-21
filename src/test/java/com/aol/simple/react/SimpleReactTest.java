@@ -35,9 +35,9 @@ import org.junit.Test;
 
 import com.aol.simple.react.extractors.Extractors;
 import com.aol.simple.react.generators.ParallelGenerator;
-import com.aol.simple.react.stream.LazyFutureStream;
-import com.aol.simple.react.stream.SimpleReact;
 import com.aol.simple.react.stream.api.FutureStream;
+import com.aol.simple.react.stream.lazy.LazyFutureStream;
+import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.util.SimpleTimer;
 import com.google.common.collect.Lists;
 

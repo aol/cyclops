@@ -1,6 +1,6 @@
 package com.aol.simple.react;
 
-import static com.aol.simple.react.stream.LazyFutureStream.*;
+import static com.aol.simple.react.stream.lazy.LazyFutureStream.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -17,10 +17,10 @@ import org.junit.Test;
 
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.QueueFactories;
-import com.aol.simple.react.stream.LazyFutureStream;
-import com.aol.simple.react.stream.SimpleReact;
-import com.aol.simple.react.stream.EagerFutureStreamImpl;
 import com.aol.simple.react.stream.api.FutureStream;
+import com.aol.simple.react.stream.eager.EagerFutureStreamImpl;
+import com.aol.simple.react.stream.lazy.LazyFutureStream;
+import com.aol.simple.react.stream.simple.SimpleReact;
 
 public class LazySeqTest extends BaseSeqTest {
 	@Test

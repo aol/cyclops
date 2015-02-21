@@ -10,10 +10,10 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 
 public interface Configuration<T> {
 
-	FutureStream<T> withTaskExecutor(ExecutorService e);
-	FutureStream<T> withRetrier(RetryExecutor retry);
-	FutureStream<T> withWaitStrategy(Consumer<CompletableFuture> c);
-	FutureStream<T> withEager(boolean eager);
-	FutureStream<T> withLazyCollector(LazyResultConsumer<T> lazy);
-	FutureStream<T> withQueueFactory(QueueFactory<T> queue);
+	SimpleReactStream<T> withTaskExecutor(ExecutorService e);
+	SimpleReactStream<T> withRetrier(RetryExecutor retry);
+	SimpleReactStream<T> withWaitStrategy(Consumer<CompletableFuture> c);
+	SimpleReactStream<T> withEager(boolean eager);
+	SimpleReactStream<T> withLazyCollector(LazyResultConsumer<T> lazy);
+	SimpleReactStream<T> withQueueFactory(QueueFactory<T> queue);
 }

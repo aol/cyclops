@@ -1,6 +1,6 @@
 package com.aol.simple.react;
 
-import static com.aol.simple.react.stream.SimpleReact.*;
+import static com.aol.simple.react.stream.simple.SimpleReact.*;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import com.aol.simple.react.stream.SimpleReact;
 import com.aol.simple.react.stream.api.FutureStream;
+import com.aol.simple.react.stream.simple.SimpleReact;
 
 public class GeneratorTest {
 	volatile int  count;

@@ -25,7 +25,7 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.aol.simple.react.stream.SimpleReact;
+import com.aol.simple.react.stream.simple.SimpleReact;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.nurkiewicz.asyncretry.policy.AbortRetryException;

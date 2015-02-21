@@ -1,4 +1,4 @@
-package com.aol.simple.react.stream;
+package com.aol.simple.react.stream.simple;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -16,12 +16,16 @@ import lombok.Getter;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 
-import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.generators.Generator;
 import com.aol.simple.react.generators.ParallelGenerator;
 import com.aol.simple.react.generators.ReactIterator;
 import com.aol.simple.react.generators.SequentialIterator;
+import com.aol.simple.react.stream.FutureStreamImpl;
+import com.aol.simple.react.stream.InfiniteProcessingException;
 import com.aol.simple.react.stream.api.FutureStream;
+import com.aol.simple.react.stream.api.SimpleReactStream;
+import com.aol.simple.react.stream.eager.EagerFutureStreamImpl;
+import com.aol.simple.react.stream.lazy.LazyFutureStreamImpl;
 import com.google.common.annotations.VisibleForTesting;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -73,10 +77,10 @@ public class SimpleReact {
 	 * @param stream of CompletableFutures that will be used to drive the reactive dataflow
 	 * @return Next stage in the reactive flow
 	 */
-	public <U> FutureStream<U> fromStream(final Stream<CompletableFuture<U>> stream) {
+	public <U> SimpleReactStream<U> fromStream(final Stream<CompletableFuture<U>> stream) {
 
 		Stream s = stream;
-		return  new FutureStreamImpl<U>( s,executor,retrier, eager);
+		return  new SimpleReactStreamImpl<U>( s,executor,retrier, eager);
 	}
 	/**
 	 * Start a reactive dataflow from a stream.
@@ -84,13 +88,13 @@ public class SimpleReact {
 	 * @param stream that will be used to drive the reactive dataflow
 	 * @return Next stage in the reactive flow
 	 */
-	public <U> FutureStream<U> fromStreamWithoutFutures(final Stream<U> stream) {
+	public <U> SimpleReactStream<U> fromStreamWithoutFutures(final Stream<U> stream) {
 		
 		Stream s = stream.map(it -> CompletableFuture.completedFuture(it));
-		return  new FutureStreamImpl<U>( s,executor, retrier,eager);
+		return  new SimpleReactStreamImpl<U>( s,executor, retrier,eager);
 	}
 
-	public <U> FutureStream<U> of(U...array){
+	public <U> SimpleReactStream<U> of(U...array){
 		return fromStreamWithoutFutures(Stream.of(array));
 	}
 	
@@ -105,7 +109,7 @@ public class SimpleReact {
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public <U> FutureStream<U> react(final List<Supplier<U>> actions) {
+	public <U> SimpleReactStream<U> react(final List<Supplier<U>> actions) {
 
 		return react((Supplier[]) actions.toArray(new Supplier[] {}));
 	}
@@ -119,8 +123,8 @@ public class SimpleReact {
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public <U> FutureStream<U> react(final Iterator<U> iterator, int maxTimes){
-		return (FutureStream<U>) this.react(() -> {
+	public <U> SimpleReactStream<U> react(final Iterator<U> iterator, int maxTimes){
+		return (SimpleReactStream<U>) this.react(() -> {
 			synchronized(iterationLock) {
 				if(!iterator.hasNext()) 
 					return FutureStreamImpl.MISSING_VALUE;
@@ -137,7 +141,7 @@ public class SimpleReact {
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public <R> FutureStream<R> reactToCollection(final Collection<R> collection){
+	public <R> SimpleReactStream<R> reactToCollection(final Collection<R> collection){
 		return react(collection.iterator(),collection.size());
 	}
 	
@@ -166,9 +170,9 @@ public class SimpleReact {
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public <U> FutureStream< U> react(final Supplier<U> s, Generator t) {
+	public <U> SimpleReactStream< U> react(final Supplier<U> s, Generator t) {
 
-		return new FutureStreamImpl<U>(t.generate(s),
+		return new SimpleReactStreamImpl<U>(t.generate(s),
 				executor,retrier,eager);
 
 	}
@@ -182,18 +186,18 @@ public class SimpleReact {
 	 * @param s Supplier to generate the infinite flow
 	 * @return Next stage in the flow
 	 */
-	public <U> FutureStream< U> reactInfinitely(final Supplier<U> s) {
+	public <U> SimpleReactStream< U> reactInfinitely(final Supplier<U> s) {
 		if(eager)
 			throw new InfiniteProcessingException("To reactInfinitely use a lazy stream");
-		return new FutureStreamImpl<U>(Stream.generate(() -> CompletableFuture.completedFuture(s.get())),
+		return new SimpleReactStreamImpl<U>(Stream.generate(() -> CompletableFuture.completedFuture(s.get())),
 				executor,retrier,false);
 
 	}
 	
-	public <U> FutureStream<U> iterateInfinitely(final U seed, final UnaryOperator<U> f){
+	public <U> SimpleReactStream<U> iterateInfinitely(final U seed, final UnaryOperator<U> f){
 		if(eager)
 			throw new InfiniteProcessingException("To iterateInfinitely use a lazy stream");
-		return new FutureStreamImpl<U>(Stream.iterate(seed, it -> f.apply(it)).map(it -> CompletableFuture.completedFuture(it)),
+		return new SimpleReactStreamImpl<U>(Stream.iterate(seed, it -> f.apply(it)).map(it -> CompletableFuture.completedFuture(it)),
 				executor,retrier,false);
 	}
 	/**
@@ -235,10 +239,10 @@ public class SimpleReact {
 	 * @param t Iterator that manages function call
 	 * @return Next stage in the reactive flow
 	 */
-	public <U> FutureStream<U> react(final Function<U,U> f,ReactIterator<U> t) {
+	public <U> SimpleReactStream<U> react(final Function<U,U> f,ReactIterator<U> t) {
 
 		Stream s = t.iterate(f);
-		return new FutureStreamImpl<U>(s,executor,retrier,eager);
+		return new SimpleReactStreamImpl<U>(s,executor,retrier,eager);
 
 	}
 	/**
@@ -263,7 +267,7 @@ public class SimpleReact {
 	 * @return Next stage in the reactive flow
 	 */
 	@SafeVarargs
-	public final <U> FutureStream<U> react(final Supplier<U>... actions) {
+	public final <U> SimpleReactStream<U> react(final Supplier<U>... actions) {
 
 		return this.<U> reactI(actions);
 
@@ -276,16 +280,13 @@ public class SimpleReact {
 	 */
 	@SuppressWarnings("unchecked")
 	@VisibleForTesting
-	protected <U> FutureStream<U> reactI(final Supplier<U>... actions) {
+	protected <U> SimpleReactStream<U> reactI(final Supplier<U>... actions) {
 		
-		if(eager)
-			return new EagerFutureStreamImpl<U>(Stream.of(actions).map(
+		
+			return new SimpleReactStreamImpl<U>(Stream.of(actions).map(
 				next -> CompletableFuture.supplyAsync(next, executor)),
-				executor,retrier);
-		else
-			return new LazyFutureStreamImpl<U>(Stream.of(actions).map(
-					next -> CompletableFuture.supplyAsync(next, executor)),
-					executor,retrier);
+				executor,retrier,eager);
+		
 		
 	}
 	
@@ -301,14 +302,6 @@ public class SimpleReact {
 		retrier=  null;
 	}
 	
-	public static class InfiniteProcessingException extends SimpleReactProcessingException{
-
-		public InfiniteProcessingException(String message) {
-			super(message);
-		}
-		
-	}
-
 	private SimpleReact(ExecutorService executor, RetryExecutor retrier,
 			Boolean eager) {
 		

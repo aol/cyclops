@@ -1,4 +1,4 @@
-package com.aol.simple.react.stream;
+package com.aol.simple.react.stream.eager;
 
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
@@ -22,7 +22,9 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.RetryBuilder;
+import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.api.FutureStream;
+import com.aol.simple.react.stream.simple.SimpleReact;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -511,7 +513,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>{
         if (stream instanceof FutureStream)
             return (FutureStream<T>) stream;
 
-        return new FutureStreamImpl<T>(stream.map(CompletableFuture::completedFuture),null,null,false);
+        return new EagerFutureStreamImpl<T>(stream.map(CompletableFuture::completedFuture),null,null);
     }
 
     /**

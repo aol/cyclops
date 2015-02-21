@@ -1,6 +1,6 @@
 package com.aol.simple.react.async;
 
-import static com.aol.simple.react.stream.EagerFutureStream.*;
+import static com.aol.simple.react.stream.eager.EagerFutureStream.*;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -11,8 +11,8 @@ import java.util.stream.Stream;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.simple.react.stream.SimpleReact;
 import com.aol.simple.react.stream.api.FutureStream;
+import com.aol.simple.react.stream.simple.SimpleReact;
 
 public class SignalTest {
 

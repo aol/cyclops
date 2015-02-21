@@ -1,4 +1,4 @@
-package com.aol.simple.react.stream;
+package com.aol.simple.react.stream.lazy;
 
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
@@ -21,7 +21,9 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.RetryBuilder;
+import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.api.FutureStream;
+import com.aol.simple.react.stream.simple.SimpleReact;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**

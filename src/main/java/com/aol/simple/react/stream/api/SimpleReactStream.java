@@ -22,7 +22,7 @@ public interface SimpleReactStream <U>{
 	
 	
 	abstract StreamWrapper getLastActive();
-	abstract FutureStream<U> withLastActive(StreamWrapper streamWrapper);
+	abstract SimpleReactStream<U> withLastActive(StreamWrapper streamWrapper);
 	SimpleReactStream<U>  withErrorHandler(Optional<Consumer<Throwable>> errorHandler);
 	abstract ExecutorService getTaskExecutor();
 	

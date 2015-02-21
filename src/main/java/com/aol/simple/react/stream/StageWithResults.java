@@ -1,18 +1,17 @@
 package com.aol.simple.react.stream;
 
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
 
-import com.aol.simple.react.exceptions.ExceptionSoftener;
-import com.aol.simple.react.stream.api.FutureStream;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+
+import com.aol.simple.react.exceptions.ExceptionSoftener;
+import com.aol.simple.react.stream.api.SimpleReactStream;
 
 @AllArgsConstructor
 @Slf4j
@@ -20,7 +19,7 @@ public class StageWithResults<RS,U> {
 	private final ExceptionSoftener exceptionSoftener = ExceptionSoftener.singleton.factory.getInstance();
 	private final ExecutorService taskExecutor;
 	
-	private final FutureStream<U> stage;
+	private final FutureStreamImpl<U> stage;
 	@Getter
 	private final RS results;
 	
@@ -37,7 +36,7 @@ public class StageWithResults<RS,U> {
 	 * 
 	 * @return Builder for the current Stage in the reactive flow
 	 */
-	public FutureStream<U> proceed(){
+	public SimpleReactStream<U> proceed(){
 		return stage;
 	}
 	

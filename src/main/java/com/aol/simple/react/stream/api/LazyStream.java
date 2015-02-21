@@ -12,8 +12,8 @@ import com.aol.simple.react.collectors.lazy.EmptyCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.stream.Runner;
-import com.aol.simple.react.stream.SimpleReact;
 import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.stream.simple.SimpleReact;
 
 public interface LazyStream<U> {
 	

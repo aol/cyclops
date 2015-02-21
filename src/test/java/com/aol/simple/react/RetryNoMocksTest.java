@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
 
-import com.aol.simple.react.stream.SimpleReact;
+import com.aol.simple.react.stream.simple.SimpleReact;
 import com.google.common.collect.Lists;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;

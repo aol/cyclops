@@ -26,8 +26,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.simple.react.stream.EagerFutureStream;
 import com.aol.simple.react.stream.api.FutureStream;
+import com.aol.simple.react.stream.eager.EagerFutureStream;
 
 public abstract class BaseSequentialSeqTest {
 	abstract <U> FutureStream<U> of(U... array);

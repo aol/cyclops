@@ -9,8 +9,8 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.simple.react.stream.EagerFutureStream;
 import com.aol.simple.react.stream.api.FutureStream;
+import com.aol.simple.react.stream.eager.EagerFutureStream;
 
 public class EagerSeqTest extends BaseSeqTest {
  
