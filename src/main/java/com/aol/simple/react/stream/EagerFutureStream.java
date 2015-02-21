@@ -501,7 +501,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>{
         if (stream instanceof FutureStream)
             return (FutureStream<T>) stream;
 
-        return new EagerFutureStreamImpl<T>(stream.map(it-> CompletableFuture.completedFuture(it)), Executors.newFixedThreadPool(1),
+        return new EagerFutureStreamImpl<T>(stream.map(CompletableFuture::completedFuture), Executors.newFixedThreadPool(1),
         		RetryBuilder.getDefaultInstance().withScheduler(Executors.newScheduledThreadPool(1)));
     }
     /**
@@ -511,7 +511,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>{
         if (stream instanceof FutureStream)
             return (FutureStream<T>) stream;
 
-        return new FutureStreamImpl<T>(stream.map(it-> CompletableFuture.completedFuture(it)),null,null,false);
+        return new FutureStreamImpl<T>(stream.map(CompletableFuture::completedFuture),null,null,false);
     }
 
     /**

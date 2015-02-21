@@ -461,7 +461,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>{
         if (stream instanceof FutureStream)
             return (FutureStream<T>) stream;
 
-        return new LazyFutureStreamImpl<T>(stream.map(it-> CompletableFuture.completedFuture(it)), Executors.newFixedThreadPool(1),
+        return new LazyFutureStreamImpl<T>(stream.map(CompletableFuture::completedFuture), Executors.newFixedThreadPool(1),
         		RetryBuilder.getDefaultInstance().withScheduler(Executors.newScheduledThreadPool(1)));
     }
    

@@ -367,8 +367,7 @@ public  class FutureStreamImpl<U> implements LazyFutureStream<U>, AsyncToQueue<U
 
 	public <R> FutureStream<R> fromStream(Stream<R> stream) {
 		return (FutureStream<R>) this.withLastActive(lastActive
-				.withNewStream(stream.map(it -> CompletableFuture
-						.completedFuture(it))));
+				.withNewStream(stream.map(CompletableFuture::completedFuture)));
 	}
 
 	public <R> FutureStream<R> fromStreamCompletableFuture(
