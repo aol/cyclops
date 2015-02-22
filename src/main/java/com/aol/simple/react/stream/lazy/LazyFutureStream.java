@@ -21,10 +21,12 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.RetryBuilder;
+import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.LazyToQueue;
+import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -35,6 +37,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  */
 public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 
+	LazyFutureStream<U> withLastActive(StreamWrapper streamWrapper);
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -44,7 +47,9 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	@Override
 	default Seq<U> limit(long maxSize) {
 
-		return toQueue().stream().limit(maxSize);
+		StreamWrapper lastActive = getLastActive();
+		StreamWrapper limited = lastActive.withStream(lastActive.stream().limit(maxSize));
+		return this.withLastActive(limited);
 
 	}
 
@@ -56,8 +61,9 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 
 	@Override
 	default Seq<U> skip(long n) {
-
-		return toQueue().stream().skip(n);
+		StreamWrapper lastActive = getLastActive();
+		StreamWrapper limited = lastActive.withStream(lastActive.stream().skip(n));
+		return this.withLastActive(limited);
 
 	}
 
