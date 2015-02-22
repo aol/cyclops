@@ -1,43 +1,246 @@
 #SimpleReact : Simple Fluent Api for Functional Reactive Programming with Java 8
 
+SimpleReact is a Java 8 concurrent Streaming library. We provide three Stream types, and three asynchronous data structures.
+
+##Stream Types
+
+* SimpleReactStream : this provides a simple, focused API for Stream Futures based on Promises / A++ spec.
+
+* EagerFutureStream : An easy to use JDK 8 Stream of CompletableFutures. Also has all of the SimpleReact API methods, and scala-like [jOOλ Seq](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.5/org/jooq/lambda/Seq.html) methods. EagerFutureStream kicks of future tasks eagerly and can be run in either parallel or sequential (free-threaded) modes.
+
+* LazyFutureStream : Provides a Lazy JDK 8 Stream of CompletableFutures. Can be used for constant proccessing (e.g. of data coming in off a SimpleReact asynchronous queue).
+ 
+ ![simplereactstreaming types](https://cloud.githubusercontent.com/assets/9964792/6320732/f24f6458-badd-11e4-8e45-10373e3654f7.png)
+ 
+##Asynchronous datastructures
+
+* Queue : async queue that can be used to join producing and consuming streams. Multiple consuming streams (if connected) compete for messages on the queue.
+
+* Topic : async topic that can be used to join producing and consuming streams. Multiple consuming streams (if connected) recieve each message on the topic.
+
+* Signal : async signal that can stream changes, backed by either a Topic or a Queue.
+
+![simplereact datastructures](https://cloud.githubusercontent.com/assets/9964792/6320736/fb884daa-badd-11e4-801f-9a61a5213be2.png)
+ 
+
+
 SimpleReact is a parallel Stream library that implements java.util.stream.Stream. Under the hood, SimpleReact manages parallel streams as a stream of CompletableFutures. SimpleReact provides a simple core API based on the Promises / A++ spec, while also providing a full rich range of options by implementing both JDK 8 Stream, and the scala-like [jOOλ Seq](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.5/org/jooq/lambda/Seq.html). SimpleReact goes beyond the traditional Java 8 Streaming interface by offering failure recovery, capture and retry functionality.
 
 It is an easy to use, concurrent, reactive programming library for JDK 8.  It provides a focused, simple and limited core Reactive API aimed at solving the 90% use case - but without adding complexity. It is a core goal of SimpleReact to integrate with JDK 8 Stream libraries for maximum reuse and plugability.
 
 See [A Simple Api, and a Rich Api](https://github.com/aol/simple-react/wiki/A-simple-API,-and-a-Rich-API) for details on SimpleReact core and the java Streaming interfaces.
 
-* Adding SimpleReact as a dependency : https://github.com/aol/simple-react/wiki/Adding-SimpleReact-as-a-dependency
+##Getting SimpleReact
 
-For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:'0.3'
 
-* Javadoc http://www.javadoc.io/doc/com.aol.simplereact/simple-react/0.3
+* [Adding SimpleReact as a dependency](https://github.com/aol/simple-react/wiki/Adding-SimpleReact-as-a-dependency)
+* [Search Maven](http://search.maven.org/#search%7Cga%7C1%7Ccom.aol.simplereact)
 
-* See an illustrative getting started example : https://github.com/aol/simple-react/wiki/Getting-started-with-a-simple-example
+For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:'0.4'
 
-* What does Simple React do : https://github.com/aol/simple-react/wiki/What-does-SimpleReact-do%3F
+##Documentation
 
-* Some less contrived / real world examples 
 
-* Example : Scaling microservices with NIO and SimpleReact : https://medium.com/@johnmcclean/scaling-up-microservices-with-nio-and-simplereact-b2e8f41fdd68 
+* [wiki](https://github.com/aol/simple-react/wiki)
+* [Javadoc](http://www.javadoc.io/doc/com.aol.simplereact/simple-react/0.4)
+* [Articles on medium](https://medium.com/search?q=simplereact)
 
- Building a non blocking NIO rest client : https://github.com/aol/simple-react/wiki/Example-:-Building-a-non-blocking-NIO-rest-client
 
-* Example : Plumbing Java 8 Streams with Queues, Topics and Signals : https://medium.com/@johnmcclean/plumbing-java-8-streams-with-queues-topics-and-signals-d9a71eafbbcc
+##Getting started
 
-* Example : Bulk loading files : https://github.com/aol/simple-react/wiki/Example-:-Bulk-loading-files
+* [See an illustrative getting started example](https://github.com/aol/simple-react/wiki/Getting-started-with-a-simple-example)
 
-* Example : Implementing a Quorum : https://github.com/aol/simple-react/wiki/Example-:-Implementing-a-Quorum
+* [What does Simple React do](https://github.com/aol/simple-react/wiki/What-does-SimpleReact-do%3F)
+
+### Some less contrived / real world examples 
+
+* [Example : Scaling microservices with NIO and SimpleReact](https://medium.com/@johnmcclean/scaling-up-microservices-with-nio-and-simplereact-b2e8f41fdd68)
+
+ [Building a non blocking NIO rest client](https://github.com/aol/simple-react/wiki/Example-:-Building-a-non-blocking-NIO-rest-client)
+
+* [Example : Plumbing Java 8 Streams with Queues, Topics and Signals](https://medium.com/@johnmcclean/plumbing-java-8-streams-with-queues-topics-and-signals-d9a71eafbbcc)
+
+* [Example : Bulk loading files](https://github.com/aol/simple-react/wiki/Example-:-Bulk-loading-files)
+
+* [Example : Implementing a Quorum](https://github.com/aol/simple-react/wiki/Example-:-Implementing-a-Quorum)
 
 ##Why SimpleReact
 
+Why daisy-chain together CompletableFuture's by hand? SimpleReact allows you to put together sophisticated concurrent chains of CompletableFutures with a very easy to use API.
 
 SimpleReact is built on top of JDK standard libraries and unlike other Reactive implementations for Java, specifically targets JDK 8 and thus reuses rather than reinvents  Streams, Functional interfaces etc. SimpleReact augments the *parallel* Streams functionality in JDK by providing a facade over both the Streams and CompletableFuture apis. Under-the-hood, SimpleReact *is* a Stream of CompletableFutures, and presents that externally as an api somewhat inspired by the Javascript Promises / A+ Spec (https://promisesaplus.com/).
 
 Everything is concurrent in SimpleReact. While this does limit some of the syntax-sugar we can provide directly, the small & focused SimpleReact Api together with the Apis of the underlying JDK 8 primitives offer often surprising levels of power and flexibility.
 
-* See an example of using CompletableFuture directly with SimpleReact : https://github.com/aol/simple-react/wiki/Example-:-Reacting-to-Asynchronous-Events-with-a-Stream-of-CompletableFutures
+* [See an example of using CompletableFuture directly with SimpleReact](https://github.com/aol/simple-react/wiki/Example-:-Reacting-to-Asynchronous-Events-with-a-Stream-of-CompletableFutures)
 
-##Data flow
+#SimpleReact Streams and commands
+
+
+##limit
+
+###EagerFutureStream
+
+When a limit is applied in an EagerFutureStream, all future tasks for a stage are executed and the first n tasks (specified by the limit) are passed as input to the next stage. In a sequential stream, tasks will complete in the order they are specified. This results in more deterministic output, but may be less efficient / performant if extract data from external sources.
+
+![eagerfuturestream limit](https://cloud.githubusercontent.com/assets/9964792/6320759/570d6368-bade-11e4-8685-cf73af4d54f7.png)
+
+
+
+
+###LazyFutureStream
+
+When a limit is applied to  a LazyFutureStream it is applied to the tasks before they start. For versions before the planned SimpleReact v0.5, specifying a limit early in a LazyFutureStream that you don’t want to run constantly is recommended. v0.5 will include the ability for consuming threads to auto-close producing threads and reduce the need for programatic management of LazyFutureStreams by users.
+
+![lazyfuturestream limit](https://cloud.githubusercontent.com/assets/9964792/6320738/04cd3678-bade-11e4-9268-b224b6c2dd21.png)
+
+
+
+###SimpleReactStream
+
+The SimpleReactStream API doesn’t provide an explicit limit mechanism. But does provide a Predicate (com.aol.simple.react.predicates.Predicates.limit) that when provided to the filter method behaves exactly as EagerFutureStream limit.
+
+
+##skip
+
+Skip will perform as in the same way as Limit for all three Stream types but skips the first X data points instead.
+
+###EagerFutureStream
+For EagerFutureStream specifying a skip will skip the first X results returned from the previous stage.
+
+###LazyFutureStream
+For LazyFutureStream specifying a skip will skip the first X tasks specified in the previous stage.
+
+###SimpleReactStream
+For SimpleReactStream using com.aol.simple.react.predicates.Predicates.skip with filter, will skip the first X results returned.
+
+##map / then
+
+###EagerFutureStream, LazyFutureStream, SimpleReactStream
+
+For all three Streams map or then converts input data in one format to output data in another.
+
+![stream map/then](https://cloud.githubusercontent.com/assets/9964792/6320750/3e6ccaa6-bade-11e4-9ebf-ad63996c489f.png)
+
+##retry
+
+###EagerFutureStream, LazyFutureStream, SimpleReactStream
+
+Retry allows a task in a stage to be retried if it fails
+
+![stream retry](https://cloud.githubusercontent.com/assets/9964792/6320754/4ea4061e-bade-11e4-8692-481e0dc0e3f9.png)
+
+##onFail
+
+###EagerFutureStream, LazyFutureStream, SimpleReactStream
+For all three Streams onFail allows recovery from a Streaming stage that fails.
+
+![stream onFail](https://cloud.githubusercontent.com/assets/9964792/6320747/34c8d666-bade-11e4-817d-2d4c5c3fa6e7.png)
+
+##flatMap
+
+###EagerFutureStream, LazyFutureStream, SimpleReactStream
+
+For all three Streams specifying a flatMap splits a single result into multiple tasks by returning a Stream from the flatMap method.
+
+![stream flatMap](https://cloud.githubusercontent.com/assets/9964792/6320742/18ce599a-bade-11e4-8bdb-8909c71da06c.png)
+
+##allOf
+###EagerFutureStream, LazyFutureStream, SimpleReactStream
+
+allOf is the inverse of flatMap. It rolls up a Stream from a previous stage, asynchronously into a single collection for further processing as a group.
+
+![stream allOf](https://cloud.githubusercontent.com/assets/9964792/6320739/0a98c8ba-bade-11e4-9097-0b3209a5aba1.png)
+
+##zip
+###EagerFutureStream, LazyFutureStream, SimpleReactStream
+
+Zip merges two streams by taking the next available result from each stream. For sequential streams, this will be determined by start order - for parallel streams, order is non-deterministic
+
+![stream zip](https://cloud.githubusercontent.com/assets/9964792/6320745/2a52717e-bade-11e4-93c7-8965a2d6f3ab.png)
+
+
+#Choosing A Stream Type
+
+The key components in choosing what type of Stream to create are :
+
+1. Eager or Lazy
+2. Sequential or Parallel
+4. What data stream should be provided with
+5. Optimising Stream performance
+
+##Eager Streams and Lazy Streams
+
+SimpleReactStreams can be either Eager or Lazy, by default they are Eager.
+
+Eager Streams start processing immediately, while Lazy Streams start processing when a terminal operation is invoked.
+
+SimpleReact provides builder classes, and JDK 8 Stream style factory methods on the Stream itself that can be used to create appropriate Streams.
+
+*SimpleReact - builder class for SimpleReact
+
+*EagerReact - builder class for EagerFutureStreams
+
+*LazyReact - builder class for LazyFutureStreams
+
+
+Lazy Streams can be effectively infinite. 
+
+###Why would you want an infinite Stream? 
+
+In the real world this could be a Stream that receives and reacts to events for as long as an application runs.
+
+Eager Streams are eagerly materialised into CompletableFuture objects, so can’t be infinite or your application will run out of Memory.
+
+###Why would you want an eager stream?
+Eager streams are useful for processing parallel tasks starting immediately. Such as bulk loading files from disk, data to remote store, or reading from a remote server.
+
+##Sequential or Parallel
+
+SimpleReact streams can either be parallel or sequential. For either type, the underlying model is identical. CompletableFuture tasks are sent to a task executor for execution. In a Sequential Stream a task executor with a single thread is used (free thread model). In a parallel Stream a task executor with many threads can be used instead.
+
+LazyFutureStream.sequentialBuilder().of(1,2,3)
+EagerFutureStream.sequentialBuilder().of(1,2,3)
+
+LazyFutureStream.parallelBuilder().of(1,2,3)
+EagerFutureStream.parallelBuilder().of(1,2,3)
+
+###Why would you want a sequential stream?
+
+SimpleReact sequential streams don’t block the current thread, unless block or a terminal operation is called. So if you want to offload some sequential processing to a separate thread, sequential streams are a good choice.
+
+###Why would you want a parallel stream?
+
+Parallel streams are useful for taking advantage of multi-core processors. For CPU bound heavy processing tasks, spreading the load across multiple cores can make processing faster. For I/O bound tasks taking advantage of threads to unblock the current thread of execution can also be advantageous (also see NIO examples later). SimpleReact parallel streams are easy to create and offer much wider options for control than standard JDK parallel Streams (such as retry, failure handling, targeting any task executor and much more!).
+Providing Data to a Stream
+
+The SimpleReact class provides a number of methods, mostly starting with the word ‘react’ that can be used to provide data to your reactive Stream.
+
+e.g. 
+	EagerFutureStream.parallel(5).reactToCollection(list);
+	LazyFutureStream.sequentialBuilder().react( ()->1, ()->”hello world”);
+	LazyFutureStream.parallel(10).reactInfinitely( ()-> count.incrementAndGet())
+
+Or you can generate a Stream from a SimpleReact datastructure
+
+	Queue queue = new Queue();
+	FutureStream stream = queue.stream(); //creates a lazy, infinite, parallel stream
+
+Or from any Java datastructure
+
+	List<Integer> list = new ArrayList<>();
+	EagerStream.of(list);
+
+Or Array
+	LazyStream.of(1,2,3,4)
+
+###Configuring concurrency
+
+TaskExecutor and RetryExecutor configuration can be changed on per stage basis of in any of the SimpleReact streams
+
+##Data flow of the SimpleReactStream API
+
+EagerFutureStream and LazyFutureStream have this functionality in addition to JDK 8 Stream functionality and [jOOλ Seq](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.5/org/jooq/lambda/Seq.html) methods, applied to a Stream of JDK 8 CompletableFutures.
 
 SimpleReact starts with an array of Suppliers which generate data other functions will react to. Each supplier will be passed to an Executor to be executed, potentially on a separate thread. Each additional step defined when calling Simple React will also be added as a linked task, also to be executed, potentially on a separate thread.
 
@@ -351,6 +554,29 @@ A simple example below where a dataflow is split into 3, processed separately th
 		stage3 = stage3.then(it -> it+"%");
 		
 		List<String> result = stage1.merge(stage2).merge(stage3).block();
+
+      #Feature matrix
+
+
+| FEATURE                                          | SimpleReactStream   | EagerFutureStream   | LazyFutureStream    | JDK 8 Stream (sequential) | JDK 8 Stream (parallel) |
+|--------------------------------------------------|---------------------|---------------------|---------------------|---------------------------|-------------------------| 
+| Focused Simple API                               | Yes                 | No                  | No                  | No                        | No                      | 
+| Full JDK 8 Streams API                           | No                  | Yes                 | Yes                 | Yes                       | Yes                     | 
+| Scala-like Seq (zip/ concate etc)                | No                  | Yes                 | Yes                 | No                        | No                      | 
+| Multithreading                                   | Yes                 | Yes                 | Yes                 | No                        | Yes                     | 
+| Free-threading (target single thread)            | Yes                 | Yes                 | Yes                 | No                        | No                      | 
+| Sequential operation                             | Yes                 | Yes                 | Yes                 | Yes                       | No                      | 
+| Target different executors per stage             | Yes                 | Yes                 | Yes                 | No                        | No                      | 
+| Concurrency configurability                      | Highly configurable | Highly configurable | Highly configurable | No                        | Limited                 | 
+| Failure recovery                                 | Yes                 | Yes                 | Yes                 | No                        | No                      | 
+| Retry support                                    | Yes                 | Yes                 | Yes                 | No                        | No                      | 
+| Compatible with SimpleReact async datastructures | Yes                 | Yes                 | Yes                 | Yes                       | Yes                     | 
+| Lazy (until terminal op)                         | Yes                 | No                  | Yes                 | Yes                       | Yes                     | 
+| Eager                                            | Yes                 | Yes                 | No                  | No                        | No                      | 
+| infinite streams                                 | Yes                 | No                  | Yes                 | Yes                       | Yes                     | 
+| each task executed independently                 | Yes                 | Yes                 | Yes                 | No                        | No                      | 
+| async results collection                         | Yes                 | Yes                 | Yes                 | No                        | No                      | 
+      
 		
 # License
 

@@ -555,34 +555,10 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 		return futureStream((Stream) Seq.empty());
 	}
 
-	/**
-	 * @see Stream#iterate(Object, UnaryOperator)
-	 */
-	static <T> SimpleReactStream<T> iterate(final T seed,
-			final UnaryOperator<T> f) {
-		return futureStream((Stream) Seq.iterate(seed, f),false);
-	}
 
-	/**
-	 * @see Stream#generate(Supplier)
-	 */
-	static SimpleReactStream<Void> generate() {
-		return generate(() -> null);
-	}
 
-	/**
-	 * @see Stream#generate(Supplier)
-	 */
-	static <T> SimpleReactStream<T> generate(T value) {
-		return generate(() -> value);
-	}
 
-	/**
-	 * @see Stream#generate(Supplier)
-	 */
-	static <T> SimpleReactStream<T> generate(Supplier<T> s) {
-		return futureStream(Stream.generate(s),false);
-	}
+	
 	static <T> SimpleReactStream<T> futureStream(Stream<T> stream){
 		return futureStream(stream,true);
 	}
