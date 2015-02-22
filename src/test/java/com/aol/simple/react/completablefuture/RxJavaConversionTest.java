@@ -29,6 +29,7 @@ public class RxJavaConversionTest {
 		
 		List<String> titles = new SimpleReact().fromStream(Stream.of(query("Hello, world!")))
 								.flatMap(Collection::stream)
+								.peek(System.out::println)
 								.<String>then(url -> getTitle(url))
 								.filter(Objects::nonNull)
 								.filter(Predicates.take(5))

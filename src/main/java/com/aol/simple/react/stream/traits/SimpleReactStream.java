@@ -187,9 +187,7 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 				.fromStream(
 						toQueue()
 								.stream()
-								.flatMap(flatFn)
-								.map(CompletableFuture::
-										completedFuture));
+								.flatMap(flatFn).peek(System.out::println));
 	}
 	
 	/**

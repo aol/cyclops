@@ -92,7 +92,7 @@ public abstract class BaseSeqTest {
 	public void zipEmpty() throws Exception {
 		
 		
-		final Seq<Integer> zipped = empty.zip(empty, (a, b) -> a + b);
+		final Seq<Integer> zipped = empty.zip(this.<Integer>of(), (a, b) -> a + b);
 		assertTrue(zipped.collect(Collectors.toList()).isEmpty());
 	}
 

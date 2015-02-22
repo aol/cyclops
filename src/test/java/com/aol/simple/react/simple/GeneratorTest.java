@@ -193,7 +193,7 @@ public class GeneratorTest {
 	@Test
 	public void testGenerateParellel() throws InterruptedException, ExecutionException {
 		Set<Long> threads = new SimpleReact(new ForkJoinPool(10))
-				.<Long> react(() ->Thread.currentThread().getId() ,SimpleReact.times(10))
+				.<Long> react(() ->Thread.currentThread().getId() ,SimpleReact.times(1000))
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.capture(e -> capture++)
