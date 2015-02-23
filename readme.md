@@ -108,8 +108,12 @@ Skip will perform as in the same way as Limit for all three Stream types but ski
 ###EagerFutureStream
 For EagerFutureStream specifying a skip will skip the first X results returned from the previous stage.
 
+![eagerfuturestream skip](https://cloud.githubusercontent.com/assets/9964792/6329112/70f48c02-bb65-11e4-908b-bab3003c6dfe.png)
+
 ###LazyFutureStream
 For LazyFutureStream specifying a skip will skip the first X tasks specified in the previous stage.
+
+![lazyfuturestream - skip](https://cloud.githubusercontent.com/assets/9964792/6329113/7291ff54-bb65-11e4-8d40-024e731a588e.png)
 
 ###SimpleReactStream
 For SimpleReactStream using com.aol.simple.react.predicates.Predicates.skip with filter, will skip the first X results returned.
@@ -159,6 +163,12 @@ Zip merges two streams by taking the next available result from each stream. For
 
 ![stream zip](https://cloud.githubusercontent.com/assets/9964792/6320745/2a52717e-bade-11e4-93c7-8965a2d6f3ab.png)
 
+
+##toQueue
+###EagerFutureStream, LazyFutureStream, SimpleReactStream
+
+toQueue creates a new simplereact.aysnc.Queue that is populated asynchronously by the current Stream. Another Stream (Consumer) can be created from the Queue by calling queue.toStream()
+![eagerfuturestream toqueue](https://cloud.githubusercontent.com/assets/9964792/6329104/5eb15034-bb65-11e4-9f18-82c34065465f.png)
 
 #Choosing A Stream Type
 
@@ -556,6 +566,22 @@ A simple example below where a dataflow is split into 3, processed separately th
 		List<String> result = stage1.merge(stage2).merge(stage3).block();
 
       #Feature matrix
+
+
+#Queues, Topics, Signals quick overview
+
+Queues can be populated asyncrhonously by a Stream and read at will be consumers. Each message added to a queue can only be read by a single consumer, once a consuming Stream has removed a message from the Queue it is gone.
+
+![Visualisation of a SimpleReact dataflow : Queues](https://cloud.githubusercontent.com/assets/9964792/6219467/c48aed46-b621-11e4-9aaa-9dcea3019024.png)
+
+Topics can be populated asynchronously by a Stream and read at will by consumers. Each consumer is guaranteed to recieve every message sent to a topic once connected.
+
+![Visualisation of a SimpleReact dataflow : Topics](https://cloud.githubusercontent.com/assets/9964792/6219474/db8243aa-b621-11e4-89d3-b854aa00adce.png)
+
+Signals track changes, and can provide those changes as continuous or discrete Streams.
+
+![Visualisation of a SimpleReact dataflow : Signals](https://cloud.githubusercontent.com/assets/9964792/6219478/e18ca33a-b621-11e4-9a51-a07e7c5364d7.png)
+
 
 
 | FEATURE                                          | SimpleReactStream   | EagerFutureStream   | LazyFutureStream    | JDK 8 Stream (sequential) | JDK 8 Stream (parallel) |
