@@ -4,7 +4,7 @@ SimpleReact is a Java 8 concurrent Streaming library. We provide three Stream ty
 
 ##Stream Types
 
-* SimpleReactStream : this provides a simple, focused API for Stream Futures based on Promises / A++ spec.
+* SimpleReactStream : this provides a simple, focused [API for Stream Futures based on the Promises / A++ spec](https://github.com/aol/simple-react#simplereactstream--a-simple-fluent-api-for-functional-reactive-programming-with-java-8).
 
 * EagerFutureStream : An easy to use JDK 8 Stream of CompletableFutures. Also has all of the SimpleReact API methods, and scala-like [jOOλ Seq](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.5/org/jooq/lambda/Seq.html) methods. EagerFutureStream kicks of future tasks eagerly and can be run in either parallel or sequential (free-threaded) modes.
 
@@ -59,7 +59,7 @@ See [A Simple Api, and a Rich Api](https://github.com/aol/simple-react/wiki/A-si
 
 * [Adding SimpleReact as a dependency](https://github.com/aol/simple-react/wiki/Adding-SimpleReact-as-a-dependency)
 * [Search Maven](http://search.maven.org/#search%7Cga%7C1%7Ccom.aol.simplereact)
-<<<<<<< HEAD
+
 
 For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:'0.4'
 
@@ -200,7 +200,7 @@ Capture allows error handling for unrecoverable errors.
 ##flatMap
 
 ###EagerFutureStream, LazyFutureStream, SimpleReactStream
-<<<<<<< HEAD
+
 
 For all three Streams specifying a flatMap splits a single result into multiple tasks by returning a Stream from the flatMap method.
 
@@ -208,7 +208,6 @@ For all three Streams specifying a flatMap splits a single result into multiple 
 
 For all three Streams specifying a flatMap splits a single result into multiple tasks by returning a Stream from the flatMap method.
 
->>>>>>> f7afa5192d293c25db676c3e2c0331eef43b4d46
 ![stream flatMap](https://cloud.githubusercontent.com/assets/9964792/6320742/18ce599a-bade-11e4-8bdb-8909c71da06c.png)
 
 ##allOf (async collect)
@@ -319,12 +318,11 @@ TaskExecutor and RetryExecutor configuration can be changed on per stage basis o
 
 ##Data flow of the SimpleReactStream API
 
-<<<<<<< HEAD
+
 ### SimpleReactStream : A Simple Fluent Api for Functional Reactive Programming with Java 8
 
-=======
->>>>>>> f7afa5192d293c25db676c3e2c0331eef43b4d46
-EagerFutureStream and LazyFutureStream have this functionality in addition to JDK 8 Stream functionality and [jOOλ Seq](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.5/org/jooq/lambda/Seq.html) methods, applied to a Stream of JDK 8 CompletableFutures.
+
+*EagerFutureStream and LazyFutureStream* have this functionality in addition to JDK 8 Stream functionality and [jOOλ Seq](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.5/org/jooq/lambda/Seq.html) methods, applied to a Stream of JDK 8 CompletableFutures.
 
 SimpleReact starts with an array of Suppliers which generate data other functions will react to. Each supplier will be passed to an Executor to be executed, potentially on a separate thread. Each additional step defined when calling Simple React will also be added as a linked task, also to be executed, potentially on a separate thread.
 
