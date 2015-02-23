@@ -11,13 +11,10 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -26,13 +23,11 @@ import java.util.stream.StreamSupport;
 import org.jooq.lambda.Seq;
 
 import com.aol.simple.react.RetryBuilder;
-import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.StageWithResults;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
-import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.simple.SimpleReactStreamImpl;
 import com.nurkiewicz.asyncretry.RetryExecutor;
@@ -112,6 +107,12 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 				.withNewStream(stream.map(CompletableFuture::completedFuture)));
 	}
 
+	/**
+	 * Construct a SimpleReactStream from provided Stream of CompletableFutures
+	 * 
+	 * @param stream JDK Stream to construct new SimpleReactStream from
+	 * @return SimpleReactStream
+	 */
 	default <R> SimpleReactStream<R> fromStreamCompletableFuture(
 			Stream<CompletableFuture<R>> stream) {
 		Stream noType = stream;
@@ -174,10 +175,14 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 			}
 		};
 	}
-	/*
-	 * (non-Javadoc)
+
+	/**
+	 * Allows aggregate values in a Stream to be flatten into a single Stream.
+	 * flatMap functions turn each aggregate value into it's own Stream, and SimpleReact aggregates those Streams
+	 * into a single flattened stream
 	 * 
-	 * @see org.jooq.lambda.Seq#flatMap(java.util.function.Function)
+	 * @param flatFn Function that coverts a value (e.g. a Collection) into a Stream
+	 * @return SimpleReactStream
 	 */
 	default <R> SimpleReactStream<R> flatMap(
 			Function<? super U, ? extends Stream<? extends R>> flatFn) {
@@ -479,27 +484,54 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	}
 
 	/**
-	 * @return Lazy SimpleReact for handling infinite streams
+	 * @return  An Eager SimpleReact instance 
+	 *  @see SimpleReact.SimpleReact()
 	 */
 	public static SimpleReact parallelBuilder() {
 		return new SimpleReact();
 	}
 
+	/**
+	 * Construct a new SimpleReact builder, with a new task executor and retry executor
+	 * with configured number of threads 
+	 * 
+	 * @param parallelism Number of threads task executor should have
+	 * @return eager SimpleReact instance
+	 */
 	public static SimpleReact parallelBuilder(int parallelism) {
 		return SimpleReact.builder().executor(new ForkJoinPool(parallelism))
 				.retrier(new RetryBuilder().parallelism(parallelism)).build();
 	}
 
+	/**
+	 * @return new eager SimpleReact builder configured with standard parallel executor
+	 * By default this is the ForkJoinPool common instance but is configurable in the ThreadPools class
+	 * 
+	 * @see ThreadPools#getStandard()
+	 * @see RetryBuilder#getDefaultInstance()
+	 */
 	public static SimpleReact parallelCommonBuilder() {
-		return new SimpleReact(ForkJoinPool.commonPool());
+		return SimpleReact.builder().executor(ThreadPools.getStandard())
+		.retrier(RetryBuilder.getDefaultInstance().withScheduler(ThreadPools.getCommonFreeThreadRetry())).build();
+		
 	}
 
+	/**
+	 * @return new eager SimpleReact builder configured to run on a separate thread (non-blocking current thread), sequentially
+	 * New ForkJoinPool will be created
+	 */
 	public static SimpleReact sequentialBuilder() {
-		return simple(new ForkJoinPool(1));
+		return SimpleReact.builder().executor(ThreadPools.getSequential())
+				.retrier(RetryBuilder.getDefaultInstance().withScheduler(ThreadPools.getSequentialRetry())).build();
 	}
 
+	/**
+	 * @return new eager SimpleReact builder configured to run on a separate thread (non-blocking current thread), sequentially
+	 * Common free thread Executor from
+	 */
 	public static SimpleReact sequentialCommonBuilder() {
-		return simple(ThreadPools.getCommonFreeThread());
+		return SimpleReact.builder().executor(ThreadPools.getCommonFreeThread())
+				.retrier(RetryBuilder.getDefaultInstance().withScheduler(ThreadPools.getCommonFreeThreadRetry())).build();
 	}
 
 	/**

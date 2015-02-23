@@ -17,6 +17,9 @@ public class ThreadPools {
 	
 	@Getter
 	private static final ScheduledExecutorService commonFreeThreadRetry = Executors.newScheduledThreadPool(1);
+	
+	@Getter
+	private static final ScheduledExecutorService commonStanardRetry = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
 
 	
 	@Setter
@@ -37,6 +40,12 @@ public class ThreadPools {
 			return commonFreeThreadRetry;
 		else
 			return Executors.newScheduledThreadPool(1);
+	}
+	public static ScheduledExecutorService getStandardRetry() {
+		if(useCommon)
+			return commonStanardRetry;
+		else
+			return Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
 	}
 	public static ExecutorService getLazyExecutor() {
 		if(useCommon)

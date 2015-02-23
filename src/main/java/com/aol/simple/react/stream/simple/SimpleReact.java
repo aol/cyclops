@@ -57,7 +57,11 @@ public class SimpleReact  extends BaseSimpleReact{
 	
 
 	/**
-	 * Construct a new SimpleReact that will use a ForkJoinPool with parrellism set to the number of processors on the host
+	 * Construct a SimpleReact builder using standard thread pool.
+	 * By default, unless ThreadPools is configured otherwise this will be sized
+	 * to the available processors
+	 * 
+	 * @see ThreadPools#getStandard()
 	 */
 	public SimpleReact(){
 		this( ThreadPools.getStandard());
