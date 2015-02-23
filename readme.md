@@ -1,4 +1,4 @@
-#SimpleReact Streams : Powerful Future Streams & Async Data Structures for Java 8
+#SimpleReact : Powerful Future Streams & Async Data Structures for Java 8
 
 SimpleReact is a Java 8 concurrent Streaming library. We provide three Stream types, and three asynchronous data structures.
 
