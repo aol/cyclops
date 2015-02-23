@@ -4,11 +4,11 @@ SimpleReact is a Java 8 concurrent Streaming library. We provide three Stream ty
 
 ##Stream Types
 
-* SimpleReactStream : this provides a simple, focused [API for Stream Futures based on the Promises / A++ spec](https://github.com/aol/simple-react#simplereactstream--a-simple-fluent-api-for-functional-reactive-programming-with-java-8).
+* SimpleReactStream : this provides [a simple, focused API for Streaming Futures](https://github.com/aol/simple-react#simplereactstream--a-simple-fluent-api-for-functional-reactive-programming-with-java-8) based on the Promises / A++ spec.
 
-* EagerFutureStream : An easy to use JDK 8 Stream of CompletableFutures. Also has all of the SimpleReact API methods, and scala-like [jOOλ Seq](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.5/org/jooq/lambda/Seq.html) methods. EagerFutureStream kicks of future tasks eagerly and can be run in either parallel or sequential (free-threaded) modes.
+* EagerFutureStream : An easy to use JDK 8 Stream of CompletableFutures, with all of the SimpleReact API methods, and scala-like [jOOλ Seq](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.5/org/jooq/lambda/Seq.html) methods too. EagerFutureStream kicks of future tasks eagerly and can be run in either parallel or sequential (free-threaded) modes.
 
-* LazyFutureStream : Provides a Lazy JDK 8 Stream of CompletableFutures. Can be used for constant proccessing (e.g. of data coming in off a SimpleReact asynchronous queue).
+* LazyFutureStream : Provides a Lazy JDK 8 Stream of CompletableFutures (and Seq, and SimpleReact API methods). Can be used for constant proccessing (e.g. of data coming in off a SimpleReact asynchronous queue).
  
  ![simplereactstreaming types](https://cloud.githubusercontent.com/assets/9964792/6320732/f24f6458-badd-11e4-8e45-10373e3654f7.png)
  
