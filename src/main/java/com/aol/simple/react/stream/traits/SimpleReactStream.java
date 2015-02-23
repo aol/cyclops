@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -521,8 +522,8 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	 * New ForkJoinPool will be created
 	 */
 	public static SimpleReact sequentialBuilder() {
-		return SimpleReact.builder().executor(ThreadPools.getSequential())
-				.retrier(RetryBuilder.getDefaultInstance().withScheduler(ThreadPools.getSequentialRetry())).build();
+		return SimpleReact.builder().executor(new ForkJoinPool(1))
+				.retrier(RetryBuilder.getDefaultInstance().withScheduler(Executors.newScheduledThreadPool(1))).build();
 	}
 
 	/**

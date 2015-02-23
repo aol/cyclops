@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -21,6 +22,7 @@ import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.eager.EagerFutureStream;
+import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.LazyToQueue;
 import com.nurkiewicz.asyncretry.RetryExecutor;
@@ -37,11 +39,38 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	
 	
 	
-	
+	 
+	/* 
+	 * Cast all elements in this stream to specified type. May throw {@link ClassCastException}.
+	 * 
+	 *  LazyFutureStream.of(1, "a", 2, "b", 3).cast(Integer.class)
+	 *  
+	 *  will throw a ClassCastException
+	 *  
+	 *	@param type Type to cast to
+	 *	@return LazyFutureStream
+	 * @see com.aol.simple.react.stream.traits.FutureStream#cast(java.lang.Class)
+	 */
 	@Override
 	default <U> LazyFutureStream<U> cast(Class<U> type) {
 		return (LazyFutureStream<U>) FutureStream.super.cast(type);
 	}
+	
+	 /**
+     * Keep only those elements in a stream that are of a given type.
+     * <p>
+     * <code><pre>
+     * 
+     * LazyFutureStream.of(1, "a", 2, "b", 3).ofType(Integer.class)
+     * 
+     * gives a Stream of (1,2,3)
+     * 
+     * LazyFutureStream.of(1, "a", 2, "b", 3).ofType(String.class)
+     * 
+     * gives a Stream of ("a","b")
+     * </pre></code>
+     *  @see com.aol.simple.react.stream.traits.FutureStream#ofType(java.lang.Class)
+     */
 	@Override
 	default <U> FutureStream<U> ofType(Class<U> type){
 		return (LazyFutureStream<U>)FutureStream.super.ofType(type);
@@ -112,9 +141,10 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 		return new LazyReact().reactToCollection(Arrays.asList(array));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	
+	/* 
+	 *	@return distinct elements in this Stream (must be a finite stream!)
+	 *
 	 * @see org.jooq.lambda.Seq#distinct()
 	 */
 	@Override
@@ -173,21 +203,46 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 		return new LazyReact();
 	}
 
+	/**
+	 * Construct a new LazyReact builder, with a new task executor and retry executor
+	 * with configured number of threads 
+	 * 
+	 * @param parallelism Number of threads task executor should have
+	 * @return LazyReact instance
+	 */
 	public static LazyReact parallelBuilder(int parallelism) {
 		return LazyReact.builder().executor(new ForkJoinPool(parallelism))
 				.retrier(new RetryBuilder().parallelism(parallelism)).build();
 	}
 
+	/**
+	 * @return new LazyReact builder configured with standard parallel executor
+	 * By default this is the ForkJoinPool common instance but is configurable in the ThreadPools class
+	 * 
+	 * @see ThreadPools#getStandard()
+	 * @see RetryBuilder#getDefaultInstance()
+	 */
 	public static LazyReact parallelCommonBuilder() {
-		return new LazyReact(ForkJoinPool.commonPool());
+		return LazyReact.builder().executor(ThreadPools.getStandard())
+				.retrier(RetryBuilder.getDefaultInstance().withScheduler(ThreadPools.getCommonFreeThreadRetry())).build();
 	}
 
+	/**
+	 * @return new LazyReact builder configured to run on a separate thread (non-blocking current thread), sequentially
+	 * New ForkJoinPool will be created
+	 */
 	public static LazyReact sequentialBuilder() {
-		return lazy(new ForkJoinPool(1));
+		return LazyReact.builder().executor(new ForkJoinPool(1))
+				.retrier(RetryBuilder.getDefaultInstance().withScheduler(Executors.newScheduledThreadPool(1))).build();
 	}
 
+	/**
+	 * @return  LazyReact builder configured to run on a separate thread (non-blocking current thread), sequentially
+	 * Common free thread Executor from
+	 */
 	public static LazyReact sequentialCommonBuilder() {
-		return lazy(ThreadPools.getCommonFreeThread());
+		return LazyReact.builder().executor(ThreadPools.getCommonFreeThread())
+				.retrier(RetryBuilder.getDefaultInstance().withScheduler(ThreadPools.getCommonFreeThreadRetry())).build();
 	}
 
 	/**

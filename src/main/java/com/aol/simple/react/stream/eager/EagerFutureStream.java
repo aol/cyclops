@@ -26,6 +26,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.ThreadPools;
+import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.EagerToQueue;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
@@ -42,9 +43,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 	
-	default EagerFutureStream<U> sequential(){
-		return (EagerFutureStream<U>)FutureStream.super.sequential();
-	}
+	
 	/* 
 	 * Non-blocking asyncrhonous application of the supplied function.
 	 * Equivalent to map from Streams / Seq apis.
@@ -97,16 +96,25 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		return (EagerFutureStream) FutureStream.super.capture(errorHandler);
 	}
 
+	/* 
+	 * @see com.aol.simple.react.stream.traits.FutureStream#allOf(java.util.function.Function)
+	 */
 	@Override
 	default <T, R> EagerFutureStream<R> allOf(final Function<List<T>, R> fn) {
 		return (EagerFutureStream) FutureStream.super.allOf(fn);
 	}
 
+	/* 
+	 * @see com.aol.simple.react.stream.traits.FutureStream#peek(java.util.function.Consumer)
+	 */
 	@Override
 	default EagerFutureStream<U> peek(final Consumer<? super U> consumer) {
 		return (EagerFutureStream) FutureStream.super.peek(consumer);
 	}
 
+	/* 
+	 * @see com.aol.simple.react.stream.traits.FutureStream#filter(java.util.function.Predicate)
+	 */
 	default EagerFutureStream<U> filter(final Predicate<? super U> p) {
 		return (EagerFutureStream) FutureStream.super.filter(p);
 	}
@@ -180,9 +188,18 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 				.fromStreamCompletableFuture(stream);
 	}
 
-	/*
-	 * (non-Javadoc)
+	
+	/* 
+	 * Take the first (maxSize) completed results from this stage of the Stream as input to the next stage.
+	 * e.g.
 	 * 
+	 * EagerFutureStream.of(()->loadSlow(),()->loadMedium(),()->loadFast()).limit(2)
+	 * 
+	 * will take the results from loadMedium and loadFast()
+	 * 
+	 * 
+	 *	@param maxSize The size of the subsequent Stream
+	 *	@return EagerFutureStream
 	 * @see org.jooq.lambda.Seq#limit(long)
 	 */
 	@Override
@@ -190,17 +207,53 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		return fromStream(toQueue().stream().limit(maxSize));
 	}
 
+	/* 
+	 * Cast all elements in this stream to specified type. May throw {@link ClassCastException}.
+	 * 
+	 *  EagerFutureStream.of(1, "a", 2, "b", 3).cast(Integer.class)
+	 *  
+	 *  will throw a ClassCastException
+	 *  
+	 *	@param type Type to cast to
+	 *	@return LazyFutureStream
+	 * @see com.aol.simple.react.stream.traits.FutureStream#cast(java.lang.Class)
+	 */
 	@Override
 	default <U> EagerFutureStream<U> cast(Class<U> type) {
 		return (EagerFutureStream<U>) FutureStream.super.cast(type);
 	}
+	
+	 /**
+     * Keep only those elements in a stream that are of a given type.
+     * <p>
+     * <code><pre>
+     * 
+     * EagerFutureStream.of(1, "a", 2, "b", 3).ofType(Integer.class)
+     * 
+     * gives a Stream of (1,2,3)
+     * 
+     * EagerFutureStream.of(1, "a", 2, "b", 3).ofType(String.class)
+     * 
+     * gives a Stream of ("a","b")
+     * </pre></code>
+     *  @see com.aol.simple.react.stream.traits.FutureStream#ofType(java.lang.Class)
+     */
 	@Override
 	default <U> EagerFutureStream<U> ofType(Class<U> type){
 		return (EagerFutureStream<U>)FutureStream.super.ofType(type);
 	}
-	/*
-	 * (non-Javadoc)
+	
+	/* 
+	 * Skip the first (n) completed results from this stage of the Stream
 	 * 
+	 * e.g. 
+	 * 
+	 *  EagerFutureStream.of(()->loadSlow(),()->loadMedium(),()->loadFast()).limit(2)
+	 * 
+	 * will take the results from loadSlow()
+	 * 
+	 *	@param n number of Elements to skip
+	 *	@return EagerFutureStream
 	 * @see org.jooq.lambda.Seq#skip(long)
 	 */
 	@Override
@@ -213,7 +266,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * <p>
 	 * <code><pre>
 	 * // (1, 2, 3, 4, 5, 6)
-	 * Seq.of(1, 2, 3).concat(Seq.of(4, 5, 6))
+	 * EagerFutureStream.of(1, 2, 3).concat(EagerFutureStream.of(4, 5, 6))
 	 * </pre></code>
 	 *
 	 * @see #concat(Stream[])
@@ -229,7 +282,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * <p>
 	 * <code><pre>
 	 * // (1, 2, 3, 4)
-	 * Seq.of(1, 2, 3).concat(4)
+	 * EagerFutureStream.of(1, 2, 3).concat(4)
 	 * </pre></code>
 	 *
 	 * @see #concat(Stream[])
@@ -243,14 +296,14 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * <p>
 	 * <code><pre>
 	 * // (1, 2, 3, 4, 5, 6)
-	 * Seq.of(1, 2, 3).concat(4, 5, 6)
+	 * EagerFutureStream.of(1, 2, 3).concat(4, 5, 6)
 	 * </pre></code>
 	 *
 	 * @see #concat(Stream[])
 	 */
 	@SuppressWarnings({ "unchecked" })
 	default EagerFutureStream<U> concat(U... other) {
-		return fromStream(concat(Seq.of(other)));
+		return fromStream(concat(EagerFutureStream.of(other)));
 	}
 
 	/**
@@ -258,7 +311,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * <p>
 	 * <code><pre>
 	 * // (1, 2, 3, 1, 2, 3, ...)
-	 * Seq.of(1, 2, 3).cycle();
+	 * EagerFutureStream.of(1, 2, 3).cycle();
 	 * </pre></code>
 	 *
 	 * @see #cycle(Stream)
@@ -287,7 +340,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * <p>
 	 * <code><pre>
 	 * // (tuple(1, "a"), tuple(2, "b"), tuple(3, "c"))
-	 * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"))
+	 * EagerFutureStream.of(1, 2, 3).zip(EagerFutureStream.of("a", "b", "c"))
 	 * </pre></code>
 	 *
 	 * @see #zip(Stream, Stream)
@@ -303,7 +356,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * <p>
 	 * <code><pre>
 	 * // ("1:a", "2:b", "3:c")
-	 * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"), (i, s) -> i + ":" + s)
+	 * EagerFutureStream.of(1, 2, 3).zip(EagerFutureStream.of("a", "b", "c"), (i, s) -> i + ":" + s)
 	 * </pre></code>
 	 *
 	 * @see #zip(Seq, BiFunction)
@@ -319,7 +372,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * <p>
 	 * <code><pre>
 	 * // (tuple("a", 0), tuple("b", 1), tuple("c", 2))
-	 * Seq.of("a", "b", "c").zipWithIndex()
+	 * EagerFutureStream.of("a", "b", "c").zipWithIndex()
 	 * </pre></code>
 	 *
 	 * @see #zipWithIndex(Stream)
@@ -334,7 +387,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * <p>
 	 * <code><pre>
 	 * // ("", "a", "ab", "abc")
-	 * Seq.of("a", "b", "c").scanLeft("", (u, t) -> u + t)
+	 * EagerFutureStream.of("a", "b", "c").scanLeft("", (u, t) -> u + t)
 	 * </pre></code>
 	 */
 	@Override
@@ -348,7 +401,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * <p>
 	 * <code><pre>
 	 * // ("", "c", "cb", "cba")
-	 * Seq.of("a", "b", "c").scanRight("", (t, u) -> u + t)
+	 * EagerFutureStream.of("a", "b", "c").scanRight("", (t, u) -> u + t)
 	 * </pre></code>
 	 */
 	@Override
@@ -362,7 +415,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * <p>
 	 * <code><pre>
 	 * // (3, 2, 1)
-	 * Seq.of(1, 2, 3).reverse()
+	 * EagerFutureStream.of(1, 2, 3).reverse()
 	 * </pre></code>
 	 */
 	@Override
@@ -375,7 +428,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * <p>
 	 * <code><pre>
 	 * // e.g. (2, 3, 1)
-	 * Seq.of(1, 2, 3).shuffle()
+	 * EagerFutureStream.of(1, 2, 3).shuffle()
 	 * </pre></code>
 	 */
 	@Override
@@ -388,7 +441,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * <p>
 	 * <code><pre>
 	 * // e.g. (2, 3, 1)
-	 * Seq.of(1, 2, 3).shuffle(new Random())
+	 * EagerFutureStream.of(1, 2, 3).shuffle(new Random())
 	 * </pre></code>
 	 */
 	@Override
@@ -402,7 +455,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * <p>
 	 * <code><pre>
 	 * // (3, 4, 5)
-	 * Seq.of(1, 2, 3, 4, 5).skipWhile(i -> i < 3)
+	 * EagerFutureStream.of(1, 2, 3, 4, 5).skipWhile(i -> i < 3)
 	 * </pre></code>
 	 *
 	 * @see #skipWhile(Stream, Predicate)
@@ -418,7 +471,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * <p>
 	 * <code><pre>
 	 * // (3, 4, 5)
-	 * Seq.of(1, 2, 3, 4, 5).skipUntil(i -> i == 3)
+	 * EagerFutureStream.of(1, 2, 3, 4, 5).skipUntil(i -> i == 3)
 	 * </pre></code>
 	 *
 	 * @see #skipUntil(Stream, Predicate)
@@ -434,7 +487,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * <p>
 	 * <code><pre>
 	 * // (1, 2)
-	 * Seq.of(1, 2, 3, 4, 5).limitWhile(i -> i < 3)
+	 * EagerFutureStream.of(1, 2, 3, 4, 5).limitWhile(i -> i < 3)
 	 * </pre></code>
 	 *
 	 * @see #limitWhile(Stream, Predicate)
@@ -450,7 +503,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * <p>
 	 * <code><pre>
 	 * // (1, 2)
-	 * Seq.of(1, 2, 3, 4, 5).limitUntil(i -> i == 3)
+	 * EagerFutureStream.of(1, 2, 3, 4, 5).limitUntil(i -> i == 3)
 	 * </pre></code>
 	 *
 	 * @see #limitUntil(Stream, Predicate)
@@ -466,7 +519,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * <p>
 	 * <code><pre>
 	 * // (1, 0, 2, 0, 3, 0, 4)
-	 * Seq.of(1, 2, 3, 4).intersperse(0)
+	 * EagerFutureStream.of(1, 2, 3, 4).intersperse(0)
 	 * </pre></code>
 	 *
 	 * @see #intersperse(Stream, Object)
@@ -502,7 +555,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * <p>
 	 * <code><pre>
 	 * // tuple((1, 2, 3), (1, 2, 3))
-	 * Seq.of(1, 2, 3).duplicate()
+	 * EagerFutureStream.of(1, 2, 3).duplicate()
 	 * </pre></code>
 	 *
 	 * @see #duplicate(Stream)
@@ -513,6 +566,19 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		return new Tuple2(fromStream(duplicated.v1), fromStream(duplicated.v2));
 	}
 
+	/**
+	 * Duplicate a Stream into two equivalent EagerFutureStreams
+	 * 
+	 *  EagerFutureStream.of(1, 2, 3).duplicate()
+	 *  
+	 *  results in 
+	 *  
+	 *  tuple((1,2,3),(1,2,3))
+	 * 
+	 * @return 
+	 * 
+	 * @see #duplicate()
+	 */
 	default Tuple2<EagerFutureStream<U>, EagerFutureStream<U>> duplicateFutureStream() {
 		Tuple2 dup = duplicate();
 		return (Tuple2<EagerFutureStream<U>, EagerFutureStream<U>>) dup;
@@ -523,7 +589,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * <p>
 	 * <code><pre>
 	 * // tuple((1, 3, 5), (2, 4, 6))
-	 * Seq.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0)
+	 * EagerFutureStream.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0)
 	 * </pre></code>
 	 *
 	 * @see #partition(Stream, Predicate)
@@ -536,6 +602,19 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 				fromStream(partitioned.v2));
 	}
 
+	/**
+	 * Partition an EagerFutureStream into two EagerFutureStreams given a predicate.
+	 * 
+	 * EagerFutureStream.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0)
+	 * 
+	 * results in 
+	 * 
+	 *  tuple((1, 3, 5), (2, 4, 6))
+	 * 
+	 * @param predicate Predicate to split Stream
+	 * @return EagerFutureStream
+	 * @see #partition(Predicate)
+	 */
 	default Tuple2<EagerFutureStream<U>, EagerFutureStream<U>> partitionFutureStream(
 			Predicate<? super U> predicate) {
 		Tuple2 partition = partition(predicate);
@@ -547,7 +626,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * <p>
 	 * <code><pre>
 	 * // tuple((1, 2, 3), (4, 5, 6))
-	 * Seq.of(1, 2, 3, 4, 5, 6).splitAt(3)
+	 * EagerFutureStream.of(1, 2, 3, 4, 5, 6).splitAt(3)
 	 * </pre></code>
 	 *
 	 * @see #splitAt(Stream, long)
@@ -557,6 +636,15 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		return new Tuple2(fromStream(split.v1), fromStream(split.v2));
 	}
 
+	/**
+	 *  Split a EagerFutureStream at a given position.
+	 * 
+	 * EagerFutureStream.of(1, 2, 3, 4, 5, 6).splitAt(3)
+	 * 
+	 * results in tuple((1, 2, 3), (4, 5, 6))
+	 * 
+	 * @see #splitAt(long)
+	 */
 	default Tuple2<EagerFutureStream<U>, EagerFutureStream<U>> splitAtFutureStream(
 			long position) {
 		Tuple2 split = splitAt(position);
@@ -568,7 +656,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * <p>
 	 * <code><pre>
 	 * // tuple(1, (2, 3, 4, 5, 6))
-	 * Seq.of(1, 2, 3, 4, 5, 6).splitHead(3)
+	 * EagerFutureStream.of(1, 2, 3, 4, 5, 6).splitHead(3)
 	 * </pre></code>
 	 *
 	 * @see #splitAt(Stream, long)
@@ -579,41 +667,71 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		return new Tuple2(split.v1, fromStream(split.v2));
 	}
 
-	default Tuple2<Optional<U>, FutureStream<U>> splitAtHeadFutureStream() {
+	/**
+	 * SplitAtHead but return type is EagerFutureStream
+	 * 
+	 * @return
+	 * @see #splitAtHead()
+	 */
+	default Tuple2<Optional<U>, EagerFutureStream<U>> splitAtHeadFutureStream() {
 		Tuple2 split = splitAtHead();
 		return split;
 	}
 
 	/**
-	 * @return Eager SimpleReact for handling finite streams
+	 * @return EagerReact for handling finite streams
+	 * @see SimpleReact.SimpleReact()
 	 */
 	public static EagerReact parallelBuilder() {
 		return new EagerReact();
 	}
 
+	/**
+	 * Construct a new EagerReact builder, with a new task executor and retry executor
+	 * with configured number of threads 
+	 * 
+	 * @param parallelism Number of threads task executor should have
+	 * @return eager EagerReact instance
+	 */
 	public static EagerReact parallelBuilder(int parallelism) {
 		return eagerBuilder(new ForkJoinPool(parallelism),
 				new RetryBuilder().parallelism(parallelism));
 	}
-
+	/**
+	 * @return new EagerReact builder configured with standard parallel executor
+	 * By default this is the ForkJoinPool common instance but is configurable in the ThreadPools class
+	 * 
+	 * @see ThreadPools#getStandard()
+	 * @see RetryBuilder#getDefaultInstance()
+	 */
 	public static EagerReact paraellelCommonBuilder() {
-		return new EagerReact(ForkJoinPool.commonPool());
+		return EagerReact.builder().executor(ThreadPools.getStandard())
+		.retrier(RetryBuilder.getDefaultInstance().withScheduler(ThreadPools.getCommonFreeThreadRetry())).build();
 	}
-
+	/**
+	 * @return new eager EagerReact builder configured to run on a separate thread (non-blocking current thread), sequentially
+	 * New ForkJoinPool will be created
+	 */
 	public static EagerReact sequentialBuilder() {
-		return eagerBuilder(new ForkJoinPool(1),
-				new RetryBuilder().parallelism(1));
+		return EagerReact.builder().executor(new ForkJoinPool(1))
+				.retrier(RetryBuilder.getDefaultInstance().withScheduler(Executors.newScheduledThreadPool(1))).build();
 	}
 
+
+	/**
+	 * @return new EagerReact builder configured to run on a separate thread (non-blocking current thread), sequentially
+	 * Common free thread Executor from
+	 */
 	public static EagerReact sequentialCommonBuilder() {
-		return eagerBuilder(ThreadPools.getCommonFreeThread());
+		return EagerReact.builder().executor(ThreadPools.getCommonFreeThread())
+				.retrier(RetryBuilder.getDefaultInstance().withScheduler(ThreadPools.getCommonFreeThreadRetry())).build();
 	}
 
 	/**
 	 * @param executor
-	 *            Executor this SimpleReact instance will use to execute
+	 *            Executor this EagerReact instance will use to execute
 	 *            concurrent tasks.
-	 * @return Eager SimpleReact for handling finite streams
+	 * @return EagerReact for handling finite streams
 	 */
 	public static EagerReact eagerBuilder(ExecutorService executor) {
 		return new EagerReact(executor);
@@ -623,7 +741,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * @param retry
 	 *            RetryExecutor this SimpleReact instance will use to retry
 	 *            concurrent tasks.
-	 * @return Eager SimpleReact for handling finite streams
+	 * @return EagerReact for handling finite streams
 	 */
 	public static EagerReact eagerBuilder(RetryExecutor retry) {
 		return EagerReact.builder().retrier(retry).build();
@@ -636,7 +754,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * @param retry
 	 *            RetryExecutor this SimpleReact instance will use to retry
 	 *            concurrent tasks.
-	 * @return Eager SimpleReact for handling finite streams
+	 * @return EagerReact for handling finite streams
 	 */
 	public static EagerReact eagerBuilder(ExecutorService executor,
 			RetryExecutor retry) {
@@ -647,7 +765,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * @see Stream#of(Object)
 	 */
 	static <T> EagerFutureStream<T> of(T value) {
-		return futureStream((Stream) Seq.of(value));
+		return futureStream((Stream) EagerFutureStream.of(value));
 	}
 
 	/**
@@ -655,7 +773,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 */
 	@SafeVarargs
 	static <T> EagerFutureStream<T> of(T... values) {
-		return futureStream((Stream) Seq.of(values));
+		return futureStream((Stream) Stream.of(values));
 	}
 
 	/**

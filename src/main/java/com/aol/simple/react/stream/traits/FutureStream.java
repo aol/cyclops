@@ -51,53 +51,89 @@ public interface FutureStream<U> extends Seq<U>,
 	 * Change type of SimpleReactStream methods to FutureStream
 	 */
 	
+	/* 
+	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#retry(java.util.function.Function)
+	 */
 	default <R> FutureStream<R> retry(final Function<U, R> fn){
 		return (FutureStream)SimpleReactStream.super.retry(fn);
 	}
+	/* 
+	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#allOf(java.util.stream.Collector, java.util.function.Function)
+	 */
 	default <T, R> FutureStream<R> allOf(final Collector collector,
 			final Function<T, R> fn){
 		return (FutureStream)SimpleReactStream.super.allOf(collector,fn);
 	}
 	
+	/* 
+	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#fromStreamCompletableFuture(java.util.stream.Stream)
+	 */
 	default <R> FutureStream<R> fromStreamCompletableFuture(
 			Stream<CompletableFuture<R>> stream) {
 		return (FutureStream)SimpleReactStream.super.fromStreamCompletableFuture(stream);
 	}
+	/* 
+	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#then(java.util.function.Function)
+	 */
 	default <R> FutureStream<R> then(final Function<U, R> fn){
 		return (FutureStream)SimpleReactStream.super.then(fn);
 	}
+	/* 
+	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#fromStream(java.util.stream.Stream)
+	 */
 	default <R> FutureStream<R> fromStream(Stream<R> stream){
 		return (FutureStream)SimpleReactStream.super.fromStream(stream);
 	}
 	
+	/* 
+	 * @see org.jooq.lambda.Seq#flatMap(java.util.function.Function)
+	 */
 	@Override
 	default <R> FutureStream<R> flatMap(
 			Function<? super U, ? extends Stream<? extends R>> flatFn){
 		return (FutureStream)SimpleReactStream.super.flatMap(flatFn);
 	}
 	
+	/* 
+	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#merge(com.aol.simple.react.stream.traits.SimpleReactStream)
+	 */
 	@Override
 	default FutureStream<U> merge(SimpleReactStream<U> s){
 		return (FutureStream)SimpleReactStream.super.merge(s);
 	}
 	
+	/* 
+	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#onFail(java.util.function.Function)
+	 */
 	@Override
 	default <U> FutureStream<U> onFail(final Function<? extends SimpleReactFailedStageException, U> fn) {
 		return (FutureStream)SimpleReactStream.super.onFail(fn);
 	}
+	/* 
+	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#capture(java.util.function.Consumer)
+	 */
 	@Override
 	default  FutureStream<U> capture(final Consumer<? extends Throwable> errorHandler) {
 		return (FutureStream)SimpleReactStream.super.capture(errorHandler);
 	}
+	/* 
+	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#allOf(java.util.function.Function)
+	 */
 	@Override
 	default <T, R> FutureStream<R> allOf(final Function<List<T>, R> fn) {
 		return (FutureStream)SimpleReactStream.super.allOf(fn);
 	}
 
+	/* 
+	 * @see org.jooq.lambda.Seq#peek(java.util.function.Consumer)
+	 */
 	@Override
 	default FutureStream<U> peek(final Consumer<? super U> consumer){
 		return (FutureStream)SimpleReactStream.super.peek(consumer);
 	}
+	/* 
+	 * @see org.jooq.lambda.Seq#filter(java.util.function.Predicate)
+	 */
 	default FutureStream<U> filter(final Predicate<? super U> p){
 		return (FutureStream)SimpleReactStream.super.filter(p);
 	}
