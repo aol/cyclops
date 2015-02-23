@@ -7,6 +7,12 @@ import lombok.Setter;
 
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 
+/*
+ * Class that defines the default Retry Executor Instance (changable via set method)
+ * 
+ * @author johnmcclean
+ *
+ */
 public class RetryBuilder {
 
 	@Getter @Setter

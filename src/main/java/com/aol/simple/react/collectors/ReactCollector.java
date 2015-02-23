@@ -9,14 +9,14 @@ import lombok.AllArgsConstructor;
 
 import com.aol.simple.react.exceptions.ThrowsSoftened;
 import com.aol.simple.react.extractors.Extractor;
-import com.aol.simple.react.stream.FutureStreamImpl;
 import com.aol.simple.react.stream.StageWithResults;
 import com.aol.simple.react.stream.Status;
+import com.aol.simple.react.stream.traits.BlockingStream;
 
 @AllArgsConstructor
 public class ReactCollector<U> {
 
-	private final FutureStreamImpl<U> builder;
+	private final BlockingStream<U> builder;
 	
 	/**
 	 * React and <b>block</b>

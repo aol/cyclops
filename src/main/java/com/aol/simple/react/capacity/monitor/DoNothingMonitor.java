@@ -12,7 +12,10 @@ import java.util.function.Consumer;
  */
 public class DoNothingMonitor implements Consumer<CompletableFuture> {
 
-	/* (non-Javadoc)
+	
+	/* 
+	 * No action will be taken
+	 *	@param t Current CompletableFuture
 	 * @see java.util.function.Consumer#accept(java.lang.Object)
 	 */
 	@Override

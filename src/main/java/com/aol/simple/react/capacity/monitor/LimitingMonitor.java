@@ -37,7 +37,11 @@ public class LimitingMonitor implements Consumer<CompletableFuture>{
 		
 	}
 	
-	/* (non-Javadoc)
+	
+	/* 
+	 *	@param n CompletableFuture will be batched and if active futures above MaxActive,
+	 *            will block until reduced to acceptable level
+	 *            
 	 * @see java.util.function.Consumer#accept(java.lang.Object)
 	 */
 	@Override
