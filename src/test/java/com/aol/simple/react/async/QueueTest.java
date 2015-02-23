@@ -191,7 +191,7 @@ public class QueueTest {
 		Stream<String> stream = Stream.of("1", "2", "3");
 		Queue<String> q = new Queue(new LinkedBlockingQueue());
 		q.fromStream(stream);
-		Stream<String> dq = q.stream();
+		
 
 		Integer dequeued = q.stream().limit(3).map(it -> Integer.valueOf(it))
 				.reduce(0, (acc, next) -> acc + next);

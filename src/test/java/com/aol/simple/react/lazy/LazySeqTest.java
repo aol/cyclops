@@ -18,6 +18,7 @@ import org.junit.Test;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.QueueFactories;
 import com.aol.simple.react.base.BaseSeqTest;
+import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.eager.EagerFutureStreamImpl;
 import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.stream.simple.SimpleReact;
@@ -94,20 +95,23 @@ public class LazySeqTest extends BaseSeqTest {
 
 	@Test
 	public void shouldZipFiniteWithInfiniteSeq() throws Exception {
-		
+		ThreadPools.setUseCommon(false);
 		final Seq<Integer> units = LazyFutureStream.iterate(1,n -> n+1).limit(5);
-		final FutureStream<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100);
+		final FutureStream<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100); // <-- MEMORY LEAK! - no auto-closing yet, so writes infinetely to it's async queue
 		final Seq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
 		
 		assertThat(zipped.limit(5).join(),equalTo(of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
-}
+		ThreadPools.setUseCommon(true);
+	}
 
 	@Test
 	public void shouldZipInfiniteWithFiniteSeq() throws Exception {
-		final FutureStream<Integer> units = LazyFutureStream.iterate(1,n -> n+1);
+		ThreadPools.setUseCommon(false);
+		final FutureStream<Integer> units = LazyFutureStream.iterate(1,n -> n+1); // <-- MEMORY LEAK!- no auto-closing yet, so writes infinetely to it's async queue
 		final Seq<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100).limit(5);
 		final Seq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
 		assertThat(zipped.limit(5).join(),equalTo(of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
+		ThreadPools.setUseCommon(true);
 	}
 
 	

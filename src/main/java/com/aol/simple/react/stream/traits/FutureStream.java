@@ -103,7 +103,7 @@ public interface FutureStream<U> extends Seq<U>,
 	}
 	
 	/**
-	 * Stream and Seq supporting methods
+	 * Stream  supporting methods
 	 */
 	
 	/* (non-Javadoc)
@@ -172,17 +172,7 @@ public interface FutureStream<U> extends Seq<U>,
 		return (R) toQueue().stream().collect(supplier, accumulator, combiner);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.stream.Stream#collect(java.util.stream.Collector)
-	
-	@Override
-	// <R, A> R collect(Collector<? super T, A, R> collector)
-	default  <R, A> R collect(Collector<? super U, A, R> collector) {
-		return block(collector);
-	}
- */
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -277,28 +267,6 @@ public interface FutureStream<U> extends Seq<U>,
 
 		return toQueue().stream().reduce(identity, accumulator, combiner);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.jooq.lambda.Seq#stream()
-	 */
-	@Override
-	default  Stream<U> stream() {
-		return toQueue().stream();
-	}
-	@Override
-	default <U> FutureStream<U> cast(Class<U> type) {
-		return (FutureStream<U>) Seq.super.cast(type);
-	}
-	@Override
-	default <U> FutureStream<U> ofType(Class<U> type){
-		return (FutureStream<U>)Seq.super.ofType(type);
-	}
-
-	
-  
-	
 	/* (non-Javadoc)
 	 * @see java.util.stream.BaseStream#iterator()
 	 */
@@ -324,8 +292,14 @@ public interface FutureStream<U> extends Seq<U>,
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jooq.lambda.Seq#sequential()
+	/* 
+	 * Creates a sequential instance by populating an async Queue from the current stream,
+	 * and reading sequentially from that Stream.
+	 * 
+	 * For an alternative approach change the task executors to single thread model, via withTaskExecutor and withRetrier
+	 * 
+	 *	@return Sequential Stream
+	 * @see com.aol.simple.react.stream.traits.FutureStream#sequential()
 	 */
 	@Override
 	default Seq<U> sequential() {
@@ -342,6 +316,96 @@ public interface FutureStream<U> extends Seq<U>,
 	default FutureStream<U> parallel() {
 		return this;
 	}
+	
+	@Override
+	default  Stream<U> stream() {
+		return toQueue().stream();
+	}
+	
+	
+	/*
+	 * Seq supporting methods
+	 */
+	
+	/**
+	 * native Seq
+	 * 
+	 */
+	
+	
+	 /**
+     * Returns a stream with a given value interspersed between any two values of this stream.
+     * <p>
+     * <code><pre>
+     * // (1, 0, 2, 0, 3, 0, 4)
+     * LazyFutureStream.of(1, 2, 3, 4).intersperse(0)
+     * </pre></code>
+     *
+     * @see #intersperse(Stream, Object)
+     */
+    default FutureStream<U> intersperse(U value) {
+        return intersperse(this, value);
+    }
+
+	
+	
+	
+	/*
+	 * 
+	 *	@param type
+	 *	@return
+	 * @see org.jooq.lambda.Seq#cast(java.lang.Class)
+	 */
+	
+	@Override
+	default <U> FutureStream<U> cast(Class<U> type) {
+		return (FutureStream<U>)cast(this,type);
+	}
+	@Override
+	default <U> FutureStream<U> ofType(Class<U> type){
+		return (FutureStream<U>)ofType(this,type);
+	}
+
+	 /**
+     * Keep only those elements in a stream that are of a given type.
+     * <p>
+     * <code><pre>
+     * // (1, 2, 3)
+     * EagerFutureStream.of(1, "a", 2, "b", 3).ofType(Integer.class)
+     * </pre></code>
+     */
+    @SuppressWarnings("unchecked")
+    static <T, U> FutureStream<U> ofType(FutureStream<T> stream, Class<U> type) {
+        return stream.filter(type::isInstance).map(t -> (U) t);
+    }
+    /**
+     * Cast all elements in a stream to a given type, possibly throwing a {@link ClassCastException}.
+     * <p>
+     * <code><pre>
+     * // ClassCastException
+     * LazyFutureStream.of(1, "a", 2, "b", 3).cast(Integer.class)
+     * </pre></code>
+     */
+	static <T, U> FutureStream<U> cast(FutureStream<T> stream, Class<U> type) {
+        return stream.map(type::cast);
+    }
+	
+	
+	 /**
+     * Returns a stream with a given value interspersed between any two values of this stream.
+     * <p>
+     * <code><pre>
+     * // (1, 0, 2, 0, 3, 0, 4)
+     * Seq.of(1, 2, 3, 4).intersperse(0)
+     * </pre></code>
+     */
+    static <T> FutureStream<T> intersperse(FutureStream<T> stream, T value) {
+        return stream.flatMap(t -> Stream.of(value, t).skip(1));
+    }
+
+	
+	
+	
 
 	/* (non-Javadoc)
 	 * @see org.jooq.lambda.Seq#unordered()
@@ -471,12 +535,26 @@ public interface FutureStream<U> extends Seq<U>,
      * @see #slice(Stream, long, long)
      */
     @Override
-    default FutureStream<U> slice(long from, long to) {
-        return fromStream(Seq.super.slice(from, to));
+    default Seq<U> slice(long from, long to) {
+        return slice(from, to);
     }
     
   
-	
+    /**
+     * Returns a limited interval from a given Stream.
+     * <p>
+     * <code><pre>
+     * // (4, 5)
+     * EagerFutureStream.of(1, 2, 3, 4, 5, 6).slice(3, 5)
+     * </pre></code>
+     */
+    static <T> Seq<T> slice(FutureStream<T> stream, long from, long to) {
+        long f = Math.max(from, 0);
+        long t = Math.max(to - f, 0);
+
+        return stream.skip(f).limit(t);
+    }
+    
 	/**
 	 * Merge this reactive dataflow with another - recommended for merging
 	 * different types. To merge flows of the same type the instance method

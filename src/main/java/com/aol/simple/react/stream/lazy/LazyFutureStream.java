@@ -5,12 +5,9 @@ import static java.util.Spliterators.spliteratorUnknownSize;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
-import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -23,10 +20,9 @@ import org.jooq.lambda.tuple.Tuple2;
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
-import com.aol.simple.react.stream.simple.SimpleReact;
+import com.aol.simple.react.stream.eager.EagerFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.LazyToQueue;
-import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -38,14 +34,49 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 
 	LazyFutureStream<U> withLastActive(StreamWrapper streamWrapper);
-	/*
-	 * (non-Javadoc)
+	
+	
+	
+	
+	@Override
+	default <U> LazyFutureStream<U> cast(Class<U> type) {
+		return (LazyFutureStream<U>) FutureStream.super.cast(type);
+	}
+	@Override
+	default <U> FutureStream<U> ofType(Class<U> type){
+		return (LazyFutureStream<U>)FutureStream.super.ofType(type);
+	}
+	 
+	 /**
+     * Returns a stream with a given value interspersed between any two values of this stream.
+     * <p>
+     * <code><pre>
+     * // (1, 0, 2, 0, 3, 0, 4)
+     * LazyFutureStream.of(1, 2, 3, 4).intersperse(0)
+     * </pre></code>
+     *
+     * @see #intersperse(Stream, Object)
+     */
+	@Override
+	 default LazyFutureStream<U> intersperse(U value) {
+	        return (LazyFutureStream<U>)FutureStream.super.intersperse(value);
+	 }
+		
+	
+	
+
+	/* 
 	 * 
+	 * LazyFutureStream.of(1,2,3,4).limit(2)
+	 * 
+	 * Will result in a Stream of (1,2). Only the first two elements are used.
+	 * 
+	 *	@param maxSize number of elements to take
+	 *	@return Limited LazyFutureStream
 	 * @see org.jooq.lambda.Seq#limit(long)
 	 */
-
 	@Override
-	default Seq<U> limit(long maxSize) {
+	default LazyFutureStream<U> limit(long maxSize) {
 
 		StreamWrapper lastActive = getLastActive();
 		StreamWrapper limited = lastActive.withStream(lastActive.stream().limit(maxSize));
@@ -53,14 +84,17 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* 
+	 * LazyFutureStream.of(1,2,3,4).skip(2)
 	 * 
+	 * Will result in a stream of (3,4). The first two elements are skipped.
+	 * 
+	 *	@param n  Number of elements to skip
+	 *	@return LazyFutureStream missing skipped elements
 	 * @see org.jooq.lambda.Seq#skip(long)
 	 */
-
 	@Override
-	default Seq<U> skip(long n) {
+	default LazyFutureStream<U> skip(long n) {
 		StreamWrapper lastActive = getLastActive();
 		StreamWrapper limited = lastActive.withStream(lastActive.stream().skip(n));
 		return this.withLastActive(limited);
@@ -251,22 +285,22 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 
 		return new LazyFutureStreamImpl<T>(
 				stream.map(CompletableFuture::completedFuture),
-				Executors.newFixedThreadPool(1), RetryBuilder
+				ThreadPools.getSequential(), RetryBuilder
 						.getDefaultInstance().withScheduler(
-								Executors.newScheduledThreadPool(1)));
+								ThreadPools.getSequentialRetry()));
 	}
 
 	/**
 	 * Wrap an Iterable into a FutureStream.
 	 */
-	static <T> FutureStream<T> futureStream(Iterable<T> iterable) {
+	static <T> LazyFutureStream<T> futureStream(Iterable<T> iterable) {
 		return futureStream(iterable.iterator());
 	}
 
 	/**
 	 * Wrap an Iterator into a FutureStream.
 	 */
-	static <T> FutureStream<T> futureStream(Iterator<T> iterator) {
+	static <T> LazyFutureStream<T> futureStream(Iterator<T> iterator) {
 		return futureStream(StreamSupport.stream(
 				spliteratorUnknownSize(iterator, ORDERED), false));
 	}

@@ -26,6 +26,7 @@ import java.util.stream.StreamSupport;
 import org.jooq.lambda.Seq;
 
 import com.aol.simple.react.RetryBuilder;
+import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.StageWithResults;
@@ -465,6 +466,7 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 
 	
 	
+	
 	/**
 	 * Construct a SimpleReact Stage from a supplied array
 	 * 
@@ -574,9 +576,9 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 
 		return new SimpleReactStreamImpl<T>(
 				stream.map(CompletableFuture::completedFuture),
-				Executors.newFixedThreadPool(1), RetryBuilder
+				ThreadPools.getSequential(), RetryBuilder
 						.getDefaultInstance().withScheduler(
-								Executors.newScheduledThreadPool(1)),eager);
+								ThreadPools.getSequentialRetry()),eager);
 	}
 
 	/**

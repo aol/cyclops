@@ -38,7 +38,10 @@ public class SamplingMonitor implements Consumer<CompletableFuture>{
 		this.monitor = monitor;
 	}
 	
-	/* (non-Javadoc)
+	
+	/* 
+	 * Will pass control to another Monitor every n futures.
+	 *	@param n CompletableFuture
 	 * @see java.util.function.Consumer#accept(java.lang.Object)
 	 */
 	@Override

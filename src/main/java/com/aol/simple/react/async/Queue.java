@@ -91,8 +91,11 @@ public class Queue<T> implements Adapter<T> {
 
 	private Stream<T> closingStream(Supplier<T> s){
 		
-		 return StreamSupport.stream(
+		
+		Stream<T> st = StreamSupport.stream(
 	                new ClosingSpliterator(Long.MAX_VALUE, s), false);
+		
+		 return st;
 	}
 	
 

@@ -13,6 +13,7 @@ import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.stream.Runner;
 import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.simple.SimpleReact;
 
 public interface LazyStream<U> {
@@ -51,7 +52,7 @@ public interface LazyStream<U> {
 	 * Trigger a lazy stream
 	 */
 	default void run() {
-		run(new ForkJoinPool(1));
+		run(ThreadPools.getLazyExecutor());
 
 	}
 

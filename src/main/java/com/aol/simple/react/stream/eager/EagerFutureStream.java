@@ -41,21 +41,56 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  */
 public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
+	
+	default EagerFutureStream<U> sequential(){
+		return (EagerFutureStream<U>)FutureStream.super.sequential();
+	}
+	/* 
+	 * Non-blocking asyncrhonous application of the supplied function.
+	 * Equivalent to map from Streams / Seq apis.
+	 * 
+	 *	@param fn Function to be applied asynchronously
+	 *	@return Next stage in stream
+	 * @see com.aol.simple.react.stream.traits.FutureStream#then(java.util.function.Function)
+	 */
 	default <R> EagerFutureStream<R> then(final Function<U, R> fn) {
 		return (EagerFutureStream) FutureStream.super.then(fn);
 	}
 
+	/* 
+	 * Merge two SimpleReact Streams
+	 *	@param s Stream to merge
+	 *	@return Next stage in stream
+	 * @see com.aol.simple.react.stream.traits.FutureStream#merge(com.aol.simple.react.stream.traits.SimpleReactStream)
+	 */
 	@Override
-	default FutureStream<U> merge(SimpleReactStream<U> s) {
+	default EagerFutureStream<U> merge(SimpleReactStream<U> s) {
 		return (EagerFutureStream) FutureStream.super.merge(s);
 	}
 
+	/* 
+	 * Define failure handling for this stage in a stream.
+	 * Recovery function will be called after an excption
+	 * Will be passed a SimpleReactFailedStageException which contains both the cause,
+	 * and the input value.
+	 *
+	 *	@param fn Recovery function
+	 *	@return Next stage in stream
+	 * @see com.aol.simple.react.stream.traits.FutureStream#onFail(java.util.function.Function)
+	 */
 	@Override
 	default <U> EagerFutureStream<U> onFail(
 			final Function<? extends SimpleReactFailedStageException, U> fn) {
 		return (EagerFutureStream) FutureStream.super.onFail(fn);
 	}
 
+	/* 
+	 * Capture non-recoverable exception
+	 * 
+	 *	@param errorHandler Consumer that captures the exception
+	 *	@return Next stage in stream
+	 * @see com.aol.simple.react.stream.traits.FutureStream#capture(java.util.function.Consumer)
+	 */
 	@Override
 	default EagerFutureStream<U> capture(
 			final Consumer<? extends Throwable> errorHandler) {
@@ -155,6 +190,14 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		return fromStream(toQueue().stream().limit(maxSize));
 	}
 
+	@Override
+	default <U> EagerFutureStream<U> cast(Class<U> type) {
+		return (EagerFutureStream<U>) FutureStream.super.cast(type);
+	}
+	@Override
+	default <U> EagerFutureStream<U> ofType(Class<U> type){
+		return (EagerFutureStream<U>)FutureStream.super.ofType(type);
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -224,7 +267,21 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	default EagerFutureStream<U> cycle() {
 		return fromStream(FutureStream.super.cycle());
 	}
-
+	  /**
+     * Returns a limited interval from a given Stream.
+     * <p>
+     * <code><pre>
+     * // (4, 5)
+     * EagerFutureStream.of(1, 2, 3, 4, 5, 6).slice(3, 5)
+     * </pre></code>
+     *
+     * @see #slice(Stream, long, long)
+     */
+    @Override
+    default EagerFutureStream<U> slice(long from, long to) {
+        return slice(from, to);
+    }
+	 
 	/**
 	 * Zip two streams into one.
 	 * <p>
@@ -617,9 +674,9 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 		return new EagerFutureStreamImpl<T>(
 				stream.map(CompletableFuture::completedFuture),
-				Executors.newFixedThreadPool(1), RetryBuilder
+				ThreadPools.getSequential(), RetryBuilder
 						.getDefaultInstance().withScheduler(
-								Executors.newScheduledThreadPool(1)));
+								ThreadPools.getSequentialRetry()));
 	}
 
 	/**
