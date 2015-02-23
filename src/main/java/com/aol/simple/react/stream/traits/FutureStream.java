@@ -364,11 +364,11 @@ public interface FutureStream<U> extends Seq<U>,
 	
 	 /**
      * Returns a stream with a given value interspersed between any two values of this stream.
-     * <p>
-     * <code><pre>
+     * 
+     * 
      * // (1, 0, 2, 0, 3, 0, 4)
      * LazyFutureStream.of(1, 2, 3, 4).intersperse(0)
-     * </pre></code>
+     * 
      *
      * @see #intersperse(Stream, Object)
      */
@@ -397,11 +397,11 @@ public interface FutureStream<U> extends Seq<U>,
 
 	 /**
      * Keep only those elements in a stream that are of a given type.
-     * <p>
-     * <code><pre>
+     * 
+     * 
      * // (1, 2, 3)
      * EagerFutureStream.of(1, "a", 2, "b", 3).ofType(Integer.class)
-     * </pre></code>
+     * 
      */
     @SuppressWarnings("unchecked")
     static <T, U> FutureStream<U> ofType(FutureStream<T> stream, Class<U> type) {
@@ -409,11 +409,11 @@ public interface FutureStream<U> extends Seq<U>,
     }
     /**
      * Cast all elements in a stream to a given type, possibly throwing a {@link ClassCastException}.
-     * <p>
-     * <code><pre>
+     * 
+     * 
      * // ClassCastException
      * LazyFutureStream.of(1, "a", 2, "b", 3).cast(Integer.class)
-     * </pre></code>
+     * 
      */
 	static <T, U> FutureStream<U> cast(FutureStream<T> stream, Class<U> type) {
         return stream.map(type::cast);
@@ -422,11 +422,11 @@ public interface FutureStream<U> extends Seq<U>,
 	
 	 /**
      * Returns a stream with a given value interspersed between any two values of this stream.
-     * <p>
-     * <code><pre>
+     * 
+     * 
      * // (1, 0, 2, 0, 3, 0, 4)
      * Seq.of(1, 2, 3, 4).intersperse(0)
-     * </pre></code>
+     * 
      */
     static <T> FutureStream<T> intersperse(FutureStream<T> stream, T value) {
         return stream.flatMap(t -> Stream.of(value, t).skip(1));
@@ -555,11 +555,11 @@ public interface FutureStream<U> extends Seq<U>,
 	
 	  /**
      * Returns a limited interval from a given Stream.
-     * <p>
-     * <code><pre>
+     * 
+     * 
      * // (4, 5)
      * Seq.of(1, 2, 3, 4, 5, 6).slice(3, 5)
-     * </pre></code>
+     * 
      *
      * @see #slice(Stream, long, long)
      */
@@ -571,11 +571,11 @@ public interface FutureStream<U> extends Seq<U>,
   
     /**
      * Returns a limited interval from a given Stream.
-     * <p>
-     * <code><pre>
+     * 
+     * 
      * // (4, 5)
      * EagerFutureStream.of(1, 2, 3, 4, 5, 6).slice(3, 5)
-     * </pre></code>
+     * 
      */
     static <T> Seq<T> slice(FutureStream<T> stream, long from, long to) {
         long f = Math.max(from, 0);

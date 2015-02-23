@@ -486,7 +486,7 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 
 	/**
 	 * @return  An Eager SimpleReact instance 
-	 *  @see SimpleReact.SimpleReact()
+	 *  @see SimpleReact#SimpleReact()
 	 */
 	public static SimpleReact parallelBuilder() {
 		return new SimpleReact();
@@ -509,7 +509,7 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	 * By default this is the ForkJoinPool common instance but is configurable in the ThreadPools class
 	 * 
 	 * @see ThreadPools#getStandard()
-	 * @see RetryBuilder#getDefaultInstance()
+	 * see RetryBuilder#getDefaultInstance()
 	 */
 	public static SimpleReact parallelCommonBuilder() {
 		return SimpleReact.builder().executor(ThreadPools.getStandard())

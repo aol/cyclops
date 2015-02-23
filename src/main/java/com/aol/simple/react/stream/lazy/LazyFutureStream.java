@@ -193,11 +193,11 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	
 	/**
 	 * Concatenate two streams.
-	 * <p>
-	 * <code><pre>
+	 * 
+	 * 
 	 * // (1, 2, 3, 4, 5, 6)
 	 * EagerFutureStream.of(1, 2, 3).concat(EagerFutureStream.of(4, 5, 6))
-	 * </pre></code>
+	 * 
 	 *
 	 * @see #concat(Stream[])
 	 */
@@ -229,8 +229,8 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	
 	 /**
      * Keep only those elements in a stream that are of a given type.
-     * <p>
-     * <code><pre>
+     * 
+     * 
      * 
      * LazyFutureStream.of(1, "a", 2, "b", 3).ofType(Integer.class)
      * 
@@ -239,7 +239,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
      * LazyFutureStream.of(1, "a", 2, "b", 3).ofType(String.class)
      * 
      * gives a Stream of ("a","b")
-     * </pre></code>
+     * 
      *  @see com.aol.simple.react.stream.traits.FutureStream#ofType(java.lang.Class)
      */
 	@Override
@@ -249,11 +249,11 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 
 	 /**
      * Returns a stream with a given value interspersed between any two values of this stream.
-     * <p>
-     * <code><pre>
+     * 
+     * 
      * // (1, 0, 2, 0, 3, 0, 4)
      * LazyFutureStream.of(1, 2, 3, 4).intersperse(0)
-     * </pre></code>
+     * 
      *
      * @see #intersperse(Stream, Object)
      */
@@ -325,11 +325,11 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 
 	/**
 	 * Duplicate a Streams into two equivalent Streams.
-	 * <p>
-	 * <code><pre>
+	 * 
+	 * 
 	 * // tuple((1, 2, 3), (1, 2, 3))
-	 * Seq.of(1, 2, 3).duplicate()
-	 * </pre></code>
+	 * LazyFutureStream.of(1, 2, 3).duplicate()
+	 * 
 	 *
 	 * @see #duplicate(Stream)
 	 */
@@ -341,11 +341,10 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 
 	/**
 	 * Partition a stream into two given a predicate.
-	 * <p>
-	 * <code><pre>
+	 * 
 	 * // tuple((1, 3, 5), (2, 4, 6))
-	 * Seq.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0)
-	 * </pre></code>
+	 * LazyFutureStream.of(1, 2, 3, 4, 5, 6).partition(i -&gt; i % 2 != 0)
+	 *
 	 *
 	 * @see #partition(Stream, Predicate)
 	 */
@@ -391,7 +390,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 * By default this is the ForkJoinPool common instance but is configurable in the ThreadPools class
 	 * 
 	 * @see ThreadPools#getStandard()
-	 * @see RetryBuilder#getDefaultInstance()
+	 * see RetryBuilder#getDefaultInstance()
 	 */
 	public static LazyReact parallelCommonBuilder() {
 		return LazyReact.builder().executor(ThreadPools.getStandard())
