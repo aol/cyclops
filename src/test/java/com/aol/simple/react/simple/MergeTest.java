@@ -10,8 +10,9 @@ import java.util.concurrent.ExecutionException;
 
 import org.junit.Test;
 
+import com.aol.simple.react.stream.ThreadPools;
+import com.aol.simple.react.stream.eager.EagerFutureStream;
 import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 
 public class MergeTest {
@@ -86,10 +87,15 @@ public class MergeTest {
 		SimpleReactStream<String> stage2 = new SimpleReact().<Integer> react(() -> 4,
 				() -> 5, () -> 6).then(it -> "*" + it);
 
-		List<String> result1 = stage1.merge(stage2).then(it -> it +"*").block();
+		List<String> result1 = stage1.merge(stage2).then(it -> it +"*")
+				.peek(it -> System.out.println(it)).block();
 		List<String> result2 = stage1.merge(stage2).then(it -> it +"-").block();
 		
 		result1.stream().forEach( it-> assertThat(it,endsWith("*")));
 		result2.stream().forEach( it-> assertThat(it,endsWith("-")));
+		
+			
+		
+		
 	}
 }

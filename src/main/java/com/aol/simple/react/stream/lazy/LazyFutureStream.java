@@ -5,13 +5,17 @@ import static java.util.Spliterators.spliteratorUnknownSize;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -19,12 +23,13 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.RetryBuilder;
+import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.eager.EagerFutureStream;
-import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.LazyToQueue;
+import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -37,9 +42,175 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 
 	LazyFutureStream<U> withLastActive(StreamWrapper streamWrapper);
 	
+	/**
+	 * Override return type on SimpleReactStream
+	 */
+	
+	/* 
+	 * Non-blocking asyncrhonous application of the supplied function.
+	 * Equivalent to map from Streams / Seq apis.
+	 * 
+	 *	@param fn Function to be applied asynchronously
+	 *	@return Next stage in stream
+	 * @see com.aol.simple.react.stream.traits.FutureStream#then(java.util.function.Function)
+	 */
+	default <R> LazyFutureStream<R> then(final Function<U, R> fn) {
+		return (LazyFutureStream) FutureStream.super.then(fn);
+	}
+
+	/* 
+	 * Merge two SimpleReact Streams
+	 *	@param s Stream to merge
+	 *	@return Next stage in stream
+	 * @see com.aol.simple.react.stream.traits.FutureStream#merge(com.aol.simple.react.stream.traits.SimpleReactStream)
+	 */
+	@Override
+	default LazyFutureStream<U> merge(SimpleReactStream<U> s) {
+		return (LazyFutureStream) FutureStream.super.merge(s);
+	}
+
+	/* 
+	 * Define failure handling for this stage in a stream.
+	 * Recovery function will be called after an exception
+	 * Will be passed a SimpleReactFailedStageException which contains both the cause,
+	 * and the input value.
+	 *
+	 *	@param fn Recovery function
+	 *	@return Next stage in stream
+	 * @see com.aol.simple.react.stream.traits.FutureStream#onFail(java.util.function.Function)
+	 */
+	@Override
+	default <U> LazyFutureStream<U> onFail(
+			final Function<? extends SimpleReactFailedStageException, U> fn) {
+		return (LazyFutureStream) FutureStream.super.onFail(fn);
+	}
+
+	/* 
+	 * Capture non-recoverable exception
+	 * 
+	 *	@param errorHandler Consumer that captures the exception
+	 *	@return Next stage in stream
+	 * @see com.aol.simple.react.stream.traits.FutureStream#capture(java.util.function.Consumer)
+	 */
+	@Override
+	default LazyFutureStream<U> capture(
+			final Consumer<? extends Throwable> errorHandler) {
+		return (LazyFutureStream) FutureStream.super.capture(errorHandler);
+	}
+
+	/* 
+	 * @see com.aol.simple.react.stream.traits.FutureStream#allOf(java.util.function.Function)
+	 */
+	@Override
+	default <T, R> LazyFutureStream<R> allOf(final Function<List<T>, R> fn) {
+		return (LazyFutureStream) FutureStream.super.allOf(fn);
+	}
+
+	/* 
+	 * @see com.aol.simple.react.stream.traits.FutureStream#peek(java.util.function.Consumer)
+	 */
+	@Override
+	default LazyFutureStream<U> peek(final Consumer<? super U> consumer) {
+		return (LazyFutureStream) FutureStream.super.peek(consumer);
+	}
+
+	/* 
+	 * @see com.aol.simple.react.stream.traits.FutureStream#filter(java.util.function.Predicate)
+	 */
+	default LazyFutureStream<U> filter(final Predicate<? super U> p) {
+		return (LazyFutureStream) FutureStream.super.filter(p);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.aol.simple.react.stream.FutureStreamImpl#flatMap(java.util.function
+	 * .Function)
+	 */
+	@Override
+	default <R> LazyFutureStream<R> flatMap(
+			Function<? super U, ? extends Stream<? extends R>> flatFn) {
+
+		return (LazyFutureStream) FutureStream.super.flatMap(flatFn);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.aol.simple.react.stream.FutureStreamImpl#retry(java.util.function
+	 * .Function)
+	 */
+	@Override
+	default <R> LazyFutureStream<R> retry(Function<U, R> fn) {
+
+		return (LazyFutureStream) FutureStream.super.retry(fn);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.aol.simple.react.stream.FutureStreamImpl#allOf(java.util.stream.Collector
+	 * , java.util.function.Function)
+	 */
+	@Override
+	default <T, R> LazyFutureStream<R> allOf(Collector collector,
+			Function<T, R> fn) {
+
+		return (LazyFutureStream) FutureStream.super.allOf(collector, fn);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.aol.simple.react.stream.FutureStreamImpl#fromStream(java.util.stream
+	 * .Stream)
+	 */
+	@Override
+	default <R> LazyFutureStream<R> fromStream(Stream<R> stream) {
+
+		return (LazyFutureStream) FutureStream.super.fromStream(stream);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.aol.simple.react.stream.FutureStreamImpl#fromStreamCompletableFuture
+	 * (java.util.stream.Stream)
+	 */
+	@Override
+	default <R> LazyFutureStream<R> fromStreamCompletableFuture(
+			Stream<CompletableFuture<R>> stream) {
+
+		return (LazyFutureStream) FutureStream.super
+				.fromStreamCompletableFuture(stream);
+	}
+
+	
+	/**
+	 * Concatenate two streams.
+	 * <p>
+	 * <code><pre>
+	 * // (1, 2, 3, 4, 5, 6)
+	 * EagerFutureStream.of(1, 2, 3).concat(EagerFutureStream.of(4, 5, 6))
+	 * </pre></code>
+	 *
+	 * @see #concat(Stream[])
+	 */
+	@SuppressWarnings({ "unchecked" })
+	@Override
+	default LazyFutureStream<U> concat(Stream<U> other) {
+		
+		
+		SimpleReactStream stream = other instanceof SimpleReactStream? (SimpleReactStream)other : SimpleReactStream.sequentialCommonBuilder().fromStreamWithoutFutures(other);
+		return (LazyFutureStream)merge(stream);
+	}
 	
 	
-	 
 	/* 
 	 * Cast all elements in this stream to specified type. May throw {@link ClassCastException}.
 	 * 

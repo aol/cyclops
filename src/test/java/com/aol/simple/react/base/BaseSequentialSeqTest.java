@@ -8,7 +8,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -19,6 +18,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
@@ -26,7 +26,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.simple.react.stream.eager.EagerFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
 
 public abstract class BaseSequentialSeqTest {
@@ -38,6 +37,28 @@ public abstract class BaseSequentialSeqTest {
 	public void setup(){
 		empty = of();
 		nonEmpty = of(1);
+	}
+	
+	@Test
+	public void concat(){
+	List<String> result = 	of(1,2,3).concat(100,200,300)
+			.map(it ->it+"!!").collect(Collectors.toList());
+
+		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
+	}
+	@Test
+	public void concatStreams(){
+	List<String> result = 	of(1,2,3).concat(of(100,200,300))
+			.map(it ->it+"!!").collect(Collectors.toList());
+
+		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
+	}
+	@Test
+	public void merge(){
+	List<String> result = 	of(1,2,3).merge(of(100,200,300))
+			.map(it ->it+"!!").collect(Collectors.toList());
+
+		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
 	}
 	@Test
 	public void zip(){
@@ -52,7 +73,7 @@ public abstract class BaseSequentialSeqTest {
 		assertThat(right,hasItem(400));
 		
 		List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
-		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
+		assertThat(asList(1,2,3,4),equalTo(left));
 		
 		
 	}
@@ -148,7 +169,7 @@ public abstract class BaseSequentialSeqTest {
 
 	@Test
 	public void limitWhileTest(){
-		List<Integer> list = of(1,2,3,4,5,6).sorted().limitWhile(it -> it<4).peek(it -> System.out.println(it)).collect(Collectors.toList());
+		List<Integer> list = of(1,2,3,4,5,6).limitWhile(it -> it<4).peek(it -> System.out.println(it)).collect(Collectors.toList());
 	
 		assertThat(list,hasItem(1));
 		assertThat(list,hasItem(2));
@@ -160,23 +181,23 @@ public abstract class BaseSequentialSeqTest {
 
     @Test
     public void testScanLeftStringConcat() {
-        assertThat(of("a", "b", "c").sorted().scanLeft("", String::concat).toList(),
+        assertThat(of("a", "b", "c").scanLeft("", String::concat).toList(),
         		is(asList("", "a", "ab", "abc")));
     }
     @Test
     public void testScanLeftSum() {
-    	assertThat(of("a", "ab", "abc").sorted().scanLeft(0, (u, t) -> u + t.length()).toList(), 
+    	assertThat(of("a", "ab", "abc").scanLeft(0, (u, t) -> u + t.length()).toList(), 
     			is(asList(0, 1, 3, 6)));
     }
 
     @Test
     public void testScanRightStringConcat() {
-        assertThat(of("a", "b", "c").sorted().scanRight("", String::concat).toList(),
+        assertThat(of("a", "b", "c").scanRight("", String::concat).toList(),
             is(asList("", "c", "bc", "abc")));
     }
     @Test
     public void testScanRightSum() {
-    	assertThat(of("a", "ab", "abc").sorted().scanRight(0, (t, u) -> u + t.length()).toList(),
+    	assertThat(of("a", "ab", "abc").scanRight(0, (t, u) -> u + t.length()).toList(),
             is(asList(0, 3, 5, 6)));
 
         
@@ -186,7 +207,7 @@ public abstract class BaseSequentialSeqTest {
 
     @Test
     public void testReverse() {
-        assertThat( of(1, 2, 3).sorted().reverse().toList(), is(asList(3, 2, 1)));
+        assertThat( of(1, 2, 3).reverse().toList(), is(asList(3, 2, 1)));
     }
 
     @Test
@@ -201,8 +222,8 @@ public abstract class BaseSequentialSeqTest {
 
     @Test
     public void testCycle() {
-        assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).sorted().cycle().limit(6).toList());
-        assertEquals(asList(1, 2, 3, 1, 2, 3), of(1, 2, 3).sorted().cycle().limit(6).toList());
+        assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle().limit(6).toList());
+        assertEquals(asList(1, 2, 3, 1, 2, 3), of(1, 2, 3).cycle().limit(6).toList());
     }
     
     @Test
@@ -266,9 +287,9 @@ public abstract class BaseSequentialSeqTest {
 
 	    @Test
 	    public void testJoin() {
-	        assertEquals("123",of(1, 2, 3).sorted().join());
-	        assertEquals("1, 2, 3", of(1, 2, 3).sorted().join(", "));
-	        assertEquals("^1|2|3$", of(1, 2, 3).sorted().join("|", "^", "$"));
+	        assertEquals("123",of(1, 2, 3).join());
+	        assertEquals("1, 2, 3", of(1, 2, 3).join(", "));
+	        assertEquals("^1|2|3$", of(1, 2, 3).join("|", "^", "$"));
 	    }
 
 	    
@@ -506,7 +527,41 @@ public abstract class BaseSequentialSeqTest {
 	           
 	    }
 
-	  
+	  //tests converted from lazy-seq suite
+	    @Test
+		public void flattenEmpty() throws Exception {
+				assertTrue(this.<Integer>of().flatMap(i -> asList(i, -i).stream()).block().isEmpty());
+		}
+
+		@Test
+		public void flatten() throws Exception {
+			assertThat(this.<Integer>of(1,2).flatMap(i -> asList(i, -i).stream()).block(),equalTo(asList(1, -1, 2, -2)));		
+		}
+
+		
+
+		@Test
+		public void flattenEmptyStream() throws Exception {
+			
+			assertThat(this.<Integer>of(1,2,3,4,5,5,6,8,9,10).flatMap(BaseSequentialSeqTest::flatMapFun).limit(10).collect(Collectors.toList()),
+											equalTo(asList(2, 3, 4, 5, 6, 7, 0, 0, 0, 0)));
+		}
+
+		private static Stream<Integer> flatMapFun(int i) {
+			if (i <= 0) {
+				return Arrays.<Integer>asList().stream();
+			}
+			switch (i) {
+				case 1:
+					return asList(2).stream();
+				case 2:
+					return asList(3, 4).stream();
+				case 3:
+					return asList(5, 6, 7).stream();
+				default:
+					return asList(0, 0).stream();
+			}
+		}
 
 	    
 	

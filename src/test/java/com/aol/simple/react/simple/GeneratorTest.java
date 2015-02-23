@@ -15,12 +15,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
 
 import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 
 public class GeneratorTest {
@@ -72,27 +73,27 @@ public class GeneratorTest {
 	}
 	@Test
 	public void testGenerateDataflowMovingConcurrently() throws InterruptedException, ExecutionException {
-		count =0;
-		second =0;
+		AtomicInteger count =new AtomicInteger();
+		AtomicInteger second = new AtomicInteger();
 		SimpleReactStream s = new SimpleReact()
 				.<Integer> react(() -> {
-					sleep(count++);
-					return count;
+					sleep(count.incrementAndGet());
+					return count.get();
 				} ,times(50))
 				.then(it -> it * 100)
 				.then(it -> {
 					
-					second ++;
+					second.incrementAndGet();
 					return it;
 				})
 				.<String>then(it -> "*" + it);
 				
 		//generation has not complete / but chain has complete for some flows
 		
-		while(count<10){ }
-		assertThat(second,greaterThan(0)); 
-		assertThat(count,lessThan(50)); 
-		assertThat(count,greaterThan(2));
+		while(count.get()<10){ }
+		assertThat(second.get(),greaterThan(0)); 
+		assertThat(count.get(),lessThan(50)); 
+		assertThat(count.get(),greaterThan(2));
 		
 		s.block();
 		
@@ -193,7 +194,7 @@ public class GeneratorTest {
 	@Test
 	public void testGenerateParellel() throws InterruptedException, ExecutionException {
 		Set<Long> threads = new SimpleReact(new ForkJoinPool(10))
-				.<Long> react(() ->Thread.currentThread().getId() ,SimpleReact.times(1000))
+				.<Long> react(() -> { LockSupport.parkNanos(0l); return Thread.currentThread().getId();} ,SimpleReact.times(1000))
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.capture(e -> capture++)

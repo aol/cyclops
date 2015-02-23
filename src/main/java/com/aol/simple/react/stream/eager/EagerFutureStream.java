@@ -274,7 +274,14 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	default EagerFutureStream<U> concat(Stream<U> other) {
+		if(other instanceof SimpleReactStream)
+			return (EagerFutureStream)merge((SimpleReactStream)other);
 		return fromStream(FutureStream.super.concat(other));
+	}
+	default FutureStream<U> concat(SimpleReactStream<U> other) {
+		
+		return (EagerFutureStream)merge((SimpleReactStream)other);
+		
 	}
 
 	/**
@@ -303,7 +310,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 */
 	@SuppressWarnings({ "unchecked" })
 	default EagerFutureStream<U> concat(U... other) {
-		return fromStream(concat(EagerFutureStream.of(other)));
+		return ( EagerFutureStream<U>)concat((SimpleReactStream)EagerFutureStream.of(other));
 	}
 
 	/**
@@ -315,11 +322,11 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * </pre></code>
 	 *
 	 * @see #cycle(Stream)
-	 */
+	 
 	@Override
 	default EagerFutureStream<U> cycle() {
 		return fromStream(FutureStream.super.cycle());
-	}
+	}*/
 	  /**
      * Returns a limited interval from a given Stream.
      * <p>

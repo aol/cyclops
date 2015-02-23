@@ -141,6 +141,14 @@ For all three Streams onFail allows recovery from a Streaming stage that fails.
 
 ![stream onFail](https://cloud.githubusercontent.com/assets/9964792/6320747/34c8d666-bade-11e4-817d-2d4c5c3fa6e7.png)
 
+##capture
+
+###EagerFutureStream, LazyFutureStream, SimpleReactStream
+
+Capture allows error handling for unrecoverable errors.
+
+![eagerfuturestream capture](https://cloud.githubusercontent.com/assets/9964792/6329474/8ee5cdea-bb68-11e4-96c3-d8335879408e.png)
+
 ##flatMap
 
 ###EagerFutureStream, LazyFutureStream, SimpleReactStream
@@ -149,12 +157,19 @@ For all three Streams specifying a flatMap splits a single result into multiple 
 
 ![stream flatMap](https://cloud.githubusercontent.com/assets/9964792/6320742/18ce599a-bade-11e4-8bdb-8909c71da06c.png)
 
-##allOf
+##allOf (async collect)
 ###EagerFutureStream, LazyFutureStream, SimpleReactStream
 
 allOf is the inverse of flatMap. It rolls up a Stream from a previous stage, asynchronously into a single collection for further processing as a group.
 
 ![stream allOf](https://cloud.githubusercontent.com/assets/9964792/6320739/0a98c8ba-bade-11e4-9097-0b3209a5aba1.png)
+
+block / collect
+EagerFutureStream, LazyFutureStream, SimpleReactStream
+
+Block behaves like allOf except that it blocks the calling thread until the Stream has been processed.
+
+![stream block](![eagerfuturestream block](https://cloud.githubusercontent.com/assets/9964792/6329382/9d475a76-bb67-11e4-9fe9-b081046a659b.png))
 
 ##zip
 ###EagerFutureStream, LazyFutureStream, SimpleReactStream

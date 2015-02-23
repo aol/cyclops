@@ -30,6 +30,7 @@ import org.jooq.lambda.Seq;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.stream.eager.EagerFutureStream;
 
 public interface FutureStream<U> extends Seq<U>,
 										ConfigurableStream<U>, 
@@ -39,17 +40,9 @@ public interface FutureStream<U> extends Seq<U>,
 										ToQueue<U>{
 	
 
-	//abstract boolean isEager();
-	
-	//abstract StreamWrapper getLastActive();
-	//abstract FutureStream<U> withLastActive(StreamWrapper streamWrapper);
-
-//	abstract <R> R block(final Collector collector);
 	
 	
-	/**
-	 * Change type of SimpleReactStream methods to FutureStream
-	 */
+	
 	
 	/* 
 	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#retry(java.util.function.Function)
