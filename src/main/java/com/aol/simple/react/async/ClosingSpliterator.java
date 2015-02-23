@@ -35,14 +35,12 @@ public class ClosingSpliterator<T> implements Spliterator<T> {
 		public boolean tryAdvance(Consumer<? super T> action) {
 			 Objects.requireNonNull(action);
             try{ 
-            	System.out.println(action.getClass());
-            	System.out.println(action);
             	action.accept(s.get());
              return true;
             }catch(ClosedQueueException e){
             	return false;
             }catch(Exception e){
-            	e.printStackTrace();
+            	
             	return false;
             }
             

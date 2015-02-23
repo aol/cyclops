@@ -1,6 +1,7 @@
 package com.aol.simple.react.async;
 
-import static com.aol.simple.react.stream.EagerFutureStream.*;
+import static com.aol.simple.react.stream.eager.EagerFutureStream.parallel;
+import static com.aol.simple.react.stream.eager.EagerFutureStream.parallelBuilder;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -23,8 +24,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.simple.react.stream.FutureStream;
-import com.aol.simple.react.stream.SimpleReact;
+import com.aol.simple.react.stream.simple.SimpleReact;
+import com.aol.simple.react.stream.traits.SimpleReactStream;
 
 public class QueueTest {
 
@@ -103,7 +104,7 @@ public class QueueTest {
 	public void backPressureTimeoutTestVeryHigh() {
 		Queue<Integer> q = new Queue<Integer>(new LinkedBlockingQueue<>(2))
 				.withOfferTimeout(1).withOfferTimeUnit(TimeUnit.DAYS);
-		FutureStream<Boolean> s = new SimpleReact().react(
+		SimpleReactStream<Boolean> s = new SimpleReact().react(
 				() -> offerAndIncrementFound(q),
 				() -> offerAndIncrementFound(q),
 				() -> offerAndIncrementFound(q),
@@ -190,7 +191,7 @@ public class QueueTest {
 		Stream<String> stream = Stream.of("1", "2", "3");
 		Queue<String> q = new Queue(new LinkedBlockingQueue());
 		q.fromStream(stream);
-		Stream<String> dq = q.stream();
+		
 
 		Integer dequeued = q.stream().limit(3).map(it -> Integer.valueOf(it))
 				.reduce(0, (acc, next) -> acc + next);
@@ -224,9 +225,9 @@ public class QueueTest {
 		count1 = 100000;
 
 		Queue<Integer> q = new Queue(new LinkedBlockingQueue());
-		parallel().reactInfinitely(() -> count++)
+		parallelBuilder().reactInfinitely(() -> count++)
 				.then(it -> q.offer(it)).run(new ForkJoinPool(1));
-		parallel().reactInfinitely(() -> count1++)
+		parallelBuilder().reactInfinitely(() -> count1++)
 				.then(it -> q.offer(it)).run(new ForkJoinPool(1));
 
 		List<Integer> result = q.stream().limit(1000)
@@ -313,7 +314,7 @@ public class QueueTest {
 		}, () -> q.offer(5));
 
 		Collection<String> results = parallel()
-				.fromStream(q.streamCompletableFutures()).then(it -> "*" + it)
+				.fromStream(q.stream()).then(it -> "*" + it)
 				.run(() -> new ArrayList<String>());
 
 		assertThat(results.size(), is(3));
@@ -337,7 +338,7 @@ public class QueueTest {
 			});
 
 			List<String> result = parallel()
-					.fromStream(q.streamCompletableFutures())
+					.fromStream(q.stream())
 					.then(it -> "*" + it)
 					.peek(it -> found.getAndAdd(1))
 					.peek(it -> System.out.println(it))

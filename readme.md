@@ -24,6 +24,30 @@ SimpleReact is a Java 8 concurrent Streaming library. We provide three Stream ty
  
 
 
+SimpleReact is a Java 8 concurrent Streaming library. We provide three Stream types, and three asynchronous data structures.
+
+##Stream Types
+
+* SimpleReactStream : this provides a simple, focused API for Stream Futures based on Promises / A++ spec.
+
+* EagerFutureStream : An easy to use JDK 8 Stream of CompletableFutures. Also has all of the SimpleReact API methods, and scala-like [jOOλ Seq](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.5/org/jooq/lambda/Seq.html) methods. EagerFutureStream kicks of future tasks eagerly and can be run in either parallel or sequential (free-threaded) modes.
+
+* LazyFutureStream : Provides a Lazy JDK 8 Stream of CompletableFutures. Can be used for constant proccessing (e.g. of data coming in off a SimpleReact asynchronous queue).
+ 
+ ![simplereactstreaming types](https://cloud.githubusercontent.com/assets/9964792/6320732/f24f6458-badd-11e4-8e45-10373e3654f7.png)
+ 
+##Asynchronous datastructures
+
+* Queue : async queue that can be used to join producing and consuming streams. Multiple consuming streams (if connected) compete for messages on the queue.
+
+* Topic : async topic that can be used to join producing and consuming streams. Multiple consuming streams (if connected) recieve each message on the topic.
+
+* Signal : async signal that can stream changes, backed by either a Topic or a Queue.
+
+![simplereact datastructures](https://cloud.githubusercontent.com/assets/9964792/6320736/fb884daa-badd-11e4-801f-9a61a5213be2.png)
+ 
+
+
 SimpleReact is a parallel Stream library that implements java.util.stream.Stream. Under the hood, SimpleReact manages parallel streams as a stream of CompletableFutures. SimpleReact provides a simple core API based on the Promises / A++ spec, while also providing a full rich range of options by implementing both JDK 8 Stream, and the scala-like [jOOλ Seq](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.5/org/jooq/lambda/Seq.html). SimpleReact goes beyond the traditional Java 8 Streaming interface by offering failure recovery, capture and retry functionality.
 
 It is an easy to use, concurrent, reactive programming library for JDK 8.  It provides a focused, simple and limited core Reactive API aimed at solving the 90% use case - but without adding complexity. It is a core goal of SimpleReact to integrate with JDK 8 Stream libraries for maximum reuse and plugability.
@@ -35,6 +59,7 @@ See [A Simple Api, and a Rich Api](https://github.com/aol/simple-react/wiki/A-si
 
 * [Adding SimpleReact as a dependency](https://github.com/aol/simple-react/wiki/Adding-SimpleReact-as-a-dependency)
 * [Search Maven](http://search.maven.org/#search%7Cga%7C1%7Ccom.aol.simplereact)
+<<<<<<< HEAD
 
 For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:'0.4'
 
@@ -56,6 +81,29 @@ For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:
 
 * [Example : Scaling microservices with NIO and SimpleReact](https://medium.com/@johnmcclean/scaling-up-microservices-with-nio-and-simplereact-b2e8f41fdd68)
 
+=======
+
+For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:'0.4'
+
+##Documentation
+
+
+* [wiki](https://github.com/aol/simple-react/wiki)
+* [Javadoc](http://www.javadoc.io/doc/com.aol.simplereact/simple-react/0.4)
+* [Articles on medium](https://medium.com/search?q=simplereact)
+
+
+##Getting started
+
+* [See an illustrative getting started example](https://github.com/aol/simple-react/wiki/Getting-started-with-a-simple-example)
+
+* [What does Simple React do](https://github.com/aol/simple-react/wiki/What-does-SimpleReact-do%3F)
+
+### Some less contrived / real world examples 
+
+* [Example : Scaling microservices with NIO and SimpleReact](https://medium.com/@johnmcclean/scaling-up-microservices-with-nio-and-simplereact-b2e8f41fdd68)
+
+>>>>>>> f7afa5192d293c25db676c3e2c0331eef43b4d46
  [Building a non blocking NIO rest client](https://github.com/aol/simple-react/wiki/Example-:-Building-a-non-blocking-NIO-rest-client)
 
 * [Example : Plumbing Java 8 Streams with Queues, Topics and Signals](https://medium.com/@johnmcclean/plumbing-java-8-streams-with-queues-topics-and-signals-d9a71eafbbcc)
@@ -152,9 +200,15 @@ Capture allows error handling for unrecoverable errors.
 ##flatMap
 
 ###EagerFutureStream, LazyFutureStream, SimpleReactStream
+<<<<<<< HEAD
 
 For all three Streams specifying a flatMap splits a single result into multiple tasks by returning a Stream from the flatMap method.
 
+=======
+
+For all three Streams specifying a flatMap splits a single result into multiple tasks by returning a Stream from the flatMap method.
+
+>>>>>>> f7afa5192d293c25db676c3e2c0331eef43b4d46
 ![stream flatMap](https://cloud.githubusercontent.com/assets/9964792/6320742/18ce599a-bade-11e4-8bdb-8909c71da06c.png)
 
 ##allOf (async collect)
@@ -265,8 +319,11 @@ TaskExecutor and RetryExecutor configuration can be changed on per stage basis o
 
 ##Data flow of the SimpleReactStream API
 
+<<<<<<< HEAD
 ### SimpleReactStream : A Simple Fluent Api for Functional Reactive Programming with Java 8
 
+=======
+>>>>>>> f7afa5192d293c25db676c3e2c0331eef43b4d46
 EagerFutureStream and LazyFutureStream have this functionality in addition to JDK 8 Stream functionality and [jOOλ Seq](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.5/org/jooq/lambda/Seq.html) methods, applied to a Stream of JDK 8 CompletableFutures.
 
 SimpleReact starts with an array of Suppliers which generate data other functions will react to. Each supplier will be passed to an Executor to be executed, potentially on a separate thread. Each additional step defined when calling Simple React will also be added as a linked task, also to be executed, potentially on a separate thread.

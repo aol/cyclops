@@ -11,12 +11,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
-import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.simple.react.stream.FutureStream;
-import com.aol.simple.react.stream.SimpleReact;
+import com.aol.simple.react.stream.simple.SimpleReact;
+import com.aol.simple.react.stream.traits.SimpleReactStream;
 
 public class CompletableFutureTest {
 	@Test
@@ -27,7 +26,7 @@ public class CompletableFutureTest {
 		
 		
 		
-		FutureStream<String> convertedToStrings = new SimpleReact()
+		SimpleReactStream<String> convertedToStrings = new SimpleReact()
 								.fromStream(queue.stream())
 								.<String>then(it ->  it + "*");
 								
