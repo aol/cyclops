@@ -19,6 +19,8 @@ import com.aol.simple.react.generators.Generator;
 import com.aol.simple.react.generators.ReactIterator;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.ThreadPools;
+import com.aol.simple.react.stream.eager.EagerFutureStream;
+import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -84,6 +86,12 @@ public class LazyReact extends BaseSimpleReact {
 		return (LazyFutureStream)super.fromStream(stream);
 	}
 
+	public <U> LazyFutureStream<U> react(final Supplier<U>... actions) {
+
+		return (LazyFutureStream)super.reactI(actions);
+
+	}
+	
 	/* 
 	 *  Construct a LazyFutureStream from the provided Stream, Stream will be mapped to a Stream of CompeltableFutures internally
 	 * 

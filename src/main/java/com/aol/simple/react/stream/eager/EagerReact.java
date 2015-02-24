@@ -19,6 +19,7 @@ import com.aol.simple.react.generators.Generator;
 import com.aol.simple.react.generators.ReactIterator;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.ThreadPools;
+import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -105,7 +106,11 @@ public class EagerReact extends BaseSimpleReact{
 		
 		return (EagerFutureStream)super.of(array);
 	}
+	public <U> EagerFutureStream<U> react(final Supplier<U>... actions) {
 
+		return (EagerFutureStream)super.reactI(actions);
+
+	}
 	
 	/* 
 	 * 
