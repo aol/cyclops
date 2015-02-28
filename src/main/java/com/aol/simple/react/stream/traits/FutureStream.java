@@ -30,7 +30,6 @@ import org.jooq.lambda.Seq;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.StreamWrapper;
-import com.aol.simple.react.stream.eager.EagerFutureStream;
 
 public interface FutureStream<U> extends Seq<U>,
 										ConfigurableStream<U>, 
@@ -99,9 +98,18 @@ public interface FutureStream<U> extends Seq<U>,
 	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#onFail(java.util.function.Function)
 	 */
 	@Override
-	default <U> FutureStream<U> onFail(final Function<? extends SimpleReactFailedStageException, U> fn) {
+	default FutureStream<U> onFail(final Function<? extends SimpleReactFailedStageException, U> fn) {
 		return (FutureStream)SimpleReactStream.super.onFail(fn);
 	}
+	
+	/* 
+	 *
+	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#onFail(java.lang.Class, java.util.function.Function)
+	 */
+	default FutureStream<U> onFail(Class<? extends Throwable> exceptionClass, final Function<? extends SimpleReactFailedStageException, U> fn){
+		return (FutureStream)SimpleReactStream.super.onFail(exceptionClass,fn);
+	}
+	
 	/* 
 	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#capture(java.util.function.Consumer)
 	 */

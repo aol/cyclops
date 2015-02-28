@@ -80,9 +80,22 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 * @see com.aol.simple.react.stream.traits.FutureStream#onFail(java.util.function.Function)
 	 */
 	@Override
-	default <U> LazyFutureStream<U> onFail(
+	default LazyFutureStream<U> onFail(
 			final Function<? extends SimpleReactFailedStageException, U> fn) {
 		return (LazyFutureStream) FutureStream.super.onFail(fn);
+	}
+
+	/* 
+	 * Handle failure for a particular class of exceptions only
+	 * 
+	 *	@param exceptionClass Class of exceptions to handle
+	 *	@param fn recovery function
+	 *	@return recovered value
+	 * @see com.aol.simple.react.stream.traits.FutureStream#onFail(java.lang.Class, java.util.function.Function)
+	 */
+	@Override
+	default LazyFutureStream<U> onFail(Class<? extends Throwable> exceptionClass, final Function<? extends SimpleReactFailedStageException, U> fn) {
+		return (LazyFutureStream)FutureStream.super.onFail(exceptionClass,fn);
 	}
 
 	/* 

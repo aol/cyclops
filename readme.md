@@ -37,14 +37,16 @@ See [A Simple Api, and a Rich Api](https://github.com/aol/simple-react/wiki/A-si
 * [Search Maven](http://search.maven.org/#search%7Cga%7C1%7Ccom.aol.simplereact)
 
 
-For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:'0.41'
+For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:'0.5'
 
 ##Documentation
 
 
 * [wiki](https://github.com/aol/simple-react/wiki)
-* [Javadoc](http://www.javadoc.io/doc/com.aol.simplereact/simple-react/0.4)
+* [Javadoc](http://www.javadoc.io/doc/com.aol.simplereact/simple-react/0.5)
 * [Articles on medium](https://medium.com/search?q=simplereact)
+* [Google Group](https://groups.google.com/forum/#!forum/simple-react)
+
 
 
 ##Getting started
@@ -91,7 +93,7 @@ When a limit is applied in an EagerFutureStream, all future tasks for a stage ar
 
 ###LazyFutureStream
 
-When a limit is applied to  a LazyFutureStream it is applied to the tasks before they start. For versions before the planned SimpleReact v0.5, specifying a limit early in a LazyFutureStream that you don’t want to run constantly is recommended. v0.5 will include the ability for consuming threads to auto-close producing threads and reduce the need for programatic management of LazyFutureStreams by users.
+When a limit is applied to  a LazyFutureStream it is applied to the tasks before they start. For versions before the planned SimpleReact v0.6, specifying a limit early in a LazyFutureStream that you don’t want to run constantly is recommended. v0.6 will include the ability for consuming threads to auto-close producing threads and reduce the need for programatic management of LazyFutureStreams by users.
 
 ![lazyfuturestream limit](https://cloud.githubusercontent.com/assets/9964792/6320738/04cd3678-bade-11e4-9268-b224b6c2dd21.png)
 

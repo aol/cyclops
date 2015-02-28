@@ -261,9 +261,9 @@ public abstract class BaseSequentialSeqTest {
 	    	of(1, "a", 2, "b", 3, null)//.capture(e-> {e.printStackTrace();ex =e;})
 	    			//.peek(it ->System.out.println(it))
 	    			.cast(Integer.class)
-	    			.<Object>onFail(e -> {
+	    			.onFail(e -> {
 	    				System.out.println("**"+e.getValue());
-	    				return (String)e.getValue();
+	    				return 1;
 	    				
 	    			})
 	    			.peek(it ->System.out.println(it)).toList();

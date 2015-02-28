@@ -26,6 +26,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.ThreadPools;
+import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.EagerToQueue;
 import com.aol.simple.react.stream.traits.FutureStream;
@@ -78,11 +79,23 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * @see com.aol.simple.react.stream.traits.FutureStream#onFail(java.util.function.Function)
 	 */
 	@Override
-	default <U> EagerFutureStream<U> onFail(
+	default  EagerFutureStream<U> onFail(
 			final Function<? extends SimpleReactFailedStageException, U> fn) {
 		return (EagerFutureStream) FutureStream.super.onFail(fn);
 	}
 
+	/* 
+	 * Handle failure for a particular class of exceptions only
+	 * 
+	 *	@param exceptionClass Class of exceptions to handle
+	 *	@param fn recovery function
+	 *	@return recovered value
+	 * @see com.aol.simple.react.stream.traits.FutureStream#onFail(java.lang.Class, java.util.function.Function)
+	 */
+	@Override
+	default EagerFutureStream<U> onFail(Class<? extends Throwable> exceptionClass, final Function<? extends SimpleReactFailedStageException, U> fn) {
+		return (EagerFutureStream)FutureStream.super.onFail(exceptionClass,fn);
+	}
 	/* 
 	 * Capture non-recoverable exception
 	 * 

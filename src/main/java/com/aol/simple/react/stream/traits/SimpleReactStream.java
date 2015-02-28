@@ -359,7 +359,31 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	 *         the dataflow
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	default <U> SimpleReactStream<U> onFail(final Function<? extends SimpleReactFailedStageException, U> fn) {
+	default SimpleReactStream<U> onFail(final Function<? extends SimpleReactFailedStageException, U> fn) {
+		return onFail(Throwable.class,fn);
+	}
+
+	/**
+	 * Recover for a particular class of exceptions only. Chain onFail methods from specific Exception classes
+	 * to general, as Exceptions will be caught and handled in order. 
+	 * e.g.
+	 * 
+	 * onFail(IOException.class, recoveryFunction1).onFail(Throwable.class,recovertyFunction2)
+	 * 
+	 * For an IOException recoveryFunction1 will be executed
+	 * 
+	 * but with the definitions reveresed 
+	 * 
+	 * onFail(Throwable.class,recovertyFunction2).onFail(IOException.class, recoveryFunction1)
+	 * 
+	 * recoveryFunction1 will not be called
+	 * 
+	 * 
+	 * @param exceptionClass Class of exceptions to recover from
+	 * @param fn Recovery function
+	 * @return recovery value
+	 */
+	default SimpleReactStream<U> onFail(Class<? extends Throwable> exceptionClass, final Function<? extends SimpleReactFailedStageException, U> fn){
 		return (SimpleReactStream<U>) this.withLastActive(getLastActive().permutate(getLastActive()
 				.stream().map((ft) -> ft.exceptionally((t) -> {
 					if (t instanceof FilteredExecutionPathException)
@@ -369,13 +393,18 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 						throwable = ((Exception)t).getCause();
 					
 					SimpleReactFailedStageException simpleReactException = assureSimpleReactException( throwable);//exceptions from initial supplier won't be wrapper in SimpleReactFailedStageException
-						return ((Function) fn).apply(simpleReactException);
+					if(exceptionClass.isAssignableFrom(simpleReactException.getCause().getClass()))
+				    	return ((Function) fn).apply(simpleReactException);
+				    throw simpleReactException;
 						
 				})), Collectors.toList()));
 	}
+	
 
 	static SimpleReactFailedStageException assureSimpleReactException(
 			Throwable throwable){
+		if(throwable instanceof SimpleReactFailedStageException)
+			return (SimpleReactFailedStageException)throwable;
 		return new SimpleReactFailedStageException(null,(throwable));
 	}
 	/**
