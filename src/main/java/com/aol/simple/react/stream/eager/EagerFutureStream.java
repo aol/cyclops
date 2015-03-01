@@ -17,6 +17,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -25,8 +26,8 @@ import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
+import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
-import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.EagerToQueue;
 import com.aol.simple.react.stream.traits.FutureStream;
@@ -172,7 +173,14 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 		return (EagerFutureStream) FutureStream.super.allOf(collector, fn);
 	}
+	default <T, R> EagerFutureStream<R> anyOf(Collector collector,
+			Function<T, R> fn) {
 
+		return (EagerFutureStream) FutureStream.super.anyOf(collector, fn);
+	}
+
+	EagerFutureStream<U> withLastActive(StreamWrapper streamWrapper);
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -219,7 +227,20 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	default EagerFutureStream<U> limit(long maxSize) {
 		return fromStream(toQueue().stream().limit(maxSize));
 	}
+	
+	default EagerFutureStream<U> limitFutures(long maxSize) {
 
+		StreamWrapper lastActive = getLastActive();
+		StreamWrapper limited = lastActive.withList(lastActive.stream().limit(maxSize).collect(Collectors.toList()));
+		return this.withLastActive(limited);
+
+	}
+
+	default EagerFutureStream<U> skipFutures(long n){
+		StreamWrapper lastActive = getLastActive();
+		StreamWrapper limited = lastActive.withList(lastActive.stream().skip(n).collect(Collectors.toList()));
+		return this.withLastActive(limited);
+	}
 	/* 
 	 * Cast all elements in this stream to specified type. May throw {@link ClassCastException}.
 	 * 
@@ -350,10 +371,17 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
      *
      * @see #slice(Stream, long, long)
      */
+   
+    default EagerFutureStream<U> sliceFutures(long from, long to) {
+    	List noType = Seq.seq(getLastActive().stream()).slice(from,to).collect(Collectors.toList());
+        return  fromListCompletableFuture(noType);
+    }
     @Override
     default EagerFutureStream<U> slice(long from, long to) {
-        return slice(from, to);
+    	
+        return fromStream( FutureStream.super.slice(from, to));
     }
+   
 	 
 	/**
 	 * Zip two streams into one.
@@ -381,12 +409,22 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 *
 	 * @see #zip(Seq, BiFunction)
 	 */
-	@Override
 	default <T, R> EagerFutureStream<R> zip(Seq<T> other,
 			BiFunction<U, T, R> zipper) {
+		//non-blocking via Queue
 		return fromStream(FutureStream.super.zip(other, zipper));
 	}
+	
+	//futures are embedded inside the Tuple making them unsuiatable for current SimpleReactStream
+	
+	default <R> Seq<Tuple2<CompletableFuture<U>, R>> zipFutures(Stream<R> other) {
+		Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other));
+		return ( Seq<Tuple2<CompletableFuture<U>, R>>)seq;
+		
+	}
+	
 
+	
 	/**
 	 * Zip a Stream with a corresponding Stream of indexes.
 	 * 
@@ -397,7 +435,21 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 *
 	 * @see #zipWithIndex(Stream)
 	 */
-	@Override
+	default Seq<Tuple2<CompletableFuture<U>, Long>> zipFuturesWithIndex() {
+		
+		Seq seq = Seq.seq(getLastActive().stream().iterator()).zipWithIndex();
+		return (Seq<Tuple2<CompletableFuture<U>, Long>>)seq;
+	}
+	/**
+	 * Zip a Stream with a corresponding Stream of indexes.
+	 * 
+	 * 
+	 * // (tuple("a", 0), tuple("b", 1), tuple("c", 2))
+	 * EagerFutureStream.of("a", "b", "c").zipWithIndex()
+	 * 
+	 *
+	 * @see #zipWithIndex(Stream)
+	 */
 	default EagerFutureStream<Tuple2<U, Long>> zipWithIndex() {
 		return fromStream(FutureStream.super.zipWithIndex());
 	}
@@ -415,7 +467,6 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 			BiFunction<T, ? super U, T> function) {
 		return fromStream(FutureStream.super.scanLeft(seed, function));
 	}
-
 	/**
 	 * Scan a stream to the right.
 	 * 
@@ -570,8 +621,9 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		return fromStream(toQueue().stream().distinct());
 	}
 
+	
 	/**
-	 * Duplicate a Streams into two equivalent Streams.
+	 * Duplicate a Streams into two equivalent Streams. (Operates on underlying futures)
 	 * 
 	 * 
 	 * // tuple((1, 2, 3), (1, 2, 3))
@@ -580,8 +632,16 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 *
 	 * @see #duplicate(Stream)
 	 */
+	
+	default Tuple2<Seq<U>, Seq<U>> duplicateFutures() {
+		//unblocking impl
+		Stream stream = getLastActive().stream();
+		Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>>  duplicated = Seq.seq((Stream<CompletableFuture<U>>)stream).duplicate();
+		return new Tuple2(fromStreamCompletableFuture(duplicated.v1), fromStreamCompletableFuture(duplicated.v2));
+	}
 	@Override
 	default Tuple2<Seq<U>, Seq<U>> duplicate() {
+		
 		Tuple2<Seq<U>, Seq<U>> duplicated = FutureStream.super.duplicate();
 		return new Tuple2(fromStream(duplicated.v1), fromStream(duplicated.v2));
 	}
@@ -599,13 +659,17 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * 
 	 * @see #duplicate()
 	 */
+	default Tuple2<EagerFutureStream<U>, EagerFutureStream<U>> duplicateFuturesFutureStream() {
+		Tuple2 dup = duplicateFutures();
+		return (Tuple2<EagerFutureStream<U>, EagerFutureStream<U>>) dup;
+	}
 	default Tuple2<EagerFutureStream<U>, EagerFutureStream<U>> duplicateFutureStream() {
 		Tuple2 dup = duplicate();
 		return (Tuple2<EagerFutureStream<U>, EagerFutureStream<U>>) dup;
 	}
 
 	/**
-	 * Partition a stream into two given a predicate.
+	 * Partition a stream into two given a predicate. (Operates on results, not futures)
 	 * 
 	 * 
 	 * // tuple((1, 3, 5), (2, 4, 6))
@@ -623,7 +687,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	}
 
 	/**
-	 * Partition an EagerFutureStream into two EagerFutureStreams given a predicate.
+	 * Partition an EagerFutureStream into two EagerFutureStreams given a predicate. 
 	 * 
 	 * EagerFutureStream.of(1, 2, 3, 4, 5, 6).partition(i -&gt; i % 2 != 0)
 	 * 
@@ -642,7 +706,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	}
 
 	/**
-	 * Split a stream at a given position.
+	 * Split a stream at a given position. (Operates on futures)
 	 * 
 	 * 
 	 * // tuple((1, 2, 3), (4, 5, 6))
@@ -651,11 +715,13 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 *
 	 * @see #splitAt(Stream, long)
 	 */
-	default Tuple2<Seq<U>, Seq<U>> splitAt(long position) {
-		Tuple2<Seq<U>, Seq<U>> split = FutureStream.super.splitAt(position);
-		return new Tuple2(fromStream(split.v1), fromStream(split.v2));
-	}
+	default Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>> splitAtNonBlocking(long position) {
+		Stream stream = getLastActive().stream();
+		Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>>  split = Seq.seq((Stream<CompletableFuture<U>>)stream).splitAt(position);
 
+	
+		return split;
+	}
 	/**
 	 *  Split a EagerFutureStream at a given position.
 	 * 
@@ -665,14 +731,33 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * 
 	 * @see #splitAt(long)
 	 */
+	default Tuple2<Seq<U>, Seq<U>> splitAt(long position) {
+		//blocking impl
+
+		Tuple2<Seq<U>, Seq<U>> split = FutureStream.super.splitAt(position);
+		return new Tuple2(fromStream(split.v1), fromStream(split.v2));
+	}
+
+	
+	default Tuple2<EagerFutureStream<U>, EagerFutureStream<U>> splitAtNonBlockingFutureStream(
+			long position) {
+		Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>> split = splitAtNonBlocking(position);
+	 return new Tuple2(fromListCompletableFuture(split.v1.collect(Collectors.toList())),fromListCompletableFuture(split.v2.collect(Collectors.toList())));
+	}
 	default Tuple2<EagerFutureStream<U>, EagerFutureStream<U>> splitAtFutureStream(
 			long position) {
 		Tuple2 split = splitAt(position);
 		return (Tuple2<EagerFutureStream<U>, EagerFutureStream<U>>) split;
 	}
+	
+	default <R> EagerFutureStream<R> fromListCompletableFuture(
+			List<CompletableFuture<R>> list) {
+		
+		return (EagerFutureStream)FutureStream.super.fromListCompletableFuture(list);
+	}
 
 	/**
-	 * Split a stream at the head.
+	 * Split a stream at the head. 
 	 * 
 	 * 
 	 * // tuple(1, (2, 3, 4, 5, 6))
@@ -683,6 +768,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 */
 	@Override
 	default Tuple2<Optional<U>, Seq<U>> splitAtHead() {
+		//blocking
 		Tuple2<Optional<U>, Seq<U>> split = FutureStream.super.splitAtHead();
 		return new Tuple2(split.v1, fromStream(split.v2));
 	}
@@ -697,6 +783,8 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		Tuple2 split = splitAtHead();
 		return split;
 	}
+	
+	
 
 	/**
 	 * @return EagerReact for handling finite streams

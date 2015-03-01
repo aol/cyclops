@@ -72,6 +72,22 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 				isEager()));
 
 	}
+	default <T, R> SimpleReactStream<R> anyOf(final Collector collector,
+			final Function<T, R> fn) {
+		CompletableFuture[] array = lastActiveArray(getLastActive());
+		CompletableFuture cf = CompletableFuture.anyOf(array);
+		Function<Exception, T> f = (Exception e) -> {
+			BlockingStream.capture(e,getErrorHandler());
+			return block(Collectors.toList(),
+					new StreamWrapper(Stream.of(array), true));
+		};
+		CompletableFuture onFail = cf.exceptionally(f);
+		CompletableFuture onSuccess = onFail.thenApplyAsync(fn,getTaskExecutor());
+		
+		return (SimpleReactStream<R>) withLastActive(new StreamWrapper(onSuccess,
+				isEager()));
+
+	}
 
 	
 
@@ -121,6 +137,12 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 				.withStream(noType));
 	}
 
+	default <R> SimpleReactStream<R> fromListCompletableFuture(
+			List<CompletableFuture<R>> list) {
+		List noType = list;
+		return (SimpleReactStream<R>) this.withLastActive(getLastActive()
+				.withList(noType));
+	}
 	
 	/**
 	 * React <b>then</b>

@@ -26,10 +26,12 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.stream.eager.EagerFutureStream;
 
 public interface FutureStream<U> extends Seq<U>,
 										ConfigurableStream<U>, 
@@ -55,6 +57,10 @@ public interface FutureStream<U> extends Seq<U>,
 	default <T, R> FutureStream<R> allOf(final Collector collector,
 			final Function<T, R> fn){
 		return (FutureStream)SimpleReactStream.super.allOf(collector,fn);
+	}
+	default <T, R> FutureStream<R> anyOf(final Collector collector,
+			final Function<T, R> fn){
+		return (FutureStream)SimpleReactStream.super.anyOf(collector,fn);
 	}
 	
 	/* 
@@ -573,7 +579,7 @@ public interface FutureStream<U> extends Seq<U>,
      */
     @Override
     default Seq<U> slice(long from, long to) {
-        return slice(from, to);
+        return Seq.super.slice(from, to);
     }
     
   
@@ -609,6 +615,6 @@ public interface FutureStream<U> extends Seq<U>,
 				.flatMap(Collection::stream).collect(Collectors.toList());
 		return (FutureStream<R>) s1.withLastActive(new StreamWrapper(merged));
 	}
-	
+
 
 }

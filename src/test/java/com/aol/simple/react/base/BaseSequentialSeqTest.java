@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.aol.simple.react.stream.eager.EagerFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
 
 public abstract class BaseSequentialSeqTest {
@@ -314,6 +315,7 @@ public abstract class BaseSequentialSeqTest {
 	    @Test
 	    public void testZipWithIndex() {
 	        assertEquals(asList(), of().zipWithIndex().toList());
+	        assertEquals(asList(tuple("a", 0L)), of("a").zip(of(0L)).toList());
 	        assertEquals(asList(tuple("a", 0L)), of("a").zipWithIndex().toList());
 	        assertEquals(asList(tuple("a", 0L), tuple("b", 1L)), of("a", "b").zipWithIndex().toList());
 	        assertEquals(asList(tuple("a", 0L), tuple("b", 1L), tuple("c", 2L)), of("a", "b", "c").zipWithIndex().toList());
@@ -404,6 +406,7 @@ public abstract class BaseSequentialSeqTest {
 	    public void testSplitAt() {
 	        Supplier<Seq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
+	        
 	        assertEquals(asList(), s.get().splitAt(0).v1.toList());
 	        assertEquals(asList(1, 2, 3, 4, 5, 6), s.get().splitAt(0).v2.toList());
 
