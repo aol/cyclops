@@ -101,7 +101,7 @@ public class BlockingTest {
 				.then(it -> "*" + it)
 				.block(status -> status.getCompleted() > 1);
 
-		assertThat(strings.size(), is(2));
+		assertThat(strings.size(), is(greaterThan(1)));
 
 	}
 	@Test

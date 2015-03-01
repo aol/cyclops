@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
@@ -207,11 +208,11 @@ public class AllOfTest {
 
 		boolean blocked[] = { false };
 
-		new SimpleReact().<Integer> react(() -> 1, () -> 2, () -> 3)
+		new SimpleReact().<Integer> react(() -> 1)
 
 		.then(it -> {
 			try {
-				Thread.sleep(50000);
+				Thread.sleep(10);
 			} catch (Exception e) {
 
 			}

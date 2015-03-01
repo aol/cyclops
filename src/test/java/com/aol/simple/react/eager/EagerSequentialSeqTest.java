@@ -23,7 +23,7 @@ public class EagerSequentialSeqTest extends BaseSequentialSeqTest {
 
 	@Override
 	protected <U> EagerFutureStream<U> of(U... array) {
-		return EagerFutureStream.sequentialBuilder().of(array);
+		return EagerFutureStream.sequentialCommonBuilder().of(array);
 	}
 
 	@Test

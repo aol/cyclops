@@ -72,22 +72,25 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 				isEager()));
 
 	}
-	default <T, R> SimpleReactStream<R> anyOf(final Collector collector,
-			final Function<T, R> fn) {
+	default <R> SimpleReactStream<R> anyOf(
+			final Function<U, R> fn) {
 		CompletableFuture[] array = lastActiveArray(getLastActive());
 		CompletableFuture cf = CompletableFuture.anyOf(array);
-		Function<Exception, T> f = (Exception e) -> {
+		Function<Exception, U> f = (Exception e) -> {
 			BlockingStream.capture(e,getErrorHandler());
 			return block(Collectors.toList(),
 					new StreamWrapper(Stream.of(array), true));
 		};
-		CompletableFuture onFail = cf.exceptionally(f);
-		CompletableFuture onSuccess = onFail.thenApplyAsync(fn,getTaskExecutor());
+		
+		cf.whenCompleteAsync((it,e) -> System.out.println(it));
+//		CompletableFuture onFail = cf.exceptionally(f);
+		CompletableFuture onSuccess = cf.thenApplyAsync(fn,getTaskExecutor());
 		
 		return (SimpleReactStream<R>) withLastActive(new StreamWrapper(onSuccess,
 				isEager()));
 
 	}
+	
 
 	
 

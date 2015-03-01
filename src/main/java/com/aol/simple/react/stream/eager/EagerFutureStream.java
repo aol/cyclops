@@ -173,10 +173,10 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 		return (EagerFutureStream) FutureStream.super.allOf(collector, fn);
 	}
-	default <T, R> EagerFutureStream<R> anyOf(Collector collector,
-			Function<T, R> fn) {
+	default <R> EagerFutureStream<R> anyOf(
+			Function<U, R> fn) {
 
-		return (EagerFutureStream) FutureStream.super.anyOf(collector, fn);
+		return (EagerFutureStream) FutureStream.super.anyOf( fn);
 	}
 
 	EagerFutureStream<U> withLastActive(StreamWrapper streamWrapper);

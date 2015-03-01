@@ -270,8 +270,12 @@ public abstract class BaseSeqTest {
 	    @Test
 	    public void testGroupByEager() {
 	        Map<Integer, List<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
-	        assertEquals(asList(2, 4), map1.get(0));
-	        assertEquals(asList(1, 3), map1.get(1));
+	       
+	        assertThat(map1.get(0),hasItem(2));
+	        assertThat(map1.get(0),hasItem(4));
+	        assertThat(map1.get(1),hasItem(1));
+	        assertThat(map1.get(1),hasItem(3));
+	        
 	        assertEquals(2, map1.size());
 
 	     

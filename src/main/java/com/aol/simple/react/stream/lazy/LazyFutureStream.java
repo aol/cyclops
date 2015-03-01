@@ -118,7 +118,11 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	default <T, R> LazyFutureStream<R> allOf(final Function<List<T>, R> fn) {
 		return (LazyFutureStream) FutureStream.super.allOf(fn);
 	}
+	default <R> LazyFutureStream<R> anyOf(
+			Function<U, R> fn) {
 
+		return (LazyFutureStream) FutureStream.super.anyOf( fn);
+	}
 	/* 
 	 * @see com.aol.simple.react.stream.traits.FutureStream#peek(java.util.function.Consumer)
 	 */

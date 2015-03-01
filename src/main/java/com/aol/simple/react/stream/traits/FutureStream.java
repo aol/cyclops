@@ -58,9 +58,8 @@ public interface FutureStream<U> extends Seq<U>,
 			final Function<T, R> fn){
 		return (FutureStream)SimpleReactStream.super.allOf(collector,fn);
 	}
-	default <T, R> FutureStream<R> anyOf(final Collector collector,
-			final Function<T, R> fn){
-		return (FutureStream)SimpleReactStream.super.anyOf(collector,fn);
+	default <R> FutureStream<R> anyOf(final Function<U,R> fn){
+		return (FutureStream)SimpleReactStream.super.anyOf(fn);
 	}
 	
 	/* 
