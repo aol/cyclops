@@ -90,9 +90,10 @@ public class GeneratorTest {
 				
 		//generation has not complete / but chain has complete for some flows
 		
-		while(count.get()<10){ }
-		assertThat(second.get(),greaterThan(0)); 
+		while(count.get()<30){ }
 		assertThat(count.get(),lessThan(50)); 
+		assertThat(second.get(),greaterThan(0)); 
+		
 		assertThat(count.get(),greaterThan(2));
 		
 		s.block();
