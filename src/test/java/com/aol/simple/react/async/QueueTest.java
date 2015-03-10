@@ -57,19 +57,23 @@ public class QueueTest {
 		assertThat(found.get(), is(2));
 		assertThat(q.stream().limit(2).collect(Collectors.toList()).size(),
 				is(2));
-		
+
 		assertThat(q.stream().limit(2).collect(Collectors.toList()).size(),
 				is(2));
 		sleep(10);
 		assertThat(found.get(), is(4));
 	}
+
 	@Test
 	public void backPressureJDKTest() {
 		Queue<String> q = new Queue<>(new LinkedBlockingQueue<>(2));
 		new SimpleReact().react(() -> {
-				Stream.of("1","2","3","4").forEach(it -> {q.offer(it); found.getAndAdd(1);});
-				return 1;
+			Stream.of("1", "2", "3", "4").forEach(it -> {
+				q.offer(it);
+				found.getAndAdd(1);
 			});
+			return 1;
+		});
 
 		sleep(10);
 		assertThat(found.get(), is(2));
@@ -191,7 +195,6 @@ public class QueueTest {
 		Stream<String> stream = Stream.of("1", "2", "3");
 		Queue<String> q = new Queue(new LinkedBlockingQueue());
 		q.fromStream(stream);
-		
 
 		Integer dequeued = q.stream().limit(3).map(it -> Integer.valueOf(it))
 				.reduce(0, (acc, next) -> acc + next);
@@ -305,17 +308,16 @@ public class QueueTest {
 	@Test
 	public void queueTestTimeout() {
 
-		Queue<Integer> q = new Queue<>(new LinkedBlockingQueue<Integer>()).withTimeout(1)
-				.withTimeUnit(TimeUnit.MILLISECONDS);
+		Queue<Integer> q = new Queue<>(new LinkedBlockingQueue<Integer>())
+				.withTimeout(1).withTimeUnit(TimeUnit.MILLISECONDS);
 
 		new SimpleReact().react(() -> q.offer(1), () -> q.offer(2), () -> {
 			sleep(500);
 			return q.offer(4);
 		}, () -> q.offer(5));
 
-		Collection<String> results = parallel()
-				.fromStream(q.stream()).then(it -> "*" + it)
-				.run(() -> new ArrayList<String>());
+		Collection<String> results = parallel().fromStream(q.stream())
+				.then(it -> "*" + it).run(() -> new ArrayList<String>());
 
 		assertThat(results.size(), is(3));
 		assertThat(results, not(hasItem("*4")));
@@ -337,10 +339,8 @@ public class QueueTest {
 				return 1;
 			});
 
-			List<String> result = parallel()
-					.fromStream(q.stream())
-					.then(it -> "*" + it)
-					.peek(it -> found.getAndAdd(1))
+			List<String> result = parallel().fromStream(q.stream())
+					.then(it -> "*" + it).peek(it -> found.getAndAdd(1))
 					.peek(it -> System.out.println(it))
 					.run(() -> new ArrayList<String>());
 
@@ -352,6 +352,25 @@ public class QueueTest {
 
 	}
 
+	boolean called = false;
+	@Test
+	public void stackOverflowQuestion() {
+		called = false;
+		Queue<String> queue = QueueFactories.<String> unboundedQueue().build();
+
+		new Thread(() -> {
+			for(int i=0;i<10;i++) {
+				queue.add("New message " + System.currentTimeMillis());
+			}
+			queue.close();
+		}).start();
+		queue.stream().peek(this::called).forEach(e -> System.out.println(e));
+		assertTrue(called);
+	}
+
+	private void called(String message){
+		called=  true;
+	}
 	private int sleep(int i) {
 		try {
 			Thread.sleep(i);

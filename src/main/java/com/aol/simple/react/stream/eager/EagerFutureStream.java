@@ -715,7 +715,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 *
 	 * @see #splitAt(Stream, long)
 	 */
-	default Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>> splitAtNonBlocking(long position) {
+	default Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>> splitAtFutures(long position) {
 		Stream stream = getLastActive().stream();
 		Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>>  split = Seq.seq((Stream<CompletableFuture<U>>)stream).splitAt(position);
 
@@ -739,9 +739,9 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	}
 
 	
-	default Tuple2<EagerFutureStream<U>, EagerFutureStream<U>> splitAtNonBlockingFutureStream(
+	default Tuple2<EagerFutureStream<U>, EagerFutureStream<U>> splitAtFuturesFutureStream(
 			long position) {
-		Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>> split = splitAtNonBlocking(position);
+		Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>> split = splitAtFutures(position);
 	 return new Tuple2(fromListCompletableFuture(split.v1.collect(Collectors.toList())),fromListCompletableFuture(split.v2.collect(Collectors.toList())));
 	}
 	default Tuple2<EagerFutureStream<U>, EagerFutureStream<U>> splitAtFutureStream(

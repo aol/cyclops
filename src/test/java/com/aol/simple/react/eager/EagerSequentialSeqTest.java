@@ -41,11 +41,11 @@ public class EagerSequentialSeqTest extends BaseSequentialSeqTest {
 	}
 	@Test
 	public void testSplitFuturesAt(){
-		assertThat(of(1,2,3,4,5).splitAtNonBlockingFutureStream(2).v1.block(),is(asList(1,2)));
+		assertThat(of(1,2,3,4,5).splitAtFuturesFutureStream(2).v1.block(),is(asList(1,2)));
 	}
 	@Test
 	public void testSplitFuturesAt2(){
-		assertThat(of(1,2,3,4,5).splitAtNonBlockingFutureStream(2).v2.collect(Collectors.toList()),is(asList(3,4,5)));
+		assertThat(of(1,2,3,4,5).splitAtFuturesFutureStream(2).v2.collect(Collectors.toList()),is(asList(3,4,5)));
 	}
 
 	
