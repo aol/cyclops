@@ -37,13 +37,13 @@ See [A Simple Api, and a Rich Api](https://github.com/aol/simple-react/wiki/A-si
 * [Search Maven](http://search.maven.org/#search%7Cga%7C1%7Ccom.aol.simplereact)
 
 
-For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:'0.5'
+For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:'0.60'
 
 ##Documentation
 
 
 * [wiki](https://github.com/aol/simple-react/wiki)
-* [Javadoc](http://www.javadoc.io/doc/com.aol.simplereact/simple-react/0.5)
+* [Javadoc](http://www.javadoc.io/doc/com.aol.simplereact/simple-react/0.60)
 * [Articles on medium](https://medium.com/search?q=simplereact)
 * [Google Group](https://groups.google.com/forum/#!forum/simple-react)
 
@@ -167,6 +167,14 @@ allOf is the inverse of flatMap. It rolls up a Stream from a previous stage, asy
 
 ![stream allOf](https://cloud.githubusercontent.com/assets/9964792/6320739/0a98c8ba-bade-11e4-9097-0b3209a5aba1.png)
 
+##anyOf
+###EagerFutureStream, LazyFutureStream, SimpleReactStream
+
+anyOf progresses the flow with the first result received.
+
+![eagerfuturestream anyof](https://cloud.githubusercontent.com/assets/9964792/6586388/01c07982-c771-11e4-90fc-9fae9ec17aba.png)
+
+
 ##block / collect
 ###EagerFutureStream, LazyFutureStream, SimpleReactStream
 
@@ -221,17 +229,18 @@ In the real world this could be a Stream that receives and reacts to events for 
 Eager Streams are eagerly materialised into CompletableFuture objects, so can’t be infinite or your application will run out of Memory.
 
 ###Why would you want an eager stream?
+
 Eager streams are useful for processing parallel tasks starting immediately. Such as bulk loading files from disk, data to remote store, or reading from a remote server.
 
 ##Sequential or Parallel
 
 SimpleReact streams can either be parallel or sequential. For either type, the underlying model is identical. CompletableFuture tasks are sent to a task executor for execution. In a Sequential Stream a task executor with a single thread is used (free thread model). In a parallel Stream a task executor with many threads can be used instead.
 
-LazyFutureStream.sequentialBuilder().of(1,2,3)
-EagerFutureStream.sequentialBuilder().of(1,2,3)
+    LazyFutureStream.sequentialBuilder().of(1,2,3)
+    EagerFutureStream.sequentialBuilder().of(1,2,3)
 
-LazyFutureStream.parallelBuilder().of(1,2,3)
-EagerFutureStream.parallelBuilder().of(1,2,3)
+    LazyFutureStream.parallelBuilder().of(1,2,3)
+    EagerFutureStream.parallelBuilder().of(1,2,3)
 
 ###Why would you want a sequential stream?
 
@@ -245,6 +254,7 @@ Providing Data to a Stream
 The SimpleReact class provides a number of methods, mostly starting with the word ‘react’ that can be used to provide data to your reactive Stream.
 
 e.g. 
+
 	EagerFutureStream.parallel(5).reactToCollection(list);
 	LazyFutureStream.sequentialBuilder().react( ()->1, ()->”hello world”);
 	LazyFutureStream.parallel(10).reactInfinitely( ()-> count.incrementAndGet())
@@ -260,6 +270,7 @@ Or from any Java datastructure
 	EagerStream.of(list);
 
 Or Array
+
 	LazyStream.of(1,2,3,4)
 
 ###Configuring concurrency
