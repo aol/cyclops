@@ -2,6 +2,7 @@ package com.aol.simple.react.async;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -19,6 +20,7 @@ import org.jooq.lambda.Seq;
 
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
+import com.aol.simple.react.stream.eager.EagerReact;
 
 /**
  * Inspired by scalaz-streams async.Queue (functionally similar, but Blocking)
@@ -86,14 +88,17 @@ public class Queue<T> implements Adapter<T> {
 	 */
 	public Seq<T> stream() {
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
-		return Seq.seq(closingStream(this::ensureOpen));
+		return Seq.seq(closingStream(this::ensureOpen,new AlwaysContinue()));
+	}
+	public Seq<T> stream(Continueable s) {
+		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
+		return Seq.seq(closingStream(this::ensureOpen,s));
 	}
 
-	private Stream<T> closingStream(Supplier<T> s){
-		
+	private Stream<T> closingStream(Supplier<T> s, Continueable sub){
 		
 		Stream<T> st = StreamSupport.stream(
-	                new ClosingSpliterator(Long.MAX_VALUE, s), false);
+	                new ClosingSpliterator(Long.MAX_VALUE, s,sub,this), false);
 		
 		 return st;
 	}
@@ -205,10 +210,16 @@ public class Queue<T> implements Adapter<T> {
 	 */
 	@Override
 	public boolean offer(T data) {
-		if(!open)
-			throw new ClosedQueueException();
+		
+		
 		try {
-			boolean result =  this.queue.offer((T)nullSafe(data),this.offerTimeout,this.offerTimeUnit);
+		
+			boolean result = false;
+			while(!result){
+				if(!open)
+					throw new ClosedQueueException();
+				result = this.queue.offer((T)nullSafe(data),1l,TimeUnit.MILLISECONDS);
+			}
 			if(sizeSignal!=null)
 				this.sizeSignal.set(queue.size());
 			return result;
@@ -247,6 +258,11 @@ public class Queue<T> implements Adapter<T> {
 		}
 
 		return true;
+	}
+	
+	public void closeAndClear(){
+		this.open = false;
+		queue.clear();
 	}
 	
 	private final NIL NILL = new NIL();

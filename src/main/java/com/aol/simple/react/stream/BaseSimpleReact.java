@@ -3,18 +3,16 @@ package com.aol.simple.react.stream;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
-import lombok.Getter;
-import lombok.experimental.Builder;
-
+import com.aol.simple.react.async.ClosingSpliterator;
+import com.aol.simple.react.async.Subscription;
 import com.aol.simple.react.generators.Generator;
 import com.aol.simple.react.generators.ParallelGenerator;
 import com.aol.simple.react.generators.ReactIterator;
@@ -154,8 +152,13 @@ public abstract class BaseSimpleReact {
 	public <U> SimpleReactStream< U> reactInfinitely(final Supplier<U> s) {
 		if(isEager())
 			throw new InfiniteProcessingException("To reactInfinitely use a lazy stream");
-		return construct(Stream.generate(() -> CompletableFuture.completedFuture(s.get())),
-				this.getExecutor(),getRetrier(),false);
+		Subscription sub = new Subscription();
+		SimpleReactStream stream = construct(StreamSupport.stream(
+                new InfiniteClosingSpliterator(Long.MAX_VALUE, () -> CompletableFuture.completedFuture(s.get()),sub), false),
+				this.getExecutor(),getRetrier(),false).withSubscription(sub);
+		//return stream.fromStream(stream.toQueue().stream(sub));
+		return stream;
+		
 
 	}
 	

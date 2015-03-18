@@ -15,8 +15,10 @@ import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
 
 import com.aol.simple.react.RetryBuilder;
+import com.aol.simple.react.async.Continueable;
 import com.aol.simple.react.async.QueueFactories;
 import com.aol.simple.react.async.QueueFactory;
+import com.aol.simple.react.async.Subscription;
 import com.aol.simple.react.capacity.monitor.LimitingMonitor;
 import com.aol.simple.react.collectors.lazy.BatchingCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
@@ -42,6 +44,8 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	private final LazyResultConsumer<U> lazyCollector;
 	private final QueueFactory<U> queueFactory;
 	private final BaseSimpleReact simpleReact;
+	private final Continueable subscription;
+	
 	
 	LazyFutureStreamImpl(final Stream<CompletableFuture<U>> stream,
 			final ExecutorService executor, final RetryExecutor retrier) {
@@ -58,6 +62,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		this.waitStrategy = new LimitingMonitor();
 		this.lazyCollector = new BatchingCollector<>();
 		this.queueFactory = QueueFactories.boundedQueue(1000);
+		this.subscription = new Subscription();
 	}
 
 	

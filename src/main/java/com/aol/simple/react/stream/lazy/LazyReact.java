@@ -71,6 +71,7 @@ public class LazyReact extends BaseSimpleReact {
 		return (LazyFutureStream) new LazyFutureStreamImpl<U>( s,executor, retrier);
 
 	}
+	
 
 	/* 
 	 * Construct a LazyFutureStream from the provided Stream of completableFutures

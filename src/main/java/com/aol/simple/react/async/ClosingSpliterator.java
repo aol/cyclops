@@ -13,10 +13,24 @@ import com.aol.simple.react.async.Queue.ClosedQueueException;
 public class ClosingSpliterator<T> implements Spliterator<T> {
         private long estimate;
         final Supplier<T> s;
+        private final Continueable subscription;
+        private final Queue queue;
 
-        protected ClosingSpliterator(long estimate,Supplier<T> s) {
+        protected ClosingSpliterator(long estimate,Supplier<T> s,
+        		Continueable subscription,
+        		Queue queue) {
             this.estimate = estimate;
             this.s = s;
+            this.subscription = subscription;
+            this.queue = queue;
+            this.subscription.addQueue(queue);
+        }
+        public ClosingSpliterator(long estimate,Supplier<T> s,
+        		Continueable subscription) {
+            this.estimate = estimate;
+            this.s = s;
+            this.subscription = subscription;
+            this.queue = null;
         }
 
         @Override
@@ -34,8 +48,12 @@ public class ClosingSpliterator<T> implements Spliterator<T> {
 		@Override
 		public boolean tryAdvance(Consumer<? super T> action) {
 			 Objects.requireNonNull(action);
+			
+				
             try{ 
+            	subscription.closeQueueIfFinishedStateless(queue);
             	action.accept(s.get());
+            	subscription.closeQueueIfFinished(queue);
              return true;
             }catch(ClosedQueueException e){
             	return false;
@@ -49,7 +67,7 @@ public class ClosingSpliterator<T> implements Spliterator<T> {
 		@Override
 		public Spliterator<T> trySplit() {
 			
-			return new ClosingSpliterator(estimate >>>= 1, s);
+			return new ClosingSpliterator(estimate >>>= 1, s,subscription,queue);
 		}
 
        
