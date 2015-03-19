@@ -53,8 +53,7 @@ public class Queue<T> implements Adapter<T> {
 	
 	@Getter
 	private final Signal<Integer> sizeSignal;
-	
-	private volatile Continueable sub;
+
 
 	/**
 	 * Construct a Queue backed by a LinkedBlockingQueue
@@ -92,7 +91,6 @@ public class Queue<T> implements Adapter<T> {
 		return Seq.seq(closingStream(this::ensureOpen,new AlwaysContinue()));
 	}
 	public Seq<T> stream(Continueable s) {
-		this.sub=s;
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
 		return Seq.seq(closingStream(this::ensureOpen,s));
 	}
