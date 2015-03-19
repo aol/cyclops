@@ -19,10 +19,15 @@ public class Runner {
 
 				collector.accept(n);
 			});
+			collector.getResults();
 		} catch (SimpleReactProcessingException e) {
 		
+		}catch(java.util.concurrent.CompletionException e){
+			
+		}catch(Throwable e){
+			e.printStackTrace();
 		}
-		collector.getResults();
+		
 		runnable.run();
 		return true;
 

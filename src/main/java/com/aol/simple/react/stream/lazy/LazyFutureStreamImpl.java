@@ -3,6 +3,7 @@ package com.aol.simple.react.stream.lazy;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
@@ -24,6 +25,7 @@ import com.aol.simple.react.collectors.lazy.BatchingCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.StreamWrapper;
+import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 @Wither
@@ -45,6 +47,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	private final QueueFactory<U> queueFactory;
 	private final BaseSimpleReact simpleReact;
 	private final Continueable subscription;
+	private final ExecutorService taskExecutor2 = Executors.newFixedThreadPool(1);
 	
 	
 	LazyFutureStreamImpl(final Stream<CompletableFuture<U>> stream,

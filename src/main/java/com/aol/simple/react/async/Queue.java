@@ -2,7 +2,6 @@ package com.aol.simple.react.async;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -20,7 +19,7 @@ import org.jooq.lambda.Seq;
 
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
-import com.aol.simple.react.stream.eager.EagerReact;
+import com.aol.simple.react.util.SimpleTimer;
 
 /**
  * Inspired by scalaz-streams async.Queue (functionally similar, but Blocking)
@@ -54,6 +53,8 @@ public class Queue<T> implements Adapter<T> {
 	
 	@Getter
 	private final Signal<Integer> sizeSignal;
+	
+	private volatile Continueable sub;
 
 	/**
 	 * Construct a Queue backed by a LinkedBlockingQueue
@@ -91,6 +92,7 @@ public class Queue<T> implements Adapter<T> {
 		return Seq.seq(closingStream(this::ensureOpen,new AlwaysContinue()));
 	}
 	public Seq<T> stream(Continueable s) {
+		this.sub=s;
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
 		return Seq.seq(closingStream(this::ensureOpen,s));
 	}
@@ -190,8 +192,10 @@ public class Queue<T> implements Adapter<T> {
 	public boolean add(T data){
 		try{
 			boolean result = queue.add((T)nullSafe(data));
-			if(sizeSignal!=null)
-				this.sizeSignal.set(queue.size());
+			if(true){
+				if(sizeSignal!=null)
+					this.sizeSignal.set(queue.size());
+			}
 			return result;
 			
 		}catch(IllegalStateException e){
@@ -215,11 +219,14 @@ public class Queue<T> implements Adapter<T> {
 		try {
 		
 			boolean result = false;
-			while(!result){
+			SimpleTimer timer = new SimpleTimer();
+			do{
+				
 				if(!open)
 					throw new ClosedQueueException();
-				result = this.queue.offer((T)nullSafe(data),1l,TimeUnit.MILLISECONDS);
-			}
+				result = this.queue.offer((T)nullSafe(data),1l,TimeUnit.MICROSECONDS);
+			}while(!result && !timeout(timer));
+			
 			if(sizeSignal!=null)
 				this.sizeSignal.set(queue.size());
 			return result;
@@ -232,6 +239,13 @@ public class Queue<T> implements Adapter<T> {
 	}
 
 	
+	private boolean timeout(SimpleTimer timer) {
+		
+		if(timer.getElapsedNanoseconds()>=offerTimeUnit.toNanos(this.offerTimeout))
+			return true;
+		return false;
+	}
+
 	private Object nillSafe(T data) {
 		if(NILL==data)
 			return null;

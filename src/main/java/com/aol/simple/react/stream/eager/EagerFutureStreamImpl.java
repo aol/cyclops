@@ -3,6 +3,7 @@ package com.aol.simple.react.stream.eager;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
@@ -45,6 +46,7 @@ public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 	private final QueueFactory<U> queueFactory;
 	private final BaseSimpleReact simpleReact;
 	private final Continueable subscription;
+	private final ExecutorService taskExecutor2 = null;
 	/**
 	 * 
 	 * Construct a SimpleReact stage - this acts as a fluent SimpleReact builder

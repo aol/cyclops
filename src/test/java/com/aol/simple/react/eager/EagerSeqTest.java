@@ -26,6 +26,7 @@ public class EagerSeqTest extends BaseSeqTest {
 	protected <U> EagerFutureStream<U> of(U... array) {
 		return EagerFutureStream.parallel(array);
 	}
+	
 
 	@Test
 	public void testOfType() {

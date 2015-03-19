@@ -26,7 +26,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.simple.react.stream.eager.EagerFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
 
 public abstract class BaseSequentialSeqTest {
@@ -95,18 +94,21 @@ public abstract class BaseSequentialSeqTest {
 	}
 	@Test
 	public void zipInOrder(){
-		List<Tuple2<Integer,Integer>> list =  of(1,2,3,4,5,6).limit(6)
-													.zip( of(100,200,300,400).limit(4))
-													.collect(Collectors.toList());
 		
-		assertThat(list.get(0).v1,is(1));
-		assertThat(list.get(0).v2,is(100));
-		assertThat(list.get(1).v1,is(2));
-		assertThat(list.get(1).v2,is(200));
-		assertThat(list.get(2).v1,is(3));
-		assertThat(list.get(2).v2,is(300));
-		assertThat(list.get(3).v1,is(4));
-		assertThat(list.get(3).v2,is(400));
+		//this is not 100% reliable for EagerFutureStream use zipFutures instead
+			List<Tuple2<Integer,Integer>> list =  of(1,2,3,4,5,6).limit(6)
+														.zip( of(100,200,300,400).limit(4))
+														.collect(Collectors.toList());
+			
+			assertThat(list.get(0).v1,is(1));
+			assertThat(list.get(0).v2,is(100));
+			assertThat(list.get(1).v1,is(2));
+			assertThat(list.get(1).v2,is(200));
+			assertThat(list.get(2).v1,is(3));
+			assertThat(list.get(2).v2,is(300));
+			assertThat(list.get(3).v1,is(4));
+			assertThat(list.get(3).v2,is(400));
+		
 		
 		
 	}

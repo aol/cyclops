@@ -44,6 +44,18 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 
 	
 	Continueable getSubscription();
+	
+	default <R> SimpleReactStream<R> populate(final Function<U, R> fn) {
+		
+
+		
+		return (SimpleReactStream<R>) this.withLastActive(getLastActive().permutate(
+				getLastActive().stream().map(
+						(ft) -> ft.thenApplyAsync(SimpleReactStream.<U,R>handleExceptions(fn),
+								getTaskExecutor2())), Collectors.toList()));
+	}
+	
+	ExecutorService getTaskExecutor2();
 	/**
 	 * @param collector
 	 *            to perform aggregation / reduction operation on the results
@@ -123,6 +135,7 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 								getTaskExecutor())), Collectors.toList()));
 	}
 	
+	
 	default <R> SimpleReactStream<R> fromStream(Stream<R> stream) {
 		return (SimpleReactStream<R>) this.withLastActive(getLastActive()
 				.withNewStream(stream.map(CompletableFuture::completedFuture)));
@@ -187,6 +200,12 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	 */
 	@SuppressWarnings("unchecked")
 	default  <R> SimpleReactStream<R> then(final Function<U, R> fn) {
+		return (SimpleReactStream<R>) this.withLastActive(getLastActive().permutate(
+				getLastActive().stream().map(
+						(ft) -> ft.thenApplyAsync(SimpleReactStream.<U,R>handleExceptions(fn),
+								getTaskExecutor())), Collectors.toList()));
+	}
+	default  <R> SimpleReactStream<R> until(final Function<U, R> fn) {
 		return (SimpleReactStream<R>) this.withLastActive(getLastActive().permutate(
 				getLastActive().stream().map(
 						(ft) -> ft.thenApplyAsync(SimpleReactStream.<U,R>handleExceptions(fn),

@@ -46,6 +46,8 @@ public class AutoclosingTest {
 		System.out.println("Last test!!");
 		close = new AtomicInteger();
 		added = new AtomicInteger();
+		
+	
 		//subscription fills from outside in (right to left), need to store open / closed for each queue
 		List<String> results = new LazyReact().reactInfinitely(()->nextValues()).withQueueFactory(()-> eventQueue())
 													  .flatMap(list -> list.stream())
@@ -55,9 +57,10 @@ public class AutoclosingTest {
 													  .peek(System.out::println)
 													  .limit(1)
 													  .collect(Collectors.toList());
+		
 		System.out.println("finished");
 	
-		
+		Thread.sleep(1000);
 		
 		int localAdded = added.get();
 		assertThat(close.get(),greaterThan(0));
@@ -67,6 +70,7 @@ public class AutoclosingTest {
 	}
 	@Test
 	public void autoClosingZip() throws InterruptedException{
+		System.out.println("Started!");
 		close = new AtomicInteger();
 		added = new AtomicInteger();
 		//subscription fills from outside in (right to left), need to store open / closed for each queue
@@ -100,6 +104,7 @@ public class AutoclosingTest {
 	}
 
 	private List<List<String>> nextValues() {
+		System.out.println("added!");
 		added.incrementAndGet();
 		return  asList(asList("1","2"),asList("1","2"));
 	}

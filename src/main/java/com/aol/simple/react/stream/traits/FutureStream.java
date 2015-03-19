@@ -1,5 +1,6 @@
 package com.aol.simple.react.stream.traits;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -314,6 +315,8 @@ public interface FutureStream<U> extends Seq<U>,
 	@Override
 	default Iterator<U> iterator() {
 
+		if(getSubscription().closed())
+			return Arrays.<U>asList().iterator();
 		return new CloseableIterator<>(toQueue().stream(getSubscription()).iterator(),getSubscription());
 	}
 
