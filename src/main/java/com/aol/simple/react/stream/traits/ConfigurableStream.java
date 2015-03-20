@@ -5,6 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 
+import com.aol.simple.react.async.Continueable;
 import com.aol.simple.react.async.QueueFactory;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.stream.BaseSimpleReact;
@@ -21,6 +22,7 @@ public interface ConfigurableStream<T> {
 	SimpleReactStream<T> withQueueFactory(QueueFactory<T> queue);
 	SimpleReactStream<T> withLastActive(StreamWrapper streamWrapper);
 	SimpleReactStream<T>  withErrorHandler(Optional<Consumer<Throwable>> errorHandler);
+	SimpleReactStream<T> withSubscription(Continueable sub);
 	
 	abstract StreamWrapper getLastActive();
 	abstract ExecutorService getTaskExecutor();

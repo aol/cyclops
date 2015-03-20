@@ -96,7 +96,6 @@ public class AnyOfTest {
 	public void testAnyOfCompletableFilterNoError(){
 	
 		String result = new EagerReact().of("hello","world","2")
-				.onFail(it ->"hello")
 				.filter(it-> !"2".equals(it))
 				.peek(it -> 
 				System.out.println(it))

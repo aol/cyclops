@@ -3,6 +3,7 @@ package com.aol.simple.react.stream.lazy;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
@@ -15,13 +16,17 @@ import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
 
 import com.aol.simple.react.RetryBuilder;
+import com.aol.simple.react.async.Continueable;
 import com.aol.simple.react.async.QueueFactories;
 import com.aol.simple.react.async.QueueFactory;
+import com.aol.simple.react.async.Subscription;
 import com.aol.simple.react.capacity.monitor.LimitingMonitor;
 import com.aol.simple.react.collectors.lazy.BatchingCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.stream.ThreadPools;
+import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 @Wither
@@ -42,6 +47,9 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	private final LazyResultConsumer<U> lazyCollector;
 	private final QueueFactory<U> queueFactory;
 	private final BaseSimpleReact simpleReact;
+	private final Continueable subscription;
+	
+	
 	
 	LazyFutureStreamImpl(final Stream<CompletableFuture<U>> stream,
 			final ExecutorService executor, final RetryExecutor retrier) {
@@ -58,8 +66,13 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		this.waitStrategy = new LimitingMonitor();
 		this.lazyCollector = new BatchingCollector<>();
 		this.queueFactory = QueueFactories.boundedQueue(1000);
+		this.subscription = new Subscription();
+		
 	}
 
+	public ExecutorService getPopulator(){
+		return Executors.newSingleThreadExecutor();
+	}
 	
 	@Override
 	public <R, A> R collect(Collector<? super U, A, R> collector) {

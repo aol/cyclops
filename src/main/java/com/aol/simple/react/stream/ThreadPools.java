@@ -10,7 +10,7 @@ import lombok.Setter;
 
 public class ThreadPools {
 	@Getter
-	private static final ExecutorService commonFreeThread = new ForkJoinPool(1);
+	private static final ExecutorService commonFreeThread =  Executors.newFixedThreadPool(1);
 	
 	@Getter
 	private static final ExecutorService commonLazyExecutor = new ForkJoinPool(1);
@@ -21,6 +21,7 @@ public class ThreadPools {
 	@Getter
 	private static final ScheduledExecutorService commonStanardRetry = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
 
+	
 	
 	@Setter
 	private static volatile boolean useCommon = true;
@@ -33,7 +34,7 @@ public class ThreadPools {
 		if(useCommon)
 			return commonFreeThread;
 		else
-		return new ForkJoinPool(1);
+			return new ForkJoinPool(1);
 	}
 	public static ScheduledExecutorService getSequentialRetry() {
 		if(useCommon)

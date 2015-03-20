@@ -6,27 +6,35 @@ import static java.util.Spliterators.spliteratorUnknownSize;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.RetryBuilder;
+import com.aol.simple.react.async.Continueable;
+import com.aol.simple.react.async.QueueFactory;
+import com.aol.simple.react.async.Subscription;
+import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
+import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
-import com.aol.simple.react.stream.eager.EagerFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.LazyToQueue;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
@@ -40,7 +48,29 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  */
 public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 
+	
+	LazyFutureStream<U> withTaskExecutor(ExecutorService e);
+	LazyFutureStream<U> withRetrier(RetryExecutor retry);
+	LazyFutureStream<U> withWaitStrategy(Consumer<CompletableFuture> c);
+	LazyFutureStream<U> withEager(boolean eager);
+	LazyFutureStream<U> withLazyCollector(LazyResultConsumer<U> lazy);
+	LazyFutureStream<U> withQueueFactory(QueueFactory<U> queue);
+	
+	LazyFutureStream<U>  withErrorHandler(Optional<Consumer<Throwable>> errorHandler);
+	LazyFutureStream<U> withSubscription(Continueable sub);
+	
 	LazyFutureStream<U> withLastActive(StreamWrapper streamWrapper);
+	
+	/* 
+	 * React to new events with the supplied function on the supplied ExecutorService
+	 * 
+	 *	@param fn Apply to incoming events
+	 *	@param service Service to execute function on 
+	 *	@return next stage in the Stream
+	 */
+	default <R> LazyFutureStream<R> then(final Function<U, R> fn, ExecutorService service){
+		return (LazyFutureStream<R>)FutureStream.super.then(fn, service);
+	}
 	
 	/**
 	 * Override return type on SimpleReactStream
@@ -295,11 +325,17 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	@Override
 	default LazyFutureStream<U> limit(long maxSize) {
 
+		Continueable  sub = this.getSubscription();
+		sub.registerLimit(maxSize);
 		StreamWrapper lastActive = getLastActive();
 		StreamWrapper limited = lastActive.withStream(lastActive.stream().limit(maxSize));
 		return this.withLastActive(limited);
 
 	}
+
+	
+
+	
 
 	/* 
 	 * LazyFutureStream.of(1,2,3,4).skip(2)
@@ -312,6 +348,8 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 */
 	@Override
 	default LazyFutureStream<U> skip(long n) {
+		Continueable sub = this.getSubscription();
+		sub.registerSkip(n);
 		StreamWrapper lastActive = getLastActive();
 		StreamWrapper limited = lastActive.withStream(lastActive.stream().skip(n));
 		return this.withLastActive(limited);
@@ -338,7 +376,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	@Override
 	default Seq<U> distinct() {
 		
-		return toQueue().stream().distinct();
+		return toQueue().stream(getSubscription()).distinct();
 	}
 
 	/**
@@ -373,6 +411,36 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 		return new Tuple2(partitioned.v1, partitioned.v2);
 	}
 
+	/**
+     * Zip two streams into one.
+     * <p>
+     * <code><pre>
+     * // (tuple(1, "a"), tuple(2, "b"), tuple(3, "c"))
+     * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"))
+     * </pre></code>
+     *
+     * @see #zip(Stream, Stream)
+     */
+    default <T> Seq<Tuple2<U, T>> zip(Seq<T> other) {
+        return zip(this, other);
+    }
+
+    /**
+     * Zip two streams into one using a {@link BiFunction} to produce resulting values.
+     * <p>
+     * <code><pre>
+     * // ("1:a", "2:b", "3:c")
+     * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"), (i, s) -> i + ":" + s)
+     * </pre></code>
+     *
+     * @see #zip(Seq, BiFunction)
+     */
+    default <T, R> Seq<R> zip(Seq<T> other, BiFunction<U, T, R> zipper) {
+        return zip(this, other, zipper);
+    }
+
+  
+	
 	/**
 	 * Construct a SimpleReact Stage from a supplied array
 	 * 
@@ -524,7 +592,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 		if (stream instanceof LazyFutureStream)
 			return (LazyFutureStream<T>) stream;
 		if (stream instanceof FutureStream)
-			stream = ((FutureStream) stream).toQueue().stream();
+			stream = ((FutureStream) stream).toQueue().stream(((FutureStream) stream).getSubscription());
 
 		return new LazyFutureStreamImpl<T>(
 				stream.map(CompletableFuture::completedFuture),
@@ -547,5 +615,57 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 		return futureStream(StreamSupport.stream(
 				spliteratorUnknownSize(iterator, ORDERED), false));
 	}
+	
+	 /**
+     * Zip two streams into one.
+     * <p>
+     * <code><pre>
+     * // (tuple(1, "a"), tuple(2, "b"), tuple(3, "c"))
+     * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"))
+     * </pre></code>
+     */
+    static <T1, T2> Seq<Tuple2<T1, T2>> zip(Stream<T1> left, Stream<T2> right) {
+        return zip(left, right, Tuple::tuple);
+    }
 
+    /**
+     * Zip two streams into one using a {@link BiFunction} to produce resulting values.
+     * <p>
+     * <code><pre>
+     * // ("1:a", "2:b", "3:c")
+     * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"), (i, s) -> i + ":" + s)
+     * </pre></code>
+     */
+    static <T1, T2, R> Seq<R> zip(Stream<T1> left, Stream<T2> right, BiFunction<T1, T2, R> zipper) {
+        final Iterator<T1> it1 = left.iterator();
+        final Iterator<T2> it2 = right.iterator();
+
+        class Zip implements Iterator<R> {
+            @Override
+            public boolean hasNext() {
+            	if(!it1.hasNext()){
+            		close(it2);
+            	}
+            	if(!it2.hasNext()){
+            		close(it1);
+            	}
+                return it1.hasNext() && it2.hasNext();
+            }
+
+            @Override
+            public R next() {
+                return zipper.apply(it1.next(), it2.next());
+            }
+        }
+
+        return Seq.seq(new Zip());
+    }
+	
+    static void close(Iterator it){
+    	
+    	if(it instanceof CloseableIterator){
+    		((CloseableIterator)it).close();
+    	}
+    }
+    
 }

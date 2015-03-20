@@ -28,6 +28,7 @@ import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
+import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.EagerToQueue;
 import com.aol.simple.react.stream.traits.FutureStream;
@@ -44,7 +45,16 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  */
 public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
-	
+	/* 
+	 * React to new events with the supplied function on the supplied ExecutorService
+	 * 
+	 *	@param fn Apply to incoming events
+	 *	@param service Service to execute function on 
+	 *	@return next stage in the Stream
+	 */
+	default <R> EagerFutureStream<R> then(final Function<U, R> fn, ExecutorService service){
+		return (EagerFutureStream<R>)FutureStream.super.then(fn, service);
+	}
 	
 	/* 
 	 * Non-blocking asyncrhonous application of the supplied function.

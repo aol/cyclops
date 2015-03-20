@@ -1,5 +1,6 @@
 package com.aol.simple.react.stream.traits;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -26,12 +27,11 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
+import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.StreamWrapper;
-import com.aol.simple.react.stream.eager.EagerFutureStream;
 
 public interface FutureStream<U> extends Seq<U>,
 										ConfigurableStream<U>, 
@@ -153,7 +153,7 @@ public interface FutureStream<U> extends Seq<U>,
 	 */
 	@Override
 	default  void forEach(Consumer<? super U> action) {
-		toQueue().stream().forEach((Consumer) action);
+		toQueue().stream(getSubscription()).forEach((Consumer) action);
 
 	}
 
@@ -162,7 +162,7 @@ public interface FutureStream<U> extends Seq<U>,
 	 */
 	@Override
 	default  void forEachOrdered(Consumer<? super U> action) {
-		toQueue().stream().forEachOrdered((Consumer) action);
+		toQueue().stream(getSubscription()).forEachOrdered((Consumer) action);
 
 	}
 
@@ -171,7 +171,7 @@ public interface FutureStream<U> extends Seq<U>,
 	 */
 	@Override
 	default  Object[] toArray() {
-		return toQueue().stream().toArray();
+		return toQueue().stream(getSubscription()).toArray();
 	}
 
 	/* (non-Javadoc)
@@ -179,7 +179,7 @@ public interface FutureStream<U> extends Seq<U>,
 	 */
 	@Override
 	default  <A> A[] toArray(IntFunction<A[]> generator) {
-		return toQueue().stream().toArray(generator);
+		return toQueue().stream(getSubscription()).toArray(generator);
 	}
 
 	/* (non-Javadoc)
@@ -188,7 +188,7 @@ public interface FutureStream<U> extends Seq<U>,
 	@Override
 	default  U reduce(U identity, BinaryOperator<U> accumulator) {
 
-		return (U) toQueue().stream().reduce(identity, accumulator);
+		return (U) toQueue().stream(getSubscription()).reduce(identity, accumulator);
 	}
 
 	/*
@@ -198,7 +198,7 @@ public interface FutureStream<U> extends Seq<U>,
 	 */
 	@Override
 	default Optional<U> reduce(BinaryOperator<U> accumulator) {
-		return toQueue().stream().reduce(accumulator);
+		return toQueue().stream(getSubscription()).reduce(accumulator);
 	}
 
 	/*
@@ -211,7 +211,7 @@ public interface FutureStream<U> extends Seq<U>,
 	default  <R> R collect(Supplier<R> supplier,
 			BiConsumer<R, ? super U> accumulator, BiConsumer<R, R> combiner) {
 
-		return (R) toQueue().stream().collect(supplier, accumulator, combiner);
+		return (R) toQueue().stream(getSubscription()).collect(supplier, accumulator, combiner);
 	}
 
 
@@ -223,7 +223,7 @@ public interface FutureStream<U> extends Seq<U>,
 	@Override
 	default Optional<U> min(Comparator<? super U> comparator) {
 
-		return toQueue().stream().min(comparator);
+		return toQueue().stream(getSubscription()).min(comparator);
 	}
 
 	/*
@@ -233,7 +233,7 @@ public interface FutureStream<U> extends Seq<U>,
 	 */
 	@Override
 	default Optional<U> max(Comparator<? super U> comparator) {
-		return toQueue().stream().max(comparator);
+		return toQueue().stream(getSubscription()).max(comparator);
 	}
 
 	/*
@@ -254,7 +254,7 @@ public interface FutureStream<U> extends Seq<U>,
 	 */
 	@Override
 	default  boolean anyMatch(Predicate<? super U> predicate) {
-		return toQueue().stream().anyMatch(predicate);
+		return toQueue().stream(getSubscription()).anyMatch(predicate);
 	}
 
 	/*
@@ -264,7 +264,7 @@ public interface FutureStream<U> extends Seq<U>,
 	 */
 	@Override
 	default  boolean allMatch(Predicate<? super U> predicate) {
-		return toQueue().stream().allMatch(predicate);
+		return toQueue().stream(getSubscription()).allMatch(predicate);
 	}
 
 	/*
@@ -274,7 +274,7 @@ public interface FutureStream<U> extends Seq<U>,
 	 */
 	@Override
 	default boolean noneMatch(Predicate<? super U> predicate) {
-		return toQueue().stream().noneMatch(predicate);
+		return toQueue().stream(getSubscription()).noneMatch(predicate);
 	}
 
 	/*
@@ -284,7 +284,7 @@ public interface FutureStream<U> extends Seq<U>,
 	 */
 	@Override
 	default Optional<U> findFirst() {
-		return toQueue().stream().findFirst();
+		return toQueue().stream(getSubscription()).findFirst();
 	}
 
 	/*
@@ -294,7 +294,7 @@ public interface FutureStream<U> extends Seq<U>,
 	 */
 	@Override
 	default Optional<U> findAny() {
-		return toQueue().stream().findAny();
+		return toQueue().stream(getSubscription()).findAny();
 	}
 
 	/*
@@ -307,7 +307,7 @@ public interface FutureStream<U> extends Seq<U>,
 	default  <R> R reduce(R identity, BiFunction<R, ? super U, R> accumulator,
 			BinaryOperator<R> combiner) {
 
-		return toQueue().stream().reduce(identity, accumulator, combiner);
+		return toQueue().stream(getSubscription()).reduce(identity, accumulator, combiner);
 	}
 	/* (non-Javadoc)
 	 * @see java.util.stream.BaseStream#iterator()
@@ -315,7 +315,9 @@ public interface FutureStream<U> extends Seq<U>,
 	@Override
 	default Iterator<U> iterator() {
 
-		return toQueue().stream().iterator();
+		if(getSubscription().closed())
+			return Arrays.<U>asList().iterator();
+		return new CloseableIterator<>(toQueue().stream(getSubscription()).iterator(),getSubscription());
 	}
 
 	/* (non-Javadoc)
@@ -323,7 +325,7 @@ public interface FutureStream<U> extends Seq<U>,
 	 */
 	@Override
 	default Spliterator<U> spliterator() {
-		return toQueue().stream().spliterator();
+		return toQueue().stream(getSubscription()).spliterator();
 	}
 
 	/* (non-Javadoc)
@@ -361,7 +363,7 @@ public interface FutureStream<U> extends Seq<U>,
 	
 	@Override
 	default  Stream<U> stream() {
-		return toQueue().stream();
+		return toQueue().stream(getSubscription());
 	}
 	
 	
@@ -489,7 +491,7 @@ public interface FutureStream<U> extends Seq<U>,
 	 */
 	@Override
 	default IntStream mapToInt(ToIntFunction<? super U> mapper) {
-		return toQueue().stream().mapToInt(mapper);
+		return toQueue().stream(getSubscription()).mapToInt(mapper);
 	}
 
 	/* (non-Javadoc)
@@ -497,7 +499,7 @@ public interface FutureStream<U> extends Seq<U>,
 	 */
 	@Override
 	default LongStream mapToLong(ToLongFunction<? super U> mapper) {
-		return toQueue().stream().mapToLong(mapper);
+		return toQueue().stream(getSubscription()).mapToLong(mapper);
 	}
 
 	/* (non-Javadoc)
@@ -505,7 +507,7 @@ public interface FutureStream<U> extends Seq<U>,
 	 */
 	@Override
 	default DoubleStream mapToDouble(ToDoubleFunction<? super U> mapper) {
-		return toQueue().stream().mapToDouble(mapper);
+		return toQueue().stream(getSubscription()).mapToDouble(mapper);
 	}
 
 	/* (non-Javadoc)
@@ -514,7 +516,7 @@ public interface FutureStream<U> extends Seq<U>,
 	@Override
 	default IntStream flatMapToInt(
 			Function<? super U, ? extends IntStream> mapper) {
-		return toQueue().stream().flatMapToInt(mapper);
+		return toQueue().stream(getSubscription()).flatMapToInt(mapper);
 	}
 
 	/* (non-Javadoc)
@@ -523,7 +525,7 @@ public interface FutureStream<U> extends Seq<U>,
 	@Override
 	default LongStream flatMapToLong(
 			Function<? super U, ? extends LongStream> mapper) {
-		return toQueue().stream().flatMapToLong(mapper);
+		return toQueue().stream(getSubscription()).flatMapToLong(mapper);
 	}
 
 	/* (non-Javadoc)
@@ -532,7 +534,7 @@ public interface FutureStream<U> extends Seq<U>,
 	@Override
 	default DoubleStream flatMapToDouble(
 			Function<? super U, ? extends DoubleStream> mapper) {
-		return toQueue().stream().flatMapToDouble(mapper);
+		return toQueue().stream(getSubscription()).flatMapToDouble(mapper);
 	}
 
 	
@@ -542,7 +544,7 @@ public interface FutureStream<U> extends Seq<U>,
 	 */
 	@Override
 	default Seq<U> sorted() {
-		return toQueue().stream().sorted();
+		return toQueue().stream(getSubscription()).sorted();
 	}
 
 	/* (non-Javadoc)
@@ -550,7 +552,7 @@ public interface FutureStream<U> extends Seq<U>,
 	 */
 	@Override
 	default Seq<U> sorted(Comparator<? super U> comparator) {
-		return toQueue().stream().sorted(comparator);
+		return toQueue().stream(getSubscription()).sorted(comparator);
 	}
 
 	/**

@@ -17,10 +17,8 @@ import lombok.experimental.Wither;
 
 import com.aol.simple.react.generators.Generator;
 import com.aol.simple.react.generators.ReactIterator;
-import com.aol.simple.react.stream.BaseSimpleReact;
+import com.aol.simple.react.stream.BaseLazySimpleReact;
 import com.aol.simple.react.stream.ThreadPools;
-import com.aol.simple.react.stream.eager.EagerFutureStream;
-import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -33,7 +31,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 @Builder
 @Wither
 @AllArgsConstructor
-public class LazyReact extends BaseSimpleReact {
+public class LazyReact extends BaseLazySimpleReact {
 
 	@Getter
 	private final ExecutorService executor;
@@ -71,6 +69,7 @@ public class LazyReact extends BaseSimpleReact {
 		return (LazyFutureStream) new LazyFutureStreamImpl<U>( s,executor, retrier);
 
 	}
+	
 
 	/* 
 	 * Construct a LazyFutureStream from the provided Stream of completableFutures

@@ -117,10 +117,8 @@ public class AnyOfTest {
 				.<CompletableFuture<String>>map(it ->  handle(it)))
 				.onFail(it ->"hello")
 				.filter(it-> !"2".equals(it))
-				.capture(e -> 
-				  e.printStackTrace())
-				.peek(it -> 
-				System.out.println(it))
+				.capture(Throwable::printStackTrace)
+				.peek(System.out::println)
 				.anyOf(data -> {
 					System.out.println(data);
 						return data; }).first();

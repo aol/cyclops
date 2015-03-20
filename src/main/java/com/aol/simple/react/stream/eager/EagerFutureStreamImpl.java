@@ -3,6 +3,7 @@ package com.aol.simple.react.stream.eager;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
@@ -15,6 +16,8 @@ import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
 
 import com.aol.simple.react.RetryBuilder;
+import com.aol.simple.react.async.AlwaysContinue;
+import com.aol.simple.react.async.Continueable;
 import com.aol.simple.react.async.QueueFactories;
 import com.aol.simple.react.async.QueueFactory;
 import com.aol.simple.react.capacity.monitor.LimitingMonitor;
@@ -42,6 +45,8 @@ public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 	private final LazyResultConsumer<U> lazyCollector;
 	private final QueueFactory<U> queueFactory;
 	private final BaseSimpleReact simpleReact;
+	private final Continueable subscription;
+	private final ExecutorService populator = null;
 	/**
 	 * 
 	 * Construct a SimpleReact stage - this acts as a fluent SimpleReact builder
@@ -65,6 +70,8 @@ public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 		this.waitStrategy = new LimitingMonitor();
 		this.lazyCollector = new BatchingCollector<>();
 		this.queueFactory = QueueFactories.unboundedQueue();
+		subscription = new AlwaysContinue();
+		
 	}
 
 	@Override

@@ -24,6 +24,8 @@ import java.util.stream.StreamSupport;
 import org.jooq.lambda.Seq;
 
 import com.aol.simple.react.RetryBuilder;
+import com.aol.simple.react.async.Continueable;
+import com.aol.simple.react.async.QueueFactory;
 import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.StageWithResults;
@@ -40,6 +42,25 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 				EagerOrLazyToQueue<U>{
 	
 
+	
+	Continueable getSubscription();
+	
+	/* 
+	 * React to new events with the supplied function on the supplied ExecutorService
+	 * 
+	 *	@param fn Apply to incoming events
+	 *	@param service Service to execute function on 
+	 *	@return next stage in the Stream
+	 */
+	default <R> SimpleReactStream<R> then(final Function<U, R> fn, ExecutorService service) {
+		
+
+		
+		return (SimpleReactStream<R>) this.withLastActive(getLastActive().permutate(
+				getLastActive().stream().map(
+						(ft) -> ft.thenApplyAsync(SimpleReactStream.<U,R>handleExceptions(fn),
+								service)), Collectors.toList()));
+	}
 	
 	
 	/**
@@ -72,18 +93,18 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 				isEager()));
 
 	}
+	/**
+	 * React to the completion of any of the events in the previous stage. Will not work reliably with Streams
+	 * where filter has been applied in earlier stages. (As Filter completes the Stream for events that are filtered out, they
+	 * potentially shortcircuit the completion of the stage).
+	 * 
+	 * @param fn Function to apply when any of the previous events complete
+	 * @return Next stage in the stream
+	 */
 	default <R> SimpleReactStream<R> anyOf(
 			final Function<U, R> fn) {
 		CompletableFuture[] array = lastActiveArray(getLastActive());
 		CompletableFuture cf = CompletableFuture.anyOf(array);
-		Function<Exception, U> f = (Exception e) -> {
-			BlockingStream.capture(e,getErrorHandler());
-			return block(Collectors.toList(),
-					new StreamWrapper(Stream.of(array), true));
-		};
-		
-		cf.whenCompleteAsync((it,e) -> System.out.println(it));
-//		CompletableFuture onFail = cf.exceptionally(f);
 		CompletableFuture onSuccess = cf.thenApplyAsync(fn,getTaskExecutor());
 		
 		return (SimpleReactStream<R>) withLastActive(new StreamWrapper(onSuccess,
@@ -122,10 +143,12 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 								getTaskExecutor())), Collectors.toList()));
 	}
 	
+	
 	default <R> SimpleReactStream<R> fromStream(Stream<R> stream) {
 		return (SimpleReactStream<R>) this.withLastActive(getLastActive()
 				.withNewStream(stream.map(CompletableFuture::completedFuture)));
 	}
+	
 
 	/**
 	 * Construct a SimpleReactStream from provided Stream of CompletableFutures
@@ -190,6 +213,12 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 						(ft) -> ft.thenApplyAsync(SimpleReactStream.<U,R>handleExceptions(fn),
 								getTaskExecutor())), Collectors.toList()));
 	}
+	default  <R> SimpleReactStream<R> until(final Function<U, R> fn) {
+		return (SimpleReactStream<R>) this.withLastActive(getLastActive().permutate(
+				getLastActive().stream().map(
+						(ft) -> ft.thenApplyAsync(SimpleReactStream.<U,R>handleExceptions(fn),
+								getTaskExecutor())), Collectors.toList()));
+	}
 
 	static <U,R> Function<U, R> handleExceptions(Function<U, R> fn) {
 		return (input) -> {
@@ -214,11 +243,11 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 			Function<? super U, ? extends Stream<? extends R>> flatFn) {
 
 		//need to pass in a builder in the constructor and build using it
-		return (SimpleReactStream)getSimpleReact().construct(Stream.of(), this.getTaskExecutor(),
-				this.getRetrier(), isEager())	
+		return (SimpleReactStream)getSimpleReact().construct( Stream.of(), this.getTaskExecutor(),
+				this.getRetrier(), isEager()).withSubscription(getSubscription()).withQueueFactory((QueueFactory<Object>) getQueueFactory())	
 				.fromStream(
 						toQueue()
-								.stream()
+								.stream(getSubscription())
 								.flatMap(flatFn));
 	}
 	
@@ -659,7 +688,7 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 		if (stream instanceof SimpleReactStream)
 			return (SimpleReactStream<T>) stream;
 		if (stream instanceof FutureStream)
-			stream = ((FutureStream) stream).toQueue().stream();
+			stream = ((FutureStream) stream).toQueue().stream(((FutureStream) stream).getSubscription());
 
 		return new SimpleReactStreamImpl<T>(
 				stream.map(CompletableFuture::completedFuture),

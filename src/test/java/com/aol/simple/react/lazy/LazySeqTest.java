@@ -39,8 +39,10 @@ public class LazySeqTest extends BaseSeqTest {
 	@Test
 	public void testBackPressureWhenZippingUnevenStreams() throws InterruptedException {
 
-		Queue fast = parallelBuilder().withExecutor(new ForkJoinPool(2)).reactInfinitely(() -> "100")
-				.withQueueFactory(QueueFactories.boundedQueue(2)).toQueue();
+		LazyFutureStream stream =  parallelBuilder().withExecutor(new ForkJoinPool(2))
+								.reactInfinitely(() -> "100").peek(System.out::println)
+				.withQueueFactory(QueueFactories.boundedQueue(2));
+		Queue fast = stream.toQueue();
 
 		Thread t = new Thread(() -> {
 			parallelBuilder().withExecutor(new ForkJoinPool(2)).react(() -> 1, SimpleReact.times(10)).peek(c -> sleep(10))

@@ -19,6 +19,7 @@ import org.jooq.lambda.Seq;
 
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
+import com.aol.simple.react.util.SimpleTimer;
 
 /**
  * Inspired by scalaz-streams async.Queue (functionally similar, but Blocking)
@@ -53,6 +54,7 @@ public class Queue<T> implements Adapter<T> {
 	@Getter
 	private final Signal<Integer> sizeSignal;
 
+
 	/**
 	 * Construct a Queue backed by a LinkedBlockingQueue
 	 */
@@ -86,14 +88,17 @@ public class Queue<T> implements Adapter<T> {
 	 */
 	public Seq<T> stream() {
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
-		return Seq.seq(closingStream(this::ensureOpen));
+		return Seq.seq(closingStream(this::ensureOpen,new AlwaysContinue()));
+	}
+	public Seq<T> stream(Continueable s) {
+		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
+		return Seq.seq(closingStream(this::ensureOpen,s));
 	}
 
-	private Stream<T> closingStream(Supplier<T> s){
-		
+	private Stream<T> closingStream(Supplier<T> s, Continueable sub){
 		
 		Stream<T> st = StreamSupport.stream(
-	                new ClosingSpliterator(Long.MAX_VALUE, s), false);
+	                new ClosingSpliterator(Long.MAX_VALUE, s,sub,this), false);
 		
 		 return st;
 	}
@@ -185,8 +190,10 @@ public class Queue<T> implements Adapter<T> {
 	public boolean add(T data){
 		try{
 			boolean result = queue.add((T)nullSafe(data));
-			if(sizeSignal!=null)
-				this.sizeSignal.set(queue.size());
+			if(true){
+				if(sizeSignal!=null)
+					this.sizeSignal.set(queue.size());
+			}
 			return result;
 			
 		}catch(IllegalStateException e){
@@ -205,10 +212,19 @@ public class Queue<T> implements Adapter<T> {
 	 */
 	@Override
 	public boolean offer(T data) {
-		if(!open)
-			throw new ClosedQueueException();
+		
+		
 		try {
-			boolean result =  this.queue.offer((T)nullSafe(data),this.offerTimeout,this.offerTimeUnit);
+		
+			boolean result = false;
+			SimpleTimer timer = new SimpleTimer();
+			do{
+				
+				if(!open)
+					throw new ClosedQueueException();
+				result = this.queue.offer((T)nullSafe(data),1l,TimeUnit.MICROSECONDS);
+			}while(!result && !timeout(timer));
+			
 			if(sizeSignal!=null)
 				this.sizeSignal.set(queue.size());
 			return result;
@@ -221,6 +237,13 @@ public class Queue<T> implements Adapter<T> {
 	}
 
 	
+	private boolean timeout(SimpleTimer timer) {
+		
+		if(timer.getElapsedNanoseconds()>=offerTimeUnit.toNanos(this.offerTimeout))
+			return true;
+		return false;
+	}
+
 	private Object nillSafe(T data) {
 		if(NILL==data)
 			return null;
@@ -247,6 +270,11 @@ public class Queue<T> implements Adapter<T> {
 		}
 
 		return true;
+	}
+	
+	public void closeAndClear(){
+		this.open = false;
+		queue.clear();
 	}
 	
 	private final NIL NILL = new NIL();
