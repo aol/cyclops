@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
@@ -27,20 +28,23 @@ public class Subscription implements Continueable{
 	
 	public void registerSkip(long skip){
 		if(queues.size()>0)
-			limits.get(queues.get(queues.size()-1)).addAndGet(skip);
+			limits.get(currentQueue()).addAndGet(skip);
 	}
 	public void registerLimit(long limit){
 		
 		if(queues.size()>0){
-			if(unlimited.get(queues.get(queues.size()-1)).get())
-				limits.get(queues.get(queues.size()-1)).set(0);
+			if(unlimited.get(currentQueue()).get())
+				limits.get(currentQueue()).set(0);
 			
-			limits.get(queues.get(queues.size()-1)).addAndGet(limit);
-			unlimited.get(queues.get(queues.size()-1)).set(false);
+			limits.get(currentQueue()).addAndGet(limit);
+			unlimited.get(currentQueue()).set(false);
 			
 			queues.stream().forEach(this::closeQueueIfFinishedStateless);
 			
 		}
+	}
+	private Queue currentQueue() {
+		return queues.get(queues.size()-1);
 	}
 	public void addQueue(Queue q){
 	
@@ -52,32 +56,17 @@ public class Subscription implements Continueable{
 	}
 	
 	
-	public boolean closeQueueIfFinished(Queue queue){
+	public void closeQueueIfFinished(Queue queue){
 		
-		if(queues.size()==0)
-			return true;
-		
-		long queueCount = count.get(queue).incrementAndGet();
-		long limit = valuesToRight(queue).stream().reduce((acc,next)-> Math.min(acc, next)).get();
-		
-		
-		
-		if(queueCount>=limit){ //last entry - close THIS queue only!
-			
-			queue.closeAndClear();
-			closed.set(true);
-		}
-		
-	
-		return true;
+		closeQueueIfFinished(queue,AtomicLong::incrementAndGet);
 		
 	}
-	public void closeQueueIfFinishedStateless(Queue queue){
+	private void closeQueueIfFinished(Queue queue, Function<AtomicLong,Long> fn){
 		
 		if(queues.size()==0)
 			return;
 		
-		long queueCount = count.get(queue).get();
+		long queueCount = fn.apply(count.get(queue));
 		long limit = valuesToRight(queue).stream().reduce((acc,next)-> Math.min(acc, next)).get();
 		
 		
@@ -89,9 +78,12 @@ public class Subscription implements Continueable{
 			closed.set(true);
 		}
 		
+		
+	}
+	public void closeQueueIfFinishedStateless(Queue queue){
 	
-		
-		
+		closeQueueIfFinished(queue,AtomicLong::get);
+			
 	}
 	private List<Long> valuesToRight(Queue queue) {
 		return Seq.seq(queues.stream()).splitAt(findQueue(queue)).v2.map(limits::get).map(AtomicLong::get).collect(Collectors.toList());
@@ -117,7 +109,7 @@ public class Subscription implements Continueable{
 	}
 }
 /**
-stream.map().iterator().limit(4).flatMap().limit(2).iterator().limit(8)
+stream.map().iterator().limit(4).flatMap(..).limit(2).map(..).limit(8)
 subscription
 
 stream no limit

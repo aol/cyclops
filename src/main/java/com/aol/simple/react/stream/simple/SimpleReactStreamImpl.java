@@ -45,7 +45,7 @@ public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>{
 	private final QueueFactory<U> queueFactory;
 	private final BaseSimpleReact simpleReact;
 	private final Continueable subscription;
-	private final ExecutorService taskExecutor2;
+
 	
 	public SimpleReactStreamImpl(final Stream<CompletableFuture<U>> stream,
 			final ExecutorService executor, final RetryExecutor retrier,boolean isEager) {
@@ -62,6 +62,9 @@ public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>{
 		this.lazyCollector = new BatchingCollector<>();
 		this.queueFactory = eager ? QueueFactories.unboundedQueue() : QueueFactories.boundedQueue(1000);
 		this.subscription = new AlwaysContinue();
-		taskExecutor2=null;
+		
+	}
+	public ExecutorService getPopulator(){
+		return Executors.newSingleThreadExecutor();
 	}
 }

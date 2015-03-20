@@ -80,12 +80,14 @@ public abstract class BaseSeqTest {
 	}
 	@Test
 	public void zipInOrder(){
+		
 		List<Tuple2<Integer,Integer>> list =  of(1,2,3,4,5,6)
 													.zip( of(100,200,300,400))
 													.collect(Collectors.toList());
 		
 		assertThat(asList(1,2,3,4,5,6),hasItem(list.get(0).v1));
 		assertThat(asList(100,200,300,400),hasItem(list.get(0).v2));
+		
 		
 		
 	}

@@ -46,7 +46,7 @@ public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 	private final QueueFactory<U> queueFactory;
 	private final BaseSimpleReact simpleReact;
 	private final Continueable subscription;
-	private final ExecutorService taskExecutor2 = null;
+	private final ExecutorService populator = null;
 	/**
 	 * 
 	 * Construct a SimpleReact stage - this acts as a fluent SimpleReact builder
@@ -71,6 +71,7 @@ public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 		this.lazyCollector = new BatchingCollector<>();
 		this.queueFactory = QueueFactories.unboundedQueue();
 		subscription = new AlwaysContinue();
+		
 	}
 
 	@Override

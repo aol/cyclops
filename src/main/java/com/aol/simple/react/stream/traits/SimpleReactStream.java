@@ -45,17 +45,24 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	
 	Continueable getSubscription();
 	
-	default <R> SimpleReactStream<R> populate(final Function<U, R> fn) {
+	/* 
+	 * React to new events with the supplied function on the supplied ExecutorService
+	 * 
+	 *	@param fn Apply to incoming events
+	 *	@param service Service to execute function on 
+	 *	@return next stage in the Stream
+	 */
+	default <R> SimpleReactStream<R> then(final Function<U, R> fn, ExecutorService service) {
 		
 
 		
 		return (SimpleReactStream<R>) this.withLastActive(getLastActive().permutate(
 				getLastActive().stream().map(
 						(ft) -> ft.thenApplyAsync(SimpleReactStream.<U,R>handleExceptions(fn),
-								getTaskExecutor2())), Collectors.toList()));
+								service)), Collectors.toList()));
 	}
 	
-	ExecutorService getTaskExecutor2();
+	
 	/**
 	 * @param collector
 	 *            to perform aggregation / reduction operation on the results
@@ -86,17 +93,18 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 				isEager()));
 
 	}
+	/**
+	 * React to the completion of any of the events in the previous stage. Will not work reliably with Streams
+	 * where filter has been applied in earlier stages. (As Filter completes the Stream for events that are filtered out, they
+	 * potentially shortcircuit the completion of the stage).
+	 * 
+	 * @param fn Function to apply when any of the previous events complete
+	 * @return Next stage in the stream
+	 */
 	default <R> SimpleReactStream<R> anyOf(
 			final Function<U, R> fn) {
 		CompletableFuture[] array = lastActiveArray(getLastActive());
 		CompletableFuture cf = CompletableFuture.anyOf(array);
-		Function<Exception, U> f = (Exception e) -> {
-			BlockingStream.capture(e,getErrorHandler());
-			return block(Collectors.toList(),
-					new StreamWrapper(Stream.of(array), true));
-		};
-		
-		
 		CompletableFuture onSuccess = cf.thenApplyAsync(fn,getTaskExecutor());
 		
 		return (SimpleReactStream<R>) withLastActive(new StreamWrapper(onSuccess,

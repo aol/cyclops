@@ -2,8 +2,8 @@ package com.aol.simple.react.async;
 
 public class AlwaysContinue implements Continueable{
 
-	public boolean closeQueueIfFinished(Queue queue){
-		return true;
+	public void closeQueueIfFinished(Queue queue){
+		
 	}
 
 	@Override
@@ -26,13 +26,13 @@ public class AlwaysContinue implements Continueable{
 
 	@Override
 	public boolean closed() {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public void closeQueueIfFinishedStateless(Queue queue) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 }

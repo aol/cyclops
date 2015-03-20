@@ -156,7 +156,7 @@ public abstract class BaseSimpleReact {
 		SimpleReactStream stream = construct(StreamSupport.stream(
                 new InfiniteClosingSpliterator(Long.MAX_VALUE, () -> CompletableFuture.completedFuture(s.get()),sub), false),
 				this.getExecutor(),getRetrier(),false).withSubscription(sub);
-		//return stream.fromStream(stream.toQueue().stream(sub));
+		
 		return stream;
 		
 
