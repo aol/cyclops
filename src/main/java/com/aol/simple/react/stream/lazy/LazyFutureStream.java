@@ -61,7 +61,16 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	
 	LazyFutureStream<U> withLastActive(StreamWrapper streamWrapper);
 	
-	
+	/* 
+	 * React to new events with the supplied function on the supplied ExecutorService
+	 * 
+	 *	@param fn Apply to incoming events
+	 *	@param service Service to execute function on 
+	 *	@return next stage in the Stream
+	 */
+	default <R> LazyFutureStream<R> then(final Function<U, R> fn, ExecutorService service){
+		return (LazyFutureStream<R>)FutureStream.super.then(fn, service);
+	}
 	
 	/**
 	 * Override return type on SimpleReactStream

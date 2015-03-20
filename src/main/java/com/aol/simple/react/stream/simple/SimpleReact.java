@@ -20,7 +20,7 @@ import com.aol.simple.react.generators.Generator;
 import com.aol.simple.react.generators.ParallelGenerator;
 import com.aol.simple.react.generators.ReactIterator;
 import com.aol.simple.react.generators.SequentialIterator;
-import com.aol.simple.react.stream.BaseSimpleReact;
+import com.aol.simple.react.stream.BaseLazySimpleReact;
 import com.aol.simple.react.stream.InfiniteProcessingException;
 import com.aol.simple.react.stream.MissingValue;
 import com.aol.simple.react.stream.ThreadPools;
@@ -39,7 +39,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 
 @Builder
 @Wither
-public class SimpleReact  extends BaseSimpleReact{
+public class SimpleReact  extends BaseLazySimpleReact{
 
 	@Getter
 	private final ExecutorService executor;
