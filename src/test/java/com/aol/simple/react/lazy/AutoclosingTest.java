@@ -107,7 +107,7 @@ public class AutoclosingTest {
 		
 		System.out.println("finished");
 	
-		Thread.sleep(1000);
+		
 		
 		int localAdded = added.get();
 		assertThat(close.get(),greaterThan(0));

@@ -26,10 +26,10 @@ public class StreamTest {
           .flatMap(x -> stage1(x)) 
           .map(x -> stage2(x))
           .map(x -> stage3(x))
-          .collect(Collectors.toSet());
+          .collect(Collectors.<Long>toSet());
 		 assertThat(set.size(),greaterThan(1));
 	}
-	private Object stage2(Object x) {
+	private Long stage2(Object x) {
 	
 		return null;
 	}
@@ -37,7 +37,7 @@ public class StreamTest {
 	
 		return Thread.currentThread().getId();
 	}
-	private Stream stage1(String x) {
+	private Stream<String> stage1(String x) {
 		return Stream.of("hello","hello","world","test","world","test","hello","world","test","hello","world","test");
 	}
 	@Test

@@ -6,6 +6,7 @@ import static java.util.Spliterators.spliteratorUnknownSize;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -18,7 +19,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -29,7 +29,6 @@ import org.jooq.lambda.tuple.Tuple2;
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Continueable;
 import com.aol.simple.react.async.QueueFactory;
-import com.aol.simple.react.async.Subscription;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
@@ -414,10 +413,10 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	/**
      * Zip two streams into one.
      * <p>
-     * <code><pre>
+     * <code>
      * // (tuple(1, "a"), tuple(2, "b"), tuple(3, "c"))
      * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"))
-     * </pre></code>
+     * </code>
      *
      * @see #zip(Stream, Stream)
      */
@@ -428,10 +427,10 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
     /**
      * Zip two streams into one using a {@link BiFunction} to produce resulting values.
      * <p>
-     * <code><pre>
+     * <code>
      * // ("1:a", "2:b", "3:c")
-     * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"), (i, s) -> i + ":" + s)
-     * </pre></code>
+     * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"), (i, s) -&gt; i + ":" + s)
+     * </code>
      *
      * @see #zip(Seq, BiFunction)
      */
@@ -619,10 +618,10 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 /**
      * Zip two streams into one.
      * <p>
-     * <code><pre>
+     * <code>
      * // (tuple(1, "a"), tuple(2, "b"), tuple(3, "c"))
      * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"))
-     * </pre></code>
+     * </code>
      */
     static <T1, T2> Seq<Tuple2<T1, T2>> zip(Stream<T1> left, Stream<T2> right) {
         return zip(left, right, Tuple::tuple);
@@ -631,10 +630,10 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
     /**
      * Zip two streams into one using a {@link BiFunction} to produce resulting values.
      * <p>
-     * <code><pre>
+     * <code>
      * // ("1:a", "2:b", "3:c")
-     * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"), (i, s) -> i + ":" + s)
-     * </pre></code>
+     * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"), (i, s) -&gt; i + ":" + s)
+     * </code>
      */
     static <T1, T2, R> Seq<R> zip(Stream<T1> left, Stream<T2> right, BiFunction<T1, T2, R> zipper) {
         final Iterator<T1> it1 = left.iterator();
@@ -667,5 +666,98 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
     		((CloseableIterator)it).close();
     	}
     }
+    
+    /**
+     * Returns a stream limited to all elements for which a predicate evaluates to <code>true</code>.
+     * <p>
+     * <code>
+     * // (1, 2)
+     * Seq.of(1, 2, 3, 4, 5).limitWhile(i -&gt; i &lt; 3)
+     * </code>
+     *
+     * @see #limitWhile(Stream, Predicate)
+     */
+    default Seq<U> limitWhile(Predicate<? super U> predicate) {
+        return limitWhile(this, predicate);
+    }
+
+    /**
+     * Returns a stream limited to all elements for which a predicate evaluates to <code>false</code>.
+     * <p>
+     * <code>
+     * // (1, 2)
+     * Seq.of(1, 2, 3, 4, 5).limitUntil(i -&gt; i == 3)
+     * </code>
+     *
+     * @see #limitUntil(Stream, Predicate)
+     */
+    default Seq<U> limitUntil(Predicate<? super U> predicate) {
+        return limitUntil(this, predicate);
+    }
+
+    
+    /**
+     * Returns a stream limited to all elements for which a predicate evaluates to <code>true</code>.
+     * <p>
+     * <code>
+     * // (1, 2)
+     * Seq.of(1, 2, 3, 4, 5).limitWhile(i -&gt; i &lt; 3)
+     * </code>
+     */
+    static <T> Seq<T> limitWhile(Stream<T> stream, Predicate<? super T> predicate) {
+        return limitUntil(stream, predicate.negate());
+    }
+
+    public final static Object NULL = new Object();
+    /**
+     * Returns a stream ed to all elements for which a predicate evaluates to <code>true</code>.
+     * <p>
+     * <code>
+     * // (1, 2)
+     * Seq.of(1, 2, 3, 4, 5).limitUntil(i -&gt; i == 3)
+     * </code>
+     */
+    @SuppressWarnings("unchecked")
+    static <T> Seq<T> limitUntil(Stream<T> stream, Predicate<? super T> predicate) {
+        final Iterator<T> it = stream.iterator();
+
+        class LimitUntil implements Iterator<T> {
+            T next = (T) NULL;
+            boolean test = false;
+
+            void test() {
+                if (!test && next == NULL && it.hasNext()) {
+                    next = it.next();
+
+                    if (test = predicate.test(next)){
+                        next = (T) NULL;
+                        close(it); //need to close any open queues
+                    }
+                }
+            }
+
+            @Override
+            public boolean hasNext() {
+                test();
+                return next != NULL;
+            }
+
+            @Override
+            public T next() {
+                if (next == NULL)
+                    throw new NoSuchElementException();
+
+                try {
+                    return next;
+                }
+                finally {
+                    next = (T) NULL;
+                }
+            }
+        }
+
+        return Seq.seq(new LimitUntil());
+    }
+
     
 }
