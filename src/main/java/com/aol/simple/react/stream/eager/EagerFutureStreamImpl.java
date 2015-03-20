@@ -46,7 +46,7 @@ public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 	private final QueueFactory<U> queueFactory;
 	private final BaseSimpleReact simpleReact;
 	private final Continueable subscription;
-	private final ExecutorService populator = null;
+
 	/**
 	 * 
 	 * Construct a SimpleReact stage - this acts as a fluent SimpleReact builder
@@ -79,8 +79,12 @@ public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 		return block(collector);
 	}
 
-    
-    
+	public BaseSimpleReact getPopulator(){
+		return null;
+	}
+	public void returnPopulator(BaseSimpleReact service){
+		
+	}
 	
 	
 }

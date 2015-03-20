@@ -212,18 +212,10 @@ public class Queue<T> implements Adapter<T> {
 	 */
 	@Override
 	public boolean offer(T data) {
-		
-		
+		if(!open)
+			throw new ClosedQueueException();
 		try {
-		
-			boolean result = false;
-			SimpleTimer timer = new SimpleTimer();
-			do{
-				
-				if(!open)
-					throw new ClosedQueueException();
-				result = this.queue.offer((T)nullSafe(data),1l,TimeUnit.MICROSECONDS);
-			}while(!result && !timeout(timer));
+			boolean result =  this.queue.offer((T)nullSafe(data),this.offerTimeout,this.offerTimeUnit);
 			
 			if(sizeSignal!=null)
 				this.sizeSignal.set(queue.size());

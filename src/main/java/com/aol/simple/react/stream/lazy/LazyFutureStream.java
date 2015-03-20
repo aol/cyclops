@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,6 +35,7 @@ import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
+import com.aol.simple.react.stream.eager.EagerFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.LazyToQueue;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
@@ -409,6 +411,30 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 				.partition(predicate);
 		return new Tuple2(partitioned.v1, partitioned.v2);
 	}
+	
+	 @Override
+	 default LazyFutureStream<U> slice(long from, long to) {
+	    	
+	        return fromStream( FutureStream.super.slice(from, to));
+	    }
+
+	 /**
+		 * Zip a Stream with a corresponding Stream of indexes.
+		 * 
+		 * 
+		 * // (tuple("a", 0), tuple("b", 1), tuple("c", 2))
+		 * LazyFutureStream.of("a", "b", "c").zipWithIndex()
+		 * 
+		 *
+		 * @see #zipWithIndex(Stream)
+		 
+		default LazyFutureStream<Tuple2<U, Long>> zipWithIndex() {
+			return fromStream(FutureStream.super.zipWithIndex());
+		}*/
+		default Seq<Tuple2<U, Long>> zipWithIndex() {
+			return FutureStream.super.zipWithIndex();
+		}
+
 
 	/**
      * Zip two streams into one.
@@ -420,8 +446,8 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
      *
      * @see #zip(Stream, Stream)
      */
-    default <T> Seq<Tuple2<U, T>> zip(Seq<T> other) {
-        return zip(this, other);
+    default <T> LazyFutureStream<Tuple2<U, T>> zip(Seq<T> other) {
+        return fromStream(zip(this, other));
     }
 
     /**
@@ -434,12 +460,143 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
      *
      * @see #zip(Seq, BiFunction)
      */
-    default <T, R> Seq<R> zip(Seq<T> other, BiFunction<U, T, R> zipper) {
-        return zip(this, other, zipper);
+    default <T, R> LazyFutureStream<R> zip(Seq<T> other, BiFunction<U, T, R> zipper) {
+        return fromStream(zip(this, other, zipper));
     }
 
   
+	/**
+	 * Scan a stream to the left.
+	 * 
+	 * 
+	 * // ("", "a", "ab", "abc")
+	 * LazyFutureStream.of("a", "b", "c").scanLeft("", (u, t) &gt; u + t)
+	 * 
+	 */
+	@Override
+	default <T> LazyFutureStream<T> scanLeft(T seed,
+			BiFunction<T, ? super U, T> function) {
+		return fromStream(FutureStream.super.scanLeft(seed, function));
+	}
+	/**
+	 * Scan a stream to the right. - careful with infinite streams!
+	 * 
+	 * 
+	 * // ("", "c", "cb", "cba")
+	 * LazyFutureStream.of("a", "b", "c").scanRight("", (t, u) &gt; u + t)
+	 * 
+	 */
+	@Override
+	default <R> LazyFutureStream<R> scanRight(R seed,
+			BiFunction<? super U, R, R> function) {
+		return fromStream(FutureStream.super.scanRight(seed, function));
+	}
+
+	/**
+	 * Reverse a stream. - careful with infinite streams!
+	 * 
+	 * 
+	 * // (3, 2, 1)
+	 * LazyFutureStream.of(1, 2, 3).reverse()
+	 * 
+	 */
+	@Override
+	default LazyFutureStream<U> reverse() {
+		return fromStream(FutureStream.super.reverse());
+	}
+
+	/**
+	 * Shuffle a stream
+	 * 
+	 * 
+	 * // e.g. (2, 3, 1)
+	 * LazyFutureStream.of(1, 2, 3).shuffle()
+	 * 
+	 */
+	@Override
+	default LazyFutureStream<U> shuffle() {
+		return fromStream(FutureStream.super.shuffle());
+	}
+
+	/**
+	 * Shuffle a stream using specified source of randomness
+	 * 
+	 * 
+	 * // e.g. (2, 3, 1)
+	 * LazyFutureStream.of(1, 2, 3).shuffle(new Random())
+	 * 
+	 */
+	@Override
+	default LazyFutureStream<U> shuffle(Random random) {
+		return fromStream(FutureStream.super.shuffle(random));
+	}
+
+	/**
+	 * Returns a stream with all elements skipped for which a predicate
+	 * evaluates to true.
+	 * 
+	 * 
+	 * // (3, 4, 5)
+	 * LazyFutureStream.of(1, 2, 3, 4, 5).skipWhile(i &gt; i &lt; 3)
+	 * 
+	 *
+	 * @see #skipWhile(Stream, Predicate)
+	 */
+	@Override
+	default LazyFutureStream<U> skipWhile(Predicate<? super U> predicate) {
+		return fromStream(FutureStream.super.skipWhile(predicate));
+	}
+
+	/**
+	 * Returns a stream with all elements skipped for which a predicate
+	 * evaluates to false.
+	 * 
+	 * 
+	 * // (3, 4, 5)
+	 * LazyFutureStream.of(1, 2, 3, 4, 5).skipUntil(i &gt; i == 3)
+	 * 
+	 *
+	 * @see #skipUntil(Stream, Predicate)
+	 */
+	@Override
+	default LazyFutureStream<U> skipUntil(Predicate<? super U> predicate) {
+		return fromStream(FutureStream.super.skipUntil(predicate));
+	}
+
+	/**
+	 * Returns a stream limited to all elements for which a predicate evaluates
+	 * to true.
+	 * 
+	 * 
+	 * // (1, 2)
+	 * EagerFutureStream.of(1, 2, 3, 4, 5).limitWhile(i -&gt; i &lt; 3)
+	 * 
+	 *
+	 * @see #limitWhile(Stream, Predicate)
+	 */
+	@Override
+	default LazyFutureStream<U> limitWhile(Predicate<? super U> predicate) {
+		return fromStream(LazyFutureStream.limitWhile(this,predicate));
+	}
+
+	/**
+	 * Returns a stream limited to all elements for which a predicate evaluates
+	 * to false.
+	 * 
+	 * 
+	 * // (1, 2)
+	 * EagerFutureStream.of(1, 2, 3, 4, 5).limitUntil(i &gt; i == 3)
+	 * 
+	 *
+	 * @see #limitUntil(Stream, Predicate)
+	 */
+	@Override
+	default LazyFutureStream<U> limitUntil(Predicate<? super U> predicate) {
+		return fromStream(limitUntil(this,predicate));
+	}
+
 	
+
 	/**
 	 * Construct a SimpleReact Stage from a supplied array
 	 * 
@@ -667,34 +824,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
     	}
     }
     
-    /**
-     * Returns a stream limited to all elements for which a predicate evaluates to <code>true</code>.
-     * <p>
-     * <code>
-     * // (1, 2)
-     * Seq.of(1, 2, 3, 4, 5).limitWhile(i -&gt; i &lt; 3)
-     * </code>
-     *
-     * @see #limitWhile(Stream, Predicate)
-     */
-    default Seq<U> limitWhile(Predicate<? super U> predicate) {
-        return limitWhile(this, predicate);
-    }
-
-    /**
-     * Returns a stream limited to all elements for which a predicate evaluates to <code>false</code>.
-     * <p>
-     * <code>
-     * // (1, 2)
-     * Seq.of(1, 2, 3, 4, 5).limitUntil(i -&gt; i == 3)
-     * </code>
-     *
-     * @see #limitUntil(Stream, Predicate)
-     */
-    default Seq<U> limitUntil(Predicate<? super U> predicate) {
-        return limitUntil(this, predicate);
-    }
-
+    
     
     /**
      * Returns a stream limited to all elements for which a predicate evaluates to <code>true</code>.

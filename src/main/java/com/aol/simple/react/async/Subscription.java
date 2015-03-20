@@ -99,6 +99,7 @@ public class Subscription implements Continueable{
 	}
 	@Override
 	public void closeAll() {
+		
 		closed.set(true);
 		queues.stream().forEach(Queue::closeAndClear);
 		

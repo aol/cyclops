@@ -24,7 +24,9 @@ import com.aol.simple.react.collectors.lazy.BatchingCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
+import com.aol.simple.react.threads.ReactPool;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 @Wither
@@ -45,6 +47,7 @@ public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>{
 	private final QueueFactory<U> queueFactory;
 	private final BaseSimpleReact simpleReact;
 	private final Continueable subscription;
+	private final ReactPool<BaseSimpleReact> pool = ReactPool.elasticPool(()->new LazyReact(Executors.newSingleThreadExecutor()));
 
 	
 	public SimpleReactStreamImpl(final Stream<CompletableFuture<U>> stream,
@@ -64,7 +67,10 @@ public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>{
 		this.subscription = new AlwaysContinue();
 		
 	}
-	public ExecutorService getPopulator(){
-		return Executors.newSingleThreadExecutor();
+	public BaseSimpleReact getPopulator(){
+		return pool.nextReactor();
+	}
+	public void returnPopulator(BaseSimpleReact service){
+		pool.populate(service);
 	}
 }

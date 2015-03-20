@@ -68,6 +68,32 @@ public class AutoclosingTest {
 		assertThat(localAdded,is(added.get()));
 		
 	}
+	@Test 
+	public void autoClosingLimit2Limit1Lots() throws InterruptedException{
+		for(int i=0;i<1500;i++){
+			close = new AtomicInteger();
+			added = new AtomicInteger();
+			
+		
+			System.out.println("test " + i);
+			//subscription fills from outside in (right to left), need to store open / closed for each queue
+			List<String> results = new LazyReact().reactInfinitely(()->nextValues()).withQueueFactory(()-> eventQueue())
+														  .flatMap(list -> list.stream())
+														  .peek(System.out::println)
+														  .limit(2)
+														  .flatMap(list -> list.stream())
+														  .peek(System.out::println)
+														  .limit(1)
+														  .collect(Collectors.toList());
+			
+			
+			if(results.size()!=1)
+				System.out.println("hello world!");
+			assertThat(results.size(),is(1));
+			assertThat(results.get(0),is("1"));
+		
+		}
+	}
 	@Test
 	public void autoClosingZip() throws InterruptedException{
 		System.out.println("Started!");
@@ -85,6 +111,26 @@ public class AutoclosingTest {
 		assertThat(close.get(),greaterThan(0));
 		assertThat(results.size(),is(3));
 		assertThat(localAdded,is(added.get()));
+		
+	}
+	@Test
+	public void autoClosingZipLots() throws InterruptedException{
+		for(int i=0;i<1500;i++){
+			close = new AtomicInteger();
+			added = new AtomicInteger();
+			//subscription fills from outside in (right to left), need to store open / closed for each queue
+			List<Tuple2<List<List<String>>, Integer>> results = new LazyReact().reactInfinitely(()->nextValues()).withQueueFactory(()-> eventQueue())
+														  .zip(LazyFutureStream.parallel(1,2,3))
+														  .collect(Collectors.toList());
+			System.out.println("finished");
+		
+			
+			
+			int localAdded = added.get();
+			assertThat(close.get(),greaterThan(0));
+			assertThat(results.size(),is(3));
+			assertThat(localAdded,is(added.get()));
+		}
 		
 	}
 	
@@ -146,7 +192,7 @@ public class AutoclosingTest {
 	}
 
 	private List<List<String>> nextValues() {
-		System.out.println("added!");
+		
 		added.incrementAndGet();
 		return  asList(asList("1","2"),asList("1","2"));
 	}
