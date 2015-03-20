@@ -413,10 +413,10 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	/**
      * Zip two streams into one.
      * <p>
-     * <code><pre>
+     * <code>
      * // (tuple(1, "a"), tuple(2, "b"), tuple(3, "c"))
      * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"))
-     * </pre></code>
+     * </code>
      *
      * @see #zip(Stream, Stream)
      */
@@ -427,10 +427,10 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
     /**
      * Zip two streams into one using a {@link BiFunction} to produce resulting values.
      * <p>
-     * <code><pre>
+     * <code>
      * // ("1:a", "2:b", "3:c")
-     * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"), (i, s) -> i + ":" + s)
-     * </pre></code>
+     * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"), (i, s) -&gt; i + ":" + s)
+     * </code>
      *
      * @see #zip(Seq, BiFunction)
      */
@@ -618,10 +618,10 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 /**
      * Zip two streams into one.
      * <p>
-     * <code><pre>
+     * <code>
      * // (tuple(1, "a"), tuple(2, "b"), tuple(3, "c"))
      * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"))
-     * </pre></code>
+     * </code>
      */
     static <T1, T2> Seq<Tuple2<T1, T2>> zip(Stream<T1> left, Stream<T2> right) {
         return zip(left, right, Tuple::tuple);
@@ -630,10 +630,10 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
     /**
      * Zip two streams into one using a {@link BiFunction} to produce resulting values.
      * <p>
-     * <code><pre>
+     * <code>
      * // ("1:a", "2:b", "3:c")
-     * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"), (i, s) -> i + ":" + s)
-     * </pre></code>
+     * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"), (i, s) -&gt; i + ":" + s)
+     * </code>
      */
     static <T1, T2, R> Seq<R> zip(Stream<T1> left, Stream<T2> right, BiFunction<T1, T2, R> zipper) {
         final Iterator<T1> it1 = left.iterator();
@@ -670,10 +670,10 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
     /**
      * Returns a stream limited to all elements for which a predicate evaluates to <code>true</code>.
      * <p>
-     * <code><pre>
+     * <code>
      * // (1, 2)
-     * Seq.of(1, 2, 3, 4, 5).limitWhile(i -> i < 3)
-     * </pre></code>
+     * Seq.of(1, 2, 3, 4, 5).limitWhile(i -&gt; i &lt; 3)
+     * </code>
      *
      * @see #limitWhile(Stream, Predicate)
      */
@@ -684,10 +684,10 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
     /**
      * Returns a stream limited to all elements for which a predicate evaluates to <code>false</code>.
      * <p>
-     * <code><pre>
+     * <code>
      * // (1, 2)
-     * Seq.of(1, 2, 3, 4, 5).limitUntil(i -> i == 3)
-     * </pre></code>
+     * Seq.of(1, 2, 3, 4, 5).limitUntil(i -&gt; i == 3)
+     * </code>
      *
      * @see #limitUntil(Stream, Predicate)
      */
@@ -699,10 +699,10 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
     /**
      * Returns a stream limited to all elements for which a predicate evaluates to <code>true</code>.
      * <p>
-     * <code><pre>
+     * <code>
      * // (1, 2)
-     * Seq.of(1, 2, 3, 4, 5).limitWhile(i -> i < 3)
-     * </pre></code>
+     * Seq.of(1, 2, 3, 4, 5).limitWhile(i -&gt; i &lt; 3)
+     * </code>
      */
     static <T> Seq<T> limitWhile(Stream<T> stream, Predicate<? super T> predicate) {
         return limitUntil(stream, predicate.negate());
@@ -712,10 +712,10 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
     /**
      * Returns a stream ed to all elements for which a predicate evaluates to <code>true</code>.
      * <p>
-     * <code><pre>
+     * <code>
      * // (1, 2)
-     * Seq.of(1, 2, 3, 4, 5).limitUntil(i -> i == 3)
-     * </pre></code>
+     * Seq.of(1, 2, 3, 4, 5).limitUntil(i -&gt; i == 3)
+     * </code>
      */
     @SuppressWarnings("unchecked")
     static <T> Seq<T> limitUntil(Stream<T> stream, Predicate<? super T> predicate) {
