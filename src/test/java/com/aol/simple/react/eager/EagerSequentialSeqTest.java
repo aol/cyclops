@@ -7,6 +7,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -17,10 +18,20 @@ import org.junit.Test;
 
 import com.aol.simple.react.base.BaseSequentialSeqTest;
 import com.aol.simple.react.stream.eager.EagerFutureStream;
+import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.traits.FutureStream;
+import com.aol.simple.react.threads.ReactPool;
 
 public class EagerSequentialSeqTest extends BaseSequentialSeqTest {
-
+	
+	
+	@Override
+	protected <U> FutureStream<U> react(Supplier<U>... array) {
+		
+		return EagerFutureStream.sequentialCommonBuilder().react(array);
+		
+	}
+	
 	@Override
 	protected <U> EagerFutureStream<U> of(U... array) {
 		return EagerFutureStream.sequentialCommonBuilder().of(array);

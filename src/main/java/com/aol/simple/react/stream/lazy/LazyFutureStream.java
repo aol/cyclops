@@ -4,6 +4,7 @@ import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -68,7 +70,64 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 		Map map =FutureStream.super.shard(shards, sharder );
 		return (Map<K,LazyFutureStream<U>>)map;
 	}
+	
+	default LazyFutureStream<U> debounce(long time, TimeUnit unit){
+		 return (LazyFutureStream<U>)FutureStream.super.debounce(time,unit);
+	 }
+	 default<T>  LazyFutureStream<U> skipUntil(FutureStream<T> s) {
+			return (LazyFutureStream<U>)FutureStream.super.skipUntil(s);
+	}
+	default<T>  LazyFutureStream<U> takeUntil(FutureStream<T> s) {
+		return (LazyFutureStream<U>)FutureStream.super.takeUntil(s);
+	}
+	
+
+	default LazyFutureStream<U> control(Function<Supplier<U>, Supplier<U>> fn){
+		 return (LazyFutureStream<U>)FutureStream.super.control(fn);
+	 }
+	default LazyFutureStream<Collection<U>> batch(Function<Supplier<U>, Supplier<Collection<U>>> fn){
+		 return (LazyFutureStream<Collection<U>>)FutureStream.super.batch(fn);
+	 }
+	default LazyFutureStream<Collection<U>> batchBySize(int size) {
+		return (LazyFutureStream<Collection<U>>)FutureStream.super. batchBySize(size);
+		
+	}
+	default LazyFutureStream<Collection<U>> batchBySize(int size, Supplier<Collection<U>> supplier) {
+		return (LazyFutureStream<Collection<U>>)FutureStream.super. batchBySize(size,supplier);
+		
+	}
+	default LazyFutureStream<U> jitter(long judderInNanos){
+		return (LazyFutureStream<U>)FutureStream.super.jitter(judderInNanos);
+	}
+	default LazyFutureStream<U> fixedDelay(long time, TimeUnit unit) {
+		return (LazyFutureStream<U>)FutureStream.super.fixedDelay(time,unit);
+	}
+	default FutureStream<U> onePer(long time, TimeUnit unit) {
+		return (LazyFutureStream<U>)FutureStream.super.onePer(time,unit);
+	
+	}
+	default FutureStream<U> xPer(int x,long time, TimeUnit unit) {
+		return (LazyFutureStream<U>)FutureStream.super.xPer(x,time,unit);
+	}
+
+	default LazyFutureStream<Collection<U>> batchByTime(long time, TimeUnit unit) {
+		return (LazyFutureStream<Collection<U>>)FutureStream.super.batchByTime(time,unit);
+	}
+	default LazyFutureStream<Collection<U>> batchByTime(long time, TimeUnit unit,Supplier<Collection<U>> factory) {
+		return (LazyFutureStream<Collection<U>>)FutureStream.super.batchByTime(time,unit,factory);
+		
+	}
+
+	default <T> LazyFutureStream<Tuple2<U, T>> combineLatest(FutureStream<T> s) {
+		return (LazyFutureStream<Tuple2<U, T>>)FutureStream.super.combineLatest(s);
+	}
+
+	static <U> LazyFutureStream<U> firstOf(LazyFutureStream<U>... futureStreams) {
+		return (LazyFutureStream<U>)FutureStream.firstOf(futureStreams);
+	}
+	
 	/* 
+	 * 
 	 * React to new events with the supplied function on the supplied ExecutorService
 	 * 
 	 *	@param fn Apply to incoming events
@@ -250,7 +309,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 * 
 	 * 
 	 * // (1, 2, 3, 4, 5, 6)
-	 * EagerFutureStream.of(1, 2, 3).concat(EagerFutureStream.of(4, 5, 6))
+	 * LazyFutureStream.of(1, 2, 3).concat(LazyFutureStream.of(4, 5, 6))
 	 * 
 	 *
 	 * @see #concat(Stream[])
@@ -575,7 +634,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 * 
 	 * 
 	 * // (1, 2)
-	 * EagerFutureStream.of(1, 2, 3, 4, 5).limitWhile(i -&gt; i &lt; 3)
+	 * LazyFutureStream.of(1, 2, 3, 4, 5).limitWhile(i -&gt; i &lt; 3)
 	 * 
 	 *
 	 * @see #limitWhile(Stream, Predicate)
@@ -591,7 +650,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 * 
 	 * 
 	 * // (1, 2)
-	 * EagerFutureStream.of(1, 2, 3, 4, 5).limitUntil(i &gt; i == 3)
+	 * LazyFutureStream.of(1, 2, 3, 4, 5).limitUntil(i &gt; i == 3)
 	 * 
 	 *
 	 * @see #limitUntil(Stream, Predicate)

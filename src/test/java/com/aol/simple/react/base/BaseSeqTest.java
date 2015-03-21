@@ -72,28 +72,51 @@ public abstract class BaseSeqTest {
 	}
 	private Object value() {
 		try {
-			Thread.sleep(1500);
+			Thread.sleep(150);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return "jello";
 	}
+	private int value2() {
+		try {
+			Thread.sleep(250);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 200;
+	}
 	@Test
 	public void combine(){
 		
-		assertThat(of(1,2,3,4,5,6).combine(of(3)).collect(Collectors.toList()).size(),greaterThan(5));
+		assertThat(of(1,2,3,4,5,6).combineLatest(of(3)).collect(Collectors.toList()).size(),greaterThan(5));
 	}
 	@Test
 	public void combineValues(){
-		assertTrue(of(1,2,3,4,5,6).combine(of(3)).anyMatch(it-> it.v2==null));
+		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v2==null));
 		//assertTrue(of(1,2,3,4,5,6).combine(of(3)).oneMatch(it-> it.v2==3));
-		assertTrue(of(1,2,3,4,5,6).combine(of(3)).anyMatch(it-> it.v1==1));
-		assertTrue(of(1,2,3,4,5,6).combine(of(3)).anyMatch(it-> it.v1==2));
-		assertTrue(of(1,2,3,4,5,6).combine(of(3)).anyMatch(it-> it.v1==3));
-		assertTrue(of(1,2,3,4,5,6).combine(of(3)).anyMatch(it-> it.v1==4));
-		assertTrue(of(1,2,3,4,5,6).combine(of(3)).anyMatch(it-> it.v1==5));
-		assertTrue(of(1,2,3,4,5,6).combine(of(3)).anyMatch(it-> it.v1==6));
+		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v1==1));
+		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v1==2));
+		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v1==3));
+		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v1==4));
+		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v1==5));
+		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v1==6));
+	}
+	@Test
+	public void skipUntil(){
+		System.out.println(react(()->1,()->2,()->3,()->4,()->value2())
+				.skipUntil(react(()->value())).collect(Collectors.toList()));
+		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).allMatch(it-> it==200));
+		assertThat(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).count(),is(1l));
+	}
+	@Test
+	public void takeUntil(){
+		System.out.println(react(()->1,()->2,()->3,()->4,()->value2())
+				.takeUntil(react(()->value())).collect(Collectors.toList()));
+		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).takeUntil(react(()->value())).noneMatch(it-> it==200));
+		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).takeUntil(react(()->value())).anyMatch(it-> it==1));
 	}
 	@Test
 	public void batchBySize(){
@@ -121,8 +144,22 @@ public abstract class BaseSeqTest {
 	public void judder(){
 		SimpleTimer timer = new SimpleTimer();
 		
-		assertThat(of(1,2,3,4,5,6).judder(10000).collect(Collectors.toList()).size(),is(6));
+		assertThat(of(1,2,3,4,5,6).jitter(10000).collect(Collectors.toList()).size(),is(6));
 		assertThat(timer.getElapsedNanoseconds(),greaterThan(20000l));
+	}
+	@Test
+	public void debounce(){
+		SimpleTimer timer = new SimpleTimer();
+		
+		assertThat(of(1,2,3,4,5,6).debounce(1000,TimeUnit.SECONDS).collect(Collectors.toList()).size(),is(1));
+		
+	}
+	@Test
+	public void debounceOk(){
+		SimpleTimer timer = new SimpleTimer();
+		
+		assertThat(of(1,2,3,4,5,6).debounce(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),is(6));
+		
 	}
 	@Test
 	public void onePer(){

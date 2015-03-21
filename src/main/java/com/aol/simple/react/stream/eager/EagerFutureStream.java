@@ -3,7 +3,9 @@ package com.aol.simple.react.stream.eager;
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -13,10 +15,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -27,14 +31,15 @@ import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Queue;
+import com.aol.simple.react.async.Queue.ClosedQueueException;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
-import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.EagerToQueue;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
+import com.aol.simple.react.util.SimpleTimer;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -50,6 +55,68 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	default <K> Map<K,EagerFutureStream<U>> shard(Map<K,Queue<U>> shards, Function<U,K> sharder ){
 		Map map =FutureStream.super.shard(shards, sharder );
 		return (Map<K,EagerFutureStream<U>>)map;
+	}
+	
+	default void cancel(){
+		cancelOriginal();
+		FutureStream.super.cancel();
+		
+	}
+	
+	 void cancelOriginal();
+
+	 default EagerFutureStream<U> debounce(long time, TimeUnit unit){
+		 return (EagerFutureStream<U>)FutureStream.super.debounce(time,unit);
+	 }
+	 default<T>  EagerFutureStream<U> skipUntil(FutureStream<T> s) {
+			return (EagerFutureStream<U>)FutureStream.super.skipUntil(s);
+		}
+		default<T>  EagerFutureStream<U> takeUntil(FutureStream<T> s) {
+			return (EagerFutureStream<U>)FutureStream.super.takeUntil(s);
+		}
+	 
+	default EagerFutureStream<U> control(Function<Supplier<U>, Supplier<U>> fn){
+		 return (EagerFutureStream<U>)FutureStream.super.control(fn);
+	 }
+	default EagerFutureStream<Collection<U>> batch(Function<Supplier<U>, Supplier<Collection<U>>> fn){
+		 return (EagerFutureStream<Collection<U>>)FutureStream.super.batch(fn);
+	 }
+	default EagerFutureStream<Collection<U>> batchBySize(int size) {
+		return (EagerFutureStream<Collection<U>>)FutureStream.super. batchBySize(size);
+		
+	}
+	default EagerFutureStream<Collection<U>> batchBySize(int size, Supplier<Collection<U>> supplier) {
+		return (EagerFutureStream<Collection<U>>)FutureStream.super. batchBySize(size,supplier);
+		
+	}
+	default EagerFutureStream<U> jitter(long judderInNanos){
+		return (EagerFutureStream<U>)FutureStream.super.jitter(judderInNanos);
+	}
+	default EagerFutureStream<U> fixedDelay(long time, TimeUnit unit) {
+		return (EagerFutureStream<U>)FutureStream.super.fixedDelay(time,unit);
+	}
+	default FutureStream<U> onePer(long time, TimeUnit unit) {
+		return (EagerFutureStream<U>)FutureStream.super.onePer(time,unit);
+	
+	}
+	default FutureStream<U> xPer(int x,long time, TimeUnit unit) {
+		return (EagerFutureStream<U>)FutureStream.super.xPer(x,time,unit);
+	}
+
+	default EagerFutureStream<Collection<U>> batchByTime(long time, TimeUnit unit) {
+		return (EagerFutureStream<Collection<U>>)FutureStream.super.batchByTime(time,unit);
+	}
+	default EagerFutureStream<Collection<U>> batchByTime(long time, TimeUnit unit,Supplier<Collection<U>> factory) {
+		return (EagerFutureStream<Collection<U>>)FutureStream.super.batchByTime(time,unit,factory);
+		
+	}
+
+	default <T> EagerFutureStream<Tuple2<U, T>> combineLatest(FutureStream<T> s) {
+		return (EagerFutureStream<Tuple2<U, T>>)FutureStream.super.combineLatest(s);
+	}
+
+	static <U> EagerFutureStream<U> firstOf(EagerFutureStream<U>... futureStreams) {
+		return (EagerFutureStream<U>)FutureStream.firstOf(futureStreams);
 	}
 	/* 
 	 * React to new events with the supplied function on the supplied ExecutorService

@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
+import java.util.function.Supplier;
 
 import org.junit.Test;
 
@@ -16,6 +17,11 @@ public class LazySequentialSeqTest extends BaseSequentialSeqTest {
 	@Override
 	protected <U> FutureStream<U> of(U... array) {
 		return LazyFutureStream.sequentialBuilder().of(array);
+	}
+
+	@Override
+	protected <U> FutureStream<U> react(Supplier<U>... array) {
+		return LazyFutureStream.sequentialBuilder().react(array);
 	}
 
 	@Test
