@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -19,6 +20,8 @@ import org.junit.Test;
 
 import com.aol.simple.react.base.BaseSeqTest;
 import com.aol.simple.react.stream.eager.EagerFutureStream;
+import com.aol.simple.react.stream.lazy.LazyFutureStream;
+import com.aol.simple.react.stream.traits.FutureStream;
 
 public class EagerSeqTest extends BaseSeqTest {
  
@@ -27,6 +30,11 @@ public class EagerSeqTest extends BaseSeqTest {
 		return EagerFutureStream.parallel(array);
 	}
 	
+	@Override
+	protected <U> FutureStream<U> react(Supplier<U>... array) {
+		return EagerFutureStream.parallelBuilder().react(array);
+		
+	}
 
 	@Test
 	public void testOfType() {

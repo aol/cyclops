@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.Spliterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
@@ -35,14 +36,20 @@ import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.Queue.ClosedQueueException;
+import com.aol.simple.react.async.Queue.QueueReader;
+import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.stream.eager.EagerFutureStream;
 import com.aol.simple.react.util.SimpleTimer;
 
 public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		LazyStream<U>, BlockingStream<U>, SimpleReactStream<U>, ToQueue<U> {
 
+	static final ExceptionSoftener softener = ExceptionSoftener.singleton.factory
+			.getInstance();
+	
 	default <K> Map<K, ? extends FutureStream<U>> shard(
 			Map<K, Queue<U>> shards, Function<U, K> sharder) {
 		toQueue(shards, sharder);
@@ -65,13 +72,128 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 					getSubscription().closeQueueIfFinished(queue);
 				}
 			} catch (ClosedQueueException e) {
-				
-				throw new ClosedQueueException(list);
+				if(list.size()>0)
+					throw new ClosedQueueException(list);
+				else
+					throw new ClosedQueueException();
 			}
 			return list;
 			};
 		};
 		return fromStream(queue.streamBatch(getSubscription(), fn));
+	}
+	default FutureStream<Collection<U>> batchBySize(int size, Supplier<Collection<U>> supplier) {
+		Queue queue = toQueue();
+		Function<Supplier<U>, Supplier<Collection<U>>> fn = s -> {
+			return () -> {Collection<U> list = supplier.get();
+			try {
+				for (int i = 0; i < size; i++) {
+					
+					list.add(s.get());
+					getSubscription().closeQueueIfFinished(queue);
+				}
+			} catch (ClosedQueueException e) {
+				if(list.size()>0)
+					throw new ClosedQueueException(list);
+				else
+					throw new ClosedQueueException();
+			}
+			return list;
+			};
+		};
+		return fromStream(queue.streamBatch(getSubscription(), fn));
+	}
+	default FutureStream<U> fixedDelay(long time) {
+		Queue queue = toQueue();
+		Function<Supplier<U>, Supplier<U>> fn = s -> {
+			return () -> {
+				SimpleTimer timer = new SimpleTimer();
+				Optional<U> result = Optional.empty();
+				try {
+					
+						result = Optional.of(s.get());
+						try {
+							Thread.sleep(time);
+						} catch (InterruptedException e) {
+							softener.throwSoftenedException(e);
+						}
+				} catch (ClosedQueueException e) {
+					if(result.isPresent())
+						throw new ClosedQueueException(result);
+					else
+						throw new ClosedQueueException();
+				}
+				return result.get();
+			};
+		};
+		return fromStream(queue.streamControl(getSubscription(), fn));
+	}
+	default FutureStream<U> onePer(long time, TimeUnit unit) {
+		Queue queue = toQueue();
+		Function<Supplier<U>, Supplier<U>> fn = s -> {
+			
+			return () -> {
+				SimpleTimer timer=  new SimpleTimer();
+				Optional<U> result = Optional.empty();
+				try {
+					
+						
+						try {
+							long elapsedNanos= unit.toNanos(time)- timer.getElapsedNanoseconds();
+							long millis = elapsedNanos/1000000;
+							int nanos = (int)(elapsedNanos - millis*1000000);
+							Thread.sleep(Math.max(0,millis),Math.max(0,nanos));
+						} catch (InterruptedException e) {
+							softener.throwSoftenedException(e);
+						}
+						result = Optional.of(s.get());
+						
+				} catch (ClosedQueueException e) {
+					if(result.isPresent())
+						throw new ClosedQueueException(result);
+					else
+						throw new ClosedQueueException();
+				}
+				return result.get();
+			};
+		};
+		return fromStream(queue.streamControl(getSubscription(), fn));
+	}
+	default FutureStream<U> xPer(int x,long time, TimeUnit unit) {
+		Queue queue = toQueue();
+		Function<Supplier<U>, Supplier<U>> fn = s -> {
+			SimpleTimer[] timer=  {new SimpleTimer()};
+			final int[]count={0};
+			return () -> {
+				
+				Optional<U> result = Optional.empty();
+				try {
+					
+						
+						try {
+							if(count[0]==x){
+								long elapsedNanos= unit.toNanos(time)-timer[0].getElapsedNanoseconds();
+								long millis = elapsedNanos/1000000;
+								int nanos = (int)(elapsedNanos - millis*1000000);
+								Thread.sleep(Math.max(0,millis),nanos);
+								count[0]=0;
+								timer[0]= new SimpleTimer();
+							}
+						} catch (InterruptedException e) {
+							softener.throwSoftenedException(e);
+						}
+						result = Optional.of(s.get());
+						
+				} catch (ClosedQueueException e) {
+					if(result.isPresent())
+						throw new ClosedQueueException(result);
+					else
+						throw new ClosedQueueException();
+				}
+				return result.get();
+			};
+		};
+		return fromStream(queue.streamControl(getSubscription(), fn));
 	}
 
 	default FutureStream<Collection<U>> batchByTime(long time, TimeUnit unit) {
@@ -93,39 +215,49 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		};
 		return fromStream(queue.streamBatch(getSubscription(), fn));
 	}
+	default FutureStream<Collection<U>> batchByTime(long time, TimeUnit unit,Supplier<Collection<U>> factory) {
+		Queue queue = toQueue();
+		Function<Supplier<U>, Supplier<Collection<U>>> fn = s -> {
+			return () -> {
+				SimpleTimer timer = new SimpleTimer();
+				Collection<U> list = factory.get();
+				try {
+					do {
+						list.add(s.get());
+					} while (timer.getElapsedNanoseconds()<unit.toNanos(time));
+				} catch (ClosedQueueException e) {
+					
+					throw new ClosedQueueException(list);
+				}
+				return list;
+			};
+		};
+		return fromStream(queue.streamBatch(getSubscription(), fn));
+	}
 
 	default <T> FutureStream<Tuple2<U, T>> combine(FutureStream<T> s) {
 		return fromStream(combine(this, s));
 	}
 
+	static void closeOthers(Queue active, List<Queue> all){
+		all.stream().filter(next -> next!=active).forEach(Queue::closeAndClear);
+	}
 	static <U> FutureStream<U> firstOf(FutureStream<U>... futureStreams) {
-
-		FutureStream<U> stream = futureStreams[0];
-		for (int i = 1; i < futureStreams.length; i++)
-			stream = stream.merge(futureStreams[i]);
-
-		Queue q = stream.toQueue();
-		final Iterator<U> it = q.stream(stream.getSubscription()).iterator();
-
-		List<Tuple2<FutureStream<U>, Queue.QueueReader>> racers = Stream
+		List<Tuple2<FutureStream<U>, QueueReader>> racers = Stream
 				.of(futureStreams)
-				.map(s -> Tuple.tuple(s, new Queue.QueueReader(s.toQueue(),
-						null))).collect(Collectors.toList());
-
-		it.next();
-		
-		FutureStream<U>  result = null;
-		
-		for (Tuple2<FutureStream<U>, Queue.QueueReader> racer : racers) {
-
-			if (racer.v2.notEmpty())
-				result = racer.v1;
-			else
-				racer.v1.getSubscription().closeAll();
-			
-
+				.map(s -> Tuple.tuple(s,new Queue.QueueReader(s.toQueue(),null))).collect(Collectors.toList());
+		while(true){
+		for(Tuple2<FutureStream<U>,Queue.QueueReader> q: racers){
+			if(q.v2.notEmpty()){
+				closeOthers(q.v2.getQueue(),racers.stream().map(t -> t.v2.getQueue()).collect(Collectors.toList()));
+				return q.v1.fromStream(q.v2.getQueue().stream(q.v1.getSubscription()));
+			}
+				
 		}
-		return null;
+		LockSupport.parkNanos(1l);
+		}
+
+		
 
 	}
 
@@ -183,24 +315,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		return Seq.seq(new Zip());
 	}
 
-	/**
-	 * default FutureStream<Collection<U>> batchBySize(int size); default
-	 * FutureStream<Collection<U>> batchBySize(int size, Supplier<Collection<U>>
-	 * supplier ); default FutureStream<Collection<U>> batchByTime(time,
-	 * Supplier<Collection<U>> supplier ); 
-	 * 
-	 * default FutureStream<U> fixedDelay(int s){
-	 * fromStream(toQueue().stream(getSubscription(),val-> { U ret= val.get();
-	 * Thread.sleep(s);return ret;})); } 
-	 * 
-	 * default FutureStream<U> onePer(int s){
-	 * fromStream(toQueue().stream(getSubscription(),val-> { U ret= val.get();
-	 * Thread.sleep(s);return ret;})); } 
-	 * 
-	 * default FutureStream<U> xPer(int s){
-	 * fromStream(toQueue().stream(getSubscription(),val-> { U ret= val.get();
-	 * Thread.sleep(s);return ret;})); }
-	 **/
+	
 	/*
 	 * @see
 	 * com.aol.simple.react.stream.traits.SimpleReactStream#retry(java.util.

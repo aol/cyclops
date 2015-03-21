@@ -1,6 +1,7 @@
 package com.aol.simple.react.lazy;
 
-import static com.aol.simple.react.stream.lazy.LazyFutureStream.*;
+import static com.aol.simple.react.stream.lazy.LazyFutureStream.parallel;
+import static com.aol.simple.react.stream.lazy.LazyFutureStream.parallelBuilder;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -9,6 +10,7 @@ import static org.junit.Assert.assertThat;
 
 import java.io.Serializable;
 import java.util.concurrent.ForkJoinPool;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.jooq.lambda.Seq;
@@ -19,7 +21,6 @@ import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.QueueFactories;
 import com.aol.simple.react.base.BaseSeqTest;
 import com.aol.simple.react.stream.ThreadPools;
-import com.aol.simple.react.stream.eager.EagerFutureStreamImpl;
 import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.FutureStream;
@@ -129,6 +130,11 @@ public class LazySeqTest extends BaseSeqTest {
 	protected <U> FutureStream<U> of(U... array) {
 
 		return parallel(array);
+	}
+	@Override
+	protected <U> FutureStream<U> react(Supplier<U>... array) {
+		return LazyFutureStream.parallelBuilder().react(array);
+		
 	}
 	protected Object sleep(int i) {
 		try {

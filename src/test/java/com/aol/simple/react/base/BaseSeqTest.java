@@ -29,11 +29,13 @@ import org.junit.Test;
 
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.stream.traits.FutureStream;
+import com.aol.simple.react.util.SimpleTimer;
 import com.google.common.collect.ImmutableMap;
 
 //see BaseSequentialSeqTest for in order tests
 public abstract class BaseSeqTest {
 	abstract protected <U> FutureStream<U> of(U... array);
+	abstract protected <U> FutureStream<U> react(Supplier<U>... array);
 	FutureStream<Integer> empty;
 	FutureStream<Integer> nonEmpty;
 
@@ -42,14 +44,22 @@ public abstract class BaseSeqTest {
 		empty = of();
 		nonEmpty = of(1);
 	}
+
 	@Test
 	public void firstOf(){
 		
-		assertTrue(FutureStream.firstOf(of(1,2,3,4),of(value()),of(value())).anyMatch(it-> it.equals(1)));
-		}
+		assertTrue(FutureStream.firstOf(of(1,2,3,4),react(()->value()),
+				react(()->value())).anyMatch(it-> it.equals(1)));
+		assertTrue(FutureStream.firstOf(of(1,2,3,4),react(()->value()),
+				react(()->value())).anyMatch(it-> it.equals(2)));
+		assertTrue(FutureStream.firstOf(of(1,2,3,4),react(()->value()),
+				react(()->value())).anyMatch(it-> it.equals(3)));
+		assertTrue(FutureStream.firstOf(of(1,2,3,4),react(()->value()),
+				react(()->value())).anyMatch(it-> it.equals(4)));
+	}
 	private Object value() {
 		try {
-			Thread.sleep(500);
+			Thread.sleep(1500);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -74,11 +84,19 @@ public abstract class BaseSeqTest {
 	}
 	@Test
 	public void batchBySize(){
+		System.out.println(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()));
 		assertThat(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()).size(),is(2));
 	}
 	@Test
 	public void batchBySizeInternalSize(){
 		assertThat(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()).get(0).size(),is(3));
+	}
+	@Test
+	public void onePer(){
+		SimpleTimer timer = new SimpleTimer();
+		System.out.println(of(1,2,3,4,5,6).onePer(1000,TimeUnit.NANOSECONDS).collect(Collectors.toList()));
+		assertThat(of(1,2,3,4,5,6).onePer(1000,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),is(6));
+		assertThat(timer.getElapsedNanoseconds(),greaterThan(600l));
 	}
 	@Test
 	public void batchByTime(){

@@ -15,7 +15,6 @@ import java.util.stream.StreamSupport;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.experimental.Wither;
 
 import org.jooq.lambda.Seq;
@@ -102,6 +101,11 @@ public class Queue<T> implements Adapter<T> {
 		
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
 		return Seq.seq(closingStreamBatch(batcher.apply(this::ensureOpen),s));
+	}
+	public Seq<T> streamControl(Continueable s,Function<Supplier<T>,Supplier<T>> batcher) {
+		
+		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
+		return Seq.seq(closingStream(batcher.apply(this::ensureOpen),s));
 	}
 
 	private Stream<Collection<T>> closingStreamBatch(Supplier<Collection<T>> s, Continueable sub){
@@ -298,11 +302,12 @@ public class Queue<T> implements Adapter<T> {
 		queue.clear();
 	}
 	
-	private final NIL NILL = new NIL();
-	private static class NIL {}
+	public static final NIL NILL = new NIL();
+	public static class NIL {}
 
 	@AllArgsConstructor
 	public static class QueueReader<T>{
+		@Getter
 		Queue<T> queue;
 		public boolean notEmpty() {
 			return queue.queue.size()!=0;
@@ -310,6 +315,9 @@ public class Queue<T> implements Adapter<T> {
 
 		@Getter
 		private volatile T last = null;
+		private int size(){
+			return queue.queue.size();
+		}
 		public T next(){
 			last = queue.ensureOpen();
 			return last;
