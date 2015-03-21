@@ -6,6 +6,7 @@ import static java.util.Spliterators.spliteratorUnknownSize;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Random;
@@ -29,14 +30,15 @@ import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Continueable;
+import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.QueueFactory;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
-import com.aol.simple.react.stream.eager.EagerFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
+import com.aol.simple.react.stream.traits.LazyStream;
 import com.aol.simple.react.stream.traits.LazyToQueue;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
@@ -62,6 +64,10 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	
 	LazyFutureStream<U> withLastActive(StreamWrapper streamWrapper);
 	
+	default <K> Map<K,LazyFutureStream<U>> shard(Map<K,Queue<U>> shards, Function<U,K> sharder ){
+		Map map =FutureStream.super.shard(shards, sharder );
+		return (Map<K,LazyFutureStream<U>>)map;
+	}
 	/* 
 	 * React to new events with the supplied function on the supplied ExecutorService
 	 * 

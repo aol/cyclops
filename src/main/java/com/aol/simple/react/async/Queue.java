@@ -1,10 +1,12 @@
 package com.aol.simple.react.async;
 
+import java.util.Collection;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -13,6 +15,7 @@ import java.util.stream.StreamSupport;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Wither;
 
 import org.jooq.lambda.Seq;
@@ -95,6 +98,19 @@ public class Queue<T> implements Adapter<T> {
 		return Seq.seq(closingStream(this::ensureOpen,s));
 	}
 
+	public Seq<Collection<T>> streamBatch(Continueable s,Function<Supplier<T>,Supplier<Collection<T>>> batcher) {
+		
+		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
+		return Seq.seq(closingStreamBatch(batcher.apply(this::ensureOpen),s));
+	}
+
+	private Stream<Collection<T>> closingStreamBatch(Supplier<Collection<T>> s, Continueable sub){
+		
+		Stream<Collection<T>> st = StreamSupport.stream(
+	                new ClosingSpliterator(Long.MAX_VALUE, s,sub,this), false);
+		
+		 return st;
+	}
 	private Stream<T> closingStream(Supplier<T> s, Continueable sub){
 		
 		Stream<T> st = StreamSupport.stream(
@@ -160,9 +176,21 @@ public class Queue<T> implements Adapter<T> {
 	 * @author johnmcclean
 	 *
 	 */
+	@AllArgsConstructor
+	
 	public static class ClosedQueueException extends
 			SimpleReactProcessingException {
 		private static final long serialVersionUID = 1L;
+		@Getter
+		private final Object currentData;
+		private final Object NOT_PRESENT = new Object();
+		public ClosedQueueException() {
+			currentData = NOT_PRESENT;
+		}
+		
+		public boolean isDataPresent(){
+			return currentData != NOT_PRESENT;
+		}
 	}
 
 	/**
@@ -212,6 +240,7 @@ public class Queue<T> implements Adapter<T> {
 	 */
 	@Override
 	public boolean offer(T data) {
+		
 		if(!open)
 			throw new ClosedQueueException();
 		try {
@@ -271,4 +300,22 @@ public class Queue<T> implements Adapter<T> {
 	
 	private final NIL NILL = new NIL();
 	private static class NIL {}
+
+	@AllArgsConstructor
+	public static class QueueReader<T>{
+		Queue<T> queue;
+		public boolean notEmpty() {
+			return queue.queue.size()!=0;
+		}
+
+		@Getter
+		private volatile T last = null;
+		public T next(){
+			last = queue.ensureOpen();
+			return last;
+		}
+	}
+	
+
+	
 }

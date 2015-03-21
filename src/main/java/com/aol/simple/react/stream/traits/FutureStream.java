@@ -1,13 +1,16 @@
 package com.aol.simple.react.stream.traits;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
@@ -27,168 +30,363 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.async.Queue;
+import com.aol.simple.react.async.Queue.ClosedQueueException;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.util.SimpleTimer;
 
-public interface FutureStream<U> extends Seq<U>,
-										ConfigurableStream<U>, 
-										LazyStream<U>,
-										BlockingStream<U>,
-										SimpleReactStream<U>,
-										ToQueue<U>{
-	
+public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
+		LazyStream<U>, BlockingStream<U>, SimpleReactStream<U>, ToQueue<U> {
 
-	
-	
-	
-	
-	/* 
-	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#retry(java.util.function.Function)
-	 */
-	default <R> FutureStream<R> retry(final Function<U, R> fn){
-		return (FutureStream)SimpleReactStream.super.retry(fn);
+	default <K> Map<K, ? extends FutureStream<U>> shard(
+			Map<K, Queue<U>> shards, Function<U, K> sharder) {
+		toQueue(shards, sharder);
+		return shards
+				.entrySet()
+				.stream()
+				.collect(
+						Collectors.toMap(e -> e.getKey(), e -> fromStream(e
+								.getValue().stream(getSubscription()))));
 	}
-	/* 
-	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#allOf(java.util.stream.Collector, java.util.function.Function)
+
+	default FutureStream<Collection<U>> batchBySize(int size) {
+		Queue queue = toQueue();
+		Function<Supplier<U>, Supplier<Collection<U>>> fn = s -> {
+			return () -> {List<U> list = new ArrayList<>();
+			try {
+				for (int i = 0; i < size; i++) {
+					
+					list.add(s.get());
+					getSubscription().closeQueueIfFinished(queue);
+				}
+			} catch (ClosedQueueException e) {
+				
+				throw new ClosedQueueException(list);
+			}
+			return list;
+			};
+		};
+		return fromStream(queue.streamBatch(getSubscription(), fn));
+	}
+
+	default FutureStream<Collection<U>> batchByTime(long time, TimeUnit unit) {
+		Queue queue = toQueue();
+		Function<Supplier<U>, Supplier<Collection<U>>> fn = s -> {
+			return () -> {
+				SimpleTimer timer = new SimpleTimer();
+				List<U> list = new ArrayList<>();
+				try {
+					do {
+						list.add(s.get());
+					} while (timer.getElapsedNanoseconds()<unit.toNanos(time));
+				} catch (ClosedQueueException e) {
+					
+					throw new ClosedQueueException(list);
+				}
+				return list;
+			};
+		};
+		return fromStream(queue.streamBatch(getSubscription(), fn));
+	}
+
+	default <T> FutureStream<Tuple2<U, T>> combine(FutureStream<T> s) {
+		return fromStream(combine(this, s));
+	}
+
+	static <U> FutureStream<U> firstOf(FutureStream<U>... futureStreams) {
+
+		FutureStream<U> stream = futureStreams[0];
+		for (int i = 1; i < futureStreams.length; i++)
+			stream = stream.merge(futureStreams[i]);
+
+		Queue q = stream.toQueue();
+		final Iterator<U> it = q.stream(stream.getSubscription()).iterator();
+
+		List<Tuple2<FutureStream<U>, Queue.QueueReader>> racers = Stream
+				.of(futureStreams)
+				.map(s -> Tuple.tuple(s, new Queue.QueueReader(s.toQueue(),
+						null))).collect(Collectors.toList());
+
+		it.next();
+		
+		FutureStream<U>  result = null;
+		
+		for (Tuple2<FutureStream<U>, Queue.QueueReader> racer : racers) {
+
+			if (racer.v2.notEmpty())
+				result = racer.v1;
+			else
+				racer.v1.getSubscription().closeAll();
+			
+
+		}
+		return null;
+
+	}
+
+	/**
+	 * Zip two streams into one.
+	 * <p>
+	 * <code>
+	 * // (tuple(1, "a"), tuple(2, "b"), tuple(3, "c"))
+	 * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"))
+	 * </code>
+	 */
+	static <T1, T2> Seq<Tuple2<T1, T2>> combine(FutureStream<T1> left,
+			FutureStream<T2> right) {
+		return combine(left, right, Tuple::tuple);
+	}
+
+	/**
+	 * Zip two streams into one using a {@link BiFunction} to produce resulting
+	 * values.
+	 * <p>
+	 * <code>
+	 * // ("1:a", "2:b", "3:c")
+	 * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"), (i, s) -&gt; i + ":" + s)
+	 * </code>
+	 */
+	static <T1, T2, R> Seq<R> combine(FutureStream<T1> left,
+			FutureStream<T2> right, BiFunction<T1, T2, R> zipper) {
+		FutureStream left2 = (FutureStream) left;
+		FutureStream right2 = (FutureStream) right;
+		Queue q = left2.merge(right2).toQueue();
+		final Iterator<T1> it = q.stream(left.getSubscription()).iterator();
+		final Queue.QueueReader<T1> it1 = new Queue.QueueReader(left.toQueue(),
+				null);
+		final Queue.QueueReader<T2> it2 = new Queue.QueueReader(
+				right.toQueue(), null);
+
+		class Zip implements Iterator<R> {
+			@Override
+			public boolean hasNext() {
+
+				return it.hasNext();
+			}
+
+			@Override
+			public R next() {
+				it.next();
+				if (it1.notEmpty())
+					return zipper.apply(it1.next(), it2.getLast());
+				else
+					return zipper.apply(it1.getLast(), it2.next());
+
+			}
+		}
+
+		return Seq.seq(new Zip());
+	}
+
+	/**
+	 * default FutureStream<Collection<U>> batchBySize(int size); default
+	 * FutureStream<Collection<U>> batchBySize(int size, Supplier<Collection<U>>
+	 * supplier ); default FutureStream<Collection<U>> batchByTime(time,
+	 * Supplier<Collection<U>> supplier ); 
+	 * 
+	 * default FutureStream<U> fixedDelay(int s){
+	 * fromStream(toQueue().stream(getSubscription(),val-> { U ret= val.get();
+	 * Thread.sleep(s);return ret;})); } 
+	 * 
+	 * default FutureStream<U> onePer(int s){
+	 * fromStream(toQueue().stream(getSubscription(),val-> { U ret= val.get();
+	 * Thread.sleep(s);return ret;})); } 
+	 * 
+	 * default FutureStream<U> xPer(int s){
+	 * fromStream(toQueue().stream(getSubscription(),val-> { U ret= val.get();
+	 * Thread.sleep(s);return ret;})); }
+	 **/
+	/*
+	 * @see
+	 * com.aol.simple.react.stream.traits.SimpleReactStream#retry(java.util.
+	 * function.Function)
+	 */
+	default <R> FutureStream<R> retry(final Function<U, R> fn) {
+		return (FutureStream) SimpleReactStream.super.retry(fn);
+	}
+
+	/*
+	 * @see
+	 * com.aol.simple.react.stream.traits.SimpleReactStream#allOf(java.util.
+	 * stream.Collector, java.util.function.Function)
 	 */
 	default <T, R> FutureStream<R> allOf(final Collector collector,
-			final Function<T, R> fn){
-		return (FutureStream)SimpleReactStream.super.allOf(collector,fn);
+			final Function<T, R> fn) {
+		return (FutureStream) SimpleReactStream.super.allOf(collector, fn);
 	}
-	default <R> FutureStream<R> anyOf(final Function<U,R> fn){
-		return (FutureStream)SimpleReactStream.super.anyOf(fn);
+
+	default <R> FutureStream<R> anyOf(final Function<U, R> fn) {
+		return (FutureStream) SimpleReactStream.super.anyOf(fn);
 	}
-	
-	/* 
-	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#fromStreamCompletableFuture(java.util.stream.Stream)
+
+	/*
+	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#
+	 * fromStreamCompletableFuture(java.util.stream.Stream)
 	 */
 	default <R> FutureStream<R> fromStreamCompletableFuture(
 			Stream<CompletableFuture<R>> stream) {
-		return (FutureStream)SimpleReactStream.super.fromStreamCompletableFuture(stream);
+		return (FutureStream) SimpleReactStream.super
+				.fromStreamCompletableFuture(stream);
 	}
-	/* 
-	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#then(java.util.function.Function)
+
+	/*
+	 * @see
+	 * com.aol.simple.react.stream.traits.SimpleReactStream#then(java.util.function
+	 * .Function)
 	 */
-	default <R> FutureStream<R> then(final Function<U, R> fn){
-		return (FutureStream)SimpleReactStream.super.then(fn);
+	default <R> FutureStream<R> then(final Function<U, R> fn) {
+		return (FutureStream) SimpleReactStream.super.then(fn);
 	}
-	/* 
-	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#fromStream(java.util.stream.Stream)
+
+	/*
+	 * @see
+	 * com.aol.simple.react.stream.traits.SimpleReactStream#fromStream(java.
+	 * util.stream.Stream)
 	 */
-	default <R> FutureStream<R> fromStream(Stream<R> stream){
-		return (FutureStream)SimpleReactStream.super.fromStream(stream);
+	default <R> FutureStream<R> fromStream(Stream<R> stream) {
+		return (FutureStream) SimpleReactStream.super.fromStream(stream);
 	}
-	
-	/* 
+
+	/*
 	 * @see org.jooq.lambda.Seq#flatMap(java.util.function.Function)
 	 */
 	@Override
 	default <R> FutureStream<R> flatMap(
-			Function<? super U, ? extends Stream<? extends R>> flatFn){
-		return (FutureStream)SimpleReactStream.super.flatMap(flatFn);
+			Function<? super U, ? extends Stream<? extends R>> flatFn) {
+		return (FutureStream) SimpleReactStream.super.flatMap(flatFn);
 	}
-	
-	/* 
-	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#merge(com.aol.simple.react.stream.traits.SimpleReactStream)
+
+	/*
+	 * @see
+	 * com.aol.simple.react.stream.traits.SimpleReactStream#merge(com.aol.simple
+	 * .react.stream.traits.SimpleReactStream)
 	 */
 	@Override
-	default FutureStream<U> merge(SimpleReactStream<U> s){
-		return (FutureStream)SimpleReactStream.super.merge(s);
+	default FutureStream<U> merge(SimpleReactStream<U> s) {
+		return (FutureStream) SimpleReactStream.super.merge(s);
 	}
-	
-	/* 
-	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#onFail(java.util.function.Function)
+
+	/*
+	 * @see
+	 * com.aol.simple.react.stream.traits.SimpleReactStream#onFail(java.util
+	 * .function.Function)
 	 */
 	@Override
-	default FutureStream<U> onFail(final Function<? extends SimpleReactFailedStageException, U> fn) {
-		return (FutureStream)SimpleReactStream.super.onFail(fn);
+	default FutureStream<U> onFail(
+			final Function<? extends SimpleReactFailedStageException, U> fn) {
+		return (FutureStream) SimpleReactStream.super.onFail(fn);
 	}
-	
-	/* 
-	 *
-	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#onFail(java.lang.Class, java.util.function.Function)
+
+	/*
+	 * 
+	 * @see
+	 * com.aol.simple.react.stream.traits.SimpleReactStream#onFail(java.lang
+	 * .Class, java.util.function.Function)
 	 */
-	default FutureStream<U> onFail(Class<? extends Throwable> exceptionClass, final Function<? extends SimpleReactFailedStageException, U> fn){
-		return (FutureStream)SimpleReactStream.super.onFail(exceptionClass,fn);
+	default FutureStream<U> onFail(Class<? extends Throwable> exceptionClass,
+			final Function<? extends SimpleReactFailedStageException, U> fn) {
+		return (FutureStream) SimpleReactStream.super
+				.onFail(exceptionClass, fn);
 	}
-	
-	/* 
-	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#capture(java.util.function.Consumer)
+
+	/*
+	 * @see
+	 * com.aol.simple.react.stream.traits.SimpleReactStream#capture(java.util
+	 * .function.Consumer)
 	 */
 	@Override
-	default  FutureStream<U> capture(final Consumer<? extends Throwable> errorHandler) {
-		return (FutureStream)SimpleReactStream.super.capture(errorHandler);
+	default FutureStream<U> capture(
+			final Consumer<? extends Throwable> errorHandler) {
+		return (FutureStream) SimpleReactStream.super.capture(errorHandler);
 	}
-	/* 
-	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#allOf(java.util.function.Function)
+
+	/*
+	 * @see
+	 * com.aol.simple.react.stream.traits.SimpleReactStream#allOf(java.util.
+	 * function.Function)
 	 */
 	@Override
 	default <T, R> FutureStream<R> allOf(final Function<List<T>, R> fn) {
-		return (FutureStream)SimpleReactStream.super.allOf(fn);
+		return (FutureStream) SimpleReactStream.super.allOf(fn);
 	}
 
-	/* 
+	/*
 	 * @see org.jooq.lambda.Seq#peek(java.util.function.Consumer)
 	 */
 	@Override
-	default FutureStream<U> peek(final Consumer<? super U> consumer){
-		return (FutureStream)SimpleReactStream.super.peek(consumer);
+	default FutureStream<U> peek(final Consumer<? super U> consumer) {
+		return (FutureStream) SimpleReactStream.super.peek(consumer);
 	}
-	/* 
+
+	/*
 	 * @see org.jooq.lambda.Seq#filter(java.util.function.Predicate)
 	 */
-	default FutureStream<U> filter(final Predicate<? super U> p){
-		return (FutureStream)SimpleReactStream.super.filter(p);
+	default FutureStream<U> filter(final Predicate<? super U> p) {
+		return (FutureStream) SimpleReactStream.super.filter(p);
 	}
-	
+
 	/**
-	 * Stream  supporting methods
+	 * Stream supporting methods
 	 */
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.jooq.lambda.Seq#forEach(java.util.function.Consumer)
 	 */
 	@Override
-	default  void forEach(Consumer<? super U> action) {
+	default void forEach(Consumer<? super U> action) {
 		toQueue().stream(getSubscription()).forEach((Consumer) action);
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.stream.Stream#forEachOrdered(java.util.function.Consumer)
 	 */
 	@Override
-	default  void forEachOrdered(Consumer<? super U> action) {
+	default void forEachOrdered(Consumer<? super U> action) {
 		toQueue().stream(getSubscription()).forEachOrdered((Consumer) action);
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.stream.Stream#toArray()
 	 */
 	@Override
-	default  Object[] toArray() {
+	default Object[] toArray() {
 		return toQueue().stream(getSubscription()).toArray();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.stream.Stream#toArray(java.util.function.IntFunction)
 	 */
 	@Override
-	default  <A> A[] toArray(IntFunction<A[]> generator) {
+	default <A> A[] toArray(IntFunction<A[]> generator) {
 		return toQueue().stream(getSubscription()).toArray(generator);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BinaryOperator)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.stream.Stream#reduce(java.lang.Object,
+	 * java.util.function.BinaryOperator)
 	 */
 	@Override
-	default  U reduce(U identity, BinaryOperator<U> accumulator) {
+	default U reduce(U identity, BinaryOperator<U> accumulator) {
 
-		return (U) toQueue().stream(getSubscription()).reduce(identity, accumulator);
+		return (U) toQueue().stream(getSubscription()).reduce(identity,
+				accumulator);
 	}
 
 	/*
@@ -208,12 +406,12 @@ public interface FutureStream<U> extends Seq<U>,
 	 * java.util.function.BiConsumer, java.util.function.BiConsumer)
 	 */
 	@Override
-	default  <R> R collect(Supplier<R> supplier,
+	default <R> R collect(Supplier<R> supplier,
 			BiConsumer<R, ? super U> accumulator, BiConsumer<R, R> combiner) {
 
-		return (R) toQueue().stream(getSubscription()).collect(supplier, accumulator, combiner);
+		return (R) toQueue().stream(getSubscription()).collect(supplier,
+				accumulator, combiner);
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -253,7 +451,7 @@ public interface FutureStream<U> extends Seq<U>,
 	 * @see java.util.stream.Stream#anyMatch(java.util.function.Predicate)
 	 */
 	@Override
-	default  boolean anyMatch(Predicate<? super U> predicate) {
+	default boolean anyMatch(Predicate<? super U> predicate) {
 		return toQueue().stream(getSubscription()).anyMatch(predicate);
 	}
 
@@ -263,7 +461,7 @@ public interface FutureStream<U> extends Seq<U>,
 	 * @see java.util.stream.Stream#allMatch(java.util.function.Predicate)
 	 */
 	@Override
-	default  boolean allMatch(Predicate<? super U> predicate) {
+	default boolean allMatch(Predicate<? super U> predicate) {
 		return toQueue().stream(getSubscription()).allMatch(predicate);
 	}
 
@@ -304,23 +502,31 @@ public interface FutureStream<U> extends Seq<U>,
 	 * java.util.function.BiFunction, java.util.function.BinaryOperator)
 	 */
 	@Override
-	default  <R> R reduce(R identity, BiFunction<R, ? super U, R> accumulator,
+	default <R> R reduce(R identity, BiFunction<R, ? super U, R> accumulator,
 			BinaryOperator<R> combiner) {
 
-		return toQueue().stream(getSubscription()).reduce(identity, accumulator, combiner);
+		return toQueue().stream(getSubscription()).reduce(identity,
+				accumulator, combiner);
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.stream.BaseStream#iterator()
 	 */
 	@Override
-	default Iterator<U> iterator() {
+	default CloseableIterator<U> iterator() {
 
-		if(getSubscription().closed())
-			return Arrays.<U>asList().iterator();
-		return new CloseableIterator<>(toQueue().stream(getSubscription()).iterator(),getSubscription());
+		if (getSubscription().closed())
+			return new CloseableIterator<>(Arrays.<U> asList().iterator(),
+					getSubscription());
+		return new CloseableIterator<>(toQueue().stream(getSubscription())
+				.iterator(), getSubscription());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.jooq.lambda.Seq#spliterator()
 	 */
 	@Override
@@ -328,7 +534,9 @@ public interface FutureStream<U> extends Seq<U>,
 		return toQueue().stream(getSubscription()).spliterator();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.stream.BaseStream#isParallel()
 	 */
 	@Override
@@ -336,13 +544,15 @@ public interface FutureStream<U> extends Seq<U>,
 		return true;
 	}
 
-	/* 
-	 * Creates a sequential instance by populating an async Queue from the current stream,
-	 * and reading sequentially from that Stream.
+	/*
+	 * Creates a sequential instance by populating an async Queue from the
+	 * current stream, and reading sequentially from that Stream.
 	 * 
-	 * For an alternative approach change the task executors to single thread model, via withTaskExecutor and withRetrier
+	 * For an alternative approach change the task executors to single thread
+	 * model, via withTaskExecutor and withRetrier
 	 * 
-	 *	@return Sequential Stream
+	 * @return Sequential Stream
+	 * 
 	 * @see com.aol.simple.react.stream.traits.FutureStream#sequential()
 	 */
 	@Override
@@ -353,105 +563,104 @@ public interface FutureStream<U> extends Seq<U>,
 		return q.stream();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.jooq.lambda.Seq#parallel()
 	 */
 	@Override
 	default FutureStream<U> parallel() {
 		return this;
 	}
-	
+
 	@Override
-	default  Stream<U> stream() {
+	default Stream<U> stream() {
 		return toQueue().stream(getSubscription());
 	}
-	
-	
+
 	/*
 	 * Seq supporting methods
 	 */
-	
+
 	/**
 	 * native Seq
 	 * 
 	 */
-	
-	
-	 /**
-     * Returns a stream with a given value interspersed between any two values of this stream.
-     * 
-     * 
-     * // (1, 0, 2, 0, 3, 0, 4)
-     * LazyFutureStream.of(1, 2, 3, 4).intersperse(0)
-     * 
-     *
-     * @see #intersperse(Stream, Object)
-     */
-    default FutureStream<U> intersperse(U value) {
-        return intersperse(this, value);
-    }
 
-	
-	
-	
+	/**
+	 * Returns a stream with a given value interspersed between any two values
+	 * of this stream.
+	 * 
+	 * 
+	 * // (1, 0, 2, 0, 3, 0, 4) LazyFutureStream.of(1, 2, 3, 4).intersperse(0)
+	 * 
+	 *
+	 * @see #intersperse(Stream, Object)
+	 */
+	default FutureStream<U> intersperse(U value) {
+		return intersperse(this, value);
+	}
+
 	/*
 	 * 
-	 *	@param type
-	 *	@return
+	 * @param type
+	 * 
+	 * @return
+	 * 
 	 * @see org.jooq.lambda.Seq#cast(java.lang.Class)
 	 */
-	
+
 	@Override
 	default <U> FutureStream<U> cast(Class<U> type) {
-		return (FutureStream<U>)cast(this,type);
+		return (FutureStream<U>) cast(this, type);
 	}
+
 	@Override
-	default <U> FutureStream<U> ofType(Class<U> type){
-		return (FutureStream<U>)ofType(this,type);
+	default <U> FutureStream<U> ofType(Class<U> type) {
+		return (FutureStream<U>) ofType(this, type);
 	}
 
-	 /**
-     * Keep only those elements in a stream that are of a given type.
-     * 
-     * 
-     * // (1, 2, 3)
-     * EagerFutureStream.of(1, "a", 2, "b", 3).ofType(Integer.class)
-     * 
-     */
-    @SuppressWarnings("unchecked")
-    static <T, U> FutureStream<U> ofType(FutureStream<T> stream, Class<U> type) {
-        return stream.filter(type::isInstance).map(t -> (U) t);
-    }
-    /**
-     * Cast all elements in a stream to a given type, possibly throwing a {@link ClassCastException}.
-     * 
-     * 
-     * // ClassCastException
-     * LazyFutureStream.of(1, "a", 2, "b", 3).cast(Integer.class)
-     * 
-     */
+	/**
+	 * Keep only those elements in a stream that are of a given type.
+	 * 
+	 * 
+	 * // (1, 2, 3) EagerFutureStream.of(1, "a", 2, "b",
+	 * 3).ofType(Integer.class)
+	 * 
+	 */
+	@SuppressWarnings("unchecked")
+	static <T, U> FutureStream<U> ofType(FutureStream<T> stream, Class<U> type) {
+		return stream.filter(type::isInstance).map(t -> (U) t);
+	}
+
+	/**
+	 * Cast all elements in a stream to a given type, possibly throwing a
+	 * {@link ClassCastException}.
+	 * 
+	 * 
+	 * // ClassCastException LazyFutureStream.of(1, "a", 2, "b",
+	 * 3).cast(Integer.class)
+	 * 
+	 */
 	static <T, U> FutureStream<U> cast(FutureStream<T> stream, Class<U> type) {
-        return stream.map(type::cast);
-    }
-	
-	
-	 /**
-     * Returns a stream with a given value interspersed between any two values of this stream.
-     * 
-     * 
-     * // (1, 0, 2, 0, 3, 0, 4)
-     * Seq.of(1, 2, 3, 4).intersperse(0)
-     * 
-     */
-    static <T> FutureStream<T> intersperse(FutureStream<T> stream, T value) {
-        return stream.flatMap(t -> Stream.of(value, t).skip(1));
-    }
+		return stream.map(type::cast);
+	}
 
-	
-	
-	
+	/**
+	 * Returns a stream with a given value interspersed between any two values
+	 * of this stream.
+	 * 
+	 * 
+	 * // (1, 0, 2, 0, 3, 0, 4) Seq.of(1, 2, 3, 4).intersperse(0)
+	 * 
+	 */
+	static <T> FutureStream<T> intersperse(FutureStream<T> stream, T value) {
+		return stream.flatMap(t -> Stream.of(value, t).skip(1));
+	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.jooq.lambda.Seq#unordered()
 	 */
 	@Override
@@ -459,7 +668,9 @@ public interface FutureStream<U> extends Seq<U>,
 		return this;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.jooq.lambda.Seq#onClose(java.lang.Runnable)
 	 */
 	@Override
@@ -469,7 +680,9 @@ public interface FutureStream<U> extends Seq<U>,
 				.map(it -> (U) it.join()));
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.jooq.lambda.Seq#close()
 	 */
 	@Override
@@ -478,7 +691,9 @@ public interface FutureStream<U> extends Seq<U>,
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.jooq.lambda.Seq#map(java.util.function.Function)
 	 */
 	@Override
@@ -486,7 +701,9 @@ public interface FutureStream<U> extends Seq<U>,
 		return then((Function) mapper);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.jooq.lambda.Seq#mapToInt(java.util.function.ToIntFunction)
 	 */
 	@Override
@@ -494,7 +711,9 @@ public interface FutureStream<U> extends Seq<U>,
 		return toQueue().stream(getSubscription()).mapToInt(mapper);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.jooq.lambda.Seq#mapToLong(java.util.function.ToLongFunction)
 	 */
 	@Override
@@ -502,7 +721,9 @@ public interface FutureStream<U> extends Seq<U>,
 		return toQueue().stream(getSubscription()).mapToLong(mapper);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.jooq.lambda.Seq#mapToDouble(java.util.function.ToDoubleFunction)
 	 */
 	@Override
@@ -510,7 +731,9 @@ public interface FutureStream<U> extends Seq<U>,
 		return toQueue().stream(getSubscription()).mapToDouble(mapper);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.jooq.lambda.Seq#flatMapToInt(java.util.function.Function)
 	 */
 	@Override
@@ -519,7 +742,9 @@ public interface FutureStream<U> extends Seq<U>,
 		return toQueue().stream(getSubscription()).flatMapToInt(mapper);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.jooq.lambda.Seq#flatMapToLong(java.util.function.Function)
 	 */
 	@Override
@@ -528,7 +753,9 @@ public interface FutureStream<U> extends Seq<U>,
 		return toQueue().stream(getSubscription()).flatMapToLong(mapper);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.jooq.lambda.Seq#flatMapToDouble(java.util.function.Function)
 	 */
 	@Override
@@ -537,9 +764,9 @@ public interface FutureStream<U> extends Seq<U>,
 		return toQueue().stream(getSubscription()).flatMapToDouble(mapper);
 	}
 
-	
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.jooq.lambda.Seq#sorted()
 	 */
 	@Override
@@ -547,7 +774,9 @@ public interface FutureStream<U> extends Seq<U>,
 		return toQueue().stream(getSubscription()).sorted();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.jooq.lambda.Seq#sorted(java.util.Comparator)
 	 */
 	@Override
@@ -557,7 +786,9 @@ public interface FutureStream<U> extends Seq<U>,
 
 	/**
 	 * Give a function access to the current stage of a SimpleReact Stream
-	 * @param consumer Consumer that will recieve current stage
+	 * 
+	 * @param consumer
+	 *            Consumer that will recieve current stage
 	 * @return Self (current stage)
 	 */
 	default FutureStream<U> self(Consumer<FutureStream<U>> consumer) {
@@ -565,40 +796,37 @@ public interface FutureStream<U> extends Seq<U>,
 			consumer.accept(this);
 			return (U) t;
 		});
-		
-	}
-	
-	  /**
-     * Returns a limited interval from a given Stream.
-     * 
-     * 
-     * // (4, 5)
-     * Seq.of(1, 2, 3, 4, 5, 6).slice(3, 5)
-     * 
-     *
-     * @see #slice(Stream, long, long)
-     */
-    @Override
-    default Seq<U> slice(long from, long to) {
-        return Seq.super.slice(from, to);
-    }
-    
-  
-    /**
-     * Returns a limited interval from a given Stream.
-     * 
-     * 
-     * // (4, 5)
-     * EagerFutureStream.of(1, 2, 3, 4, 5, 6).slice(3, 5)
-     * 
-     */
-    static <T> Seq<T> slice(FutureStream<T> stream, long from, long to) {
-        long f = Math.max(from, 0);
-        long t = Math.max(to - f, 0);
 
-        return stream.skip(f).limit(t);
-    }
-    
+	}
+
+	/**
+	 * Returns a limited interval from a given Stream.
+	 * 
+	 * 
+	 * // (4, 5) Seq.of(1, 2, 3, 4, 5, 6).slice(3, 5)
+	 * 
+	 *
+	 * @see #slice(Stream, long, long)
+	 */
+	@Override
+	default Seq<U> slice(long from, long to) {
+		return Seq.super.slice(from, to);
+	}
+
+	/**
+	 * Returns a limited interval from a given Stream.
+	 * 
+	 * 
+	 * // (4, 5) EagerFutureStream.of(1, 2, 3, 4, 5, 6).slice(3, 5)
+	 * 
+	 */
+	static <T> Seq<T> slice(FutureStream<T> stream, long from, long to) {
+		long f = Math.max(from, 0);
+		long t = Math.max(to - f, 0);
+
+		return stream.skip(f).limit(t);
+	}
+
 	/**
 	 * Merge this reactive dataflow with another - recommended for merging
 	 * different types. To merge flows of the same type the instance method
@@ -612,10 +840,10 @@ public interface FutureStream<U> extends Seq<U>,
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <R> FutureStream<R> merge(FutureStream s1, FutureStream s2) {
-		List merged = Stream.of(s1.getLastActive().list(), s2.getLastActive().list())
+		List merged = Stream
+				.of(s1.getLastActive().list(), s2.getLastActive().list())
 				.flatMap(Collection::stream).collect(Collectors.toList());
 		return (FutureStream<R>) s1.withLastActive(new StreamWrapper(merged));
 	}
-
 
 }

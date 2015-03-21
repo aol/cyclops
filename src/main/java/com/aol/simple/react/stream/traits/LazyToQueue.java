@@ -1,5 +1,6 @@
 package com.aol.simple.react.stream.traits;
 
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Function;
 import java.util.stream.Collector;
@@ -13,7 +14,7 @@ public interface LazyToQueue <U> extends ToQueue<U>{
 
 
 	
-	abstract QueueFactory<U> getQueueFactory();
+	
 	abstract <T, R>  SimpleReactStream<R> allOf(final Collector collector,
 			final Function<T, R> fn);
 		
@@ -35,6 +36,18 @@ public interface LazyToQueue <U> extends ToQueue<U>{
 
 		
 		return queue;
+	}
+	default<K> void toQueue(Map<K,Queue<U>> shards, Function<U,K> sharder) {
+		
+		
+		 	LazyReact service = getPopulator();
+			then(it-> shards.get(sharder.apply(it)).offer(it),service.getExecutor())
+							.capture(Throwable::printStackTrace)
+							.run((Thread)null,
+					() -> {shards.values().forEach(it->it.close()); returnPopulator(service); });
+
+		
+		
 	}
 	
 	

@@ -12,10 +12,12 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -26,7 +28,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.stream.traits.FutureStream;
+import com.google.common.collect.ImmutableMap;
 
 public abstract class BaseSequentialSeqTest {
 	abstract protected  <U> FutureStream<U> of(U... array);
@@ -37,6 +41,31 @@ public abstract class BaseSequentialSeqTest {
 	public void setup(){
 		empty = of();
 		nonEmpty = of(1);
+	}
+	
+	
+	@Test
+	public void shard(){
+		
+		for(int i=0;i<100;i++){
+			Map<Integer,Queue> shards = new HashMap<>();
+			shards.put(1,new Queue());
+			shards.put(2,new Queue());
+			shards.put(3,new Queue());
+			shards.put(4,new Queue());
+			shards.put(5,new Queue());
+			shards.put(6,new Queue());
+			assertThat(of(1,2,3,4,5,6).shard(ImmutableMap.copyOf(shards),Function.identity()).size(),is(6));
+		}
+	}
+	@Test
+	public void shardStreams(){
+		
+		for(int index=0;index<100;index++){
+			Map<Integer,Queue<Integer>> shards = ImmutableMap.of(0,new Queue(),1,new Queue());
+			
+			assertThat(of(1,2,3,4,5,6).shard(shards,i -> 0).get(0).collect(Collectors.toList()),hasItem(6));
+		}
 	}
 	
 	@Test

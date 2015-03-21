@@ -56,6 +56,8 @@ public class ClosingSpliterator<T> implements Spliterator<T> {
             	subscription.closeQueueIfFinished(queue);
              return true;
             }catch(ClosedQueueException e){
+            	if(e.isDataPresent())
+            		action.accept((T)e.getCurrentData());
             	return false;
             }catch(Exception e){
             	
