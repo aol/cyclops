@@ -290,8 +290,11 @@ public class Queue<T> implements Adapter<T> {
 	@Override
 	public boolean close() {
 		this.open = false;
-		for(int i=0;i<Math.min(maxPoisonPills, listeningStreams.get());i++){
-			queue.add((T)POISON_PILL);
+		
+		if(this.queue.remainingCapacity()>0){
+			for(int i=0;i<Math.min(maxPoisonPills, listeningStreams.get());i++){
+				queue.add((T)POISON_PILL);
+			}
 		}
 
 		return true;

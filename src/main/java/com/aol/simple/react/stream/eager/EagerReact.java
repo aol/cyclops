@@ -7,7 +7,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
@@ -19,7 +18,6 @@ import com.aol.simple.react.generators.Generator;
 import com.aol.simple.react.generators.ReactIterator;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.ThreadPools;
-import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -63,7 +61,7 @@ public class EagerReact extends BaseSimpleReact{
 
 	@Override
 	public <U> EagerFutureStream<U> construct(Stream s,
-			ExecutorService executor, RetryExecutor retrier, boolean eager) {
+			ExecutorService executor, RetryExecutor retrier, boolean eager,List<CompletableFuture> org) {
 		return (EagerFutureStream) new EagerFutureStreamImpl<U>( s,executor, retrier);
 	}
 	/* 

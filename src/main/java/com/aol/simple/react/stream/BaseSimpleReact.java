@@ -29,7 +29,8 @@ public abstract class BaseSimpleReact {
 	protected abstract boolean isEager();
 	protected abstract  RetryExecutor getRetrier();
 	
-	public abstract <U>  SimpleReactStream<U> construct(Stream s, ExecutorService e, RetryExecutor r, boolean eager);
+	public abstract <U>  SimpleReactStream<U> construct(Stream s, ExecutorService e, RetryExecutor r, boolean eager,
+			List<CompletableFuture> org);
 
 	
 	
@@ -43,7 +44,7 @@ public abstract class BaseSimpleReact {
 	public <U> SimpleReactStream<U> fromStream(final Stream<CompletableFuture<U>> stream) {
 
 		Stream s = stream;
-		return  construct( s,getExecutor(),getRetrier(), isEager());
+		return  construct( s,getExecutor(),getRetrier(), isEager(),null);
 	}
 	/**
 	 * Start a reactive dataflow from a stream.
@@ -54,7 +55,7 @@ public abstract class BaseSimpleReact {
 	public <U> SimpleReactStream<U> fromStreamWithoutFutures(final Stream<U> stream) {
 		
 		Stream s = stream.map(it -> CompletableFuture.completedFuture(it));
-		return construct( s,this.getExecutor(), getRetrier(),isEager());
+		return construct( s,this.getExecutor(), getRetrier(),isEager(),null);
 	}
 
 	public <U> SimpleReactStream<U> of(U...array){
@@ -136,7 +137,7 @@ public abstract class BaseSimpleReact {
 	public <U> SimpleReactStream< U> react(final Supplier<U> s, Generator t) {
 
 		return construct(t.generate(s),
-				this.getExecutor(),getRetrier(),isEager());
+				this.getExecutor(),getRetrier(),isEager(),null);
 
 	}
 	
@@ -182,7 +183,7 @@ public abstract class BaseSimpleReact {
 	public <U> SimpleReactStream<U> react(final Function<U,U> f,ReactIterator<U> t) {
 
 		Stream s = t.iterate(f);
-		return construct(s,this.getExecutor(),getRetrier(),isEager());
+		return construct(s,this.getExecutor(),getRetrier(),isEager(),null);
 
 	}
 	/**
@@ -224,7 +225,7 @@ public abstract class BaseSimpleReact {
 		
 			return construct(Stream.of(actions).map(
 				next -> CompletableFuture.supplyAsync(next, this.getExecutor())),
-				this.getExecutor(),getRetrier(),isEager());
+				this.getExecutor(),getRetrier(),isEager(),null);
 		
 		
 	}

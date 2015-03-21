@@ -31,7 +31,7 @@ public interface LazyToQueue <U> extends ToQueue<U>{
 		Queue<U> queue = this.getQueueFactory().build();
 		
 		 	LazyReact service = getPopulator();
-			then(queue::offer,service.getExecutor()).run((Thread)null,
+			then(queue::offer,service.getExecutor()).runThread(
 					() -> {queue.close(); returnPopulator(service); });
 
 		
@@ -43,7 +43,7 @@ public interface LazyToQueue <U> extends ToQueue<U>{
 		 	LazyReact service = getPopulator();
 			then(it-> shards.get(sharder.apply(it)).offer(it),service.getExecutor())
 							.capture(Throwable::printStackTrace)
-							.run((Thread)null,
+							.runThread(
 					() -> {shards.values().forEach(it->it.close()); returnPopulator(service); });
 
 		

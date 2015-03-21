@@ -64,9 +64,9 @@ public class LazyReact extends BaseLazySimpleReact {
 	
 	@Override
 	public <U> LazyFutureStream<U> construct(Stream s,
-			ExecutorService executor, RetryExecutor retrier, boolean eager) {
+			ExecutorService executor, RetryExecutor retrier, boolean eager,List<CompletableFuture> org) {
 		
-		return (LazyFutureStream) new LazyFutureStreamImpl<U>( s,executor, retrier);
+		return (LazyFutureStream) new LazyFutureStreamImpl<U>( s,executor, retrier,org);
 
 	}
 	

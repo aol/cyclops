@@ -1,7 +1,12 @@
 package com.aol.simple.react.base;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.nullValue;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -15,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -25,6 +31,13 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Test;
+
+import com.aol.simple.react.async.Queue;
+import com.aol.simple.react.stream.traits.FutureStream;
+import com.aol.simple.react.util.SimpleTimer;
+import com.google.common.collect.ImmutableMap;
+
 import org.junit.Test;
 
 import com.aol.simple.react.async.Queue;
@@ -88,8 +101,28 @@ public abstract class BaseSeqTest {
 		assertThat(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()).size(),is(2));
 	}
 	@Test
+	public void batchBySizeSet(){
+		
+		assertThat(of(1,1,1,1,1,1).batchBySize(3,()->new TreeSet()).block().get(0).size(),is(1));
+		assertThat(of(1,1,1,1,1,1).batchBySize(3,()->new TreeSet()).block().get(1).size(),is(1));
+	}
+	@Test
 	public void batchBySizeInternalSize(){
 		assertThat(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()).get(0).size(),is(3));
+	}
+	@Test
+	public void fixedDelay(){
+		SimpleTimer timer = new SimpleTimer();
+		
+		assertThat(of(1,2,3,4,5,6).fixedDelay(10000,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),is(6));
+		assertThat(timer.getElapsedNanoseconds(),greaterThan(60000l));
+	}
+	@Test
+	public void judder(){
+		SimpleTimer timer = new SimpleTimer();
+		
+		assertThat(of(1,2,3,4,5,6).judder(10000).collect(Collectors.toList()).size(),is(6));
+		assertThat(timer.getElapsedNanoseconds(),greaterThan(20000l));
 	}
 	@Test
 	public void onePer(){
@@ -99,8 +132,20 @@ public abstract class BaseSeqTest {
 		assertThat(timer.getElapsedNanoseconds(),greaterThan(600l));
 	}
 	@Test
+	public void xPer(){
+		SimpleTimer timer = new SimpleTimer();
+		System.out.println(of(1,2,3,4,5,6).xPer(6,1000,TimeUnit.NANOSECONDS).collect(Collectors.toList()));
+		assertThat(of(1,2,3,4,5,6).xPer(6,100000000,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),is(6));
+		assertThat(timer.getElapsedNanoseconds(),lessThan(60000000l));
+	}
+	@Test
 	public void batchByTime(){
-		assertThat(of(1,2,3,4,5,6).batchByTime(500,TimeUnit.MICROSECONDS).collect(Collectors.toList()).size(),is(1));
+		assertThat(of(1,2,3,4,5,6).batchByTime(1500,TimeUnit.MICROSECONDS).collect(Collectors.toList()).size(),is(1));
+	}
+	@Test
+	public void batchByTimeSet(){
+		
+		assertThat(of(1,1,1,1,1,1).batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet()).block().get(0).size(),is(1));
 	}
 	@Test
 	public void batchByTimeInternalSize(){

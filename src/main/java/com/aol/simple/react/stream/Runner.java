@@ -25,7 +25,7 @@ public class Runner {
 		}catch(java.util.concurrent.CompletionException e){
 			
 		}catch(Throwable e){
-			e.printStackTrace();
+			
 		}
 		
 		runnable.run();

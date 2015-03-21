@@ -51,8 +51,8 @@ public class SimpleReact  extends BaseLazySimpleReact{
 	
 	@Override
 	public <U> SimpleReactStream<U> construct(Stream s,
-			ExecutorService executor, RetryExecutor retrier, boolean eager) {
-		return  new SimpleReactStreamImpl<U>( s,executor, retrier,eager);
+			ExecutorService executor, RetryExecutor retrier, boolean eager, List<CompletableFuture> originalFutures) {
+		return  new SimpleReactStreamImpl<U>( s,executor, retrier,eager,originalFutures);
 	}
 	
 

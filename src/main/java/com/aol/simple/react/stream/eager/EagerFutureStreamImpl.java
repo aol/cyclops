@@ -1,9 +1,9 @@
 package com.aol.simple.react.stream.eager;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
@@ -46,6 +46,7 @@ public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 	private final QueueFactory<U> queueFactory;
 	private final BaseSimpleReact simpleReact;
 	private final Continueable subscription;
+	private final List<CompletableFuture> originalFutures;
 
 	/**
 	 * 
@@ -58,11 +59,16 @@ public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 	 */
 	public EagerFutureStreamImpl(final Stream<CompletableFuture<U>> stream,
 			final ExecutorService executor, final RetryExecutor retrier) {
+		this(stream,executor,retrier,null);
+	}
+	public EagerFutureStreamImpl(final Stream<CompletableFuture<U>> stream,
+			final ExecutorService executor, final RetryExecutor retrier,List<CompletableFuture> org) {
 		this.simpleReact = new EagerReact();
 		this.taskExecutor = Optional.ofNullable(executor).orElse(
 				new ForkJoinPool(Runtime.getRuntime().availableProcessors()));
 		Stream s = stream;
 		this.lastActive = new StreamWrapper(s, true);
+		this.originalFutures = org!=null ? org : this.lastActive.list();
 		this.errorHandler = Optional.of((e) -> log.error(e.getMessage(), e));
 		this.eager = true;
 		this.retrier = Optional.ofNullable(retrier).orElse(
@@ -72,6 +78,10 @@ public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 		this.queueFactory = QueueFactories.unboundedQueue();
 		subscription = new AlwaysContinue();
 		
+	}
+	
+	public void cancelOriginal(){
+		this.originalFutures.stream().forEach(cf -> cf.cancel(true));
 	}
 
 	@Override

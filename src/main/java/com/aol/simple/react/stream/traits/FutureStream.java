@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Spliterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -30,6 +31,8 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+import lombok.AllArgsConstructor;
+
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -41,7 +44,6 @@ import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.StreamWrapper;
-import com.aol.simple.react.stream.eager.EagerFutureStream;
 import com.aol.simple.react.util.SimpleTimer;
 
 public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
@@ -49,6 +51,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 
 	static final ExceptionSoftener softener = ExceptionSoftener.singleton.factory
 			.getInstance();
+	
 	
 	default <K> Map<K, ? extends FutureStream<U>> shard(
 			Map<K, Queue<U>> shards, Function<U, K> sharder) {
@@ -60,7 +63,11 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 						Collectors.toMap(e -> e.getKey(), e -> fromStream(e
 								.getValue().stream(getSubscription()))));
 	}
-
+	
+	default void cancel(){
+		this.streamCompletableFutures().forEach(next-> next.cancel(true));
+	}
+	
 	default FutureStream<Collection<U>> batchBySize(int size) {
 		Queue queue = toQueue();
 		Function<Supplier<U>, Supplier<Collection<U>>> fn = s -> {
@@ -103,7 +110,36 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		};
 		return fromStream(queue.streamBatch(getSubscription(), fn));
 	}
-	default FutureStream<U> fixedDelay(long time) {
+	default FutureStream<U> judder(long judderInNanos){
+		Queue queue = toQueue();
+		Random r = new Random();
+		Function<Supplier<U>, Supplier<U>> fn = s -> {
+			return () -> {
+				SimpleTimer timer = new SimpleTimer();
+				Optional<U> result = Optional.empty();
+				try {
+					
+						result = Optional.of(s.get());
+						try {
+							long elapsedNanos= (long)(judderInNanos * r.nextDouble());
+							long millis = elapsedNanos/1000000;
+							int nanos = (int)(elapsedNanos - millis*1000000);
+							Thread.sleep(Math.max(0,millis),Math.max(0,nanos));
+						} catch (InterruptedException e) {
+							softener.throwSoftenedException(e);
+						}
+				} catch (ClosedQueueException e) {
+					if(result.isPresent())
+						throw new ClosedQueueException(result);
+					else
+						throw new ClosedQueueException();
+				}
+				return result.get();
+			};
+		};
+		return fromStream(queue.streamControl(getSubscription(), fn));
+	}
+	default FutureStream<U> fixedDelay(long time, TimeUnit unit) {
 		Queue queue = toQueue();
 		Function<Supplier<U>, Supplier<U>> fn = s -> {
 			return () -> {
@@ -113,7 +149,11 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 					
 						result = Optional.of(s.get());
 						try {
-							Thread.sleep(time);
+							long elapsedNanos= unit.toNanos(time);
+							long millis = elapsedNanos/1000000;
+							int nanos = (int)(elapsedNanos - millis*1000000);
+							Thread.sleep(Math.max(0,millis),Math.max(0,nanos));
+							
 						} catch (InterruptedException e) {
 							softener.throwSoftenedException(e);
 						}
@@ -273,6 +313,12 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 			FutureStream<T2> right) {
 		return combine(left, right, Tuple::tuple);
 	}
+	@AllArgsConstructor
+	static class Val<T>{
+		enum Pos { left,right};
+		Pos pos;
+		T val;
+	}
 
 	/**
 	 * Zip two streams into one using a {@link BiFunction} to produce resulting
@@ -285,16 +331,14 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 */
 	static <T1, T2, R> Seq<R> combine(FutureStream<T1> left,
 			FutureStream<T2> right, BiFunction<T1, T2, R> zipper) {
-		FutureStream left2 = (FutureStream) left;
-		FutureStream right2 = (FutureStream) right;
-		Queue q = left2.merge(right2).toQueue();
-		final Iterator<T1> it = q.stream(left.getSubscription()).iterator();
-		final Queue.QueueReader<T1> it1 = new Queue.QueueReader(left.toQueue(),
-				null);
-		final Queue.QueueReader<T2> it2 = new Queue.QueueReader(
-				right.toQueue(), null);
+		
+		Queue q = left.map(it->new Val(Val.Pos.left,it)).merge(right.map(it->new Val(Val.Pos.right,it))).toQueue();
+		final Iterator<Val> it = q.stream(left.getSubscription()).iterator();
+		
 
 		class Zip implements Iterator<R> {
+			T1 lastLeft = null;
+			T2 lastRight = null;
 			@Override
 			public boolean hasNext() {
 
@@ -303,11 +347,14 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 
 			@Override
 			public R next() {
-				it.next();
-				if (it1.notEmpty())
-					return zipper.apply(it1.next(), it2.getLast());
+				Val v =it.next();
+				if(v.pos== Val.Pos.left)
+					lastLeft = (T1)v.val;
 				else
-					return zipper.apply(it1.getLast(), it2.next());
+					lastRight = (T2)v.val;
+			
+				return zipper.apply(lastLeft, lastRight);
+				
 
 			}
 		}

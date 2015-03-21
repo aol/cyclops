@@ -244,13 +244,17 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 
 		//need to pass in a builder in the constructor and build using it
 		return (SimpleReactStream)getSimpleReact().construct( Stream.of(), this.getTaskExecutor(),
-				this.getRetrier(), isEager()).withSubscription(getSubscription()).withQueueFactory((QueueFactory<Object>) getQueueFactory())	
+				this.getRetrier(), isEager(),getOriginalFutures()).withSubscription(getSubscription()).withQueueFactory((QueueFactory<Object>) getQueueFactory())	
 				.fromStream(
 						toQueue()
 								.stream(getSubscription())
 								.flatMap(flatFn));
 	}
 	
+	
+
+	List getOriginalFutures();
+
 	/**
 	 * 
 	 * React <b>with</b>

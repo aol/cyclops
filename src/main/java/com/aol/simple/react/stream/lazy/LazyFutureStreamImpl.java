@@ -1,5 +1,6 @@
 package com.aol.simple.react.stream.lazy;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -48,11 +49,14 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	private final BaseSimpleReact simpleReact;
 	private final Continueable subscription;
 	private final static ReactPool<BaseSimpleReact> pool = ReactPool.elasticPool(()->new LazyReact(Executors.newSingleThreadExecutor()));
-
-	
+	private final List originalFutures=  null;
 	
 	LazyFutureStreamImpl(final Stream<CompletableFuture<U>> stream,
-			final ExecutorService executor, final RetryExecutor retrier) {
+			final ExecutorService executor, final RetryExecutor retrier){
+		this(stream,executor,retrier,null);
+	}
+	LazyFutureStreamImpl(final Stream<CompletableFuture<U>> stream,
+			final ExecutorService executor, final RetryExecutor retrier,List originalFutures) {
 		
 		this.simpleReact = new LazyReact();
 		this.taskExecutor = Optional.ofNullable(executor).orElse(
@@ -65,7 +69,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 				RetryBuilder.getDefaultInstance());
 		this.waitStrategy = new LimitingMonitor();
 		this.lazyCollector = new BatchingCollector<>();
-		this.queueFactory = QueueFactories.boundedQueue(1000);
+		this.queueFactory = QueueFactories.boundedQueue(lazyCollector.getMaxActive().getMaxActive());
 		this.subscription = new Subscription();
 		
 	}
