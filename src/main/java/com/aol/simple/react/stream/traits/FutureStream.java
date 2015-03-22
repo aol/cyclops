@@ -38,6 +38,7 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.async.Queue;
+import com.aol.simple.react.async.QueueFactories;
 import com.aol.simple.react.async.Queue.ClosedQueueException;
 import com.aol.simple.react.async.Queue.QueueReader;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
@@ -53,6 +54,21 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 			.getInstance();
 	
 	
+	/**
+	 * Break a stream into multiple Streams based of some characteristic of the elements of the Stream
+	 * 
+	 * e.g. 
+	 * 
+	 * EagerFutureStream.of(10,20,25,30,41,43).shard(ImmutableMap.of("even",new Queue(),"odd",new Queue(),element-> element%2==0? "even" : "odd");
+	 * 
+	 * results in 2 Streams
+	 * "even": 10,20,30
+	 * "odd" : 25,41,43
+	 * 
+	 * @param shards Map of Queue's keyed by shard identifier
+	 * @param sharder Function to split split incoming elements into shards
+	 * @return Map of new sharded Streams
+	 */
 	default <K> Map<K, ? extends FutureStream<U>> shard(
 			Map<K, Queue<U>> shards, Function<U, K> sharder) {
 		toQueue(shards, sharder);
@@ -64,10 +80,20 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 								.getValue().stream(getSubscription()))));
 	}
 	
+	/**
+	 * Cancel the CompletableFutures in this stage of the stream
+	 */
 	default void cancel(){
 		this.streamCompletableFutures().forEach(next-> next.cancel(true));
 	}
 	
+	/**
+	 * 
+	 * Batch the elements in this stream into Lists of specified size
+	 * 
+	 * @param size Size of lists elements should be batched into
+	 * @return Stream of Lists
+	 */
 	default FutureStream<Collection<U>> batchBySize(int size) {
 		Queue queue = toQueue();
 		Function<Supplier<U>, Supplier<Collection<U>>> fn = s -> {
@@ -89,10 +115,25 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		};
 		return fromStream(queue.streamBatch(getSubscription(), fn));
 	}
+	/**
+	 * Batch elements into a Stream of collections with user defined function
+	 * @param fn Function takes a supplier, which can be used repeatedly to get the next value from the Stream. If there are no more values, a ClosedQueueException will be thrown.
+	 *           This function should return a Supplier which creates a collection of the batched values
+	 * @return Stream of batched values
+	 */
 	default FutureStream<Collection<U>> batch(Function<Supplier<U>, Supplier<Collection<U>>> fn){
 		Queue queue = toQueue();
 		return fromStream(queue.streamBatch(getSubscription(), fn));
 	}
+	
+	/**
+	 * Batch the elements in this stream into Collections of specified size
+	 * The type of Collection is determined by the specified supplier
+	 * 
+	 * @param size Size of batch
+	 * @param supplier Create the batch holding collection
+	 * @return Stream of Collections
+	 */
 	default FutureStream<Collection<U>> batchBySize(int size, Supplier<Collection<U>> supplier) {
 		Queue queue = toQueue();
 		Function<Supplier<U>, Supplier<Collection<U>>> fn = s -> {
@@ -114,7 +155,14 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		};
 		return fromStream(queue.streamBatch(getSubscription(), fn));
 	}
-	default FutureStream<U> jitter(long judderInNanos){
+	/**
+	 * Introduce a random delay between events in a stream
+	 * Can be used to prevent behaviour synchronizing within a system
+	 * 
+	 * @param jitterInNanos Max number of nanos for jitter (random number less than this will be selected)/
+	 * @return Next stage in Stream with jitter applied
+	 */
+	default FutureStream<U> jitter(long jitterInNanos){
 		Queue queue = toQueue();
 		Random r = new Random();
 		Function<Supplier<U>, Supplier<U>> fn = s -> {
@@ -125,7 +173,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 					
 						result = Optional.of(s.get());
 						try {
-							long elapsedNanos= (long)(judderInNanos * r.nextDouble());
+							long elapsedNanos= (long)(jitterInNanos * r.nextDouble());
 							long millis = elapsedNanos/1000000;
 							int nanos = (int)(elapsedNanos - millis*1000000);
 							Thread.sleep(Math.max(0,millis),Math.max(0,nanos));
@@ -143,6 +191,25 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		};
 		return fromStream(queue.streamControl(getSubscription(), fn));
 	}
+	/**
+	 * Apply a fixed delay before emitting elements to the next phase of the Stream.
+	 * Note this doesn't neccessarily imply a fixed delay between element creation (although it may do).
+	 * e.g.
+	 * 
+	 * EagerFutureStream.of(1,2,3,4).fixedDelay(1,TimeUnit.hours);
+	 * 
+	 * Will emit 1 on start, then 2 after an hour, 3 after 2 hours and so on.
+	 * 
+	 * However all 4 numbers will be populated in the Stream immediately.
+	 * 
+	 * LazyFutureStream.of(1,2,3,4).withQueueFactories(QueueFactories.boundedQueue(1)).fixedDelay(1,TimeUnit.hours);
+	 * 
+	 * Will populate each number in the Stream an hour apart.
+	 * 
+	 * @param time amount of time between emissions
+	 * @param unit TimeUnit for emissions
+	 * @return Next Stage of the Stream
+	 */
 	default FutureStream<U> fixedDelay(long time, TimeUnit unit) {
 		Queue queue = toQueue();
 		Function<Supplier<U>, Supplier<U>> fn = s -> {
@@ -172,10 +239,27 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		};
 		return fromStream(queue.streamControl(getSubscription(), fn));
 	}
+	/**
+	 * Allows clients to control the emission of data for the next phase of the Stream.
+	 * The user specified function can delay, drop, or change elements
+	 * 
+	 * @param fn Function takes a supplier, which can be used repeatedly to get the next value from the Stream. If there are no more values, a ClosedQueueException will be thrown.
+	 *           This function should return a Supplier which returns the desired result for the next element (or just the next element).
+	 * @return Next stage in Stream
+	 */
 	default FutureStream<U> control(Function<Supplier<U>, Supplier<U>> fn){
 		Queue queue = toQueue();
 		return fromStream(queue.streamControl(getSubscription(), fn));
 	}
+	
+	/**
+	 * Can be used to debounce (accept a single data point from a unit of time) data.
+	 * This drops data. For a method that slows emissions and keeps data #see#onePer
+	 * 
+	 * @param time Time from which to accept only one element
+	 * @param unit Time unit for specified time
+	 * @return Next stage of stream, with only 1 element per specified time windows
+	 */
 	default FutureStream<U> debounce(long time, TimeUnit unit) {
 		Queue queue = toQueue();
 		Function<Supplier<U>, Supplier<U>> fn = s -> {
@@ -205,6 +289,13 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		};
 		return fromStream(queue.streamControl(getSubscription(), fn));
 	}
+	/**
+	 * Slow emissions down, emiting one element per specified time period
+	 * 
+	 * @param time Frequency period of element emission
+	 * @param unit Time unit for frequency period
+	 * @return Stream with emissions slowed down by specified emission frequency
+	 */
 	default FutureStream<U> onePer(long time, TimeUnit unit) {
 		Queue queue = toQueue();
 		Function<Supplier<U>, Supplier<U>> fn = s -> {
@@ -236,6 +327,14 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		};
 		return fromStream(queue.streamControl(getSubscription(), fn));
 	}
+	/**
+	 * Allows x (specified number of) emissions with a time period before stopping emmissions until specified time has elapsed since last emission
+	 * 
+	 * @param x Number of allowable emissions per time period
+	 * @param time Frequency time period
+	 * @param unit Frequency time unit
+	 * @return Stream with emissions slowed down by specified emission frequency
+	 */
 	default FutureStream<U> xPer(int x,long time, TimeUnit unit) {
 		Queue queue = toQueue();
 		Function<Supplier<U>, Supplier<U>> fn = s -> {
