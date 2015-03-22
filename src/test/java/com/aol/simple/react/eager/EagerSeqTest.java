@@ -1,12 +1,14 @@
 package com.aol.simple.react.eager;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -20,8 +22,8 @@ import org.junit.Test;
 
 import com.aol.simple.react.base.BaseSeqTest;
 import com.aol.simple.react.stream.eager.EagerFutureStream;
-import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
+import com.google.common.collect.Lists;
 
 public class EagerSeqTest extends BaseSeqTest {
  
@@ -33,6 +35,35 @@ public class EagerSeqTest extends BaseSeqTest {
 	@Override
 	protected <U> FutureStream<U> react(Supplier<U>... array) {
 		return EagerFutureStream.parallelBuilder().react(array);
+		
+	}
+	
+	@Test
+	public void batchSinceLastReadIterator() throws InterruptedException{
+		Iterator<Collection<Object>> it = react(()->1,()->2,()->3,()->4,()->5,()->value()).chunkLastReadIterator();
+		Thread.sleep(50);
+		List<Collection> cols = Lists.newArrayList();
+		while(it.hasNext()){
+			
+			cols.add(it.next());
+		}
+		
+		assertThat(cols.get(0).size(),greaterThan(1));
+		cols.remove(0);
+		Collection withJello = cols.stream().filter(col -> col.contains("jello")).findFirst().get();
+		
+	
+		
+	}
+	@Test
+	public void batchSinceLastRead() throws InterruptedException{
+		List<Collection> cols = react(()->1,()->2,()->3,()->4,()->5,()->value()).chunkSinceLastRead().peek(it->{sleep(50);}).collect(Collectors.toList());
+		
+		assertThat(cols.get(0).size(),greaterThan(1));
+		cols.remove(0);
+		Collection withJello = cols.stream().filter(col -> col.contains("jello")).findFirst().get();
+		
+	
 		
 	}
 

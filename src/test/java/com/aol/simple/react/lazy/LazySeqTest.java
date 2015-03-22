@@ -9,6 +9,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -26,6 +29,35 @@ import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.FutureStream;
 
 public class LazySeqTest extends BaseSeqTest {
+	
+	@Test
+	public void batchSinceLastReadIterator() throws InterruptedException{
+		Iterator<Collection<Integer>> it = of(1,2,3,4,5,6).chunkLastReadIterator();
+	
+		Thread.sleep(10);
+		Collection one = it.next();
+		
+		Collection two = it.next();
+		
+		assertThat(one.size(),is(6));
+		assertThat(two.size(),is(0));
+		
+	
+		
+	}
+	@Test
+	public void batchSinceLastRead() throws InterruptedException{
+		List<Collection> cols = of(1,2,3,4,5,6).chunkSinceLastRead().peek(it->{sleep(50);}).collect(Collectors.toList());
+		
+		System.out.println(cols.get(0));
+		assertThat(cols.get(0).size(),is(6));
+		assertThat(cols.size(),is(1));
+		
+		
+	
+		
+	}
+	
 	@Test
 	public void zipFastSlow() {
 		Queue q = new Queue();

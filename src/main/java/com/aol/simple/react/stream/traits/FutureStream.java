@@ -38,7 +38,6 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.async.QueueFactories;
 import com.aol.simple.react.async.Queue.ClosedQueueException;
 import com.aol.simple.react.async.Queue.QueueReader;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
@@ -46,6 +45,7 @@ import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.util.SimpleTimer;
+import com.google.common.collect.Lists;
 
 public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		LazyStream<U>, BlockingStream<U>, SimpleReactStream<U>, ToQueue<U> {
@@ -54,6 +54,69 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 			.getInstance();
 	
 	
+	/**
+	 * @return an Iterator that chunks all completed elements from this stream since last it.next() call into a collection
+	 */
+	default Iterator<Collection<U>> chunkLastReadIterator(){
+		Queue.QueueReader reader =  new Queue.QueueReader(toQueue(),null);
+		class Chunker implements Iterator<Collection<U>> {
+			
+			@Override
+			public boolean hasNext() {
+
+				return reader.isOpen();
+			}
+
+			@Override
+			public Collection<U> next() {
+				try{
+					return reader.drainToOrBlock();
+				}catch(ClosedQueueException e){
+					return Lists.newArrayList();
+				}
+				
+
+			}
+		}
+		return new Chunker();
+	}
+	/**
+	 * @return a Stream that batches all completed elements from this stream since last read attempt into a collection
+	 */
+	default FutureStream<Collection<U>> chunkSinceLastRead(){
+		Queue queue = toQueue();
+		Queue.QueueReader reader =  new Queue.QueueReader(queue,null);
+		class Chunker implements Iterator<Collection<U>> {
+			
+			@Override
+			public boolean hasNext() {
+
+				return reader.isOpen();
+			}
+
+			@Override
+			public Collection<U> next() {
+				return reader.drainToOrBlock();
+
+			}
+		}
+		Chunker chunker = new Chunker();
+		Function<Supplier<U>, Supplier<Collection<U>>> fn = s -> {
+			return () -> {
+				
+				try {
+					return chunker.next();
+				} catch (ClosedQueueException e) {
+					
+					throw new ClosedQueueException();
+				}
+				
+			};
+		};
+		return fromStream(queue.streamBatch(getSubscription(), fn));
+		
+		
+	}
 	/**
 	 * Break a stream into multiple Streams based of some characteristic of the elements of the Stream
 	 * 
@@ -372,6 +435,13 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		return fromStream(queue.streamControl(getSubscription(), fn));
 	}
 
+	/**
+	 * Organise elements in a Stream into a Collections based on the time period they pass through this stage
+	 * 
+	 * @param time Time period during which all elements should be collected
+	 * @param unit Time unit during which all elements should be collected
+	 * @return Stream of Lists
+	 */
 	default FutureStream<Collection<U>> batchByTime(long time, TimeUnit unit) {
 		Queue queue = toQueue();
 		Function<Supplier<U>, Supplier<Collection<U>>> fn = s -> {
@@ -391,6 +461,14 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		};
 		return fromStream(queue.streamBatch(getSubscription(), fn));
 	}
+	/**
+	 * Organise elements in a Stream into a Collections based on the time period they pass through this stage
+	 * 
+	 * @param time Time period during which all elements should be collected
+	 * @param unit Time unit during which all elements should be collected
+	 * @param factory Instantiates the collections used in the batching
+	 * @return Stream of collections
+	 */
 	default FutureStream<Collection<U>> batchByTime(long time, TimeUnit unit,Supplier<Collection<U>> factory) {
 		Queue queue = toQueue();
 		Function<Supplier<U>, Supplier<Collection<U>>> fn = s -> {
@@ -411,27 +489,77 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		return fromStream(queue.streamBatch(getSubscription(), fn));
 	}
 
+	/**
+	 * 
+	 * Similar to zip and combineLatest, except will always take the latest from this Stream while taking the last available value from the provided stream.
+	 * By contrast zip takes new / latest values from both Streams and combineLatest takes the latest from either Stream (merged with last available from the other).
+	 * 
+	 * @param s Stream to merge with
+	 * @return Stream of Tuples with the latest values from this stream
+	 */
 	default <T> FutureStream<Tuple2<U, T>> withLatest(FutureStream<T> s) {
 		return fromStream(withLatest(this, s));
 	}
+	/**
+	 * Similar to zip and withLatest, except will always take the latest from either Stream (merged with last available from the other).
+	 * By contrast zip takes new / latest values from both Streams and withLatest will always take the latest from this Stream while 
+	 * taking the last available value from the provided stream.
+	 * 
+	 * @param s Stream to merge with
+	 * @return  Stream of Tuples with the latest values from either stream
+	 */
 	default <T> FutureStream<Tuple2<U, T>> combineLatest(FutureStream<T> s) {
 		return fromStream(combineLatest(this, s));
 	}
+	/**
+	 * Return a Stream with the same values as this Stream, but with all values omitted until the provided stream starts emitting values.
+	 * Provided Stream ends the stream of values from this stream.
+	 * 
+	 * @param s Stream that will start the emission of values from this stream
+	 * @return Next stage in the Stream but with all values skipped until the provided Stream starts emitting
+	 */
 	default<T>  FutureStream<U> skipUntil(FutureStream<T> s) {
 		return fromStream(skipUntil(this, s));
 	}
+	/**
+	 * Return a Stream with the same values, but will stop emitting values once the provided Stream starts to emit values.
+	 * e.g. if the provided Stream is asynchronously refreshing state from some remote store, this stream can proceed until
+	 * the provided Stream succeeds in retrieving data.
+	 * 
+	 * @param s Stream that will stop the emission of values from this stream
+	 * @return Next stage in the Stream but will only emit values until provided Stream starts emitting values
+	 */
 	default<T>  FutureStream<U> takeUntil(FutureStream<T> s) {
 		return fromStream(takeUntil(this, s));
 	}
 
+	/**
+	 * Close all queues except the active one
+	 * 
+	 * @param active Queue not to close
+	 * @param all All queues potentially including the active queue
+	 */
 	static void closeOthers(Queue active, List<Queue> all){
 		all.stream().filter(next -> next!=active).forEach(Queue::closeAndClear);
 		
 	}
+	/**
+	 * Close all streams except the active one
+	 * 
+	 * @param active Stream not to close
+	 * @param all  All streams potentially including the active stream
+	 */
 	static void closeOthers(FutureStream active, List<FutureStream> all){
 		all.stream().filter(next -> next!=active).filter(s -> s.isEager()).forEach(FutureStream::cancel);
 		
 	}
+	
+	/**
+	 * Return first Stream out of provided Streams that starts emitted results 
+	 * 
+	 * @param futureStreams Streams to race
+	 * @return First Stream to start emitting values
+	 */
 	static <U> FutureStream<U> firstOf(FutureStream<U>... futureStreams) {
 		List<Tuple2<FutureStream<U>, QueueReader>> racers = Stream
 				.of(futureStreams)

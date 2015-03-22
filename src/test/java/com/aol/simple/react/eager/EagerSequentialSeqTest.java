@@ -1,10 +1,13 @@
 package com.aol.simple.react.eager;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertThat;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -36,7 +39,37 @@ public class EagerSequentialSeqTest extends BaseSequentialSeqTest {
 	protected <U> EagerFutureStream<U> of(U... array) {
 		return EagerFutureStream.sequentialCommonBuilder().of(array);
 	}
+	@Test
+	public void batchSinceLastReadIterator() throws InterruptedException{
+		Iterator<Collection<Integer>> it = of(1,2,3,4,5,6).chunkLastReadIterator();
+	
+		Thread.sleep(10);
+		Collection one = it.next();
+		
+		
+		Collection two = it.next();
+		
+		assertThat(one.size(),is(6));
+		assertThat(two.size(),is(0));
+		
+	
+		
+	}
 
+	@Test
+	public void batchSinceLastRead() throws InterruptedException{
+		List<Collection> cols = of(1,2,3,4,5,6).chunkSinceLastRead().peek(it->{sleep(150);}).collect(Collectors.toList());
+		
+		System.out.println(cols.get(0));
+		assertThat(cols.get(0).size(),is(6));
+		if(cols.size()>1)
+			assertThat(cols.get(1).size(),is(0));
+		
+		
+	
+		
+	}
+	
 	@Test
 	public void testLimitFutures(){
 		assertThat(of(1,2,3,4,5).limitFutures(2).collect(Collectors.toList()),is(asList(1,2)));

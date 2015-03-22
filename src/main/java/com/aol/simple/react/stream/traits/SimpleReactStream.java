@@ -213,11 +213,21 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 						(ft) -> ft.thenApplyAsync(SimpleReactStream.<U,R>handleExceptions(fn),
 								getTaskExecutor())), Collectors.toList()));
 	}
-	default  <R> SimpleReactStream<R> until(final Function<U, R> fn) {
-		return (SimpleReactStream<R>) this.withLastActive(getLastActive().permutate(
-				getLastActive().stream().map(
-						(ft) -> ft.thenApplyAsync(SimpleReactStream.<U,R>handleExceptions(fn),
-								getTaskExecutor())), Collectors.toList()));
+	/**
+	 * Can only be used on Eager Streams
+	 * 
+	 * Applies a function to this phase independent on the main flow.
+	 * Convenience over taking a reference to this phase and splitting it.
+	 * 
+	 * @param fn Function to be applied to each completablefuture on completion
+	 * @return This phase in Stream
+	 */
+	default   SimpleReactStream<U> doOnEach(final Function<U, U> fn) {
+		
+		getLastActive().stream().forEach(
+						(ft) -> ft.thenApplyAsync(SimpleReactStream.<U,U>handleExceptions(fn),
+								getTaskExecutor()));
+		return this;
 	}
 
 	static <U,R> Function<U, R> handleExceptions(Function<U, R> fn) {

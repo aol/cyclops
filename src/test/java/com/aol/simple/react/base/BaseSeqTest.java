@@ -5,7 +5,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.nullValue;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
@@ -16,6 +17,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -38,13 +40,6 @@ import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.util.SimpleTimer;
 import com.google.common.collect.ImmutableMap;
 
-import org.junit.Test;
-
-import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.stream.traits.FutureStream;
-import com.aol.simple.react.util.SimpleTimer;
-import com.google.common.collect.ImmutableMap;
-
 //see BaseSequentialSeqTest for in order tests
 public abstract class BaseSeqTest {
 	abstract protected <U> FutureStream<U> of(U... array);
@@ -58,6 +53,8 @@ public abstract class BaseSeqTest {
 		nonEmpty = of(1);
 	}
 
+	
+	
 	@Test
 	public void firstOf(){
 		
@@ -70,7 +67,7 @@ public abstract class BaseSeqTest {
 		assertTrue(FutureStream.firstOf(of(1,2,3,4),react(()->value()),
 				react(()->value())).anyMatch(it-> it.equals(4)));
 	}
-	private Object value() {
+	protected Object value() {
 		try {
 			Thread.sleep(150);
 		} catch (InterruptedException e) {
@@ -115,7 +112,7 @@ public abstract class BaseSeqTest {
 	public void withLatestValues(){
 		assertTrue(of(1,2,3,4,5,6).withLatest(of(30,40,50,60,70,80,90,100,110,120,140)).anyMatch(it-> it.v2==null));
 		//assertTrue(of(1,2,3,4,5,6).combine(of(3)).oneMatch(it-> it.v2==3));
-		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v1==1));
+		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==1));
 		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==2));
 		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==3));
 		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==4));

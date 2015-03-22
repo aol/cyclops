@@ -22,6 +22,7 @@ import org.jooq.lambda.Seq;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.util.SimpleTimer;
+import com.google.common.collect.Lists;
 
 /**
  * Inspired by scalaz-streams async.Queue (functionally similar, but Blocking)
@@ -324,6 +325,24 @@ public class Queue<T> implements Adapter<T> {
 		public T next(){
 			last = queue.ensureOpen();
 			return last;
+		}
+		public boolean isOpen() {
+			return queue.open;
+		}
+		public Collection<T> drainToOrBlock() {
+			Collection<T> result = Lists.newArrayList();
+			if(size()>0)
+				queue.queue.drainTo(result);
+			else{
+				try{
+					result.add(queue.ensureOpen());
+				}catch(ClosedQueueException e){
+					queue.open=false;
+					throw e;
+				}
+			}
+			
+			return result.stream().filter(it -> it!=POISON_PILL).collect(Collectors.toList());
 		}
 	}
 	

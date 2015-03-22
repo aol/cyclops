@@ -64,7 +64,7 @@ public abstract class BaseSequentialSeqTest {
 		assertTrue(FutureStream.firstOf(of(1,2,3,4),react(()->value()),
 				react(()->value())).anyMatch(it-> it.equals(4)));
 	}
-	private Object value() {
+	protected Object value() {
 		try {
 			Thread.sleep(150);
 		} catch (InterruptedException e) {
