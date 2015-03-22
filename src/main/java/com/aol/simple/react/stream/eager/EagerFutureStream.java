@@ -89,8 +89,8 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		return (EagerFutureStream<Collection<U>>)FutureStream.super. batchBySize(size,supplier);
 		
 	}
-	default EagerFutureStream<U> jitter(long judderInNanos){
-		return (EagerFutureStream<U>)FutureStream.super.jitter(judderInNanos);
+	default EagerFutureStream<U> jitter(long jitterInNanos){
+		return (EagerFutureStream<U>)FutureStream.super.jitter(jitterInNanos);
 	}
 	default EagerFutureStream<U> fixedDelay(long time, TimeUnit unit) {
 		return (EagerFutureStream<U>)FutureStream.super.fixedDelay(time,unit);
@@ -113,6 +113,9 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 	default <T> EagerFutureStream<Tuple2<U, T>> combineLatest(FutureStream<T> s) {
 		return (EagerFutureStream<Tuple2<U, T>>)FutureStream.super.combineLatest(s);
+	}
+	default <T> EagerFutureStream<Tuple2<U, T>> withLatest(FutureStream<T> s) {
+		return (EagerFutureStream<Tuple2<U, T>>)FutureStream.super.withLatest(s);
 	}
 
 	static <U> EagerFutureStream<U> firstOf(EagerFutureStream<U>... futureStreams) {

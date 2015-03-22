@@ -312,7 +312,9 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		return fromStream(queue.streamBatch(getSubscription(), fn));
 	}
 
-	
+	default <T> FutureStream<Tuple2<U, T>> withLatest(FutureStream<T> s) {
+		return fromStream(withLatest(this, s));
+	}
 	default <T> FutureStream<Tuple2<U, T>> combineLatest(FutureStream<T> s) {
 		return fromStream(combineLatest(this, s));
 	}
@@ -353,11 +355,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 
 	/**
 	 * Zip two streams into one. Uses the latest values from each rather than waiting for both
-	 * <p>
-	 * <code>
-	 * // (tuple(1, "a"), tuple(2, "b"), tuple(3, "c"))
-	 * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"))
-	 * </code>
+	 * 
 	 */
 	static <T1, T2> Seq<Tuple2<T1, T2>> combineLatest(FutureStream<T1> left,
 			FutureStream<T2> right) {
@@ -373,11 +371,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	/**
 	 * Zip two streams into one using a {@link BiFunction} to produce resulting. 
 	 * values. Uses the latest values from each rather than waiting for both.
-	 * <p>
-	 * <code>
-	 * // ("1:a", "2:b", "3:c")
-	 * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"), (i, s) -&gt; i + ":" + s)
-	 * </code>
+	 * 
 	 */
 	static <T1, T2, R> Seq<R> combineLatest(FutureStream<T1> left,
 			FutureStream<T2> right, BiFunction<T1, T2, R> zipper) {
@@ -410,6 +404,54 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		}
 
 		return Seq.seq(new Zip());
+	}
+	
+	/**
+	 * Zip two streams into one. Uses the latest values from each rather than waiting for both
+	 * 
+	 */
+	static <T1, T2> Seq<Tuple2<T1, T2>> withLatest(FutureStream<T1> left,
+			FutureStream<T2> right) {
+		return withLatest(left, right, Tuple::tuple);
+	}
+	/**
+	 * Zip two streams into one using a {@link BiFunction} to produce resulting. 
+	 * values. Uses the latest values from each rather than waiting for both.
+	 * 
+	 */
+	static <T1, T2, R> Seq<R> withLatest(FutureStream<T1> left,
+			FutureStream<T2> right, BiFunction<T1, T2, R> zipper) {
+		
+		Queue q = left.map(it->new Val(Val.Pos.left,it)).merge(right.map(it->new Val(Val.Pos.right,it))).toQueue();
+		final Iterator<Val> it = q.stream(left.getSubscription()).iterator();
+		
+
+		class Zip implements Iterator<R> {
+			T1 lastLeft = null;
+			T2 lastRight = null;
+			@Override
+			public boolean hasNext() {
+
+				return it.hasNext();
+			}
+
+			@Override
+			public R next() {
+				Val v =it.next();
+				if(v.pos== Val.Pos.left){
+					lastLeft = (T1)v.val;
+					return zipper.apply(lastLeft, lastRight);
+				}
+				else
+					lastRight = (T2)v.val;
+			
+				return (R)Optional.empty();
+				
+
+			}
+		}
+
+		return Seq.seq(new Zip()).filter(next->!(next instanceof Optional));
 	}
 	
 	static <T1, T2> Seq<T1> skipUntil(FutureStream<T1> left,

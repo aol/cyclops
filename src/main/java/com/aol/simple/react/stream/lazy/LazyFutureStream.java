@@ -39,6 +39,7 @@ import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
+import com.aol.simple.react.stream.eager.EagerFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.LazyStream;
 import com.aol.simple.react.stream.traits.LazyToQueue;
@@ -121,7 +122,9 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	default <T> LazyFutureStream<Tuple2<U, T>> combineLatest(FutureStream<T> s) {
 		return (LazyFutureStream<Tuple2<U, T>>)FutureStream.super.combineLatest(s);
 	}
-
+	default <T> LazyFutureStream<Tuple2<U, T>> withLatest(FutureStream<T> s) {
+		return (LazyFutureStream<Tuple2<U, T>>)FutureStream.super.withLatest(s);
+	}
 	static <U> LazyFutureStream<U> firstOf(LazyFutureStream<U>... futureStreams) {
 		return (LazyFutureStream<U>)FutureStream.firstOf(futureStreams);
 	}

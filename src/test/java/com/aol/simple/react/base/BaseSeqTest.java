@@ -105,6 +105,24 @@ public abstract class BaseSeqTest {
 		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v1==6));
 	}
 	@Test
+	public void withLatest(){
+		
+		assertThat(of(1,2,3,4,5,6).withLatest(of(30,40,50,60,70,80,90,100,110,120,140))
+				.collect(Collectors.toList()).size(),is(6));
+		
+	}
+	@Test
+	public void withLatestValues(){
+		assertTrue(of(1,2,3,4,5,6).withLatest(of(30,40,50,60,70,80,90,100,110,120,140)).anyMatch(it-> it.v2==null));
+		//assertTrue(of(1,2,3,4,5,6).combine(of(3)).oneMatch(it-> it.v2==3));
+		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v1==1));
+		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==2));
+		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==3));
+		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==4));
+		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==5));
+		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==6));
+	}
+	@Test
 	public void skipUntil(){
 		System.out.println(react(()->1,()->2,()->3,()->4,()->value2())
 				.skipUntil(react(()->value())).collect(Collectors.toList()));
