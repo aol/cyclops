@@ -80,7 +80,7 @@ Everything is concurrent in SimpleReact. While this does limit some of the synta
 #SimpleReact Streams and commands
 
 * [List of operators] (https://github.com/aol/simple-react/wiki/A-simple-API,-and-a-Rich-API)
-* [Batching, control, sharding and zipping operators ](https://github.com/aol/simple-react/wiki/Batching,-Control,-Sharding-and-Zipping-Operators)
+* [Batching, control, sharding and zipping operators ](https://github.com/aol/simple-react/wiki/Batching,-Time-Control,-Sharding-and-Zipping-Operators)
 
 ##limit
 
