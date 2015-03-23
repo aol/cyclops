@@ -15,7 +15,7 @@ import com.aol.simple.react.stream.simple.SimpleReact;
  *
  */
 public class SequentialElasticPools {
-	public final ReactPool<SimpleReact> simpleReact = ReactPool.elasticPool(()->new SimpleReact(Executors.newFixedThreadPool(1)));
-	public final ReactPool<EagerReact> eagerReact = ReactPool.elasticPool(()->new EagerReact(Executors.newFixedThreadPool(1)));
-	public final ReactPool<LazyReact> lazyReact = ReactPool.elasticPool(()->new LazyReact(Executors.newFixedThreadPool(1)));
+	public final static ReactPool<SimpleReact> simpleReact = ReactPool.elasticPool(()->new SimpleReact(Executors.newFixedThreadPool(1)));
+	public final static ReactPool<EagerReact> eagerReact = ReactPool.elasticPool(()->new EagerReact(Executors.newFixedThreadPool(1)));
+	public final static ReactPool<LazyReact> lazyReact = ReactPool.elasticPool(()->new LazyReact(Executors.newFixedThreadPool(1)));
 }

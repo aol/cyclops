@@ -7,6 +7,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
@@ -91,7 +94,45 @@ public class EagerReact extends BaseSimpleReact{
 		return (EagerFutureStream)super.fromStreamWithoutFutures(stream);
 	}
 
+	/* 
+	 *  Construct a EagerFutureStream from the provided Stream, Stream will be mapped to a Stream of CompeltableFutures internally
+	 * 
+	 *	@param stream Stream that serves as input to LazyFutureStream
+	 *	@return EagerFutureStream
+	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
+	 */
+	@Override
+	public EagerFutureStream<Integer> fromPrimitiveStream(IntStream stream) {
+		
+		return (EagerFutureStream)super.fromPrimitiveStream(stream);
+	}
+
+	/* 
+	 *  Construct a EagerFutureStream from the provided Stream, Stream will be mapped to a Stream of CompeltableFutures internally
+	 * 
+	 *	@param stream Stream that serves as input to LazyFutureStream
+	 *	@return EagerFutureStream
+	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
+	 */
+	@Override
+	public  EagerFutureStream<Double> fromPrimitiveStream(DoubleStream stream) {
+		
+		return (EagerFutureStream)super.fromPrimitiveStream(stream);
+	}
 	
+
+	/* 
+	 *  Construct a EagerFutureStream from the provided Stream, Stream will be mapped to a Stream of CompeltableFutures internally
+	 * 
+	 *	@param stream Stream that serves as input to LazyFutureStream
+	 *	@return EagerFutureStream
+	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
+	 */
+	@Override
+	public  EagerFutureStream<Long> fromPrimitiveStream(LongStream stream) {
+		
+		return (EagerFutureStream)super.fromPrimitiveStream(stream);
+	}
 	/* 
 	 * Construct a EagerFutureStream from array
 	 * 

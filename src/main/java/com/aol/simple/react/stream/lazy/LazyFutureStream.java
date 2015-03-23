@@ -23,6 +23,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -73,6 +74,66 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 
 	LazyFutureStream<U> withLastActive(StreamWrapper streamWrapper);
 
+	default LazyFutureStream<U> limitFutures(long maxSize) {
+
+		StreamWrapper lastActive = getLastActive();
+		StreamWrapper limited = lastActive.withNewStream(lastActive.stream()
+				.limit(maxSize));
+		return this.withLastActive(limited);
+
+	}
+
+	default LazyFutureStream<U> skipFutures(long n) {
+		StreamWrapper lastActive = getLastActive();
+		StreamWrapper limited = lastActive.withNewStream(lastActive.stream().skip(n));
+		return this.withLastActive(limited);
+	}
+	
+	default LazyFutureStream<U> sliceFutures(long from, long to) {
+		List noType = Seq.seq(getLastActive().stream()).slice(from, to)
+				.collect(Collectors.toList());
+		///return (LazyFutureStream<U>)fromListCompletableFuture(noType);
+		StreamWrapper lastActive = getLastActive();
+		StreamWrapper limited = lastActive.withNewStream(noType.stream());
+		return this.withLastActive(limited);
+	}
+	default Seq<Tuple2<CompletableFuture<U>, Long>> zipFuturesWithIndex() {
+
+		Seq seq = Seq.seq(getLastActive().stream().iterator()).zipWithIndex();
+		return (Seq<Tuple2<CompletableFuture<U>, Long>>) seq;
+	}
+	default Tuple2<Seq<U>, Seq<U>> duplicateFutures() {
+		// unblocking impl
+		Stream stream = getLastActive().stream();
+		Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>> duplicated = Seq
+				.seq((Stream<CompletableFuture<U>>) stream).duplicate();
+		return new Tuple2(fromStreamCompletableFuture(duplicated.v1),
+				fromStreamCompletableFuture(duplicated.v2));
+	}
+	/**
+	 * Duplicate a Stream into two equivalent EagerFutureStreams
+	 * 
+	 * LazyFutureStream.of(1, 2, 3).duplicate()
+	 * 
+	 * results in
+	 * 
+	 * tuple((1,2,3),(1,2,3))
+	 * 
+	 * @return
+	 * 
+	 * @see #duplicate()
+	 */
+	default Tuple2<LazyFutureStream<U>, LazyFutureStream<U>> duplicateFuturesFutureStream() {
+		Tuple2 dup = duplicateFutures();
+		return (Tuple2<LazyFutureStream<U>,LazyFutureStream<U>>) dup;
+	}
+	default <R> Seq<Tuple2<CompletableFuture<U>, R>> zipFutures(Stream<R> other) {
+		Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other));
+		return (Seq<Tuple2<CompletableFuture<U>, R>>) seq;
+
+	}
+	
+	
 	/**
 	 * @return a Stream that batches all completed elements from this stream
 	 *         since last read attempt into a collection
@@ -261,7 +322,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 *            Time unit for frequency period
 	 * @return Stream with emissions slowed down by specified emission frequency
 	 */
-	default FutureStream<U> onePer(long time, TimeUnit unit) {
+	default LazyFutureStream<U> onePer(long time, TimeUnit unit) {
 		return (LazyFutureStream<U>) FutureStream.super.onePer(time, unit);
 
 	}

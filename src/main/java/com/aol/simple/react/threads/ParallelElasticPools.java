@@ -14,7 +14,7 @@ import com.aol.simple.react.stream.simple.SimpleReact;
  *
  */
 public class ParallelElasticPools {
-	public final ReactPool<SimpleReact> simpleReact = ReactPool.elasticPool(()->new SimpleReact(new ForkJoinPool(Runtime.getRuntime().availableProcessors())));
-	public final ReactPool<EagerReact> eagerReact = ReactPool.elasticPool(()->new EagerReact(new ForkJoinPool(Runtime.getRuntime().availableProcessors())));
-	public final ReactPool<LazyReact> lazyReact = ReactPool.elasticPool(()->new LazyReact(new ForkJoinPool(Runtime.getRuntime().availableProcessors())));
+	public final static ReactPool<SimpleReact> simpleReact = ReactPool.elasticPool(()->new SimpleReact(new ForkJoinPool(Runtime.getRuntime().availableProcessors())));
+	public final static ReactPool<EagerReact> eagerReact = ReactPool.elasticPool(()->new EagerReact(new ForkJoinPool(Runtime.getRuntime().availableProcessors())));
+	public final static ReactPool<LazyReact> lazyReact = ReactPool.elasticPool(()->new LazyReact(new ForkJoinPool(Runtime.getRuntime().availableProcessors())));
 }
