@@ -37,13 +37,13 @@ See [A Simple Api, and a Rich Api](https://github.com/aol/simple-react/wiki/A-si
 * [Search Maven](http://search.maven.org/#search%7Cga%7C1%7Ccom.aol.simplereact)
 
 
-For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:'0.70'
+For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:'0.80'
 
 ##Documentation
 
 
 * [wiki](https://github.com/aol/simple-react/wiki)
-* [Javadoc](http://www.javadoc.io/doc/com.aol.simplereact/simple-react/0.70)
+* [Javadoc](http://www.javadoc.io/doc/com.aol.simplereact/simple-react/0.80)
 * [Articles on medium](https://medium.com/search?q=simplereact)
 * [Google Group](https://groups.google.com/forum/#!forum/simple-react)
 
@@ -79,6 +79,8 @@ Everything is concurrent in SimpleReact. While this does limit some of the synta
 
 #SimpleReact Streams and commands
 
+* [List of operators] (https://github.com/aol/simple-react/wiki/A-simple-API,-and-a-Rich-API)
+* [Batching, control, sharding and zipping operators ](https://github.com/aol/simple-react/wiki/Batching,-Control,-Sharding-and-Zipping-Operators)
 
 ##limit
 
@@ -629,7 +631,11 @@ Signals track changes, and can provide those changes as continuous or discrete S
 | Concurrency configurability                      | Highly configurable | Highly configurable | Highly configurable | No                        | Limited                 | 
 | Failure recovery                                 | Yes                 | Yes                 | Yes                 | No                        | No                      | 
 | Retry support                                    | Yes                 | Yes                 | Yes                 | No                        | No                      | 
-| Compatible with SimpleReact async datastructures | Yes                 | Yes                 | Yes                 | Yes                       | Yes                     | 
+| Time control                                     | No                  | Yes                 | Yes                 | No                        | No                      | 
+| Batching                                     	   | No                  | Yes                 | Yes                 | No                        | No                      |
+| Sharding                                     	   | No                  | Yes                 | Yes                 | No                        | No                      | 
+| Zipping                                     	   | No                  | Yes                 | Yes                 | No                        | No                      |
+| Compatible with SimpleReact async datastructures | Yes                 | Yes                 | Yes                 | No                      	 | No                      | 
 | Lazy (until terminal op)                         | Yes                 | No                  | Yes                 | Yes                       | Yes                     | 
 | Eager                                            | Yes                 | Yes                 | No                  | No                        | No                      | 
 | infinite streams                                 | Yes                 | No                  | Yes                 | Yes                       | Yes                     | 
