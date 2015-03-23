@@ -23,7 +23,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -40,9 +39,7 @@ import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
-import com.aol.simple.react.stream.eager.EagerFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
-import com.aol.simple.react.stream.traits.LazyStream;
 import com.aol.simple.react.stream.traits.LazyToQueue;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
@@ -74,35 +71,51 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 
 	LazyFutureStream<U> withLastActive(StreamWrapper streamWrapper);
 
-	default LazyFutureStream<U> limitFutures(long maxSize) {
-
-		StreamWrapper lastActive = getLastActive();
-		StreamWrapper limited = lastActive.withNewStream(lastActive.stream()
-				.limit(maxSize));
-		return this.withLastActive(limited);
-
-	}
-
-	default LazyFutureStream<U> skipFutures(long n) {
-		StreamWrapper lastActive = getLastActive();
-		StreamWrapper limited = lastActive.withNewStream(lastActive.stream().skip(n));
-		return this.withLastActive(limited);
-	}
 	
-	default LazyFutureStream<U> sliceFutures(long from, long to) {
-		List noType = Seq.seq(getLastActive().stream()).slice(from, to)
-				.collect(Collectors.toList());
-		///return (LazyFutureStream<U>)fromListCompletableFuture(noType);
-		StreamWrapper lastActive = getLastActive();
-		StreamWrapper limited = lastActive.withNewStream(noType.stream());
-		return this.withLastActive(limited);
-	}
-	default Seq<Tuple2<CompletableFuture<U>, Long>> zipFuturesWithIndex() {
+	/**
+	 * Zip this Stream with an index, but Zip based on the underlying tasks, not completed results.
+	 * 
+	 * e.g.
+	 * two functions that return method name, but take varying lengths of time.
+	 * 
+	 * LazyFutureStream.react(()->takesALotOfTime(),()->veryQuick()).zipWithIndex();
+	 * 
+	 *  [["takesALotOfTime",0],["veryQuick",1]]
+	 *  
+	 *  Where as with standard zipWithIndex you would get a new Stream ordered by completion
+	 *  
+	 *  [["veryQuick",0],["takesALotOfTime",1]]
+	 *  
+	 *  Care should be taken not to use this method with infinite streams!
+	 * 
+	 * @return Zipped Sequence 
+	 */
+	default LazyFutureStream<Tuple2<U,Long>> zipFuturesWithIndex() {
 
 		Seq seq = Seq.seq(getLastActive().stream().iterator()).zipWithIndex();
-		return (Seq<Tuple2<CompletableFuture<U>, Long>>) seq;
+		Seq<Tuple2<CompletableFuture<U>,Long>> withType = (Seq<Tuple2<CompletableFuture<U>,Long>>)seq;
+		Stream futureStream =  fromStream(withType.map(t ->t.v1.thenApplyAsync(v -> Tuple.tuple(t.v1.join(),t.v2))));
+		FutureStream noType = fromStreamCompletableFuture(futureStream);
+		
+		return (LazyFutureStream<Tuple2<U,Long>>)noType;
+		
 	}
-	default Tuple2<Seq<U>, Seq<U>> duplicateFutures() {
+	/**
+	 *  Duplicate a Stream into two equivalent Sequences
+	 *  LazyFutureStream.of(1, 2, 3).duplicate()
+	 * 
+	 * results in
+	 * 
+	 * tuple((1,2,3),(1,2,3))
+	 * 
+	 * Care should be taken not to use this method with infinite streams!
+	 * 
+	 * 
+	 * @see #duplicate()
+	 * 
+	 * @return Two equivalent Streams
+	 */
+	default Tuple2<Seq<U>, Seq<U>> duplicateFuturesSeq() {
 		// unblocking impl
 		Stream stream = getLastActive().stream();
 		Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>> duplicated = Seq
@@ -111,7 +124,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 				fromStreamCompletableFuture(duplicated.v2));
 	}
 	/**
-	 * Duplicate a Stream into two equivalent EagerFutureStreams
+	 * Duplicate a Stream into two equivalent LazyFutureStreams
 	 * 
 	 * LazyFutureStream.of(1, 2, 3).duplicate()
 	 * 
@@ -119,17 +132,37 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 * 
 	 * tuple((1,2,3),(1,2,3))
 	 * 
-	 * @return
+	 * Care should be taken not to use this method with infinite streams!
+	 * 
+	 * @return Two equivalent Streams
 	 * 
 	 * @see #duplicate()
 	 */
-	default Tuple2<LazyFutureStream<U>, LazyFutureStream<U>> duplicateFuturesFutureStream() {
-		Tuple2 dup = duplicateFutures();
+	default Tuple2<LazyFutureStream<U>, LazyFutureStream<U>> duplicateFutures() {
+		Tuple2 dup = duplicateFuturesSeq();
 		return (Tuple2<LazyFutureStream<U>,LazyFutureStream<U>>) dup;
 	}
-	default <R> Seq<Tuple2<CompletableFuture<U>, R>> zipFutures(Stream<R> other) {
-		Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other));
-		return (Seq<Tuple2<CompletableFuture<U>, R>>) seq;
+	/**
+	 * Zip two Streams, zipping against the underlying futures of this stream
+	 * 
+	 * @param other
+	 * @return
+	 */
+	default <R> LazyFutureStream<Tuple2<U,R>> zipFutures(Stream<R> other) {
+		return (LazyFutureStream<Tuple2<U,R>>)FutureStream.super.zipFutures(other);
+
+	}
+	/**
+	 * Zip two Streams, zipping against the underlying futures of both Streams
+	 * Placeholders (Futures) will be populated immediately in the new zipped Stream and results
+	 * will be populated asyncrhonously
+	 * 
+	 * @param other  Another FutureStream to zip Futures with
+	 * @return New Sequence of CompletableFutures
+	 */
+
+	default <R> LazyFutureStream<Tuple2<U,R>> zipFutures(FutureStream<R> other) {
+		return (LazyFutureStream<Tuple2<U,R>>)FutureStream.super.zipFutures(other);
 
 	}
 	
@@ -849,7 +882,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 * <p>
 	 * <code>
 	 * // ("1:a", "2:b", "3:c")
-	 * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"), (i, s) -&gt; i + ":" + s)
+	 * LazyFutureStream.of(1, 2, 3).zip(Seq.of("a", "b", "c"), (i, s) -&gt; i + ":" + s)
 	 * </code>
 	 *
 	 * @see #zip(Seq, BiFunction)

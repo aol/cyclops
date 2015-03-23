@@ -40,10 +40,12 @@ import org.jooq.lambda.tuple.Tuple2;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.Queue.ClosedQueueException;
 import com.aol.simple.react.async.Queue.QueueReader;
+import com.aol.simple.react.async.Queue.QueueTimeoutException;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.util.SimpleTimer;
 import com.google.common.collect.Lists;
 
@@ -55,25 +57,71 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	
 	
 	/**
+	 * Zip two Streams, zipping against the underlying futures of this stream
+	 * 
+	 * @param other
+	 * @return
+	 */
+	default <R> FutureStream<Tuple2<U,R>> zipFutures(Stream<R> other) {
+		if(other instanceof FutureStream)
+			return zipFutures((FutureStream)other);
+		Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other));
+		Seq<Tuple2<CompletableFuture<U>,R>> withType = (Seq<Tuple2<CompletableFuture<U>,R>>)seq;
+		Stream futureStream = fromStream(withType.map(t ->t.v1.thenApply(v -> Tuple.tuple(t.v1.join(),t.v2)))
+				.map(CompletableFuture::join));
+
+		
+		return (FutureStream<Tuple2<U,R>>)futureStream;
+
+	}
+	/**
+	 * Zip two Streams, zipping against the underlying futures of both Streams
+	 * Placeholders (Futures) will be populated immediately in the new zipped Stream and results
+	 * will be populated asyncrhonously
+	 * 
+	 * @param other  Another FutureStream to zip Futures with
+	 * @return New Sequence of CompletableFutures
+	 */
+
+	default <R> FutureStream<Tuple2<U,R>> zipFutures(FutureStream<R> other) {
+		Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other.getLastActive().stream()));
+		Seq<Tuple2<CompletableFuture<U>,CompletableFuture<R>>> withType = (Seq<Tuple2<CompletableFuture<U>,CompletableFuture<R>>>)seq;
+		Stream futureStream =  fromStream(withType.map(t ->CompletableFuture.allOf(t.v1,t.v2).thenApply(v -> Tuple.tuple(t.v1.join(),t.v2.join())))
+				.map(CompletableFuture::join));
+		
+		return (FutureStream<Tuple2<U,R>>)futureStream;
+		
+
+	}
+	
+	/**
 	 * @return an Iterator that chunks all completed elements from this stream since last it.next() call into a collection
 	 */
 	default Iterator<Collection<U>> chunkLastReadIterator(){
-		Queue.QueueReader reader =  new Queue.QueueReader(toQueue(),null);
+		
+		Queue.QueueReader reader =  new Queue.QueueReader(toQueue(q->q.withTimeout(100).withTimeUnit(TimeUnit.MICROSECONDS)),null);
 		class Chunker implements Iterator<Collection<U>> {
-			
+			volatile boolean open =true;
 			@Override
 			public boolean hasNext() {
 
-				return reader.isOpen();
+				return open == true && reader.isOpen();
 			}
 
 			@Override
 			public Collection<U> next() {
-				try{
-					return reader.drainToOrBlock();
-				}catch(ClosedQueueException e){
-					return Lists.newArrayList();
+				
+				while(hasNext()){
+					try{
+						return reader.drainToOrBlock();
+					}catch(ClosedQueueException e){
+						open =false;
+						return Lists.newArrayList();
+					}catch(QueueTimeoutException e){
+						LockSupport.parkNanos(0l);
+					}
 				}
+				return Lists.newArrayList();
 				
 
 			}

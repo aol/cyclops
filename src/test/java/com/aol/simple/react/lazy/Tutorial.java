@@ -16,7 +16,7 @@ public class Tutorial {
 
 	String status="ok";
 	/**
-	 * check status every second, bath every 10 secs
+	 * check status every second, batch every 10 secs
 	 */
 	@Test @Ignore
 	public void onePerSecondAndBatch(){
@@ -31,12 +31,14 @@ public class Tutorial {
 	/**
 	 * create a stream of time intervals in seconds
 	 */
-	@Test @Ignore
+	@Test 
 	public void secondsTimeInterval(){
 		List<Collection<Integer>> collected = LazyFutureStream.sequentialCommonBuilder().iterateInfinitely(0, it -> it+1)
 													.withQueueFactory(QueueFactories.boundedQueue(1))
 													.onePer(1, TimeUnit.SECONDS)
+													.peek(System.out::println)
 													.batchByTime(10, TimeUnit.SECONDS)
+													.peek(System.out::println)
 													.limit(15)
 													.block();
 		System.out.println(collected);

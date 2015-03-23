@@ -2,6 +2,7 @@ package com.aol.simple.react.stream.traits;
 
 import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collector;
 
@@ -26,9 +27,15 @@ public interface EagerToQueue<U> extends ToQueue<U> {
 	default Queue<U> toQueue() {
 		Queue<U> queue = this.getQueueFactory().build();
 
-		then(it -> queue.offer(it)).allOf(it -> queue.close());
+		  then(it -> queue.offer(it)).allOf(it ->queue.close());
 
 		return queue;
+	}
+	 default Queue<U> toQueue(Function<Queue,Queue> modifier){
+		  Queue<U> queue = modifier.apply(this.getQueueFactory().build());
+		  then(it -> queue.offer(it)).allOf(it ->queue.close());
+
+			return queue;
 	}
 
 	default <K> void toQueue(Map<K, Queue<U>> shards, Function<U, K> sharder) {

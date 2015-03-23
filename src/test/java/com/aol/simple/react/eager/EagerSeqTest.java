@@ -57,11 +57,15 @@ public class EagerSeqTest extends BaseSeqTest {
 	}
 	@Test
 	public void batchSinceLastRead() throws InterruptedException{
-		List<Collection> cols = react(()->1,()->2,()->3,()->4,()->5,()->value()).chunkSinceLastRead().peek(it->{sleep(50);}).collect(Collectors.toList());
 		
-		assertThat(cols.get(0).size(),greaterThan(1));
-		cols.remove(0);
-		Collection withJello = cols.stream().filter(col -> col.contains("jello")).findFirst().get();
+			
+			List<Collection> cols = react(()->1,()->2,()->3,()->4,()->5,()->value()).chunkSinceLastRead().peek(it->{sleep(50);}).collect(Collectors.toList());
+			
+			System.out.println(cols);
+			assertThat(cols.size(),greaterThan(1));
+			cols.remove(0);
+			Collection withJello = cols.stream().filter(col -> col.contains("jello")).findFirst().get();
+		
 		
 	
 		
@@ -99,11 +103,11 @@ public class EagerSeqTest extends BaseSeqTest {
 	}
 	@Test
 	public void testSplitFuturesAt(){
-		assertThat(of(1,2,3,4,5).splitAtFuturesFutureStream(2).v1.block().size(),is(asList(1,2).size()));
+		assertThat(of(1,2,3,4,5).splitAtFutures(2).v1.block().size(),is(asList(1,2).size()));
 	}
 	@Test
 	public void testSplitFuturesAt2(){
-		assertThat(sortedList(of(1,2,3,4,5).splitAtFuturesFutureStream(2)
+		assertThat(sortedList(of(1,2,3,4,5).splitAt(2)
 											.v2
 											.collect(Collectors.toList())).size(),
 											is(asList(3,4,5).size()));
@@ -113,8 +117,8 @@ public class EagerSeqTest extends BaseSeqTest {
 	@Test
 	public void testZipWithFutures(){
 		Stream stream = of("a","b");
-		Seq<Tuple2<CompletableFuture<Integer>,String>> seq = of(1,2).zipFutures(stream);
-		List<Tuple2<Integer,String>> result = seq.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(Collectors.toList());
+		List<Tuple2<Integer,String>> result = of(1,2).zipFutures(stream).block();
+		
 		assertThat(result.size(),is(asList(tuple(1,"a"),tuple(2,"b")).size()));
 	}
 	
@@ -122,13 +126,13 @@ public class EagerSeqTest extends BaseSeqTest {
 	@Test
 	public void testZipFuturesWithIndex(){
 		
-		Seq<Tuple2<CompletableFuture<String>,Long>> seq = of("a","b").zipFuturesWithIndex();
-		List<Tuple2<String,Long>> result = seq.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(Collectors.toList());
+		List<Tuple2<String,Long>> result  = of("a","b").zipFuturesWithIndex().block();
+		
 		assertThat(result.size(),is(asList(tuple("a",0l),tuple("b",1l)).size()));
 	}
 	@Test
 	public void duplicateFutures(){
-		List<String> list = of("a","b").duplicateFuturesFutureStream().v1.block();
+		List<String> list = of("a","b").duplicateFutures().v1.block();
 		assertThat(sortedList(list),is(asList("a","b")));
 	}
 	private <T> List<T> sortedList(List<T> list) {
@@ -137,7 +141,7 @@ public class EagerSeqTest extends BaseSeqTest {
 
 	@Test
 	public void duplicateFutures2(){
-		List<String> list = of("a","b").duplicateFuturesFutureStream().v2.block();
+		List<String> list = of("a","b").duplicateFutures().v2.block();
 		assertThat(sortedList(list),is(asList("a","b")));
 	}
 	
