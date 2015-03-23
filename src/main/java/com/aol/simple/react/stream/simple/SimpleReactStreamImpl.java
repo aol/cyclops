@@ -1,5 +1,6 @@
 package com.aol.simple.react.stream.simple;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -24,7 +25,9 @@ import com.aol.simple.react.collectors.lazy.BatchingCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
+import com.aol.simple.react.threads.ReactPool;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 @Wither
@@ -45,15 +48,23 @@ public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>{
 	private final QueueFactory<U> queueFactory;
 	private final BaseSimpleReact simpleReact;
 	private final Continueable subscription;
-
-	
+	private final ReactPool<BaseSimpleReact> pool = ReactPool.elasticPool(()->new LazyReact(Executors.newSingleThreadExecutor()));
+	private final List originalFutures;
 	public SimpleReactStreamImpl(final Stream<CompletableFuture<U>> stream,
-			final ExecutorService executor, final RetryExecutor retrier,boolean isEager) {
+			final ExecutorService executor, final RetryExecutor retrier,boolean isEager){
+		this(stream,executor,retrier,isEager,null);
+	}
+	public SimpleReactStreamImpl(final Stream<CompletableFuture<U>> stream,
+			final ExecutorService executor, final RetryExecutor retrier,boolean isEager,List<CompletableFuture> originalFutures) {
 		this.simpleReact = new SimpleReact();
 		this.taskExecutor = Optional.ofNullable(executor).orElse(
 				new ForkJoinPool(Runtime.getRuntime().availableProcessors()));
 		Stream s = stream;
 		this.lastActive = new StreamWrapper(s, true);
+		if(isEager)
+			this.originalFutures = originalFutures!=null ? originalFutures : this.lastActive.list();
+		else
+			this.originalFutures =null;
 		this.errorHandler = Optional.of((e) -> log.error(e.getMessage(), e));
 		this.eager = true;
 		this.retrier = Optional.ofNullable(retrier).orElse(
@@ -64,7 +75,10 @@ public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>{
 		this.subscription = new AlwaysContinue();
 		
 	}
-	public ExecutorService getPopulator(){
-		return Executors.newSingleThreadExecutor();
+	public BaseSimpleReact getPopulator(){
+		return pool.nextReactor();
+	}
+	public void returnPopulator(BaseSimpleReact service){
+		pool.populate(service);
 	}
 }

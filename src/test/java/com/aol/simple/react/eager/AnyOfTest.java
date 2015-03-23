@@ -93,10 +93,10 @@ public class AnyOfTest {
 		
 	}
 	@Test
-	public void testAnyOfCompletableFilterNoError(){
+	public void testAnyOfCompletableFilterNoTarget(){
 	
 		String result = new EagerReact().of("hello","world","2")
-				.filter(it-> !"2".equals(it))
+				.filter(it-> !"23".equals(it))
 				.peek(it -> 
 				System.out.println(it))
 				.anyOf(data -> {

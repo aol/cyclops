@@ -8,6 +8,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
@@ -64,9 +67,9 @@ public class LazyReact extends BaseLazySimpleReact {
 	
 	@Override
 	public <U> LazyFutureStream<U> construct(Stream s,
-			ExecutorService executor, RetryExecutor retrier, boolean eager) {
+			ExecutorService executor, RetryExecutor retrier, boolean eager,List<CompletableFuture> org) {
 		
-		return (LazyFutureStream) new LazyFutureStreamImpl<U>( s,executor, retrier);
+		return (LazyFutureStream) new LazyFutureStreamImpl<U>( s,executor, retrier,org);
 
 	}
 	
@@ -104,6 +107,46 @@ public class LazyReact extends BaseLazySimpleReact {
 		return (LazyFutureStream)super.fromStreamWithoutFutures(stream);
 	}
 
+	/* 
+	 *  Construct a EagerFutureStream from the provided Stream, Stream will be mapped to a Stream of CompeltableFutures internally
+	 * 
+	 *	@param stream Stream that serves as input to LazyFutureStream
+	 *	@return EagerFutureStream
+	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
+	 */
+	@Override
+	public  LazyFutureStream<Integer> fromPrimitiveStream(IntStream stream) {
+		
+		return (LazyFutureStream)super.fromPrimitiveStream(stream);
+	}
+
+	/* 
+	 *  Construct a EagerFutureStream from the provided Stream, Stream will be mapped to a Stream of CompeltableFutures internally
+	 * 
+	 *	@param stream Stream that serves as input to LazyFutureStream
+	 *	@return EagerFutureStream
+	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
+	 */
+	@Override
+	public  LazyFutureStream<Double> fromPrimitiveStream(DoubleStream stream) {
+		
+		return (LazyFutureStream)super.fromPrimitiveStream(stream);
+	}
+	
+
+	/* 
+	 *  Construct a EagerFutureStream from the provided Stream, Stream will be mapped to a Stream of CompeltableFutures internally
+	 * 
+	 *	@param stream Stream that serves as input to LazyFutureStream
+	 *	@return EagerFutureStream
+	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
+	 */
+	@Override
+	public  LazyFutureStream<Long> fromPrimitiveStream(LongStream stream) {
+		
+		return (LazyFutureStream)super.fromPrimitiveStream(stream);
+	}
+	
 	/* 
 	 * Construct a LazyFutureStream from array
 	 * 

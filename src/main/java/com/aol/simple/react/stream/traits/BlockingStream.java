@@ -27,9 +27,7 @@ public interface BlockingStream<U> extends ConfigurableStream<U>{
 	final static ExceptionSoftener exceptionSoftener = ExceptionSoftener.singleton.factory
 			.getInstance();
 	
-/**	abstract StreamWrapper getLastActive();
-	abstract  Optional<Consumer<Throwable>> getErrorHandler();
-	**/
+
 	
 	
 	/**

@@ -7,7 +7,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
@@ -19,7 +21,6 @@ import com.aol.simple.react.generators.Generator;
 import com.aol.simple.react.generators.ReactIterator;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.ThreadPools;
-import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -63,7 +64,7 @@ public class EagerReact extends BaseSimpleReact{
 
 	@Override
 	public <U> EagerFutureStream<U> construct(Stream s,
-			ExecutorService executor, RetryExecutor retrier, boolean eager) {
+			ExecutorService executor, RetryExecutor retrier, boolean eager,List<CompletableFuture> org) {
 		return (EagerFutureStream) new EagerFutureStreamImpl<U>( s,executor, retrier);
 	}
 	/* 
@@ -93,7 +94,45 @@ public class EagerReact extends BaseSimpleReact{
 		return (EagerFutureStream)super.fromStreamWithoutFutures(stream);
 	}
 
+	/* 
+	 *  Construct a EagerFutureStream from the provided Stream, Stream will be mapped to a Stream of CompeltableFutures internally
+	 * 
+	 *	@param stream Stream that serves as input to LazyFutureStream
+	 *	@return EagerFutureStream
+	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
+	 */
+	@Override
+	public EagerFutureStream<Integer> fromPrimitiveStream(IntStream stream) {
+		
+		return (EagerFutureStream)super.fromPrimitiveStream(stream);
+	}
+
+	/* 
+	 *  Construct a EagerFutureStream from the provided Stream, Stream will be mapped to a Stream of CompeltableFutures internally
+	 * 
+	 *	@param stream Stream that serves as input to LazyFutureStream
+	 *	@return EagerFutureStream
+	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
+	 */
+	@Override
+	public  EagerFutureStream<Double> fromPrimitiveStream(DoubleStream stream) {
+		
+		return (EagerFutureStream)super.fromPrimitiveStream(stream);
+	}
 	
+
+	/* 
+	 *  Construct a EagerFutureStream from the provided Stream, Stream will be mapped to a Stream of CompeltableFutures internally
+	 * 
+	 *	@param stream Stream that serves as input to LazyFutureStream
+	 *	@return EagerFutureStream
+	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
+	 */
+	@Override
+	public  EagerFutureStream<Long> fromPrimitiveStream(LongStream stream) {
+		
+		return (EagerFutureStream)super.fromPrimitiveStream(stream);
+	}
 	/* 
 	 * Construct a EagerFutureStream from array
 	 * 
@@ -106,7 +145,8 @@ public class EagerReact extends BaseSimpleReact{
 		
 		return (EagerFutureStream)super.of(array);
 	}
-	public <U> EagerFutureStream<U> react(final Supplier<U>... actions) {
+	
+	public  <U> EagerFutureStream<U> react(final Supplier<U>... actions) {
 
 		return (EagerFutureStream)super.reactI(actions);
 

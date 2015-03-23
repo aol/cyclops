@@ -27,7 +27,7 @@ public abstract class BaseLazySimpleReact extends BaseSimpleReact{
 		Subscription sub = new Subscription();
 		SimpleReactStream stream = construct(StreamSupport.stream(
                 new InfiniteClosingSpliterator(Long.MAX_VALUE, () -> CompletableFuture.completedFuture(s.get()),sub), false),
-				this.getExecutor(),getRetrier(),false).withSubscription(sub);
+				this.getExecutor(),getRetrier(),false,null).withSubscription(sub);
 		
 		return stream;
 		
@@ -50,7 +50,7 @@ public abstract class BaseLazySimpleReact extends BaseSimpleReact{
 		Subscription sub = new Subscription();
 		SimpleReactStream stream = construct(StreamSupport.stream(
                 new InfiniteClosingSpliterator(Long.MAX_VALUE, () -> CompletableFuture.supplyAsync(s),sub), false),
-				this.getExecutor(),getRetrier(),false).withSubscription(sub);
+				this.getExecutor(),getRetrier(),false,null).withSubscription(sub);
 		
 		return stream;
 		
@@ -83,7 +83,7 @@ public abstract class BaseLazySimpleReact extends BaseSimpleReact{
 	            }
 	        };
 	      return  construct(StreamSupport.stream(  new InfiniteClosingSpliteratorFromIterator(Long.MAX_VALUE,iterator,sub),false),
-					this.getExecutor(),getRetrier(),false);
+					this.getExecutor(),getRetrier(),false,null);
 
 	}
 }

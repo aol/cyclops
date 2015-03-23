@@ -1,10 +1,12 @@
 package com.aol.simple.react.async;
 
+import java.util.Collection;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -20,6 +22,7 @@ import org.jooq.lambda.Seq;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.util.SimpleTimer;
+import com.google.common.collect.Lists;
 
 /**
  * Inspired by scalaz-streams async.Queue (functionally similar, but Blocking)
@@ -95,6 +98,24 @@ public class Queue<T> implements Adapter<T> {
 		return Seq.seq(closingStream(this::ensureOpen,s));
 	}
 
+	public Seq<Collection<T>> streamBatch(Continueable s,Function<Supplier<T>,Supplier<Collection<T>>> batcher) {
+		
+		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
+		return Seq.seq(closingStreamBatch(batcher.apply(this::ensureOpen),s));
+	}
+	public Seq<T> streamControl(Continueable s,Function<Supplier<T>,Supplier<T>> batcher) {
+		
+		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
+		return Seq.seq(closingStream(batcher.apply(this::ensureOpen),s));
+	}
+
+	private Stream<Collection<T>> closingStreamBatch(Supplier<Collection<T>> s, Continueable sub){
+		
+		Stream<Collection<T>> st = StreamSupport.stream(
+	                new ClosingSpliterator(Long.MAX_VALUE, s,sub,this), false);
+		
+		 return st;
+	}
 	private Stream<T> closingStream(Supplier<T> s, Continueable sub){
 		
 		Stream<T> st = StreamSupport.stream(
@@ -160,9 +181,21 @@ public class Queue<T> implements Adapter<T> {
 	 * @author johnmcclean
 	 *
 	 */
+	@AllArgsConstructor
+	
 	public static class ClosedQueueException extends
 			SimpleReactProcessingException {
 		private static final long serialVersionUID = 1L;
+		@Getter
+		private final Object currentData;
+		private final Object NOT_PRESENT = new Object();
+		public ClosedQueueException() {
+			currentData = NOT_PRESENT;
+		}
+		
+		public boolean isDataPresent(){
+			return currentData != NOT_PRESENT;
+		}
 	}
 
 	/**
@@ -213,17 +246,10 @@ public class Queue<T> implements Adapter<T> {
 	@Override
 	public boolean offer(T data) {
 		
-		
+		if(!open)
+			throw new ClosedQueueException();
 		try {
-		
-			boolean result = false;
-			SimpleTimer timer = new SimpleTimer();
-			do{
-				
-				if(!open)
-					throw new ClosedQueueException();
-				result = this.queue.offer((T)nullSafe(data),1l,TimeUnit.MICROSECONDS);
-			}while(!result && !timeout(timer));
+			boolean result =  this.queue.offer((T)nullSafe(data),this.offerTimeout,this.offerTimeUnit);
 			
 			if(sizeSignal!=null)
 				this.sizeSignal.set(queue.size());
@@ -265,8 +291,11 @@ public class Queue<T> implements Adapter<T> {
 	@Override
 	public boolean close() {
 		this.open = false;
-		for(int i=0;i<Math.min(maxPoisonPills, listeningStreams.get());i++){
-			queue.add((T)POISON_PILL);
+		
+		if(this.queue.remainingCapacity()>0){
+			for(int i=0;i<Math.min(maxPoisonPills, listeningStreams.get());i++){
+				queue.add((T)POISON_PILL);
+			}
 		}
 
 		return true;
@@ -277,6 +306,46 @@ public class Queue<T> implements Adapter<T> {
 		queue.clear();
 	}
 	
-	private final NIL NILL = new NIL();
-	private static class NIL {}
+	public static final NIL NILL = new NIL();
+	public static class NIL {}
+
+	@AllArgsConstructor
+	public static class QueueReader<T>{
+		@Getter
+		Queue<T> queue;
+		public boolean notEmpty() {
+			return queue.queue.size()!=0;
+		}
+
+		@Getter
+		private volatile T last = null;
+		private int size(){
+			return queue.queue.size();
+		}
+		public T next(){
+			last = queue.ensureOpen();
+			return last;
+		}
+		public boolean isOpen() {
+			return queue.open;
+		}
+		public Collection<T> drainToOrBlock() {
+			Collection<T> result = Lists.newArrayList();
+			if(size()>0)
+				queue.queue.drainTo(result);
+			else{
+				try{
+					result.add(queue.ensureOpen());
+				}catch(ClosedQueueException e){
+					queue.open=false;
+					throw e;
+				}
+			}
+			
+			return result.stream().filter(it -> it!=POISON_PILL).collect(Collectors.toList());
+		}
+	}
+	
+
+	
 }

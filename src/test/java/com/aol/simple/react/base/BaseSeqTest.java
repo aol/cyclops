@@ -2,9 +2,11 @@ package com.aol.simple.react.base;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.nullValue;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
@@ -14,10 +16,15 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,11 +35,15 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.stream.traits.FutureStream;
+import com.aol.simple.react.util.SimpleTimer;
+import com.google.common.collect.ImmutableMap;
 
 //see BaseSequentialSeqTest for in order tests
 public abstract class BaseSeqTest {
 	abstract protected <U> FutureStream<U> of(U... array);
+	abstract protected <U> FutureStream<U> react(Supplier<U>... array);
 	FutureStream<Integer> empty;
 	FutureStream<Integer> nonEmpty;
 
@@ -40,6 +51,178 @@ public abstract class BaseSeqTest {
 	public void setup(){
 		empty = of();
 		nonEmpty = of(1);
+	}
+
+	
+	
+	@Test
+	public void firstOf(){
+		
+		assertTrue(FutureStream.firstOf(of(1,2,3,4),react(()->value()),
+				react(()->value())).anyMatch(it-> it.equals(1)));
+		assertTrue(FutureStream.firstOf(of(1,2,3,4),react(()->value()),
+				react(()->value())).anyMatch(it-> it.equals(2)));
+		assertTrue(FutureStream.firstOf(of(1,2,3,4),react(()->value()),
+				react(()->value())).anyMatch(it-> it.equals(3)));
+		assertTrue(FutureStream.firstOf(of(1,2,3,4),react(()->value()),
+				react(()->value())).anyMatch(it-> it.equals(4)));
+	}
+	protected Object value() {
+		try {
+			Thread.sleep(150);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "jello";
+	}
+	private int value2() {
+		try {
+			Thread.sleep(250);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 200;
+	}
+	@Test
+	public void combine(){
+		
+		assertThat(of(1,2,3,4,5,6).combineLatest(of(3)).collect(Collectors.toList()).size(),greaterThan(5));
+	}
+	@Test
+	public void combineValues(){
+		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v2==null));
+		//assertTrue(of(1,2,3,4,5,6).combine(of(3)).oneMatch(it-> it.v2==3));
+		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v1==1));
+		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v1==2));
+		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v1==3));
+		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v1==4));
+		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v1==5));
+		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v1==6));
+	}
+	@Test
+	public void withLatest(){
+		
+		assertThat(of(1,2,3,4,5,6).withLatest(of(30,40,50,60,70,80,90,100,110,120,140))
+				.collect(Collectors.toList()).size(),is(6));
+		
+	}
+	@Test
+	public void withLatestValues(){
+		assertTrue(of(1,2,3,4,5,6).withLatest(of(30,40,50,60,70,80,90,100,110,120,140)).anyMatch(it-> it.v2==null));
+		//assertTrue(of(1,2,3,4,5,6).combine(of(3)).oneMatch(it-> it.v2==3));
+		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==1));
+		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==2));
+		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==3));
+		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==4));
+		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==5));
+		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==6));
+	}
+	@Test
+	public void skipUntil(){
+		System.out.println(react(()->1,()->2,()->3,()->4,()->value2())
+				.skipUntil(react(()->value())).collect(Collectors.toList()));
+		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).allMatch(it-> it==200));
+		assertThat(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).count(),is(1l));
+	}
+	@Test
+	public void takeUntil(){
+		System.out.println(react(()->1,()->2,()->3,()->4,()->value2())
+				.takeUntil(react(()->value())).collect(Collectors.toList()));
+		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).takeUntil(react(()->value())).noneMatch(it-> it==200));
+		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).takeUntil(react(()->value())).anyMatch(it-> it==1));
+	}
+	@Test
+	public void batchBySize(){
+		System.out.println(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()));
+		assertThat(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()).size(),is(2));
+	}
+	@Test
+	public void batchBySizeSet(){
+		
+		assertThat(of(1,1,1,1,1,1).batchBySize(3,()->new TreeSet()).block().get(0).size(),is(1));
+		assertThat(of(1,1,1,1,1,1).batchBySize(3,()->new TreeSet()).block().get(1).size(),is(1));
+	}
+	@Test
+	public void batchBySizeInternalSize(){
+		assertThat(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()).get(0).size(),is(3));
+	}
+	@Test
+	public void fixedDelay(){
+		SimpleTimer timer = new SimpleTimer();
+		
+		assertThat(of(1,2,3,4,5,6).fixedDelay(10000,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),is(6));
+		assertThat(timer.getElapsedNanoseconds(),greaterThan(60000l));
+	}
+	@Test
+	public void judder(){
+		SimpleTimer timer = new SimpleTimer();
+		
+		assertThat(of(1,2,3,4,5,6).jitter(10000).collect(Collectors.toList()).size(),is(6));
+		assertThat(timer.getElapsedNanoseconds(),greaterThan(20000l));
+	}
+	@Test
+	public void debounce(){
+		SimpleTimer timer = new SimpleTimer();
+		
+		assertThat(of(1,2,3,4,5,6).debounce(1000,TimeUnit.SECONDS).collect(Collectors.toList()).size(),is(1));
+		
+	}
+	@Test
+	public void debounceOk(){
+		SimpleTimer timer = new SimpleTimer();
+		
+		assertThat(of(1,2,3,4,5,6).debounce(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),is(6));
+		
+	}
+	@Test
+	public void onePer(){
+		SimpleTimer timer = new SimpleTimer();
+		System.out.println(of(1,2,3,4,5,6).onePer(1000,TimeUnit.NANOSECONDS).collect(Collectors.toList()));
+		assertThat(of(1,2,3,4,5,6).onePer(1000,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),is(6));
+		assertThat(timer.getElapsedNanoseconds(),greaterThan(600l));
+	}
+	@Test
+	public void xPer(){
+		SimpleTimer timer = new SimpleTimer();
+		System.out.println(of(1,2,3,4,5,6).xPer(6,1000,TimeUnit.NANOSECONDS).collect(Collectors.toList()));
+		assertThat(of(1,2,3,4,5,6).xPer(6,100000000,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),is(6));
+		assertThat(timer.getElapsedNanoseconds(),lessThan(60000000l));
+	}
+	@Test
+	public void batchByTime(){
+		assertThat(of(1,2,3,4,5,6).batchByTime(1500,TimeUnit.MICROSECONDS).collect(Collectors.toList()).size(),is(1));
+	}
+	@Test
+	public void batchByTimeSet(){
+		
+		assertThat(of(1,1,1,1,1,1).batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet()).block().get(0).size(),is(1));
+	}
+	@Test
+	public void batchByTimeInternalSize(){
+		assertThat(of(1,2,3,4,5,6).batchByTime(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),greaterThan(5));
+	}
+	@Test
+	public void shard(){
+		Map<Integer,Queue> shards = new HashMap<>();
+		shards.put(1,new Queue());
+		shards.put(2,new Queue());
+		shards.put(3,new Queue());
+		shards.put(4,new Queue());
+		shards.put(5,new Queue());
+		shards.put(6,new Queue());
+		for(int i=0;i<100;i++)
+			assertThat(of(1,2,3,4,5,6).shard(ImmutableMap.copyOf(shards),Function.identity()).size(),is(6));
+	}
+	@Test
+	public void shardStreams(){
+		
+		for(int index=0;index<100;index++){
+			Map<Integer,Queue<Integer>> shards = ImmutableMap.of(0,new Queue(),1,new Queue());
+			
+			assertThat(of(1,2,3,4,5,6).shard(shards,i -> i%2).get(0).collect(Collectors.toList()),hasItem(6));
+		}
 	}
 	@Test
 	public void zip(){

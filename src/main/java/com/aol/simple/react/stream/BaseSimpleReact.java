@@ -7,12 +7,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
-import com.aol.simple.react.async.ClosingSpliterator;
-import com.aol.simple.react.async.Subscription;
 import com.aol.simple.react.generators.Generator;
 import com.aol.simple.react.generators.ParallelGenerator;
 import com.aol.simple.react.generators.ReactIterator;
@@ -29,7 +28,8 @@ public abstract class BaseSimpleReact {
 	protected abstract boolean isEager();
 	protected abstract  RetryExecutor getRetrier();
 	
-	public abstract <U>  SimpleReactStream<U> construct(Stream s, ExecutorService e, RetryExecutor r, boolean eager);
+	public abstract <U>  SimpleReactStream<U> construct(Stream s, ExecutorService e, RetryExecutor r, boolean eager,
+			List<CompletableFuture> org);
 
 	
 	
@@ -43,7 +43,7 @@ public abstract class BaseSimpleReact {
 	public <U> SimpleReactStream<U> fromStream(final Stream<CompletableFuture<U>> stream) {
 
 		Stream s = stream;
-		return  construct( s,getExecutor(),getRetrier(), isEager());
+		return  construct( s,getExecutor(),getRetrier(), isEager(),null);
 	}
 	/**
 	 * Start a reactive dataflow from a stream.
@@ -54,8 +54,43 @@ public abstract class BaseSimpleReact {
 	public <U> SimpleReactStream<U> fromStreamWithoutFutures(final Stream<U> stream) {
 		
 		Stream s = stream.map(it -> CompletableFuture.completedFuture(it));
-		return construct( s,this.getExecutor(), getRetrier(),isEager());
+		return construct( s,this.getExecutor(), getRetrier(),isEager(),null);
 	}
+	/**
+	 * Start a reactive dataflow from a stream.
+	 * 
+	 * @param stream that will be used to drive the reactive dataflow
+	 * @return Next stage in the reactive flow
+	 */
+	public <U> SimpleReactStream<U> fromPrimitiveStream(final IntStream stream) {
+		
+		return (SimpleReactStream<U>)fromStreamWithoutFutures(stream.boxed());
+	
+	}
+	/**
+	 * Start a reactive dataflow from a stream.
+	 * 
+	 * @param stream that will be used to drive the reactive dataflow
+	 * @return Next stage in the reactive flow
+	 */
+	public <U> SimpleReactStream<U> fromPrimitiveStream(final DoubleStream stream) {
+		
+		return (SimpleReactStream<U>)fromStreamWithoutFutures(stream.boxed());
+	
+	}
+	/**
+	 * Start a reactive dataflow from a stream.
+	 * 
+	 * @param stream that will be used to drive the reactive dataflow
+	 * @return Next stage in the reactive flow
+	 */
+	public <U> SimpleReactStream<U> fromPrimitiveStream(final LongStream stream) {
+		
+		return (SimpleReactStream<U>)fromStreamWithoutFutures(stream.boxed());
+	
+	}
+	
+
 
 	public <U> SimpleReactStream<U> of(U...array){
 		return fromStreamWithoutFutures(Stream.of(array));
@@ -136,7 +171,7 @@ public abstract class BaseSimpleReact {
 	public <U> SimpleReactStream< U> react(final Supplier<U> s, Generator t) {
 
 		return construct(t.generate(s),
-				this.getExecutor(),getRetrier(),isEager());
+				this.getExecutor(),getRetrier(),isEager(),null);
 
 	}
 	
@@ -182,7 +217,7 @@ public abstract class BaseSimpleReact {
 	public <U> SimpleReactStream<U> react(final Function<U,U> f,ReactIterator<U> t) {
 
 		Stream s = t.iterate(f);
-		return construct(s,this.getExecutor(),getRetrier(),isEager());
+		return construct(s,this.getExecutor(),getRetrier(),isEager(),null);
 
 	}
 	/**
@@ -224,7 +259,7 @@ public abstract class BaseSimpleReact {
 		
 			return construct(Stream.of(actions).map(
 				next -> CompletableFuture.supplyAsync(next, this.getExecutor())),
-				this.getExecutor(),getRetrier(),isEager());
+				this.getExecutor(),getRetrier(),isEager(),null);
 		
 		
 	}

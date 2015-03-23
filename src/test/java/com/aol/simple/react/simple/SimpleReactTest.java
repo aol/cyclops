@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 
 import com.aol.simple.react.extractors.Extractors;
+import com.aol.simple.react.stream.eager.EagerFutureStream;
 import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.FutureStream;
@@ -38,6 +39,17 @@ import com.google.common.collect.Lists;
 
 public class SimpleReactTest {
 
+	@Test
+	public void doOnEach(){
+		String[] found = {""};
+		String res = new SimpleReact().react(()->"hello")
+										.doOnEach(it->{ found[0]=it;return "world";})
+										.then(it->it+"!")
+										.first();
+		assertThat(found[0],is("hello"));
+		assertThat(res,is("hello!"));
+	}
+	
 	@Test
 	public void whenChainEmptyBlockReturns(){
 		new SimpleReact(new ForkJoinPool(1))

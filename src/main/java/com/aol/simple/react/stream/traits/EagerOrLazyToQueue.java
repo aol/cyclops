@@ -1,5 +1,8 @@
 package com.aol.simple.react.stream.traits;
 
+import java.util.Map;
+import java.util.function.Function;
+
 import com.aol.simple.react.async.Queue;
 
 public interface EagerOrLazyToQueue<U> extends EagerToQueue<U>, LazyToQueue<U>{
@@ -11,6 +14,12 @@ public interface EagerOrLazyToQueue<U> extends EagerToQueue<U>, LazyToQueue<U>{
 			return EagerToQueue.super.toQueue();
 		else
 			return LazyToQueue.super.toQueue();
+	}
+	default <K> void toQueue(Map<K, Queue<U>> shards, Function<U, K> sharder) {
+		if(isEager())
+			EagerToQueue.super.toQueue(shards,sharder);
+		else
+			LazyToQueue.super.toQueue(shards,sharder);
 	}
 
 }
