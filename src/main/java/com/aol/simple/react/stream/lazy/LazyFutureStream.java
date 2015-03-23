@@ -77,15 +77,20 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 * 
 	 * e.g.
 	 * two functions that return method name, but take varying lengths of time.
+	 * <code>
 	 * 
-	 * LazyFutureStream.react(()->takesALotOfTime(),()->veryQuick()).zipWithIndex();
+	 * LazyFutureStream.react(()-gt;takesALotOfTime(),()-gt;veryQuick()).zipWithIndex();
 	 * 
 	 *  [["takesALotOfTime",0],["veryQuick",1]]
+	 * 
+	 *  </code>
 	 *  
 	 *  Where as with standard zipWithIndex you would get a new Stream ordered by completion
+	 *  <code>
 	 *  
 	 *  [["veryQuick",0],["takesALotOfTime",1]]
 	 *  
+	 *  </code>
 	 *  Care should be taken not to use this method with infinite streams!
 	 * 
 	 * @return Zipped Sequence 
@@ -181,10 +186,12 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 * elements of the Stream
 	 * 
 	 * e.g.
+	 * <code>
 	 * 
 	 * EagerFutureStream.of(10,20,25,30,41,43).shard(ImmutableMap.of("even",new
-	 * Queue(),"odd",new Queue(),element-> element%2==0? "even" : "odd");
+	 * Queue(),"odd",new Queue(),element-&gt; element%2==0? "even" : "odd");
 	 * 
+	 * </code>
 	 * results in 2 Streams "even": 10,20,30 "odd" : 25,41,43
 	 * 
 	 * @param shards
@@ -316,8 +323,8 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 *            will be selected)/
 	 * @return Next stage in Stream with jitter applied
 	 */
-	default LazyFutureStream<U> jitter(long judderInNanos) {
-		return (LazyFutureStream<U>) FutureStream.super.jitter(judderInNanos);
+	default LazyFutureStream<U> jitter(long jitterInNanos) {
+		return (LazyFutureStream<U>) FutureStream.super.jitter(jitterInNanos);
 	}
 
 	/**
@@ -729,9 +736,13 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 * Returns a stream with a given value interspersed between any two values
 	 * of this stream.
 	 * 
+	 * <code>
 	 * 
-	 * // (1, 0, 2, 0, 3, 0, 4) LazyFutureStream.of(1, 2, 3, 4).intersperse(0)
+	 * // (1, 0, 2, 0, 3, 0, 4) 
 	 * 
+	 * LazyFutureStream.of(1, 2, 3, 4).intersperse(0)
+	 * 
+	 * </code>
 	 *
 	 * @see #intersperse(Stream, Object)
 	 */
@@ -811,9 +822,12 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	/**
 	 * Duplicate a Streams into two equivalent Streams.
 	 * 
+	 * <code> 
 	 * 
-	 * // tuple((1, 2, 3), (1, 2, 3)) LazyFutureStream.of(1, 2, 3).duplicate()
+	 * // tuple((1, 2, 3), (1, 2, 3)) 
 	 * 
+	 * LazyFutureStream.of(1, 2, 3).duplicate()
+	 * </code>
 	 *
 	 * @see #duplicate(Stream)
 	 */
@@ -826,10 +840,14 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	/**
 	 * Partition a stream into two given a predicate.
 	 * 
-	 * // tuple((1, 3, 5), (2, 4, 6)) LazyFutureStream.of(1, 2, 3, 4, 5,
-	 * 6).partition(i -&gt; i % 2 != 0)
-	 *
-	 *
+	 * <code>
+	 * 
+	 * // tuple((1, 3, 5), (2, 4, 6)) 
+	 * 
+	 * LazyFutureStream.of(1, 2, 3, 4, 5,6).partition(i -&gt; i % 2 != 0)
+	 * 
+	 * </code>
+	 * 
 	 * @see #partition(Stream, Predicate)
 	 */
 	@Override
@@ -848,15 +866,17 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	/**
 	 * Zip a Stream with a corresponding Stream of indexes.
 	 * 
+	 * <code>
 	 * 
-	 * // (tuple("a", 0), tuple("b", 1), tuple("c", 2)) LazyFutureStream.of("a",
-	 * "b", "c").zipWithIndex()
+	 * // (tuple("a", 0), tuple("b", 1), tuple("c", 2)) 
 	 * 
+	 * LazyFutureStream.of("a","b", "c").zipWithIndex()
+	 * 
+	 *</code>
 	 *
 	 * @see #zipWithIndex(Stream)
 	 * 
-	 *      default LazyFutureStream<Tuple2<U, Long>> zipWithIndex() { return
-	 *      fromStream(FutureStream.super.zipWithIndex()); }
+	 *      
 	 */
 	default Seq<Tuple2<U, Long>> zipWithIndex() {
 		return FutureStream.super.zipWithIndex();

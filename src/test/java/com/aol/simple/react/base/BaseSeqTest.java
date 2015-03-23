@@ -140,9 +140,9 @@ public abstract class BaseSeqTest {
 	}
 	@Test
 	public void batchBySizeSet(){
-		
-		assertThat(of(1,1,1,1,1,1).batchBySize(3,()->new TreeSet()).block().get(0).size(),is(1));
-		assertThat(of(1,1,1,1,1,1).batchBySize(3,()->new TreeSet()).block().get(1).size(),is(1));
+		 
+		assertThat(of(1,1,1,1,1,1).batchBySize(3,()->new TreeSet<Integer>()).block().get(0).size(),is(1));
+		assertThat(of(1,1,1,1,1,1).batchBySize(3,()->new TreeSet<>()).block().get(1).size(),is(1));
 	}
 	@Test
 	public void batchBySizeInternalSize(){
@@ -197,7 +197,7 @@ public abstract class BaseSeqTest {
 	@Test
 	public void batchByTimeSet(){
 		
-		assertThat(of(1,1,1,1,1,1).batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet()).block().get(0).size(),is(1));
+		assertThat(of(1,1,1,1,1,1).batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>()).block().get(0).size(),is(1));
 	}
 	@Test
 	public void batchByTimeInternalSize(){
@@ -205,7 +205,7 @@ public abstract class BaseSeqTest {
 	}
 	@Test
 	public void shard(){
-		Map<Integer,Queue> shards = new HashMap<>();
+		Map<Integer,Queue<Integer>> shards = new HashMap<>();
 		shards.put(1,new Queue());
 		shards.put(2,new Queue());
 		shards.put(3,new Queue());

@@ -70,7 +70,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * e.g.
 	 * 
 	 * EagerFutureStream.of(10,20,25,30,41,43).shard(ImmutableMap.of("even",new
-	 * Queue(),"odd",new Queue(),element-> element%2==0? "even" : "odd");
+	 * Queue(),"odd",new Queue(),element-&gt; element%2==0? "even" : "odd");
 	 * 
 	 * results in 2 Streams "even": 10,20,30 "odd" : 25,41,43
 	 * 
@@ -780,10 +780,11 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * Zip two streams into one using a {@link BiFunction} to produce resulting
 	 * values.
 	 * 
+	 * <code>
+	 * ("1:a", "2:b", "3:c") 
 	 * 
-	 * // ("1:a", "2:b", "3:c") EagerFutureStream.of(1, 2,
-	 * 3).zip(EagerFutureStream.of("a", "b", "c"), (i, s) &gt; i + ":" + s)
-	 * 
+	 * EagerFutureStream.of(1, 2,3).zip(EagerFutureStream.of("a", "b", "c"), (i, s) &gt; i + ":" + s)
+	 * </code>
 	 *
 	 * @see #zip(Seq, BiFunction)
 	 */
@@ -820,28 +821,23 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * 
 	 * e.g.
 	 * two functions that return method name, but take varying lengths of time.
-	 * 
-	 * EagerFutureStream.react(()->takesALotOfTime(),()->veryQuick()).zipWithIndex();
+	 * <code>
+	 * EagerFutureStream.react(()-&gt;takesALotOfTime(),()-&gt;veryQuick()).zipWithIndex();
 	 * 
 	 *  [["takesALotOfTime",0],["veryQuick",1]]
 	 *  
 	 *  Where as with standard zipWithIndex you would get a new Stream ordered by completion
 	 *  
 	 *  [["veryQuick",0],["takesALotOfTime",1]]
-	 * 
+	 * </code>
 	 * @see #zipWithIndex(Stream)
 	 */
 	default EagerFutureStream<Tuple2<U,Long>> zipFuturesWithIndex() {
 
 		Seq seq = Seq.seq(getLastActive().stream().iterator()).zipWithIndex();
 		Seq<Tuple2<CompletableFuture<U>,Long>> withType = (Seq<Tuple2<CompletableFuture<U>,Long>>)seq;
-	//	withType.map(t -> t.v1.thenApply(v -> Tuple.tuple(t.v1.join(),t.v2))).map(CompletableFuture::join).forEach(System.out::println);
 		Stream futureStream =  fromStream(withType.map(t -> t.v1.thenApply(v -> Tuple.tuple(t.v1.join(),t.v2))).map(CompletableFuture::join));
-	//	FutureStream noType = fromStreamCompletableFuture(futureStream);
-	//	noType.forEach(System.out::println);
 		return (EagerFutureStream<Tuple2<U,Long>>)futureStream;
-	//	EagerFutureStream noType = fromStream(withType.map(t ->t.v1.thenApplyAsync(v -> Tuple.tuple(t.v1.join(),t.v2))));
-	//	return (EagerFutureStream<Tuple2<U,Long>>)noType;
 		
 	}
 

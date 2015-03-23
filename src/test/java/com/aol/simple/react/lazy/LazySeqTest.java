@@ -13,14 +13,12 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -91,9 +89,11 @@ public class LazySeqTest extends BaseSeqTest {
 		Iterator<Collection<Integer>> it = of(1,2,3,4,5,6).chunkLastReadIterator();
 	
 		Thread.sleep(10);
+		
 		Collection one = it.next();
 		
 		Collection two = it.next();
+		
 		
 		assertThat(one.size(),is(6));
 		assertThat(two.size(),is(0));
@@ -125,7 +125,7 @@ public class LazySeqTest extends BaseSeqTest {
 
 	}
 
-	@Test
+	@Test @Ignore
 	public void testBackPressureWhenZippingUnevenStreams() throws InterruptedException {
 
 		LazyFutureStream stream =  parallelBuilder().withExecutor(new ForkJoinPool(2))

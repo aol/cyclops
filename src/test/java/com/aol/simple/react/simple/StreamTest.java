@@ -19,27 +19,7 @@ import com.aol.simple.react.stream.simple.SimpleReact;
 public class StreamTest {
 
 	
-	@Test
-	public void stackOverflow(){
-		 Set<Long> set =  LazyFutureStream.parallelBuilder(10)
-          .of("1.txt")
-          .flatMap(x -> stage1(x)) 
-          .map(x -> stage2(x))
-          .map(x -> stage3(x))
-          .collect(Collectors.<Long>toSet());
-		 assertThat(set.size(),greaterThan(1));
-	}
-	private Long stage2(Object x) {
 	
-		return null;
-	}
-	private Long  stage3(Object x) {
-	
-		return Thread.currentThread().getId();
-	}
-	private Stream<String> stage1(String x) {
-		return Stream.of("hello","hello","world","test","world","test","hello","world","test","hello","world","test");
-	}
 	@Test
 	public void testStreamFrom() throws InterruptedException,
 			ExecutionException {
