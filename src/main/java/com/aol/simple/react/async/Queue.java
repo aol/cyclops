@@ -327,7 +327,7 @@ public class Queue<T> implements Adapter<T> {
 			return last;
 		}
 		public boolean isOpen() {
-			return queue.open;
+			return queue.open || notEmpty();
 		}
 		public Collection<T> drainToOrBlock() {
 			Collection<T> result = Lists.newArrayList();

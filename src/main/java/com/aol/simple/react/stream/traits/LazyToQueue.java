@@ -6,7 +6,6 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.async.QueueFactory;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.lazy.LazyReact;
 
@@ -29,6 +28,17 @@ public interface LazyToQueue <U> extends ToQueue<U>{
 	 */
 	default Queue<U> toQueue() {
 		Queue<U> queue = this.getQueueFactory().build();
+		
+		 	LazyReact service = getPopulator();
+			then(queue::offer,service.getExecutor()).runThread(
+					() -> {queue.close(); returnPopulator(service); });
+
+		
+		return queue;
+	}
+	
+	default Queue<U> toQueue(Function<Queue,Queue> fn) {
+		Queue<U> queue = fn.apply(this.getQueueFactory().build());
 		
 		 	LazyReact service = getPopulator();
 			then(queue::offer,service.getExecutor()).runThread(

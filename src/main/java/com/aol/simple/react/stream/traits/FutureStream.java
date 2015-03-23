@@ -170,7 +170,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 * 
 	 * e.g. 
 	 * 
-	 * EagerFutureStream.of(10,20,25,30,41,43).shard(ImmutableMap.of("even",new Queue(),"odd",new Queue(),element-> element%2==0? "even" : "odd");
+	 * EagerFutureStream.of(10,20,25,30,41,43).shard(ImmutableMap.of("even",new Queue(),"odd",new Queue(),element-&gt; element%2==0? "even" : "odd");
 	 * 
 	 * results in 2 Streams
 	 * "even": 10,20,30
