@@ -559,7 +559,6 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 */
 	@Override
 	default <R> EagerFutureStream<R> fromStream(Stream<R> stream) {
-
 		return (EagerFutureStream) FutureStream.super.fromStream(stream);
 	}
 
@@ -836,7 +835,8 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 		Seq seq = Seq.seq(getLastActive().stream().iterator()).zipWithIndex();
 		Seq<Tuple2<CompletableFuture<U>,Long>> withType = (Seq<Tuple2<CompletableFuture<U>,Long>>)seq;
-		Stream futureStream =  fromStream(withType.map(t -> t.v1.thenApply(v -> Tuple.tuple(t.v1.join(),t.v2))).map(CompletableFuture::join));
+		Stream futureStream =  fromStreamCompletableFuture((Stream)withType.map(t -> t.v1.thenApply(v -> 
+							Tuple.tuple(t.v1.join(),t.v2))));
 		return (EagerFutureStream<Tuple2<U,Long>>)futureStream;
 		
 	}
@@ -1203,7 +1203,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * 
 	 * @see ThreadPools#getStandard() see RetryBuilder#getDefaultInstance()
 	 */
-	public static EagerReact paraellelCommonBuilder() {
+	public static EagerReact parallelCommonBuilder() {
 		return EagerReact
 				.builder()
 				.executor(ThreadPools.getStandard())

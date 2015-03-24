@@ -160,6 +160,12 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 			Stream<CompletableFuture<R>> stream) {
 		Stream noType = stream;
 		return (SimpleReactStream<R>) this.withLastActive(getLastActive()
+				.withNewStream(noType));
+	}
+	default <R> SimpleReactStream<R> fromStreamCompletableFutureReplace(
+			Stream<CompletableFuture<R>> stream) {
+		Stream noType = stream;
+		return (SimpleReactStream<R>) this.withLastActive(getLastActive()
 				.withStream(noType));
 	}
 
