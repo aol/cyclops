@@ -38,7 +38,8 @@ public interface LazyStream<U> {
 
 	}
 	default void run(ExecutorService e,Runnable r) {
-		new SimpleReact(e).react(() -> new Runner(r).run(getLastActive(),new EmptyCollector(getLazyCollector().getMaxActive())));
+		new SimpleReact(e).react(() -> new Runner(r).run(getLastActive(),
+					new EmptyCollector(getLazyCollector().getMaxActive())));
 
 	}
 	default void runThread(Runnable r) {

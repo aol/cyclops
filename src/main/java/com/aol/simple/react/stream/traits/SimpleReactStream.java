@@ -34,6 +34,7 @@ import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.simple.SimpleReactStreamImpl;
 import com.nurkiewicz.asyncretry.RetryExecutor;
+import com.nurkiewicz.asyncretry.policy.AbortRetryException;
 
 
 public interface SimpleReactStream<U> extends LazyStream<U>, 
@@ -138,13 +139,19 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 
 		return (SimpleReactStream<R>) this.withLastActive(getLastActive().permutate(
 				getLastActive().stream().map(
-						(ft) -> ft.thenApplyAsync((res) -> BlockingStream.getSafe(getRetrier()
-								.getWithRetry(() -> fn.apply((U) res)),getErrorHandler()),
+						(ft) -> ft.thenApplyAsync(res -> 
+						getRetrier().getWithRetry(()->SimpleReactStream.<U,R>handleExceptions(fn).apply((U)res) ).join()
+							,
+						//BlockingStream.getSafe(getRetrier()
+						//		.getWithRetry(() -> fn.apply((U) res))
+							//	,getErrorHandler()),
 								getTaskExecutor())), Collectors.toList()));
 	}
 	
 	
 	default <R> SimpleReactStream<R> fromStream(Stream<R> stream) {
+		
+		
 		return (SimpleReactStream<R>) this.withLastActive(getLastActive()
 				.withNewStream(stream.map(CompletableFuture::completedFuture)));
 	}
@@ -241,6 +248,8 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 			try {
 				return fn.apply(input);
 			} catch (Throwable t) {
+				if(t instanceof AbortRetryException)//special case for retry
+					throw t;
 				throw new SimpleReactFailedStageException(input, t);
 
 			}

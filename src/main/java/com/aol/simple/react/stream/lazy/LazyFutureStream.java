@@ -121,7 +121,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 * @return Two equivalent Streams
 	 */
 	default Tuple2<Seq<U>, Seq<U>> duplicateFuturesSeq() {
-		// unblocking impl
+		
 		Stream stream = getLastActive().stream();
 		Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>> duplicated = Seq
 				.seq((Stream<CompletableFuture<U>>) stream).duplicate();
@@ -1096,7 +1096,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 				.executor(new ForkJoinPool(1))
 				.retrier(
 						RetryBuilder.getDefaultInstance().withScheduler(
-								Executors.newScheduledThreadPool(1))).build();
+								Executors.newScheduledThreadPool(2))).build();
 	}
 
 	/**
