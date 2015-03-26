@@ -13,19 +13,25 @@ import com.aol.simple.react.stream.eager.EagerFutureStream;
 
 public class EagerTest {
 
-	@Test @Ignore
+	@Test
+	public void testPrimitiveStream(){
+		EagerFutureStream.parallelCommonBuilder()
+		.fromPrimitiveStream(IntStream.range(0, 1000))
+		.forEach(System.out::println);
+	}
+	@Test
 	public void jitter(){
 		EagerFutureStream.parallelCommonBuilder()
-						.fromPrimitiveStream(IntStream.range(0, 1000000))
+						.fromPrimitiveStream(IntStream.range(0, 100))
 						.map(it -> it*100)
 						.jitter(10l)
 						.peek(System.out::println)
 						.block();
 	}
-	@Test @Ignore
+	@Test 
 	public void jitterSequential(){
 		EagerFutureStream.sequentialCommonBuilder()
-						.fromPrimitiveStream(IntStream.range(0, 1000000))
+						.fromPrimitiveStream(IntStream.range(0, 100))
 						.map(it -> it*100)
 						.jitter(100000l)
 						.peek(System.out::println)

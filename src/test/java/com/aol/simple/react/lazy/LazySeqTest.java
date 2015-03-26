@@ -4,7 +4,7 @@ import static com.aol.simple.react.stream.lazy.LazyFutureStream.parallel;
 import static com.aol.simple.react.stream.lazy.LazyFutureStream.parallelBuilder;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -95,8 +95,8 @@ public class LazySeqTest extends BaseSeqTest {
 		Collection two = it.next();
 		
 		
-		assertThat(one.size(),is(6));
-		assertThat(two.size(),is(0));
+		assertThat(one.size(),is(1));
+		assertThat(two.size(),is(1));
 		
 	
 		
@@ -106,8 +106,8 @@ public class LazySeqTest extends BaseSeqTest {
 		List<Collection> cols = of(1,2,3,4,5,6).chunkSinceLastRead().peek(System.out::println).peek(it->{sleep(50);}).collect(Collectors.toList());
 		
 		System.out.println(cols.get(0));
-		assertThat(cols.get(0).size(),is(6));
-		assertThat(cols.size(),is(1));
+		assertThat(cols.get(0).size(),is(1));
+		assertThat(cols.size(),is(6));
 		
 		
 	
@@ -162,17 +162,18 @@ public class LazySeqTest extends BaseSeqTest {
 
 		int max = fast.getSizeSignal().getDiscrete().stream()
 				.mapToInt(it -> (int) it).limit(50).max().getAsInt();
-		assertThat(max, is(10));
+		assertThat(max, lessThan(3));
 	}
+
+	
 
 	@Test
 	public void testOfType() {
 		assertEquals(asList(1, 2, 3),
 				of(1, "a", 2, "b", 3, null).ofType(Integer.class).toList());
-		assertEquals(asList(1, "a", 2, "b", 3), of(1, "a", 2, "b", 3, null)
-				.ofType(Serializable.class).toList());
+		assertThat(of(1, "a", 2, "b", 3, null)
+				.ofType(Serializable.class).toList(),containsInAnyOrder(1, "a", 2, "b", 3));
 	}
-
 	@Test @Ignore
 	public void shouldZipTwoInfiniteSequences() throws Exception {
 		
@@ -181,7 +182,7 @@ public class LazySeqTest extends BaseSeqTest {
 		final Seq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
 
 		
-		assertThat(zipped.limit(5).join(),equalTo(of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
+		assertThat(zipped.limit(5).join(),equalTo(LazyFutureStream.of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
 	}
 
 	@Test
@@ -191,7 +192,7 @@ public class LazySeqTest extends BaseSeqTest {
 		final FutureStream<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100); // <-- MEMORY LEAK! - no auto-closing yet, so writes infinetely to it's async queue
 		final Seq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
 		
-		assertThat(zipped.limit(5).join(),equalTo(of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
+		assertThat(zipped.limit(5).join(),equalTo(LazyFutureStream.of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
 		ThreadPools.setUseCommon(true);
 	}
 
@@ -201,16 +202,16 @@ public class LazySeqTest extends BaseSeqTest {
 		final FutureStream<Integer> units = LazyFutureStream.iterate(1,n -> n+1); // <-- MEMORY LEAK!- no auto-closing yet, so writes infinetely to it's async queue
 		final Seq<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100).limit(5);
 		final Seq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
-		assertThat(zipped.limit(5).join(),equalTo(of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
+		assertThat(zipped.limit(5).join(),equalTo(LazyFutureStream.of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
 		ThreadPools.setUseCommon(true);
 	}
 
 	
 	@Test
 	public void testCastPast() {
-		assertEquals(asList(1, "a", 2, "b", 3, null),
+		assertThat(
 				of(1, "a", 2, "b", 3, null).capture(e -> e.printStackTrace())
-						.cast(Serializable.class).toList());
+						.cast(Serializable.class).toList(),containsInAnyOrder(1, "a", 2, "b", 3, null));
 
 	}
 

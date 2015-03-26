@@ -17,6 +17,7 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 	abstract <R> SimpleReactStream<R> then(final Function<U, R> fn,
 			ExecutorService exec);
 
+	abstract <R> SimpleReactStream<R> then(final Function<U, R> fn);
 	abstract <T extends BaseSimpleReact> T getPopulator();
 
 	/**
@@ -27,29 +28,31 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 	default Queue<U> toQueue() {
 		Queue<U> queue = this.getQueueFactory().build();
 
-		LazyReact service = getPopulator();
-		then(queue::offer, service.getExecutor()).runThread(() -> {
+		
+		
+		Continuation continuation = then(queue::offer).runContinuation(() -> {
 			queue.close();
-			returnPopulator(service);
+			
 		});
-
+		queue.setContinuation(continuation);
 		return queue;
 	}
 
 	default Queue<U> toQueue(Function<Queue, Queue> fn) {
 		Queue<U> queue = fn.apply(this.getQueueFactory().build());
 
-		LazyReact service = getPopulator();
-		then(queue::offer, service.getExecutor()).runThread(() -> {
+		Continuation continuation = then(queue::offer).runContinuation(() -> {
 			queue.close();
-			returnPopulator(service);
+			
 		});
-
+		queue.setContinuation(continuation);
 		return queue;
 	}
 
 	default <K> void toQueue(Map<K, Queue<U>> shards, Function<U, K> sharder) {
 
+		//in this case all the items have to be pushed to the shards, 
+		//we can't rely on the client pulling them all to get them in to the right shards
 		LazyReact service = getPopulator();
 		then(it -> shards.get(sharder.apply(it)).offer(it),
 				service.getExecutor())

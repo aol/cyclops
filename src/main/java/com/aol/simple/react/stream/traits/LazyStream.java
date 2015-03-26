@@ -46,6 +46,10 @@ public interface LazyStream<U> {
 		new Thread(() -> new Runner(r).run(getLastActive(),new EmptyCollector(getLazyCollector().getMaxActive()))).start();
 
 	}
+	default Continuation runContinuation(Runnable r) {
+		return new Runner(r).runContinuations(getLastActive(),new EmptyCollector(getLazyCollector().getMaxActive()));
+
+	}
 	/**
 	 * Trigger a lazy stream
 	 */

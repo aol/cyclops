@@ -57,10 +57,9 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 		
 
 		
-		return (SimpleReactStream<R>) this.withLastActive(getLastActive().permutate(
-				getLastActive().stream().map(
-						(ft) -> ft.thenApplyAsync(SimpleReactStream.<U,R>handleExceptions(fn),
-								service)), Collectors.toList()));
+		return (SimpleReactStream<R>) this.withLastActive(
+				getLastActive().stream(s -> s.map(
+						(ft) -> ft.thenApplyAsync(SimpleReactStream.<U,R>handleExceptions(fn)))));
 	}
 	
 	
@@ -136,16 +135,11 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	 */
 	@SuppressWarnings("unchecked")
 	default <R> SimpleReactStream<R> retry(final Function<U, R> fn) {
+		Function<Stream<CompletableFuture>,Stream<CompletableFuture>>  mapper = stream -> stream.map(
+				(ft) -> ft.thenApplyAsync(res -> 
+				getRetrier().getWithRetry( ()->SimpleReactStream.<U,R>handleExceptions(fn).apply((U)res)).join(),getTaskExecutor() ));
 
-		return (SimpleReactStream<R>) this.withLastActive(getLastActive().permutate(
-				getLastActive().stream().map(
-						(ft) -> ft.thenApplyAsync(res -> 
-						getRetrier().getWithRetry(()->SimpleReactStream.<U,R>handleExceptions(fn).apply((U)res) ).join()
-							,
-						//BlockingStream.getSafe(getRetrier()
-						//		.getWithRetry(() -> fn.apply((U) res))
-							//	,getErrorHandler()),
-								getTaskExecutor())), Collectors.toList()));
+		return (SimpleReactStream<R>) this.withLastActive(getLastActive().stream(mapper));
 	}
 	
 	
@@ -221,10 +215,8 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	 */
 	@SuppressWarnings("unchecked")
 	default  <R> SimpleReactStream<R> then(final Function<U, R> fn) {
-		return (SimpleReactStream<R>) this.withLastActive(getLastActive().permutate(
-				getLastActive().stream().map(
-						(ft) -> ft.thenApplyAsync(SimpleReactStream.<U,R>handleExceptions(fn),
-								getTaskExecutor())), Collectors.toList()));
+		Function<Stream<CompletableFuture>,Stream<CompletableFuture>> streamMapper = s ->s.map(ft -> ft.thenApplyAsync(SimpleReactStream.<U,R>handleExceptions(fn),getTaskExecutor()));
+		return (SimpleReactStream<R>) this.withLastActive(getLastActive().stream(streamMapper));
 	}
 	/**
 	 * Can only be used on Eager Streams
@@ -237,9 +229,9 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	 */
 	default   SimpleReactStream<U> doOnEach(final Function<U, U> fn) {
 		
-		getLastActive().stream().forEach(
+		getLastActive().stream(s ->s.peek(
 						(ft) -> ft.thenApplyAsync(SimpleReactStream.<U,U>handleExceptions(fn),
-								getTaskExecutor()));
+								getTaskExecutor())));
 		return this;
 	}
 
@@ -347,14 +339,14 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	 */
 	@SuppressWarnings("unchecked")
 	default SimpleReactStream<U> filter(final Predicate<? super U> p) {
-
-		return (SimpleReactStream<U>) this.withLastActive(getLastActive().permutate(getLastActive()
-				.stream().map(ft -> ft.thenApplyAsync((in) -> {
-					if (!p.test((U) in)) {
-						throw new FilteredExecutionPathException();
-					}
-					return in;
-				})), Collectors.toList()));
+	Function<Stream<CompletableFuture>,Stream<CompletableFuture>> fn = s -> s.map(ft -> ft.thenApplyAsync((in) -> {
+			if (!p.test((U) in)) {
+				throw new FilteredExecutionPathException();
+			}
+			return in;
+		}));
+		return (SimpleReactStream<U>) this.withLastActive(getLastActive()
+				.stream(fn));
 
 	}
 	/**
@@ -467,20 +459,22 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	 * @return recovery value
 	 */
 	default SimpleReactStream<U> onFail(Class<? extends Throwable> exceptionClass, final Function<? extends SimpleReactFailedStageException, U> fn){
-		return (SimpleReactStream<U>) this.withLastActive(getLastActive().permutate(getLastActive()
-				.stream().map((ft) -> ft.exceptionally((t) -> {
-					if (t instanceof FilteredExecutionPathException)
-						throw (FilteredExecutionPathException) t;
-					Throwable throwable =(Throwable)t;
-					if(t instanceof CompletionException)
-						throwable = ((Exception)t).getCause();
-					
-					SimpleReactFailedStageException simpleReactException = assureSimpleReactException( throwable);//exceptions from initial supplier won't be wrapper in SimpleReactFailedStageException
-					if(exceptionClass.isAssignableFrom(simpleReactException.getCause().getClass()))
-				    	return ((Function) fn).apply(simpleReactException);
-				    throw simpleReactException;
-						
-				})), Collectors.toList()));
+		
+		Function<Stream<CompletableFuture>,Stream<CompletableFuture>> mapper = s -> s.map((ft) -> ft.exceptionally((t) -> {
+			if (t instanceof FilteredExecutionPathException)
+				throw (FilteredExecutionPathException) t;
+			Throwable throwable =(Throwable)t;
+			if(t instanceof CompletionException)
+				throwable = ((Exception)t).getCause();
+			
+			SimpleReactFailedStageException simpleReactException = assureSimpleReactException( throwable);//exceptions from initial supplier won't be wrapper in SimpleReactFailedStageException
+			if(exceptionClass.isAssignableFrom(simpleReactException.getCause().getClass()))
+		    	return ((Function) fn).apply(simpleReactException);
+		    throw simpleReactException;
+				
+		}));
+		return (SimpleReactStream<U>) this.withLastActive(getLastActive()
+				.stream(mapper));
 	}
 	
 

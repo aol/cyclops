@@ -15,12 +15,14 @@ import java.util.stream.StreamSupport;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Wither;
 
 import org.jooq.lambda.Seq;
 
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
+import com.aol.simple.react.stream.traits.Continuation;
 import com.aol.simple.react.util.SimpleTimer;
 import com.google.common.collect.Lists;
 
@@ -56,6 +58,9 @@ public class Queue<T> implements Adapter<T> {
 	
 	@Getter
 	private final Signal<Integer> sizeSignal;
+	
+	@Setter
+	private  volatile Continuation continuation;
 
 
 	/**
@@ -152,6 +157,11 @@ public class Queue<T> implements Adapter<T> {
 		
 		T data = null;
 		try {
+			if(this.continuation!=null)
+				continuation = continuation.proceed();
+			if(!open && queue.size()==0)
+				throw new ClosedQueueException();
+		
 			if (timeout == -1)
 				data = queue.take();
 			else {
@@ -221,6 +231,7 @@ public class Queue<T> implements Adapter<T> {
 	 * @return true if successfully added.
 	 */
 	public boolean add(T data){
+	
 		try{
 			boolean result = queue.add((T)nullSafe(data));
 			if(true){
@@ -245,7 +256,7 @@ public class Queue<T> implements Adapter<T> {
 	 */
 	@Override
 	public boolean offer(T data) {
-		
+	
 		if(!open)
 			throw new ClosedQueueException();
 		try {

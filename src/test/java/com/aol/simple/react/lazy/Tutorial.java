@@ -38,19 +38,21 @@ import com.aol.simple.react.threads.SequentialElasticPools;
 import com.google.common.collect.ImmutableMap;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 
-@Ignore
+
 public class Tutorial {
 
 	@SuppressWarnings("unchecked")
 	@Test
 	public void zipByResults() {
 
-		LazyFutureStream<String> a = LazyFutureStream.parallelBuilder(3).react(
+		EagerFutureStream<String> a = EagerFutureStream.parallelBuilder(3).react(
 				() -> slowest(), () -> fast(), () -> slow());
-		LazyFutureStream<Integer> b = LazyFutureStream.sequentialBuilder().of(
+		EagerFutureStream<Integer> b = EagerFutureStream.sequentialBuilder().of(
 				1, 2, 3, 4, 5, 6);
 
-		a.zip(b).forEach(System.out::println);
+		a.zip(b).peek(System.out::println);
+		System.out.println("Not blocked!");
+		sleep(100000);
 
 	}
 

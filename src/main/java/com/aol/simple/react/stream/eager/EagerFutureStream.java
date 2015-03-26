@@ -892,7 +892,10 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	@Override
 	default <R> EagerFutureStream<R> scanRight(R seed,
 			BiFunction<? super U, R, R> function) {
-		return fromStream(FutureStream.super.scanRight(seed, function));
+		 Seq<R> stream = FutureStream.super.scanRight(seed, function);
+		 if(stream instanceof FutureStream)
+			 return (EagerFutureStream<R>)stream;
+		return fromStream(stream);
 	}
 
 	/**
