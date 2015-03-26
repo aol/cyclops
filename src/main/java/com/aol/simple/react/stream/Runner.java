@@ -2,11 +2,14 @@ package com.aol.simple.react.stream;
 
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 import lombok.AllArgsConstructor;
 
 import com.aol.simple.react.async.Queue.ClosedQueueException;
 import com.aol.simple.react.collectors.lazy.EmptyCollector;
+import com.aol.simple.react.exceptions.ExceptionSoftener;
+import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.stream.traits.Continuation;
 
@@ -57,13 +60,16 @@ public class Runner {
 					throw new ClosedQueueException();
 					
 				});
+			//	continuation needs to  return a tuple
+			//			when f completes exceptionally with a filtered result
+			//			ensureOpen needs to call proceed again
 				cont[0] =  new Continuation( () -> {	
 					try {
 						
 						if(it.hasNext()){
 							
 							CompletableFuture f = it.next();
-						
+							
 							collector.accept(f);
 						}
 						if(it.hasNext())

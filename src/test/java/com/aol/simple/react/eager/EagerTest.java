@@ -6,13 +6,57 @@ import static org.junit.Assert.assertThat;
 
 import java.util.stream.IntStream;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.simple.react.stream.eager.EagerFutureStream;
+import com.aol.simple.react.stream.lazy.LazyFutureStream;
 
 public class EagerTest {
 
+	int slow(){
+		try {
+			Thread.sleep(150);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 3;
+	}
+	
+	@Test
+	public void convertToLazy(){
+		
+		
+		
+		
+		assertThat(EagerFutureStream.parallelCommonBuilder()
+						.react(()->slow(),()->1,()->2)
+						.peek(System.out::println)
+						.convertToLazyStream()
+						.zipWithIndex()
+						.block().size(),is(3));
+						
+	}
+
+	@Test
+	public void convertToLazyAndBack(){
+		
+		
+		
+		
+		assertThat(EagerFutureStream.parallelCommonBuilder()
+						.react(()->slow(),()->1,()->2)
+						.peek(System.out::println)
+						.convertToLazyStream()
+						.zipWithIndex()
+						.peek(System.out::println)
+						.convertToEagerStream()
+						.map(it->slow())
+						.peek(System.out::println)
+						.block().size(),is(3));
+						
+	}
+	
 	@Test
 	public void testPrimitiveStream(){
 		EagerFutureStream.parallelCommonBuilder()

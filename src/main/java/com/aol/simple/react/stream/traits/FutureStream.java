@@ -944,9 +944,12 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 * Stream supporting methods
 	 */
 
+	
 	/*
-	 * (non-Javadoc)
-	 * 
+	 * Sequentially iterate through the LazyFutureStream
+	 * To run a parallel Stream in parallel use run or run on current
+	 *  
+	 *@param action Consumer for each element in the Stream
 	 * @see org.jooq.lambda.Seq#forEach(java.util.function.Consumer)
 	 */
 	@Override
@@ -955,9 +958,12 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 
 	}
 
-	/*
-	 * (non-Javadoc)
+	
+	/* 
+	 * Sequentially iterate through the LazyFutureStream
+	 * To run a parallel Stream in parallel use run or run on current
 	 * 
+	 *	@param action Consumer for each element
 	 * @see java.util.stream.Stream#forEachOrdered(java.util.function.Consumer)
 	 */
 	@Override

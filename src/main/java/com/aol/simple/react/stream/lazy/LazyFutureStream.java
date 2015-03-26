@@ -38,9 +38,10 @@ import com.aol.simple.react.async.QueueFactory;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
-import com.aol.simple.react.stream.MissingValue;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
+import com.aol.simple.react.stream.eager.EagerFutureStream;
+import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.LazyToQueue;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
@@ -73,6 +74,15 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 
 	LazyFutureStream<U> withLastActive(StreamWrapper streamWrapper);
 
+	/**
+	 * Convert between an Lazy and Eager future stream,
+	 * can be used to take advantages of each approach during a single Stream
+	 * 
+	 * @return An EagerFutureStream from this LazyFutureStream, will use the same executors
+	 */
+	default EagerFutureStream<U> convertToEagerStream(){
+		return new EagerReact(getTaskExecutor()).withRetrier(getRetrier()).fromStream((Stream)getLastActive().stream());
+	}
 	
 	
 	default <R> LazyFutureStream<R> map(Function<? super U, ? extends R> mapper) {
@@ -885,8 +895,8 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 * 
 	 *      
 	 */
-	default Seq<Tuple2<U, Long>> zipWithIndex() {
-		return FutureStream.super.zipWithIndex();
+	default LazyFutureStream<Tuple2<U, Long>> zipWithIndex() {
+		return (LazyFutureStream)fromStream(FutureStream.super.zipWithIndex());
 	}
 
 	/**

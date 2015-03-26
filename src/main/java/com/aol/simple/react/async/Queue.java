@@ -157,8 +157,13 @@ public class Queue<T> implements Adapter<T> {
 		
 		T data = null;
 		try {
-			if(this.continuation!=null)
-				continuation = continuation.proceed();
+			if(this.continuation!=null){
+				while(open && queue.size()==0){
+					continuation = continuation.proceed();
+				}
+				if(queue.size()>0)
+					return ensureNotPoisonPill(queue.poll());
+			}
 			if(!open && queue.size()==0)
 				throw new ClosedQueueException();
 		
@@ -174,15 +179,20 @@ public class Queue<T> implements Adapter<T> {
 			softener.throwSoftenedException(e);
 		}
 			
-		if(data instanceof PoisonPill){
-			throw new ClosedQueueException();
-		
-		}
+		ensureNotPoisonPill(data);
 		if(sizeSignal!=null)
 			this.sizeSignal.set(queue.size());
 
 		return (T)nillSafe(data);
 		
+	}
+
+	private T ensureNotPoisonPill(T data) {
+		if(data instanceof PoisonPill){
+			throw new ClosedQueueException();
+		
+		}
+		return data;
 	}
 
 	/**

@@ -3,7 +3,6 @@ package com.aol.simple.react.stream.eager;
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -22,14 +21,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.function.ToDoubleFunction;
-import java.util.function.ToIntFunction;
-import java.util.function.ToLongFunction;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -39,16 +32,15 @@ import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.async.Queue.ClosedQueueException;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.lazy.LazyFutureStream;
+import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.EagerToQueue;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
-import com.aol.simple.react.util.SimpleTimer;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -62,6 +54,15 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 	
+	/**
+	 * Convert between an Eager and Lazy future stream,
+	 * can be used to take advantages of each approach during a single Stream
+	 * 
+	 * @return A LazyFutureStream from this EagerFutureStream
+	 */
+	default LazyFutureStream<U> convertToLazyStream(){
+		return new LazyReact(getTaskExecutor()).withRetrier(getRetrier()).fromStream((Stream)getLastActive().stream());
+	}
 	default <R> EagerFutureStream<R> map(Function<? super U, ? extends R> mapper) {
 		return (EagerFutureStream<R>)FutureStream.super.map(mapper);
 	}

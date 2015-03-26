@@ -31,9 +31,7 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 		
 		
 		Continuation continuation = then(queue::offer).runContinuation(() -> {
-			queue.close();
-			
-		});
+			queue.close(); });
 		queue.setContinuation(continuation);
 		return queue;
 	}
