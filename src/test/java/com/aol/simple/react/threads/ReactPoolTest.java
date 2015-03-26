@@ -26,6 +26,11 @@ public class ReactPoolTest {
 		List<String> result = pool.react( (er) -> er.react(()->"hello",()->"world").block() );
 		assertThat(result.size(),is(2));
 	}
+	
+	
+	
+	
+	
 	@Test
 	public void testRoundRobin(){
 		EagerReact react1 = mock(EagerReact.class);
@@ -40,6 +45,16 @@ public class ReactPoolTest {
 		verify(react1,times(1)).react(suppliers);
 		verify(react2,times(1)).react(suppliers);
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	@Test
 	public void testElastic(){
 		

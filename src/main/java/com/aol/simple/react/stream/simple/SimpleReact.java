@@ -24,6 +24,7 @@ import com.aol.simple.react.stream.BaseLazySimpleReact;
 import com.aol.simple.react.stream.InfiniteProcessingException;
 import com.aol.simple.react.stream.MissingValue;
 import com.aol.simple.react.stream.ThreadPools;
+import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.google.common.annotations.VisibleForTesting;
 import com.nurkiewicz.asyncretry.RetryExecutor;
@@ -316,6 +317,9 @@ public class SimpleReact  extends BaseLazySimpleReact{
 		this.retrier = retrier;
 		this.eager = Optional.ofNullable(eager).orElse(true);
 	}
+
+
+	
 		
 	
 }

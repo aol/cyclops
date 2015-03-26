@@ -25,6 +25,7 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
@@ -119,7 +120,7 @@ public class RetryTest {
 
 		
 		assertThat(result.size(), is(0));
-		assertThat(error.getMessage(), is("DONT PANIC"));
+		assertThat(((SimpleReactFailedStageException)error).getCause().getMessage(), is("DONT PANIC"));
 
 	}
 
@@ -132,12 +133,13 @@ public class RetryTest {
 
 		
 		List<String> result = new SimpleReact().react(() -> 1)
-				.withRetrier(executor).capture(e -> error = e)
+				.withRetrier(executor)
+				.capture(e -> error = e)
 				.retry(serviceMock).block();
 
 		
 		assertThat(result.size(), is(0));
-
+		error.printStackTrace();
 		assertThat(error, instanceOf(AbortRetryException.class));
 	}
 
@@ -147,7 +149,7 @@ public class RetryTest {
 		error = null;
 		
 		final RetryExecutor executor = new AsyncRetryExecutor(schedulerMock)
-				.abortOn(IllegalArgumentException.class);
+				.abortIf(t->   t.getCause().getClass().isAssignableFrom(IllegalArgumentException.class));
 		given(serviceMock.apply(anyInt())).willThrow(
 				new IllegalArgumentException("DONT PANIC"));
 
@@ -158,8 +160,9 @@ public class RetryTest {
 		
 		assertThat(result.size(), is(0));
 
-		assertThat(error, instanceOf(IllegalArgumentException.class));
-		assertThat(error.getMessage(), is("DONT PANIC"));
+		error.printStackTrace();
+		assertThat(error.getCause(), instanceOf(IllegalArgumentException.class));
+		assertThat(error.getCause().getMessage(), is("DONT PANIC"));
 	}
 
 	

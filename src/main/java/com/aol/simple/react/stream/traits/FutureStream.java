@@ -67,8 +67,8 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 			return zipFutures((FutureStream)other);
 		Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other));
 		Seq<Tuple2<CompletableFuture<U>,R>> withType = (Seq<Tuple2<CompletableFuture<U>,R>>)seq;
-		Stream futureStream = fromStream(withType.map(t ->t.v1.thenApply(v -> Tuple.tuple(t.v1.join(),t.v2)))
-				.map(CompletableFuture::join));
+		Stream futureStream = fromStreamCompletableFuture((Stream)withType.map(t ->t.v1.thenApply(v -> Tuple.tuple(t.v1.join(),t.v2)))
+				);
 
 		
 		return (FutureStream<Tuple2<U,R>>)futureStream;
@@ -86,8 +86,8 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	default <R> FutureStream<Tuple2<U,R>> zipFutures(FutureStream<R> other) {
 		Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other.getLastActive().stream()));
 		Seq<Tuple2<CompletableFuture<U>,CompletableFuture<R>>> withType = (Seq<Tuple2<CompletableFuture<U>,CompletableFuture<R>>>)seq;
-		Stream futureStream =  fromStream(withType.map(t ->CompletableFuture.allOf(t.v1,t.v2).thenApply(v -> Tuple.tuple(t.v1.join(),t.v2.join())))
-				.map(CompletableFuture::join));
+		Stream futureStream =  fromStreamCompletableFuture((Stream)withType.map(t ->CompletableFuture.allOf(t.v1,t.v2).thenApply(v -> Tuple.tuple(t.v1.join(),t.v2.join())))
+				);
 		
 		return (FutureStream<Tuple2<U,R>>)futureStream;
 		
@@ -373,6 +373,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 */
 	default FutureStream<U> debounce(long time, TimeUnit unit) {
 		Queue queue = toQueue();
+		long timeNanos =  unit.toNanos(time);
 		Function<Supplier<U>, Supplier<U>> fn = s -> {
 			
 			return () -> {
@@ -383,7 +384,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 					while(elapsedNanos>0){
 					
 						result = Optional.of(s.get());
-						elapsedNanos= unit.toNanos(time) - timer.getElapsedNanoseconds();
+						elapsedNanos= timeNanos - timer.getElapsedNanoseconds();
 					
 					}
 						
@@ -728,6 +729,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 
 		return Seq.seq(new Zip()).filter(next->!(next instanceof Optional));
 	}
+	
 	
 	static <T1, T2> Seq<T1> skipUntil(FutureStream<T1> left,
 			FutureStream<T2> right) {

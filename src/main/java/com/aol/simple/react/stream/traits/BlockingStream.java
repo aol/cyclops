@@ -9,6 +9,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.aol.simple.react.blockers.Blocker;
 import com.aol.simple.react.collectors.ReactCollector;
@@ -103,7 +104,10 @@ public interface BlockingStream<U> extends ConfigurableStream<U>{
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	default <R> R block(final Collector collector,
 			final StreamWrapper lastActive) {
-		return (R) lastActive.stream().map((future) -> {
+		Stream<CompletableFuture> stream = lastActive.stream();
+		if(!isEager())
+			stream = lastActive.stream().collect(Collectors.toList()).stream();
+		return (R) stream.map((future) -> {
 			return (U) getSafe(future,getErrorHandler());
 		}).filter(v -> v != MissingValue.MISSING_VALUE).collect(collector);
 	}

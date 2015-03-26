@@ -1,15 +1,36 @@
 package com.aol.simple.react.eager;
 
 import static java.util.Arrays.asList;
-
-import org.junit.Test;
-
-import com.aol.simple.react.stream.eager.EagerFutureStream;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.stream.IntStream;
+
+import org.junit.Ignore;
+import org.junit.Test;
+
+import com.aol.simple.react.stream.eager.EagerFutureStream;
+
 public class EagerTest {
 
+	@Test @Ignore
+	public void jitter(){
+		EagerFutureStream.parallelCommonBuilder()
+						.fromPrimitiveStream(IntStream.range(0, 1000000))
+						.map(it -> it*100)
+						.jitter(10l)
+						.peek(System.out::println)
+						.block();
+	}
+	@Test @Ignore
+	public void jitterSequential(){
+		EagerFutureStream.sequentialCommonBuilder()
+						.fromPrimitiveStream(IntStream.range(0, 1000000))
+						.map(it -> it*100)
+						.jitter(100000l)
+						.peek(System.out::println)
+						.runOnCurrent();
+	}
 	@Test
 	public void doOnEach(){
 		String[] found = {""};

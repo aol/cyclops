@@ -88,7 +88,8 @@ public class LazyReact extends BaseLazySimpleReact {
 		return (LazyFutureStream)super.fromStream(stream);
 	}
 
-	public <U> LazyFutureStream<U> react(final Supplier<U>... actions) {
+	@SafeVarargs
+	public final <U> LazyFutureStream<U> react(final Supplier<U>... actions) {
 
 		return (LazyFutureStream)super.reactI(actions);
 
@@ -114,6 +115,7 @@ public class LazyReact extends BaseLazySimpleReact {
 	 *	@return EagerFutureStream
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public  LazyFutureStream<Integer> fromPrimitiveStream(IntStream stream) {
 		

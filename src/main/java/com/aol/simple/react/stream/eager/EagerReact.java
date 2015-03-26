@@ -146,7 +146,8 @@ public class EagerReact extends BaseSimpleReact{
 		return (EagerFutureStream)super.of(array);
 	}
 	
-	public  <U> EagerFutureStream<U> react(final Supplier<U>... actions) {
+	@SafeVarargs
+	public final  <U> EagerFutureStream<U> react(final Supplier<U>... actions) {
 
 		return (EagerFutureStream)super.reactI(actions);
 

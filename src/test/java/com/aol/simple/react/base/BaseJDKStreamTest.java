@@ -69,6 +69,7 @@ public abstract class BaseJDKStreamTest {
 	}
 	@Test
 	public void testDistinct(){
+		assertThat(of(1,1,1,2,1).distinct().collect(Collectors.toList()).size(),is(2));
 		assertThat(of(1,1,1,2,1).distinct().collect(Collectors.toList()),hasItem(1));
 		assertThat(of(1,1,1,2,1).distinct().collect(Collectors.toList()),hasItem(2));
 	}
@@ -178,5 +179,32 @@ public abstract class BaseJDKStreamTest {
 		assertThat(of(1,5,3,4,2).count(),is(5L));
 	}
 
+	@Test
+	public void collectSBB(){
+		List<Integer> list = of(1,2,3,4,5).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+		assertThat(list.size(),is(5));
+	}
+	@Test
+	public void collect(){
+		assertThat(of(1,2,3,4,5).collect(Collectors.toList()).size(),is(5));
+		assertThat(of(1,1,1,2).collect(Collectors.toSet()).size(),is(2));
+	}
+	@Test
+	public void testFilter(){
+		assertThat(of(1,1,1,2).filter(it -> it==1).collect(Collectors.toList()).size(),is(3));
+	}
+	@Test
+	public void testMap(){
+		assertThat(of(1).map(it->it+100).collect(Collectors.toList()).get(0),is(101));
+	}
+	Object val;
+	@Test
+	public void testPeek(){
+		val = null;
+		of(1).map(it->it+100).peek(it -> val=it).collect(Collectors.toList());
+		assertThat(val,is(101));
+	}
 		
+
+
 }

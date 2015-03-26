@@ -91,6 +91,11 @@ public abstract class BaseSeqTest {
 		assertThat(of(1,2,3,4,5,6).combineLatest(of(3)).collect(Collectors.toList()).size(),greaterThan(5));
 	}
 	@Test
+	public void combineLatest(){
+		
+		assertThat(of(1,2,3,4,5,6).combineLatest(react(()->3,()->value())).collect(Collectors.toList()).size(),greaterThan(5));
+	}
+	@Test
 	public void combineValues(){
 		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v2==null));
 		//assertTrue(of(1,2,3,4,5,6).combine(of(3)).oneMatch(it-> it.v2==3));
@@ -495,10 +500,10 @@ public abstract class BaseSeqTest {
 
 	    @Test
 	    public void testZipWithIndex() {
-	        assertEquals(asList(), Seq.of().zipWithIndex().toList());
-	        assertEquals(asList(tuple("a", 0L)), Seq.of("a").zipWithIndex().toList());
-	        assertEquals(asList(tuple("a", 0L), tuple("b", 1L)), Seq.of("a", "b").zipWithIndex().toList());
-	        assertEquals(asList(tuple("a", 0L), tuple("b", 1L), tuple("c", 2L)), Seq.of("a", "b", "c").zipWithIndex().toList());
+	        assertEquals(asList(), of().zipWithIndex().toList());
+	        assertEquals(asList(tuple("a", 0L)), of("a").zipWithIndex().toList());
+	        assertEquals(asList(tuple("a", 0L), tuple("b", 1L)), of("a", "b").zipWithIndex().toList());
+	        assertEquals(asList(tuple("a", 0L), tuple("b", 1L), tuple("c", 2L)), of("a", "b", "c").zipWithIndex().toList());
 	    }
 
 	   

@@ -5,6 +5,7 @@ import static java.util.Spliterators.spliteratorUnknownSize;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import com.aol.simple.react.async.QueueFactory;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
+import com.aol.simple.react.stream.MissingValue;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.traits.FutureStream;
@@ -72,6 +74,10 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	LazyFutureStream<U> withLastActive(StreamWrapper streamWrapper);
 
 	
+	
+	default <R> LazyFutureStream<R> map(Function<? super U, ? extends R> mapper) {
+		return (LazyFutureStream<R>)FutureStream.super.map(mapper);
+	}
 	/**
 	 * Zip this Stream with an index, but Zip based on the underlying tasks, not completed results.
 	 * 
@@ -121,7 +127,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 * @return Two equivalent Streams
 	 */
 	default Tuple2<Seq<U>, Seq<U>> duplicateFuturesSeq() {
-		// unblocking impl
+		
 		Stream stream = getLastActive().stream();
 		Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>> duplicated = Seq
 				.seq((Stream<CompletableFuture<U>>) stream).duplicate();
@@ -188,7 +194,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 * e.g.
 	 * <code>
 	 * 
-	 * EagerFutureStream.of(10,20,25,30,41,43).shard(ImmutableMap.of("even",new
+	 * LazyFutureStream.of(10,20,25,30,41,43).shard(ImmutableMap.of("even",new
 	 * Queue(),"odd",new Queue(),element-&gt; element%2==0? "even" : "odd");
 	 * 
 	 * </code>
@@ -332,7 +338,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 * Stream. Note this doesn't neccessarily imply a fixed delay between
 	 * element creation (although it may do). e.g.
 	 * 
-	 * EagerFutureStream.of(1,2,3,4).fixedDelay(1,TimeUnit.hours);
+	 * LazyFutureStream.of(1,2,3,4).fixedDelay(1,TimeUnit.hours);
 	 * 
 	 * Will emit 1 on start, then 2 after an hour, 3 after 2 hours and so on.
 	 * 
@@ -456,6 +462,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 * @param futureStreams Streams to race
 	 * @return First Stream to start emitting values
 	 */
+	@SafeVarargs
 	static <U> LazyFutureStream<U> firstOf(LazyFutureStream<U>... futureStreams) {
 		return (LazyFutureStream<U>) FutureStream.firstOf(futureStreams);
 	}
@@ -1096,7 +1103,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 				.executor(new ForkJoinPool(1))
 				.retrier(
 						RetryBuilder.getDefaultInstance().withScheduler(
-								Executors.newScheduledThreadPool(1))).build();
+								Executors.newScheduledThreadPool(2))).build();
 	}
 
 	/**
@@ -1349,5 +1356,77 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 
 		return Seq.seq(new LimitUntil());
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.jooq.lambda.Seq#parallel()
+	 */
+	@Override
+	default LazyFutureStream<U> parallel() {
+		return this;
+	}
+
+	@Override
+	default LazyFutureStream<U> stream() {
+		return (LazyFutureStream<U>)FutureStream.super.stream();
+	}
+
+
+
+
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.jooq.lambda.Seq#unordered()
+	 */
+	@Override
+	default LazyFutureStream<U> unordered() {
+		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.jooq.lambda.Seq#onClose(java.lang.Runnable)
+	 */
+	@Override
+	default LazyFutureStream<U> onClose(Runnable closeHandler) {
+
+		return (LazyFutureStream)FutureStream.super.onClose(closeHandler);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.jooq.lambda.Seq#sorted()
+	 */
+	@Override
+	default LazyFutureStream<U> sorted() {
+		return (LazyFutureStream<U>)fromStream(FutureStream.super.sorted());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.jooq.lambda.Seq#sorted(java.util.Comparator)
+	 */
+	@Override
+	default LazyFutureStream<U> sorted(Comparator<? super U> comparator) {
+		return (LazyFutureStream<U>)fromStream(FutureStream.super.sorted(comparator));
+	}
+
+	/**
+	 * Give a function access to the current stage of a SimpleReact Stream
+	 * 
+	 * @param consumer
+	 *            Consumer that will recieve current stage
+	 * @return Self (current stage)
+	 */
+	default LazyFutureStream<U> self(Consumer<FutureStream<U>> consumer) {
+		return ( LazyFutureStream<U>)FutureStream.super.self(consumer);
+	}
+
 
 }
