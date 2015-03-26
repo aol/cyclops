@@ -730,6 +730,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		return Seq.seq(new Zip()).filter(next->!(next instanceof Optional));
 	}
 	
+	
 	static <T1, T2> Seq<T1> skipUntil(FutureStream<T1> left,
 			FutureStream<T2> right) {
 		

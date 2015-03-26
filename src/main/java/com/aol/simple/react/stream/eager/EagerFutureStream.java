@@ -6,6 +6,7 @@ import static java.util.Spliterators.spliteratorUnknownSize;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +22,14 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntFunction;
+import java.util.function.ToLongFunction;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -54,6 +61,11 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  */
 public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
+	
+	default <R> EagerFutureStream<R> map(Function<? super U, ? extends R> mapper) {
+		return (EagerFutureStream<R>)FutureStream.super.map(mapper);
+	}
+	
 	/**
 	 * @return a Stream that batches all completed elements from this stream
 	 *         since last read attempt into a collection
@@ -1326,6 +1338,77 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 				spliteratorUnknownSize(iterator, ORDERED), false));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.jooq.lambda.Seq#parallel()
+	 */
+	@Override
+	default EagerFutureStream<U> parallel() {
+		return this;
+	}
 
+	@Override
+	default EagerFutureStream<U> stream() {
+		return (EagerFutureStream<U>)FutureStream.super.stream();
+	}
+
+
+
+
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.jooq.lambda.Seq#unordered()
+	 */
+	@Override
+	default EagerFutureStream<U> unordered() {
+		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.jooq.lambda.Seq#onClose(java.lang.Runnable)
+	 */
+	@Override
+	default EagerFutureStream<U> onClose(Runnable closeHandler) {
+
+		return (EagerFutureStream)FutureStream.super.onClose(closeHandler);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.jooq.lambda.Seq#sorted()
+	 */
+	@Override
+	default EagerFutureStream<U> sorted() {
+		return (EagerFutureStream<U>)fromStream(FutureStream.super.sorted());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.jooq.lambda.Seq#sorted(java.util.Comparator)
+	 */
+	@Override
+	default EagerFutureStream<U> sorted(Comparator<? super U> comparator) {
+		return (EagerFutureStream<U>)fromStream(FutureStream.super.sorted(comparator));
+	}
+
+	/**
+	 * Give a function access to the current stage of a SimpleReact Stream
+	 * 
+	 * @param consumer
+	 *            Consumer that will recieve current stage
+	 * @return Self (current stage)
+	 */
+	default EagerFutureStream<U> self(Consumer<FutureStream<U>> consumer) {
+		return ( EagerFutureStream<U>)FutureStream.super.self(consumer);
+	}
+
+	
 
 }
