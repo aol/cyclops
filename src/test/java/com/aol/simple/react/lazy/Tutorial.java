@@ -116,12 +116,12 @@ public class Tutorial {
 	}
 
 	private String slowest() {
-		sleep(2500);
+		sleep(250);
 		return "slowestResult";
 	}
 
 	private String slow() {
-		sleep(100);
+		sleep(10);
 		return "slowResult";
 	}
 
@@ -326,7 +326,7 @@ public class Tutorial {
 		FutureStream<Boolean> stoppingStream = LazyFutureStream
 				.sequentialCommonBuilder().react(() -> 1000).then(this::sleep)
 				.peek(System.out::println);
-		System.out.println(LazyFutureStream.sequentialCommonBuilder()
+		System.out.println(EagerFutureStream.sequentialCommonBuilder()
 				.fromPrimitiveStream(IntStream.range(0, 1000000))
 				// .peek(System.out::println)
 				.skipUntil(stoppingStream).peek(System.out::println).block()
@@ -416,7 +416,7 @@ public class Tutorial {
 		LazyFutureStream.sequentialCommonBuilder()
 				.iterateInfinitely(0, it -> it + 1)
 				.limit(100)
-				.onePer(1, TimeUnit.SECONDS)
+				.onePer(1, TimeUnit.MICROSECONDS)
 				.map(seconds -> readStatus()).retry(this::saveStatus)
 				.peek(System.out::println).capture(Throwable::printStackTrace)
 				.block();
@@ -424,8 +424,8 @@ public class Tutorial {
 	}
 
 	private String saveStatus(Status s) {
-		if (count++ % 2 == 0)
-			throw new RuntimeException();
+		//if (count++ % 2 == 0)
+		//	throw new RuntimeException();
 
 		return "Status saved:" + s.getId();
 	}
@@ -466,10 +466,10 @@ public class Tutorial {
 	public void secondsTimeInterval() {
 		List<Collection<Integer>> collected = LazyFutureStream
 				.sequentialCommonBuilder().iterateInfinitely(0, it -> it + 1)
-				.limit(100)
+				//.limit(100)
 				.withQueueFactory(QueueFactories.boundedQueue(1))
-				.onePer(1, TimeUnit.SECONDS).peek(System.out::println)
-				.batchByTime(10, TimeUnit.SECONDS).peek(System.out::println)
+				.onePer(1, TimeUnit.MICROSECONDS).peek(System.out::println)
+				.batchByTime(10, TimeUnit.MICROSECONDS).peek(System.out::println)
 				.limit(15).block();
 		System.out.println(collected);
 	}
@@ -516,7 +516,7 @@ public class Tutorial {
 				.map(this::readFileToString)
 				.map(this::parseJson)
 				.batchBySize(10)
-				.onePer(1, TimeUnit.SECONDS)
+				.onePer(1, TimeUnit.MICROSECONDS)
 				.peek(batch -> System.out.println("batched : " + batch))
 				.map(this::processOrders)
 				.flatMap(Collection::stream)
@@ -534,7 +534,7 @@ public class Tutorial {
 				.limit(100)
 				.map(this::readFileToString)
 				.map(this::parseJson)
-				.batchByTime(1, TimeUnit.SECONDS)
+				.batchByTime(1, TimeUnit.MICROSECONDS)
 				.peek(batch -> System.out.println("batched : " + batch))
 				.map(this::processOrders)
 				.flatMap(Collection::stream)

@@ -3,8 +3,10 @@ package com.aol.simple.react.lazy;
 import static com.aol.simple.react.stream.lazy.LazyFutureStream.parallel;
 import static com.aol.simple.react.stream.lazy.LazyFutureStream.parallelBuilder;
 import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -27,6 +29,7 @@ import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.QueueFactories;
 import com.aol.simple.react.base.BaseSeqTest;
 import com.aol.simple.react.stream.ThreadPools;
+import com.aol.simple.react.stream.eager.EagerFutureStream;
 import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.FutureStream;
@@ -35,6 +38,7 @@ public class LazySeqTest extends BaseSeqTest {
 	
 	
 
+	
 	
 	@Test
 	public void testZipWithFutures(){

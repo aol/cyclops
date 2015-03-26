@@ -3,6 +3,7 @@ package com.aol.simple.react.stream.lazy;
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -74,6 +75,26 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 
 	LazyFutureStream<U> withLastActive(StreamWrapper streamWrapper);
 
+	  /**
+     * Returns an {@link Optional} describing the first element of this stream,
+     * or an empty {@code Optional} if the stream is empty.  If the stream has
+     * no encounter order, then any element may be returned.
+     *
+     * <p>This is a <a href="package-summary.html#StreamOps">short-circuiting
+     * terminal operation</a>.
+     *
+     * @return an {@code Optional} describing the first element of this stream,
+     * or an empty {@code Optional} if the stream is empty
+     * @throws NullPointerException if the element selected is null
+     */
+    default Optional<U> findFirst(){
+    	List<U> results = new ArrayList<>();
+    	this.run(()->results);
+    	if(results.size()==0)
+    		return Optional.empty();
+    	return Optional.of(results.get(0));
+    }
+	
 	/**
 	 * Convert between an Lazy and Eager future stream,
 	 * can be used to take advantages of each approach during a single Stream

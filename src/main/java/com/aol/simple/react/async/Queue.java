@@ -162,7 +162,7 @@ public class Queue<T> implements Adapter<T> {
 					continuation = continuation.proceed();
 				}
 				if(queue.size()>0)
-					return ensureNotPoisonPill(queue.poll());
+					return (T)nillSafe(ensureNotPoisonPill(queue.poll()));
 			}
 			if(!open && queue.size()==0)
 				throw new ClosedQueueException();

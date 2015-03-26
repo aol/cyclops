@@ -60,9 +60,7 @@ public class Runner {
 					throw new ClosedQueueException();
 					
 				});
-			//	continuation needs to  return a tuple
-			//			when f completes exceptionally with a filtered result
-			//			ensureOpen needs to call proceed again
+			
 				cont[0] =  new Continuation( () -> {	
 					try {
 						
