@@ -68,7 +68,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		this.retrier = Optional.ofNullable(retrier).orElse(
 				RetryBuilder.getDefaultInstance());
 		this.waitStrategy = new LimitingMonitor();
-		this.lazyCollector = new BatchingCollector<>();
+		this.lazyCollector = new BatchingCollector<>(this);
 		this.queueFactory = QueueFactories.unboundedQueue();//QueueFactories.boundedQueue(lazyCollector.getMaxActive().getMaxActive());
 		this.subscription = new Subscription();
 		
