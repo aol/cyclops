@@ -1,6 +1,5 @@
 package com.aol.simple.react.lazy;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -12,9 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -29,11 +26,9 @@ import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.QueueFactories;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.eager.EagerFutureStream;
-import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.FutureStream;
-import com.aol.simple.react.threads.ReactPool;
 import com.aol.simple.react.threads.SequentialElasticPools;
 import com.google.common.collect.ImmutableMap;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
@@ -462,7 +457,7 @@ public class Tutorial {
 	/**
 	 * create a stream of time intervals in seconds
 	 */
-	@Test
+	@Test @Ignore
 	public void secondsTimeInterval() {
 		List<Collection<Integer>> collected = LazyFutureStream
 				.sequentialCommonBuilder().iterateInfinitely(0, it -> it + 1)
