@@ -12,16 +12,21 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 
+import com.aol.simple.react.async.Subscription;
 import com.aol.simple.react.generators.Generator;
 import com.aol.simple.react.generators.ReactIterator;
 import com.aol.simple.react.stream.BaseLazySimpleReact;
+import com.aol.simple.react.stream.InfiniteClosingSpliterator;
+import com.aol.simple.react.stream.InfiniteProcessingException;
 import com.aol.simple.react.stream.ThreadPools;
+import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -247,7 +252,22 @@ public class LazyReact extends BaseLazySimpleReact {
 		
 		return (LazyFutureStream)super.reactInfinitely(s);
 	}
+	/**
+	 * Generate an infinite reactive flow. Requires a lazy flow. Supplier may be executed multiple times in parallel asynchronously by populating thread.
+	 * Active CompletableFutures may grow rapidly.
+	 * 
+	 * The flow will run indefinitely unless / until the provided Supplier throws an Exception
+	 * 
+	 * @see com.aol.simple.react.async.Queue   SimpleReact Queue for a way to create a more managable infinit flow
+	 * 
+	 * @param s Supplier to generate the infinite flow
+	 * @return Next stage in the flow
+	 */
+	public <U> LazyFutureStream< U> reactInfinitelyAsync(final Supplier<U> s) {
+		return (LazyFutureStream<U>)super.reactInfinitelyAsync(s);
+		
 
+	}
 	/* 
 	 * Create an Infinite LazyFutureStream using provided params
 	 * 

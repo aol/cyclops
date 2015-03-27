@@ -3,6 +3,7 @@ package com.aol.simple.react.stream.lazy;
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -38,9 +39,10 @@ import com.aol.simple.react.async.QueueFactory;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
-import com.aol.simple.react.stream.MissingValue;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
+import com.aol.simple.react.stream.eager.EagerFutureStream;
+import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.LazyToQueue;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
@@ -73,6 +75,35 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 
 	LazyFutureStream<U> withLastActive(StreamWrapper streamWrapper);
 
+	  /**
+     * Returns an {@link Optional} describing the first element of this stream,
+     * or an empty {@code Optional} if the stream is empty.  If the stream has
+     * no encounter order, then any element may be returned.
+     *
+     * <p>This is a <a href="package-summary.html#StreamOps">short-circuiting
+     * terminal operation</a>.
+     *
+     * @return an {@code Optional} describing the first element of this stream,
+     * or an empty {@code Optional} if the stream is empty
+     * @throws NullPointerException if the element selected is null
+     */
+    default Optional<U> findFirst(){
+    	List<U> results = new ArrayList<>();
+    	this.run(()->results);
+    	if(results.size()==0)
+    		return Optional.empty();
+    	return Optional.of(results.get(0));
+    }
+	
+	/**
+	 * Convert between an Lazy and Eager future stream,
+	 * can be used to take advantages of each approach during a single Stream
+	 * 
+	 * @return An EagerFutureStream from this LazyFutureStream, will use the same executors
+	 */
+	default EagerFutureStream<U> convertToEagerStream(){
+		return new EagerReact(getTaskExecutor()).withRetrier(getRetrier()).fromStream((Stream)getLastActive().stream());
+	}
 	
 	
 	default <R> LazyFutureStream<R> map(Function<? super U, ? extends R> mapper) {
@@ -885,8 +916,8 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 * 
 	 *      
 	 */
-	default Seq<Tuple2<U, Long>> zipWithIndex() {
-		return FutureStream.super.zipWithIndex();
+	default LazyFutureStream<Tuple2<U, Long>> zipWithIndex() {
+		return (LazyFutureStream)fromStream(FutureStream.super.zipWithIndex());
 	}
 
 	/**

@@ -11,15 +11,78 @@ import org.junit.Test;
 
 import static org.hamcrest.Matchers.*;
 
+import com.aol.simple.react.stream.eager.EagerFutureStream;
 import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
 
 public class LazyTest {
 
-	@Test @Ignore 
+	int slow(){
+		try {
+			Thread.sleep(150);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 3;
+	}
+	
+	@Test
+	public void convertToEager(){
+		
+		
+		
+		
+		assertThat(LazyFutureStream.parallelCommonBuilder()
+						.react(()->slow(),()->1,()->2)
+						.peek(System.out::println)
+						.convertToEagerStream()
+						.zipWithIndex()
+						.block().size(),is(3));
+						
+	}
+
+	@Test
+	public void convertToEagerAndBack(){
+		
+		
+		
+		
+		assertThat(LazyFutureStream.parallelCommonBuilder()
+						.react(()->slow(),()->1,()->2)
+						.peek(System.out::println)
+						.convertToEagerStream()
+						.zipWithIndex()
+						.peek(System.out::println)
+						.convertToLazyStream()
+						.map(it->slow())
+						.peek(System.out::println)
+						.block().size(),is(3));
+						
+	}
+	
+	@Test
+	public void zipWithIndexApi(){
+		LazyFutureStream.parallelCommonBuilder()
+		.react(() -> 2, () -> 1, () -> 2)
+		
+		.zipWithIndex()
+		.peek(System.out::println)
+		.map(it -> {
+			if (it.v1 == 1) {
+				sleep(1000);
+				return -1;
+			}
+			return it.v1 + 100;
+		})
+		.peek(System.out::println)
+		.forEach(System.out::println);
+	}
+	@Test 
 	public void debounce() {
 		System.out.println(LazyFutureStream.sequentialCommonBuilder()
 				.fromPrimitiveStream(IntStream.range(0, 1000000))
+				.limit(100)
 				.debounce(100, TimeUnit.MILLISECONDS)
 				.peek(System.out::println)
 				.block().size());

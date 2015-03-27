@@ -62,8 +62,8 @@ public class EagerSequentialSeqTest extends BaseSequentialSeqTest {
 		
 		System.out.println(cols.get(0));
 		assertThat(cols.size(),greaterThan(0)); //anything else is non-deterministic
-		if(cols.size()>1)
-			assertThat(cols.get(1).size(),is(0));
+	//	if(cols.size()>1)
+	//		assertThat(cols.get(1).size(),is(0));
 		
 		
 	

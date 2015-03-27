@@ -10,14 +10,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.simple.react.base.BaseSequentialSeqTest;
@@ -45,20 +43,20 @@ public class LazySequentialSeqTest extends BaseSequentialSeqTest {
 		
 		Collection two = it.next();
 		
-		assertThat(one.size(),is(6));
-		assertThat(two.size(),is(0));
+		assertThat(one.size(),is(1));
+		assertThat(two.size(),is(1));
 		
 	
 		
 	}
 	
-	@Test
+	@Test 
 	public void batchSinceLastRead() throws InterruptedException{
 		List<Collection> cols = of(1,2,3,4,5,6).chunkSinceLastRead().peek(it->{sleep(50);}).collect(Collectors.toList());
 		
 		System.out.println(cols.get(0));
-		assertThat(cols.get(0).size(),is(6));
-		assertThat(cols.size(),is(1));
+		assertThat(cols.get(0).size(),is(1));
+		assertThat(cols.size(),is(6));
 		
 		
 	

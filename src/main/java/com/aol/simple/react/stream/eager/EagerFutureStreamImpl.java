@@ -74,7 +74,7 @@ public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 		this.retrier = Optional.ofNullable(retrier).orElse(
 				RetryBuilder.getDefaultInstance());
 		this.waitStrategy = new LimitingMonitor();
-		this.lazyCollector = new BatchingCollector<>();
+		this.lazyCollector = new BatchingCollector<>(this);
 		this.queueFactory = QueueFactories.unboundedQueue();
 		subscription = new AlwaysContinue();
 		
