@@ -42,6 +42,7 @@ import com.google.common.collect.Lists;
 public class Queue<T> implements Adapter<T> {
 
 	private final static PoisonPill POISON_PILL = new PoisonPill();
+	private final static PoisonPill CLEAR_PILL = new PoisonPill();
 	private final ExceptionSoftener softener = ExceptionSoftener.singleton.factory
 			.getInstance();
 	private volatile boolean open = true;
@@ -61,6 +62,7 @@ public class Queue<T> implements Adapter<T> {
 	
 	@Setter
 	private  volatile Continuation continuation;
+	private volatile boolean shuttingDown = false;
 
 
 	/**
@@ -162,15 +164,15 @@ public class Queue<T> implements Adapter<T> {
 					continuation = continuation.proceed();
 				}
 				if(queue.size()>0)
-					return (T)nillSafe(ensureNotPoisonPill(queue.poll()));
+					return (T)nillSafe(ensureNotPoisonPill(ensureClear(queue.poll())));
 			}
 			if(!open && queue.size()==0)
 				throw new ClosedQueueException();
 		
 			if (timeout == -1)
-				data = queue.take();
+				data = ensureClear(queue.take());
 			else {
-				data = queue.poll(timeout, timeUnit);
+				data = ensureClear(queue.poll(timeout, timeUnit));
 				if (data == null)
 					throw new QueueTimeoutException();
 			}
@@ -185,6 +187,17 @@ public class Queue<T> implements Adapter<T> {
 
 		return (T)nillSafe(data);
 		
+	}
+
+	private T ensureClear(T poll) {
+		if(CLEAR_PILL==poll){
+			if(queue.size()>0)
+				poll = ensureClear(queue.poll());
+	
+			this.queue.clear();
+		}
+	
+		return poll;
 	}
 
 	private T ensureNotPoisonPill(T data) {
@@ -292,6 +305,7 @@ public class Queue<T> implements Adapter<T> {
 	}
 
 	private Object nillSafe(T data) {
+		
 		if(NILL==data)
 			return null;
 		else
@@ -312,19 +326,24 @@ public class Queue<T> implements Adapter<T> {
 	@Override
 	public boolean close() {
 		this.open = false;
-		
+	
 		if(this.queue.remainingCapacity()>0){
 			for(int i=0;i<Math.min(maxPoisonPills, listeningStreams.get());i++){
-				queue.add((T)POISON_PILL);
+				add((T)POISON_PILL);
+			
 			}
 		}
+		
 
 		return true;
 	}
 	
 	public void closeAndClear(){
+	
 		this.open = false;
-		queue.clear();
+		
+		add((T)CLEAR_PILL);
+	
 	}
 	
 	public static final NIL NILL = new NIL();

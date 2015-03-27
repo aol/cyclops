@@ -67,54 +67,65 @@ public class SignalTest {
 	
 	@Test
 	public void signalDiscrete1(){
-		try{
-			Signal<Integer> q = Signal.queueBackedSignal();
-			
-			
-			new SimpleReact().react(() -> q.set(1), ()-> q.set(1),()-> {sleep(200); return q.set(1); }, ()-> { sleep(400); q.getDiscrete().close(); return 1;});
-			
-			
-			
-			parallel().fromStream(q.getDiscrete().streamCompletableFutures())
-					.then(it -> "*" +it)
-					.peek(it -> incrementFound())
-					.peek(it -> System.out.println(it))
-					.runOnCurrent();
-			
-			
-			
-			
+		for(int i=0;i<100;i++){
+			resetFound();
+			try{
+				Signal<Integer> q = Signal.queueBackedSignal();
 				
-		}finally{
-			assertThat(found,is(1));
+				
+				new SimpleReact().react(() -> q.set(1), ()-> q.set(1),()-> {sleep(200); return q.set(1); }, ()-> { sleep(40); q.close(); return 1;});
+				
+				
+				
+				parallel().fromStreamCompletableFuture(q.getDiscrete().streamCompletableFutures())
+						.then(it -> "*" +it)
+						.peek(it -> incrementFound())
+						.peek(it -> System.out.println(it))
+						.block();
+				
+				
+				
+				
+					
+			}finally{
+				assertThat(found,is(1));
+			}
 		}
 		
 		
 	}
+	private synchronized void resetFound() {
+		found=0;
+		
+	}
+
 	@Test
 	public void signalContinuous3(){
-		try{
-			Signal<Integer> q =Signal.queueBackedSignal();
-			
-			
-			new SimpleReact().react(() -> q.set(1), ()-> q.set(1),()-> {sleep(200); return q.set(1); }, ()-> { sleep(400); q.close(); return 1;});
-			
-			
-			
-			parallel().fromStream(q.getContinuous().streamCompletableFutures())
-					.then(it -> "*" +it)
-					.peek(it -> incrementFound())
-					.peek(it -> System.out.println(it))
-					.runOnCurrent();
-			
-			
-			
-			
+		for(int i=0;i<100;i++){
+			System.out.println(i);
+			resetFound();
+			try{
+				Signal<Integer> q =Signal.queueBackedSignal();
 				
-		}finally{
-			assertThat(found,is(3));
+				
+				new SimpleReact().react(() -> q.set(1), ()-> q.set(1),()-> {sleep(20); return q.set(1); }, ()-> { sleep(40); q.close(); return 1;});
+				
+				
+				
+				parallel().fromStream(q.getContinuous().streamCompletableFutures())
+						.then(it -> "*" +it)
+						.peek(it -> incrementFound())
+						.peek(it -> System.out.println(it))
+						.block();
+				
+				
+				
+				
+					
+			}finally{
+				assertThat(found,is(3));
+			}
 		}
-		
 		
 	}
 	

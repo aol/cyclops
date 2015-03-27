@@ -12,21 +12,16 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 
-import com.aol.simple.react.async.Subscription;
 import com.aol.simple.react.generators.Generator;
 import com.aol.simple.react.generators.ReactIterator;
 import com.aol.simple.react.stream.BaseLazySimpleReact;
-import com.aol.simple.react.stream.InfiniteClosingSpliterator;
-import com.aol.simple.react.stream.InfiniteProcessingException;
 import com.aol.simple.react.stream.ThreadPools;
-import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -40,13 +35,16 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 @Wither
 @AllArgsConstructor
 public class LazyReact extends BaseLazySimpleReact {
-
+	
 	@Getter
 	private final ExecutorService executor;
 	@Getter
 	private final RetryExecutor retrier;
 	@Getter
 	private final boolean eager = false;
+	
+	
+	
 
 	/**
 	 * Construct a LazyReact builder using standard thread pool.
@@ -56,6 +54,7 @@ public class LazyReact extends BaseLazySimpleReact {
 	 * @see ThreadPools#getStandard()
 	 */
 	public LazyReact(){
+		
 		this( ThreadPools.getStandard());
 		
 	}
@@ -65,10 +64,14 @@ public class LazyReact extends BaseLazySimpleReact {
 	 * @param executor ExecutorService to use
 	 */
 	public LazyReact(ExecutorService executor) {
+		
 		this.executor = executor;
 		this.retrier = null;
 		
+		
+		
 	}
+	
 	
 	@Override
 	public <U> LazyFutureStream<U> construct(Stream s,
@@ -308,5 +311,7 @@ public class LazyReact extends BaseLazySimpleReact {
 		
 		return (LazyFutureStream)super.reactI(actions);
 	}
+	
+	
 
 }

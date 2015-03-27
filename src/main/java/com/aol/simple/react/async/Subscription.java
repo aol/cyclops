@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -89,6 +90,10 @@ public class Subscription implements Continueable{
 		return Seq.seq(queues.stream()).splitAt(findQueue(queue)).v2.map(limits::get).map(AtomicLong::get).collect(Collectors.toList());
 		
 	}
+	private Seq<Queue> queuesToLeft(Queue queue) {
+		return Seq.seq(queues.stream()).splitAt(findQueue(queue)).v1;
+		
+	}
 	
 	private int findQueue(Queue queue){
 		for(int i=0;i< queues.size();i++){
@@ -98,10 +103,20 @@ public class Subscription implements Continueable{
 		return -1;
 	}
 	@Override
-	public void closeAll() {
+	public void closeAll(Queue queue) {
 		
+	
 		closed.set(true);
+		queue.closeAndClear();
+		queuesToLeft(queue).forEach(Queue::closeAndClear);
+	
+	}
+	public void closeAll() {
+			
+		closed.set(true);
+	
 		queues.stream().forEach(Queue::closeAndClear);
+	
 		
 	}
 	@Override

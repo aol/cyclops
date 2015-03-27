@@ -17,24 +17,30 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.simple.react.async.Queue;
+import com.aol.simple.react.stream.CloseableIterator;
+import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.util.SimpleTimer;
 import com.google.common.collect.ImmutableMap;
@@ -585,24 +591,52 @@ public abstract class BaseSeqTest {
 	    }
 
 	    @Test
-	    public void testSplitAt() {
-	        Supplier<Seq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
-
-	        assertEquals(asList(), s.get().splitAt(0).v1.toList());
-	        assertTrue(s.get().splitAt(0).v2.toList().containsAll(asList(1, 2, 3, 4, 5, 6)));
-
-	        assertEquals(1, s.get().splitAt(1).v1.toList().size());
-	        assertEquals(s.get().splitAt(1).v2.toList().size(),5);
-
-	        assertEquals(3, s.get().splitAt(3).v1.toList().size());
-	        assertEquals(3, s.get().splitAt(3).v2.toList().size());
-
-	        assertEquals(6, s.get().splitAt(6).v1.toList().size());
-	        assertEquals(asList(), s.get().splitAt(6).v2.toList());
-
-	        assertTrue(s.get().splitAt(7).v1.toList().containsAll(asList(1, 2, 3, 4, 5, 6)));
-	        assertEquals(asList(), s.get().splitAt(7).v2.toList());
+	    public void testPartition100(){
+	    	
+	    	for(int i=0;i<0;i++){
+		    	Supplier<Seq<Tuple2<Integer,Integer>>> s = ()-> of(tuple(1, 0),tuple(2, 1), tuple(3, 2), tuple(4, 3), tuple(5, 4), tuple(6, 5));
+		    	
+		    	Tuple2<Seq<Tuple2<Integer, Integer>>, Seq<Tuple2<Integer, Integer>>> tuple = s.get().partition(t -> t.v2 < 3);
+		    	
+		    	Tuple2<Seq<Integer>, Seq<Integer>> t2 = tuple.map((v1, v2) -> Tuple.<Seq<Integer>, Seq<Integer>>tuple(
+		                v1.map(t -> t.v1),
+		                v2.map(t -> t.v1)
+		            ));
+		            
+		    	List l1 = t2.v1.toList();
+		    	System.out.println("l1:" +l1);
+		    	List l2 = t2.v2.toList();
+		    	 System.out.println("l2:"+l2);
+		    	assertThat(l1.size(),is(3));
+		    	assertThat(l2.size(),is(3));
+	    	}
+	    	
 	    }
+	
+	@Test
+	public void testSplitAt() {
+		for (int i = 0; i < 1000; i++) {
+			Supplier<Seq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+
+			assertEquals(asList(), s.get().splitAt(0).v1.toList());
+			assertTrue(s.get().splitAt(0).v2.toList().containsAll(
+					asList(1, 2, 3, 4, 5, 6)));
+
+			assertEquals(1, s.get().splitAt(1).v1.toList().size());
+			assertEquals(s.get().splitAt(1).v2.toList().size(), 5);
+
+			assertEquals(3, s.get().splitAt(3).v1.toList().size());
+
+			assertEquals(3, s.get().splitAt(3).v2.count());
+
+			assertEquals(6, s.get().splitAt(6).v1.toList().size());
+			assertEquals(asList(), s.get().splitAt(6).v2.toList());
+
+			assertThat(s.get().splitAt(7).v1.toList().size(), is(6));
+			assertEquals(asList(), s.get().splitAt(7).v2.toList());
+
+		}
+	}
 
 	    @Test
 	    public void testSplitAtHead() {

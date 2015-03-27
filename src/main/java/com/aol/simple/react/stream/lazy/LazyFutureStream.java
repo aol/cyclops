@@ -75,6 +75,9 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 
 	LazyFutureStream<U> withLastActive(StreamWrapper streamWrapper);
 
+	default void closeAll(){
+		getSubscription().closeAll();
+	}
 	  /**
      * Returns an {@link Optional} describing the first element of this stream,
      * or an empty {@code Optional} if the stream is empty.  If the stream has
