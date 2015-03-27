@@ -90,6 +90,7 @@ public class Signal<T> {
 	 * 
 	 */
 	public void close(){
+		
 		continuous.close();
 		discrete.close();
 	}

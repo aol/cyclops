@@ -333,6 +333,7 @@ public class Queue<T> implements Adapter<T> {
 			
 			}
 		}
+		
 
 		return true;
 	}

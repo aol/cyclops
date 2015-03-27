@@ -8,7 +8,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 
 sourceCompatibility = 1.8
-version = '0.81'
+version = '0.82'
 jar {
     manifest {
         attributes 'Implementation-Title': 'Simple React', 'Implementation-Version': version
@@ -57,7 +57,7 @@ modifyPom {
 
 		groupId 'com.aol.simplereact'
 		artifactId 'simple-react'
-		version '0.81'
+		version '0.82'
 		
 		scm {
 			url 'scm:git@github.com:aol/simple-react.git'
