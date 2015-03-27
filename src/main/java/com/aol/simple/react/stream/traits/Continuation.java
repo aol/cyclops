@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class Continuation {
 
-	Supplier<Continuation> remainderOfWorkToBeDone;
+	private final Supplier<Continuation> remainderOfWorkToBeDone;
 	
 	public Continuation proceed(){
 		return remainderOfWorkToBeDone.get();
