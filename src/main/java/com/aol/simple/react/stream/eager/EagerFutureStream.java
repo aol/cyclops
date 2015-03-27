@@ -1296,7 +1296,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * @see Stream#of(Object)
 	 */
 	static <T> EagerFutureStream<T> of(T value) {
-		return futureStream((Stream) EagerFutureStream.of(value));
+		return futureStream((Stream) Stream.of(value));
 	}
 
 	/**
