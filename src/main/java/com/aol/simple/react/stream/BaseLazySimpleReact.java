@@ -6,10 +6,15 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.StreamSupport;
 
+import lombok.AllArgsConstructor;
+
 import com.aol.simple.react.async.Subscription;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 
 public abstract class BaseLazySimpleReact extends BaseSimpleReact{
+	
+	
+	
 	/**
 	 * Generate an infinite reactive flow. Requires a lazy flow. Supplier will be executed multiple times sequentially / syncrhonously by populating thread.
 	 * 

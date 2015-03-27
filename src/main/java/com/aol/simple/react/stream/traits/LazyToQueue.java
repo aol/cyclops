@@ -30,7 +30,7 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 
 		
 		
-		Continuation continuation = then(queue::offer).runContinuation(() -> {
+		Continuation continuation = then(queue::add).runContinuation(() -> {
 			queue.close(); });
 		queue.setContinuation(continuation);
 		return queue;
@@ -39,7 +39,7 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 	default Queue<U> toQueue(Function<Queue, Queue> fn) {
 		Queue<U> queue = fn.apply(this.getQueueFactory().build());
 
-		Continuation continuation = then(queue::offer).runContinuation(() -> {
+		Continuation continuation = then(queue::add).runContinuation(() -> {
 			queue.close();
 			
 		});

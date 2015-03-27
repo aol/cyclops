@@ -1133,11 +1133,13 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	@Override
 	default CloseableIterator<U> iterator() {
 
+		Queue<U> q = toQueue();
 		if (getSubscription().closed())
 			return new CloseableIterator<>(Arrays.<U> asList().iterator(),
-					getSubscription());
-		return new CloseableIterator<>(toQueue().stream(getSubscription())
-				.iterator(), getSubscription());
+					getSubscription(),null);
+		
+		return new CloseableIterator<>(q.stream(getSubscription())
+				.iterator(), getSubscription(),q);
 	}
 
 	/*

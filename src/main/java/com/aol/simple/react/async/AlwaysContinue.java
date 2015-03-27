@@ -19,7 +19,7 @@ public class AlwaysContinue implements Continueable{
 	}
 
 	@Override
-	public void closeAll() {
+	public void closeAll(Queue queue) {
 		
 		
 	}
@@ -33,6 +33,12 @@ public class AlwaysContinue implements Continueable{
 	@Override
 	public void closeQueueIfFinishedStateless(Queue queue) {
 		
+		
+	}
+
+	@Override
+	public void closeAll() {
+		// TODO Auto-generated method stub
 		
 	}
 }

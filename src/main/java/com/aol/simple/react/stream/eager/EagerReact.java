@@ -57,10 +57,12 @@ public class EagerReact extends BaseSimpleReact{
 	 * @param executor ExecutorService to use
 	 */
 	public EagerReact(ExecutorService executor) {
+		
 		this.executor = executor;
 		this.retrier = null;
 		
 	}
+	
 
 	@Override
 	public <U> EagerFutureStream<U> construct(Stream s,

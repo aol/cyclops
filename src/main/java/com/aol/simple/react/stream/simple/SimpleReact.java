@@ -72,9 +72,13 @@ public class SimpleReact  extends BaseLazySimpleReact{
 	 * @param executor Executor this SimpleReact instance will use to execute concurrent tasks.
 	 */
 	public SimpleReact(ExecutorService executor) {
-	
 		this.executor = executor;
 		this.retrier = null;
+		this.eager =true;
+	}
+	public SimpleReact(ExecutorService executor,RetryExecutor retrier) {
+		this.executor = executor;
+		this.retrier = retrier;
 		this.eager =true;
 	}
 	
@@ -298,6 +302,7 @@ public class SimpleReact  extends BaseLazySimpleReact{
 	}
 	
 	SimpleReact(boolean eager){
+		
 		this.executor = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
 		this.eager =eager;
 		retrier= null;

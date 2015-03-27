@@ -12,6 +12,9 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import com.aol.simple.react.generators.Generator;
 import com.aol.simple.react.generators.ParallelGenerator;
 import com.aol.simple.react.generators.ReactIterator;
@@ -21,12 +24,13 @@ import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.google.common.annotations.VisibleForTesting;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
-
+@AllArgsConstructor
 public abstract class BaseSimpleReact {
 
 	protected abstract ExecutorService getExecutor();
 	protected abstract boolean isEager();
 	protected abstract  RetryExecutor getRetrier();
+	
 	
 	public abstract <U>  SimpleReactStream<U> construct(Stream s, ExecutorService e, RetryExecutor r, boolean eager,
 			List<CompletableFuture> org);

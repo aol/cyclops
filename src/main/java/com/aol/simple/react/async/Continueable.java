@@ -7,9 +7,11 @@ public interface Continueable {
 	public void addQueue(Queue queue);
 	public void registerSkip(long skip);
 	public void registerLimit(long limit);
-	public void closeAll();
+	public void closeAll(Queue q);
 
 	public boolean closed();
 
 	public void closeQueueIfFinishedStateless(Queue queue);
+
+	public void closeAll();
 }
