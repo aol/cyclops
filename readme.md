@@ -41,7 +41,7 @@ For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:
 
 ##Documentation
 
-
+* [Reactive programming with Java 8 and simple-react: The Tutorial](https://medium.com/@johnmcclean/reactive-programming-with-java-8-and-simple-react-the-tutorial-3634f512eeb1)
 * [wiki](https://github.com/aol/simple-react/wiki)
 * [Javadoc](http://www.javadoc.io/doc/com.aol.simplereact/simple-react/0.82)
 * [Articles on medium](https://medium.com/search?q=simplereact)
