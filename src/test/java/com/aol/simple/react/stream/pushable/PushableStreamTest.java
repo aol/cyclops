@@ -1,6 +1,7 @@
 package com.aol.simple.react.stream.pushable;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.Collections;
@@ -18,14 +19,6 @@ import org.mockito.internal.util.collections.Sets;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.Signal;
 import com.aol.simple.react.stream.lazy.LazyFutureStream;
-import com.aol.simple.react.stream.pushable.MultiPushableLazyFutureStream;
-import com.aol.simple.react.stream.pushable.MultiPushableSeq;
-import com.aol.simple.react.stream.pushable.MultiPushableStream;
-import com.aol.simple.react.stream.pushable.MultiplePushableStreamsBuilder;
-import com.aol.simple.react.stream.pushable.PushableLazyFutureStream;
-import com.aol.simple.react.stream.pushable.PushableSeq;
-import com.aol.simple.react.stream.pushable.PushableStream;
-import com.aol.simple.react.stream.pushable.PushableStreamBuilder;
 import com.aol.simple.react.threads.SequentialElasticPools;
 import com.google.common.collect.Lists;
 

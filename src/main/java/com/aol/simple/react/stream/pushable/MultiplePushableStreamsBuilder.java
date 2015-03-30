@@ -30,7 +30,7 @@ public class MultiplePushableStreamsBuilder<T>  {
 	 * Create a pushable LazyFutureStream using the supplied ReactPool
 	 * 
 	 * @param s ReactPool to use to create the Stream
-	 * @return a Tuple2 with a Topic<T> and LazyFutureStream<T> - add data to the Queue
+	 * @return a Tuple2 with a Topic&lt;T&gt; and LazyFutureStream&lt;T&gt; - add data to the Queue
 	 * to push it to the Stream
 	 */
 	public  LazyFutureStream<T> pushable(ReactPool<LazyReact> s){
@@ -41,7 +41,7 @@ public class MultiplePushableStreamsBuilder<T>  {
 
 	/**
 	 * Create a pushable JDK 8 Stream
-	 * @return a Tuple2 with a Topic<T> and Stream<T> - add data to the Queue
+	 * @return a Tuple2 with a Topic&lt;T&gt; and Stream&lt;T&gt; - add data to the Queue
 	 * to push it to the Stream
 	 */
 	public   Stream<T> pushableStream(){
@@ -52,7 +52,7 @@ public class MultiplePushableStreamsBuilder<T>  {
 	/**
 	 * Create a pushable org.jooq.lambda.Seq
 	 * 
-	 * @return a Tuple2 with a Topic<T> and Seq<T> - add data to the Queue
+	 * @return a Tuple2 with a Topic&lt;T&gt; and Seq&lt;T&gt; - add data to the Queue
 	 * to push it to the Stream
 	 */
 	public Seq<T> pushableSeq(){
@@ -64,7 +64,7 @@ public class MultiplePushableStreamsBuilder<T>  {
 	 * Create a pushable LazyFutureStream. This will call LazyFutureStream#futureStream(Stream) which creates
 	 * a sequential LazyFutureStream
 	 * 
-	  @return a Tuple2 with a Queue<T> and LazyFutureStream<T> - add data to the Queue
+	  @return a Tuple2 with a Queue&lt;T&gt; and LazyFutureStream&lt;T&gt; - add data to the Queue
 	 * to push it to the Stream
 	 */
 	public  <T> LazyFutureStream<T> pushableLazyFutureStream(){

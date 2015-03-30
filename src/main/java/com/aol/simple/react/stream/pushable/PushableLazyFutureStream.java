@@ -9,8 +9,8 @@ import com.aol.simple.react.stream.lazy.LazyFutureStream;
 
 /**
  * A more concrete Tuple2 impl
- * v1 is Queue<T>
- * v2 is LazyFutureStream<T>
+ * v1 is Queue&lt;T&gt;
+ * v2 is LazyFutureStream&lt;T&gt;
  * 
  * @author johnmcclean
  *

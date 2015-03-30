@@ -50,7 +50,7 @@ public class PushableStreamBuilder{
 	 * Create a pushable LazyFutureStream using the supplied ReactPool
 	 * 
 	 * @param s ReactPool to use to create the Stream
-	 * @return a Tuple2 with a Queue<T> and LazyFutureStream<T> - add data to the Queue
+	 * @return a Tuple2 with a Queue&lt;T&gt; and LazyFutureStream&lt;T&gt; - add data to the Queue
 	 * to push it to the Stream
 	 */
 	public  <T>  PushableLazyFutureStream<T> pushable(ReactPool<LazyReact> s){
@@ -62,7 +62,7 @@ public class PushableStreamBuilder{
 
 	/**
 	 * Create a pushable JDK 8 Stream
-	 * @return a Tuple2 with a Queue<T> and Stream<T> - add data to the Queue
+	 * @return a Tuple2 with a Queue&lt;T&gt; and Stream&lt;T&gt; - add data to the Queue
 	 * to push it to the Stream
 	 */
 	public  <T>  PushableStream<T> pushableStream(){
@@ -73,7 +73,7 @@ public class PushableStreamBuilder{
 	/**
 	 * Create a pushable org.jooq.lambda.Seq
 	 * 
-	 * @return a Tuple2 with a Queue<T> and Seq<T> - add data to the Queue
+	 * @return a Tuple2 with a Queue&lt;T&gt; and Seq&lt;T&gt; - add data to the Queue
 	 * to push it to the Stream
 	 */
 	public<T>  PushableSeq<T> pushableSeq(){
@@ -85,7 +85,7 @@ public class PushableStreamBuilder{
 	 * Create a pushable LazyFutureStream. This will call LazyFutureStream#futureStream(Stream) which creates
 	 * a sequential LazyFutureStream
 	 * 
-	  @return a Tuple2 with a Queue<T> and LazyFutureStream<T> - add data to the Queue
+	  @return a Tuple2 with a Queue&lt;T&gt; and LazyFutureStream&lt;T&gt; - add data to the Queue
 	 * to push it to the Stream
 	 */
 	public <T>  PushableLazyFutureStream<T> pushableLazyFutureStream(){
@@ -107,7 +107,7 @@ public class PushableStreamBuilder{
 	 * Create a pushable org.jooq.lambda.Seq
 	 * 
 	 * @param adapter Adapter to create a Seq from
-	 * @return A Seq that will accept inout from a supplied adapter
+	 * @return A Seq that will accept input from a supplied adapter
 	 */
 	public <T> Seq<T> pushableSeq(Adapter<T> adapter){
 		
@@ -126,6 +126,9 @@ public class PushableStreamBuilder{
 		return LazyFutureStream.futureStream((Stream<T>)adapter.stream());
 	}
 	
+	/**
+	 * @return a builder that will use Topics to allow multiple Streams from the same data
+	 */
 	public <T> MultiplePushableStreamsBuilder<T> multiple(){
 		return new MultiplePushableStreamsBuilder<T>(createQueue());
 	}

@@ -11,8 +11,8 @@ import com.aol.simple.react.async.Queue;
 
 /**
  * A more concrete Tuple2 impl
- * v1 is Queue<T>
- * v2 is Stream<T>
+ * v1 is Queue&lt;T&gt;
+ * v2 is Stream&lt;T&gt;
  * 
  * @author johnmcclean
  *
