@@ -27,10 +27,13 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 @AllArgsConstructor
 public abstract class BaseSimpleReact {
 
+	
 	protected abstract ExecutorService getExecutor();
 	protected abstract boolean isEager();
 	protected abstract  RetryExecutor getRetrier();
 	
+	protected abstract boolean isAsync() ;
+//	public abstract BaseSimpleReact withAsync(boolean b) ;
 	
 	public abstract <U>  SimpleReactStream<U> construct(Stream s, ExecutorService e, RetryExecutor r, boolean eager,
 			List<CompletableFuture> org);

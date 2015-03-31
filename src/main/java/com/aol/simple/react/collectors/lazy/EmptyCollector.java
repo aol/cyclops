@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.experimental.Wither;
 
 import com.aol.simple.react.config.MaxActive;
+import com.aol.simple.react.stream.traits.BlockingStream;
 @Wither
 @AllArgsConstructor
 public class EmptyCollector<T> implements LazyResultConsumer<T> {
@@ -32,9 +33,19 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 		if(active.size()>maxActive.getMaxActive()){
 			
 			while(active.size()>maxActive.getReduceTo()){
-				LockSupport.parkNanos(0l);
+				
+				
+				
 				List<CompletableFuture> toRemove = active.stream().filter(cf -> cf.isDone()).collect(Collectors.toList());
 				active.removeAll(toRemove);
+				if(active.size()>maxActive.getReduceTo()){
+					CompletableFuture promise=  new CompletableFuture();
+					CompletableFuture.anyOf(active.toArray(new CompletableFuture[0]))
+									.thenAccept(cf -> promise.complete(true));
+					
+					promise.join();
+				}
+				
 					
 			}
 		}

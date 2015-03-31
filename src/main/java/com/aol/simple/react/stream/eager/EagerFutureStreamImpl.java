@@ -25,6 +25,7 @@ import com.aol.simple.react.collectors.lazy.BatchingCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 
@@ -36,17 +37,17 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 	
 
-	private final ExecutorService taskExecutor;
-	private final RetryExecutor retrier;
+
 	private final Optional<Consumer<Throwable>> errorHandler;
 	private final StreamWrapper lastActive;
 	private final boolean eager;
 	private final Consumer<CompletableFuture> waitStrategy;
 	private final LazyResultConsumer<U> lazyCollector;
 	private final QueueFactory<U> queueFactory;
-	private final BaseSimpleReact simpleReact;
+	private final EagerReact simpleReact;
 	private final Continueable subscription;
 	private final List<CompletableFuture> originalFutures;
+
 
 	/**
 	 * 
@@ -57,26 +58,23 @@ public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 	 * @param executor
 	 *            The next stage's tasks will be submitted to this executor
 	 */
-	public EagerFutureStreamImpl(final Stream<CompletableFuture<U>> stream,
-			final ExecutorService executor, final RetryExecutor retrier) {
-		this(stream,executor,retrier,null);
+	public EagerFutureStreamImpl(EagerReact eagerReact,final Stream<CompletableFuture<U>> stream) {
+		this(eagerReact, stream,null);
 	}
-	public EagerFutureStreamImpl(final Stream<CompletableFuture<U>> stream,
-			final ExecutorService executor, final RetryExecutor retrier,List<CompletableFuture> org) {
-		this.simpleReact = new EagerReact();
-		this.taskExecutor = Optional.ofNullable(executor).orElse(
-				new ForkJoinPool(Runtime.getRuntime().availableProcessors()));
+	public EagerFutureStreamImpl(EagerReact eagerReact, final Stream<CompletableFuture<U>> stream,List<CompletableFuture> org) {
+		this.simpleReact =eagerReact;
+
 		Stream s = stream;
 		this.lastActive = new StreamWrapper(s, true);
 		this.originalFutures = org!=null ? org : this.lastActive.list();
 		this.errorHandler = Optional.of((e) -> log.error(e.getMessage(), e));
 		this.eager = true;
-		this.retrier = Optional.ofNullable(retrier).orElse(
-				RetryBuilder.getDefaultInstance());
+
 		this.waitStrategy = new LimitingMonitor();
 		this.lazyCollector = new BatchingCollector<>(this);
 		this.queueFactory = QueueFactories.unboundedQueue();
 		subscription = new AlwaysContinue();
+
 		
 	}
 	
@@ -96,5 +94,45 @@ public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 		
 	}
 	
+	@Override
+	public EagerFutureStream<U> withAsync(boolean b) {
+		
+		return this.withSimpleReact(this.simpleReact.withAsync(b));
+	}
+
+
+
+	@Override
+	public ExecutorService getTaskExecutor() {
+		return this.simpleReact.getExecutor();
+	}
+
+
+
+	@Override
+	public RetryExecutor getRetrier() {
+		return this.simpleReact.getRetrier();
+	}
+
+
+
+	@Override
+	public boolean isAsync() {
+		return this.simpleReact.isAsync();
+	}
+
+
+
+	@Override
+	public EagerFutureStream<U> withTaskExecutor(ExecutorService e) {
+		return this.withSimpleReact(simpleReact.withExecutor(e));
+	}
+
+
+
+	@Override
+	public EagerFutureStream<U> withRetrier(RetryExecutor retry) {
+		return this.withSimpleReact(simpleReact.withRetrier(retry));
+	}
 	
 }

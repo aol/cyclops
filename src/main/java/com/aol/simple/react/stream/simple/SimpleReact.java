@@ -20,11 +20,10 @@ import com.aol.simple.react.generators.Generator;
 import com.aol.simple.react.generators.ParallelGenerator;
 import com.aol.simple.react.generators.ReactIterator;
 import com.aol.simple.react.generators.SequentialIterator;
-import com.aol.simple.react.stream.BaseLazySimpleReact;
+import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.InfiniteProcessingException;
 import com.aol.simple.react.stream.MissingValue;
 import com.aol.simple.react.stream.ThreadPools;
-import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.google.common.annotations.VisibleForTesting;
 import com.nurkiewicz.asyncretry.RetryExecutor;
@@ -40,20 +39,22 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 
 @Builder
 @Wither
-public class SimpleReact  extends BaseLazySimpleReact{
+public class SimpleReact  extends BaseSimpleReact{
 
 	@Getter
 	private final ExecutorService executor;
 	@Getter
 	private final RetryExecutor retrier;
 	@Getter
-	private final boolean eager;
-
+	private final boolean eager=true;
+	
+	
+	private final Boolean async;
 	
 	@Override
 	public <U> SimpleReactStream<U> construct(Stream s,
 			ExecutorService executor, RetryExecutor retrier, boolean eager, List<CompletableFuture> originalFutures) {
-		return  new SimpleReactStreamImpl<U>( s,executor, retrier,eager,originalFutures);
+		return  new SimpleReactStreamImpl<U>( this,s, originalFutures);
 	}
 	
 
@@ -74,12 +75,14 @@ public class SimpleReact  extends BaseLazySimpleReact{
 	public SimpleReact(ExecutorService executor) {
 		this.executor = executor;
 		this.retrier = null;
-		this.eager =true;
+		
+		this.async =true;
 	}
 	public SimpleReact(ExecutorService executor,RetryExecutor retrier) {
 		this.executor = executor;
 		this.retrier = retrier;
-		this.eager =true;
+		
+		this.async =true;
 	}
 	
 	
@@ -102,7 +105,7 @@ public class SimpleReact  extends BaseLazySimpleReact{
 	public <U> SimpleReactStream<U> fromStreamWithoutFutures(final Stream<U> stream) {
 		
 		Stream s = stream.map(it -> CompletableFuture.completedFuture(it));
-		return  new SimpleReactStreamImpl<U>( s,executor, retrier,eager);
+		return  new SimpleReactStreamImpl<U>( this, s,null);
 	}
 
 	public <U> SimpleReactStream<U> of(U...array){
@@ -183,34 +186,10 @@ public class SimpleReact  extends BaseLazySimpleReact{
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public <U> SimpleReactStream< U> react(final Supplier<U> s, Generator t) {
 
-		return new SimpleReactStreamImpl<U>(t.generate(s),
-				executor,retrier,eager);
-
-	}
-	/**
-	 * Generate an infinite reactive flow. Requires a lazy flow.
-	 * 
-	 * The flow will run indefinitely unless / until the provided Supplier throws an Exception
-	 * 
-	 * @see com.aol.simple.react.async.Queue   SimpleReact Queue for a way to create a more managable infinit flow
-	 * 
-	 * @param s Supplier to generate the infinite flow
-	 * @return Next stage in the flow
-	 */
-	public <U> SimpleReactStream< U> reactInfinitely(final Supplier<U> s) {
-		if(eager)
-			throw new InfiniteProcessingException("To reactInfinitely use a lazy stream");
-		return new SimpleReactStreamImpl<U>(Stream.generate(() -> CompletableFuture.completedFuture(s.get())),
-				executor,retrier,false);
+		return new SimpleReactStreamImpl<U>(this,t.generate(s),null);
 
 	}
 	
-	public <U> SimpleReactStream<U> iterateInfinitely(final U seed, final UnaryOperator<U> f){
-		if(eager)
-			throw new InfiniteProcessingException("To iterateInfinitely use a lazy stream");
-		return new SimpleReactStreamImpl<U>(Stream.iterate(seed, it -> f.apply(it)).map(it -> CompletableFuture.completedFuture(it)),
-				executor,retrier,false);
-	}
 	/**
 	 * Create a Sequential Generator that will trigger a Supplier to be called the specified number of times
 	 * 
@@ -253,7 +232,7 @@ public class SimpleReact  extends BaseLazySimpleReact{
 	public <U> SimpleReactStream<U> react(final Function<U,U> f,ReactIterator<U> t) {
 
 		Stream s = t.iterate(f);
-		return new SimpleReactStreamImpl<U>(s,executor,retrier,eager);
+		return new SimpleReactStreamImpl<U>(this,s,null);
 
 	}
 	/**
@@ -294,36 +273,29 @@ public class SimpleReact  extends BaseLazySimpleReact{
 	protected <U> SimpleReactStream<U> reactI(final Supplier<U>... actions) {
 		
 		
-			return new SimpleReactStreamImpl<U>(Stream.of(actions).map(
+			return new SimpleReactStreamImpl<U>(this,Stream.of(actions).map(
 				next -> CompletableFuture.supplyAsync(next, executor)),
-				executor,retrier,eager);
+				null);
 		
 		
 	}
 	
-	SimpleReact(boolean eager){
-		
-		this.executor = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
-		this.eager =eager;
-		retrier= null;
-	}
-	SimpleReact(ExecutorService executor,boolean eager) {
-		
-		this.executor = executor;
-		this.eager =eager;
-		retrier=  null;
-	}
 	
-	private SimpleReact(ExecutorService executor, RetryExecutor retrier,
-			Boolean eager) {
+	
+	public SimpleReact(ExecutorService executor, RetryExecutor retrier,
+			 Boolean async) {
 		
 		this.executor = Optional.ofNullable(executor).orElse(
 				new ForkJoinPool(Runtime.getRuntime().availableProcessors()));
 		this.retrier = retrier;
-		this.eager = Optional.ofNullable(eager).orElse(true);
+		
+		this.async = Optional.ofNullable(async).orElse(true);
 	}
 
-
+	public boolean isAsync(){
+		return async;
+	}
+	
 	
 		
 	

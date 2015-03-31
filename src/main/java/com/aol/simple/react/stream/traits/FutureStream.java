@@ -1464,4 +1464,14 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		return (FutureStream<R>) s1.withLastActive(new StreamWrapper(merged));
 	}
 
+	
+	default FutureStream<U> sync(){
+		return (FutureStream<U>)SimpleReactStream.super.sync();
+	}
+	
+
+	default FutureStream<U> async(){
+		return (FutureStream<U>) SimpleReactStream.super.async();
+	}
+	
 }

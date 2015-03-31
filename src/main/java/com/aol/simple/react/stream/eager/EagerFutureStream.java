@@ -54,6 +54,14 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 	
+	default EagerFutureStream<U> sync(){
+		return (EagerFutureStream<U>)FutureStream.super.sync();
+	}
+	default EagerFutureStream<U> async(){
+		return (EagerFutureStream<U>)FutureStream.super.async();
+	}
+
+	
 	/**
 	 * Convert between an Eager and Lazy future stream,
 	 * can be used to take advantages of each approach during a single Stream
@@ -1222,6 +1230,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	public static EagerReact parallelCommonBuilder() {
 		return EagerReact
 				.builder()
+				.async(true)
 				.executor(ThreadPools.getStandard())
 				.retrier(
 						RetryBuilder.getDefaultInstance().withScheduler(
@@ -1237,6 +1246,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	public static EagerReact sequentialBuilder() {
 		return EagerReact
 				.builder()
+				.async(false)
 				.executor(new ForkJoinPool(1))
 				.retrier(
 						RetryBuilder.getDefaultInstance().withScheduler(
@@ -1251,6 +1261,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	public static EagerReact sequentialCommonBuilder() {
 		return EagerReact
 				.builder()
+				.async(false)
 				.executor(ThreadPools.getCommonFreeThread())
 				.retrier(
 						RetryBuilder.getDefaultInstance().withScheduler(
@@ -1315,16 +1326,17 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	}
 
 	/**
-	 * Wrap a Stream into a FutureStream.
+	 * Wrap a Stream into a Sequential FutureStream.
 	 */
 	static <T> EagerFutureStream<T> futureStream(Stream<T> stream) {
 		if (stream instanceof FutureStream)
 			return (EagerFutureStream<T>) stream;
-
-		return new EagerFutureStreamImpl<T>(
-				stream.map(CompletableFuture::completedFuture),
-				ThreadPools.getSequential(), RetryBuilder.getDefaultInstance()
-						.withScheduler(ThreadPools.getSequentialRetry()));
+		EagerReact er = new EagerReact(
+		ThreadPools.getSequential(), RetryBuilder.getDefaultInstance()
+		.withScheduler(ThreadPools.getSequentialRetry()),false);
+		
+		return new EagerFutureStreamImpl<T>(er,
+				stream.map(CompletableFuture::completedFuture));
 	}
 
 	/**

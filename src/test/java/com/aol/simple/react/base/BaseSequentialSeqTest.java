@@ -52,6 +52,27 @@ public abstract class BaseSequentialSeqTest {
 		nonEmpty = of(1);
 	}
 	
+	@Test
+	public void syncTest(){
+		FutureStream stream = of(1,2,3,4).sync();
+		assertThat(stream.isAsync(),is(false));
+	}
+	@Test
+	public void asyncTest(){
+		FutureStream stream = of(1,2,3,4).async();
+		assertThat(stream.isAsync(),is(true));
+	}
+	@Test
+	public void syncAndAsyncTest(){
+		FutureStream stream = of(1,2,3,4).sync().async();
+		assertThat(stream.isAsync(),is(true));
+	}
+	@Test
+	public void asyncSyncTest(){
+		FutureStream stream = of(1,2,3,4).async().sync();
+		assertThat(stream.isAsync(),is(false));
+	}
+	
 	@Test @Ignore
 	public void firstOf(){
 		

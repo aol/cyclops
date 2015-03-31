@@ -164,8 +164,9 @@ public class LazySeqTest extends BaseSeqTest {
 		}).start();
 		;
 
-		int max = fast.getSizeSignal().getDiscrete().stream()
+		int max = fast.getSizeSignal().getContinuous().stream()
 				.mapToInt(it -> (int) it).limit(50).max().getAsInt();
+		
 		assertThat(max, lessThan(11));
 	}
 
