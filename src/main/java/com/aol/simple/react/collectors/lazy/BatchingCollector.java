@@ -86,7 +86,7 @@ public class BatchingCollector<T> implements LazyResultConsumer<T>{
 	 * @see com.aol.simple.react.collectors.lazy.LazyResultConsumer#getResults()
 	 */
 	public Collection<CompletableFuture<T>> getResults(){
-		
+		results.addAll(active);
 		return results;
 	}
 
