@@ -144,7 +144,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 		Seq seq = Seq.seq(getLastActive().stream().iterator()).zipWithIndex();
 		Seq<Tuple2<CompletableFuture<U>,Long>> withType = (Seq<Tuple2<CompletableFuture<U>,Long>>)seq;
 		Stream futureStream =  fromStream(withType.map(t ->t.v1.thenApplyAsync(v -> Tuple.tuple(t.v1.join(),t.v2))));
-		FutureStream noType = fromStreamCompletableFuture(futureStream);
+		FutureStream noType = fromStreamOfFutures(futureStream);
 		
 		return (LazyFutureStream<Tuple2<U,Long>>)noType;
 		
@@ -169,8 +169,8 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 		Stream stream = getLastActive().stream();
 		Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>> duplicated = Seq
 				.seq((Stream<CompletableFuture<U>>) stream).duplicate();
-		return new Tuple2(fromStreamCompletableFuture(duplicated.v1),
-				fromStreamCompletableFuture(duplicated.v2));
+		return new Tuple2(fromStreamOfFutures(duplicated.v1),
+				fromStreamOfFutures(duplicated.v2));
 	}
 	/**
 	 * Duplicate a Stream into two equivalent LazyFutureStreams
@@ -710,11 +710,11 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 * (java.util.stream.Stream)
 	 */
 	@Override
-	default <R> LazyFutureStream<R> fromStreamCompletableFuture(
+	default <R> LazyFutureStream<R> fromStreamOfFutures(
 			Stream<CompletableFuture<R>> stream) {
 
 		return (LazyFutureStream) FutureStream.super
-				.fromStreamCompletableFuture(stream);
+				.fromStreamOfFutures(stream);
 	}
 
 	/**

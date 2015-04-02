@@ -77,7 +77,7 @@ public class SignalTest {
 				
 				
 				
-				parallel().fromStreamCompletableFuture(q.getDiscrete().streamCompletableFutures())
+				parallel().fromStreamOfFutures(q.getDiscrete().streamCompletableFutures())
 						.then(it -> "*" +it)
 						.peek(it -> incrementFound())
 						.peek(it -> System.out.println(it))

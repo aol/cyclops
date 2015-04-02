@@ -589,11 +589,11 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * (java.util.stream.Stream)
 	 */
 	@Override
-	default <R> EagerFutureStream<R> fromStreamCompletableFuture(
+	default <R> EagerFutureStream<R> fromStreamOfFutures(
 			Stream<CompletableFuture<R>> stream) {
 
 		return (EagerFutureStream) FutureStream.super
-				.fromStreamCompletableFuture(stream);
+				.fromStreamOfFutures(stream);
 	}
 
 	/*
@@ -854,7 +854,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 		Seq seq = Seq.seq(getLastActive().stream().iterator()).zipWithIndex();
 		Seq<Tuple2<CompletableFuture<U>,Long>> withType = (Seq<Tuple2<CompletableFuture<U>,Long>>)seq;
-		Stream futureStream =  fromStreamCompletableFuture((Stream)withType.map(t -> t.v1.thenApply(v -> 
+		Stream futureStream =  fromStreamOfFutures((Stream)withType.map(t -> t.v1.thenApply(v -> 
 							Tuple.tuple(t.v1.join(),t.v2))));
 		return (EagerFutureStream<Tuple2<U,Long>>)futureStream;
 		
@@ -1060,8 +1060,8 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		Stream stream = getLastActive().stream();
 		Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>> duplicated = Seq
 				.seq((Stream<CompletableFuture<U>>) stream).duplicate();
-		Tuple2 dup =new Tuple2(fromStreamCompletableFuture(duplicated.v1),
-				fromStreamCompletableFuture(duplicated.v2));
+		Tuple2 dup =new Tuple2(fromStreamOfFutures(duplicated.v1),
+				fromStreamOfFutures(duplicated.v2));
 	
 		return (Tuple2<EagerFutureStream<U>,EagerFutureStream<U>>) dup;
 	}
