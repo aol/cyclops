@@ -20,8 +20,8 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import com.aol.simple.react.base.BaseSequentialSeqTest;
-import com.aol.simple.react.stream.eager.EagerFutureStream;
 import com.aol.simple.react.stream.eager.EagerReact;
+import com.aol.simple.react.stream.traits.EagerFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.threads.ReactPool;
 

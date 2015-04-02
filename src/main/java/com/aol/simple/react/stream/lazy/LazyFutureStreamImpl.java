@@ -24,6 +24,7 @@ import com.aol.simple.react.collectors.lazy.BatchingCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.threads.ReactPool;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -50,7 +51,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 
 	
 	
-	LazyFutureStreamImpl(LazyReact lazyReact, final Stream<CompletableFuture<U>> stream) {
+	public LazyFutureStreamImpl(LazyReact lazyReact, final Stream<CompletableFuture<U>> stream) {
 		
 		this.simpleReact = lazyReact;
 		Stream s = stream;

@@ -1,7 +1,7 @@
 package com.aol.simple.react.async;
 
-import static com.aol.simple.react.stream.eager.EagerFutureStream.parallel;
-import static com.aol.simple.react.stream.eager.EagerFutureStream.parallelBuilder;
+import static com.aol.simple.react.stream.traits.EagerFutureStream.parallel;
+import static com.aol.simple.react.stream.traits.EagerFutureStream.parallelBuilder;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -24,8 +24,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.stream.simple.SimpleReact;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 
 public class QueueTest {

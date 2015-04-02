@@ -2,7 +2,7 @@ package com.aol.simple.react.eager;
 
 import org.junit.Test;
 
-import com.aol.simple.react.stream.eager.EagerFutureStream;
+import com.aol.simple.react.stream.traits.EagerFutureStream;
 
 public class ReplayTest {
 

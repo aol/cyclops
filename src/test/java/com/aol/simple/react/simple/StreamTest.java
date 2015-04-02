@@ -1,6 +1,5 @@
 package com.aol.simple.react.simple;
 
-import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
@@ -13,8 +12,8 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.stream.simple.SimpleReact;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class StreamTest {
 

@@ -6,8 +6,8 @@ import org.jooq.lambda.Seq;
 
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.Topic;
-import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.stream.lazy.LazyReact;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.threads.ReactPool;
 
 /**

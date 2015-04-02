@@ -1,6 +1,6 @@
 package com.aol.simple.react.async;
 
-import static com.aol.simple.react.stream.eager.EagerFutureStream.*;
+import static com.aol.simple.react.stream.traits.EagerFutureStream.*;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 

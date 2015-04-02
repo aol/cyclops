@@ -1,6 +1,6 @@
 package com.aol.simple.react.async;
 
-import static com.aol.simple.react.stream.eager.EagerFutureStream.parallel;
+import static com.aol.simple.react.stream.traits.EagerFutureStream.parallel;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;

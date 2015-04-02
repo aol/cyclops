@@ -45,7 +45,6 @@ import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.StreamWrapper;
-import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.util.SimpleTimer;
 import com.google.common.collect.Lists;
 

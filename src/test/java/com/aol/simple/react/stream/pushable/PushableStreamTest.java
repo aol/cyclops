@@ -18,7 +18,7 @@ import org.mockito.internal.util.collections.Sets;
 
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.Signal;
-import com.aol.simple.react.stream.lazy.LazyFutureStream;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.threads.SequentialElasticPools;
 import com.google.common.collect.Lists;
 

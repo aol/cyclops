@@ -11,9 +11,9 @@ import org.junit.Test;
 
 import static org.hamcrest.Matchers.*;
 
-import com.aol.simple.react.stream.eager.EagerFutureStream;
-import com.aol.simple.react.stream.lazy.LazyFutureStream;
+import com.aol.simple.react.stream.traits.EagerFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class LazyTest {
 

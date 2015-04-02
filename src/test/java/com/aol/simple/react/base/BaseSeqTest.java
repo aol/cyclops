@@ -40,8 +40,8 @@ import org.junit.Test;
 
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.stream.CloseableIterator;
-import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.util.SimpleTimer;
 import com.google.common.collect.ImmutableMap;
 

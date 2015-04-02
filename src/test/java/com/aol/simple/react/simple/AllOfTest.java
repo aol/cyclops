@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 
 import com.aol.simple.react.extractors.Extractors;
-import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.stream.simple.SimpleReact;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.google.common.collect.ImmutableMap;
 
 public class AllOfTest {

@@ -1,4 +1,4 @@
-package com.aol.simple.react.stream.lazy;
+package com.aol.simple.react.stream.traits;
 
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
@@ -41,11 +41,9 @@ import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
-import com.aol.simple.react.stream.eager.EagerFutureStream;
 import com.aol.simple.react.stream.eager.EagerReact;
-import com.aol.simple.react.stream.traits.FutureStream;
-import com.aol.simple.react.stream.traits.LazyToQueue;
-import com.aol.simple.react.stream.traits.SimpleReactStream;
+import com.aol.simple.react.stream.lazy.LazyFutureStreamImpl;
+import com.aol.simple.react.stream.lazy.LazyReact;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -1466,7 +1464,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 * @return Self (current stage)
 	 */
 	default LazyFutureStream<U> self(Consumer<FutureStream<U>> consumer) {
-		return ( LazyFutureStream<U>)FutureStream.super.self(consumer);
+		return (com.aol.simple.react.stream.traits.LazyFutureStream<U>)FutureStream.super.self(consumer);
 	}
 
 

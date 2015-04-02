@@ -33,7 +33,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.stream.eager.EagerFutureStream;
+import com.aol.simple.react.stream.traits.EagerFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.util.SimpleTimer;
 import com.google.common.collect.ImmutableMap;
