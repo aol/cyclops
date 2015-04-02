@@ -33,13 +33,14 @@ import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.simple.SimpleReactStreamImpl;
+import com.aol.simple.react.stream.traits.ConfigurableStream.SimpleReactConfigurableStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.nurkiewicz.asyncretry.policy.AbortRetryException;
 
 
 public interface SimpleReactStream<U> extends LazyStream<U>, 
 				BlockingStream<U>, 
-				ConfigurableStream<U>, 
+				SimpleReactConfigurableStream<U>, 
 				EagerOrLazyToQueue<U>{
 	
 
@@ -60,6 +61,21 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 		return (SimpleReactStream<R>) this.withLastActive(
 				getLastActive().stream(s -> s.map(
 						(ft) -> ft.thenApplyAsync(SimpleReactStream.<U,R>handleExceptions(fn)))));
+	}
+	/* 
+	 * React to new events with the supplied function on the supplied ExecutorService
+	 * 
+	 *	@param fn Apply to incoming events
+	 *	@param service Service to execute function on 
+	 *	@return next stage in the Stream
+	 */
+	default <R> SimpleReactStream<R> thenSync(final Function<U, R> fn) {
+		
+
+		
+		return (SimpleReactStream<R>) this.withLastActive(
+				getLastActive().stream(s -> s.map(
+						(ft) -> ft.thenApply(SimpleReactStream.<U,R>handleExceptions(fn)))));
 	}
 	
 	
@@ -143,6 +159,7 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	}
 	
 	
+	
 	default <R> SimpleReactStream<R> fromStream(Stream<R> stream) {
 		
 		
@@ -215,6 +232,8 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	 */
 	@SuppressWarnings("unchecked")
 	default  <R> SimpleReactStream<R> then(final Function<U, R> fn) {
+		if(!this.isAsync())
+			return thenSync(fn);
 		Function<Stream<CompletableFuture>,Stream<CompletableFuture>> streamMapper = s ->s.map(ft -> ft.thenApplyAsync(SimpleReactStream.<U,R>handleExceptions(fn),getTaskExecutor()));
 		return (SimpleReactStream<R>) this.withLastActive(getLastActive().stream(streamMapper));
 	}
@@ -228,11 +247,44 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	 * @return This phase in Stream
 	 */
 	default   SimpleReactStream<U> doOnEach(final Function<U, U> fn) {
-		
+		if(!isAsync())
+			return doOnEachSync(fn);
 		getLastActive().stream(s ->s.peek(
 						(ft) -> ft.thenApplyAsync(SimpleReactStream.<U,U>handleExceptions(fn),
 								getTaskExecutor())));
 		return this;
+	}
+	default   SimpleReactStream<U> doOnEachSync(final Function<U, U> fn) {
+		
+		getLastActive().stream(s ->s.peek(
+						(ft) -> ft.thenApply(SimpleReactStream.<U,U>handleExceptions(fn))));
+		return this;
+	}
+	/**
+	 * Peek asynchronously at the results in the current stage. Current results
+	 * are passed through to the next stage.
+	 * 
+	 * @param consumer
+	 *            That will recieve current results
+	 * @return A new builder object that can be used to define the next stage in
+	 *         the dataflow
+	 */
+	default SimpleReactStream<U> peek(final Consumer<? super U> consumer) {
+		if(!isAsync())
+			return peekSync(consumer);
+		return (SimpleReactStream<U>) then((t) -> {
+			consumer.accept(t);
+			return (U) t;
+		});
+	}
+	
+	
+	
+	default SimpleReactStream<U> peekSync(final Consumer<? super U> consumer) {
+		return (SimpleReactStream<U>) thenSync((t) -> {
+			consumer.accept(t);
+			return (U) t;
+		});
 	}
 
 	static <U,R> Function<U, R> handleExceptions(Function<U, R> fn) {
@@ -312,21 +364,7 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	}
 	
 	
-	/**
-	 * Peek asynchronously at the results in the current stage. Current results
-	 * are passed through to the next stage.
-	 * 
-	 * @param consumer
-	 *            That will recieve current results
-	 * @return A new builder object that can be used to define the next stage in
-	 *         the dataflow
-	 */
-	default SimpleReactStream<U> peek(final Consumer<? super U> consumer) {
-		return (SimpleReactStream<U>) then((t) -> {
-			consumer.accept(t);
-			return (U) t;
-		});
-	}
+	
 	/**
 	 * Removes elements that do not match the supplied predicate from the
 	 * dataflow
@@ -339,6 +377,8 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	 */
 	@SuppressWarnings("unchecked")
 	default SimpleReactStream<U> filter(final Predicate<? super U> p) {
+		if(!isAsync())
+			return filterSync(p);
 	Function<Stream<CompletableFuture>,Stream<CompletableFuture>> fn = s -> s.map(ft -> ft.thenApplyAsync((in) -> {
 			if (!p.test((U) in)) {
 				throw new FilteredExecutionPathException();
@@ -349,6 +389,17 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 				.stream(fn));
 
 	}
+	default SimpleReactStream<U> filterSync(final Predicate<? super U> p) {
+		Function<Stream<CompletableFuture>,Stream<CompletableFuture>> fn = s -> s.map(ft -> ft.thenApply((in) -> {
+				if (!p.test((U) in)) {
+					throw new FilteredExecutionPathException();
+				}
+				return in;
+			}));
+			return (SimpleReactStream<U>) this.withLastActive(getLastActive()
+					.stream(fn));
+
+		}
 	/**
 	 * @return A Stream of CompletableFutures that represent this stage in the
 	 *         dataflow
@@ -618,7 +669,7 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	 * see RetryBuilder#getDefaultInstance()
 	 */
 	public static SimpleReact parallelCommonBuilder() {
-		return SimpleReact.builder().executor(ThreadPools.getStandard())
+		return SimpleReact.builder().executor(ThreadPools.getStandard()).async(true)
 		.retrier(RetryBuilder.getDefaultInstance().withScheduler(ThreadPools.getCommonFreeThreadRetry())).build();
 		
 	}
@@ -628,7 +679,7 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	 * New ForkJoinPool will be created
 	 */
 	public static SimpleReact sequentialBuilder() {
-		return SimpleReact.builder().executor(new ForkJoinPool(1))
+		return SimpleReact.builder().async(false).executor(new ForkJoinPool(1))
 				.retrier(RetryBuilder.getDefaultInstance().withScheduler(Executors.newScheduledThreadPool(1))).build();
 	}
 
@@ -637,7 +688,7 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	 * Common free thread Executor from
 	 */
 	public static SimpleReact sequentialCommonBuilder() {
-		return SimpleReact.builder().executor(ThreadPools.getCommonFreeThread())
+		return SimpleReact.builder().async(false).executor(ThreadPools.getCommonFreeThread())
 				.retrier(RetryBuilder.getDefaultInstance().withScheduler(ThreadPools.getCommonFreeThreadRetry())).build();
 	}
 
@@ -686,7 +737,7 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	 */
 	@SafeVarargs
 	static <T> SimpleReactStream<T> of(T... values) {
-		return futureStream((Stream) Seq.of(values),true);
+		return futureStream((Stream) Seq.of(values));
 	}
 
 	/**
@@ -700,24 +751,22 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 
 
 	
-	static <T> SimpleReactStream<T> futureStream(Stream<T> stream){
-		return futureStream(stream,true);
-	}
+	
 	
 	/**
 	 * Wrap a Stream into a SimpleReactStream.
 	 */
-	static <T> SimpleReactStream<T> futureStream(Stream<T> stream,boolean eager) {
+	static <T> SimpleReactStream<T> futureStream(Stream<T> stream) {
 		if (stream instanceof SimpleReactStream)
 			return (SimpleReactStream<T>) stream;
 		if (stream instanceof FutureStream)
 			stream = ((FutureStream) stream).toQueue().stream(((FutureStream) stream).getSubscription());
 
-		return new SimpleReactStreamImpl<T>(
-				stream.map(CompletableFuture::completedFuture),
-				ThreadPools.getSequential(), RetryBuilder
-						.getDefaultInstance().withScheduler(
-								ThreadPools.getSequentialRetry()),eager);
+		SimpleReact sr = new SimpleReact(ThreadPools.getSequential(), RetryBuilder
+				.getDefaultInstance().withScheduler(
+						ThreadPools.getSequentialRetry()),false);
+		return new SimpleReactStreamImpl<T>(sr,
+				stream.map(CompletableFuture::completedFuture),null);
 	}
 
 	/**
@@ -735,5 +784,13 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 				spliteratorUnknownSize(iterator, ORDERED), false));
 	}
 
+	default SimpleReactStream<U> sync(){
+		return this.withAsync(false);
+	}
+	
+
+	default SimpleReactStream<U> async(){
+		return this.withAsync(true);
+	}
 	
 }

@@ -3,6 +3,7 @@ package com.aol.simple.react.stream.lazy;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Function;
@@ -13,7 +14,6 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
@@ -33,7 +33,6 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  */
 @Builder
 @Wither
-@AllArgsConstructor
 public class LazyReact extends BaseLazySimpleReact {
 	
 	@Getter
@@ -44,6 +43,11 @@ public class LazyReact extends BaseLazySimpleReact {
 	private final boolean eager = false;
 	
 	
+	private final Boolean async;
+	
+	public boolean isAsync(){
+		return async;
+	}
 	
 
 	/**
@@ -67,7 +71,7 @@ public class LazyReact extends BaseLazySimpleReact {
 		
 		this.executor = executor;
 		this.retrier = null;
-		
+		this.async = true;
 		
 		
 	}
@@ -77,7 +81,7 @@ public class LazyReact extends BaseLazySimpleReact {
 	public <U> LazyFutureStream<U> construct(Stream s,
 			ExecutorService executor, RetryExecutor retrier, boolean eager,List<CompletableFuture> org) {
 		
-		return (LazyFutureStream) new LazyFutureStreamImpl<U>( s,executor, retrier,org);
+		return (LazyFutureStream) new LazyFutureStreamImpl<U>( this,s);
 
 	}
 	
@@ -311,6 +315,14 @@ public class LazyReact extends BaseLazySimpleReact {
 		
 		return (LazyFutureStream)super.reactI(actions);
 	}
+	public LazyReact(ExecutorService executor, RetryExecutor retrier,
+			Boolean async) {
+		super();
+		this.executor = executor;
+		this.retrier = retrier;
+		this.async = Optional.ofNullable(async).orElse(true);
+	}
+	
 	
 	
 

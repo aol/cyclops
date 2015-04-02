@@ -3,6 +3,7 @@ package com.aol.simple.react.stream.eager;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Function;
@@ -12,7 +13,6 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
@@ -31,7 +31,6 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  */
 @Builder
 @Wither
-@AllArgsConstructor
 public class EagerReact extends BaseSimpleReact{
 	@Getter
 	private final ExecutorService executor;
@@ -39,6 +38,18 @@ public class EagerReact extends BaseSimpleReact{
 	private final RetryExecutor retrier;
 	@Getter
 	private final boolean eager = true;
+	
+	private final Boolean async;
+	
+	
+	
+	public EagerReact(ExecutorService executor, RetryExecutor retrier,
+			Boolean async) {
+		super();
+		this.executor = executor;
+		this.retrier = retrier;
+		this.async = Optional.ofNullable(async).orElse(true);
+	}
 	
 	/**
 	 * Construct a EagerReact builder using standard thread pool.
@@ -60,6 +71,7 @@ public class EagerReact extends BaseSimpleReact{
 		
 		this.executor = executor;
 		this.retrier = null;
+		this.async=true;
 		
 	}
 	
@@ -67,7 +79,7 @@ public class EagerReact extends BaseSimpleReact{
 	@Override
 	public <U> EagerFutureStream<U> construct(Stream s,
 			ExecutorService executor, RetryExecutor retrier, boolean eager,List<CompletableFuture> org) {
-		return (EagerFutureStream) new EagerFutureStreamImpl<U>( s,executor, retrier);
+		return (EagerFutureStream) new EagerFutureStreamImpl<U>( this,s,org);
 	}
 	/* 
 	 * Construct a EagerFutureStream from the provided Stream of completableFutures
@@ -248,5 +260,10 @@ public class EagerReact extends BaseSimpleReact{
 		
 		return (EagerFutureStream)super.react(f, t);
 	}
+	
+	public boolean isAsync(){
+		return async;
+	}
+	
 
 }

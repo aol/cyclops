@@ -17,7 +17,7 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 	abstract <R> SimpleReactStream<R> then(final Function<U, R> fn,
 			ExecutorService exec);
 
-	abstract <R> SimpleReactStream<R> then(final Function<U, R> fn);
+	abstract <R> SimpleReactStream<R> thenSync(final Function<U, R> fn);
 	abstract <T extends BaseSimpleReact> T getPopulator();
 
 	/**
@@ -30,7 +30,7 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 
 		
 		
-		Continuation continuation = then(queue::add).runContinuation(() -> {
+		Continuation continuation = thenSync(queue::add).runContinuation(() -> {
 			queue.close(); });
 		queue.setContinuation(continuation);
 		return queue;
@@ -39,7 +39,7 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 	default Queue<U> toQueue(Function<Queue, Queue> fn) {
 		Queue<U> queue = fn.apply(this.getQueueFactory().build());
 
-		Continuation continuation = then(queue::add).runContinuation(() -> {
+		Continuation continuation = thenSync(queue::add).runContinuation(() -> {
 			queue.close();
 			
 		});

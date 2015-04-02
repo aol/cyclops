@@ -19,6 +19,7 @@ public class MaxActive {
 	@Getter
 	public enum defaultValue {
 		factory(new MaxActive(Runtime.getRuntime().availableProcessors()*2,Runtime.getRuntime().availableProcessors()));
+	//	factory(new MaxActive(2,1));
 		private final MaxActive instance;
 	}
 }

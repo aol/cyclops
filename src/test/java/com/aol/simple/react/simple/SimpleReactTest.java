@@ -40,6 +40,27 @@ import com.google.common.collect.Lists;
 public class SimpleReactTest {
 
 	@Test
+	public void syncTest(){
+		SimpleReactStream stream = SimpleReactStream.of(1,2,3,4).sync();
+		assertThat(stream.isAsync(),is(false));
+	}
+	@Test
+	public void asyncTest(){
+		SimpleReactStream stream = SimpleReactStream.of(1,2,3,4).async();
+		assertThat(stream.isAsync(),is(true));
+	}
+	@Test
+	public void syncAndAsyncTest(){
+		SimpleReactStream stream = SimpleReactStream.of(1,2,3,4).sync().async();
+		assertThat(stream.isAsync(),is(true));
+	}
+	@Test
+	public void asyncSyncTest(){
+		SimpleReactStream stream = SimpleReactStream.of(1,2,3,4).async().sync();
+		assertThat(stream.isAsync(),is(false));
+	}
+	
+	@Test
 	public void doOnEach(){
 		String[] found = {""};
 		String res = new SimpleReact().react(()->"hello")

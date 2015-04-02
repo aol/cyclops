@@ -25,6 +25,7 @@ import com.aol.simple.react.collectors.lazy.BatchingCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.aol.simple.react.threads.ReactPool;
@@ -38,41 +39,35 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>{
 	
 
-	private final ExecutorService taskExecutor;
-	private final RetryExecutor retrier;
+
 	private final Optional<Consumer<Throwable>> errorHandler;
 	private final StreamWrapper lastActive;
 	private final boolean eager;
 	private final Consumer<CompletableFuture> waitStrategy;
 	private final LazyResultConsumer<U> lazyCollector;
 	private final QueueFactory<U> queueFactory;
-	private final BaseSimpleReact simpleReact;
+	private final SimpleReact simpleReact;
 	private final Continueable subscription;
 	private final ReactPool<BaseSimpleReact> pool = ReactPool.elasticPool(()->new LazyReact(Executors.newSingleThreadExecutor()));
 	private final List originalFutures;
-	public SimpleReactStreamImpl(final Stream<CompletableFuture<U>> stream,
-			final ExecutorService executor, final RetryExecutor retrier,boolean isEager){
-		this(stream,executor,retrier,isEager,null);
-	}
-	public SimpleReactStreamImpl(final Stream<CompletableFuture<U>> stream,
-			final ExecutorService executor, final RetryExecutor retrier,boolean isEager,List<CompletableFuture> originalFutures) {
-		this.simpleReact = new SimpleReact();
-		this.taskExecutor = Optional.ofNullable(executor).orElse(
-				new ForkJoinPool(Runtime.getRuntime().availableProcessors()));
+
+	
+	public SimpleReactStreamImpl(final SimpleReact simpleReact, final Stream<CompletableFuture<U>> stream,
+			List<CompletableFuture> originalFutures) {
+		this.simpleReact = simpleReact;
 		Stream s = stream;
 		this.lastActive = new StreamWrapper(s, true);
-		if(isEager)
+		if(simpleReact.isEager())
 			this.originalFutures = originalFutures!=null ? originalFutures : this.lastActive.list();
 		else
 			this.originalFutures =null;
 		this.errorHandler = Optional.of((e) -> log.error(e.getMessage(), e));
 		this.eager = true;
-		this.retrier = Optional.ofNullable(retrier).orElse(
-				RetryBuilder.getDefaultInstance());
 		this.waitStrategy = new LimitingMonitor();
 		this.lazyCollector = new BatchingCollector<>(this);
 		this.queueFactory = eager ? QueueFactories.unboundedQueue() : QueueFactories.boundedQueue(1000);
 		this.subscription = new AlwaysContinue();
+
 		
 	}
 	public BaseSimpleReact getPopulator(){
@@ -80,5 +75,45 @@ public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>{
 	}
 	public void returnPopulator(BaseSimpleReact service){
 		pool.populate(service);
+	}
+	@Override
+	public SimpleReactStream<U> withAsync(boolean b) {
+		
+		return this.withSimpleReact(this.simpleReact.withAsync(b));
+	}
+
+
+
+	@Override
+	public ExecutorService getTaskExecutor() {
+		return this.simpleReact.getExecutor();
+	}
+
+
+
+	@Override
+	public RetryExecutor getRetrier() {
+		return this.simpleReact.getRetrier();
+	}
+
+
+
+	@Override
+	public boolean isAsync() {
+		return this.simpleReact.isAsync();
+	}
+
+
+
+	@Override
+	public SimpleReactStream<U> withTaskExecutor(ExecutorService e) {
+		return this.withSimpleReact(simpleReact.withExecutor(e));
+	}
+
+
+
+	@Override
+	public SimpleReactStream<U> withRetrier(RetryExecutor retry) {
+		return this.withSimpleReact(simpleReact.withRetrier(retry));
 	}
 }

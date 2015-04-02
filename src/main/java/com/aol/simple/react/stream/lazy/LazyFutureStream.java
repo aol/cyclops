@@ -74,6 +74,12 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	LazyFutureStream<U> withSubscription(Continueable sub);
 
 	LazyFutureStream<U> withLastActive(StreamWrapper streamWrapper);
+	default LazyFutureStream<U> sync(){
+		return (LazyFutureStream<U>)FutureStream.super.sync();
+	}
+	default LazyFutureStream<U> async(){
+		return (LazyFutureStream<U>)FutureStream.super.async();
+	}
 
 	default void closeAll(){
 		getSubscription().closeAll();
@@ -1134,6 +1140,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	public static LazyReact sequentialBuilder() {
 		return LazyReact
 				.builder()
+				.async(false)
 				.executor(new ForkJoinPool(1))
 				.retrier(
 						RetryBuilder.getDefaultInstance().withScheduler(
@@ -1148,6 +1155,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	public static LazyReact sequentialCommonBuilder() {
 		return LazyReact
 				.builder()
+				.async(false)
 				.executor(ThreadPools.getCommonFreeThread())
 				.retrier(
 						RetryBuilder.getDefaultInstance().withScheduler(
@@ -1248,11 +1256,10 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 		if (stream instanceof FutureStream)
 			stream = ((FutureStream) stream).toQueue().stream(
 					((FutureStream) stream).getSubscription());
-
-		return new LazyFutureStreamImpl<T>(
-				stream.map(CompletableFuture::completedFuture),
-				ThreadPools.getSequential(), RetryBuilder.getDefaultInstance()
-						.withScheduler(ThreadPools.getSequentialRetry()));
+		LazyReact react =new LazyReact(ThreadPools.getSequential(), RetryBuilder.getDefaultInstance()
+						.withScheduler(ThreadPools.getSequentialRetry()),false);
+		return new LazyFutureStreamImpl<T>(react,
+				stream.map(CompletableFuture::completedFuture));
 	}
 
 	/**
