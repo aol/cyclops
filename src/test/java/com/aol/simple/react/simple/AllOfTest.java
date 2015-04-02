@@ -1,23 +1,18 @@
 package com.aol.simple.react.simple;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
@@ -31,15 +26,14 @@ public class AllOfTest {
 
 	@Test
 	public void allOf(){
-		List<ImmutableMap<String,Collection<Integer>>> result = new ArrayList<>();
-		Supplier s = ()->result;
+		List<ImmutableMap<String, List<Integer>>> result =
 		
 		 LazyFutureStream.sequentialBuilder().react(()->1,()->2,()->3)
 		 									 .map(it->it+100)
 		 									 .peek(System.out::println)
-		 									 .allOf(c-> { System.out.println(c);return ImmutableMap.of("numbers",c);})
+		 									 .allOf((List<Integer> c)-> { System.out.println(c);return ImmutableMap.of("numbers",c);})
 		 									 .peek(map -> System.out.println(map))
-		 									 .run(s);
+		 									 .run(Collectors.toList());
 		 
 		 assertThat(result.size(),is(1));
 	}

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
@@ -12,7 +11,7 @@ import lombok.Getter;
 import lombok.experimental.Wither;
 
 import com.aol.simple.react.config.MaxActive;
-import com.aol.simple.react.stream.traits.BlockingStream;
+import com.aol.simple.react.stream.traits.ConfigurableStream;
 @Wither
 @AllArgsConstructor
 public class EmptyCollector<T> implements LazyResultConsumer<T> {
@@ -55,16 +54,22 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 	}
 
 	@Override
-	public LazyResultConsumer<T> withResults(Collection<T> t) {
+	public LazyResultConsumer<T> withResults(Collection<CompletableFuture<T>> t) {
 		
 		return this.withMaxActive(maxActive);
 	}
 
 	@Override
-	public Collection<T> getResults() {
+	public Collection<CompletableFuture<T>> getResults() {
 		active.stream().forEach(cf -> cf.join());
 		active.clear();
 		return new ArrayList<>();
+	}
+
+	@Override
+	public ConfigurableStream<T> getBlocking() {
+	
+		return null;
 	}
 	
 }

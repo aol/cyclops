@@ -62,13 +62,13 @@ public class TopicTest {
 			.react(()->parallel()
 				.fromStream(topic.stream())
 				.then(it -> it + "*")
-				.<Collection<String>>run(()->new ArrayList<>() ),
+				.run(Collectors.toList() ),
 				
 				()->parallel()
 					.fromStream(topic.stream())
 					.then(it -> it + "!")
 					.peek(it->sleep(10)) //make sure takes slightly longer to complete
-					.<Collection<String>>run( ()->new HashSet<>() )
+					.run( Collectors.toSet() )
 				
 				);
 		 
@@ -149,13 +149,13 @@ public class TopicTest {
 			.react(()->parallel()
 				.fromStream(topic.streamCompletableFutures())
 				.then(it -> it + "*")
-				.<Collection<String>>run(()->new ArrayList<>() ),
+				.run(Collectors.toList() ),
 				
 				()->parallel()
 					.fromStream(topic.streamCompletableFutures())
 					.then(it -> it + "!")
 				
-					.<Collection<String>>run( ()->new HashSet<>() )
+					.run( Collectors.toSet())
 				
 				);
 		
@@ -194,13 +194,13 @@ public class TopicTest {
 			.react(()->parallel()
 				.fromStream(topic.stream())
 				.then(it -> it + "*")
-				.<Collection<String>>run(()->new ArrayList<>() ),
+				.run(Collectors.toList() ),
 				
 				()->parallel()
 					.fromStream(topic.stream())
 					.then(it -> it + "!")
 				
-					.<Collection<String>>run( ()->new HashSet<>() )
+					.run( Collectors.toSet() )
 				
 				);
 		

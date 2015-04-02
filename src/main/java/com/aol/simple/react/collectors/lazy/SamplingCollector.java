@@ -8,6 +8,7 @@ import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 
 import com.aol.simple.react.config.MaxActive;
+import com.aol.simple.react.stream.traits.ConfigurableStream;
 
 /**
  * 
@@ -53,7 +54,7 @@ public class SamplingCollector<T> implements LazyResultConsumer<T>{
 	 * @see com.aol.simple.react.collectors.lazy.LazyResultConsumer#withResults(java.util.Collection)
 	 */
 	@Override
-	public LazyResultConsumer<T> withResults(Collection<T> t) {
+	public LazyResultConsumer<T> withResults(Collection<CompletableFuture<T>> t) {
 		return this.withConsumer(consumer.withResults(t));
 	}
 
@@ -61,13 +62,18 @@ public class SamplingCollector<T> implements LazyResultConsumer<T>{
 	 * @see com.aol.simple.react.collectors.lazy.LazyResultConsumer#getResults()
 	 */
 	@Override
-	public Collection<T> getResults() {
+	public Collection<CompletableFuture<T>> getResults() {
 		return consumer.getResults();
 	}
 
 	@Override
 	public MaxActive getMaxActive() {
 		return consumer.getMaxActive();
+	}
+
+	@Override
+	public ConfigurableStream<T> getBlocking() {
+		return consumer.getBlocking();
 	}
 
 	

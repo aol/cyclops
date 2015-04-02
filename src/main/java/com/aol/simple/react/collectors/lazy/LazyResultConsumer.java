@@ -5,6 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import com.aol.simple.react.config.MaxActive;
+import com.aol.simple.react.stream.traits.ConfigurableStream;
 
 /**
  * Interface that defines the rules for Collecting results from Infinite SimpleReact Streams
@@ -21,12 +22,14 @@ public interface LazyResultConsumer<T> extends Consumer<CompletableFuture<T>>{
 	 * @param t Collection to be populated
 	 * @return Consumer that will populate the collection
 	 */
-	public LazyResultConsumer<T> withResults(Collection<T> t);
+	public LazyResultConsumer<T> withResults(Collection<CompletableFuture<T>> t);
 
 	/**
 	 * @return Completed results
 	 */
-	public Collection<T> getResults();
+	public Collection<CompletableFuture<T>> getResults();
 
 	public MaxActive getMaxActive();
+
+	public ConfigurableStream<T> getBlocking();
 }

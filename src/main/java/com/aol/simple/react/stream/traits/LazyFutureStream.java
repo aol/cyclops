@@ -3,7 +3,6 @@ package com.aol.simple.react.stream.traits;
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -25,6 +24,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -95,8 +95,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
      * @throws NullPointerException if the element selected is null
      */
     default Optional<U> findFirst(){
-    	List<U> results = new ArrayList<>();
-    	this.run(()->results);
+    	List<U> results = this.run(Collectors.toList());
     	if(results.size()==0)
     		return Optional.empty();
     	return Optional.of(results.get(0));

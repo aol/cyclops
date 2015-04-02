@@ -1,12 +1,13 @@
 package com.aol.simple.react.stream.traits;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.aol.simple.react.collectors.lazy.EmptyCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
@@ -33,15 +34,17 @@ public interface LazyStream<U> {
 	 * 
 	 */
 	default void run(ExecutorService e) {
-		new SimpleReact(e).react(() -> run(() -> null));
+		new SimpleReact(e).react(() -> run(new NonCollector()));
 		
 
 	}
+	/*
 	default void run(ExecutorService e,Runnable r) {
 		new SimpleReact(e).react(() -> new Runner(r).run(getLastActive(),
 					new EmptyCollector(getLazyCollector().getMaxActive())));
 
 	}
+	 */
 	default void runThread(Runnable r) {
 		new Thread(() -> new Runner(r).run(getLastActive(),new EmptyCollector(getLazyCollector().getMaxActive()))).start();
 
@@ -54,7 +57,9 @@ public interface LazyStream<U> {
 	 * Trigger a lazy stream
 	 */
 	default void runOnCurrent() {
-		run(() -> null);
+		
+		
+		run(new NonCollector());
 
 	}
 	/**
@@ -73,12 +78,11 @@ public interface LazyStream<U> {
 	 *            Supplier that creates a collection to store results in
 	 * @return Collection of results
 	 */
-	default <C extends Collection<U>> C run(Supplier<C> collector) {
+	default <A,R> R run(Collector<U,A,R> collector) {
 
-		C result = (C) collector.get();
-
-		Optional<LazyResultConsumer<U>> batcher = result != null ? Optional
-				.of(getLazyCollector().withResults(result)) : Optional.empty();
+		
+		Optional<LazyResultConsumer<U>> batcher = collector.supplier().get() != null ? Optional
+				.of(getLazyCollector().withResults( new ArrayList<>())) : Optional.empty();
 
 		try {
 			this.getLastActive().stream().forEach(n -> {
@@ -89,9 +93,12 @@ public interface LazyStream<U> {
 		} catch (SimpleReactProcessingException e) {
 			
 		}
-		if (result == null)
+		if (collector.supplier().get() == null)
 			return null;
-		return (C) batcher.get().getResults();
+		return (R)batcher.get().getResults().stream()
+									.map(cf -> BlockingStream.getSafe(cf,getLazyCollector().getBlocking().getErrorHandler()))
+									.collect((Collector)collector);
+		
 
 	}
 }

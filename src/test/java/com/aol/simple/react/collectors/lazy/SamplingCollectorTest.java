@@ -16,6 +16,7 @@ import com.aol.simple.react.capacity.monitor.SamplingMonitor;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.collectors.lazy.SamplingCollector;
 import com.aol.simple.react.config.MaxActive;
+import com.aol.simple.react.stream.traits.ConfigurableStream;
 
 public class SamplingCollectorTest {
 
@@ -105,6 +106,12 @@ public class SamplingCollectorTest {
 
 		@Override
 		public MaxActive getMaxActive() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public ConfigurableStream getBlocking() {
 			// TODO Auto-generated method stub
 			return null;
 		}
