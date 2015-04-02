@@ -11,10 +11,10 @@ import org.jooq.lambda.tuple.Tuple2;
 import com.aol.simple.react.async.Adapter;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.QueueFactories;
-import com.aol.simple.react.stream.eager.EagerFutureStream;
 import com.aol.simple.react.stream.eager.EagerReact;
-import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.stream.lazy.LazyReact;
+import com.aol.simple.react.stream.traits.EagerFutureStream;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.threads.ReactPool;
 
 /**

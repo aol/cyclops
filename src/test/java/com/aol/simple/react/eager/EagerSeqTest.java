@@ -20,7 +20,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.simple.react.base.BaseSeqTest;
-import com.aol.simple.react.stream.eager.EagerFutureStream;
+import com.aol.simple.react.stream.traits.EagerFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.google.common.collect.Lists;
 

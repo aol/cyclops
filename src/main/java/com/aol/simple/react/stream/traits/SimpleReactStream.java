@@ -174,7 +174,7 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	 * @param stream JDK Stream to construct new SimpleReactStream from
 	 * @return SimpleReactStream
 	 */
-	default <R> SimpleReactStream<R> fromStreamCompletableFuture(
+	default <R> SimpleReactStream<R> fromStreamOfFutures(
 			Stream<CompletableFuture<R>> stream) {
 		Stream noType = stream;
 		return (SimpleReactStream<R>) this.withLastActive(getLastActive()

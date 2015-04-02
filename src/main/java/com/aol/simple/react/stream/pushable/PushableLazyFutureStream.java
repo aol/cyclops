@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.stream.lazy.LazyFutureStream;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 /**
  * A more concrete Tuple2 impl

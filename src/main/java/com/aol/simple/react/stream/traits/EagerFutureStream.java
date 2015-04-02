@@ -1,4 +1,4 @@
-package com.aol.simple.react.stream.eager;
+package com.aol.simple.react.stream.traits;
 
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
@@ -35,12 +35,10 @@ import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
-import com.aol.simple.react.stream.lazy.LazyFutureStream;
+import com.aol.simple.react.stream.eager.EagerFutureStreamImpl;
+import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.traits.EagerToQueue;
-import com.aol.simple.react.stream.traits.FutureStream;
-import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -591,11 +589,11 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * (java.util.stream.Stream)
 	 */
 	@Override
-	default <R> EagerFutureStream<R> fromStreamCompletableFuture(
+	default <R> EagerFutureStream<R> fromStreamOfFutures(
 			Stream<CompletableFuture<R>> stream) {
 
 		return (EagerFutureStream) FutureStream.super
-				.fromStreamCompletableFuture(stream);
+				.fromStreamOfFutures(stream);
 	}
 
 	/*
@@ -856,7 +854,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 		Seq seq = Seq.seq(getLastActive().stream().iterator()).zipWithIndex();
 		Seq<Tuple2<CompletableFuture<U>,Long>> withType = (Seq<Tuple2<CompletableFuture<U>,Long>>)seq;
-		Stream futureStream =  fromStreamCompletableFuture((Stream)withType.map(t -> t.v1.thenApply(v -> 
+		Stream futureStream =  fromStreamOfFutures((Stream)withType.map(t -> t.v1.thenApply(v -> 
 							Tuple.tuple(t.v1.join(),t.v2))));
 		return (EagerFutureStream<Tuple2<U,Long>>)futureStream;
 		
@@ -1062,8 +1060,8 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		Stream stream = getLastActive().stream();
 		Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>> duplicated = Seq
 				.seq((Stream<CompletableFuture<U>>) stream).duplicate();
-		Tuple2 dup =new Tuple2(fromStreamCompletableFuture(duplicated.v1),
-				fromStreamCompletableFuture(duplicated.v2));
+		Tuple2 dup =new Tuple2(fromStreamOfFutures(duplicated.v1),
+				fromStreamOfFutures(duplicated.v2));
 	
 		return (Tuple2<EagerFutureStream<U>,EagerFutureStream<U>>) dup;
 	}
@@ -1422,7 +1420,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * @return Self (current stage)
 	 */
 	default EagerFutureStream<U> self(Consumer<FutureStream<U>> consumer) {
-		return ( EagerFutureStream<U>)FutureStream.super.self(consumer);
+		return (com.aol.simple.react.stream.traits.EagerFutureStream<U>)FutureStream.super.self(consumer);
 	}
 
 	

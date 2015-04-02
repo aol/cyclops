@@ -8,8 +8,8 @@ import java.util.stream.IntStream;
 
 import org.junit.Test;
 
-import com.aol.simple.react.stream.eager.EagerFutureStream;
-import com.aol.simple.react.stream.lazy.LazyFutureStream;
+import com.aol.simple.react.stream.traits.EagerFutureStream;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class EagerTest {
 

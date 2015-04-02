@@ -1,18 +1,16 @@
 package com.aol.simple.react.async;
 
-import static com.aol.simple.react.stream.eager.EagerFutureStream.*;
+import static com.aol.simple.react.stream.traits.EagerFutureStream.parallel;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.traits.FutureStream;
 
 public class SignalTest {
 
@@ -59,7 +57,7 @@ public class SignalTest {
 					.then(it -> "*" +it)
 					.peek(it -> incrementFound())
 					.peek(it -> System.out.println(it))
-					.run(() -> new ArrayList<String>());
+					.run(Collectors.toList());
 		} finally{
 			assertThat(found, is(3));
 		}
@@ -77,7 +75,7 @@ public class SignalTest {
 				
 				
 				
-				parallel().fromStreamCompletableFuture(q.getDiscrete().streamCompletableFutures())
+				parallel().fromStreamOfFutures(q.getDiscrete().streamCompletableFutures())
 						.then(it -> "*" +it)
 						.peek(it -> incrementFound())
 						.peek(it -> System.out.println(it))

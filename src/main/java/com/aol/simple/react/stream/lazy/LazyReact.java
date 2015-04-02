@@ -22,6 +22,7 @@ import com.aol.simple.react.generators.Generator;
 import com.aol.simple.react.generators.ReactIterator;
 import com.aol.simple.react.stream.BaseLazySimpleReact;
 import com.aol.simple.react.stream.ThreadPools;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**

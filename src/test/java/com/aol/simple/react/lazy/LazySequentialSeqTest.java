@@ -1,7 +1,6 @@
 package com.aol.simple.react.lazy;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.*;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertThat;
@@ -19,8 +18,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.simple.react.base.BaseSequentialSeqTest;
-import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class LazySequentialSeqTest extends BaseSequentialSeqTest {
 
