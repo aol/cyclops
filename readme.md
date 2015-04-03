@@ -2,6 +2,13 @@
 
 SimpleReact is a Java 8 concurrent Streaming library. We provide three Stream types, and three asynchronous data structures.
 
+## Build Status 
+
+![Build health](https://travis-ci.org/aol/simple-react.svg)
+ 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.aol.simplereact/simple-react/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.simplereact/simple-react)
+
+
 ##Stream Types
 
 * SimpleReactStream : this provides [a simple, focused API for Streaming Futures](https://github.com/aol/simple-react#simplereactstream--a-simple-fluent-api-for-functional-reactive-programming-with-java-8) based on the Promises / A++ spec.
