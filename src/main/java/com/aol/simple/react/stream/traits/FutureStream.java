@@ -45,7 +45,6 @@ import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.StreamWrapper;
-import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.util.SimpleTimer;
 import com.google.common.collect.Lists;
 
@@ -67,7 +66,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 			return zipFutures((FutureStream)other);
 		Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other));
 		Seq<Tuple2<CompletableFuture<U>,R>> withType = (Seq<Tuple2<CompletableFuture<U>,R>>)seq;
-		Stream futureStream = fromStreamCompletableFuture((Stream)withType.map(t ->t.v1.thenApply(v -> Tuple.tuple(t.v1.join(),t.v2)))
+		Stream futureStream = fromStreamOfFutures((Stream)withType.map(t ->t.v1.thenApply(v -> Tuple.tuple(t.v1.join(),t.v2)))
 				);
 
 		
@@ -86,7 +85,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	default <R> FutureStream<Tuple2<U,R>> zipFutures(FutureStream<R> other) {
 		Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other.getLastActive().stream()));
 		Seq<Tuple2<CompletableFuture<U>,CompletableFuture<R>>> withType = (Seq<Tuple2<CompletableFuture<U>,CompletableFuture<R>>>)seq;
-		Stream futureStream =  fromStreamCompletableFuture((Stream)withType.map(t ->CompletableFuture.allOf(t.v1,t.v2).thenApply(v -> Tuple.tuple(t.v1.join(),t.v2.join())))
+		Stream futureStream =  fromStreamOfFutures((Stream)withType.map(t ->CompletableFuture.allOf(t.v1,t.v2).thenApply(v -> Tuple.tuple(t.v1.join(),t.v2.join())))
 				);
 		
 		return (FutureStream<Tuple2<U,R>>)futureStream;
@@ -838,10 +837,10 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#
 	 * fromStreamCompletableFuture(java.util.stream.Stream)
 	 */
-	default <R> FutureStream<R> fromStreamCompletableFuture(
+	default <R> FutureStream<R> fromStreamOfFutures(
 			Stream<CompletableFuture<R>> stream) {
 		return (FutureStream) SimpleReactStream.super
-				.fromStreamCompletableFuture(stream);
+				.fromStreamOfFutures(stream);
 	}
 
 	/*

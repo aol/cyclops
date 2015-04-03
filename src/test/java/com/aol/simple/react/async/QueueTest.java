@@ -1,7 +1,7 @@
 package com.aol.simple.react.async;
 
-import static com.aol.simple.react.stream.eager.EagerFutureStream.parallel;
-import static com.aol.simple.react.stream.eager.EagerFutureStream.parallelBuilder;
+import static com.aol.simple.react.stream.traits.EagerFutureStream.parallel;
+import static com.aol.simple.react.stream.traits.EagerFutureStream.parallelBuilder;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -24,8 +24,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.stream.simple.SimpleReact;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 
 public class QueueTest {
@@ -318,7 +318,7 @@ public class QueueTest {
 		}, () -> q.offer(5));
 
 		Collection<String> results = parallel().fromStream(q.stream())
-				.then(it -> "*" + it).run(() -> new ArrayList<String>());
+				.then(it -> "*" + it).run(Collectors.toList());
 
 		assertThat(results.size(), is(3));
 		assertThat(results, not(hasItem("*4")));
@@ -343,7 +343,7 @@ public class QueueTest {
 			List<String> result = parallel().fromStream(q.stream())
 					.then(it -> "*" + it).peek(it -> found.getAndAdd(1))
 					.peek(it -> System.out.println(it))
-					.run(() -> new ArrayList<String>());
+					.run(Collectors.toList());
 
 			assertThat(result, hasItem("*1"));
 

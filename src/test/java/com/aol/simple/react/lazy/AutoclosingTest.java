@@ -15,8 +15,8 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.stream.lazy.LazyReact;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class AutoclosingTest {
 

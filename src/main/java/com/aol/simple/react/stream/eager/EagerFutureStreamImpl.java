@@ -25,7 +25,8 @@ import com.aol.simple.react.collectors.lazy.BatchingCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.StreamWrapper;
-import com.aol.simple.react.stream.lazy.LazyFutureStream;
+import com.aol.simple.react.stream.traits.EagerFutureStream;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 

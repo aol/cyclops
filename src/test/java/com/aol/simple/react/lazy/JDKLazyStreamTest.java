@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 import com.aol.simple.react.base.BaseJDKStreamTest;
-import com.aol.simple.react.stream.lazy.LazyFutureStream;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class JDKLazyStreamTest extends BaseJDKStreamTest{
 

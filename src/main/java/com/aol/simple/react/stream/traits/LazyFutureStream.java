@@ -1,9 +1,8 @@
-package com.aol.simple.react.stream.lazy;
+package com.aol.simple.react.stream.traits;
 
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -25,6 +24,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -41,11 +41,9 @@ import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
-import com.aol.simple.react.stream.eager.EagerFutureStream;
 import com.aol.simple.react.stream.eager.EagerReact;
-import com.aol.simple.react.stream.traits.FutureStream;
-import com.aol.simple.react.stream.traits.LazyToQueue;
-import com.aol.simple.react.stream.traits.SimpleReactStream;
+import com.aol.simple.react.stream.lazy.LazyFutureStreamImpl;
+import com.aol.simple.react.stream.lazy.LazyReact;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -97,8 +95,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
      * @throws NullPointerException if the element selected is null
      */
     default Optional<U> findFirst(){
-    	List<U> results = new ArrayList<>();
-    	this.run(()->results);
+    	List<U> results = this.run(Collectors.toList());
     	if(results.size()==0)
     		return Optional.empty();
     	return Optional.of(results.get(0));
@@ -146,7 +143,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 		Seq seq = Seq.seq(getLastActive().stream().iterator()).zipWithIndex();
 		Seq<Tuple2<CompletableFuture<U>,Long>> withType = (Seq<Tuple2<CompletableFuture<U>,Long>>)seq;
 		Stream futureStream =  fromStream(withType.map(t ->t.v1.thenApplyAsync(v -> Tuple.tuple(t.v1.join(),t.v2))));
-		FutureStream noType = fromStreamCompletableFuture(futureStream);
+		FutureStream noType = fromStreamOfFutures(futureStream);
 		
 		return (LazyFutureStream<Tuple2<U,Long>>)noType;
 		
@@ -171,8 +168,8 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 		Stream stream = getLastActive().stream();
 		Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>> duplicated = Seq
 				.seq((Stream<CompletableFuture<U>>) stream).duplicate();
-		return new Tuple2(fromStreamCompletableFuture(duplicated.v1),
-				fromStreamCompletableFuture(duplicated.v2));
+		return new Tuple2(fromStreamOfFutures(duplicated.v1),
+				fromStreamOfFutures(duplicated.v2));
 	}
 	/**
 	 * Duplicate a Stream into two equivalent LazyFutureStreams
@@ -712,11 +709,11 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 * (java.util.stream.Stream)
 	 */
 	@Override
-	default <R> LazyFutureStream<R> fromStreamCompletableFuture(
+	default <R> LazyFutureStream<R> fromStreamOfFutures(
 			Stream<CompletableFuture<R>> stream) {
 
 		return (LazyFutureStream) FutureStream.super
-				.fromStreamCompletableFuture(stream);
+				.fromStreamOfFutures(stream);
 	}
 
 	/**
@@ -1466,7 +1463,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 * @return Self (current stage)
 	 */
 	default LazyFutureStream<U> self(Consumer<FutureStream<U>> consumer) {
-		return ( LazyFutureStream<U>)FutureStream.super.self(consumer);
+		return (com.aol.simple.react.stream.traits.LazyFutureStream<U>)FutureStream.super.self(consumer);
 	}
 
 
