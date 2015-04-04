@@ -1,7 +1,7 @@
 package com.aol.simple.react.collectors.lazy;
 
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -37,7 +37,7 @@ public class BatchingCollectorTest {
 		for(int i=0;i<1000;i++){
 			collector.accept(cf);
 		}
-		verify(cf,times(986)).isDone();
+		verify(cf,atLeastOnce()).isDone();
 	}
 	@Test
 	public void testAcceptMock495() {
