@@ -54,10 +54,12 @@ public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 	 * 
 	 * Construct a SimpleReact stage - this acts as a fluent SimpleReact builder
 	 * 
+	 @param eagerReact
+	 *            Management for each stage
+	 *            
 	 * @param stream
 	 *            Stream that will generate the events that will be reacted to.
-	 * @param executor
-	 *            The next stage's tasks will be submitted to this executor
+	 * 
 	 */
 	public EagerFutureStreamImpl(EagerReact eagerReact,final Stream<CompletableFuture<U>> stream) {
 		this(eagerReact, stream,null);
