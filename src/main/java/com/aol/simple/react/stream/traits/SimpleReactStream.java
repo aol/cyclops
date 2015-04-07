@@ -784,11 +784,29 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 				spliteratorUnknownSize(iterator, ORDERED), false));
 	}
 
+	/* 
+	 * Execute subsequent stages on the completing thread (until async called)
+	 * 10X faster than async execution.
+	 * Use async for blocking IO or distributing work across threads or cores.
+	 * Switch to sync for non-blocking tasks when desired thread utlisation reached
+	 * 
+	 *	@return Version of FutureStream that will use sync CompletableFuture methods
+	 * 
+	 */
 	default SimpleReactStream<U> sync(){
 		return this.withAsync(false);
 	}
 	
-
+	/* 
+	 * Execute subsequent stages by submission to an ExecutorService for async execution
+	 * 10X slower than sync execution.
+	 * Use async for blocking IO or distributing work across threads or cores.
+	 * Switch to sync for non-blocking tasks when desired thread utlisation reached
+	 *
+	 * 
+	 *	@return Version of FutureStream that will use async CompletableFuture methods
+	 *
+	 */
 	default SimpleReactStream<U> async(){
 		return this.withAsync(true);
 	}

@@ -1464,11 +1464,30 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	}
 
 	
+	/* 
+	 * Execute subsequent stages on the completing thread (until async called)
+	 * 10X faster than async execution.
+	 * Use async for blocking IO or distributing work across threads or cores.
+	 * Switch to sync for non-blocking tasks when desired thread utlisation reached
+	 * 
+	 *	@return Version of FutureStream that will use sync CompletableFuture methods
+	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#sync()
+	 */
 	default FutureStream<U> sync(){
 		return (FutureStream<U>)SimpleReactStream.super.sync();
 	}
 	
 
+	/* 
+	 * Execute subsequent stages by submission to an ExecutorService for async execution
+	 * 10X slower than sync execution.
+	 * Use async for blocking IO or distributing work across threads or cores.
+	 * Switch to sync for non-blocking tasks when desired thread utlisation reached
+	 *
+	 * 
+	 *	@return Version of FutureStream that will use async CompletableFuture methods
+	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#async()
+	 */
 	default FutureStream<U> async(){
 		return (FutureStream<U>) SimpleReactStream.super.async();
 	}

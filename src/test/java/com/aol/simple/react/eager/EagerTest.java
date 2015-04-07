@@ -85,6 +85,9 @@ public class EagerTest {
 	public void doOnEach(){
 		String[] found = {""};
 		String res = EagerFutureStream.sequentialBuilder().react(()->"hello").doOnEach(it->{ found[0]=it;return "world";}).map(it->it+"!").first();
+		while("".equals(found[0])){
+			Thread.yield();
+		}
 		assertThat(found[0],is("hello"));
 		assertThat(res,is("hello!"));
 	}

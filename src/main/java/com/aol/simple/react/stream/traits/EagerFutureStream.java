@@ -51,10 +51,28 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  */
 public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
-	
+	/* 
+	 * Execute subsequent stages on the completing thread (until async called)
+	 * 10X faster than async execution.
+	 * Use async for blocking IO or distributing work across threads or cores.
+	 * Switch to sync for non-blocking tasks when desired thread utlisation reached
+	 * 
+	 *	@return Version of FutureStream that will use sync CompletableFuture methods
+	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#sync()
+	 */
 	default EagerFutureStream<U> sync(){
 		return (EagerFutureStream<U>)FutureStream.super.sync();
 	}
+	/* 
+	 * Execute subsequent stages by submission to an ExecutorService for async execution
+	 * 10X slower than sync execution.
+	 * Use async for blocking IO or distributing work across threads or cores.
+	 * Switch to sync for non-blocking tasks when desired thread utlisation reached
+	 *
+	 * 
+	 *	@return Version of FutureStream that will use async CompletableFuture methods
+	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#async()
+	 */
 	default EagerFutureStream<U> async(){
 		return (EagerFutureStream<U>)FutureStream.super.async();
 	}

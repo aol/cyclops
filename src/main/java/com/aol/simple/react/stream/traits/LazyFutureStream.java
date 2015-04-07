@@ -72,11 +72,35 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	LazyFutureStream<U> withSubscription(Continueable sub);
 
 	LazyFutureStream<U> withLastActive(StreamWrapper streamWrapper);
+	
+	/* 
+	 * Execute subsequent stages on the completing thread (until async called)
+	 * 10X faster than async execution.
+	 * Use async for blocking IO or distributing work across threads or cores.
+	 * Switch to sync for non-blocking tasks when desired thread utlisation reached
+	 * 
+	 *	@return Version of FutureStream that will use sync CompletableFuture methods
+	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#sync()
+	 */
 	default LazyFutureStream<U> sync(){
 		return (LazyFutureStream<U>)FutureStream.super.sync();
 	}
+	/* 
+	 * Execute subsequent stages by submission to an ExecutorService for async execution
+	 * 10X slower than sync execution.
+	 * Use async for blocking IO or distributing work across threads or cores.
+	 * Switch to sync for non-blocking tasks when desired thread utlisation reached
+	 *
+	 * 
+	 *	@return Version of FutureStream that will use async CompletableFuture methods
+	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#async()
+	 */
 	default LazyFutureStream<U> async(){
 		return (LazyFutureStream<U>)FutureStream.super.async();
+	}
+	
+	default <R> LazyFutureStream<R> thenSync(final Function<U, R> fn){
+		return (LazyFutureStream<R>)FutureStream.super.thenSync(fn);
 	}
 
 	default void closeAll(){
