@@ -25,9 +25,6 @@ import javaslang.monad.Option;
 
 import org.jooq.lambda.Seq;
 
-import com.aol.cyclops.api.Function1Converter;
-import com.aol.cyclops.api.Function2Converter;
-import com.aol.cyclops.api.OptionConverter;
 import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
@@ -52,9 +49,7 @@ import fj.P8;
 public class JavasLangConverter {
 	
 	
-	public static class FromJDK<T,R> implements Function1Converter<λ1<T,R>,Function<T,R>>,
-											Function2Converter<λ1<T,R>,Function<T,R>>,
-											OptionConverter<Optional<T>,Option<T>>{
+	public static class FromJDK<T,R> {
 		
 		public static <T,R>  λ1<T,R> λ(Function<T,R> fn){
 			return (t) -> fn.apply(t);
@@ -66,21 +61,8 @@ public class JavasLangConverter {
 			return Option.of(o.orElse(null));
 		}
 		
-		
-		@Override
-		public Function<T, R> λ(λ1<T, R> fn) {
-			return λ(fn);
-		}
-		@Override
-		public Function<T, R> λ2(λ1<T, R> fn) {
-			return λ2(fn);
-		}
-		@Override
-		public Option<T> option(Optional<T> t) {
-			return option(t);
-		}
-		
 	}
+	
 	public static class FromGuava {
 		public static <T,R>  λ1<T,R> λ(com.google.common.base.Function<T,R> fn){
 			return (t) -> fn.apply(t);
