@@ -692,39 +692,7 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 				.retrier(RetryBuilder.getDefaultInstance().withScheduler(ThreadPools.getCommonFreeThreadRetry())).build();
 	}
 
-	/**
-	 * @param executor
-	 *            Executor this SimpleReact instance will use to execute
-	 *            concurrent tasks.
-	 * @return Lazy SimpleReact for handling infinite streams
-	 */
-	public static SimpleReact simple(ExecutorService executor) {
-		return new SimpleReact(executor);
-	}
-
-	/**
-	 * @param retry
-	 *            RetryExecutor this SimpleReact instance will use to retry
-	 *            concurrent tasks.
-	 * @return Lazy SimpleReact for handling infinite streams
-	 */
-	public static SimpleReact simple(RetryExecutor retry) {
-		return SimpleReact.builder().retrier(retry).build();
-	}
-
-	/**
-	 * @param executor
-	 *            Executor this SimpleReact instance will use to execute
-	 *            concurrent tasks.
-	 * @param retry
-	 *            RetryExecutor this SimpleReact instance will use to retry
-	 *            concurrent tasks.
-	 * @return Lazy SimpleReact for handling infinite streams
-	 */
-	public static SimpleReact simple(ExecutorService executor, RetryExecutor retry) {
-		return SimpleReact.builder().executor(executor).retrier(retry).build();
-	}
-
+	
 	/**
 	 * @see Stream#of(Object)
 	 */
@@ -757,8 +725,7 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	 * Wrap a Stream into a SimpleReactStream.
 	 */
 	static <T> SimpleReactStream<T> futureStream(Stream<T> stream) {
-		if (stream instanceof SimpleReactStream)
-			return (SimpleReactStream<T>) stream;
+		
 		if (stream instanceof FutureStream)
 			stream = ((FutureStream) stream).toQueue().stream(((FutureStream) stream).getSubscription());
 

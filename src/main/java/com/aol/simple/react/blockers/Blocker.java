@@ -49,17 +49,10 @@ public class Blocker<U> {
 					result, (Throwable)ex);
 		}));
 
-		try {
-			return promise.get();
-		} catch (ExecutionException e) {
-			exceptionSoftener.throwSoftenedException(e);
-			
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			exceptionSoftener.throwSoftenedException(e);
-			
-		}
-		throw new RuntimeException("Unreachable code reached!");
+		
+		return promise.join();
+		
+		
 	}
 
 	

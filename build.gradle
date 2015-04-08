@@ -1,11 +1,14 @@
 import org.gradle.api.artifacts.maven.MavenDeployment
 
+def custom ={ "$rootDir/gradle/${it}.gradle"} //find custom plugins locally
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'com.bmuschko.nexus'
 apply plugin: 'com.github.johnrengelman.shadow'
-
+apply plugin: 'jacoco'
+apply from: custom('jacoco-version')
 
 sourceCompatibility = 1.8
 version = '0.84'
@@ -14,6 +17,8 @@ jar {
         attributes 'Implementation-Title': 'Simple React', 'Implementation-Version': version
     }
 }
+apply from: custom('jacoco-config')
+apply from: custom('jacoco-excludes')
 
 buildscript {
     repositories {

@@ -3,7 +3,7 @@ package com.aol.simple.react.predicates;
 import java.util.function.Predicate;
 
 public class Predicates {
-
+	Predicates(){}
 	public static <T> Take<T> take(int take){
 		return new Take<T>(take);
 	}

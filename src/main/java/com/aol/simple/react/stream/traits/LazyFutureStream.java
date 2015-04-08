@@ -1184,39 +1184,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 				.build();
 	}
 
-	/**
-	 * @param executor
-	 *            Executor this SimpleReact instance will use to execute
-	 *            concurrent tasks.
-	 * @return Lazy SimpleReact for handling infinite streams
-	 */
-	public static LazyReact lazy(ExecutorService executor) {
-		return new LazyReact(executor);
-	}
-
-	/**
-	 * @param retry
-	 *            RetryExecutor this SimpleReact instance will use to retry
-	 *            concurrent tasks.
-	 * @return Lazy SimpleReact for handling infinite streams
-	 */
-	public static LazyReact lazy(RetryExecutor retry) {
-		return LazyReact.builder().retrier(retry).build();
-	}
-
-	/**
-	 * @param executor
-	 *            Executor this SimpleReact instance will use to execute
-	 *            concurrent tasks.
-	 * @param retry
-	 *            RetryExecutor this SimpleReact instance will use to retry
-	 *            concurrent tasks.
-	 * @return Lazy SimpleReact for handling infinite streams
-	 */
-	public static LazyReact lazy(ExecutorService executor, RetryExecutor retry) {
-		return LazyReact.builder().executor(executor).retrier(retry).build();
-	}
-
+	
 	/**
 	 * @see Stream#of(Object)
 	 */

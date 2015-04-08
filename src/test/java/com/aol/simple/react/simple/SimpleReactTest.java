@@ -15,6 +15,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,19 +27,55 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.Test;
 
 import com.aol.simple.react.extractors.Extractors;
+import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.traits.EagerFutureStream;
-import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.google.common.collect.Lists;
 
 public class SimpleReactTest {
-
+	@Test
+	public void testFromStreamCompletableFutureReplace(){
+		assertThat(SimpleReactStream.of(1,2,3).fromStreamCompletableFutureReplace(Stream.of(CompletableFuture.completedFuture(1))).block().size(),is(3));
+	}
+	@Test
+	public void streamOfEmpty(){
+		List value = SimpleReactStream.empty().block();
+		assertThat(value.size(),is(0));
+	}
+	@Test
+	public void streamOfOne(){
+		Integer value = SimpleReactStream.of(1).first();
+		assertThat(value,is(1));
+	}
+	@Test
+	public void streamParallelOf(){
+		SimpleReactStream value = SimpleReactStream.parallelOf(1,2);
+		
+		assertThat(value.getTaskExecutor(),is(ForkJoinPool.commonPool()));
+	}
+	@Test
+	public void futureStreamIterator(){
+		assertThat(SimpleReactStream.futureStream(Arrays.asList(1,2,3,4).iterator()).block().size(),is(4));
+	}
+	@Test
+	public void futureStreamIterable(){
+		assertThat(SimpleReactStream.futureStream(Arrays.asList(1,2,3,4)).block().size(),is(4));
+	}
+	
+	@Test
+	public void futureStreamTest(){
+		assertThat(SimpleReactStream.futureStream((Stream)LazyFutureStream.of(1,2,3,4)).block().size(),is(4));
+	}
+	@Test
+	public void futureStreamFromStreamTest(){
+		assertThat(SimpleReactStream.futureStream(Stream.of(1,2,3,4)).block().size(),is(4));
+	}
 	@Test
 	public void syncTest(){
 		SimpleReactStream stream = SimpleReactStream.of(1,2,3,4).sync();
@@ -90,7 +127,7 @@ public class SimpleReactTest {
 	public void testLazyParameters(){
 		
 		ForkJoinPool fjp = new ForkJoinPool();
-		assertThat(LazyFutureStream.lazy(fjp).getExecutor(),is(fjp));
+		assertThat(new LazyReact(fjp).getExecutor(),is(fjp));
 	}
 	@Test
 	public void testEagetParameters(){

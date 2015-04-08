@@ -202,4 +202,26 @@ public class PushableStreamTest {
 		assertThat(Sets.newSet(100),is(vals));
 	}
 	
+	@Test
+	public void testWithBackPressureAfterButOff() {
+		PushableLazyFutureStream<Integer> pushable = new PushableStreamBuilder().withBackPressureAfter(10)
+				.withBackPressureOn(false)
+				.pushableLazyFutureStream();
+		
+		pushable.getInput().add(100);
+		pushable.getInput().close();
+		assertThat(pushable.getStream().collect(Collectors.toList()),
+				hasItem(100));
+	}
+	@Test(expected=IllegalArgumentException.class)
+	public void testWithBackPressureNegativeAfterButOn() {
+		PushableLazyFutureStream<Integer> pushable = new PushableStreamBuilder().withBackPressureAfter(-10)
+				.withBackPressureOn(true)
+				.pushableLazyFutureStream();
+		
+		pushable.getInput().add(100);
+		pushable.getInput().close();
+		assertThat(pushable.getStream().collect(Collectors.toList()),
+				hasItem(100));
+	}
 }
