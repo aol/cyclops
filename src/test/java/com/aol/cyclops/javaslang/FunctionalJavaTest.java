@@ -64,16 +64,13 @@ public class FunctionalJavaTest {
 		assertThat(FromFunctionalJava.tuple(fj.P.p(1,2,3,4,5,6,7)),is(Tuple.of(1,2,3,4,5,6,7)));
 	}
 	
-	@Test
-	public void testFromFunctionalJavaTuple7(){
-		assertThat(FromFunctionalJava.tuple(fj.P.p(1,2,3,4,5,6,7)),is(Tuple.of(1,2,3,4,5,6,7)));
-	}
+
 	
 	@Test
 	public void testFromFunctionalJavaTuple8(){
 		assertThat(FromFunctionalJava.tuple(fj.P.p(1,2,3,4,5,6,7,8)),is(Tuple.of(1,2,3,4,5,6,7,8)));
 	}
-	
+	/**
 	@Test
 	public void testFromFunctionalJavaTuple9(){
 		assertThat(FromFunctionalJava.tuple(fj.P.p(1,2,3,4,5,6,7,8,9)),is(Tuple.of(1,2,3,4,5,6,7,8,9)));
@@ -98,7 +95,7 @@ public class FunctionalJavaTest {
 	public void testFromFunctionalJavaTuple13(){
 		assertThat(FromFunctionalJava.tuple(fj.P.p(1,2,3,4,5,6,7,8,9,10,11,12,13)),is(Tuple.of(1,2,3,4,5,6,7,8,9,10,11,12,13)));
 	}
-	
+	**/
 	
 	
 	
