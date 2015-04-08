@@ -36,6 +36,15 @@
 
 <p>SimpleReact is a Java 8 concurrent Streaming library. We provide three Stream types, and three asynchronous data structures.</p>
 
+<pre><code>  List&lt;String&gt; results = LazyFutureStream.sequentialBuilder()
+                      .react(()-&gt;”new event1",()-&gt;”new event2")
+                      .retry(this::unreliable)
+                      .onFail(e-&gt;”default”)
+                      .peek(System.out::println)
+                      .capture(Throwable::printStackTrace)
+                      .block();
+</code></pre>
+
 <h2>
 <a id="build-status" class="anchor" href="#build-status" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build Status</h2>
 
