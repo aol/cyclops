@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import java.util.Optional;
 
-import static com.aol.cyclops.javaslang.JavasLangConverter.*;
+
 import static com.aol.cyclops.javaslang.FromJDK.λ2;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
