@@ -1,7 +1,7 @@
 package com.aol.cyclops.javaslang;
 
 
-import static com.aol.cyclops.matcher.Extractors._;
+
 import static fj.data.List.list;
 
 import java.io.File;
@@ -26,8 +26,7 @@ import lombok.experimental.ExtensionMethod;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Test;
 
-import com.aol.cyclops.matcher.Matching;
-import com.aol.cyclops.matcher.PatternMatcher;
+
 
 import fj.Ord;
 import fj.data.List;
@@ -78,37 +77,7 @@ public class Presentation {
 
     }
 
-    @Test
-    public void patternMatch() {
-
-    	
-        String result =  Matching.inCaseOfType((FileNotFoundException e) -> "file not found")
-        		.inCaseOfType((Exception e) -> "general exception")
-        		.inCaseOfType((Integer i)->"hello")
-                .match(new FileNotFoundException("test"))
-                .orElse("ok");
-
-
-        System.out.println("matched " + result);
-
-    }
-    @Test
-    public void patternMatch2() {
-
-    	
-        String result = new PatternMatcher()
-        		.inCaseOfValue(5,_(0),r-> "found "+r)
-        		.inCaseOfValue(10,_(0),r-> "found 10")
-        		.inCaseOfType(_(1),(FileNotFoundException e) -> "file not found")
-        		.inCaseOf(_(2),(Integer value)->value>1000,value -> "larger than 1000")
-        		.caseOf(_(2),(Integer value)->value>1000,System.out::println)
-                .<String>match(Tuple.tuple(10,Optional.empty(),999))
-                .orElse("ok");
-
-
-        System.out.println("matched " + result);
-
-    }
+   
 
     @Test
     public void exceptionHandling(){
