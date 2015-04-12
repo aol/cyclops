@@ -10,10 +10,11 @@ public class Extractors {
 	
 	
 	
-	public final static <R> PatternMatcher.Extractor<Iterable<R>,R> _(int pos){
-		return  (Iterable<R> it)-> {
+	//public final static <R> PatternMatcher.Extractor<Iterable<R>,R> _(int pos){
+	public final static  PatternMatcher.Extractor _(int pos){
+		return  ( it)-> {
 			
-			return (R)Seq.seq(it).skip(pos).limit(1).peek(System.out::println).collect(Collectors.toList()).get(0);
+			return Seq.seq((Iterable)it).skip(pos).limit(1).collect(Collectors.toList()).get(0);
 		};
 		
 	}

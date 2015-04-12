@@ -2,13 +2,9 @@ package com.aol.cyclops.javaslang;
 
 import static com.googlecode.totallylazy.collections.PersistentList.constructors.list;
 import static com.googlecode.totallylazy.collections.PersistentMap.constructors.map;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 import java.util.Date;
 import java.util.Iterator;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import lombok.val;
 
@@ -16,9 +12,7 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple3;
 import org.junit.Test;
 
-import com.aol.cyclops.TailCall;
 import com.googlecode.totallylazy.Trampoline;
-import static com.aol.cyclops.matcher.Extractors._;
 
 
 public class Preso2 {

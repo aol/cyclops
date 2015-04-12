@@ -11,13 +11,19 @@ import javaslang.Function1;
 import javaslang.LambdaAccessor;
 import lombok.val;
 
+import org.hamcrest.Matcher;
+
 import com.google.common.collect.Maps;
 
 
 @SuppressWarnings("unchecked")
-public class PatternMatcher{
+public class PatternMatcher implements Function1{
 	Map<Pair<Predicate,Optional<Extractor>>,Pair<ActionWithReturn,Optional<Extractor>>> cases = Maps.newLinkedHashMap();
 
+	public Object apply(Object t){
+		return match(t).get();
+	}
+	
 	public <R> Optional<R> match(Object t){
 		
 		Object[] result = {null};
@@ -61,18 +67,32 @@ public class PatternMatcher{
 		caseOfThenExtract(it -> it.getClass().isAssignableFrom(clazz), a, null);
 		return this;
 	}
+	public <V> PatternMatcher caseOf(Matcher<V> match,Action<V> a){
+		inCaseOfThenExtract(it->match.matches(it), new ActionWithReturnWrapper(a), null);
+		return this;
+	}
 	public <V> PatternMatcher caseOf(Predicate<V> match,Action<V> a){
 		inCaseOfThenExtract(match, new ActionWithReturnWrapper(a), null);
 		return this;
 	}
-	public <R,V,T> PatternMatcher caseOfThenExtract(Predicate match,Action<V> a, Extractor<T,R> extractor){
+	public <R,V,T> PatternMatcher caseOfThenExtract(Predicate<V> match,Action<V> a, Extractor<T,R> extractor){
 		
 		cases.put(new Pair(match, Optional.empty()), new Pair<ActionWithReturn, Optional<Extractor>>(new ActionWithReturnWrapper(a), Optional.ofNullable(extractor)));
+		return this;
+	}
+	public <R,V,T> PatternMatcher caseOfThenExtract(Matcher<V> match,Action<V> a, Extractor<T,R> extractor){
+		Predicate<V> predicate = it->match.matches(it);
+		cases.put(new Pair(predicate, Optional.empty()), new Pair<ActionWithReturn, Optional<Extractor>>(new ActionWithReturnWrapper(a), Optional.ofNullable(extractor)));
 		return this;
 	}
 	public <R,V,T> PatternMatcher caseOf( Extractor<T,R> extractor,Predicate<V> match,Action<V> a){
 		
 		cases.put(new Pair(match,Optional.of(extractor)),new Pair<ActionWithReturn,Optional<Extractor>>(new ActionWithReturnWrapper(a),Optional.empty()));
+		return this;
+	}
+	public <R,V,T> PatternMatcher caseOf( Extractor<T,R> extractor,Matcher<V> match,Action<V> a){
+		Predicate<V> predicate = it->match.matches(it);
+		cases.put(new Pair(predicate,Optional.of(extractor)),new Pair<ActionWithReturn,Optional<Extractor>>(new ActionWithReturnWrapper(a),Optional.empty()));
 		return this;
 	}
 	public <V,X> PatternMatcher inCaseOfValue(V value,ActionWithReturn<V,X> a){
@@ -90,7 +110,7 @@ public class PatternMatcher{
 		inCaseOfThenExtract(match, a, null);
 		return this;
 	}
-	public <R,V,T,X> PatternMatcher inCaseOfThenExtract(Predicate match,ActionWithReturn<V,X> a, Extractor<T,R> extractor){
+	public <R,V,T,X> PatternMatcher inCaseOfThenExtract(Predicate match,ActionWithReturn<R,X> a, Extractor<T,R> extractor){
 		
 		cases.put(new Pair(match,Optional.empty()),new Pair<ActionWithReturn,Optional<Extractor>>(a,Optional.ofNullable(extractor)));
 		return this;
@@ -102,6 +122,27 @@ public class PatternMatcher{
 		cases.put(new Pair(match,Optional.of(extractor)),new Pair<ActionWithReturn,Optional<Extractor>>(a,Optional.empty()));
 		return this;
 	}
+	
+	/**hamcrest **/
+	public <V,X> PatternMatcher inCaseOf(Matcher<V> match,ActionWithReturn<V,X> a){
+		Predicate<V> predicate = it->match.matches(it);
+		inCaseOfThenExtract(predicate, a, null);
+		return this;
+	}
+	public <R,V,T,X> PatternMatcher inCaseOfThenExtract(Matcher<V> match,ActionWithReturn<V,X> a, Extractor<T,R> extractor){
+		Predicate<V> predicate = it->match.matches(it);
+		cases.put(new Pair(predicate,Optional.empty()),
+					new Pair<ActionWithReturn,Optional<Extractor>>(a,Optional.ofNullable(extractor)));
+		return this;
+	}
+	
+	
+	public <R,V,T,X> PatternMatcher inCaseOf( Extractor<T,R> extractor,Matcher<V> match,ActionWithReturn<V,X> a){
+		Predicate<V> predicate = it->match.matches(it);
+		cases.put(new Pair(predicate,Optional.of(extractor)),new Pair<ActionWithReturn,Optional<Extractor>>(a,Optional.empty()));
+		return this;
+	}
+	
 	public <R,V,T,X> PatternMatcher inCaseOfType( Extractor<T,R> extractor,ActionWithReturn<V,X> a){
 		val type = a.getType();
 		val clazz = type.parameterType(type.parameterCount()-1);

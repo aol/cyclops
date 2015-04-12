@@ -1,10 +1,14 @@
 package com.aol.cyclops.matcher;
 
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.*;
 import static com.aol.cyclops.matcher.Extractors._;
 import static com.aol.cyclops.matcher.Matchers.rangeChecker;
 import static com.aol.cyclops.matcher.Matchers.typeMatcher;
 
 import java.util.List;
+
+import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;
 
@@ -40,5 +44,21 @@ public class RunPatternMatcher {
 		
 		
 		System.out.println ("Got (+100)" + m.match(ImmutableList.of(120,200,420)).get());
+	}
+	
+	@Test
+	public void testPostExtract(){
+		PatternMatcher  m = new PatternMatcher();
+		m.caseOfThenExtract(typeMatcher(List.class), (head)-> System.out.println("head is " + head),
+				Extractors.collectionHead);
+		m.match(ImmutableList.of(120,200,420));
+		
+	}
+	@Test
+	public void testPostExtractWithReturn(){
+		PatternMatcher  m = new PatternMatcher();
+		m.inCaseOfThenExtract(typeMatcher(List.class), (head)-> head,
+				Extractors.collectionHead);
+		assertThat(120,is(m.match(ImmutableList.of(120,200,420)).get()));
 	}
 }

@@ -23,10 +23,11 @@ import javaslang.control.Try;
 import lombok.val;
 import lombok.experimental.ExtensionMethod;
 
+import org.jooq.lambda.tuple.Tuple;
 import org.junit.Test;
 
+import com.aol.cyclops.matcher.Matching;
 import com.aol.cyclops.matcher.PatternMatcher;
-import com.google.common.collect.ImmutableList;
 
 import fj.Ord;
 import fj.data.List;
@@ -81,9 +82,10 @@ public class Presentation {
     public void patternMatch() {
 
     	
-        String result = new PatternMatcher().inCaseOfType((FileNotFoundException e) -> "file not found")
+        String result =  Matching.inCaseOfType((FileNotFoundException e) -> "file not found")
         		.inCaseOfType((Exception e) -> "general exception")
-                .<String>match(new FileNotFoundException("test"))
+        		.inCaseOfType((Integer i)->"hello")
+                .match(new FileNotFoundException("test"))
                 .orElse("ok");
 
 
@@ -100,7 +102,7 @@ public class Presentation {
         		.inCaseOfType(_(1),(FileNotFoundException e) -> "file not found")
         		.inCaseOf(_(2),(Integer value)->value>1000,value -> "larger than 1000")
         		.caseOf(_(2),(Integer value)->value>1000,System.out::println)
-                .<String>match(ImmutableList.of(10,Optional.empty(),999))
+                .<String>match(Tuple.tuple(10,Optional.empty(),999))
                 .orElse("ok");
 
 

@@ -1,6 +1,7 @@
 package com.aol.cyclops.matcher;
 
 import lombok.val;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,8 +19,11 @@ public class ScalaParserExampleTest {
 
 	@Test
 	public void testEval() {
-		val expr = new Add(new Const(1), new Mult(new Const(2), new Mult(new X(), new X()))); // 1 + 2 * X*X
-		assert(parser.eval(expr, 3) == 19);
+		
+		// 1 + 2 * X*X
+		val expr = new Add(new Const(1), new Mult(new Const(2), new Mult(new X(), new X()))); 
+		assertTrue(parser.eval(expr, 3) == 19);
+		
 	}
 
 }

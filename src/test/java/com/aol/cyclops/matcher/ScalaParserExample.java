@@ -11,16 +11,16 @@ public class ScalaParserExample {
 
 	//http://kerflyn.wordpress.com/2011/02/14/playing-with-scalas-pattern-matching/
 	public Integer eval(Expression expression, int xValue){
+
 		
-		PatternMatcher match = new PatternMatcher();
+		return Matching.inCaseOfType( (X x)-> xValue)
+			.inCaseOfType((Const c) -> c.getValue())
+			.inCaseOfType((Add a) ->  eval(a.getLeft(),xValue) + eval(a.getRight(),xValue))
+			.inCaseOfType( (Mult m) -> eval(m.getLeft(),xValue) * eval(m.getRight(),xValue))
+			.inCaseOfType( (Neg n) ->  -eval(n.getExpr(),xValue))
+			.match(expression).orElse(1);
 		
-		match.inCaseOf(typeMatcher(X.class), (X x)-> xValue)
-			.inCaseOf(typeMatcher(Const.class), (Const c) -> c.getValue())
-			.inCaseOf(typeMatcher(Add.class), (Add a) ->  eval(a.getLeft(),xValue) + eval(a.getRight(),xValue))
-			.inCaseOf(typeMatcher(Mult.class), (Mult m) -> eval(m.getLeft(),xValue) * eval(m.getRight(),xValue))
-			.inCaseOf(typeMatcher(Neg.class), (Neg n) ->  -eval(n.getExpr(),xValue));
 		
-		return (Integer)match.match(expression).orElse(1);
 	}
 	
 	
