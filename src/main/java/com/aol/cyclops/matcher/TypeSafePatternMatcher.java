@@ -102,8 +102,8 @@ public class TypeSafePatternMatcher<T,X> implements Function1<T,X>{
 		 return this;
 	}
 
-	public <R, V> TypeSafePatternMatcher<T, X> inCaseOfThenExtract(Predicate match,
-			ActionWithReturn<V,X> a, Extractor<T, R> extractor) {
+	public <R, V> TypeSafePatternMatcher<T, X> inCaseOfThenExtract(Predicate<T> match,
+			ActionWithReturn<R,X> a, Extractor<T, R> extractor) {
 		 matcher.inCaseOfThenExtract(match, a, extractor);
 		 return this;
 	}
@@ -121,8 +121,8 @@ public class TypeSafePatternMatcher<T,X> implements Function1<T,X>{
 		 return this;
 	}
 
-	public <R, V> TypeSafePatternMatcher<T, X> inCaseOfThenExtract(Matcher<V> match,
-			ActionWithReturn<V,X> a, Extractor<T, R> extractor) {
+	public <R> TypeSafePatternMatcher<T, X> inCaseOfThenExtract(Matcher<T> match,
+			ActionWithReturn<R,X> a, Extractor<T, R> extractor) {
 		matcher.inCaseOfThenExtract(match, a, extractor);
 		 return this;
 	}

@@ -110,7 +110,7 @@ public class PatternMatcher implements Function1{
 		inCaseOfThenExtract(match, a, null);
 		return this;
 	}
-	public <R,V,T,X> PatternMatcher inCaseOfThenExtract(Predicate match,ActionWithReturn<R,X> a, Extractor<T,R> extractor){
+	public <R,T,X> PatternMatcher inCaseOfThenExtract(Predicate<T> match,ActionWithReturn<R,X> a, Extractor<T,R> extractor){
 		
 		cases.put(new Pair(match,Optional.empty()),new Pair<ActionWithReturn,Optional<Extractor>>(a,Optional.ofNullable(extractor)));
 		return this;
@@ -129,8 +129,8 @@ public class PatternMatcher implements Function1{
 		inCaseOfThenExtract(predicate, a, null);
 		return this;
 	}
-	public <R,V,T,X> PatternMatcher inCaseOfThenExtract(Matcher<V> match,ActionWithReturn<V,X> a, Extractor<T,R> extractor){
-		Predicate<V> predicate = it->match.matches(it);
+	public <R,T,X> PatternMatcher inCaseOfThenExtract(Matcher<T> match,ActionWithReturn<R,X> a, Extractor<T,R> extractor){
+		Predicate<T> predicate = it->match.matches(it);
 		cases.put(new Pair(predicate,Optional.empty()),
 					new Pair<ActionWithReturn,Optional<Extractor>>(a,Optional.ofNullable(extractor)));
 		return this;

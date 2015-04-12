@@ -1,11 +1,15 @@
 package com.aol.cyclops.matcher;
 
-import static com.aol.cyclops.matcher.Extractors._;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.List;
 
+import org.hamcrest.Matcher;
 import org.junit.Test;
 
 public class HamcrestTest {
@@ -27,14 +31,16 @@ public class HamcrestTest {
 	}
 	@Test
 	public void hamcrestWithPostExtractor(){
-		assertEquals("world",Matching.inCaseOfThenExtract(containsInAnyOrder("world","hello"),value -> value
+		assertEquals("world",Matching.inCaseOfThenExtract((Matcher)containsInAnyOrder("world","hello"),value -> value
 									,Extractors._(1))
 							.apply(Arrays.asList("hello","world")));
 	}
 	@Test
 	public void hamcrestWithPostExtractor2(){
-		assertEquals("world",new PatternMatcher().inCaseOfThenExtract(containsInAnyOrder("world","hello"),value -> value
-									,Extractors.<String>_(1))
+		assertEquals("world",new PatternMatcher().<String,List<String>,String>inCaseOfThenExtract(
+				(Matcher)containsInAnyOrder("world","hello"),
+										(String value) -> value
+									,(List<String> list)-> list.get(1))
 							.apply(Arrays.asList("hello","world")));
 	}
 }

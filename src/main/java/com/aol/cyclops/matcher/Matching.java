@@ -65,7 +65,7 @@ public class Matching {
 	public static <V,T,X> TypeSafePatternMatcher<T,X> inCaseOf(Predicate<V> match,ActionWithReturn<V,X> a){
 		return new TypeSafePatternMatcher<T,X>().inCaseOf(match, a);
 	}
-	public static <R,V,T,X> TypeSafePatternMatcher<T,X> inCaseOfThenExtract(Predicate<V> match,ActionWithReturn<V,X> a, Extractor<T,R> extractor){
+	public static <R,V,T,X> TypeSafePatternMatcher<T,X> inCaseOfThenExtract(Predicate<T> match,ActionWithReturn<R,X> a, Extractor<T,R> extractor){
 		return new TypeSafePatternMatcher<T,X>().inCaseOfThenExtract(match, a, extractor);
 	}
 	
@@ -78,7 +78,7 @@ public class Matching {
 		return new TypeSafePatternMatcher<T,X>().inCaseOf(match, a);
 	}
 	
-	public static <R,V,T,X> TypeSafePatternMatcher<T,X> inCaseOfThenExtract(Matcher<V> match,ActionWithReturn<V,X> a, Extractor<T,R> extractor){
+	public static <R,T,X> TypeSafePatternMatcher<T,X> inCaseOfThenExtract(Matcher<T> match,ActionWithReturn<R,X> a, Extractor<T,R> extractor){
 		return new TypeSafePatternMatcher<T,X>().inCaseOfThenExtract(match, a, extractor);
 	}
 	
