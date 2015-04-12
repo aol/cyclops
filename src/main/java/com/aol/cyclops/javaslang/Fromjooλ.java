@@ -1,15 +1,13 @@
 package com.aol.cyclops.javaslang;
-import javaslang.Functions.λ1;
-import javaslang.Functions.λ2;
-import javaslang.Tuple.Tuple0;
-import javaslang.Tuple.Tuple1;
-import javaslang.Tuple.Tuple2;
-import javaslang.Tuple.Tuple3;
-import javaslang.Tuple.Tuple4;
-import javaslang.Tuple.Tuple5;
-import javaslang.Tuple.Tuple6;
-import javaslang.Tuple.Tuple7;
-import javaslang.Tuple.Tuple8;
+import javaslang.Tuple0;
+import javaslang.Tuple1;
+import javaslang.Tuple2;
+import javaslang.Tuple3;
+import javaslang.Tuple4;
+import javaslang.Tuple5;
+import javaslang.Tuple6;
+import javaslang.Tuple7;
+import javaslang.Tuple8;
 
 public class Fromjooλ{
 	public static  Tuple0 tuple(org.jooq.lambda.tuple.Tuple0 t){

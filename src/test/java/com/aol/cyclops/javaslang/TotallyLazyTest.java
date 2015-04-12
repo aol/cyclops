@@ -6,9 +6,6 @@ import javaslang.Tuple;
 
 import org.junit.Test;
 
-
-import com.aol.cyclops.javaslang.FromTotallyLazy;
-
 public class TotallyLazyTest {
 	@Test
 	public void testFromTotallyLazyλ() {
@@ -37,18 +34,18 @@ public class TotallyLazyTest {
 	}
 	@Test
 	public void testFromTotallyLazyTuple2(){
-		assertThat(FromTotallyLazy.tuple(com.googlecode.totallylazy.Pair.pair(1, 2)),is(new Tuple.Tuple2(1,2)));
+		assertThat(FromTotallyLazy.tuple(com.googlecode.totallylazy.Pair.pair(1, 2)),is(Tuple.of(1,2)));
 	}
 	@Test
 	public void testFromTotallyLazyTuple3(){
-		assertThat(FromTotallyLazy.tuple(com.googlecode.totallylazy.Triple.triple(1, 2,3)),is(new Tuple.Tuple3(1,2,3)));
+		assertThat(FromTotallyLazy.tuple(com.googlecode.totallylazy.Triple.triple(1, 2,3)),is(Tuple.of(1,2,3)));
 	}
 	@Test
 	public void testFromTotallyLazyTuple4(){
-		assertThat(FromTotallyLazy.tuple(com.googlecode.totallylazy.Quadruple.quadruple(1, 2, 3, 4)),is(new Tuple.Tuple4(1,2,3,4)));
+		assertThat(FromTotallyLazy.tuple(com.googlecode.totallylazy.Quadruple.quadruple(1, 2, 3, 4)),is(Tuple.of(1,2,3,4)));
 	}
 	@Test
 	public void testFromTotallyLazyTuple5(){
-		assertThat(FromTotallyLazy.tuple(com.googlecode.totallylazy.Quintuple.quintuple(1, 2, 3, 4,5)),is(new Tuple.Tuple5(1,2,3,4,5)));
+		assertThat(FromTotallyLazy.tuple(com.googlecode.totallylazy.Quintuple.quintuple(1, 2, 3, 4,5)),is(Tuple.of(1,2,3,4,5)));
 	}
 }

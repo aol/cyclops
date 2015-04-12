@@ -18,7 +18,7 @@ dependencies {
     compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
 	compile group:'com.googlecode.totallylazy', name: 'totallylazy', version: '2.4'
 	compile group: 'com.aol.simplereact', name:'simple-react', version:'0.83'
-	compile 'com.javaslang:javaslang:1.1.0'
+	compile 'com.javaslang:javaslang:1.2.0'
 	compile 'com.nurkiewicz.lazyseq:lazyseq:0.0.1'
 	compile group: 'org.projectlombok', name: 'lombok', version:'1.14.2'
 	compile "org.functionaljava:functionaljava:4.3"

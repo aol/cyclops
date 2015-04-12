@@ -1,15 +1,15 @@
 package com.aol.cyclops.javaslang;
 
-import javaslang.Functions.λ1;
-import javaslang.Functions.λ2;
-import javaslang.Tuple.Tuple2;
-import javaslang.Tuple.Tuple3;
-import javaslang.Tuple.Tuple4;
-import javaslang.Tuple.Tuple5;
-import javaslang.monad.Either;
-import javaslang.monad.Option;
-import javaslang.monad.Either.Left;
-import javaslang.monad.Either.Right;
+import javaslang.Function1;
+import javaslang.Function2;
+import javaslang.Tuple2;
+import javaslang.Tuple3;
+import javaslang.Tuple4;
+import javaslang.Tuple5;
+import javaslang.control.Either;
+import javaslang.control.Left;
+import javaslang.control.Option;
+import javaslang.control.Right;
 
 import com.googlecode.totallylazy.Pair;
 import com.googlecode.totallylazy.Quadruple;
@@ -17,10 +17,10 @@ import com.googlecode.totallylazy.Quintuple;
 import com.googlecode.totallylazy.Triple;
 
 public class FromTotallyLazy {
-	public static <T,R>  λ1<T,R> λ(com.googlecode.totallylazy.Function<T,R> fn){
+	public static <T,R>  Function1<T,R> λ(com.googlecode.totallylazy.Function<T,R> fn){
 		return (t) -> fn.apply(t);
 	}
-	public static <T,X,R>  λ2<T,X,R>  λ2(com.googlecode.totallylazy.Function2<T,X,R> fn){
+	public static <T,X,R>  Function2<T,X,R>  λ2(com.googlecode.totallylazy.Function2<T,X,R> fn){
 		return (t,x) -> fn.apply(t,x);
 	}
 	

@@ -41,7 +41,7 @@ public class FunctionalJavaTest {
 	}
 	@Test
 	public void testFromFunctionalJavaTuple2(){
-		assertThat(FromFunctionalJava.tuple(fj.P.p(1, 2)),is(new Tuple.Tuple2(1,2)));
+		assertThat(FromFunctionalJava.tuple(fj.P.p(1, 2)),is(Tuple.of(1,2)));
 	}
 	@Test
 	public void testFromFunctionalJavaTuple3(){

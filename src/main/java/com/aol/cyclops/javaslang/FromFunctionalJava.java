@@ -1,21 +1,19 @@
 package com.aol.cyclops.javaslang;
 
-import javaslang.Functions.λ1;
-import javaslang.Functions.λ2;
-import javaslang.Tuple.Tuple1;
-import javaslang.Tuple.Tuple2;
-import javaslang.Tuple.Tuple3;
-import javaslang.Tuple.Tuple4;
-import javaslang.Tuple.Tuple5;
-import javaslang.Tuple.Tuple6;
-import javaslang.Tuple.Tuple7;
-import javaslang.Tuple.Tuple8;
-import javaslang.monad.Either.Left;
-import javaslang.monad.Either.Right;
-import javaslang.monad.Option;
-
-import javaslang.monad.Either;
-
+import javaslang.Function1;
+import javaslang.Function2;
+import javaslang.Tuple1;
+import javaslang.Tuple2;
+import javaslang.Tuple3;
+import javaslang.Tuple4;
+import javaslang.Tuple5;
+import javaslang.Tuple6;
+import javaslang.Tuple7;
+import javaslang.Tuple8;
+import javaslang.control.Either;
+import javaslang.control.Left;
+import javaslang.control.Option;
+import javaslang.control.Right;
 import fj.F;
 import fj.F2;
 import fj.P1;
@@ -29,10 +27,10 @@ import fj.P8;
 
 
 public class FromFunctionalJava {
-	public static <T,R>  λ1<T,R> λ(F<T,R> fn){
+	public static <T,R>  Function1<T,R> λ(F<T,R> fn){
 		return (t) -> fn.f(t);
 	}
-	public static <T,X,R>  λ2<T,X,R> λ2(F2<T,X,R> fn){
+	public static <T,X,R>  Function2<T,X,R> λ2(F2<T,X,R> fn){
 		return (t,x) -> fn.f(t,x);
 	}
 	public static<T> Option<T> option(fj.data.Option<T> o){
