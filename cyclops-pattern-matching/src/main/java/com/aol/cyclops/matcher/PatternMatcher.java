@@ -15,6 +15,8 @@ import java.util.stream.Stream;
 
 import lombok.val;
 
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
@@ -90,7 +92,7 @@ public class PatternMatcher implements Function{
 		caseOfThenExtract(it -> Objects.equals(it, value), a, null);
 		return this;
 	}
-	public <V> PatternMatcher caseOfPredicates(Iterable<Predicate<V>> predicates,Action<List<V>> a){
+	public <V> PatternMatcher caseOfIterable(Iterable<Predicate<V>> predicates,Action<List<V>> a){
 		
 		Seq<Predicate<V>> pred = Seq.seq(predicates);
 		
@@ -99,14 +101,83 @@ public class PatternMatcher implements Function{
 				.map(t -> t.v2.test((V)t.v1)).allMatch(v->v==true), a, null);
 		return this;
 	}
+	public <V> PatternMatcher matchOfIterable(Iterable<Matcher> predicates,Action<List<V>> a){
+		
+		Seq<Matcher> pred = Seq.seq(predicates);
+		
+		
+		matchOfThenExtract(new BaseMatcher(){
 
-	public <V,V1> PatternMatcher caseOfPredicates(Tuple predicates,Action<? super Tuple> a){
+			@Override
+			public boolean matches(Object item) {
+				return seq(item).zip(pred)
+						.map(t -> t.v2.matches((V)t.v1)).allMatch(v->v==true);
+			}
+
+			@Override
+			public void describeTo(Description description) {
+			
+				
+			}
+			
+		}, a, null);
+		return this;
+	}
+	public <T,R,V,V1>  PatternMatcher matchOfMatchers(Tuple2<Matcher<V>,Matcher<V1>> predicates,
+				Action<R> a,Extractor<T,R> extractor){
+			
+			Seq<Object> pred = Seq.seq(predicates);
+			
+			matchOfThenExtract(new BaseMatcher(){
+
+				@Override
+				public boolean matches(Object item) {
+					return seq(item).zip(pred).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
+				}
+
+				@Override
+				public void describeTo(Description description) {
+				
+					
+				}
+				
+			}, a, extractor);
+			return this;
+	}
+	public <T,R,V,V1> PatternMatcher caseOfPredicates(Tuple2<Predicate<V>,Predicate<V1>> predicates,
+							Action<R> a,Extractor<T,R> extractor){
 		
 		Seq<Object> pred = Seq.seq(predicates);
 		
-		caseOfThenExtract(it -> seq(it).zip(pred).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, null);
+		caseOfThenExtract(it -> seq(it).zip(pred).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
 		return this;
 	}
+	public <T,R> PatternMatcher caseOfTuple(Tuple predicates, Action<R> a,Extractor<T,R> extractor){
+
+				Seq<Object> pred = Seq.seq(predicates);
+				caseOfThenExtract(it -> seq(it).zip(pred).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
+				return this;
+	}
+	public <T,R> PatternMatcher matchOfTuple(Tuple predicates, Action<R> a,Extractor<T,R> extractor){
+
+		Seq<Object> pred = Seq.seq(predicates);
+		matchOfThenExtract(new BaseMatcher(){
+
+			@Override
+			public boolean matches(Object item) {
+				return seq(item).zip(pred).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
+			}
+
+			@Override
+			public void describeTo(Description description) {
+			
+				
+			}
+			
+		}, a, extractor);
+		return this;
+}
+	
 	
 	private Seq<Object> seq(Object t){
 		if(t instanceof Iterable){
@@ -123,6 +194,93 @@ public class PatternMatcher implements Function{
 		}
 		return Seq.of(t);
 	}
+	
+     public <V,X> PatternMatcher inCaseOfIterable(Iterable<Predicate<V>> predicates,ActionWithReturn<List<V>,X> a){
+		
+		Seq<Predicate<V>> pred = Seq.seq(predicates);
+		
+		
+		inCaseOfThenExtract(it -> seq(it).zip(pred)
+				.map(t -> t.v2.test((V)t.v1)).allMatch(v->v==true), a, null);
+		return this;
+	}
+	public <V,X> PatternMatcher inMatchOfIterable(Iterable<Matcher> predicates,ActionWithReturn<List<V>,X> a){
+		
+		Seq<Matcher> pred = Seq.seq(predicates);
+		
+		
+		inMatchOfThenExtract(new BaseMatcher(){
+
+			@Override
+			public boolean matches(Object item) {
+				return seq(item).zip(pred)
+						.map(t -> t.v2.matches((V)t.v1)).allMatch(v->v==true);
+			}
+
+			@Override
+			public void describeTo(Description description) {
+			
+				
+			}
+			
+		}, a, null);
+		return this;
+	}
+	public <T,R,V,V1,X>  PatternMatcher inMatchOfMatchers(Tuple2<Matcher<V>,Matcher<V1>> predicates,
+				ActionWithReturn<R,X> a,Extractor<T,R> extractor){
+			
+			Seq<Object> pred = Seq.seq(predicates);
+			
+			inMatchOfThenExtract(new BaseMatcher(){
+
+				@Override
+				public boolean matches(Object item) {
+					return seq(item).zip(pred).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
+				}
+
+				@Override
+				public void describeTo(Description description) {
+				
+					
+				}
+				
+			}, a, extractor);
+			return this;
+	}
+	public <T,R,V,V1,X> PatternMatcher inCaseOfPredicates(Tuple2<Predicate<V>,Predicate<V1>> predicates,
+							ActionWithReturn<R,X> a,Extractor<T,R> extractor){
+		
+		Seq<Object> pred = Seq.seq(predicates);
+		
+		inCaseOfThenExtract(it -> seq(it).zip(pred).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
+		return this;
+	}
+	public <T,R,X> PatternMatcher inCaseOfTuple(Tuple predicates, ActionWithReturn<R,X> a,Extractor<T,R> extractor){
+
+				Seq<Object> pred = Seq.seq(predicates);
+				inCaseOfThenExtract(it -> seq(it).zip(pred).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
+				return this;
+	}
+	public <T,R,X> PatternMatcher inMatchOfTuple(Tuple predicates, ActionWithReturn<R,X> a,Extractor<T,R> extractor){
+
+		Seq<Object> pred = Seq.seq(predicates);
+		inMatchOfThenExtract(new BaseMatcher(){
+
+			@Override
+			public boolean matches(Object item) {
+				return seq(item).zip(pred).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
+			}
+
+			@Override
+			public void describeTo(Description description) {
+			
+				
+			}
+			
+		}, a, extractor);
+		return this;
+}
+	
 	public <V,X> PatternMatcher caseOfType(Action<V> a){
 		val type = a.getType();
 		val clazz = type.parameterType(type.parameterCount()-1);

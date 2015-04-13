@@ -1,5 +1,6 @@
 package com.aol.cyclops.matcher;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -7,6 +8,8 @@ import java.util.function.Predicate;
 import lombok.val;
 
 import org.hamcrest.Matcher;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.matcher.PatternMatcher.Action;
 import com.aol.cyclops.matcher.PatternMatcher.ActionWithReturn;
@@ -14,6 +17,73 @@ import com.aol.cyclops.matcher.PatternMatcher.ActionWithReturnWrapper;
 import com.aol.cyclops.matcher.PatternMatcher.Extractor;
 
 public class Matching {
+	
+	public static <R,V,T,X> TypeSafePatternMatcher<T, X> inCaseOfIterable(
+			Iterable<Predicate<V>> predicates, ActionWithReturn<List<V>, X> a) {
+
+		return new TypeSafePatternMatcher<T,X>().inCaseOfIterable(predicates, a);
+	}
+
+	public static <R,V,T,X> TypeSafePatternMatcher<T, X> inMatchOfIterable(
+			Iterable<Matcher> predicates, ActionWithReturn<List<V>, X> a) {
+		return new TypeSafePatternMatcher<T,X>().inMatchOfIterable(predicates, a);
+	}
+
+	public static <R,V,V1,T,X> TypeSafePatternMatcher<T, X> inMatchOfMatchers(
+			Tuple2<Matcher<V>, Matcher<V1>> predicates,
+			ActionWithReturn<R, X> a, Extractor<T, R> extractor) {
+
+		return new TypeSafePatternMatcher<T,X>().inMatchOfMatchers(predicates, a, extractor);
+	}
+
+	public static <R,V,V1,T,X> TypeSafePatternMatcher<T, X> inCaseOfPredicates(
+			Tuple2<Predicate<V>, Predicate<V1>> predicates,
+			ActionWithReturn<R, X> a, Extractor<T, R> extractor) {
+
+		return new TypeSafePatternMatcher<T,X>().inCaseOfPredicates(predicates, a, extractor);
+	}
+
+	public static <R,V,T,X> TypeSafePatternMatcher<T, X> inCaseOfTuple(Tuple predicates,
+			ActionWithReturn<R, X> a, Extractor<T, R> extractor) {
+
+		return new TypeSafePatternMatcher<T,X>().inCaseOfTuple(predicates, a, extractor);
+	}
+
+	public static <R,V,T,X> TypeSafePatternMatcher<T, X> inMatchOfTuple(Tuple predicates,
+			ActionWithReturn<R, X> a, Extractor<T, R> extractor) {
+		return new TypeSafePatternMatcher<T,X>().inMatchOfTuple(predicates, a, extractor);
+	}
+	
+	public static <R,V,T,X> TypeSafePatternMatcher<T, X> caseOfIterable(Iterable<Predicate<V>> predicates,Action<List<V>> a){
+		return new TypeSafePatternMatcher<T,X>().caseOfIterable(predicates, a);
+		
+	}
+	
+	public static <R,V,T,X> TypeSafePatternMatcher<T, X> matchOfIterable(Iterable<Matcher> predicates,Action<List<V>> a){
+		return new TypeSafePatternMatcher<T,X>().matchOfIterable(predicates, a);
+		
+	}
+	
+	public static <R,V,V1,T,X>  TypeSafePatternMatcher<T, X> matchOfMatchers(Tuple2<Matcher<V>,Matcher<V1>> predicates,
+			Action<R> a,Extractor<T,R> extractor){
+		return new TypeSafePatternMatcher<T,X>().matchOfMatchers(predicates, a, extractor);
+		
+	}
+	
+	public static <R,V,V1,T,X> TypeSafePatternMatcher<T, X> caseOfPredicates(Tuple2<Predicate<V>,Predicate<V1>> predicates,
+			Action<R> a,Extractor<T,R> extractor){
+		return new TypeSafePatternMatcher<T,X>().caseOfPredicates(predicates, a, extractor);
+		
+	}
+			
+	public static <R,V,T,X> TypeSafePatternMatcher<T, X> caseOfTuple(Tuple predicates, Action<R> a,Extractor<T,R> extractor){
+		return new TypeSafePatternMatcher<T,X>().caseOfTuple(predicates, a, extractor);
+		
+	}
+			
+	public static <R,V,T,X> TypeSafePatternMatcher<T, X> matchOfTuple(Tuple predicates, Action<R> a,Extractor<T,R> extractor){
+		return new TypeSafePatternMatcher<T,X>().matchOfTuple(predicates, a, extractor);
+	}
 
 	public static <R,V,T,X> TypeSafePatternMatcher<T,X> caseOfType( Extractor<T,R> extractor,Action<V> a){
 		return new TypeSafePatternMatcher<T,X>().caseOfType(extractor,a);
