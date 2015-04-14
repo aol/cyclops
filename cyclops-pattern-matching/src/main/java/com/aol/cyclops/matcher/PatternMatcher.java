@@ -60,6 +60,17 @@ public class PatternMatcher implements Function{
 	
 	private final Map<Pair<Predicate,Optional<Extractor>>,Pair<ActionWithReturn,Optional<Extractor>>> cases = new LinkedHashMap<>();
 
+	public <T,X> Function<T,X> asUnwrappedFunction(){
+		return (T t) -> (X)apply(t).get();
+	}
+	
+	public <T,X> Function<T,Stream<X>> asStreamFunction(){
+		
+		return	(T t) -> (Stream<X>)Stream.of(t)
+										.map(this::apply)
+										.filter(Optional::isPresent)
+										.map(Optional::get);
+	}
 	/* 
 	 *	@param t Object to match against
 	 *	@return Value from matched case if present

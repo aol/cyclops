@@ -1,6 +1,16 @@
 # Cyclops
 
-Super charge your JDK with one view into the functional Java world
+Super charge your JDK with one view into the functional Java world with
+
+## cyclops-converters :
+ 
+Converts types between JDK 8, TotallyLazy, Functional Java, Javaslang, jooλ, Guava,simple-react
+
+## cyclops-pattern-matching :
+
+Advanced Scala-like pattern matching for Java 8
+
+## cyclops-converters 
 
 * Immutable Java classes
 * Immutable Java Collections

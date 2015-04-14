@@ -2,12 +2,16 @@ package com.aol.cyclops.matcher;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Test;
+
 
 public class MatchManyTest {
 
@@ -43,7 +47,46 @@ public class MatchManyTest {
 		assertThat((List<Integer>)data,hasItem(200));
 		
 	}
-	
+	@Test
+	public void optionalFlatMap(){
+		System.out.println(Optional.of(100).flatMap(Matching.inCaseOfValue(100, i->i+10)).get());
+	}
+	@Test
+	public void unwrapped(){
+		Integer num = Stream.of(1)
+							.map(Matching.inCaseOfValue(1,i->i+10).asUnwrappedFunction())
+							.findFirst()
+							.get();
+		
+		assertThat(num,is(11));
+	}
+	@Test(expected=NoSuchElementException.class)
+	public void unwrappedMissing(){
+		Integer num = Stream.of(10)
+							.map(Matching.inCaseOfValue(1,i->i+10).asUnwrappedFunction())
+							.findFirst()
+							.get();
+		
+		fail("unreachable");
+	}
+	@Test
+	public void stream(){
+		Integer num = Stream.of(1)
+							.flatMap(Matching.inCaseOfValue(1,i->i+10).asStreamFunction())
+							.findFirst()
+							.get();
+		
+		assertThat(num,is(11));
+	}
+	@Test(expected=NoSuchElementException.class)
+	public void streamdMissing(){
+		Integer num = Stream.of(10)
+							.flatMap(Matching.inCaseOfValue(1,i->i+10).asStreamFunction())
+							.findFirst()
+							.get();
+		
+		fail("unreachable");
+	}
 	@Test
 	public void matchFromStream(){
 		

@@ -29,6 +29,15 @@ public class TypeSafePatternMatcher<T, X> implements Function<T, Optional<X>> {
 	private static final long serialVersionUID = 1L;
 	private final PatternMatcher matcher = new PatternMatcher();
 
+	
+	public  Function<T,X> asUnwrappedFunction(){
+		return matcher.asUnwrappedFunction(); 
+	}
+	
+	public <T> Function<T,Stream<T>> asStreamFunction(){
+		
+		return matcher.asStreamFunction();
+	}
 	public Optional<X> apply(Object t) {
 		return  match(t);
 	}
