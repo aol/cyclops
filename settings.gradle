@@ -1,2 +1,3 @@
 rootProject.name = 'cyclops'
 include ':cyclops-pattern-matching'
+include ':cyclops-converters'
