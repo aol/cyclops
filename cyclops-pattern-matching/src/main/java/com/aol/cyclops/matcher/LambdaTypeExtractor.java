@@ -7,13 +7,27 @@ import java.lang.invoke.MethodType;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.stream.Stream;
 
-import net.jodah.typetools.TypeResolver;
-
+/**
+ * Extract generic type info from Lambda expressions
+ * 
+ * @see <a href='http://stackoverflow.com/questions/21887358/reflection-type-inference-on-java-8-lambdas'>Discussion on stackoverflow</a>
+ * Serialisation approach seems to work more often than ConstantPool approach.
+ * 
+ * Does not work for MethodReferences.
+ * 
+ * @author johnmcclean
+ *
+ */
 public class LambdaTypeExtractor {
 	private static final ExceptionSoftener softener = ExceptionSoftener.singleton.factory.getInstance();
 	
+	/**
+	 * Extract generic type info from a Serializable Lambda expression
+	 * 
+	 * @param serializable Serializable lambda expression
+	 * @return MethodType info
+	 */
 	public static MethodType extractType(Serializable serializable){
 		
 		try{
@@ -29,11 +43,7 @@ public class LambdaTypeExtractor {
      method.setAccessible(true);
      MethodType type = MethodType.fromMethodDescriptorString( ((SerializedLambda) method.invoke(serializable)).getImplMethodSignature(),
     		 serializable.getClass().getClassLoader());
-     if(type.parameterCount()==0) {
-		Class[] classes = TypeResolver.resolveRawArguments(serializable.getClass().getSuperclass(), serializable.getClass());
-		 System.out.println("type resolver" + classes.length);
-		 Stream.of(classes).forEach(System.out::println);
-	 }
-		return type;
+     
+     return type;
 	}
 }

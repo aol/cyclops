@@ -25,11 +25,11 @@ public class Matching {
 	}
 
 	public static <R,V,T,X> TypeSafePatternMatcher<T, X> inMatchOfIterable(
-			Iterable<Matcher> predicates, ActionWithReturn<List<V>, X> a) {
+			Iterable<Matcher<V>> predicates, ActionWithReturn<List<V>, X> a) {
 		return new TypeSafePatternMatcher<T,X>().inMatchOfIterable(predicates, a);
 	}
 
-	public static <R,V,V1,T,X> TypeSafePatternMatcher<T, X> inMatchOfMatchers(
+	public static <R,V,V1,T,X> TypeSafePatternMatcher<T, X> inMatchOfTuple(
 			Tuple2<Matcher<V>, Matcher<V1>> predicates,
 			ActionWithReturn<R, X> a, Extractor<T, R> extractor) {
 
@@ -59,7 +59,7 @@ public class Matching {
 		
 	}
 	
-	public static <R,V,T,X> TypeSafePatternMatcher<T, X> matchOfIterable(Iterable<Matcher> predicates,Action<List<V>> a){
+	public static <R,V,T,X> TypeSafePatternMatcher<T, X> matchOfIterable(Iterable<Matcher<V>> predicates,Action<List<V>> a){
 		return new TypeSafePatternMatcher<T,X>().matchOfIterable(predicates, a);
 		
 	}

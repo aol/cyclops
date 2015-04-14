@@ -3,7 +3,7 @@ package com.aol.cyclops.matcher;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 import static com.aol.cyclops.matcher.Extractors.at;
-import static com.aol.cyclops.matcher.Predicates.rangeChecker;
+import static com.aol.cyclops.matcher.TestPredicates.rangeChecker;
 import static org.hamcrest.Matchers.*;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;
 
-public class RunPatternMatcher {
+public class RunPatternMatcherTest {
 
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args){

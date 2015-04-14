@@ -236,7 +236,7 @@ public class MatchingTest {
 	@Test
 	public void testInCaseOfPredicateOfVActionWithReturnOfVX() {
 		assertThat(Matching.inCaseOf((Integer a)-> a>100, x->x*10)
-				.apply(101),is(1010));
+				.apply(101).get(),is(1010));
 	}
 	@Test
 	public void testInCaseOfPredicateOfVActionWithReturnOfVXFalse() {
@@ -277,7 +277,7 @@ public class MatchingTest {
 	@Test
 	public void testInCaseOfMatcherOfVActionWithReturnOfVX() {
 		assertThat(Matching.inMatchOf(hasItem("hello"), hello->"world")
-				.apply(Arrays.asList("hello")),is("world"));
+				.apply(Arrays.asList("hello")).get(),is("world"));
 	}
 	@Test
 	public void testInCaseOfMatcherOfVActionWithReturnOfVXFalse() {
@@ -302,7 +302,7 @@ public class MatchingTest {
 	@Test
 	public void testInCaseOfExtractorOfTRMatcherOfVActionWithReturnOfVX() {
 		assertThat(Matching.inMatchOf(Person::getName, is("bob"), name -> name + " wins!")
-				.apply(new Person("bob",65)),is("bob wins!"));
+				.apply(new Person("bob",65)).get(),is("bob wins!"));
 	}
 	@Test
 	public void testInCaseOfExtractorOfTRMatcherOfVActionWithReturnOfVXFalse() {

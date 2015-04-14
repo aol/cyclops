@@ -3,7 +3,7 @@ package com.aol.cyclops.matcher;
 
 import java.util.function.Predicate;
 
-public class Predicates {
+public class TestPredicates {
 	
 	
 	public final static Predicate instanceMatcher(Object toMatch){

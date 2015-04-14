@@ -1,19 +1,20 @@
 package com.aol.cyclops.matcher;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.anything;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertThat;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.Test;
-public class ListMatching {
+public class ListMatchingTest {
 
 	
 	String language = null;
@@ -73,7 +74,7 @@ public class ListMatching {
 	@Test
 	public void multiMatchOfIterable(){
 		new PatternMatcher()
-			.matchOfIterable(asList( equalTo("-l"),anything()),
+			.matchOfIterable(asList( equalTo("-l"),any(String.class)),
 								(List<String> list) -> language  = list.get(1) )
 			.match(asList("-l","java"));
 		

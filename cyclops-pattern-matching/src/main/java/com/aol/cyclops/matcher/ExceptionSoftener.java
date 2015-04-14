@@ -1,3 +1,4 @@
+
 package com.aol.cyclops.matcher;
 
 
@@ -10,7 +11,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import sun.misc.Unsafe;
 
-
+@Slf4j
 public class ExceptionSoftener {
 
 	@Getter @AllArgsConstructor

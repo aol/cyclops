@@ -22,18 +22,18 @@ public class HamcrestTest {
 	@Test
 	public void hasAnyOrderTest(){
 		assertTrue(Matching.inMatchOf(containsInAnyOrder("world","hello"),list -> true)
-							.apply(Arrays.asList("hello","world")));
+							.apply(Arrays.asList("hello","world")).get());
 	}
 	@Test
 	public void hamcrestWithExtractor(){
 		assertTrue(Matching.inMatchOf(Extractors.at(1),is("world"),list -> true)
-							.apply(Arrays.asList("hello","world")));
+							.apply(Arrays.asList("hello","world")).get());
 	}
 	@Test
 	public void hamcrestWithPostExtractor(){
 		assertEquals("world",Matching.inMatchOfThenExtract((Matcher)containsInAnyOrder("world","hello"),value -> value
 									,Extractors.at(1))
-							.apply(Arrays.asList("hello","world")));
+							.apply(Arrays.asList("hello","world")).get());
 	}
 	@Test
 	public void hamcrestWithPostExtractor2(){
@@ -41,6 +41,6 @@ public class HamcrestTest {
 				(Matcher)containsInAnyOrder("world","hello"),
 										(String value) -> value
 									,(List<String> list)-> list.get(1))
-							.apply(Arrays.asList("hello","world")));
+							.apply(Arrays.asList("hello","world")).get());
 	}
 }

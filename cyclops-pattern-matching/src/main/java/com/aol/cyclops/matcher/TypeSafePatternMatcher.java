@@ -1,5 +1,6 @@
 package com.aol.cyclops.matcher;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -20,7 +21,7 @@ import com.aol.cyclops.matcher.PatternMatcher.ActionWithReturn;
 import com.aol.cyclops.matcher.PatternMatcher.Extractor;
 
 @AllArgsConstructor
-public class TypeSafePatternMatcher<T, X> implements Function<T, X> {
+public class TypeSafePatternMatcher<T, X> implements Function<T, Optional<X>> {
 
 	/**
 	 * 
@@ -28,11 +29,15 @@ public class TypeSafePatternMatcher<T, X> implements Function<T, X> {
 	private static final long serialVersionUID = 1L;
 	private final PatternMatcher matcher = new PatternMatcher();
 
-	public X apply(T t) {
-		return (X) match(t).get();
+	public Optional<X> apply(Object t) {
+		return  match(t);
 	}
 
+	
 	public Optional<X> match(Object t) {
+		return matcher.match(t);
+	}
+	public Optional<X> match(Object... t) {
 		return matcher.match(t);
 	}
 
@@ -55,7 +60,7 @@ public class TypeSafePatternMatcher<T, X> implements Function<T, X> {
 	}
 
 	public <V> TypeSafePatternMatcher<T, X> matchOfIterable(
-			Iterable<Matcher> predicates, Action<List<V>> a) {
+			Iterable<Matcher<V>> predicates, Action<List<V>> a) {
 		matcher.matchOfIterable(predicates, a);
 		return this;
 	}
@@ -94,7 +99,7 @@ public class TypeSafePatternMatcher<T, X> implements Function<T, X> {
 	}
 
 	public <V> TypeSafePatternMatcher<T, X> inMatchOfIterable(
-			Iterable<Matcher> predicates, ActionWithReturn<List<V>, X> a) {
+			Iterable<Matcher<V>> predicates, ActionWithReturn<List<V>, X> a) {
 		matcher.inMatchOfIterable(predicates, a);
 		return this;
 	}

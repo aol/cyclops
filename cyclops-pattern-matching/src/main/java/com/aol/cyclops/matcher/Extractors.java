@@ -14,8 +14,22 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
 
+/**
+ * Generic extractors for use s pre and post data extractors.
+ * 
+ * @author johnmcclean
+ *
+ */
 public class Extractors {
 	
+	/**
+	 * An extractor that will generte a Tuple2 with two values at the specified index.
+	 * Works on Iterable data structures.
+	 * 
+	 * @param v1 position of the first element to extract
+	 * @param v2 position of the second element to extract
+	 * @return Tuple with 2 specified elements
+	 */
 	public final static <V1,V2> PatternMatcher.Extractor<Iterable,Tuple2<V1,V2>> of(int v1,int v2){
 		val l1 = new Long(v1);
 		val l2 = new Long(v2);
@@ -31,7 +45,27 @@ public class Extractors {
 		};
 		
 	}
+	/**
+	 * Return element or first element in an Iterable.
+	 * 
+	 * @param pos Position to extract
+	 * @return value
+	 */
+	public final static <R> PatternMatcher.Extractor<?,R> first(){
 	
+		return  ( item)-> {
+			if(item instanceof Iterable)
+				return (R)((Iterable)item).iterator().next();
+			return (R)item;
+		};
+		
+	}
+	/**
+	 * Iterate to position and retieve value at position in an iterable data structure.
+	 * 
+	 * @param pos Position to extract
+	 * @return value
+	 */
 	public final static <R> PatternMatcher.Extractor<Iterable<R>,R> at(int pos){
 	
 		return  ( Iterable<R> it)-> {
@@ -40,12 +74,23 @@ public class Extractors {
 		};
 		
 	}
+	/**
+	 * 
+	 * Look up element at position in a list
+	 * 
+	 * @param pos Position to extract element from
+	 * @return Value at position
+	 */
 	public final static <R> PatternMatcher.Extractor<List<R>,R> get(int pos){
 		return (List<R> c) ->{
 			return c.get(pos);
 		};
 		
 	}
+	/**
+	 * @param key Look up a value from a map
+	 * @return Value for key specified
+	 */
 	public final static <K,R> PatternMatcher.Extractor<Map<K,R>,R> get(K key){
 		return (Map<K,R> c) ->{
 			return c.get(key);

@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.lang.invoke.MethodType;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -64,8 +65,8 @@ public class PatternMatcher implements Function{
 	 *	@return Value from matched case if present
 	 * @see java.util.function.Function#apply(java.lang.Object)
 	 */
-	public Object apply(Object t){
-		return match(t).get();
+	public Optional<Object> apply(Object t){
+		return match(t);
 	}
 	
 	/**
@@ -98,7 +99,9 @@ public class PatternMatcher implements Function{
 		Stream<Optional<R>> results = s.<Optional<R>>map(this::match);
 		return results.filter(Optional::isPresent).map(Optional::get);
 	}
-	
+	public <R> Optional<R> match(Object... t){
+		return match(Arrays.asList(t));
+	}
 	/**
 	 * @param t Object to match against supplied cases
 	 * @return Value returned from matched case (if present) otherwise Optional.empty()
@@ -194,12 +197,12 @@ public class PatternMatcher implements Function{
 		
 		
 		caseOfThenExtract(it -> seq(it).zip(pred)
-				.map(t -> t.v2.test((V)t.v1)).allMatch(v->v==true), a, null);
+				.map(t -> t.v2.test((V)first(t))).allMatch(v->v==true), a, null);
 		return this;
 	}
-	public <V> PatternMatcher matchOfIterable(Iterable<Matcher> predicates,Action<List<V>> a){
+	public <V> PatternMatcher matchOfIterable(Iterable<Matcher<V>> predicates,Action<List<V>> a){
 		
-		Seq<Matcher> pred = Seq.seq(predicates);
+		Seq<Matcher<V>> pred = Seq.seq(predicates);
 		
 		
 		matchOfThenExtract(new BaseMatcher(){
@@ -207,7 +210,7 @@ public class PatternMatcher implements Function{
 			@Override
 			public boolean matches(Object item) {
 				return seq(item).zip(pred)
-						.map(t -> t.v2.matches((V)t.v1)).allMatch(v->v==true);
+						.map(t -> t.v2.matches((V)first(t))).allMatch(v->v==true);
 			}
 
 			@Override
@@ -228,7 +231,7 @@ public class PatternMatcher implements Function{
 
 				@Override
 				public boolean matches(Object item) {
-					return seq(item).zip(pred).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
+					return seq(item).zip(pred).map(t -> ((Matcher)t.v2).matches(first(t))).allMatch(v->v==true);
 				}
 
 				@Override
@@ -245,13 +248,13 @@ public class PatternMatcher implements Function{
 		
 		Seq<Object> pred = Seq.seq(predicates);
 		
-		caseOfThenExtract(it -> seq(it).zip(pred).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
+		caseOfThenExtract(it -> seq(it).zip(pred).map(t -> ((Predicate)t.v2).test(first(t))).allMatch(v->v==true), a, extractor);
 		return this;
 	}
 	public <T,R> PatternMatcher caseOfTuple(Tuple predicates, Action<R> a,Extractor<T,R> extractor){
 
 				Seq<Object> pred = Seq.seq(predicates);
-				caseOfThenExtract(it -> seq(it).zip(pred).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
+				caseOfThenExtract(it -> seq(it).zip(pred).map(t -> ((Predicate)t.v2).test(first(t))).allMatch(v->v==true), a, extractor);
 				return this;
 	}
 	public <T,R> PatternMatcher matchOfTuple(Tuple predicates, Action<R> a,Extractor<T,R> extractor){
@@ -261,7 +264,7 @@ public class PatternMatcher implements Function{
 
 			@Override
 			public boolean matches(Object item) {
-				return seq(item).zip(pred).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
+				return seq(item).zip(pred).map(t -> ((Matcher)t.v2).matches(first(t))).allMatch(v->v==true);
 			}
 
 			@Override
@@ -297,12 +300,12 @@ public class PatternMatcher implements Function{
 		
 		
 		inCaseOfThenExtract(it -> seq(it).zip(pred)
-				.map(t -> t.v2.test((V)t.v1)).allMatch(v->v==true), a, null);
+				.map(t -> t.v2.test((V)first(t))).allMatch(v->v==true), a, null);
 		return this;
 	}
-	public <V,X> PatternMatcher inMatchOfIterable(Iterable<Matcher> predicates,ActionWithReturn<List<V>,X> a){
+	public <V,X> PatternMatcher inMatchOfIterable(Iterable<Matcher<V>> predicates,ActionWithReturn<List<V>,X> a){
 		
-		Seq<Matcher> pred = Seq.seq(predicates);
+		Seq<Matcher<V>> pred = (Seq<Matcher<V>>) Seq.seq(predicates);
 		
 		
 		inMatchOfThenExtract(new BaseMatcher(){
@@ -310,7 +313,7 @@ public class PatternMatcher implements Function{
 			@Override
 			public boolean matches(Object item) {
 				return seq(item).zip(pred)
-						.map(t -> t.v2.matches((V)t.v1)).allMatch(v->v==true);
+						.map(t -> t.v2.matches((V)first(t))).allMatch(v->v==true);
 			}
 
 			@Override
@@ -331,7 +334,7 @@ public class PatternMatcher implements Function{
 
 				@Override
 				public boolean matches(Object item) {
-					return seq(item).zip(pred).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
+					return seq(item).zip(pred).map(t -> ((Matcher)t.v2).matches(first(t))).allMatch(v->v==true);
 				}
 
 				@Override
@@ -348,13 +351,20 @@ public class PatternMatcher implements Function{
 		
 		Seq<Object> pred = Seq.seq(predicates);
 		
-		inCaseOfThenExtract(it -> seq(it).zip(pred).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
+		inCaseOfThenExtract(it -> seq(it).zip(pred).map(t -> ((Predicate)t.v2).test(first(t))).allMatch(v->v==true), a, extractor);
 		return this;
+	}
+	
+	private<T> T first(Object t){
+		if(t instanceof Iterable){
+			return (T)((Iterable)t).iterator().next();
+		}
+		return (T)t;
 	}
 	public <T,R,X> PatternMatcher inCaseOfTuple(Tuple predicates, ActionWithReturn<R,X> a,Extractor<T,R> extractor){
 
 				Seq<Object> pred = Seq.seq(predicates);
-				inCaseOfThenExtract(it -> seq(it).zip(pred).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
+				inCaseOfThenExtract(it -> seq(it).zip(pred).map(t -> ((Predicate)t.v2).test(first(t))).allMatch(v->v==true), a, extractor);
 				return this;
 	}
 	public <T,R,X> PatternMatcher inMatchOfTuple(Tuple predicates, ActionWithReturn<R,X> a,Extractor<T,R> extractor){
@@ -364,7 +374,7 @@ public class PatternMatcher implements Function{
 
 			@Override
 			public boolean matches(Object item) {
-				return seq(item).zip(pred).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
+				return seq(item).zip(pred).map(t -> ((Matcher)t.v2).matches(first(t))).allMatch(v->v==true);
 			}
 
 			@Override

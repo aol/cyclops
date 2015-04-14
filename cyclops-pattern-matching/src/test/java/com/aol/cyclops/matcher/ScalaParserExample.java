@@ -1,7 +1,7 @@
 package com.aol.cyclops.matcher;
 
 
-import static com.aol.cyclops.matcher.Predicates.typeMatcher;
+import static com.aol.cyclops.matcher.TestPredicates.typeMatcher;
 
 import com.aol.cyclops.matcher.PatternMatcher.ActionWithReturn;
 
