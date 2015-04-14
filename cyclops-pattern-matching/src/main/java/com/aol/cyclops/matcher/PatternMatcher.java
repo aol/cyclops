@@ -1,9 +1,11 @@
 package com.aol.cyclops.matcher;
 
+import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -22,31 +24,85 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
-import com.google.common.collect.Maps;
 
 
+/**
+ * PatternMatcher supports advanced pattern matching for Java 8
+ * 
+ * Features include
+ * 
+ * -cases match by value
+ * -cases match by type
+ * -cases using predicates
+ *  		inCaseOfXXX
+ *  		caseOfXXX
+ * -cases using hamcrete Matchers
+ * 			inMatchOfXXX
+ * 			matchOfXXX
+ * -cases as expressions (return value) - inCaseOfXXX, inMatchOfXXX
+ * -cases as statements (no return value) - caseOfXXX, matchOfXXX
+ * -pre & post variable extraction via Extractor (@see com.aol.cyclops.matcher.Extractors)
+ * -match using iterables of predicates or hamcrest Matchers
+ * 		- see caseOfIterable, matchOfIterable, inCaseOfIterable, matchOfIterable
+ * -match using tuples of predicates or hamcreate Matchers
+ * 	 	- see caseOfTuple, matchOfTuple, inCaseOfTuple, inMatchOfTuple
+ * 
+ * - single match (match method)
+ * - match many (matchMany)
+ * - match against a stream (single match, match many)
+ * 
+ * @author johnmcclean
+ *
+ */
 @SuppressWarnings("unchecked")
 public class PatternMatcher implements Function{
-	Map<Pair<Predicate,Optional<Extractor>>,Pair<ActionWithReturn,Optional<Extractor>>> cases = Maps.newLinkedHashMap();
+	
+	private final Map<Pair<Predicate,Optional<Extractor>>,Pair<ActionWithReturn,Optional<Extractor>>> cases = new LinkedHashMap<>();
 
+	/* 
+	 *	@param t Object to match against
+	 *	@return Value from matched case if present
+	 * @see java.util.function.Function#apply(java.lang.Object)
+	 */
 	public Object apply(Object t){
 		return match(t).get();
 	}
 	
+	/**
+	 * Each input element can generated multiple matched values
+	 * 
+	 * @param s  Stream of data to match against (input to matcher)
+	 * @return Stream of values from matched cases
+	 */
 	public<R> Stream<R> matchManyFromStream(Stream s){
 		return s.flatMap(this::matchMany);
 	}
 	
+	/**
+	 * 
+	 * @param t input to match against - can generate multiple values
+	 * @return Stream of values from matched cases for the input
+	 */
 	public<R> Stream<R> matchMany(Object t) {
-		return cases.entrySet().stream().flatMap(entry->mapper(t,entry));
+		return cases.entrySet().stream().flatMap(entry -> mapper(t, entry));
 	}
 	
-	public <R> Optional<R> matchFromStream(Stream s){
+	/**
+	 * Each input element can generated a single matched value
+	 * 
+	 * @param s Stream of data to match against (input to matcher)
+	 * @return Stream of matched values, one case per input value can match
+	 */
+	public <R> Stream<R> matchFromStream(Stream s){
 		
 		Stream<Optional<R>> results = s.<Optional<R>>map(this::match);
-		return results.filter(Optional::isPresent).findFirst().get();
+		return results.filter(Optional::isPresent).map(Optional::get);
 	}
 	
+	/**
+	 * @param t Object to match against supplied cases
+	 * @return Value returned from matched case (if present) otherwise Optional.empty()
+	 */
 	public <R> Optional<R> match(Object t){
 		
 		Object[] result = {null};
@@ -55,26 +111,49 @@ public class PatternMatcher implements Function{
 			if(result[0]==null){
 				
 				
-				Object toUse = match.getSecond().map(ex -> {
-							val type = ex.getType();
-							return type.parameterType(type.parameterCount() - 1).isAssignableFrom(t.getClass()) ? ex : Function.identity();
-						}
-				).orElse(x -> x).apply(t);
+				Object toUse = t;
+				try{
+					toUse = match.getSecond().map(ex -> {
+								MethodType type = ex.getType();
+								if(type.parameterCount()==0)
+									return ex; //can't get parameter types for MethodReferences
+								return type.parameterType(type.parameterCount() - 1).isAssignableFrom(t.getClass()) ? ex : Function.identity();
+							}
+					).orElse(x -> x).apply(t);
+				}catch(ClassCastException e){ // MethodReferences will result in ClassCastExceptions
+
+				}
 				
 				if(match.getFirst().test(toUse)){
-					
-					result[0] = (R)action.getFirst().apply(action.getSecond().map(ex -> {
-						val type = ex.getType();
-						return type.parameterType(type.parameterCount() - 1).isAssignableFrom(t.getClass()) ? ex : Function.identity();
-
-					}).orElse((x) -> x).apply(toUse));
+					//assume post-extractor is type safe.
+					result[0] = (R)action.getFirst().apply(action.getSecond().orElse((x) -> x).apply(toUse));
 				}
 			}
 		});
 		return Optional.ofNullable((R)result[0]);
 	}
+
+
 	
-	public <R,V,T,X> PatternMatcher caseOfType( Extractor<T,R> extractor,Action<V> a){
+	/**
+	 * Match by type specified in Extractor as input, if user provided type via match, matches the Action (Action extends Consumer)
+	 * will be executed and provided with the result of the extraction.
+	 * e.g.
+	 * <pre>
+	 * new PatternMatcher().caseOfType(Person::getAge, (Integer i) -&gt; value = i)
+				.match(new Person(100));
+	 * </pre>
+	 * 
+	 * This case will be triggered and the action will recieve the age of the Person (100).
+	 * 
+	 * 
+	 * @param extractor will be used to extract a value from the user input to the matcher.
+	 * @param a A consumer that will accept value from the extractor if user input matches the extractor input type
+	 * @return self
+	 * 
+	 * (type V is not R to allow matching of V against R)
+	 */
+	public <R,T,X,V> PatternMatcher caseOfType( Extractor<T,R> extractor,Action<V> a){
 		val type = a.getType();
 		val clazz = type.parameterType(type.parameterCount()-1);
 		Predicate predicate = it -> it.getClass().isAssignableFrom(clazz);
@@ -83,6 +162,23 @@ public class PatternMatcher implements Function{
 		
 		
 	}
+	/**
+	 * Match by specified value against the extracted value from user input. Data will only be extracted from user input if
+	 * user input is of a type acceptable to the extractor
+	 * 
+	 * <pre>
+	 * Matching.caseOfValue(100, Person::getAge, (Integer i) -&gt; value = i)
+			.match(new Person(100));
+	 * </pre>
+	 * 
+	 * This case will be triggered and the users age will be extracted, it matches 100 so the action will then be triggered.
+	 * 
+	 * 
+	 * @param value Value to match against (via equals method)
+	 * @param extractor will be used to extract a value from the user input to the matcher.
+	 * @param a A consumer that will accept value from the extractor if user input matches the extractor input type
+	 * @return
+	 */
 	public <R,V,T,X> PatternMatcher caseOfValue(R value, Extractor<T,R> extractor,Action<V> a){
 		
 		return inCaseOfValue(value,extractor,new ActionWithReturnWrapper(a));
@@ -421,19 +517,22 @@ public class PatternMatcher implements Function{
 			
 				
 				
-				Object toUse = match.getSecond().map(ex -> {
-							val type = ex.getType();
-							return type.parameterType(type.parameterCount() - 1).isAssignableFrom(t.getClass()) ? ex : Function.identity();
-						}
-				).orElse(x -> x).apply(t);
+				Object toUse = t;
+		try{
+				match.getSecond().map(ex -> {
+						MethodType type = ex.getType();
+						if(type.parameterCount()==0)
+							return ex; //can't get parameter types for MethodReferences
+						return type.parameterType(type.parameterCount() - 1).isAssignableFrom(t.getClass()) ? ex : Function.identity();
+					}
+			).orElse(x -> x).apply(t);
+		}catch(ClassCastException e){ //can't get parameter types for MethodReferences (pre-extractors)
+
+		}
 				
 				if(match.getFirst().test(toUse)){
-					
-					results.add((R)action.getFirst().apply(action.getSecond().map(ex -> {
-						val type = ex.getType();
-						return type.parameterType(type.parameterCount() - 1).isAssignableFrom(t.getClass()) ? ex : Function.identity();
-
-					}).orElse((x) -> x).apply(toUse)));
+					//assume post extract is type safe
+					results.add((R)action.getFirst().apply(action.getSecond().orElse((x) -> x).apply(toUse)));
 				}
 			
 		return results.stream();

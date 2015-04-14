@@ -44,6 +44,24 @@ public class MatchingTest {
 		assertThat(value,is(100));
 		
 	}
+	@Test(expected=Exception.class)
+	public void testCaseOfTypeWithExtractorAndActionBadCase() {
+
+		Matching.caseOfType(Person::getName, (Integer i) -> value = i)
+				.match(new Person(100));
+
+		assertThat(value,is(100));
+
+	}
+	@Test
+	public void testCaseOfTypeMethodReference() {
+
+		Matching.caseOfType(Person::getAge, (Integer i) -> value = i)
+				.match("hello");
+
+		assertThat(value,is(nullValue()));
+
+	}
 	@Test
 	public void testCaseOfTypeWithExtractorAndActionFalse() {
 		

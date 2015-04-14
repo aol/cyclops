@@ -44,7 +44,7 @@ public class TypeSafePatternMatcher<T, X> implements Function<T, X> {
 		return matcher.matchManyFromStream(s);
 	}
 
-	public <R> Optional<R> matchFromStream(Stream s) {
+	public <R> Stream<R> matchFromStream(Stream s) {
 		return matcher.matchFromStream(s);
 	}
 
@@ -128,7 +128,8 @@ public class TypeSafePatternMatcher<T, X> implements Function<T, X> {
 		return this;
 	}
 
-	public <R, V> TypeSafePatternMatcher<T, X> caseOfType(
+	//type V is not R to allow matching of V against R
+	public <R,V> TypeSafePatternMatcher<T, X> caseOfType(
 			Extractor<T, R> extractor, Action<V> a) {
 		matcher.caseOfType(extractor, a);
 		return this;
