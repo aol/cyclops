@@ -120,17 +120,30 @@ public interface Switch<F> {
 		return this;
 	}
 	
+	/**
+	 * Iterate over value in switch (single value, so one iteration)
+	 * @param consumer to provide value to.
+	 */
 	default void forEach(Consumer<F> consumer){
 		if(isDisabled())
 			return;
 		consumer.accept(get());
 	}
+	/**
+	 * @return transform this Switch into an enabled Switch
+	 */
 	default Enabled<F> enable(){
 		return new Enabled<F>(get()); 
 	}
+	/**
+	 * @return transform this Switch into a disabled Switch
+	 */
 	default Disabled<F> disable(){
 		return new Disabled<F>(get()); 
 	}
+	/**
+	 * @return flip this Switch
+	 */
 	default Switch<F> flip(){
 		
 		if(isEnabled())
@@ -140,10 +153,16 @@ public interface Switch<F> {
 	}
 	
 	
+	/**
+	 * @return Optional.empty() if disabled, Optional containing current value if enabled
+	 */
 	default Optional<F> optional(){
 		return stream().findFirst();	
 	}
 	
+	/**
+	 * @return emty Stream if disabled, Stream with current value if enabled.
+	 */
 	default Stream<F> stream(){
 		if(isEnabled())
 			return Stream.of(get());
