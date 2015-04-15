@@ -8,6 +8,7 @@ import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertThat;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -16,29 +17,64 @@ import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 public class MatchingDataStructuresTest {
 	@Test
-	public void inCaseOfIterable() {
+	public void inCaseOfManySingle() {
 		Predicate<Person> isTall = (Person p) -> p.isTall();
 		assertThat(
-				Matching.inCaseOfIterable(asList(isTall),
-						list -> list.get(0).getName() + " is tall")
+				Matching.inCaseOfMany(list -> list.get(0).getName() + " is tall"
+				,isTall)
+						.apply(new Person("bob")).get(), is("bob is tall"));
+	}
+	@Test
+	public void inCaseOfManyDouble() {
+		Predicate<Person> isTall = (Person p) -> p.isTall();
+		assertThat(
+				Matching.inCaseOfMany(list -> list.get(0).getName() + " is tall"
+				,isTall)
+						.match(new Person("bob"),new Person("bob")).get(), is("bob is tall"));
+	}
+	@Test
+	public void inCaseOfManyList() {
+		Predicate<Person> isTall = (Person p) -> p.isTall();
+		assertThat(
+				Matching.inCaseOfMany(list -> list.get(0).getName() + " is tall"
+				,isTall)
 						.apply(asList(new Person("bob"))).get(), is("bob is tall"));
 	}
-
 	
 
 	@Test
-	public void  inMatchOfIterable() {
+	public void  inMatchOfManyList() {
 		assertThat(
-				Matching.inMatchOfIterable(
-						asList(Matchers.<Person> samePropertyValuesAs(new Person("bob"))), 
-						list -> list.get(0).getName()).apply(
+				Matching.inMatchOfMany(
+						list -> list.get(0).getName(),
+						Matchers.<Person> samePropertyValuesAs(new Person("bob")))
+						.apply(
 						asList(new Person("bob"))).get(), is("bob"));
+	}
+	@Test
+	public void  inMatchOfManySingle() {
+		assertThat(
+				Matching.inMatchOfMany(
+						list -> list.get(0).getName(),
+						Matchers.<Person> samePropertyValuesAs(new Person("bob")))
+						.apply(
+						new Person("bob")).get(), is("bob"));
+	}
+	@Test
+	public void  inMatchOfManyDouble() {
+		assertThat(
+				Matching.inMatchOfMany(
+						list -> list.get(0).getName(),
+						Matchers.<Person> samePropertyValuesAs(new Person("bob")))
+						.match(
+						new Person("bob"), new Person("two")).get(), is("bob"));
 	}
 	
 
@@ -131,23 +167,68 @@ public class MatchingDataStructuresTest {
 		value = null;
 	}
 	@Test
-	public void  caseOfIterable(){
+	public void  caseOfManyList(){
 		
 		Predicate<Person> isTall = (Person p) -> p.isTall();
 
-		Matching.caseOfIterable(asList(isTall),
-				list -> value = list.get(0).getName() + " is tall")
+		Matching.caseOfMany(
+				list -> value = list.get(0).getName() + " is tall",
+				isTall)
 				.match(asList(new Person("bob")));
 
 		assertThat(value, is("bob is tall"));
 	}
 	@Test
-	public void   matchOfIterable(){
-		Matching.matchOfIterable(
-				asList(Matchers.<Person> samePropertyValuesAs(new Person("bob"))),
-						list -> value = list.get(0).getName())
+	public void  caseOfManySingle(){
+		
+		
+
+		Matching.caseOfMany(
+				list -> value = list.get(0).getName() + " is tall",
+						(Person p) -> p.isTall())
+				.match(new Person("bob"));
+
+		assertThat(value, is("bob is tall"));
+	}
+	@Test
+	public void  caseOfManyDouble(){
+		
+		
+
+		Matching.caseOfMany(
+				list -> value = list.get(0).getName() + " is tall",
+						(Person p) -> p.isTall())
+				.match(new Person("bob"),new Person("two"));
+
+		assertThat(value, is("bob is tall"));
+	}
+	@Test
+	public void   matchOfManyList(){
+		Matching.matchOfMany(
+						list -> value = list.get(0).getName(),
+						Matchers.<Person> samePropertyValuesAs(new Person("bob")))
 					.apply(
 				asList(new Person("bob")));
+		assertThat(value, is("bob"));
+		
+	}
+	@Test
+	public void   matchOfManySingle(){
+		Matching.matchOfMany(
+						list -> value = list.get(0).getName(),
+						Matchers.<Person> samePropertyValuesAs(new Person("bob")))
+					.apply(
+				new Person("bob"));
+		assertThat(value, is("bob"));
+		
+	}
+	@Test
+	public void   matchOfManyDouble(){
+		Matching.matchOfMany(
+						list -> value = list.get(0).getName(),
+						Matchers.<Person> samePropertyValuesAs(new Person("bob")))
+					.match(
+				new Person("bob"),new Person("two"));
 		assertThat(value, is("bob"));
 		
 	}

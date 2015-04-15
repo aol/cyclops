@@ -202,18 +202,20 @@ public class PatternMatcher implements Function{
 		caseOfThenExtract(it -> Objects.equals(it, value), a, null);
 		return this;
 	}
-	public <V> PatternMatcher caseOfIterable(Iterable<Predicate<V>> predicates,Action<List<V>> a){
+	@SafeVarargs
+	public final <V> PatternMatcher caseOfMany(Action<List<V>> a,Predicate<V>... predicates){
 		
-		Seq<Predicate<V>> pred = Seq.seq(predicates);
+		Seq<Predicate<V>> pred = Seq.of(predicates);
 		
 		
 		caseOfThenExtract(it -> seq(it).zip(pred)
-				.map(t -> t.v2.test((V)first(t))).allMatch(v->v==true), a, null);
+				.map(t -> t.v2.test((V)first(t))).allMatch(v->v==true), a, this::wrapInList);
 		return this;
 	}
-	public <V> PatternMatcher matchOfIterable(Iterable<Matcher<V>> predicates,Action<List<V>> a){
+	@SafeVarargs
+	public final <V> PatternMatcher matchOfMany(Action<List<V>> a,Matcher<V>... predicates){
 		
-		Seq<Matcher<V>> pred = Seq.seq(predicates);
+		Seq<Matcher<V>> pred = Seq.of(predicates);
 		
 		
 		matchOfThenExtract(new BaseMatcher(){
@@ -230,7 +232,7 @@ public class PatternMatcher implements Function{
 				
 			}
 			
-		}, a, null);
+		}, a, this::wrapInList);
 		return this;
 	}
 	public <T,R,V,V1>  PatternMatcher matchOfMatchers(Tuple2<Matcher<V>,Matcher<V1>> predicates,
@@ -286,7 +288,7 @@ public class PatternMatcher implements Function{
 			
 		}, a, extractor);
 		return this;
-}
+	}
 	
 	
 	private Seq<Object> seq(Object t){
@@ -304,19 +306,36 @@ public class PatternMatcher implements Function{
 		}
 		return Seq.of(t);
 	}
+	public <V,X> PatternMatcher selectFromChain(Stream<ChainOfResponsibility<V,X>> stream){
+		selectFrom(stream.map(n->Tuple.tuple(n,n)));
+		return this;
+	}
+	public <V,X> PatternMatcher selectFrom(Stream<Tuple2<Predicate<V>,Function<V,X>>> stream){
+		stream.forEach(t -> inCaseOf(t.v1,a->t.v2.apply(a)));
+		return this;
+	}
 	
-     public <V,X> PatternMatcher inCaseOfIterable(Iterable<Predicate<V>> predicates,ActionWithReturn<List<V>,X> a){
+     public <V,X> PatternMatcher inCaseOfMany(ActionWithReturn<List<V>,X> a,
+    		 Predicate<V>... predicates){
 		
-		Seq<Predicate<V>> pred = Seq.seq(predicates);
+		Seq<Predicate<V>> pred = Seq.of(predicates);
 		
 		
 		inCaseOfThenExtract(it -> seq(it).zip(pred)
-				.map(t -> t.v2.test((V)first(t))).allMatch(v->v==true), a, null);
+				.map(t -> t.v2.test((V)first(t))).allMatch(v->v==true), a, e-> wrapInList(e));
 		return this;
 	}
-	public <V,X> PatternMatcher inMatchOfIterable(Iterable<Matcher<V>> predicates,ActionWithReturn<List<V>,X> a){
+	private List wrapInList(Object a) {
+		if(a instanceof List)
+			return (List)a;
+		else
+			return Arrays.asList(a);
+	}
+
+	public <V,X> PatternMatcher inMatchOfMany(ActionWithReturn<List<V>,X> a,
+			Matcher<V>... predicates){
 		
-		Seq<Matcher<V>> pred = (Seq<Matcher<V>>) Seq.seq(predicates);
+		Seq<Matcher<V>> pred = (Seq<Matcher<V>>) Seq.of(predicates);
 		
 		
 		inMatchOfThenExtract(new BaseMatcher(){
@@ -333,7 +352,7 @@ public class PatternMatcher implements Function{
 				
 			}
 			
-		}, a, null);
+		}, a, this::wrapInList);
 		return this;
 	}
 	public <T,R,V,V1,X>  PatternMatcher inMatchOfMatchers(Tuple2<Matcher<V>,Matcher<V1>> predicates,

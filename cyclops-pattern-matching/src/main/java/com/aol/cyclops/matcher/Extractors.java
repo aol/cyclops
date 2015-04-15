@@ -53,11 +53,12 @@ public class Extractors {
 	 */
 	public final static <R> PatternMatcher.Extractor<?,R> first(){
 	
-		return  ( item)-> {
+		PatternMatcher.Extractor<Object,R> result =  ( item)-> {
 			if(item instanceof Iterable)
 				return (R)((Iterable)item).iterator().next();
 			return (R)item;
 		};
+		return result;
 		
 	}
 	/**

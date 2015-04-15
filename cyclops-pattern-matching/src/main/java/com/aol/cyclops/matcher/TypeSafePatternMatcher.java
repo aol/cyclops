@@ -34,7 +34,7 @@ public class TypeSafePatternMatcher<T, X> implements Function<T, Optional<X>> {
 		return matcher.asUnwrappedFunction(); 
 	}
 	
-	public <T> Function<T,Stream<T>> asStreamFunction(){
+	public  Function<T,Stream<X>> asStreamFunction(){
 		
 		return matcher.asStreamFunction();
 	}
@@ -62,15 +62,14 @@ public class TypeSafePatternMatcher<T, X> implements Function<T, Optional<X>> {
 		return matcher.matchFromStream(s);
 	}
 
-	public <V> TypeSafePatternMatcher<T, X> caseOfIterable(
-			Iterable<Predicate<V>> predicates, Action<List<V>> a) {
-		matcher.caseOfIterable(predicates, a);
+	public <V> TypeSafePatternMatcher<T, X> caseOfMany( Action<List<V>> a,Predicate<V>... predicates ) {
+		matcher.caseOfMany(a,predicates);
 		return this;
 	}
 
 	public <V> TypeSafePatternMatcher<T, X> matchOfIterable(
-			Iterable<Matcher<V>> predicates, Action<List<V>> a) {
-		matcher.matchOfIterable(predicates, a);
+			 Action<List<V>> a,Matcher<V>... predicates) {
+		matcher.matchOfMany(a,predicates);
 		return this;
 	}
 
@@ -99,17 +98,24 @@ public class TypeSafePatternMatcher<T, X> implements Function<T, Optional<X>> {
 		matcher.matchOfTuple(predicates, a, extractor);
 		return this;
 	}
+	public <V> TypeSafePatternMatcher<T, X> selectFromChain(Stream<ChainOfResponsibility<V,X>> stream){
+		matcher.selectFromChain(stream);
+		return this;
+	}
+	public <V> TypeSafePatternMatcher<T, X> selectFrom(Stream<Tuple2<Predicate<V>,Function<V,X>>> stream){
+		matcher.selectFrom(stream);
+		return this;
+	}
+	public <V> TypeSafePatternMatcher<T, X> inCaseOfMany(ActionWithReturn<List<V>, X> a,
+				Predicate<V>... predicates) {
 
-	public <V> TypeSafePatternMatcher<T, X> inCaseOfIterable(
-			Iterable<Predicate<V>> predicates, ActionWithReturn<List<V>, X> a) {
-
-		matcher.inCaseOfIterable(predicates, a);
+		matcher.inCaseOfMany(a,predicates);
 		return this;
 	}
 
-	public <V> TypeSafePatternMatcher<T, X> inMatchOfIterable(
-			Iterable<Matcher<V>> predicates, ActionWithReturn<List<V>, X> a) {
-		matcher.inMatchOfIterable(predicates, a);
+	public <V> TypeSafePatternMatcher<T, X> inMatchOfMany(
+			 ActionWithReturn<List<V>, X> a,Matcher<V>... predicates) {
+		matcher.inMatchOfMany( a,predicates);
 		return this;
 	}
 

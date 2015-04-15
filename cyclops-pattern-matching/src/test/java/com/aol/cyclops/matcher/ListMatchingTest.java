@@ -21,8 +21,8 @@ public class ListMatchingTest {
 	@Test
 	public void multiMatch(){
 		new PatternMatcher()
-			.caseOfIterable(asList( v -> v.equals("-l") || v.equals("---lang"),v->true),
-								(List<String> list) -> language  = list.get(1) )
+			.caseOfMany((List<String> list) -> language  = list.get(1) ,
+								v -> v.equals("-l") || v.equals("---lang"),v->true)
 			.match(asList("-l","java"));
 		
 		assertThat(language,is("java"));
@@ -74,8 +74,8 @@ public class ListMatchingTest {
 	@Test
 	public void multiMatchOfIterable(){
 		new PatternMatcher()
-			.matchOfIterable(asList( equalTo("-l"),any(String.class)),
-								(List<String> list) -> language  = list.get(1) )
+			.matchOfMany( (List<String> list) -> language  = list.get(1) ,
+							equalTo("-l"),any(String.class))
 			.match(asList("-l","java"));
 		
 		assertThat(language,is("java"));
