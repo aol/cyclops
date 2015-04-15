@@ -1,31 +1,155 @@
 package com.aol.cyclops.enableswitch;
-import com.googlecode.totallylazy.Either;
-import com.googlecode.totallylazy.Option;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
+/**
+ * Switch interface for handling features that can be enabled or disabled.
+ * 
+ * @author johnmcclean
+ *
+ * @param <F>
+ */
 public interface Switch<F> {
 
-	default boolean isEnabled(){
-		return this.isRight();
+	boolean isEnabled();
+	boolean isDisabled();
+	
+	F get();
+	
+	/**
+	 * Create a new enabled switch
+	 * 
+	 * @param f switch value
+	 * @return enabled switch
+	 */
+	public static <F> Enabled<F> enable(F f){
+		return new Enabled<F>(f);
 	}
-	boolean isRight();
-	boolean isLeft();
-	default boolean isDisabled(){
-		return this.isLeft();
+	/**
+	 * Create a new disabled switch
+	 * 
+	 * @param f switch value
+	 * @return disabled switch
+	 */
+	public static <F> Disabled<F> disable(F f){
+		return new Disabled<F>(f);
 	}
 	
-	default Switch<F> flipTheSwitch(){
-		Either<F,F> either = getDelegate().flip();
-		if(either.isLeft())
-			return new Disabled<F>(either.left());
-		else
-			return new Enabled<F>(either.right());
+	/**
+	 * 
+	 * 
+	 * @param from Create a switch with the same type
+	 * @param f but with this value (f)
+	 * @return new switch
+	 */
+	public static <F> Switch<F> from(Switch<F> from, F f){
+		if(from.isEnabled())
+			return enable(f);
+		return disable(f);
 	}
 	
-	default Option<F> enabled(){
-		return getDelegate().rightOption();
+	/**
+	 * Flatten a nested Switch
+	 * 
+	 * <pre>
+	 * Enabled&lt;Enabled&lt;Disabled&gt;&gt; nested= Switch.enable(Switch.enable(Switch.disable(100)));
+	 * </pre>
+	 * 
+	 * unwraps to disabled[100]
+	 * 
+	 * @return flattened switch
+	 */
+	default <X> Optional<Switch<X>> flatten(){
+		Optional s = Optional.of(get()).flatMap(x->{
+			if(x instanceof Switch)
+				return ((Switch)x).flatten();
+			else
+				return Optional.of(Switch.from(this,x));
+		});
+		return (Optional<Switch<X>>)s;
+	}
+	
+	/**
+	 * Peek at current switch value
+	 * 
+	 * @param consumer Consumer to provide current value to
+	 * @return This Switch
+	 */
+	default Switch<F> peek(Consumer<F> consumer){
+		consumer.accept(get());
+		return this;
+	}
+	
+	/**
+	 * @param map Create a new Switch with provided function
+	 * @return switch from function
+	 */
+	default <X> Switch<X> flatMap(Function<F,Switch<X>> map){
+		if(isDisabled())
+			return (Switch<X>)this;
+		return map.apply(get());
+	}
+	
+	
+	
+	/**
+	 * @param map transform the value inside this Switch into new Switch object
+	 * @return new Switch with transformed value
+	 */
+	default <X> Switch<X> map(Function<F,X> map){
+		if(isDisabled())
+			return (Switch<X>)this;
+		return enable(map.apply(get()));
+	}
+	
+	/**
+	 * Filter this Switch. If current value does not meet criteria,
+	 * a disabled Switch is returned
+	 * 
+	 * @param p Predicate to test for
+	 * @return Filtered switch
+	 */
+	default Switch<F> filter(Predicate<F> p){
+		if(isDisabled())
+			return this;
+		if(!p.test(get()))
+			return Switch.disable(get());
+		return this;
+	}
+	
+	default void forEach(Consumer<F> consumer){
+		if(isDisabled())
+			return;
+		consumer.accept(get());
+	}
+	default Enabled<F> enable(){
+		return new Enabled<F>(get()); 
+	}
+	default Disabled<F> disable(){
+		return new Disabled<F>(get()); 
+	}
+	default Switch<F> flip(){
 		
+		if(isEnabled())
+			return disable(get());
+		else
+			return enable(get());
 	}
-	Either<F, F> getDelegate();
+	
+	
+	default Optional<F> optional(){
+		return stream().findFirst();	
+	}
+	
+	default Stream<F> stream(){
+		if(isEnabled())
+			return Stream.of(get());
+		else
+			return Stream.of();
+	}
 	
 	
 }

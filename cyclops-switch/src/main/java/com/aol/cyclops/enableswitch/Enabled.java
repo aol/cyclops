@@ -2,26 +2,19 @@ package com.aol.cyclops.enableswitch;
 
 import java.util.Objects;
 
-import lombok.experimental.Delegate;
-
-import com.googlecode.totallylazy.Either;
-import com.googlecode.totallylazy.Right;
-import com.googlecode.totallylazy.Tuple;
-
-public class Enabled<F> extends Either<F, F> implements Switch<F>{
+public class Enabled<F> implements Switch<F>{
 
 	
 	public static void main(String[] args){
 		Runnable r = ()->System.out.println("hello");
 		
-		new Enabled<Runnable>(r).enabled().forEach(runner  -> runner.run());
+		new Enabled<Runnable>(r).stream().forEach(runner  -> runner.run());
 	}
     private static final long serialVersionUID = 1L;
 
-    @Delegate
-	Right<F,F> enabled;
+    F enabled;
 
-    public Either<F,F> getDelegate(){
+    public F get(){
     	return enabled;
     }
     
@@ -31,12 +24,10 @@ public class Enabled<F> extends Either<F, F> implements Switch<F>{
      * @param left The value of this Left
      */
     public Enabled(F enabled) {
-       this.enabled =  (Right<F, F>) Either.right(enabled);
+       this.enabled = enabled;
     }
     
     
-
-   
     @Override
     public boolean equals(Object obj) {
         return (obj == this) || (obj instanceof Enabled && Objects.equals(enabled, ((Enabled<?>) obj).enabled));
@@ -51,4 +42,15 @@ public class Enabled<F> extends Either<F, F> implements Switch<F>{
     public String toString() {
         return String.format("enabled(%s)", enabled );
     }
+
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
+
+	@Override
+	public boolean isDisabled() {
+		
+		return false;
+	}
 }
