@@ -9,20 +9,17 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 public class MatchingTest {
@@ -37,6 +34,8 @@ public class MatchingTest {
 	
 	@Test
 	public void testCaseOfTypeWithExtractorAndAction() {
+		
+		
 		
 		Matching.extract(Person::getAge).thenApply((Integer i) -> value = i)
 				.match(new Person(100));
@@ -74,14 +73,14 @@ public class MatchingTest {
 
 	@Test
 	public void testCaseOfValueExtractorAction() {
-		Matching.extract(Person::getAge).value(100).thenApply((Integer i) -> value = i)
+		Matching.extract(Person::getAge).isValue(100).thenApply((Integer i) -> value = i)
 			.match(new Person(100));
 		assertThat(value,is(100));
 	}
 	@Test
 	public void testCaseOfValueExtractorActionFalse() {
 		
-		Matching.extract(Person::getAge).value(200).thenApply( (Integer i) -> value = i)
+		Matching.extract(Person::getAge).isValue(200).thenApply( (Integer i) -> value = i)
 			.match(new Person(100));
 		
 		assertThat(value,is(nullValue()));
@@ -89,12 +88,12 @@ public class MatchingTest {
 
 	@Test
 	public void testCaseOfValueVActionOfV() {
-		Matching.value("hello").thenApply(s -> value=s).match("hello");
+		Matching.isValue("hello").thenApply(s -> value=s).match("hello");
 		assertThat(value,is("hello"));
 	}
 	@Test
 	public void testCaseOfValueVActionOfVFalse() {
-		Matching.value("hello").thenApply(s -> value=s).match("hello1");
+		Matching.isValue("hello").thenApply(s -> value=s).match("hello1");
 		assertThat(value,is(nullValue()));
 	}
 
@@ -127,7 +126,8 @@ public class MatchingTest {
 	@Test
 	public void testCaseOfPredicateOfVActionOfV() {
 		Person person = new Person(42);
-		Matching.inCaseOf(v->v==person).thenApply(p->value=p)
+		Matching.caseOf(v->v==person).thenApply(p->value=p)
+		
 				.match(person);
 		
 		assertThat(value,is(person));
@@ -135,7 +135,7 @@ public class MatchingTest {
 	@Test
 	public void testCaseOfPredicateOfVActionOfVFalse() {
 		Person person = new Person(42);
-		Matching.inCaseOf(v->v==person).thenApply(p->value=p)
+		Matching.caseOf(v->v==person).thenApply(p->value=p)
 				.match(new Person(42));
 		
 		assertThat(value,is(nullValue()));
@@ -143,14 +143,14 @@ public class MatchingTest {
 
 	@Test
 	public void testCaseOfThenExtractPredicateOfVActionOfVExtractorOfTR() {
-		Matching.caseOfThenExtract(it-> it instanceof List, it->value=it , at(0))
+		Matching.caseOf(it-> it instanceof List).thenExtract(at(0)).thenApply(it->value=it)
 				.match(Arrays.asList(true,false,"hello"));
 		
 		assertThat(value,is(true));
 	}
 	@Test
 	public void testCaseOfThenExtractPredicateOfVActionOfVExtractorOfTRFalse() {
-		Matching.caseOfThenExtract(it-> it instanceof Map, it->value=it , at(0))
+		Matching.caseOf((List<Object> it)-> it.size()>2).thenExtract(at(0)).thenApply( it->value=it)
 				.match(Arrays.asList(true,false,"hello"));
 		
 		assertThat(value,is(nullValue()));
@@ -158,6 +158,9 @@ public class MatchingTest {
 
 	@Test
 	public void testCaseOfThenExtractMatcherOfVActionOfVExtractorOfTR() {
+		
+		
+		
 		Matching.matchOfThenExtract(is(not(empty())), it->value=it, get(1))
 						.match(Arrays.asList(true,false,"hello"));
 		
@@ -204,12 +207,12 @@ public class MatchingTest {
 
 	@Test
 	public void testInCaseOfValueVActionWithReturnOfVX() {
-		assertThat(Matching.value(100).thenApply(v-> v+100)
+		assertThat(Matching.isValue(100).thenApply(v-> v+100)
 					.match(100).orElse(100),is(200));
 	}
 	@Test
 	public void testInCaseOfValueVActionWithReturnOfVXFalse() {
-		assertThat(Matching.value(100).thenApply(v-> v+100)
+		assertThat(Matching.isValue(100).thenApply(v-> v+100)
 					.match(500).orElse(100),is(100));
 	}
 
@@ -235,25 +238,25 @@ public class MatchingTest {
 
 	@Test
 	public void testInCaseOfPredicateOfVActionWithReturnOfVX() {
-		assertThat(Matching.inCaseOf((Integer a)-> a>100).thenApply(x->x*10)
+		assertThat(Matching.caseOf((Integer a)-> a>100).thenApply(x->x*10)
 				.apply(101).get(),is(1010));
 	}
 	@Test
 	public void testInCaseOfPredicateOfVActionWithReturnOfVXFalse() {
-		assertThat(Matching.inCaseOf((Integer a)-> a>100).thenApply(x->x*10)
+		assertThat(Matching.caseOf((Integer a)-> a>100).thenApply(x->x*10)
 				.match(99),is(Optional.empty()));
 	}
 
 	@Test
 	public void testInCaseOfThenExtractPredicateOfTActionWithReturnOfRXExtractorOfTR() {
-		assertThat(Matching.inCaseOf((Person person)->person.getAge()>18)
+		assertThat(Matching.caseOf((Person person)->person.getAge()>18)
 								.thenExtract(Person::getName)
 								.thenApply(name-> name + " is an adult")
 							.match(new Person("rosie",39)).get(),is("rosie is an adult"));
 	}
 	@Test
 	public void testInCaseOfThenExtractPredicateOfTActionWithReturnOfRXExtractorOfTRFalse() {
-		assertThat(Matching.inCaseOf((Person person)->person.getAge()>18).thenExtract(Person::getName)
+		assertThat(Matching.caseOf((Person person)->person.getAge()>18).thenExtract(Person::getName)
 							.thenApply(name-> name + " is an adult")
 							.match(new Person("rosie",9)),is(Optional.empty()));
 	}
@@ -275,12 +278,12 @@ public class MatchingTest {
 	@Test
 	public void testInCaseOfMatcherOfVActionWithReturnOfVX() {
 
-		assertThat(Matching.inMatchOf(hasItem("hello"), hello->"world")
+		assertThat(Matching.matchOf(hasItem("hello")).thenApply(hello->"world")
 				.apply(Arrays.asList("hello")).get(),is("world"));
 	}
 	@Test
 	public void testInCaseOfMatcherOfVActionWithReturnOfVXFalse() {
-		assertThat(Matching.inMatchOf(hasItem("hello"),  hello-> "world")
+		assertThat(Matching.matchOf(hasItem("hello")).thenApply(  hello-> "world")
 				.match(Arrays.asList("hello2")),is(Optional.empty()));
 	}
 
@@ -321,11 +324,11 @@ public class MatchingTest {
 
 	@Test
 	public void testInCaseOfValueRExtractorOfTRActionWithReturnOfVX() {
-		assertThat(Matching.extract(Person::getName).value("hello").thenApply(name -> name + " world").match(new Person("hello",40)).get(),is("hello world"));
+		assertThat(Matching.extract(Person::getName).isValue("hello").thenApply(name -> name + " world").match(new Person("hello",40)).get(),is("hello world"));
 	}
 	@Test
 	public void testInCaseOfValueRExtractorOfTRActionWithReturnOfVXFalse() {
-		assertThat(Matching.extract(Person::getName).value("hello").thenApply(name -> name + " world").match(new Person("hello2",40)),is(Optional.empty()));
+		assertThat(Matching.extract(Person::getName).isValue("hello").thenApply(name -> name + " world").match(new Person("hello2",40)),is(Optional.empty()));
 	}
 	
 	

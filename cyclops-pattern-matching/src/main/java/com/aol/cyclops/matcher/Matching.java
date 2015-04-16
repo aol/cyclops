@@ -113,14 +113,14 @@ public class Matching {
 		return new TypeSafePatternMatcher<T,X>().matchOfTuple(predicates, a, extractor);
 	}
 
-	public static <V,T,X> Step<ActionWithReturn<V,X>,TypeSafePatternMatcher<T,X>> value(V value){
+	public static <V,T,X> Step<ActionWithReturn<V,X>,TypeSafePatternMatcher<T,X>> isValue(V value){
 		return (ActionWithReturn<V,X> a) -> new TypeSafePatternMatcher<T,X>().inCaseOfValue(value, a) ;
 	}
 	public static <V,T,X> TypeSafePatternMatcher<T,X> thenApply(ActionWithReturn<T,X> a){
 		return new TypeSafePatternMatcher<T,X>().inCaseOfType(a);
 		
 	}
-	public static <V> InCaseOfBuilder<V> inCaseOf(Predicate<V> match){
+	public static <V> InCaseOfBuilder<V> caseOf(Predicate<V> match){
 		return new InCaseOfBuilder<V>(match);
 	}
 	@AllArgsConstructor
@@ -161,7 +161,7 @@ public class Matching {
 		public <V,X> TypeSafePatternMatcher<T,X> thenApply(ActionWithReturn<V,X> a){
 			return new TypeSafePatternMatcher<T,X>().inCaseOfType(extractor, a);
 		}
-		public <V,X> Step<ActionWithReturn<R,X>,TypeSafePatternMatcher<T,X>>  value(R value){
+		public <V,X> Step<ActionWithReturn<R,X>,TypeSafePatternMatcher<T,X>>  isValue(R value){
 			return (ActionWithReturn<R,X> a ) ->{
 				return new TypeSafePatternMatcher<T,X>().inCaseOfValue(value, extractor, a);
 			};
