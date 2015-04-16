@@ -67,7 +67,7 @@ public class TypeSafePatternMatcher<T, X> implements Function<T, Optional<X>> {
 		return this;
 	}
 
-	public <V> TypeSafePatternMatcher<T, X> matchOfIterable(
+	public <V> TypeSafePatternMatcher<T, X> matchOfMany(
 			 Action<List<V>> a,Matcher<V>... predicates) {
 		matcher.matchOfMany(a,predicates);
 		return this;
