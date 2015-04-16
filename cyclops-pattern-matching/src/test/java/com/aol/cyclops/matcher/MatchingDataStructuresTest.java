@@ -25,6 +25,8 @@ import org.junit.Test;
 public class MatchingDataStructuresTest {
 	@Test
 	public void inCaseOfManySingle() {
+		
+
 		Predicate<Person> isTall = (Person p) -> p.isTall();
 		assertThat(
 				Matching.inCaseOfMany(list -> list.get(0).getName() + " is tall"
