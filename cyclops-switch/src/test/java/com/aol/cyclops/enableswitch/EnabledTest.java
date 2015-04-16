@@ -1,6 +1,6 @@
 package com.aol.cyclops.enableswitch;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -27,6 +27,14 @@ public class EnabledTest {
 		System.out.println(o.get());
 		Switch<Integer> flat = nested.<Integer>flatten().get();
 		assertThat(flat.get(),is(100));
+	}
+	@Test
+	public void testFlattenSematics(){
+		Enabled<Enabled<Disabled<Integer>>> nested= Switch.enable(Switch.enable(Switch.disable(100)));
+		Optional<Switch<Integer>> o = nested.<Integer>flatten();
+		System.out.println(o.get());
+		Switch<Integer> flat = nested.<Integer>flatten().get();
+		assertThat(flat,instanceOf(Enabled.class));
 	}
 	
 	@Test

@@ -52,13 +52,13 @@ public interface Switch<F> {
 	}
 	
 	/**
-	 * Flatten a nested Switch
+	 * Flatten a nested Switch, maintaining top level enabled / disabled semantics
 	 * 
 	 * <pre>
 	 * Enabled&lt;Enabled&lt;Disabled&gt;&gt; nested= Switch.enable(Switch.enable(Switch.disable(100)));
 	 * </pre>
 	 * 
-	 * unwraps to disabled[100]
+	 * unwraps to enabled[100]
 	 * 
 	 * @return flattened switch
 	 */
@@ -69,7 +69,9 @@ public interface Switch<F> {
 			else
 				return Optional.of(Switch.from(this,x));
 		});
-		return (Optional<Switch<X>>)s;
+		Object value = s.get();
+		Switch<X> newSwitch = from((Switch<X>)this,((Switch<X>)value).get());
+		return Optional.<Switch<X>>of(newSwitch);
 	}
 	
 	/**
