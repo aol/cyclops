@@ -30,6 +30,7 @@ public class TypeSafePatternMatcher<T, X> implements Function<T, Optional<X>> {
 	private final PatternMatcher matcher = new PatternMatcher();
 
 	
+	public Matching newCase(){
 	public  Function<T,X> asUnwrappedFunction(){
 		return matcher.asUnwrappedFunction(); 
 	}

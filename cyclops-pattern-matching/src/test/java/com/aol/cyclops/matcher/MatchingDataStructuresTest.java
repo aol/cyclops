@@ -27,7 +27,7 @@ public class MatchingDataStructuresTest {
 	public void inCaseOfManySingle() {
 		
 		assertThat(
-				Matching.inCaseOfMany((Person p) -> p.isTall())
+				Matching.caseOf((Person p) -> p.isTall())
 							.thenApply(list -> list.get(0).getName() + " is tall")
 						
 						
@@ -38,14 +38,14 @@ public class MatchingDataStructuresTest {
 	public void inCaseOfManyDouble() {
 		Predicate<Person> isTall = (Person p) -> p.isTall();
 		assertThat(
-				Matching.inCaseOfMany(isTall).thenApply(list -> list.get(0).getName() + " is tall")
+				Matching.caseOf(isTall).thenApply(list -> list.get(0).getName() + " is tall")
 						.match(new Person("bob"),new Person("bob")).get(), is("bob is tall"));
 	}
 	@Test
 	public void inCaseOfManyList() {
 		Predicate<Person> isTall = (Person p) -> p.isTall();
 		assertThat(
-				Matching.inCaseOfMany(isTall).thenApply(list -> list.get(0).getName() + " is tall")
+				Matching.caseOf(isTall).thenApply(list -> list.get(0).getName() + " is tall")
 						.apply(asList(new Person("bob"))).get(), is("bob is tall"));
 	}
 	
@@ -53,14 +53,14 @@ public class MatchingDataStructuresTest {
 	@Test
 	public void  inMatchOfManyList() {
 		assertThat(
-				Matching.inMatchOfMany(Matchers.<Person> samePropertyValuesAs(new Person("bob")))
+				Matching.matchOf(Matchers.<Person> samePropertyValuesAs(new Person("bob")))
 											.thenApply(list -> list.get(0).getName())
 						.apply(asList(new Person("bob"))).get(), is("bob"));
 	}
 	@Test
 	public void  inMatchOfManySingle() {
 		assertThat(
-				Matching.inMatchOfMany(Matchers.<Person> samePropertyValuesAs(new Person("bob")))
+				Matching.matchOf(Matchers.<Person> samePropertyValuesAs(new Person("bob")))
 												.thenApply(list -> list.get(0).getName())
 						.apply(
 						new Person("bob")).get(), is("bob"));
@@ -68,7 +68,7 @@ public class MatchingDataStructuresTest {
 	@Test
 	public void  inMatchOfManyDouble() {
 		assertThat(
-				Matching.inMatchOfMany(Matchers.<Person> samePropertyValuesAs(new Person("bob")))
+				Matching.matchOf(Matchers.<Person> samePropertyValuesAs(new Person("bob")))
 										.thenApply(list -> list.get(0).getName())
 						.match(
 						new Person("bob"), new Person("two")).get(), is("bob"));
@@ -168,7 +168,7 @@ public class MatchingDataStructuresTest {
 		
 		Predicate<Person> isTall = (Person p) -> p.isTall();
 
-		Matching.inCaseOfMany(isTall).thenConsume(list -> value = list.get(0).getName() + " is tall")
+		Matching.caseOf(isTall).thenConsume(list -> value = list.get(0).getName() + " is tall")
 				.match(asList(new Person("bob")));
 
 		assertThat(value, is("bob is tall"));
@@ -178,7 +178,7 @@ public class MatchingDataStructuresTest {
 		
 		
 
-		Matching.inCaseOfMany((Person p) -> p.isTall()).thenConsume(list -> value = list.get(0).getName() + " is tall")
+		Matching.caseOf((Person p) -> p.isTall()).thenConsume(list -> value = list.get(0).getName() + " is tall")
 				.match(new Person("bob"));
 
 		assertThat(value, is("bob is tall"));
@@ -188,14 +188,14 @@ public class MatchingDataStructuresTest {
 		
 		
 
-		Matching.inCaseOfMany((Person p) -> p.isTall()).thenConsume(list -> value = list.get(0).getName() + " is tall")
+		Matching.caseOf((Person p) -> p.isTall()).thenConsume(list -> value = list.get(0).getName() + " is tall")
 				.match(new Person("bob"),new Person("two"));
 
 		assertThat(value, is("bob is tall"));
 	}
 	@Test
 	public void   matchOfManyList(){
-		Matching.inMatchOfMany(Matchers.<Person> samePropertyValuesAs(new Person("bob"))).thenConsume(list -> value = list.get(0).getName())
+		Matching.matchOf(Matchers.<Person> samePropertyValuesAs(new Person("bob"))).thenConsume(list -> value = list.get(0).getName())
 					.apply(
 				asList(new Person("bob")));
 		assertThat(value, is("bob"));
@@ -203,7 +203,7 @@ public class MatchingDataStructuresTest {
 	}
 	@Test
 	public void   matchOfManySingle(){
-		Matching.inMatchOfMany(Matchers.<Person> samePropertyValuesAs(new Person("bob"))).thenConsume(list -> value = list.get(0).getName())
+		Matching.matchOf(Matchers.<Person> samePropertyValuesAs(new Person("bob"))).thenConsume(list -> value = list.get(0).getName())
 					.apply(
 				new Person("bob"));
 		assertThat(value, is("bob"));
@@ -211,7 +211,7 @@ public class MatchingDataStructuresTest {
 	}
 	@Test
 	public void   matchOfManyDouble(){
-		Matching.inMatchOfMany(Matchers.<Person> samePropertyValuesAs(new Person("bob"))).thenConsume(list -> value = list.get(0).getName())
+		Matching.matchOf(Matchers.<Person> samePropertyValuesAs(new Person("bob"))).thenConsume(list -> value = list.get(0).getName())
 					.match(
 				new Person("bob"),new Person("two"));
 		assertThat(value, is("bob"));
@@ -231,7 +231,7 @@ public class MatchingDataStructuresTest {
 	
 	@Test
 	public void  caseOfPredicates(){
-		Stream.of(1,2,3,4).map(Matching.inCaseOfValue(1, v->"found 1").inCaseOf((Integer i)-> i%2==0,v->"found even"))
+		Stream.of(1,2,3,4).map(Matching.isValue(1).thenApply(v->"found 1").inCaseOf((Integer i)-> i%2==0,v->"found even"))
 									.filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
 		
 		

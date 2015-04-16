@@ -143,7 +143,7 @@ public class MatchingTest {
 
 	@Test
 	public void testCaseOfThenExtractPredicateOfVActionOfVExtractorOfTR() {
-		Matching.caseOf(it-> it instanceof List).thenExtract(at(0)).thenApply(it->value=it)
+		Matching.caseOf(it-> it instanceof List).thenExtract(get(0)).thenApply(it->value=it)
 				.match(Arrays.asList(true,false,"hello"));
 		
 		assertThat(value,is(true));
