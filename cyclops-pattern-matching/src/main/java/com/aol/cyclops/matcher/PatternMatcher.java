@@ -306,7 +306,7 @@ public class PatternMatcher implements Function{
 		}
 		return Seq.of(t);
 	}
-	public <V,X> PatternMatcher selectFromChain(Stream<ChainOfResponsibility<V,X>> stream){
+	public <V,X> PatternMatcher selectFromChain(Stream<? extends ChainOfResponsibility<V,X>> stream){
 		selectFrom(stream.map(n->Tuple.tuple(n,n)));
 		return this;
 	}

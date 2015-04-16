@@ -26,7 +26,7 @@ public class Matching {
 			 ActionWithReturn<List<V>, X> a,Matcher<V>... predicates) {
 		return new TypeSafePatternMatcher<T,X>().inMatchOfMany(a,predicates);
 	}
-	public static <R,V,T,X> TypeSafePatternMatcher<T, X> selectFromChain(Stream<ChainOfResponsibility<V,X>> stream){
+	public static <R,V,T,X> TypeSafePatternMatcher<T, X> selectFromChain(Stream<? extends ChainOfResponsibility<V,X>> stream){
 		return new TypeSafePatternMatcher<T,X>().selectFromChain(stream);
 	}
 	public static <R,V,T,X> TypeSafePatternMatcher<T, X> selectFrom(Stream<Tuple2<Predicate<V>,Function<V,X>>> stream){

@@ -98,7 +98,7 @@ public class TypeSafePatternMatcher<T, X> implements Function<T, Optional<X>> {
 		matcher.matchOfTuple(predicates, a, extractor);
 		return this;
 	}
-	public <V> TypeSafePatternMatcher<T, X> selectFromChain(Stream<ChainOfResponsibility<V,X>> stream){
+	public <V> TypeSafePatternMatcher<T, X> selectFromChain(Stream<? extends ChainOfResponsibility<V,X>> stream){
 		matcher.selectFromChain(stream);
 		return this;
 	}
