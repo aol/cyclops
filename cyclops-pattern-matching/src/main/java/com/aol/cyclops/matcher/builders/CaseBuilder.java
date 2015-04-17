@@ -28,6 +28,19 @@ public class CaseBuilder {
 		}
 	}
 	@AllArgsConstructor
+	public static class InCaseOfThenExtractStep<T,X,R> implements Step<R,X>{
+		private final Case cse;
+		private final PatternMatcher matcher;
+		private final Predicate<T> match;
+		private final Extractor<T,R> extractor;
+		public <X> MatchingInstance<R,X> thenApply(ActionWithReturn<R,X> t){
+			return addCase(matcher.inCaseOfThenExtract(match, t,extractor));
+		}
+		private <T,X> MatchingInstance<T,X> addCase(Object o){
+			return new MatchingInstance<>(cse);
+		}
+	}
+	@AllArgsConstructor
 	public static class InCaseOfBuilder<V>{
 		// T : user input (type provided to match)
 		// X : match response (thenApply)
@@ -38,14 +51,10 @@ public class CaseBuilder {
 		private final Case cse;
 		
 		public <T,R,X> Step<R,X> thenExtract(Extractor<T,R> extractor){
-			return (ActionWithReturn<R,X> a)->{
-				return addCase(matcher.inCaseOfThenExtract(match, a,(Extractor<V,R>)extractor));
-			};
+			return  new InCaseOfThenExtractStep(cse,matcher,match,extractor);
 		}
 		
-		private <T,R,X> MatchingInstance<T,X> nextSteps(Extractor<T,R> extractorActionWithReturn<R,X> a){
-			return addCase(matcher.inCaseOfThenExtract(match, a,(Extractor<V,R>)extractor));
-		}
+		
 		
 		public <T,X> MatchingInstance<T,X> thenApply(ActionWithReturn<V,X> a){
 			return addCase(matcher.inCaseOf(match, a));
@@ -70,19 +79,49 @@ public class CaseBuilder {
 		private final Case cse;
 		
 		public <V> Step<V,X> isTrue(Predicate<V> match){
-			return (ActionWithReturn<V,X> a)-> addCase(patternMatcher.inCaseOf(extractor, match, a));
+			return new InCaseOfStep<V>(match);
+					//(ActionWithReturn<V,X> a)-> addCase(patternMatcher.inCaseOf(extractor, match, a));
+		}
+		@AllArgsConstructor
+		public class InCaseOfStep<V> implements Step<V,X>{
+			private final Predicate<V> match;
+			@Override
+			public <X> MatchingInstance<V, X> thenApply(ActionWithReturn<V, X> t) {
+				return addCase(patternMatcher.inCaseOf(extractor, match, t));
+			}
+			
 		}
 		public <V> Step<V,X> isMatch(Matcher<V> match){
-			return (ActionWithReturn<V,X> a)-> addCase(new TypeSafePatternMatcher<T,X>(patternMatcher).inMatchOf(extractor, match, a));
+			return new InMatchOf(match);
+			
+		}
+		@AllArgsConstructor
+		public class InMatchOf<V>implements Step<V,X>{
+			private final Matcher<V> match;
+			@Override
+			public <X> MatchingInstance<V, X> thenApply(ActionWithReturn<V, X> t) {
+				return addCase(patternMatcher.inMatchOf(extractor, match, t));
+
+			}
+			
 		}
 		
 		public <V> TypeSafePatternMatcher<T,X> isType(ActionWithReturn<V,X> a){
 			return new TypeSafePatternMatcher<T,X>(patternMatcher).inCaseOfType(extractor, a);
 		}
 		public <V> Step<V,X>  isValue(V value){
-			return (ActionWithReturn<V,X> a ) ->{
-				return addCase(new TypeSafePatternMatcher<T,X>(patternMatcher).inCaseOfValue(value, extractor, a));
-			};
+			return new InCaseOfValueStep(value);
+			
+		}
+		@AllArgsConstructor
+		public class InCaseOfValueStep<V,X> implements Step<V,X>{
+			private V value;
+			@Override
+			public <X> MatchingInstance<V, X> thenApply(ActionWithReturn<V, X> t) {
+				return addCase(patternMatcher.inCaseOfValue(value, extractor, t));
+				
+			}
+			
 		}
 		private <T,R> MatchingInstance<T,R> addCase(Object o){
 			return new MatchingInstance<>(cse);
@@ -101,9 +140,16 @@ public class CaseBuilder {
 				//V : input for matcher / predicate
 		
 		public <R,X> Step<R,X> thenExtract(Extractor<? extends V,R> extractor){
-			return (ActionWithReturn<R,X> a)->{
-				return addCase(new TypeSafePatternMatcher<V,X>(patternMatcher).inMatchOfThenExtract(match, a,(Extractor)extractor));
-			};
+			return new InMatchOfThenExtract(extractor);
+		}
+		@AllArgsConstructor
+		public class InMatchOfThenExtract<V,X,R> implements Step<V,X>{
+			private final Extractor<? extends V,R> extractor; 
+			@Override
+			public <X> MatchingInstance<V, X> thenApply(ActionWithReturn<V, X> t) {
+				return addCase(patternMatcher.inMatchOfThenExtract(match, t,(Extractor)extractor));
+			}
+			
 		}
 		public <T,X> TypeSafePatternMatcher<T,X> thenApply(ActionWithReturn<V,X> a){
 			return new TypeSafePatternMatcher<T,X>(patternMatcher).inMatchOf(match, a);

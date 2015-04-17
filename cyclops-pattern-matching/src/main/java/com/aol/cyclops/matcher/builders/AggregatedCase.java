@@ -24,9 +24,9 @@ public class AggregatedCase<X> extends Case{
 	/** Match against single element - user provided elements will be aggregated into an iterable for matching **/
 	public  <V> Step<V,X> isValue(V value){
 		
-	//	return new CaseBuilder.ValueStep<>(this, patternMatcher, value);
+		return new CaseBuilder.ValueStep<>(this, patternMatcher, value);
 		//need to create classes now that X is infered from thenApply
-		return (ActionWithReturn<V,X> a) -> addCase(patternMatcher.inCaseOfValue(value, a) );
+	//	return (ActionWithReturn<V,X> a) -> addCase(patternMatcher.inCaseOfValue(value, a) );
 	}
 	
 	private <T> MatchingInstance<T,X> addCase(Object o){
