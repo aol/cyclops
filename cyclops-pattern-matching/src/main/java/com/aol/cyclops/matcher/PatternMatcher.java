@@ -486,7 +486,7 @@ public class PatternMatcher implements Function{
 		cases.put(new Pair(predicate,Optional.of(extractor)),new Pair<ActionWithReturn,Optional<Extractor>>(a,Optional.empty()));
 		return this;
 	}
-	public <R,V,T,X> PatternMatcher inCaseOfValue(R value, Extractor<T,R> extractor,ActionWithReturn<V,X> a){
+	public <R,V,T,X> PatternMatcher inCaseOfValue(V value, Extractor<T,R> extractor,ActionWithReturn<V,X> a){
 		
 		Predicate predicate = it -> Objects.equals(it, value);
 		cases.put(new Pair(predicate,Optional.of(extractor)),new Pair<ActionWithReturn,Optional<Extractor>>(a,Optional.empty()));
@@ -525,7 +525,7 @@ public class PatternMatcher implements Function{
 	
 	public static class ActionWithReturnWrapper<T,X> implements ActionWithReturn<T,X>{
 		private final Action<T> action;
-		ActionWithReturnWrapper(Action<T> action){
+		public ActionWithReturnWrapper(Action<T> action){
 			this.action = action;
 		}
 		public X apply(T t){

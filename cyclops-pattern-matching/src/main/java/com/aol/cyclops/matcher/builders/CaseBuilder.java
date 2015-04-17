@@ -14,56 +14,95 @@ import com.aol.cyclops.matcher.PatternMatcher.Extractor;
 import com.aol.cyclops.matcher.TypeSafePatternMatcher;
 
 public class CaseBuilder {
+	
+	@AllArgsConstructor
+	public static class ValueStep<V,X> implements Step<V,X>{
+		private final Case cse;
+		private final PatternMatcher matcher;
+		private final V value;
+		public <X> MatchingInstance<V,X> thenApply(ActionWithReturn<V,X> t){
+			return  addCase(matcher.inCaseOfValue(value, t));
+		}
+		private <T,X> MatchingInstance<T,X> addCase(Object o){
+			return new MatchingInstance<>(cse);
+		}
+	}
 	@AllArgsConstructor
 	public static class InCaseOfBuilder<V>{
+		// T : user input (type provided to match)
+		// X : match response (thenApply)
+		// R : extractor response
+		// V : input for matcher / predicate
 		private final Predicate<V> match;
 		private final PatternMatcher matcher;
+		private final Case cse;
 		
-		public <T,R,X> Step<ActionWithReturn<R,X>,TypeSafePatternMatcher<V,X>> thenExtract(Extractor<T,R> extractor){
+		public <T,R,X> Step<R,X> thenExtract(Extractor<T,R> extractor){
 			return (ActionWithReturn<R,X> a)->{
-				return new TypeSafePatternMatcher<V,X>(matcher).inCaseOfThenExtract(match, a,(Extractor<V,R>)extractor);
+				return addCase(matcher.inCaseOfThenExtract(match, a,(Extractor<V,R>)extractor));
 			};
 		}
 		
-		public <T,X> TypeSafePatternMatcher<T,X> thenApply(ActionWithReturn<V,X> a){
-			return new TypeSafePatternMatcher<T,X>(matcher).inCaseOf(match, a);
+		private <T,R,X> MatchingInstance<T,X> nextSteps(Extractor<T,R> extractorActionWithReturn<R,X> a){
+			return addCase(matcher.inCaseOfThenExtract(match, a,(Extractor<V,R>)extractor));
 		}
-		public <T,X>  TypeSafePatternMatcher<T,X> thenConsume(Action<V> a){
-			return new TypeSafePatternMatcher<T,X>(matcher).caseOf(match, a);
+		
+		public <T,X> MatchingInstance<T,X> thenApply(ActionWithReturn<V,X> a){
+			return addCase(matcher.inCaseOf(match, a));
+		}
+		public <T,X>  MatchingInstance<T,X> thenConsume(Action<V> a){
+			return addCase(matcher.caseOf(match, a));
+		}
+		private <T,X> MatchingInstance<T,X> addCase(Object o){
+			return new MatchingInstance<>(cse);
 		}
 		
 	}
 	@AllArgsConstructor
-	public static class InCaseOfBuilderExtractor<T,R>{
+	public static class InCaseOfBuilderExtractor<T,R,X>{
+		//T : user input (type provided to match)
+		//X : match response (thenApply)
+		//R : extractor response
+		//V : input for matcher / predicate
+		
 		private final Extractor<T,R> extractor;
 		private final PatternMatcher patternMatcher;
+		private final Case cse;
 		
-		public <V,X> Step<ActionWithReturn<V,X>,TypeSafePatternMatcher<T,X>> isTrue(Predicate<V> match){
-			return (ActionWithReturn<V,X> a)-> new TypeSafePatternMatcher<T,X>(patternMatcher).inCaseOf(extractor, match, a);
+		public <V> Step<V,X> isTrue(Predicate<V> match){
+			return (ActionWithReturn<V,X> a)-> addCase(patternMatcher.inCaseOf(extractor, match, a));
 		}
-		public <V,X> Step<ActionWithReturn<V,X>,TypeSafePatternMatcher<T,X>> matches(Matcher<V> match){
-			return (ActionWithReturn<V,X> a)-> new TypeSafePatternMatcher<T,X>(patternMatcher).inMatchOf(extractor, match, a);
+		public <V> Step<V,X> isMatch(Matcher<V> match){
+			return (ActionWithReturn<V,X> a)-> addCase(new TypeSafePatternMatcher<T,X>(patternMatcher).inMatchOf(extractor, match, a));
 		}
 		
-		public <V,X> TypeSafePatternMatcher<T,X> isType(ActionWithReturn<V,X> a){
+		public <V> TypeSafePatternMatcher<T,X> isType(ActionWithReturn<V,X> a){
 			return new TypeSafePatternMatcher<T,X>(patternMatcher).inCaseOfType(extractor, a);
 		}
-		public <V,X> Step<ActionWithReturn<R,X>,TypeSafePatternMatcher<T,X>>  isValue(R value){
-			return (ActionWithReturn<R,X> a ) ->{
-				return new TypeSafePatternMatcher<T,X>(patternMatcher).inCaseOfValue(value, extractor, a);
+		public <V> Step<V,X>  isValue(V value){
+			return (ActionWithReturn<V,X> a ) ->{
+				return addCase(new TypeSafePatternMatcher<T,X>(patternMatcher).inCaseOfValue(value, extractor, a));
 			};
+		}
+		private <T,R> MatchingInstance<T,R> addCase(Object o){
+			return new MatchingInstance<>(cse);
 		}
 		
 	}
 	
 	@AllArgsConstructor
-	public static class InMatchOfBuilder<V>{
+	public static class InMatchOfBuilder<V,X>{
 		private final Matcher<V> match;
 		private final PatternMatcher patternMatcher;
+		private final Case cse;
+				//T : user input (type provided to match)
+				//X : match response (thenApply)
+				//R : extractor response
+				//V : input for matcher / predicate
 		
-		public <R,X> Step<ActionWithReturn<R,X>,TypeSafePatternMatcher<V,X>> thenExtract(Extractor<V,R> extractor){
+		public <R,X> Step<R,X> thenExtract(Extractor<? extends V,R> extractor){
 			return (ActionWithReturn<R,X> a)->{
-				return new TypeSafePatternMatcher<V,X>(patternMatcher).inMatchOfThenExtract(match, a,extractor);
+				return addCase(new TypeSafePatternMatcher<V,X>(patternMatcher).inMatchOfThenExtract(match, a,(Extractor)extractor));
 			};
 		}
 		public <T,X> TypeSafePatternMatcher<T,X> thenApply(ActionWithReturn<V,X> a){
@@ -71,6 +110,9 @@ public class CaseBuilder {
 		}
 		public <T,X>  TypeSafePatternMatcher<T,X> thenConsume(Action<V> a){
 			return new TypeSafePatternMatcher<T,X>(patternMatcher).matchOf(match, a);
+		}
+		private <T,R> MatchingInstance<T,R> addCase(Object o){
+			return new MatchingInstance<>(cse);
 		}
 		
 	}
@@ -100,5 +142,6 @@ public class CaseBuilder {
 		}
 		
 	}
+
 	
 }

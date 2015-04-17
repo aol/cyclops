@@ -18,23 +18,33 @@ public class HamcrestTest {
 
 	@Test
 	public void hamcrest1(){
-		Matching.matchOf(hasItem("hello2"),System.out::println)
+		Matching.newCase(c->c.isMatch(hasItem("hello2")).thenConsume(System.out::println))
+							.match(Arrays.asList("hello","world"));
+	}
+	@Test
+	public void hamcrestViaNew(){
+		Matching.newCase().isMatch(hasItem("hello2")).thenConsume(System.out::println)
 							.match(Arrays.asList("hello","world"));
 	}
 	@Test
 	public void hasAnyOrderTest(){
-		assertTrue(Matching.inMatchOf(containsInAnyOrder("world","hello"),list -> true)
+		assertTrue(Matching.<Boolean>newCase(c->c.isMatch(containsInAnyOrder("world","hello"))
+											.thenApply(list -> true))
 							.apply(Arrays.asList("hello","world")).get());
 	}
 	@Test
 	public void hamcrestWithExtractor(){
-		assertTrue(Matching.inMatchOf(Extractors.at(1),is("world"),list -> true)
-							.apply(Arrays.asList("hello","world")).get());
+		assertTrue(Matching.newCase().extract(Extractors.at(1))
+										.isMatch(is("world"))
+										.thenApply(list -> true)
+							.match(Arrays.asList("hello","world")).get());
 	}
 	@Test
 	public void hamcrestWithPostExtractor(){
-		assertEquals("world",Matching.inMatchOfThenExtract((Matcher)containsInAnyOrder("world","hello"),value -> value
-									,Extractors.at(1))
+		assertEquals("world",Matching.newCase(c->c.isMatch(containsInAnyOrder("world","hello"))
+													.thenExtract(Extractors.at(1))
+													.thenApply(value -> value))
+					
 							.apply(Arrays.asList("hello","world")).get());
 	}
 	@Test

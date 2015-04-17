@@ -228,7 +228,7 @@ public class TypeSafePatternMatcher<T, X> implements Function<T, Optional<X>> {
 		return this;
 	}
 
-	public <R, V> TypeSafePatternMatcher<T, X> inCaseOfValue(R value,
+	public <R, V> TypeSafePatternMatcher<T, X> inCaseOfValue(V value,
 			Extractor<T, R> extractor, ActionWithReturn<V, X> a) {
 		matcher.inCaseOfValue(value, extractor, a);
 		return this;

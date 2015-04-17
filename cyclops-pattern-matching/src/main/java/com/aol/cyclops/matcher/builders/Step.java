@@ -1,8 +1,14 @@
 package com.aol.cyclops.matcher.builders;
 
-public interface Step<T,R>{
-	R thenApply(T t);
-	default void thenConsume(T t){
-		thenApply(t);
+import com.aol.cyclops.matcher.PatternMatcher.Action;
+import com.aol.cyclops.matcher.PatternMatcher.ActionWithReturn;
+import com.aol.cyclops.matcher.PatternMatcher.ActionWithReturnWrapper;
+
+public interface Step<T,X>{
+	
+	
+	<X> MatchingInstance<T,X> thenApply(ActionWithReturn<T,X> t);
+	default MatchingInstance<T,X> thenConsume(Action<T> t){
+		return thenApply(new ActionWithReturnWrapper(t));
 	}
 }

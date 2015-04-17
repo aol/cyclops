@@ -22,8 +22,11 @@ import com.aol.cyclops.matcher.PatternMatcher.Extractor;
 import com.aol.cyclops.matcher.builders.CaseBuilder.InCaseOfManyStep2;
 import com.aol.cyclops.matcher.builders.CaseBuilder.InMatchOfManyStep2;
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
-public class AtomisedCase extends Case{
-	
+public class AtomisedCase<T> extends Case{
+	// T : user input (type provided to match)
+	// X : match response (thenApply)
+	// R : extractor response
+	// V : input for matcher / predicate
 	@Getter(AccessLevel.PACKAGE)
 	private final PatternMatcher patternMatcher;
 	
@@ -37,16 +40,16 @@ public class AtomisedCase extends Case{
 	public  final <R,V,V1,T,X> ExtractionStep<T,R,X> bothTrue(Predicate<V> pred1, Predicate<V1> pred2){
 		//return new TypeSafePatternMatcher<T,X>(patternMatcher).inCaseOfPredicates(Tuple.tuple(pred1,pred2), a, extractor);
 		//extractor // then action
-		return  (Extractor<T, R> extractor)-> (ActionWithReturn<R, X> a) ->new TypeSafePatternMatcher<T,X>(patternMatcher).inCaseOfPredicates(Tuple.tuple(pred1,pred2), a, extractor);
+		return  (Extractor<T, R> extractor)-> (ActionWithReturn<R, X> a) ->addCase(patternMatcher.inCaseOfPredicates(Tuple.tuple(pred1,pred2), a, extractor));
 	}
 	@SafeVarargs
-	public  final <R,V,T,X> ExtractionStep<T,R,X> allTrueNoType(Predicate...predicates){
+	public  final <R,V,T,X> ExtractionStep<T,R,X> allTrueNoType(Predicate<? extends Object>...predicates){
 		//extractor // then action
-		return (Extractor<T, R> extractor) -> (ActionWithReturn<R, X> a) -> new TypeSafePatternMatcher<T,X>(patternMatcher).inCaseOfTuple(Tuple.tuple(predicates), a, extractor);
+		return (Extractor<T, R> extractor) -> (ActionWithReturn<R, X> a) -> addCase(patternMatcher.inCaseOfTuple(Tuple.tuple(predicates), a, extractor));
 	}
 	
 	@SafeVarargs
-	public  final <R,V,T,X> ExtractionStep<T,R,X> allNoType(Object...predicates){
+	public  final <R,V,T,X> ExtractionStep<T,R,X> allHoldNoType(Object...predicates){
 		return allTrueNoType(convert(predicates));
 	}
 	
@@ -66,27 +69,29 @@ public class AtomisedCase extends Case{
 
 
 	@SafeVarargs
-	public  final <R,V,T,X> InMatchOfManyStep2<R,V,T,X> allMatches(Matcher<V>... predicates) {
+	public  final <R,V,T,X> InMatchOfManyStep2<R,V,T,X> allMatch(Matcher<V>... predicates) {
 		return new InMatchOfManyStep2<R,V,T,X>(predicates,patternMatcher);
 	}
-	public  final <R,V,V1,T,X> ExtractionStep<T,R,X> bothMatch(Matcher<V> pred1, Matcher<V1> pred2){
+	public  final <R,V,V1,X> ExtractionStep<T,R,X> bothMatch(Matcher<V> pred1, Matcher<V1> pred2){
 		//return new TypeSafePatternMatcher<T,X>(patternMatcher).inCaseOfPredicates(Tuple.tuple(pred1,pred2), a, extractor);
 		//extractor // then action
-		return  (Extractor<T, R> extractor)-> (ActionWithReturn<R, X> a) ->new TypeSafePatternMatcher<T,X>(patternMatcher).inMatchOfMatchers(Tuple.tuple(pred1,pred2), a, extractor);
+		return  (Extractor<T, R> extractor)-> (ActionWithReturn<R, X> a) ->addCase(patternMatcher.inMatchOfMatchers(Tuple.tuple(pred1,pred2), a, extractor));
 	}
 	@SafeVarargs
 	public  final <R,V,T,X> ExtractionStep<T,R,X> allMatchNoType(Matcher...predicates){
 		//extractor // then action
-		return (Extractor<T, R> extractor) -> (ActionWithReturn<R, X> a) -> new TypeSafePatternMatcher<T,X>(patternMatcher).inMatchOfTuple(Tuple.tuple(predicates), a, extractor);
+		return (Extractor<T, R> extractor) -> (ActionWithReturn<R, X> a) -> addCase(patternMatcher.inMatchOfTuple(Tuple.tuple(predicates), a, extractor));
 	}
 	
 	@SafeVarargs
-	public  final <V,T,X> Step<ActionWithReturn<List<V>,X>,TypeSafePatternMatcher<T,X>> allValues(V... values){
+	public  final <V,T,X> Step<List<V>,X> allValues(V... values){
 		//add wildcard support
 		Predicate<V>[] predicates = Seq.of(values).map(nextValue->buildPredicate(nextValue)).toList().toArray(new Predicate[0]);
-		return (ActionWithReturn<List<V>,X> a) -> new TypeSafePatternMatcher<T,X>(patternMatcher).inCaseOfMany(a,predicates) ;
+		return (ActionWithReturn<List<V>,X> a) -> addCase(patternMatcher.inCaseOfMany(a,predicates)) ;
 	}
-
+	private <T,R> MatchingInstance<T,R> addCase(Object o){
+		return new MatchingInstance<>(this);
+	}
 
 	public static final Predicate ANY = test ->true;
 
