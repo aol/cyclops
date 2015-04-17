@@ -33,7 +33,7 @@ public class AtomisedCase<T> extends Case{
 	/** Match all elements against an Array or Iterable - user provided elements are disaggregated and matched by index**/
 	@SafeVarargs
 	public  final <R,V,T,X> InCaseOfManyStep2<R,V,T,X> allTrue(Predicate<V>... predicates) {
-		return new InCaseOfManyStep2<R,V,T,X>(predicates,patternMatcher);
+		return new InCaseOfManyStep2<R,V,T,X>(predicates,patternMatcher,this);
 		
 	}
 	

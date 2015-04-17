@@ -167,11 +167,15 @@ public class CaseBuilder {
 	public static class InCaseOfManyStep2<R,V,T,X>{
 		private final Predicate<V>[] predicates;
 		private final PatternMatcher patternMatcher;
+		private final Case cse;
 		public  TypeSafePatternMatcher<T,X> thenApply(ActionWithReturn<List<V>, X> a){
 			return new TypeSafePatternMatcher<T,X>(patternMatcher).inCaseOfMany( a,predicates);
 		}
-		public  TypeSafePatternMatcher<T,X> thenConsume(Action<List<V>> a){
-			return new TypeSafePatternMatcher<T,X>(patternMatcher).caseOfMany( a,predicates);
+		public  MatchingInstance<T,X> thenConsume(Action<List<V>> a){
+			return addCase(patternMatcher.caseOfMany( a,predicates));
+		}
+		private <T,X> MatchingInstance<T,X> addCase(Object o){
+			return new MatchingInstance<>(cse);
 		}
 	}
 
