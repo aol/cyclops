@@ -6,7 +6,7 @@ import com.aol.cyclops.matcher.PatternMatcher.Extractor;
 
 public interface ExtractionStep<T,R,X> {
 
-	public Step<R,X> thenExtract(Extractor<T,R> extractor);
+	public <T,R> Step<R,X> thenExtract(Extractor<T,R> extractor);
 	
 	
 }

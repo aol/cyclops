@@ -40,26 +40,44 @@ public class AtomisedCase<T> extends Case{
 	public  final <R,V,V1,T,X> ExtractionStep<T,R,X> bothTrue(Predicate<V> pred1, Predicate<V1> pred2){
 		//return new TypeSafePatternMatcher<T,X>(patternMatcher).inCaseOfPredicates(Tuple.tuple(pred1,pred2), a, extractor);
 		//extractor // then action
-		return  (Extractor<T, R> extractor)-> new Step<R,X>(){
+		return  new  ExtractionStep<T,R,X>(){
 
 			@Override
-			public <X> MatchingInstance<R, X> thenApply(ActionWithReturn<R, X> t) {
+			public <T, R> Step<R, X> thenExtract(Extractor<T, R> extractor) {
 				
-				return addCase(patternMatcher.inCaseOfPredicates(Tuple.tuple(pred1,pred2), t, extractor));
+				return new Step<R,X>(){
+					
+					@Override
+					public <X> MatchingInstance<R, X> thenApply(ActionWithReturn<R, X> t) {
+						
+						return addCase(patternMatcher.inCaseOfPredicates(Tuple.tuple(pred1,pred2), t, extractor));
+					}
+				};
 			}
-			
+			 
 		};
+		
 		
 	}
 	@SafeVarargs
 	public  final <R,V,T,X> ExtractionStep<T,R,X> allTrueNoType(Predicate<? extends Object>...predicates){
 		//extractor // then action
-		return (Extractor<T, R> extractor) -> new Step<R,X>(){
+		return  new  ExtractionStep<T,R,X>(){
+
 			@Override
-			public <X> MatchingInstance<R, X> thenApply(ActionWithReturn<R, X> t) {
-				return  addCase(patternMatcher.inCaseOfTuple(Tuple.tuple(predicates), t, extractor));
+			public <T, R> Step<R, X> thenExtract(Extractor<T, R> extractor) {
+				
+				return new Step<R,X>(){
+					
+					@Override
+					public <X> MatchingInstance<R, X> thenApply(ActionWithReturn<R, X> t) {
+						return  addCase(patternMatcher.inCaseOfTuple(Tuple.tuple(predicates), t, extractor));
+					}
+				};
 			}
+			 
 		};
+			
 	}
 	
 	@SafeVarargs
@@ -89,25 +107,42 @@ public class AtomisedCase<T> extends Case{
 	public  final <R,V,V1,X> ExtractionStep<T,R,X> bothMatch(Matcher<V> pred1, Matcher<V1> pred2){
 		//return new TypeSafePatternMatcher<T,X>(patternMatcher).inCaseOfPredicates(Tuple.tuple(pred1,pred2), a, extractor);
 		//extractor // then action
-		return  (Extractor<T, R> extractor)-> new Step<R,X>(){
+		return  new  ExtractionStep<T,R,X>(){
+
 			@Override
-			public <X> MatchingInstance<R, X> thenApply(ActionWithReturn<R, X> t) {
-				// TODO Auto-generated method stub
-				return addCase(patternMatcher.inMatchOfMatchers(Tuple.tuple(pred1,pred2), t, extractor));
+			public <T, R> Step<R, X> thenExtract(Extractor<T, R> extractor) {
+				
+				return new Step<R,X>(){
+					
+					@Override
+					public <X> MatchingInstance<R, X> thenApply(ActionWithReturn<R, X> t) {
+						// TODO Auto-generated method stub
+						return addCase(patternMatcher.inMatchOfMatchers(Tuple.tuple(pred1,pred2), t, extractor));
+					}
+				};
 			}
+			 
 		};
 	}
 	@SafeVarargs
 	public  final <R,V,T,X> ExtractionStep<T,R,X> allMatchNoType(Matcher...predicates){
 		//extractor // then action
-		return (Extractor<T, R> extractor) -> new Step<R,X>(){
+		return  new  ExtractionStep<T,R,X>(){
 
 			@Override
-			public <X> MatchingInstance<R, X> thenApply(ActionWithReturn<R, X> t) {
-				return addCase(patternMatcher.inMatchOfTuple(Tuple.tuple(predicates), t, extractor));
+			public <T, R> Step<R, X> thenExtract(Extractor<T, R> extractor) {
+				return  new Step<R,X>(){
+
+					@Override
+					public <X> MatchingInstance<R, X> thenApply(ActionWithReturn<R, X> t) {
+						return addCase(patternMatcher.inMatchOfTuple(Tuple.tuple(predicates), t, extractor));
+					}
+					
+				};
 			}
 			
 		};
+		
 		
 		
 	}
