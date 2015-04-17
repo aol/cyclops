@@ -17,11 +17,11 @@ public class ScalaParserExample {
 	public Integer eval(Expression expression, int xValue){
 
 		
-		return Matching.inCaseOfType( (X x)-> xValue)
-			.inCaseOfType((Const c) -> c.getValue())
-			.inCaseOfType((Add a) ->  eval(a.getLeft(),xValue) + eval(a.getRight(),xValue))
-			.inCaseOfType( (Mult m) -> eval(m.getLeft(),xValue) * eval(m.getRight(),xValue))
-			.inCaseOfType( (Neg n) ->  -eval(n.getExpr(),xValue))
+		return Matching.newCase().isType( (X x)-> xValue)
+			.newCase().isType((Const c) -> c.getValue())
+			.newCase().isType((Add a) ->  eval(a.getLeft(),xValue) + eval(a.getRight(),xValue))
+			.newCase().isType( (Mult m) -> eval(m.getLeft(),xValue) * eval(m.getRight(),xValue))
+			.newCase().isType( (Neg n) ->  -eval(n.getExpr(),xValue))
 			.match(expression).orElse(1);
 		
 		
