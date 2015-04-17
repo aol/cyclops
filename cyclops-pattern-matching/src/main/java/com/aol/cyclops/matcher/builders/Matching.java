@@ -16,10 +16,10 @@ public class Matching {
 		consumer.accept(cse);
 		return new MatchingInstance<>(cse);
 	}
-	public static final<T,X> MatchingInstance<T,X> atomisedCase(Consumer<AtomisedCase> consumer){
+	public static final<X> MatchingInstance<? extends Object,X> atomisedCase(Consumer<AtomisedCase<? extends Object>> consumer){
 		AtomisedCase cse = new AtomisedCase(new PatternMatcher());
 		consumer.accept(cse);
-		return new MatchingInstance<T,X>(cse);
+		return new MatchingInstance<>(cse);
 	}
 
 	

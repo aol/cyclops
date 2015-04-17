@@ -91,19 +91,20 @@ public class MatchingDataStructuresTest {
 	public void  inMatchOfMatchersSingle() {
 
 		assertThat(
-				Matching.atomisedCase(c->c.bothMatch(samePropertyValuesAs(new Person("bob")),any(String.class))
+				Matching.atomisedCase(c->  c.bothMatch(samePropertyValuesAs(new Person("bob")),any(String.class))
 											.thenExtract(Extractors.<Person>first())
-											.thenApply(bob->bob.getName()) 
-												Extractors.<Person>first())
-						.match(new Person("bob"),"boo hoo!").get(),is("bob"));
+											.thenApply(bob -> bob.getName())
+
+						.match(new Person("bob"), "boo hoo!").get(),is("bob"));
 	}
 
 	@Test
 	public void  inCaseOfPredicates() {
-		
-		String result = Matching.atomisedCase(c->c.allTrue( (Person p) -> p.isTall(),p->true, (String p)->p.getName() + " is tall")
+		Matching.atomisedCase(c -> c.allTrueNoType((Person p) -> p.isTall(),p->true).thenExtract(Extractors.<Person>first()).thenApply(p -> p.getName() + " is tall")).apply(new Person("bob")).get();
+		String result = Matching.<String>atomisedCase(c -> c.allTrueNoType((Person p) -> p.isTall(),p->true)
 												.thenExtract(Extractors.<Person>first())
-								.apply(new Person("bob")).get();
+												.thenApply(p -> p.getName() + " is tall"))
+						.apply(new Person("bob")).get();
 		assertThat(result,is("bob is tall"));
 	}
 	@Test
@@ -111,7 +112,7 @@ public class MatchingDataStructuresTest {
 		
 		String result = Matching.atomisedCase(c->c.allTrueNoType( (Person p) -> p.isTall(), p->true)
 													.thenExtract(Extractors.<Person>first())
-													.then.apply(p->p.getName() + " is tall") )
+													.thenApply(p->p.getName() + " is tall") )
 													
 								.<String>match(new Person("bob"),"test").get();
 		assertThat(result,is("bob is tall"));
@@ -155,8 +156,8 @@ public class MatchingDataStructuresTest {
 	@Test
 	public void inMatchOfTuple() {
 		
-		String result = Matching.inMatchOfTuple(tuple(Matchers.<Person> samePropertyValuesAs(new Person("bob")),anything()), 
-										t->t.v1.getName() + " is tall and lives in " + t.v2.getCity(), 
+		String result = Matching.inMatchOfTuple(tuple(Matchers.<Person> samePropertyValuesAs(new Person("bob")),anything()),
+										t->t.v1.getName() + " is tall and lives in " + t.v2.getCity(),
 										Extractors.<Person,Address>of(0,1))
 										.match(new Person("bob"),new Address()).get();
 		
@@ -252,6 +253,7 @@ public class MatchingDataStructuresTest {
 			
 	@Test
 	public void  caseOfTuple(){
+		
 		Matching.caseOfTuple(tuple(p((Person p) -> p.isTall()),p((Address a)->a.getCountry().equals("Ireland")), p( p->true)),
 				t->value = t.v1.getName() + " is tall and lives in " + t.v2.getCity(), Extractors.<Person,Address>of(0,1))
 
@@ -268,7 +270,7 @@ public class MatchingDataStructuresTest {
 	public void matchOfTuple(){
 		Matching.atomisedCase().bothMatch(samePropertyValuesAs(new Person("bob")),anything())
 					.thenExtract(Extractors.<Person,Address>of(0,1))
-					.thenApply(t->value = t.v1.getName() + " is tall and lives in " + t.v2.getCity()) 
+					.thenApply(t->value = t.v1.getName() + " is tall and lives in " + t.v2.getCity())
 				
 				.match(new Person("bob"),new Address());
 

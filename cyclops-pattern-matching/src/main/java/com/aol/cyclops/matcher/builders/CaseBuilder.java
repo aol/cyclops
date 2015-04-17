@@ -168,8 +168,8 @@ public class CaseBuilder {
 		private final Predicate<V>[] predicates;
 		private final PatternMatcher patternMatcher;
 		private final Case cse;
-		public  TypeSafePatternMatcher<T,X> thenApply(ActionWithReturn<List<V>, X> a){
-			return new TypeSafePatternMatcher<T,X>(patternMatcher).inCaseOfMany( a,predicates);
+		public  MatchingInstance<T,X> thenApply(ActionWithReturn<List<V>, X> a){
+			return addCase(patternMatcher.inCaseOfMany( a,predicates));
 		}
 		public  MatchingInstance<T,X> thenConsume(Action<List<V>> a){
 			return addCase(patternMatcher.caseOfMany( a,predicates));
