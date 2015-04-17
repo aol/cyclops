@@ -12,6 +12,8 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
+import com.aol.cyclops.matcher.builders.Matching;
+
 
 public class MatchManyTest {
 

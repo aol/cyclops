@@ -4,6 +4,7 @@ package com.aol.cyclops.matcher;
 import static com.aol.cyclops.matcher.TestPredicates.typeMatcher;
 
 import com.aol.cyclops.matcher.PatternMatcher.ActionWithReturn;
+import com.aol.cyclops.matcher.builders.Matching;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

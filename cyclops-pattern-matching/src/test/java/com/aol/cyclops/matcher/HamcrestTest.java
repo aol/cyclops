@@ -12,6 +12,8 @@ import java.util.List;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
+import com.aol.cyclops.matcher.builders.Matching;
+
 public class HamcrestTest {
 
 	@Test

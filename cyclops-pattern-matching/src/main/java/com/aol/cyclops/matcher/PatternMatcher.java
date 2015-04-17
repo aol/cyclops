@@ -37,7 +37,7 @@ import org.jooq.lambda.tuple.Tuple2;
  * -cases using predicates
  *  		inCaseOfXXX
  *  		caseOfXXX
- * -cases using hamcrete Matchers
+ * -cases using hamcrest Matchers
  * 			inMatchOfXXX
  * 			matchOfXXX
  * -cases as expressions (return value) - inCaseOfXXX, inMatchOfXXX

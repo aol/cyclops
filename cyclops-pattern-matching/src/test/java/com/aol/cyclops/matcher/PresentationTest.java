@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.junit.Test;
 
+import com.aol.cyclops.matcher.builders.Matching;
 import com.google.common.collect.ImmutableList;
 
 
