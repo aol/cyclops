@@ -14,12 +14,12 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,6 +37,7 @@ public class MatchingTest {
 	@Test
 	public void testCaseOfTypeWithExtractorAndAction() {
 		Matching.newCase(c -> c.extract(Person::getAge).isType((Integer i) -> value=i))
+				.newCase(c -> c.extract(Person::getAge).isType((Integer i) -> value=i))
 				.match(new Person(100));
 		
 		
@@ -46,6 +47,7 @@ public class MatchingTest {
 	@Test(expected=Exception.class)
 	public void testCaseOfTypeWithExtractorAndActionBadCase() {
 		Matching.newCase(c->c.extract(Person::getName).isType((Integer i) -> value = i))
+				.newCase(c->c.extract(Person::getName).isType((Integer i) -> value = i))
 					.match(new Person(100));
 	
 
@@ -153,14 +155,17 @@ public class MatchingTest {
 		assertThat(value,is(true));
 	}
 	@Test
-	public void testCaseOfThenExtractPredicateOfVActionOfVExtractorOfTRFalse() {
-		Matching.newCase(c->c.isTrue((List<Object> it)-> it.size()>2)
+	public void testCaseOfThenExtractPredicateOfVActionOfVExtractorOfTRFalseSize() {
+		Matching.newCase(c->c.isTrue((List<Object> it)-> it.size()>3)
 							.thenExtract(at(0))
 							.thenConsume( it->value=it))
+				.newCase(c->c.isTrue((List<Object> it)-> it.size()>3).thenExtract(at(0)).thenConsume( it->value=it))
+				.newCase(c->c.isTrue(it->it instanceof Map).thenExtract(at(0)).thenConsume(it->value=it))
 				.match(Arrays.asList(true,false,"hello"));
 		
 		assertThat(value,is(nullValue()));
 	}
+	
 
 	@Test
 	public void testCaseOfThenExtractMatcherOfVActionOfVExtractorOfTR() {

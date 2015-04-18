@@ -9,7 +9,6 @@ import lombok.Getter;
 import org.hamcrest.Matcher;
 
 import com.aol.cyclops.matcher.PatternMatcher;
-import com.aol.cyclops.matcher.TypeSafePatternMatcher;
 import com.aol.cyclops.matcher.PatternMatcher.ActionWithReturn;
 import com.aol.cyclops.matcher.PatternMatcher.Extractor;
 import com.aol.cyclops.matcher.builders.CaseBuilder.InCaseOfBuilder;

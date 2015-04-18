@@ -14,15 +14,15 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	private final Case cse;
 	
 	public final StreamCase streamCase(){
-		StreamCase cse = new StreamCase(new PatternMatcher());
+		StreamCase cse = new StreamCase(this.cse.getPatternMatcher());
 		return cse;
 	}
 	public final AggregatedCase<X> newCase(){
-		AggregatedCase<X> cse = new AggregatedCase<X>(new PatternMatcher());
+		AggregatedCase<X> cse = new AggregatedCase<X>(this.cse.getPatternMatcher());
 		return cse;
 	}
-	public final AtomisedCase atomisedCase(){
-		AtomisedCase cse = new AtomisedCase(new PatternMatcher());
+	public final AtomisedCase<X> atomisedCase(){
+		AtomisedCase cse = new AtomisedCase(this.cse.getPatternMatcher());
 		return cse;
 	}
 	
@@ -32,12 +32,12 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 		consumer.accept(cse);
 		return this;
 	}
-	public final MatchingInstance<T,X> simpleCase(Consumer<AggregatedCase<X>> consumer){
+	public final MatchingInstance<T,X> newCase(Consumer<AggregatedCase<X>> consumer){
 		AggregatedCase<X> cse = new AggregatedCase<>(new PatternMatcher());
 		consumer.accept(cse);
 		return this;
 	}
-	public final MatchingInstance<T,X> atomisedCase(Consumer<AtomisedCase> consumer){
+	public final MatchingInstance<T,X> atomisedCase(Consumer<AtomisedCase<X>> consumer){
 		AtomisedCase cse = new AtomisedCase(new PatternMatcher());
 		consumer.accept(cse);
 		return this;
@@ -89,7 +89,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 		
 		return cse.getPatternMatcher().matchFromStream(s);
 	}
-	public <R> Optional<R> match(Object... t){
+	public  Optional<X> match(Object... t){
 		return cse.getPatternMatcher().match(t);
 	}
 	/**

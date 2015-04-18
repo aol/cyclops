@@ -11,7 +11,6 @@ import com.aol.cyclops.matcher.PatternMatcher;
 import com.aol.cyclops.matcher.PatternMatcher.Action;
 import com.aol.cyclops.matcher.PatternMatcher.ActionWithReturn;
 import com.aol.cyclops.matcher.PatternMatcher.Extractor;
-import com.aol.cyclops.matcher.TypeSafePatternMatcher;
 
 public class CaseBuilder {
 	
@@ -106,8 +105,8 @@ public class CaseBuilder {
 			
 		}
 		
-		public <V> TypeSafePatternMatcher<T,X> isType(ActionWithReturn<V,X> a){
-			return new TypeSafePatternMatcher<T,X>(patternMatcher).inCaseOfType(extractor, a);
+		public <V> MatchingInstance<T,X> isType(ActionWithReturn<V,X> a){
+			return addCase(patternMatcher.inCaseOfType(extractor, a));
 		}
 		public <V> Step<V,X>  isValue(V value){
 			return new InCaseOfValueStep(value);
@@ -149,29 +148,32 @@ public class CaseBuilder {
 			public <X> MatchingInstance<V, X> thenApply(ActionWithReturn<V, X> t) {
 				return addCase(patternMatcher.inMatchOfThenExtract(match, t,(Extractor)extractor));
 			}
+			private <T,R> MatchingInstance<T,R> addCase(Object o){
+				return new MatchingInstance<>(cse);
+			}
 			
 		}
-		public <T,X> TypeSafePatternMatcher<T,X> thenApply(ActionWithReturn<V,X> a){
-			return new TypeSafePatternMatcher<T,X>(patternMatcher).inMatchOf(match, a);
+		public <T,X> MatchingInstance<T,X>  thenApply(ActionWithReturn<V,X> a){
+			return addCase(patternMatcher.inMatchOf(match, a));
 		}
-		public <T,X>  TypeSafePatternMatcher<T,X> thenConsume(Action<V> a){
-			return new TypeSafePatternMatcher<T,X>(patternMatcher).matchOf(match, a);
-		}
-		private <T,R> MatchingInstance<T,R> addCase(Object o){
-			return new MatchingInstance<>(cse);
+		public <T,X>  MatchingInstance<T,X> thenConsume(Action<V> a){
+			return addCase(patternMatcher.matchOf(match, a));
 		}
 		
+		private <T,X> MatchingInstance<T,X> addCase(Object o){
+			return new MatchingInstance<>(cse);
+		}
 	}
 	
 	@AllArgsConstructor
-	public static class InCaseOfManyStep2<R,V,T,X>{
+	public static class InCaseOfManyStep2<V>{
 		private final Predicate<V>[] predicates;
 		private final PatternMatcher patternMatcher;
 		private final Case cse;
-		public  MatchingInstance<T,X> thenApply(ActionWithReturn<List<V>, X> a){
+		public <X> MatchingInstance<V,X> thenApply(ActionWithReturn<List<V>, X> a){
 			return addCase(patternMatcher.inCaseOfMany( a,predicates));
 		}
-		public  MatchingInstance<T,X> thenConsume(Action<List<V>> a){
+		public  <X> MatchingInstance<V,X> thenConsume(Action<List<V>> a){
 			return addCase(patternMatcher.caseOfMany( a,predicates));
 		}
 		private <T,X> MatchingInstance<T,X> addCase(Object o){
@@ -183,14 +185,17 @@ public class CaseBuilder {
 	public static class InMatchOfManyStep2<R,V,T,X>{
 		private final Matcher<V>[] predicates;
 		private final PatternMatcher patternMatcher;
+		private final Case cse;
 		
-		public  TypeSafePatternMatcher<T,X> thenApply(ActionWithReturn<List<V>, X> a){
-			return new TypeSafePatternMatcher<T,X>(patternMatcher).inMatchOfMany( a,predicates);
+		public  MatchingInstance<T,X> thenApply(ActionWithReturn<List<V>, X> a){
+			return addCase(patternMatcher.inMatchOfMany( a,predicates));
 		}
-		public  TypeSafePatternMatcher<T,X> thenConsume(Action<List<V>> a){
-			return new TypeSafePatternMatcher<T,X>(patternMatcher).matchOfMany( a,predicates);
+		public  MatchingInstance<T,X> thenConsume(Action<List<V>> a){
+			return addCase(patternMatcher.matchOfMany( a,predicates));
 		}
-		
+		private <T,X> MatchingInstance<T,X> addCase(Object o){
+			return new MatchingInstance<>(cse);
+		}
 	}
 
 	

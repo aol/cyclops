@@ -13,16 +13,18 @@ import lombok.Getter;
 import org.hamcrest.Matcher;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple1;
+import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
 
 import com.aol.cyclops.matcher.PatternMatcher;
-import com.aol.cyclops.matcher.Predicates;
-import com.aol.cyclops.matcher.TypeSafePatternMatcher;
 import com.aol.cyclops.matcher.PatternMatcher.ActionWithReturn;
 import com.aol.cyclops.matcher.PatternMatcher.Extractor;
+import com.aol.cyclops.matcher.Predicates;
 import com.aol.cyclops.matcher.builders.CaseBuilder.InCaseOfManyStep2;
 import com.aol.cyclops.matcher.builders.CaseBuilder.InMatchOfManyStep2;
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
-public class AtomisedCase<T> extends Case{
+public class AtomisedCase<X> extends Case{
 	// T : user input (type provided to match)
 	// X : match response (thenApply)
 	// R : extractor response
@@ -32,8 +34,8 @@ public class AtomisedCase<T> extends Case{
 	
 	/** Match all elements against an Array or Iterable - user provided elements are disaggregated and matched by index**/
 	@SafeVarargs
-	public  final <R,V,T,X> InCaseOfManyStep2<R,V,T,X> allTrue(Predicate<V>... predicates) {
-		return new InCaseOfManyStep2<R,V,T,X>(predicates,patternMatcher,this);
+	public  final <V> InCaseOfManyStep2<V> allTrue(Predicate<V>... predicates) {
+		return new InCaseOfManyStep2<V>(predicates,patternMatcher,this);
 		
 	}
 	
@@ -59,6 +61,13 @@ public class AtomisedCase<T> extends Case{
 		
 		
 	}
+	public  final <R,V,V1,V2,T,X> ExtractionStep<T,R,X> threeTrue(Predicate<V> pred1, Predicate<V1> pred2,Predicate<V2> pred3){
+		//return new TypeSafePatternMatcher<T,X>(patternMatcher).inCaseOfPredicates(Tuple.tuple(pred1,pred2), a, extractor);
+		//extractor // then action
+		return allTrueNoType(pred1,pred2,pred3);
+		
+		
+	}
 	@SafeVarargs
 	public  final <R,V,T,X> ExtractionStep<T,R,X> allTrueNoType(Predicate<? extends Object>...predicates){
 		//extractor // then action
@@ -71,7 +80,7 @@ public class AtomisedCase<T> extends Case{
 					
 					@Override
 					public <X> MatchingInstance<R, X> thenApply(ActionWithReturn<R, X> t) {
-						return  addCase(patternMatcher.inCaseOfTuple(Tuple.tuple(predicates), t, extractor));
+						return  addCase(patternMatcher.inCaseOfSeq(Seq.of(predicates), t, extractor));
 					}
 				};
 			}
@@ -102,9 +111,9 @@ public class AtomisedCase<T> extends Case{
 
 	@SafeVarargs
 	public  final <R,V,T,X> InMatchOfManyStep2<R,V,T,X> allMatch(Matcher<V>... predicates) {
-		return new InMatchOfManyStep2<R,V,T,X>(predicates,patternMatcher);
+		return new InMatchOfManyStep2<R,V,T,X>(predicates,patternMatcher,this);
 	}
-	public  final <R,V,V1,X> ExtractionStep<T,R,X> bothMatch(Matcher<V> pred1, Matcher<V1> pred2){
+	public  final <T,R,V,V1> ExtractionStep<T,R,X> bothMatch(Matcher<V> pred1, Matcher<V1> pred2){
 		//return new TypeSafePatternMatcher<T,X>(patternMatcher).inCaseOfPredicates(Tuple.tuple(pred1,pred2), a, extractor);
 		//extractor // then action
 		return  new  ExtractionStep<T,R,X>(){
@@ -135,7 +144,7 @@ public class AtomisedCase<T> extends Case{
 
 					@Override
 					public <X> MatchingInstance<R, X> thenApply(ActionWithReturn<R, X> t) {
-						return addCase(patternMatcher.inMatchOfTuple(Tuple.tuple(predicates), t, extractor));
+						return addCase(patternMatcher.inMatchOfSeq(Seq.of(predicates), t, extractor));
 					}
 					
 				};
@@ -172,5 +181,16 @@ public class AtomisedCase<T> extends Case{
 			return ANY;
 		return Predicates.p(test->Objects.equals(test, nextValue));
 	}
+	/**
+	private Tuple selectTuple(Object[] array){
+		if(array.length==1)
+			return new Tuple1(array[0]);
+		if(array.length==2)
+			return new Tuple2(array[0],array[1]);
+		if(array.length==3)
+			return new Tuple3(array[0],array[1],array[2]);
+		if(array.length==4)
+			return new Tuple3(array[0],array[1],array[2],array[3]);
+	}**/
 	
 }

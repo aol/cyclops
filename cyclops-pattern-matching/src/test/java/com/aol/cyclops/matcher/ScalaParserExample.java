@@ -15,14 +15,14 @@ public class ScalaParserExample {
 
 	//http://kerflyn.wordpress.com/2011/02/14/playing-with-scalas-pattern-matching/
 	public Integer eval(Expression expression, int xValue){
-
 		
 		return Matching.newCase().isType( (X x)-> xValue)
-			.newCase().isType((Const c) -> c.getValue())
-			.newCase().isType((Add a) ->  eval(a.getLeft(),xValue) + eval(a.getRight(),xValue))
-			.newCase().isType( (Mult m) -> eval(m.getLeft(),xValue) * eval(m.getRight(),xValue))
-			.newCase().isType( (Neg n) ->  -eval(n.getExpr(),xValue))
-			.match(expression).orElse(1);
+				.newCase().isType((Const c) -> c.getValue())
+				.newCase().isType((Add a) ->  eval(a.getLeft(),xValue) + eval(a.getRight(),xValue))
+				.newCase().isType( (Mult m) -> eval(m.getLeft(),xValue) * eval(m.getRight(),xValue))
+				.newCase().isType( (Neg n) ->  -eval(n.getExpr(),xValue))
+				.match(expression).orElse(1);
+		
 		
 		
 	}
