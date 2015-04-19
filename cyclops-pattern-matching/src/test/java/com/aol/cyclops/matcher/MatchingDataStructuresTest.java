@@ -1,5 +1,6 @@
 package com.aol.cyclops.matcher;
 import static com.aol.cyclops.matcher.Predicates.p;
+import static com.aol.cyclops.matcher.builders.AtomisedCase.ANY;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.anything;
@@ -25,6 +26,19 @@ import org.junit.Test;
 
 import com.aol.cyclops.matcher.builders.Matching;
 public class MatchingDataStructuresTest {
+	
+	
+	@Test
+	public void allValues(){
+		assertThat(Matching.atomisedCase().allValues(1,ANY,2).thenApply(l->"case1")
+			.atomisedCase().allValues(1,3,2).thenApply(l->"case2")
+			.atomisedCase().bothTrue((Integer i)->i==1,(String s)->s.length()>0)
+					.thenExtract(Extractors.<Integer,String>toTuple2())
+					.thenApply(t->t.v1+t.v2)
+			.match(1,"hello",2).get(),is("case1"));
+		
+		
+	}
 	@Test
 	public void inCaseOfManySingle() {
 		

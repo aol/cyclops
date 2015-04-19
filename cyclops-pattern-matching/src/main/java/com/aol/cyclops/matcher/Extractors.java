@@ -2,6 +2,7 @@ package com.aol.cyclops.matcher;
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,6 +13,12 @@ import lombok.val;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
+import org.jooq.lambda.tuple.Tuple4;
+import org.jooq.lambda.tuple.Tuple5;
+import org.jooq.lambda.tuple.Tuple6;
+import org.jooq.lambda.tuple.Tuple7;
+import org.jooq.lambda.tuple.Tuple8;
 
 
 /**
@@ -95,6 +102,60 @@ public class Extractors {
 	public final static <K,R> PatternMatcher.Extractor<Map<K,R>,R> get(K key){
 		return (Map<K,R> c) ->{
 			return c.get(key);
+		};
+		
+	}
+	
+	public final static <R>  PatternMatcher.Extractor<R,R> same(){
+		return (R c) -> c;
+	}
+	
+	public final static <V1,V2> PatternMatcher.Extractor<Iterable,Tuple2<V1,V2>> toTuple2(){
+		return  ( Iterable itable)-> {
+			Iterator it = itable.iterator();
+			return new Tuple2(it.next(),it.next());
+		};
+		
+	}
+	public final static <V1,V2,V3> PatternMatcher.Extractor<Iterable,Tuple3<V1,V2,V3>> toTuple3(){
+		return  ( Iterable itable)-> {
+			Iterator it = itable.iterator();
+			return new Tuple3(it.next(),it.next(),it.next());
+		};
+		
+	}
+	public final static <V1,V2,V3,V4> PatternMatcher.Extractor<Iterable,Tuple4<V1,V2,V3,V4>> toTuple4(){
+		return  ( Iterable itable)-> {
+			Iterator it = itable.iterator();
+			return new Tuple4(it.next(),it.next(),it.next(),it.next());
+		};
+		
+	}
+	public final static <V1,V2,V3,V4,V5> PatternMatcher.Extractor<Iterable,Tuple5<V1,V2,V3,V4,V5>> toTuple5(){
+		return  ( Iterable itable)-> {
+			Iterator it = itable.iterator();
+			return new Tuple5(it.next(),it.next(),it.next(),it.next(),it.next());
+		};
+		
+	}
+	public final static <V1,V2,V3,V4,V5,V6> PatternMatcher.Extractor<Iterable,Tuple6<V1,V2,V3,V4,V5,V6>> toTuple6(){
+		return  ( Iterable itable)-> {
+			Iterator it = itable.iterator();
+			return new Tuple6(it.next(),it.next(),it.next(),it.next(),it.next(),it.next());
+		};
+		
+	}
+	public final static <V1,V2,V3,V4,V5,V6,V7> PatternMatcher.Extractor<Iterable,Tuple7<V1,V2,V3,V4,V5,V6,V7>> toTuple7(){
+		return  ( Iterable itable)-> {
+			Iterator it = itable.iterator();
+			return new Tuple7(it.next(),it.next(),it.next(),it.next(),it.next(),it.next(),it.next());
+		};
+		
+	}
+	public final static <V1,V2,V3,V4,V5,V6,V7,V8> PatternMatcher.Extractor<Iterable,Tuple8<V1,V2,V3,V4,V5,V6,V7,V8>> toTuple8(){
+		return  ( Iterable itable)-> {
+			Iterator it = itable.iterator();
+			return new Tuple8(it.next(),it.next(),it.next(),it.next(),it.next(),it.next(),it.next(),it.next());
 		};
 		
 	}
