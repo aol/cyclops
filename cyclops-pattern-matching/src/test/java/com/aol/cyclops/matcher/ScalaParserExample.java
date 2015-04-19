@@ -4,6 +4,7 @@ package com.aol.cyclops.matcher;
 import static com.aol.cyclops.matcher.TestPredicates.typeMatcher;
 
 import com.aol.cyclops.matcher.PatternMatcher.ActionWithReturn;
+import com.aol.cyclops.matcher.builders.Matching;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -14,14 +15,14 @@ public class ScalaParserExample {
 
 	//http://kerflyn.wordpress.com/2011/02/14/playing-with-scalas-pattern-matching/
 	public Integer eval(Expression expression, int xValue){
-
 		
-		return Matching.inCaseOfType( (X x)-> xValue)
-			.inCaseOfType((Const c) -> c.getValue())
-			.inCaseOfType((Add a) ->  eval(a.getLeft(),xValue) + eval(a.getRight(),xValue))
-			.inCaseOfType( (Mult m) -> eval(m.getLeft(),xValue) * eval(m.getRight(),xValue))
-			.inCaseOfType( (Neg n) ->  -eval(n.getExpr(),xValue))
-			.match(expression).orElse(1);
+		return Matching.newCase().isType( (X x)-> xValue)
+				.newCase().isType((Const c) -> c.getValue())
+				.newCase().isType((Add a) ->  eval(a.getLeft(),xValue) + eval(a.getRight(),xValue))
+				.newCase().isType( (Mult m) -> eval(m.getLeft(),xValue) * eval(m.getRight(),xValue))
+				.newCase().isType( (Neg n) ->  -eval(n.getExpr(),xValue))
+				.match(expression).orElse(1);
+		
 		
 		
 	}

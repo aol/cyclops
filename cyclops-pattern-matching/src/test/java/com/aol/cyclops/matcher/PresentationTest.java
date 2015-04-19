@@ -4,9 +4,12 @@ import static com.aol.cyclops.matcher.Extractors.at;
 
 import java.io.FileNotFoundException;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import org.junit.Test;
 
+import com.aol.cyclops.matcher.builders.AggregatedCase;
+import com.aol.cyclops.matcher.builders.Matching;
 import com.google.common.collect.ImmutableList;
 
 
@@ -15,11 +18,16 @@ public class PresentationTest {
 
 	 @Test
 	    public void patternMatch() {
+		 
+		 	String str = Matching.newCase().isType((FileNotFoundException e) -> "file not found")
+		 										.match(new FileNotFoundException("test"))
+		 										.orElse("ok");
 
-	    	
-	        String result =  Matching.inCaseOfType((FileNotFoundException e) -> "file not found")
-	        		.inCaseOfType((Exception e) -> "general exception")
-	        		.inCaseOfType((Integer i)->"hello")
+		 //	Consumer<AggregatedCase<String>> fileNotFound = c ->c.isType((FileNotFoundException e) -> "file not found");
+		 	
+	        String result =  Matching.newCase().isType((FileNotFoundException e) -> "file not found")
+	        		.newCase().isType((Exception e) -> "general exception")
+	        		.newCase().isType((Integer i)->"hello")
 	                .match(new FileNotFoundException("test"))
 	                .orElse("ok");
 

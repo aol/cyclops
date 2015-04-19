@@ -37,7 +37,7 @@ import org.jooq.lambda.tuple.Tuple2;
  * -cases using predicates
  *  		inCaseOfXXX
  *  		caseOfXXX
- * -cases using hamcrete Matchers
+ * -cases using hamcrest Matchers
  * 			inMatchOfXXX
  * 			matchOfXXX
  * -cases as expressions (return value) - inCaseOfXXX, inMatchOfXXX
@@ -307,7 +307,7 @@ public class PatternMatcher implements Function{
 		return Seq.of(t);
 	}
 	public <V,X> PatternMatcher selectFromChain(Stream<? extends ChainOfResponsibility<V,X>> stream){
-		selectFrom(stream.map(n->Tuple.tuple(n,n)));
+		selectFrom(stream.map(n->Tuple.tuple((Object)n,(Object)n)));
 		return this;
 	}
 	public <V,X> PatternMatcher selectFrom(Stream<Tuple2<Predicate<V>,Function<V,X>>> stream){
@@ -391,15 +391,16 @@ public class PatternMatcher implements Function{
 		}
 		return (T)t;
 	}
-	public <T,R,X> PatternMatcher inCaseOfTuple(Tuple predicates, ActionWithReturn<R,X> a,Extractor<T,R> extractor){
+	public <T,R,X> PatternMatcher inCaseOfSeq(Seq<Predicate> predicates, ActionWithReturn<R,X> a,Extractor<T,R> extractor){
 
-				Seq<Object> pred = Seq.seq(predicates);
-				inCaseOfThenExtract(it -> seq(it).zip(pred).map(t -> ((Predicate)t.v2).test(first(t))).allMatch(v->v==true), a, extractor);
-				return this;
+		Seq<Object> pred = (Seq)predicates;
+		inCaseOfThenExtract(it -> seq(it).zip(pred).map(t -> ((Predicate)t.v2).test(first(t))).allMatch(v->v==true), a, extractor);
+		return this;
 	}
-	public <T,R,X> PatternMatcher inMatchOfTuple(Tuple predicates, ActionWithReturn<R,X> a,Extractor<T,R> extractor){
+	
+	public <T,R,X> PatternMatcher inMatchOfSeq(Seq<Matcher> predicates, ActionWithReturn<R,X> a,Extractor<T,R> extractor){
 
-		Seq<Object> pred = Seq.seq(predicates);
+		Seq<Object> pred = (Seq)(predicates);
 		inMatchOfThenExtract(new BaseMatcher(){
 
 			@Override
@@ -486,7 +487,7 @@ public class PatternMatcher implements Function{
 		cases.put(new Pair(predicate,Optional.of(extractor)),new Pair<ActionWithReturn,Optional<Extractor>>(a,Optional.empty()));
 		return this;
 	}
-	public <R,V,T,X> PatternMatcher inCaseOfValue(R value, Extractor<T,R> extractor,ActionWithReturn<V,X> a){
+	public <R,V,T,X> PatternMatcher inCaseOfValue(V value, Extractor<T,R> extractor,ActionWithReturn<V,X> a){
 		
 		Predicate predicate = it -> Objects.equals(it, value);
 		cases.put(new Pair(predicate,Optional.of(extractor)),new Pair<ActionWithReturn,Optional<Extractor>>(a,Optional.empty()));
@@ -525,7 +526,7 @@ public class PatternMatcher implements Function{
 	
 	public static class ActionWithReturnWrapper<T,X> implements ActionWithReturn<T,X>{
 		private final Action<T> action;
-		ActionWithReturnWrapper(Action<T> action){
+		public ActionWithReturnWrapper(Action<T> action){
 			this.action = action;
 		}
 		public X apply(T t){
