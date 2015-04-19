@@ -21,14 +21,14 @@ public class SelectFromTest {
 	public void selectFrom(){
 		Stream<Tuple2<Predicate<Integer>,Function<Integer,Integer>>> chain = Stream.of(tuple(it->it>10,it->it*100),
 				tuple(it->it<10,it->it*100));
-		int result = Matching.streamCase().selectMatchingFrom(chain).match(5).get();
+		int result = Matching.streamCase().selectPassingAndApplyFrom(chain).match(5).get();
 		
 		assertThat(result,is(500));
 	}
 	@Test
 	public void selectFromChain(){
 		Stream<ChainImpl> chain = Stream.of(new ChainImpl(5,10),new ChainImpl(7,100));
-		int result = Matching.streamCase().selectMatchingFromChain(chain).match(6).get();
+		int result = Matching.streamCase().streamOfResponsibility(chain).match(6).get();
 		
 		assertThat(result,is(600));
 	}

@@ -1,8 +1,7 @@
 package com.aol.cyclops.matcher;
 
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.is;
+import static com.aol.cyclops.matcher.Extractors.get;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -38,6 +37,12 @@ public class HamcrestTest {
 										.isMatch(is("world"))
 										.thenApply(list -> true)
 							.match(Arrays.asList("hello","world")).get());
+	}
+	@Test
+	public void postExtractorDoc(){
+		Matching.newCase().isMatch(is(not(empty()))).thenExtract(get(1))
+					.thenConsume(System.out::println)
+				.match(Arrays.asList(20303,"20303 is passing",true));
 	}
 	@Test
 	public void hamcrestWithPostExtractor(){

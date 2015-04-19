@@ -25,10 +25,10 @@ public class StreamCase extends Case{
 	
 	/**Select matching / passing elements from Stream **/
 	
-	public  <R,V,T,X> MatchingInstance<T,X> selectMatchingFromChain(Stream<? extends ChainOfResponsibility<V,X>> stream){
+	public  <R,V,T,X> MatchingInstance<T,X> streamOfResponsibility(Stream<? extends ChainOfResponsibility<V,X>> stream){
 		return addCase(patternMatcher.selectFromChain(stream));
 	}
-	public  <R,V,T,X> MatchingInstance<T,X> selectMatchingFrom(Stream<Tuple2<Predicate<V>,Function<V,X>>> stream){
+	public  <R,V,T,X> MatchingInstance<T,X> selectPassingAndApplyFrom(Stream<Tuple2<Predicate<V>,Function<V,X>>> stream){
 		
 		return addCase(patternMatcher.selectFrom(stream));
 	}
