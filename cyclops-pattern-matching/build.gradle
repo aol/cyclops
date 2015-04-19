@@ -12,7 +12,7 @@ buildscript {
 	}
 }
 sourceCompatibility = 1.8
-version = '0.1.2'
+version = '0.2.0'
 jar {
     manifest {
         attributes 'Implementation-Title': 'Gradle Quickstart', 'Implementation-Version': version
@@ -45,7 +45,7 @@ modifyPom {
 
 		groupId 'com.aol.advertising.cyclops'
 		artifactId 'pattern-matching'
-		version '0.1.2'
+		version '0.2.0'
 		
 		scm {
 			url 'ssh://git@stash.ops.aol.com:2022/lana/cyclops.git'
