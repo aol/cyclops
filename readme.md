@@ -44,7 +44,7 @@ See [A Simple Api, and a Rich Api](https://github.com/aol/simple-react/wiki/A-si
 * [Search Maven](http://search.maven.org/#search%7Cga%7C1%7Ccom.aol.simplereact)
 
 
-For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:'0.84'
+For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:'0.85'
 
 ##Documentation
 
