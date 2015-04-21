@@ -14,8 +14,11 @@ public interface EagerToQueue<U> extends ToQueue<U> {
 
 	abstract <T, R> SimpleReactStream<R> allOf(final Collector collector,
 			final Function<T, R> fn);
+	
 
 	abstract <R> SimpleReactStream<R> thenSync(final Function<U, R> fn);
+	
+	
 	abstract  SimpleReactStream<U >peek(final Consumer<? super U> fn);
 	
 	/**

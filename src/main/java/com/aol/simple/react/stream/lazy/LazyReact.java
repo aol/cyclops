@@ -46,6 +46,10 @@ public class LazyReact extends BaseLazySimpleReact {
 	
 	private final Boolean async;
 	
+	/* 
+	 *	@return true if async
+	 * @see com.aol.simple.react.stream.BaseSimpleReact#isAsync()
+	 */
 	public boolean isAsync(){
 		return async;
 	}
@@ -78,9 +82,17 @@ public class LazyReact extends BaseLazySimpleReact {
 	}
 	
 	
+	
+	/* 
+	 * Construct a new Stream from another Stream
+	 * 
+	 *	@param s Stream to copy
+	 *	@param org ignored for LazyFutureStreams
+	 *	@return
+	 * @see com.aol.simple.react.stream.BaseSimpleReact#construct(java.util.stream.Stream, java.util.List)
+	 */
 	@Override
-	public <U> LazyFutureStream<U> construct(Stream s,
-			ExecutorService executor, RetryExecutor retrier, boolean eager,List<CompletableFuture> org) {
+	public <U> LazyFutureStream<U> construct(Stream s,List<CompletableFuture> org) {
 		
 		return (LazyFutureStream) new LazyFutureStreamImpl<U>( this,s);
 
@@ -101,6 +113,13 @@ public class LazyReact extends BaseLazySimpleReact {
 		return (LazyFutureStream)super.fromStream(stream);
 	}
 
+	/* 
+	 * Create a steam from provided Suppleirs
+	 * 
+	 *	@param actions Supplier Actions
+	 *	@return
+	 * @see com.aol.simple.react.stream.BaseSimpleReact#react(java.util.function.Supplier[])
+	 */
 	@SafeVarargs
 	public final <U> LazyFutureStream<U> react(final Supplier<U>... actions) {
 
@@ -316,6 +335,11 @@ public class LazyReact extends BaseLazySimpleReact {
 		
 		return (LazyFutureStream)super.reactI(actions);
 	}
+	/**
+	 * @param executor Task Executor for concurrent tasks
+	 * @param retrier Async Retrier
+	 * @param async If true each task will be submitted to an executor service
+	 */
 	public LazyReact(ExecutorService executor, RetryExecutor retrier,
 			Boolean async) {
 		super();

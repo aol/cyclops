@@ -19,8 +19,9 @@ import com.aol.simple.react.stream.simple.SimpleReact;
 
 public interface LazyStream<U> {
 	
-	abstract StreamWrapper getLastActive();
-	abstract LazyResultConsumer<U> getLazyCollector();
+	StreamWrapper getLastActive();
+	LazyResultConsumer<U> getLazyCollector();
+	@SuppressWarnings("rawtypes")
 	Consumer<CompletableFuture> getWaitStrategy();
 	
 	/**
@@ -38,13 +39,7 @@ public interface LazyStream<U> {
 		
 
 	}
-	/*
-	default void run(ExecutorService e,Runnable r) {
-		new SimpleReact(e).react(() -> new Runner(r).run(getLastActive(),
-					new EmptyCollector(getLazyCollector().getMaxActive())));
 
-	}
-	 */
 	default void runThread(Runnable r) {
 		new Thread(() -> new Runner(r).run(getLastActive(),new EmptyCollector(getLazyCollector().getMaxActive()))).start();
 

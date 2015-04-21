@@ -924,6 +924,9 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		return (FutureStream) SimpleReactStream.super.allOf(fn);
 	}
 
+	
+	
+	
 	/*
 	 * @see org.jooq.lambda.Seq#peek(java.util.function.Consumer)
 	 */

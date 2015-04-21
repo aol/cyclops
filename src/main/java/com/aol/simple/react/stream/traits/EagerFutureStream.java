@@ -1232,8 +1232,8 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * @return eager EagerReact instance
 	 */
 	public static EagerReact parallelBuilder(int parallelism) {
-		return eagerBuilder(new ForkJoinPool(parallelism),
-				new RetryBuilder().parallelism(parallelism));
+		return EagerReact.builder().executor(new ForkJoinPool(parallelism)).retrier(new RetryBuilder().parallelism(parallelism)).build();
+		
 	}
 
 	/**
@@ -1285,39 +1285,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 				.build();
 	}
 
-	/**
-	 * @param executor
-	 *            Executor this EagerReact instance will use to execute
-	 *            concurrent tasks.
-	 * @return EagerReact for handling finite streams
-	 */
-	public static EagerReact eagerBuilder(ExecutorService executor) {
-		return new EagerReact(executor);
-	}
-
-	/**
-	 * @param retry
-	 *            RetryExecutor this SimpleReact instance will use to retry
-	 *            concurrent tasks.
-	 * @return EagerReact for handling finite streams
-	 */
-	public static EagerReact eagerBuilder(RetryExecutor retry) {
-		return EagerReact.builder().retrier(retry).build();
-	}
-
-	/**
-	 * @param executor
-	 *            Executor this SimpleReact instance will use to execute
-	 *            concurrent tasks.
-	 * @param retry
-	 *            RetryExecutor this SimpleReact instance will use to retry
-	 *            concurrent tasks.
-	 * @return EagerReact for handling finite streams
-	 */
-	public static EagerReact eagerBuilder(ExecutorService executor,
-			RetryExecutor retry) {
-		return EagerReact.builder().executor(executor).retrier(retry).build();
-	}
+	
 
 	/**
 	 * @see Stream#of(Object)

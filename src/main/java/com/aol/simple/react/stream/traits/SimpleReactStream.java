@@ -41,7 +41,7 @@ import com.nurkiewicz.asyncretry.policy.AbortRetryException;
 public interface SimpleReactStream<U> extends LazyStream<U>, 
 				BlockingStream<U>, 
 				SimpleReactConfigurableStream<U>, 
-				EagerOrLazyToQueue<U>{
+				ToQueue<U>{
 	
 
 	
@@ -312,8 +312,7 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 			Function<? super U, ? extends Stream<? extends R>> flatFn) {
 
 		//need to pass in a builder in the constructor and build using it
-		return (SimpleReactStream)getSimpleReact().construct( Stream.of(), this.getTaskExecutor(),
-				this.getRetrier(), isEager(),getOriginalFutures()).withSubscription(getSubscription()).withQueueFactory((QueueFactory<Object>) getQueueFactory())	
+		return (SimpleReactStream)getSimpleReact().construct( Stream.of(), getOriginalFutures()).withSubscription(getSubscription()).withQueueFactory((QueueFactory<Object>) getQueueFactory())	
 				.fromStream(
 						toQueue()
 								.stream(getSubscription())

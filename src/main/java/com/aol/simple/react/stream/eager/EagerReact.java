@@ -79,7 +79,7 @@ public class EagerReact extends BaseSimpleReact{
 
 	@Override
 	public <U> EagerFutureStream<U> construct(Stream s,
-			ExecutorService executor, RetryExecutor retrier, boolean eager,List<CompletableFuture> org) {
+			List<CompletableFuture> org) {
 		return (EagerFutureStream) new EagerFutureStreamImpl<U>( this,s,org);
 	}
 	/* 

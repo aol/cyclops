@@ -52,8 +52,7 @@ public class SimpleReact  extends BaseSimpleReact{
 	private final Boolean async;
 	
 	@Override
-	public <U> SimpleReactStream<U> construct(Stream s,
-			ExecutorService executor, RetryExecutor retrier, boolean eager, List<CompletableFuture> originalFutures) {
+	public <U> SimpleReactStream<U> construct(Stream s, List<CompletableFuture> originalFutures) {
 		return  new SimpleReactStreamImpl<U>( this,s, originalFutures);
 	}
 	
