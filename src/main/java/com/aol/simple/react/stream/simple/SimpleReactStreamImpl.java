@@ -6,6 +6,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
@@ -79,8 +81,16 @@ public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>,EagerToQue
 		
 		return this.withSimpleReact(this.simpleReact.withAsync(b));
 	}
+	@Override
+	public <R> SimpleReactStream<R> thenSync(final Function<U, R> fn){
+		return SimpleReactStream.super.thenSync(fn);
+	}
 
-
+	@Override
+	public <T, R> SimpleReactStream<R> allOf(final Collector collector,
+			final Function<T, R> fn){
+		return SimpleReactStream.super.allOf(collector,fn);
+	}
 
 	@Override
 	public ExecutorService getTaskExecutor() {

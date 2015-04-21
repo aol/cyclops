@@ -71,7 +71,6 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	 */
 	default <R> SimpleReactStream<R> thenSync(final Function<U, R> fn) {
 		
-
 		
 		return (SimpleReactStream<R>) this.withLastActive(
 				getLastActive().stream(s -> s.map(

@@ -51,6 +51,10 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  */
 public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
+	
+	default <R> EagerFutureStream<R> thenSync(final Function<U, R> fn){
+		 return (EagerFutureStream<R>)FutureStream.super.thenSync(fn);
+	 }
 	/* 
 	 * Execute subsequent stages on the completing thread (until async called)
 	 * 10X faster than async execution.

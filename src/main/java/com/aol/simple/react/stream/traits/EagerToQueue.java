@@ -19,7 +19,7 @@ public interface EagerToQueue<U> extends ToQueue<U> {
 	abstract <R> SimpleReactStream<R> thenSync(final Function<U, R> fn);
 	
 	
-	abstract  SimpleReactStream<U >peek(final Consumer<? super U> fn);
+
 	
 	/**
 	 * Convert the current Stream to a SimpleReact Queue

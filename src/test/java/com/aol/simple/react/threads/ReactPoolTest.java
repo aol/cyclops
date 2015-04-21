@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -37,7 +38,7 @@ public class ReactPoolTest {
 		EagerReact react2 = mock(EagerReact.class);
 		
 		ReactPool<EagerReact> pool = ReactPool.boundedPool(asList(react1,react2));
-		Supplier[] suppliers = { ()->"hello",()->"world" };
+		List<Supplier<String>> suppliers = Arrays.asList(()->"hello",()->"world" );
 		pool.react( (er) -> er.react(suppliers));
 		pool.react( (er) -> er.react(suppliers));
 		
@@ -78,7 +79,7 @@ public class ReactPoolTest {
 		
 		ReactPool<EagerReact> pool = ReactPool.unboundedPool(asList(react1,react2));
 		pool.populate(react3);
-		Supplier[] suppliers = { ()->"hello",()->"world" };
+		List<Supplier<String>> suppliers = Arrays.asList( ()->"hello",()->"world" );
 		pool.react( (er) -> er.react(suppliers));
 		pool.react( (er) -> er.react(suppliers));
 		pool.react( (er) -> er.react(suppliers));
@@ -87,6 +88,7 @@ public class ReactPoolTest {
 		verify(react1,times(1)).react(suppliers);
 		verify(react2,times(1)).react(suppliers);
 		verify(react3,times(1)).react(suppliers);
+		
 	}
 	
 	@Test
