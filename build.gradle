@@ -11,7 +11,7 @@ apply plugin: 'jacoco'
 apply from: custom('jacoco-version')
 
 sourceCompatibility = 1.8
-version = '0.84'
+version = '0.85'
 jar {
     manifest {
         attributes 'Implementation-Title': 'Simple React', 'Implementation-Version': version
@@ -40,7 +40,7 @@ dependencies {
    
 	
 	compile 'org.jooq:jool:0.9.6'
-	compile group: 'org.projectlombok', name: 'lombok', version:'1.14.2'
+	compile group: 'org.projectlombok', name: 'lombok', version:'1.16.4'
 	compile group: 'com.google.guava', name: 'guava', version:'18.0'
 	compile 'com.nurkiewicz.asyncretry:asyncretry:0.0.6'
 	compile group: 'org.slf4j', name: 'jcl-over-slf4j', version:'1.6.1'
@@ -62,7 +62,7 @@ modifyPom {
 
 		groupId 'com.aol.simplereact'
 		artifactId 'simple-react'
-		version '0.84'
+		version '0.85'
 		
 		scm {
 			url 'scm:git@github.com:aol/simple-react.git'
