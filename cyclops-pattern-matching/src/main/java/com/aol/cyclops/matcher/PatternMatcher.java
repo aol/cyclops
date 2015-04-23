@@ -317,13 +317,13 @@ public class PatternMatcher implements Function{
 		stream.forEach(t -> inCaseOf(t.v1,a->t.v2.apply(a)));
 		return this;
 	}
-	 public <T,V,X> PatternMatcher inCaseOfManyType(ActionWithReturn<T,X> a,
+	 public <T,V,X> PatternMatcher inCaseOfManyType(Predicate master,ActionWithReturn<T,X> a,
     		 Predicate<V>... predicates){
 		
 		Seq<Predicate<V>> pred = Seq.of(predicates);
 		
 		
-		inCaseOf(it -> seq(it).zip(pred)
+		inCaseOf(it -> master.test(it) && seq(it).zip(pred)
 				.map(t -> t.v2.test((V)first(t))).allMatch(v->v==true), a);
 		return this;
 	}

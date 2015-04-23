@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.val;
 
 import org.hamcrest.Matcher;
 import org.jooq.lambda.Seq;
@@ -152,20 +153,23 @@ public class AtomisedCase<X> extends Case{
 		
 		
 	}
-	public  <T,R> AndMembersMatchBuilder<T,R,X> isType(ActionWithReturn<T,R> a){
+	public  <T,R> AndMembersMatchBuilder<T,R> isType(ActionWithReturn<T,R> a){
 		
-		return new AndMembersMatchBuilder<T,R,X>(a);
+		return new AndMembersMatchBuilder<T,R>(a);
 		
 	}
 	@AllArgsConstructor
-	public class AndMembersMatchBuilder<T,R,X>{
+	public class AndMembersMatchBuilder<T,R>{
 		ActionWithReturn<T,R> action;
 		@SafeVarargs
-		public  final <V> MatchingInstance<T,R> andAllValues(V... values){
+		public  final <V> MatchingInstance<T,X> with(V... values){
+			val type = action.getType();
+			val clazz = type.parameterType(type.parameterCount()-1);
+			Predicate predicate = it -> it.getClass().isAssignableFrom(clazz);
 			//add wildcard support
-			Predicate<V>[] predicates = Seq.of(values).map(nextValue->buildPredicate(nextValue)).toList().toArray(new Predicate[0]);
+			Predicate<V>[] predicates = Seq.of(values).map(nextValue->convertToPredicate(nextValue)).toList().toArray(new Predicate[0]);
 			
-					return  addCase(patternMatcher.inCaseOfManyType(t,predicates)) ;
+					return  addCase(patternMatcher.inCaseOfManyType(predicate,action,predicates)) ;
 				
 			}
 	}

@@ -2,7 +2,6 @@ package com.aol.cyclops.matcher;
 
 
 import static com.aol.cyclops.matcher.Predicates.ANY;
-import static com.aol.cyclops.matcher.ScalaParserExample.Matchable.value;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 
 import java.util.Objects;
@@ -48,58 +47,30 @@ public class ScalaParserExample {
 	{
 	
 		
-		return Matching.atomisedCase().isType( (Mult m)->new Const(0)).andAllValues(new Const(0),ANY())
+		return Matching.<Expression>atomisedCase().isType( (Mult m)->new Const(0)).with(new Const(0),ANY())
+						.atomisedCase().isType( (Mult m)->new Const(0)).with(ANY(),new Const(0))
+						.atomisedCase().isType((Mult m)-> simplify(m.right)).with(new Const(1))
+						.atomisedCase().isType( (Mult m) -> simplify(m.getLeft())).with(ANY(),new Const(1))
+						.atomisedCase().isType( (Mult<Const,Const> m) -> new Const(m.left.value * m.right.value))
+													.with(ANY(Const.class),ANY(Const.class))
+						.atomisedCase().isType((Add a) -> simplify(a.right)).with(new Const(0),ANY())
+						.atomisedCase().isType((Add a)-> simplify(a.left)).with(ANY(),new Const(0))
+						.atomisedCase().isType( (Add<Const,Const> a) -> new Const(a.left.value + a.right.value)).with(ANY(Const.class), ANY(Const.class))
+						.atomisedCase().isType( (Neg<Const> n) -> new Const(-n.expr.value)).with(new Neg<Const>(null),ANY(Const.class))
 												
-												
-						.atomisedCase().isType( (Mult m)->new Const(0)).andAllValues(ANY(),new Const(0))
-												
-												
-						.atomisedCase().recordMembers(mult,new Const(1))
-												.thenApply((Mult m)-> simplify(m.right))
 						
-						.atomisedCase().recordMembers(mult,ANY(),new Const(1))
-												.thenApply( (Mult m) -> simplify(m.getLeft()))
-												
-						.atomisedCase().bothTrue(ANY(Const.class), ANY(Const.class))
-												.thenExtract( (Mult<Const,Const> m) -> tuple(m.left.value,m.right.value)   )
-												.thenApply( t -> new Const(t.v1 * t.v2))						
-					/**	.atomisedCase().recordMembers(multConst,ANY(Const.class),ANY(Const.class))
-												.thenApply( (Mult<Const,Const> m) -> new Const(m.left.value * m.right.value))
-						**/						
-						.atomisedCase().recordMembers(add,new Const(0),ANY())
-												.thenApply((Add a) -> simplify(a.right))
-												
-						.atomisedCase().recordMembers(add, ANY(),new Const(0))
-												.thenApply((Add a)-> simplify(a.left))
-						.atomisedCase().bothTrue(ANY(Const.class), ANY(Const.class))
-												.thenExtract( (Add<Const,Const> a )-> tuple(a.left.value,a.right.value))
-												.thenApply( t -> new Const(t.v1+t.v2))
-						.atomisedCase().recordMembers(new Neg<Const>(null),ANY(Const.class))
-											.thenApply( (Neg<Const> n) -> new Const(-n.expr.value))		
-						
-				.match(e).get();
-				/**
-//				.isMult(Const(0), *): return Const(0);
-	    case Mult(*, Const(0)): return Const(0);
-	    case Mult(Const(1), var x): return Simplify(x);
-	    case Mult(var x, Const(1)): return Simplify(x);
-	    case Mult(Const(var l), Const(var r)): return Const(l*r);
-	    case Add(Const(0), var x): return Simplify(x);
-	    case Add(var x, Const(0)): return Simplify(x);
-	    case Add(Const(var l), Const(var r)): return Const(l+r);
-	    case Neg(Const(var k)): return Const(-k);
-	    default: return e;
-	  }**/
+				.unapply(e).orElse(e);
+
 	}
 	
 	//Records / case classes
 	
-	static abstract class  Expression{ }
-	static class X extends Expression{ }
-	@Value  static class Const extends Expression  implements Decomposable { int value; }
-	@Value static class Add<T extends Expression, R extends Expression> extends Expression implements Decomposable { T left; R right; }
-	@Value static class Mult<T extends Expression, R extends Expression> extends Expression  implements Decomposable { T left; R right; }
-	@Value static class Neg<T extends Expression> extends Expression  implements Decomposable { T expr; }
+	static abstract class  Expression implements Decomposable{ }
+	final static class X extends Expression{ }
+	@Value final static class Const extends Expression  implements Decomposable { int value; }
+	@Value final static class Add<T extends Expression, R extends Expression> extends Expression implements Decomposable { T left; R right; }
+	@Value final static class Mult<T extends Expression, R extends Expression> extends Expression  implements Decomposable { T left; R right; }
+	@Value final static class Neg<T extends Expression> extends Expression  implements Decomposable { T expr; }
 	
 	
 }

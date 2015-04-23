@@ -8,12 +8,15 @@ public interface Decomposable{
 	default List<? extends Object> unapply(){
 		return Stream.of(this.getClass().getDeclaredFields()).map(f ->{
 			try {
+				f.setAccessible(true);
 				return f.get(this);
 			} catch (Exception e) {
+				e.printStackTrace();
 				return null;
 			}
 		}).collect(Collectors.toList());
 		
 	}
+	
 	
 }

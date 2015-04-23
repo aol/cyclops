@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
+import lombok.Value;
 
 import org.junit.Test;
 
@@ -25,6 +26,12 @@ public class DecomposableTest {
 		
 		
 	}
+	
+	
+	@Test
+	public void testDefaultMethod(){
+		assertThat(new DefaultDecomposable(1,"hello",2).unapply(),is(new DecomposableObject(1,"hello",2).unapply()));
+	}
 	@AllArgsConstructor
 	static class DecomposableObject implements Decomposable{
 		private final int num;
@@ -36,4 +43,6 @@ public class DecomposableTest {
 		}
 		
 	}
+	
+	@Value static final class DefaultDecomposable implements Decomposable{ int num; String name; int num2;}
 }
