@@ -1,6 +1,5 @@
 package com.aol.cyclops.matcher;
-import static com.aol.cyclops.matcher.Predicates.p;
-import static com.aol.cyclops.matcher.builders.AtomisedCase.ANY;
+import static com.aol.cyclops.matcher.Predicates.ANY;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.anything;
@@ -9,7 +8,6 @@ import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertThat;
 
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -18,7 +16,6 @@ import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Before;
@@ -30,7 +27,7 @@ public class MatchingDataStructuresTest {
 	
 	@Test
 	public void allValues(){
-		assertThat(Matching.atomisedCase().allValues(1,ANY,2).thenApply(l->"case1")
+		assertThat(Matching.atomisedCase().allValues(1,ANY(),2).thenApply(l->"case1")
 			.atomisedCase().allValues(1,3,2).thenApply(l->"case2")
 			.atomisedCase().bothTrue((Integer i)->i==1,(String s)->s.length()>0)
 					.thenExtract(Extractors.<Integer,String>toTuple2())

@@ -13,9 +13,6 @@ import lombok.Getter;
 import org.hamcrest.Matcher;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple1;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
 
 import com.aol.cyclops.matcher.PatternMatcher;
 import com.aol.cyclops.matcher.PatternMatcher.ActionWithReturn;
@@ -155,6 +152,23 @@ public class AtomisedCase<X> extends Case{
 		
 		
 	}
+	public  <T,R> AndMembersMatchBuilder<T,R,X> isType(ActionWithReturn<T,R> a){
+		
+		return new AndMembersMatchBuilder<T,R,X>(a);
+		
+	}
+	@AllArgsConstructor
+	public class AndMembersMatchBuilder<T,R,X>{
+		ActionWithReturn<T,R> action;
+		@SafeVarargs
+		public  final <V> MatchingInstance<T,R> andAllValues(V... values){
+			//add wildcard support
+			Predicate<V>[] predicates = Seq.of(values).map(nextValue->buildPredicate(nextValue)).toList().toArray(new Predicate[0]);
+			
+					return  addCase(patternMatcher.inCaseOfManyType(t,predicates)) ;
+				
+			}
+	}
 	
 	@SafeVarargs
 	public  final <V,T,X> Step<List<V>,X> allValues(V... values){
@@ -174,11 +188,9 @@ public class AtomisedCase<X> extends Case{
 		return new MatchingInstance<>(this);
 	}
 
-	public static final Predicate ANY = test ->true;
-
 	private <V> Predicate<Object> buildPredicate(V nextValue) {
-		if(ANY==nextValue)
-			return ANY;
+		if(Predicates.ANY()==nextValue)
+			return Predicates.ANY();
 		return Predicates.p(test->Objects.equals(test, nextValue));
 	}
 	/**

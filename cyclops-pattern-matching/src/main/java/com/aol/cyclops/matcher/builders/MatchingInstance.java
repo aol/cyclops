@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 
+import com.aol.cyclops.matcher.Decomposable;
 import com.aol.cyclops.matcher.PatternMatcher;
 @AllArgsConstructor
 public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
@@ -98,5 +99,8 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 */
 	public  Optional<X> match(Object t){
 		return cse.getPatternMatcher().match(t);
+	}
+	public Optional<X> unapply(Decomposable decomposableObject) {
+		return cse.getPatternMatcher().unapply(decomposableObject);
 	}
 }
