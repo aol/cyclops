@@ -11,7 +11,7 @@ public interface Decomposable{
 				f.setAccessible(true);
 				return f.get(this);
 			} catch (Exception e) {
-				e.printStackTrace();
+				ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(e);
 				return null;
 			}
 		}).collect(Collectors.toList());
