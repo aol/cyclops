@@ -2,16 +2,9 @@ package com.aol.cyclops.matcher;
 
 
 import static com.aol.cyclops.matcher.Predicates.ANY;
-import static org.jooq.lambda.tuple.Tuple.tuple;
-
-import java.util.Objects;
-import java.util.function.Predicate;
-
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Value;
-
-import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
-import org.jooq.lambda.tuple.Tuple;
 
 import com.aol.cyclops.matcher.builders.Matching;
 
@@ -45,7 +38,8 @@ public class ScalaParserExample {
 	
 	Expression simplify(Expression e)
 	{
-	
+		
+
 		
 		return Matching.<Expression>atomisedCase().isType( (Mult m)->new Const(0)).with(new Const(0),ANY())
 						.atomisedCase().isType( (Mult m)->new Const(0)).with(ANY(),new Const(0))
@@ -63,15 +57,18 @@ public class ScalaParserExample {
 
 	}
 	
-	//Records / case classes
-	
-	static abstract class  Expression implements Decomposable{ }
+	//Sealed case classes
+	interface Type<R>{}
+	@AllArgsConstructor(access=AccessLevel.PRIVATE) static abstract class  Expression implements Decomposable{}
 	final static class X extends Expression{ }
 	@Value final static class Const extends Expression  implements Decomposable { int value; }
 	@Value final static class Add<T extends Expression, R extends Expression> extends Expression implements Decomposable { T left; R right; }
 	@Value final static class Mult<T extends Expression, R extends Expression> extends Expression  implements Decomposable { T left; R right; }
 	@Value final static class Neg<T extends Expression> extends Expression  implements Decomposable { T expr; }
 	
+	static interface Cases<T,R>{
+		public R _case(T t);
+	}
 	
 }
 
