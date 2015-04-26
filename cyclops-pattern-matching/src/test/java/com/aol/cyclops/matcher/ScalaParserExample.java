@@ -41,16 +41,16 @@ public class ScalaParserExample {
 		
 
 		
-		return Matching.<Expression>atomisedCase().isType( (Mult m)->new Const(0)).with(new Const(0),ANY())
-						.atomisedCase().isType( (Mult m)->new Const(0)).with(ANY(),new Const(0))
-						.atomisedCase().isType((Mult m)-> simplify(m.right)).with(new Const(1))
-						.atomisedCase().isType( (Mult m) -> simplify(m.getLeft())).with(ANY(),new Const(1))
-						.atomisedCase().isType( (Mult<Const,Const> m) -> new Const(m.left.value * m.right.value))
+		return Matching.<Expression>adtCase().isType( (Mult m)->new Const(0)).with(new Const(0),ANY())
+						.adtCase().isType( (Mult m)->new Const(0)).with(ANY(),new Const(0))
+						.adtCase().isType((Mult m)-> simplify(m.right)).with(new Const(1))
+						.adtCase().isType( (Mult m) -> simplify(m.getLeft())).with(ANY(),new Const(1))
+						.adtCase().isType( (Mult<Const,Const> m) -> new Const(m.left.value * m.right.value))
 													.with(ANY(Const.class),ANY(Const.class))
-						.atomisedCase().isType((Add a) -> simplify(a.right)).with(new Const(0),ANY())
-						.atomisedCase().isType((Add a)-> simplify(a.left)).with(ANY(),new Const(0))
-						.atomisedCase().isType( (Add<Const,Const> a) -> new Const(a.left.value + a.right.value)).with(ANY(Const.class), ANY(Const.class))
-						.atomisedCase().isType( (Neg<Const> n) -> new Const(-n.expr.value)).with(new Neg<Const>(null),ANY(Const.class))
+						.adtCase().isType((Add a) -> simplify(a.right)).with(new Const(0),ANY())
+						.adtCase().isType((Add a)-> simplify(a.left)).with(ANY(),new Const(0))
+						.adtCase().isType( (Add<Const,Const> a) -> new Const(a.left.value + a.right.value)).with(ANY(Const.class), ANY(Const.class))
+						.adtCase().isType( (Neg<Const> n) -> new Const(-n.expr.value)).with(new Neg<Const>(null),ANY(Const.class))
 												
 						
 				.unapply(e).orElse(e);
@@ -58,7 +58,7 @@ public class ScalaParserExample {
 	}
 	
 	//Sealed case classes
-	interface Type<R>{}
+	
 	@AllArgsConstructor(access=AccessLevel.PRIVATE) static abstract class  Expression implements Decomposable{}
 	final static class X extends Expression{ }
 	@Value final static class Const extends Expression  implements Decomposable { int value; }
@@ -66,9 +66,6 @@ public class ScalaParserExample {
 	@Value final static class Mult<T extends Expression, R extends Expression> extends Expression  implements Decomposable { T left; R right; }
 	@Value final static class Neg<T extends Expression> extends Expression  implements Decomposable { T expr; }
 	
-	static interface Cases<T,R>{
-		public R _case(T t);
-	}
 	
 }
 
