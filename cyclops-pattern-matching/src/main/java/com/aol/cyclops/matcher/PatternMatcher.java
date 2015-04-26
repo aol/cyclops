@@ -1,6 +1,5 @@
 package com.aol.cyclops.matcher;
 
-import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.lang.invoke.MethodType;
 import java.util.ArrayList;
@@ -112,6 +111,10 @@ public class PatternMatcher implements Function{
 	}
 	public <R> Optional<R> match(Object... t){
 		return match(Arrays.asList(t));
+	}
+	
+	public <R> Optional<R> unapply(Decomposable t){
+		return match(t.unapply());
 	}
 	/**
 	 * @param t Object to match against supplied cases
@@ -307,14 +310,23 @@ public class PatternMatcher implements Function{
 		return Seq.of(t);
 	}
 	public <V,X> PatternMatcher selectFromChain(Stream<? extends ChainOfResponsibility<V,X>> stream){
-		selectFrom(stream.map(n->Tuple.tuple(n,n)));
+		selectFrom(stream.map(n->new Tuple2(n,n)));
 		return this;
 	}
 	public <V,X> PatternMatcher selectFrom(Stream<Tuple2<Predicate<V>,Function<V,X>>> stream){
 		stream.forEach(t -> inCaseOf(t.v1,a->t.v2.apply(a)));
 		return this;
 	}
-	
+	 public <T,V,X> PatternMatcher inCaseOfManyType(Predicate master,ActionWithReturn<T,X> a,
+    		 Predicate<V>... predicates){
+		
+		Seq<Predicate<V>> pred = Seq.of(predicates);
+		
+		
+		inCaseOf(it -> master.test(it) && seq(it).zip(pred)
+				.map(t -> t.v2.test((V)first(t))).allMatch(v->v==true), a);
+		return this;
+	}
      public <V,X> PatternMatcher inCaseOfMany(ActionWithReturn<List<V>,X> a,
     		 Predicate<V>... predicates){
 		

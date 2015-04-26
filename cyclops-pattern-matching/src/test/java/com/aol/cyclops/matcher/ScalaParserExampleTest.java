@@ -29,6 +29,10 @@ public class ScalaParserExampleTest {
 
 		assertThat(parser.eval(expr, 3),is(19));
 		
-	}
+		val df = parser.derive(expr);
+		assertThat(parser.eval(df, 3), is(12));
+		val simple = parser.simplify(expr);
+		System.out.println(simple);
+	}	
 
 }

@@ -1,11 +1,15 @@
 package com.aol.cyclops.matcher.builders;
 
 import java.util.function.Consumer;
+import java.util.stream.Stream;
+
+import org.jooq.lambda.tuple.Tuple;
 
 import com.aol.cyclops.matcher.PatternMatcher;
 
 public class Matching {
 
+	
 	public static final <T,X> MatchingInstance<T,X> streamCase(Consumer<Case> consumer){
 		StreamCase cse = new StreamCase(new PatternMatcher());
 		consumer.accept(cse);
@@ -16,7 +20,7 @@ public class Matching {
 		consumer.accept(cse);
 		return new MatchingInstance<>(cse);
 	}
-	public static final<X> MatchingInstance<? extends Object,X> atomisedCase(Consumer<AtomisedCase<? extends Object>> consumer){
+	public static final<X> MatchingInstance<? extends Object,X> adtCase(Consumer<AtomisedCase<? extends Object>> consumer){
 		AtomisedCase cse = new AtomisedCase(new PatternMatcher());
 		consumer.accept(cse);
 		return new MatchingInstance<>(cse);
@@ -28,7 +32,7 @@ public class Matching {
 		return cse;
 	}
 	
-	public static final<USER_VALUE> AtomisedCase<USER_VALUE> atomisedCase(){
+	public static final<USER_VALUE> AtomisedCase<USER_VALUE> adtCase(){
 		AtomisedCase cse = new AtomisedCase(new PatternMatcher());
 		return cse;
 	}

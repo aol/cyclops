@@ -1,6 +1,5 @@
 package com.aol.cyclops.matcher;
-import static com.aol.cyclops.matcher.Predicates.p;
-import static com.aol.cyclops.matcher.builders.AtomisedCase.ANY;
+import static com.aol.cyclops.matcher.Predicates.ANY;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.anything;
@@ -9,7 +8,6 @@ import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertThat;
 
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -18,7 +16,6 @@ import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Before;
@@ -30,9 +27,9 @@ public class MatchingDataStructuresTest {
 	
 	@Test
 	public void allValues(){
-		assertThat(Matching.atomisedCase().allValues(1,ANY,2).thenApply(l->"case1")
-			.atomisedCase().allValues(1,3,2).thenApply(l->"case2")
-			.atomisedCase().bothTrue((Integer i)->i==1,(String s)->s.length()>0)
+		assertThat(Matching.adtCase().allValues(1,ANY(),2).thenApply(l->"case1")
+			.adtCase().allValues(1,3,2).thenApply(l->"case2")
+			.adtCase().bothTrue((Integer i)->i==1,(String s)->s.length()>0)
 					.thenExtract(Extractors.<Integer,String>toTuple2())
 					.thenApply(t->t.v1+t.v2)
 			.match(1,"hello",2).get(),is("case1"));
@@ -43,9 +40,9 @@ public class MatchingDataStructuresTest {
 	public void inCaseOfManySingle() {
 		
 		assertThat(
-				Matching.atomisedCase(c->c.allTrue((Person p) -> p.isTall())
+				Matching.adtCase(c->c.allTrue((Person p) -> p.isTall())
 											.thenApply(list -> list.get(0).getName() + " is tall"))
-						.atomisedCase(c->c.allTrue((Person p) -> p.isTall())
+						.adtCase(c->c.allTrue((Person p) -> p.isTall())
 											.thenApply(list -> list.get(0).getName() + " is tall"))
 						
 						
@@ -55,7 +52,7 @@ public class MatchingDataStructuresTest {
 	public void inCaseOfManyDouble() {
 		Predicate<Person> isTall = (Person p) -> p.isTall();
 		assertThat(
-				Matching.atomisedCase(c->c.allTrue(isTall)
+				Matching.adtCase(c->c.allTrue(isTall)
 										.thenApply(list -> list.get(0).getName() + " is tall"))
 						.match(new Person("bob"),new Person("bob")).get(), is("bob is tall"));
 	}
@@ -63,7 +60,7 @@ public class MatchingDataStructuresTest {
 	public void inCaseOfManyList() {
 		Predicate<Person> isTall = (Person p) -> p.isTall();
 		assertThat(
-				Matching.atomisedCase(c->c.allTrue(isTall)
+				Matching.adtCase(c->c.allTrue(isTall)
 										.thenApply(list -> list.get(0).getName() + " is tall"))
 										
 						.apply(asList(new Person("bob"))).get(), is("bob is tall"));
@@ -73,21 +70,21 @@ public class MatchingDataStructuresTest {
 	@Test
 	public void  inMatchOfManyList() {
 		assertThat(
-				Matching.atomisedCase(c->c.allMatch(samePropertyValuesAs(new Person("bob")))
+				Matching.adtCase(c->c.allMatch(samePropertyValuesAs(new Person("bob")))
 											.thenApply(list -> list.get(0).getName()))
 						.apply(asList(new Person("bob"))).get(), is("bob"));
 	}
 	@Test
 	public void  inMatchOfManySingle() {
 		assertThat(
-				Matching.atomisedCase(c->c.allMatch(samePropertyValuesAs(new Person("bob")))
+				Matching.adtCase(c->c.allMatch(samePropertyValuesAs(new Person("bob")))
 												.thenApply(list -> list.get(0).getName()))
 						.apply(new Person("bob")).get(), is("bob"));
 	}
 	@Test
 	public void  inMatchOfManyDouble() {
 		assertThat(
-				Matching.atomisedCase(c->c.allMatch(samePropertyValuesAs(new Person("bob")))
+				Matching.adtCase(c->c.allMatch(samePropertyValuesAs(new Person("bob")))
 										.thenApply(list -> list.get(0).getName()))
 						.match(new Person("bob"), new Person("two")).get(), is("bob"));
 	}
@@ -97,7 +94,7 @@ public class MatchingDataStructuresTest {
 	public void  inMatchOfMatchers() {
 
 		assertThat(
-				Matching.atomisedCase().bothMatch(samePropertyValuesAs(new Person("bob")),anything())
+				Matching.adtCase().bothMatch(samePropertyValuesAs(new Person("bob")),anything())
 											.thenExtract(Extractors.<Person>first())
 											.thenApply(bob->bob.getName())
 											.apply(Tuple.tuple(new Person("bob"),"boo hoo!")).get(),is("bob"));
@@ -106,7 +103,7 @@ public class MatchingDataStructuresTest {
 	public void  inMatchOfMatchersSingle() {
 
 		assertThat(
-				Matching.atomisedCase(c->  c.bothMatch(samePropertyValuesAs(new Person("bob")),any(String.class))
+				Matching.adtCase(c->  c.bothMatch(samePropertyValuesAs(new Person("bob")),any(String.class))
 											.thenExtract(Extractors.<Person>first())
 											.thenApply(bob -> bob.getName()))
 						.match(new Person("bob"), "boo hoo!").get(),is("bob"));
@@ -114,8 +111,8 @@ public class MatchingDataStructuresTest {
 
 	@Test
 	public void  inCaseOfPredicates() {
-		Matching.atomisedCase(c -> c.allTrueNoType((Person p) -> p.isTall(),p->true).thenExtract(Extractors.<Person>first()).thenApply(p -> p.getName() + " is tall")).apply(new Person("bob")).get();
-		String result = Matching.<String>atomisedCase(c -> c.allTrueNoType((Person p) -> p.isTall(),p->true)
+		Matching.adtCase(c -> c.allTrueNoType((Person p) -> p.isTall(),p->true).thenExtract(Extractors.<Person>first()).thenApply(p -> p.getName() + " is tall")).apply(new Person("bob")).get();
+		String result = Matching.<String>adtCase(c -> c.allTrueNoType((Person p) -> p.isTall(),p->true)
 												.thenExtract(Extractors.<Person>first())
 												.thenApply(p -> p.getName() + " is tall"))
 						.apply(new Person("bob")).get();
@@ -124,10 +121,10 @@ public class MatchingDataStructuresTest {
 	@Test
 	public void  inCaseOfPredicatesMultiple() {
 		
-		String result = Matching.<String>atomisedCase(c->c.allTrueNoType( (Person p) -> p.isTall(), p->true)
+		String result = Matching.<String>adtCase(c->c.allTrueNoType( (Person p) -> p.isTall(), p->true)
 													.thenExtract(Extractors.<Person>first())
 													.thenApply(p->p.getName() + " is tall") )
-								.atomisedCase(c->c.allTrueNoType( (Person p) -> p.isTall(), p->true)
+								.adtCase(c->c.allTrueNoType( (Person p) -> p.isTall(), p->true)
 													.thenExtract(Extractors.<Person>first())
 													.thenApply(p->p.getName() + " is tall") )
 													
@@ -138,15 +135,15 @@ public class MatchingDataStructuresTest {
 	@Test
 	public void inCaseOfTuple() {
 
-		String result = Matching.atomisedCase()
+		String result = Matching.adtCase()
 										.threeTrue((Person p) -> p.isTall(),(Address a)->a.getCountry().equals("Ireland"), p->true)
 										.thenExtract( Extractors.<Person,Address>of(0,1))
 										.thenApply(t->t.v1.getName() + " is tall and lives in " + t.v2.getCity())
-								.atomisedCase()
+								.adtCase()
 									.threeTrue((Person p) -> !p.isTall(),(Address a)->a.getCountry().equals("Ireland"), p->true)
 									.thenExtract( Extractors.<Person,Address>of(0,1))
 									.thenApply(t->t.v1.getName() + " is not tall and lives in " + t.v2.getCity())
-								.atomisedCase()
+								.adtCase()
 									.threeTrue((Address a)->a.getCountry().equals("Ireland"),(Person p) -> !p.isTall(), p->true)
 									.thenExtract( Extractors.<Person,Address>of(0,1))
 									.thenApply(t->t.v1.getName() + " is not tall and lives in " + t.v2.getCity())
@@ -158,13 +155,13 @@ public class MatchingDataStructuresTest {
 	@Test
 	public void inCaseOfTupleUnsuitableObject() {
 
-		String result = Matching.atomisedCase().threeTrue((Person p) -> p.isTall(),(Address a)->a.getCountry().equals("Ireland"),p->true)
+		String result = Matching.adtCase().threeTrue((Person p) -> p.isTall(),(Address a)->a.getCountry().equals("Ireland"),p->true)
 													.thenExtract(Extractors.<Person,Address>of(0,1))
 													.thenApply(t-> t.v1.getName() + " is tall and lives in " + t.v2.getCity())
 														
 													
 						
-								.atomisedCase().threeTrue((Person p) -> p.isTall(),(Address a)->a.getCountry().equals("France"), p->true)
+								.adtCase().threeTrue((Person p) -> p.isTall(),(Address a)->a.getCountry().equals("France"), p->true)
 												.thenExtract(Extractors.<Person,Address>of(0,1))
 												.thenApply(t->t.v1.getName() + " is tall and lives in " + t.v2.getCity())
 												
@@ -176,7 +173,7 @@ public class MatchingDataStructuresTest {
 	@Test
 	public void inMatchOfTuple() {
 		
-		String result = Matching.atomisedCase().bothMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob")),anything())
+		String result = Matching.adtCase().bothMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob")),anything())
 											.thenExtract(Extractors.<Person,Address>of(0,1))
 											.thenApply(t->t.v1.getName() + " is tall and lives in " + t.v2.getCity())
 									.match(new Person("bob"),new Address()).get();
@@ -195,9 +192,9 @@ public class MatchingDataStructuresTest {
 		
 		Predicate<Person> isTall = (Person p) -> p.isTall();
 
-		Matching.atomisedCase().allTrue(isTall)
+		Matching.adtCase().allTrue(isTall)
 					.thenConsume(list -> value = list.get(0).getName() + " is tall")
-				.atomisedCase().allTrue(isTall)
+				.adtCase().allTrue(isTall)
 					.thenConsume(list -> value = list.get(0).getName() + " is tall")	
 				.match(asList(new Person("bob")));
 
@@ -208,7 +205,7 @@ public class MatchingDataStructuresTest {
 		
 		
 
-		Matching.atomisedCase().allTrue((Person p) -> p.isTall()).thenConsume(list -> value = list.get(0).getName() + " is tall")
+		Matching.adtCase().allTrue((Person p) -> p.isTall()).thenConsume(list -> value = list.get(0).getName() + " is tall")
 				.match(new Person("bob"));
 
 		assertThat(value, is("bob is tall"));
@@ -218,14 +215,14 @@ public class MatchingDataStructuresTest {
 		
 		
 
-		Matching.atomisedCase().allTrue((Person p) -> p.isTall()).thenConsume(list -> value = list.get(0).getName() + " is tall")
+		Matching.adtCase().allTrue((Person p) -> p.isTall()).thenConsume(list -> value = list.get(0).getName() + " is tall")
 				.match(new Person("bob"),new Person("two"));
 
 		assertThat(value, is("bob is tall"));
 	}
 	@Test
 	public void   matchOfManyList(){
-		Matching.atomisedCase().allMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob"))).thenConsume(list -> value = list.get(0).getName())
+		Matching.adtCase().allMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob"))).thenConsume(list -> value = list.get(0).getName())
 					.apply(
 				asList(new Person("bob")));
 		assertThat(value, is("bob"));
@@ -233,7 +230,7 @@ public class MatchingDataStructuresTest {
 	}
 	@Test
 	public void   matchOfManySingle(){
-		Matching.atomisedCase().allMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob"))).thenConsume(list -> value = list.get(0).getName())
+		Matching.adtCase().allMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob"))).thenConsume(list -> value = list.get(0).getName())
 					.apply(
 				new Person("bob"));
 		assertThat(value, is("bob"));
@@ -241,7 +238,7 @@ public class MatchingDataStructuresTest {
 	}
 	@Test
 	public void   matchOfManyDouble(){
-		Matching.atomisedCase().allMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob"))).thenConsume(list -> value = list.get(0).getName())
+		Matching.adtCase().allMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob"))).thenConsume(list -> value = list.get(0).getName())
 					.match(
 				new Person("bob"),new Person("two"));
 		assertThat(value, is("bob"));
@@ -252,10 +249,10 @@ public class MatchingDataStructuresTest {
 	@Test
 	public void  matchOfMatchers(){
 
-				Matching.atomisedCase().bothMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob")),anything())
+				Matching.adtCase().bothMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob")),anything())
 																.thenExtract(Extractors.<Person>first())
 																.thenApply(bob-> value =bob.getName())
-									.atomisedCase().bothMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob2")),anything())
+									.adtCase().bothMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob2")),anything())
 																.thenExtract(Extractors.<Person>first())
 																.thenApply(bob-> value =bob.getName())
 											.apply(Tuple.tuple(new Person("bob"),"boo hoo!"));
@@ -271,8 +268,8 @@ public class MatchingDataStructuresTest {
 		
 		
 		
-		Matching.atomisedCase().bothTrue((Person p) -> p.isTall(),p->true).thenExtract(Extractors.<Person>first()).thenApply( p->value = p.getName() + " is tall" )
-				.atomisedCase().bothTrue((Person p) -> p.isTall(),p->true).thenExtract(Extractors.<Person>first()).thenApply( p->value = p.getName() + " is tall" )
+		Matching.adtCase().bothTrue((Person p) -> p.isTall(),p->true).thenExtract(Extractors.<Person>first()).thenApply( p->value = p.getName() + " is tall" )
+				.adtCase().bothTrue((Person p) -> p.isTall(),p->true).thenExtract(Extractors.<Person>first()).thenApply( p->value = p.getName() + " is tall" )
 								.apply(new Person("bob"));
 		
 		assertThat(value,is("bob is tall"));
@@ -282,10 +279,10 @@ public class MatchingDataStructuresTest {
 	@Test
 	public void  caseOfTuple(){
 
-		Matching.atomisedCase().allTrueNoType((Person p) -> p.isTall(),(Address a)->a.getCountry().equals("Ireland"),  p->true)
+		Matching.adtCase().allTrueNoType((Person p) -> p.isTall(),(Address a)->a.getCountry().equals("Ireland"),  p->true)
 								.thenExtract(Extractors.<Person,Address>of(0,1))
 								.thenApply(t->value = t.v1.getName() + " is tall and lives in " + t.v2.getCity())
-				.atomisedCase()
+				.adtCase()
 									.allTrueNoType((Person p) -> p.isTall(),(Address a)->a.getCountry().equals("France"), p->true)
 									.thenExtract(Extractors.<Person,Address>of(0,1))
 									.thenApply(t-> value = t.v1.getName() + " is tall and lives in " + t.v2.getCity())
@@ -297,7 +294,7 @@ public class MatchingDataStructuresTest {
 			
 	@Test
 	public void matchOfTuple(){
-		Matching.atomisedCase().bothMatch(samePropertyValuesAs(new Person("bob")),anything())
+		Matching.adtCase().bothMatch(samePropertyValuesAs(new Person("bob")),anything())
 					.thenExtract(Extractors.<Person,Address>of(0,1))
 					.thenApply(t->value = t.v1.getName() + " is tall and lives in " + t.v2.getCity())
 				

@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 
+import com.aol.cyclops.matcher.Decomposable;
 import com.aol.cyclops.matcher.PatternMatcher;
 @AllArgsConstructor
 public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
@@ -21,7 +22,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 		AggregatedCase<X> cse = new AggregatedCase<X>(this.cse.getPatternMatcher());
 		return cse;
 	}
-	public final AtomisedCase<X> atomisedCase(){
+	public final AtomisedCase<X> adtCase(){
 		AtomisedCase cse = new AtomisedCase(this.cse.getPatternMatcher());
 		return cse;
 	}
@@ -37,7 +38,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 		consumer.accept(cse);
 		return this;
 	}
-	public final MatchingInstance<T,X> atomisedCase(Consumer<AtomisedCase<X>> consumer){
+	public final MatchingInstance<T,X> adtCase(Consumer<AtomisedCase<X>> consumer){
 		AtomisedCase cse = new AtomisedCase(new PatternMatcher());
 		consumer.accept(cse);
 		return this;
@@ -98,5 +99,8 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 */
 	public  Optional<X> match(Object t){
 		return cse.getPatternMatcher().match(t);
+	}
+	public Optional<X> unapply(Decomposable decomposableObject) {
+		return cse.getPatternMatcher().unapply(decomposableObject);
 	}
 }
