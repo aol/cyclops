@@ -68,14 +68,15 @@ public class ScalaParserExample {
 	}
 	
 	public Expression deeplyNestedExample(Expression e){
+		
 		return Matching.<Expression>_case().isType( (Add<Const,Mult> a)-> new Const(1))
 									.with(__,type(Mult.class).with(__,new Const(0)))
 				._case().isType( (Add<Mult,Const> a)-> new Const(0)).with(type(Mult.class).with(__,new Const(0)),__)
 				._case().isType( (Add<Add,Const> a)-> new Const(0)).with(with(__,new Const(2)),__)
-				//a.left.value+
+				
 				
 				.apply(e).orElse(new Const(-1));
-			//		._case()
+			
 	}
 	
 	//Sealed case classes
