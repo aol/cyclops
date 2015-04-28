@@ -2,9 +2,18 @@ package com.aol.cyclops.matcher;
 
 
 import static com.aol.cyclops.matcher.Predicates.ANY;
+import static com.aol.cyclops.matcher.Predicates.*;
+import static com.aol.cyclops.matcher.Predicates.type;
+
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Value;
+
+import org.jooq.lambda.Seq;
 
 import com.aol.cyclops.matcher.builders.Matching;
 
@@ -16,7 +25,7 @@ public class ScalaParserExample {
 		
 		return Matching.newCase().isType( (X x)-> xValue)
 				.newCase().isType((Const c) -> c.getValue())
-				.newCase().isType((Add a) ->  eval(a.getLeft(),xValue) + eval(a.getRight(),xValue))
+				.newCase().isType((Add a) ->  { System.out.println("!add"); return eval(a.getLeft(),xValue) + eval(a.getRight(),xValue);})
 				.newCase().isType( (Mult m) -> eval(m.getLeft(),xValue) * eval(m.getRight(),xValue))
 				.newCase().isType( (Neg n) ->  -eval(n.getExpr(),xValue))
 				.match(expression).orElse(1);
@@ -41,20 +50,32 @@ public class ScalaParserExample {
 		
 
 		
-		return Matching.<Expression>adtCase().isType( (Mult m)->new Const(0)).with(new Const(0),ANY())
-						.adtCase().isType( (Mult m)->new Const(0)).with(ANY(),new Const(0))
-						.adtCase().isType((Mult m)-> simplify(m.right)).with(new Const(1))
-						.adtCase().isType( (Mult m) -> simplify(m.getLeft())).with(ANY(),new Const(1))
-						.adtCase().isType( (Mult<Const,Const> m) -> new Const(m.left.value * m.right.value))
+		return Matching.<Expression>_case().isType( (Mult m)->new Const(0)).with(new Const(0),__)
+						._case().isType( (Mult m)->new Const(0)).with(__,new Const(0))
+						._case().isType((Mult m)-> simplify(m.right)).with(new Const(1))
+						._case().isType( (Mult m) -> simplify(m.getLeft())).with(__,new Const(1))
+						._case().isType( (Mult<Const,Const> m) -> new Const(m.left.value * m.right.value))
 													.with(ANY(Const.class),ANY(Const.class))
-						.adtCase().isType((Add a) -> simplify(a.right)).with(new Const(0),ANY())
-						.adtCase().isType((Add a)-> simplify(a.left)).with(ANY(),new Const(0))
-						.adtCase().isType( (Add<Const,Const> a) -> new Const(a.left.value + a.right.value)).with(ANY(Const.class), ANY(Const.class))
-						.adtCase().isType( (Neg<Const> n) -> new Const(-n.expr.value)).with(new Neg<Const>(null),ANY(Const.class))
+						._case().isType((Add a) -> simplify(a.right)).with(new Const(0),__)
+						._case().isType((Add a)-> simplify(a.left)).with(__,new Const(0))
+					
+						._case().isType( (Add<Const,Const> a) -> new Const(a.left.value + a.right.value)).with(ANY(Const.class), ANY(Const.class))
+						._case().isType( (Neg<Const> n) -> new Const(-n.expr.value)).with(new Neg<Const>(null),ANY(Const.class))
 												
 						
-				.unapply(e).orElse(e);
+				.apply(e).orElse(e);
 
+	}
+	
+	public Expression deeplyNestedExample(Expression e){
+		return Matching.<Expression>_case().isType( (Add<Const,Mult> a)-> new Const(1))
+									.with(__,type(Mult.class).with(__,new Const(0)))
+				._case().isType( (Add<Mult,Const> a)-> new Const(0)).with(type(Mult.class).with(__,new Const(0)),__)
+				._case().isType( (Add<Add,Const> a)-> new Const(0)).with(with(__,new Const(2)),__)
+				//a.left.value+
+				
+				.apply(e).orElse(new Const(-1));
+			//		._case()
 	}
 	
 	//Sealed case classes

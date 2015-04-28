@@ -22,7 +22,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 		AggregatedCase<X> cse = new AggregatedCase<X>(this.cse.getPatternMatcher());
 		return cse;
 	}
-	public final AtomisedCase<X> adtCase(){
+	public final AtomisedCase<X> _case(){
 		AtomisedCase cse = new AtomisedCase(this.cse.getPatternMatcher());
 		return cse;
 	}
@@ -38,7 +38,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 		consumer.accept(cse);
 		return this;
 	}
-	public final MatchingInstance<T,X> adtCase(Consumer<AtomisedCase<X>> consumer){
+	public final MatchingInstance<T,X> _case(Consumer<AtomisedCase<X>> consumer){
 		AtomisedCase cse = new AtomisedCase(new PatternMatcher());
 		consumer.accept(cse);
 		return this;

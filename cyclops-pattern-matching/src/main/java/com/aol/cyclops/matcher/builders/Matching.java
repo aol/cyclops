@@ -20,7 +20,7 @@ public class Matching {
 		consumer.accept(cse);
 		return new MatchingInstance<>(cse);
 	}
-	public static final<X> MatchingInstance<? extends Object,X> adtCase(Consumer<AtomisedCase<? extends Object>> consumer){
+	public static final<X> MatchingInstance<? extends Object,X> _case(Consumer<AtomisedCase<? extends Object>> consumer){
 		AtomisedCase cse = new AtomisedCase(new PatternMatcher());
 		consumer.accept(cse);
 		return new MatchingInstance<>(cse);
@@ -32,7 +32,7 @@ public class Matching {
 		return cse;
 	}
 	
-	public static final<USER_VALUE> AtomisedCase<USER_VALUE> adtCase(){
+	public static final<USER_VALUE> AtomisedCase<USER_VALUE> _case(){
 		AtomisedCase cse = new AtomisedCase(new PatternMatcher());
 		return cse;
 	}
