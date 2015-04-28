@@ -18,7 +18,12 @@ public class Matching {
 		return fn.apply(cse);
 		
 	}
-	public static final<X> MatchingInstance<? extends Object,X> _case(Function<AtomisedCase<? extends Object>,MatchingInstance<? extends Object,X>> fn){
+	public static final<X> MatchingInstance<? extends Object,X> _case(Function<_Case<? extends Object>,MatchingInstance<? extends Object,X>> fn){
+		_Case cse = new _Case(new PatternMatcher());
+		return fn.apply(cse);
+		
+	}
+	public static final<X> MatchingInstance<? extends Object,X> atomisedCase(Function<AtomisedCase<? extends Object>,MatchingInstance<? extends Object,X>> fn){
 		AtomisedCase cse = new AtomisedCase(new PatternMatcher());
 		return fn.apply(cse);
 		
@@ -29,9 +34,12 @@ public class Matching {
 		StreamCase cse = new StreamCase(new PatternMatcher());
 		return cse;
 	}
-	
-	public static final<USER_VALUE> AtomisedCase<USER_VALUE> _case(){
+	public static final<USER_VALUE> AtomisedCase<USER_VALUE> atomisedCase(){
 		AtomisedCase cse = new AtomisedCase(new PatternMatcher());
+		return cse;
+	}
+	public static final<USER_VALUE> _Case<USER_VALUE> _case(){
+		_Case cse = new  _Case(new PatternMatcher());
 		return cse;
 	}
 	public static final<X> AggregatedCase<X> newCase(){

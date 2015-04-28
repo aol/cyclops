@@ -99,14 +99,7 @@ public class AtomisedCase<X> extends Case{
 		return Stream.of(predicates).map(this::convertToPredicate).collect(Collectors.toList()).toArray(new Predicate[0]);
 		
 	}
-	private Predicate convertToPredicate(Object o){
-		if(o instanceof Predicate)
-			return (Predicate)o;
-		if(o instanceof Matcher)
-			return test -> ((Matcher)o).matches(test);
-			
-		return test -> Objects.equals(test,o);
-	}
+	
 
 
 
@@ -155,26 +148,6 @@ public class AtomisedCase<X> extends Case{
 		
 		
 		
-	}
-	public  <T,R> AndMembersMatchBuilder<T,R> isType(ActionWithReturn<T,R> a){
-		
-		return new AndMembersMatchBuilder<T,R>(a);
-		
-	}
-	@AllArgsConstructor
-	public class AndMembersMatchBuilder<T,R>{
-		ActionWithReturn<T,R> action;
-		@SafeVarargs
-		public  final <V> MatchingInstance<T,X> with(V... values){
-			val type = action.getType();
-			val clazz = type.parameterType(type.parameterCount()-1);
-			Predicate predicate = it -> Optional.of(it).map(v->v.getClass().isAssignableFrom(clazz)).orElse(false);
-			//add wildcard support
-			Predicate<V>[] predicates = Seq.of(values).map(nextValue->convertToPredicate(nextValue)).toList().toArray(new Predicate[0]);
-			
-					return  addCase(patternMatcher.inCaseOfManyType(predicate,action,predicates)) ;
-				
-			}
 	}
 	
 	@SafeVarargs

@@ -5,14 +5,22 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
 import com.aol.cyclops.matcher.Decomposable;
 import com.aol.cyclops.matcher.PatternMatcher;
+import com.aol.cyclops.matcher.Cases;
 @AllArgsConstructor
 public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	
+	
 	private final Case cse;
+	
+	public final Cases cases(){
+		return this.cse.getPatternMatcher().getCases();
+	}
+	
 	
 	public final StreamCase streamCase(){
 		StreamCase cse = new StreamCase(this.cse.getPatternMatcher());
@@ -22,7 +30,11 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 		AggregatedCase<X> cse = new AggregatedCase<X>(this.cse.getPatternMatcher());
 		return cse;
 	}
-	public final AtomisedCase<X> _case(){
+	public final _Case<X> _case(){
+		_Case cse = new _Case(this.cse.getPatternMatcher());
+		return cse;
+	}
+	public final AtomisedCase<X> atomisedCase(){
 		AtomisedCase cse = new AtomisedCase(this.cse.getPatternMatcher());
 		return cse;
 	}
@@ -38,7 +50,12 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 		consumer.accept(cse);
 		return this;
 	}
-	public final MatchingInstance<T,X> _case(Consumer<AtomisedCase<X>> consumer){
+	public final MatchingInstance<T,X> _case(Consumer<_Case<X>> consumer){
+		_Case cse = new _Case(new PatternMatcher());
+		consumer.accept(cse);
+		return this;
+	}
+	public final MatchingInstance<T,X> atomisedCase(Consumer<AtomisedCase<X>> consumer){
 		AtomisedCase cse = new AtomisedCase(new PatternMatcher());
 		consumer.accept(cse);
 		return this;

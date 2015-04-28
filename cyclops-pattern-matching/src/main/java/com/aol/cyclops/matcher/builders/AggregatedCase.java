@@ -27,7 +27,7 @@ public class AggregatedCase<X> extends Case{
 		
 		return new CaseBuilder.ValueStep<>(this, patternMatcher, value);
 		//need to create classes now that X is infered from thenApply
-	//	return (ActionWithReturn<V,X> a) -> addCase(patternMatcher.inCaseOfValue(value, a) );
+	//	return (Function<V,X> a) -> addCase(patternMatcher.inCaseOfValue(value, a) );
 	}
 	
 	

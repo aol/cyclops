@@ -29,6 +29,16 @@ import org.jooq.lambda.tuple.Tuple8;
  */
 public class Extractors {
 	
+	private static final Object NOT_SET = new Object();
+	public static final <T,R > PatternMatcher.Extractor<T,R> memoised( PatternMatcher.Extractor<T,R> extractor){
+		Object[] value = {NOT_SET};
+		return input -> {
+				if(value[0]==NOT_SET )
+					value[0]=extractor.apply(input);
+				return (R)value[0];
+		};
+		
+	}
 	public static final <T,R> PatternMatcher.Extractor<T,R> decompose() {
 		return input -> {
 			if(input instanceof  Decomposable)
