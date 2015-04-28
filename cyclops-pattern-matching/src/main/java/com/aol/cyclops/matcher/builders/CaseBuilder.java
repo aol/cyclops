@@ -22,8 +22,8 @@ public class CaseBuilder {
 		public <X> MatchingInstance<V,X> thenApply(ActionWithReturn<V,X> t){
 			return  addCase(matcher.inCaseOfValue(value, t));
 		}
-		private <T,X> MatchingInstance<T,X> addCase(Object o){
-			return new MatchingInstance<>(cse);
+		private <T,X> MatchingInstance<T,X> addCase(PatternMatcher o){
+			return new MatchingInstance<>(cse.withPatternMatcher(o));
 		}
 	}
 	@AllArgsConstructor
@@ -35,8 +35,8 @@ public class CaseBuilder {
 		public <X> MatchingInstance<R,X> thenApply(ActionWithReturn<R,X> t){
 			return addCase(matcher.inCaseOfThenExtract(match, t,extractor));
 		}
-		private <T,X> MatchingInstance<T,X> addCase(Object o){
-			return new MatchingInstance<>(cse);
+		private <T,X> MatchingInstance<T,X> addCase(PatternMatcher o){
+			return new MatchingInstance<>(cse.withPatternMatcher(o));
 		}
 	}
 	@AllArgsConstructor
@@ -61,8 +61,8 @@ public class CaseBuilder {
 		public <T,X>  MatchingInstance<T,X> thenConsume(Action<V> a){
 			return addCase(matcher.caseOf(match, a));
 		}
-		private <T,X> MatchingInstance<T,X> addCase(Object o){
-			return new MatchingInstance<>(cse);
+		private <T,X> MatchingInstance<T,X> addCase(PatternMatcher o){
+			return new MatchingInstance<>(cse.withPatternMatcher(o));
 		}
 		
 	}
@@ -122,8 +122,8 @@ public class CaseBuilder {
 			}
 			
 		}
-		private <T,R> MatchingInstance<T,R> addCase(Object o){
-			return new MatchingInstance<>(cse);
+		private <T,R> MatchingInstance<T,R> addCase(PatternMatcher o){
+			return new MatchingInstance<>(cse.withPatternMatcher(o));
 		}
 		
 	}
@@ -148,8 +148,8 @@ public class CaseBuilder {
 			public <X> MatchingInstance<V, X> thenApply(ActionWithReturn<V, X> t) {
 				return addCase(patternMatcher.inMatchOfThenExtract(match, t,(Extractor)extractor));
 			}
-			private <T,R> MatchingInstance<T,R> addCase(Object o){
-				return new MatchingInstance<>(cse);
+			private <T,R> MatchingInstance<T,R> addCase(PatternMatcher o){
+				return new MatchingInstance<>(cse.withPatternMatcher(o));
 			}
 			
 		}
@@ -160,8 +160,8 @@ public class CaseBuilder {
 			return addCase(patternMatcher.matchOf(match, a));
 		}
 		
-		private <T,X> MatchingInstance<T,X> addCase(Object o){
-			return new MatchingInstance<>(cse);
+		private <T,X> MatchingInstance<T,X> addCase(PatternMatcher o){
+			return new MatchingInstance<>(cse.withPatternMatcher(o));
 		}
 	}
 	
@@ -176,8 +176,8 @@ public class CaseBuilder {
 		public  <X> MatchingInstance<V,X> thenConsume(Action<List<V>> a){
 			return addCase(patternMatcher.caseOfMany( a,predicates));
 		}
-		private <T,X> MatchingInstance<T,X> addCase(Object o){
-			return new MatchingInstance<>(cse);
+		private <T,X> MatchingInstance<T,X> addCase(PatternMatcher o){
+			return new MatchingInstance<>(cse.withPatternMatcher(o));
 		}
 	}
 
@@ -193,8 +193,8 @@ public class CaseBuilder {
 		public  MatchingInstance<T,X> thenConsume(Action<List<V>> a){
 			return addCase(patternMatcher.matchOfMany( a,predicates));
 		}
-		private <T,X> MatchingInstance<T,X> addCase(Object o){
-			return new MatchingInstance<>(cse);
+		private <T,X> MatchingInstance<T,X> addCase(PatternMatcher o){
+			return new MatchingInstance<>(cse.withPatternMatcher(o));
 		}
 	}
 

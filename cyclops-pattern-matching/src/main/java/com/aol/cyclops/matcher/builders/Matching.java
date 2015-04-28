@@ -1,29 +1,27 @@
 package com.aol.cyclops.matcher.builders;
 
 import java.util.function.Consumer;
-import java.util.stream.Stream;
-
-import org.jooq.lambda.tuple.Tuple;
+import java.util.function.Function;
 
 import com.aol.cyclops.matcher.PatternMatcher;
 
 public class Matching {
 
 	
-	public static final <T,X> MatchingInstance<T,X> streamCase(Consumer<Case> consumer){
+	public static final <T,X> MatchingInstance<T,X> streamCase(Function<Case,MatchingInstance<T,X>> fn){
 		StreamCase cse = new StreamCase(new PatternMatcher());
-		consumer.accept(cse);
-		return new MatchingInstance(cse);
+		return fn.apply(cse);
+		
 	}
-	public static final<X> MatchingInstance<? extends Object,X> newCase(Consumer<AggregatedCase<X>> consumer){
+	public static final<X> MatchingInstance<? extends Object,X> newCase(Function<AggregatedCase<X>,MatchingInstance<? extends Object,X>>fn){
 		AggregatedCase<X> cse = new AggregatedCase(new PatternMatcher());
-		consumer.accept(cse);
-		return new MatchingInstance<>(cse);
+		return fn.apply(cse);
+		
 	}
-	public static final<X> MatchingInstance<? extends Object,X> _case(Consumer<AtomisedCase<? extends Object>> consumer){
+	public static final<X> MatchingInstance<? extends Object,X> _case(Function<AtomisedCase<? extends Object>,MatchingInstance<? extends Object,X>> fn){
 		AtomisedCase cse = new AtomisedCase(new PatternMatcher());
-		consumer.accept(cse);
-		return new MatchingInstance<>(cse);
+		return fn.apply(cse);
+		
 	}
 
 	

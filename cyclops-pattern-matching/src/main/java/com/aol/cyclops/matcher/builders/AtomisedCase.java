@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.val;
+import lombok.experimental.Wither;
 
 import org.hamcrest.Matcher;
 import org.jooq.lambda.Seq;
@@ -29,6 +30,7 @@ public class AtomisedCase<X> extends Case{
 	// R : extractor response
 	// V : input for matcher / predicate
 	@Getter(AccessLevel.PACKAGE)
+	@Wither(AccessLevel.PACKAGE)
 	private final PatternMatcher patternMatcher;
 	
 	/** Match all elements against an Array or Iterable - user provided elements are disaggregated and matched by index**/
@@ -189,8 +191,8 @@ public class AtomisedCase<X> extends Case{
 			
 		};
 	}
-	private <T,R> MatchingInstance<T,R> addCase(Object o){
-		return new MatchingInstance<>(this);
+	private <T,R> MatchingInstance<T,R> addCase(PatternMatcher o){
+		return new MatchingInstance<>(this.withPatternMatcher(o));
 	}
 
 	private <V> Predicate<Object> buildPredicate(V nextValue) {

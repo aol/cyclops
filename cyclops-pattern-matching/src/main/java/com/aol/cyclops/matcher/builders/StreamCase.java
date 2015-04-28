@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.experimental.Wither;
 
 import org.jooq.lambda.tuple.Tuple2;
 
@@ -17,6 +18,7 @@ import com.aol.cyclops.matcher.PatternMatcher;
 public class StreamCase extends Case{
 	
 	@Getter(AccessLevel.PACKAGE)
+	@Wither(AccessLevel.PACKAGE)
 	private final PatternMatcher patternMatcher;
 	
 
@@ -32,8 +34,8 @@ public class StreamCase extends Case{
 		
 		return addCase(patternMatcher.selectFrom(stream));
 	}
-	private <T,X> MatchingInstance<T,X> addCase(Object o){
-		return new MatchingInstance<>(this);
+	private <T,X> MatchingInstance<T,X> addCase(PatternMatcher o){
+		return new MatchingInstance<>(this.withPatternMatcher(o));
 	}
 	
 	

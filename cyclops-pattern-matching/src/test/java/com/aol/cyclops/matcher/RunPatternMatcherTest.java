@@ -56,8 +56,7 @@ public class RunPatternMatcherTest {
 	}
 	@Test
 	public void testPostExtractWithReturn(){
-		PatternMatcher  m = new PatternMatcher();
-		m.inMatchOfThenExtract(instanceOf(List.class), (head)-> head,
+		PatternMatcher  m = new PatternMatcher().inMatchOfThenExtract(instanceOf(List.class), (head)-> head,
 				Extractors.at(0));
 		assertThat(120,is(m.match(ImmutableList.of(120,200,420)).get()));
 	}
