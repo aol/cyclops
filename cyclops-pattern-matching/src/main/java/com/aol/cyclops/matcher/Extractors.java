@@ -29,6 +29,13 @@ import org.jooq.lambda.tuple.Tuple8;
  */
 public class Extractors {
 	
+	public static final <T,R> PatternMatcher.Extractor<T,R> decompose() {
+		return input -> {
+			if(input instanceof  Decomposable)
+				return (R)((Decomposable)input).unapply();
+			return (R)input;
+		};
+	}
 	/**
 	 * An extractor that will generte a Tuple2 with two values at the specified index.
 	 * Works on Iterable data structures.

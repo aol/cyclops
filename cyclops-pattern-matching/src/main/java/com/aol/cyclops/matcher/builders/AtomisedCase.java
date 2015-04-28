@@ -2,6 +2,7 @@ package com.aol.cyclops.matcher.builders;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -165,7 +166,7 @@ public class AtomisedCase<X> extends Case{
 		public  final <V> MatchingInstance<T,X> with(V... values){
 			val type = action.getType();
 			val clazz = type.parameterType(type.parameterCount()-1);
-			Predicate predicate = it -> it.getClass().isAssignableFrom(clazz);
+			Predicate predicate = it -> Optional.of(it).map(v->v.getClass().isAssignableFrom(clazz)).orElse(false);
 			//add wildcard support
 			Predicate<V>[] predicates = Seq.of(values).map(nextValue->convertToPredicate(nextValue)).toList().toArray(new Predicate[0]);
 			
@@ -197,16 +198,6 @@ public class AtomisedCase<X> extends Case{
 			return Predicates.ANY();
 		return Predicates.p(test->Objects.equals(test, nextValue));
 	}
-	/**
-	private Tuple selectTuple(Object[] array){
-		if(array.length==1)
-			return new Tuple1(array[0]);
-		if(array.length==2)
-			return new Tuple2(array[0],array[1]);
-		if(array.length==3)
-			return new Tuple3(array[0],array[1],array[2]);
-		if(array.length==4)
-			return new Tuple3(array[0],array[1],array[2],array[3]);
-	}**/
+	
 	
 }

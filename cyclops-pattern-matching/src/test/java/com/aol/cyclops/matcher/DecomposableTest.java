@@ -17,9 +17,9 @@ import com.aol.cyclops.matcher.builders.Matching;
 public class DecomposableTest {
 	@Test
 	public void allValues(){
-		assertThat(Matching.adtCase().allValues(1,ANY(),2).thenApply(l->"case1")
-			.adtCase().allValues(1,3,2).thenApply(l->"case2")
-			.adtCase().bothTrue((Integer i)->i==1,(String s)->s.length()>0)
+		assertThat(Matching._case().allValues(1,ANY(),2).thenApply(l->"case1")
+			._case().allValues(1,3,2).thenApply(l->"case2")
+			._case().bothTrue((Integer i)->i==1,(String s)->s.length()>0)
 					.thenExtract(Extractors.<Integer,String>toTuple2())
 					.thenApply(t->t.v1+t.v2)
 			.unapply(new DecomposableObject(1,"hello",2)).get(),is("case1"));
