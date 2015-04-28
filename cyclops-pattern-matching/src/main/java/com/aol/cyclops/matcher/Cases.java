@@ -20,9 +20,9 @@ import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
 @AllArgsConstructor
-public class Cases implements Function {
+public class Cases<T,R> implements Function<T,Optional<R>> {
 	@Wither
-	private final PStack<Case> cases;
+	private final PStack<Case<T,R>> cases;
 	@Wither(AccessLevel.PRIVATE)
 	private final boolean sequential;
 
@@ -47,61 +47,61 @@ public class Cases implements Function {
 	 * @return New Cases object that will match sequentially 
 	 * 
 	 */
-	public Cases sequential(){
+	public Cases<T,R> sequential(){
 		return this.withSequential(true);
 	}
 	/**
 	 * Default behaviour is to match sequentially
 	 * @return A new cases object that will match in parallel
 	 */
-	public Cases parallel(){
+	public Cases<T,R> parallel(){
 		return this.withSequential(false);
 	}
 	
 	
-	public Cases merge(Cases patterns){
+	public Cases<T,R> merge(Cases<T, R> patterns){
 		return this.withCases(cases.plusAll(size(), patterns.cases));
 	}
 
-	public Cases filter(Predicate<Case> predicate) {
+	public Cases<T,R> filter(Predicate<Case<T,R>> predicate) {
 		return withCases(cases.stream().filter(data -> predicate.test(data))
 				.collect(collector()));
 	}
 
-	public Cases filterPredicate(Predicate<Predicate> predicate) {
+	public Cases<T,R> filterPredicate(Predicate<Predicate<T>> predicate) {
 		return withCases(cases.stream()
 				.filter(data -> predicate.test(data.getPredicate()))
 				.collect(collector()));
 	}
 
-	public Cases filterFunction(Predicate<Function> predicate) {
+	public Cases<T,R> filterFunction(Predicate<Function<T,R>> predicate) {
 		return withCases(cases.stream()
 				.filter(data -> predicate.test(data.getAction()))
 				.collect(collector()));
 	}
 
-	public Cases mapPredicate(Function<Predicate, Predicate> predicateMapper) {
+	public Cases<T,R> mapPredicate(Function<Predicate<T>, Predicate<T>> predicateMapper) {
 		return map(caseData -> {
 			return Case.of(predicateMapper.apply(caseData.getPredicate()),
 					caseData.getAction());
 		});
 	}
 
-	public Cases mapFunction(
-			Function<Function, Function> actionMapper) {
+	public <R1> Cases<T,R> mapFunction(
+			Function<Function<T,R>, Function<T,R1>> actionMapper) {
 		return map(caseData -> {
 			return Case.of(caseData.getPredicate(),
 					actionMapper.apply(caseData.getAction()));
 		});
 	}
 
-	public Cases map(Function<Case, Case> mapper) {
+	public <T1,R1> Cases<T,R> map(Function<Case<T,R>, Case<T1,R1>> mapper) {
 
-		return this.withCases(cases.stream().map(mapper).collect(collector()));
+		return this.withCases((PStack)cases.stream().map(mapper).collect(collector()));
 
 	}
 
-	public Cases flatMap(Function<PStack<Case>, Cases> mapper) {
+	public <T1,R1> Cases<T1,R1> flatMap(Function<PStack<Case<T,R>>, Cases<T1,R1>> mapper) {
 		return mapper.apply(cases);
 	}
 
@@ -113,13 +113,13 @@ public class Cases implements Function {
 		return cases.size();
 	}
 
-	public <T, X> Function<T, X> asUnwrappedFunction() {
-		return (T t) -> (X) apply(t).get();
+	public <T1, X> Function<T1, X> asUnwrappedFunction() {
+		return (T1 t) -> (X) apply((T)t).get();
 	}
 
-	public <T, X> Function<T, Stream<X>> asStreamFunction() {
+	public <T1, X> Function<T1, Stream<X>> asStreamFunction() {
 
-		return (T t) -> (Stream<X>) Stream.of(t).map(this::apply)
+		return (T1 t) -> (Stream<X>) Stream.of(t).map(input-> this.apply((T)input))
 				.filter(Optional::isPresent).map(Optional::get);
 	}
 
@@ -130,7 +130,7 @@ public class Cases implements Function {
 	 * 
 	 * @see java.util.function.Function#apply(java.lang.Object)
 	 */
-	public Optional<Object> apply(Object t) {
+	public Optional<R> apply(T t) {
 		return match(t);
 	}
 
@@ -141,7 +141,7 @@ public class Cases implements Function {
 	 *            Stream of data to match against (input to matcher)
 	 * @return Stream of values from matched cases
 	 */
-	public <R> Stream<R> matchManyFromStream(Stream s) {
+	public <R> Stream<R> matchManyFromStream(Stream<T> s) {
 		return s.flatMap(this::matchMany);
 	}
 	public <R> CompletableFuture<Stream<R>> matchManyFromStreamAsync(Executor executor, Stream s){
@@ -154,12 +154,12 @@ public class Cases implements Function {
 	 *            input to match against - can generate multiple values
 	 * @return Stream of values from matched cases for the input
 	 */
-	public <R> Stream<R> matchMany(Object t) {
+	public <R> Stream<R> matchMany(T t) {
 		return (Stream) stream().map(pattern -> pattern.match(t))
 				.filter(Optional::isPresent).map(Optional::get);
 
 	}
-	public <R> CompletableFuture<Stream<R>> matchManyAsync(Executor executor, Object t){
+	public <R> CompletableFuture<Stream<R>> matchManyAsync(Executor executor, T t){
 		return CompletableFuture.supplyAsync(()->matchMany(t), executor);
 	}
 	/**
@@ -194,7 +194,7 @@ public class Cases implements Function {
 	 * @return Value returned from matched case (if present) otherwise
 	 *         Optional.empty()
 	 */
-	public <R> Optional<R> match(Object t) {
+	public <R> Optional<R> match(T t) {
 
 		return (Optional) stream().map(pattern -> pattern.match(t))
 				.filter(Optional::isPresent).map(Optional::get).findFirst();
@@ -202,7 +202,7 @@ public class Cases implements Function {
 	}
 	
 	
-	private Stream<Case> stream(){
+	private Stream<Case<T,R>> stream(){
 		if(this.sequential)
 			return cases.stream();
 		return cases.parallelStream();
