@@ -16,6 +16,8 @@ public abstract class Case {
 			return (Predicate)o;
 		if(o instanceof Matcher)
 			return test -> ((Matcher)o).matches(test);
+		if(o instanceof With)
+			return ((With)o).toPredicate();
 			
 		return test -> Objects.equals(test,o);
 	}
