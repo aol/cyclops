@@ -5,19 +5,19 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
+import com.aol.cyclops.matcher.Cases;
 import com.aol.cyclops.matcher.Decomposable;
 import com.aol.cyclops.matcher.PatternMatcher;
-import com.aol.cyclops.matcher.Cases;
+import com.aol.cyclops.matcher.PatternMatcher.ActionWithReturn;
 @AllArgsConstructor
 public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	
 	
 	private final Case cse;
 	
-	public final Cases cases(){
+	public final Cases<T,X,ActionWithReturn<T,X>> cases(){
 		return this.cse.getPatternMatcher().getCases();
 	}
 	

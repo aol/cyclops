@@ -1,12 +1,16 @@
 package com.aol.cyclops.matcher.builders;
 
-import java.util.function.Consumer;
 import java.util.function.Function;
 
+import com.aol.cyclops.matcher.Cases;
 import com.aol.cyclops.matcher.PatternMatcher;
+import com.aol.cyclops.matcher.PatternMatcher.ActionWithReturn;
 
 public class Matching {
 
+	public static final <T,X> MatchingInstance<T,X> of(Cases<T,X,? extends Function<T,X>> cases){
+		return new MatchingInstance(new _Case(new PatternMatcher().withCases(cases)));
+	}
 	
 	public static final <T,X> MatchingInstance<T,X> streamCase(Function<Case,MatchingInstance<T,X>> fn){
 		StreamCase cse = new StreamCase(new PatternMatcher());

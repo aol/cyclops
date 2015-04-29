@@ -4,13 +4,9 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.function.BiConsumer;
-import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import lombok.AccessLevel;
@@ -62,31 +58,47 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 * @return New Cases instance (sequential)
 	 */
 	public static <T,R,X extends Function<T,R>>  Cases<T,R,X> of(Case<T,R,X>... cazes){
-		return of(Stream.of(cazes).collect(collector()));
+		return of(Stream.of(cazes).map(ConsPStack::singleton)
+				.reduce(ConsPStack.empty(),(acc,next)-> acc.plus(acc.size(),next.get(0))));
 	}
+	/**
+	 * Zip two Streams into pattern Matching Cases
+	 * 
+	 * @param predicates Stream of predicates
+	 * @param functions Stream of functions
+	 * @return Cases with predicates paired to functions
+	 */
 	public static <T,R,X extends Function<T,R>>  Cases<T,R,X> zip(Stream<Predicate<T>> predicates, Stream<X> functions){
 		
 		return of(Seq.seq(predicates)
 			.zip(Seq.seq(functions))
 			.map(Case::of)
-			.collect(collector()));
+			.map(ConsPStack::singleton)
+			.reduce(ConsPStack.empty(),(acc, next)-> acc.plus(acc.size(),next.get(0))));
 		
 		
 	}
+	/**
+	 * <pre>
+	 * 	val cases = Cases.of(Case.of(input->true,input->"hello"));
+	 *	val unzipped = cases.unzip();
+	 *	assertTrue(unzipped.v1.map(p->p.test(10)).allMatch(v->v));
+	 *	assertTrue(unzipped.v2.map(fn->fn.apply(10)).allMatch(v->"hello".equals(v)));
+	 * </pre>
+	 * 
+	 * 
+	 * @return unzipped Cases, with Predicates in one Stream and Functions in the other.
+	 */
 	public Tuple2<Stream<Predicate<T>>,Stream<X>> unzip(){
 		return Tuple.<Stream<Predicate<T>>,Stream<X>>tuple(cases.stream().map(c-> c.getPredicate()),cases.stream().map(c->c.getAction()));
 	}
-	private static <T> Collector<T, PStack<T>, PStack<T>> collector() {
-		final Supplier<PStack<T>> supplier = ConsPStack::empty;
-		final BiConsumer<PStack<T>, T> accumulator = PStack::plus;
-		final BinaryOperator<PStack<T>> combiner = (left, right) -> {
-			left.plusAll(right);
-			return left;
-		};
-
-		return Collector.of(supplier, accumulator, combiner);
-	}
 	
+	
+	/**
+	 * Iterate over each case
+	 * 
+	 * @param consumer accept each case in turn
+	 */
 	public void forEach(Consumer<Case<T,R,X>> consumer){
 		cases.stream().forEach(consumer);
 	}
@@ -108,27 +120,94 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	}
 	
 	
+	/**
+	 * Merge two cases, with supplied Cases added after current Cases
+	 * @see #append
+	 * 
+	 * @param patterns Cases to merge to this set
+	 * @return New merged Cases
+	 */
 	public Cases<T,R,X> merge(Cases<T, R,X> patterns){
 		return this.withCases(cases.plusAll(size(), patterns.cases));
 	}
-
+	
+	
+	/**
+	 * Filter the Cases with the supplied predicate
+	 * 
+	 * <pre>
+	 * cases = Cases.of(Case.of(input-&gt;true,input-&gt;&quot;hello&quot;),Case.of(input-&gt;false,input-&gt;&quot;second&quot;))
+									.filter(p-&gt; p.getPredicate().test(10));
+		assertThat(cases.size(),is(1));
+	 * 
+	 * </pre>
+	 * 
+	 * 
+	 * @param predicate to filter out cases
+	 * @return New Filtered Cases
+	 */
 	public Cases<T,R,X> filter(Predicate<Case<T,R,X>> predicate) {
-		return withCases(cases.stream().filter(data -> predicate.test(data))
-				.collect(collector()));
+		return withCases(cases.stream().filter(data -> predicate.test(data)).map(ConsPStack::singleton)
+				.reduce(ConsPStack.empty(),(acc, next)-> acc.plus(acc.size(),next.get(0))));
 	}
 
+	/**
+	 * Filter the Cases with the supplied predicate
+	 * 
+	 * <pre>
+	 *  Cases.of(Case.of(input-&gt;true,input-&gt;&quot;hello&quot;),Case.of(input-&gt;false,input-&gt;&quot;second&quot;))
+				.filterPredicate(p-&gt; p.test(10));
+		assertThat(cases.size(),is(1));
+	 * 
+	 * </pre>
+	 * 
+	 * 
+	 * @param predicate to filter out cases
+	 * @return New Filtered Cases
+	 */
 	public Cases<T,R,X> filterPredicate(Predicate<Predicate<T>> predicate) {
 		return withCases(cases.stream()
-				.filter(data -> predicate.test(data.getPredicate()))
-				.collect(collector()));
+				.filter(data -> predicate.test(data.getPredicate())).map(ConsPStack::singleton)
+				.reduce(ConsPStack.empty(),(acc, next)-> acc.plus(acc.size(),next.get(0))));
 	}
 
+	/**
+	 * Filter the Cases with the supplied predicate
+	 * 
+	 * <pre>
+	 * 
+	 * cases = Cases.of(Case.of(input-&gt;true,input-&gt;&quot;hello&quot;),Case.of(input-&gt;false,input-&gt;&quot;second&quot;))
+	 *			.filterFunction(fn-&gt; fn.apply(10).equals(&quot;second&quot;));
+	 *	assertThat(cases.size(),is(1));
+	 * 
+	 * </pre>
+	 * 
+	 * 
+	 * @param predicate to filter out cases
+	 * @return New Filtered Cases
+	 */
 	public Cases<T,R,X> filterFunction(Predicate<Function<T,R>> predicate) {
 		return withCases(cases.stream()
-				.filter(data -> predicate.test(data.getAction()))
-				.collect(collector()));
+				.filter(data -> predicate.test(data.getAction())).map(ConsPStack::singleton)
+				.reduce(ConsPStack.empty(),(acc, next)-> acc.plus(acc.size(),next.get(0))));
 	}
 
+	/**
+	 * Map predicates for all Cases with the supplied function
+	 * 
+	 * <pre>
+	 * 
+	 * List results = Cases.of(Case.of(input-&gt;true,input-&gt;&quot;hello&quot;),Case.of(input-&gt;false,input-&gt;&quot;second&quot;))
+	 *					.mapPredicate(p-&gt;input-&gt;true).matchMany(10).collect(Collectors.toList());
+	 *	
+	 *	assertThat(results.size(),is(2));
+	 * 
+	 * </pre>
+	 * 
+	 * 
+	 * @param predicateMapper Function to map the predicates
+	 * @return New Cases with mapped predicates
+	 */
 	public Cases<T,R,X> mapPredicate(Function<Predicate<T>, Predicate<T>> predicateMapper) {
 		return map(caseData -> {
 			return Case.of(predicateMapper.apply(caseData.getPredicate()),
@@ -136,6 +215,23 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 		});
 	}
 
+	/**
+	 * Map all the functions to another function
+	 * 
+	 * <pre>
+	 * 
+	 * List&lt;String&gt; results = Cases.of(Case.of(input-&gt;true,input-&gt;&quot;hello&quot;),Case.of(input-&gt;true,input-&gt;&quot;second&quot;))
+	 *			.mapFunction(fn-&gt;input-&gt;&quot;prefix_&quot;+fn.apply(input)).&lt;String&gt;matchMany(10).collect(Collectors.toList());
+	 *	
+	 *	assertThat(results.size(),is(2));
+	 *	assertTrue(results.stream().allMatch(s-&gt;s.startsWith(&quot;prefix_&quot;)));
+	 *	assertTrue(results.stream().anyMatch(s-&gt;s.startsWith(&quot;prefix_hello&quot;)));
+	 *	assertTrue(results.stream().anyMatch(s-&gt;s.startsWith(&quot;prefix_second&quot;)));
+	 * 
+	 * </pre>
+	 * @param actionMapper Function to apply mapping
+	 * @return New Cases with all functions mapped
+	 */
 	public <R1> Cases<T,R,X> mapFunction(
 			Function<Function<T,R>, Function<T,R1>> actionMapper) {
 		return map(caseData -> {
@@ -144,28 +240,99 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 		});
 	}
 
+	/**
+	 * Map all Case instances present to a different value
+	 * 
+	 * <pre>
+	 * 		List&lt;String&gt; results = Cases.of(Case.of(input-&gt;true,input-&gt;&quot;hello&quot;),Case.of(input-&gt;false,input-&gt;&quot;second&quot;))
+	 *			.map(cse-&gt;Case.of(t-&gt;true,input-&gt;&quot;prefix_&quot;+cse.getAction().apply(input))).&lt;String&gt;matchMany(10).collect(Collectors.toList());
+	 *	
+	 *	assertThat(results.size(),is(2));
+	 *	assertTrue(results.stream().allMatch(s-&gt;s.startsWith(&quot;prefix_&quot;)));
+	 *	assertTrue(results.stream().anyMatch(s-&gt;s.startsWith(&quot;prefix_hello&quot;)));
+	 *	assertTrue(results.stream().anyMatch(s-&gt;s.startsWith(&quot;prefix_second&quot;)));
+	 * 
+	 * 
+	 * </pre>
+	 * 
+	 * 
+	 * @param mapper Function to map case instances
+	 * @return New Cases with new Case instances
+	 */
 	public <T1,R1,X1 extends Function<T1,R1>> Cases<T,R,X> map(Function<Case<T,R,X>, Case<T1,R1,X1>> mapper) {
 
-		return this.withCases((PStack)cases.stream().map(mapper).collect(collector()));
+		return this.withCases((PStack)cases.stream().map(mapper).map(ConsPStack::singleton)
+				.reduce(ConsPStack.empty(),(acc, next)-> acc.plus(acc.size(),next.get(0))));
 
 	}
 
+	/**
+	 * Map to a new Cases instance via a function that is provided all current Cases
+	 * 
+	 * <pre>
+	 * 
+	 *  cases = Cases.of(Case.of(input-&gt;true,input-&gt;&quot;hello&quot;),Case.of(input-&gt;false,input-&gt;&quot;second&quot;))
+						.flatMap(input-&gt; Cases.of(input.plus(Case.of(in-&gt;true,in-&gt;&quot;new&quot;))));
+		
+		assertThat(cases.size(),is(3));
+	 *  
+	 *  </pre>
+	 * 
+	 * 
+	 * 
+	 * @param mapper Function to map to a new Cases instance
+	 * @return new Cases instance
+	 */
 	public <T1,R1,X1 extends Function<T1,R1>> Cases<T1,R1,X1> flatMap(Function<PStack<Case<T,R,X>>, Cases<T1,R1,X1>> mapper) {
+
 		return mapper.apply(cases);
 	}
 
-	public Cases append(int index, Case pattern) {
+	/**
+	 * Append an individual case with supplied Cases inserted at index
+	 * @see #merge
+	 * @param index to insert supplied cases in new Case instance
+	 * @param pattern Cases to append / insert
+	 * @return New Cases with current and supplied cases
+	 */
+	public Cases<T,R,X> append(int index, Case<T,R,X> pattern) {
 		return this.withCases(cases.plus(index, pattern));
 	}
 
+	/**
+	 * @return number of cases
+	 */
 	public int size() {
 		return cases.size();
 	}
 
+	/**
+	 * 
+	 * <pre>
+	 * 
+	 * 
+	 * assertThat(Cases.of(Case.of(input-&gt;true,input-&gt;&quot;hello&quot;)).asUnwrappedFunction().apply(10),is(&quot;hello&quot;));
+	 * 
+	 * </pre>
+	 * 
+	 * @return A function that when applied will return the 'unwrapped' result
+	 * of matching. I.e. Optional#get will have been called.
+	 */
 	public <T1, X> Function<T1, X> asUnwrappedFunction() {
 		return (T1 t) -> (X) apply((T)t).get();
 	}
 
+	/**
+	 * 
+	 * <pre>
+	 * 
+	 * assertThat(Cases.of(Case.of(input-&gt;true,input-&gt;&quot;hello&quot;)).asStreamFunction().apply(10).findFirst().get(),is(&quot;hello&quot;));
+	 * 
+	 * </pre>
+	 * 
+	 * 
+	 * @return A function that returns the result of matching as a Stream
+	 */
 	public <T1, X> Function<T1, Stream<X>> asStreamFunction() {
 
 		return (T1 t) -> (Stream<X>) Stream.of(t).map(input-> this.apply((T)input))
@@ -173,68 +340,177 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	}
 
 	/*
+	 * 
+	 * <pre>
+	 * assertThat(Cases.of(Case.of(input-&gt;true,input-&gt;&quot;hello&quot;)).apply(10).get(),is(&quot;hello&quot;));
+	 * </pre>
+	 * 
 	 * @param t Object to match against
 	 * 
 	 * @return Value from matched case if present
 	 * 
 	 * @see java.util.function.Function#apply(java.lang.Object)
+	 * 
 	 */
 	public Optional<R> apply(T t) {
 		return match(t);
 	}
 
 	/**
-	 * Each input element can generated multiple matched values
+	 * Each input element in the stream can generate multiple matched values
+	 * 
+	 * <pre>
+	 * 
+	 * List&lt;String&gt; results = Cases.of(Case.of((Integer input)-&gt;10==input,input-&gt;&quot;hello&quot;),
+	 *										Case.of(input-&gt;11==input,input-&gt;&quot;world&quot;))
+	 *									.&lt;String&gt;matchManyFromStream(Stream.of(1,10,11))
+	 *									.toList();
+	 *	
+	 *	assertThat(results.size(),is(2));
+	 *	assertThat(results,hasItem(&quot;hello&quot;));
+	 *	assertThat(results,hasItem(&quot;world&quot;));
+	 * 
+	 * </pre>
+	 * 
 	 * 
 	 * @param s
 	 *            Stream of data to match against (input to matcher)
 	 * @return Stream of values from matched cases
 	 */
-	public <R> Stream<R> matchManyFromStream(Stream<T> s) {
-		return s.flatMap(this::matchMany);
+	public <R> Seq<R> matchManyFromStream(Stream<T> s) {
+		return Seq.seq(s.flatMap(this::matchMany));
 	}
-	public <R> CompletableFuture<Stream<R>> matchManyFromStreamAsync(Executor executor, Stream s){
+	/**
+	 * Asynchronously match against a Stream of data, on the supplied executor
+	 * Each input element in the stream can generate multiple matched values
+	 * 
+	 * <pre>
+	 * 
+	 * List&lt;String&gt; results = Cases.of(Case.of((Integer input)-&gt;10==input,input-&gt;&quot;hello&quot;),
+	 *			Case.of(input-&gt;11==input,input-&gt;&quot;world&quot;))
+	 *		.&lt;String&gt;matchManyFromStreamAsync(ForkJoinPool.commonPool(),Stream.of(1,10,11))
+	 *		.join()
+	 *		.toList(); 
+     *
+	 *	assertThat(results.size(),is(2));
+	 *	assertThat(results,hasItem(&quot;hello&quot;));
+	 *	assertThat(results,hasItem(&quot;world&quot;));
+	 * 
+	 * </pre>	 
+	 * @param executor used to perform async task
+	 * @param s
+	 *            Stream of data to match against (input to matcher)
+	 * @return Stream of values from matched cases
+	 */
+	public <R> CompletableFuture<Seq<R>> matchManyFromStreamAsync(Executor executor, Stream s){
 		return CompletableFuture.supplyAsync(()->matchManyFromStream(s), executor);
 	}
 
 	/**
 	 * 
+	 * <pre>
+	 * List&lt;String&gt; results =  Cases.of(Case.of((Integer input)-&gt;10==input,input-&gt;&quot;hello&quot;),
+	 *			Case.of(input-&gt;11==input,input-&gt;&quot;world&quot;),
+	 *			Case.of(input-&gt;10==input,input-&gt;&quot;woo!&quot;))
+	 *		.&lt;String&gt;matchMany(10).toList();
+	 *	
+	 *	assertThat(results.size(),is(2));
+	 *	assertThat(results,hasItem(&quot;hello&quot;));
+	 *	assertThat(results,hasItem(&quot;woo!&quot;));
+	 *	
+	 *	</pre>
+	 * 
+	 * 
 	 * @param t
 	 *            input to match against - can generate multiple values
 	 * @return Stream of values from matched cases for the input
 	 */
-	public <R> Stream<R> matchMany(T t) {
-		return (Stream) stream().map(pattern -> pattern.match(t))
-				.filter(Optional::isPresent).map(Optional::get);
+	public <R> Seq<R> matchMany(T t) {
+		return Seq.seq((Stream) stream().map(pattern -> pattern.match(t))
+				.filter(Optional::isPresent).map(Optional::get));
 
 	}
-	public <R> CompletableFuture<Stream<R>> matchManyAsync(Executor executor, T t){
+	/**
+	 * Match many asynchronously
+	 * <pre>
+	 * List&lt;String&gt; results =  Cases.of(Case.of((Integer input)-&gt;10==input,input-&gt;&quot;hello&quot;),
+	 *			Case.of(input-&gt;11==input,input-&gt;&quot;world&quot;),
+	 *			Case.of(input-&gt;10==input,input-&gt;&quot;woo!&quot;))
+	 *		.&lt;String&gt;matchManyAsync(ForkJoinPool.commonPool(),10).join().toList();
+	 *	
+	 *	assertThat(results.size(),is(2));
+	 *	assertThat(results,hasItem(&quot;hello&quot;));
+	 *	assertThat(results,hasItem(&quot;woo!&quot;));
+	 * 
+	 * 
+	 * </pre>
+	 * 
+	 * 
+	 * @param executor Executor to execute task asynchronously
+	 * @param t  input to match against - can generate multiple values
+	 * @return Stream of values from matched cases for the input wrapped in a  CompletableFuture
+	 */
+	public <R> CompletableFuture<Seq<R>> matchManyAsync(Executor executor, T t){
 		return CompletableFuture.supplyAsync(()->matchMany(t), executor);
 	}
 	/**
 	 * Each input element can generated a single matched value
 	 * 
+	 * <pre>
+	 * 
+	 * 		List&lt;String&gt; results = Cases
+	 *			.of(Case.of((Integer input) -&gt; 10 == input, input -&gt; &quot;hello&quot;),
+	 *					Case.of((Integer input) -&gt; 10 == input, input -&gt; &quot;ignored&quot;),
+	 *					Case.of(input -&gt; 11 == input, input -&gt; &quot;world&quot;))
+	 *			.&lt;String&gt; matchFromStream(Stream.of(1, 11, 10)).toList(); 
+     *
+	 *	assertThat(results.size(), is(2));
+	 *	assertThat(results, hasItem(&quot;hello&quot;));
+	 *	assertThat(results, hasItem(&quot;world&quot;));
+	 * 
+	 * </pre>
+	 * 
 	 * @param s
 	 *            Stream of data to match against (input to matcher)
 	 * @return Stream of matched values, one case per input value can match
 	 */
-	public <R> Stream<R> matchFromStream(Stream s) {
+	public <R> Seq<R> matchFromStream(Stream<T> s) {
 
 		Stream<Optional<R>> results = s.<Optional<R>> map(this::match);
-		return results.filter(Optional::isPresent).map(Optional::get);
+		return Seq.seq(results.filter(Optional::isPresent).map(Optional::get));
 	}
-	public <R> CompletableFuture<Stream<R>> matchFromStreamAsync(Executor executor, Stream s){
+	/**
+	 * Execute matchFromStream asynchronously
+	 * @see #matchFromStream
+	 * <pre>
+	 * List&lt;String&gt; results = Cases
+	 *			.of(Case.of((Integer input) -&gt; 10 == input, input -&gt; &quot;hello&quot;),
+	 *					Case.of((Integer input) -&gt; 10 == input, input -&gt; &quot;ignored&quot;),
+	 *					Case.of(input -&gt; 11 == input, input -&gt; &quot;world&quot;))
+	 *			.&lt;String&gt; matchFromStreamAsync(ForkJoinPool.commonPool(),Stream.of(1, 11, 10)).join().toList(); 
+     *  
+	 *	assertThat(results.size(), is(2));
+	 *	assertThat(results, hasItem(&quot;hello&quot;));
+	 *	assertThat(results, hasItem(&quot;world&quot;));
+	 * 
+	 * </pre>
+	 * 
+	 * @param executor executor Executor to execute task asynchronously
+	 * @param s Stream of data
+	 * @return Results
+	 */
+	public <R> CompletableFuture<Seq<R>> matchFromStreamAsync(Executor executor, Stream<T> s){
 		return CompletableFuture.supplyAsync(()->matchFromStream(s), executor);
 	}
 	
 	public <R> Optional<R> match(Object... t) {
-		return match(Arrays.asList(t));
+		return match((T)Arrays.asList(t));
 	}
 	public <R> CompletableFuture<Optional<R>> matchAsync(Executor executor, Object... t){
 		return CompletableFuture.supplyAsync(()->match(t), executor);
 	}
 	public <R> Optional<R> unapply(Decomposable t) {
-		return match(t.unapply());
+		return match((T)t.unapply());
 	}
 
 	/**
