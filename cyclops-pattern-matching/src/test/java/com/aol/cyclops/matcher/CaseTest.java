@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -18,9 +19,11 @@ import com.aol.cyclops.matcher.PatternMatcher.ActionWithReturn;
 
 public class CaseTest {
 	Case<Integer,Integer,Function<Integer,Integer>> case1;
+	Case<Integer,Integer,Function<Integer,Integer>> offCase;
 	@Before
 	public void setup(){
 		case1 =Case.of(input->true,input->input+10);
+		offCase = case1.mapPredicate(p-> p.negate());
 	}
 	
 	@Test
@@ -98,4 +101,38 @@ public class CaseTest {
 		assertThat(case1.flatMap(tuple2 -> Case.of(tuple2.v1,(Integer input)->input+20)).match(100).get(),is(120));
 	}
 	
+	@Test
+	public void andThen(){
+		assertThat(case1.andThen(Case.of(input->true,input->input*2)).match(100).get(),is(220));
+	}
+	@Test
+	public void compose(){
+		assertThat(case1.compose(Case.of((Integer input)->true,input->input*2)).match(100).get(),is(210));
+	}
+	@Test
+	public void composeOr(){
+		assertThat(case1.composeOr(Case.of((Integer input)->false,input->input*2)).match(100).get(),is(210));
+	}
+	@Test
+	public void orFunction(){
+		assertThat(case1.or((Integer input)->false,input->input*2).match(100).get(),is(210));
+	}
+	@Test
+	public void composeFunction(){
+		assertThat(case1.composeFunction((Integer input)->input*2).match(100).get(),is(210));
+	}
+	
+	@Test
+	public void andThenFunction(){
+		assertThat(case1.andThenFunction(input->input*2).match(100).get(),is(220));
+	}
+	
+	@Test
+	public void or(){
+		assertThat(offCase.or(t->true).match(100).get(),is(110));
+	}
+	@Test
+	public void matchAsync(){
+		assertThat(offCase.or(t->true).matchAsync(ForkJoinPool.commonPool(),100).join().get(),is(110));
+	}
 }

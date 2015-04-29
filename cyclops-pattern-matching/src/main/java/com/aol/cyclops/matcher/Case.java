@@ -1,5 +1,8 @@
 package com.aol.cyclops.matcher;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -162,10 +165,37 @@ public interface Case<T,R,X extends Function<T,R>> {
 	}
 	
 	
+	/**
+	 * Provide a Case that will be run only if this one matches successfully
+	 * The result of the current case will be the input into the supplied case
+	 * Both cases have to be successful to return a result from match
+	 * 
+	 * <pre>
+	 * case1 =Case.of(input-&gt;false,input-&gt;input+10);
+	 * assertThat(case1.andThen(Case.of(input-&gt;true,input-&gt;input+1)).match(100).get(),is(111));
+	 * </pre>
+	 * 
+	 * @param after Case that will be run after this one, if it matches successfully
+	 * @return New Case which chains current case and the supplied one
+	 */
 	default  Case<T,T,Function<T,T>> andThen(Case<R,T,? extends Function<R,T>> after){
 		return after.compose(this);
 	}
 	
+	/**
+	 * Provide a Case that will be executed before the current one. The current case will only be attempted
+	 * if the supplied case matches.
+	 * 
+	 * <pre>
+	 *  case1 =Case.of(input-&gt;false,input-&gt;input+10);
+	 * assertThat(case1.compose(Case.of((Integer input)->true,input->input*2)).match(100).get(),is(210))
+	 * </pre>
+	 * 
+	 * (100*2)+10=210
+	 * 
+	 * @param before Case to be run before this one
+	 * @return New Case which chains the supplied case and the current one
+	 */
 	default <T1> Case<T1,R,Function<T1,R>> compose(Case<T1,T,? extends Function<T1,T>> before){
 		
 		final Object[] array = {null};
@@ -182,6 +212,19 @@ public interface Case<T,R,X extends Function<T,R>> {
 		return Case.<T1,R,Function<T1,R>>of(predicate,  input -> getPattern().v2.apply((T)array[0]));
 		
 	}
+	/**
+	 * Provide a Case that will be executed before the current one. The function from the supplied Case will be executed
+	 * first and it;s output will be provided to the function of the current case - if either predicate holds.
+	 * 
+	 * <pre>
+	 * case1 =Case.of(input-&gt;false,input-&gt;input+10);
+	 * assertThat(case1.composeOr(Case.of((Integer input)-&gt;false,input-&gt;input*2)).match(100).get(),is(210));
+	 * </pre>
+	 * 
+	 * 
+	 * @param before Case to be run before this one
+	 * @return New Case which chains the supplied case and the current one
+	 */
 	default <T1 > Case<T1,R,Function<T1,R>> composeOr(Case<T1,T,? extends Function<T1,T>> before){
 		
 		
@@ -189,16 +232,71 @@ public interface Case<T,R,X extends Function<T,R>> {
 				input -> getPattern().v2.apply(before.getPattern().v2.apply(input)));
 		
 	}
+	/**
+	 * Creates a new Case that will execute the supplied function before current function if current predicate holds.
+	 * The output of this function will be provided to the function in the current case.
+	 * 
+	 * <pre>
+	 * case1 =Case.of(input-&amp;gt;false,input-&amp;gt;input+10);
+	 * assertThat(case1.composeFunction((Integer input)-&gt;input*2).match(100).get(),is(210));
+	 * </pre>
+	 * 
+	 * 
+	 * @param before Function to execute before current function
+	 * @return New case which chains the supplied function before the current function
+	 */
 	default <T1> Case<T1,R,Function<T1,R>> composeFunction(Function<T1,T> before){
 		return this.compose(Case.<T1,T,Function<T1,T>>of(t->true,before));
 	}
+	/**
+	 * Creates a new Case that will execute the supplied function after current function if current predicate holds.
+	 * The output of the current function will be provided as input to the supplied function.
+	 * 
+	 * <pre>
+	 * case1 =Case.of(input-&amp;gt;false,input-&amp;gt;input+10);
+	 * assertThat(case1.andThenFunction(input-&gt;input*2).match(100).get(),is(220));
+	 * </pre>
+	 * 
+	 * @param after Function to execute after the current function
+	 * @return New case which chains the supplied function after the current function
+	 */
 	default  Case<T,T,Function<T,T>> andThenFunction(Function<R,T>  after){
 		return this.andThen(Case.<R,T,Function<R,T>>of(r->true,after));
 	}
+	/**
+	 * Create a new Case that will loosen the current predicate.
+	 * Either predicate can hold in order for the Case to pass.
+	 * 
+	 * <pre>
+	 * case1 =Case.of(input-&gt;true,input-&gt;input+10);
+ 	 * offCase = case1.mapPredicate(p-&gt; p.negate());
+ 	 * assertThat(offCase.or(t-&gt;true).match(100).get(),is(110));
+	 * </pre>
+	 * 
+	 * 
+	 * @param or Predicate that will be or'd with the current predicate
+	 * @return New Case where the predicate is the supplied predicate or the current predicate.
+	 */
 	default Case<T,R,Function<T,R>> or(Predicate<T> or){
 		return composeOr(Case.of(or,Function.identity()));
 		
 	}
+	/**
+	 * Syntax sugar for composeOr
+	 * @see #composeOr
+	 * 
+	 * Provide a Case that will be executed before the current one. The function from the supplied Case will be executed
+	 * first and it;s output will be provided to the function of the current case - if either predicate holds.
+	 * 
+	 * <pre>
+	 * case1 =Case.of(input-&gt;false,input-&gt;input+10);
+	 * assertThat(case1.composeOr(Case.of((Integer input)-&gt;false,input-&gt;input*2)).match(100).get(),is(210));
+	 * </pre>
+	 * 
+	 * @param or Predicate for  before case
+	 * @param fn Function for before case
+	 * @return New Case which chains the supplied case and the current one
+	 */
 	default<T1> Case<T1,R,Function<T1,R>> or(Predicate<T1> or, Function<T1,T> fn){
 		return composeOr(Case.of(or,fn));
 		
@@ -247,25 +345,69 @@ public interface Case<T,R,X extends Function<T,R>> {
 	default  <T1> Case<T1,R,Function<T1,R>>  composeAnd(Predicate<T1> and, Function<T1,T> before){
 		return compose(Case.of(and,before));
 	}
+	/**
+	 * @return true if this not an EmptyCase
+	 */
 	default boolean isNotEmpty(){
 		return !this.isEmpty();
 	}
+	/**
+	 * Match against the supplied value.
+	 * Value will be passed into the current predicate
+	 * If it passes / holds, value will be passed to the current function.
+	 * The result of function application will be returned wrapped in an Optional.
+	 * If the predicate does not hold, Optional.empty() is returned.
+	 * 
+	 * @param value To match against
+	 * @return Optional.empty if doesn't match, result of the application of current function if it does wrapped in an Optional
+	 */
 	default Optional<R> match(T value){
 		if(getPattern().v1.test(value))
 			return Optional.of(getPattern().v2.apply(value));
 		return Optional.empty();
 	}
+	/**
+	 * Similar to Match, but executed asynchonously on supplied Executor.
+	 * 
+	 * @see #match
+     *
+	 * Match against the supplied value.
+	 * Value will be passed into the current predicate
+	 * If it passes / holds, value will be passed to the current function.
+	 * The result of function application will be returned wrapped in an Optional.
+	 * If the predicate does not hold, Optional.empty() is returned.
+     *
+	 * @param executor Executor to execute matching on
+	 * @param value Value to match against
+	 * @return A CompletableFuture that will eventual contain an Optional.empty if doesn't match, result of the application of current function if it does
+	 */
 	default CompletableFuture<Optional<R>> matchAsync(Executor executor, T value){
 		return CompletableFuture.supplyAsync(()->match(value),executor);
 	}
+	/**
+	 * Construct an instance of Case from supplied predicate and action
+	 * 
+	 * @param predicate That will be used to match
+	 * @param action Function that is executed on succesful match
+	 * @return New Case instance
+	 */
 	public static <T,R,X extends Function<T,R>> Case<T,R,X> of(Predicate<T> predicate,X action){
 		return new ActiveCase<T,R,X>(Tuple.tuple(predicate,action));
 	}
+	/**
+	 *  Construct an instance of Case from supplied Tuple of predicate and action
+	 * 
+	 * @param pattern containing the predicate that will be used to match  and the function that is executed on succesful match
+	 * @return New Case instance
+	 */
 	public static <T,R,X extends Function<T,R>> Case<T,R,X> of(Tuple2<Predicate<T>,X> pattern){
 		return new ActiveCase<>(pattern);
 	}
 	
-	public static final Case empty = new EmptyCase();//Tuple.<Predicate,Function>tuple(t->false,input->input),true);
+	public static final Case empty = new EmptyCase();
+	/**
+	 * @return EmptyCase
+	 */
 	public static <T,R,X extends Function<T,R>> Case<T,R,X> empty(){
 		return empty;
 	}
