@@ -33,7 +33,7 @@ public class AggregatedCase<X> extends Case{
 	
 	
 	public  <T,R> MatchingInstance<T,R> isType(ActionWithReturn<T,R> a){
-		;
+		
 		return new MatchingInstance<>(this.withPatternMatcher(patternMatcher.inCaseOfType(a)));
 		
 	}
