@@ -1,9 +1,14 @@
 package com.aol.cyclops.matcher;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -18,6 +23,8 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
+
+import com.aol.cyclops.matcher.CasesTest.MyClass;
 
 /**
  * Represents an ordered list of pattern matching cases.
@@ -503,12 +510,54 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 		return CompletableFuture.supplyAsync(()->matchFromStream(s), executor);
 	}
 	
+	/**
+	 * Aggregates supplied objects into a List for matching against
+	 * 
+	 * <pre>
+ 	 * assertThat(Cases.of(Case.of((List&lt;Integer&gt; input) -&gt; input.size()==3, input -&gt; &quot;hello&quot;),
+	 *			Case.of((List&lt;Integer&gt; input) -&gt; input.size()==2, input -&gt; &quot;ignored&quot;),
+	 *			Case.of((List&lt;Integer&gt; input) -&gt; input.size()==1, input -&gt; &quot;world&quot;)).match(1,2,3).get(),is(&quot;hello&quot;));
+     *
+	 * </pre>
+	 * 
+	 * @param t Array to match on
+	 * @return Matched value wrapped in Optional
+	 */
 	public <R> Optional<R> match(Object... t) {
 		return match((T)Arrays.asList(t));
 	}
+	/**
+	 * Aggregates supplied objects into a List for matching asynchronously against
+	 * 
+	 * <pre>
+	 * assertThat(Cases.of(Case.of((List&lt;Integer&gt; input) -&gt; input.size()==3, input -&gt; &quot;hello&quot;),
+	 *			Case.of((List&lt;Integer&gt; input) -&gt; input.size()==2, input -&gt; &quot;ignored&quot;),
+	 *			Case.of((List&lt;Integer&gt; input) -&gt; input.size()==1, input -&gt; &quot;world&quot;))
+	 *			.matchAsync(ForkJoinPool.commonPool(),1,2,3).join().get(),is(&quot;hello&quot;));	 
+	 *
+	 * </pre>
+	 * @param executor Executor to perform the async task
+	 * @param t Array to match on
+	 * @return Matched value wrapped in CompletableFuture & Optional
+	 */
 	public <R> CompletableFuture<Optional<R>> matchAsync(Executor executor, Object... t){
 		return CompletableFuture.supplyAsync(()->match(t), executor);
 	}
+	/**
+	 * Decomposes the supplied input via it's unapply method
+	 * Provides a List to the Matcher of values to match on
+	 * 
+	 * <pre>
+	 * assertThat(Cases.of(Case.of((List input) -&gt; input.size()==3, input -&gt; &quot;hello&quot;),
+	 *			Case.of((List input) -&gt; input.size()==2, input -&gt; &quot;ignored&quot;),
+	 *			Case.of((List input) -&gt; input.size()==1, input -&gt; &quot;world&quot;))
+	 *			.unapply(new MyClass(1,&quot;hello&quot;)).get(),is(&quot;ignored&quot;));
+	 *					
+	 *	@Value static class MyClass implements Decomposable{ int value; String name; }		
+	 * </pre>
+	 * @param t Object to decompose and match on
+	 * @return Matched result wrapped in an Optional
+	 */
 	public <R> Optional<R> unapply(Decomposable t) {
 		return match((T)t.unapply());
 	}

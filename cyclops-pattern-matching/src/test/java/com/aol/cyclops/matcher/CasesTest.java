@@ -1,13 +1,14 @@
 package com.aol.cyclops.matcher;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
@@ -15,6 +16,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import lombok.AllArgsConstructor;
 import lombok.val;
 
 import org.junit.Test;
@@ -254,32 +256,35 @@ public class CasesTest {
 
 	@Test
 	public void testMatchObjectArray() {
-		fail("Not yet implemented");
+		assertThat(Cases.of(Case.of((List<Integer> input) -> input.size()==3, input -> "hello"),
+				Case.of((List<Integer> input) -> input.size()==2, input -> "ignored"),
+				Case.of((List<Integer> input) -> input.size()==1, input -> "world")).match(1,2,3).get(),is("hello"));
 	}
 
 	@Test
 	public void testMatchAsync() {
-		fail("Not yet implemented");
+		assertThat(Cases.of(Case.of((List<Integer> input) -> input.size()==3, input -> "hello"),
+				Case.of((List<Integer> input) -> input.size()==2, input -> "ignored"),
+				Case.of((List<Integer> input) -> input.size()==1, input -> "world"))
+				.matchAsync(ForkJoinPool.commonPool(),1,2,3).join().get(),is("hello"));
+
 	}
 
 	@Test
 	public void testUnapply() {
-		fail("Not yet implemented");
+		assertThat(Cases.of(Case.of((List input) -> input.size()==3, input -> "hello"),
+				Case.of((List input) -> input.size()==2, input -> "ignored"),
+				Case.of((List input) -> input.size()==1, input -> "world"))
+				.unapply(new MyClass(1,"hello")).get(),is("ignored"));
 	}
+	@AllArgsConstructor
+	static class MyClass implements Decomposable{
+		int value;
+		String name;
+	}
+	
 
-	@Test
-	public void testMatchT() {
-		fail("Not yet implemented");
-	}
 
-	@Test
-	public void testWithCases() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testCasesPStackOfCaseOfTRXBoolean() {
-		fail("Not yet implemented");
-	}
+	
 
 }
