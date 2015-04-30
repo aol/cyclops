@@ -2,7 +2,6 @@ package com.aol.cyclops.matcher.builders;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -10,16 +9,14 @@ import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.val;
 import lombok.experimental.Wither;
 
 import org.hamcrest.Matcher;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 
-import com.aol.cyclops.matcher.PatternMatcher;
-import com.aol.cyclops.matcher.PatternMatcher.ActionWithReturn;
-import com.aol.cyclops.matcher.PatternMatcher.Extractor;
+import com.aol.cyclops.matcher.ActionWithReturn;
+import com.aol.cyclops.matcher.Extractor;
 import com.aol.cyclops.matcher.Predicates;
 import com.aol.cyclops.matcher.builders.CaseBuilder.InCaseOfManyStep2;
 import com.aol.cyclops.matcher.builders.CaseBuilder.InMatchOfManyStep2;

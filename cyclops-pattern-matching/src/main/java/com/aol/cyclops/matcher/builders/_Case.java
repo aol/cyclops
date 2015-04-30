@@ -1,11 +1,7 @@
 package com.aol.cyclops.matcher.builders;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
-
-import org.hamcrest.Matcher;
-import org.jooq.lambda.Seq;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -13,8 +9,10 @@ import lombok.Getter;
 import lombok.val;
 import lombok.experimental.Wither;
 
-import com.aol.cyclops.matcher.PatternMatcher;
-import com.aol.cyclops.matcher.PatternMatcher.ActionWithReturn;
+import org.jooq.lambda.Seq;
+
+import com.aol.cyclops.matcher.ActionWithReturn;
+import com.aol.cyclops.matcher.Predicates;
 
 
 /**

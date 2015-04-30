@@ -12,8 +12,13 @@ import lombok.experimental.Wither;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.matcher.ChainOfResponsibility;
-import com.aol.cyclops.matcher.PatternMatcher;
 
+/**
+ * Case Builder for building Cases from Stream data
+ * 
+ * @author johnmcclean
+ *
+ */
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
 public class StreamCase extends Case{
 	
@@ -21,16 +26,31 @@ public class StreamCase extends Case{
 	@Wither(AccessLevel.PACKAGE)
 	private final PatternMatcher patternMatcher;
 	
-
-	/** core api **/
-	
-	
 	/**Select matching / passing elements from Stream **/
 	
+	/**
+	 * Build a 'Stream of responsibility' pattern 
+	 * Stream of responsibility equivalent to ChainOfResponsibility pattern
+	 * ChainOfResponsibility interface includes a Predicate and an Action - each will be used to build a case 
+	 * 
+	 * @param stream Each member of this Stream will result in one additional Case
+	 * @return Pattern Matcher Builder with additional new Cases per Stream element added.
+	 */
 	public  <R,V,T,X> MatchingInstance<T,X> streamOfResponsibility(Stream<? extends ChainOfResponsibility<V,X>> stream){
 		return addCase(patternMatcher.selectFromChain(stream));
 	}
-	public  <R,V,T,X> MatchingInstance<T,X> selectPassingAndApplyFrom(Stream<Tuple2<Predicate<V>,Function<V,X>>> stream){
+	
+	
+	
+	/**
+	 * Build a 'Stream of responsibility' pattern 
+	 * Stream of responsibility equivalent to ChainOfResponsibility pattern
+	 * Tuple includes a Predicate and an Action  (Function) - each will be used to build a case 
+	 * 
+	 * @param stream  Each member of this Stream will result in one additional Case
+	 * @return Pattern Matcher Builder with additional new Cases per Stream element added.
+	 */
+	public  <R,V,T,X> MatchingInstance<T,X> streamOfResponsibilityFromTuple(Stream<Tuple2<Predicate<V>,Function<V,X>>> stream){
 		
 		return addCase(patternMatcher.selectFrom(stream));
 	}

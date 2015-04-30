@@ -2,13 +2,21 @@
 
 Super charge your JDK with one view into the functional Java world with
 
+## cyclops-pattern-matching :
+
+Advanced Scala-like pattern matching for Java 8
+
+* Sequential, Parallel and Async execution
+* Match by type, value, predicate or Hamcrest Matcher
+* Recursively decompose and match against Case classes
+* Fluent step builders for common cases
+* Fluent, functionally compositional monad-like core Case and Cases classes 
+
 ## cyclops-converters :
  
 Converts types between JDK 8, TotallyLazy, Functional Java, Javaslang, jooλ, Guava,simple-react
 
-## cyclops-pattern-matching :
 
-Advanced Scala-like pattern matching for Java 8
 
 ## cyclops-converters 
 

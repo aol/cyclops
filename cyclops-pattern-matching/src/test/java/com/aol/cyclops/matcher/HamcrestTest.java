@@ -1,7 +1,11 @@
 package com.aol.cyclops.matcher;
 
 import static com.aol.cyclops.matcher.Extractors.get;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -12,6 +16,7 @@ import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import com.aol.cyclops.matcher.builders.Matching;
+import com.aol.cyclops.matcher.builders.PatternMatcher;
 
 public class HamcrestTest {
 

@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.aol.cyclops.matcher.builders.PatternMatcher;
 import com.google.common.collect.ImmutableList;
 
 public class RunPatternMatcherTest {

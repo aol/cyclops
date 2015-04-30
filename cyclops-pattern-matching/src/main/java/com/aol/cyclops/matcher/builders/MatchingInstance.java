@@ -1,16 +1,14 @@
 package com.aol.cyclops.matcher.builders;
 
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 
+import com.aol.cyclops.matcher.ActionWithReturn;
 import com.aol.cyclops.matcher.Cases;
 import com.aol.cyclops.matcher.Decomposable;
-import com.aol.cyclops.matcher.PatternMatcher;
-import com.aol.cyclops.matcher.PatternMatcher.ActionWithReturn;
 /**
  * 
  * Pattern Matching builder instance

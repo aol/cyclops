@@ -21,7 +21,7 @@ public class SelectFromTest {
 	public void selectFrom(){
 		Stream<Tuple2<Predicate<Integer>,Function<Integer,Integer>>> chain = Stream.of(tuple(it->it>10,it->it*100),
 				tuple(it->it<10,it->it*100));
-		int result = Matching.streamCase().selectPassingAndApplyFrom(chain).match(5).get();
+		int result = Matching.streamCase().streamOfResponsibilityFromTuple(chain).match(5).get();
 		
 		assertThat(result,is(500));
 	}

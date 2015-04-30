@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.matcher.builders.Matching;
+import com.aol.cyclops.matcher.builders.PatternMatcher;
 
 
 public class MatchManyTest {

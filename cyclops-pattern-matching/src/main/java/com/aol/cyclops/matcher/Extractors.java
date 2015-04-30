@@ -1,7 +1,7 @@
 package com.aol.cyclops.matcher;
+
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +30,7 @@ import org.jooq.lambda.tuple.Tuple8;
 public class Extractors {
 	
 	private static final Object NOT_SET = new Object();
-	public static final <T,R > PatternMatcher.Extractor<T,R> memoised( PatternMatcher.Extractor<T,R> extractor){
+	public static final <T,R > Extractor<T,R> memoised( Extractor<T,R> extractor){
 		Object[] value = {NOT_SET};
 		return input -> {
 				if(value[0]==NOT_SET )
@@ -39,7 +39,7 @@ public class Extractors {
 		};
 		
 	}
-	public static final <T,R> PatternMatcher.Extractor<T,R> decompose() {
+	public static final <T,R> Extractor<T,R> decompose() {
 		return input -> {
 			if(input instanceof  Decomposable)
 				return (R)((Decomposable)input).unapply();
@@ -54,7 +54,7 @@ public class Extractors {
 	 * @param v2 position of the second element to extract
 	 * @return Tuple with 2 specified elements
 	 */
-	public final static <V1,V2> PatternMatcher.Extractor<Iterable,Tuple2<V1,V2>> of(int v1,int v2){
+	public final static <V1,V2> Extractor<Iterable,Tuple2<V1,V2>> of(int v1,int v2){
 		val l1 = new Long(v1);
 		val l2 = new Long(v2);
 		return  ( Iterable it)-> {
@@ -75,9 +75,9 @@ public class Extractors {
 	 * @param pos Position to extract
 	 * @return value
 	 */
-	public final static <R> PatternMatcher.Extractor<?,R> first(){
+	public final static <R> Extractor<?,R> first(){
 	
-		PatternMatcher.Extractor<Object,R> result =  ( item)-> {
+		Extractor<Object,R> result =  ( item)-> {
 			if(item instanceof Iterable)
 				return (R)((Iterable)item).iterator().next();
 			return (R)item;
@@ -91,7 +91,7 @@ public class Extractors {
 	 * @param pos Position to extract
 	 * @return value
 	 */
-	public final static <R> PatternMatcher.Extractor<Iterable<R>,R> at(int pos){
+	public final static <R> Extractor<Iterable<R>,R> at(int pos){
 	
 		return  ( Iterable<R> it)-> {
 			return StreamSupport.stream(spliteratorUnknownSize(it.iterator(), ORDERED), false).skip(pos).limit(1).findFirst().get();
@@ -106,7 +106,7 @@ public class Extractors {
 	 * @param pos Position to extract element from
 	 * @return Value at position
 	 */
-	public final static <R> PatternMatcher.Extractor<List<R>,R> get(int pos){
+	public final static <R> Extractor<List<R>,R> get(int pos){
 		return (List<R> c) ->{
 			return c.get(pos);
 		};
@@ -116,60 +116,60 @@ public class Extractors {
 	 * @param key Look up a value from a map
 	 * @return Value for key specified
 	 */
-	public final static <K,R> PatternMatcher.Extractor<Map<K,R>,R> get(K key){
+	public final static <K,R> Extractor<Map<K,R>,R> get(K key){
 		return (Map<K,R> c) ->{
 			return c.get(key);
 		};
 		
 	}
 	
-	public final static <R>  PatternMatcher.Extractor<R,R> same(){
+	public final static <R>  Extractor<R,R> same(){
 		return (R c) -> c;
 	}
 	
-	public final static <V1,V2> PatternMatcher.Extractor<Iterable,Tuple2<V1,V2>> toTuple2(){
+	public final static <V1,V2> Extractor<Iterable,Tuple2<V1,V2>> toTuple2(){
 		return  ( Iterable itable)-> {
 			Iterator it = itable.iterator();
 			return new Tuple2(it.next(),it.next());
 		};
 		
 	}
-	public final static <V1,V2,V3> PatternMatcher.Extractor<Iterable,Tuple3<V1,V2,V3>> toTuple3(){
+	public final static <V1,V2,V3> Extractor<Iterable,Tuple3<V1,V2,V3>> toTuple3(){
 		return  ( Iterable itable)-> {
 			Iterator it = itable.iterator();
 			return new Tuple3(it.next(),it.next(),it.next());
 		};
 		
 	}
-	public final static <V1,V2,V3,V4> PatternMatcher.Extractor<Iterable,Tuple4<V1,V2,V3,V4>> toTuple4(){
+	public final static <V1,V2,V3,V4> Extractor<Iterable,Tuple4<V1,V2,V3,V4>> toTuple4(){
 		return  ( Iterable itable)-> {
 			Iterator it = itable.iterator();
 			return new Tuple4(it.next(),it.next(),it.next(),it.next());
 		};
 		
 	}
-	public final static <V1,V2,V3,V4,V5> PatternMatcher.Extractor<Iterable,Tuple5<V1,V2,V3,V4,V5>> toTuple5(){
+	public final static <V1,V2,V3,V4,V5> Extractor<Iterable,Tuple5<V1,V2,V3,V4,V5>> toTuple5(){
 		return  ( Iterable itable)-> {
 			Iterator it = itable.iterator();
 			return new Tuple5(it.next(),it.next(),it.next(),it.next(),it.next());
 		};
 		
 	}
-	public final static <V1,V2,V3,V4,V5,V6> PatternMatcher.Extractor<Iterable,Tuple6<V1,V2,V3,V4,V5,V6>> toTuple6(){
+	public final static <V1,V2,V3,V4,V5,V6> Extractor<Iterable,Tuple6<V1,V2,V3,V4,V5,V6>> toTuple6(){
 		return  ( Iterable itable)-> {
 			Iterator it = itable.iterator();
 			return new Tuple6(it.next(),it.next(),it.next(),it.next(),it.next(),it.next());
 		};
 		
 	}
-	public final static <V1,V2,V3,V4,V5,V6,V7> PatternMatcher.Extractor<Iterable,Tuple7<V1,V2,V3,V4,V5,V6,V7>> toTuple7(){
+	public final static <V1,V2,V3,V4,V5,V6,V7> Extractor<Iterable,Tuple7<V1,V2,V3,V4,V5,V6,V7>> toTuple7(){
 		return  ( Iterable itable)-> {
 			Iterator it = itable.iterator();
 			return new Tuple7(it.next(),it.next(),it.next(),it.next(),it.next(),it.next(),it.next());
 		};
 		
 	}
-	public final static <V1,V2,V3,V4,V5,V6,V7,V8> PatternMatcher.Extractor<Iterable,Tuple8<V1,V2,V3,V4,V5,V6,V7,V8>> toTuple8(){
+	public final static <V1,V2,V3,V4,V5,V6,V7,V8> Extractor<Iterable,Tuple8<V1,V2,V3,V4,V5,V6,V7,V8>> toTuple8(){
 		return  ( Iterable itable)-> {
 			Iterator it = itable.iterator();
 			return new Tuple8(it.next(),it.next(),it.next(),it.next(),it.next(),it.next(),it.next(),it.next());

@@ -4,12 +4,11 @@ import static com.aol.cyclops.matcher.Extractors.at;
 
 import java.io.FileNotFoundException;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import org.junit.Test;
 
-import com.aol.cyclops.matcher.builders.ElementCase;
 import com.aol.cyclops.matcher.builders.Matching;
+import com.aol.cyclops.matcher.builders.PatternMatcher;
 import com.google.common.collect.ImmutableList;
 
 

@@ -1,14 +1,12 @@
-package com.aol.cyclops.matcher;
+package com.aol.cyclops.matcher.builders;
 
-import static com.aol.cyclops.matcher.SeqUtils.seq;
+import static com.aol.cyclops.matcher.builders.SeqUtils.seq;
 
-import java.io.Serializable;
 import java.lang.invoke.MethodType;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -25,10 +23,21 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
+import com.aol.cyclops.matcher.Action;
+import com.aol.cyclops.matcher.ActionWithReturn;
+import com.aol.cyclops.matcher.Case;
+import com.aol.cyclops.matcher.Cases;
+import com.aol.cyclops.matcher.ChainOfResponsibility;
+import com.aol.cyclops.matcher.Decomposable;
+import com.aol.cyclops.matcher.Extractor;
+import com.aol.cyclops.matcher.Extractors;
+
 
 
 /**
  * PatternMatcher supports advanced pattern matching for Java 8
+ * 
+ * This API allows new type definitions to be supplied for each Case
  * 
  * Features include
  * 
@@ -63,7 +72,7 @@ public class PatternMatcher implements Function{
 	private final Cases cases;
 	
 	public PatternMatcher(){
-		cases = new Cases();
+		cases = Cases.of();
 	}
 
 	public <T,X> Function<T,X> asUnwrappedFunction(){
@@ -531,12 +540,7 @@ public class PatternMatcher implements Function{
 
 
 
-	public static interface Extractor<T,R> extends Function<T,R>, Serializable {
-		public R apply(T t);
-		default MethodType getType(){
-			return LambdaTypeExtractor.extractType(this);
-		}
-	}
+	
 	private final static Object NO_VALUE = new Object();
 	public static class ActionWithReturnWrapper<T,X> implements ActionWithReturn<T,X>{
 		private final Action<T> action;
@@ -550,20 +554,8 @@ public class PatternMatcher implements Function{
 		}
 	}
 	
-	public static interface ActionWithReturn<T,X> extends Function<T,X>, Serializable {
-		public X apply(T t);
-		default MethodType getType(){
-			return LambdaTypeExtractor.extractType(this);
-		}
-	}
-	public static interface Action<T> extends Consumer<T>, Serializable {
-		
-		public void accept(T t);
-		
-		default MethodType getType(){
-			return LambdaTypeExtractor.extractType(this);
-		}
-	}
+	
+	
 	
 	
 	

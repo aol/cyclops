@@ -3,7 +3,6 @@ package com.aol.cyclops.matcher.builders;
 import java.util.function.Function;
 
 import com.aol.cyclops.matcher.Cases;
-import com.aol.cyclops.matcher.PatternMatcher;
 
 /**
  * Pattern Matching builder

@@ -19,7 +19,7 @@ import java.lang.reflect.Method;
  * @author johnmcclean
  *
  */
-public class LambdaTypeExtractor {
+class LambdaTypeExtractor {
 	private static final ExceptionSoftener softener = ExceptionSoftener.singleton.factory.getInstance();
 	
 	/**

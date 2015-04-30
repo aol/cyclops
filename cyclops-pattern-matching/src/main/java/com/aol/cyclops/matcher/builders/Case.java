@@ -5,8 +5,6 @@ import java.util.function.Predicate;
 
 import org.hamcrest.Matcher;
 
-import com.aol.cyclops.matcher.PatternMatcher;
-
 public abstract class Case {
 
 	abstract Case withPatternMatcher(PatternMatcher matcher);
@@ -16,8 +14,8 @@ public abstract class Case {
 			return (Predicate)o;
 		if(o instanceof Matcher)
 			return test -> ((Matcher)o).matches(test);
-		if(o instanceof With)
-			return ((With)o).toPredicate();
+		if(o instanceof ADTPredicateBuilder)
+			return ((ADTPredicateBuilder)o).toPredicate();
 			
 		return test -> Objects.equals(test,o);
 	}

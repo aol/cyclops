@@ -15,8 +15,6 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.matcher.PatternMatcher.ActionWithReturn;
-
 public class CaseTest {
 	Case<Integer,Integer,Function<Integer,Integer>> case1;
 	Case<Integer,Integer,Function<Integer,Integer>> offCase;

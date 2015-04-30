@@ -1,4 +1,4 @@
-package com.aol.cyclops.matcher;
+package com.aol.cyclops.matcher.builders;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
 
-public class SeqUtils {
+class SeqUtils {
 
 	public static Seq<Object> seq(Object t){
 		if(t instanceof Iterable){
