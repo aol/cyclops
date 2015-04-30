@@ -11,6 +11,15 @@ import com.aol.cyclops.matcher.Cases;
 import com.aol.cyclops.matcher.Decomposable;
 import com.aol.cyclops.matcher.PatternMatcher;
 import com.aol.cyclops.matcher.PatternMatcher.ActionWithReturn;
+/**
+ * 
+ * Pattern Matching builder instance
+ * 
+ * @author johnmcclean
+ *
+ * @param <T>
+ * @param <X>
+ */
 @AllArgsConstructor
 public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	
@@ -20,51 +29,142 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	public final Cases<T,X,ActionWithReturn<T,X>> cases(){
 		return this.cse.getPatternMatcher().getCases();
 	}
-	
-	
-	public final StreamCase streamCase(){
-		StreamCase cse = new StreamCase(this.cse.getPatternMatcher());
-		return cse;
-	}
-	public final ElementCase<X> newCase(){
-		ElementCase<X> cse = new ElementCase<X>(this.cse.getPatternMatcher());
-		return cse;
-	}
+	/**
+	 * Create a builder for Matching on Case classes. This is the closest builder
+	 * for Scala / ML style pattern matching.
+	 * 
+	 * Case classes can be constructed succintly in Java with Lombok or jADT
+	 * e.g.
+	 * <pre>
+	 * @Value final class CaseClass implements Decomposable { int field1; String field2;}
+	 * </pre>
+	 * 
+	 * Use with static imports from the Predicates class to get wildcards via '__' or ANY()
+	 * And to apply nested / recursive matching via Predicates.type(  ).with (   )
+	 * 
+	 * Match disaggregated elements by type, value, JDK 8 Predicate or Hamcrest Matcher
+	 * 
+	 * @return Case Class style Pattern Matching Builder
+	 */
 	public final _Case<X> _case(){
 		_Case cse = new _Case(this.cse.getPatternMatcher());
 		return cse;
 	}
+	/**
+	 * Create a builder for Matching against a provided Object as is (i.e. the Steps this builder provide assume you don't wish to disaggregate it and
+	 * match on it's decomposed parts separately).
+	 * 
+	 * Allows matching by type, value, JDK 8 Predicate, or Hamcrest Matcher
+	 * 
+	 * @return Simplex Element based Pattern Matching Builder
+	 */
+	public final ElementCase<X> newCase(){
+		ElementCase<X> cse = new ElementCase<X>(this.cse.getPatternMatcher());
+		return cse;
+	}
+	/**
+	 * Create a builder for matching on the disaggregated elements of a collection.
+	 * 
+	 * Allows matching by type, value, JDK 8 Predicate, or Hamcrest Matcher per element
+	 * 
+	 * @return Iterable / Collection based Pattern Matching Builder
+	 */
 	public final IterableCase<X> iterableCase(){
 		IterableCase cse = new IterableCase(this.cse.getPatternMatcher());
 		return cse;
 	}
+	/**
+	 * Create a builder that builds Pattern Matching Cases from Streams of data.
+	 * 
+	 * 
+	 * @return Stream based Pattern Matching Builder
+	 */
+	public final StreamCase streamCase(){
+		StreamCase cse = new StreamCase(this.cse.getPatternMatcher());
+		return cse;
+	}
 	
 	
-	public final MatchingInstance<T,X> streamCase(Consumer<Case> consumer){
-		StreamCase cse = new StreamCase(new PatternMatcher());
-		consumer.accept(cse);
-		return this;
-	}
-	public final MatchingInstance<T,X> newCase(Consumer<ElementCase<X>> consumer){
-		ElementCase<X> cse = new ElementCase<>(new PatternMatcher());
-		consumer.accept(cse);
-		return this;
-	}
-	public final MatchingInstance<T,X> _case(Consumer<_Case<X>> consumer){
+	
+	/**
+	 * Create a builder for Matching on Case classes. This is the closest builder
+	 * for Scala / ML style pattern matching.
+	 * 
+	 * Case classes can be constructed succintly in Java with Lombok or jADT
+	 * e.g.
+	 * <pre>
+	 * @Value final class CaseClass implements Decomposable { int field1; String field2;}
+	 * </pre>
+	 * 
+	 * Use with static imports from the Predicates class to get wildcards via '__' or ANY()
+	 * And to apply nested / recursive matching via Predicates.type(  ).with (   )
+	 * 
+	 * Match disaggregated elements by type, value, JDK 8 Predicate or Hamcrest Matcher
+
+	 * 
+	 * @param fn Function that accepts the Case for Case classes and returns the output of that builder
+	 * @return Pattern Matching Builder
+	 */
+	public final <X> MatchingInstance<? extends Object,X> _case(Function<_Case<? extends Object>,MatchingInstance<? extends Object,X>> fn){
 		_Case cse = new _Case(new PatternMatcher());
-		consumer.accept(cse);
-		return this;
-	}
-	public final MatchingInstance<T,X> iterableCase(Consumer<IterableCase<X>> consumer){
-		IterableCase cse = new IterableCase(new PatternMatcher());
-		consumer.accept(cse);
-		return this;
+		return fn.apply(cse);
+		
 	}
 	
+	/**
+     * Create a builder for Matching against a provided Object as is (i.e. the Steps this builder provide assume you don't wish to disaggregate it and
+	 * match on it's decomposed parts separately).
+	 * 
+	 * Allows matching by type, value, JDK 8 Predicate, or Hamcrest Matcher 
+	 * 
+	 * @param fn Function that accepts a Simplex Element based Pattern Matching Builder and returns it's output
+	 * @return Pattern Matching Builder
+	 */
+	public final<X> MatchingInstance<? extends Object,X> newCase(Function<ElementCase<X>,MatchingInstance<? extends Object,X>>fn){
+		ElementCase<X> cse = new ElementCase(new PatternMatcher());
+		return fn.apply(cse);
+		
+	}
+	
+	/**
+	 * Create a builder for matching on the disaggregated elements of a collection.
+	 * 
+	 * Allows matching by type, value, JDK 8 Predicate, or Hamcrest Matcher per element
+	 * 
+	 * @param fn a Function that accepts a Iterable / Collection based Pattern Matching Builder and returns it's output
+	 * @return Pattern Matching Builder
+	 */
+	public final<X> MatchingInstance<? extends Object,X> iterableCase(Function<IterableCase<? extends Object>,MatchingInstance<? extends Object,X>> fn){
+		IterableCase cse = new IterableCase(new PatternMatcher());
+		return fn.apply(cse);
+		
+	}
+	
+	
+	/**
+	 * Create a builder that builds Pattern Matching Cases from Streams of data.
+	 * 
+	 * @param fn a function that accepts a Stream based pattern matching builder
+	 * @return Pattern Matching Builder
+	 */
+	public final <T,X> MatchingInstance<T,X> streamCase(Function<Case,MatchingInstance<T,X>> fn){
+		StreamCase cse = new StreamCase(new PatternMatcher());
+		return fn.apply(cse);
+		
+	}
+	
+	/**
+	 * @return Pattern Matcher as function that will return the 'unwrapped' result when apply is called.
+	 *  i.e. Optional#get will be called.
+	 * 
+	 */
 	public Function<T,X> asUnwrappedFunction(){
 		return cse.getPatternMatcher().asUnwrappedFunction();
 	}
 	
+	/**
+	 * @return Pattern Matcher as a function that will return a Stream of results
+	 */
 	public Function<T,Stream<X>> asStreamFunction(){
 		
 		return	cse.getPatternMatcher().asStreamFunction();
@@ -107,6 +207,19 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 		
 		return cse.getPatternMatcher().matchFromStream(s);
 	}
+	/**
+	 * Aggregates supplied objects into a List for matching against
+	 * 
+	 * <pre>
+ 	 * assertThat(Cases.of(Case.of((List&lt;Integer&gt; input) -&gt; input.size()==3, input -&gt; &quot;hello&quot;),
+	 *			Case.of((List&lt;Integer&gt; input) -&gt; input.size()==2, input -&gt; &quot;ignored&quot;),
+	 *			Case.of((List&lt;Integer&gt; input) -&gt; input.size()==1, input -&gt; &quot;world&quot;)).match(1,2,3).get(),is(&quot;hello&quot;));
+     *
+	 * </pre>
+	 * 
+	 * @param t Array to match on
+	 * @return Matched value wrapped in Optional
+	 */
 	public  Optional<X> match(Object... t){
 		return cse.getPatternMatcher().match(t);
 	}
@@ -117,6 +230,12 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	public  Optional<X> match(Object t){
 		return cse.getPatternMatcher().match(t);
 	}
+	/**
+	 * Immediately decompose the supplied parameter and pass it to the PatternMatcher for matching
+	 * 
+	 * @param decomposableObject Object to match on after decomposed via unapply method
+	 * @return Matching result
+	 */
 	public Optional<X> unapply(Decomposable decomposableObject) {
 		return cse.getPatternMatcher().unapply(decomposableObject);
 	}

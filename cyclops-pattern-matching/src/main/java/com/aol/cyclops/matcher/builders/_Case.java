@@ -17,6 +17,13 @@ import com.aol.cyclops.matcher.PatternMatcher;
 import com.aol.cyclops.matcher.PatternMatcher.ActionWithReturn;
 
 
+/**
+ * Case builder for Algebraic Data Type or Case class matching
+ * 
+ * @author johnmcclean
+ *
+ * @param <X> Return type from the Pattern Matching expression
+ */
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 public class _Case<X> extends Case {
 	// T : user input (type provided to match)
@@ -27,6 +34,13 @@ public class _Case<X> extends Case {
 	@Wither(AccessLevel.PACKAGE)
 	private final PatternMatcher patternMatcher;
 
+	/**
+	 * Build a Case where we will check if user input matches the Type of the input params on the ActionWithReturn instance supplied
+	 * If it does, the ActionWithReturn will be executed (applied) to get the result of the Match.
+	 * 
+	 * @param a Action from which the Predicate (by param type) and Function will be extracted to build a Pattern Matching case
+	 * @return Next step in Case builder
+	 */
 	public <T, R> AndMembersMatchBuilder<T, R> isType(ActionWithReturn<T, R> a) {
 
 		return new AndMembersMatchBuilder<T, R>(a);
@@ -37,6 +51,17 @@ public class _Case<X> extends Case {
 	public class AndMembersMatchBuilder<T, R> {
 		ActionWithReturn<T, R> action;
 
+		/**
+		 * 
+		 * Provide a comparison value, JDK 8 Predicate, or Hamcrest Matcher  for each Element to match on.
+		 * 
+		 * Further & recursively unwrap any element by Predicates.type(ELEMENT_TYPE.class).with(V... values)
+		 * 
+		 * @see Predicates#type
+		 * 
+		 * @param values Matching rules for each element in the decomposed / unapplied user input
+		 * @return Pattern Matcher builder with completed Case added to it
+		 */
 		@SafeVarargs
 		public final <V> MatchingInstance<T, X> with(V... values) {
 			val type = action.getType();
