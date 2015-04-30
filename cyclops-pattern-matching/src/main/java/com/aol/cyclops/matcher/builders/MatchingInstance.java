@@ -26,16 +26,16 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 		StreamCase cse = new StreamCase(this.cse.getPatternMatcher());
 		return cse;
 	}
-	public final AggregatedCase<X> newCase(){
-		AggregatedCase<X> cse = new AggregatedCase<X>(this.cse.getPatternMatcher());
+	public final ElementCase<X> newCase(){
+		ElementCase<X> cse = new ElementCase<X>(this.cse.getPatternMatcher());
 		return cse;
 	}
 	public final _Case<X> _case(){
 		_Case cse = new _Case(this.cse.getPatternMatcher());
 		return cse;
 	}
-	public final AtomisedCase<X> atomisedCase(){
-		AtomisedCase cse = new AtomisedCase(this.cse.getPatternMatcher());
+	public final IterableCase<X> iterableCase(){
+		IterableCase cse = new IterableCase(this.cse.getPatternMatcher());
 		return cse;
 	}
 	
@@ -45,8 +45,8 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 		consumer.accept(cse);
 		return this;
 	}
-	public final MatchingInstance<T,X> newCase(Consumer<AggregatedCase<X>> consumer){
-		AggregatedCase<X> cse = new AggregatedCase<>(new PatternMatcher());
+	public final MatchingInstance<T,X> newCase(Consumer<ElementCase<X>> consumer){
+		ElementCase<X> cse = new ElementCase<>(new PatternMatcher());
 		consumer.accept(cse);
 		return this;
 	}
@@ -55,8 +55,8 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 		consumer.accept(cse);
 		return this;
 	}
-	public final MatchingInstance<T,X> atomisedCase(Consumer<AtomisedCase<X>> consumer){
-		AtomisedCase cse = new AtomisedCase(new PatternMatcher());
+	public final MatchingInstance<T,X> iterableCase(Consumer<IterableCase<X>> consumer){
+		IterableCase cse = new IterableCase(new PatternMatcher());
 		consumer.accept(cse);
 		return this;
 	}

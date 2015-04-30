@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 
 import org.junit.Test;
 
-import com.aol.cyclops.matcher.builders.AggregatedCase;
+import com.aol.cyclops.matcher.builders.ElementCase;
 import com.aol.cyclops.matcher.builders.Matching;
 import com.google.common.collect.ImmutableList;
 

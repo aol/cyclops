@@ -24,7 +24,7 @@ import com.aol.cyclops.matcher.Predicates;
 import com.aol.cyclops.matcher.builders.CaseBuilder.InCaseOfManyStep2;
 import com.aol.cyclops.matcher.builders.CaseBuilder.InMatchOfManyStep2;
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
-public class AtomisedCase<X> extends Case{
+public class IterableCase<X> extends Case{
 	// T : user input (type provided to match)
 	// X : match response (thenApply)
 	// R : extractor response
