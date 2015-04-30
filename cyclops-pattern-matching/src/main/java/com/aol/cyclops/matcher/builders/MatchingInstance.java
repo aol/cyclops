@@ -105,7 +105,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 * @param fn Function that accepts the Case for Case classes and returns the output of that builder
 	 * @return Pattern Matching Builder
 	 */
-	public final <X> MatchingInstance<? extends Object,X> _case(Function<_Case<? extends Object>,MatchingInstance<? extends Object,X>> fn){
+	public final MatchingInstance<? extends Object,X> _case(Function<_Case<? extends Object>,MatchingInstance<? extends Object,X>> fn){
 		_Case cse = new _Case(new PatternMatcher());
 		return fn.apply(cse);
 		
@@ -120,7 +120,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 * @param fn Function that accepts a Simplex Element based Pattern Matching Builder and returns it's output
 	 * @return Pattern Matching Builder
 	 */
-	public final<X> MatchingInstance<? extends Object,X> newCase(Function<ElementCase<X>,MatchingInstance<? extends Object,X>>fn){
+	public final MatchingInstance<? extends Object,X> newCase(Function<ElementCase<X>,MatchingInstance<? extends Object,X>>fn){
 		ElementCase<X> cse = new ElementCase(new PatternMatcher());
 		return fn.apply(cse);
 		
@@ -134,7 +134,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 * @param fn a Function that accepts a Iterable / Collection based Pattern Matching Builder and returns it's output
 	 * @return Pattern Matching Builder
 	 */
-	public final<X> MatchingInstance<? extends Object,X> iterableCase(Function<IterableCase<? extends Object>,MatchingInstance<? extends Object,X>> fn){
+	public final MatchingInstance<? extends Object,X> iterableCase(Function<IterableCase<? extends Object>,MatchingInstance<? extends Object,X>> fn){
 		IterableCase cse = new IterableCase(new PatternMatcher());
 		return fn.apply(cse);
 		
@@ -147,7 +147,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 * @param fn a function that accepts a Stream based pattern matching builder
 	 * @return Pattern Matching Builder
 	 */
-	public final <T,X> MatchingInstance<T,X> streamCase(Function<Case,MatchingInstance<T,X>> fn){
+	public final  MatchingInstance<T,X> streamCase(Function<Case,MatchingInstance<T,X>> fn){
 		StreamCase cse = new StreamCase(new PatternMatcher());
 		return fn.apply(cse);
 		
