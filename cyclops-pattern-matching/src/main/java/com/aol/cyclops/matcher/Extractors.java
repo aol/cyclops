@@ -2,15 +2,19 @@ package com.aol.cyclops.matcher;
 
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
+
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import lombok.val;
 
 import org.jooq.lambda.Seq;
+import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -30,6 +34,17 @@ import org.jooq.lambda.tuple.Tuple8;
 public class Extractors {
 	
 	private static final Object NOT_SET = new Object();
+	
+	private static final Map<Class,Function> decomposers= new HashMap<>();
+	
+	/**
+	 * Register decomposition function in standard hashmap
+	 * @param c
+	 * @param f
+	 */
+	public static final void registerDecompositionFunction(Class c, Function f){
+		decomposers.put(c, f);
+	}
 	public static final <T,R > Extractor<T,R> memoised( Extractor<T,R> extractor){
 		Object[] value = {NOT_SET};
 		return input -> {
@@ -43,7 +58,11 @@ public class Extractors {
 		return input -> {
 			if(input instanceof  Decomposable)
 				return (R)((Decomposable)input).unapply();
-			return (R)input;
+			else if(decomposers.get(input.getClass())!=null)
+				return (R)decomposers.get(input.getClass()).apply(input);
+			
+			return (R)ReflectionCache.getUnapplyMethod(input.getClass()).map(Unchecked.function(m->m.invoke(input))).orElse(input);
+			
 		};
 	}
 	/**

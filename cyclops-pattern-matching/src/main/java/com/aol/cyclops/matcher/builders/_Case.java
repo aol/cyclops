@@ -36,6 +36,14 @@ public class _Case<X> extends Case {
 	 * Build a Case where we will check if user input matches the Type of the input params on the ActionWithReturn instance supplied
 	 * If it does, the ActionWithReturn will be executed (applied) to get the result of the Match.
 	 * 
+	 * isType will attempt to match on the type of the supplied Case class. If it matches the Case class will be 'decomposed' via it's unapply method
+	 * and the Case will then attempt to match on each of the elements that make up the Case class. If the Case class implements Decomposable, that interface and it's
+	 * unapply method will be used. Otherwise in Extractors it is possible to register Decomposition Funcitons that will unapply Case classes from other sources (e.g.
+	 * javaslang, jADT or even Scala). If no Decomposition Function has been registered, reflection will be used to call an unapply method on the Case class if it exists.
+	 * 
+	 * @see com.aol.cyclops.matcher.Extractors#decompose
+	 * @see com.aol.cyclops.matcher.Extractors#registerDecompositionFunction
+	 * 
 	 * @param a Action from which the Predicate (by param type) and Function will be extracted to build a Pattern Matching case
 	 * @return Next step in Case builder
 	 */
