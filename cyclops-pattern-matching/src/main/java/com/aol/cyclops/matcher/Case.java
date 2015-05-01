@@ -1,17 +1,15 @@
 package com.aol.cyclops.matcher;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
+
+import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
 /**
  * An interface / trait for building functionally compositional pattern matching cases
  * 
@@ -186,7 +184,7 @@ public interface Case<T,R,X extends Function<T,R>> {
 	
 	default <T1>  Case<T,T1,Function<T,T1>> andThen(Cases<R,T1,? extends Function<R,T1>> after){
 		final ImmutableClosedValue<Optional<T1>> var = new ImmutableClosedValue<>();
-		return andThen(Case.of(t-> var.setOnce(after.match(t)).isPresent(),  t-> var.get().get()));
+		return andThen(Case.of(t-> var.setOnce(after.match(t)).get().isPresent(),  t-> var.get().get()));
 	}
 	
 	/**

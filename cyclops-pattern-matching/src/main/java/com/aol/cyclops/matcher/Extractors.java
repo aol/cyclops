@@ -24,6 +24,8 @@ import org.jooq.lambda.tuple.Tuple6;
 import org.jooq.lambda.tuple.Tuple7;
 import org.jooq.lambda.tuple.Tuple8;
 
+import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
+
 
 /**
  * Generic extractors for use s pre and post data extractors.
@@ -46,11 +48,10 @@ public class Extractors {
 		decomposers.put(c, f);
 	}
 	public static final <T,R > Extractor<T,R> memoised( Extractor<T,R> extractor){
-		Object[] value = {NOT_SET};
+		final ImmutableClosedValue<R> value = new ImmutableClosedValue<>();
 		return input -> {
-				if(value[0]==NOT_SET )
-					value[0]=extractor.apply(input);
-				return (R)value[0];
+			return value.getOrSet(()->extractor.apply(input));
+				
 		};
 		
 	}

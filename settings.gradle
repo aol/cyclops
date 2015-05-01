@@ -1,3 +1,4 @@
 rootProject.name = 'cyclops'
 include ':cyclops-pattern-matching'
 include ':cyclops-converters'
+include ':cyclops-lambda-utils'
