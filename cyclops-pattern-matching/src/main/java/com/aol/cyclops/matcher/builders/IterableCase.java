@@ -88,7 +88,7 @@ public class IterableCase<X> extends Case{
 	}
 	
 	@SafeVarargs
-	public  final <R,V,T,X> ExtractionStep<T,R,X> allHoldNoType(Object...predicates){
+	public  final <R,V,T> ExtractionStep<T,R,X> allHoldNoType(Object...predicates){
 		return allTrueNoType(convert(predicates));
 	}
 	

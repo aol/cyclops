@@ -18,10 +18,10 @@ public interface Decomposable{
 	/**
 	 * @return Values of the fields of this Decomposable instance
 	 */
-	default List<? extends Object> unapply(){
+	default <T extends Iterable<? extends Object>> T unapply(){
 
 		try {
-			return ReflectionCache.getField(this.getClass()).stream().map(f ->{
+			return (T)ReflectionCache.getField(this.getClass()).stream().map(f ->{
 				try {
 				
 					return f.get(this);
@@ -33,7 +33,7 @@ public interface Decomposable{
 		} catch (Exception e) {
 			ExceptionSoftener.singleton.factory.getInstance()
 					.throwSoftenedException(e);
-			return null;
+			return (T)null;
 		}
 		
 	}

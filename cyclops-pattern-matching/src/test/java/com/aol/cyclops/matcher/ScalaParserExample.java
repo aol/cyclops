@@ -2,25 +2,24 @@ package com.aol.cyclops.matcher;
 
 
 import static com.aol.cyclops.matcher.Predicates.ANY;
-import static com.aol.cyclops.matcher.Predicates.*;
+import static com.aol.cyclops.matcher.Predicates.__;
 import static com.aol.cyclops.matcher.Predicates.type;
+import static com.aol.cyclops.matcher.Predicates.with;
 
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
+import java.util.function.Function;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 
-import org.jooq.lambda.Seq;
-
+import com.aol.cyclops.matcher.ScalaParserExample.Mult;
 import com.aol.cyclops.matcher.builders.Matching;
 
 public class ScalaParserExample {
 
 	//http://kerflyn.wordpress.com/2011/02/14/playing-with-scalas-pattern-matching/
 	//See C# impl here :- https://github.com/dotnet/roslyn/issues/206
+	//paper : http://lampwww.epfl.ch/~emir/written/MatchingObjectsWithPatterns-TR.pdf
 	public Integer eval(Expression expression, int xValue){
 		
 		return Matching.newCase().isType( (X x)-> xValue)
@@ -47,8 +46,17 @@ public class ScalaParserExample {
 	
 	Expression simplify(Expression e)
 	{
+	//	Cases allMultCases =Cases.of(Case.of(input-> input instanceof Mult),Function.identity()).map(caze-> caze.andThen(multCases));
+		//optimised
+		/**
+		return Matching.<Expression>newCase().isType( (Mult m)-> {
 		
-
+		 		return (Expression)Matching.<Expression>iterableCase().allHoldNoType(new Const(0),__).thenExtract(Extractors.<Const>get(0)).thenApply( (Const c) -> c)
+		 		.iterableCase().allHoldNoType(__,new Const(0)).thenExtract(Extractors.<Const>get(1)).thenApply( (Const c) -> c)
+				.iterableCase().allHoldNoType(new Const(1)).thenExtract(Extractors.<Mult>same()).thenApply( mu->simplify(m.right))
+				.iterableCase().allHoldNoType(__,new Const(1)).thenExtract(Extractors.<Mult>same()).thenApply( mu->simplify(m.left)).apply(m).get();
+		}).apply(e).get();
+**/
 		
 		return Matching.<Expression>_case().isType( (Mult m)->new Const(0)).with(new Const(0),__)
 						._case().isType( (Mult m)->new Const(0)).with(__,new Const(0))

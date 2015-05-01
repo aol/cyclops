@@ -1,9 +1,12 @@
 package com.aol.cyclops.matcher;
 
+import static com.aol.cyclops.matcher.Predicates.__;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -14,6 +17,8 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.aol.cyclops.matcher.builders.Matching;
 
 public class CaseTest {
 	Case<Integer,Integer,Function<Integer,Integer>> case1;
@@ -48,6 +53,13 @@ public class CaseTest {
 		val caze = Case.of(t->true, act);
 		
 		assertThat(caze.filter(t -> t.v2.getType()==null).mapFunction(fn -> input ->20).match("hello").isPresent(),is(false));
+	}
+	
+	@Test
+	public void andThenTest(){
+		Case<Object,Set,Function<Object,Set>> cse = Case.of(input-> input instanceof Map, input-> ((Map)input).keySet());
+		val cases = Cases.of(cse).map(c -> c.andThen((Cases)Matching.iterableCase().allHoldNoType(__,2).thenExtract(Extractors.<Integer>get(1)).thenApply(i->i*2)
+													.iterableCase().allHoldNoType(2,__).thenExtract(Extractors.<Integer>get(1)).thenApply(i->i*3).cases()));
 	}
 	
 	@Test

@@ -11,9 +11,11 @@ import com.aol.cyclops.matcher.Cases;
  *
  */
 public class Matching {
-
+	
+	
 	/**
-	 * Create a Pattern Matcher Builder from supplied Cases
+	 *
+	 *Create a Pattern Matcher Builder from supplied Cases
 	 * 
 	 * @param cases to match on
 	 * @return Pattern Mather Builder

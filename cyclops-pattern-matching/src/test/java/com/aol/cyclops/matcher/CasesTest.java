@@ -5,7 +5,6 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.val;
 
 import org.junit.Test;
@@ -141,10 +141,24 @@ public class CasesTest {
 		assertTrue(results.stream().anyMatch(s->s.startsWith("prefix_second")));
 	}
 
+	@AllArgsConstructor
+	@Getter
+	static class Person{
+		String name;
+		int age;
+	}
 	@Test
-	public void testFlatMap() {
+	public void flatMap(){
+		Case<Object,Integer,Function<Object,Integer>> cse = Case.of(input-> input instanceof Person, input -> ((Person)input).getAge());
+		
+		 
+		assertThat(Cases.of(cse).flatMap(c -> Cases.of(c.andThen(Case.of( age-> age<18,s->"minor")),
+										c.andThen(Case.of( age->age>=18,s->"adult")))).match(new Person("bob",21)).get(),is("adult"));
+	}
+	@Test
+	public void testFlatMapAll() {
 		val cases = Cases.of(Case.of(input->true,input->"hello"),Case.of(input->false,input->"second"))
-						.flatMap(input-> Cases.of(input.plus(Case.of(in->true,in->"new"))));
+						.flatMapAll(input-> Cases.of(input.plus(Case.of(in->true,in->"new"))));
 		
 		assertThat(cases.size(),is(3));
 	}

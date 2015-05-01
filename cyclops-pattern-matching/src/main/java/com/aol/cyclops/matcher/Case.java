@@ -178,8 +178,15 @@ public interface Case<T,R,X extends Function<T,R>> {
 	 * @param after Case that will be run after this one, if it matches successfully
 	 * @return New Case which chains current case and the supplied one
 	 */
-	default  Case<T,T,Function<T,T>> andThen(Case<R,T,? extends Function<R,T>> after){
+	default <T1> Case<T,T1,Function<T,T1>> andThen(Case<R,T1,? extends Function<R,T1>> after){
 		return after.compose(this);
+	}
+	
+	
+	
+	default <T1>  Case<T,T1,Function<T,T1>> andThen(Cases<R,T1,? extends Function<R,T1>> after){
+		final ImmutableClosedValue<Optional<T1>> var = new ImmutableClosedValue<>();
+		return andThen(Case.of(t-> var.setOnce(after.match(t)).isPresent(),  t-> var.get().get()));
 	}
 	
 	/**
@@ -198,18 +205,18 @@ public interface Case<T,R,X extends Function<T,R>> {
 	 */
 	default <T1> Case<T1,R,Function<T1,R>> compose(Case<T1,T,? extends Function<T1,T>> before){
 		
-		final Object[] array = {null};
+		final ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		Predicate<T1> predicate =t-> {
 			final boolean passed;
 			if(before.getPattern().v1.test(t)){
 				passed=true;
-				array[0]=before.getPattern().v2.apply(t);
+				value.setOnce(before.getPattern().v2.apply(t));
 			}else
 				passed= false;
-			return  passed && getPattern().v1.test((T)array[0]);
+			return  passed && getPattern().v1.test(value.get());
 		};
 		
-		return Case.<T1,R,Function<T1,R>>of(predicate,  input -> getPattern().v2.apply((T)array[0]));
+		return Case.<T1,R,Function<T1,R>>of(predicate,  input -> getPattern().v2.apply(value.get()));
 		
 	}
 	/**

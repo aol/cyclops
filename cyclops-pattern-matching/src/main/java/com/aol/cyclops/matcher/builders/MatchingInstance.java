@@ -5,6 +5,10 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
+import lombok.experimental.Wither;
+
+import org.pcollections.HashTreePMap;
+import org.pcollections.PMap;
 
 import com.aol.cyclops.matcher.ActionWithReturn;
 import com.aol.cyclops.matcher.Cases;
@@ -23,6 +27,8 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	
 	
 	private final Case cse;
+	
+	
 	
 	public final Cases<T,X,ActionWithReturn<T,X>> cases(){
 		return this.cse.getPatternMatcher().getCases();

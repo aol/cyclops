@@ -272,6 +272,31 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 				.reduce(ConsPStack.empty(),(acc, next)-> acc.plus(acc.size(),next.get(0))));
 
 	}
+	/**
+	 * Expand each Case into a Cases object allowing 1:Many expansion of Cases
+	 * 
+	 * <pre>
+	 * 		Case&lt;Object,Integer,Function&lt;Object,Integer&gt;&gt; cse = Case.of(input-&gt; input instanceof Person, input -&gt; ((Person)input).getAge());
+	 *
+	 *	 
+	 *	assertThat(Cases.of(cse).flatMap(c -&gt; Cases.of(c.andThen(Case.of( age-&gt; age&lt;18,s-&gt;&quot;minor&quot;)),
+	 *									c.andThen(Case.of( age-&gt;age&gt;=18,s-&gt;&quot;adult&quot;)))).match(new Person(&quot;bob&quot;,21)).get(),is(&quot;adult&quot;)); 
+     *
+	 * 
+	 * </pre>
+	 * 
+	 * @param mapper Function to map Case instances to Cases instances
+	 * @return New Cases aggregated from new mapped Cases instances
+	 */
+	public <T1,R1,X1 extends Function<T1,R1>> Cases<T,R,X> flatMap(Function<Case<T,R,X>, Cases<T1,R1,X1>> mapper) {
+
+		return this.withCases((PStack)cases.stream()
+											.map(mapper)
+											.flatMap(Cases::sequentialStream)
+											.map(ConsPStack::singleton)
+											.reduce(ConsPStack.empty(),(acc, next)-> acc.plus(acc.size(),next.get(0))));
+
+	}
 
 	/**
 	 * Map to a new Cases instance via a function that is provided all current Cases
@@ -279,7 +304,7 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 * <pre>
 	 * 
 	 *  cases = Cases.of(Case.of(input-&gt;true,input-&gt;&quot;hello&quot;),Case.of(input-&gt;false,input-&gt;&quot;second&quot;))
-						.flatMap(input-&gt; Cases.of(input.plus(Case.of(in-&gt;true,in-&gt;&quot;new&quot;))));
+						.flatMapAll(input-&gt; Cases.of(input.plus(Case.of(in-&gt;true,in-&gt;&quot;new&quot;))));
 		
 		assertThat(cases.size(),is(3));
 	 *  
@@ -290,7 +315,7 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 * @param mapper Function to map to a new Cases instance
 	 * @return new Cases instance
 	 */
-	public <T1,R1,X1 extends Function<T1,R1>> Cases<T1,R1,X1> flatMap(Function<PStack<Case<T,R,X>>, Cases<T1,R1,X1>> mapper) {
+	public <T1,R1,X1 extends Function<T1,R1>> Cases<T1,R1,X1> flatMapAll(Function<PStack<Case<T,R,X>>, Cases<T1,R1,X1>> mapper) {
 
 		return mapper.apply(cases);
 	}
@@ -574,11 +599,15 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 				.filter(Optional::isPresent).map(Optional::get).findFirst();
 
 	}
-	
+	private Stream<Case<T,R,X>> sequentialStream(){
+		
+			return cases.stream();
+		
+	}
 	
 	private Stream<Case<T,R,X>> stream(){
 		if(this.sequential)
-			return cases.stream();
+			return sequentialStream();
 		return cases.parallelStream();
 	}
 
