@@ -20,6 +20,17 @@ import com.aol.cyclops.matcher.Extractor;
 import com.aol.cyclops.matcher.Predicates;
 import com.aol.cyclops.matcher.builders.CaseBuilder.InCaseOfManyStep2;
 import com.aol.cyclops.matcher.builders.CaseBuilder.InMatchOfManyStep2;
+/**
+ * Case builder for handling iterables
+ * Predicates match against each element in the Iterable
+ * Extractor can be used to select iterable elements
+ * Use Extractors.same to pass the iterable itself
+ * 
+ * 
+ * @author johnmcclean
+ *
+ * @param <X> Type to be passed to match
+ */
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
 public class IterableCase<X> extends Case{
 	// T : user input (type provided to match)
@@ -31,17 +42,38 @@ public class IterableCase<X> extends Case{
 	private final PatternMatcher patternMatcher;
 	
 	/** Match all elements against an Array or Iterable - user provided elements are disaggregated and matched by index**/
+	/**
+	 * All of the predicates hold
+	 * Each predicate will be matched in turn against a member of the iterable
+	 * Note if there is more elements in the iterable than predicates, and all predicates hold this case will trigger
+	 * 
+	 * 
+	 * @param predicates Predicates to test the elements of provided iterable against
+	 * @return Next stage in Case Step Builder
+	 */
 	@SafeVarargs
 	public  final <V> InCaseOfManyStep2<V> allTrue(Predicate<V>... predicates) {
 		return new InCaseOfManyStep2<V>(predicates,patternMatcher,this);
 		
 	}
 	
+	/**
+	 * Check that two predicates accepting potential different types hold
+	 * Will check against the first two elements of an iterable only.
+	 * 
+	 * @param pred1 Predicate to match against the first element in the iterable 
+	 * @param pred2 Predicate to match against the second element in the iterable
+	 * @return Next stage in the Case Step Builder
+	 */
 	public  final <R,V,V1,T,X> ExtractionStep<T,R,X> bothTrue(Predicate<V> pred1, Predicate<V1> pred2){
-		//return new TypeSafePatternMatcher<T,X>(patternMatcher).inCaseOfPredicates(Tuple.tuple(pred1,pred2), a, extractor);
-		//extractor // then action
+
 		return  new  ExtractionStep<T,R,X>(){
 
+			/* 
+			 * To keep the iterable as the value for the next step use
+			 * @see Extractors#same	
+			 * @see com.aol.cyclops.matcher.builders.ExtractionStep#thenExtract(com.aol.cyclops.matcher.Extractor)
+			 */
 			@Override
 			public <T, R> Step<R, X> thenExtract(Extractor<T, R> extractor) {
 				
@@ -59,23 +91,49 @@ public class IterableCase<X> extends Case{
 		
 		
 	}
+	/**
+	 * 
+	 *  Check that three predicates accepting potential different types hold
+	 * Will check against the first three elements of an iterable only.
+	 * 
+	 * @param pred1 Predicate to match against the first element in the iterable 
+	 * @param pred2 Predicate to match against the second element in the iterable 
+	 * @param pred3 Predicate to match against the third element in the iterable 
+	 * @return Next stage in Case Step Builder
+	 */
 	public  final <R,V,V1,V2,T,X> ExtractionStep<T,R,X> threeTrue(Predicate<V> pred1, Predicate<V1> pred2,Predicate<V2> pred3){
-		//return new TypeSafePatternMatcher<T,X>(patternMatcher).inCaseOfPredicates(Tuple.tuple(pred1,pred2), a, extractor);
-		//extractor // then action
+
 		return allTrueNoType(pred1,pred2,pred3);
 		
 		
 	}
+	/**
+	 *  Each predicate will be matched in turn against a member of the iterable
+	 * Note if there is more elements in the iterable than predicates, and all predicates hold this case will trigger
+	 * 
+	 * 
+	 * @param predicates Predicates to test the elements of provided iterable against
+	 * @return Next stage in Case Step Builder
+	 * 
+	 */
 	@SafeVarargs
 	public  final <R,V,T,X> ExtractionStep<T,R,X> allTrueNoType(Predicate<? extends Object>...predicates){
 		//extractor // then action
 		return  new  ExtractionStep<T,R,X>(){
 
+			/* 
+			 * To keep the iterable as the value for the next step use
+			 * @see Extractors#same	
+			 * @see com.aol.cyclops.matcher.builders.ExtractionStep#thenExtract(com.aol.cyclops.matcher.Extractor)
+			 */
 			@Override
 			public <T, R> Step<R, X> thenExtract(Extractor<T, R> extractor) {
 				
 				return new Step<R,X>(){
 					
+					/* 
+					 * @see com.aol.cyclops.matcher.builders.Step#thenApply(com.aol.cyclops.matcher.ActionWithReturn)
+					 */
 					@Override
 					public <X> MatchingInstance<R, X> thenApply(ActionWithReturn<R, X> t) {
 						return  addCase(patternMatcher.inCaseOfSeq(Seq.of(predicates), t, extractor));
@@ -87,6 +145,14 @@ public class IterableCase<X> extends Case{
 			
 	}
 	
+	/**
+	 * Each supplied value will be checked against an element from the iterable
+	 * Each supplied value could be a comparison value, JDK 8 Predicate, or Hamcrest Matcher
+	 *  Note if there is more elements in the iterable than predicates (or matchers / prototype values etc), and all predicates hold this case will trigger
+	 * 
+	 * @param predicates comparison value, JDK 8 Predicate, or Hamcrest Matcher to compare to elements in an Iterable
+	 * @return Next stage in the Case Step builder
+	 */
 	@SafeVarargs
 	public  final <R,V,T> ExtractionStep<T,R,X> allHoldNoType(Object...predicates){
 		return allTrueNoType(convert(predicates));
@@ -100,23 +166,45 @@ public class IterableCase<X> extends Case{
 
 
 
+	/**
+	 * Each supplied Hamcrest Matcher will be matched against elements in the matching iterable
+	 *  Note if there is more elements in the iterable than matchers, and all predicates hold this case will trigger
+	 * 
+	 * @param predicates Hamcrest Matchers to be matched against elements in the matching iterable
+	 * @return Next stage in the Case Step builder
+	 */
 	@SafeVarargs
 	public  final <R,V,T,X> InMatchOfManyStep2<R,V,T,X> allMatch(Matcher<V>... predicates) {
 		return new InMatchOfManyStep2<R,V,T,X>(predicates,patternMatcher,this);
 	}
+	/**
+	 * Check that two Matchers accepting potential different types hold
+	 * Will check against the first two elements of an iterable only.
+	 * 
+	 * @param pred1 Matcher to match against the first element in the iterable 
+	 * @param pred2 Matcher to match against the second element in the iterable
+	 * @return Next stage in the Case Step Builder
+	 */
 	public  final <T,R,V,V1> ExtractionStep<T,R,X> bothMatch(Matcher<V> pred1, Matcher<V1> pred2){
-		//return new TypeSafePatternMatcher<T,X>(patternMatcher).inCaseOfPredicates(Tuple.tuple(pred1,pred2), a, extractor);
-		//extractor // then action
+		
 		return  new  ExtractionStep<T,R,X>(){
 
+			/* 
+			 * To keep the iterable as the value for the next step use
+			 * @see Extractors#same	
+			 * @see com.aol.cyclops.matcher.builders.ExtractionStep#thenExtract(com.aol.cyclops.matcher.Extractor)
+			 */
 			@Override
 			public <T, R> Step<R, X> thenExtract(Extractor<T, R> extractor) {
 				
 				return new Step<R,X>(){
 					
+					/* 
+					 * @see com.aol.cyclops.matcher.builders.Step#thenApply(com.aol.cyclops.matcher.ActionWithReturn)
+					 */
 					@Override
 					public <X> MatchingInstance<R, X> thenApply(ActionWithReturn<R, X> t) {
-						// TODO Auto-generated method stub
+						
 						return addCase(patternMatcher.inMatchOfMatchers(Tuple.tuple(pred1,pred2), t, extractor));
 					}
 				};
@@ -124,15 +212,30 @@ public class IterableCase<X> extends Case{
 			 
 		};
 	}
+	/**
+	 * Each supplied Hamcrest Matcher will be matched against elements in the matching iterable
+	 *  Note if there is more elements in the iterable than matchers, and all predicates hold this case will trigger
+	 * 
+	 * @param predicates Hamcrest Matchers to be matched against elements in the matching iterable
+	 * @return Next stage in the Case Step builder
+	 */
 	@SafeVarargs
 	public  final <R,V,T,X> ExtractionStep<T,R,X> allMatchNoType(Matcher...predicates){
-		//extractor // then action
+		
 		return  new  ExtractionStep<T,R,X>(){
 
+			/* 
+			 * To keep the iterable as the value for the next step use
+			 * @see Extractors#same	
+			 * @see com.aol.cyclops.matcher.builders.ExtractionStep#thenExtract(com.aol.cyclops.matcher.Extractor)
+			 */
 			@Override
 			public <T, R> Step<R, X> thenExtract(Extractor<T, R> extractor) {
 				return  new Step<R,X>(){
 
+					/* 
+					 * @see com.aol.cyclops.matcher.builders.Step#thenApply(com.aol.cyclops.matcher.ActionWithReturn)
+					 */
 					@Override
 					public <X> MatchingInstance<R, X> thenApply(ActionWithReturn<R, X> t) {
 						return addCase(patternMatcher.inMatchOfSeq(Seq.of(predicates), t, extractor));
@@ -147,12 +250,22 @@ public class IterableCase<X> extends Case{
 		
 	}
 	
+	/**
+	 * Check all supplied values against elements in the iterable in turn
+	 *  Note if there is more elements in the iterable than values to match against and all values match this case will trigger
+	 * 
+	 * @param values to match against (via Objects.equals)
+	 * @return Next stage in the Case Step builder
+	 */
 	@SafeVarargs
 	public  final <V,T,X> Step<List<V>,X> allValues(V... values){
 		//add wildcard support
 		Predicate<V>[] predicates = Seq.of(values).map(nextValue->buildPredicate(nextValue)).toList().toArray(new Predicate[0]);
 		return new  Step<List<V>,X>(){
 
+			/* 
+			 * @see com.aol.cyclops.matcher.builders.Step#thenApply(com.aol.cyclops.matcher.ActionWithReturn)
+			 */
 			@Override
 			public <X> MatchingInstance<List<V>, X> thenApply(
 					ActionWithReturn<List<V>, X> t) {
