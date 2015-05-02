@@ -74,11 +74,17 @@ public class PatternMatcher implements Function{
 	public PatternMatcher(){
 		cases = Cases.of();
 	}
-
+	/**
+	 * @return Pattern Matcher as function that will return the 'unwrapped' result when apply is called.
+	 *  i.e. Optional#get will be called.
+	 * 
+	 */
 	public <T,X> Function<T,X> asUnwrappedFunction(){
 		return cases.asUnwrappedFunction();
 	}
-	
+	/**
+	 * @return Pattern Matcher as a function that will return a Stream of results
+	 */
 	public <T,X> Function<T,Stream<X>> asStreamFunction(){
 		
 		return	cases.asStreamFunction();

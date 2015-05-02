@@ -2,7 +2,7 @@
 
 Super charge your JDK with one view into the functional Java world with
 
-cyclops-converters, cyclops-pattern-matching, cyclops-lambda-utils, cyclops-enable-switch
+cyclops-converters, cyclops-pattern-matching, cyclops-lambda-utils, cyclops-for-comprehensions, cyclops-enable-switch
 
 Still to document - 
     interface changes in cyclops pattern matcher
@@ -342,6 +342,28 @@ ClosedVar represents a captured variable inside a Java 8 closure. Because of the
      			return input + timesCalled.get();
      }
 
+## Cyclops Monadic For Comprehensions
+
+Cyclops for comphrensions are implemented as a wrapper over for comprehensions from Functional Groovy see [Groovy Null Handling Using Bind, Comprehensions and Lift](https://mperry.github.io/2013/07/28/groovy-null-handling.html). They will work with *any* Monad type (JDK, Functional Java, Javaslang, TotallyLazy, Cyclops etc).
+
+    Optional<Integer> one = Optional.of(1);
+	Optional<Integer> empty = Optional.empty();
+	BiFunction<Integer,Integer,Integer> f2 = (a,b) -> a *b; 
+		
+	Object result =  new ForComphrension2<Optional,Optional<Integer>,Integer>()
+							.<Integer,Integer>foreach(c -> c.$1(one)
+															.$2(empty)
+															.yield(()->{return f2.apply(c.$1(), c.$2());}));
+
+Each call to $ results in flatMap call apart from the last one which results in map. guard can be used for filtering.
+The c.$1() and c.$2() calls capture the result of the operations at c.$1(_) and c.$2(_).
+
+### There are 4 For Comphrension classes
+
+* ForComprehension :- looser typing than the other two, offer $(name) methods for unlimited for components. $1-3 offered also
+* ForComprehension1 :- Stricter typing, offers $1 operations only
+* ForComprehension2 :- Stricter typing, offer $1 and $2 operations
+* ForComprehension3 :- Stricter typing, offer $1, $2 and $3 operations
 
 ## Cyclops enable switch
 
@@ -357,6 +379,7 @@ Concrete type that conveys that a feature may be disabled or may be enabled (swi
 * convert to Optional or Stream
 * standard Java 8 operators (map, flatMap, peek, filter, forEach) + flatten etc
 * isEnabled / isDisabled
+* Biased towards enabled (right biased).
 
 
 ### Getting started

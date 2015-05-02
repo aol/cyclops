@@ -41,12 +41,20 @@ public class Extractors {
 	
 	/**
 	 * Register decomposition function in standard hashmap
-	 * @param c
-	 * @param f
+	 * Global mutable state - use with care
+	 * 
+	 * @param c Class to decompose
+	 * @param f Function to do decomposition
 	 */
-	public static final void registerDecompositionFunction(Class c, Function f){
+	public static final <T,R> void registerDecompositionFunction(Class<T> c, Function<T,R> f){
 		decomposers.put(c, f);
 	}
+	/**
+	 * An extractor that caches the extraction result
+	 * 
+	 * @param extractor to memoise (cache result of)
+	 * @return Memoised extractor
+	 */
 	public static final <T,R > Extractor<T,R> memoised( Extractor<T,R> extractor){
 		final ImmutableClosedValue<R> value = new ImmutableClosedValue<>();
 		return input -> {
@@ -55,6 +63,9 @@ public class Extractors {
 		};
 		
 	}
+	/**
+	 * @return Extractor that decomposes Case classes into iterables 
+	 */
 	public static final <T,R> Extractor<T,R> decompose() {
 		return input -> {
 			if(input instanceof  Decomposable)
@@ -143,10 +154,16 @@ public class Extractors {
 		
 	}
 	
+	/**
+	 * @return identity extractor, returns same value
+	 */
 	public final static <R>  Extractor<R,R> same(){
 		return (R c) -> c;
 	}
 	
+	/**
+	 * @return An extractor that generates a tuple from an iterable
+	 */
 	public final static <V1,V2> Extractor<Iterable,Tuple2<V1,V2>> toTuple2(){
 		return  ( Iterable itable)-> {
 			Iterator it = itable.iterator();
