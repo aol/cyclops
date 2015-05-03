@@ -1,13 +1,11 @@
 package com.aol.cyclops.comprehensions;
 
-import groovy.lang.Closure;
-
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.github.mperry.fg.Comprehension;
+
 
 public class ForComprehension {
 	
@@ -19,13 +17,14 @@ public class ForComprehension {
 
 		Object result =  ForComprehension.foreach(c -> c.$1(one)
 														.$2(empty)
-														.guard(()->c.<Integer>$1()>2)
+													//	.guard(()->c.<Integer>$1()>2)
 														.yield(()->{return f2.apply(c.$1(), c.$2());}));
 	System.out.println(result);
 }
+	@SuppressWarnings("unchecked")
 	public static <T,R> R foreach(Function<ComphrensionData<T,R>,R> fn){
-		return (R)Comprehension.foreach(new Closure("delegate"){
-			public Object call(){
+		return (R)Comprehension.foreach(new ContextualExecutor("delegate"){
+			public Object execute(){
 				return fn.apply(new ComphrensionData(this));
 			}
 		});
@@ -35,7 +34,7 @@ public class ForComprehension {
 		BaseComprehensionData data;
 		
 		
-		public ComphrensionData(Closure delegate) {
+		public ComphrensionData(ContextualExecutor delegate) {
 			super();
 			data = new BaseComprehensionData(delegate);
 		}

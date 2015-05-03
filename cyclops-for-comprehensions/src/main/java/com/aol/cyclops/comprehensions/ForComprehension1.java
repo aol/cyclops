@@ -1,18 +1,9 @@
 package com.aol.cyclops.comprehensions;
 
-import groovy.lang.Closure;
-import groovy.lang.GroovyObject;
-
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
-
-import com.github.mperry.fg.Comprehension;
-import com.github.mperry.fg.Generator;
 
 public class ForComprehension1<MONAD,R,R_PARAM> {
 
@@ -28,8 +19,8 @@ public class ForComprehension1<MONAD,R,R_PARAM> {
 		System.out.println(result);
 	}
 	public <T1,T2> R foreach(Function<ComphrensionData<MONAD,T1,R,R_PARAM>,R> fn){
-		return (R)Comprehension.foreach(new Closure("hello"){
-			public Object call(){
+		return (R)Comprehension.foreach(new ContextualExecutor("hello"){
+			public Object execute(){
 				return fn.apply(new ComphrensionData(this));
 			}
 		});
@@ -39,7 +30,7 @@ public class ForComprehension1<MONAD,R,R_PARAM> {
 		BaseComprehensionData data;
 		
 		
-		public ComphrensionData(Closure delegate) {
+		public ComphrensionData(ContextualExecutor delegate) {
 			super();
 			data = new BaseComprehensionData(delegate);
 		}
