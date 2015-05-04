@@ -27,10 +27,10 @@ public class ForComprehension3<MONAD,R,R_PARAM> {
 		BiFunction<Integer,Integer,Integer> f2 = (a,b) -> a *b; 
 		
 		 ForComprehension3<Optional,Optional<Integer>,Integer> optionalComprehension = new ForComprehension3<>();
-		Object result =  optionalComprehension.<Integer,Integer,Integer>foreach(c -> c.$1(one)
-																					.$2(empty)
-																					.$3(Optional.of(c.$1()))
-																					.guard(()->c.$1()>2)
+		Object result =  optionalComprehension.<Integer,Integer,Integer>foreach(c -> c.flatMapAs$1(one)
+																					.flatMapAs$2(empty)
+																					.mapAs$3(Optional.of(c.$1()))
+																					.filter(()->c.$1()>2)
 																					.yield(()->{return f2.apply(c.$1(), c.$2());}));
 		System.out.println(result);
 	}
@@ -42,25 +42,25 @@ public class ForComprehension3<MONAD,R,R_PARAM> {
 		});
 	}
 	static interface Step1<MONAD,T1,T2,T3,R,R_PARAM>{
-		public  Step2<MONAD,T1,T2,T3,R,R_PARAM> $1(MONAD f);
+		public  Step2<MONAD,T1,T2,T3,R,R_PARAM> flatMapAs$1(MONAD f);
 		public T1 $1();
 		public T2 $2();
 		public T3 $3();
 	}
 	static interface Step2<MONAD,T1,T2,T3,R,R_PARAM>{
-		public  Step3<MONAD,T1,T2,T3,R,R_PARAM> $2(MONAD f);
-		public  Step3<MONAD,T1,T2,T3,R,R_PARAM> $2(Supplier<MONAD> f);
-		public R yield(Supplier<R_PARAM> s);
+		public  Step3<MONAD,T1,T2,T3,R,R_PARAM> flatMapAs$2(MONAD f);
+		public  Step3<MONAD,T1,T2,T3,R,R_PARAM> flatMapAs$2(Supplier<MONAD> f);
+		
 		
 	}
 	static interface Step3<MONAD,T1,T2,T3,R,R_PARAM>{
-		public  Step4<MONAD,T1,T2,T3,R,R_PARAM> $3(MONAD f);
-		public  Step4<MONAD,T1,T2,T3,R,R_PARAM> $3(Supplier<MONAD> f);
-		public R yield(Supplier<R_PARAM> s);
+		public  Step4<MONAD,T1,T2,T3,R,R_PARAM> mapAs$3(MONAD f);
+		public  Step4<MONAD,T1,T2,T3,R,R_PARAM> mapAs$3(Supplier<MONAD> f);
+		
 		
 	}
 	static interface Step4<MONAD,T1,T2,T3,R,R_PARAM>{
-		public  Step4<MONAD,T1,T2,T3,R,R_PARAM> guard(Supplier<Boolean> s);
+		public  Step4<MONAD,T1,T2,T3,R,R_PARAM> filter(Supplier<Boolean> s);
 		public R yield(Supplier<R_PARAM> s);
 		
 	}
@@ -79,7 +79,7 @@ public class ForComprehension3<MONAD,R,R_PARAM> {
 			data = new BaseComprehensionData(delegate,convertCollections);
 		}
 		
-		public  ComphrensionData<MONAD,T1,T2,T3,R,R_PARAM> guard(Supplier<Boolean> s){
+		public  ComphrensionData<MONAD,T1,T2,T3,R,R_PARAM> filter(Supplier<Boolean> s){
 			data.guardInternal(s);
 			return this;
 			
@@ -101,24 +101,24 @@ public class ForComprehension3<MONAD,R,R_PARAM> {
 			return data.$Internal("_3");
 		
 		}
-		public  Step2<MONAD,T1,T2,T3,R,R_PARAM> $1(MONAD f){
+		public  Step2<MONAD,T1,T2,T3,R,R_PARAM> flatMapAs$1(MONAD f){
 			data.$Internal("_1", f);
 			
 			return this;
 		}
-		public  Step3<MONAD,T1,T2,T3,R,R_PARAM> $2(MONAD f){
+		public  Step3<MONAD,T1,T2,T3,R,R_PARAM> flatMapAs$2(MONAD f){
 			data.$Internal("_2", f);
 			return this;
 		}
-		public  Step3<MONAD,T1,T2,T3,R,R_PARAM> $2(Supplier<MONAD> f){
+		public  Step3<MONAD,T1,T2,T3,R,R_PARAM> flatMapAs$2(Supplier<MONAD> f){
 			data.$Internal("_2", f);
 			return this;
 		}
-		public  Step4<MONAD,T1,T2,T3,R,R_PARAM> $3(MONAD f){
+		public  Step4<MONAD,T1,T2,T3,R,R_PARAM> mapAs$3(MONAD f){
 			data.$Internal("_3", f);
 			return this;
 		}
-		public  Step4<MONAD,T1,T2,T3,R,R_PARAM> $3(Supplier<MONAD> f){
+		public  Step4<MONAD,T1,T2,T3,R,R_PARAM> mapAs$3(Supplier<MONAD> f){
 			data.$Internal("_3", f);
 			return this;
 		}

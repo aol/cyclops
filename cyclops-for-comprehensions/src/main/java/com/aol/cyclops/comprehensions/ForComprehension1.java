@@ -23,8 +23,8 @@ public class ForComprehension1<MONAD,R,R_PARAM> {
 		BiFunction<Integer,Integer,Integer> f2 = (a,b) -> a *b; 
 		
 		Object result =  new ForComprehension1<Optional<?>,Optional<Integer>,Integer>()
-							.<Integer,Integer>foreach(c -> c.$1(one)
-															.guard(()->c.$1()>2)
+							.<Integer,Integer>foreach(c -> c.mapAs$1(one)
+															.filter(()->c.$1()>2)
 															.yield(()->{return f2.apply(c.$1(), 10);}));
 		System.out.println(result);
 	}
@@ -37,12 +37,12 @@ public class ForComprehension1<MONAD,R,R_PARAM> {
 		});
 	}
 	static interface Step1<MONAD,T1,R,R_PARAM>{
-		public  Step2<MONAD,T1,R,R_PARAM> $1(MONAD f);
+		public  Step2<MONAD,T1,R,R_PARAM> mapAs$1(MONAD f);
 		public T1 $1();
 		
 	}
 	static interface Step2<MONAD,T1,R,R_PARAM>{
-		public  Step3<MONAD,T1,R,R_PARAM> guard(Supplier<Boolean> s);
+		public  Step3<MONAD,T1,R,R_PARAM> filter(Supplier<Boolean> s);
 		public R yield(Supplier<R_PARAM> s);
 		
 	}
@@ -60,7 +60,7 @@ public class ForComprehension1<MONAD,R,R_PARAM> {
 			data = new BaseComprehensionData(delegate,convertCollections);
 		}
 		
-		public Step3<MONAD,T1,R,R_PARAM> guard(Supplier<Boolean> s){
+		public Step3<MONAD,T1,R,R_PARAM> filter(Supplier<Boolean> s){
 			data.guardInternal(s);
 			return this;
 			
@@ -75,7 +75,7 @@ public class ForComprehension1<MONAD,R,R_PARAM> {
 		
 		}
 		
-		public Step2<MONAD,T1,R,R_PARAM> $1(MONAD f){
+		public Step2<MONAD,T1,R,R_PARAM> mapAs$1(MONAD f){
 			data.$Internal("_1", f);
 			
 			return this;

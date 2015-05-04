@@ -26,9 +26,9 @@ public class ForComprehension2<MONAD,R,R_PARAM> {
 		val comprehension = new ForComprehension2<Optional,Optional<Integer>,Integer>();
 				
 		
-		Object result =  comprehension.<Integer,Integer>foreach(c -> c.$1(one)
-																		.$2(()->Optional.of(c.$1()))
-																		.guard(()->c.$1()>2)
+		Object result =  comprehension.<Integer,Integer>foreach(c -> c.flatMapAs$1(one)
+																		.mapAs$2(()->Optional.of(c.$1()))
+																		.filter(()->c.$1()>2)
 																		.yield(()->{return f2.apply(c.$1(), c.$2());}));
 		System.out.println(result);
 	}
@@ -41,18 +41,18 @@ public class ForComprehension2<MONAD,R,R_PARAM> {
 	}
 	
 	static interface Step1<MONAD,T1,T2,R,R_PARAM>{
-		public  Step2<MONAD,T1,T2,R,R_PARAM> $1(MONAD f);
+		public  Step2<MONAD,T1,T2,R,R_PARAM> flatMapAs$1(MONAD f);
 		public T1 $1();
 		public T2 $2();
 	}
 	static interface Step2<MONAD,T1,T2,R,R_PARAM>{
-		public  Step3<MONAD,T1,T2,R,R_PARAM> $2(MONAD f);
-		public  Step3<MONAD,T1,T2,R,R_PARAM> $2(Supplier<MONAD> f);
-		public R yield(Supplier<R_PARAM> s);
+		public  Step3<MONAD,T1,T2,R,R_PARAM> mapAs$2(MONAD f);
+		public  Step3<MONAD,T1,T2,R,R_PARAM> mapAs$2(Supplier<MONAD> f);
+		
 		
 	}
 	static interface Step3<MONAD,T1,T2,R,R_PARAM>{
-		public  Step4<MONAD,T1,T2,R,R_PARAM> guard(Supplier<Boolean> s);
+		public  Step4<MONAD,T1,T2,R,R_PARAM> filter(Supplier<Boolean> s);
 		public R yield(Supplier<R_PARAM> s);
 		
 	}
@@ -70,7 +70,7 @@ public class ForComprehension2<MONAD,R,R_PARAM> {
 			data = new BaseComprehensionData(delegate,convertCollections);
 		}
 		
-		public  Step4<MONAD,T1,T2,R,R_PARAM> guard(Supplier<Boolean> s){
+		public  Step4<MONAD,T1,T2,R,R_PARAM> filter(Supplier<Boolean> s){
 			data.guardInternal(s);
 			return this;
 			
@@ -90,16 +90,16 @@ public class ForComprehension2<MONAD,R,R_PARAM> {
 		}
 		
 		
-		public  Step2<MONAD,T1,T2,R,R_PARAM> $1(MONAD f){
+		public  Step2<MONAD,T1,T2,R,R_PARAM> flatMapAs$1(MONAD f){
 			data.$Internal("_1", f);
 			
 			return this;
 		}
-		public  Step3<MONAD,T1,T2,R,R_PARAM> $2(MONAD f){
+		public  Step3<MONAD,T1,T2,R,R_PARAM> mapAs$2(MONAD f){
 			data.$Internal("_2", f);
 			return this;
 		}
-		public  Step3<MONAD,T1,T2,R,R_PARAM> $2(Supplier<MONAD> f){
+		public  Step3<MONAD,T1,T2,R,R_PARAM> mapAs$2(Supplier<MONAD> f){
 			data.$Internal("_2", f);
 			return this;
 		}
