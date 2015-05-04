@@ -9,12 +9,10 @@ import lombok.Setter;
 abstract class ContextualExecutor<T,C> {
 
 	
-	private  C context;
+	private  volatile C context;
 	
 	public T executeAndSetContext(C context){
-		
 			this.context = context;
-			
 			return execute();
 		
 	}

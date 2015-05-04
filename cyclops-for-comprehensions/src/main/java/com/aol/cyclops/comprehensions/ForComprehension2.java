@@ -5,38 +5,72 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import lombok.val;
+
 public class ForComprehension2<MONAD,R,R_PARAM> {
 
+	private final boolean convertCollections;
+	
+	public ForComprehension2(boolean convertCollections) {
+		super();
+		this.convertCollections = convertCollections;
+	}
+	public ForComprehension2(){
+		this.convertCollections=false;
+	}
 	public static void main(String[] args){
 		Optional<Integer> one = Optional.of(1);
 		Optional<Integer> empty = Optional.of(3);
 		BiFunction<Integer,Integer,Integer> f2 = (a,b) -> a *b; 
 		
-		Object result =  new ForComprehension2<Optional,Optional<Integer>,Integer>()
-							.<Integer,Integer>foreach(c -> c.$1(one)
-															.$2(empty)
-															.guard(()->c.$1()>2)
-															.yield(()->{return f2.apply(c.$1(), c.$2());}));
+		val comprehension = new ForComprehension2<Optional,Optional<Integer>,Integer>();
+				
+		
+		Object result =  comprehension.<Integer,Integer>foreach(c -> c.$1(one)
+																		.$2(()->Optional.of(c.$1()))
+																		.guard(()->c.$1()>2)
+																		.yield(()->{return f2.apply(c.$1(), c.$2());}));
 		System.out.println(result);
 	}
-	public <T1,T2> R foreach(Function<ComphrensionData<MONAD,T1,T2,R,R_PARAM>,R> fn){
-		return (R)Comprehension.foreach(new ContextualExecutor("hello"){
-			public Object execute(){
-				return fn.apply(new ComphrensionData(this));
+	public <T1,T2> R foreach(Function<Step1<MONAD,T1,T2,R,R_PARAM>,R> fn){
+		return Foreach.foreach(new ContextualExecutor<R,Foreach<R>>(new Foreach<R>()){
+			public R execute(){
+				return fn.apply(new ComphrensionData<>(this));
 			}
 		});
 	}
 	
-	static class ComphrensionData<MONAD,T1,T2,R,R_PARAM> {
+	static interface Step1<MONAD,T1,T2,R,R_PARAM>{
+		public  Step2<MONAD,T1,T2,R,R_PARAM> $1(MONAD f);
+		public T1 $1();
+		public T2 $2();
+	}
+	static interface Step2<MONAD,T1,T2,R,R_PARAM>{
+		public  Step3<MONAD,T1,T2,R,R_PARAM> $2(MONAD f);
+		public  Step3<MONAD,T1,T2,R,R_PARAM> $2(Supplier<MONAD> f);
+		public R yield(Supplier<R_PARAM> s);
+		
+	}
+	static interface Step3<MONAD,T1,T2,R,R_PARAM>{
+		public  Step4<MONAD,T1,T2,R,R_PARAM> guard(Supplier<Boolean> s);
+		public R yield(Supplier<R_PARAM> s);
+		
+	}
+	static interface Step4<MONAD,T1,T2,R,R_PARAM>{
+		public R yield(Supplier<R_PARAM> s);
+		
+	}
+	class ComphrensionData<MONAD,T1,T2,R,R_PARAM> implements Step1<MONAD,T1,T2,R,R_PARAM>, Step2<MONAD,T1,T2,R,R_PARAM>,
+																	Step3<MONAD,T1,T2,R,R_PARAM>,Step4<MONAD,T1,T2,R,R_PARAM>{
 		BaseComprehensionData data;
 		
 		
 		public ComphrensionData(ContextualExecutor delegate) {
 			super();
-			data = new BaseComprehensionData(delegate);
+			data = new BaseComprehensionData(delegate,convertCollections);
 		}
 		
-		public  ComphrensionData<MONAD,T1,T2,R,R_PARAM> guard(Supplier<Boolean> s){
+		public  Step4<MONAD,T1,T2,R,R_PARAM> guard(Supplier<Boolean> s){
 			data.guardInternal(s);
 			return this;
 			
@@ -54,12 +88,18 @@ public class ForComprehension2<MONAD,R,R_PARAM> {
 			return data.$Internal("_2");
 		
 		}
-		public  ComphrensionData<MONAD,T1,T2,R,R_PARAM> $1(MONAD f){
+		
+		
+		public  Step2<MONAD,T1,T2,R,R_PARAM> $1(MONAD f){
 			data.$Internal("_1", f);
 			
 			return this;
 		}
-		public  ComphrensionData<MONAD,T1,T2,R,R_PARAM> $2(MONAD f){
+		public  Step3<MONAD,T1,T2,R,R_PARAM> $2(MONAD f){
+			data.$Internal("_2", f);
+			return this;
+		}
+		public  Step3<MONAD,T1,T2,R,R_PARAM> $2(Supplier<MONAD> f){
 			data.$Internal("_2", f);
 			return this;
 		}

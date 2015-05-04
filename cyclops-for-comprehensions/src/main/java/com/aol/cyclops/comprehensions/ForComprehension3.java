@@ -5,35 +5,78 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import com.aol.cyclops.comprehensions.ForComprehension2.ComphrensionData;
+import com.aol.cyclops.comprehensions.ForComprehension2.Step2;
+import com.aol.cyclops.comprehensions.ForComprehension2.Step3;
+import com.aol.cyclops.comprehensions.ForComprehension2.Step4;
+
 public class ForComprehension3<MONAD,R,R_PARAM> {
 
+	private final boolean convertCollections;
+	
+	public ForComprehension3(boolean convertCollections) {
+		super();
+		this.convertCollections = convertCollections;
+	}
+	public ForComprehension3(){
+		this.convertCollections=false;
+	}
 	public static void main(String[] args){
 		Optional<Integer> one = Optional.of(1);
 		Optional<Integer> empty = Optional.of(3);
 		BiFunction<Integer,Integer,Integer> f2 = (a,b) -> a *b; 
 		
-		Object result =  new ForComprehension3<Optional,Optional<Integer>,Integer>()
-							.<Integer,Integer,Integer>foreach(c -> c.$1(one)
-															.$2(empty)
-															.guard(()->c.$1()>2)
-															.yield(()->{return f2.apply(c.$1(), c.$2());}));
+		 ForComprehension3<Optional,Optional<Integer>,Integer> optionalComprehension = new ForComprehension3<>();
+		Object result =  optionalComprehension.<Integer,Integer,Integer>foreach(c -> c.$1(one)
+																					.$2(empty)
+																					.$3(Optional.of(c.$1()))
+																					.guard(()->c.$1()>2)
+																					.yield(()->{return f2.apply(c.$1(), c.$2());}));
 		System.out.println(result);
 	}
-	public <T1,T2,T3> R foreach(Function<ComphrensionData<MONAD,T1,T2,T3,R,R_PARAM>,R> fn){
-		return (R)Comprehension.foreach(new ContextualExecutor("hello"){
-			public Object execute(){
-				return fn.apply(new ComphrensionData(this));
+	public <T1,T2,T3> R foreach(Function<Step1<MONAD,T1,T2,T3,R,R_PARAM>,R> fn){
+		return Foreach.foreach(new ContextualExecutor<R,Foreach<R>>(new Foreach<R>()){
+			public R execute(){
+				return fn.apply(new ComphrensionData<>(this));
 			}
 		});
 	}
+	static interface Step1<MONAD,T1,T2,T3,R,R_PARAM>{
+		public  Step2<MONAD,T1,T2,T3,R,R_PARAM> $1(MONAD f);
+		public T1 $1();
+		public T2 $2();
+		public T3 $3();
+	}
+	static interface Step2<MONAD,T1,T2,T3,R,R_PARAM>{
+		public  Step3<MONAD,T1,T2,T3,R,R_PARAM> $2(MONAD f);
+		public  Step3<MONAD,T1,T2,T3,R,R_PARAM> $2(Supplier<MONAD> f);
+		public R yield(Supplier<R_PARAM> s);
+		
+	}
+	static interface Step3<MONAD,T1,T2,T3,R,R_PARAM>{
+		public  Step4<MONAD,T1,T2,T3,R,R_PARAM> $3(MONAD f);
+		public  Step4<MONAD,T1,T2,T3,R,R_PARAM> $3(Supplier<MONAD> f);
+		public R yield(Supplier<R_PARAM> s);
+		
+	}
+	static interface Step4<MONAD,T1,T2,T3,R,R_PARAM>{
+		public  Step4<MONAD,T1,T2,T3,R,R_PARAM> guard(Supplier<Boolean> s);
+		public R yield(Supplier<R_PARAM> s);
+		
+	}
+	static interface Step5<MONAD,T1,T2,T3,R,R_PARAM>{
+		public R yield(Supplier<R_PARAM> s);
+	}
 	
-	static class ComphrensionData<MONAD,T1,T2,T3,R,R_PARAM> {
-BaseComprehensionData data;
+	 class ComphrensionData<MONAD,T1,T2,T3,R,R_PARAM> implements Step1<MONAD,T1,T2,T3,R,R_PARAM>, Step2<MONAD,T1,T2,T3,R,R_PARAM>, 
+												Step3<MONAD,T1,T2,T3,R,R_PARAM>,Step4<MONAD,T1,T2,T3,R,R_PARAM>, Step5<MONAD,T1,T2,T3,R,R_PARAM>{
+													
+		BaseComprehensionData data;
 		
 		
 		public ComphrensionData(ContextualExecutor delegate) {
 			super();
-			data = new BaseComprehensionData(delegate);
+			data = new BaseComprehensionData(delegate,convertCollections);
 		}
 		
 		public  ComphrensionData<MONAD,T1,T2,T3,R,R_PARAM> guard(Supplier<Boolean> s){
@@ -54,20 +97,28 @@ BaseComprehensionData data;
 			return data.$Internal("_2");
 		
 		}
-		public T2 $3(){
+		public T3 $3(){
 			return data.$Internal("_3");
 		
 		}
-		public  ComphrensionData<MONAD,T1,T2,T3,R,R_PARAM> $1(MONAD f){
+		public  Step2<MONAD,T1,T2,T3,R,R_PARAM> $1(MONAD f){
 			data.$Internal("_1", f);
 			
 			return this;
 		}
-		public  ComphrensionData<MONAD,T1,T2,T3,R,R_PARAM> $2(MONAD f){
+		public  Step3<MONAD,T1,T2,T3,R,R_PARAM> $2(MONAD f){
 			data.$Internal("_2", f);
 			return this;
 		}
-		public  ComphrensionData<MONAD,T1,T2,T3,R,R_PARAM> $3(MONAD f){
+		public  Step3<MONAD,T1,T2,T3,R,R_PARAM> $2(Supplier<MONAD> f){
+			data.$Internal("_2", f);
+			return this;
+		}
+		public  Step4<MONAD,T1,T2,T3,R,R_PARAM> $3(MONAD f){
+			data.$Internal("_3", f);
+			return this;
+		}
+		public  Step4<MONAD,T1,T2,T3,R,R_PARAM> $3(Supplier<MONAD> f){
 			data.$Internal("_3", f);
 			return this;
 		}

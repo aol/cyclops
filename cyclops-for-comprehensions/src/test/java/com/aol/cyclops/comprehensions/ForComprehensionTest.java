@@ -18,7 +18,7 @@ public class ForComprehensionTest {
 		public void simple() {
 			
 			IntStream res = (IntStream)ForComprehension.foreach (  c-> {
-				return c.$1(  IntStream.range(1,3)) 
+				return c.flatMapAs$1(  IntStream.range(1,3)) 
 				.yield( ()-> c.<Integer>$1() + 1);
 				
 			});

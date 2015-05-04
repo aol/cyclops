@@ -43,6 +43,7 @@ public class Yield<T> {
 			
 			if (head instanceof Filter) {
 				
+				System.out.println("Context : " + context);
 				
 				Object s = selectComprehender(currentExpansionUnwrapped).filter(currentExpansionUnwrapped,it->   (boolean)head.getFunction().executeAndSetContext(context.plus(lastExpansionName,it)));
 				return process(yieldExecutor, context, s, lastExpansionName,index+1);

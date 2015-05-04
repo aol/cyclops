@@ -6,7 +6,7 @@ import org.pcollections.ConsPStack;
 import org.pcollections.HashTreePMap;
 import org.pcollections.PStack;
 
-public class Comprehension<T> {
+public class Foreach<T> {
 
 	private PStack<Expansion> generators = ConsPStack.empty();
 
@@ -18,12 +18,12 @@ public class Comprehension<T> {
 	}
 
 	void addExpansion(Expansion g) {
-		generators = generators.plus(g);
+		generators = generators.plus(generators.size(),g);
 	}
 
-	static Object foreach(ContextualExecutor comprehension) {
+	static<T> T foreach(ContextualExecutor<T,Foreach<T>> comprehension) {
 
-		return comprehension.executeAndSetContext(new Comprehension());
+		return comprehension.executeAndSetContext(new Foreach<>());
 	}
 
 }
