@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
@@ -13,6 +14,7 @@ import lombok.AllArgsConstructor;
 
 import org.pcollections.PMap;
 
+import com.aol.cyclops.comprehensions.comprehenders.CompletableFutureComprehender;
 import com.aol.cyclops.comprehensions.comprehenders.IntStreamComprehender;
 import com.aol.cyclops.comprehensions.comprehenders.LongStreamComprehender;
 import com.aol.cyclops.comprehensions.comprehenders.OptionalComprehender;
@@ -27,6 +29,7 @@ public class Yield<T> {
 		put(Stream.class,new StreamComprehender());
 		put(IntStream.class,new IntStreamComprehender());
 		put(LongStream.class,new LongStreamComprehender());
+		put(CompletableFuture.class, new CompletableFutureComprehender());
 	}};
 
 	private final  List<Expansion> expansions;
