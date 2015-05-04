@@ -32,13 +32,13 @@ public class ForComprehension1<MONAD,R,R_PARAM> {
 		BiFunction<Integer,Integer,Integer> f2 = (a,b) -> a *b; 
 		
 		Object result =  new ForComprehension1<Optional<?>,Optional<Integer>,Integer>()
-							.<Integer,Integer>foreach(c -> c.mapAs$1(one)
+							.<Integer>foreach(c -> c.mapAs$1(one)
 															.filter(()->c.$1()>2)
 															.yield(()->{return f2.apply(c.$1(), 10);}));
 		System.out.println(result);
 	}
 	
-	public <T1,T2> R foreach(Function<Step1<MONAD,T1,R,R_PARAM>,R> fn){
+	public <T1> R foreach(Function<Step1<MONAD,T1,R,R_PARAM>,R> fn){
 		return Foreach.foreach(new ContextualExecutor<R,Foreach<R>>(new Foreach<R>()){
 			public R execute(){
 				return fn.apply(new ComphrensionData<>(this));

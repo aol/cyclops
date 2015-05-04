@@ -6,7 +6,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public final class BaseComprehensionData {
-	private final boolean convertCollections;
+	private final boolean convertIterables;
 	private ContextualExecutor delegate;
 	
 	private ContextualExecutor currentContext;
@@ -15,7 +15,7 @@ public final class BaseComprehensionData {
 	public BaseComprehensionData(ContextualExecutor delegate, boolean convertCollections) {
 		
 		this.delegate = delegate;
-		this.convertCollections = convertCollections;
+		this.convertIterables = convertCollections;
 	}
 	
 	public <R extends BaseComprehensionData> R guardInternal(Supplier<Boolean> s){
@@ -67,12 +67,13 @@ public final class BaseComprehensionData {
 		return (R)this;
 	}
 	private Object convertToMonadicForm(Object f) {
-		if(!convertCollections)
-			return f;
+		
 		if(f instanceof Collection)
 			return ((Collection)f).stream();
 		if(f instanceof Map)
 			return ((Map)f).entrySet().stream();
+		if(!convertIterables)
+			return f;
 		if(f instanceof Iterable)
 			return Stream.of((Iterable)f);
 		return f;

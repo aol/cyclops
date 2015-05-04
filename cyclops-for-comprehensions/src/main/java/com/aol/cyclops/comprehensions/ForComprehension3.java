@@ -5,10 +5,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.comprehensions.ForComprehension2.ComphrensionData;
-import com.aol.cyclops.comprehensions.ForComprehension2.Step2;
-import com.aol.cyclops.comprehensions.ForComprehension2.Step3;
-import com.aol.cyclops.comprehensions.ForComprehension2.Step4;
+import com.aol.cyclops.comprehensions.notype.LessTypingForComprehension3;
 
 public class ForComprehension3<MONAD,R,R_PARAM> {
 
@@ -41,6 +38,7 @@ public class ForComprehension3<MONAD,R,R_PARAM> {
 			}
 		});
 	}
+	
 	static interface Step1<MONAD,T1,T2,T3,R,R_PARAM>{
 		public  Step2<MONAD,T1,T2,T3,R,R_PARAM> flatMapAs$1(MONAD f);
 		public T1 $1();
@@ -50,12 +48,14 @@ public class ForComprehension3<MONAD,R,R_PARAM> {
 	static interface Step2<MONAD,T1,T2,T3,R,R_PARAM>{
 		public  Step3<MONAD,T1,T2,T3,R,R_PARAM> flatMapAs$2(MONAD f);
 		public  Step3<MONAD,T1,T2,T3,R,R_PARAM> flatMapAs$2(Supplier<MONAD> f);
+		public  Step2<MONAD,T1,T2,T3,R,R_PARAM> filter(Supplier<Boolean> s);
 		
 		
 	}
 	static interface Step3<MONAD,T1,T2,T3,R,R_PARAM>{
 		public  Step4<MONAD,T1,T2,T3,R,R_PARAM> mapAs$3(MONAD f);
 		public  Step4<MONAD,T1,T2,T3,R,R_PARAM> mapAs$3(Supplier<MONAD> f);
+		public  Step3<MONAD,T1,T2,T3,R,R_PARAM> filter(Supplier<Boolean> s);
 		
 		
 	}

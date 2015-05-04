@@ -1,26 +1,25 @@
-package com.aol.cyclops.comprehensions;
+package com.aol.cyclops.comprehensions.notype;
 
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.comprehensions.ForComprehension2.ComphrensionData;
-import com.aol.cyclops.comprehensions.ForComprehension3.Step2;
-import com.aol.cyclops.comprehensions.ForComprehension3.Step3;
-import com.aol.cyclops.comprehensions.ForComprehension3.Step4;
+import com.aol.cyclops.comprehensions.BaseComprehensionData;
+import com.aol.cyclops.comprehensions.ContextualExecutor;
+import com.aol.cyclops.comprehensions.Foreach;
 
 
 
-public class ForComprehension<T,R> {
+public class LessTypingForComprehension3<T,R> {
 	
 	private final boolean convertCollections;
 	
-	public ForComprehension(boolean convertCollections) {
+	public LessTypingForComprehension3(boolean convertCollections) {
 		super();
 		this.convertCollections = convertCollections;
 	}
-	public ForComprehension(){
+	public LessTypingForComprehension3(){
 		this.convertCollections=false;
 	}
 	
@@ -30,7 +29,7 @@ public class ForComprehension<T,R> {
 		Optional<Integer> empty = Optional.of(3);
 		BiFunction<Integer, Integer, Integer> f2 = (a, b) -> a * b;
 
-		Object result =  ForComprehension.foreach(c -> c.flatMapAs$1(one)
+		Object result =  LessTypingForComprehension3.foreach(c -> c.flatMapAs$1(one)
 														.flatMapAs$2(empty)
 														.mapAs$3(Optional.empty())
 													//	.guard(()->c.<Integer>$1()>2)
@@ -41,48 +40,50 @@ public class ForComprehension<T,R> {
 	public static <T,R> R foreach(Function<Step1<T,R>,R> fn){
 		return Foreach.foreach(new ContextualExecutor<R,Foreach<R>>(new Foreach<R>()){
 			public R execute(){
-				return fn.apply(new ForComprehension<T,R>().getComphrensionData(this));
+				return fn.apply(new LessTypingForComprehension3<T,R>().getComphrensionData(this));
 			}
 		});
 	}
 	protected  Step1<T, R> getComphrensionData(ContextualExecutor<R,Foreach<R>> exec) {
 		return new ComphrensionData<>(exec);
 	}
-	static interface Step1<T,R>{
+	public static interface Step1<T,R>{
 		public  Step2<T,R> flatMapAs$1(Object f);
-		public  <T> ForComprehension<T,R>.ComphrensionData<T,R> $(String name,Object f);
-		public  <T> ForComprehension<T,R>.ComphrensionData<T,R>  $(String name,Supplier f);
+		public  <T> LessTypingForComprehension3<T,R>.ComphrensionData<T,R> $(String name,Object f);
+		public  <T> LessTypingForComprehension3<T,R>.ComphrensionData<T,R>  $(String name,Supplier f);
 		public <T> T $1();
 		public <T> T $2();
 		public <T> T $3();
 		public <T> T $(String name);
 	}
-	static interface Step2<T,R>{
+	public static interface Step2<T,R>{
 		public  Step3<T,R> flatMapAs$2(Object f);
-		public  <T> ForComprehension<T,R>.ComphrensionData<T,R>  $(String name,Object f);
-		public  <T> ForComprehension<T,R>.ComphrensionData<T,R>  $(String name,Supplier f);
+		public  <T> LessTypingForComprehension3<T,R>.ComphrensionData<T,R>  $(String name,Object f);
+		public  <T> LessTypingForComprehension3<T,R>.ComphrensionData<T,R>  $(String name,Supplier f);
 		public  Step3<T,R> flatMapAs$2(Supplier f);
 		public <R> R yield(Supplier s);
+		public  Step2<T,R> filter(Supplier<Boolean> s);
 		
 	}
-	static interface Step3<T,R>{
+	public static interface Step3<T,R>{
 		public  Step4<T,R> mapAs$3(Object f);
-		public  <T> ForComprehension<T,R>.ComphrensionData<T,R>  $(String name,Object f);
-		public <T> ForComprehension<T,R>.ComphrensionData<T,R>  $(String name,Supplier f);
+		public  <T> LessTypingForComprehension3<T,R>.ComphrensionData<T,R>  $(String name,Object f);
+		public <T> LessTypingForComprehension3<T,R>.ComphrensionData<T,R>  $(String name,Supplier f);
 		public  Step4<T,R> mapAs$3(Supplier f);
-		//public R yield(Supplier s);
+		public  Step3<T,R> filter(Supplier<Boolean> s);
+		
 		
 	}
-	static interface Step4<T,R>{
+	public static interface Step4<T,R>{
 		public  Step4<T,R> filter(Supplier<Boolean> s);
-		public  <T> ForComprehension<T,R>.ComphrensionData<T,R>  $(String name,Object f);
-		public <T> ForComprehension<T,R>.ComphrensionData<T,R>  $(String name,Supplier f);
+		public  <T> LessTypingForComprehension3<T,R>.ComphrensionData<T,R>  $(String name,Object f);
+		public <T> LessTypingForComprehension3<T,R>.ComphrensionData<T,R>  $(String name,Supplier f);
 		public <R> R yield(Supplier s);
 		
 	}
-	static interface Step5<T,R>{
-		public  <T> ForComprehension<T,R>.ComphrensionData<T,R>  $(String name,Object f);
-		public <T> ForComprehension<T,R>.ComphrensionData<T,R>  $(String name,Supplier f);
+	public static interface Step5<T,R>{
+		public  <T> LessTypingForComprehension3<T,R>.ComphrensionData<T,R>  $(String name,Object f);
+		public <T> LessTypingForComprehension3<T,R>.ComphrensionData<T,R>  $(String name,Supplier f);
 		public <R> R yield(Supplier s);
 		
 	}
@@ -122,12 +123,12 @@ public class ForComprehension<T,R> {
 			return data.$Internal("_3");
 		
 		}
-		public  <T> ForComprehension<T,R>.ComphrensionData<T,R> $(String name,Object f){
+		public  <T> LessTypingForComprehension3<T,R>.ComphrensionData<T,R> $(String name,Object f){
 			data.$Internal(name, f);
 			
 			return (ComphrensionData)this;
 		}
-		public  <T> ForComprehension<T,R>.ComphrensionData<T,R> $(String name,Supplier f){
+		public  <T> LessTypingForComprehension3<T,R>.ComphrensionData<T,R> $(String name,Supplier f){
 			data.$Internal(name, f);
 			
 			return (ComphrensionData)this;

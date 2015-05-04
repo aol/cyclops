@@ -16,7 +16,7 @@ public class ForComprehension2<MONAD,R,R_PARAM> {
 		this.convertCollections = convertCollections;
 	}
 	public ForComprehension2(){
-		this.convertCollections=false;
+		this.convertCollections=true;
 	}
 	public static void main(String[] args){
 		Optional<Integer> one = Optional.of(1);
@@ -48,6 +48,7 @@ public class ForComprehension2<MONAD,R,R_PARAM> {
 	static interface Step2<MONAD,T1,T2,R,R_PARAM>{
 		public  Step3<MONAD,T1,T2,R,R_PARAM> mapAs$2(MONAD f);
 		public  Step3<MONAD,T1,T2,R,R_PARAM> mapAs$2(Supplier<MONAD> f);
+		public  Step3<MONAD,T1,T2,R,R_PARAM> filter(Supplier<Boolean> s);
 		
 		
 	}
@@ -70,7 +71,7 @@ public class ForComprehension2<MONAD,R,R_PARAM> {
 			data = new BaseComprehensionData(delegate,convertCollections);
 		}
 		
-		public  Step4<MONAD,T1,T2,R,R_PARAM> filter(Supplier<Boolean> s){
+		public  ComphrensionData<MONAD,T1,T2,R,R_PARAM> filter(Supplier<Boolean> s){
 			data.guardInternal(s);
 			return this;
 			

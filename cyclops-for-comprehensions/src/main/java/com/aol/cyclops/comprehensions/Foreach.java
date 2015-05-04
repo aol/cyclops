@@ -21,7 +21,7 @@ public class Foreach<T> {
 		generators = generators.plus(generators.size(),g);
 	}
 
-	static<T> T foreach(ContextualExecutor<T,Foreach<T>> comprehension) {
+	public static<T> T foreach(ContextualExecutor<T,Foreach<T>> comprehension) {
 
 		return comprehension.executeAndSetContext(new Foreach<>());
 	}
