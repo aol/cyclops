@@ -1,5 +1,7 @@
 package com.aol.cyclops.lambda.utils;
 
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import lombok.EqualsAndHashCode;
@@ -41,7 +43,52 @@ public class ImmutableClosedValue<T> {
 	public T get(){
 		return value;
 	}
+	/**
+	 * Create an intermediate unbound (or unitialised) ImmutableClosedValue)
+	 *
+	 * @return unitialised ImmutableClosedValue
+	 */
+	public static <T> ImmutableClosedValue<T> unbound(){
+		return new ImmutableClosedValue();
+	}
+	/**
+	 * @param value Create an initialised ImmutableClosedValue with specified value
+	 * @return Initialised ImmutableClosedValue
+	 */
+	public static <T> ImmutableClosedValue<T> of(T value){
+		ImmutableClosedValue v =  new ImmutableClosedValue();
+		v.setOnce(value);
+		return v;
+	}
 	
+	
+	/**
+	 * Map the value stored in this Immutable Closed Value from one Value to another
+	 * If this is an unitiatilised ImmutableClosedValue, an uninitialised closed value will be returned instead
+	 * 
+	 * @param fn Mapper function
+	 * @return new ImmutableClosedValue with new mapped value 
+	 */
+	public <R> ImmutableClosedValue<R> map(Function<T,R> fn){
+		if(!set)
+			return (ImmutableClosedValue)this;
+		else
+			return ImmutableClosedValue.of(fn.apply(value));
+	}
+	
+	/**
+	 * FlatMap the value stored in Immutable Closed Value from one Value to another
+	 *  If this is an unitiatilised ImmutableClosedValue, an uninitialised closed value will be returned instead
+	 * 
+	 * @param fn  Flat Mapper function
+	 * @return new ImmutableClosedValue with new mapped value 
+	 */
+	public <R> ImmutableClosedValue<R> flatMap(Function<T,ImmutableClosedValue<R>> fn){
+		if(!set)
+			return (ImmutableClosedValue)this;
+		else
+			return ImmutableClosedValue.of(fn.apply(value).get());
+	}
 	/**
 	 * Set the value of this ImmutableClosedValue
 	 * If it has already been set will throw an exception
