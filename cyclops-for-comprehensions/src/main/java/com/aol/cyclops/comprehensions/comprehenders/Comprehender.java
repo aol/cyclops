@@ -1,4 +1,4 @@
-package com.aol.cyclops.comprehensions;
+package com.aol.cyclops.comprehensions.comprehenders;
 
 import java.util.function.Function;
 import java.util.function.Predicate;

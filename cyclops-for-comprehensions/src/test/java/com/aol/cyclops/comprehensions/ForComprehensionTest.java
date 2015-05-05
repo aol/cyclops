@@ -1,7 +1,7 @@
 package com.aol.cyclops.comprehensions;
 
 
-import static com.aol.cyclops.comprehensions.notype.LessTypingForComprehension3.foreach;
+import static com.aol.cyclops.comprehensions.LessTypingForComprehension3.foreach;
 import static fj.data.Option.none;
 import static fj.data.Option.some;
 import static org.hamcrest.Matchers.equalTo;

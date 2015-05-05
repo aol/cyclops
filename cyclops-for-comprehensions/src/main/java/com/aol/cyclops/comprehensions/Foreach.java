@@ -6,7 +6,7 @@ import org.pcollections.ConsPStack;
 import org.pcollections.HashTreePMap;
 import org.pcollections.PStack;
 
-public class Foreach<T> {
+class Foreach<T> {
 
 	private PStack<Expansion> generators = ConsPStack.empty();
 

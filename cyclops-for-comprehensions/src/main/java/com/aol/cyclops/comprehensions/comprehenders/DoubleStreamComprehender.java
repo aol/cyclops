@@ -5,8 +5,6 @@ import java.util.function.Predicate;
 import java.util.stream.DoubleStream;
 import java.util.stream.LongStream;
 
-import com.aol.cyclops.comprehensions.Comprehender;
-
 public class DoubleStreamComprehender implements Comprehender<DoubleStream> {
 
 	@Override

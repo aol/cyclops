@@ -4,8 +4,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.LongStream;
 
-import com.aol.cyclops.comprehensions.Comprehender;
-
 public class LongStreamComprehender implements Comprehender<LongStream> {
 
 	@Override

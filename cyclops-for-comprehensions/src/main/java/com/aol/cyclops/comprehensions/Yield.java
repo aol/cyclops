@@ -17,6 +17,7 @@ import lombok.val;
 import org.pcollections.PMap;
 
 import com.aol.cyclops.comprehensions.comprehenders.CompletableFutureComprehender;
+import com.aol.cyclops.comprehensions.comprehenders.Comprehender;
 import com.aol.cyclops.comprehensions.comprehenders.DoubleStreamComprehender;
 import com.aol.cyclops.comprehensions.comprehenders.IntStreamComprehender;
 import com.aol.cyclops.comprehensions.comprehenders.LongStreamComprehender;
@@ -25,7 +26,7 @@ import com.aol.cyclops.comprehensions.comprehenders.ReflectionComprehender;
 import com.aol.cyclops.comprehensions.comprehenders.StreamComprehender;
 
 @AllArgsConstructor
-public class Yield<T> {
+class Yield<T> {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
 	private static final Map<Class,Comprehender> comprehenders = new HashMap<Class,Comprehender>(){{

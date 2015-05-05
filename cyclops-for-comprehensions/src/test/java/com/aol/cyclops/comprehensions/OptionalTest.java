@@ -7,8 +7,6 @@ import java.util.function.BiFunction;
 
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.notype.LessTypingForComprehension3;
-
 public class OptionalTest {
 
 	@Test

@@ -4,8 +4,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import com.aol.cyclops.comprehensions.Comprehender;
-
 public class CompletableFutureComprehender implements Comprehender<CompletableFuture>{
 
 	@Override

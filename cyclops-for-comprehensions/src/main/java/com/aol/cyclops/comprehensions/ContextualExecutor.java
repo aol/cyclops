@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @Getter
-public abstract class ContextualExecutor<T,C> {
+abstract class ContextualExecutor<T,C> {
 
 	
 	private  volatile C context;

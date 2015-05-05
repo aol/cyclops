@@ -5,7 +5,8 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public final class BaseComprehensionData {
+
+final class BaseComprehensionData {
 	
 	private ContextualExecutor delegate;
 	

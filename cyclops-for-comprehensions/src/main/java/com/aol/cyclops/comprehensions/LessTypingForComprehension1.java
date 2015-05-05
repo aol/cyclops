@@ -1,13 +1,9 @@
-package com.aol.cyclops.comprehensions.notype;
+package com.aol.cyclops.comprehensions;
 
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import com.aol.cyclops.comprehensions.BaseComprehensionData;
-import com.aol.cyclops.comprehensions.ContextualExecutor;
-import com.aol.cyclops.comprehensions.Foreach;
 
 
 

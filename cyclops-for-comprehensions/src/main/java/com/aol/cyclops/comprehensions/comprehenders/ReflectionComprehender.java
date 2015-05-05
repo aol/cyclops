@@ -7,8 +7,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.comprehensions.Comprehender;
-
 import fj.F;
 
 public class ReflectionComprehender implements Comprehender {

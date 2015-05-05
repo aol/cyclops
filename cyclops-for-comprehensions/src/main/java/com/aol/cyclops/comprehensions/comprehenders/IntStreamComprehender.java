@@ -5,8 +5,6 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
-import com.aol.cyclops.comprehensions.Comprehender;
-
 public class IntStreamComprehender implements Comprehender<IntStream> {
 
 	@Override

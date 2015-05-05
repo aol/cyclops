@@ -5,8 +5,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.comprehensions.notype.LessTypingForComprehension3;
-
 public class ForComprehension3<MONAD,R,R_PARAM> {
 
 	private final boolean convertCollections;

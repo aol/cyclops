@@ -4,8 +4,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import com.aol.cyclops.comprehensions.Comprehender;
-
 public class OptionalComprehender implements Comprehender<Optional> {
 
 	@Override

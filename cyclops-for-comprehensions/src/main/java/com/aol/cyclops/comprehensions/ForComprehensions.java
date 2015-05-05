@@ -2,10 +2,6 @@ package com.aol.cyclops.comprehensions;
 
 import java.util.function.Function;
 
-import com.aol.cyclops.comprehensions.notype.LessTypingForComprehension1;
-import com.aol.cyclops.comprehensions.notype.LessTypingForComprehension2;
-import com.aol.cyclops.comprehensions.notype.LessTypingForComprehension3;
-
 public class ForComprehensions {
 
 	
