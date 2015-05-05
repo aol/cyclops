@@ -37,8 +37,6 @@ public class LessTypingForComprehension3<T,R> {
 	}
 	public static interface Step1<T,R>{
 		public  Step2<T,R> flatMapAs$1(Object f);
-		public  <T> LessTypingForComprehension3<T,R>.ComphrensionData<T,R> $(String name,Object f);
-		public  <T> LessTypingForComprehension3<T,R>.ComphrensionData<T,R>  $(String name,Supplier f);
 		public <T> T $1();
 		public <T> T $2();
 		public <T> T $3();
@@ -46,8 +44,6 @@ public class LessTypingForComprehension3<T,R> {
 	}
 	public static interface Step2<T,R>{
 		public  Step3<T,R> flatMapAs$2(Object f);
-		public  <T> LessTypingForComprehension3<T,R>.ComphrensionData<T,R>  $(String name,Object f);
-		public  <T> LessTypingForComprehension3<T,R>.ComphrensionData<T,R>  $(String name,Supplier f);
 		public  Step3<T,R> flatMapAs$2(Supplier f);
 		public <R> R yield(Supplier s);
 		public  Step2<T,R> filter(Supplier<Boolean> s);
@@ -55,8 +51,6 @@ public class LessTypingForComprehension3<T,R> {
 	}
 	public static interface Step3<T,R>{
 		public  Step4<T,R> mapAs$3(Object f);
-		public  <T> LessTypingForComprehension3<T,R>.ComphrensionData<T,R>  $(String name,Object f);
-		public <T> LessTypingForComprehension3<T,R>.ComphrensionData<T,R>  $(String name,Supplier f);
 		public  Step4<T,R> mapAs$3(Supplier f);
 		public  Step3<T,R> filter(Supplier<Boolean> s);
 		
@@ -64,14 +58,10 @@ public class LessTypingForComprehension3<T,R> {
 	}
 	public static interface Step4<T,R>{
 		public  Step4<T,R> filter(Supplier<Boolean> s);
-		public  <T> LessTypingForComprehension3<T,R>.ComphrensionData<T,R>  $(String name,Object f);
-		public <T> LessTypingForComprehension3<T,R>.ComphrensionData<T,R>  $(String name,Supplier f);
 		public <R> R yield(Supplier s);
 		
 	}
 	public static interface Step5<T,R>{
-		public  <T> LessTypingForComprehension3<T,R>.ComphrensionData<T,R>  $(String name,Object f);
-		public <T> LessTypingForComprehension3<T,R>.ComphrensionData<T,R>  $(String name,Supplier f);
 		public <R> R yield(Supplier s);
 		
 	}
@@ -111,16 +101,7 @@ public class LessTypingForComprehension3<T,R> {
 			return data.$Internal("_3");
 		
 		}
-		public  <T> LessTypingForComprehension3<T,R>.ComphrensionData<T,R> $(String name,Object f){
-			data.$Internal(name, f);
-			
-			return (ComphrensionData)this;
-		}
-		public  <T> LessTypingForComprehension3<T,R>.ComphrensionData<T,R> $(String name,Supplier f){
-			data.$Internal(name, f);
-			
-			return (ComphrensionData)this;
-		}
+		
 		public   Step2<T,R> flatMapAs$1(Object f){
 			data.$Internal("_1", f);
 			

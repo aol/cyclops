@@ -46,10 +46,14 @@ public class ForComprehensionTest {
 		public void longstream() {
 			val comp =  new ForComprehension2<LongStream,LongStream,Long>();
 			
+			
 			LongStream res = comp.<Long,Long>foreach (  c-> 
 										c.flatMapAs$1( LongStream.range(1l,30l))
 										.mapAs$2(()->LongStream.range(6l,10l))
 										.yield( ()-> ( c.$1() * c.$2()) + 1l));
+			
+			
+			
 			List<Integer> expected = Arrays.asList(7, 8, 9, 10, 13, 15, 17, 19, 19, 22, 25, 28, 25, 29, 
 										33, 37, 31, 36, 41, 46, 37, 43, 49, 55, 43, 50, 57, 64, 49, 57, 
 										65, 73, 55, 64, 73, 82, 61, 71, 81, 91, 67, 78, 89, 100, 73, 85, 
