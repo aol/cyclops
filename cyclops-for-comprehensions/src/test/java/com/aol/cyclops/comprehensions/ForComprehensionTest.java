@@ -23,6 +23,8 @@ import lombok.val;
 import org.junit.Test;
 
 import fj.data.Option;
+
+
 	
 	
 public class ForComprehensionTest {
@@ -195,7 +197,7 @@ public class ForComprehensionTest {
 			Option<Integer> empty = Option.none();
 			BiFunction<Integer,Integer,Integer> f2 = (a,b) -> a *b; 
 			
-			val result =  new ForComprehension2<Option<?>,Option<Integer>,Integer>(false)
+			val result =  new ForComprehension2<Option<?>,Option<Integer>,Integer>()
 								.<Integer,Integer>foreach(c -> c.flatMapAs$1(one)
 																.mapAs$2(empty)
 																.filter(()->c.$1()>2)

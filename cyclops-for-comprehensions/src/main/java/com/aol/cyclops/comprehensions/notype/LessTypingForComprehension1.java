@@ -13,15 +13,7 @@ import com.aol.cyclops.comprehensions.Foreach;
 
 public class LessTypingForComprehension1<T,R> {
 	
-	private final boolean convertCollections;
 	
-	public LessTypingForComprehension1(boolean convertCollections) {
-		super();
-		this.convertCollections = convertCollections;
-	}
-	public LessTypingForComprehension1(){
-		this.convertCollections=false;
-	}
 	
 	public static void main(String[] args){
 
@@ -49,16 +41,16 @@ public class LessTypingForComprehension1<T,R> {
 	}
 	public static interface Step1<T,R>{
 		public  Step2<T,R> flatMapAs$1(Object f);
-		public  <T> LessTypingForComprehension1<T,R>.ComphrensionData<T,R> $(String name,Object f);
-		public  <T> LessTypingForComprehension1<T,R>.ComphrensionData<T,R>  $(String name,Supplier f);
+	//	public  <T> LessTypingForComprehension1<T,R>.ComphrensionData<T,R> $(String name,Object f);
+	//	public  <T> LessTypingForComprehension1<T,R>.ComphrensionData<T,R>  $(String name,Supplier f);
 		public <T> T $1();
 		public <T> T $2();
 		public <T> T $(String name);
 	}
 	public static interface Step2<T,R>{
 		public  Step3<T,R> mapAs$2(Object f);
-		public  <T> LessTypingForComprehension1<T,R>.ComphrensionData<T,R>  $(String name,Object f);
-		public  <T> LessTypingForComprehension1<T,R>.ComphrensionData<T,R>  $(String name,Supplier f);
+	//	public  <T> LessTypingForComprehension1<T,R>.ComphrensionData<T,R>  $(String name,Object f);
+	//	public  <T> LessTypingForComprehension1<T,R>.ComphrensionData<T,R>  $(String name,Supplier f);
 		public  Step3<T,R> mapAs$2(Supplier f);
 		public <R> R yield(Supplier s);
 		public  Step2<T,R> filter(Supplier<Boolean> s);
@@ -67,14 +59,14 @@ public class LessTypingForComprehension1<T,R> {
 	
 	public static interface Step3<T,R>{
 		public  Step4<T,R> filter(Supplier<Boolean> s);
-		public  <T> LessTypingForComprehension1<T,R>.ComphrensionData<T,R>  $(String name,Object f);
-		public <T> LessTypingForComprehension1<T,R>.ComphrensionData<T,R>  $(String name,Supplier f);
+	//	public  <T> LessTypingForComprehension1<T,R>.ComphrensionData<T,R>  $(String name,Object f);
+	//	public <T> LessTypingForComprehension1<T,R>.ComphrensionData<T,R>  $(String name,Supplier f);
 		public <R> R yield(Supplier s);
 		
 	}
 	public static interface Step4<T,R>{
-		public  <T> LessTypingForComprehension1<T,R>.ComphrensionData<T,R>  $(String name,Object f);
-		public <T> LessTypingForComprehension1<T,R>.ComphrensionData<T,R>  $(String name,Supplier f);
+	//	public  <T> LessTypingForComprehension1<T,R>.ComphrensionData<T,R>  $(String name,Object f);
+	//	public <T> LessTypingForComprehension1<T,R>.ComphrensionData<T,R>  $(String name,Supplier f);
 		public <R> R yield(Supplier s);
 		
 	}
@@ -85,7 +77,7 @@ public class LessTypingForComprehension1<T,R> {
 		
 		public ComphrensionData(ContextualExecutor delegate) {
 			super();
-			data = new BaseComprehensionData(delegate,convertCollections);
+			data = new BaseComprehensionData(delegate);
 		}
 		
 		public  ComphrensionData<T,R> filter(Supplier<Boolean> s){

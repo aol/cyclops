@@ -16,15 +16,7 @@ import java.util.function.Supplier;
  */
 public class ForComprehension1<MONAD,R,R_PARAM> {
 
-	private final boolean convertCollections;
 	
-	public ForComprehension1(boolean convertCollections) {
-		super();
-		this.convertCollections = convertCollections;
-	}
-	public ForComprehension1(){
-		this.convertCollections=true;
-	}
 	
 	public static void main(String[] args){
 		Optional<Integer> one = Optional.of(1);
@@ -89,7 +81,7 @@ public class ForComprehension1<MONAD,R,R_PARAM> {
 		
 		public ComphrensionData(ContextualExecutor delegate) {
 			super();
-			data = new BaseComprehensionData(delegate,convertCollections);
+			data = new BaseComprehensionData(delegate);
 		}
 		
 		public Step3<MONAD,T1,R,R_PARAM> filter(Supplier<Boolean> s){

@@ -18,4 +18,5 @@ public class ForComprehensions {
 	public static <T,R> R foreach3(Function<LessTypingForComprehension3.Step1<T,R>,R> fn){
 		return LessTypingForComprehension3.foreach(fn);
 	}
+	
 }

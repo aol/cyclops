@@ -9,19 +9,11 @@ import com.aol.cyclops.comprehensions.BaseComprehensionData;
 import com.aol.cyclops.comprehensions.ContextualExecutor;
 import com.aol.cyclops.comprehensions.Foreach;
 
-
-
 public class LessTypingForComprehension2<T,R> {
 	
-	private final boolean convertCollections;
 	
-	public LessTypingForComprehension2(boolean convertCollections) {
-		super();
-		this.convertCollections = convertCollections;
-	}
-	public LessTypingForComprehension2(){
-		this.convertCollections=false;
-	}
+	
+	
 	
 	public static void main(String[] args){
 
@@ -77,7 +69,7 @@ public class LessTypingForComprehension2<T,R> {
 		
 		public ComphrensionData(ContextualExecutor delegate) {
 			super();
-			data = new BaseComprehensionData(delegate,convertCollections);
+			data = new BaseComprehensionData(delegate);
 		}
 		
 		public  ComphrensionData<T,R> filter(Supplier<Boolean> s){

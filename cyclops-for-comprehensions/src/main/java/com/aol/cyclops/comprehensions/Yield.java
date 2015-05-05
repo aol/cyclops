@@ -1,6 +1,6 @@
 package com.aol.cyclops.comprehensions;
 
-import java.util.AbstractMap;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +12,7 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
+import lombok.val;
 
 import org.pcollections.PMap;
 
@@ -26,7 +27,8 @@ import com.aol.cyclops.comprehensions.comprehenders.StreamComprehender;
 @AllArgsConstructor
 public class Yield<T> {
 	
-	private static final Map<Class,Comprehender> comprehenders = new HashMap(){{
+	@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
+	private static final Map<Class,Comprehender> comprehenders = new HashMap<Class,Comprehender>(){{
 		put(Optional.class,new OptionalComprehender());
 		put(Stream.class,new StreamComprehender());
 		put(IntStream.class,new IntStreamComprehender());
@@ -37,25 +39,29 @@ public class Yield<T> {
 
 	private final  List<Expansion> expansions;
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	T process(ContextualExecutor<?,Map> yieldExecutor, PMap<String,Object> context, 
 						Object currentExpansionUnwrapped, String lastExpansionName, int index) {
 		
+		val comprehender = selectComprehender(currentExpansionUnwrapped)
+									.orElseGet( ()->selectComprehender(convertToMonadicForm(currentExpansionUnwrapped))
+													.orElse( new Tuple2(new ReflectionComprehender(),currentExpansionUnwrapped)));
+			
+		
 		if (expansions.size() == index) {
 			
-			return (T)selectComprehender(currentExpansionUnwrapped).map( currentExpansionUnwrapped,it->yieldExecutor.executeAndSetContext(context.plus(lastExpansionName,it)));
+			return (T)comprehender._1.map( comprehender._2,it->yieldExecutor.executeAndSetContext(context.plus(lastExpansionName,it)));
 		
 		} else {
 			Expansion head = expansions.get(index);
 			
 			if (head instanceof Filter) {
 				
-				System.out.println("Context : " + context);
-				
-				Object s = selectComprehender(currentExpansionUnwrapped).filter(currentExpansionUnwrapped,it->   (boolean)head.getFunction().executeAndSetContext(context.plus(lastExpansionName,it)));
+				Object s = comprehender._1.filter(comprehender._2,it->   (boolean)head.getFunction().executeAndSetContext(context.plus(lastExpansionName,it)));
 				return process(yieldExecutor, context, s, lastExpansionName,index+1);
 			} else {
 				
-				return (T)selectComprehender(currentExpansionUnwrapped).flatMap(currentExpansionUnwrapped,it ->{				 	
+				return (T)comprehender._1.flatMap(comprehender._2,it ->{				 	
 						PMap newMap  =context.plus(lastExpansionName,it);
 						return process((ContextualExecutor)yieldExecutor, newMap, head.getFunction().executeAndSetContext( newMap), head.getName(),index+1);
 				 });
@@ -65,11 +71,27 @@ public class Yield<T> {
 		}
 	}
 
-	private Comprehender selectComprehender(Object structure) {
+	@AllArgsConstructor
+	static class Tuple2<T1,T2>{
+		final T1 _1;
+		final T2 _2;
+	}
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private Optional<Tuple2<Comprehender,Object>> selectComprehender(Object structure) {
 		return comprehenders.entrySet().stream()
 				.filter(e -> e.getKey().isAssignableFrom(structure.getClass()))
-				.findFirst()
-				.orElse(new AbstractMap.SimpleEntry(null, new ReflectionComprehender()))
-				.getValue();
+				.map(e->e.getValue())
+				.map(v->new Tuple2<Comprehender,Object>(v,structure))
+				.findFirst();
 	}
+	@SuppressWarnings("rawtypes")
+	private Object convertToMonadicForm(Object f) {
+			
+			if(f instanceof Collection)
+				return ((Collection)f).stream();
+			if(f instanceof Map)
+				return ((Map)f).entrySet().stream();
+			
+			return f;
+		}
 }

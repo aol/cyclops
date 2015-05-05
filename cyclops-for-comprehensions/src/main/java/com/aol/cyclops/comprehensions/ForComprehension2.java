@@ -9,15 +9,7 @@ import lombok.val;
 
 public class ForComprehension2<MONAD,R,R_PARAM> {
 
-	private final boolean convertCollections;
 	
-	public ForComprehension2(boolean convertCollections) {
-		super();
-		this.convertCollections = convertCollections;
-	}
-	public ForComprehension2(){
-		this.convertCollections=true;
-	}
 	public static void main(String[] args){
 		Optional<Integer> one = Optional.of(1);
 		Optional<Integer> empty = Optional.of(3);
@@ -30,7 +22,6 @@ public class ForComprehension2<MONAD,R,R_PARAM> {
 																		.mapAs$2(()->Optional.of(c.$1()))
 																		.filter(()->c.$1()>2)
 																		.yield(()->{return f2.apply(c.$1(), c.$2());}));
-		System.out.println(result);
 	}
 	public <T1,T2> R foreach(Function<Step1<MONAD,T1,T2,R,R_PARAM>,R> fn){
 		return Foreach.foreach(new ContextualExecutor<R,Foreach<R>>(new Foreach<R>()){
@@ -68,7 +59,7 @@ public class ForComprehension2<MONAD,R,R_PARAM> {
 		
 		public ComphrensionData(ContextualExecutor delegate) {
 			super();
-			data = new BaseComprehensionData(delegate,convertCollections);
+			data = new BaseComprehensionData(delegate);
 		}
 		
 		public  ComphrensionData<MONAD,T1,T2,R,R_PARAM> filter(Supplier<Boolean> s){
