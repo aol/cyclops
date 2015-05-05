@@ -41,7 +41,7 @@ final class BaseComprehensionData {
 	
 	public <T> T $Internal(String property){
 		Object delegate = currentContext.getContext();
-		System.out.println(delegate);
+		
 		return (T)((Map)delegate).get(property);
 	
 	
