@@ -14,6 +14,14 @@ import org.jooq.lambda.tuple.Tuple2;
 
 
 
+/**
+ * Represents an empty pattern matching case
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Input type
+ * @param <R> Return type
+ */
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
 public final class EmptyCase<T,R> implements Case<T,R,Function<T,R>>{
 	@Getter

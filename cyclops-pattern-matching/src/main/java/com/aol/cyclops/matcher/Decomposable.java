@@ -18,6 +18,7 @@ public interface Decomposable{
 	/**
 	 * @return Values of the fields of this Decomposable instance
 	 */
+	@SuppressWarnings("unchecked")
 	default <T extends Iterable<? extends Object>> T unapply(){
 
 		try {

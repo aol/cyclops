@@ -13,8 +13,15 @@ import java.util.function.Consumer;
  */
 public interface Action<T> extends Consumer<T>, Serializable {
 	
+	/* 
+	 * @see java.util.function.Consumer#accept(java.lang.Object)
+	 */
+	@Override
 	public void accept(T t);
 	
+	/**
+	 * @return MethodType info for the Lambda expression that implements this interface
+	 */
 	default MethodType getType(){
 		return LambdaTypeExtractor.extractType(this);
 	}

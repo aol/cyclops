@@ -11,6 +11,7 @@ import java.util.function.Function;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Value;
+import lombok.val;
 
 import com.aol.cyclops.matcher.ScalaParserExample.Mult;
 import com.aol.cyclops.matcher.builders.Matching;
@@ -80,7 +81,7 @@ public class ScalaParserExample {
 		return Matching.<Expression>_case().isType( (Add<Const,Mult> a)-> new Const(1))
 									.with(__,type(Mult.class).with(__,new Const(0)))
 				._case().isType( (Add<Mult,Const> a)-> new Const(0)).with(type(Mult.class).with(__,new Const(0)),__)
-				._case().isType( (Add<Add,Const> a)-> new Const(0)).with(with(__,new Const(2)),__)
+				._case().isType( (Add<Add,Const> a)-> new Const(-100)).with(with(__,new Const(2)),__)
 				
 				
 				.apply(e).orElse(new Const(-1));

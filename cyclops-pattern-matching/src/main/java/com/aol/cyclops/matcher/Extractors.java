@@ -162,7 +162,7 @@ public class Extractors {
 	}
 	
 	/**
-	 * @return An extractor that generates a tuple from an iterable
+	 * @return An extractor that generates a tuple from an iterable, extracts the first 2 values to create a Tuple2
 	 */
 	public final static <V1,V2> Extractor<Iterable,Tuple2<V1,V2>> toTuple2(){
 		return  ( Iterable itable)-> {
@@ -171,6 +171,10 @@ public class Extractors {
 		};
 		
 	}
+	
+	/**
+	 *  @return An extractor that generates a tuple from an iterable, extracts the first 3 values to create a Tuple3
+	 */
 	public final static <V1,V2,V3> Extractor<Iterable,Tuple3<V1,V2,V3>> toTuple3(){
 		return  ( Iterable itable)-> {
 			Iterator it = itable.iterator();
@@ -178,6 +182,9 @@ public class Extractors {
 		};
 		
 	}
+	/**
+	 *  @return An extractor that generates a tuple from an iterable, extracts the first 4 values to create a Tuple4
+	 */
 	public final static <V1,V2,V3,V4> Extractor<Iterable,Tuple4<V1,V2,V3,V4>> toTuple4(){
 		return  ( Iterable itable)-> {
 			Iterator it = itable.iterator();
@@ -185,6 +192,9 @@ public class Extractors {
 		};
 		
 	}
+	/**
+	 *  @return An extractor that generates a tuple from an iterable, extracts the first 5 values to create a Tuple5
+	 */
 	public final static <V1,V2,V3,V4,V5> Extractor<Iterable,Tuple5<V1,V2,V3,V4,V5>> toTuple5(){
 		return  ( Iterable itable)-> {
 			Iterator it = itable.iterator();
@@ -192,6 +202,9 @@ public class Extractors {
 		};
 		
 	}
+	/**
+	 *  @return An extractor that generates a tuple from an iterable, extracts the first 6 values to create a Tuple6
+	 */
 	public final static <V1,V2,V3,V4,V5,V6> Extractor<Iterable,Tuple6<V1,V2,V3,V4,V5,V6>> toTuple6(){
 		return  ( Iterable itable)-> {
 			Iterator it = itable.iterator();
@@ -199,6 +212,9 @@ public class Extractors {
 		};
 		
 	}
+	/**
+	 *  @return An extractor that generates a tuple from an iterable, extracts the first 7 values to create a Tuple7
+	 */
 	public final static <V1,V2,V3,V4,V5,V6,V7> Extractor<Iterable,Tuple7<V1,V2,V3,V4,V5,V6,V7>> toTuple7(){
 		return  ( Iterable itable)-> {
 			Iterator it = itable.iterator();
@@ -206,6 +222,9 @@ public class Extractors {
 		};
 		
 	}
+	/**
+	 *  @return An extractor that generates a tuple from an iterable, extracts the first 8 values to create a Tuple8
+	 */
 	public final static <V1,V2,V3,V4,V5,V6,V7,V8> Extractor<Iterable,Tuple8<V1,V2,V3,V4,V5,V6,V7,V8>> toTuple8(){
 		return  ( Iterable itable)-> {
 			Iterator it = itable.iterator();

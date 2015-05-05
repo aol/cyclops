@@ -1,6 +1,7 @@
 package com.aol.cyclops.matcher;
 
 import static com.aol.cyclops.matcher.Predicates.__;
+import static com.aol.cyclops.matcher.Predicates.with;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -11,6 +12,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import lombok.Value;
 import lombok.val;
 
 import org.jooq.lambda.tuple.Tuple;
@@ -71,6 +73,37 @@ public class CaseTest {
 	@Test
 	public void testAnd(){
 		assertThat(case1.and(p->false).match(100).isPresent(),is(false));
+	}
+	@Test
+	public void testAndOfType(){
+		assertThat(case1.andOfType(Integer.class).match(100).isPresent(),is(true));
+	}
+	@Test
+	public void testAndOfTypeNegative(){
+		assertThat(((Case)case1).andOfType(String.class).match(100).isPresent(),is(false));
+	}
+	@Test
+	public void testAndOfValue(){
+		assertThat(case1.andOfValue(100).match(100).isPresent(),is(true));
+	}
+	@Test
+	public void testAndOfValueNegative(){
+		assertThat(((Case)case1).andOfValue(5).match(100).isPresent(),is(false));
+	}
+	@Value static final class Person implements Decomposable{ String name; int age; Address address; }
+	@Value static final  class Address implements Decomposable { int number; String city; String country;}
+	
+	@Test
+	public void testAndWithValues(){
+		System.out.println(Object.class.isAssignableFrom(Person.class));
+		
+		val case2 = Case.of((Person p)->p.age>18,p->p.name + " can vote");
+		assertThat(case2.andWithValues(__,__,Predicates.with(__,__,"Ireland")).match(new Person("bob",19,new Address(10,"dublin","Ireland"))).isPresent(),is(true));
+	}
+	@Test
+	public void testAndWithValuesNegative(){
+		val case2 = Case.of((Person p)->p.age>18,p->p.name + " can vote");
+		assertThat(case2.andWithValues(__,__,with(__,__,"Ireland")).match(new Person("bob",17,new Address(10,"dublin","Ireland"))).isPresent(),is(false));
 	}
 	@Test
 	public void testAndTrue(){

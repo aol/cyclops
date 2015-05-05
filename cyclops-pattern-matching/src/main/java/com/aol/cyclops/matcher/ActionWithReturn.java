@@ -15,10 +15,13 @@ import java.util.function.Function;
  */
 public interface ActionWithReturn<T,X> extends Function<T,X>, Serializable {
 	
+	/* 
+	 * @see java.util.function.Function#apply(java.lang.Object)
+	 */
 	public X apply(T t);
 	
 	/**
-	 * @return MethodType info
+	 * @return MethodType info for the lambda expression that implements this interface
 	 */
 	default MethodType getType(){
 		return LambdaTypeExtractor.extractType(this);

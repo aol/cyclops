@@ -37,7 +37,7 @@ import com.aol.cyclops.matcher.Extractors;
 /**
  * PatternMatcher supports advanced pattern matching for Java 8
  * 
- * This API allows new type definitions to be supplied for each Case
+ * This is an API for creating Case instances and allows new type definitions to be supplied for each Case
  * 
  * Features include
  * 
@@ -132,10 +132,23 @@ public class PatternMatcher implements Function{
 		
 		return cases.matchFromStream(s);
 	}
+	/**
+	 * Aggregates supplied objects into a List for matching against
+	 * 
+	 * 
+	 * @param t Array to match on
+	 * @return Matched value wrapped in Optional
+	 */
 	public <R> Optional<R> match(Object... t){
 		return cases.match(t);
 	}
-	
+	/**
+	 * Decomposes the supplied input via it's unapply method
+	 * Provides a List to the Matcher of values to match on
+	 * 
+	 * @param t Object to decompose and match on
+	 * @return Matched result wrapped in an Optional
+	 */
 	public <R> Optional<R> unapply(Decomposable t){
 		return cases.unapply(t);
 	}
@@ -208,7 +221,7 @@ public class PatternMatcher implements Function{
 	 * user input is of a type acceptable to the extractor
 	 * 
 	 * <pre>
-	 * Matching.caseOfValue(100, Person::getAge, (Integer i) -&gt; value = i)
+	 * new PatternMatcher.caseOfValue(100, Person::getAge, (Integer i) -&gt; value = i)
 			.match(new Person(100));
 	 * </pre>
 	 * 
@@ -224,11 +237,41 @@ public class PatternMatcher implements Function{
 		
 		return inCaseOfValue(value,extractor,new ActionWithReturnWrapper(a));
 	}
+	
+	/**
+	 * Match by specified value and then execute supplied action.
+	 * 
+	 * <pre>
+	 *  new PatternMatcher.caseOfValue(100, (Person p) -&gt; value = p.getAge())
+			   .match(new Person(100));
+	 * </pre>
+	 * 
+	 * @param value to compare against, if Objects.equals(value,matching-input) is true, action is triggered
+	 * @param a Action to be consumed (no return value)
+	 * @return new PatternMatcher
+	 */
 	public <V,X> PatternMatcher caseOfValue(V value,Action<V> a){
 		
 		return caseOfThenExtract(it -> Objects.equals(it, value), a, null);
 		
 	}
+	/**
+	 * Match against an iterable using supplied predicates. Each predicate will be tested a against a different sequential element in the user
+	 * supplied iterable. e.g. 
+	 * 
+	 * <pre>
+	 * 	new PatternMatcher()
+	 *		.caseOfMany((List&lt;String&gt; list) -&gt; language  = list.get(1) ,
+	 *							v -&gt; v.equals(&quot;-l&quot;) || v.equals(&quot;---lang&quot;),v-&gt;true)
+	 *		.match(asList(&quot;-l&quot;,&quot;java&quot;));
+	 *	
+	 *	assertThat(language,is(&quot;java&quot;));
+	 * </pre>
+	 * 
+	 * @param a Action to execute if case passes
+	 * @param predicates To match against each sequential element in the iterable
+	 * @return New PatternMatcher
+	 */
 	@SafeVarargs
 	public final <V> PatternMatcher caseOfMany(Action<List<V>> a,Predicate<V>... predicates){
 		
@@ -239,6 +282,24 @@ public class PatternMatcher implements Function{
 				.map(t -> t.v2.test((V)t.v1)).allMatch(v->v==true), a, this::wrapInList);
 		
 	}
+	/**
+	 * Match against an iterable using supplied hamcrest matchers. Each matcher will be tested a against a different sequential element in the user
+	 * supplied iterable. e.g.
+	 * 
+	 * <pre>
+	 * new PatternMatcher()
+	 *	.matchOfMany( (List&lt;String&gt; list) -&gt; language  = list.get(1) ,
+	 *						equalTo(&quot;-l&quot;),any(String.class))
+	 *		.match(asList(&quot;-l&quot;,&quot;java&quot;));
+	 *	
+	 *	assertThat(language,is(&quot;java&quot;));
+	 * 
+	 * </pre>
+	 * 
+	 * @param a Action to execute if case passes
+	 * @param predicates To match against each sequential element in the iterable
+	 * @return New PatternMatcher
+	 */
 	@SafeVarargs
 	public final <V> PatternMatcher matchOfMany(Action<List<V>> a,Matcher<V>... predicates){
 		
@@ -262,6 +323,24 @@ public class PatternMatcher implements Function{
 		}, a, this::wrapInList);
 		
 	}
+	/**
+	 * 
+	 * <pre>
+	 * new PatternMatcher()
+	 *		.matchOfMatchers(tuple( equalTo(&quot;-l&quot;),
+	 *								 anything()),
+	 *							lang -&gt; language  = lang,Extractors.&lt;String&gt;at(1) )
+	 *		.match(tuple(&quot;-l&quot;,&quot;java&quot;));
+	 *	
+	 *	assertThat(language,is(&quot;java&quot;));
+	 * </pre>
+	 * 
+	 * 
+	 * @param predicates
+	 * @param a
+	 * @param extractor
+	 * @return
+	 */
 	public <T,R,V,V1>  PatternMatcher matchOfMatchers(Tuple2<Matcher<V>,Matcher<V1>> predicates,
 				Action<R> a,Extractor<T,R> extractor){
 			

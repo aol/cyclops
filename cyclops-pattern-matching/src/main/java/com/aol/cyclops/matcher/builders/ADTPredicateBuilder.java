@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.hamcrest.Matcher;
 import org.jooq.lambda.Seq;
 
+import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
 import com.aol.cyclops.matcher.Extractors;
 
 /**
@@ -24,8 +25,10 @@ public class ADTPredicateBuilder<T>{
 		private final Class<T> type;
 		
 		
+		
 		Predicate toPredicate(){
-			return t ->  Optional.of(t).map(v->v.getClass().isAssignableFrom(type)).orElse(false);
+			
+			return t ->  Optional.of(t).map(v->type.isAssignableFrom(v.getClass())).orElse(false);
 		}
 		
 		/**
@@ -46,7 +49,9 @@ public class ADTPredicateBuilder<T>{
 		 */
 		public<V> Predicate with(V... values){
 			Seq<Predicate> predicates = Seq.of(values).map(nextValue->convertToPredicate(nextValue));
-			return t -> toPredicate().test(t) && SeqUtils.seq(Extractors.decompose().apply(t))
+			ImmutableClosedValue val = new ImmutableClosedValue();
+			return t -> toPredicate().test(t) && SeqUtils.seq(val.getOrSet(()->Extractors.decompose().apply(t))).count() >= values.length
+					  	&& SeqUtils.seq(val.getOrSet(()->Extractors.decompose().apply(t)))
 							.zip(predicates).map(tuple -> tuple.v2.test(tuple.v1))
 							.allMatch(v->v==true);
 		}

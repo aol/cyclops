@@ -1,5 +1,9 @@
 package com.aol.cyclops.matcher;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -10,6 +14,7 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
+import com.aol.cyclops.matcher.builders.ADTPredicateBuilder;
 /**
  * An interface / trait for building functionally compositional pattern matching cases
  * 
@@ -182,6 +187,12 @@ public interface Case<T,R,X extends Function<T,R>> {
 	
 	
 	
+	/**
+	 * Add a set of Cases that will be run if this case matches successfull
+	 * 
+	 * @param after Cases to run if this case matches
+	 * @return New Case which chains current case and the supplied cases
+	 */
 	default <T1>  Case<T,T1,Function<T,T1>> andThen(Cases<R,T1,? extends Function<R,T1>> after){
 		final ImmutableClosedValue<Optional<T1>> var = new ImmutableClosedValue<>();
 		return andThen(Case.of(t-> var.setOnce(after.match(t)).get().isPresent(),  t-> var.get().get()));
@@ -308,6 +319,7 @@ public interface Case<T,R,X extends Function<T,R>> {
 	}
 	/**
 	 * Create a new case which ands the supplied predicate with the current predicate.
+	 * The supplied predicate will be tested before existing predicate
 	 * 
 	 * <pre>
 	 * assertThat(case1.and(p->false).match(100).isPresent(),is(false));
@@ -324,6 +336,66 @@ public interface Case<T,R,X extends Function<T,R>> {
 		return compose(Case.of(and,Function.identity()));
 	}
 	
+	/**
+	 * Add a guard that assures input is of specified type. Note that this can't change the type supported by this case,
+	 * but will allow this case to be used in a mixed type Cases environment
+	 * e.g.
+	 * 
+	 * <pre>
+	 * case1 =Case.of(input-&gt;true,input-&gt;input+10);
+	 * assertThat(case1.andOfType(Integer.class).match(100).isPresent(),is(true));
+	 * assertThat(((Case)case1).andOfType(String.class).match(100).isPresent(),is(false));
+	 * </pre>
+	 * 
+	 * @param and Class to check type against
+	 * @return New case with Class type guard inserted before current predicate
+	 */
+	default Case<T,R,Function<T,R>> andOfType(Class<T> and){
+		return compose(Case.of(input -> input.getClass().isAssignableFrom(and),Function.identity()));
+	}
+	/**
+	 * Add a guard that assures input is of specified type. Note that this can't change the type supported by this case,
+	 * but will allow this case to be used in a mixed type Cases environment
+	 * e.g.
+	 * 
+	 * <pre>
+	 * case1 =Case.of(input-&gt;true,input-&gt;input+10);
+	 * assertThat(((Case)case1).andOfValue(5).match(100).isPresent(),is(false));
+	 * assertThat(case1.andOfValue(100).match(100).isPresent(),is(true));
+	 * </pre>
+	 * 
+	 * @param and Class to check type against
+	 * @return New case with Class type guard inserted before current predicate
+	 */
+	default Case<T,R,Function<T,R>> andOfValue(T and){
+		return compose(Case.of(input -> Objects.equals(input,and),Function.identity()));
+	}
+	
+	/**
+	 * Insert a guard that decomposes input values and compares against the supplied values
+	 * Recursive decomposition is possible via Predicates.type and Predicates.with methods
+	 * @see Predicates#type
+	 * @see Predicates#with
+	 * 
+	 * <pre>
+	 *  val case2 = Case.of((Person p)-&gt;p.age&gt;18,p-&gt;p.name + &quot; can vote&quot;);
+	 *	assertThat(case2.andWithValues(__,__,Predicates.with(__,__,&quot;Ireland&quot;)).match(new Person(&quot;bob&quot;,19,new Address(10,&quot;dublin&quot;,&quot;Ireland&quot;))).isPresent(),is(true));
+	 *	assertThat(case2.andWithValues(__,__,with(__,__,&quot;Ireland&quot;)).match(new Person(&quot;bob&quot;,17,new Address(10,&quot;dublin&quot;,&quot;Ireland&quot;))).isPresent(),is(false));
+     *
+     *
+     * @Value static final class Person implements Decomposable{ String name; int age; Address address; }
+	 * @Value static final  class Address implements Decomposable { int number; String city; String country;}
+     *
+	 * </pre>
+	 * 
+	 * 
+	 * @param with values to compare to - or predicates or hamcrest matchers
+	 * @return New case with test against decomposed values inserted as a guard
+	 */
+	default Case<T,R,Function<T,R>> andWithValues(Object... with){
+		
+		return compose((Case)Case.of(new ADTPredicateBuilder(Object.class).with(with),Function.identity()));
+	}
 	/**
 	 * Compose a new Case which executes the Predicate and function supplied before the current predicate
 	 * and function.
