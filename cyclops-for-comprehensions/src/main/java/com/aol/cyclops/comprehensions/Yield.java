@@ -44,7 +44,7 @@ class Yield<T> {
 	T process(ContextualExecutor<?,Map> yieldExecutor, PMap<String,Object> context, 
 						Object currentExpansionUnwrapped, String lastExpansionName, int index) {
 		
-		val comprehender = selectComprehender(currentExpansionUnwrapped)
+		Tuple2<Comprehender,Object> comprehender = selectComprehender(currentExpansionUnwrapped)
 									.orElseGet( ()->selectComprehender(convertToMonadicForm(currentExpansionUnwrapped))
 													.orElse( new Tuple2(new ReflectionComprehender(),currentExpansionUnwrapped)));
 			

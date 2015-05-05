@@ -6,6 +6,8 @@ import java.util.function.Supplier;
 
 import lombok.val;
 
+import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
+
 public class FreeFormForComprehension<T,R> {
 	@SuppressWarnings("unchecked")
 	public static <T,R> R foreach(Function<ComphrensionData<T,R>,R> fn){
@@ -23,20 +25,26 @@ public class FreeFormForComprehension<T,R> {
 			@SuppressWarnings("rawtypes")
 			public R execute(){
 				val compData = new ComphrensionData(this);
+				ImmutableClosedValue<X> xClosed = new ImmutableClosedValue<>();
 				X proxy = (X)Proxy.newProxyInstance(FreeFormForComprehension.class
 						.getClassLoader(), new Class[]{c}, (prxy,
 						method, args) -> {
 							if(method.getName().equals("yield") && method.getParameterCount()==1 && method.getParameterTypes()[0].isAssignableFrom(Supplier.class))
 								return compData.yield((Supplier)args[0]);
-							if(method.getName().equals("filter")&& method.getParameterCount()==1 && method.getParameterTypes()[0].isAssignableFrom(Supplier.class)) 
-								return compData.filter((Supplier)args[0]);
+							if(method.getName().equals("filter")&& method.getParameterCount()==1 && method.getParameterTypes()[0].isAssignableFrom(Supplier.class)) {
+								compData.filter((Supplier)args[0]);
+								return xClosed.get();
+							}
 							if(method.getParameterCount()==0)
 								return compData.$(method.getName());
-							else if(method.getParameterCount()==1)
-								return compData.$(method.getName(),args[0]);
+							else if(method.getParameterCount()==1){
+								 compData.$(method.getName(),args[0]);
+								 return xClosed.get();
+							}
 							
 							throw new RuntimeException("No method available for " + method.getName());
 				});
+				xClosed.setOnce(proxy);
 				
 				return fn.apply(proxy);
 			}
