@@ -87,7 +87,7 @@ public class ImmutableClosedValue<T> {
 		if(!set)
 			return (ImmutableClosedValue)this;
 		else
-			return ImmutableClosedValue.of(fn.apply(value).get());
+			return fn.apply(value);
 	}
 	/**
 	 * Set the value of this ImmutableClosedValue
