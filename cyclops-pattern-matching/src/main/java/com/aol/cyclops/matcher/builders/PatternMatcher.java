@@ -324,7 +324,7 @@ public class PatternMatcher implements Function{
 		
 	}
 	/**
-	 * 
+	 * Run both matchers in the supplied tuple against the first two elements of a supplied iterable for matching
 	 * <pre>
 	 * new PatternMatcher()
 	 *		.matchOfMatchers(tuple( equalTo(&quot;-l&quot;),
@@ -336,10 +336,10 @@ public class PatternMatcher implements Function{
 	 * </pre>
 	 * 
 	 * 
-	 * @param predicates
-	 * @param a
-	 * @param extractor
-	 * @return
+	 * @param predicates Tuple of 2 hamcrest matchers
+	 * @param a Action to be triggered on successful match, will receive data via the extractor
+	 * @param extractor Extractor to extract data out of incoming iterable after matchers have matched
+	 * @return New Pattern Matcher
 	 */
 	public <T,R,V,V1>  PatternMatcher matchOfMatchers(Tuple2<Matcher<V>,Matcher<V1>> predicates,
 				Action<R> a,Extractor<T,R> extractor){
@@ -362,6 +362,24 @@ public class PatternMatcher implements Function{
 			}, a, extractor);
 			
 	}
+	/**
+	 * Run both predicates in the supplied tuple against the first two elements of a supplied iterable for matching
+	 * <pre>
+	 * new PatternMatcher()
+	 *		.caseOfPredicates(tuple( v -&gt;  v.equals(&quot;-l&quot;) ||  v.equals(&quot;---lang&quot;),
+	 *								 v-&gt;true),
+	 *							lang -&gt; language  =lang,Extractors.&lt;String&gt;at(1) )
+	 *		.match(tuple(&quot;-l&quot;,&quot;java&quot;));
+	 *	
+	 *	assertThat(language,is(&quot;java&quot;));
+	 * 
+	 * </pre>
+	 * 
+	 * @param predicates Tuple of 2 predicates
+	 * @param a Action to be triggered on successful match, will receive data via the extractor
+	 * @param extractor Extractor to extract data out of incoming iterable after predicates have matched
+	 * @return New Pattern Matcher
+	 */
 	public <T,R,V,V1> PatternMatcher caseOfPredicates(Tuple2<Predicate<V>,Predicate<V1>> predicates,
 							Action<R> a,Extractor<T,R> extractor){
 		
@@ -370,12 +388,29 @@ public class PatternMatcher implements Function{
 		return caseOfThenExtract(it -> seq(it).zip(pred).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
 		
 	}
+	/**
+	 * Match against a tuple of predicates (or prototype values, or hamcrest matchers). Each predicate will match against an element in an iterable. 
+	 * 
+	 * @param predicates Predicates to match with
+	 * @param a Action triggered if predicates hold
+	 * @param extractor
+	 * @return
+	 */
 	public <T,R> PatternMatcher caseOfTuple(Tuple predicates, Action<R> a,Extractor<T,R> extractor){
 
 				Seq<Object> pred = Seq.seq(predicates);
-				return caseOfThenExtract(it -> seq(it).zip(pred).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
+				return caseOfThenExtract(it -> seq(it).zip(pred).map(t -> (convertToPredicate(t.v2)).test(t.v1)).allMatch(v->v==true), a, extractor);
 				
 	}
+	private Predicate convertToPredicate(Object o){
+		if(o instanceof Predicate)
+			return (Predicate)o;
+		if(o instanceof Matcher)
+			return test -> ((Matcher)o).matches(test);
+			
+		return test -> Objects.equals(test,o);
+	}
+	
 	public <T,R> PatternMatcher matchOfTuple(Tuple predicates, Action<R> a,Extractor<T,R> extractor){
 
 		Seq<Object> pred = Seq.seq(predicates);
@@ -407,6 +442,7 @@ public class PatternMatcher implements Function{
 		stream.forEach(t -> matcher[0] = matcher[0].inCaseOf(t.v1,a->t.v2.apply(a)));
 		return matcher[0];
 	}
+	
 	 public <T,V,X> PatternMatcher inCaseOfManyType(Predicate master,ActionWithReturn<T,X> a,
     		 Predicate<V>... predicates){
 		

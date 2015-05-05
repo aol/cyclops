@@ -49,9 +49,9 @@ public class ADTPredicateBuilder<T>{
 		 */
 		public<V> Predicate with(V... values){
 			Seq<Predicate> predicates = Seq.of(values).map(nextValue->convertToPredicate(nextValue));
-			ImmutableClosedValue val = new ImmutableClosedValue();
-			return t -> toPredicate().test(t) && SeqUtils.seq(val.getOrSet(()->Extractors.decompose().apply(t))).count() >= values.length
-					  	&& SeqUtils.seq(val.getOrSet(()->Extractors.decompose().apply(t)))
+			
+			return t -> toPredicate().test(t) 
+					  	&& SeqUtils.seq(Extractors.decompose().apply(t))
 							.zip(predicates).map(tuple -> tuple.v2.test(tuple.v1))
 							.allMatch(v->v==true);
 		}

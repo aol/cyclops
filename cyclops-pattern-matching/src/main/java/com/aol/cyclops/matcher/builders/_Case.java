@@ -70,8 +70,10 @@ public class _Case<X> extends Case {
 		 */
 		@SafeVarargs
 		public final <V> MatchingInstance<T, X> with(V... values) {
+			
 			val type = action.getType();
 			val clazz = type.parameterType(type.parameterCount() - 1);
+		
 			Predicate predicate = it -> Optional.of(it)
 					.map(v -> v.getClass().isAssignableFrom(clazz))
 					.orElse(false);
