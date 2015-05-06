@@ -54,7 +54,21 @@ class Yield<T> {
 			
 		}
 	}};
+	
+	/**
+	 * Careful - global mutable state, with the possiblity of changing behaviour for existing comprehenders
+	 * 
+	 * @param c
+	 * @param comp
+	 */
+	public static void addComprehender(Class c, Comprehender comp){
+		comprehenders.put(c,comp);
+	}
 
+	public static Map<Class,Comprehender> getRegisteredComprehenders(){
+		return new HashMap(comprehenders);
+	}
+	
 	private final  List<Expansion> expansions;
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
