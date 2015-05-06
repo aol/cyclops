@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import org.pcollections.PMap;
 
 import com.aol.cyclops.comprehensions.comprehenders.CompletableFutureComprehender;
+import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
 import com.aol.cyclops.comprehensions.comprehenders.DoubleStreamComprehender;
 import com.aol.cyclops.comprehensions.comprehenders.IntStreamComprehender;
 import com.aol.cyclops.comprehensions.comprehenders.LongStreamComprehender;
@@ -27,47 +28,6 @@ import com.aol.cyclops.lambda.api.Comprehender;
 @AllArgsConstructor
 class Yield<T> {
 	
-	@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
-	private static final Map<Class,Comprehender> comprehenders = new HashMap<Class,Comprehender>(){{
-		put(Optional.class,new OptionalComprehender());
-		put(Stream.class,new StreamComprehender());
-		put(IntStream.class,new IntStreamComprehender());
-		put(LongStream.class,new LongStreamComprehender());
-		put(DoubleStream.class,new DoubleStreamComprehender());
-		put(CompletableFuture.class, new CompletableFutureComprehender());
-		try{
-			Class cases = Class.forName("com.aol.cyclops.matcher.Cases");
-			put(cases,(Comprehender)Class.forName("com.aol.cyclops.matcher.comprehenders.CasesComprehender").newInstance());
-		}catch(Exception e){
-			
-		}
-		try{
-			Class caze = Class.forName("com.aol.cyclops.matcher.Case");
-			put(caze,(Comprehender)Class.forName("com.aol.cyclops.matcher.comprehenders.CaseComprehender").newInstance());
-		}catch(Exception e){
-			
-		}
-		try{
-			Class caze = Class.forName("com.aol.cyclops.enableswitch.Switch");
-			put(caze,(Comprehender)Class.forName("com.aol.cyclops.enableswitch.SwitchComprehender").newInstance());
-		}catch(Exception e){
-			
-		}
-	}};
-	
-	/**
-	 * Careful - global mutable state, with the possiblity of changing behaviour for existing comprehenders
-	 * 
-	 * @param c
-	 * @param comp
-	 */
-	public static void addComprehender(Class c, Comprehender comp){
-		comprehenders.put(c,comp);
-	}
-
-	public static Map<Class,Comprehender> getRegisteredComprehenders(){
-		return new HashMap(comprehenders);
-	}
 	
 	private final  List<Expansion> expansions;
 	
@@ -110,7 +70,7 @@ class Yield<T> {
 	}
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private Optional<Tuple2<Comprehender,Object>> selectComprehender(Object structure) {
-		return comprehenders.entrySet().stream()
+		return Comprehenders.getRegisteredComprehenders().entrySet().stream()
 				.filter(e -> e.getKey().isAssignableFrom(structure.getClass()))
 				.map(e->e.getValue())
 				.map(v->new Tuple2<Comprehender,Object>(v,structure))

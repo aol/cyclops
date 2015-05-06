@@ -60,10 +60,12 @@ public class ForComprehension3<MONAD,R,R_PARAM> {
 	static interface Step4<MONAD,T1,T2,T3,R,R_PARAM>{
 		public  Step4<MONAD,T1,T2,T3,R,R_PARAM> filter(Supplier<Boolean> s);
 		public R yield(Supplier<R_PARAM> s);
+		public void run(Runnable r);
 		
 	}
 	static interface Step5<MONAD,T1,T2,T3,R,R_PARAM>{
 		public R yield(Supplier<R_PARAM> s);
+		public void run(Runnable r);
 	}
 	
 	 class ComphrensionData<MONAD,T1,T2,T3,R,R_PARAM> implements Step1<MONAD,T1,T2,T3,R,R_PARAM>, Step2<MONAD,T1,T2,T3,R,R_PARAM>, 
@@ -81,6 +83,10 @@ public class ForComprehension3<MONAD,R,R_PARAM> {
 			data.guardInternal(s);
 			return this;
 			
+		}
+		
+		public void run(Runnable r){
+			data.run(r);
 		}
 		
 		public R yield(Supplier<R_PARAM> s){

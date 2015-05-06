@@ -29,6 +29,9 @@ final class BaseComprehensionData {
 		return (R)this;
 	}
 	
+	public void run(Runnable r){
+		yieldInternal( ()-> { r.run(); return null; });
+	}
 	public <R> R yieldInternal(Supplier s){
 		return (R)((Foreach)delegate.getContext()).yield(new ContextualExecutor(delegate.getContext()){
 			public Object execute(){

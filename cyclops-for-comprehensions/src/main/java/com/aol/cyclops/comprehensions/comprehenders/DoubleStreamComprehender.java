@@ -8,7 +8,7 @@ import java.util.stream.LongStream;
 import com.aol.cyclops.lambda.api.Comprehender;
 
 public class DoubleStreamComprehender implements Comprehender<DoubleStream> {
-
+	
 	@Override
 	public Object filter(DoubleStream t, Predicate p) {
 		return t.filter(test->p.test(test));

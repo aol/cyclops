@@ -68,6 +68,7 @@ public class ForComprehension1<MONAD,R,R_PARAM> {
 		 * @return Yielded variable
 		 */
 		public R yield(Supplier<R_PARAM> s);
+		public void run(Runnable r);
 		
 	}
 	static interface Step3<MONAD,T1,R,R_PARAM>{
@@ -88,6 +89,9 @@ public class ForComprehension1<MONAD,R,R_PARAM> {
 			data.guardInternal(s);
 			return this;
 			
+		}
+		public void run(Runnable r){
+			data.run(r);
 		}
 		
 		public R yield(Supplier<R_PARAM> s){

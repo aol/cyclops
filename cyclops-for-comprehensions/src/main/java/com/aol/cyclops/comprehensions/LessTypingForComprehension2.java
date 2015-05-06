@@ -48,6 +48,7 @@ public class LessTypingForComprehension2<T,R> {
 		public  Step3<T,R> mapAs$2(Object f);
 		public  Step3<T,R> mapAs$2(Supplier f);
 		public <R> R yield(Supplier s);
+		public void run(Runnable r);
 		public  Step2<T,R> filter(Supplier<Boolean> s);
 		
 	}
@@ -55,10 +56,12 @@ public class LessTypingForComprehension2<T,R> {
 	public static interface Step3<T,R>{
 		public  Step4<T,R> filter(Supplier<Boolean> s);
 		public <R> R yield(Supplier s);
+		public void run(Runnable r);
 		
 	}
 	public static interface Step4<T,R>{
 		public <R> R yield(Supplier s);
+		public void run(Runnable r);
 		
 	}
 
@@ -75,6 +78,9 @@ public class LessTypingForComprehension2<T,R> {
 			data.guardInternal(s);
 			return this;
 			
+		}
+		public void run(Runnable r){
+			data.run(r);
 		}
 		
 		public R yield(Supplier s){

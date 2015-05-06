@@ -12,17 +12,11 @@ We can iterate over them using Java 5 'foreach' syntax
      	System.out.println(element);
      }
      
-Given print method that returns a value
-
-     public Object print(Object o){
-     	System.out.println(o);
-     	return o;
-     }
 
 The equivalent for comprehension would be 
 
      ForComprehensions.foreach1(c -> c.mapAs$1(list)
-                                      .yield( ()-> print(c.$1())
+                                      .run( ()-> System.out.println(c.$1())
                                       
 If we nest our looping
 	
@@ -38,7 +32,7 @@ Things start to become a little unwieldy, but a little less so with for comprehe
       
      ForComprehensions.foreach2(c -> c.flatMapAs$1(list)
                                       .mapAs$2(numbers)                                                    
-                                      .yield( ()-> print(c.$1() + c.$2())
+                                      .run( ()-> System.out.println(c.$1()+c.$2())
 
 
 Let's add a third level of nesting
@@ -59,7 +53,7 @@ Let's add a third level of nesting
      ForComprehensions.foreach3(c -> c.flatMapAs$1(list)
                                       .flatMapAs$2(numbers)
                                       .mapAs$2(dates)                                                    
-                                      .yield( ()-> print(c.$1() + c.$2() + c.$3())
+                                      .run( ()-> System.out.println(c.$1()+c.$2()+c.$3())
  
       
      list.stream()
@@ -103,3 +97,6 @@ Or the other way around
 		assertThat(results.get(),hasItem("coolworld"));
 		
 Outputs : [[coolhello],[coolworld]]
+
+## Filtering
+

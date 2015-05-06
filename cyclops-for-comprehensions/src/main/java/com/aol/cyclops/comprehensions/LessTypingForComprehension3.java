@@ -59,10 +59,12 @@ public class LessTypingForComprehension3<T,R> {
 	public static interface Step4<T,R>{
 		public  Step4<T,R> filter(Supplier<Boolean> s);
 		public <R> R yield(Supplier s);
+		public void run(Runnable r);
 		
 	}
 	public static interface Step5<T,R>{
 		public <R> R yield(Supplier s);
+		public void run(Runnable r);
 		
 	}
 
@@ -80,7 +82,9 @@ public class LessTypingForComprehension3<T,R> {
 			return this;
 			
 		}
-		
+		public void run(Runnable r){
+			data.run(r);
+		}
 		public R yield(Supplier s){
 			return data.yieldInternal(s);
 			
