@@ -145,7 +145,7 @@ public class Matching {
 	 * @param fn a function that accepts a Stream based pattern matching builder
 	 * @return Pattern Matching Builder
 	 */
-	public static final <T,X> MatchingInstance<T,X> streamCase(Function<Case,MatchingInstance<T,X>> fn){
+	public static final <T,X> MatchingInstance<T,X> streamCase(Function<CaseBeingBuilt,MatchingInstance<T,X>> fn){
 		StreamCase cse = new StreamCase(new PatternMatcher());
 		return fn.apply(cse);
 		

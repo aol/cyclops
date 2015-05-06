@@ -12,18 +12,17 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
-import lombok.val;
 
 import org.pcollections.PMap;
 
 import com.aol.cyclops.comprehensions.comprehenders.CompletableFutureComprehender;
-import com.aol.cyclops.comprehensions.comprehenders.Comprehender;
 import com.aol.cyclops.comprehensions.comprehenders.DoubleStreamComprehender;
 import com.aol.cyclops.comprehensions.comprehenders.IntStreamComprehender;
 import com.aol.cyclops.comprehensions.comprehenders.LongStreamComprehender;
 import com.aol.cyclops.comprehensions.comprehenders.OptionalComprehender;
 import com.aol.cyclops.comprehensions.comprehenders.ReflectionComprehender;
 import com.aol.cyclops.comprehensions.comprehenders.StreamComprehender;
+import com.aol.cyclops.lambda.api.Comprehender;
 
 @AllArgsConstructor
 class Yield<T> {
@@ -36,6 +35,24 @@ class Yield<T> {
 		put(LongStream.class,new LongStreamComprehender());
 		put(DoubleStream.class,new DoubleStreamComprehender());
 		put(CompletableFuture.class, new CompletableFutureComprehender());
+		try{
+			Class cases = Class.forName("com.aol.cyclops.matcher.Cases");
+			put(cases,(Comprehender)Class.forName("com.aol.cyclops.matcher.comprehenders.CasesComprehender").newInstance());
+		}catch(Exception e){
+			
+		}
+		try{
+			Class caze = Class.forName("com.aol.cyclops.matcher.Case");
+			put(caze,(Comprehender)Class.forName("com.aol.cyclops.matcher.comprehenders.CaseComprehender").newInstance());
+		}catch(Exception e){
+			
+		}
+		try{
+			Class caze = Class.forName("com.aol.cyclops.enableswitch.Switch");
+			put(caze,(Comprehender)Class.forName("com.aol.cyclops.enableswitch.SwitchComprehender").newInstance());
+		}catch(Exception e){
+			
+		}
 	}};
 
 	private final  List<Expansion> expansions;

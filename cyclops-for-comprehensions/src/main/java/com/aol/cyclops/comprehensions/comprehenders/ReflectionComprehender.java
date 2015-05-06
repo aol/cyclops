@@ -8,6 +8,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.lambda.api.Comprehender;
+
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -98,6 +100,17 @@ public class ReflectionComprehender implements Comprehender {
 	public Object of(Object o) {
 		try {
 			return type.get().getMethod("of",o.getClass()).invoke(null,o);
+		} catch (IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException | NoSuchMethodException
+				| SecurityException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public Object of() {
+		try {
+			return type.get().getMethod("of").invoke(null);
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException
 				| SecurityException e) {

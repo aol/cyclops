@@ -5,6 +5,8 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
+import com.aol.cyclops.lambda.api.Comprehender;
+
 public class IntStreamComprehender implements Comprehender<IntStream> {
 
 	@Override
@@ -30,6 +32,11 @@ public class IntStreamComprehender implements Comprehender<IntStream> {
 	@Override
 	public IntStream of(Object o) {
 		return IntStream.of((int)o);
+	}
+
+	@Override
+	public IntStream of() {
+		return IntStream.of();
 	}
 
 }

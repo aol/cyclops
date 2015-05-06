@@ -15,7 +15,7 @@ public class CaseBuilder {
 	
 	@AllArgsConstructor
 	public static class ValueStep<V,X> implements Step<V,X>{
-		private final Case cse;
+		private final CaseBeingBuilt cse;
 		private final PatternMatcher matcher;
 		private final V value;
 		/* 
@@ -30,7 +30,7 @@ public class CaseBuilder {
 	}
 	@AllArgsConstructor
 	public static class InCaseOfThenExtractStep<T,X,R> implements Step<R,X>{
-		private final Case cse;
+		private final CaseBeingBuilt cse;
 		private final PatternMatcher matcher;
 		private final Predicate<T> match;
 		private final Extractor<T,R> extractor;
@@ -52,7 +52,7 @@ public class CaseBuilder {
 		// V : input for matcher / predicate
 		private final Predicate<V> match;
 		private final PatternMatcher matcher;
-		private final Case cse;
+		private final CaseBeingBuilt cse;
 		
 		/**
 		 * Post-process input supplied to matching, so input to Action will be different from input to Predicate
@@ -99,7 +99,7 @@ public class CaseBuilder {
 		
 		private final Extractor<T,R> extractor;
 		private final PatternMatcher patternMatcher;
-		private final Case cse;
+		private final CaseBeingBuilt cse;
 		
 		/**
 		 * Add Predicate for this Case
@@ -193,7 +193,7 @@ public class CaseBuilder {
 	public static class InMatchOfBuilder<V,X>{
 		private final Matcher<V> match;
 		private final PatternMatcher patternMatcher;
-		private final Case cse;
+		private final CaseBeingBuilt cse;
 				//T : user input (type provided to match)
 				//X : match response (thenApply)
 				//R : extractor response
@@ -245,7 +245,7 @@ public class CaseBuilder {
 	public static class InCaseOfManyStep2<V>{
 		private final Predicate<V>[] predicates;
 		private final PatternMatcher patternMatcher;
-		private final Case cse;
+		private final CaseBeingBuilt cse;
 		
 		/**
 		 * Create a new Case with the supplied ActionWithReturn as the action
@@ -275,7 +275,7 @@ public class CaseBuilder {
 	public static class InMatchOfManyStep2<R,V,T,X>{
 		private final Matcher<V>[] predicates;
 		private final PatternMatcher patternMatcher;
-		private final Case cse;
+		private final CaseBeingBuilt cse;
 		
 		/**
 		 * Create a new Case with the supplied ActionWithReturn as the action

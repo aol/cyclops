@@ -4,6 +4,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import com.aol.cyclops.lambda.api.Comprehender;
+
 public class OptionalComprehender implements Comprehender<Optional> {
 
 	@Override
@@ -29,6 +31,11 @@ public class OptionalComprehender implements Comprehender<Optional> {
 	@Override
 	public Optional of(Object o) {
 		return Optional.of(o);
+	}
+
+	@Override
+	public Optional of() {
+		return Optional.empty();
 	}
 
 }

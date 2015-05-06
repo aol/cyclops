@@ -39,6 +39,10 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 		cases = ConsPStack.empty();
 		sequential =true;
 	}
+	 
+	 public PStack<Case<T,R,X>> get(){
+		 return cases;
+	 }
 	 /**
 	  * Construct a Cases instance from a persistent stack of Pattern Matching Cases
 	  * Will execute sequentially when Match is called.

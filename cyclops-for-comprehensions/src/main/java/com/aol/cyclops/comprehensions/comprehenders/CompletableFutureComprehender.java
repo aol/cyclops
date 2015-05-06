@@ -4,6 +4,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import com.aol.cyclops.lambda.api.Comprehender;
+
 public class CompletableFutureComprehender implements Comprehender<CompletableFuture>{
 
 	@Override
@@ -29,6 +31,11 @@ public class CompletableFutureComprehender implements Comprehender<CompletableFu
 	@Override
 	public CompletableFuture of(Object o) {
 		return CompletableFuture.completedFuture(o);
+	}
+
+	@Override
+	public CompletableFuture of() {
+		return new CompletableFuture();
 	}
 	
 

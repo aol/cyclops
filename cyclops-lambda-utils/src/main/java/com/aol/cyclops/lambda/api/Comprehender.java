@@ -1,4 +1,4 @@
-package com.aol.cyclops.comprehensions.comprehenders;
+package com.aol.cyclops.lambda.api;
 
 import java.lang.reflect.Method;
 import java.util.Optional;
@@ -66,13 +66,16 @@ public interface Comprehender<T> {
 	
 	public boolean instanceOfT(Object apply);
 	public T of(Object o);
+	public T of();
 	
 	default T makeSafe(Object apply){
 		
 			if(instanceOfT(apply))
 				return (T)apply;
 			if(apply instanceof Optional){
-				return of(((Optional)apply).get());
+				if(((Optional)apply).isPresent())
+					return of(((Optional)apply).get());
+				return of();
 			}
 			if(apply instanceof Stream){
 				return of(((Stream)apply).collect(Collectors.toList()));

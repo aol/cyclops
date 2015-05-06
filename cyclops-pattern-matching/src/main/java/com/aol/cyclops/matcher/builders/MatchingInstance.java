@@ -26,7 +26,7 @@ import com.aol.cyclops.matcher.Decomposable;
 public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	
 	
-	private final Case cse;
+	private final CaseBeingBuilt cse;
 	
 	
 	
@@ -151,7 +151,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 * @param fn a function that accepts a Stream based pattern matching builder
 	 * @return Pattern Matching Builder
 	 */
-	public final  MatchingInstance<T,X> streamCase(Function<Case,MatchingInstance<T,X>> fn){
+	public final  MatchingInstance<T,X> streamCase(Function<CaseBeingBuilt,MatchingInstance<T,X>> fn){
 		StreamCase cse = new StreamCase(new PatternMatcher());
 		return fn.apply(cse);
 		

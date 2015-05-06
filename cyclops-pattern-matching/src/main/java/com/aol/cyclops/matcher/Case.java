@@ -33,19 +33,19 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	/**
 	 * @return Pattern for this case
 	 */
-	public Tuple2<Predicate<T>,X> getPattern();
+	public Tuple2<Predicate<T>,X> get();
 	
 	/**
 	 * @return Predicate for this case
 	 */
 	default Predicate<T> getPredicate(){
-		return getPattern().v1;
+		return get().v1;
 	}
 	/**
 	 * @return Action (Function) for this case
 	 */
 	default X getAction(){
-		return getPattern().v2;
+		return get().v2;
 	}
 	
 	/**
@@ -104,7 +104,7 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	 * @return
 	 */
 	default  Case<T,R,X> filter(Predicate<Tuple2<Predicate<T>,X>> predicate){
-		return predicate.test(getPattern()) ? this : empty();
+		return predicate.test(get()) ? this : empty();
 	}
 	/**
 	 * Allows the predicate to be replaced with one returned from the supplied function
@@ -147,7 +147,7 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	 * @return New case with a (potentially) new predicate and action
 	 */
 	default <T1,R1,X1 extends Function<T1,R1>> Case<T1,R1,X1> map(Function<Tuple2<Predicate<T>,X>,Tuple2<Predicate<T1>,X1>> mapper){
-		return Case.of(mapper.apply(getPattern()));	
+		return Case.of(mapper.apply(get()));	
 	}
 	/**
 	 * Create a new Case from the supplied Function
@@ -161,7 +161,7 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	 * @return new Case instance created
 	 */
 	default <T1,R1,X1 extends Function<T1,R1>> Case<T1,R1,X1> flatMap(Function<Tuple2<Predicate<T>,X>,Case<T1,R1,X1>> mapper){
-		return mapper.apply(getPattern());	
+		return mapper.apply(get());	
 	}
 	
 	
@@ -214,15 +214,15 @@ public interface Case<T,R,X extends Function<T,R>>  {
 		final ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		Predicate<T1> predicate =t-> {
 			final boolean passed;
-			if(before.getPattern().v1.test(t)){
+			if(before.get().v1.test(t)){
 				passed=true;
-				value.setOnce(before.getPattern().v2.apply(t));
+				value.setOnce(before.get().v2.apply(t));
 			}else
 				passed= false;
-			return  passed && getPattern().v1.test(value.get());
+			return  passed && get().v1.test(value.get());
 		};
 		
-		return Case.<T1,R,Function<T1,R>>of(predicate,  input -> getPattern().v2.apply(value.get()));
+		return Case.<T1,R,Function<T1,R>>of(predicate,  input -> get().v2.apply(value.get()));
 		
 	}
 	/**
@@ -241,8 +241,8 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	default <T1 > Case<T1,R,Function<T1,R>> composeOr(Case<T1,T,? extends Function<T1,T>> before){
 		
 		
-		return Case.<T1,R,Function<T1,R>>of(t->   before.getPattern().v1.test(t) || getPattern().v1.test(before.getPattern().v2.apply(t)),
-				input -> getPattern().v2.apply(before.getPattern().v2.apply(input)));
+		return Case.<T1,R,Function<T1,R>>of(t->   before.get().v1.test(t) || get().v1.test(before.get().v2.apply(t)),
+				input -> get().v2.apply(before.get().v2.apply(input)));
 		
 	}
 	/**
@@ -436,8 +436,8 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	 * @return Optional.empty if doesn't match, result of the application of current function if it does wrapped in an Optional
 	 */
 	default Optional<R> match(T value){
-		if(getPattern().v1.test(value))
-			return Optional.of(getPattern().v2.apply(value));
+		if(get().v1.test(value))
+			return Optional.of(get().v2.apply(value));
 		return Optional.empty();
 	}
 	/**

@@ -1,6 +1,6 @@
 # for comprehensions explained
 
-
+For comprehensions are useful for iterating over nested structures (e.g. collections, Streams, Optionals, CompletableFutures or other Monads).
     
 Given a list of Strings 
 

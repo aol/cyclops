@@ -32,7 +32,7 @@ import com.aol.cyclops.matcher.builders.CaseBuilder.InMatchOfManyStep2;
  * @param <X> Type to be passed to match
  */
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
-public class IterableCase<X> extends Case{
+public class IterableCase<X> extends CaseBeingBuilt{
 	// T : user input (type provided to match)
 	// X : match response (thenApply)
 	// R : extractor response

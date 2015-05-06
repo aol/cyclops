@@ -20,7 +20,7 @@ import com.aol.cyclops.matcher.ChainOfResponsibility;
  *
  */
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
-public class StreamCase extends Case{
+public class StreamCase extends CaseBeingBuilt{
 	
 	@Getter(AccessLevel.PACKAGE)
 	@Wither(AccessLevel.PACKAGE)

@@ -28,11 +28,13 @@ import org.jooq.lambda.tuple.Tuple2;
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
 public final class ActiveCase<T,R,X extends Function<T,R>> implements Case<T,R,X>{
 	
-	@Getter
 	private final Tuple2<Predicate<T>,X> pattern;
 	@Getter
 	private final boolean empty=false;
 	
+	public Tuple2<Predicate<T>,X> get(){
+		return pattern;
+	}
 	
 	
 }

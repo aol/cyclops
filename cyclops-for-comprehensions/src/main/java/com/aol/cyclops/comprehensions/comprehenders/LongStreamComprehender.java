@@ -4,6 +4,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.LongStream;
 
+import com.aol.cyclops.lambda.api.Comprehender;
+
 public class LongStreamComprehender implements Comprehender<LongStream> {
 
 	@Override
@@ -29,6 +31,11 @@ public class LongStreamComprehender implements Comprehender<LongStream> {
 	@Override
 	public LongStream of(Object o) {
 		return LongStream.of((long)o);
+	}
+
+	@Override
+	public LongStream of() {
+		return LongStream.of();
 	}
 
 }

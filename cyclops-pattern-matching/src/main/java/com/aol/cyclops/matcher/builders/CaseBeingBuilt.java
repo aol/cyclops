@@ -5,9 +5,9 @@ import java.util.function.Predicate;
 
 import org.hamcrest.Matcher;
 
-public abstract class Case {
+public abstract class CaseBeingBuilt {
 
-	abstract Case withPatternMatcher(PatternMatcher matcher);
+	abstract CaseBeingBuilt withPatternMatcher(PatternMatcher matcher);
 	abstract PatternMatcher getPatternMatcher();
 	Predicate convertToPredicate(Object o){
 		if(o instanceof Predicate)

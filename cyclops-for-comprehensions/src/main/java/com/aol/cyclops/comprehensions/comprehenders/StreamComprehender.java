@@ -7,6 +7,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.lambda.api.Comprehender;
+
 public class StreamComprehender implements Comprehender<Stream> {
 
 	@Override
@@ -28,7 +30,10 @@ public class StreamComprehender implements Comprehender<Stream> {
 	public boolean instanceOfT(Object apply) {
 		return apply instanceof Stream;
 	}
-
+	@Override
+	public Stream of() {
+		return Stream.of();
+	}
 	@Override
 	public Stream of(Object o) {
 		return Stream.of(o);

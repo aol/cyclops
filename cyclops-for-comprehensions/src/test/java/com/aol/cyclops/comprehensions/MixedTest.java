@@ -2,7 +2,7 @@ package com.aol.cyclops.comprehensions;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,6 +33,20 @@ public class MixedTest {
 		assertThat(results,hasItem("worldcool"));
 	}
 	@Test
+	public void mixedStreamOptionalEmpty(){
+		val strs = Arrays.asList("hello","world");
+		val opt = Optional.empty();
+		
+		
+		List<String> results = ForComprehensions.<String,Stream<String>>foreach2( c-> c.flatMapAs$1(strs)
+										 .mapAs$2(opt)
+										 .yield(() -> c.<String>$1() + c.$2())).collect(Collectors.toList());
+		
+		System.out.println(results);
+		assertThat(results.size(),equalTo(0));
+		
+	}
+	@Test
 	public void mixedOptionalStream(){
 		val strs = Arrays.asList("hello","world");
 		val opt = Optional.of("cool");
@@ -45,6 +59,19 @@ public class MixedTest {
 		assertThat(results.get(),hasItem("coolhello"));
 		assertThat(results.get(),hasItem("coolworld"));
 	}
+	@Test
+	public void mixedOptionalEmptyStream(){
+		val strs = Arrays.asList("hello","world");
+		val opt = Optional.empty();
+		
+		
+		Optional<List<String>> results = ForComprehensions.<String,Optional<List<String>>>foreach2( c-> c.flatMapAs$1(opt)
+										 .mapAs$2(strs)
+										 .yield(() -> c.<String>$1() + c.$2()));
+		
+		assertFalse(results.isPresent());
+	}
+	
 	@Test
 	public void mixedOptionalCompletableFuture(){
 		val str = CompletableFuture.completedFuture("hello");

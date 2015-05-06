@@ -5,6 +5,8 @@ import java.util.function.Predicate;
 import java.util.stream.DoubleStream;
 import java.util.stream.LongStream;
 
+import com.aol.cyclops.lambda.api.Comprehender;
+
 public class DoubleStreamComprehender implements Comprehender<DoubleStream> {
 
 	@Override
@@ -30,6 +32,11 @@ public class DoubleStreamComprehender implements Comprehender<DoubleStream> {
 	@Override
 	public DoubleStream of(Object o) {
 		return DoubleStream.of((double)o);
+	}
+
+	@Override
+	public DoubleStream of() {
+		return DoubleStream.of();
 	}
 
 }

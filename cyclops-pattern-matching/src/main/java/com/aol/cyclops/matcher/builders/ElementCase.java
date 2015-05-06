@@ -23,7 +23,7 @@ import com.aol.cyclops.matcher.builders.CaseBuilder.InMatchOfBuilder;
  * @param <X>
  */
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
-public class ElementCase<X> extends Case{
+public class ElementCase<X> extends CaseBeingBuilt{
 	@Getter(AccessLevel.PACKAGE)
 	@Wither(AccessLevel.PACKAGE)
 	private final PatternMatcher patternMatcher;
