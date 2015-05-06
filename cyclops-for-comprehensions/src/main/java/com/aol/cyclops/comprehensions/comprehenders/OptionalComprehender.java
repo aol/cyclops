@@ -21,4 +21,14 @@ public class OptionalComprehender implements Comprehender<Optional> {
 		return o.flatMap(fn);
 	}
 
+	@Override
+	public boolean instanceOfT(Object apply) {
+		return apply instanceof Optional;
+	}
+
+	@Override
+	public Optional of(Object o) {
+		return Optional.of(o);
+	}
+
 }

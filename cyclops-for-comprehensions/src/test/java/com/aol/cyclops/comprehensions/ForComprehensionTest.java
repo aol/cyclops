@@ -218,7 +218,7 @@ public class ForComprehensionTest {
 			BiFunction<Integer,Integer,Integer> f2 = (a,b) -> a *b; 
 			
 			val result =  ForComprehensions
-								.<Integer,Option<Integer>>foreach1(c -> c.flatMapAs$1(one)
+								.<Integer,Option<Integer>>foreach2(c -> c.flatMapAs$1(one)
 																.mapAs$2(empty)
 																.filter(()->c.<Integer>$1()>2)
 																.yield(()->{return f2.apply(c.$1(), 10);}));

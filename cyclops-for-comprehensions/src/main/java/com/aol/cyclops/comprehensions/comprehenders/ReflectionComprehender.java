@@ -3,14 +3,19 @@ package com.aol.cyclops.comprehensions.comprehenders;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import fj.F;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class ReflectionComprehender implements Comprehender {
 
+	Optional<Class> type;
+	
+	
 	@Override
 	public Object filter(Object t, Predicate p) {
 		Method m = Stream.of(t.getClass().getMethods())
@@ -79,9 +84,26 @@ public class ReflectionComprehender implements Comprehender {
 			return m.invoke(t, o);
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
-			e.printStackTrace();
+			
 			throw new RuntimeException(e);
 		}
 	}
+
+	@Override
+	public boolean instanceOfT(Object apply) {
+		return type.map(t -> apply.getClass().isAssignableFrom(t)).orElse(true);
+	}
+
+	@Override
+	public Object of(Object o) {
+		try {
+			return type.get().getMethod("of",o.getClass()).invoke(null,o);
+		} catch (IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException | NoSuchMethodException
+				| SecurityException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 
 }

@@ -1,8 +1,5 @@
 package com.aol.cyclops.matcher;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -28,7 +25,7 @@ import com.aol.cyclops.matcher.builders.ADTPredicateBuilder;
  * @param <R> Return type for function (action) which is executed if the predicate tests positive
  * @param <X> Type of Function - cyclops pattern matching builders use ActionWithReturn which is serialisable and retains type info
  */
-public interface Case<T,R,X extends Function<T,R>> {
+public interface Case<T,R,X extends Function<T,R>>  {
 	/**
 	 * @return true is this an 'empty' case
 	 */

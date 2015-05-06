@@ -22,4 +22,14 @@ public class DoubleStreamComprehender implements Comprehender<DoubleStream> {
 		return t.flatMap( i-> (DoubleStream)fn.apply(i));
 	}
 
+	@Override
+	public boolean instanceOfT(Object apply) {
+		return apply instanceof DoubleStream;
+	}
+
+	@Override
+	public DoubleStream of(Object o) {
+		return DoubleStream.of((double)o);
+	}
+
 }

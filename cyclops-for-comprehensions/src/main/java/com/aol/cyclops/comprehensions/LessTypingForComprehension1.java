@@ -5,6 +5,11 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import com.aol.cyclops.comprehensions.LessTypingForComprehension2.ComphrensionData;
+import com.aol.cyclops.comprehensions.LessTypingForComprehension2.Step1;
+import com.aol.cyclops.comprehensions.LessTypingForComprehension2.Step2;
+import com.aol.cyclops.comprehensions.LessTypingForComprehension2.Step3;
+
 
 
 public class LessTypingForComprehension1<T,R> {
@@ -17,11 +22,11 @@ public class LessTypingForComprehension1<T,R> {
 		Optional<Integer> empty = Optional.of(3);
 		BiFunction<Integer, Integer, Integer> f2 = (a, b) -> a * b;
 
-		Object result =  LessTypingForComprehension1.foreach(c -> c.flatMapAs$1(one)
-														.mapAs$2(empty)
+		Object result =  LessTypingForComprehension1.foreach(c -> c.mapAs$1(one)
+														
 														
 													//	.guard(()->c.<Integer>$1()>2)
-														.yield(()->{return f2.apply(c.$1(), c.$2());}));
+														.yield(()->{return f2.apply(c.$1(), 10);}));
 	System.out.println(result);
 }
 	@SuppressWarnings("unchecked")
@@ -36,30 +41,24 @@ public class LessTypingForComprehension1<T,R> {
 		return new ComphrensionData<>(exec);
 	}
 	public static interface Step1<T,R>{
-		public  Step2<T,R> flatMapAs$1(Object f);
+		public  Step2<T,R> mapAs$1(Object f);
 		public <T> T $1();
-		public <T> T $2();
+	
 		public <T> T $(String name);
 	}
-	public static interface Step2<T,R>{
-		public  Step3<T,R> mapAs$2(Object f);
-		public  Step3<T,R> mapAs$2(Supplier f);
-		public <R> R yield(Supplier s);
-		public  Step2<T,R> filter(Supplier<Boolean> s);
-		
-	}
 	
-	public static interface Step3<T,R>{
-		public  Step4<T,R> filter(Supplier<Boolean> s);
+	
+	public static interface Step2<T,R>{
+		public  Step3<T,R> filter(Supplier<Boolean> s);
 		public <R> R yield(Supplier s);
 		
 	}
-	public static interface Step4<T,R>{
+	public static interface Step3<T,R>{
 		public <R> R yield(Supplier s);
 		
 	}
 
-	class ComphrensionData<T,R> implements Step1<T,R>, Step2<T,R>,Step3<T,R>,Step4<T,R>{
+	class ComphrensionData<T,R> implements Step1<T,R>, Step2<T,R>,Step3<T,R>{
 		BaseComprehensionData data;
 		
 		
@@ -86,25 +85,15 @@ public class LessTypingForComprehension1<T,R> {
 			return data.$Internal("_1");
 		
 		}
-		public <T> T $2(){
-			return data.$Internal("_2");
 		
-		}
-		
-		
-		public   Step2<T,R> flatMapAs$1(Object f){
+		public   Step2<T,R> mapAs$1(Object f){
 			data.$Internal("_1", f);
 			
 			return (ComphrensionData)this;
 		}
-		public   Step3<T,R> mapAs$2(Object f){
-			data.$Internal("_2", f);
-			return (ComphrensionData)this;
-		}
-		public   Step3<T,R> mapAs$2(Supplier f){
-			data.$Internal("_2", f);
-			return (ComphrensionData)this;
-		}
+		
+		
+		
 		
 	}
 }

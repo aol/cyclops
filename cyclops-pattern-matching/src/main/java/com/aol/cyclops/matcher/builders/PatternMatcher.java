@@ -391,6 +391,15 @@ public class PatternMatcher implements Function{
 	/**
 	 * Match against a tuple of predicates (or prototype values, or hamcrest matchers). Each predicate will match against an element in an iterable. 
 	 * 
+	 * <pre>
+	 * new PatternMatcher()
+	 *		.caseOfTuple(tuple(p( v -&gt;  v.equals(&quot;-l&quot;) ||  v.equals(&quot;---lang&quot;)),
+	 *								 p(v-&gt;true)),
+	 *							lang -&gt; language  =lang,Extractors.&lt;String&gt;at(1) )
+	 *		.match(tuple(&quot;-l&quot;,&quot;java&quot;));
+	 *	
+	 *	assertThat(language,is(&quot;java&quot;));
+	 * </pre>
 	 * @param predicates Predicates to match with
 	 * @param a Action triggered if predicates hold
 	 * @param extractor

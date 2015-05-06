@@ -10,20 +10,20 @@ public class LessTypingForComprehension2<T,R> {
 	
 	
 	
-	
 	public static void main(String[] args){
 
 		Optional<Integer> one = Optional.of(1);
 		Optional<Integer> empty = Optional.of(3);
 		BiFunction<Integer, Integer, Integer> f2 = (a, b) -> a * b;
 
-		Object result =  LessTypingForComprehension2.foreach(c -> c.mapAs$1(one)
-														
+		Object result =  LessTypingForComprehension2.foreach(c -> c.flatMapAs$1(one)
+														.mapAs$2(empty)
 														
 													//	.guard(()->c.<Integer>$1()>2)
-														.yield(()->{return f2.apply(c.$1(), 10);}));
+														.yield(()->{return f2.apply(c.$1(), c.$2());}));
 	System.out.println(result);
 }
+	
 	@SuppressWarnings("unchecked")
 	public static <T,R> R foreach(Function<Step1<T,R>,R> fn){
 		return Foreach.foreach(new ContextualExecutor<R,Foreach<R>>(new Foreach<R>()){
@@ -35,25 +35,34 @@ public class LessTypingForComprehension2<T,R> {
 	protected  Step1<T, R> getComphrensionData(ContextualExecutor<R,Foreach<R>> exec) {
 		return new ComphrensionData<>(exec);
 	}
-	public static interface Step1<T,R>{
-		public  Step2<T,R> mapAs$1(Object f);
-		public <T> T $1();
+
 	
+	
+	public static interface Step1<T,R>{
+		public  Step2<T,R> flatMapAs$1(Object f);
+		public <T> T $1();
+		public <T> T $2();
 		public <T> T $(String name);
 	}
-	
-	
 	public static interface Step2<T,R>{
-		public  Step3<T,R> filter(Supplier<Boolean> s);
+		public  Step3<T,R> mapAs$2(Object f);
+		public  Step3<T,R> mapAs$2(Supplier f);
+		public <R> R yield(Supplier s);
+		public  Step2<T,R> filter(Supplier<Boolean> s);
+		
+	}
+	
+	public static interface Step3<T,R>{
+		public  Step4<T,R> filter(Supplier<Boolean> s);
 		public <R> R yield(Supplier s);
 		
 	}
-	public static interface Step3<T,R>{
+	public static interface Step4<T,R>{
 		public <R> R yield(Supplier s);
 		
 	}
 
-	class ComphrensionData<T,R> implements Step1<T,R>, Step2<T,R>,Step3<T,R>{
+	class ComphrensionData<T,R> implements Step1<T,R>, Step2<T,R>,Step3<T,R>,Step4<T,R>{
 		BaseComprehensionData data;
 		
 		
@@ -80,15 +89,26 @@ public class LessTypingForComprehension2<T,R> {
 			return data.$Internal("_1");
 		
 		}
+		public <T> T $2(){
+			return data.$Internal("_2");
 		
-		public   Step2<T,R> mapAs$1(Object f){
+		}
+		
+		
+		public   Step2<T,R> flatMapAs$1(Object f){
 			data.$Internal("_1", f);
 			
 			return (ComphrensionData)this;
 		}
-		
-		
-		
+		public   Step3<T,R> mapAs$2(Object f){
+			data.$Internal("_2", f);
+			return (ComphrensionData)this;
+		}
+		public   Step3<T,R> mapAs$2(Supplier f){
+			data.$Internal("_2", f);
+			return (ComphrensionData)this;
+		}
 		
 	}
 }
+

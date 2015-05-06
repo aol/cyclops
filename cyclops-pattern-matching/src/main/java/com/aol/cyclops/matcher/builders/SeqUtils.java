@@ -8,7 +8,8 @@ import org.jooq.lambda.Seq;
 
 class SeqUtils {
 
-	private static final Object EMPTY = new Object();
+	public final static class EMPTY { }
+	private static final EMPTY EMPTY = new EMPTY();
 	public static Seq<Object> seq(Object t){
 		if(t instanceof Iterable){
 			return Seq.seq((Iterable)t).concat(Seq.cycle(Stream.of(EMPTY)));

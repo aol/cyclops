@@ -20,6 +20,16 @@ public class CompletableFutureComprehender implements Comprehender<CompletableFu
 	public CompletableFuture flatMap(CompletableFuture t, Function fn) {
 		return t.thenCompose(fn);
 	}
+
+	@Override
+	public boolean instanceOfT(Object apply) {
+		return apply instanceof CompletableFuture;
+	}
+
+	@Override
+	public CompletableFuture of(Object o) {
+		return CompletableFuture.completedFuture(o);
+	}
 	
 
 }

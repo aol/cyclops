@@ -21,4 +21,14 @@ public class LongStreamComprehender implements Comprehender<LongStream> {
 		return t.flatMap( i-> (LongStream)fn.apply(i));
 	}
 
+	@Override
+	public boolean instanceOfT(Object apply) {
+		return apply instanceof LongStream;
+	}
+
+	@Override
+	public LongStream of(Object o) {
+		return LongStream.of((long)o);
+	}
+
 }

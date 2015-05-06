@@ -1,14 +1,9 @@
 package com.aol.cyclops.matcher;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -24,8 +19,6 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
-import com.aol.cyclops.matcher.CasesTest.MyClass;
-
 /**
  * Represents an ordered list of pattern matching cases.
  * 
@@ -36,7 +29,7 @@ import com.aol.cyclops.matcher.CasesTest.MyClass;
  * @param <X> Type of Function - cyclops pattern matching builders use ActionWithReturn which is serialisable and retains type info
  */
 @AllArgsConstructor
-public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R>> {
+public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R>>{
 	@Wither
 	private final PStack<Case<T,R,X>> cases;
 	@Wither(AccessLevel.PRIVATE)

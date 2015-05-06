@@ -22,4 +22,14 @@ public class IntStreamComprehender implements Comprehender<IntStream> {
 		return t.flatMap( i-> (IntStream)fn.apply(i));
 	}
 
+	@Override
+	public boolean instanceOfT(Object apply) {
+		return apply instanceof IntStream;
+	}
+
+	@Override
+	public IntStream of(Object o) {
+		return IntStream.of((int)o);
+	}
+
 }

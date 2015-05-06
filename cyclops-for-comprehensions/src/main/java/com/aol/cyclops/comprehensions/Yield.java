@@ -46,7 +46,7 @@ class Yield<T> {
 		
 		Tuple2<Comprehender,Object> comprehender = selectComprehender(currentExpansionUnwrapped)
 									.orElseGet( ()->selectComprehender(convertToMonadicForm(currentExpansionUnwrapped))
-													.orElse( new Tuple2(new ReflectionComprehender(),currentExpansionUnwrapped)));
+													.orElse( new Tuple2(new ReflectionComprehender(Optional.of(currentExpansionUnwrapped).map(Object::getClass)),currentExpansionUnwrapped)));
 			
 		
 		if (expansions.size() == index) {
@@ -62,7 +62,7 @@ class Yield<T> {
 				return process(yieldExecutor, context, s, lastExpansionName,index+1);
 			} else {
 				
-				return (T)comprehender._1.flatMap(comprehender._2,it ->{				 	
+				return (T)comprehender._1.executeflatMap(comprehender._2,it ->{				 	
 						PMap newMap  =context.plus(lastExpansionName,it);
 						return process((ContextualExecutor)yieldExecutor, newMap, head.getFunction().executeAndSetContext( newMap), head.getName(),index+1);
 				 });
