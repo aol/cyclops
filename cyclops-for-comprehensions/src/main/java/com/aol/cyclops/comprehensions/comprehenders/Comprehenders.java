@@ -45,6 +45,13 @@ public class Comprehenders {
 		}catch(Exception e){
 			
 		}
+		try{
+			Class caze = Class.forName("com.aol.cyclops.trycatch.Try");
+			put(caze,(Comprehender)Class.forName("com.aol.cyclops.trycatch.TryComprehender").newInstance());
+		}catch(Exception e){
+			
+		}
+		
 	}};
 	
 	/**
