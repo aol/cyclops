@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.lambda.utils.ExceptionSoftener;
+
 /**
  * trait / interface for Value Objects / Case Classes / Algebraic Data Types
  * 

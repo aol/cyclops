@@ -1,5 +1,4 @@
-
-package com.aol.cyclops.matcher;
+package com.aol.cyclops.lambda.utils;
 
 
 
@@ -11,8 +10,8 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import sun.misc.Unsafe;
 
-@Slf4j
-class ExceptionSoftener {
+
+public class ExceptionSoftener {
 
 	@Getter @AllArgsConstructor
 	public static enum singleton { factory( new  ExceptionSoftener ());
@@ -23,7 +22,7 @@ class ExceptionSoftener {
 	
 	private final Optional<Unsafe> unsafe = getUnsafe();
 	
-	public void throwSoftenedException(final Exception e) {
+	public void throwSoftenedException(final Throwable e) {
 
 		unsafe.ifPresent(u -> u.throwException(e));
 		throw new RuntimeException(e);
@@ -41,7 +40,7 @@ class ExceptionSoftener {
 
 		} catch (Exception ex) {
 
-			//log.error(ex.getMessage());
+			
 
 		}
 		return Optional.empty();

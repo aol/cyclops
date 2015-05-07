@@ -37,27 +37,27 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 		if(p.test(value))
 			return this;
 		else
-			return null;//Failure.of(new NoSuchElementException());
+			return Failure.of(null);
 	}
 
 	@Override
-	public Try<T,X> recover(Function<X, T> fn) {
+	public Success<T,X> recover(Function<X, T> fn) {
 		return this;
 	}
 
 	@Override
-	public Try<T,X> recoverWith(Function<X, Try<T,X>> fn) {
+	public Success<T,X> recoverWith(Function<X, Success<T,X>> fn) {
 		return this;
 	}
 
 	@Override
-	public Try<T,X> recoverFor(Class<? extends X> t, Function<X, T> fn) {
+	public Success<T,X> recoverFor(Class<? extends X> t, Function<X, T> fn) {
 		return this;
 	}
 
 	@Override
-	public Try<T,X> recoverWithFor(Class<? extends X> t,
-			Function<X, Try<T,X>> fn) {
+	public Success<T,X> recoverWithFor(Class<? extends X> t,
+			Function<X, Success<T,X>> fn) {
 		return this;
 	}
 
@@ -112,6 +112,28 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 	@Override
 	public Try<T, X> onFail(Class<? extends X> t, Consumer<X> consumer) {
 		return this;
+	}
+
+	@Override
+	public void throwException() {
+		
+		
+	}
+
+	@Override
+	public Optional<X> toFailedOptional() {
+		return Optional.empty();
+	}
+
+	@Override
+	public Stream<X> toFailedStream() {
+		return Stream.of();
+	}
+
+	@Override
+	public void foreachFailed(Consumer<X> consumer) {
+		
+		
 	}
 	
 }

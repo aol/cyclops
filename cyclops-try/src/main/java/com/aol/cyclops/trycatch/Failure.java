@@ -8,6 +8,9 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
+import lombok.val;
+
+import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
 @AllArgsConstructor
 public class Failure<T,X extends Throwable> implements Try<T,X> {
@@ -36,7 +39,7 @@ public class Failure<T,X extends Throwable> implements Try<T,X> {
 	}
 	
 	@Override
-	public Try<T,X> recoverWithFor(Class<? extends X> t,Function<X, Try<T,X>> fn){
+	public Try<T,X> recoverWithFor(Class<? extends X> t,Function<X, Success<T,X>> fn){
 		if(error.getClass().isAssignableFrom(t))
 			return recoverWith(fn);
 		return this;
@@ -49,12 +52,12 @@ public class Failure<T,X extends Throwable> implements Try<T,X> {
 	}
 	
 	@Override
-	public Try<T,X> recover(Function<X, T> fn) {
+	public Success<T,X> recover(Function<X, T> fn) {
 		return Success.of(fn.apply(error));
 	}
 	
 	@Override
-	public  Try<T,X> recoverWith(Function<X,Try<T,X>> fn){
+	public  Success<T,X> recoverWith(Function<X,Success<T,X>> fn){
 		return fn.apply(error);
 	}
 	@Override
@@ -100,5 +103,24 @@ public class Failure<T,X extends Throwable> implements Try<T,X> {
 		if(error.getClass().isAssignableFrom(t))
 			consumer.accept(error);
 		return this;
+	}
+	@Override
+	public void throwException() {
+		ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(error);
+		
+	}
+	@Override
+	public Optional<X> toFailedOptional() {
+		
+		return Optional.of(error);
+	}
+	@Override
+	public Stream<X> toFailedStream() {
+		return Stream.of(error);
+	}
+	@Override
+	public void foreachFailed(Consumer<X> consumer) {
+		consumer.accept(error);
+		
 	}
 }

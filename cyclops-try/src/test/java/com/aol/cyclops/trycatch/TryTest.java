@@ -5,9 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
-
-import com.aol.cyclops.trycatch.Try;
 
 public class TryTest {
  
@@ -33,12 +33,26 @@ public class TryTest {
 	@Test
 	public void test3(){
 		
-		Try.catchExceptions(IOException.class,FileNotFoundException.class)
-				.init(()->new BufferedReader(new FileReader("file.txt")))
-						.tryThis(this::read)
-						.andFinally(BufferedReader::close);
+		
+		Try t = Try.catchExceptions(FileNotFoundException.class,IOException.class)
+				   .init(()->new BufferedReader(new FileReader("file.txt")))
+				   .tryWithResources(this::read);
+		
+		
+										
+		
 	}
 	
+	public void testMultipleResources(){
+		Try t2 = Try.catchExceptions(FileNotFoundException.class,IOException.class)
+				   .init(()->Tuple.tuple(new BufferedReader(new FileReader("file.txt")),new FileReader("hello")))
+				   .tryWithResources(this::read2);
+	}
+	
+	private String read2(Tuple2<BufferedReader,FileReader> res) throws IOException{
+		String line = res.v1.readLine();
+		return null;
+	}
 	private String read(BufferedReader br) throws IOException{
 		StringBuilder sb = new StringBuilder();
         String line = br.readLine();
