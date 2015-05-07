@@ -5,6 +5,8 @@ import static org.junit.Assert.assertThat;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
+import lombok.val;
+
 import org.junit.Test;
 
 public class OptionalTest {
@@ -27,6 +29,7 @@ public class OptionalTest {
 
 	}
 	
+	@Test
 	public void testForComphrensions4(){
 		Optional<Integer> one = Optional.of(1);
 		Optional<Integer> empty = Optional.of(3);
@@ -40,6 +43,24 @@ public class OptionalTest {
 														.yield(()->{return f2.apply(c.$1(), c.$2());}));
 		
 		assertThat(result,equalTo(Optional.empty()));
+
+	}
+	
+	@Test
+	public void test2(){
+		Optional<Integer> one = Optional.of(3);
+		Optional<Integer> empty = Optional.of(3);
+		BiFunction<Integer,Integer,Integer> f2 = (a,b) -> a *b; 
+		
+		val comprehension = new ForComprehension2<Optional,Optional<Integer>,Integer>();
+				
+		
+		Object result =  comprehension.<Integer,Integer>foreach(c -> c.flatMapAs$1(one)
+																		.mapAs$2(()->Optional.of(c.$1()))
+																		.filter(()->c.$1()>2)
+																		.yield(()->{return f2.apply(c.$1(), c.$2());}));
+		
+		assertThat(result,equalTo(Optional.of(9)));
 
 	}
 }

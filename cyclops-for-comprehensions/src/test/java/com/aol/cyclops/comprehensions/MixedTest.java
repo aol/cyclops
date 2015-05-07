@@ -31,8 +31,9 @@ public class MixedTest {
 										 .yield(() -> c.<String>$1() + c.$2()));
 										 
 		
-		assertThat(results.collect(Collectors.toList()),hasItem("hellocool"));
-		assertThat(results.collect(Collectors.toList()),hasItem("worldcool"));
+		val list = results.collect(Collectors.toList());
+		assertThat(list,hasItem("hellocool"));
+		assertThat(list,hasItem("worldcool"));
 	}
 	@Test
 	public void mixedStreamOptionalEmpty(){

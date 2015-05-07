@@ -1,28 +1,16 @@
 package com.aol.cyclops.comprehensions;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
-import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 
 import org.pcollections.PMap;
 
-import com.aol.cyclops.comprehensions.comprehenders.CompletableFutureComprehender;
 import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
-import com.aol.cyclops.comprehensions.comprehenders.DoubleStreamComprehender;
-import com.aol.cyclops.comprehensions.comprehenders.IntStreamComprehender;
-import com.aol.cyclops.comprehensions.comprehenders.LongStreamComprehender;
-import com.aol.cyclops.comprehensions.comprehenders.OptionalComprehender;
 import com.aol.cyclops.comprehensions.comprehenders.ReflectionComprehender;
-import com.aol.cyclops.comprehensions.comprehenders.StreamComprehender;
+import com.aol.cyclops.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.lambda.api.Comprehender;
 
 @AllArgsConstructor
@@ -36,7 +24,7 @@ class Yield<T> {
 						Object currentExpansionUnwrapped, String lastExpansionName, int index) {
 		
 		Tuple2<Comprehender,Object> comprehender = selectComprehender(currentExpansionUnwrapped)
-									.orElseGet( ()->selectComprehender(convertToMonadicForm(currentExpansionUnwrapped))
+									.orElseGet( ()->selectComprehender(MonadicConverters.convertToMonadicForm(currentExpansionUnwrapped))
 													.orElse( new Tuple2(new ReflectionComprehender(Optional.of(currentExpansionUnwrapped).map(Object::getClass)),currentExpansionUnwrapped)));
 			
 		
@@ -76,14 +64,5 @@ class Yield<T> {
 				.map(v->new Tuple2<Comprehender,Object>(v,structure))
 				.findFirst();
 	}
-	@SuppressWarnings("rawtypes")
-	private Object convertToMonadicForm(Object f) {
-			
-			if(f instanceof Collection)
-				return ((Collection)f).stream();
-			if(f instanceof Map)
-				return ((Map)f).entrySet().stream();
-			
-			return f;
-		}
+	
 }
