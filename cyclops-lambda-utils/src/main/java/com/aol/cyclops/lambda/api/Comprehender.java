@@ -83,6 +83,8 @@ public interface Comprehender<T> {
 			if(apply instanceof CompletableFuture){
 				return of(((CompletableFuture)apply).join());
 			}
+			if(apply instanceof Gettable)
+				return of(((Gettable)apply).get());
 			Optional<Method> m = Stream.of(apply.getClass().getMethods())
 					.filter(method -> "get".equals(method.getName()))
 					.filter(method -> method.getParameterCount()==0).findFirst();

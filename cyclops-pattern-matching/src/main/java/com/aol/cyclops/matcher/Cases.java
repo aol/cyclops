@@ -1,6 +1,7 @@
 package com.aol.cyclops.matcher;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -43,15 +44,28 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 public PStack<Case<T,R,X>> get(){
 		 return cases;
 	 }
+	 
 	 /**
 	  * Construct a Cases instance from a persistent stack of Pattern Matching Cases
 	  * Will execute sequentially when Match is called.
 	  * 
 	 * @param cases Persistent Stack of cases to build Cases from
 	 * @return  New Cases instance (sequential)
-	 */
-	public static <T,R,X extends Function<T,R>>  Cases<T,R,X> of(PStack<Case<T,R,X>> cases){
+	*/
+	public static <T,R,X extends Function<T,R>>  Cases<T,R,X> ofPStack(PStack<Case<T,R,X>> cases){
 		 return new Cases(cases,true);
+	}
+	 
+		 /**
+		  * Construct a Cases instance from a list of Pattern Matching Cases
+		  * Will execute sequentially when Match is called.
+		  * 
+		 * @param cases Persistent Stack of cases to build Cases from
+		 * @return  New Cases instance (sequential)
+		*/
+	public static <T,R,X extends Function<T,R>>  Cases<T,R,X> ofList(List<Case<T,R,X>> cases){
+		 return new Cases(cases.stream().map(ConsPStack::singleton)
+					.reduce(ConsPStack.empty(),(acc,next)-> acc.plus(acc.size(),next.get(0))),true);
 	 }
 
 	/**
@@ -62,7 +76,7 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 * @return New Cases instance (sequential)
 	 */
 	public static <T,R,X extends Function<T,R>>  Cases<T,R,X> of(Case<T,R,X>... cazes){
-		return of(Stream.of(cazes).map(ConsPStack::singleton)
+		return ofPStack(Stream.of(cazes).map(ConsPStack::singleton)
 				.reduce(ConsPStack.empty(),(acc,next)-> acc.plus(acc.size(),next.get(0))));
 	}
 	/**
@@ -74,7 +88,7 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 */
 	public static <T,R,X extends Function<T,R>>  Cases<T,R,X> zip(Stream<Predicate<T>> predicates, Stream<X> functions){
 		
-		return of(Seq.seq(predicates)
+		return ofPStack(Seq.seq(predicates)
 			.zip(Seq.seq(functions))
 			.map(Case::of)
 			.map(ConsPStack::singleton)

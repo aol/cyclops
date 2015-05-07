@@ -36,7 +36,7 @@ public class CasesComprehender implements Comprehender<Cases> {
 		if(o instanceof Case[])
 			return Cases.of((Case[])o);
 		else
-			return Cases.of((PStack)o);
+			return Cases.ofPStack((PStack)o);
 	}
 
 	@Override

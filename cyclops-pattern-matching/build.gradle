@@ -21,11 +21,12 @@ jar {
 
 repositories {
     mavenCentral()
+	maven { url "http://cmmaven.cm.aol.com:8081/nexus/content/repositories/aol-advertising" }
 }
 
 dependencies {
-	compile project(':cyclops-lambda-utils')
-//	compile 'org.pcollections:pcollections:2.1.2'
+	compile 'com.aol.advertising.cyclops:lambda-utils:1.0'
+	compile 'org.pcollections:pcollections:2.1.2'
 	compile 'org.jooq:jool:0.9.6'
 	compile group: 'org.slf4j', name: 'jcl-over-slf4j', version:'1.6.1'
 	compile group: 'org.hamcrest', name: 'hamcrest-all', version:'1.3'

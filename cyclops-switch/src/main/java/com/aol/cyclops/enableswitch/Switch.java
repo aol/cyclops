@@ -5,6 +5,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.lambda.api.Gettable;
+
 /**
  * Switch interface for handling features that can be enabled or disabled.
  * 
@@ -12,7 +14,7 @@ import java.util.stream.Stream;
  *
  * @param <F>
  */
-public interface Switch<F> {
+public interface Switch<F> extends Gettable<F> {
 
 	boolean isEnabled();
 	boolean isDisabled();

@@ -1,6 +1,5 @@
 package com.aol.cyclops.lambda.utils;
 
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -105,6 +104,7 @@ public class ImmutableClosedValue<T> {
 		throw new  ImmutableClosedValueSetMoreThanOnceException("Current value " + this.value + " attempt to reset to " + val);
 	}
 	private synchronized T setOnceFromSupplier(Supplier<T> lazy){
+		
 		if(!this.set){
 			this.value = lazy.get();
 			this.set=true;

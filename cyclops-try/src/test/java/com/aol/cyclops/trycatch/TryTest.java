@@ -33,7 +33,6 @@ public class TryTest {
 	@Test
 	public void test3(){
 		
-		
 		Try t = Try.catchExceptions(FileNotFoundException.class,IOException.class)
 				   .init(()->new BufferedReader(new FileReader("file.txt")))
 				   .tryWithResources(this::read);

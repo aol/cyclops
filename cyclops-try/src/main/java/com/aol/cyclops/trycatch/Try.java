@@ -1,17 +1,15 @@
 
 package com.aol.cyclops.trycatch;
 
-import java.io.BufferedReader;
 import java.io.Closeable;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import com.aol.cyclops.lambda.api.Gettable;
 
 import lombok.AllArgsConstructor;
 import lombok.val;
@@ -40,7 +38,7 @@ import lombok.val;
  * @param <T> Return type (success)
  * @param <X> Base Error type
  */
-public interface Try<T,X extends Throwable> {
+public interface Try<T,X extends Throwable> extends Gettable<T> {
 
 	/**
 	 * @return Successful value or will throw Throwable (X) if Failire

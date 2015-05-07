@@ -330,7 +330,7 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	 * @return New case instance which and's current predicate with supplied
 	 */
 	default Case<T,R,Function<T,R>> and(Predicate<T> and){
-		return compose(Case.of(and,Function.identity()));
+		return compose((Case)Case.of(and,Function.identity()));
 	}
 	
 	/**
@@ -348,7 +348,7 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	 * @return New case with Class type guard inserted before current predicate
 	 */
 	default Case<T,R,Function<T,R>> andOfType(Class<T> and){
-		return compose(Case.of(input -> input.getClass().isAssignableFrom(and),Function.identity()));
+		return compose((Case)Case.of(input -> input.getClass().isAssignableFrom(and),Function.identity()));
 	}
 	/**
 	 * Add a guard that assures input is of specified type. Note that this can't change the type supported by this case,
@@ -365,7 +365,7 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	 * @return New case with Class type guard inserted before current predicate
 	 */
 	default Case<T,R,Function<T,R>> andOfValue(T and){
-		return compose(Case.of(input -> Objects.equals(input,and),Function.identity()));
+		return compose((Case)Case.of(input -> Objects.equals(input,and),Function.identity()));
 	}
 	
 	/**

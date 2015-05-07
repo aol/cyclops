@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,14 +21,13 @@ import lombok.Getter;
 import lombok.val;
 
 import org.junit.Test;
-import org.pcollections.ConsPStack;
 
 public class CasesTest {
 
 	
 	@Test
 	public void ofPStack() {
-		val cases = Cases.of(ConsPStack.singleton(Case.of(input->true,input->"hello")));
+		Cases cases = Cases.ofList((List)Arrays.asList(Case.of(input->true,input->"hello")));
 		assertThat(cases.size(),is(1));
 	}
 
@@ -152,13 +152,13 @@ public class CasesTest {
 		Case<Object,Integer,Function<Object,Integer>> cse = Case.of(input-> input instanceof Person, input -> ((Person)input).getAge());
 		
 		 
-		assertThat(Cases.of(cse).flatMap(c -> Cases.of(c.andThen(Case.of( age-> age<18,s->"minor")),
-										c.andThen(Case.of( age->age>=18,s->"adult")))).match(new Person("bob",21)).get(),is("adult"));
+		assertThat(Cases.of(cse).flatMap(c -> Cases.ofList((List)Arrays.asList(c.andThen(Case.of( age-> age<18,s->"minor")),
+										c.andThen(Case.of( age->age>=18,s->"adult"))))).match(new Person("bob",21)).get(),is("adult"));
 	}
 	@Test
 	public void testFlatMapAll() {
 		val cases = Cases.of(Case.of(input->true,input->"hello"),Case.of(input->false,input->"second"))
-						.flatMapAll(input-> Cases.of(input.plus(Case.of(in->true,in->"new"))));
+						.flatMapAll(input-> (Cases)Cases.ofPStack(input.plus(Case.of(in->true,in->"new"))));
 		
 		assertThat(cases.size(),is(3));
 	}
