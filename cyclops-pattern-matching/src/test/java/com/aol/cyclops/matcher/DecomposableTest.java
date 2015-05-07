@@ -12,6 +12,7 @@ import lombok.Value;
 
 import org.junit.Test;
 
+import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.matcher.builders.Matching;
 
 public class DecomposableTest {

@@ -1,7 +1,7 @@
 package com.aol.cyclops.comprehensions;
 
 
-import static com.aol.cyclops.comprehensions.LessTypingForComprehension3.foreach;
+import static com.aol.cyclops.comprehensions.LessTypingForComprehension1.foreach;
 import static fj.data.Option.none;
 import static fj.data.Option.some;
 import static org.hamcrest.Matchers.equalTo;
@@ -34,7 +34,7 @@ public class ForComprehensionTest {
 		public void intstream() {
 			
 			IntStream res = (IntStream)foreach (  c-> 
-										c.flatMapAs$1(  IntStream.range(1,3)) 
+										c.mapAs$1(  IntStream.range(1,3)) 
 										 .yield( ()-> c.<Integer>$1() + 1));
 			List<Integer> expected = Arrays.asList(2,3);
 			
@@ -97,85 +97,7 @@ public class ForComprehensionTest {
 			assertThat(expected, equalTo( res.collect(Collectors.toList())));
 			
 		}
-		/**
-		@Test
-		void test1() {
-			def res = foreach {
-				a { 1.to(2) }
-				b { 1.to(1) }
-				yield {
-					[a, b]
-				}
-			}
-	//		def expected = [[1, 3], [1, 4], [2, 3], [2, 4]]
-			def expected = [[1, 1], [2, 1]]
-			assertTrue(expected == res.toJList())
-		}
-		**/
-		/**
 		
-		@Test
-		void test1() {
-			def res = foreach {
-				a { 1.to(2) }
-				b { 1.to(1) }
-				yield {
-					[a, b]
-				}
-			}
-	//		def expected = [[1, 3], [1, 4], [2, 3], [2, 4]]
-			def expected = [[1, 1], [2, 1]]
-			assertTrue(expected == res.toJList())
-		}
-	
-		@Test
-		void test2() {
-			def res = foreach {
-				a { 1.to(2) }
-				b { a.to(2) }
-				yield {
-					[a, b]
-				}
-			}
-			def expected = [[1, 1], [1, 2], [2, 2]]
-			def actual = res.toJList()
-			assertTrue(expected == actual)
-		}
-	
-		@Test
-		void test3() {
-			def res = foreach {
-				a { 1.to(2) }
-				guard {
-					a == 2
-				}
-				yield {
-					a
-				}
-			}
-			def expected = [2]
-			assertTrue(expected == res.toJList())
-		}
-	
-		@Test
-		void test4() {
-			def res = foreach {
-				a { 1.to(2) }
-				b { 3.to(4) }
-				guard {
-					a == 2 && b == 3
-				}
-				c { 5.to(6) }
-				guard { c == 5 }
-				yield {
-					[a, b, c]
-				}
-			}
-			def expected = [[2, 3, 5]]
-			def actual = res.toJList()
-			assertTrue(actual == expected)
-		}
-	**/
 		@Test
 		public void test5() {
 			val comp =  new ForComprehension1<List<Option<Integer>>,Stream<Option<Integer>>,Option<Integer>>();
@@ -218,7 +140,7 @@ public class ForComprehensionTest {
 			BiFunction<Integer,Integer,Integer> f2 = (a,b) -> a *b; 
 			
 			val result =  ForComprehensions
-								.<Integer,Option<Integer>>foreach2(c -> c.flatMapAs$1(one)
+								.<Option<Integer>>foreach2(c -> c.flatMapAs$1(one)
 																.mapAs$2(empty)
 																.filter(()->c.<Integer>$1()>2)
 																.yield(()->{return f2.apply(c.$1(), 10);}));

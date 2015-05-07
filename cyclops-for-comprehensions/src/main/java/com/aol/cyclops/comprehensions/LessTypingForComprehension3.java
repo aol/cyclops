@@ -45,7 +45,6 @@ public class LessTypingForComprehension3<T,R> {
 	public static interface Step2<T,R>{
 		public  Step3<T,R> flatMapAs$2(Object f);
 		public  Step3<T,R> flatMapAs$2(Supplier f);
-		public <R> R yield(Supplier s);
 		public  Step2<T,R> filter(Supplier<Boolean> s);
 		
 	}

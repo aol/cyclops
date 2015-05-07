@@ -20,6 +20,8 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
+import com.aol.cyclops.lambda.api.Decomposable;
+
 /**
  * Represents an ordered list of pattern matching cases.
  * 

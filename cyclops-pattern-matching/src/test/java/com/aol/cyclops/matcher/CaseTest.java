@@ -20,6 +20,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.matcher.builders.Matching;
 
 public class CaseTest {

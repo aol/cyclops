@@ -22,6 +22,8 @@ import lombok.val;
 
 import org.junit.Test;
 
+import com.aol.cyclops.lambda.api.Decomposable;
+
 public class CasesTest {
 
 	

@@ -25,7 +25,7 @@ repositories {
 }
 
 dependencies {
-	compile 'com.aol.advertising.cyclops:lambda-utils:1.0'
+	compile 'com.aol.advertising.cyclops:lambda-utils:1.0.1'
 	compile 'org.pcollections:pcollections:2.1.2'
 	compile 'org.jooq:jool:0.9.6'
 	compile group: 'org.slf4j', name: 'jcl-over-slf4j', version:'1.6.1'

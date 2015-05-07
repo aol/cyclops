@@ -2,6 +2,8 @@ package com.aol.cyclops.enableswitch;
 
 import java.util.Objects;
 
+import lombok.Value;
+
 /**
  * An enabled switch
  * 
@@ -16,6 +18,7 @@ import java.util.Objects;
  *
  * @param <F> Type of value Enabled Switch holds
  */
+@Value
 public class Enabled<F> implements Switch<F>{
 
 	

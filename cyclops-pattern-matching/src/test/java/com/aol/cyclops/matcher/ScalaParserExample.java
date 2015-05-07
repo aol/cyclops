@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Value;
 import lombok.val;
 
+import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.matcher.ScalaParserExample.Mult;
 import com.aol.cyclops.matcher.builders.Matching;
 

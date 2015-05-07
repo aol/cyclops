@@ -1,5 +1,6 @@
 package com.aol.cyclops.comprehensions;
 
+import static com.aol.cyclops.comprehensions.ForComprehensions.foreach2;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.*;
@@ -25,12 +26,13 @@ public class MixedTest {
 		val opt = Optional.of("cool");
 		
 		
-		List<String> results = ForComprehensions.<String,Stream<String>>foreach2( c-> c.flatMapAs$1(strs)
+		Stream<String> results = foreach2( c-> c.flatMapAs$1(strs)
 										 .mapAs$2(opt)
-										 .yield(() -> c.<String>$1() + c.$2())).collect(Collectors.toList());
+										 .yield(() -> c.<String>$1() + c.$2()));
+										 
 		
-		assertThat(results,hasItem("hellocool"));
-		assertThat(results,hasItem("worldcool"));
+		assertThat(results.collect(Collectors.toList()),hasItem("hellocool"));
+		assertThat(results.collect(Collectors.toList()),hasItem("worldcool"));
 	}
 	@Test
 	public void mixedStreamOptionalEmpty(){
@@ -38,9 +40,13 @@ public class MixedTest {
 		val opt = Optional.empty();
 		
 		
-		List<String> results = ForComprehensions.<String,Stream<String>>foreach2( c-> c.flatMapAs$1(strs)
-										 .mapAs$2(opt)
-										 .yield(() -> c.<String>$1() + c.$2())).collect(Collectors.toList());
+		List<String> results = ForComprehensions.<Stream<String>>foreach2( 
+										c-> c.flatMapAs$1(strs)
+											 .mapAs$2(opt)
+											 .yield(() -> c.<String>$1() + c.$2()))
+											 .collect(Collectors.toList());
+		
+		
 		
 		System.out.println(results);
 		assertThat(results.size(),equalTo(0));
@@ -52,9 +58,10 @@ public class MixedTest {
 		val opt = Optional.of("cool");
 		
 		
-		Optional<List<String>> results = ForComprehensions.<String,Optional<List<String>>>foreach2( c-> c.flatMapAs$1(opt)
-										 .mapAs$2(strs)
-										 .yield(() -> c.<String>$1() + c.$2()));
+		Optional<List<String>> results = foreach2( 
+											c-> c.flatMapAs$1(opt)
+												.mapAs$2(strs)
+												.yield(() -> c.<String>$1() + c.$2()));
 		
 		assertThat(results.get(),hasItem("coolhello"));
 		assertThat(results.get(),hasItem("coolworld"));
@@ -65,9 +72,10 @@ public class MixedTest {
 		val opt = Optional.empty();
 		
 		
-		Optional<List<String>> results = ForComprehensions.<String,Optional<List<String>>>foreach2( c-> c.flatMapAs$1(opt)
-										 .mapAs$2(strs)
-										 .yield(() -> c.<String>$1() + c.$2()));
+		Optional<List<String>> results = foreach2( 
+											c-> c.flatMapAs$1(opt)
+												.mapAs$2(strs)
+												.yield(() -> c.<String>$1() + c.$2()));
 		
 		assertFalse(results.isPresent());
 	}
@@ -78,7 +86,8 @@ public class MixedTest {
 		val opt = Optional.of("cool");
 		
 		
-		Optional<String> results = ForComprehensions.<String,Optional<String>>foreach2( c-> c.flatMapAs$1(opt)
+		Optional<String> results = foreach2( 
+										c-> c.flatMapAs$1(opt)
 										 .mapAs$2(str)
 										 .yield(() -> c.<String>$1() + c.$2()));
 		

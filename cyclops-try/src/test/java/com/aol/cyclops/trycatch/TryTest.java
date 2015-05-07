@@ -1,6 +1,7 @@
 package com.aol.cyclops.trycatch;
 
 import java.io.BufferedReader;
+import static org.junit.Assert.assertThat;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -8,34 +9,42 @@ import java.io.IOException;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
-
+import static org.hamcrest.Matchers.*;
 public class TryTest {
  
-	@Test
+	@Test(expected=IOException.class)
 	public void test(){
 		Try.runWithCatch(this::exceptional,IOException.class)
-					.onFail(System.out::println);
+					.onFail(System.out::println).get();
 	}
 	
 	@Test
 	public void test2(){
-		Try.withCatch(()-> exceptional2()).map(i->i+" woo!").onFail(System.out::println).toOptional().orElse("default");
+		assertThat(Try.withCatch(()-> exceptional2())
+						.map(i->i+" woo!")
+						.onFail(System.out::println)
+						.toOptional()
+						.orElse("default"),is("hello world woo!"));
 		
 		
-		Try.catchExceptions(RuntimeException.class)
+	}
+	
+	@Test
+	public void catchExceptonsWithRun(){
+		assertThat(Try.catchExceptions(RuntimeException.class)
 			.run(()-> exceptional2())
 			.onFail(System.out::println)
 			.map(i->i+"woo!")
 			.toOptional()
-			.orElse("hello world");
+			.orElse("hello world"),is("nullwoo!"));
 	}
 	
 	@Test
-	public void test3(){
+	public void testTryWithResources(){
 		
-		Try t = Try.catchExceptions(FileNotFoundException.class,IOException.class)
+		assertThat(Try.catchExceptions(FileNotFoundException.class,IOException.class)
 				   .init(()->new BufferedReader(new FileReader("file.txt")))
-				   .tryWithResources(this::read);
+				   .tryWithResources(this::read).toFailedOptional().get(),instanceOf((Class)FileNotFoundException.class));
 		
 		
 										

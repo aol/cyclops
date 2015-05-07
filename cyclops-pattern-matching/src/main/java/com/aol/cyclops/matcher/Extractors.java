@@ -24,6 +24,8 @@ import org.jooq.lambda.tuple.Tuple6;
 import org.jooq.lambda.tuple.Tuple7;
 import org.jooq.lambda.tuple.Tuple8;
 
+import com.aol.cyclops.lambda.api.Decomposable;
+import com.aol.cyclops.lambda.api.ReflectionCache;
 import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
 
 

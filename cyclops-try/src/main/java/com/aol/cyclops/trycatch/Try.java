@@ -9,10 +9,11 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.lambda.api.Gettable;
-
 import lombok.AllArgsConstructor;
 import lombok.val;
+
+import com.aol.cyclops.lambda.api.Decomposable;
+import com.aol.cyclops.lambda.api.Gettable;
 
 /**
  * Light weight Try Monad
@@ -38,7 +39,7 @@ import lombok.val;
  * @param <T> Return type (success)
  * @param <X> Base Error type
  */
-public interface Try<T,X extends Throwable> extends Gettable<T> {
+public interface Try<T,X extends Throwable> extends Gettable<T>, Decomposable {
 
 	/**
 	 * @return Successful value or will throw Throwable (X) if Failire
@@ -80,7 +81,7 @@ public interface Try<T,X extends Throwable> extends Gettable<T> {
 	 *          Do nothing to a Failure
 	 * @return this if Success and Predicate holds, or if Failure. New Failure if Success and Predicate fails
 	 */
-	public Try<T,X> filter(Predicate<T> p);
+	public Optional<T> filter(Predicate<T> p);
 	
 	/**
 	 * @param consumer Accept Exception if present (Failure)
@@ -92,7 +93,7 @@ public interface Try<T,X extends Throwable> extends Gettable<T> {
 	 * @param consumer Accept Exception if present (Failure) and if class types match
 	 * @return this
 	 */
-	public Try<T,X> onFail(Class<? extends X> t,Consumer<X> consumer);
+	public Try<T,X> onFail(Class<? super X> t,Consumer<X> consumer);
 	
 	/**
 	 * @param fn Recovery function - map from a failure to a Success.
@@ -113,7 +114,7 @@ public interface Try<T,X extends Throwable> extends Gettable<T> {
 	 * @param fn Recovery function
 	 * @return New Success if failure and types match / otherwise this
 	 */
-	public Try<T,X> recoverFor(Class<? extends X> t,Function<X, T> fn);
+	public Try<T,X> recoverFor(Class<? super X> t,Function<X, T> fn);
 	
 	/**
 	 * 
@@ -123,7 +124,7 @@ public interface Try<T,X extends Throwable> extends Gettable<T> {
 	 * @param fn Recovery FlatMap function. Map from a failure to a Success
 	 * @return Success from recovery function or this  and types match or if already Success
 	 */
-	public Try<T,X> recoverWithFor(Class<? extends X> t,Function<X, Success<T,X>> fn);
+	public Try<T,X> recoverWithFor(Class<? super X> t,Function<X, Success<T,X>> fn);
 	/**
 	 * Flatten a nested Try Structure
 	 * @return Lowest nested Try
@@ -304,8 +305,8 @@ public interface Try<T,X extends Throwable> extends Gettable<T> {
 		private void invokeClose(Closeable in){
 			
 				Try.withCatch(()->in.getClass().getMethod("close")).filter(m->m!=null)
-						.toOptional().flatMap(m->Try.withCatch(()->m.invoke(in))
-											.filter(o->o!=null).toOptional());
+						.flatMap(m->Try.withCatch(()->m.invoke(in))
+											.filter(o->o!=null));
 			
 		}
 		public Try<T,X> close(){

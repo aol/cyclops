@@ -1,10 +1,12 @@
 package com.aol.cyclops.enableswitch;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.lambda.api.Gettable;
 
 /**
@@ -14,13 +16,16 @@ import com.aol.cyclops.lambda.api.Gettable;
  *
  * @param <F>
  */
-public interface Switch<F> extends Gettable<F> {
+public interface Switch<F> extends Gettable<F>, Decomposable {
 
 	boolean isEnabled();
 	boolean isDisabled();
 	
 	F get();
 	
+	default <T extends Iterable<? extends Object>> T unapply(){
+		return (T)Arrays.asList(get());
+	}
 	/**
 	 * Create a new enabled switch
 	 * 

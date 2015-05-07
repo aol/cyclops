@@ -5,8 +5,9 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class LessTypingForComprehension2<T,R> {
-	
+
+
+public class LessTypingForComprehension4<T,R> {
 	
 	
 	
@@ -16,54 +17,65 @@ public class LessTypingForComprehension2<T,R> {
 		Optional<Integer> empty = Optional.of(3);
 		BiFunction<Integer, Integer, Integer> f2 = (a, b) -> a * b;
 
-		Object result =  LessTypingForComprehension2.foreach(c -> c.flatMapAs$1(one)
-														.mapAs$2(empty)
-														
+		Object result =  LessTypingForComprehension4.foreach(c -> c.flatMapAs$1(one)
+														.flatMapAs$2(empty)
+														.flatMapAs$3(Optional.empty())
+														.mapAs$4(Optional.empty())
 													//	.guard(()->c.<Integer>$1()>2)
 														.yield(()->{return f2.apply(c.$1(), c.$2());}));
 	System.out.println(result);
 }
-	
 	@SuppressWarnings("unchecked")
 	public static <T,R> R foreach(Function<Step1<T,R>,R> fn){
 		return Foreach.foreach(new ContextualExecutor<R,Foreach<R>>(new Foreach<R>()){
 			public R execute(){
-				return fn.apply(new LessTypingForComprehension2<T,R>().getComphrensionData(this));
+				return fn.apply(new LessTypingForComprehension4<T,R>().getComphrensionData(this));
 			}
 		});
 	}
 	protected  Step1<T, R> getComphrensionData(ContextualExecutor<R,Foreach<R>> exec) {
 		return new ComphrensionData<>(exec);
 	}
-
-	
-	
 	public static interface Step1<T,R>{
 		public  Step2<T,R> flatMapAs$1(Object f);
 		public <T> T $1();
 		public <T> T $2();
+		public <T> T $3();
 		public <T> T $(String name);
 	}
 	public static interface Step2<T,R>{
-		public  Step3<T,R> mapAs$2(Object f);
-		public  Step3<T,R> mapAs$2(Supplier f);
+		public  Step3<T,R> flatMapAs$2(Object f);
+		public  Step3<T,R> flatMapAs$2(Supplier f);
 		public  Step2<T,R> filter(Supplier<Boolean> s);
 		
 	}
-	
 	public static interface Step3<T,R>{
+		public  Step4<T,R> flatMapAs$3(Object f);
+		public  Step4<T,R> flatMapAs$3(Supplier f);
+		public  Step3<T,R> filter(Supplier<Boolean> s);
+		
+		
+	}
+	public static interface Step4<T,R>{
+		public  Step5<T,R> mapAs$4(Object f);
+		public  Step5<T,R> mapAs$4(Supplier f);
+		public  Step3<T,R> filter(Supplier<Boolean> s);
+		
+		
+	}
+	public static interface Step5<T,R>{
 		public  Step4<T,R> filter(Supplier<Boolean> s);
 		public <R> R yield(Supplier s);
 		public void run(Runnable r);
 		
 	}
-	public static interface Step4<T,R>{
+	public static interface Step6<T,R>{
 		public <R> R yield(Supplier s);
 		public void run(Runnable r);
 		
 	}
 
-	class ComphrensionData<T,R> implements Step1<T,R>, Step2<T,R>,Step3<T,R>,Step4<T,R>{
+	class ComphrensionData<T,R> implements Step1<T,R>, Step2<T,R>,Step3<T,R>,Step4<T,R>,Step5<T,R>,Step6<T,R>{
 		BaseComprehensionData data;
 		
 		
@@ -80,7 +92,6 @@ public class LessTypingForComprehension2<T,R> {
 		public void run(Runnable r){
 			data.run(r);
 		}
-		
 		public R yield(Supplier s){
 			return data.yieldInternal(s);
 			
@@ -97,22 +108,43 @@ public class LessTypingForComprehension2<T,R> {
 			return data.$Internal("_2");
 		
 		}
+		public <T> T $3(){
+			return data.$Internal("_3");
 		
+		}
+		public <T> T $4(){
+			return data.$Internal("_4");
+		
+		}
 		
 		public   Step2<T,R> flatMapAs$1(Object f){
 			data.$Internal("_1", f);
 			
 			return (ComphrensionData)this;
 		}
-		public   Step3<T,R> mapAs$2(Object f){
+		public   Step3<T,R> flatMapAs$2(Object f){
 			data.$Internal("_2", f);
 			return (ComphrensionData)this;
 		}
-		public   Step3<T,R> mapAs$2(Supplier f){
+		public   Step3<T,R> flatMapAs$2(Supplier f){
 			data.$Internal("_2", f);
 			return (ComphrensionData)this;
 		}
-		
+		public   Step4<T,R> flatMapAs$3(Object f){
+			data.$Internal("_3", f);
+			return (ComphrensionData)this;
+		}
+		public   Step4<T,R> flatMapAs$3(Supplier f){
+			data.$Internal("_3", f);
+			return (ComphrensionData)this;
+		}
+		public   Step5<T,R> mapAs$4(Object f){
+			data.$Internal("_4", f);
+			return (ComphrensionData)this;
+		}
+		public   Step5<T,R> mapAs$4(Supplier f){
+			data.$Internal("_4", f);
+			return (ComphrensionData)this;
+		}
 	}
 }
-

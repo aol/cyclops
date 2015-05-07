@@ -23,12 +23,12 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
+import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.matcher.Action;
 import com.aol.cyclops.matcher.ActionWithReturn;
 import com.aol.cyclops.matcher.Case;
 import com.aol.cyclops.matcher.Cases;
 import com.aol.cyclops.matcher.ChainOfResponsibility;
-import com.aol.cyclops.matcher.Decomposable;
 import com.aol.cyclops.matcher.Extractor;
 import com.aol.cyclops.matcher.Extractors;
 

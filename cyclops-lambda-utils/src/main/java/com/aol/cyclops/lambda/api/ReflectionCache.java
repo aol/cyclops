@@ -1,4 +1,4 @@
-package com.aol.cyclops.matcher;
+package com.aol.cyclops.lambda.api;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -9,14 +9,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.Unchecked;
-import org.jooq.lambda.UncheckedException;
+import com.sun.org.apache.xpath.internal.functions.Function;
 
-class ReflectionCache {
+public class ReflectionCache {
 	private final static Map<Class,List<Field>> fields = new ConcurrentHashMap<>();
 
 	private final static Map<Class,Optional<Method>> unapplyMethods =new ConcurrentHashMap<>();
-	public static List<Field> getField(
+	static List<Field> getField(
 			Class<? extends Decomposable> class1) {
 		return fields.computeIfAbsent(class1, cl ->{
 			return Stream.of(class1.getDeclaredFields()).peek(f -> f.setAccessible(true)).collect(Collectors.toList());
@@ -26,13 +25,15 @@ class ReflectionCache {
 	
 	public static Optional<Method> getUnapplyMethod(Class c) {
 	
-			return unapplyMethods.computeIfAbsent(c, Unchecked.function(cl -> {
+			return unapplyMethods.computeIfAbsent(c, cl -> {
 				try{
 					return Optional.of(cl.getMethod("unapply"));
 				}catch(NoSuchMethodException e){
 					return Optional.empty();
 				}
-			}));	
+			});	
 		
 	}
+	
+	
 }

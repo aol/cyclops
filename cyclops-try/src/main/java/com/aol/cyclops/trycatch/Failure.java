@@ -1,5 +1,6 @@
 package com.aol.cyclops.trycatch;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -7,8 +8,9 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import lombok.AllArgsConstructor;
-import lombok.val;
+import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
@@ -20,9 +22,13 @@ import com.aol.cyclops.lambda.utils.ExceptionSoftener;
  * @param <T>
  * @param <X>
  */
-@AllArgsConstructor
+@RequiredArgsConstructor @ToString @EqualsAndHashCode
 public class Failure<T,X extends Throwable> implements Try<T,X> {
 
+	@Override
+	public <T extends Iterable<? extends Object>> T unapply() {
+		return (T)Arrays.asList(error);
+	}
 	private final X error;
 	
 	/**
@@ -62,12 +68,12 @@ public class Failure<T,X extends Throwable> implements Try<T,X> {
 	}
 	
 	/* 
-	 *	@return this
+	 *	@return Empty optional
 	 * @see com.aol.cyclops.trycatch.Try#filter(java.util.function.Predicate)
 	 */
 	@Override
-	public Try<T,X> filter(Predicate<T> p) {
-		return this;
+	public Optional<T> filter(Predicate<T> p) {
+		return Optional.empty();
 	}
 	
 	/* 
@@ -79,8 +85,8 @@ public class Failure<T,X extends Throwable> implements Try<T,X> {
 	 * @see com.aol.cyclops.trycatch.Try#recoverWithFor(java.lang.Class, java.util.function.Function)
 	 */
 	@Override
-	public Try<T,X> recoverWithFor(Class<? extends X> t,Function<X, Success<T,X>> fn){
-		if(error.getClass().isAssignableFrom(t))
+	public Try<T,X> recoverWithFor(Class<? super X> t,Function<X, Success<T,X>> fn){
+		if(t.isAssignableFrom(error.getClass()))
 			return recoverWith(fn);
 		return this;
 	}
@@ -94,8 +100,8 @@ public class Failure<T,X extends Throwable> implements Try<T,X> {
 	 * @see com.aol.cyclops.trycatch.Try#recoverFor(java.lang.Class, java.util.function.Function)
 	 */
 	@Override
-	public Try<T,X> recoverFor(Class<? extends X> t,Function<X, T> fn){
-		if(error.getClass().isAssignableFrom(t))
+	public Try<T,X> recoverFor(Class<? super X> t,Function<X, T> fn){
+		if(t.isAssignableFrom(error.getClass()))
 			return recover(fn);
 		return this;
 	}
@@ -146,7 +152,7 @@ public class Failure<T,X extends Throwable> implements Try<T,X> {
 	 */
 	@Override
 	public T orElseGet(Supplier<T> value) {
-		return get();
+		return value.get();
 	}
 	/* 
 	 *	@return Optional.empty()
@@ -206,8 +212,8 @@ public class Failure<T,X extends Throwable> implements Try<T,X> {
 	 * @see com.aol.cyclops.trycatch.Try#onFail(java.lang.Class, java.util.function.Consumer)
 	 */
 	@Override
-	public Try<T, X> onFail(Class<? extends X> t, Consumer<X> consumer) {
-		if(error.getClass().isAssignableFrom(t))
+	public Try<T, X> onFail(Class<? super X> t, Consumer<X> consumer) {
+		if(t.isAssignableFrom(error.getClass()))
 			consumer.accept(error);
 		return this;
 	}

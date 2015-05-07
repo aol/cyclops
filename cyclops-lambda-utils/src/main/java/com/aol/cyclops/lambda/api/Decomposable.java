@@ -1,8 +1,6 @@
-package com.aol.cyclops.matcher;
+package com.aol.cyclops.lambda.api;
 
-import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
