@@ -11,11 +11,11 @@ import java.util.stream.Stream;
 
 import com.sun.org.apache.xpath.internal.functions.Function;
 
-public class ReflectionCache {
+class ReflectionCache {
 	private final static Map<Class,List<Field>> fields = new ConcurrentHashMap<>();
 
 	private final static Map<Class,Optional<Method>> unapplyMethods =new ConcurrentHashMap<>();
-	static List<Field> getField(
+	public static List<Field> getField(
 			Class<? extends Decomposable> class1) {
 		return fields.computeIfAbsent(class1, cl ->{
 			return Stream.of(class1.getDeclaredFields()).peek(f -> f.setAccessible(true)).collect(Collectors.toList());

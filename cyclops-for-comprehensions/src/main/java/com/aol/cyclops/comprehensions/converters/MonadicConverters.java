@@ -20,6 +20,9 @@ public class MonadicConverters {
 		public MonadicConverters withMoreConverters(List<MonadicConverter> convList){
 			return new MonadicConverters(convList,defaultList);
 		}
+		public MonadicConverters withMoreConvertersReverseOrder(List<MonadicConverter> convList){
+			return new MonadicConverters(defaultList,convList);
+		}
 	}
 	
 	public static final PStack<MonadicConverter> defaultList = ConsPStack.<MonadicConverter>singleton(new CollectionToStreamConverter()).plus(new DecomposableToStreamConverter());

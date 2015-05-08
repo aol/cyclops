@@ -22,7 +22,7 @@ We can iterate over them using Java 5 'foreach' syntax
 The equivalent for comprehension would be 
 
      ForComprehensions.foreach1(c -> c.mapAs$1(list)
-                                      .run( ()-> System.out.println(c.$1())
+                                	  .run( (Vars1<String> v) -> System.out.println(v.$1())
                                       
 If we nest our looping
 	
@@ -37,8 +37,8 @@ If we nest our looping
 Things start to become a little unwieldy, but a little less so with for comprehensions
       
      ForComprehensions.foreach2(c -> c.flatMapAs$1(list)
-                                      .mapAs$2(numbers)                                                    
-                                      .run( ()-> System.out.println(c.$1()+c.$2())
+                                      .mapAs$2((Vars2<String,Integer> v)->numbers)                                                    
+                                      .run(v -> System.out.println(v.$1()+v.$2())
 
 
 Let's add a third level of nesting
@@ -57,9 +57,9 @@ Let's add a third level of nesting
  And the for comprehension looks like 
    
      ForComprehensions.foreach3(c -> c.flatMapAs$1(list)
-                                      .flatMapAs$2(numbers)
-                                      .mapAs$2(dates)                                                    
-                                      .run( ()-> System.out.println(c.$1()+c.$2()+c.$3())
+                                      .flatMapAs$2((Vars<String,Integer,Date> v) -> numbers)
+                                      .mapAs$2(v -> dates)                                                    
+                                      .run( v-> System.out.println(v.$1()+v.$2()+v.$3())
  
       
      list.stream()
@@ -70,7 +70,7 @@ Let's add a third level of nesting
 Can be written as
 
 	  ForComprehensions.foreach1(c -> c.mapAs$1(list))
-	                                   .yield( () -> c.$1().toUpperCase())
+	                                   .yield( (Vars1<String> v) -> c.$1().toUpperCase())
 	                    .collect(Collectors.toList());
      
  ## Mixing types
@@ -81,9 +81,9 @@ Can be written as
 	 val opt = Optional.of("cool");
 		
 		
-	  List<String> results = ForComprehensions.<String,Stream<String>>foreach2( c-> c.flatMapAs$1(strs)
-										 .mapAs$2(opt)
-										 .yield(() -> c.<String>$1() + c.$2())).collect(Collectors.toList());
+	  Seq<String> results = ForComprehensions.foreach2( c-> c.flatMapAs$1(strs)
+										 .mapAs$2((Vars2<String,String> v) -> opt)
+										 .yield( v -> v.$1() + v.$2()));
 										 
 Outputs : [hellocool, worldcool]
 
@@ -95,9 +95,9 @@ Or the other way around
 		val opt = Optional.of("cool");
 		
 		
-		Optional<List<String>> results = ForComprehensions.<String,Optional<List<String>>>foreach2( c-> c.flatMapAs$1(opt)
-										 .mapAs$2(strs)
-										 .yield(() -> c.<String>$1() + c.$2()));
+		Optional<List<String>> results = ForComprehensions.foreach2( c-> c.flatMapAs$1(opt)
+										 .mapAs$2( (Vars2<String,String> v) -> strs)
+										 .yield( v -> v.<String>$1() + v.$2()));
 		
 		assertThat(results.get(),hasItem("coolhello"));
 		assertThat(results.get(),hasItem("coolworld"));
@@ -105,4 +105,9 @@ Or the other way around
 Outputs : [[coolhello],[coolworld]]
 
 ## Filtering
+
+## Convert any Object to a Monad
+
+ObjectToStreamConverter
+NullToOptionalConverter
 

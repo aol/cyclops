@@ -18,8 +18,6 @@ public class LessTypingForComprehension1<T,R> {
 	
 	public static interface Step1<T,R>{
 		public  Step2<T,R> mapAs$1(Object f);
-		
-	
 	}
 
 	public static interface Step2<T,R>{
