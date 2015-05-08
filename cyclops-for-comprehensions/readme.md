@@ -1,3 +1,9 @@
+todos :
+	test against enable switch / try etc
+	test adding more monadic converters
+	test adding more comprehenders
+	update documentation
+
 # for comprehensions explained
 
 For comprehensions are useful for iterating over nested structures (e.g. collections, Streams, Optionals, CompletableFutures or other Monads).

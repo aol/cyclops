@@ -2,6 +2,7 @@ package com.aol.cyclops.comprehensions;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -15,13 +16,14 @@ class Proxier {
 		X proxy= (X)Proxy.newProxyInstance(FreeFormForComprehension.class
 				.getClassLoader(), new Class[]{type}, (prxy,
 				method, args) -> {
-					if(method.getName().equals("yield") && method.getParameterCount()==1 && method.getParameterTypes()[0].isAssignableFrom(Function.class)){
-						return handleYield(method,compData,type, args);
+					if(method.getName().equals("yield") && method.getParameterCount()==1){
+						return handleYield(method,compData,args);
 					}
-					else if(method.getName().equals("yield") && method.getParameterCount()==1 && method.getParameterTypes()[0].isAssignableFrom(Supplier.class)){
-						return handleYieldSupplier(method,compData,type, args);
-					}else if(method.getName().equals("filter")&& method.getParameterCount()==1) {
+					
+					else if(method.getName().equals("filter")&& method.getParameterCount()==1) {
 						return handleFilter(method,compData,type, args,xClosed);
+					}else if(method.getName().equals("run")&& method.getParameterCount()==1) {
+						return handleConsume(method,compData, args);
 					}
 					
 					else if(method.getParameterCount()==0)
@@ -36,27 +38,32 @@ class Proxier {
 		return proxy;
 	}
 	
-	private <X> X handleYieldSupplier(Method method,ComprehensionData compData,Class<X> type, Object[] args){
+	private <X> X handleYieldSupplier(Method method,ComprehensionData compData, Object[] args){
 		
 		
-		 return (X)compData.yieldSupplier((Supplier)args[0]);
+		 return (X)compData.yield((Supplier)args[0]);
 	
 	}
-	private <X> X handleYield(Method method,ComprehensionData compData,Class<X> type, Object[] args){
-		
-			// if(method.getReturnType().isInterface() && type!=method.getReturnType())
-			//	 return (X)newProxy(method.getReturnType(),compData);
-			// if(args[0] instanceof Function)
-				 return (X)compData.yield((Function)args[0]);
-			// return (X)compData.yieldSupplier((Supplier)args[0]);
-		
+	private <X> X handleYield(Method method,ComprehensionData compData, Object[] args){		
+			if(args[0] instanceof Supplier)
+				return handleYieldSupplier(method,compData,args);
+				
+		return (X)compData.yieldFunction((Function)args[0]);
+	}
+	
+	private <X> X handleConsume(Method method,ComprehensionData compData, Object[] args){
+		if(args[0] instanceof Runnable)
+			compData.yield(()-> { ((Runnable)args[0]).run(); return null;});
+		else
+			compData.yieldFunction( input-> { ((Consumer)args[0]).accept(input); return null;});
+		return (X)null;
 	}
 	
 	private <X> X handleFilter(Method method,ComprehensionData compData,Class<X> type, Object[] args,ImmutableClosedValue<X> xClosed ){
 		if(args[0] instanceof Function)
-			compData.filter((Function)args[0]);
+			compData.filterFunction((Function)args[0]);
 		else
-				compData.filterSupplier((Supplier)args[0]);
+				compData.filter((Supplier)args[0]);
 		 if(method.getReturnType().isInterface() && type!=method.getReturnType())
 			 return (X)newProxy(method.getReturnType(),compData);
 		return xClosed.get();

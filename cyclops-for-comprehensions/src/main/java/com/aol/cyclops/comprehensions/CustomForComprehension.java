@@ -46,4 +46,5 @@ public interface CustomForComprehension<R,T extends CustomForComprehension<R,?>>
 	public T filter(Supplier<Boolean> s);
 	
 	public R yield(Supplier s);
+	public void run(Runnable r);
 }

@@ -12,16 +12,18 @@ import org.junit.Test;
 public class FreeFormTest {
 
 	MyComprehension<Custom2,Custom2> comp = ForComprehensions.custom(Custom2.class);
-	/**
+	
 	@Test
 	public void freeForm(){
 		List<Integer> list= Arrays.asList(1,2,3);
 		Stream<Integer> stream = foreachX(c -> c.$("hello",list)
+										.filter(()->c.<Integer>$("hello")<10)
 										.yield(()-> c.<Integer>$("hello")+2));
 		
 		assertThat(Arrays.asList(3,4,5),equalTo(stream.collect(Collectors.toList())));
 										
-	} **/
+	}
+	
 	@Test
 	public void freeFormCustom(){
 		

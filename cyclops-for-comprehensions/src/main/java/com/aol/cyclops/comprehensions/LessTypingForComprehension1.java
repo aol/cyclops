@@ -25,12 +25,12 @@ public class LessTypingForComprehension1<T,R> {
 	public static interface Step2<T,R>{
 		public  <T1> Step3<T,R,T1> filter(Function<Vars1<T1>,Boolean> s);
 		public <T1,R> R yield(Function<Vars1<T1>,?> s);
-		public  <T1> void run(Consumer<Vars1<T1>> r);
+		public  <T1> Void run(Consumer<Vars1<T1>> r);
 		
 	}
 	public static interface Step3<T,R,T1>{
 		public <R> R yield(Function<Vars1<T1>,?> s);
-		public  void run(Consumer<Vars1<T1>> r);
+		public  Void run(Consumer<Vars1<T1>> r);
 		
 	}
 

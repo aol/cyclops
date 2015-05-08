@@ -1,5 +1,7 @@
 package com.aol.cyclops.comprehensions;
 
+import static com.aol.cyclops.comprehensions.ForComprehensions.foreachX;
+
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -7,6 +9,15 @@ import java.util.function.Supplier;
 import lombok.Getter;
 
 
+/**
+ * Class that collects data for free form for comprehensions
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Variable type
+ * @param <R> Return type
+ * @param <V> Aggregate Variable type holder
+ */
 public class ComprehensionData<T,R,V extends Initialisable<?>> implements Initialisable{
 	private final BaseComprehensionData data;
 	@Getter
@@ -14,68 +25,124 @@ public class ComprehensionData<T,R,V extends Initialisable<?>> implements Initia
 	
 	private final Proxier proxier = new Proxier();
 	
-	public ComprehensionData(ExecutionState state,Optional<Class<V>> varsClass) {
+	ComprehensionData(ExecutionState state,Optional<Class<V>> varsClass) {
 		super();
 		data = new BaseComprehensionData(state);
 		this.vars = varsClass.map(c->proxier.newProxy(c,this))
 						.orElse((V)new Varsonly().init(data));
 	}
-	public ComprehensionData(V vars,ExecutionState state) {
+	ComprehensionData(V vars,ExecutionState state) {
 		super();
 		data = new BaseComprehensionData(state);
 		this.vars = (V)vars.init(data);
 	}
-	ComprehensionData<T,R,V> filterSupplier(Supplier<Boolean> s){
+	
+	
+	/**
+	 * Add a guard to the for comprehension
+	 * 
+	 * {@code
+	 *  	foreachX(c -> c.$("hello",list)
+						   .filter(()->c.<Integer>$("hello")<10)
+							.yield(()-> c.<Integer>$("hello")+2));
+		  }
+		  
+	 * @param s Supplier that returns true for elements that should stay in the
+	 * 					comprehension
+	 * @return this
+	 */
+	public ComprehensionData<T,R,V> filter(Supplier<Boolean> s){
 		data.guardInternal(s);
 		return this;
 		
 	}
 	
-	public  ComprehensionData<T,R,V> filter(Function<V,Boolean> s){
+	ComprehensionData<T,R,V> filterFunction(Function<V,Boolean> s){
 		data.guardInternal(()->s.apply(vars));
 		return this;
 		
 	}
-	R yieldSupplier(Supplier s){
+	/**
+	 * Define the yeild section of a for comprehension and kick of processing
+	 *  for a comprehension
+	 *  
+	 *  {@code
+	 *  	foreachX(c -> c.$("hello",list)
+						   .filter(()->c.<Integer>$("hello")<10)
+							.yield(()-> c.<Integer>$("hello")+2));
+		  }
+	 *  
+	 * @param s Yield section
+	 * @return result of for comprehension
+	 */
+	public <R> R yield(Supplier s){
 		return data.yieldInternal(s);
 		
 	}
-	public <R> R yield(Function<V,?> s){
+	<R> R yieldFunction(Function<V,?> s){
 		return data.yieldInternal(()->s.apply(vars));
 		
 	}
+	
+	/**
+	 * Extract a bound variable
+	 * {@code
+	 *  	foreachX(c -> c.$("hello",list)
+						   .filter(()->c.<Integer>$("hello")<10)
+							.yield(()-> c.<Integer>$("hello")+2));
+		  }
+		  
+	 * 
+	 * @param name Variable name
+	 * @return variable value
+	 */
 	public <T> T $(String name){
 		return data.$Internal(name);
 	
 	}
-	public <T> T $1(){
-		return data.$Internal("_1");
 	
-	}
-	public <T> T $2(){
-		return data.$Internal("_2");
 	
-	}
 	
+	/**
+	 * Bind a variable in this for comprehension
+	 * 
+	 * {@code
+	 *  	foreachX(c -> c.$("hello",list)
+						   .filter(()->c.<Integer>$("hello")<10)
+							.yield(()-> c.<Integer>$("hello")+2));
+		  }
+	 * 
+	 * @param name of variable to bind
+	 * @param f value
+	 * @return this
+	 */
 	public  <T> ComprehensionData<T,R,V> $(String name,Object f){
 		data.$Internal(name, f);
 		
 		return (ComprehensionData)this;
 	}
+	/**
+	 * Lazily bind a variable in this for comprehension
+	 * 
+	 * {@code
+	 *  	foreachX(c -> c.$("hello",list)
+						   .filter(()->c.<Integer>$("hello")<10)
+							.yield(()-> c.<Integer>$("hello")+2));
+		  }
+	 * 
+	 * @param name name of variable to bind
+	 * @param f value
+	 * @return this
+	 */
 	public  <T> ComprehensionData<T,R,V> $(String name,Supplier f){
 		data.$Internal(name, f);
 		
 		return (ComprehensionData)this;
 	}
-	public   <T> ComprehensionData<T,R,V> $1(Object f){
-		data.$Internal("_1", f);
-		
-		return (ComprehensionData)this;
-	}
-	public   <T> ComprehensionData<T,R,V> $2(Object f){
-		data.$Internal("_2", f);
-		return (ComprehensionData)this;
-	}
+	
+	/* 
+	 * @see com.aol.cyclops.comprehensions.Initialisable#init(com.aol.cyclops.comprehensions.BaseComprehensionData)
+	 */
 	@Override
 	public Initialisable init(BaseComprehensionData data) {
 		return this;
