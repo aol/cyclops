@@ -1,26 +1,36 @@
 package com.aol.cyclops.comprehensions;
 
-import java.util.function.Supplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 
 
 public class LessTypingForComprehension1<T,R> {
 	
+	public static interface Vars1<T1> {
+		public   T1 $1();
+	}
+	
+	public static VarsImpl getVars(){
+		return new VarsImpl();
+	}
+	public static class VarsImpl<T1> extends Varsonly<T1,Object,Object,Object,Object> implements Vars1<T1>{}
+	
 	public static interface Step1<T,R>{
 		public  Step2<T,R> mapAs$1(Object f);
-		public <T> T $1();
+		
 	
 	}
 
 	public static interface Step2<T,R>{
-		public  Step3<T,R> filter(Supplier<Boolean> s);
-		public <R> R yield(Supplier s);
-		public void run(Runnable r);
+		public  <T1> Step3<T,R,T1> filter(Function<Vars1<T1>,Boolean> s);
+		public <T1,R> R yield(Function<Vars1<T1>,?> s);
+		public  <T1> void run(Consumer<Vars1<T1>> r);
 		
 	}
-	public static interface Step3<T,R>{
-		public <R> R yield(Supplier s);
-		public void run(Runnable r);
+	public static interface Step3<T,R,T1>{
+		public <R> R yield(Function<Vars1<T1>,?> s);
+		public  void run(Consumer<Vars1<T1>> r);
 		
 	}
 

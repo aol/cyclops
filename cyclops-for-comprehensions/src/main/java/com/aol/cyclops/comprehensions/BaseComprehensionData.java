@@ -1,9 +1,10 @@
+
 package com.aol.cyclops.comprehensions;
 
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
-
-import com.aol.cyclops.comprehensions.converters.MonadicConverters;
 
 
 final class BaseComprehensionData {
@@ -13,6 +14,7 @@ final class BaseComprehensionData {
 	private ContextualExecutor currentContext;
 
 	private final State state;
+	
 	
 	public BaseComprehensionData(ExecutionState state) {
 		
@@ -32,7 +34,7 @@ final class BaseComprehensionData {
 	}
 	
 	public void run(Runnable r){
-		yieldInternal( ()-> { r.run(); return null; });
+		yieldInternal( () -> { r.run(); return null; });
 	}
 	public <R> R yieldInternal(Supplier s){
 		return (R)((Foreach)delegate.getContext()).yield(new ExecutionState(new ContextualExecutor(delegate.getContext()){

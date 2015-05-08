@@ -20,6 +20,10 @@ import lombok.val;
 
 import org.junit.Test;
 
+import com.aol.cyclops.comprehensions.LessTypingForComprehension1.Vars1;
+import com.aol.cyclops.comprehensions.LessTypingForComprehension2.Vars2;
+import com.aol.cyclops.comprehensions.LessTypingForComprehension3.Vars3;
+
 import fj.data.Option;
 
 
@@ -33,7 +37,7 @@ public class ForComprehensionTest {
 			
 			IntStream res = (IntStream)ForComprehensions.foreach1 (  c-> 
 										c.mapAs$1(  IntStream.range(1,3)) 
-										 .yield( ()-> c.<Integer>$1() + 1));
+										 .yield( (Vars1<Integer> v)-> v.$1() + 1));
 			List<Integer> expected = Arrays.asList(2,3);
 			
 			
@@ -42,13 +46,13 @@ public class ForComprehensionTest {
 		}
 		@Test
 		public void longstream() {
-			val comp =  new ForComprehension2<LongStream,LongStream,Long>();
 			
 			
-			LongStream res = comp.<Long,Long>foreach (  c-> 
+			
+			LongStream res = ForComprehensions.foreach2 (  c-> 
 										c.flatMapAs$1( LongStream.range(1l,30l))
-										.mapAs$2(()->LongStream.range(6l,10l))
-										.yield( ()-> ( c.$1() * c.$2()) + 1l));
+										.mapAs$2((Vars2<Long,Long> v)-> LongStream.range(6l,10l))
+										.yield(  v ->  (v.$1() * v.$2()) + 1l));
 			
 			
 			
@@ -68,13 +72,14 @@ public class ForComprehensionTest {
 		}
 		@Test
 		public void doubleStream() {
-			val comp =  new ForComprehension3<DoubleStream,DoubleStream,Double>();
 			
-			DoubleStream res = comp.<Double,Double,Double>foreach (  c-> 
+			
+			DoubleStream res =ForComprehensions.foreach3 (  c-> 
 										c.flatMapAs$1( DoubleStream.of(10.00,20.00))
-										.flatMapAs$2(()->DoubleStream.of(2.00,3.50))
-										.mapAs$3(()->DoubleStream.of(25.50))
-										.yield( ()-> ( c.$1() * c.$2() * c.$3()) ));
+										.flatMapAs$2((Vars3<Double,Double,Double> v)->DoubleStream.of(2.00,3.50))
+										.mapAs$3(v->DoubleStream.of(25.50))
+										.yield( v-> ( v.$1() * v.$2() * v.$3()) ));
+			
 			List<Double> expected = Arrays.asList(510.0, 892.5, 1020.0, 1785.0);
 			
 			
@@ -84,11 +89,11 @@ public class ForComprehensionTest {
 	
 		@Test
 		public void simpleLists() {
-			val comp =  new ForComprehension1<List,Stream<Integer>,Integer>();
+		
 			
-			Stream<Integer> res =comp.<Integer>foreach ( c-> 
-						c.mapAs$1(Arrays.asList(1,2))
-						 .yield(()-> c.$1() +1));
+			Stream<Integer> res =ForComprehensions.foreach1 ( c-> 
+																c.mapAs$1(Arrays.asList(1,2))
+																.yield((Vars1<Integer> v) -> v.$1() +1));
 			
 			List<Integer> expected = Arrays.asList(2,3);
 		
@@ -98,14 +103,13 @@ public class ForComprehensionTest {
 		
 		@Test
 		public void test5() {
-			val comp =  new ForComprehension1<List<Option<Integer>>,Stream<Option<Integer>>,Option<Integer>>();
+			
 			val some = some(1);
 			Supplier<Option<Integer>> s = ()->some;
 			List<Option<Integer>> list = Arrays.<Option<Integer>>asList(some(0), some(1),  none(),some(2), some(10));
-			Stream<Option<Integer>> res =comp
-							.<Option<Integer>>foreach(c-> c.mapAs$1(list)
-															.filter(()-> c.$1().filter( it -> it > 1).isSome())
-															.yield( ()-> c.$1().map(it->it+3)));
+			Stream<Option<Integer>> res =ForComprehensions.foreach1 (c-> c.mapAs$1(list)
+															.filter((Vars1<Option<Integer>> v) -> v.$1().filter( it -> it > 1).isSome())
+															.yield( v-> v.$1().map(it->it+3)));
 				
 				
 			
@@ -121,11 +125,10 @@ public class ForComprehensionTest {
 			Option<Integer> empty = Option.none();
 			BiFunction<Integer,Integer,Integer> f2 = (a,b) -> a *b; 
 			
-			val result =  new ForComprehension2<Option<?>,Option<Integer>,Integer>()
-								.<Integer,Integer>foreach(c -> c.flatMapAs$1(one)
-																.mapAs$2(empty)
-																.filter(()->c.$1()>2)
-																.yield(()->{return f2.apply(c.$1(), 10);}));
+			Option result =  ForComprehensions.foreach2(c -> c.flatMapAs$1(one)
+																.mapAs$2((Vars2<Integer,Integer> v) ->empty)
+																.filter(v->v.$1()>2)
+																.yield(v->{return f2.apply(v.$1(), 10);}));
 			
 			System.out.println(result);
 			assertTrue(result.isNone());
@@ -139,9 +142,9 @@ public class ForComprehensionTest {
 			
 			val result =  ForComprehensions
 								.<Option<Integer>>foreach2(c -> c.flatMapAs$1(one)
-																.mapAs$2(empty)
-																.filter(()->c.<Integer>$1()>2)
-																.yield(()->{return f2.apply(c.$1(), 10);}));
+																.mapAs$2((Vars2<Integer,Integer> v)->empty)
+																.filter(v->v.$1()>2)
+																.yield(v->{return f2.apply(v.$1(), 10);}));
 			
 			System.out.println(result);
 			assertTrue(result.isNone());

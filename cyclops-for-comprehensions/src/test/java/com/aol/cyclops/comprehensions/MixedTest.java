@@ -3,7 +3,8 @@ package com.aol.cyclops.comprehensions;
 import static com.aol.cyclops.comprehensions.ForComprehensions.foreach2;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,7 +17,7 @@ import lombok.val;
 
 import org.junit.Test;
 
-import fj.data.Option;
+import com.aol.cyclops.comprehensions.LessTypingForComprehension2.Vars2;
 
 public class MixedTest {
 
@@ -27,8 +28,8 @@ public class MixedTest {
 		
 		
 		Stream<String> results = foreach2( c-> c.flatMapAs$1(strs)
-										 .mapAs$2(opt)
-										 .yield(() -> c.<String>$1() + c.$2()));
+										 .mapAs$2((Vars2<String,String> v)->opt)
+										 .yield(v -> v.$1() + v.$2()));
 										 
 		
 		val list = results.collect(Collectors.toList());
@@ -43,8 +44,8 @@ public class MixedTest {
 		
 		List<String> results = ForComprehensions.<Stream<String>>foreach2( 
 										c-> c.flatMapAs$1(strs)
-											 .mapAs$2(opt)
-											 .yield(() -> c.<String>$1() + c.$2()))
+											 .mapAs$2((Vars2<String,String> v)->opt)
+											 .yield(v -> v.$1() + v.$2()))
 											 .collect(Collectors.toList());
 		
 		
@@ -61,8 +62,8 @@ public class MixedTest {
 		
 		Optional<List<String>> results = foreach2( 
 											c-> c.flatMapAs$1(opt)
-												.mapAs$2(strs)
-												.yield(() -> c.<String>$1() + c.$2()));
+												.mapAs$2((Vars2<String,String> v)->strs)
+												.yield(v -> v.$1() + v.$2()));
 		
 		assertThat(results.get(),hasItem("coolhello"));
 		assertThat(results.get(),hasItem("coolworld"));
@@ -75,8 +76,8 @@ public class MixedTest {
 		
 		Optional<List<String>> results = foreach2( 
 											c-> c.flatMapAs$1(opt)
-												.mapAs$2(strs)
-												.yield(() -> c.<String>$1() + c.$2()));
+												.mapAs$2((Vars2<String,String> v)->strs)
+												.yield(v -> v.$1() + v.$2()));
 		
 		assertFalse(results.isPresent());
 	}
@@ -89,8 +90,8 @@ public class MixedTest {
 		
 		Optional<String> results = foreach2( 
 										c-> c.flatMapAs$1(opt)
-										 .mapAs$2(str)
-										 .yield(() -> c.<String>$1() + c.$2()));
+										 .mapAs$2((Vars2<String,String> v)->str)
+										 .yield(v -> v.$1() + v.$2()));
 		
 		assertThat(results.get(),equalTo("coolhello"));
 		

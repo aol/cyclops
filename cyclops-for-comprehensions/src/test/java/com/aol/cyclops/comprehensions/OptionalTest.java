@@ -5,9 +5,12 @@ import static org.junit.Assert.assertThat;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
-import lombok.val;
-
 import org.junit.Test;
+
+import com.aol.cyclops.comprehensions.LessTypingForComprehension1.Vars1;
+import com.aol.cyclops.comprehensions.LessTypingForComprehension2.Vars2;
+import com.aol.cyclops.comprehensions.LessTypingForComprehension3.Vars3;
+import com.aol.cyclops.comprehensions.LessTypingForComprehension4.Vars4;
 
 public class OptionalTest {
 
@@ -21,9 +24,9 @@ public class OptionalTest {
 
 	
 		Optional<Integer> result =  (Optional)ForComprehensions.foreach3(c -> c.flatMapAs$1(two)
-														.flatMapAs$2(four)
-														.mapAs$3(three)
-														.yield(()->{return f2.apply(c.$1(), c.$2());}));
+														.flatMapAs$2((Vars3<Integer,Integer,Integer> v)->four)
+														.mapAs$3(v->three)
+														.yield(v->{return f2.apply(v.$1(), v.$2());}));
 		
 		assertThat(result,equalTo(Optional.of(8)));
 
@@ -36,10 +39,10 @@ public class OptionalTest {
 		BiFunction<Integer, Integer, Integer> f2 = (a, b) -> a * b;
 
 		Object result =  ForComprehensions.foreach4(c -> c.flatMapAs$1(one)
-														.flatMapAs$2(empty)
-														.flatMapAs$3(Optional.empty())
-														.mapAs$4(Optional.empty())
-														.yield(()->{return f2.apply(c.$1(), c.$2());}));
+														.flatMapAs$2((Vars4<Integer,Integer,Integer,Integer> v)->empty)
+														.flatMapAs$3(v->Optional.empty())
+														.mapAs$4(v->Optional.empty())
+														.yield(v->{return f2.apply(v.$1(), v.$2());}));
 		
 		assertThat(result,equalTo(Optional.empty()));
 
@@ -54,7 +57,7 @@ public class OptionalTest {
 		
 		Object result = ForComprehensions.foreach1(c ->  c.mapAs$1(one)
 														
-														.yield(()->{return f2.apply(c.$1(), 10);}));
+														.yield((Vars1<Integer> v)->{return f2.apply(v.$1(), 10);}));
 
 		assertThat(result,equalTo(Optional.of(10)));
 
@@ -68,9 +71,9 @@ public class OptionalTest {
 				
 		
 		Object result =  ForComprehensions.foreach2(c -> c.flatMapAs$1(one)
-																		.mapAs$2(()->Optional.of(c.$1()))
-																		.filter(()->c.<Integer>$1()>2)
-																		.yield(()->{return f2.apply(c.$1(), c.$2());}));
+																		.mapAs$2((Vars2<Integer,Integer> v)->Optional.of(v.$1()))
+																		.filter(v->v.<Integer>$1()>2)
+																		.yield(v->{return f2.apply(v.$1(), v.$2());}));
 		
 		assertThat(result,equalTo(Optional.of(9)));
 
