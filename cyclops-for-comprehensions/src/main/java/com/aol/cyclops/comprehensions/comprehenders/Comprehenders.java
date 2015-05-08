@@ -9,6 +9,12 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+import org.pcollections.HashTreePMap;
+import org.pcollections.PMap;
+
 import com.aol.cyclops.lambda.api.Comprehender;
 
 /**
@@ -19,8 +25,19 @@ import com.aol.cyclops.lambda.api.Comprehender;
  */
 public class Comprehenders {
 	
+	@AllArgsConstructor
+	public static enum Companion{
+		instance(new Comprehenders());
+		@Getter
+		private final Comprehenders comprehenders;
+		
+		public Comprehenders withMoreComprehenders( Map<Class,Comprehender> comprehenders){
+			return new Comprehenders(defaultComprehenders,comprehenders);
+		}
+	}
+	
 	@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
-	private static final Map<Class,Comprehender> comprehenders = new HashMap<Class,Comprehender>(){{
+	public static final Map<Class,Comprehender> defaultComprehenders = new HashMap<Class,Comprehender>(){{
 		put(Optional.class,new OptionalComprehender());
 		put(Stream.class,new StreamComprehender());
 		put(IntStream.class,new IntStreamComprehender());
@@ -53,21 +70,23 @@ public class Comprehenders {
 		}
 		
 	}};
+	private final PMap<Class,Comprehender> comprehenders;
 	
-	/**
-	 * Careful - global mutable state, with the possiblity of changing behaviour for existing comprehenders
-	 * 
-	 * @param c Class to add 
-	 * @param comp Comprehender for class
-	 */
-	public static void addComprehender(Class c, Comprehender comp){
-		comprehenders.put(c,comp);
+	private Comprehenders(){
+		comprehenders = HashTreePMap.from(defaultComprehenders);
 	}
-
+	private Comprehenders(Map<Class,Comprehender> map,Map<Class,Comprehender> map2){
+		comprehenders = HashTreePMap.from(map).plusAll(map2);
+	}
+	public Comprehenders(Map<Class,Comprehender> map){
+		comprehenders = HashTreePMap.from(map);
+	}
+	
+	
 	/**
 	 * @return Registered Comprehenders
 	 */
-	public static Map<Class,Comprehender> getRegisteredComprehenders(){
+	public Map<Class,Comprehender> getRegisteredComprehenders(){
 		return new HashMap(comprehenders);
 	}
 	

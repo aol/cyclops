@@ -3,20 +3,22 @@ package com.aol.cyclops.comprehensions.converters;
 import java.util.Collection;
 import java.util.Map;
 
-public class CollectionToStreamConverter implements MonadicConverter {
+import org.jooq.lambda.Seq;
+
+public class CollectionToStreamConverter implements MonadicConverter<Seq> {
 
 	public boolean accept(Object o){
 		return (o instanceof Collection) || (o instanceof Map);
 	}
 	@SuppressWarnings("rawtypes")
-	public Object convertToMonadicForm(Object f) {
+	public Seq convertToMonadicForm(Object f) {
 			
 			if(f instanceof Collection)
-				return ((Collection)f).stream();
+				return Seq.seq(((Collection)f).stream());
 			if(f instanceof Map)
-				return ((Map)f).entrySet().stream();
+				return Seq.seq(((Map)f).entrySet().stream());
 			
-			return f;
+			return null; //should never happen
 		}
 
 }

@@ -2,9 +2,8 @@ package com.aol.cyclops.comprehensions;
 
 import java.util.function.Function;
 
-import lombok.AllArgsConstructor;
-
-import com.aol.cyclops.comprehensions.FreeFormForComprehension.ComphrensionData;
+import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
+import com.aol.cyclops.comprehensions.converters.MonadicConverters;
 
 /**
  * Static helper methods for for comprehensions
@@ -15,7 +14,15 @@ import com.aol.cyclops.comprehensions.FreeFormForComprehension.ComphrensionData;
  */
 public class ForComprehensions {
 
-	
+	public static <X> FreeFormForComprehension<X>  buildExecutor(State state,Class<X> interfaces){
+		return new FreeFormForComprehension<>(state,interfaces);
+	}
+	public static FreeFormForComprehension<?>  buildExecutor(MonadicConverters converters, Comprehenders comprehenders){
+		return new FreeFormForComprehension<>(new State(comprehenders,converters));
+	}
+	public static FreeFormForComprehension<?>  buildExecutor(State state){
+		return new FreeFormForComprehension<>(state);
+	}
 	/**
 	 * Create  for comprehension over a single Monad or collection
 	 * 
@@ -23,8 +30,10 @@ public class ForComprehensions {
 	 * @return Result
 	 */
 	public static <R> R foreach1(Function<LessTypingForComprehension1.Step1<?,R>,R> fn){
-		return (R)LessTypingForComprehension1.foreach((Function)fn);
+		return (R)new FreeFormForComprehension(LessTypingForComprehension1.Step1.class).foreach((Function)fn);
+		
 	}
+	
 	/**
 	 * Create  for comprehension over two Monads or collections
 	 * 
@@ -32,7 +41,7 @@ public class ForComprehensions {
 	 * @return Result
 	 */
 	public static <R> R foreach2(Function<LessTypingForComprehension2.Step1<?,R>,R> fn){
-		return (R)LessTypingForComprehension2.foreach((Function)fn);
+		return (R)new FreeFormForComprehension(LessTypingForComprehension2.Step1.class).foreach((Function)fn);
 	}
 	/**
 	 * Create  for comprehension over three Monads or collections
@@ -41,7 +50,7 @@ public class ForComprehensions {
 	 * @return Result
 	 */
 	public static <R> R foreach3(Function<LessTypingForComprehension3.Step1<?,R>,R> fn){
-		return (R)LessTypingForComprehension3.foreach((Function)fn);
+		return (R)new FreeFormForComprehension(LessTypingForComprehension3.Step1.class).foreach((Function)fn);
 	}
 	
 	/**
@@ -51,7 +60,7 @@ public class ForComprehensions {
 	 * @return Result
 	 */
 	public static <R> R foreach4(Function<LessTypingForComprehension4.Step1<?,R>,R> fn){
-		return (R)LessTypingForComprehension4.foreach((Function)fn);
+		return (R)new FreeFormForComprehension(LessTypingForComprehension4.Step1.class).foreach((Function)fn);
 	}
 	
 	/**
@@ -60,8 +69,8 @@ public class ForComprehensions {
 	 * @param fn For comprehension
 	 * @return Result
 	 */
-	public static <R> R foreachX(Function<ComphrensionData<?,R>,R> fn){
-		return (R)FreeFormForComprehension.foreach((Function)fn);
+	public static <R> R foreachX(Function<FreeFormForComprehension.ComphrensionData<?,R>,R> fn){
+		return (R)new FreeFormForComprehension().foreach((Function)fn);
 	}
 	
 	/**
@@ -72,7 +81,7 @@ public class ForComprehensions {
 	 * @return Result
 	 */
 	public static <X,R> R foreachX(Class<X> c,Function<X,R> fn){
-		return FreeFormForComprehension.foreach(c,fn);
+		return (R)new FreeFormForComprehension(c).foreach(fn);
 	}
 	/**
 	 * Step builder for Creating a for comprehension using a custom interface

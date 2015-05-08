@@ -6,13 +6,18 @@ import org.pcollections.ConsPStack;
 import org.pcollections.HashTreePMap;
 import org.pcollections.PStack;
 
+import com.aol.cyclops.comprehensions.converters.MonadicConverters;
+
 class Foreach<T> {
 
 	private PStack<Expansion> generators = ConsPStack.empty();
 
-	public T yield(ContextualExecutor<?, Map> c) {
+	
+	
+	public T yield(ExecutionState state) {
 		Expansion head = generators.get(0);
-		return new Yield<T>(generators).process(c, HashTreePMap.empty(), head
+		return new Yield<T>(generators,state.state)
+				.process(state.contextualExecutor, HashTreePMap.empty(), head
 				.getFunction().executeAndSetContext(HashTreePMap.empty()), head
 				.getName(), 1);
 	}

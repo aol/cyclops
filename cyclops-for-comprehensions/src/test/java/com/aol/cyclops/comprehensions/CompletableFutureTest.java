@@ -2,6 +2,7 @@ package com.aol.cyclops.comprehensions;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+
 import java.util.concurrent.CompletableFuture;
 
 import lombok.val;

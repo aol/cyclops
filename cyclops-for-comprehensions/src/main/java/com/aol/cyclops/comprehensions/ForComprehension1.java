@@ -82,7 +82,7 @@ public class ForComprehension1<MONAD,R,R_PARAM> {
 		
 		public ComphrensionData(ContextualExecutor delegate) {
 			super();
-			data = new BaseComprehensionData(delegate);
+			data = new BaseComprehensionData(new ExecutionState(delegate, new State()));
 		}
 		
 		public Step3<MONAD,T1,R,R_PARAM> filter(Supplier<Boolean> s){

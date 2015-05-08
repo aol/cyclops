@@ -57,7 +57,7 @@ public class ReflectionComprehender implements Comprehender {
 			return m.invoke(t, o);
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
-			
+			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 	}

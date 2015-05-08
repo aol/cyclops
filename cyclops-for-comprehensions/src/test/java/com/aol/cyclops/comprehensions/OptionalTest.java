@@ -35,11 +35,10 @@ public class OptionalTest {
 		Optional<Integer> empty = Optional.of(3);
 		BiFunction<Integer, Integer, Integer> f2 = (a, b) -> a * b;
 
-		Object result =  LessTypingForComprehension4.foreach(c -> c.flatMapAs$1(one)
+		Object result =  ForComprehensions.foreach4(c -> c.flatMapAs$1(one)
 														.flatMapAs$2(empty)
 														.flatMapAs$3(Optional.empty())
 														.mapAs$4(Optional.empty())
-													//	.guard(()->c.<Integer>$1()>2)
 														.yield(()->{return f2.apply(c.$1(), c.$2());}));
 		
 		assertThat(result,equalTo(Optional.empty()));
@@ -47,17 +46,30 @@ public class OptionalTest {
 	}
 	
 	@Test
+	public void test1(){
+		Optional<Integer> one = Optional.of(1);
+		Optional<Integer> empty = Optional.of(3);
+		BiFunction<Integer, Integer, Integer> f2 = (a, b) -> a * b;
+
+		
+		Object result = ForComprehensions.foreach1(c ->  c.mapAs$1(one)
+														
+														.yield(()->{return f2.apply(c.$1(), 10);}));
+
+		assertThat(result,equalTo(Optional.of(10)));
+
+	}
+	@Test
 	public void test2(){
 		Optional<Integer> one = Optional.of(3);
 		Optional<Integer> empty = Optional.of(3);
 		BiFunction<Integer,Integer,Integer> f2 = (a,b) -> a *b; 
 		
-		val comprehension = new ForComprehension2<Optional,Optional<Integer>,Integer>();
 				
 		
-		Object result =  comprehension.<Integer,Integer>foreach(c -> c.flatMapAs$1(one)
+		Object result =  ForComprehensions.foreach2(c -> c.flatMapAs$1(one)
 																		.mapAs$2(()->Optional.of(c.$1()))
-																		.filter(()->c.$1()>2)
+																		.filter(()->c.<Integer>$1()>2)
 																		.yield(()->{return f2.apply(c.$1(), c.$2());}));
 		
 		assertThat(result,equalTo(Optional.of(9)));

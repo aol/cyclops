@@ -18,13 +18,15 @@ class Yield<T> {
 	
 	
 	private final  List<Expansion> expansions;
+	private final  State state;
+	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	T process(ContextualExecutor<?,Map> yieldExecutor, PMap<String,Object> context, 
 						Object currentExpansionUnwrapped, String lastExpansionName, int index) {
 		
 		Tuple2<Comprehender,Object> comprehender = selectComprehender(currentExpansionUnwrapped)
-									.orElseGet( ()->selectComprehender(MonadicConverters.convertToMonadicForm(currentExpansionUnwrapped))
+									.orElseGet( ()->selectComprehender(state.converters.convertToMonadicForm(currentExpansionUnwrapped))
 													.orElse( new Tuple2(new ReflectionComprehender(Optional.of(currentExpansionUnwrapped).map(Object::getClass)),currentExpansionUnwrapped)));
 			
 		
@@ -58,7 +60,7 @@ class Yield<T> {
 	}
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private Optional<Tuple2<Comprehender,Object>> selectComprehender(Object structure) {
-		return Comprehenders.getRegisteredComprehenders().entrySet().stream()
+		return state.comprehenders.getRegisteredComprehenders().entrySet().stream()
 				.filter(e -> e.getKey().isAssignableFrom(structure.getClass()))
 				.map(e->e.getValue())
 				.map(v->new Tuple2<Comprehender,Object>(v,structure))

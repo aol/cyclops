@@ -1,7 +1,5 @@
 package com.aol.cyclops.comprehensions;
 
-
-import static com.aol.cyclops.comprehensions.LessTypingForComprehension1.foreach;
 import static fj.data.Option.none;
 import static fj.data.Option.some;
 import static org.hamcrest.Matchers.equalTo;
@@ -33,7 +31,7 @@ public class ForComprehensionTest {
 		@Test
 		public void intstream() {
 			
-			IntStream res = (IntStream)foreach (  c-> 
+			IntStream res = (IntStream)ForComprehensions.foreach1 (  c-> 
 										c.mapAs$1(  IntStream.range(1,3)) 
 										 .yield( ()-> c.<Integer>$1() + 1));
 			List<Integer> expected = Arrays.asList(2,3);
