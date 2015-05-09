@@ -3,6 +3,9 @@ package com.aol.cyclops.comprehensions;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
@@ -58,5 +61,42 @@ public class StreamTest {
 		
 		assertThat(expected, equalTo( res.toList()));
 	}
-	
+	@Test
+	public void bufferedReaderStream() {
+		
+		Seq<String> res = ForComprehensions.foreach1 (  c-> 
+									c.mapAs$1(  new BufferedReader(new InputStreamReader(this.getClass().getClassLoader()
+                                .getResourceAsStream("input.file")))) 
+									 .yield( (Vars1<String> v)-> ""+ v.$1() + "*"));
+		List<String> expected = Arrays.asList("line 1*","line 2*","line 3*");
+		
+		
+		
+		assertThat(expected, equalTo( res.toList()));
+	}
+	@Test
+	public void urlStream2() {
+		URL url =this.getClass().getClassLoader().getResource("input.file");
+		Seq<String> res = ForComprehensions.foreach1 (  c-> 
+									c.mapAs$1(  url) 
+									 .yield( (Vars1<String> v)-> ""+ v.$1() + "*"));
+		List<String> expected = Arrays.asList("line 1*","line 2*","line 3*");
+		
+		
+		
+		assertThat(expected, equalTo( res.toList()));
+	}
+	@Test
+	public void fileStream2() {
+		URL url =this.getClass().getClassLoader().getResource("input.file");
+		File file = new File(url.getFile());
+		Seq<String> res = ForComprehensions.foreach1 (  c-> 
+									c.mapAs$1(  file) 
+									 .yield( (Vars1<String> v)-> ""+ v.$1() + "*"));
+		List<String> expected = Arrays.asList("line 1*","line 2*","line 3*");
+		
+		
+		
+		assertThat(expected, equalTo( res.toList()));
+	}
 }
