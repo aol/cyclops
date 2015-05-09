@@ -1,90 +1,79 @@
 package com.aol.cyclops.comprehensions;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
-import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
+import lombok.AllArgsConstructor;
+import lombok.val;
+
+import org.pcollections.HashTreePMap;
+import org.pcollections.HashTreePSet;
+import org.pcollections.PMap;
+import org.pcollections.PSet;
 
 
 class Proxier {
+	
+	private static volatile PMap<Class,PSet<ProxyWrapper>> proxyCache =  HashTreePMap.empty();
+	
+	
+	void release(Class type,Object proxy){
+		mergeProxies(type,HashTreePSet.singleton(new ProxyWrapper((Proxy)proxy)));
+	}
+	
 	@SuppressWarnings("unchecked")
 	<X> X newProxy(Class<X> type, ComprehensionData compData){
-		ImmutableClosedValue<X> xClosed = new ImmutableClosedValue<>();
-		X proxy= (X)Proxy.newProxyInstance(FreeFormForComprehension.class
-				.getClassLoader(), new Class[]{type}, (prxy,
-				method, args) -> {
-					if(method.getName().equals("yield") && method.getParameterCount()==1){
-						return handleYield(method,compData,args);
-					}
-					
-					else if(method.getName().equals("filter")&& method.getParameterCount()==1) {
-						return handleFilter(method,compData,type, args,xClosed);
-					}else if(method.getName().equals("run")&& method.getParameterCount()==1) {
-						return handleConsume(method,compData, args);
-					}
-					
-					else if(method.getParameterCount()==0)
-						return compData.$(method.getName());
-					else if(method.getParameterCount()==1){
-						return handleBind(method,compData,type, args,xClosed);
-					}
-					
-					throw new RuntimeException("No method available for " + method.getName());
-		});
-		xClosed.setOnce(proxy);
+		
+		
+		
+		val proxies = removeProxies(type);
+		val proxy = proxies.iterator().next();
+		val newProxies = proxies.minus(proxy);
+		mergeProxies(type,newProxies);
+		
+		InvocationHandlerProxy handler = (InvocationHandlerProxy)Proxy.getInvocationHandler(proxy.proxy);
+		handler.setProxy(proxy.proxy);
+		handler.setCompData(compData);
+		
+	
+		return (X)proxy.proxy;
+	}
+	private <X> X setHandler(X proxy, InvocationHandlerProxy proxyHandler){
+		proxyHandler.setProxy(proxy);
 		return proxy;
 	}
-	
-	private <X> X handleYieldSupplier(Method method,ComprehensionData compData, Object[] args){
+	private synchronized PSet<ProxyWrapper> removeProxies(Class key){
+		val proxies = proxyCache.get(key);
+		val proxiesToUse = proxies==null ? HashTreePSet.singleton(newProxyInstance(key,new InvocationHandlerProxy(key))) : proxies; 
 		
+		if(proxies!=null)
+			proxyCache = proxyCache.minus(key);
+		return proxiesToUse;
+	}
+	private synchronized void mergeProxies(Class key,PSet<ProxyWrapper> proxies){
+		val current = proxyCache.get(key);
+		proxyCache.minus(key);
+		val newProxies = current==null ? proxies : proxies.plusAll(current);
+		proxyCache = proxyCache.plus(key, newProxies);
+	}
+	
+	private ProxyWrapper newProxyInstance(Class type,InvocationHandlerProxy proxyHandler){
 		
-		 return (X)compData.yield((Supplier)args[0]);
-	
-	}
-	private <X> X handleYield(Method method,ComprehensionData compData, Object[] args){		
-			if(args[0] instanceof Supplier)
-				return handleYieldSupplier(method,compData,args);
-				
-		return (X)compData.yieldFunction((Function)args[0]);
+		return new ProxyWrapper((Proxy)Proxy.newProxyInstance(type
+				.getClassLoader(), new Class[]{type}, proxyHandler));
 	}
 	
-	private <X> X handleConsume(Method method,ComprehensionData compData, Object[] args){
-		if(args[0] instanceof Runnable)
-			compData.yield(()-> { ((Runnable)args[0]).run(); return null;});
-		else
-			compData.yieldFunction( input-> { ((Consumer)args[0]).accept(input); return null;});
-		return (X)null;
-	}
-	
-	private <X> X handleFilter(Method method,ComprehensionData compData,Class<X> type, Object[] args,ImmutableClosedValue<X> xClosed ){
-		if(args[0] instanceof Function)
-			compData.filterFunction((Function)args[0]);
-		else
-				compData.filter((Supplier)args[0]);
-		 if(method.getReturnType().isInterface() && type!=method.getReturnType())
-			 return (X)newProxy(method.getReturnType(),compData);
-		return xClosed.get();
-	}
-	
-	private <X> X handleBind(Method method,ComprehensionData compData,Class<X> type, Object[] args,ImmutableClosedValue<X> xClosed ){
-		String name = method.getName();
-		if(method.getName().indexOf('$')!=-1)
-			name = method.getName().substring(method.getName().indexOf('$'));
-		 compData.$(name,applyFunction(args[0],compData));
-		 if(method.getReturnType().isInterface() && type!=method.getReturnType())
-			 return (X)newProxy(method.getReturnType(),compData);
-		 return xClosed.get();
-	}
-	
-	private Object applyFunction(Object o, ComprehensionData compData){
-		if(o instanceof Function){
-			Supplier s = ()-> ((Function)o).apply(compData.getVars());
-			return s;
+	@AllArgsConstructor
+	static class ProxyWrapper{
+		private final Proxy proxy;
+		
+		@Override
+		public boolean equals(Object o){
+			return o==proxy;
 		}
-		return o;
+		@Override
+		public int hashCode(){
+			return System.identityHashCode(proxy);
+		}
 	}
 	
 }

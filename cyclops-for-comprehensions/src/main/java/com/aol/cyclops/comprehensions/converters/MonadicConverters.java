@@ -25,13 +25,21 @@ public class MonadicConverters {
 		}
 	}
 	
-	public static final PStack<MonadicConverter> defaultList = ConsPStack.<MonadicConverter>singleton(new CollectionToStreamConverter()).plus(new DecomposableToStreamConverter());
+	public static final PStack<MonadicConverter> defaultList = ConsPStack.<MonadicConverter>singleton(new CollectionToStreamConverter())
+						.plus(new DecomposableToStreamConverter())
+						.plus(new OptionalDoubleToOptionalConverter())
+						.plus(new OptionalIntToOptionalConverter())
+						.plus(new OptionalLongToOptionalConverter())
+						.plus(new NullToOptionalConverter())
+						.plus(new CallableToCompletableFutureConverter())
+						.plus(new StringToStreamConverter())
+						.plus(new IntegerToRangeConverter());
 	
 	
 	private final PStack<MonadicConverter> converters;
 	
 	private MonadicConverters(){
-		converters = ConsPStack.<MonadicConverter>singleton(new CollectionToStreamConverter()).plus(new DecomposableToStreamConverter());
+		converters =defaultList;
 	}
 	public MonadicConverters(List<MonadicConverter> converters,List<MonadicConverter> converters2){
 		this.converters = ConsPStack.from(converters).plusAll(converters2);

@@ -11,7 +11,7 @@ public class NullToOptionalConverter implements MonadicConverter<Optional> {
 
 	@Override
 	public Optional convertToMonadicForm(Object f) {
-		return Optional.of(f);
+		return Optional.ofNullable(f);
 	}
 
 }

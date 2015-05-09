@@ -1,6 +1,7 @@
 package com.aol.cyclops.comprehensions;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -31,6 +32,7 @@ public class LessTypingForComprehension3<T,R> {
 	
 	public static interface Step1<T,R>{
 		public  Step2<T,R> flatMapAs$1(Object f);
+
 		
 	}
 	public static interface Step2<T,R>{

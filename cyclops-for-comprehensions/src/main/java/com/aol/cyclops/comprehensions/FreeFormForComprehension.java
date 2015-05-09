@@ -41,6 +41,7 @@ public class FreeFormForComprehension<X,V extends Initialisable<?>> {
 		this.varsClass = Optional.ofNullable(vars);
 		this.varsImpl = Optional.ofNullable(varsImpl);
 	}
+	
 	@SuppressWarnings("unchecked")
 	<T,R> R foreachNoClass(Function<ComprehensionData<T,R,V>,R> fn){
 		return Foreach.foreach(new ContextualExecutor<R,Foreach<R>>(new Foreach<R>()){
@@ -54,6 +55,7 @@ public class FreeFormForComprehension<X,V extends Initialisable<?>> {
 	}
 	
 	
+	
 	@SuppressWarnings("unchecked")
 	public <R> R foreach(Function<X,R> fn){
 		if(c==null)
@@ -62,12 +64,19 @@ public class FreeFormForComprehension<X,V extends Initialisable<?>> {
 			@SuppressWarnings("rawtypes")
 			public R execute(){
 			
-				val compData = varsImpl.isPresent() ?   new ComprehensionData(varsImpl.get(),new ExecutionState(this, state)) 
-														: new ComprehensionData(new ExecutionState(this, state),varsClass);
+				val compData = varsImpl.isPresent() ? new ComprehensionData(varsImpl.get(),new ExecutionState(this, state)) 
+													: new ComprehensionData(new ExecutionState(this, state),varsClass);
 				
-				X proxy = proxier.newProxy(c,compData);
+					X proxy = null;
+					try
+					{
+						proxy = proxier.newProxy(c,compData);
+					
+						return fn.apply(proxy);
+					}finally{
+						proxier.release(c,proxy);
+					}
 				
-				return fn.apply(proxy);
 			}
 		});
 	}

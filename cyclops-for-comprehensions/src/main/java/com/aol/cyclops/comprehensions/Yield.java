@@ -27,7 +27,7 @@ class Yield<T> {
 		
 		Tuple2<Comprehender,Object> comprehender = selectComprehender(currentExpansionUnwrapped)
 									.orElseGet( ()->selectComprehender(state.converters.convertToMonadicForm(currentExpansionUnwrapped))
-													.orElse( new Tuple2(new ReflectionComprehender(Optional.of(currentExpansionUnwrapped).map(Object::getClass)),currentExpansionUnwrapped)));
+													.orElse( new Tuple2(new ReflectionComprehender(Optional.ofNullable(currentExpansionUnwrapped).map(Object::getClass)),currentExpansionUnwrapped)));
 			
 		
 		if (expansions.size() == index) {
@@ -60,6 +60,8 @@ class Yield<T> {
 	}
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private Optional<Tuple2<Comprehender,Object>> selectComprehender(Object structure) {
+		if(structure==null)
+			return Optional.empty();
 		return state.comprehenders.getRegisteredComprehenders().entrySet().stream()
 				.filter(e -> e.getKey().isAssignableFrom(structure.getClass()))
 				.map(e->e.getValue())

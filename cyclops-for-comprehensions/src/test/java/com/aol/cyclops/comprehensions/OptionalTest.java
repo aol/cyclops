@@ -31,7 +31,21 @@ public class OptionalTest {
 		assertThat(result,equalTo(Optional.of(8)));
 
 	}
-	
+	@Test
+	public void testForComphrensions4Null(){
+		Optional<Integer> one = Optional.of(1);
+		Optional<Integer> empty = null;
+		BiFunction<Integer, Integer, Integer> f2 = (a, b) -> a * b;
+
+		Object result =  ForComprehensions.foreach4(c -> c.flatMapAs$1(one)
+														.flatMapAs$2((Vars4<Integer,Integer,Integer,Integer> v)->empty)
+														.flatMapAs$3(v->Optional.empty())
+														.mapAs$4(v->Optional.empty())
+														.yield(v->{return f2.apply(v.$1(), v.$2());}));
+		
+		assertThat(result,equalTo(Optional.empty()));
+
+	}
 	@Test
 	public void testForComphrensions4(){
 		Optional<Integer> one = Optional.of(1);

@@ -28,9 +28,11 @@ public class ComprehensionData<T,R,V extends Initialisable<?>> implements Initia
 	ComprehensionData(ExecutionState state,Optional<Class<V>> varsClass) {
 		super();
 		data = new BaseComprehensionData(state);
-		this.vars = varsClass.map(c->proxier.newProxy(c,this))
-						.orElse((V)new Varsonly().init(data));
+	//	this.vars = varsClass.map(c->proxier.newProxy(c,this))
+	//					.orElse((V)new Varsonly().init(data));
+		this.vars =(V)new Varsonly().init(data);
 	}
+	
 	ComprehensionData(V vars,ExecutionState state) {
 		super();
 		data = new BaseComprehensionData(state);
