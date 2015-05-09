@@ -6,7 +6,7 @@ public class IntegerToRangeConverter implements MonadicConverter<IntStream> {
 
 	@Override
 	public boolean accept(Object o) {
-		return o instanceof Integer;
+		return o instanceof Integer && ((Integer)o)>=0;
 	}
 
 	@Override

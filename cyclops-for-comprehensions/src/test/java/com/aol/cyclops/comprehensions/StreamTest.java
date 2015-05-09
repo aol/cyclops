@@ -9,7 +9,10 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import lombok.val;
 
@@ -21,7 +24,18 @@ import com.aol.cyclops.comprehensions.LessTypingForComprehension1.Vars1;
 import com.aol.cyclops.comprehensions.LessTypingForComprehension2.Vars2;
 
 public class StreamTest {
-
+	@Test
+	public void arrayStream() {
+		
+		Seq<String> res = ForComprehensions.foreach1 (  c-> 
+									c.mapAs$1(  new String[]{"hello world","hello"}) 
+									 .yield( (Vars1<String> v)->  v.$1() + "1"));
+		List<String> expected = Arrays.asList("hello world1", "hello1");
+		
+		
+		
+		assertThat(expected, equalTo( res.toList()));
+	}
 	@Test
 	public void stringStream() {
 		
@@ -98,5 +112,54 @@ public class StreamTest {
 		
 		
 		assertThat(expected, equalTo( res.toList()));
+	}
+	@Test
+	public void enumStream() {
+		
+		Seq<String> res = ForComprehensions.foreach1 (  c-> 
+									c.mapAs$1(  MyEnum.class) 
+									 .yield( (Vars1<MyEnum> v)-> ""+ v.$1() + "*"));
+		List<String> expected = Arrays.asList("FIRST*","SECOND*","THIRD*");
+		
+		
+		
+		assertThat(expected, equalTo( res.toList()));
+	}
+	@Test
+	public void iterableStream() {
+		
+		Seq<String> res = ForComprehensions.foreach1 (  c-> 
+									c.mapAs$1(  new MyIterable()) 
+									 .yield( (Vars1<String> v)->  v.$1() + "*"));
+		List<String> expected = Arrays.asList("hello*","world*");
+		
+		
+		
+		assertThat(expected, equalTo( res.toList()));
+	}
+	@Test
+	public void mapStream() {
+		
+		Map<String,Integer> m = new HashMap<>();
+		m.put("hello",10);
+		Seq<String> res = ForComprehensions.foreach1 (  c-> 
+									c.mapAs$1(  m) 
+									 .yield( (Vars1<Map.Entry<String, Integer>> v)-> ""+ v.$1() + "*"));
+		List<String> expected = Arrays.asList("hello=10*");
+		
+		
+		
+		assertThat(expected, equalTo( res.toList()));
+	}
+	
+	static enum MyEnum{FIRST, SECOND, THIRD}
+	
+	static class MyIterable implements Iterable{
+
+		@Override
+		public Iterator iterator() {
+			return Arrays.asList("hello","world").iterator();
+		}
+		
 	}
 }

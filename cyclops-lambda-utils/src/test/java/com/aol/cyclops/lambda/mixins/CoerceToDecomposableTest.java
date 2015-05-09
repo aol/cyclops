@@ -19,12 +19,7 @@ public class CoerceToDecomposableTest {
 	public void test() {
 		assertThat(CoerceToDecomposable.coerceToDecomposable(new MyCase("key",10)).unapply(),equalTo(Arrays.asList("key",10)));
 	}
-	/**
-	@Test
-	public void testKeepType() {
-		assertThat(CoerceToDecomposable.coerceToDecomposableKeepType(
-				new MyCase("key",10)).getKey(),equalTo("key"));
-	}**/
+	
 	
 	@Value
 	static class MyCase { String key; int value;}

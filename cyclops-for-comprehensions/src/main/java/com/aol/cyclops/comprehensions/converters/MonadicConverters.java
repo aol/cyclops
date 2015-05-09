@@ -38,12 +38,16 @@ public class MonadicConverters {
 						.plus(new URLToStreamConverter())
 						.plus(new BufferedReaderToStreamConverter())
 						.plus(new ResultsetToStreamConverter())
-						.plus(new SupplierToCompletableFutureConverter ());
+						.plus(new SupplierToCompletableFutureConverter ())
+						.plus(new ArrayToStreamConverter())
+						.plus(new EnumToStreamConverter());
 	
-	//Array to Stream
-	//Supplier[] Callable[] to LazyFutureStream
+	
+	//Supplier[] Callable[]  to LazyFutureStream
+	//CompletableFuture[] to EagerFutureStream
 	//CheckedSupplier to Try
 	//CheckedSupplier[]  to Seq of Try
+	//async.Queue, async.Topic, async.Signal to Seq / Stream
 	
 	
 	private final PStack<MonadicConverter> converters;
