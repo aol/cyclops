@@ -45,6 +45,18 @@ public class ForComprehensionTest {
 			assertThat(expected, equalTo( res.boxed().collect(Collectors.toList())));
 		}
 		@Test
+		public void intstream4() {
+			
+			IntStream res = (IntStream)ForComprehensions.foreach1 (  c-> 
+										c.mapAs$1(  4) 
+										 .yield( (Vars1<Integer> v)-> v.$1() + 1));
+			List<Integer> expected = Arrays.asList(1,2,3,4);
+			
+			
+			
+			assertThat(expected, equalTo( res.boxed().collect(Collectors.toList())));
+		}
+		@Test
 		public void longstream() {
 			
 			
@@ -100,6 +112,7 @@ public class ForComprehensionTest {
 			assertThat(expected, equalTo( res.collect(Collectors.toList())));
 			
 		}
+		
 		
 		@Test
 		public void test5() {

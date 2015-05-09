@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 import lombok.val;
 
@@ -31,7 +32,7 @@ public class CompletableFutureTest {
 	}
 
 	@Test
-	public void cfFromSupplier(){
+	public void cfFromCallable(){
 		
 		
 		val f = CompletableFuture.completedFuture("hello world");
@@ -39,6 +40,22 @@ public class CompletableFutureTest {
 		val f3 = CompletableFuture.completedFuture("3");
 		CompletableFuture<String> result = 
 				ForComprehensions.foreach3(c -> c.flatMapAs$1((Callable)()->"hello world")
+										.flatMapAs$2((Vars3<String,String,String> v)->f2)
+										.mapAs$3(v->f3)
+										.yield(v-> v.$1()+v.$2()+v.$3())
+									);
+		
+		assertThat(result.join(),equalTo("hello world23"));
+	}
+	@Test
+	public void cfFromSupplier(){
+		
+		
+		val f = CompletableFuture.completedFuture("hello world");
+		val f2 = CompletableFuture.completedFuture("2");
+		val f3 = CompletableFuture.completedFuture("3");
+		CompletableFuture<String> result = 
+				ForComprehensions.foreach3(c -> c.flatMapAs$1((Supplier)()->(Supplier)()->"hello world")
 										.flatMapAs$2((Vars3<String,String,String> v)->f2)
 										.mapAs$3(v->f3)
 										.yield(v-> v.$1()+v.$2()+v.$3())

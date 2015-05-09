@@ -1,6 +1,9 @@
 package com.aol.cyclops.comprehensions;
 
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.val;
@@ -16,12 +19,15 @@ class Proxier {
 	private static volatile PMap<Class,PSet<ProxyWrapper>> proxyCache =  HashTreePMap.empty();
 	
 	
-	void release(Class type,Object proxy){
-		mergeProxies(type,HashTreePSet.singleton(new ProxyWrapper((Proxy)proxy)));
+	void release(Class type,List<Proxy> proxies){
+		
+		mergeProxies(type,proxies.stream().map(ProxyWrapper::new)
+				.map(HashTreePSet::singleton)
+				.reduce(HashTreePSet.empty(),(acc,next) -> acc.plusAll(next)));
 	}
 	
 	@SuppressWarnings("unchecked")
-	<X> X newProxy(Class<X> type, ComprehensionData compData){
+	<X> X newProxy(Class<X> type, ComprehensionData compData, ThreadLocal<Map<Class,List>> activeProxyStore){
 		
 		
 		
@@ -33,7 +39,10 @@ class Proxier {
 		InvocationHandlerProxy handler = (InvocationHandlerProxy)Proxy.getInvocationHandler(proxy.proxy);
 		handler.setProxy(proxy.proxy);
 		handler.setCompData(compData);
+		handler.setActiveProxyStore(activeProxyStore);
 		
+		val list = activeProxyStore.get().computeIfAbsent(type,c->new ArrayList());
+		list.add(proxy.proxy);
 	
 		return (X)proxy.proxy;
 	}

@@ -2,6 +2,9 @@ package com.aol.cyclops.comprehensions;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -16,6 +19,8 @@ class InvocationHandlerProxy<X> implements InvocationHandler{
 	private volatile ComprehensionData compData;
 	@Setter
 	private X proxy;
+	@Setter
+	private ThreadLocal<Map<Class,List>> activeProxyStore;
 	
 	public InvocationHandlerProxy(Class<X> type) {
 		super();
@@ -51,7 +56,7 @@ class InvocationHandlerProxy<X> implements InvocationHandler{
 	
 	}
 	private <X> X handleYield(Method method, Object[] args){
-			proxier.release(type, proxy);
+		//	proxier.release(type, proxy);
 			if(args[0] instanceof Supplier)
 				return handleYieldSupplier(method,compData,args);
 				
@@ -73,8 +78,8 @@ class InvocationHandlerProxy<X> implements InvocationHandler{
 		else
 				compData.filter((Supplier)args[0]);
 		 if(method.getReturnType().isInterface() && type!=method.getReturnType()){
-			 proxier.release(type, proxy);
-			 return (X)proxier.newProxy(method.getReturnType(),compData);
+		//	 proxier.release(type, proxy);
+			 return (X)proxier.newProxy(method.getReturnType(),compData,this.activeProxyStore);
 		 }
 		return (X)proxy;
 	}
@@ -86,11 +91,13 @@ class InvocationHandlerProxy<X> implements InvocationHandler{
 			name = method.getName().substring(method.getName().indexOf('$'));
 		 compData.$(name,applyFunction(args[0]));
 		 if(method.getReturnType().isInterface() && type!=method.getReturnType()){
-			 proxier.release(type, proxy);
-			 return (X)proxier.newProxy(method.getReturnType(),compData);
+		
+			 return (X)proxier.newProxy(method.getReturnType(),compData,this.activeProxyStore);
 		 }
 		 return (X)proxy;
 	}
+
+	
 	
 	private Object applyFunction(Object o){
 		if(o instanceof Function){

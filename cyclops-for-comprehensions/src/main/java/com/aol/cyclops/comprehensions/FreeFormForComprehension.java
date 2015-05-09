@@ -1,13 +1,13 @@
 package com.aol.cyclops.comprehensions;
 
-import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import lombok.val;
-
-import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
 
 
 public class FreeFormForComprehension<X,V extends Initialisable<?>> {
@@ -66,15 +66,14 @@ public class FreeFormForComprehension<X,V extends Initialisable<?>> {
 			
 				val compData = varsImpl.isPresent() ? new ComprehensionData(varsImpl.get(),new ExecutionState(this, state)) 
 													: new ComprehensionData(new ExecutionState(this, state),varsClass);
-				
-					X proxy = null;
+							
 					try
 					{
-						proxy = proxier.newProxy(c,compData);
 					
-						return fn.apply(proxy);
+						return fn.apply(proxier.newProxy(c,compData,proxyStore));
 					}finally{
-						proxier.release(c,proxy);
+						proxier.release(c,proxyStore.get().get(c));
+						proxyStore.set(new HashMap());
 					}
 				
 			}
@@ -83,7 +82,7 @@ public class FreeFormForComprehension<X,V extends Initialisable<?>> {
 	
 	
 	
-	
+	private final static ThreadLocal<Map<Class,List>> proxyStore = ThreadLocal.withInitial(()->new HashMap<>());
 	
 	
 	

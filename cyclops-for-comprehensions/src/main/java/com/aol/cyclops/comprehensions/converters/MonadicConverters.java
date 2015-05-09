@@ -33,7 +33,17 @@ public class MonadicConverters {
 						.plus(new NullToOptionalConverter())
 						.plus(new CallableToCompletableFutureConverter())
 						.plus(new StringToStreamConverter())
-						.plus(new IntegerToRangeConverter());
+						.plus(new IntegerToRangeConverter())
+						.plus(new FileToStreamConverter())
+						.plus(new URLToStreamConverter())
+						.plus(new BufferedReaderToStreamConverter())
+						.plus(new ResultsetToStreamConverter())
+						.plus(new SupplierToCompletableFutureConverter ());
+	
+	//Array to Stream
+	//Supplier[] Callable[] to LazyFutureStream
+	//CheckedSupplier to Try
+	//CheckedSupplier[]  to Seq of Try
 	
 	
 	private final PStack<MonadicConverter> converters;
