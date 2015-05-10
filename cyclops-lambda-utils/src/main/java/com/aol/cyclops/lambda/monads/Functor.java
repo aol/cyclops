@@ -7,6 +7,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
+
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
 
@@ -26,25 +28,10 @@ public interface Functor<T> {
 	public <T> Functor<T> withFunctor(Object functor);
 	public Object getFunctor();
 	default  <R> Functor<R>  map(Function<T,R> fn) {
-		Method m = Stream.of(getFunctor().getClass().getMethods())
-				.filter(method -> "map".equals(method.getName()))
-				.filter(method -> method.getParameterCount()==1).findFirst()
-				.get();
-		m.setAccessible(true);
-		Class z = m.getParameterTypes()[0];
-		Object o = Proxy.newProxyInstance(Functor.class
-				.getClassLoader(), new Class[]{z}, (proxy,
-				method, args) -> {
-			return fn.apply((T)args[0]);
-		});
-
-		try {
-			return (Functor)withFunctor(m.invoke(getFunctor(), o));
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		}
+		return withFunctor((T)new ComprehenderSelector().selectComprehender(Comprehenders.Companion.instance.getComprehenders(),
+				getFunctor())
+				.map(getFunctor(), fn));
+	
 	}
 	default   Functor<T>  peek(Consumer<T> c) {
 		return (Functor)map(input -> {
@@ -55,9 +42,5 @@ public interface Functor<T> {
 	default <X> X get(){
 		return (X)getFunctor();
 	}
-	/**
-	public static <T> Functor<T> of(Object of) {
-		return new Functor(of);
-	}
-	**/
+	
 }

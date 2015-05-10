@@ -7,8 +7,16 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
+/**
+ * Don't break encapsulation of classes for testing purposes
+ * Coerce Objects to Map form in testing, to test their values.
+ * 
+ * @author johnmcclean
+ *
+ */
 public class CoerceToMap {
 
+	@SuppressWarnings("unchecked")
 	public static Map<String,?> toMap(Object o){
 		try {
 			

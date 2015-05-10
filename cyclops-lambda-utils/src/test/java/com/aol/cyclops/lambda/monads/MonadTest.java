@@ -20,33 +20,23 @@ public class MonadTest {
 
 	@Test
 	public void test() {
-		val list = MonadImpl.<List<Integer>,Stream>of(Stream.of(Arrays.asList(1,3)))
+		val list = MonadWrapper.<List<Integer>,Stream>of(Stream.of(Arrays.asList(1,3)))
 				.flatMap(Collection::stream).<Stream<Integer>>get()
 				.map(i->i*2)
 				.peek(System.out::println)
 				.collect(Collectors.toList());
 		assertThat(Arrays.asList(2,6),equalTo(list));
 	}
-	@Test @Ignore //WIP for raw Monads
+	@Test
 	public void testMixed() {
-		val list = MonadImpl.<List<Integer>,Stream>of(Stream.of(Arrays.asList(1,3)))
-				.bind(Optional::of).<Stream<Integer>>get()
-				.map(i->i*2)
+		val list = MonadWrapper.<List<Integer>,Stream>of(Stream.of(Arrays.asList(1,3)))
+				.bind(Optional::of).<Stream<List<Integer>>>get()
+				.map(i->i.size())
 				.peek(System.out::println)
 				.collect(Collectors.toList());
-		assertThat(Arrays.asList(2,6),equalTo(list));
+		assertThat(Arrays.asList(2),equalTo(list));
 	}
 	
-	@Value
-	static class MonadImpl<T,MONAD> implements Monad<T,MONAD>{
-		@Wither
-		private final Object monad;
-		public static <T,MONAD> Monad<T,MONAD>  of(Object of) {
-			return new MonadImpl(of);
-			
-		}
-		
-		
-	}
+	
 
 }
