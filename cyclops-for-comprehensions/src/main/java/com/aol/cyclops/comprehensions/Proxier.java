@@ -31,10 +31,7 @@ class Proxier {
 		
 		
 		
-		val proxies = removeProxies(type);
-		val proxy = proxies.iterator().next();
-		val newProxies = proxies.minus(proxy);
-		mergeProxies(type,newProxies);
+		val proxy = getProxy(type);
 		
 		InvocationHandlerProxy handler = (InvocationHandlerProxy)Proxy.getInvocationHandler(proxy.proxy);
 		handler.setProxy(proxy.proxy);
@@ -50,7 +47,14 @@ class Proxier {
 		proxyHandler.setProxy(proxy);
 		return proxy;
 	}
-	private synchronized PSet<ProxyWrapper> removeProxies(Class key){
+	private synchronized <X> ProxyWrapper getProxy(Class<X> type){
+		PSet<ProxyWrapper> proxies = removeProxies(type);
+		val proxy = proxies.iterator().next();
+		val newProxies = proxies.minus(proxy);
+		mergeProxies(type,newProxies);
+		return proxy;
+	}
+	private  PSet<ProxyWrapper> removeProxies(Class key){
 		val proxies = proxyCache.get(key);
 		val proxiesToUse = proxies==null ? HashTreePSet.singleton(newProxyInstance(key,new InvocationHandlerProxy(key))) : proxies; 
 		
