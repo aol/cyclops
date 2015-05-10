@@ -8,6 +8,8 @@ import lombok.Getter;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
+import com.aol.cyclops.lambda.api.MonadicConverter;
+
 public class MonadicConverters {
 	
 	@AllArgsConstructor
@@ -36,11 +38,13 @@ public class MonadicConverters {
 						.plus(new IntegerToRangeConverter())
 						.plus(new FileToStreamConverter())
 						.plus(new URLToStreamConverter())
+						.plus(new InputStreamToStreamConverter())
 						.plus(new BufferedReaderToStreamConverter())
 						.plus(new ResultsetToStreamConverter())
 						.plus(new SupplierToCompletableFutureConverter ())
 						.plus(new ArrayToStreamConverter())
-						.plus(new EnumToStreamConverter());
+						.plus(new EnumToStreamConverter())
+						.plus(new IteratorToStreamConverter());
 	
 	
 	//Supplier[] Callable[]  to LazyFutureStream

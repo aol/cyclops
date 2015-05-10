@@ -3,6 +3,8 @@ package com.aol.cyclops.comprehensions.converters;
 import java.util.Optional;
 import java.util.OptionalLong;
 
+import com.aol.cyclops.lambda.api.MonadicConverter;
+
 import lombok.val;
 
 public class OptionalDoubleToOptionalConverter implements

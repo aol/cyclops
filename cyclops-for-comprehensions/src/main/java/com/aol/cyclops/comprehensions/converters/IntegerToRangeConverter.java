@@ -2,6 +2,8 @@ package com.aol.cyclops.comprehensions.converters;
 
 import java.util.stream.IntStream;
 
+import com.aol.cyclops.lambda.api.MonadicConverter;
+
 public class IntegerToRangeConverter implements MonadicConverter<IntStream> {
 
 	@Override

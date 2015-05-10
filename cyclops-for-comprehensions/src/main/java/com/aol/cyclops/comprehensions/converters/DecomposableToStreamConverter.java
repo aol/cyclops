@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 import org.jooq.lambda.Seq;
 
 import com.aol.cyclops.lambda.api.Decomposable;
+import com.aol.cyclops.lambda.api.MonadicConverter;
 
 
 

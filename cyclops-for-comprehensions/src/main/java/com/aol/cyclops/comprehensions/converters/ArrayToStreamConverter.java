@@ -2,6 +2,8 @@ package com.aol.cyclops.comprehensions.converters;
 
 import org.jooq.lambda.Seq;
 
+import com.aol.cyclops.lambda.api.MonadicConverter;
+
 public class ArrayToStreamConverter implements MonadicConverter<Seq> {
 
 	@Override

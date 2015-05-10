@@ -3,6 +3,7 @@ package com.aol.cyclops.comprehensions.converters;
 import org.jooq.lambda.Seq;
 
 import com.aol.cyclops.lambda.api.CoerceToDecomposable;
+import com.aol.cyclops.lambda.api.MonadicConverter;
 
 /**
  * Convert any Object to a Stream

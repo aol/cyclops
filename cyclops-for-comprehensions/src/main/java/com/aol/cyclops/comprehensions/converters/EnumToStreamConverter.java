@@ -4,6 +4,8 @@ import lombok.val;
 
 import org.jooq.lambda.Seq;
 
+import com.aol.cyclops.lambda.api.MonadicConverter;
+
 public class EnumToStreamConverter implements MonadicConverter<Seq>{
 
 	@Override

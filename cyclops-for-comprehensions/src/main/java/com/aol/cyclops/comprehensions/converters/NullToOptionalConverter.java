@@ -2,6 +2,8 @@ package com.aol.cyclops.comprehensions.converters;
 
 import java.util.Optional;
 
+import com.aol.cyclops.lambda.api.MonadicConverter;
+
 public class NullToOptionalConverter implements MonadicConverter<Optional> {
 
 	@Override

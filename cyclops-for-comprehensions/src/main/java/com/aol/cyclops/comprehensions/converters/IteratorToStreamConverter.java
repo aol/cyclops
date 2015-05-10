@@ -1,21 +1,21 @@
 package com.aol.cyclops.comprehensions.converters;
 
-import java.util.stream.Stream;
+import java.util.Iterator;
 
 import org.jooq.lambda.Seq;
 
 import com.aol.cyclops.lambda.api.MonadicConverter;
 
-public class StringToStreamConverter implements MonadicConverter<Stream> {
+public class IteratorToStreamConverter implements MonadicConverter<Seq> {
 
 	@Override
 	public boolean accept(Object o) {
-		return o instanceof CharSequence;
+		return o instanceof Iterator;
 	}
 
 	@Override
 	public Seq convertToMonadicForm(Object f) {
-		return Seq.seq(((CharSequence)f).chars().boxed()).map(i ->Character.toChars(i)[0]);
+		return Seq.seq((Iterator)f);
 	}
 
 }

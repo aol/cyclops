@@ -9,6 +9,7 @@ import lombok.val;
 
 import org.jooq.lambda.Seq;
 
+import com.aol.cyclops.lambda.api.MonadicConverter;
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
 public class URLToStreamConverter implements MonadicConverter<Seq> {

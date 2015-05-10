@@ -7,6 +7,8 @@ import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
 
+import com.aol.cyclops.lambda.api.MonadicConverter;
+
 public class CollectionToStreamConverter implements MonadicConverter<Seq> {
 
 	private static final Map<Class,Boolean> shouldConvertCache=  new ConcurrentHashMap<>();
