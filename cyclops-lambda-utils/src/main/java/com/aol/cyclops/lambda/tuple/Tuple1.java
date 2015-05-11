@@ -3,6 +3,7 @@ package com.aol.cyclops.lambda.tuple;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Function;
 
 interface Tuple1<T1> extends CachedValues{
@@ -27,8 +28,17 @@ interface Tuple1<T1> extends CachedValues{
 	default <T> T call(Function<T1,T> fn){
 		return fn.apply(v1());
 	}
+	default <T> CompletableFuture<T>  callAsync(Function<T1,T> fn){
+		return CompletableFuture.completedFuture(v1()).thenApplyAsync(fn);
+	}
 	default <T> CompletableFuture<T> applyAsync1(Function<T1,T> fn){
 		return CompletableFuture.completedFuture(v1()).thenApplyAsync(fn);
+	}
+	default <T> CompletableFuture<T>  callAsync(Function<T1,T> fn,Executor e){
+		return CompletableFuture.completedFuture(v1()).thenApplyAsync(fn,e);
+	}
+	default <T> CompletableFuture<T> applyAsync1(Function<T1,T> fn,Executor e){
+		return CompletableFuture.completedFuture(v1()).thenApplyAsync(fn,e);
 	}
 	default <T> Tuple1<T> map1(Function<T1,T> fn){
 		return of(fn.apply(v1()));

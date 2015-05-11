@@ -3,6 +3,7 @@ package com.aol.cyclops.lambda.tuple;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -34,8 +35,17 @@ public interface Tuple3<T1,T2,T3> extends Tuple2<T1,T2> {
 	default <R> R call(TriFunction<T1,T2,T3,R> fn){
 		return fn.apply(v1(),v2(),v3());
 	}
+	default <R> CompletableFuture<R>  callAsync(TriFunction<T1,T2,T3,R> fn){
+		return CompletableFuture.completedFuture(this).thenApplyAsync(i->fn.apply(i.v1(), i.v2(),i.v3()));
+	}
 	default <R> CompletableFuture<R> applyAsync3(Function<T1,Function<T2,Function<T3,R>>> fn){
 		return CompletableFuture.completedFuture(v3()).thenApplyAsync(fn.apply(v1()).apply(v2()));
+	}
+	default <R> CompletableFuture<R>  callAsync(TriFunction<T1,T2,T3,R> fn,Executor e){
+		return CompletableFuture.completedFuture(this).thenApplyAsync(i->fn.apply(i.v1(), i.v2(),i.v3()),e);
+	}
+	default <R> CompletableFuture<R> applyAsync3(Function<T1,Function<T2,Function<T3,R>>> fn,Executor e){
+		return CompletableFuture.completedFuture(v3()).thenApplyAsync(fn.apply(v1()).apply(v2()),e);
 	}
 	default <T> Tuple3<T1,T2,T> map3(Function<T3,T> fn){
 		return of(v1(),v2(),fn.apply(v3()));

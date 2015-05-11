@@ -4,12 +4,17 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
+import lombok.val;
 
 import com.aol.cyclops.lambda.api.Decomposable;
+import com.aol.cyclops.lambda.utils.ClosedVar;
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
 public interface CachedValues extends Iterable, Decomposable{
@@ -44,10 +49,20 @@ public interface CachedValues extends Iterable, Decomposable{
 		
 	}
 	
+	default void forEach(Consumer c){
+		getCachedValues().forEach(c);
+	}
+	
+	default <T extends CachedValues> T filter(Predicate<Tuple2<Integer,Object>> p){
+		ClosedVar<Integer> index = new ClosedVar(0);
+		val newList = getCachedValues().stream().map(v-> Tuples.tuple(index.set(index.get()+1).get(),v))
+						.filter(p).collect(Collectors.toList());
+		return (T)new TupleImpl(newList,newList.size());
+	}
 	default List toList(){
 		return getCachedValues();
 	}
-	default <T extends Stream<?>> T asFlattenStream(){
+	default <T extends Stream<?>> T asFlattenedStream(){
 		return (T)asStreams().flatMap(s->s);
 	}
 	default <T extends Stream<?>> Stream<T> asStreams(){

@@ -3,6 +3,7 @@ package com.aol.cyclops.lambda.tuple;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Function;
 
 import com.aol.cyclops.comprehensions.functions.QuadFunction;
@@ -31,9 +32,21 @@ public interface Tuple4<T1,T2,T3,T4> extends Tuple3<T1,T2,T3> {
 	default <R> R call(QuadFunction<T1,T2,T3,T4,R> fn){
 		return fn.apply(v1(),v2(),v3(),v4());
 	}
+	default <R> CompletableFuture<R>  callAsync(QuadFunction<T1,T2,T3,T4,R> fn){
+		return CompletableFuture.completedFuture(this).thenApplyAsync(i->fn.apply(i.v1(), 
+				i.v2(),i.v3(),i.v4()));
+	}
 	default <R> CompletableFuture<R> applyAsync4(Function<T1,Function<T2,Function<T3,Function<T4,R>>>> fn){
 		return CompletableFuture.completedFuture(v4())
 				.thenApplyAsync(fn.apply(v1()).apply(v2()).apply(v3()));
+	}
+	default <R> CompletableFuture<R>  callAsync(QuadFunction<T1,T2,T3,T4,R> fn,Executor e){
+		return CompletableFuture.completedFuture(this).thenApplyAsync(i->fn.apply(i.v1(), 
+				i.v2(),i.v3(),i.v4()),e);
+	}
+	default <R> CompletableFuture<R> applyAsync4(Function<T1,Function<T2,Function<T3,Function<T4,R>>>> fn, Executor e){
+		return CompletableFuture.completedFuture(v4())
+				.thenApplyAsync(fn.apply(v1()).apply(v2()).apply(v3()),e);
 	}
 	default <T> Tuple4<T1,T2,T3,T> map4(Function<T4,T> fn){
 		return of(v1(),v2(),v3(),fn.apply(v4()));

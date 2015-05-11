@@ -3,6 +3,7 @@ package com.aol.cyclops.lambda.tuple;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.IntStream;
@@ -38,8 +39,17 @@ public interface Tuple2<T1,T2> extends Tuple1<T1> {
 	default <R> R call(BiFunction<T1,T2,R> fn){
 		return fn.apply(v1(),v2());
 	}
+	default <R> CompletableFuture<R>  callAsync(BiFunction<T1,T2,R> fn){
+		return CompletableFuture.completedFuture(this).thenApplyAsync(i->fn.apply(i.v1(), i.v2()));
+	}
 	default <R> CompletableFuture<R> applyAsync2(Function<T1,Function<T2,R>> fn){
 		return CompletableFuture.completedFuture(v2()).thenApplyAsync(fn.apply(v1()));
+	}
+	default <R> CompletableFuture<R>  callAsync(BiFunction<T1,T2,R> fn,Executor e){
+		return CompletableFuture.completedFuture(this).thenApplyAsync(i->fn.apply(i.v1(), i.v2()),e);
+	}
+	default <R> CompletableFuture<R> applyAsync2(Function<T1,Function<T2,R>> fn,Executor e){
+		return CompletableFuture.completedFuture(v2()).thenApplyAsync(fn.apply(v1()),e);
 	}
 	default <T> Tuple2<T1,T> map2(Function<T2,T> fn){
 		return of(v1(),fn.apply(v2()));
@@ -60,10 +70,13 @@ public interface Tuple2<T1,T2> extends Tuple1<T1> {
 	static class TwoNumbers{
 		private final Tuple2 t2;
 		public IntStream asRange(){
+			//check if int
+
+			//if not toString and then as int
 			return IntStream.range(((Number)t2.v1()).intValue(), ((Number)t2.v1()).intValue());
 		}
 		public LongStream asLongRange(){
-			return LongStream.range(((Number)t2.v1()).intValue(), ((Number)t2.v1()).intValue());
+			return LongStream.range(((Number)t2.v1()).longValue(), ((Number)t2.v1()).longValue());
 		}
 	}
 	public static <T1,T2> Tuple2<T1,T2> ofTuple(Object tuple2){
