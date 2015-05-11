@@ -4,6 +4,11 @@ import java.util.Arrays;
 
 import lombok.AllArgsConstructor;
 
+/**
+ * Highly dynamic / powerful Tuples
+ * @author johnmcclean
+ *
+ */
 public class Tuples {
 	
 	@AllArgsConstructor
@@ -16,10 +21,7 @@ public class Tuples {
 	public static <T extends CachedValues> ConvertStep<T> convert(T c){
 		return new ConvertStep(c);
 		}
-	/**
-	public static <X,T extends CachedValues> X convert(T c,Class<X> to){
-		return (X)c.to(to);
-	}**/
+	
 	public static <T1> Tuple1<T1> tuple(T1 t1){
 		return (Tuple1)new TupleImpl(Arrays.asList(t1),1);
 	}

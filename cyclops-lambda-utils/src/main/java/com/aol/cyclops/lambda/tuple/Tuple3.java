@@ -4,7 +4,10 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
-import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
+
+import lombok.AllArgsConstructor;
 
 public interface Tuple3<T1,T2,T3> extends Tuple2<T1,T2> {
 	
@@ -46,7 +49,30 @@ public interface Tuple3<T1,T2,T3> extends Tuple2<T1,T2> {
 			return Optional.of("(%s,%s,%s)");
 		return Tuple2.super.asStringFormat(arity);
 	}
-	
+	default ThreeNumbers asThreeNumbers(){
+		return new ThreeNumbers(this);
+	}
+	@AllArgsConstructor
+	static class ThreeNumbers{
+		private final Tuple3 t3;
+		public IntStream asRange(){
+			int start = ((Number)t3.v1()).intValue();
+			int end = ((Number)t3.v2()).intValue();
+			int step = ((Number)t3.v3()).intValue();
+			
+			return IntStream.iterate(start, i -> i + step)
+	         .limit((end-start)/step);
+			
+		}
+		public LongStream asLongRange(){
+			long start = ((Number)t3.v1()).longValue();
+			long end = ((Number)t3.v2()).longValue();
+			long step = ((Number)t3.v3()).longValue();
+			
+			return LongStream.iterate(start, i -> i + step)
+	         .limit((end-start)/step);
+		}
+	}
 	public static <T1,T2,T3> Tuple3<T1,T2,T3> ofTuple(Object tuple2){
 		return (Tuple3)new TupleImpl(tuple2,3);
 	}
