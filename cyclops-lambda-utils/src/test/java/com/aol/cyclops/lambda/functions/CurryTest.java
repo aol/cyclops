@@ -50,6 +50,11 @@ public class CurryTest {
 		
 		assertThat(Curry.curry7(this::seven).apply(3).apply(2).apply("three").apply("4").apply(true).apply(10).apply("prefix"),equalTo("prefixthree164true"));
 	}
+	@Test
+	public void testMethodRef8() {
+		
+		assertThat(Curry.curry8(this::eight).apply(3).apply(2).apply("three").apply("4").apply(true).apply(10).apply("prefix").apply(false),equalTo("falseprefixthree164true"));
+	}
 	
 	public Integer mult(Integer a,Integer b){
 		return a*b;
@@ -68,6 +73,9 @@ public class CurryTest {
 	}
 	public String seven(Integer a,Integer b,String name,String postfix,boolean append,int num , String start){
 		return start +name + ((a*b)+num) + postfix +append;
+	}
+	public String eight(Integer a,Integer b,String name,String postfix,boolean append,int num , String start,boolean willBeFalse){
+		return ""+willBeFalse+start +name + ((a*b)+num) + postfix +append;
 	}
 
 }

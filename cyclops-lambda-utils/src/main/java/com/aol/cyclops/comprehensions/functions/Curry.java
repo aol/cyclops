@@ -26,5 +26,8 @@ public class Curry {
 	public static <T1,T2,T3,T4,T5,T6,T7,R> Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,R>>>>>>>  curry7(HeptFunction<T1,T2,T3,T4,T5,T6,T7,R> heptFunc){
 		return   t1->t2 -> t3 -> t4-> t5-> t6 -> t7 -> heptFunc.apply(t1,t2,t3,t4,t5, t6,t7);
 	}
+	public static <T1,T2,T3,T4,T5,T6,T7,T8,R> Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,Function<T8,R>>>>>>>>  curry8(OctFunction<T1,T2,T3,T4,T5,T6,T7,T8,R> heptFunc){
+		return   t1->t2 -> t3 -> t4-> t5-> t6 -> t7 -> t8-> heptFunc.apply(t1,t2,t3,t4,t5, t6,t7,t8);
+	}
 	
 }
