@@ -69,16 +69,17 @@ public interface Switch<F> extends Gettable<F>, Decomposable {
 	 * 
 	 * @return flattened switch
 	 */
-	default <X> Optional<Switch<X>> flatten(){
+	default <X> Switch<X> flatten(){
+		
 		Optional s = Optional.of(get()).flatMap(x->{
 			if(x instanceof Switch)
-				return ((Switch)x).flatten();
+				return Optional.of(((Switch)x).flatten());
 			else
 				return Optional.of(Switch.from(this,x));
 		});
 		Object value = s.get();
 		Switch<X> newSwitch = from((Switch<X>)this,((Switch<X>)value).get());
-		return Optional.<Switch<X>>of(newSwitch);
+		return newSwitch;
 	}
 	
 	/**

@@ -23,17 +23,17 @@ public class EnabledTest {
 	@Test
 	public void testFlatten(){
 		Enabled<Enabled<Disabled<Integer>>> nested= Switch.enable(Switch.enable(Switch.disable(100)));
-		Optional<Switch<Integer>> o = nested.<Integer>flatten();
+		Switch<Integer> o = nested.<Integer>flatten();
 		System.out.println(o.get());
-		Switch<Integer> flat = nested.<Integer>flatten().get();
+		Switch<Integer> flat = nested.<Integer>flatten();
 		assertThat(flat.get(),is(100));
 	}
 	@Test
 	public void testFlattenSematics(){
 		Enabled<Enabled<Disabled<Integer>>> nested= Switch.enable(Switch.enable(Switch.disable(100)));
-		Optional<Switch<Integer>> o = nested.<Integer>flatten();
+		Switch<Integer> o = nested.<Integer>flatten();
 		System.out.println(o.get());
-		Switch<Integer> flat = nested.<Integer>flatten().get();
+		Switch<Integer> flat = nested.<Integer>flatten();
 		assertThat(flat,instanceOf(Enabled.class));
 	}
 	

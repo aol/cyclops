@@ -7,8 +7,8 @@ import java.util.function.Function;
 public class Curry {
 
 	
-	public static <T1,T2,R> Function<T2,Function<T1,R>> curry2(BiFunction<T1,T2,R> biFunc){
-		return  t2 -> t1 -> biFunc.apply(t1,t2);
+	public static <T1,T2,R> Function<T1,Function<T2,R>> curry2(BiFunction<T1,T2,R> biFunc){
+		return  t1 -> t2 -> biFunc.apply(t1,t2);
 	}
 	
 	public static <T1,T2,T3,R> Function<T1,Function<T2,Function<T3,R>>> curry3(TriFunction<T1,T2,T3,R> triFunc){

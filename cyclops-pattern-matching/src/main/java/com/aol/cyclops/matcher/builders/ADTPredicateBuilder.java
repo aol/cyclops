@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import org.hamcrest.Matcher;
 import org.jooq.lambda.Seq;
 
-import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
 import com.aol.cyclops.matcher.Extractors;
 
 /**
