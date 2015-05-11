@@ -26,5 +26,8 @@ public class Uncurry {
 	public static <T1,T2,T3,T4,T5,T6,T7,R> HeptFunction<T1,T2,T3,T4,T5,T6,T7,R>  uncurry7(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,R>>>>>>> heptFunc){
 		return   (t1,t2,t3, t4,t5, t6, t7) -> heptFunc.apply(t1).apply(t2).apply(t3).apply(t4).apply(t5).apply(t6).apply(t7);
 	}
+	public static <T1,T2,T3,T4,T5,T6,T7,T8,R> OctFunction<T1,T2,T3,T4,T5,T6,T7,T8,R>  uncurry8(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,Function<T8,R>>>>>>>> octFunc){
+		return   (t1,t2,t3, t4,t5, t6, t7,t8) -> octFunc.apply(t1).apply(t2).apply(t3).apply(t4).apply(t5).apply(t6).apply(t7).apply(t8);
+	}
 	
 }

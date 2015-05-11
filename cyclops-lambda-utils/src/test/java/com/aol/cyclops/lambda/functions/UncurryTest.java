@@ -46,5 +46,11 @@ public class UncurryTest {
 		(Integer f) -> (Integer g) -> a+b+c+d+e+f+g)
 				.apply(1,2,3,4,5,6,7),equalTo(28));
 	}
+	@Test
+	public void testUncurry8() {
+		assertThat(Uncurry.uncurry8((Integer a)->(Integer b)->(Integer c)->(Integer d)-> (Integer e)->
+		(Integer f) -> (Integer g) ->(Integer h) -> a+b+c+d+e+f+g+h)
+				.apply(1,2,3,4,5,6,7,8),equalTo(36));
+	}
 
 }
