@@ -64,8 +64,8 @@ public interface Tuple3<T1,T2,T3> extends Tuple2<T1,T2> {
 			return Optional.of("(%s,%s,%s)");
 		return Tuple2.super.asStringFormat(arity);
 	}
-	default ThreeNumbers asThreeNumbers(){
-		return new ThreeNumbers(this);
+	public static ThreeNumbers asThreeNumbers(Tuple3<Number,Number,Number> numbers){
+		return new ThreeNumbers(numbers);
 	}
 	@AllArgsConstructor
 	static class ThreeNumbers{

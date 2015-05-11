@@ -63,8 +63,8 @@ public interface Tuple2<T1,T2> extends Tuple1<T1> {
 			return Optional.of("(%s,%s)");
 		return Tuple1.super.asStringFormat(arity);
 	}
-	default TwoNumbers asTwoNumbers(){
-		return new TwoNumbers(this);
+	public static TwoNumbers asTwoNumbers(Tuple2<Number,Number> tuple){
+		return new TwoNumbers(tuple);
 	}
 	@AllArgsConstructor
 	static class TwoNumbers{
