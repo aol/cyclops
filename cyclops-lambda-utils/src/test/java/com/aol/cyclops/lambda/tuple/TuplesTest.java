@@ -26,7 +26,7 @@ public class TuplesTest {
 	}
 	@Test
 	public void testTupleget1s(){
-		assertThat(Tuples.of("hello").getT1(),equalTo("hello"));
+		assertThat(Tuples.tuple("hello").getT1(),equalTo("hello"));
 	}
 	@Test
 	public void testTuple1List(){
@@ -46,7 +46,7 @@ public class TuplesTest {
 	}
 	@Test
 	public void testTupleget2s(){
-		assertThat(Tuples.of("hello",10).getT2(),equalTo(10));
+		assertThat(Tuples.tuple("hello",10).getT2(),equalTo(10));
 	}
 	@Test
 	public void testTuple2List(){
@@ -67,7 +67,7 @@ public class TuplesTest {
 	}
 	@Test
 	public void testTupleget3s(){
-		assertThat(Tuples.of("hello",10,date).getT3(),equalTo(date));
+		assertThat(Tuples.tuple("hello",10,date).getT3(),equalTo(date));
 	}
 	@Test
 	public void testTuple3List(){
@@ -88,7 +88,7 @@ public class TuplesTest {
 	}
 	@Test
 	public void testTupleget4s(){
-		assertThat(Tuples.of("hello",10,date,"world").getT4(),equalTo("world"));
+		assertThat(Tuples.tuple("hello",10,date,"world").getT4(),equalTo("world"));
 	}
 	@Test
 	public void testTuple4List(){
@@ -108,7 +108,7 @@ public class TuplesTest {
 	}
 	@Test
 	public void testTupleget5s(){
-		assertThat(Tuples.of("hello",10,date,"world",20).getT5(),equalTo(20));
+		assertThat(Tuples.tuple("hello",10,date,"world",20).getT5(),equalTo(20));
 	}
 	@Test
 	public void testTuple5List(){
@@ -129,7 +129,7 @@ public class TuplesTest {
 	}
 	@Test
 	public void testTupleget6s(){
-		assertThat(Tuples.of("hello",10,date,"world",20,100l).getT6(),equalTo(100l));
+		assertThat(Tuples.tuple("hello",10,date,"world",20,100l).getT6(),equalTo(100l));
 	}
 	@Test
 	public void testTuple6List(){
@@ -152,7 +152,7 @@ public class TuplesTest {
 	}
 	@Test
 	public void testTupleget7s(){
-		assertThat(Tuples.of("hello",10,date,"world",20,100l,"woo").getT7(),equalTo("woo"));
+		assertThat(Tuples.tuple("hello",10,date,"world",20,100l,"woo").getT7(),equalTo("woo"));
 	}
 	@Test
 	public void testTuple7List(){
@@ -173,7 +173,7 @@ public class TuplesTest {
 		}
 		@Test
 		public void testTupleget8s(){
-			assertThat(Tuples.of("hello",10,date,"world",20,100l,"woo",8).getT8(),equalTo(8));
+			assertThat(Tuples.tuple("hello",10,date,"world",20,100l,"woo",8).getT8(),equalTo(8));
 		}
 		@Test
 		public void testTuple8List(){

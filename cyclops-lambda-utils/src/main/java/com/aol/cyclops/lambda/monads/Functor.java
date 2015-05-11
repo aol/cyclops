@@ -15,8 +15,9 @@ import lombok.experimental.Wither;
 
 
 /**
- * Trait that encapsulates any Functor type
- * Uses reflection to apply JDK 8 java.util.Function
+ * Trait that wraps & encapsulates any Functor type
+ * Uses InvokeDynamic to call Map if no suitable Comprehender present
+ * Uses (cached) JDK Dynamic Proxies to coerce function types to java.util.Function
  * @author johnmcclean
  *
  * @param <T>

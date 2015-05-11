@@ -2,12 +2,18 @@ package com.aol.cyclops.lambda.tuple;
 
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
+
+import lombok.AllArgsConstructor;
 
 public interface Tuple2<T1,T2> extends Tuple1<T1> {
 	
 	default T2 v2(){
-		return (T2)getCachedValues().get(1);
+		if(arity()<2)
+			throw new ClassCastException("Attempt to upscale to " + Tuple2.class.getCanonicalName() + " from com.aol.cyclops.lambda.tuple.Tuple"+arity());		return (T2)getCachedValues().get(1);
 	}
 	default T2 _2(){
 		return v2();
@@ -25,6 +31,16 @@ public interface Tuple2<T1,T2> extends Tuple1<T1> {
 		return of(v2(),v1());
 	}
 	
+	default <R> R apply2(Function<T1,Function<T2,R>> fn){
+		return fn.apply(v1()).apply(v2());
+	}
+	default <R> CompletableFuture<R> applyAsync2(Function<T1,Function<T2,R>> fn){
+		return CompletableFuture.completedFuture(v2()).thenApplyAsync(fn.apply(v1()));
+	}
+	default <T> Tuple2<T1,T> map2(Function<T2,T> fn){
+		return of(v1(),fn.apply(v2()));
+	}
+	
 	default int arity(){
 		return 2;
 	}
@@ -33,10 +49,23 @@ public interface Tuple2<T1,T2> extends Tuple1<T1> {
 			return Optional.of("(%s,%s)");
 		return Tuple1.super.asStringFormat(arity);
 	}
+	default TwoNumbers asTwoNumbers(){
+		return new TwoNumbers(this);
+	}
+	@AllArgsConstructor
+	static class TwoNumbers{
+		private final Tuple2 t2;
+		public IntStream asRange(){
+			return IntStream.range(((Number)t2.v1()).intValue(), ((Number)t2.v1()).intValue());
+		}
+		public LongStream asLongRange(){
+			return LongStream.range(((Number)t2.v1()).intValue(), ((Number)t2.v1()).intValue());
+		}
+	}
 	public static <T1,T2> Tuple2<T1,T2> ofTuple(Object tuple2){
-		return (Tuple2)new Tuples(tuple2,2);
+		return (Tuple2)new TupleImpl(tuple2,2);
 	}
 	public static <T1,T2> Tuple2<T1,T2> of(T1 t1, T2 t2){
-		return (Tuple2)new Tuples(Arrays.asList(t1,t2),2);
+		return (Tuple2)new TupleImpl(Arrays.asList(t1,t2),2);
 	}
 }

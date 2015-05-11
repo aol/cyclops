@@ -2,6 +2,8 @@ package com.aol.cyclops.lambda.tuple;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 interface Tuple1<T1> extends CachedValues{
 	
@@ -19,7 +21,18 @@ interface Tuple1<T1> extends CachedValues{
 	default int arity(){
 		return 1;
 	}
-
+	default <T> T apply1(Function<T1,T> fn){
+		return fn.apply(v1());
+	}
+	default <T> CompletableFuture<T> applyAsync1(Function<T1,T> fn){
+		return CompletableFuture.completedFuture(v1()).thenApplyAsync(fn);
+	}
+	default <T> Tuple1<T> map1(Function<T1,T> fn){
+		return of(fn.apply(v1()));
+	}
+	default <T> Tuple1<T> flatMap1(Function<T1,Tuple1<T>> fn){
+		return fn.apply(v1());
+	}
 	default Tuple1<T1> swap1(){
 		return this;
 	}
@@ -30,10 +43,10 @@ interface Tuple1<T1> extends CachedValues{
 	}
    
 	public static <T1> Tuple1<T1> ofTuple(Object tuple1){
-		return (Tuple1)new Tuples(tuple1,1);
+		return (Tuple1)new TupleImpl(tuple1,1);
 	}
 	public static <T1> Tuple1<T1> of(T1 t1){
-		return (Tuple1)new Tuples(Arrays.asList(t1),1);
+		return (Tuple1)new TupleImpl(Arrays.asList(t1),1);
 	}
 	
 	
