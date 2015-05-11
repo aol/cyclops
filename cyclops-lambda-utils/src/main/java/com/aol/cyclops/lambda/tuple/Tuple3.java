@@ -9,6 +9,8 @@ import java.util.stream.LongStream;
 
 import lombok.AllArgsConstructor;
 
+import com.aol.cyclops.comprehensions.functions.TriFunction;
+
 public interface Tuple3<T1,T2,T3> extends Tuple2<T1,T2> {
 	
 	default T3 v3(){
@@ -28,6 +30,9 @@ public interface Tuple3<T1,T2,T3> extends Tuple2<T1,T2> {
 	}
 	default <R> R apply3(Function<T1,Function<T2,Function<T3,R>>> fn){
 		return fn.apply(v1()).apply(v2()).apply(v3());
+	}
+	default <R> R call(TriFunction<T1,T2,T3,R> fn){
+		return fn.apply(v1(),v2(),v3());
 	}
 	default <R> CompletableFuture<R> applyAsync3(Function<T1,Function<T2,Function<T3,R>>> fn){
 		return CompletableFuture.completedFuture(v3()).thenApplyAsync(fn.apply(v1()).apply(v2()));

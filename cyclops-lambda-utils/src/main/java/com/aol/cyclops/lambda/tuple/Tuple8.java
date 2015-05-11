@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
+import com.aol.cyclops.comprehensions.functions.OctFunction;
+
 public interface Tuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends Tuple7<T1,T2,T3,T4,T5,T6,T7> {
 	
 	default T8 v8(){
@@ -29,6 +31,9 @@ public interface Tuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends Tuple7<T1,T2,T3,T4,T5,T
 	default <R> CompletableFuture<R> applyAsync8(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,Function<T8,R>>>>>>>>  fn){
 		return CompletableFuture.completedFuture(v8())
 				.thenApplyAsync(fn.apply(v1()).apply(v2()).apply(v3()).apply(v4()).apply(v5()).apply(v6()).apply(v7()));
+	}
+	default <R> R call(OctFunction<T1,T2,T3,T4,T5,T6,T7,T8,R> fn){
+		return fn.apply(v1(),v2(),v3(),v4(),v5(),v6(),v7(),v8());
 	}
 	default <T> Tuple8<T1,T2,T3,T4,T5,T6,T7,T> map8(Function<T8,T> fn){
 		return of(v1(),v2(),v3(),v4(),v5(),v6(),v7(),fn.apply(v8()));

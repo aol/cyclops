@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
+import com.aol.cyclops.comprehensions.functions.QuintFunction;
+
 public interface Tuple5<T1,T2,T3,T4,T5> extends Tuple4<T1,T2,T3,T4> {
 	
 	default T5 v5(){
@@ -24,6 +26,9 @@ public interface Tuple5<T1,T2,T3,T4,T5> extends Tuple4<T1,T2,T3,T4> {
 	}
 	default <R> R apply5(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,R>>>>> fn){
 		return fn.apply(v1()).apply(v2()).apply(v3()).apply(v4()).apply(v5());
+	}
+	default <R> R call(QuintFunction<T1,T2,T3,T4,T5,R> fn){
+		return fn.apply(v1(),v2(),v3(),v4(),v5());
 	}
 	default <R> CompletableFuture<R> applyAsync5(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,R>>>>> fn){
 		return CompletableFuture.completedFuture(v5())

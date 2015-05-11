@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
+import com.aol.cyclops.comprehensions.functions.QuadFunction;
+
 public interface Tuple4<T1,T2,T3,T4> extends Tuple3<T1,T2,T3> {
 	
 	default T4 v4(){
@@ -25,6 +27,9 @@ public interface Tuple4<T1,T2,T3,T4> extends Tuple3<T1,T2,T3> {
 	}
 	default <R> R apply4(Function<T1,Function<T2,Function<T3,Function<T4,R>>>> fn){
 		return fn.apply(v1()).apply(v2()).apply(v3()).apply(v4());
+	}
+	default <R> R call(QuadFunction<T1,T2,T3,T4,R> fn){
+		return fn.apply(v1(),v2(),v3(),v4());
 	}
 	default <R> CompletableFuture<R> applyAsync4(Function<T1,Function<T2,Function<T3,Function<T4,R>>>> fn){
 		return CompletableFuture.completedFuture(v4())

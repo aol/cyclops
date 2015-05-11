@@ -8,6 +8,20 @@ import lombok.AllArgsConstructor;
  * Highly dynamic / powerful Tuples
  * @author johnmcclean
  *
+ *  {@code
+ *    method1().call(this::method2)
+ *  
+ *  //results in 10hello
+ *  
+ *  public Tuple2<Integer,String> method1(){
+		return Tuples.tuple(10,"hello");
+	}
+	
+	public String method2(Integer number, String value){
+		return "" + number + value;
+	}
+ *  }
+ *
  */
 public class Tuples {
 	

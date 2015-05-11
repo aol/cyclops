@@ -24,6 +24,9 @@ interface Tuple1<T1> extends CachedValues{
 	default <T> T apply1(Function<T1,T> fn){
 		return fn.apply(v1());
 	}
+	default <T> T call(Function<T1,T> fn){
+		return fn.apply(v1());
+	}
 	default <T> CompletableFuture<T> applyAsync1(Function<T1,T> fn){
 		return CompletableFuture.completedFuture(v1()).thenApplyAsync(fn);
 	}

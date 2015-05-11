@@ -44,6 +44,9 @@ public interface CachedValues extends Iterable, Decomposable{
 		
 	}
 	
+	default List toList(){
+		return getCachedValues();
+	}
 	default <T extends Stream<?>> T asFlattenStream(){
 		return (T)asStreams().flatMap(s->s);
 	}

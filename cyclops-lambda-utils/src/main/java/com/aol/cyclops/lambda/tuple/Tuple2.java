@@ -3,6 +3,7 @@ package com.aol.cyclops.lambda.tuple;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -33,6 +34,9 @@ public interface Tuple2<T1,T2> extends Tuple1<T1> {
 	
 	default <R> R apply2(Function<T1,Function<T2,R>> fn){
 		return fn.apply(v1()).apply(v2());
+	}
+	default <R> R call(BiFunction<T1,T2,R> fn){
+		return fn.apply(v1(),v2());
 	}
 	default <R> CompletableFuture<R> applyAsync2(Function<T1,Function<T2,R>> fn){
 		return CompletableFuture.completedFuture(v2()).thenApplyAsync(fn.apply(v1()));

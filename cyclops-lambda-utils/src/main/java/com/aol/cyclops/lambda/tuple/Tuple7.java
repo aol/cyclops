@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
+import com.aol.cyclops.comprehensions.functions.HeptFunction;
+
 public interface Tuple7<T1,T2,T3,T4,T5,T6,T7> extends Tuple6<T1,T2,T3,T4,T5,T6> {
 	
 	default T7 v7(){
@@ -24,6 +26,9 @@ public interface Tuple7<T1,T2,T3,T4,T5,T6,T7> extends Tuple6<T1,T2,T3,T4,T5,T6> 
 	}
 	default <R> R apply7(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,R>>>>>>> fn){
 		return fn.apply(v1()).apply(v2()).apply(v3()).apply(v4()).apply(v5()).apply(v6()).apply(v7());
+	}
+	default <R> R call(HeptFunction<T1,T2,T3,T4,T5,T6,T7,R> fn){
+		return fn.apply(v1(),v2(),v3(),v4(),v5(),v6(),v7());
 	}
 	default <R> CompletableFuture<R> applyAsync7(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,R>>>>>>> fn){
 		return CompletableFuture.completedFuture(v7())
