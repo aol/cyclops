@@ -21,7 +21,7 @@ public class MonadTest {
 	@Test
 	public void test() {
 		val list = MonadWrapper.<List<Integer>,Stream>of(Stream.of(Arrays.asList(1,3)))
-				.flatMap(Collection::stream).<Stream<Integer>>get()
+				.flatMap(Collection::stream).<Stream<Integer>>unwrap()
 				.map(i->i*2)
 				.peek(System.out::println)
 				.collect(Collectors.toList());
@@ -30,7 +30,7 @@ public class MonadTest {
 	@Test
 	public void testMixed() {
 		val list = MonadWrapper.<List<Integer>,Stream>of(Stream.of(Arrays.asList(1,3)))
-				.bind(Optional::of).<Stream<List<Integer>>>get()
+				.bind(Optional::of).<Stream<List<Integer>>>unwrap()
 				.map(i->i.size())
 				.peek(System.out::println)
 				.collect(Collectors.toList());

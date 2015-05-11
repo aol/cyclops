@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 
 
 import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
-import com.aol.cyclops.comprehensions.comprehenders.ReflectionComprehender;
+import com.aol.cyclops.comprehensions.comprehenders.InvokeDynamicComprehender;
 import com.aol.cyclops.lambda.api.Comprehender;
 
 public class ComprehenderSelector {
@@ -20,7 +20,7 @@ public class ComprehenderSelector {
 				.filter(e -> e.getKey().isAssignableFrom(structure.getClass()))
 				.map(e->e.getValue())
 				.findFirst()
-				.orElse(new ReflectionComprehender(Optional.ofNullable(structure)
+				.orElse(new InvokeDynamicComprehender(Optional.ofNullable(structure)
 				.map(Object::getClass)));
 	}
 }

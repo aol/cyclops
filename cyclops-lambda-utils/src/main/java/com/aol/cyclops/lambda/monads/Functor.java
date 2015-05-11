@@ -21,12 +21,12 @@ import lombok.experimental.Wither;
  *
  * @param <T>
  */
-//@AllArgsConstructor
+
 public interface Functor<T> {
-	//@Wither
-//	private final Object functor;
+
 	public <T> Functor<T> withFunctor(Object functor);
 	public Object getFunctor();
+	
 	default  <R> Functor<R>  map(Function<T,R> fn) {
 		return withFunctor((T)new ComprehenderSelector().selectComprehender(Comprehenders.Companion.instance.getComprehenders(),
 				getFunctor())
@@ -39,7 +39,7 @@ public interface Functor<T> {
 			return  input;
 		});
 	}
-	default <X> X get(){
+	default <X> X unwrap(){
 		return (X)getFunctor();
 	}
 	

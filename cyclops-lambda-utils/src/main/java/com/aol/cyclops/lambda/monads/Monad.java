@@ -64,7 +64,7 @@ public interface Monad<T,MONAD> extends Functor<T>, Filterable<T>{
 	default <R extends MONAD,NT> Monad<NT,R> flatMap(Function<T,R> fn) {
 		return bind(fn);
 	}
-	default  <T> T get(){
+	default  <T> T unwrap(){
 		return (T)getMonad();
 	}
 	

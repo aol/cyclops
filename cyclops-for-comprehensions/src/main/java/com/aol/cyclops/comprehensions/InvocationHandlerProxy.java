@@ -56,7 +56,7 @@ class InvocationHandlerProxy<X> implements InvocationHandler{
 	
 	}
 	private <X> X handleYield(Method method, Object[] args){
-		//	proxier.release(type, proxy);
+		
 			if(args[0] instanceof Supplier)
 				return handleYieldSupplier(method,compData,args);
 				
@@ -78,7 +78,7 @@ class InvocationHandlerProxy<X> implements InvocationHandler{
 		else
 				compData.filter((Supplier)args[0]);
 		 if(method.getReturnType().isInterface() && type!=method.getReturnType()){
-		//	 proxier.release(type, proxy);
+	
 			 return (X)proxier.newProxy(method.getReturnType(),compData,this.activeProxyStore);
 		 }
 		return (X)proxy;

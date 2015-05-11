@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 import org.pcollections.PMap;
 
 import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
-import com.aol.cyclops.comprehensions.comprehenders.ReflectionComprehender;
+import com.aol.cyclops.comprehensions.comprehenders.InvokeDynamicComprehender;
 import com.aol.cyclops.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.lambda.api.Comprehender;
 
@@ -27,7 +27,7 @@ class Yield<T> {
 		
 		Tuple2<Comprehender,Object> comprehender = selectComprehender(currentExpansionUnwrapped)
 									.orElseGet( ()->selectComprehender(state.converters.convertToMonadicForm(currentExpansionUnwrapped))
-													.orElse( new Tuple2(new ReflectionComprehender(Optional.ofNullable(currentExpansionUnwrapped).map(Object::getClass)),currentExpansionUnwrapped)));
+													.orElse( new Tuple2(new InvokeDynamicComprehender(Optional.ofNullable(currentExpansionUnwrapped).map(Object::getClass)),currentExpansionUnwrapped)));
 			
 		
 		if (expansions.size() == index) {

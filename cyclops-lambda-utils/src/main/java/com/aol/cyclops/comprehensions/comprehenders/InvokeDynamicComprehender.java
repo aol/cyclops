@@ -1,31 +1,41 @@
 package com.aol.cyclops.comprehensions.comprehenders;
 
+import java.lang.invoke.CallSite;
+import java.lang.invoke.ConstantCallSite;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+
+import lombok.AllArgsConstructor;
+import lombok.val;
 
 import org.pcollections.HashTreePMap;
 import org.pcollections.HashTreePSet;
 import org.pcollections.PMap;
 import org.pcollections.PSet;
 
-
 import com.aol.cyclops.lambda.api.Comprehender;
-
-import lombok.AllArgsConstructor;
-import lombok.val;
+import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
 @AllArgsConstructor
-public class ReflectionComprehender implements Comprehender {
+public class InvokeDynamicComprehender implements Comprehender {
 
 	Optional<Class> type;
 	
 	private static volatile PMap<Class,PSet<ProxyWrapper>> proxyCache =  HashTreePMap.empty();
+	private static volatile Map<Method,CallSite> callSites = new ConcurrentHashMap<>();
+	private static volatile Map<Class,Method> mapMethod = new ConcurrentHashMap<>();
+	private static volatile Map<Class,Method> flatMapMethod = new ConcurrentHashMap<>();
+	private static volatile Map<Class,Method> filterMethod = new ConcurrentHashMap<>();
 	@AllArgsConstructor
 	static class ProxyWrapper{
 		private final Proxy proxy;
@@ -41,55 +51,79 @@ public class ReflectionComprehender implements Comprehender {
 	}
 	@Override
 	public Object filter(Object t, Predicate p) {
-		Method m = Stream.of(t.getClass().getMethods())
+		Class clazz = t.getClass();
+		Method m = filterMethod.computeIfAbsent(clazz, c->Stream.of(c.getMethods())
 				.filter(method -> "filter".equals(method.getName()))
-				.filter(method -> method.getParameterCount()==1)
-				.findFirst().get();
+				.filter(method -> method.getParameterCount()==1).findFirst()
+				.map(m2->{ m2.setAccessible(true); return m2;})
+				.get());
+		
 		Class z = m.getParameterTypes()[0];
 		ProxyWrapper proxy = getProxy(z);
 		((FunctionExecutionInvocationHandler)Proxy.getInvocationHandler(proxy.proxy)).setFunction(input -> p.test(input));
 		
 
-		try {
-			return m.invoke(t, proxy.proxy);
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e) {
-			throw new RuntimeException(e);
-		}finally{
-			release(z,proxy);
-		}
+		return executeMethod(t, m, z, proxy);
 
 	}
 
 	@Override
 	public Object map(Object t, Function fn) {
-		Method m = Stream.of(t.getClass().getMethods())
+		
+		Class clazz = t.getClass();
+	
+		
+		Method m = mapMethod.computeIfAbsent(clazz, c->Stream.of(c.getMethods())
 				.filter(method -> "map".equals(method.getName()))
 				.filter(method -> method.getParameterCount()==1).findFirst()
-				.get();
+				.map(m2->{ m2.setAccessible(true); return m2;})
+				.get());
+		
 		Class z = m.getParameterTypes()[0];
 		ProxyWrapper proxy = getProxy(z);
 		((FunctionExecutionInvocationHandler)Proxy.getInvocationHandler(proxy.proxy)).setFunction(input -> fn.apply(input));
 		
 
+		
+		
+		return executeMethod(t, m, z, proxy);
+		
+		
+	}
+
+	private Object executeMethod(Object t, Method m, Class z, ProxyWrapper proxy) {
 		try {
-			return m.invoke(t, proxy.proxy);
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
+			
+			
+			MethodHandle handle = MethodHandles.publicLookup().unreflect(m);   
+
+			return this.callSites.computeIfAbsent(m, (m2) ->  {
+				try {
+					return new ConstantCallSite(MethodHandles.publicLookup().unreflect(m2));
+				} catch (Exception e) {
+					ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(e);
+				}
+				return null;
+			}).dynamicInvoker().invoke(t,proxy.proxy);
+		
+		} catch (Throwable e) {
+			ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(e);
 		}finally{
 			release(z,proxy);
 		}
+		return null;
 	}
+
 
 	@Override
 	public Object flatMap(Object t, Function fn) {
-		
-		Method m = Stream.of(t.getClass().getMethods())
+		Class clazz = t.getClass();
+		Method m = flatMapMethod.computeIfAbsent(clazz, c->Stream.of(c.getMethods())
 				.filter(method -> "flatMap".equals(method.getName()) || "bind".equals(method.getName()))
-				.filter(method -> method.getParameterCount()==1)
-				.findFirst().get();
+				.filter(method -> method.getParameterCount()==1).findFirst()
+				.map(m2->{ m2.setAccessible(true); return m2;})
+				.get());
+		
 		
 		Class z = m.getParameterTypes()[0];
 		ProxyWrapper proxy = getProxy(z);
@@ -97,15 +131,7 @@ public class ReflectionComprehender implements Comprehender {
 		
 		
 
-		try {
-			return m.invoke(t, proxy.proxy);
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e) {
-			
-			throw new RuntimeException(e);
-		}finally{
-			release(z,proxy);
-		}
+		return executeMethod(t, m, z, proxy);
 	}
 
 	@Override
@@ -144,7 +170,7 @@ public class ReflectionComprehender implements Comprehender {
 	}
 	private  PSet<ProxyWrapper> removeProxies(Class key){
 		val proxies = proxyCache.get(key);
-		val proxiesToUse = proxies==null ? HashTreePSet.singleton(new ProxyWrapper((Proxy)Proxy.newProxyInstance(ReflectionComprehender.class.getClassLoader(),
+		val proxiesToUse = proxies==null ? HashTreePSet.singleton(new ProxyWrapper((Proxy)Proxy.newProxyInstance(InvokeDynamicComprehender.class.getClassLoader(),
 								new Class[]{key},new FunctionExecutionInvocationHandler()))) : proxies; 
 		
 		if(proxies!=null)

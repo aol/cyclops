@@ -19,7 +19,7 @@ public class FunctorTest {
 	public void testFunctor() {
 		val list = FunctorImpl.<Integer>of(Stream.of(1))
 					.map(i->i*2)
-					.peek(System.out::println).<Stream>get().collect(Collectors.toList());
+					.peek(System.out::println).<Stream>unwrap().collect(Collectors.toList());
 		
 		assertThat(Arrays.asList(2),equalTo(list));
 	}
