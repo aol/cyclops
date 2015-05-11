@@ -95,7 +95,7 @@ public class InvokeDynamicComprehender implements Comprehender {
 		try {
 			
 			
-			MethodHandle handle = MethodHandles.publicLookup().unreflect(m);   
+			
 
 			return this.callSites.computeIfAbsent(m, (m2) ->  {
 				try {
