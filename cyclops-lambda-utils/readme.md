@@ -19,10 +19,15 @@ Wrap and nest any Monadic type :
 				.collect(Collectors.toList());
 		assertThat(Arrays.asList(2),equalTo(list));
 		
+bind :-> flatMap
+
+Not possible to flatMap an Optional inside a Stream in JDK, but you can with the MonadWrapper (or any other type of Monad)
+		
 ## Closure utils
 
 ImmutableClosedValue :
-Set values once only
+Set values once only inside a Closure.
+
 
         ImmutableClosedValue<Integer> value = new ImmutableClosedValue<>();
 		Supplier s= () -> value.getOrSet(()->10);
@@ -31,7 +36,7 @@ Set values once only
 		
 ClosedVar 
 
-Fully mutable variable	  
+Fully mutable variable wrapper manipulatable inside a closure	  
 	 
 	 import static com.aol.cyclops.comprehensions.functions.Lambda.*;
 	 
@@ -60,7 +65,7 @@ um.. λ2 ? (Type inferencing helper :) - and without it
 
 Cyclops can convert any function (with up to 8 inputs) or method reference into a chain of one method functions (Currying). This technique is a useful (and more safe) alternative to Closures. The Curried function can be created and values explicitly passed in rather than captured by the compiler (where-upon they may change).
 
-Currying method references 
+#### Currying method references 
 
 	  import static com.aol.cyclops.comprehensions.functions.Curry.*;
 	  
@@ -72,18 +77,18 @@ Currying method references
 	 }
 	 
 
-Currying in place
+#### Currying in place
 
       		assertThat(Curry.curry2((Integer i, Integer j) -> "" + (i+j) +   "hello").apply(1).apply(2),equalTo("3hello"));
       		
 
-Uncurry
+#### Uncurry
 
       assertThat(Uncurry.uncurry3((Integer a)->(Integer b)->(Integer c)->a+b+c)
 								.apply(1,2,3),equalTo(6));
 								
 
-Type inferencing help
+#### Type inferencing help
 
       import static com.aol.cyclops.comprehensions.functions.Lambda.*;
 	 
@@ -95,20 +100,22 @@ Type inferencing help
 		assertThat(myInt.get(),
 				is(200));
 
-Curry Consumer
+#### Curry Consumer
 
      		CurryConsumer.curry4( (Integer a, Integer b, Integer c,Integer d) -> value = a+b+c+d).apply(2).apply(1).apply(2).accept(3);
      		
 		assertThat(value,equalTo(8));
 		
-Uncurry Consumer 
+#### Uncurry Consumer 
 
      UncurryConsumer.uncurry2((Integer a)->(Integer b) -> value = a+b ).accept(2,3);
 	 assertThat(value,equalTo(5));
      
 ## Coerce to decomposable / map
 
-*Coerce to Map* - this offers and alternative to adding getters to methods solely for making state available in unit tests.
+#### Coerce to Map 
+
+This offers and alternative to adding getters to methods solely for making state available in unit tests.
 
 Rather than break production level encapsulation, in your tests coerce your producition object to a Map and access the fields that way.
 
@@ -146,7 +153,7 @@ The Decomposable interface specifies an unapply method (with a default implement
 
 ### Wrap any Tuple type
 
-Convert from Tuple (or Object)
+#### Convert from Tuple (or Object)
 
     @Test
 	public void cons(){
@@ -160,7 +167,7 @@ Convert from Tuple (or Object)
 		Date c;
 	}
 
-Convert to Tuple (or Object)
+#### Convert to Tuple (or Object)
 
     @AllArgsConstructor
 	static class TwoParams{
