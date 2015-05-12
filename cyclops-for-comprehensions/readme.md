@@ -108,9 +108,32 @@ Outputs : [[coolhello],[coolworld]]
 
 ## Convert any Object to a Monad
 
-ObjectToStreamConverter
-NullToOptionalConverter
+### Stream conversions
 
+Collection to Stream
+Iterable to Stream
+Iterator to Stream
+Array to Stream
+Int to IntStream.range(int)
+File to Stream
+URL to Stream
+BufferedReader to Stream
+InputStream to Stream
+ResultSet to Stream
+Enum to Stream
+String to Stream
+
+ObjectToStreamConverter
+
+### Optional conversions
+
+NullToOptionalConverter
+Optional<Primitive> to Optional
+
+### CompletableFuture Conversionss
+
+Callable to CompletableFuture
+Supplier to CompletableFuture
 
 ## Dynamic Proxy Caching
 

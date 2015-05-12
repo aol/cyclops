@@ -92,12 +92,7 @@ interface Tuple1<T1> extends CachedValues{
 	default Tuple1<T1> swap1(){
 		return this;
 	}
-	default Optional<String> asStringFormat(int arity){
-		if(arity()==1)
-			return Optional.of("(%s,%s)");
-		return Optional.empty();
-	}
-   
+	
 	public static <T1> Tuple1<T1> ofTuple(Object tuple1){
 		return (Tuple1)new TupleImpl(tuple1,1);
 	}

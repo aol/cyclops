@@ -19,8 +19,8 @@ import com.aol.cyclops.lambda.utils.ExceptionSoftener;
  * 
  * @author johnmcclean
  *
- * @param <T>
- * @param <X>
+ * @param <T> Value type
+ * @param <X> Error type
  */
 @RequiredArgsConstructor @ToString @EqualsAndHashCode
 public class Failure<T,X extends Throwable> implements Try<T,X> {

@@ -3,8 +3,10 @@ package com.aol.cyclops.lambda.tuple;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -60,12 +62,39 @@ public interface CachedValues extends Iterable, Decomposable{
 						.filter(p).map(Tuple2::v2).collect(Collectors.toList());
 		return (T)new TupleImpl(newList,newList.size());
 	}
-	default List toList(){
-		return getCachedValues();
+	default <T> List<T> toList(){
+		return (List)getCachedValues();
 	}
+	default <K,V> Map<K,V> toMap(){
+		Map result = new HashMap<>();
+		Iterator it = getCachedValues().iterator();
+		if(arity()%2==0){
+			for(int i=0;i+1<arity();i=i+2){
+				result.put(getCachedValues().get(i), getCachedValues().get(i+1));
+			}
+		}
+		
+		return result;
+	}
+	public int arity();
+	/**
+	 * Will attempt to convert each element in the tuple into a flattened Stream
+	 * 
+	 * @return Flattened Stream
+	 */
 	default <T extends Stream<?>> T asFlattenedStream(){
 		return (T)asStreams().flatMap(s->s);
 	}
+	/**
+	 * Will attempt to convert each element in the tuple into a Stream
+	 * 
+	 * Collection::stream
+	 * CharSequence to stream
+	 * File to Stream
+	 * URL to Stream
+	 * 
+	 * @return Stream of Streams
+	 */
 	default <T extends Stream<?>> Stream<T> asStreams(){
 		//each value where stream can't be called, should just be an empty Stream
 		return (Stream)getCachedValues().stream()

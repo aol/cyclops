@@ -190,4 +190,8 @@ With filtering
 Async method chaining
 
 	method1().<Tuple1<Integer>>filter(t->t.v1()==0).callAsync(this::method3).join();
+	
+### Conversion to Streams
+
+Tuples can also be converted to flattened or unflattened Stream of Streams. asStreams will attempt to create a Stream from each element (via Collection::stream for example). BufferedReaders, Files, URLs, Arrays, Collections, CharSequences will all be turned into Streams.
       

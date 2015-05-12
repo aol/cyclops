@@ -174,11 +174,7 @@ public interface Tuple3<T1,T2,T3> extends Tuple2<T1,T2> {
 	default Tuple3<T3,T2,T1> swap3(){
 		return of(v3(),v2(),v1());
 	}
-	default Optional<String> asStringFormat(int arity){
-		if(arity()==3)
-			return Optional.of("(%s,%s,%s)");
-		return Tuple2.super.asStringFormat(arity);
-	}
+	
 	public static ThreeNumbers asThreeNumbers(Tuple3<Number,Number,Number> numbers){
 		return new ThreeNumbers(numbers);
 	}

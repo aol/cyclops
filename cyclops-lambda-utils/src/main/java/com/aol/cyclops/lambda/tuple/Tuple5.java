@@ -37,6 +37,14 @@ public interface Tuple5<T1,T2,T3,T4,T5> extends Tuple4<T1,T2,T3,T4> {
 	default <R> R call(QuintFunction<T1,T2,T3,T4,T5,R> fn){
 		return fn.apply(v1(),v2(),v3(),v4(),v5());
 	}
+	default <R> CompletableFuture<R>  callAsync(QuintFunction<T1,T2,T3,T4,T5,R> fn){
+		return CompletableFuture.completedFuture(this).thenApplyAsync(i->fn.apply(i.v1(), 
+				i.v2(),i.v3(),i.v4(),i.v5()));
+	}
+	default <R> CompletableFuture<R> applyAsync5(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,R>>>>> fn){
+		return CompletableFuture.completedFuture(v5())
+				.thenApplyAsync(fn.apply(v1()).apply(v2()).apply(v3()).apply(v4()));
+	}
 	default <R> CompletableFuture<R>  callAsync(QuintFunction<T1,T2,T3,T4,T5,R> fn, Executor e){
 		return CompletableFuture.completedFuture(this).thenApplyAsync(i->fn.apply(i.v1(), 
 				i.v2(),i.v3(),i.v4(),i.v5()),e);
@@ -263,11 +271,7 @@ public interface Tuple5<T1,T2,T3,T4,T5> extends Tuple4<T1,T2,T3,T4> {
 	default Tuple5<T5,T4,T3,T2,T1> swap5(){
 		return of(v5(),v4(),v3(),v2(),v1());
 	}
-	default Optional<String> asStringFormat(int arity){
-		if(arity()==5)
-			return Optional.of("(%s,%s,%s,%s,%s)");
-		return Tuple4.super.asStringFormat(arity);
-	}
+	
 	public static <T1,T2,T3,T4,T5> Tuple5<T1,T2,T3,T4,T5> ofTuple(Object tuple5){
 		return (Tuple5)new TupleImpl(tuple5,5);
 	}

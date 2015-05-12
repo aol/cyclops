@@ -46,17 +46,14 @@ public interface Tuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends Tuple7<T1,T2,T3,T4,T5,T
 		return CompletableFuture.completedFuture(this).thenApplyAsync(i->fn.apply(i.v1(), 
 				i.v2(),i.v3(),i.v4(),i.v5(),i.v6(),i.v7(),i.v8()));
 	}
-	default <R> CompletableFuture<R> applyAsync7(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,R>>>>>>> fn){
-		return CompletableFuture.completedFuture(v7())
-				.thenApplyAsync(fn.apply(v1()).apply(v2()).apply(v3()).apply(v4()).apply(v5()).apply(v6()));
-	}
+	
 	default <R> CompletableFuture<R>  callAsync(OctFunction<T1,T2,T3,T4,T5,T6,T7,T8,R> fn, Executor e){
 		return CompletableFuture.completedFuture(this).thenApplyAsync(i->fn.apply(i.v1(), 
 				i.v2(),i.v3(),i.v4(),i.v5(),i.v6(),i.v7(),i.v8()),e);
 	}
-	default <R> CompletableFuture<R> applyAsync7(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,R>>>>>>> fn, Executor e){
-		return CompletableFuture.completedFuture(v7())
-				.thenApplyAsync(fn.apply(v1()).apply(v2()).apply(v3()).apply(v4()).apply(v5()).apply(v6()),e);
+	default <R> CompletableFuture<R> applyAsync8(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,Function<T8,R>>>>>>>>  fn, Executor e){
+		return CompletableFuture.completedFuture(v8())
+				.thenApplyAsync(fn.apply(v1()).apply(v2()).apply(v3()).apply(v4()).apply(v5()).apply(v6()).apply(v7()),e);
 	}
 	
 	default Tuple1<T1> tuple1(){
@@ -84,11 +81,7 @@ public interface Tuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends Tuple7<T1,T2,T3,T4,T5,T
 		return of(v8(),v7(),v6(),v5(),v4(),v3(),v2(),v1());
 	}
 	
-	default Optional<String> asStringFormat(int arity){
-		if(arity()==8)
-			return Optional.of("(%s,%s,%s,%s,%s,%s,%s,%s)");
-		return Tuple7.super.asStringFormat(arity);
-	}
+
 	
 	
 	/**Strict mapping of the first element

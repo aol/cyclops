@@ -68,11 +68,7 @@ public interface Tuple4<T1,T2,T3,T4> extends Tuple3<T1,T2,T3> {
 	default Tuple4<T4,T3,T2,T1> swap4(){
 		return of(v4(),v3(),v2(),v1());
 	}
-	default Optional<String> asStringFormat(int arity){
-		if(arity()==4)
-			return Optional.of("(%s,%s,%s,%s)");
-		return Tuple3.super.asStringFormat(arity);
-	}
+	
 	
 	/**Strict mapping of the first element
 	 * 

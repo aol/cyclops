@@ -72,11 +72,7 @@ public interface Tuple6<T1,T2,T3,T4,T5,T6> extends Tuple5<T1,T2,T3,T4,T5> {
 	default Tuple6<T6,T5,T4,T3,T2,T1> swap6(){
 		return of(v6(),v5(),v4(),v3(),v2(),v1());
 	}
-	default Optional<String> asStringFormat(int arity){
-		if(arity()==6)
-			return Optional.of("(%s,%s,%s,%s,%s,%s)");
-		return Tuple5.super.asStringFormat(arity);
-	}
+	
 	public static <T1,T2,T3,T4,T5,T6> Tuple6<T1,T2,T3,T4,T5,T6> ofTuple(Object tuple6){
 		return (Tuple6)new TupleImpl(tuple6,6);
 	}

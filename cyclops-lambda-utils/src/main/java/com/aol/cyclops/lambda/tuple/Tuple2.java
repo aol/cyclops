@@ -138,11 +138,7 @@ public interface Tuple2<T1,T2> extends Tuple1<T1> {
 	default int arity(){
 		return 2;
 	}
-	default Optional<String> asStringFormat(int arity){
-		if(arity()==2)
-			return Optional.of("(%s,%s)");
-		return Tuple1.super.asStringFormat(arity);
-	}
+	
 	public static TwoNumbers asTwoNumbers(Tuple2<Number,Number> tuple){
 		return new TwoNumbers(tuple);
 	}

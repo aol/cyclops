@@ -76,11 +76,7 @@ public interface Tuple7<T1,T2,T3,T4,T5,T6,T7> extends Tuple6<T1,T2,T3,T4,T5,T6> 
 	default Tuple7<T7,T6,T5,T4,T3,T2,T1> swap7(){
 		return of(v7(),v6(),v5(),v4(),v3(),v2(),v1());
 	}
-	default Optional<String> asStringFormat(int arity){
-		if(arity()==7)
-			return Optional.of("(%s,%s,%s,%s,%s,%s,%s)");
-		return Tuple6.super.asStringFormat(arity);
-	}
+	
 	
 	
 	/**Strict mapping of the first element
