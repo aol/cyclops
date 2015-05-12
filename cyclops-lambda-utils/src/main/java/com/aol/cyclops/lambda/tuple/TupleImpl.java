@@ -29,19 +29,21 @@ import com.aol.cyclops.lambda.api.TupleWrapper;
  * @param <T6>
  */
 @EqualsAndHashCode
-class TupleImpl<T1,T2,T3,T4,T5,T6,T7,T8> implements TupleWrapper,  Tuple8<T1,T2,T3,T4,T5,T6,T7,T8>
-															{
+class TupleImpl<T1,T2,T3,T4,T5,T6,T7,T8> implements TupleWrapper,  Tuple8<T1,T2,T3,T4,T5,T6,T7,T8>{
 	@Getter
 	private final Object instance;
+	
+	
 	@Getter
 	private final List<Object> cachedValues;
 	
 	private final  int arity;
 	
+	
 	public TupleImpl(Object tuple,int arity){
 		this.instance = tuple;
 		if(tuple instanceof Collection)
-			cachedValues = new ArrayList(((List)tuple));
+			cachedValues = new ArrayList( ((List)tuple));
 		else if(tuple instanceof Map){
 			cachedValues = new ArrayList( ((Map)tuple).entrySet());
 		}
@@ -61,6 +63,8 @@ class TupleImpl<T1,T2,T3,T4,T5,T6,T7,T8> implements TupleWrapper,  Tuple8<T1,T2,
 			cachedValues = values();
 		this.arity = arity;
 	}
+	
+	
 	private List<Object> loadFromIterator(Iterator tuple) {
 		List<Object> result = new ArrayList<>();
 		while(tuple.hasNext())

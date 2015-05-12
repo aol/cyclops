@@ -1,12 +1,17 @@
 package com.aol.cyclops.lambda.tuple;
 
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
+import lombok.val;
+
 import com.aol.cyclops.comprehensions.functions.HeptFunction;
+import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
 
 public interface Tuple7<T1,T2,T3,T4,T5,T6,T7> extends Tuple6<T1,T2,T3,T4,T5,T6> {
 	
@@ -48,9 +53,7 @@ public interface Tuple7<T1,T2,T3,T4,T5,T6,T7> extends Tuple6<T1,T2,T3,T4,T5,T6> 
 		return CompletableFuture.completedFuture(v7())
 				.thenApplyAsync(fn.apply(v1()).apply(v2()).apply(v3()).apply(v4()).apply(v5()).apply(v6()),e);
 	}
-	default <T> Tuple7<T1,T2,T3,T4,T5,T6,T> map7(Function<T7,T> fn){
-		return of(v1(),v2(),v3(),v4(),v5(),v6(),fn.apply(v7()));
-	}
+	
 	default Tuple1<T1> tuple1(){
 		return this;
 	}
@@ -66,7 +69,7 @@ public interface Tuple7<T1,T2,T3,T4,T5,T6,T7> extends Tuple6<T1,T2,T3,T4,T5,T6> 
 	default Tuple5<T1,T2,T3,T4,T5> tuple5(){
 		return this;
 	}
-	default Tuple6<T1,T2,T3,T4,T5,T6> tuple6(){
+	default Tuple6<T1,T2,T3,T4,T5,T6> Tuple7(){
 		return this;
 	}
 	default Tuple7<T7,T6,T5,T4,T3,T2,T1> swap7(){
@@ -76,6 +79,262 @@ public interface Tuple7<T1,T2,T3,T4,T5,T6,T7> extends Tuple6<T1,T2,T3,T4,T5,T6> 
 		if(arity()==7)
 			return Optional.of("(%s,%s,%s,%s,%s,%s,%s)");
 		return Tuple6.super.asStringFormat(arity);
+	}
+	
+	
+	/**Strict mapping of the first element
+	 * 
+	 * @param fn Mapping function
+	 * @return Tuple7
+	 */
+	default <T> Tuple7<T,T2,T3,T4,T5,T6,T7> map1(Function<T1,T> fn){
+		return Tuples.tuple(fn.apply(v1()),v2(),v3(),v4(),v5(),v6(),v7());
+	}
+	/**
+	 * Lazily Map 1st element and memoise the result
+	 * @param fn Map function
+	 * @return
+	 */
+	default <T> Tuple7<T,T2,T3,T4,T5,T6,T7> lazyMap1(Function<T1,T> fn){
+		val tuple = this;
+		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		return new Tuple7<T,T2,T3,T4,T5,T6,T7>(){
+			public T v1(){
+				return value.getOrSet(()->fn.apply(tuple.v1())); 
+			}
+
+			@Override
+			public List<Object> getCachedValues() {
+				return Arrays.asList(v1(),v2());
+			}
+
+			@Override
+			public Iterator iterator() {
+				return getCachedValues().iterator();
+			}
+
+			
+		};
+		
+	}
+	/**
+	 * Lazily Map 2nd element and memoise the result
+	 * @param fn Map function
+	 * @return
+	 */
+	default <T> Tuple7<T1,T,T3,T4,T5,T6,T7> lazyMap2(Function<T2,T> fn){
+		val tuple = this;
+		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		return new Tuple7<T1,T,T3,T4,T5,T6,T7>(){
+			
+			public T v2(){
+				return value.getOrSet(()->fn.apply(tuple.v2())); 
+			}
+
+			@Override
+			public List<Object> getCachedValues() {
+				return Arrays.asList(v1(),v2());
+			}
+
+			@Override
+			public Iterator iterator() {
+				return getCachedValues().iterator();
+			}
+
+			
+		};
+		
+	}
+	
+	/** Map the second element in this Tuple
+	 * @param fn mapper function
+	 * @return new Tuple3
+	 */
+	default <T> Tuple7<T1,T,T3,T4,T5,T6,T7> map2(Function<T2,T> fn){
+		return of(v1(),fn.apply(v2()),v3(),v4(),v5(),v6(),v7());
+	}
+	/**
+	 * Lazily Map 3rd element and memoise the result
+	 * @param fn Map function
+	 * @return
+	 */
+	default <T> Tuple7<T1,T2,T,T4,T5,T6,T7> lazyMap3(Function<T3,T> fn){
+		val tuple = this;
+		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		return new Tuple7<T1,T2,T,T4,T5,T6,T7>(){
+			
+			public T v3(){
+				return value.getOrSet(()->fn.apply(tuple.v3())); 
+			}
+
+			@Override
+			public List<Object> getCachedValues() {
+				return Arrays.asList(v1(),v2());
+			}
+
+			@Override
+			public Iterator iterator() {
+				return getCachedValues().iterator();
+			}
+
+			
+		};
+		
+	}
+	
+	/* 
+	 * @see com.aol.cyclops.lambda.tuple.Tuple4#map3(java.util.function.Function)
+	 */
+	default <T> Tuple7<T1,T2,T,T4,T5,T6,T7> map3(Function<T3,T> fn){
+		return of(v1(),v2(),fn.apply(v3()),v4(),v5(),v6(),v7());
+	}
+	/**
+	 * Lazily Map 4th element and memoise the result
+	 * @param fn Map function
+	 * @return
+	 */
+	default <T> Tuple7<T1,T2,T3,T,T5,T6,T7> lazyMap4(Function<T4,T> fn){
+		val tuple = this;
+		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		return new Tuple7<T1,T2,T3,T,T5,T6,T7>(){
+			
+			public T v4(){
+				return value.getOrSet(()->fn.apply(tuple.v4())); 
+			}
+
+			@Override
+			public List<Object> getCachedValues() {
+				return Arrays.asList(v1(),v2());
+			}
+
+			@Override
+			public Iterator iterator() {
+				return getCachedValues().iterator();
+			}
+
+			
+		};
+		
+	}
+	/* 
+	 * Map element 4
+	 * @see com.aol.cyclops.lambda.tuple.Tuple4#map4(java.util.function.Function)
+	 */
+	default <T> Tuple7<T1,T2,T3,T,T5,T6,T7> map4(Function<T4,T> fn){
+		return of(v1(),v2(),v3(),fn.apply(v4()),v5(),v6(),v7());
+	}
+	/*
+	 * Lazily Map 5th element and memoise the result
+	 * @param fn Map function
+	 * @return
+	 */
+	default <T> Tuple7<T1,T2,T3,T4,T,T6,T7> lazyMap5(Function<T4,T> fn){
+		val tuple = this;
+		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		return new Tuple7<T1,T2,T3,T4,T,T6,T7>(){
+			
+			public T v5(){
+				return value.getOrSet(()->fn.apply(tuple.v4())); 
+			}
+
+			@Override
+			public List<Object> getCachedValues() {
+				return Arrays.asList(v1(),v2());
+			}
+
+			@Override
+			public Iterator iterator() {
+				return getCachedValues().iterator();
+			}
+
+			
+		};
+		
+	}
+	/**
+	 * Map the 5th element in a tuple to a different value
+	 * 
+	 * @param fn Mapper function
+	 * @return new Tuple5
+	 */
+	default <T> Tuple7<T1,T2,T3,T4,T,T6,T7> map5(Function<T5,T> fn){
+		return of(v1(),v2(),v3(),v4(),fn.apply(v5()),v6(),v7());
+	}
+	/*
+	 * Lazily Map 6th element and memoise the result
+	 * @param fn Map function
+	 * @return
+	 */
+	default <T> Tuple7<T1,T2,T3,T4,T5,T,T7> lazyMap6(Function<T4,T> fn){
+		val tuple = this;
+		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		return new Tuple7<T1,T2,T3,T4,T5,T,T7>(){
+			
+			public T v6(){
+				return value.getOrSet(()->fn.apply(tuple.v4())); 
+			}
+
+			@Override
+			public List<Object> getCachedValues() {
+				return Arrays.asList(v1(),v2());
+			}
+
+			@Override
+			public Iterator iterator() {
+				return getCachedValues().iterator();
+			}
+
+			
+		};
+		
+	}
+	/**
+	 * 
+	 * Map the 6th element in a tuple to a different value
+	 * 
+	 * @param fn Mapper function
+	 * @return new Tuple7
+	 */
+	default <T> Tuple7<T1,T2,T3,T4,T5,T,T7> map6(Function<T6,T> fn){
+		return of(v1(),v2(),v3(),v4(),v5(),fn.apply(v6()),v7());
+	}
+	/*
+	 * Lazily Map 7th element and memoise the result
+	 * @param fn Map function
+	 * @return
+	 */
+	default <T> Tuple7<T1,T2,T3,T4,T5,T6,T> lazyMap7(Function<T4,T> fn){
+		val tuple = this;
+		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		return new Tuple7<T1,T2,T3,T4,T5,T6,T>(){
+			
+			public T v7(){
+				return value.getOrSet(()->fn.apply(tuple.v4())); 
+			}
+
+			@Override
+			public List<Object> getCachedValues() {
+				return Arrays.asList(v1(),v2());
+			}
+
+			@Override
+			public Iterator iterator() {
+				return getCachedValues().iterator();
+			}
+
+			
+		};
+		
+	}
+	/**
+	 * 
+	 * Map the 7th element in a tuple to a different value
+	 * 
+	 * @param fn Mapper function
+	 * @return new Tuple7
+	 */
+	default <T> Tuple7<T1,T2,T3,T4,T5,T6,T> map7(Function<T7,T> fn){
+		return of(v1(),v2(),v3(),v4(),v5(),v6(),fn.apply(v7()));
 	}
 	public static <T1,T2,T3,T4,T5,T6,T7> Tuple7<T1,T2,T3,T4,T5,T6,T7> ofTuple(Object tuple7){
 		return (Tuple7)new TupleImpl(tuple7,7);

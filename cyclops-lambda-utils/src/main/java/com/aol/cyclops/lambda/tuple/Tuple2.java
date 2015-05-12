@@ -1,6 +1,8 @@
 package com.aol.cyclops.lambda.tuple;
 
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -10,6 +12,9 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
 import lombok.AllArgsConstructor;
+import lombok.val;
+
+import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
 
 public interface Tuple2<T1,T2> extends Tuple1<T1> {
 	
@@ -25,6 +30,78 @@ public interface Tuple2<T1,T2> extends Tuple1<T1> {
 		return v2();
 	}
 	
+	
+	/**Strict mapping of the first element
+	 * 
+	 * @param fn Mapping function
+	 * @return Tuple1
+	 */
+	default <T> Tuple2<T,T2> map1(Function<T1,T> fn){
+		return Tuples.tuple(fn.apply(v1()),v2());
+	}
+	/**
+	 * Lazily Map 1st element and memoise the result
+	 * @param fn Map function
+	 * @return
+	 */
+	default <T> Tuple2<T,T2> lazyMap1(Function<T1,T> fn){
+		val tuple = this;
+		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		return new Tuple2<T,T2>(){
+			public T v1(){
+				return value.getOrSet(()->fn.apply(tuple.v1())); 
+			}
+
+			@Override
+			public List<Object> getCachedValues() {
+				return Arrays.asList(v1(),v2());
+			}
+
+			@Override
+			public Iterator iterator() {
+				return getCachedValues().iterator();
+			}
+
+			
+		};
+		
+	}
+	/**
+	 * Lazily Map 2nd element and memoise the result
+	 * @param fn Map function
+	 * @return
+	 */
+	default <T> Tuple2<T1,T> lazyMap2(Function<T2,T> fn){
+		val tuple = this;
+		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		return new Tuple2<T1,T>(){
+			
+			public T v2(){
+				return value.getOrSet(()->fn.apply(tuple.v2())); 
+			}
+
+			@Override
+			public List<Object> getCachedValues() {
+				return Arrays.asList(v1(),v2());
+			}
+
+			@Override
+			public Iterator iterator() {
+				return getCachedValues().iterator();
+			}
+
+			
+		};
+		
+	}
+	
+	/** Map the second element in this Tuple
+	 * @param fn mapper function
+	 * @return new Tuple2
+	 */
+	default <T> Tuple2<T1,T> map2(Function<T2,T> fn){
+		return of(v1(),fn.apply(v2()));
+	}
 	default Tuple1<T1> tuple1(){
 		return this;
 	}
@@ -51,9 +128,7 @@ public interface Tuple2<T1,T2> extends Tuple1<T1> {
 	default <R> CompletableFuture<R> applyAsync2(Function<T1,Function<T2,R>> fn,Executor e){
 		return CompletableFuture.completedFuture(v2()).thenApplyAsync(fn.apply(v1()),e);
 	}
-	default <T> Tuple2<T1,T> map2(Function<T2,T> fn){
-		return of(v1(),fn.apply(v2()));
-	}
+	
 	
 	default int arity(){
 		return 2;

@@ -17,7 +17,8 @@ public class CoerceToDecomposableTest {
 
 	@Test
 	public void test() {
-		assertThat(CoerceToDecomposable.coerceToDecomposable(new MyCase("key",10)).unapply(),equalTo(Arrays.asList("key",10)));
+		assertThat(CoerceToDecomposable.coerceToDecomposable(new MyCase("key",10))
+				.unapply(),equalTo(Arrays.asList("key",10)));
 	}
 	
 	

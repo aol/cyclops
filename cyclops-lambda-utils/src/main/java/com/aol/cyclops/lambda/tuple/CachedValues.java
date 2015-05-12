@@ -2,6 +2,7 @@ package com.aol.cyclops.lambda.tuple;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
@@ -66,9 +67,17 @@ public interface CachedValues extends Iterable, Decomposable{
 		return (T)asStreams().flatMap(s->s);
 	}
 	default <T extends Stream<?>> Stream<T> asStreams(){
+		//each value where stream can't be called, should just be an empty Stream
 		return (Stream)getCachedValues().stream()
 					.filter(o->o!=null)
 					.map(o->DynamicInvoker.invokeStream(o.getClass(), o));
+	}
+	default Stream<String> asStreamOfStrings(){
+		
+		return (Stream)getCachedValues().stream()
+					.filter(o->o!=null)
+					.map(Object::toString);
+					
 	}
 	@Override
 	default Iterator iterator(){
@@ -79,9 +88,22 @@ public interface CachedValues extends Iterable, Decomposable{
 		return getCachedValues().stream();
 	}
 	
-	default <T extends CachedValues> T flatMap(Function<List,T> fn){
-		return fn.apply(getCachedValues());
+	default <T extends CachedValues,X> T append(X value){
+		List list = new ArrayList(getCachedValues());
+		list.add(value);
+		return (T)new TupleImpl(list,list.size());
+		
 	}
+	default <T extends CachedValues> T appendAll(CachedValues values){
+		List list = new ArrayList(getCachedValues());
+		list.addAll(values.getCachedValues());
+		return (T)new TupleImpl(list,list.size());
+		
+	}
+	default <T extends CachedValues, X extends CachedValues> T flatMap(Function<X,T> fn){
+		return fn.apply((X)this);
+	}
+	
 	default <T extends CachedValues> T map(Function<List,List> fn){
 		List list = fn.apply(getCachedValues());
 		return (T)new TupleImpl(list,list.size());

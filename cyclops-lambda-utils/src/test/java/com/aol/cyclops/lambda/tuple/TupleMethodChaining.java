@@ -19,6 +19,11 @@ public class TupleMethodChaining {
 		method1().<Tuple1<Integer>>filter(t->t.v1()==0).call(this::method3);
 		
 	}
+	@Test
+	public void testConvert2Async(){
+		method1().<Tuple1<Integer>>filter(t->t.v1()==0).callAsync(this::method3).join();
+		
+	}
 	public Tuple2<Integer,String> method1(){
 		return Tuples.tuple(10,"hello");
 	}

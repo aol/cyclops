@@ -1,10 +1,16 @@
 package com.aol.cyclops.lambda.tuple;
 
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
+
+import lombok.val;
+
+import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
 
 interface Tuple1<T1> extends CachedValues{
 	
@@ -40,12 +46,48 @@ interface Tuple1<T1> extends CachedValues{
 	default <T> CompletableFuture<T> applyAsync1(Function<T1,T> fn,Executor e){
 		return CompletableFuture.completedFuture(v1()).thenApplyAsync(fn,e);
 	}
+	
+	
+	
+	/**Strict mapping of the first element
+	 * 
+	 * @param fn Mapping function
+	 * @return Tuple1
+	 */
 	default <T> Tuple1<T> map1(Function<T1,T> fn){
-		return of(fn.apply(v1()));
+		return Tuples.tuple(fn.apply(v1()));
 	}
-	default <T> Tuple1<T> flatMap1(Function<T1,Tuple1<T>> fn){
-		return fn.apply(v1());
+	/**
+	 * Lazily Map 1st element and memoise the result
+	 * @param fn Map function
+	 * @return
+	 */
+	default <T> Tuple1<T> lazyMap1(Function<T1,T> fn){
+		val tuple = this;
+		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		return new Tuple1<T>(){
+			public T v1(){
+				return value.getOrSet(()->fn.apply(tuple.v1())); 
+			}
+
+			@Override
+			public List<Object> getCachedValues() {
+				return Arrays.asList(v1());
+			}
+
+			@Override
+			public Iterator iterator() {
+				return getCachedValues().iterator();
+			}
+
+			
+		};
+		
 	}
+	
+	
+	
+	
 	default Tuple1<T1> swap1(){
 		return this;
 	}
