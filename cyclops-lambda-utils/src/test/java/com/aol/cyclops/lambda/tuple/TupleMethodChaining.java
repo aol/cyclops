@@ -5,29 +5,47 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.tuple.TupleMethodsTest.TwoParams;
-
 public class TupleMethodChaining {
 	@Test
-	public void testConvert(){
+	public void testConvertT1(){
 		
-		System.out.println(method1().call(this::method2));
+		assertThat(methodTuple1().call(this::method3),equalTo("10"));
+		
+	}
+	@Test
+	public void testConvertT2(){
+		
+		assertThat(methodTuple2().call(this::method2),equalTo("10hello"));
+		
+	}
+	@Test
+	public void testConvertT3(){
+		
+		assertThat(methodTuple3().call(this::method3params),equalTo("10hello3"));
 		
 	}
 	@Test
 	public void testConvert2(){
-		method1().<Tuple1<Integer>>filter(t->t.v1()==0).call(this::method3);
+		methodTuple2().<Tuple1<Integer>>filter(t->t.v1()==0).call(this::method3);
 		
 	}
 	@Test
 	public void testConvert2Async(){
-		method1().<Tuple1<Integer>>filter(t->t.v1()==0).callAsync(this::method3).join();
+		methodTuple2().<Tuple1<Integer>>filter(t->t.v1()==0).callAsync(this::method3).join();
 		
 	}
-	public Tuple2<Integer,String> method1(){
+	public Tuple1<Integer> methodTuple1(){
+		return Tuples.tuple(10);
+	}
+	public Tuple2<Integer,String> methodTuple2(){
 		return Tuples.tuple(10,"hello");
 	}
-	
+	public Tuple3<Integer,String,Integer> methodTuple3(){
+		return Tuples.tuple(10,"hello",3);
+	}
+	public String method3params(Integer number, String value,Integer num2){
+		return "" + number + value + num2;
+	}
 	public String method2(Integer number, String value){
 		return "" + number + value;
 	}

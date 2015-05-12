@@ -11,7 +11,6 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
 import lombok.AllArgsConstructor;
-import lombok.val;
 
 import com.aol.cyclops.comprehensions.functions.TriFunction;
 import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
@@ -71,11 +70,11 @@ public interface Tuple3<T1,T2,T3> extends Tuple2<T1,T2> {
 	default <T> Tuple3<T,T2,T3> lazyMap1(Function<T1,T> fn){
 		if(arity()!=3)
 			return (Tuple3)Tuple2.super.lazyMap1(fn);
-		val tuple = this;
+	
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return new TupleImpl<T,T2,T3,Object,Object,Object,Object,Object>(Arrays.asList(),3){
 			public T v1(){
-				return value.getOrSet(()->fn.apply(tuple.v1())); 
+				return value.getOrSet(()->fn.apply(Tuple3.this.v1())); 
 			}
 
 			@Override
@@ -101,12 +100,12 @@ public interface Tuple3<T1,T2,T3> extends Tuple2<T1,T2> {
 	default <T> Tuple3<T1,T,T3> lazyMap2(Function<T2,T> fn){
 		if(arity()!=3)
 			return (Tuple3)Tuple2.super.lazyMap2(fn);
-		val tuple = this;
+		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return new TupleImpl(3){
 			
 			public T v2(){
-				return value.getOrSet(()->fn.apply(tuple.v2())); 
+				return value.getOrSet(()->fn.apply(Tuple3.this.v2())); 
 			}
 
 			@Override
@@ -140,12 +139,12 @@ public interface Tuple3<T1,T2,T3> extends Tuple2<T1,T2> {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	default <T> Tuple3<T1,T2,T> lazyMap3(Function<T3,T> fn){
-		val tuple = this;
+		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return new TupleImpl(3){
 			
 			public T v3(){
-				return value.getOrSet(()->fn.apply(tuple.v3())); 
+				return value.getOrSet(()->fn.apply(Tuple3.this.v3())); 
 			}
 
 			@Override

@@ -8,7 +8,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-import lombok.val;
+
 
 import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
 
@@ -63,12 +63,12 @@ interface Tuple1<T1> extends CachedValues{
 	 * @return
 	 */
 	default <T> Tuple1<T> lazyMap1(Function<T1,T> fn){
-		val tuple = this;
+		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return new TupleImpl<T,Object,Object,Object,Object,Object,Object,Object>(Arrays.asList(),1){
 			
 			public T v1(){
-				return value.getOrSet(()->fn.apply(tuple.v1())); 
+				return value.getOrSet(()->fn.apply(Tuple1.this.v1())); 
 			}
 
 			@Override

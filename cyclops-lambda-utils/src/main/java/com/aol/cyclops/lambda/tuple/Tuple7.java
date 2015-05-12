@@ -8,7 +8,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-import lombok.val;
+
+
 
 import com.aol.cyclops.comprehensions.functions.HeptFunction;
 import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
@@ -101,11 +102,11 @@ public interface Tuple7<T1,T2,T3,T4,T5,T6,T7> extends Tuple6<T1,T2,T3,T4,T5,T6> 
 	default <T> Tuple7<T,T2,T3,T4,T5,T6,T7> lazyMap1(Function<T1,T> fn){
 		if(arity()!=7)
 			return (Tuple7)Tuple6.super.lazyMap1(fn);
-		val tuple = this;
+		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return new TupleImpl(7){
 			public T v1(){
-				return value.getOrSet(()->fn.apply(tuple.v1())); 
+				return value.getOrSet(()->fn.apply(Tuple7.this.v1())); 
 			}
 
 			@Override
@@ -131,12 +132,12 @@ public interface Tuple7<T1,T2,T3,T4,T5,T6,T7> extends Tuple6<T1,T2,T3,T4,T5,T6> 
 		if(arity()!=7)
 			return (Tuple7)Tuple6.super.lazyMap2(fn);
 		
-		val tuple = this;
+
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return  new TupleImpl(7){
 			
 			public T v2(){
-				return value.getOrSet(()->fn.apply(tuple.v2())); 
+				return value.getOrSet(()->fn.apply(Tuple7.this.v2())); 
 			}
 
 			@Override
@@ -172,12 +173,12 @@ public interface Tuple7<T1,T2,T3,T4,T5,T6,T7> extends Tuple6<T1,T2,T3,T4,T5,T6> 
 	default <T> Tuple7<T1,T2,T,T4,T5,T6,T7> lazyMap3(Function<T3,T> fn){
 		if(arity()!=7)
 			return (Tuple7)Tuple6.super.lazyMap3(fn);
-		val tuple = this;
+
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return new TupleImpl(7){
 			
 			public T v3(){
-				return value.getOrSet(()->fn.apply(tuple.v3())); 
+				return value.getOrSet(()->fn.apply(Tuple7.this.v3())); 
 			}
 
 			@Override
@@ -211,12 +212,12 @@ public interface Tuple7<T1,T2,T3,T4,T5,T6,T7> extends Tuple6<T1,T2,T3,T4,T5,T6> 
 	default <T> Tuple7<T1,T2,T3,T,T5,T6,T7> lazyMap4(Function<T4,T> fn){
 		if(arity()!=7)
 			return (Tuple7)Tuple6.super.lazyMap4(fn);
-		val tuple = this;
+		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return  new TupleImpl(7){
 			
 			public T v4(){
-				return value.getOrSet(()->fn.apply(tuple.v4())); 
+				return value.getOrSet(()->fn.apply(Tuple7.this.v4())); 
 			}
 
 			@Override
@@ -250,12 +251,12 @@ public interface Tuple7<T1,T2,T3,T4,T5,T6,T7> extends Tuple6<T1,T2,T3,T4,T5,T6> 
 	default <T> Tuple7<T1,T2,T3,T4,T,T6,T7> lazyMap5(Function<T5,T> fn){
 		if(arity()!=7)
 			return (Tuple7)Tuple6.super.lazyMap5(fn);
-		val tuple = this;
+		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return  new TupleImpl(7){
 			
 			public T v5(){
-				return value.getOrSet(()->fn.apply(tuple.v5())); 
+				return value.getOrSet(()->fn.apply(Tuple7.this.v5())); 
 			}
 
 			@Override
@@ -291,12 +292,12 @@ public interface Tuple7<T1,T2,T3,T4,T5,T6,T7> extends Tuple6<T1,T2,T3,T4,T5,T6> 
 	default <T> Tuple7<T1,T2,T3,T4,T5,T,T7> lazyMap6(Function<T6,T> fn){
 		if(arity()!=7)
 			return (Tuple7)Tuple6.super.lazyMap6(fn);
-		val tuple = this;
+		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return  new TupleImpl(7){
 			
 			public T v6(){
-				return value.getOrSet(()->fn.apply(tuple.v6())); 
+				return value.getOrSet(()->fn.apply(Tuple7.this.v6())); 
 			}
 
 			@Override
@@ -331,12 +332,12 @@ public interface Tuple7<T1,T2,T3,T4,T5,T6,T7> extends Tuple6<T1,T2,T3,T4,T5,T6> 
 	 * @return
 	 */
 	default <T> Tuple7<T1,T2,T3,T4,T5,T6,T> lazyMap7(Function<T7,T> fn){
-		val tuple = this;
+		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return  new TupleImpl(7){
 			
 			public T v7(){
-				return value.getOrSet(()->fn.apply(tuple.v7())); 
+				return value.getOrSet(()->fn.apply(Tuple7.this.v7())); 
 			}
 
 			@Override

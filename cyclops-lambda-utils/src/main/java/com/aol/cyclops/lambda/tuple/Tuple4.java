@@ -8,7 +8,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-import lombok.val;
+
+
 
 import com.aol.cyclops.comprehensions.functions.QuadFunction;
 import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
@@ -93,11 +94,11 @@ public interface Tuple4<T1,T2,T3,T4> extends Tuple3<T1,T2,T3> {
 	default <T> Tuple4<T,T2,T3,T4> lazyMap1(Function<T1,T> fn){
 		if(arity()!=4)
 			return (Tuple4)Tuple3.super.lazyMap1(fn);
-		val tuple = this;
+	
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return new TupleImpl(4){
 			public T v1(){
-				return value.getOrSet(()->fn.apply(tuple.v1())); 
+				return value.getOrSet(()->fn.apply(Tuple4.this.v1())); 
 			}
 
 			@Override
@@ -123,12 +124,12 @@ public interface Tuple4<T1,T2,T3,T4> extends Tuple3<T1,T2,T3> {
 	default <T> Tuple4<T1,T,T3,T4> lazyMap2(Function<T2,T> fn){
 		if(arity()!=4)
 			return (Tuple4)Tuple3.super.lazyMap2(fn);
-		val tuple = this;
+		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return new TupleImpl(4){
 			
 			public T v2(){
-				return value.getOrSet(()->fn.apply(tuple.v2())); 
+				return value.getOrSet(()->fn.apply(Tuple4.this.v2())); 
 			}
 
 			@Override
@@ -164,12 +165,12 @@ public interface Tuple4<T1,T2,T3,T4> extends Tuple3<T1,T2,T3> {
 	default <T> Tuple4<T1,T2,T,T4> lazyMap3(Function<T3,T> fn){
 		if(arity()!=4)
 			return (Tuple4)Tuple3.super.lazyMap3(fn);
-		val tuple = this;
+		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return new TupleImpl(4){
 			
 			public T v3(){
-				return value.getOrSet(()->fn.apply(tuple.v3())); 
+				return value.getOrSet(()->fn.apply(Tuple4.this.v3())); 
 			}
 
 			@Override
@@ -200,12 +201,11 @@ public interface Tuple4<T1,T2,T3,T4> extends Tuple3<T1,T2,T3> {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	default <T> Tuple4<T1,T2,T3,T> lazyMap4(Function<T4,T> fn){
 		
-		val tuple = this;
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return new TupleImpl(4){
 			
 			public T v4(){
-				return value.getOrSet(()->fn.apply(tuple.v4())); 
+				return value.getOrSet(()->fn.apply(Tuple4.this.v4())); 
 			}
 
 			@Override

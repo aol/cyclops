@@ -12,7 +12,7 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
 import lombok.AllArgsConstructor;
-import lombok.val;
+
 
 import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
 
@@ -50,11 +50,11 @@ public interface Tuple2<T1,T2> extends Tuple1<T1> {
 	default <T> Tuple2<T,T2> lazyMap1(Function<T1,T> fn){
 		if(arity()!=2)
 			return (Tuple2)Tuple1.super.lazyMap1(fn);
-		val tuple = this;
+		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return new TupleImpl<T,T2,Object,Object,Object,Object,Object,Object>(Arrays.asList(),2){
 			public T v1(){
-				return value.getOrSet(()->fn.apply(tuple.v1())); 
+				return value.getOrSet(()->fn.apply(Tuple2.this.v1())); 
 			}
 
 			@Override
@@ -77,12 +77,12 @@ public interface Tuple2<T1,T2> extends Tuple1<T1> {
 	 * @return
 	 */
 	default <T> Tuple2<T1,T> lazyMap2(Function<T2,T> fn){
-		val tuple = this;
+		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return new TupleImpl<T1,T,Object,Object,Object,Object,Object,Object>(Arrays.asList(),2){
 			
 			public T v2(){
-				return value.getOrSet(()->fn.apply(tuple.v2())); 
+				return value.getOrSet(()->fn.apply(Tuple2.this.v2())); 
 			}
 
 			@Override
