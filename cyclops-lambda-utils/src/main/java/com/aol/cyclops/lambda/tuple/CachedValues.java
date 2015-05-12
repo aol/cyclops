@@ -55,9 +55,9 @@ public interface CachedValues extends Iterable, Decomposable{
 	}
 	
 	default <T extends CachedValues> T filter(Predicate<Tuple2<Integer,Object>> p){
-		ClosedVar<Integer> index = new ClosedVar(0);
+		ClosedVar<Integer> index = new ClosedVar(-1);
 		val newList = getCachedValues().stream().map(v-> Tuples.tuple(index.set(index.get()+1).get(),v))
-						.filter(p).collect(Collectors.toList());
+						.filter(p).map(Tuple2::v2).collect(Collectors.toList());
 		return (T)new TupleImpl(newList,newList.size());
 	}
 	default List toList(){

@@ -84,7 +84,7 @@ class TupleImpl<T1,T2,T3,T4,T5,T6,T7,T8> implements TupleWrapper,  Tuple8<T1,T2,
 	}
 	@Override
     public String toString() {
-        return String.format(asStringFormat(arity).orElse(""), _1());
+		return getCachedValues().toString();
     }
 	
 	
