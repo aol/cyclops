@@ -58,7 +58,10 @@ public interface Tuple3<T1,T2,T3> extends Tuple2<T1,T2> {
 	 * @return Tuple1
 	 */
 	default <T> Tuple3<T,T2,T3> map1(Function<T1,T> fn){
-		return Tuples.tuple(fn.apply(v1()),v2(),v3());
+		if(arity()!=3)
+			return (Tuple3)Tuple2.super.map1(fn);
+		else
+			return Tuples.tuple(fn.apply(v1()),v2(),v3());
 	}
 	/**
 	 * Lazily Map 1st element and memoise the result
@@ -66,9 +69,11 @@ public interface Tuple3<T1,T2,T3> extends Tuple2<T1,T2> {
 	 * @return
 	 */
 	default <T> Tuple3<T,T2,T3> lazyMap1(Function<T1,T> fn){
+		if(arity()!=3)
+			return (Tuple3)Tuple2.super.lazyMap1(fn);
 		val tuple = this;
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
-		return new Tuple3<T,T2,T3>(){
+		return new TupleImpl<T,T2,T3,Object,Object,Object,Object,Object>(Arrays.asList(),3){
 			public T v1(){
 				return value.getOrSet(()->fn.apply(tuple.v1())); 
 			}
@@ -92,10 +97,13 @@ public interface Tuple3<T1,T2,T3> extends Tuple2<T1,T2> {
 	 * @param fn Map function
 	 * @return
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	default <T> Tuple3<T1,T,T3> lazyMap2(Function<T2,T> fn){
+		if(arity()!=3)
+			return (Tuple3)Tuple2.super.lazyMap2(fn);
 		val tuple = this;
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
-		return new Tuple3<T1,T,T3>(){
+		return new TupleImpl(3){
 			
 			public T v2(){
 				return value.getOrSet(()->fn.apply(tuple.v2())); 
@@ -121,6 +129,8 @@ public interface Tuple3<T1,T2,T3> extends Tuple2<T1,T2> {
 	 * @return new Tuple3
 	 */
 	default <T> Tuple3<T1,T,T3> map2(Function<T2,T> fn){
+		if(arity()!=3)
+			return (Tuple3)Tuple2.super.map2(fn);
 		return of(v1(),fn.apply(v2()),v3());
 	}
 	/**
@@ -128,10 +138,11 @@ public interface Tuple3<T1,T2,T3> extends Tuple2<T1,T2> {
 	 * @param fn Map function
 	 * @return
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	default <T> Tuple3<T1,T2,T> lazyMap3(Function<T3,T> fn){
 		val tuple = this;
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
-		return new Tuple3<T1,T2,T>(){
+		return new TupleImpl(3){
 			
 			public T v3(){
 				return value.getOrSet(()->fn.apply(tuple.v3())); 

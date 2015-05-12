@@ -65,7 +65,8 @@ interface Tuple1<T1> extends CachedValues{
 	default <T> Tuple1<T> lazyMap1(Function<T1,T> fn){
 		val tuple = this;
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
-		return new Tuple1<T>(){
+		return new TupleImpl<T,Object,Object,Object,Object,Object,Object,Object>(Arrays.asList(),1){
+			
 			public T v1(){
 				return value.getOrSet(()->fn.apply(tuple.v1())); 
 			}

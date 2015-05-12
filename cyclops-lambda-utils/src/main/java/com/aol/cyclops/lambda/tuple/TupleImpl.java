@@ -39,7 +39,12 @@ class TupleImpl<T1,T2,T3,T4,T5,T6,T7,T8> implements TupleWrapper,  Tuple8<T1,T2,
 	
 	private final  int arity;
 	
-	
+	private final List<Object> empty = Arrays.asList();
+	public TupleImpl(int arity){
+		this.arity = arity;
+		this.cachedValues = empty;
+		this.instance=null;
+	}
 	public TupleImpl(Object tuple,int arity){
 		this.instance = tuple;
 		if(tuple instanceof Collection)

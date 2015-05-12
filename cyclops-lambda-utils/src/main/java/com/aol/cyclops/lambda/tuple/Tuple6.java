@@ -89,17 +89,23 @@ public interface Tuple6<T1,T2,T3,T4,T5,T6> extends Tuple5<T1,T2,T3,T4,T5> {
 	 * @return Tuple6
 	 */
 	default <T> Tuple6<T,T2,T3,T4,T5,T6> map1(Function<T1,T> fn){
-		return Tuples.tuple(fn.apply(v1()),v2(),v3(),v4(),v5(),v6());
+		if(arity()!=6)
+			return (Tuple6)Tuple5.super.map1(fn);
+		else
+			return Tuples.tuple(fn.apply(v1()),v2(),v3(),v4(),v5(),v6());
 	}
 	/**
 	 * Lazily Map 1st element and memoise the result
 	 * @param fn Map function
 	 * @return
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	default <T> Tuple6<T,T2,T3,T4,T5,T6> lazyMap1(Function<T1,T> fn){
+		if(arity()!=6)
+			return (Tuple6)Tuple5.super.lazyMap1(fn);
 		val tuple = this;
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
-		return new Tuple6<T,T2,T3,T4,T5,T6>(){
+		return new TupleImpl(6){
 			public T v1(){
 				return value.getOrSet(()->fn.apply(tuple.v1())); 
 			}
@@ -123,10 +129,13 @@ public interface Tuple6<T1,T2,T3,T4,T5,T6> extends Tuple5<T1,T2,T3,T4,T5> {
 	 * @param fn Map function
 	 * @return
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	default <T> Tuple6<T1,T,T3,T4,T5,T6> lazyMap2(Function<T2,T> fn){
+		if(arity()!=6)
+			return (Tuple6)Tuple5.super.lazyMap2(fn);
 		val tuple = this;
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
-		return new Tuple6<T1,T,T3,T4,T5,T6>(){
+		return new TupleImpl(6){
 			
 			public T v2(){
 				return value.getOrSet(()->fn.apply(tuple.v2())); 
@@ -152,6 +161,8 @@ public interface Tuple6<T1,T2,T3,T4,T5,T6> extends Tuple5<T1,T2,T3,T4,T5> {
 	 * @return new Tuple3
 	 */
 	default <T> Tuple6<T1,T,T3,T4,T5,T6> map2(Function<T2,T> fn){
+		if(arity()!=6)
+			return (Tuple6)Tuple5.super.map2(fn);
 		return of(v1(),fn.apply(v2()),v3(),v4(),v5(),v6());
 	}
 	/**
@@ -160,9 +171,11 @@ public interface Tuple6<T1,T2,T3,T4,T5,T6> extends Tuple5<T1,T2,T3,T4,T5> {
 	 * @return
 	 */
 	default <T> Tuple6<T1,T2,T,T4,T5,T6> lazyMap3(Function<T3,T> fn){
+		if(arity()!=6)
+			return (Tuple6)Tuple5.super.lazyMap3(fn);
 		val tuple = this;
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
-		return new Tuple6<T1,T2,T,T4,T5,T6>(){
+		return new TupleImpl(6){
 			
 			public T v3(){
 				return value.getOrSet(()->fn.apply(tuple.v3())); 
@@ -187,6 +200,8 @@ public interface Tuple6<T1,T2,T3,T4,T5,T6> extends Tuple5<T1,T2,T3,T4,T5> {
 	 * @see com.aol.cyclops.lambda.tuple.Tuple4#map3(java.util.function.Function)
 	 */
 	default <T> Tuple6<T1,T2,T,T4,T5,T6> map3(Function<T3,T> fn){
+		if(arity()!=6)
+			return (Tuple6)Tuple5.super.map3(fn);
 		return of(v1(),v2(),fn.apply(v3()),v4(),v5(),v6());
 	}
 	/**
@@ -195,9 +210,11 @@ public interface Tuple6<T1,T2,T3,T4,T5,T6> extends Tuple5<T1,T2,T3,T4,T5> {
 	 * @return
 	 */
 	default <T> Tuple6<T1,T2,T3,T,T5,T6> lazyMap4(Function<T4,T> fn){
+		if(arity()!=6)
+			return (Tuple6)Tuple5.super.lazyMap4(fn);
 		val tuple = this;
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
-		return new Tuple6<T1,T2,T3,T,T5,T6>(){
+		return new TupleImpl(6){
 			
 			public T v4(){
 				return value.getOrSet(()->fn.apply(tuple.v4())); 
@@ -222,6 +239,8 @@ public interface Tuple6<T1,T2,T3,T4,T5,T6> extends Tuple5<T1,T2,T3,T4,T5> {
 	 * @see com.aol.cyclops.lambda.tuple.Tuple4#map4(java.util.function.Function)
 	 */
 	default <T> Tuple6<T1,T2,T3,T,T5,T6> map4(Function<T4,T> fn){
+		if(arity()!=6)
+			return (Tuple6)Tuple5.super.map4(fn);
 		return of(v1(),v2(),v3(),fn.apply(v4()),v5(),v6());
 	}
 	/*
@@ -229,13 +248,16 @@ public interface Tuple6<T1,T2,T3,T4,T5,T6> extends Tuple5<T1,T2,T3,T4,T5> {
 	 * @param fn Map function
 	 * @return
 	 */
-	default <T> Tuple6<T1,T2,T3,T4,T,T6> lazyMap5(Function<T4,T> fn){
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	default <T> Tuple6<T1,T2,T3,T4,T,T6> lazyMap5(Function<T5,T> fn){
+			if(arity()!=6)
+				return (Tuple6)Tuple5.super.lazyMap5(fn);
 		val tuple = this;
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
-		return new Tuple6<T1,T2,T3,T4,T,T6>(){
+		return new TupleImpl(6){
 			
 			public T v5(){
-				return value.getOrSet(()->fn.apply(tuple.v4())); 
+				return value.getOrSet(()->fn.apply(tuple.v5())); 
 			}
 
 			@Override
@@ -259,6 +281,8 @@ public interface Tuple6<T1,T2,T3,T4,T5,T6> extends Tuple5<T1,T2,T3,T4,T5> {
 	 * @return new Tuple5
 	 */
 	default <T> Tuple6<T1,T2,T3,T4,T,T6> map5(Function<T5,T> fn){
+		if(arity()!=6)
+			return (Tuple6)Tuple5.super.map5(fn);
 		return of(v1(),v2(),v3(),v4(),fn.apply(v5()),v6());
 	}
 	/*
@@ -266,13 +290,13 @@ public interface Tuple6<T1,T2,T3,T4,T5,T6> extends Tuple5<T1,T2,T3,T4,T5> {
 	 * @param fn Map function
 	 * @return
 	 */
-	default <T> Tuple6<T1,T2,T3,T4,T5,T> lazyMap6(Function<T4,T> fn){
+	default <T> Tuple6<T1,T2,T3,T4,T5,T> lazyMap6(Function<T6,T> fn){
 		val tuple = this;
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
-		return new Tuple6<T1,T2,T3,T4,T5,T>(){
+		return new TupleImpl(6){
 			
 			public T v6(){
-				return value.getOrSet(()->fn.apply(tuple.v4())); 
+				return value.getOrSet(()->fn.apply(tuple.v6())); 
 			}
 
 			@Override

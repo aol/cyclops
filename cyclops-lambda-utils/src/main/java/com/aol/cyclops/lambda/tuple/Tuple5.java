@@ -51,17 +51,23 @@ public interface Tuple5<T1,T2,T3,T4,T5> extends Tuple4<T1,T2,T3,T4> {
 	 * @return Tuple5
 	 */
 	default <T> Tuple5<T,T2,T3,T4,T5> map1(Function<T1,T> fn){
-		return Tuples.tuple(fn.apply(v1()),v2(),v3(),v4(),v5());
+		if(arity()!=5)
+			return (Tuple5)Tuple4.super.map1(fn);
+		else
+			return Tuples.tuple(fn.apply(v1()),v2(),v3(),v4(),v5());
 	}
 	/**
 	 * Lazily Map 1st element and memoise the result
 	 * @param fn Map function
 	 * @return
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	default <T> Tuple5<T,T2,T3,T4,T5> lazyMap1(Function<T1,T> fn){
+		if(arity()!=5)
+			return (Tuple5)Tuple4.super.lazyMap1(fn);
 		val tuple = this;
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
-		return new Tuple5<T,T2,T3,T4,T5>(){
+		return new TupleImpl(5){
 			public T v1(){
 				return value.getOrSet(()->fn.apply(tuple.v1())); 
 			}
@@ -85,10 +91,13 @@ public interface Tuple5<T1,T2,T3,T4,T5> extends Tuple4<T1,T2,T3,T4> {
 	 * @param fn Map function
 	 * @return
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	default <T> Tuple5<T1,T,T3,T4,T5> lazyMap2(Function<T2,T> fn){
+		if(arity()!=5)
+			return (Tuple5)Tuple4.super.lazyMap2(fn);
 		val tuple = this;
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
-		return new Tuple5<T1,T,T3,T4,T5>(){
+		return new TupleImpl(5){
 			
 			public T v2(){
 				return value.getOrSet(()->fn.apply(tuple.v2())); 
@@ -114,6 +123,8 @@ public interface Tuple5<T1,T2,T3,T4,T5> extends Tuple4<T1,T2,T3,T4> {
 	 * @return new Tuple3
 	 */
 	default <T> Tuple5<T1,T,T3,T4,T5> map2(Function<T2,T> fn){
+		if(arity()!=5)
+			return (Tuple5)Tuple4.super.map2(fn);
 		return of(v1(),fn.apply(v2()),v3(),v4(),v5());
 	}
 	/**
@@ -121,10 +132,13 @@ public interface Tuple5<T1,T2,T3,T4,T5> extends Tuple4<T1,T2,T3,T4> {
 	 * @param fn Map function
 	 * @return
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	default <T> Tuple5<T1,T2,T,T4,T5> lazyMap3(Function<T3,T> fn){
+		if(arity()!=5)
+			return (Tuple5)Tuple4.super.lazyMap3(fn);
 		val tuple = this;
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
-		return new Tuple5<T1,T2,T,T4,T5>(){
+		return new TupleImpl(5){
 			
 			public T v3(){
 				return value.getOrSet(()->fn.apply(tuple.v3())); 
@@ -149,6 +163,8 @@ public interface Tuple5<T1,T2,T3,T4,T5> extends Tuple4<T1,T2,T3,T4> {
 	 * @see com.aol.cyclops.lambda.tuple.Tuple4#map3(java.util.function.Function)
 	 */
 	default <T> Tuple5<T1,T2,T,T4,T5> map3(Function<T3,T> fn){
+		if(arity()!=5)
+			return (Tuple5)Tuple4.super.map3(fn);
 		return of(v1(),v2(),fn.apply(v3()),v4(),v5());
 	}
 	/**
@@ -156,10 +172,13 @@ public interface Tuple5<T1,T2,T3,T4,T5> extends Tuple4<T1,T2,T3,T4> {
 	 * @param fn Map function
 	 * @return
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	default <T> Tuple5<T1,T2,T3,T,T5> lazyMap4(Function<T4,T> fn){
+		if(arity()!=5)
+			return (Tuple5)Tuple4.super.lazyMap4(fn);
 		val tuple = this;
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
-		return new Tuple5<T1,T2,T3,T,T5>(){
+		return new TupleImpl(5){
 			
 			public T v4(){
 				return value.getOrSet(()->fn.apply(tuple.v4())); 
@@ -184,6 +203,8 @@ public interface Tuple5<T1,T2,T3,T4,T5> extends Tuple4<T1,T2,T3,T4> {
 	 * @see com.aol.cyclops.lambda.tuple.Tuple4#map4(java.util.function.Function)
 	 */
 	default <T> Tuple5<T1,T2,T3,T,T5> map4(Function<T4,T> fn){
+		if(arity()!=5)
+			return (Tuple5)Tuple4.super.map4(fn);
 		return of(v1(),v2(),v3(),fn.apply(v4()),v5());
 	}
 	/**
@@ -191,13 +212,15 @@ public interface Tuple5<T1,T2,T3,T4,T5> extends Tuple4<T1,T2,T3,T4> {
 	 * @param fn Map function
 	 * @return
 	 */
-	default <T> Tuple5<T1,T2,T3,T4,T> lazyMap5(Function<T4,T> fn){
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	default <T> Tuple5<T1,T2,T3,T4,T> lazyMap5(Function<T5,T> fn){
+	
 		val tuple = this;
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
-		return new Tuple5<T1,T2,T3,T4,T>(){
+		return new TupleImpl(5){
 			
 			public T v5(){
-				return value.getOrSet(()->fn.apply(tuple.v4())); 
+				return value.getOrSet(()->fn.apply(tuple.v5())); 
 			}
 
 			@Override
