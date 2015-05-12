@@ -25,7 +25,8 @@ Not possible to flatMap an Optional inside a Stream in JDK, but you can with the
 		
 ## Closure utils
 
-ImmutableClosedValue :
+### ImmutableClosedValue 
+
 Set values once only inside a Closure.
 
 
@@ -34,7 +35,7 @@ Set values once only inside a Closure.
 		assertThat(s.get(),is(10));
 		assertThat(value.getOrSet(()->20),is(10));
 		
-ClosedVar 
+### ClosedVar 
 
 Fully mutable variable wrapper manipulatable inside a closure	  
 	 
