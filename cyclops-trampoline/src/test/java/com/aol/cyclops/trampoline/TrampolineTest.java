@@ -18,7 +18,7 @@ public class TrampolineTest {
 	@Test
 	public void trampolineTest(){
 		
-		assertThat(loop(446198426,10).result(),equalTo(25));
+		assertThat(loop(500000,10).result(),equalTo(446198426));
 		
 	}
 	Trampoline<Integer> loop(int times,int sum){
