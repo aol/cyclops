@@ -90,7 +90,7 @@ public class InvokeDynamicComprehender implements Comprehender {
 		
 		
 	}
-
+	
 	private Object executeMethod(Object t, Method m, Class z, ProxyWrapper proxy) {
 		try {
 			

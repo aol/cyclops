@@ -1,8 +1,12 @@
-todos :
-	test against enable switch / try etc
-	test adding more monadic converters
-	test adding more comprehenders
-	update documentation
+# Cyclops for comprehensions
+
+Two supported formats
+
+1. scala like syntax
+2. do nototation
+
+Scala-like for syntax slightly more strict than do notation.
+
 
 # for comprehensions explained
 
@@ -143,8 +147,7 @@ To support Monads that use non standard Functional interfaces, Cyclops will crea
 # Do Notation
 
 	List<Integer> list= Arrays.asList(1,2,3);
-	Stream<Integer> stream = Do.withVars(letters)
-								.assign(a, list)
+	Stream<Integer> stream = Do.assign(a, list)
 								.filter(λ1((Integer a) -> a>2))
 								.yield(λ1((Integer a)-> a +2) );
 				
@@ -155,8 +158,7 @@ To support Monads that use non standard Functional interfaces, Cyclops will crea
 
 Yield and Filter take curried functions
 
-		Stream<Integer> stream = Do.withVars(Do.letters)
-								   .assign(Do.Letters.a, Arrays.asList(20,30))
-								   .assign(Do.Letters.b, Arrays.asList(1,2,3))
+		Stream<Integer> stream = Do.assign(Do.Letters.a, asList(20,30))
+								   .assign(Do.Letters.b, asList(1,2,3))
 								   .yield(λ2((Integer a)-> (Integer b) -> a + b+2) );
 

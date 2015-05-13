@@ -14,7 +14,6 @@ public class FunctionExecutionInvocationHandler implements InvocationHandler{
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
-		System.out.println(args[0]);
 		return function.apply(args[0]);
 	}
 }

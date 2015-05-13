@@ -41,15 +41,8 @@ import com.aol.cyclops.lambda.utils.ClosedVar;
  *
  * @param <X>
  */
-@Value
-public class Do<X extends Vars> {
-	private final Vars vars;
-	
-	PStack<Entry> assigned;
-	public  Do<X> assign(Supplier<String> var,Object o){
-		return new Do(vars,assigned.plus(assigned.size(),new Entry(var,o)));
-		
-	}
+
+public class Do {
 	@Value
 	static class Entry{
 		Supplier<String> key;
@@ -60,49 +53,60 @@ public class Do<X extends Vars> {
 		
 		Function<Vars,Boolean> f;
 	}
-	public Do<X> filter(Function f){
-		return new Do(vars,assigned.plus(assigned.size(),new Entry(()->"$$internalGUARD"+assigned.size(),new Guard(f))));
-	}
-	public<T> T yield(Function f){
-		return (T)ForComprehensions.foreachX(c->build(c,f));
-	}
+	@Value
+	public static class DoComp {
+		
+		PStack<Entry> assigned;
+		public  DoComp assign(Supplier<String> var,Object o){
+			return new DoComp(assigned.plus(assigned.size(),new Entry(var,o)));
+			
+		}
+		
+		public DoComp filter(Function f){
+			return new DoComp(assigned.plus(assigned.size(),new Entry(()->"$$internalGUARD"+assigned.size(),new Guard(f))));
+		}
+		public<T> T yield(Function f){
+			return (T)ForComprehensions.foreachX(c->build(c,f));
+		}
+		
+		private Object handleNext(Entry e,ComprehensionData c,List<Supplier<String>> assigned){
+			if(e.getValue() instanceof Guard){
+				
+				final Function f = ((Guard)e.getValue()).getF();
+				c.filter( ()-> { List<Supplier<String>>  newList = new ArrayList(assigned); 
+									
+									ClosedVar<Object> var = new ClosedVar<>(true);
+									
+								
+								newList.stream().forEach(v-> var.set(f.apply(c.$(v.get() )) )) ; 
+										return var.get(); 
+								}  );
+				
+			}
+			else
+				c.$(e.getKey().get(),e.getValue());
+			
+			return null;
+		}
+		private Object build(
+				ComprehensionData c, Function f) {
+			ClosedVar<List<Supplier<String>>> vars = new ClosedVar<>(new ArrayList());
+			assigned.stream().forEach(e-> addToVar(e,vars,handleNext(e,c,vars.get())));
+			ClosedVar var = new ClosedVar();
+			return c.yield(()-> { vars.get().stream().forEach(e-> var.set(f.apply( c.$(e.get() ) ))) ; return var.get(); }  );
+			
+		}
 	
-	private Object handleNext(Entry e,ComprehensionData c,List<Supplier<String>> assigned){
-		if(e.getValue() instanceof Guard){
-			
-			final Function f = ((Guard)e.getValue()).getF();
-			c.filter( ()-> { List<Supplier<String>>  newList = new ArrayList(assigned); 
-								
-								ClosedVar<Object> var = new ClosedVar<>(true);
-								
-							
-							newList.stream().forEach(v-> var.set(f.apply(c.$(v.get() )) )) ; 
-									return var.get(); 
-							}  );
-			
+		private Object addToVar(Entry e,ClosedVar<List<Supplier<String>>> vars, Object handleNext) {
+			if(!(e.getValue() instanceof Guard)){	
+				vars.get().add(e.getKey());
+			}
+			return handleNext;
 		}
-		else
-			c.$(e.getKey().get(),e.getValue());
-		
-		return null;
+	
 	}
-	private Object build(
-			ComprehensionData c, Function f) {
-		ClosedVar<List<Supplier<String>>> vars = new ClosedVar<>(new ArrayList());
-		assigned.stream().forEach(e-> addToVar(e,vars,handleNext(e,c,vars.get())));
-		ClosedVar var = new ClosedVar();
-		return c.yield(()-> { vars.get().stream().forEach(e-> var.set(f.apply( c.$(e.get() ) ))) ; return var.get(); }  );
-		
-	}
-
-	private Object addToVar(Entry e,ClosedVar<List<Supplier<String>>> vars, Object handleNext) {
-		if(!(e.getValue() instanceof Guard)){	
-			vars.get().add(e.getKey());
-		}
-		return handleNext;
-	}
-	public static <X extends Vars> Do<X> withVars(X vars){
-		return new Do(vars,ConsPStack.empty());
+	public static  DoComp assign(Supplier<String> var,Object o){
+		return new DoComp(ConsPStack.empty()).assign(var, o);
 	}
 	public static Letters letters = new Letters();
 	public static class Letters implements Vars{
