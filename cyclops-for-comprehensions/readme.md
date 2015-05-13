@@ -137,5 +137,26 @@ Supplier to CompletableFuture
 
 ## Dynamic Proxy Caching
 
+To support Monads that use non standard Functional interfaces, Cyclops will create / cache and reuse dynamic proxies that wrap JDK8 Functional interfaces in suitable wrappers.
 
+
+# Do Notation
+
+	List<Integer> list= Arrays.asList(1,2,3);
+	Stream<Integer> stream = Do.withVars(letters)
+								.assign(a, list)
+								.filter(λ1((Integer a) -> a>2))
+								.yield(λ1((Integer a)-> a +2) );
+				
+										
+		
+		assertThat(Arrays.asList(5),equalTo(stream.collect(Collectors.toList())));
+
+
+Yield and Filter take curried functions
+
+		Stream<Integer> stream = Do.withVars(Do.letters)
+								   .assign(Do.Letters.a, Arrays.asList(20,30))
+								   .assign(Do.Letters.b, Arrays.asList(1,2,3))
+								   .yield(λ2((Integer a)-> (Integer b) -> a + b+2) );
 
