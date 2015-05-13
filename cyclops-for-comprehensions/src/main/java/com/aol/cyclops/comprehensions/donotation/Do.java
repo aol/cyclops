@@ -3,8 +3,10 @@ package com.aol.cyclops.comprehensions.donotation;
 import static com.aol.cyclops.comprehensions.donotation.Do.letters;
 import static com.aol.cyclops.comprehensions.donotation.Do.Letters.a;
 import static com.aol.cyclops.comprehensions.functions.Lambda.λ1;
+import static com.aol.cyclops.comprehensions.functions.Lambda.λ2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -26,6 +28,13 @@ import com.aol.cyclops.lambda.utils.ClosedVar;
 								.assign(a, list)
 								.filter(λ1((Integer a) -> a>2))
 								.yield(λ1((Integer a)-> a +2) );
+								
+				Stream<Integer> stream = Do.withVars(Do.letters)
+								   .assign(Do.Letters.a, Arrays.asList(20,30))
+								   .assign(Do.Letters.b, Arrays.asList(1,2,3))
+								   .yield(λ2((Integer a)-> (Integer b) -> a + b+2) );							
+								
+								
 								}
  * 
  * @author johnmcclean
