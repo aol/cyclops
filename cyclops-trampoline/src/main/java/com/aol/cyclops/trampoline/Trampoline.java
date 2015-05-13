@@ -1,4 +1,4 @@
-package com.aol.cyclops.lambda.api;
+package com.aol.cyclops.trampoline;
 
 import java.util.stream.Stream;
 
@@ -8,7 +8,7 @@ import java.util.stream.Stream;
  * 
  * @author johnmcclean
  *
- * @param <T>
+ * @param <T> Return type
  */
 public interface Trampoline<T> {
 
@@ -19,18 +19,37 @@ public interface Trampoline<T> {
 		return this;
 	}
 
+	/**
+	 * @return The result of Trampoline execution
+	 */
 	T result();
 	
+	/**
+	 * @return true if complete
+	 * 
+	 */
 	default boolean complete() {
 		return true;
 	}
 
 	
+	/**
+	 * Created a completed Trampoline
+	 * 
+	 * @param Completed result
+	 * @return Completed Trampoline
+	 */
 	public static <T> Trampoline<T> done(T result) {
 		return () -> result;
 	}
 
-	public static <T> Trampoline<T> more(Trampoline<Trampoline<T>> next) {
+	/**
+	 * Create a Trampoline that has more work to do
+	 * 
+	 * @param trampoline Next stage in Trampoline
+	 * @returnC Trampoline with more work
+	 */
+	public static <T> Trampoline<T> more(Trampoline<Trampoline<T>> trampoline) {
 		return new Trampoline<T>() {
 			
 			@Override
@@ -40,7 +59,7 @@ public interface Trampoline<T> {
 
 			@Override
 			public Trampoline<T> bounce() {
-				return next.result();
+				return trampoline.result();
 			}
 
 			public T result() {
