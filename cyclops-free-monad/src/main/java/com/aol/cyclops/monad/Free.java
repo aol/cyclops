@@ -54,9 +54,7 @@ public interface Free<F extends Functor<?>,A> {
 
 	@Value
 	static class Suspend<A,F extends Functor<?>> implements Free<F,A> {
-
-
-	    Functor<Free<F,A>> next;
+		Functor<Free<F,A>> next;
 	    
 	    public A result(){
 	    	Object o = next.unwrap();
@@ -74,8 +72,7 @@ public interface Free<F extends Functor<?>,A> {
 	    	 return res;
 
 	      }
-	    
-	     
+   
 	}
 	 
 }

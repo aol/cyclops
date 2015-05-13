@@ -30,7 +30,7 @@ public interface Monad<T,MONAD> extends Functor<T>, Filterable<T>{
 	public <T,MONAD> Monad<T,MONAD> withMonad(Object invoke);
 	public Object getMonad();
 	
-	default <T> Monad<T,MONAD> withFunctor(Object functor){
+	default <T> Monad<T,MONAD> withFunctor(T functor){
 		return withMonad(functor);
 	}
 	default Object getFunctor(){

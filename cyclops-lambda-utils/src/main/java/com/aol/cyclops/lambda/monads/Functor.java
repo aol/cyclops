@@ -22,7 +22,18 @@ import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
 public interface Functor<T> {
 
-	default <T> Functor<T> withFunctor(Object functor){
+	/**
+	 * Will attempt to create a new instance of this functor type via constructor reflection
+	 * if this is a wrapped Functor (i.e. getFunctor returns another instance) otherwise
+	 * returns the supplied functor
+	 * 
+	 * 
+	 * @param functor
+	 * @return
+	 */
+	default <T> Functor<T> withFunctor(T functor){
+		if(getFunctor()==this)
+			return (Functor<T>)functor;
 		
 		try {
 			Constructor cons = this.getClass().getConstructor(Object.class);
@@ -36,6 +47,12 @@ public interface Functor<T> {
 		return null;
 	}
 	
+	/**
+	 * Override this method if you are using this class to wrap a Functor that does not
+	 * implement this interface natively.
+	 * 
+	 * @return underlying functor
+	 */
 	default Object getFunctor(){
 		return this;
 	}
@@ -44,7 +61,7 @@ public interface Functor<T> {
 		Object value = new ComprehenderSelector().selectComprehender(Comprehenders.Companion.instance.getComprehenders(),
 				getFunctor()).map(getFunctor(), fn);
 	
-		return withFunctor((T)value);
+		return withFunctor((R)value);
 	
 	}
 	default   Functor<T>  peek(Consumer<T> c) {

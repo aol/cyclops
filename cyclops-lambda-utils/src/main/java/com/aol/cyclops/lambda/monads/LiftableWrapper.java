@@ -10,7 +10,7 @@ public class LiftableWrapper<T,A> implements LiftableFunctor<T, A, LiftableFunct
 	public Object getFunctor(){
 		return functor;
 	}
-	public <T> Functor<T> withFunctor(Object functor){
+	public <T> Functor<T> withFunctor(T functor){
 		return new LiftableWrapper(functor);
 	}
 }

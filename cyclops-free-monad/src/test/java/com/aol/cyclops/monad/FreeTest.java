@@ -90,9 +90,6 @@ public class FreeTest {
 										.mapAs$3(v->lift())
 										.yield(v-> v.$1()+v.$2()+v.$3()));
 		
-	/**	MonadWrapper.<Integer,Stream<Integer>>of(lift(1,2,3))
-					.<Stream<Integer>,Integer>flatMap(  a-> MonadWrapper.<Integer,Stream<Integer>>of(lift(a,a*2))
-							.<Stream<Integer>,Integer>flatMap(b->  lift(1).map( c -> a+b+c)).unwrap()).<Stream>unwrap().forEach(System.out::println);**/
 	}
 	@Test @Ignore
 	public void testList(){
