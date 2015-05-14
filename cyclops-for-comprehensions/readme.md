@@ -162,3 +162,56 @@ Yield and Filter take curried functions
 								   .assign(Do.Letters.b, asList(1,2,3))
 								   .yield(λ2((Integer a)-> (Integer b) -> a + b+2) );
 
+## Cyclops Monadic For Comprehensions
+
+Cyclops for comphrensions allow deeply nested iterations or monadic operations to be expressed as a simple foreach expression. The implementation is inspired by the rather excellent Groovy implementation by Mark Perry (Functional Groovy)  see [Groovy Null Handling Using Bind, Comprehensions and Lift](https://mperry.github.io/2013/07/28/groovy-null-handling.html). They will work with *any* Monad type (JDK, Functional Java, Javaslang, TotallyLazy, Cyclops etc).
+
+The Cyclops implementation is pure Java however, and although it will revert to dynamic execution when it needs to, reflection can be avoided entirely.
+
+### Features
+
+ 
+1. Nested iteration over Collections & Maps
+* Nested iteration over JDK 8 Monads - Stream, Optional, CompletableFuture
+* Nested iteration over any external Monad e.g. Functional Java, Javaslang, TotallyLazy (by reflection, or register a Comprehender)
+* Strict and looser typing    
+* Fluent step builder interfaces with semantic naming
+* Built in support for 3 levels of nesting
+    
+    stream.flatMap ( s1 -> stream2.flatMap( s2 -> stream3.map (s3 -> s3+s2+s1)));
+    
+    foreach3 (c -> c.flatMapAs$1(stream)
+                   .flatMapAs$2(stream2)
+                   .mapAs$3(stream3)
+                   .yield(()->$3()+$2()+$1());
+
+* Support for custom interface definition with virtually unlimited nesting
+
+    Stream<Integer> stream = foreachX(Custom.class,  
+									c-> c.myVar(list)
+										.yield(()->c.myVar()+3)
+									);
+
+    Optional<Integer> one = Optional.of(1);
+	Optional<Integer> empty = Optional.empty();
+	BiFunction<Integer,Integer,Integer> f2 = (a,b) -> a *b; 
+		
+	Object result =  foreach2(c -> c.flatMapAs$1(one)
+									.mapAs$2(v->empty)
+									.yield((Vars2<Integer,Integer> v)->{return f2.apply(v.$1(), v.$2());}));
+
+Each call to $ results in flatMap call apart from the last one which results in map. guard can be used for filtering.
+The c.$1() and c.$2() calls capture the result of the operations at c.$1(_) and c.$2(_).
+
+### There are 4 For Comphrension classes
+
+* ForComprehensions :- static foreach methods with looser typing, and provides entry point to custom For Comprehensions
+* ForComprehension1 :- Stricter typing, offers $1 operations only
+* ForComprehension2 :- Stricter typing, offer $1 and $2 operations
+* ForComprehension3 :- Stricter typing, offer $1, $2 and $3 operations
+
+### For more info
+
+* [Scala Sequence Comprehensions](http://docs.scala-lang.org/tutorials/tour/sequence-comprehensions.html)
+* [Scala yield] (http://docs.scala-lang.org/tutorials/FAQ/yield.html)
+

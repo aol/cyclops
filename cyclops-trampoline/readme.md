@@ -40,7 +40,7 @@ The code above could be further simplified using static imports
 
 ## Simulating coroutines and continuations
 
-Trampolines can be used to interleaving the execution of different functions on the same thread, in a generic if ugly way
+Trampolines can be used to interleave the execution of different functions on the same thread, in a generic if ugly way
 
 	List results;
 	@Test
