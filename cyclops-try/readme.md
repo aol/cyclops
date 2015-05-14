@@ -1,0 +1,82 @@
+# Cyclops Try
+
+Cyclops Try offers an alternative way to manage exception handling.
+
+#Goals
+
+* 	Offer similar functionality as Scala's Try, but with behaviour more in line with current Java development practices
+*	Replace throw / catch / finally exception handling with Try wrapper / Monad
+*	Allow specified exceptions to be caught
+*	Allow Exception recovery
+*	Support Try with Resources 
+*	Integrate with JDK Optional and Stream
+* 	Encapsulate success and failed states
+*	Offer functional composition over encapsulated state
+	
+	
+
+# Why use Try
+
+Throwing exceptions from methods breaks referential transparency and introduces complex goto like control flow. If a method or function can enter an Exceptional state returning a Try object can allow calling code the cleanly handle the Exception or process the result. E.g.
+
+	private Try<Integer,RuntimeException> exceptionalMethod()
+
+// call method, log exception, add bonus amount if successful
+
+	int total = Try.catchExceptions(RuntimeException.class)
+					.run(()-> exceptionalMethod())
+					.onFail(e->logger.error(e))
+					.map(i->i+bonus)
+					.get()
+
+## Try allows only specified Exceptions to be caught
+	
+With Cyclops Try you can specify which exceptions to catch. This behaviour is similar to JDK Optional, in that you use Try to consciously encapsulate the exceptional state of the method - not to capture unknown exceptional states. 
+
+### Comparison with Optional
+
+With Optional, best practices is to use it when no result is valid result (not automatically on every method - whereby accidental null states - bugs! - are encapsulated in an Optional.
+
+For Try this would mean, if a function is trying to load a file handling FileNotFoundException and IOException is reasonable - handling ClassCastExceptions or NullPointerExceptions may hide bugs. Bugs that you would be better off finding in unit tests early in your development cycle.
+
+## Try with resources
+
+	Try.catchExceptions(FileNotFoundException.class,IOException.class)
+				   .init(()->new BufferedReader(new FileReader("file.txt")))
+				   .tryWithResources(this::read)
+				   
+	private String read(BufferedReader br) throws IOException{
+		StringBuilder sb = new StringBuilder();
+        String line = br.readLine();
+
+        while (line != null) {
+            sb.append(line);
+            sb.append(System.lineSeparator());
+            line = br.readLine();
+        }
+        String everything = sb.toString();
+        return everything;
+	}
+
+### Try with multiple resources
+
+Any iterable can be used in the init method when using Try with resources, in Closeables returned in the Iterable will be closed after the main block has been executed.
+
+    Try.catchExceptions(FileNotFoundException.class,IOException.class)
+	.init(()->Tuples.tuple(new BufferedReader(new FileReader("file.txt")),new   FileReader("hello")))
+				   .tryWithResources(this::read2)
+
+### Differentiated recovery
+
+onFail can recover from any Exception or specified Exceptions
+
+     Try.runWithCatch(this::loadFile,FileNotFoundException.class,IOException.class)
+					.onFail(FileNotFoundException.class,extractFromMemoryCace())
+					.onFail(IOException.class,storeForTryLater())
+					.get()
+
+### Alternatives and differences
+
+This implementation of Try differs from both the Scala and the Javaslang version. Javaslang Try seems to be very similar in it's implementation to the Scala Try and both will capture all Exceptions thrown at any stage during composition. So if calling Try -> map -> flatMap -> map results in an exception during the map or flatMap state Try will revert to a failure state incorporating the thrown Exception.	
+
+By contrast Cyclops Try only captures Exceptions during specific 'withCatch' phases - which correspond to the initialisation and main execution phases. In the Java world this is equivalent to a Try / Catch block. The further safe processing of the result is not automatically encapsulated in a Try (although developers could do so explicitly if they wished).

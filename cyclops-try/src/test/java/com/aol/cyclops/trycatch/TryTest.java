@@ -1,15 +1,19 @@
 package com.aol.cyclops.trycatch;
 
-import java.io.BufferedReader;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.function.Consumer;
 
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
-import static org.hamcrest.Matchers.*;
+
+import com.aol.cyclops.lambda.tuple.Tuple2;
+import com.aol.cyclops.lambda.tuple.Tuples;
 public class TryTest {
  
 	@Test(expected=IOException.class)
@@ -17,7 +21,11 @@ public class TryTest {
 		Try.runWithCatch(this::exceptional,IOException.class)
 					.onFail(System.out::println).get();
 	}
-	
+
+	private Consumer<IOException> extractFromMemoryCace() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	@Test
 	public void test2(){
 		assertThat(Try.withCatch(()-> exceptional2())
@@ -53,12 +61,12 @@ public class TryTest {
 	
 	public void testMultipleResources(){
 		Try t2 = Try.catchExceptions(FileNotFoundException.class,IOException.class)
-				   .init(()->Tuple.tuple(new BufferedReader(new FileReader("file.txt")),new FileReader("hello")))
+				   .init(()->Tuples.tuple(new BufferedReader(new FileReader("file.txt")),new FileReader("hello")))
 				   .tryWithResources(this::read2);
 	}
 	
 	private String read2(Tuple2<BufferedReader,FileReader> res) throws IOException{
-		String line = res.v1.readLine();
+		String line = res.v1().readLine();
 		return null;
 	}
 	private String read(BufferedReader br) throws IOException{
