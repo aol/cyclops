@@ -18,15 +18,13 @@ import com.aol.cyclops.lambda.utils.ClosedVar;
 /**
  * Do notation for comprehensions
  * 
- * {@code 		Stream<Integer> stream = Do.withVars(letters)
-								.assign(a, list)
-								.filter(λ1((Integer a) -> a>2))
-								.yield(λ1((Integer a)-> a +2) );
+ * {@code 		Stream<Integer> stream = Do.with(list)
+								.filter((Integer a) -> a>2)
+								.yield((Integer a)-> a +2 );
 								
-				Stream<Integer> stream = Do.withVars(Do.letters)
-								   .assign(Do.Letters.a, Arrays.asList(20,30))
-								   .assign(Do.Letters.b, Arrays.asList(1,2,3))
-								   .yield(λ2((Integer a)-> (Integer b) -> a + b+2) );							
+				Stream<Integer> stream = Do.with(Arrays.asList(20,30))
+								   .andJustAdd(Arrays.asList(1,2,3))
+								   .yield((Integer a)-> (Integer b) -> a + b+2);							
 								
 								
 								}
@@ -212,22 +210,14 @@ public class Do {
 	public abstract static class DoComp {
 		
 		PStack<Entry> assigned;
-		/**
-		public  DoComp assignand(Function f){
-			return new DoComp(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),new Assignment(f))));
-			
-		}**/
-	//	protected abstract <T extends DoComp> create(PStack stack);
+		
 		protected PStack<Entry> addToAssigned(Function f){
 			return assigned.plus(assigned.size(),createEntry(f));
 		}
 		protected Entry createEntry(Function f){
 			return new Entry("$$monad"+assigned.size(),new Assignment(f));
 		}
-		/**
-		public DoComp filter(Function f){
-			return new DoComp(assigned.plus(assigned.size(),new Entry("$$internalGUARD"+assigned.size(),new Guard(f))));
-		}**/
+		
 		protected <T> T yieldInternal(Function f){
 			return (T)ForComprehensions.foreachX(c->build(c,f));
 		}

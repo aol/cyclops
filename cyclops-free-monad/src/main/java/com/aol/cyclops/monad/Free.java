@@ -1,6 +1,7 @@
 package com.aol.cyclops.monad;
 
 import static com.aol.cyclops.trampoline.Trampoline.done;
+import static com.aol.cyclops.trampoline.Trampoline.more;
 import static fj.data.Either.left;
 import static fj.data.Either.right;
 
@@ -69,7 +70,8 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 		val result = toReturn.get();
 		if(result.isLeft())
 			return done(result.left().value());
-		return Trampoline.more(()->result.right().value().resume(f));
+		
+		return more(()->result.right().value().resume(f));
 		
 	}
 	
@@ -150,11 +152,15 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 			return new GoSub<>(free,a-> new GoSub<>(next.apply(a),newFn));
 		}
 		
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		Either<Either<Functor<Free<F,A>>, A>,Free> handleGoSub(Functor<Free> f){
+			
 			return free.match(  newCase ->
 					newCase.isType((Return<A,F> r) -> right(next.apply(r.result)))
+					
 					.newCase().isType( (Suspend<A,F> s) -> left((f.map(o -> 
 							o.flatMap(next)))))
+							
 					.newCase().isType( (GoSub<A,F,B> y) -> right(y.free.flatMap(o ->
 			           y.next.apply(o).flatMap((Function)this.next))))
 			
