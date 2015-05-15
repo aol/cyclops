@@ -1,14 +1,18 @@
 package com.aol.cyclops.monad;
 
+import static com.aol.cyclops.trampoline.Trampoline.done;
 import static fj.data.Either.left;
 import static fj.data.Either.right;
 
 import java.util.function.Function;
 
 import lombok.Value;
+import lombok.val;
 
 import com.aol.cyclops.lambda.monads.Functor;
+import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
 import com.aol.cyclops.matcher.Matchable;
+import com.aol.cyclops.trampoline.Trampoline;
 
 import fj.data.Either;
 
@@ -17,6 +21,8 @@ import fj.data.Either;
  * experimental attempt at a Free Monad in Java
  * 
  * Inspired by http://www.slideshare.net/kenbot/running-free-with-the-monads
+ * and https://github.com/xuwei-k/free-monad-java/blob/master/src/main/java/free/Free.java
+ * and of course https://github.com/scalaz/scalaz/blob/series/7.2.x/core/src/main/scala/scalaz/Free.scala
  * 
  * Uses generic Functor interface
  * Builds an abstract tree of computations
@@ -46,14 +52,24 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 	
 	public <B> Free<F,B> flatMap(Function<A,Free<F,B>> fn);
 	
-	default <T1> Either<Free<F, A>, A> resume(Functor<T1> f){
+	default <T1> Trampoline<Either<Functor<Free<F,A>>, A>> resume(Functor<T1> f){
+		
+		val toReturn = new ImmutableClosedValue<Either<Either<Functor<Free<F,A>>, A>,Free>>();
+		
 		if(this instanceof GoSub){
-			return ((GoSub)this).handleGoSub(f);
+			toReturn.getOrSet(()->((GoSub)this).handleGoSub(f));
+			
 		}
-		return this.match( newCase->
-			 newCase.isType( (Return r) -> right(r.result) )
-			.newCase().isType( (Suspend s) -> left(s.next) )		
-				);
+		toReturn.getOrSet(()->left(
+			this.match( newCase->
+							newCase.isType( (Return r) -> right(r.result) )
+							.newCase().isType( (Suspend s) -> left(s.next) )		
+				)));
+		
+		val result = toReturn.get();
+		if(result.isLeft())
+			return done(result.left().value());
+		return Trampoline.more(()->result.right().value().resume(f));
 		
 	}
 	
@@ -133,13 +149,14 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 		public <B1> Free<F, B1> flatMap(Function<B, Free<F, B1>> newFn) {
 			return new GoSub<>(free,a-> new GoSub<>(next.apply(a),newFn));
 		}
-		public  Either<Free<F, A>, A> handleGoSub(Functor<Free> f){
+		
+		Either<Either<Functor<Free<F,A>>, A>,Free> handleGoSub(Functor<Free> f){
 			return free.match(  newCase ->
-					newCase.isType((Return<A,F> r) -> next.apply(r.result).resume(f))
+					newCase.isType((Return<A,F> r) -> right(next.apply(r.result)))
 					.newCase().isType( (Suspend<A,F> s) -> left((f.map(o -> 
 							o.flatMap(next)))))
-					.newCase().isType( (GoSub<A,F,B> y) ->(Free)y.free.flatMap(o ->
-			           y.next.apply(o).flatMap((Function)this.next)).resume(f))
+					.newCase().isType( (GoSub<A,F,B> y) -> right(y.free.flatMap(o ->
+			           y.next.apply(o).flatMap((Function)this.next))))
 			
 				);
 							

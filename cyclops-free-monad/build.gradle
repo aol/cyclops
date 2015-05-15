@@ -16,9 +16,11 @@ repositories {
 dependencies {
 	compile "org.functionaljava:functionaljava:4.3"
 	compile "org.functionaljava:functionaljava-java8:4.3"
+	compile project(':cyclops-pattern-matching')
+	compile project(':cyclops-trampoline')
 	compile project(':cyclops-lambda-utils')
 	testCompile project(':cyclops-for-comprehensions')
-	testCompile project(':cyclops-pattern-matching')
+
     testCompile group: 'junit', name: 'junit', version: '4.+'
 }
 
