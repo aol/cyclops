@@ -15,6 +15,7 @@ import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 public interface Decomposable{
 	
 	
+	
 	/**
 	 * @return Values of the fields of this Decomposable instance
 	 */

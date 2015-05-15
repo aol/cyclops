@@ -5,7 +5,46 @@ Two supported formats
 1. scala like syntax
 2. do nototation
 
-Scala-like for syntax slightly more strict than do notation.
+
+
+# Do Notation
+
+	List<Integer> list= Arrays.asList(1,2,3);
+	
+	Stream<Integer> stream = Do.with(list)
+								.yield((Integer i)-> i +2);
+				
+										
+		
+	assertThat(Arrays.asList(3,4,5),equalTo(stream.collect(Collectors.toList())));
+
+
+Yield, Filter and 'and' take curried functions
+
+(That is a chain of single input parameter functions)
+
+		Stream<Integer> stream = Do.with(asList(20,30))
+								   .and((Integer i)->asList(1,2,3))
+								   .yield((Integer i)-> (Integer j) -> i + j+2);
+
+Parameters are stack based, the parameter to the first function is an index into the first Collection or Monad, the parameter to the second function is an index into the second Collection or Monad and so on.
+
+The above code could be rewritten as 
+
+		Stream<Integer> stream = Do.with(asList(20,30))
+								   .and((Integer any)->asList(1,2,3))
+								   .yield((Integer x)-> (Integer y) -> x + y+2);
+
+And it would work in exactly the same way
+
+		List<Integer> list= Arrays.asList(1,2,3);
+		Stream<Integer> stream = Do.with(list)
+								.filter((Integer a) -> a>2)
+								.yield((Integer a)-> a +2);
+				
+										
+		
+		assertThat(Arrays.asList(5),equalTo(stream.collect(Collectors.toList())));
 
 
 # for comprehensions explained
@@ -144,23 +183,6 @@ Supplier to CompletableFuture
 To support Monads that use non standard Functional interfaces, Cyclops will create / cache and reuse dynamic proxies that wrap JDK8 Functional interfaces in suitable wrappers.
 
 
-# Do Notation
-
-	List<Integer> list= Arrays.asList(1,2,3);
-	Stream<Integer> stream = Do.assign(a, list)
-								.filter(λ1((Integer a) -> a>2))
-								.yield(λ1((Integer a)-> a +2) );
-				
-										
-		
-		assertThat(Arrays.asList(5),equalTo(stream.collect(Collectors.toList())));
-
-
-Yield and Filter take curried functions
-
-		Stream<Integer> stream = Do.assign(Do.Letters.a, asList(20,30))
-								   .assign(Do.Letters.b, asList(1,2,3))
-								   .yield(λ2((Integer a)-> (Integer b) -> a + b+2) );
 
 ## Cyclops Monadic For Comprehensions
 

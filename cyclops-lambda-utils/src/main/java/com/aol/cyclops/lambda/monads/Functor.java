@@ -71,7 +71,7 @@ public interface Functor<T> {
 		});
 	}
 	default <X> X unwrap(){
-		if(getFunctor() instanceof Functor)
+		if(getFunctor()!=this && getFunctor() instanceof Functor)
 			return (X)((Functor)getFunctor()).unwrap();
 		return (X)getFunctor();
 	}

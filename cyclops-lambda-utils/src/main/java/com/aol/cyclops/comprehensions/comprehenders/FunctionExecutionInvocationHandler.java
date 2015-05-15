@@ -14,6 +14,12 @@ public class FunctionExecutionInvocationHandler implements InvocationHandler{
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
+		if("toString".equals (method.getName()) && method.getParameterCount()==0)
+			return function.toString();
+		if("hashCode".equals (method.getName()) && method.getParameterCount()==0)
+			return function.hashCode();
+		if("equals".equals (method.getName()) && method.getParameterCount()==1)
+			return function.equals(args[0]);
 		return function.apply(args[0]);
 	}
 }

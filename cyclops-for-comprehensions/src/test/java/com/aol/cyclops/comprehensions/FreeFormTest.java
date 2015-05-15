@@ -1,8 +1,5 @@
 package com.aol.cyclops.comprehensions;
 import static com.aol.cyclops.comprehensions.ForComprehensions.foreachX;
-import static com.aol.cyclops.comprehensions.donotation.Do.letters;
-import static com.aol.cyclops.comprehensions.donotation.Do.Letters.*;
-import static com.aol.cyclops.comprehensions.functions.Lambda.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -15,8 +12,6 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.comprehensions.donotation.Do;
-import com.aol.cyclops.comprehensions.donotation.Do.Letters;
-import com.aol.cyclops.comprehensions.functions.Lambda;
 public class FreeFormTest {
 
 	MyComprehension<Custom2,Custom2> comp = ForComprehensions.custom(Custom2.class);
@@ -34,8 +29,8 @@ public class FreeFormTest {
 	@Test
 	public void freeFormDo(){
 		List<Integer> list= Arrays.asList(1,2,3);
-		Stream<Integer> stream = Do.assign(Do.Letters.a, list)
-								.yield(λ1((Integer a)-> a +2) );
+		Stream<Integer> stream = Do.with(()->list)
+								.yield((Integer a)-> a +2);
 				
 										
 		
@@ -45,9 +40,9 @@ public class FreeFormTest {
 	@Test
 	public void freeFormDoWithFilter(){
 		List<Integer> list= Arrays.asList(1,2,3);
-		Stream<Integer> stream = Do.assign(a, list)
-								.filter(λ1((Integer a) -> a>2))
-								.yield(λ1((Integer a)-> a +2) );
+		Stream<Integer> stream = Do.with(list)
+								.filter((Integer a) -> a>2)
+								.yield((Integer a)-> a +2);
 				
 										
 		
@@ -56,9 +51,9 @@ public class FreeFormTest {
 	}
 	@Test
 	public void freeFormDo2(){
-		Stream<Integer> stream = Do.assign(a, asList(20,30))
-								   .assign(b, asList(1,2,3))
-								   .yield(λ2((Integer a)-> (Integer b) -> a + b+2) );
+		Stream<Integer> stream = Do.with(asList(20,30))
+								   .and((Integer i)->asList(1,2,3))
+								   .yield((Integer a)-> (Integer b) -> a + b+2);
 			
 	}
 	

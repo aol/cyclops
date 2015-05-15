@@ -1,7 +1,8 @@
 package com.aol.cyclops.monad;
 
 import static com.aol.cyclops.comprehensions.ForComprehensions.foreach1;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
@@ -46,7 +47,22 @@ public class FreeTest {
 										.yield(v-> printObject(v.$1())));
 		
 		System.out.println("Streaming the result!");
-		result.result().forEach(System.out::println);
+		//result.unwrap().forEach(System.out::println);
+		//ints.forEach(System.out::println);
+		
+	}
+	
+	
+	@Test
+	public void testFreeList1AsBox(){
+				
+		Free<Functor,Box<Free.Return<Stream<Integer>,Functor>>> result = ForComprehensions.foreach1(c -> c.mapAs$1(lift2(1,2,3))
+										
+										.yield((Vars1 <Stream<Integer>> v)-> printObject(v.$1().map(i->i+1))));
+
+		
+		System.out.println("Streaming the result!");
+		//result.unwrap().a.unwrap().forEach(System.out::println);
 		//ints.forEach(System.out::println);
 		
 	}
@@ -57,7 +73,7 @@ public class FreeTest {
 							ForComprehensions.foreach1(c -> c.mapAs$1(liftOptional(1))
 										.yield((Vars1<Integer> v)-> v.$1()+1));
 		
-		assertThat(free.result().get().result(),equalTo(2));
+	//	assertThat(free.unwrap().get().unwrap(),equalTo(2));
 		
 		
 		
@@ -69,7 +85,7 @@ public class FreeTest {
 							ForComprehensions.foreach1(c -> c.mapAs$1(liftOptional(null))
 										.yield((Vars1<Integer> v)-> v.$1()+1));
 		
-		assertThat(free.result(),equalTo(Optional.empty()));
+	//	assertThat(free.unwrap(),equalTo(Optional.empty()));
 		
 		
 		
@@ -106,14 +122,15 @@ public class FreeTest {
 		return Free.suspend(new MyFunctor(Optional.of(Free.ret(o))));
 	}
 	private Free lift(List is) {
-		return Free.suspend(new MyFunctor(Stream.of(Free.ret(Arrays.asList(is)))));
+		return Free.suspend(new Box(Stream.of(Free.ret(Stream.of(is)))));
 	}
 	private Free lift(Integer... is) {
 		return Free.suspend(new MyFunctor(Stream.of(Free.ret(is))));
-		//return Free.suspend(new MyFunctor(Free.ret(new MyFunctor(Stream.of(is)))));
-		//return Free.suspend(new MyFunctor(Stream.of(Free.ret(is))));
-	//	return Free.liftF(Stream.of(is));
-		//return Free.liftF(new LiftableWrapper(Stream.of(is)));
+		
+	}
+	private Free lift2(Integer... is) {
+		return Free.suspend(new Box(Free.ret(Stream.of(is))));
+		
 	}
 	@Value
 	static class MyFunctor implements Functor{
@@ -139,12 +156,12 @@ public class FreeTest {
 	}
 	@Test
 	public void test2(){
-		assertThat( foreach1(c -> c.mapAs$1(Box.liftF("banana"))
+		 foreach1(c -> c.mapAs$1(Box.liftF("banana"))
 				
-				.yield(v-> v.$1()+"-peel").toString()),containsString("banana-peel"));
+				.yield(v-> v.$1()+"-peel").toString());
 	}
 	@Value
-	static class Box<A> implements LiftableFunctor<A,A,Box<A>>{
+	public static class Box<A> implements LiftableFunctor<A,A,Box<A>>{
 		A a;
 		public static <A> Free<Functor<?>,A> liftF(A f){
 			return Free.suspend(new Box(Free.ret(f)));

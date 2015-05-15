@@ -78,8 +78,11 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 * @return New Cases instance (sequential)
 	 */
 	public static <T,R,X extends Function<T,R>>  Cases<T,R,X> of(Case<T,R,X>... cazes){
-		return ofPStack(Stream.of(cazes).map(ConsPStack::singleton)
+		return ofPStack(
+				Stream.of(cazes)
+				.map(ConsPStack::singleton)
 				.reduce(ConsPStack.empty(),(acc,next)-> acc.plus(acc.size(),next.get(0))));
+			
 	}
 	/**
 	 * Zip two Streams into pattern Matching Cases

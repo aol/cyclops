@@ -14,7 +14,8 @@ repositories {
 }
 
 dependencies {
-	compile 'net.jodah:typetools:0.4.1'
+	compile "org.functionaljava:functionaljava:4.3"
+	compile "org.functionaljava:functionaljava-java8:4.3"
 	compile project(':cyclops-lambda-utils')
 	testCompile project(':cyclops-for-comprehensions')
 	testCompile project(':cyclops-pattern-matching')
