@@ -2,10 +2,11 @@ package com.aol.cyclops.matcher;
 
 import java.util.function.Function;
 
-import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.matcher.builders.ElementCase;
 import com.aol.cyclops.matcher.builders.Matching;
 import com.aol.cyclops.matcher.builders.MatchingInstance;
+import com.aol.cyclops.matcher.builders.PatternMatcher;
+import com.aol.cyclops.matcher.builders.SimplestCase;
 import com.aol.cyclops.matcher.builders._Case;
 
 
@@ -31,9 +32,10 @@ public interface Matchable{
 	 * @param fn Function to build the matching expression
 	 * @return Matching result
 	 */
-	default <R,I> R match(Function<ElementCase<I>,MatchingInstance> fn){
-		return (R)fn.apply( Matching.newCase()).match(this).get();
-	}
+	default <R,I> R match(Function<SimplestCase<I>,SimplestCase> fn){
+		return (R)new MatchingInstance(fn.apply( new SimplestCase( new PatternMatcher()))).match(this).get();
+	} //desired api for this should be this.match ( c-> caseOf( (Return r)-> doSomething(r)
+		//										.caseOf( (Suspend s)-> doSomething(s));
 	/**
 	 * Match against this matchable using simple matching interface
 	 * 

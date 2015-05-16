@@ -153,13 +153,13 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 		public <T1> Trampoline<Either<Functor<Free<F, B>>, B>> resume(
 				Functor<T1> f) {
 			
-			Either<Either<Functor<Free<F,A>>, A>,Free> res= free.match(  newCase ->
-			newCase.isType((Return<A,F> r) -> right(next.apply(r.result)))
+			Either<Either<Functor<Free<F,A>>, A>,Free> res= free.match(  c ->
+			c.caseOf((Return<A,F> r) -> right(next.apply(r.result)))
 			
-			.newCase().isType( (Suspend<A,F> s) -> left((f.map(o -> 
+			.caseOf( (Suspend<A,F> s) -> left((f.map(o -> 
 					((Free) o).flatMap(next)))))
 					
-			.newCase().isType( (GoSub<A,F,B> y) -> right(y.free.flatMap(o ->
+			.caseOf( (GoSub<A,F,B> y) -> right(y.free.flatMap(o ->
 	           y.next.apply(o).flatMap((Function)this.next))))
 	
 		);
