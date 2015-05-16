@@ -2,6 +2,20 @@
 
 Super charge your JDK with one view into the functional Java world with
 
+
+
+      cyclops-lambda-utils
+             cyclops-for-comprehensions
+             cyclops-pattern-matching
+             	cyclops-integration
+             	cyclops-power-tuples
+             	 
+             cyclops-trampoline
+             cyclops-enable-switch
+             cyclops-try
+            
+             
+
 cyclops-converters, cyclops-pattern-matching, cyclops-lambda-utils, cyclops-for-comprehensions, cyclops-enable-switch
 
 Still to document - 
