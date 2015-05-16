@@ -9,8 +9,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.experimental.Wither;
 
 import com.aol.cyclops.lambda.api.TupleWrapper;
 
@@ -29,6 +32,7 @@ import com.aol.cyclops.lambda.api.TupleWrapper;
  * @param <T6>
  */
 @EqualsAndHashCode
+@AllArgsConstructor(access=AccessLevel.PRIVATE)
 class TupleImpl<T1,T2,T3,T4,T5,T6,T7,T8> implements TupleWrapper,  PTuple8<T1,T2,T3,T4,T5,T6,T7,T8>{
 	@Getter
 	private final Object instance;
@@ -36,7 +40,7 @@ class TupleImpl<T1,T2,T3,T4,T5,T6,T7,T8> implements TupleWrapper,  PTuple8<T1,T2
 	
 	@Getter
 	private final List<Object> cachedValues;
-	
+	@Wither
 	private final  int arity;
 	
 	private final List<Object> empty = Arrays.asList();

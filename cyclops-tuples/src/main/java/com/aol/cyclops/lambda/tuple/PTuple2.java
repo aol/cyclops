@@ -3,7 +3,6 @@ package com.aol.cyclops.lambda.tuple;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
@@ -12,7 +11,7 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
 import lombok.AllArgsConstructor;
-
+import lombok.val;
 
 import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
 
@@ -108,8 +107,35 @@ public interface PTuple2<T1,T2> extends PTuple1<T1> {
 		return of(v1(),fn.apply(v2()));
 	}
 	default PTuple1<T1> tuple1(){
-		return this;
+		return (PTuple1<T1>)this.withArity(1);
 	}
+	default <NT1,NT2> PTuple2<NT1,NT2> reorder(Function<PTuple2<T1,T2>,NT1> v1S, Function<PTuple2<T1,T2>,NT2> v2S){
+		
+		val host = this;
+			return new TupleImpl(Arrays.asList(),2){
+				public NT1 v1(){
+					return v1S.apply(host); 
+				}
+				public NT2 v2(){
+					return v2S.apply(host); 
+				}
+
+				
+				@Override
+				public List<Object> getCachedValues() {
+					return Arrays.asList(v2(),v1());
+				}
+
+				@Override
+				public Iterator iterator() {
+					return getCachedValues().iterator();
+				}
+
+				
+			};
+			
+		}
+	
 	
 	default PTuple2<T2,T1> swap2(){
 		return of(v2(),v1());

@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class ReflectionCache {
+public class ReflectionCache {
 	private final static Map<Class,List<Field>> fields = new ConcurrentHashMap<>();
 
 	private final static Map<Class,Optional<Method>> unapplyMethods =new ConcurrentHashMap<>();

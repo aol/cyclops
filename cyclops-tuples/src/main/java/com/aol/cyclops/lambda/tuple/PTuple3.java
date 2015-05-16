@@ -3,10 +3,10 @@ package com.aol.cyclops.lambda.tuple;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
@@ -166,14 +166,44 @@ public interface PTuple3<T1,T2,T3> extends PTuple2<T1,T2> {
 		return of(v1(),v2(),fn.apply(v3()));
 	}
 	default PTuple1<T1> tuple1(){
-		return this;
+		return (PTuple1<T1>)this.withArity(1);
 	}
+	
 	default PTuple2<T1,T2> tuple2(){
-		return this;
+		return (PTuple2<T1,T2>)this.withArity(2);
 	}
 	default PTuple3<T3,T2,T1> swap3(){
 		return of(v3(),v2(),v1());
 	}
+	
+	default <NT1,NT2,NT3> PTuple3<NT1,NT2,NT3> reorder(Function<PTuple3<T1,T2,T3>,NT1> v1S, Function<PTuple3<T1,T2,T3>,NT2> v2S,Function<PTuple3<T1,T2,T3>,NT3> v3S){
+			
+		PTuple3<T1,T2,T3> host = this;
+			return new TupleImpl(Arrays.asList(),3){
+				public NT1 v1(){
+					return v1S.apply(host); 
+				}
+				public NT2 v2(){
+					return v2S.apply(host); 
+				}
+
+				public NT3 v3(){
+					return v3S.apply(host); 
+				}
+				@Override
+				public List<Object> getCachedValues() {
+					return Arrays.asList(v2(),v1());
+				}
+
+				@Override
+				public Iterator iterator() {
+					return getCachedValues().iterator();
+				}
+
+				
+			};
+			
+		}
 	
 	public static ThreeNumbers asThreeNumbers(PTuple3<Number,Number,Number> numbers){
 		return new ThreeNumbers(numbers);

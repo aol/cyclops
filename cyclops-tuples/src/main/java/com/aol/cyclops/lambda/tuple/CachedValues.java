@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.val;
 
+import com.aol.cyclops.comprehensions.donotation.Doable;
 import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.lambda.utils.ClosedVar;
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
@@ -25,7 +26,7 @@ public interface CachedValues extends Iterable, Decomposable, Matchable,Doable{
 
 	public List<Object> getCachedValues();
 	
-	
+	CachedValues withArity(int arity);
 	@AllArgsConstructor
 	public static class ConvertStep<T extends CachedValues>{
 		private final T c;
@@ -49,7 +50,7 @@ public interface CachedValues extends Iterable, Decomposable, Matchable,Doable{
 			return new ParamMatcher().create(to, arity(), getCachedValues(),e);
 			
 		}
-		return null;
+		
 		
 		
 	}

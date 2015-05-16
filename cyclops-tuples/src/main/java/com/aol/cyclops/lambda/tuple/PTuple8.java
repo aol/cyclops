@@ -3,13 +3,9 @@ package com.aol.cyclops.lambda.tuple;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
-
-
-
 
 import com.aol.cyclops.comprehensions.functions.OctFunction;
 import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
@@ -106,7 +102,7 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 		
 		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
-		return new PTuple8<T,T2,T3,T4,T5,T6,T7,T8>(){
+		return new TupleImpl(8){
 			public T v1(){
 				return value.getOrSet(()->fn.apply(PTuple8.this.v1())); 
 			}
@@ -136,7 +132,7 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 		
 		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
-		return new PTuple8<T1,T,T3,T4,T5,T6,T7,T8>(){
+		return new TupleImpl<T1,T,T3,T4,T5,T6,T7,T8>(8){
 			
 			public T v2(){
 				return value.getOrSet(()->fn.apply(PTuple8.this.v2())); 
@@ -178,7 +174,7 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 		
 	
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
-		return new PTuple8<T1,T2,T,T4,T5,T6,T7,T8>(){
+		return new TupleImpl(8){
 			
 			public T v3(){
 				return value.getOrSet(()->fn.apply(PTuple8.this.v3())); 
@@ -219,7 +215,7 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 		
 		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
-		return new PTuple8<T1,T2,T3,T,T5,T6,T7,T8>(){
+		return new TupleImpl(8){
 			
 			public T v4(){
 				return value.getOrSet(()->fn.apply(PTuple8.this.v4())); 
@@ -260,7 +256,7 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 		
 		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
-		return new PTuple8<T1,T2,T3,T4,T,T6,T7,T8>(){
+		return new TupleImpl(8){
 			
 			public T v5(){
 				return value.getOrSet(()->fn.apply(PTuple8.this.v5())); 
@@ -303,7 +299,7 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 		
 		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
-		return new PTuple8<T1,T2,T3,T4,T5,T,T7,T8>(){
+		return new TupleImpl(8){
 			
 			public T v6(){
 				return value.getOrSet(()->fn.apply(PTuple8.this.v6())); 
@@ -347,7 +343,7 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 		
 		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
-		return new PTuple8<T1,T2,T3,T4,T5,T6,T,T8>(){
+		return new TupleImpl(8){
 			
 			public T v7(){
 				return value.getOrSet(()->fn.apply(PTuple8.this.v7())); 
@@ -391,7 +387,7 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 		
 		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
-		return new PTuple8<T1,T2,T3,T4,T5,T6,T7,T>(){
+		return new TupleImpl(8){
 			
 			public T v8(){
 				return value.getOrSet(()->fn.apply(PTuple8.this.v8())); 

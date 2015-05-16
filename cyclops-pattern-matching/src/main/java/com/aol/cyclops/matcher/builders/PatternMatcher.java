@@ -279,7 +279,7 @@ public class PatternMatcher implements Function{
 		
 		
 		return caseOfThenExtract(it -> seq(it).zip(pred)
-				.map(t -> t.v2.test((V)t.v1)).allMatch(v->v==true), a, this::wrapInList);
+				.map(t -> t.v2.test((V)t.v1)).allMatch(v-> v), a, this::wrapInList);
 		
 	}
 	/**
@@ -671,18 +671,8 @@ public class PatternMatcher implements Function{
 
 
 	
-	private final static Object NO_VALUE = new Object();
-	public static class ActionWithReturnWrapper<T,X> implements ActionWithReturn<T,X>{
-		private final Action<T> action;
-		public ActionWithReturnWrapper(Action<T> action){
-			this.action = action;
-		}
-		
-		public X apply(T t){
-			action.accept(t);
-			return (X)NO_VALUE;
-		}
-	}
+
+	
 	
 	
 	

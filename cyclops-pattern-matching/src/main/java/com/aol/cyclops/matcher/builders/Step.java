@@ -2,7 +2,7 @@ package com.aol.cyclops.matcher.builders;
 
 import com.aol.cyclops.matcher.Action;
 import com.aol.cyclops.matcher.ActionWithReturn;
-import com.aol.cyclops.matcher.builders.PatternMatcher.ActionWithReturnWrapper;
+import com.aol.cyclops.matcher.builders.ActionWithReturnWrapper;
 
 public interface Step<T,X>{
 	

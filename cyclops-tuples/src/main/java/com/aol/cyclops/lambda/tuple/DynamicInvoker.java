@@ -66,10 +66,6 @@ public class DynamicInvoker {
 	static class Invoker{
 		private Object executeMethod(Object t, Method m, Class z) {
 			try {
-				
-				
-				
-
 				return callSites.computeIfAbsent(m, (m2) ->  {
 					try {
 						return new ConstantCallSite(MethodHandles.publicLookup().unreflect(m2));
