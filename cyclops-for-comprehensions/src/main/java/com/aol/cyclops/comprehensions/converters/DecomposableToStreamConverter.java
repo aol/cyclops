@@ -20,7 +20,7 @@ public class DecomposableToStreamConverter implements MonadicConverter<Stream> {
 
 	@Override
 	public Seq convertToMonadicForm(Object f) {
-		return Seq.seq(((Decomposable)f).unapply());
+		return Seq.seq((Iterable)((Decomposable)f).unapply());
 	}
 
 }

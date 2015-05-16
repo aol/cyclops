@@ -51,7 +51,7 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 		return CompletableFuture.completedFuture(v8())
 				.thenApplyAsync(fn.apply(v1()).apply(v2()).apply(v3()).apply(v4()).apply(v5()).apply(v6()).apply(v7()),e);
 	}
-	
+	/**
 	default PTuple1<T1> tuple1(){
 		return this;
 	}
@@ -69,9 +69,9 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 	}
 	default PTuple6<T1,T2,T3,T4,T5,T6> tuple6(){
 		return this;
-	}
-	default PTuple7<T1,T2,T3,T4,T5,T6,T7> Tuple8(){
-		return this;
+	}**/
+	default PTuple7<T1,T2,T3,T4,T5,T6,T7> Tuple7(){
+		return (PTuple7)withArity(7);
 	}
 	default PTuple8<T8,T7,T6,T5,T4,T3,T2,T1> swap8(){
 		return of(v8(),v7(),v6(),v5(),v4(),v3(),v2(),v1());

@@ -1,4 +1,4 @@
-apply plugin: 'groovy'
+apply plugin: 'java'
 apply plugin: 'eclipse'
 
 sourceCompatibility = 1.8
@@ -23,20 +23,7 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.+'
 	testCompile group: 'org.hsqldb', name:'hsqldb', version:'2.0.0'
 }
-sourceSets {
-	main {
-		java { srcDirs = []}
-		groovy { srcDirs = ['src/main/java'] }
-		resources { srcDir 'src/main/resources' }
-	}
 
-	test {
-		java { srcDirs = []}
-		groovy { srcDirs = ['src/test/java'] }
-		resources { srcDir 'src/test/resources' }
-	}
-	
-}
 
 test {
     systemProperties 'property': 'value'

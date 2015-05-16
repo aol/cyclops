@@ -8,7 +8,7 @@ import lombok.Value;
 
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.api.CoerceToDecomposable;
+import com.aol.cyclops.lambda.api.AsDecomposable;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -17,7 +17,7 @@ public class CoerceToDecomposableTest {
 
 	@Test
 	public void test() {
-		assertThat(CoerceToDecomposable.coerceToDecomposable(new MyCase("key",10))
+		assertThat(AsDecomposable.asDecomposable(new MyCase("key",10))
 				.unapply(),equalTo(Arrays.asList("key",10)));
 	}
 	

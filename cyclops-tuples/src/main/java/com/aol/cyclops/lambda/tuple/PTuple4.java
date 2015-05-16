@@ -3,13 +3,11 @@ package com.aol.cyclops.lambda.tuple;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-
-
+import lombok.val;
 
 import com.aol.cyclops.comprehensions.functions.QuadFunction;
 import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
@@ -56,14 +54,40 @@ public interface PTuple4<T1,T2,T3,T4> extends PTuple3<T1,T2,T3> {
 	}
 	
 	
-	default PTuple1<T1> tuple1(){
-		return this;
-	}
-	default PTuple2<T1,T2> tuple2(){
-		return this;
-	}
+	default <NT1,NT2,NT3,NT4> PTuple4<NT1,NT2,NT3,NT4> reorder(Function<PTuple4<T1,T2,T3,T4>,NT1> v1S, Function<PTuple4<T1,T2,T3,T4>,NT2> v2S,
+										Function<PTuple4<T1,T2,T3,T4>,NT3> v3S,Function<PTuple4<T1,T2,T3,T4>,NT4> v4S){
+		
+		val host = this;
+			return new TupleImpl(Arrays.asList(),4){
+				public NT1 v1(){
+					return v1S.apply(host); 
+				}
+				public NT2 v2(){
+					return v2S.apply(host); 
+				}
+
+				public NT3 v3(){
+					return v3S.apply(host); 
+				}
+				public NT4 v4(){
+					return v4S.apply(host); 
+				}
+				@Override
+				public List<Object> getCachedValues() {
+					return Arrays.asList(v1(),v2(),v3(),v4());
+				}
+
+				@Override
+				public Iterator iterator() {
+					return getCachedValues().iterator();
+				}
+
+				
+			};
+			
+		}
 	default PTuple3<T1,T2,T3> tuple3(){
-		return this;
+		return (PTuple3<T1,T2,T3>)withArity(3);
 	}
 	default PTuple4<T4,T3,T2,T1> swap4(){
 		return of(v4(),v3(),v2(),v1());

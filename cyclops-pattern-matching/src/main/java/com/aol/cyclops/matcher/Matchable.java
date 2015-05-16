@@ -2,7 +2,6 @@ package com.aol.cyclops.matcher;
 
 import java.util.function.Function;
 
-import com.aol.cyclops.matcher.builders.ElementCase;
 import com.aol.cyclops.matcher.builders.Matching;
 import com.aol.cyclops.matcher.builders.MatchingInstance;
 import com.aol.cyclops.matcher.builders.PatternMatcher;
@@ -23,28 +22,27 @@ public interface Matchable{
 	 * 
 	 * {@code 
 	 * return match(c -> 
-							c.isType( (Put p) -> putRecord(p.key,p.value))
-							.newCase().isType((Delete d) -> deleteRecord(d.key))
-							.newCase().isType((Get g) -> getRecord(g.key))
+						c.caseOf( (Put p) -> new Put(p.key,p.value,(Action)fn.apply(p.next)))
+						 .caseOf((Delete d) -> new Delete(d.key,(Action)fn.apply(d.next)))
+						 .caseOf((Get g) -> new Get(g.key,(Function)g.next.andThen(fn)))
 					);
 	 * }
 	 * 
 	 * @param fn Function to build the matching expression
 	 * @return Matching result
 	 */
-	default <R,I> R match(Function<SimplestCase<I>,SimplestCase> fn){
-		return (R)new MatchingInstance(fn.apply( new SimplestCase( new PatternMatcher()))).match(this).get();
-	} //desired api for this should be this.match ( c-> caseOf( (Return r)-> doSomething(r)
-		//										.caseOf( (Suspend s)-> doSomething(s));
+	default <R> R match(Function<SimplestCase<? super R>,SimplestCase<? super R>> fn){
+		return new MatchingInstance<Object,R>(fn.apply( new SimplestCase<>( new PatternMatcher()))).match(this).get();
+	} 
 	/**
 	 * Match against this matchable using simple matching interface
 	 * 
 	 * {@code 
 	 * return match(c -> 
-							c.isType( (Put p) -> putRecord(p.key,p.value))
-							.newCase().isType((Delete d) -> deleteRecord(d.key))
-							.newCase().isType((Get g) -> getRecord(g.key)),
-							noOperation()
+						 c.caseOf( (Put p) -> new Put(p.key,p.value,(Action)fn.apply(p.next)))
+						 .caseOf((Delete d) -> new Delete(d.key,(Action)fn.apply(d.next)))
+						 .caseOf((Get g) -> new Get(g.key,(Function)g.next.andThen(fn)))
+						 noOperation()
 					);
 	 * }
 	 * 
@@ -52,8 +50,8 @@ public interface Matchable{
 	 * @param defaultValue Default value if matching expression does not match
 	 * @return Matching result
 	 */
-	default <R,I> R match(Function<ElementCase<I>,MatchingInstance> fn,R defaultValue){
-		return (R)fn.apply( Matching.newCase()).match(this).orElse(defaultValue);
+	default <R> R match(Function<SimplestCase<? super R>,SimplestCase<? super R>> fn,R defaultValue){
+		return new MatchingInstance<Object,R>(fn.apply( new SimplestCase<>( new PatternMatcher()))).match(this).orElse(defaultValue);
 	}
 	/**
 	 * Match against this matchable using algebraic matching interface (each field can

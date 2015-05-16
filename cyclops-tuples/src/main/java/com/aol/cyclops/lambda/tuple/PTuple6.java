@@ -53,7 +53,7 @@ public interface PTuple6<T1,T2,T3,T4,T5,T6> extends PTuple5<T1,T2,T3,T4,T5> {
 		return CompletableFuture.completedFuture(v6())
 				.thenApplyAsync(fn.apply(v1()).apply(v2()).apply(v3()).apply(v4()).apply(v5()),e);
 	}
-	
+	/**
 	default PTuple1<T1> tuple1(){
 		return this;
 	}
@@ -65,9 +65,9 @@ public interface PTuple6<T1,T2,T3,T4,T5,T6> extends PTuple5<T1,T2,T3,T4,T5> {
 	}
 	default PTuple4<T1,T2,T3,T4> tuple4(){
 		return this;
-	}
+	} **/
 	default PTuple5<T1,T2,T3,T4,T5> tuple5(){
-		return this;
+		return (PTuple5)withArity(5);
 	}
 	default PTuple6<T6,T5,T4,T3,T2,T1> swap6(){
 		return of(v6(),v5(),v4(),v3(),v2(),v1());

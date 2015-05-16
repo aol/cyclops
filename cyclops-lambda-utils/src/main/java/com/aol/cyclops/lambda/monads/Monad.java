@@ -20,6 +20,9 @@ import com.aol.cyclops.lambda.api.Comprehender;
  * A generalised view into Any Monad (that implements flatMap or bind and accepts any function definition
  * with an arity of 1).
  * 
+ * NB the intended use case is to wrap already existant Monad-like objects from diverse sources, to improve
+ * interoperability
+ * 
  * @author johnmcclean
  *
  * @param <T>

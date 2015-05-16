@@ -11,6 +11,9 @@ import java.util.function.Function;
 
 
 
+
+import lombok.val;
+
 import com.aol.cyclops.comprehensions.functions.QuintFunction;
 import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
 
@@ -255,23 +258,65 @@ public interface PTuple5<T1,T2,T3,T4,T5> extends PTuple4<T1,T2,T3,T4> {
 	default <T> PTuple5<T1,T2,T3,T4,T> map5(Function<T5,T> fn){
 		return of(v1(),v2(),v3(),v4(),fn.apply(v5()));
 	}
-	
-	default PTuple1<T1> tuple1(){
-		return this;
-	}
-	default PTuple2<T1,T2> tuple2(){
-		return this;
-	}
-	default PTuple3<T1,T2,T3> tuple3(){
-		return this;
-	}
+
 	default PTuple4<T1,T2,T3,T4> tuple4(){
-		return this;
-	}
+		return (PTuple4)withArity(4);
+	} 
 	default PTuple5<T5,T4,T3,T2,T1> swap5(){
 		return of(v5(),v4(),v3(),v2(),v1());
 	}
-	
+
+	/**
+	 * Lazily reorder a PTuple5 or both a narrow and reorder a larger Tuple
+	 * 
+	 * @param v1S
+	 * @param v2S
+	 * @param v3S
+	 * @param v4S
+	 * @param v5S
+	 * @return
+	 */
+	default <NT1, NT2, NT3, NT4,NT5> PTuple5<NT1, NT2, NT3, NT4,NT5> reorder(
+			Function<PTuple5<T1, T2, T3, T4,T5>, NT1> v1S,
+			Function<PTuple5<T1, T2, T3, T4,T5>, NT2> v2S,
+			Function<PTuple5<T1, T2, T3, T4,T5>, NT3> v3S,
+			Function<PTuple5<T1, T2, T3, T4,T5>, NT4> v4S,
+			Function<PTuple5<T1, T2, T3, T4,T5>, NT5> v5S) {
+
+		val host = this;
+		return new TupleImpl(Arrays.asList(), 5) {
+			public NT1 v1() {
+				return v1S.apply(host);
+			}
+
+			public NT2 v2() {
+				return v2S.apply(host);
+			}
+
+			public NT3 v3() {
+				return v3S.apply(host);
+			}
+
+			public NT4 v4() {
+				return v4S.apply(host);
+			}
+			public NT5 v5() {
+				return v5S.apply(host);
+			}
+
+			@Override
+			public List<Object> getCachedValues() {
+				return Arrays.asList(v1(), v2(), v3(), v4(),v5());
+			}
+
+			@Override
+			public Iterator iterator() {
+				return getCachedValues().iterator();
+			}
+
+		};
+
+}
 	public static <T1,T2,T3,T4,T5> PTuple5<T1,T2,T3,T4,T5> ofTuple(Object tuple5){
 		return (PTuple5)new TupleImpl(tuple5,5);
 	}

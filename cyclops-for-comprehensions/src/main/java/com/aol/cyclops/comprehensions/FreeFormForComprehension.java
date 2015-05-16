@@ -47,7 +47,7 @@ public class FreeFormForComprehension<X,V extends Initialisable<?>> {
 		return Foreach.foreach(new ContextualExecutor<R,Foreach<R>>(new Foreach<R>()){
 			@SuppressWarnings("rawtypes")
 			public R execute(){
-				return fn.apply(new ComprehensionData(new ExecutionState(this, state),varsClass));
+				return (R)fn.apply(new ComprehensionData(new ExecutionState(this, state),varsClass));
 			}
 
 			

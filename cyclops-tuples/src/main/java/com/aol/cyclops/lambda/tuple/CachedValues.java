@@ -19,10 +19,12 @@ import lombok.val;
 import com.aol.cyclops.comprehensions.donotation.Doable;
 import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.lambda.utils.ClosedVar;
-import com.aol.cyclops.lambda.utils.ExceptionSoftener;
-import com.aol.cyclops.matcher.Matchable;
+import com.aol.cyclops.matcher.builders.MatchingInstance;
+import com.aol.cyclops.matcher.builders.PatternMatcher;
+import com.aol.cyclops.matcher.builders._MembersMatchBuilder;
+import com.aol.cyclops.matcher.builders._Simpler_Case;
 
-public interface CachedValues extends Iterable, Decomposable, Matchable,Doable{
+public interface CachedValues extends Iterable, Decomposable, Doable{
 
 	public List<Object> getCachedValues();
 	
@@ -33,6 +35,20 @@ public interface CachedValues extends Iterable, Decomposable, Matchable,Doable{
 		public <X> X to(Class<X> to){
 			return (X)c.to(to);
 		}
+	}
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	default <R,T,I> R  match(Function<_MembersMatchBuilder<I,T>,_MembersMatchBuilder<I,T>> fn){
+		
+		return (R) new MatchingInstance(new _Simpler_Case( fn.apply( (_MembersMatchBuilder)
+					new _Simpler_Case(new PatternMatcher()).withType(this.getClass())).getPatternMatcher()))
+						.match(this).get();
+	}
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	default <R,T,I> R  match(Function<_MembersMatchBuilder<I,T>,_MembersMatchBuilder<I,T>> fn, R defaultValue){
+		
+		return (R) new MatchingInstance(new _Simpler_Case( fn.apply( (_MembersMatchBuilder)
+					new _Simpler_Case(new PatternMatcher()).withType(this.getClass())).getPatternMatcher()))
+						.match(this).orElse(defaultValue);
 	}
 	default <T extends CachedValues> ConvertStep<T> convert(){
 		return new ConvertStep(this);

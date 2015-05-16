@@ -25,14 +25,14 @@ public class SimplestCase<R> extends CaseBeingBuilt{
 	 * @param a Action for the new Case, Predicate for the Case will be created from the input type to the Action.
 	 * @return Completed Case
 	 */
-	public  <T> SimplestCase<R> caseOf(ActionWithReturn<T,R> a){
+	public  <T,R> SimplestCase<R> caseOf(ActionWithReturn<T,R> a){
 		
-		return this.withPatternMatcher(patternMatcher.inCaseOfType(a));
+		return (SimplestCase)this.withPatternMatcher(patternMatcher.inCaseOfType(a));
 		
 	}
-	public  <T> SimplestCase<R> caseOf(Class<T> t, Function<T,R> a){
+	public  <T,R> SimplestCase<R> caseOf(Class<T> t, Function<T,R> a){
 		
-		return this.withPatternMatcher(patternMatcher.withCases(Cases.of(Case.of(v-> v!=null && v.getClass().isAssignableFrom(t),a))));
+		return (SimplestCase)this.withPatternMatcher(patternMatcher.withCases(Cases.of(Case.of(v-> v!=null && v.getClass().isAssignableFrom(t),a))));
 		
 	}
 }

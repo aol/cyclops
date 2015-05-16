@@ -1,11 +1,14 @@
-## Dynamic Tuples
+## Power Tuples
 
-1. Wrap any Tuple type
+1. Wrap any Tuple type / Object (mapping fields to elements and back)
 2. Method call chaining support
 3. Asyncrhonous method call chaining support
 4. Inheritance relationship between Tuples
 5. Lazy and Strict map methods
-6. Useful utility methods (asStreamOfStrings, asTwoNumbers etc)
+6. Lazy reordering
+7. Pattern matching
+8. For comprehensions
+9. Useful utility methods (asStreamOfStrings, asTwoNumbers etc)
 
 ### Wrap any Tuple type
 

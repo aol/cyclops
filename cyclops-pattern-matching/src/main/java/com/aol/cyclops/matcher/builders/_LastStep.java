@@ -1,0 +1,22 @@
+package com.aol.cyclops.matcher.builders;
+
+import java.util.function.Predicate;
+
+import lombok.AllArgsConstructor;
+
+import com.aol.cyclops.matcher.ActionWithReturn;
+
+@AllArgsConstructor
+public  class _LastStep<X,V,T> {
+	
+	private final Class<T> clazz;
+	private final Predicate predicate;
+	private Predicate<V>[] predicates;
+	private final PatternMatcher patternMatcher;
+	
+	public final <X> _MembersMatchBuilder<X,T> then(ActionWithReturn<T,X> fn){
+		return new _Simpler_Case(patternMatcher.inCaseOfManyType(predicate, fn,
+				predicates)).withType(clazz);
+	}
+
+}

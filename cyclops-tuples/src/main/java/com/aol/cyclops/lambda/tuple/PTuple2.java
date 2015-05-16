@@ -123,7 +123,7 @@ public interface PTuple2<T1,T2> extends PTuple1<T1> {
 				
 				@Override
 				public List<Object> getCachedValues() {
-					return Arrays.asList(v2(),v1());
+					return Arrays.asList(v1(),v2());
 				}
 
 				@Override

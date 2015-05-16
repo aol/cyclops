@@ -14,10 +14,10 @@ import com.aol.cyclops.lambda.utils.ExceptionSoftener;
  * @author johnmcclean
  *
  */
-public class CoerceToMap {
+public class AsMap {
 
 	@SuppressWarnings("unchecked")
-	public static Map<String,?> toMap(Object o){
+	public static Map<String,?> asMap(Object o){
 		try {
 			
 			return (Map)Stream.of(o.getClass().getDeclaredFields())

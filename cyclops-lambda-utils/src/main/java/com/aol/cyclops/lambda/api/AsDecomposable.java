@@ -7,11 +7,11 @@ import lombok.AllArgsConstructor;
 
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
-public class CoerceToDecomposable {
+public class AsDecomposable {
 	
 	
 	
-	public static Decomposable coerceToDecomposable(Object toCoerce){
+	public static Decomposable asDecomposable(Object toCoerce){
 		return new CoercedDecomposable(toCoerce);
 	}
 	@AllArgsConstructor

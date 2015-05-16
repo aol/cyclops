@@ -69,7 +69,7 @@ public class ForComprehensions {
 	 * @param fn For comprehension
 	 * @return Result
 	 */
-	public static <R> R foreachX(Function<ComprehensionData<?,R,ComprehensionData<?,R,? extends Initialisable<?>>>,R> fn){
+	public static <R> R foreachX(Function<ComprehensionData<?,R,? extends Initialisable>,R> fn){
 		return (R)new FreeFormForComprehension().foreach((Function)fn);
 	}
 	

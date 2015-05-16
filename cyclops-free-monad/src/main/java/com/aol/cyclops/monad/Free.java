@@ -1,7 +1,5 @@
 package com.aol.cyclops.monad;
 
-import static com.aol.cyclops.monad.Free.Return.RETURN;
-import static com.aol.cyclops.monad.Free.Suspend.SUSPEND;
 import static com.aol.cyclops.trampoline.Trampoline.done;
 import static fj.data.Either.left;
 import static fj.data.Either.right;
@@ -13,6 +11,7 @@ import lombok.val;
 
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.matcher.Matchable;
+import com.aol.cyclops.matcher.builders.SimplestCase;
 import com.aol.cyclops.trampoline.Trampoline;
 
 import fj.data.Either;
@@ -35,9 +34,6 @@ import fj.data.Either;
  */
 public interface Free<F extends Functor<?>,A> extends Matchable {
 
-	public final static Class FREE = Free.class;
-
-	
 	/**
 	 * @return Unwraps the last Functor
 	 */
@@ -55,22 +51,8 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 	}
 	
 	public <B> Free<F,B> flatMap(Function<A,Free<F,B>> fn);
-	<T1> Trampoline<Either<Functor<Free<F,A>>, A>> resume(Functor<T1> f);
-	/**
-	default <T1> Trampoline<Either<Functor<Free<F,A>>, A>> resume(Functor<T1> f){
-		
-		val toReturn = new ImmutableClosedValue<Either<Either<Functor<Free<F,A>>, A>,Free>>();
-		
-		
-			toReturn.getOrSet(()->((GoSub)this).handleGoSub(f));
-		
-		
-		val result = toReturn.get();
 	
-		return result.isLeft() ?  done(result.left().value()) : more(()->result.right().value().resume(f));
-		
-	}
-	**/
+	<T1> Trampoline<Either<Functor<Free<F,A>>, A>> resume(Functor<T1> f);
 	
 	
 
@@ -98,7 +80,6 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 	}
 	@Value
 	static class Return<A,F extends Functor<?>> implements Free<F,A> {
-		public final static Class<Return> RETURN = Return.class;
 		
 		A result;
 
@@ -123,7 +104,6 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 
 	@Value
 	static class Suspend<A,F extends Functor<?>> implements Free<F,A> {
-		public final static Class<Suspend> SUSPEND = Suspend.class;
 		Functor<Free<F,A>> next;
 	    
 	    public A unwrap(){
@@ -146,7 +126,6 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 	}
 	@Value
 	static class GoSub<A,F extends Functor<?>,B>  implements Free<F,B>{
-		public final static Class<GoSub> GOSUB = GoSub.class;
 		Free<F,A> free;
 		Function<A,Free<F,B>> next;
 		@Override
@@ -157,40 +136,25 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 		public <B1> Free<F, B1> flatMap(Function<B, Free<F, B1>> newFn) {
 			return new GoSub<>(free,a-> new GoSub<>(next.apply(a),newFn));
 		}
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		@Override
 		public <T1> Trampoline<Either<Functor<Free<F, B>>, B>> resume(
 				Functor<T1> f) {
 			
-			Either<Either<Functor<Free<F,A>>, A>,Free> res= free.match(  c ->
-			
-				c.caseOf(RETURN, r -> right(next.apply(r.result)))
-				.caseOf(SUSPEND, s -> left((f.map(o ->  ((Free) o).flatMap(next)))))
-				.caseOf(GOSUB, y -> right(y.free.flatMap(o -> y.next.apply(o).flatMap((Function)this.next))))
-	
-		);
+			Either<Either<Functor<Free<F,A>>, A>,Free> res= free.match(buildCase(f));
+		
 	
 			return res.isLeft() ? (Trampoline)done(res.left().value()) : Trampoline.more(()->res.right().value().resume(f));
 		}
-		/**
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		public <T1> Trampoline<Either<Functor<Free<F,A>>, A>> resume(Functor<T1> f){
-			
-			Either<Either<Functor<Free<F,A>>, A>,Free> res= free.match(  newCase ->
-					newCase.isType((Return<A,F> r) -> right(next.apply(r.result)))
-					
-					.newCase().isType( (Suspend<A,F> s) -> left((f.map(o -> 
-							o.flatMap(next)))))
-							
-					.newCase().isType( (GoSub<A,F,B> y) -> right(y.free.flatMap(o ->
-			           y.next.apply(o).flatMap((Function)this.next))))
-			
-				);
-			
-			return res.isLeft() ? done(res.left().value()) : Trampoline.more(()->res.right().value().resume(f));
-				
-			
-							
-		}**/
+		
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		private <T1> Function<SimplestCase<? super Either>,SimplestCase<? super Either>> buildCase(Functor<T1> f){
+			return  c ->  c.caseOf((Return<A,F> r) -> right(next.apply(r.result)))
+							.caseOf( (Suspend<A,F> s) -> left((f.map(o -> ((Free) o).flatMap(next)))))
+							.caseOf( (GoSub<A,F,B> y) -> right(y.free.flatMap(o -> y.next.apply(o).flatMap((Function)this.next))));
+
+		}
+		
 							
 	}
 	 

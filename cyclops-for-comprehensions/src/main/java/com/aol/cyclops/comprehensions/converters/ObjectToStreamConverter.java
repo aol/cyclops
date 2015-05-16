@@ -2,7 +2,7 @@ package com.aol.cyclops.comprehensions.converters;
 
 import org.jooq.lambda.Seq;
 
-import com.aol.cyclops.lambda.api.CoerceToDecomposable;
+import com.aol.cyclops.lambda.api.AsDecomposable;
 import com.aol.cyclops.lambda.api.MonadicConverter;
 
 /**
@@ -20,7 +20,7 @@ public class ObjectToStreamConverter implements MonadicConverter<Seq> {
 
 	@Override
 	public Seq convertToMonadicForm(Object f) {
-		return Seq.seq(CoerceToDecomposable.coerceToDecomposable(f).unapply());
+		return Seq.seq((Iterable)AsDecomposable.asDecomposable(f).unapply());
 	}
 
 }

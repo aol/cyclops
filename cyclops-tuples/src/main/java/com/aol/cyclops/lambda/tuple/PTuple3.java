@@ -169,9 +169,7 @@ public interface PTuple3<T1,T2,T3> extends PTuple2<T1,T2> {
 		return (PTuple1<T1>)this.withArity(1);
 	}
 	
-	default PTuple2<T1,T2> tuple2(){
-		return (PTuple2<T1,T2>)this.withArity(2);
-	}
+	
 	default PTuple3<T3,T2,T1> swap3(){
 		return of(v3(),v2(),v1());
 	}
@@ -192,7 +190,7 @@ public interface PTuple3<T1,T2,T3> extends PTuple2<T1,T2> {
 				}
 				@Override
 				public List<Object> getCachedValues() {
-					return Arrays.asList(v2(),v1());
+					return Arrays.asList(v1(),v2(),v3());
 				}
 
 				@Override

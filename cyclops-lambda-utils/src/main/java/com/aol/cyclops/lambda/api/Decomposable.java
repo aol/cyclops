@@ -21,7 +21,7 @@ public interface Decomposable{
 	 */
 	@SuppressWarnings("unchecked")
 	default <T extends Iterable<? extends Object>> T unapply(){
-
+		
 		try {
 			return (T)ReflectionCache.getField(this.getClass()).stream().map(f ->{
 				try {
