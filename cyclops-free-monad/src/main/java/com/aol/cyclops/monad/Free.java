@@ -1,7 +1,6 @@
 package com.aol.cyclops.monad;
 
 import static com.aol.cyclops.trampoline.Trampoline.done;
-import static com.aol.cyclops.trampoline.Trampoline.more;
 import static fj.data.Either.left;
 import static fj.data.Either.right;
 
@@ -11,7 +10,6 @@ import lombok.Value;
 import lombok.val;
 
 import com.aol.cyclops.lambda.monads.Functor;
-import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
 import com.aol.cyclops.matcher.Matchable;
 import com.aol.cyclops.trampoline.Trampoline;
 
@@ -52,28 +50,22 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 	}
 	
 	public <B> Free<F,B> flatMap(Function<A,Free<F,B>> fn);
-	
+	<T1> Trampoline<Either<Functor<Free<F,A>>, A>> resume(Functor<T1> f);
+	/**
 	default <T1> Trampoline<Either<Functor<Free<F,A>>, A>> resume(Functor<T1> f){
 		
 		val toReturn = new ImmutableClosedValue<Either<Either<Functor<Free<F,A>>, A>,Free>>();
 		
-		if(this instanceof GoSub){
+		
 			toReturn.getOrSet(()->((GoSub)this).handleGoSub(f));
-			
-		}
-		toReturn.getOrSet(()->left(
-			this.match( newCase->
-							newCase.isType( (Return r) -> right(r.result) )
-							.newCase().isType( (Suspend s) -> left(s.next) )		
-				)));
+		
 		
 		val result = toReturn.get();
-		if(result.isLeft())
-			return done(result.left().value());
-		
-		return more(()->result.right().value().resume(f));
+	
+		return result.isLeft() ?  done(result.left().value()) : more(()->result.right().value().resume(f));
 		
 	}
+	**/
 	
 	
 
@@ -112,6 +104,9 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 			return flatMap(x -> ret(fn.apply(x)));
 		}
 		
+		public <T1> Trampoline<Either<Functor<Free<F,A>>, A>> resume(Functor<T1> f){
+			return done(right(result));
+		}
 	      public <B> Free<F,B> flatMap(Function<A,Free<F,B>> fn) {
 	    	  return new GoSub(this,fn);
 	 
@@ -137,6 +132,9 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 	    	return new GoSub(this,fn);
 	    	
 	      }
+	     public <T1> Trampoline<Either<Functor<Free<F,A>>, A>> resume(Functor<T1> f){
+				return done(left(next));
+			}
    
 	}
 	@Value
@@ -151,11 +149,28 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 		public <B1> Free<F, B1> flatMap(Function<B, Free<F, B1>> newFn) {
 			return new GoSub<>(free,a-> new GoSub<>(next.apply(a),newFn));
 		}
-		
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Either<Either<Functor<Free<F,A>>, A>,Free> handleGoSub(Functor<Free> f){
+		@Override
+		public <T1> Trampoline<Either<Functor<Free<F, B>>, B>> resume(
+				Functor<T1> f) {
 			
-			return free.match(  newCase ->
+			Either<Either<Functor<Free<F,A>>, A>,Free> res= free.match(  newCase ->
+			newCase.isType((Return<A,F> r) -> right(next.apply(r.result)))
+			
+			.newCase().isType( (Suspend<A,F> s) -> left((f.map(o -> 
+					((Free) o).flatMap(next)))))
+					
+			.newCase().isType( (GoSub<A,F,B> y) -> right(y.free.flatMap(o ->
+	           y.next.apply(o).flatMap((Function)this.next))))
+	
+		);
+	
+			return res.isLeft() ? (Trampoline)done(res.left().value()) : Trampoline.more(()->res.right().value().resume(f));
+		}
+		/**
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		public <T1> Trampoline<Either<Functor<Free<F,A>>, A>> resume(Functor<T1> f){
+			
+			Either<Either<Functor<Free<F,A>>, A>,Free> res= free.match(  newCase ->
 					newCase.isType((Return<A,F> r) -> right(next.apply(r.result)))
 					
 					.newCase().isType( (Suspend<A,F> s) -> left((f.map(o -> 
@@ -165,8 +180,12 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 			           y.next.apply(o).flatMap((Function)this.next))))
 			
 				);
+			
+			return res.isLeft() ? done(res.left().value()) : Trampoline.more(()->res.right().value().resume(f));
+				
+			
 							
-		}
+		}**/
 							
 	}
 	 
