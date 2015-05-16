@@ -16,11 +16,11 @@ import lombok.AllArgsConstructor;
 
 import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
 
-public interface Tuple2<T1,T2> extends Tuple1<T1> {
+public interface PTuple2<T1,T2> extends PTuple1<T1> {
 	
 	default T2 v2(){
 		if(arity()<2)
-			throw new ClassCastException("Attempt to upscale to " + Tuple2.class.getCanonicalName() + " from com.aol.cyclops.lambda.tuple.Tuple"+arity());		return (T2)getCachedValues().get(1);
+			throw new ClassCastException("Attempt to upscale to " + PTuple2.class.getCanonicalName() + " from com.aol.cyclops.lambda.tuple.Tuple"+arity());		return (T2)getCachedValues().get(1);
 	}
 	default T2 _2(){
 		return v2();
@@ -36,25 +36,25 @@ public interface Tuple2<T1,T2> extends Tuple1<T1> {
 	 * @param fn Mapping function
 	 * @return Tuple1
 	 */
-	default <T> Tuple2<T,T2> map1(Function<T1,T> fn){
+	default <T> PTuple2<T,T2> map1(Function<T1,T> fn){
 		if(arity()!=2)
-			return (Tuple2)Tuple1.super.map1(fn);
+			return (PTuple2)PTuple1.super.map1(fn);
 		else
-			return Tuples.tuple(fn.apply(v1()),v2());
+			return PowerTuples.tuple(fn.apply(v1()),v2());
 	}
 	/**
 	 * Lazily Map 1st element and memoise the result
 	 * @param fn Map function
 	 * @return
 	 */
-	default <T> Tuple2<T,T2> lazyMap1(Function<T1,T> fn){
+	default <T> PTuple2<T,T2> lazyMap1(Function<T1,T> fn){
 		if(arity()!=2)
-			return (Tuple2)Tuple1.super.lazyMap1(fn);
+			return (PTuple2)PTuple1.super.lazyMap1(fn);
 		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return new TupleImpl<T,T2,Object,Object,Object,Object,Object,Object>(Arrays.asList(),2){
 			public T v1(){
-				return value.getOrSet(()->fn.apply(Tuple2.this.v1())); 
+				return value.getOrSet(()->fn.apply(PTuple2.this.v1())); 
 			}
 
 			@Override
@@ -76,13 +76,13 @@ public interface Tuple2<T1,T2> extends Tuple1<T1> {
 	 * @param fn Map function
 	 * @return
 	 */
-	default <T> Tuple2<T1,T> lazyMap2(Function<T2,T> fn){
+	default <T> PTuple2<T1,T> lazyMap2(Function<T2,T> fn){
 		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return new TupleImpl<T1,T,Object,Object,Object,Object,Object,Object>(Arrays.asList(),2){
 			
 			public T v2(){
-				return value.getOrSet(()->fn.apply(Tuple2.this.v2())); 
+				return value.getOrSet(()->fn.apply(PTuple2.this.v2())); 
 			}
 
 			@Override
@@ -104,14 +104,14 @@ public interface Tuple2<T1,T2> extends Tuple1<T1> {
 	 * @param fn mapper function
 	 * @return new Tuple2
 	 */
-	default <T> Tuple2<T1,T> map2(Function<T2,T> fn){
+	default <T> PTuple2<T1,T> map2(Function<T2,T> fn){
 		return of(v1(),fn.apply(v2()));
 	}
-	default Tuple1<T1> tuple1(){
+	default PTuple1<T1> tuple1(){
 		return this;
 	}
 	
-	default Tuple2<T2,T1> swap2(){
+	default PTuple2<T2,T1> swap2(){
 		return of(v2(),v1());
 	}
 	
@@ -139,12 +139,12 @@ public interface Tuple2<T1,T2> extends Tuple1<T1> {
 		return 2;
 	}
 	
-	public static TwoNumbers asTwoNumbers(Tuple2<Number,Number> tuple){
+	public static TwoNumbers asTwoNumbers(PTuple2<Number,Number> tuple){
 		return new TwoNumbers(tuple);
 	}
 	@AllArgsConstructor
 	static class TwoNumbers{
-		private final Tuple2 t2;
+		private final PTuple2 t2;
 		public IntStream asRange(){
 			//check if int
 
@@ -155,10 +155,10 @@ public interface Tuple2<T1,T2> extends Tuple1<T1> {
 			return LongStream.range(((Number)t2.v1()).longValue(), ((Number)t2.v1()).longValue());
 		}
 	}
-	public static <T1,T2> Tuple2<T1,T2> ofTuple(Object tuple2){
-		return (Tuple2)new TupleImpl(tuple2,2);
+	public static <T1,T2> PTuple2<T1,T2> ofTuple(Object tuple2){
+		return (PTuple2)new TupleImpl(tuple2,2);
 	}
-	public static <T1,T2> Tuple2<T1,T2> of(T1 t1, T2 t2){
-		return (Tuple2)new TupleImpl(Arrays.asList(t1,t2),2);
+	public static <T1,T2> PTuple2<T1,T2> of(T1 t1, T2 t2){
+		return (PTuple2)new TupleImpl(Arrays.asList(t1,t2),2);
 	}
 }

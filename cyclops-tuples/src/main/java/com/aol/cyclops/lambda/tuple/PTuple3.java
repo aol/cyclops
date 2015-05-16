@@ -15,11 +15,11 @@ import lombok.AllArgsConstructor;
 import com.aol.cyclops.comprehensions.functions.TriFunction;
 import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
 
-public interface Tuple3<T1,T2,T3> extends Tuple2<T1,T2> {
+public interface PTuple3<T1,T2,T3> extends PTuple2<T1,T2> {
 	
 	default T3 v3(){
 		if(arity()<3)
-			throw new ClassCastException("Attempt to upscale to " + Tuple3.class.getCanonicalName() + " from com.aol.cyclops.lambda.tuple.Tuple"+arity());
+			throw new ClassCastException("Attempt to upscale to " + PTuple3.class.getCanonicalName() + " from com.aol.cyclops.lambda.tuple.Tuple"+arity());
 		return (T3)getCachedValues().get(2);
 	}
 	default T3 _3(){
@@ -56,25 +56,25 @@ public interface Tuple3<T1,T2,T3> extends Tuple2<T1,T2> {
 	 * @param fn Mapping function
 	 * @return Tuple1
 	 */
-	default <T> Tuple3<T,T2,T3> map1(Function<T1,T> fn){
+	default <T> PTuple3<T,T2,T3> map1(Function<T1,T> fn){
 		if(arity()!=3)
-			return (Tuple3)Tuple2.super.map1(fn);
+			return (PTuple3)PTuple2.super.map1(fn);
 		else
-			return Tuples.tuple(fn.apply(v1()),v2(),v3());
+			return PowerTuples.tuple(fn.apply(v1()),v2(),v3());
 	}
 	/**
 	 * Lazily Map 1st element and memoise the result
 	 * @param fn Map function
 	 * @return
 	 */
-	default <T> Tuple3<T,T2,T3> lazyMap1(Function<T1,T> fn){
+	default <T> PTuple3<T,T2,T3> lazyMap1(Function<T1,T> fn){
 		if(arity()!=3)
-			return (Tuple3)Tuple2.super.lazyMap1(fn);
+			return (PTuple3)PTuple2.super.lazyMap1(fn);
 	
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return new TupleImpl<T,T2,T3,Object,Object,Object,Object,Object>(Arrays.asList(),3){
 			public T v1(){
-				return value.getOrSet(()->fn.apply(Tuple3.this.v1())); 
+				return value.getOrSet(()->fn.apply(PTuple3.this.v1())); 
 			}
 
 			@Override
@@ -97,15 +97,15 @@ public interface Tuple3<T1,T2,T3> extends Tuple2<T1,T2> {
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <T> Tuple3<T1,T,T3> lazyMap2(Function<T2,T> fn){
+	default <T> PTuple3<T1,T,T3> lazyMap2(Function<T2,T> fn){
 		if(arity()!=3)
-			return (Tuple3)Tuple2.super.lazyMap2(fn);
+			return (PTuple3)PTuple2.super.lazyMap2(fn);
 		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return new TupleImpl(3){
 			
 			public T v2(){
-				return value.getOrSet(()->fn.apply(Tuple3.this.v2())); 
+				return value.getOrSet(()->fn.apply(PTuple3.this.v2())); 
 			}
 
 			@Override
@@ -127,9 +127,9 @@ public interface Tuple3<T1,T2,T3> extends Tuple2<T1,T2> {
 	 * @param fn mapper function
 	 * @return new Tuple3
 	 */
-	default <T> Tuple3<T1,T,T3> map2(Function<T2,T> fn){
+	default <T> PTuple3<T1,T,T3> map2(Function<T2,T> fn){
 		if(arity()!=3)
-			return (Tuple3)Tuple2.super.map2(fn);
+			return (PTuple3)PTuple2.super.map2(fn);
 		return of(v1(),fn.apply(v2()),v3());
 	}
 	/**
@@ -138,13 +138,13 @@ public interface Tuple3<T1,T2,T3> extends Tuple2<T1,T2> {
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <T> Tuple3<T1,T2,T> lazyMap3(Function<T3,T> fn){
+	default <T> PTuple3<T1,T2,T> lazyMap3(Function<T3,T> fn){
 		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return new TupleImpl(3){
 			
 			public T v3(){
-				return value.getOrSet(()->fn.apply(Tuple3.this.v3())); 
+				return value.getOrSet(()->fn.apply(PTuple3.this.v3())); 
 			}
 
 			@Override
@@ -162,25 +162,25 @@ public interface Tuple3<T1,T2,T3> extends Tuple2<T1,T2> {
 		
 	}
 	
-	default <T> Tuple3<T1,T2,T> map3(Function<T3,T> fn){
+	default <T> PTuple3<T1,T2,T> map3(Function<T3,T> fn){
 		return of(v1(),v2(),fn.apply(v3()));
 	}
-	default Tuple1<T1> tuple1(){
+	default PTuple1<T1> tuple1(){
 		return this;
 	}
-	default Tuple2<T1,T2> tuple2(){
+	default PTuple2<T1,T2> tuple2(){
 		return this;
 	}
-	default Tuple3<T3,T2,T1> swap3(){
+	default PTuple3<T3,T2,T1> swap3(){
 		return of(v3(),v2(),v1());
 	}
 	
-	public static ThreeNumbers asThreeNumbers(Tuple3<Number,Number,Number> numbers){
+	public static ThreeNumbers asThreeNumbers(PTuple3<Number,Number,Number> numbers){
 		return new ThreeNumbers(numbers);
 	}
 	@AllArgsConstructor
 	static class ThreeNumbers{
-		private final Tuple3 t3;
+		private final PTuple3 t3;
 		public IntStream asRange(){
 			int start = ((Number)t3.v1()).intValue();
 			int end = ((Number)t3.v2()).intValue();
@@ -199,10 +199,10 @@ public interface Tuple3<T1,T2,T3> extends Tuple2<T1,T2> {
 	         .limit((end-start)/step);
 		}
 	}
-	public static <T1,T2,T3> Tuple3<T1,T2,T3> ofTuple(Object tuple2){
-		return (Tuple3)new TupleImpl(tuple2,3);
+	public static <T1,T2,T3> PTuple3<T1,T2,T3> ofTuple(Object tuple2){
+		return (PTuple3)new TupleImpl(tuple2,3);
 	}
-	public static <T1,T2,T3> Tuple3<T1,T2,T3> of(T1 t1, T2 t2,T3 t3){
-		return (Tuple3)new TupleImpl(Arrays.asList(t1,t2,t3),3);
+	public static <T1,T2,T3> PTuple3<T1,T2,T3> of(T1 t1, T2 t2,T3 t3){
+		return (PTuple3)new TupleImpl(Arrays.asList(t1,t2,t3),3);
 	}
 }

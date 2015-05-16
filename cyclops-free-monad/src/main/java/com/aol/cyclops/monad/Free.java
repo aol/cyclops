@@ -1,5 +1,7 @@
 package com.aol.cyclops.monad;
 
+import static com.aol.cyclops.monad.Free.Return.RETURN;
+import static com.aol.cyclops.monad.Free.Suspend.SUSPEND;
 import static com.aol.cyclops.trampoline.Trampoline.done;
 import static fj.data.Either.left;
 import static fj.data.Either.right;
@@ -33,6 +35,9 @@ import fj.data.Either;
  */
 public interface Free<F extends Functor<?>,A> extends Matchable {
 
+	public final static Class FREE = Free.class;
+
+	
 	/**
 	 * @return Unwraps the last Functor
 	 */
@@ -93,6 +98,7 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 	}
 	@Value
 	static class Return<A,F extends Functor<?>> implements Free<F,A> {
+		public final static Class<Return> RETURN = Return.class;
 		
 		A result;
 
@@ -117,6 +123,7 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 
 	@Value
 	static class Suspend<A,F extends Functor<?>> implements Free<F,A> {
+		public final static Class<Suspend> SUSPEND = Suspend.class;
 		Functor<Free<F,A>> next;
 	    
 	    public A unwrap(){
@@ -139,6 +146,7 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 	}
 	@Value
 	static class GoSub<A,F extends Functor<?>,B>  implements Free<F,B>{
+		public final static Class<GoSub> GOSUB = GoSub.class;
 		Free<F,A> free;
 		Function<A,Free<F,B>> next;
 		@Override
@@ -154,13 +162,10 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 				Functor<T1> f) {
 			
 			Either<Either<Functor<Free<F,A>>, A>,Free> res= free.match(  c ->
-			c.caseOf((Return<A,F> r) -> right(next.apply(r.result)))
 			
-			.caseOf( (Suspend<A,F> s) -> left((f.map(o -> 
-					((Free) o).flatMap(next)))))
-					
-			.caseOf( (GoSub<A,F,B> y) -> right(y.free.flatMap(o ->
-	           y.next.apply(o).flatMap((Function)this.next))))
+				c.caseOf(RETURN, r -> right(next.apply(r.result)))
+				.caseOf(SUSPEND, s -> left((f.map(o ->  ((Free) o).flatMap(next)))))
+				.caseOf(GOSUB, y -> right(y.free.flatMap(o -> y.next.apply(o).flatMap((Function)this.next))))
 	
 		);
 	

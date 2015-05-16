@@ -29,7 +29,7 @@ import com.aol.cyclops.lambda.api.TupleWrapper;
  * @param <T6>
  */
 @EqualsAndHashCode
-class TupleImpl<T1,T2,T3,T4,T5,T6,T7,T8> implements TupleWrapper,  Tuple8<T1,T2,T3,T4,T5,T6,T7,T8>{
+class TupleImpl<T1,T2,T3,T4,T5,T6,T7,T8> implements TupleWrapper,  PTuple8<T1,T2,T3,T4,T5,T6,T7,T8>{
 	@Getter
 	private final Object instance;
 	

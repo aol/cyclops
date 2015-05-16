@@ -13,7 +13,7 @@ public class TupleWrappingTest {
 	@Test
 	public void cons(){
 		Three three = new Three(1,"hello",new Date());
-		assertThat(three.a,equalTo(Tuple3.ofTuple(three).v1()));
+		assertThat(three.a,equalTo(PTuple3.ofTuple(three).v1()));
 	}
 	@AllArgsConstructor
 	static class Three{

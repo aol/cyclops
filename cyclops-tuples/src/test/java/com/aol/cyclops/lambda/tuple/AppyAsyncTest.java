@@ -29,42 +29,42 @@ public class AppyAsyncTest {
 	@Test
 	public void testConvertT4(){
 		
-		assertThat(Tuple4.of(1,2,3,4).callAsync(this::method4params).join(),equalTo(10));
+		assertThat(PTuple4.of(1,2,3,4).callAsync(this::method4params).join(),equalTo(10));
 		
 	}
 	@Test
 	public void testConvertT5(){
 		
-		assertThat(Tuples.tuple(1,2,3,4,5).callAsync(this::method5params).join(),equalTo(15));
+		assertThat(PowerTuples.tuple(1,2,3,4,5).callAsync(this::method5params).join(),equalTo(15));
 		
 	}
 	@Test
 	public void testConvertT6(){
 		
-		assertThat(Tuples.tuple(1,2,3,4,5,6).callAsync(this::method6params).join(),equalTo(21));
+		assertThat(PowerTuples.tuple(1,2,3,4,5,6).callAsync(this::method6params).join(),equalTo(21));
 		
 	}
 	@Test
 	public void testConvertT7(){
 		
-		assertThat(Tuples.tuple(1,2,3,4,5,6,7).callAsync(this::method7params).join(),equalTo(28));
+		assertThat(PowerTuples.tuple(1,2,3,4,5,6,7).callAsync(this::method7params).join(),equalTo(28));
 		
 	}
 	@Test
 	public void testConvertT8(){
 		
-		assertThat(Tuples.tuple(1,2,3,4,5,6,7,8).callAsync(this::method8params).join(),equalTo(36));
+		assertThat(PowerTuples.tuple(1,2,3,4,5,6,7,8).callAsync(this::method8params).join(),equalTo(36));
 		
 	}
 	
-	public Tuple1<Integer> methodTuple1(){
-		return Tuples.tuple(10);
+	public PTuple1<Integer> methodTuple1(){
+		return PowerTuples.tuple(10);
 	}
-	public Tuple2<Integer,String> methodTuple2(){
-		return Tuples.tuple(10,"hello");
+	public PTuple2<Integer,String> methodTuple2(){
+		return PowerTuples.tuple(10,"hello");
 	}
-	public Tuple3<Integer,String,Integer> methodTuple3(){
-		return Tuples.tuple(10,"hello",3);
+	public PTuple3<Integer,String,Integer> methodTuple3(){
+		return PowerTuples.tuple(10,"hello",3);
 	}
 	public String method3params(Integer number, String value,Integer num2){
 		return "" + number + value + num2;

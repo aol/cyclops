@@ -14,11 +14,11 @@ import java.util.function.Function;
 import com.aol.cyclops.comprehensions.functions.QuintFunction;
 import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
 
-public interface Tuple5<T1,T2,T3,T4,T5> extends Tuple4<T1,T2,T3,T4> {
+public interface PTuple5<T1,T2,T3,T4,T5> extends PTuple4<T1,T2,T3,T4> {
 	
 	default T5 v5(){
 		if(arity()<5)
-			throw new ClassCastException("Attempt to upscale to " + Tuple5.class.getCanonicalName() + " from com.aol.cyclops.lambda.tuple.Tuple"+arity());
+			throw new ClassCastException("Attempt to upscale to " + PTuple5.class.getCanonicalName() + " from com.aol.cyclops.lambda.tuple.Tuple"+arity());
 		return (T5)getCachedValues().get(4);
 	}
 	default T5 _5(){
@@ -59,11 +59,11 @@ public interface Tuple5<T1,T2,T3,T4,T5> extends Tuple4<T1,T2,T3,T4> {
 	 * @param fn Mapping function
 	 * @return Tuple5
 	 */
-	default <T> Tuple5<T,T2,T3,T4,T5> map1(Function<T1,T> fn){
+	default <T> PTuple5<T,T2,T3,T4,T5> map1(Function<T1,T> fn){
 		if(arity()!=5)
-			return (Tuple5)Tuple4.super.map1(fn);
+			return (PTuple5)PTuple4.super.map1(fn);
 		else
-			return Tuples.tuple(fn.apply(v1()),v2(),v3(),v4(),v5());
+			return PowerTuples.tuple(fn.apply(v1()),v2(),v3(),v4(),v5());
 	}
 	/**
 	 * Lazily Map 1st element and memoise the result
@@ -71,14 +71,14 @@ public interface Tuple5<T1,T2,T3,T4,T5> extends Tuple4<T1,T2,T3,T4> {
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <T> Tuple5<T,T2,T3,T4,T5> lazyMap1(Function<T1,T> fn){
+	default <T> PTuple5<T,T2,T3,T4,T5> lazyMap1(Function<T1,T> fn){
 		if(arity()!=5)
-			return (Tuple5)Tuple4.super.lazyMap1(fn);
+			return (PTuple5)PTuple4.super.lazyMap1(fn);
 		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return new TupleImpl(5){
 			public T v1(){
-				return value.getOrSet(()->fn.apply(Tuple5.this.v1())); 
+				return value.getOrSet(()->fn.apply(PTuple5.this.v1())); 
 			}
 
 			@Override
@@ -101,15 +101,15 @@ public interface Tuple5<T1,T2,T3,T4,T5> extends Tuple4<T1,T2,T3,T4> {
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <T> Tuple5<T1,T,T3,T4,T5> lazyMap2(Function<T2,T> fn){
+	default <T> PTuple5<T1,T,T3,T4,T5> lazyMap2(Function<T2,T> fn){
 		if(arity()!=5)
-			return (Tuple5)Tuple4.super.lazyMap2(fn);
+			return (PTuple5)PTuple4.super.lazyMap2(fn);
 		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return new TupleImpl(5){
 			
 			public T v2(){
-				return value.getOrSet(()->fn.apply(Tuple5.this.v2())); 
+				return value.getOrSet(()->fn.apply(PTuple5.this.v2())); 
 			}
 
 			@Override
@@ -131,9 +131,9 @@ public interface Tuple5<T1,T2,T3,T4,T5> extends Tuple4<T1,T2,T3,T4> {
 	 * @param fn mapper function
 	 * @return new Tuple3
 	 */
-	default <T> Tuple5<T1,T,T3,T4,T5> map2(Function<T2,T> fn){
+	default <T> PTuple5<T1,T,T3,T4,T5> map2(Function<T2,T> fn){
 		if(arity()!=5)
-			return (Tuple5)Tuple4.super.map2(fn);
+			return (PTuple5)PTuple4.super.map2(fn);
 		return of(v1(),fn.apply(v2()),v3(),v4(),v5());
 	}
 	/**
@@ -142,15 +142,15 @@ public interface Tuple5<T1,T2,T3,T4,T5> extends Tuple4<T1,T2,T3,T4> {
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <T> Tuple5<T1,T2,T,T4,T5> lazyMap3(Function<T3,T> fn){
+	default <T> PTuple5<T1,T2,T,T4,T5> lazyMap3(Function<T3,T> fn){
 		if(arity()!=5)
-			return (Tuple5)Tuple4.super.lazyMap3(fn);
+			return (PTuple5)PTuple4.super.lazyMap3(fn);
 		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return new TupleImpl(5){
 			
 			public T v3(){
-				return value.getOrSet(()->fn.apply(Tuple5.this.v3())); 
+				return value.getOrSet(()->fn.apply(PTuple5.this.v3())); 
 			}
 
 			@Override
@@ -171,9 +171,9 @@ public interface Tuple5<T1,T2,T3,T4,T5> extends Tuple4<T1,T2,T3,T4> {
 	/* 
 	 * @see com.aol.cyclops.lambda.tuple.Tuple4#map3(java.util.function.Function)
 	 */
-	default <T> Tuple5<T1,T2,T,T4,T5> map3(Function<T3,T> fn){
+	default <T> PTuple5<T1,T2,T,T4,T5> map3(Function<T3,T> fn){
 		if(arity()!=5)
-			return (Tuple5)Tuple4.super.map3(fn);
+			return (PTuple5)PTuple4.super.map3(fn);
 		return of(v1(),v2(),fn.apply(v3()),v4(),v5());
 	}
 	/**
@@ -182,15 +182,15 @@ public interface Tuple5<T1,T2,T3,T4,T5> extends Tuple4<T1,T2,T3,T4> {
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <T> Tuple5<T1,T2,T3,T,T5> lazyMap4(Function<T4,T> fn){
+	default <T> PTuple5<T1,T2,T3,T,T5> lazyMap4(Function<T4,T> fn){
 		if(arity()!=5)
-			return (Tuple5)Tuple4.super.lazyMap4(fn);
+			return (PTuple5)PTuple4.super.lazyMap4(fn);
 		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return new TupleImpl(5){
 			
 			public T v4(){
-				return value.getOrSet(()->fn.apply(Tuple5.this.v4())); 
+				return value.getOrSet(()->fn.apply(PTuple5.this.v4())); 
 			}
 
 			@Override
@@ -211,9 +211,9 @@ public interface Tuple5<T1,T2,T3,T4,T5> extends Tuple4<T1,T2,T3,T4> {
 	 * Map element 4
 	 * @see com.aol.cyclops.lambda.tuple.Tuple4#map4(java.util.function.Function)
 	 */
-	default <T> Tuple5<T1,T2,T3,T,T5> map4(Function<T4,T> fn){
+	default <T> PTuple5<T1,T2,T3,T,T5> map4(Function<T4,T> fn){
 		if(arity()!=5)
-			return (Tuple5)Tuple4.super.map4(fn);
+			return (PTuple5)PTuple4.super.map4(fn);
 		return of(v1(),v2(),v3(),fn.apply(v4()),v5());
 	}
 	/**
@@ -222,14 +222,14 @@ public interface Tuple5<T1,T2,T3,T4,T5> extends Tuple4<T1,T2,T3,T4> {
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <T> Tuple5<T1,T2,T3,T4,T> lazyMap5(Function<T5,T> fn){
+	default <T> PTuple5<T1,T2,T3,T4,T> lazyMap5(Function<T5,T> fn){
 	
 		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return new TupleImpl(5){
 			
 			public T v5(){
-				return value.getOrSet(()->fn.apply(Tuple5.this.v5())); 
+				return value.getOrSet(()->fn.apply(PTuple5.this.v5())); 
 			}
 
 			@Override
@@ -252,30 +252,30 @@ public interface Tuple5<T1,T2,T3,T4,T5> extends Tuple4<T1,T2,T3,T4> {
 	 * @param fn Mapper function
 	 * @return new Tuple5
 	 */
-	default <T> Tuple5<T1,T2,T3,T4,T> map5(Function<T5,T> fn){
+	default <T> PTuple5<T1,T2,T3,T4,T> map5(Function<T5,T> fn){
 		return of(v1(),v2(),v3(),v4(),fn.apply(v5()));
 	}
 	
-	default Tuple1<T1> tuple1(){
+	default PTuple1<T1> tuple1(){
 		return this;
 	}
-	default Tuple2<T1,T2> tuple2(){
+	default PTuple2<T1,T2> tuple2(){
 		return this;
 	}
-	default Tuple3<T1,T2,T3> tuple3(){
+	default PTuple3<T1,T2,T3> tuple3(){
 		return this;
 	}
-	default Tuple4<T1,T2,T3,T4> tuple4(){
+	default PTuple4<T1,T2,T3,T4> tuple4(){
 		return this;
 	}
-	default Tuple5<T5,T4,T3,T2,T1> swap5(){
+	default PTuple5<T5,T4,T3,T2,T1> swap5(){
 		return of(v5(),v4(),v3(),v2(),v1());
 	}
 	
-	public static <T1,T2,T3,T4,T5> Tuple5<T1,T2,T3,T4,T5> ofTuple(Object tuple5){
-		return (Tuple5)new TupleImpl(tuple5,5);
+	public static <T1,T2,T3,T4,T5> PTuple5<T1,T2,T3,T4,T5> ofTuple(Object tuple5){
+		return (PTuple5)new TupleImpl(tuple5,5);
 	}
-	public static <T1,T2,T3,T4,T5> Tuple5<T1,T2,T3,T4,T5> of(T1 t1, T2 t2,T3 t3,T4 t4,T5 t5){
-		return (Tuple5)new TupleImpl(Arrays.asList(t1,t2,t3,t4,t5),5);
+	public static <T1,T2,T3,T4,T5> PTuple5<T1,T2,T3,T4,T5> of(T1 t1, T2 t2,T3 t3,T4 t4,T5 t5){
+		return (PTuple5)new TupleImpl(Arrays.asList(t1,t2,t3,t4,t5),5);
 	}
 }

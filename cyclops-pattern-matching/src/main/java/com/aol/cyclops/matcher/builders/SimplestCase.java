@@ -1,11 +1,15 @@
 package com.aol.cyclops.matcher.builders;
 
+import java.util.function.Function;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
 
 import com.aol.cyclops.matcher.ActionWithReturn;
+import com.aol.cyclops.matcher.Case;
+import com.aol.cyclops.matcher.Cases;
 @AllArgsConstructor
 public class SimplestCase<R> extends CaseBeingBuilt{
 	@Getter(AccessLevel.PACKAGE)
@@ -24,6 +28,11 @@ public class SimplestCase<R> extends CaseBeingBuilt{
 	public  <T> SimplestCase<R> caseOf(ActionWithReturn<T,R> a){
 		
 		return this.withPatternMatcher(patternMatcher.inCaseOfType(a));
+		
+	}
+	public  <T> SimplestCase<R> caseOf(Class<T> t, Function<T,R> a){
+		
+		return this.withPatternMatcher(patternMatcher.withCases(Cases.of(Case.of(v-> v!=null && v.getClass().isAssignableFrom(t),a))));
 		
 	}
 }

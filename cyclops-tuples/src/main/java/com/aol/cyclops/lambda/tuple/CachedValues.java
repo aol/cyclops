@@ -19,8 +19,9 @@ import lombok.val;
 import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.lambda.utils.ClosedVar;
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
+import com.aol.cyclops.matcher.Matchable;
 
-public interface CachedValues extends Iterable, Decomposable{
+public interface CachedValues extends Iterable, Decomposable, Matchable,Doable{
 
 	public List<Object> getCachedValues();
 	
@@ -37,7 +38,7 @@ public interface CachedValues extends Iterable, Decomposable{
 	}
 	default <X> X to(Class<X> to){
 		Constructor<X> cons = (Constructor)Stream.of(to.getConstructors())
-							.filter(c -> c.getParameterCount()==2)
+							.filter(c -> c.getParameterCount()==arity())
 							.findFirst()
 							.get();
 		try {
@@ -45,7 +46,8 @@ public interface CachedValues extends Iterable, Decomposable{
 			return cons.newInstance(getCachedValues().toArray());
 		} catch (InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException e) {
-			ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(e);
+			return new ParamMatcher().create(to, arity(), getCachedValues(),e);
+			
 		}
 		return null;
 		
@@ -56,10 +58,10 @@ public interface CachedValues extends Iterable, Decomposable{
 		getCachedValues().forEach(c);
 	}
 	
-	default <T extends CachedValues> T filter(Predicate<Tuple2<Integer,Object>> p){
+	default <T extends CachedValues> T filter(Predicate<PTuple2<Integer,Object>> p){
 		ClosedVar<Integer> index = new ClosedVar(-1);
-		val newList = getCachedValues().stream().map(v-> Tuples.tuple(index.set(index.get()+1).get(),v))
-						.filter(p).map(Tuple2::v2).collect(Collectors.toList());
+		val newList = getCachedValues().stream().map(v-> PowerTuples.tuple(index.set(index.get()+1).get(),v))
+						.filter(p).map(PTuple2::v2).collect(Collectors.toList());
 		return (T)new TupleImpl(newList,newList.size());
 	}
 	default <T> List<T> toList(){

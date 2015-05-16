@@ -12,7 +12,7 @@ import java.util.function.Function;
 
 import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
 
-interface Tuple1<T1> extends CachedValues{
+interface PTuple1<T1> extends CachedValues{
 	
 	default T1 v1(){
 		return (T1)getCachedValues().get(0);
@@ -54,21 +54,21 @@ interface Tuple1<T1> extends CachedValues{
 	 * @param fn Mapping function
 	 * @return Tuple1
 	 */
-	default <T> Tuple1<T> map1(Function<T1,T> fn){
-		return Tuples.tuple(fn.apply(v1()));
+	default <T> PTuple1<T> map1(Function<T1,T> fn){
+		return PowerTuples.tuple(fn.apply(v1()));
 	}
 	/**
 	 * Lazily Map 1st element and memoise the result
 	 * @param fn Map function
 	 * @return
 	 */
-	default <T> Tuple1<T> lazyMap1(Function<T1,T> fn){
+	default <T> PTuple1<T> lazyMap1(Function<T1,T> fn){
 		
 		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
 		return new TupleImpl<T,Object,Object,Object,Object,Object,Object,Object>(Arrays.asList(),1){
 			
 			public T v1(){
-				return value.getOrSet(()->fn.apply(Tuple1.this.v1())); 
+				return value.getOrSet(()->fn.apply(PTuple1.this.v1())); 
 			}
 
 			@Override
@@ -89,15 +89,15 @@ interface Tuple1<T1> extends CachedValues{
 	
 	
 	
-	default Tuple1<T1> swap1(){
+	default PTuple1<T1> swap1(){
 		return this;
 	}
 	
-	public static <T1> Tuple1<T1> ofTuple(Object tuple1){
-		return (Tuple1)new TupleImpl(tuple1,1);
+	public static <T1> PTuple1<T1> ofTuple(Object tuple1){
+		return (PTuple1)new TupleImpl(tuple1,1);
 	}
-	public static <T1> Tuple1<T1> of(T1 t1){
-		return (Tuple1)new TupleImpl(Arrays.asList(t1),1);
+	public static <T1> PTuple1<T1> of(T1 t1){
+		return (PTuple1)new TupleImpl(Arrays.asList(t1),1);
 	}
 	
 	

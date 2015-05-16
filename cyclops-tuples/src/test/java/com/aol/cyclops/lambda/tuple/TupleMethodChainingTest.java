@@ -27,51 +27,51 @@ public class TupleMethodChainingTest {
 	@Test
 	public void testConvertT4(){
 		
-		assertThat(Tuple4.of(1,2,3,4).call(this::method4params),equalTo(10));
+		assertThat(PTuple4.of(1,2,3,4).call(this::method4params),equalTo(10));
 		
 	}
 	@Test
 	public void testConvertT5(){
 		
-		assertThat(Tuples.tuple(1,2,3,4,5).call(this::method5params),equalTo(15));
+		assertThat(PowerTuples.tuple(1,2,3,4,5).call(this::method5params),equalTo(15));
 		
 	}
 	@Test
 	public void testConvertT6(){
 		
-		assertThat(Tuples.tuple(1,2,3,4,5,6).call(this::method6params),equalTo(21));
+		assertThat(PowerTuples.tuple(1,2,3,4,5,6).call(this::method6params),equalTo(21));
 		
 	}
 	@Test
 	public void testConvertT7(){
 		
-		assertThat(Tuples.tuple(1,2,3,4,5,6,7).call(this::method7params),equalTo(28));
+		assertThat(PowerTuples.tuple(1,2,3,4,5,6,7).call(this::method7params),equalTo(28));
 		
 	}
 	@Test
 	public void testConvertT8(){
 		
-		assertThat(Tuples.tuple(1,2,3,4,5,6,7,8).call(this::method8params),equalTo(36));
+		assertThat(PowerTuples.tuple(1,2,3,4,5,6,7,8).call(this::method8params),equalTo(36));
 		
 	}
 	@Test
 	public void testConvert2(){
-		methodTuple2().<Tuple1<Integer>>filter(t->t.v1()==0).call(this::method3);
+		methodTuple2().<PTuple1<Integer>>filter(t->t.v1()==0).call(this::method3);
 		
 	}
 	@Test
 	public void testConvert2Async(){
-		methodTuple2().<Tuple1<Integer>>filter(t->t.v1()==0).callAsync(this::method3).join();
+		methodTuple2().<PTuple1<Integer>>filter(t->t.v1()==0).callAsync(this::method3).join();
 		
 	}
-	public Tuple1<Integer> methodTuple1(){
-		return Tuples.tuple(10);
+	public PTuple1<Integer> methodTuple1(){
+		return PowerTuples.tuple(10);
 	}
-	public Tuple2<Integer,String> methodTuple2(){
-		return Tuples.tuple(10,"hello");
+	public PTuple2<Integer,String> methodTuple2(){
+		return PowerTuples.tuple(10,"hello");
 	}
-	public Tuple3<Integer,String,Integer> methodTuple3(){
-		return Tuples.tuple(10,"hello",3);
+	public PTuple3<Integer,String,Integer> methodTuple3(){
+		return PowerTuples.tuple(10,"hello",3);
 	}
 	public String method3params(Integer number, String value,Integer num2){
 		return "" + number + value + num2;

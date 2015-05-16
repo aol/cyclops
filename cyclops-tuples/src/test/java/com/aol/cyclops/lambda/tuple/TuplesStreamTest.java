@@ -16,28 +16,28 @@ public class TuplesStreamTest {
 	@Test
 	public void streamOfStrings(){
 		Date d  = new Date();
-		List<String> result = Tuples.tuple("hello",d,20).asStreamOfStrings().collect(Collectors.toList());
+		List<String> result = PowerTuples.tuple("hello",d,20).asStreamOfStrings().collect(Collectors.toList());
 		
 		assertThat(Arrays.asList("hello",d.toString(),"20"),equalTo(result));
 	}
 	@Test
 	public void streamOfStreamsNoStreamable(){
 		Date d  = new Date();
-		List<Stream> result = Tuples.tuple(100,d,20).asStreams().collect(Collectors.toList());
+		List<Stream> result = PowerTuples.tuple(100,d,20).asStreams().collect(Collectors.toList());
 		
 		assertThat(3,equalTo(result.size()));
 	}
 	@Test
 	public void streamOfStreamsStringAndArray(){
 		Date d  = new Date();
-		List<Stream> result = Tuples.tuple("hello",Arrays.asList(d,20)).asStreams().collect(Collectors.toList());
+		List<Stream> result = PowerTuples.tuple("hello",Arrays.asList(d,20)).asStreams().collect(Collectors.toList());
 		
 		assertThat(2,equalTo(result.size()));
 	}
 	@Test
 	public void streamOfStreamsStringAndArrayFlattened(){
 		Date d  = new Date();
-		List result = Tuples.tuple("hello",Arrays.asList(d,20)).asFlattenedStream().collect(Collectors.toList());
+		List result = PowerTuples.tuple("hello",Arrays.asList(d,20)).asFlattenedStream().collect(Collectors.toList());
 		
 		assertThat(7,equalTo(result.size()));
 	}
@@ -46,7 +46,7 @@ public class TuplesStreamTest {
 	public void streamOfStreamsFileFlattened(){
 		URL url =this.getClass().getClassLoader().getResource("input.file");
 		File file = new File(url.getFile());
-		List result = Tuples.tuple(file).asFlattenedStream().collect(Collectors.toList());
+		List result = PowerTuples.tuple(file).asFlattenedStream().collect(Collectors.toList());
 		
 		assertThat(2,equalTo(result.size()));
 	}
