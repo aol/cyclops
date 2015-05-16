@@ -126,8 +126,10 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 	}
 	@Value
 	static class GoSub<A,F extends Functor<?>,B>  implements Free<F,B>{
+		
 		Free<F,A> free;
 		Function<A,Free<F,B>> next;
+		
 		@Override
 		public B unwrap() {
 			return null;
@@ -149,6 +151,7 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		private <T1> Function<SimplestCase<? super Either>,SimplestCase<? super Either>> buildCase(Functor<T1> f){
+			
 			return  c ->  c.caseOf((Return<A,F> r) -> right(next.apply(r.result)))
 							.caseOf( (Suspend<A,F> s) -> left((f.map(o -> ((Free) o).flatMap(next)))))
 							.caseOf( (GoSub<A,F,B> y) -> right(y.free.flatMap(o -> y.next.apply(o).flatMap((Function)this.next))));
