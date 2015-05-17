@@ -7,19 +7,13 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
-/**
- * Don't break encapsulation of classes for testing purposes
- * Coerce Objects to Map form in testing, to test their values.
- * 
- * @author johnmcclean
- *
- */
-public class AsMap {
-
-	@SuppressWarnings("unchecked")
-	public static Map<String,?> asMap(Object o){
+public interface Mappable {
+	default Object unwrap(){
+		return this;
+	}
+	default Map<String,?> toMap(){
 		try {
-			
+			Object  o=  unwrap();
 			return (Map)Stream.of(o.getClass().getDeclaredFields())
 					.collect(Collectors.toMap((Field f)->f.getName(),(Field f) ->{
 						try {

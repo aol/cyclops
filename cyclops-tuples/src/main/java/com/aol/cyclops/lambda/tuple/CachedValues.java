@@ -13,17 +13,16 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+
 import lombok.AllArgsConstructor;
 import lombok.val;
 
-import com.aol.cyclops.comprehensions.donotation.Doable;
-import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.lambda.utils.Mutable;
 import com.aol.cyclops.matcher.builders.MatchingInstance;
 import com.aol.cyclops.matcher.builders.PatternMatcher;
 import com.aol.cyclops.matcher.builders._MembersMatchBuilder;
 import com.aol.cyclops.matcher.builders._Simpler_Case;
-import com.aol.cyclops.matcher.util.Value;
+import com.aol.cyclops.value.*;
 
 public interface CachedValues extends Iterable, Value{
 

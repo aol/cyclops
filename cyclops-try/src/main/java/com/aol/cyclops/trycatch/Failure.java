@@ -26,7 +26,7 @@ import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 public class Failure<T,X extends Throwable> implements Try<T,X> {
 
 	@Override
-	public <T extends Iterable<? extends Object>> T unapply() {
+	public <T extends Iterable<?>> T unapply() {
 		return (T)Arrays.asList(error);
 	}
 	private final X error;

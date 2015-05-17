@@ -15,15 +15,17 @@ import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 public interface Decomposable{
 	
 	
-	
+	default  Object getDValue(){
+		return this;
+	}
 	/**
 	 * @return Values of the fields of this Decomposable instance
 	 */
 	@SuppressWarnings("unchecked")
-	default <T extends Iterable<? extends Object>> T unapply(){
+	default <I extends Iterable<?>> I unapply(){
 		
 		try {
-			return (T)ReflectionCache.getField(this.getClass()).stream().map(f ->{
+			return (I)ReflectionCache.getField(getDValue().getClass()).stream().map(f ->{
 				try {
 				
 					return f.get(this);
@@ -35,7 +37,7 @@ public interface Decomposable{
 		} catch (Exception e) {
 			ExceptionSoftener.singleton.factory.getInstance()
 					.throwSoftenedException(e);
-			return (T)null;
+			return (I)null;
 		}
 		
 	}

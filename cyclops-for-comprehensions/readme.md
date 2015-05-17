@@ -232,6 +232,9 @@ The c.$1() and c.$2() calls capture the result of the operations at c.$1(_) and 
 * ForComprehension2 :- Stricter typing, offer $1 and $2 operations
 * ForComprehension3 :- Stricter typing, offer $1, $2 and $3 operations
 
+### Auto-Seq upscaling
+
+
 ### For more info
 
 * [Scala Sequence Comprehensions](http://docs.scala-lang.org/tutorials/tour/sequence-comprehensions.html)

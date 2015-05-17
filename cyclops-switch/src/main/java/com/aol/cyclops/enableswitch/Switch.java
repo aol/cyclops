@@ -23,7 +23,7 @@ public interface Switch<F> extends Gettable<F>, Decomposable {
 	
 	F get();
 	
-	default <T extends Iterable<? extends Object>> T unapply(){
+	default <T extends Iterable<?>> T unapply(){
 		return (T)Arrays.asList(get());
 	}
 	/**

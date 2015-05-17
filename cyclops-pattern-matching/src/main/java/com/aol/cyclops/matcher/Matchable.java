@@ -10,12 +10,22 @@ import com.aol.cyclops.matcher.builders._Case;
 
 
 /**
- * Decomposable that is also matchable
+ * Matchable
+ * 
+ * todo - add AsMatchable.asMatchable
  * 
  * @author johnmcclean
  *
  */
 public interface Matchable{
+	
+	
+	/**
+	 * @return matchable
+	 */
+	default Object getMatchable(){
+		return this;
+	}
 	
 	/**
 	 * Match against this matchable using simple matching interface
@@ -32,7 +42,7 @@ public interface Matchable{
 	 * @return Matching result
 	 */
 	default <R> R match(Function<SimplestCase<? super R>,SimplestCase<? super R>> fn){
-		return new MatchingInstance<Object,R>(fn.apply( new SimplestCase<>( new PatternMatcher()))).match(this).get();
+		return new MatchingInstance<Object,R>(fn.apply( new SimplestCase<>( new PatternMatcher()))).match(getMatchable()).get();
 	} 
 	/**
 	 * Match against this matchable using simple matching interface
@@ -51,7 +61,7 @@ public interface Matchable{
 	 * @return Matching result
 	 */
 	default <R> R match(Function<SimplestCase<? super R>,SimplestCase<? super R>> fn,R defaultValue){
-		return new MatchingInstance<Object,R>(fn.apply( new SimplestCase<>( new PatternMatcher()))).match(this).orElse(defaultValue);
+		return new MatchingInstance<Object,R>(fn.apply( new SimplestCase<>( new PatternMatcher()))).match(getMatchable()).orElse(defaultValue);
 	}
 	/**
 	 * Match against this matchable using algebraic matching interface (each field can
@@ -62,7 +72,7 @@ public interface Matchable{
 	 * @return Matching result
 	 */
 	default <R,I> R _match(Function<_Case<I>,MatchingInstance> fn){
-		return (R)fn.apply( Matching._case()).match(this).get();
+		return (R)fn.apply( Matching._case()).match(getMatchable()).get();
 	}
 	/**
 	 * Match against this matchable using algebraic matching interface (each field can
@@ -74,6 +84,6 @@ public interface Matchable{
 	 * @return Matching result
 	 */
 	default <R,I> R _match(Function<_Case<I>,MatchingInstance> fn,R defaultValue){
-		return (R)fn.apply( Matching._case()).match(this).orElse(defaultValue);
+		return (R)fn.apply( Matching._case()).match(getMatchable()).orElse(defaultValue);
 	}
 }

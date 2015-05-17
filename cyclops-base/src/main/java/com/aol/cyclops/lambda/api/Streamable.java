@@ -2,17 +2,21 @@ package com.aol.cyclops.lambda.api;
 
 import static com.aol.cyclops.lambda.api.AsDecomposable.asDecomposable;
 
+import java.util.Iterator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public interface Streamable<T> {
+public interface Streamable<T> extends Iterable<T>{
 
-	default T getStreamable(){
+	default Iterator<T> iterator(){
+		return stream().iterator();
+	}
+	default  T getValue(){
 		return (T)this;
 	}
 	
 	default Stream<T> stream(){
-		T streamable = getStreamable();
+		T streamable = getValue();
 		if(streamable instanceof Stream)
 			return (Stream)streamable;
 		if(streamable instanceof Iterable)

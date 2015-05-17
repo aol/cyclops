@@ -26,7 +26,7 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 	private final T value;
 	
 	@Override
-	public <R extends Iterable<? extends Object>> R unapply() {
+	public <R extends Iterable<?>> R unapply() {
 		return (R)Arrays.asList(value);
 	}
 
