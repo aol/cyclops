@@ -2,18 +2,15 @@ package com.aol.cyclops.comprehensions.converters;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.stream.Stream;
 
 import lombok.val;
-
-import org.jooq.lambda.Seq;
 
 import com.aol.cyclops.lambda.api.MonadicConverter;
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
-public class ResultsetToStreamConverter implements MonadicConverter<Seq> {
+public class ResultsetToStreamConverter implements MonadicConverter<Stream> {
 
 	@Override
 	public boolean accept(Object o) {
@@ -21,9 +18,9 @@ public class ResultsetToStreamConverter implements MonadicConverter<Seq> {
 	}
 
 	@Override
-	public Seq convertToMonadicForm(Object f) {
+	public Stream convertToMonadicForm(Object f) {
 		val resultset = (ResultSet)f;
-		return Seq.seq(new Iterator(){
+		return toStream((new Iterator(){
 			Boolean hasNext;
 			@Override
 			public boolean hasNext() {
@@ -42,7 +39,11 @@ public class ResultsetToStreamConverter implements MonadicConverter<Seq> {
 				return resultset;
 			}
 			
-		});
+		}));
+	}
+
+	private Stream toStream(Iterator iterator) {
+		return new IteratorToStreamConverter().convertToMonadicForm(iterator);
 	}
 
 }

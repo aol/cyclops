@@ -1,12 +1,14 @@
 package com.aol.cyclops.comprehensions.converters;
 
 import java.util.Iterator;
-
-import org.jooq.lambda.Seq;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.lambda.api.MonadicConverter;
 
-public class IteratorToStreamConverter implements MonadicConverter<Seq> {
+public class IteratorToStreamConverter implements MonadicConverter<Stream> {
 
 	@Override
 	public boolean accept(Object o) {
@@ -14,8 +16,8 @@ public class IteratorToStreamConverter implements MonadicConverter<Seq> {
 	}
 
 	@Override
-	public Seq convertToMonadicForm(Object f) {
-		return Seq.seq((Iterator)f);
+	public Stream convertToMonadicForm(Object f) {
+		return StreamSupport.stream(Spliterators.spliteratorUnknownSize((Iterator)f, Spliterator.ORDERED),false );
 	}
 
 }

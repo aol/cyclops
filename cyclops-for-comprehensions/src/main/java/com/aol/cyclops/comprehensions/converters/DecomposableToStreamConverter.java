@@ -1,8 +1,7 @@
 package com.aol.cyclops.comprehensions.converters;
 
 import java.util.stream.Stream;
-
-import org.jooq.lambda.Seq;
+import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.lambda.api.MonadicConverter;
@@ -19,8 +18,8 @@ public class DecomposableToStreamConverter implements MonadicConverter<Stream> {
 	}
 
 	@Override
-	public Seq convertToMonadicForm(Object f) {
-		return Seq.seq((Iterable)((Decomposable)f).unapply());
+	public Stream convertToMonadicForm(Object f) {
+		return StreamSupport.stream(((Iterable)((Decomposable)f).unapply()).spliterator(),false);
 	}
 
 }

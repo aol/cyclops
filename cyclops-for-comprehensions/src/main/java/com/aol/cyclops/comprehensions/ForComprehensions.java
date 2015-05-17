@@ -17,8 +17,8 @@ public class ForComprehensions {
 	public static <X,V extends Initialisable<?>> FreeFormForComprehension<X,V>  buildExecutor(State state,Class<X> interfaceStep1,Class<V> variables){
 		return new FreeFormForComprehension<>(state,interfaceStep1,variables,null);
 	}
-	public static FreeFormForComprehension<?,?>  buildExecutor(MonadicConverters converters, Comprehenders comprehenders){
-		return new FreeFormForComprehension<>(new State(comprehenders,converters));
+	public static FreeFormForComprehension<?,?>  buildExecutor(MonadicConverters converters, Comprehenders comprehenders,StreamConverter converter){
+		return new FreeFormForComprehension<>(new State(comprehenders,converters,converter));
 	}
 	public static FreeFormForComprehension<?,?>  buildExecutor(State state){
 		return new FreeFormForComprehension<>(state);

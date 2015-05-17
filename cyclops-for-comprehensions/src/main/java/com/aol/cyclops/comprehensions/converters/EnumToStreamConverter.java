@@ -1,12 +1,12 @@
 package com.aol.cyclops.comprehensions.converters;
 
-import lombok.val;
+import java.util.stream.Stream;
 
-import org.jooq.lambda.Seq;
+import lombok.val;
 
 import com.aol.cyclops.lambda.api.MonadicConverter;
 
-public class EnumToStreamConverter implements MonadicConverter<Seq>{
+public class EnumToStreamConverter implements MonadicConverter<Stream>{
 
 	@Override
 	public boolean accept(Object o) {
@@ -21,9 +21,9 @@ public class EnumToStreamConverter implements MonadicConverter<Seq>{
 	}
 
 	@Override
-	public Seq convertToMonadicForm(Object f) {
+	public Stream convertToMonadicForm(Object f) {
 		Class c = (Class)f;
-		return Seq.of(c.getEnumConstants());
+		return Stream.of(c.getEnumConstants());
 	}
 
 }

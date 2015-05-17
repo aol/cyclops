@@ -16,7 +16,7 @@ repositories {
 dependencies {
 	compile project(':cyclops-base')
 	compile group: 'org.projectlombok', name: 'lombok', version:'1.16.2'
-	compile 'org.jooq:jool:0.9.6'
+	testCompile 'org.jooq:jool:0.9.6'
 	compile 'org.pcollections:pcollections:2.1.2'
 	testCompile 'org.functionaljava:functionaljava:4.3'
 	testCompile group: 'org.hamcrest', name: 'hamcrest-all', version:'1.3'

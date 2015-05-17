@@ -1,16 +1,15 @@
 package com.aol.cyclops.comprehensions.converters;
 
 import java.io.BufferedReader;
+import java.util.stream.Stream;
 
 import lombok.val;
-
-import org.jooq.lambda.Seq;
 
 import com.aol.cyclops.lambda.api.MonadicConverter;
 
 
 
-public class BufferedReaderToStreamConverter implements MonadicConverter<Seq> {
+public class BufferedReaderToStreamConverter implements MonadicConverter<Stream> {
 
 	@Override
 	public boolean accept(Object o) {
@@ -18,9 +17,9 @@ public class BufferedReaderToStreamConverter implements MonadicConverter<Seq> {
 	}
 
 	@Override
-	public Seq convertToMonadicForm(Object f) {
+	public Stream convertToMonadicForm(Object f) {
 		val reader = (BufferedReader)f;
-		return Seq.seq(reader.lines());
+		return Stream.of(reader.lines());
 	}
 
 }

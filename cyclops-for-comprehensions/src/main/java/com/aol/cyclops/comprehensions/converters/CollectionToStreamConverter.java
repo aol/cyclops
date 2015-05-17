@@ -4,27 +4,26 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
-
-import org.jooq.lambda.Seq;
+import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.lambda.api.MonadicConverter;
 
-public class CollectionToStreamConverter implements MonadicConverter<Seq> {
+public class CollectionToStreamConverter implements MonadicConverter<Stream> {
 
 	private static final Map<Class,Boolean> shouldConvertCache=  new ConcurrentHashMap<>();
 	public boolean accept(Object o){
 		return (o instanceof Collection) || (o instanceof Map) || (o instanceof Iterable && shouldConvertCache.computeIfAbsent(o.getClass(),c->shouldConvert(c)));
 	}
 	@SuppressWarnings("rawtypes")
-	public Seq convertToMonadicForm(Object f) {
+	public Stream convertToMonadicForm(Object f) {
 			
 			if(f instanceof Collection)
-				return Seq.seq(((Collection)f).stream());
+				return (((Collection)f).stream());
 			if(f instanceof Map)
-				return Seq.seq(((Map)f).entrySet().stream());
+				return (((Map)f).entrySet().stream());
 			
 			if(f instanceof Iterable){
-				return Seq.seq((Iterable)f);
+				return StreamSupport.stream(((Iterable)f).spliterator(),false);
 			}
 			
 			return null; //should never happen

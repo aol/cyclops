@@ -1,10 +1,12 @@
 package com.aol.cyclops.comprehensions.converters;
 
-import org.jooq.lambda.Seq;
+import java.util.stream.Stream;
 
 import com.aol.cyclops.lambda.api.MonadicConverter;
 
-public class ArrayToStreamConverter implements MonadicConverter<Seq> {
+import fj.data.Seq;
+
+public class ArrayToStreamConverter implements MonadicConverter<Stream> {
 
 	@Override
 	public boolean accept(Object o) {
@@ -14,8 +16,8 @@ public class ArrayToStreamConverter implements MonadicConverter<Seq> {
 	}
 
 	@Override
-	public Seq convertToMonadicForm(Object f) {
-		return Seq.of((Object[])f);
+	public Stream convertToMonadicForm(Object f) {
+		return Stream.of((Object[])f);
 	}
 
 }

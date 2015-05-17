@@ -1,17 +1,13 @@
 package com.aol.cyclops.lambda.monads;
 
-import static com.aol.cyclops.lambda.api.AsDecomposable.asDecomposable;
+import static com.aol.cyclops.lambda.api.AsStreamable.asStreamable;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
-import com.aol.cyclops.comprehensions.comprehenders.InvokeDynamicComprehender;
-import com.aol.cyclops.lambda.api.AsDecomposable;
-import com.aol.cyclops.lambda.utils.InvokeDynamic;
 
 
 
@@ -75,16 +71,8 @@ public interface Monad<T,MONAD> extends Functor<T>, Filterable<T>{
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	default Stream<T> stream(){
-		Object monad = getMonad();
-		if(monad instanceof Stream)
-			return (Stream)monad;
-		if(monad instanceof Iterable)
-			return StreamSupport.stream(((Iterable)monad).spliterator(), false);
-		return  new InvokeDynamic().stream(monad).orElseGet( ()->
-								(Stream)StreamSupport.stream(asDecomposable(monad)
-												.unapply()
-												.spliterator(),
-													false));
+		return asStreamable((T)getMonad()).stream();
+		
 	}
 
 	default <R extends MONAD,NT> Monad<NT,R> flatMap(Function<T,R> fn) {

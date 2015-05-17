@@ -1,4 +1,4 @@
-package com.aol.cyclops.lambda.utils;
+package com.aol.cyclops.lambda.api;
 
 import java.lang.invoke.CallSite;
 import java.lang.invoke.ConstantCallSite;
@@ -12,9 +12,11 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.comprehensions.comprehenders.FunctionExecutionInvocationHandler;
+import com.aol.cyclops.lambda.utils.ExceptionSoftener;
+import com.aol.cyclops.lambda.utils.ExceptionSoftener.singleton;
 
 
-public class InvokeDynamic {
+class InvokeDynamic {
 	private static volatile Map<Method, CallSite> callSites = new ConcurrentHashMap<>();
 	private static volatile Map<Class, Optional<Method>> streamMethod = new ConcurrentHashMap<>();
 
