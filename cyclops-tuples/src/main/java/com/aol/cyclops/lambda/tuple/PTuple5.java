@@ -14,7 +14,7 @@ import java.util.function.Function;
 
 import lombok.val;
 
-import com.aol.cyclops.comprehensions.functions.QuintFunction;
+import com.aol.cyclops.functions.QuintFunction;
 import com.aol.cyclops.lambda.utils.LazyImmutable;
 
 public interface PTuple5<T1,T2,T3,T4,T5> extends PTuple4<T1,T2,T3,T4> {

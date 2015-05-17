@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 import lombok.val;
 
-import com.aol.cyclops.comprehensions.functions.QuadFunction;
+import com.aol.cyclops.functions.QuadFunction;
 import com.aol.cyclops.lambda.utils.LazyImmutable;
 
 public interface PTuple4<T1,T2,T3,T4> extends PTuple3<T1,T2,T3> {

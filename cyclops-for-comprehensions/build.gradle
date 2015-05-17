@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-	compile project(':cyclops-lambda-utils')
+	compile project(':cyclops-base')
 	compile group: 'org.projectlombok', name: 'lombok', version:'1.16.2'
 	compile 'org.jooq:jool:0.9.6'
 	compile 'org.pcollections:pcollections:2.1.2'

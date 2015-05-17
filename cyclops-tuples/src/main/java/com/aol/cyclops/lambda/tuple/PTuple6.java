@@ -11,7 +11,7 @@ import java.util.function.Function;
 
 
 
-import com.aol.cyclops.comprehensions.functions.HexFunction;
+import com.aol.cyclops.functions.HexFunction;
 import com.aol.cyclops.lambda.utils.LazyImmutable;
 
 public interface PTuple6<T1,T2,T3,T4,T5,T6> extends PTuple5<T1,T2,T3,T4,T5> {

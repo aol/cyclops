@@ -1,13 +1,13 @@
 package com.aol.cyclops.lambda.tuple;
 
-import static com.aol.cyclops.comprehensions.functions.Curry.*;
+import static com.aol.cyclops.functions.Curry.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.functions.Curry;
-import com.aol.cyclops.comprehensions.functions.QuintFunction;
+import com.aol.cyclops.functions.Curry;
+import com.aol.cyclops.functions.QuintFunction;
 
 public class TupleMethodChainingAsyncTest {
 	@Test

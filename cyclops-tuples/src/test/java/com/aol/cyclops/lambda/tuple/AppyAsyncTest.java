@@ -5,7 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.functions.QuintFunction;
+import com.aol.cyclops.functions.QuintFunction;
 
 public class AppyAsyncTest {
 	@Test

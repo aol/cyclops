@@ -23,8 +23,9 @@ import com.aol.cyclops.matcher.builders.MatchingInstance;
 import com.aol.cyclops.matcher.builders.PatternMatcher;
 import com.aol.cyclops.matcher.builders._MembersMatchBuilder;
 import com.aol.cyclops.matcher.builders._Simpler_Case;
+import com.aol.cyclops.matcher.util.Value;
 
-public interface CachedValues extends Iterable, Decomposable, Doable{
+public interface CachedValues extends Iterable, Value{
 
 	public List<Object> getCachedValues();
 	
@@ -37,14 +38,14 @@ public interface CachedValues extends Iterable, Decomposable, Doable{
 		}
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <R,T,I> R  match(Function<_MembersMatchBuilder<I,T>,_MembersMatchBuilder<I,T>> fn){
+	default <R,T,I> R  matchValues(Function<_MembersMatchBuilder<I,T>,_MembersMatchBuilder<I,T>> fn){
 		
 		return (R) new MatchingInstance(new _Simpler_Case( fn.apply( (_MembersMatchBuilder)
 					new _Simpler_Case(new PatternMatcher()).withType(this.getClass())).getPatternMatcher()))
 						.match(this).get();
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <R,T,I> R  match(Function<_MembersMatchBuilder<I,T>,_MembersMatchBuilder<I,T>> fn, R defaultValue){
+	default <R,T,I> R  matchValues(Function<_MembersMatchBuilder<I,T>,_MembersMatchBuilder<I,T>> fn, R defaultValue){
 		
 		return (R) new MatchingInstance(new _Simpler_Case( fn.apply( (_MembersMatchBuilder)
 					new _Simpler_Case(new PatternMatcher()).withType(this.getClass())).getPatternMatcher()))

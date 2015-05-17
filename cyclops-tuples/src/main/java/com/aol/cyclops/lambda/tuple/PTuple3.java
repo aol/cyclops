@@ -12,7 +12,7 @@ import java.util.stream.LongStream;
 
 import lombok.AllArgsConstructor;
 
-import com.aol.cyclops.comprehensions.functions.TriFunction;
+import com.aol.cyclops.functions.TriFunction;
 import com.aol.cyclops.lambda.utils.LazyImmutable;
 
 public interface PTuple3<T1,T2,T3> extends PTuple2<T1,T2> {

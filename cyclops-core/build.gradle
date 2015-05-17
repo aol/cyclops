@@ -1,0 +1,36 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.8
+version = '1.0'
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Gradle Quickstart', 'Implementation-Version': version
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+	
+	compile project(':cyclops-pattern-matching')
+	compile project(':cyclops-trampoline')
+	compile project(':cyclops-base')
+	testCompile project(':cyclops-for-comprehensions')
+
+    testCompile group: 'junit', name: 'junit', version: '4.3'
+}
+
+test {
+    systemProperties 'property': 'value'
+}
+
+uploadArchives {
+    repositories {
+       flatDir {
+           dirs 'repos'
+       }
+    }
+}

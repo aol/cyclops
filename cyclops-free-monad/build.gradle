@@ -18,7 +18,7 @@ dependencies {
 	compile "org.functionaljava:functionaljava-java8:4.3"
 	compile project(':cyclops-pattern-matching')
 	compile project(':cyclops-trampoline')
-	compile project(':cyclops-lambda-utils')
+	compile project(':cyclops-base')
 	testCompile project(':cyclops-for-comprehensions')
 
     testCompile group: 'junit', name: 'junit', version: '4.+'
