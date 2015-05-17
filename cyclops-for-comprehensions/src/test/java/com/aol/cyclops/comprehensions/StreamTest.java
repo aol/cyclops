@@ -25,10 +25,7 @@ import com.aol.cyclops.comprehensions.LessTypingForComprehension1.Vars1;
 import com.aol.cyclops.comprehensions.LessTypingForComprehension2.Vars2;
 
 public class StreamTest {
-	static{
-		
-		State.setGlobalStreamConverter( stream -> Seq.seq(stream) );
-	}
+	
 	@Test
 	public void arrayStream() {
 		

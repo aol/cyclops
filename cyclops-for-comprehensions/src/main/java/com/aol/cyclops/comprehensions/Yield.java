@@ -26,7 +26,7 @@ class Yield<T> {
 						Object currentExpansionUnwrapped, String lastExpansionName, int index) {
 		
 		Tuple2<Comprehender,Object> comprehender = selectComprehender(currentExpansionUnwrapped)
-									.orElseGet( ()->selectComprehender(state.converters.convertToMonadicForm(currentExpansionUnwrapped))
+									.orElseGet( ()->selectComprehender(state.converters.convertToMonadicForm(currentExpansionUnwrapped,state.streamConverter))
 													.orElse( new Tuple2(new InvokeDynamicComprehender(Optional.ofNullable(currentExpansionUnwrapped).map(Object::getClass)),currentExpansionUnwrapped)));
 			
 		

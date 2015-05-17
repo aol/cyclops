@@ -8,6 +8,7 @@ import lombok.Getter;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
+import com.aol.cyclops.comprehensions.StreamUpscaler;
 import com.aol.cyclops.lambda.api.MonadicConverter;
 
 public class MonadicConverters {
@@ -66,8 +67,8 @@ public class MonadicConverters {
 		this.converters = ConsPStack.from(converters);
 	}
 	
-	public Object convertToMonadicForm(Object o){
-		return converters.stream().filter(t-> t.accept(o)).map(m -> m.convertToMonadicForm(o)).findFirst().orElse(o);
+	public Object convertToMonadicForm(Object o, StreamUpscaler converter){
+		return converter.upscaleIfStream(converters.stream().filter(t-> t.accept(o)).map(m -> m.convertToMonadicForm(o)).findFirst().orElse(o));
 	}
 	
 }
