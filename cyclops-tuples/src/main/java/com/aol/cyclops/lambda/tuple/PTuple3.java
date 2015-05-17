@@ -13,7 +13,7 @@ import java.util.stream.LongStream;
 import lombok.AllArgsConstructor;
 
 import com.aol.cyclops.comprehensions.functions.TriFunction;
-import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
+import com.aol.cyclops.lambda.utils.LazyImmutable;
 
 public interface PTuple3<T1,T2,T3> extends PTuple2<T1,T2> {
 	
@@ -71,7 +71,7 @@ public interface PTuple3<T1,T2,T3> extends PTuple2<T1,T2> {
 		if(arity()!=3)
 			return (PTuple3)PTuple2.super.lazyMap1(fn);
 	
-		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		LazyImmutable<T> value = new LazyImmutable<>();
 		return new TupleImpl<T,T2,T3,Object,Object,Object,Object,Object>(Arrays.asList(),3){
 			public T v1(){
 				return value.getOrSet(()->fn.apply(PTuple3.this.v1())); 
@@ -101,7 +101,7 @@ public interface PTuple3<T1,T2,T3> extends PTuple2<T1,T2> {
 		if(arity()!=3)
 			return (PTuple3)PTuple2.super.lazyMap2(fn);
 		
-		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		LazyImmutable<T> value = new LazyImmutable<>();
 		return new TupleImpl(3){
 			
 			public T v2(){
@@ -140,7 +140,7 @@ public interface PTuple3<T1,T2,T3> extends PTuple2<T1,T2> {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	default <T> PTuple3<T1,T2,T> lazyMap3(Function<T3,T> fn){
 		
-		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		LazyImmutable<T> value = new LazyImmutable<>();
 		return new TupleImpl(3){
 			
 			public T v3(){

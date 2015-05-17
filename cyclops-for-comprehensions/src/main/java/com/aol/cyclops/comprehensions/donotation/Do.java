@@ -13,7 +13,7 @@ import org.pcollections.PStack;
 
 import com.aol.cyclops.comprehensions.ComprehensionData;
 import com.aol.cyclops.comprehensions.ForComprehensions;
-import com.aol.cyclops.lambda.utils.ClosedVar;
+import com.aol.cyclops.lambda.utils.Mutable;
 
 /**
  * Do notation for comprehensions
@@ -230,7 +230,7 @@ public class Do {
 				c.filter( ()-> {
 									List<String>  newList = new ArrayList(assigned); 
 									
-									ClosedVar<Object> var = new ClosedVar<>(true);
+									Mutable<Object> var = new Mutable<>(true);
 									newList.stream().forEach(v-> var.set(f.apply(c.$(v)) )) ; 
 										return var.get(); 
 								}  );
@@ -242,7 +242,7 @@ public class Do {
 				c.$(e.getKey(), ()-> {
 									List<Supplier<String>>  newList = new ArrayList(assigned); 
 									
-									ClosedVar<Object> var = new ClosedVar<>(true);
+									Mutable<Object> var = new Mutable<>(true);
 									newList.stream().forEach(v-> var.set(f.apply(c.$(v.get() )) )) ; 
 										return var.get(); 
 								}  );
@@ -255,14 +255,14 @@ public class Do {
 		}
 		private Object build(
 				ComprehensionData c, Function f) {
-			ClosedVar<List<String>> vars = new ClosedVar<>(new ArrayList());
+			Mutable<List<String>> vars = new Mutable<>(new ArrayList());
 			assigned.stream().forEach(e-> addToVar(e,vars,handleNext(e,c,vars.get())));
-			ClosedVar var = new ClosedVar();
+			Mutable var = new Mutable();
 			return c.yield(()-> { vars.get().stream().forEach(e-> var.set(f.apply( c.$(e ) ))) ; return var.get(); }  );
 			
 		}
 	
-		private Object addToVar(Entry e,ClosedVar<List<String>> vars, Object handleNext) {
+		private Object addToVar(Entry e,Mutable<List<String>> vars, Object handleNext) {
 			if(!(e.getValue() instanceof Guard)){	
 				vars.get().add(e.getKey());
 			}

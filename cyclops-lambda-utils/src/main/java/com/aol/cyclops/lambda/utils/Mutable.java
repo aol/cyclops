@@ -1,5 +1,7 @@
 package com.aol.cyclops.lambda.utils;
 
+import java.util.function.Supplier;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -31,10 +33,13 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString @EqualsAndHashCode
-public class ClosedVar<T> {
+public class Mutable<T> implements Supplier<T>{
 
 	private volatile T var;
 	
+	public static <T> Mutable<T> of(T var){
+		return new Mutable<T>(var);
+	}
 	/**
 	 * @return Current value
 	 */
@@ -46,7 +51,7 @@ public class ClosedVar<T> {
 	 * @param var New value
 	 * @return  this object with mutated value
 	 */
-	public ClosedVar<T> set(T var){
+	public Mutable<T> set(T var){
 		this.var = var;
 		return this;
 	}

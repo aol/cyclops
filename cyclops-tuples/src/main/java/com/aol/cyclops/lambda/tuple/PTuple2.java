@@ -13,7 +13,7 @@ import java.util.stream.LongStream;
 import lombok.AllArgsConstructor;
 import lombok.val;
 
-import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
+import com.aol.cyclops.lambda.utils.LazyImmutable;
 
 public interface PTuple2<T1,T2> extends PTuple1<T1> {
 	
@@ -50,7 +50,7 @@ public interface PTuple2<T1,T2> extends PTuple1<T1> {
 		if(arity()!=2)
 			return (PTuple2)PTuple1.super.lazyMap1(fn);
 		
-		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		LazyImmutable<T> value = new LazyImmutable<>();
 		return new TupleImpl<T,T2,Object,Object,Object,Object,Object,Object>(Arrays.asList(),2){
 			public T v1(){
 				return value.getOrSet(()->fn.apply(PTuple2.this.v1())); 
@@ -77,7 +77,7 @@ public interface PTuple2<T1,T2> extends PTuple1<T1> {
 	 */
 	default <T> PTuple2<T1,T> lazyMap2(Function<T2,T> fn){
 		
-		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		LazyImmutable<T> value = new LazyImmutable<>();
 		return new TupleImpl<T1,T,Object,Object,Object,Object,Object,Object>(Arrays.asList(),2){
 			
 			public T v2(){

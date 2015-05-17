@@ -8,7 +8,7 @@ import java.util.concurrent.Executor;
 import java.util.function.Function;
 
 import com.aol.cyclops.comprehensions.functions.OctFunction;
-import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
+import com.aol.cyclops.lambda.utils.LazyImmutable;
 
 public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5,T6,T7> {
 	
@@ -101,7 +101,7 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 			return (PTuple8)PTuple7.super.lazyMap1(fn);
 		
 		
-		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		LazyImmutable<T> value = new LazyImmutable<>();
 		return new TupleImpl(8){
 			public T v1(){
 				return value.getOrSet(()->fn.apply(PTuple8.this.v1())); 
@@ -131,7 +131,7 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 			return (PTuple8)PTuple7.super.lazyMap2(fn);
 		
 		
-		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		LazyImmutable<T> value = new LazyImmutable<>();
 		return new TupleImpl<T1,T,T3,T4,T5,T6,T7,T8>(8){
 			
 			public T v2(){
@@ -173,7 +173,7 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 			return (PTuple8)PTuple7.super.lazyMap3(fn);
 		
 	
-		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		LazyImmutable<T> value = new LazyImmutable<>();
 		return new TupleImpl(8){
 			
 			public T v3(){
@@ -214,7 +214,7 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 			return (PTuple8)PTuple7.super.lazyMap4(fn);
 		
 		
-		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		LazyImmutable<T> value = new LazyImmutable<>();
 		return new TupleImpl(8){
 			
 			public T v4(){
@@ -255,7 +255,7 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 			return (PTuple8)PTuple7.super.lazyMap5(fn);
 		
 		
-		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		LazyImmutable<T> value = new LazyImmutable<>();
 		return new TupleImpl(8){
 			
 			public T v5(){
@@ -298,7 +298,7 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 			return (PTuple8)PTuple7.super.lazyMap6(fn);
 		
 		
-		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		LazyImmutable<T> value = new LazyImmutable<>();
 		return new TupleImpl(8){
 			
 			public T v6(){
@@ -342,7 +342,7 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 			return (PTuple8)PTuple7.super.lazyMap7(fn);
 		
 		
-		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		LazyImmutable<T> value = new LazyImmutable<>();
 		return new TupleImpl(8){
 			
 			public T v7(){
@@ -386,7 +386,7 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 		
 		
 		
-		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		LazyImmutable<T> value = new LazyImmutable<>();
 		return new TupleImpl(8){
 			
 			public T v8(){

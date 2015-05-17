@@ -161,6 +161,7 @@ public class InvokeDynamicComprehender implements Comprehender {
 		}
 	}
 	
+	
 	private synchronized <X> ProxyWrapper getProxy(Class<X> type){
 		PSet<ProxyWrapper> proxies = removeProxies(type);
 		val proxy = proxies.iterator().next();

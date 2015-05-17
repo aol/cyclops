@@ -12,7 +12,7 @@ import java.util.function.Function;
 
 
 import com.aol.cyclops.comprehensions.functions.HexFunction;
-import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
+import com.aol.cyclops.lambda.utils.LazyImmutable;
 
 public interface PTuple6<T1,T2,T3,T4,T5,T6> extends PTuple5<T1,T2,T3,T4,T5> {
 	
@@ -101,7 +101,7 @@ public interface PTuple6<T1,T2,T3,T4,T5,T6> extends PTuple5<T1,T2,T3,T4,T5> {
 		if(arity()!=6)
 			return (PTuple6)PTuple5.super.lazyMap1(fn);
 		
-		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		LazyImmutable<T> value = new LazyImmutable<>();
 		return new TupleImpl(6){
 			public T v1(){
 				return value.getOrSet(()->fn.apply(PTuple6.this.v1())); 
@@ -131,7 +131,7 @@ public interface PTuple6<T1,T2,T3,T4,T5,T6> extends PTuple5<T1,T2,T3,T4,T5> {
 		if(arity()!=6)
 			return (PTuple6)PTuple5.super.lazyMap2(fn);
 		
-		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		LazyImmutable<T> value = new LazyImmutable<>();
 		return new TupleImpl(6){
 			
 			public T v2(){
@@ -171,7 +171,7 @@ public interface PTuple6<T1,T2,T3,T4,T5,T6> extends PTuple5<T1,T2,T3,T4,T5> {
 		if(arity()!=6)
 			return (PTuple6)PTuple5.super.lazyMap3(fn);
 	
-		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		LazyImmutable<T> value = new LazyImmutable<>();
 		return new TupleImpl(6){
 			
 			public T v3(){
@@ -210,7 +210,7 @@ public interface PTuple6<T1,T2,T3,T4,T5,T6> extends PTuple5<T1,T2,T3,T4,T5> {
 		if(arity()!=6)
 			return (PTuple6)PTuple5.super.lazyMap4(fn);
 		
-		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		LazyImmutable<T> value = new LazyImmutable<>();
 		return new TupleImpl(6){
 			
 			public T v4(){
@@ -250,7 +250,7 @@ public interface PTuple6<T1,T2,T3,T4,T5,T6> extends PTuple5<T1,T2,T3,T4,T5> {
 			if(arity()!=6)
 				return (PTuple6)PTuple5.super.lazyMap5(fn);
 		
-		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		LazyImmutable<T> value = new LazyImmutable<>();
 		return new TupleImpl(6){
 			
 			public T v5(){
@@ -289,7 +289,7 @@ public interface PTuple6<T1,T2,T3,T4,T5,T6> extends PTuple5<T1,T2,T3,T4,T5> {
 	 */
 	default <T> PTuple6<T1,T2,T3,T4,T5,T> lazyMap6(Function<T6,T> fn){
 		
-		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		LazyImmutable<T> value = new LazyImmutable<>();
 		return new TupleImpl(6){
 			
 			public T v6(){

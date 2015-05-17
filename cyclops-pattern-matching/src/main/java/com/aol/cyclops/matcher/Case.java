@@ -10,7 +10,7 @@ import java.util.function.Predicate;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
-import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
+import com.aol.cyclops.lambda.utils.LazyImmutable;
 import com.aol.cyclops.matcher.builders.ADTPredicateBuilder;
 /**
  * An interface / trait for building functionally compositional pattern matching cases
@@ -191,7 +191,7 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	 * @return New Case which chains current case and the supplied cases
 	 */
 	default <T1>  Case<T,T1,Function<T,T1>> andThen(Cases<R,T1,? extends Function<R,T1>> after){
-		final ImmutableClosedValue<Optional<T1>> var = new ImmutableClosedValue<>();
+		final LazyImmutable<Optional<T1>> var = new LazyImmutable<>();
 		return andThen(Case.of(t-> var.setOnce(after.match(t)).get().isPresent(),  t-> var.get().get()));
 	}
 	
@@ -211,7 +211,7 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	 */
 	default <T1> Case<T1,R,Function<T1,R>> compose(Case<T1,T,? extends Function<T1,T>> before){
 		
-		final ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		final LazyImmutable<T> value = new LazyImmutable<>();
 		Predicate<T1> predicate =t-> {
 			final boolean passed;
 			if(before.get().v1.test(t)){

@@ -21,7 +21,7 @@ import com.aol.cyclops.comprehensions.LessTypingForComprehension1.Vars1;
 import com.aol.cyclops.comprehensions.LessTypingForComprehension2.Vars2;
 import com.aol.cyclops.comprehensions.LessTypingForComprehension3.Vars3;
 import com.aol.cyclops.lambda.monads.Functor;
-import com.aol.cyclops.lambda.monads.LiftableFunctor;
+import com.aol.cyclops.lambda.monads.ConstructableFunctor;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
 
 public class FreeTest {
@@ -161,7 +161,7 @@ public class FreeTest {
 				.yield(v-> v.$1()+"-peel").toString());
 	}
 	@Value
-	public static class Box<A> implements LiftableFunctor<A,A,Box<A>>{
+	public static class Box<A> implements ConstructableFunctor<A,A,Box<A>>{
 		A a;
 		public static <A> Free<Functor<?>,A> liftF(A f){
 			return Free.suspend(new Box(Free.ret(f)));

@@ -26,7 +26,7 @@ import org.jooq.lambda.tuple.Tuple8;
 
 import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.lambda.api.ReflectionCache;
-import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
+import com.aol.cyclops.lambda.utils.LazyImmutable;
 
 
 /**
@@ -58,7 +58,7 @@ public class Extractors {
 	 * @return Memoised extractor
 	 */
 	public static final <T,R > Extractor<T,R> memoised( Extractor<T,R> extractor){
-		final ImmutableClosedValue<R> value = new ImmutableClosedValue<>();
+		final LazyImmutable<R> value = new LazyImmutable<>();
 		return input -> {
 			return value.getOrSet(()->extractor.apply(input));
 				

@@ -13,7 +13,7 @@ import java.util.function.Function;
 
 import lombok.val;
 
-import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
+import com.aol.cyclops.lambda.utils.LazyImmutable;
 
 interface PTuple1<T1> extends CachedValues{
 	
@@ -67,7 +67,7 @@ interface PTuple1<T1> extends CachedValues{
 	 */
 	default <T> PTuple1<T> lazyMap1(Function<T1,T> fn){
 		
-		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		LazyImmutable<T> value = new LazyImmutable<>();
 		return new TupleImpl<T,Object,Object,Object,Object,Object,Object,Object>(Arrays.asList(),1){
 			
 			public T v1(){

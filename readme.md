@@ -1,3 +1,8 @@
+Todos 
+
+		move function utils to their own module
+		reduce 3rd party dependencies to maximise resusability / reduce coupling
+		
 # Cyclops
 
 Super charge your JDK with one view into the functional Java world with

@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
-public interface LiftableFunctor<T,A,X extends LiftableFunctor<T,?,?>> extends Functor<T> {
+public interface ConstructableFunctor<T,A,X extends ConstructableFunctor<T,?,?>> extends Functor<T> {
 
 	
 	default X of(A current){

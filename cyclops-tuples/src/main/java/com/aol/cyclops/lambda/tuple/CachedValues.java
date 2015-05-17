@@ -18,7 +18,7 @@ import lombok.val;
 
 import com.aol.cyclops.comprehensions.donotation.Doable;
 import com.aol.cyclops.lambda.api.Decomposable;
-import com.aol.cyclops.lambda.utils.ClosedVar;
+import com.aol.cyclops.lambda.utils.Mutable;
 import com.aol.cyclops.matcher.builders.MatchingInstance;
 import com.aol.cyclops.matcher.builders.PatternMatcher;
 import com.aol.cyclops.matcher.builders._MembersMatchBuilder;
@@ -76,7 +76,7 @@ public interface CachedValues extends Iterable, Decomposable, Doable{
 	}
 	
 	default <T extends CachedValues> T filter(Predicate<PTuple2<Integer,Object>> p){
-		ClosedVar<Integer> index = new ClosedVar(-1);
+		Mutable<Integer> index = new Mutable(-1);
 		val newList = getCachedValues().stream().map(v-> PowerTuples.tuple(index.set(index.get()+1).get(),v))
 						.filter(p).map(PTuple2::v2).collect(Collectors.toList());
 		return (T)new TupleImpl(newList,newList.size());

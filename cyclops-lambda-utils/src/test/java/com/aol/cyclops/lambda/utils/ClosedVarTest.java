@@ -13,7 +13,7 @@ public class ClosedVarTest {
 
 	@Test
 	public void inClosure(){
-		ClosedVar<Integer> myInt = new ClosedVar<>(0);
+		Mutable<Integer> myInt = new Mutable<>(0);
 		
 		λ2((Integer i)-> (Integer j)-> myInt.set(i*j)).apply(10).apply(20);
 		
@@ -22,9 +22,9 @@ public class ClosedVarTest {
 	}
 	@Test
 	public void inClosure2(){
-		ClosedVar<Integer> myInt = new ClosedVar<>(0);
+		Mutable<Integer> myInt = new Mutable<>(0);
 		
-		BiFunction<Integer,Integer,ClosedVar<Integer>> fn = (i,j)-> myInt.set(i*j);
+		BiFunction<Integer,Integer,Mutable<Integer>> fn = (i,j)-> myInt.set(i*j);
 		fn.apply(10,20);
 		
 		assertThat(myInt.get(),
@@ -33,27 +33,27 @@ public class ClosedVarTest {
 
 	@Test
 	public void testSet() {
-		assertThat(new ClosedVar().set("hello").get(),is("hello"));
+		assertThat(new Mutable().set("hello").get(),is("hello"));
 	}
 
 	@Test
 	public void testClosedVar() {
-		assertThat(new ClosedVar(10).get(),equalTo(10));
+		assertThat(new Mutable(10).get(),equalTo(10));
 	}
 	@Test
 	public void testClosedVarEquals() {
-		assertThat(new ClosedVar(10),equalTo(new ClosedVar(10)));
+		assertThat(new Mutable(10),equalTo(new Mutable(10)));
 	}
 	@Test
 	public void testClosedVarEqualsFalse() {
-		assertThat(new ClosedVar(10),not(equalTo(new ClosedVar(20))));
+		assertThat(new Mutable(10),not(equalTo(new Mutable(20))));
 	}
 	@Test
 	public void testClosedVarHashCode() {
-		assertThat(new ClosedVar(10).hashCode(),equalTo(new ClosedVar(10).hashCode()));
+		assertThat(new Mutable(10).hashCode(),equalTo(new Mutable(10).hashCode()));
 	}
 	@Test
 	public void testClosedVarHashCodeFalse() {
-		assertThat(new ClosedVar(10).hashCode(),not(equalTo(new ClosedVar(20).hashCode())));
+		assertThat(new Mutable(10).hashCode(),not(equalTo(new Mutable(20).hashCode())));
 	}
 }

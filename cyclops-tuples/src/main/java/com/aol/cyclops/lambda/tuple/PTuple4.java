@@ -10,7 +10,7 @@ import java.util.function.Function;
 import lombok.val;
 
 import com.aol.cyclops.comprehensions.functions.QuadFunction;
-import com.aol.cyclops.lambda.utils.ImmutableClosedValue;
+import com.aol.cyclops.lambda.utils.LazyImmutable;
 
 public interface PTuple4<T1,T2,T3,T4> extends PTuple3<T1,T2,T3> {
 	
@@ -115,7 +115,7 @@ public interface PTuple4<T1,T2,T3,T4> extends PTuple3<T1,T2,T3> {
 		if(arity()!=4)
 			return (PTuple4)PTuple3.super.lazyMap1(fn);
 	
-		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		LazyImmutable<T> value = new LazyImmutable<>();
 		return new TupleImpl(4){
 			public T v1(){
 				return value.getOrSet(()->fn.apply(PTuple4.this.v1())); 
@@ -145,7 +145,7 @@ public interface PTuple4<T1,T2,T3,T4> extends PTuple3<T1,T2,T3> {
 		if(arity()!=4)
 			return (PTuple4)PTuple3.super.lazyMap2(fn);
 		
-		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		LazyImmutable<T> value = new LazyImmutable<>();
 		return new TupleImpl(4){
 			
 			public T v2(){
@@ -186,7 +186,7 @@ public interface PTuple4<T1,T2,T3,T4> extends PTuple3<T1,T2,T3> {
 		if(arity()!=4)
 			return (PTuple4)PTuple3.super.lazyMap3(fn);
 		
-		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		LazyImmutable<T> value = new LazyImmutable<>();
 		return new TupleImpl(4){
 			
 			public T v3(){
@@ -221,7 +221,7 @@ public interface PTuple4<T1,T2,T3,T4> extends PTuple3<T1,T2,T3> {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	default <T> PTuple4<T1,T2,T3,T> lazyMap4(Function<T4,T> fn){
 		
-		ImmutableClosedValue<T> value = new ImmutableClosedValue<>();
+		LazyImmutable<T> value = new LazyImmutable<>();
 		return new TupleImpl(4){
 			
 			public T v4(){

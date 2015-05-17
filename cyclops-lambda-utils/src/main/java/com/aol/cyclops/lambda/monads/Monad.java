@@ -1,16 +1,17 @@
 package com.aol.cyclops.lambda.monads;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.Optional;
+import static com.aol.cyclops.lambda.api.AsDecomposable.asDecomposable;
+
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
-import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.comprehensions.comprehenders.InvokeDynamicComprehender;
+import com.aol.cyclops.lambda.api.AsDecomposable;
+import com.aol.cyclops.lambda.utils.InvokeDynamic;
 
 
 
@@ -62,6 +63,28 @@ public interface Monad<T,MONAD> extends Functor<T>, Filterable<T>{
 				getMonad())
 				.executeflatMap(getMonad(), fn));
 	
+	}
+	/**
+	 * Unwrap this Monad into a Stream.
+	 * If the underlying monad is a Stream it is returned
+	 * If it is an iterable a new Stream is created from it
+	 * If it is not a stream or an iterable a (cached) attempt will be made to invokeDynamic a stream() method
+	 * If there is no stream() method, the monad will be decomposed to an iterable and that stream will be returned
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	default Stream<T> stream(){
+		Object monad = getMonad();
+		if(monad instanceof Stream)
+			return (Stream)monad;
+		if(monad instanceof Iterable)
+			return StreamSupport.stream(((Iterable)monad).spliterator(), false);
+		return  new InvokeDynamic().stream(monad).orElseGet( ()->
+								(Stream)StreamSupport.stream(asDecomposable(monad)
+												.unapply()
+												.spliterator(),
+													false));
 	}
 
 	default <R extends MONAD,NT> Monad<NT,R> flatMap(Function<T,R> fn) {

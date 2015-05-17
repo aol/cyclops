@@ -31,11 +31,11 @@ import lombok.ToString;
  * @param <T>
  */
 @ToString @EqualsAndHashCode
-public class ImmutableClosedValue<T> {
+public class LazyImmutable<T> implements Supplier<T>{
 	private T value;
 	private boolean set=false;
 	
-	public ImmutableClosedValue(){}
+	public LazyImmutable(){}
 	/**
 	 * @return Current value
 	 */
@@ -47,15 +47,15 @@ public class ImmutableClosedValue<T> {
 	 *
 	 * @return unitialised ImmutableClosedValue
 	 */
-	public static <T> ImmutableClosedValue<T> unbound(){
-		return new ImmutableClosedValue();
+	public static <T> LazyImmutable<T> unbound(){
+		return new LazyImmutable();
 	}
 	/**
 	 * @param value Create an initialised ImmutableClosedValue with specified value
 	 * @return Initialised ImmutableClosedValue
 	 */
-	public static <T> ImmutableClosedValue<T> of(T value){
-		ImmutableClosedValue v =  new ImmutableClosedValue();
+	public static <T> LazyImmutable<T> of(T value){
+		LazyImmutable v =  new LazyImmutable();
 		v.setOnce(value);
 		return v;
 	}
@@ -68,11 +68,11 @@ public class ImmutableClosedValue<T> {
 	 * @param fn Mapper function
 	 * @return new ImmutableClosedValue with new mapped value 
 	 */
-	public <R> ImmutableClosedValue<R> map(Function<T,R> fn){
+	public <R> LazyImmutable<R> map(Function<T,R> fn){
 		if(!set)
-			return (ImmutableClosedValue)this;
+			return (LazyImmutable)this;
 		else
-			return ImmutableClosedValue.of(fn.apply(value));
+			return LazyImmutable.of(fn.apply(value));
 	}
 	
 	/**
@@ -82,9 +82,9 @@ public class ImmutableClosedValue<T> {
 	 * @param fn  Flat Mapper function
 	 * @return new ImmutableClosedValue with new mapped value 
 	 */
-	public <R> ImmutableClosedValue<R> flatMap(Function<T,ImmutableClosedValue<R>> fn){
+	public <R> LazyImmutable<R> flatMap(Function<T,LazyImmutable<R>> fn){
 		if(!set)
-			return (ImmutableClosedValue)this;
+			return (LazyImmutable)this;
 		else
 			return fn.apply(value);
 	}
@@ -95,13 +95,13 @@ public class ImmutableClosedValue<T> {
 	 * @param val Value to set to
 	 * @return Current set Value
 	 */
-	public synchronized ImmutableClosedValue<T> setOnce(T val) throws ImmutableClosedValueSetMoreThanOnceException{
+	public synchronized LazyImmutable<T> setOnce(T val) throws LazyImmutableSetMoreThanOnceException{
 		if(!this.set){
 			this.value = val;
 			this.set=true;
 			return this;
 		}
-		throw new  ImmutableClosedValueSetMoreThanOnceException("Current value " + this.value + " attempt to reset to " + val);
+		throw new  LazyImmutableSetMoreThanOnceException("Current value " + this.value + " attempt to reset to " + val);
 	}
 	private synchronized T setOnceFromSupplier(Supplier<T> lazy){
 		
