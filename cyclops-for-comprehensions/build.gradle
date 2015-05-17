@@ -26,12 +26,13 @@ dependencies {
 	testCompile group: 'org.hsqldb', name:'hsqldb', version:'2.0.0'
 }
 sourceSets {
-	main.compileClasspath += configurations.provided
-	test.compileClasspath += configurations.provided
-	test.runtimeClasspath += configurations.provided
+	main.compileClasspath += [configurations.provided]
+	test.compileClasspath += [configurations.provided]
+	test.runtimeClasspath += [configurations.provided]
 }
 
-eclipse.classpath.plusConfigurations += configurations.provided  // Eclipse users only
+eclipse.classpath.plusConfigurations += [configurations.provided]  // Eclipse users only
+
 
 
 

@@ -14,13 +14,11 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
 
-import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
 import com.aol.cyclops.lambda.api.Decomposable;
+import com.nurkiewicz.lazyseq.LazySeq;
 
 /**
  * Represents an ordered list of pattern matching cases.
@@ -93,8 +91,8 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 */
 	public static <T,R,X extends Function<T,R>>  Cases<T,R,X> zip(Stream<Predicate<T>> predicates, Stream<X> functions){
 		
-		return ofPStack(Seq.seq(predicates)
-			.zip(Seq.seq(functions))
+		return ofPStack(LazySeq.of(predicates.iterator())
+			.zip(LazySeq.of(functions.iterator()),(a,b)->Two.tuple(a,b))
 			.map(Case::of)
 			.map(ConsPStack::singleton)
 			.reduce(ConsPStack.empty(),(acc, next)-> acc.plus(acc.size(),next.get(0))));
@@ -112,8 +110,8 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 * 
 	 * @return unzipped Cases, with Predicates in one Stream and Functions in the other.
 	 */
-	public Tuple2<Stream<Predicate<T>>,Stream<X>> unzip(){
-		return Tuple.<Stream<Predicate<T>>,Stream<X>>tuple(cases.stream().map(c-> c.getPredicate()),cases.stream().map(c->c.getAction()));
+	public Two<Stream<Predicate<T>>,Stream<X>> unzip(){
+		return Two.<Stream<Predicate<T>>,Stream<X>>tuple(cases.stream().map(c-> c.getPredicate()),cases.stream().map(c->c.getAction()));
 	}
 	
 	
@@ -425,8 +423,8 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 *            Stream of data to match against (input to matcher)
 	 * @return Stream of values from matched cases
 	 */
-	public <R> Seq<R> matchManyFromStream(Stream<T> s) {
-		return Seq.seq(s.flatMap(this::matchMany));
+	public <R> Stream<R> matchManyFromStream(Stream<T> s) {
+		return (Stream)s.flatMap(this::matchMany);
 	}
 	/**
 	 * Asynchronously match against a Stream of data, on the supplied executor
@@ -450,7 +448,7 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 *            Stream of data to match against (input to matcher)
 	 * @return Stream of values from matched cases
 	 */
-	public <R> CompletableFuture<Seq<R>> matchManyFromStreamAsync(Executor executor, Stream s){
+	public <R> CompletableFuture<Stream<R>> matchManyFromStreamAsync(Executor executor, Stream s){
 		return CompletableFuture.supplyAsync(()->matchManyFromStream(s), executor);
 	}
 
@@ -473,9 +471,9 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 *            input to match against - can generate multiple values
 	 * @return Stream of values from matched cases for the input
 	 */
-	public <R> Seq<R> matchMany(T t) {
-		return Seq.seq((Stream) stream().map(pattern -> pattern.match(t))
-				.filter(Optional::isPresent).map(Optional::get));
+	public <R> Stream<R> matchMany(T t) {
+		return (Stream) stream().map(pattern -> pattern.match(t))
+				.filter(Optional::isPresent).map(Optional::get);
 
 	}
 	/**
@@ -498,7 +496,7 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 * @param t  input to match against - can generate multiple values
 	 * @return Stream of values from matched cases for the input wrapped in a  CompletableFuture
 	 */
-	public <R> CompletableFuture<Seq<R>> matchManyAsync(Executor executor, T t){
+	public <R> CompletableFuture<Stream<R>> matchManyAsync(Executor executor, T t){
 		return CompletableFuture.supplyAsync(()->matchMany(t), executor);
 	}
 	/**
@@ -522,10 +520,10 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 *            Stream of data to match against (input to matcher)
 	 * @return Stream of matched values, one case per input value can match
 	 */
-	public <R> Seq<R> matchFromStream(Stream<T> s) {
+	public <R> Stream<R> matchFromStream(Stream<T> s) {
 
 		Stream<Optional<R>> results = s.<Optional<R>> map(this::match);
-		return Seq.seq(results.filter(Optional::isPresent).map(Optional::get));
+		return results.filter(Optional::isPresent).map(Optional::get);
 	}
 	/**
 	 * Execute matchFromStream asynchronously
@@ -547,7 +545,7 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 * @param s Stream of data
 	 * @return Results
 	 */
-	public <R> CompletableFuture<Seq<R>> matchFromStreamAsync(Executor executor, Stream<T> s){
+	public <R> CompletableFuture<Stream<R>> matchFromStreamAsync(Executor executor, Stream<T> s){
 		return CompletableFuture.supplyAsync(()->matchFromStream(s), executor);
 	}
 	

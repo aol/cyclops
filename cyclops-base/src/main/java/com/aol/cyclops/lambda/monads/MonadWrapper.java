@@ -13,6 +13,9 @@ public class MonadWrapper<T,MONAD> implements Monad<T,MONAD>, Decomposable{
 		return new MonadWrapper(of);
 		
 	}
+	public Object unwrap(){
+		return monad;
+	}
 	
 	
 }

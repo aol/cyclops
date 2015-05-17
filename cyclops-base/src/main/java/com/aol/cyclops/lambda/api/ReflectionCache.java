@@ -1,12 +1,17 @@
 package com.aol.cyclops.lambda.api;
 
+import com.nurkiewicz.lazyseq.LazySeq;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -17,7 +22,12 @@ public class ReflectionCache {
 	public static List<Field> getField(
 			Class class1) {
 		return fields.computeIfAbsent(class1, cl ->{
-			return Stream.of(class1.getDeclaredFields()).filter(f->!Modifier.isStatic(f.getModifiers())).peek(f -> f.setAccessible(true)).collect(Collectors.toList());
+			return LazySeq.iterate(class1, c->c.getSuperclass())
+						.takeWhile(c->c!=Object.class)
+						.flatMap(c->LazySeq.of(c.getDeclaredFields()))
+						.filter(f->!Modifier.isStatic(f.getModifiers()))
+						.map(f -> { f.setAccessible(true); return f;})
+						.toList();
 					});
 		
 	}

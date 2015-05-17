@@ -4,30 +4,17 @@ import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import lombok.val;
 
-import org.jooq.lambda.Seq;
-import org.jooq.lambda.Unchecked;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
-import org.jooq.lambda.tuple.Tuple5;
-import org.jooq.lambda.tuple.Tuple6;
-import org.jooq.lambda.tuple.Tuple7;
-import org.jooq.lambda.tuple.Tuple8;
-
 import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.lambda.api.ReflectionCache;
 import com.aol.cyclops.lambda.utils.LazyImmutable;
-
+import com.nurkiewicz.lazyseq.LazySeq;
 
 /**
  * Generic extractors for use s pre and post data extractors.
@@ -75,9 +62,23 @@ public class Extractors {
 			else if(decomposers.get(input.getClass())!=null)
 				return (R)decomposers.get(input.getClass()).apply(input);
 			
-			return (R)ReflectionCache.getUnapplyMethod(input.getClass()).map(Unchecked.function(m->m.invoke(input))).orElse(input);
+			return (R)ReflectionCache.getUnapplyMethod(input.getClass()).map(unchecked(m->m.invoke(input))).orElse(input);
 			
 		};
+	}
+	private static <T,R> Function<T,R> unchecked(Unchecked<T,R> u){
+	
+			return t ->{ 
+				try {
+				return u.apply(t);
+			}catch (Throwable e) {
+				ExceptionSoftener.singleton.factory.getInstance().throw(e);
+			}
+			return null;
+		};
+	}
+	private static interface Unchecked<T,R>{
+		public R apply(T t) throws Throwable;
 	}
 	/**
 	 * An extractor that will generte a Tuple2 with two values at the specified index.
@@ -87,17 +88,18 @@ public class Extractors {
 	 * @param v2 position of the second element to extract
 	 * @return Tuple with 2 specified elements
 	 */
-	public final static <V1,V2> Extractor<Iterable,Tuple2<V1,V2>> of(int v1,int v2){
+	public final static <V1,V2> Extractor<Iterable,Two<V1,V2>> of(int v1,int v2){
 		val l1 = new Long(v1);
 		val l2 = new Long(v2);
 		return  ( Iterable it)-> {
 		
-			List l  = (List)Seq.seq(it).zipWithIndex().skip(Math.min(v1,v2))
+			List l  = (List)LazySeq.of(it).zip(LazySeq.numbers(0),(a,b)->Two.tuple(a, b))
+								.drop(Math.min(v1,v2))
 								.limit(Math.max(v1,v2)+1)
-								.filter(t -> ((Tuple2<Object,Long>)t).v2.equals(l1) || ((Tuple2<Object,Long>)t).v2.equals(l2))
-								.map(t->((Tuple2)t).v1)
-								.collect(Collectors.toList());
-			return Tuple.tuple((V1)l.get(0),(V2)l.get(1));
+								.filter(t -> ((Two<Object,Long>)t).v2.equals(l1) || ((Two<Object,Long>)t).v2.equals(l2))
+								.map(t->((Two)t).v1)
+								.toList();
+			return Two.tuple((V1)l.get(0),(V2)l.get(1));
 			
 		};
 		
@@ -163,76 +165,5 @@ public class Extractors {
 		return (R c) -> c;
 	}
 	
-	/**
-	 * @return An extractor that generates a tuple from an iterable, extracts the first 2 values to create a Tuple2
-	 */
-	public final static <V1,V2> Extractor<Iterable,Tuple2<V1,V2>> toTuple2(){
-		return  ( Iterable itable)-> {
-			Iterator it = itable.iterator();
-			return new Tuple2(it.next(),it.next());
-		};
-		
-	}
-	
-	/**
-	 *  @return An extractor that generates a tuple from an iterable, extracts the first 3 values to create a Tuple3
-	 */
-	public final static <V1,V2,V3> Extractor<Iterable,Tuple3<V1,V2,V3>> toTuple3(){
-		return  ( Iterable itable)-> {
-			Iterator it = itable.iterator();
-			return new Tuple3(it.next(),it.next(),it.next());
-		};
-		
-	}
-	/**
-	 *  @return An extractor that generates a tuple from an iterable, extracts the first 4 values to create a Tuple4
-	 */
-	public final static <V1,V2,V3,V4> Extractor<Iterable,Tuple4<V1,V2,V3,V4>> toTuple4(){
-		return  ( Iterable itable)-> {
-			Iterator it = itable.iterator();
-			return new Tuple4(it.next(),it.next(),it.next(),it.next());
-		};
-		
-	}
-	/**
-	 *  @return An extractor that generates a tuple from an iterable, extracts the first 5 values to create a Tuple5
-	 */
-	public final static <V1,V2,V3,V4,V5> Extractor<Iterable,Tuple5<V1,V2,V3,V4,V5>> toTuple5(){
-		return  ( Iterable itable)-> {
-			Iterator it = itable.iterator();
-			return new Tuple5(it.next(),it.next(),it.next(),it.next(),it.next());
-		};
-		
-	}
-	/**
-	 *  @return An extractor that generates a tuple from an iterable, extracts the first 6 values to create a Tuple6
-	 */
-	public final static <V1,V2,V3,V4,V5,V6> Extractor<Iterable,Tuple6<V1,V2,V3,V4,V5,V6>> toTuple6(){
-		return  ( Iterable itable)-> {
-			Iterator it = itable.iterator();
-			return new Tuple6(it.next(),it.next(),it.next(),it.next(),it.next(),it.next());
-		};
-		
-	}
-	/**
-	 *  @return An extractor that generates a tuple from an iterable, extracts the first 7 values to create a Tuple7
-	 */
-	public final static <V1,V2,V3,V4,V5,V6,V7> Extractor<Iterable,Tuple7<V1,V2,V3,V4,V5,V6,V7>> toTuple7(){
-		return  ( Iterable itable)-> {
-			Iterator it = itable.iterator();
-			return new Tuple7(it.next(),it.next(),it.next(),it.next(),it.next(),it.next(),it.next());
-		};
-		
-	}
-	/**
-	 *  @return An extractor that generates a tuple from an iterable, extracts the first 8 values to create a Tuple8
-	 */
-	public final static <V1,V2,V3,V4,V5,V6,V7,V8> Extractor<Iterable,Tuple8<V1,V2,V3,V4,V5,V6,V7,V8>> toTuple8(){
-		return  ( Iterable itable)-> {
-			Iterator it = itable.iterator();
-			return new Tuple8(it.next(),it.next(),it.next(),it.next(),it.next(),it.next(),it.next(),it.next());
-		};
-		
-	}
 	
 }

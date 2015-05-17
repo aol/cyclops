@@ -7,9 +7,10 @@ import java.util.function.Predicate;
 import lombok.AllArgsConstructor;
 
 import org.hamcrest.Matcher;
-import org.jooq.lambda.Seq;
 
 import com.aol.cyclops.matcher.Extractors;
+import com.aol.cyclops.matcher.Two;
+import com.nurkiewicz.lazyseq.LazySeq;
 
 /**
  * Predicate Builder for Algebraic Data Types
@@ -47,11 +48,11 @@ public class ADTPredicateBuilder<T>{
 		 * @return A single Predicate encompassing supplied rules
 		 */
 		public<V> Predicate with(V... values){
-			Seq<Predicate> predicates = Seq.of(values).map(nextValue->convertToPredicate(nextValue));
+			LazySeq<Predicate> predicates = LazySeq.of(values).map(nextValue->convertToPredicate(nextValue));
 			
 			return t -> toPredicate().test(t) 
 					  	&& SeqUtils.seq(Extractors.decompose().apply(t))
-							.zip(predicates).map(tuple -> tuple.v2.test(tuple.v1))
+							.zip(predicates,(a,b)->Two.tuple(a, b)).map(tuple -> tuple.v2.test(tuple.v1))
 							.allMatch(v->v==true);
 		}
 		private Predicate convertToPredicate(Object o){

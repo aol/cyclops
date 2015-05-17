@@ -1,7 +1,7 @@
 package com.aol.cyclops.matcher;
 
 import static org.hamcrest.Matchers.is;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static com.aol.cyclops.matcher.Two.tuple;
 import static org.junit.Assert.assertThat;
 
 import java.util.function.Function;
@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 
-import org.jooq.lambda.tuple.Tuple2;
+import com.aol.cyclops.matcher.Two;
 import org.junit.Test;
 
 import com.aol.cyclops.matcher.builders.Matching;
@@ -19,7 +19,7 @@ public class SelectFromTest {
 
 	@Test
 	public void selectFrom(){
-		Stream<Tuple2<Predicate<Integer>,Function<Integer,Integer>>> chain = Stream.of(tuple(it->it>10,it->it*100),
+		Stream<Two<Predicate<Integer>,Function<Integer,Integer>>> chain = Stream.of(tuple(it->it>10,it->it*100),
 				tuple(it->it<10,it->it*100));
 		int result = Matching.streamCase().streamOfResponsibilityFromTuple(chain).match(5).get();
 		

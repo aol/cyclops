@@ -12,14 +12,14 @@ import lombok.Getter;
 import lombok.experimental.Wither;
 
 import org.hamcrest.Matcher;
-import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
 
 import com.aol.cyclops.matcher.ActionWithReturn;
 import com.aol.cyclops.matcher.Extractor;
 import com.aol.cyclops.matcher.Predicates;
+import com.aol.cyclops.matcher.Two;
 import com.aol.cyclops.matcher.builders.CaseBuilder.InCaseOfManyStep2;
 import com.aol.cyclops.matcher.builders.CaseBuilder.InMatchOfManyStep2;
+import com.nurkiewicz.lazyseq.LazySeq;
 /**
  * Case builder for handling iterables
  * Predicates match against each element in the Iterable
@@ -82,7 +82,7 @@ public class IterableCase<X> extends CaseBeingBuilt{
 					@Override
 					public <X> MatchingInstance<R, X> thenApply(ActionWithReturn<R, X> t) {
 						
-						return addCase(patternMatcher.inCaseOfPredicates(Tuple.tuple(pred1,pred2), t, extractor));
+						return addCase(patternMatcher.inCaseOfPredicates(Two.tuple(pred1,pred2), t, extractor));
 					}
 				};
 			}
@@ -136,7 +136,7 @@ public class IterableCase<X> extends CaseBeingBuilt{
 					 */
 					@Override
 					public <X> MatchingInstance<R, X> thenApply(ActionWithReturn<R, X> t) {
-						return  addCase(patternMatcher.inCaseOfSeq(Seq.of(predicates), t, extractor));
+						return  addCase(patternMatcher.inCaseOfStream(Stream.of(predicates), t, extractor));
 					}
 				};
 			}
@@ -205,7 +205,7 @@ public class IterableCase<X> extends CaseBeingBuilt{
 					@Override
 					public <X> MatchingInstance<R, X> thenApply(ActionWithReturn<R, X> t) {
 						
-						return addCase(patternMatcher.inMatchOfMatchers(Tuple.tuple(pred1,pred2), t, extractor));
+						return addCase(patternMatcher.inMatchOfMatchers(Two.tuple(pred1,pred2), t, extractor));
 					}
 				};
 			}
@@ -238,7 +238,7 @@ public class IterableCase<X> extends CaseBeingBuilt{
 					 */
 					@Override
 					public <X> MatchingInstance<R, X> thenApply(ActionWithReturn<R, X> t) {
-						return addCase(patternMatcher.inMatchOfSeq(Seq.of(predicates), t, extractor));
+						return addCase(patternMatcher.inMatchOfSeq(Stream.of(predicates), t, extractor));
 					}
 					
 				};
@@ -260,7 +260,7 @@ public class IterableCase<X> extends CaseBeingBuilt{
 	@SafeVarargs
 	public  final <V,T,X> Step<List<V>,X> allValues(V... values){
 		//add wildcard support
-		Predicate<V>[] predicates = Seq.of(values).map(nextValue->buildPredicate(nextValue)).toList().toArray(new Predicate[0]);
+		Predicate<V>[] predicates = LazySeq.of(values).map(nextValue->buildPredicate(nextValue)).toList().toArray(new Predicate[0]);
 		return new  Step<List<V>,X>(){
 
 			/* 

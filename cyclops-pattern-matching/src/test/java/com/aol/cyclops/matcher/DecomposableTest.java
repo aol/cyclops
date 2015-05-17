@@ -16,7 +16,7 @@ import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.matcher.builders.Matching;
 
 public class DecomposableTest {
-	@Test
+/**	@Test
 	public void allValues(){
 		assertThat(Matching.iterableCase().allValues(1,ANY(),2).thenApply(l->"case1")
 			.iterableCase().allValues(1,3,2).thenApply(l->"case2")
@@ -27,7 +27,7 @@ public class DecomposableTest {
 		
 		
 	}
-	
+	**/
 	
 	@Test
 	public void testDefaultMethod(){

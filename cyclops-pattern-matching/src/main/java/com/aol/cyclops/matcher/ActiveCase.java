@@ -10,8 +10,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+
 /**
  * A functionally compositional class that represents a pattern matching Case
  * 
@@ -28,11 +27,11 @@ import org.jooq.lambda.tuple.Tuple2;
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
 public final class ActiveCase<T,R,X extends Function<T,R>> implements Case<T,R,X>{
 	
-	private final Tuple2<Predicate<T>,X> pattern;
+	private final Two<Predicate<T>,X> pattern;
 	@Getter
 	private final boolean empty=false;
 	
-	public Tuple2<Predicate<T>,X> get(){
+	public Two<Predicate<T>,X> get(){
 		return pattern;
 	}
 	

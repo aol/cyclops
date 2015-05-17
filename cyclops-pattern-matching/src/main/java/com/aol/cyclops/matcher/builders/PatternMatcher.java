@@ -19,9 +19,6 @@ import lombok.experimental.Wither;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.matcher.Action;
@@ -31,6 +28,8 @@ import com.aol.cyclops.matcher.Cases;
 import com.aol.cyclops.matcher.ChainOfResponsibility;
 import com.aol.cyclops.matcher.Extractor;
 import com.aol.cyclops.matcher.Extractors;
+import com.aol.cyclops.matcher.Two;
+import com.nurkiewicz.lazyseq.LazySeq;
 
 
 
@@ -275,10 +274,10 @@ public class PatternMatcher implements Function{
 	@SafeVarargs
 	public final <V> PatternMatcher caseOfMany(Action<List<V>> a,Predicate<V>... predicates){
 		
-		Seq<Predicate<V>> pred = Seq.of(predicates);
+		LazySeq<Predicate<V>> pred = LazySeq.of(predicates);
 		
 		
-		return caseOfThenExtract(it -> seq(it).zip(pred)
+		return caseOfThenExtract(it -> seq(it).zip(pred,(a1,b1)->Two.tuple(a1,b1))
 				.map(t -> t.v2.test((V)t.v1)).allMatch(v-> v), a, this::wrapInList);
 		
 	}
@@ -303,14 +302,14 @@ public class PatternMatcher implements Function{
 	@SafeVarargs
 	public final <V> PatternMatcher matchOfMany(Action<List<V>> a,Matcher<V>... predicates){
 		
-		Seq<Matcher<V>> pred = Seq.of(predicates);
+		LazySeq<Matcher<V>> pred = LazySeq.of(predicates);
 		
 		
 		return matchOfThenExtract(new BaseMatcher(){
 
 			@Override
 			public boolean matches(Object item) {
-				return seq(item).zip(pred)
+				return seq(item).zip(pred,(a1,b1)->Two.tuple(a1,b1))
 						.map(t -> t.v2.matches((V)t.v1)).allMatch(v->v==true);
 			}
 
@@ -341,16 +340,16 @@ public class PatternMatcher implements Function{
 	 * @param extractor Extractor to extract data out of incoming iterable after matchers have matched
 	 * @return New Pattern Matcher
 	 */
-	public <T,R,V,V1>  PatternMatcher matchOfMatchers(Tuple2<Matcher<V>,Matcher<V1>> predicates,
+	public <T,R,V,V1>  PatternMatcher matchOfMatchers(Two<Matcher<V>,Matcher<V1>> predicates,
 				Action<R> a,Extractor<T,R> extractor){
 			
-			Seq<Object> pred = Seq.seq(predicates);
+			LazySeq<Object> pred = LazySeq.of(predicates);
 			
 			return matchOfThenExtract(new BaseMatcher(){
 
 				@Override
 				public boolean matches(Object item) {
-					return seq(item).zip(pred).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
+					return seq(item).zip(pred,(a1,b1)->Two.tuple(a1,b1)).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
 				}
 
 				@Override
@@ -380,12 +379,12 @@ public class PatternMatcher implements Function{
 	 * @param extractor Extractor to extract data out of incoming iterable after predicates have matched
 	 * @return New Pattern Matcher
 	 */
-	public <T,R,V,V1> PatternMatcher caseOfPredicates(Tuple2<Predicate<V>,Predicate<V1>> predicates,
+	public <T,R,V,V1> PatternMatcher caseOfPredicates(Two<Predicate<V>,Predicate<V1>> predicates,
 							Action<R> a,Extractor<T,R> extractor){
 		
-		Seq<Object> pred = Seq.seq(predicates);
+		LazySeq<Object> pred = LazySeq.of(predicates);
 		
-		return caseOfThenExtract(it -> seq(it).zip(pred).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
+		return caseOfThenExtract(it -> seq(it).zip(pred,(a1,b1)->Two.tuple(a1,b1)).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
 		
 	}
 	/**
@@ -405,10 +404,10 @@ public class PatternMatcher implements Function{
 	 * @param extractor
 	 * @return
 	 */
-	public <T,R> PatternMatcher caseOfTuple(Tuple predicates, Action<R> a,Extractor<T,R> extractor){
+	public <T,R> PatternMatcher caseOfTuple(Iterable predicates, Action<R> a,Extractor<T,R> extractor){
 
-				Seq<Object> pred = Seq.seq(predicates);
-				return caseOfThenExtract(it -> seq(it).zip(pred).map(t -> (convertToPredicate(t.v2)).test(t.v1)).allMatch(v->v==true), a, extractor);
+				LazySeq<Object> pred = LazySeq.of(predicates);
+				return caseOfThenExtract(it -> seq(it).zip(pred,(a1,b1)->Two.tuple(a1,b1)).map(t -> (convertToPredicate(t.v2)).test(t.v1)).allMatch(v->v==true), a, extractor);
 				
 	}
 	private Predicate convertToPredicate(Object o){
@@ -420,14 +419,14 @@ public class PatternMatcher implements Function{
 		return test -> Objects.equals(test,o);
 	}
 	
-	public <T,R> PatternMatcher matchOfTuple(Tuple predicates, Action<R> a,Extractor<T,R> extractor){
+	public <T,R> PatternMatcher matchOfTuple(Iterable predicates, Action<R> a,Extractor<T,R> extractor){
 
-		Seq<Object> pred = Seq.seq(predicates);
+		LazySeq<Object> pred = LazySeq.of(predicates);
 		return matchOfThenExtract(new BaseMatcher(){
 
 			@Override
 			public boolean matches(Object item) {
-				return seq(item).zip(pred).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
+				return seq(item).zip(pred,(a1,b1)->Two.tuple(a1,b1)).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
 			}
 
 			@Override
@@ -443,10 +442,10 @@ public class PatternMatcher implements Function{
 	
 	
 	public <V,X> PatternMatcher selectFromChain(Stream<? extends ChainOfResponsibility<V,X>> stream){
-		return selectFrom(stream.map(n->new Tuple2(n,n)));
+		return selectFrom(stream.map(n->new Two(n,n)));
 		
 	}
-	public <V,X> PatternMatcher selectFrom(Stream<Tuple2<Predicate<V>,Function<V,X>>> stream){
+	public <V,X> PatternMatcher selectFrom(Stream<Two<Predicate<V>,Function<V,X>>> stream){
 		PatternMatcher[] matcher = {this};
 		stream.forEach(t -> matcher[0] = matcher[0].inCaseOf(t.v1,a->t.v2.apply(a)));
 		return matcher[0];
@@ -455,10 +454,10 @@ public class PatternMatcher implements Function{
 	 public <T,V,X> PatternMatcher inCaseOfManyType(Predicate master,ActionWithReturn<T,X> a,
     		 Predicate<V>... predicates){
 		
-		Seq<Predicate<V>> pred = Seq.of(predicates);
+		LazySeq<Predicate<V>> pred = LazySeq.of(predicates);
 		
 		
-		return inCaseOf(it -> master.test(it) && seq(Extractors.decompose().apply(it)).zip(pred)
+		return inCaseOf(it -> master.test(it) && seq(Extractors.decompose().apply(it)).zip(pred,(a1,b1)->Two.tuple(a1,b1))
 				.map(t -> t.v2.test((V)t.v1)).allMatch(v->v==true), a);
 		
 	}
@@ -467,10 +466,10 @@ public class PatternMatcher implements Function{
      public <V,X> PatternMatcher inCaseOfMany(ActionWithReturn<List<V>,X> a,
     		 Predicate<V>... predicates){
 		
-		Seq<Predicate<V>> pred = Seq.of(predicates);
+		LazySeq<Predicate<V>> pred = LazySeq.of(predicates);
 		
 		
-		return inCaseOfThenExtract(it -> seq(it).zip(pred)
+		return inCaseOfThenExtract(it -> seq(it).zip(pred,(a1,b1)->Two.tuple(a1,b1))
 				.map(t -> t.v2.test((V)t.v1)).allMatch(v->v==true), a, e-> wrapInList(e));
 		
 	}
@@ -484,14 +483,14 @@ public class PatternMatcher implements Function{
 	public <V,X> PatternMatcher inMatchOfMany(ActionWithReturn<List<V>,X> a,
 			Matcher<V>... predicates){
 		
-		Seq<Matcher<V>> pred = (Seq<Matcher<V>>) Seq.of(predicates);
+		LazySeq<Matcher<V>> pred = (LazySeq<Matcher<V>>) LazySeq.of(predicates);
 		
 		
 		return inMatchOfThenExtract(new BaseMatcher(){
 
 			@Override
 			public boolean matches(Object item) {
-				return seq(item).zip(pred)
+				return seq(item).zip(pred,(a1,b1)->Two.tuple(a1,b1))
 						.map(t -> t.v2.matches((V)t.v1)).allMatch(v->v==true);
 			}
 
@@ -504,16 +503,16 @@ public class PatternMatcher implements Function{
 		}, a, this::wrapInList);
 		
 	}
-	public <T,R,V,V1,X>  PatternMatcher inMatchOfMatchers(Tuple2<Matcher<V>,Matcher<V1>> predicates,
+	public <T,R,V,V1,X>  PatternMatcher inMatchOfMatchers(Two<Matcher<V>,Matcher<V1>> predicates,
 				ActionWithReturn<R,X> a,Extractor<T,R> extractor){
 			
-			Seq<Object> pred = Seq.seq(predicates);
+			LazySeq<Object> pred = LazySeq.of(predicates);
 			
 			return inMatchOfThenExtract(new BaseMatcher(){
 
 				@Override
 				public boolean matches(Object item) {
-					return seq(item).zip(pred).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
+					return seq(item).zip(pred,(a1,b1)->Two.tuple(a1,b1)).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
 				}
 
 				@Override
@@ -525,31 +524,31 @@ public class PatternMatcher implements Function{
 			}, a, extractor);
 			
 	}
-	public <T,R,V,V1,X> PatternMatcher inCaseOfPredicates(Tuple2<Predicate<V>,Predicate<V1>> predicates,
+	public <T,R,V,V1,X> PatternMatcher inCaseOfPredicates(Two<Predicate<V>,Predicate<V1>> predicates,
 							ActionWithReturn<R,X> a,Extractor<T,R> extractor){
 		
-		Seq<Object> pred = Seq.seq(predicates);
+		LazySeq<Object> pred = LazySeq.of(predicates);
 		
-		return inCaseOfThenExtract(it -> seq(it).zip(pred).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
-		
-	}
-	
-	
-	public <T,R,X> PatternMatcher inCaseOfSeq(Seq<Predicate> predicates, ActionWithReturn<R,X> a,Extractor<T,R> extractor){
-
-		Seq<Object> pred = (Seq)predicates;
-		return inCaseOfThenExtract(it -> seq(it).zip(pred).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
+		return inCaseOfThenExtract(it -> seq(it).zip(pred,(a1,b1)->Two.tuple(a1,b1)).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
 		
 	}
 	
-	public <T,R,X> PatternMatcher inMatchOfSeq(Seq<Matcher> predicates, ActionWithReturn<R,X> a,Extractor<T,R> extractor){
+	
+	public <T,R,X> PatternMatcher inCaseOfStream(Stream<Predicate> predicates, ActionWithReturn<R,X> a,Extractor<T,R> extractor){
 
-		Seq<Object> pred = (Seq)(predicates);
+		LazySeq<Object> pred = LazySeq.<Object>of(predicates.iterator());
+		return inCaseOfThenExtract(it -> seq(it).zip(pred,(a1,b1)->Two.tuple(a1,b1)).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
+		
+	}
+	
+	public <T,R,X> PatternMatcher inMatchOfSeq(Stream<Matcher> predicates, ActionWithReturn<R,X> a,Extractor<T,R> extractor){
+
+		LazySeq<Object> pred = LazySeq.of(predicates);
 		return inMatchOfThenExtract(new BaseMatcher(){
 
 			@Override
 			public boolean matches(Object item) {
-				return seq(item).zip(pred).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
+				return LazySeq.of(item).zip(pred,(a1,b1)->Two.tuple(a1,b1)).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
 			}
 
 			@Override

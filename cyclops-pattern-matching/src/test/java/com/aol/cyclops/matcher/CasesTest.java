@@ -199,7 +199,7 @@ public class CasesTest {
 		List<String> results = Cases.of(Case.of((Integer input)->10==input,input->"hello"),
 											Case.of(input->11==input,input->"world"))
 										.<String>matchManyFromStream(Stream.of(1,10,11))
-										.toList();
+										.collect(Collectors.toList());
 		
 		assertThat(results.size(),is(2));
 		assertThat(results,hasItem("hello"));
@@ -213,7 +213,7 @@ public class CasesTest {
 				Case.of(input->11==input,input->"world"))
 			.<String>matchManyFromStreamAsync(ForkJoinPool.commonPool(),Stream.of(1,10,11))
 			.join()
-			.toList();
+			.collect(Collectors.toList());
 
 		assertThat(results.size(),is(2));
 		assertThat(results,hasItem("hello"));
@@ -225,7 +225,7 @@ public class CasesTest {
 		List<String> results =  Cases.of(Case.of((Integer input)->10==input,input->"hello"),
 				Case.of(input->11==input,input->"world"),
 				Case.of(input->10==input,input->"woo!"))
-			.<String>matchMany(10).toList();
+			.<String>matchMany(10).collect(Collectors.toList());
 		
 		assertThat(results.size(),is(2));
 		assertThat(results,hasItem("hello"));
@@ -237,7 +237,7 @@ public class CasesTest {
 		List<String> results =  Cases.of(Case.of((Integer input)->10==input,input->"hello"),
 				Case.of(input->11==input,input->"world"),
 				Case.of(input->10==input,input->"woo!"))
-			.<String>matchManyAsync(ForkJoinPool.commonPool(),10).join().toList();
+			.<String>matchManyAsync(ForkJoinPool.commonPool(),10).join().collect(Collectors.toList());
 		
 		assertThat(results.size(),is(2));
 		assertThat(results,hasItem("hello"));
@@ -250,7 +250,7 @@ public class CasesTest {
 				.of(Case.of((Integer input) -> 10 == input, input -> "hello"),
 						Case.of((Integer input) -> 10 == input, input -> "ignored"),
 						Case.of(input -> 11 == input, input -> "world"))
-				.<String> matchFromStream(Stream.of(1, 11, 10)).toList();
+				.<String> matchFromStream(Stream.of(1, 11, 10)).collect(Collectors.toList());
 
 		assertThat(results.size(), is(2));
 		assertThat(results, hasItem("hello"));
@@ -263,7 +263,7 @@ public class CasesTest {
 				.of(Case.of((Integer input) -> 10 == input, input -> "hello"),
 						Case.of((Integer input) -> 10 == input, input -> "ignored"),
 						Case.of(input -> 11 == input, input -> "world"))
-				.<String> matchFromStreamAsync(ForkJoinPool.commonPool(),Stream.of(1, 11, 10)).join().toList();
+				.<String> matchFromStreamAsync(ForkJoinPool.commonPool(),Stream.of(1, 11, 10)).join().collect(Collectors.toList());
 
 		assertThat(results.size(), is(2));
 		assertThat(results, hasItem("hello"));

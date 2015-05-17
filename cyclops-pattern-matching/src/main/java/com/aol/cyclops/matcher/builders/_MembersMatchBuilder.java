@@ -6,10 +6,8 @@ import java.util.function.Predicate;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
-import org.jooq.lambda.Seq;
-
-import com.aol.cyclops.matcher.ActionWithReturn;
 import com.aol.cyclops.matcher.Predicates;
+import com.nurkiewicz.lazyseq.LazySeq;
 
 
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
@@ -39,7 +37,7 @@ public class _MembersMatchBuilder<X,T> {
 				.orElse(false);
 		// add wildcard support
 		
-		Predicate<V>[] predicates = Seq.of(values)
+		Predicate<V>[] predicates = LazySeq.of(values)
 				.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toList()
 				.toArray(new Predicate[0]);
 

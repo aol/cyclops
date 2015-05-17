@@ -5,9 +5,9 @@ import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.jooq.lambda.tuple.Tuple.tuple;
-import static org.junit.Assert.assertThat;
 
+import static org.junit.Assert.assertThat;
+import static com.aol.cyclops.matcher.Two.tuple;
 import java.util.List;
 import java.util.function.Predicate;
 

@@ -9,9 +9,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-
 
 
 /**
@@ -25,7 +22,7 @@ import org.jooq.lambda.tuple.Tuple2;
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
 public final class EmptyCase<T,R> implements Case<T,R,Function<T,R>>{
 	
-	private final Tuple2<Predicate<T>,Function<T,R>> pattern = Tuple.<Predicate<T>,Function<T,R>>tuple(t->false,input->null);
+	private final Two<Predicate<T>,Function<T,R>> pattern = Two.<Predicate<T>,Function<T,R>>tuple(t->false,input->null);
 	@Getter
 	private final boolean empty =true;
 	
@@ -33,7 +30,7 @@ public final class EmptyCase<T,R> implements Case<T,R,Function<T,R>>{
 	public  Optional<R> match(T value){
 		return Optional.empty();
 	}
-	public Tuple2<Predicate<T>,Function<T,R>> get(){
+	public Two<Predicate<T>,Function<T,R>> get(){
 		return pattern;
 	}
 

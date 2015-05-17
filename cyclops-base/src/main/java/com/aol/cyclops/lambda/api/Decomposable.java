@@ -15,7 +15,7 @@ import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 public interface Decomposable{
 	
 	
-	default  Object getDValue(){
+	default  Object unwrap(){
 		return this;
 	}
 	/**
@@ -25,7 +25,7 @@ public interface Decomposable{
 	default <I extends Iterable<?>> I unapply(){
 		
 		try {
-			return (I)ReflectionCache.getField(getDValue().getClass()).stream().map(f ->{
+			return (I)ReflectionCache.getField(unwrap().getClass()).stream().map(f ->{
 				try {
 				
 					return f.get(this);

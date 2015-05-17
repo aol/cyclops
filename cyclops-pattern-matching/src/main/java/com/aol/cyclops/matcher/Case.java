@@ -7,8 +7,7 @@ import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+
 
 import com.aol.cyclops.lambda.utils.LazyImmutable;
 import com.aol.cyclops.matcher.builders.ADTPredicateBuilder;
@@ -33,7 +32,7 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	/**
 	 * @return Pattern for this case
 	 */
-	public Tuple2<Predicate<T>,X> get();
+	public Two<Predicate<T>,X> get();
 	
 	/**
 	 * @return Predicate for this case
@@ -60,7 +59,7 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	 * 
 	 */
 	default Case<T,R,X> negate(){
-		return map(t2-> Tuple.tuple(t2.v1.negate(),t2.v2));
+		return map(t2-> Two.tuple(t2.v1.negate(),t2.v2));
 	}
 	
 	/**
@@ -75,7 +74,7 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	 * Results in a case that will multiply numbers 100 or less by 5
 	 */
 	default Case<T,R,X> negate(X action){
-		return map(t2-> Tuple.tuple(t2.v1.negate(),action));
+		return map(t2-> Two.tuple(t2.v1.negate(),action));
 	}
 	
 	/**
@@ -103,7 +102,7 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	 * @param predicate
 	 * @return
 	 */
-	default  Case<T,R,X> filter(Predicate<Tuple2<Predicate<T>,X>> predicate){
+	default  Case<T,R,X> filter(Predicate<Two<Predicate<T>,X>> predicate){
 		return predicate.test(get()) ? this : empty();
 	}
 	/**
@@ -119,7 +118,7 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	 * @return A new Case instance with a new Predicate
 	 */
 	default  Case<T,R,X> mapPredicate(Function<Predicate<T>,Predicate<T>> mapper){
-		return this.map(t2-> Tuple.tuple(mapper.apply(t2.v1),t2.v2));
+		return this.map(t2-> Two.tuple(mapper.apply(t2.v1),t2.v2));
 	}
 	/**
 	 * Allows the current function to be replaced by another
@@ -133,7 +132,7 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	 * @return  A new Case instance with a new function
 	 */
 	default  <R1,X1 extends Function<T,R1>> Case<T,R1,X1> mapFunction(Function<Function<T,R>,X1> mapper){
-		return this.<T,R1,X1>map(t2-> Tuple.tuple(t2.v1,mapper.apply(t2.v2)));
+		return this.<T,R1,X1>map(t2-> Two.tuple(t2.v1,mapper.apply(t2.v2)));
 	}
 	/**
 	 * Allows both the predicate and function in the current case to be replaced in a new Case
@@ -146,7 +145,7 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	 * @param mapper Function that generates the new predicate and action (function) 
 	 * @return New case with a (potentially) new predicate and action
 	 */
-	default <T1,R1,X1 extends Function<T1,R1>> Case<T1,R1,X1> map(Function<Tuple2<Predicate<T>,X>,Tuple2<Predicate<T1>,X1>> mapper){
+	default <T1,R1,X1 extends Function<T1,R1>> Case<T1,R1,X1> map(Function<Two<Predicate<T>,X>,Two<Predicate<T1>,X1>> mapper){
 		return Case.of(mapper.apply(get()));	
 	}
 	/**
@@ -160,7 +159,7 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	 * @param mapper Function that creates a new Case
 	 * @return new Case instance created
 	 */
-	default <T1,R1,X1 extends Function<T1,R1>> Case<T1,R1,X1> flatMap(Function<Tuple2<Predicate<T>,X>,Case<T1,R1,X1>> mapper){
+	default <T1,R1,X1 extends Function<T1,R1>> Case<T1,R1,X1> flatMap(Function<Two<Predicate<T>,X>,Case<T1,R1,X1>> mapper){
 		return mapper.apply(get());	
 	}
 	
@@ -466,7 +465,7 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	 * @return New Case instance
 	 */
 	public static <T,R,X extends Function<T,R>> Case<T,R,X> of(Predicate<T> predicate,X action){
-		return new ActiveCase<T,R,X>(Tuple.tuple(predicate,action));
+		return new ActiveCase<T,R,X>(Two.tuple(predicate,action));
 	}
 	/**
 	 *  Construct an instance of Case from supplied Tuple of predicate and action
@@ -474,7 +473,7 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	 * @param pattern containing the predicate that will be used to match  and the function that is executed on succesful match
 	 * @return New Case instance
 	 */
-	public static <T,R,X extends Function<T,R>> Case<T,R,X> of(Tuple2<Predicate<T>,X> pattern){
+	public static <T,R,X extends Function<T,R>> Case<T,R,X> of(Two<Predicate<T>,X> pattern){
 		return new ActiveCase<>(pattern);
 	}
 	

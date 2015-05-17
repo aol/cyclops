@@ -5,9 +5,9 @@ import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.samePropertyValuesAs;
-import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertThat;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -17,7 +17,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import org.hamcrest.Matchers;
-import org.jooq.lambda.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,7 +29,7 @@ public class MatchingDataStructuresTest {
 		assertThat(Matching.iterableCase().allValues(1,ANY(),2).thenApply(l->"case1")
 			.iterableCase().allValues(1,3,2).thenApply(l->"case2")
 			.iterableCase().bothTrue((Integer i)->i==1,(String s)->s.length()>0)
-					.thenExtract(Extractors.<Integer,String>toTuple2())
+					.thenExtract(Extractors.<Integer,String>of(0,1))
 					.thenApply(t->t.v1+t.v2)
 			.match(1,"hello",2).get(),is("case1"));
 		
@@ -97,7 +96,7 @@ public class MatchingDataStructuresTest {
 				Matching.iterableCase().bothMatch(samePropertyValuesAs(new Person("bob")),anything())
 											.thenExtract(Extractors.<Person>first())
 											.thenApply(bob->bob.getName())
-											.apply(Tuple.tuple(new Person("bob"),"boo hoo!")).get(),is("bob"));
+											.apply(Two.tuple(new Person("bob"),"boo hoo!")).get(),is("bob"));
 	}
 	@Test
 	public void  inMatchOfMatchersSingle() {
@@ -148,7 +147,7 @@ public class MatchingDataStructuresTest {
 									.thenExtract( Extractors.<Person,Address>of(0,1))
 									.thenApply(t->t.v1.getName() + " is not tall and lives in " + t.v2.getCity())
 						
-								.apply(tuple(new Person("bob"),new Address(), new Job())).get();
+								.apply(Arrays.asList(new Person("bob"),new Address(), new Job())).get();
 		
 		assertThat(result,is("bob is tall and lives in Dublin"));
 	}
@@ -255,7 +254,7 @@ public class MatchingDataStructuresTest {
 									.iterableCase().bothMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob2")),anything())
 																.thenExtract(Extractors.<Person>first())
 																.thenApply(bob-> value =bob.getName())
-											.apply(Tuple.tuple(new Person("bob"),"boo hoo!"));
+											.apply(Two.tuple(new Person("bob"),"boo hoo!"));
 				assertThat(value, is("bob"));
 		
 	}
@@ -286,7 +285,7 @@ public class MatchingDataStructuresTest {
 									.allTrueNoType((Person p) -> p.isTall(),(Address a)->a.getCountry().equals("France"), p->true)
 									.thenExtract(Extractors.<Person,Address>of(0,1))
 									.thenApply(t-> value = t.v1.getName() + " is tall and lives in " + t.v2.getCity())
-						.apply(tuple(new Person("bob"),new Address(), new Job()));
+						.apply(Arrays.asList(new Person("bob"),new Address(), new Job()));
 		
 		assertThat(value,is("bob is tall and lives in Dublin"));
 		

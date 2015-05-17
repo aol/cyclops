@@ -9,10 +9,9 @@ import lombok.Getter;
 import lombok.val;
 import lombok.experimental.Wither;
 
-import org.jooq.lambda.Seq;
-
 import com.aol.cyclops.matcher.ActionWithReturn;
 import com.aol.cyclops.matcher.Predicates;
+import com.nurkiewicz.lazyseq.LazySeq;
 
 
 /**
@@ -78,7 +77,7 @@ public class _Case<X> extends CaseBeingBuilt {
 					.map(v -> v.getClass().isAssignableFrom(clazz))
 					.orElse(false);
 			// add wildcard support
-			Predicate<V>[] predicates = Seq.of(values)
+			Predicate<V>[] predicates = LazySeq.of(values)
 					.map(nextValue -> convertToPredicate(nextValue)).toList()
 					.toArray(new Predicate[0]);
 

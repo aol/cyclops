@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -49,7 +50,13 @@ class TupleImpl<T1,T2,T3,T4,T5,T6,T7,T8> implements TupleWrapper,  PTuple8<T1,T2
 		this.cachedValues = empty;
 		this.instance=null;
 	}
+	public TupleImpl(Object tuple){
+		this(tuple,OptionalInt.empty());
+	}
 	public TupleImpl(Object tuple,int arity){
+		this(tuple,OptionalInt.of(arity));
+	}
+	private TupleImpl(Object tuple,OptionalInt arity){
 		this.instance = tuple;
 		if(tuple instanceof Collection)
 			cachedValues = new ArrayList( ((List)tuple));
@@ -70,7 +77,7 @@ class TupleImpl<T1,T2,T3,T4,T5,T6,T7,T8> implements TupleWrapper,  PTuple8<T1,T2
 		}
 		else
 			cachedValues = values();
-		this.arity = arity;
+		this.arity = arity.orElse(cachedValues.size());
 	}
 	
 	
