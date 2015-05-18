@@ -26,7 +26,7 @@ public interface Decomposable{
 		
 		try {
 			
-			return (I)ReflectionCache.getField(unwrap().getClass()).stream().map(f ->{
+			return (I)ReflectionCache.getFields(unwrap().getClass()).stream().map(f ->{
 				try {
 				
 					return f.get(unwrap());

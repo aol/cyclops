@@ -13,7 +13,7 @@ public interface TupleWrapper {
 	default List<Object> values(){
 		
 		try {
-			return	(List)ReflectionCache.getField(getInstance().getClass()).stream().map(f ->{
+			return	(List)ReflectionCache.getFields(getInstance().getClass()).stream().map(f ->{
 				try {
 				
 					return f.get(getInstance());

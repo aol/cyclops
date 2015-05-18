@@ -13,11 +13,12 @@ public interface Mappable {
 	}
 	default Map<String,?> toMap(){
 		try {
-			Object  o=  unwrap();
-			return (Map)Stream.of(o.getClass().getDeclaredFields())
+			final Object o = unwrap().getClass();
+			return ReflectionCache.getFields(o.getClass())
+					.stream()
 					.collect(Collectors.toMap((Field f)->f.getName(),(Field f) ->{
 						try {
-							f.setAccessible(true);
+
 							return f.get(o);
 						} catch (Exception e) {
 							ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(e);

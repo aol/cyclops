@@ -4,10 +4,10 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.lambda.api.Decomposable;
-import com.aol.cyclops.lambda.api.Gettable;
 
 /**
  * Switch interface for handling features that can be enabled or disabled.
@@ -16,7 +16,7 @@ import com.aol.cyclops.lambda.api.Gettable;
  *
  * @param <F>
  */
-public interface Switch<F> extends Gettable<F>, Decomposable {
+public interface Switch<F> extends Supplier<F>, Decomposable {
 
 	boolean isEnabled();
 	boolean isDisabled();

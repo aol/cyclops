@@ -13,7 +13,6 @@ import lombok.AllArgsConstructor;
 import lombok.val;
 
 import com.aol.cyclops.lambda.api.Decomposable;
-import com.aol.cyclops.lambda.api.Gettable;
 
 /**
  * Light weight Try Monad
@@ -39,7 +38,7 @@ import com.aol.cyclops.lambda.api.Gettable;
  * @param <T> Return type (success)
  * @param <X> Base Error type
  */
-public interface Try<T,X extends Throwable> extends Gettable<T>, Decomposable {
+public interface Try<T,X extends Throwable> extends Supplier<T>, Decomposable {
 
 	/**
 	 * @return Successful value or will throw Throwable (X) if Failire

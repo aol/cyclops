@@ -24,9 +24,12 @@ public class AsStreamableValue {
 	
 	/**
 	 * Coerce / wrap an Object as a StreamableValue instance
+	 * Adds pattern matching and decomposability
+	 * As well as the ability to convert the fields of the supplied
+	 * Object into a Stream
 	 * 
 	 * @param toCoerce Object to making into a StreamableValue
-	 * @return StreamableValue that delegates calls to the supplied object
+	 * @return StreamableValue that adds functionality to the supplied object
 	 */
 	public static <T> StreamableValue<T> asStreamableValue(T toCoerce){
 		return new CoercedStreamableValue<T>(toCoerce);

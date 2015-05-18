@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -83,8 +84,8 @@ public interface Comprehender<T> {
 			if(apply instanceof CompletableFuture){
 				return of(((CompletableFuture)apply).join());
 			}
-			if(apply instanceof Gettable)
-				return of(((Gettable)apply).get());
+			if(apply instanceof Supplier)
+				return of(((Supplier)apply).get());
 			Optional<Method> m = Stream.of(apply.getClass().getMethods())
 					.filter(method -> "get".equals(method.getName()))
 					.filter(method -> method.getParameterCount()==0).findFirst();

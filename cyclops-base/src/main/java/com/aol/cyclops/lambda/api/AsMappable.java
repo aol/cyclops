@@ -13,6 +13,14 @@ public class AsMappable {
 
 
 	
+	/**
+	 * Convert supplied object to a Mappable instance.
+	 * Mappable will convert the (non-static) fields of the supplied object into a map
+	 * 
+	 * 
+	 * @param toCoerce Object to convert to a Mappable
+	 * @return  Mappable instance
+	 */
 	public static  Mappable asMappable(Object toCoerce){
 		return new CoercedMappable(toCoerce);
 	}
