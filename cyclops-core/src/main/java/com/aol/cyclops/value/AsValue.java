@@ -2,6 +2,7 @@ package com.aol.cyclops.value;
 
 
 public class AsValue {
+	
 	public static Value asValue(Object toCoerce){
 		return new CoercedValue(toCoerce);
 	}

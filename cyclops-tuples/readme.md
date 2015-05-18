@@ -9,6 +9,8 @@
 7. Pattern matching
 8. For comprehensions
 9. Useful utility methods (asStreamOfStrings, asTwoNumbers etc)
+10. Concatonation
+11. LazySwap (reverse)
 
 ### Wrap any Tuple type
 
@@ -17,7 +19,7 @@
     @Test
 	public void cons(){
 		Three three = new Three(1,"hello",new Date());
-		assertThat(three.a,equalTo(Tuple3.ofTuple(three).v1()));
+		assertThat(three.a,equalTo(PTuple3.ofTuple(three).v1()));
 	}
 	@AllArgsConstructor
 	static class Three{
@@ -34,7 +36,7 @@
 		String value;
 	}
 	
-    TwoParams p  = Tuples.tuple(10,"hello").convert().to(TwoParams.class);
+    TwoParams p  = PowerTuples.tuple(10,"hello").convert().to(TwoParams.class);
 	assertThat(p.num,equalTo(10));
 	assertThat(p.value,equalTo("hello"));
 
@@ -42,12 +44,12 @@
 
 With filtering
 
-    method1().<Tuple1<Integer>>filter(t->t.v1()==0).call(this::method3);
+    method1().<PTuple1<Integer>>filter(t->t.v1()==0).call(this::method3);
     
 
 Async method chaining
 
-	method1().<Tuple1<Integer>>filter(t->t.v1()==0).callAsync(this::method3).join();
+	method1().<PTuple1<Integer>>filter(t->t.v1()==0).callAsync(this::method3).join();
 	
 ### Conversion to Streams
 

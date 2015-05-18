@@ -1,10 +1,25 @@
 # Features
 
-1. Generic Monad operations
-2. Specific and InvokeDynamic based Monadic comprehension (for use in cyclops-for-comprehension and elsewhere)
-3. Utils for working with Closures / captured values & variables
-4. Currying
-5. Coerce to decomposable / map
+*  Generic Monad operations
+*  Specific and InvokeDynamic based Monadic comprehension (for use in cyclops-for-comprehension and elsewhere)
+*  Mutable / LazyImmutable Utils for working with Closures / captured values & variables
+* Interfaces
+	
+		Streamable  : repeatable stream()
+		Decomposable (for Value objects) : unapply()
+		Mappable (convert fields to Map)  : toMap()
+		Functor (Generic functor interface) : map(Function)
+		Monad (Generic Monad interface) : flatMap(Function)
+		Gettable : get()
+
+* Coerce / wrap to interface
+
+		asStreamable
+		asDecomposable
+		asMappable
+		asFunctor
+		asMonad
+		
 
 
 
@@ -25,24 +40,24 @@ Not possible to flatMap an Optional inside a Stream in JDK, but you can with the
 		
 ## Closure utils
 
-### ImmutableClosedValue 
+### LazyImmutable
 
 Set values once only inside a Closure.
 
 
-        ImmutableClosedValue<Integer> value = new ImmutableClosedValue<>();
+        LazyImmutable<Integer> value = new LazyImmutable<>();
 		Supplier s= () -> value.getOrSet(()->10);
 		assertThat(s.get(),is(10));
 		assertThat(value.getOrSet(()->20),is(10));
 		
-### ClosedVar 
+### Mutable
 
 Fully mutable variable wrapper manipulatable inside a closure	  
 	 
-	 import static com.aol.cyclops.comprehensions.functions.Lambda.*;
+	 import static com.aol.cyclops.lambda.utils.Lambda.*;
 	 
 	 
-	   ClosedVar<Integer> myInt = new ClosedVar<>(0);
+	   Mutable<Integer> myInt = new Mutable<>(0);
 		
 		λ2((Integer i)-> (Integer j)-> myInt.set(i*j)).apply(10).apply(20);
 		
@@ -54,7 +69,7 @@ um.. λ2 ? (Type inferencing helper :) - and without it
 		
 
 
-        ClosedVar<Integer> myInt = new ClosedVar<>(0);
+        Mutable<Integer> myInt = Mutable.of(0);
 		
 		BiFunction<Integer,Integer,ClosedVar<Integer>> fn = (i,j)-> myInt.set(i*j);
 		fn.apply(10,20);
@@ -62,57 +77,8 @@ um.. λ2 ? (Type inferencing helper :) - and without it
 		assertThat(myInt.get(),
 				is(200));
 			
-## Currying
-
-Cyclops can convert any function (with up to 8 inputs) or method reference into a chain of one method functions (Currying). This technique is a useful (and more safe) alternative to Closures. The Curried function can be created and values explicitly passed in rather than captured by the compiler (where-upon they may change).
-
-#### Currying method references 
-
-	  import static com.aol.cyclops.comprehensions.functions.Curry.*;
-	  
-	  
-      assertThat(curry2(this::mult).apply(3).apply(2),equalTo(6));
-      
-      public Integer mult(Integer a,Integer b){
-		return a*b;
-	 }
-	 
-
-#### Currying in place
-
-      		assertThat(Curry.curry2((Integer i, Integer j) -> "" + (i+j) +   "hello").apply(1).apply(2),equalTo("3hello"));
-      		
-
-#### Uncurry
-
-      assertThat(Uncurry.uncurry3((Integer a)->(Integer b)->(Integer c)->a+b+c)
-								.apply(1,2,3),equalTo(6));
-								
-
-#### Type inferencing help
-
-      import static com.aol.cyclops.comprehensions.functions.Lambda.*;
-	 
-	 
-	   ClosedVar<Integer> myInt = new ClosedVar<>(0);
-		
-		λ2((Integer i)-> (Integer j)-> myInt.set(i*j)).apply(10).apply(20);
-		
-		assertThat(myInt.get(),
-				is(200));
-
-#### Curry Consumer
-
-     		CurryConsumer.curry4( (Integer a, Integer b, Integer c,Integer d) -> value = a+b+c+d).apply(2).apply(1).apply(2).accept(3);
-     		
-		assertThat(value,equalTo(8));
-		
-#### Uncurry Consumer 
-
-     UncurryConsumer.uncurry2((Integer a)->(Integer b) -> value = a+b ).accept(2,3);
-	 assertThat(value,equalTo(5));
-     
-## Coerce to decomposable / map
+  
+## Coerce to decomposable / mappable / streamable / functor / monad
 
 #### Coerce to Map 
 
@@ -122,7 +88,7 @@ Rather than break production level encapsulation, in your tests coerce your prod
 
     @Test
 	public void testMap(){
-		Map<String,?> map = CoerceToMap.toMap(new MyEntity(10,"hello"));
+		Map<String,?> map = AsMappable.asMappable(new MyEntity(10,"hello")).toMap();
 		System.out.println(map);
 		assertThat(map.get("num"),equalTo(10));
 		assertThat(map.get("str"),equalTo("hello"));
@@ -136,10 +102,23 @@ The Decomposable interface specifies an unapply method (with a default implement
 
      @Test
 	public void test() {
-		assertThat(CoerceToDecomposable.coerceToDecomposable(new MyCase("key",10))
+		assertThat(AsDecomposable.asDecomposable(new MyCase("key",10))
 				.unapply(),equalTo(Arrays.asList("key",10)));
 	}
 	
 	@Value
 	static class MyCase { String key; int value;}
+	
+	
+## Type inferencing help
+
+    import static com.aol.cyclops.functions.Lambda.*;
+ 
+ 
+    Mutable<Integer> myInt = Mutable.of(0);
+    
+    λ2((Integer i)-> (Integer j)-> myInt.set(i*j)).apply(10).apply(20);
+    
+    assertThat(myInt.get(),
+            is(200));
 	
