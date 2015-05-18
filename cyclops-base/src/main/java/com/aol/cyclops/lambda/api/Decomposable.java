@@ -25,10 +25,11 @@ public interface Decomposable{
 	default <I extends Iterable<?>> I unapply(){
 		
 		try {
+			
 			return (I)ReflectionCache.getField(unwrap().getClass()).stream().map(f ->{
 				try {
 				
-					return f.get(this);
+					return f.get(unwrap());
 				} catch (Exception e) {
 					ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(e);
 					return null;

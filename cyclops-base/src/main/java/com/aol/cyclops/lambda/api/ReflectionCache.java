@@ -1,19 +1,20 @@
 package com.aol.cyclops.lambda.api;
 
-import com.nurkiewicz.lazyseq.LazySeq;
+import static com.aol.cyclops.streams.ReversedIterator.reversedStream;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import com.aol.cyclops.streams.ReversedIterator;
+import com.nurkiewicz.lazyseq.LazySeq;
 
 public class ReflectionCache {
 	private final static Map<Class,List<Field>> fields = new ConcurrentHashMap<>();
@@ -22,12 +23,12 @@ public class ReflectionCache {
 	public static List<Field> getField(
 			Class class1) {
 		return fields.computeIfAbsent(class1, cl ->{
-			return LazySeq.iterate(class1, c->c.getSuperclass())
-						.takeWhile(c->c!=Object.class)
-						.flatMap(c->LazySeq.of(c.getDeclaredFields()))
+			return reversedStream(LazySeq.iterate(class1, c->c.getSuperclass())
+						.takeWhile(c->c!=Object.class).toList())
+						.flatMap(c->Stream.of(c.getDeclaredFields()))
 						.filter(f->!Modifier.isStatic(f.getModifiers()))
 						.map(f -> { f.setAccessible(true); return f;})
-						.toList();
+						.collect(Collectors.toList());
 					});
 		
 	}

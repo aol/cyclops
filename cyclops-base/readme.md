@@ -3,6 +3,7 @@
 *  Generic Monad operations
 *  Specific and InvokeDynamic based Monadic comprehension (for use in cyclops-for-comprehension and elsewhere)
 *  Mutable / LazyImmutable Utils for working with Closures / captured values & variables
+* Stream utils - e.g. reverse a stream
 * Interfaces
 	
 		Streamable  : repeatable stream()
@@ -121,4 +122,10 @@ The Decomposable interface specifies an unapply method (with a default implement
     
     assertThat(myInt.get(),
             is(200));
+            
+ ## Reverse a Stream
+ 
+ 
+     ReversedIterator.reversedStream(LazySeq.iterate(class1, c->c.getSuperclass())
+						.takeWhile(c->c!=Object.class).toList());
 	
