@@ -4,16 +4,13 @@ import org.junit.Test
 
 
 
-class ConcatGenerator {
+class ConcatTestGenerator {
 	
 	@Test
 	public void swapGen(){
 		8.times{
 			println genAll(it+1)
 		}
-	//	int size =1
-		
-		
 	}
 	
 	def genAll(int size){
@@ -27,13 +24,13 @@ class ConcatGenerator {
 		(size).times{
 			b.append ("""
 				public T${it+1} v${it+1}(){
-					return first.v${it+1}();
+					return host.v${it+1}();
 				}
 """)
 		}
 		(size2-size).times{
 			b.append ("""
-				public NT${it+1+size} v${it+1+size}(){
+				public T${it+1+size} v${it+1+size}(){
 					return concatWith.v${it+1+size}();
 				}
 """)
@@ -46,7 +43,7 @@ class ConcatGenerator {
 		String sep  = ""
 		(size).times{
 			
-			b.append("""${sep}first.v${it+1}()""")
+			b.append("""${sep}host.v${it+1}()""")
 			sep=","
 		}
 		(size2).times{
@@ -57,55 +54,36 @@ class ConcatGenerator {
 		return b
 	}
 	
-	def types(size) {
+	def types(size,int offset=0) {
 		StringBuilder b = new StringBuilder("<")
 		String sep = ""
-		
-		(size).times{
+		offset.times{
 			
-				
-			b.append(sep+"NT" +(it+1))
+			b.append(sep+"?")
 			sep=","
+		}
+		(size-offset).times{
+			if(it>0)
+				sep=","
+			b.append(sep+"T" +(it+1+offset))
 			
 		}
 		return b.append(">").toString()
 		
 	}
-	def typesOld(size) {
+	def typesDef(size,int offset=0) {
 		StringBuilder b = new StringBuilder("<")
 		String sep = ""
 		
-		(size).times{
-			
-				
-			b.append(sep+"T" +(it+1))
-			sep=","
+		(size-offset).times{
+			if(it>0)
+				sep=","
+			b.append(sep+"T" +(it+1+offset))
 			
 		}
 		return b.append(">").toString()
 		
 	}
-	def concatTypes(size,size2) {
-		StringBuilder b = new StringBuilder("<")
-		String sep = ""
-		(size).times{
-			
-				
-			b.append(sep+"T" +(it+1))
-			sep=","
-			
-		}
-		(size2).times{
-			
-				
-			b.append(sep+"NT" +(it+1))
-			sep=","
-			
-		}
-		return b.append(">").toString()
-		
-	}
-	
 	def values(size){
 		StringBuilder b = new StringBuilder()
 		def sep =""
@@ -144,39 +122,12 @@ class ConcatGenerator {
 	
 	def template (size,size2) { 
 		"""
-		
-        /**
-         * Concatenate two PTuples creating a new PTuple. 
-         *
-         *   {@code 
-         *      concat(PowerTuples.tuple(${values(size)}),PowerTuples.tuple(${values2(size2)}));
-         *   // [${newValues(size,size2)}] 
-         *  }
-         *  
-         **/
-		public static ${concatTypes(size,size2)} PTuple${size+size2}${concatTypes(size,size2)} concat(PTuple${size}${typesOld(size)} first, PTuple${size2}${types(size2)} concatWith){
-			
-			
-			return new TupleImpl(Arrays.asList(),${size+size2}){
-				
-				${methods(size,size2)}
-
-				
-				@Override
-				public List<Object> getCachedValues() {
-					return Arrays.asList(${list(size,size2)});
-				}
-
-				@Override
-				public Iterator iterator() {
-					return getCachedValues().iterator();
-				}
-
-				
-			};
-			
+		@Test
+		public void testConcatPTuple${size}_${size2}(){
+			assertThat(concat(PowerTuples.tuple(${values(size)}),PowerTuples.tuple(${values2(size2)})).toList()
+					,equalTo(Arrays.asList(${newValues(size,size2)})));
 		}
-	"""
+        """
 	}
 	
 }

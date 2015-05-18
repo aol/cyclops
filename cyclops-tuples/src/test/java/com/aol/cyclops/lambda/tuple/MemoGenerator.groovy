@@ -8,7 +8,7 @@ class MemoGenerator {
 	
 	@Test
 	public void swapGen(){
-		int size =4
+		int size =8
 		println template(size)	
 	}
 	
@@ -17,11 +17,7 @@ class MemoGenerator {
 		size.times{
 			b.append ("""
 				public T${it+1} v${it+1}(){
-					if(values.get(it).isPresent())
-						return ( T${it+1})values.get(it).get();
-					Object o = host.v${it+1}();
-					values.put(it,Optional.of(o));
-					return ( T${it+1})o;
+					return ( T${it+1})values.computeIfAbsent(new Integer($it), key -> host.v${it+1}());
 				}
 """)
 		}
@@ -54,13 +50,12 @@ class MemoGenerator {
 	
 	def template (size) { 
 		"""		
-		public PTuple${size}${types(size)} memo(){
-			if(arity()!=size)
-				return super.memo();
+		default PTuple${size}${types(size)} memo(){
+			if(arity()!=$size)
+				return PTuple${size-1}.super.memo();
 			val host = this;
-			Map<Integer,Optional<Object>> values = new HashMap<>();
-			for(int i=0;i<size;i++)
-				values.put(i,Optional.empty());
+			Map<Integer,Object> values = new ConcurrentHashMap<>();
+			
 			return new TupleImpl(Arrays.asList(),${size}){
 				
 				${methods(size)}

@@ -3,19 +3,17 @@ package com.aol.cyclops.lambda.tuple;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
-
-
-
 
 import lombok.val;
 
 import com.aol.cyclops.lambda.utils.LazyImmutable;
 
-interface PTuple1<T1> extends CachedValues{
+public interface PTuple1<T1> extends CachedValues{
 	
 	default T1 v1(){
 		return (T1)getCachedValues().get(0);
@@ -119,6 +117,34 @@ interface PTuple1<T1> extends CachedValues{
 		return ( PTuple1<T1>)withArity(1);
 	}
 	
+	default PTuple1<T1> memo(){
+		
+		val host = this;
+		Map<Integer,Object> values = new ConcurrentHashMap<>();
+		
+		return new TupleImpl(Arrays.asList(),1){
+			
+			
+			public T1 v1(){
+				return ( T1)values.computeIfAbsent(new Integer(0), key -> host.v1());
+			}
+
+
+			
+			@Override
+			public List<Object> getCachedValues() {
+				return Arrays.asList(v1());
+			}
+
+			@Override
+			public Iterator iterator() {
+				return getCachedValues().iterator();
+			}
+
+			
+		};
+		
+	}
 	public static <T1> PTuple1<T1> ofTuple(Object tuple1){
 		return (PTuple1)new TupleImpl(tuple1,1);
 	}

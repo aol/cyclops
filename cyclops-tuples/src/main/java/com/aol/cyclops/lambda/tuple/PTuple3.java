@@ -3,14 +3,16 @@ package com.aol.cyclops.lambda.tuple;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
 import lombok.AllArgsConstructor;
+import lombok.val;
 
 import com.aol.cyclops.functions.TriFunction;
 import com.aol.cyclops.lambda.utils.LazyImmutable;
@@ -227,6 +229,44 @@ public interface PTuple3<T1,T2,T3> extends PTuple2<T1,T2> {
 	         .limit((end-start)/step);
 		}
 	}
+	default PTuple3<T1,T2,T3> memo(){
+		if(arity()!=3)
+			return (PTuple3)PTuple2.super.memo();
+		val host = this;
+		Map<Integer,Object> values = new ConcurrentHashMap<>();
+		
+		return new TupleImpl(Arrays.asList(),3){
+			
+			
+			public T1 v1(){
+				return ( T1)values.computeIfAbsent(new Integer(0), key -> host.v1());
+			}
+
+			public T2 v2(){
+				return ( T2)values.computeIfAbsent(new Integer(1), key -> host.v2());
+			}
+
+			public T3 v3(){
+				return ( T3)values.computeIfAbsent(new Integer(2), key -> host.v3());
+			}
+
+
+			
+			@Override
+			public List<Object> getCachedValues() {
+				return Arrays.asList(v1(),v2(),v3());
+			}
+
+			@Override
+			public Iterator iterator() {
+				return getCachedValues().iterator();
+			}
+
+			
+		};
+		
+	}
+	
 	public static <T1,T2,T3> PTuple3<T1,T2,T3> ofTuple(Object tuple2){
 		return (PTuple3)new TupleImpl(tuple2,3);
 	}

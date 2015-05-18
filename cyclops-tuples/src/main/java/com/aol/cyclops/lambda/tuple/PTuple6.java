@@ -3,13 +3,13 @@ package com.aol.cyclops.lambda.tuple;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-
-
+import lombok.val;
 
 import com.aol.cyclops.functions.HexFunction;
 import com.aol.cyclops.lambda.utils.LazyImmutable;
@@ -319,6 +319,112 @@ public interface PTuple6<T1,T2,T3,T4,T5,T6> extends PTuple5<T1,T2,T3,T4,T5> {
 	 */
 	default <T> PTuple6<T1,T2,T3,T4,T5,T> map6(Function<T6,T> fn){
 		return of(v1(),v2(),v3(),v4(),v5(),fn.apply(v6()));
+	}
+	/**
+	 * Lazily reorder a PTuple6 or both a narrow and reorder a larger Tuple
+	 * 
+	 * @param v1S Function that determines new first element
+	 * @param v2S Function that determines new second element
+	 * @param v3S Function that determines new third element
+	 * @param v4S Function that determines new fourth element
+	 * @param v5S Function that determines new fifth element
+	 * @param v6S Function that determines new sixth element
+	 * @return reordered PTuple6
+	 */
+	default <NT1, NT2, NT3, NT4,NT5,NT6> PTuple6<NT1, NT2, NT3, NT4,NT5,NT6> reorder(
+			Function<PTuple6<T1, T2, T3, T4,T5,T6>, NT1> v1S,
+			Function<PTuple6<T1, T2, T3, T4,T5,T6>, NT2> v2S,
+			Function<PTuple6<T1, T2, T3, T4,T5,T6>, NT3> v3S,
+			Function<PTuple6<T1, T2, T3, T4,T5,T6>, NT4> v4S,
+			Function<PTuple6<T1, T2, T3, T4,T5,T6>, NT5> v5S,
+			Function<PTuple6<T1, T2, T3, T4,T5,T6>, NT6> v6S) {
+
+		val host = this;
+		return new TupleImpl(Arrays.asList(), 5) {
+			public NT1 v1() {
+				return v1S.apply(host);
+			}
+
+			public NT2 v2() {
+				return v2S.apply(host);
+			}
+
+			public NT3 v3() {
+				return v3S.apply(host);
+			}
+
+			public NT4 v4() {
+				return v4S.apply(host);
+			}
+			public NT5 v5() {
+				return v5S.apply(host);
+			}
+
+			public NT6 v6() {
+				return v6S.apply(host);
+			}
+
+			@Override
+			public List<Object> getCachedValues() {
+				return Arrays.asList(v1(), v2(), v3(), v4(),v5(),v6());
+			}
+
+			@Override
+			public Iterator iterator() {
+				return getCachedValues().iterator();
+			}
+
+		};
+
+}
+	default PTuple6<T1,T2,T3,T4,T5,T6> memo(){
+		if(arity()!=6)
+			return (PTuple6)PTuple5.super.memo();
+		val host = this;
+		Map<Integer,Object> values = new ConcurrentHashMap<>();
+		
+		return new TupleImpl(Arrays.asList(),6){
+			
+			
+			public T1 v1(){
+				return ( T1)values.computeIfAbsent(new Integer(0), key -> host.v1());
+			}
+
+			public T2 v2(){
+				return ( T2)values.computeIfAbsent(new Integer(1), key -> host.v2());
+			}
+
+			public T3 v3(){
+				return ( T3)values.computeIfAbsent(new Integer(2), key -> host.v3());
+			}
+
+			public T4 v4(){
+				return ( T4)values.computeIfAbsent(new Integer(3), key -> host.v4());
+			}
+
+			public T5 v5(){
+				return ( T5)values.computeIfAbsent(new Integer(4), key -> host.v5());
+			}
+
+			public T6 v6(){
+				return ( T6)values.computeIfAbsent(new Integer(5), key -> host.v6());
+			}
+
+
+			
+			@Override
+			public List<Object> getCachedValues() {
+				return Arrays.asList(v1(),v2(),v3(),v4(),v5(),v6());
+			}
+
+			@Override
+			public Iterator iterator() {
+				return getCachedValues().iterator();
+			}
+
+			
+		};
+		
 	}
 	
 }

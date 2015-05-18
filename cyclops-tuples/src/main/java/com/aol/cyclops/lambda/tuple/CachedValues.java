@@ -23,7 +23,7 @@ import com.aol.cyclops.matcher.builders._MembersMatchBuilder;
 import com.aol.cyclops.matcher.builders._Simpler_Case;
 import com.aol.cyclops.value.StreamableValue;
 
-public interface CachedValues extends Iterable, StreamableValue{
+public interface CachedValues extends Iterable, StreamableValue, Concatenate, LazySwap{
 
 	public List<Object> getCachedValues();
 	

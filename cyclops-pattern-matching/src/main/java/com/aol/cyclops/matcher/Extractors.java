@@ -2,7 +2,7 @@ package com.aol.cyclops.matcher;
 
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
-
+import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +72,7 @@ public class Extractors {
 				try {
 				return u.apply(t);
 			}catch (Throwable e) {
-				ExceptionSoftener.singleton.factory.getInstance().throw(e);
+				ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(e);
 			}
 			return null;
 		};

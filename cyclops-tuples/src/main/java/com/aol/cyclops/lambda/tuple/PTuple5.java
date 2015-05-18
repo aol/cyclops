@@ -3,14 +3,11 @@ package com.aol.cyclops.lambda.tuple;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
-
-
-
-
 
 import lombok.val;
 
@@ -269,12 +266,12 @@ public interface PTuple5<T1,T2,T3,T4,T5> extends PTuple4<T1,T2,T3,T4> {
 	/**
 	 * Lazily reorder a PTuple5 or both a narrow and reorder a larger Tuple
 	 * 
-	 * @param v1S
-	 * @param v2S
-	 * @param v3S
-	 * @param v4S
-	 * @param v5S
-	 * @return
+	 * @param v1S Function that determines new first element
+	 * @param v2S Function that determines new second element
+	 * @param v3S Function that determines new third element
+	 * @param v4S Function that determines new fourth element
+	 * @param v5S Function that determines new fifth element
+	 * @return reordered PTuple5
 	 */
 	default <NT1, NT2, NT3, NT4,NT5> PTuple5<NT1, NT2, NT3, NT4,NT5> reorder(
 			Function<PTuple5<T1, T2, T3, T4,T5>, NT1> v1S,
@@ -317,6 +314,51 @@ public interface PTuple5<T1,T2,T3,T4,T5> extends PTuple4<T1,T2,T3,T4> {
 		};
 
 }
+	default PTuple5<T1,T2,T3,T4,T5> memo(){
+		if(arity()!=5)
+			return (PTuple5)PTuple4.super.memo();
+		val host = this;
+		Map<Integer,Object> values = new ConcurrentHashMap<>();
+		
+		return new TupleImpl(Arrays.asList(),5){
+			
+			
+			public T1 v1(){
+				return ( T1)values.computeIfAbsent(new Integer(0), key -> host.v1());
+			}
+
+			public T2 v2(){
+				return ( T2)values.computeIfAbsent(new Integer(1), key -> host.v2());
+			}
+
+			public T3 v3(){
+				return ( T3)values.computeIfAbsent(new Integer(2), key -> host.v3());
+			}
+
+			public T4 v4(){
+				return ( T4)values.computeIfAbsent(new Integer(3), key -> host.v4());
+			}
+
+			public T5 v5(){
+				return ( T5)values.computeIfAbsent(new Integer(4), key -> host.v5());
+			}
+
+
+			
+			@Override
+			public List<Object> getCachedValues() {
+				return Arrays.asList(v1(),v2(),v3(),v4(),v5());
+			}
+
+			@Override
+			public Iterator iterator() {
+				return getCachedValues().iterator();
+			}
+
+			
+		};
+		
+	}
 	public static <T1,T2,T3,T4,T5> PTuple5<T1,T2,T3,T4,T5> ofTuple(Object tuple5){
 		return (PTuple5)new TupleImpl(tuple5,5);
 	}

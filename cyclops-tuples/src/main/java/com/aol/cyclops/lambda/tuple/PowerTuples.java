@@ -13,8 +13,8 @@ import lombok.AllArgsConstructor;
  *  
  *  //results in 10hello
  *  
- *  public Tuple2<Integer,String> method1(){
-		return Tuples.tuple(10,"hello");
+ *  public PTuple2<Integer,String> method1(){
+		return PowerTuples.tuple(10,"hello");
 	}
 	
 	public String method2(Integer number, String value){

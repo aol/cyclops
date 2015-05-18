@@ -3,7 +3,10 @@ package com.aol.cyclops.lambda.tuple;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
@@ -245,7 +248,47 @@ public interface PTuple4<T1,T2,T3,T4> extends PTuple3<T1,T2,T3> {
 	default <T> PTuple4<T1,T2,T3,T> map4(Function<T4,T> fn){
 		return of(v1(),v2(),v3(),fn.apply(v4()));
 	}
-	
+	default PTuple4<T1,T2,T3,T4> memo(){
+		if(arity()!=4)
+			return (PTuple4)PTuple3.super.memo();
+		val host = this;
+		Map<Integer,Object> values = new ConcurrentHashMap<>();
+		
+		return new TupleImpl(Arrays.asList(),4){
+			
+			
+			public T1 v1(){
+				return ( T1)values.computeIfAbsent(new Integer(0), key -> host.v1());
+			}
+
+			public T2 v2(){
+				return ( T2)values.computeIfAbsent(new Integer(1), key -> host.v2());
+			}
+
+			public T3 v3(){
+				return ( T3)values.computeIfAbsent(new Integer(2), key -> host.v3());
+			}
+
+			public T4 v4(){
+				return ( T4)values.computeIfAbsent(new Integer(3), key -> host.v4());
+			}
+
+
+			
+			@Override
+			public List<Object> getCachedValues() {
+				return Arrays.asList(v1(),v2(),v3(),v4());
+			}
+
+			@Override
+			public Iterator iterator() {
+				return getCachedValues().iterator();
+			}
+
+			
+		};
+		
+	}
 	public static <T1,T2,T3,T4> PTuple4<T1,T2,T3,T4> ofTuple(Object tuple4){
 		return (PTuple4)new TupleImpl(tuple4,4);
 	}
