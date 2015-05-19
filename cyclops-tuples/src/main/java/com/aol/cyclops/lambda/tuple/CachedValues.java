@@ -7,23 +7,34 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 import lombok.val;
 
+import com.aol.cyclops.lambda.monads.Monoid;
 import com.aol.cyclops.lambda.utils.Mutable;
+import com.aol.cyclops.lambda.utils.Printable;
 import com.aol.cyclops.matcher.builders.MatchingInstance;
 import com.aol.cyclops.matcher.builders.PatternMatcher;
 import com.aol.cyclops.matcher.builders._MembersMatchBuilder;
 import com.aol.cyclops.matcher.builders._Simpler_Case;
 import com.aol.cyclops.value.StreamableValue;
+import com.nurkiewicz.lazyseq.LazySeq;
 
-public interface CachedValues extends Iterable, StreamableValue, Concatenate, LazySwap{
+
+
+public interface CachedValues extends Iterable, StreamableValue, Concatenate, LazySwap, Comparable<CachedValues>, Printable{
 
 	public List<Object> getCachedValues();
 	
@@ -68,6 +79,42 @@ public interface CachedValues extends Iterable, StreamableValue, Concatenate, La
 		
 		
 		
+	}
+	default <T extends CachedValues> Monoid<T> asReducer(){
+		List<Monoid> reducers = (List<Monoid>)(List)getCachedValues();
+		return new Monoid(){
+			public CachedValues zero(){
+				return new TupleImpl(reducers.stream().map(r->r.zero()).collect(Collectors.toList()),arity());
+			}
+			public BiFunction<CachedValues,CachedValues,CachedValues> combiner(){
+				return (c1,c2) -> { 
+					List l= new ArrayList<>(c2.getCachedValues()); 
+					l.add(c2.getCachedValues());
+					return new TupleImpl(l,l.size());
+				};
+			}
+		};
+	}
+	default <T,A,R> Collector<T,A,R> asCollector(){
+
+		List<Collector> collectors = (List<Collector>)(List)getCachedValues();
+		final Supplier supplier =  ()-> collectors.stream().map(c->c.supplier().get()).collect(Collectors.toList());
+		final BiConsumer accumulator = (acc,next) -> { print("hello"); LazySeq.of(collectors.stream().iterator()).<Object,PTuple2<Collector,Object>>zip(LazySeq.of((List)print(acc)),(a,b)->PowerTuples.<Collector,Object>tuple(a,b))
+													
+													.forEach( t -> print(t.v1()).accumulator().accept(print(t.v2()),print(next)));
+		};
+		final BinaryOperator combiner = (t1,t2)-> new TupleImpl(collectors.stream().map(c->c.combiner().apply(t1,t2)).collect(Collectors.toList()),arity());
+		
+		return (Collector) Collector.of( supplier,
+                accumulator ,
+		 combiner,
+		values-> new TupleImpl(LazySeq.of(collectors.stream().iterator()).<Object,PTuple2<Collector,Object>>zip(LazySeq.of((List)values),(a,b)->PowerTuples.<Collector,Object>tuple(a,b)).map(t->t.v1().finisher().apply(t.v2())).toList(),arity()));
+	}
+
+
+	@Override
+	default int compareTo(CachedValues o){
+			return Objects.compare(getCachedValues(), o.getCachedValues(), (a,b) ->  a==null ? (b==null ? 0 : 1) : ((Comparable)a).compareTo(b) );
 	}
 	
 	default void forEach(Consumer c){

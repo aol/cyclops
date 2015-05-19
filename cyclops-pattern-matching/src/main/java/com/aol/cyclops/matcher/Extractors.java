@@ -2,7 +2,7 @@ package com.aol.cyclops.matcher;
 
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
-import com.aol.cyclops.lambda.utils.ExceptionSoftener;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,8 +11,10 @@ import java.util.stream.StreamSupport;
 
 import lombok.val;
 
+import com.aol.cyclops.lambda.api.AsDecomposable;
 import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.lambda.api.ReflectionCache;
+import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 import com.aol.cyclops.lambda.utils.LazyImmutable;
 import com.nurkiewicz.lazyseq.LazySeq;
 
@@ -62,7 +64,7 @@ public class Extractors {
 			else if(decomposers.get(input.getClass())!=null)
 				return (R)decomposers.get(input.getClass()).apply(input);
 			
-			return (R)ReflectionCache.getUnapplyMethod(input.getClass()).map(unchecked(m->m.invoke(input))).orElse(input);
+			return (R)ReflectionCache.getUnapplyMethod(input.getClass()).map(unchecked(m->m.invoke(input))).orElse(AsDecomposable.asDecomposable(input).unapply());
 			
 		};
 	}

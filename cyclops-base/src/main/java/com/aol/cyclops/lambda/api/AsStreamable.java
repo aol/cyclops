@@ -12,6 +12,9 @@ public class AsStreamable {
 	public static <T> Streamable<T> asStreamable(T toCoerce){
 		return new CoercedStreamable(collectStream(toCoerce));
 	}
+	public static <T> Streamable<T> asStreamable(Stream<T> toCoerce){
+		return new CoercedStreamable(collectStream(toCoerce));
+	}
 	
 	private static <T> T collectStream(T object){
 		if(object instanceof Stream){

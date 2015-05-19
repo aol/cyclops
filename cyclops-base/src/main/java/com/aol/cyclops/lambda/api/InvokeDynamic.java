@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
@@ -17,6 +18,7 @@ class InvokeDynamic {
 	private static volatile Map<Method, CallSite> callSites = new ConcurrentHashMap<>();
 	private static volatile Map<Class, Optional<Method>> streamMethod = new ConcurrentHashMap<>();
 	private static volatile Map<Class, Optional<Method>> supplierMethod = new ConcurrentHashMap<>();
+	private static volatile Map<String,Map<Class, List<Method>>> generalMethods = new ConcurrentHashMap<>();
 	public Optional<Stream> stream(Object t) {
 
 		Class clazz = t.getClass();
@@ -34,8 +36,29 @@ class InvokeDynamic {
 			return Optional.empty();
 		Method m = om.get();
 
-		return Optional.of((Stream) executeMethod(t, m));
+		return Optional.of((Stream) executeMethod( m,t));
 
+	}
+	public <T> Optional<T> execute(List<String> methodNames, Object... args){
+		return (Optional)methodNames.stream().map(s -> execute(s,args)).filter(Optional::isPresent).findFirst().get();
+	}
+	public <T> Optional<T> execute(String methodName,Object... args) {
+		Class clazz = args[0].getClass();
+		Map<Class, List<Method>> methods = generalMethods.computeIfAbsent(methodName, k->new ConcurrentHashMap<>());
+		List<Method> om = methods.computeIfAbsent(
+				clazz,
+				c -> Stream.of(c.getMethods())
+						.filter(method -> methodName.equals(method.getName()))
+						.filter(method -> method.getParameterCount() == args.length)
+						.map(m2 -> {
+							m2.setAccessible(true);
+							return m2;
+						}).collect(Collectors.toList()));
+		
+		if(om.size()>0){
+			return Optional.of((T)executeMethod( om.get(0),args));
+		}
+		return Optional.empty();
 	}
 	public <T> Optional<T> supplier(Object t,List<String> methodNames) {
 
@@ -54,11 +77,11 @@ class InvokeDynamic {
 			return Optional.empty();
 		Method m = om.get();
 
-		return Optional.of( (T)executeMethod(t, m));
+		return Optional.of( (T)executeMethod( m,t));
 
 	}
 
-	private Object executeMethod(Object t, Method m) {
+	private Object executeMethod(Method m, Object ...args) {
 		try {
 
 			return this.callSites
@@ -74,7 +97,7 @@ class InvokeDynamic {
 											.throwSoftenedException(e);
 								}
 								return null;
-							}).dynamicInvoker().invoke(t);
+							}).dynamicInvoker().invoke(args);
 
 		} catch (Throwable e) {
 			ExceptionSoftener.singleton.factory.getInstance()
@@ -84,4 +107,5 @@ class InvokeDynamic {
 		}
 		return null;
 	}
+	
 }

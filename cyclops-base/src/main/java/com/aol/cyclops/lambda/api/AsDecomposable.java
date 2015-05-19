@@ -22,7 +22,9 @@ public class AsDecomposable {
 	@Value
 	public static class CoercedDecomposable implements Decomposable{
 		private final Object dValue;
-		
+		public Object unwrap(){
+			return dValue;
+		}
 		
 	}
 }

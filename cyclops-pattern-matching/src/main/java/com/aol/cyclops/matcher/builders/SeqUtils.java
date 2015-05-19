@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.streams.StreamUtils;
 import com.nurkiewicz.lazyseq.LazySeq;
 
 class SeqUtils {
@@ -11,18 +12,22 @@ class SeqUtils {
 	public final static class EMPTY { }
 	private static final EMPTY EMPTY = new EMPTY();
 	public static LazySeq<Object> seq(Object t){
-		if(t instanceof Iterable){
-			return LazySeq.of((Iterable)t).continually(EMPTY);
-		}
-		if(t instanceof Stream){
-			return LazySeq.of((Stream)t).continually(EMPTY);
-		}
-		if(t instanceof Iterator){
-			return LazySeq.of((Iterator)t).continually(EMPTY);
-		}
-		if(t instanceof Map){
-			return LazySeq.of((Map)t).continually(EMPTY);
-		}
-		return LazySeq.of(t).continually(EMPTY);
+		return LazySeq.of(stream(t));
 	}
+		public static Stream<Object> stream(Object t){
+		
+			if(t instanceof Iterable){
+				return Stream.concat(StreamUtils.stream((Iterable)t),(StreamUtils.cycle(Stream.of(EMPTY))));
+			}
+			if(t instanceof Stream){
+				return Stream.concat( (Stream)t,(StreamUtils.cycle(Stream.of(EMPTY))));
+			}
+			if(t instanceof Iterator){
+				return Stream.concat( StreamUtils.stream((Iterator)t),(StreamUtils.cycle(Stream.of(EMPTY))));
+			}
+			if(t instanceof Map){
+				return Stream.concat(StreamUtils.stream((Map)t),(StreamUtils.cycle(Stream.of(EMPTY))));
+			}
+			return Stream.concat(Stream.of(t),(StreamUtils.cycle(Stream.of(EMPTY))));
+		}
 }

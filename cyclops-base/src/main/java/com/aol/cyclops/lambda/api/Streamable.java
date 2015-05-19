@@ -11,12 +11,12 @@ public interface Streamable<T> extends Iterable<T>{
 	default Iterator<T> iterator(){
 		return stream().iterator();
 	}
-	default  Object getValue(){
+	default  Object getStreamable(){
 		return this;
 	}
 	
 	default Stream<T> stream(){
-		Object streamable = getValue();
+		Object streamable = getStreamable();
 		if(streamable instanceof Stream)
 			return (Stream)streamable;
 		if(streamable instanceof Iterable)
