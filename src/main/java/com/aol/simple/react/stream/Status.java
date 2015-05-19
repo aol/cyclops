@@ -27,7 +27,7 @@ public class Status<T> {
 	}
 	
 	public final long getElapsedMillis(){
-		return elapsedNanos * 1000000;
+		return elapsedNanos / 1000000;
 	}
 
 	public int getCompleted() {
