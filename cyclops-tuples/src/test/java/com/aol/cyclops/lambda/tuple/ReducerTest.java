@@ -24,7 +24,7 @@ public class ReducerTest {
 		 System.out.println(Stream.of("hello", "world", "woo!").reduce("", (a,b)->a+","+b));
 		 assertThat(
 		  
-		            Stream.of("hello", "world", "woo!").map(s ->(CachedValues)PowerTuples.tuple(s))
+		            Stream.of("hello", "world", "woo!").map(CachedValues::of)
 		                  .reduce(reducer.zero(),reducer.reducer())
 		                  ,equalTo(tuple("helloworldwoo!",",hello,world,woo!"))
 		        );

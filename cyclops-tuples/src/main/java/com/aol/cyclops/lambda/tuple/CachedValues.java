@@ -3,6 +3,7 @@ package com.aol.cyclops.lambda.tuple;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -24,7 +25,6 @@ import lombok.val;
 
 import com.aol.cyclops.lambda.monads.Monoid;
 import com.aol.cyclops.lambda.utils.Mutable;
-import com.aol.cyclops.lambda.utils.Printable;
 import com.aol.cyclops.matcher.builders.MatchingInstance;
 import com.aol.cyclops.matcher.builders.PatternMatcher;
 import com.aol.cyclops.matcher.builders._MembersMatchBuilder;
@@ -206,5 +206,12 @@ public interface CachedValues extends Iterable, StreamableValue, Concatenate, La
 	default <T extends CachedValues> T map(Function<List,List> fn){
 		List list = fn.apply(getCachedValues());
 		return (T)new TupleImpl(list,list.size());
+	}
+	
+	public static <T extends CachedValues> T of(T value){
+		return (T)new TupleImpl(Arrays.asList(value),1);
+	}
+	public static <T extends CachedValues> T of(T... values){
+		return (T)new TupleImpl(Arrays.asList(values),values.length);
 	}
 }
