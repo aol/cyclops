@@ -3,10 +3,13 @@ package com.aol.cyclops.dynamic;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
+import com.aol.cyclops.lambda.api.AsGenericMonoid;
 import com.aol.cyclops.lambda.api.AsMappable;
 import com.aol.cyclops.lambda.api.AsSupplier;
 import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.lambda.api.Mappable;
+import com.aol.cyclops.lambda.api.Monoid;
+import com.aol.cyclops.lambda.api.AsGenericMonoid.WrappedMonoid;
 import com.aol.cyclops.lambda.api.AsSupplier.CoercedSupplier;
 import com.aol.cyclops.lambda.monads.AsFunctor;
 import com.aol.cyclops.lambda.monads.AsGenericMonad;
@@ -19,7 +22,7 @@ import com.aol.cyclops.value.AsValue;
 import com.aol.cyclops.value.StreamableValue;
 import com.aol.cyclops.value.ValueObject;
 
-public class As {
+public interface As {
 
 	/**
 	 * Coerce / wrap an Object as a StreamableValue instance
@@ -139,6 +142,18 @@ public class As {
 	 */
 	public static <T>  Supplier<T> asSupplier(Object toCoerce, String method){
 		return AsSupplier.asSupplier(toCoerce,method);
+	}
+	/**
+	 * Wrap supplied Monoid object in the cylops Monoid interface
+	 * 
+	 * Will look for sum(a,b) or combine(a,b) methods for combiner
+	 * and zero() method for zero
+	 * 
+	 * @param o Monoid type to wrap
+	 * @return Cyclopse Monoid
+	 */
+	public static <A> Monoid<A> asMonoid(Object o){
+		return AsGenericMonoid.asMonoid(o);
 	}
 	
 }

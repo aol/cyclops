@@ -60,6 +60,13 @@ public class LazyImmutable<T> implements Supplier<T>{
 		return v;
 	}
 	
+	/**
+	 * @return a defined, but unitialised LazyImmutable
+	 */
+	public static <T> LazyImmutable<T> def(){
+		return new LazyImmutable(){};
+	}
+	
 	
 	/**
 	 * Map the value stored in this Immutable Closed Value from one Value to another

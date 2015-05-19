@@ -11,6 +11,7 @@
 		Mappable (convert fields to Map)  : toMap()
 		Functor (Generic functor interface) : map(Function)
 		Monad (Generic Monad interface) : flatMap(Function)
+		Monoid zero(), combiner(), reduce(Stream s)
 		Gettable : get()
 
 * Coerce / wrap to interface
@@ -19,7 +20,9 @@
 		asDecomposable
 		asMappable
 		asFunctor
-		asMonad
+		asGenericMonad
+		asGenericMonoid
+		asSupplier
 		
 
 

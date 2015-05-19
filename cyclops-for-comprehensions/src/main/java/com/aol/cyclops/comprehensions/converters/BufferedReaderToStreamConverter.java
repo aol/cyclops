@@ -19,7 +19,7 @@ public class BufferedReaderToStreamConverter implements MonadicConverter<Stream>
 	@Override
 	public Stream convertToMonadicForm(Object f) {
 		val reader = (BufferedReader)f;
-		return Stream.of(reader.lines());
+		return reader.lines();
 	}
 
 }

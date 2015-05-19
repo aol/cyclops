@@ -5,11 +5,18 @@ import java.util.function.BiFunction;
 
 import lombok.AllArgsConstructor;
 
-import com.aol.cyclops.lambda.monads.Monoid;
-
 public class AsGenericMonoid {
 	
-	public <A> Monoid<A> asMonoid(Object o){
+	/**
+	 * Wrap supplied Monoid object in the cylops Monoid interface
+	 * 
+	 * Will look for sum(a,b) or combine(a,b) methods for combiner
+	 * and zero() method for zero
+	 * 
+	 * @param o Monoid type to wrap
+	 * @return Cyclopse Monoid
+	 */
+	public static <A> Monoid<A> asMonoid(Object o){
 		return new WrappedMonoid(o);
 	}
 	@AllArgsConstructor

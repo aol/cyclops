@@ -21,7 +21,7 @@ public class FileToStreamConverter implements MonadicConverter<Stream> {
 	@Override
 	public Stream convertToMonadicForm(Object f) {
 		try {
-			return Stream.of(Files.lines(Paths.get( ((File)f).getAbsolutePath())));
+			return Files.lines(Paths.get( ((File)f).getAbsolutePath()));
 		} catch (IOException e) {
 			ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(e);
 		}

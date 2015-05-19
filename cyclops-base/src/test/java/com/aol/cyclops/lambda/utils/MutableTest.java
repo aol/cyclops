@@ -7,10 +7,19 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
 import java.util.function.BiFunction;
+import java.util.stream.Stream;
 
 import org.junit.Test;
-public class ClosedVarTest {
+public class MutableTest {
 
+	@Test
+	public void testMutate(){
+		Mutable<Integer> num = Mutable.of(20);
+		    
+		Stream.of(1,2,3,4).map(i->i*10).peek(i-> num.mutate(n->n+i)).forEach(System.out::println);
+		    
+		assertThat(num.get(),is(120));
+	}
 	@Test
 	public void inClosure(){
 		Mutable<Integer> myInt = new Mutable<>(0);

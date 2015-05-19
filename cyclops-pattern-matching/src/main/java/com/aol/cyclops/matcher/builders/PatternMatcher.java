@@ -4,6 +4,7 @@ import static com.aol.cyclops.matcher.builders.SeqUtils.seq;
 
 import java.lang.invoke.MethodType;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -21,6 +22,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
 import com.aol.cyclops.lambda.api.Decomposable;
+import com.aol.cyclops.lambda.utils.Printable;
 import com.aol.cyclops.matcher.Action;
 import com.aol.cyclops.matcher.ActionWithReturn;
 import com.aol.cyclops.matcher.Case;
@@ -536,7 +538,7 @@ public class PatternMatcher implements Function{
 	
 	public <T,R,X> PatternMatcher inCaseOfStream(Stream<Predicate> predicates, ActionWithReturn<R,X> a,Extractor<T,R> extractor){
 
-		LazySeq<Object> pred = LazySeq.<Object>of(predicates.iterator());
+		LazySeq<Object> pred = LazySeq.<Object>of((Iterator)predicates.iterator());
 		return inCaseOfThenExtract(it -> seq(it).zip(pred,(a1,b1)->Two.tuple(a1,b1)).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
 		
 	}

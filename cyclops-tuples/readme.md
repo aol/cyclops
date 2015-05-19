@@ -11,6 +11,9 @@
 9. Useful utility methods (asStreamOfStrings, asTwoNumbers etc)
 10. Concatonation
 11. LazySwap (reverse)
+12. Memoization
+13. asCollector
+14. asReducer
 
 ### Wrap any Tuple type
 
@@ -54,4 +57,37 @@ Async method chaining
 ### Conversion to Streams
 
 Tuples can also be converted to flattened or unflattened Stream of Streams. asStreams will attempt to create a Stream from each element (via Collection::stream for example). BufferedReaders, Files, URLs, Arrays, Collections, CharSequences will all be turned into Streams.
+
+## asCollector
+
+A tuple of Collectors can be coerced to a single Collector
+
+e.g. Collecting as a List and Set simultaneously
+
+       PTuple2<Set<Integer>,List<Integer>> res = Stream.of(1, 2, 2)
+                       .collect(tuple(Collectors.toSet(),Collectors.toList()).asCollector());
+
+See rich set of Collectors here [java.util.stream.Collectors](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collectors.html)
+
+## asReducer
+
+Convert a tuple into a single Monoid (or Reducer) that can perform multiple reduce operations on a single Stream.
+
+
+       Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
+	   Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
+	   val result = tuple(sum,mult).<PTuple2<Integer,Integer>>asReducer()
+											.mapReduce(Stream.of(1,2,3,4)); 
+
+
+
+Or alternatively
+
+
+      Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
+	  Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
+	  val result = tuple(sum,mult).<PTuple2<Integer,Integer>>asReducer()
+											.mapReduce(Stream.of(1,2,3,4)); 
+		 
+		assertThat(result,equalTo(tuple(10,24)));
       

@@ -10,6 +10,7 @@ import java.util.List;
 
 import lombok.val;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 
@@ -29,7 +30,7 @@ public class TrampolineTest {
 			return Trampoline.more(()->loop(times-1,sum+times));
 	}
 	
-	@Test
+	@Test @Ignore
 	public void trampolineTest1(){
 		
 		assertThat(loop1(500000,10),equalTo(446198426));

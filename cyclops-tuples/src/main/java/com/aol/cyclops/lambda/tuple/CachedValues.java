@@ -1,5 +1,9 @@
 package com.aol.cyclops.lambda.tuple;
 
+import static com.aol.cyclops.lambda.tuple.PowerTuples.tuple;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -23,7 +27,7 @@ import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.val;
 
-import com.aol.cyclops.lambda.monads.Monoid;
+import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.utils.Mutable;
 import com.aol.cyclops.matcher.builders.MatchingInstance;
 import com.aol.cyclops.matcher.builders.PatternMatcher;
@@ -80,8 +84,38 @@ public interface CachedValues extends Iterable, StreamableValue, Concatenate, La
 		
 		
 	}
+	/**
+	 * Wrap multiple reducers or monoids into a single reducer instance,
+	 * that can be used to reduce a given steam to multiple different values simultanously
+	 * 
+	 * {@code
+	 * 
+	 * Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
+	 * Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
+	   val result = tuple(sum,mult).<PTuple2<Integer,Integer>>asReducer()
+											.mapReduce(Stream.of(1,2,3,4)); 
+		 
+		assertThat(result,equalTo(tuple(10,24)));
+	 * 
+	 * }
+	 * 
+	 * Or alternatively 
+	 * 
+	 * {@code
+	 * 
+	 * Monoid<String> concat = Monoid.of("",(a,b)->a+b);
+	   Monoid<String> join = Monoid.of("",(a,b)->a+","+b);
+	   Monoid<CachedValues> reducer = PowerTuples.tuple(concat,join).asReducer(); 
+	 * 
+	 * 
+	 * assertThat(Stream.of("hello", "world", "woo!").map(CachedValues::of)
+		                  .reduce(reducer.zero(),reducer.reducer())
+		                  ,equalTo(tuple("helloworldwoo!",",hello,world,woo!")));
+	 * }
+	 * @return
+	 */
 	default <T extends CachedValues> Monoid<T> asReducer(){
-		List<Monoid> reducers = (List<Monoid>)(List)getCachedValues();
+		List<Monoid> reducers = (List)getCachedValues().stream().filter(c-> c instanceof Monoid).collect(Collectors.toList());
 		return new Monoid(){
 			public CachedValues zero(){
 				return new TupleImpl(reducers.stream().map(r->r.zero()).collect(Collectors.toList()),arity());
@@ -98,11 +132,29 @@ public interface CachedValues extends Iterable, StreamableValue, Concatenate, La
 					return new TupleImpl(l,l.size());
 				};
 			}
+			
+		
+			public Stream mapToType(Stream stream){
+				return (Stream) stream.map(CachedValues::of);
+			}
 		};
 	}
+	/**
+	 * Wrap multiple collectors in a single Collector instance, so they can all run against a single Stream
+	 * e.g 
+	 * {@code
+	 *  PTuple2<Set<Integer>,List<Integer>> res = Stream.of(1, 2, 2)
+                       .collect(tuple(Collectors.toSet(),Collectors.toList()).asCollector());
+	 * 
+	 * }
+	 * 
+	 * Filters all non-Collector instances out of the Tuple
+	 * 
+	 * @return Collector
+	 */
 	default <T,A,R> Collector<T,A,R> asCollector(){
 
-		List<Collector> collectors = (List<Collector>)(List)getCachedValues();
+		List<Collector> collectors = (List)getCachedValues().stream().filter(c-> c instanceof Collector).collect(Collectors.toList());
 		final Supplier supplier =  ()-> collectors.stream().map(c->c.supplier().get()).collect(Collectors.toList());
 		final BiConsumer accumulator = (acc,next) -> {  LazySeq.of(collectors.stream().iterator()).<Object,PTuple2<Collector,Object>>zip(LazySeq.of((List)acc),(a,b)->PowerTuples.<Collector,Object>tuple(a,b))
 													
@@ -207,11 +259,11 @@ public interface CachedValues extends Iterable, StreamableValue, Concatenate, La
 		List list = fn.apply(getCachedValues());
 		return (T)new TupleImpl(list,list.size());
 	}
-	
-	public static <T extends CachedValues> T of(T value){
-		return (T)new TupleImpl(Arrays.asList(value),1);
+	 
+	public static <T> CachedValues of(T value){
+		return new TupleImpl(Arrays.asList(value),1);
 	}
-	public static <T extends CachedValues> T of(T... values){
-		return (T)new TupleImpl(Arrays.asList(values),values.length);
+	public static  CachedValues  of(Object... values){
+		return new TupleImpl(Arrays.asList(values),values.length);
 	}
 }

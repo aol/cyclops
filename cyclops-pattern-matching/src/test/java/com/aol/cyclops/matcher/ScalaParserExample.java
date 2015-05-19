@@ -83,10 +83,10 @@ public class ScalaParserExample {
 	
 	@AllArgsConstructor(access=AccessLevel.PRIVATE) static abstract class  Expression implements Decomposable{}
 	final static class X extends Expression{ }
-	@Value final static class Const extends Expression  implements Decomposable { int value; }
-	@Value final static class Add<T extends Expression, R extends Expression> extends Expression implements Decomposable { T left; R right; }
-	@Value final static class Mult<T extends Expression, R extends Expression> extends Expression  implements Decomposable { T left; R right; }
-	@Value final static class Neg<T extends Expression> extends Expression  implements Decomposable { T expr; }
+	@Value final static class Const extends Expression  { int value; }
+	@Value final static class Add<T extends Expression, R extends Expression> extends Expression { T left; R right; }
+	@Value final static class Mult<T extends Expression, R extends Expression> extends Expression  { T left; R right; }
+	@Value final static class Neg<T extends Expression> extends Expression { T expr; }
 	
 	
 }

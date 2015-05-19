@@ -12,7 +12,7 @@ class SeqUtils {
 	public final static class EMPTY { }
 	private static final EMPTY EMPTY = new EMPTY();
 	public static LazySeq<Object> seq(Object t){
-		return LazySeq.of(stream(t));
+		return LazySeq.of(stream(t).iterator());
 	}
 		public static Stream<Object> stream(Object t){
 		
