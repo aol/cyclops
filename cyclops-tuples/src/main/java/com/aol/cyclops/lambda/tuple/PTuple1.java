@@ -114,7 +114,7 @@ public interface PTuple1<T1> extends CachedValues{
 	
 	
 	default PTuple1<T1> swap1(){
-		return ( PTuple1<T1>)withArity(1);
+		return PowerTuples.tuple(v1());
 	}
 	
 	default PTuple1<T1> memo(){

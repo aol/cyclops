@@ -29,6 +29,22 @@ public class TrampolineTest {
 			return Trampoline.more(()->loop(times-1,sum+times));
 	}
 	
+	@Test
+	public void trampolineTest1(){
+		
+		assertThat(loop1(500000,10),equalTo(446198426));
+		
+	}
+	Integer loop1(int times,int sum){
+		
+		if(times==0)
+			return sum;
+		else
+			return loop1(times-1,sum+times);
+	}
+	
+	
+	
 	List results;
 	@Test
 	public void coroutine(){
