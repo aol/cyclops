@@ -21,7 +21,8 @@ public class AsGenericMonoid {
 			return (A)invokeDynamic.execute("zero",o).get();
 		}
 		public BiFunction<A,A,A> combiner(){
-			return (a,b) -> (A)invokeDynamic.execute(Arrays.asList("sum","combine"),a,b).get();
+			return (a,b) -> (A)
+					invokeDynamic.execute(Arrays.asList("sum","combine"),a,b).get();
 		}
 		
 	}

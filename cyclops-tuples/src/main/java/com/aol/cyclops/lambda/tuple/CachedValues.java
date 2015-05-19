@@ -34,7 +34,7 @@ import com.nurkiewicz.lazyseq.LazySeq;
 
 
 
-public interface CachedValues extends Iterable, StreamableValue, Concatenate, LazySwap, Comparable<CachedValues>, Printable{
+public interface CachedValues extends Iterable, StreamableValue, Concatenate, LazySwap, Comparable<CachedValues>{
 
 	public List<Object> getCachedValues();
 	
@@ -88,8 +88,13 @@ public interface CachedValues extends Iterable, StreamableValue, Concatenate, La
 			}
 			public BiFunction<CachedValues,CachedValues,CachedValues> combiner(){
 				return (c1,c2) -> { 
-					List l= new ArrayList<>(c2.getCachedValues()); 
-					l.add(c2.getCachedValues());
+					List l= new ArrayList<>();
+					
+					
+					for(int i=0;i<reducers.size();i++){
+						l.add(reducers.get(i).combiner().apply(c1.getCachedValues().get(i),c2.getCachedValues().get(0)));
+					}
+					
 					return new TupleImpl(l,l.size());
 				};
 			}
@@ -99,9 +104,9 @@ public interface CachedValues extends Iterable, StreamableValue, Concatenate, La
 
 		List<Collector> collectors = (List<Collector>)(List)getCachedValues();
 		final Supplier supplier =  ()-> collectors.stream().map(c->c.supplier().get()).collect(Collectors.toList());
-		final BiConsumer accumulator = (acc,next) -> { print("hello"); LazySeq.of(collectors.stream().iterator()).<Object,PTuple2<Collector,Object>>zip(LazySeq.of((List)print(acc)),(a,b)->PowerTuples.<Collector,Object>tuple(a,b))
+		final BiConsumer accumulator = (acc,next) -> {  LazySeq.of(collectors.stream().iterator()).<Object,PTuple2<Collector,Object>>zip(LazySeq.of((List)acc),(a,b)->PowerTuples.<Collector,Object>tuple(a,b))
 													
-													.forEach( t -> print(t.v1()).accumulator().accept(print(t.v2()),print(next)));
+													.forEach( t -> t.v1().accumulator().accept(t.v2(),next));
 		};
 		final BinaryOperator combiner = (t1,t2)-> new TupleImpl(collectors.stream().map(c->c.combiner().apply(t1,t2)).collect(Collectors.toList()),arity());
 		

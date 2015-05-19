@@ -21,11 +21,12 @@ public class ReducerTest {
 		Monoid<String> concat = Monoid.of("",(a,b)->a+b);
 		Monoid<String> join = Monoid.of("",(a,b)->a+","+b);
 		Monoid<CachedValues> reducer = tuple(concat,join).asReducer(); 
+		 System.out.println(Stream.of("hello", "world", "woo!").reduce("", (a,b)->a+","+b));
 		 assertThat(
 		  
 		            Stream.of("hello", "world", "woo!").map(s ->(CachedValues)PowerTuples.tuple(s))
 		                  .reduce(reducer.zero(),reducer.reducer())
-		                  ,equalTo(tuple("helloworldwoo!","hello,world,woo!"))
+		                  ,equalTo(tuple("helloworldwoo!",",hello,world,woo!"))
 		        );
 	}
 	
