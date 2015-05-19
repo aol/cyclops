@@ -66,6 +66,11 @@ The equivalent for comprehension would be
 
      ForComprehensions.foreach1(c -> c.mapAs$1(list)
                                 	  .run( (Vars1<String> v) -> System.out.println(v.$1())
+                                	  
+ or with Do Notation
+ 	
+    Do.with(list)
+      .yield( (String element) -> {System.out.println(element); return null; } );                            	  
                                       
 If we nest our looping
 	
@@ -83,7 +88,13 @@ Things start to become a little unwieldy, but a little less so with for comprehe
                                       .mapAs$2((Vars2<String,Integer> v)->numbers)                                                    
                                       .run(v -> System.out.println(v.$1()+v.$2())
 
+With Do notation
 
+    Do.with(list)
+      .and((String element) -> numbers)
+      .yield( (String element) -> (Integer num) -> {System.out.println(element + num); return null; } );
+      
+                                  
 Let's add a third level of nesting
 
     List<Date> dates = Arrays.asList(new Date(),new Date(0));
@@ -104,6 +115,16 @@ Let's add a third level of nesting
                                       .mapAs$2(v -> dates)                                                    
                                       .run( v-> System.out.println(v.$1()+v.$2()+v.$3())
  
+ 
+ With Do notation
+
+    Do.with(list)
+      .andJustAdd(numbers)
+      .andJustAdd(dates)
+      .yield( (String element) -> (Integer num) -> (Date date) -> {System.out.println(element + num+":"+date) ; return null; } );
+ 
+ 
+ Stream map
       
      list.stream()
          .map(element -> element.toUpperCase())

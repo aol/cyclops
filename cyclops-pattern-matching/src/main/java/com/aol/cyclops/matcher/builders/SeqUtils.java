@@ -12,17 +12,17 @@ class SeqUtils {
 	private static final EMPTY EMPTY = new EMPTY();
 	public static LazySeq<Object> seq(Object t){
 		if(t instanceof Iterable){
-			return LazySeq.of((Iterable)t).concat(LazySeq.continually(EMPTY),LazySeq.empty());
+			return LazySeq.of((Iterable)t).continually(EMPTY);
 		}
 		if(t instanceof Stream){
-			return LazySeq.of((Stream)t).concat(LazySeq.continually(EMPTY),LazySeq.empty());
+			return LazySeq.of((Stream)t).continually(EMPTY);
 		}
 		if(t instanceof Iterator){
-			return LazySeq.of((Iterator)t).concat(LazySeq.continually(EMPTY),LazySeq.empty());
+			return LazySeq.of((Iterator)t).continually(EMPTY);
 		}
 		if(t instanceof Map){
-			return LazySeq.of((Map)t).concat(LazySeq.continually(EMPTY),LazySeq.empty());
+			return LazySeq.of((Map)t).continually(EMPTY);
 		}
-		return LazySeq.of(t).concat(LazySeq.continually(EMPTY),LazySeq.empty());
+		return LazySeq.of(t).continually(EMPTY);
 	}
 }
