@@ -34,7 +34,7 @@ import com.nurkiewicz.lazyseq.LazySeq;
 
 
 
-public interface CachedValues extends Iterable, StreamableValue, Concatenate, LazySwap, Comparable<CachedValues>{
+public interface CachedValues extends Iterable, StreamableValue, Comparable<CachedValues>{
 
 	public List<Object> getCachedValues();
 	
