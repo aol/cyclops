@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
 
-class InvokeDynamic {
+public class InvokeDynamic {
 	private static volatile Map<Method, CallSite> callSites = new ConcurrentHashMap<>();
 	private static volatile Map<Class, Optional<Method>> streamMethod = new ConcurrentHashMap<>();
 	private static volatile Map<Class, Optional<Method>> supplierMethod = new ConcurrentHashMap<>();

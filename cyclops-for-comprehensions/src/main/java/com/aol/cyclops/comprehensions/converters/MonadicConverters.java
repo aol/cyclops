@@ -45,7 +45,8 @@ public class MonadicConverters {
 						.plus(new SupplierToCompletableFutureConverter ())
 						.plus(new ArrayToStreamConverter())
 						.plus(new EnumToStreamConverter())
-						.plus(new IteratorToStreamConverter());
+						.plus(new IteratorToStreamConverter())
+						.plus(new StreamableToStreamConverter());
 	
 	
 	//Supplier[] Callable[]  to LazyFutureStream

@@ -180,4 +180,5 @@ public interface As {
 		return AsGenericMonoid.asMonoid(o);
 	}
 	
+	
 }

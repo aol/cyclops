@@ -54,6 +54,8 @@ public class FreeFormTest {
 		Stream<Integer> stream = Do.with(asList(20,30))
 								   .and((Integer i)->asList(1,2,3))
 								   .yield((Integer a)-> (Integer b) -> a + b+2);
+		
+		assertThat(stream.collect(Collectors.toList()),equalTo(Arrays.asList(23,24,25,33,34,35)));
 			
 	}
 	@Test
@@ -61,6 +63,8 @@ public class FreeFormTest {
 		Stream<Integer> stream = Do.with(asList(20,30))
 								   .andJustAdd(asList(1,2,3))
 								   .yield((Integer a)-> (Integer b) -> a + b+2);
+		
+		assertThat(stream.collect(Collectors.toList()),equalTo(Arrays.asList(23,24,25,33,34,35)));
 			
 	}
 	

@@ -31,17 +31,22 @@ public class AsStreamableValue {
 	 * @param toCoerce Object to making into a StreamableValue
 	 * @return StreamableValue that adds functionality to the supplied object
 	 */
-	public static <T> StreamableValue<T> asStreamableValue(T toCoerce){
+	public static <T> StreamableValue<T> asStreamableValue(Object toCoerce){
 		return new CoercedStreamableValue<T>(toCoerce);
 	}
 	
 	@lombok.Value
 	public static class CoercedStreamableValue<T> implements StreamableValue<T>{
-		private final T value;
+		private final Object v;
 		
-		public T getMatchable(){
-			return value;
+		public Object getMatchable(){
+			return v;
 		}
-			
+		public  Object unwrap(){
+			return v;
+		}
+		public Object getStreamable(){
+			return v;
+		}
 	}
 }

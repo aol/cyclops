@@ -120,6 +120,24 @@ public class AsTest {
 		assertThat(map.get("num"),equalTo(10));
 		assertThat(map.get("str"),equalTo("hello"));
 	}
+	
+	@Test
+	public void testAsSupplierObject() {
+		assertThat(As.asSupplier(Optional.of("hello")).get(),equalTo("hello"));
+	}
+
+	@Test
+	public void testAsSupplierObjectString() {
+		assertThat(As.asSupplier(new Duck(),"quack").get(),equalTo("quack"));
+	}
+
+	static class Duck{
+		
+		public String quack(){
+			return  "quack";
+		}
+	}
+	
 	@Value static class MyEntity { int num; String str;}
 	@Value
 	static class MyCase { String key; int value;}
