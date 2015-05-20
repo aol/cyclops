@@ -2,6 +2,7 @@ package com.aol.cyclops.lambda.api;
 
 import java.lang.invoke.CallSite;
 import java.lang.invoke.ConstantCallSite;
+import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -39,11 +40,11 @@ class InvokeDynamic {
 		return Optional.of((Stream) executeMethod( m,t));
 
 	}
-	public <T> Optional<T> execute(List<String> methodNames, Object... args){
-		return (Optional)methodNames.stream().map(s -> execute(s,args)).filter(Optional::isPresent).findFirst().get();
+	public <T> Optional<T> execute(List<String> methodNames, Object obj, Object... args){
+		return (Optional)methodNames.stream().map(s -> execute(s,obj,args)).filter(Optional::isPresent).findFirst().get();
 	}
-	public <T> Optional<T> execute(String methodName,Object... args) {
-		Class clazz = args[0].getClass();
+	public <T> Optional<T> execute(String methodName,Object obj,Object... args) {
+		Class clazz = obj.getClass();
 		Map<Class, List<Method>> methods = generalMethods.computeIfAbsent(methodName, k->new ConcurrentHashMap<>());
 		List<Method> om = methods.computeIfAbsent(
 				clazz,
@@ -56,7 +57,7 @@ class InvokeDynamic {
 						}).collect(Collectors.toList()));
 		
 		if(om.size()>0){
-			return Optional.of((T)executeMethod( om.get(0),args));
+			return Optional.of((T)executeMethod( om.get(0),obj,args));
 		}
 		return Optional.empty();
 	}
@@ -81,10 +82,11 @@ class InvokeDynamic {
 
 	}
 
-	private Object executeMethod(Method m, Object ...args) {
+	private Object executeMethod(Method m, Object obj,Object... args) {
 		try {
 
-			return this.callSites
+			
+			MethodHandle mh = this.callSites
 					.computeIfAbsent(
 							m,
 							(m2) -> {
@@ -97,7 +99,13 @@ class InvokeDynamic {
 											.throwSoftenedException(e);
 								}
 								return null;
-							}).dynamicInvoker().invoke(args);
+							}).dynamicInvoker();
+			if(args.length==0)
+				return mh.invoke(obj);
+			if(args.length==1)
+				return mh.invoke(obj,args[0]);
+			if(args.length==2)
+				return mh.invoke(obj,args[0],args[1]);
 
 		} catch (Throwable e) {
 			ExceptionSoftener.singleton.factory.getInstance()

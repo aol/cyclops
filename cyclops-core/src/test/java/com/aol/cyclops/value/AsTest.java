@@ -20,11 +20,19 @@ import lombok.val;
 import org.junit.Test;
 
 import com.aol.cyclops.dynamic.As;
+import com.aol.cyclops.lambda.api.AsGenericMonoid;
 import com.aol.cyclops.lambda.api.AsStreamable;
+import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
 
 public class AsTest {
-	
+	@Test
+	public void testAsMonoidFj() {
+		fj.Monoid m = fj.Monoid.monoid((Integer a) -> (Integer b) -> a+b,0);
+		Monoid<Integer> sum = As.asMonoid(m);
+		
+		assertThat(sum.reduce(Stream.of(1,2,3)),equalTo(6));
+	}
 	@Test
 	public void testAsStreamableT() {
 		val result = As.<Integer>asStreamable(Arrays.asList(1,2,3)).stream().map(i->i+2).collect(Collectors.toList());

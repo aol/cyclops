@@ -1,16 +1,21 @@
 package com.aol.cyclops.streams;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.lambda.api.AsStreamable;
+import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Streamable;
 
 public interface StreamUtils {
@@ -78,4 +83,40 @@ public interface StreamUtils {
 	public static <K,V> Stream<Map.Entry<K, V>> stream(Map<K,V> it){
 		return it.entrySet().stream();
 	}
+	@SuppressWarnings({"rawtypes","unchecked"})
+	public static <R> List<R> reduce(Stream<R> stream,Collection<Monoid<R>> reducers){
+	
+		Monoid<R> m = new Monoid(){
+			public List zero(){
+				return reducers.stream().map(r->r.zero()).collect(Collectors.toList());
+			}
+			public BiFunction<List,List,List> combiner(){
+				return (c1,c2) -> { 
+					List l= new ArrayList<>();
+					int i =0;
+					for(Monoid next : reducers){
+						l.add(next.combiner().apply(c1.get(i),c2.get(0)));
+						i++;
+					}
+					
+					
+					return l;
+				};
+			}
+			
+		
+			public Stream mapToType(Stream stream){
+				return (Stream) stream.map(value->Arrays.asList(value));
+			}
+		};
+		return (List)m.reduce(stream);
+	}
+	@SuppressWarnings({"rawtypes","unchecked"})
+	public static <R> List<R> reduce(Stream<R> stream,Stream<Monoid<R>> reducer){
+		return (List)reduce(stream, (List)reducer.collect(Collectors.toList()));
+		
+	}
+	
+	
+	
 }
