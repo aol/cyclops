@@ -1,10 +1,5 @@
 package com.aol.cyclops.value;
 
-import lombok.AllArgsConstructor;
-import lombok.Value;
-
-import com.aol.cyclops.value.AsValueTest.Child;
-import com.aol.cyclops.value.AsValueTest.Parent;
 
 
 public class AsValue {

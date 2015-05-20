@@ -4,8 +4,6 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.lambda.api.MonadicConverter;
 
-import fj.data.Seq;
-
 public class ArrayToStreamConverter implements MonadicConverter<Stream> {
 
 	@Override

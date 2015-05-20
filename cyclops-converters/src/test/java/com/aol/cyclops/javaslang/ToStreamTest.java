@@ -1,7 +1,9 @@
 package com.aol.cyclops.javaslang;
 
 import javaslang.collection.Stream;
+
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.stream.Collectors;
@@ -33,7 +35,7 @@ public class ToStreamTest {
         assertThat(ToStream.toJooλ(Stream.of(1, 2, 3, 4)).collect(Collectors.toList()).size(), is(4));
     }
 
-    @Test
+    @Test    @Ignore
     public void testToFutureStream() throws Exception {
         assertThat(ToStream.toFutureStream(Stream.of(1, 2, 3, 4)).collect(Collectors.toList()).size(), is(4));
     }

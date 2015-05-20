@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import lombok.val;
+
 
 public interface Concatenate{
 

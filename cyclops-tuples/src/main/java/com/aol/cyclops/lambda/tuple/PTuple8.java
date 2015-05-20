@@ -444,36 +444,36 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 			Function<PTuple8<T1, T2, T3, T4,T5,T6,T7,T8>, NT7> v7S,
 			Function<PTuple8<T1, T2, T3, T4,T5,T6,T7,T8>, NT8> v8S) {
 
-		val host = this;
+		
 		return new TupleImpl(Arrays.asList(), 5) {
 			public NT1 v1() {
-				return v1S.apply(host);
+				return v1S.apply(PTuple8.this);
 			}
 
 			public NT2 v2() {
-				return v2S.apply(host);
+				return v2S.apply(PTuple8.this);
 			}
 
 			public NT3 v3() {
-				return v3S.apply(host);
+				return v3S.apply(PTuple8.this);
 			}
 
 			public NT4 v4() {
-				return v4S.apply(host);
+				return v4S.apply(PTuple8.this);
 			}
 			public NT5 v5() {
-				return v5S.apply(host);
+				return v5S.apply(PTuple8.this);
 			}
 
 			public NT6 v6() {
-				return v6S.apply(host);
+				return v6S.apply(PTuple8.this);
 			}
 			public NT7 v7() {
-				return v7S.apply(host);
+				return v7S.apply(PTuple8.this);
 			}
 
 			public NT8 v8() {
-				return v8S.apply(host);
+				return v8S.apply(PTuple8.this);
 			}
 
 			@Override
@@ -492,42 +492,42 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 	default PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> memo(){
 		if(arity()!=8)
 			return (PTuple8)PTuple7.super.memo();
-		val host = this;
+		
 		Map<Integer,Object> values = new ConcurrentHashMap<>();
 		
 		return new TupleImpl(Arrays.asList(),8){
 			
 			
 			public T1 v1(){
-				return ( T1)values.computeIfAbsent(new Integer(0), key -> host.v1());
+				return ( T1)values.computeIfAbsent(new Integer(0), key -> PTuple8.this.v1());
 			}
 
 			public T2 v2(){
-				return ( T2)values.computeIfAbsent(new Integer(1), key -> host.v2());
+				return ( T2)values.computeIfAbsent(new Integer(1), key -> PTuple8.this.v2());
 			}
 
 			public T3 v3(){
-				return ( T3)values.computeIfAbsent(new Integer(2), key -> host.v3());
+				return ( T3)values.computeIfAbsent(new Integer(2), key -> PTuple8.this.v3());
 			}
 
 			public T4 v4(){
-				return ( T4)values.computeIfAbsent(new Integer(3), key -> host.v4());
+				return ( T4)values.computeIfAbsent(new Integer(3), key -> PTuple8.this.v4());
 			}
 
 			public T5 v5(){
-				return ( T5)values.computeIfAbsent(new Integer(4), key -> host.v5());
+				return ( T5)values.computeIfAbsent(new Integer(4), key -> PTuple8.this.v5());
 			}
 
 			public T6 v6(){
-				return ( T6)values.computeIfAbsent(new Integer(5), key -> host.v6());
+				return ( T6)values.computeIfAbsent(new Integer(5), key -> PTuple8.this.v6());
 			}
 
 			public T7 v7(){
-				return ( T7)values.computeIfAbsent(new Integer(6), key -> host.v7());
+				return ( T7)values.computeIfAbsent(new Integer(6), key -> PTuple8.this.v7());
 			}
 
 			public T8 v8(){
-				return ( T8)values.computeIfAbsent(new Integer(7), key -> host.v8());
+				return ( T8)values.computeIfAbsent(new Integer(7), key -> PTuple8.this.v8());
 			}
 
 

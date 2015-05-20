@@ -280,25 +280,25 @@ public interface PTuple5<T1,T2,T3,T4,T5> extends PTuple4<T1,T2,T3,T4> {
 			Function<PTuple5<T1, T2, T3, T4,T5>, NT4> v4S,
 			Function<PTuple5<T1, T2, T3, T4,T5>, NT5> v5S) {
 
-		val host = this;
+		
 		return new TupleImpl(Arrays.asList(), 5) {
 			public NT1 v1() {
-				return v1S.apply(host);
+				return v1S.apply(PTuple5.this);
 			}
 
 			public NT2 v2() {
-				return v2S.apply(host);
+				return v2S.apply(PTuple5.this);
 			}
 
 			public NT3 v3() {
-				return v3S.apply(host);
+				return v3S.apply(PTuple5.this);
 			}
 
 			public NT4 v4() {
-				return v4S.apply(host);
+				return v4S.apply(PTuple5.this);
 			}
 			public NT5 v5() {
-				return v5S.apply(host);
+				return v5S.apply(PTuple5.this);
 			}
 
 			@Override
@@ -317,30 +317,30 @@ public interface PTuple5<T1,T2,T3,T4,T5> extends PTuple4<T1,T2,T3,T4> {
 	default PTuple5<T1,T2,T3,T4,T5> memo(){
 		if(arity()!=5)
 			return (PTuple5)PTuple4.super.memo();
-		val host = this;
+		
 		Map<Integer,Object> values = new ConcurrentHashMap<>();
 		
 		return new TupleImpl(Arrays.asList(),5){
 			
 			
 			public T1 v1(){
-				return ( T1)values.computeIfAbsent(new Integer(0), key -> host.v1());
+				return ( T1)values.computeIfAbsent(new Integer(0), key -> PTuple5.this.v1());
 			}
 
 			public T2 v2(){
-				return ( T2)values.computeIfAbsent(new Integer(1), key -> host.v2());
+				return ( T2)values.computeIfAbsent(new Integer(1), key -> PTuple5.this.v2());
 			}
 
 			public T3 v3(){
-				return ( T3)values.computeIfAbsent(new Integer(2), key -> host.v3());
+				return ( T3)values.computeIfAbsent(new Integer(2), key -> PTuple5.this.v3());
 			}
 
 			public T4 v4(){
-				return ( T4)values.computeIfAbsent(new Integer(3), key -> host.v4());
+				return ( T4)values.computeIfAbsent(new Integer(3), key -> PTuple5.this.v4());
 			}
 
 			public T5 v5(){
-				return ( T5)values.computeIfAbsent(new Integer(4), key -> host.v5());
+				return ( T5)values.computeIfAbsent(new Integer(4), key -> PTuple5.this.v5());
 			}
 
 

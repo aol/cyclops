@@ -1,4 +1,4 @@
-package com.aol.cyclops.lambda.utils;
+package com.aol.cyclops.lambda.api;
 
 public interface Printable {
 

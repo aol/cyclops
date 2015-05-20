@@ -178,17 +178,17 @@ public interface PTuple3<T1,T2,T3> extends PTuple2<T1,T2> {
 	
 	default <NT1,NT2,NT3> PTuple3<NT1,NT2,NT3> reorder(Function<PTuple3<T1,T2,T3>,NT1> v1S, Function<PTuple3<T1,T2,T3>,NT2> v2S,Function<PTuple3<T1,T2,T3>,NT3> v3S){
 			
-		PTuple3<T1,T2,T3> host = this;
+		
 			return new TupleImpl(Arrays.asList(),3){
 				public NT1 v1(){
-					return v1S.apply(host); 
+					return v1S.apply(PTuple3.this); 
 				}
 				public NT2 v2(){
-					return v2S.apply(host); 
+					return v2S.apply(PTuple3.this); 
 				}
 
 				public NT3 v3(){
-					return v3S.apply(host); 
+					return v3S.apply(PTuple3.this); 
 				}
 				@Override
 				public List<Object> getCachedValues() {
@@ -232,22 +232,22 @@ public interface PTuple3<T1,T2,T3> extends PTuple2<T1,T2> {
 	default PTuple3<T1,T2,T3> memo(){
 		if(arity()!=3)
 			return (PTuple3)PTuple2.super.memo();
-		val host = this;
+		
 		Map<Integer,Object> values = new ConcurrentHashMap<>();
 		
 		return new TupleImpl(Arrays.asList(),3){
 			
 			
 			public T1 v1(){
-				return ( T1)values.computeIfAbsent(new Integer(0), key -> host.v1());
+				return ( T1)values.computeIfAbsent(new Integer(0), key -> PTuple3.this.v1());
 			}
 
 			public T2 v2(){
-				return ( T2)values.computeIfAbsent(new Integer(1), key -> host.v2());
+				return ( T2)values.computeIfAbsent(new Integer(1), key -> PTuple3.this.v2());
 			}
 
 			public T3 v3(){
-				return ( T3)values.computeIfAbsent(new Integer(2), key -> host.v3());
+				return ( T3)values.computeIfAbsent(new Integer(2), key -> PTuple3.this.v3());
 			}
 
 

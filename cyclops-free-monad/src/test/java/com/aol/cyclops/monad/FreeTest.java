@@ -25,6 +25,7 @@ import com.aol.cyclops.lambda.monads.ConstructableFunctor;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
 
 public class FreeTest {
+	/**
 	@Test
 	public void testFreeList2(){
 		Free<Functor,Stream<Free.Return<Integer,Functor>>> result = ForComprehensions.foreach2(c -> 
@@ -131,7 +132,8 @@ public class FreeTest {
 	private Free lift2(Integer... is) {
 		return Free.suspend(new Box(Free.ret(Stream.of(is))));
 		
-	}
+	}**/
+	/**
 	@Value
 	static class MyFunctor implements Functor{
 		@Override
@@ -160,6 +162,7 @@ public class FreeTest {
 				
 				.yield(v-> v.$1()+"-peel").toString());
 	}
+	**/
 	@Value
 	public static class Box<A> implements ConstructableFunctor<A,A,Box<A>>{
 		A a;
@@ -170,16 +173,6 @@ public class FreeTest {
 		public <B> Box<B> map(Function<A,B> fn){
 			return new Box(fn.apply(a));
 		}
-		/**@Override
-		public <B> Box<B> of(B current) {
-			return new Box(current);
-		}**/
-		/**
-		@Override
-		public  Box<A> of(A current) {
-			return new Box(current);
-		}
-		**/
-
+		
 	}
 }

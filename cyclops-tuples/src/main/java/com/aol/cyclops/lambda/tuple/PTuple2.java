@@ -113,13 +113,13 @@ public interface PTuple2<T1,T2> extends PTuple1<T1>{
 	}
 	default <NT1,NT2> PTuple2<NT1,NT2> reorder(Function<PTuple2<T1,T2>,NT1> v1S, Function<PTuple2<T1,T2>,NT2> v2S){
 		
-		val host = this;
+		
 			return new TupleImpl(Arrays.asList(),2){
 				public NT1 v1(){
-					return v1S.apply(host); 
+					return v1S.apply(PTuple2.this); 
 				}
 				public NT2 v2(){
-					return v2S.apply(host); 
+					return v2S.apply(PTuple2.this); 
 				}
 
 				
@@ -186,18 +186,18 @@ public interface PTuple2<T1,T2> extends PTuple1<T1>{
 	default PTuple2<T1,T2> memo(){
 		if(arity()!=2)
 			return (PTuple2)PTuple1.super.memo();
-		val host = this;
+		
 		Map<Integer,Object> values = new ConcurrentHashMap<>();
 		
 		return new TupleImpl(Arrays.asList(),2){
 			
 			
 			public T1 v1(){
-				return ( T1)values.computeIfAbsent(new Integer(0), key -> host.v1());
+				return ( T1)values.computeIfAbsent(new Integer(0), key -> PTuple2.this.v1());
 			}
 
 			public T2 v2(){
-				return ( T2)values.computeIfAbsent(new Integer(1), key -> host.v2());
+				return ( T2)values.computeIfAbsent(new Integer(1), key -> PTuple2.this.v2());
 			}
 
 

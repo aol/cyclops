@@ -22,7 +22,6 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
 import com.aol.cyclops.lambda.api.Decomposable;
-import com.aol.cyclops.lambda.utils.Printable;
 import com.aol.cyclops.matcher.Action;
 import com.aol.cyclops.matcher.ActionWithReturn;
 import com.aol.cyclops.matcher.Case;

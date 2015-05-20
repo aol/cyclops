@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.utils.Printable;
+import com.aol.cyclops.lambda.api.Printable;
 import com.aol.cyclops.matcher.builders.PatternMatcher;
 public class ListMatchingTest implements Printable{
 

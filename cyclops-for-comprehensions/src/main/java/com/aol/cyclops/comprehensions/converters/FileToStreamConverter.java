@@ -9,8 +9,6 @@ import java.util.stream.Stream;
 import com.aol.cyclops.lambda.api.MonadicConverter;
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
-import fj.data.Seq;
-
 public class FileToStreamConverter implements MonadicConverter<Stream> {
 
 	@Override

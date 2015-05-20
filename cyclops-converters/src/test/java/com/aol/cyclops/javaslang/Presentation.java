@@ -35,7 +35,7 @@ import fj.data.TreeMap;
  * Created by johnmcclean on 4/10/15.
  */
 
-@ExtensionMethod(Presentation.class)
+
 public class Presentation {
 
 	

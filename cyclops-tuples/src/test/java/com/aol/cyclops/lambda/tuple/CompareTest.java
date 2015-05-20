@@ -1,14 +1,12 @@
 package com.aol.cyclops.lambda.tuple;
 
 import static com.aol.cyclops.lambda.tuple.PowerTuples.tuple;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import org.jooq.lambda.tuple.Tuple2;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.Test;
 
 public class CompareTest {

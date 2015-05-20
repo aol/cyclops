@@ -11,8 +11,6 @@ import lombok.val;
 import com.aol.cyclops.lambda.api.MonadicConverter;
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
-import fj.data.Seq;
-
 public class URLToStreamConverter implements MonadicConverter<Stream> {
 
 	@Override

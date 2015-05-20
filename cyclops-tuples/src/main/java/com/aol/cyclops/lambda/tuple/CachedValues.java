@@ -1,9 +1,5 @@
 package com.aol.cyclops.lambda.tuple;
 
-import static com.aol.cyclops.lambda.tuple.PowerTuples.tuple;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -25,7 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
-import lombok.val;
+
 
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.utils.Mutable;
@@ -180,7 +176,7 @@ public interface CachedValues extends Iterable, StreamableValue, Concatenate, La
 	
 	default <T extends CachedValues> T filter(Predicate<PTuple2<Integer,Object>> p){
 		Mutable<Integer> index = new Mutable(-1);
-		val newList = getCachedValues().stream().map(v-> PowerTuples.tuple(index.set(index.get()+1).get(),v))
+		List newList = getCachedValues().stream().map(v-> PowerTuples.tuple(index.set(index.get()+1).get(),v))
 						.filter(p).map(PTuple2::v2).collect(Collectors.toList());
 		return (T)new TupleImpl(newList,newList.size());
 	}

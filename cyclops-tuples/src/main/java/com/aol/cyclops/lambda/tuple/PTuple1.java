@@ -89,10 +89,10 @@ public interface PTuple1<T1> extends CachedValues{
 	
 	default <NT1> PTuple1<NT1> reorder(Function<PTuple1<T1>,NT1> v1S){
 		
-		val host = this;
+		
 			return new TupleImpl(Arrays.asList(),1){
 				public NT1 v1(){
-					return v1S.apply(host); 
+					return v1S.apply(PTuple1.this); 
 				}
 				
 
@@ -119,14 +119,14 @@ public interface PTuple1<T1> extends CachedValues{
 	
 	default PTuple1<T1> memo(){
 		
-		val host = this;
+	
 		Map<Integer,Object> values = new ConcurrentHashMap<>();
 		
 		return new TupleImpl(Arrays.asList(),1){
 			
 			
 			public T1 v1(){
-				return ( T1)values.computeIfAbsent(new Integer(0), key -> host.v1());
+				return ( T1)values.computeIfAbsent(new Integer(0), key -> PTuple1.this.v1());
 			}
 
 
