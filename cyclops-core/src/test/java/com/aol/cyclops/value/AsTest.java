@@ -24,6 +24,8 @@ import com.aol.cyclops.lambda.api.AsGenericMonoid;
 import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
+import com.aol.cyclops.value.AsStreamableValueTest.BaseData;
+import com.aol.cyclops.value.AsStreamableValueTest.Bonus;
 
 public class AsTest {
 	@Test
@@ -129,6 +131,38 @@ public class AsTest {
 	@Test
 	public void testAsSupplierObjectString() {
 		assertThat(As.asSupplier(new Duck(),"quack").get(),equalTo("quack"));
+	}
+	@Test
+	public void testAsStreamableValue() {
+		double total = As.<Double>asStreamableValue(new BaseData(10.00,5.00,100.30))
+									.stream().collect(Collectors.summingDouble(t->t));
+		
+		assertThat(total,equalTo(115.3));
+	}
+	@Test
+	public void testAsStreamableValueDo() {
+		
+		Stream<Double> withBonus = As.<Double>asStreamableValue(new BaseData(10.00,5.00,100.30))
+									.doWithThisAnd(d->As.<Double>asStreamableValue(new Bonus(2.0)))
+									.yield((Double base)->(Double bonus)-> base*(1.0+bonus));
+		
+		
+		//withBonus.forEach(System.out::println);
+		val total = withBonus.collect(Collectors.summingDouble(t->t));
+		
+		assertThat(total,equalTo(345.9));
+	}
+	
+	@Value
+	static class BaseData{
+		double salary;
+		double pension;
+		double socialClub;
+	}
+	@Value
+	static class Bonus{
+		double bonus;
+		
 	}
 
 	static class Duck{

@@ -57,7 +57,7 @@ public interface As {
 	 * @param toCoerce Object to making into a StreamableValue
 	 * @return StreamableValue that adds functionality to the supplied object
 	 */
-	public static <T> StreamableValue<T> asStreamableValue(T toCoerce){
+	public static <T> StreamableValue<T> asStreamableValue(Object toCoerce){
 		return AsStreamableValue.asStreamableValue(toCoerce);
 	}
 	/**
