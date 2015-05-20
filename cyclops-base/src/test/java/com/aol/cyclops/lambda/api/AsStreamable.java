@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.Value;
 
 public class AsStreamable {
-	public static <T> Streamable<T> asStreamable(T toCoerce){
+	public static <T> Streamable<T> asStreamable(Object toCoerce){
 		return new CoercedStreamable(collectStream(toCoerce));
 	}
 	public static <T> Streamable<T> asStreamable(Stream<T> toCoerce){

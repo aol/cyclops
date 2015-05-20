@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
+import com.aol.cyclops.lambda.api.AsStreamable;
 
 
 
@@ -71,7 +72,7 @@ public interface Monad<T,MONAD> extends Functor<T>, Filterable<T>{
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	default Stream<T> stream(){
-		return asStreamable((T)getMonad()).stream();
+		return AsStreamable.<T>asStreamable(getMonad()).stream();
 		
 	}
 

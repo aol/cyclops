@@ -2,17 +2,22 @@ package com.aol.cyclops.dynamic;
 
 import java.util.Arrays;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
+import com.aol.cyclops.lambda.api.AsDecomposable;
+import com.aol.cyclops.lambda.api.AsFunctor;
+import com.aol.cyclops.lambda.api.AsGenericMonad;
 import com.aol.cyclops.lambda.api.AsGenericMonoid;
 import com.aol.cyclops.lambda.api.AsMappable;
+import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.AsSupplier;
 import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.lambda.api.Mappable;
 import com.aol.cyclops.lambda.api.Monoid;
+import com.aol.cyclops.lambda.api.Streamable;
 import com.aol.cyclops.lambda.api.AsGenericMonoid.WrappedMonoid;
+import com.aol.cyclops.lambda.api.AsStreamable.CoercedStreamable;
 import com.aol.cyclops.lambda.api.AsSupplier.CoercedSupplier;
-import com.aol.cyclops.lambda.monads.AsFunctor;
-import com.aol.cyclops.lambda.monads.AsGenericMonad;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.Monad;
 import com.aol.cyclops.matcher.AsMatchable;
@@ -23,6 +28,25 @@ import com.aol.cyclops.value.StreamableValue;
 import com.aol.cyclops.value.ValueObject;
 
 public interface As {
+	
+	/**
+	 * Wrap the object as a replayable Stream
+	 * 
+	 * @param toCoerce Object to wrap as a replayable Stream
+	 * @return Replayable Stream
+	 */
+	public static <T> Streamable<T> asStreamable(Object toCoerce){
+		return AsStreamable.asStreamable(toCoerce);
+	}
+	/**
+	 * Wrap the stream as a replayable Stream
+	 * 
+	 * @param toCoerce Stream to wrap as a replayable Stream
+	 * @return Replayable Stream
+	 */
+	public static <T> Streamable<T> asStreamable(Stream<T> toCoerce){
+		return AsStreamable.asStreamable(toCoerce);
+	}
 
 	/**
 	 * Coerce / wrap an Object as a StreamableValue instance
@@ -58,7 +82,7 @@ public interface As {
 	 * @return Decomposable  that adds functionality to the supplied object
 	 */
 	public static  Decomposable asDecomposable(Object toCoerce){
-		return asDecomposable(toCoerce);
+		return AsDecomposable.asDecomposable(toCoerce);
 	}
 	
 	/**

@@ -1,4 +1,7 @@
-package com.aol.cyclops.lambda.monads;
+package com.aol.cyclops.lambda.api;
+
+import com.aol.cyclops.lambda.monads.Monad;
+import com.aol.cyclops.lambda.monads.MonadWrapper;
 
 public class AsGenericMonad {
 
