@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.OptionalInt;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -32,9 +33,9 @@ import com.aol.cyclops.lambda.api.TupleWrapper;
  * @param <T5>
  * @param <T6>
  */
-@EqualsAndHashCode
+
 @AllArgsConstructor(access=AccessLevel.PRIVATE)
-class TupleImpl<T1,T2,T3,T4,T5,T6,T7,T8> implements TupleWrapper,  PTuple8<T1,T2,T3,T4,T5,T6,T7,T8>{
+public class TupleImpl<T1,T2,T3,T4,T5,T6,T7,T8> implements TupleWrapper,  PTuple8<T1,T2,T3,T4,T5,T6,T7,T8>{
 	@Getter
 	private final Object instance;
 	
@@ -102,6 +103,17 @@ class TupleImpl<T1,T2,T3,T4,T5,T6,T7,T8> implements TupleWrapper,  PTuple8<T1,T2
     public String toString() {
 		return getCachedValues().toString();
     }
+	@Override
+	public int hashCode() {
+		
+		return Objects.hashCode(this.getCachedValues());
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof CachedValues))
+			return false;
+		return Objects.equals(this.getCachedValues(), ((CachedValues)obj).getCachedValues());
+	}
 	
 	
 	

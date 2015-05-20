@@ -12,7 +12,7 @@ buildscript {
 	}
 }
 sourceCompatibility = 1.8
-version = '0.1.1'
+version = '3.0.0'
 jar {
     manifest {
         attributes 'Implementation-Title': 'Gradle Quickstart', 'Implementation-Version': version
@@ -22,10 +22,12 @@ jar {
 repositories {
     mavenCentral()
 	maven { url "http://repo.bodar.com" }
+     maven { url "http://cmmaven.cm.aol.com:8081/nexus/content/repositories/aol-advertising" }
 }
 
 dependencies {
-	compile project(':cyclops-core')
+        compile 'com.aol.advertising.cyclops:cyclops-core:3.0.0'	
+//compile project(':cyclops-core')
 	testCompile group: 'org.hamcrest', name: 'hamcrest-all', version:'1.3'
     testCompile group: 'junit', name: 'junit', version: '4.+'
 }
@@ -43,7 +45,7 @@ modifyPom {
 
 		groupId 'com.aol.advertising.cyclops'
 		artifactId 'enable-switch'
-		version '0.1.1'
+		version  "$version"
 		
 		scm {
 			url 'ssh://git@stash.ops.aol.com:2022/lana/cyclops.git'

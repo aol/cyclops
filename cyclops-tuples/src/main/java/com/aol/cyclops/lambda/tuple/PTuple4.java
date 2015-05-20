@@ -4,16 +4,16 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-import lombok.val;
-
 import com.aol.cyclops.functions.QuadFunction;
-import com.aol.cyclops.lambda.utils.LazyImmutable;
+import com.aol.cyclops.lambda.tuple.lazymap.LazyMap1PTuple8;
+import com.aol.cyclops.lambda.tuple.lazymap.LazyMap2PTuple8;
+import com.aol.cyclops.lambda.tuple.lazymap.LazyMap3PTuple8;
+import com.aol.cyclops.lambda.tuple.lazymap.LazyMap4PTuple8;
 
 public interface PTuple4<T1,T2,T3,T4> extends PTuple3<T1,T2,T3> {
 	
@@ -60,20 +60,20 @@ public interface PTuple4<T1,T2,T3,T4> extends PTuple3<T1,T2,T3> {
 	default <NT1,NT2,NT3,NT4> PTuple4<NT1,NT2,NT3,NT4> reorder(Function<PTuple4<T1,T2,T3,T4>,NT1> v1S, Function<PTuple4<T1,T2,T3,T4>,NT2> v2S,
 										Function<PTuple4<T1,T2,T3,T4>,NT3> v3S,Function<PTuple4<T1,T2,T3,T4>,NT4> v4S){
 		
-		
+		PTuple4<T1,T2,T3,T4> host = this;
 			return new TupleImpl(Arrays.asList(),4){
 				public NT1 v1(){
-					return v1S.apply(PTuple4.this); 
+					return v1S.apply(host); 
 				}
 				public NT2 v2(){
-					return v2S.apply(PTuple4.this); 
+					return v2S.apply(host); 
 				}
 
 				public NT3 v3(){
-					return v3S.apply(PTuple4.this); 
+					return v3S.apply(host); 
 				}
 				public NT4 v4(){
-					return v4S.apply(PTuple4.this); 
+					return v4S.apply(host); 
 				}
 				@Override
 				public List<Object> getCachedValues() {
@@ -118,24 +118,7 @@ public interface PTuple4<T1,T2,T3,T4> extends PTuple3<T1,T2,T3> {
 		if(arity()!=4)
 			return (PTuple4)PTuple3.super.lazyMap1(fn);
 	
-		LazyImmutable<T> value = new LazyImmutable<>();
-		return new TupleImpl(4){
-			public T v1(){
-				return value.getOrSet(()->fn.apply(PTuple4.this.v1())); 
-			}
-
-			@Override
-			public List<Object> getCachedValues() {
-				return Arrays.asList(v1(),v2());
-			}
-
-			@Override
-			public Iterator iterator() {
-				return getCachedValues().iterator();
-			}
-
-			
-		};
+		return new LazyMap1PTuple8(fn,(PTuple8)this);
 		
 	}
 	/**
@@ -148,25 +131,7 @@ public interface PTuple4<T1,T2,T3,T4> extends PTuple3<T1,T2,T3> {
 		if(arity()!=4)
 			return (PTuple4)PTuple3.super.lazyMap2(fn);
 		
-		LazyImmutable<T> value = new LazyImmutable<>();
-		return new TupleImpl(4){
-			
-			public T v2(){
-				return value.getOrSet(()->fn.apply(PTuple4.this.v2())); 
-			}
-
-			@Override
-			public List<Object> getCachedValues() {
-				return Arrays.asList(v1(),v2());
-			}
-
-			@Override
-			public Iterator iterator() {
-				return getCachedValues().iterator();
-			}
-
-			
-		};
+		return new LazyMap2PTuple8(fn,(PTuple8)this);
 		
 	}
 	
@@ -189,25 +154,7 @@ public interface PTuple4<T1,T2,T3,T4> extends PTuple3<T1,T2,T3> {
 		if(arity()!=4)
 			return (PTuple4)PTuple3.super.lazyMap3(fn);
 		
-		LazyImmutable<T> value = new LazyImmutable<>();
-		return new TupleImpl(4){
-			
-			public T v3(){
-				return value.getOrSet(()->fn.apply(PTuple4.this.v3())); 
-			}
-
-			@Override
-			public List<Object> getCachedValues() {
-				return Arrays.asList(v1(),v2());
-			}
-
-			@Override
-			public Iterator iterator() {
-				return getCachedValues().iterator();
-			}
-
-			
-		};
+		return new LazyMap3PTuple8(fn,(PTuple8)this);
 		
 	}
 	
@@ -224,25 +171,7 @@ public interface PTuple4<T1,T2,T3,T4> extends PTuple3<T1,T2,T3> {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	default <T> PTuple4<T1,T2,T3,T> lazyMap4(Function<T4,T> fn){
 		
-		LazyImmutable<T> value = new LazyImmutable<>();
-		return new TupleImpl(4){
-			
-			public T v4(){
-				return value.getOrSet(()->fn.apply(PTuple4.this.v4())); 
-			}
-
-			@Override
-			public List<Object> getCachedValues() {
-				return Arrays.asList(v1(),v2());
-			}
-
-			@Override
-			public Iterator iterator() {
-				return getCachedValues().iterator();
-			}
-
-			
-		};
+		return new LazyMap4PTuple8(fn,(PTuple8)this);
 		
 	}
 	default <T> PTuple4<T1,T2,T3,T> map4(Function<T4,T> fn){
@@ -251,26 +180,26 @@ public interface PTuple4<T1,T2,T3,T4> extends PTuple3<T1,T2,T3> {
 	default PTuple4<T1,T2,T3,T4> memo(){
 		if(arity()!=4)
 			return (PTuple4)PTuple3.super.memo();
-
+		PTuple4<T1,T2,T3,T4> host = this;
 		Map<Integer,Object> values = new ConcurrentHashMap<>();
 		
 		return new TupleImpl(Arrays.asList(),4){
 			
 			
 			public T1 v1(){
-				return ( T1)values.computeIfAbsent(new Integer(0), key -> PTuple4.this.v1());
+				return ( T1)values.computeIfAbsent(new Integer(0), key -> host.v1());
 			}
 
 			public T2 v2(){
-				return ( T2)values.computeIfAbsent(new Integer(1), key -> PTuple4.this.v2());
+				return ( T2)values.computeIfAbsent(new Integer(1), key -> host.v2());
 			}
 
 			public T3 v3(){
-				return ( T3)values.computeIfAbsent(new Integer(2), key -> PTuple4.this.v3());
+				return ( T3)values.computeIfAbsent(new Integer(2), key -> host.v3());
 			}
 
 			public T4 v4(){
-				return ( T4)values.computeIfAbsent(new Integer(3), key -> PTuple4.this.v4());
+				return ( T4)values.computeIfAbsent(new Integer(3), key -> host.v4());
 			}
 
 

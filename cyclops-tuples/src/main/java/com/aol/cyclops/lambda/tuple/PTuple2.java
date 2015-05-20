@@ -3,9 +3,7 @@ package com.aol.cyclops.lambda.tuple;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -13,8 +11,10 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
 import lombok.AllArgsConstructor;
-import lombok.val;
 
+import com.aol.cyclops.lambda.tuple.lazymap.LazyMap1PTuple8;
+import com.aol.cyclops.lambda.tuple.lazymap.LazyMap2PTuple8;
+import com.aol.cyclops.lambda.tuple.memo.Memo2;
 import com.aol.cyclops.lambda.utils.LazyImmutable;
 
 public interface PTuple2<T1,T2> extends PTuple1<T1>{
@@ -52,24 +52,7 @@ public interface PTuple2<T1,T2> extends PTuple1<T1>{
 		if(arity()!=2)
 			return (PTuple2)PTuple1.super.lazyMap1(fn);
 		
-		LazyImmutable<T> value = new LazyImmutable<>();
-		return new TupleImpl<T,T2,Object,Object,Object,Object,Object,Object>(Arrays.asList(),2){
-			public T v1(){
-				return value.getOrSet(()->fn.apply(PTuple2.this.v1())); 
-			}
-
-			@Override
-			public List<Object> getCachedValues() {
-				return Arrays.asList(v1(),v2());
-			}
-
-			@Override
-			public Iterator iterator() {
-				return getCachedValues().iterator();
-			}
-
-			
-		};
+		return new LazyMap1PTuple8(fn,(PTuple8)this);
 		
 	}
 	/**
@@ -79,25 +62,7 @@ public interface PTuple2<T1,T2> extends PTuple1<T1>{
 	 */
 	default <T> PTuple2<T1,T> lazyMap2(Function<T2,T> fn){
 		
-		LazyImmutable<T> value = new LazyImmutable<>();
-		return new TupleImpl<T1,T,Object,Object,Object,Object,Object,Object>(Arrays.asList(),2){
-			
-			public T v2(){
-				return value.getOrSet(()->fn.apply(PTuple2.this.v2())); 
-			}
-
-			@Override
-			public List<Object> getCachedValues() {
-				return Arrays.asList(v1(),v2());
-			}
-
-			@Override
-			public Iterator iterator() {
-				return getCachedValues().iterator();
-			}
-
-			
-		};
+		return new LazyMap2PTuple8(fn,(PTuple8)this);
 		
 	}
 	
@@ -113,13 +78,13 @@ public interface PTuple2<T1,T2> extends PTuple1<T1>{
 	}
 	default <NT1,NT2> PTuple2<NT1,NT2> reorder(Function<PTuple2<T1,T2>,NT1> v1S, Function<PTuple2<T1,T2>,NT2> v2S){
 		
-		
+		PTuple2<T1,T2> host = this;
 			return new TupleImpl(Arrays.asList(),2){
 				public NT1 v1(){
-					return v1S.apply(PTuple2.this); 
+					return v1S.apply(host); 
 				}
 				public NT2 v2(){
-					return v2S.apply(PTuple2.this); 
+					return v2S.apply(host); 
 				}
 
 				
@@ -187,33 +152,9 @@ public interface PTuple2<T1,T2> extends PTuple1<T1>{
 		if(arity()!=2)
 			return (PTuple2)PTuple1.super.memo();
 		
-		Map<Integer,Object> values = new ConcurrentHashMap<>();
 		
-		return new TupleImpl(Arrays.asList(),2){
-			
-			
-			public T1 v1(){
-				return ( T1)values.computeIfAbsent(new Integer(0), key -> PTuple2.this.v1());
-			}
-
-			public T2 v2(){
-				return ( T2)values.computeIfAbsent(new Integer(1), key -> PTuple2.this.v2());
-			}
-
-
-			
-			@Override
-			public List<Object> getCachedValues() {
-				return Arrays.asList(v1(),v2());
-			}
-
-			@Override
-			public Iterator iterator() {
-				return getCachedValues().iterator();
-			}
-
-			
-		};
+		
+		return new Memo2(this);
 		
 	}
 	public static <T1,T2> PTuple2<T1,T2> ofTuple(Object tuple2){
@@ -222,4 +163,6 @@ public interface PTuple2<T1,T2> extends PTuple1<T1>{
 	public static <T1,T2> PTuple2<T1,T2> of(T1 t1, T2 t2){
 		return (PTuple2)new TupleImpl(Arrays.asList(t1,t2),2);
 	}
+
+
 }

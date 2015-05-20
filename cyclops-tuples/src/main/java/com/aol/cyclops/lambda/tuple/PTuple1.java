@@ -1,17 +1,13 @@
 package com.aol.cyclops.lambda.tuple;
 
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-import lombok.val;
-
-import com.aol.cyclops.lambda.utils.LazyImmutable;
+import com.aol.cyclops.lambda.tuple.lazymap.LazyMap1PTuple8;
+import com.aol.cyclops.lambda.tuple.memo.Memo1;
+import com.aol.cyclops.lambda.tuple.reorder.ReorderP1;
 
 public interface PTuple1<T1> extends CachedValues{
 	
@@ -65,52 +61,13 @@ public interface PTuple1<T1> extends CachedValues{
 	 */
 	default <T> PTuple1<T> lazyMap1(Function<T1,T> fn){
 		
-		LazyImmutable<T> value = new LazyImmutable<>();
-		return new TupleImpl<T,Object,Object,Object,Object,Object,Object,Object>(Arrays.asList(),1){
-			
-			public T v1(){
-				return value.getOrSet(()->fn.apply(PTuple1.this.v1())); 
-			}
-
-			@Override
-			public List<Object> getCachedValues() {
-				return Arrays.asList(v1());
-			}
-
-			@Override
-			public Iterator iterator() {
-				return getCachedValues().iterator();
-			}
-
-			
-		};
-		
+		return new LazyMap1PTuple8(fn,(PTuple8)this);
 	}
 	
 	default <NT1> PTuple1<NT1> reorder(Function<PTuple1<T1>,NT1> v1S){
-		
-		
-			return new TupleImpl(Arrays.asList(),1){
-				public NT1 v1(){
-					return v1S.apply(PTuple1.this); 
-				}
-				
 
-				
-				@Override
-				public List<Object> getCachedValues() {
-					return Arrays.asList(v1());
-				}
-
-				@Override
-				public Iterator iterator() {
-					return getCachedValues().iterator();
-				}
-
-				
-			};
-			
-		}
+		return new ReorderP1<>(v1S, this);
+	}
 	
 	
 	default PTuple1<T1> swap1(){
@@ -118,32 +75,7 @@ public interface PTuple1<T1> extends CachedValues{
 	}
 	
 	default PTuple1<T1> memo(){
-		
-	
-		Map<Integer,Object> values = new ConcurrentHashMap<>();
-		
-		return new TupleImpl(Arrays.asList(),1){
-			
-			
-			public T1 v1(){
-				return ( T1)values.computeIfAbsent(new Integer(0), key -> PTuple1.this.v1());
-			}
-
-
-			
-			@Override
-			public List<Object> getCachedValues() {
-				return Arrays.asList(v1());
-			}
-
-			@Override
-			public Iterator iterator() {
-				return getCachedValues().iterator();
-			}
-
-			
-		};
-		
+			return new Memo1<>( this);
 	}
 	public static <T1> PTuple1<T1> ofTuple(Object tuple1){
 		return (PTuple1)new TupleImpl(tuple1,1);
@@ -151,6 +83,7 @@ public interface PTuple1<T1> extends CachedValues{
 	public static <T1> PTuple1<T1> of(T1 t1){
 		return (PTuple1)new TupleImpl(Arrays.asList(t1),1);
 	}
-	
-	
+
+
+
 }

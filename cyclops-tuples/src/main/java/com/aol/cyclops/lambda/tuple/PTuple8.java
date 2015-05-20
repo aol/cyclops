@@ -9,10 +9,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-import lombok.val;
-
 import com.aol.cyclops.functions.OctFunction;
-import com.aol.cyclops.lambda.utils.LazyImmutable;
+import com.aol.cyclops.lambda.tuple.lazymap.LazyMap1PTuple8;
+import com.aol.cyclops.lambda.tuple.lazymap.LazyMap2PTuple8;
+import com.aol.cyclops.lambda.tuple.lazymap.LazyMap3PTuple8;
+import com.aol.cyclops.lambda.tuple.lazymap.LazyMap4PTuple8;
+import com.aol.cyclops.lambda.tuple.lazymap.LazyMap5PTuple8;
+import com.aol.cyclops.lambda.tuple.lazymap.LazyMap6PTuple8;
+import com.aol.cyclops.lambda.tuple.lazymap.LazyMap7PTuple8;
+import com.aol.cyclops.lambda.tuple.lazymap.LazyMap8PTuple8;
 
 public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5,T6,T7> {
 	
@@ -55,25 +60,7 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 		return CompletableFuture.completedFuture(v8())
 				.thenApplyAsync(fn.apply(v1()).apply(v2()).apply(v3()).apply(v4()).apply(v5()).apply(v6()).apply(v7()),e);
 	}
-	/**
-	default PTuple1<T1> tuple1(){
-		return this;
-	}
-	default PTuple2<T1,T2> tuple2(){
-		return this;
-	}
-	default PTuple3<T1,T2,T3> tuple3(){
-		return this;
-	}
-	default PTuple4<T1,T2,T3,T4> tuple4(){
-		return this;
-	}
-	default PTuple5<T1,T2,T3,T4,T5> tuple5(){
-		return this;
-	}
-	default PTuple6<T1,T2,T3,T4,T5,T6> tuple6(){
-		return this;
-	}**/
+	
 	default PTuple7<T1,T2,T3,T4,T5,T6,T7> Tuple7(){
 		return (PTuple7)withArity(7);
 	}
@@ -104,25 +91,7 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 		if(arity()!=8)
 			return (PTuple8)PTuple7.super.lazyMap1(fn);
 		
-		
-		LazyImmutable<T> value = new LazyImmutable<>();
-		return new TupleImpl(8){
-			public T v1(){
-				return value.getOrSet(()->fn.apply(PTuple8.this.v1())); 
-			}
-
-			@Override
-			public List<Object> getCachedValues() {
-				return Arrays.asList(v1(),v2());
-			}
-
-			@Override
-			public Iterator iterator() {
-				return getCachedValues().iterator();
-			}
-
-			
-		};
+		return new LazyMap1PTuple8(fn,this);
 		
 	}
 	/**
@@ -135,25 +104,7 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 			return (PTuple8)PTuple7.super.lazyMap2(fn);
 		
 		
-		LazyImmutable<T> value = new LazyImmutable<>();
-		return new TupleImpl<T1,T,T3,T4,T5,T6,T7,T8>(8){
-			
-			public T v2(){
-				return value.getOrSet(()->fn.apply(PTuple8.this.v2())); 
-			}
-
-			@Override
-			public List<Object> getCachedValues() {
-				return Arrays.asList(v1(),v2());
-			}
-
-			@Override
-			public Iterator iterator() {
-				return getCachedValues().iterator();
-			}
-
-			
-		};
+		return new LazyMap2PTuple8(fn,(PTuple8)this);
 		
 	}
 	
@@ -177,25 +128,7 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 			return (PTuple8)PTuple7.super.lazyMap3(fn);
 		
 	
-		LazyImmutable<T> value = new LazyImmutable<>();
-		return new TupleImpl(8){
-			
-			public T v3(){
-				return value.getOrSet(()->fn.apply(PTuple8.this.v3())); 
-			}
-
-			@Override
-			public List<Object> getCachedValues() {
-				return Arrays.asList(v1(),v2());
-			}
-
-			@Override
-			public Iterator iterator() {
-				return getCachedValues().iterator();
-			}
-
-			
-		};
+		return new LazyMap3PTuple8(fn,(PTuple8)this);
 		
 	}
 	
@@ -218,25 +151,7 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 			return (PTuple8)PTuple7.super.lazyMap4(fn);
 		
 		
-		LazyImmutable<T> value = new LazyImmutable<>();
-		return new TupleImpl(8){
-			
-			public T v4(){
-				return value.getOrSet(()->fn.apply(PTuple8.this.v4())); 
-			}
-
-			@Override
-			public List<Object> getCachedValues() {
-				return Arrays.asList(v1(),v2());
-			}
-
-			@Override
-			public Iterator iterator() {
-				return getCachedValues().iterator();
-			}
-
-			
-		};
+		return new LazyMap4PTuple8(fn,(PTuple8)this);
 		
 	}
 	/* 
@@ -257,27 +172,8 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 	default <T> PTuple8<T1,T2,T3,T4,T,T6,T7,T8> lazyMap5(Function<T5,T> fn){
 		if(arity()!=8)
 			return (PTuple8)PTuple7.super.lazyMap5(fn);
-		
-		
-		LazyImmutable<T> value = new LazyImmutable<>();
-		return new TupleImpl(8){
-			
-			public T v5(){
-				return value.getOrSet(()->fn.apply(PTuple8.this.v5())); 
-			}
 
-			@Override
-			public List<Object> getCachedValues() {
-				return Arrays.asList(v1(),v2());
-			}
-
-			@Override
-			public Iterator iterator() {
-				return getCachedValues().iterator();
-			}
-
-			
-		};
+		return new LazyMap5PTuple8(fn,(PTuple8)this);
 		
 	}
 	/**
@@ -300,28 +196,9 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 	default <T> PTuple8<T1,T2,T3,T4,T5,T,T7,T8> lazyMap6(Function<T6,T> fn){
 		if(arity()!=8)
 			return (PTuple8)PTuple7.super.lazyMap6(fn);
-		
-		
-		LazyImmutable<T> value = new LazyImmutable<>();
-		return new TupleImpl(8){
-			
-			public T v6(){
-				return value.getOrSet(()->fn.apply(PTuple8.this.v6())); 
-			}
 
-			@Override
-			public List<Object> getCachedValues() {
-				return Arrays.asList(v1(),v2());
-			}
 
-			@Override
-			public Iterator iterator() {
-				return getCachedValues().iterator();
-			}
-
-			
-		};
-		
+		return new LazyMap6PTuple8(fn,(PTuple8)this);
 	}
 	/**
 	 * 
@@ -346,25 +223,7 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 			return (PTuple8)PTuple7.super.lazyMap7(fn);
 		
 		
-		LazyImmutable<T> value = new LazyImmutable<>();
-		return new TupleImpl(8){
-			
-			public T v7(){
-				return value.getOrSet(()->fn.apply(PTuple8.this.v7())); 
-			}
-
-			@Override
-			public List<Object> getCachedValues() {
-				return Arrays.asList(v1(),v2());
-			}
-
-			@Override
-			public Iterator iterator() {
-				return getCachedValues().iterator();
-			}
-
-			
-		};
+		return new LazyMap7PTuple8(fn,(PTuple8)this);
 		
 	}
 	
@@ -389,26 +248,7 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 	default <T> PTuple8<T1,T2,T3,T4,T5,T6,T7,T> lazyMap8(Function<T8,T> fn){
 		
 		
-		
-		LazyImmutable<T> value = new LazyImmutable<>();
-		return new TupleImpl(8){
-			
-			public T v8(){
-				return value.getOrSet(()->fn.apply(PTuple8.this.v8())); 
-			}
-
-			@Override
-			public List<Object> getCachedValues() {
-				return Arrays.asList(v1(),v2());
-			}
-
-			@Override
-			public Iterator iterator() {
-				return getCachedValues().iterator();
-			}
-
-			
-		};
+		return new LazyMap8PTuple8(fn,(PTuple8)this);
 	}
 		
 	/**
@@ -444,36 +284,36 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 			Function<PTuple8<T1, T2, T3, T4,T5,T6,T7,T8>, NT7> v7S,
 			Function<PTuple8<T1, T2, T3, T4,T5,T6,T7,T8>, NT8> v8S) {
 
-		
+		PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> host =  this;
 		return new TupleImpl(Arrays.asList(), 5) {
 			public NT1 v1() {
-				return v1S.apply(PTuple8.this);
+				return v1S.apply(host);
 			}
 
 			public NT2 v2() {
-				return v2S.apply(PTuple8.this);
+				return v2S.apply(host);
 			}
 
 			public NT3 v3() {
-				return v3S.apply(PTuple8.this);
+				return v3S.apply(host);
 			}
 
 			public NT4 v4() {
-				return v4S.apply(PTuple8.this);
+				return v4S.apply(host);
 			}
 			public NT5 v5() {
-				return v5S.apply(PTuple8.this);
+				return v5S.apply(host);
 			}
 
 			public NT6 v6() {
-				return v6S.apply(PTuple8.this);
+				return v6S.apply(host);
 			}
 			public NT7 v7() {
-				return v7S.apply(PTuple8.this);
+				return v7S.apply(host);
 			}
 
 			public NT8 v8() {
-				return v8S.apply(PTuple8.this);
+				return v8S.apply(host);
 			}
 
 			@Override
@@ -492,42 +332,42 @@ public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5
 	default PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> memo(){
 		if(arity()!=8)
 			return (PTuple8)PTuple7.super.memo();
-		
+		PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> host =  this;
 		Map<Integer,Object> values = new ConcurrentHashMap<>();
 		
 		return new TupleImpl(Arrays.asList(),8){
 			
 			
 			public T1 v1(){
-				return ( T1)values.computeIfAbsent(new Integer(0), key -> PTuple8.this.v1());
+				return ( T1)values.computeIfAbsent(new Integer(0), key -> host.v1());
 			}
 
 			public T2 v2(){
-				return ( T2)values.computeIfAbsent(new Integer(1), key -> PTuple8.this.v2());
+				return ( T2)values.computeIfAbsent(new Integer(1), key -> host.v2());
 			}
 
 			public T3 v3(){
-				return ( T3)values.computeIfAbsent(new Integer(2), key -> PTuple8.this.v3());
+				return ( T3)values.computeIfAbsent(new Integer(2), key -> host.v3());
 			}
 
 			public T4 v4(){
-				return ( T4)values.computeIfAbsent(new Integer(3), key -> PTuple8.this.v4());
+				return ( T4)values.computeIfAbsent(new Integer(3), key -> host.v4());
 			}
 
 			public T5 v5(){
-				return ( T5)values.computeIfAbsent(new Integer(4), key -> PTuple8.this.v5());
+				return ( T5)values.computeIfAbsent(new Integer(4), key -> host.v5());
 			}
 
 			public T6 v6(){
-				return ( T6)values.computeIfAbsent(new Integer(5), key -> PTuple8.this.v6());
+				return ( T6)values.computeIfAbsent(new Integer(5), key -> host.v6());
 			}
 
 			public T7 v7(){
-				return ( T7)values.computeIfAbsent(new Integer(6), key -> PTuple8.this.v7());
+				return ( T7)values.computeIfAbsent(new Integer(6), key -> host.v7());
 			}
 
 			public T8 v8(){
-				return ( T8)values.computeIfAbsent(new Integer(7), key -> PTuple8.this.v8());
+				return ( T8)values.computeIfAbsent(new Integer(7), key -> host.v8());
 			}
 
 

@@ -12,10 +12,11 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
 import lombok.AllArgsConstructor;
-import lombok.val;
 
 import com.aol.cyclops.functions.TriFunction;
-import com.aol.cyclops.lambda.utils.LazyImmutable;
+import com.aol.cyclops.lambda.tuple.lazymap.LazyMap1PTuple8;
+import com.aol.cyclops.lambda.tuple.lazymap.LazyMap2PTuple8;
+import com.aol.cyclops.lambda.tuple.lazymap.LazyMap3PTuple8;
 
 public interface PTuple3<T1,T2,T3> extends PTuple2<T1,T2> {
 	
@@ -73,24 +74,7 @@ public interface PTuple3<T1,T2,T3> extends PTuple2<T1,T2> {
 		if(arity()!=3)
 			return (PTuple3)PTuple2.super.lazyMap1(fn);
 	
-		LazyImmutable<T> value = new LazyImmutable<>();
-		return new TupleImpl<T,T2,T3,Object,Object,Object,Object,Object>(Arrays.asList(),3){
-			public T v1(){
-				return value.getOrSet(()->fn.apply(PTuple3.this.v1())); 
-			}
-
-			@Override
-			public List<Object> getCachedValues() {
-				return Arrays.asList(v1(),v2());
-			}
-
-			@Override
-			public Iterator iterator() {
-				return getCachedValues().iterator();
-			}
-
-			
-		};
+		return new LazyMap1PTuple8(fn,(PTuple8)this);
 		
 	}
 	/**
@@ -103,25 +87,7 @@ public interface PTuple3<T1,T2,T3> extends PTuple2<T1,T2> {
 		if(arity()!=3)
 			return (PTuple3)PTuple2.super.lazyMap2(fn);
 		
-		LazyImmutable<T> value = new LazyImmutable<>();
-		return new TupleImpl(3){
-			
-			public T v2(){
-				return value.getOrSet(()->fn.apply(PTuple3.this.v2())); 
-			}
-
-			@Override
-			public List<Object> getCachedValues() {
-				return Arrays.asList(v1(),v2());
-			}
-
-			@Override
-			public Iterator iterator() {
-				return getCachedValues().iterator();
-			}
-
-			
-		};
+		return new LazyMap2PTuple8(fn,(PTuple8)this);
 		
 	}
 	
@@ -142,33 +108,14 @@ public interface PTuple3<T1,T2,T3> extends PTuple2<T1,T2> {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	default <T> PTuple3<T1,T2,T> lazyMap3(Function<T3,T> fn){
 		
-		LazyImmutable<T> value = new LazyImmutable<>();
-		return new TupleImpl(3){
-			
-			public T v3(){
-				return value.getOrSet(()->fn.apply(PTuple3.this.v3())); 
-			}
-
-			@Override
-			public List<Object> getCachedValues() {
-				return Arrays.asList(v1(),v2());
-			}
-
-			@Override
-			public Iterator iterator() {
-				return getCachedValues().iterator();
-			}
-
-			
-		};
-		
+		return new LazyMap3PTuple8(fn,(PTuple8)this);
 	}
 	
 	default <T> PTuple3<T1,T2,T> map3(Function<T3,T> fn){
 		return of(v1(),v2(),fn.apply(v3()));
 	}
-	default PTuple1<T1> tuple1(){
-		return (PTuple1<T1>)this.withArity(1);
+	default PTuple1<T1> tuple2(){
+		return (PTuple1<T1>)this.withArity(2);
 	}
 	
 	
@@ -178,17 +125,17 @@ public interface PTuple3<T1,T2,T3> extends PTuple2<T1,T2> {
 	
 	default <NT1,NT2,NT3> PTuple3<NT1,NT2,NT3> reorder(Function<PTuple3<T1,T2,T3>,NT1> v1S, Function<PTuple3<T1,T2,T3>,NT2> v2S,Function<PTuple3<T1,T2,T3>,NT3> v3S){
 			
-		
+		PTuple3<T1,T2,T3> host = this;
 			return new TupleImpl(Arrays.asList(),3){
 				public NT1 v1(){
-					return v1S.apply(PTuple3.this); 
+					return v1S.apply(host); 
 				}
 				public NT2 v2(){
-					return v2S.apply(PTuple3.this); 
+					return v2S.apply(host); 
 				}
 
 				public NT3 v3(){
-					return v3S.apply(PTuple3.this); 
+					return v3S.apply(host); 
 				}
 				@Override
 				public List<Object> getCachedValues() {
@@ -232,22 +179,22 @@ public interface PTuple3<T1,T2,T3> extends PTuple2<T1,T2> {
 	default PTuple3<T1,T2,T3> memo(){
 		if(arity()!=3)
 			return (PTuple3)PTuple2.super.memo();
-		
+		PTuple3<T1,T2,T3> host = this;
 		Map<Integer,Object> values = new ConcurrentHashMap<>();
 		
 		return new TupleImpl(Arrays.asList(),3){
 			
 			
 			public T1 v1(){
-				return ( T1)values.computeIfAbsent(new Integer(0), key -> PTuple3.this.v1());
+				return ( T1)values.computeIfAbsent(new Integer(0), key -> host.v1());
 			}
 
 			public T2 v2(){
-				return ( T2)values.computeIfAbsent(new Integer(1), key -> PTuple3.this.v2());
+				return ( T2)values.computeIfAbsent(new Integer(1), key -> host.v2());
 			}
 
 			public T3 v3(){
-				return ( T3)values.computeIfAbsent(new Integer(2), key -> PTuple3.this.v3());
+				return ( T3)values.computeIfAbsent(new Integer(2), key -> host.v3());
 			}
 
 

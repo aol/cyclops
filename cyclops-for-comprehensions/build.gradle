@@ -1,8 +1,19 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'com.bmuschko.nexus'
+buildscript {
+	repositories {
+		jcenter()
+	}
+
+	dependencies {
+		classpath 'com.bmuschko:gradle-nexus-plugin:2.2'
+		
+	}
+}
 
 sourceCompatibility = 1.8
-version = '1.0'
+version = '3.0.0'
 jar {
     manifest {
         attributes 'Implementation-Title': 'Gradle Quickstart', 'Implementation-Version': version
@@ -11,12 +22,14 @@ jar {
 
 repositories {
     mavenCentral()
+	maven { url "http://cmmaven.cm.aol.com:8081/nexus/content/repositories/aol-advertising" }
 }
 configurations {
 	provided
 }
 dependencies {
-	compile project(':cyclops-base')
+    compile 'com.aol.advertising.cyclops:cyclops-base:3.0.0'
+//	compile project(':cyclops-base')
 	compile group: 'org.projectlombok', name: 'lombok', version:'1.16.2'
 	provided 'org.jooq:jool:0.9.6'
 	compile 'org.pcollections:pcollections:2.1.2'
@@ -39,11 +52,50 @@ eclipse.classpath.plusConfigurations += [configurations.provided]  // Eclipse us
 test {
     systemProperties 'property': 'value'
 }
+modifyPom {
+        project {
+                name 'cyclops-for-comprehensions'
+                description 'Monadic for comprehensions for Java 8'
+                url 'http://advertising.com'
+                inceptionYear '2015'
 
-uploadArchives {
-    repositories {
-       flatDir {
-           dirs 'repos'
-       }
-    }
+                groupId 'com.aol.advertising.cyclops'
+                artifactId 'cyclops-for-comprehensions'
+                version "$version"
+
+                scm {
+                        url 'ssh://git@stash.ops.aol.com:2022/lana/cyclops.git'
+                        connection 'ssh://git@stash.ops.aol.com:2022/lana/cyclops.git'
+                        developerConnection 'ssh://git@stash.ops.aol.com:2022/lana/cyclops.git'
+                }
+
+                licenses {
+                        license {
+                                name 'The Apache Software License, Version 2.0'
+                                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                                distribution 'repo'
+                        }
+                }
+
+                developers {
+                        developer {
+                                id 'johnmcclean-aol'
+                                name 'John McClean'
+                                email 'john.mcclean@teamaol.com'
+                        }
+                }
+        }
+}
+
+extraArchive {
+        sources = false
+        tests = false
+        javadoc = false
+}
+
+nexus {
+        sign = false
+        repositoryUrl = 'http://cmmaven.cm.aol.com:8081/nexus/content/repositories/aol-advertising'
+        snapshotRepositoryUrl = 'http://cmmaven.cm.aol.com:8081/nexus/content/groups/public'
+
 }

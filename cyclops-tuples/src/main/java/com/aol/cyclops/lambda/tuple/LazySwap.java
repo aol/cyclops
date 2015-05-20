@@ -1,5 +1,8 @@
 package com.aol.cyclops.lambda.tuple;
 
+import com.aol.cyclops.lambda.tuple.lazyswap.LazySwapPTuple2;
+import com.aol.cyclops.lambda.tuple.lazyswap.LazySwapPTuple3;
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -16,31 +19,7 @@ public interface LazySwap {
 	public static <T1,T2> PTuple2<T2,T1> lazySwap(PTuple2<T1,T2> host){
 		
 		
-		return new TupleImpl(Arrays.asList(),2){
-			
-			
-			public T2 v1(){
-				return host.v2();
-			}
-
-			public T1 v2(){
-				return host.v1();
-			}
-
-
-			
-			@Override
-			public List<Object> getCachedValues() {
-				return Arrays.asList(v2(),v1());
-			}
-
-			@Override
-			public Iterator iterator() {
-				return getCachedValues().iterator();
-			}
-
-			
-		};
+		return new LazySwapPTuple2<T2,T1>(host);
 		
 	}
 
@@ -55,35 +34,7 @@ public interface LazySwap {
 	public static <T1,T2,T3> PTuple3<T3,T2,T1> lazySwap(PTuple3<T1,T2,T3> host){
 		
 		
-		return new TupleImpl(Arrays.asList(),3){
-			
-			
-			public T3 v1(){
-				return host.v3();
-			}
-
-			public T2 v2(){
-				return host.v2();
-			}
-
-			public T1 v3(){
-				return host.v1();
-			}
-
-
-			
-			@Override
-			public List<Object> getCachedValues() {
-				return Arrays.asList(v3(),v2(),v1());
-			}
-
-			@Override
-			public Iterator iterator() {
-				return getCachedValues().iterator();
-			}
-
-			
-		};
+		return new LazySwapPTuple3<>(host);
 		
 	}
 
@@ -121,7 +72,7 @@ public interface LazySwap {
 			
 			@Override
 			public List<Object> getCachedValues() {
-				return Arrays.asList(v4(),v3(),v2(),v1());
+				return Arrays.asList(v1(),v2(),v3(),v4());
 			}
 
 			@Override
@@ -172,7 +123,7 @@ public interface LazySwap {
 			
 			@Override
 			public List<Object> getCachedValues() {
-				return Arrays.asList(v5(),v4(),v3(),v2(),v1());
+				return Arrays.asList(v1(),v2(),v3(),v4(),v5());
 			}
 
 			@Override
@@ -227,7 +178,7 @@ public interface LazySwap {
 			
 			@Override
 			public List<Object> getCachedValues() {
-				return Arrays.asList(v6(),v5(),v4(),v3(),v2(),v1());
+				return Arrays.asList(v1(),v2(),v3(),v4(),v5(),v6());
 			}
 
 			@Override
@@ -286,7 +237,7 @@ public interface LazySwap {
 			
 			@Override
 			public List<Object> getCachedValues() {
-				return Arrays.asList(v7(),v6(),v5(),v4(),v3(),v2(),v1());
+				return Arrays.asList(v1(),v2(),v3(),v4(),v5(),v6(),v7());
 			}
 
 			@Override
@@ -349,7 +300,7 @@ public interface LazySwap {
 			
 			@Override
 			public List<Object> getCachedValues() {
-				return Arrays.asList(v8(),v7(),v6(),v5(),v4(),v3(),v2(),v1());
+				return Arrays.asList(v1(),v2(),v3(),v4(),v5(),v6(),v7(),v8());
 			}
 
 			@Override
@@ -361,6 +312,7 @@ public interface LazySwap {
 		};
 		
 	}
+
 
 
 }
