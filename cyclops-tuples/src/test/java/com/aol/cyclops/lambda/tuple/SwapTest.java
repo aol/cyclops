@@ -64,6 +64,6 @@ public class SwapTest {
 	}
 	@Test
 	public void swap8(){
-		assertThat(PowerTuples.tuple(1,2,3,4,5,6,7,8).swap7(),equalTo(PowerTuples.tuple(8,7,6,5,4,3,2,1)));
+		assertThat(PowerTuples.tuple(1,2,3,4,5,6,7,8).swap8(),equalTo(PowerTuples.tuple(8,7,6,5,4,3,2,1)));
 	}	
 }

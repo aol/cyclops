@@ -112,7 +112,14 @@ public class TupleImpl<T1,T2,T3,T4,T5,T6,T7,T8> implements TupleWrapper,  PTuple
 	public boolean equals(Object obj) {
 		if(!(obj instanceof CachedValues))
 			return false;
-		return Objects.equals(this.getCachedValues(), ((CachedValues)obj).getCachedValues());
+		if(getCachedValues()==null){
+			if(  ( (CachedValues)obj).getCachedValues()==null){
+				return true;
+			}
+		}
+		
+		return getCachedValues().equals( ((CachedValues)obj).getCachedValues());
+
 	}
 	
 	
