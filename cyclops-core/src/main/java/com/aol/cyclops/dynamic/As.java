@@ -29,6 +29,7 @@ import com.aol.cyclops.value.ValueObject;
 
 public interface As {
 	
+	
 	/**
 	 * Wrap the object as a replayable Stream
 	 * 

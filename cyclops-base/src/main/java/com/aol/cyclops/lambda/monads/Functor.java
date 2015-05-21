@@ -12,7 +12,8 @@ import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
 
 /**
- * Trait that wraps & encapsulates any Functor type
+ * An interoperability trait that wraps & encapsulates any Functor type
+ * 
  * Uses InvokeDynamic to call Map if no suitable Comprehender present
  * Uses (cached) JDK Dynamic Proxies to coerce function types to java.util.Function
  * @author johnmcclean

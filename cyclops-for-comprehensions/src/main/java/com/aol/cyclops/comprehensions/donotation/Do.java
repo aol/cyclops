@@ -78,10 +78,10 @@ public class Do {
 		public <T> DoComp2 and(Function<T,?> f){
 			return  new DoComp2(addToAssigned(f));
 		}
-		public  DoComp2 andJustAdd(Object o){	
+		public  DoComp2 with(Object o){	
 			return new DoComp2(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
 		}
-		public  DoComp2 andJustAdd(Supplier o){	
+		public  DoComp2 with(Supplier o){	
 			return new DoComp2(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
 		}
 	}
@@ -102,10 +102,10 @@ public class Do {
 		public <T,T1> DoComp3 and(Function<T,Function<T1,?>> f){
 			return  new DoComp3(addToAssigned(f));
 		}
-		public  DoComp3 andJustAdd(Object o){	
+		public  DoComp3 with(Object o){	
 			return new DoComp3(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
 		}
-		public  DoComp3 andJustAdd(Supplier o){	
+		public  DoComp3 with(Supplier o){	
 			return new DoComp3(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
 		}
 	}
@@ -126,10 +126,10 @@ public class Do {
 		public <T,T1,T2> DoComp4 and(Function<T,Function<T1,Function<T2,?>>> f){
 			return  new DoComp4(addToAssigned(f));
 		}
-		public  DoComp4 andJustAdd(Object o){	
+		public  DoComp4 with(Object o){	
 			return new DoComp4(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
 		}
-		public  DoComp4 andJustAdd(Supplier o){	
+		public  DoComp4 with(Supplier o){	
 			return new DoComp4(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
 		}
 	}
@@ -148,10 +148,10 @@ public class Do {
 		public <T,T1,T2,T3> DoComp5 and(Function<T,Function<T1,Function<T2,Function<T3,?>>>> f){
 			return  new DoComp5(addToAssigned(f));
 		}
-		public  DoComp5 andJustAdd(Object o){	
+		public  DoComp5 with(Object o){	
 			return new DoComp5(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
 		}
-		public  DoComp5 andJustAdd(Supplier o){	
+		public  DoComp5 with(Supplier o){	
 			return new DoComp5(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
 		}
 	}
@@ -170,10 +170,10 @@ public class Do {
 		public <T,T1,T2,T3,T4> DoComp6 and(Function<T,Function<T1,Function<T2,Function<T3,Function<T4,?>>>>> f){
 			return  new DoComp6(addToAssigned(f));
 		}
-		public  DoComp6 andJustAdd(Object o){	
+		public  DoComp6 with(Object o){	
 			return new DoComp6(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
 		}
-		public  DoComp6 andJustAdd(Supplier o){	
+		public  DoComp6 with(Supplier o){	
 			return new DoComp6(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
 		}
 	}
@@ -192,10 +192,10 @@ public class Do {
 		public <T,T1,T2,T3,T4,T5> DoComp7 and(Function<T,Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,?>>>>>> f){
 			return  new DoComp7(addToAssigned(f));
 		}
-		public  DoComp7 andJustAdd(Object o){	
+		public  DoComp7 with(Object o){	
 			return new DoComp7(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
 		}
-		public  DoComp7 andJustAdd(Supplier o){	
+		public  DoComp7 with(Supplier o){	
 			return new DoComp7(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
 		}
 	}
@@ -215,10 +215,10 @@ public class Do {
 		public <T,T1,T2,T3,T4,T5,T6,T7> DoComp8 and(Function<T,Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,?>>>>>>> f){
 			return  new DoComp8(addToAssigned(f));
 		}
-		public  DoComp8 andJustAdd(Object o){	
+		public  DoComp8 with(Object o){	
 			return new DoComp8(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
 		}
-		public  DoComp8 andJustAdd(Supplier o){	
+		public  DoComp8 with(Supplier o){	
 			return new DoComp8(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
 		}
 	}

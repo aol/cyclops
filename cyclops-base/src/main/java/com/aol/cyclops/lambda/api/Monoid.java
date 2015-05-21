@@ -11,6 +11,10 @@ import java.util.stream.Stream;
 
 
 /**
+ * An interoperability trait for Monoids
+ * 
+ * Also inteded for use with Java 8 Streams (reduce method)
+ * 
  * Practically the method signature to reduce matches the Monoid interface
  * Monoids could regrarded as immutable equivalents to JDK Collectors for Immutable Reduction
  * 
@@ -53,7 +57,7 @@ public interface Monoid<T> {
 		return reduce(mapToType(toReduce));
 	}
 	default T reduce(Stream<T> toReduce){
-		return mapToType(toReduce).reduce(zero(),reducer());
+		return toReduce.reduce(zero(),reducer());
 	}
 	
 	public static <T> Monoid<T> of(T zero, Function<T,Function<T,T>> combiner){

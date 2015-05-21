@@ -28,10 +28,10 @@ repositories {
 dependencies {
 	
 	compile 'com.aol.advertising.cyclops:cyclops-base:3.0.0'
-	compile 'com.aol.advertising.cyclops:pattern-matching:3.0.0'
+//	compile 'com.aol.advertising.cyclops:pattern-matching:3.0.0'
 	compile 'com.aol.advertising.cyclops:cyclops-for-comprehensions:3.0.0'
         compile 'com.aol.advertising.cyclops:cyclops-trampoline:3.0.0'
-//	compile project(':cyclops-pattern-matching')
+	compile project(':cyclops-pattern-matching')
 //	compile project(':cyclops-trampoline')
 //	compile project(':cyclops-base')
 //	compile project(':cyclops-for-comprehensions')

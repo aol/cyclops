@@ -14,7 +14,7 @@ public  class _LastStep<X,V,T> {
 	private Predicate<V>[] predicates;
 	private final PatternMatcher patternMatcher;
 	
-	public final <X> _MembersMatchBuilder<X,T> then(ActionWithReturn<T,X> fn){
+	public final <X> CheckValues<X,T> then(ActionWithReturn<T,X> fn){
 		return new _Simpler_Case(patternMatcher.inCaseOfManyType(predicate, fn,
 				predicates)).withType(clazz);
 	}

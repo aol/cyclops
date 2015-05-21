@@ -10,8 +10,8 @@ public class _Simpler_Case<X> extends CaseBeingBuilt {
 	@Wither(AccessLevel.PACKAGE)
 	private final PatternMatcher patternMatcher;
 	
-	public  <T> _MembersMatchBuilder<X,T> withType(Class<T> type){
-		return new _MembersMatchBuilder(type,this);
+	public  <T> CheckValues<X,T> withType(Class<T> type){
+		return new CheckValues(type,this);
 		
 		
 	}

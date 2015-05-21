@@ -20,20 +20,44 @@ import lombok.val;
 import org.junit.Test;
 
 import com.aol.cyclops.dynamic.As;
-import com.aol.cyclops.lambda.api.AsGenericMonoid;
-import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;
-import com.aol.cyclops.lambda.monads.MonadWrapper;
-import com.aol.cyclops.value.AsStreamableValueTest.BaseData;
-import com.aol.cyclops.value.AsStreamableValueTest.Bonus;
+import com.aol.cyclops.matcher.Matchable;
+import com.aol.cyclops.matcher.builders.CheckValues;
 
 public class AsTest {
+	
 	@Test
 	public void testAsMonoidFj() {
 		fj.Monoid m = fj.Monoid.monoid((Integer a) -> (Integer b) -> a+b,0);
 		Monoid<Integer> sum = As.asMonoid(m);
 		
 		assertThat(sum.reduce(Stream.of(1,2,3)),equalTo(6));
+	}
+	private <I,T> CheckValues<Object, T> cases(CheckValues<I, T> c) {
+		return c.with(1,2,3).then(i->"hello")
+				.with(4,5,6).then(i->"goodbye");
+	}
+	@AllArgsConstructor
+	static class MyCase2  implements Matchable{
+		int a;
+		int b;
+		int c;
+	}
+	@Test
+	public void asMatchableTest(){
+		
+		
+			assertThat(As.asMatchable(new MyCase2(1,2,3)).match(this::cases),equalTo("hello"));
+			
+	
+	}
+	@Test
+	public void asMatchableTest2(){
+		
+		
+			assertThat(As.asMatchable(new MyCase2(1,2,4)).match(this::cases,"default"),equalTo("default"));
+			
+	
 	}
 	@Test
 	public void testAsStreamableT() {
@@ -89,7 +113,7 @@ public class AsTest {
 	public void testAsValueMatch() {
 		List list = new ArrayList();
 		
-		assertThat(As.asValue(new Child(10,20)).match(c-> 
+		assertThat(As.asValue(new Child(10,20)).matchType(c-> 
 			c.caseOf((Child child) -> child.val ))
 		,equalTo(10));
 	}

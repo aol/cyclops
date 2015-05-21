@@ -1,7 +1,22 @@
 Todos 
 
-		move function utils to their own module
-		reduce 3rd party dependencies to maximise resusability / reduce coupling
+# APIs
+
+for comprehensions 
+   
+   				
+   		        Do.with(  ).andJustAdd( )
+				should become
+				Do.with (  ) .with (  ). and (   ).yield (  )
+
+Pattern matching
+	
+	asMatchable( match  ).match(this:cases);
+	
+	private <I,T> CheckValues<Object, T> cases(CheckValues<I, T> c) {
+		return c.with(1,2,3).then(i->"hello")
+				.with(4,5,6).then(i->"goodbye");
+	}
 		
 # Cyclops
 

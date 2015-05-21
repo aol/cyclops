@@ -130,7 +130,7 @@ public class DoListsTest {
 	@Test
 	public void do2Just(){
 		Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
-						.andJustAdd(Arrays.asList(2.0))
+						.with(Arrays.asList(2.0))
 						.yield((Double base)->(Double bonus)-> base*(1.0+bonus));
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
@@ -141,8 +141,8 @@ public class DoListsTest {
 	@Test
 	public void do3Just(){
 		Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
-						.andJustAdd(Arrays.asList(2.0))
-						.andJustAdd(Arrays.asList(10.0))
+						.with(Arrays.asList(2.0))
+						.with(Arrays.asList(10.0))
 						.yield((Double base)->(Double bonus)->(Double woot) -> base*(1.0+bonus)*woot);
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
@@ -151,9 +151,9 @@ public class DoListsTest {
 	@Test
 	public void do4Just(){
 		Stream<Double> s = Do.with(()->Arrays.asList(10.00,5.00,100.30))
-						.andJustAdd(Arrays.asList(2.0))
+						.with(Arrays.asList(2.0))
 						.and((Double d)->(Double e)->Arrays.asList(10.0))
-						.andJustAdd(Arrays.asList(10.0))
+						.with(Arrays.asList(10.0))
 						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
 									base*(1.0+bonus)*woot*f);
 		
@@ -163,10 +163,10 @@ public class DoListsTest {
 	@Test
 	public void do5Just(){
 		Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
-						.andJustAdd(Arrays.asList(2.0))
+						.with(Arrays.asList(2.0))
 						.and((Double d)->(Double e)->Arrays.asList(10.0))
 						.and((Double d)->(Double e)->(Double f)->Arrays.asList(10.0))
-						.andJustAdd(Arrays.asList(10.0) )
+						.with(Arrays.asList(10.0) )
 						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
 									(Double g)->
 									base*(1.0+bonus)*woot*f*g);
@@ -181,7 +181,7 @@ public class DoListsTest {
 						.and((Double d)->(Double e)->Arrays.asList(10.0))
 						.and((Double d)->(Double e)->(Double f)->Arrays.asList(10.0))
 						.and( (Double d)->(Double e)->(Double f)-> (Double g)-> Arrays.asList(10.0) )
-						.andJustAdd(Arrays.asList(10.0) )
+						.with(Arrays.asList(10.0) )
 						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
 									(Double g)->(Double h)->
 									base*(1.0+bonus)*woot*f*g*h);
@@ -198,7 +198,7 @@ public class DoListsTest {
 						.and( (Double d)->(Double e)->(Double f)-> (Double g)-> Arrays.asList(10.0) )
 						.and( (Double d)->(Double e)->(Double f)-> (Double g)-> (Double h)->
 											Arrays.asList(10.0) )
-						.andJustAdd(Arrays.asList(10.0) )
+						.with(Arrays.asList(10.0) )
 						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
 									(Double g)->(Double h)->(Double i)->
 									base*(1.0+bonus)*woot*f*g*h*i);
@@ -217,7 +217,7 @@ public class DoListsTest {
 											Arrays.asList(10.0) )
 						.and( (Double d)->(Double e)->(Double f)-> (Double g)-> (Double h)-> (Double i) ->
 											Arrays.asList(10.0) )
-						.andJustAdd(Arrays.asList(10.0) )
+						.with(Arrays.asList(10.0) )
 						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
 									(Double g)->(Double h)->(Double i)->(Double j)->
 									base*(1.0+bonus)*woot*f*g*h*i*j);

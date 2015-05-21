@@ -143,7 +143,7 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 		public <T1> Trampoline<Either<Functor<Free<F, B>>, B>> resume(
 				Functor<T1> f) {
 			
-			Either<Either<Functor<Free<F,A>>, A>,Free> res= free.match(buildCase(f));
+			Either<Either<Functor<Free<F,A>>, A>,Free> res= free.matchType(buildCase(f));
 		
 	
 			return res.isLeft() ? (Trampoline)done(res.left().value()) : Trampoline.more(()->res.right().value().resume(f));

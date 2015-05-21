@@ -12,7 +12,7 @@ buildscript {
 	}
 }
 sourceCompatibility = 1.8
-version = '1.0'
+version = '3.0.0'
 jar {
     manifest {
         attributes 'Implementation-Title': 'Gradle Quickstart', 'Implementation-Version': version
@@ -42,13 +42,13 @@ test {
 
 modifyPom {
 	project {
-		name 'cyclops-tuples'
+		name 'cyclops-power-tuples'
 		description 'Tuples for Java 8'
 		url 'http://advertising.com'
 		inceptionYear '2015'
 
 		groupId 'com.aol.advertising.cyclops'
-		artifactId 'cyclops-tuples'
+		artifactId 'cyclops-power-tuples'
 		version "$version"
 		
 		scm {

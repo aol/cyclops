@@ -130,7 +130,7 @@ public class DoTest {
 	@Test
 	public void do2Just(){
 		Stream<Double> s = Do.with(Stream.of(10.00,5.00,100.30))
-						.andJustAdd(()->Stream.of(2.0))
+						.with(()->Stream.of(2.0))
 						.yield((Double base)->(Double bonus)-> base*(1.0+bonus));
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
@@ -141,8 +141,8 @@ public class DoTest {
 	@Test
 	public void do3Just(){
 		Stream<Double> s = Do.with(()->Stream.of(10.00,5.00,100.30))
-						.andJustAdd(()->Stream.of(2.0))
-						.andJustAdd(()->Stream.of(10.0))
+						.with(()->Stream.of(2.0))
+						.with(()->Stream.of(10.0))
 						.yield((Double base)->(Double bonus)->(Double woot) -> base*(1.0+bonus)*woot);
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
@@ -151,9 +151,9 @@ public class DoTest {
 	@Test
 	public void do4Just(){
 		Stream<Double> s = Do.with(()->Stream.of(10.00,5.00,100.30))
-						.andJustAdd(()->Stream.of(2.0))
+						.with(()->Stream.of(2.0))
 						.and((Double d)->(Double e)->Stream.of(10.0))
-						.andJustAdd(()->Stream.of(10.0))
+						.with(()->Stream.of(10.0))
 						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
 									base*(1.0+bonus)*woot*f);
 		
@@ -163,10 +163,10 @@ public class DoTest {
 	@Test
 	public void do5Just(){
 		Stream<Double> s = Do.with(Stream.of(10.00,5.00,100.30))
-						.andJustAdd(()->Stream.of(2.0))
+						.with(()->Stream.of(2.0))
 						.and((Double d)->(Double e)->Stream.of(10.0))
 						.and((Double d)->(Double e)->(Double f)->Stream.of(10.0))
-						.andJustAdd(()->Stream.of(10.0) )
+						.with(()->Stream.of(10.0) )
 						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
 									(Double g)->
 									base*(1.0+bonus)*woot*f*g);
@@ -181,7 +181,7 @@ public class DoTest {
 						.and((Double d)->(Double e)->Stream.of(10.0))
 						.and((Double d)->(Double e)->(Double f)->Stream.of(10.0))
 						.and( (Double d)->(Double e)->(Double f)-> (Double g)-> Stream.of(10.0) )
-						.andJustAdd(()->Stream.of(10.0) )
+						.with(()->Stream.of(10.0) )
 						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
 									(Double g)->(Double h)->
 									base*(1.0+bonus)*woot*f*g*h);
@@ -198,7 +198,7 @@ public class DoTest {
 						.and( (Double d)->(Double e)->(Double f)-> (Double g)-> Stream.of(10.0) )
 						.and( (Double d)->(Double e)->(Double f)-> (Double g)-> (Double h)->
 											Stream.of(10.0) )
-						.andJustAdd(()->Stream.of(10.0) )
+						.with(()->Stream.of(10.0) )
 						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
 									(Double g)->(Double h)->(Double i)->
 									base*(1.0+bonus)*woot*f*g*h*i);
@@ -217,7 +217,7 @@ public class DoTest {
 											Stream.of(10.0) )
 						.and( (Double d)->(Double e)->(Double f)-> (Double g)-> (Double h)-> (Double i) ->
 											Stream.of(10.0) )
-						.andJustAdd(()->Stream.of(10.0) )
+						.with(()->Stream.of(10.0) )
 						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
 									(Double g)->(Double h)->(Double i)->(Double j)->
 									base*(1.0+bonus)*woot*f*g*h*i*j);

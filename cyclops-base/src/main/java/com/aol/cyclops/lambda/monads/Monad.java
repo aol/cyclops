@@ -13,13 +13,13 @@ import com.aol.cyclops.lambda.api.AsStreamable;
 
 
 /**
- * Trait that encapsulates any Monad type
+ * An interoperability Trait that encapsulates java Monad implementations.
  * 
  * A generalised view into Any Monad (that implements flatMap or bind and accepts any function definition
  * with an arity of 1).
  * 
  * NB the intended use case is to wrap already existant Monad-like objects from diverse sources, to improve
- * interoperability
+ * interoperability - it's not intended for use as an interface to be implemented on a Monad.
  * 
  * @author johnmcclean
  *

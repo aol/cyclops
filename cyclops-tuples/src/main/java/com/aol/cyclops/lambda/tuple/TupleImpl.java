@@ -35,7 +35,7 @@ import com.aol.cyclops.lambda.api.TupleWrapper;
  */
 
 @AllArgsConstructor(access=AccessLevel.PRIVATE)
-public class TupleImpl<T1,T2,T3,T4,T5,T6,T7,T8> implements TupleWrapper,  PTuple8<T1,T2,T3,T4,T5,T6,T7,T8>{
+public class TupleImpl<T1,T2,T3,T4,T5,T6,T7,T8> implements PTuple8<T1,T2,T3,T4,T5,T6,T7,T8>{
 	@Getter
 	private final Object instance;
 	
@@ -77,7 +77,8 @@ public class TupleImpl<T1,T2,T3,T4,T5,T6,T7,T8> implements TupleWrapper,  PTuple
 			cachedValues=  Arrays.asList((Object[]) tuple);
 		}
 		else
-			cachedValues = values();
+			cachedValues = ((TupleWrapper) ()-> tuple).values();
+				
 		this.arity = arity.orElse(cachedValues.size());
 	}
 	
@@ -122,6 +123,9 @@ public class TupleImpl<T1,T2,T3,T4,T5,T6,T7,T8> implements TupleWrapper,  PTuple
 
 	}
 	
-	
+
+	public Object getMatchable(){
+		return getCachedValues();
+	}
 	
 }

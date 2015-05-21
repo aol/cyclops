@@ -11,7 +11,7 @@ import com.nurkiewicz.lazyseq.LazySeq;
 
 
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
-public class _MembersMatchBuilder<X,T> {
+public class CheckValues<X,T> {
 	private final Class<T> clazz;
 	private final _Simpler_Case<X> simplerCase;
 	
