@@ -1,17 +1,17 @@
 package com.aol.simple.react.async;
 
 import static com.aol.simple.react.stream.traits.EagerFutureStream.parallel;
-import static com.aol.simple.react.stream.traits.EagerFutureStream.parallelBuilder;
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -37,8 +37,12 @@ public class QueueTest {
 
 	private final AtomicInteger found = new AtomicInteger(0);
 
+	
 	@Test
 	public void backPressureTest() {
+		
+		
+		
 		Queue<Integer> q = new Queue<>(new LinkedBlockingQueue<>(2));
 		new SimpleReact().react(() -> {
 			q.offer(1);

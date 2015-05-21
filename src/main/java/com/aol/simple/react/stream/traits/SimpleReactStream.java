@@ -236,6 +236,7 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 		Function<Stream<CompletableFuture>,Stream<CompletableFuture>> streamMapper = s ->s.map(ft -> ft.thenApplyAsync(SimpleReactStream.<U,R>handleExceptions(fn),getTaskExecutor()));
 		return (SimpleReactStream<R>) this.withLastActive(getLastActive().stream(streamMapper));
 	}
+	
 	/**
 	 * Can only be used on Eager Streams
 	 * 

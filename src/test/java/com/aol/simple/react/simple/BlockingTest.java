@@ -213,7 +213,7 @@ public class BlockingTest {
 						return it;
 	
 					}).capture(e -> count++)
-					.block(status -> status.getAllCompleted() >1 && status.getElapsedMillis()>200);
+					.block(status -> status.getAllCompleted() >1 && status.getElapsedMillis()>20);
 	
 			assertThat(result.size(), is(2));
 			assertThat(count, is(0));

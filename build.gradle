@@ -11,7 +11,7 @@ apply plugin: 'jacoco'
 apply from: custom('jacoco-version')
 
 sourceCompatibility = 1.8
-version = '0.85'
+version = '0.86'
 jar {
     manifest {
         attributes 'Implementation-Title': 'Simple React', 'Implementation-Version': version
@@ -62,7 +62,7 @@ modifyPom {
 
 		groupId 'com.aol.simplereact'
 		artifactId 'simple-react'
-		version '0.85'
+		version '0.86'
 		
 		scm {
 			url 'scm:git@github.com:aol/simple-react.git'

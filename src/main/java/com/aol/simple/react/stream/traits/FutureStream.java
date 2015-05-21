@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -1142,6 +1143,42 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		
 		return new CloseableIterator<>(q.stream(getSubscription())
 				.iterator(), getSubscription(),q);
+	}
+	
+ 
+	
+	 /* 
+	  * More efficient reverse implementation than Seq version
+	  * 
+	  * 
+	  *	@return
+	  * @see org.jooq.lambda.Seq#reverse()
+	  */
+	default FutureStream<U> reverse() {
+	        return fromStream(Seq.seq(reversedIterator()));
+	   }
+	default Iterator<U> reversedIterator(){
+		Queue<U> q = toQueue();
+		if (getSubscription().closed())
+			return new CloseableIterator<>(Arrays.<U> asList().iterator(),
+					getSubscription(),null);
+		List l=  q.stream(getSubscription()).toList();
+		ListIterator iterator = l.listIterator(l.size());
+		return new CloseableIterator<>(new Iterator(){
+
+			@Override
+			public boolean hasNext() {
+				return iterator.hasPrevious();
+			}
+
+			@Override
+			public Object next() {
+				return iterator.previous();
+			}
+			
+		}, getSubscription(),q);
+		
+		
 	}
 
 	/*

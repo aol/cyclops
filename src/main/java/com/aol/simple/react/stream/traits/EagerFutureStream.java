@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -39,7 +40,6 @@ import com.aol.simple.react.stream.eager.EagerFutureStreamImpl;
 import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
-import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
  * 
@@ -939,6 +939,8 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		return fromStream(FutureStream.super.reverse());
 	}
 
+	
+	
 	/**
 	 * Shuffle a stream
 	 * 
