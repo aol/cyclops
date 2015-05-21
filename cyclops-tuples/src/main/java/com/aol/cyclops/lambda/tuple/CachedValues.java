@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
-
+import lombok.val;
 
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.utils.Mutable;
@@ -167,7 +167,25 @@ public interface CachedValues extends Iterable, StreamableValue, Comparable<Cach
 
 	@Override
 	default int compareTo(CachedValues o){
-			return Objects.compare(getCachedValues(), o.getCachedValues(), (a,b) ->  a==null ? (b==null ? 0 : 1) : ((Comparable)a).compareTo(b) );
+		if(o==null)
+			return 1;
+		if(o.getCachedValues()==null){
+			if(getCachedValues()==null){
+				return 0;
+			}
+			return 1;
+		}
+		else if(getCachedValues()==null)
+			return -1;
+		for(int i=0;i<getCachedValues().size();i++){
+			if(i>=getCachedValues().size())
+				return 1;
+			int res = Objects.compare(getCachedValues().get(i), o.getCachedValues().get(i), (a,b) ->  a==null ? (b==null ? 0 : -1) : b==null? 1 : ((Comparable)a).compareTo(b) );
+			if(res!=0)
+				return res;
+			
+		}
+			return 0;
 	}
 	
 	default void forEach(Consumer c){

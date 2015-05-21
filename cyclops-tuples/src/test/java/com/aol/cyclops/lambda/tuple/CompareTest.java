@@ -30,15 +30,15 @@ public class CompareTest {
 	    }
 	    @Test
 	    public void compare2() {
-	    	assertThat(tuple(1,2,4).compareTo(tuple(1,2,3)),equalTo(-1));
+	    	assertThat(tuple(1,2,4).compareTo(tuple(1,2,3)),equalTo(1));
 	    }
 	    @Test
 	    public void compare3() {
-	    	assertThat(tuple(1,2,1).compareTo(tuple(1,2,3)),equalTo(1));
+	    	assertThat(tuple(1,2,1).compareTo(tuple(1,2,3)),equalTo(-1));
 	    }
 	    @Test
 	    public void compare4() {
-	    	assertThat(tuple(1,2,null).compareTo(tuple(1,2,3)),equalTo(1));
+	    	assertThat(tuple(1,2,null).compareTo(tuple(1,2,3)),equalTo(-1));
 	    }
 	    
 	    @Test
@@ -47,7 +47,7 @@ public class CompareTest {
 	    }
 	    @Test
 	    public void compare6() {
-	    	assertThat(tuple(1,2,4).compareTo(tuple(1,2,null)),equalTo(-1));
+	    	assertThat(tuple(1,2,4).compareTo(tuple(1,2,null)),equalTo(1));
 	    }
 	    
 }
