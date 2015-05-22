@@ -32,8 +32,32 @@ The cleanest way to use the Matchable instance is to encapsulate your matching l
 	
 	private CheckValues<I,T> calcEmployeeBenefits(CheckValues<I,T> c){
 		return c.with(__,Bonus.PAYABLE,__).then(e->e.salary()*e.bonus())
-		        .with(__,__,__).then(e->e.salary())
+		        .with(__,__,__).then(e->e.salary());
 	}
+	
+* match example
+
+
+	new MyCase(4,2,3).match(this::message,"how are you?");
+	
+	private <I,T> CheckValues<Object, T> message(CheckValues<I, T> c) {
+		return c.with(1,2,3).then(i->"hello")
+				.with(4,5,6).then(i->"goodbye");
+	}
+	
+Returns the default message "how are you?"	as values 4,2,3 don't match 1,2,3 or 4,5,6
+
+* _match example
+
+    new MyCase(4,5,6)._match(c ->c.isType( (MyCase ce)-> "hello").with(1,2,3),"goodbye")
+   
+Returns "goodbye" as altough the type matches, 1,2,3 doesn't match 4,5,6
+
+* matchType example
+
+	new MyCase(4,5,6).matchType(c ->c.isType((MyCase ce) -> "hello")
+	
+Returns "hello" as MyCase is an instance of MyCase
 
 ### Interfaces that extends Matchable
 
@@ -148,4 +172,4 @@ Use the Async suffix - available on the Cases object, when calling match to run 
 													.matchAsync(100)		
 ## The PatternMatcher class
 
-The PatternMatcher builder is the core builder for Cyclops
+The PatternMatcher builder is the core builder for Cyclops Cases, that other builder instances leverage to build pattern matching cases. It's API is unsuitable for general use in most applications, but can leveraged to build application specific Matching builders.
