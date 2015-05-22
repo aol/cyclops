@@ -7,7 +7,7 @@ for comprehensions
    				
    		        Do.with(  ).andJustAdd( )
 				should become
-				Do.with (  ) .with (  ). and (   ).yield (  )
+				Do.with(  ).with(  ).and(   ).yield (  )
 
 Pattern matching
 	

@@ -4,7 +4,7 @@ import lombok.Value;
 import lombok.experimental.Wither;
 
 @Value
-public class FunctorWrapper<T,A> implements ConstructableFunctor<T, A, ConstructableFunctor<T,?,?>>{
+public class FunctorWrapper<T> implements Functor<T>{
 	@Wither
 	Object functor;
 	public Object getFunctor(){
