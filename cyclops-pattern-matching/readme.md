@@ -37,13 +37,35 @@ The cleanest way to use the Matchable instance is to encapsulate your matching l
 
 ### Interfaces that extends Matchable
 
-ValueObject
-StreamableValue
-CachedValues, PTuple1-8
+* ValueObject
+* StreamableValue
+* CachedValues, PTuple1-8
 
 ## Coercing any Object to a Matchable
 
     As.asMatchable(myObject).match(this::makeFinancialDecision)
+
+com.aol.cyclops.dynamic.As provides a range of methods to dynamically convert types/
+
+# Creating Case classes
+
+In Java it is possible to create sealed type hierarchies by reducing the visibilty of constructors. E.g. If the type hierarchies are defined in one file super class constructors can be made private and sub classes made final. This will prevent users from creating new classes externally. 
+Lombok provides a number of annotations that make creating case classes simpler.
+
+@Value :  see https://projectlombok.org/features/Value.html
+
+## A sealed type hierarchy
+
+An example sealed hierarchy
+
+	@AllArgsConstructor(access=AccessLevel.PRIVATE) 
+	public static class CaseClass implements Matchable { } 
+	@Value public static class MyCase1 extends CaseClass { int var1; String var2; }
+	@Value public static class MyCase2 extends CaseClass { int var1; String var2; }
+
+    CaseClass result;
+    return result.match(this::handleBusinessCases);
+    
     
 ## The Matching class
 
@@ -76,6 +98,8 @@ Examples :
 
     Matching.newCase().isMatch(hasItem("hello2")).thenConsume(System.out::println)
 							.match(Arrays.asList("hello","world"))
+	
+methods xxMatch accept Hamcrest Matchers
 							
 ### Matching multiple
 
@@ -83,13 +107,45 @@ Examples :
 											.newCase().isType((Integer i) -> i)
 											.matchMany(100);
 											
+Use the matchMany method to instruct cylops to return all results that match
+
 ### Inside a Stream
+
+#### flatMap
+
+Use asStreamFunction to Stream multiple results back out of a set of Cases.
 
      Integer num = Stream.of(1)
 							.flatMap(Matching.newCase().isValue(1).thenApply(i->i+10).asStreamFunction())
 							.findFirst()
 							.get();							
 
+asStreamFunction converts the MatchingInstance into a function that returns a Stream. Perfect for use within flatMap.
+
+#### map
+	
+	Integer num = Stream.of(1)
+							.map(Matching.newCase().isValue(1).thenApply(i->i+10))
+							.findFirst()
+							.get().get();	
+
+Or drop the second get() (which unwraps from an Optional) with
+
+
+	Integer num = Stream.of(1)
+							.map(Matching.newCase().isValue(1).thenApply(i->i+10).asUnwrappedFunction())
+							.findFirst()
+							.get();	
+							
+							
+### Async execution	
+
+Use the Async suffix - available on the Cases object, when calling match to run the pattern matching asynchronously, potentially on another thread.
+
+		CompletableFuture<Integer> result =	Matching.newCase().isValue(100).thenApply(this::expensiveOperation1)
+													.newCase().isType((Integer i) -> this.exepensiveOperation2(i))
+													.cases()
+													.matchAsync(100)		
 ## The PatternMatcher class
 
 The PatternMatcher builder is the core builder for Cyclops

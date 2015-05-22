@@ -26,6 +26,7 @@ public class CaseTest {
 	Case<Integer,Integer,Function<Integer,Integer>> offCase;
 	@Before
 	public void setup(){
+		
 		case1 =Case.of(input->true,input->input+10);
 		offCase = case1.mapPredicate(p-> p.negate());
 	}

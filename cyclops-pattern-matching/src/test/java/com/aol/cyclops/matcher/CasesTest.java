@@ -16,13 +16,16 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Value;
 import lombok.val;
 
 import org.junit.Test;
 
 import com.aol.cyclops.lambda.api.Decomposable;
+
 
 public class CasesTest {
 
@@ -299,7 +302,7 @@ public class CasesTest {
 		String name;
 	}
 	
-
+	
 
 	
 

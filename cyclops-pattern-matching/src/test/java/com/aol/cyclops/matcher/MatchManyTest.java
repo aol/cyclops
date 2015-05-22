@@ -76,6 +76,16 @@ public class MatchManyTest {
 		fail("unreachable");
 	}
 	@Test
+	public void streamMap(){
+		Integer num = Stream.of(1)
+							.map(Matching.newCase().isValue(1).thenApply(i->i+10).asUnwrappedFunction())
+							.findFirst()
+							.get();
+							
+		
+		assertThat(num,is(11));
+	}
+	@Test
 	public void stream(){
 		Integer num = Stream.of(1)
 							.flatMap(Matching.newCase().isValue(1).thenApply(i->i+10).asStreamFunction())

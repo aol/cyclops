@@ -381,8 +381,7 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 */
 	public <T1, X> Function<T1, Stream<X>> asStreamFunction() {
 
-		return (T1 t) -> (Stream<X>) Stream.of(t).map(input-> this.apply((T)input))
-				.filter(Optional::isPresent).map(Optional::get);
+		return (T1 t) -> (Stream<X>) Stream.of(t).flatMap(input-> this.matchMany((T)input));
 	}
 
 	/*
