@@ -24,6 +24,24 @@ import java.util.stream.Stream;
  */
 public interface Monoid<T> {
 
+	/**
+	 * An element that when provided as a parameter to the combiner with another value, results
+	 * in the other value being returned
+	 * e.g.
+	 *  0  + 1  = 1
+	 *  
+	 *  0 is zero()
+	 *  
+	 *  1 * 2 = 2
+	 *  
+	 *   1 is zero()
+	 *   
+	 *   "" + "hello" = "hello"
+	 *   
+	 *  "" is zero()
+	 *  
+	 * @return
+	 */
 	T zero();
 	
 	BiFunction<T,T,T> combiner();

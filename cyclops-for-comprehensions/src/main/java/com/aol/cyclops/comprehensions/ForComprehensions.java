@@ -14,7 +14,7 @@ import com.aol.cyclops.comprehensions.converters.MonadicConverters;
  */
 public class ForComprehensions {
 
-	public static <X,V extends Initialisable<V>> FreeFormForComprehension<X,V>  buildExecutor(State state,Class<X> interfaceStep1,Class<V> variables){
+	public static <X,V extends Initialisable> FreeFormForComprehension<X,V>  buildExecutor(State state,Class<X> interfaceStep1,Class<V> variables){
 		return new FreeFormForComprehension<>(state,interfaceStep1,variables,null);
 	}
 	public static FreeFormForComprehension<?,?>  buildExecutor(MonadicConverters converters, Comprehenders comprehenders,StreamUpscaler converter){

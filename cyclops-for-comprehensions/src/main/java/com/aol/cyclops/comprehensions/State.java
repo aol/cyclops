@@ -32,8 +32,5 @@ final class State {
 		}
 		
 	}
-	/**
-	public static <T,X> void setGlobalStreamConverter(StreamConverter<T,X> converter){
-		globalStreamConverter = converter;
-	}**/
+	
 }

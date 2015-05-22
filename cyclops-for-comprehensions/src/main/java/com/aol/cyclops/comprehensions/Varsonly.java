@@ -3,13 +3,13 @@ package com.aol.cyclops.comprehensions;
 import lombok.Setter;
 
 
-public  class Varsonly<T1,T2,T3,T4,T5> implements Initialisable<Varsonly<T1,T2,T3,T4,T5> >{
+public class Varsonly<T1,T2,T3,T4,T5> implements Initialisable{
 	@Setter
 	private BaseComprehensionData data;
 	
-	public Varsonly<T1,T2,T3,T4,T5>  init(BaseComprehensionData data){
+	public void init(BaseComprehensionData data){
 		this.data = data;
-		return this;
+		
 	}
 	public <T> T $(String name){
 		return data.$Internal(name);

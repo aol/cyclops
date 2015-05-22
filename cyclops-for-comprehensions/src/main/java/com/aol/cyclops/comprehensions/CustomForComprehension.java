@@ -41,7 +41,7 @@ import java.util.function.Supplier;
  * @param <T> The type of the Custom For Comprehension (the interface that extends
  *  this one).
  */
-public interface CustomForComprehension<R,T extends CustomForComprehension<R,?>>{
+public interface CustomForComprehension<R,T>{
 	
 	public T filter(Supplier<Boolean> s);
 	

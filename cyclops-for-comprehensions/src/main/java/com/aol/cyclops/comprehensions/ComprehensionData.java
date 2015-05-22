@@ -18,7 +18,7 @@ import lombok.Getter;
  * @param <R> Return type
  * @param <V> Aggregate Variable type holder
  */
-public class ComprehensionData<T,R,V extends Initialisable<?>> implements Initialisable{
+public class ComprehensionData<T,R,V extends Initialisable>{
 	private final BaseComprehensionData data;
 	@Getter
 	private final V vars;
@@ -29,13 +29,17 @@ public class ComprehensionData<T,R,V extends Initialisable<?>> implements Initia
 		super();
 		data = new BaseComprehensionData(state);
 	
-		this.vars =(V)new Varsonly().init(data);
+		this.vars = (V)new Varsonly();
+		this.vars.init(data);
 	}
 	
 	ComprehensionData(V vars,ExecutionState state) {
 		super();
 		data = new BaseComprehensionData(state);
-		this.vars = (V)vars.init(data);
+		
+		this.vars = (V)((Initialisable)vars);
+		this.vars.init(data);
+		
 	}
 	
 	
@@ -141,13 +145,7 @@ public class ComprehensionData<T,R,V extends Initialisable<?>> implements Initia
 		return (ComprehensionData)this;
 	}
 	
-	/* 
-	 * @see com.aol.cyclops.comprehensions.Initialisable#init(com.aol.cyclops.comprehensions.BaseComprehensionData)
-	 */
-	@Override
-	public Initialisable init(BaseComprehensionData data) {
-		return this;
-	}
+	
 	
 	
 }
