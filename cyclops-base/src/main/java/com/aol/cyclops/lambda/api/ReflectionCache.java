@@ -42,15 +42,7 @@ public class ReflectionCache {
 						.collect(Collectors.toList());
 					});
 		
-	}/**
-	@Value
-	private static class Two{
-		String first;
-		Field second;
-		public static Two of(Field f){
-			return new Two(f.getName(),f);
-		}
-	}**/
+	}
 	
 	public static Optional<Method> getUnapplyMethod(Class c) {
 	
