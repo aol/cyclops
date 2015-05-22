@@ -24,7 +24,7 @@ public class AsValueTest {
 	public void testAsValueMatch() {
 		List list = new ArrayList();
 		
-		assertThat(AsValue.asValue(new Child(10,20)).match(c-> 
+		assertThat(AsValue.asValue(new Child(10,20)).matchType(c-> 
 			c.caseOf((Child child) -> child.val ))
 		,equalTo(10));
 	}

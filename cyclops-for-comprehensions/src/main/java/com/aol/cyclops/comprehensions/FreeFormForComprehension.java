@@ -10,7 +10,7 @@ import java.util.function.Function;
 import lombok.val;
 
 
-public class FreeFormForComprehension<X,V extends Initialisable<?>> {
+public class FreeFormForComprehension<X,V extends Initialisable<V>> {
 	private final State state;
 	private final Class<X> c;
 	private final Optional<Class<V>> varsClass;
