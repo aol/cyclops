@@ -51,9 +51,9 @@ public class DecisionTest {
 		@Override
 		public <R> Functor<R> map(Function<Action, R> fn) {
 			return matchType(c -> 
-							c.caseOf( (Put p) -> new Put(p.key,p.value,(Action)fn.apply(p.next)))
-							.caseOf((Delete d) -> new Delete(d.key,(Action)fn.apply(d.next)))
-							.caseOf((Get g) -> new Get(g.key,(Function)g.next.andThen(fn)))
+							c.isType( (Put p) -> new Put(p.key,p.value,(Action)fn.apply(p.next)))
+							.isType((Delete d) -> new Delete(d.key,(Action)fn.apply(d.next)))
+							.isType((Get g) -> new Get(g.key,(Function)g.next.andThen(fn)))
 			
 					);
 		} 

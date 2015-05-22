@@ -16,6 +16,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -42,8 +44,8 @@ public class MatchingTest {
 		
 		
 		assertThat(value,is(100));
-		
 	}
+	
 	@Test(expected=Exception.class)
 	public void testCaseOfTypeWithExtractorAndActionBadCase() {
 		Matching.newCase(c->c.extract(Person::getName).isType((Integer i) -> value = i))
@@ -238,6 +240,12 @@ public class MatchingTest {
 	public void testInCaseOfValueVFunctionOfVXFalse() {
 		assertThat(Matching.newCase().isValue(100).thenApply(v-> v+100)
 					.match(500).orElse(100),is(100));
+	}
+	@Test
+	public void matchMany() {
+		assertThat(Matching.newCase().isValue(100).thenApply(v-> v+100)
+					.newCase().isType((Integer i) -> i)
+					.matchMany(100).collect(Collectors.toList()),is(Arrays.asList(200,100)));
 	}
 
 	@Test

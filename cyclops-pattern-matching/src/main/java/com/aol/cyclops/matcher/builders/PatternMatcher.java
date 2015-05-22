@@ -669,16 +669,5 @@ public class PatternMatcher implements Function{
 	}
 
 
-
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
 	
 }

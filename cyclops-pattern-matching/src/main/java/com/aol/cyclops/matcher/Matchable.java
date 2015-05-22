@@ -33,9 +33,9 @@ public interface Matchable{
 	}
 	/**
 	 * {@code 
-	 *   new MyCase(1,2,3).matchValues(this::cases)  
+	 *   new MyCase(1,2,3).matchValues(this::choseMessage)  
 	 *   
-	 *   private <I,T> CheckValues<Object, T> cases(CheckValues<I, T> c) {
+	 *   private <I,T> CheckValues<Object, T> chooseMessage(CheckValues<I, T> c) {
 		      return c.with(1,2,3).then(i->"hello")
 				      .with(4,5,6).then(i->"goodbye");
 	     }

@@ -259,10 +259,7 @@ public class Do {
 				c.filter( ()-> {
 							List<String>  newList = new ArrayList(assigned); 
 							return unwrapNestedFunction(c, f, newList);
-								/**	
-									Mutable<Object> var = new Mutable<>(true);
-									newList.stream().forEach(v-> var.set(f.apply(c.$(v)) )) ; 
-										return var.get(); **/
+								
 								}  );
 				
 			}

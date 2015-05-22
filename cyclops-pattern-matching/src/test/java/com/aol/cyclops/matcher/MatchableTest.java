@@ -42,7 +42,7 @@ public class MatchableTest {
 	public void testMatch(){
 		
 		
-		assertThat(new MyCase(4,5,6).matchType(c ->c.caseOf((MyCase ce) -> "hello")) ,
+		assertThat(new MyCase(4,5,6).matchType(c ->c.isType((MyCase ce) -> "hello")) ,
 				  equalTo("hello"));
 		
 	}
