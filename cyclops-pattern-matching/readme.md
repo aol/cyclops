@@ -116,19 +116,54 @@ Features available via the Matching class include
 * Match against collections with each element processed independently
 * Three case types (standard, atomised, stream) can be mixed within a single Matching test
 
+## Operators
+
+At the top level the operators are 
+
+* *when* : to define a new case
+* *whenValues*  : to define a new case, potentially recursively matching against the internal values of an Object
+* *whenFromStream* : to a define a new case from a Stream of cases
+* *whenIterable* : to specifically handle the case where the Object to match is an iterable
+
+Second level operators are
+
+* *isType* : provide a lambda / Function that will be used to both verify the type and provide a return value if triggered
+* *isValue* : compare object to match against specified value
+* *isTrue* : Use a Predicate to determine if Object matches
+* *isMatch* : Use a Hamcrest Matcher to determine if Object matches
+
+Further Operators 
+
+* *thenApply* : final action to determine result on match
+* *thenConsume* : final action with no return result on match
+* *thenExtract* : extract a new value to pass to next stage (or as result)
+
+Special cases
+
+Iteables 
+
+* *allTrue* : all the predicates must match
+* *allMatch* : all the hamcrest matchers must match
+* *allHold* : allows mix of predicates, hamcrest matchers and prototype values all of which must hold
+
+Streams
+
+* *streamOfResponsibility* : extract the matching cases from a Stream. Useful for introducing selection logic within your own Java 8 Streams
+
+
 Examples : 
 
 ### With Hamcrest
 
-    Matching.newCase().isMatch(hasItem("hello2")).thenConsume(System.out::println)
+    Matching.when().isMatch(hasItem("hello2")).thenConsume(System.out::println)
 							.match(Arrays.asList("hello","world"))
 	
 methods xxMatch accept Hamcrest Matchers
 							
 ### Matching multiple
 
-     Stream<Integer> resultStream = Matching.newCase().isValue(100).thenApply(v-> v+100)
-											.newCase().isType((Integer i) -> i)
+     Stream<Integer> resultStream = Matching.when().isValue(100).thenApply(v-> v+100)
+											.when().isType((Integer i) -> i)
 											.matchMany(100);
 											
 Use the matchMany method to instruct cylops to return all results that match
@@ -140,7 +175,7 @@ Use the matchMany method to instruct cylops to return all results that match
 Use asStreamFunction to Stream multiple results back out of a set of Cases.
 
      Integer num = Stream.of(1)
-							.flatMap(Matching.newCase().isValue(1).thenApply(i->i+10).asStreamFunction())
+							.flatMap(Matching.when().isValue(1).thenApply(i->i+10).asStreamFunction())
 							.findFirst()
 							.get();							
 
@@ -149,7 +184,7 @@ asStreamFunction converts the MatchingInstance into a function that returns a St
 #### map
 	
 	Integer num = Stream.of(1)
-							.map(Matching.newCase().isValue(1).thenApply(i->i+10))
+							.map(Matching.when().isValue(1).thenApply(i->i+10))
 							.findFirst()
 							.get().get();	
 
@@ -157,7 +192,7 @@ Or drop the second get() (which unwraps from an Optional) with
 
 
 	Integer num = Stream.of(1)
-							.map(Matching.newCase().isValue(1).thenApply(i->i+10).asUnwrappedFunction())
+							.map(Matching.when().isValue(1).thenApply(i->i+10).asUnwrappedFunction())
 							.findFirst()
 							.get();	
 							
@@ -166,10 +201,18 @@ Or drop the second get() (which unwraps from an Optional) with
 
 Use the Async suffix - available on the Cases object, when calling match to run the pattern matching asynchronously, potentially on another thread.
 
-		CompletableFuture<Integer> result =	Matching.newCase().isValue(100).thenApply(this::expensiveOperation1)
-													.newCase().isType((Integer i) -> this.exepensiveOperation2(i))
+		CompletableFuture<Integer> result =	Matching.when().isValue(100).thenApply(this::expensiveOperation1)
+													.when().isType((Integer i) -> this.exepensiveOperation2(i))
 													.cases()
 													.matchAsync(100)		
 ## The PatternMatcher class
 
 The PatternMatcher builder is the core builder for Cyclops Cases, that other builder instances leverage to build pattern matching cases. It's API is unsuitable for general use in most applications, but can leveraged to build application specific Matching builders.
+
+
+The patternMatcher class provides a lot of utility methods that are organisied as follows
+
+* *inCaseOf* : match with a Predicate and return a result
+* *caseOf* : match with a Predicate but no result will be returned
+* *inMatchOf* : match with a Hamcrest Matcher and return a result
+* *matchOf* : match with a Hamcrest Matcher but no result will be returned

@@ -50,7 +50,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 * 
 	 * @return Case Class style Pattern Matching Builder
 	 */
-	public final _Case<X> _case(){
+	public final _Case<X> whenValues(){
 		_Case cse = new _Case(this.cse.getPatternMatcher());
 		return cse;
 	}
@@ -62,7 +62,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 * 
 	 * @return Simplex Element based Pattern Matching Builder
 	 */
-	public final ElementCase<X> newCase(){
+	public final ElementCase<X> when(){
 		ElementCase<X> cse = new ElementCase<X>(this.cse.getPatternMatcher());
 		return cse;
 	}
@@ -73,7 +73,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 * 
 	 * @return Iterable / Collection based Pattern Matching Builder
 	 */
-	public final IterableCase<X> iterableCase(){
+	public final IterableCase<X> whenIterable(){
 		IterableCase cse = new IterableCase(this.cse.getPatternMatcher());
 		return cse;
 	}
@@ -83,7 +83,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 * 
 	 * @return Stream based Pattern Matching Builder
 	 */
-	public final StreamCase streamCase(){
+	public final StreamCase whenFromStream(){
 		StreamCase cse = new StreamCase(this.cse.getPatternMatcher());
 		return cse;
 	}
@@ -109,7 +109,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 * @param fn Function that accepts the Case for Case classes and returns the output of that builder
 	 * @return Pattern Matching Builder
 	 */
-	public final MatchingInstance<? extends Object,X> _case(Function<_Case<? extends Object>,MatchingInstance<? extends Object,X>> fn){
+	public final MatchingInstance<? extends Object,X> whenValues(Function<_Case<? extends Object>,MatchingInstance<? extends Object,X>> fn){
 		_Case cse = new _Case(new PatternMatcher());
 		return fn.apply(cse);
 		
@@ -124,7 +124,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 * @param fn Function that accepts a Simplex Element based Pattern Matching Builder and returns it's output
 	 * @return Pattern Matching Builder
 	 */
-	public final MatchingInstance<? extends Object,X> newCase(Function<ElementCase<X>,MatchingInstance<? extends Object,X>>fn){
+	public final MatchingInstance<? extends Object,X> when(Function<ElementCase<X>,MatchingInstance<? extends Object,X>>fn){
 		ElementCase<X> cse = new ElementCase(new PatternMatcher());
 		return fn.apply(cse);
 		
@@ -138,7 +138,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 * @param fn a Function that accepts a Iterable / Collection based Pattern Matching Builder and returns it's output
 	 * @return Pattern Matching Builder
 	 */
-	public final MatchingInstance<? extends Object,X> iterableCase(Function<IterableCase<? extends Object>,MatchingInstance<? extends Object,X>> fn){
+	public final MatchingInstance<? extends Object,X> whenIterable(Function<IterableCase<? extends Object>,MatchingInstance<? extends Object,X>> fn){
 		IterableCase cse = new IterableCase(new PatternMatcher());
 		return fn.apply(cse);
 		
@@ -151,7 +151,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 * @param fn a function that accepts a Stream based pattern matching builder
 	 * @return Pattern Matching Builder
 	 */
-	public final  MatchingInstance<T,X> streamCase(Function<CaseBeingBuilt,MatchingInstance<T,X>> fn){
+	public final  MatchingInstance<T,X> whenStream(Function<CaseBeingBuilt,MatchingInstance<T,X>> fn){
 		StreamCase cse = new StreamCase(new PatternMatcher());
 		return fn.apply(cse);
 		

@@ -18,15 +18,15 @@ public class PresentationTest {
 	 @Test
 	    public void patternMatch() {
 		 
-		 	String str = Matching.newCase().isType((FileNotFoundException e) -> "file not found")
+		 	String str = Matching.when().isType((FileNotFoundException e) -> "file not found")
 		 										.match(new FileNotFoundException("test"))
 		 										.orElse("ok");
 
 		 //	Consumer<AggregatedCase<String>> fileNotFound = c ->c.isType((FileNotFoundException e) -> "file not found");
 		 	
-	        String result =  Matching.newCase().isType((FileNotFoundException e) -> "file not found")
-	        		.newCase().isType((Exception e) -> "general exception")
-	        		.newCase().isType((Integer i)->"hello")
+	        String result =  Matching.when().isType((FileNotFoundException e) -> "file not found")
+	        		.when().isType((Exception e) -> "general exception")
+	        		.when().isType((Integer i)->"hello")
 	                .match(new FileNotFoundException("test"))
 	                .orElse("ok");
 

@@ -75,7 +75,7 @@ Advanced Scala-like pattern matching for Java 8
 
 ### Matching with hamcrest
 
-       Matching.newCase().isMatch(hasItem("hello2"))
+       Matching.when().isMatch(hasItem("hello2"))
                          .thenConsume(System.out::println)
 	       .match(Arrays.asList("hello","world"));
 
@@ -85,7 +85,7 @@ Advanced Scala-like pattern matching for Java 8
 
 #### With pre-extraction<
 
-       Matching.newCase().extract(Person::getAge)
+       Matching.when().extract(Person::getAge)
                          .isMatch(greaterThan(21)
                          .thenConsume(System.out::println)
                      .match(new Person("bob",24));
@@ -101,7 +101,7 @@ If Person implements iterable (returning [name,age] - so age is at(1) )
 
 then this code will also work
 
-       Matching.newCase().extract(Extractors.at(1))
+       Matching.when().extract(Extractors.at(1))
                          .isMatch(greaterThan(21)
                          .thenConsume(System.out::println)
                    .match(new Person("bob",24));
@@ -111,7 +111,7 @@ then this code will also work
 
 ### With Post Extraction
 
-         Matching.newCase().isMatch(is(not(empty())))
+         Matching.when().isMatch(is(not(empty())))
                                         .thenExtract(get(1)) //get is faster (than at) lookup for indexed lists
 					.thenConsume(System.out::println)
 				.match(Arrays.asList(20303,"20303 is passing",true));
@@ -122,7 +122,7 @@ then this code will also work
 ### Matching with predicates
 
 
-    Matching.newCase().isTrue((Integer a)-> a>100)
+    Matching.when().isTrue((Integer a)-> a>100)
                       .thenApply(x->x*10)
             .match(101);
 
@@ -133,7 +133,7 @@ then this code will also work
 With PostExtraction 
 
 
-    Matching.newCase().isTrue((Person person)->person.getAge()>18)
+    Matching.when().isTrue((Person person)->person.getAge()>18)
                       .thenExtract(Person::getName)
                       .thenApply(name-> name + " is an adult")
             .match(new Person("rosie",39))
@@ -142,10 +142,10 @@ With PostExtraction
 
 Example 
 
-         Matching.newCase(c->c.extract(Person::getName)
+         Matching.when(c->c.extract(Person::getName)
                                   .isTrue((String name)->name.length()>5)
                                   .thenApply(name->name+" is too long"))
-	        .newCase(c->c.extract(Person::getName)
+	        .when(c->c.extract(Person::getName)
                                   .isTrue((String name)->name.length()<3)
                                   .thenApply(name->name+" is too short"))				
              .match(new Person("long name",9))
@@ -164,20 +164,21 @@ can be refactored to
                                            .isTrue((String name)->name.length()<3)
                                            .thenApply(name->name+" is too short");
 
-                Matching.newCase(nameTooLong)
-                        .newCase(nameTooShort)
+                Matching.when(nameTooLong)
+                        .when(nameTooShort)
                         .match(new Person("long name",9))
+                        
 ### Matching against Tuples or Collections
 
 It is possible to match against user data as a collection with each element verified separately
 
 E.g. For the user input [1,"hello",2] each element can be verified and processed independently
 
-        Matching.atomisedCase().allValues(10,ANY,2).thenApply(l->"case1")
+        Matching.whenIterable().allValues(10,ANY,2).thenApply(l->"case1")
 
-			.atomisedCase().allValues(1,3,8).thenApply(l->"case2")
+			.whenIterable().allValues(1,3,8).thenApply(l->"case2")
 
-			.atomisedCase().bothTrue((Integer i)->i==1,(String s)->s.length()>0)
+			.whenIterable().bothTrue((Integer i)->i==1,(String s)->s.length()>0)
 					.thenExtract(Extractors.<Integer,String>toTuple2())
 					.thenApply(t->"Integer at pos 0 is " + t.v1+ " + String at pos 1 is " +t.v2)
 
@@ -186,11 +187,10 @@ E.g. For the user input [1,"hello",2] each element can be verified and processed
 ### Strategy pattern within a Stream
 
 
-
-   		Stream.of(1,2,3,4).map(Matching.newCase().isType((GenericRule rule)> selectRuleBuilder(rule)))
+     Stream.of(1,2,3,4).map(Matching.when().isType((GenericRule rule)> selectRuleBuilder(rule)))
 					    .map(o->o.orElse(defaultRuleBuilder())
-                                            .map(RuleBuilder::applyRule)
-                                            .collect(Collectors.toList());
+                        .map(RuleBuilder::applyRule)
+                        .collect(Collectors.toList());
 
 
 ### Chain of responsibility pattern within a Stream
@@ -206,7 +206,7 @@ the current value to the apply method on the selected member.
 
 
          return	Seq.seq(urlListMatchRules)
-					.map(Matching.streamCase().streamOfResponsibility(domainPathExpresssionBuilders.stream()))
+					.map(Matching.whenFromStream().streamOfResponsibility(domainPathExpresssionBuilders.stream()))
 					.map(o->o.orElse(new Expression()))  //type is Optional<Expression>
 					.toList();
 
@@ -218,7 +218,7 @@ the current value to the apply method on the selected member.
 
 
        return	Seq.seq(urlListMatchRules)
-					.map(Matching.streamCase().streamOfResponsibility(domainPathExpresssionBuilders.stream()).asUnwrappedFunction())
+					.map(Matching.whenFromStream().streamOfResponsibility(domainPathExpresssionBuilders.stream()).asUnwrappedFunction())
 					.toList(); 
 
     //throws NoSuchElementException is no match found
@@ -230,7 +230,7 @@ the current value to the apply method on the selected member.
 	private final List<ChainOfResponsibility<UrlListMatchRule,Expression>> domainPathExpresssionBuilders;
 	
 	return	Seq.seq(urlListMatchRules)
-					.flatMap(Matching.streamCase().streamOfResponsibility(domainPathExpresssionBuilders.stream()).asStreamFunction())
+					.flatMap(Matching.whenFromStream().streamOfResponsibility(domainPathExpresssionBuilders.stream()).asStreamFunction())
 					.toList();
 
     //empty list if no match
@@ -240,7 +240,7 @@ the current value to the apply method on the selected member.
 
 
 	return	Seq.seq(urlListMatchRules)
-					.flatMap(Matching.streamCase().selectFromChain(domainPathExpresssionBuilders.stream())::matchMany)
+					.flatMap(Matching.whenFromStream().selectFromChain(domainPathExpresssionBuilders.stream())::matchMany)
 					.toList();
 
     //in this case each rule can result in multiple Expressions being produced
@@ -253,11 +253,11 @@ parser.eval(expr, 3) == 19
 	public Integer eval(Expression expression, int xValue){
 
 		
-		return Matching.newCase().isType( (X x)-> xValue)
-				.newCase().isType((Const c) -> c.getValue())
-				.newCase().isType((Add a) ->  eval(a.getLeft(),xValue) + eval(a.getRight(),xValue))
-				.newCase().isType( (Mult m) -> eval(m.getLeft(),xValue) * eval(m.getRight(),xValue))
-				.newCase().isType( (Neg n) ->  -eval(n.getExpr(),xValue))
+		return Matching.when().isType( (X x)-> xValue)
+				.when().isType((Const c) -> c.getValue())
+				.when().isType((Add a) ->  eval(a.getLeft(),xValue) + eval(a.getRight(),xValue))
+				.when().isType( (Mult m) -> eval(m.getLeft(),xValue) * eval(m.getRight(),xValue))
+				.when().isType( (Neg n) ->  -eval(n.getExpr(),xValue))
 				.match(expression).orElse(1);
 		
 		

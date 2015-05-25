@@ -104,7 +104,7 @@ public interface Matchable{
 	 * @return Matching result
 	 */
 	default <R,I> R _match(Function<_Case<I>,MatchingInstance> fn){
-		return (R)fn.apply( Matching._case()).match(getMatchable()).get();
+		return (R)fn.apply( Matching.whenValues()).match(getMatchable()).get();
 	}
 	
 	/**
@@ -117,6 +117,6 @@ public interface Matchable{
 	 * @return Matching result
 	 */
 	default <R,I> R _match(Function<_Case<I>,MatchingInstance> fn,R defaultValue){
-		return (R)fn.apply( Matching._case()).match(getMatchable()).orElse(defaultValue);
+		return (R)fn.apply( Matching.whenValues()).match(getMatchable()).orElse(defaultValue);
 	}
 }

@@ -1,9 +1,12 @@
 package com.aol.cyclops.comprehensions;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,10 +39,35 @@ public class DoListsTest {
 	
 	@Test
 	public void do3(){
-		Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
+	/**	Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
 						.and((Double d)->Arrays.asList(2.0))
 						.and((Double d)->(Double e)->Arrays.asList(10.0))
 						.yield((Double base)->(Double bonus)->(Double woot) -> base*(1.0+bonus)*woot);
+		
+	**/
+		
+		List<Double> list1=asList(10.00,5.00,100.30);
+		List<Double> list2= asList(2.0,12.4);
+		List<Double> list3 =asList(10.0,0.34);
+		List<Double> result = new ArrayList<>();
+		for(int i=0;i<list1.size();i++){
+			for(int j=0;j<list2.size();j++){
+				for(int k=0;k<list3.size();k++){
+					
+					result.add (list1.get(i)*list2.get(j)*list3.get(k));
+				}
+			}
+			
+		}
+		
+		Stream<Double> s = Do.with(asList(10.00,5.00,100.30))
+							  .with(asList(2.0,12.4))
+							  .with(asList(10.0,0.34))
+							  .yield((Double i)->(Double j)->(Double k) -> i*j*k);
+		
+		
+		
+		
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(3459.0));

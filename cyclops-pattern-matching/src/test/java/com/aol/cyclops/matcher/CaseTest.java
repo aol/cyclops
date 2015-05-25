@@ -60,8 +60,8 @@ public class CaseTest {
 	@Test
 	public void andThenTest(){
 		Case<Object,Set,Function<Object,Set>> cse = Case.of(input-> input instanceof Map, input-> ((Map)input).keySet());
-		val cases = Cases.of(cse).map(c -> c.andThen((Cases)Matching.iterableCase().allHoldNoType(__,2).thenExtract(Extractors.<Integer>get(1)).thenApply(i->i*2)
-													.iterableCase().allHoldNoType(2,__).thenExtract(Extractors.<Integer>get(1)).thenApply(i->i*3).cases()));
+		val cases = Cases.of(cse).map(c -> c.andThen((Cases)Matching.whenIterable().allHoldNoType(__,2).thenExtract(Extractors.<Integer>get(1)).thenApply(i->i*2)
+													.whenIterable().allHoldNoType(2,__).thenExtract(Extractors.<Integer>get(1)).thenApply(i->i*3).cases()));
 	}
 	
 	@Test

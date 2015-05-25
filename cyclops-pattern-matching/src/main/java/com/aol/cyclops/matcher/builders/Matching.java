@@ -41,7 +41,7 @@ public class Matching {
 	 * 
 	 * @return Case Class style Pattern Matching Builder
 	 */
-	public static final<USER_VALUE> _Case<USER_VALUE> _case(){
+	public static final<USER_VALUE> _Case<USER_VALUE> whenValues(){
 		_Case cse = new  _Case(new PatternMatcher());
 		return cse;
 	}
@@ -53,7 +53,7 @@ public class Matching {
 	 * 
 	 * @return Simplex Element based Pattern Matching Builder
 	 */
-	public static final<X> ElementCase<X> newCase(){
+	public static final<X> ElementCase<X> when(){
 		ElementCase<X> cse = new ElementCase<>(new PatternMatcher());
 		return cse;
 	}
@@ -65,7 +65,7 @@ public class Matching {
 	 * 
 	 * @return Iterable / Collection based Pattern Matching Builder
 	 */
-	public static final<USER_VALUE> IterableCase<USER_VALUE> iterableCase(){
+	public static final<USER_VALUE> IterableCase<USER_VALUE> whenIterable(){
 		IterableCase cse = new IterableCase(new PatternMatcher());
 		return cse;
 	}
@@ -76,7 +76,7 @@ public class Matching {
 	 * 
 	 * @return Stream based Pattern Matching Builder
 	 */
-	public static final  StreamCase streamCase(){
+	public static final  StreamCase whenFromStream(){
 		StreamCase cse = new StreamCase(new PatternMatcher());
 		return cse;
 	}
@@ -104,7 +104,7 @@ public class Matching {
 	 * @param fn Function that accepts the Case for Case classes and returns the output of that builder
 	 * @return Pattern Matching Builder
 	 */
-	public static final<X> MatchingInstance<? extends Object,X> _case(Function<_Case<? extends Object>,MatchingInstance<? extends Object,X>> fn){
+	public static final<X> MatchingInstance<? extends Object,X> when(Function<_Case<? extends Object>,MatchingInstance<? extends Object,X>> fn){
 		_Case cse = new _Case(new PatternMatcher());
 		return fn.apply(cse);
 		
@@ -118,7 +118,7 @@ public class Matching {
 	 * @param fn Function that accepts a Simplex Element based Pattern Matching Builder and returns it's output
 	 * @return Pattern Matching Builder
 	 */
-	public static final<X> MatchingInstance<? extends Object,X> newCase(Function<ElementCase<X>,MatchingInstance<? extends Object,X>>fn){
+	public static final<X> MatchingInstance<? extends Object,X> whenValues(Function<ElementCase<X>,MatchingInstance<? extends Object,X>>fn){
 		ElementCase<X> cse = new ElementCase(new PatternMatcher());
 		return fn.apply(cse);
 		
@@ -132,7 +132,7 @@ public class Matching {
 	 * @param fn a Function that accepts a Iterable / Collection based Pattern Matching Builder and returns it's output
 	 * @return Pattern Matching Builder
 	 */
-	public static final<X> MatchingInstance<? extends Object,X> iterableCase(Function<IterableCase<? extends Object>,MatchingInstance<? extends Object,X>> fn){
+	public static final<X> MatchingInstance<? extends Object,X> whenIterable(Function<IterableCase<? extends Object>,MatchingInstance<? extends Object,X>> fn){
 		IterableCase cse = new IterableCase(new PatternMatcher());
 		return fn.apply(cse);
 		
@@ -145,7 +145,7 @@ public class Matching {
 	 * @param fn a function that accepts a Stream based pattern matching builder
 	 * @return Pattern Matching Builder
 	 */
-	public static final <T,X> MatchingInstance<T,X> streamCase(Function<CaseBeingBuilt,MatchingInstance<T,X>> fn){
+	public static final <T,X> MatchingInstance<T,X> whenFromStream(Function<CaseBeingBuilt,MatchingInstance<T,X>> fn){
 		StreamCase cse = new StreamCase(new PatternMatcher());
 		return fn.apply(cse);
 		

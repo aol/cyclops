@@ -52,13 +52,13 @@ public class MatchManyTest {
 	}
 	@Test
 	public void optionalFlatMap(){
-		System.out.println(Optional.of(100).flatMap(Matching.newCase().isValue(100)
+		System.out.println(Optional.of(100).flatMap(Matching.when().isValue(100)
 																	.thenApply(i->i+10)).get());
 	}
 	@Test
 	public void unwrapped(){
 		Integer num = Stream.of(1)
-							.map(Matching.<Integer>newCase().isValue(1)
+							.map(Matching.<Integer>when().isValue(1)
 													.thenApply(i->i+10)
 										.asUnwrappedFunction())
 							.findFirst()
@@ -69,7 +69,7 @@ public class MatchManyTest {
 	@Test(expected=NoSuchElementException.class)
 	public void unwrappedMissing(){
 		Integer num = Stream.of(10)
-							.map(Matching.newCase().isValue(1).thenApply(i->i+10).asUnwrappedFunction())
+							.map(Matching.when().isValue(1).thenApply(i->i+10).asUnwrappedFunction())
 							.findFirst()
 							.get();
 		
@@ -78,7 +78,7 @@ public class MatchManyTest {
 	@Test
 	public void streamMap(){
 		Integer num = Stream.of(1)
-							.map(Matching.newCase().isValue(1).thenApply(i->i+10).asUnwrappedFunction())
+							.map(Matching.when().isValue(1).thenApply(i->i+10).asUnwrappedFunction())
 							.findFirst()
 							.get();
 							
@@ -88,7 +88,7 @@ public class MatchManyTest {
 	@Test
 	public void stream(){
 		Integer num = Stream.of(1)
-							.flatMap(Matching.newCase().isValue(1).thenApply(i->i+10).asStreamFunction())
+							.flatMap(Matching.when().isValue(1).thenApply(i->i+10).asStreamFunction())
 							.findFirst()
 							.get();
 		
@@ -100,7 +100,7 @@ public class MatchManyTest {
 		
 		
 		Integer num = Stream.of(10)
-							.flatMap(Matching.newCase().isValue(1)
+							.flatMap(Matching.when().isValue(1)
 									.thenApply(i->i+10).asStreamFunction())
 							.findFirst()
 							.get();
