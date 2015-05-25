@@ -59,7 +59,36 @@ Returns "goodbye" as altough the type matches, 1,2,3 doesn't match 4,5,6
 	
 Returns "hello" as MyCase is an instance of MyCase
 
-### Interfaces that extends Matchable
+### Wildcards
+
+com.aol.cyclops.matcher.Predicates
+
+contains a number of Wildcard Predicates
+
+Predicates.__   (double underscore) indicates a wild card
+
+
+    new MyCase(4,5,6)._match(c ->c.isType( (MyCase ce)-> "hello").with(___,5,6),"goodbye")
+
+The first value can be a Wildcard, the second and third should be 5 & 6.
+
+Predicates.ANY() can also be used as a Wildcard. ANY() is capitalised to differentiate from Hamcrest Matchers any()
+
+### Recursive matching
+
+It is possible to recursivley match on values. For example if the entity being matched on consists of other entities we can match recurisvely on those.
+
+com.aol.cyclops.matcher.Predicates.with  - facilitates recursive matching
+
+e.g.
+
+    new MyCase(1,new MyEntity(10,11),6)._match(c ->c.isType( (MyCase ce)-> "hello").with(___,with(10,__),6),"goodbye")
+
+or in fully expanded form 
+
+	new MyCase(1,new MyEntity(10,11),6)._match(c ->c.isType( (MyCase ce)-> "hello").with(Predicates.___,Predicates.with(10,Predicates.__),6),"goodbye")
+
+### Interfaces that extend Matchable
 
 * ValueObject
 * StreamableValue
@@ -71,6 +100,24 @@ Returns "hello" as MyCase is an instance of MyCase
 
 com.aol.cyclops.dynamic.As provides a range of methods to dynamically convert types/
 
+# The Decomposable Interface  / Trait
+
+The Decomposable Interface defines an unapply method that is used to convert the implementing Object into an iterable. This can be used to control how Cyclops performs recursive decomposition.
+
+	public <I extends Iterable<?>> I unapply();
+	
+### Interfaces that extend Decomposable
+
+* ValueObject
+* StreamableValue
+* CachedValues, PTuple1-8
+
+## Coercing any Object to a Decomposable
+
+    As.asDecomposable(myObject).unapply().forEach(System.out::println);
+
+com.aol.cyclops.dynamic.As provides a range of methods to dynamically convert types
+
 # Creating Case classes
 
 In Java it is possible to create sealed type hierarchies by reducing the visibilty of constructors. E.g. If the type hierarchies are defined in one file super class constructors can be made private and sub classes made final. This will prevent users from creating new classes externally. 
@@ -80,10 +127,10 @@ Lombok provides a number of annotations that make creating case classes simpler.
 
 ## A sealed type hierarchy
 
-An example sealed hierarchy
+An example sealed hierarchy (ValueObject implies both Matchable and Decomposable)
 
 	@AllArgsConstructor(access=AccessLevel.PRIVATE) 
-	public static class CaseClass implements Matchable { } 
+	public static class CaseClass implements ValueObject { } 
 	@Value public static class MyCase1 extends CaseClass { int var1; String var2; }
 	@Value public static class MyCase2 extends CaseClass { int var1; String var2; }
 

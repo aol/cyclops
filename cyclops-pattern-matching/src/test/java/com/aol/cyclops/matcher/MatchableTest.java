@@ -39,11 +39,20 @@ public class MatchableTest {
 		
 	}
 	@Test
+	public void test_2(){
+	
+		
+		assertThat(new MyCase(4,5,6)._match(c ->c.isType( (MyCase ce)-> "hello").with(4,5,6),"goodbye") ,
+				  equalTo("hello"));
+		
+	}
+	@Test
 	public void testMatch(){
 		
 		
 		assertThat(new MyCase(4,5,6).matchType(c ->c.isType((MyCase ce) -> "hello")) ,
 				  equalTo("hello"));
+		
 		
 	}
 	@Value
