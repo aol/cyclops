@@ -38,7 +38,7 @@ public class AsTest {
 				.with(4,5,6).then(i->"goodbye");
 	}
 	@AllArgsConstructor
-	static class MyCase2  implements Matchable{
+	static class MyCase2 {
 		int a;
 		int b;
 		int c;
