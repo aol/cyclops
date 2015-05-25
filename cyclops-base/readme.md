@@ -178,8 +178,22 @@ Which can be used inside functions to neatly display the current value, when tro
 
 	
 	Function<Integer,Integer> fn = a -> print(a+10);
+	
+# Monoids
+
+Fit the Stream.reduce signature. Can be used to wrap any Monoid type (e.g. functional java).
 
 
+	Monoid.of("",(a,b)->a+b).reduce(Stream.of("a","b","c"));
+	
+Produces "abc"
+	 
+	fj.Monoid m = fj.Monoid.monoid((Integer a) -> (Integer b) -> a+b,0);
+	Monoid<Integer> sum = As.asMonoid(m);
+		
+	assertThat(sum.reduce(Stream.of(1,2,3)),equalTo(6));
+	
+Use in conjunction with Power Tuples or StreamUtils for Multiple simultanous reduction on a Stream.
 
 	
 	

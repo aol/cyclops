@@ -143,14 +143,14 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 		public <T1> Trampoline<Either<Functor<Free<F, B>>, B>> resume(
 				Functor<T1> f) {
 			
-			Either<Either<Functor<Free<F,A>>, A>,Free> res= free.matchType(buildCase(f));
+			Either<Either<Functor<Free<F,A>>, A>,Free> res= free.matchType(whenReturnSuspendOrGoSub(f));
 		
 	
 			return res.isLeft() ? (Trampoline)done(res.left().value()) : Trampoline.more(()->res.right().value().resume(f));
 		}
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		private <T1> Function<SimplestCase<? super Either>,SimplestCase<? super Either>> buildCase(Functor<T1> f){
+		private <T1> Function<SimplestCase<? super Either>,SimplestCase<? super Either>> whenReturnSuspendOrGoSub(Functor<T1> f){
 			
 			return  c ->  c.isType((Return<A,F> r) -> right(next.apply(r.result)))
 							.isType( (Suspend<A,F> s) -> left((f.map(o -> ((Free) o).flatMap(next)))))

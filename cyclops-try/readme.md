@@ -75,6 +75,33 @@ onFail can recover from any Exception or specified Exceptions
 					.onFail(IOException.class,storeForTryLater())
 					.get()
 
+## Try versus Try / Catch
+
+### Try as return type
+
+A JDK 8 readLine method 
+
+	public String readLine() throws IOException
+
+Could be rewritten as
+
+	public Try<String,IOException> readLine()
+	
+This forces user code to handle the IOException (unlike Scala's Try monad). Try is less suitable for methods that return multiple different Exception types, although that is possibly a signal that your method is doing more than one thing and should be refactored.
+
+### Checked and Unchecked Exceptions
+
+Try naturally converts Checked Exceptions into Unchecked Exceptions. Consider a method that may throw the Checked IOExeption class. If application Code decides that IOException should NOT be handled, it can simply be thrown without requiring that the rest of the call stack become polluted with throws IOException declarations.
+
+E.g.
+
+	public Try<String,IOException> readLine();
+	
+	Try<String,IOException> result = readLine();
+	result.throwException(); //throws a softened version of IOException
+	
+	result.map(this::processResult)... 
+	
 ### Alternatives and differences
 
 This implementation of Try differs from both the Scala and the Javaslang version. Javaslang Try seems to be very similar in it's implementation to the Scala Try and both will capture all Exceptions thrown at any stage during composition. So if calling Try -> map -> flatMap -> map results in an exception during the map or flatMap state Try will revert to a failure state incorporating the thrown Exception.	
