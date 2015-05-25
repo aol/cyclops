@@ -15,6 +15,16 @@
 13. asCollector
 14. asReducer
 
+## Entry Point
+
+com.aol.cyclops.lambda.tuple.PowerTuples 
+
+Has static creational methods for PTuples1..8 as well as Tuple Concatenation and Lazily Swapping (reversing) values.
+
+e.g.
+
+	 lazySwap(PowerTuples.tuple(1, 2, 3))
+
 ### Wrap any Tuple type
 
 #### Convert from Tuple (or Object)
@@ -90,4 +100,16 @@ Or alternatively
 											.mapReduce(Stream.of(1,2,3,4)); 
 		 
 		assertThat(result,equalTo(tuple(10,24)));
+		
+## Pattern Matching
+
+
+	String result = PowerTuples.tuple(1,2,3).matchValues(c -> cases(c)   );
+
+	private <I,T> _MembersMatchBuilder<Object, T> cases(_MembersMatchBuilder<I, T> c) {
+		return c.with(1,2,3).then(i->"hello")
+				.with(4,5,6).then(i->"goodbye");
+	}
+	
+Result is "hello"
       

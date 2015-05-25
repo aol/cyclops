@@ -23,7 +23,7 @@ import lombok.AllArgsConstructor;
  *  }
  *
  */
-public class PowerTuples {
+public class PowerTuples implements Concatenate, LazySwap {
 	
 	@AllArgsConstructor
 	public static class ConvertStep<T extends CachedValues>{
