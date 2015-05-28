@@ -11,8 +11,10 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
 import com.aol.cyclops.lambda.api.AsStreamable;
+import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Streamable;
 import com.aol.cyclops.streams.StreamUtils;
+import com.nurkiewicz.lazyseq.LazySeq;
 
 
 
@@ -76,7 +78,21 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 		return (Monad)this.flatMap( t->   (MONAD)t );
 		
 	}
-	
+	default  <R> R mapReduce(Monoid<R> reducer){
+		return reducer.mapReduce(stream());
+	}
+	default  <R> R mapReduce(Function<T,R> mapper, Monoid<R> reducer){
+		return reducer.reduce(stream().map(mapper));
+	}
+	default  T reduce(Monoid<T> reducer){
+		return reducer.reduce(stream());
+	}
+	default T foldRight(Monoid<T> reducer){
+		return reducer.reduce(StreamUtils.reverse(stream()));
+	}
+	default T foldRightMapToType(Monoid<T> reducer){
+		return reducer.mapReduce(StreamUtils.reverse(stream()));
+	}
 	/**
 	 * @return Underlying monad converted to a Streamable instance
 	 */
