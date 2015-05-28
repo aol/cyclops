@@ -36,6 +36,7 @@ public class InvokeDynamicComprehender implements Comprehender {
 	private static volatile Map<Class,Method> mapMethod = new ConcurrentHashMap<>();
 	private static volatile Map<Class,Method> flatMapMethod = new ConcurrentHashMap<>();
 	private static volatile Map<Class,Method> filterMethod = new ConcurrentHashMap<>();
+	private static volatile Map<Class,Method> ofMethod = new ConcurrentHashMap<>();
 	@AllArgsConstructor
 	static class ProxyWrapper{
 		private final Proxy proxy;
@@ -141,6 +142,14 @@ public class InvokeDynamicComprehender implements Comprehender {
 
 	@Override
 	public Object of(Object o) {
+		/**
+		Class clazz = o.getClass();
+		Method m = ofMethod.computeIfAbsent(clazz, c->Stream.of(c.getMethods())
+				.filter(method -> "of".equals(method.getName()) || "unit".equals(method.getName()))
+				.filter(method -> method.getParameterCount()==1).findFirst()
+				.map(m2->{ m2.setAccessible(true); return m2;})
+				.get());**/
+		
 		try {
 			return type.get().getMethod("of",o.getClass()).invoke(null,o);
 		} catch (IllegalAccessException | IllegalArgumentException

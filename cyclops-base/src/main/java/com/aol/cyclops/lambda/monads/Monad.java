@@ -1,14 +1,18 @@
 package com.aol.cyclops.lambda.monads;
 
-import static com.aol.cyclops.lambda.api.AsStreamable.asStreamable;
-
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
 import com.aol.cyclops.lambda.api.AsStreamable;
+import com.aol.cyclops.lambda.api.Streamable;
+import com.aol.cyclops.streams.StreamUtils;
 
 
 
@@ -26,7 +30,9 @@ import com.aol.cyclops.lambda.api.AsStreamable;
  * @param <T>
  * @param <MONAD>
  */
-public interface Monad<T,MONAD> extends Functor<T>, Filterable<T>{
+public interface Monad<T,MONAD> extends Functor<T>, Filterable<T>, Streamable<T>{
+	
+	
 	
 	public <T,MONAD> Monad<T,MONAD> withMonad(Object invoke);
 	public Object getMonad();
@@ -55,32 +61,79 @@ public interface Monad<T,MONAD> extends Functor<T>, Filterable<T>{
 		return (Monad)Functor.super.peek(c);
 	}
 	
-	default <R,NT> Monad<NT,R> bind(Function<T,R> fn){
+	default <R> Monad<T,MONAD> bind(Function<T,R> fn){
 		return withMonad((MONAD)new ComprehenderSelector().selectComprehender(Comprehenders.Companion.instance.getComprehenders(),
 				getMonad())
 				.executeflatMap(getMonad(), fn));
 	
 	}
 	/**
-	 * Unwrap this Monad into a Stream.
-	 * If the underlying monad is a Stream it is returned
-	 * If it is an iterable a new Stream is created from it
-	 * If it is not a stream or an iterable a (cached) attempt will be made to invokeDynamic a stream() to toStream() method
-	 * If there is no stream() method, the monad will be decomposed to an iterable and that stream will be returned
+	 * join / flatten one level of a nested hierarchy
 	 * 
-	 * @return
+	 * @return Flattened / joined one level
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	default Stream<T> stream(){
-		return AsStreamable.<T>asStreamable(getMonad()).stream();
+	default <T1> Monad<T1,T> flatten(){
+		return (Monad)this.flatMap( t->   (MONAD)t );
 		
 	}
+	
+	/**
+	 * @return Underlying monad converted to a Streamable instance
+	 */
+	default Streamable<T> toStreamable(){
+		return  AsStreamable.asStreamable(stream());
+	}
+	/**
+	 * @return This monad converted to a set
+	 */
+	default Set<T> toSet(){
+		return (Set)stream().collect(Collectors.toSet());
+	}
+	/**
+	 * @return this monad converted to a list
+	 */
+	default List<T> toList(){
+		return (List)stream().collect(Collectors.toList());
+	}
+	/**
+	 * Unwrap this Monad into a Stream.
+	 * If the underlying monad is a Stream it is returned
+	 * Otherwise we flatMap the underlying monad to a Stream type
+	 */
+	default Stream<T> stream(){
+		Stream stream = Stream.of(1);
+		return this.<T,Stream>withMonad((Stream)new ComprehenderSelector().selectComprehender(Comprehenders.Companion.instance.getComprehenders(),
+				stream).executeflatMap(stream, i-> getMonad())).unwrap();
+		
+	}
+	/**
+	 * @return This monad coverted to an Optional
+	 */
+	default Optional<T> toOptional(){
+		Optional stream = Optional.of(1);
+		return this.<T,Optional>withMonad((Optional)new ComprehenderSelector().selectComprehender(Comprehenders.Companion.instance.getComprehenders(),
+				stream).executeflatMap(stream, i-> getMonad())).unwrap();
+		
+	}
+	
+	/**
+	 * Convert to a Stream with the values repeated specified times
+	 * 
+	 * @param times Times values should be repeated within a Stream
+	 * @return Stream with values repeated
+	 */
+	default Stream<T> cycle(int times){
+		
+		return StreamUtils.cycle(times,AsStreamable.asStreamable(stream()));
+		
+	}
+	
 
 	default <R extends MONAD,NT> Monad<NT,R> flatMap(Function<T,R> fn) {
-		return bind(fn);
+		return (Monad)bind(fn);
 	}
-	default  <T> T unwrap(){
-		return (T)getMonad();
+	default  MONAD unwrap(){
+		return (MONAD)getMonad();
 	}
 	
 

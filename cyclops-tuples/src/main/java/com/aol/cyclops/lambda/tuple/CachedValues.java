@@ -36,6 +36,8 @@ import com.nurkiewicz.lazyseq.LazySeq;
 
 public interface CachedValues extends Iterable, StreamableValue, Comparable<CachedValues>{
 
+	
+	
 	default Object getMatchable(){
 		return getCachedValues();
 	}

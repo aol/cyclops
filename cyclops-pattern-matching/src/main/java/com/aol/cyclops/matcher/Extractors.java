@@ -63,6 +63,8 @@ public class Extractors {
 				return (R)((Decomposable)input).unapply();
 			else if(decomposers.get(input.getClass())!=null)
 				return (R)decomposers.get(input.getClass()).apply(input);
+			else if(input instanceof Iterable)
+				return (R)input;
 			
 			return (R)ReflectionCache.getUnapplyMethod(input.getClass()).map(unchecked(m->m.invoke(input))).orElse(AsDecomposable.asDecomposable(input).unapply());
 			

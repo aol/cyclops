@@ -28,6 +28,7 @@ public class AsTest {
 	
 	@Test
 	public void testAsMonoidFj() {
+		
 		fj.Monoid m = fj.Monoid.monoid((Integer a) -> (Integer b) -> a+b,0);
 		Monoid<Integer> sum = As.asMonoid(m);
 		

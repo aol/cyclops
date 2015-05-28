@@ -28,12 +28,12 @@ public class LazyMap1PTuple8<T,T1,T2,T3,T4,T5,T6,T7,T8> extends TupleImpl<T,T2,T
 	@Override
 	public List<Object> getCachedValues() {
 			return Arrays.asList(v1(),v2());
-		}
+	}
 
 	@Override
 	public Iterator iterator() {
 			return getCachedValues().iterator();
-		}
+	}
 
 		
 };

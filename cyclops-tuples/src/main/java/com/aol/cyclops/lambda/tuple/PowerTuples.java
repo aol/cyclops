@@ -34,7 +34,7 @@ public class PowerTuples implements Concatenate, LazySwap {
 	}
 	public static <T extends CachedValues> ConvertStep<T> convert(T c){
 		return new ConvertStep(c);
-		}
+	}
 	
 	public static <T1> PTuple1<T1> tuple(T1 t1){
 		return (PTuple1)new TupleImpl(Arrays.asList(t1),1);
