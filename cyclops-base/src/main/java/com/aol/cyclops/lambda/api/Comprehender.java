@@ -1,13 +1,16 @@
 package com.aol.cyclops.lambda.api;
 
-import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
+
+import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 
 /**
  * Interface for defining how Comprehensions should work for a type
@@ -62,7 +65,7 @@ public interface Comprehender<T> {
 	 * @return Result of call to t.flatMap( i -> fn.apply(i));
 	 */
 	default T executeflatMap(T t, Function fn){
-		return flatMap(t,input -> makeSafe(fn.apply(input)));
+		return flatMap(t,input -> unwrapOtherMonadTypes(fn.apply(input)));
 	}
 	public T flatMap(T t, Function fn);
 	
@@ -70,34 +73,39 @@ public interface Comprehender<T> {
 	public T of(Object o);
 	public T of();
 	
-	default T makeSafe(Object apply){
-		
-			if(instanceOfT(apply))
-				return (T)apply;
-			if(apply instanceof Optional){
-				if(((Optional)apply).isPresent())
-					return of(((Optional)apply).get());
-				return of();
-			}
-			if(apply instanceof Stream){
-				return of(((Stream)apply).collect(Collectors.toList()));
-			}
-			if(apply instanceof CompletableFuture){
-				return of(((CompletableFuture)apply).join());
-			}
-			if(apply instanceof Supplier)
-				return of(((Supplier)apply).get());
-			Optional<Method> m = Stream.of(apply.getClass().getMethods())
-					.filter(method -> "get".equals(method.getName()))
-					.filter(method -> method.getParameterCount()==0).findFirst();
-			return (T)m.map(method -> invoke(method,apply)).orElse(apply);
-	}
-	default Object invoke(Method method, Object apply) {
-		try{
-			return of(method.invoke(apply));
-		}catch(Exception e){
-			throw new RuntimeException(e);
+	default T unwrapOtherMonadTypes(Object apply){
+
+		if (instanceOfT(apply))
+			return (T) apply;
+
+		if (apply instanceof Optional) {
+			if (((Optional) apply).isPresent())
+				return of(((Optional) apply).get());
+			return of();
 		}
+		if (apply instanceof Stream) {
+			return of(((Stream) apply).collect(Collectors.toList()));
+		}
+		if (apply instanceof IntStream) {
+			return of(((IntStream) apply).boxed().collect(Collectors.toList()));
+		}
+		if (apply instanceof DoubleStream) {
+			return of(((DoubleStream) apply).boxed().collect(Collectors.toList()));
+		}
+		if (apply instanceof LongStream) {
+			return of(((DoubleStream) apply).boxed().collect(Collectors.toList()));
+		}
+		if (apply instanceof CompletableFuture) {
+			return of(((CompletableFuture) apply).join());
+		}
+
+		return (T) new ComprehenderSelector().selectComprehender(apply)
+				.handleReturnForFlatMap(apply);
+
+	}
+	
+	default T handleReturnForFlatMap(Object apply){
+		return (T)apply;//new InvokeDynamic().execute(Arrays.asList("get"),apply);
 	}
 
 	public Class getTargetClass();

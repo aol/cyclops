@@ -12,13 +12,14 @@ import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
 import com.aol.cyclops.comprehensions.comprehenders.InvokeDynamicComprehender;
 import com.aol.cyclops.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.lambda.api.MonadicConverter;
 
 @AllArgsConstructor
 class Yield<T> {
 	
 	
 	private final  List<Expansion> expansions;
-	private final  State state;
+	private final MonadicConverters converters = new MonadicConverters();
 	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -26,7 +27,7 @@ class Yield<T> {
 						Object currentExpansionUnwrapped, String lastExpansionName, int index) {
 		
 		Tuple2<Comprehender,Object> comprehender = selectComprehender(currentExpansionUnwrapped)
-									.orElseGet( ()->selectComprehender(state.converters.convertToMonadicForm(currentExpansionUnwrapped,state.streamConverter))
+									.orElseGet( ()->selectComprehender(converters.convertToMonadicForm(currentExpansionUnwrapped))
 													.orElse( new Tuple2(new InvokeDynamicComprehender(Optional.ofNullable(currentExpansionUnwrapped).map(Object::getClass)),currentExpansionUnwrapped)));
 			
 		
@@ -62,7 +63,7 @@ class Yield<T> {
 	private Optional<Tuple2<Comprehender,Object>> selectComprehender(Object structure) {
 		if(structure==null)
 			return Optional.empty();
-		return state.comprehenders.getRegisteredComprehenders().entrySet().stream()
+		return new Comprehenders().getRegisteredComprehenders().entrySet().stream()
 				.filter(e -> e.getKey().isAssignableFrom(structure.getClass()))
 				.map(e->e.getValue())
 				.map(v->new Tuple2<Comprehender,Object>(v,structure))

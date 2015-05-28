@@ -41,6 +41,8 @@ public class StreamComprehender implements Comprehender<Stream> {
 	public Stream of(Object o) {
 		return Stream.of(o);
 	}
+	
+	
 
 	
 

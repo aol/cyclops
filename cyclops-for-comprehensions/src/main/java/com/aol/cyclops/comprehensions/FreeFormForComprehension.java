@@ -11,7 +11,7 @@ import lombok.val;
 
 
 public class FreeFormForComprehension<X,V extends Initialisable> {
-	private final State state;
+	
 	private final Class<X> c;
 	private final Optional<Class<V>> varsClass;
 	private final Optional<V> varsImpl;
@@ -19,24 +19,23 @@ public class FreeFormForComprehension<X,V extends Initialisable> {
 	private final Proxier proxier = new Proxier();
 	
 	public  FreeFormForComprehension(){
-		this(new State(),null,null,null);
+		this(null,null,null);
 		
-	}public  FreeFormForComprehension(Class<X> c){
-		this(new State(),c,null,null);
+	}
+	public  FreeFormForComprehension(Class<X> c){
+		this(c,null,null);
 	}
 	public  FreeFormForComprehension(Class<X> c,Class<V> vars){
-		this(new State(),c,vars,null);
+		this(c,vars,null);
 		
 	}
 	public  FreeFormForComprehension(Class<X> c,V vars){
-		this(new State(),c,null,vars);
+		this(c,null,vars);
 		
 	}
-	public  FreeFormForComprehension(State s){
-		this(s,null,null,null);
-	}
-	public  FreeFormForComprehension(State s,Class<X> c,Class<V> vars,V varsImpl){
-		state= s;
+	
+	public  FreeFormForComprehension(Class<X> c,Class<V> vars,V varsImpl){
+		
 		this.c=c;
 		this.varsClass = Optional.ofNullable(vars);
 		this.varsImpl = Optional.ofNullable(varsImpl);
@@ -47,7 +46,7 @@ public class FreeFormForComprehension<X,V extends Initialisable> {
 		return Foreach.foreach(new ContextualExecutor<R,Foreach<R>>(new Foreach<R>()){
 			@SuppressWarnings("rawtypes")
 			public R execute(){
-				return (R)fn.apply(new ComprehensionData(new ExecutionState(this, state),varsClass));
+				return (R)fn.apply(new ComprehensionData(new ExecutionState(this),varsClass));
 			}
 
 			
@@ -64,8 +63,8 @@ public class FreeFormForComprehension<X,V extends Initialisable> {
 			@SuppressWarnings("rawtypes")
 			public R execute(){
 			
-				val compData = varsImpl.isPresent() ? new ComprehensionData(varsImpl.get(),new ExecutionState(this, state)) 
-													: new ComprehensionData(new ExecutionState(this, state),varsClass);
+				val compData = varsImpl.isPresent() ? new ComprehensionData(varsImpl.get(),new ExecutionState(this)) 
+													: new ComprehensionData(new ExecutionState(this),varsClass);
 							
 					try
 					{

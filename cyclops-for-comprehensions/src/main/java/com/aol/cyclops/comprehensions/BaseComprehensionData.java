@@ -13,13 +13,13 @@ final class BaseComprehensionData {
 	
 	private ContextualExecutor currentContext;
 
-	private final State state;
+	
 	
 	
 	public BaseComprehensionData(ExecutionState state) {
 		
 		this.delegate = state.contextualExecutor;
-		this.state = state.state;
+		
 		
 	}
 	
@@ -42,7 +42,7 @@ final class BaseComprehensionData {
 				currentContext = this;
 				return s.get();
 			}
-		},state));
+		}));
 		
 	}
 	

@@ -20,7 +20,7 @@ public class MonadTest {
 
 	@Test
 	public void test() {
-		val list = MonadWrapper.<List<Integer>,Stream<Integer>>of(Stream.of(Arrays.asList(1,3)))
+		val list = MonadWrapper.<Stream<Integer>,List<Integer>>of(Stream.of(Arrays.asList(1,3)))
 				.flatMap(Collection::stream).unwrap()
 				.map(i->i*2)
 				.peek(System.out::println)
@@ -30,7 +30,7 @@ public class MonadTest {
 	@Test
 	public void testMixed() {
 		
-		List<Integer> list = MonadWrapper.<List<Integer>,Stream<Integer>>of(Stream.of(Arrays.asList(1,3),null))
+		List<Integer> list = MonadWrapper.<Stream<Integer>,List<Integer>>of(Stream.of(Arrays.asList(1,3),null))
 				.bind(Optional::ofNullable)
 				.map(i->i.size())
 				.peek(System.out::println)
@@ -44,23 +44,23 @@ public class MonadTest {
 	}
 	@Test
 	public void testJoin(){
-		assertThat(MonadWrapper.<Integer,Stream<Integer>>of(Stream.of(1,2,2)).map(b-> Stream.of(b)).flatten().toList(),equalTo(Arrays.asList(1,2,2)));
+		assertThat(MonadWrapper.<Stream<Integer>,Integer>of(Stream.of(1,2,2)).map(b-> Stream.of(b)).flatten().toList(),equalTo(Arrays.asList(1,2,2)));
 	}
 	@Test
 	public void testToSet(){
-		assertThat(MonadWrapper.<Integer,Stream<Integer>>of(Stream.of(1,2,2)).toSet().size(),equalTo(2));
+		assertThat(MonadWrapper.<Stream<Integer>,Integer>of(Stream.of(1,2,2)).toSet().size(),equalTo(2));
 	}
 	@Test
 	public void testToList(){
-		assertThat(MonadWrapper.<Integer,Stream<Integer>>of(Stream.of(1,2,3)).toList(),equalTo(Arrays.asList(1,2,3)));
+		assertThat(MonadWrapper.<Stream<Integer>,Integer>of(Stream.of(1,2,3)).toList(),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void testToListFlatten(){
-		assertThat(MonadWrapper.<Integer,Stream<Integer>>of(Stream.of(1,2,3,null)).bind(Optional::ofNullable).toList(),equalTo(Arrays.asList(1,2,3)));
+		assertThat(MonadWrapper.<Stream<Integer>,Integer>of(Stream.of(1,2,3,null)).bind(Optional::ofNullable).toList(),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void testToListOptional(){
-		assertThat(MonadWrapper.<Integer,Stream<Integer>>of(Optional.of(1)).toList(),equalTo(Arrays.asList(1)));
+		assertThat(MonadWrapper.<Stream<Integer>,Integer>of(Optional.of(1)).toList(),equalTo(Arrays.asList(1)));
 	}
 	
 	

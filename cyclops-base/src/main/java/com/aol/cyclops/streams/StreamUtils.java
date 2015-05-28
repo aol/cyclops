@@ -118,7 +118,7 @@ public interface StreamUtils {
 				return (Stream) stream.map(value->Arrays.asList(value));
 			}
 		};
-		return (List)m.reduce(stream);
+		return (List)m.mapReduce(stream);
 	}
 	@SuppressWarnings({"rawtypes","unchecked"})
 	public static <R> List<R> reduce(Stream<R> stream,Stream<Monoid<R>> reducer){

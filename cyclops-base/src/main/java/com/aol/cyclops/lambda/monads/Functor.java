@@ -59,7 +59,7 @@ public interface Functor<T> {
 	}
 	
 	default  <R> Functor<R>  map(Function<T,R> fn) {
-		Object value = new ComprehenderSelector().selectComprehender(Comprehenders.Companion.instance.getComprehenders(),
+		Object value = new ComprehenderSelector().selectComprehender(
 				getFunctor()).map(getFunctor(), fn);
 	
 		return withFunctor((R)value);

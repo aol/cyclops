@@ -16,7 +16,8 @@ public class CollectionToStreamConverter implements MonadicConverter<Stream> {
 	}
 	@SuppressWarnings("rawtypes")
 	public Stream convertToMonadicForm(Object f) {
-			
+			if(f instanceof Stream)
+				return (Stream)f;
 			if(f instanceof Collection)
 				return (((Collection)f).stream());
 			if(f instanceof Map)

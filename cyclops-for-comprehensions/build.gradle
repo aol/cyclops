@@ -28,8 +28,8 @@ configurations {
 	provided
 }
 dependencies {
-    compile 'com.aol.advertising.cyclops:cyclops-base:3.0.0'
-//	compile project(':cyclops-base')
+//    compile 'com.aol.advertising.cyclops:cyclops-base:3.0.0'
+	compile project(':cyclops-base')
 	compile group: 'org.projectlombok', name: 'lombok', version:'1.16.2'
 	provided 'org.jooq:jool:0.9.6'
 	compile 'org.pcollections:pcollections:2.1.2'

@@ -16,7 +16,7 @@ class Foreach<T> {
 	
 	public T yield(ExecutionState state) {
 		Expansion head = generators.get(0);
-		return new Yield<T>(generators,state.state)
+		return new Yield<T>(generators)
 				.process(state.contextualExecutor, HashTreePMap.empty(), head
 				.getFunction().executeAndSetContext(HashTreePMap.empty()), head
 				.getName(), 1);

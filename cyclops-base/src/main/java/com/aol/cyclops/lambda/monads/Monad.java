@@ -30,14 +30,14 @@ import com.aol.cyclops.streams.StreamUtils;
  * @param <T>
  * @param <MONAD>
  */
-public interface Monad<T,MONAD> extends Functor<T>, Filterable<T>, Streamable<T>{
+public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>{
 	
 	
 	
-	public <T,MONAD> Monad<T,MONAD> withMonad(Object invoke);
+	public <MONAD,T> Monad<MONAD,T> withMonad(Object invoke);
 	public Object getMonad();
 	
-	default <T> Monad<T,MONAD> withFunctor(T functor){
+	default <T> Monad<MONAD,T> withFunctor(T functor){
 		return withMonad(functor);
 	}
 	default Object getFunctor(){
@@ -51,18 +51,18 @@ public interface Monad<T,MONAD> extends Functor<T>, Filterable<T>, Streamable<T>
 	default Object getFilterable(){
 		return getMonad();
 	}
-	default   Monad<T,MONAD>  filter(Predicate<T> fn){
+	default   Monad<MONAD,T>  filter(Predicate<T> fn){
 		return (Monad)Filterable.super.filter(fn);
 	}
-	default  <R> Monad<R,MONAD> map(Function<T,R> fn){
+	default  <R> Monad<MONAD,R> map(Function<T,R> fn){
 		return (Monad)Functor.super.map(fn);
 	}
-	default   Monad<T,MONAD>  peek(Consumer<T> c) {
+	default   Monad<MONAD,T>  peek(Consumer<T> c) {
 		return (Monad)Functor.super.peek(c);
 	}
 	
-	default <R> Monad<T,MONAD> bind(Function<T,R> fn){
-		return withMonad((MONAD)new ComprehenderSelector().selectComprehender(Comprehenders.Companion.instance.getComprehenders(),
+	default <R> Monad<MONAD,T> bind(Function<T,R> fn){
+		return withMonad((MONAD)new ComprehenderSelector().selectComprehender(
 				getMonad())
 				.executeflatMap(getMonad(), fn));
 	
@@ -72,7 +72,7 @@ public interface Monad<T,MONAD> extends Functor<T>, Filterable<T>, Streamable<T>
 	 * 
 	 * @return Flattened / joined one level
 	 */
-	default <T1> Monad<T1,T> flatten(){
+	default <T1> Monad<T,T1> flatten(){
 		return (Monad)this.flatMap( t->   (MONAD)t );
 		
 	}
@@ -102,7 +102,7 @@ public interface Monad<T,MONAD> extends Functor<T>, Filterable<T>, Streamable<T>
 	 */
 	default Stream<T> stream(){
 		Stream stream = Stream.of(1);
-		return this.<T,Stream>withMonad((Stream)new ComprehenderSelector().selectComprehender(Comprehenders.Companion.instance.getComprehenders(),
+		return this.<Stream,T>withMonad((Stream)new ComprehenderSelector().selectComprehender(
 				stream).executeflatMap(stream, i-> getMonad())).unwrap();
 		
 	}
@@ -111,7 +111,7 @@ public interface Monad<T,MONAD> extends Functor<T>, Filterable<T>, Streamable<T>
 	 */
 	default Optional<T> toOptional(){
 		Optional stream = Optional.of(1);
-		return this.<T,Optional>withMonad((Optional)new ComprehenderSelector().selectComprehender(Comprehenders.Companion.instance.getComprehenders(),
+		return this.<Optional,T>withMonad((Optional)new ComprehenderSelector().selectComprehender(
 				stream).executeflatMap(stream, i-> getMonad())).unwrap();
 		
 	}
@@ -129,7 +129,7 @@ public interface Monad<T,MONAD> extends Functor<T>, Filterable<T>, Streamable<T>
 	}
 	
 
-	default <R extends MONAD,NT> Monad<NT,R> flatMap(Function<T,R> fn) {
+	default <NT,R extends MONAD> Monad<R,NT> flatMap(Function<T,R> fn) {
 		return (Monad)bind(fn);
 	}
 	default  MONAD unwrap(){

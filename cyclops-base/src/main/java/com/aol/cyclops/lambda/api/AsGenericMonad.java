@@ -1,5 +1,6 @@
 package com.aol.cyclops.lambda.api;
 
+import com.aol.cyclops.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.lambda.monads.Monad;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
 
@@ -25,5 +26,8 @@ public class AsGenericMonad {
 	 */
 	public static <T,MONAD> Monad<T,MONAD> asMonad(Object monad){
 		return new MonadWrapper<>(monad);
+	}
+	public static <T,MONAD> Monad<T,MONAD> convertToMonad(Object monad){
+		return new MonadWrapper<>(new MonadicConverters().convertToMonadicForm(monad));
 	}
 }

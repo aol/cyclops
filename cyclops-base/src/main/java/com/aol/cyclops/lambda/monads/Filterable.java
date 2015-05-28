@@ -14,7 +14,7 @@ import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
  */
 public interface Filterable<T> {
 	default   Filterable<T>  filter(Predicate<T> fn) {
-		return withFilterable((Filterable)new ComprehenderSelector().selectComprehender(Comprehenders.Companion.instance.getComprehenders(),
+		return withFilterable((Filterable)new ComprehenderSelector().selectComprehender(
 				getFilterable())
 				.filter(getFilterable(), fn));
 	}

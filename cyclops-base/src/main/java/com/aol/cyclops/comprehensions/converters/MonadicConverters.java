@@ -1,37 +1,33 @@
 package com.aol.cyclops.comprehensions.converters;
 
-import java.util.List;
 import java.util.ServiceLoader;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.val;
 
-import org.pcollections.ConsPStack;
+import org.jooq.lambda.Seq;
 import org.pcollections.PStack;
 
-import com.aol.cyclops.comprehensions.StreamUpscaler;
 import com.aol.cyclops.lambda.api.MonadicConverter;
+import com.aol.cyclops.lambda.api.Reducers;
 import com.aol.cyclops.streams.StreamUtils;
 
 public class MonadicConverters {
 	
-	@AllArgsConstructor
-	public static enum Companion{ 
-		instance(new MonadicConverters());
-		
-		@Getter
-		private final MonadicConverters converters;
-		
-		public MonadicConverters withMoreConverters(List<MonadicConverter> convList){
-			return new MonadicConverters(convList,defaultList);
+
+	private final  StreamUpscaler upscaler = getConverter();
+	private static StreamUpscaler getConverter() {
+		try{
+			Class.forName("org.jooq.lambda.Seq");
+			return stream -> Seq.seq(stream);
+		}catch(ClassNotFoundException e){
+			return  stream -> stream;
 		}
-		public MonadicConverters withMoreConvertersReverseOrder(List<MonadicConverter> convList){
-			return new MonadicConverters(defaultList,convList);
-		}
+		
 	}
-	
-	public static final PStack<MonadicConverter> defaultList;/** = ConsPStack.<MonadicConverter>singleton(new CollectionToStreamConverter())
+	private final static PStack<MonadicConverter> converters;
+	//public static final PStack<MonadicConverter> defaultList;
+	/** = ConsPStack.<MonadicConverter>singleton(new CollectionToStreamConverter())
 						.plus(new DecomposableToStreamConverter())
 						.plus(new OptionalDoubleToOptionalConverter())
 						.plus(new OptionalIntToOptionalConverter())
@@ -53,8 +49,8 @@ public class MonadicConverters {
 	
 	static {
 		val loader  = ServiceLoader.load(MonadicConverter.class);
-		defaultList= Reducers.toPStack().reduce(StreamUtils.stream(loader.iterator()))
-		
+		converters = Reducers.<MonadicConverter>toPStack().mapReduce(StreamUtils.stream(loader.iterator()).sorted((a,b) -> a.priority() - b.priority()));
+		System.out.println(converters);
 	}
 	
 	
@@ -65,20 +61,11 @@ public class MonadicConverters {
 	//async.Queue, async.Topic, async.Signal to Seq / Stream
 	
 	
-	private final PStack<MonadicConverter> converters;
 	
-	private MonadicConverters(){
-		converters =defaultList;
-	}
-	public MonadicConverters(List<MonadicConverter> converters,List<MonadicConverter> converters2){
-		this.converters = ConsPStack.from(converters).plusAll(converters2);
-	}
-	public MonadicConverters(List<MonadicConverter> converters){
-		this.converters = ConsPStack.from(converters);
-	}
 	
-	public Object convertToMonadicForm(Object o, StreamUpscaler converter){
-		return converter.upscaleIfStream(converters.stream().filter(t-> t.accept(o)).map(m -> m.convertToMonadicForm(o)).findFirst().orElse(o));
+	
+	public Object convertToMonadicForm(Object o){
+		return upscaler.upscaleIfStream(converters.stream().filter(t-> t.accept(o)).map(m -> m.convertToMonadicForm(o)).findFirst().orElse(o));
 	}
 	
 }

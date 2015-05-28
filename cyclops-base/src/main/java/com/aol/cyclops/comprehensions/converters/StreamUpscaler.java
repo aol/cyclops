@@ -1,4 +1,4 @@
-package com.aol.cyclops.comprehensions;
+package com.aol.cyclops.comprehensions.converters;
 
 import java.util.stream.Stream;
 

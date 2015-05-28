@@ -11,10 +11,10 @@ import com.aol.cyclops.lambda.api.Comprehender;
 
 public class ComprehenderSelector {
 
-	
+	private final Comprehenders comprehenders = new Comprehenders();
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public Comprehender selectComprehender(Comprehenders comprehenders,Object structure) {
+	public Comprehender selectComprehender(Object structure) {
 		
 		return comprehenders.getRegisteredComprehenders().entrySet().stream()
 				.filter(e -> e.getKey().isAssignableFrom(structure.getClass()))
