@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
@@ -28,7 +29,9 @@ import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
 @AllArgsConstructor
 public class InvokeDynamicComprehender implements Comprehender {
-
+	public Class getTargetClass(){
+		return null;
+	}
 	Optional<Class> type;
 	
 	private static volatile PMap<Class,PSet<ProxyWrapper>> proxyCache =  HashTreePMap.empty();

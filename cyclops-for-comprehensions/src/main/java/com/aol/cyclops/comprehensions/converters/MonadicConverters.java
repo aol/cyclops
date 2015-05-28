@@ -1,15 +1,18 @@
 package com.aol.cyclops.comprehensions.converters;
 
 import java.util.List;
+import java.util.ServiceLoader;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.val;
 
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
 import com.aol.cyclops.comprehensions.StreamUpscaler;
 import com.aol.cyclops.lambda.api.MonadicConverter;
+import com.aol.cyclops.streams.StreamUtils;
 
 public class MonadicConverters {
 	
@@ -28,7 +31,7 @@ public class MonadicConverters {
 		}
 	}
 	
-	public static final PStack<MonadicConverter> defaultList = ConsPStack.<MonadicConverter>singleton(new CollectionToStreamConverter())
+	public static final PStack<MonadicConverter> defaultList;/** = ConsPStack.<MonadicConverter>singleton(new CollectionToStreamConverter())
 						.plus(new DecomposableToStreamConverter())
 						.plus(new OptionalDoubleToOptionalConverter())
 						.plus(new OptionalIntToOptionalConverter())
@@ -46,7 +49,13 @@ public class MonadicConverters {
 						.plus(new ArrayToStreamConverter())
 						.plus(new EnumToStreamConverter())
 						.plus(new IteratorToStreamConverter())
-						.plus(new StreamableToStreamConverter());
+						.plus(new StreamableToStreamConverter());**/
+	
+	static {
+		val loader  = ServiceLoader.load(MonadicConverter.class);
+		defaultList= Reducers.toPStack().reduce(StreamUtils.stream(loader.iterator()))
+		
+	}
 	
 	
 	//Supplier[] Callable[]  to LazyFutureStream

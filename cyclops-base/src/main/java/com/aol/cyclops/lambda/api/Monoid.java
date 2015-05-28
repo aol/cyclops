@@ -78,6 +78,19 @@ public interface Monoid<T> {
 		return toReduce.reduce(zero(),reducer());
 	}
 	
+	public static <T> Monoid<T> of(T zero, Function<T,Function<T,T>> combiner,Function<?,T> mapToType){
+		return new Monoid<T>(){
+			public T zero(){
+				return zero;
+			}
+			public BiFunction<T,T,T> combiner(){
+				return (a,b) -> combiner.apply(a).apply(b);
+			}
+			public Stream<T> mapToType(Stream stream){
+				return (Stream)stream.map(mapToType);
+			}
+		};
+	}
 	public static <T> Monoid<T> of(T zero, Function<T,Function<T,T>> combiner){
 		return new Monoid<T>(){
 			public T zero(){

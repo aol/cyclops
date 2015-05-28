@@ -5,12 +5,15 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.lambda.api.Comprehender;
 
 public class StreamComprehender implements Comprehender<Stream> {
-
+	public Class getTargetClass(){
+		return Stream.class;
+	}
 	@Override
 	public Object filter(Stream t, Predicate p) {
 		return t.filter(p);

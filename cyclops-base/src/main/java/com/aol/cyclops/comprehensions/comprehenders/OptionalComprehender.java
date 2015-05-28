@@ -3,11 +3,14 @@ package com.aol.cyclops.comprehensions.comprehenders;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.DoubleStream;
 
 import com.aol.cyclops.lambda.api.Comprehender;
 
 public class OptionalComprehender implements Comprehender<Optional> {
-
+	public Class getTargetClass(){
+		return Optional.class;
+	}
 	@Override
 	public Object filter(Optional o,Predicate p) {
 		return o.filter(p);

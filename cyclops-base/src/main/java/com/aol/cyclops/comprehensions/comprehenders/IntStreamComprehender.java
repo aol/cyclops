@@ -3,12 +3,15 @@ package com.aol.cyclops.comprehensions.comprehenders;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
+import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 
 import com.aol.cyclops.lambda.api.Comprehender;
 
 public class IntStreamComprehender implements Comprehender<IntStream> {
-
+	public Class getTargetClass(){
+		return IntStream.class;
+	}
 	@Override
 	public Object filter(IntStream t, Predicate p) {
 		return t.filter(test->p.test(test));
@@ -38,5 +41,6 @@ public class IntStreamComprehender implements Comprehender<IntStream> {
 	public IntStream of() {
 		return IntStream.of();
 	}
+	
 
 }

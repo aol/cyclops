@@ -2,12 +2,16 @@ package com.aol.cyclops.comprehensions.comprehenders;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.DoubleStream;
 import java.util.stream.LongStream;
 
 import com.aol.cyclops.lambda.api.Comprehender;
 
 public class LongStreamComprehender implements Comprehender<LongStream> {
 
+	public Class getTargetClass(){
+		return LongStream.class;
+	}
 	@Override
 	public Object filter(LongStream t, Predicate p) {
 		return t.filter(test->p.test(test));

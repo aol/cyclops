@@ -1,5 +1,6 @@
 package com.aol.cyclops.comprehensions.comprehenders;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.DoubleStream;
@@ -8,7 +9,9 @@ import java.util.stream.LongStream;
 import com.aol.cyclops.lambda.api.Comprehender;
 
 public class DoubleStreamComprehender implements Comprehender<DoubleStream> {
-	
+	public Class getTargetClass(){
+		return DoubleStream.class;
+	}
 	@Override
 	public Object filter(DoubleStream t, Predicate p) {
 		return t.filter(test->p.test(test));
@@ -38,5 +41,7 @@ public class DoubleStreamComprehender implements Comprehender<DoubleStream> {
 	public DoubleStream of() {
 		return DoubleStream.of();
 	}
+
+	
 
 }

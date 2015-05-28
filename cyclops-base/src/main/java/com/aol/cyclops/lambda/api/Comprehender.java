@@ -35,6 +35,7 @@ import java.util.stream.Stream;
  */
 public interface Comprehender<T> {
 
+	
 	/**
 	 * Wrapper around filter
 	 * 
@@ -98,5 +99,7 @@ public interface Comprehender<T> {
 			throw new RuntimeException(e);
 		}
 	}
+
+	public Class getTargetClass();
 	
 }

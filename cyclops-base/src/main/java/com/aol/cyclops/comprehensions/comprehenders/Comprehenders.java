@@ -2,20 +2,19 @@ package com.aol.cyclops.comprehensions.comprehenders;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
-import java.util.stream.Stream;
+import java.util.ServiceLoader;
+import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.val;
 
 import org.pcollections.HashTreePMap;
 import org.pcollections.PMap;
 
 import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.lambda.api.Reducers;
+import com.aol.cyclops.streams.StreamUtils;
 
 /**
  * Registered Comprehenders
@@ -31,13 +30,15 @@ public class Comprehenders {
 		@Getter
 		private final Comprehenders comprehenders;
 		
-		public Comprehenders withMoreComprehenders( Map<Class,Comprehender> comprehenders){
+	/**	public Comprehenders withMoreComprehenders( Map<Class,Comprehender> comprehenders){
 			return new Comprehenders(defaultComprehenders,comprehenders);
-		}
+		}**/
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
-	public static final Map<Class,Comprehender> defaultComprehenders = new HashMap<Class,Comprehender>(){{
+//	@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
+//	public static final Map<Class,Comprehender> defaultComprehenders;
+	
+	/** = new HashMap<Class,Comprehender>(){{
 		put(Optional.class,new OptionalComprehender());
 		put(Stream.class,new StreamComprehender());
 		put(IntStream.class,new IntStreamComprehender());
@@ -69,12 +70,23 @@ public class Comprehenders {
 			
 		}
 		
-	}};
-	private final PMap<Class,Comprehender> comprehenders;
+	}};**/
+	private final static PMap<Class,Comprehender> comprehenders;
+	static {
+		
+		val loader  = ServiceLoader.load(Comprehender.class);
 	
+	
+		comprehenders = Reducers.<Class,Comprehender>toPMap().reduce(StreamUtils.stream(loader.iterator())
+													.filter(c -> !(c instanceof InvokeDynamicComprehender))
+													.map(comp->HashTreePMap.singleton(comp.getTargetClass(),comp)));
+	
+		
+}
 	private Comprehenders(){
-		comprehenders = HashTreePMap.from(defaultComprehenders);
+	//	comprehenders = HashTreePMap.from(defaultComprehenders);
 	}
+	/**
 	private Comprehenders(Map<Class,Comprehender> map,Map<Class,Comprehender> map2){
 		comprehenders = HashTreePMap.from(map).plusAll(map2);
 	}
@@ -82,7 +94,7 @@ public class Comprehenders {
 		comprehenders = HashTreePMap.from(map);
 	}
 	
-	
+	**/
 	/**
 	 * @return Registered Comprehenders
 	 */
