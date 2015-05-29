@@ -24,7 +24,7 @@ import com.aol.cyclops.lambda.utils.Mutable;
 								.yield((Integer a)-> a +2 );
 								
 				Stream<Integer> stream = Do.with(Arrays.asList(20,30))
-								   .andJustAdd(Arrays.asList(1,2,3))
+								   .add(Arrays.asList(1,2,3))
 								   .yield((Integer a)-> (Integer b) -> a + b+2);							
 								
 								
