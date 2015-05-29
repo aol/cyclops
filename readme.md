@@ -54,7 +54,7 @@ Mutable represents a captured variable inside a Java 8 closure. Because of the e
 
      Mutable<Integer> timesCalled = Mutable.of(0);
      Function<String,String> fn = input -> {
-     			return input + timesCalled.mutable(v -> v+1);
+     			return input + timesCalled.mutate(v -> v+1);
      }
 
 
