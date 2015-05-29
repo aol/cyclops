@@ -2,14 +2,14 @@
 
 Powerful, modular extensions for Java 8.
 
-* For Comprehensions
-* Pattern Matching
-* Advanced Monadic cross-type operations
-* Powerful Tuple implementation
-* Trampoline
-* Try
-* Enable Switch
-* Utils for working with Functions & Streams
+* [Extensible For Comprehensions](https://github.com/aol/cyclops/wiki/Extensible-For-Comprehensions-for-Java-8)
+* [Pattern Matching](https://github.com/aol/cyclops/wiki/Pattern-matching-:-Pattern-Matching-for-Java-8)
+* [Advanced Monadic (Stream, Optional etc) cross-type operations](https://github.com/aol/cyclops/wiki/Monad-&-Stream-utilities)
+* [Powerful Tuple implementation](https://github.com/aol/cyclops/wiki/Power-Tuples)
+* [Trampoline](https://github.com/aol/cyclops/wiki/Trampoline-:-Stackless-Recursion-for-Java-8)
+* [Try](https://github.com/aol/cyclops/wiki/Try-:-functional-exception-handling-for-Java-8)
+* [Enable Switch](https://github.com/aol/cyclops/wiki/Enable-and-disable-production-features)
+* [Utils for working with Functions](https://github.com/aol/cyclops/wiki/Utilities-for-working-with-Java-8-Functions)
 
 ![cyclops module relationship - class diagram](https://cloud.githubusercontent.com/assets/9964792/7887668/af2f6b4e-062a-11e5-9194-a2a4b6d25c96.png)
    
