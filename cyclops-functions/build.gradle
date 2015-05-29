@@ -25,6 +25,8 @@ repositories {
 }
 
 dependencies {
+	//    compile 'com.aol.advertising.cyclops:cyclops-base:3.0.0'
+	compile project(':cyclops-base')
     testCompile group: 'junit', name: 'junit', version: '4.4'
 	testCompile group: 'org.hamcrest', name: 'hamcrest-all', version:'1.3'
 }
