@@ -1,28 +1,10 @@
 package com.aol.cyclops.monad;
 
-import static com.aol.cyclops.comprehensions.ForComprehensions.foreach1;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 import lombok.Value;
 
-import org.junit.Ignore;
-import org.junit.Test;
-
-import com.aol.cyclops.comprehensions.ForComprehensions;
-import com.aol.cyclops.comprehensions.LessTypingForComprehension1.Vars1;
-import com.aol.cyclops.comprehensions.LessTypingForComprehension2.Vars2;
-import com.aol.cyclops.comprehensions.LessTypingForComprehension3.Vars3;
 import com.aol.cyclops.lambda.monads.Functor;
-import com.aol.cyclops.lambda.monads.ConstructableFunctor;
-import com.aol.cyclops.lambda.monads.MonadWrapper;
 
 public class FreeTest {
 	/**
@@ -164,7 +146,7 @@ public class FreeTest {
 	}
 	**/
 	@Value
-	public static class Box<A> implements ConstructableFunctor<A,A,Box<A>>{
+	public static class Box<A> implements Functor<A>{
 		A a;
 		public static <A> Free<Functor<?>,A> liftF(A f){
 			return Free.suspend(new Box(Free.ret(f)));

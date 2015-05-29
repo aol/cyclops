@@ -74,6 +74,7 @@ public class TryComprehender implements Comprehender<Try> {
 		return Try.class;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object handleReturnForCrossTypeFlatMap(Comprehender comp,Try apply){
 		

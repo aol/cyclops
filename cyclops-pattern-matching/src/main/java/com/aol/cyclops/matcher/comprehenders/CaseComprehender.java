@@ -35,8 +35,13 @@ public class CaseComprehender implements Comprehender<Case>{
 	}
 
 	@Override
-	public Case of() {
+	public Case empty() {
 		return Case.empty;
+	}
+
+	@Override
+	public Class getTargetClass() {
+		return Case.class;
 	}
 
 }

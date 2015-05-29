@@ -49,7 +49,7 @@ public class Extractors {
 	public static final <T,R > Extractor<T,R> memoised( Extractor<T,R> extractor){
 		final LazyImmutable<R> value = new LazyImmutable<>();
 		return input -> {
-			return value.getOrSet(()->extractor.apply(input));
+			return value.computeIfAbsent(()->extractor.apply(input));
 				
 		};
 		

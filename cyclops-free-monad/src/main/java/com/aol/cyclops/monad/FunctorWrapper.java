@@ -5,11 +5,10 @@ import java.util.function.Function;
 import lombok.Value;
 
 import com.aol.cyclops.lambda.monads.Functor;
-import com.aol.cyclops.lambda.monads.ConstructableFunctor;
 
 
 @Value
-public class FunctorWrapper<A> implements ConstructableFunctor<A,A,FunctorWrapper<A>>{
+public class FunctorWrapper<A> implements Functor<A>{
 	
 	A a;
 	

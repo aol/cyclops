@@ -13,7 +13,7 @@ buildscript {
 }
 
 sourceCompatibility = 1.8
-version = '3.0.0'
+version = '4.0.0'
 jar {
     manifest {
         attributes 'Implementation-Title': 'Gradle Quickstart', 'Implementation-Version': version

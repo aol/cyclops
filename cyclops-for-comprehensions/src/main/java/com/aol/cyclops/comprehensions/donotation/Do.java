@@ -67,6 +67,20 @@ public class Do {
 			super(assigned);
 			
 		}
+		/**
+		 * Execute and Yield a result from this for comprehension using the supplied function
+		 * 
+		 * e.g. add 2 to every element in a list
+		 * 
+		 * {@code   Do.with(list)
+					  .yield((Integer a)-> a +2 );
+								
+			}
+		 * 
+		 * 
+		 * @param f To be applied to every element in the for comprehension
+		 * @return For comprehension result
+		 */
 		public <T,R> R yield(Function<T,?> f){
 			return this.yieldInternal(f);
 		}
@@ -314,9 +328,29 @@ public class Do {
 		}
 	
 	}
+	/**
+	 * Start a for comprehension from a Supplier
+	 * 
+	 * Supplier#get will be called immediately
+	 * 
+	 *  If  supplied type is a Monad Cyclops knows about (@see com.aol.cyclops.lambda.api.Comprehender) it will be used directly
+	 *  Otherwise an attempt will be made to lift the type to a Monadic form (@see com.aol.cyclops.lambda.api.MonadicConverter)
+	 *
+	 * 
+	 * @param o Supplier that generates Object to use
+	 * @return Next stage in the step builder
+	 */
 	public static  DoComp1 with(Supplier<Object> o){
 		return new DoComp0(ConsPStack.empty()).add(o.get());
 	}
+	/**
+	 * Build a for comprehension from supplied type
+	 * If type is a Monad Cyclops knows about (@see com.aol.cyclops.lambda.api.Comprehender) it will be used directly
+	 * Otherwise an attempt will be made to lift the type to a Monadic form (@see com.aol.cyclops.lambda.api.MonadicConverter)
+	 * 
+	 * @param o Object to use
+	 * @return Next stage in for comprehension step builder
+	 */
 	public static  DoComp1 with(Object o){
 		return new DoComp0(ConsPStack.empty()).add(o);
 	}
