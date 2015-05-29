@@ -94,7 +94,7 @@ public interface Comprehender<T> {
 	
 	static Object lift(Comprehender comp, Object apply){
 		Object o  = new MonadicConverters().convertToMonadicForm(apply);
-		System.out.println(o.getClass());
+		
 		return o;
 		
 	}
@@ -129,8 +129,8 @@ public interface Comprehender<T> {
 
 	}
 	
-	default T handleReturnForCrossTypeFlatMap(Comprehender comp,Object apply){
-		return (T)apply;//new InvokeDynamic().execute(Arrays.asList("get"),apply);
+	default Object handleReturnForCrossTypeFlatMap(Comprehender comp,T apply){
+		return apply;
 	}
 
 	public Class getTargetClass();

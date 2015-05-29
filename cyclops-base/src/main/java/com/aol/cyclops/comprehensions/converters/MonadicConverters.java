@@ -26,31 +26,12 @@ public class MonadicConverters {
 		
 	}
 	private final static PStack<MonadicConverter> converters;
-	//public static final PStack<MonadicConverter> defaultList;
-	/** = ConsPStack.<MonadicConverter>singleton(new CollectionToStreamConverter())
-						.plus(new DecomposableToStreamConverter())
-						.plus(new OptionalDoubleToOptionalConverter())
-						.plus(new OptionalIntToOptionalConverter())
-						.plus(new OptionalLongToOptionalConverter())
-						.plus(new NullToOptionalConverter())
-						.plus(new CallableToCompletableFutureConverter())
-						.plus(new StringToStreamConverter())
-						.plus(new IntegerToRangeConverter())
-						.plus(new FileToStreamConverter())
-						.plus(new URLToStreamConverter())
-						.plus(new InputStreamToStreamConverter())
-						.plus(new BufferedReaderToStreamConverter())
-						.plus(new ResultsetToStreamConverter())
-						.plus(new SupplierToCompletableFutureConverter ())
-						.plus(new ArrayToStreamConverter())
-						.plus(new EnumToStreamConverter())
-						.plus(new IteratorToStreamConverter())
-						.plus(new StreamableToStreamConverter());**/
+	
 	
 	static {
 		val loader  = ServiceLoader.load(MonadicConverter.class);
 		converters = Reducers.<MonadicConverter>toPStack().mapReduce(StreamUtils.stream(loader.iterator()).sorted((a,b) -> a.priority() - b.priority()));
-		System.out.println(converters);
+		
 	}
 	
 	

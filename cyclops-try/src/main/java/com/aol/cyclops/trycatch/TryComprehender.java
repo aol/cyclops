@@ -8,6 +8,7 @@ import com.aol.cyclops.lambda.api.Comprehender;
 
 /**
  * Comprehender for performant for-comprehensions for Try 
+ * Behaviour in cross-type flatMap is to create an empty instance for Failures, but always pass Successes on
  * 
  * @author johnmcclean
  *
@@ -73,6 +74,12 @@ public class TryComprehender implements Comprehender<Try> {
 		return Try.class;
 	}
 
+	@Override
+	public Object handleReturnForCrossTypeFlatMap(Comprehender comp,Try apply){
+		
+		return apply.matchType(c->c.isType( (Success s) -> comp.of(apply.get()) )
+								   .isType( (Failure f) -> comp.empty()));
+	}
 	
 
 }

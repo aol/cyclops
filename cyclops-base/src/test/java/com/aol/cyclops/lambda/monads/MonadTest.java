@@ -74,11 +74,14 @@ public class MonadTest {
 	public void testLift(){
 		
 		
-		AsGenericMonad.<Stream<String>,String>asMonad(Stream.of("input.file"))
-								.map(this.getClass().getClassLoader()::getResource)
-								.peek(System.out::println)
-								.<Stream<String>,String>liftAndbind(url -> new File(url.getFile()))
-								.forEach(System.out::println);
+		List<String> result = AsGenericMonad.<Stream<String>,String>asMonad(Stream.of("input.file"))
+								.map(getClass().getClassLoader()::getResource)
+							//	.peek(System.out::println)
+								.map(URL::getFile)
+								.<Stream<String>,String>liftAndbind(File::new)
+								.toList();
+		
+		assertThat(result,equalTo(Arrays.asList("hello","world")));
 	}
 	
 
