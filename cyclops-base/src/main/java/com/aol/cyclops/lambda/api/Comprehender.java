@@ -130,7 +130,7 @@ public interface Comprehender<T> {
 	}
 	
 	default Object handleReturnForCrossTypeFlatMap(Comprehender comp,T apply){
-		return apply;
+		return comp.of(apply);
 	}
 
 	public Class getTargetClass();
