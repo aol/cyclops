@@ -69,6 +69,12 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 				.executeflatMap(getMonad(), fn));
 	
 	}
+	default <MONAD1,R> Monad<MONAD1,R> liftAndbind(Function<T,?> fn){
+		return withMonad((MONAD)new ComprehenderSelector().selectComprehender(
+				getMonad())
+				.liftAndFlatMap(getMonad(), fn));
+	
+	}
 	/**
 	 * join / flatten one level of a nested hierarchy
 	 * 
@@ -145,7 +151,7 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	}
 	
 
-	default <NT,R extends MONAD> Monad<R,NT> flatMap(Function<T,R> fn) {
+	default <R extends MONAD,NT> Monad<R,NT> flatMap(Function<T,R> fn) {
 		return (Monad)bind(fn);
 	}
 	default  MONAD unwrap(){

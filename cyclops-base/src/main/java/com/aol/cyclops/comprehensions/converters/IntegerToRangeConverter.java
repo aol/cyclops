@@ -6,6 +6,10 @@ import com.aol.cyclops.lambda.api.MonadicConverter;
 
 public class IntegerToRangeConverter implements MonadicConverter<IntStream> {
 
+	public static int priority = 5;
+	public int priority(){
+		return priority;
+	}
 	@Override
 	public boolean accept(Object o) {
 		return o instanceof Integer && ((Integer)o)>=0;

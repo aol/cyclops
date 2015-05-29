@@ -2,18 +2,16 @@ package com.aol.cyclops.comprehensions.comprehenders;
 
 import java.lang.invoke.CallSite;
 import java.lang.invoke.ConstantCallSite;
-import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
@@ -25,6 +23,7 @@ import org.pcollections.PMap;
 import org.pcollections.PSet;
 
 import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.lambda.api.InvokeDynamic;
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
 @AllArgsConstructor
@@ -152,18 +151,23 @@ public class InvokeDynamicComprehender implements Comprehender {
 				.filter(method -> method.getParameterCount()==1).findFirst()
 				.map(m2->{ m2.setAccessible(true); return m2;})
 				.get());**/
-		
-		try {
+		InvokeDynamic dyn = new InvokeDynamic();
+		return dyn.execute(Arrays.asList("of","singleton"),type,o);
+	/**	try {
 			return type.get().getMethod("of",o.getClass()).invoke(null,o);
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException
 				| SecurityException e) {
 			throw new RuntimeException(e);
-		}
+		}**/
 	}
 
 	@Override
-	public Object of() {
+	public Object empty() {
+		
+		InvokeDynamic dyn = new InvokeDynamic();
+		return dyn.execute(Arrays.asList("of","empty","cons","nil"),type);
+		/**
 		try {
 			return type.get().getMethod("of").invoke(null);
 		} catch (IllegalAccessException | IllegalArgumentException
@@ -171,6 +175,7 @@ public class InvokeDynamicComprehender implements Comprehender {
 				| SecurityException e) {
 			throw new RuntimeException(e);
 		}
+		**/
 	}
 	
 	

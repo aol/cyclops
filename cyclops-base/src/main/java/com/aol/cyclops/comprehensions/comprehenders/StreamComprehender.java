@@ -34,7 +34,7 @@ public class StreamComprehender implements Comprehender<Stream> {
 		return apply instanceof Stream;
 	}
 	@Override
-	public Stream of() {
+	public Stream empty() {
 		return Stream.of();
 	}
 	@Override

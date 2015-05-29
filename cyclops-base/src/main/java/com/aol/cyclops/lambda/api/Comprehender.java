@@ -10,6 +10,8 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
+import com.aol.cyclops.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 
 /**
@@ -22,15 +24,17 @@ import com.aol.cyclops.lambda.monads.ComprehenderSelector;
  * E.g. To support mapping for the Functional Java Option type wrap the supplied JDK 8 Function in a Functional Java
  * fj.F type, call the make call to option.map( ) and retun the result.
  * 
- * <pre>
- *  OptionComprehender&lt;Option&gt; {
+ * {@code
+ *  OptionComprehender<Option> {
  *    
  *     public Object map(Option o, Function fn){
- *        return o.map( a-&gt; fn.apply(a));
+ *        return o.map( a-> fn.apply(a));
  *     }
  *     
  * }
- * </pre>
+ * }
+ * 
+ *
  * 
  * @author johnmcclean
  *
@@ -58,6 +62,17 @@ public interface Comprehender<T> {
 	public Object map(T t, Function fn);
 	
 	/**
+	 * A flatMap function that allows flatMapping to a different Monad type
+	 * will attempt to lift any non-Monadic values returned into a Monadic form
+	 * 
+	 * @param t Monad to perform flatMap on
+	 * @param fn FlatMap function that returns different type
+	 * @return flatMap applied and return type converted back to host type, non-Monadic return values lifted into a Monadic form
+	 */
+	default T liftAndFlatMap(T t, Function fn){
+		return flatMap(t,input -> unwrapOtherMonadTypes(this,lift(this,fn.apply(input))));
+	}
+	/**
 	 * Wrapper around flatMap
 	 * 
 	 * @param t Monadic type being wrapped
@@ -65,46 +80,56 @@ public interface Comprehender<T> {
 	 * @return Result of call to t.flatMap( i -> fn.apply(i));
 	 */
 	default T executeflatMap(T t, Function fn){
-		return flatMap(t,input -> unwrapOtherMonadTypes(fn.apply(input)));
+		return flatMap(t,input -> unwrapOtherMonadTypes(this,fn.apply(input)));
 	}
+	
+	
 	public T flatMap(T t, Function fn);
 	
-	public boolean instanceOfT(Object apply);
+	default boolean instanceOfT(Object apply){
+		return getTargetClass().isAssignableFrom(apply.getClass());
+	}
 	public T of(Object o);
-	public T of();
+	public T empty();
 	
-	default T unwrapOtherMonadTypes(Object apply){
+	static Object lift(Comprehender comp, Object apply){
+		Object o  = new MonadicConverters().convertToMonadicForm(apply);
+		System.out.println(o.getClass());
+		return o;
+		
+	}
+	static <T> T unwrapOtherMonadTypes(Comprehender<T> comp,Object apply){
 
-		if (instanceOfT(apply))
+		if (comp.instanceOfT(apply))
 			return (T) apply;
 
 		if (apply instanceof Optional) {
 			if (((Optional) apply).isPresent())
-				return of(((Optional) apply).get());
-			return of();
+				return comp.of(((Optional) apply).get());
+			return comp.empty();
 		}
 		if (apply instanceof Stream) {
-			return of(((Stream) apply).collect(Collectors.toList()));
+			return comp.of(((Stream) apply).collect(Collectors.toList()));
 		}
 		if (apply instanceof IntStream) {
-			return of(((IntStream) apply).boxed().collect(Collectors.toList()));
+			return comp.of(((IntStream) apply).boxed().collect(Collectors.toList()));
 		}
 		if (apply instanceof DoubleStream) {
-			return of(((DoubleStream) apply).boxed().collect(Collectors.toList()));
+			return comp.of(((DoubleStream) apply).boxed().collect(Collectors.toList()));
 		}
 		if (apply instanceof LongStream) {
-			return of(((DoubleStream) apply).boxed().collect(Collectors.toList()));
+			return comp.of(((DoubleStream) apply).boxed().collect(Collectors.toList()));
 		}
 		if (apply instanceof CompletableFuture) {
-			return of(((CompletableFuture) apply).join());
+			return comp.of(((CompletableFuture) apply).join());
 		}
 
 		return (T) new ComprehenderSelector().selectComprehender(apply)
-				.handleReturnForFlatMap(apply);
+				.handleReturnForCrossTypeFlatMap(comp,apply);
 
 	}
 	
-	default T handleReturnForFlatMap(Object apply){
+	default T handleReturnForCrossTypeFlatMap(Comprehender comp,Object apply){
 		return (T)apply;//new InvokeDynamic().execute(Arrays.asList("get"),apply);
 	}
 

@@ -38,7 +38,7 @@ public class LongStreamComprehender implements Comprehender<LongStream> {
 	}
 
 	@Override
-	public LongStream of() {
+	public LongStream empty() {
 		return LongStream.of();
 	}
 

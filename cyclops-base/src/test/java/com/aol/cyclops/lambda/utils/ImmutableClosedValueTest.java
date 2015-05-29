@@ -49,9 +49,9 @@ public class ImmutableClosedValueTest {
 	@Test
 	public void setOnceLazy(){
 		LazyImmutable<Integer> value = new LazyImmutable<>();
-		Supplier s= () -> value.getOrSet(()->10);
+		Supplier s= () -> value.computeIfAbsent(()->10);
 		assertThat(s.get(),is(10));
-		assertThat(value.getOrSet(()->20),is(10));
+		assertThat(value.computeIfAbsent(()->20),is(10));
 		
 	}
 	

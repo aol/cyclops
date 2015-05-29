@@ -25,8 +25,8 @@ repositories {
 }
 
 dependencies {
-	compile 'com.aol.advertising.cyclops:cyclops-core:3.0.0'
-//	compile project(':cyclops-core')
+//	compile 'com.aol.advertising.cyclops:cyclops-core:3.0.0'
+	compile project(':cyclops-core')
 	testCompile project(':cyclops-tuples')
 	//testCompile 'org.jooq:jool:0.9.6'
 	testCompile group: 'org.hamcrest', name: 'hamcrest-all', version:'1.3'

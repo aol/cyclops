@@ -38,7 +38,7 @@ public class IntStreamComprehender implements Comprehender<IntStream> {
 	}
 
 	@Override
-	public IntStream of() {
+	public IntStream empty() {
 		return IntStream.of();
 	}
 	

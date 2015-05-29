@@ -39,7 +39,7 @@ public class OptionalComprehender implements Comprehender<Optional> {
 	}
 
 	@Override
-	public Optional of() {
+	public Optional empty() {
 		return Optional.empty();
 	}
 

@@ -13,6 +13,10 @@ import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
 public class URLToStreamConverter implements MonadicConverter<Stream> {
 
+	public static int priority = 5;
+	public int priority(){
+		return priority;
+	}
 	@Override
 	public boolean accept(Object o) {
 		return o instanceof URL;

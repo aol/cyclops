@@ -14,14 +14,16 @@ import com.aol.cyclops.lambda.api.MonadicConverter;
  */
 public class ObjectToStreamConverter implements MonadicConverter<Stream> {
 
+	public static int priority = 500;
+	@Override
+	public int priority(){
+		return priority;
+	}
 	@Override
 	public boolean accept(Object o) {
 		return true;
 	}
-	@Override
-	public  int priority(){
-		return 500;
-	}
+	
 	
 	@Override
 	public Stream convertToMonadicForm(Object f) {

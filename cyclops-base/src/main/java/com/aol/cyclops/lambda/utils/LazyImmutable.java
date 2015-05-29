@@ -64,7 +64,7 @@ public class LazyImmutable<T> implements Supplier<T>{
 	 * @return a defined, but unitialised LazyImmutable
 	 */
 	public static <T> LazyImmutable<T> def(){
-		return new LazyImmutable(){};
+		return new LazyImmutable<>();
 	}
 	
 	
@@ -127,7 +127,7 @@ public class LazyImmutable<T> implements Supplier<T>{
 	 * @param lazy Supplier to generate new value
 	 * @return Current value
 	 */
-	public T getOrSet(Supplier<T> lazy) {
+	public T computeIfAbsent(Supplier<T> lazy) {
 		if(set)
 			return value;
 		return setOnceFromSupplier(lazy);

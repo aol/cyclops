@@ -6,6 +6,10 @@ import com.aol.cyclops.lambda.api.MonadicConverter;
 
 public class ArrayToStreamConverter implements MonadicConverter<Stream> {
 
+	public static int priority = 5;
+	public int priority(){
+		return priority;
+	}
 	@Override
 	public boolean accept(Object o) {
 		if(o==null)

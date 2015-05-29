@@ -3,10 +3,15 @@ package com.aol.cyclops.lambda.monads;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.io.File;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -16,6 +21,8 @@ import lombok.experimental.Wither;
 
 import org.junit.Ignore;
 import org.junit.Test;
+
+import com.aol.cyclops.lambda.api.AsGenericMonad;
 public class MonadTest {
 
 	@Test
@@ -63,6 +70,16 @@ public class MonadTest {
 		assertThat(MonadWrapper.<Stream<Integer>,Integer>of(Optional.of(1)).toList(),equalTo(Arrays.asList(1)));
 	}
 	
+	@Test
+	public void testLift(){
+		
+		
+		AsGenericMonad.<Stream<String>,String>asMonad(Stream.of("input.file"))
+								.map(this.getClass().getClassLoader()::getResource)
+								.peek(System.out::println)
+								.<Stream<String>,String>liftAndbind(url -> new File(url.getFile()))
+								.forEach(System.out::println);
+	}
 	
 
 }

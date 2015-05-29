@@ -20,16 +20,13 @@ import com.aol.cyclops.streams.StreamUtils;
 public class Comprehenders {
 	
 	private final static PMap<Class,Comprehender> comprehenders;
-	static {
-		
+	static {	
 		ServiceLoader<Comprehender> loader  = ServiceLoader.load(Comprehender.class);
-	
 	
 		comprehenders = Reducers.<Class,Comprehender>toPMap().reduce(StreamUtils.stream(loader.iterator())
 													.filter(c -> !(c instanceof InvokeDynamicComprehender))
 													.map(comp->HashTreePMap.singleton(comp.getTargetClass(),comp)));
 	
-		
 	}
 	
 	

@@ -9,7 +9,11 @@ import lombok.val;
 
 public class OptionalIntToOptionalConverter implements
 		MonadicConverter<Optional> {
-
+	public static int priority = 5;
+	public int priority(){
+		return priority;
+	}
+	
 	@Override
 	public boolean accept(Object o) {
 		return (o instanceof OptionalInt);

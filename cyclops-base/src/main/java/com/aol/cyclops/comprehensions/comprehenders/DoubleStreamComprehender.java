@@ -38,7 +38,7 @@ public class DoubleStreamComprehender implements Comprehender<DoubleStream> {
 	}
 
 	@Override
-	public DoubleStream of() {
+	public DoubleStream empty() {
 		return DoubleStream.of();
 	}
 

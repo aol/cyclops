@@ -36,7 +36,7 @@ public class CompletableFutureComprehender implements Comprehender<CompletableFu
 	}
 
 	@Override
-	public CompletableFuture of() {
+	public CompletableFuture empty() {
 		return new CompletableFuture();
 	}
 	

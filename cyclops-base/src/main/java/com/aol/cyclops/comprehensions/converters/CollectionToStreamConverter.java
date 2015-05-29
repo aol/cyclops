@@ -10,6 +10,11 @@ import com.aol.cyclops.lambda.api.MonadicConverter;
 
 public class CollectionToStreamConverter implements MonadicConverter<Stream> {
 
+	public static int priority = 5;
+	public int priority(){
+		return priority;
+	}
+	
 	private static final Map<Class,Boolean> shouldConvertCache=  new ConcurrentHashMap<>();
 	public boolean accept(Object o){
 		return (o instanceof Collection) || (o instanceof Map) || (o instanceof Iterable && shouldConvertCache.computeIfAbsent(o.getClass(),c->shouldConvert(c)));

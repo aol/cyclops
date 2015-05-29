@@ -63,8 +63,14 @@ public class TryComprehender implements Comprehender<Try> {
 	 * @see com.aol.cyclops.lambda.api.Comprehender#of()
 	 */
 	@Override
-	public Try of() {
+	public Try empty() {
 		return Success.of(Optional.empty());
+	}
+
+	@Override
+	public Class getTargetClass() {
+		
+		return Try.class;
 	}
 
 	
