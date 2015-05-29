@@ -1,9 +1,11 @@
 # Features
 
+Extensible components for Java 8
+
 *  Generic Monad operations
 *  Specific and InvokeDynamic based Monadic comprehension (for use in cyclops-for-comprehension and elsewhere)
 *  Mutable / LazyImmutable Utils for working with Closures / captured values & variables
-* Stream utils - e.g. reverse a stream
+*  Stream utils - e.g. reverse a stream
 
 * Interfaces
 	

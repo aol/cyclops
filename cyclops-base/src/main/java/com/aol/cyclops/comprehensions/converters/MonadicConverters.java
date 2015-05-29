@@ -25,12 +25,13 @@ public class MonadicConverters {
 		}
 		
 	}
+	@Getter
 	private final static PStack<MonadicConverter> converters;
 	
 	
 	static {
 		val loader  = ServiceLoader.load(MonadicConverter.class);
-		converters = Reducers.<MonadicConverter>toPStack().mapReduce(StreamUtils.stream(loader.iterator()).sorted((a,b) -> a.priority() - b.priority()));
+		converters = Reducers.<MonadicConverter>toPStack().mapReduce(StreamUtils.stream(loader.iterator()).sorted((a,b) ->  b.priority()-a.priority()));
 		
 	}
 	
