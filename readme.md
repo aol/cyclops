@@ -1,6 +1,6 @@
 # Cyclops
 
-Powerful, modular extensions for Java 8. Take only what you need.
+Powerful, modular extensions for Java 8. Take what you need or want.
 
 * [Extensible For Comprehensions](https://github.com/aol/cyclops/wiki/Extensible-For-Comprehensions-for-Java-8)
 * [Pattern Matching](https://github.com/aol/cyclops/wiki/Pattern-matching-:-Pattern-Matching-for-Java-8)
