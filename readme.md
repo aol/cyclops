@@ -1,6 +1,6 @@
 # Cyclops
 
-Powerful, modular extensions for Java 8.
+Powerful, modular extensions for Java 8. Take only what you need.
 
 * [Extensible For Comprehensions](https://github.com/aol/cyclops/wiki/Extensible-For-Comprehensions-for-Java-8)
 * [Pattern Matching](https://github.com/aol/cyclops/wiki/Pattern-matching-:-Pattern-Matching-for-Java-8)
@@ -11,8 +11,16 @@ Powerful, modular extensions for Java 8.
 * [Enable Switch](https://github.com/aol/cyclops/wiki/Enable-and-disable-production-features)
 * [Utils for working with Functions](https://github.com/aol/cyclops/wiki/Utilities-for-working-with-Java-8-Functions)
 
+
+[Cyclops Wiki](https://github.com/aol/cyclops/wiki)
+
+## Cyclops module overview
+
 ![cyclops module relationship - class diagram](https://cloud.githubusercontent.com/assets/9964792/7887668/af2f6b4e-062a-11e5-9194-a2a4b6d25c96.png)
    
+## Cyclops goals
+
+Cyclops core goal is to raise up Java 8 to a higher level by providing modular, extensible enhancements that will interoperate or aid interoperability with other Java libraries. To do this we make use of Java facilities such as Service Loading for extenisibility and Invoke Dynamic dynamic method calls (when we don't know anything about an external type, but have been asked to handle it). All points of contact with InvokeDynamic code can be replaced by custom extensions if neccessary.
 
 ## For Comprehensions
 
@@ -23,7 +31,7 @@ Perform nested operations on Collections or Monads.
 
 ## Pattern Matching
 
-Advanced Scala-like pattern matching for Java 8
+Advanced Scala-like pattern matching for Java 8. Match recursively against most Objects / datastructures.
 
 ![whenvalues recursive](https://cloud.githubusercontent.com/assets/9964792/7887716/01eeeeb8-062b-11e5-95e9-3ac10f16acdf.png)
 

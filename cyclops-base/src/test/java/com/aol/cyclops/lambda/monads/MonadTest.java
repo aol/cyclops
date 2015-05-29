@@ -76,7 +76,7 @@ public class MonadTest {
 		
 		List<String> result = AsGenericMonad.<Stream<String>,String>asMonad(Stream.of("input.file"))
 								.map(getClass().getClassLoader()::getResource)
-							//	.peek(System.out::println)
+								.peek(System.out::println)
 								.map(URL::getFile)
 								.<Stream<String>,String>liftAndbind(File::new)
 								.toList();
