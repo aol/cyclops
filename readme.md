@@ -198,8 +198,34 @@ Features
     switch.map(this::processData); //if live, data is processed, otherwise nothing happens
     
 
+## Traits
 
-## cyclops-lambda-utils
+* Decomposable : decompose an Object to a Iterable over it's values
+* Matchable : add pattern matching capabilities to an Object
+* Doable : add for comprehension capabilities to an Object
+* Streamable : add repeatable Streaming capabilities
+* Mappable : add the ability to coerce an Object to a map
+* Printable : ability to println as an expression
+* ValueObject : Matchable and Decomposable object
+* StreamableValue : Streamable and Doable ValueObject
+
+com.aol.cyclops.dynamic.As offers duck typing / coercion to many different types (including the above traits) and
+
+* com.aol.cyclops.lambda.monads.Monad
+* com.aol.cyclops.lambda.monads.Functor
+* com.aol.cyclops.lambda.monads.Monoid
+* Supplier
+
+## Function utilities
+
+* Currying : com.aol.cyclops.functions.Curry
+* Currying for Consumers : com.aol.cyclops.functions.CurryConsumer
+* Uncurrying : com.aol.cyclops.functions.Uncurry
+* Uncurrying for Consumers : com.aol.cyclops.functions.UncurryConsumer
+* Type Inferencing help : com.aol.cyclops.lambda.utils.Lambda
+* Memoisation : com.aol.cyclops.functions.Memoise
+
+## cyclops-base
 
 ### LazyImmutable
 
@@ -232,6 +258,8 @@ Mutable represents a captured variable inside a Java 8 closure. Because of the e
 
 
 ## cyclops-converters 
+
+Conversion utilities across Java 8 functional libraries (JAVASLANG, TottalyLazy, FunctionalJava, Guava, jooλ)
 
 * Immutable Java classes
 * Immutable Java Collections
