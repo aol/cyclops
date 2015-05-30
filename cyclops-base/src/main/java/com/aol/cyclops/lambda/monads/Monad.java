@@ -69,6 +69,18 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	default   Monad<MONAD,T>  peek(Consumer<T> c) {
 		return (Monad)Functor.super.peek(c);
 	}
+	default  void  allMatch(Predicate<T> c) {
+		stream().allMatch(c);
+	}
+	default  void  anyMatch(Predicate<T> c) {
+		stream().anyMatch(c);
+	}
+	default  Optional<T>  findFirst() {
+		return stream().findFirst();
+	}
+	default  Optional<T>  findAny() {
+		return stream().findAny();
+	}
 	
 	/**
 	 * Perform a looser typed flatMap / bind operation
@@ -96,6 +108,7 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 				.liftAndFlatMap(getMonad(), fn));
 	
 	}
+	
 	/**
 	 * join / flatten one level of a nested hierarchy
 	 * 

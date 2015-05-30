@@ -10,7 +10,6 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
 import com.aol.cyclops.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 
@@ -70,7 +69,7 @@ public interface Comprehender<T> {
 	 * @return flatMap applied and return type converted back to host type, non-Monadic return values lifted into a Monadic form
 	 */
 	default T liftAndFlatMap(T t, Function fn){
-		return flatMap(t,input -> unwrapOtherMonadTypes(this,lift(this,fn.apply(input))));
+		return flatMap(t,input -> unwrapOtherMonadTypes(this,liftObject(this,fn.apply(input))));
 	}
 	/**
 	 * Wrapper around flatMap
@@ -92,7 +91,7 @@ public interface Comprehender<T> {
 	public T of(Object o);
 	public T empty();
 	
-	static Object lift(Comprehender comp, Object apply){
+	static Object liftObject(Comprehender comp, Object apply){
 		Object o  = new MonadicConverters().convertToMonadicForm(apply);
 		
 		return o;
@@ -132,6 +131,8 @@ public interface Comprehender<T> {
 	default Object handleReturnForCrossTypeFlatMap(Comprehender comp,T apply){
 		return comp.of(apply);
 	}
+	
+	
 
 	public Class getTargetClass();
 	
