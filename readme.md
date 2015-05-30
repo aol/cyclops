@@ -174,6 +174,31 @@ Features
 * Recover from different exceptions independently
 * Functional composition over both success and failed states
 
+
+### Example : Try with resources
+
+    Try.catchExceptions(FileNotFoundException.class,IOException.class)
+				   .init(()->new BufferedReader(new FileReader("file.txt")))
+				   .tryWithResources(this::read)
+				   .onFail(this::recover)
+				   .map(this::continueProcessing)
+				
+## Production Enable / Disable Switch
+
+* Enable / Disable classes (Pattern Match by type)
+* convert to Optional or Stream
+* standard Java 8 operators (map, flatMap, peek, filter, forEach) + flatten etc
+* isEnabled / isDisabled
+* Biased towards enabled (right biased).
+
+### Example
+
+	Switch<Feature> switch = createSwitch(config);
+	
+    switch.map(this::processData); //if live, data is processed, otherwise nothing happens
+    
+
+
 ## cyclops-lambda-utils
 
 ### LazyImmutable
