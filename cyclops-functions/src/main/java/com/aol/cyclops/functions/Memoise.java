@@ -67,6 +67,26 @@ public class Memoise {
 		return (t1,t2) -> memoise2.apply(new Pair<>(t1,t2));
 	}
 	/**
+	 * Convert a TriFunction into one that caches it's result
+	 * 
+	 * @param fn TriFunction to memoise
+	 * @return Memoised TriFunction
+	 */
+	public static <T1,T2,T3, R> TriFunction<T1, T2,T3, R> memoiseTriFunction(TriFunction<T1, T2,T3, R> fn) {
+		val memoise2 = memoiseFunction((Triple<T1,T2,T3> triple) -> fn.apply(triple._1,triple._2,triple._3));
+		return (t1,t2,t3) -> memoise2.apply(new Triple<>(t1,t2,t3));
+	}
+	/**
+	 * Convert a QuadFunction into one that caches it's result
+	 * 
+	 * @param fn QuadFunction to memoise
+	 * @return Memoised TriFunction
+	 */
+	public static <T1,T2,T3,T4, R> QuadFunction<T1, T2,T3, T4,R> memoiseQuadFunction(QuadFunction<T1, T2,T3,T4, R> fn) {
+		val memoise2 = memoiseFunction((Quad<T1,T2,T3,T4> quad) -> fn.apply(quad._1,quad._2,quad._3,quad._4));
+		return (t1,t2,t3,t4) -> memoise2.apply(new Quad<>(t1,t2,t3,t4));
+	}
+	/**
 	 * Convert a Predicate into one that caches it's result
 	 * 
 	 * @param p Predicate to memoise
@@ -80,5 +100,18 @@ public class Memoise {
 	private static class Pair<T1,T2>{
 		T1 _1;
 		T2 _2;
+	}
+	@Value
+	private static class Triple<T1,T2,T3>{
+		T1 _1;
+		T2 _2;
+		T3 _3;
+	}
+	@Value
+	private static class Quad<T1,T2,T3,T4>{
+		T1 _1;
+		T2 _2;
+		T3 _3;
+		T4 _4;
 	}
 }

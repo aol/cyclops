@@ -1,7 +1,13 @@
 package com.aol.cyclops.lambda.functions;
 
-import static com.aol.cyclops.functions.Memoise.*;
-import static org.junit.Assert.fail;
+import static com.aol.cyclops.functions.Memoise.memoiseBiFunction;
+import static com.aol.cyclops.functions.Memoise.memoiseCallable;
+import static com.aol.cyclops.functions.Memoise.memoiseFunction;
+import static com.aol.cyclops.functions.Memoise.memoisePredicate;
+import static com.aol.cyclops.functions.Memoise.memoiseQuadFunction;
+import static com.aol.cyclops.functions.Memoise.memoiseSupplier;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 import java.util.concurrent.Callable;
 import java.util.function.BiFunction;
@@ -9,11 +15,12 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import lombok.val;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import com.aol.cyclops.functions.Memoise;
 public class MemoiseTest {
 
 	int called= 0;
@@ -67,6 +74,34 @@ public class MemoiseTest {
 		assertThat(s.test(2),equalTo(true));
 		assertThat(s.test(2),equalTo(true));
 		
+	}
+	@Test
+	public void testMemoiseTriFunction(){
+		val cached = Memoise.memoiseTriFunction(this::mult);
+		
+		assertThat(cached.apply(1,2,3),equalTo(6));
+		assertThat(cached.apply(1,2,3),equalTo(6));
+		assertThat(cached.apply(1,2,3),equalTo(6));
+		assertThat(called,equalTo(1));
+	}
+	
+	private int mult(int a,int b,int c){
+		called++;
+		return a*b*c;
+	}
+	@Test
+	public void testMemoiseQuadFunction(){
+		val cached = memoiseQuadFunction(this::addAll);
+		
+		assertThat(cached.apply(1,2,3,4),equalTo(10));
+		assertThat(cached.apply(1,2,3,4),equalTo(10));
+		assertThat(cached.apply(1,2,3,4),equalTo(10));
+		assertThat(called,equalTo(1));
+	}
+	
+	private int addAll(int a,int b,int c, int d){
+		called++;
+		return a+b+c+d;
 	}
 
 }

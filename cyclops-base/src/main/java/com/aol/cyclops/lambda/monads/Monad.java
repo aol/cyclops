@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -124,6 +125,10 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	 */
 	default  <R> R mapReduce(Function<T,R> mapper, Monoid<R> reducer){
 		return reducer.reduce(stream().map(mapper));
+	}
+	
+	default <R, A> R collect(Collector<T,A,R> collector){
+		return stream().collect(collector);
 	}
 	
 	/**
