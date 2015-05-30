@@ -28,12 +28,151 @@ Perform nested operations on Collections or Monads.
 
 ![for comprehensions](https://cloud.githubusercontent.com/assets/9964792/7887680/c6ac127c-062a-11e5-9ad7-ad4553761e8d.png)
 
+### Example 
+
+    Stream<Double> s = Do.with(asList(10.00,5.00,100.30))
+						.with(asList(2.0))
+						.and((Double d)->(Double e)->asList(e*d*10.0))
+						.yield((Double i)->(Double j)->(Double k) -> i*(1.0+j)*k);
+		
+	double total = s.collect(Collectors.summingDouble(t->t));
 
 ## Pattern Matching
 
 Advanced Scala-like pattern matching for Java 8. Match recursively against most Objects / datastructures.
 
 ![whenvalues recursive](https://cloud.githubusercontent.com/assets/9964792/7887716/01eeeeb8-062b-11e5-95e9-3ac10f16acdf.png)
+
+Features include
+
+* Sequential, Parallel and Async execution
+* Match by type, value, predicate or Hamcrest Matcher
+* Recursively decompose and match against Case classes
+* Fluent step builders for common cases
+* Fluent, functionally compositional monad-like core Case and Cases classes
+* Support for chain of responsibility pattern within a Stream
+* Support hamcrest matchers
+* Java 8 predicates for matching.
+* Match on first (return Optional)
+* Match many (return Stream)
+* Strict and lose typing
+* Pre & post value extraction per case
+* Match using multiple in case expressions via tuples or iterables of predicates / matchers
+* Match against streams of data
+* Usable within a Stream (strategy pattern)
+* Fluent step builders
+
+### Example 
+
+    private <I,T> CheckValues<Object, T> cases(CheckValues<I, T> c) {
+		return c.with(1,2,3).then(i->"hello")
+				.with(4,5,6).then(i->"goodbye");
+	}
+	@Test
+	public void test(){
+		assertThat(As.asMatchable(new MyCase(1,2,3)).match(this::cases),equalTo("hello"));
+		
+	}
+
+## Extensible Generic Monad Operations
+
+### Example
+
+flatMap (bind) across Stream and Optional types (null entries are removed)
+
+      List<Integer> list = As.<Stream<Integer>,List<Integer>>asMonad(Stream.of(Arrays.asList(1,3),null))
+				.bind(Optional::ofNullable)
+				.map(i->i.size())
+				.peek(System.out::println)
+				.toList();
+		assertThat(Arrays.asList(2),equalTo(list));
+
+### Example
+
+Lift a File to a Stream
+
+
+		List<String> result = AsGenericMonad.<Stream<String>,String>asMonad(Stream.of("input.file"))
+								.map(getClass().getClassLoader()::getResource)
+								.peek(System.out::println)
+								.map(URL::getFile)
+								.<Stream<String>,String>liftAndbind(File::new)
+								.toList();
+		
+		assertThat(result,equalTo(Arrays.asList("hello","world")));
+
+## Power Tuples 
+
+Features include
+
+* Wrap any Tuple type / Object (mapping fields to elements and back)
+* Method call chaining support
+* Asyncrhonous method call chaining support
+* Inheritance relationship between Tuples
+* Lazy and Strict map methods
+* Lazy reordering
+* Pattern matching
+* For comprehensions
+* Useful utility methods (asStreamOfStrings, asTwoNumbers etc)
+* Concatonation
+* LazySwap (reverse)
+vMemoization
+* asCollector
+* asReducer
+
+[See Power Tuples wiki](https://github.com/aol/cyclops/wiki/Power-Tuples)
+
+## Stackless Recursion with Trampoline
+
+Utilise the heap rather than the Stack for (tail) recursive algorithms in Java.
+   
+ The Java code below will result in a Stackoverflow error  
+   
+    @Test @Ignore
+	public void trampolineTest1(){
+		
+		assertThat(loop1(500000,10),equalTo(446198426));
+		
+	}
+	Integer loop1(int times,int sum){
+		
+		if(times==0)
+			return sum;
+		else
+			return loop1(times-1,sum+times);
+	}  
+
+The same code using Trampoline works fine.
+
+
+    @Test
+    public void trampolineTest(){
+
+        assertThat(loop(500000,10).result(),equalTo(446198426));
+
+     }
+
+     Trampoline<Integer> loop(int times,int sum){
+       
+       if(times==0)
+          return Trampoline.done(sum);
+       else
+          return Trampoline.more(()->loop(times-1,sum+times));
+     }
+     
+## Try : functional exception handling
+
+Cyclops Try is similar to, but functionally different from the Scala (and JAVASLANG) Try monads. 
+
+Features 
+
+* Try with Resources
+* Success and Failure states
+* Step builders to guide you through use
+* Catch specified (expected) exceptions
+* Doesn't operate as a 'catch-all' that may hide bugs
+* Recover from different exceptions independently
+* Functional composition over both success and failed states
 
 ## cyclops-lambda-utils
 
