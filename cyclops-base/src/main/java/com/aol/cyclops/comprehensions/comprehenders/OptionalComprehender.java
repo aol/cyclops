@@ -18,11 +18,9 @@ public class OptionalComprehender implements Comprehender<Optional> {
 
 	@Override
 	public Object map(Optional o,Function fn) {
-		return print(o.map(fn));
+		return o.map(fn);
 	}
-	public  <T> T print(T obj){
-		return obj;
-	}
+	
 	@Override
 	public Optional flatMap(Optional o,Function fn) {
 		return o.flatMap(fn);

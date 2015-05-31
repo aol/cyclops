@@ -24,6 +24,8 @@ public interface Decomposable{
 	@SuppressWarnings("unchecked")
 	default <I extends Iterable<?>> I unapply(){
 		
+		if(unwrap() instanceof Iterable)
+			return (I)unwrap();
 		try {
 			
 			return (I)ReflectionCache.getFields(unwrap().getClass()).stream().map(f ->{

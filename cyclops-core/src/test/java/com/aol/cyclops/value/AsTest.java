@@ -130,7 +130,7 @@ public class AsTest {
 	}
 	@Test
 	public void testAsValue_MatchDefault() {
-		List list = new ArrayList();
+		
 		
 		assertThat(As.asValue(new Child(10,20))._match(c-> 
 			c.isType( (Child child) -> child.val).with(20,20),50)
