@@ -281,12 +281,5 @@ Integrates
 * jooλ : sequences, tuples,  exception handling
 * simple-react : concurrent streaming library
 
-Features
-
-* Convert iterable sequences (i.e. Streams)
-* Convert function types
-* Convert tuples
-* Convert Optional / Either types
-* Syntax sugar over monads (e.g. tailRecursion)
 
 
