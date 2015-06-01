@@ -167,7 +167,7 @@ public class Failure<T,X extends Throwable> implements Try<T,X> {
 	 * @see com.aol.cyclops.trycatch.Try#toStream()
 	 */
 	@Override
-	public Stream<T> toStream() {
+	public Stream<T> stream() {
 		return Stream.of();
 	}
 	/* 

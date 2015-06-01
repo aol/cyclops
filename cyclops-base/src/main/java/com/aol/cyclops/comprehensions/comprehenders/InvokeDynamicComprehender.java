@@ -144,22 +144,10 @@ public class InvokeDynamicComprehender implements Comprehender {
 
 	@Override
 	public Object of(Object o) {
-		/**
-		Class clazz = o.getClass();
-		Method m = ofMethod.computeIfAbsent(clazz, c->Stream.of(c.getMethods())
-				.filter(method -> "of".equals(method.getName()) || "unit".equals(method.getName()))
-				.filter(method -> method.getParameterCount()==1).findFirst()
-				.map(m2->{ m2.setAccessible(true); return m2;})
-				.get());**/
+		
 		InvokeDynamic dyn = new InvokeDynamic();
 		return dyn.execute(Arrays.asList("of","singleton"),type,o);
-	/**	try {
-			return type.get().getMethod("of",o.getClass()).invoke(null,o);
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | NoSuchMethodException
-				| SecurityException e) {
-			throw new RuntimeException(e);
-		}**/
+
 	}
 
 	@Override
@@ -167,15 +155,7 @@ public class InvokeDynamicComprehender implements Comprehender {
 		
 		InvokeDynamic dyn = new InvokeDynamic();
 		return dyn.execute(Arrays.asList("of","empty","cons","nil"),type);
-		/**
-		try {
-			return type.get().getMethod("of").invoke(null);
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | NoSuchMethodException
-				| SecurityException e) {
-			throw new RuntimeException(e);
-		}
-		**/
+		
 	}
 	
 	

@@ -13,6 +13,7 @@ import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
  * @param <T>
  */
 public interface Filterable<T> {
+	
 	default   Filterable<T>  filter(Predicate<T> fn) {
 		return withFilterable((Filterable)new ComprehenderSelector().selectComprehender(
 				getFilterable())

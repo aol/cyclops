@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.val;
 
-import com.aol.cyclops.lambda.api.Decomposable;
+import com.aol.cyclops.lambda.api.Streamable;
 import com.aol.cyclops.value.ValueObject;
 
 /**
@@ -39,7 +39,7 @@ import com.aol.cyclops.value.ValueObject;
  * @param <T> Return type (success)
  * @param <X> Base Error type
  */
-public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject {
+public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, Streamable<T> {
 
 	/**
 	 * @return Successful value or will throw Throwable (X) if Failire
@@ -138,7 +138,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject {
 	/**
 	 * @return Stream with value if Sucess, Empty Stream if failure
 	 */
-	public Stream<T> toStream();
+	public Stream<T> stream();
 	/**
 	 * @return Optional present if Failure (with Exception), Optional empty if Success
 	 */

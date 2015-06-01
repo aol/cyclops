@@ -7,6 +7,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.lambda.api.Streamable;
 import com.aol.cyclops.value.ValueObject;
 
 
@@ -18,7 +19,7 @@ import com.aol.cyclops.value.ValueObject;
  *
  * @param <F>
  */
-public interface Switch<F> extends Supplier<F>, ValueObject {
+public interface Switch<F> extends Supplier<F>, ValueObject, Streamable<F> {
 
 	boolean isEnabled();
 	boolean isDisabled();
@@ -136,7 +137,7 @@ public interface Switch<F> extends Supplier<F>, ValueObject {
 	 * Iterate over value in switch (single value, so one iteration)
 	 * @param consumer to provide value to.
 	 */
-	default void forEach(Consumer<F> consumer){
+	default void forEach(Consumer<? super F> consumer){
 		if(isDisabled())
 			return;
 		consumer.accept(get());
@@ -175,6 +176,7 @@ public interface Switch<F> extends Supplier<F>, ValueObject {
 	/**
 	 * @return emty Stream if disabled, Stream with current value if enabled.
 	 */
+	@Override
 	default Stream<F> stream(){
 		if(isEnabled())
 			return Stream.of(get());

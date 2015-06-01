@@ -10,12 +10,12 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
+import com.aol.cyclops.lambda.api.AsGenericMonad;
 import com.aol.cyclops.lambda.api.AsStreamable;
+import com.aol.cyclops.lambda.api.Comprehender;
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Streamable;
 import com.aol.cyclops.streams.StreamUtils;
-import com.nurkiewicz.lazyseq.LazySeq;
 
 
 
@@ -49,8 +49,6 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	default Filterable<T> withFilterable(Filterable filter){
 		return withMonad(filter);
 	}
-	
-
 	default Object getFilterable(){
 		return getMonad();
 	}
@@ -66,18 +64,42 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	default  <R> Monad<MONAD,R> map(Function<T,R> fn){
 		return (Monad)Functor.super.map(fn);
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
+	 */
 	default   Monad<MONAD,T>  peek(Consumer<T> c) {
 		return (Monad)Functor.super.peek(c);
 	}
+	/**
+	 * True if predicate matches all elements when Monad converted to a Stream
+	 * 
+	 * @param c Predicate to check if all match
+	 */
 	default  void  allMatch(Predicate<T> c) {
 		stream().allMatch(c);
 	}
+	/**
+	 * True if a single element matches when Monad converted to a Stream
+	 * 
+	 * @param c Predicate to check if any match
+	 */
 	default  void  anyMatch(Predicate<T> c) {
 		stream().anyMatch(c);
 	}
+	/**
+	 * @return First matching element in sequential order
+	 * 
+	 * (deterministic)
+	 * 
+	 */
 	default  Optional<T>  findFirst() {
 		return stream().findFirst();
 	}
+	/**
+	 * @return first matching element,  but order is not guaranteed
+	 * 
+	 * (non-deterministic) 
+	 */
 	default  Optional<T>  findAny() {
 		return stream().findAny();
 	}
@@ -140,6 +162,12 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 		return reducer.reduce(stream().map(mapper));
 	}
 	
+	/**
+	 * Mutable reduction / collection over this Monad converted to a Stream
+	 * 
+	 * @param collector Collection operation definition
+	 * @return Collected result
+	 */
 	default <R, A> R collect(Collector<T,A,R> collector){
 		return stream().collect(collector);
 	}
@@ -202,8 +230,11 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	}
 	/**
 	 * @return This monad coverted to an Optional
+	 * 
+	 * Streams will be converted into Optional<List<T>>
+	 * 
 	 */
-	default Optional<T> toOptional(){
+	default <T> Optional<T> toOptional(){
 		Optional stream = Optional.of(1);
 		return this.<Optional,T>withMonad((Optional)new ComprehenderSelector().selectComprehender(
 				stream).executeflatMap(stream, i-> getMonad())).unwrap();
@@ -222,7 +253,37 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 		
 	}
 	
+	/**
+	 * Convert to a Stream with the result of a reduction operation repeated specified times
+	 * 
+	 * @param m Monoid to be used in reduction
+	 * @param times Number of times value should be repeated
+	 * @return Stream with reduced values repeated
+	 */
+	default Stream<T> cycle(Monoid<T> m,int times){
+		return StreamUtils.cycle(times,AsStreamable.asStreamable(m.reduce(stream())));
+	}
+	
+	default <R> Stream<R> cycle(Comprehender<R> c,int times){
+		return cycle(times).map(r -> c.of(r));	
+	}
 
+	/**
+	 * Convert a list of Monads to a Monad with a List
+	 * 
+	 * @param seq List to convert
+	 * @return Monad with a List
+	 */ 
+	default <T> Monad<MONAD,List<T>> sequence(List<Monad<MONAD,T>> seq){
+		return (Monad)new ComprehenderSelector().selectComprehender(getMonad()).of(AsGenericMonad.asMonad(seq.stream()).flatMap(m-> m));
+	}
+	default <T,R> Monad<MONAD,List<T>> traverse(List<Monad<MONAD,T>> seq, Function<T,Monad<MONAD,R>> fn){
+		
+		return (Monad)new ComprehenderSelector().selectComprehender(getMonad())
+							.of(AsGenericMonad.asMonad(seq.stream())
+							.flatMap(m-> AsGenericMonad.asMonad(m)
+							.flatMap((Function)fn).getMonad()));
+	}
 	/**
 	 * flatMap operation
 	 * 
