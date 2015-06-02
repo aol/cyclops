@@ -1,9 +1,13 @@
 package com.aol.cyclops.lambda.monads;
 
-import static com.aol.cyclops.lambda.api.AsGenericMonad.*;
+import static com.aol.cyclops.lambda.api.AsGenericMonad.asMonad;
+import static com.aol.cyclops.lambda.api.AsGenericMonad.monad;
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.net.URL;
@@ -12,24 +16,18 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import lombok.Value;
 import lombok.val;
-import lombok.experimental.Wither;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.cyclops.lambda.api.AsGenericMonad;
+import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Reducers;
-import com.aol.cyclops.streams.StreamUtils;
 public class MonadTest {
 
 	@Test
@@ -182,8 +180,8 @@ public class MonadTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void zipOptional(){
-		Stream<List<Integer>> zipped = (Stream)asMonad(Stream.of(1,2,3)).zip(asMonad(Optional.of(2)), 
-													(a,b) -> Arrays.asList(a,b));
+		Stream<List<Integer>> zipped = asMonad(Stream.of(1,2,3)).zip(asMonad(Optional.of(2)), 
+													(a,b) -> Arrays.asList(a,b)).toStream();
 		
 		
 		List<Integer> zip = zipped.collect(Collectors.toList()).get(0);
@@ -194,7 +192,8 @@ public class MonadTest {
 	@Test
 	public void zipStream(){
 		Stream<List<Integer>> zipped = monad(Stream.of(1,2,3)).zip(Stream.of(2,3,4), 
-													(a,b) -> Arrays.asList(a,b));
+													(a,b) -> Arrays.asList(a,b))
+													.stream();
 		
 		
 		List<Integer> zip = zipped.collect(Collectors.toList()).get(1);
@@ -228,6 +227,75 @@ public class MonadTest {
 		
 		assertThat(list.get(0),hasItems(1,2,3));
 		assertThat(list.get(1),hasItems(4,5,6));
+	}
+	
+	@Test
+	public void startsWith(){
+		assertTrue(monad(Stream.of(1,2,3,4)).startsWith(Arrays.asList(1,2,3)));
+	}
+	@Test
+	public void startsWithIterator(){
+		assertTrue(monad(Stream.of(1,2,3,4)).startsWith(Arrays.asList(1,2,3).iterator()));
+	}
+	@Test
+	public void distinctOptional(){
+		List<Integer> list = monad(Optional.of(Arrays.asList(1,2,2,2,5,6)))
+											.<Stream<Integer>,Integer>streamedMonad()
+											.distinct().collect(Collectors.toList());
+		
+		
+		assertThat(list.size(),equalTo(4));
+	}
+	@Test
+    public void scanLeft() {
+        assertEquals(
+            asList("", "a", "ab", "abc"),
+            monad(Stream.of("a", "b", "c")).scanLeft(Reducers.toString("")).toList());
+
+        
+    }
+	@Test
+	public void reducer1(){
+		Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
+		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
+		val result = monad(Stream.of(1,2,3,4))
+						.reduce(Arrays.asList(sum,mult).stream() );
+				
+		 
+		assertThat(result,equalTo(Arrays.asList(10,24)));
+	}
+	@Test
+	public void reducer2(){
+		Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
+		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
+		val result = monad(Optional.of(Stream.of(1,2,3,4)))
+						.<Stream<Integer>,Integer>streamedMonad()
+						.reduce(Arrays.asList(sum,mult) );
+				
+		 
+		assertThat(result,equalTo(Arrays.asList(10,24)));
+	}
+	@Test
+	public void reducer3(){
+		Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
+		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
+		val result = monad(Optional.of(Stream.of()))
+						.<Stream<Integer>,Integer>streamedMonad()
+						.reduce(Arrays.asList(sum,mult) );
+				
+		 
+		assertThat(result,equalTo(Arrays.asList(0,1)));
+	}
+	@Test
+	public void reducer4(){
+		Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
+		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
+		val result = monad(Optional.empty())
+						.<Stream<Integer>,Integer>streamedMonad()
+						.reduce(Arrays.asList(sum,mult) );
+				
+		 
+		assertThat(result,equalTo(Arrays.asList(0,1)));
 	}
 
 }

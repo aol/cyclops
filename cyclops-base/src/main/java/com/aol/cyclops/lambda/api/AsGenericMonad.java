@@ -1,6 +1,7 @@
 package com.aol.cyclops.lambda.api;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
@@ -9,7 +10,7 @@ import com.aol.cyclops.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.lambda.monads.Monad;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
 
-public class AsGenericMonad {
+public interface AsGenericMonad {
 
 	/**
 	 * Create a duck typed Monad. 
@@ -41,8 +42,17 @@ public class AsGenericMonad {
 	public static <T> Monad<CompletableFuture<T>,T> monad(CompletableFuture<T> monad){
 		return new MonadWrapper<>(monad);
 	}
-	public static <T> Monad<Stream<T>,T> convertToMonad(Collection<T> monad){
-		return new MonadWrapper<>(monad);
+	public static <T> Monad<Stream<T>,T> monad(Collection<T> monad){
+		return convertToMonad(monad);
+	}
+	public static <T> Monad<Stream<T>,T> monad(Iterable<T> monad){
+		return convertToMonad(monad);
+	}
+	public static <T> Monad<Stream<T>,T> monad(Iterator<T> monad){
+		return convertToMonad(monad);
+	}
+	public static <T> Monad<Stream<T>,T> monad(T... values){
+		return monad(Stream.of(values));
 	}
 	public static <T> Monad<?,T> toMonad(Object monad){
 		return new MonadWrapper<>(monad);

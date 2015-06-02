@@ -93,11 +93,11 @@ public interface StreamUtils {
 		return it.entrySet().stream();
 	}
 	@SuppressWarnings({"rawtypes","unchecked"})
-	public static <R> List<R> reduce(Stream<R> stream,Collection<Monoid<R>> reducers){
+	public static <R> List<R> reduce(Stream<R> stream,Iterable<Monoid<R>> reducers){
 	
 		Monoid<R> m = new Monoid(){
 			public List zero(){
-				return reducers.stream().map(r->r.zero()).collect(Collectors.toList());
+				return stream(reducers).map(r->r.zero()).collect(Collectors.toList());
 			}
 			public BiFunction<List,List,List> combiner(){
 				return (c1,c2) -> { 

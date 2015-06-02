@@ -4,6 +4,7 @@ import static com.aol.cyclops.lambda.api.AsGenericMonad.asMonad;
 import static com.aol.cyclops.lambda.api.AsGenericMonad.monad;
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -41,7 +42,7 @@ import com.nurkiewicz.lazyseq.LazySeq;
  * @param <T>
  * @param <MONAD>
  */
-public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>{
+public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>, AsGenericMonad{
 	
 	
 	
@@ -181,6 +182,9 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	}
 	
 	/**
+	 * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was one value
+	 * To reduce over the values on the list, called streamedMonad() first. I.e. streamedMonad().reduce(reducer)
+	 * 
 	 * 
 	 * @param reducer Use supplied Monoid to reduce values
 	 * @return reduced values
@@ -188,6 +192,30 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	default  T reduce(Monoid<T> reducer){
 		return reducer.reduce(stream());
 	}
+	
+	/**
+     * Reduce with multiple reducers in parallel
+	 * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was one value
+	 * To reduce over the values on the list, called streamedMonad() first. I.e. streamedMonad().reduce(reducer)
+	 * 
+	 * @param reducers
+	 * @return
+	 */
+	default List<T> reduce(Stream<Monoid<T>> reducers){
+		return StreamUtils.reduce(stream(), reducers);
+	}
+	/**
+     * Reduce with multiple reducers in parallel
+	 * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was one value
+	 * To reduce over the values on the list, called streamedMonad() first. I.e. streamedMonad().reduce(reducer)
+	 * 
+	 * @param reducers
+	 * @return
+	 */
+	default List<T> reduce(Iterable<Monoid<T>> reducers){
+		return StreamUtils.reduce(stream(), reducers);
+	}
+	
 	/**
 	 * 
 	 * 
@@ -245,6 +273,12 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 		return (List)stream().collect(Collectors.toList());
 	}
 	/**
+	 * @return  calls to stream() but more flexible on type for inferencing purposes.
+	 */
+	default <T> Stream<T> toStream(){
+		return (Stream)stream();
+	}
+	/**
 	 * Unwrap this Monad into a Stream.
 	 * If the underlying monad is a Stream it is returned
 	 * Otherwise we flatMap the underlying monad to a Stream type
@@ -276,9 +310,9 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	 * @param times Times values should be repeated within a Stream
 	 * @return Stream with values repeated
 	 */
-	default Stream<T> cycle(int times){
+	default Monad<Stream<T>,T> cycle(int times){
 		
-		return StreamUtils.cycle(times,AsStreamable.asStreamable(stream()));
+		return monad(StreamUtils.cycle(times,AsStreamable.asStreamable(stream())));
 		
 	}
 	
@@ -296,8 +330,8 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	 * @param times Number of times value should be repeated
 	 * @return Stream with reduced values repeated
 	 */
-	default Stream<T> cycle(Monoid<T> m,int times){
-		return StreamUtils.cycle(times,AsStreamable.asStreamable(m.reduce(stream())));
+	default Monad<Stream<T>,T> cycle(Monoid<T> m,int times){
+		return monad(StreamUtils.cycle(times,AsStreamable.asStreamable(m.reduce(stream()))));
 	}
 	
 	
@@ -308,9 +342,9 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	 * 
 	 * {@code
 	 * 
-	 *  List<Optional<Integer>> list  = AsGenericMonad.asMonad(Stream.of(1,2))
+	 *  List<Optional<Integer>> list  = monad(Stream.of(1,2))
 											.cycle(Optional.class,2)
-											.collect(Collectors.toList());
+											.toList();
 											
 	    //is asList(Optional.of(1),Optional.of(2),Optional.of(1),Optional.of(2)	));
 	
@@ -323,8 +357,8 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	 * @param times
 	 * @return
 	 */
-	default <R> Stream<R> cycle(Class<R> monad,int times){
-		return (Stream)cycle(times).map(r -> new ComprehenderSelector().selectComprehender(monad).of(r));	
+	default <R> Monad<Stream<R>,R> cycle(Class<R> monad,int times){
+		return (Monad)cycle(times).map(r -> new ComprehenderSelector().selectComprehender(monad).of(r));	
 	}
 
 	/**
@@ -333,8 +367,8 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	 * @param predicate repeat while true
 	 * @return Repeating Stream
 	 */
-	default  Stream<T> cycleWhile(Predicate<T> predicate){
-		return LazySeq.of(StreamUtils.cycle(stream()).iterator()).takeWhile(predicate).stream();
+	default  Monad<Stream<T>,T> cycleWhile(Predicate<T> predicate){
+		return monad(LazySeq.of(StreamUtils.cycle(stream()).iterator()).takeWhile(predicate).stream());
 	}
 	/**
 	 * Generic zip function. E.g. Zipping a Stream and an Optional
@@ -349,8 +383,8 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	 * @param zipper Zipping function
 	 * @return Stream zipping two Monads
 	 */
-	default <MONAD2,S,R> Stream<R> zip(Monad<MONAD2,? extends S> second, BiFunction<? super T, ? super S, ? extends R> zipper){
-		return (Stream)LazySeq.of(stream().iterator()).zip(LazySeq.of(second.stream().iterator()), zipper).stream();
+	default <MONAD2,S,R> Monad<Stream<R>,R> zip(Monad<MONAD2,? extends S> second, BiFunction<? super T, ? super S, ? extends R> zipper){
+		return monad((Stream)LazySeq.of(stream().iterator()).zip(LazySeq.of(second.stream().iterator()), zipper).stream());
 	}
 	
 	/**
@@ -367,8 +401,8 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	 * @param zipper  Zip funciton
 	 * @return This monad zipped with a Stream
 	 */
-	default <S,R> Stream<R> zip(Stream<? extends S> second, BiFunction<? super T, ? super S, ? extends R> zipper){
-		return (Stream)LazySeq.of(stream().iterator()).zip(LazySeq.of(second.iterator()), zipper).stream();
+	default <S,R> Monad<Stream<R>,R> zip(Stream<? extends S> second, BiFunction<? super T, ? super S, ? extends R> zipper){
+		return monad((Stream)LazySeq.of(stream().iterator()).zip(LazySeq.of(second.iterator()), zipper).stream());
 	}
 	/**
 	 * Create a sliding view over this monad
@@ -376,8 +410,8 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	 * @param windowSize Size of sliding window
 	 * @return Stream with sliding view over monad
 	 */
-	default Stream<List<T>> sliding(int windowSize){
-		return (Stream)LazySeq.of(stream().iterator()).sliding(windowSize).stream();
+	default Monad<Stream<List<T>>,List<T>> sliding(int windowSize){
+		return monad((Stream)LazySeq.of(stream().iterator()).sliding(windowSize).stream());
 	}
 	
 	/**
@@ -398,22 +432,49 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	 * @param groupSize Size of each Group
 	 * @return Stream with elements grouped by size
 	 */
-	default Stream<List<T>> grouped(int groupSize){
-		return LazySeq.of(stream().iterator()).grouped(groupSize).stream();
+	default Monad<Stream<List<T>>,List<T>> grouped(int groupSize){
+		return monad(LazySeq.of(stream().iterator()).grouped(groupSize).stream());
 	}
+	/**
+	 * 
+	 * {@code 
+	 * assertTrue(monad(Stream.of(1,2,3,4)).startsWith(Arrays.asList(1,2,3)));
+	 * }
+	 * 
+	 * @param iterable
+	 * @return True if Monad starts with Iterable sequence of data
+	 */
 	default boolean startsWith(Iterable<T> iterable){
 		return LazySeq.of(stream().iterator()).startsWith(iterable);
 		
 	}
+	/**
+	 * 	{@code assertTrue(monad(Stream.of(1,2,3,4)).startsWith(Arrays.asList(1,2,3).iterator())) }
+
+	 * @param iterator
+	 * @return True if Monad starts with Iterators sequence of data
+	 */
 	default boolean startsWith(Iterator<T> iterator){
 		return LazySeq.of(stream().iterator()).startsWith(iterator);
 		
 	}
-	default Stream<T> distinct(){
-		return LazySeq.of(stream().iterator()).distinct().stream();
+	
+	
+	/*
+	 * Return the distinct Stream of elements
+	 * 
+	 * {@code
+	 * 	List<Integer> list = monad(Optional.of(Arrays.asList(1,2,2,2,5,6)))
+											.<Stream<Integer>,Integer>streamedMonad()
+											.distinct()
+											.collect(Collectors.toList());
+		}
+	 */
+	default Monad<Stream<T>,T> distinct(){
+		return monad(LazySeq.of(stream().iterator()).distinct().stream());
 	}
-	default Stream<T> scanLeft(Monoid<T> monoid){
-		return LazySeq.of(stream().iterator()).scan(monoid.zero(), monoid.reducer()).stream();
+	default Monad<Stream<T>,T> scanLeft(Monoid<T> monoid){
+		return AsGenericMonad.monad(LazySeq.of(stream().iterator()).scan(monoid.zero(), monoid.reducer()).stream());
 	}
 	
 	/**
@@ -474,6 +535,10 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	}
 	default  MONAD unwrap(){
 		return (MONAD)getMonad();
+	}
+	
+	default <R,NT> Monad<R,NT> parallel(){
+		return streamedMonad().parallel();
 	}
 	
 	/**
