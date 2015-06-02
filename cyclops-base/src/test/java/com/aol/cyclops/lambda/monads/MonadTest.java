@@ -2,6 +2,7 @@ package com.aol.cyclops.lambda.monads;
 
 import static com.aol.cyclops.lambda.api.AsGenericMonad.asMonad;
 import static com.aol.cyclops.lambda.api.AsGenericMonad.monad;
+
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
@@ -28,6 +29,8 @@ import org.junit.Test;
 import com.aol.cyclops.lambda.api.AsGenericMonad;
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Reducers;
+
+
 public class MonadTest {
 
 	@Test
@@ -128,7 +131,7 @@ public class MonadTest {
 								.map(getClass().getClassLoader()::getResource)
 								.peek(System.out::println)
 								.map(URL::getFile)
-								.<Stream<String>,String>liftAndbind(File::new)
+								.<Stream<String>,String>liftAndBind(File::new)
 								.toList();
 		
 		assertThat(result,equalTo(Arrays.asList("hello","world")));
@@ -137,7 +140,7 @@ public class MonadTest {
 	
 	
 	@Test
-	public void testSequence(){
+	public void testSequenceNative(){
 		
         List<Integer> list = IntStream.range(0, 100).boxed().collect(Collectors.toList());
         List<CompletableFuture<Integer>> futures = list
@@ -146,7 +149,7 @@ public class MonadTest {
                 .collect(Collectors.toList());
 
         
-        CompletableFuture<List<Integer>> futureList = Monad.sequence(CompletableFuture.class, futures);
+        CompletableFuture<List<Integer>> futureList = Monad.sequenceNative(CompletableFuture.class, futures);
    
         List<Integer> collected = futureList.join();
         assertThat(collected.size(),equalTo( list.size()));
@@ -156,6 +159,49 @@ public class MonadTest {
         }
         
 	}
+	
+	@Test
+	public void testTraverseNative(){
+		
+        List<Integer> list = IntStream.range(0, 100).boxed().collect(Collectors.toList());
+        List<CompletableFuture<Integer>> futures = list
+                .stream()
+                .map(x -> CompletableFuture.supplyAsync(() -> x))
+                .collect(Collectors.toList());
+
+       
+        CompletableFuture<List<String>> futureList = Monad.traverseNative(CompletableFuture.class, futures, (Integer i) -> "hello" +i);
+   
+        List<String> collected = futureList.join();
+        assertThat(collected.size(),equalTo( list.size()));
+        
+        for(Integer next : list){
+        	assertThat("hello"+list.get(next),equalTo( collected.get(next)));
+        }
+        
+	}
+	@Test
+	public void testSequence(){
+		
+        List<Integer> list = IntStream.range(0, 100).boxed().collect(Collectors.toList());
+        List<CompletableFuture<Integer>> futures = list
+                .stream()
+                .map(x -> CompletableFuture.supplyAsync(() -> x))
+                .collect(Collectors.toList());
+       
+        
+        Simplex<List<Integer>> futureList = Monad.sequence(CompletableFuture.class,futures).simplex();
+        
+ 
+        List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>monad().join();
+        assertThat(collected.size(),equalTo( list.size()));
+        
+        for(Integer next : list){
+        	assertThat(list.get(next),equalTo( collected.get(next)));
+        }
+        
+	}
+	
 	@Test
 	public void testTraverse(){
 		
@@ -165,10 +211,10 @@ public class MonadTest {
                 .map(x -> CompletableFuture.supplyAsync(() -> x))
                 .collect(Collectors.toList());
 
-        
-        CompletableFuture<List<String>> futureList = Monad.traverse(CompletableFuture.class, futures, (Integer i) -> "hello" +i);
+       
+        Simplex<List<String>> futureList = Monad.traverse(CompletableFuture.class, futures, (Integer i) -> "hello" +i).simplex();
    
-        List<String> collected = futureList.join();
+        List<String> collected = futureList.<CompletableFuture<List<String>>>monad().join();
         assertThat(collected.size(),equalTo( list.size()));
         
         for(Integer next : list){
@@ -306,9 +352,11 @@ public class MonadTest {
 	}
 	@Test
 	public void aggregate2(){
-		List<Integer> result = monad(Optional.of(Arrays.asList(1,2,3,4))).<Integer>aggregate(monad(CompletableFuture.completedFuture(5))).toList();
+		List<Integer> result = monad(Optional.of(Arrays.asList(1,2,3,4)))
+								.<Integer>aggregate(monad(CompletableFuture.completedFuture(5)))
+								.toList();
 		
-		assertThat(result,equalTo(Arrays.asList(Arrays.asList(1,2,3,4,5))));
+		assertThat(result,equalTo(Arrays.asList(1,2,3,4,5)));
 	}
 
 }

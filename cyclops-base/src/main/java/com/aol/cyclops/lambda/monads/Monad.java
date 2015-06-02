@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Spliterator;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -19,6 +20,8 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import lombok.experimental.Delegate;
+import lombok.Value;
 import lombok.val;
 
 import com.aol.cyclops.lambda.api.AsGenericMonad;
@@ -44,6 +47,7 @@ import com.nurkiewicz.lazyseq.LazySeq;
  * @param <T>
  * @param <MONAD>
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>, AsGenericMonad{
 	
 	
@@ -135,7 +139,7 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	 * @param fn flatMap function
 	 * @return flatMapped monad
 	 */
-	default <MONAD1,R> Monad<MONAD1,R> liftAndbind(Function<T,?> fn){
+	default <MONAD1,R> Monad<MONAD1,R> liftAndBind(Function<T,?> fn){
 		return withMonad((MONAD)new ComprehenderSelector().selectComprehender(
 				getMonad())
 				.liftAndFlatMap(getMonad(), fn));
@@ -289,8 +293,8 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 		if(unwrap() instanceof Stream)
 			return (Stream)unwrap();
 		Stream stream = Stream.of(1);
-		return this.<Stream,T>withMonad((Stream)new ComprehenderSelector().selectComprehender(
-				stream).executeflatMap(stream, i-> getMonad())).unwrap();
+		return (Stream)withMonad((Stream)new ComprehenderSelector().selectComprehender(
+				stream).executeflatMap(stream, i-> getMonad())).flatMap(Function.identity()).unwrap();
 		
 	}
 	/**
@@ -496,7 +500,7 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	 * @return Monad with a List
 	 */ 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <MONAD,MONAD_LIST> MONAD_LIST sequence(Class c,List<MONAD> seq){
+	public static <MONAD,MONAD_LIST> MONAD_LIST sequenceNative(Class c,List<MONAD> seq){
 		return (MONAD_LIST)AsGenericMonad.asMonad(new ComprehenderSelector().selectComprehender(c).of(1))
 								.flatMap(in-> 
 											AsGenericMonad.asMonad(seq.stream()).flatMap(m-> m).unwrap()
@@ -519,18 +523,65 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	 * @return Monad with a list
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <MONAD,MONAD_LIST,R> MONAD_LIST traverse(Class c,List<MONAD> seq, Function<?,R> fn){
+	public static <MONAD,MONAD_LIST,R> MONAD_LIST traverseNative(Class c,List<MONAD> seq, Function<?,R> fn){
 		return (MONAD_LIST)AsGenericMonad.asMonad(new ComprehenderSelector().selectComprehender(c).of(1))
 								.flatMap(in-> 
 											AsGenericMonad.asMonad(seq.stream()).flatMap(m-> m).flatMap((Function)fn).unwrap()
 											).unwrap();
 	}
 	
+	/**
+	 * Convert a list of Monads to a Monad with a List applying the supplied function in the process
+	 * 
+	 * {@code 
+	 *    List<CompletableFuture<Integer>> futures;
+
+        
+        Simplex<List<String>> futureList = Monad.traverse(CompletableFuture.class, futures, (Integer i) -> "hello" +i).simplex();
+        }
+
+	 * 
+	 * @param c Monad type to traverse
+	 * @param seq List of Monads
+	 * @param fn Function to apply 
+	 * @return Monad with a list
+	 */
+	public static <MONAD,R> Monad<MONAD,List<R>> traverse(Class c,List<?> seq, Function<?,R> fn){
+		return (Monad)asMonad(new ComprehenderSelector().selectComprehender(c).of(1))
+								.flatMap(in-> asMonad(seq.stream()).flatMap(m-> m).flatMap((Function)fn).unwrap()
+									);
+	}
+
+	
+	/**
+	 * Convert a list of Monads to a Monad with a List
+	 * 
+	 * {@code
+	 * List<CompletableFuture<Integer>> futures;
+
+        
+        Simplex<List<Integer>> futureList = Monad.sequence(CompletableFuture.class, futures).simplex();
+
+	  
+	  }
+	 * 
+	 * @param c The type of Monad to convert
+	 * @param seq List of monads to convert
+	 * @return Monad with a List
+	 */ 
+	public static <MONAD,T>  Monad<MONAD,T> sequence(Class c, List<?> seq){
+		return (Monad)AsGenericMonad.asMonad(new ComprehenderSelector().selectComprehender(c).of(1))
+				.flatMap(in-> asMonad(seq.stream()).flatMap(m-> m).unwrap()
+							);
+	}
 	default <R> Monad<MONAD,R> aggregate(Monad<?,?> next){
 		Stream concat = StreamUtils.concat(stream(),next.stream() );
 		
 		return (Monad)withMonad(new ComprehenderSelector().selectComprehender(
-				unwrap()).of(monad(concat).bind(Function.identity()).collect(Collectors.toList()))).flatMap(Function.identity());
+				unwrap()).of(monad(concat)
+						.flatMap(Function.identity())
+						.toList()))
+						.bind(Function.identity() );
 	}
 	
 	/**
@@ -542,7 +593,7 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	default <R extends MONAD,NT> Monad<R,NT> flatMap(Function<T,R> fn) {
 		return (Monad)bind(fn);
 	}
-	default  MONAD unwrap(){
+	default   MONAD unwrap(){
 		return (MONAD)getMonad();
 	}
 	
@@ -574,6 +625,42 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 		 Monad r = this.<Stream,T>withMonad((Stream)new ComprehenderSelector().selectComprehender(
 				stream).executeflatMap(stream, i-> getMonad()));
 		 return r.flatMap(e->e);
+	}
+	
+	static interface FlatMap<T>{
+		public  <R1, NT> Monad<R1, NT> flatMap(Function<T, R1> fn);
+	}
+	/**
+	 * @return Simplex view on wrapped Monad, with a single typed parameter - which is the datatype
+	 * ultimately being handled by the Monad.
+	 * 
+	 * E.g.
+	 * {@ code 
+	 * Monad<Stream<String>,String> becomes
+	 * Simplex<String>
+	 * }
+	 * To get back to Stream<String> use
+	 * 
+	 * {@code
+	 *   
+	 * simplex.<Stream<String>>.monad();  
+	 * }
+	 * 
+	 */
+	default <X> Simplex<X> simplex(){
+		return new Simplex<X>(){
+			@Delegate(excludes=FlatMap.class)
+			Monad<Object,X> m = (Monad)Monad.this;
+
+			public  <R1, NT> Monad<R1, NT> flatMap(Function<X, R1> fn) {
+				return m.flatMap(fn);
+			}
+			
+			public <R> R monad(){
+				return (R)unwrap();
+			}
+			
+		};
 	}
 	
 
