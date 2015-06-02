@@ -19,6 +19,8 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import lombok.val;
+
 import com.aol.cyclops.lambda.api.AsGenericMonad;
 import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;
@@ -522,6 +524,13 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 								.flatMap(in-> 
 											AsGenericMonad.asMonad(seq.stream()).flatMap(m-> m).flatMap((Function)fn).unwrap()
 											).unwrap();
+	}
+	
+	default <R> Monad<MONAD,R> aggregate(Monad<?,?> next){
+		Stream concat = StreamUtils.concat(stream(),next.stream() );
+		
+		return (Monad)withMonad(new ComprehenderSelector().selectComprehender(
+				unwrap()).of(monad(concat).bind(Function.identity()).collect(Collectors.toList()))).flatMap(Function.identity());
 	}
 	
 	/**

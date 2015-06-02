@@ -297,5 +297,18 @@ public class MonadTest {
 		 
 		assertThat(result,equalTo(Arrays.asList(0,1)));
 	}
+	
+	@Test
+	public void aggregate(){
+		List<Integer> result = monad(Stream.of(1,2,3,4)).<Integer>aggregate(monad(Optional.of(5))).toList();
+		
+		assertThat(result,equalTo(Arrays.asList(1,2,3,4,5)));
+	}
+	@Test
+	public void aggregate2(){
+		List<Integer> result = monad(Optional.of(Arrays.asList(1,2,3,4))).<Integer>aggregate(monad(CompletableFuture.completedFuture(5))).toList();
+		
+		assertThat(result,equalTo(Arrays.asList(Arrays.asList(1,2,3,4,5))));
+	}
 
 }

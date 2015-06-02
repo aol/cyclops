@@ -17,6 +17,7 @@ import java.util.stream.StreamSupport;
 import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Streamable;
+import com.nurkiewicz.lazyseq.LazySeq;
 
 public interface StreamUtils {
 	/**
@@ -82,6 +83,21 @@ public interface StreamUtils {
 	public static <U> Stream<U> stream(Iterator<U> it){
 		return StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED),
 					false);
+	}
+	
+	
+	public static <U> Stream<U> concat(Object o, Stream<U> stream){
+		Stream<U> first = null;
+		if(o instanceof Stream){
+			first = (Stream)o;
+		}else if(o instanceof Iterable){
+			first = stream( (Iterable)o);
+		}
+		else{
+			first = Stream.of((U)o);
+		}
+		return Stream.concat(first, stream);
+		
 	}
 	/**
 	 * Create a stream from a map
