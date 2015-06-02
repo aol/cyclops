@@ -2,17 +2,23 @@ package com.aol.cyclops.streams;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import lombok.AllArgsConstructor;
+import lombok.Value;
 
 import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;
@@ -142,6 +148,50 @@ public interface StreamUtils {
 		
 	}
 	
+	public static <T,A,R> List<R> collect(Stream<T> stream, Stream<Collector> collectors){
+		return collect(stream, AsStreamable.<Collector>asStreamable(collectors));
+	}
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static <T,A,R> List<R> collect(Stream<T> stream, Iterable<Collector> collectors){
+		return collect(stream, AsStreamable.<Collector>asStreamable(collectors));
+	}
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static <T> List collect(Stream<T> stream, Streamable<Collector> collectors){
+		
+		
+		final Supplier supplier =  ()-> collectors.stream().map(c->c.supplier().get()).collect(Collectors.toList());
+		final BiConsumer accumulator = (acc,next) -> {  LazySeq.of(collectors.stream().iterator()).<Object,Pair<Collector,Object>>zip(LazySeq.of((List)acc),(a,b)->new Pair<Collector,Object>(a,b))
+													
+													.forEach( t -> t.v1().accumulator().accept(t.v2(),next));
+		};
+		final BinaryOperator combiner = (t1,t2)->  {
+			Iterator t1It = ((Iterable)t1).iterator();
+			Iterator t2It =  ((Iterable)t2).iterator();
+			return collectors.stream().map(c->c.combiner().apply(t1It.next(),t2It.next())).collect(Collectors.toList());
+		};
+		Function finisher = t1 -> {
+			Iterator t1It = ((Iterable)t1).iterator();
+			return collectors.stream().map(c->c.finisher().apply(t1It.next())).collect(Collectors.toList());
+		};
+		 Collector col = Collector.of( supplier,accumulator , combiner,finisher);
+			
+		 return (List)stream.collect(col);
+	}
 	
+	@Value @AllArgsConstructor
+	public static class Pair<T1,T2>{
+		T1 v1;
+		T2 v2;
+		public Pair(List list){
+			v1 = (T1)list.get(0);
+			v2 = (T2)list.get(1);
+		}
+		public T1 v1(){
+			return v1;
+		}
+		public T2 v2(){
+			return v2;
+		}
+	}
 	
 }

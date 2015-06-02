@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -18,6 +19,10 @@ import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.streams.StreamUtils;
 
+import static java.util.stream.Collectors.averagingInt;
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.mapping;
 public class StreamUtilsTest implements StreamUtils {
 
 	@Test
@@ -79,6 +84,12 @@ public class StreamUtilsTest implements StreamUtils {
 		 
 		assertThat(result,equalTo(Arrays.asList(10,24)));
 	}
-	
+	@Test
+    public void testCollectors() {
+		List result = StreamUtils.collect(Stream.of(1,2,3),Arrays.asList(Collectors.toList(),Collectors.summingInt(Integer::intValue),Collectors.averagingInt(Integer::intValue)));
+		
+		System.out.println(result);
+        
+    }
 
 }
