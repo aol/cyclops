@@ -111,7 +111,7 @@ public class SuccessTest {
 
 	@Test
 	public void testToStream() {
-		assertThat(success.toStream().collect(Collectors.toList()),
+		assertThat(success.stream().collect(Collectors.toList()),
 				equalTo(Stream.of(value).collect(Collectors.toList())));
 	}
 

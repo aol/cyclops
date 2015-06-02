@@ -50,8 +50,8 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 * 
 	 * @return Case Class style Pattern Matching Builder
 	 */
-	public final _Case<X> whenValues(){
-		_Case cse = new _Case(this.cse.getPatternMatcher());
+	public final CheckTypeAndValues<X> whenValues(){
+		CheckTypeAndValues cse = new CheckTypeAndValues(this.cse.getPatternMatcher());
 		return cse;
 	}
 	/**
@@ -109,8 +109,8 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 * @param fn Function that accepts the Case for Case classes and returns the output of that builder
 	 * @return Pattern Matching Builder
 	 */
-	public final MatchingInstance<? extends Object,X> whenValues(Function<_Case<? extends Object>,MatchingInstance<? extends Object,X>> fn){
-		_Case cse = new _Case(new PatternMatcher());
+	public final MatchingInstance<? extends Object,X> whenValues(Function<CheckTypeAndValues<? extends Object>,MatchingInstance<? extends Object,X>> fn){
+		CheckTypeAndValues cse = new CheckTypeAndValues(new PatternMatcher());
 		return fn.apply(cse);
 		
 	}

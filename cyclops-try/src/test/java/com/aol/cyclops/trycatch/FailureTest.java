@@ -112,7 +112,7 @@ public class FailureTest {
 
 	@Test
 	public void testToStream() {
-		assertThat(failure.toStream().collect(Collectors.toList()),
+		assertThat(failure.stream().collect(Collectors.toList()),
 				equalTo(Stream.of().collect(Collectors.toList())));
 	}
 

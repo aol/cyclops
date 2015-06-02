@@ -76,7 +76,7 @@ public class TryComprehender implements Comprehender<Try> {
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public Object handleReturnForCrossTypeFlatMap(Comprehender comp,Try apply){
+	public Object resolveForCrossTypeFlatMap(Comprehender comp,Try apply){
 		
 		return apply.matchType(c->c.isType( (Success s) -> comp.of(apply.get()) )
 								   .isType( (Failure f) -> comp.empty()));

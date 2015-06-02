@@ -358,5 +358,13 @@ public class MonadTest {
 		
 		assertThat(result,equalTo(Arrays.asList(1,2,3,4,5)));
 	}
+	@Test
+	public void aggregate3(){
+		List<Integer> result = monad(Optional.of(Arrays.asList(1,2,3,4)))
+								.<Integer>aggregate(monad(CompletableFuture.supplyAsync(()->Arrays.asList(5,6))))
+								.toList();
+		
+		assertThat(result,equalTo(Arrays.asList(1,2,3,4,5,6)));
+	}
 
 }

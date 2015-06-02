@@ -22,7 +22,7 @@ import com.nurkiewicz.lazyseq.LazySeq;
  * @param <X> Return type from the Pattern Matching expression
  */
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
-public class _Case<X> extends CaseBeingBuilt {
+public class CheckTypeAndValues<X> extends CaseBeingBuilt {
 	// T : user input (type provided to match)
 	// X : match response (thenApply)
 	// R : extractor response

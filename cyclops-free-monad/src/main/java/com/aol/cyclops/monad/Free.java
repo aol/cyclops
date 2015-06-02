@@ -7,11 +7,10 @@ import static fj.data.Either.right;
 import java.util.function.Function;
 
 import lombok.Value;
-import lombok.val;
 
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.matcher.Matchable;
-import com.aol.cyclops.matcher.builders.SimplestCase;
+import com.aol.cyclops.matcher.builders.CheckType;
 import com.aol.cyclops.trampoline.Trampoline;
 
 import fj.data.Either;
@@ -150,7 +149,7 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 		}
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		private <T1> Function<SimplestCase<? super Either>,SimplestCase<? super Either>> whenReturnSuspendOrGoSub(Functor<T1> f){
+		private <T1> Function<CheckType<? super Either>,CheckType<? super Either>> whenReturnSuspendOrGoSub(Functor<T1> f){
 			
 			return  c ->  c.isType((Return<A,F> r) -> right(next.apply(r.result)))
 							.isType( (Suspend<A,F> s) -> left((f.map(o -> ((Free) o).flatMap(next)))))

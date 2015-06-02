@@ -21,7 +21,7 @@ public class Matching {
 	 * @return Pattern Mather Builder
 	 */
 	public static final <T,X> MatchingInstance<T,X> of(Cases<T,X,? extends Function<T,X>> cases){
-		return new MatchingInstance(new _Case(new PatternMatcher().withCases(cases)));
+		return new MatchingInstance(new CheckTypeAndValues(new PatternMatcher().withCases(cases)));
 	}
 	
 	/**
@@ -41,8 +41,8 @@ public class Matching {
 	 * 
 	 * @return Case Class style Pattern Matching Builder
 	 */
-	public static final<USER_VALUE> _Case<USER_VALUE> whenValues(){
-		_Case cse = new  _Case(new PatternMatcher());
+	public static final<USER_VALUE> CheckTypeAndValues<USER_VALUE> whenValues(){
+		CheckTypeAndValues cse = new  CheckTypeAndValues(new PatternMatcher());
 		return cse;
 	}
 	/**
@@ -104,8 +104,8 @@ public class Matching {
 	 * @param fn Function that accepts the Case for Case classes and returns the output of that builder
 	 * @return Pattern Matching Builder
 	 */
-	public static final<X> MatchingInstance<? extends Object,X> when(Function<_Case<? extends Object>,MatchingInstance<? extends Object,X>> fn){
-		_Case cse = new _Case(new PatternMatcher());
+	public static final<X> MatchingInstance<? extends Object,X> when(Function<CheckTypeAndValues<? extends Object>,MatchingInstance<? extends Object,X>> fn){
+		CheckTypeAndValues cse = new CheckTypeAndValues(new PatternMatcher());
 		return fn.apply(cse);
 		
 	}

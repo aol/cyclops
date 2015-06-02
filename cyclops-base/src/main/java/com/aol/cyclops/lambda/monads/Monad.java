@@ -7,6 +7,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -377,6 +378,15 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 		return monad(LazySeq.of(StreamUtils.cycle(stream()).iterator()).takeWhile(predicate).stream());
 	}
 	/**
+	 * Repeat in a Stream until specified predicate holds
+	 * 
+	 * @param predicate repeat while true
+	 * @return Repeating Stream
+	 */
+	default  Monad<Stream<T>,T> cycleUntil(Predicate<T> predicate){
+		return monad(LazySeq.of(StreamUtils.cycle(stream()).iterator()).takeWhile(predicate.negate()).stream());
+	}
+	/**
 	 * Generic zip function. E.g. Zipping a Stream and an Optional
 	 * 
 	 * {@code
@@ -482,6 +492,32 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	default Monad<Stream<T>,T> scanLeft(Monoid<T> monoid){
 		return AsGenericMonad.monad(LazySeq.of(stream().iterator()).scan(monoid.zero(), monoid.reducer()).stream());
 	}
+	
+	default Monad<Stream<T>,T> sorted(){
+		return monad(stream().sorted());
+	}
+	default Monad<Stream<T>,T> sorted(Comparator<T > c){
+		return monad(stream().sorted(c));   
+	}
+	default Monad<Stream<T>,T> skip(int num){
+		return monad(stream().skip(num));
+	}
+	default Monad<Stream<T>,T> skipWhile(Predicate<T> p){
+		return monad(LazySeq.of(stream().iterator()).dropWhile(p).stream());
+	}
+	default Monad<Stream<T>,T> skipUntil(Predicate<T> p){
+		return monad(LazySeq.of(stream().iterator()).dropWhile(p.negate()).stream());
+	}
+	default Monad<Stream<T>,T> limit(int num){
+		return monad(stream().limit(num));
+	}
+	default Monad<Stream<T>,T> limitWhile(Predicate<T> p){
+		return monad(LazySeq.of(stream().iterator()).takeWhile(p).stream());
+	}
+	default Monad<Stream<T>,T> limiUntil(Predicate<T> p){
+		return monad(LazySeq.of(stream().iterator()).takeWhile(p.negate()).stream());
+	}
+	
 	
 	/**
 	 * Convert a list of Monads to a Monad with a List

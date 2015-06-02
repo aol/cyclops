@@ -8,8 +8,8 @@ import com.aol.cyclops.matcher.MatchableTest.MyCase;
 import com.aol.cyclops.matcher.builders.Matching;
 import com.aol.cyclops.matcher.builders.MatchingInstance;
 import com.aol.cyclops.matcher.builders.PatternMatcher;
-import com.aol.cyclops.matcher.builders.SimplestCase;
-import com.aol.cyclops.matcher.builders._Case;
+import com.aol.cyclops.matcher.builders.CheckType;
+import com.aol.cyclops.matcher.builders.CheckTypeAndValues;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.matcher.builders._Simpler_Case;
 
@@ -73,8 +73,8 @@ public interface Matchable{
 	 * @param fn Function to build the matching expression
 	 * @return Matching result
 	 */
-	default <R> R matchType(Function<SimplestCase<? super R>,SimplestCase<? super R>> fn){
-		return new MatchingInstance<Object,R>(fn.apply( new SimplestCase<>( new PatternMatcher()))).match(getMatchable()).get();
+	default <R> R matchType(Function<CheckType<? super R>,CheckType<? super R>> fn){
+		return new MatchingInstance<Object,R>(fn.apply( new CheckType<>( new PatternMatcher()))).match(getMatchable()).get();
 	} 
 	/**
 	 * Match against this matchable using simple matching interface
@@ -92,8 +92,8 @@ public interface Matchable{
 	 * @param defaultValue Default value if matching expression does not match
 	 * @return Matching result
 	 */
-	default <R> R matchType(Function<SimplestCase<? super R>,SimplestCase<? super R>> fn,R defaultValue){
-		return new MatchingInstance<Object,R>(fn.apply( new SimplestCase<>( new PatternMatcher()))).match(getMatchable()).orElse(defaultValue);
+	default <R> R matchType(Function<CheckType<? super R>,CheckType<? super R>> fn,R defaultValue){
+		return new MatchingInstance<Object,R>(fn.apply( new CheckType<>( new PatternMatcher()))).match(getMatchable()).orElse(defaultValue);
 	}
 	/**
 	 * Match against this matchable using algebraic matching interface (each field can
@@ -103,7 +103,7 @@ public interface Matchable{
 	 * @param fn Function to build the matching expression
 	 * @return Matching result
 	 */
-	default <R,I> R _match(Function<_Case<I>,MatchingInstance> fn){
+	default <R,I> R _match(Function<CheckTypeAndValues<I>,MatchingInstance> fn){
 		return (R)fn.apply( Matching.whenValues()).match(getMatchable()).get();
 	}
 	
@@ -116,7 +116,7 @@ public interface Matchable{
 	 * @param defaultValue Default value if matching expression does not match
 	 * @return Matching result
 	 */
-	default <R,I> R _match(Function<_Case<I>,MatchingInstance> fn,R defaultValue){
+	default <R,I> R _match(Function<CheckTypeAndValues<I>,MatchingInstance> fn,R defaultValue){
 		return (R)fn.apply( Matching.whenValues()).match(getMatchable()).orElse(defaultValue);
 	}
 }

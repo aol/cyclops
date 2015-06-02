@@ -49,7 +49,7 @@ public class SwitchComprehender implements Comprehender<Switch>{
 		return Switch.class;
 	}
 	@Override
-	public Object handleReturnForCrossTypeFlatMap(Comprehender comp,Switch apply){
+	public Object resolveForCrossTypeFlatMap(Comprehender comp,Switch apply){
 		return apply.matchType( c -> c.isType((Enabled e)-> comp.of(e.get()))
 									 .isType( (Disabled d) -> comp.empty()));
 	}

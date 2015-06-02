@@ -69,9 +69,9 @@ public interface Comprehender<T> {
 	 * @return flatMap applied and return type converted back to host type, non-Monadic return values lifted into a Monadic form
 	 */
 	default T liftAndFlatMap(T t, Function fn){
-		Function fn2 = input ->liftObject(this,fn.apply(input));
-		return executeflatMap(t,fn2);
-	//	return flatMap(t,input -> unwrapOtherMonadTypes(this,liftObject(this,fn.apply(input))));
+		
+		return executeflatMap(t,input ->liftObject(this,fn.apply(input)));
+	
 	}
 	/**
 	 * Wrapper around flatMap
@@ -126,11 +126,20 @@ public interface Comprehender<T> {
 		}
 
 		return (T) new ComprehenderSelector().selectComprehender(apply)
-				.handleReturnForCrossTypeFlatMap(comp,apply);
+				.resolveForCrossTypeFlatMap(comp,apply);
 
 	}
 	
-	default Object handleReturnForCrossTypeFlatMap(Comprehender comp,T apply){
+	/**
+	 * Answers the question how should this type behave when returned in a flatMap function
+	 * by another type? For example - Optional uses comp.of(opt.get()) when a value is present
+	 * and comp.empty() when no value is present.
+	 * 
+	 * @param comp
+	 * @param apply
+	 * @return
+	 */
+	default Object resolveForCrossTypeFlatMap(Comprehender comp,T apply){
 		return comp.of(apply);
 	}
 	
