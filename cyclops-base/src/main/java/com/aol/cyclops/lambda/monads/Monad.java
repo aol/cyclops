@@ -1,6 +1,9 @@
 package com.aol.cyclops.lambda.monads;
 
 import static com.aol.cyclops.lambda.api.AsGenericMonad.asMonad;
+import static com.aol.cyclops.lambda.api.AsGenericMonad.monad;
+import static org.hamcrest.Matchers.hasItems;
+import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -367,12 +370,36 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	default <S,R> Stream<R> zip(Stream<? extends S> second, BiFunction<? super T, ? super S, ? extends R> zipper){
 		return (Stream)LazySeq.of(stream().iterator()).zip(LazySeq.of(second.iterator()), zipper).stream();
 	}
+	/**
+	 * Create a sliding view over this monad
+	 * 
+	 * @param windowSize Size of sliding window
+	 * @return Stream with sliding view over monad
+	 */
 	default Stream<List<T>> sliding(int windowSize){
 		return (Stream)LazySeq.of(stream().iterator()).sliding(windowSize).stream();
 	}
 	
+	/**
+	 * Group elements in a Monad into a Stream
+	 * 
+	 * {@code
+	 * 
+	 * List<List<Integer>> list = monad(Stream.of(1,2,3,4,5,6))
+	 * 									.grouped(3)
+	 * 									.collect(Collectors.toList());
+		
+		
+		assertThat(list.get(0),hasItems(1,2,3));
+		assertThat(list.get(1),hasItems(4,5,6));
+		
+		}
+	 * 
+	 * @param groupSize Size of each Group
+	 * @return Stream with elements grouped by size
+	 */
 	default Stream<List<T>> grouped(int groupSize){
-		return LazySeq.of(stream().iterator()).sliding(groupSize).stream();
+		return LazySeq.of(stream().iterator()).grouped(groupSize).stream();
 	}
 	default boolean startsWith(Iterable<T> iterable){
 		return LazySeq.of(stream().iterator()).startsWith(iterable);
@@ -447,6 +474,32 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	}
 	default  MONAD unwrap(){
 		return (MONAD)getMonad();
+	}
+	
+	/**
+	 * Transform the contents of a Monad into a Monad wrapping a Stream e.g.
+	 * Turn an Optional<List<Integer>> into Stream<Integer>
+	 * 
+	 * {@code
+	 * List<List<Integer>> list = monad(Optional.of(Arrays.asList(1,2,3,4,5,6)))
+											.<Stream<Integer>,Integer>streamedMonad()
+											.grouped(3)
+											.collect(Collectors.toList());
+		
+		
+		assertThat(list.get(0),hasItems(1,2,3));
+		assertThat(list.get(1),hasItems(4,5,6));
+	 * 
+	 * }
+	 * 
+	 * 
+	 * @return A Monad that wraps a Stream
+	 */
+	default <R,NT> Monad<R,NT> streamedMonad(){
+		Stream stream = Stream.of(1);
+		 Monad r = this.<Stream,T>withMonad((Stream)new ComprehenderSelector().selectComprehender(
+				stream).executeflatMap(stream, i-> getMonad()));
+		 return r.flatMap(e->e);
 	}
 	
 

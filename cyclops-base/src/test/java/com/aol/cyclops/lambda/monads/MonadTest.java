@@ -211,5 +211,23 @@ public class MonadTest {
 		assertThat(list.get(0),hasItems(1,2));
 		assertThat(list.get(1),hasItems(2,3));
 	}
+	@Test
+	public void grouped(){
+		List<List<Integer>> list = monad(Stream.of(1,2,3,4,5,6)).grouped(3).collect(Collectors.toList());
+		
+		
+		assertThat(list.get(0),hasItems(1,2,3));
+		assertThat(list.get(1),hasItems(4,5,6));
+	}
+	@Test
+	public void groupedOptional(){
+		List<List<Integer>> list = monad(Optional.of(Arrays.asList(1,2,3,4,5,6)))
+											.<Stream<Integer>,Integer>streamedMonad()
+											.grouped(3).collect(Collectors.toList());
+		
+		
+		assertThat(list.get(0),hasItems(1,2,3));
+		assertThat(list.get(1),hasItems(4,5,6));
+	}
 
 }
