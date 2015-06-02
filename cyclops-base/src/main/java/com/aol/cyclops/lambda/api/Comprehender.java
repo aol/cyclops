@@ -69,7 +69,9 @@ public interface Comprehender<T> {
 	 * @return flatMap applied and return type converted back to host type, non-Monadic return values lifted into a Monadic form
 	 */
 	default T liftAndFlatMap(T t, Function fn){
-		return flatMap(t,input -> unwrapOtherMonadTypes(this,liftObject(this,fn.apply(input))));
+		Function fn2 = input ->liftObject(this,fn.apply(input));
+		return executeflatMap(t,fn2);
+	//	return flatMap(t,input -> unwrapOtherMonadTypes(this,liftObject(this,fn.apply(input))));
 	}
 	/**
 	 * Wrapper around flatMap

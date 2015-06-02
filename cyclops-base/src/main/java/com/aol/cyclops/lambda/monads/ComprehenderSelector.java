@@ -12,7 +12,15 @@ import com.aol.cyclops.lambda.api.Comprehender;
 public class ComprehenderSelector {
 
 	private final Comprehenders comprehenders = new Comprehenders();
-	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Comprehender selectComprehender(Class structure) {
+		
+		return comprehenders.getRegisteredComprehenders().entrySet().stream()
+				.filter(e -> e.getKey().isAssignableFrom(structure))
+				.map(e->e.getValue())
+				.findFirst()
+				.orElse(new InvokeDynamicComprehender(Optional.of(structure)));
+	}
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Comprehender selectComprehender(Object structure) {
 		

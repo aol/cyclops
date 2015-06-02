@@ -1,6 +1,7 @@
 package com.aol.cyclops.comprehensions.comprehenders;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -23,7 +24,9 @@ public class StreamComprehender implements Comprehender<Stream> {
 	public Object map(Stream t, Function fn) {
 		return t.map(fn);
 	}
-
+	public Stream executeflatMap(Stream t, Function fn){
+		return flatMap(t,input -> unwrapOtherMonadTypes(this,fn.apply(input)));
+	}
 	@Override
 	public Stream flatMap(Stream t, Function fn) {
 		return t.flatMap(fn);
@@ -41,7 +44,13 @@ public class StreamComprehender implements Comprehender<Stream> {
 	public Stream of(Object o) {
 		return Stream.of(o);
 	}
-	
+	static <T> T unwrapOtherMonadTypes(Comprehender<T> comp,Object apply){
+		if(apply instanceof Collection){
+			return (T)((Collection)apply).stream();
+		}
+		return Comprehender.unwrapOtherMonadTypes(comp,apply);
+		
+	}
 	
 
 	

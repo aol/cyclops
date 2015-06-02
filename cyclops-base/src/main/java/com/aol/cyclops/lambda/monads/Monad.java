@@ -1,8 +1,13 @@
 package com.aol.cyclops.lambda.monads;
 
+import static com.aol.cyclops.lambda.api.AsGenericMonad.asMonad;
+
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -12,10 +17,10 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.lambda.api.AsGenericMonad;
 import com.aol.cyclops.lambda.api.AsStreamable;
-import com.aol.cyclops.lambda.api.Comprehender;
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Streamable;
 import com.aol.cyclops.streams.StreamUtils;
+import com.nurkiewicz.lazyseq.LazySeq;
 
 
 
@@ -183,6 +188,25 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	/**
 	 * 
 	 * 
+	 * @param reducer Use supplied Monoid to reduce values starting via foldLeft
+	 * @return Reduced result
+	 */
+	default T foldLeft(Monoid<T> reducer){
+		return reduce(reducer);
+	}
+	/**
+	 *  Attempt to map this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
+	 * Then use Monoid to reduce values
+	 * 
+	 * @param reducer Monoid to reduce values
+	 * @return Reduce result
+	 */
+	default <T> T foldLeftMapToType(Monoid<T> reducer){
+		return reducer.mapReduce(stream());
+	}
+	/**
+	 * 
+	 * 
 	 * @param reducer Use supplied Monoid to reduce values starting via foldRight
 	 * @return Reduced result
 	 */
@@ -196,7 +220,7 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	 * @param reducer Monoid to reduce values
 	 * @return Reduce result
 	 */
-	default T foldRightMapToType(Monoid<T> reducer){
+	default <T> T foldRightMapToType(Monoid<T> reducer){
 		return reducer.mapReduce(StreamUtils.reverse(stream()));
 	}
 	/**
@@ -223,6 +247,8 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	 * Otherwise we flatMap the underlying monad to a Stream type
 	 */
 	default Stream<T> stream(){
+		if(unwrap() instanceof Stream)
+			return (Stream)unwrap();
 		Stream stream = Stream.of(1);
 		return this.<Stream,T>withMonad((Stream)new ComprehenderSelector().selectComprehender(
 				stream).executeflatMap(stream, i-> getMonad())).unwrap();
@@ -256,6 +282,13 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	/**
 	 * Convert to a Stream with the result of a reduction operation repeated specified times
 	 * 
+	 * {@code 
+	  		List<Integer> list = AsGenericMonad,asMonad(Stream.of(1,2,2))
+											.cycle(Reducers.toCountInt(),3)
+											.collect(Collectors.toList());
+		//is asList(3,3,3);
+	  }
+	 * 
 	 * @param m Monoid to be used in reduction
 	 * @param times Number of times value should be repeated
 	 * @return Stream with reduced values repeated
@@ -264,26 +297,145 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 		return StreamUtils.cycle(times,AsStreamable.asStreamable(m.reduce(stream())));
 	}
 	
-	default <R> Stream<R> cycle(Comprehender<R> c,int times){
-		return cycle(times).map(r -> c.of(r));	
+	
+	/**
+	 * 
+	 * Convert to a Stream, repeating the resulting structure specified times and
+	 * lifting all values to the specified Monad type
+	 * 
+	 * {@code
+	 * 
+	 *  List<Optional<Integer>> list  = AsGenericMonad.asMonad(Stream.of(1,2))
+											.cycle(Optional.class,2)
+											.collect(Collectors.toList());
+											
+	    //is asList(Optional.of(1),Optional.of(2),Optional.of(1),Optional.of(2)	));
+	
+	 * 
+	 * }
+	 * 
+	 * 
+	 * 
+	 * @param monad
+	 * @param times
+	 * @return
+	 */
+	default <R> Stream<R> cycle(Class<R> monad,int times){
+		return (Stream)cycle(times).map(r -> new ComprehenderSelector().selectComprehender(monad).of(r));	
 	}
 
 	/**
+	 * Repeat in a Stream while specified predicate holds
+	 * 
+	 * @param predicate repeat while true
+	 * @return Repeating Stream
+	 */
+	default  Stream<T> cycleWhile(Predicate<T> predicate){
+		return LazySeq.of(StreamUtils.cycle(stream()).iterator()).takeWhile(predicate).stream();
+	}
+	/**
+	 * Generic zip function. E.g. Zipping a Stream and an Optional
+	 * 
+	 * {@code
+	 * Stream<List<Integer>> zipped = asMonad(Stream.of(1,2,3)).zip(asMonad(Optional.of(2)), 
+													(a,b) -> Arrays.asList(a,b));
+	 * // [[1,2]]
+	 * }
+	 * 
+	 * @param second Monad to zip with
+	 * @param zipper Zipping function
+	 * @return Stream zipping two Monads
+	 */
+	default <MONAD2,S,R> Stream<R> zip(Monad<MONAD2,? extends S> second, BiFunction<? super T, ? super S, ? extends R> zipper){
+		return (Stream)LazySeq.of(stream().iterator()).zip(LazySeq.of(second.stream().iterator()), zipper).stream();
+	}
+	
+	/**
+	 * Zip this Monad with a Stream
+	 * 
+	 * {@code 
+	 * Stream<List<Integer>> zipped = asMonad(Stream.of(1,2,3)).zip(Stream.of(2,3,4), 
+													(a,b) -> Arrays.asList(a,b));
+													
+		//[[1,2][2,3][3,4]]											
+	 * }
+	 * 
+	 * @param second Stream to zip with
+	 * @param zipper  Zip funciton
+	 * @return This monad zipped with a Stream
+	 */
+	default <S,R> Stream<R> zip(Stream<? extends S> second, BiFunction<? super T, ? super S, ? extends R> zipper){
+		return (Stream)LazySeq.of(stream().iterator()).zip(LazySeq.of(second.iterator()), zipper).stream();
+	}
+	default Stream<List<T>> sliding(int windowSize){
+		return (Stream)LazySeq.of(stream().iterator()).sliding(windowSize).stream();
+	}
+	
+	default Stream<List<T>> grouped(int groupSize){
+		return LazySeq.of(stream().iterator()).sliding(groupSize).stream();
+	}
+	default boolean startsWith(Iterable<T> iterable){
+		return LazySeq.of(stream().iterator()).startsWith(iterable);
+		
+	}
+	default boolean startsWith(Iterator<T> iterator){
+		return LazySeq.of(stream().iterator()).startsWith(iterator);
+		
+	}
+	default Stream<T> distinct(){
+		return LazySeq.of(stream().iterator()).distinct().stream();
+	}
+	default Stream<T> scanLeft(Monoid<T> monoid){
+		return LazySeq.of(stream().iterator()).scan(monoid.zero(), monoid.reducer()).stream();
+	}
+	
+	/**
 	 * Convert a list of Monads to a Monad with a List
 	 * 
-	 * @param seq List to convert
+	 * {@code
+	 * List<CompletableFuture<Integer>> futures;
+
+        
+        CompletableFuture<List<Integer>> futureList = Monad.sequence(CompletableFuture.class, futures);
+
+	  
+	  }
+	 * 
+	 * @param c The type of Monad to convert
+	 * @param seq List of monads to convert
 	 * @return Monad with a List
-	 */ 
-	default <T> Monad<MONAD,List<T>> sequence(List<Monad<MONAD,T>> seq){
-		return (Monad)new ComprehenderSelector().selectComprehender(getMonad()).of(AsGenericMonad.asMonad(seq.stream()).flatMap(m-> m));
+	 */ 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static <MONAD,MONAD_LIST> MONAD_LIST sequence(Class c,List<MONAD> seq){
+		return (MONAD_LIST)AsGenericMonad.asMonad(new ComprehenderSelector().selectComprehender(c).of(1))
+								.flatMap(in-> 
+											AsGenericMonad.asMonad(seq.stream()).flatMap(m-> m).unwrap()
+											).unwrap();
 	}
-	default <T,R> Monad<MONAD,List<T>> traverse(List<Monad<MONAD,T>> seq, Function<T,Monad<MONAD,R>> fn){
-		
-		return (Monad)new ComprehenderSelector().selectComprehender(getMonad())
-							.of(AsGenericMonad.asMonad(seq.stream())
-							.flatMap(m-> AsGenericMonad.asMonad(m)
-							.flatMap((Function)fn).getMonad()));
+	/**
+	 * Convert a list of Monads to a Monad with a List applying the supplied function in the process
+	 * 
+	 * {@code 
+	 *    List<CompletableFuture<Integer>> futures;
+
+        
+        CompletableFuture<List<String>> futureList = Monad.traverse(CompletableFuture.class, futures, (Integer i) -> "hello" +i);
+        }
+
+	 * 
+	 * @param c Monad type to traverse
+	 * @param seq List of Monads
+	 * @param fn Function to apply 
+	 * @return Monad with a list
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static <MONAD,MONAD_LIST,R> MONAD_LIST traverse(Class c,List<MONAD> seq, Function<?,R> fn){
+		return (MONAD_LIST)AsGenericMonad.asMonad(new ComprehenderSelector().selectComprehender(c).of(1))
+								.flatMap(in-> 
+											AsGenericMonad.asMonad(seq.stream()).flatMap(m-> m).flatMap((Function)fn).unwrap()
+											).unwrap();
 	}
+	
 	/**
 	 * flatMap operation
 	 * 

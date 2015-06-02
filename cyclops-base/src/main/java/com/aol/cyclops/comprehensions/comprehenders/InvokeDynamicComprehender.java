@@ -137,16 +137,25 @@ public class InvokeDynamicComprehender implements Comprehender {
 		return executeMethod(t, m, z, proxy);
 	}
 
+	private boolean isAssignableFrom(Class t,Object apply){
+		if(apply.getClass().isAssignableFrom(t))
+			return true;
+		
+		if(apply.getClass().getSuperclass()==Object.class)
+			return false;
+		
+		return apply.getClass().getSuperclass().isAssignableFrom(t);
+	}
 	@Override
 	public boolean instanceOfT(Object apply) {
-		return type.map(t -> apply.getClass().isAssignableFrom(t)).orElse(true);
+		return type.map(t -> isAssignableFrom(t,apply)).orElse(true);
 	}
 
 	@Override
 	public Object of(Object o) {
 		
 		InvokeDynamic dyn = new InvokeDynamic();
-		return dyn.execute(Arrays.asList("of","singleton"),type,o);
+		return dyn.execute(Arrays.asList("of","singleton","some","right","success"),type,o);
 
 	}
 
@@ -154,7 +163,7 @@ public class InvokeDynamicComprehender implements Comprehender {
 	public Object empty() {
 		
 		InvokeDynamic dyn = new InvokeDynamic();
-		return dyn.execute(Arrays.asList("of","empty","cons","nil"),type);
+		return dyn.execute(Arrays.asList("of","empty","cons","none","nil","left","failure"),type);
 		
 	}
 	

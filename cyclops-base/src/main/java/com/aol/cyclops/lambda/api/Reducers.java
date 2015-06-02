@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import lombok.val;
 
 import org.pcollections.ConsPStack;
 import org.pcollections.HashTreePMap;
@@ -27,12 +30,19 @@ public class Reducers {
 	public static Monoid<String> toString(String joiner){
 		return Monoid.of("", (a,b) -> a + joiner +b);
 	}
+	public static Monoid<Integer> toTotalInt(){
+		return Monoid.of(0, (a,b) -> a+b);
+	}
+	public static Monoid<Integer> toCountInt(){
+		
+		return Monoid.of(0, a ->b -> a+1,(x) -> Integer.valueOf(""+x));
+	}
 	
-	public static Monoid<Double> toTotal(){
+	public static Monoid<Double> toTotalDouble(){
 		return Monoid.of(0.0, (a,b) -> a+b);
 	}
-	public static Monoid<Double> toCount(){
-		return Monoid.of(0.0, (a,b) -> a+1);
+	public static Monoid<Double> toCountDouble(){
+		return Monoid.of(0.0, a->b -> a+1,(x) -> Double.valueOf(""+x));
 	}
 	
 }
