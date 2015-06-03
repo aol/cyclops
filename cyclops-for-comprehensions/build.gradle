@@ -22,13 +22,13 @@ jar {
 
 repositories {
     mavenCentral()
-	maven { url "http://cmmaven.cm.aol.com:8081/nexus/content/repositories/aol-advertising" }
+	
 }
 configurations {
 	provided
 }
 dependencies {
-	compile 'com.aol.advertising.cyclops:cyclops-base:4.0.0'
+	compile 'com.aol.cyclops:cyclops-base:4.0.0'
 	compile project(':cyclops-base')
 	compile group: 'org.projectlombok', name: 'lombok', version:'1.16.2'
 	provided 'org.jooq:jool:0.9.6'

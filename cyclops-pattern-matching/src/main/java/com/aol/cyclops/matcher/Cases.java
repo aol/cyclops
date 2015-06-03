@@ -100,12 +100,12 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 		
 	}
 	/**
-	 * <pre>
+	 * {@code
 	 * 	val cases = Cases.of(Case.of(input->true,input->"hello"));
 	 *	val unzipped = cases.unzip();
 	 *	assertTrue(unzipped.v1.map(p->p.test(10)).allMatch(v->v));
 	 *	assertTrue(unzipped.v2.map(fn->fn.apply(10)).allMatch(v->"hello".equals(v)));
-	 * </pre>
+	 * }
 	 * 
 	 * 
 	 * @return unzipped Cases, with Predicates in one Stream and Functions in the other.
@@ -576,7 +576,7 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 * </pre>
 	 * @param executor Executor to perform the async task
 	 * @param t Array to match on
-	 * @return Matched value wrapped in CompletableFuture & Optional
+	 * @return Matched value wrapped in CompletableFuture &amp; Optional
 	 */
 	public <R> CompletableFuture<Optional<R>> matchAsync(Executor executor, Object... t){
 		return CompletableFuture.supplyAsync(()->match(t), executor);

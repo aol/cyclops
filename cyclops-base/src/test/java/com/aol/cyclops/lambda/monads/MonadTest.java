@@ -425,12 +425,12 @@ public class MonadTest {
 	
 	@Test
 	public void testReplicateM(){
-		 Simplex<Optional<Integer>> applied =monad(Optional.of(2)).replicateM(5).simplex();
+		 Simplex<List<Integer>> applied =monad(Optional.of(2)).replicateM(5).simplex();
 		 assertThat(applied.unwrap(),equalTo(Optional.of(Arrays.asList(2,2,2,2,2))));
 	}
 	@Test
 	public void testReplicateMStream(){
-		 Simplex<Optional<Integer>> applied =monad(Stream.of(2,3,4)).replicateM(5).simplex();
+		 Simplex<Integer> applied =monad(Stream.of(2,3,4)).replicateM(5).simplex();
 		 assertThat(applied.toList(),equalTo(Arrays.asList(2,3,4,2,3,4,2,3,4,2,3,4,2,3,4)));
 	}
 	

@@ -32,7 +32,7 @@ import com.aol.cyclops.lambda.utils.Mutable;
  * 
  * @author johnmcclean
  *
- * @param <X>
+ * 
  */
 
 public class Do {
