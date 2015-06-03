@@ -40,7 +40,10 @@ import com.aol.cyclops.lambda.monads.ComprehenderSelector;
  * @param <T> Monadic Type being wrapped
  */
 public interface Comprehender<T> {
-
+	
+	default int priority(){
+		return 5;
+	}
 	
 	/**
 	 * Wrapper around filter

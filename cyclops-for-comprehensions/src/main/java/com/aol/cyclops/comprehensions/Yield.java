@@ -63,7 +63,7 @@ class Yield<T> {
 	private Optional<Tuple2<Comprehender,Object>> selectComprehender(Object structure) {
 		if(structure==null)
 			return Optional.empty();
-		return new Comprehenders().getRegisteredComprehenders().entrySet().stream()
+		return new Comprehenders().getRegisteredComprehenders().stream()
 				.filter(e -> e.getKey().isAssignableFrom(structure.getClass()))
 				.map(e->e.getValue())
 				.map(v->new Tuple2<Comprehender,Object>(v,structure))

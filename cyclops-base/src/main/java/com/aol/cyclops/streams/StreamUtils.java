@@ -1,8 +1,5 @@
 package com.aol.cyclops.streams;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -19,10 +16,6 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-import lombok.AllArgsConstructor;
-import lombok.Value;
-import lombok.val;
 
 import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;

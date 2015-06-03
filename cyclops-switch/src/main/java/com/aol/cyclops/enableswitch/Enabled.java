@@ -70,7 +70,7 @@ public class Enabled<F> implements Switch<F>{
      */
     @Override
     public String toString() {
-        return String.format("enabled(%s)", enabled );
+        return String.format("Enabled(%s)", enabled );
     }
 
 	/* 

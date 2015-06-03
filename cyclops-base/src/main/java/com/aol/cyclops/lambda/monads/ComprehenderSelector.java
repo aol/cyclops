@@ -15,7 +15,7 @@ public class ComprehenderSelector {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Comprehender selectComprehender(Class structure) {
 		
-		return comprehenders.getRegisteredComprehenders().entrySet().stream()
+		return comprehenders.getRegisteredComprehenders().stream()
 				.filter(e -> e.getKey().isAssignableFrom(structure))
 				.map(e->e.getValue())
 				.findFirst()
@@ -23,11 +23,12 @@ public class ComprehenderSelector {
 	}
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Comprehender selectComprehender(Object structure) {
-		
-		return comprehenders.getRegisteredComprehenders().entrySet().stream()
+//		comprehenders.getRegisteredComprehenders().entrySet().forEach(System.out::println);
+		return comprehenders.getRegisteredComprehenders().stream()
 				.filter(e -> e.getKey().isAssignableFrom(structure.getClass()))
 				.map(e->e.getValue())
 				.findFirst()
+				.map(i-> { System.out.println("comp is " + i + " o  is " + structure); return i;})
 				.orElse(new InvokeDynamicComprehender(Optional.ofNullable(structure)
 				.map(Object::getClass)));
 	}

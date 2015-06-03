@@ -2,15 +2,12 @@ package com.aol.cyclops.matcher;
 
 import java.util.function.Function;
 
-import lombok.Value;
-
-import com.aol.cyclops.matcher.MatchableTest.MyCase;
-import com.aol.cyclops.matcher.builders.Matching;
-import com.aol.cyclops.matcher.builders.MatchingInstance;
-import com.aol.cyclops.matcher.builders.PatternMatcher;
 import com.aol.cyclops.matcher.builders.CheckType;
 import com.aol.cyclops.matcher.builders.CheckTypeAndValues;
 import com.aol.cyclops.matcher.builders.CheckValues;
+import com.aol.cyclops.matcher.builders.Matching;
+import com.aol.cyclops.matcher.builders.MatchingInstance;
+import com.aol.cyclops.matcher.builders.PatternMatcher;
 import com.aol.cyclops.matcher.builders._Simpler_Case;
 
 

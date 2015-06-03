@@ -13,6 +13,10 @@ public class StreamableComprehender implements Comprehender {
 		return Streamable.class;
 	}
 	@Override
+	public int priority(){
+		return 500;
+	}
+	@Override
 	public Object filter(Object t, Predicate p) {
 		return ((Streamable)t).stream().filter(p);
 	}

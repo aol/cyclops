@@ -36,16 +36,6 @@ public class MonadicConverters {
 	}
 	
 	
-	//Supplier[] Callable[]  to LazyFutureStream
-	//CompletableFuture[] to EagerFutureStream
-	//CheckedSupplier to Try
-	//CheckedSupplier[]  to Seq of Try
-	//async.Queue, async.Topic, async.Signal to Seq / Stream
-	
-	
-	
-	
-	
 	public Object convertToMonadicForm(Object o){
 		return upscaler.upscaleIfStream(converters.stream().filter(t-> t.accept(o)).map(m -> m.convertToMonadicForm(o)).findFirst().orElse(o));
 	}

@@ -50,7 +50,7 @@ modifyPom {
 		url 'http://advertising.com'
 		inceptionYear '2015'
 
-		groupId 'com.aol.advertising.cyclops'
+		groupId 'com.aol.cyclops'
 		artifactId 'cyclops-core'
 		version "$version"
 		

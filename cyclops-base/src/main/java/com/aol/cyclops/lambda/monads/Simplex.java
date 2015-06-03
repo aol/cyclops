@@ -1,5 +1,5 @@
 package com.aol.cyclops.lambda.monads;
 
-public interface Simplex<T> extends Monad<Object,T>{
+public interface Simplex<X> extends Monad<Object,X>{
 	public <R> R monad();
 }

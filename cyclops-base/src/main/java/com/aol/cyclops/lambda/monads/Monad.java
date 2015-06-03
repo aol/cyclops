@@ -2,20 +2,15 @@ package com.aol.cyclops.lambda.monads;
 
 import static com.aol.cyclops.lambda.api.AsGenericMonad.asMonad;
 import static com.aol.cyclops.lambda.api.AsGenericMonad.monad;
-import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItems;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
+
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.Spliterator;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -25,14 +20,11 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import lombok.experimental.Delegate;
-import lombok.Value;
-import lombok.val;
 
 import com.aol.cyclops.lambda.api.AsGenericMonad;
 import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;
-import com.aol.cyclops.lambda.api.Reducers;
+
 import com.aol.cyclops.lambda.api.Streamable;
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.streams.Pair;
@@ -911,9 +903,7 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 		 return r.flatMap(e->e);
 	}
 	
-	static interface FlatMap<T>{
-		public  <R1, NT> Monad<R1, NT> flatMap(Function<T, R1> fn);
-	}
+	
 	/**
 	 * @return Simplex view on wrapped Monad, with a single typed parameter - which is the datatype
 	 * ultimately being handled by the Monad.
@@ -932,19 +922,7 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	 * 
 	 */
 	default <X> Simplex<X> simplex(){
-		return new Simplex<X>(){
-			@Delegate(excludes=FlatMap.class)
-			Monad<Object,X> m = (Monad)Monad.this;
-
-			public  <R1, NT> Monad<R1, NT> flatMap(Function<X, R1> fn) {
-				return m.flatMap(fn);
-			}
-			
-			public <R> R monad(){
-				return (R)unwrap();
-			}
-			
-		};
+		return new SimplexImpl<X>((Monad)this);	
 	}
 	
 

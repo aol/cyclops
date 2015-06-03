@@ -16,7 +16,7 @@ sourceCompatibility = 1.8
 version = '4.0.0'
 jar {
     manifest {
-        attributes 'Implementation-Title': 'Cyclops Lambda Utils', 'Implementation-Version': version
+        attributes 'Implementation-Title': 'Cyclops Base', 'Implementation-Version': version
     }
 }
 
@@ -28,7 +28,7 @@ configurations {
 }
 
 dependencies {
-//	compile 'cglib:cglib:3.1'
+
 	provided 'org.jooq:jool:0.9.6'	
 	provided group: 'org.projectlombok', name: 'lombok', version:'1.16.2'
 	compile 'com.nurkiewicz.lazyseq:lazyseq:0.0.1'
@@ -57,7 +57,7 @@ modifyPom {
 		url 'http://advertising.com'
 		inceptionYear '2015'
 
-		groupId 'com.aol.advertising.cyclops'
+		groupId 'com.aol.cyclops'
 		artifactId 'cyclops-base'
 		version "$version"
 		

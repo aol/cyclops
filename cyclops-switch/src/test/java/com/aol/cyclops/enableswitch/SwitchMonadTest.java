@@ -26,7 +26,7 @@ public class SwitchMonadTest {
 									.toList();
 		
 		
-		assertThat(list,equalTo(Arrays.asList(4,5)));
+		assertThat(list,equalTo(Arrays.asList(2,3)));
 	}
 
 }
