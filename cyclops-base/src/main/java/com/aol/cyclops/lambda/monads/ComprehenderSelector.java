@@ -23,12 +23,11 @@ public class ComprehenderSelector {
 	}
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Comprehender selectComprehender(Object structure) {
-//		comprehenders.getRegisteredComprehenders().entrySet().forEach(System.out::println);
+
 		return comprehenders.getRegisteredComprehenders().stream()
 				.filter(e -> e.getKey().isAssignableFrom(structure.getClass()))
 				.map(e->e.getValue())
 				.findFirst()
-				.map(i-> { System.out.println("comp is " + i + " o  is " + structure); return i;})
 				.orElse(new InvokeDynamicComprehender(Optional.ofNullable(structure)
 				.map(Object::getClass)));
 	}

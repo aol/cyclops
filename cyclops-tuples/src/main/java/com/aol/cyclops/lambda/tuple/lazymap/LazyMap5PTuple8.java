@@ -22,7 +22,7 @@ public class LazyMap5PTuple8<T,T1,T2,T3,T4,T5,T6,T7,T8> extends TupleImpl<T1,T2,
         this.fn = fn;
     }
     public T v5(){
-        return value.getOrSet(()->fn.apply(host.v5()));
+        return value.computeIfAbsent(()->fn.apply(host.v5()));
     }
 
     @Override

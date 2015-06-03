@@ -25,9 +25,9 @@ import lombok.val;
 
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.utils.Mutable;
+import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.matcher.builders.MatchingInstance;
 import com.aol.cyclops.matcher.builders.PatternMatcher;
-import com.aol.cyclops.matcher.builders._MembersMatchBuilder;
 import com.aol.cyclops.matcher.builders._Simpler_Case;
 import com.aol.cyclops.value.StreamableValue;
 import com.nurkiewicz.lazyseq.LazySeq;
@@ -52,16 +52,16 @@ public interface CachedValues extends Iterable, StreamableValue, Comparable<Cach
 		}
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <R,T,I> R  matchValues(Function<_MembersMatchBuilder<I,T>,_MembersMatchBuilder<I,T>> fn){
+	default <R,T,I> R  matchValues(Function<CheckValues<I,T>,CheckValues<I,T>> fn){
 		
-		return (R) new MatchingInstance(new _Simpler_Case( fn.apply( (_MembersMatchBuilder)
+		return (R) new MatchingInstance(new _Simpler_Case( fn.apply( (CheckValues)
 					new _Simpler_Case(new PatternMatcher()).withType(this.getClass())).getPatternMatcher()))
 						.match(this).get();
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <R,T,I> R  matchValues(Function<_MembersMatchBuilder<I,T>,_MembersMatchBuilder<I,T>> fn, R defaultValue){
+	default <R,T,I> R  matchValues(Function<CheckValues<I,T>,CheckValues<I,T>> fn, R defaultValue){
 		
-		return (R) new MatchingInstance(new _Simpler_Case( fn.apply( (_MembersMatchBuilder)
+		return (R) new MatchingInstance(new _Simpler_Case( fn.apply( (CheckValues)
 					new _Simpler_Case(new PatternMatcher()).withType(this.getClass())).getPatternMatcher()))
 						.match(this).orElse(defaultValue);
 	}

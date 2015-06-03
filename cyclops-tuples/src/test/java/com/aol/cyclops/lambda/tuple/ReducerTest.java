@@ -40,7 +40,7 @@ public class ReducerTest {
 		Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
 		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
 		val result = tuple(sum,mult).<PTuple2<Integer,Integer>>asReducer()
-											.reduce((Stream)Stream.of(1,2,3,4)); 
+											.mapReduce((Stream)Stream.of(1,2,3,4)); 
 		 
 		assertThat(result,equalTo(tuple(10,24)));
 	}

@@ -1,10 +1,13 @@
 package com.aol.cyclops.lambda.tuple.matching;
 
 import org.junit.Test;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+
 import com.aol.cyclops.lambda.tuple.PowerTuples;
-import com.aol.cyclops.matcher.builders._MembersMatchBuilder;
+import com.aol.cyclops.matcher.builders.CheckValues;
+
 
 public class MatchingTest {
 
@@ -14,7 +17,7 @@ public class MatchingTest {
 		
 	}
 
-	private <I,T> _MembersMatchBuilder<Object, T> cases(_MembersMatchBuilder<I, T> c) {
+	private <I,T> CheckValues<Object, T> cases(CheckValues<I, T> c) {
 		return c.with(1,2,3).then(i->"hello")
 				.with(4,5,6).then(i->"goodbye");
 	}
