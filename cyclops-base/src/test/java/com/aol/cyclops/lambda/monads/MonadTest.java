@@ -30,6 +30,7 @@ import com.aol.cyclops.lambda.api.AsGenericMonad;
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Reducers;
 import com.aol.cyclops.lambda.api.Streamable;
+import com.aol.cyclops.streams.StreamUtils;
 
 
 public class MonadTest {
@@ -301,6 +302,15 @@ public class MonadTest {
 
         
     }
+	@Test
+    public void testCollectors() {
+		List result = monad(Stream.of(1,2,3)).collect(Stream.of(Collectors.toList(),Collectors.summingInt(Integer::intValue),Collectors.averagingInt(Integer::intValue)));
+		
+		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));
+		assertThat(result.get(1),equalTo(6));
+		assertThat(result.get(2),equalTo(2.0));
+    }
+	
 	@Test
 	public void reducer1(){
 		Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);

@@ -88,8 +88,9 @@ public class StreamUtilsTest implements StreamUtils {
     public void testCollectors() {
 		List result = StreamUtils.collect(Stream.of(1,2,3),Arrays.asList(Collectors.toList(),Collectors.summingInt(Integer::intValue),Collectors.averagingInt(Integer::intValue)));
 		
-		System.out.println(result);
-        
+		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));
+		assertThat(result.get(1),equalTo(6));
+		assertThat(result.get(2),equalTo(2.0));
     }
 
 }

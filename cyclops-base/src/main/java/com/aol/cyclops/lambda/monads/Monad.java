@@ -35,6 +35,7 @@ import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Reducers;
 import com.aol.cyclops.lambda.api.Streamable;
 import com.aol.cyclops.streams.StreamUtils;
+import com.aol.cyclops.streams.Pair;
 import com.nurkiewicz.lazyseq.LazySeq;
 
 
@@ -193,6 +194,25 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	default <R, A> R collect(Collector<T,A,R> collector){
 		return stream().collect(collector);
 	}
+	/**
+	 * Apply multiple collectors Simulataneously to this Monad
+	 * 
+	 * {@code
+	  	List result = monad(Stream.of(1,2,3)).collect(Stream.of(Collectors.toList(),
+	  															Collectors.summingInt(Integer::intValue),
+	  															Collectors.averagingInt(Integer::intValue)));
+		
+		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));
+		assertThat(result.get(1),equalTo(6));
+		assertThat(result.get(2),equalTo(2.0));
+		}
+		
+		 * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was one value
+	 * To reduce over the values on the list, called streamedMonad() first. I.e. streamedMonad().collect(collectors);
+	 * 
+	 * @param collectors Stream of Collectors to apply
+	 * @return  List of results
+	 */
 	default  List collect(Stream<Collector> collectors){
 		return StreamUtils.collect(stream(),collectors);
 	}

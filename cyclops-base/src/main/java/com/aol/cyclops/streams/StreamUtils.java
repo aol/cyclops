@@ -1,5 +1,8 @@
 package com.aol.cyclops.streams;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -19,6 +22,7 @@ import java.util.stream.StreamSupport;
 
 import lombok.AllArgsConstructor;
 import lombok.Value;
+import lombok.val;
 
 import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;
@@ -92,12 +96,24 @@ public interface StreamUtils {
 	}
 	
 	
+	/**
+	 * Concat an Object and a Stream
+	 * If the Object is a Stream, Streamable or Iterable will be converted (or left) in Stream form and concatonated
+	 * Otherwise a new Stream.of(o) is created
+	 * 
+	 * @param o Object to concat
+	 * @param stream  Stream to concat
+	 * @return Concatonated Stream
+	 */
 	public static <U> Stream<U> concat(Object o, Stream<U> stream){
 		Stream<U> first = null;
 		if(o instanceof Stream){
 			first = (Stream)o;
 		}else if(o instanceof Iterable){
 			first = stream( (Iterable)o);
+		}
+		else if(o instanceof Streamable){
+			first = ((Streamable)o).stream();
 		}
 		else{
 			first = Stream.of((U)o);
@@ -114,6 +130,23 @@ public interface StreamUtils {
 	public static <K,V> Stream<Map.Entry<K, V>> stream(Map<K,V> it){
 		return it.entrySet().stream();
 	}
+	/**
+	 * Simultanously reduce a stream with multiple reducers
+	 * 
+	 * {@code
+	 * 
+	 *  Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
+		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
+		val result = StreamUtils.reduce(Stream.of(1,2,3,4),Arrays.asList(sum,mult));
+				
+		 
+		assertThat(result,equalTo(Arrays.asList(10,24)));
+		}
+	 * 
+	 * @param stream Stream to reduce
+	 * @param reducers Reducers to reduce Stream
+	 * @return Reduced Stream values as List entries
+	 */
 	@SuppressWarnings({"rawtypes","unchecked"})
 	public static <R> List<R> reduce(Stream<R> stream,Iterable<Monoid<R>> reducers){
 	
@@ -142,19 +175,47 @@ public interface StreamUtils {
 		};
 		return (List)m.mapReduce(stream);
 	}
+	/**
+	 * Simultanously reduce a stream with multiple reducers
+	 * 
+	 *  @param stream Stream to reduce
+	 * @param reducers Reducers to reduce Stream
+	 * @return Reduced Stream values as List entries
+	 */
 	@SuppressWarnings({"rawtypes","unchecked"})
-	public static <R> List<R> reduce(Stream<R> stream,Stream<Monoid<R>> reducer){
-		return (List)reduce(stream, (List)reducer.collect(Collectors.toList()));
+	public static <R> List<R> reduce(Stream<R> stream,Stream<Monoid<R>> reducers){
+		return (List)reduce(stream, (List)reducers.collect(Collectors.toList()));
 		
 	}
 	
+	/**
+	 *  Apply multiple Collectors, simultaneously to a Stream
+	 * 
+	 * @param stream Stream to collect
+	 * @param collectors Collectors to apply
+	 * @return Result as a list
+	 */
 	public static <T,A,R> List<R> collect(Stream<T> stream, Stream<Collector> collectors){
 		return collect(stream, AsStreamable.<Collector>asStreamable(collectors));
 	}
+	/**
+	 *  Apply multiple Collectors, simultaneously to a Stream
+	 * 
+	 * @param stream Stream to collect
+	 * @param collectors Collectors to apply
+	 * @return Result as a list
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T,A,R> List<R> collect(Stream<T> stream, Iterable<Collector> collectors){
 		return collect(stream, AsStreamable.<Collector>asStreamable(collectors));
 	}
+	/**
+	 * Apply multiple Collectors, simultaneously to a Stream
+	 * 
+	 * @param stream Stream to collect
+	 * @param collectors  Collectors to apply
+	 * @return Result as a list
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T> List collect(Stream<T> stream, Streamable<Collector> collectors){
 		
@@ -162,7 +223,7 @@ public interface StreamUtils {
 		final Supplier supplier =  ()-> collectors.stream().map(c->c.supplier().get()).collect(Collectors.toList());
 		final BiConsumer accumulator = (acc,next) -> {  LazySeq.of(collectors.stream().iterator()).<Object,Pair<Collector,Object>>zip(LazySeq.of((List)acc),(a,b)->new Pair<Collector,Object>(a,b))
 													
-													.forEach( t -> t.v1().accumulator().accept(t.v2(),next));
+													.forEach( t -> t._1().accumulator().accept(t._2(),next));
 		};
 		final BinaryOperator combiner = (t1,t2)->  {
 			Iterator t1It = ((Iterable)t1).iterator();
@@ -178,20 +239,6 @@ public interface StreamUtils {
 		 return (List)stream.collect(col);
 	}
 	
-	@Value @AllArgsConstructor
-	public static class Pair<T1,T2>{
-		T1 v1;
-		T2 v2;
-		public Pair(List list){
-			v1 = (T1)list.get(0);
-			v2 = (T2)list.get(1);
-		}
-		public T1 v1(){
-			return v1;
-		}
-		public T2 v2(){
-			return v2;
-		}
-	}
+	
 	
 }
