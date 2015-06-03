@@ -2,6 +2,7 @@ package com.aol.cyclops.lambda.monads;
 
 import static com.aol.cyclops.lambda.api.AsGenericMonad.asMonad;
 import static com.aol.cyclops.lambda.api.AsGenericMonad.monad;
+import static com.aol.cyclops.lambda.api.AsSimplexMonad.simplex;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
@@ -27,6 +28,7 @@ import lombok.val;
 import org.junit.Test;
 
 import com.aol.cyclops.lambda.api.AsGenericMonad;
+import com.aol.cyclops.lambda.api.AsSimplexMonad;
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Reducers;
 import com.aol.cyclops.lambda.api.Streamable;
@@ -465,5 +467,36 @@ public class MonadTest {
 	@Test
 	public void testLimitWhile(){
 		assertThat(monad(Stream.of(4,3,6,7)).sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));
+	}
+	@Test
+	public void testLiftM(){
+		Function<Monad<Optional<Integer>,Integer>,Monad<Optional<Integer>,Integer>> lifted = Monad.liftMonad((Integer a)->a+3);
+		
+		Monad<Optional<Integer>, Integer> result = lifted.apply(monad(Optional.of(3)));
+		
+		assertThat(result.unwrap().get(),equalTo(6));
+	}
+	@Test
+	public void testLiftMSimplex(){
+		val lifted = Monad.liftM((Integer a)->a+3);
+		
+		Simplex<Integer> result = lifted.apply(simplex(Optional.of(3)));
+		
+		assertThat(result.<Optional<Integer>>monad().get(),equalTo(6));
+	}
+	@Test
+	public void testLiftMNative(){
+		Function<Optional<Integer>,Optional<Integer>> lifted = Monad.liftMNative((Integer a)->a+3);
+		
+		Optional<Integer> result = lifted.apply(Optional.of(3));
+		
+		assertThat(result.get(),equalTo(6));
+	}
+	
+	@Test
+	public void testReduceM(){
+		Monoid<Optional<Integer>> optionalAdd = Monoid.of(Optional.of(0), (a,b)-> Optional.of(a.get()+b.get()));
+		
+		assertThat(monad(Stream.of(2,8,3,1)).reduceM(optionalAdd).unwrap(),equalTo(Optional.of(14)));
 	}
 }

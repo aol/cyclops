@@ -50,7 +50,6 @@ import com.nurkiewicz.lazyseq.LazySeq;
 public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>, AsGenericMonad{
 	
 	
-	
 	public <MONAD,T> Monad<MONAD,T> withMonad(Object invoke);
 	public Object getMonad();
 	
@@ -728,6 +727,37 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 		return (Monad)asMonad (unit(1))
 						.flatten()
 						.bind(v-> cycle(times).unwrap());		
+	}
+	default <NT,R> Monad<NT,R> reduceM(Monoid<NT> reducer){
+	//	List(2, 8, 3, 1).foldLeftM(0) {binSmalls}
+	//	convert to list Optionals
+		
+		return asMonad(monad(stream()).map(value ->new ComprehenderSelector()
+							.selectComprehender(reducer.zero().getClass()).of(value))
+							.reduce((Monoid)reducer));		
+	}
+	
+	/**
+	 * Lift a function so it accepts a Monad and returns a Monad (native / unwrapped in Monad wrapper interface)
+	 * 
+	 * @param fn
+	 * @return
+	 */
+	static <U1,R1,U2,R2> Function<U2,R2> liftMNative(Function<U1,R1> fn){
+		return u2 -> (R2)asMonad(u2).map( input -> fn.apply((U1)input)  ).unwrap();
+	}
+	/**
+	 * Lift a function so it accepts a Monad and returns a Monad (simplex view of a wrapped Monad)
+	 * Simplex view simplifies type related challenges. The actual native type is not specified here.
+	 * 
+	 * @param fn
+	 * @return
+	 */
+	static <U,R> Function<Simplex<U>,Simplex<R>> liftM(Function<U,R> fn){
+		return u -> u.map( input -> fn.apply(input)  ).simplex();
+	}
+	static <MONAD1,U,MONAD2,R> Function<Monad<MONAD1,U>,Monad<MONAD2,R>> liftMonad(Function<U,R> fn){
+		return u -> (Monad)u.map( input -> fn.apply(input)  );
 	}
 	/**
 	 * Generate a new instance of the underlying monad with given value
