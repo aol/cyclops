@@ -14,7 +14,12 @@ Powerful, modular extensions for Java 8. Take what you need or want.
 
 [Cyclops Wiki](https://github.com/aol/cyclops/wiki)
 
+
+
 ## Cyclops module overview
+
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-base/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-base)
+
 
 ![cyclops module relationship - class diagram](https://cloud.githubusercontent.com/assets/9964792/7887668/af2f6b4e-062a-11e5-9194-a2a4b6d25c96.png)
    
