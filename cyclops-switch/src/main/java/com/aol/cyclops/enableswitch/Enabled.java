@@ -38,7 +38,7 @@ public class Enabled<F> implements Switch<F>{
     /**
      * Constructs an Enabled Switch
      *
-     * @param enable The value of this Enabled Switch
+     * @param enabled The value of this Enabled Switch
      */
     public Enabled(F enabled) {
        this.enabled = enabled;

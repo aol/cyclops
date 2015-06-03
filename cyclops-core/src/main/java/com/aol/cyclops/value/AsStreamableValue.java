@@ -15,7 +15,7 @@ import com.aol.cyclops.matcher.builders.CheckTypeAndValues;
 /**
  * Corerce an Object to implement the StreamableValue interface
  * 
- * This adds - support for decomposition, pattern matching, restreamable behaviour & for comprehensions to your objects
+ * This adds - support for decomposition, pattern matching, restreamable behaviour &amp; for comprehensions to your objects
  * 
  * @author johnmcclean
  *

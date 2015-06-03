@@ -15,8 +15,8 @@ public class AsValue {
 									aCase.isType( (Child child) -> child.val).with(10,20))
 		
 		//is child.val (10)
-		@AllArgsConstructor static class Parent{ private final int val; }
-	    @Value static class Child extends Parent{ int nextVal;
+		\@AllArgsConstructor static class Parent{ private final int val; }
+	    \@Value static class Child extends Parent{ int nextVal;
 			public Child(int val,int nextVal) { super(val); this.nextVal = nextVal;}
 		}
 			

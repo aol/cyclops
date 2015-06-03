@@ -36,7 +36,7 @@ public interface Trampoline<T> {
 	/**
 	 * Created a completed Trampoline
 	 * 
-	 * @param Completed result
+	 * @param result Completed result
 	 * @return Completed Trampoline
 	 */
 	public static <T> Trampoline<T> done(T result) {
@@ -47,7 +47,7 @@ public interface Trampoline<T> {
 	 * Create a Trampoline that has more work to do
 	 * 
 	 * @param trampoline Next stage in Trampoline
-	 * @returnC Trampoline with more work
+	 * @return Trampoline with more work
 	 */
 	public static <T> Trampoline<T> more(Trampoline<Trampoline<T>> trampoline) {
 		return new Trampoline<T>() {

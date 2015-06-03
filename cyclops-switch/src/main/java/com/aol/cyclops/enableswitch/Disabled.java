@@ -29,7 +29,7 @@ public class Disabled<F> implements Switch<F>{
     /**
      * Constructs a left.
      *
-     * @param left The value of this Left
+     * @param disabled The value of this Left
      */
     public Disabled(F disabled) {
         this.disabled = disabled;

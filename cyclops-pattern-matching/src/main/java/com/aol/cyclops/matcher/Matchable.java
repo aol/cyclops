@@ -36,7 +36,7 @@ public interface Matchable{
 		      return c.with(1,2,3).then(i->"hello")
 				      .with(4,5,6).then(i->"goodbye");
 	     }
-	     @Value static class MyCase  implements Matchable{ int a; int b; int c; }
+	     \@Value static class MyCase  implements Matchable{ int a; int b; int c; }
 	 * }
 	 * 
 	 * @param fn

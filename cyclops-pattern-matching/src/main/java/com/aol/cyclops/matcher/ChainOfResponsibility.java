@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 /**
  * Interface for implementing StreamOfResponsibility
  * 
- * Implementing Classes will be used as Predicate & Action (Function) 
+ * Implementing Classes will be used as Predicate &amp; Action (Function) 
  * when building Cases.
  * 
  * @author johnmcclean

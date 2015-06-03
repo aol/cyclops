@@ -13,7 +13,7 @@ buildscript {
 }
 
 sourceCompatibility = 1.8
-version = '4.0.0'
+
 jar {
     manifest {
         attributes 'Implementation-Title': 'Cyclops Lambda Utils', 'Implementation-Version': version
@@ -57,19 +57,18 @@ modifyPom {
 		version "$version"
 		
 		scm {
-			url 'ssh://git@stash.ops.aol.com:2022/lana/cyclops.git'
-			connection 'ssh://git@stash.ops.aol.com:2022/lana/cyclops.git'
-			developerConnection 'ssh://git@stash.ops.aol.com:2022/lana/cyclops.git'
+			url 'ssh://git@github.com:aol/cyclops.git'
+			connection 'ssh://git@github.com:aol/cyclops.git'
+			developerConnection 'ssh://git@github.com:aol/cyclops.git'
 		}
 
 		licenses {
 			license {
-				name 'The Apache Software License, Version 2.0'
-				url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+				name 'The MIT License (MIT)'
+				url 'https://github.com/aol/cyclops/blob/master/licence.txt'
 				distribution 'repo'
 			}
 		}
-
 		developers {
 			developer {
 				id 'johnmcclean-aol'
@@ -81,16 +80,15 @@ modifyPom {
 }
 
 extraArchive {
-	sources = false
-	tests = false
-	javadoc = false
+        sources = true
+        tests = true
+        javadoc = true
 }
 
 nexus {
-	sign = false
-	repositoryUrl = 'http://cmmaven.cm.aol.com:8081/nexus/content/repositories/aol-advertising'
-	snapshotRepositoryUrl = 'http://cmmaven.cm.aol.com:8081/nexus/content/groups/public'
-	
+       sign = true
+        repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+        snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots'	
 }
 
 

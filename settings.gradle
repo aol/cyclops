@@ -1,4 +1,4 @@
-rootProject.name = 'cyclops'
+rootProject.name = 'com.aol.cyclops'
 include ':cyclops-pattern-matching'
 include ':cyclops-converters'
 include ':cyclops-base'

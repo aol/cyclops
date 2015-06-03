@@ -51,7 +51,7 @@ import com.nurkiewicz.lazyseq.LazySeq;
  * 			matchOfXXX
  * -cases as expressions (return value) - inCaseOfXXX, inMatchOfXXX
  * -cases as statements (no return value) - caseOfXXX, matchOfXXX
- * -pre & post variable extraction via Extractor (@see com.aol.cyclops.matcher.Extractors)
+ * -pre &amp; post variable extraction via Extractor (@see com.aol.cyclops.matcher.Extractors)
  * -match using iterables of predicates or hamcrest Matchers
  * 		- see caseOfIterable, matchOfIterable, inCaseOfIterable, matchOfIterable
  * -match using tuples of predicates or hamcreate Matchers
@@ -176,7 +176,7 @@ public class PatternMatcher implements Function{
 	 * This case will be triggered and the action will recieve the age of the Person (100).
 	 * 
 	 * 
-	 * @param extractor will be used to extract a value from the user input to the matcher.
+	 * @param ext will be used to extract a value from the user input to the matcher.
 	 * @param a A consumer that will accept value from the extractor if user input matches the extractor input type
 	 * @return self
 	 * 

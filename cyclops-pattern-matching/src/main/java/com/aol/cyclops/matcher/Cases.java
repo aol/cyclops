@@ -591,7 +591,7 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 *			Case.of((List input) -&gt; input.size()==1, input -&gt; &quot;world&quot;))
 	 *			.unapply(new MyClass(1,&quot;hello&quot;)).get(),is(&quot;ignored&quot;));
 	 *					
-	 *	@Value static class MyClass implements Decomposable{ int value; String name; }		
+	 *	\@Value static class MyClass implements Decomposable{ int value; String name; }		
 	 * </pre>
 	 * @param t Object to decompose and match on
 	 * @return Matched result wrapped in an Optional

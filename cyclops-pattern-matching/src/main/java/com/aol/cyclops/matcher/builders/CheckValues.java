@@ -19,7 +19,7 @@ public class CheckValues<X,T> {
 	 * 
 	 * Provide a comparison value, JDK 8 Predicate, or Hamcrest Matcher  for each Element to match on.
 	 * 
-	 * Further & recursively unwrap any element by Predicates.type(ELEMENT_TYPE.class).with(V... values)
+	 * Further &amp; recursively unwrap any element by Predicates.type(ELEMENT_TYPE.class).with(V... values)
 	 * 
 	 * @see Predicates#type
 	 * 

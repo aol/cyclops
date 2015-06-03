@@ -1,18 +1,14 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
-apply plugin: 'com.bmuschko.nexus'
+
 sourceCompatibility = 1.8
-version = '4.0.0'
 
 buildscript {
 	repositories {
 		jcenter()
 	}
 
-	dependencies {
-		classpath 'com.bmuschko:gradle-nexus-plugin:2.2'
-		
-	}
+	
 }
 
 
@@ -25,8 +21,10 @@ repositories {
 test {
     systemProperties 'property': 'value'
 }
+
 subprojects {
 	
+}/**
 		
 		apply plugin: 'java'
 		apply plugin: 'maven-publish'
@@ -62,3 +60,4 @@ subprojects {
 		
 		
 }
+**/

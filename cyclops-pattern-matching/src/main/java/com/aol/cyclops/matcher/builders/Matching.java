@@ -30,9 +30,9 @@ public class Matching {
 	 * 
 	 * Case classes can be constructed succintly in Java with Lombok or jADT
 	 * e.g.
-	 * <pre>
-	 * @Value final class CaseClass implements Decomposable { int field1; String field2;}
-	 * </pre>
+	 * {@code
+	 * \@Value final class CaseClass implements Decomposable { int field1; String field2;}
+	 * }
 	 * 
 	 * Use with static imports from the Predicates class to get wildcards via '__' or ANY()
 	 * And to apply nested / recursive matching via Predicates.type(  ).with (   )
@@ -91,9 +91,9 @@ public class Matching {
 	 * 
 	 * Case classes can be constructed succintly in Java with Lombok or jADT
 	 * e.g.
-	 * <pre>
-	 * @Value final class CaseClass implements Decomposable { int field1; String field2;}
-	 * </pre>
+	 * {@code
+	 * \@Value final class CaseClass implements Decomposable { int field1; String field2;}
+	 * }
 	 * 
 	 * Use with static imports from the Predicates class to get wildcards via '__' or ANY()
 	 * And to apply nested / recursive matching via Predicates.type(  ).with (   )

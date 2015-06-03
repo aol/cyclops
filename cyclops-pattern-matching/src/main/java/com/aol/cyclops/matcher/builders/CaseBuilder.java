@@ -70,7 +70,7 @@ public class CaseBuilder {
 		/**
 		 * Create a new Case with the supplied ActionWithReturn as the action
 		 * 
-		 * @param t Action to be executed when the new Case is triggered
+		 * @param a Action to be executed when the new Case is triggered
 		 * @return Pattern Matcher Builder
 		 */
 		public <T,X> MatchingInstance<T,X> thenApply(ActionWithReturn<V,X> a){
@@ -79,7 +79,7 @@ public class CaseBuilder {
 		/**
 		 * Create a new Case with the supplied ActionWithReturn as the action
 		 * 
-		 * @param t Action to be executed when the new Case is triggered
+		 * @param a Action to be executed when the new Case is triggered
 		 * @return Pattern Matcher Builder
 		 */
 		public <T,X>  MatchingInstance<T,X> thenConsume(Action<V> a){
@@ -220,7 +220,7 @@ public class CaseBuilder {
 		/**
 		 * Create a new Case with the supplied ActionWithReturn as the action
 		 * 
-		 * @param t Action to be executed when the new Case is triggered
+		 * @param a Action to be executed when the new Case is triggered
 		 * @return Pattern Matcher Builder
 		 */
 		public <T,X> MatchingInstance<T,X>  thenApply(ActionWithReturn<V,X> a){
@@ -229,7 +229,7 @@ public class CaseBuilder {
 		/**
 		 * Create a new Case with the supplied ActionWithReturn as the action
 		 * 
-		 * @param t Action to be executed when the new Case is triggered
+		 * @param a Action to be executed when the new Case is triggered
 		 * @return Pattern Matcher Builder
 		 */
 		public <T,X>  MatchingInstance<T,X> thenConsume(Action<V> a){
@@ -250,7 +250,7 @@ public class CaseBuilder {
 		/**
 		 * Create a new Case with the supplied ActionWithReturn as the action
 		 * 
-		 * @param t Action to be executed when the new Case is triggered
+		 * @param a Action to be executed when the new Case is triggered
 		 * @return Pattern Matcher Builder
 		 */
 		public <X> MatchingInstance<V,X> thenApply(ActionWithReturn<List<V>, X> a){
@@ -260,7 +260,7 @@ public class CaseBuilder {
 		/**
 		 * Create a new Case with the supplied ActionWithReturn as the action
 		 * 
-		 * @param t Action to be executed when the new Case is triggered
+		 * @param a Action to be executed when the new Case is triggered
 		 * @return Pattern Matcher Builder
 		 */
 		public  <X> MatchingInstance<V,X> thenConsume(Action<List<V>> a){
@@ -280,7 +280,7 @@ public class CaseBuilder {
 		/**
 		 * Create a new Case with the supplied ActionWithReturn as the action
 		 * 
-		 * @param t Action to be executed when the new Case is triggered
+		 * @param a Action to be executed when the new Case is triggered
 		 * @return Pattern Matcher Builder
 		 */
 		public  MatchingInstance<T,X> thenApply(ActionWithReturn<List<V>, X> a){
@@ -290,7 +290,7 @@ public class CaseBuilder {
 		/**
 		 * Create a new Case with the supplied ActionWithReturn as the action
 		 * 
-		 * @param t Action to be executed when the new Case is triggered
+		 * @param a Action to be executed when the new Case is triggered
 		 * @return Pattern Matcher Builder
 		 */
 		public  MatchingInstance<T,X> thenConsume(Action<List<V>> a){

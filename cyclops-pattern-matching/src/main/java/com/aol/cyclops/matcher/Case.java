@@ -50,10 +50,10 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	/**
 	 * @return A new case with the predicate negated
 	 * 
-	 * <pre>
+	 * {@code
 	 *     Case.of((Integer num) -> num >100,(Integer num) -> num * 10).negate();
 	 *     
-	 * </pre>
+	 * }
 	 * 
 	 * Results in a case that will multiply numbers 100 or less by 10
 	 * 
@@ -198,10 +198,10 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	 * Provide a Case that will be executed before the current one. The current case will only be attempted
 	 * if the supplied case matches.
 	 * 
-	 * <pre>
+	 * {@code
 	 *  case1 =Case.of(input-&gt;false,input-&gt;input+10);
 	 * assertThat(case1.compose(Case.of((Integer input)->true,input->input*2)).match(100).get(),is(210))
-	 * </pre>
+	 * }
 	 * 
 	 * (100*2)+10=210
 	 * 
@@ -317,12 +317,12 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	 * Create a new case which ands the supplied predicate with the current predicate.
 	 * The supplied predicate will be tested before existing predicate
 	 * 
-	 * <pre>
+	 * {@code
 	 * assertThat(case1.and(p->false).match(100).isPresent(),is(false));
 	 *
 	 * assertThat(case1.and(p->true).match(100).isPresent(),is(true));
 	 * 
-	 * </pre>
+	 * }
 	 * 
 	 * @param and New Predicate to be and'd with current
 	 * 
@@ -373,16 +373,16 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	 * @see Predicates#type
 	 * @see Predicates#with
 	 * 
-	 * <pre>
+	 * {@code
 	 *  val case2 = Case.of((Person p)-&gt;p.age&gt;18,p-&gt;p.name + &quot; can vote&quot;);
 	 *	assertThat(case2.andWithValues(__,__,Predicates.with(__,__,&quot;Ireland&quot;)).match(new Person(&quot;bob&quot;,19,new Address(10,&quot;dublin&quot;,&quot;Ireland&quot;))).isPresent(),is(true));
 	 *	assertThat(case2.andWithValues(__,__,with(__,__,&quot;Ireland&quot;)).match(new Person(&quot;bob&quot;,17,new Address(10,&quot;dublin&quot;,&quot;Ireland&quot;))).isPresent(),is(false));
      *
      *
-     * @Value static final class Person implements Decomposable{ String name; int age; Address address; }
-	 * @Value static final  class Address implements Decomposable { int number; String city; String country;}
+     * \@Value static final class Person implements Decomposable{ String name; int age; Address address; }
+	 * \@Value static final  class Address implements Decomposable { int number; String city; String country;}
      *
-	 * </pre>
+	 * }
 	 * 
 	 * 
 	 * @param with values to compare to - or predicates or hamcrest matchers
@@ -396,21 +396,22 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	 * Compose a new Case which executes the Predicate and function supplied before the current predicate
 	 * and function.
 	 * 
+	 * {@code 
 	 * e.g. match(100)
 	 *  new Predicate passes (100) -> apply new function (100) returns 20
 	 *  			-> predicate from current case recieves (20) passes
 	 *  				-> apply function from current case recieves (20)
-	 *  
+	 * } 
 	 *  both predicates must pass or Optional.empty() is returned from match.
 	 * 
-	 * <pre>
+	 * {@code
 	 * case1 =Case.of(input->true,input->input+10);
 	 * 
 	 * assertThat(case1.composeAnd(p->false,(Integer input)->input*2).match(100).isPresent(),is(false));
 	 * 
 	 * assertThat(case1.composeAnd(p->true,(Integer input)->input*2).match(100).get(),is(210));
 	 * 
-	 * </pre>
+	 * }
 	 * @param and Predicate to be and'd with current predicate
 	 * @param before
 	 * @return

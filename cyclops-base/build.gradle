@@ -1,6 +1,8 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'com.bmuschko.nexus'
+apply plugin: 'maven-publish'
+
 buildscript {
 	repositories {
 		jcenter()
@@ -13,7 +15,7 @@ buildscript {
 }
 
 sourceCompatibility = 1.8
-version = '4.0.0'
+
 jar {
     manifest {
         attributes 'Implementation-Title': 'Cyclops Base', 'Implementation-Version': version

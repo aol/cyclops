@@ -110,7 +110,7 @@ public class Extractors {
 	/**
 	 * Return element or first element in an Iterable.
 	 * 
-	 * @param pos Position to extract
+	 * 
 	 * @return value
 	 */
 	public final static <R> Extractor<?,R> first(){
