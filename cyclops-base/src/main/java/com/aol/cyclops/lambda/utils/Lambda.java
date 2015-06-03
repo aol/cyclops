@@ -30,7 +30,7 @@ public class Lambda {
 	 * {@code
 	 * 		val fn  = λ3((Integer a)-> (Integer b)-> a+b+)
 	 * }
-	 * @param func
+	 * @param biFunc
 	 * @return supplied function
 	 */
 	public static <T1,T2,R> Function<T1,Function<T2,R>> λ2(Function<T1,Function<T2,R>> biFunc){
@@ -44,7 +44,7 @@ public class Lambda {
 	 * {@code
 	 * 		val fn  = λ3((Integer a)-> (Integer b)->(Integer c) -> a+b+c)
 	 * }
-	 * @param func
+	 * @param triFunc
 	 * @return supplied function
 	 */
 	public static <T1,T2,T3,R> Function<T1,Function<T2,Function<T3,R>>> λ3(Function<T1,Function<T2,Function<T3,R>>> triFunc){
@@ -58,7 +58,7 @@ public class Lambda {
 	 * {@code
 	 * 		val fn  = λ4((Integer a)-> (Integer b)->(Integer c) -> (Integer d) -> a+b+c+d)
 	 * }
-	 * @param func
+	 * @param quadFunc
 	 * @return supplied function
 	 */
 	public static <T1,T2,T3,T4,R> Function<T1,Function<T2,Function<T3,Function<T4,R>>>> λ4(Function<T1,Function<T2,Function<T3,Function<T4,R>>>> quadFunc){
@@ -72,7 +72,7 @@ public class Lambda {
 	 * {@code
 	 * 		val fn  = λ4((Integer a)-> (Integer b)->(Integer c) -> (Integer d) -> (Integer e) -> a+b+c+d+e)
 	 * }
-	 * @param func
+	 * @param pentFunc
 	 * @return supplied function
 	 */
 	public static <T1,T2,T3,T4,T5,R> Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,R>>>>> λ5(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,R>>>>> pentFunc){
@@ -86,7 +86,7 @@ public class Lambda {
 	 * {@code
 	 * 		val fn  = λ4((Integer a)-> (Integer b)->(Integer c) -> (Integer d) -> (Integer e) -> (Integer f)-> a+b+c+d+e+f)
 	 * }
-	 * @param func
+	 * @param hexFunc
 	 * @return supplied function
 	 */
 	public static <T1,T2,T3,T4,T5,T6,R> Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,R>>>>>>  λ6(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,R>>>>>> hexFunc){
@@ -100,7 +100,7 @@ public class Lambda {
 	 * {@code
 	 * 		val fn  = λ4((Integer a)-> (Integer b)->(Integer c) -> (Integer d) -> (Integer e) -> (Integer f)->(Integer g) -> a+b+c+d+e+f+g)
 	 * }
-	 * @param func
+	 * @param heptFunc
 	 * @return supplied function
 	 */
 	public static <T1,T2,T3,T4,T5,T6,T7,R> Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,R>>>>>>>  λ7(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,R>>>>>>> heptFunc){
@@ -114,7 +114,7 @@ public class Lambda {
 	 * {@code
 	 * 		val fn  = λ4((Integer a)-> (Integer b)->(Integer c) -> (Integer d) -> (Integer e) -> (Integer f)->(Integer g) -> (Integer h) ->a+b+c+d+e+f+g+h)
 	 * }
-	 * @param func
+	 * @param octFunc
 	 * @return supplied function
 	 */
 	public static <T1,T2,T3,T4,T5,T6,T7,T8,R> Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,Function<T8,R>>>>>>>>  λ8(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,Function<T8,R>>>>>>>> octFunc){

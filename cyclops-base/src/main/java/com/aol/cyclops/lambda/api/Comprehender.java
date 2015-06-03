@@ -50,7 +50,7 @@ public interface Comprehender<T> {
 	 * 
 	 * @param t Monadic type being wrapped
 	 * @param p JDK Predicate to wrap
-	 * @return Result of call to t.filter ( i -> p.test(i));
+	 * @return Result of call to {@code t.filter ( i -> p.test(i)); }
 	 */
 	public Object filter(T t, Predicate p);
 	
@@ -59,7 +59,7 @@ public interface Comprehender<T> {
 	 * 
 	 * @param t Monadic type being wrapped
 	 * @param fn JDK Function to wrap
-	 * @return Result of call to t.map( i -> fn.apply(i));
+	 * @return Result of call to {@code t.map( i -> fn.apply(i)); }
 	 */
 	public Object map(T t, Function fn);
 	
@@ -81,7 +81,7 @@ public interface Comprehender<T> {
 	 * 
 	 * @param t Monadic type being wrapped
 	 * @param fn JDK Function to wrap
-	 * @return Result of call to t.flatMap( i -> fn.apply(i));
+	 * @return Result of call to {@code t.flatMap( i -> fn.apply(i)); }
 	 */
 	default T executeflatMap(T t, Function fn){
 		return flatMap(t,input -> unwrapOtherMonadTypes(this,fn.apply(input)));

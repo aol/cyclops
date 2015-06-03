@@ -24,7 +24,7 @@ public class AsSupplier {
 	 * That returns the result of a call to the supplied method name
 	 * 
 	 * @param toCoerce Object to convert into a supplier
-	 * @param methods Method to call when Supplier.get() called
+	 * @param method Method to call when Supplier.get() called
 	 * @return Supplier that delegates to supplied object
 	 */
 	public static <T>  Supplier<T> asSupplier(Object toCoerce, String method){

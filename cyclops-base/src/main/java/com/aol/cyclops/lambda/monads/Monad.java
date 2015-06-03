@@ -322,7 +322,7 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	/**
 	 * @return This monad coverted to an Optional
 	 * 
-	 * Streams will be converted into Optional<List<T>>
+	 * Streams will be converted into {@code Optional<List<T>> }
 	 * 
 	 */
 	default <T> Optional<T> toOptional(){
@@ -552,7 +552,7 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	 *     monad(Optional.of(Arrays.asList(1,2,3))).streamedMonad().sorted() // Monad[Stream[1,2,3]]
 	 *  }
 	 * 
-	 *  @{code assertThat(monad(Stream.of(4,3,6,7)).sorted().toList(),equalTo(Arrays.asList(3,4,6,7))); }
+	 *  {@code assertThat(monad(Stream.of(4,3,6,7)).sorted().toList(),equalTo(Arrays.asList(3,4,6,7))); }
 	 * 
 	 */
 	default Monad<Stream<T>,T> sorted(){
@@ -879,7 +879,7 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	
 	/**
 	 * Transform the contents of a Monad into a Monad wrapping a Stream e.g.
-	 * Turn an Optional<List<Integer>> into Stream<Integer>
+	 * Turn an {@code Optional<List<Integer>>  into Stream<Integer> }
 	 * 
 	 * {@code
 	 * List<List<Integer>> list = monad(Optional.of(Arrays.asList(1,2,3,4,5,6)))
@@ -909,15 +909,15 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	 * ultimately being handled by the Monad.
 	 * 
 	 * E.g.
-	 * {@ code 
-	 * Monad<Stream<String>,String> becomes
-	 * Simplex<String>
+	 * {@code 
+	 * 		Monad<Stream<String>,String> becomes
+	 * 		Simplex<String>
 	 * }
-	 * To get back to Stream<String> use
+	 * To get back to {@code Stream<String> } use
 	 * 
 	 * {@code
 	 *   
-	 * simplex.<Stream<String>>.monad();  
+	 * 	simplex.<Stream<String>>.monad();  
 	 * }
 	 * 
 	 */

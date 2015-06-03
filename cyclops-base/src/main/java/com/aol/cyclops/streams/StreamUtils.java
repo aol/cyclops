@@ -52,7 +52,7 @@ public interface StreamUtils {
 	/**
 	 * Create a Stream that infiniteable cycles the provided Streamable
 	 * @param s Streamable to cycle
-	 * @returnNew cycling stream
+	 * @return New cycling stream
 	 */
 	public static <U> Stream<U> cycle(Streamable<U> s){
 		return Stream.iterate(s.stream(),s1-> s.stream()).flatMap(Function.identity());
@@ -61,7 +61,7 @@ public interface StreamUtils {
 	/**
 	 * Create a Stream that infiniteable cycles the provided Streamable
 	 * @param s Streamable to cycle
-	 * @returnNew cycling stream
+	 * @return New cycling stream
 	 */
 	public static <U> Stream<U> cycle(int times,Streamable<U> s){
 		return Stream.iterate(s.stream(),s1-> s.stream()).limit(times).flatMap(Function.identity());

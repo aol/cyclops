@@ -9,13 +9,12 @@ import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
 
-
-
 /**
- * An interoperability trait that wraps & encapsulates any Functor type
+ * An interoperability trait that wraps &amp; encapsulates any Functor type
  * 
  * Uses InvokeDynamic to call Map if no suitable Comprehender present
  * Uses (cached) JDK Dynamic Proxies to coerce function types to java.util.Function
+ * 
  * @author johnmcclean
  *
  * @param <T>

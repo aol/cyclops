@@ -13,19 +13,19 @@ import lombok.ToString;
  * In Java 8 because of the effectively final rule references to captured
  * variables can't be changed.
  * e.g.
- * <pre>
+ *{@code 
  * String var = "hello";
  * Runnable r = () -> var ="world";
- * </pre>
+ * }
  * 
  * Won't compile because var is treated as if it is final.
  * This can be 'worked around' by using a wrapping object or array.
  * 
  * e.g.
- * <pre>
- * ClosedVar&lt;String&gt; var = new ClosedVar("hello");
+ * {@code
+ * Mutable<String> var =  Mutable.of("hello");
  * Runnable r = () -> var.set("world");
- * </pre>
+ * }
  * 
  * @author johnmcclean
  *
@@ -73,7 +73,7 @@ public class Mutable<T> implements Supplier<T>{
 		return this;
 	}
 	/**
-	 * @param var New value
+	 * @param varFn New value
 	 * @return  this object with mutated value
 	 */
 	public Mutable<T> mutate(Function<T,T> varFn){

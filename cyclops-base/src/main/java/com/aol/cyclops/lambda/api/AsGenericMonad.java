@@ -16,9 +16,11 @@ public interface AsGenericMonad {
 	 * Create a duck typed Monad. 
 	 * Monaad should have methods
 	 * 
+	 * {@code 
 	 * map(F f)
 	 * filter(P p)
 	 * flatMap(F<x,MONAD> fm)
+	 * }
 	 * 
 	 * Where F is a Functional Interface of any type that takes a single parameter and returns
 	 * a result.	 
