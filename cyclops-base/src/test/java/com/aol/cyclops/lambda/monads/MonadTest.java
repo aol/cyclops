@@ -2,7 +2,6 @@ package com.aol.cyclops.lambda.monads;
 
 import static com.aol.cyclops.lambda.api.AsGenericMonad.asMonad;
 import static com.aol.cyclops.lambda.api.AsGenericMonad.monad;
-
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
@@ -17,6 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -29,6 +29,7 @@ import org.junit.Test;
 import com.aol.cyclops.lambda.api.AsGenericMonad;
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Reducers;
+import com.aol.cyclops.lambda.api.Streamable;
 
 
 public class MonadTest {
@@ -366,5 +367,93 @@ public class MonadTest {
 		
 		assertThat(result,equalTo(Arrays.asList(1,2,3,4,5,6)));
 	}
+	
+	@Test
+	public void testApplyM(){
+	 Simplex<Integer> applied =monad(Stream.of(1,2,3)).applyM(monad(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2))).simplex();
+	
+	 assertThat(applied.toList(),equalTo(Arrays.asList(2, 2, 3, 4, 4, 6)));
+	 
+	}
+	@Test
+	public void testApplyMOptional(){
+	 Simplex<Integer> applied =monad(Optional.of(2)).applyM(monad(Optional.of( (Integer a)->a+1)) ).simplex();
+	
+	 assertThat(applied.toList(),equalTo(Arrays.asList(3)));
+	 
+	}
+	@Test
+	public void testApplyMOptionalEmpty(){
+	 Simplex<Integer> applied =monad(Optional.of(2)).applyM(monad(Optional.empty())).<Integer>simplex();
+	
+	 assertThat(applied.toList(),equalTo(Arrays.asList()));
+	 
+	}
+	@Test
+	public void testApplyMEmptyOptional(){
+		Simplex<Integer> empty= 	monad(Optional.empty()).simplex();
+		Simplex<Integer> applied =	empty.applyM(monad(Optional.of((Integer a)->a+1)) ).simplex();
+	
+		assertThat(applied.toList(),equalTo(Arrays.asList()));
+	 
+	}
 
+	@Test
+	public void testFilterM(){
+	 Simplex<Stream<Integer>> applied =monad(Stream.of(1,2,3)).filterM(monad(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3))).simplex();
+	
+	 assertThat(applied.map(s->s.collect(Collectors.toList())).toList(),equalTo(Arrays.asList(Arrays.asList(1), Arrays.asList(2),Arrays.asList())));
+	
+	}
+	@Test
+	public void testFilterMOptional(){
+	 Simplex<Optional<Integer>> applied =monad(Optional.of(2)).filterM(monad(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3))).simplex();
+	
+	 assertThat(applied.toList(),equalTo(Arrays.asList(2)));
+	
+	}
+	
+	@Test
+	public void testReplicateM(){
+		 Simplex<Optional<Integer>> applied =monad(Optional.of(2)).replicateM(5).simplex();
+		 assertThat(applied.unwrap(),equalTo(Optional.of(Arrays.asList(2,2,2,2,2))));
+	}
+	@Test
+	public void testReplicateMStream(){
+		 Simplex<Optional<Integer>> applied =monad(Stream.of(2,3,4)).replicateM(5).simplex();
+		 assertThat(applied.toList(),equalTo(Arrays.asList(2,3,4,2,3,4,2,3,4,2,3,4,2,3,4)));
+	}
+	
+	@Test
+	public void testSorted(){
+		assertThat(monad(Stream.of(4,3,6,7)).sorted().toList(),equalTo(Arrays.asList(3,4,6,7)));
+	}
+	@Test
+	public void testSortedCompartor(){
+		assertThat(monad(Stream.of(4,3,6,7)).sorted((a,b) -> b-a).toList(),equalTo(Arrays.asList(7,6,4,3)));
+	}
+	@Test
+	public void testSkip(){
+		assertThat(monad(Stream.of(4,3,6,7)).skip(2).toList(),equalTo(Arrays.asList(6,7)));
+	}
+	@Test
+	public void testSkipUntil(){
+		assertThat(monad(Stream.of(4,3,6,7)).skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));
+	}
+	@Test
+	public void testSkipWhile(){
+		assertThat(monad(Stream.of(4,3,6,7)).sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
+	}
+	@Test
+	public void testLimit(){
+		assertThat(monad(Stream.of(4,3,6,7)).limit(2).toList(),equalTo(Arrays.asList(4,3)));
+	}
+	@Test
+	public void testLimitUntil(){
+		assertThat(monad(Stream.of(4,3,6,7)).limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3)));
+	}
+	@Test
+	public void testLimitWhile(){
+		assertThat(monad(Stream.of(4,3,6,7)).sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));
+	}
 }

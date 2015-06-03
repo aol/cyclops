@@ -4,3 +4,4 @@ com.aol.cyclops.comprehensions.comprehenders.LongStreamComprehender
 com.aol.cyclops.comprehensions.comprehenders.IntStreamComprehender
 com.aol.cyclops.comprehensions.comprehenders.DoubleStreamComprehender
 com.aol.cyclops.comprehensions.comprehenders.CompletableFutureComprehender
+com.aol.cyclops.comprehensions.comprehenders.StreamableComprehender

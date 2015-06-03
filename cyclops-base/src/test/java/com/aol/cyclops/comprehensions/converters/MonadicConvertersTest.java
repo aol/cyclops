@@ -10,8 +10,8 @@ public class MonadicConvertersTest {
 	MonadicConverters converters;
 	@Test
 	public void testPriorityOrderingObjectToStreamShouldBeLast() {
-		val converters = converters.getConverters();
-		assertThat(converters.get(converters.size()-1),instanceOf(ObjectToStreamConverter.class));
+		val converters2 = converters.getConverters();
+		assertThat(converters2.get(converters2.size()-1),instanceOf(ObjectToStreamConverter.class));
 	}
 
 }

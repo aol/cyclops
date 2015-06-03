@@ -27,4 +27,12 @@ public interface Streamable<T> extends Iterable<T>{
 												.spliterator(),
 													false));
 	}
+	
+	public static<T> Streamable<T> of(T... values){
+		return new Streamable<T>(){
+			public Stream<T> stream(){
+				return Stream.of(values);
+			}
+		};
+	}
 }

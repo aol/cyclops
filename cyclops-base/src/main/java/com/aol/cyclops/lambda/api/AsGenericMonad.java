@@ -33,6 +33,9 @@ public interface AsGenericMonad {
 	public static <MONAD,T> Monad<MONAD,T> asMonad(Object monad){
 		return new MonadWrapper<>(monad);
 	}
+	public static <T> Monad<Stream<T>,T> monad(Streamable<T> monad){
+		return new MonadWrapper<>(monad);
+	}
 	public static <T> Monad<Stream<T>,T> monad(Stream<T> monad){
 		return new MonadWrapper<>(monad);
 	}

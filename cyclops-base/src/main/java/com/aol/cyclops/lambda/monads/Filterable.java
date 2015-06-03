@@ -2,6 +2,8 @@ package com.aol.cyclops.lambda.monads;
 
 import java.util.function.Predicate;
 
+import lombok.val;
+
 import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
 
 /**
@@ -15,12 +17,13 @@ import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
 public interface Filterable<T> {
 	
 	default   Filterable<T>  filter(Predicate<T> fn) {
-		return withFilterable((Filterable)new ComprehenderSelector().selectComprehender(
+		T filterable = (T)new ComprehenderSelector().selectComprehender(
 				getFilterable())
-				.filter(getFilterable(), fn));
+				.filter(getFilterable(), fn);
+		return withFilterable( filterable );
 	}
 
-	public Filterable<T> withFilterable(Filterable filter);
+	public Filterable<T> withFilterable(T filter);
 
 	public Object getFilterable();
 }

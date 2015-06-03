@@ -2,7 +2,10 @@ package com.aol.cyclops.lambda.monads;
 
 import static com.aol.cyclops.lambda.api.AsGenericMonad.asMonad;
 import static com.aol.cyclops.lambda.api.AsGenericMonad.monad;
+import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -13,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -28,6 +32,7 @@ import lombok.val;
 import com.aol.cyclops.lambda.api.AsGenericMonad;
 import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;
+import com.aol.cyclops.lambda.api.Reducers;
 import com.aol.cyclops.lambda.api.Streamable;
 import com.aol.cyclops.streams.StreamUtils;
 import com.nurkiewicz.lazyseq.LazySeq;
@@ -62,7 +67,8 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	default Object getFunctor(){
 		return getMonad();
 	}
-	default Filterable<T> withFilterable(Filterable filter){
+	@Override
+	default Filterable<T> withFilterable(T filter){
 		return withMonad(filter);
 	}
 	default Object getFilterable(){
@@ -187,6 +193,9 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	default <R, A> R collect(Collector<T,A,R> collector){
 		return stream().collect(collector);
 	}
+	default  List collect(Stream<Collector> collectors){
+		return StreamUtils.collect(stream(),collectors);
+	}
 	
 	/**
 	 * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was one value
@@ -309,6 +318,21 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 		return this.<Optional,T>withMonad((Optional)new ComprehenderSelector().selectComprehender(
 				stream).executeflatMap(stream, i-> getMonad())).unwrap();
 		
+	}
+	
+	default <R> Monad<Optional<R>,R> flatMapToOptional(Function<MONAD,Optional<R>> fn){
+		Optional opt = Optional.of(1);
+		return monad(opt.flatMap(i->fn.apply(unwrap())));
+	}
+	
+	default <R> Monad<Stream<R>,R> flatMapToStream(Function<MONAD,Stream<R>> fn){
+		Stream stream = Stream.of(1);
+		return monad(stream.flatMap(i->fn.apply(unwrap())));
+	}
+	
+	default <R> Monad<CompletableFuture<R>,R> flatMapToCompletableFuture(Function<MONAD,CompletableFuture<R>> fn){
+		CompletableFuture future = CompletableFuture.completedFuture(1);
+		return monad(future.thenCompose(i->fn.apply(unwrap())));
 	}
 	
 	/**
@@ -489,33 +513,218 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	default Monad<Stream<T>,T> distinct(){
 		return monad(LazySeq.of(stream().iterator()).distinct().stream());
 	}
+	/**
+	 * Scan left using supplied Monoid
+	 * 
+	 * {@code  
+	 * 
+	 * 	assertEquals(asList("", "a", "ab", "abc"),monad(Stream.of("a", "b", "c")).scanLeft(Reducers.toString("")).toList());
+            
+            }
+	 * 
+	 * @param monoid
+	 * @return
+	 */
 	default Monad<Stream<T>,T> scanLeft(Monoid<T> monoid){
-		return AsGenericMonad.monad(LazySeq.of(stream().iterator()).scan(monoid.zero(), monoid.reducer()).stream());
+		return monad(LazySeq.of(stream().iterator()).scan(monoid.zero(), monoid.reducer()).stream());
 	}
 	
+	/**
+	 * @return Monad converted to Stream via stream() and sorted - to access nested collections in non-Stream monads as a stream use streamedMonad() first
+	 * 
+	 *  e.g.
+	 *  
+	 *  {@code 
+	 *    monad(Optional.of(Arrays.asList(1,2,3))).sorted()  // Monad[Stream[List[1,2,3]]]
+	 *    
+	 *     monad(Optional.of(Arrays.asList(1,2,3))).streamedMonad().sorted() // Monad[Stream[1,2,3]]
+	 *  }
+	 * 
+	 *  @{code assertThat(monad(Stream.of(4,3,6,7)).sorted().toList(),equalTo(Arrays.asList(3,4,6,7))); }
+	 * 
+	 */
 	default Monad<Stream<T>,T> sorted(){
 		return monad(stream().sorted());
 	}
+	/**
+	 *	 
+	 *  Monad converted to Stream via stream() and sorted - to access nested collections in non-Stream monads as a stream use streamedMonad() first
+	 * 
+	 *  e.g.
+	 *  
+	 *  {@code 
+	 *    monad(Optional.of(Arrays.asList(1,2,3))).sorted( (a,b)->b-a)  // Monad[Stream[List[1,2,3]]]
+	 *    
+	 *     monad(Optional.of(Arrays.asList(1,2,3))).streamedMonad().sorted( (a,b)->b-a) // Monad[Stream[3,2,1]]
+	 *  }
+	 * 
+
+	 * 
+	 * @param c Compartor to sort with
+	 * @return Sorted Monad
+	 */
 	default Monad<Stream<T>,T> sorted(Comparator<T > c){
 		return monad(stream().sorted(c));   
 	}
+	/**
+	 * {@code assertThat(monad(Stream.of(4,3,6,7)).skip(2).toList(),equalTo(Arrays.asList(6,7))); }
+	 * 
+	 * NB to access nested collections in non-Stream monads as a stream use streamedMonad() first
+	 * 
+	 * @param num  Number of elemenets to skip
+	 * @return Monad converted to Stream with specified number of elements skipped
+	 */
 	default Monad<Stream<T>,T> skip(int num){
-		return monad(stream().skip(num));
+		return monad(stream()
+					.skip(num));
 	}
+	/**
+	 * 
+	 * NB to access nested collections in non-Stream monads as a stream use streamedMonad() first
+	 * 
+	 * {@code
+	 * assertThat(monad(Stream.of(4,3,6,7)).sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
+	 * }
+	 * 
+	 * @param p Predicate to skip while true
+	 * @return Monad converted to Stream with elements skipped while predicate holds
+	 */
 	default Monad<Stream<T>,T> skipWhile(Predicate<T> p){
-		return monad(LazySeq.of(stream().iterator()).dropWhile(p).stream());
+		return monad(LazySeq.of(stream().iterator())
+				.dropWhile(p)
+				.stream());
 	}
+	/**
+	 * 
+	 * NB to access nested collections in non-Stream monads as a stream use streamedMonad() first
+	 * 
+	 * {@code assertThat(monad(Stream.of(4,3,6,7)).skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));}
+	 * 
+	 * 
+	 * @param p Predicate to skip until true
+	 * @return Monad converted to Stream with elements skipped until predicate holds
+	 */
 	default Monad<Stream<T>,T> skipUntil(Predicate<T> p){
-		return monad(LazySeq.of(stream().iterator()).dropWhile(p.negate()).stream());
+		return monad(LazySeq.of(stream().iterator())
+				.dropWhile(p.negate())
+				.stream());
 	}
+	/**
+	 * NB to access nested collections in non-Stream monads as a stream use streamedMonad() first
+	 * 
+	 * {@code assertThat(monad(Stream.of(4,3,6,7)).limit(2).toList(),equalTo(Arrays.asList(4,3)));}
+	 * 
+	 * @param num Limit element size to num
+	 * @return Monad converted to Stream with elements up to num
+	 */
 	default Monad<Stream<T>,T> limit(int num){
-		return monad(stream().limit(num));
+		return monad(stream()
+				.limit(num));
 	}
+	/**
+	 *  NB to access nested collections in non-Stream monads as a stream use streamedMonad() first
+	 * 
+	 * {@code assertThat(monad(Stream.of(4,3,6,7)).sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));}
+	 * 
+	 * @param p Limit while predicate is true
+	 * @return Monad converted to Stream with limited elements
+	 */
 	default Monad<Stream<T>,T> limitWhile(Predicate<T> p){
-		return monad(LazySeq.of(stream().iterator()).takeWhile(p).stream());
+		return monad(LazySeq.of(stream().iterator())
+					.takeWhile(p)
+					.stream());
 	}
-	default Monad<Stream<T>,T> limiUntil(Predicate<T> p){
-		return monad(LazySeq.of(stream().iterator()).takeWhile(p.negate()).stream());
+	/**
+	 * NB to access nested collections in non-Stream monads as a stream use streamedMonad() first
+	 * 
+	 * {@code assertThat(monad(Stream.of(4,3,6,7)).limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3))); }
+	 * 
+	 * @param p Limit until predicate is true
+	 * @return Monad converted to Stream with limited elements
+	 */
+	default Monad<Stream<T>,T> limitUntil(Predicate<T> p){
+		return monad(LazySeq.of(stream().iterator())
+					.takeWhile(p.negate()).stream());
+	}
+	
+	//Optional(1) Optional (a+2) = Optional(3)
+	/**
+	 * Apply function/s inside supplied Monad to data in current Monad
+	 * 
+	 * e.g. with Streams
+	 * {@code 
+	 * 
+	 * Simplex<Integer> applied =monad(Stream.of(1,2,3)).applyM(monad(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2))).simplex();
+	
+	 	assertThat(applied.toList(),equalTo(Arrays.asList(2, 2, 3, 4, 4, 6)));
+	 }
+	 * 
+	 * with Optionals 
+	 * {@code
+	 * 
+	 *  Simplex<Integer> applied =monad(Optional.of(2)).applyM(monad(Optional.of( (Integer a)->a+1)) ).simplex();
+		assertThat(applied.toList(),equalTo(Arrays.asList(3)));}
+	 * 
+	 * @param fn
+	 * @return
+	 */
+	default <NT,R> Monad<NT,R> applyM(Monad<?,Function<T,R>> fn){
+		return (Monad)this.bind(v-> fn.map(innerFn -> innerFn.apply(v))
+							.unwrap());
+		
+	}
+	/**
+	 * Filter current monad by each element in supplied Monad
+	 * 
+	 * e.g.
+	 * 
+	 * {@code
+	 *  Simplex<Stream<Integer>> applied = monad(Stream.of(1,2,3))
+	 *    									.filterM(monad(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3)))
+	 *    									.simplex();
+	 * 
+	 * //results in Stream.of(Stream.of(1),Stream.of(2),Stream.of(())
+	 * }
+	 * 
+	 * @param fn
+	 * @return
+	 */
+	default <NT,R> Monad<NT,R> filterM(Monad<?,Predicate<T>> fn){
+		return  (Monad)this.bind(v-> fn.map(innerFn -> new Pair(v,innerFn.test(v)))
+													.filter(p->(boolean)p._2())
+													.map(Pair::_1))
+													.map(m -> ((Monad) m).unwrap());
+													
+	}
+	/**
+	 * 
+	 * Replicate given Monad
+	 * 
+	 * {@code 
+	 * 	
+	 *   Simplex<Optional<Integer>> applied =monad(Optional.of(2)).replicateM(5).simplex();
+		 assertThat(applied.unwrap(),equalTo(Optional.of(Arrays.asList(2,2,2,2,2))));
+		 
+		 }
+	 * 
+	 * 
+	 * @param times number of times to replicate
+	 * @return Replicated Monad
+	 */
+	default <NT,R> Monad<NT,R> replicateM(int times){
+		
+		return (Monad)asMonad (unit(1))
+						.flatten()
+						.bind(v-> cycle(times).unwrap());		
+	}
+	/**
+	 * Generate a new instance of the underlying monad with given value
+	 * 
+	 * @param value  to construct new instance with
+	 * @return new instance of underlying Monad
+	 */
+	default <MONAD,T> MONAD unit(T value) {
+		return (MONAD)new ComprehenderSelector().selectComprehender(getMonad()).of(value);
 	}
 	
 	
@@ -610,6 +819,19 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 				.flatMap(in-> asMonad(seq.stream()).flatMap(m-> m).unwrap()
 							);
 	}
+	/**
+	 * Aggregate the contents of this Monad and the supplied Monad 
+	 * 
+	 * {@code 
+	 * 
+	 * List<Integer> result = monad(Stream.of(1,2,3,4)).<Integer>aggregate(monad(Optional.of(5))).toList();
+		
+		assertThat(result,equalTo(Arrays.asList(1,2,3,4,5)));
+		}
+	 * 
+	 * @param next Monad to aggregate content with
+	 * @return Aggregated Monad
+	 */
 	default <R> Monad<MONAD,R> aggregate(Monad<?,?> next){
 		Stream concat = StreamUtils.concat(stream(),next.stream() );
 		
@@ -629,10 +851,16 @@ public interface Monad<MONAD,T> extends Functor<T>, Filterable<T>, Streamable<T>
 	default <R extends MONAD,NT> Monad<R,NT> flatMap(Function<T,R> fn) {
 		return (Monad)bind(fn);
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#unwrap()
+	 */
 	default   MONAD unwrap(){
 		return (MONAD)getMonad();
 	}
 	
+	/**
+	 * @return this monad converted to a Parallel Stream, via streamedMonad() wraped in Monad interface
+	 */
 	default <R,NT> Monad<R,NT> parallel(){
 		return streamedMonad().parallel();
 	}

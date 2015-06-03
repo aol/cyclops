@@ -109,6 +109,14 @@ public interface Comprehender<T> {
 				return comp.of(((Optional) apply).get());
 			return comp.empty();
 		}
+		/**
+		if (apply instanceof Streamable) {
+			Stream s  = ((Streamable) apply).stream();
+			if(comp.instanceOfT(s))
+				return (T)s;
+			apply=s;
+			
+		}**/
 		if (apply instanceof Stream) {
 			return comp.of(((Stream) apply).collect(Collectors.toList()));
 		}
