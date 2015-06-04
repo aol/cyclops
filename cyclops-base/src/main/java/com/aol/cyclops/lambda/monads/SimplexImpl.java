@@ -4,16 +4,27 @@ import java.util.function.Function;
 
 import lombok.AllArgsConstructor;
 import lombok.experimental.Delegate;
+import lombok.experimental.Wither;
 
 
 
 @AllArgsConstructor
-public class SimplexImpl<X> implements Simplex<X>{
+public class SimplexImpl<X> implements AnyM<X>{
 	
+	@Wither
+	private final Object monad;
+	public static <MONAD,T> Monad<MONAD,T>  of(Object of) {
+		return new MonadWrapper(of);
+		
+	}
+	public Object unwrap(){
+		return monad;
+	}
+	/**
 		@Delegate(excludes=FlatMap.class)
 		private final Monad<Object,X> m ;//= (Monad)Monad.this;
 
-		public  <R1, NT> Monad<R1, NT> flatMap(Function<X, R1> fn) {
+		public  <R1, NT> Simplex<R1, NT> flatMap(Function<X, R1> fn) {
 			return m.flatMap(fn);
 		}
 		
@@ -22,5 +33,5 @@ public class SimplexImpl<X> implements Simplex<X>{
 		}
 		static interface FlatMap<U>{
 			public  <R1, NT> Monad<R1, NT> flatMap(Function<U, R1> fn);
-		}
+		}**/
 }

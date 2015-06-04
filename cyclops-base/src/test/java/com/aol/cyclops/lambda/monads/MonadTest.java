@@ -2,7 +2,7 @@ package com.aol.cyclops.lambda.monads;
 
 import static com.aol.cyclops.lambda.api.AsGenericMonad.asMonad;
 import static com.aol.cyclops.lambda.api.AsGenericMonad.monad;
-import static com.aol.cyclops.lambda.api.AsSimplexMonad.simplex;
+import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -28,7 +29,7 @@ import lombok.val;
 import org.junit.Test;
 
 import com.aol.cyclops.lambda.api.AsGenericMonad;
-import com.aol.cyclops.lambda.api.AsSimplexMonad;
+import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Reducers;
 import com.aol.cyclops.lambda.api.Streamable;
@@ -153,7 +154,7 @@ public class MonadTest {
                 .collect(Collectors.toList());
 
         
-        CompletableFuture<List<Integer>> futureList = Monad.sequenceNative(CompletableFuture.class, futures);
+        CompletableFuture<List<Integer>> futureList = MonadFunctions.sequenceNative(CompletableFuture.class, futures);
    
         List<Integer> collected = futureList.join();
         assertThat(collected.size(),equalTo( list.size()));
@@ -174,7 +175,7 @@ public class MonadTest {
                 .collect(Collectors.toList());
 
        
-        CompletableFuture<List<String>> futureList = Monad.traverseNative(CompletableFuture.class, futures, (Integer i) -> "hello" +i);
+        CompletableFuture<List<String>> futureList = MonadFunctions.traverseNative(CompletableFuture.class, futures, (Integer i) -> "hello" +i);
    
         List<String> collected = futureList.join();
         assertThat(collected.size(),equalTo( list.size()));
@@ -194,15 +195,55 @@ public class MonadTest {
                 .collect(Collectors.toList());
        
         
-        Simplex<List<Integer>> futureList = Monad.sequence(CompletableFuture.class,futures).simplex();
+        AnyM<List<Integer>> futureList = MonadFunctions.sequence(CompletableFuture.class,futures).anyM();
         
  
-        List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>monad().join();
+        List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>unwrapMonad().join();
         assertThat(collected.size(),equalTo( list.size()));
         
         for(Integer next : list){
         	assertThat(list.get(next),equalTo( collected.get(next)));
         }
+        
+	}
+	@Test
+	public void testSequenceList(){
+		
+        
+       
+        
+        AnyM<List<Integer>> futureList = MonadFunctions.sequence(Stream.class,Arrays.asList(Arrays.asList(1,2),Arrays.asList(3,4))).anyM();
+        
+ 
+        assertThat(futureList.toList(),equalTo(Arrays.asList(1,2,3,4)));
+        
+	}
+	@Test
+	public void testSequenceStream(){
+	
+        
+       
+        
+        AnyM<List<Stream<Integer>>> result = MonadFunctions.sequence(Stream.class,Arrays.asList(Stream.of(1,2),Stream.of(3,4))).anyM();
+        
+ 
+       
+        assertThat(result
+        		      .toList(),
+        				equalTo(Arrays.asList(1,2,3,4)));
+        
+	}
+	@Test
+	public void testSequenceOptional(){
+		
+        
+       
+        
+        AnyM<List<Integer>> futureList = MonadFunctions.sequence(Optional.class,
+        						Arrays.asList(Optional.of(7),Optional.of(8),Optional.of(9))).anyM();
+        
+ 
+        assertThat(futureList.toList(),equalTo(Arrays.asList(7,8,9)));
         
 	}
 	
@@ -216,9 +257,9 @@ public class MonadTest {
                 .collect(Collectors.toList());
 
        
-        Simplex<List<String>> futureList = Monad.traverse(CompletableFuture.class, futures, (Integer i) -> "hello" +i).simplex();
+        AnyM<List<String>> futureList = MonadFunctions.traverse(CompletableFuture.class, futures, (Integer i) -> "hello" +i).anyM();
    
-        List<String> collected = futureList.<CompletableFuture<List<String>>>monad().join();
+        List<String> collected = futureList.<CompletableFuture<List<String>>>unwrapMonad().join();
         assertThat(collected.size(),equalTo( list.size()));
         
         for(Integer next : list){
@@ -382,44 +423,45 @@ public class MonadTest {
 	
 	@Test
 	public void testApplyM(){
-	 Simplex<Integer> applied =monad(Stream.of(1,2,3)).applyM(monad(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2))).simplex();
+	 AnyM<Integer> applied =monad(Stream.of(1,2,3)).applyM(monad(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2))).anyM();
 	
 	 assertThat(applied.toList(),equalTo(Arrays.asList(2, 2, 3, 4, 4, 6)));
 	 
 	}
 	@Test
 	public void testApplyMOptional(){
-	 Simplex<Integer> applied =monad(Optional.of(2)).applyM(monad(Optional.of( (Integer a)->a+1)) ).simplex();
+	 AnyM<Integer> applied =monad(Optional.of(2)).applyM(monad(Optional.of( (Integer a)->a+1)) ).anyM();
 	
 	 assertThat(applied.toList(),equalTo(Arrays.asList(3)));
 	 
 	}
 	@Test
 	public void testApplyMOptionalEmpty(){
-	 Simplex<Integer> applied =monad(Optional.of(2)).applyM(monad(Optional.empty())).<Integer>simplex();
+	 AnyM<Integer> applied =monad(Optional.of(2)).applyM(monad(Optional.empty())).<Integer>anyM();
 	
 	 assertThat(applied.toList(),equalTo(Arrays.asList()));
 	 
 	}
 	@Test
 	public void testApplyMEmptyOptional(){
-		Simplex<Integer> empty= 	monad(Optional.empty()).simplex();
-		Simplex<Integer> applied =	empty.applyM(monad(Optional.of((Integer a)->a+1)) ).simplex();
+		AnyM<Integer> empty= 	monad(Optional.empty()).anyM();
+		AnyM<Integer> applied =	empty.applyM(monad(Optional.of((Integer a)->a+1)) ).anyM();
 	
 		assertThat(applied.toList(),equalTo(Arrays.asList()));
 	 
 	}
 
 	@Test
-	public void testFilterM(){
-	 Simplex<Stream<Integer>> applied =monad(Stream.of(1,2,3)).filterM(monad(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3))).simplex();
+	public void testSimpleFilter(){
+	 AnyM<Stream<Integer>> applied =monad(Stream.of(1,2,3)).simpleFilter(monad(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3))).anyM();
 	
+	// System.out.println(applied.toList());
 	 assertThat(applied.map(s->s.collect(Collectors.toList())).toList(),equalTo(Arrays.asList(Arrays.asList(1), Arrays.asList(2),Arrays.asList())));
 	
 	}
 	@Test
-	public void testFilterMOptional(){
-	 Simplex<Optional<Integer>> applied =monad(Optional.of(2)).filterM(monad(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3))).simplex();
+	public void testSimpleFilterOptional(){
+	 AnyM<Optional<Integer>> applied =monad(Optional.of(2)).simpleFilter(monad(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3))).anyM();
 	
 	 assertThat(applied.toList(),equalTo(Arrays.asList(2)));
 	
@@ -427,12 +469,12 @@ public class MonadTest {
 	
 	@Test
 	public void testReplicateM(){
-		 Simplex<List<Integer>> applied =monad(Optional.of(2)).replicateM(5).simplex();
+		 AnyM<List<Integer>> applied =monad(Optional.of(2)).replicateM(5).anyM();
 		 assertThat(applied.unwrap(),equalTo(Optional.of(Arrays.asList(2,2,2,2,2))));
 	}
 	@Test
 	public void testReplicateMStream(){
-		 Simplex<Integer> applied =monad(Stream.of(2,3,4)).replicateM(5).simplex();
+		 AnyM<Integer> applied =monad(Stream.of(2,3,4)).replicateM(5).anyM();
 		 assertThat(applied.toList(),equalTo(Arrays.asList(2,3,4,2,3,4,2,3,4,2,3,4,2,3,4)));
 	}
 	
@@ -470,7 +512,7 @@ public class MonadTest {
 	}
 	@Test
 	public void testLiftM(){
-		Function<Monad<Optional<Integer>,Integer>,Monad<Optional<Integer>,Integer>> lifted = Monad.liftMonad((Integer a)->a+3);
+		Function<Monad<Optional<Integer>,Integer>,Monad<Optional<Integer>,Integer>> lifted = MonadFunctions.liftMonad((Integer a)->a+3);
 		
 		Monad<Optional<Integer>, Integer> result = lifted.apply(monad(Optional.of(3)));
 		
@@ -478,15 +520,15 @@ public class MonadTest {
 	}
 	@Test
 	public void testLiftMSimplex(){
-		val lifted = Monad.liftM((Integer a)->a+3);
+		val lifted = MonadFunctions.liftM((Integer a)->a+3);
 		
-		Simplex<Integer> result = lifted.apply(simplex(Optional.of(3)));
+		AnyM<Integer> result = lifted.apply(anyM(Optional.of(3)));
 		
-		assertThat(result.<Optional<Integer>>monad().get(),equalTo(6));
+		assertThat(result.<Optional<Integer>>unwrapMonad().get(),equalTo(6));
 	}
 	@Test
 	public void testLiftMNative(){
-		Function<Optional<Integer>,Optional<Integer>> lifted = Monad.liftMNative((Integer a)->a+3);
+		Function<Optional<Integer>,Optional<Integer>> lifted = MonadFunctions.liftMNative((Integer a)->a+3);
 		
 		Optional<Integer> result = lifted.apply(Optional.of(3));
 		
@@ -498,5 +540,39 @@ public class MonadTest {
 		Monoid<Optional<Integer>> optionalAdd = Monoid.of(Optional.of(0), (a,b)-> Optional.of(a.get()+b.get()));
 		
 		assertThat(monad(Stream.of(2,8,3,1)).reduceM(optionalAdd).unwrap(),equalTo(Optional.of(14)));
+	}
+	
+	@Test
+	public void testLiftM2(){
+		BiFunction<Monad<Optional<Integer>,Integer>,Monad<Optional<Integer>,Integer>,Monad<Optional<Integer>,Integer>> lifted =
+								MonadFunctions.liftMonad2((Integer a, Integer b)->a+3+b);
+		
+		Monad<Optional<Integer>, Integer> result = lifted.apply(monad(Optional.of(3)),monad(Optional.of(3)));
+		
+		assertThat(result.unwrap().get(),equalTo(9));
+	}
+	@Test
+	public void testLiftM2Simplex(){
+		val lifted = MonadFunctions.liftM2((Integer a,Integer b)->a+b);
+		
+		AnyM<Integer> result = lifted.apply(anyM(Optional.of(3)),anyM(Optional.of(4)));
+		
+		assertThat(result.<Optional<Integer>>unwrapMonad().get(),equalTo(7));
+	}
+	@Test
+	public void testLiftM2SimplexNull(){
+		val lifted = MonadFunctions.liftM2((Integer a,Integer b)->a+b);
+		
+		AnyM<Integer> result = lifted.apply(anyM(Optional.of(3)),anyM(Optional.ofNullable(null)));
+		
+		assertThat(result.<Optional<Integer>>unwrapMonad().isPresent(),equalTo(false));
+	}
+	@Test
+	public void testLiftM2Native(){
+		BiFunction<Optional<Integer>,Optional<Integer>,Optional<Integer>> lifted = MonadFunctions.liftMNative2((Integer a, Integer b)->a*b);
+		
+		Optional<Integer> result = lifted.apply(Optional.of(3),Optional.of(6));
+		
+		assertThat(result.get(),equalTo(18));
 	}
 }
