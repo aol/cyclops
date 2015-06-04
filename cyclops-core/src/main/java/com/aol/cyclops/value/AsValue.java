@@ -10,7 +10,7 @@ public class AsValue {
 	 * 
 	 * e.g. 
 	 * 
-	 * {@code
+	 * <pre>{@code
 	 *  int result = AsValue.asValue(new Child(10,20))._match(aCase-> 
 									aCase.isType( (Child child) -> child.val).with(10,20))
 		

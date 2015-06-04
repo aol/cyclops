@@ -13,7 +13,7 @@ public class Lambda {
 	/**
 	 * e.g. with Lombok val 
 	 * 
-	 * {@code
+	 * <pre>{@code
 	 * 		val fn  = λ1((Integer i)->"hello")
 	 * }
 	 * @param func
@@ -27,7 +27,7 @@ public class Lambda {
 	 * 
 	 * e.g. with Lombok val 
 	 * 
-	 * {@code
+	 * <pre>{@code
 	 * 		val fn  = λ3((Integer a)-> (Integer b)-> a+b+)
 	 * }
 	 * @param biFunc
@@ -41,7 +41,7 @@ public class Lambda {
 	 * 
 	 * e.g. with Lombok val 
 	 * 
-	 * {@code
+	 * <pre>{@code
 	 * 		val fn  = λ3((Integer a)-> (Integer b)->(Integer c) -> a+b+c)
 	 * }
 	 * @param triFunc
@@ -55,7 +55,7 @@ public class Lambda {
 	 * 
 	 * e.g. with Lombok val 
 	 * 
-	 * {@code
+	 * <pre>{@code
 	 * 		val fn  = λ4((Integer a)-> (Integer b)->(Integer c) -> (Integer d) -> a+b+c+d)
 	 * }
 	 * @param quadFunc
@@ -69,7 +69,7 @@ public class Lambda {
 	 * 
 	 * e.g. with Lombok val 
 	 * 
-	 * {@code
+	 * <pre>{@code
 	 * 		val fn  = λ4((Integer a)-> (Integer b)->(Integer c) -> (Integer d) -> (Integer e) -> a+b+c+d+e)
 	 * }
 	 * @param pentFunc
@@ -83,7 +83,7 @@ public class Lambda {
 	 * 
 	 * e.g. with Lombok val 
 	 * 
-	 * {@code
+	 * <pre>{@code
 	 * 		val fn  = λ4((Integer a)-> (Integer b)->(Integer c) -> (Integer d) -> (Integer e) -> (Integer f)-> a+b+c+d+e+f)
 	 * }
 	 * @param hexFunc
@@ -97,7 +97,7 @@ public class Lambda {
 	 * 
 	 * e.g. with Lombok val 
 	 * 
-	 * {@code
+	 * <pre>{@code
 	 * 		val fn  = λ4((Integer a)-> (Integer b)->(Integer c) -> (Integer d) -> (Integer e) -> (Integer f)->(Integer g) -> a+b+c+d+e+f+g)
 	 * }
 	 * @param heptFunc
@@ -111,7 +111,7 @@ public class Lambda {
 	 * 
 	 * e.g. with Lombok val 
 	 * 
-	 * {@code
+	 * <pre>{@code
 	 * 		val fn  = λ4((Integer a)-> (Integer b)->(Integer c) -> (Integer d) -> (Integer e) -> (Integer f)->(Integer g) -> (Integer h) ->a+b+c+d+e+f+g+h)
 	 * }
 	 * @param octFunc

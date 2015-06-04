@@ -91,7 +91,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	/**
 	 * Apply multiple collectors Simulataneously to this Monad
 	 * 
-	 * {@code
+	 * <pre>{@code
 	  	List result = monad(Stream.of(1,2,3)).collect(Stream.of(Collectors.toList(),
 	  															Collectors.summingInt(Integer::intValue),
 	  															Collectors.averagingInt(Integer::intValue)));
@@ -236,7 +236,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	/**
 	 * Convert to a Stream with the result of a reduction operation repeated specified times
 	 * 
-	 * {@code 
+	 * <pre>{@code 
 	  		List<Integer> list = AsGenericMonad,asMonad(Stream.of(1,2,2))
 											.cycle(Reducers.toCountInt(),3)
 											.collect(Collectors.toList());
@@ -257,7 +257,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * Convert to a Stream, repeating the resulting structure specified times and
 	 * lifting all values to the specified Monad type
 	 * 
-	 * {@code
+	 * <pre>{@code
 	 * 
 	 *  List<Optional<Integer>> list  = monad(Stream.of(1,2))
 											.cycle(Optional.class,2)
@@ -299,7 +299,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	/**
 	 * Generic zip function. E.g. Zipping a Stream and an Optional
 	 * 
-	 * {@code
+	 * <pre>{@code
 	 * Stream<List<Integer>> zipped = asMonad(Stream.of(1,2,3)).zip(asMonad(Optional.of(2)), 
 													(a,b) -> Arrays.asList(a,b));
 	 * // [[1,2]]
@@ -316,7 +316,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	/**
 	 * Zip this Monad with a Stream
 	 * 
-	 * {@code 
+	 * <pre>{@code 
 	 * Stream<List<Integer>> zipped = asMonad(Stream.of(1,2,3)).zip(Stream.of(2,3,4), 
 													(a,b) -> Arrays.asList(a,b));
 													
@@ -343,7 +343,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	/**
 	 * Group elements in a Monad into a Stream
 	 * 
-	 * {@code
+	 * <pre>{@code
 	 * 
 	 * List<List<Integer>> list = monad(Stream.of(1,2,3,4,5,6))
 	 * 									.grouped(3)
@@ -363,7 +363,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	}
 	/**
 	 * 
-	 * {@code 
+	 * <pre>{@code 
 	 * assertTrue(monad(Stream.of(1,2,3,4)).startsWith(Arrays.asList(1,2,3)));
 	 * }
 	 * 
@@ -375,7 +375,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 		
 	}
 	/**
-	 * 	{@code assertTrue(monad(Stream.of(1,2,3,4)).startsWith(Arrays.asList(1,2,3).iterator())) }
+	 * 	<pre>{@code assertTrue(monad(Stream.of(1,2,3,4)).startsWith(Arrays.asList(1,2,3).iterator())) }
 
 	 * @param iterator
 	 * @return True if Monad starts with Iterators sequence of data
@@ -389,7 +389,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	/*
 	 * Return the distinct Stream of elements
 	 * 
-	 * {@code
+	 * <pre>{@code
 	 * 	List<Integer> list = monad(Optional.of(Arrays.asList(1,2,2,2,5,6)))
 											.<Stream<Integer>,Integer>streamedMonad()
 											.distinct()
@@ -402,7 +402,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	/**
 	 * Scan left using supplied Monoid
 	 * 
-	 * {@code  
+	 * <pre>{@code  
 	 * 
 	 * 	assertEquals(asList("", "a", "ab", "abc"),monad(Stream.of("a", "b", "c")).scanLeft(Reducers.toString("")).toList());
             
@@ -420,13 +420,13 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * 
 	 *  e.g.
 	 *  
-	 *  {@code 
+	 *  <pre>{@code 
 	 *    monad(Optional.of(Arrays.asList(1,2,3))).sorted()  // Monad[Stream[List[1,2,3]]]
 	 *    
 	 *     monad(Optional.of(Arrays.asList(1,2,3))).streamedMonad().sorted() // Monad[Stream[1,2,3]]
 	 *  }
 	 * 
-	 *  {@code assertThat(monad(Stream.of(4,3,6,7)).sorted().toList(),equalTo(Arrays.asList(3,4,6,7))); }
+	 *  <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).sorted().toList(),equalTo(Arrays.asList(3,4,6,7))); }
 	 * 
 	 */
 	default Monad<Stream<T>,T> sorted(){
@@ -438,7 +438,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * 
 	 *  e.g.
 	 *  
-	 *  {@code 
+	 *  <pre>{@code 
 	 *    monad(Optional.of(Arrays.asList(1,2,3))).sorted( (a,b)->b-a)  // Monad[Stream[List[1,2,3]]]
 	 *    
 	 *     monad(Optional.of(Arrays.asList(1,2,3))).streamedMonad().sorted( (a,b)->b-a) // Monad[Stream[3,2,1]]
@@ -453,7 +453,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 		return monad(stream().sorted(c));   
 	}
 	/**
-	 * {@code assertThat(monad(Stream.of(4,3,6,7)).skip(2).toList(),equalTo(Arrays.asList(6,7))); }
+	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).skip(2).toList(),equalTo(Arrays.asList(6,7))); }
 	 * 
 	 * NB to access nested collections in non-Stream monads as a stream use streamedMonad() first
 	 * 
@@ -468,7 +468,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * 
 	 * NB to access nested collections in non-Stream monads as a stream use streamedMonad() first
 	 * 
-	 * {@code
+	 * <pre>{@code
 	 * assertThat(monad(Stream.of(4,3,6,7)).sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
 	 * }
 	 * 
@@ -484,7 +484,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * 
 	 * NB to access nested collections in non-Stream monads as a stream use streamedMonad() first
 	 * 
-	 * {@code assertThat(monad(Stream.of(4,3,6,7)).skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));}
+	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));}
 	 * 
 	 * 
 	 * @param p Predicate to skip until true
@@ -498,7 +498,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	/**
 	 * NB to access nested collections in non-Stream monads as a stream use streamedMonad() first
 	 * 
-	 * {@code assertThat(monad(Stream.of(4,3,6,7)).limit(2).toList(),equalTo(Arrays.asList(4,3)));}
+	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).limit(2).toList(),equalTo(Arrays.asList(4,3)));}
 	 * 
 	 * @param num Limit element size to num
 	 * @return Monad converted to Stream with elements up to num
@@ -510,7 +510,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	/**
 	 *  NB to access nested collections in non-Stream monads as a stream use streamedMonad() first
 	 * 
-	 * {@code assertThat(monad(Stream.of(4,3,6,7)).sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));}
+	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));}
 	 * 
 	 * @param p Limit while predicate is true
 	 * @return Monad converted to Stream with limited elements
@@ -523,7 +523,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	/**
 	 * NB to access nested collections in non-Stream monads as a stream use streamedMonad() first
 	 * 
-	 * {@code assertThat(monad(Stream.of(4,3,6,7)).limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3))); }
+	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3))); }
 	 * 
 	 * @param p Limit until predicate is true
 	 * @return Monad converted to Stream with limited elements
@@ -534,9 +534,9 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	}
 	/**
 	 * Transform the contents of a Monad into a Monad wrapping a Stream e.g.
-	 * Turn an {@code Optional<List<Integer>>  into Stream<Integer> }
+	 * Turn an <pre>{@code Optional<List<Integer>>  into Stream<Integer> }
 	 * 
-	 * {@code
+	 * <pre>{@code
 	 * List<List<Integer>> list = monad(Optional.of(Arrays.asList(1,2,3,4,5,6)))
 											.<Stream<Integer>,Integer>streamedMonad()
 											.grouped(3)

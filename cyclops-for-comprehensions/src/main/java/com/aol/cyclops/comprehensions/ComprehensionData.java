@@ -46,7 +46,7 @@ public class ComprehensionData<T,R,V extends Initialisable>{
 	/**
 	 * Add a guard to the for comprehension
 	 * 
-	 * {@code
+	 * <pre>{@code
 	 *  	foreachX(c -> c.$("hello",list)
 						   .filter(()->c.<Integer>$("hello")<10)
 							.yield(()-> c.<Integer>$("hello")+2));
@@ -71,7 +71,7 @@ public class ComprehensionData<T,R,V extends Initialisable>{
 	 * Define the yeild section of a for comprehension and kick of processing
 	 *  for a comprehension
 	 *  
-	 *  {@code
+	 *  <pre>{@code
 	 *  	foreachX(c -> c.$("hello",list)
 						   .filter(()->c.<Integer>$("hello")<10)
 							.yield(()-> c.<Integer>$("hello")+2));
@@ -91,7 +91,7 @@ public class ComprehensionData<T,R,V extends Initialisable>{
 	
 	/**
 	 * Extract a bound variable
-	 * {@code
+	 * <pre>{@code
 	 *  	foreachX(c -> c.$("hello",list)
 						   .filter(()->c.<Integer>$("hello")<10)
 							.yield(()-> c.<Integer>$("hello")+2));
@@ -111,7 +111,7 @@ public class ComprehensionData<T,R,V extends Initialisable>{
 	/**
 	 * Bind a variable in this for comprehension
 	 * 
-	 * {@code
+	 * <pre>{@code
 	 *  	foreachX(c -> c.$("hello",list)
 						   .filter(()->c.<Integer>$("hello")<10)
 							.yield(()-> c.<Integer>$("hello")+2));
@@ -129,7 +129,7 @@ public class ComprehensionData<T,R,V extends Initialisable>{
 	/**
 	 * Lazily bind a variable in this for comprehension
 	 * 
-	 * {@code
+	 * <pre>{@code
 	 *  	foreachX(c -> c.$("hello",list)
 						   .filter(()->c.<Integer>$("hello")<10)
 							.yield(()-> c.<Integer>$("hello")+2));

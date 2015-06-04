@@ -3,11 +3,10 @@ package com.aol.cyclops.lambda.monads;
 
 import static com.aol.cyclops.lambda.api.AsGenericMonad.asMonad;
 import static com.aol.cyclops.lambda.api.AsGenericMonad.monad;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+
 
 import java.util.List;
-import java.util.Optional;
+
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -15,7 +14,7 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.lambda.api.AsGenericMonad;
 import com.aol.cyclops.lambda.api.AsAnyM;
-import com.aol.cyclops.lambda.api.AsStreamable;
+
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.streams.Pair;
 
@@ -29,7 +28,7 @@ public interface MonadFunctions<MONAD,T> extends AsGenericMonad,AsAnyM{
 	 * Apply function/s inside supplied Monad to data in current Monad
 	 * 
 	 * e.g. with Streams
-	 * {@code 
+	 * <pre>{@code 
 	 * 
 	 * Simplex<Integer> applied =monad(Stream.of(1,2,3)).applyM(monad(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2))).simplex();
 	
@@ -37,7 +36,7 @@ public interface MonadFunctions<MONAD,T> extends AsGenericMonad,AsAnyM{
 	 }
 	 * 
 	 * with Optionals 
-	 * {@code
+	 * <pre>{@code
 	 * 
 	 *  Simplex<Integer> applied =monad(Optional.of(2)).applyM(monad(Optional.of( (Integer a)->a+1)) ).simplex();
 		assertThat(applied.toList(),equalTo(Arrays.asList(3)));}
@@ -55,7 +54,7 @@ public interface MonadFunctions<MONAD,T> extends AsGenericMonad,AsAnyM{
 	 * 
 	 * e.g.
 	 * 
-	 * {@code
+	 * <pre>{@code
 	 *  Simplex<Stream<Integer>> applied = monad(Stream.of(1,2,3))
 	 *    									.filterM(monad(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3)))
 	 *    									.simplex();
@@ -82,7 +81,7 @@ public interface MonadFunctions<MONAD,T> extends AsGenericMonad,AsAnyM{
 	 * 
 	 * Replicate given Monad
 	 * 
-	 * {@code 
+	 * <pre>{@code 
 	 * 	
 	 *   Simplex<Optional<Integer>> applied =monad(Optional.of(2)).replicateM(5).simplex();
 		 assertThat(applied.unwrap(),equalTo(Optional.of(Arrays.asList(2,2,2,2,2))));
@@ -102,7 +101,7 @@ public interface MonadFunctions<MONAD,T> extends AsGenericMonad,AsAnyM{
 	/**
 	 * Perform a reduction where NT is a (native) Monad type
 	 * e.g. 
-	 * {@code 
+	 * <pre>{@code 
 	 * Monoid<Optional<Integer>> optionalAdd = Monoid.of(Optional.of(0), (a,b)-> Optional.of(a.get()+b.get()));
 		
 		assertThat(monad(Stream.of(2,8,3,1)).reduceM(optionalAdd).unwrap(),equalTo(Optional.of(14)));
@@ -171,7 +170,7 @@ public interface MonadFunctions<MONAD,T> extends AsGenericMonad,AsAnyM{
 	/**
 	 * Convert a list of Monads to a Monad with a List
 	 * 
-	 * {@code
+	 * <pre>{@code
 	 * List<CompletableFuture<Integer>> futures;
 
         
@@ -194,7 +193,7 @@ public interface MonadFunctions<MONAD,T> extends AsGenericMonad,AsAnyM{
 	/**
 	 * Convert a list of Monads to a Monad with a List applying the supplied function in the process
 	 * 
-	 * {@code 
+	 * <pre>{@code 
 	 *    List<CompletableFuture<Integer>> futures;
 
         
@@ -218,7 +217,7 @@ public interface MonadFunctions<MONAD,T> extends AsGenericMonad,AsAnyM{
 	/**
 	 * Convert a list of Monads to a Monad with a List applying the supplied function in the process
 	 * 
-	 * {@code 
+	 * <pre>{@code 
 	 *    List<CompletableFuture<Integer>> futures;
 
         
@@ -241,7 +240,7 @@ public interface MonadFunctions<MONAD,T> extends AsGenericMonad,AsAnyM{
 	/**
 	 * Convert a list of Monads to a Monad with a List
 	 * 
-	 * {@code
+	 * <pre>{@code
 	 * List<CompletableFuture<Integer>> futures;
 
        

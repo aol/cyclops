@@ -39,7 +39,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 * 
 	 * Case classes can be constructed succintly in Java with Lombok or jADT
 	 * e.g.
-	 * {@code
+	 * <pre>{@code
 	 * \@Value final class CaseClass implements Decomposable { int field1; String field2;}
 	 * }
 	 * 
@@ -96,7 +96,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 * 
 	 * Case classes can be constructed succintly in Java with Lombok or jADT
 	 * e.g.
-	 * {@code
+	 * <pre>{@code
 	 * \@Value final class CaseClass implements Decomposable { int field1; String field2;}
 	 * }
 	 * 

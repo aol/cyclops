@@ -100,7 +100,7 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 		
 	}
 	/**
-	 * {@code
+	 * <pre>{@code
 	 * 	val cases = Cases.of(Case.of(input->true,input->"hello"));
 	 *	val unzipped = cases.unzip();
 	 *	assertTrue(unzipped.v1.map(p->p.test(10)).allMatch(v->v));

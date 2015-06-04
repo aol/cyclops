@@ -23,7 +23,7 @@ import com.aol.cyclops.lambda.monads.ComprehenderSelector;
  * E.g. To support mapping for the Functional Java Option type wrap the supplied JDK 8 Function in a Functional Java
  * fj.F type, call the make call to option.map( ) and retun the result.
  * 
- * {@code
+ * <pre>{@code
  *  OptionComprehender<Option> {
  *    
  *     public Object map(Option o, Function fn){
@@ -50,7 +50,7 @@ public interface Comprehender<T> {
 	 * 
 	 * @param t Monadic type being wrapped
 	 * @param p JDK Predicate to wrap
-	 * @return Result of call to {@code t.filter ( i -> p.test(i)); }
+	 * @return Result of call to <pre>{@code t.filter ( i -> p.test(i)); }
 	 */
 	public Object filter(T t, Predicate p);
 	
@@ -59,7 +59,7 @@ public interface Comprehender<T> {
 	 * 
 	 * @param t Monadic type being wrapped
 	 * @param fn JDK Function to wrap
-	 * @return Result of call to {@code t.map( i -> fn.apply(i)); }
+	 * @return Result of call to <pre>{@code t.map( i -> fn.apply(i)); }
 	 */
 	public Object map(T t, Function fn);
 	
@@ -81,7 +81,7 @@ public interface Comprehender<T> {
 	 * 
 	 * @param t Monadic type being wrapped
 	 * @param fn JDK Function to wrap
-	 * @return Result of call to {@code t.flatMap( i -> fn.apply(i)); }
+	 * @return Result of call to <pre>{@code t.flatMap( i -> fn.apply(i)); }
 	 */
 	default T executeflatMap(T t, Function fn){
 		return flatMap(t,input -> unwrapOtherMonadTypes(this,fn.apply(input)));

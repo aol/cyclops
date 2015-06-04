@@ -20,18 +20,10 @@ public class SimplexImpl<X> implements AnyM<X>{
 	public Object unwrap(){
 		return monad;
 	}
-	/**
-		@Delegate(excludes=FlatMap.class)
-		private final Monad<Object,X> m ;//= (Monad)Monad.this;
+	@Override
+    public String toString() {
+        return String.format("AnyM(%s)", monad );
+    }
 
-		public  <R1, NT> Simplex<R1, NT> flatMap(Function<X, R1> fn) {
-			return m.flatMap(fn);
-		}
-		
-		public <R> R monad(){
-			return (R)unwrap();
-		}
-		static interface FlatMap<U>{
-			public  <R1, NT> Monad<R1, NT> flatMap(Function<U, R1> fn);
-		}**/
+	
 }

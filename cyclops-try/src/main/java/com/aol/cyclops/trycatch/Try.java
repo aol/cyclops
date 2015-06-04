@@ -184,6 +184,17 @@ public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, St
 		return this;
 	}
 	
+	/**
+	 * Return a Try that will catch specified exceptions when map / flatMap called
+	 * For use with liftM / liftM2 and For Comprehensions (when Try is at the top level)
+	 * 
+	 * @param value Initial value
+	 * @param classes Exceptions to catch during map / flatMap
+	 * @return Try instance
+	 */
+	public static <T,X extends Throwable> Try<T,X> of(T value,Class<? extends Throwable>... classes){
+		return new Success<>(value,classes);
+	}
 	
 	/**
 	 * Try to execute supplied Supplier and will Catch specified Excpetions or java.lang.Exception

@@ -13,7 +13,7 @@ import lombok.ToString;
  * In Java 8 because of the effectively final rule references to captured
  * variables can't be changed.
  * e.g.
- *{@code 
+ *<pre>{@code 
  * String var = "hello";
  * Runnable r = () -> var ="world";
  * }
@@ -22,7 +22,7 @@ import lombok.ToString;
  * This can be 'worked around' by using a wrapping object or array.
  * 
  * e.g.
- * {@code
+ * <pre>{@code
  * Mutable<String> var =  Mutable.of("hello");
  * Runnable r = () -> var.set("world");
  * }
@@ -42,7 +42,7 @@ public class Mutable<T> implements Supplier<T>{
 	 * Create a Mutable variable, which can be mutated inside a Closure 
 	 * 
 	 * e.g.
-	 * {@code
+	 * <pre>{@code
 	 *   Mutable<Integer> num = Mutable.of(20);
 	 *   
 	 *   Stream.of(1,2,3,4).map(i->i*10).peek(i-> num.mutate(n->n+i)).foreach(System.out::println);

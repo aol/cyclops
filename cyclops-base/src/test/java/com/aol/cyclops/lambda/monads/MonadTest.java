@@ -38,6 +38,51 @@ import com.aol.cyclops.streams.StreamUtils;
 
 public class MonadTest {
 
+	 Optional<Integer> value = Optional.of(42);
+	 Monad<Optional<Integer>,Integer> monadicValue = monad(value);
+	 Function<Optional<Integer>,Monad<Optional<Integer>,Integer>> monadOf = input ->monad(input);
+	 Function<Optional<Integer>,Monad<Optional<Integer>,Integer>> f = input -> monad(Optional.of(input.get()*5));
+	 Function<Optional<Integer>,Monad<Optional<Integer>,Integer>> g = input -> monad(Optional.of(input.get()*50));
+	  /**
+     * Monad law 1, Left Identity
+     *
+     * From LYAHFGG [1] above: 
+     *   The first monad law states that if we take a value, put it in a default context 
+     *   with return and then feed it to a function by using >>=, it’s the same as just 
+     *   taking the value and applying the function to it
+     */
+	 @Test
+    public void satisfiesLaw1LeftIdentity() {
+        assertThat( monad(value).monadFlatMap(f),
+            equalTo(f.apply(value) ));
+    }
+ 
+    /**
+     * Monad law 2, Right Identity
+     *
+     * From LYAHFGG [1] above: 
+     *   The second law states that if we have a monadic value and we use >>= to feed 
+     *   it to return, the result is our original monadic value.
+     */
+    @Test
+    public void satisfiesLaw2RightIdentity() {
+         assertThat(monadicValue.monadFlatMap(monadOf),
+            equalTo(monadicValue));
+    }
+ 
+    /**
+     * Monad law 3, Associativity
+     *
+     * From LYAHFGG [1] above: 
+     *   The final monad law says that when we have a chain of monadic function 
+     *   applications with >>=, it shouldn’t matter how they’re nested.
+     */
+    @Test
+    public void satisfiesLaw3Associativity() {
+    	assertThat(monadicValue.monadFlatMap(f).monadFlatMap(g)
+            ,equalTo(monadicValue.monadFlatMap( input ->f.apply(input).monadFlatMap(g))));
+    }
+	
 	@Test
 	public void test() {
 		val list = MonadWrapper.<Stream<Integer>,List<Integer>>of(Stream.of(Arrays.asList(1,3)))
@@ -574,5 +619,17 @@ public class MonadTest {
 		Optional<Integer> result = lifted.apply(Optional.of(3),Optional.of(6));
 		
 		assertThat(result.get(),equalTo(18));
+	}
+	private Integer add(Integer a, Integer  b){
+		return a+b;
+	}
+	@Test
+	public void testLiftM2Mixed(){
+		val lifted = MonadFunctions.liftM2(this::add); 
+		
+		AnyM<Integer> result = lifted.apply(anyM(Optional.of(3)),anyM(Stream.of(4,6,7)));
+		
+		
+		assertThat(result.<Optional<List<Integer>>>unwrapMonad().get(),equalTo(Arrays.asList(7,9,10)));
 	}
 }

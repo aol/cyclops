@@ -13,18 +13,16 @@ import lombok.ToString;
  * It will only allow it's value to be set once. Unfortunately the compiler won't be
  * able to tell if setOnce is called more than once
  * 
- * usage
+ * example usage
  * 
- * <pre>
- * public static final &lt;T,R &gt; Extractor&lt;T,R&gt; memoised( Extractor&lt;T,R&gt; extractor){
- *		final ImmutableClosedValue&lt;R&gt; value = new ImmutableClosedValue&lt;&gt;();
- *		return input -&gt; {
- *			return value.getOrSet(()-&gt;extractor.apply(input));
- *				
- *		};
- *		
- *	}
- * </pre>
+ * <pre>{@code
+ * public static <T> Supplier<T> memoiseSupplier(Supplier<T> s){
+		LazyImmutable<T> lazy = LazyImmutable.def();
+		return () -> lazy.computeIfAbsent(s);
+	}
+ * }
+ * 
+ * Has map and flatMap methods, but is not a Monad (see example usage above for why, it is the initial mutation that is valuable).
  * 
  * @author johnmcclean
  *
@@ -96,6 +94,7 @@ public class LazyImmutable<T> implements Supplier<T>{
 			return fn.apply(value);
 	}
 	/**
+	 * 
 	 * Set the value of this ImmutableClosedValue
 	 * If it has already been set will throw an exception
 	 * 

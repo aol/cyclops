@@ -29,7 +29,7 @@ public interface Matchable{
 		return this;
 	}
 	/**
-	 * {@code 
+	 * <pre>{@code 
 	 *   new MyCase(1,2,3).matchValues(this::choseMessage)  
 	 *   
 	 *   private <I,T> CheckValues<Object, T> chooseMessage(CheckValues<I, T> c) {
@@ -59,7 +59,7 @@ public interface Matchable{
 	/**
 	 * Match against this matchable using simple matching interface
 	 * 
-	 * {@code 
+	 * <pre>{@code 
 	 * return match(c -> 
 						c.caseOf( (Put p) -> new Put(p.key,p.value,(Action)fn.apply(p.next)))
 						 .caseOf((Delete d) -> new Delete(d.key,(Action)fn.apply(d.next)))
@@ -76,7 +76,7 @@ public interface Matchable{
 	/**
 	 * Match against this matchable using simple matching interface
 	 * 
-	 * {@code 
+	 * <pre>{@code 
 	 * return match(c -> 
 						 c.caseOf( (Put p) -> new Put(p.key,p.value,(Action)fn.apply(p.next)))
 						 .caseOf((Delete d) -> new Delete(d.key,(Action)fn.apply(d.next)))

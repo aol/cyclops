@@ -8,6 +8,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.lambda.utils.ExceptionSoftener;
+
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -24,6 +26,7 @@ import lombok.ToString;
 public class Success<T, X extends Throwable> implements Try<T,X>{
 	
 	private final T value;
+	private final Class<? extends Throwable>[] classes;
 	
 	@Override
 	public <R extends Iterable<?>> R unapply() {
@@ -45,8 +48,16 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 	 * @return new Success with value
 	 */
 	public static <T,X extends Throwable> Success<T,X> of(T value){
-		return new Success<>(value);
+		return new Success<>(value,new Class[0]);
 	}
+	/**
+	 * @param value Successful value
+	 * @return new Success with value
+	 */
+	public static <T,X extends Throwable> Success<T,X> of(T value,Class<? extends Throwable>[] classes){
+		return new Success<>(value,classes);
+	}
+	
 	/* 
 	 * @param fn Map success value from T to R.
 	 * @return New Try with mapped value
@@ -54,8 +65,26 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 	 */
 	@Override
 	public <R> Try<R,X> map(Function<T, R> fn) {
-		return of(fn.apply(get()));
+		return safeApply( ()->of(fn.apply(get())));
 	}
+	
+	private <R> R safeApply(Supplier<R> s){
+		try{
+			return s.get();
+		}catch(Throwable t){
+			return (R)Failure.of(orThrow(Stream.of(classes).filter(c->c.isAssignableFrom(t.getClass())).map(c->t).findFirst(),t));
+			
+		}
+	}
+
+	private Throwable orThrow(Optional<Throwable> findFirst, Throwable t) {
+		if(findFirst.isPresent())
+			return findFirst.get();
+		ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(t);
+		return null;
+	}
+
+
 
 	/* 
 	 * @param fn FlatMap success value or Do nothing if Failure (return this)
@@ -64,7 +93,8 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 	 */
 	@Override
 	public <R> Try<R,X> flatMap(Function<T, Try<R,X>> fn) {
-		return fn.apply(get());
+		return safeApply(()-> fn.apply(get()));
+		
 	}
 
 	/* 

@@ -126,7 +126,7 @@ public interface StreamUtils {
 	/**
 	 * Simultanously reduce a stream with multiple reducers
 	 * 
-	 * {@code
+	 * <pre>{@code
 	 * 
 	 *  Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
 		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);

@@ -30,7 +30,7 @@ public class Matching {
 	 * 
 	 * Case classes can be constructed succintly in Java with Lombok or jADT
 	 * e.g.
-	 * {@code
+	 * <pre>{@code
 	 * \@Value final class CaseClass implements Decomposable { int field1; String field2;}
 	 * }
 	 * 
@@ -91,7 +91,7 @@ public class Matching {
 	 * 
 	 * Case classes can be constructed succintly in Java with Lombok or jADT
 	 * e.g.
-	 * {@code
+	 * <pre>{@code
 	 * \@Value final class CaseClass implements Decomposable { int field1; String field2;}
 	 * }
 	 * 

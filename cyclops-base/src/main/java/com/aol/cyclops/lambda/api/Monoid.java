@@ -60,7 +60,7 @@ public interface Monoid<T> {
 	 * reduce using this monoid
 	 * 
 	 * Example of multiple reduction using multiple Monoids and PowerTuples
-	 * {@code 
+	 * <pre>{@code 
 	 *  Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
 	 *	Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
 	 *	<PTuple2<Integer,Integer>> result = PowerTuples.tuple(sum,mult).<PTuple2<Integer,Integer>>asReducer()

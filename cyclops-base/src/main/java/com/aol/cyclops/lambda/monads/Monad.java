@@ -6,6 +6,7 @@ import static com.aol.cyclops.lambda.api.AsGenericMonad.monad;
 
 
 
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.api.AsGenericMonad;
 import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;
@@ -34,10 +36,10 @@ import com.nurkiewicz.lazyseq.LazySeq;
  * An interoperability Trait that encapsulates java Monad implementations.
  * 
  * A generalised view into Any Monad (that implements flatMap or bind and accepts any function definition
- * with an arity of 1).
+ * with an arity of 1). Operates as a  Monad Monad (yes two Monads in a row! - or a Monad that encapsulates and operates on Monads).
  * 
  * NB the intended use case is to wrap already existant Monad-like objects from diverse sources, to improve
- * interoperability - it's not intended for use as an interface to be implemented on a Monad.
+ * interoperability - it's not intended for use as an interface to be implemented on a Monad class.
  * 
  * @author johnmcclean
  *
@@ -45,7 +47,7 @@ import com.nurkiewicz.lazyseq.LazySeq;
  * @param <MONAD>
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunctions<MONAD,T>,Functor<T>, Filterable<T>{
+public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunctions<MONAD,T>,Functor<T>, Filterable<T>, AsAnyM{
 	
 	
 	public <MONAD,T> Monad<MONAD,T> withMonad(Object invoke);
@@ -125,7 +127,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 	/**
 	 * @return This monad coverted to an Optional
 	 * 
-	 * Streams will be converted into {@code Optional<List<T>> }
+	 * Streams will be converted into <pre>{@code Optional<List<T>> }
 	 * 
 	 */
 	default <T> Optional<T> toOptional(){
@@ -169,7 +171,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 	/**
 	 * Aggregate the contents of this Monad and the supplied Monad 
 	 * 
-	 * {@code 
+	 * <pre>{@code 
 	 * 
 	 * List<Integer> result = monad(Stream.of(1,2,3,4)).<Integer>aggregate(monad(Optional.of(5))).toList();
 		
@@ -188,7 +190,16 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 						.toList()))
 						.bind(Function.identity() );
 	}
+	default <MONAD2,NT>  Monad<MONAD2,NT> monadMap(Function<MONAD,NT> fn) {
+		return asMonad(fn.apply(unwrap()));
+	}
+	default Optional<MONAD> monadFilter(Predicate<MONAD> p) {
+		return p.test(unwrap()) ? Optional.of(unwrap()) : Optional.empty();
+	}
 	
+	default <MONAD2,NT,R extends Monad<MONAD2,NT>> R monadFlatMap(Function<MONAD,R> fn) {
+		return fn.apply(unwrap());
+	}
 	/**
 	 * flatMap operation
 	 * 
@@ -210,17 +221,17 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 	
 	
 	/**
-	 * @return Simplex view on wrapped Monad, with a single typed parameter - which is the datatype
+	 * @return AnyM view on a wrapped Monad, with a single typed parameter - which is the datatype
 	 * ultimately being handled by the Monad.
 	 * 
 	 * E.g.
-	 * {@code 
+	 * <pre>{@code 
 	 * 		Monad<Stream<String>,String> becomes
 	 * 		Simplex<String>
 	 * }
-	 * To get back to {@code Stream<String> } use
+	 * To get back to <pre>{@code Stream<String> } use
 	 * 
-	 * {@code
+	 * <pre>{@code
 	 *   
 	 * 	simplex.<Stream<String>>.monad();  
 	 * }

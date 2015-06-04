@@ -113,7 +113,7 @@ public interface As {
 	 * Create a duck typed Monad. 
 	 * Monaad should have methods
 	 * 
-	 * {@code 
+	 * <pre>{@code 
 	 * map(F f)
 	 * filter(P p)
 	 * flatMap(F<x,MONAD> fm)

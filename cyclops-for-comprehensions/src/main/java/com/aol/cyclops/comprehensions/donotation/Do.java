@@ -19,7 +19,7 @@ import com.aol.cyclops.lambda.utils.Mutable;
 /**
  * Do notation for comprehensions
  * 
- * {@code 		Stream<Integer> stream = Do.with(list)
+ * <pre>{@code 		Stream<Integer> stream = Do.with(list)
 								.filter((Integer a) -> a>2)
 								.yield((Integer a)-> a +2 );
 								
@@ -72,7 +72,7 @@ public class Do {
 		 * 
 		 * e.g. add 2 to every element in a list
 		 * 
-		 * {@code   Do.with(list)
+		 * <pre>{@code   Do.with(list)
 					  .yield((Integer a)-> a +2 );
 								
 			}
