@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.api.AsDecomposable;
 import com.aol.cyclops.lambda.api.AsFunctor;
 import com.aol.cyclops.lambda.api.AsGenericMonad;
@@ -18,10 +19,12 @@ import com.aol.cyclops.lambda.api.Streamable;
 import com.aol.cyclops.lambda.api.AsGenericMonoid.WrappedMonoid;
 import com.aol.cyclops.lambda.api.AsStreamable.CoercedStreamable;
 import com.aol.cyclops.lambda.api.AsSupplier.CoercedSupplier;
+import com.aol.cyclops.lambda.monads.AnyM;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.Monad;
 import com.aol.cyclops.matcher.AsMatchable;
 import com.aol.cyclops.matcher.Matchable;
+import com.aol.cyclops.trampoline.Trampoline;
 import com.aol.cyclops.value.AsStreamableValue;
 import com.aol.cyclops.value.AsValue;
 import com.aol.cyclops.value.StreamableValue;
@@ -129,8 +132,52 @@ public interface As {
 	 * @param monad to wrap
 	 * @return Duck typed Monad
 	 */
-	public static <T,MONAD> Monad<T,MONAD> asMonad(Object monad){
+	public static <MONAD,T> Monad<MONAD,T> asMonad(Object monad){
 		return AsGenericMonad.asMonad(monad);
+	}
+	/**
+	 * Create a duck typed Monad wrapper. Using AnyM we focus only on the underlying type
+	 * e.g. instead of 
+	 * <pre>
+	 * {@code 
+	 *  Monad<Stream<Integer>,Integer> stream;
+	 * 
+	 * we can write
+	 * 
+	 *   AnyM<Integer> stream;
+	 * }
+	 *  
+	 * The wrapped Monaad should have equivalent methods for
+	 * 
+	 * <pre>
+	 * {@code 
+	 * map(F f)
+	 * 
+	 * flatMap(F<x,MONAD> fm)
+	 * 
+	 * and optionally 
+	 * 
+	 * filter(P p)
+	 * }
+	 * </pre>
+	 * 
+	 * A Comprehender instance can be created and registered for new Monad Types. Cyclops will attempt
+	 * to manage any Monad type (via the InvokeDynamicComprehender) althouh behaviour is best guaranteed with
+	 * customised Comprehenders.
+	 * 
+	 * Where F is a Functional Interface of any type that takes a single parameter and returns
+	 * a result.	 
+	 * Where P is a Functional Interface of any type that takes a single parameter and returns
+	 * a boolean
+	 * 
+	 *  flatMap operations on the duck typed Monad can return any Monad type
+	 *  
+	 * 
+	 * @param anyM to wrap
+	 * @return Duck typed Monad
+	 */
+	public static <T> AnyM<T> asAnyM(Object monad){
+		return AsAnyM.asAnyM(monad);
 	}
 	/**
 	 * Create a Duck typed functor. Wrapped class should have a method
@@ -183,5 +230,28 @@ public interface As {
 		return AsGenericMonoid.asMonoid(o);
 	}
 	
+	/**
+	 * Create a Trampoline that is completed
+	 * 
+	 * @param t Result value
+	 * @return Completed Trampoline
+	 */
+	public static <T> Trampoline<T> asDone(T t){
+		return Trampoline.done(t);
+	}
+	/**
+	 * Create a Trampoline with more work to do
+	 * 
+	 * <pre>
+	 * {@code
+	 * 		return As.asMore(()->loop(times-1,sum+times));
+	 * }
+	 * 
+	 * @param trampoline Next stage in computation
+	 * @return In progress Trampoline
+	 */
+	public static <T> Trampoline<T> asMore(Trampoline<Trampoline<T>> trampoline){
+		return Trampoline.more(trampoline);
+	}
 	
 }

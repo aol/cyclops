@@ -4,7 +4,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 //#http://java.dzone.com/articles/whats-wrong-java-8-currying-vs
-public class Curry {
+public class Curry extends CurryConsumer{
 
 	
 	public static <T1,T2,R> Function<T1,Function<T2,R>> curry2(BiFunction<T1,T2,R> biFunc){

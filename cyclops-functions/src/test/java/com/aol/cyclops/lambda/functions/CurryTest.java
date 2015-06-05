@@ -12,6 +12,7 @@ public class CurryTest {
 
 	@Test
 	public void testBiFunc() {
+		
 		BiFunction<Integer,Integer,String> fn= (i,j) -> "" + (i+j) + "hello";
 		assertThat(Curry.curry2(fn).apply(1).apply(2),equalTo("3hello"));
 	}

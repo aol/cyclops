@@ -2,6 +2,8 @@ package com.aol.cyclops.lambda.utils;
 
 import java.util.function.Function;
 
+import com.sun.xml.internal.ws.util.StreamUtils;
+
 /**
  * Lambda type inferencing helper / curried function creation helper
  * 
@@ -15,7 +17,7 @@ public class Lambda {
 	 * 
 	 * <pre>{@code
 	 * 		val fn  = λ1((Integer i)->"hello")
-	 * }
+	 * }</pre>
 	 * @param func
 	 * @return supplied function
 	 */
@@ -29,7 +31,7 @@ public class Lambda {
 	 * 
 	 * <pre>{@code
 	 * 		val fn  = λ3((Integer a)-> (Integer b)-> a+b+)
-	 * }
+	 * }</pre>
 	 * @param biFunc
 	 * @return supplied function
 	 */
@@ -43,7 +45,7 @@ public class Lambda {
 	 * 
 	 * <pre>{@code
 	 * 		val fn  = λ3((Integer a)-> (Integer b)->(Integer c) -> a+b+c)
-	 * }
+	 * }</pre>
 	 * @param triFunc
 	 * @return supplied function
 	 */
@@ -57,7 +59,7 @@ public class Lambda {
 	 * 
 	 * <pre>{@code
 	 * 		val fn  = λ4((Integer a)-> (Integer b)->(Integer c) -> (Integer d) -> a+b+c+d)
-	 * }
+	 * }</pre>
 	 * @param quadFunc
 	 * @return supplied function
 	 */
@@ -71,7 +73,7 @@ public class Lambda {
 	 * 
 	 * <pre>{@code
 	 * 		val fn  = λ4((Integer a)-> (Integer b)->(Integer c) -> (Integer d) -> (Integer e) -> a+b+c+d+e)
-	 * }
+	 * }</pre>
 	 * @param pentFunc
 	 * @return supplied function
 	 */
@@ -85,7 +87,7 @@ public class Lambda {
 	 * 
 	 * <pre>{@code
 	 * 		val fn  = λ4((Integer a)-> (Integer b)->(Integer c) -> (Integer d) -> (Integer e) -> (Integer f)-> a+b+c+d+e+f)
-	 * }
+	 * }</pre>
 	 * @param hexFunc
 	 * @return supplied function
 	 */
@@ -99,7 +101,7 @@ public class Lambda {
 	 * 
 	 * <pre>{@code
 	 * 		val fn  = λ4((Integer a)-> (Integer b)->(Integer c) -> (Integer d) -> (Integer e) -> (Integer f)->(Integer g) -> a+b+c+d+e+f+g)
-	 * }
+	 * }</pre>
 	 * @param heptFunc
 	 * @return supplied function
 	 */
@@ -113,7 +115,7 @@ public class Lambda {
 	 * 
 	 * <pre>{@code
 	 * 		val fn  = λ4((Integer a)-> (Integer b)->(Integer c) -> (Integer d) -> (Integer e) -> (Integer f)->(Integer g) -> (Integer h) ->a+b+c+d+e+f+g+h)
-	 * }
+	 * }</pre>
 	 * @param octFunc
 	 * @return supplied function
 	 */

@@ -10,7 +10,7 @@ import com.aol.cyclops.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.lambda.monads.Monad;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
 
-public interface AsGenericMonad {
+public class AsGenericMonad {
 
 	/**
 	 * Create a duck typed Monad. 

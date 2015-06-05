@@ -30,6 +30,7 @@ public class MemoiseTest {
 	}
 	@Test
 	public void testMemoiseSupplier() {
+		
 		Supplier<Integer> s = memoiseSupplier(()->++called);
 		assertThat(s.get(),equalTo(1));
 		assertThat(s.get(),equalTo(1));

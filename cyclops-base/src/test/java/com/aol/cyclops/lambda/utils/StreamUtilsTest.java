@@ -23,10 +23,11 @@ import static java.util.stream.Collectors.averagingInt;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.mapping;
-public class StreamUtilsTest implements StreamUtils {
+public class StreamUtilsTest {
 
 	@Test
 	public void testReverse() {
+		
 		assertThat(StreamUtils.reverse(Stream.of(1,2,3)).collect(Collectors.toList())
 				,equalTo(Arrays.asList(3,2,1)));
 	}

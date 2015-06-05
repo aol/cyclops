@@ -16,6 +16,7 @@ import org.junit.Test;
 import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.monads.AnyM;
 import com.aol.cyclops.lambda.monads.MonadFunctions;
+import com.aol.cyclops.lambda.monads.Monads;
 import com.google.common.base.Optional;
 
 public class LiftTest {
@@ -26,7 +27,7 @@ public class LiftTest {
 	
 	@Test
 	public void testLift(){
-		val add = MonadFunctions.liftM2(this::add);
+		val add = Monads.liftM2(this::add);
 		
 		AnyM<Integer> result = add.apply(anyM(Try.of(2, RuntimeException.class)), anyM(Try.of(3,RuntimeException.class)));
 		assertThat(result.<Try<Integer,RuntimeException>>unwrapMonad().get(),equalTo(5));
@@ -34,7 +35,7 @@ public class LiftTest {
 	
 	@Test
 	public void testLiftError(){
-		val divide = MonadFunctions.liftM2(this::divide);
+		val divide = Monads.liftM2(this::divide);
 		
 		AnyM<Integer> result = divide.apply(anyM(Try.of(2, ArithmeticException.class)), anyM(Try.of(0,ArithmeticException.class)));
 		System.out.println(result);
@@ -43,15 +44,16 @@ public class LiftTest {
 	
 	@Test
 	public void testLiftErrorAndStream(){
-		val divide = MonadFunctions.liftM2(this::divide);
+		val divide = Monads.liftM2(this::divide);
 		
 		AnyM<Integer> result = divide.apply(anyM(Try.of(20, ArithmeticException.class)), anyM(Stream.of(4,1,2,3,0)));
 		System.out.println(result);
 		assertThat(result.<Try<Integer,ArithmeticException>>unwrapMonad().isFailure(),equalTo(true));
 	}
+	
 	@Test
 	public void testLiftAndStream(){
-		val divide = MonadFunctions.liftM2(this::divide);
+		val divide = Monads.liftM2(this::divide);
 		
 		AnyM<Integer> result = divide.apply(anyM(Try.of(2, ArithmeticException.class)), anyM(Stream.of(10,1,2,3)));
 		
@@ -60,7 +62,7 @@ public class LiftTest {
 	
 	@Test(expected=ArithmeticException.class)
 	public void testLiftNoExceptionType(){
-		val divide = MonadFunctions.liftM2(this::divide);
+		val divide = Monads.liftM2(this::divide);
 		
 		AnyM<Integer> result = divide.apply(anyM(Try.of(2)), anyM(Try.of(0)));
 		System.out.println(result);

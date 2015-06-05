@@ -14,9 +14,11 @@ import lombok.val;
 
 import com.aol.cyclops.lambda.monads.AnyM;
 import com.aol.cyclops.lambda.monads.MonadFunctions;
+import com.aol.cyclops.lambda.monads.Monads;
 
 
-public interface LiftMFunctions {
+public class LiftMFunctions {
+	
 	/**
 	 * Lift a function so it accepts a Monad and returns a Monad (simplex view of a wrapped Monad)
 	 * Simplex view simplifies type related challenges. The actual native type is not specified here.
@@ -25,7 +27,7 @@ public interface LiftMFunctions {
 	 * @return
 	 */
 	public static <U,R> Function<AnyM<U>,AnyM<R>> liftM(Function<U,R> fn){
-		return MonadFunctions.liftM(fn);
+		return Monads.liftM(fn);
 	}
 	
 	/**
@@ -52,7 +54,7 @@ public interface LiftMFunctions {
 	 * @return
 	 */
 	static <U1,U2,R> BiFunction<AnyM<U1>,AnyM<U2>,AnyM<R>> liftM2(BiFunction<U1,U2,R> fn){
-		return MonadFunctions.liftM2(fn);
+		return Monads.liftM2(fn);
 	}
 	
 	static <U1,U2,U3,R> TriFunction<AnyM<U1>,AnyM<U2>,AnyM<U3>,AnyM<R>> liftM3(TriFunction<U1,U2,U3,R> fn){

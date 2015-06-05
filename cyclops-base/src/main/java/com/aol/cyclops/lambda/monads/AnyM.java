@@ -14,6 +14,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.api.AsGenericMonad;
 import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;
@@ -264,9 +265,9 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 *    monad(Optional.of(Arrays.asList(1,2,3))).sorted()  // Monad[Stream[List[1,2,3]]]
 	 *    
 	 *     monad(Optional.of(Arrays.asList(1,2,3))).streamedMonad().sorted() // Monad[Stream[1,2,3]]
-	 *  }
+	 *  }</pre>
 	 * 
-	 *  <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).sorted().toList(),equalTo(Arrays.asList(3,4,6,7))); }
+	 *  <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).sorted().toList(),equalTo(Arrays.asList(3,4,6,7))); }</pre>
 	 * 
 	 */
 	default AnyM<T> sortedAnyM(){
@@ -282,7 +283,7 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 *    monad(Optional.of(Arrays.asList(1,2,3))).sorted( (a,b)->b-a)  // Monad[Stream[List[1,2,3]]]
 	 *    
 	 *     monad(Optional.of(Arrays.asList(1,2,3))).streamedMonad().sorted( (a,b)->b-a) // Monad[Stream[3,2,1]]
-	 *  }
+	 *  }</pre>
 	 * 
 
 	 * 
@@ -293,7 +294,7 @@ public interface AnyM<T> extends Monad<Object,T>{
 		return Monad.super.sorted(c).anyM();   
 	}
 	/**
-	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).skip(2).toList(),equalTo(Arrays.asList(6,7))); }
+	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).skip(2).toList(),equalTo(Arrays.asList(6,7))); }</pre>
 	 * 
 	 * NB to access nested collections in non-Stream monads as a stream use streamedMonad() first
 	 * 
@@ -309,7 +310,7 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 * 
 	 * <pre>{@code
 	 * assertThat(monad(Stream.of(4,3,6,7)).sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
-	 * }
+	 * }</pre>
 	 * 
 	 * @param p Predicate to skip while true
 	 * @return Monad converted to Stream with elements skipped while predicate holds
@@ -321,7 +322,7 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 * 
 	 * NB to access nested collections in non-Stream monads as a stream use streamedMonad() first
 	 * 
-	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));}
+	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));}</pre>
 	 * 
 	 * 
 	 * @param p Predicate to skip until true
@@ -344,7 +345,7 @@ public interface AnyM<T> extends Monad<Object,T>{
 	/**
 	 *  NB to access nested collections in non-Stream monads as a stream use streamedMonad() first
 	 * 
-	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));}
+	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));}</pre>
 	 * 
 	 * @param p Limit while predicate is true
 	 * @return Monad converted to Stream with limited elements
@@ -355,7 +356,7 @@ public interface AnyM<T> extends Monad<Object,T>{
 	/**
 	 * NB to access nested collections in non-Stream monads as a stream use streamedMonad() first
 	 * 
-	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3))); }
+	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3))); }</pre>
 	 * 
 	 * @param p Limit until predicate is true
 	 * @return Monad converted to Stream with limited elements
@@ -376,7 +377,7 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 * List<Integer> result = monad(Stream.of(1,2,3,4)).<Integer>aggregate(monad(Optional.of(5))).toList();
 		
 		assertThat(result,equalTo(Arrays.asList(1,2,3,4,5)));
-		}
+		}</pre>
 	 * 
 	 * @param next Monad to aggregate content with
 	 * @return Aggregated Monad
@@ -405,7 +406,7 @@ public interface AnyM<T> extends Monad<Object,T>{
 	
 	/**
 	 * Transform the contents of a Monad into a Monad wrapping a Stream e.g.
-	 * Turn an <pre>{@code Optional<List<Integer>>  into Stream<Integer> }
+	 * Turn an <pre>{@code Optional<List<Integer>>  into Stream<Integer> }</pre>
 	 * 
 	 * <pre>{@code
 	 * List<List<Integer>> list = monad(Optional.of(Arrays.asList(1,2,3,4,5,6)))
@@ -417,7 +418,7 @@ public interface AnyM<T> extends Monad<Object,T>{
 		assertThat(list.get(0),hasItems(1,2,3));
 		assertThat(list.get(1),hasItems(4,5,6));
 	 * 
-	 * }
+	 * }</pre>
 	 * 
 	 * 
 	 * @return A Monad that wraps a Stream
@@ -425,4 +426,51 @@ public interface AnyM<T> extends Monad<Object,T>{
 	default <NT> AnyM<NT> streamedMonadAnyM(){
 		return Monad.super.streamedMonad().anyM();
 	}
+	
+	/**
+	 * Create a duck typed Monad wrapper. Using AnyM we focus only on the underlying type
+	 * e.g. instead of 
+	 * <pre>
+	 * {@code 
+	 *  Monad<Stream<Integer>,Integer> stream;
+	 * 
+	 * we can write
+	 * 
+	 *   AnyM<Integer> stream;
+	 * }
+	 *  
+	 * The wrapped Monaad should have equivalent methods for
+	 * 
+	 * <pre>
+	 * {@code 
+	 * map(F f)
+	 * 
+	 * flatMap(F<x,MONAD> fm)
+	 * 
+	 * and optionally 
+	 * 
+	 * filter(P p)
+	 * }
+	 * </pre>
+	 * 
+	 * A Comprehender instance can be created and registered for new Monad Types. Cyclops will attempt
+	 * to manage any Monad type (via the InvokeDynamicComprehender) althouh behaviour is best guaranteed with
+	 * customised Comprehenders.
+	 * 
+	 * Where F is a Functional Interface of any type that takes a single parameter and returns
+	 * a result.	 
+	 * Where P is a Functional Interface of any type that takes a single parameter and returns
+	 * a boolean
+	 * 
+	 *  flatMap operations on the duck typed Monad can return any Monad type
+	 *  
+	 * 
+	 * @param anyM to wrap
+	 * @return Duck typed Monad
+	 */
+	public static <T> AnyM<T> of(Object o){
+		return AsAnyM.asAnyM(o);
+	}
+	
+	
 }

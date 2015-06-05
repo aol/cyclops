@@ -26,6 +26,7 @@ dependencies {
 	//	compile 'com.aol.advertising.cyclops:pattern-matching:3.0.0'
 	//	compile 'com.aol.advertising.cyclops:cyclops-for-comprehensions:3.0.0'
 	//   compile 'com.aol.advertising.cyclops:cyclops-trampoline:3.0.0'
+	compile project(':cyclops-functions')
 	compile project(':cyclops-pattern-matching')
 	compile project(':cyclops-trampoline')
 	compile project(':cyclops-base')

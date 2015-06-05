@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.lambda.monads.AnyM;
 import com.aol.cyclops.lambda.monads.MonadFunctions;
+import com.aol.cyclops.lambda.monads.Monads;
 
 public class LiftTest {
 
@@ -19,7 +20,8 @@ public class LiftTest {
 	
 	@Test
 	public void testLift(){
-		val add = MonadFunctions.liftM2(this::add);
+		
+		val add = Monads.liftM2(this::add);
 		
 		AnyM<Integer> result = add.apply(anyM(Switch.enable(2)), anyM(Switch.enable(3)));
 		assertThat(result.<Switch<Integer>>unwrapMonad().get(),equalTo(5));
@@ -29,7 +31,7 @@ public class LiftTest {
 	
 	
 	public void testLiftDisabled(){
-		val divide = MonadFunctions.liftM2(this::add);
+		val divide = Monads.liftM2(this::add);
 		
 		AnyM<Integer> result = divide.apply(anyM(Switch.enable(2)), anyM(Switch.disable(4)));
 		assertThat(result.<Switch<Integer>>unwrapMonad().isDisabled(),equalTo(true));

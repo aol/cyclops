@@ -7,6 +7,7 @@ import static com.aol.cyclops.lambda.api.AsGenericMonad.monad;
 
 
 
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -47,7 +48,7 @@ import com.nurkiewicz.lazyseq.LazySeq;
  * @param <MONAD>
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunctions<MONAD,T>,Functor<T>, Filterable<T>, AsAnyM{
+public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunctions<MONAD,T>,Functor<T>, Filterable<T>{
 	
 	
 	public <MONAD,T> Monad<MONAD,T> withMonad(Object invoke);
@@ -241,5 +242,49 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 		return new SimplexImpl<X>(unwrap());	
 	}
 	
+	/**
+	 * Create a duck typed Monad wrapper. Using AnyM we focus only on the underlying type
+	 * e.g. instead of 
+	 * <pre>
+	 * {@code 
+	 *  Monad<Stream<Integer>,Integer> stream;
+	 * 
+	 * we can write
+	 * 
+	 *   AnyM<Integer> stream;
+	 * }
+	 *  
+	 * The wrapped Monaad should have equivalent methods for
+	 * 
+	 * <pre>
+	 * {@code 
+	 * map(F f)
+	 * 
+	 * flatMap(F<x,MONAD> fm)
+	 * 
+	 * and optionally 
+	 * 
+	 * filter(P p)
+	 * }
+	 * </pre>
+	 * 
+	 * A Comprehender instance can be created and registered for new Monad Types. Cyclops will attempt
+	 * to manage any Monad type (via the InvokeDynamicComprehender) althouh behaviour is best guaranteed with
+	 * customised Comprehenders.
+	 * 
+	 * Where F is a Functional Interface of any type that takes a single parameter and returns
+	 * a result.	 
+	 * Where P is a Functional Interface of any type that takes a single parameter and returns
+	 * a boolean
+	 * 
+	 *  flatMap operations on the duck typed Monad can return any Monad type
+	 *  
+	 * 
+	 * @param anyM to wrap
+	 * @return Duck typed Monad
+	 */
+	public static <MONAD,T> Monad<MONAD,T> of(Object o){
+		return AsGenericMonad.asMonad(o);
+	}
 
 }

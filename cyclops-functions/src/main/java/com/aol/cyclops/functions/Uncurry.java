@@ -4,7 +4,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 //#http://java.dzone.com/articles/whats-wrong-java-8-currying-vs
-public class Uncurry {
+public class Uncurry extends UncurryConsumer{
 
 	
 	public static <T1,T2,R> BiFunction<T1,T2,R> uncurry2(Function<T2,Function<T1,R>> biFunc){
