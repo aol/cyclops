@@ -17,6 +17,16 @@ import com.aol.cyclops.lambda.monads.MonadFunctions;
 import com.aol.cyclops.lambda.monads.Monads;
 
 
+/**
+ * 
+ * Lift funcitons / method references to a higher level of abstraction
+ * Transparently inject behaviour via Monads.
+ * 
+ * e.g. Use Stream to inject iteration, Try for error handling, Optional for null handling, CompletableFuture for async execution
+ * 
+ * @author johnmcclean
+ *
+ */
 public class LiftMFunctions {
 	
 	/**
@@ -53,24 +63,52 @@ public class LiftMFunctions {
 	 * @param fn
 	 * @return
 	 */
-	static <U1,U2,R> BiFunction<AnyM<U1>,AnyM<U2>,AnyM<R>> liftM2(BiFunction<U1,U2,R> fn){
+	public static <U1,U2,R> BiFunction<AnyM<U1>,AnyM<U2>,AnyM<R>> liftM2(BiFunction<U1,U2,R> fn){
 		return Monads.liftM2(fn);
 	}
 	
-	static <U1,U2,U3,R> TriFunction<AnyM<U1>,AnyM<U2>,AnyM<U3>,AnyM<R>> liftM3(TriFunction<U1,U2,U3,R> fn){
+	/**
+	 * Lift a TriFunction into Monadic form. A good use case it to take an existing method and lift it so it can accept and return monads
+	 * 
+	 * <pre>
+	 * {@code
+	 * TriFunction<AnyM<Double>,AnyM<Entity>,AnyM<String>,AnyM<Integer>> fn = liftM3(this::myMethod);
+	 *    
+	 * }
+	 * </pre>
+	 * 
+	 * Now we can execute the Method with Streams, Optional, Futures, Try's etc to transparently inject iteration, null handling, async execution and / or error handling
+	 * 
+	 * @param fn Function to lift
+	 * @return Lifted function
+	 */
+	public static <U1,U2,U3,R> TriFunction<AnyM<U1>,AnyM<U2>,AnyM<U3>,AnyM<R>> liftM3(TriFunction<U1,U2,U3,R> fn){
 		return (u1,u2,u3) -> u1.bind( input1 -> 
 									u2.bind(input2 -> 
 										u3.map(input3->fn.apply(input1,input2,input3)  )).unwrap()).anyM();
 	}
 	
-	static <U1,U2,U3,U4,R> QuadFunction<AnyM<U1>,AnyM<U2>,AnyM<U3>,AnyM<U4>,AnyM<R>> liftM4(QuadFunction<U1,U2,U3,U4,R> fn){
+	/**
+	 * Lift a QuadFunction into Monadic form.
+	 * 
+	 * @param fn Quad funciton to lift
+	 * @return Lifted Quad function
+	 */
+	public static <U1,U2,U3,U4,R> QuadFunction<AnyM<U1>,AnyM<U2>,AnyM<U3>,AnyM<U4>,AnyM<R>> liftM4(QuadFunction<U1,U2,U3,U4,R> fn){
 		
 		return (u1,u2,u3,u4) -> u1.bind( input1 -> 
 										u2.bind(input2 -> 
 												u3.bind(input3->
 														u4.map(input4->fn.apply(input1,input2,input3,input4)  ))).unwrap()).anyM();
 	}
-	static <U1,U2,U3,U4,U5,R> QuintFunction<AnyM<U1>,AnyM<U2>,AnyM<U3>,AnyM<U4>,AnyM<U5>,AnyM<R>> liftM5(QuintFunction<U1,U2,U3,U4,U5,R> fn){
+	
+	/**
+	 * Lift a QuintFunction (5 parameters) into Monadic form
+	 * 
+	 * @param fn Function to lift
+	 * @return Lifted Function
+	 */
+	public static <U1,U2,U3,U4,U5,R> QuintFunction<AnyM<U1>,AnyM<U2>,AnyM<U3>,AnyM<U4>,AnyM<U5>,AnyM<R>> liftM5(QuintFunction<U1,U2,U3,U4,U5,R> fn){
 		
 		return (u1,u2,u3,u4,u5) -> u1.bind( input1 -> 
 										u2.bind(input2 -> 
@@ -79,24 +117,48 @@ public class LiftMFunctions {
 															u5.map(input5->fn.apply(input1,input2,input3,input4,input5)  )))).unwrap()).anyM();
 	}
 	
-	static <U1,U2,R> Function<AnyM<U1>,Function<AnyM<U2>,AnyM<R>>> liftM2(Function<U1,Function<U2,R>> fn){
+	/**
+	 * Lift a Curried Function (2 levels a->b->fn.apply(a,b) ) into Monadic form
+	 * 
+	 * @param fn Function to lift
+	 * @return Lifted function 
+	 */
+	public static <U1,U2,R> Function<AnyM<U1>,Function<AnyM<U2>,AnyM<R>>> liftM2(Function<U1,Function<U2,R>> fn){
 		return u1 -> u2 -> u1.bind( input1 -> u2.map(input2 -> fn.apply(input1).apply(input2)  ).unwrap()).anyM();
 
 	}
-	static <U1,U2,U3,R> Function<AnyM<U1>,Function<AnyM<U2>,Function<AnyM<U3>,AnyM<R>>>> liftM3(Function<U1,Function<U2,Function<U3,R>>> fn){
+	/**
+	 * Lift a Curried Function (3 levels a->b->c->fn.apply(a,b,c) ) into Monadic form
+	 * 
+	 * @param fn Function to lift
+	 * @return Lifted function 
+	 */
+	public static <U1,U2,U3,R> Function<AnyM<U1>,Function<AnyM<U2>,Function<AnyM<U3>,AnyM<R>>>> liftM3(Function<U1,Function<U2,Function<U3,R>>> fn){
 		return u1 -> u2 ->u3 -> u1.bind( input1 -> 
 									u2.bind(input2 -> 
 										u3.map(input3->fn.apply(input1).apply(input2).apply(input3)  )).unwrap()).anyM();
 	}
 	
-	static <U1,U2,U3,U4,R> Function<AnyM<U1>,Function<AnyM<U2>,Function<AnyM<U3>,Function<AnyM<U4>,AnyM<R>>>>> liftM4(Function<U1,Function<U2,Function<U3,Function<U4,R>>>> fn){
+	/**
+	 * Lift a Curried Function (4 levels a->b->c->d->fn.apply(a,b,c,d) ) into Monadic form
+	 * 
+	 * @param fn Function to lift
+	 * @return Lifted function 
+	 */
+	public static <U1,U2,U3,U4,R> Function<AnyM<U1>,Function<AnyM<U2>,Function<AnyM<U3>,Function<AnyM<U4>,AnyM<R>>>>> liftM4(Function<U1,Function<U2,Function<U3,Function<U4,R>>>> fn){
 		
 		return u1->u2->u3->u4 -> u1.bind( input1 -> 
 										u2.bind(input2 -> 
 												u3.bind(input3->
 														u4.map(input4->fn.apply(input1).apply(input2).apply(input3).apply(input4)  ))).unwrap()).anyM();
 	}
-	static <U1,U2,U3,U4,U5,R> Function<AnyM<U1>,Function<AnyM<U2>,Function<AnyM<U3>,Function<AnyM<U4>,Function<AnyM<U5>,AnyM<R>>>>>> liftM5(Function<U1,Function<U2,Function<U3,Function<U4,Function<U5,R>>>>> fn){
+	/**
+	 * Lift a Curried Function (5 levels a->b->c->d->e->fn.apply(a,b,c,d,e) ) into Monadic form
+	 * 
+	 * @param fn Function to lift
+	 * @return Lifted function 
+	 */
+	public static <U1,U2,U3,U4,U5,R> Function<AnyM<U1>,Function<AnyM<U2>,Function<AnyM<U3>,Function<AnyM<U4>,Function<AnyM<U5>,AnyM<R>>>>>> liftM5(Function<U1,Function<U2,Function<U3,Function<U4,Function<U5,R>>>>> fn){
 		
 		return u1 ->u2 ->u3 ->u4 ->u5  -> u1.bind( input1 -> 
 										   u2.bind(input2 -> 

@@ -1,7 +1,9 @@
 package com.aol.cyclops.comprehensions;
 
+import java.util.Arrays;
 import java.util.function.Function;
 
+import com.aol.cyclops.comprehensions.FreeFormTest.Custom2;
 import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
 import com.aol.cyclops.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.comprehensions.converters.StreamUpscaler;
@@ -78,6 +80,16 @@ public class ForComprehensions {
 	}
 	/**
 	 * Step builder for Creating a for comprehension using a custom interface
+	 * 
+	 * <pre>
+	 * {@code
+	 *  MyComprehension<Custom2,Custom2> comp2 = ForComprehensions.custom(Custom2.class);
+	 *   comp.foreach(c -> c.i(Arrays.asList(20,30))
+								.j(Arrays.asList(1,2,3))
+								.yield(() -> c.i() +c.j()));
+	 * }
+	 * 
+	 * </pre>
 	 * 
 	 * @param c Interface that defines for comprehension - should extend CustomForComprehension
 	 * @return next stage in the step builder
