@@ -1,8 +1,17 @@
 package com.aol.cyclops.matcher;
 
+import static com.aol.cyclops.matcher.Predicates.__;
+import static com.aol.cyclops.matcher.Predicates.type;
+import static com.aol.cyclops.matcher.Predicates.with;
+
 import java.util.function.Predicate;
 
+import com.aol.cyclops.matcher.ScalaParserExample.Add;
+import com.aol.cyclops.matcher.ScalaParserExample.Const;
+import com.aol.cyclops.matcher.ScalaParserExample.Expression;
+import com.aol.cyclops.matcher.ScalaParserExample.Mult;
 import com.aol.cyclops.matcher.builders.ADTPredicateBuilder;
+import com.aol.cyclops.matcher.builders.Matching;
 
 
 /**
@@ -44,14 +53,16 @@ public class Predicates {
 	 * Recursively decompose and match against case classes of specified type.
 	 * 
 	 * <pre>
-	 * Matching.&lt;Expression&gt;_case().isType( (Add&lt;Const,Mult&gt; a)-&gt; new Const(1))
-	 *								.with(__,type(Mult.class).with(__,new Const(0)))
-	 *			._case().isType( (Add&lt;Mult,Const&gt; a)-&gt; new Const(0)).with(type(Mult.class).with(__,new Const(0)),__)
-	 *			._case().isType( (Add&lt;Add,Const&gt; a)-&gt; new Const(0)).with(with(__,new Const(2)),__)
-	 *			
-	 *			
-	 *			.apply(e).orElse(new Const(-1));
+	 * {@code
+	 *  return Matching.<Expression>whenValues().isType( (Add<Const,Mult> a)-> new Const(1))
+									.with(__,type(Mult.class).with(__,new Const(0)))
+				.whenValues().isType( (Add<Mult,Const> a)-> new Const(0)).with(type(Mult.class).with(__,new Const(0)),__)
+				.whenValues().isType( (Add<Add,Const> a)-> new Const(-100)).with(with(__,new Const(2)),__)
+				
+				
+				.apply(e).orElse(new Const(-1));
 	 * 
+	 * }
 	 * </pre>
 	 * 
 	 * 
@@ -65,14 +76,16 @@ public class Predicates {
 	 * Recursively compose an Object without specifying a type
 	 * 
 	 * <pre>
-	 * Matching.&lt;Expression&gt;_case().isType( (Add&lt;Const,Mult&gt; a)-&gt; new Const(1))
-	 *								.with(__,type(Mult.class).with(__,new Const(0)))
-	 *			._case().isType( (Add&lt;Mult,Const&gt; a)-&gt; new Const(0)).with(type(Mult.class).with(__,new Const(0)),__)
-	 *			._case().isType( (Add&lt;Add,Const&gt; a)-&gt; new Const(0)).with(with(__,new Const(2)),__)
-	 *			
-	 *			
-	 *			.apply(e).orElse(new Const(-1));
+	 * {@code 
+	 * return Matching.<Expression>whenValues().isType( (Add<Const,Mult> a)-> new Const(1))
+									.with(__,type(Mult.class).with(__,new Const(0)))
+				.whenValues().isType( (Add<Mult,Const> a)-> new Const(0)).with(type(Mult.class).with(__,new Const(0)),__)
+				.whenValues().isType( (Add<Add,Const> a)-> new Const(-100)).with(with(__,new Const(2)),__)
+				
+				
+				.apply(e).orElse(new Const(-1));
 	 * 
+	 * }
 	 * </pre>
 	 * 
 	 * @param values To match against

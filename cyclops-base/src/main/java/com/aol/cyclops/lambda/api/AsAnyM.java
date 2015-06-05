@@ -459,7 +459,7 @@ public class AsAnyM extends AsGenericMonad{
 	 * @param anyM to wrap
 	 * @return Duck typed Monad
 	 */
-	public static <T> AnyM<T> toMonad(Object anyM){
+	public static <T> AnyM<T> toAnyM(Object anyM){
 		return new MonadWrapper<>(anyM).anyM();
 	}
 	/**
