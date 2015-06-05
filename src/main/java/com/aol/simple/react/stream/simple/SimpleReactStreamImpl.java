@@ -65,7 +65,7 @@ public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>,EagerToQue
 		this.eager = true;
 		this.waitStrategy = new LimitingMonitor();
 		this.lazyCollector = new BatchingCollector<>(this);
-		this.queueFactory = eager ? QueueFactories.unboundedQueue() : QueueFactories.boundedQueue(1000);
+		this.queueFactory = QueueFactories.unboundedQueue();
 		this.subscription = new AlwaysContinue();
 
 		

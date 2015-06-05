@@ -147,7 +147,7 @@ public abstract class BaseSimpleReact {
 	 */
 	@SuppressWarnings("unchecked")
 	public <R> SimpleReactStream<R> reactToCollection(final Collection<R> collection){
-		return react(collection.iterator(),collection.size());
+		return fromStreamWithoutFutures(collection.stream());
 	}
 	
 	
