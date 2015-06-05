@@ -42,6 +42,7 @@ import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.Queue.ClosedQueueException;
 import com.aol.simple.react.async.Queue.QueueReader;
 import com.aol.simple.react.async.Queue.QueueTimeoutException;
+import com.aol.simple.react.async.QueueFactories;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
@@ -99,7 +100,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 */
 	default Iterator<Collection<U>> chunkLastReadIterator(){
 		
-		Queue.QueueReader reader =  new Queue.QueueReader(toQueue(q->q.withTimeout(100).withTimeUnit(TimeUnit.MICROSECONDS)),null);
+		Queue.QueueReader reader =  new Queue.QueueReader(this.withQueueFactory(QueueFactories.unboundedQueue()).toQueue(q->q.withTimeout(100).withTimeUnit(TimeUnit.MICROSECONDS)),null);
 		class Chunker implements Iterator<Collection<U>> {
 			volatile boolean open =true;
 			@Override
@@ -132,7 +133,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 * @return a Stream that batches all completed elements from this stream since last read attempt into a collection
 	 */
 	default FutureStream<Collection<U>> chunkSinceLastRead(){
-		Queue queue = toQueue();
+		Queue queue = this.withQueueFactory(QueueFactories.unboundedQueue()).toQueue();
 		Queue.QueueReader reader =  new Queue.QueueReader(queue,null);
 		class Chunker implements Iterator<Collection<U>> {
 			

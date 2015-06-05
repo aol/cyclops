@@ -60,7 +60,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		this.eager = false;
 		this.waitStrategy = new LimitingMonitor();
 		this.lazyCollector = new BatchingCollector<>(this);
-		this.queueFactory = QueueFactories.unboundedQueue();
+		this.queueFactory = QueueFactories.unboundedNonBlockingQueue();
 		this.subscription = new Subscription();
 
 		
