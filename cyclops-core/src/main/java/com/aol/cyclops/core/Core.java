@@ -13,12 +13,18 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import sun.security.pkcs11.wrapper.Functions;
-
-import com.aol.cyclops.comprehensions.converters.MonadicConverters;
+import com.aol.cyclops.comprehensions.ComprehensionData;
+import com.aol.cyclops.comprehensions.ForComprehensions;
+import com.aol.cyclops.comprehensions.Initialisable;
+import com.aol.cyclops.comprehensions.LessTypingForComprehension1;
+import com.aol.cyclops.comprehensions.LessTypingForComprehension2;
+import com.aol.cyclops.comprehensions.LessTypingForComprehension3;
+import com.aol.cyclops.comprehensions.LessTypingForComprehension4;
+import com.aol.cyclops.comprehensions.MyComprehension;
 import com.aol.cyclops.comprehensions.donotation.Do;
 import com.aol.cyclops.comprehensions.donotation.Do.DoComp1;
 import com.aol.cyclops.dynamic.As;
+import com.aol.cyclops.functions.Functions;
 import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.lambda.api.Mappable;
 import com.aol.cyclops.lambda.api.Monoid;
@@ -27,12 +33,16 @@ import com.aol.cyclops.lambda.api.Streamable;
 import com.aol.cyclops.lambda.monads.AnyM;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.Monad;
-import com.aol.cyclops.lambda.monads.MonadWrapper;
 import com.aol.cyclops.lambda.monads.Monads;
+import com.aol.cyclops.lambda.utils.LazyImmutable;
+import com.aol.cyclops.lambda.utils.Mutable;
+import com.aol.cyclops.matcher.ActiveCase;
+import com.aol.cyclops.matcher.Case;
 import com.aol.cyclops.matcher.Cases;
 import com.aol.cyclops.matcher.Extractors;
 import com.aol.cyclops.matcher.Matchable;
 import com.aol.cyclops.matcher.Predicates;
+import com.aol.cyclops.matcher.Two;
 import com.aol.cyclops.matcher.builders.ADTPredicateBuilder;
 import com.aol.cyclops.matcher.builders.CheckTypeAndValues;
 import com.aol.cyclops.matcher.builders.ElementCase;
@@ -47,6 +57,52 @@ import com.aol.cyclops.value.ValueObject;
 
 public class Core extends Functions {
 	/**
+	 * Construct an instance of Case from supplied predicate and action
+	 * 
+	 * @param predicate That will be used to match
+	 * @param action Function that is executed on succesful match
+	 * @return New Case instance
+	 */
+	public static <T,R,X extends Function<T,R>> Case<T,R,X> caseOf(Predicate<T> predicate,X action){
+		return Case.of(predicate,action);
+	}
+	/**
+	 * Construct a Cases instance from an array Pattern Matching Cases
+	 * Will execute sequentially when Match is called.
+	 * 
+	 * @param cazes Array of cases to build Cases instance from 
+	 * @return New Cases instance (sequential)
+	 */
+	public static <T,R,X extends Function<T,R>>  Cases<T,R,X> casesOf(Case<T,R,X>... cases){
+		return Cases.of(cases);
+	}
+	
+	/**
+	 * @return an unitialised LazyImmutable
+	 */
+	public static <T> LazyImmutable<T> lazyImmutable(){
+		return LazyImmutable.def();
+	}
+	/**
+	 * Create a Mutable variable, which can be mutated inside a Closure 
+	 * 
+	 * e.g.
+	 * <pre>{@code
+	 *   Mutable<Integer> num = Mutable.of(20);
+	 *   
+	 *   Stream.of(1,2,3,4).map(i->i*10).peek(i-> num.mutate(n->n+i)).foreach(System.out::println);
+	 *   
+	 *   System.out.println(num.get());
+	 *   //prints 120
+	 * } </pre>
+	 * 
+	 * @param var Initial value of Mutable
+	 * @return New Mutable instance
+	 */
+	public static <T> Mutable<T> mutable(T var){
+		return Mutable.of(var);
+	}
+ 	/**
 	 * Wrap the object as a replayable Stream
 	 * 
 	 * @param toCoerce Object to wrap as a replayable Stream
@@ -493,7 +549,176 @@ public class Core extends Functions {
 		return Do.with(o);
 	}
 	
+	/**
+	 * Create  for comprehension over a single Monad or collection
+	 * <pre>
+	 * {@code
+	 * IntStream res = (IntStream)ForComprehensions.foreach1 (  c-> 
+										c.mapAs$1(  IntStream.range(1,3)) 
+										 .yield( (Vars1<Integer> v)-> v.$1() + 1));
+			List<Integer> expected = Arrays.asList(2,3);
+			
+			
+			
+			assertThat(expected, equalTo( res.boxed().collect(Collectors.toList())));
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param fn for comprehension
+	 * @return Result
+	 */
+	public static <R> R foreach1(Function<LessTypingForComprehension1.Step1<?,R>,R> fn){
+		return ForComprehensions.foreach1(fn);
+		
+	}
 	
+	/**
+	 * Create  for comprehension over two Monads or collections
+	 * <pre>
+	 * {@code 
+	 * 	val one = new  MyCase("hello",20);
+		val two  = new MyCase2("France");
+		
+		Stream<String> result = ForComprehensions.foreach2(c -> c.flatMapAs$1(one)
+										 .mapAs$2(v->two)
+										 .yield(v-> v.$1().toString() 
+												 	+ v.$2().toString()));
+		
+	
+		assertThat(result.collect(Collectors.toList()),equalTo(Arrays.asList("helloFrance","20France")));
+	}
+	
+	@Value static class MyCase implements Decomposable{ String name; int value;}
+	@Value static class MyCase2 implements Decomposable{ String country;}
+
+	 * 
+	 * }
+	 * </pre>
+	 * @param fn  for comprehension
+	 * @return Result
+	 */
+	public static <R> R foreach2(Function<LessTypingForComprehension2.Step1<?,R>,R> fn){
+		return ForComprehensions.foreach2(fn);
+	}
+	/**
+	 * Create  for comprehension over three Monads or collections
+	 * 
+	 * <pre>
+	 * {@code
+	 * val f = CompletableFuture.completedFuture("hello world");
+		val f2 = CompletableFuture.completedFuture("2");
+		val f3 = CompletableFuture.completedFuture("3");
+		CompletableFuture<String> result = ForComprehensions.foreach3(c -> c.flatMapAs$1(f)
+										.flatMapAs$2((Vars3<String,String,String> v)->f2)
+										.mapAs$3(v->f3)
+										.yield(v-> v.$1()+v.$2()+v.$3())
+									);
+		
+		assertThat(result.join(),equalTo("hello world23"));
+	 * 
+	 * }
+	 * </pre>
+	 * 
+	 * @param fn for comprehension
+	 * @return Result
+	 */
+	public static <R> R foreach3(Function<LessTypingForComprehension3.Step1<?,R>,R> fn){
+		return ForComprehensions.foreach3(fn);
+	}
+	
+	/**
+	 * Create  for comprehension over four Monads or collections
+	 * <pre>
+	 * {@code 
+		Optional<Integer> one = Optional.of(1);
+		Optional<Integer> empty = Optional.of(3);
+		BiFunction<Integer, Integer, Integer> f2 = (a, b) -> a * b;
+
+		ForComprehensions.foreach4(c -> c.flatMapAs$1(one)
+														.flatMapAs$2((Vars4<Integer,Integer,Integer,Integer> v)->empty)
+														.flatMapAs$3(v->Optional.empty())
+														.mapAs$4(v->Optional.empty())
+														.run(v->{ result= f2.apply(v.$1(), v.$2());}));
+		
+		assertThat(result,equalTo(null));
+	 * }
+	 * </pre>
+	 * @param fn for comprehension
+	 * @return Result
+	 */
+	public static <R> R foreach4(Function<LessTypingForComprehension4.Step1<?,R>,R> fn){
+		return ForComprehensions.foreach4(fn);
+	}
+	
+	/**
+	 * Create a custom for comprehension virtually unlimited in nesting depths
+	 * 
+	 * <pre>
+	 * {@code 
+	 * List<Integer> list= Arrays.asList(1,2,3);
+		Stream<Integer> stream = foreachX(c -> c.$("hello",list)
+										.filter(()->c.<Integer>$("hello")<10)
+										.yield(()-> c.<Integer>$("hello")+2));
+		
+		assertThat(Arrays.asList(3,4,5),equalTo(stream.collect(Collectors.toList())));
+	 * }
+	 * </pre>
+	 * 
+	 * @param fn For comprehension
+	 * @return Result
+	 */
+	public static <R> R foreachX(Function<ComprehensionData<?,R,? extends Initialisable>,R> fn){
+		return ForComprehensions.foreachX(fn);
+	}
+	
+	/**
+	 * Create a for comprehension using a custom interface 
+	 * 
+	 * <pre>
+	 * {@code
+	 * 	List<Integer> list= Arrays.asList(1,2,3);
+	 	Stream<Integer> stream = foreachX(Custom.class,  
+									c-> c.myVar(list)
+										.yield(()->c.myVar()+3)
+									);
+		
+		assertThat(Arrays.asList(4,5,6),equalTo(stream.collect(Collectors.toList())));
+		
+		static interface Custom extends CustomForComprehension<Stream<Integer>,Custom>{
+			Integer myVar();
+			Custom myVar(List<Integer> value);
+		 }
+	 * }
+	 * 
+	 * 
+	 * @param c Interface that defines for comprehension - should extend CustomForComprehension
+	 * @param fn for comprehension
+	 * @return Result
+	 */
+	public static <X,R> R foreachX(Class<X> c,Function<X,R> fn){
+		return ForComprehensions.foreachX(c, fn);
+	}
+	/**
+	 * Step builder for Creating a for comprehension using a custom interface
+	 * 
+	 * <pre>
+	 * {@code
+	 *  MyComprehension<Custom2,Custom2> comp2 = ForComprehensions.custom(Custom2.class);
+	 *   comp.foreach(c -> c.i(Arrays.asList(20,30))
+								.j(Arrays.asList(1,2,3))
+								.yield(() -> c.i() +c.j()));
+	 * }
+	 * 
+	 * </pre>
+	 * 
+	 * @param c Interface that defines for comprehension - should extend CustomForComprehension
+	 * @return next stage in the step builder
+	 */
+	public static <X,V> MyComprehension<X,V> custom(Class<X> c){
+		
+		return ForComprehensions.custom(c);
+	}
 	/**
 	 * Lift a function so it accepts a Monad and returns a Monad (native / unwrapped in Monad wrapper interface)
 	 * 
@@ -1564,6 +1789,7 @@ public class Core extends Functions {
 	 * @return Predicate builder that can decompose classes of specified type
 	 */
 	public	static<T> ADTPredicateBuilder<T> type(Class<T> type){
+		
 			return Predicates.type(type);
 	}
 	/**

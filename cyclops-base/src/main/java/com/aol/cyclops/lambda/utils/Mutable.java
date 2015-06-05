@@ -49,10 +49,10 @@ public class Mutable<T> implements Supplier<T>{
 	 *   
 	 *   System.out.println(num.get());
 	 *   //prints 120
-	 * } 
+	 * } </pre>
 	 * 
-	 * @param var
-	 * @return
+	 * @param var Initial value of Mutable
+	 * @return New Mutable instance
 	 */
 	public static <T> Mutable<T> of(T var){
 		return new Mutable<T>(var);
