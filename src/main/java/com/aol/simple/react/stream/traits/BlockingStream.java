@@ -105,8 +105,11 @@ public interface BlockingStream<U> extends ConfigurableStream<U>{
 	default <R> R block(final Collector collector,
 			final StreamWrapper lastActive) {
 		Stream<CompletableFuture> stream = lastActive.stream();
-		if(!isEager())
-			stream = lastActive.stream().collect(Collectors.toList()).stream();
+		if(!isEager()){
+			return (R)((LazyStream)this).run(collector);
+		
+			//stream = lastActive.stream().collect(Collectors.toList()).stream();
+		}
 		return (R) stream.map((future) -> {
 			return (U) getSafe(future,getErrorHandler());
 		}).filter(v -> v != MissingValue.MISSING_VALUE).collect(collector);
@@ -263,4 +266,6 @@ public interface BlockingStream<U> extends ConfigurableStream<U>{
 	default <R> R submitAndBlock(Function<List<U>, R> fn) {
 		return collectResults().block().submit(r -> fn.apply(r));
 	}
+
+	 boolean isParallel();
 }

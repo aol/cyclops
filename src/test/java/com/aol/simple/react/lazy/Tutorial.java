@@ -190,7 +190,7 @@ public class Tutorial {
 		EagerFutureStream.firstOf(stream1, stream2, stream3)
 						.peek(System.out::println)
 						.map(this::saveData)
-						.runOnCurrent();
+						.block();
 			
 		
 	}

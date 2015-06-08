@@ -11,13 +11,13 @@ import com.aol.simple.react.stream.lazy.LazyReact;
 
 public interface LazyToQueue<U> extends ToQueue<U> {
 
-	abstract <T, R> SimpleReactStream<R> allOf(final Collector collector,
+	abstract <T, R> LazyFutureStream<R> allOf(final Collector collector,
 			final Function<T, R> fn);
 
-	abstract <R> SimpleReactStream<R> then(final Function<U, R> fn,
+	abstract <R> LazyFutureStream<R> then(final Function<U, R> fn,
 			Executor exec);
 
-	abstract <R> SimpleReactStream<R> thenSync(final Function<U, R> fn);
+	abstract <R> LazyFutureStream<R> thenSync(final Function<U, R> fn);
 	abstract <T extends BaseSimpleReact> T getPopulator();
 
 	/**

@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Builder;
@@ -32,7 +33,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 @Builder
 @Getter
 @Slf4j 
-@AllArgsConstructor
+@AllArgsConstructor(access=AccessLevel.PRIVATE)
 public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	
 	
@@ -48,6 +49,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	private final Continueable subscription;
 	private final static ReactPool<BaseSimpleReact> pool = ReactPool.elasticPool(()->new LazyReact(Executors.newSingleThreadExecutor()));
 	private final List originalFutures=  null;
+	private final boolean parallel;
 
 	
 	
@@ -62,12 +64,14 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		this.lazyCollector = new BatchingCollector<>(this);
 		this.queueFactory = QueueFactories.unboundedNonBlockingQueue();
 		this.subscription = new Subscription();
+		this.parallel = false;
 
 		
 	}
 	
 	
 
+	
 	public BaseSimpleReact getPopulator(){
 		return pool.nextReactor();
 	}

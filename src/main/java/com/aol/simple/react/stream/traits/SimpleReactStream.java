@@ -38,7 +38,7 @@ import com.aol.simple.react.stream.traits.ConfigurableStream.SimpleReactConfigur
 import com.nurkiewicz.asyncretry.policy.AbortRetryException;
 
 
-public interface SimpleReactStream<U> extends LazyStream<U>, 
+public interface SimpleReactStream<U> extends  
 				BlockingStream<U>, 
 				SimpleReactConfigurableStream<U>, 
 				ToQueue<U>{
@@ -708,7 +708,7 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	 * @see Stream#of(Object)
 	 */
 	static <T> SimpleReactStream<T> of(T value) {
-		return futureStream((Stream) Seq.of(value));
+		return of((Stream) Seq.of(value));
 	}
 
 	/**
@@ -716,14 +716,14 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	 */
 	@SafeVarargs
 	static <T> SimpleReactStream<T> of(T... values) {
-		return futureStream((Stream) Seq.of(values));
+		return of((Stream) Seq.of(values));
 	}
 
 	/**
 	 * @see Stream#empty()
 	 */
 	static <T> SimpleReactStream<T> empty() {
-		return futureStream((Stream) Seq.empty());
+		return of((Stream) Seq.empty());
 	}
 
 
@@ -735,7 +735,7 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	/**
 	 * Wrap a Stream into a SimpleReactStream.
 	 */
-	static <T> SimpleReactStream<T> futureStream(Stream<T> stream) {
+	static <T> SimpleReactStream<T> of(Stream<T> stream) {
 		
 		if (stream instanceof FutureStream)
 			stream = ((FutureStream) stream).toQueue().stream(((FutureStream) stream).getSubscription());
@@ -750,15 +750,15 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	/**
 	 * Wrap an Iterable into a FutureStream.
 	 */
-	static <T> SimpleReactStream<T> futureStream(Iterable<T> iterable) {
-		return futureStream(iterable.iterator());
+	static <T> SimpleReactStream<T> ofIterable(Iterable<T> iterable) {
+		return of(iterable.iterator());
 	}
 
 	/**
 	 * Wrap an Iterator into a FutureStream.
 	 */
-	static <T> SimpleReactStream<T> futureStream(Iterator<T> iterator) {
-		return futureStream(StreamSupport.stream(
+	static <T> SimpleReactStream<T> of(Iterator<T> iterator) {
+		return of(StreamSupport.stream(
 				spliteratorUnknownSize(iterator, ORDERED), false));
 	}
 

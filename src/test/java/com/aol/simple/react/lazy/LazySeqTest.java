@@ -171,6 +171,7 @@ public class LazySeqTest extends BaseSeqTest {
 
 	@Test
 	public void testOfType() {
+		
 		assertThat(of(1, "a", 2, "b", 3, null).ofType(Integer.class).toList(),containsInAnyOrder(1, 2, 3));
 		assertThat(of(1, "a", 2, "b", 3, null).ofType(Integer.class).toList(),not(containsInAnyOrder("a", "b",null)));
 		assertThat(of(1, "a", 2, "b", 3, null)

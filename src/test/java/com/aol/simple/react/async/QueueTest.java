@@ -327,7 +327,7 @@ public class QueueTest {
 		}, () -> q.offer(5));
 
 		Collection<String> results = parallel().fromStream(q.stream())
-				.then(it -> "*" + it).run(Collectors.toList());
+				.then(it -> "*" + it).collect(Collectors.toList());
 
 		assertThat(results.size(), lessThan(4));
 		assertThat(results, not(hasItem("*4")));
@@ -353,7 +353,7 @@ public class QueueTest {
 			List<String> result = parallel().fromStream(q.stream())
 					.then(it -> "*" + it).peek(it -> found.getAndAdd(1))
 					.peek(it -> System.out.println(it))
-					.run(Collectors.toList());
+					.collect(Collectors.toList());
 
 			assertThat(result, hasItem("*1"));
 

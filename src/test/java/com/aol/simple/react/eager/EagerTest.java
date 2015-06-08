@@ -78,7 +78,7 @@ public class EagerTest {
 						.map(it -> it*100)
 						.jitter(100000l)
 						.peek(System.out::println)
-						.runOnCurrent();
+						.block();
 	}
 	@Test
 	public void doOnEach(){

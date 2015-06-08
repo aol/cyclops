@@ -61,20 +61,20 @@ public class SimpleReactTest {
 	}
 	@Test
 	public void futureStreamIterator(){
-		assertThat(SimpleReactStream.futureStream(Arrays.asList(1,2,3,4).iterator()).block().size(),is(4));
+		assertThat(SimpleReactStream.of(Arrays.asList(1,2,3,4).iterator()).block().size(),is(4));
 	}
 	@Test
 	public void futureStreamIterable(){
-		assertThat(SimpleReactStream.futureStream(Arrays.asList(1,2,3,4)).block().size(),is(4));
+		assertThat(SimpleReactStream.ofIterable(Arrays.asList(1,2,3,4)).block().size(),is(4));
 	}
 	
 	@Test
 	public void futureStreamTest(){
-		assertThat(SimpleReactStream.futureStream((Stream)LazyFutureStream.of(1,2,3,4)).block().size(),is(4));
+		assertThat(SimpleReactStream.of((Stream)LazyFutureStream.of(1,2,3,4)).block().size(),is(4));
 	}
 	@Test
 	public void futureStreamFromStreamTest(){
-		assertThat(SimpleReactStream.futureStream(Stream.of(1,2,3,4)).block().size(),is(4));
+		assertThat(SimpleReactStream.of(Stream.of(1,2,3,4)).block().size(),is(4));
 	}
 	@Test
 	public void syncTest(){

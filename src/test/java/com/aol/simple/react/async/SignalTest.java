@@ -57,7 +57,7 @@ public class SignalTest {
 					.then(it -> "*" +it)
 					.peek(it -> incrementFound())
 					.peek(it -> System.out.println(it))
-					.run(Collectors.toList());
+					.collect(Collectors.toList());
 		} finally{
 			assertThat(found, is(3));
 		}

@@ -18,6 +18,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -52,7 +53,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  * @author johnmcclean
  *
  */
-public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
+public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, LazyToQueue<U> {
 
 	LazyFutureStream<U> withTaskExecutor(Executor e);
 
@@ -73,6 +74,21 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 
 	LazyFutureStream<U> withLastActive(StreamWrapper streamWrapper);
 	
+	default void forEach(Consumer<? super U> c){
+		LazyStream.super.forEach(c);
+		//FutureStream.super.forEach(c);
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.stream.Stream#reduce(java.lang.Object,
+	 * java.util.function.BinaryOperator)
+	 */
+	@Override
+	default U reduce(U identity, BinaryOperator<U> accumulator) {
+
+		return LazyStream.super.reduce(identity, accumulator);
+	}
 	/* 
 	 * Execute subsequent stages on the completing thread (until async called)
 	 * 10X faster than async execution.
@@ -166,7 +182,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 
 		Seq seq = Seq.seq(getLastActive().stream().iterator()).zipWithIndex();
 		Seq<Tuple2<CompletableFuture<U>,Long>> withType = (Seq<Tuple2<CompletableFuture<U>,Long>>)seq;
-		Stream futureStream =  fromStream(withType.map(t ->t.v1.thenApplyAsync(v -> Tuple.tuple(t.v1.join(),t.v2))));
+		Stream futureStream =  withType.map(t ->t.v1.thenApplyAsync(v -> Tuple.tuple(t.v1.join(),t.v2)));
 		FutureStream noType = fromStreamOfFutures(futureStream);
 		
 		return (LazyFutureStream<Tuple2<U,Long>>)noType;
@@ -1005,7 +1021,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	@Override
 	default <R> LazyFutureStream<R> scanRight(R seed,
 			BiFunction<? super U, R, R> function) {
-		return fromStream(FutureStream.super.scanRight(seed, function));
+		return (LazyFutureStream)FutureStream.super.scanRight(seed, function);
 	}
 
 	/**
@@ -1017,7 +1033,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 */
 	@Override
 	default LazyFutureStream<U> reverse() {
-		return fromStream(FutureStream.super.reverse());
+		return (LazyFutureStream)FutureStream.super.reverse();
 	}
 
 	/**

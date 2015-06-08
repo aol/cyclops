@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -62,13 +63,13 @@ public class TopicTest {
 			.react(()->parallel()
 				.fromStream(topic.stream())
 				.then(it -> it + "*")
-				.run(Collectors.toList() ),
+				.collect(Collectors.toList() ),
 				
 				()->parallel()
 					.fromStream(topic.stream())
 					.then(it -> it + "!")
 					.peek(it->sleep(10)) //make sure takes slightly longer to complete
-					.run( Collectors.toSet() )
+					.collect( Collectors.toSet() )
 				
 				);
 		 
@@ -149,13 +150,13 @@ public class TopicTest {
 			.react(()->parallel()
 				.fromStream(topic.streamCompletableFutures())
 				.then(it -> it + "*")
-				.run(Collectors.toList() ),
+				.collect(Collectors.toList() ),
 				
 				()->parallel()
 					.fromStream(topic.streamCompletableFutures())
 					.then(it -> it + "!")
 				
-					.run( Collectors.toSet())
+					.collect( Collectors.toSet())
 				
 				);
 		
@@ -194,13 +195,13 @@ public class TopicTest {
 			.react(()->parallel()
 				.fromStream(topic.stream())
 				.then(it -> it + "*")
-				.run(Collectors.toList() ),
+				.collect(Collectors.toList() ),
 				
 				()->parallel()
 					.fromStream(topic.stream())
 					.then(it -> it + "!")
 				
-					.run( Collectors.toSet() )
+					.collect( Collectors.toSet() )
 				
 				);
 		

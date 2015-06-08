@@ -51,7 +51,7 @@ import com.aol.simple.react.util.SimpleTimer;
 import com.google.common.collect.Lists;
 
 public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
-		LazyStream<U>, BlockingStream<U>, SimpleReactStream<U>, ToQueue<U> {
+		 BlockingStream<U>, SimpleReactStream<U>, ToQueue<U> {
 
 	static final ExceptionSoftener softener = ExceptionSoftener.singleton.factory
 			.getInstance();
@@ -1204,9 +1204,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 * @see java.util.stream.BaseStream#isParallel()
 	 */
 	@Override
-	default boolean isParallel() {
-		return true;
-	}
+	boolean isParallel();
 
 	/*
 	 * Creates a sequential instance by populating an async Queue from the

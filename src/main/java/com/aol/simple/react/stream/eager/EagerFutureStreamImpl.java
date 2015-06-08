@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Builder;
@@ -23,6 +24,7 @@ import com.aol.simple.react.collectors.lazy.BatchingCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -31,7 +33,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 @Builder
 @Getter
 @Slf4j
-@AllArgsConstructor
+@AllArgsConstructor(access=AccessLevel.PRIVATE)
 public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 	
 
@@ -45,7 +47,7 @@ public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 	private final EagerReact simpleReact;
 	private final Continueable subscription;
 	private final List<CompletableFuture> originalFutures;
-
+	private final boolean parallel;
 
 	/**
 	 * 
@@ -74,6 +76,7 @@ public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 		this.lazyCollector = new BatchingCollector<>(this);
 		this.queueFactory = QueueFactories.unboundedQueue();
 		subscription = new AlwaysContinue();
+		this.parallel=true;
 
 		
 	}

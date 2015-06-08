@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +16,7 @@ import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 
 import com.aol.simple.react.config.MaxActive;
+import com.aol.simple.react.stream.MissingValue;
 import com.aol.simple.react.stream.traits.BlockingStream;
 
 /**
@@ -91,5 +96,36 @@ public class BatchingCollector<T> implements LazyResultConsumer<T>{
 	}
 
 	 
+	public void forEach(Consumer<? super T> c, Function<CompletableFuture,T> safeJoin){
+		if(this.blocking.isParallel()  && results.size()>maxActive.getParallelReduceBatchSize()){
+			forEachResults(getResults(),c, safeJoin);
+		}else if(!this.blocking.isParallel()  && results.size()>maxActive.getMaxActive()){
+			forEachResults(getResults(),c, safeJoin);
+		}
+	}
+	public void forEachResults( Collection<CompletableFuture<T>> results,Consumer<? super T> c,
+			Function<CompletableFuture, T> safeJoin) {
+		Stream<CompletableFuture<T>> stream = getResults().stream();
+		Stream<CompletableFuture<T>> streamToUse = this.blocking.isParallel() ? stream.parallel() : stream;
+		streamToUse.map(safeJoin).filter(v -> v != MissingValue.MISSING_VALUE).forEach(c);
+		getResults().clear();
+	}
+	public  T reduce(Function<CompletableFuture,T>safeJoin,T identity, BinaryOperator<T> accumulator){
+		if(this.blocking.isParallel()  && results.size()>maxActive.getParallelReduceBatchSize()){
+			 return reduceResults(getResults(),safeJoin, identity, accumulator);
+		}else if(!this.blocking.isParallel()  && results.size()>maxActive.getMaxActive()){
+			return reduceResults(getResults(),safeJoin, identity, accumulator);
+		}
+		return identity;
+	}
+	public T reduceResults( Collection<CompletableFuture<T>> results,Function<CompletableFuture, T> safeJoin, T identity,
+			BinaryOperator<T> accumulator) {
+		Stream<CompletableFuture<T>> stream = results.stream();
+		 Stream<CompletableFuture<T>> streamToUse = this.blocking.isParallel() ? stream.parallel() : stream;
+		 T result = streamToUse.map(safeJoin)
+					.filter(v -> v != MissingValue.MISSING_VALUE).reduce(identity, accumulator);
+		getResults().clear();
+		return result;
+	}
 	
 }
