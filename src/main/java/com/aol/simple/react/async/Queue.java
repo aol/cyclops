@@ -160,11 +160,11 @@ public class Queue<T> implements Adapter<T> {
 		T data = null;
 		try {
 			if(this.continuation!=null){
-				while(open && queue.size()==0){
+				while(open && (data = ensureClear(queue.poll()))==null){
 					continuation = continuation.proceed();
 				}
-				if(queue.size()>0)
-					return (T)nillSafe(ensureNotPoisonPill(ensureClear(queue.poll())));
+				if(data!=null)
+					return (T)nillSafe(ensureNotPoisonPill(ensureClear(data)));
 			}
 			if(!open && queue.size()==0)
 				throw new ClosedQueueException();
