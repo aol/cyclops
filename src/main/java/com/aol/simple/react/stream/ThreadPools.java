@@ -1,6 +1,6 @@
 package com.aol.simple.react.stream;
 
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ScheduledExecutorService;
@@ -10,10 +10,10 @@ import lombok.Setter;
 
 public class ThreadPools {
 	@Getter
-	private static final ExecutorService commonFreeThread =  Executors.newFixedThreadPool(1);
+	private static final Executor commonFreeThread =  Executors.newFixedThreadPool(1);
 	
 	@Getter
-	private static final ExecutorService commonLazyExecutor = new ForkJoinPool(1);
+	private static final Executor commonLazyExecutor = new ForkJoinPool(1);
 	
 	@Getter
 	private static final ScheduledExecutorService commonFreeThreadRetry = Executors.newScheduledThreadPool(1);
@@ -25,12 +25,12 @@ public class ThreadPools {
 	
 	@Setter
 	private static volatile boolean useCommon = true;
-	public static ExecutorService getStandard() {
+	public static Executor getStandard() {
 		if(useCommon)
 			return ForkJoinPool.commonPool();
 		return new ForkJoinPool(Runtime.getRuntime().availableProcessors());
 	}
-	public static ExecutorService getSequential() {
+	public static Executor getSequential() {
 		if(useCommon)
 			return commonFreeThread;
 		else
@@ -48,7 +48,7 @@ public class ThreadPools {
 		else
 			return Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
 	}
-	public static ExecutorService getLazyExecutor() {
+	public static Executor getLazyExecutor() {
 		if(useCommon)
 			return commonLazyExecutor;
 		else

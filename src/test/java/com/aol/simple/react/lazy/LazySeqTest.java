@@ -135,7 +135,7 @@ public class LazySeqTest extends BaseSeqTest {
 		Queue fast = stream.toQueue();
 
 		Thread t = new Thread(() -> {
-			parallelBuilder().withExecutor(new ForkJoinPool(2)).react(() -> 1, SimpleReact.times(10)).peek(c -> sleep(10))
+			parallelBuilder().withExecutor(new ForkJoinPool(2)).range(0,10).peek(c -> sleep(10))
 					.zip(fast.stream()).forEach(it -> {
 					});
 		});
@@ -155,7 +155,7 @@ public class LazySeqTest extends BaseSeqTest {
 				.withQueueFactory(QueueFactories.boundedQueue(10)).toQueue();
 
 		new Thread(() -> {
-			parallelBuilder().withExecutor(new ForkJoinPool(2)).react(() -> 1, SimpleReact.times(1000)).peek(c -> sleep(10))
+			parallelBuilder().withExecutor(new ForkJoinPool(2)).range(0,1000).peek(c -> sleep(10))
 					.zip(fast.stream()).forEach(it -> {
 					});
 		}).start();

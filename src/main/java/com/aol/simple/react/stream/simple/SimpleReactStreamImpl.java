@@ -3,7 +3,7 @@ package com.aol.simple.react.stream.simple;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -93,7 +93,7 @@ public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>,EagerToQue
 	}
 
 	@Override
-	public ExecutorService getTaskExecutor() {
+	public Executor getTaskExecutor() {
 		return this.simpleReact.getExecutor();
 	}
 
@@ -114,7 +114,7 @@ public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>,EagerToQue
 
 
 	@Override
-	public SimpleReactStream<U> withTaskExecutor(ExecutorService e) {
+	public SimpleReactStream<U> withTaskExecutor(Executor e) {
 		return this.withSimpleReact(simpleReact.withExecutor(e));
 	}
 

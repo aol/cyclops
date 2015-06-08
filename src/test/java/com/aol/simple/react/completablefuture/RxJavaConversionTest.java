@@ -28,6 +28,7 @@ public class RxJavaConversionTest {
 		
 		
 		List<String> titles = new SimpleReact().fromStream(Stream.of(query("Hello, world!")))
+				
 								.flatMap(Collection::stream)
 								.peek(System.out::println)
 								.<String>then(url -> getTitle(url))
@@ -43,7 +44,7 @@ public class RxJavaConversionTest {
 	}
 	@Test
 	public void rxConversionTestSkip() throws InterruptedException, ExecutionException{
-		List<String> titles = new SimpleReact().reactToCollection(query("Hello, world!").get())
+		List<String> titles = new SimpleReact().of(query("Hello, world!").get())
 								.<String>then(url -> getTitle(url))
 								.filter(Objects::nonNull)
 								.filter(Predicates.skip(5))
@@ -57,7 +58,7 @@ public class RxJavaConversionTest {
 	}
 	@Test
 	public void rxConversionTestSample() throws InterruptedException, ExecutionException{
-		List<String> titles = new SimpleReact().reactToCollection(query("Hello, world!").get())
+		List<String> titles = new SimpleReact().of(query("Hello, world!").get())
 								.<String>then(url -> getTitle(url))
 								.filter(Objects::nonNull)
 								.filter(Predicates.sample(2))

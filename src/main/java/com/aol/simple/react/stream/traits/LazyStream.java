@@ -1,13 +1,11 @@
 package com.aol.simple.react.stream.traits;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import com.aol.simple.react.collectors.lazy.EmptyCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
@@ -25,16 +23,16 @@ public interface LazyStream<U> {
 	Consumer<CompletableFuture> getWaitStrategy();
 	
 	/**
-	 * Trigger a lazy stream as a task on the provided ExecutorService
+	 * Trigger a lazy stream as a task on the provided Executor
 	 * 
 	 * @param e
 	 *            Executor service to trigger lazy stream on (Stream
-	 *            CompletableFutures will use ExecutorService associated with
+	 *            CompletableFutures will use Executor associated with
 	 *            this Stage may not be the same one).
 	 * 
 	 * 
 	 */
-	default void run(ExecutorService e) {
+	default void run(Executor e) {
 		new SimpleReact(e).react(() -> run(new NonCollector()));
 		
 

@@ -10,7 +10,7 @@ public class JDKLazyStreamTest extends BaseJDKStreamTest{
 
 	public <U> Stream<U> of(U... array){
 	 
-		return LazyFutureStream.parallelBuilder().reactToCollection(Arrays.asList(array));
+		return LazyFutureStream.parallelBuilder().of(Arrays.asList(array));
 	}
 	
 		

@@ -1,8 +1,6 @@
 package com.aol.simple.react.simple;
 
-import static com.aol.simple.react.stream.simple.SimpleReact.iterate;
-import static com.aol.simple.react.stream.simple.SimpleReact.times;
-import static com.aol.simple.react.stream.simple.SimpleReact.timesInSequence;
+
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
@@ -32,7 +30,7 @@ public class GeneratorTest {
 	
 	private Object lock1= "lock1";
 	private Object lock2= "lock2";
-	
+	/**
 	public synchronized void incrementCapture(){
 		capture++;
 	}
@@ -213,5 +211,5 @@ public class GeneratorTest {
 			e.printStackTrace();
 		}
 		return it;
-	}
+	}**/
 }

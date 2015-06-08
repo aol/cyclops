@@ -104,7 +104,7 @@ public class Queue<T> implements Adapter<T> {
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
 		return Seq.seq(closingStream(this::ensureOpen,s));
 	}
-
+	
 	public Seq<Collection<T>> streamBatch(Continueable s,Function<Supplier<T>,Supplier<Collection<T>>> batcher) {
 		
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
@@ -245,6 +245,11 @@ public class Queue<T> implements Adapter<T> {
 	private static class PoisonPill { }
 
 
+	public T get(){
+		
+		return ensureOpen();
+		
+	}
 	/**
 	 * Add a single data point to the queue
 	 * 

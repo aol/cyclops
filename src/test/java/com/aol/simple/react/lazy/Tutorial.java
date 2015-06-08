@@ -250,7 +250,7 @@ public class Tutorial {
 	@Test
 	public void testFilter(){
 		LazyFutureStream.sequentialCommonBuilder()
-		.reactToCollection(loadUserData())
+		.of(loadUserData())
 		.filter(User::hasPurchased)
 		.forEach(System.out::println);
 	}
@@ -322,7 +322,7 @@ public class Tutorial {
 				.sequentialCommonBuilder().react(() -> 1000).then(this::sleep)
 				.peek(System.out::println);
 		System.out.println(EagerFutureStream.sequentialCommonBuilder()
-				.fromPrimitiveStream(IntStream.range(0, 1000000))
+				.of(IntStream.range(0, 1000000))
 				// .peek(System.out::println)
 				.skipUntil(stoppingStream).peek(System.out::println).block()
 				.size());
@@ -343,7 +343,7 @@ public class Tutorial {
 	@Test
 	public void jitter() {
 		LazyFutureStream.sequentialCommonBuilder()
-				.fromPrimitiveStream(IntStream.range(0, 1000))
+				.of(IntStream.range(0, 1000))
 				.map(it -> it * 100).jitter(100l)
 				.peek(System.out::println).runOnCurrent();
 	}
@@ -352,7 +352,7 @@ public class Tutorial {
 	public void fixedDelay() {
 
 		LazyFutureStream.sequentialCommonBuilder()
-				.fromPrimitiveStream(IntStream.range(0, 1000))
+				.of(IntStream.range(0, 1000))
 				.fixedDelay(1l, TimeUnit.MICROSECONDS).peek(System.out::println)
 				.runOnCurrent();
 	}
@@ -363,7 +363,7 @@ public class Tutorial {
 		List<String> files = Arrays.asList("/tmp/1.data", "/tmp/2.data");
 
 		List<Status> data = SequentialElasticPools.lazyReact.react(er -> er
-				.reactToCollection(files).map(this::loadData)
+				.of(files).map(this::loadData)
 				.peek(System.out::println).map(this::saveData)
 				.collect(Collectors.toList()));
 
@@ -474,7 +474,7 @@ public class Tutorial {
 	public void range() {
 		List<Collection<Integer>> collected = LazyFutureStream
 				.sequentialCommonBuilder()
-				.fromPrimitiveStream(IntStream.range(0, 10)).batchBySize(5)
+				.of(IntStream.range(0, 10)).batchBySize(5)
 				.block();
 		System.out.println(collected);
 	}

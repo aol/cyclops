@@ -28,7 +28,6 @@ public class EagerTest {
 		
 		
 		
-		
 		assertThat(EagerFutureStream.parallelCommonBuilder()
 						.react(()->slow(),()->1,()->2)
 						.peek(System.out::println)
@@ -60,13 +59,13 @@ public class EagerTest {
 	@Test
 	public void testPrimitiveStream(){
 		EagerFutureStream.parallelCommonBuilder()
-		.fromPrimitiveStream(IntStream.range(0, 1000))
+		.of(IntStream.range(0, 1000))
 		.forEach(System.out::println);
 	}
 	@Test
 	public void jitter(){
 		EagerFutureStream.parallelCommonBuilder()
-						.fromPrimitiveStream(IntStream.range(0, 100))
+						.of(IntStream.range(0, 100))
 						.map(it -> it*100)
 						.jitter(10l)
 						.peek(System.out::println)
@@ -75,7 +74,7 @@ public class EagerTest {
 	@Test 
 	public void jitterSequential(){
 		EagerFutureStream.sequentialCommonBuilder()
-						.fromPrimitiveStream(IntStream.range(0, 100))
+						.of(IntStream.range(0, 100))
 						.map(it -> it*100)
 						.jitter(100000l)
 						.peek(System.out::println)

@@ -4,25 +4,22 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import lombok.Getter;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 
-import com.aol.simple.react.generators.Generator;
-import com.aol.simple.react.generators.ParallelGenerator;
-import com.aol.simple.react.generators.ReactIterator;
-import com.aol.simple.react.generators.SequentialIterator;
 import com.aol.simple.react.stream.BaseSimpleReact;
-import com.aol.simple.react.stream.InfiniteProcessingException;
-import com.aol.simple.react.stream.MissingValue;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.google.common.annotations.VisibleForTesting;
@@ -42,7 +39,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 public class SimpleReact  extends BaseSimpleReact{
 
 	@Getter
-	private final ExecutorService executor;
+	private final Executor executor;
 	@Getter
 	private final RetryExecutor retrier;
 	@Getter
@@ -56,7 +53,13 @@ public class SimpleReact  extends BaseSimpleReact{
 		return  new SimpleReactStreamImpl<U>( this,s, originalFutures);
 	}
 	
-
+	public static <T,R> Function<SimpleReactStream<T>,SimpleReactStream<R>> lift(Function<T,R> fn){
+		return s1 -> s1.then(fn);
+		
+	}
+	public static <T1,T2,R> BiFunction<SimpleReactStream<T1>,SimpleReactStream<T2>,SimpleReactStream<R>> lift2(BiFunction<T1,T2,R> fn){
+		return (s1,s2) -> SimpleReactStream.bind(s1,input1-> s2.then(input2 -> fn.apply(input1,input2)));
+	}
 	/**
 	 * Construct a SimpleReact builder using standard thread pool.
 	 * By default, unless ThreadPools is configured otherwise this will be sized
@@ -71,13 +74,13 @@ public class SimpleReact  extends BaseSimpleReact{
 	/**
 	 * @param executor Executor this SimpleReact instance will use to execute concurrent tasks.
 	 */
-	public SimpleReact(ExecutorService executor) {
+	public SimpleReact(Executor executor) {
 		this.executor = executor;
 		this.retrier = null;
 		
 		this.async =true;
 	}
-	public SimpleReact(ExecutorService executor,RetryExecutor retrier) {
+	public SimpleReact(Executor executor,RetryExecutor retrier) {
 		this.executor = executor;
 		this.retrier = retrier;
 		
@@ -95,21 +98,7 @@ public class SimpleReact  extends BaseSimpleReact{
 		return super.fromStream(stream);
 		
 	}
-	/**
-	 * Start a reactive dataflow from a stream.
-	 * 
-	 * @param stream that will be used to drive the reactive dataflow
-	 * @return Next stage in the reactive flow
-	 */
-	public <U> SimpleReactStream<U> fromStreamWithoutFutures(final Stream<U> stream) {
-		
-		Stream s = stream.map(it -> CompletableFuture.completedFuture(it));
-		return  new SimpleReactStreamImpl<U>( this, s,null);
-	}
 
-	public <U> SimpleReactStream<U> of(U...array){
-		return fromStreamWithoutFutures(Stream.of(array));
-	}
 	
 	
 	/**
@@ -122,131 +111,61 @@ public class SimpleReact  extends BaseSimpleReact{
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public <U> SimpleReactStream<U> react(final List<Supplier<U>> actions) {
+	public <U> SimpleReactStream<U> react(final Collection<Supplier<U>> actions) {
 
 		return react((Supplier[]) actions.toArray(new Supplier[] {}));
 	}
-	private final Object iterationLock = "iterationLock";
-	
 	/**
-	 * Start a reactive flow from a JDK Iterator
 	 * 
-	 * @param iterator SimpleReact will iterate over this iterator concurrently to start the reactive dataflow
-	 * @param maxTimes Maximum number of iterations
-	 * @return Next stage in the reactive flow
-	 */
-	@SuppressWarnings("unchecked")
-	public <U> SimpleReactStream<U> react(final Iterator<U> iterator, int maxTimes){
-		return (SimpleReactStream<U>) this.react(() -> {
-			synchronized(iterationLock) {
-				if(!iterator.hasNext()) 
-					return MissingValue.MISSING_VALUE;
-			return iterator.next();
-			}
-		},SimpleReact.times(maxTimes)).filter(it->it!=MissingValue.MISSING_VALUE);
-	
-	}
-	/**
-	 * Start a reactive flow from a Collection using an Iterator
+	 * Start a reactive dataflow with a list of one-off-suppliers
 	 * 
-	 * @param collection - Collection SimpleReact will iterate over at the start of the flow
-	 *
-	 * @return Next stage in the reactive flow
-	 */
-	@SuppressWarnings("unchecked")
-	public <R> SimpleReactStream<R> reactToCollection(final Collection<R> collection){
-		return react(collection.iterator(),collection.size());
-	}
-	
-	
-	/**
-	 * Start a reactive dataflow from a single Supplier, which will be executed repeatedly according to rules defined by the generator.
-	 * 
-	 * Example : 
-	 * To execute the same Supplier 4 times use :
-	 * <code>
-	 * List&lt;String&gt; strings = new SimpleReact()
-				.&lt;Integer&gt; react(() -&gt; count++ ,SimpleReact.times(4))
-	 * </code>
-	 * To skip the first 5 iterations and take the next 5
-	 *  * <code>
-	 * List&lt;String&gt; strings = new SimpleReact()
-				.&lt;Integer&gt; react(() -&gt; count++ ,SimpleReact.times(5).offset(5))
-	 * </code>
-	 * 
-	 * The supplier will be called 10 times, in the above example, but only the last 5 results will be passed into the 
-	 * reactive dataflow.
-	 * 
-	 * @param s Supplier to provide data (and thus events) that
+	 * @param actions
+	 *           Stream of Suppliers to provide data (and thus events) that
 	 *            downstream jobs will react too
-	 * @param t Generator implementation that will determine how the Supplier is executed
 	 * @return Next stage in the reactive flow
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public <U> SimpleReactStream< U> react(final Supplier<U> s, Generator t) {
+	@SuppressWarnings("unchecked")
+	public <U> SimpleReactStream<U> react(final Stream<Supplier<U>> actions) {
 
-		return new SimpleReactStreamImpl<U>(this,t.generate(s),null);
-
-	}
-	
-	/**
-	 * Create a Sequential Generator that will trigger a Supplier to be called the specified number of times
-	 * 
-	 * @param times Number of times the Supplier should be called at the start of the reactive dataflow
-	 * @return Sequential Generator
-	 */
-	@SuppressWarnings("rawtypes")
-	public static ParallelGenerator times(int times){
-		return new  ParallelGenerator(times,0);
-	
+		return new SimpleReactStreamImpl<U>(this,actions.map(
+				next -> CompletableFuture.supplyAsync(next, executor)),
+				null);
 		
 	}
 	/**
-	 * Create a Parallel Generator that will trigger a Supplier to be called the specified number of times
 	 * 
-	 * @param times Number of times the Supplier should be called at the start of the reactive dataflow
-	 * @return Parellel Generator
-	 */
-	@SuppressWarnings("rawtypes")
-	public static ParallelGenerator timesInSequence(int times){
-		return new  ParallelGenerator(times,0);
-	
-		
-	}
-	/**
-	 * Start a reactive dataflow that calls the supplied function iteratively, with each output, feeding into the next input
-	 *
-	 * Example :-
+	 * Start a reactive dataflow with a list of one-off-suppliers
 	 * 
-	 * <code>
-	 * List&lt;Integer&gt; results = new SimpleReact()
-				.&lt;Integer&gt; react((input) -&gt; input + 1,iterate(0).times(1).offset(10))
-	 * </code>
-	 * 
-	 * 
-	 * @param f Function to be called iteratively
-	 * @param t Iterator that manages function call
+	 * @param actions
+	 *           Iterator over Suppliers to provide data (and thus events) that
+	 *            downstream jobs will react too
 	 * @return Next stage in the reactive flow
 	 */
-	public <U> SimpleReactStream<U> react(final Function<U,U> f,ReactIterator<U> t) {
+	@SuppressWarnings("unchecked")
+	public <U> SimpleReactStream<U> react(final Iterator<Supplier<U>> actions) {
 
-		Stream s = t.iterate(f);
-		return new SimpleReactStreamImpl<U>(this,s,null);
-
-	}
-	/**
-	 * Create an iterator that manages a function call starting with the supplied seed value
-	 * 
-	 * @param seed Initial value that iterator will apply to the function it iterates over
-	 * @return Populated ReactIterator
-	 */
-	public static <T> ReactIterator<T> iterate(T seed){
-		return new  SequentialIterator<T>(seed);
-	
+		return new SimpleReactStreamImpl<U>(this,StreamSupport.stream(Spliterators.spliteratorUnknownSize(actions, Spliterator.ORDERED),false).map(
+				next -> CompletableFuture.supplyAsync(next, executor)),
+				null);
 		
 	}
-	
-	
+	/**
+	 * 
+	 * Start a reactive dataflow with a list of one-off-suppliers
+	 * 
+	 * @param actions
+	 *           Stream of Suppliers to provide data (and thus events) that
+	 *            downstream jobs will react too
+	 * @return Next stage in the reactive flow
+	 */
+	@SuppressWarnings("unchecked")
+	public <U> SimpleReactStream<U> reactIterable(final Iterable<Supplier<U>> actions) {
+
+		return new SimpleReactStreamImpl<U>(this,StreamSupport.stream(Spliterators.spliteratorUnknownSize(actions.iterator(), Spliterator.ORDERED),false).map(
+				next -> CompletableFuture.supplyAsync(next, executor)),
+				null);
+		
+	}
 	/**
 	 * 
 	 * Start a reactive dataflow with an array of one-off-suppliers
@@ -258,7 +177,7 @@ public class SimpleReact  extends BaseSimpleReact{
 	@SafeVarargs
 	public final <U> SimpleReactStream<U> react(final Supplier<U>... actions) {
 
-		return this.<U> reactI(actions);
+		return super.react(actions);
 
 	}
 	
@@ -281,7 +200,7 @@ public class SimpleReact  extends BaseSimpleReact{
 	
 	
 	
-	public SimpleReact(ExecutorService executor, RetryExecutor retrier,
+	public SimpleReact(Executor executor, RetryExecutor retrier,
 			 Boolean async) {
 		
 		this.executor = Optional.ofNullable(executor).orElse(

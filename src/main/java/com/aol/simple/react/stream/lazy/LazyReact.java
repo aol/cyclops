@@ -5,7 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -18,8 +19,6 @@ import lombok.Getter;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 
-import com.aol.simple.react.generators.Generator;
-import com.aol.simple.react.generators.ReactIterator;
 import com.aol.simple.react.stream.BaseLazySimpleReact;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
@@ -37,7 +36,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 public class LazyReact extends BaseLazySimpleReact {
 	
 	@Getter
-	private final ExecutorService executor;
+	private final Executor executor;
 	@Getter
 	private final RetryExecutor retrier;
 	@Getter
@@ -68,11 +67,11 @@ public class LazyReact extends BaseLazySimpleReact {
 		
 	}
 	/**
-	 * Construct a LazyReact builder with provided ExecutorService
+	 * Construct a LazyReact builder with provided Executor
 	 * 
-	 * @param executor ExecutorService to use
+	 * @param executor Executor to use
 	 */
-	public LazyReact(ExecutorService executor) {
+	public LazyReact(Executor executor) {
 		
 		this.executor = executor;
 		this.retrier = null;
@@ -80,6 +79,14 @@ public class LazyReact extends BaseLazySimpleReact {
 		
 		
 	}
+	
+	public static <T,R> Function<LazyFutureStream<T>,LazyFutureStream<R>> lift(Function<T,R> fn){
+		return efs -> efs.map(v->fn.apply(v));
+	}
+	public static <T1,T2,R> BiFunction<LazyFutureStream<T1>,LazyFutureStream<T2>,LazyFutureStream<R>> lift2(BiFunction<T1,T2,R> fn){
+		return (lfs1,lfs2) -> lfs1.flatMap( v1-> (LazyFutureStream)lfs2.map(v2->fn.apply(v1,v2)));
+	}
+	
 	
 	
 	
@@ -97,7 +104,9 @@ public class LazyReact extends BaseLazySimpleReact {
 		return (LazyFutureStream) new LazyFutureStreamImpl<U>( this,s);
 
 	}
-	
+	public LazyFutureStream<Integer> range(int startInclusive, int endExclusive){
+		return of(IntStream.range(startInclusive, endExclusive));
+	}
 
 	/* 
 	 * Construct a LazyFutureStream from the provided Stream of completableFutures
@@ -135,9 +144,9 @@ public class LazyReact extends BaseLazySimpleReact {
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
 	 */
 	@Override
-	public <U> LazyFutureStream<U> fromStreamWithoutFutures(Stream<U> stream) {
+	public <U> LazyFutureStream<U> of(Stream<U> stream) {
 		
-		return (LazyFutureStream)super.fromStreamWithoutFutures(stream);
+		return (LazyFutureStream)super.of(stream);
 	}
 
 	/* 
@@ -149,9 +158,9 @@ public class LazyReact extends BaseLazySimpleReact {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public  LazyFutureStream<Integer> fromPrimitiveStream(IntStream stream) {
+	public  LazyFutureStream<Integer> of(IntStream stream) {
 		
-		return (LazyFutureStream)super.fromPrimitiveStream(stream);
+		return (LazyFutureStream)super.of(stream);
 	}
 
 	/* 
@@ -162,9 +171,9 @@ public class LazyReact extends BaseLazySimpleReact {
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
 	 */
 	@Override
-	public  LazyFutureStream<Double> fromPrimitiveStream(DoubleStream stream) {
+	public  LazyFutureStream<Double> of(DoubleStream stream) {
 		
-		return (LazyFutureStream)super.fromPrimitiveStream(stream);
+		return (LazyFutureStream)super.of(stream);
 	}
 	
 
@@ -176,9 +185,9 @@ public class LazyReact extends BaseLazySimpleReact {
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
 	 */
 	@Override
-	public  LazyFutureStream<Long> fromPrimitiveStream(LongStream stream) {
+	public  LazyFutureStream<Long> of(LongStream stream) {
 		
-		return (LazyFutureStream)super.fromPrimitiveStream(stream);
+		return (LazyFutureStream)super.of(stream);
 	}
 	
 	/* 
@@ -204,7 +213,7 @@ public class LazyReact extends BaseLazySimpleReact {
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#react(java.util.List)
 	 */
 	@Override
-	public <U> LazyFutureStream<U> react(List<Supplier<U>> actions) {
+	public <U> LazyFutureStream<U> react(Collection<Supplier<U>> actions) {
 		
 		return (LazyFutureStream)super.react(actions);
 	}
@@ -217,9 +226,9 @@ public class LazyReact extends BaseLazySimpleReact {
 	 * @return Next stage in the reactive flow
 	 */
 	@Override
-	public <U> LazyFutureStream<U> react(Iterator<U> iterator, int maxTimes) {
+	public <U> LazyFutureStream<U> of(Iterator<U> iterator) {
 		
-		return (LazyFutureStream)super.react(iterator, maxTimes);
+		return (LazyFutureStream)super.of(iterator);
 	}
 
 	/**
@@ -230,39 +239,12 @@ public class LazyReact extends BaseLazySimpleReact {
 	 * @return Next stage in the reactive flow
 	 */
 	@Override
-	public <R> LazyFutureStream<R> reactToCollection(Collection<R> collection) {
+	public <R> LazyFutureStream<R> of(Collection<R> collection) {
 		
-		return (LazyFutureStream)super.reactToCollection(collection);
+		return (LazyFutureStream)super.of(collection);
 	}
 
-	/**
-	 * Start a LazyFutureStream from a single Supplier, which will be executed repeatedly according to rules defined by the generator.
-	 * 
-	 * Example : 
-	 * To execute the same Supplier 4 times use :
-	 * <code>
-	 * List&lt;String&gt; strings = new LazyReact()
-				.&lt;Integer&gt; react(() -&gt; count++ ,LazyReact.times(4))
-	 * </code>
-	 * To skip the first 5 iterations and take the next 5
-	 *  * <code>
-	 * List&lt;String&gt; strings = new LazyReact()
-				.&lt;Integer&gt; react(() -&gt; count++ ,LazyReact.times(5).offset(5))
-	 * </code>
-	 * 
-	 * The supplier will be called 10 times, in the above example, but only the last 5 results will be passed into the 
-	 * reactive dataflow.
-	 * 
-	 * @param s Supplier to provide data (and thus events) that
-	 *            downstream jobs will react too
-	 * @param t Generator implementation that will determine how the Supplier is executed
-	 * @return Next stage in the reactive flow
-	 */
-	@Override
-	public <U> LazyFutureStream<U> react(Supplier<U> s, Generator t) {
-		
-		return (LazyFutureStream)super.react(s, t);
-	}
+	
 
 	/**
 	 * Generate an infinite LazyFutureStream
@@ -309,26 +291,7 @@ public class LazyReact extends BaseLazySimpleReact {
 		return (LazyFutureStream)super.iterateInfinitely(seed, f);
 	}
 
-	/**
-	 * Start a LazyFutureStream that calls the supplied function iteratively, with each output, feeding into the next input
-	 *
-	 * Example :-
-	 * 
-	 * <code>
-	 * List&lt;Integer&gt; results = new LazyReact()
-				.&lt;Integer&gt; react((input) -&gt; input + 1,iterate(0).times(1).offset(10))
-	 * </code>
-	 * 
-	 * 
-	 * @param f Function to be called iteratively
-	 * @param t Iterator that manages function call
-	 * @return Next stage in the reactive flow
-	 */
-	@Override
-	public <U> LazyFutureStream<U> react(Function<U, U> f, ReactIterator<U> t) {
-		
-		return (LazyFutureStream)super.react(f, t);
-	}
+	
 
 	@Override
 	protected <U> LazyFutureStream<U> reactI(Supplier<U>... actions) {
@@ -340,12 +303,40 @@ public class LazyReact extends BaseLazySimpleReact {
 	 * @param retrier Async Retrier
 	 * @param async If true each task will be submitted to an executor service
 	 */
-	public LazyReact(ExecutorService executor, RetryExecutor retrier,
+	public LazyReact(Executor executor, RetryExecutor retrier,
 			Boolean async) {
 		super();
 		this.executor = executor;
 		this.retrier = retrier;
 		this.async = Optional.ofNullable(async).orElse(true);
+	}
+
+
+	@Override
+	public <U> LazyFutureStream<U> ofIterable(Iterable<U> iter) {
+		
+		return (LazyFutureStream)super.of(iter);
+	}
+
+
+	@Override
+	public <U> LazyFutureStream<U> react(Stream<Supplier<U>> actions) {
+	
+		return (LazyFutureStream)super.react(actions);
+	}
+
+
+	@Override
+	public <U> LazyFutureStream<U> react(Iterator<Supplier<U>> actions) {
+		
+		return (LazyFutureStream)super.react(actions);
+	}
+
+
+	@Override
+	public <U> LazyFutureStream<U> reactIterable(Iterable<Supplier<U>> actions) {
+		
+		return (LazyFutureStream)super.reactIterable(actions);
 	}
 	
 	

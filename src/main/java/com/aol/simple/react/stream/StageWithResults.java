@@ -2,7 +2,7 @@ package com.aol.simple.react.stream;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
 
@@ -17,7 +17,7 @@ import com.aol.simple.react.stream.traits.ConfigurableStream;
 @Slf4j
 public class StageWithResults<RS,U> {
 	private final ExceptionSoftener exceptionSoftener = ExceptionSoftener.singleton.factory.getInstance();
-	private final ExecutorService taskExecutor;
+	private final Executor taskExecutor;
 	
 	private final ConfigurableStream<U> stage;
 	@Getter
@@ -36,7 +36,7 @@ public class StageWithResults<RS,U> {
 
 	
 	/**
-	 * This method allows the SimpleReact ExecutorService to be reused by JDK parallel streams. It is best used when
+	 * This method allows the SimpleReact Executor to be reused by JDK parallel streams. It is best used when
 	 * collectResults and block are called explicitly for finer grained control over the blocking conditions.
 	 * 
 	 * @param fn Function that contains parallelStream code to be executed by the SimpleReact ForkJoinPool (if configured)
@@ -48,7 +48,7 @@ public class StageWithResults<RS,U> {
 	
 	
 	/**
-	 * This method allows the SimpleReact ExecutorService to be reused by JDK parallel streams
+	 * This method allows the SimpleReact Executor to be reused by JDK parallel streams
 	 * 
 	 * @param callable that contains code
 	 */
@@ -56,7 +56,8 @@ public class StageWithResults<RS,U> {
 		if(taskExecutor instanceof ForkJoinPool){
 			log.debug("Submited callable to SimpleReact ForkJoinPool. JDK ParallelStreams will reuse SimpleReact ForkJoinPool.");
 			try {
-				return taskExecutor.submit(callable).get();
+				
+				return ((ForkJoinPool) taskExecutor).submit(callable).get();
 			} catch (ExecutionException e) {
 				exceptionSoftener.throwSoftenedException(e);
 				
@@ -67,7 +68,7 @@ public class StageWithResults<RS,U> {
 			}
 		}
 		try {
-			log.debug("Submited callable but do not have a ForkJoinPool. JDK ParallelStreams will use Common ForkJoinPool not SimpleReact ExecutorService.");
+			log.debug("Submited callable but do not have a ForkJoinPool. JDK ParallelStreams will use Common ForkJoinPool not SimpleReact Executor.");
 			return callable.call();
 		} catch (Exception e) {
 			throw new RuntimeException(e); 

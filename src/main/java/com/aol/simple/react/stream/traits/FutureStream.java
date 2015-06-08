@@ -56,6 +56,12 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	static final ExceptionSoftener softener = ExceptionSoftener.singleton.factory
 			.getInstance();
 	
+	static <T,R> Function<FutureStream<T>,FutureStream<R>> lift(Function<T,R> fn){
+		return fs -> fs.map(v->fn.apply(v));
+	}
+	static <T1,T2,R> BiFunction<FutureStream<T1>,FutureStream<T2>,FutureStream<R>> lift2(BiFunction<T1,T2,R> fn){
+		return (fs1,fs2) -> fs1.flatMap( v1-> (FutureStream)fs2.map(v2->fn.apply(v1,v2)));
+	}
 	
 	/**
 	 * Zip two Streams, zipping against the underlying futures of this stream
@@ -1227,8 +1233,8 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 * @see org.jooq.lambda.Seq#parallel()
 	 */
 	@Override
-	default FutureStream<U> parallel() {
-		return this;
+	default Seq<U> parallel() {
+		return Seq.seq(stream()).parallel();
 	}
 
 	@Override
@@ -1520,7 +1526,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	
 
 	/* 
-	 * Execute subsequent stages by submission to an ExecutorService for async execution
+	 * Execute subsequent stages by submission to an Executor for async execution
 	 * 10X slower than sync execution.
 	 * Use async for blocking IO or distributing work across threads or cores.
 	 * Switch to sync for non-blocking tasks when desired thread utlisation reached

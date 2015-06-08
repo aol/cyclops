@@ -36,7 +36,7 @@ public interface BlockingStream<U> extends ConfigurableStream<U>{
 	 * inside a dataflow stage. This can then be used to provide those results
 	 * to a function. Inside that function client code can leverage JDK 8
 	 * parallel Streams that will be executed within the SimpleReact
-	 * ExecutorService if that service is an instance of ForkJoinPool (the
+	 * Executor if that service is an instance of ForkJoinPool (the
 	 * default setting).
 	 * 
 	 * Example : <code>
@@ -252,7 +252,7 @@ public interface BlockingStream<U> extends ConfigurableStream<U>{
 	}
 
 	/**
-	 * This method allows the SimpleReact ExecutorService to be reused by JDK
+	 * This method allows the SimpleReact Executor to be reused by JDK
 	 * parallel streams. This offers less control over blocking than raw submit,
 	 * with the parameterless block() method called.
 	 * 

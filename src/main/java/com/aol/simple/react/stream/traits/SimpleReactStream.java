@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
@@ -25,6 +25,7 @@ import org.jooq.lambda.Seq;
 
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Continueable;
+import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.QueueFactory;
 import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
@@ -34,7 +35,6 @@ import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.simple.SimpleReactStreamImpl;
 import com.aol.simple.react.stream.traits.ConfigurableStream.SimpleReactConfigurableStream;
-import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.nurkiewicz.asyncretry.policy.AbortRetryException;
 
 
@@ -48,13 +48,13 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	Continueable getSubscription();
 	
 	/* 
-	 * React to new events with the supplied function on the supplied ExecutorService
+	 * React to new events with the supplied function on the supplied Executor
 	 * 
 	 *	@param fn Apply to incoming events
 	 *	@param service Service to execute function on 
 	 *	@return next stage in the Stream
 	 */
-	default <R> SimpleReactStream<R> then(final Function<U, R> fn, ExecutorService service) {
+	default <R> SimpleReactStream<R> then(final Function<U, R> fn, Executor service) {
 		
 
 		
@@ -63,7 +63,7 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 						(ft) -> ft.thenApplyAsync(SimpleReactStream.<U,R>handleExceptions(fn)))));
 	}
 	/* 
-	 * React to new events with the supplied function on the supplied ExecutorService
+	 * React to new events with the supplied function on the supplied Executor
 	 * 
 	 *	@param fn Apply to incoming events
 	 *	@param service Service to execute function on 
@@ -317,6 +317,18 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 						toQueue()
 								.stream(getSubscription())
 								.flatMap(flatFn));
+	}
+	static <U,R> SimpleReactStream<R> bind(SimpleReactStream<U> stream,
+			Function< U, SimpleReactStream<R>> flatFn) {
+
+		return join(stream.then(flatFn));
+		
+	}
+	static <U,R> SimpleReactStream<R> join(SimpleReactStream<U> stream){
+		Queue queue =  stream.getQueueFactory().build();
+		stream.then(it -> stream.getSimpleReact().of(it).sync().then(queue::offer)).allOf(it ->queue.close());
+		 return stream.fromStream(queue.stream(stream.getSubscription()));
+	
 	}
 	
 	
@@ -637,7 +649,7 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	 * @return SimpleReact Stage
 	 */
 	public static <U> SimpleReactStream<U> parallelOf(U... array) {
-		return new SimpleReact().reactToCollection(Arrays.asList(array));
+		return new SimpleReact().of(Arrays.asList(array));
 	}
 
 	/**
@@ -764,7 +776,7 @@ public interface SimpleReactStream<U> extends LazyStream<U>,
 	}
 	
 	/* 
-	 * Execute subsequent stages by submission to an ExecutorService for async execution
+	 * Execute subsequent stages by submission to an Executor for async execution
 	 * 10X slower than sync execution.
 	 * Use async for blocking IO or distributing work across threads or cores.
 	 * Switch to sync for non-blocking tasks when desired thread utlisation reached

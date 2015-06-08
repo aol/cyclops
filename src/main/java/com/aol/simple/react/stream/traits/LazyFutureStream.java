@@ -13,7 +13,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
@@ -54,7 +54,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  */
 public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 
-	LazyFutureStream<U> withTaskExecutor(ExecutorService e);
+	LazyFutureStream<U> withTaskExecutor(Executor e);
 
 	LazyFutureStream<U> withRetrier(RetryExecutor retry);
 
@@ -86,7 +86,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 		return (LazyFutureStream<U>)FutureStream.super.sync();
 	}
 	/* 
-	 * Execute subsequent stages by submission to an ExecutorService for async execution
+	 * Execute subsequent stages by submission to an Executor for async execution
 	 * 10X slower than sync execution.
 	 * Use async for blocking IO or distributing work across threads or cores.
 	 * Switch to sync for non-blocking tasks when desired thread utlisation reached
@@ -531,7 +531,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	/*
 	 * 
 	 * React to new events with the supplied function on the supplied
-	 * ExecutorService
+	 * Executor 
 	 * 
 	 * @param fn Apply to incoming events
 	 * 
@@ -540,7 +540,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 * @return next stage in the Stream
 	 */
 	default <R> LazyFutureStream<R> then(final Function<U, R> fn,
-			ExecutorService service) {
+			Executor service) {
 		return (LazyFutureStream<R>) FutureStream.super.then(fn, service);
 	}
 
@@ -756,7 +756,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 
 		SimpleReactStream stream = other instanceof SimpleReactStream ? (SimpleReactStream) other
 				: SimpleReactStream.sequentialCommonBuilder()
-						.fromStreamWithoutFutures(other);
+						.of(other);
 		return (LazyFutureStream) merge(stream);
 	}
 
@@ -873,7 +873,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 * @return Next SimpleReact stage
 	 */
 	public static <U> LazyFutureStream<U> parallel(U... array) {
-		return new LazyReact().reactToCollection(Arrays.asList(array));
+		return new LazyReact().of(Arrays.asList(array));
 	}
 
 	/*
@@ -1113,7 +1113,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 	 * @return SimpleReact Stage
 	 */
 	public static <U> LazyFutureStream<U> parallelOf(U... array) {
-		return new LazyReact().reactToCollection(Arrays.asList(array));
+		return new LazyReact().of(Arrays.asList(array));
 	}
 
 	/**
@@ -1387,15 +1387,7 @@ public interface LazyFutureStream<U> extends FutureStream<U>, LazyToQueue<U> {
 		return Seq.seq(new LimitUntil());
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.jooq.lambda.Seq#parallel()
-	 */
-	@Override
-	default LazyFutureStream<U> parallel() {
-		return this;
-	}
+	
 
 	@Override
 	default LazyFutureStream<U> stream() {

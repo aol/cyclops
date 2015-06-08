@@ -8,12 +8,11 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
@@ -68,7 +67,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		return (EagerFutureStream<U>)FutureStream.super.sync();
 	}
 	/* 
-	 * Execute subsequent stages by submission to an ExecutorService for async execution
+	 * Execute subsequent stages by submission to an Executor for async execution
 	 * 10X slower than sync execution.
 	 * Use async for blocking IO or distributing work across threads or cores.
 	 * Switch to sync for non-blocking tasks when desired thread utlisation reached
@@ -397,7 +396,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 	/*
 	 * React to new events with the supplied function on the supplied
-	 * ExecutorService
+	 * Executor
 	 * 
 	 * @param fn Apply to incoming events
 	 * 
@@ -406,7 +405,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * @return next stage in the Stream
 	 */
 	default <R> EagerFutureStream<R> then(final Function<U, R> fn,
-			ExecutorService service) {
+			Executor service) {
 		return (EagerFutureStream<R>) FutureStream.super.then(fn, service);
 	}
 
@@ -1050,7 +1049,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * @return Next SimpleReact stage
 	 */
 	public static <U> EagerFutureStream<U> parallel(U... array) {
-		return new EagerReact().reactToCollection(Arrays.asList(array));
+		return new EagerReact().of(Arrays.asList(array));
 	}
 
 	/*
@@ -1344,15 +1343,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 				spliteratorUnknownSize(iterator, ORDERED), false));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.jooq.lambda.Seq#parallel()
-	 */
-	@Override
-	default EagerFutureStream<U> parallel() {
-		return this;
-	}
+
 
 	@Override
 	default EagerFutureStream<U> stream() {

@@ -5,7 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.DoubleStream;
@@ -17,8 +18,6 @@ import lombok.Getter;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 
-import com.aol.simple.react.generators.Generator;
-import com.aol.simple.react.generators.ReactIterator;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
@@ -34,7 +33,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 @Wither
 public class EagerReact extends BaseSimpleReact{
 	@Getter
-	private final ExecutorService executor;
+	private final Executor executor;
 	@Getter
 	private final RetryExecutor retrier;
 	@Getter
@@ -44,7 +43,7 @@ public class EagerReact extends BaseSimpleReact{
 	
 	
 	
-	public EagerReact(ExecutorService executor, RetryExecutor retrier,
+	public EagerReact(Executor executor, RetryExecutor retrier,
 			Boolean async) {
 		super();
 		this.executor = executor;
@@ -64,16 +63,23 @@ public class EagerReact extends BaseSimpleReact{
 		
 	}
 	/**
-	 * Construct a EagerReact builder with provided ExecutorService
+	 * Construct a EagerReact builder with provided Executor
 	 * 
-	 * @param executor ExecutorService to use
+	 * @param executor Executor to use
 	 */
-	public EagerReact(ExecutorService executor) {
+	public EagerReact(Executor executor) {
 		
 		this.executor = executor;
 		this.retrier = null;
 		this.async=true;
 		
+	}
+	
+	public <T,R> Function<EagerFutureStream<T>,EagerFutureStream<R>> lift(Function<T,R> fn){
+		return efs -> efs.map(v->fn.apply(v));
+	}
+	public <T1,T2,R> BiFunction<EagerFutureStream<T1>,EagerFutureStream<T2>,EagerFutureStream<R>> lift2(BiFunction<T1,T2,R> fn){
+		return (efs1,efs2) -> efs1.flatMap( v1-> (EagerFutureStream)efs2.map(v2->fn.apply(v1,v2)));
 	}
 	
 
@@ -104,9 +110,9 @@ public class EagerReact extends BaseSimpleReact{
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
 	 */
 	@Override
-	public <U> EagerFutureStream<U> fromStreamWithoutFutures(Stream<U> stream) {
+	public <U> EagerFutureStream<U> of(Stream<U> stream) {
 		
-		return (EagerFutureStream)super.fromStreamWithoutFutures(stream);
+		return (EagerFutureStream)super.of(stream);
 	}
 
 	/* 
@@ -117,9 +123,9 @@ public class EagerReact extends BaseSimpleReact{
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
 	 */
 	@Override
-	public EagerFutureStream<Integer> fromPrimitiveStream(IntStream stream) {
+	public EagerFutureStream<Integer> of(IntStream stream) {
 		
-		return (EagerFutureStream)super.fromPrimitiveStream(stream);
+		return (EagerFutureStream)super.of(stream);
 	}
 
 	/* 
@@ -130,9 +136,9 @@ public class EagerReact extends BaseSimpleReact{
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
 	 */
 	@Override
-	public  EagerFutureStream<Double> fromPrimitiveStream(DoubleStream stream) {
+	public  EagerFutureStream<Double> of(DoubleStream stream) {
 		
-		return (EagerFutureStream)super.fromPrimitiveStream(stream);
+		return (EagerFutureStream)super.of(stream);
 	}
 	
 
@@ -144,9 +150,9 @@ public class EagerReact extends BaseSimpleReact{
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
 	 */
 	@Override
-	public  EagerFutureStream<Long> fromPrimitiveStream(LongStream stream) {
+	public  EagerFutureStream<Long> of(LongStream stream) {
 		
-		return (EagerFutureStream)super.fromPrimitiveStream(stream);
+		return (EagerFutureStream)super.of(stream);
 	}
 	/* 
 	 * Construct a EagerFutureStream from array
@@ -179,7 +185,7 @@ public class EagerReact extends BaseSimpleReact{
 	 */
 
 	@Override
-	public <U> EagerFutureStream<U> react(List<Supplier<U>> actions) {
+	public <U> EagerFutureStream<U> react(Collection<Supplier<U>> actions) {
 		
 		return (EagerFutureStream)super.react(actions);
 	}
@@ -193,9 +199,9 @@ public class EagerReact extends BaseSimpleReact{
 	 * @return Next stage in the reactive flow
 	 */
 	@Override
-	public <U> EagerFutureStream<U> react(Iterator<U> iterator, int maxTimes) {
+	public <U> EagerFutureStream<U> of(Iterator<U> iterator) {
 		
-		return (EagerFutureStream)super.react(iterator, maxTimes);
+		return (EagerFutureStream)super.of(iterator);
 	}
 
 	/**
@@ -206,65 +212,48 @@ public class EagerReact extends BaseSimpleReact{
 	 * @return Next stage in the reactive flow
 	 */
 	@Override
-	public <R> EagerFutureStream<R> reactToCollection(Collection<R> collection) {
+	public <R> EagerFutureStream<R> of(Collection<R> collection) {
 		
-		return (EagerFutureStream)super.reactToCollection(collection);
+		return (EagerFutureStream)super.of(collection);
 	}
 
-	/**
-	 * Start a EagerFutureStream from a single Supplier, which will be executed repeatedly according to rules defined by the generator.
-	 * 
-	 * Example : 
-	 * To execute the same Supplier 4 times use :
-	 * <code>
-	 * List&lt;String&gt; strings = new EagerReact()
-				.&lt;Integer&gt; react(() -&gt; count++ ,EagerReact.times(4))
-	 * </code>
-	 * To skip the first 5 iterations and take the next 5
-	 *  * <code>
-	 * List&lt;String&gt; strings = new EagerReact()
-				.&lt;Integer&gt; react(() -&gt; count++ ,EagerReact.times(5).offset(5))
-	 * </code>
-	 * 
-	 * The supplier will be called 10 times, in the above example, but only the last 5 results will be passed into the 
-	 * reactive dataflow.
-	 * 
-	 * @param s Supplier to provide data (and thus events) that
-	 *            downstream jobs will react too
-	 * @param t Generator implementation that will determine how the Supplier is executed
-	 * @return Next stage in the reactive flow
-	 */
-	@Override
-	public <U> EagerFutureStream<U> react(Supplier<U> s, Generator t) {
-		
-		return (EagerFutureStream)super.react(s, t);
-	}
 
-	/**
-	 * Start an EagerFutureStream that calls the supplied function iteratively, with each output, feeding into the next input
-	 *
-	 * Example :-
-	 * 
-	 * <code>
-	 * List&lt;Integer&gt; results = new EagerReact()
-				.&lt;Integer&gt; react((input) -&gt; input + 1,iterate(0).times(1).offset(10))
-	 * </code>
-	 * 
-	 * 
-	 * @param f Function to be called iteratively
-	 * @param t Iterator that manages function call
-	 * @return Next stage in the reactive flow
-	 */
 
-	@Override
-	public <U> EagerFutureStream<U> react(Function<U, U> f, ReactIterator<U> t) {
-		
-		return (EagerFutureStream)super.react(f, t);
-	}
-	
 	public boolean isAsync(){
 		return async;
 	}
+
+	@Override
+	public EagerFutureStream<Integer> range(int startInclusive, int endExclusive) {
+		// TODO Auto-generated method stub
+		return (EagerFutureStream)super.range(startInclusive, endExclusive);
+	}
+
+	@Override
+	public <U> EagerFutureStream<U> ofIterable(Iterable<U> iter) {
+		// TODO Auto-generated method stub
+		return (EagerFutureStream)super.of(iter);
+	}
+
+	@Override
+	public <U> EagerFutureStream<U> react(Stream<Supplier<U>> actions) {
+		// TODO Auto-generated method stub
+		return (EagerFutureStream)super.react(actions);
+	}
+
+	@Override
+	public <U> EagerFutureStream<U> react(Iterator<Supplier<U>> actions) {
+		// TODO Auto-generated method stub
+		return (EagerFutureStream)super.react(actions);
+	}
+
+	@Override
+	public <U> EagerFutureStream<U> reactIterable(Iterable<Supplier<U>> actions) {
+		
+		return (EagerFutureStream)super.reactIterable(actions);
+	}
+
+	
 	
 
 }

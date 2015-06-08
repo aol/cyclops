@@ -3,7 +3,7 @@ package com.aol.simple.react.stream.lazy;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
@@ -91,7 +91,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 
 
 	@Override
-	public ExecutorService getTaskExecutor() {
+	public Executor getTaskExecutor() {
 		return this.simpleReact.getExecutor();
 	}
 
@@ -112,7 +112,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 
 
 	@Override
-	public LazyFutureStream<U> withTaskExecutor(ExecutorService e) {
+	public LazyFutureStream<U> withTaskExecutor(Executor e) {
 		return this.withSimpleReact(simpleReact.withExecutor(e));
 	}
 

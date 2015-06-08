@@ -2,7 +2,7 @@ package com.aol.simple.react.stream.traits;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
 import com.aol.simple.react.async.Continueable;
@@ -14,7 +14,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 
 public interface ConfigurableStream<T> {//<T,X extends ConfigurableStream<T,X>> {
 
-	ConfigurableStream<T> withTaskExecutor(ExecutorService e);
+	ConfigurableStream<T> withTaskExecutor(Executor e);
 	ConfigurableStream<T> withRetrier(RetryExecutor retry);
 	ConfigurableStream<T> withWaitStrategy(Consumer<CompletableFuture> c);
 	ConfigurableStream<T> withEager(boolean eager);
@@ -25,7 +25,7 @@ public interface ConfigurableStream<T> {//<T,X extends ConfigurableStream<T,X>> 
 	ConfigurableStream<T> withSubscription(Continueable sub);
 	ConfigurableStream<T> withAsync(boolean b);
 	abstract StreamWrapper getLastActive();
-	abstract ExecutorService getTaskExecutor();
+	abstract Executor getTaskExecutor();
 	abstract RetryExecutor getRetrier();
 	abstract boolean isEager();
 	abstract BaseSimpleReact getSimpleReact();
@@ -33,7 +33,7 @@ public interface ConfigurableStream<T> {//<T,X extends ConfigurableStream<T,X>> 
 	boolean isAsync();
 	
 	static interface SimpleReactConfigurableStream<U> extends ConfigurableStream<U>{
-		SimpleReactStream<U> withTaskExecutor(ExecutorService e);
+		SimpleReactStream<U> withTaskExecutor(Executor e);
 		SimpleReactStream<U> withRetrier(RetryExecutor retry);
 		SimpleReactStream<U> withWaitStrategy(Consumer<CompletableFuture> c);
 		SimpleReactStream<U> withEager(boolean eager);

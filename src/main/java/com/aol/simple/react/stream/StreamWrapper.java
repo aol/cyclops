@@ -3,7 +3,7 @@ package com.aol.simple.react.stream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.stream.Collector;
@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
-import lombok.experimental.Builder;
+import lombok.Builder;
 import lombok.experimental.Wither;
 
 import com.aol.simple.react.stream.traits.FutureStream;
@@ -109,7 +109,7 @@ public class StreamWrapper{
 	
 	
 	static class AsyncList{
-		private final static ExecutorService service = Executors.newSingleThreadExecutor();
+		private final static Executor service = Executors.newSingleThreadExecutor();
 		private final CompletableFuture<List<CompletableFuture>> async;
 		
 		public AsyncList(Stream<CompletableFuture> stream){

@@ -111,14 +111,14 @@ public class SimpleReactTest {
 	@Test
 	public void whenChainEmptyBlockReturns(){
 		new SimpleReact(new ForkJoinPool(1))
-		.react(Lists.newArrayList())
+		.of(Lists.newArrayList())
 		.block();
 	}
 
 	@Test
 	public void whenChainEmptyBlockReturnsWithBreakout(){
 		new SimpleReact(new ForkJoinPool(1))
-		.react(Lists.newArrayList())
+		.of(Lists.newArrayList())
 		.block(status->false);
 	}
 	
@@ -140,6 +140,19 @@ public class SimpleReactTest {
 
 		List<CompletableFuture<Integer>> futures = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.with(it -> it * 100);
+
+		assertThat(futures.get(0).get(), is(greaterThan(99)));
+		
+		new SimpleReact().fromStream(futures.stream()).block();
+
+	}
+
+	@Test
+	public void testReactList() throws InterruptedException, ExecutionException {
+
+		List<CompletableFuture<Integer>> futures = new SimpleReact()
+				.<Integer> react(Arrays.asList(() -> 1, () -> 2, () -> 3))
 				.with(it -> it * 100);
 
 		assertThat(futures.get(0).get(), is(greaterThan(99)));

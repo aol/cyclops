@@ -1,7 +1,7 @@
 package com.aol.simple.react.stream.traits;
 
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.stream.Collector;
 
@@ -15,7 +15,7 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 			final Function<T, R> fn);
 
 	abstract <R> SimpleReactStream<R> then(final Function<U, R> fn,
-			ExecutorService exec);
+			Executor exec);
 
 	abstract <R> SimpleReactStream<R> thenSync(final Function<U, R> fn);
 	abstract <T extends BaseSimpleReact> T getPopulator();

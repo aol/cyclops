@@ -33,7 +33,7 @@ public interface EagerToQueue<U> extends ToQueue<U> {
 
 		return queue;
 	}
-	 default Queue<U> toQueue(Function<Queue,Queue> modifier){
+	default Queue<U> toQueue(Function<Queue,Queue> modifier){
 		  Queue<U> queue = modifier.apply(this.getQueueFactory().build());
 		  thenSync(it -> queue.offer(it)).allOf(it ->queue.close());
 
