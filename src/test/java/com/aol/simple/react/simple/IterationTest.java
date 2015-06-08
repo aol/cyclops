@@ -12,6 +12,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.simple.react.stream.simple.SimpleReact;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class IterationTest {
 
@@ -85,6 +86,8 @@ public class IterationTest {
 	}
 	@Test @Ignore
 	public void testIterateMaxSize() throws InterruptedException, ExecutionException {
+		
+		
 		Iterator<Integer> iterator = createInfiniteIterator();
 		List<String> strings = new SimpleReact()
 				.<Integer> of(iterator)
