@@ -24,11 +24,11 @@ public abstract class BaseSimpleReact {
 
 	
 	protected abstract Executor getExecutor();
-	protected abstract boolean isEager();
+
 	protected abstract  RetryExecutor getRetrier();
 	
 	protected abstract boolean isAsync() ;
-//	public abstract BaseSimpleReact withAsync(boolean b) ;
+
 	
 	public abstract <U>  SimpleReactStream<U> construct(Stream s, 
 			List<CompletableFuture> org);

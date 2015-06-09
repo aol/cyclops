@@ -1226,15 +1226,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		return q.stream();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.jooq.lambda.Seq#parallel()
-	 */
-	@Override
-	default Seq<U> parallel() {
-		return Seq.seq(stream()).parallel();
-	}
+
 
 	@Override
 	default Stream<U> stream() {

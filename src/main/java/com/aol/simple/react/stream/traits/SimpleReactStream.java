@@ -16,6 +16,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -32,6 +33,7 @@ import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.StageWithResults;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
+import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.simple.SimpleReactStreamImpl;
 import com.aol.simple.react.stream.traits.ConfigurableStream.SimpleReactConfigurableStream;
@@ -703,6 +705,22 @@ public interface SimpleReactStream<U> extends
 				.retrier(RetryBuilder.getDefaultInstance().withScheduler(ThreadPools.getCommonFreeThreadRetry())).build();
 	}
 
+	/**
+	 *  Create a parallel asynchronous stream
+	 * @see Stream#of(Object)
+	 */
+	static <T> SimpleReactStream<T> react(Supplier<T> value) {
+		return  new SimpleReact().react(value);
+	}
+
+	/**
+	 * Create a parallel asynchronous stream
+	 * @see Stream#of(Object[])
+	 */
+	@SafeVarargs
+	static <T> SimpleReactStream<T> react(Supplier<T>... values) {
+		return  new SimpleReact().react(values);
+	}
 	
 	/**
 	 * @see Stream#of(Object)
@@ -788,5 +806,6 @@ public interface SimpleReactStream<U> extends
 	default SimpleReactStream<U> async(){
 		return this.withAsync(true);
 	}
+
 	
 }

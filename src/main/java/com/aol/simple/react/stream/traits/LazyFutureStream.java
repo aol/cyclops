@@ -74,6 +74,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	LazyFutureStream<U> withSubscription(Continueable sub);
 
 	LazyFutureStream<U> withLastActive(StreamWrapper streamWrapper);
+	LazyFutureStream<U> withAsync(boolean async);
 	
 	default void forEach(Consumer<? super U> c){
 		LazyStream.super.forEach(c);
@@ -1213,12 +1214,27 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 				.build();
 	}
 
-	
+	/**
+	 *  Create a parallel asynchronous stream
+	 * @see Stream#of(Object)
+	 */
+	static <T> LazyFutureStream<T> react(Supplier<T> value) {
+		return  new LazyReact().react(value);
+	}
+
+	/**
+	 * Create a parallel asynchronous stream
+	 * @see Stream#of(Object[])
+	 */
+	@SafeVarargs
+	static <T> LazyFutureStream<T> react(Supplier<T>... values) {
+		return  new LazyReact().react(values);
+	}
 	/**
 	 * @see Stream#of(Object)
 	 */
 	static <T> LazyFutureStream<T> of(T value) {
-		return futureStream((Stream) Seq.of(value));
+		return of((Stream) Seq.of(value));
 	}
 
 	/**
@@ -1226,14 +1242,14 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 */
 	@SafeVarargs
 	static <T> LazyFutureStream<T> of(T... values) {
-		return futureStream((Stream) Seq.of(values));
+		return of((Stream) Seq.of(values));
 	}
 
 	/**
 	 * @see Stream#empty()
 	 */
 	static <T> LazyFutureStream<T> empty() {
-		return futureStream((Stream) Seq.empty());
+		return of((Stream) Seq.empty());
 	}
 
 	/**
@@ -1241,7 +1257,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 */
 	static <T> LazyFutureStream<T> iterate(final T seed,
 			final UnaryOperator<T> f) {
-		return futureStream((Stream) Seq.iterate(seed, f));
+		return of((Stream) Seq.iterate(seed, f));
 	}
 
 	/**
@@ -1262,13 +1278,13 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 * @see Stream#generate(Supplier)
 	 */
 	static <T> LazyFutureStream<T> generate(Supplier<T> s) {
-		return futureStream(Stream.generate(s));
+		return of(Stream.generate(s));
 	}
 
 	/**
 	 * Wrap a Stream into a FutureStream.
 	 */
-	static <T> LazyFutureStream<T> futureStream(Stream<T> stream) {
+	static <T> LazyFutureStream<T> of(Stream<T> stream) {
 		if (stream instanceof LazyFutureStream)
 			return (LazyFutureStream<T>) stream;
 		if (stream instanceof FutureStream)
@@ -1283,15 +1299,15 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	/**
 	 * Wrap an Iterable into a FutureStream.
 	 */
-	static <T> LazyFutureStream<T> futureStream(Iterable<T> iterable) {
-		return futureStream(iterable.iterator());
+	static <T> LazyFutureStream<T> ofIterable(Iterable<T> iterable) {
+		return of(iterable.iterator());
 	}
 
 	/**
 	 * Wrap an Iterator into a FutureStream.
 	 */
-	static <T> LazyFutureStream<T> futureStream(Iterator<T> iterator) {
-		return futureStream(StreamSupport.stream(
+	static <T> LazyFutureStream<T> of(Iterator<T> iterator) {
+		return of(StreamSupport.stream(
 				spliteratorUnknownSize(iterator, ORDERED), false));
 	}
 
@@ -1418,12 +1434,29 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	
 	
 
+	/* 
+	 *	@return Convert to standard JDK 8 Stream
+	 * @see com.aol.simple.react.stream.traits.FutureStream#stream()
+	 */ 
 	@Override
-	default LazyFutureStream<U> stream() {
-		return (LazyFutureStream<U>)FutureStream.super.stream();
+	default Stream<U> stream() {
+		return FutureStream.super.stream();
 	}
 
-
+	/* 
+	 *	@return New version of this stream converted to execute asynchronously and in parallel
+	 * @see com.aol.simple.react.stream.traits.FutureStream#parallel()
+	 */
+	default LazyFutureStream<U> parallel(){
+		return this.withAsync(true).withTaskExecutor(parallelBuilder().getExecutor());
+	}
+	/* 
+	 *	@return New version of this stream  converted to execute synchronously and sequentially
+	 * @see com.aol.simple.react.stream.traits.FutureStream#sequential()
+	 */
+	default LazyFutureStream<U> sequential(){
+		return this.withAsync(false).withTaskExecutor(sequentialBuilder().getExecutor());
+	}
 
 
 	

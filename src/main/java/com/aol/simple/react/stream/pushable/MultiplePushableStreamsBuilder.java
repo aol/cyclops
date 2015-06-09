@@ -69,7 +69,7 @@ public class MultiplePushableStreamsBuilder<T>  {
 	 */
 	public  <T> LazyFutureStream<T> pushableLazyFutureStream(){
 		
-		return LazyFutureStream.futureStream((Stream<T>)topic.stream());
+		return LazyFutureStream.of((Stream<T>)topic.stream());
 	}
 
 	/**

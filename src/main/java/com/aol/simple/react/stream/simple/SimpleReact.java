@@ -41,8 +41,7 @@ public class SimpleReact  extends BaseSimpleReact{
 	private final Executor executor;
 	@Getter
 	private final RetryExecutor retrier;
-	@Getter
-	private final boolean eager=true;
+	
 	
 	
 	private final Boolean async;

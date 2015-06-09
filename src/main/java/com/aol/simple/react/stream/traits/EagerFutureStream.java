@@ -31,7 +31,10 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.RetryBuilder;
+import com.aol.simple.react.async.Continueable;
 import com.aol.simple.react.async.Queue;
+import com.aol.simple.react.async.QueueFactory;
+import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
@@ -39,6 +42,7 @@ import com.aol.simple.react.stream.eager.EagerFutureStreamImpl;
 import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
+import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
  * 
@@ -49,6 +53,24 @@ import com.aol.simple.react.stream.simple.SimpleReact;
  *
  */
 public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
+	EagerFutureStream<U> withAsync(boolean async);
+	EagerFutureStream<U> withTaskExecutor(Executor e);
+
+	EagerFutureStream<U> withRetrier(RetryExecutor retry);
+
+	EagerFutureStream<U> withWaitStrategy(Consumer<CompletableFuture> c);
+
+	EagerFutureStream<U> withEager(boolean eager);
+
+	EagerFutureStream<U> withLazyCollector(LazyResultConsumer<U> lazy);
+
+	EagerFutureStream<U> withQueueFactory(QueueFactory<U> queue);
+
+	EagerFutureStream<U> withErrorHandler(
+			Optional<Consumer<Throwable>> errorHandler);
+
+	EagerFutureStream<U> withSubscription(Continueable sub);
+
 
 	
 	default <R> EagerFutureStream<R> thenSync(final Function<U, R> fn){
@@ -1291,33 +1313,50 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	}
 
 	
-
 	/**
+	 *  Create a parallel asynchronous stream
 	 * @see Stream#of(Object)
 	 */
-	static <T> EagerFutureStream<T> of(T value) {
-		return futureStream((Stream) Stream.of(value));
+	static <T> EagerFutureStream<T> react(Supplier<T> value) {
+		return  new EagerReact().react(value);
 	}
 
 	/**
+	 * Create a parallel asynchronous stream
+	 * @see Stream#of(Object[])
+	 */
+	@SafeVarargs
+	static <T> EagerFutureStream<T> react(Supplier<T>... values) {
+		return  new EagerReact().react(values);
+	}
+	/**
+	 *  Create a sequential synchronous stream
+	 * @see Stream#of(Object)
+	 */
+	static <T> EagerFutureStream<T> of(T value) {
+		return of((Stream) Stream.of(value));
+	}
+
+	/**
+	 * Create a sequential synchronous stream
 	 * @see Stream#of(Object[])
 	 */
 	@SafeVarargs
 	static <T> EagerFutureStream<T> of(T... values) {
-		return futureStream((Stream) Stream.of(values));
+		return of((Stream) Stream.of(values));
 	}
 
 	/**
 	 * @see Stream#empty()
 	 */
 	static <T> EagerFutureStream<T> empty() {
-		return futureStream((Stream) Seq.empty());
+		return of((Stream) Seq.empty());
 	}
 
 	/**
-	 * Wrap a Stream into a Sequential FutureStream.
+	 * Wrap a Stream into a Sequential synchronous FutureStream.
 	 */
-	static <T> EagerFutureStream<T> futureStream(Stream<T> stream) {
+	static <T> EagerFutureStream<T> of(Stream<T> stream) {
 		if (stream instanceof FutureStream)
 			return (EagerFutureStream<T>) stream;
 		EagerReact er = new EagerReact(
@@ -1325,29 +1364,49 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		.withScheduler(ThreadPools.getSequentialRetry()),false);
 		
 		return new EagerFutureStreamImpl<T>(er,
-				stream.map(CompletableFuture::completedFuture));
+				stream.map(CompletableFuture::completedFuture)).sync();
 	}
 
 	/**
 	 * Wrap an Iterable into a FutureStream.
 	 */
-	static <T> EagerFutureStream<T> futureStream(Iterable<T> iterable) {
-		return futureStream(iterable.iterator());
+	static <T> EagerFutureStream<T> ofIterable(Iterable<T> iterable) {
+		return of(iterable.iterator());
 	}
 
 	/**
 	 * Wrap an Iterator into a FutureStream.
 	 */
-	static <T> EagerFutureStream<T> futureStream(Iterator<T> iterator) {
-		return futureStream(StreamSupport.stream(
+	static <T> EagerFutureStream<T> of(Iterator<T> iterator) {
+		return of(StreamSupport.stream(
 				spliteratorUnknownSize(iterator, ORDERED), false));
 	}
 
 
 
+	/* 
+	 *	@return Convert to standard JDK 8 Stream
+	 * @see com.aol.simple.react.stream.traits.FutureStream#stream()
+	 */
 	@Override
-	default EagerFutureStream<U> stream() {
-		return (EagerFutureStream<U>)FutureStream.super.stream();
+	default Stream<U> stream() {
+		return FutureStream.super.stream();
+	}
+	/* 
+	 *	@return New version of this stream converted to execute asynchronously and in parallel
+	 * @see com.aol.simple.react.stream.traits.FutureStream#parallel()
+	 */
+	@Override
+	default EagerFutureStream<U> parallel(){
+		return this.withAsync(true).withTaskExecutor(parallelBuilder().getExecutor());
+	}
+	/* 
+	 *	@return  New version of this stream  converted to execute synchronously and sequentially
+	 * @see com.aol.simple.react.stream.traits.FutureStream#sequential()
+	 */
+	@Override
+	default EagerFutureStream<U> sequential(){
+		return this.withAsync(false).withTaskExecutor(sequentialBuilder().getExecutor());
 	}
 
 
