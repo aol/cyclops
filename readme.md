@@ -20,12 +20,12 @@ Powerful, modular extensions for Java 8. Take what you need or want.
 
 * Cyclops Base : [![Maven Central : cyclops-base](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-base/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-base)
 * Cyclops For Comprehensions : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-for-comprehensions/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-for-comprehensions)
-* Cyclops Pattern Matching : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/pattern-matching/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/pattern-matching)
+* Cyclops Pattern Matching : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-pattern-matching/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-pattern-matching)
 * Cyclops Functions : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-functions/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-functions)
 * Cyclops Core : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-core)
 * Cyclops Try : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-try/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-try)
 * Cyclops Trampoline : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-trampoline/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-trampoline)
-* Cyclops Enable Switch : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/enable-switch/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/enable-switch)
+* Cyclops Enable Switch : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-enable-switch/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-enable-switch)
 * Cyclops Power Tuples : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-power-tuples/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-power-tuples)
 
 
