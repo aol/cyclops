@@ -42,8 +42,9 @@ dependencies {
    
 	
 	compile 'org.jooq:jool:0.9.6'
+	compile 'org.pcollections:pcollections:2.1.2'
 	provided group: 'org.projectlombok', name: 'lombok', version:'1.16.4'
-	compile group: 'com.google.guava', name: 'guava', version:'18.0'
+	//compile group: 'com.google.guava', name: 'guava', version:'18.0'
 	compile 'com.nurkiewicz.asyncretry:asyncretry:0.0.6'
 	compile group: 'org.slf4j', name: 'jcl-over-slf4j', version:'1.6.1'
     testCompile group: 'junit', name: 'junit', version: '4.12'

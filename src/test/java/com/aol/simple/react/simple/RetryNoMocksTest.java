@@ -1,8 +1,10 @@
 package com.aol.simple.react.simple;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -12,7 +14,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
 
 import com.aol.simple.react.stream.simple.SimpleReact;
-import com.google.common.collect.Lists;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.nurkiewicz.asyncretry.policy.AbortRetryException;
@@ -24,7 +25,7 @@ public class RetryNoMocksTest {
 	@Test
 	public void testRetry() {
 		count = new AtomicInteger(0);
-		errors = Collections.synchronizedCollection(Lists.newArrayList());
+		errors = Collections.synchronizedCollection(new ArrayList<>());
 		final RetryExecutor executor = new AsyncRetryExecutor(Executors.newSingleThreadScheduledExecutor());
 		List<Integer> result = new SimpleReact().react(()->1,()->2,()->3)
 												.withRetrier(executor)
@@ -38,7 +39,7 @@ public class RetryNoMocksTest {
 	@Test
 	public void testAbort() {
 		count = new AtomicInteger(0);
-		errors = Collections.synchronizedCollection(Lists.newArrayList());
+		errors = Collections.synchronizedCollection(new ArrayList<>());
 		final RetryExecutor executor = new AsyncRetryExecutor(Executors.newSingleThreadScheduledExecutor());
 		List<Integer> result = new SimpleReact().react(()->1,()->2,()->3)
 												.withRetrier(executor)
@@ -52,7 +53,7 @@ public class RetryNoMocksTest {
 	@Test
 	public void testRetryEnds() {
 		count = new AtomicInteger(0);
-		errors = Collections.synchronizedCollection(Lists.newArrayList());
+		errors = Collections.synchronizedCollection(new ArrayList<>());
 		final RetryExecutor executor = new AsyncRetryExecutor(Executors.newSingleThreadScheduledExecutor())
 												.retryOn(Throwable.class)
 												.withExponentialBackoff(5, 2)     //500ms times 2 after each retry

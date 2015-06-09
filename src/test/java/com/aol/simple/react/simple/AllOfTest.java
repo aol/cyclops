@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
@@ -16,22 +17,24 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
+import org.pcollections.HashPMap;
+import org.pcollections.HashTreePMap;
 
 import com.aol.simple.react.extractors.Extractors;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
-import com.google.common.collect.ImmutableMap;
+
 
 public class AllOfTest {
 
 	@Test
 	public void allOf(){
-		List<ImmutableMap<String, List<Integer>>> result =
+		List<HashPMap<String, List<Integer>>> result =
 		
 		 LazyFutureStream.sequentialBuilder().react(()->1,()->2,()->3)
 		 									 .map(it->it+100)
 		 									 .peek(System.out::println)
-		 									 .allOf((List<Integer> c)-> { System.out.println(c);return ImmutableMap.of("numbers",c);})
+		 									 .allOf((List<Integer> c)-> { System.out.println(c);return HashTreePMap.singleton("numbers",c);})
 		 									 .peek(map -> System.out.println(map))
 		 									 .run(Collectors.toList());
 		 

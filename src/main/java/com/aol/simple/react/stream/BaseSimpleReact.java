@@ -17,7 +17,6 @@ import java.util.stream.StreamSupport;
 import lombok.AllArgsConstructor;
 
 import com.aol.simple.react.stream.traits.SimpleReactStream;
-import com.google.common.annotations.VisibleForTesting;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 @AllArgsConstructor
@@ -230,7 +229,6 @@ public abstract class BaseSimpleReact {
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	@VisibleForTesting
 	protected <U> SimpleReactStream<U> reactI(final Supplier<U>... actions) {
 		
 		

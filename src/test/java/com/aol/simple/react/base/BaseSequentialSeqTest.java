@@ -31,12 +31,12 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.pcollections.HashTreePMap;
 
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.util.SimpleTimer;
-import com.google.common.collect.ImmutableMap;
 
 public abstract class BaseSequentialSeqTest {
 
@@ -236,14 +236,14 @@ public abstract class BaseSequentialSeqTest {
 			shards.put(4,new Queue());
 			shards.put(5,new Queue());
 			shards.put(6,new Queue());
-			assertThat(of(1,2,3,4,5,6).shard(ImmutableMap.copyOf(shards),Function.identity()).size(),is(6));
+			assertThat(of(1,2,3,4,5,6).shard(HashTreePMap.from(shards),Function.identity()).size(),is(6));
 		}
 	}
 	@Test
 	public void shardStreams(){
 		
 		for(int index=0;index<100;index++){
-			Map<Integer,Queue<Integer>> shards = ImmutableMap.of(0,new Queue(),1,new Queue());
+			Map<Integer,Queue<Integer>> shards = HashTreePMap.singleton(0,new Queue<Integer>()).plus(1,new Queue());
 			
 			assertThat(of(1,2,3,4,5,6).shard(shards,i -> 0).get(0).collect(Collectors.toList()),hasItem(6));
 		}

@@ -8,6 +8,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -16,13 +17,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.tuple.Tuple2;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.simple.react.base.BaseSeqTest;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
-import com.google.common.collect.Lists;
 
 public class EagerSeqTest extends BaseSeqTest {
  
@@ -41,7 +40,7 @@ public class EagerSeqTest extends BaseSeqTest {
 	public void batchSinceLastReadIterator() throws InterruptedException{
 		Iterator<Collection<Object>> it = react(()->1,()->2,()->3,()->4,()->5,()->value()).chunkLastReadIterator();
 		Thread.sleep(50);
-		List<Collection> cols = Lists.newArrayList();
+		List<Collection> cols = new ArrayList<>();
 		while(it.hasNext()){
 			
 			cols.add(it.next());

@@ -22,7 +22,6 @@ import lombok.experimental.Wither;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
-import com.google.common.annotations.VisibleForTesting;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -187,7 +186,6 @@ public class SimpleReact  extends BaseSimpleReact{
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	@VisibleForTesting
 	protected <U> SimpleReactStream<U> reactI(final Supplier<U>... actions) {
 		
 		

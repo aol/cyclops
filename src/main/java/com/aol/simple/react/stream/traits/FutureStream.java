@@ -48,7 +48,6 @@ import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.util.SimpleTimer;
-import com.google.common.collect.Lists;
 
 public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		 BlockingStream<U>, SimpleReactStream<U>, ToQueue<U> {
@@ -123,12 +122,12 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 						return reader.drainToOrBlock();
 					}catch(ClosedQueueException e){
 						open =false;
-						return Lists.newArrayList();
+						return new ArrayList<>();
 					}catch(QueueTimeoutException e){
 						LockSupport.parkNanos(0l);
 					}
 				}
-				return Lists.newArrayList();
+				return new ArrayList<>();
 				
 
 			}

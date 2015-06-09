@@ -1,5 +1,6 @@
 package com.aol.simple.react.async;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
@@ -24,7 +25,7 @@ import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.stream.traits.Continuation;
 import com.aol.simple.react.util.SimpleTimer;
-import com.google.common.collect.Lists;
+
 
 /**
  * Inspired by scalaz-streams async.Queue (functionally similar, but Blocking)
@@ -375,7 +376,7 @@ public class Queue<T> implements Adapter<T> {
 			return queue.open || notEmpty();
 		}
 		public Collection<T> drainToOrBlock() {
-			Collection<T> result = Lists.newArrayList();
+			Collection<T> result = new ArrayList<>();
 			if(size()>0)
 				queue.queue.drainTo(result);
 			else{

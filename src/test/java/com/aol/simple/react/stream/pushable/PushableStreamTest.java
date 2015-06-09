@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -20,7 +21,7 @@ import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.Signal;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.threads.SequentialElasticPools;
-import com.google.common.collect.Lists;
+
 
 public class PushableStreamTest {
 
@@ -70,7 +71,7 @@ public class PushableStreamTest {
 		PushableStream<Integer> pushable = new PushableStreamBuilder()
 				.withBackPressureAfter(1).withBackPressureOn(true)
 				.pushableStream();
-		List events = Collections.synchronizedList(Lists.newArrayList());
+		List events = Collections.synchronizedList(new ArrayList<>());
 		new Thread(() -> pushable.getStream().forEach(events::add)).start();
 		pushable.getInput().offer(10);
 		events.add("here!");

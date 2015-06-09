@@ -1,5 +1,7 @@
 package com.aol.simple.react.blockers;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +13,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import org.pcollections.ConsPStack;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,8 +22,7 @@ import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.ThrowsSoftened;
 import com.aol.simple.react.stream.Status;
 import com.aol.simple.react.util.SimpleTimer;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+
 
 @AllArgsConstructor
 @Slf4j
@@ -43,7 +46,7 @@ public class Blocker<U> {
 	public List<U> block(final Predicate<Status> breakout) {
 
 		if(lastActive.size()==0)
-			return ImmutableList.of();
+			return Arrays.asList();
 		lastActive.forEach(f -> f.whenComplete((result, ex) -> {
 			testBreakoutConditionsBeforeUnblockingCurrentThread(breakout,
 					result, (Throwable)ex);
@@ -66,7 +69,7 @@ public class Blocker<U> {
 		}
 		
 		return new Status(completed.get(), errors.get(),
-				lastActive.size(), timer.getElapsedNanoseconds(),ImmutableList.copyOf(currentResults));
+				lastActive.size(), timer.getElapsedNanoseconds(),ConsPStack.from(currentResults));
 		
 	}
 	private void testBreakoutConditionsBeforeUnblockingCurrentThread(

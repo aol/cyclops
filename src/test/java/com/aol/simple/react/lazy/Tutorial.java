@@ -21,6 +21,7 @@ import lombok.ToString;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.pcollections.HashTreePMap;
 
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.QueueFactories;
@@ -30,7 +31,6 @@ import com.aol.simple.react.stream.traits.EagerFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.threads.SequentialElasticPools;
-import com.google.common.collect.ImmutableMap;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 
 
@@ -236,7 +236,7 @@ public class Tutorial {
 		 LazyFutureStream.sequentialCommonBuilder().react(()->1,()->2,()->3)
 		 									 .map(it->it+100)
 		 									 .peek(System.out::println)
-		 									 .allOf(c-> ImmutableMap.of("numbers",c))
+		 									 .allOf(c-> HashTreePMap.singleton("numbers",c))
 		 									 .peek(System.out::println)
 		 									 .block();
 	}
@@ -562,12 +562,12 @@ public class Tutorial {
 
 	private Collection<Map> processOrders(Collection<Map> input) {
 		sleep(100);
-		return input.stream().map(m -> ImmutableMap.of("processed", m))
+		return input.stream().map(m -> HashTreePMap.singleton("processed", m))
 				.collect(Collectors.toList());
 	}
 
 	private Map parseJson(String json) {
-		return ImmutableMap.of("id", count++, "type", "order", "date",
+		return HashTreePMap.<Object,Object>singleton("id", count++).plus( "type", "order").plus( "date",
 				new Date());
 	}
 

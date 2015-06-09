@@ -1,9 +1,9 @@
 package com.aol.simple.react.stream;
 
 import lombok.AllArgsConstructor;
-import lombok.experimental.Builder;
+import lombok.Builder;
 
-import com.google.common.collect.ImmutableList;
+import org.pcollections.PStack;
 
 /**
  * Class that returned to blocking predicates for short circuiting result collection
@@ -20,7 +20,7 @@ public class Status<T> {
 	private final int errors;
 	private final int total;
 	private final long elapsedNanos;
-	private final ImmutableList<T> resultsSoFar;
+	private final PStack<T> resultsSoFar;
 
 	public final int getAllCompleted(){
 		return completed + errors;
@@ -46,7 +46,7 @@ public class Status<T> {
 		return elapsedNanos;
 	}
 
-	public ImmutableList<T> getResultsSoFar() {
+	public PStack<T> getResultsSoFar() {
 		return resultsSoFar;
 	}
 }

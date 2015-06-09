@@ -14,14 +14,10 @@ import lombok.Getter;
 import lombok.Synchronized;
 
 import org.jooq.lambda.Seq;
-
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import org.pcollections.HashTreePMap;
+import org.pcollections.PMap;
+import org.pcollections.PVector;
+import org.pcollections.TreePVector;
 
 /**
  * A class that can accept input streams and generate output streams where data sent in the Topic is guaranteed to be
@@ -34,10 +30,10 @@ import com.google.common.collect.Lists;
 public class Topic<T> implements Adapter<T> {
 	
 	
-	@Getter(AccessLevel.PACKAGE) @VisibleForTesting
+	@Getter(AccessLevel.PACKAGE) 
 	private final DistributingCollection<T> distributor = new DistributingCollection<T>();
-	@Getter(AccessLevel.PACKAGE) @VisibleForTesting
-	private volatile ImmutableMap<Seq,Queue<T>> streamToQueue = ImmutableMap.of();
+	@Getter(AccessLevel.PACKAGE) 
+	private volatile PMap<Seq,Queue<T>> streamToQueue = HashTreePMap.empty();
 	private final Object lock = new Object();
 	private volatile int index=0;
 
@@ -72,9 +68,11 @@ public class Topic<T> implements Adapter<T> {
 	public void disconnect(Stream<T> stream){
 		
 		distributor.removeQueue(streamToQueue.get(stream));
-		Map<Seq,Queue<T>> mutable = new HashMap<>(streamToQueue);
+/**		Map<Seq,Queue<T>> mutable = new HashMap<>(streamToQueue);
 		mutable.remove(stream);
-		this.streamToQueue = ImmutableMap.copyOf(mutable);
+		
+		this.streamToQueue = Map.copyOf(mutable);**/
+		this.streamToQueue = streamToQueue.minus(stream);
 		this.index--;
 	}
 	
@@ -82,9 +80,10 @@ public class Topic<T> implements Adapter<T> {
 	private<R> Seq<R> connect(Function<Queue<T>,Seq<R>> streamCreator){
 		Queue<T> queue = this.getNextQueue();
 		Seq<R> stream = streamCreator.apply(queue);
-		Map<Seq,Queue<T>> mutable = new HashMap<>(streamToQueue);
+	/**	Map<Seq,Queue<T>> mutable = new HashMap<>(streamToQueue);
 		mutable.put(stream,queue);
-		this.streamToQueue = ImmutableMap.copyOf(mutable);
+		this.streamToQueue = ImmutableMap.copyOf(mutable);**/
+		this.streamToQueue = streamToQueue.plus(stream,queue);
 		return stream;
 	}
 
@@ -167,18 +166,19 @@ public class Topic<T> implements Adapter<T> {
 
 		private static final long serialVersionUID = 1L;
 		@Getter
-		private volatile ImmutableList<Queue<T>> subscribers = ImmutableList.of();
+		private volatile PVector<Queue<T>> subscribers = TreePVector.empty();
 		
 		private final Object lock = new Object();
 		
 		@Synchronized("lock")
 		public void addQueue(Queue<T> q){
-			 subscribers = ImmutableList.copyOf(Iterables.concat(subscribers,Lists.newArrayList(q)));
+			 subscribers = subscribers.plus(q);
 		}
 		
 		@Synchronized("lock")
 		public void removeQueue(Queue<T> q){
-			 subscribers = ImmutableList.copyOf(Collections2.filter(subscribers, Predicates.not(Predicates.equalTo(q))));
+			 subscribers = subscribers.minus(q);
+					
 		}
 		
 		@Override

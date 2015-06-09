@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -26,6 +26,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,7 +39,7 @@ import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
-import com.google.common.collect.Lists;
+
 
 public class SimpleReactTest {
 	@Test
@@ -111,14 +114,14 @@ public class SimpleReactTest {
 	@Test
 	public void whenChainEmptyBlockReturns(){
 		new SimpleReact(new ForkJoinPool(1))
-		.of(Lists.newArrayList())
+		.of(new ArrayList<>())
 		.block();
 	}
 
 	@Test
 	public void whenChainEmptyBlockReturnsWithBreakout(){
 		new SimpleReact(new ForkJoinPool(1))
-		.of(Lists.newArrayList())
+		.of(new ArrayList<>())
 		.block(status->false);
 	}
 	
@@ -212,7 +215,6 @@ public class SimpleReactTest {
 	}
 
 	
-	
 	@Test
 	public void testGenericExtract() throws InterruptedException, ExecutionException {
 
@@ -220,7 +222,8 @@ public class SimpleReactTest {
 		.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
 		.<Set<Integer>,Set<Integer>>allOf(Collectors.toSet(), (Set<Integer> it) -> {
-			assertThat (it,is( Set.class));
+			
+			assertThat (it,instanceOf( Set.class));
 			return it;
 		}).capture(e -> e.printStackTrace())
 		.blockAndExtract(Extractors.last(), status -> false);
@@ -258,7 +261,7 @@ public class SimpleReactTest {
 	public void testOnFailFirst() throws InterruptedException,
 			ExecutionException {
 		List<String> strings = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> {
+				.<Integer> react(() -> 1,() -> 2,(Supplier<Integer>) () -> {
 					throw new RuntimeException("boo!");
 				}).onFail(e -> 1).then((it) -> "*" + it).block();
 
