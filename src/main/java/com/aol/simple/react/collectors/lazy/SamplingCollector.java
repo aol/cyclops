@@ -65,6 +65,10 @@ public class SamplingCollector<T> implements LazyResultConsumer<T>{
 	public Collection<CompletableFuture<T>> getResults() {
 		return consumer.getResults();
 	}
+	@Override
+	public Collection<CompletableFuture<T>> getAllResults() {
+		return consumer.getResults();
+	}
 
 	@Override
 	public MaxActive getMaxActive() {

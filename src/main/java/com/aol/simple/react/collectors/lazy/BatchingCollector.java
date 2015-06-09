@@ -91,41 +91,14 @@ public class BatchingCollector<T> implements LazyResultConsumer<T>{
 	 * @see com.aol.simple.react.collectors.lazy.LazyResultConsumer#getResults()
 	 */
 	public Collection<CompletableFuture<T>> getResults(){
+		
+		return results;
+	}
+	public Collection<CompletableFuture<T>> getAllResults(){
 		results.addAll(active);
 		return results;
 	}
-
 	 
-	public void forEach(Consumer<? super T> c, Function<CompletableFuture,T> safeJoin){
-		if(this.blocking.isParallel()  && results.size()>maxActive.getParallelReduceBatchSize()){
-			forEachResults(getResults(),c, safeJoin);
-		}else if(!this.blocking.isParallel()  && results.size()>maxActive.getMaxActive()){
-			forEachResults(getResults(),c, safeJoin);
-		}
-	}
-	public void forEachResults( Collection<CompletableFuture<T>> results,Consumer<? super T> c,
-			Function<CompletableFuture, T> safeJoin) {
-		Stream<CompletableFuture<T>> stream = getResults().stream();
-		Stream<CompletableFuture<T>> streamToUse = this.blocking.isParallel() ? stream.parallel() : stream;
-		streamToUse.map(safeJoin).filter(v -> v != MissingValue.MISSING_VALUE).forEach(c);
-		getResults().clear();
-	}
-	public  T reduce(Function<CompletableFuture,T>safeJoin,T identity, BinaryOperator<T> accumulator){
-		if(this.blocking.isParallel()  && results.size()>maxActive.getParallelReduceBatchSize()){
-			 return reduceResults(getResults(),safeJoin, identity, accumulator);
-		}else if(!this.blocking.isParallel()  && results.size()>maxActive.getMaxActive()){
-			return reduceResults(getResults(),safeJoin, identity, accumulator);
-		}
-		return identity;
-	}
-	public T reduceResults( Collection<CompletableFuture<T>> results,Function<CompletableFuture, T> safeJoin, T identity,
-			BinaryOperator<T> accumulator) {
-		Stream<CompletableFuture<T>> stream = results.stream();
-		 Stream<CompletableFuture<T>> streamToUse = this.blocking.isParallel() ? stream.parallel() : stream;
-		 T result = streamToUse.map(safeJoin)
-					.filter(v -> v != MissingValue.MISSING_VALUE).reduce(identity, accumulator);
-		getResults().clear();
-		return result;
-	}
+	
 	
 }

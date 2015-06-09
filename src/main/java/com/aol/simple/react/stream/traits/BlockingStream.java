@@ -267,5 +267,5 @@ public interface BlockingStream<U> extends ConfigurableStream<U>{
 		return collectResults().block().submit(r -> fn.apply(r));
 	}
 
-	 boolean isParallel();
+	 
 }

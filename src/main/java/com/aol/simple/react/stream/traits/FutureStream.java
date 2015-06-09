@@ -1204,7 +1204,9 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 * @see java.util.stream.BaseStream#isParallel()
 	 */
 	@Override
-	boolean isParallel();
+	default boolean isParallel(){
+		return true;
+	}
 
 	/*
 	 * Creates a sequential instance by populating an async Queue from the

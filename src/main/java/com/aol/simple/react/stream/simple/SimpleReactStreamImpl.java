@@ -50,7 +50,6 @@ public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>,EagerToQue
 	private final Continueable subscription;
 	private final ReactPool<BaseSimpleReact> pool = ReactPool.elasticPool(()->new LazyReact(Executors.newSingleThreadExecutor()));
 	private final List originalFutures;
-	private final boolean parallel;
 	
 	public SimpleReactStreamImpl(final SimpleReact simpleReact, final Stream<CompletableFuture<U>> stream,
 			List<CompletableFuture> originalFutures) {
@@ -64,7 +63,6 @@ public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>,EagerToQue
 		this.lazyCollector = new BatchingCollector<>(this);
 		this.queueFactory = QueueFactories.unboundedQueue();
 		this.subscription = new AlwaysContinue();
-		this.parallel = true;
 		
 	}
 	public BaseSimpleReact getPopulator(){

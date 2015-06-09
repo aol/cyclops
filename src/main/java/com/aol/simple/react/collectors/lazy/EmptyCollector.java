@@ -65,6 +65,9 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 		active.clear();
 		return new ArrayList<>();
 	}
+	public Collection<CompletableFuture<T>> getAllResults() {
+		return getResults();
+	}
 
 	@Override
 	public ConfigurableStream<T> getBlocking() {

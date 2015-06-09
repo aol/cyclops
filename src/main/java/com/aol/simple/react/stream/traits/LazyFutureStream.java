@@ -17,6 +17,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
@@ -88,6 +89,18 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	default U reduce(U identity, BinaryOperator<U> accumulator) {
 
 		return LazyStream.super.reduce(identity, accumulator);
+	}
+	@Override
+	default<T> T reduce(T identity, BiFunction<T,? super U,T> accumulator, BinaryOperator<T> combiner){
+		return LazyStream.super.reduce(identity, accumulator,combiner);
+	}
+	@Override
+	default Optional<U> reduce(BinaryOperator<U> accumulator){
+		return LazyStream.super.reduce(accumulator);
+	}
+	@Override
+	default <R> R collect(Supplier<R> supplier, BiConsumer<R,? super U> accumulator, BiConsumer<R,R> combiner){
+		return LazyStream.super.collect(supplier, accumulator, combiner);
 	}
 	/* 
 	 * Execute subsequent stages on the completing thread (until async called)

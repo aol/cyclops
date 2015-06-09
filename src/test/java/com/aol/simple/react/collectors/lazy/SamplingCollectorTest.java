@@ -115,6 +115,12 @@ public class SamplingCollectorTest {
 			// TODO Auto-generated method stub
 			return null;
 		}
+
+		@Override
+		public Collection getAllResults() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 		
 	}
 }

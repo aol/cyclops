@@ -49,7 +49,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	private final Continueable subscription;
 	private final static ReactPool<BaseSimpleReact> pool = ReactPool.elasticPool(()->new LazyReact(Executors.newSingleThreadExecutor()));
 	private final List originalFutures=  null;
-	private final boolean parallel;
+	private final ParallelReductionConfig parallel;
 
 	
 	
@@ -64,7 +64,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		this.lazyCollector = new BatchingCollector<>(this);
 		this.queueFactory = QueueFactories.unboundedNonBlockingQueue();
 		this.subscription = new Subscription();
-		this.parallel = false;
+		this.parallel = ParallelReductionConfig.defaultValue;
 
 		
 	}

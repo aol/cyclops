@@ -4,30 +4,35 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import com.aol.simple.react.collectors.lazy.BatchingCollector;
 import com.aol.simple.react.collectors.lazy.EmptyCollector;
+import com.aol.simple.react.collectors.lazy.IncrementalReducer;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.stream.MissingValue;
 import com.aol.simple.react.stream.Runner;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
+import com.aol.simple.react.stream.lazy.ParallelReductionConfig;
 import com.aol.simple.react.stream.simple.SimpleReact;
 
-public interface LazyStream<U> {
+public interface LazyStream<U> extends BlockingStream<U>{
 	
 	StreamWrapper getLastActive();
 	LazyResultConsumer<U> getLazyCollector();
 	@SuppressWarnings("rawtypes")
 	Consumer<CompletableFuture> getWaitStrategy();
 	Optional<Consumer<Throwable>> getErrorHandler();
-	boolean isParallel();
+	 ParallelReductionConfig getParallel();
 	
 	/**
 	 * Trigger a lazy stream as a task on the provided Executor
@@ -89,6 +94,7 @@ public interface LazyStream<U> {
 
 				batcher.ifPresent(c -> c.accept(n));
 				this.getWaitStrategy().accept(n);
+				
 			});
 		} catch (SimpleReactProcessingException e) {
 			
@@ -96,7 +102,7 @@ public interface LazyStream<U> {
 		if (collector.supplier().get() == null)
 			return null;
 		
-		return (R)batcher.get().getResults().stream()
+		return (R)batcher.get().getAllResults().stream()
 									.map(cf -> BlockingStream.getSafe(cf,getErrorHandler()))
 									.filter(v -> v != MissingValue.MISSING_VALUE)
 									.collect((Collector)collector);
@@ -108,12 +114,13 @@ public interface LazyStream<U> {
 		
 	
 		Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U)BlockingStream.getSafe(cf,getErrorHandler());
-		BatchingCollector<U> collector = (BatchingCollector)this.getLazyCollector().withResults(new ArrayList<>());
+		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().withResults(new ArrayList<>()), this,
+				getParallel());
 		try {
 			this.getLastActive().stream().forEach(next -> {
 
 				
-				collector.accept(next);
+				collector.getConsumer().accept(next);
 				this.getWaitStrategy().accept(next);
 				
 				collector.forEach(c, safeJoin);
@@ -121,28 +128,100 @@ public interface LazyStream<U> {
 		} catch (SimpleReactProcessingException e) {
 			
 		}
-		collector.forEachResults(collector.getResults(),c, safeJoin);
+		collector.forEachResults(collector.getConsumer().getAllResults(),c, safeJoin);
 		
 		
 
 	}
+	
+	default Optional<U> reduce(BinaryOperator<U> accumulator){
+		Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U)BlockingStream.getSafe(cf,getErrorHandler());
+		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().withResults(new ArrayList<>()), this,
+			getParallel());
+		Optional[] result =  {Optional.empty()};
+		try {
+			this.getLastActive().stream().forEach(next -> {
+
+				
+				collector.getConsumer().accept(next);
+				this.getWaitStrategy().accept(next);
+				
+				
+				if(!result[0].isPresent())
+					result[0] = collector.reduce(safeJoin,accumulator);
+				else
+					result[0] = result[0].map(v ->collector.reduce(safeJoin,(U)v,accumulator));	
+				
+			});
+		} catch (SimpleReactProcessingException e) {
+			
+		}
+	
+		 if(result[0].isPresent())
+					return result[0].map(v-> collector.reduceResults(collector.getConsumer().getAllResults(), safeJoin,(U)v, accumulator));
+			
+			return		collector.reduceResults(collector.getConsumer().getAllResults(), safeJoin, accumulator);
+			
+	}
 	default U reduce(U identity, BinaryOperator<U> accumulator){
 		
 		Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U)BlockingStream.getSafe(cf,getErrorHandler());
-		BatchingCollector<U> collector = (BatchingCollector)this.getLazyCollector().withResults(new ArrayList<>());
+		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().withResults(new ArrayList<>()), this,
+			getParallel());
 		Object[] result =  {identity};
 		try {
 			this.getLastActive().stream().forEach(next -> {
 
 				
-				collector.accept(next);
+				collector.getConsumer().accept(next);
 				this.getWaitStrategy().accept(next);
 				result[0] = collector.reduce(safeJoin,(U)result[0],accumulator);	
 			});
 		} catch (SimpleReactProcessingException e) {
 			
 		}
-		return collector.reduceResults(collector.getResults(), safeJoin,(U)result[0], accumulator);
+		return collector.reduceResults(collector.getConsumer().getAllResults(), safeJoin,(U)result[0], accumulator);
+	}
+	
+	default<T> T reduce(T identity, BiFunction<T,? super U,T> accumulator, BinaryOperator<T> combiner){
+		Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U)BlockingStream.getSafe(cf,getErrorHandler());
+		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().withResults(new ArrayList<>()), this,
+			getParallel());
+		Object[] result =  {identity};
+		try {
+			this.getLastActive().stream().forEach(next -> {
+
+				
+				collector.getConsumer().accept(next);
+				this.getWaitStrategy().accept(next);
+				result[0] = collector.reduce(safeJoin,(T)result[0],accumulator,combiner);	
+			});
+		} catch (SimpleReactProcessingException e) {
+			
+		}
+		return collector.reduceResults(collector.getConsumer().getAllResults(), safeJoin,(T)result[0], accumulator,combiner);
+	}
+	
+	default <R> R collect(Supplier<R> supplier, BiConsumer<R,? super U> accumulator, BiConsumer<R,R> combiner){
+		LazyResultConsumer<U> batcher =  getLazyCollector().withResults( new ArrayList<>());
+
+		try {
+			this.getLastActive().stream().forEach(n -> {
+
+				batcher.accept(n);
+				this.getWaitStrategy().accept(n);
+				
+			});
+		} catch (SimpleReactProcessingException e) {
+			
+		}
+		
+		
+		return (R)batcher.getAllResults().stream()
+									.map(cf -> BlockingStream.getSafe(cf,getErrorHandler()))
+									.filter(v -> v != MissingValue.MISSING_VALUE)
+									.collect((Supplier)supplier,(BiConsumer)accumulator,(BiConsumer)combiner);
+		
 	}
 	
 }

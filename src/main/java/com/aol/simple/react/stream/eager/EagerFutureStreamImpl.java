@@ -47,7 +47,7 @@ public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 	private final EagerReact simpleReact;
 	private final Continueable subscription;
 	private final List<CompletableFuture> originalFutures;
-	private final boolean parallel;
+	
 
 	/**
 	 * 
@@ -76,8 +76,6 @@ public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 		this.lazyCollector = new BatchingCollector<>(this);
 		this.queueFactory = QueueFactories.unboundedQueue();
 		subscription = new AlwaysContinue();
-		this.parallel=true;
-
 		
 	}
 	
