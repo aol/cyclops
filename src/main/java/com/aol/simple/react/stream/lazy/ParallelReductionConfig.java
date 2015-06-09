@@ -1,5 +1,6 @@
 package com.aol.simple.react.stream.lazy;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 import lombok.experimental.Wither;
@@ -7,6 +8,7 @@ import lombok.experimental.Wither;
 @Builder
 @Wither
 @Value
+@AllArgsConstructor
 public class ParallelReductionConfig {
 
 	int batchSize;

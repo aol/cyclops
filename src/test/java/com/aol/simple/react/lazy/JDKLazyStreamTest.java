@@ -3,7 +3,10 @@ package com.aol.simple.react.lazy;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Vector;
 import java.util.stream.Stream;
 
 import org.junit.Test;
@@ -37,5 +40,16 @@ public class JDKLazyStreamTest extends BaseJDKStreamTest{
 		assertThat(of(1,2,3,4,5).withParallelReduction(new ParallelReductionConfig(3,true)).map(it -> it*100).reduce( 0,
                 (acc, next) -> acc+next,
                 Integer::sum),is(1500));
+	}
+	@Test
+	public void forEach() {
+		Vector<Integer> list = new Vector<>();
+		of(1,5,3,4,2).withParallelReduction(new ParallelReductionConfig(3,true)).forEach(it-> list.add(it));
+		assertThat(list,hasItem(1));
+		assertThat(list,hasItem(2));
+		assertThat(list,hasItem(3));
+		assertThat(list,hasItem(4));
+		assertThat(list,hasItem(5));
+		
 	}
 }

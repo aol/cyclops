@@ -21,6 +21,7 @@ import lombok.experimental.Wither;
 
 import com.aol.simple.react.stream.BaseLazySimpleReact;
 import com.aol.simple.react.stream.ThreadPools;
+import com.aol.simple.react.stream.traits.EagerFutureStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -79,15 +80,6 @@ public class LazyReact extends BaseLazySimpleReact {
 		
 		
 	}
-	
-	public static <T,R> Function<LazyFutureStream<T>,LazyFutureStream<R>> lift(Function<T,R> fn){
-		return efs -> efs.map(v->fn.apply(v));
-	}
-	public static <T1,T2,R> BiFunction<LazyFutureStream<T1>,LazyFutureStream<T2>,LazyFutureStream<R>> lift2(BiFunction<T1,T2,R> fn){
-		return (lfs1,lfs2) -> lfs1.flatMap( v1-> (LazyFutureStream)lfs2.map(v2->fn.apply(v1,v2)));
-	}
-	
-	
 	
 	
 	/* 

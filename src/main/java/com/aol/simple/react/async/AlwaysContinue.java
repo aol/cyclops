@@ -38,7 +38,7 @@ public class AlwaysContinue implements Continueable{
 
 	@Override
 	public void closeAll() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 }

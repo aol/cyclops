@@ -51,13 +51,7 @@ public class SimpleReact  extends BaseSimpleReact{
 		return  new SimpleReactStreamImpl<U>( this,s, originalFutures);
 	}
 	
-	public static <T,R> Function<SimpleReactStream<T>,SimpleReactStream<R>> lift(Function<T,R> fn){
-		return s1 -> s1.then(fn);
-		
-	}
-	public static <T1,T2,R> BiFunction<SimpleReactStream<T1>,SimpleReactStream<T2>,SimpleReactStream<R>> lift2(BiFunction<T1,T2,R> fn){
-		return (s1,s2) -> SimpleReactStream.bind(s1,input1-> s2.then(input2 -> fn.apply(input1,input2)));
-	}
+	
 	/**
 	 * Construct a SimpleReact builder using standard thread pool.
 	 * By default, unless ThreadPools is configured otherwise this will be sized

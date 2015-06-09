@@ -68,10 +68,7 @@ public class Topic<T> implements Adapter<T> {
 	public void disconnect(Stream<T> stream){
 		
 		distributor.removeQueue(streamToQueue.get(stream));
-/**		Map<Seq,Queue<T>> mutable = new HashMap<>(streamToQueue);
-		mutable.remove(stream);
-		
-		this.streamToQueue = Map.copyOf(mutable);**/
+
 		this.streamToQueue = streamToQueue.minus(stream);
 		this.index--;
 	}
@@ -80,9 +77,7 @@ public class Topic<T> implements Adapter<T> {
 	private<R> Seq<R> connect(Function<Queue<T>,Seq<R>> streamCreator){
 		Queue<T> queue = this.getNextQueue();
 		Seq<R> stream = streamCreator.apply(queue);
-	/**	Map<Seq,Queue<T>> mutable = new HashMap<>(streamToQueue);
-		mutable.put(stream,queue);
-		this.streamToQueue = ImmutableMap.copyOf(mutable);**/
+
 		this.streamToQueue = streamToQueue.plus(stream,queue);
 		return stream;
 	}

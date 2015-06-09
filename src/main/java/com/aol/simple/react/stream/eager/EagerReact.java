@@ -75,14 +75,7 @@ public class EagerReact extends BaseSimpleReact{
 		
 	}
 	
-	public <T,R> Function<EagerFutureStream<T>,EagerFutureStream<R>> lift(Function<T,R> fn){
-		return efs -> efs.map(v->fn.apply(v));
-	}
-	public <T1,T2,R> BiFunction<EagerFutureStream<T1>,EagerFutureStream<T2>,EagerFutureStream<R>> lift2(BiFunction<T1,T2,R> fn){
-		return (efs1,efs2) -> efs1.flatMap( v1-> (EagerFutureStream)efs2.map(v2->fn.apply(v1,v2)));
-	}
 	
-
 	@Override
 	public <U> EagerFutureStream<U> construct(Stream s,
 			List<CompletableFuture> org) {

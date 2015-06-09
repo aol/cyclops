@@ -33,6 +33,10 @@ import com.aol.simple.react.util.SimpleTimer;
  * A Queue that takes data from one or more input Streams and provides them to
  * one or more output Streams
  * 
+ * Interface specifies a BlockingQueue, but NonBlockingQueues (such as ConcurrentLinkedQueue can be used
+ * in conjunction with an implementation of the Continuation interface
+ * @see QueueFactories#unboundedNonBlockingQueue() )
+ * 
  * @author johnmcclean, thomas kountis
  *
  * @param <T>
@@ -93,9 +97,9 @@ public class Queue<T> implements Adapter<T> {
 	/**
 	 * @return Sequential Infinite (until Queue is closed) Stream of data from
 	 *         this Queue
-	 * 
+	 * <pre>
 	 *         use queue.stream().parallel() to convert to a parallel Stream
-	 * 
+	 * </pre>
 	 */
 	public Seq<T> stream() {
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected

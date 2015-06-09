@@ -326,9 +326,9 @@ public interface SimpleReactStream<U> extends
 		return join(stream.then(flatFn));
 		
 	}
-	static <U,R> SimpleReactStream<R> join(SimpleReactStream<U> stream){
+	static <U,R> SimpleReactStream<R> join(SimpleReactStream<SimpleReactStream<U>> stream){
 		Queue queue =  stream.getQueueFactory().build();
-		stream.then(it -> stream.getSimpleReact().of(it).sync().then(queue::offer)).allOf(it ->queue.close());
+		stream.then(it -> it.sync().then(queue::offer)).allOf(it ->queue.close());
 		 return stream.fromStream(queue.stream(stream.getSubscription()));
 	
 	}
