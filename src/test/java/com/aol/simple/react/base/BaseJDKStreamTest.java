@@ -38,6 +38,11 @@ public abstract class BaseJDKStreamTest {
 	public void testAllMatchFalse(){
 		assertThat(of(1,2,3,4,5).allMatch(it-> it<0 && it >6),is(false));
 	}
+	@Test
+	public void testFlatMap(){
+		assertThat(of( asList("1","10"), asList("2"),asList("3"),asList("4")).flatMap( list -> list.stream() ).collect(Collectors.toList() 
+						),hasItem("10"));
+	}
 	
 	@Test
 	public void testMapReduce(){
@@ -48,11 +53,7 @@ public abstract class BaseJDKStreamTest {
 		assertThat(of(1,2,3,4,5).map(it -> it*100).reduce( 50,(acc,next) -> acc+next),is(1550));
 	}
 	
-	@Test
-	public void testFlatMap(){
-		assertThat(of( asList("1","10"), asList("2"),asList("3"),asList("4")).flatMap( list -> list.stream() ).collect(Collectors.toList() 
-						),hasItem("10"));
-	}
+	
 	@Test
 	public void testMapReduceCombiner(){
 		assertThat(of(1,2,3,4,5).map(it -> it*100).reduce( 0,

@@ -32,7 +32,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	@SuppressWarnings("rawtypes")
 	Consumer<CompletableFuture> getWaitStrategy();
 	Optional<Consumer<Throwable>> getErrorHandler();
-	 ParallelReductionConfig getParallel();
+	 ParallelReductionConfig getParallelReduction();
 	
 	/**
 	 * Trigger a lazy stream as a task on the provided Executor
@@ -115,7 +115,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	
 		Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U)BlockingStream.getSafe(cf,getErrorHandler());
 		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().withResults(new ArrayList<>()), this,
-				getParallel());
+				getParallelReduction());
 		try {
 			this.getLastActive().stream().forEach(next -> {
 
@@ -137,7 +137,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	default Optional<U> reduce(BinaryOperator<U> accumulator){
 		Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U)BlockingStream.getSafe(cf,getErrorHandler());
 		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().withResults(new ArrayList<>()), this,
-			getParallel());
+			getParallelReduction());
 		Optional[] result =  {Optional.empty()};
 		try {
 			this.getLastActive().stream().forEach(next -> {
@@ -167,7 +167,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 		
 		Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U)BlockingStream.getSafe(cf,getErrorHandler());
 		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().withResults(new ArrayList<>()), this,
-			getParallel());
+			getParallelReduction());
 		Object[] result =  {identity};
 		try {
 			this.getLastActive().stream().forEach(next -> {
@@ -186,7 +186,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	default<T> T reduce(T identity, BiFunction<T,? super U,T> accumulator, BinaryOperator<T> combiner){
 		Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U)BlockingStream.getSafe(cf,getErrorHandler());
 		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().withResults(new ArrayList<>()), this,
-			getParallel());
+			getParallelReduction());
 		Object[] result =  {identity};
 		try {
 			this.getLastActive().stream().forEach(next -> {

@@ -46,6 +46,7 @@ import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.lazy.LazyFutureStreamImpl;
 import com.aol.simple.react.stream.lazy.LazyReact;
+import com.aol.simple.react.stream.lazy.ParallelReductionConfig;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -1511,6 +1512,9 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	default LazyFutureStream<U> self(Consumer<FutureStream<U>> consumer) {
 		return (com.aol.simple.react.stream.traits.LazyFutureStream<U>)FutureStream.super.self(consumer);
 	}
+
+	FutureStream<U> withParallelReduction(
+			ParallelReductionConfig parallelReductionConfig);
 
 
 }

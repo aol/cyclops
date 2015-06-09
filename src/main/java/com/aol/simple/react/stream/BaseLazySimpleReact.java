@@ -27,8 +27,7 @@ public abstract class BaseLazySimpleReact extends BaseSimpleReact{
 	 * @return Next stage in the flow
 	 */
 	public <U> SimpleReactStream< U> reactInfinitely(final Supplier<U> s) {
-		if(isEager())
-			throw new InfiniteProcessingException("To reactInfinitely use a lazy stream");
+		
 		Subscription sub = new Subscription();
 		SimpleReactStream stream = construct(StreamSupport.stream(
                 new InfiniteClosingSpliterator(Long.MAX_VALUE, () -> CompletableFuture.completedFuture(s.get()),sub), false),
@@ -50,8 +49,7 @@ public abstract class BaseLazySimpleReact extends BaseSimpleReact{
 	 * @return Next stage in the flow
 	 */
 	public <U> SimpleReactStream< U> reactInfinitelyAsync(final Supplier<U> s) {
-		if(isEager())
-			throw new InfiniteProcessingException("To reactInfinitely use a lazy stream");
+		
 		Subscription sub = new Subscription();
 		SimpleReactStream stream = construct(StreamSupport.stream(
                 new InfiniteClosingSpliterator(Long.MAX_VALUE, () -> CompletableFuture.supplyAsync(s),sub), false),
@@ -70,8 +68,7 @@ public abstract class BaseLazySimpleReact extends BaseSimpleReact{
 	 * @return Next stage in the flow / stream
 	 */
 	public <U> SimpleReactStream<U> iterateInfinitely(final U seed, final UnaryOperator<U> f){
-		if(isEager())
-			throw new InfiniteProcessingException("To iterateInfinitely use a lazy stream");
+		
 		Subscription sub = new Subscription();
 		 final Iterator<CompletableFuture<U>> iterator = new Iterator<CompletableFuture<U>> () {
 	            @SuppressWarnings("unchecked")
