@@ -1,16 +1,8 @@
 package com.aol.cyclops.lambda.monads;
 
-import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
-import static com.aol.cyclops.lambda.api.AsGenericMonad.asMonad;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.Stream;
-
-import lombok.val;
 
 import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.api.AsGenericMonad;
@@ -71,6 +63,7 @@ public class Monads extends AsAnyM{
 	 * @return Lifted BiFunction
 	 */
 	public static <U1,U2,R> BiFunction<AnyM<U1>,AnyM<U2>,AnyM<R>> liftM2(BiFunction<U1,U2,R> fn){
+		
 		return (u1,u2) -> u1.bind( input1 -> u2.map(input2 -> fn.apply(input1,input2)  ).unwrap()).anyM();
 	}
 	/**
