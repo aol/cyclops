@@ -17,6 +17,13 @@ import com.aol.simple.react.stream.MissingValue;
 import com.aol.simple.react.stream.lazy.ParallelReductionConfig;
 import com.aol.simple.react.stream.traits.BlockingStream;
 
+/**
+ * Perform incremental (optionally parallel) reduction on a stream
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Data type
+ */
 @Getter
 @AllArgsConstructor
 public class IncrementalReducer<T> {

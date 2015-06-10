@@ -15,7 +15,7 @@ public class DoNothingMonitor implements Consumer<CompletableFuture> {
 	
 	/* 
 	 * No action will be taken
-	 *	@param t Current CompletableFuture
+	 * @param t Current CompletableFuture
 	 * @see java.util.function.Consumer#accept(java.lang.Object)
 	 */
 	@Override

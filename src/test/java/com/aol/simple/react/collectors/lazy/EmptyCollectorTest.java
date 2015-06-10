@@ -39,7 +39,7 @@ public class EmptyCollectorTest {
 	}
 	@Test
 	public void testAcceptMock495() {
-		collector = new EmptyCollector(new MaxActive(500,5,1000));
+		collector = new EmptyCollector(new MaxActive(500,5));
 		CompletableFuture cf = mock(CompletableFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){
@@ -49,7 +49,7 @@ public class EmptyCollectorTest {
 	}
 	@Test
 	public void testAcceptMock50() {
-		collector = new EmptyCollector(new MaxActive(500,450,1000));
+		collector = new EmptyCollector(new MaxActive(500,450));
 		CompletableFuture cf = mock(CompletableFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){
@@ -61,7 +61,7 @@ public class EmptyCollectorTest {
 	@Test
 	public void testWithResults() {
 		
-		collector = collector.withMaxActive(new MaxActive(4,3,1000));
+		collector = collector.withMaxActive(new MaxActive(4,3));
 		assertThat(collector.withResults(null).getMaxActive().getMaxActive(),is(4));
 	}
 

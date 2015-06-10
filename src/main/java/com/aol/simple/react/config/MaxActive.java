@@ -13,13 +13,13 @@ public class MaxActive {
 
 	private final int maxActive;
 	private final int reduceTo;
-	private final int parallelReduceBatchSize;
+	
 	
 	
 	@AllArgsConstructor
 	@Getter
 	public enum defaultValue {
-		factory(new MaxActive(Runtime.getRuntime().availableProcessors()*2,Runtime.getRuntime().availableProcessors(),1000));
+		factory(new MaxActive(Runtime.getRuntime().availableProcessors()*2,Runtime.getRuntime().availableProcessors()));
 		private final MaxActive instance;
 	}
 }

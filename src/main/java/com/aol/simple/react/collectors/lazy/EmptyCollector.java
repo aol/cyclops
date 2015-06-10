@@ -12,6 +12,14 @@ import lombok.experimental.Wither;
 
 import com.aol.simple.react.config.MaxActive;
 import com.aol.simple.react.stream.traits.ConfigurableStream;
+/**
+ * A collector that periodically joins active completablefutures
+ * but does not store the results
+ * 
+ * @author johnmcclean
+ *
+ * @param <T>
+ */
 @Wither
 @AllArgsConstructor
 public class EmptyCollector<T> implements LazyResultConsumer<T> {
@@ -25,6 +33,10 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 		maxActive = MaxActive.defaultValue.factory.getInstance();
 	}
 	
+	/* 
+	 *	@param t Result type
+	 * @see java.util.function.Consumer#accept(java.lang.Object)
+	 */
 	@Override
 	public void accept(CompletableFuture<T> t) {
 		active.add(t);
@@ -53,22 +65,35 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 		
 	}
 
+	
 	@Override
 	public LazyResultConsumer<T> withResults(Collection<CompletableFuture<T>> t) {
 		
 		return this.withMaxActive(maxActive);
 	}
 
+	/* 
+	 *	@return empty list
+	 * @see com.aol.simple.react.collectors.lazy.LazyResultConsumer#getResults()
+	 */
 	@Override
 	public Collection<CompletableFuture<T>> getResults() {
 		active.stream().forEach(cf -> cf.join());
 		active.clear();
 		return new ArrayList<>();
 	}
+	/* 
+	 *	@return empty list
+	 * @see com.aol.simple.react.collectors.lazy.LazyResultConsumer#getAllResults()
+	 */
 	public Collection<CompletableFuture<T>> getAllResults() {
 		return getResults();
 	}
 
+	/* 
+	 *	@return null
+	 * @see com.aol.simple.react.collectors.lazy.LazyResultConsumer#getBlocking()
+	 */
 	@Override
 	public ConfigurableStream<T> getBlocking() {
 	

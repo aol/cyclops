@@ -28,6 +28,9 @@ public interface LazyResultConsumer<T> extends Consumer<CompletableFuture<T>>{
 	 * @return Completed results
 	 */
 	public Collection<CompletableFuture<T>> getResults();
+	/**
+	 * @return Completed  and active results
+	 */
 	public Collection<CompletableFuture<T>> getAllResults();
 
 	public MaxActive getMaxActive();

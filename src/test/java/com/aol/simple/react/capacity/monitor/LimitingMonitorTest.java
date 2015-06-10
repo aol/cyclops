@@ -38,7 +38,7 @@ public class LimitingMonitorTest {
 	}
 	@Test
 	public void testAcceptMock495() {
-		waiter = new LimitingMonitor(new MaxActive(500,5,1000));
+		waiter = new LimitingMonitor(new MaxActive(500,5));
 		CompletableFuture cf = mock(CompletableFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){
@@ -48,7 +48,7 @@ public class LimitingMonitorTest {
 	}
 	@Test
 	public void testAcceptMock50() {
-		waiter = new LimitingMonitor(new MaxActive(500,450,1000));
+		waiter = new LimitingMonitor(new MaxActive(500,450));
 		CompletableFuture cf = mock(CompletableFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){
@@ -61,7 +61,7 @@ public class LimitingMonitorTest {
 
 	@Test
 	public void testWithMaxActive() {
-		waiter = waiter.withMaxActive(new MaxActive(10000,5,1000));
+		waiter = waiter.withMaxActive(new MaxActive(10000,5));
 		CompletableFuture cf = Mockito.mock(CompletableFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){
@@ -72,7 +72,7 @@ public class LimitingMonitorTest {
 
 	@Test
 	public void testActiveSpinWaiterMaxActive() {
-		waiter = new LimitingMonitor(new MaxActive(10,5,1000));
+		waiter = new LimitingMonitor(new MaxActive(10,5));
 		CompletableFuture cf = Mockito.mock(CompletableFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){
