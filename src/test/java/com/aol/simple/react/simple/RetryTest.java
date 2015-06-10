@@ -68,8 +68,8 @@ public class RetryTest {
 
 	
 		String result = new SimpleReact().react(() -> 1, () -> 2, () -> 3)
-				.withRetrier(executor).retry(serviceMock).collectResults()
-				.first().getResults();
+				.withRetrier(executor).retry(serviceMock)
+				.first();
 
 		assertThat(result, is("42"));
 	}
@@ -90,7 +90,7 @@ public class RetryTest {
 
 		
 		String result = new SimpleReact().react(() -> 1).withRetrier(executor)
-				.retry(serviceMock).collectResults().first().getResults();
+				.retry(serviceMock).first();
 
 	
 

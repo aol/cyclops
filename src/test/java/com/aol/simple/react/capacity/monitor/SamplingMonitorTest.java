@@ -32,7 +32,7 @@ public class SamplingMonitorTest {
 
 	@Test
 	public void testBuilder() {
-		monitor = SamplingMonitor.builder().sampleRate(1).monitor(it->recieved++).count(0).build();
+		monitor = new SamplingMonitor(1,0,it->recieved++);
 		for(int i=0;i<100;i++)
 			monitor.accept(CompletableFuture.completedFuture(10));
 		assertThat(recieved, is(100));

@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.aol.simple.react.blockers.Blocker;
-import com.aol.simple.react.collectors.ReactCollector;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.exceptions.ThrowsSoftened;
@@ -31,36 +30,7 @@ public interface BlockingStream<U> extends ConfigurableStream<U>{
 
 	
 	
-	/**
-	 * This provides a mechanism to collect all of the results of active tasks
-	 * inside a dataflow stage. This can then be used to provide those results
-	 * to a function. Inside that function client code can leverage JDK 8
-	 * parallel Streams that will be executed within the SimpleReact
-	 * Executor if that service is an instance of ForkJoinPool (the
-	 * default setting).
-	 * 
-	 * Example : <code>
-	 * Integer result = new SimpleReact()
-				.&lt;Integer, Integer&gt; react(() -&gt; 1, () -&gt; 2, () -&gt; 3)
-				.then((it) -&gt; { it * 200)
-				.collectResults()
-				.&lt;List&lt;Integer&gt;&gt;block()
-				.submit( 
-						it -&gt; it.orElse(new ArrayList())
-								.parallelStream()
-								.filter(f -&gt; f &gt; 300)
-								.map(m -&gt; m - 5)
-								.reduce(0, (acc, next) -&gt; acc + next));
-								
-	 * </code>
-	 * 
-	 * @return A builder that allows the blocking mechanism for results
-	 *         collection to be set
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default ReactCollector<U> collectResults() {
-		return new ReactCollector(this);
-	}
+
 
 	/**
 	 * React and <b>block</b>
@@ -254,18 +224,7 @@ public interface BlockingStream<U> extends ConfigurableStream<U>{
 		return (R) block(breakout).stream().collect(collector);
 	}
 
-	/**
-	 * This method allows the SimpleReact Executor to be reused by JDK
-	 * parallel streams. This offers less control over blocking than raw submit,
-	 * with the parameterless block() method called.
-	 * 
-	 * @param fn
-	 *            Function that contains parallelStream code to be executed by
-	 *            the SimpleReact ForkJoinPool (if configured)
-	 */
-	default <R> R submitAndBlock(Function<List<U>, R> fn) {
-		return collectResults().block().submit(r -> fn.apply(r));
-	}
+	
 
 	 
 }
