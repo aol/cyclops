@@ -28,10 +28,7 @@ public class JDKLazyStreamTest extends BaseJDKStreamTest{
 	}
 	@Test
 	public void testMapReduceSeed2(){
-		//Fails : this is an bug in JDK 8:45
-//		assertThat(Stream.of(1,2,3,4,5).map(i->i*100).reduce( 50,(acc,next) -> acc+next),equalTo(Stream.of(1,2,3,4,5).map(i->i*100).parallel().reduce( 50,(acc,next) -> acc+next)));
-	
-		//assertThat(of(1,2,3,4,5).withParallelReduction(new ParallelReductionConfig(0,true)).map(it -> it*100).reduce( 50,(acc,next) -> acc+next),is(1550));
+		assertThat(of(1,2,3,4,5).withParallelReduction(new ParallelReductionConfig(0,true)).map(it -> it*100).reduce( 0,(acc,next) -> acc+next),is(1500));
 	}
 	
 	

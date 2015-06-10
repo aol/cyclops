@@ -26,6 +26,9 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 /**
  * Builder class for EagerFutureStreams
  * 
+ * react methods - submit Suppliers to task executor
+ * of methods - build Streams directly from data
+ * 
  * @author johnmcclean
  *
  */
@@ -212,34 +215,78 @@ public class EagerReact extends BaseSimpleReact{
 
 
 
+	/* 
+	 *	@return isAsync : if true all tasks go through supplied executor - if false
+	 * all tasks executed on the completing thread
+	 * @see com.aol.simple.react.stream.BaseSimpleReact#isAsync()
+	 */
 	public boolean isAsync(){
 		return async;
 	}
 
+	/* 
+	 * Generate an EagerFutureStream that is a range of Integers
+	 * 
+	 *	@param startInclusive Start of range 
+	 *	@param endExclusive End of range
+	 *	@return EagerFutureStream that is a range of Integers
+	 * @see com.aol.simple.react.stream.BaseSimpleReact#range(int, int)
+	 */
 	@Override
 	public EagerFutureStream<Integer> range(int startInclusive, int endExclusive) {
-		// TODO Auto-generated method stub
+		
 		return (EagerFutureStream)super.range(startInclusive, endExclusive);
 	}
 
+	/* 
+	 * Build an EagerFutureStream from the supplied iterable
+	 * 
+	 *	@param iter Iterable
+	 *	@return EagerFutureStream
+	 * @see com.aol.simple.react.stream.BaseSimpleReact#ofIterable(java.lang.Iterable)
+	 */
 	@Override
 	public <U> EagerFutureStream<U> ofIterable(Iterable<U> iter) {
-		// TODO Auto-generated method stub
+		
 		return (EagerFutureStream)super.of(iter);
 	}
 
+	/* 
+	 * Build an EagerFutureStream that reacts Asynchronously to the Suppliers within the
+	 * specified Stream
+	 * 
+	 *	@param actions Stream to react to
+	 *	@return EagerFutureStream
+	 * @see com.aol.simple.react.stream.BaseSimpleReact#react(java.util.stream.Stream)
+	 */
 	@Override
 	public <U> EagerFutureStream<U> react(Stream<Supplier<U>> actions) {
-		// TODO Auto-generated method stub
+		
 		return (EagerFutureStream)super.react(actions);
 	}
 
+	/* 
+	 * Build an EagerFutureStream that reacts Asynchronously to the Suppliers within the
+	 * specified Iterator 
+	 * 
+	 *	@param actions Iterator to react to
+	 *	@return EagerFutureStream
+	 * @see com.aol.simple.react.stream.BaseSimpleReact#react(java.util.Iterator)
+	 */
 	@Override
 	public <U> EagerFutureStream<U> react(Iterator<Supplier<U>> actions) {
-		// TODO Auto-generated method stub
+		
 		return (EagerFutureStream)super.react(actions);
 	}
 
+	/*
+	 * Build an EagerFutureStream that reacts Asynchronously to the Suppliers within the
+	 * specified Iterator 
+	 *   
+	 *	@param actions
+	 *	@return
+	 * @see com.aol.simple.react.stream.BaseSimpleReact#reactIterable(java.lang.Iterable)
+	 */
 	@Override
 	public <U> EagerFutureStream<U> reactIterable(Iterable<Supplier<U>> actions) {
 		

@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.experimental.Builder;
+import lombok.Builder;
 import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
 
