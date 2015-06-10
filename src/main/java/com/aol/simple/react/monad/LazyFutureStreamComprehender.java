@@ -8,6 +8,13 @@ import lombok.val;
 import com.aol.cyclops.lambda.api.Comprehender;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
+/**
+ * 
+ * Cyclops Monad Comprehender for LazyFutureStreams
+ * 
+ * @author johnmcclean
+ *
+ */
 public class LazyFutureStreamComprehender implements Comprehender<LazyFutureStream> {
 	public static int priority = 3;
 	@Override

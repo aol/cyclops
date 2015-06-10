@@ -16,7 +16,7 @@ public abstract class BaseLazySimpleReact extends BaseSimpleReact{
 	
 	
 	/**
-	 * Generate an infinite reactive flow. Requires a lazy flow. Supplier will be executed multiple times sequentially / syncrhonously by populating thread.
+	 * Generate an infinite reactive flow. Requires a lazy flow. Supplier will be executed multiple times sequentially / synchronously by populating thread.
 	 * 
 	 * 
 	 * The flow will run indefinitely unless / until the provided Supplier throws an Exception

@@ -6,6 +6,11 @@ import java.util.function.Predicate;
 import com.aol.cyclops.lambda.api.Comprehender;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 
+/**
+ * Cyclops Monad Comprehender for SimpleReactStreams
+ * @author johnmcclean
+ *
+ */
 public class SimpleReactStreamComprehender implements Comprehender<SimpleReactStream> {
 	public static int priority = 4;
 	@Override

@@ -7,6 +7,12 @@ import com.aol.cyclops.lambda.api.Comprehender;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
+/**
+ * Cyclops Monad Comprehender for EagerFutureStreams
+ * 
+ * @author johnmcclean
+ *
+ */
 public class EagerFutureStreamComprehender implements Comprehender<EagerFutureStream> {
 	public static int priority = 3;
 	@Override
