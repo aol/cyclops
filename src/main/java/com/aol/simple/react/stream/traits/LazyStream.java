@@ -103,7 +103,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 			return null;
 		
 		return (R)batcher.get().getAllResults().stream()
-									.map(cf -> BlockingStream.getSafe(cf,getErrorHandler()))
+									.map(cf -> BlockingStreamHelper.getSafe(cf,getErrorHandler()))
 									.filter(v -> v != MissingValue.MISSING_VALUE)
 									.collect((Collector)collector);
 		
@@ -113,7 +113,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 
 		
 	
-		Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U)BlockingStream.getSafe(cf,getErrorHandler());
+		Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
 		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().withResults(new ArrayList<>()), this,
 				getParallelReduction());
 		try {
@@ -135,7 +135,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	}
 	
 	default Optional<U> reduce(BinaryOperator<U> accumulator){
-		Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U)BlockingStream.getSafe(cf,getErrorHandler());
+		Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
 		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().withResults(new ArrayList<>()), this,
 			getParallelReduction());
 		Optional[] result =  {Optional.empty()};
@@ -165,7 +165,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	}
 	default U reduce(U identity, BinaryOperator<U> accumulator){
 		
-		Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U)BlockingStream.getSafe(cf,getErrorHandler());
+		Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
 		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().withResults(new ArrayList<>()), this,
 			getParallelReduction());
 		Object[] result =  {identity};
@@ -184,7 +184,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	}
 	
 	default<T> T reduce(T identity, BiFunction<T,? super U,T> accumulator, BinaryOperator<T> combiner){
-		Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U)BlockingStream.getSafe(cf,getErrorHandler());
+		Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
 		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().withResults(new ArrayList<>()), this,
 			getParallelReduction());
 		Object[] result =  {identity};
@@ -218,7 +218,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 		
 		
 		return (R)batcher.getAllResults().stream()
-									.map(cf -> BlockingStream.getSafe(cf,getErrorHandler()))
+									.map(cf ->  BlockingStreamHelper.getSafe(cf,getErrorHandler()))
 									.filter(v -> v != MissingValue.MISSING_VALUE)
 									.collect((Supplier)supplier,(BiConsumer)accumulator,(BiConsumer)combiner);
 		

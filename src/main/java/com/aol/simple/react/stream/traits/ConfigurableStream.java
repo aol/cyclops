@@ -12,12 +12,11 @@ import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
-public interface ConfigurableStream<T> {//<T,X extends ConfigurableStream<T,X>> {
+public interface ConfigurableStream<T> { 
 
 	ConfigurableStream<T> withTaskExecutor(Executor e);
 	ConfigurableStream<T> withRetrier(RetryExecutor retry);
 	ConfigurableStream<T> withWaitStrategy(Consumer<CompletableFuture> c);
-	ConfigurableStream<T> withEager(boolean eager);
 	ConfigurableStream<T> withLazyCollector(LazyResultConsumer<T> lazy);
 	ConfigurableStream<T> withQueueFactory(QueueFactory<T> queue);
 	ConfigurableStream<T> withLastActive(StreamWrapper streamWrapper);
@@ -36,7 +35,6 @@ public interface ConfigurableStream<T> {//<T,X extends ConfigurableStream<T,X>> 
 		SimpleReactStream<U> withTaskExecutor(Executor e);
 		SimpleReactStream<U> withRetrier(RetryExecutor retry);
 		SimpleReactStream<U> withWaitStrategy(Consumer<CompletableFuture> c);
-		SimpleReactStream<U> withEager(boolean eager);
 		SimpleReactStream<U> withLazyCollector(LazyResultConsumer<U> lazy);
 		SimpleReactStream<U> withQueueFactory(QueueFactory<U> queue);
 		SimpleReactStream<U> withLastActive(StreamWrapper streamWrapper);

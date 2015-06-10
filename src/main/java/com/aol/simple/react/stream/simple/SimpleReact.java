@@ -9,14 +9,12 @@ import java.util.Spliterators;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import lombok.Getter;
 import lombok.experimental.Builder;
+import lombok.Getter;
 import lombok.experimental.Wither;
 
 import com.aol.simple.react.stream.BaseSimpleReact;
@@ -27,6 +25,8 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 /**
  * Builder class for FutureStream
  * 
+  * react methods - submit Suppliers to task executor
+ * of methods - build Streams directly from data 
  * 
  * @author johnmcclean
  *

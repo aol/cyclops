@@ -24,8 +24,7 @@ import com.aol.simple.react.stream.StreamWrapper;
 public interface BlockingStream<U> extends ConfigurableStream<U>{
 
 	
-	final static ExceptionSoftener exceptionSoftener = ExceptionSoftener.singleton.factory
-			.getInstance();
+	
 	
 
 	
@@ -35,12 +34,15 @@ public interface BlockingStream<U> extends ConfigurableStream<U>{
 	/**
 	 * React and <b>block</b>
 	 * 
-	 * <code>
-	 	List&lt;String&gt; strings = new SimpleReact().&lt;Integer, Integer&gt; react(() -&gt; 1, () -&gt; 2, () -&gt; 3)
-				.then((it) -&gt; it * 100)
-				.then((it) -&gt; "*" + it)
+	 * <pre>
+	 * {@code 
+		List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.then((it) -> it * 100)
+				.then((it) -> "*" + it)
 				.block();
-	  </code>
+		}
+				
+	  </pre>
 	 * 
 	 * In this example, once the current thread of execution meets the React
 	 * block method, it will block until all tasks have been completed. The
@@ -54,7 +56,7 @@ public interface BlockingStream<U> extends ConfigurableStream<U>{
 	 */
 	@ThrowsSoftened({ InterruptedException.class, ExecutionException.class })
 	default List<U> block() {
-		return block(Collectors.toList(), getLastActive());
+		return BlockingStreamHelper.block(this,Collectors.toList(), getLastActive());
 	}
 
 	/**
@@ -68,54 +70,10 @@ public interface BlockingStream<U> extends ConfigurableStream<U>{
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@ThrowsSoftened({ InterruptedException.class, ExecutionException.class })
 	default <R> R block(final Collector collector) {
-		return (R) block(collector, getLastActive());
+		return (R) BlockingStreamHelper.block(this,collector, getLastActive());
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <R> R block(final Collector collector,
-			final StreamWrapper lastActive) {
-		Stream<CompletableFuture> stream = lastActive.stream();
-		if(!isEager()){
-			return (R)((LazyStream)this).run(collector);
-		
-			//stream = lastActive.stream().collect(Collectors.toList()).stream();
-		}
-		return (R) stream.map((future) -> {
-			return (U) getSafe(future,getErrorHandler());
-		}).filter(v -> v != MissingValue.MISSING_VALUE).collect(collector);
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	static <R> R aggregateResults(final Collector collector,
-			final List<CompletableFuture> completedFutures, Optional<Consumer<Throwable>> errorHandler) {
-		return (R) completedFutures.stream().map(next -> getSafe(next,errorHandler))
-				.filter(v -> v != MissingValue.MISSING_VALUE).collect(collector);
-	}
 	
-	static void capture(final Exception e,Optional<Consumer<Throwable>> errorHandler) {
-		errorHandler.ifPresent((handler) -> {
-			if (!(e.getCause() instanceof FilteredExecutionPathException)) {
-				handler.accept(e.getCause());
-			}
-		});
-	}
-	@SuppressWarnings("rawtypes")
-	static Object getSafe(final CompletableFuture next,Optional<Consumer<Throwable>> errorHandler) {
-		try {
-			return next.get();
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			capture(e,errorHandler);
-			exceptionSoftener.throwSoftenedException(e);
-		} catch (RuntimeException e) {
-			capture(e,errorHandler);
-		} catch (Exception e) {
-			capture(e,errorHandler);
-		}
-
-		return MissingValue.MISSING_VALUE;
-	}
-
 	
 	/**
 	 * Block until first result received

@@ -28,6 +28,10 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 /**
  * 
  * Builder class for LazyFutureStreams
+ *
+ * 
+ * react methods - submit Suppliers to task executor
+ * of methods - build Streams directly from data 
  * 
  * @author johnmcclean
  *
@@ -96,6 +100,15 @@ public class LazyReact extends BaseLazySimpleReact {
 		return (LazyFutureStream) new LazyFutureStreamImpl<U>( this,s);
 
 	}
+	/* 
+	 * Generate an LazyFutureStream that is a range of Integers
+	 * 
+	 *	@param startInclusive Start of range 
+	 *	@param endExclusive End of range
+	 *	@return LazyFutureStream that is a range of Integers
+	 * @see com.aol.simple.react.stream.BaseSimpleReact#range(int, int)
+	 */
+	@Override
 	public LazyFutureStream<Integer> range(int startInclusive, int endExclusive){
 		return of(IntStream.range(startInclusive, endExclusive));
 	}
@@ -303,7 +316,13 @@ public class LazyReact extends BaseLazySimpleReact {
 		this.async = Optional.ofNullable(async).orElse(true);
 	}
 
-
+	/* 
+	 * Build an LazyFutureStream from the supplied iterable
+	 * 
+	 *	@param iter Iterable
+	 *	@return LazyFutureStream
+	 * @see com.aol.simple.react.stream.BaseSimpleReact#ofIterable(java.lang.Iterable)
+	 */
 	@Override
 	public <U> LazyFutureStream<U> ofIterable(Iterable<U> iter) {
 		
@@ -311,20 +330,42 @@ public class LazyReact extends BaseLazySimpleReact {
 	}
 
 
+	/* 
+	 * Build an LazyFutureStream that reacts Asynchronously to the Suppliers within the
+	 * specified Stream
+	 * 
+	 *	@param actions Stream to react to
+	 *	@return LazyFutureStream
+	 * @see com.aol.simple.react.stream.BaseSimpleReact#react(java.util.stream.Stream)
+	 */
 	@Override
 	public <U> LazyFutureStream<U> react(Stream<Supplier<U>> actions) {
 	
 		return (LazyFutureStream)super.react(actions);
 	}
 
-
+	/* 
+	 * Build an LazyFutureStream that reacts Asynchronously to the Suppliers within the
+	 * specified Iterator 
+	 * 
+	 *	@param actions Iterator to react to
+	 *	@return LazyFutureStream
+	 * @see com.aol.simple.react.stream.BaseSimpleReact#react(java.util.Iterator)
+	 */
 	@Override
 	public <U> LazyFutureStream<U> react(Iterator<Supplier<U>> actions) {
 		
 		return (LazyFutureStream)super.react(actions);
 	}
 
-
+	/*
+	 * Build an LazyFutureStream that reacts Asynchronously to the Suppliers within the
+	 * specified Iterator 
+	 *   
+	 *	@param actions
+	 *	@return
+	 * @see com.aol.simple.react.stream.BaseSimpleReact#reactIterable(java.lang.Iterable)
+	 */
 	@Override
 	public <U> LazyFutureStream<U> reactIterable(Iterable<Supplier<U>> actions) {
 		

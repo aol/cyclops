@@ -2,15 +2,22 @@ package com.aol.simple.react.stream.traits;
 
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
+import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -23,19 +30,24 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
+import org.pcollections.HashTreePMap;
 
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Continueable;
 import com.aol.simple.react.async.Queue;
+import com.aol.simple.react.async.QueueFactories;
 import com.aol.simple.react.async.QueueFactory;
+import com.aol.simple.react.async.Queue.ClosedQueueException;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
+import com.aol.simple.react.predicates.Predicates;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.eager.EagerFutureStreamImpl;
@@ -53,17 +65,79 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  *
  */
 public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
+	/* 
+	 * Convert this stream into an async / sync stream
+	 * 
+	 *	@param async true if aysnc stream
+	 *	@return
+	 * @see com.aol.simple.react.stream.traits.ConfigurableStream#withAsync(boolean)
+	 */
 	EagerFutureStream<U> withAsync(boolean async);
+	/* 
+	 * Change task executor for the next stage of the Stream
+	 * 
+	 * <pre>
+	 * {@code
+	 *  EagerFutureStream.of(1,2,3,4)
+	 *  					.map(this::loadFromDb)
+	 *  					.withTaskExecutor(parallelBuilder().getExecutor())
+	 *  					.map(this::processOnDifferentExecutor)
+	 *  					.toList();
+	 * }
+	 * </pre>
+	 * 
+	 *	@param e New executor to use
+	 *	@return Stream ready for next stage definition
+	 * @see com.aol.simple.react.stream.traits.ConfigurableStream#withTaskExecutor(java.util.concurrent.Executor)
+	 */
 	EagerFutureStream<U> withTaskExecutor(Executor e);
 
+	/* 
+	 * Change the Retry Executor used in this stream for subsequent stages
+	 * <pre>
+	 * {@code
+	 * List<String> result = new SimpleReact().react(() -> 1)
+				.withRetrier(executor)
+				.capture(e -> error = e)
+				.retry(serviceMock).block();
+	 * 
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 *	@param retry Retry executor to use
+	 *	@return Stream 
+	 * @see com.aol.simple.react.stream.traits.ConfigurableStream#withRetrier(com.nurkiewicz.asyncretry.RetryExecutor)
+	 */
 	EagerFutureStream<U> withRetrier(RetryExecutor retry);
 
+	
 	EagerFutureStream<U> withWaitStrategy(Consumer<CompletableFuture> c);
 
-	EagerFutureStream<U> withEager(boolean eager);
+	
 
 	EagerFutureStream<U> withLazyCollector(LazyResultConsumer<U> lazy);
 
+	/* 
+	 * Change the QueueFactory type for the next phase of the Stream.
+	 * Default for EagerFutureStream is an unbounded blocking queue, but other types 
+	 * will work fine for a subset of the tasks (e.g. an unbonunded non-blocking queue).
+	 * 
+	 * <pre>
+	 * {@code
+	 * List<Collection<String>> collected = EagerFutureStream
+				.react(data)
+				.withQueueFactory(QueueFactories.boundedQueue(1))
+				.onePer(1, TimeUnit.SECONDS)
+				.batchByTime(10, TimeUnit.SECONDS)
+				.limit(15)
+				.toList();
+	 * }
+	 * </pre>
+	 *	@param queue Queue factory to use for subsequent stages
+	 *	@return Stream
+	 * @see com.aol.simple.react.stream.traits.ConfigurableStream#withQueueFactory(com.aol.simple.react.async.QueueFactory)
+	 */
 	EagerFutureStream<U> withQueueFactory(QueueFactory<U> queue);
 
 	EagerFutureStream<U> withErrorHandler(
@@ -71,8 +145,18 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 	EagerFutureStream<U> withSubscription(Continueable sub);
 
-
-	
+	/*
+	 * Synchronous version of then (executed on completing thread, without involving an Executor)
+	 * 
+	 * React to new events with the supplied function on the supplied
+	 * Executor
+	 * 
+	 * @param fn Apply to incoming events
+	 * 
+	 * @param service Service to execute function on
+	 * 
+	 * @return next stage in the Stream
+	 */
 	default <R> EagerFutureStream<R> thenSync(final Function<U, R> fn){
 		 return (EagerFutureStream<R>)FutureStream.super.thenSync(fn);
 	 }
@@ -112,6 +196,21 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	default LazyFutureStream<U> convertToLazyStream(){
 		return new LazyReact(getTaskExecutor()).withRetrier(getRetrier()).fromStream((Stream)getLastActive().stream());
 	}
+	/* 
+	 * Apply a function to all items in the stream.
+	 * <pre>
+	 * {@code
+	 *  EagerFutureStream.sequentialBuilder().react(()->1,()->2,()->3)
+		 									 .map(it->it+100) //add 100
+		 									 .toList();
+
+	 * }
+	 * //results in [100,200,300]
+	 * </pre>
+	 *	@param mapper Function to be applied to all items in the Stream
+	 *	@return
+	 * @see com.aol.simple.react.stream.traits.FutureStream#map(java.util.function.Function)
+	 */
 	default <R> EagerFutureStream<R> map(Function<? super U, ? extends R> mapper) {
 		return (EagerFutureStream<R>)FutureStream.super.map(mapper);
 	}
@@ -130,9 +229,18 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * elements of the Stream
 	 * 
 	 * e.g.
+	 * <pre>
+	 * {@code 
+	 *  Queue<Integer> evenQueue = QueueFactories.unboundedQueue().build();
+	 *   Queue<Integer> oddQueue = QueueFactories.unboundedQueue().build()
+	 *  EagerFutureStream.of(10,20,25,30,41,43)
+	 * 					 .shard(ImmutableMap.of("even",evenQueue,"odd",oddQueue),element-> element==0? "even" : "odd");
 	 * 
-	 * EagerFutureStream.of(10,20,25,30,41,43).shard(ImmutableMap.of("even",new
-	 * Queue(),"odd",new Queue(),element-&gt; element%2==0? "even" : "odd");
+	 * 
+	 * Stream<Integer> evenStream = evenQueue.stream();
+	 * }
+	 * 
+	 * 
 	 * 
 	 * results in 2 Streams "even": 10,20,30 "odd" : 25,41,43
 	 * 
@@ -158,12 +266,27 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 	}
 
+	/**
+	 * Cancel the original tasks that populated the EagerFuturestream
+	 */
 	void cancelOriginal();
 
 	/**
 	 * Can be used to debounce (accept a single data point from a unit of time)
 	 * data. This drops data. For a method that slows emissions and keeps data
 	 * #see#onePer
+	 * 
+	 * <pre>
+	 * {@code 
+	 * 
+	 * 			EagerFutureStream.of(1,2,3,4,5,6)
+	 * 							.debounce(1000,TimeUnit.SECONDS)
+	 * 							.toList();
+	 *   //[1] - as all events will be passed through in < 1000 seconds, only 1 will be allowed
+	 * }
+	 * 
+	 * 
+	 * </pre>
 	 * 
 	 * @param time
 	 *            Time from which to accept only one element
@@ -180,7 +303,13 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * Return a Stream with the same values as this Stream, but with all values
 	 * omitted until the provided stream starts emitting values. Provided Stream
 	 * ends the stream of values from this stream.
-	 * 
+	 <pre>
+	  {@code 
+	 * 			EagerFutureStream.react(()->loadNext(1),()->loadNext(2),()->3,()->4,()->loadNext(4))
+	 * 							 .skipUntil(EagerFutureStream.react(()->loadFromDb()))
+	 * 							 .toList();
+	 * }
+	 * </pre>
 	 * @param s
 	 *            Stream that will start the emission of values from this stream
 	 * @return Next stage in the Stream but with all values skipped until the
@@ -195,6 +324,15 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * the provided Stream starts to emit values. e.g. if the provided Stream is
 	 * asynchronously refreshing state from some remote store, this stream can
 	 * proceed until the provided Stream succeeds in retrieving data.
+	 * 
+	 * <pre>
+	 * {@code 
+	 * 			EagerFutureStream.react(()->loadNext(1),()->loadNext(2),()->3,()->4,()->loadNext(4))
+	 * 							 .takeUntil(EagerFutureStream.react(()->loadFromDb()))
+	 * 							 .toList();
+	 * }
+	 * 
+	 * </pre>
 	 * 
 	 * @param s
 	 *            Stream that will stop the emission of values from this stream
@@ -240,7 +378,16 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/**
 	 * 
 	 * Batch the elements in this stream into Lists of specified size
-	 * 
+	 * <pre>
+	 * {@code
+	 * EagerFutureStream.of(1,2,3,4,5,6)
+	 * 					.batchBySize(3)
+	 * 					.toList();
+	 *
+	 *  // [[1,2,3],[4,5,6]]
+	 * }
+	 *
+	 * </pre>
 	 * @param size
 	 *            Size of lists elements should be batched into
 	 * @return Stream of Lists
@@ -255,6 +402,16 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * Batch the elements in this stream into Collections of specified size The
 	 * type of Collection is determined by the specified supplier
 	 * 
+	 * <pre>
+	 * {@code 
+	 * 		EagerFutureStream.of(1,1,1,1,1,1)
+	 * 						.batchBySize(3,()->new TreeSet<>())
+	 * 						.toList()
+	 * 
+	 *   //[[1],[1]]
+	 * }
+	 * 
+	 * </pre>
 	 * @param size
 	 *            Size of batch
 	 * @param supplier
@@ -271,7 +428,19 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/**
 	 * Introduce a random delay between events in a stream Can be used to
 	 * prevent behaviour synchronizing within a system
+	 * <pre>
+	 * {@code
 	 * 
+	 * EagerFutureStream.parallelCommonBuilder()
+						.of(IntStream.range(0, 100))
+						.map(it -> it*100)
+						.jitter(10l)
+						.peek(System.out::println)
+						.block();
+	 * 
+	 * }
+	
+	 * </pre>
 	 * @param jitterInNanos
 	 *            Max number of nanos for jitter (random number less than this
 	 *            will be selected)/
@@ -286,15 +455,24 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * Stream. Note this doesn't neccessarily imply a fixed delay between
 	 * element creation (although it may do). e.g.
 	 * 
-	 * EagerFutureStream.of(1,2,3,4).fixedDelay(1,TimeUnit.hours);
-	 * 
+	 * <pre>
+	 * {@code
+	  	EagerFutureStream.of(1,2,3,4)
+	  					.fixedDelay(1,TimeUnit.hours);
+	  	}
+	 * </pre>
 	 * Will emit 1 on start, then 2 after an hour, 3 after 2 hours and so on.
 	 * 
 	 * However all 4 numbers will be populated in the Stream immediately.
-	 * 
-	 * LazyFutureStream.of(1,2,3,4).withQueueFactories(QueueFactories.
-	 * boundedQueue(1)).fixedDelay(1,TimeUnit.hours);
-	 * 
+	  
+	   <pre>
+	   {@code 
+	 	LazyFutureStream.of(1,2,3,4)
+	 					.withQueueFactories(QueueFactories.boundedQueue(1))
+	 					.fixedDelay(1,TimeUnit.hours);
+	 	}
+	 	</pre>
+	  
 	 * Will populate each number in the Stream an hour apart.
 	 * 
 	 * @param time
@@ -310,6 +488,15 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/**
 	 * Slow emissions down, emiting one element per specified time period
 	 * 
+	 * <pre>
+	 * {@code 
+	 * 		EagerFutureStream.of(1,2,3,4,5,6)
+	 * 						 .onePer(1000,TimeUnit.NANOSECONDS)
+	 * 						 .toList();
+	 * 
+	 * }
+	 * 
+	 * </pre>
 	 * @param time
 	 *            Frequency period of element emission
 	 * @param unit
@@ -324,6 +511,16 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/**
 	 * Allows x (specified number of) emissions with a time period before
 	 * stopping emmissions until specified time has elapsed since last emission
+	 * 
+	 * <pre>
+	 * {@code 
+	 *    EagerFutureStream.of(1,2,3,4,5,6)
+	 *    				   .xPer(6,100000000,TimeUnit.NANOSECONDS)
+	 *    				   .toList();
+	 * 
+	 * }
+	 * 
+	 * </pre>
 	 * 
 	 * @param x
 	 *            Number of allowable emissions per time period
@@ -341,6 +538,15 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * Organise elements in a Stream into a Collections based on the time period
 	 * they pass through this stage
 	 * 
+	 * <pre>
+	 * {@code 
+	 * 	EagerFutureStream.of(1,2,3,4,5,6)
+	 * 					.batchByTime(15000,TimeUnit.MICROSECONDS);
+	 * 
+	 * }
+	 * 
+	 * </pre>
+	 * 
 	 * @param time
 	 *            Time period during which all elements should be collected
 	 * @param unit
@@ -356,6 +562,16 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/**
 	 * Organise elements in a Stream into a Collections based on the time period
 	 * they pass through this stage
+	 * 
+	 * <pre>
+	 * {@code 
+	 * 
+	 *   EagerFutureStream.of(1,1,1,1,1,1)
+	 *   				  .batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>())
+	 *   				  .toList()
+	 * 
+	 * }
+	 * </pre>
 	 * 
 	 * @param time
 	 *            Time period during which all elements should be collected
@@ -379,6 +595,13 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * always take the latest from this Stream while taking the last available
 	 * value from the provided stream.
 	 * 
+	 * <pre>
+	 * {@code
+	 *    EagerFutureStream.of(1,2,3,4,5,6)
+	 *    				   .combineLatest(react(()->3,()->value()))
+	 *    				   .toList();
+	 * }
+	 * </pre>
 	 * @param s
 	 *            Stream to merge with
 	 * @return Stream of Tuples with the latest values from either stream
@@ -396,6 +619,16 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * combineLatest takes the latest from either Stream (merged with last
 	 * available from the other).
 	 * 
+	 * <pre>
+	 * {@code
+	 * EagerFutureStream.of(1,2,3,4,5,6)
+	 * 					.withLatest(of(30,40,50,60,70,80,90,100,110,120,140))
+						.toList();
+	 * 
+	 * }
+	 * 
+	 * </pre>
+	 * 
 	 * @param s
 	 *            Stream to merge with
 	 * @return Stream of Tuples with the latest values from this stream
@@ -407,6 +640,17 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 	/**
 	 * Return first Stream out of provided Streams that starts emitted results 
+	 * 
+	 * <pre>
+	 * {@code 
+	 * 	 EagerFutureStream.firstOf(stream1, stream2, stream3)
+						.peek(System.out::println)
+						.map(this::saveData)
+						.block();
+	 * 
+	 * }
+	 * 
+	 * </pre>
 	 * 
 	 * @param futureStreams Streams to race
 	 * @return First Stream to start emitting values
@@ -437,6 +681,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * Applies a function to this phase independent on the main flow.
 	 * Convenience over taking a reference to this phase and splitting it.
 	 * 
+	 * 
 	 * @param fn
 	 *            Function to be applied to each completablefuture on completion
 	 * @return This phase in Stream
@@ -462,7 +707,19 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	}
 
 	/*
-	 * Merge two SimpleReact Streams
+	 * Merge two simple-react Streams
+	 * 
+	 * <pre>
+	 * {@code 
+	 * List<String> result = 	EagerFutureStream.of(1,2,3)
+	 * 											 .merge(LazyFutureStream.of(100,200,300))
+												  .map(it ->it+"!!")
+												  .toList();
+
+		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
+	 * 
+	 * }
+	 * </pre>
 	 * 
 	 * @param s Stream to merge
 	 * 
@@ -483,6 +740,17 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * SimpleReactFailedStageException which contains both the cause, and the
 	 * input value.
 	 * 
+	 * <pre>
+	 * {@code 
+	 * EagerFutureStream.of(1, "a", 2, "b", 3)
+	    			.cast(Integer.class)
+	    			.onFail(e -> -1)
+	    			.toList();
+	 * 
+	 * }
+	 * </pre>
+	 * 
+	 * 
 	 * @param fn Recovery function
 	 * 
 	 * @return Next stage in stream
@@ -500,6 +768,16 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/*
 	 * Handle failure for a particular class of exceptions only
 	 * 
+	 * 
+	 * <pre>
+	 * {@code 
+	 * new EagerReact().react(()->1,()->2)
+			.then(this::throwException)
+			.onFail(IOException.class, this::recoverIO)
+			.onFail(RuntimeException.class, this::recoverGeneral)
+			.toList();
+	 * }
+	 * </pre>
 	 * @param exceptionClass Class of exceptions to handle
 	 * 
 	 * @param fn recovery function
@@ -521,6 +799,16 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/*
 	 * Capture non-recoverable exception
 	 * 
+	 * <pre>
+	 * {@code 
+	 *   EagerFutureStream.of(1, "a", 2, "b", 3, null)
+	 *   				  .capture(e -> logger.error(e))
+						  .cast(Serializable.class)
+						  .toList()
+	 * 
+	 * }
+	 * 
+	 * </pre>
 	 * @param errorHandler Consumer that captures the exception
 	 * 
 	 * @return Next stage in stream
@@ -536,6 +824,17 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	}
 
 	/*
+	 * 
+	 * <pre>
+	 * {@code
+	 *  EagerFutureStream.sequentialCommonBuilder().react(()->1,()->2,()->3)
+		 									 .map(it->it+100)
+		 									 .allOf(c-> HashTreePMap.singleton("numbers",c))
+		 									 .block();
+	 * 
+	 * }
+	 * </pre>
+	 * 
 	 * @see
 	 * com.aol.simple.react.stream.traits.FutureStream#allOf(java.util.function
 	 * .Function)
@@ -556,6 +855,18 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	}
 
 	/*
+	 * <pre>
+	 * {@code 
+	 * List<String> result = new EagerReact()
+								.<Integer> react(() -> 1, () -> 2, () -> 3)
+								.then(it -> "*" + it)
+								.filter(it -> it.startsWith("*"))
+								.block();
+	 * 
+	 * }
+	 * 
+	 * </pre>
+	 * 
 	 * @see
 	 * com.aol.simple.react.stream.traits.FutureStream#filter(java.util.function
 	 * .Predicate)
@@ -565,6 +876,22 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	}
 
 	/*
+	 * <pre>
+	 * {@code
+	 * 
+	 * List<String> titles = new EagerReact().fromStream(Stream.of(query("Hello, world!")))
+				
+								.flatMap(Collection::stream)
+								.peek(System.out::println)
+								.<String>then(url -> getTitle(url))
+								.filter(Objects::nonNull)
+								.filter(Predicates.take(5))
+								.peek(title -> saveTitle(title) )
+								.peek(System.out::println)
+								.block();
+	 * }
+	 * </pre>
+	 * 
 	 * (non-Javadoc)
 	 * 
 	 * @see
@@ -579,6 +906,20 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	}
 
 	/*
+	 * <pre>
+	 * {@code
+	 * 		List<String> results = LazyFutureStream.sequentialCommonBuilder()
+												   .withRetrier(retrier)
+													.react(() -> "new event1", () -> "new event2")
+													.retry(this::unreliable)
+													.onFail(e -> "default")
+													.peek(System.out::println)
+													.capture(Throwable::printStackTrace)
+													.block();
+	 * 
+	 * }
+	 * </pre>
+	 * 
 	 * (non-Javadoc)
 	 * 
 	 * @see
@@ -797,9 +1138,12 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * 
 	 *
 	 * @see #cycle(Stream)
-	 * @Override default EagerFutureStream<U> cycle() { return
-	 *           fromStream(FutureStream.super.cycle()); }
-	 */
+	 * **/
+	  @Override 
+	 default EagerFutureStream<U> cycle() { return
+	            fromStream(FutureStream.super.cycle()); 
+	 }
+	 
 	/**
 	 * Returns a limited interval from a given Stream.
 	 * 
@@ -864,7 +1208,8 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	default <R> EagerFutureStream<Tuple2<U,R>> zipFutures(Stream<R> other) {
 		return (EagerFutureStream<Tuple2<U,R>>)FutureStream.super.zipFutures(other);
 
-	}	/**
+	}
+	/**
 	 * Zip two Streams, zipping against the underlying futures of both Streams
 	 * Placeholders (Futures) will be populated immediately in the new zipped Stream and results
 	 * will be populated asyncrhonously

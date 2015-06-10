@@ -33,7 +33,6 @@ import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.StageWithResults;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
-import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.simple.SimpleReactStreamImpl;
 import com.aol.simple.react.stream.traits.ConfigurableStream.SimpleReactConfigurableStream;
@@ -96,14 +95,14 @@ public interface SimpleReactStream<U> extends
 		CompletableFuture[] array = lastActiveArray(getLastActive());
 		CompletableFuture cf = CompletableFuture.allOf(array);
 		Function<Exception, T> f = (Exception e) -> {
-			BlockingStream.capture(e,getErrorHandler());
-			return block(Collectors.toList(),
+			BlockingStreamHelper.capture(e,getErrorHandler());
+			return BlockingStreamHelper.block(this,Collectors.toList(),
 					new StreamWrapper(Stream.of(array), true));
 		};
 		CompletableFuture onFail = cf.exceptionally(f);
 		CompletableFuture onSuccess = onFail.thenApplyAsync((result) -> {
 			return new StageWithResults(this.getTaskExecutor(),null, result).submit(() -> (R)fn
-					.apply(BlockingStream.aggregateResults(collector, Stream.of(array)
+					.apply(BlockingStreamHelper.aggregateResults(collector, Stream.of(array)
 							.collect(Collectors.toList()),getErrorHandler())));
 		}, getTaskExecutor());
 		return (SimpleReactStream<R>) withLastActive(new StreamWrapper(onSuccess,
