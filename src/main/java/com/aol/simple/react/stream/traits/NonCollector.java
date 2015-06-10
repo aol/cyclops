@@ -7,6 +7,16 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
+/**
+ * Collector that does nothing
+ * 
+ * @author johnmcclean
+ * 
+ * @param <T> the type of input elements to the reduction operation
+ * @param <A> the mutable accumulation type of the reduction operation (often
+ *            hidden as an implementation detail)
+ * @param <R> the result type of the reduction operation
+ */
 class NonCollector<T, A, R> implements Collector<T, A, R> {
 
 	@Override

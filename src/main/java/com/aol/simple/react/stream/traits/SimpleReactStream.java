@@ -203,11 +203,14 @@ public interface SimpleReactStream<U> extends
 	 * Unlike 'with' this method is fluent, and returns another Stage Builder
 	 * that can represent the next stage in the dataflow.
 	 * 
-	 * <code>
-	  new SimpleReact().&lt;Integer, Integer&gt; react(() -&gt; 1, () -&gt; 2, () -&gt; 3)
-				.then((it) -&gt; it * 100)
-				.then((it) -&gt; "*" + it)
-	</code>
+	 * <pre>
+	 * {@code 
+	 	new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+				.then((it) -> it * 100)
+				.then((it) -> "*" + it)
+				
+				}
+	</pre>
 	 *
 	 * React then allows event reactors to be chained. Unlike React with, which
 	 * returns a collection of Future references, React then is a fluent
@@ -282,6 +285,12 @@ public interface SimpleReactStream<U> extends
 	
 	
 	
+	/**
+	 * Synchronous peek operator
+	 * 
+	 * @param consumer Peek consumer
+	 * @return Next stage
+	 */
 	default SimpleReactStream<U> peekSync(final Consumer<? super U> consumer) {
 		return (SimpleReactStream<U>) thenSync((t) -> {
 			consumer.accept(t);
@@ -320,12 +329,29 @@ public interface SimpleReactStream<U> extends
 								.stream(getSubscription())
 								.flatMap(flatFn));
 	}
+	
+	
+	/**
+	 * 
+	 * flatMap / bind implementation that returns the correct type (SimpleReactStream)
+	 * 
+	 * @param stream Stream to flatMap
+	 * @param flatFn flatMap function
+	 * @return
+	 */
 	static <U,R> SimpleReactStream<R> bind(SimpleReactStream<U> stream,
 			Function< U, SimpleReactStream<R>> flatFn) {
 
 		return join(stream.then(flatFn));
 		
 	}
+	
+	/**
+	 * flatten nested SimpleReactStreams
+	 * 
+	 * @param stream Stream to flatten
+	 * @return flattened Stream
+	 */
 	static <U,R> SimpleReactStream<R> join(SimpleReactStream<SimpleReactStream<U>> stream){
 		Queue queue =  stream.getQueueFactory().build();
 		stream.then(it -> it.sync().then(queue::offer)).allOf(it ->queue.close());
@@ -348,10 +374,12 @@ public interface SimpleReactStream<U> extends
 	 * SimpleReact Stage builder, this method can be used this method to access
 	 * the underlying CompletableFutures.
 	 * 
-	 * <code>
-	 	List&lt;CompletableFuture&lt;Integer&gt;&gt; futures = new SimpleReact().&lt;Integer, Integer&gt; react(() -&gt; 1, () -&gt; 2, () -&gt; 3)
-				.with((it) -&gt; it * 100);
-			</code>
+	 * <pre>
+	 	{@code 
+	 	List<CompletableFuture<Integer>> futures = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+									.with((it) -> it * 100);
+		}
+		</pre>
 	 * 
 	 * In this instance, 3 suppliers generate 3 numbers. These may be executed
 	 * in parallel, when they complete each number will be multiplied by 100 -
@@ -402,6 +430,18 @@ public interface SimpleReactStream<U> extends
 				.stream(fn));
 
 	}
+	/**
+	 * Synchronous filtering operation
+	 * 
+	 * Removes elements that do not match the supplied predicate from the
+	 * dataflow
+	 * 
+	 * @param p
+	 *            Predicate that will be used to filter elements from the
+	 *            dataflow
+	 * @return A new builder object that can be used to define the next stage in
+	 *         the dataflow
+	 */
 	default SimpleReactStream<U> filterSync(final Predicate<? super U> p) {
 		Function<Stream<CompletableFuture>,Stream<CompletableFuture>> fn = s -> s.map(ft -> ft.thenApply((in) -> {
 				if (!p.test((U) in)) {
@@ -474,18 +514,24 @@ public interface SimpleReactStream<U> extends
 	 * the function supplied to the currently active event tasks in the
 	 * dataflow.
 	 * 
-	 * <code>
-	  	List&lt;String&gt; strings = new SimpleReact().&lt;Integer, Integer&gt; react(() -&gt; 100, () -&gt; 2, () -&gt; 3)
-					.then(it -&gt; {
+	 * <pre>
+	  {@code
+	List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 100, () -> 2, () -> 3)
+					.then(it -> {
 						if (it == 100)
 							throw new RuntimeException("boo!");
 			
 						return it;
 					})
-					.onFail(e -&gt; 1)
-					.then(it -&gt; "*" + it)
-					.block();
-		  </code>
+					.onFail(e -> 1)
+					.then(it -> "*" + it)
+					.block();	  
+	  
+	  
+	  
+	  }
+	  
+		  </pre>
 	 * 
 	 * 
 	 * In this example onFail recovers from the RuntimeException thrown when the
@@ -506,15 +552,22 @@ public interface SimpleReactStream<U> extends
 	 * Recover for a particular class of exceptions only. Chain onFail methods from specific Exception classes
 	 * to general, as Exceptions will be caught and handled in order. 
 	 * e.g.
-	 * 
-	 * onFail(IOException.class, recoveryFunction1).onFail(Throwable.class,recovertyFunction2)
-	 * 
+	 * <pre>
+	 * {@code
+	  			onFail(IOException.class, recoveryFunction1)
+	  			.onFail(Throwable.class,recovertyFunction2)
+	 *  }
+	 * </pre>
 	 * For an IOException recoveryFunction1 will be executed
 	 * 
 	 * but with the definitions reveresed 
-	 * 
-	 * onFail(Throwable.class,recovertyFunction2).onFail(IOException.class, recoveryFunction1)
-	 * 
+	 * <pre>
+	  {@code
+	  	onFail(Throwable.class,recovertyFunction2)
+	  		.onFail(IOException.class, recoveryFunction1)
+	 	}
+	 	</pre>
+	 
 	 * recoveryFunction1 will not be called
 	 * 
 	 * 
@@ -555,27 +608,29 @@ public interface SimpleReactStream<U> extends
 	 * recover) - capture is used to capture those occasions where the full
 	 * pipeline has failed and is unrecoverable.
 	 * 
-	 * <code>
-	 * List&lt;String&gt; strings = new SimpleReact().&lt;Integer, Integer&gt; react(() -&gt; 1, () -&gt; 2, () -&gt; 3)
-			.then(it -&gt; it * 100)
-			.then(it -&gt; {
+	 * <pre>
+	 	{@code
+		List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+			.then(it -> it * 100)
+			.then(it -> {
 				if (it == 100)
 					throw new RuntimeException("boo!");
 	
 				return it;
 			})
-			.onFail(e -&gt; 1)
-			.then(it -&gt; "*" + it)
-			.then(it -&gt; {
+			.onFail(e -> 1)
+			.then(it -> "*" + it)
+			.then(it -> {
 				
 				if ("*200".equals(it))
 					throw new RuntimeException("boo!");
 	
 				return it;
 			})
-			.capture(e -&gt; logger.error(e.getMessage(),e))
+			.capture(e -> logger.error(e.getMessage(),e))
 			.block();
-		</code>
+			}
+		</pre>
 	 * 
 	 * In this case, strings will only contain the two successful results (for
 	 * ()-&gt;1 and ()-&gt;3), an exception for the chain starting from Supplier
@@ -605,11 +660,12 @@ public interface SimpleReactStream<U> extends
 	 * until all currently alloted tasks complete. The allOf task is then
 	 * provided with a list of the results from the previous tasks in the chain.
 	 * 
-	 * <code>
+	 * <pre>
+	  {@code
 	  boolean blocked[] = {false};
-		new SimpleReact().&lt;Integer, Integer&gt; react(() -&gt; 1, () -&gt; 2, () -&gt; 3)
+		new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
 				
-				.then(it -&gt; {
+				.then(it -> {
 					try {
 						Thread.sleep(50000);
 					} catch (Exception e) {
@@ -618,11 +674,13 @@ public interface SimpleReactStream<U> extends
 					blocked[0] =true;
 					return 10;
 				})
-				.allOf( it -&gt; it.size());
+				.allOf( it -> it.size());
 
 		
 		assertThat(blocked[0],is(false));
-		</code>
+	  
+	  }
+		</pre>
 	 * 
 	 * In this example, the current thread will continue and assert that it is
 	 * not blocked, allOf could continue and be executed in a separate thread.

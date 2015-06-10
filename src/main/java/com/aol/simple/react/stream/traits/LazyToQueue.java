@@ -21,7 +21,7 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 	abstract <T extends BaseSimpleReact> T getPopulator();
 
 	/**
-	 * Convert the current Stream to a SimpleReact Queue
+	 * Convert the current Stream to a simple-react Queue
 	 * 
 	 * @return Queue populated asynchrnously by this Stream
 	 */
@@ -36,6 +36,14 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 		return queue;
 	}
 
+	/* 
+	 * Convert the current Stream to a simple-react Queue.
+	 * The supplied function can be used to determine properties of the Queue to be used
+	 * 
+	 *  @param fn Function to be applied to default Queue. Returned Queue will be used to conver this Stream to a Queue
+	 *	@return This stream converted to a Queue
+	 * @see com.aol.simple.react.stream.traits.ToQueue#toQueue(java.util.function.Function)
+	 */
 	default Queue<U> toQueue(Function<Queue, Queue> fn) {
 		Queue<U> queue = fn.apply(this.getQueueFactory().build());
 
@@ -47,6 +55,13 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 		return queue;
 	}
 
+	/* 
+	 * Populate provided queues with the sharded data from this Stream.
+	 * 
+	 *	@param shards Map of key to Queue shards
+	 *	@param sharder Sharding function, element to key converter
+	 * @see com.aol.simple.react.stream.traits.ToQueue#toQueue(java.util.Map, java.util.function.Function)
+	 */
 	default <K> void toQueue(Map<K, Queue<U>> shards, Function<U, K> sharder) {
 
 		//in this case all the items have to be pushed to the shards, 
