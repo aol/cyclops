@@ -20,7 +20,7 @@ public class DoTest {
 	public void doTestLazy(){
 		for(int i=0;i<100;i++){
 		LazyFutureStream<Integer> result =
-				Do.with(LazyFutureStream.of(1,2,3).sequential())
+				Do.with(LazyFutureStream.of(1,2,3))
 												.with(Optional.of(2))
 												.yield((Integer a) -> (Integer b) -> a+b);
 												
@@ -40,7 +40,7 @@ public class DoTest {
 	}
 	@Test
 	public void doTestEager(){
-		for(int i=0;i<1000;i++){
+		for(int i=0;i<10;i++){
 		EagerFutureStream<Integer> result = Do.with(EagerFutureStream.of(1,2,3))
 												.with(Optional.of(2))
 												.yield((Integer a) -> (Integer b) -> a+b);

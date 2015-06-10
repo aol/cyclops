@@ -5,7 +5,7 @@ import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 
 import lombok.AllArgsConstructor;
-import lombok.experimental.Builder;
+import lombok.Builder;
 import lombok.experimental.Wither;
 
 /**

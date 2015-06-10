@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Value;
 
@@ -16,10 +17,10 @@ import com.aol.simple.react.stream.MissingValue;
 import com.aol.simple.react.stream.lazy.ParallelReductionConfig;
 import com.aol.simple.react.stream.traits.BlockingStream;
 
-@Value
+@Getter
+@AllArgsConstructor
 public class IncrementalReducer<T> {
 	private final LazyResultConsumer<T> consumer;
-	@Getter
 	private final BlockingStream<T> blocking;
 	private final ParallelReductionConfig config;
 	

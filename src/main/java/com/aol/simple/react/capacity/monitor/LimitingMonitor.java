@@ -8,7 +8,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
-import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 
 import com.aol.simple.react.config.MaxActive;
@@ -22,7 +21,6 @@ import com.aol.simple.react.config.MaxActive;
  */
 @Wither
 @AllArgsConstructor
-@Builder
 public class LimitingMonitor implements Consumer<CompletableFuture>{
 
 	private final List<CompletableFuture> active = new ArrayList<>(1000);

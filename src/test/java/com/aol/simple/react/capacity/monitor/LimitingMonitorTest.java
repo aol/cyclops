@@ -57,16 +57,7 @@ public class LimitingMonitorTest {
 		verify(cf,times(501)).isDone();
 	}
 
-	@Test
-	public void testBuilder() {
-		waiter = LimitingMonitor.builder().maxActive(new MaxActive(2,1,1000)).build();
-		CompletableFuture cf = Mockito.mock(CompletableFuture.class);
-		given(cf.isDone()).willReturn(true);
-		for(int i=0;i<1000;i++){
-			waiter.accept(cf);
-		}
-		verify(cf,times(999)).isDone();
-	}
+	
 
 	@Test
 	public void testWithMaxActive() {
