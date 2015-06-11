@@ -1513,7 +1513,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 		return (com.aol.simple.react.stream.traits.LazyFutureStream<U>)FutureStream.super.self(consumer);
 	}
 
-	FutureStream<U> withParallelReduction(
+	LazyFutureStream<U> withParallelReduction(
 			ParallelReductionConfig parallelReductionConfig);
 
 

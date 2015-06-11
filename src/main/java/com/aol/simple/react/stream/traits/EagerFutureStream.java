@@ -1000,9 +1000,13 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * Take the first (maxSize) completed results from this stage of the Stream
 	 * as input to the next stage. e.g.
 	 * 
-	 * EagerFutureStream.of(()&gt;loadSlow(),()&gt;loadMedium(),()&gt;loadFast())
-	 * .limit(2)
-	 * 
+	 * <pre>
+	 * {@code 
+	 * EagerFutureStream.of(()>loadSlow(),()>loadMedium(),()>loadFast())
+	 * 				.limit(2)
+	 * }
+	 *  //[loadFast, loadMedium]
+	 * </pre>
 	 * will take the results from loadMedium and loadFast()
 	 * 
 	 * 
@@ -1017,6 +1021,25 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		return fromStream(toQueue().stream().limit(maxSize));
 	}
 
+	/**
+	 * Perform a limit operation on the underlying Stream of Futures
+	 * In contrast to EagerFutureStream#limit this removes entries basaed on their
+	 * start position
+	 * 
+	 * <pre>
+	 * {@code 
+	 * EagerFutureStream.of(()>loadSlow(),()>loadMedium(),()>loadFast())
+	 * 				.limitFutures(2)
+	 * }
+	 * 
+	 * //[loadSlow, loadMedium]
+	 * </pre>
+	 * 
+	 * 
+	 * 
+	 * @param maxSize The size of the subsequent Stream
+	 * @return limited Stream
+	 */
 	default EagerFutureStream<U> limitFutures(long maxSize) {
 
 		StreamWrapper lastActive = getLastActive();
@@ -1025,7 +1048,49 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		return this.withLastActive(limited);
 
 	}
+	/*
+	 * Skip the first (n) completed results from this stage of the Stream
+	 * 
+	 * e.g.
+	 * <pre>
+	 * {@code 
+	 * EagerFutureStream.of(()>loadSlow(),()>loadMedium(),()>loadFast())
+	 * 				.skip(2)
+	 * }
+	 * 
+	 * //[loadSlow]
+	 * </pre>
+	 * 
+	 * will take the results from loadSlow()
+	 * 
+	 * @param n number of Elements to skip
+	 * 
+	 * @return EagerFutureStream
+	 * 
+	 * @see org.jooq.lambda.Seq#skip(long)
+	 */
+	@Override
+	default EagerFutureStream<U> skip(long n) {
+		return fromStream(toQueue().stream().skip(n));
+	}
 
+	/**
+	 * In contast to EagerFutureStream#skip skipFutures will skip the first n entries
+	 * of the underlying Stream of Futures.
+     * <pre>
+	 * {@code 
+	 * EagerFutureStream.of(()>loadSlow(),()>loadMedium(),()>loadFast())
+	 * 				.skip(2)
+	 * }
+	 * 
+	 * //[loadFast]
+	 * </pre>	 
+
+
+	 * 
+	 * @param n
+	 * @return
+	 */
 	default EagerFutureStream<U> skipFutures(long n) {
 		StreamWrapper lastActive = getLastActive();
 		StreamWrapper limited = lastActive.withList(lastActive.stream().skip(n)
@@ -1037,8 +1102,9 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * Cast all elements in this stream to specified type. May throw {@link
 	 * ClassCastException}.
 	 * 
+	 * <pre>
 	 * EagerFutureStream.of(1, "a", 2, "b", 3).cast(Integer.class)
-	 * 
+	 * </pre>
 	 * will throw a ClassCastException
 	 * 
 	 * @param type Type to cast to
@@ -1057,7 +1123,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * Keep only those elements in a stream that are of a given type.
 	 * 
 	 * 
-	 * 
+	 * <pre>
 	 * EagerFutureStream.of(1, "a", 2, "b", 3).ofType(Integer.class)
 	 * 
 	 * gives a Stream of (1,2,3)
@@ -1065,7 +1131,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * EagerFutureStream.of(1, "a", 2, "b", 3).ofType(String.class)
 	 * 
 	 * gives a Stream of ("a","b")
-	 * 
+	 * </pre>
 	 * @see com.aol.simple.react.stream.traits.FutureStream#ofType(java.lang.Class)
 	 */
 	@Override
@@ -1073,26 +1139,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		return (EagerFutureStream<U>) FutureStream.super.ofType(type);
 	}
 
-	/*
-	 * Skip the first (n) completed results from this stage of the Stream
-	 * 
-	 * e.g.
-	 * 
-	 * EagerFutureStream.of(()&gt;loadSlow(),()&gt;loadMedium(),()&gt;loadFast())
-	 * .limit(2)
-	 * 
-	 * will take the results from loadSlow()
-	 * 
-	 * @param n number of Elements to skip
-	 * 
-	 * @return EagerFutureStream
-	 * 
-	 * @see org.jooq.lambda.Seq#skip(long)
-	 */
-	@Override
-	default EagerFutureStream<U> skip(long n) {
-		return fromStream(toQueue().stream().skip(n));
-	}
+	
 
 	/**
 	 * Concatenate two streams.
@@ -1137,10 +1184,10 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/**
 	 * Concatenate two streams.
 	 * 
-	 * 
+	 * <pre> {@code 
 	 * // (1, 2, 3, 4) EagerFutureStream.of(1, 2, 3).concat(4)
-	 * 
-	 *
+	 * }
+	 *</pre>
 	 * @see #concat(Stream[])
 	 */
 	default EagerFutureStream<U> concat(U other) {
@@ -1150,10 +1197,11 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/**
 	 * Concatenate two streams.
 	 * 
-	 * 
+	 * <pre>
+	 * {@code 
 	 * // (1, 2, 3, 4, 5, 6) EagerFutureStream.of(1, 2, 3).concat(4, 5, 6)
-	 * 
-	 *
+	 * }
+	 *</pre>
 	 * @see #concat(Stream[])
 	 */
 	@SuppressWarnings({ "unchecked" })
@@ -1167,10 +1215,11 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/**
 	 * Returns a limited interval from a given Stream.
 	 * 
-	 * 
+	 * <pre>
+	 * {@code 
 	 * // (4, 5) EagerFutureStream.of(1, 2, 3, 4, 5, 6).sliceFutures(3, 5)
-	 * 
-	 *
+	 * }
+	 *</pre>
 	 * @see #slice(long, long)
 	 */
 
@@ -1183,9 +1232,11 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/**
 	 * Returns a limited interval from a given Stream.
 	 * 
-	 * 
+	 * <pre>
+	 * {@code 
 	 * // (4, 5) EagerFutureStream.of(1, 2, 3, 4, 5, 6).slice(3, 5)
 	 * 
+	 * }</pre>
 	 *
 	 * @see #slice(Stream, long, long)
 	 */
@@ -1198,12 +1249,13 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 	/**
 	 * Zip two streams into one.
-	 * 
+	 * <pre>
+	 * {@code 
 	 * 
 	 * // (tuple(1, "a"), tuple(2, "b"), tuple(3, "c")) EagerFutureStream.of(1,
 	 * 2, 3).zip(EagerFutureStream.of("a", "b", "c"))
 	 * 
-	 *
+	 *}</pre>
 	 * @see #zip(Stream, Stream)
 	 */
 	@Override
@@ -1214,12 +1266,13 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/**
 	 * Zip two streams into one using a {@link BiFunction} to produce resulting
 	 * values.
-	 * 
+	 * <pre>
 	 * <code>
 	 * ("1:a", "2:b", "3:c") 
 	 * 
 	 * EagerFutureStream.of(1, 2,3).zip(EagerFutureStream.of("a", "b", "c"), (i, s) &gt; i + ":" + s)
 	 * </code>
+	 * </pre>
 	 *
 	 * @see #zip(Seq, BiFunction)
 	 */
@@ -1257,6 +1310,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * 
 	 * e.g.
 	 * two functions that return method name, but take varying lengths of time.
+	 * <pre>
 	 * <code>
 	 * EagerFutureStream.react(()-&gt;takesALotOfTime(),()-&gt;veryQuick()).zipWithIndex();
 	 * 
@@ -1266,6 +1320,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 *  
 	 *  [["veryQuick",0],["takesALotOfTime",1]]
 	 * </code>
+	 * </pre>
 	 * @see #zipWithIndex(Stream)
 	 */
 	default EagerFutureStream<Tuple2<U,Long>> zipFuturesWithIndex() {
@@ -1281,11 +1336,12 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/**
 	 * Zip a Stream with a corresponding Stream of indexes.
 	 * 
-	 * 
+	 * <pre>
+	 * {@code 
 	 * // (tuple("a", 0), tuple("b", 1), tuple("c", 2))
 	 * EagerFutureStream.of("a", "b", "c").zipWithIndex()
 	 * 
-	 *
+	 *}</pre>
 	 * @see #zipWithIndex(Stream)
 	 */
 	default EagerFutureStream<Tuple2<U, Long>> zipWithIndex() {
@@ -1294,10 +1350,12 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 	/**
 	 * Scan a stream to the left.
-	 * 
+	 * <pre>
+	 * {@code 
 	 * 
 	 * // ("", "a", "ab", "abc") EagerFutureStream.of("a", "b",
 	 * "c").scanLeft("", (u, t) &gt; u + t)
+	 * }</pre>
 	 * 
 	 */
 	@Override
@@ -1309,10 +1367,11 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/**
 	 * Scan a stream to the right.
 	 * 
-	 * 
+	 * <pre>
+	 * {@code 
 	 * // ("", "c", "cb", "cba") EagerFutureStream.of("a", "b",
 	 * "c").scanRight("", (t, u) &gt; u + t)
-	 * 
+	 * }</pre>
 	 */
 	@Override
 	default <R> EagerFutureStream<R> scanRight(R seed,
@@ -1325,10 +1384,11 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 	/**
 	 * Reverse a stream.
-	 * 
+	 * <pre>
+	 * {@code 
 	 * 
 	 * // (3, 2, 1) EagerFutureStream.of(1, 2, 3).reverse()
-	 * 
+	 * }</pre>
 	 */
 	@Override
 	default EagerFutureStream<U> reverse() {
@@ -1339,9 +1399,12 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	
 	/**
 	 * Shuffle a stream
-	 * 
+	 * <pre>
+	 * {@code 
 	 * 
 	 * // e.g. (2, 3, 1) EagerFutureStream.of(1, 2, 3).shuffle()
+	 * 
+	 * }</pre>
 	 * 
 	 */
 	@Override
@@ -1351,10 +1414,12 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 	/**
 	 * Shuffle a stream using specified source of randomness
-	 * 
+	 * <pre>
+	 * {@code 
 	 * 
 	 * // e.g. (2, 3, 1) EagerFutureStream.of(1, 2, 3).shuffle(new Random())
 	 * 
+	 * }</pre>
 	 */
 	@Override
 	default EagerFutureStream<U> shuffle(Random random) {
@@ -1364,12 +1429,13 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/**
 	 * Returns a stream with all elements skipped for which a predicate
 	 * evaluates to true.
-	 * 
+	 * <pre>
+	 * {@code 
 	 * 
 	 * // (3, 4, 5) EagerFutureStream.of(1, 2, 3, 4, 5).skipWhile(i &gt; i &lt;
 	 * 3)
 	 * 
-	 *
+	 *}</pre>
 	 * @see #skipWhile(Stream, Predicate)
 	 */
 	@Override
@@ -1380,11 +1446,12 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/**
 	 * Returns a stream with all elements skipped for which a predicate
 	 * evaluates to false.
-	 * 
+	 * <pre>
+	 * {@code 
 	 * 
 	 * // (3, 4, 5) EagerFutureStream.of(1, 2, 3, 4, 5).skipUntil(i &gt; i == 3)
 	 * 
-	 *
+	 *}</pre>
 	 * @see #skipUntil(Stream, Predicate)
 	 */
 	@Override
@@ -1395,12 +1462,13 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/**
 	 * Returns a stream limited to all elements for which a predicate evaluates
 	 * to true.
-	 * 
+	 * <pre>
+	 * {@code 
 	 * 
 	 * // (1, 2) EagerFutureStream.of(1, 2, 3, 4, 5).limitWhile(i -&gt; i &lt;
 	 * 3)
 	 * 
-	 *
+	 * }</pre>
 	 * @see #limitWhile(Stream, Predicate)
 	 */
 	@Override
@@ -1411,11 +1479,12 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/**
 	 * Returns a stream limited to all elements for which a predicate evaluates
 	 * to false.
-	 * 
+	 * <pre>
+	 * {@code 
 	 * 
 	 * // (1, 2) EagerFutureStream.of(1, 2, 3, 4, 5).limitUntil(i &gt; i == 3)
 	 * 
-	 *
+	 *}</pre>
 	 * @see #limitUntil(Stream, Predicate)
 	 */
 	@Override
@@ -1426,11 +1495,12 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/**
 	 * Returns a stream with a given value interspersed between any two values
 	 * of this stream.
-	 * 
+	 * <pre>
+	 * {@code 
 	 * 
 	 * // (1, 0, 2, 0, 3, 0, 4) EagerFutureStream.of(1, 2, 3, 4).intersperse(0)
 	 * 
-	 *
+	 *}</pre>
 	 * @see #intersperse(Stream, Object)
 	 */
 	@Override
@@ -1460,14 +1530,16 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	}
 
 	/**
-	 * Duplicate a Stream into two equivalent LazyFutureStreams
-	 * 
+	 * Duplicate a Stream into two equivalent LazyFutureStreams, underlying
+	 * Stream of Futures is duplicated
+	 * <pre>
+	 * {@code 
 	 * EagerFutureStream.of(1, 2, 3).duplicate()
 	 * 
 	 * results in
 	 * 
 	 * tuple((1,2,3),(1,2,3))
-	 * 
+	 * }</pre>
 	 * Care should be taken not to use this method with infinite streams!
 	 * 
 	 * @return Two equivalent Streams
@@ -1485,6 +1557,23 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	
 		return (Tuple2<EagerFutureStream<U>,EagerFutureStream<U>>) dup;
 	}
+	/**
+	 * Duplicate a Stream into two equivalent LazyFutureStreams, Streams are duplicated as results
+	 * of Futures are populated
+	 * <pre>
+	 * {@code 
+	 * EagerFutureStream.of(1, 2, 3).duplicate()
+	 * 
+	 * results in
+	 * 
+	 * tuple((1,2,3),(1,2,3))
+	 * }</pre>
+	 * Care should be taken not to use this method with infinite streams!
+	 * 
+	 * @return Two equivalent Streams
+	 * 
+	 * @see #duplicate()
+	 */
 	@Override
 	default Tuple2<Seq<U>, Seq<U>> duplicate() {
 
@@ -1501,10 +1590,11 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * futures)
 	 * Can't change the return type in Seq to incorporate EagerFutureStream - see partitionFutureStream instead.
 	 * 
-	 * 
-	 * // tuple((1, 3, 5), (2, 4, 6)) EagerFutureStream.of(1, 2, 3, 4, 5,
-	 * 6).partition(i -&gt; i % 2 != 0)
-	 * 
+	 * <pre>
+	 * {@code 
+	 * // tuple((1, 3, 5), (2, 4, 6)) 
+	 * EagerFutureStream.of(1, 2, 3, 4, 5,6).partition(i -> i % 2 != 0)
+	 * }</pre>
 	 *
 	 * @see #partition(Stream, Predicate)
 	 */
@@ -1519,13 +1609,14 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/**
 	 * Partition an EagerFutureStream into two EagerFutureStreams given a
 	 * predicate.
-	 * 
-	 * EagerFutureStream.of(1, 2, 3, 4, 5, 6).partition(i -&gt; i % 2 != 0)
+	 * <pre>
+	 * {@code 
+	 * EagerFutureStream.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0)
 	 * 
 	 * results in
 	 * 
 	 * tuple((1, 3, 5), (2, 4, 6))
-	 * 
+	 * }</pre>
 	 * @param predicate
 	 *            Predicate to split Stream
 	 * @return EagerFutureStream
@@ -1539,10 +1630,12 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 	/**
 	 * Split a stream at a given position. (Operates on futures)
-	 * 
-	 * 
-	 * // tuple((1, 2, 3), (4, 5, 6)) EagerFutureStream.of(1, 2, 3, 4, 5,
-	 * 6).splitAt(3)
+	 * <pre>
+	 * {@code  
+	 * // tuple((1, 2, 3), (4, 5, 6))
+	 *  EagerFutureStream.of(1, 2, 3, 4, 5,6).splitAt(3)
+	 *  
+	 *  }</pre>
 	 * @return 
 	 * 
 	 *
@@ -1561,10 +1654,12 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 	/**
 	 * Split a EagerFutureStream at a given position.
-	 * 
+	 * <pre>
+	 * {@code 
 	 * EagerFutureStream.of(1, 2, 3, 4, 5, 6).splitAt(3)
 	 * 
 	 * results in tuple((1, 2, 3), (4, 5, 6))
+	 * }</pre>
 	 * 
 	 * @see #splitAt(long)
 	 */
@@ -1574,14 +1669,31 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		Tuple2<Seq<U>, Seq<U>> split = FutureStream.super.splitAt(position);
 		return new Tuple2(fromStream(split.v1), fromStream(split.v2));
 	}
-
-
+	
+	/**
+	 * Split a EagerFutureStream at a given position. Return type is an EagerFutureStream
+	 * <pre>
+	 * {@code 
+	 * EagerFutureStream.of(1, 2, 3, 4, 5, 6).splitAtFutureStream(3)
+	 * 
+	 * results in tuple((1, 2, 3), (4, 5, 6))
+	 * }</pre>
+	 * 
+	 * @see #splitAt(long)
+	 */
 	default Tuple2<EagerFutureStream<U>, EagerFutureStream<U>> splitAtFutureStream(
 			long position) {
 		Tuple2 split = splitAt(position);
 		return (Tuple2<EagerFutureStream<U>, EagerFutureStream<U>>) split;
 	}
 
+	/* 
+	 * Convert a List of CompletableFutures into an EagerFutureStream
+	 * 
+	 *	@param list List of CompletableFutures
+	 *	@return EagerFutureStream
+	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#fromListCompletableFuture(java.util.List)
+	 */
 	default <R> EagerFutureStream<R> fromListCompletableFuture(
 			List<CompletableFuture<R>> list) {
 
@@ -1592,10 +1704,11 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/**
 	 * Split a stream at the head.
 	 * 
-	 * 
-	 * // tuple(1, (2, 3, 4, 5, 6)) EagerFutureStream.of(1, 2, 3, 4, 5,
-	 * 6).splitHead(3)
-	 * 
+	 * <pre>
+	 * {@code 
+	 * // tuple(1, (2, 3, 4, 5, 6)) 
+	 * EagerFutureStream.of(1, 2, 3, 4, 5, 6).splitHead(3)
+	 * }</pre>
 	 *
 	 * @see #splitAt(Stream, long)
 	 */
