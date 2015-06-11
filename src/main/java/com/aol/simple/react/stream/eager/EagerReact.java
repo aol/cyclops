@@ -191,7 +191,6 @@ public class EagerReact extends BaseSimpleReact{
 	 * Start a LazyFutureStream from a JDK Iterator
 	 * 
 	 * @param iterator SimpleReact will iterate over this iterator concurrently to start the reactive dataflow
-	 * @param maxTimes Maximum number of iterations
 	 * @return Next stage in the reactive flow
 	 */
 	@Override

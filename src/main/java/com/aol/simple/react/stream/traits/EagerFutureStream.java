@@ -2,22 +2,15 @@ package com.aol.simple.react.stream.traits;
 
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
-import java.io.IOException;
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
-import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -30,24 +23,19 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
-import org.pcollections.HashTreePMap;
 
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Continueable;
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.async.QueueFactories;
 import com.aol.simple.react.async.QueueFactory;
-import com.aol.simple.react.async.Queue.ClosedQueueException;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
-import com.aol.simple.react.predicates.Predicates;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.eager.EagerFutureStreamImpl;
@@ -239,7 +227,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * 
 	 * Stream<Integer> evenStream = evenQueue.stream();
 	 * }
-	 * 
+	 * </pre>
 	 * 
 	 * 
 	 * results in 2 Streams "even": 10,20,30 "odd" : 25,41,43
@@ -933,6 +921,19 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	}
 
 	/*
+	 * <pre>
+	 * {@code 
+	 * Set<Integer> result = new EagerReact()
+								.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
+								.then( it -> it*100)
+								.allOf(Collectors.toSet(), it -> it.size())
+								.first();
+			
+	 * 
+	 * }
+	 * 
+	 * </pre>
+	 * 
 	 * (non-Javadoc)
 	 * 
 	 * @see
@@ -946,6 +947,21 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		return (EagerFutureStream) FutureStream.super.allOf(collector, fn);
 	}
 
+	/* 
+	 * <pre>
+	 * {@code 
+	 * 				new EagerReact().react(() -> 1)
+	 * 								.then(this::load)
+									.anyOf(this::process)
+									.first();
+	 * 
+	 * }
+	 * 
+	 * </pre>
+	 * 
+	 *	
+	 * @see com.aol.simple.react.stream.traits.FutureStream#anyOf(java.util.function.Function)
+	 */
 	default <R> EagerFutureStream<R> anyOf(Function<U, R> fn) {
 
 		return (EagerFutureStream) FutureStream.super.anyOf(fn);
@@ -1081,10 +1097,14 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/**
 	 * Concatenate two streams.
 	 * 
+	 * <pre>
+	 * {@code 
+	 * // (1, 2, 3, 4, 5, 6) 
+	 *  EagerFutureStream.of(1, 2,3).concat(Stream.of(4, 5, 6))
 	 * 
-	 * // (1, 2, 3, 4, 5, 6) EagerFutureStream.of(1, 2,
-	 * 3).concat(EagerFutureStream.of(4, 5, 6))
 	 * 
+	 * }
+	 * </pre>
 	 *
 	 * @see #concat(Stream[])
 	 */
@@ -1095,7 +1115,19 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 			return (EagerFutureStream) merge((SimpleReactStream) other);
 		return fromStream(FutureStream.super.concat(other));
 	}
-
+	/**
+	 * Concatenate two streams.
+	 * 
+	 * <pre>
+	 * {@code 
+	 * // (1, 2, 3, 4, 5, 6) 
+	 *  EagerFutureStream.of(1, 2,3).concat(EagerFutureStream.of(4, 5, 6))
+	 * 
+	 * 
+	 * }
+	 * </pre>
+	 * @see #concat(Stream[])
+	 */
 	default FutureStream<U> concat(SimpleReactStream<U> other) {
 
 		return (EagerFutureStream) merge((SimpleReactStream) other);
@@ -1130,20 +1162,24 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 				.of(other));
 	}
 
+	
+	 
 	/**
-	 * Repeat a stream infinitely.
+	 * Returns a limited interval from a given Stream.
 	 * 
 	 * 
-	 * // (1, 2, 3, 1, 2, 3, ...) EagerFutureStream.of(1, 2, 3).cycle();
+	 * // (4, 5) EagerFutureStream.of(1, 2, 3, 4, 5, 6).sliceFutures(3, 5)
 	 * 
 	 *
-	 * @see #cycle(Stream)
-	 * **/
-	  @Override 
-	 default EagerFutureStream<U> cycle() { return
-	            fromStream(FutureStream.super.cycle()); 
-	 }
-	 
+	 * @see #slice(long, long)
+	 */
+
+	default EagerFutureStream<U> sliceFutures(long from, long to) {
+		List noType = Seq.seq(getLastActive().stream()).slice(from, to)
+				.collect(Collectors.toList());
+		return fromListCompletableFuture(noType);
+	}
+
 	/**
 	 * Returns a limited interval from a given Stream.
 	 * 
@@ -1153,12 +1189,6 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 *
 	 * @see #slice(Stream, long, long)
 	 */
-
-	default EagerFutureStream<U> sliceFutures(long from, long to) {
-		List noType = Seq.seq(getLastActive().stream()).slice(from, to)
-				.collect(Collectors.toList());
-		return fromListCompletableFuture(noType);
-	}
 
 	@Override
 	default EagerFutureStream<U> slice(long from, long to) {
