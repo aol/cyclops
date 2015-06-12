@@ -62,6 +62,9 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 	default Object getFunctor(){
 		return unwrap();
 	}
+	default Stream<T> stream(){
+		return StreamBasedFunctions.super.stream();
+	}
 	@Override
 	default Filterable<T> withFilterable(T filter){
 		return withMonad(filter);

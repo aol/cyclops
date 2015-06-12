@@ -1,12 +1,12 @@
 package com.aol.cyclops.trycatch;
 
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.FileSystemException;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -58,9 +58,13 @@ public class FailureTest {
 		assertThat(failure.recoverWithFor(FileNotFoundException.class, e-> Success.of(10)),equalTo(Success.of(10)));
 	}
 	@Test
-	public void testRecoverWithForInherited() {
-		assertThat(failure.recoverWithFor(IOException.class, e-> Success.of(10)),equalTo(Success.of(10)));
+	public void testRecoverWithForSubclass() {
+		Failure<Integer,IOException> failure = Failure.of(error);
+		assertThat(failure.recoverWithFor(FileSystemException.class, e-> Success.of(10)),equalTo(Failure.of(error)));
+		assertThat(failure.recoverWithFor(FileNotFoundException.class, e-> Success.of(10)),equalTo(Success.of(10)));
+		
 	}
+	
 	@Test
 	public void testRecoverWithForIgnore() {
 		assertThat(failure.recoverWithFor((Class)RuntimeException.class, e-> Success.of(10)),equalTo(failure));
@@ -72,7 +76,10 @@ public class FailureTest {
 	}
 	@Test
 	public void testRecoverForInherited() {
-		assertThat(failure.recoverFor(IOException.class, e-> 10),equalTo(Success.of(10)));
+		Failure<Integer,IOException> failure = Failure.of(error);
+		assertThat(failure.recoverFor(FileSystemException.class, e-> 10),equalTo(Failure.of(error)));
+		assertThat(failure.recoverFor(FileNotFoundException.class, e-> 10),equalTo(Success.of(10)));
+		
 	}
 	@Test
 	public void testRecoverForIgnore() {

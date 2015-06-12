@@ -11,6 +11,7 @@ import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.FileSystemException;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -75,14 +76,16 @@ public class SuccessTest {
 
 	@Test
 	public void testRecoverFor() {
-		assertThat(success.recoverFor(IOException.class,e->20),equalTo(success));
+		Success<Integer,IOException> success = Success.of(20);
+		assertThat(success.recoverFor(FileSystemException.class, e-> 10),equalTo(Success.of(20)));
+		assertThat(success.recoverFor(FileNotFoundException.class, e-> 15),equalTo(Success.of(20)));
+		assertThat(success.recoverFor(IOException.class,e->30),equalTo(success));
 	}
 
 	@Test
 	public void testRecoverWithFor() {
 		assertThat(success.recoverWithFor(FileNotFoundException.class,e->Success.of(20)),equalTo(success));
 	}
-
 	@Test
 	public void testFlatten() {
 		

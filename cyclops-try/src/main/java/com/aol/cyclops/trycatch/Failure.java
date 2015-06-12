@@ -85,7 +85,7 @@ public class Failure<T,X extends Throwable> implements Try<T,X> {
 	 * @see com.aol.cyclops.trycatch.Try#recoverWithFor(java.lang.Class, java.util.function.Function)
 	 */
 	@Override
-	public Try<T,X> recoverWithFor(Class<? super X> t,Function<X, Success<T,X>> fn){
+	public Try<T,X> recoverWithFor(Class<? extends X> t,Function<X, Success<T,X>> fn){
 		if(t.isAssignableFrom(error.getClass()))
 			return recoverWith(fn);
 		return this;
@@ -100,7 +100,7 @@ public class Failure<T,X extends Throwable> implements Try<T,X> {
 	 * @see com.aol.cyclops.trycatch.Try#recoverFor(java.lang.Class, java.util.function.Function)
 	 */
 	@Override
-	public Try<T,X> recoverFor(Class<? super X> t,Function<X, T> fn){
+	public Try<T,X> recoverFor(Class<? extends X> t,Function<X, T> fn){
 		if(t.isAssignableFrom(error.getClass()))
 			return recover(fn);
 		return this;

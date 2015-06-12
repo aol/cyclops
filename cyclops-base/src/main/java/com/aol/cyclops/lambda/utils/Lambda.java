@@ -2,7 +2,6 @@ package com.aol.cyclops.lambda.utils;
 
 import java.util.function.Function;
 
-import com.sun.xml.internal.ws.util.StreamUtils;
 
 /**
  * Lambda type inferencing helper / curried function creation helper

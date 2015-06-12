@@ -134,7 +134,7 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 	 * @see com.aol.cyclops.trycatch.Try#recoverFor(java.lang.Class, java.util.function.Function)
 	 */
 	@Override
-	public Success<T,X> recoverFor(Class<? super X> t, Function<X, T> fn) {
+	public Success<T,X> recoverFor(Class<? extends X> t, Function<X, T> fn) {
 		return this;
 	}
 
@@ -143,7 +143,7 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 	 * @see com.aol.cyclops.trycatch.Try#recoverWithFor(java.lang.Class, java.util.function.Function)
 	 */
 	@Override
-	public Success<T,X> recoverWithFor(Class<? super X> t,
+	public Success<T,X> recoverWithFor(Class<? extends X> t,
 			Function<X, Success<T,X>> fn) {
 		return this;
 	}

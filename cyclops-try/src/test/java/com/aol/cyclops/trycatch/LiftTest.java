@@ -17,7 +17,7 @@ import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.monads.AnyM;
 import com.aol.cyclops.lambda.monads.MonadFunctions;
 import com.aol.cyclops.lambda.monads.Monads;
-import com.google.common.base.Optional;
+
 
 public class LiftTest {
 

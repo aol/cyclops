@@ -1,19 +1,9 @@
 package com.aol.cyclops.functions;
 
-import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
-import java.util.Arrays;
-import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.Stream;
-
-import lombok.val;
 
 import com.aol.cyclops.lambda.monads.AnyM;
-import com.aol.cyclops.lambda.monads.MonadFunctions;
 import com.aol.cyclops.lambda.monads.Monads;
 
 

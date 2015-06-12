@@ -1,17 +1,8 @@
 package com.aol.cyclops.matcher;
 
-import static com.aol.cyclops.matcher.Predicates.__;
-import static com.aol.cyclops.matcher.Predicates.type;
-import static com.aol.cyclops.matcher.Predicates.with;
-
 import java.util.function.Predicate;
 
-import com.aol.cyclops.matcher.ScalaParserExample.Add;
-import com.aol.cyclops.matcher.ScalaParserExample.Const;
-import com.aol.cyclops.matcher.ScalaParserExample.Expression;
-import com.aol.cyclops.matcher.ScalaParserExample.Mult;
 import com.aol.cyclops.matcher.builders.ADTPredicateBuilder;
-import com.aol.cyclops.matcher.builders.Matching;
 
 
 /**
