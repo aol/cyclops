@@ -93,7 +93,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, St
 	 * @param consumer Accept Exception if present (Failure) and if class types match
 	 * @return this
 	 */
-	public Try<T,X> onFail(Class<? super X> t,Consumer<X> consumer);
+	public Try<T,X> onFail(Class<? extends X> t,Consumer<X> consumer);
 	
 	/**
 	 * @param fn Recovery function - map from a failure to a Success.
