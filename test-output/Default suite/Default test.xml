@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite hostname="ir000781" name="org.reactivestreams.tck.PublisherVerification" tests="36" failures="0" timestamp="17 Jun 2015 23:38:44 GMT" time="8.79" errors="0">
+  <testcase name="optional_spec104_mustSignalOnErrorWhenFails" time="0.008" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest">
+    <skipped/>
+  </testcase>
+  <testcase name="optional_spec105_emptyStreamMustTerminateBySignallingOnComplete" time="0.396" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest"/>
+  <testcase name="optional_spec111_maySupportMultiSubscribe" time="0.002" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest">
+    <skipped/>
+  </testcase>
+  <testcase name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfront" time="0.002" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest">
+    <skipped/>
+  </testcase>
+  <testcase name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfrontAndCompleteAsExpected" time="0.001" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest">
+    <skipped/>
+  </testcase>
+  <testcase name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingOneByOne" time="0.002" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest">
+    <skipped/>
+  </testcase>
+  <testcase name="required_createPublisher1MustProduceAStreamOfExactly1Element" time="0.007" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest"/>
+  <testcase name="required_createPublisher3MustProduceAStreamOfExactly3Elements" time="0.002" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest"/>
+  <testcase name="required_spec101_subscriptionRequestMustResultInTheCorrectNumberOfProducedElements" time="0.916" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest"/>
+  <testcase name="required_spec102_maySignalLessThanRequestedAndTerminateSubscription" time="0.002" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest"/>
+  <testcase name="required_spec105_mustSignalOnCompleteWhenFiniteStreamTerminates" time="0.304" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest"/>
+  <testcase name="required_spec107_mustNotEmitFurtherSignalsOnceOnCompleteHasBeenSignalled" time="0.305" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest"/>
+  <testcase name="required_spec109_mayRejectCallsToSubscribeIfPublisherIsUnableOrUnwillingToServeThemRejectionMustTriggerOnErrorAfterOnSubscribe" time="0.001" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest">
+    <skipped/>
+  </testcase>
+  <testcase name="required_spec109_mustIssueOnSubscribeForNonNullSubscriber" time="0.001" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest"/>
+  <testcase name="required_spec109_subscribeThrowNPEOnNullSubscriber" time="0.001" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest"/>
+  <testcase name="required_spec302_mustAllowSynchronousRequestCallsFromOnNextAndOnSubscribe" time="0.304" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest"/>
+  <testcase name="required_spec303_mustNotAllowUnboundedRecursion" time="0.006" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest"/>
+  <testcase name="required_spec306_afterSubscriptionIsCancelledRequestMustBeNops" time="0.307" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest"/>
+  <testcase name="required_spec307_afterSubscriptionIsCancelledAdditionalCancelationsMustBeNops" time="0.306" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest"/>
+  <testcase name="required_spec309_requestNegativeNumberMustSignalIllegalArgumentException" time="0.306" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest"/>
+  <testcase name="required_spec309_requestZeroMustSignalIllegalArgumentException" time="0.309" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest"/>
+  <testcase name="required_spec312_cancelMustMakeThePublisherToEventuallyStopSignaling" time="4.56" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest"/>
+  <testcase name="required_spec313_cancelMustMakeThePublisherEventuallyDropAllReferencesToTheSubscriber" time="0.325" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest"/>
+  <testcase name="required_spec317_mustNotSignalOnErrorWhenPendingAboveLongMaxValue" time="0.306" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest"/>
+  <testcase name="required_spec317_mustSupportACumulativePendingElementCountUpToLongMaxValue" time="0.003" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest"/>
+  <testcase name="required_spec317_mustSupportAPendingElementCountUpToLongMaxValue" time="0.001" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest"/>
+  <testcase name="required_validate_boundedDepthOfOnNextAndRequestRecursion" time="0.0" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest"/>
+  <testcase name="required_validate_maxElementsFromPublisher" time="0.0" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest"/>
+  <testcase name="stochastic_spec103_mustSignalOnMethodsSequentially" time="0.042" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest"/>
+  <testcase name="untested_spec106_mustConsiderSubscriptionCancelledAfterOnErrorOrOnCompleteHasBeenCalled" time="0.001" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest">
+    <skipped/>
+  </testcase>
+  <testcase name="untested_spec107_mustNotEmitFurtherSignalsOnceOnErrorHasBeenSignalled" time="0.001" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest">
+    <skipped/>
+  </testcase>
+  <testcase name="untested_spec108_possiblyCanceledSubscriptionShouldNotReceiveOnErrorOrOnCompleteSignals" time="0.001" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest">
+    <skipped/>
+  </testcase>
+  <testcase name="untested_spec109_subscribeShouldNotThrowNonFatalThrowable" time="0.001" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest">
+    <skipped/>
+  </testcase>
+  <testcase name="untested_spec110_rejectASubscriptionRequestIfTheSameSubscriberSubscribesTwice" time="0.001" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest">
+    <skipped/>
+  </testcase>
+  <testcase name="untested_spec304_requestShouldNotPerformHeavyComputations" time="0.001" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest">
+    <skipped/>
+  </testcase>
+  <testcase name="untested_spec305_cancelMustNotSynchronouslyPerformHeavyCompuatation" time="0.001" classname="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest">
+    <skipped/>
+  </testcase>
+</testsuite>

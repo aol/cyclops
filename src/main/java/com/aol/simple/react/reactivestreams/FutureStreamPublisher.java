@@ -31,17 +31,22 @@ public interface FutureStreamPublisher<T> extends Publisher<T> {
 			Subscription sub = new Subscription(){
 				volatile boolean complete =false;
 				volatile boolean cancelled = false;
-				
+				Stack<Long> requests = new Stack<Long>();
 				@Override
 				public void request(long n) {
-					
+					requests.add(n);
+					if(requests.size()>1){
+						
+						return;
+					}
 					if(n<1){
 						s.onError(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
 					}
 					
 					
-					if(!cancelled){
-						for(int i=0;i<n;i++){
+					while(!cancelled  && requests.size()>0){
+						long n2 = requests.peek();
+						for(int i=0;i<n2;i++){
 							if(it.hasNext()){
 								//s.onNext(it.next());
 								results.add(it.next().thenAccept( r-> s.onNext(r)).exceptionally(t->{ s.onError(t); return null;}));
@@ -59,6 +64,7 @@ public interface FutureStreamPublisher<T> extends Publisher<T> {
 							
 							
 						}
+						requests.pop();
 					}
 				
 					
