@@ -11,9 +11,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
-import java.util.stream.Stream;
 
-import com.aol.simple.react.collectors.lazy.BatchingCollector;
 import com.aol.simple.react.collectors.lazy.EmptyCollector;
 import com.aol.simple.react.collectors.lazy.IncrementalReducer;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
@@ -109,6 +107,9 @@ public interface LazyStream<U> extends BlockingStream<U>{
 		
 
 	}
+	
+	
+	
 	default void forEach(Consumer<? super U> c){
 
 		
