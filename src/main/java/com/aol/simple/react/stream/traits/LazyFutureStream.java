@@ -1193,7 +1193,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 		return LazyReact
 				.builder()
 				.async(false)
-				.executor(new ForkJoinPool(1))
+				.executor(Executors.newFixedThreadPool(1))
 				.retrier(
 						RetryBuilder.getDefaultInstance().withScheduler(
 								Executors.newScheduledThreadPool(2))).build();

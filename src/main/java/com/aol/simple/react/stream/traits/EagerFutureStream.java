@@ -1778,7 +1778,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		return EagerReact
 				.builder()
 				.async(false)
-				.executor(new ForkJoinPool(1))
+				.executor(Executors.newFixedThreadPool(1))
 				.retrier(
 						RetryBuilder.getDefaultInstance().withScheduler(
 								Executors.newScheduledThreadPool(1))).build();

@@ -62,7 +62,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		this.eager = false;
 		this.waitStrategy = new LimitingMonitor();
 		this.lazyCollector = new BatchingCollector<>(this);
-		this.queueFactory = QueueFactories.unboundedNonBlockingQueue();
+		this.queueFactory = QueueFactories.boundedNonBlockingQueue(10000);
 		this.subscription = new Subscription();
 		this.parallelReduction = ParallelReductionConfig.defaultValue;
 
