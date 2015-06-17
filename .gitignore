@@ -3,6 +3,9 @@
 /doc/
 # Created by https://www.gitignore.io
 
+test-output
+test-output-tests
+
 ### Eclipse ###
 *.pydevproject
 .metadata
