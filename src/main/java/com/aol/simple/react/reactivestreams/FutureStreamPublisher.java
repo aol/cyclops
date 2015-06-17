@@ -34,9 +34,7 @@ public interface FutureStreamPublisher<T> extends Publisher<T> {
 				
 				@Override
 				public void request(long n) {
-					if(active.size()>0)
-						return;
-					active.add(this);
+					
 					if(n<1){
 						s.onError(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
 					}
