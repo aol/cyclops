@@ -26,7 +26,7 @@ public class LiftMFunctionsTest {
 	@Test
 	public void testLiftM() {
 		String name = null;
-		assertThat(LiftMFunctions.liftM(this::one).apply(anyM(Optional.ofNullable(name))).unwrapMonad(),
+		assertThat(LiftMFunctions.liftM(this::one).apply(anyM(Optional.ofNullable(name))).unwrap(),
 				equalTo(Optional.empty()));
 	}
 	@Test
@@ -35,7 +35,7 @@ public class LiftMFunctionsTest {
 		
 		AnyM<Integer> result = lifted.apply(anyM(Optional.of(3)),anyM(Optional.of(4)));
 		
-		assertThat(result.<Optional<Integer>>unwrapMonad().get(),equalTo(7));
+		assertThat(result.<Optional<Integer>>unwrap().get(),equalTo(7));
 	}
 	// + (Just 1) Nothing = Nothing
 	@Test
@@ -44,7 +44,7 @@ public class LiftMFunctionsTest {
 		
 		AnyM<Integer> result = lifted.apply(anyM(Optional.of(3)),anyM(Optional.ofNullable(null)));
 		
-		assertThat(result.<Optional<Integer>>unwrapMonad().isPresent(),equalTo(false));
+		assertThat(result.<Optional<Integer>>unwrap().isPresent(),equalTo(false));
 	}
 	
 	//+ [0,1] [0,2] = [0,2,1,3]

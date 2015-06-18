@@ -415,7 +415,7 @@ public class AsAnyM extends AsGenericMonad{
 	 * @return Duck typed Monad
 	 */
 	public static <T> AnyM<T> anyM(T... values){
-		return anyM(Stream.of(values)).anyM();
+		return anyM(Stream.of(values));
 	}
 	/**
 	 * Create a Monad wrapper from an Object

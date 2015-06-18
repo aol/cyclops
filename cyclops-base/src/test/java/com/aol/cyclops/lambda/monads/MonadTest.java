@@ -243,7 +243,7 @@ public class MonadTest {
         AnyM<List<Integer>> futureList = Monads.sequence(CompletableFuture.class,futures).anyM();
         
  
-        List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>unwrapMonad().join();
+        List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>unwrap().join();
         assertThat(collected.size(),equalTo( list.size()));
         
         for(Integer next : list){
@@ -304,7 +304,7 @@ public class MonadTest {
        
         AnyM<List<String>> futureList = Monads.traverse(CompletableFuture.class, futures, (Integer i) -> "hello" +i).anyM();
    
-        List<String> collected = futureList.<CompletableFuture<List<String>>>unwrapMonad().join();
+        List<String> collected = futureList.<CompletableFuture<List<String>>>unwrap().join();
         assertThat(collected.size(),equalTo( list.size()));
         
         for(Integer next : list){
@@ -490,7 +490,7 @@ public class MonadTest {
 	@Test
 	public void testApplyMEmptyOptional(){
 		AnyM<Integer> empty= 	monad(Optional.empty()).anyM();
-		AnyM<Integer> applied =	empty.applyM(monad(Optional.of((Integer a)->a+1)) ).anyM();
+		AnyM<Integer> applied =	empty.applyM(anyM(Optional.of((Integer a)->a+1)) ).anyM();
 	
 		assertThat(applied.toList(),equalTo(Arrays.asList()));
 	 
@@ -569,7 +569,7 @@ public class MonadTest {
 		
 		AnyM<Integer> result = lifted.apply(anyM(Optional.of(3)));
 		
-		assertThat(result.<Optional<Integer>>unwrapMonad().get(),equalTo(6));
+		assertThat(result.<Optional<Integer>>unwrap().get(),equalTo(6));
 	}
 	@Test
 	public void testLiftMNative(){
@@ -602,7 +602,7 @@ public class MonadTest {
 		
 		AnyM<Integer> result = lifted.apply(anyM(Optional.of(3)),anyM(Optional.of(4)));
 		
-		assertThat(result.<Optional<Integer>>unwrapMonad().get(),equalTo(7));
+		assertThat(result.<Optional<Integer>>unwrap().get(),equalTo(7));
 	}
 	@Test
 	public void testLiftM2SimplexNull(){
@@ -610,7 +610,7 @@ public class MonadTest {
 		
 		AnyM<Integer> result = lifted.apply(anyM(Optional.of(3)),anyM(Optional.ofNullable(null)));
 		
-		assertThat(result.<Optional<Integer>>unwrapMonad().isPresent(),equalTo(false));
+		assertThat(result.<Optional<Integer>>unwrap().isPresent(),equalTo(false));
 	}
 	@Test
 	public void testLiftM2Native(){
@@ -630,6 +630,6 @@ public class MonadTest {
 		AnyM<Integer> result = lifted.apply(anyM(Optional.of(3)),anyM(Stream.of(4,6,7)));
 		
 		
-		assertThat(result.<Optional<List<Integer>>>unwrapMonad().get(),equalTo(Arrays.asList(7,9,10)));
+		assertThat(result.<Optional<List<Integer>>>unwrap().get(),equalTo(Arrays.asList(7,9,10)));
 	}
 }

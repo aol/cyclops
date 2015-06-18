@@ -27,7 +27,7 @@ public class Monads extends AsAnyM{
 	 * @return
 	 */
 	public static <U,R> Function<AnyM<U>,AnyM<R>> liftM(Function<U,R> fn){
-		return u -> u.map( input -> fn.apply(input)  ).anyM();
+		return u -> u.map( input -> fn.apply(input)  );
 	}
 	public static <MONAD1,U,MONAD2,R> Function<Monad<MONAD1,U>,Monad<MONAD2,R>> liftMonad(Function<U,R> fn){
 		return u -> (Monad)u.map( input -> fn.apply(input)  );
@@ -64,7 +64,7 @@ public class Monads extends AsAnyM{
 	 */
 	public static <U1,U2,R> BiFunction<AnyM<U1>,AnyM<U2>,AnyM<R>> liftM2(BiFunction<U1,U2,R> fn){
 		
-		return (u1,u2) -> u1.bind( input1 -> u2.map(input2 -> fn.apply(input1,input2)  ).unwrap()).anyM();
+		return (u1,u2) -> u1.bind( input1 -> u2.map(input2 -> fn.apply(input1,input2)  ).unwrap());
 	}
 	/**
 	 *  Lift a function so it accepts Monads and returns a Monads. Allows Monad functionality to be 'injected' into plain methods or code.

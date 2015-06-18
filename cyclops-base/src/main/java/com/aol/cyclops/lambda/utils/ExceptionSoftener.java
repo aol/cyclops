@@ -1,14 +1,8 @@
 package com.aol.cyclops.lambda.utils;
 
 
-
-import java.lang.reflect.Field;
-import java.util.Optional;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import sun.misc.Unsafe;
 
 
 public class ExceptionSoftener {
@@ -20,31 +14,19 @@ public class ExceptionSoftener {
 	    
 	}
 	
-	private final Optional<Unsafe> unsafe = getUnsafe();
 	
 	public void throwSoftenedException(final Throwable e) {
-
-		unsafe.ifPresent(u -> u.throwException(e));
-		throw new RuntimeException(e);
+		new Thrower<RuntimeException>().uncheck(e);
 	}
-	
-	private static Optional<Unsafe> getUnsafe() {
-
-		try {
-
-			final Field field = Unsafe.class.getDeclaredField("theUnsafe");
-
-			field.setAccessible(true);
-
-			return Optional.of((Unsafe) field.get(null));
-
-		} catch (Exception ex) {
-
+	static class Thrower<T extends Throwable> {
+		@SuppressWarnings("unchecked")
+			private void uncheck(Throwable throwable) throws T {
+			 	throw (T) throwable;
+			 }
+	}
+			 
 			
+	
 
-		}
-		return Optional.empty();
-
-	}
 }
 

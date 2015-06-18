@@ -242,7 +242,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 	 * 
 	 */
 	default <X> AnyM<X> anyM(){
-		return new SimplexImpl<X>(unwrap());	
+		return new AnyM<X>((Monad)this);	
 	}
 	
 	/**

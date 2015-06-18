@@ -30,7 +30,7 @@ public class LiftTest {
 		val add = Monads.liftM2(this::add);
 		
 		AnyM<Integer> result = add.apply(anyM(Try.of(2, RuntimeException.class)), anyM(Try.of(3,RuntimeException.class)));
-		assertThat(result.<Try<Integer,RuntimeException>>unwrapMonad().get(),equalTo(5));
+		assertThat(result.<Try<Integer,RuntimeException>>unwrap().get(),equalTo(5));
 	}
 	
 	@Test
@@ -39,7 +39,7 @@ public class LiftTest {
 		
 		AnyM<Integer> result = divide.apply(anyM(Try.of(2, ArithmeticException.class)), anyM(Try.of(0,ArithmeticException.class)));
 		System.out.println(result);
-		assertThat(result.<Try<Integer,ArithmeticException>>unwrapMonad().isFailure(),equalTo(true));
+		assertThat(result.<Try<Integer,ArithmeticException>>unwrap().isFailure(),equalTo(true));
 	}
 	
 	@Test
@@ -48,7 +48,7 @@ public class LiftTest {
 		
 		AnyM<Integer> result = divide.apply(anyM(Try.of(20, ArithmeticException.class)), anyM(Stream.of(4,1,2,3,0)));
 		System.out.println(result);
-		assertThat(result.<Try<Integer,ArithmeticException>>unwrapMonad().isFailure(),equalTo(true));
+		assertThat(result.<Try<Integer,ArithmeticException>>unwrap().isFailure(),equalTo(true));
 	}
 	
 	@Test
@@ -57,7 +57,7 @@ public class LiftTest {
 		
 		AnyM<Integer> result = divide.apply(anyM(Try.of(2, ArithmeticException.class)), anyM(Stream.of(10,1,2,3)));
 		
-		assertThat(result.<Try<List<Integer>,ArithmeticException>>unwrapMonad().get(),equalTo(Arrays.asList(0, 2, 1, 0)));
+		assertThat(result.<Try<List<Integer>,ArithmeticException>>unwrap().get(),equalTo(Arrays.asList(0, 2, 1, 0)));
 	}
 	
 	@Test(expected=ArithmeticException.class)
