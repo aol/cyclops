@@ -3,8 +3,10 @@ package com.aol.simple.react.reactivestreams;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Stack;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.reactivestreams.Publisher;
@@ -14,24 +16,30 @@ import org.reactivestreams.Subscription;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public interface FutureStreamPublisher<T> extends Publisher<T> {
 	StreamWrapper getLastActive();
 	void cancel();
-	
-	
+	void forwardErrors(Consumer<Throwable> c);
 	default void  subscribe(Subscriber<? super T> s){
-	//	Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
-		
+	
 		try {
+			
+			forwardErrors(t->s.onError(t));
+		
+				
 			Queue<T> queue = toQueue();
 			Iterator<CompletableFuture<T>> it = queue.streamCompletableFutures().iterator();
 			List<CompletableFuture> results = new ArrayList<>();
-		
+			FutureStreamPublisher thizz = this;
+			
 			Subscription sub = new Subscription(){
+				
 				volatile boolean complete =false;
 				volatile boolean cancelled = false;
 				Stack<Long> requests = new Stack<Long>();
+				
 				@Override
 				public void request(long n) {
 					requests.add(n);
@@ -48,10 +56,10 @@ public interface FutureStreamPublisher<T> extends Publisher<T> {
 						long n2 = requests.peek();
 						for(int i=0;i<n2;i++){
 							if(it.hasNext()){
-								//s.onNext(it.next());
 								results.add(it.next().thenAccept( r-> s.onNext(r)).exceptionally(t->{ s.onError(t); return null;}));
 								List<CompletableFuture> newResults = results.stream().filter(cf->cf.isDone()).collect(Collectors.toList());
 								results.removeAll(newResults);
+								
 							}
 							else{
 								
@@ -72,8 +80,7 @@ public interface FutureStreamPublisher<T> extends Publisher<T> {
 
 				@Override
 				public void cancel() {
-					//stopping[0] = true;
-				//	results.stream().peek(cf ->cf.cancel(true));
+					forwardErrors(t->{});
 					queue.closeAndClear();
 					cancelled=true;
 					

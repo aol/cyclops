@@ -3,7 +3,7 @@
 <suite verbose="0" name="Failed suite [Default suite]" parallel="false">
   <test name="Default test(failed)" preserve-order="false">
     <classes>
-      <class name="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest">
+      <class name="com.aol.simple.react.reactivestreams.TckSynchronousPublisherTest">
         <methods>
           <include name="untested_spec304_requestShouldNotPerformHeavyComputations"/>
           <include name="untested_spec305_cancelMustNotSynchronouslyPerformHeavyCompuatation"/>

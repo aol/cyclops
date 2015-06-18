@@ -11,8 +11,9 @@ import java.util.stream.Stream;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.Value;
 import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
 
@@ -50,7 +51,12 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	private final static ReactPool<BaseSimpleReact> pool = ReactPool.elasticPool(()->new LazyReact(Executors.newSingleThreadExecutor()));
 	private final List originalFutures=  null;
 	private final ParallelReductionConfig parallelReduction;
-
+	private final ConsumerHolder error;
+	
+	@AllArgsConstructor
+	static class ConsumerHolder{
+		volatile Consumer<Throwable> forward;
+	}
 	
 	
 	public LazyFutureStreamImpl(LazyReact lazyReact, final Stream<CompletableFuture<U>> stream) {
@@ -58,18 +64,20 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		this.simpleReact = lazyReact;
 		Stream s = stream;
 		this.lastActive = new StreamWrapper(s, false);
-		this.errorHandler = Optional.of((e) -> log.error(e.getMessage(), e));
+		this.errorHandler = Optional.of((e) -> { error.forward.accept(e); log.error(e.getMessage(), e);});
 		this.eager = false;
 		this.waitStrategy = new LimitingMonitor();
 		this.lazyCollector = new BatchingCollector<>(this);
 		this.queueFactory = QueueFactories.unboundedNonBlockingQueue();
 		this.subscription = new Subscription();
 		this.parallelReduction = ParallelReductionConfig.defaultValue;
-
+		this.error =  new ConsumerHolder(a->{});
 		
 	}
 	
-	
+	public void forwardErrors(Consumer<Throwable> c){
+		error.forward =c;
+	}
 
 	
 	public BaseSimpleReact getPopulator(){

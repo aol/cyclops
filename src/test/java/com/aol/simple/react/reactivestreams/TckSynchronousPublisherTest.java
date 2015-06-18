@@ -6,11 +6,12 @@ import org.reactivestreams.tck.PublisherVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
 
+import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 @Test
-public class TckAsynchronousPublisherTest extends PublisherVerification<Long>{
+public class TckSynchronousPublisherTest extends PublisherVerification<Long>{
 
-	public TckAsynchronousPublisherTest(){
+	public TckSynchronousPublisherTest(){
 		  super(new TestEnvironment(300L));
 	}
 	
@@ -23,8 +24,8 @@ public class TckAsynchronousPublisherTest extends PublisherVerification<Long>{
 
 	@Override
 	public Publisher<Long> createFailedPublisher() {
-		// TODO Auto-generated method stub
 		return null;
+		
 	}
 	
 
