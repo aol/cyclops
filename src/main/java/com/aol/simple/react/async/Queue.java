@@ -351,7 +351,7 @@ public class Queue<T> implements Adapter<T> {
 	public void closeAndClear(){
 	
 		this.open = false;
-		System.out.println("Queue open :" + this.open);
+		
 		add((T)CLEAR_PILL);
 	
 	}

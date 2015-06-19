@@ -122,7 +122,7 @@ public class FutureStreamProcessor<T,R> extends FutureStreamSubscriber<T> implem
 		if(this.publisherSubscription!=null)
 			getStream().subscribe(this.publisherSubscription);
 		
-		stream = (LazyFutureStream)getStream().withReactiveStreamsSubscription(s);
+		//stream = (LazyFutureStream)getStream().withReactiveStreamsSubscription(s);
 	}
 	private void internalSubscribe(final Subscription s){
 	

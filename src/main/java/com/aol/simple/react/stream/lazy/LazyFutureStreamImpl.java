@@ -53,7 +53,6 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	private final List originalFutures=  null;
 	private final ParallelReductionConfig parallelReduction;
 	private final ConsumerHolder error;
-	private final org.reactivestreams.Subscription reactiveStreamsSubscription;
 	private final ExecutorService publisherExecutor = Executors.newFixedThreadPool(1);
 	@AllArgsConstructor
 	static class ConsumerHolder{
@@ -74,7 +73,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		this.queueFactory = QueueFactories.unboundedNonBlockingQueue();
 		this.subscription = new Subscription();
 		this.parallelReduction = ParallelReductionConfig.defaultValue;
-		this.reactiveStreamsSubscription=null;
+		
 		
 		
 	}

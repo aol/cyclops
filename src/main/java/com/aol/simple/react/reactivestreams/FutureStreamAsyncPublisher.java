@@ -21,8 +21,7 @@ public interface FutureStreamAsyncPublisher<T> extends Publisher<T> {
 	StreamWrapper getLastActive();
 	void cancel();
 	void forwardErrors(Consumer<Throwable> c);
-	org.reactivestreams.Subscription getReactiveStreamsSubscription();
-	FutureStreamAsyncPublisher<T> withReactiveStreamsSubscription(org.reactivestreams.Subscription subscription);
+	
 	Executor getPublisherExecutor();
 	
 	default void subscribeAsync(Subscriber<? super T> s){
@@ -79,7 +78,7 @@ public interface FutureStreamAsyncPublisher<T> extends Publisher<T> {
 						List<CompletableFuture> results) {
 					long n2 = requests.peek();
 					
-					handleDownstream(n2);
+					
 					for(int i=0;i<n2;i++){
 						
 						if(it.hasNext()){
@@ -103,15 +102,6 @@ public interface FutureStreamAsyncPublisher<T> extends Publisher<T> {
 					}
 					
 					requests.poll();
-				}
-				private void handleDownstream(Long numElements){
-					if(!cancelled){ 
-						if(getReactiveStreamsSubscription()!=null){
-							System.out.println("Forwarding demand " + numElements);
-							getReactiveStreamsSubscription().request(numElements);
-							
-						}
-					}
 				}
 				
 				
