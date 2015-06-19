@@ -19,14 +19,7 @@ public class FutureStreamProcessor<T,R> extends FutureStreamSubscriber<T> implem
 	Function<LazyFutureStream<T>,LazyFutureStream<R>> fn = lf -> (LazyFutureStream)lf;
 	ConcurrentLinkedQueue<Long> requests = new ConcurrentLinkedQueue<Long>();
 	
-	//  stream-a ~ q1 ~ processor ~ q2 ~ stream-b
-	//stream-b requests (3) - thread X
-	//processor/subscription attempt to take 1 from q2 on Thread X
-	//continuation attempt to take 1 from q1
-	//call request(1) on stream-a
-	//block Thread X until response in Queue
-	//stream-a never responds
-	//stream-b blocked
+	
 	@Override
 	public void subscribe(Subscriber<? super R> sr) {
 		Objects.requireNonNull(sr);
@@ -124,7 +117,7 @@ public class FutureStreamProcessor<T,R> extends FutureStreamSubscriber<T> implem
 			s.cancel();
 			return;
 		}
-	//	super.onSubscribe(s);
+	
 		internalSubscribe(s);
 		if(this.publisherSubscription!=null)
 			getStream().subscribe(this.publisherSubscription);
