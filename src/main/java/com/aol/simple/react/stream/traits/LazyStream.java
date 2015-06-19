@@ -22,6 +22,7 @@ import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.lazy.ParallelReductionConfig;
 import com.aol.simple.react.stream.simple.SimpleReact;
+import com.aol.simple.react.threads.SequentialElasticPools;
 
 public interface LazyStream<U> extends BlockingStream<U>{
 	
@@ -43,7 +44,9 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	 * 
 	 */
 	default void run(Executor e) {
-		new SimpleReact(e).react(() -> run(new NonCollector()));
+		SimpleReact reactor  = SequentialElasticPools.simpleReact.nextReactor();
+		reactor.react(() -> run(new NonCollector())).peek(n-> SequentialElasticPools.simpleReact.populate(reactor));
+	//	new SimpleReact(e).react(() -> run(new NonCollector()));
 		
 
 	}
@@ -71,6 +74,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	 * Trigger a lazy stream
 	 */
 	default void run() {
+		//this needs to use an elastic pool of executors
 		run(ThreadPools.getLazyExecutor());
 
 	}

@@ -3,22 +3,40 @@
 <suite verbose="0" name="Failed suite [Default suite]" parallel="false">
   <test name="Default test(failed)" preserve-order="false">
     <classes>
-      <class name="com.aol.simple.react.reactivestreams.TckSynchronousPublisherTest">
+      <class name="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
         <methods>
-          <include name="untested_spec304_requestShouldNotPerformHeavyComputations"/>
-          <include name="untested_spec305_cancelMustNotSynchronouslyPerformHeavyCompuatation"/>
-          <include name="untested_spec106_mustConsiderSubscriptionCancelledAfterOnErrorOrOnCompleteHasBeenCalled"/>
-          <include name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfrontAndCompleteAsExpected"/>
-          <include name="untested_spec109_subscribeShouldNotThrowNonFatalThrowable"/>
-          <include name="optional_spec104_mustSignalOnErrorWhenFails"/>
-          <include name="setUp"/>
-          <include name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingOneByOne"/>
-          <include name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfront"/>
-          <include name="untested_spec110_rejectASubscriptionRequestIfTheSameSubscriberSubscribesTwice"/>
-          <include name="optional_spec111_maySupportMultiSubscribe"/>
+          <include name="required_spec308_requestMustRegisterGivenNumberElementsToBeProduced"/>
           <include name="required_spec109_mayRejectCallsToSubscribeIfPublisherIsUnableOrUnwillingToServeThemRejectionMustTriggerOnErrorAfterOnSubscribe"/>
-          <include name="untested_spec107_mustNotEmitFurtherSignalsOnceOnErrorHasBeenSignalled"/>
+          <include name="untested_spec316_requestMustNotThrowExceptionAndMustOnErrorTheSubscriber"/>
+          <include name="untested_spec213_failingOnSignalInvocation"/>
+          <include name="untested_spec212_mustNotCallOnSubscribeMoreThanOnceBasedOnObjectEquality_specViolation"/>
+          <include name="required_spec104_mustCallOnErrorOnAllItsSubscribersIfItEncountersANonRecoverableError"/>
+          <include name="untested_spec206_mustCallSubscriptionCancelIfItIsNoLongerValid"/>
+          <include name="optional_spec104_mustSignalOnErrorWhenFails"/>
+          <include name="required_spec209_mustBePreparedToReceiveAnOnCompleteSignalWithoutPrecedingRequestCall"/>
+          <include name="untested_spec109_subscribeShouldNotThrowNonFatalThrowable"/>
+          <include name="untested_spec301_mustNotBeCalledOutsideSubscriberContext"/>
+          <include name="untested_spec305_cancelMustNotSynchronouslyPerformHeavyCompuatation"/>
+          <include name="untested_spec304_requestShouldNotPerformHeavyComputations"/>
           <include name="untested_spec108_possiblyCanceledSubscriptionShouldNotReceiveOnErrorOrOnCompleteSignals"/>
+          <include name="untested_spec202_shouldAsynchronouslyDispatch"/>
+          <include name="untested_spec211_mustMakeSureThatAllCallsOnItsMethodsHappenBeforeTheProcessingOfTheRespectiveEvents"/>
+          <include name="untested_spec107_mustNotEmitFurtherSignalsOnceOnErrorHasBeenSignalled"/>
+          <include name="required_exerciseWhiteboxHappyPath"/>
+          <include name="untested_spec315_cancelMustNotThrowExceptionAndMustSignalOnError"/>
+          <include name="optional_spec111_maySupportMultiSubscribe"/>
+          <include name="untested_spec204_mustConsiderTheSubscriptionAsCancelledInAfterRecievingOnCompleteOrOnError"/>
+          <include name="untested_spec110_rejectASubscriptionRequestIfTheSameSubscriberSubscribesTwice"/>
+          <include name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfront"/>
+          <include name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingOneByOne"/>
+          <include name="required_mustRequestFromUpstreamForElementsThatHaveBeenRequestedLongAgo"/>
+          <include name="untested_spec311_requestMaySynchronouslyCallOnCompleteOrOnError"/>
+          <include name="setUp"/>
+          <include name="untested_spec314_cancelMayCauseThePublisherToShutdownIfNoOtherSubscriptionExists"/>
+          <include name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfrontAndCompleteAsExpected"/>
+          <include name="untested_spec106_mustConsiderSubscriptionCancelledAfterOnErrorOrOnCompleteHasBeenCalled"/>
+          <include name="untested_spec207_mustEnsureAllCallsOnItsSubscriptionTakePlaceFromTheSameThreadOrTakeCareOfSynchronization"/>
+          <include name="untested_spec310_requestMaySynchronouslyCallOnNextOnSubscriber"/>
         </methods>
       </class>
     </classes>

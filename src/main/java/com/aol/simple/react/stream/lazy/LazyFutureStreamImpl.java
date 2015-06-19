@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
@@ -52,7 +53,8 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	private final List originalFutures=  null;
 	private final ParallelReductionConfig parallelReduction;
 	private final ConsumerHolder error;
-	
+	private final org.reactivestreams.Subscription reactiveStreamsSubscription;
+	private final ExecutorService publisherExecutor = Executors.newFixedThreadPool(1);
 	@AllArgsConstructor
 	static class ConsumerHolder{
 		volatile Consumer<Throwable> forward;
@@ -64,6 +66,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		this.simpleReact = lazyReact;
 		Stream s = stream;
 		this.lastActive = new StreamWrapper(s, false);
+		this.error =  new ConsumerHolder(a->{});
 		this.errorHandler = Optional.of((e) -> { error.forward.accept(e); log.error(e.getMessage(), e);});
 		this.eager = false;
 		this.waitStrategy = new LimitingMonitor();
@@ -71,7 +74,8 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		this.queueFactory = QueueFactories.unboundedNonBlockingQueue();
 		this.subscription = new Subscription();
 		this.parallelReduction = ParallelReductionConfig.defaultValue;
-		this.error =  new ConsumerHolder(a->{});
+		this.reactiveStreamsSubscription=null;
+		
 		
 	}
 	
