@@ -40,7 +40,7 @@ import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.QueueFactory;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
-import com.aol.simple.react.reactivestreams.FutureStreamPublisher;
+import com.aol.simple.react.reactivestreams.FutureStreamAsyncPublisher;
 import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
@@ -56,7 +56,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  * @author johnmcclean
  *
  */
-public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, LazyToQueue<U>, FutureStreamPublisher<U> {
+public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, LazyToQueue<U>, FutureStreamAsyncPublisher<U> {
 
 	LazyFutureStream<U> withTaskExecutor(Executor e);
 

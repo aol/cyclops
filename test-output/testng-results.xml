@@ -2,18 +2,18 @@
 <testng-results>
   <reporter-output>
   </reporter-output>
-  <suite name="Default suite" duration-ms="11778" started-at="2015-06-19T15:35:02Z" finished-at="2015-06-19T15:35:14Z">
+  <suite name="Default suite" duration-ms="11204" started-at="2015-06-19T15:58:49Z" finished-at="2015-06-19T15:59:00Z">
     <groups>
     </groups>
-    <test name="Default test" duration-ms="11778" started-at="2015-06-19T15:35:02Z" finished-at="2015-06-19T15:35:14Z">
+    <test name="Default test" duration-ms="11204" started-at="2015-06-19T15:58:49Z" finished-at="2015-06-19T15:59:00Z">
       <class name="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="5" started-at="2015-06-19T15:35:02Z" finished-at="2015-06-19T15:35:02Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="4" started-at="2015-06-19T15:58:49Z" finished-at="2015-06-19T15:58:49Z">
         </test-method>
-        <test-method status="PASS" signature="mustImmediatelyPassOnOnErrorEventsReceivedFromItsUpstreamToItsDownstream()" name="mustImmediatelyPassOnOnErrorEventsReceivedFromItsUpstreamToItsDownstream" duration-ms="99" started-at="2015-06-19T15:35:02Z" finished-at="2015-06-19T15:35:02Z">
+        <test-method status="PASS" signature="mustImmediatelyPassOnOnErrorEventsReceivedFromItsUpstreamToItsDownstream()" name="mustImmediatelyPassOnOnErrorEventsReceivedFromItsUpstreamToItsDownstream" duration-ms="102" started-at="2015-06-19T15:58:49Z" finished-at="2015-06-19T15:58:49Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-06-19T15:35:02Z" finished-at="2015-06-19T15:35:02Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:49Z" finished-at="2015-06-19T15:58:49Z">
         </test-method>
-        <test-method status="SKIP" signature="optional_spec104_mustSignalOnErrorWhenFails()" name="optional_spec104_mustSignalOnErrorWhenFails" duration-ms="2" started-at="2015-06-19T15:35:02Z" finished-at="2015-06-19T15:35:02Z">
+        <test-method status="SKIP" signature="optional_spec104_mustSignalOnErrorWhenFails()" name="optional_spec104_mustSignalOnErrorWhenFails" duration-ms="1" started-at="2015-06-19T15:58:49Z" finished-at="2015-06-19T15:58:49Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Skipping because no error state Publisher provided, and the test requires it. Please implement PublisherVerification#createFailedPublisher to run this test.]]>
@@ -53,13 +53,13 @@
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:02Z" finished-at="2015-06-19T15:35:02Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-06-19T15:58:49Z" finished-at="2015-06-19T15:58:49Z">
         </test-method>
-        <test-method status="PASS" signature="optional_spec105_emptyStreamMustTerminateBySignallingOnComplete()" name="optional_spec105_emptyStreamMustTerminateBySignallingOnComplete" duration-ms="259" started-at="2015-06-19T15:35:02Z" finished-at="2015-06-19T15:35:03Z">
+        <test-method status="PASS" signature="optional_spec105_emptyStreamMustTerminateBySignallingOnComplete()" name="optional_spec105_emptyStreamMustTerminateBySignallingOnComplete" duration-ms="261" started-at="2015-06-19T15:58:49Z" finished-at="2015-06-19T15:58:49Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:03Z" finished-at="2015-06-19T15:35:03Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:49Z" finished-at="2015-06-19T15:58:49Z">
         </test-method>
-        <test-method status="SKIP" signature="optional_spec111_maySupportMultiSubscribe()" name="optional_spec111_maySupportMultiSubscribe" duration-ms="255" started-at="2015-06-19T15:35:03Z" finished-at="2015-06-19T15:35:03Z">
+        <test-method status="SKIP" signature="optional_spec111_maySupportMultiSubscribe()" name="optional_spec111_maySupportMultiSubscribe" duration-ms="259" started-at="2015-06-19T15:58:49Z" finished-at="2015-06-19T15:58:49Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Skipped because tested publisher does NOT implement this OPTIONAL requirement. Reason for skipping was: Could not subscribe org.reactivestreams.tck.TestEnvironment$ManualSubscriberWithSubscriptionSupport@6e1567f1 to Publisher com.aol.simple.react.reactivestreams.FutureStreamProcessor@59494225 within 250 ms]]>
@@ -99,9 +99,9 @@
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:03Z" finished-at="2015-06-19T15:35:03Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:49Z" finished-at="2015-06-19T15:58:49Z">
         </test-method>
-        <test-method status="SKIP" signature="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfront()" name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfront" duration-ms="252" started-at="2015-06-19T15:35:03Z" finished-at="2015-06-19T15:35:03Z">
+        <test-method status="SKIP" signature="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfront()" name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfront" duration-ms="255" started-at="2015-06-19T15:58:49Z" finished-at="2015-06-19T15:58:50Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Skipped because tested publisher does NOT implement this OPTIONAL requirement. Reason for skipping was: Could not subscribe org.reactivestreams.tck.TestEnvironment$ManualSubscriberWithSubscriptionSupport@4b952a2d to Publisher com.aol.simple.react.reactivestreams.FutureStreamProcessor@69ea3742 within 250 ms]]>
@@ -141,7 +141,7 @@
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="SKIP" signature="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfrontAndCompleteAsExpected()" name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfrontAndCompleteAsExpected" duration-ms="257" started-at="2015-06-19T15:35:03Z" finished-at="2015-06-19T15:35:03Z">
+        <test-method status="SKIP" signature="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfrontAndCompleteAsExpected()" name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfrontAndCompleteAsExpected" duration-ms="255" started-at="2015-06-19T15:58:50Z" finished-at="2015-06-19T15:58:50Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Skipped because tested publisher does NOT implement this OPTIONAL requirement. Reason for skipping was: Could not subscribe org.reactivestreams.tck.TestEnvironment$ManualSubscriberWithSubscriptionSupport@49993335 to Publisher com.aol.simple.react.reactivestreams.FutureStreamProcessor@5025a98f within 250 ms]]>
@@ -181,9 +181,9 @@
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:03Z" finished-at="2015-06-19T15:35:03Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:50Z" finished-at="2015-06-19T15:58:50Z">
         </test-method>
-        <test-method status="SKIP" signature="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingOneByOne()" name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingOneByOne" duration-ms="257" started-at="2015-06-19T15:35:03Z" finished-at="2015-06-19T15:35:04Z">
+        <test-method status="SKIP" signature="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingOneByOne()" name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingOneByOne" duration-ms="254" started-at="2015-06-19T15:58:50Z" finished-at="2015-06-19T15:58:50Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Skipped because tested publisher does NOT implement this OPTIONAL requirement. Reason for skipping was: Could not subscribe org.reactivestreams.tck.TestEnvironment$ManualSubscriberWithSubscriptionSupport@6e1ec318 to Publisher com.aol.simple.react.reactivestreams.FutureStreamProcessor@10bdf5e5 within 250 ms]]>
@@ -223,17 +223,17 @@
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:03Z" finished-at="2015-06-19T15:35:03Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:50Z" finished-at="2015-06-19T15:58:50Z">
         </test-method>
-        <test-method status="PASS" signature="required_createPublisher1MustProduceAStreamOfExactly1Element()" name="required_createPublisher1MustProduceAStreamOfExactly1Element" duration-ms="22" started-at="2015-06-19T15:35:04Z" finished-at="2015-06-19T15:35:04Z">
+        <test-method status="PASS" signature="required_createPublisher1MustProduceAStreamOfExactly1Element()" name="required_createPublisher1MustProduceAStreamOfExactly1Element" duration-ms="21" started-at="2015-06-19T15:58:50Z" finished-at="2015-06-19T15:58:50Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:04Z" finished-at="2015-06-19T15:35:04Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:50Z" finished-at="2015-06-19T15:58:50Z">
         </test-method>
-        <test-method status="PASS" signature="required_createPublisher3MustProduceAStreamOfExactly3Elements()" name="required_createPublisher3MustProduceAStreamOfExactly3Elements" duration-ms="5" started-at="2015-06-19T15:35:04Z" finished-at="2015-06-19T15:35:04Z">
+        <test-method status="PASS" signature="required_createPublisher3MustProduceAStreamOfExactly3Elements()" name="required_createPublisher3MustProduceAStreamOfExactly3Elements" duration-ms="5" started-at="2015-06-19T15:58:50Z" finished-at="2015-06-19T15:58:50Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:04Z" finished-at="2015-06-19T15:35:04Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:50Z" finished-at="2015-06-19T15:58:50Z">
         </test-method>
-        <test-method status="FAIL" signature="required_exerciseWhiteboxHappyPath()" name="required_exerciseWhiteboxHappyPath" duration-ms="267" started-at="2015-06-19T15:35:04Z" finished-at="2015-06-19T15:35:04Z">
+        <test-method status="FAIL" signature="required_exerciseWhiteboxHappyPath()" name="required_exerciseWhiteboxHappyPath" duration-ms="263" started-at="2015-06-19T15:58:50Z" finished-at="2015-06-19T15:58:50Z">
           <exception class="java.lang.AssertionError">
             <message>
               <![CDATA[Subscriber com.aol.simple.react.reactivestreams.FutureStreamProcessor@5f9d02cb did not call `registerOnNext(5)` within 250 ms]]>
@@ -282,11 +282,11 @@ Caused by: java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestr
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:04Z" finished-at="2015-06-19T15:35:04Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:50Z" finished-at="2015-06-19T15:58:50Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:04Z" finished-at="2015-06-19T15:35:04Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:50Z" finished-at="2015-06-19T15:58:50Z">
         </test-method>
-        <test-method status="FAIL" signature="required_mustRequestFromUpstreamForElementsThatHaveBeenRequestedLongAgo()" name="required_mustRequestFromUpstreamForElementsThatHaveBeenRequestedLongAgo" duration-ms="255" started-at="2015-06-19T15:35:04Z" finished-at="2015-06-19T15:35:04Z">
+        <test-method status="FAIL" signature="required_mustRequestFromUpstreamForElementsThatHaveBeenRequestedLongAgo()" name="required_mustRequestFromUpstreamForElementsThatHaveBeenRequestedLongAgo" duration-ms="255" started-at="2015-06-19T15:58:50Z" finished-at="2015-06-19T15:58:51Z">
           <exception class="java.lang.AssertionError">
             <message>
               <![CDATA[timeout while awaiting 5 within 250 ms]]>
@@ -337,17 +337,17 @@ Caused by: java.lang.AssertionError: timeout while awaiting 5 within 250 ms
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="required_spec101_subscriptionRequestMustResultInTheCorrectNumberOfProducedElements()" name="required_spec101_subscriptionRequestMustResultInTheCorrectNumberOfProducedElements" duration-ms="761" started-at="2015-06-19T15:35:04Z" finished-at="2015-06-19T15:35:05Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-06-19T15:58:51Z" finished-at="2015-06-19T15:58:51Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:04Z" finished-at="2015-06-19T15:35:04Z">
+        <test-method status="PASS" signature="required_spec101_subscriptionRequestMustResultInTheCorrectNumberOfProducedElements()" name="required_spec101_subscriptionRequestMustResultInTheCorrectNumberOfProducedElements" duration-ms="767" started-at="2015-06-19T15:58:51Z" finished-at="2015-06-19T15:58:51Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec102_maySignalLessThanRequestedAndTerminateSubscription()" name="required_spec102_maySignalLessThanRequestedAndTerminateSubscription" duration-ms="3" started-at="2015-06-19T15:35:05Z" finished-at="2015-06-19T15:35:05Z">
+        <test-method status="PASS" signature="required_spec102_maySignalLessThanRequestedAndTerminateSubscription()" name="required_spec102_maySignalLessThanRequestedAndTerminateSubscription" duration-ms="5" started-at="2015-06-19T15:58:51Z" finished-at="2015-06-19T15:58:51Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:05Z" finished-at="2015-06-19T15:35:05Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:51Z" finished-at="2015-06-19T15:58:51Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:05Z" finished-at="2015-06-19T15:35:05Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:51Z" finished-at="2015-06-19T15:58:51Z">
         </test-method>
-        <test-method status="FAIL" signature="required_spec104_mustCallOnErrorOnAllItsSubscribersIfItEncountersANonRecoverableError()" name="required_spec104_mustCallOnErrorOnAllItsSubscribersIfItEncountersANonRecoverableError" duration-ms="254" started-at="2015-06-19T15:35:05Z" finished-at="2015-06-19T15:35:05Z">
+        <test-method status="FAIL" signature="required_spec104_mustCallOnErrorOnAllItsSubscribersIfItEncountersANonRecoverableError()" name="required_spec104_mustCallOnErrorOnAllItsSubscribersIfItEncountersANonRecoverableError" duration-ms="260" started-at="2015-06-19T15:58:51Z" finished-at="2015-06-19T15:58:52Z">
           <exception class="java.lang.AssertionError">
             <message>
               <![CDATA[Could not subscribe org.reactivestreams.tck.IdentityProcessorVerification$ManualSubscriberWithErrorCollection@35d176f7 to Publisher com.aol.simple.react.reactivestreams.FutureStreamProcessor@551aa95a within 250 ms]]>
@@ -393,17 +393,17 @@ Caused by: java.lang.AssertionError: timeout while awaiting 5 within 250 ms
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:05Z" finished-at="2015-06-19T15:35:05Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:52Z" finished-at="2015-06-19T15:58:52Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec105_mustSignalOnCompleteWhenFiniteStreamTerminates()" name="required_spec105_mustSignalOnCompleteWhenFiniteStreamTerminates" duration-ms="256" started-at="2015-06-19T15:35:05Z" finished-at="2015-06-19T15:35:05Z">
+        <test-method status="PASS" signature="required_spec105_mustSignalOnCompleteWhenFiniteStreamTerminates()" name="required_spec105_mustSignalOnCompleteWhenFiniteStreamTerminates" duration-ms="257" started-at="2015-06-19T15:58:52Z" finished-at="2015-06-19T15:58:52Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec107_mustNotEmitFurtherSignalsOnceOnCompleteHasBeenSignalled()" name="required_spec107_mustNotEmitFurtherSignalsOnceOnCompleteHasBeenSignalled" duration-ms="258" started-at="2015-06-19T15:35:05Z" finished-at="2015-06-19T15:35:06Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-06-19T15:58:52Z" finished-at="2015-06-19T15:58:52Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:05Z" finished-at="2015-06-19T15:35:05Z">
+        <test-method status="PASS" signature="required_spec107_mustNotEmitFurtherSignalsOnceOnCompleteHasBeenSignalled()" name="required_spec107_mustNotEmitFurtherSignalsOnceOnCompleteHasBeenSignalled" duration-ms="257" started-at="2015-06-19T15:58:52Z" finished-at="2015-06-19T15:58:52Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:06Z" finished-at="2015-06-19T15:35:06Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:52Z" finished-at="2015-06-19T15:58:52Z">
         </test-method>
-        <test-method status="SKIP" signature="required_spec109_mayRejectCallsToSubscribeIfPublisherIsUnableOrUnwillingToServeThemRejectionMustTriggerOnErrorAfterOnSubscribe()" name="required_spec109_mayRejectCallsToSubscribeIfPublisherIsUnableOrUnwillingToServeThemRejectionMustTriggerOnErrorAfterOnSubscribe" duration-ms="1" started-at="2015-06-19T15:35:06Z" finished-at="2015-06-19T15:35:06Z">
+        <test-method status="SKIP" signature="required_spec109_mayRejectCallsToSubscribeIfPublisherIsUnableOrUnwillingToServeThemRejectionMustTriggerOnErrorAfterOnSubscribe()" name="required_spec109_mayRejectCallsToSubscribeIfPublisherIsUnableOrUnwillingToServeThemRejectionMustTriggerOnErrorAfterOnSubscribe" duration-ms="1" started-at="2015-06-19T15:58:52Z" finished-at="2015-06-19T15:58:52Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Skipping because no error state Publisher provided, and the test requires it. Please implement PublisherVerification#createFailedPublisher to run this test.]]>
@@ -443,41 +443,41 @@ Caused by: java.lang.AssertionError: timeout while awaiting 5 within 250 ms
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="required_spec109_mustIssueOnSubscribeForNonNullSubscriber()" name="required_spec109_mustIssueOnSubscribeForNonNullSubscriber" duration-ms="2" started-at="2015-06-19T15:35:06Z" finished-at="2015-06-19T15:35:06Z">
+        <test-method status="PASS" signature="required_spec109_mustIssueOnSubscribeForNonNullSubscriber()" name="required_spec109_mustIssueOnSubscribeForNonNullSubscriber" duration-ms="1" started-at="2015-06-19T15:58:52Z" finished-at="2015-06-19T15:58:52Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:06Z" finished-at="2015-06-19T15:35:06Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:52Z" finished-at="2015-06-19T15:58:52Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-06-19T15:35:06Z" finished-at="2015-06-19T15:35:06Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:52Z" finished-at="2015-06-19T15:58:52Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec109_subscribeThrowNPEOnNullSubscriber()" name="required_spec109_subscribeThrowNPEOnNullSubscriber" duration-ms="0" started-at="2015-06-19T15:35:06Z" finished-at="2015-06-19T15:35:06Z">
+        <test-method status="PASS" signature="required_spec109_subscribeThrowNPEOnNullSubscriber()" name="required_spec109_subscribeThrowNPEOnNullSubscriber" duration-ms="1" started-at="2015-06-19T15:58:52Z" finished-at="2015-06-19T15:58:52Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec201_mustSignalDemandViaSubscriptionRequest()" name="required_spec201_mustSignalDemandViaSubscriptionRequest" duration-ms="2" started-at="2015-06-19T15:35:06Z" finished-at="2015-06-19T15:35:06Z">
+        <test-method status="PASS" signature="required_spec201_mustSignalDemandViaSubscriptionRequest()" name="required_spec201_mustSignalDemandViaSubscriptionRequest" duration-ms="2" started-at="2015-06-19T15:58:52Z" finished-at="2015-06-19T15:58:52Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:06Z" finished-at="2015-06-19T15:35:06Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:52Z" finished-at="2015-06-19T15:58:52Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:06Z" finished-at="2015-06-19T15:35:06Z">
+        <test-method status="PASS" signature="required_spec203_mustNotCallMethodsOnSubscriptionOrPublisherInOnComplete()" name="required_spec203_mustNotCallMethodsOnSubscriptionOrPublisherInOnComplete" duration-ms="2" started-at="2015-06-19T15:58:52Z" finished-at="2015-06-19T15:58:52Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec203_mustNotCallMethodsOnSubscriptionOrPublisherInOnComplete()" name="required_spec203_mustNotCallMethodsOnSubscriptionOrPublisherInOnComplete" duration-ms="2" started-at="2015-06-19T15:35:06Z" finished-at="2015-06-19T15:35:06Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:52Z" finished-at="2015-06-19T15:58:52Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:06Z" finished-at="2015-06-19T15:35:06Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-06-19T15:58:52Z" finished-at="2015-06-19T15:58:52Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec203_mustNotCallMethodsOnSubscriptionOrPublisherInOnError()" name="required_spec203_mustNotCallMethodsOnSubscriptionOrPublisherInOnError" duration-ms="2" started-at="2015-06-19T15:35:06Z" finished-at="2015-06-19T15:35:06Z">
+        <test-method status="PASS" signature="required_spec203_mustNotCallMethodsOnSubscriptionOrPublisherInOnError()" name="required_spec203_mustNotCallMethodsOnSubscriptionOrPublisherInOnError" duration-ms="2" started-at="2015-06-19T15:58:52Z" finished-at="2015-06-19T15:58:52Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-06-19T15:35:06Z" finished-at="2015-06-19T15:35:06Z">
+        <test-method status="PASS" signature="required_spec205_mustCallSubscriptionCancelIfItAlreadyHasAnSubscriptionAndReceivesAnotherOnSubscribeSignal()" name="required_spec205_mustCallSubscriptionCancelIfItAlreadyHasAnSubscriptionAndReceivesAnotherOnSubscribeSignal" duration-ms="257" started-at="2015-06-19T15:58:52Z" finished-at="2015-06-19T15:58:52Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec205_mustCallSubscriptionCancelIfItAlreadyHasAnSubscriptionAndReceivesAnotherOnSubscribeSignal()" name="required_spec205_mustCallSubscriptionCancelIfItAlreadyHasAnSubscriptionAndReceivesAnotherOnSubscribeSignal" duration-ms="255" started-at="2015-06-19T15:35:06Z" finished-at="2015-06-19T15:35:06Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:52Z" finished-at="2015-06-19T15:58:52Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:06Z" finished-at="2015-06-19T15:35:06Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-06-19T15:58:52Z" finished-at="2015-06-19T15:58:52Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec208_mustBePreparedToReceiveOnNextSignalsAfterHavingCalledSubscriptionCancel()" name="required_spec208_mustBePreparedToReceiveOnNextSignalsAfterHavingCalledSubscriptionCancel" duration-ms="258" started-at="2015-06-19T15:35:06Z" finished-at="2015-06-19T15:35:06Z">
+        <test-method status="PASS" signature="required_spec208_mustBePreparedToReceiveOnNextSignalsAfterHavingCalledSubscriptionCancel()" name="required_spec208_mustBePreparedToReceiveOnNextSignalsAfterHavingCalledSubscriptionCancel" duration-ms="257" started-at="2015-06-19T15:58:52Z" finished-at="2015-06-19T15:58:53Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:06Z" finished-at="2015-06-19T15:35:06Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:53Z" finished-at="2015-06-19T15:58:53Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec209_mustBePreparedToReceiveAnOnCompleteSignalWithPrecedingRequestCall()" name="required_spec209_mustBePreparedToReceiveAnOnCompleteSignalWithPrecedingRequestCall" duration-ms="254" started-at="2015-06-19T15:35:06Z" finished-at="2015-06-19T15:35:06Z">
+        <test-method status="PASS" signature="required_spec209_mustBePreparedToReceiveAnOnCompleteSignalWithPrecedingRequestCall()" name="required_spec209_mustBePreparedToReceiveAnOnCompleteSignalWithPrecedingRequestCall" duration-ms="253" started-at="2015-06-19T15:58:53Z" finished-at="2015-06-19T15:58:53Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:06Z" finished-at="2015-06-19T15:35:06Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:53Z" finished-at="2015-06-19T15:58:53Z">
         </test-method>
-        <test-method status="FAIL" signature="required_spec209_mustBePreparedToReceiveAnOnCompleteSignalWithoutPrecedingRequestCall()" name="required_spec209_mustBePreparedToReceiveAnOnCompleteSignalWithoutPrecedingRequestCall" duration-ms="255" started-at="2015-06-19T15:35:06Z" finished-at="2015-06-19T15:35:07Z">
+        <test-method status="FAIL" signature="required_spec209_mustBePreparedToReceiveAnOnCompleteSignalWithoutPrecedingRequestCall()" name="required_spec209_mustBePreparedToReceiveAnOnCompleteSignalWithoutPrecedingRequestCall" duration-ms="253" started-at="2015-06-19T15:58:53Z" finished-at="2015-06-19T15:58:53Z">
           <exception class="java.lang.AssertionError">
             <message>
               <![CDATA[Subscriber com.aol.simple.react.reactivestreams.FutureStreamProcessor@3dfc5fb8 did not call `registerOnComplete()` within 250 ms]]>
@@ -523,49 +523,49 @@ Caused by: java.lang.AssertionError: timeout while awaiting 5 within 250 ms
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-06-19T15:35:07Z" finished-at="2015-06-19T15:35:07Z">
+        <test-method status="PASS" signature="required_spec210_mustBePreparedToReceiveAnOnErrorSignalWithPrecedingRequestCall()" name="required_spec210_mustBePreparedToReceiveAnOnErrorSignalWithPrecedingRequestCall" duration-ms="1" started-at="2015-06-19T15:58:53Z" finished-at="2015-06-19T15:58:53Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec210_mustBePreparedToReceiveAnOnErrorSignalWithPrecedingRequestCall()" name="required_spec210_mustBePreparedToReceiveAnOnErrorSignalWithPrecedingRequestCall" duration-ms="1" started-at="2015-06-19T15:35:07Z" finished-at="2015-06-19T15:35:07Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:53Z" finished-at="2015-06-19T15:58:53Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:07Z" finished-at="2015-06-19T15:35:07Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:53Z" finished-at="2015-06-19T15:58:53Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec210_mustBePreparedToReceiveAnOnErrorSignalWithoutPrecedingRequestCall()" name="required_spec210_mustBePreparedToReceiveAnOnErrorSignalWithoutPrecedingRequestCall" duration-ms="1" started-at="2015-06-19T15:35:07Z" finished-at="2015-06-19T15:35:07Z">
+        <test-method status="PASS" signature="required_spec210_mustBePreparedToReceiveAnOnErrorSignalWithoutPrecedingRequestCall()" name="required_spec210_mustBePreparedToReceiveAnOnErrorSignalWithoutPrecedingRequestCall" duration-ms="1" started-at="2015-06-19T15:58:53Z" finished-at="2015-06-19T15:58:53Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec213_onError_mustThrowNullPointerExceptionWhenParametersAreNull()" name="required_spec213_onError_mustThrowNullPointerExceptionWhenParametersAreNull" duration-ms="2" started-at="2015-06-19T15:35:07Z" finished-at="2015-06-19T15:35:07Z">
+        <test-method status="PASS" signature="required_spec213_onError_mustThrowNullPointerExceptionWhenParametersAreNull()" name="required_spec213_onError_mustThrowNullPointerExceptionWhenParametersAreNull" duration-ms="2" started-at="2015-06-19T15:58:53Z" finished-at="2015-06-19T15:58:53Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:07Z" finished-at="2015-06-19T15:35:07Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:53Z" finished-at="2015-06-19T15:58:53Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:07Z" finished-at="2015-06-19T15:35:07Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:53Z" finished-at="2015-06-19T15:58:53Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec213_onNext_mustThrowNullPointerExceptionWhenParametersAreNull()" name="required_spec213_onNext_mustThrowNullPointerExceptionWhenParametersAreNull" duration-ms="1" started-at="2015-06-19T15:35:07Z" finished-at="2015-06-19T15:35:07Z">
+        <test-method status="PASS" signature="required_spec213_onNext_mustThrowNullPointerExceptionWhenParametersAreNull()" name="required_spec213_onNext_mustThrowNullPointerExceptionWhenParametersAreNull" duration-ms="2" started-at="2015-06-19T15:58:53Z" finished-at="2015-06-19T15:58:53Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-06-19T15:35:07Z" finished-at="2015-06-19T15:35:07Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-06-19T15:58:53Z" finished-at="2015-06-19T15:58:53Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec213_onSubscribe_mustThrowNullPointerExceptionWhenParametersAreNull()" name="required_spec213_onSubscribe_mustThrowNullPointerExceptionWhenParametersAreNull" duration-ms="1" started-at="2015-06-19T15:35:07Z" finished-at="2015-06-19T15:35:07Z">
+        <test-method status="PASS" signature="required_spec213_onSubscribe_mustThrowNullPointerExceptionWhenParametersAreNull()" name="required_spec213_onSubscribe_mustThrowNullPointerExceptionWhenParametersAreNull" duration-ms="1" started-at="2015-06-19T15:58:53Z" finished-at="2015-06-19T15:58:53Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:07Z" finished-at="2015-06-19T15:35:07Z">
+        <test-method status="PASS" signature="required_spec302_mustAllowSynchronousRequestCallsFromOnNextAndOnSubscribe()" name="required_spec302_mustAllowSynchronousRequestCallsFromOnNextAndOnSubscribe" duration-ms="255" started-at="2015-06-19T15:58:53Z" finished-at="2015-06-19T15:58:53Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec302_mustAllowSynchronousRequestCallsFromOnNextAndOnSubscribe()" name="required_spec302_mustAllowSynchronousRequestCallsFromOnNextAndOnSubscribe" duration-ms="256" started-at="2015-06-19T15:35:07Z" finished-at="2015-06-19T15:35:07Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:53Z" finished-at="2015-06-19T15:58:53Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:07Z" finished-at="2015-06-19T15:35:07Z">
+        <test-method status="PASS" signature="required_spec303_mustNotAllowUnboundedRecursion()" name="required_spec303_mustNotAllowUnboundedRecursion" duration-ms="19" started-at="2015-06-19T15:58:53Z" finished-at="2015-06-19T15:58:53Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec303_mustNotAllowUnboundedRecursion()" name="required_spec303_mustNotAllowUnboundedRecursion" duration-ms="29" started-at="2015-06-19T15:35:07Z" finished-at="2015-06-19T15:35:07Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:53Z" finished-at="2015-06-19T15:58:53Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec306_afterSubscriptionIsCancelledRequestMustBeNops()" name="required_spec306_afterSubscriptionIsCancelledRequestMustBeNops" duration-ms="254" started-at="2015-06-19T15:35:07Z" finished-at="2015-06-19T15:35:07Z">
+        <test-method status="PASS" signature="required_spec306_afterSubscriptionIsCancelledRequestMustBeNops()" name="required_spec306_afterSubscriptionIsCancelledRequestMustBeNops" duration-ms="259" started-at="2015-06-19T15:58:53Z" finished-at="2015-06-19T15:58:54Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:07Z" finished-at="2015-06-19T15:35:07Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:53Z" finished-at="2015-06-19T15:58:53Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec307_afterSubscriptionIsCancelledAdditionalCancelationsMustBeNops()" name="required_spec307_afterSubscriptionIsCancelledAdditionalCancelationsMustBeNops" duration-ms="257" started-at="2015-06-19T15:35:07Z" finished-at="2015-06-19T15:35:07Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:54Z" finished-at="2015-06-19T15:58:54Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:07Z" finished-at="2015-06-19T15:35:07Z">
+        <test-method status="PASS" signature="required_spec307_afterSubscriptionIsCancelledAdditionalCancelationsMustBeNops()" name="required_spec307_afterSubscriptionIsCancelledAdditionalCancelationsMustBeNops" duration-ms="257" started-at="2015-06-19T15:58:54Z" finished-at="2015-06-19T15:58:54Z">
         </test-method>
-        <test-method status="FAIL" signature="required_spec308_requestMustRegisterGivenNumberElementsToBeProduced()" name="required_spec308_requestMustRegisterGivenNumberElementsToBeProduced" duration-ms="255" started-at="2015-06-19T15:35:07Z" finished-at="2015-06-19T15:35:08Z">
+        <test-method status="FAIL" signature="required_spec308_requestMustRegisterGivenNumberElementsToBeProduced()" name="required_spec308_requestMustRegisterGivenNumberElementsToBeProduced" duration-ms="256" started-at="2015-06-19T15:58:54Z" finished-at="2015-06-19T15:58:54Z">
           <exception class="java.lang.AssertionError">
             <message>
-              <![CDATA[Subscriber com.aol.simple.react.reactivestreams.FutureStreamProcessor@23fe1d71 did not call `registerOnNext(5)` within 250 ms]]>
+              <![CDATA[Subscriber com.aol.simple.react.reactivestreams.FutureStreamProcessor@74a10858 did not call `registerOnNext(5)` within 250 ms]]>
             </message>
             <full-stacktrace>
-              <![CDATA[java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestreams.FutureStreamProcessor@23fe1d71 did not call `registerOnNext(5)` within 250 ms
+              <![CDATA[java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestreams.FutureStreamProcessor@74a10858 did not call `registerOnNext(5)` within 250 ms
 	at org.testng.Assert.fail(Assert.java:78)
 	at org.reactivestreams.tck.TestEnvironment.flopAndFail(TestEnvironment.java:180)
 	at org.reactivestreams.tck.TestEnvironment$Receptacle.next(TestEnvironment.java:878)
@@ -600,7 +600,7 @@ Caused by: java.lang.AssertionError: timeout while awaiting 5 within 250 ms
 	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
 	at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
 	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
-Caused by: java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestreams.FutureStreamProcessor@23fe1d71 did not call `registerOnNext(5)` within 250 ms
+Caused by: java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestreams.FutureStreamProcessor@74a10858 did not call `registerOnNext(5)` within 250 ms
 	at org.testng.Assert.fail(Assert.java:89)
 	at org.reactivestreams.tck.TestEnvironment.flopAndFail(TestEnvironment.java:177)
 	... 32 more
@@ -608,51 +608,49 @@ Caused by: java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestr
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:07Z" finished-at="2015-06-19T15:35:07Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:54Z" finished-at="2015-06-19T15:58:54Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:08Z" finished-at="2015-06-19T15:35:08Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:54Z" finished-at="2015-06-19T15:58:54Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec309_requestNegativeNumberMustSignalIllegalArgumentException()" name="required_spec309_requestNegativeNumberMustSignalIllegalArgumentException" duration-ms="253" started-at="2015-06-19T15:35:08Z" finished-at="2015-06-19T15:35:08Z">
+        <test-method status="PASS" signature="required_spec309_requestNegativeNumberMustSignalIllegalArgumentException()" name="required_spec309_requestNegativeNumberMustSignalIllegalArgumentException" duration-ms="254" started-at="2015-06-19T15:58:54Z" finished-at="2015-06-19T15:58:54Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec309_requestZeroMustSignalIllegalArgumentException()" name="required_spec309_requestZeroMustSignalIllegalArgumentException" duration-ms="258" started-at="2015-06-19T15:35:08Z" finished-at="2015-06-19T15:35:08Z">
+        <test-method status="PASS" signature="required_spec309_requestZeroMustSignalIllegalArgumentException()" name="required_spec309_requestZeroMustSignalIllegalArgumentException" duration-ms="256" started-at="2015-06-19T15:58:54Z" finished-at="2015-06-19T15:58:55Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:08Z" finished-at="2015-06-19T15:35:08Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:54Z" finished-at="2015-06-19T15:58:54Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-06-19T15:35:08Z" finished-at="2015-06-19T15:35:08Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:55Z" finished-at="2015-06-19T15:58:55Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec312_cancelMustMakeThePublisherToEventuallyStopSignaling()" name="required_spec312_cancelMustMakeThePublisherToEventuallyStopSignaling" duration-ms="507" started-at="2015-06-19T15:35:08Z" finished-at="2015-06-19T15:35:09Z">
+        <test-method status="PASS" signature="required_spec312_cancelMustMakeThePublisherToEventuallyStopSignaling()" name="required_spec312_cancelMustMakeThePublisherToEventuallyStopSignaling" duration-ms="510" started-at="2015-06-19T15:58:55Z" finished-at="2015-06-19T15:58:55Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec313_cancelMustMakeThePublisherEventuallyDropAllReferencesToTheSubscriber()" name="required_spec313_cancelMustMakeThePublisherEventuallyDropAllReferencesToTheSubscriber" duration-ms="3526" started-at="2015-06-19T15:35:09Z" finished-at="2015-06-19T15:35:12Z">
+        <test-method status="PASS" signature="required_spec313_cancelMustMakeThePublisherEventuallyDropAllReferencesToTheSubscriber()" name="required_spec313_cancelMustMakeThePublisherEventuallyDropAllReferencesToTheSubscriber" duration-ms="3525" started-at="2015-06-19T15:58:55Z" finished-at="2015-06-19T15:58:59Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:09Z" finished-at="2015-06-19T15:35:09Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:55Z" finished-at="2015-06-19T15:58:55Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec317_mustNotSignalOnErrorWhenPendingAboveLongMaxValue()" name="required_spec317_mustNotSignalOnErrorWhenPendingAboveLongMaxValue" duration-ms="557" started-at="2015-06-19T15:35:12Z" finished-at="2015-06-19T15:35:13Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-06-19T15:58:59Z" finished-at="2015-06-19T15:58:59Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:12Z" finished-at="2015-06-19T15:35:12Z">
+        <test-method status="PASS" signature="required_spec317_mustNotSignalOnErrorWhenPendingAboveLongMaxValue()" name="required_spec317_mustNotSignalOnErrorWhenPendingAboveLongMaxValue" duration-ms="253" started-at="2015-06-19T15:58:59Z" finished-at="2015-06-19T15:58:59Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:13Z" finished-at="2015-06-19T15:35:13Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-06-19T15:58:59Z" finished-at="2015-06-19T15:58:59Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec317_mustSupportACumulativePendingElementCountUpToLongMaxValue()" name="required_spec317_mustSupportACumulativePendingElementCountUpToLongMaxValue" duration-ms="4" started-at="2015-06-19T15:35:13Z" finished-at="2015-06-19T15:35:13Z">
+        <test-method status="PASS" signature="required_spec317_mustSupportACumulativePendingElementCountUpToLongMaxValue()" name="required_spec317_mustSupportACumulativePendingElementCountUpToLongMaxValue" duration-ms="3" started-at="2015-06-19T15:58:59Z" finished-at="2015-06-19T15:58:59Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-06-19T15:35:13Z" finished-at="2015-06-19T15:35:13Z">
+        <test-method status="PASS" signature="required_spec317_mustSupportAPendingElementCountUpToLongMaxValue()" name="required_spec317_mustSupportAPendingElementCountUpToLongMaxValue" duration-ms="2" started-at="2015-06-19T15:58:59Z" finished-at="2015-06-19T15:58:59Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec317_mustSupportAPendingElementCountUpToLongMaxValue()" name="required_spec317_mustSupportAPendingElementCountUpToLongMaxValue" duration-ms="33" started-at="2015-06-19T15:35:13Z" finished-at="2015-06-19T15:35:13Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:59Z" finished-at="2015-06-19T15:58:59Z">
         </test-method>
-        <test-method status="PASS" signature="required_validate_boundedDepthOfOnNextAndRequestRecursion()" name="required_validate_boundedDepthOfOnNextAndRequestRecursion" duration-ms="1" started-at="2015-06-19T15:35:13Z" finished-at="2015-06-19T15:35:13Z">
+        <test-method status="PASS" signature="required_validate_boundedDepthOfOnNextAndRequestRecursion()" name="required_validate_boundedDepthOfOnNextAndRequestRecursion" duration-ms="0" started-at="2015-06-19T15:58:59Z" finished-at="2015-06-19T15:58:59Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:13Z" finished-at="2015-06-19T15:35:13Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:59Z" finished-at="2015-06-19T15:58:59Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:13Z" finished-at="2015-06-19T15:35:13Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:59Z" finished-at="2015-06-19T15:58:59Z">
         </test-method>
-        <test-method status="PASS" signature="required_validate_maxElementsFromPublisher()" name="required_validate_maxElementsFromPublisher" duration-ms="1" started-at="2015-06-19T15:35:13Z" finished-at="2015-06-19T15:35:13Z">
+        <test-method status="PASS" signature="required_validate_maxElementsFromPublisher()" name="required_validate_maxElementsFromPublisher" duration-ms="0" started-at="2015-06-19T15:58:59Z" finished-at="2015-06-19T15:58:59Z">
         </test-method>
-        <test-method status="PASS" signature="stochastic_spec103_mustSignalOnMethodsSequentially()" name="stochastic_spec103_mustSignalOnMethodsSequentially" duration-ms="979" started-at="2015-06-19T15:35:13Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="PASS" signature="stochastic_spec103_mustSignalOnMethodsSequentially()" name="stochastic_spec103_mustSignalOnMethodsSequentially" duration-ms="761" started-at="2015-06-19T15:58:59Z" finished-at="2015-06-19T15:59:00Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:13Z" finished-at="2015-06-19T15:35:13Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:58:59Z" finished-at="2015-06-19T15:58:59Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
-        </test-method>
-        <test-method status="SKIP" signature="untested_spec106_mustConsiderSubscriptionCancelledAfterOnErrorOrOnCompleteHasBeenCalled()" name="untested_spec106_mustConsiderSubscriptionCancelledAfterOnErrorOrOnCompleteHasBeenCalled" duration-ms="1" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="SKIP" signature="untested_spec106_mustConsiderSubscriptionCancelledAfterOnErrorOrOnCompleteHasBeenCalled()" name="untested_spec106_mustConsiderSubscriptionCancelledAfterOnErrorOrOnCompleteHasBeenCalled" duration-ms="1" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified by this TCK.]]>
@@ -691,7 +689,11 @@ Caused by: java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestr
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="SKIP" signature="untested_spec107_mustNotEmitFurtherSignalsOnceOnErrorHasBeenSignalled()" name="untested_spec107_mustNotEmitFurtherSignalsOnceOnErrorHasBeenSignalled" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
+        </test-method>
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
+        </test-method>
+        <test-method status="SKIP" signature="untested_spec107_mustNotEmitFurtherSignalsOnceOnErrorHasBeenSignalled()" name="untested_spec107_mustNotEmitFurtherSignalsOnceOnErrorHasBeenSignalled" duration-ms="1" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified by this TCK.]]>
@@ -730,9 +732,9 @@ Caused by: java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestr
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
         </test-method>
-        <test-method status="SKIP" signature="untested_spec108_possiblyCanceledSubscriptionShouldNotReceiveOnErrorOrOnCompleteSignals()" name="untested_spec108_possiblyCanceledSubscriptionShouldNotReceiveOnErrorOrOnCompleteSignals" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="SKIP" signature="untested_spec108_possiblyCanceledSubscriptionShouldNotReceiveOnErrorOrOnCompleteSignals()" name="untested_spec108_possiblyCanceledSubscriptionShouldNotReceiveOnErrorOrOnCompleteSignals" duration-ms="1" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified by this TCK.]]>
@@ -771,11 +773,7 @@ Caused by: java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestr
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
-        </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
-        </test-method>
-        <test-method status="SKIP" signature="untested_spec109_subscribeShouldNotThrowNonFatalThrowable()" name="untested_spec109_subscribeShouldNotThrowNonFatalThrowable" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="SKIP" signature="untested_spec109_subscribeShouldNotThrowNonFatalThrowable()" name="untested_spec109_subscribeShouldNotThrowNonFatalThrowable" duration-ms="1" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified by this TCK.]]>
@@ -814,7 +812,11 @@ Caused by: java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestr
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="SKIP" signature="untested_spec110_rejectASubscriptionRequestIfTheSameSubscriberSubscribesTwice()" name="untested_spec110_rejectASubscriptionRequestIfTheSameSubscriberSubscribesTwice" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
+        </test-method>
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
+        </test-method>
+        <test-method status="SKIP" signature="untested_spec110_rejectASubscriptionRequestIfTheSameSubscriberSubscribesTwice()" name="untested_spec110_rejectASubscriptionRequestIfTheSameSubscriberSubscribesTwice" duration-ms="1" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified by this TCK.]]>
@@ -853,9 +855,9 @@ Caused by: java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestr
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
         </test-method>
-        <test-method status="SKIP" signature="untested_spec202_shouldAsynchronouslyDispatch()" name="untested_spec202_shouldAsynchronouslyDispatch" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="SKIP" signature="untested_spec202_shouldAsynchronouslyDispatch()" name="untested_spec202_shouldAsynchronouslyDispatch" duration-ms="1" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified using this TCK.]]>
@@ -894,11 +896,7 @@ Caused by: java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestr
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
-        </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
-        </test-method>
-        <test-method status="SKIP" signature="untested_spec204_mustConsiderTheSubscriptionAsCancelledInAfterRecievingOnCompleteOrOnError()" name="untested_spec204_mustConsiderTheSubscriptionAsCancelledInAfterRecievingOnCompleteOrOnError" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="SKIP" signature="untested_spec204_mustConsiderTheSubscriptionAsCancelledInAfterRecievingOnCompleteOrOnError()" name="untested_spec204_mustConsiderTheSubscriptionAsCancelledInAfterRecievingOnCompleteOrOnError" duration-ms="1" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified using this TCK.]]>
@@ -937,50 +935,9 @@ Caused by: java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestr
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
         </test-method>
-        <test-method status="SKIP" signature="untested_spec207_mustEnsureAllCallsOnItsSubscriptionTakePlaceFromTheSameThreadOrTakeCareOfSynchronization()" name="untested_spec207_mustEnsureAllCallsOnItsSubscriptionTakePlaceFromTheSameThreadOrTakeCareOfSynchronization" duration-ms="1" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
-          <exception class="org.testng.SkipException">
-            <message>
-              <![CDATA[Not verified using this TCK.]]>
-            </message>
-            <full-stacktrace>
-              <![CDATA[org.testng.SkipException: Not verified using this TCK.
-	at org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
-	at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec207_mustEnsureAllCallsOnItsSubscriptionTakePlaceFromTheSameThreadOrTakeCareOfSynchronization(SubscriberWhiteboxVerification.java:246)
-	at org.reactivestreams.tck.IdentityProcessorVerification.untested_spec207_mustEnsureAllCallsOnItsSubscriptionTakePlaceFromTheSameThreadOrTakeCareOfSynchronization(IdentityProcessorVerification.java:532)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:497)
-	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
-	at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
-	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
-	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
-	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
-	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
-	at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
-	at org.testng.TestRunner.privateRun(TestRunner.java:749)
-	at org.testng.TestRunner.run(TestRunner.java:600)
-	at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
-	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
-	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
-	at org.testng.SuiteRunner.run(SuiteRunner.java:223)
-	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
-	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
-	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
-	at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
-	at org.testng.TestNG.run(TestNG.java:900)
-	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
-	at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
-	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
-]]>
-            </full-stacktrace>
-          </exception>
-        </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
-        </test-method>
-        <test-method status="SKIP" signature="untested_spec206_mustCallSubscriptionCancelIfItIsNoLongerValid()" name="untested_spec206_mustCallSubscriptionCancelIfItIsNoLongerValid" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="SKIP" signature="untested_spec206_mustCallSubscriptionCancelIfItIsNoLongerValid()" name="untested_spec206_mustCallSubscriptionCancelIfItIsNoLongerValid" duration-ms="1" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified using this TCK.]]>
@@ -1019,7 +976,50 @@ Caused by: java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestr
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="SKIP" signature="untested_spec211_mustMakeSureThatAllCallsOnItsMethodsHappenBeforeTheProcessingOfTheRespectiveEvents()" name="untested_spec211_mustMakeSureThatAllCallsOnItsMethodsHappenBeforeTheProcessingOfTheRespectiveEvents" duration-ms="1" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
+        </test-method>
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
+        </test-method>
+        <test-method status="SKIP" signature="untested_spec207_mustEnsureAllCallsOnItsSubscriptionTakePlaceFromTheSameThreadOrTakeCareOfSynchronization()" name="untested_spec207_mustEnsureAllCallsOnItsSubscriptionTakePlaceFromTheSameThreadOrTakeCareOfSynchronization" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
+          <exception class="org.testng.SkipException">
+            <message>
+              <![CDATA[Not verified using this TCK.]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[org.testng.SkipException: Not verified using this TCK.
+	at org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+	at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec207_mustEnsureAllCallsOnItsSubscriptionTakePlaceFromTheSameThreadOrTakeCareOfSynchronization(SubscriberWhiteboxVerification.java:246)
+	at org.reactivestreams.tck.IdentityProcessorVerification.untested_spec207_mustEnsureAllCallsOnItsSubscriptionTakePlaceFromTheSameThreadOrTakeCareOfSynchronization(IdentityProcessorVerification.java:532)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:497)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+	at org.testng.TestRunner.privateRun(TestRunner.java:749)
+	at org.testng.TestRunner.run(TestRunner.java:600)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+	at org.testng.TestNG.run(TestNG.java:900)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+	at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+]]>
+            </full-stacktrace>
+          </exception>
+        </test-method>
+        <test-method status="SKIP" signature="untested_spec211_mustMakeSureThatAllCallsOnItsMethodsHappenBeforeTheProcessingOfTheRespectiveEvents()" name="untested_spec211_mustMakeSureThatAllCallsOnItsMethodsHappenBeforeTheProcessingOfTheRespectiveEvents" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified using this TCK.]]>
@@ -1058,11 +1058,9 @@ Caused by: java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestr
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
-        </test-method>
-        <test-method status="SKIP" signature="untested_spec212_mustNotCallOnSubscribeMoreThanOnceBasedOnObjectEquality_specViolation()" name="untested_spec212_mustNotCallOnSubscribeMoreThanOnceBasedOnObjectEquality_specViolation" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="SKIP" signature="untested_spec212_mustNotCallOnSubscribeMoreThanOnceBasedOnObjectEquality_specViolation()" name="untested_spec212_mustNotCallOnSubscribeMoreThanOnceBasedOnObjectEquality_specViolation" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified using this TCK.]]>
@@ -1101,9 +1099,11 @@ Caused by: java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestr
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
         </test-method>
-        <test-method status="SKIP" signature="untested_spec213_failingOnSignalInvocation()" name="untested_spec213_failingOnSignalInvocation" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
+        </test-method>
+        <test-method status="SKIP" signature="untested_spec213_failingOnSignalInvocation()" name="untested_spec213_failingOnSignalInvocation" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified using this TCK.]]>
@@ -1142,50 +1142,7 @@ Caused by: java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestr
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
-        </test-method>
-        <test-method status="SKIP" signature="untested_spec304_requestShouldNotPerformHeavyComputations()" name="untested_spec304_requestShouldNotPerformHeavyComputations" duration-ms="1" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
-          <exception class="org.testng.SkipException">
-            <message>
-              <![CDATA[Not verified by this TCK.]]>
-            </message>
-            <full-stacktrace>
-              <![CDATA[org.testng.SkipException: Not verified by this TCK.
-	at org.reactivestreams.tck.PublisherVerification.notVerified(PublisherVerification.java:1166)
-	at org.reactivestreams.tck.PublisherVerification.untested_spec304_requestShouldNotPerformHeavyComputations(PublisherVerification.java:791)
-	at org.reactivestreams.tck.IdentityProcessorVerification.untested_spec304_requestShouldNotPerformHeavyComputations(IdentityProcessorVerification.java:330)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:497)
-	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
-	at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
-	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
-	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
-	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
-	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
-	at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
-	at org.testng.TestRunner.privateRun(TestRunner.java:749)
-	at org.testng.TestRunner.run(TestRunner.java:600)
-	at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
-	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
-	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
-	at org.testng.SuiteRunner.run(SuiteRunner.java:223)
-	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
-	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
-	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
-	at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
-	at org.testng.TestNG.run(TestNG.java:900)
-	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
-	at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
-	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
-]]>
-            </full-stacktrace>
-          </exception>
-        </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
-        </test-method>
-        <test-method status="SKIP" signature="untested_spec301_mustNotBeCalledOutsideSubscriberContext()" name="untested_spec301_mustNotBeCalledOutsideSubscriberContext" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="SKIP" signature="untested_spec301_mustNotBeCalledOutsideSubscriberContext()" name="untested_spec301_mustNotBeCalledOutsideSubscriberContext" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified using this TCK.]]>
@@ -1224,9 +1181,50 @@ Caused by: java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestr
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
         </test-method>
-        <test-method status="SKIP" signature="untested_spec305_cancelMustNotSynchronouslyPerformHeavyCompuatation()" name="untested_spec305_cancelMustNotSynchronouslyPerformHeavyCompuatation" duration-ms="1" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
+        </test-method>
+        <test-method status="SKIP" signature="untested_spec304_requestShouldNotPerformHeavyComputations()" name="untested_spec304_requestShouldNotPerformHeavyComputations" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
+          <exception class="org.testng.SkipException">
+            <message>
+              <![CDATA[Not verified by this TCK.]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[org.testng.SkipException: Not verified by this TCK.
+	at org.reactivestreams.tck.PublisherVerification.notVerified(PublisherVerification.java:1166)
+	at org.reactivestreams.tck.PublisherVerification.untested_spec304_requestShouldNotPerformHeavyComputations(PublisherVerification.java:791)
+	at org.reactivestreams.tck.IdentityProcessorVerification.untested_spec304_requestShouldNotPerformHeavyComputations(IdentityProcessorVerification.java:330)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:497)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+	at org.testng.TestRunner.privateRun(TestRunner.java:749)
+	at org.testng.TestRunner.run(TestRunner.java:600)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+	at org.testng.TestNG.run(TestNG.java:900)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+	at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+]]>
+            </full-stacktrace>
+          </exception>
+        </test-method>
+        <test-method status="SKIP" signature="untested_spec305_cancelMustNotSynchronouslyPerformHeavyCompuatation()" name="untested_spec305_cancelMustNotSynchronouslyPerformHeavyCompuatation" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified by this TCK.]]>
@@ -1265,7 +1263,11 @@ Caused by: java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestr
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="SKIP" signature="untested_spec310_requestMaySynchronouslyCallOnNextOnSubscriber()" name="untested_spec310_requestMaySynchronouslyCallOnNextOnSubscriber" duration-ms="1" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
+        </test-method>
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
+        </test-method>
+        <test-method status="SKIP" signature="untested_spec310_requestMaySynchronouslyCallOnNextOnSubscriber()" name="untested_spec310_requestMaySynchronouslyCallOnNextOnSubscriber" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified using this TCK.]]>
@@ -1304,11 +1306,7 @@ Caused by: java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestr
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
-        </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
-        </test-method>
-        <test-method status="SKIP" signature="untested_spec311_requestMaySynchronouslyCallOnCompleteOrOnError()" name="untested_spec311_requestMaySynchronouslyCallOnCompleteOrOnError" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="SKIP" signature="untested_spec311_requestMaySynchronouslyCallOnCompleteOrOnError()" name="untested_spec311_requestMaySynchronouslyCallOnCompleteOrOnError" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified using this TCK.]]>
@@ -1347,9 +1345,9 @@ Caused by: java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestr
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
         </test-method>
-        <test-method status="SKIP" signature="untested_spec314_cancelMayCauseThePublisherToShutdownIfNoOtherSubscriptionExists()" name="untested_spec314_cancelMayCauseThePublisherToShutdownIfNoOtherSubscriptionExists" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="SKIP" signature="untested_spec314_cancelMayCauseThePublisherToShutdownIfNoOtherSubscriptionExists()" name="untested_spec314_cancelMayCauseThePublisherToShutdownIfNoOtherSubscriptionExists" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified using this TCK.]]>
@@ -1388,7 +1386,13 @@ Caused by: java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestr
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="SKIP" signature="untested_spec315_cancelMustNotThrowExceptionAndMustSignalOnError()" name="untested_spec315_cancelMustNotThrowExceptionAndMustSignalOnError" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
+        </test-method>
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
+        </test-method>
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
+        </test-method>
+        <test-method status="SKIP" signature="untested_spec315_cancelMustNotThrowExceptionAndMustSignalOnError()" name="untested_spec315_cancelMustNotThrowExceptionAndMustSignalOnError" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified using this TCK.]]>
@@ -1427,11 +1431,7 @@ Caused by: java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestr
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
-        </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
-        </test-method>
-        <test-method status="SKIP" signature="untested_spec316_requestMustNotThrowExceptionAndMustOnErrorTheSubscriber()" name="untested_spec316_requestMustNotThrowExceptionAndMustOnErrorTheSubscriber" duration-ms="0" started-at="2015-06-19T15:35:14Z" finished-at="2015-06-19T15:35:14Z">
+        <test-method status="SKIP" signature="untested_spec316_requestMustNotThrowExceptionAndMustOnErrorTheSubscriber()" name="untested_spec316_requestMustNotThrowExceptionAndMustOnErrorTheSubscriber" duration-ms="0" started-at="2015-06-19T15:59:00Z" finished-at="2015-06-19T15:59:00Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified using this TCK.]]>

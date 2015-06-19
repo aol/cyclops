@@ -50,47 +50,31 @@ public class FutureStreamSubscriber<T> implements Subscriber<T> {
 		
 		queue = new Queue(){
 			public T get(){
-				System.out.println("requesting! 1");
 				s.request(1);
-				System.out.println("waiting!");
-				try{
-					return (T)super.get();
-				}
-				finally{
-					System.out.println("got!");
-				}
 				
+					return (T)super.get();	
 			}
 		};
 	
 		this.subscription= s;
 		stream = stream();
-		/**Continuation[] cont = new Continuation[1];
-		cont[0]= new Continuation(() ->{  
-			if(queue.isOpen())
-				s.request(1);
-			else{
-				s.cancel();
-				throw new ClosedQueueException();
-			}
-			return cont[0];  });
-		queue.setContinuation(cont[0]);**/
+		
 		s.request(1);
 		
 	}
 
 	@Override
 	public void onNext(T t) {
-		System.out.println("On next! " + t);
+		
 		Objects.requireNonNull(t);
 		queue.add(t);
-		System.out.println("Added " + queue.size());
+		
 		
 	}
 
 	@Override
 	public void onError(Throwable t) {
-		System.out.println("On error!");
+		
 		Objects.requireNonNull(t);
 		((Consumer)stream.getErrorHandler().orElse((Consumer)h->{})).accept(t);
 		
@@ -98,7 +82,7 @@ public class FutureStreamSubscriber<T> implements Subscriber<T> {
 
 	@Override
 	public void onComplete() {
-		System.out.println("On complete!");
+		
 		if(queue!=null){
 			queue.setContinuation(new Continuation( () -> {
 						throw new ClosedQueueException();

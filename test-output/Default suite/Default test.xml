@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite hostname="ir000781" name="org.reactivestreams.tck.IdentityProcessorVerification" tests="66" failures="5" timestamp="19 Jun 2015 14:35:14 GMT" time="11.778" errors="0">
-  <testcase name="mustImmediatelyPassOnOnErrorEventsReceivedFromItsUpstreamToItsDownstream" time="0.099" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="optional_spec104_mustSignalOnErrorWhenFails" time="0.002" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
+<testsuite hostname="ir000781" name="org.reactivestreams.tck.IdentityProcessorVerification" tests="66" failures="5" timestamp="19 Jun 2015 14:59:00 GMT" time="11.204" errors="0">
+  <testcase name="mustImmediatelyPassOnOnErrorEventsReceivedFromItsUpstreamToItsDownstream" time="0.102" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="optional_spec104_mustSignalOnErrorWhenFails" time="0.001" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
     <skipped/>
   </testcase>
-  <testcase name="optional_spec105_emptyStreamMustTerminateBySignallingOnComplete" time="0.259" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="optional_spec111_maySupportMultiSubscribe" time="0.255" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
+  <testcase name="optional_spec105_emptyStreamMustTerminateBySignallingOnComplete" time="0.261" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="optional_spec111_maySupportMultiSubscribe" time="0.259" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
     <skipped/>
   </testcase>
-  <testcase name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfront" time="0.252" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
+  <testcase name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfront" time="0.255" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
     <skipped/>
   </testcase>
-  <testcase name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfrontAndCompleteAsExpected" time="0.257" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
+  <testcase name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfrontAndCompleteAsExpected" time="0.255" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
     <skipped/>
   </testcase>
-  <testcase name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingOneByOne" time="0.257" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
+  <testcase name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingOneByOne" time="0.254" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
     <skipped/>
   </testcase>
-  <testcase name="required_createPublisher1MustProduceAStreamOfExactly1Element" time="0.022" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="required_createPublisher1MustProduceAStreamOfExactly1Element" time="0.021" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
   <testcase name="required_createPublisher3MustProduceAStreamOfExactly3Elements" time="0.005" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="required_exerciseWhiteboxHappyPath" time="0.267" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
+  <testcase name="required_exerciseWhiteboxHappyPath" time="0.263" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
     <failure type="java.lang.AssertionError" message="Subscriber com.aol.simple.react.reactivestreams.FutureStreamProcessor@5f9d02cb did not call `registerOnNext(5)` within 250 ms">
       <![CDATA[java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestreams.FutureStreamProcessor@5f9d02cb did not call `registerOnNext(5)` within 250 ms
 	at org.testng.Assert.fail(Assert.java:78)
@@ -109,9 +109,9 @@ Caused by: java.lang.AssertionError: timeout while awaiting 5 within 250 ms
 ]]>
     </failure>
   </testcase>
-  <testcase name="required_spec101_subscriptionRequestMustResultInTheCorrectNumberOfProducedElements" time="0.761" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="required_spec102_maySignalLessThanRequestedAndTerminateSubscription" time="0.003" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="required_spec104_mustCallOnErrorOnAllItsSubscribersIfItEncountersANonRecoverableError" time="0.254" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
+  <testcase name="required_spec101_subscriptionRequestMustResultInTheCorrectNumberOfProducedElements" time="0.767" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="required_spec102_maySignalLessThanRequestedAndTerminateSubscription" time="0.005" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="required_spec104_mustCallOnErrorOnAllItsSubscribersIfItEncountersANonRecoverableError" time="0.26" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
     <failure type="java.lang.AssertionError" message="Could not subscribe org.reactivestreams.tck.IdentityProcessorVerification$ManualSubscriberWithErrorCollection@35d176f7 to Publisher com.aol.simple.react.reactivestreams.FutureStreamProcessor@551aa95a within 250 ms">
       <![CDATA[java.lang.AssertionError: Could not subscribe org.reactivestreams.tck.IdentityProcessorVerification$ManualSubscriberWithErrorCollection@35d176f7 to Publisher com.aol.simple.react.reactivestreams.FutureStreamProcessor@551aa95a within 250 ms
 	at org.testng.Assert.fail(Assert.java:89)
@@ -152,20 +152,20 @@ Caused by: java.lang.AssertionError: timeout while awaiting 5 within 250 ms
 ]]>
     </failure>
   </testcase>
-  <testcase name="required_spec105_mustSignalOnCompleteWhenFiniteStreamTerminates" time="0.256" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="required_spec107_mustNotEmitFurtherSignalsOnceOnCompleteHasBeenSignalled" time="0.258" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="required_spec105_mustSignalOnCompleteWhenFiniteStreamTerminates" time="0.257" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="required_spec107_mustNotEmitFurtherSignalsOnceOnCompleteHasBeenSignalled" time="0.257" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
   <testcase name="required_spec109_mayRejectCallsToSubscribeIfPublisherIsUnableOrUnwillingToServeThemRejectionMustTriggerOnErrorAfterOnSubscribe" time="0.001" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
     <skipped/>
   </testcase>
-  <testcase name="required_spec109_mustIssueOnSubscribeForNonNullSubscriber" time="0.002" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="required_spec109_subscribeThrowNPEOnNullSubscriber" time="0.0" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="required_spec109_mustIssueOnSubscribeForNonNullSubscriber" time="0.001" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="required_spec109_subscribeThrowNPEOnNullSubscriber" time="0.001" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
   <testcase name="required_spec201_mustSignalDemandViaSubscriptionRequest" time="0.002" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
   <testcase name="required_spec203_mustNotCallMethodsOnSubscriptionOrPublisherInOnComplete" time="0.002" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
   <testcase name="required_spec203_mustNotCallMethodsOnSubscriptionOrPublisherInOnError" time="0.002" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="required_spec205_mustCallSubscriptionCancelIfItAlreadyHasAnSubscriptionAndReceivesAnotherOnSubscribeSignal" time="0.255" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="required_spec208_mustBePreparedToReceiveOnNextSignalsAfterHavingCalledSubscriptionCancel" time="0.258" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="required_spec209_mustBePreparedToReceiveAnOnCompleteSignalWithPrecedingRequestCall" time="0.254" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="required_spec209_mustBePreparedToReceiveAnOnCompleteSignalWithoutPrecedingRequestCall" time="0.255" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
+  <testcase name="required_spec205_mustCallSubscriptionCancelIfItAlreadyHasAnSubscriptionAndReceivesAnotherOnSubscribeSignal" time="0.257" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="required_spec208_mustBePreparedToReceiveOnNextSignalsAfterHavingCalledSubscriptionCancel" time="0.257" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="required_spec209_mustBePreparedToReceiveAnOnCompleteSignalWithPrecedingRequestCall" time="0.253" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="required_spec209_mustBePreparedToReceiveAnOnCompleteSignalWithoutPrecedingRequestCall" time="0.253" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
     <failure type="java.lang.AssertionError" message="Subscriber com.aol.simple.react.reactivestreams.FutureStreamProcessor@3dfc5fb8 did not call `registerOnComplete()` within 250 ms">
       <![CDATA[java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestreams.FutureStreamProcessor@3dfc5fb8 did not call `registerOnComplete()` within 250 ms
 	at org.testng.Assert.fail(Assert.java:89)
@@ -209,15 +209,15 @@ Caused by: java.lang.AssertionError: timeout while awaiting 5 within 250 ms
   <testcase name="required_spec210_mustBePreparedToReceiveAnOnErrorSignalWithPrecedingRequestCall" time="0.001" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
   <testcase name="required_spec210_mustBePreparedToReceiveAnOnErrorSignalWithoutPrecedingRequestCall" time="0.001" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
   <testcase name="required_spec213_onError_mustThrowNullPointerExceptionWhenParametersAreNull" time="0.002" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="required_spec213_onNext_mustThrowNullPointerExceptionWhenParametersAreNull" time="0.001" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="required_spec213_onNext_mustThrowNullPointerExceptionWhenParametersAreNull" time="0.002" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
   <testcase name="required_spec213_onSubscribe_mustThrowNullPointerExceptionWhenParametersAreNull" time="0.001" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="required_spec302_mustAllowSynchronousRequestCallsFromOnNextAndOnSubscribe" time="0.256" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="required_spec303_mustNotAllowUnboundedRecursion" time="0.029" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="required_spec306_afterSubscriptionIsCancelledRequestMustBeNops" time="0.254" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="required_spec302_mustAllowSynchronousRequestCallsFromOnNextAndOnSubscribe" time="0.255" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="required_spec303_mustNotAllowUnboundedRecursion" time="0.019" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="required_spec306_afterSubscriptionIsCancelledRequestMustBeNops" time="0.259" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
   <testcase name="required_spec307_afterSubscriptionIsCancelledAdditionalCancelationsMustBeNops" time="0.257" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="required_spec308_requestMustRegisterGivenNumberElementsToBeProduced" time="0.255" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
-    <failure type="java.lang.AssertionError" message="Subscriber com.aol.simple.react.reactivestreams.FutureStreamProcessor@23fe1d71 did not call `registerOnNext(5)` within 250 ms">
-      <![CDATA[java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestreams.FutureStreamProcessor@23fe1d71 did not call `registerOnNext(5)` within 250 ms
+  <testcase name="required_spec308_requestMustRegisterGivenNumberElementsToBeProduced" time="0.256" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
+    <failure type="java.lang.AssertionError" message="Subscriber com.aol.simple.react.reactivestreams.FutureStreamProcessor@74a10858 did not call `registerOnNext(5)` within 250 ms">
+      <![CDATA[java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestreams.FutureStreamProcessor@74a10858 did not call `registerOnNext(5)` within 250 ms
 	at org.testng.Assert.fail(Assert.java:78)
 	at org.reactivestreams.tck.TestEnvironment.flopAndFail(TestEnvironment.java:180)
 	at org.reactivestreams.tck.TestEnvironment$Receptacle.next(TestEnvironment.java:878)
@@ -252,51 +252,51 @@ Caused by: java.lang.AssertionError: timeout while awaiting 5 within 250 ms
 	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
 	at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
 	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
-Caused by: java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestreams.FutureStreamProcessor@23fe1d71 did not call `registerOnNext(5)` within 250 ms
+Caused by: java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestreams.FutureStreamProcessor@74a10858 did not call `registerOnNext(5)` within 250 ms
 	at org.testng.Assert.fail(Assert.java:89)
 	at org.reactivestreams.tck.TestEnvironment.flopAndFail(TestEnvironment.java:177)
 	... 32 more
 ]]>
     </failure>
   </testcase>
-  <testcase name="required_spec309_requestNegativeNumberMustSignalIllegalArgumentException" time="0.253" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="required_spec309_requestZeroMustSignalIllegalArgumentException" time="0.258" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="required_spec312_cancelMustMakeThePublisherToEventuallyStopSignaling" time="0.507" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="required_spec313_cancelMustMakeThePublisherEventuallyDropAllReferencesToTheSubscriber" time="3.526" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="required_spec317_mustNotSignalOnErrorWhenPendingAboveLongMaxValue" time="0.557" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="required_spec317_mustSupportACumulativePendingElementCountUpToLongMaxValue" time="0.004" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="required_spec317_mustSupportAPendingElementCountUpToLongMaxValue" time="0.033" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="required_validate_boundedDepthOfOnNextAndRequestRecursion" time="0.001" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="required_validate_maxElementsFromPublisher" time="0.001" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
-  <testcase name="stochastic_spec103_mustSignalOnMethodsSequentially" time="0.979" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="required_spec309_requestNegativeNumberMustSignalIllegalArgumentException" time="0.254" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="required_spec309_requestZeroMustSignalIllegalArgumentException" time="0.256" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="required_spec312_cancelMustMakeThePublisherToEventuallyStopSignaling" time="0.51" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="required_spec313_cancelMustMakeThePublisherEventuallyDropAllReferencesToTheSubscriber" time="3.525" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="required_spec317_mustNotSignalOnErrorWhenPendingAboveLongMaxValue" time="0.253" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="required_spec317_mustSupportACumulativePendingElementCountUpToLongMaxValue" time="0.003" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="required_spec317_mustSupportAPendingElementCountUpToLongMaxValue" time="0.002" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="required_validate_boundedDepthOfOnNextAndRequestRecursion" time="0.0" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="required_validate_maxElementsFromPublisher" time="0.0" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
+  <testcase name="stochastic_spec103_mustSignalOnMethodsSequentially" time="0.761" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest"/>
   <testcase name="untested_spec106_mustConsiderSubscriptionCancelledAfterOnErrorOrOnCompleteHasBeenCalled" time="0.001" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
     <skipped/>
   </testcase>
-  <testcase name="untested_spec107_mustNotEmitFurtherSignalsOnceOnErrorHasBeenSignalled" time="0.0" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
+  <testcase name="untested_spec107_mustNotEmitFurtherSignalsOnceOnErrorHasBeenSignalled" time="0.001" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
     <skipped/>
   </testcase>
-  <testcase name="untested_spec108_possiblyCanceledSubscriptionShouldNotReceiveOnErrorOrOnCompleteSignals" time="0.0" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
+  <testcase name="untested_spec108_possiblyCanceledSubscriptionShouldNotReceiveOnErrorOrOnCompleteSignals" time="0.001" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
     <skipped/>
   </testcase>
-  <testcase name="untested_spec109_subscribeShouldNotThrowNonFatalThrowable" time="0.0" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
+  <testcase name="untested_spec109_subscribeShouldNotThrowNonFatalThrowable" time="0.001" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
     <skipped/>
   </testcase>
-  <testcase name="untested_spec110_rejectASubscriptionRequestIfTheSameSubscriberSubscribesTwice" time="0.0" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
+  <testcase name="untested_spec110_rejectASubscriptionRequestIfTheSameSubscriberSubscribesTwice" time="0.001" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
     <skipped/>
   </testcase>
-  <testcase name="untested_spec202_shouldAsynchronouslyDispatch" time="0.0" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
+  <testcase name="untested_spec202_shouldAsynchronouslyDispatch" time="0.001" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
     <skipped/>
   </testcase>
-  <testcase name="untested_spec204_mustConsiderTheSubscriptionAsCancelledInAfterRecievingOnCompleteOrOnError" time="0.0" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
+  <testcase name="untested_spec204_mustConsiderTheSubscriptionAsCancelledInAfterRecievingOnCompleteOrOnError" time="0.001" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
     <skipped/>
   </testcase>
-  <testcase name="untested_spec206_mustCallSubscriptionCancelIfItIsNoLongerValid" time="0.0" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
+  <testcase name="untested_spec206_mustCallSubscriptionCancelIfItIsNoLongerValid" time="0.001" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
     <skipped/>
   </testcase>
-  <testcase name="untested_spec207_mustEnsureAllCallsOnItsSubscriptionTakePlaceFromTheSameThreadOrTakeCareOfSynchronization" time="0.001" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
+  <testcase name="untested_spec207_mustEnsureAllCallsOnItsSubscriptionTakePlaceFromTheSameThreadOrTakeCareOfSynchronization" time="0.0" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
     <skipped/>
   </testcase>
-  <testcase name="untested_spec211_mustMakeSureThatAllCallsOnItsMethodsHappenBeforeTheProcessingOfTheRespectiveEvents" time="0.001" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
+  <testcase name="untested_spec211_mustMakeSureThatAllCallsOnItsMethodsHappenBeforeTheProcessingOfTheRespectiveEvents" time="0.0" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
     <skipped/>
   </testcase>
   <testcase name="untested_spec212_mustNotCallOnSubscribeMoreThanOnceBasedOnObjectEquality_specViolation" time="0.0" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
@@ -308,13 +308,13 @@ Caused by: java.lang.AssertionError: Subscriber com.aol.simple.react.reactivestr
   <testcase name="untested_spec301_mustNotBeCalledOutsideSubscriberContext" time="0.0" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
     <skipped/>
   </testcase>
-  <testcase name="untested_spec304_requestShouldNotPerformHeavyComputations" time="0.001" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
+  <testcase name="untested_spec304_requestShouldNotPerformHeavyComputations" time="0.0" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
     <skipped/>
   </testcase>
-  <testcase name="untested_spec305_cancelMustNotSynchronouslyPerformHeavyCompuatation" time="0.001" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
+  <testcase name="untested_spec305_cancelMustNotSynchronouslyPerformHeavyCompuatation" time="0.0" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
     <skipped/>
   </testcase>
-  <testcase name="untested_spec310_requestMaySynchronouslyCallOnNextOnSubscriber" time="0.001" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
+  <testcase name="untested_spec310_requestMaySynchronouslyCallOnNextOnSubscriber" time="0.0" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
     <skipped/>
   </testcase>
   <testcase name="untested_spec311_requestMaySynchronouslyCallOnCompleteOrOnError" time="0.0" classname="com.aol.simple.react.reactivestreams.TckProcessorVerificationTest">
