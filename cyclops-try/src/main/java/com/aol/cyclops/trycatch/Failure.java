@@ -212,7 +212,7 @@ public class Failure<T,X extends Throwable> implements Try<T,X> {
 	 * @see com.aol.cyclops.trycatch.Try#onFail(java.lang.Class, java.util.function.Consumer)
 	 */
 	@Override
-	public Try<T, X> onFail(Class<? super X> t, Consumer<X> consumer) {
+	public Try<T, X> onFail(Class<? extends X> t, Consumer<X> consumer) {
 		if(t.isAssignableFrom(error.getClass()))
 			consumer.accept(error);
 		return this;

@@ -157,8 +157,9 @@ public class FailureTest {
 	}
 	@Test
 	public void testOnFailClassOfQextendsXConsumerOfXInherited() {
+		Failure<Integer,IOException> failure =  Failure.of(error);
 		errorCaptured = null;
-		failure.onFail(IOException.class, e -> errorCaptured =e);
+		failure.onFail(FileNotFoundException.class, e -> errorCaptured =e);
 		assertThat(error,equalTo(errorCaptured));
 	}
 	@Test
