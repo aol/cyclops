@@ -27,6 +27,7 @@ import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class FutureStreamSubscriber<T> implements Subscriber<T> {
 	
+	
 	protected LazyFutureStream stream(){
 		Continueable subscription =  new com.aol.simple.react.async.Subscription();
 		return LazyFutureStream.of()
