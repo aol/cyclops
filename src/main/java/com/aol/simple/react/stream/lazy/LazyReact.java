@@ -88,8 +88,8 @@ public class LazyReact extends BaseLazySimpleReact {
 	}
 	
 	/**
-	 * LazyReact builder with a new TaskExecutor with threads determined by {@link #parallelism}
-	 * Max concurrent tasks is determined by {@link #concurrency}
+	 * LazyReact builder with a new TaskExecutor with threads determined by parallelism
+	 * Max concurrent tasks is determined by concurrency
 	 * 
 	 * @param parallelism
 	 * @param concurrency
