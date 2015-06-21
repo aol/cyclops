@@ -3,6 +3,7 @@ package com.aol.simple.react.lazy;
 import static org.junit.Assert.assertThat;
 import static java.util.Arrays.asList;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
@@ -11,6 +12,7 @@ import org.junit.Test;
 
 import static org.hamcrest.Matchers.*;
 
+import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
@@ -127,25 +129,30 @@ public class LazyTest {
 
 	@Test
 	public void lazyReactStream() {
-		LazyFutureStream.sequentialBuilder().react(() -> 1).map(list -> 1 + 2)
-				.block();
+		assertThat(LazyFutureStream.sequentialBuilder().react(() -> 1).map(list -> 1 + 2)
+				.block(),equalTo(Arrays.asList(3)));
+	}
+	@Test
+	public void lazyReactParAndConc() {
+		assertThat(new LazyReact(2,2).react(() -> 1).map(list -> 1 + 2)
+				.block(),equalTo(Arrays.asList(3)));
 	}
 
 	@Test
 	public void lazyParallel() {
-		LazyFutureStream.parallelBuilder().react(() -> 1).map(list -> 1 + 2)
-				.block();
+		assertThat(LazyFutureStream.parallelBuilder().react(() -> 1).map(list -> 1 + 2)
+				.block(),equalTo(Arrays.asList(3)));
 	}
 
 	@Test
 	public void lazyReactStreamList() {
-		LazyFutureStream.sequentialBuilder().react(asList(() -> 1))
-				.map(list -> 1 + 2).block();
+		assertThat(LazyFutureStream.sequentialBuilder().react(asList(() -> 1))
+				.map(list -> 1 + 2).block(),equalTo(Arrays.asList(3)));
 	}
 
 	@Test
 	public void lazyParallelList() {
-		LazyFutureStream.parallelBuilder().react(asList(() -> 1))
-				.map(list -> 1 + 2).block();
+		assertThat(LazyFutureStream.parallelBuilder().react(asList(() -> 1))
+				.map(list -> 1 + 2).block(),equalTo(Arrays.asList(3)));
 	}
 }

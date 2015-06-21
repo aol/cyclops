@@ -691,10 +691,14 @@ public abstract class BaseSeqTest {
 
 	    @Test
 	    public void testUnzip() {
+	    	//order is not guaranteed as populated asynchronously
 	        Supplier<Seq<Tuple2<Integer, String>>> s = () -> of(tuple(1, "a"), tuple(2, "b"), tuple(3, "c"));
 
+	        for(int i=0;i<1000;i++){
 	        Tuple2<Seq<Integer>, Seq<String>> u1 = Seq.unzip(s.get());
-	        assertTrue(u1.v1.toList().containsAll(asList(1, 2, 3)));
+	      
+	        assertTrue(u1.v1.toList().containsAll(Arrays.asList(1, 2, 3)));
+	       
 	       
 	        assertTrue(u1.v2.toList().containsAll(asList("a", "b", "c")));
 
@@ -709,21 +713,24 @@ public abstract class BaseSeqTest {
 	        Tuple2<Seq<Integer>, Seq<String>> u4 = Seq.unzip(s.get(), (t1, t2) -> tuple(-t1, t2 + "!"));
 	        assertTrue(u4.v1.toList().containsAll(asList(-1, -2, -3)));
 	        assertTrue(u4.v2.toList().containsAll(asList("a!", "b!", "c!")));
+	        }
 	    }
 	   
 
 	    @Test
 	    public void testFoldLeft() {
-	        Supplier<Seq<String>> s = () -> of("a", "b", "c");
-
-	        assertTrue(s.get().foldLeft("", String::concat).contains("a"));
-	        assertTrue(s.get().foldLeft("", String::concat).contains("b"));
-	        assertTrue(s.get().foldLeft("", String::concat).contains("c"));
-	       
-	        assertEquals(3, (int) s.get().foldLeft(0, (u, t) -> u + t.length()));
-
-	        
-	        assertEquals(3, (int) s.get().foldRight(0, (t, u) -> u + t.length()));
+	    	for(int i=0;i<100;i++){
+		        Supplier<Seq<String>> s = () -> of("a", "b", "c");
+	
+		        assertTrue(s.get().foldLeft("", String::concat).contains("a"));
+		        assertTrue(s.get().foldLeft("", String::concat).contains("b"));
+		        assertTrue(s.get().foldLeft("", String::concat).contains("c"));
+		       
+		        assertEquals(3, (int) s.get().foldLeft(0, (u, t) -> u + t.length()));
+	
+		        
+		        assertEquals(3, (int) s.get().foldRight(0, (t, u) -> u + t.length()));
+	    	}
 	    }
 	    
 	    @Test

@@ -1,12 +1,8 @@
 package com.aol.simple.react.exceptions;
 
-import java.lang.reflect.Field;
-import java.util.Optional;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import sun.misc.Unsafe;
 
 @Slf4j
 public class ExceptionSoftener {
@@ -18,30 +14,18 @@ public class ExceptionSoftener {
 	    
 	}
 	
-	private final Optional<Unsafe> unsafe = getUnsafe();
 	
-	public void throwSoftenedException(final Exception e) {
-
-		unsafe.ifPresent(u -> u.throwException(e));
-		throw new RuntimeException(e);
+	public void throwSoftenedException(final Throwable e) {
+		new Thrower<RuntimeException>().uncheck(e);
 	}
+	static class Thrower<T extends Throwable> {
+		@SuppressWarnings("unchecked")
+			private void uncheck(Throwable throwable) throws T {
+			 	throw (T) throwable;
+			 }
+	}
+			 
+			
 	
-	private static Optional<Unsafe> getUnsafe() {
 
-		try {
-
-			final Field field = Unsafe.class.getDeclaredField("theUnsafe");
-
-			field.setAccessible(true);
-
-			return Optional.of((Unsafe) field.get(null));
-
-		} catch (Exception ex) {
-
-			log.error(ex.getMessage());
-
-		}
-		return Optional.empty();
-
-	}
 }
