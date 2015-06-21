@@ -6,8 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.DoubleStream;
@@ -19,9 +18,10 @@ import lombok.Getter;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 
+import com.aol.simple.react.RetryBuilder;
+import com.aol.simple.react.config.MaxActive;
 import com.aol.simple.react.stream.BaseLazySimpleReact;
 import com.aol.simple.react.stream.ThreadPools;
-import com.aol.simple.react.stream.traits.EagerFutureStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -49,6 +49,8 @@ public class LazyReact extends BaseLazySimpleReact {
 	
 	
 	private final Boolean async;
+	@Getter
+	private final MaxActive maxActive;
 	
 	/* 
 	 *	@return true if async
@@ -81,7 +83,23 @@ public class LazyReact extends BaseLazySimpleReact {
 		this.executor = executor;
 		this.retrier = null;
 		this.async = true;
+		this.maxActive = MaxActive.defaultValue.factory.getInstance();
 		
+	}
+	
+	/**
+	 * LazyReact builder with a new TaskExecutor with threads determined by {@link #parallelism}
+	 * Max concurrent tasks is determined by {@link #concurrency}
+	 * 
+	 * @param parallelism
+	 * @param concurrency
+	 */
+	public LazyReact(int parallelism, int concurrency) {
+		
+		this.executor = Executors.newFixedThreadPool(parallelism);
+		this.retrier = new RetryBuilder().parallelism(parallelism);
+		this.async = true;
+		this.maxActive = new MaxActive(parallelism,concurrency);
 		
 	}
 	
@@ -308,11 +326,12 @@ public class LazyReact extends BaseLazySimpleReact {
 	 * @param async If true each task will be submitted to an executor service
 	 */
 	public LazyReact(Executor executor, RetryExecutor retrier,
-			Boolean async) {
+			Boolean async, MaxActive maxActive) {
 		super();
 		this.executor = executor;
 		this.retrier = retrier;
 		this.async = Optional.ofNullable(async).orElse(true);
+		this.maxActive = Optional.ofNullable(maxActive).orElse(MaxActive.defaultValue.factory.getInstance());
 	}
 
 	/* 
@@ -370,6 +389,7 @@ public class LazyReact extends BaseLazySimpleReact {
 		
 		return (LazyFutureStream)super.reactIterable(actions);
 	}
+	
 	
 	
 	

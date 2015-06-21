@@ -60,9 +60,9 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		this.lastActive = new StreamWrapper(s, false);
 		this.errorHandler = Optional.of((e) -> log.error(e.getMessage(), e));
 		this.eager = false;
-		this.waitStrategy = new LimitingMonitor();
+		this.waitStrategy = new LimitingMonitor(lazyReact.getMaxActive());
 		this.lazyCollector = new BatchingCollector<>(this);
-		this.queueFactory = QueueFactories.boundedNonBlockingQueue(10000);
+		this.queueFactory = QueueFactories.unboundedNonBlockingQueue();
 		this.subscription = new Subscription();
 		this.parallelReduction = ParallelReductionConfig.defaultValue;
 

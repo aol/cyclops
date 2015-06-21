@@ -37,8 +37,11 @@ import org.jooq.lambda.tuple.Tuple2;
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Continueable;
 import com.aol.simple.react.async.Queue;
+import com.aol.simple.react.async.QueueFactories;
 import com.aol.simple.react.async.QueueFactory;
+import com.aol.simple.react.capacity.monitor.LimitingMonitor;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
+import com.aol.simple.react.config.MaxActive;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.StreamWrapper;
@@ -130,6 +133,46 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 		return (LazyFutureStream<U>)FutureStream.super.async();
 	}
 	
+	/**
+	 * This is the default setting, internal queues are backed by a ConcurrentLinkedQueue
+	 * This operator will return the next stage to using this Queue type if it has been changed
+	 * 
+	 * @return LazyFutureStream backed by a ConcurrentLinkedQueue
+	 */ 
+	default LazyFutureStream<U> unboundedWaitFree(){
+		return this.withQueueFactory(QueueFactories.unboundedNonBlockingQueue());
+	}
+	/**
+	 * Use an Agrona ManyToOneConcurrentArrayQueue for the next operations (wait-free, mechanical sympathy).
+	 * Note Queued data will be somewhat limited by configured concurrency level, but that flatMap operations
+	 * can increase the amount of data to be buffered significantly.
+	 * 
+	 * @param size Buffer size
+	 * @return LazyFutureStream backed by an Agrona ManyToOneConcurrentArrayQueue
+	 */
+	default LazyFutureStream<U> boundedWaitFree(int size){
+		return this.withQueueFactory(QueueFactories.boundedNonBlockingQueue(size));
+	}
+	/**
+	 * Configure the max active concurrent tasks. The last set value wins, this can't be set per stage.
+	 * 
+	 * <pre>
+	 *    {@code
+	 *    	List<String> data = new LazyReact().react(urlFile)
+	 *    										.maxActive(100)
+	 *    										.flatMap(this::loadUrls)
+	 *    										.map(this::callUrls)
+	 *    										.block();
+	 *    }
+	 * </pre>
+	 * 
+	 * @param concurrentTasks Maximum number of active task chains
+	 * @return LazyFutureStream with new limits set
+	 */
+	default LazyFutureStream<U> maxActive(int concurrentTasks){
+		return this.withWaitStrategy(new LimitingMonitor(
+					new MaxActive(concurrentTasks, concurrentTasks)));
+	}
 	default <R> LazyFutureStream<R> thenSync(final Function<U, R> fn){
 		return (LazyFutureStream<R>)FutureStream.super.thenSync(fn);
 	}
@@ -1163,7 +1206,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 * @return LazyReact instance
 	 */
 	public static LazyReact parallelBuilder(int parallelism) {
-		return LazyReact.builder().executor(new ForkJoinPool(parallelism))
+		return LazyReact.builder().executor(Executors.newFixedThreadPool(parallelism))
 				.retrier(new RetryBuilder().parallelism(parallelism)).build();
 	}
 
@@ -1292,7 +1335,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 			stream = ((FutureStream) stream).toQueue().stream(
 					((FutureStream) stream).getSubscription());
 		LazyReact react =new LazyReact(ThreadPools.getSequential(), RetryBuilder.getDefaultInstance()
-						.withScheduler(ThreadPools.getSequentialRetry()),false);
+						.withScheduler(ThreadPools.getSequentialRetry()),false, new MaxActive(1,1));
 		return new LazyFutureStreamImpl<T>(react,
 				stream.map(CompletableFuture::completedFuture));
 	}
