@@ -88,18 +88,18 @@ public class LazyReact extends BaseLazySimpleReact {
 	}
 	
 	/**
-	 * LazyReact builder with a new TaskExecutor with threads determined by parallelism
+	 * LazyReact builder with a new TaskExecutor with threads determined by threadPoolSize
 	 * Max concurrent tasks is determined by concurrency
 	 * 
-	 * @param parallelism
+	 * @param threadPoolSize
 	 * @param concurrency
 	 */
-	public LazyReact(int parallelism, int concurrency) {
+	public LazyReact(int threadPoolSize, int concurrency) {
 		
-		this.executor = Executors.newFixedThreadPool(parallelism);
-		this.retrier = new RetryBuilder().parallelism(parallelism);
+		this.executor = Executors.newFixedThreadPool(threadPoolSize);
+		this.retrier = new RetryBuilder().parallelism(threadPoolSize);
 		this.async = true;
-		this.maxActive = new MaxActive(parallelism,concurrency);
+		this.maxActive = new MaxActive(threadPoolSize,concurrency);
 		
 	}
 	

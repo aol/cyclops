@@ -59,17 +59,70 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  *
  */
 public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, LazyToQueue<U> {
-
+	/* 
+	 * Change task executor for the next stage of the Stream
+	 * 
+	 * <pre>
+	 * {@code
+	 *  LazyFutureStream.of(1,2,3,4)
+	 *  					.map(this::loadFromDb)
+	 *  					.withTaskExecutor(parallelBuilder().getExecutor())
+	 *  					.map(this::processOnDifferentExecutor)
+	 *  					.toList();
+	 * }
+	 * </pre>
+	 * 
+	 *	@param e New executor to use
+	 *	@return Stream ready for next stage definition
+	 * @see com.aol.simple.react.stream.traits.ConfigurableStream#withTaskExecutor(java.util.concurrent.Executor)
+	 */
 	LazyFutureStream<U> withTaskExecutor(Executor e);
-
+	/* 
+	 * Change the Retry Executor used in this stream for subsequent stages
+	 * <pre>
+	 * {@code
+	 * List<String> result = new LazyReact().react(() -> 1)
+				.withRetrier(executor)
+				.capture(e -> error = e)
+				.retry(serviceMock).block();
+	 * 
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 *	@param retry Retry executor to use
+	 *	@return Stream 
+	 * @see com.aol.simple.react.stream.traits.ConfigurableStream#withRetrier(com.nurkiewicz.asyncretry.RetryExecutor)
+	 */
 	LazyFutureStream<U> withRetrier(RetryExecutor retry);
 
 	LazyFutureStream<U> withWaitStrategy(Consumer<CompletableFuture> c);
 
-	LazyFutureStream<U> withEager(boolean eager);
+	//LazyFutureStream<U> withEager(boolean eager);
 
 	LazyFutureStream<U> withLazyCollector(LazyResultConsumer<U> lazy);
-
+	/* 
+	 * Change the QueueFactory type for the next phase of the Stream.
+	 * Default for EagerFutureStream is an unbounded blocking queue, but other types 
+	 * will work fine for a subset of the tasks (e.g. an unbonunded non-blocking queue).
+	 * 
+	 * <pre>
+	 * {@code
+	 * List<Collection<String>> collected = LazyFutureStream
+				.react(data)
+				.withQueueFactory(QueueFactories.boundedQueue(1))
+				.onePer(1, TimeUnit.SECONDS)
+				.batchByTime(10, TimeUnit.SECONDS)
+				.limit(15)
+				.toList();
+	 * }
+	 * </pre>
+	 *	@param queue Queue factory to use for subsequent stages
+	 *	@return Stream
+	 * @see com.aol.simple.react.stream.traits.ConfigurableStream#withQueueFactory(com.aol.simple.react.async.QueueFactory)
+     * @see com.aol.simple.react.stream.traits.LazyFutureStream#unboundedWaitFree()
+     * @see com.aol.simple.react.stream.traits.LazyFutureStream#boundedWaitFree(int size)
+	 */
 	LazyFutureStream<U> withQueueFactory(QueueFactory<U> queue);
 
 	LazyFutureStream<U> withErrorHandler(
@@ -78,6 +131,13 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	LazyFutureStream<U> withSubscription(Continueable sub);
 
 	LazyFutureStream<U> withLastActive(StreamWrapper streamWrapper);
+	/* 
+	 * Convert this stream into an async / sync stream
+	 * 
+	 *	@param async true if aysnc stream
+	 *	@return
+	 * @see com.aol.simple.react.stream.traits.ConfigurableStream#withAsync(boolean)
+	 */
 	LazyFutureStream<U> withAsync(boolean async);
 	
 	default void forEach(Consumer<? super U> c){
@@ -327,12 +387,14 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 * elements of the Stream
 	 * 
 	 * e.g.
+	 * <pre>
 	 * <code>
 	 * 
 	 * LazyFutureStream.of(10,20,25,30,41,43).shard(ImmutableMap.of("even",new
-	 * Queue(),"odd",new Queue(),element-&gt; element%2==0? "even" : "odd");
+	 * 															Queue(),"odd",new Queue(),element-&gt; element%2==0? "even" : "odd");
 	 * 
 	 * </code>
+	 * </pre>
 	 * results in 2 Streams "even": 10,20,30 "odd" : 25,41,43
 	 * 
 	 * @param shards

@@ -84,7 +84,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * Change the Retry Executor used in this stream for subsequent stages
 	 * <pre>
 	 * {@code
-	 * List<String> result = new SimpleReact().react(() -> 1)
+	 * List<String> result = new EagerReact().react(() -> 1)
 				.withRetrier(executor)
 				.capture(e -> error = e)
 				.retry(serviceMock).block();
