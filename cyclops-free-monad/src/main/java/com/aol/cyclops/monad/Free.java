@@ -5,6 +5,7 @@ import static fj.data.Either.left;
 import static fj.data.Either.right;
 
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import lombok.Value;
 
@@ -141,6 +142,7 @@ public interface Free<F extends Functor<?>,A> extends Matchable {
 		@Override
 		public <T1> Trampoline<Either<Functor<Free<F, B>>, B>> resume(
 				Functor<T1> f) {
+			
 			
 			Either<Either<Functor<Free<F,A>>, A>,Free> res= free.matchType(whenReturnSuspendOrGoSub(f));
 		

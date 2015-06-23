@@ -1,11 +1,13 @@
 package com.aol.cyclops.lambda.monads;
 
+import static com.aol.cyclops.lambda.api.AsGenericMonad.asMonad;
+import static com.aol.cyclops.lambda.api.AsGenericMonad.monad;
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -14,36 +16,44 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+
 import com.aol.cyclops.lambda.api.AsAnyM;
-import com.aol.cyclops.lambda.api.AsGenericMonad;
 import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Streamable;
+import com.aol.cyclops.streams.Pair;
 import com.aol.cyclops.streams.StreamUtils;
 import com.nurkiewicz.lazyseq.LazySeq;
 
-public interface AnyM<T> extends Monad<Object,T>{
-	default <R> R unwrapMonad(){
-		return (R)unwrap();
+@AllArgsConstructor(access=AccessLevel.PACKAGE)
+public class AnyM<T>{
+	
+	private final Monad<Object,T> monad;
+	
+	
+	public final <R> R unwrap(){
+		return (R)monad.unwrap();
 	}
-	default <MONAD> Monad<MONAD,T> monad(){
-		return AsGenericMonad.asMonad(unwrapMonad());
+	public final <MONAD> Monad<MONAD,T> monad(){
+		return (Monad)monad;
 	}
 	
-	default   AnyM<T>  filter(Predicate<T> fn){
-		return (AnyM)Monad.super.filter(fn).anyM();
+	public final   AnyM<T>  filter(Predicate<T> fn){
+		return monad.filter(fn).anyM();
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#map(java.util.function.Function)
 	 */
-	default  <R> AnyM<R> map(Function<T,R> fn){
-		return (AnyM)Monad.super.map(fn).anyM();
+	public final  <R> AnyM<R> map(Function<T,R> fn){
+		return monad.map(fn).anyM();
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
 	 */
-	default   AnyM<T>  peek(Consumer<T> c) {
-		return (AnyM)Monad.super.peek(c).anyM();
+	public final   AnyM<T>  peek(Consumer<T> c) {
+		return monad.peek(c).anyM();
 	}
 	
 	
@@ -54,8 +64,8 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 * @param fn flatMap function
 	 * @return flatMapped monad
 	 */
-	default <R> AnyM<T> bind(Function<T,R> fn){
-		return (AnyM)Monad.super.bind(fn).anyM();
+	public final <R> AnyM<R> bind(Function<T,R> fn){
+		return monad.bind(fn).anyM();
 	
 	}
 	/**
@@ -65,8 +75,8 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 * @param fn flatMap function
 	 * @return flatMapped monad
 	 */
-	default <R> AnyM<R> liftAndBindAnyM(Function<T,?> fn){
-		return (AnyM)Monad.super.liftAndBind(fn).anyM();
+	public final <R> AnyM<R> liftAndBind(Function<T,?> fn){
+		return monad.liftAndBind(fn).anyM();
 	
 	}
 	
@@ -75,24 +85,20 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 * 
 	 * @return Flattened / joined one level
 	 */
-	default <T1> AnyM<T1> flattenAnyM(){
-		return (AnyM)Monad.super.flatten().anyM();
+	public final <T1> AnyM<T1> flatten(){
+		return monad.flatten().anyM();
 		
 	}
 	
-	
-	
-	
-	
-	
+		
 	/**
 	 * Convert to a Stream with the values repeated specified times
 	 * 
 	 * @param times Times values should be repeated within a Stream
 	 * @return Stream with values repeated
 	 */
-	default AnyM<T> cycleAnyM(int times){
-		return Monad.super.cycle(times).anyM();
+	public final AnyM<T> cycle(int times){
+		return monad.cycle(times).anyM();
 		
 	}
 	
@@ -110,8 +116,8 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 * @param times Number of times value should be repeated
 	 * @return Stream with reduced values repeated
 	 */
-	default AnyM<T> cycleAnyM(Monoid<T> m,int times){
-		return Monad.super.cycle(m,times).anyM();
+	public final AnyM<T> cycle(Monoid<T> m,int times){
+		return monad.cycle(m,times).anyM();
 	}
 	
 	
@@ -129,16 +135,16 @@ public interface AnyM<T> extends Monad<Object,T>{
 	    //is asList(Optional.of(1),Optional.of(2),Optional.of(1),Optional.of(2)	));
 	
 	 * 
-	 * }
+	 * }</pre>
 	 * 
 	 * 
 	 * 
-	 * @param monad
+	 * @param monadC class type
 	 * @param times
 	 * @return
 	 */
-	default <R> AnyM<R> cycleAnyM(Class<R> monad,int times){
-		return Monad.super.cycle(monad,times).anyM();
+	public final <R> AnyM<R> cycle(Class<R> monadC,int times){
+		return monad.cycle(monadC,times).anyM();
 	}
 
 	/**
@@ -147,8 +153,8 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 * @param predicate repeat while true
 	 * @return Repeating Stream
 	 */
-	default  AnyM<T> cycleWhileAnyM(Predicate<T> predicate){
-		return Monad.super.cycleWhile(predicate).anyM();
+	public final  AnyM<T> cycleWhile(Predicate<T> predicate){
+		return monad.cycleWhile(predicate).anyM();
 	}
 	/**
 	 * Repeat in a Stream until specified predicate holds
@@ -156,8 +162,8 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 * @param predicate repeat while true
 	 * @return Repeating Stream
 	 */
-	default  AnyM<T> cycleUntilAnyM(Predicate<T> predicate){
-		return Monad.super.cycleUntil(predicate).anyM();
+	public final  AnyM<T> cycleUntil(Predicate<T> predicate){
+		return monad.cycleUntil(predicate).anyM();
 	}
 	/**
 	 * Generic zip function. E.g. Zipping a Stream and an Optional
@@ -166,14 +172,14 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 * Stream<List<Integer>> zipped = asMonad(Stream.of(1,2,3)).zip(asMonad(Optional.of(2)), 
 													(a,b) -> Arrays.asList(a,b));
 	 * // [[1,2]]
-	 * }
+	 * }</pre>
 	 * 
 	 * @param second Monad to zip with
 	 * @param zipper Zipping function
 	 * @return Stream zipping two Monads
 	 */
-	default <S,R> AnyM<R> zipAnyM(AnyM<? extends S> second, BiFunction<? super T, ? super S, ? extends R> zipper){
-		return Monad.super.zip(second, zipper).anyM();
+	public final <S,R> AnyM<R> zip(AnyM<? extends S> second, BiFunction<? super T, ? super S, ? extends R> zipper){
+		return monad.zip(second.monad, zipper).anyM();
 	}
 	
 	/**
@@ -184,14 +190,14 @@ public interface AnyM<T> extends Monad<Object,T>{
 													(a,b) -> Arrays.asList(a,b));
 													
 		//[[1,2][2,3][3,4]]											
-	 * }
+	 * }</pre>
 	 * 
 	 * @param second Stream to zip with
 	 * @param zipper  Zip funciton
 	 * @return This monad zipped with a Stream
 	 */
-	default <S,R> AnyM<R> zipAnyM(Stream<? extends S> second, BiFunction<? super T, ? super S, ? extends R> zipper){
-		return Monad.super.zip(second, zipper).anyM();
+	public final <S,R> AnyM<R> zip(Stream<? extends S> second, BiFunction<? super T, ? super S, ? extends R> zipper){
+		return monad.zip(second, zipper).anyM();
 	}
 	/**
 	 * Create a sliding view over this monad
@@ -199,8 +205,8 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 * @param windowSize Size of sliding window
 	 * @return Stream with sliding view over monad
 	 */
-	default AnyM<List<T>> slidingAnyM(int windowSize){
-		return Monad.super.sliding(windowSize).anyM();
+	public final AnyM<List<T>> sliding(int windowSize){
+		return monad.sliding(windowSize).anyM();
 	}
 	
 	/**
@@ -216,13 +222,13 @@ public interface AnyM<T> extends Monad<Object,T>{
 		assertThat(list.get(0),hasItems(1,2,3));
 		assertThat(list.get(1),hasItems(4,5,6));
 		
-		}
+		}</pre>
 	 * 
 	 * @param groupSize Size of each Group
 	 * @return Stream with elements grouped by size
 	 */
-	default AnyM<List<T>> groupedAnyM(int groupSize){
-		return Monad.super.grouped(groupSize).anyM();
+	public final AnyM<List<T>> grouped(int groupSize){
+		return monad.grouped(groupSize).anyM();
 	}
 	
 	
@@ -235,10 +241,10 @@ public interface AnyM<T> extends Monad<Object,T>{
 											.<Stream<Integer>,Integer>streamedMonad()
 											.distinct()
 											.collect(Collectors.toList());
-		}
+		}</pre>
 	 */
-	default AnyM<T> distinctAnyM(){
-		return Monad.super.distinct().anyM();
+	public final AnyM<T> distinct(){
+		return monad.distinct().anyM();
 	}
 	/**
 	 * Scan left using supplied Monoid
@@ -247,13 +253,13 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 * 
 	 * 	assertEquals(asList("", "a", "ab", "abc"),monad(Stream.of("a", "b", "c")).scanLeft(Reducers.toString("")).toList());
             
-            }
+            }</pre>
 	 * 
 	 * @param monoid
 	 * @return
 	 */
-	default AnyM<T> scanLeftAnyM(Monoid<T> monoid){
-		return Monad.super.scanLeft(monoid).anyM();
+	public final AnyM<T> scanLeft(Monoid<T> monoid){
+		return monad.scanLeft(monoid).anyM();
 	}
 	
 	/**
@@ -270,8 +276,8 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 *  <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).sorted().toList(),equalTo(Arrays.asList(3,4,6,7))); }</pre>
 	 * 
 	 */
-	default AnyM<T> sortedAnyM(){
-		return Monad.super.sorted().anyM();
+	public final AnyM<T> sorted(){
+		return monad.sorted().anyM();
 	}
 	/**
 	 *	 
@@ -290,8 +296,8 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 * @param c Compartor to sort with
 	 * @return Sorted Monad
 	 */
-	default AnyM<T> sortedAnyM(Comparator<T > c){
-		return Monad.super.sorted(c).anyM();   
+	public final AnyM<T> sorted(Comparator<T > c){
+		return monad.sorted(c).anyM();   
 	}
 	/**
 	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).skip(2).toList(),equalTo(Arrays.asList(6,7))); }</pre>
@@ -301,8 +307,8 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 * @param num  Number of elemenets to skip
 	 * @return Monad converted to Stream with specified number of elements skipped
 	 */
-	default AnyM<T> skipAnyM(int num){
-		return Monad.super.skip(num).anyM();
+	public final AnyM<T> skip(int num){
+		return monad.skip(num).anyM();
 	}
 	/**
 	 * 
@@ -315,8 +321,8 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 * @param p Predicate to skip while true
 	 * @return Monad converted to Stream with elements skipped while predicate holds
 	 */
-	default AnyM<T> skipWhileAnyM(Predicate<T> p){
-		return Monad.super.skipWhile(p).anyM();
+	public final AnyM<T> skipWhile(Predicate<T> p){
+		return monad.skipWhile(p).anyM();
 	}
 	/**
 	 * 
@@ -328,19 +334,19 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 * @param p Predicate to skip until true
 	 * @return Monad converted to Stream with elements skipped until predicate holds
 	 */
-	default AnyM<T> skipUntilAnyM(Predicate<T> p){
-		return Monad.super.skipUntil(p).anyM();
+	public final AnyM<T> skipUntil(Predicate<T> p){
+		return monad.skipUntil(p).anyM();
 	}
 	/**
 	 * NB to access nested collections in non-Stream monads as a stream use streamedMonad() first
 	 * 
-	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).limit(2).toList(),equalTo(Arrays.asList(4,3)));}
+	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).limit(2).toList(),equalTo(Arrays.asList(4,3)));}</pre>
 	 * 
 	 * @param num Limit element size to num
 	 * @return Monad converted to Stream with elements up to num
 	 */
-	default AnyM<T> limitAnyM(int num){
-		return Monad.super.limit(num).anyM();
+	public final AnyM<T> limit(int num){
+		return monad.limit(num).anyM();
 	}
 	/**
 	 *  NB to access nested collections in non-Stream monads as a stream use streamedMonad() first
@@ -350,8 +356,8 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 * @param p Limit while predicate is true
 	 * @return Monad converted to Stream with limited elements
 	 */
-	default AnyM<T> limitWhileAnyM(Predicate<T> p){
-		return Monad.super.limitWhile(p).anyM();
+	public final AnyM<T> limitWhile(Predicate<T> p){
+		return monad.limitWhile(p).anyM();
 	}
 	/**
 	 * NB to access nested collections in non-Stream monads as a stream use streamedMonad() first
@@ -361,8 +367,8 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 * @param p Limit until predicate is true
 	 * @return Monad converted to Stream with limited elements
 	 */
-	default AnyM<T> limitUntilAnyM(Predicate<T> p){
-		return Monad.super.limitUntil(p).anyM();
+	public final AnyM<T> limitUntil(Predicate<T> p){
+		return monad.limitUntil(p).anyM();
 	}
 	
 
@@ -382,8 +388,8 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 * @param next Monad to aggregate content with
 	 * @return Aggregated Monad
 	 */
-	default <R> AnyM<R> aggregate(AnyM<?> next){
-		return Monad.super.aggregate(next).anyM();
+	public final <R> AnyM<R> aggregate(AnyM<?> next){
+		return monad.aggregate(next.monad).anyM();
 	}
 	
 	/**
@@ -392,16 +398,16 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 * @param fn
 	 * @return
 	 */
-	default <NT> AnyM<NT> flatMapAnyM(Function<T,?> fn) {
-		return Monad.super.flatMap(fn).anyM();
+	public final <NT> AnyM<NT> flatMap(Function<T,AnyM<NT>> fn) {
+		return monad.flatMap(fn).anyM();
 	}
 	
 	
 	/**
 	 * @return this monad converted to a Parallel Stream, via streamedMonad() wraped in Monad interface
 	 */
-	default <NT> AnyM<NT> parallelAnyM(){
-		return Monad.super.parallel().anyM();
+	public final <NT> AnyM<NT> parallel(){
+		return monad.parallel().anyM();
 	}
 	
 	/**
@@ -423,8 +429,8 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 * 
 	 * @return A Monad that wraps a Stream
 	 */
-	default <NT> AnyM<NT> streamedMonadAnyM(){
-		return Monad.super.streamedMonad().anyM();
+	public final <NT> AnyM<NT> streamedMonad(){
+		return monad.streamedMonad().anyM();
 	}
 	
 	/**
@@ -437,7 +443,7 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 * we can write
 	 * 
 	 *   AnyM<Integer> stream;
-	 * }
+	 * }</pre>
 	 *  
 	 * The wrapped Monaad should have equivalent methods for
 	 * 
@@ -465,12 +471,328 @@ public interface AnyM<T> extends Monad<Object,T>{
 	 *  flatMap operations on the duck typed Monad can return any Monad type
 	 *  
 	 * 
-	 * @param anyM to wrap
+	 * @param o to wrap
 	 * @return Duck typed Monad
 	 */
 	public static <T> AnyM<T> of(Object o){
 		return AsAnyM.asAnyM(o);
 	}
 	
+	
+	/**
+	 * True if predicate matches all elements when Monad converted to a Stream
+	 * 
+	 * @param c Predicate to check if all match
+	 */
+	public final  void  allMatch(Predicate<T> c) {
+		stream().allMatch(c);
+	}
+	/**
+	 * True if a single element matches when Monad converted to a Stream
+	 * 
+	 * @param c Predicate to check if any match
+	 */
+	public final  void  anyMatch(Predicate<T> c) {
+		stream().anyMatch(c);
+	}
+	/**
+	 * @return First matching element in sequential order
+	 * 
+	 * (deterministic)
+	 * 
+	 */
+	public final  Optional<T>  findFirst() {
+		return stream().findFirst();
+	}
+	/**
+	 * @return first matching element,  but order is not guaranteed
+	 * 
+	 * (non-deterministic) 
+	 */
+	public final  Optional<T>  findAny() {
+		return stream().findAny();
+	}
+	
+	/**
+	 * Attempt to map this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
+	 * Then use Monoid to reduce values
+	 * 
+	 * @param reducer Monoid to reduce values
+	 * @return Reduce result
+	 */
+	public final  <R> R mapReduce(Monoid<R> reducer){
+		return reducer.mapReduce(stream());
+	}
+	/**
+	 *  Attempt to map this Monad to the same type as the supplied Monoid, using supplied function
+	 *  Then use Monoid to reduce values
+	 *  
+	 * @param mapper Function to map Monad type
+	 * @param reducer Monoid to reduce values
+	 * @return Reduce result
+	 */
+	public final  <R> R mapReduce(Function<T,R> mapper, Monoid<R> reducer){
+		return reducer.reduce(stream().map(mapper));
+	}
+	
+	/**
+	 * Mutable reduction / collection over this Monad converted to a Stream
+	 * 
+	 * @param collector Collection operation definition
+	 * @return Collected result
+	 */
+	public final <R, A> R collect(Collector<T,A,R> collector){
+		return stream().collect(collector);
+	}
+	/**
+	 * Apply multiple collectors Simulataneously to this Monad
+	 * 
+	 * <pre>{@code
+	  	List result = monad(Stream.of(1,2,3)).collect(Stream.of(Collectors.toList(),
+	  															Collectors.summingInt(Integer::intValue),
+	  															Collectors.averagingInt(Integer::intValue)));
+		
+		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));
+		assertThat(result.get(1),equalTo(6));
+		assertThat(result.get(2),equalTo(2.0));
+		}</pre>
+		
+		 * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was one value
+	 * To reduce over the values on the list, called streamedMonad() first. I.e. streamedMonad().collect(collectors);
+	 * 
+	 * @param collectors Stream of Collectors to apply
+	 * @return  List of results
+	 */
+	public final  List collect(Stream<Collector> collectors){
+		return StreamUtils.collect(stream(),collectors);
+	}
+	
+	/**
+	 * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was one value
+	 * To reduce over the values on the list, called streamedMonad() first. I.e. streamedMonad().reduce(reducer)
+	 * 
+	 * 
+	 * @param reducer Use supplied Monoid to reduce values
+	 * @return reduced values
+	 */
+	public final  T reduce(Monoid<T> reducer){
+		return reducer.reduce(stream());
+	}
+	
+	/**
+     * Reduce with multiple reducers in parallel
+	 * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was one value
+	 * To reduce over the values on the list, called streamedMonad() first. I.e. streamedMonad().reduce(reducer)
+	 * 
+	 * @param reducers
+	 * @return
+	 */
+	public final List<T> reduce(Stream<Monoid<T>> reducers){
+		return StreamUtils.reduce(stream(), reducers);
+	}
+	/**
+     * Reduce with multiple reducers in parallel
+	 * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was one value
+	 * To reduce over the values on the list, called streamedMonad() first. I.e. streamedMonad().reduce(reducer)
+	 * 
+	 * @param reducers
+	 * @return
+	 */
+	public final List<T> reduce(Iterable<Monoid<T>> reducers){
+		return StreamUtils.reduce(stream(), reducers);
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param reducer Use supplied Monoid to reduce values starting via foldLeft
+	 * @return Reduced result
+	 */
+	public final T foldLeft(Monoid<T> reducer){
+		return reduce(reducer);
+	}
+	/**
+	 *  Attempt to map this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
+	 * Then use Monoid to reduce values
+	 * 
+	 * @param reducer Monoid to reduce values
+	 * @return Reduce result
+	 */
+	public final <T> T foldLeftMapToType(Monoid<T> reducer){
+		return reducer.mapReduce(stream());
+	}
+	/**
+	 * 
+	 * 
+	 * @param reducer Use supplied Monoid to reduce values starting via foldRight
+	 * @return Reduced result
+	 */
+	public final T foldRight(Monoid<T> reducer){
+		return reducer.reduce(StreamUtils.reverse(stream()));
+	}
+	/**
+	 *  Attempt to map this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
+	 * Then use Monoid to reduce values
+	 * 
+	 * @param reducer Monoid to reduce values
+	 * @return Reduce result
+	 */
+	public final <T> T foldRightMapToType(Monoid<T> reducer){
+		return reducer.mapReduce(StreamUtils.reverse(stream()));
+	}
+	/**
+	 * @return Underlying monad converted to a Streamable instance
+	 */
+	public final Streamable<T> toStreamable(){
+		return  AsStreamable.asStreamable(stream());
+	}
+	/**
+	 * @return This monad converted to a set
+	 */
+	public final Set<T> toSet(){
+		return (Set)stream().collect(Collectors.toSet());
+	}
+	/**
+	 * @return this monad converted to a list
+	 */
+	public final List<T> toList(){
+		return (List)stream().collect(Collectors.toList());
+	}
+	/**
+	 * @return  calls to stream() but more flexible on type for inferencing purposes.
+	 */
+	public final <T> Stream<T> toStream(){
+		return (Stream)stream();
+	}
+	/**
+	 * Unwrap this Monad into a Stream.
+	 * If the underlying monad is a Stream it is returned
+	 * Otherwise we flatMap the underlying monad to a Stream type
+	 */
+	public final Stream<T> stream(){
+		return monad.stream();
+		
+	}
+
+	/**
+	 * 
+	 * <pre>{@code 
+	 * assertTrue(monad(Stream.of(1,2,3,4)).startsWith(Arrays.asList(1,2,3)));
+	 * }</pre>
+	 * 
+	 * @param iterable
+	 * @return True if Monad starts with Iterable sequence of data
+	 */
+	public final boolean startsWith(Iterable<T> iterable){
+		return LazySeq.of(stream().iterator()).startsWith(iterable);
+		
+	}
+	/**
+	 * 	<pre>{@code assertTrue(monad(Stream.of(1,2,3,4)).startsWith(Arrays.asList(1,2,3).iterator())) }</pre>
+
+	 * @param iterator
+	 * @return True if Monad starts with Iterators sequence of data
+	 */
+	public final boolean startsWith(Iterator<T> iterator){
+		return LazySeq.of(stream().iterator()).startsWith(iterator);
+		
+	}
+	
+	
+
+	/**
+	 * Apply function/s inside supplied Monad to data in current Monad
+	 * 
+	 * e.g. with Streams
+	 * <pre>{@code 
+	 * 
+	 * Simplex<Integer> applied =monad(Stream.of(1,2,3)).applyM(monad(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2))).simplex();
+	
+	 	assertThat(applied.toList(),equalTo(Arrays.asList(2, 2, 3, 4, 4, 6)));
+	 }</pre>
+	 * 
+	 * with Optionals 
+	 * <pre>{@code
+	 * 
+	 *  Simplex<Integer> applied =monad(Optional.of(2)).applyM(monad(Optional.of( (Integer a)->a+1)) ).simplex();
+		assertThat(applied.toList(),equalTo(Arrays.asList(3)));}</pre>
+	 * 
+	 * @param fn
+	 * @return
+	 */
+	public final <R> AnyM<R> applyM(AnyM<Function<T,R>> fn){
+		return monad.applyM(fn.monad).anyM();
+		
+	}
+	/**
+	 * Filter current monad by each element in supplied Monad
+	 * 
+	 * e.g.
+	 * 
+	 * <pre>{@code
+	 *  Simplex<Stream<Integer>> applied = monad(Stream.of(1,2,3))
+	 *    									.filterM(monad(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3)))
+	 *    									.simplex();
+	 * 
+	 * //results in Stream.of(Stream.of(1),Stream.of(2),Stream.of(())
+	 * }</pre>
+	 * 
+	 * @param fn
+	 * @return
+	 */
+	public final <NT,R> Monad<NT,R> simpleFilter(AnyM<Predicate<T>> fn){
+		return  monad.simpleFilter(fn.monad);
+		
+		
+	
+	//	filterM((a: Int) => List(a > 2, a % 2 == 0), List(1, 2, 3), ListMonad),
+	//List(List(3), Nil, List(2, 3), List(2), List(3),
+	//	  Nil, List(2, 3), List(2))												
+	}
+	/**
+	 * 
+	 * Replicate given Monad
+	 * 
+	 * <pre>{@code 
+	 * 	
+	 *   Simplex<Optional<Integer>> applied =monad(Optional.of(2)).replicateM(5).simplex();
+		 assertThat(applied.unwrap(),equalTo(Optional.of(Arrays.asList(2,2,2,2,2))));
+		 
+		 }</pre>
+	 * 
+	 * 
+	 * @param times number of times to replicate
+	 * @return Replicated Monad
+	 */
+	public final <NT,R> Monad<NT,R> replicateM(int times){
+		
+		return monad.replicateM(times);		
+	}
+	/**
+	 * Perform a reduction where NT is a (native) Monad type
+	 * e.g. 
+	 * <pre>{@code 
+	 * Monoid<Optional<Integer>> optionalAdd = Monoid.of(Optional.of(0), (a,b)-> Optional.of(a.get()+b.get()));
+		
+		assertThat(monad(Stream.of(2,8,3,1)).reduceM(optionalAdd).unwrap(),equalTo(Optional.of(14)));
+		}</pre>
+	 * 
+	 * 
+	 * @param reducer
+	 * @return
+	 */
+	public final <NT,R> Monad<NT,R> reduceM(Monoid<NT> reducer){
+	//	List(2, 8, 3, 1).foldLeftM(0) {binSmalls} -> Optional(14)
+	//	convert to list Optionals
+		
+		return monad.reduceM(reducer);		
+	}
+	
+	
+	
+	@Override
+    public String toString() {
+        return String.format("AnyM(%s)", monad );
+    }
 	
 }

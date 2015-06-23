@@ -7,11 +7,12 @@ import javaslang.Tuple;
 import org.junit.Test;
 
 public class TotallyLazyTest {
-	@Test
+/**	@Test
 	public void testFromTotallyLazyλ() {
 		assertThat(FromTotallyLazy.λ((Integer a)->a*100).apply(2),is(200));
 		
 	}
+	
 	@Test
 	public void testFromTotallyLazyλ2(){
 		assertThat(FromTotallyLazy.λ2((Integer a,Integer b)->a*b).curried().apply(100).apply(5),is(500));
@@ -47,5 +48,5 @@ public class TotallyLazyTest {
 	@Test
 	public void testFromTotallyLazyTuple5(){
 		assertThat(FromTotallyLazy.tuple(com.googlecode.totallylazy.Quintuple.quintuple(1, 2, 3, 4,5)),is(Tuple.of(1,2,3,4,5)));
-	}
+	}**/
 }

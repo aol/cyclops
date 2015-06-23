@@ -24,7 +24,7 @@ public class LiftTest {
 		val add = Monads.liftM2(this::add);
 		
 		AnyM<Integer> result = add.apply(anyM(Switch.enable(2)), anyM(Switch.enable(3)));
-		assertThat(result.<Switch<Integer>>unwrapMonad().get(),equalTo(5));
+		assertThat(result.<Switch<Integer>>unwrap().get(),equalTo(5));
 	}
 	
 	
@@ -34,7 +34,7 @@ public class LiftTest {
 		val divide = Monads.liftM2(this::add);
 		
 		AnyM<Integer> result = divide.apply(anyM(Switch.enable(2)), anyM(Switch.disable(4)));
-		assertThat(result.<Switch<Integer>>unwrapMonad().isDisabled(),equalTo(true));
+		assertThat(result.<Switch<Integer>>unwrap().isDisabled(),equalTo(true));
 	}
 	
 	

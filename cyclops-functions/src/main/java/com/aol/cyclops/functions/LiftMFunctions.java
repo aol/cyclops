@@ -54,7 +54,7 @@ public class LiftMFunctions {
 	 * @return
 	 */
 	public static <U1,U2,R> BiFunction<AnyM<U1>,AnyM<U2>,AnyM<R>> liftM2(BiFunction<U1,U2,R> fn){
-		return (u1,u2) -> u1.bind( input1 -> u2.map(input2 -> fn.apply(input1,input2)  ).unwrap()).anyM();
+		return (u1,u2) -> u1.bind( input1 -> u2.map(input2 -> fn.apply(input1,input2)  ).unwrap());
 	}
 	
 	/**
@@ -75,7 +75,7 @@ public class LiftMFunctions {
 	public static <U1,U2,U3,R> TriFunction<AnyM<U1>,AnyM<U2>,AnyM<U3>,AnyM<R>> liftM3(TriFunction<U1,U2,U3,R> fn){
 		return (u1,u2,u3) -> u1.bind( input1 -> 
 									u2.bind(input2 -> 
-										u3.map(input3->fn.apply(input1,input2,input3)  )).unwrap()).anyM();
+										u3.map(input3->fn.apply(input1,input2,input3)  )).unwrap());
 	}
 	
 	/**
@@ -89,7 +89,7 @@ public class LiftMFunctions {
 		return (u1,u2,u3,u4) -> u1.bind( input1 -> 
 										u2.bind(input2 -> 
 												u3.bind(input3->
-														u4.map(input4->fn.apply(input1,input2,input3,input4)  ))).unwrap()).anyM();
+														u4.map(input4->fn.apply(input1,input2,input3,input4)  ))).unwrap());
 	}
 	
 	/**
@@ -104,7 +104,7 @@ public class LiftMFunctions {
 										u2.bind(input2 -> 
 												u3.bind(input3->
 														u4.bind(input4->
-															u5.map(input5->fn.apply(input1,input2,input3,input4,input5)  )))).unwrap()).anyM();
+															u5.map(input5->fn.apply(input1,input2,input3,input4,input5)  )))).unwrap());
 	}
 	
 	/**
@@ -114,7 +114,7 @@ public class LiftMFunctions {
 	 * @return Lifted function 
 	 */
 	public static <U1,U2,R> Function<AnyM<U1>,Function<AnyM<U2>,AnyM<R>>> liftM2(Function<U1,Function<U2,R>> fn){
-		return u1 -> u2 -> u1.bind( input1 -> u2.map(input2 -> fn.apply(input1).apply(input2)  ).unwrap()).anyM();
+		return u1 -> u2 -> u1.bind( input1 -> u2.map(input2 -> fn.apply(input1).apply(input2)  ).unwrap());
 
 	}
 	/**
@@ -126,7 +126,7 @@ public class LiftMFunctions {
 	public static <U1,U2,U3,R> Function<AnyM<U1>,Function<AnyM<U2>,Function<AnyM<U3>,AnyM<R>>>> liftM3(Function<U1,Function<U2,Function<U3,R>>> fn){
 		return u1 -> u2 ->u3 -> u1.bind( input1 -> 
 									u2.bind(input2 -> 
-										u3.map(input3->fn.apply(input1).apply(input2).apply(input3)  )).unwrap()).anyM();
+										u3.map(input3->fn.apply(input1).apply(input2).apply(input3)  )).unwrap());
 	}
 	
 	/**
@@ -140,7 +140,7 @@ public class LiftMFunctions {
 		return u1->u2->u3->u4 -> u1.bind( input1 -> 
 										u2.bind(input2 -> 
 												u3.bind(input3->
-														u4.map(input4->fn.apply(input1).apply(input2).apply(input3).apply(input4)  ))).unwrap()).anyM();
+														u4.map(input4->fn.apply(input1).apply(input2).apply(input3).apply(input4)  ))).unwrap());
 	}
 	/**
 	 * Lift a Curried Function (5 levels a->b->c->d->e->fn.apply(a,b,c,d,e) ) into Monadic form
@@ -154,6 +154,6 @@ public class LiftMFunctions {
 										   u2.bind(input2 -> 
 												u3.bind(input3->
 														u4.bind(input4->
-															u5.map(input5->fn.apply(input1).apply(input2).apply(input3).apply(input4).apply(input5)  )))).unwrap()).anyM();
+															u5.map(input5->fn.apply(input1).apply(input2).apply(input3).apply(input4).apply(input5)  )))).unwrap());
 	}
 }

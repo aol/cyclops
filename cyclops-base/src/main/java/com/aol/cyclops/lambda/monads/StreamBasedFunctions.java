@@ -100,6 +100,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 		assertThat(result.get(1),equalTo(6));
 		assertThat(result.get(2),equalTo(2.0));
 		}
+		</pre>
 		
 		 * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was one value
 	 * To reduce over the values on the list, called streamedMonad() first. I.e. streamedMonad().collect(collectors);
@@ -241,7 +242,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 											.cycle(Reducers.toCountInt(),3)
 											.collect(Collectors.toList());
 		//is asList(3,3,3);
-	  }
+	  }</pre>
 	 * 
 	 * @param m Monoid to be used in reduction
 	 * @param times Number of times value should be repeated
@@ -266,7 +267,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	    //is asList(Optional.of(1),Optional.of(2),Optional.of(1),Optional.of(2)	));
 	
 	 * 
-	 * }
+	 * }</pre>
 	 * 
 	 * 
 	 * 
@@ -303,7 +304,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * Stream<List<Integer>> zipped = asMonad(Stream.of(1,2,3)).zip(asMonad(Optional.of(2)), 
 													(a,b) -> Arrays.asList(a,b));
 	 * // [[1,2]]
-	 * }
+	 * }</pre>
 	 * 
 	 * @param second Monad to zip with
 	 * @param zipper Zipping function
@@ -321,7 +322,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 													(a,b) -> Arrays.asList(a,b));
 													
 		//[[1,2][2,3][3,4]]											
-	 * }
+	 * }</pre>
 	 * 
 	 * @param second Stream to zip with
 	 * @param zipper  Zip funciton
@@ -331,7 +332,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 		return monad((Stream)LazySeq.of(stream().iterator()).zip(LazySeq.of(second.iterator()), zipper).stream());
 	}
 	/**
-	 * Create a sliding view over this monad
+	 * Create a sliding view over this monad's contents
 	 * 
 	 * @param windowSize Size of sliding window
 	 * @return Stream with sliding view over monad
@@ -353,7 +354,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 		assertThat(list.get(0),hasItems(1,2,3));
 		assertThat(list.get(1),hasItems(4,5,6));
 		
-		}
+		}</pre>
 	 * 
 	 * @param groupSize Size of each Group
 	 * @return Stream with elements grouped by size
@@ -365,7 +366,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * 
 	 * <pre>{@code 
 	 * assertTrue(monad(Stream.of(1,2,3,4)).startsWith(Arrays.asList(1,2,3)));
-	 * }
+	 * }</pre>
 	 * 
 	 * @param iterable
 	 * @return True if Monad starts with Iterable sequence of data
@@ -375,8 +376,8 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 		
 	}
 	/**
-	 * 	<pre>{@code assertTrue(monad(Stream.of(1,2,3,4)).startsWith(Arrays.asList(1,2,3).iterator())) }
-
+	 * 	<pre>{@code assertTrue(monad(Stream.of(1,2,3,4)).startsWith(Arrays.asList(1,2,3).iterator())) }</pre>
+ 		
 	 * @param iterator
 	 * @return True if Monad starts with Iterators sequence of data
 	 */
@@ -394,7 +395,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 											.<Stream<Integer>,Integer>streamedMonad()
 											.distinct()
 											.collect(Collectors.toList());
-		}
+		}</pre>
 	 */
 	default Monad<Stream<T>,T> distinct(){
 		return monad(LazySeq.of(stream().iterator()).distinct().stream());
@@ -407,7 +408,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * 	assertEquals(asList("", "a", "ab", "abc"),monad(Stream.of("a", "b", "c")).scanLeft(Reducers.toString("")).toList());
             
             }
-	 * 
+	 * </pre>
 	 * @param monoid
 	 * @return
 	 */
@@ -424,9 +425,9 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 *    monad(Optional.of(Arrays.asList(1,2,3))).sorted()  // Monad[Stream[List[1,2,3]]]
 	 *    
 	 *     monad(Optional.of(Arrays.asList(1,2,3))).streamedMonad().sorted() // Monad[Stream[1,2,3]]
-	 *  }
+	 *  }</pre>
 	 * 
-	 *  <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).sorted().toList(),equalTo(Arrays.asList(3,4,6,7))); }
+	 *  <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).sorted().toList(),equalTo(Arrays.asList(3,4,6,7))); }</pre>
 	 * 
 	 */
 	default Monad<Stream<T>,T> sorted(){
@@ -442,7 +443,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 *    monad(Optional.of(Arrays.asList(1,2,3))).sorted( (a,b)->b-a)  // Monad[Stream[List[1,2,3]]]
 	 *    
 	 *     monad(Optional.of(Arrays.asList(1,2,3))).streamedMonad().sorted( (a,b)->b-a) // Monad[Stream[3,2,1]]
-	 *  }
+	 *  }</pre>
 	 * 
 
 	 * 
@@ -453,7 +454,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 		return monad(stream().sorted(c));   
 	}
 	/**
-	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).skip(2).toList(),equalTo(Arrays.asList(6,7))); }
+	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).skip(2).toList(),equalTo(Arrays.asList(6,7))); }</pre>
 	 * 
 	 * NB to access nested collections in non-Stream monads as a stream use streamedMonad() first
 	 * 
@@ -470,7 +471,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * 
 	 * <pre>{@code
 	 * assertThat(monad(Stream.of(4,3,6,7)).sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
-	 * }
+	 * }</pre>
 	 * 
 	 * @param p Predicate to skip while true
 	 * @return Monad converted to Stream with elements skipped while predicate holds
@@ -484,7 +485,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * 
 	 * NB to access nested collections in non-Stream monads as a stream use streamedMonad() first
 	 * 
-	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));}
+	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));}</pre>
 	 * 
 	 * 
 	 * @param p Predicate to skip until true
@@ -498,7 +499,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	/**
 	 * NB to access nested collections in non-Stream monads as a stream use streamedMonad() first
 	 * 
-	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).limit(2).toList(),equalTo(Arrays.asList(4,3)));}
+	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).limit(2).toList(),equalTo(Arrays.asList(4,3)));}</pre>
 	 * 
 	 * @param num Limit element size to num
 	 * @return Monad converted to Stream with elements up to num
@@ -510,7 +511,10 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	/**
 	 *  NB to access nested collections in non-Stream monads as a stream use streamedMonad() first
 	 * 
-	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));}
+	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7))
+	 * 										.sorted().limitWhile(i->i<6).toList(),
+	 * 								equalTo(Arrays.asList(3,4)));
+	 * }</pre>
 	 * 
 	 * @param p Limit while predicate is true
 	 * @return Monad converted to Stream with limited elements
@@ -523,7 +527,11 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	/**
 	 * NB to access nested collections in non-Stream monads as a stream use streamedMonad() first
 	 * 
-	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3))); }
+	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7))
+	 * 									.limitUntil(i->i==6).toList(),
+	 * 									equalTo(Arrays.asList(4,3))); 
+	 * }
+	 * </pre>
 	 * 
 	 * @param p Limit until predicate is true
 	 * @return Monad converted to Stream with limited elements
@@ -534,7 +542,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	}
 	/**
 	 * Transform the contents of a Monad into a Monad wrapping a Stream e.g.
-	 * Turn an <pre>{@code Optional<List<Integer>>  into Stream<Integer> }
+	 * Turn an <pre>{@code Optional<List<Integer>>  into Stream<Integer> }</pre>
 	 * 
 	 * <pre>{@code
 	 * List<List<Integer>> list = monad(Optional.of(Arrays.asList(1,2,3,4,5,6)))
@@ -546,7 +554,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 		assertThat(list.get(0),hasItems(1,2,3));
 		assertThat(list.get(1),hasItems(4,5,6));
 	 * 
-	 * }
+	 * }</pre>
 	 * 
 	 * 
 	 * @return A Monad that wraps a Stream

@@ -10,13 +10,14 @@ import javaslang.control.Either;
 import javaslang.control.Left;
 import javaslang.control.Option;
 import javaslang.control.Right;
-
+/**
 import com.googlecode.totallylazy.Pair;
 import com.googlecode.totallylazy.Quadruple;
 import com.googlecode.totallylazy.Quintuple;
 import com.googlecode.totallylazy.Triple;
-
+**/
 public class FromTotallyLazy {
+	/**
 	public static <T,R>  Function1<T,R> λ(com.googlecode.totallylazy.Function<T,R> fn){
 		return (t) -> fn.apply(t);
 	}
@@ -46,4 +47,5 @@ public class FromTotallyLazy {
 	public static <T1,T2,T3,T4,T5> Tuple5<T1,T2,T3,T4,T5> tuple(Quintuple<T1,T2,T3,T4,T5> t){
 		return new Tuple5(t.first(),t.second(),t.third(),t.fourth(),t.fifth());
 	}
+	**/
 }

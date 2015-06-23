@@ -109,6 +109,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 * @param fn Function that accepts the Case for Case classes and returns the output of that builder
 	 * @return Pattern Matching Builder
 	 */
+	@Deprecated
 	public final MatchingInstance<? extends Object,X> whenValues(Function<CheckTypeAndValues<? extends Object>,MatchingInstance<? extends Object,X>> fn){
 		CheckTypeAndValues cse = new CheckTypeAndValues(new PatternMatcher());
 		return fn.apply(cse);
@@ -124,6 +125,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 * @param fn Function that accepts a Simplex Element based Pattern Matching Builder and returns it's output
 	 * @return Pattern Matching Builder
 	 */
+	@Deprecated
 	public final MatchingInstance<? extends Object,X> when(Function<ElementCase<X>,MatchingInstance<? extends Object,X>>fn){
 		ElementCase<X> cse = new ElementCase(new PatternMatcher());
 		return fn.apply(cse);
@@ -151,6 +153,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 * @param fn a function that accepts a Stream based pattern matching builder
 	 * @return Pattern Matching Builder
 	 */
+	@Deprecated
 	public final  MatchingInstance<T,X> whenStream(Function<CaseBeingBuilt,MatchingInstance<T,X>> fn){
 		StreamCase cse = new StreamCase(new PatternMatcher());
 		return fn.apply(cse);

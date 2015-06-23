@@ -40,7 +40,6 @@ public class AsGenericMonad {
 	 *  flatMap operations on the duck typed Monad can return any Monad type
 	 *  
 	 * 
-	 * @param anyM to wrap
 	 * @return Duck typed Monad
 	 */
 	public static <MONAD,T> Monad<MONAD,T> asMonad(Object monad){
@@ -77,8 +76,6 @@ public class AsGenericMonad {
 	 * flatMap operations on the duck typed Monad can return any Monad type
 	 * 
 	 * 
-	 * @param anyM
-	 *            to wrap
 	 * @return Duck typed Monad
 	 */
 	public static <T> Monad<Stream<T>, T> monad(Streamable<T> monad) {
@@ -114,7 +111,6 @@ public class AsGenericMonad {
 	 *  flatMap operations on the duck typed Monad can return any Monad type
 	 *  
 	 * 
-	 * @param anyM to wrap
 	 * @return Duck typed Monad
 	 */	
 	public static <T> Monad<Stream<T>,T> monad(Stream<T> monad){
@@ -149,7 +145,6 @@ public class AsGenericMonad {
 	 *  flatMap operations on the duck typed Monad can return any Monad type
 	 *  
 	 * 
-	 * @param anyM to wrap
 	 * @return Duck typed Monad
 	 */
 	public static <T> Monad<Optional<T>,T> monad(Optional<T> monad){
@@ -184,7 +179,6 @@ public class AsGenericMonad {
 	 *  flatMap operations on the duck typed Monad can return any Monad type
 	 *  
 	 * 
-	 * @param anyM to wrap
 	 * @return Duck typed Monad
 	 */
 	
@@ -220,7 +214,6 @@ public class AsGenericMonad {
 	 *  flatMap operations on the duck typed Monad can return any Monad type
 	 *  
 	 * 
-	 * @param anyM to wrap
 	 * @return Duck typed Monad
 	 */
 	public static <T> Monad<Stream<T>,T> monad(Collection<T> monad){
@@ -255,7 +248,6 @@ public class AsGenericMonad {
 	 *  flatMap operations on the duck typed Monad can return any Monad type
 	 *  
 	 * 
-	 * @param anyM to wrap
 	 * @return Duck typed Monad
 	 */
 	public static <T> Monad<Stream<T>,T> monad(Iterable<T> monad){
@@ -289,7 +281,6 @@ public class AsGenericMonad {
 	 *  flatMap operations on the duck typed Monad can return any Monad type
 	 *  
 	 * 
-	 * @param anyM to wrap
 	 * @return Duck typed Monad
 	 */
 	public static <T> Monad<Stream<T>,T> monad(Iterator<T> monad){
@@ -323,7 +314,7 @@ public class AsGenericMonad {
 	 *  flatMap operations on the duck typed Monad can return any Monad type
 	 *  
 	 * 
-	 * @param anyM to wrap
+	 *
 	 * @return Duck typed Monad
 	 */
 	public static <T> Monad<Stream<T>,T> monad(T... values){
@@ -358,7 +349,6 @@ public class AsGenericMonad {
 	 *  flatMap operations on the duck typed Monad can return any Monad type
 	 *  
 	 * 
-	 * @param anyM to wrap
 	 * @return Duck typed Monad
 	 */
 	public static <T> Monad<?,T> toMonad(Object monad){
@@ -395,7 +385,6 @@ public class AsGenericMonad {
 	 *  flatMap operations on the duck typed Monad can return any Monad type
 	 *  
 	 * 
-	 * @param anyM to wrap
 	 * @return Duck typed Monad
 	 */
 	public static <T,MONAD> Monad<T,MONAD> convertToMonad(Object monad){

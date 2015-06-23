@@ -19,11 +19,12 @@ public class AsAnyM extends AsGenericMonad{
 	 * <pre>
 	 * {@code 
 	 *  Monad<Stream<Integer>,Integer> stream;
+	 * }</pre>
 	 * 
 	 * we can write
-	 * 
+	 * <pre>{@code
 	 *   AnyM<Integer> stream;
-	 * }
+	 * }</pre>
 	 *  
 	 * The wrapped Monaad should have equivalent methods for
 	 * 
@@ -68,7 +69,7 @@ public class AsAnyM extends AsGenericMonad{
 	 * we can write
 	 * 
 	 *   AnyM<Integer> stream;
-	 * }
+	 * }</pre>
 	 *  
 	 * The wrapped Monaad should have equivalent methods for
 	 * 
@@ -114,7 +115,7 @@ public class AsAnyM extends AsGenericMonad{
 	 * 
 	 *   AnyM<Integer> stream;
 	 * }
-	 *  
+	 *  </pre>
 	 * The wrapped Monaad should have equivalent methods for
 	 * 
 	 * <pre>
@@ -158,7 +159,7 @@ public class AsAnyM extends AsGenericMonad{
 	 * we can write
 	 * 
 	 *   AnyM<Integer> opt;
-	 * }
+	 * }</pre>
 	 *  
 	 * The wrapped Monaad should have equivalent methods for
 	 * 
@@ -203,7 +204,7 @@ public class AsAnyM extends AsGenericMonad{
 	 * we can write
 	 * 
 	 *   AnyM<Integer> future;
-	 * }
+	 * }</pre>
 	 *  
 	 * The wrapped Monaad should have equivalent methods for
 	 * 
@@ -248,7 +249,7 @@ public class AsAnyM extends AsGenericMonad{
 	 * we can write
 	 * 
 	 *   AnyM<Integer> stream;
-	 * }
+	 * }</pre>
 	 *  
 	 * The wrapped Monaad should have equivalent methods for
 	 * 
@@ -293,7 +294,7 @@ public class AsAnyM extends AsGenericMonad{
 	 * we can write
 	 * 
 	 *   AnyM<Integer> stream;
-	 * }
+	 * }</pre>
 	 *  
 	 * The wrapped Monaad should have equivalent methods for
 	 * 
@@ -338,7 +339,7 @@ public class AsAnyM extends AsGenericMonad{
 	 * we can write
 	 * 
 	 *   AnyM<Integer> stream;
-	 * }
+	 * }</pre>
 	 *  
 	 * The wrapped Monaad should have equivalent methods for
 	 * 
@@ -383,7 +384,7 @@ public class AsAnyM extends AsGenericMonad{
 	 * we can write
 	 * 
 	 *   AnyM<Integer> stream;
-	 * }
+	 * }</pre>
 	 *  
 	 * The wrapped Monaad should have equivalent methods for
 	 * 
@@ -411,11 +412,10 @@ public class AsAnyM extends AsGenericMonad{
 	 *  flatMap operations on the duck typed Monad can return any Monad type
 	 *  
 	 * 
-	 * @param anyM to wrap
 	 * @return Duck typed Monad
 	 */
 	public static <T> AnyM<T> anyM(T... values){
-		return anyM(Stream.of(values)).anyM();
+		return anyM(Stream.of(values));
 	}
 	/**
 	 * Create a Monad wrapper from an Object
@@ -428,7 +428,7 @@ public class AsAnyM extends AsGenericMonad{
 	 * we can write
 	 * 
 	 *   AnyM<Integer> stream;
-	 * }
+	 * }</pre>
 	 *  
 	 * The wrapped Monaad should have equivalent methods for
 	 * 
@@ -475,7 +475,7 @@ public class AsAnyM extends AsGenericMonad{
 	 * we can write
 	 * 
 	 *   AnyM<Integer> stream;
-	 * }
+	 * }</pre>
 	 *  
 	 * The wrapped Monaad should have equivalent methods for
 	 * 

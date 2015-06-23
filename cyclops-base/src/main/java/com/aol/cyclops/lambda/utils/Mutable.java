@@ -16,7 +16,7 @@ import lombok.ToString;
  *<pre>{@code 
  * String var = "hello";
  * Runnable r = () -> var ="world";
- * }
+ * }</pre>
  * 
  * Won't compile because var is treated as if it is final.
  * This can be 'worked around' by using a wrapping object or array.
@@ -25,7 +25,7 @@ import lombok.ToString;
  * <pre>{@code
  * Mutable<String> var =  Mutable.of("hello");
  * Runnable r = () -> var.set("world");
- * }
+ * }</pre>
  * 
  * @author johnmcclean
  *
