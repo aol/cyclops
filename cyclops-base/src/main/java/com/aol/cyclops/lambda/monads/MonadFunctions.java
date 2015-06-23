@@ -33,14 +33,15 @@ public interface MonadFunctions<MONAD,T>{
 	 * Simplex<Integer> applied =monad(Stream.of(1,2,3)).applyM(monad(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2))).simplex();
 	
 	 	assertThat(applied.toList(),equalTo(Arrays.asList(2, 2, 3, 4, 4, 6)));
-	 }
+	 }</pre>
 	 * 
 	 * with Optionals 
 	 * <pre>{@code
 	 * 
-	 *  Simplex<Integer> applied =monad(Optional.of(2)).applyM(monad(Optional.of( (Integer a)->a+1)) ).simplex();
-		assertThat(applied.toList(),equalTo(Arrays.asList(3)));}
-	 * 
+	 *  AnyM<Integer> applied =monad(Optional.of(2)).applyM(monad(Optional.of( (Integer a)->a+1)) ).anyM();
+		assertThat(applied.toList(),equalTo(Arrays.asList(3)));
+		}
+	 * </pre>
 	 * @param fn
 	 * @return
 	 */
@@ -60,7 +61,7 @@ public interface MonadFunctions<MONAD,T>{
 	 *    									.simplex();
 	 * 
 	 * //results in Stream.of(Stream.of(1),Stream.of(2),Stream.of(())
-	 * }
+	 * }</pre>
 	 * 
 	 * @param fn
 	 * @return
@@ -86,7 +87,7 @@ public interface MonadFunctions<MONAD,T>{
 	 *   Simplex<Optional<Integer>> applied =monad(Optional.of(2)).replicateM(5).simplex();
 		 assertThat(applied.unwrap(),equalTo(Optional.of(Arrays.asList(2,2,2,2,2))));
 		 
-		 }
+		 }</pre>
 	 * 
 	 * 
 	 * @param times number of times to replicate
@@ -105,7 +106,7 @@ public interface MonadFunctions<MONAD,T>{
 	 * Monoid<Optional<Integer>> optionalAdd = Monoid.of(Optional.of(0), (a,b)-> Optional.of(a.get()+b.get()));
 		
 		assertThat(monad(Stream.of(2,8,3,1)).reduceM(optionalAdd).unwrap(),equalTo(Optional.of(14)));
-		}
+		}</pre>
 	 * 
 	 * 
 	 * @param reducer

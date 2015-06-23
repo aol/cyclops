@@ -447,7 +447,7 @@ public class AnyMTest {
 	@Test
 	public void testApplyMEmptyOptional(){
 		AnyM<Integer> empty= 	monad(Optional.empty()).anyM();
-		AnyM<Integer> applied =	empty.applyM(anyM(Optional.of((Integer a)->a+1)) ).anyM();
+		AnyM<Integer> applied =	empty.applyM(anyM(Optional.of((Integer a)->a+1)) );
 	
 		assertThat(applied.toList(),equalTo(Arrays.asList()));
 	 

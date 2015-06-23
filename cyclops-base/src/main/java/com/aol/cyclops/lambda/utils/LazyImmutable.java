@@ -20,7 +20,7 @@ import lombok.ToString;
 		LazyImmutable<T> lazy = LazyImmutable.def();
 		return () -> lazy.computeIfAbsent(s);
 	}
- * }
+ * }</pre>
  * 
  * Has map and flatMap methods, but is not a Monad (see example usage above for why, it is the initial mutation that is valuable).
  * 

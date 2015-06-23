@@ -131,7 +131,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 	/**
 	 * @return This monad coverted to an Optional
 	 * 
-	 * Streams will be converted into <pre>{@code Optional<List<T>> }
+	 * Streams will be converted into <pre>{@code Optional<List<T>> }</pre>
 	 * 
 	 */
 	default <T> Optional<T> toOptional(){
@@ -180,7 +180,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 	 * List<Integer> result = monad(Stream.of(1,2,3,4)).<Integer>aggregate(monad(Optional.of(5))).toList();
 		
 		assertThat(result,equalTo(Arrays.asList(1,2,3,4,5)));
-		}
+		}</pre>
 	 * 
 	 * @param next Monad to aggregate content with
 	 * @return Aggregated Monad
@@ -230,15 +230,14 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 	 * 
 	 * E.g.
 	 * <pre>{@code 
-	 * 		Monad<Stream<String>,String> becomes
-	 * 		Simplex<String>
-	 * }
-	 * To get back to <pre>{@code Stream<String> } use
+	 * 		Monad<Stream<String>,String> becomes Simplex<String>
+	 * }</pre>
+	 * To get back to <pre>{@code Stream<String> }</pre> use
 	 * 
 	 * <pre>{@code
 	 *   
 	 * 	simplex.<Stream<String>>.monad();  
-	 * }
+	 * }</pre>
 	 * 
 	 */
 	default <X> AnyM<X> anyM(){
@@ -255,7 +254,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 	 * we can write
 	 * 
 	 *   AnyM<Integer> stream;
-	 * }
+	 * }</pre>
 	 *  
 	 * The wrapped Monaad should have equivalent methods for
 	 * 
@@ -283,7 +282,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 	 *  flatMap operations on the duck typed Monad can return any Monad type
 	 *  
 	 * 
-	 * @param anyM to wrap
+	 * @param o  to wrap
 	 * @return Duck typed Monad
 	 */
 	public static <MONAD,T> Monad<MONAD,T> of(Object o){

@@ -28,6 +28,7 @@ public interface Monoid<T> {
 	 * An element that when provided as a parameter to the combiner with another value, results
 	 * in the other value being returned
 	 * e.g.
+	 * <pre>
 	 *  0  + 1  = 1
 	 *  
 	 *  0 is zero()
@@ -39,7 +40,7 @@ public interface Monoid<T> {
 	 *   "" + "hello" = "hello"
 	 *   
 	 *  "" is zero()
-	 *  
+	 *  </pre>
 	 * @return
 	 */
 	T zero();
@@ -67,7 +68,7 @@ public interface Monoid<T> {
 	 *										.mapReduce(Stream.of(1,2,3,4)); 
 	 *	 
 	 *	assertThat(result,equalTo(tuple(10,24)));
-	 *  }
+	 *  }</pre>
 	 * 
 	 * @param toReduce Stream to reduce
 	 * @return reduced value

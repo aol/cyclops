@@ -2,19 +2,20 @@ package com.aol.cyclops.simplereact;
 
 import java.util.stream.Stream;
 
+import javax.sound.midi.Sequence;
+
 import org.jooq.lambda.Seq;
 
-import com.aol.simple.react.stream.lazy.LazyFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.google.common.collect.FluentIterable;
-import com.googlecode.totallylazy.Sequence;
-import com.googlecode.totallylazy.Sequences;
 import com.nurkiewicz.lazyseq.LazySeq;
 
 public class ToStream {
+	/**
 	public static <T> Sequence<T> toTotallyLazy(FutureStream<T> s) {
 		return Sequences.sequence(s);
-	}
+	}**/
 	public static <T> FluentIterable<T> toFluentIterable(FutureStream<T> s){
 		return FluentIterable.from(s);
 	}
@@ -28,7 +29,7 @@ public class ToStream {
 	}
 
 	public static <T> LazyFutureStream<T> toFutureStream(FutureStream<T> s) {
-		return LazyFutureStream.futureStream(s.iterator());
+		return LazyFutureStream.of(s.iterator());
 	}
 
 	public static <T> javaslang.collection.Stream<T> toJavasLang(
