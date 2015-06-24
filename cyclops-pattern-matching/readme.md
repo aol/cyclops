@@ -2,7 +2,7 @@
 
 Powerful Pattern Matching for Java. Use lambda's, hamcrest or scala-like wildcards!
 
-![untitled drawing 1](https://cloud.githubusercontent.com/assets/9964792/8333960/457b3d1e-1a8d-11e5-8662-7ad37623794e.png)
+![pattern matching](https://cloud.githubusercontent.com/assets/9964792/8334707/3827c1e2-1a91-11e5-87b1-604905a75ecb.png)
   
 # How to get Cyclops Pattern Matching 
               
