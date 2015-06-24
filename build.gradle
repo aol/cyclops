@@ -24,40 +24,4 @@ test {
 
 subprojects {
 	
-}/**
-		
-		apply plugin: 'java'
-		apply plugin: 'maven-publish'
-		sourceCompatibility = 1.8
-		targetCompatibility = 1.8
-		version = '3.0.0'
-		publishing {
-			
-			publications {
-				maven(MavenPublication) {
-					groupId 'com.aol.advertising.cyclops'
-					artifactId "$project.name"
-					version "$version"
-					
-
-					from components.java
-				}
-			}
-		}
-		publishing {
-			repositories {
-				maven {
-					// change to point to your repo, e.g. http://my.org/repo
-					url "http://cmmaven.cm.aol.com:8081/nexus/content/repositories/aol-advertising"
-				}
-			}
-		}
-		jar {
-			manifest {
-				attributes 'Implementation-Title': "$project.name", 'Implementation-Version': version
-			}
-		}
-		
-		
 }
-**/
