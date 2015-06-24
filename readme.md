@@ -2,6 +2,10 @@
 
 Powerful, modular extensions for Java 8. Take what you need or want.
 
+![cyclops 1](https://cloud.githubusercontent.com/assets/9964792/8341880/19f980be-1ac0-11e5-9904-444405b4b4f1.png)
+
+# Cyclops Modules
+
 * [Extensible For Comprehensions](https://github.com/aol/cyclops/wiki/Extensible-For-Comprehensions-for-Java-8)
 * [Pattern Matching](https://github.com/aol/cyclops/wiki/Pattern-matching-:-Pattern-Matching-for-Java-8)
 * [Advanced Monadic (Stream, Optional etc) cross-type operations](https://github.com/aol/cyclops/wiki/Monad-&-Stream-utilities)
