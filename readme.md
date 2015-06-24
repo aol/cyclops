@@ -299,4 +299,9 @@ Integrates
 * simple-react : concurrent streaming library
 
 
+## Attribution
+
+* Trampoline pic by Mikefifield Licenced under  [Creative Commons Attribution 3.0 Unported](https://creativecommons.org/licenses/by/3.0/deed.en) : https://commons.wikimedia.org/wiki/File:Rebounder01.jpg
+* Feature Toggle pic by Jason Zack Licenced under  [Creative Commons Attribution-Share Alike 2.5 Generic](https://creativecommons.org/licenses/by-sa/2.5/deed.en) : https://commons.wikimedia.org/wiki/File:On-Off_Switch.jpg 
+
 
