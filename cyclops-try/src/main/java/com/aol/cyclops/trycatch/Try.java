@@ -212,7 +212,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, St
 		}catch(Throwable t){
 			if(classes.length==0)
 				return Failure.of((X)t);
-			val error = Stream.of(classes).filter(c -> t.getClass().isAssignableFrom(c)).findFirst();
+			val error = Stream.of(classes).filter(c -> c.isAssignableFrom(t.getClass())).findFirst();
 			if(error.isPresent())
 				return Failure.of((X)t);
 			else
