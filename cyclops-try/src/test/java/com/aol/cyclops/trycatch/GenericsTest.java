@@ -1,6 +1,7 @@
 package com.aol.cyclops.trycatch;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -10,7 +11,7 @@ public class GenericsTest {
 
 	@Test
 	public void doIt() {
-		Try.catchExceptions(NullPointerException.class, IOException.class)
+		Try.catchExceptions(NullPointerException.class,IOException.class)
 				.init(() -> new BufferedReader(new FileReader("file.txt")))
 				.tryWithResources(this::read)
 				.onFail(NullPointerException.class, System.err::println)

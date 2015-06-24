@@ -20,7 +20,7 @@ public class AsValue {
 			public Child(int val,int nextVal) { super(val); this.nextVal = nextVal;}
 		}
 			
-	 * }
+	 * }</pre>
 	 * @param toCoerce Object to coerce
 	 * @return ValueObject that delegates calls to the supplied object
 	 */

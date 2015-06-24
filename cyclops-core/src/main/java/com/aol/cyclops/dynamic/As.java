@@ -120,7 +120,7 @@ public interface As {
 	 * map(F f)
 	 * filter(P p)
 	 * flatMap(F<x,MONAD> fm)
-	 * }
+	 * }</pre>
 	 * 
 	 * Where F is a Functional Interface of any type that takes a single parameter and returns
 	 * a result.	 
@@ -145,7 +145,7 @@ public interface As {
 	 * we can write
 	 * 
 	 *   AnyM<Integer> stream;
-	 * }
+	 * }</pre>
 	 *  
 	 * The wrapped Monaad should have equivalent methods for
 	 * 
@@ -173,7 +173,6 @@ public interface As {
 	 *  flatMap operations on the duck typed Monad can return any Monad type
 	 *  
 	 * 
-	 * @param anyM to wrap
 	 * @return Duck typed Monad
 	 */
 	public static <T> AnyM<T> asAnyM(Object monad){
@@ -245,7 +244,7 @@ public interface As {
 	 * <pre>
 	 * {@code
 	 * 		return As.asMore(()->loop(times-1,sum+times));
-	 * }
+	 * }</pre>
 	 * 
 	 * @param trampoline Next stage in computation
 	 * @return In progress Trampoline
