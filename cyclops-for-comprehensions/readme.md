@@ -1,9 +1,21 @@
 # Cyclops for comprehensions
 
+Simplify deeply nested looping (over Collections, even  Streams, Optionals and more!).
+
+![for comprehensions](https://cloud.githubusercontent.com/assets/9964792/7887680/c6ac127c-062a-11e5-9ad7-ad4553761e8d.png)
+
+# Getting Cyclops For Comprehensions
+
+* [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-for-comprehensions/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-for-comprehensions)
+* [Javadoc for Cyclops For Comprehensions](http://www.javadoc.io/doc/com.aol.cyclops/cyclops-for-comprehensions/4.0.2)
+* [Wiki for Extensible For Comprehensions](https://github.com/aol/cyclops/wiki/Extensible-For-Comprehensions-for-Java-8)
+
+# Overview of Cyclops For Comprehensions
+
 Two supported formats
 
-1. scala like syntax
-2. do nototation
+1. do nototation
+2. scala like syntax
 
 
 
