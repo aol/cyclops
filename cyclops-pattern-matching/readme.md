@@ -6,11 +6,13 @@ Powerful Pattern Matching for Java. Use lambda's, hamcrest or scala-like wildcar
   
 # How to get Cyclops Pattern Matching 
               
-# Pattern Matching Structure & Examples
+
 
 * [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-pattern-matching/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-pattern-matching)
 * [Javadoc for Cyclops Pattern Matching](http://www.javadoc.io/doc/com.aol.cyclops/pattern-matching/4.0.3)
 * [Pattern Matching Wiki](https://github.com/aol/cyclops/wiki/Pattern-matching-:-Pattern-Matching-for-Java-8)
+
+# Pattern Matching Structure & Examples
 
 ## Cyclops Pattern Matching is structured into two packages
 
