@@ -10,6 +10,7 @@ import com.aol.cyclops.matcher.builders.CheckValues;
 
 public class MatchableTest {
 	private <I,T> CheckValues<Object, T> cases(CheckValues<I, T> c) {
+		
 		return c.with(1,2,3).then(i->"hello")
 				.with(4,5,6).then(i->"goodbye");
 	}
@@ -48,7 +49,6 @@ public class MatchableTest {
 	}
 	@Test
 	public void testMatch(){
-		
 		
 		assertThat(new MyCase(4,5,6).matchType(c ->c.isType((MyCase ce) -> "hello")) ,
 				  equalTo("hello"));

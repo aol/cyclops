@@ -1,6 +1,18 @@
 # Cyclops pattern matching
 
-Cyclops Pattern Matching is structured into two packages
+Powerful Pattern Matching for Java. Use lambda's, hamcrest or scala-like wildcards!
+
+![untitled drawing 1](https://cloud.githubusercontent.com/assets/9964792/8333960/457b3d1e-1a8d-11e5-8662-7ad37623794e.png)
+  
+# How to get Cyclops Pattern Matching 
+              
+# Pattern Matching Structure & Examples
+
+* [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-pattern-matching/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-pattern-matching)
+* [Javadoc for Cyclops Pattern Matching](http://www.javadoc.io/doc/com.aol.cyclops/pattern-matching/4.0.3)
+* [Pattern Matching Wiki](https://github.com/aol/cyclops/wiki/Pattern-matching-:-Pattern-Matching-for-Java-8)
+
+## Cyclops Pattern Matching is structured into two packages
 
 1. A core which holds the cases to be executed
 2. A set of builders which aims to make building pattern matching expressions simpler

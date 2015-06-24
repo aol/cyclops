@@ -50,7 +50,7 @@ public class ComprehensionData<T,R,V extends Initialisable>{
 	 *  	foreachX(c -> c.$("hello",list)
 						   .filter(()->c.<Integer>$("hello")<10)
 							.yield(()-> c.<Integer>$("hello")+2));
-		  }
+		  }</pre>
 		  
 	 * @param s Supplier that returns true for elements that should stay in the
 	 * 					comprehension
@@ -75,7 +75,7 @@ public class ComprehensionData<T,R,V extends Initialisable>{
 	 *  	foreachX(c -> c.$("hello",list)
 						   .filter(()->c.<Integer>$("hello")<10)
 							.yield(()-> c.<Integer>$("hello")+2));
-		  }
+		  }</pre>
 	 *  
 	 * @param s Yield section
 	 * @return result of for comprehension
@@ -95,7 +95,7 @@ public class ComprehensionData<T,R,V extends Initialisable>{
 	 *  	foreachX(c -> c.$("hello",list)
 						   .filter(()->c.<Integer>$("hello")<10)
 							.yield(()-> c.<Integer>$("hello")+2));
-		  }
+		  }</pre>
 		  
 	 * 
 	 * @param name Variable name
@@ -115,7 +115,7 @@ public class ComprehensionData<T,R,V extends Initialisable>{
 	 *  	foreachX(c -> c.$("hello",list)
 						   .filter(()->c.<Integer>$("hello")<10)
 							.yield(()-> c.<Integer>$("hello")+2));
-		  }
+		  }</pre>
 	 * 
 	 * @param name of variable to bind
 	 * @param f value
@@ -133,7 +133,7 @@ public class ComprehensionData<T,R,V extends Initialisable>{
 	 *  	foreachX(c -> c.$("hello",list)
 						   .filter(()->c.<Integer>$("hello")<10)
 							.yield(()-> c.<Integer>$("hello")+2));
-		  }
+		  }</pre>
 	 * 
 	 * @param name name of variable to bind
 	 * @param f value

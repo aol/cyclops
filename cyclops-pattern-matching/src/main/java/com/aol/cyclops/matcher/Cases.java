@@ -105,7 +105,7 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 *	val unzipped = cases.unzip();
 	 *	assertTrue(unzipped.v1.map(p->p.test(10)).allMatch(v->v));
 	 *	assertTrue(unzipped.v2.map(fn->fn.apply(10)).allMatch(v->"hello".equals(v)));
-	 * }
+	 * }</pre>
 	 * 
 	 * 
 	 * @return unzipped Cases, with Predicates in one Stream and Functions in the other.

@@ -311,7 +311,7 @@ public class MatchingTest {
 
 	@Test
 	public void testInCaseOfMatcherOfVFunctionOfVX() {
-
+		
 		assertThat(Matching.when()
 							.isMatch(hasItem("hello"))
 							.thenApply(hello->"world")

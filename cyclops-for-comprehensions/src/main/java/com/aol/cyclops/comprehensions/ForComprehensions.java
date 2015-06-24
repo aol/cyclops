@@ -50,10 +50,10 @@ public class ForComprehensions {
 		
 	
 		assertThat(result.collect(Collectors.toList()),equalTo(Arrays.asList("helloFrance","20France")));
-	}
+		
 	
-	@Value static class MyCase implements Decomposable{ String name; int value;}
-	@Value static class MyCase2 implements Decomposable{ String country;}
+		\@Value static class MyCase implements Decomposable{ String name; int value;}
+		\@Value static class MyCase2 implements Decomposable{ String country;}
 
 	 * 
 	 * }
@@ -152,7 +152,7 @@ public class ForComprehensions {
 			Integer myVar();
 			Custom myVar(List<Integer> value);
 		 }
-	 * }
+	 * }</pre>
 	 * 
 	 * 
 	 * @param c Interface that defines for comprehension - should extend CustomForComprehension

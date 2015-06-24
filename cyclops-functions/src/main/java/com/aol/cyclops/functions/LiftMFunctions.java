@@ -9,7 +9,7 @@ import com.aol.cyclops.lambda.monads.Monads;
 
 /**
  * 
- * Lift funcitons / method references to a higher level of abstraction
+ * Lift functions / method references to a higher level of abstraction
  * Transparently inject behaviour via Monads.
  * 
  * e.g. Use Stream to inject iteration, Try for error handling, Optional for null handling, CompletableFuture for async execution
@@ -108,7 +108,7 @@ public class LiftMFunctions {
 	}
 	
 	/**
-	 * Lift a Curried Function (2 levels a->b->fn.apply(a,b) ) into Monadic form
+	 * Lift a Curried Function {@code(2 levels a->b->fn.apply(a,b) )} into Monadic form
 	 * 
 	 * @param fn Function to lift
 	 * @return Lifted function 
@@ -118,7 +118,7 @@ public class LiftMFunctions {
 
 	}
 	/**
-	 * Lift a Curried Function (3 levels a->b->c->fn.apply(a,b,c) ) into Monadic form
+	 * Lift a Curried Function {@code(3 levels a->b->c->fn.apply(a,b,c) )} into Monadic form
 	 * 
 	 * @param fn Function to lift
 	 * @return Lifted function 
@@ -130,7 +130,7 @@ public class LiftMFunctions {
 	}
 	
 	/**
-	 * Lift a Curried Function (4 levels a->b->c->d->fn.apply(a,b,c,d) ) into Monadic form
+	 * Lift a Curried Function {@code(4 levels a->b->c->d->fn.apply(a,b,c,d) )} into Monadic form
 	 * 
 	 * @param fn Function to lift
 	 * @return Lifted function 
@@ -143,7 +143,7 @@ public class LiftMFunctions {
 														u4.map(input4->fn.apply(input1).apply(input2).apply(input3).apply(input4)  ))).unwrap());
 	}
 	/**
-	 * Lift a Curried Function (5 levels a->b->c->d->e->fn.apply(a,b,c,d,e) ) into Monadic form
+	 * Lift a Curried Function {@code (5 levels a->b->c->d->e->fn.apply(a,b,c,d,e) ) }into Monadic form
 	 * 
 	 * @param fn Function to lift
 	 * @return Lifted function 

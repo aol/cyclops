@@ -28,7 +28,7 @@ import com.aol.cyclops.lambda.utils.Mutable;
 								   .yield((Integer a)-> (Integer b) -> a + b+2);							
 								
 								
-								}
+								}</pre>
  * 
  * @author johnmcclean
  *
@@ -75,7 +75,7 @@ public class Do {
 		 * <pre>{@code   Do.with(list)
 					  .yield((Integer a)-> a +2 );
 								
-			}
+			}</pre>
 		 * 
 		 * 
 		 * @param f To be applied to every element in the for comprehension

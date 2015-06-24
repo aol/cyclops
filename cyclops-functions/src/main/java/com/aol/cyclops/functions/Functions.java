@@ -155,7 +155,7 @@ public class Functions extends Uncurry {
 	}
 	
 	/**
-	 * Lift a Curried Function (2 levels a->b->fn.apply(a,b) ) into Monadic form
+	 * Lift a Curried Function {@code (2 levels a->b->fn.apply(a,b) )} into Monadic form
 	 * 
 	 * @param fn Function to lift
 	 * @return Lifted function 
@@ -165,7 +165,7 @@ public class Functions extends Uncurry {
 
 	}
 	/**
-	 * Lift a Curried Function (3 levels a->b->c->fn.apply(a,b,c) ) into Monadic form
+	 * Lift a Curried Function {@code (3 levels a->b->c->fn.apply(a,b,c) )} into Monadic form
 	 * 
 	 * @param fn Function to lift
 	 * @return Lifted function 
@@ -175,7 +175,7 @@ public class Functions extends Uncurry {
 	}
 	
 	/**
-	 * Lift a Curried Function (4 levels a->b->c->d->fn.apply(a,b,c,d) ) into Monadic form
+	 * Lift a Curried Function {@code (4 levels a->b->c->d->fn.apply(a,b,c,d) )} into Monadic form
 	 * 
 	 * @param fn Function to lift
 	 * @return Lifted function 
@@ -185,7 +185,7 @@ public class Functions extends Uncurry {
 		return LiftMFunctions.liftM4(fn);
 	}
 	/**
-	 * Lift a Curried Function (5 levels a->b->c->d->e->fn.apply(a,b,c,d,e) ) into Monadic form
+	 * Lift a Curried Function {@code (5 levels a->b->c->d->e->fn.apply(a,b,c,d,e) )} into Monadic form
 	 * 
 	 * @param fn Function to lift
 	 * @return Lifted function 

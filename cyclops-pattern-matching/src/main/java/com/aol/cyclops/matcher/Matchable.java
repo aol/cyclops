@@ -37,7 +37,7 @@ public interface Matchable{
 				      .with(4,5,6).then(i->"goodbye");
 	     }
 	     \@Value static class MyCase  implements Matchable{ int a; int b; int c; }
-	 * }
+	 * }</pre>
 	 * 
 	 * @param fn
 	 * @return
@@ -65,7 +65,7 @@ public interface Matchable{
 						 .caseOf((Delete d) -> new Delete(d.key,(Action)fn.apply(d.next)))
 						 .caseOf((Get g) -> new Get(g.key,(Function)g.next.andThen(fn)))
 					);
-	 * }
+	 * }</pre>
 	 * 
 	 * @param fn Function to build the matching expression
 	 * @return Matching result
@@ -83,7 +83,7 @@ public interface Matchable{
 						 .caseOf((Get g) -> new Get(g.key,(Function)g.next.andThen(fn)))
 						 noOperation()
 					);
-	 * }
+	 * }</pre>
 	 * 
 	 * @param fn Function to build the matching expression
 	 * @param defaultValue Default value if matching expression does not match

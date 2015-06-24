@@ -4,7 +4,7 @@ import static com.aol.cyclops.matcher.Extractors.get;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -28,6 +28,7 @@ public class HamcrestTest {
 	@Test
 	public void hamcrestViaNew(){
 		Matching.when().isMatch(hasItem("hello2")).thenConsume(System.out::println)
+				.when().isMatch(contains("world","hello","unexpected")).thenConsume(System.err::println)
 							.match(Arrays.asList("hello","world"));
 	}
 	@Test
