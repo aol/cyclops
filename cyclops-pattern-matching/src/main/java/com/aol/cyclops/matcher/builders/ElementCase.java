@@ -1,8 +1,12 @@
 package com.aol.cyclops.matcher.builders;
 
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.AllOf.allOf;
+import static org.hamcrest.core.AnyOf.anyOf;
 
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -86,9 +90,32 @@ public class ElementCase<X> extends CaseBeingBuilt {
 	 *            Hamcrest Matchers that will trigger this case
 	 * @return Next Step in the Case Builder process
 	 */
-	public <V> InMatchOfBuilder<V, X> isMatch(Matcher<V>... matches) {
+	public <V> InMatchOfBuilder<V, X> allMatch(Matcher<V>... matchers) {
 
-		return new InMatchOfBuilder<V, X>(allOf(matches), patternMatcher, this);
+		return new InMatchOfBuilder<V, X>(allOf(matchers), patternMatcher, this);
+	}
+
+	/**
+	 * Build a Case which is triggered when the supplied Hamcrest Matchers holds
+	 * 
+	 * @param match
+	 *            Hamcrest Matchers that will trigger this case
+	 * @return Next Step in the Case Builder process
+	 */
+	public <V> InMatchOfBuilder<V, X> anyMatch(Matcher<V>... matchers) {
+
+		return new InMatchOfBuilder<V, X>(anyOf(matchers), patternMatcher, this);
+	}
+
+	/**
+	 * Build a Case which is triggered when the supplied Hamcrest Matchers holds
+	 * 
+	 * @param match
+	 *            Hamcrest Matchers that will trigger this case
+	 * @return Next Step in the Case Builder process
+	 */
+	public <V> InMatchOfBuilder<V, X> noneMatch(Matcher<V>... matchers) {
+		return new InMatchOfBuilder<V, X>(allOf(Stream.of(matchers).map(m -> not(m)).collect(Collectors.toList())), patternMatcher, this);
 	}
 
 	/**

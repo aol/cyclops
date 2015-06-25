@@ -30,12 +30,30 @@ public class HamcrestTest {
 	}
 
 	@Test
-	public void multipleHamcrestMatchers() {
-		assertThat(
-				Matching.when().isMatch(containsString("hello"), containsString("world")).thenApply(message -> message).match("hello world").get(),
-				is("hello world"));
+	public void multipleHamcrestMatchersAllMatch() {
+		assertThat(Matching.when().allMatch(containsString("hello"), containsString("world")).thenApply(message -> message).match("hello world")
+				.get(), is("hello world"));
 
-		assertThat(Matching.when().isMatch(containsString("hello"), containsString("universe")).thenApply(message -> message).match("hello world"),
+		assertThat(Matching.when().allMatch(containsString("hello"), containsString("universe")).thenApply(message -> message).match("hello world"),
+				is(Optional.empty()));
+	}
+
+	@Test
+	public void multipleHamcrestMatchersAnyMatch() {
+		assertThat(Matching.when().anyMatch(containsString("hello"), containsString("world33")).thenApply(message -> message).match("hello world")
+				.get(), is("hello world"));
+
+		assertThat(
+				Matching.when().allMatch(containsString("goodbye"), containsString("universe")).thenApply(message -> message).match("hello world"),
+				is(Optional.empty()));
+	}
+
+	@Test
+	public void multipleHamcrestMatchersNoneMatch() {
+		assertThat(Matching.when().noneMatch(containsString("ciao"), containsString("world33")).thenApply(message -> message).match("hello world")
+				.get(), is("hello world"));
+
+		assertThat(Matching.when().noneMatch(containsString("hello"), containsString("universe")).thenApply(message -> message).match("hello world"),
 				is(Optional.empty()));
 	}
 
