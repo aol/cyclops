@@ -2,7 +2,7 @@
 
 Powerful, modular extensions for Java 8. Take what you need or want.
 
-![cyclops - duke2](https://cloud.githubusercontent.com/assets/9964792/8359029/c1ae4722-1b5b-11e5-8bff-25dcec44826c.png)
+![cyclops - duke2](https://cloud.githubusercontent.com/assets/9964792/8359084/28d79944-1b5c-11e5-9c56-2c44d33f3aed.png)
 
 # Cyclops Modules
 
