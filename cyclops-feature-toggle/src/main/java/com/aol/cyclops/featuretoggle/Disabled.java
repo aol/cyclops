@@ -1,4 +1,4 @@
-package com.aol.cyclops.enableswitch;
+package com.aol.cyclops.featuretoggle;
 
 import java.util.Objects;
 
@@ -19,7 +19,7 @@ import lombok.Value;
  * @param <F> Type of value Enabled Switch holds
  */
 @Value
-public class Disabled<F> implements Switch<F>{
+public class Disabled<F> implements FeatureToggle<F>{
 
 	
 	private final F disabled;

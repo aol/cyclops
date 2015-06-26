@@ -1,10 +1,13 @@
-package com.aol.cyclops.enableswitch;
+package com.aol.cyclops.featuretoggle;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import com.aol.cyclops.featuretoggle.Disabled;
+import com.aol.cyclops.featuretoggle.FeatureToggle;
 
 public class DisabledTest {
 
@@ -13,7 +16,7 @@ public class DisabledTest {
 	@Before
 	public void setup(){
 		value = null;
-		disabled = Switch.disable(100);
+		disabled = FeatureToggle.disable(100);
 	}
 	
 	@Test
@@ -50,7 +53,7 @@ public class DisabledTest {
 	}
 	@Test
 	public void testFlatMap(){
-		assertThat(disabled.flatMap(i->Switch.disable(100)).isEnabled(),is(false));
+		assertThat(disabled.flatMap(i->FeatureToggle.disable(100)).isEnabled(),is(false));
 	}
 	
 	@Test
