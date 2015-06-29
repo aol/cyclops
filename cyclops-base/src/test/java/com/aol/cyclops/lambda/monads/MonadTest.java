@@ -11,6 +11,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
@@ -283,7 +284,7 @@ public class MonadTest {
 	public void testSequenceOptional(){
 		
         
-       
+
         
         AnyM<List<Integer>> futureList = Monads.sequence(Optional.class,
         						Arrays.asList(Optional.of(7),Optional.of(8),Optional.of(9)));
