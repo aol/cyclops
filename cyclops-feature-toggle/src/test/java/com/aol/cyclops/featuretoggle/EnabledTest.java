@@ -1,4 +1,4 @@
-package com.aol.cyclops.enableswitch;
+package com.aol.cyclops.featuretoggle;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertFalse;
@@ -10,6 +10,10 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.aol.cyclops.featuretoggle.Disabled;
+import com.aol.cyclops.featuretoggle.Enabled;
+import com.aol.cyclops.featuretoggle.FeatureToggle;
+
 public class EnabledTest {
 
 	Enabled<Integer> enabled;
@@ -17,23 +21,23 @@ public class EnabledTest {
 	@Before
 	public void setup(){
 		value = null;
-		enabled = Switch.enable(100);
+		enabled = FeatureToggle.enable(100);
 	}
 	
 	@Test
 	public void testFlatten(){
-		Enabled<Enabled<Disabled<Integer>>> nested= Switch.enable(Switch.enable(Switch.disable(100)));
-		Switch<Integer> o = nested.<Integer>flatten();
+		Enabled<Enabled<Disabled<Integer>>> nested= FeatureToggle.enable(FeatureToggle.enable(FeatureToggle.disable(100)));
+		FeatureToggle<Integer> o = nested.<Integer>flatten();
 		System.out.println(o.get());
-		Switch<Integer> flat = nested.<Integer>flatten();
+		FeatureToggle<Integer> flat = nested.<Integer>flatten();
 		assertThat(flat.get(),is(100));
 	}
 	@Test
 	public void testFlattenSematics(){
-		Enabled<Enabled<Disabled<Integer>>> nested= Switch.enable(Switch.enable(Switch.disable(100)));
-		Switch<Integer> o = nested.<Integer>flatten();
+		Enabled<Enabled<Disabled<Integer>>> nested= FeatureToggle.enable(FeatureToggle.enable(FeatureToggle.disable(100)));
+		FeatureToggle<Integer> o = nested.<Integer>flatten();
 		System.out.println(o.get());
-		Switch<Integer> flat = nested.<Integer>flatten();
+		FeatureToggle<Integer> flat = nested.<Integer>flatten();
 		assertThat(flat,instanceOf(Enabled.class));
 	}
 	
@@ -71,7 +75,7 @@ public class EnabledTest {
 	}
 	@Test
 	public void testFlatMap(){
-		assertThat(enabled.flatMap(i->Switch.disable(100)).isEnabled(),is(false));
+		assertThat(enabled.flatMap(i->FeatureToggle.disable(100)).isEnabled(),is(false));
 	}
 	
 	@Test

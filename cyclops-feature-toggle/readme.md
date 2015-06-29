@@ -1,14 +1,14 @@
-# Cyclops Production Switch
+# Cyclops Production Feature Toggle
 
-Cyclops Enable Switch makes delivering on CI/CD easy by making it very simple to turn production features on & off!
+Cyclops Feature Toggle makes delivering on CI/CD easy by making it very simple to turn production features on & off!
 
 ![production switch](https://cloud.githubusercontent.com/assets/9964792/8335310/ce07a846-1a94-11e5-837a-ef73b2f930d7.png)
 
-# Getting Cyclops Enable Switch
+# Getting Cyclops Feature Toggle
 
 *  [![Maven Central : cyclops-production-switch](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-enable-switch/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-enable-switch)
 * [Cyclops Production Switch javadoc](http://www.javadoc.io/doc/com.aol.cyclops/enable-switch/4.0.3)
-* [Enable Switch Wiki](https://github.com/aol/cyclops/wiki/Enable-and-disable-production-features)
+* [Feature Toggle Wiki](https://github.com/aol/cyclops/wiki/Enable-and-disable-production-features)
 
 ### Rationale
 
@@ -29,9 +29,9 @@ The most basic way to use it is (if you are used to programming imperatively)
 
 
     if(featureDisabled) 
-          return Switch.disable(data);
+          return FeatureToggle.disable(data);
     else
-        return Switch.enable(data);
+        return FeatureToggle.enable(data);
 
 
 
@@ -58,7 +58,7 @@ The statement above can be rewritten as -
 Creating the Switch 
 
 
-    public synchronized Switch<Supplier<List<DomainExpression>>> readFile() {
+    public synchronized FeatureToggle<Supplier<List<DomainExpression>>> readFile() {
 		Supplier<List<DomainExpression>> s = ()->serialisedFileReader.readFileFromDisk(rawDomainRuleFileLocation);
 		if (rawDomainEnabled) {
 			return new Enabled(s);
@@ -71,7 +71,7 @@ Creating the Switch
 Using the Switch 
 
 
-    Switch<Supplier<List<DomainExpression>>> domainExpressions; //lazy load data from db
+    FeatureToggle<Supplier<List<DomainExpression>>> domainExpressions; //lazy load data from db
      ...
 
     domainExpressions.stream().flatMap(s -> s.get().stream()).forEach(domainExpression->{
