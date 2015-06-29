@@ -243,6 +243,9 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 	default <X> AnyM<X> anyM(){
 		return new AnyM<X>((Monad)this);	
 	}
+	default <X> TraversableM<X>  sequence(){
+		return new  TraversableM<X>((Monad)this);	
+	}
 	
 	/**
 	 * Create a duck typed Monad wrapper. Using AnyM we focus only on the underlying type
