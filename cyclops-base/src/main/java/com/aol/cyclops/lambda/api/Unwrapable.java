@@ -1,7 +1,7 @@
 package com.aol.cyclops.lambda.api;
 
 public interface Unwrapable {
-	default Object unwrap(){
-		return this;
+	default  <R> R  unwrap(){
+		return (R)this;
 	}
 }

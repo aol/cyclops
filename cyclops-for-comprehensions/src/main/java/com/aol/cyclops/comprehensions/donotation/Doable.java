@@ -3,8 +3,6 @@ package com.aol.cyclops.comprehensions.donotation;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.comprehensions.donotation.UntypedDo.DoComp2;
-
 public interface Doable<T> {
 	
 	

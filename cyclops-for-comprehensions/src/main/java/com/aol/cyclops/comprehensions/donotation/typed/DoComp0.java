@@ -152,7 +152,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T1> DoComp1<T1> add(AnyM<T1> o){
-			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o.unwrap())));
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
 			
 		}
 		

@@ -10,6 +10,7 @@ import org.pcollections.PStack;
 
 import com.aol.cyclops.comprehensions.ComprehensionData;
 import com.aol.cyclops.comprehensions.ForComprehensions;
+import com.aol.cyclops.lambda.api.Unwrapable;
 import com.aol.cyclops.lambda.utils.Mutable;
 
 @AllArgsConstructor
@@ -51,10 +52,15 @@ public abstract class DoComp {
 			
 		}
 		else
-			c.$(e.getKey(),e.getValue());
+			c.$(e.getKey(),handleUnwrappable(e.getValue()));
 		
 		return null;
 	}
+	 private Object handleUnwrappable(Object o){
+		 if(o instanceof Unwrapable)
+				return ((Unwrapable)o).unwrap();
+			return o;
+	 }
 	private Object build(
 			ComprehensionData c, Function f) {
 		Mutable<List<String>> vars = new Mutable<>(new ArrayList());
@@ -79,7 +85,8 @@ public abstract class DoComp {
 			}
 			
 		}
-
+		if(result instanceof Unwrapable)
+			return ((Unwrapable)result).unwrap();
 		return result;
 	}
 

@@ -16,7 +16,7 @@ import com.aol.cyclops.comprehensions.LessTypingForComprehension2.Vars2;
 import com.aol.cyclops.comprehensions.LessTypingForComprehension2.VarsImpl;
 
 
-
+@Deprecated //use com.aol.cyclops.comprehensions.donotation.typed.Do instead
 public class LessTypingForComprehension3<T,R> {
 
 	public static interface Vars3<T1,T2,T3> {

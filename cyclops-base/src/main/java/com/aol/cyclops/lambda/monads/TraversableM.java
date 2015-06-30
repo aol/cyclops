@@ -18,12 +18,17 @@ import lombok.AllArgsConstructor;
 import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Streamable;
+import com.aol.cyclops.lambda.api.Unwrapable;
 import com.aol.cyclops.streams.StreamUtils;
 import com.nurkiewicz.lazyseq.LazySeq;
 
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
-public class TraversableM<T> {
+public class TraversableM<T> implements Unwrapable {
 	private final Monad<Object,T> monad;
+
+	public final <R> R unwrap(){
+		return (R)monad.unwrap();
+	}
 	/**
 	 * Convert to a Stream with the values repeated specified times
 	 * 

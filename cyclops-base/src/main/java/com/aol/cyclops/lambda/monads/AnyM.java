@@ -23,12 +23,13 @@ import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Streamable;
+import com.aol.cyclops.lambda.api.Unwrapable;
 import com.aol.cyclops.streams.Pair;
 import com.aol.cyclops.streams.StreamUtils;
 import com.nurkiewicz.lazyseq.LazySeq;
 
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
-public class AnyM<T>{
+public class AnyM<T> implements Unwrapable{
 	
 	private final Monad<Object,T> monad;
 	
