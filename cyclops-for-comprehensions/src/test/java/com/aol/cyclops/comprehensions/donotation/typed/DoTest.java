@@ -27,16 +27,76 @@ public class DoTest {
 	@Test
 	public void do2Add(){
 		Stream<Double> s =  Do.add(Stream.of(10.00,5.00,100.30))
-						.add(Stream.of(2.0))
+						.addStream(()->Stream.of(2.0))
 						.yield( base -> bonus-> base*(1.0+bonus));
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(345.9));
 	}
 	@Test
+	public void do3Add(){
+		Stream<Double> s =  Do.add(Stream.of(10.00,5.00,100.30))
+						.add(Arrays.asList(2.0))
+						.addStream(()->Stream.of(3.0))
+						.yield( base -> bonus-> v-> base*(1.0+bonus));
+		
+		val total = s.collect(Collectors.summingDouble(t->t));
+		assertThat(total,equalTo(345.9));
+	}
+	@Test
+	public void do4Add(){
+		Stream<Double> s =  Do.add(Stream.of(10.00,5.00,100.30))
+						.add(Arrays.asList(2.0))
+						.add(Arrays.asList(2.0))
+						.addStream(()->Stream.of(3.0))
+						.yield( base -> bonus-> v-> v1->base*(1.0+bonus));
+		
+		val total = s.collect(Collectors.summingDouble(t->t));
+		assertThat(total,equalTo(345.9));
+	}
+	@Test
+	public void do5Add(){
+		Stream<Double> s =  Do.add(Stream.of(10.00,5.00,100.30))
+						.add(Arrays.asList(2.0))
+						.add(Arrays.asList(2.0))
+						.add(Arrays.asList(2.0))
+						.addStream(()->Stream.of(3.0))
+						.yield( base -> bonus-> v->v1->v2-> base*(1.0+bonus));
+		
+		val total = s.collect(Collectors.summingDouble(t->t));
+		assertThat(total,equalTo(345.9));
+	}
+	@Test
+	public void do6Add(){
+		Stream<Double> s =  Do.add(Stream.of(10.00,5.00,100.30))
+						.add(Arrays.asList(2.0))
+						.add(Arrays.asList(2.0))
+						.add(Arrays.asList(2.0))
+						.add(Arrays.asList(2.0))
+						.addStream(()->Stream.of(3.0))
+						.yield( base -> bonus-> v->v1->v2->v3-> base*(1.0+bonus));
+		
+		val total = s.collect(Collectors.summingDouble(t->t));
+		assertThat(total,equalTo(345.9));
+	}
+	@Test
+	public void do7Add(){
+		Stream<Double> s =  Do.add(Stream.of(10.00,5.00,100.30))
+						.add(Arrays.asList(2.0))
+						.add(Arrays.asList(2.0))
+						.add(Arrays.asList(2.0))
+						.add(Arrays.asList(2.0))
+						.add(Arrays.asList(2.0))
+						.addStream(()->Stream.of(3.0))
+						.yield( base -> bonus-> v->v1->v2->v3->v4-> base*(1.0+bonus));
+		
+		val total = s.collect(Collectors.summingDouble(t->t));
+		assertThat(total,equalTo(345.9));
+	}
+	@Test
 	public void do1(){
-		Stream<Double> s = UntypedDo.with(Stream.of(10.00,5.00,100.30))
-						.yield((Double base)-> base+10);
+		Stream<Double> s = Do.add(Stream.of(10.00,5.00,100.30))
+						.yield( base -> base+10);
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(145.3));
@@ -45,10 +105,10 @@ public class DoTest {
 	
 	@Test
 	public void do3(){
-		Stream<Double> s = UntypedDo.with(Stream.of(10.00,5.00,100.30))
-						.and((Double d)->Stream.of(2.0))
-						.and((Double d)->(Double e)->Stream.of(10.0))
-						.yield((Double base)->(Double bonus)->(Double woot) -> base*(1.0+bonus)*woot);
+		Stream<Double> s = Do.add(Stream.of(10.00,5.00,100.30))
+						.addStream(()->Stream.of(2.0))
+						.withStream( d -> e ->Stream.of(10.0))
+						.yield( base -> bonus -> woot  -> base*(1.0+bonus)*woot);
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(3459.0));

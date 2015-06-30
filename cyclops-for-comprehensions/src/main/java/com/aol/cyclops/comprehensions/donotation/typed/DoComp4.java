@@ -85,7 +85,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 		 * @param f Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T5> DoComp5<T1,T2,T3,T4,T5> add(Stream<T5> o){
+		public <T5> DoComp5<T1,T2,T3,T4,T5> addStream(Supplier<Stream<T5>> o){
 			return new DoComp5(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
 			
 		}
