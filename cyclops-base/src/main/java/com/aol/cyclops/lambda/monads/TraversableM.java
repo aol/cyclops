@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
@@ -601,5 +602,14 @@ public class TraversableM<T> implements Unwrapable {
 		return LazySeq.of(stream().iterator()).startsWith(iterator);
 		
 	}
-
+	
+	public AnyM<T> anyM(){
+		return new AnyM<>(monad);
+	}
+	public final  <R> TraversableM<R> map(Function<? super T,? extends R> fn){
+		return new TraversableM(monad.map(fn));
+	}
+	public final   TraversableM<T>  peek(Consumer<? super T> c) {
+		return new TraversableM(monad.peek(c));
+	}
 }

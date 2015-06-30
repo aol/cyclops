@@ -29,7 +29,7 @@ import com.aol.cyclops.streams.StreamUtils;
 import com.nurkiewicz.lazyseq.LazySeq;
 
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
-public class AnyM<T> implements Unwrapable{
+public class AnyM<T> {//implements Unwrapable{
 	
 	private final Monad<Object,T> monad;
 	
@@ -65,7 +65,7 @@ public class AnyM<T> implements Unwrapable{
 	 * @param fn flatMap function
 	 * @return flatMapped monad
 	*/
-	final <R> AnyM<R> bind(Function<? super T,? extends R> fn){
+	public final <R> AnyM<R> bind(Function<? super T,? extends R> fn){
 		return monad.bind(fn).anyM();
 	
 	} 
@@ -126,8 +126,33 @@ public class AnyM<T> implements Unwrapable{
 	 * Turn an <pre>{@code Optional<List<Integer>>  into Stream<Integer> }</pre>
 	 * 
 	 * <pre>{@code
+	 * List<Integer> list = anyM(Optional.of(Arrays.asList(1,2,3,4,5,6)))
+											.traversable(c->c.stream())
+											.collect(Collectors.toList());
+		
+		
+		assertThat(list,hasItems(1,2,3,4,5,6));
+		
+	 * 
+	 * }</pre>
+	 * 
+	 * @return A Monad that wraps a Stream
+	 */
+	public final <NT> TraversableM<NT> traversable(Function<T,Stream<NT>> fn){
+		return monad.flatMapToStream((Function)fn)
+					.sequence();
+	}
+	/**
+	 *  <pre>{@code Optional<List<Integer>>  into Stream<Integer> }
+	 * Less type safe equivalent, but may be more accessible equivalent to  
+	 * <pre>
+	 * {@code 
+	 *    sequence(Function<T,Stream<NT>> fn)
+	 *   }
+	 *   </pre>
+	 *  <pre>{@code
 	 * List<List<Integer>> list = anyM(Optional.of(Arrays.asList(1,2,3,4,5,6)))
-											.sequence(Collections::stream)
+											.traversable()
 											.grouped(3)
 											.collect(Collectors.toList());
 		
@@ -136,27 +161,13 @@ public class AnyM<T> implements Unwrapable{
 		assertThat(list.get(1),hasItems(4,5,6));
 	 * 
 	 * }</pre>
-	 * 
-	 * @return A Monad that wraps a Stream
-	 */
-	public final <NT> TraversableM<T> traversable(Function<? super T,Stream<? extends NT>> fn){
-		return monad.flatMapToStream((Function)fn)
-					.sequence();
-	}
-	/**
-	 * 
-	 * Less type safe equivalent, but may be more accessible equivalent to  
-	 * <pre>
-	 * {@code 
-	 *    sequence(Function<T,Stream<NT>> fn)
-	 *   }
-	 *   </pre>
 	
 	 * @return A Monad that wraps a Stream
 	 */
-	public final TraversableM<T> traversable(){
+	public final <T> TraversableM<T> traversable(){
 		return monad.streamedMonad().sequence();
 	}
+	
 	/**
 	 * Wrap this Monad's contents as a Sequence without disaggreating it. .e.
 	 *  <pre>{@code Optional<List<Integer>>  into Stream<List<Integer>> }</pre>

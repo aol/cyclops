@@ -27,7 +27,7 @@ configurations {
 	provided
 }
 dependencies {
-	//    compile 'com.aol.advertising.cyclops:cyclops-base:3.0.0'
+	
 	compile project(':cyclops-base')
 	provided group: 'org.projectlombok', name: 'lombok', version:'1.16.2'
 	testCompile 'org.functionaljava:functionaljava:4.3'

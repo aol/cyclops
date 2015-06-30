@@ -152,7 +152,7 @@ public class FreeTest {
 			return Free.suspend(new Box(Free.ret(f)));
 		//	return Free.suspend(new Box(f));
 		}
-		public <B> Box<B> map(Function<A,B> fn){
+		public <B> Box<B> map(Function<? super A,? extends B> fn){
 			return new Box(fn.apply(a));
 		}
 		

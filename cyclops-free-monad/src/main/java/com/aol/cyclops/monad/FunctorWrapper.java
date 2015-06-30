@@ -15,7 +15,7 @@ public class FunctorWrapper<A> implements Functor<A>{
 	public static <A> Free<Functor<?>,A> liftF(A f){
 		return Free.suspend(new FunctorWrapper(Free.ret(f)));
 	}
-	public <B> FunctorWrapper<B> map(Function<A,B> fn){
+	public <B> FunctorWrapper<B> map(Function<? super A,? extends B> fn){
 		return new FunctorWrapper(fn.apply(a));
 	}
 	

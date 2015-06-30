@@ -8,6 +8,8 @@ import static com.aol.cyclops.lambda.api.AsGenericMonad.monad;
 
 
 
+
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -125,7 +127,6 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 	 */
 	default <T1> Monad<T,T1> flatten(){
 		return (Monad)this.flatMap( t->   (MONAD)t );
-		
 	}
 	
 	/**
@@ -147,8 +148,22 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 	}
 	
 	default <R> Monad<Stream<R>,R> flatMapToStream(Function<? super MONAD,Stream<? extends R>> fn){
+		//Stream stream = Stream.of(1);
+	//	List<Stream>
+	//	Stream<List<Integer>>
+	//	System.out.println(unwrap());
+	//	return monad(stream.flatMap(i->fn.apply(unwrap())));
+		
 		Stream stream = Stream.of(1);
-		return monad(stream.flatMap(i->fn.apply(unwrap())));
+		 Monad r = this.<Stream,T>withMonad((Stream)new ComprehenderSelector().selectComprehender(
+				stream).executeflatMap(stream, i-> unwrap()));
+		 return r.flatMap(e->e);
+		 /**
+		Stream stream = Stream.of(1);
+		 Monad r = this.<Stream,T>withMonad((Stream)new ComprehenderSelector().selectComprehender(
+				stream).executeflatMap(stream, i-> { return bind((Function)fn)
+														.peek(System.out::println).unwrap();}));
+		 return r.flatMap(e->e);**/
 	}
 	
 	default <R> Monad<CompletableFuture<R>,R> flatMapToCompletableFuture(Function<? super MONAD,CompletableFuture<? extends R>> fn){

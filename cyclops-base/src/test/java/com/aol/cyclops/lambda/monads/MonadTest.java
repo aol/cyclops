@@ -241,7 +241,7 @@ public class MonadTest {
                 .collect(Collectors.toList());
        
         
-        AnyM<List<Integer>> futureList = Monads.sequence(CompletableFuture.class,futures);
+        AnyM<Stream<Integer>> futureList = Monads.sequence(CompletableFuture.class,futures);
         
  
         List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>unwrap().join();
@@ -258,7 +258,7 @@ public class MonadTest {
         
        
         
-        AnyM<List<Integer>> futureList = Monads.sequence(Stream.class,Arrays.asList(Arrays.asList(1,2),Arrays.asList(3,4)));
+        AnyM<Stream<Integer>> futureList = Monads.sequence(Stream.class,Arrays.asList(Arrays.asList(1,2),Arrays.asList(3,4)));
         
  
         assertThat(futureList.traversable().toList(),equalTo(Arrays.asList(1,2,3,4)));
@@ -270,7 +270,7 @@ public class MonadTest {
         
        
         
-        AnyM<List<Stream<Integer>>> result = Monads.sequence(Stream.class,Arrays.asList(Stream.of(1,2),Stream.of(3,4)));
+        AnyM<Stream<Stream<Integer>>> result = Monads.sequence(Stream.class,Arrays.asList(Stream.of(1,2),Stream.of(3,4)));
         
  
        
@@ -286,7 +286,7 @@ public class MonadTest {
         
 
         
-        AnyM<List<Integer>> futureList = Monads.sequence(Optional.class,
+        AnyM<Stream<Integer>> futureList = Monads.sequence(Optional.class,
         						Arrays.asList(Optional.of(7),Optional.of(8),Optional.of(9)));
         
  

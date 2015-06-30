@@ -10,10 +10,6 @@ public class CompletableFutureComprehender implements Comprehender<CompletableFu
 	public Class getTargetClass(){
 		return CompletableFuture.class;
 	}
-	@Override
-	public Object filter(CompletableFuture t, Predicate p) {
-		return t;
-	}
 
 	@Override
 	public Object map(CompletableFuture t, Function fn) {

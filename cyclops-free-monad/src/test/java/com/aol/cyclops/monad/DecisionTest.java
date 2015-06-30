@@ -49,7 +49,7 @@ public class DecisionTest {
 	static class Action implements Matchable, Functor<Action>{
 
 		@Override
-		public <R> Functor<R> map(Function<Action, R> fn) {
+		public <R> Functor<R> map(Function<? super Action, ? extends R> fn) {
 			return matchType(c -> 
 							c.isType( (Put p) -> new Put(p.key,p.value,(Action)fn.apply(p.next)))
 							.isType((Delete d) -> new Delete(d.key,(Action)fn.apply(d.next)))

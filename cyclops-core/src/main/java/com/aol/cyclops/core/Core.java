@@ -860,7 +860,7 @@ public class Core extends Functions {
 	 * @param fn Function to apply 
 	 * @return Monad with a list
 	 */
-	public static <MONAD,R> Monad<MONAD,List<R>> traverse(Class c,List<?> seq, Function<?,R> fn){
+	public static <R> AnyM<List<R>> traverse(Class c,List<?> seq, Function<?,R> fn){
 		return Monads.traverse(c, seq, fn);
 	}
 
@@ -881,7 +881,7 @@ public class Core extends Functions {
 	 * @param seq List of monads to convert
 	 * @return Monad with a List
 	 */ 
-	public static <MONAD,T>  Monad<MONAD,T> sequence(Class c, List<?> seq){
+	public static <T>  AnyM<Stream<T>> sequence(Class c, List<?> seq){
 		return Monads.sequence(c, seq);
 	}
 	

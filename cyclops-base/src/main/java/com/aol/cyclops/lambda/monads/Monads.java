@@ -3,6 +3,7 @@ package com.aol.cyclops.lambda.monads;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.api.AsGenericMonad;
@@ -161,7 +162,7 @@ public class Monads extends AsAnyM{
 	 */
 	public static <T,R> AnyM<List<R>> traverse(Class<?> c,List<T> seq, Function<?,R> fn){
 		return asMonad(new ComprehenderSelector().selectComprehender(c).of(1))
-								.flatMap(in-> asMonad(seq.stream()).flatMap(m-> m).flatMap((Function)fn).unwrap()
+								.flatMap(in-> monad(seq.stream()).flatten().flatMap((Function)fn).unwrap()
 									).anyM();
 	}
 
@@ -182,9 +183,9 @@ public class Monads extends AsAnyM{
 	 * @param seq List of monads to convert
 	 * @return Monad with a List
 	 */ 
-	public static <T,T1>  AnyM<List<T>> sequence(Class<?> c, List<T1> seq){
+	public static <T,T1>  AnyM<Stream<T>> sequence(Class<?> c, List<T1> seq){
 		return AsGenericMonad.asMonad(new ComprehenderSelector().selectComprehender(c).of(1))
-				.flatMap(in-> asMonad(seq.stream()).flatMap(m-> m).unwrap()
-							).anyM();
+				.flatMap(in-> monad(seq.stream()).flatten().unwrap()).anyM();
 	}
+	
 }
