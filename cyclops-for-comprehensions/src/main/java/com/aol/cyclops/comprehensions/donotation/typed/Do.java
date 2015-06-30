@@ -31,7 +31,7 @@ public class Do {
 		}</pre>
 	 * 
 	 * 
-	 * @param f Defines next level in comprehension
+	 * @param o Defines next level in comprehension
 	 * @return Next stage in for comprehension builder
 	 */
 	public static <T1> DoComp1<T1> add(Iterable<T1> o){
@@ -52,7 +52,7 @@ public class Do {
 		}</pre>
 	 * 
 	 * 
-	 * @param f Defines next level in comprehension
+	 * @param o Defines next level in comprehension
 	 * @return Next stage in for comprehension builder
 	 */
 	public static <T1> DoComp1<T1> add(Iterator<T1> o){
@@ -73,7 +73,7 @@ public class Do {
 		}</pre>
 	 * 
 	 * 
-	 * @param f Defines next level in comprehension
+	 * @param o Defines next level in comprehension
 	 * @return Next stage in for comprehension builder
 	 */
 	public  static <T1> DoComp1<T1> add(Stream<T1> o){
@@ -94,7 +94,7 @@ public class Do {
 		}</pre>
 	 * 
 	 * 
-	 * @param f Defines next level in comprehension
+	 * @param o Defines next level in comprehension
 	 * @return Next stage in for comprehension builder
 	 */
 	public static <T1> DoComp1<T1> add(Optional<T1> o){
@@ -115,7 +115,7 @@ public class Do {
 		}</pre>
 	 * 
 	 * 
-	 * @param f Defines next level in comprehension
+	 * @param o Defines next level in comprehension
 	 * @return Next stage in for comprehension builder
 	 */
 	public static <T1> DoComp1<T1> add(CompletableFuture<T1> o){
@@ -136,7 +136,7 @@ public class Do {
 		}</pre>
 	 * 
 	 * 
-	 * @param f Defines next level in comprehension
+	 * @param o Defines next level in comprehension
 	 * @return Next stage in for comprehension builder
 	 */
 	public static <T1> DoComp1<T1> add(AnyM<T1> o){
@@ -157,7 +157,7 @@ public class Do {
 		}</pre>
 	 * 
 	 * 
-	 * @param f Defines next level in comprehension
+	 * @param o Defines next level in comprehension
 	 * @return Next stage in for comprehension builder
 	 */
 	public static <T1> DoComp1<T1> add(TraversableM<T1> o){
@@ -178,7 +178,7 @@ public class Do {
 		}</pre>
 	 * 
 	 * 
-	 * @param f Defines next level in comprehension
+	 * @param o Defines next level in comprehension
 	 * @return Next stage in for comprehension builder
 	 */
 	public static <T1> DoComp1<T1> add(Callable<T1> o){
@@ -199,7 +199,7 @@ public class Do {
 		}</pre>
 	 * 
 	 * 
-	 * @param f Defines next level in comprehension
+	 * @param o Defines next level in comprehension
 	 * @return Next stage in for comprehension builder
 	 */
 	public static <T1> DoComp1<T1> add(Supplier<T1> o){
@@ -220,7 +220,7 @@ public class Do {
 		}</pre>
 	 * 
 	 * 
-	 * @param f Defines next level in comprehension
+	 * @param o Defines next level in comprehension
 	 * @return Next stage in for comprehension builder
 	 */
 	public static <T1> DoComp1<T1> add(Collection<T1> o){
@@ -244,7 +244,7 @@ public class Do {
 		}</pre>
 	 *
 	 *
-	 * @param f Defines next level in comprehension
+	 * @param o Defines next level in comprehension
 	 * @return Next stage in for comprehension builder
 	 */
 	public static <T1 extends String>  DoComp1<T1> add(File o){
@@ -265,7 +265,7 @@ public class Do {
 		}</pre>
 	 *
 	 *
-	 * @param f Defines next level in comprehension
+	 * @param o Defines next level in comprehension
 	 * @return Next stage in for comprehension builder
 	 */
 	public static <T1 extends String>  DoComp1<T1> add(URL o){
@@ -286,7 +286,7 @@ public class Do {
 		}</pre>
 	 *
 	 *
-	 * @param f Defines next level in comprehension
+	 * @param o Defines next level in comprehension
 	 * @return Next stage in for comprehension builder
 	 */
 	public static <T1 extends String>  DoComp1<T1> add(BufferedReader o){

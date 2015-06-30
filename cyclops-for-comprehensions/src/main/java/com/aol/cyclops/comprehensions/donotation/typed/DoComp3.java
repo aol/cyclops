@@ -38,7 +38,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T4> DoComp4<T1,T2,T3,T4> add(Iterable<T4> o){
@@ -60,7 +60,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T4> DoComp4<T1,T2,T3,T4> add(Iterator<T4> o){
@@ -82,7 +82,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T4> DoComp4<T1,T2,T3,T4> addStream(Supplier<Stream<T4>> o){
@@ -104,7 +104,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T4> DoComp4<T1,T2,T3,T4> add(Optional<T4> o){
@@ -126,7 +126,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T4> DoComp4<T1,T2,T3,T4> add(CompletableFuture<T4> o){
@@ -148,7 +148,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T4> DoComp4<T1,T2,T3,T4> add(AnyM<T4> o){
@@ -170,7 +170,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T4> DoComp4<T1,T2,T3,T4> add(TraversableM<T4> o){
@@ -192,7 +192,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T4> DoComp4<T1,T2,T3,T4> add(Callable<T4> o){
@@ -214,7 +214,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T4> DoComp4<T1,T2,T3,T4> add(Supplier<T4> o){
@@ -236,7 +236,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T4> DoComp4<T1,T2,T3,T4> add(Collection<T4> o){
@@ -261,7 +261,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 *
 		 *
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T4 extends String>  DoComp4<T1,T2,T3,T4> add(File o){
@@ -283,7 +283,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 *
 		 *
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T4 extends String>  DoComp4<T1,T2,T3,T4> add(URL o){
@@ -305,7 +305,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 *
 		 *
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T4 extends String>  DoComp4<T1,T2,T3,T4> add(BufferedReader o){

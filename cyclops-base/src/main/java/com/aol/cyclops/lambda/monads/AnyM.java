@@ -29,7 +29,7 @@ import com.aol.cyclops.streams.StreamUtils;
 import com.nurkiewicz.lazyseq.LazySeq;
 
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
-public class AnyM<T> {//implements Unwrapable{
+public class AnyM<T> implements Unwrapable{
 	
 	private final Monad<Object,T> monad;
 	
@@ -143,7 +143,7 @@ public class AnyM<T> {//implements Unwrapable{
 					.sequence();
 	}
 	/**
-	 *  <pre>{@code Optional<List<Integer>>  into Stream<Integer> }
+	 *  <pre>{@code Optional<List<Integer>>  into Stream<Integer> }</pre>
 	 * Less type safe equivalent, but may be more accessible equivalent to  
 	 * <pre>
 	 * {@code 
@@ -151,14 +151,12 @@ public class AnyM<T> {//implements Unwrapable{
 	 *   }
 	 *   </pre>
 	 *  <pre>{@code
-	 * List<List<Integer>> list = anyM(Optional.of(Arrays.asList(1,2,3,4,5,6)))
+	 * List<Integer> list = anyM(Optional.of(Arrays.asList(1,2,3,4,5,6)))
 											.traversable()
-											.grouped(3)
 											.collect(Collectors.toList());
 		
 		
-		assertThat(list.get(0),hasItems(1,2,3));
-		assertThat(list.get(1),hasItems(4,5,6));
+		
 	 * 
 	 * }</pre>
 	

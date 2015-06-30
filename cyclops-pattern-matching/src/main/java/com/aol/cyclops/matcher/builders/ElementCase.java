@@ -86,7 +86,7 @@ public class ElementCase<X> extends CaseBeingBuilt {
 	/**
 	 * Build a Case which is triggered when all of the supplied Hamcrest Matchers holds
 	 * 
-	 * @param match
+	 * @param matchers
 	 *            Hamcrest Matchers that will trigger this case
 	 * @return Next Step in the Case Builder process
 	 */
@@ -98,7 +98,7 @@ public class ElementCase<X> extends CaseBeingBuilt {
 	/**
 	 * Build a Case which is triggered when any of the supplied Hamcrest Matchers holds
 	 * 
-	 * @param match
+	 * @param matchers
 	 *            Hamcrest Matchers that will trigger this case
 	 * @return Next Step in the Case Builder process
 	 */
@@ -110,7 +110,7 @@ public class ElementCase<X> extends CaseBeingBuilt {
 	/**
 	 * Build a Case which is triggered when none of the supplied Hamcrest Matchers holds
 	 * 
-	 * @param match
+	 * @param matchers
 	 *            Hamcrest Matchers that will trigger this case
 	 * @return Next Step in the Case Builder process
 	 */

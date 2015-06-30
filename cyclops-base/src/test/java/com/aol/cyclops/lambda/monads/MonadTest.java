@@ -503,7 +503,7 @@ public class MonadTest {
 	 AnyM<Stream<Integer>> applied =monad(Stream.of(1,2,3)).simpleFilter(monad(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3))).anyM();
 	
 	// System.out.println(applied.toList());
-	 assertThat(applied.map(s->s.collect(Collectors.toList())).traversable().toList(),equalTo(Arrays.asList(Arrays.asList(1), Arrays.asList(2),Arrays.asList())));
+	 assertThat(applied.map(s->s.collect(Collectors.toList())).toTraversable().toList(),equalTo(Arrays.asList(Arrays.asList(1), Arrays.asList(2),Arrays.asList())));
 	
 	}
 	@Test

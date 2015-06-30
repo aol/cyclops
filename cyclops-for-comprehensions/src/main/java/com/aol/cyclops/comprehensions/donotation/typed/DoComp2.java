@@ -38,7 +38,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T3> DoComp3<T1,T2,T3> add(Iterable<T3> o){
@@ -60,7 +60,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T3> DoComp3<T1,T2,T3> add(Iterator<T3> o){
@@ -82,7 +82,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T3> DoComp3<T1,T2,T3> addStream(Supplier<Stream<T3>> o){
@@ -104,7 +104,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T3> DoComp3<T1,T2,T3> add(Optional<T3> o){
@@ -126,7 +126,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T3> DoComp3<T1,T2,T3> add(CompletableFuture<T3> o){
@@ -148,7 +148,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T3> DoComp3<T1,T2,T3> add(AnyM<T3> o){
@@ -170,7 +170,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T3> DoComp3<T1,T2,T3> add(TraversableM<T3> o){
@@ -192,7 +192,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T3> DoComp3<T1,T2,T3> add(Callable<T3> o){
@@ -214,7 +214,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T3> DoComp3<T1,T2,T3> add(Supplier<T3> o){
@@ -236,7 +236,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T3> DoComp3<T1,T2,T3> add(Collection<T3> o){
@@ -261,7 +261,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 *
 		 *
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T3 extends String>  DoComp3<T1,T2,T3> add(File o){
@@ -283,7 +283,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 *
 		 *
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T3 extends String>  DoComp3<T1,T2,T3> add(URL o){
@@ -305,7 +305,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 *
 		 *
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T3 extends String>  DoComp3<T1,T2,T3> add(BufferedReader o){

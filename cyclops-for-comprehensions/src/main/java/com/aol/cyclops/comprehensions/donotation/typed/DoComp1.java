@@ -38,7 +38,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T2> DoComp2<T1,T2> add(Iterable<T2> o){
@@ -60,7 +60,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T2> DoComp2<T1,T2> add(Iterator<T2> o){
@@ -82,7 +82,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T2> DoComp2<T1,T2> addStream(Supplier<Stream<T2>> o){
@@ -104,7 +104,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T2> DoComp2<T1,T2> add(Optional<T2> o){
@@ -126,7 +126,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T2> DoComp2<T1,T2> add(CompletableFuture<T2> o){
@@ -148,7 +148,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T2> DoComp2<T1,T2> add(AnyM<T2> o){
@@ -170,7 +170,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T2> DoComp2<T1,T2> add(TraversableM<T2> o){
@@ -192,7 +192,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T2> DoComp2<T1,T2> add(Callable<T2> o){
@@ -214,7 +214,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T2> DoComp2<T1,T2> add(Supplier<T2> o){
@@ -236,7 +236,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T2> DoComp2<T1,T2> add(Collection<T2> o){
@@ -261,7 +261,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 *
 		 *
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T2 extends String>  DoComp2<T1,T2> add(File o){
@@ -283,7 +283,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 *
 		 *
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T2 extends String>  DoComp2<T1,T2> add(URL o){
@@ -305,7 +305,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 *
 		 *
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T2 extends String>  DoComp2<T1,T2> add(BufferedReader o){

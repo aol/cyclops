@@ -38,7 +38,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(Iterable<T8> o){
@@ -60,7 +60,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(Iterator<T8> o){
@@ -82,7 +82,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(Stream<T8> o){
@@ -104,7 +104,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(Optional<T8> o){
@@ -126,7 +126,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(CompletableFuture<T8> o){
@@ -148,7 +148,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(AnyM<T8> o){
@@ -170,7 +170,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(TraversableM<T8> o){
@@ -192,7 +192,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(Callable<T8> o){
@@ -214,7 +214,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(Supplier<T8> o){
@@ -236,7 +236,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 * 
 		 * 
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(Collection<T8> o){
@@ -261,7 +261,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 *
 		 *
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8 extends String>  DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(File o){
@@ -283,7 +283,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 *
 		 *
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8 extends String>  DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(URL o){
@@ -305,7 +305,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			}</pre>
 		 *
 		 *
-		 * @param f Defines next level in comprehension
+		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8 extends String>  DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(BufferedReader o){
