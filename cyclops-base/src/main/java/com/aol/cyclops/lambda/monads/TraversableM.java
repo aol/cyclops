@@ -98,7 +98,7 @@ public class TraversableM<T> implements Unwrapable {
 	 *            repeat while true
 	 * @return Repeating Stream
 	 */
-	public final AnyM<T> cycleWhile(Predicate<T> predicate) {
+	public final AnyM<T> cycleWhile(Predicate<? super T> predicate) {
 		return monad.cycleWhile(predicate).anyM();
 	}
 
@@ -109,7 +109,7 @@ public class TraversableM<T> implements Unwrapable {
 	 *            repeat while true
 	 * @return Repeating Stream
 	 */
-	public final AnyM<T> cycleUntil(Predicate<T> predicate) {
+	public final AnyM<T> cycleUntil(Predicate<? super T> predicate) {
 		return monad.cycleUntil(predicate).anyM();
 	}
 
@@ -269,7 +269,7 @@ public class TraversableM<T> implements Unwrapable {
 	 *            Compartor to sort with
 	 * @return Sorted Monad
 	 */
-	public final AnyM<T> sorted(Comparator<T> c) {
+	public final AnyM<T> sorted(Comparator<? super T> c) {
 		return monad.sorted(c).anyM();
 	}
 
@@ -306,7 +306,7 @@ public class TraversableM<T> implements Unwrapable {
 	 * @return Monad converted to Stream with elements skipped while predicate
 	 *         holds
 	 */
-	public final AnyM<T> skipWhile(Predicate<T> p) {
+	public final AnyM<T> skipWhile(Predicate<? super T> p) {
 		return monad.skipWhile(p).anyM();
 	}
 
@@ -325,7 +325,7 @@ public class TraversableM<T> implements Unwrapable {
 	 * @return Monad converted to Stream with elements skipped until predicate
 	 *         holds
 	 */
-	public final AnyM<T> skipUntil(Predicate<T> p) {
+	public final AnyM<T> skipUntil(Predicate<? super T> p) {
 		return monad.skipUntil(p).anyM();
 	}
 
@@ -357,7 +357,7 @@ public class TraversableM<T> implements Unwrapable {
 	 *            Limit while predicate is true
 	 * @return Monad converted to Stream with limited elements
 	 */
-	public final AnyM<T> limitWhile(Predicate<T> p) {
+	public final AnyM<T> limitWhile(Predicate<? super T> p) {
 		return monad.limitWhile(p).anyM();
 	}
 
@@ -373,7 +373,7 @@ public class TraversableM<T> implements Unwrapable {
 	 *            Limit until predicate is true
 	 * @return Monad converted to Stream with limited elements
 	 */
-	public final AnyM<T> limitUntil(Predicate<T> p) {
+	public final AnyM<T> limitUntil(Predicate<? super T> p) {
 		return monad.limitUntil(p).anyM();
 	}
 	/**
@@ -388,7 +388,7 @@ public class TraversableM<T> implements Unwrapable {
 	 * 
 	 * @param c Predicate to check if all match
 	 */
-	public final  void  allMatch(Predicate<T> c) {
+	public final  void  allMatch(Predicate<? super T> c) {
 		stream().allMatch(c);
 	}
 	/**
@@ -396,7 +396,7 @@ public class TraversableM<T> implements Unwrapable {
 	 * 
 	 * @param c Predicate to check if any match
 	 */
-	public final  void  anyMatch(Predicate<T> c) {
+	public final  void  anyMatch(Predicate<? super T> c) {
 		stream().anyMatch(c);
 	}
 	/**
@@ -435,7 +435,7 @@ public class TraversableM<T> implements Unwrapable {
 	 * @param reducer Monoid to reduce values
 	 * @return Reduce result
 	 */
-	public final  <R> R mapReduce(Function<T,R> mapper, Monoid<R> reducer){
+	public final  <R> R mapReduce(Function<? super T,? extends R> mapper, Monoid<R> reducer){
 		return reducer.reduce(stream().map(mapper));
 	}
 	
@@ -445,7 +445,7 @@ public class TraversableM<T> implements Unwrapable {
 	 * @param collector Collection operation definition
 	 * @return Collected result
 	 */
-	public final <R, A> R collect(Collector<T,A,R> collector){
+	public final <R, A> R collect(Collector<? super T, A, R> collector){
 		return stream().collect(collector);
 	}
 	/**

@@ -17,9 +17,18 @@ public class DoTest {
 	
 	@Test
 	public void do2(){
-		Stream<Double> s = UntypedDo.with(Stream.of(10.00,5.00,100.30))
-						.and((Double d)->Stream.of(2.0))
-						.yield((Double base)->(Double bonus)-> base*(1.0+bonus));
+		Stream<Double> s =  Do.add(Stream.of(10.00,5.00,100.30))
+						.withStream(d->Stream.of(2.0))
+						.yield( base -> bonus-> base*(1.0+bonus));
+		
+		val total = s.collect(Collectors.summingDouble(t->t));
+		assertThat(total,equalTo(345.9));
+	}
+	@Test
+	public void do2Add(){
+		Stream<Double> s =  Do.add(Stream.of(10.00,5.00,100.30))
+						.add(Stream.of(2.0))
+						.yield( base -> bonus-> base*(1.0+bonus));
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(345.9));

@@ -41,19 +41,19 @@ public class AnyM<T> implements Unwrapable{
 		return (Monad)monad;
 	}
 	
-	public final   AnyM<T>  filter(Predicate<T> fn){
+	public final   AnyM<T>  filter(Predicate<? super T> fn){
 		return monad.filter(fn).anyM();
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#map(java.util.function.Function)
 	 */
-	public final  <R> AnyM<R> map(Function<T,R> fn){
+	public final  <R> AnyM<R> map(Function<? super T,? extends R> fn){
 		return monad.map(fn).anyM();
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
 	 */
-	public final   AnyM<T>  peek(Consumer<T> c) {
+	public final   AnyM<T>  peek(Consumer<? super T> c) {
 		return monad.peek(c).anyM();
 	}
 	
@@ -65,7 +65,7 @@ public class AnyM<T> implements Unwrapable{
 	 * @param fn flatMap function
 	 * @return flatMapped monad
 	*/
-	final <R> AnyM<R> bind(Function<T,R> fn){
+	final <R> AnyM<R> bind(Function<? super T,? extends R> fn){
 		return monad.bind(fn).anyM();
 	
 	} 
@@ -76,7 +76,7 @@ public class AnyM<T> implements Unwrapable{
 	 * @param fn flatMap function
 	 * @return flatMapped monad
 	 */
-	public final <R> AnyM<R> liftAndBind(Function<T,?> fn){
+	public final <R> AnyM<R> liftAndBind(Function<? super T,?> fn){
 		return monad.liftAndBind(fn).anyM();
 	
 	}
@@ -114,7 +114,7 @@ public class AnyM<T> implements Unwrapable{
 	 * @param fn
 	 * @return
 	 */
-	public final <NT> AnyM<NT> flatMap(Function<T,AnyM<NT>> fn) {
+	public final <NT> AnyM<NT> flatMap(Function<? super T,AnyM<? extends NT>> fn) {
 		return monad.flatMap(fn).anyM();
 	}
 	
@@ -139,7 +139,7 @@ public class AnyM<T> implements Unwrapable{
 	 * 
 	 * @return A Monad that wraps a Stream
 	 */
-	public final <NT> TraversableM<T> traversable(Function<T,Stream<NT>> fn){
+	public final <NT> TraversableM<T> traversable(Function<? super T,Stream<? extends NT>> fn){
 		return monad.flatMapToStream((Function)fn)
 					.sequence();
 	}
@@ -237,7 +237,7 @@ public class AnyM<T> implements Unwrapable{
 	 * @param fn
 	 * @return
 	 */
-	public final <R> AnyM<R> applyM(AnyM<Function<T,R>> fn){
+	public final <R> AnyM<R> applyM(AnyM<Function<? super T,? extends R>> fn){
 		return monad.applyM(fn.monad).anyM();
 		
 	}
@@ -257,7 +257,7 @@ public class AnyM<T> implements Unwrapable{
 	 * @param fn
 	 * @return
 	 */
-	public final <NT,R> Monad<NT,R> simpleFilter(AnyM<Predicate<T>> fn){
+	public final <NT,R> Monad<NT,R> simpleFilter(AnyM<Predicate<? super T>> fn){
 		return  monad.simpleFilter(fn.monad);
 			
 	

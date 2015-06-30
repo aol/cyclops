@@ -75,19 +75,19 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Filterable#filter(java.util.function.Predicate)
 	 */
-	default   Monad<MONAD,T>  filter(Predicate<T> fn){
+	default   Monad<MONAD,T>  filter(Predicate<? super T> fn){
 		return (Monad)Filterable.super.filter(fn);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#map(java.util.function.Function)
 	 */
-	default  <R> Monad<MONAD,R> map(Function<T,R> fn){
+	default  <R> Monad<MONAD,R> map(Function<? super T,? extends R> fn){
 		return (Monad)Functor.super.map(fn);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
 	 */
-	default   Monad<MONAD,T>  peek(Consumer<T> c) {
+	default   Monad<MONAD,T>  peek(Consumer<? super T> c) {
 		return (Monad)Functor.super.peek(c);
 	}
 
@@ -98,7 +98,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 	 * @param fn flatMap function
 	 * @return flatMapped monad
 	 */
-	default <R> Monad<MONAD,T> bind(Function<T,R> fn){
+	default <R> Monad<MONAD,T> bind(Function<? super T,? extends R> fn){
 		return withMonad((MONAD)new ComprehenderSelector().selectComprehender(
 				unwrap())
 				.executeflatMap(unwrap(), fn));
@@ -111,7 +111,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 	 * @param fn flatMap function
 	 * @return flatMapped monad
 	 */
-	default <MONAD1,R> Monad<MONAD1,R> liftAndBind(Function<T,?> fn){
+	default <MONAD1,R> Monad<MONAD1,R> liftAndBind(Function<? super T,?> fn){
 		return withMonad((MONAD)new ComprehenderSelector().selectComprehender(
 				unwrap())
 				.liftAndFlatMap(unwrap(), fn));
@@ -141,17 +141,17 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 		
 	}
 	
-	default <R> Monad<Optional<R>,R> flatMapToOptional(Function<MONAD,Optional<R>> fn){
+	default <R> Monad<Optional<R>,R> flatMapToOptional(Function<? super MONAD,Optional<? extends R>> fn){
 		Optional opt = Optional.of(1);
 		return monad(opt.flatMap(i->fn.apply(unwrap())));
 	}
 	
-	default <R> Monad<Stream<R>,R> flatMapToStream(Function<MONAD,Stream<R>> fn){
+	default <R> Monad<Stream<R>,R> flatMapToStream(Function<? super MONAD,Stream<? extends R>> fn){
 		Stream stream = Stream.of(1);
 		return monad(stream.flatMap(i->fn.apply(unwrap())));
 	}
 	
-	default <R> Monad<CompletableFuture<R>,R> flatMapToCompletableFuture(Function<MONAD,CompletableFuture<R>> fn){
+	default <R> Monad<CompletableFuture<R>,R> flatMapToCompletableFuture(Function<? super MONAD,CompletableFuture<? extends R>> fn){
 		CompletableFuture future = CompletableFuture.completedFuture(1);
 		return monad(future.thenCompose(i->fn.apply(unwrap())));
 	}
@@ -194,14 +194,14 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 						.toList()))
 						.bind(Function.identity() );
 	}
-	default <MONAD2,NT>  Monad<MONAD2,NT> monadMap(Function<MONAD,NT> fn) {
+	default <MONAD2,NT>  Monad<MONAD2,NT> monadMap(Function<? super MONAD,? extends NT> fn) {
 		return asMonad(fn.apply(unwrap()));
 	}
-	default Optional<MONAD> monadFilter(Predicate<MONAD> p) {
+	default Optional<MONAD> monadFilter(Predicate<? super MONAD> p) {
 		return p.test(unwrap()) ? Optional.of(unwrap()) : Optional.empty();
 	}
 	
-	default <MONAD2,NT,R extends Monad<MONAD2,NT>> R monadFlatMap(Function<MONAD,R> fn) {
+	default <MONAD2,NT,R extends Monad<MONAD2,NT>> R monadFlatMap(Function<? super MONAD,? extends R> fn) {
 		return fn.apply(unwrap());
 	}
 	/**
@@ -210,7 +210,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 	 * @param fn
 	 * @return
 	 */
-	default <R extends MONAD,NT> Monad<R,NT> flatMap(Function<T,R> fn) {
+	default <R extends MONAD,NT> Monad<R,NT> flatMap(Function<? super T,? extends R> fn) {
 		return (Monad)bind(fn);
 	}
 	/* (non-Javadoc)
