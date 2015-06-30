@@ -642,7 +642,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 		 * @param f To be applied to every element in the for comprehension
 		 * @return Current stage with guard / filter applied
 		 */
-		public  DoComp5 filter(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Boolean>>>>> f){
+		public  DoComp5<T1,T2,T3,T4,T5> filter(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Boolean>>>>> f){
 			return new DoComp5(assigned.plus(assigned.size(),new Entry("$$internalGUARD"+assigned.size(),new Guard(f))));
 		}
 		

@@ -1,4 +1,4 @@
-package com.aol.cyclops.comprehensions;
+package com.aol.cyclops.comprehensions.donotation.typed;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;

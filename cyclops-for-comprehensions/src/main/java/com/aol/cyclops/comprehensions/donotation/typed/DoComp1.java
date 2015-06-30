@@ -152,7 +152,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T2> DoComp2<T1,T2> add(AnyM<T2> o){
-			return new DoComp2(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
+			return new DoComp2(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o.unwrap())));
 			
 		}
 		
@@ -174,7 +174,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T2> DoComp2<T1,T2> add(TraversableM<T2> o){
-			return new DoComp2(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
+			return new DoComp2(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o.unwrap())));
 			
 		}
 		
@@ -642,7 +642,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 		 * @param f To be applied to every element in the for comprehension
 		 * @return Current stage with guard / filter applied
 		 */
-		public  DoComp1 filter(Function<T1,Boolean> f){
+		public  DoComp1<T1> filter(Function<T1,Boolean> f){
 			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$internalGUARD"+assigned.size(),new Guard(f))));
 		}
 		

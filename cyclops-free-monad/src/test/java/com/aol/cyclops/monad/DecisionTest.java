@@ -9,7 +9,7 @@ import lombok.Value;
 
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.donotation.Do;
+import com.aol.cyclops.comprehensions.donotation.UntypedDo;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.matcher.Matchable;
 import com.aol.cyclops.monad.FreeTest.Box;
@@ -20,7 +20,7 @@ public class DecisionTest {
 	public void script(){
 		//build a set of actions for get followed by put
 		
-		Object output =	Do.with(get("key"))
+		Object output =	UntypedDo.with(get("key"))
 							.and((String a)->put("key",a))
 							.yield((String a)->(String b) -> b);
 							

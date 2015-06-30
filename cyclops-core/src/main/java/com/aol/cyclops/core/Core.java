@@ -21,8 +21,8 @@ import com.aol.cyclops.comprehensions.LessTypingForComprehension2;
 import com.aol.cyclops.comprehensions.LessTypingForComprehension3;
 import com.aol.cyclops.comprehensions.LessTypingForComprehension4;
 import com.aol.cyclops.comprehensions.MyComprehension;
-import com.aol.cyclops.comprehensions.donotation.Do;
-import com.aol.cyclops.comprehensions.donotation.Do.DoComp1;
+import com.aol.cyclops.comprehensions.donotation.UntypedDo;
+import com.aol.cyclops.comprehensions.donotation.UntypedDo.DoComp1;
 import com.aol.cyclops.dynamic.As;
 import com.aol.cyclops.functions.Functions;
 import com.aol.cyclops.lambda.api.Decomposable;
@@ -534,7 +534,7 @@ public class Core extends Functions {
 	 * @return Next stage in the step builder
 	 */
 	public static  DoComp1 doWith(Supplier<Object> o){
-		return  Do.with(o);
+		return  UntypedDo.with(o);
 	}
 	/**
 	 * Build a for comprehension from supplied type
@@ -545,7 +545,7 @@ public class Core extends Functions {
 	 * @return Next stage in for comprehension step builder
 	 */
 	public static  DoComp1 doWith(Object o){
-		return Do.with(o);
+		return UntypedDo.with(o);
 	}
 	
 	/**

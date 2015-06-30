@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.donotation.Do;
+import com.aol.cyclops.comprehensions.donotation.UntypedDo;
 
 import fj.data.Either;
 import fj.data.Validation;
@@ -25,7 +25,7 @@ public class MixedDoTest {
 		
 		
 		
-		CompletableFuture<List<String>> results1 = Do.with(future)
+		CompletableFuture<List<String>> results1 = UntypedDo.with(future)
 									 				.with(()->Stream.of("first","second"))
 									 				.yield((String loadedData) -> (String local)-> loadedData + ":" + local );
 		
@@ -53,7 +53,7 @@ public class MixedDoTest {
 		
 		
 		
-		Stream<String> results1 = Do.with(Stream.of("first","second"))
+		Stream<String> results1 = UntypedDo.with(Stream.of("first","second"))
 									 				.with(CompletableFuture.supplyAsync(this::loadData))
 									 				.yield((String local) -> (String loadedData)-> loadedData + ":" + local );
 		

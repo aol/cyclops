@@ -11,12 +11,12 @@ import lombok.val;
 
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.donotation.Do;
+import com.aol.cyclops.comprehensions.donotation.UntypedDo;
 public class DoFiltersTest {
 	
 	@Test
 	public void do2(){
-		Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
+		Stream<Double> s = UntypedDo.with(Arrays.asList(10.00,5.00,100.30))
 						.and((Double d)->Arrays.asList(2.0))
 						.filter((Double d)-> (Double e) -> e*d>10.00)
 						.yield((Double base)->(Double bonus)-> base*(1.0+bonus));
@@ -26,7 +26,7 @@ public class DoFiltersTest {
 	}
 	@Test
 	public void do1(){
-		Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
+		Stream<Double> s = UntypedDo.with(Arrays.asList(10.00,5.00,100.30))
 						.filter((Double d)-> d > 10.00)
 						.yield((Double base)-> base+10);
 		
@@ -37,7 +37,7 @@ public class DoFiltersTest {
 	
 	@Test
 	public void do3(){
-		Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
+		Stream<Double> s = UntypedDo.with(Arrays.asList(10.00,5.00,100.30))
 						.and((Double d)->Arrays.asList(2.0))
 						.and((Double d)->(Double e)->Arrays.asList(10.0))
 						.filter((Double d)-> (Double e) -> (Double f)-> (e*d*f)>10.00)
@@ -48,7 +48,7 @@ public class DoFiltersTest {
 	}
 	@Test
 	public void do4(){
-		Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
+		Stream<Double> s = UntypedDo.with(Arrays.asList(10.00,5.00,100.30))
 						.and((Double d)->Arrays.asList(2.0))
 						.and((Double d)->(Double e)->Arrays.asList(10.0))
 						.and((Double d)->(Double e)->(Double f)->Arrays.asList(10.0))
@@ -61,7 +61,7 @@ public class DoFiltersTest {
 	}
 	@Test
 	public void do5(){
-		Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
+		Stream<Double> s = UntypedDo.with(Arrays.asList(10.00,5.00,100.30))
 						.and((Double d)->Arrays.asList(2.0))
 						.and((Double d)->(Double e)->Arrays.asList(10.0))
 						.and((Double d)->(Double e)->(Double f)->Arrays.asList(10.0))
@@ -78,7 +78,7 @@ public class DoFiltersTest {
 	}
 	@Test
 	public void do6(){
-		Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
+		Stream<Double> s = UntypedDo.with(Arrays.asList(10.00,5.00,100.30))
 						.and((Double d)->Arrays.asList(2.0))
 						.and((Double d)->(Double e)->Arrays.asList(10.0))
 						.and((Double d)->(Double e)->(Double f)->Arrays.asList(10.0))
@@ -97,7 +97,7 @@ public class DoFiltersTest {
 	}
 	@Test
 	public void do7(){
-		Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
+		Stream<Double> s = UntypedDo.with(Arrays.asList(10.00,5.00,100.30))
 						.and((Double d)->Arrays.asList(2.0))
 						.and((Double d)->(Double e)->Arrays.asList(10.0))
 						.and((Double d)->(Double e)->(Double f)->Arrays.asList(10.0))
@@ -118,7 +118,7 @@ public class DoFiltersTest {
 	}
 	@Test
 	public void do8(){
-		Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
+		Stream<Double> s = UntypedDo.with(Arrays.asList(10.00,5.00,100.30))
 						.and((Double d)->Arrays.asList(2.0))
 						.and((Double d)->(Double e)->Arrays.asList(10.0))
 						.and((Double d)->(Double e)->(Double f)->Arrays.asList(10.0))

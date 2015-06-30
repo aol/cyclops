@@ -35,7 +35,7 @@ import com.aol.cyclops.lambda.utils.Mutable;
  * 
  */
 
-public class Do {
+public class UntypedDo {
 	@Value
 	static class Entry{
 		String key;

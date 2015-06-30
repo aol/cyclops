@@ -201,7 +201,7 @@ class DoGenerator {
 		 * @param f To be applied to every element in the for comprehension
 		 * @return Current stage with guard / filter applied
 		 */
-		public  DoComp${size} filter(Function${curriedTypes(size)},Boolean${curriedClose(size-1)} f){
+		public  ${classDef(size)} filter(Function${curriedTypes(size)},Boolean${curriedClose(size-1)} f){
 			return new DoComp${size}(assigned.plus(assigned.size(),new Entry("\$\$internalGUARD"+assigned.size(),new Guard(f))));
 		}
 		"""
