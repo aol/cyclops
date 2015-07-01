@@ -3,6 +3,10 @@ package com.aol.cyclops.lambda.monads;
 import static com.aol.cyclops.lambda.api.AsGenericMonad.asMonad;
 import static com.aol.cyclops.lambda.api.AsGenericMonad.monad;
 import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
+import static com.aol.cyclops.lambda.api.AsAnyMList.collectionToAnyMList;
+import static com.aol.cyclops.lambda.api.AsAnyMList.completableFutureToAnyMList;
+import static com.aol.cyclops.lambda.api.AsAnyMList.optionalToAnyMList;
+import static com.aol.cyclops.lambda.api.AsAnyMList.streamToAnyMList;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
@@ -11,6 +15,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,6 +33,7 @@ import lombok.val;
 
 import org.junit.Test;
 
+import com.aol.cyclops.lambda.api.AsAnyMList;
 import com.aol.cyclops.lambda.api.AsGenericMonad;
 import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.api.Monoid;
@@ -189,47 +195,7 @@ public class MonadTest {
 	
 	
 	
-	@Test
-	public void testSequenceNative(){
-		
-        List<Integer> list = IntStream.range(0, 100).boxed().collect(Collectors.toList());
-        List<CompletableFuture<Integer>> futures = list
-                .stream()
-                .map(x -> CompletableFuture.supplyAsync(() -> x))
-                .collect(Collectors.toList());
-
-        
-        CompletableFuture<List<Integer>> futureList = Monads.sequenceNative(CompletableFuture.class, futures);
-   
-        List<Integer> collected = futureList.join();
-        assertThat(collected.size(),equalTo( list.size()));
-        
-        for(Integer next : list){
-        	assertThat(list.get(next),equalTo( collected.get(next)));
-        }
-        
-	}
 	
-	@Test
-	public void testTraverseNative(){
-		
-        List<Integer> list = IntStream.range(0, 100).boxed().collect(Collectors.toList());
-        List<CompletableFuture<Integer>> futures = list
-                .stream()
-                .map(x -> CompletableFuture.supplyAsync(() -> x))
-                .collect(Collectors.toList());
-
-       
-        CompletableFuture<List<String>> futureList = Monads.traverseNative(CompletableFuture.class, futures, (Integer i) -> "hello" +i);
-   
-        List<String> collected = futureList.join();
-        assertThat(collected.size(),equalTo( list.size()));
-        
-        for(Integer next : list){
-        	assertThat("hello"+list.get(next),equalTo( collected.get(next)));
-        }
-        
-	}
 	@Test
 	public void testSequence(){
 		
@@ -240,7 +206,7 @@ public class MonadTest {
                 .collect(Collectors.toList());
        
         
-        AnyM<List<Integer>> futureList = Monads.sequence(CompletableFuture.class,futures).anyM();
+        AnyM<Stream<Integer>> futureList = Monads.sequence(completableFutureToAnyMList(futures));
         
  
         List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>unwrap().join();
@@ -257,10 +223,10 @@ public class MonadTest {
         
        
         
-        AnyM<List<Integer>> futureList = Monads.sequence(Stream.class,Arrays.asList(Arrays.asList(1,2),Arrays.asList(3,4))).anyM();
+        AnyM<Stream<Integer>> futureList = Monads.sequence(collectionToAnyMList(asList(Arrays.asList(1,2),Arrays.asList(3,4))));
         
  
-        assertThat(futureList.toList(),equalTo(Arrays.asList(1,2,3,4)));
+        assertThat(futureList.traversable().toList(),equalTo(Arrays.asList(1,2,3,4)));
         
 	}
 	@Test
@@ -269,11 +235,12 @@ public class MonadTest {
         
        
         
-        AnyM<List<Stream<Integer>>> result = Monads.sequence(Stream.class,Arrays.asList(Stream.of(1,2),Stream.of(3,4))).anyM();
+        AnyM<Stream<Integer>> result = Monads.sequence(streamToAnyMList(asList(Stream.of(1,2),Stream.of(3,4))));
         
  
        
         assertThat(result
+        			  .traversable()
         		      .toList(),
         				equalTo(Arrays.asList(1,2,3,4)));
         
@@ -282,13 +249,12 @@ public class MonadTest {
 	public void testSequenceOptional(){
 		
         
-       
+
         
-        AnyM<List<Integer>> futureList = Monads.sequence(Optional.class,
-        						Arrays.asList(Optional.of(7),Optional.of(8),Optional.of(9))).anyM();
+        AnyM<Stream<Integer>> futureList = Monads.sequence(optionalToAnyMList(asList(Optional.of(7),Optional.of(8),Optional.of(9))));
         
  
-        assertThat(futureList.toList(),equalTo(Arrays.asList(7,8,9)));
+        assertThat(futureList.traversable().toList(),equalTo(Arrays.asList(7,8,9)));
         
 	}
 	
@@ -302,7 +268,7 @@ public class MonadTest {
                 .collect(Collectors.toList());
 
        
-        AnyM<List<String>> futureList = Monads.traverse(CompletableFuture.class, futures, (Integer i) -> "hello" +i).anyM();
+        AnyM<List<String>> futureList = Monads.traverse(completableFutureToAnyMList(futures), (Integer i) -> "hello" +i);
    
         List<String> collected = futureList.<CompletableFuture<List<String>>>unwrap().join();
         assertThat(collected.size(),equalTo( list.size()));
@@ -470,21 +436,21 @@ public class MonadTest {
 	public void testApplyM(){
 	 AnyM<Integer> applied =monad(Stream.of(1,2,3)).applyM(monad(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2))).anyM();
 	
-	 assertThat(applied.toList(),equalTo(Arrays.asList(2, 2, 3, 4, 4, 6)));
+	 assertThat(applied.traversable().toList(),equalTo(Arrays.asList(2, 2, 3, 4, 4, 6)));
 	 
 	}
 	@Test
 	public void testApplyMOptional(){
 	 AnyM<Integer> applied =monad(Optional.of(2)).applyM(monad(Optional.of( (Integer a)->a+1)) ).anyM();
 	
-	 assertThat(applied.toList(),equalTo(Arrays.asList(3)));
+	 assertThat(applied.traversable().toList(),equalTo(Arrays.asList(3)));
 	 
 	}
 	@Test
 	public void testApplyMOptionalEmpty(){
 	 AnyM<Integer> applied =monad(Optional.of(2)).applyM(monad(Optional.empty())).<Integer>anyM();
 	
-	 assertThat(applied.toList(),equalTo(Arrays.asList()));
+	 assertThat(applied.traversable().toList(),equalTo(Arrays.asList()));
 	 
 	}
 	@Test
@@ -492,7 +458,7 @@ public class MonadTest {
 		AnyM<Integer> empty= 	monad(Optional.empty()).anyM();
 		AnyM<Integer> applied =	empty.applyM(anyM(Optional.of((Integer a)->a+1)) );
 	
-		assertThat(applied.toList(),equalTo(Arrays.asList()));
+		assertThat(applied.traversable().toList(),equalTo(Arrays.asList()));
 	 
 	}
 
@@ -501,14 +467,14 @@ public class MonadTest {
 	 AnyM<Stream<Integer>> applied =monad(Stream.of(1,2,3)).simpleFilter(monad(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3))).anyM();
 	
 	// System.out.println(applied.toList());
-	 assertThat(applied.map(s->s.collect(Collectors.toList())).toList(),equalTo(Arrays.asList(Arrays.asList(1), Arrays.asList(2),Arrays.asList())));
+	 assertThat(applied.map(s->s.collect(Collectors.toList())).toTraversable().toList(),equalTo(Arrays.asList(Arrays.asList(1), Arrays.asList(2),Arrays.asList())));
 	
 	}
 	@Test
 	public void testSimpleFilterOptional(){
 	 AnyM<Optional<Integer>> applied =monad(Optional.of(2)).simpleFilter(monad(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3))).anyM();
 	
-	 assertThat(applied.toList(),equalTo(Arrays.asList(2)));
+	 assertThat(applied.traversable().toList(),equalTo(Arrays.asList(2)));
 	
 	}
 	
@@ -520,7 +486,7 @@ public class MonadTest {
 	@Test
 	public void testReplicateMStream(){
 		 AnyM<Integer> applied =monad(Stream.of(2,3,4)).replicateM(5).anyM();
-		 assertThat(applied.toList(),equalTo(Arrays.asList(2,3,4,2,3,4,2,3,4,2,3,4,2,3,4)));
+		 assertThat(applied.traversable().toList(),equalTo(Arrays.asList(2,3,4,2,3,4,2,3,4,2,3,4,2,3,4)));
 	}
 	
 	@Test
@@ -555,14 +521,7 @@ public class MonadTest {
 	public void testLimitWhile(){
 		assertThat(monad(Stream.of(4,3,6,7)).sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));
 	}
-	@Test
-	public void testLiftM(){
-		Function<Monad<Optional<Integer>,Integer>,Monad<Optional<Integer>,Integer>> lifted = Monads.liftMonad((Integer a)->a+3);
-		
-		Monad<Optional<Integer>, Integer> result = lifted.apply(monad(Optional.of(3)));
-		
-		assertThat(result.unwrap().get(),equalTo(6));
-	}
+	
 	@Test
 	public void testLiftMSimplex(){
 		val lifted = Monads.liftM((Integer a)->a+3);
@@ -571,14 +530,7 @@ public class MonadTest {
 		
 		assertThat(result.<Optional<Integer>>unwrap().get(),equalTo(6));
 	}
-	@Test
-	public void testLiftMNative(){
-		Function<Optional<Integer>,Optional<Integer>> lifted = Monads.liftMNative((Integer a)->a+3);
-		
-		Optional<Integer> result = lifted.apply(Optional.of(3));
-		
-		assertThat(result.get(),equalTo(6));
-	}
+	
 	
 	@Test
 	public void testReduceM(){
@@ -587,15 +539,7 @@ public class MonadTest {
 		assertThat(monad(Stream.of(2,8,3,1)).reduceM(optionalAdd).unwrap(),equalTo(Optional.of(14)));
 	}
 	
-	@Test
-	public void testLiftM2(){
-		BiFunction<Monad<Optional<Integer>,Integer>,Monad<Optional<Integer>,Integer>,Monad<Optional<Integer>,Integer>> lifted =
-								Monads.liftMonad2((Integer a, Integer b)->a+3+b);
-		
-		Monad<Optional<Integer>, Integer> result = lifted.apply(monad(Optional.of(3)),monad(Optional.of(3)));
-		
-		assertThat(result.unwrap().get(),equalTo(9));
-	}
+	
 	@Test
 	public void testLiftM2Simplex(){
 		val lifted = Monads.liftM2((Integer a,Integer b)->a+b);
@@ -612,14 +556,7 @@ public class MonadTest {
 		
 		assertThat(result.<Optional<Integer>>unwrap().isPresent(),equalTo(false));
 	}
-	@Test
-	public void testLiftM2Native(){
-		BiFunction<Optional<Integer>,Optional<Integer>,Optional<Integer>> lifted = Monads.liftMNative2((Integer a, Integer b)->a*b);
-		
-		Optional<Integer> result = lifted.apply(Optional.of(3),Optional.of(6));
-		
-		assertThat(result.get(),equalTo(18));
-	}
+	
 	private Integer add(Integer a, Integer  b){
 		return a+b;
 	}

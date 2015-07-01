@@ -7,10 +7,7 @@ import java.util.function.BiFunction;
 
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.LessTypingForComprehension1.Vars1;
-import com.aol.cyclops.comprehensions.LessTypingForComprehension2.Vars2;
-import com.aol.cyclops.comprehensions.LessTypingForComprehension3.Vars3;
-import com.aol.cyclops.comprehensions.LessTypingForComprehension4.Vars4;
+import com.aol.cyclops.comprehensions.donotation.typed.Do;
 
 public class OptionalTest {
 
@@ -23,10 +20,10 @@ public class OptionalTest {
 		BiFunction<Integer, Integer, Integer> f2 = (a, b) -> a * b;
 
 	
-		Optional<Integer> result =  (Optional)ForComprehensions.foreach3(c -> c.flatMapAs$1(two)
-														.flatMapAs$2((Vars3<Integer,Integer,Integer> v)->four)
-														.mapAs$3(v->three)
-														.yield(v->{return f2.apply(v.$1(), v.$2());}));
+		Optional<Integer> result =  Do.add(two)
+										.add(four)
+										.add(three)
+										.yield(v1->v2->v3 -> f2.apply(v1, v2))).unwrap();
 		
 		assertThat(result,equalTo(Optional.of(8)));
 
@@ -37,11 +34,11 @@ public class OptionalTest {
 		Optional<Integer> empty = null;
 		BiFunction<Integer, Integer, Integer> f2 = (a, b) -> a * b;
 
-		Object result =  ForComprehensions.foreach4(c -> c.flatMapAs$1(one)
-														.flatMapAs$2((Vars4<Integer,Integer,Integer,Integer> v)->empty)
-														.flatMapAs$3(v->Optional.empty())
-														.mapAs$4(v->Optional.empty())
-														.yield(v->{return f2.apply(v.$1(), v.$2());}));
+		Object result = Do.add(one)
+							.add(empty)
+							.withOptional(v1->v2->Optional.empty())
+							.add(Optional.empty())
+							.yield(v1->v2->v3->v4-> f2.apply(v1, v2)).unwrap();
 		
 		assertThat(result,equalTo(Optional.empty()));
 
@@ -52,11 +49,11 @@ public class OptionalTest {
 		Optional<Integer> empty = Optional.of(3);
 		BiFunction<Integer, Integer, Integer> f2 = (a, b) -> a * b;
 
-		Object result =  ForComprehensions.foreach4(c -> c.flatMapAs$1(one)
-														.flatMapAs$2((Vars4<Integer,Integer,Integer,Integer> v)->empty)
-														.flatMapAs$3(v->Optional.empty())
-														.mapAs$4(v->Optional.empty())
-														.yield(v->{return f2.apply(v.$1(), v.$2());}));
+		Object result =  Do.add(one)
+							.withOptional(v1->empty)
+							.withOptional(v1->v2->Optional.empty())
+							.withOptional(v1->v2->v3->Optional.empty())
+							.yield(v1->v2->v3->v4-> f2.apply(v1, v2))).unwrap();
 		
 		assertThat(result,equalTo(Optional.empty()));
 
@@ -69,9 +66,8 @@ public class OptionalTest {
 		BiFunction<Integer, Integer, Integer> f2 = (a, b) -> a * b;
 
 		
-		Object result = ForComprehensions.foreach1(c ->  c.mapAs$1(one)
-														
-														.yield((Vars1<Integer> v)->{return f2.apply(v.$1(), 10);}));
+		Object result = Do.add(one)
+						   .yield(v->f2.apply(v, 10)).unwrap();
 
 		assertThat(result,equalTo(Optional.of(10)));
 
@@ -84,10 +80,10 @@ public class OptionalTest {
 		
 				
 		
-		Object result =  ForComprehensions.foreach2(c -> c.flatMapAs$1(one)
-																		.mapAs$2((Vars2<Integer,Integer> v)->Optional.of(v.$1()))
-																		.filter(v->v.<Integer>$1()>2)
-																		.yield(v->{return f2.apply(v.$1(), v.$2());}));
+		Object result =  Do.add(one)
+							.withOptional(v1->Optional.of(v1))
+							.filter(v1->v2->v1>2)
+							.yield(v1->v2-> f2.apply(v1, v2)).unwrap();
 		
 		assertThat(result,equalTo(Optional.of(9)));
 

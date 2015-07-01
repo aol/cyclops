@@ -16,9 +16,6 @@ import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.lambda.api.Mappable;
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Streamable;
-import com.aol.cyclops.lambda.api.AsGenericMonoid.WrappedMonoid;
-import com.aol.cyclops.lambda.api.AsStreamable.CoercedStreamable;
-import com.aol.cyclops.lambda.api.AsSupplier.CoercedSupplier;
 import com.aol.cyclops.lambda.monads.AnyM;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.Monad;
@@ -176,7 +173,7 @@ public interface As {
 	 * @return Duck typed Monad
 	 */
 	public static <T> AnyM<T> asAnyM(Object monad){
-		return AsAnyM.asAnyM(monad);
+		return AsAnyM.notTypeSafeAnyM(monad);
 	}
 	/**
 	 * Create a Duck typed functor. Wrapped class should have a method

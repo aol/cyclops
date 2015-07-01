@@ -1,4 +1,4 @@
-package com.aol.cyclops.comprehensions;
+package com.aol.cyclops.comprehensions.donotation.typed;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -25,9 +25,10 @@ public class MixedDoTest {
 		
 		
 		
-		CompletableFuture<List<String>> results1 = UntypedDo.add(future)
-									 				.add(()->Stream.of("first","second"))
-									 				.yield((String loadedData) -> (String local)-> loadedData + ":" + local );
+		CompletableFuture<List<String>> results1 = Do.add(future)
+									 				.addStream(()->Stream.of("first","second"))
+									 				.yield((String loadedData) -> (String local)-> loadedData + ":" + local )
+									 				.unwrap();
 		
 	
 		
@@ -53,9 +54,9 @@ public class MixedDoTest {
 		
 		
 		
-		Stream<String> results1 = UntypedDo.add(Stream.of("first","second"))
+		Stream<String> results1 = Do.add(Stream.of("first","second"))
 									 				.add(CompletableFuture.supplyAsync(this::loadData))
-									 				.yield((String local) -> (String loadedData)-> loadedData + ":" + local );
+									 				.yield((String local) -> (String loadedData)-> loadedData + ":" + local ).unwrap();
 		
 	
 		

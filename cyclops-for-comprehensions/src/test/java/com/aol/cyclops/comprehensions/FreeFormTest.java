@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.donotation.Do;
+import com.aol.cyclops.comprehensions.donotation.UntypedDo;
 public class FreeFormTest {
 
 	MyComprehension<Custom2,Custom2> comp = ForComprehensions.custom(Custom2.class);
@@ -29,7 +29,7 @@ public class FreeFormTest {
 	@Test
 	public void freeFormDo(){
 		List<Integer> list= Arrays.asList(1,2,3);
-		Stream<Integer> stream = Do.with(()->list)
+		Stream<Integer> stream = UntypedDo.add(()->list)
 								.yield((Integer a)-> a +2);
 				
 										
@@ -40,7 +40,7 @@ public class FreeFormTest {
 	@Test
 	public void freeFormDoWithFilter(){
 		List<Integer> list= Arrays.asList(1,2,3);
-		Stream<Integer> stream = Do.with(list)
+		Stream<Integer> stream = UntypedDo.add(list)
 								.filter((Integer a) -> a>2)
 								.yield((Integer a)-> a +2);
 				
@@ -51,8 +51,8 @@ public class FreeFormTest {
 	}
 	@Test
 	public void freeFormDo2(){
-		Stream<Integer> stream = Do.with(asList(20,30))
-								   .and((Integer i)->asList(1,2,3))
+		Stream<Integer> stream = UntypedDo.add(asList(20,30))
+								   .with((Integer i)->asList(1,2,3))
 								   .yield((Integer a)-> (Integer b) -> a + b+2);
 		
 		assertThat(stream.collect(Collectors.toList()),equalTo(Arrays.asList(23,24,25,33,34,35)));
@@ -60,8 +60,8 @@ public class FreeFormTest {
 	}
 	@Test
 	public void freeFormDo3(){
-		Stream<Integer> stream = Do.with(asList(20,30))
-								   .with(asList(1,2,3))
+		Stream<Integer> stream = UntypedDo.add(asList(20,30))
+								   .add(asList(1,2,3))
 								   .yield((Integer a)-> (Integer b) -> a + b+2);
 		
 		assertThat(stream.collect(Collectors.toList()),equalTo(Arrays.asList(23,24,25,33,34,35)));

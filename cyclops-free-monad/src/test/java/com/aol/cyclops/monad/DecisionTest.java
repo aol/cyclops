@@ -9,7 +9,7 @@ import lombok.Value;
 
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.donotation.Do;
+import com.aol.cyclops.comprehensions.donotation.UntypedDo;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.matcher.Matchable;
 import com.aol.cyclops.monad.FreeTest.Box;
@@ -20,7 +20,7 @@ public class DecisionTest {
 	public void script(){
 		//build a set of actions for get followed by put
 		
-		Object output =	Do.with(get("key"))
+		Object output =	UntypedDo.with(get("key"))
 							.and((String a)->put("key",a))
 							.yield((String a)->(String b) -> b);
 							
@@ -49,7 +49,7 @@ public class DecisionTest {
 	static class Action implements Matchable, Functor<Action>{
 
 		@Override
-		public <R> Functor<R> map(Function<Action, R> fn) {
+		public <R> Functor<R> map(Function<? super Action, ? extends R> fn) {
 			return matchType(c -> 
 							c.isType( (Put p) -> new Put(p.key,p.value,(Action)fn.apply(p.next)))
 							.isType((Delete d) -> new Delete(d.key,(Action)fn.apply(d.next)))

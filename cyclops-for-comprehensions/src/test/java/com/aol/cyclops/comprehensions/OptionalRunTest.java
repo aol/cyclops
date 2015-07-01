@@ -8,10 +8,9 @@ import java.util.function.BiFunction;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.LessTypingForComprehension1.Vars1;
-import com.aol.cyclops.comprehensions.LessTypingForComprehension2.Vars2;
-import com.aol.cyclops.comprehensions.LessTypingForComprehension3.Vars3;
-import com.aol.cyclops.comprehensions.LessTypingForComprehension4.Vars4;
+import com.aol.cyclops.comprehensions.donotation.typed.Do;
+
+
 
 public class OptionalRunTest {
 	Integer result ;
@@ -29,12 +28,12 @@ public class OptionalRunTest {
 		BiFunction<Integer, Integer, Integer> f2 = (a, b) -> a * b;
 
 	
-		 ForComprehensions.foreach3(c -> c.flatMapAs$1(two)
-														.flatMapAs$2((Vars3<Integer,Integer,Integer> v)->four)
-														.mapAs$3(v->three)
-														.run(v-> { result= f2.apply(v.$1(), v.$2()); }));
+		Optional<Integer> result =  Do.add(two)
+										.add(four)
+										.add(three)
+										.yield(v1->v2->v3-> f2.apply(v1, v2)).unwrap();
 		
-		assertThat(result,equalTo(8));
+		assertThat(result.get(),equalTo(8));
 
 	}
 	

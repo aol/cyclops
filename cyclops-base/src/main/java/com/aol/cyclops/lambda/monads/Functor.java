@@ -57,14 +57,14 @@ public interface Functor<T> {
 		return this;
 	}
 	
-	default  <R> Functor<R>  map(Function<T,R> fn) {
+	default  <R> Functor<R>  map(Function<? super T,? extends R> fn) {
 		Object value = new ComprehenderSelector().selectComprehender(
 				getFunctor()).map(getFunctor(), fn);
 	
 		return withFunctor((R)value);
 	
 	}
-	default   Functor<T>  peek(Consumer<T> c) {
+	default   Functor<T>  peek(Consumer<? super T> c) {
 		return (Functor)map(input -> {
 			c.accept(input);
 			return  input;
