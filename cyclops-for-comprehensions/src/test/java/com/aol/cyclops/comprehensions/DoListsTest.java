@@ -14,13 +14,13 @@ import lombok.val;
 
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.donotation.Do;
+import com.aol.cyclops.comprehensions.donotation.UntypedDo;
 public class DoListsTest {
 	
 
 	@Test
 	public void do2(){
-		Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
+		Stream<Double> s = UntypedDo.with(Arrays.asList(10.00,5.00,100.30))
 						.and((Double d)->Arrays.asList(2.0))
 						.yield((Double base)->(Double bonus)-> base*(1.0+bonus));
 		
@@ -29,7 +29,7 @@ public class DoListsTest {
 	}
 	@Test
 	public void do1(){
-		Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
+		Stream<Double> s = UntypedDo.with(Arrays.asList(10.00,5.00,100.30))
 						.yield((Double base)-> base+10);
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
@@ -39,7 +39,7 @@ public class DoListsTest {
 	
 	@Test
 	public void do3(){
-		Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
+		Stream<Double> s = UntypedDo.with(Arrays.asList(10.00,5.00,100.30))
 						.and((Double d)->Arrays.asList(2.0))
 						.and((Double d)->(Double e)->Arrays.asList(10.0))
 						.yield((Double base)->(Double bonus)->(Double woot) -> base*(1.0+bonus)*woot);
@@ -49,7 +49,7 @@ public class DoListsTest {
 	}
 	@Test
 	public void do4(){
-		Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
+		Stream<Double> s = UntypedDo.with(Arrays.asList(10.00,5.00,100.30))
 						.and((Double d)->Arrays.asList(2.0))
 						.and((Double d)->(Double e)->Arrays.asList(10.0))
 						.and((Double d)->(Double e)->(Double f)->Arrays.asList(10.0))
@@ -61,7 +61,7 @@ public class DoListsTest {
 	}
 	@Test
 	public void do5(){
-		Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
+		Stream<Double> s = UntypedDo.with(Arrays.asList(10.00,5.00,100.30))
 						.and((Double d)->Arrays.asList(2.0))
 						.and((Double d)->(Double e)->Arrays.asList(10.0))
 						.and((Double d)->(Double e)->(Double f)->Arrays.asList(10.0))
@@ -75,7 +75,7 @@ public class DoListsTest {
 	}
 	@Test
 	public void do6(){
-		Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
+		Stream<Double> s = UntypedDo.with(Arrays.asList(10.00,5.00,100.30))
 						.and((Double d)->Arrays.asList(2.0))
 						.and((Double d)->(Double e)->Arrays.asList(10.0))
 						.and((Double d)->(Double e)->(Double f)->Arrays.asList(10.0))
@@ -91,7 +91,7 @@ public class DoListsTest {
 	}
 	@Test
 	public void do7(){
-		Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
+		Stream<Double> s = UntypedDo.with(Arrays.asList(10.00,5.00,100.30))
 						.and((Double d)->Arrays.asList(2.0))
 						.and((Double d)->(Double e)->Arrays.asList(10.0))
 						.and((Double d)->(Double e)->(Double f)->Arrays.asList(10.0))
@@ -109,7 +109,7 @@ public class DoListsTest {
 	}
 	@Test
 	public void do9(){
-		Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
+		Stream<Double> s = UntypedDo.with(Arrays.asList(10.00,5.00,100.30))
 						.and((Double d)->Arrays.asList(2.0))
 						.and((Double d)->(Double e)->Arrays.asList(10.0))
 						.and((Double d)->(Double e)->(Double f)->Arrays.asList(10.0))
@@ -132,7 +132,7 @@ public class DoListsTest {
 	
 	@Test
 	public void do2Just(){
-		Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
+		Stream<Double> s = UntypedDo.with(Arrays.asList(10.00,5.00,100.30))
 						.with(Arrays.asList(2.0))
 						.yield((Double base)->(Double bonus)-> base*(1.0+bonus));
 		
@@ -143,7 +143,7 @@ public class DoListsTest {
 	
 	@Test
 	public void do3Just(){
-		Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
+		Stream<Double> s = UntypedDo.with(Arrays.asList(10.00,5.00,100.30))
 						.with(Arrays.asList(2.0))
 						.with(Arrays.asList(10.0))
 						.yield((Double base)->(Double bonus)->(Double woot) -> base*(1.0+bonus)*woot);
@@ -153,7 +153,7 @@ public class DoListsTest {
 	}
 	@Test
 	public void do4Just(){
-		Stream<Double> s = Do.with(()->Arrays.asList(10.00,5.00,100.30))
+		Stream<Double> s = UntypedDo.with(()->Arrays.asList(10.00,5.00,100.30))
 						.with(Arrays.asList(2.0))
 						.and((Double d)->(Double e)->Arrays.asList(10.0))
 						.with(Arrays.asList(10.0))
@@ -165,7 +165,7 @@ public class DoListsTest {
 	}
 	@Test
 	public void do5Just(){
-		Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
+		Stream<Double> s = UntypedDo.with(Arrays.asList(10.00,5.00,100.30))
 						.with(Arrays.asList(2.0))
 						.and((Double d)->(Double e)->Arrays.asList(10.0))
 						.and((Double d)->(Double e)->(Double f)->Arrays.asList(10.0))
@@ -179,7 +179,7 @@ public class DoListsTest {
 	}
 	@Test
 	public void do6Just(){
-		Stream<Double> s = Do.with(()->Arrays.asList(10.00,5.00,100.30))
+		Stream<Double> s = UntypedDo.with(()->Arrays.asList(10.00,5.00,100.30))
 						.and((Double d)->Arrays.asList(2.0))
 						.and((Double d)->(Double e)->Arrays.asList(10.0))
 						.and((Double d)->(Double e)->(Double f)->Arrays.asList(10.0))
@@ -194,7 +194,7 @@ public class DoListsTest {
 	}
 	@Test
 	public void do7Just(){
-		Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
+		Stream<Double> s = UntypedDo.with(Arrays.asList(10.00,5.00,100.30))
 						.and((Double d)->Arrays.asList(2.0))
 						.and((Double d)->(Double e)->Arrays.asList(10.0))
 						.and((Double d)->(Double e)->(Double f)->Arrays.asList(10.0))
@@ -211,7 +211,7 @@ public class DoListsTest {
 	}
 	@Test
 	public void do9Just(){
-		Stream<Double> s = Do.with(()->Arrays.asList(10.00,5.00,100.30))
+		Stream<Double> s = UntypedDo.with(()->Arrays.asList(10.00,5.00,100.30))
 						.and((Double d)->Arrays.asList(2.0))
 						.and((Double d)->(Double e)->Arrays.asList(10.0))
 						.and((Double d)->(Double e)->(Double f)->Arrays.asList(10.0))

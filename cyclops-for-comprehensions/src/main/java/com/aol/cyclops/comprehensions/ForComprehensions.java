@@ -9,6 +9,7 @@ import java.util.function.Function;
  * @author johnmcclean
  *
  */
+@Deprecated //use com.aol.cyclops.comprehensions.donotation.typed.Do instead
 public class ForComprehensions {
 
 	

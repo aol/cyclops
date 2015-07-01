@@ -52,7 +52,9 @@ public interface Comprehender<T> {
 	 * @param p JDK Predicate to wrap
 	 * @return Result of call to <pre>{@code t.filter ( i -> p.test(i)); }</pre>
 	 */
-	public Object filter(T t, Predicate p);
+	default Object filter(T t, Predicate p){
+		return this.flatMap(t, d -> p.test(d) ? of(d) : empty());
+	}
 	
 	/**
 	 * Wrapper around map
