@@ -285,7 +285,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @param predicate repeat while true
 	 * @return Repeating Stream
 	 */
-	default  Monad<Stream<T>,T> cycleWhile(Predicate<T> predicate){
+	default  Monad<Stream<T>,T> cycleWhile(Predicate<? super T> predicate){
 		return monad(LazySeq.of(StreamUtils.cycle(stream()).iterator()).takeWhile(predicate).stream());
 	}
 	/**
@@ -294,7 +294,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @param predicate repeat while true
 	 * @return Repeating Stream
 	 */
-	default  Monad<Stream<T>,T> cycleUntil(Predicate<T> predicate){
+	default  Monad<Stream<T>,T> cycleUntil(Predicate<? super T> predicate){
 		return monad(LazySeq.of(StreamUtils.cycle(stream()).iterator()).takeWhile(predicate.negate()).stream());
 	}
 	/**
@@ -450,7 +450,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @param c Compartor to sort with
 	 * @return Sorted Monad
 	 */
-	default Monad<Stream<T>,T> sorted(Comparator<T > c){
+	default Monad<Stream<T>,T> sorted(Comparator<? super T > c){
 		return monad(stream().sorted(c));   
 	}
 	/**
@@ -476,7 +476,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @param p Predicate to skip while true
 	 * @return Monad converted to Stream with elements skipped while predicate holds
 	 */
-	default Monad<Stream<T>,T> skipWhile(Predicate<T> p){
+	default Monad<Stream<T>,T> skipWhile(Predicate<? super T> p){
 		return monad(LazySeq.of(stream().iterator())
 				.dropWhile(p)
 				.stream());
@@ -491,7 +491,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @param p Predicate to skip until true
 	 * @return Monad converted to Stream with elements skipped until predicate holds
 	 */
-	default Monad<Stream<T>,T> skipUntil(Predicate<T> p){
+	default Monad<Stream<T>,T> skipUntil(Predicate<? super T> p){
 		return monad(LazySeq.of(stream().iterator())
 				.dropWhile(p.negate())
 				.stream());
@@ -519,7 +519,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @param p Limit while predicate is true
 	 * @return Monad converted to Stream with limited elements
 	 */
-	default Monad<Stream<T>,T> limitWhile(Predicate<T> p){
+	default Monad<Stream<T>,T> limitWhile(Predicate<? super T> p){
 		return monad(LazySeq.of(stream().iterator())
 					.takeWhile(p)
 					.stream());
@@ -536,7 +536,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @param p Limit until predicate is true
 	 * @return Monad converted to Stream with limited elements
 	 */
-	default Monad<Stream<T>,T> limitUntil(Predicate<T> p){
+	default Monad<Stream<T>,T> limitUntil(Predicate<? super T> p){
 		return monad(LazySeq.of(stream().iterator())
 					.takeWhile(p.negate()).stream());
 	}

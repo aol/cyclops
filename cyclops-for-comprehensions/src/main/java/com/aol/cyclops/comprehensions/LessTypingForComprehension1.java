@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 
-
+@Deprecated //use com.aol.cyclops.comprehensions.donotation.typed.Do instead
 public class LessTypingForComprehension1<T,R> {
 	
 	public static interface Vars1<T1> {

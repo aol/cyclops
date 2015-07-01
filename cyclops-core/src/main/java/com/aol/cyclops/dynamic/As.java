@@ -176,7 +176,7 @@ public interface As {
 	 * @return Duck typed Monad
 	 */
 	public static <T> AnyM<T> asAnyM(Object monad){
-		return AsAnyM.asAnyM(monad);
+		return AsAnyM.notTypeSafeAnyM(monad);
 	}
 	/**
 	 * Create a Duck typed functor. Wrapped class should have a method

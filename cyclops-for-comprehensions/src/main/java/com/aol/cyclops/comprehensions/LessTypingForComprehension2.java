@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 
 import com.aol.cyclops.comprehensions.LessTypingForComprehension1.Vars1;
 
+@Deprecated //use com.aol.cyclops.comprehensions.donotation.typed.Do instead
 public class LessTypingForComprehension2<T,R> {
 	
 	public static interface Vars2<T1,T2> {

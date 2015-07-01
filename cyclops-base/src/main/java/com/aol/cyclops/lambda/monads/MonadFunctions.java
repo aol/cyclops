@@ -19,7 +19,7 @@ import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.streams.Pair;
 
 public interface MonadFunctions<MONAD,T>{
-	public <R> Monad<MONAD,T> bind(Function<T,R> fn);
+	public <R> Monad<MONAD,T> bind(Function<? super T,? extends R> fn);
 	public Stream<T> stream();
 	public <MONAD,T> MONAD unit(T value);
 	public Monad<Stream<T>,T> cycle(int times);
@@ -45,7 +45,7 @@ public interface MonadFunctions<MONAD,T>{
 	 * @param fn
 	 * @return
 	 */
-	default <NT,R> Monad<NT,R> applyM(Monad<?,Function<T,R>> fn){
+	default <NT,R> Monad<NT,R> applyM(Monad<?,Function<? super T,? extends R>> fn){
 		return (Monad)this.bind(v-> fn.map(innerFn -> innerFn.apply(v))
 							.unwrap());
 		
@@ -66,7 +66,7 @@ public interface MonadFunctions<MONAD,T>{
 	 * @param fn
 	 * @return
 	 */
-	default <NT,R> Monad<NT,R> simpleFilter(Monad<?,Predicate<T>> fn){
+	default <NT,R> Monad<NT,R> simpleFilter(Monad<?,Predicate<? super T>> fn){
 		return  (Monad)this.bind(v-> fn.map(innerFn -> new Pair(v,innerFn.test(v)))
 													.filter(p->(boolean)p._2())
 													.map(Pair::_1))

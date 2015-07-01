@@ -32,7 +32,7 @@ configurations {
 }
 dependencies {
 
-//	compile "com.aol.cyclops:cyclops-base:$version"
+
 	compile project(':cyclops-base')
 	provided group: 'org.projectlombok', name: 'lombok', version:'1.16.2'
 	provided 'org.jooq:jool:0.9.6'
@@ -102,20 +102,3 @@ nexus {
         repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
         snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots'	
 }
-/**
-publishing {
-	publications {
-		myPublication(MavenPublication) {
-			// telling gradle to publish project's jar archive (2)
-			from components.java
-			// telling gradle to publish README file (2)
-			
-		}
-	}
-	// telling gradle to publish artifact to local directory (3)
-	repositories {
-		maven {
-			url "file:/${project.projectDir}/artifacts"
-		}
-	}
-}**/
