@@ -15,15 +15,15 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.dynamic.As;
 import com.aol.cyclops.functions.Functions;
+import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.lambda.api.Mappable;
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Reducers;
 import com.aol.cyclops.lambda.api.Streamable;
 import com.aol.cyclops.lambda.monads.AnyM;
+import com.aol.cyclops.lambda.monads.AnyMonads;
 import com.aol.cyclops.lambda.monads.Functor;
-import com.aol.cyclops.lambda.monads.Monad;
-import com.aol.cyclops.lambda.monads.Monads;
 import com.aol.cyclops.lambda.utils.LazyImmutable;
 import com.aol.cyclops.lambda.utils.Mutable;
 import com.aol.cyclops.matcher.Case;
@@ -210,8 +210,8 @@ public class Core extends Functions {
 	 * 
 	 * @return Duck typed Monad
 	 */
-	public static <T> AnyM<T> asAnyM(Object monad){
-		return As.asAnyM(monad);
+	public static <T> AnyM<T> notTypeSafeAnyM(Object monad){
+		return AsAnyM.notTypeSafeAnyM(monad);
 	}
 	/**
 	 * Create a Duck typed functor. Wrapped class should have a method
@@ -519,7 +519,7 @@ public class Core extends Functions {
 	 * @return
 	 */
 	public static <U,R> Function<AnyM<U>,AnyM<R>> liftM(Function<U,R> fn){
-		return Monads.liftM(fn);
+		return AnyMonads.liftM(fn);
 	}
 	
 	
@@ -545,7 +545,7 @@ public class Core extends Functions {
 	 * @return Lifted BiFunction
 	 */
 	public static <U1,U2,R> BiFunction<AnyM<U1>,AnyM<U2>,AnyM<R>> liftM2(BiFunction<U1,U2,R> fn){
-		return Monads.liftM2(fn);
+		return AnyMonads.liftM2(fn);
 	}
 	
 
@@ -596,7 +596,7 @@ public class Core extends Functions {
 	 * @return Duck typed Monad
 	 */
 	public static <T> AnyM<T> anyM(Streamable<T> anyM){
-		return Monads.anyM(anyM);
+		return AnyMonads.anyM(anyM);
 	}
 	/**
 	 * Create a Monad wrapper from a Stream
@@ -641,7 +641,7 @@ public class Core extends Functions {
 	 * @return Duck typed Monad
 	 */
 	public static <T> AnyM<T> anyM(Stream<T> anyM){
-		return Monads.anyM(anyM);
+		return AnyMonads.anyM(anyM);
 	}
 	/**
 	 * Create a Monad wrapper from an Optional
@@ -686,7 +686,7 @@ public class Core extends Functions {
 	 * @return Duck typed Monad
 	 */
 	public static <T> AnyM<T> anyM(Optional<T> anyM){
-		return Monads.anyM(anyM);
+		return AnyMonads.anyM(anyM);
 	}
 	/**
 	 * Create a Monad wrapper from a CompletableFuture
@@ -731,7 +731,7 @@ public class Core extends Functions {
 	 * @return Duck typed Monad
 	 */
 	public static <T> AnyM<T> anyM(CompletableFuture<T> anyM){
-		return Monads.anyM(anyM);
+		return AnyMonads.anyM(anyM);
 	}
 	/**
 	 * Create a Monad wrapper from a Collection
@@ -776,7 +776,7 @@ public class Core extends Functions {
 	 * @return Duck typed Monad
 	 */
 	public static <T> AnyM<T> anyM(Collection<T> anyM){
-		return Monads.anyM(anyM);
+		return AnyMonads.anyM(anyM);
 	}
 	/**
 	 * Create a Monad wrapper from an Iterable
@@ -821,7 +821,7 @@ public class Core extends Functions {
 	 * @return Duck typed Monad
 	 */
 	public static <T> AnyM<T> anyM(Iterable<T> anyM){
-		return Monads.anyM(anyM);
+		return AnyMonads.anyM(anyM);
 	}
 	/**
 	 * Create a Monad wrapper from an Iterator
@@ -866,7 +866,7 @@ public class Core extends Functions {
 	 * @return Duck typed Monad
 	 */
 	public static <T> AnyM<T> anyM(Iterator<T> anyM){
-		return Monads.anyM(anyM);
+		return AnyMonads.anyM(anyM);
 	}
 	/**
 	 * Create a Monad wrapper from an array of values
@@ -910,7 +910,7 @@ public class Core extends Functions {
 	 * @return Duck typed Monad
 	 */
 	public static <T> AnyM<T> anyM(T... values){
-		return Monads.anyM(values);
+		return AnyMonads.anyM(values);
 	}
 	/**
 	 * Create a Monad wrapper from an Object
@@ -955,7 +955,7 @@ public class Core extends Functions {
 	 * @return Duck typed Monad
 	 */
 	public static <T> AnyM<T> toAnyM(Object anyM){
-		return Monads.toAnyM(anyM);
+		return AnyMonads.toAnyM(anyM);
 	}
 	/**
 	 * Create a Monad wrapper from an Object that will be converted to Monadic form if neccessary by the registered
@@ -1003,387 +1003,10 @@ public class Core extends Functions {
 	 */
 	public static <T> AnyM<T> convertToAnyM(Object anyM){
 		
-		return Monads.convertToAnyM(anyM);
+		return AnyMonads.convertToAnyM(anyM);
 	}
 	
-	/**
-	 * Create a duck typed Monad wrapper. 
-	 * The wrapped Monaad should have equivalent methods for
-	 * 
-	 * <pre>
-	 * {@code 
-	 * map(F f)
-	 * 
-	 * flatMap(F<x,MONAD> fm)
-	 * 
-	 * and optionally 
-	 * 
-	 * filter(P p)
-	 * }
-	 * </pre>
-	 * 
-	 * A Comprehender instance can be created and registered for new Monad Types. Cyclops will attempt
-	 * to manage any Monad type (via the InvokeDynamicComprehender) althouh behaviour is best guaranteed with
-	 * customised Comprehenders.
-	 * 
-	 * Where F is a Functional Interface of any type that takes a single parameter and returns
-	 * a result.	 
-	 * Where P is a Functional Interface of any type that takes a single parameter and returns
-	 * a boolean
-	 * 
-	 *  flatMap operations on the duck typed Monad can return any Monad type
-	 *  
-	 * 
-	 * @return Duck typed Monad
-	 */
-	public static <MONAD,T> Monad<MONAD,T> asMonad(Object monad){
-		return Monads.asMonad(monad);
-	}
-
-	/**
-	 * Create a Monad wrapper from a Streamable Create a duck typed Monad
-	 * wrapper.
-	 * 
-	 * The wrapped Monaad should have equivalent methods for
-	 * 
-	 * <pre>
-	 * {@code 
-	 * map(F f)
-	 * 
-	 * flatMap(F<x,MONAD> fm)
-	 * 
-	 * and optionally 
-	 * 
-	 * filter(P p)
-	 * }
-	 * </pre>
-	 * 
-	 * A Comprehender instance can be created and registered for new Monad
-	 * Types. Cyclops will attempt to manage any Monad type (via the
-	 * InvokeDynamicComprehender) althouh behaviour is best guaranteed with
-	 * customised Comprehenders.
-	 * 
-	 * Where F is a Functional Interface of any type that takes a single
-	 * parameter and returns a result. Where P is a Functional Interface of any
-	 * type that takes a single parameter and returns a boolean
-	 * 
-	 * flatMap operations on the duck typed Monad can return any Monad type
-	 * 
-	 * 
-	 * @return Duck typed Monad
-	 */
-	public static <T> Monad<Stream<T>, T> monad(Streamable<T> monad) {
-		return Monads.monad(monad);
-	}
 	
-	/**
-	 * Create a Monad wrapper from a Stream
-	 *  
-	 * The wrapped Monaad should have equivalent methods for
-	 * 
-	 * <pre>
-	 * {@code 
-	 * map(F f)
-	 * 
-	 * flatMap(F<x,MONAD> fm)
-	 * 
-	 * and optionally 
-	 * 
-	 * filter(P p)
-	 * }
-	 * </pre>
-	 * 
-	 * A Comprehender instance can be created and registered for new Monad Types. Cyclops will attempt
-	 * to manage any Monad type (via the InvokeDynamicComprehender) althouh behaviour is best guaranteed with
-	 * customised Comprehenders.
-	 * 
-	 * Where F is a Functional Interface of any type that takes a single parameter and returns
-	 * a result.	 
-	 * Where P is a Functional Interface of any type that takes a single parameter and returns
-	 * a boolean
-	 * 
-	 *  flatMap operations on the duck typed Monad can return any Monad type
-	 *  
-	 * 
-	 * @return Duck typed Monad
-	 */	
-	public static <T> Monad<Stream<T>,T> monad(Stream<T> monad){
-		return Monads.monad(monad);
-	}
-	/**
-	 * Create a Monad wrapper from an Optional
-	 *
-	 * The wrapped Monaad should have equivalent methods for
-	 * 
-	 * <pre>
-	 * {@code 
-	 * map(F f)
-	 * 
-	 * flatMap(F<x,MONAD> fm)
-	 * 
-	 * and optionally 
-	 * 
-	 * filter(P p)
-	 * }
-	 * </pre>
-	 * 
-	 * A Comprehender instance can be created and registered for new Monad Types. Cyclops will attempt
-	 * to manage any Monad type (via the InvokeDynamicComprehender) althouh behaviour is best guaranteed with
-	 * customised Comprehenders.
-	 * 
-	 * Where F is a Functional Interface of any type that takes a single parameter and returns
-	 * a result.	 
-	 * Where P is a Functional Interface of any type that takes a single parameter and returns
-	 * a boolean
-	 * 
-	 *  flatMap operations on the duck typed Monad can return any Monad type
-	 *  
-	 * 
-	 * @return Duck typed Monad
-	 */
-	public static <T> Monad<Optional<T>,T> monad(Optional<T> monad){
-		return Monads.monad(monad);
-	}
-	/**
-	 * Create a Monad wrapper from a CompletableFuture
-	 *  
-	 * The wrapped Monaad should have equivalent methods for
-	 * 
-	 * <pre>
-	 * {@code 
-	 * map(F f)  -- thenApply/Async
-	 * 
-	 * flatMap(F<x,MONAD> fm) -- thenCompose/Async
-	 * 
-	 * and optionally 
-	 * 
-	 * filter(P p)  -- not present for CompletableFutures
-	 * }
-	 * </pre>
-	 * 
-	 * A Comprehender instance can be created and registered for new Monad Types. Cyclops will attempt
-	 * to manage any Monad type (via the InvokeDynamicComprehender) althouh behaviour is best guaranteed with
-	 * customised Comprehenders.
-	 * 
-	 * Where F is a Functional Interface of any type that takes a single parameter and returns
-	 * a result.	 
-	 * Where P is a Functional Interface of any type that takes a single parameter and returns
-	 * a boolean
-	 * 
-	 *  flatMap operations on the duck typed Monad can return any Monad type
-	 *  
-	 * 
-	 * @return Duck typed Monad
-	 */
-	
-	public static <T> Monad<CompletableFuture<T>,T> monad(CompletableFuture<T> monad){
-		return Monads.monad(monad);
-	}
-	/**
-	 * Create a Monad wrapper from a Collection
-		
-	 * The wrapped Monaad should have equivalent methods for
-	 * 
-	 * <pre>
-	 * {@code 
-	 * map(F f)
-	 * 
-	 * flatMap(F<x,MONAD> fm)
-	 * 
-	 * and optionally 
-	 * 
-	 * filter(P p)
-	 * }
-	 * </pre>
-	 * 
-	 * A Comprehender instance can be created and registered for new Monad Types. Cyclops will attempt
-	 * to manage any Monad type (via the InvokeDynamicComprehender) althouh behaviour is best guaranteed with
-	 * customised Comprehenders.
-	 * 
-	 * Where F is a Functional Interface of any type that takes a single parameter and returns
-	 * a result.	 
-	 * Where P is a Functional Interface of any type that takes a single parameter and returns
-	 * a boolean
-	 * 
-	 *  flatMap operations on the duck typed Monad can return any Monad type
-	 *  
-	 * 
-	 * @return Duck typed Monad
-	 */
-	public static <T> Monad<Stream<T>,T> monad(Collection<T> monad){
-		return Monads.monad(monad);
-	}
-	/**
-	 * Create a Monad wrapper from an Iterable
-	 *  
-	 * The wrapped Monaad should have equivalent methods for
-	 * 
-	 * <pre>
-	 * {@code 
-	 * map(F f)
-	 * 
-	 * flatMap(F<x,MONAD> fm)
-	 * 
-	 * and optionally 
-	 * 
-	 * filter(P p)
-	 * }
-	 * </pre>
-	 * 
-	 * A Comprehender instance can be created and registered for new Monad Types. Cyclops will attempt
-	 * to manage any Monad type (via the InvokeDynamicComprehender) althouh behaviour is best guaranteed with
-	 * customised Comprehenders.
-	 * 
-	 * Where F is a Functional Interface of any type that takes a single parameter and returns
-	 * a result.	 
-	 * Where P is a Functional Interface of any type that takes a single parameter and returns
-	 * a boolean
-	 * 
-	 *  flatMap operations on the duck typed Monad can return any Monad type
-	 *  
-	 * 
-	 * @return Duck typed Monad
-	 */
-	public static <T> Monad<Stream<T>,T> monad(Iterable<T> monad){
-		return Monads.monad(monad);
-	}
-	/**
-	 * Create a Monad wrapper from an Iterator
-	 * The wrapped Monaad should have equivalent methods for
-	 * 
-	 * <pre>
-	 * {@code 
-	 * map(F f)
-	 * 
-	 * flatMap(F<x,MONAD> fm)
-	 * 
-	 * and optionally 
-	 * 
-	 * filter(P p)
-	 * }
-	 * </pre>
-	 * 
-	 * A Comprehender instance can be created and registered for new Monad Types. Cyclops will attempt
-	 * to manage any Monad type (via the InvokeDynamicComprehender) althouh behaviour is best guaranteed with
-	 * customised Comprehenders.
-	 * 
-	 * Where F is a Functional Interface of any type that takes a single parameter and returns
-	 * a result.	 
-	 * Where P is a Functional Interface of any type that takes a single parameter and returns
-	 * a boolean
-	 * 
-	 *  flatMap operations on the duck typed Monad can return any Monad type
-	 *  
-	 * 
-	 * @return Duck typed Monad
-	 */
-	public static <T> Monad<Stream<T>,T> monad(Iterator<T> monad){
-		return Monads.monad(monad);
-	}
-	/**
-	 * Create a Monad wrapper from an array of values
-	 * The wrapped Monaad should have equivalent methods for
-	 * 
-	 * <pre>
-	 * {@code 
-	 * map(F f)
-	 * 
-	 * flatMap(F<x,MONAD> fm)
-	 * 
-	 * and optionally 
-	 * 
-	 * filter(P p)
-	 * }
-	 * </pre>
-	 * 
-	 * A Comprehender instance can be created and registered for new Monad Types. Cyclops will attempt
-	 * to manage any Monad type (via the InvokeDynamicComprehender) althouh behaviour is best guaranteed with
-	 * customised Comprehenders.
-	 * 
-	 * Where F is a Functional Interface of any type that takes a single parameter and returns
-	 * a result.	 
-	 * Where P is a Functional Interface of any type that takes a single parameter and returns
-	 * a boolean
-	 * 
-	 *  flatMap operations on the duck typed Monad can return any Monad type
-	 *  
-	 * 
-	 * @return Duck typed Monad
-	 */
-	public static <T> Monad<Stream<T>,T> monad(T... values){
-		return Monads.monad(values);
-	}
-	/**
-	 * Create a Monad wrapper from an Object
-	 *  
-	 * The wrapped Monaad should have equivalent methods for
-	 * 
-	 * <pre>
-	 * {@code 
-	 * map(F f)
-	 * 
-	 * flatMap(F<x,MONAD> fm)
-	 * 
-	 * and optionally 
-	 * 
-	 * filter(P p)
-	 * }
-	 * </pre>
-	 * 
-	 * A Comprehender instance can be created and registered for new Monad Types. Cyclops will attempt
-	 * to manage any Monad type (via the InvokeDynamicComprehender) althouh behaviour is best guaranteed with
-	 * customised Comprehenders.
-	 * 
-	 * Where F is a Functional Interface of any type that takes a single parameter and returns
-	 * a result.	 
-	 * Where P is a Functional Interface of any type that takes a single parameter and returns
-	 * a boolean
-	 * 
-	 *  flatMap operations on the duck typed Monad can return any Monad type
-	 *  
-	 * 
-	 * @return Duck typed Monad
-	 */
-	public static <T> Monad<?,T> toMonad(Object monad){
-		return Monads.toMonad(monad);
-	}
-	/**
-	 * Create a Monad wrapper from an Object that will be converted to Monadic form if neccessary by the registered
-	 * MonadicConverters. You can register your own MonadicConverter instances and / or change the priorities of currently registered converters.
-	 * 
-	* Create a duck typed Monad wrapper. 
-	 * The wrapped Monaad should have equivalent methods for
-	 * 
-	 * <pre>
-	 * {@code 
-	 * map(F f)
-	 * 
-	 * flatMap(F<x,MONAD> fm)
-	 * 
-	 * and optionally 
-	 * 
-	 * filter(P p)
-	 * }
-	 * </pre>
-	 * 
-	 * A Comprehender instance can be created and registered for new Monad Types. Cyclops will attempt
-	 * to manage any Monad type (via the InvokeDynamicComprehender) althouh behaviour is best guaranteed with
-	 * customised Comprehenders.
-	 * 
-	 * Where F is a Functional Interface of any type that takes a single parameter and returns
-	 * a result.	 
-	 * Where P is a Functional Interface of any type that takes a single parameter and returns
-	 * a boolean
-	 * 
-	 *  flatMap operations on the duck typed Monad can return any Monad type
-	 *  
-	 * 
-	 * @param monad to wrap
-	 * @return Duck typed Monad
-	 */
-	public static <T,MONAD> Monad<T,MONAD> convertToMonad(Object monad){
-		return Monads.convertToMonad(monad);
-	}
 	
 	
 	/** 

@@ -4,7 +4,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import com.aol.cyclops.lambda.monads.AnyM;
-import com.aol.cyclops.lambda.monads.Monads;
+import com.aol.cyclops.lambda.monads.AnyMonads;
 
 
 /**
@@ -27,7 +27,7 @@ public class LiftMFunctions {
 	 * @return
 	 */
 	public static <U,R> Function<AnyM<U>,AnyM<R>> liftM(Function<U,R> fn){
-		return Monads.liftM(fn);
+		return AnyMonads.liftM(fn);
 	}
 	
 	/**

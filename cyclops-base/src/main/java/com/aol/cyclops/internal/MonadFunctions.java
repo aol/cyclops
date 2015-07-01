@@ -1,21 +1,18 @@
-package com.aol.cyclops.lambda.monads;
+package com.aol.cyclops.internal;
 
 
-import static com.aol.cyclops.lambda.api.AsGenericMonad.asMonad;
-import static com.aol.cyclops.lambda.api.AsGenericMonad.monad;
-
+import static com.aol.cyclops.internal.AsGenericMonad.asMonad;
+import static com.aol.cyclops.internal.AsGenericMonad.monad;
 
 import java.util.List;
-
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.lambda.api.AsGenericMonad;
 import com.aol.cyclops.lambda.api.AsAnyM;
-
 import com.aol.cyclops.lambda.api.Monoid;
+import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.streams.Pair;
 
 public interface MonadFunctions<MONAD,T>{

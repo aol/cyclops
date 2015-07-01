@@ -4,10 +4,11 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.internal.AsGenericMonad;
+import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.api.AsDecomposable;
 import com.aol.cyclops.lambda.api.AsFunctor;
-import com.aol.cyclops.lambda.api.AsGenericMonad;
 import com.aol.cyclops.lambda.api.AsGenericMonoid;
 import com.aol.cyclops.lambda.api.AsMappable;
 import com.aol.cyclops.lambda.api.AsStreamable;
@@ -18,7 +19,6 @@ import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Streamable;
 import com.aol.cyclops.lambda.monads.AnyM;
 import com.aol.cyclops.lambda.monads.Functor;
-import com.aol.cyclops.lambda.monads.Monad;
 import com.aol.cyclops.matcher.AsMatchable;
 import com.aol.cyclops.matcher.Matchable;
 import com.aol.cyclops.trampoline.Trampoline;
@@ -109,72 +109,8 @@ public interface As {
 		return AsMatchable.asMatchable(toCoerce);
 	}
 
-	/**
-	 * Create a duck typed Monad. 
-	 * Monaad should have methods
-	 * 
-	 * <pre>{@code 
-	 * map(F f)
-	 * filter(P p)
-	 * flatMap(F<x,MONAD> fm)
-	 * }</pre>
-	 * 
-	 * Where F is a Functional Interface of any type that takes a single parameter and returns
-	 * a result.	 
-	 * Where P is a Functional Interface of any type that takes a single parameter and returns
-	 * a boolean
-	 * 
-	 *  flatMap operations on the duck typed Monad can return any Monad type
-	 * 
-	 * @param monad to wrap
-	 * @return Duck typed Monad
-	 */
-	public static <MONAD,T> Monad<MONAD,T> asMonad(Object monad){
-		return AsGenericMonad.asMonad(monad);
-	}
-	/**
-	 * Create a duck typed Monad wrapper. Using AnyM we focus only on the underlying type
-	 * e.g. instead of 
-	 * <pre>
-	 * {@code 
-	 *  Monad<Stream<Integer>,Integer> stream;
-	 * 
-	 * we can write
-	 * 
-	 *   AnyM<Integer> stream;
-	 * }</pre>
-	 *  
-	 * The wrapped Monaad should have equivalent methods for
-	 * 
-	 * <pre>
-	 * {@code 
-	 * map(F f)
-	 * 
-	 * flatMap(F<x,MONAD> fm)
-	 * 
-	 * and optionally 
-	 * 
-	 * filter(P p)
-	 * }
-	 * </pre>
-	 * 
-	 * A Comprehender instance can be created and registered for new Monad Types. Cyclops will attempt
-	 * to manage any Monad type (via the InvokeDynamicComprehender) althouh behaviour is best guaranteed with
-	 * customised Comprehenders.
-	 * 
-	 * Where F is a Functional Interface of any type that takes a single parameter and returns
-	 * a result.	 
-	 * Where P is a Functional Interface of any type that takes a single parameter and returns
-	 * a boolean
-	 * 
-	 *  flatMap operations on the duck typed Monad can return any Monad type
-	 *  
-	 * 
-	 * @return Duck typed Monad
-	 */
-	public static <T> AnyM<T> asAnyM(Object monad){
-		return AsAnyM.notTypeSafeAnyM(monad);
-	}
+	
+	
 	/**
 	 * Create a Duck typed functor. Wrapped class should have a method
 	 * 

@@ -1,7 +1,7 @@
 package com.aol.cyclops.lambda.monads;
 
-import static com.aol.cyclops.lambda.api.AsGenericMonad.asMonad;
-import static com.aol.cyclops.lambda.api.AsGenericMonad.monad;
+import static com.aol.cyclops.internal.AsGenericMonad.asMonad;
+import static com.aol.cyclops.internal.AsGenericMonad.monad;
 
 import java.util.Comparator;
 import java.util.Iterator;
@@ -19,6 +19,8 @@ import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
+import com.aol.cyclops.internal.AsGenericMonad;
+import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;
@@ -28,7 +30,16 @@ import com.aol.cyclops.streams.Pair;
 import com.aol.cyclops.streams.StreamUtils;
 import com.nurkiewicz.lazyseq.LazySeq;
 
-@AllArgsConstructor(access=AccessLevel.PACKAGE)
+/**
+ * 
+ * Wrapper for Any Monad type
+ * @see AnyMonads companion class for static helper methods
+ * 
+ * @author johnmcclean
+ *
+ * @param <T>
+ */
+@AllArgsConstructor(access=AccessLevel.PROTECTED)
 public class AnyM<T> implements Unwrapable{
 	
 	private final Monad<Object,T> monad;
@@ -104,9 +115,13 @@ public class AnyM<T> implements Unwrapable{
 	 * @param next Monad to aggregate content with
 	 * @return Aggregated Monad
 	 */
-	public final <R> AnyM<R> aggregate(AnyM<?> next){
+	public final  AnyM<T> aggregate(AnyM<T> next){
 		return monad.aggregate(next.monad).anyM();
 	}
+	public final  <R> AnyM<List<R>> aggregateUntyped(AnyM<?> next){
+		return monad.aggregate(next.monad).anyM();
+	}
+	
 	
 	/**
 	 * flatMap operation
@@ -138,7 +153,7 @@ public class AnyM<T> implements Unwrapable{
 	 * 
 	 * @return A Monad that wraps a Stream
 	 */
-	public final <NT> TraversableM<NT> traversable(Function<T,Stream<NT>> fn){
+	public final <NT> SequenceM<NT> toSequence(Function<T,Stream<NT>> fn){
 		return monad.flatMapToStream((Function)fn)
 					.sequence();
 	}
@@ -162,7 +177,7 @@ public class AnyM<T> implements Unwrapable{
 	
 	 * @return A Monad that wraps a Stream
 	 */
-	public final <T> TraversableM<T> traversable(){
+	public final <T> SequenceM<T> toSequence(){
 		return monad.streamedMonad().sequence();
 	}
 	
@@ -172,7 +187,7 @@ public class AnyM<T> implements Unwrapable{
 	 * If the underlying monad is a Stream it is returned
 	 * Otherwise we flatMap the underlying monad to a Stream type
 	 */
-	public final TraversableM<T> toTraversable(){
+	public final SequenceM<T> asSequence(){
 		return monad.sequence();
 		
 	}
@@ -217,10 +232,10 @@ public class AnyM<T> implements Unwrapable{
 	 * 
 	 * @param o to wrap
 	 * @return Duck typed Monad
-	 */
+	 
 	public static <T> AnyM<T> of(Object o){
 		return AsAnyM.notTypeSafeAnyM(o);
-	}
+	}*/
 	
 	
 		
@@ -266,8 +281,8 @@ public class AnyM<T> implements Unwrapable{
 	 * @param fn
 	 * @return
 	 */
-	public final <NT,R> Monad<NT,R> simpleFilter(AnyM<Predicate<? super T>> fn){
-		return  monad.simpleFilter(fn.monad);
+	public final <R> AnyM<R> simpleFilter(AnyM<Predicate<? super T>> fn){
+		return  monad.simpleFilter(fn.monad).anyM();
 			
 	
 	//	filterM((a: Int) => List(a > 2, a % 2 == 0), List(1, 2, 3), ListMonad),
@@ -289,9 +304,9 @@ public class AnyM<T> implements Unwrapable{
 	 * @param times number of times to replicate
 	 * @return Replicated Monad
 	 */
-	public final <NT,R> Monad<NT,R> replicateM(int times){
+	public final <R> AnyM<R> replicateM(int times){
 		
-		return monad.replicateM(times);		
+		return monad.replicateM(times).anyM();		
 	}
 	/**
 	 * Perform a reduction where NT is a (native) Monad type
@@ -306,11 +321,11 @@ public class AnyM<T> implements Unwrapable{
 	 * @param reducer
 	 * @return
 	 */
-	public final <NT,R> Monad<NT,R> reduceM(Monoid<NT> reducer){
+	public final <R> AnyM<R> reduceM(Monoid<R> reducer){
 	//	List(2, 8, 3, 1).foldLeftM(0) {binSmalls} -> Optional(14)
 	//	convert to list Optionals
 		
-		return monad.reduceM(reducer);		
+		return monad.reduceM(reducer).anyM();		
 	}
 	
 	

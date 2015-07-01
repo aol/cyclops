@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 import org.pcollections.PStack;
 
 import com.aol.cyclops.lambda.monads.AnyM;
-import com.aol.cyclops.lambda.monads.TraversableM;
+import com.aol.cyclops.lambda.monads.SequenceM;
 	public class DoComp0 extends DoComp{
 		public DoComp0(PStack<Entry> assigned) {
 			super(assigned);
@@ -207,7 +207,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T1> DoComp1<T1> add(TraversableM<T1> o){
+		public <T1> DoComp1<T1> add(SequenceM<T1> o){
 			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
 			
 		}

@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 import org.pcollections.ConsPStack;
 
 import com.aol.cyclops.lambda.monads.AnyM;
-import com.aol.cyclops.lambda.monads.TraversableM;
+import com.aol.cyclops.lambda.monads.SequenceM;
 
 public class Do {
 
@@ -189,7 +189,7 @@ public class Do {
 	 * @param o Defines next level in comprehension
 	 * @return Next stage in for comprehension builder
 	 */
-	public static <T1> DoComp1<T1> add(TraversableM<T1> o){
+	public static <T1> DoComp1<T1> add(SequenceM<T1> o){
 		return new DoComp0(ConsPStack.empty()).add(o);	
 	}
 	

@@ -19,7 +19,7 @@ import org.pcollections.PStack;
 
 import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.monads.AnyM;
-import com.aol.cyclops.lambda.monads.TraversableM;
+import com.aol.cyclops.lambda.monads.SequenceM;
 	public class DoComp1<T1> extends DoComp{
 		public DoComp1(PStack<Entry> assigned) {
 			super(assigned);
@@ -204,7 +204,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T2> DoComp2<T1,T2> add(TraversableM<T2> o){
+		public <T2> DoComp2<T1,T2> add(SequenceM<T2> o){
 			return new DoComp2(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
 			
 		}
@@ -517,7 +517,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 		 * @param f Gives access to current pointers and defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T2> DoComp2<T1,T2> withTraversableM(Function<T1,TraversableM<T2>> f){
+		public <T2> DoComp2<T1,T2> withTraversableM(Function<T1,SequenceM<T2>> f){
 			return new DoComp2(addToAssigned(f));
 			
 		}

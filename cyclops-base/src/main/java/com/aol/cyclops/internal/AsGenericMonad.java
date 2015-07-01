@@ -1,4 +1,4 @@
-package com.aol.cyclops.lambda.api;
+package com.aol.cyclops.internal;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -7,7 +7,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.comprehensions.converters.MonadicConverters;
-import com.aol.cyclops.lambda.monads.Monad;
+import com.aol.cyclops.lambda.api.Streamable;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
 
 public class AsGenericMonad {
