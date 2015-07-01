@@ -21,43 +21,42 @@ import org.jooq.lambda.Seq;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.LessTypingForComprehension1.Vars1;
-import com.aol.cyclops.comprehensions.LessTypingForComprehension2.Vars2;
+import com.aol.cyclops.comprehensions.donotation.UntypedDo;
+import com.aol.cyclops.comprehensions.donotation.typed.Do;
 
 public class StreamTest {
 	
 	@Test
 	public void arrayStream() {
 		
-		Seq<String> res = ForComprehensions.foreach1 (  c-> 
-									c.mapAs$1(  new String[]{"hello world","hello"}) 
-									 .yield( (Vars1<String> v)->  v.$1() + "1"));
+		List<String> res = Do.add(new String[]{"hello world","hello"}) 
+							.yield( v1->  v1 + "1")
+							.toTraversable().toList();
 		List<String> expected = Arrays.asList("hello world1", "hello1");
 		
 		
 		
-		assertThat(expected, equalTo( res.toList()));
+		assertThat(expected, equalTo( res));
 	}
 	@Test
 	public void stringStream() {
 		
-		Seq<String> res = ForComprehensions.foreach1 (  c-> 
-									c.mapAs$1(  "hello world") 
-									 .yield( (Vars1<Character> v)-> ""+ v.$1() + "1"));
+		List<String> res = Do.add("hello world") 
+							.yield( v-> ""+ v + "1").<String>traversable().toList();
 		List<String> expected = Arrays.asList("h1", "e1", "l1", "l1", "o1",  " 1", "w1", "o1", "r1", 
 				"l1", "d1");
 		
 		
 		
-		assertThat(expected, equalTo( res.toList()));
+		assertThat(expected,equalTo( res));
 	}
 	@Test
 	public void stringStreamWithNull() {
 		
-		Seq<String> res = ForComprehensions.foreach2 (  c-> 
-									c.flatMapAs$1(  "hello world") 
-									.mapAs$2((Vars2<Character,Character> v)-> null)
-									 .yield( v-> ""+ v.$1() + v.$2()));
+		Seq<String> res =  Do.add(  "hello world") 
+							.add((Iterable<String>)null)
+							.yield( v1-> v2-> ""+ v1 + v2)
+							.unwrap();
 		List<String> expected = Arrays.asList();
 		
 		
@@ -67,9 +66,8 @@ public class StreamTest {
 	@Test @Ignore
 	public void urlStream() throws MalformedURLException {
 		val url = new URL("http://www.aol.com");
-		Seq<String> res = ForComprehensions.foreach1 (  c-> 
-									c.mapAs$1(  url) 
-									 .yield( (Vars1<Character> v)->  v.$1() + "New line!"));
+		Seq<String> res = Do.add (url) 
+									 .yield( v1->  v1 + "New line!").unwrap();
 		List<String> expected = Arrays.asList("h1", "e1", "l1", "l1", "o1",  " 1", "w1", "o1", "r1", 
 				"l1", "d1");
 		
@@ -80,10 +78,9 @@ public class StreamTest {
 	@Test
 	public void bufferedReaderStream() {
 		
-		Seq<String> res = ForComprehensions.foreach1 (  c-> 
-									c.mapAs$1(  new BufferedReader(new InputStreamReader(this.getClass().getClassLoader()
-                                .getResourceAsStream("input.file")))) 
-									 .yield( (Vars1<String> v)-> ""+ v.$1() + "*"));
+		Seq<String> res = Do.add(  new BufferedReader(new InputStreamReader(this.getClass().getClassLoader()
+                               	.getResourceAsStream("input.file")))) 
+                              .yield( v -> ""+ v + "*").unwrap();
 		List<String> expected = Arrays.asList("line 1*","line 2*","line 3*");
 		
 		
@@ -93,9 +90,8 @@ public class StreamTest {
 	@Test
 	public void urlStream2() {
 		URL url =this.getClass().getClassLoader().getResource("input.file");
-		Seq<String> res = ForComprehensions.foreach1 (  c-> 
-									c.mapAs$1(  url) 
-									 .yield( (Vars1<String> v)-> ""+ v.$1() + "*"));
+		Seq<String> res = Do.add (url) 
+							.yield( v-> ""+ v+ "*").unwrap();
 		List<String> expected = Arrays.asList("line 1*","line 2*","line 3*");
 		
 		
@@ -106,9 +102,8 @@ public class StreamTest {
 	public void fileStream2() {
 		URL url =this.getClass().getClassLoader().getResource("input.file");
 		File file = new File(url.getFile());
-		Seq<String> res = ForComprehensions.foreach1 (  c-> 
-									c.mapAs$1(  file) 
-									 .yield( (Vars1<String> v)-> ""+ v.$1() + "*"));
+		Seq<String> res = Do.add(  file) 
+							 .yield( v-> ""+ v + "*").unwrap();
 		List<String> expected = Arrays.asList("line 1*","line 2*","line 3*");
 		
 		
@@ -118,9 +113,8 @@ public class StreamTest {
 	@Test
 	public void enumStream() {
 		
-		Seq<String> res = ForComprehensions.foreach1 (  c-> 
-									c.mapAs$1(  MyEnum.class) 
-									 .yield( (Vars1<MyEnum> v)-> ""+ v.$1() + "*"));
+		Seq<String> res = UntypedDo.add ( MyEnum.class) 
+									 .yield( v -> ""+ v + "*");
 		List<String> expected = Arrays.asList("FIRST*","SECOND*","THIRD*");
 		
 		
@@ -130,9 +124,8 @@ public class StreamTest {
 	@Test
 	public void iterableStream() {
 		
-		Seq<String> res = ForComprehensions.foreach1 (  c-> 
-									c.mapAs$1(  new MyIterable()) 
-									 .yield( (Vars1<String> v)->  v.$1() + "*"));
+		Seq<String> res = Do.add(  new MyIterable()) 
+							.yield( v->  v + "*").unwrap();
 		List<String> expected = Arrays.asList("hello*","world*");
 		
 		
@@ -144,19 +137,19 @@ public class StreamTest {
 		
 		Map<String,Integer> m = new HashMap<>();
 		m.put("hello",10);
-		Seq<String> res = ForComprehensions.foreach1 (  c-> 
-									c.mapAs$1(  m) 
-									 .yield( (Vars1<Map.Entry<String, Integer>> v)-> ""+ v.$1() + "*"));
+		List<String> res = Do.add(m.entrySet().stream()) 
+							.yield( v-> ""+ v + "*").toTraversable().toList();
 		List<String> expected = Arrays.asList("hello=10*");
 		
 		
 		
-		assertThat(expected, equalTo( res.toList()));
+		
+		assertThat(expected, equalTo( res));
 	}
 	
 	static enum MyEnum{FIRST, SECOND, THIRD}
 	
-	static class MyIterable implements Iterable{
+	static class MyIterable implements Iterable<String>{
 
 		@Override
 		public Iterator iterator() {

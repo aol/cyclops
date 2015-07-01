@@ -12,6 +12,10 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.BaseStream;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import org.pcollections.PStack;
@@ -24,8 +28,19 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			
 		}
 		
+		public <T1> DoComp1<T1> add(T1... values){
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),Stream.of(values))));
 
+		}
 
+		public  DoComp1<Character> add(CharSequence seq){
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),seq)));
+
+		}
+		public  DoComp1<Integer> times(int times){
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),times)));
+			
+		}
 		/**
 		 * Add a Iterable as next nested level in the comprehension
 		 * 
@@ -75,7 +90,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 		 * 
 		 * 
 		 * 
-		 * <pre>{@code   Do
+		 * <pre>{@code   Do.add(stream)
 		 				   .filter( -> i1>5)
 					  	   .yield( -> );
 								
@@ -86,6 +101,25 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T1> DoComp1<T1> add(Stream<T1> o){
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
+			
+		}
+		/**
+		 * Add a BaseStream  type (e.g. IntStream etc) as next nested level in the comprehension
+		 * 
+		 * 
+		 * 
+		 * <pre>{@code   Do.add(intStream)
+		 				   .filter( -> i1>5)
+					  	   .yield( -> );
+								
+			}</pre>
+		 * 
+		 * 
+		 * @param o Defines next level in comprehension
+		 * @return Next stage in for comprehension builder
+		 */
+		public  <T1> DoComp1<T1> add(BaseStream<T1,?> o){
 			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
 			
 		}
@@ -182,7 +216,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 
 		/**
 		 * Add a Callable as next nested level in the comprehension
-		 * 
+		 * Will behave as a CompletableFuture i.e. executed asynchronously 
 		 * 
 		 * 
 		 * <pre>{@code   Do
@@ -204,6 +238,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 
 		/**
 		 * Add a Supplier as next nested level in the comprehension
+		 * Will behave as a CompletableFuture i.e. executed asynchronously 
 		 * 
 		 * 
 		 * 
@@ -218,7 +253,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T1> DoComp1<T1> add(Supplier<T1> o){
-			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),(Supplier)()->o)));
 			
 		}
 		
@@ -312,7 +347,6 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
 			
 		}
-		
 
 
 		

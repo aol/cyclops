@@ -12,6 +12,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.BaseStream;
 import java.util.stream.Stream;
 
 import org.pcollections.PStack;
@@ -24,9 +25,18 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			super(assigned);
 			
 		}
-		
-
-
+		public <T6> DoComp6<T1,T2,T3,T4,T5,Character> add(CharSequence seq){
+			return new DoComp6(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),seq)));
+			
+		}
+		public <T6> DoComp6<T1,T2,T3,T4,T5,T6> add(T6... values){
+			return new DoComp6(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),Stream.of(values))));
+			
+		}
+		public  DoComp6<T1,T2,T3,T4,T5,Integer> times(int times){
+			return new DoComp6(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),times)));
+			
+		}
 		/**
 		 * Add a Iterable as next nested level in the comprehension
 		 * 
@@ -87,6 +97,25 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T6> DoComp6<T1,T2,T3,T4,T5,T6> addStream(Supplier<Stream<T6>> o){
+			return new DoComp6(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
+			
+		}
+		/**
+		 * Add a Stream as next nested level in the comprehension
+		 * 
+		 * 
+		 * 
+		 * <pre>{@code   Do.add(stream1).add(stream2).add(stream3).add(stream4).add(stream5)
+		 				   .filter((Integer i1)->(Integer i2)->(Integer i3)->(Integer i4)->(Integer i5) -> i1>5)
+					  	   .yield((Integer i1)->(Integer i2)->(Integer i3)->(Integer i4)->(Integer i5) -> i1+i2+i3+i4+i5);
+								
+			}</pre>
+		 * 
+		 * 
+		 * @param o Defines next level in comprehension
+		 * @return Next stage in for comprehension builder
+		 */
+		public <T6> DoComp6<T1,T2,T3,T4,T5,T6> addBaseStream(Supplier<BaseStream<T6,?>> o){
 			return new DoComp6(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
 			
 		}
@@ -219,7 +248,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T6> DoComp6<T1,T2,T3,T4,T5,T6> add(Supplier<T6> o){
-			return new DoComp6(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
+			return new DoComp6(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),(Supplier)()->o)));
 			
 		}
 		
@@ -379,6 +408,25 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T6> DoComp6<T1,T2,T3,T4,T5,T6> withStream(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Stream<T6>>>>>> f){
+			return new DoComp6(addToAssigned(f));
+			
+		}
+		/**
+		 * Add a BaseStream as next nested level in the comprehension
+		 * 
+		 * 
+		 * 
+		 * <pre>{@code   Do.with((Integer i1) -> stream1).with((Integer i1)->(Integer i2) -> stream2).with((Integer i1)->(Integer i2)->(Integer i3) -> stream3).with((Integer i1)->(Integer i2)->(Integer i3)->(Integer i4) -> stream4).with((Integer i1)->(Integer i2)->(Integer i3)->(Integer i4)->(Integer i5) -> stream5)
+		 				   .filter((Integer i1)->(Integer i2)->(Integer i3)->(Integer i4)->(Integer i5) -> i1>5)
+					  	   .yield((Integer i1)->(Integer i2)->(Integer i3)->(Integer i4)->(Integer i5) -> i1+i2+i3+i4+i5);
+								
+			}</pre>
+		 * 
+		 * 
+		 * @param f Gives access to current pointers and defines next level in comprehension
+		 * @return Next stage in for comprehension builder
+		 */
+		public <T6> DoComp6<T1,T2,T3,T4,T5,T6> withBaseStream(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,BaseStream<T6,?>>>>>> f){
 			return new DoComp6(addToAssigned(f));
 			
 		}

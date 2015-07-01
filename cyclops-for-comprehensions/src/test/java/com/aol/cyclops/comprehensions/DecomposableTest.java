@@ -12,6 +12,8 @@ import lombok.val;
 
 import org.junit.Test;
 
+import com.aol.cyclops.comprehensions.donotation.UntypedDo;
+import com.aol.cyclops.comprehensions.donotation.typed.Do;
 import com.aol.cyclops.lambda.api.Decomposable;
 
 public class DecomposableTest {
@@ -21,11 +23,10 @@ public class DecomposableTest {
 		val one = new  MyCase("hello",20);
 		val two  = new MyCase2("France");
 		
-		Stream<String> result = ForComprehensions.foreach2(c -> c.flatMapAs$1(one)
-										 .mapAs$2(v->two)
-										 .yield(v-> v.$1().toString() 
-												 	+ v.$2().toString())
-				);
+		Stream<String> result = UntypedDo.add(one)
+								  .add(two)
+								  .yield(v1->v2-> v1.toString() + v2.toString());
+				
 		
 	
 		assertThat(result.collect(Collectors.toList()),equalTo(Arrays.asList("helloFrance","20France")));

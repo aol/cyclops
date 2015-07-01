@@ -11,7 +11,7 @@ import lombok.val;
 
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.LessTypingForComprehension3.Vars3;
+import com.aol.cyclops.comprehensions.donotation.typed.Do;
 
 public class CompletableFutureTest {
 
@@ -22,11 +22,12 @@ public class CompletableFutureTest {
 		val f = CompletableFuture.completedFuture("hello world");
 		val f2 = CompletableFuture.completedFuture("2");
 		val f3 = CompletableFuture.completedFuture("3");
-		CompletableFuture<String> result = ForComprehensions.foreach3(c -> c.flatMapAs$1(f)
-										.flatMapAs$2((Vars3<String,String,String> v)->f2)
-										.mapAs$3(v->f3)
-										.yield(v-> v.$1()+v.$2()+v.$3())
-									);
+		CompletableFuture<String> result = Do.add(f)
+											.add(f2)
+											.add(f3) 
+											.yield(v1->v2->v3 -> v1 +v2 +v3)
+											.unwrap();
+									
 		
 		assertThat(result.join(),equalTo("hello world23"));
 	}
@@ -38,12 +39,11 @@ public class CompletableFutureTest {
 		val f = CompletableFuture.completedFuture("hello world");
 		val f2 = CompletableFuture.completedFuture("2");
 		val f3 = CompletableFuture.completedFuture("3");
-		CompletableFuture<String> result = 
-				ForComprehensions.foreach3(c -> c.flatMapAs$1((Callable)()->"hello world")
-										.flatMapAs$2((Vars3<String,String,String> v)->f2)
-										.mapAs$3(v->f3)
-										.yield(v-> v.$1()+v.$2()+v.$3())
-									);
+		CompletableFuture<String> result =  Do.add((Callable<String>)()->"hello world")
+												.add(f2)
+												.add(f3)
+												.yield(v1->v2->v3 -> v1 +v2 +v3).unwrap();
+									
 		
 		assertThat(result.join(),equalTo("hello world23"));
 	}
@@ -54,12 +54,11 @@ public class CompletableFutureTest {
 		val f = CompletableFuture.completedFuture("hello world");
 		val f2 = CompletableFuture.completedFuture("2");
 		val f3 = CompletableFuture.completedFuture("3");
-		CompletableFuture<String> result = 
-				ForComprehensions.foreach3(c -> c.flatMapAs$1((Supplier)()->(Supplier)()->"hello world")
-										.flatMapAs$2((Vars3<String,String,String> v)->f2)
-										.mapAs$3(v->f3)
-										.yield(v-> v.$1()+v.$2()+v.$3())
-									);
+		CompletableFuture<String> result = Do.add((Supplier<String>)()->"hello world")
+											 .add(f2)
+											 .add(f3)
+											 .yield(v1->v2->v3 -> v1 +v2 +v3)
+											 .unwrap();
 		
 		assertThat(result.join(),equalTo("hello world23"));
 	}

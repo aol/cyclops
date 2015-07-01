@@ -60,16 +60,5 @@ public class DoFJOptionTest {
 		assertEquals(result.some(),3);
 
 	}
-	@Test @Ignore //fj.Either needs a specific comprehender
-	public void eitherTest(){
-		Either<Exception,Integer> one = Either.right(1);
-		Either<Exception,Integer> empty = Either.left(new IOException());
-		BiFunction<Integer,Integer,Integer> f2 = (a,b) -> a *b; 
-		
-		Either result =  UntypedDo.with(one).with(empty).yield( (Integer a)->(Integer b) -> f2.apply(a,b));
-		
-		System.out.println(result);
-		assertTrue(result.isLeft());
-
-	}
+	
 }

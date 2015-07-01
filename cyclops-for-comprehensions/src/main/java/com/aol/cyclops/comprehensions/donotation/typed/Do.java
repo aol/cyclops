@@ -9,6 +9,8 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
+import java.util.stream.BaseStream;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.pcollections.ConsPStack;
@@ -18,13 +20,21 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 
 public class Do {
 
-
+	public static  DoComp1<Integer> times(int times){
+		return new DoComp0(ConsPStack.empty()).times(times);	
+	}
+	public static  DoComp1<Character> add(CharSequence seq){
+		return new DoComp0(ConsPStack.empty()).add(seq);
+	}
+	public static <T1> DoComp1<T1> add(T1... values){
+		return new DoComp0(ConsPStack.empty()).add(values);
+	}
 	/**
 	 * Add a Iterable as next nested level in the comprehension
 	 * 
 	 * 
 	 * 
-	 * <pre>{@code   Do
+	 * <pre>{@code   Do.add(iterable)
 	 				   .filter( -> i1>5)
 				  	   .yield( -> );
 							
@@ -45,7 +55,7 @@ public class Do {
 	 * 
 	 * 
 	 * 
-	 * <pre>{@code   Do
+	 * <pre>{@code   Do.add(iterator)
 	 				   .filter( -> i1>5)
 				  	   .yield( -> );
 							
@@ -66,7 +76,7 @@ public class Do {
 	 * 
 	 * 
 	 * 
-	 * <pre>{@code   Do
+	 * <pre>{@code   Do.add(stream)
 	 				   .filter( -> i1>5)
 				  	   .yield( -> );
 							
@@ -80,6 +90,25 @@ public class Do {
 		return new DoComp0(ConsPStack.empty()).add(o);		
 	}
 	
+	/**
+	 * Add a BaseStream (e.g. IntStream, LongStream etc) as next nested level in the comprehension
+	 * 
+	 * 
+	 * 
+	 * <pre>{@code   Do.add(intStream)
+	 				   .filter( -> i1>5)
+				  	   .yield( -> );
+							
+		}</pre>
+	 * 
+	 * 
+	 * @param o Defines next level in comprehension
+	 * @return Next stage in for comprehension builder
+	 */
+	public  static  <T1> DoComp1<T1> add(BaseStream<T1,?> o){
+		return new DoComp0(ConsPStack.empty()).add(o);		
+	}
+	
 
 
 	/**
@@ -87,7 +116,7 @@ public class Do {
 	 * 
 	 * 
 	 * 
-	 * <pre>{@code   Do
+	 * <pre>{@code   Do.add(optional)
 	 				   .filter( -> i1>5)
 				  	   .yield( -> );
 							
@@ -108,7 +137,7 @@ public class Do {
 	 * 
 	 * 
 	 * 
-	 * <pre>{@code   Do
+	 * <pre>{@code   Do.add(completableFuture)
 	 				   .filter( -> i1>5)
 				  	   .yield( -> );
 							
@@ -129,7 +158,7 @@ public class Do {
 	 * 
 	 * 
 	 * 
-	 * <pre>{@code   Do
+	 * <pre>{@code   Do.add(anyM)
 	 				   .filter( -> i1>5)
 				  	   .yield( -> );
 							
@@ -150,7 +179,7 @@ public class Do {
 	 * 
 	 * 
 	 * 
-	 * <pre>{@code   Do
+	 * <pre>{@code   Do.add(traversable)
 	 				   .filter( -> i1>5)
 				  	   .yield( -> );
 							
@@ -171,7 +200,7 @@ public class Do {
 	 * 
 	 * 
 	 * 
-	 * <pre>{@code   Do
+	 * <pre>{@code   Do.add(callable)
 	 				   .filter( -> i1>5)
 				  	   .yield( -> );
 							
@@ -213,7 +242,7 @@ public class Do {
 	 * 
 	 * 
 	 * 
-	 * <pre>{@code   Do
+	 * <pre>{@code   Do.add(collection)
 	 				   .filter( -> i1>5)
 				  	   .yield( -> );
 							
@@ -237,7 +266,7 @@ public class Do {
 	 *
 	 *
 	 *
-	 * <pre>{@code   Do
+	 * <pre>{@code   Do.add(file)
 						.filter( -> i1>5)
 						 .yield( -> );
 							
@@ -258,7 +287,7 @@ public class Do {
 	 *
 	 *
 	 *
-	 * <pre>{@code   Do
+	 * <pre>{@code   Do.add(url)
 						.filter( -> i1>5)
 						 .yield( -> );
 							
@@ -279,7 +308,7 @@ public class Do {
 	 *
 	 *
 	 *
-	 * <pre>{@code   Do
+	 * <pre>{@code   Do.add(bufferedReader)
 						.filter( -> i1>5)
 						 .yield( -> );
 							

@@ -12,12 +12,13 @@ public interface Doable<T> {
 		return this;
 	}
 	default  DoComp2 doWithThisAnd(Function<T,?> f){
-		return UntypedDo.with(getValue()).and(f);
+		return UntypedDo.add(getValue()).with(f);
 	}
 	default  DoComp2 doWithThisAndThat(Object o){
-		return UntypedDo.with(getValue()).with(o);
+		return UntypedDo.add(getValue()).add(o);
 	}
 	default  DoComp2 doWithThisAndThat(Supplier o){
-		return UntypedDo.with(getValue()).with(o);
+		return UntypedDo.add(getValue()).add(o);
+
 	}
 }
