@@ -4,9 +4,9 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import com.aol.cyclops.lambda.api.AsGenericMonad;
+import com.aol.cyclops.internal.AsGenericMonad;
+import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.lambda.api.Comprehender;
-import com.aol.cyclops.lambda.monads.Monad;
 
 public class MonadMonadComprehender implements Comprehender<Monad> {
 

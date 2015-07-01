@@ -81,26 +81,7 @@ public class AsTest {
 	}
 	
 
-	@Test
-	public void asGenericMonad() {
-		
-		val list = As.<Stream<Integer>,List<Integer>>asMonad(Stream.of(Arrays.asList(1,3)))
-				.<Stream<Integer>,Integer>flatMap(Collection::stream)
-				.map(i->i*2)
-				.peek(System.out::println)
-				.toList();
-		assertThat(Arrays.asList(2,6),equalTo(list));
-	}
-	@Test
-	public void testMixed() {
-		val list = As.<Stream<List<Integer>>,List<Integer>>asMonad(Stream.of(Arrays.asList(1,3)))
-				.bind(Optional::of)
-				.unwrap()
-				.map(i->i.size())
-				.peek(System.out::println)
-				.collect(Collectors.toList());
-		assertThat(Arrays.asList(2),equalTo(list));
-	}
+	
 	@Test
 	public void asFunctor(){
 		Object mappedStream = As.<Integer>asFunctor(Stream.of(1,2,3)).map( i->i*2).unwrap();

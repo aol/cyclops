@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
+import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Streamable;
@@ -24,7 +25,7 @@ import com.aol.cyclops.streams.StreamUtils;
 import com.nurkiewicz.lazyseq.LazySeq;
 
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
-public class TraversableM<T> implements Unwrapable {
+public class SequenceM<T> implements Unwrapable {
 	private final Monad<Object,T> monad;
 
 	public final <R> R unwrap(){
@@ -37,8 +38,8 @@ public class TraversableM<T> implements Unwrapable {
 	 *            Times values should be repeated within a Stream
 	 * @return Stream with values repeated
 	 */
-	public final AnyM<T> cycle(int times) {
-		return monad.cycle(times).anyM();
+	public final SequenceM<T> cycle(int times) {
+		return monad.cycle(times).sequence();
 
 	}
 
@@ -61,8 +62,8 @@ public class TraversableM<T> implements Unwrapable {
 	 *            Number of times value should be repeated
 	 * @return Stream with reduced values repeated
 	 */
-	public final AnyM<T> cycle(Monoid<T> m, int times) {
-		return monad.cycle(m, times).anyM();
+	public final SequenceM<T> cycle(Monoid<T> m, int times) {
+		return monad.cycle(m, times).sequence();
 	}
 
 	/**
@@ -88,8 +89,8 @@ public class TraversableM<T> implements Unwrapable {
 	 * @param times
 	 * @return
 	 */
-	public final <R> AnyM<R> cycle(Class<R> monadC, int times) {
-		return monad.cycle(monadC, times).anyM();
+	public final <R> SequenceM<R> cycle(Class<R> monadC, int times) {
+		return monad.cycle(monadC, times).sequence();
 	}
 
 	/**
@@ -99,8 +100,8 @@ public class TraversableM<T> implements Unwrapable {
 	 *            repeat while true
 	 * @return Repeating Stream
 	 */
-	public final AnyM<T> cycleWhile(Predicate<? super T> predicate) {
-		return monad.cycleWhile(predicate).anyM();
+	public final SequenceM<T> cycleWhile(Predicate<? super T> predicate) {
+		return monad.cycleWhile(predicate).sequence();
 	}
 
 	/**
@@ -110,8 +111,8 @@ public class TraversableM<T> implements Unwrapable {
 	 *            repeat while true
 	 * @return Repeating Stream
 	 */
-	public final AnyM<T> cycleUntil(Predicate<? super T> predicate) {
-		return monad.cycleUntil(predicate).anyM();
+	public final SequenceM<T> cycleUntil(Predicate<? super T> predicate) {
+		return monad.cycleUntil(predicate).sequence();
 	}
 
 	/**
@@ -132,9 +133,13 @@ public class TraversableM<T> implements Unwrapable {
 	 *            Zipping function
 	 * @return Stream zipping two Monads
 	 */
-	public final <S, R> AnyM<R> zip(TraversableM<? extends S> second,
+	public final <S, R> SequenceM<R> zip(SequenceM<? extends S> second,
 			BiFunction<? super T, ? super S, ? extends R> zipper) {
-		return monad.zip(second.monad, zipper).anyM();
+		return monad.zip(second.monad, zipper).sequence();
+	}
+	public final <S, R> SequenceM<R> zip(AnyM<? extends S> second,
+			BiFunction<? super T, ? super S, ? extends R> zipper) {
+		return zip(second.toSequence(), zipper);
 	}
 
 	/**
@@ -156,9 +161,9 @@ public class TraversableM<T> implements Unwrapable {
 	 *            Zip funciton
 	 * @return This monad zipped with a Stream
 	 */
-	public final <S, R> AnyM<R> zip(Stream<? extends S> second,
+	public final <S, R> SequenceM<R> zip(Stream<? extends S> second,
 			BiFunction<? super T, ? super S, ? extends R> zipper) {
-		return monad.zip(second, zipper).anyM();
+		return monad.zip(second, zipper).sequence();
 	}
 
 	/**
@@ -168,8 +173,8 @@ public class TraversableM<T> implements Unwrapable {
 	 *            Size of sliding window
 	 * @return Stream with sliding view over monad
 	 */
-	public final AnyM<List<T>> sliding(int windowSize) {
-		return monad.sliding(windowSize).anyM();
+	public final SequenceM<List<T>> sliding(int windowSize) {
+		return monad.sliding(windowSize).sequence();
 	}
 
 	/**
@@ -191,8 +196,8 @@ public class TraversableM<T> implements Unwrapable {
 	 *            Size of each Group
 	 * @return Stream with elements grouped by size
 	 */
-	public final AnyM<List<T>> grouped(int groupSize) {
-		return monad.grouped(groupSize).anyM();
+	public final SequenceM<List<T>> grouped(int groupSize) {
+		return monad.grouped(groupSize).sequence();
 	}
 
 	/*
@@ -203,8 +208,8 @@ public class TraversableM<T> implements Unwrapable {
 	 * .<Stream<Integer>,Integer>streamedMonad() .distinct()
 	 * .collect(Collectors.toList()); }</pre>
 	 */
-	public final AnyM<T> distinct() {
-		return monad.distinct().anyM();
+	public final SequenceM<T> distinct() {
+		return monad.distinct().sequence();
 	}
 
 	/**
@@ -221,8 +226,8 @@ public class TraversableM<T> implements Unwrapable {
 	 * @param monoid
 	 * @return
 	 */
-	public final AnyM<T> scanLeft(Monoid<T> monoid) {
-		return monad.scanLeft(monoid).anyM();
+	public final SequenceM<T> scanLeft(Monoid<T> monoid) {
+		return monad.scanLeft(monoid).sequence();
 	}
 
 	/**
@@ -245,8 +250,8 @@ public class TraversableM<T> implements Unwrapable {
 	 * </pre>
 	 * 
 	 */
-	public final AnyM<T> sorted() {
-		return monad.sorted().anyM();
+	public final SequenceM<T> sorted() {
+		return monad.sorted().sequence();
 	}
 
 	/**
@@ -270,8 +275,8 @@ public class TraversableM<T> implements Unwrapable {
 	 *            Compartor to sort with
 	 * @return Sorted Monad
 	 */
-	public final AnyM<T> sorted(Comparator<? super T> c) {
-		return monad.sorted(c).anyM();
+	public final SequenceM<T> sorted(Comparator<? super T> c) {
+		return monad.sorted(c).sequence();
 	}
 
 	/**
@@ -287,8 +292,8 @@ public class TraversableM<T> implements Unwrapable {
 	 * @return Monad converted to Stream with specified number of elements
 	 *         skipped
 	 */
-	public final AnyM<T> skip(int num) {
-		return monad.skip(num).anyM();
+	public final SequenceM<T> skip(int num) {
+		return monad.skip(num).sequence();
 	}
 
 	/**
@@ -307,8 +312,8 @@ public class TraversableM<T> implements Unwrapable {
 	 * @return Monad converted to Stream with elements skipped while predicate
 	 *         holds
 	 */
-	public final AnyM<T> skipWhile(Predicate<? super T> p) {
-		return monad.skipWhile(p).anyM();
+	public final SequenceM<T> skipWhile(Predicate<? super T> p) {
+		return monad.skipWhile(p).sequence();
 	}
 
 	/**
@@ -326,8 +331,8 @@ public class TraversableM<T> implements Unwrapable {
 	 * @return Monad converted to Stream with elements skipped until predicate
 	 *         holds
 	 */
-	public final AnyM<T> skipUntil(Predicate<? super T> p) {
-		return monad.skipUntil(p).anyM();
+	public final SequenceM<T> skipUntil(Predicate<? super T> p) {
+		return monad.skipUntil(p).sequence();
 	}
 
 	/**
@@ -342,8 +347,8 @@ public class TraversableM<T> implements Unwrapable {
 	 *            Limit element size to num
 	 * @return Monad converted to Stream with elements up to num
 	 */
-	public final AnyM<T> limit(int num) {
-		return monad.limit(num).anyM();
+	public final SequenceM<T> limit(int num) {
+		return monad.limit(num).sequence();
 	}
 
 	/**
@@ -358,8 +363,8 @@ public class TraversableM<T> implements Unwrapable {
 	 *            Limit while predicate is true
 	 * @return Monad converted to Stream with limited elements
 	 */
-	public final AnyM<T> limitWhile(Predicate<? super T> p) {
-		return monad.limitWhile(p).anyM();
+	public final SequenceM<T> limitWhile(Predicate<? super T> p) {
+		return monad.limitWhile(p).sequence();
 	}
 
 	/**
@@ -374,14 +379,14 @@ public class TraversableM<T> implements Unwrapable {
 	 *            Limit until predicate is true
 	 * @return Monad converted to Stream with limited elements
 	 */
-	public final AnyM<T> limitUntil(Predicate<? super T> p) {
-		return monad.limitUntil(p).anyM();
+	public final SequenceM<T> limitUntil(Predicate<? super T> p) {
+		return monad.limitUntil(p).sequence();
 	}
 	/**
 	 * @return this monad converted to a Parallel Stream, via streamedMonad() wraped in Monad interface
 	 */
-	public final <NT> AnyM<NT> parallel(){
-		return monad.parallel().anyM();
+	public final <NT> SequenceM<NT> parallel(){
+		return monad.parallel().sequence();
 	}
 	
 	/**
@@ -389,16 +394,16 @@ public class TraversableM<T> implements Unwrapable {
 	 * 
 	 * @param c Predicate to check if all match
 	 */
-	public final  void  allMatch(Predicate<? super T> c) {
-		stream().allMatch(c);
+	public final  boolean  allMatch(Predicate<? super T> c) {
+		return stream().allMatch(c);
 	}
 	/**
 	 * True if a single element matches when Monad converted to a Stream
 	 * 
 	 * @param c Predicate to check if any match
 	 */
-	public final  void  anyMatch(Predicate<? super T> c) {
-		stream().anyMatch(c);
+	public final  boolean  anyMatch(Predicate<? super T> c) {
+		return stream().anyMatch(c);
 	}
 	/**
 	 * @return First matching element in sequential order
@@ -606,10 +611,22 @@ public class TraversableM<T> implements Unwrapable {
 	public AnyM<T> anyM(){
 		return new AnyM<>(monad);
 	}
-	public final  <R> TraversableM<R> map(Function<? super T,? extends R> fn){
-		return new TraversableM(monad.map(fn));
+	public final  <R> SequenceM<R> map(Function<? super T,? extends R> fn){
+		return new SequenceM(monad.map(fn));
 	}
-	public final   TraversableM<T>  peek(Consumer<? super T> c) {
-		return new TraversableM(monad.peek(c));
+	public final   SequenceM<T>  peek(Consumer<? super T> c) {
+		return new SequenceM(monad.peek(c));
+	}
+	/**
+	 * flatMap operation
+	 * 
+	 * @param fn
+	 * @return
+	 */
+	public final <R> SequenceM<R> flatMap(Function<? super T,SequenceM<? extends R>> fn) {
+		return monad.flatMap(in -> fn.apply(in).unwrap()).sequence();
+	}
+	public final   SequenceM<T>  filter(Predicate<? super T> fn){
+		return monad.filter(fn).sequence();
 	}
 }

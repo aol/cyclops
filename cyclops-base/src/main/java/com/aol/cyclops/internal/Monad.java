@@ -1,7 +1,9 @@
-package com.aol.cyclops.lambda.monads;
+package com.aol.cyclops.internal;
 
-import static com.aol.cyclops.lambda.api.AsGenericMonad.asMonad;
-import static com.aol.cyclops.lambda.api.AsGenericMonad.monad;
+import static com.aol.cyclops.internal.AsGenericMonad.asMonad;
+import static com.aol.cyclops.internal.AsGenericMonad.monad;
+
+
 
 
 
@@ -25,10 +27,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.lambda.api.AsAnyM;
-import com.aol.cyclops.lambda.api.AsGenericMonad;
 import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Streamable;
+import com.aol.cyclops.lambda.monads.AnyM;
+import com.aol.cyclops.lambda.monads.ComprehenderSelector;
+import com.aol.cyclops.lambda.monads.Filterable;
+import com.aol.cyclops.lambda.monads.Functor;
+import com.aol.cyclops.lambda.monads.SequenceM;
+import com.aol.cyclops.lambda.monads.StreamBasedFunctions;
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.streams.Pair;
 import com.nurkiewicz.lazyseq.LazySeq;
@@ -255,13 +262,8 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 	 * }</pre>
 	 * 
 	 */
-	default <X> AnyM<X> anyM(){
-		return new AnyM<X>((Monad)this);	
-	}
-	default <X> TraversableM<X>  sequence(){
-		return new  TraversableM<X>((Monad)this);	
-	}
-	
+	public <X> AnyM<X> anyM();
+	public <X> SequenceM<X>  sequence();
 	/**
 	 * Create a duck typed Monad wrapper. Using AnyM we focus only on the underlying type
 	 * e.g. instead of 

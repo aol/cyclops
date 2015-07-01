@@ -9,11 +9,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.comprehensions.converters.MonadicConverters;
-import com.aol.cyclops.lambda.monads.MonadWrapper;
 import com.aol.cyclops.lambda.monads.AnyM;
+import com.aol.cyclops.lambda.monads.MonadWrapper;
 
 
-public class AsAnyMList extends AsGenericMonad{
+public class AsAnyMList extends AsAnyM{
 
 	
 	public static <T> List<AnyM<T>> notTypeSafeAnyMList(Collection<Object> anyM){

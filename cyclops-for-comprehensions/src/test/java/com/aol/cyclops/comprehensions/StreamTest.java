@@ -31,7 +31,7 @@ public class StreamTest {
 		
 		List<String> res = Do.add(new String[]{"hello world","hello"}) 
 							.yield( v1->  v1 + "1")
-							.toTraversable().toList();
+							.asSequence().toList();
 		List<String> expected = Arrays.asList("hello world1", "hello1");
 		
 		
@@ -42,7 +42,7 @@ public class StreamTest {
 	public void stringStream() {
 		
 		List<String> res = Do.add("hello world") 
-							.yield( v-> ""+ v + "1").<String>traversable().toList();
+							.yield( v-> ""+ v + "1").<String>toSequence().toList();
 		List<String> expected = Arrays.asList("h1", "e1", "l1", "l1", "o1",  " 1", "w1", "o1", "r1", 
 				"l1", "d1");
 		
@@ -138,7 +138,7 @@ public class StreamTest {
 		Map<String,Integer> m = new HashMap<>();
 		m.put("hello",10);
 		List<String> res = Do.add(m.entrySet().stream()) 
-							.yield( v-> ""+ v + "*").toTraversable().toList();
+							.yield( v-> ""+ v + "*").asSequence().toList();
 		List<String> expected = Arrays.asList("hello=10*");
 		
 		

@@ -1,7 +1,8 @@
 package com.aol.cyclops.lambda.functions;
 
 import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -12,12 +13,8 @@ import lombok.val;
 import org.junit.Test;
 
 import com.aol.cyclops.functions.LiftMFunctions;
-import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.api.Streamable;
 import com.aol.cyclops.lambda.monads.AnyM;
-import com.aol.cyclops.lambda.monads.Monads;
-
-import static org.hamcrest.Matchers.*;
 public class LiftMFunctionsTest {
 
 	public Integer one(String word){
@@ -56,7 +53,7 @@ public class LiftMFunctionsTest {
 		
 		AnyM<String> responses = LiftMFunctions.liftM2(this::response).apply(anyM(stream1), anyM(stream2));
 		
-		assertThat(responses.traversable().toList(),equalTo(Arrays.asList("all upper::MIXEDCASE", 
+		assertThat(responses.toSequence().toList(),equalTo(Arrays.asList("all upper::MIXEDCASE", 
 				"all upper::ALL LOWER", "mixed case::MIXEDCASE", "mixed case::ALL LOWER")));
 		
 	}
@@ -69,7 +66,7 @@ public class LiftMFunctionsTest {
 		
 		AnyM<String> responses = LiftMFunctions.liftM2(this::response).apply(anyM(stream1), anyM(stream2));
 		
-		assertThat(responses.traversable().toList(),equalTo(Arrays.asList("all upper::MIXEDCASE", 
+		assertThat(responses.toSequence().toList(),equalTo(Arrays.asList("all upper::MIXEDCASE", 
 				"all upper::ALL LOWER", "mixed case::MIXEDCASE", "mixed case::ALL LOWER")));
 		
 	}

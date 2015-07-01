@@ -9,11 +9,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.comprehensions.converters.MonadicConverters;
-import com.aol.cyclops.lambda.monads.MonadWrapper;
 import com.aol.cyclops.lambda.monads.AnyM;
+import com.aol.cyclops.lambda.monads.MonadWrapper;
 
 
-public class AsAnyM extends AsGenericMonad{
+public class AsAnyM {
 
 	/**
 	 * Create a duck typed Monad wrapper. Using AnyM we focus only on the underlying type

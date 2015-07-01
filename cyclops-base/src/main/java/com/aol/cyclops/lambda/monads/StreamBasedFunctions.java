@@ -1,6 +1,6 @@
 package com.aol.cyclops.lambda.monads;
-import static com.aol.cyclops.lambda.api.AsGenericMonad.asMonad;
-import static com.aol.cyclops.lambda.api.AsGenericMonad.monad;
+import static com.aol.cyclops.internal.AsGenericMonad.asMonad;
+import static com.aol.cyclops.internal.AsGenericMonad.monad;
 
 import java.util.Comparator;
 import java.util.Iterator;
@@ -14,6 +14,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Streamable;

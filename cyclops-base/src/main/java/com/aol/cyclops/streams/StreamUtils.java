@@ -20,8 +20,6 @@ import java.util.stream.StreamSupport;
 import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Streamable;
-import com.aol.cyclops.lambda.monads.Monads;
-import com.aol.cyclops.lambda.utils.Lambda;
 import com.nurkiewicz.lazyseq.LazySeq;
 
 public class StreamUtils{
