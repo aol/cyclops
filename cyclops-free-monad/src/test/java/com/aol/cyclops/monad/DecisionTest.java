@@ -1,8 +1,5 @@
 package com.aol.cyclops.monad;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertThat;
-
 import java.util.function.Function;
 
 import lombok.Value;
@@ -20,8 +17,8 @@ public class DecisionTest {
 	public void script(){
 		//build a set of actions for get followed by put
 		
-		Object output =	UntypedDo.with(get("key"))
-							.and((String a)->put("key",a))
+		Object output =	UntypedDo.add(get("key"))
+							.with((String a)->put("key",a))
 							.yield((String a)->(String b) -> b);
 							
 		/**
