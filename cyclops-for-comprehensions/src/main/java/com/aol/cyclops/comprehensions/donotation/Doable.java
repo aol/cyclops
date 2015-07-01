@@ -19,5 +19,6 @@ public interface Doable<T> {
 	}
 	default  DoComp2 doWithThisAndThat(Supplier o){
 		return UntypedDo.add(getValue()).add(o);
+
 	}
 }

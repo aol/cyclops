@@ -17,6 +17,7 @@ public class DecisionTest {
 	public void script(){
 		//build a set of actions for get followed by put
 		
+
 		Object output =	UntypedDo.add(get("key"))
 							.with((String a)->put("key",a))
 							.yield((String a)->(String b) -> b);
