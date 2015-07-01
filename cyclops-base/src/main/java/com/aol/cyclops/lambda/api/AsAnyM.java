@@ -2,8 +2,10 @@ package com.aol.cyclops.lambda.api;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.comprehensions.converters.MonadicConverters;
@@ -55,7 +57,7 @@ public class AsAnyM extends AsGenericMonad{
 	 * @param anyM to wrap
 	 * @return Duck typed Monad
 	 */
-	public static <T> AnyM<T> asAnyM(Object anyM){
+	public static <T> AnyM<T> notTypeSafeAnyM(Object anyM){
 		return new MonadWrapper<>(anyM).anyM();
 	}
 	/**

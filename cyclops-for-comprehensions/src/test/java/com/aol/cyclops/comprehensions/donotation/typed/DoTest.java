@@ -19,7 +19,7 @@ public class DoTest {
 	public void do2(){
 		Stream<Double> s =  Do.add(Stream.of(10.00,5.00,100.30))
 						.withStream(d->Stream.of(2.0))
-						.yield( base -> bonus-> base*(1.0+bonus));
+						.yield( base -> bonus-> base*(1.0+bonus)).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(345.9));
@@ -28,7 +28,7 @@ public class DoTest {
 	public void do2Add(){
 		Stream<Double> s =  Do.add(Stream.of(10.00,5.00,100.30))
 						.addStream(()->Stream.of(2.0))
-						.yield( base -> bonus-> base*(1.0+bonus));
+						.yield( base -> bonus-> base*(1.0+bonus)).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(345.9));
@@ -38,7 +38,7 @@ public class DoTest {
 		Stream<Double> s =  Do.add(Stream.of(10.00,5.00,100.30))
 						.add(Arrays.asList(2.0))
 						.addStream(()->Stream.of(3.0))
-						.yield( base -> bonus-> v-> base*(1.0+bonus));
+						.yield( base -> bonus-> v-> base*(1.0+bonus)).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(345.9));
@@ -49,7 +49,7 @@ public class DoTest {
 						.add(Arrays.asList(2.0))
 						.add(Arrays.asList(2.0))
 						.addStream(()->Stream.of(3.0))
-						.yield( base -> bonus-> v-> v1->base*(1.0+bonus));
+						.yield( base -> bonus-> v-> v1->base*(1.0+bonus)).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(345.9));
@@ -61,7 +61,7 @@ public class DoTest {
 						.add(Arrays.asList(2.0))
 						.add(Arrays.asList(2.0))
 						.addStream(()->Stream.of(3.0))
-						.yield( base -> bonus-> v->v1->v2-> base*(1.0+bonus));
+						.yield( base -> bonus-> v->v1->v2-> base*(1.0+bonus)).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(345.9));
@@ -74,7 +74,7 @@ public class DoTest {
 						.add(Arrays.asList(2.0))
 						.add(Arrays.asList(2.0))
 						.addStream(()->Stream.of(3.0))
-						.yield( base -> bonus-> v->v1->v2->v3-> base*(1.0+bonus));
+						.yield( base -> bonus-> v->v1->v2->v3-> base*(1.0+bonus)).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(345.9));
@@ -88,7 +88,7 @@ public class DoTest {
 						.add(Arrays.asList(2.0))
 						.add(Arrays.asList(2.0))
 						.addStream(()->Stream.of(3.0))
-						.yield( base -> bonus-> v->v1->v2->v3->v4-> base*(1.0+bonus));
+						.yield( base -> bonus-> v->v1->v2->v3->v4-> base*(1.0+bonus)).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(345.9));
@@ -96,7 +96,7 @@ public class DoTest {
 	@Test
 	public void do1(){
 		Stream<Double> s = Do.add(Stream.of(10.00,5.00,100.30))
-						.yield( base -> base+10);
+						.yield( base -> base+10).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(145.3));
@@ -108,33 +108,33 @@ public class DoTest {
 		Stream<Double> s = Do.add(Stream.of(10.00,5.00,100.30))
 						.addStream(()->Stream.of(2.0))
 						.withStream( d -> e ->Stream.of(10.0))
-						.yield( base -> bonus -> woot  -> base*(1.0+bonus)*woot);
+						.yield( base -> bonus -> woot  -> base*(1.0+bonus)*woot).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(3459.0));
 	}
 	@Test
 	public void do4(){
-		Stream<Double> s = UntypedDo.with(Stream.of(10.00,5.00,100.30))
-						.and((Double d)->Stream.of(2.0))
-						.and((Double d)->(Double e)->Stream.of(10.0))
-						.and((Double d)->(Double e)->(Double f)->Stream.of(10.0))
-						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
-									base*(1.0+bonus)*woot*f);
+		Stream<Double> s = Do.add(Stream.of(10.00,5.00,100.30))
+						.withStream( d->Stream.of(2.0))
+						.withStream( d -> e ->Stream.of(10.0))
+						.withStream(  d ->  e ->  f -> Stream.of(10.0))
+						.yield(base -> bonus -> woot ->  f ->
+									base*(1.0+bonus)*woot*f)).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(34590.0));
 	}
 	@Test
 	public void do5(){
-		Stream<Double> s = UntypedDo.with(Stream.of(10.00,5.00,100.30))
-						.and((Double d)->Stream.of(2.0))
-						.and((Double d)->(Double e)->Stream.of(10.0))
-						.and((Double d)->(Double e)->(Double f)->Stream.of(10.0))
-						.and( (Double d)->(Double e)->(Double f)-> (Double g)-> Stream.of(10.0) )
-						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
-									(Double g)->
-									base*(1.0+bonus)*woot*f*g);
+		Stream<Double> s = Do.add(Stream.of(10.00,5.00,100.30))
+						.withStream( d ->Stream.of(2.0))
+						.withStream( d -> e ->Stream.of(10.0))
+						.withStream( d-> e -> f ->Stream.of(10.0))
+						.withStream( d -> e -> f ->  g -> Stream.of(10.0) )
+						.yield( base -> bonus->  woot  ->  f->
+									g ->
+									base*(1.0+bonus)*woot*f*g).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(345900.0));
@@ -150,7 +150,7 @@ public class DoTest {
 											Stream.of(10.0) )
 						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
 									(Double g)->(Double h)->
-									base*(1.0+bonus)*woot*f*g*h);
+									base*(1.0+bonus)*woot*f*g*h).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(3459000.0));
@@ -168,7 +168,7 @@ public class DoTest {
 											Stream.of(10.0) )
 						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
 									(Double g)->(Double h)->(Double i)->
-									base*(1.0+bonus)*woot*f*g*h*i);
+									base*(1.0+bonus)*woot*f*g*h*i).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(34590000.0));
@@ -188,7 +188,7 @@ public class DoTest {
 											Stream.of(10.0) )
 						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
 									(Double g)->(Double h)->(Double i)->(Double j)->
-									base*(1.0+bonus)*woot*f*g*h*i*j);
+									base*(1.0+bonus)*woot*f*g*h*i*j).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(345900000.0));
@@ -200,7 +200,7 @@ public class DoTest {
 	public void do2Just(){
 		Stream<Double> s = UntypedDo.with(Stream.of(10.00,5.00,100.30))
 						.with(()->Stream.of(2.0))
-						.yield((Double base)->(Double bonus)-> base*(1.0+bonus));
+						.yield((Double base)->(Double bonus)-> base*(1.0+bonus)).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(345.9));
@@ -212,7 +212,7 @@ public class DoTest {
 		Stream<Double> s = UntypedDo.with(()->Stream.of(10.00,5.00,100.30))
 						.with(()->Stream.of(2.0))
 						.with(()->Stream.of(10.0))
-						.yield((Double base)->(Double bonus)->(Double woot) -> base*(1.0+bonus)*woot);
+						.yield((Double base)->(Double bonus)->(Double woot) -> base*(1.0+bonus)*woot).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(3459.0));
@@ -224,7 +224,7 @@ public class DoTest {
 						.and((Double d)->(Double e)->Stream.of(10.0))
 						.with(()->Stream.of(10.0))
 						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
-									base*(1.0+bonus)*woot*f);
+									base*(1.0+bonus)*woot*f).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(34590.0));
@@ -238,7 +238,7 @@ public class DoTest {
 						.with(()->Stream.of(10.0) )
 						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
 									(Double g)->
-									base*(1.0+bonus)*woot*f*g);
+									base*(1.0+bonus)*woot*f*g).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(345900.0));
@@ -253,7 +253,7 @@ public class DoTest {
 						.with(()->Stream.of(10.0) )
 						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
 									(Double g)->(Double h)->
-									base*(1.0+bonus)*woot*f*g*h);
+									base*(1.0+bonus)*woot*f*g*h).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(3459000.0));
@@ -270,7 +270,7 @@ public class DoTest {
 						.with(()->Stream.of(10.0) )
 						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
 									(Double g)->(Double h)->(Double i)->
-									base*(1.0+bonus)*woot*f*g*h*i);
+									base*(1.0+bonus)*woot*f*g*h*i).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(34590000.0));
@@ -289,7 +289,7 @@ public class DoTest {
 						.with(()->Stream.of(10.0) )
 						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
 									(Double g)->(Double h)->(Double i)->(Double j)->
-									base*(1.0+bonus)*woot*f*g*h*i*j);
+									base*(1.0+bonus)*woot*f*g*h*i*j).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(345900000.0));

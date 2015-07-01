@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 
 import org.pcollections.PStack;
 
+import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.monads.AnyM;
 import com.aol.cyclops.lambda.monads.TraversableM;
 	public class DoComp3<T1,T2,T3> extends DoComp{
@@ -622,8 +623,8 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 		 * @param f To be applied to every element in the for comprehension
 		 * @return For comprehension result
 		 */
-		public <R> R yield(Function<T1,Function<T2,Function<T3,?>>> f){
-			return this.yieldInternal(f);
+		public <R> AnyM<R> yield(Function<T1,Function<T2,Function<T3,R>>> f){
+			return AsAnyM.anyM(this.yieldInternal(f));
 		}
 		
 		

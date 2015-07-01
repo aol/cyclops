@@ -219,7 +219,7 @@ public class AnyM<T> implements Unwrapable{
 	 * @return Duck typed Monad
 	 */
 	public static <T> AnyM<T> of(Object o){
-		return AsAnyM.asAnyM(o);
+		return AsAnyM.notTypeSafeAnyM(o);
 	}
 	
 	

@@ -622,7 +622,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 		 * @param f To be applied to every element in the for comprehension
 		 * @return For comprehension result
 		 */
-		public <R> R yield(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,?>>>>> f){
+		public <R> AnyM<R> yield(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,R>>>>> f){
 			return this.yieldInternal(f);
 		}
 		
