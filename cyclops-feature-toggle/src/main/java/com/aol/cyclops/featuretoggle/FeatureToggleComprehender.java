@@ -1,4 +1,4 @@
-package com.aol.cyclops.enableswitch;
+package com.aol.cyclops.featuretoggle;
 import java.util.function.Function;
 
 import java.util.function.Predicate;
@@ -10,46 +10,46 @@ import com.aol.cyclops.lambda.api.Comprehender;
  *
  *  Behaviour in cross-type flatMap is to create an empty instance for Disabled Switches, but always pass Enabled values on
  */
-public class SwitchComprehender implements Comprehender<Switch>{
+public class FeatureToggleComprehender implements Comprehender<FeatureToggle>{
 
 	@Override
-	public Object filter(Switch t, Predicate p) {
+	public Object filter(FeatureToggle t, Predicate p) {
 		return t.filter(p);
 	}
 
 	@Override
-	public Object map(Switch t, Function fn) {
+	public Object map(FeatureToggle t, Function fn) {
 		return t.map(fn);
 	}
 
 	@Override
-	public Switch flatMap(Switch t, Function fn) {
+	public FeatureToggle flatMap(FeatureToggle t, Function fn) {
 		return t.flatMap(fn);
 	}
 
 	@Override
 	public boolean instanceOfT(Object apply) {
-		return apply instanceof Switch;
+		return apply instanceof FeatureToggle;
 	}
 	
 	
 
 	@Override
-	public Switch of(Object o) {
-		return Switch.enable(o);
+	public FeatureToggle of(Object o) {
+		return FeatureToggle.enable(o);
 	}
 
 	@Override
-	public Switch empty() {
-		return Switch.disable(null);
+	public FeatureToggle empty() {
+		return FeatureToggle.disable(null);
 	}
 
 	@Override
 	public Class getTargetClass() {
-		return Switch.class;
+		return FeatureToggle.class;
 	}
 	@Override
-	public Object resolveForCrossTypeFlatMap(Comprehender comp,Switch apply){
+	public Object resolveForCrossTypeFlatMap(Comprehender comp,FeatureToggle apply){
 		return apply.matchType( c -> c.isType((Enabled e)-> comp.of(e.get()))
 									 .isType( (Disabled d) -> comp.empty()));
 	}

@@ -1,4 +1,4 @@
-package com.aol.cyclops.enableswitch;
+package com.aol.cyclops.featuretoggle;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -19,7 +19,7 @@ import com.aol.cyclops.value.ValueObject;
  *
  * @param <F>
  */
-public interface Switch<F> extends Supplier<F>, ValueObject, Streamable<F> {
+public interface FeatureToggle<F> extends Supplier<F>, ValueObject, Streamable<F> {
 
 	boolean isEnabled();
 	boolean isDisabled();
@@ -55,7 +55,7 @@ public interface Switch<F> extends Supplier<F>, ValueObject, Streamable<F> {
 	 * @param f but with this value (f)
 	 * @return new switch
 	 */
-	public static <F> Switch<F> from(Switch<F> from, F f){
+	public static <F> FeatureToggle<F> from(FeatureToggle<F> from, F f){
 		if(from.isEnabled())
 			return enable(f);
 		return disable(f);
@@ -72,16 +72,16 @@ public interface Switch<F> extends Supplier<F>, ValueObject, Streamable<F> {
 	 * 
 	 * @return flattened switch
 	 */
-	default <X> Switch<X> flatten(){
+	default <X> FeatureToggle<X> flatten(){
 		
 		Optional s = Optional.of(get()).flatMap(x->{
-			if(x instanceof Switch)
-				return Optional.of(((Switch)x).flatten());
+			if(x instanceof FeatureToggle)
+				return Optional.of(((FeatureToggle)x).flatten());
 			else
-				return Optional.of(Switch.from(this,x));
+				return Optional.of(FeatureToggle.from(this,x));
 		});
 		Object value = s.get();
-		Switch<X> newSwitch = from((Switch<X>)this,((Switch<X>)value).get());
+		FeatureToggle<X> newSwitch = from((FeatureToggle<X>)this,((FeatureToggle<X>)value).get());
 		return newSwitch;
 	}
 	
@@ -91,7 +91,7 @@ public interface Switch<F> extends Supplier<F>, ValueObject, Streamable<F> {
 	 * @param consumer Consumer to provide current value to
 	 * @return This Switch
 	 */
-	default Switch<F> peek(Consumer<F> consumer){
+	default FeatureToggle<F> peek(Consumer<F> consumer){
 		consumer.accept(get());
 		return this;
 	}
@@ -100,9 +100,9 @@ public interface Switch<F> extends Supplier<F>, ValueObject, Streamable<F> {
 	 * @param map Create a new Switch with provided function
 	 * @return switch from function
 	 */
-	default <X> Switch<X> flatMap(Function<F,Switch<X>> map){
+	default <X> FeatureToggle<X> flatMap(Function<F,FeatureToggle<X>> map){
 		if(isDisabled())
-			return (Switch<X>)this;
+			return (FeatureToggle<X>)this;
 		return map.apply(get());
 	}
 	
@@ -112,9 +112,9 @@ public interface Switch<F> extends Supplier<F>, ValueObject, Streamable<F> {
 	 * @param map transform the value inside this Switch into new Switch object
 	 * @return new Switch with transformed value
 	 */
-	default <X> Switch<X> map(Function<F,X> map){
+	default <X> FeatureToggle<X> map(Function<F,X> map){
 		if(isDisabled())
-			return (Switch<X>)this;
+			return (FeatureToggle<X>)this;
 		return enable(map.apply(get()));
 	}
 	
@@ -125,11 +125,11 @@ public interface Switch<F> extends Supplier<F>, ValueObject, Streamable<F> {
 	 * @param p Predicate to test for
 	 * @return Filtered switch
 	 */
-	default Switch<F> filter(Predicate<F> p){
+	default FeatureToggle<F> filter(Predicate<F> p){
 		if(isDisabled())
 			return this;
 		if(!p.test(get()))
-			return Switch.disable(get());
+			return FeatureToggle.disable(get());
 		return this;
 	}
 	
@@ -157,7 +157,7 @@ public interface Switch<F> extends Supplier<F>, ValueObject, Streamable<F> {
 	/**
 	 * @return flip this Switch
 	 */
-	default Switch<F> flip(){
+	default FeatureToggle<F> flip(){
 		
 		if(isEnabled())
 			return disable(get());

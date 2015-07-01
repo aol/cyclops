@@ -1,4 +1,4 @@
-package com.aol.cyclops.enableswitch;
+package com.aol.cyclops.featuretoggle;
 
 import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
 import static org.hamcrest.Matchers.equalTo;
@@ -8,6 +8,7 @@ import lombok.val;
 
 import org.junit.Test;
 
+import com.aol.cyclops.featuretoggle.FeatureToggle;
 import com.aol.cyclops.lambda.monads.AnyM;
 import com.aol.cyclops.lambda.monads.MonadFunctions;
 import com.aol.cyclops.lambda.monads.Monads;
@@ -23,8 +24,8 @@ public class LiftTest {
 		
 		val add = Monads.liftM2(this::add);
 		
-		AnyM<Integer> result = add.apply(anyM(Switch.enable(2)), anyM(Switch.enable(3)));
-		assertThat(result.<Switch<Integer>>unwrap().get(),equalTo(5));
+		AnyM<Integer> result = add.apply(anyM(FeatureToggle.enable(2)), anyM(FeatureToggle.enable(3)));
+		assertThat(result.<FeatureToggle<Integer>>unwrap().get(),equalTo(5));
 	}
 	
 	
@@ -33,8 +34,8 @@ public class LiftTest {
 	public void testLiftDisabled(){
 		val divide = Monads.liftM2(this::add);
 		
-		AnyM<Integer> result = divide.apply(anyM(Switch.enable(2)), anyM(Switch.disable(4)));
-		assertThat(result.<Switch<Integer>>unwrap().isDisabled(),equalTo(true));
+		AnyM<Integer> result = divide.apply(anyM(FeatureToggle.enable(2)), anyM(FeatureToggle.disable(4)));
+		assertThat(result.<FeatureToggle<Integer>>unwrap().isDisabled(),equalTo(true));
 	}
 	
 	

@@ -1,6 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
-
+apply plugin: 'idea'
 sourceCompatibility = 1.8
 
 buildscript {
@@ -17,11 +17,16 @@ repositories {
 }
 
 
-
 test {
     systemProperties 'property': 'value'
 }
 
 subprojects {
-	
+	if (JavaVersion.current().isJava8Compatible()) {
+		allprojects {
+		  tasks.withType(Javadoc) {
+			options.addStringOption('Xdoclint:none', '-quiet')
+		  }
+		}
+	  }
 }
