@@ -65,7 +65,7 @@ public class AnyM<T> implements Unwrapable{
 	 * @param fn flatMap function
 	 * @return flatMapped monad
 	*/
-	public final <R> AnyM<R> bind(Function<? super T,? extends R> fn){
+	public final <R> AnyM<R> bind(Function<? super T,?> fn){
 		return monad.bind(fn).anyM();
 	
 	} 
@@ -114,8 +114,8 @@ public class AnyM<T> implements Unwrapable{
 	 * @param fn
 	 * @return
 	 */
-	public final <NT> AnyM<NT> flatMap(Function<? super T,AnyM<? extends NT>> fn) {
-		return monad.flatMap(fn).anyM();
+	public final <R> AnyM<R> flatMap(Function<? super T,AnyM<? extends R>> fn) {
+		return monad.flatMap(in -> fn.apply(in).unwrap()).anyM();
 	}
 	
 	

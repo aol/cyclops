@@ -307,6 +307,21 @@ public class AnyMTest {
         
 	}
 	
+	@Test
+	public void testFlatMap(){
+		AnyM<List<Integer>> m  = anyM(Stream.of(Arrays.asList(1,2,3),Arrays.asList(1,2,3)));
+		AnyM<Integer> intM = m.flatMap( c -> anyM(c.stream()));
+		List<Integer> list = intM.toTraversable().toList();
+		assertThat(list,equalTo(Arrays.asList(1, 2, 3, 1, 2, 3)));
+	}
+	@Test
+	public void testBind(){
+		AnyM<List<Integer>> m  = anyM(Stream.of(Arrays.asList(1,2,3),Arrays.asList(1,2,3)));
+		AnyM<Integer> intM = m.bind(Collection::stream);
+		List<Integer> list = intM.toTraversable().toList();
+		assertThat(list,equalTo(Arrays.asList(1, 2, 3, 1, 2, 3)));
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Test
 	public void zipOptional(){
