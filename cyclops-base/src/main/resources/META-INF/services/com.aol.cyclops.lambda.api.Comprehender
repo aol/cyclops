@@ -5,4 +5,6 @@ com.aol.cyclops.comprehensions.comprehenders.IntStreamComprehender
 com.aol.cyclops.comprehensions.comprehenders.DoubleStreamComprehender
 com.aol.cyclops.comprehensions.comprehenders.CompletableFutureComprehender
 com.aol.cyclops.comprehensions.comprehenders.StreamableComprehender
+com.aol.cyclops.comprehensions.comprehenders.LazySeqComprehender
+com.aol.cyclops.comprehensions.comprehenders.SeqComprehender
 # com.aol.cyclops.comprehensions.comprehenders.MonadMonadComprehender -> will cause issues during flatMap
