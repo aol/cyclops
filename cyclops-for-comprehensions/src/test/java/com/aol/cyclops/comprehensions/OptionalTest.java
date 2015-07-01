@@ -23,7 +23,7 @@ public class OptionalTest {
 		Optional<Integer> result =  Do.add(two)
 										.add(four)
 										.add(three)
-										.yield(v1->v2->v3 -> f2.apply(v1, v2))).unwrap();
+										.yield(v1->v2->v3 -> f2.apply(v1, v2)).unwrap();
 		
 		assertThat(result,equalTo(Optional.of(8)));
 
@@ -53,7 +53,7 @@ public class OptionalTest {
 							.withOptional(v1->empty)
 							.withOptional(v1->v2->Optional.empty())
 							.withOptional(v1->v2->v3->Optional.empty())
-							.yield(v1->v2->v3->v4-> f2.apply(v1, v2))).unwrap();
+							.yield(v1->v2->v3->v4-> f2.apply(v1, v2)).unwrap();
 		
 		assertThat(result,equalTo(Optional.empty()));
 

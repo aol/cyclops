@@ -53,9 +53,10 @@ public class StreamTest {
 	@Test
 	public void stringStreamWithNull() {
 		
-		Seq<String> res = Do.add(  "hello world") 
-							.add(null)
-							.yield( v1->v2-> ""+ v1 + v2));
+		Seq<String> res =  Do.add(  "hello world") 
+							.add((Iterable<String>)null)
+							.yield( v1-> v2-> ""+ v1 + v2)
+							.unwrap();
 		List<String> expected = Arrays.asList();
 		
 		

@@ -43,8 +43,8 @@ public class MixedTest {
 		
 		List<String> results = Do.add(strs)
 								.add(opt)
-								.yield(v1->v2 -> v1+ v2))
-								.traverable()
+								.yield( v1->v2 -> v1+ v2)
+								.toTraversable()
 								.toList();
 								
 		
@@ -62,7 +62,7 @@ public class MixedTest {
 		
 		Optional<List<String>> results = Do.add(opt)
 												.add(strs)
-												.yield(v1->v2 -> v1+ v2)).unwrap();
+												.yield(v1->v2 -> v1+ v2).unwrap();
 		
 		assertThat(results.get(),hasItem("coolhello"));
 		assertThat(results.get(),hasItem("coolworld"));
