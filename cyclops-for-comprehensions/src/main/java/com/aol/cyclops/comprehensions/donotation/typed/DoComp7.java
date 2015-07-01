@@ -86,7 +86,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(Stream<T8> o){
+		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> addStream(Supplier<Stream<T8>> o){
 			return new DoComp8(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
 			
 		}
@@ -624,7 +624,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 		 * @return For comprehension result
 		 */
 		public <R> AnyM<R> yield(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,R>>>>>>> f){
-			return AsAnyM.anyM(this.yieldInternal(f));
+			return AsAnyM.notTypeSafeAnyM(this.yieldInternal(f));
 		}
 		
 		

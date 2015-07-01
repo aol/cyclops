@@ -116,11 +116,10 @@ public class DoTest {
 	@Test
 	public void do4(){
 		Stream<Double> s = Do.add(Stream.of(10.00,5.00,100.30))
-						.withStream( d->Stream.of(2.0))
-						.withStream( d -> e ->Stream.of(10.0))
-						.withStream(  d ->  e ->  f -> Stream.of(10.0))
-						.yield(base -> bonus -> woot ->  f ->
-									base*(1.0+bonus)*woot*f)).unwrap();
+							.withStream( d->Stream.of(2.0))
+							.withStream( d -> e ->Stream.of(10.0))
+							.withStream(  d ->  e ->  f -> Stream.of(10.0))
+							.yield(base -> bonus -> woot ->  f -> base*(1.0+bonus)*woot*f).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(34590.0));
@@ -141,12 +140,12 @@ public class DoTest {
 	}
 	@Test
 	public void do6(){
-		Stream<Double> s = UntypedDo.with(Stream.of(10.00,5.00,100.30))
-						.and((Double d)->Stream.of(2.0))
-						.and((Double d)->(Double e)->Stream.of(10.0))
-						.and((Double d)->(Double e)->(Double f)->Stream.of(10.0))
-						.and( (Double d)->(Double e)->(Double f)-> (Double g)-> Stream.of(10.0) )
-						.and( (Double d)->(Double e)->(Double f)-> (Double g)-> (Double h)->
+		Stream<Double> s = Do.add(Stream.of(10.00,5.00,100.30))
+						.withStream((Double d)->Stream.of(2.0))
+						.withStream((Double d)->(Double e)->Stream.of(10.0))
+						.withStream((Double d)->(Double e)->(Double f)->Stream.of(10.0))
+						.withStream( (Double d)->(Double e)->(Double f)-> (Double g)-> Stream.of(10.0) )
+						.withStream( (Double d)->(Double e)->(Double f)-> (Double g)-> (Double h)->
 											Stream.of(10.0) )
 						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
 									(Double g)->(Double h)->
@@ -157,14 +156,14 @@ public class DoTest {
 	}
 	@Test
 	public void do7(){
-		Stream<Double> s = UntypedDo.with(Stream.of(10.00,5.00,100.30))
-						.and((Double d)->Stream.of(2.0))
-						.and((Double d)->(Double e)->Stream.of(10.0))
-						.and((Double d)->(Double e)->(Double f)->Stream.of(10.0))
-						.and( (Double d)->(Double e)->(Double f)-> (Double g)-> Stream.of(10.0) )
-						.and( (Double d)->(Double e)->(Double f)-> (Double g)-> (Double h)->
+		Stream<Double> s = Do.add(Stream.of(10.00,5.00,100.30))
+						.withStream((Double d)->Stream.of(2.0))
+						.withStream((Double d)->(Double e)->Stream.of(10.0))
+						.withStream((Double d)->(Double e)->(Double f)->Stream.of(10.0))
+						.withStream( (Double d)->(Double e)->(Double f)-> (Double g)-> Stream.of(10.0) )
+						.withStream( (Double d)->(Double e)->(Double f)-> (Double g)-> (Double h)->
 											Stream.of(10.0) )
-						.and( (Double d)->(Double e)->(Double f)-> (Double g)-> (Double h)-> (Double i) ->
+						.withStream( (Double d)->(Double e)->(Double f)-> (Double g)-> (Double h)-> (Double i) ->
 											Stream.of(10.0) )
 						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
 									(Double g)->(Double h)->(Double i)->
@@ -175,16 +174,16 @@ public class DoTest {
 	}
 	@Test
 	public void do9(){
-		Stream<Double> s = UntypedDo.with(Stream.of(10.00,5.00,100.30))
-						.and((Double d)->Stream.of(2.0))
-						.and((Double d)->(Double e)->Stream.of(10.0))
-						.and((Double d)->(Double e)->(Double f)->Stream.of(10.0))
-						.and( (Double d)->(Double e)->(Double f)-> (Double g)-> Stream.of(10.0) )
-						.and( (Double d)->(Double e)->(Double f)-> (Double g)-> (Double h)->
+		Stream<Double> s = Do.add(Stream.of(10.00,5.00,100.30))
+						.withStream((Double d)->Stream.of(2.0))
+						.withStream((Double d)->(Double e)->Stream.of(10.0))
+						.withStream((Double d)->(Double e)->(Double f)->Stream.of(10.0))
+						.withStream( (Double d)->(Double e)->(Double f)-> (Double g)-> Stream.of(10.0) )
+						.withStream( (Double d)->(Double e)->(Double f)-> (Double g)-> (Double h)->
 											Stream.of(10.0) )
-						.and( (Double d)->(Double e)->(Double f)-> (Double g)-> (Double h)-> (Double i) ->
+						.withStream( (Double d)->(Double e)->(Double f)-> (Double g)-> (Double h)-> (Double i) ->
 											Stream.of(10.0) )
-						.and( (Double d)->(Double e)->(Double f)-> (Double g)-> (Double h)-> (Double i) -> (Double j) ->
+						.withStream( (Double d)->(Double e)->(Double f)-> (Double g)-> (Double h)-> (Double i) -> (Double j) ->
 											Stream.of(10.0) )
 						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
 									(Double g)->(Double h)->(Double i)->(Double j)->
@@ -198,8 +197,8 @@ public class DoTest {
 	
 	@Test
 	public void do2Just(){
-		Stream<Double> s = UntypedDo.with(Stream.of(10.00,5.00,100.30))
-						.with(()->Stream.of(2.0))
+		Stream<Double> s = Do.add(Stream.of(10.00,5.00,100.30))
+						.addStream(()->Stream.of(2.0))
 						.yield((Double base)->(Double bonus)-> base*(1.0+bonus)).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
@@ -209,48 +208,45 @@ public class DoTest {
 	
 	@Test
 	public void do3Just(){
-		Stream<Double> s = UntypedDo.with(()->Stream.of(10.00,5.00,100.30))
-						.with(()->Stream.of(2.0))
-						.with(()->Stream.of(10.0))
-						.yield((Double base)->(Double bonus)->(Double woot) -> base*(1.0+bonus)*woot).unwrap();
+		Stream<Double> s = Do.add(Stream.of(10.00,5.00,100.30))
+						.addStream(()->Stream.of(2.0))
+						.addStream(()->Stream.of(10.0))
+						.yield( base -> bonus -> woot -> base*(1.0+bonus)*woot).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(3459.0));
 	}
 	@Test
 	public void do4Just(){
-		Stream<Double> s = UntypedDo.with(()->Stream.of(10.00,5.00,100.30))
-						.with(()->Stream.of(2.0))
-						.and((Double d)->(Double e)->Stream.of(10.0))
-						.with(()->Stream.of(10.0))
-						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
-									base*(1.0+bonus)*woot*f).unwrap();
+		Stream<Double> s = Do.add(Stream.of(10.00,5.00,100.30))
+						.addStream(()->Stream.of(2.0))
+						.withStream(d-> e ->Stream.of(10.0))
+						.addStream(()->Stream.of(10.0))
+						.yield( base -> bonus -> woot  -> f -> base*(1.0+bonus)*woot*f).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(34590.0));
 	}
 	@Test
 	public void do5Just(){
-		Stream<Double> s = UntypedDo.with(Stream.of(10.00,5.00,100.30))
-						.with(()->Stream.of(2.0))
-						.and((Double d)->(Double e)->Stream.of(10.0))
-						.and((Double d)->(Double e)->(Double f)->Stream.of(10.0))
-						.with(()->Stream.of(10.0) )
-						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
-									(Double g)->
-									base*(1.0+bonus)*woot*f*g).unwrap();
+		Stream<Double> s = Do.add(Stream.of(10.00,5.00,100.30))
+						.addStream(()->Stream.of(2.0))
+						.withStream( d -> e->Stream.of(10.0))
+						.withStream( d -> e-> f ->Stream.of(10.0))
+						.addStream(()->Stream.of(10.0) )
+						.yield(base -> bonus -> woot ->  f-> g -> base*(1.0+bonus)*woot*f*g).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(345900.0));
 	}
 	@Test
 	public void do6Just(){
-		Stream<Double> s = UntypedDo.with(()->Stream.of(10.00,5.00,100.30))
-						.and((Double d)->Stream.of(2.0))
-						.and((Double d)->(Double e)->Stream.of(10.0))
-						.and((Double d)->(Double e)->(Double f)->Stream.of(10.0))
-						.and( (Double d)->(Double e)->(Double f)-> (Double g)-> Stream.of(10.0) )
-						.with(()->Stream.of(10.0) )
+		Stream<Double> s =  Do.add(Stream.of(10.00,5.00,100.30))
+						.withStream((Double d)->Stream.of(2.0))
+						.withStream((Double d)->(Double e)->Stream.of(10.0))
+						.withStream((Double d)->(Double e)->(Double f)->Stream.of(10.0))
+						.withStream( (Double d)->(Double e)->(Double f)-> (Double g)-> Stream.of(10.0) )
+						.addStream(()->Stream.of(10.0) )
 						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
 									(Double g)->(Double h)->
 									base*(1.0+bonus)*woot*f*g*h).unwrap();
@@ -260,14 +256,14 @@ public class DoTest {
 	}
 	@Test
 	public void do7Just(){
-		Stream<Double> s = UntypedDo.with(()->Stream.of(10.00,5.00,100.30))
-						.and((Double d)->Stream.of(2.0))
-						.and((Double d)->(Double e)->Stream.of(10.0))
-						.and((Double d)->(Double e)->(Double f)->Stream.of(10.0))
-						.and( (Double d)->(Double e)->(Double f)-> (Double g)-> Stream.of(10.0) )
-						.and( (Double d)->(Double e)->(Double f)-> (Double g)-> (Double h)->
+		Stream<Double> s = Do.add(Stream.of(10.00,5.00,100.30))
+						.withStream((Double d)->Stream.of(2.0))
+						.withStream((Double d)->(Double e)->Stream.of(10.0))
+						.withStream((Double d)->(Double e)->(Double f)->Stream.of(10.0))
+						.withStream( (Double d)->(Double e)->(Double f)-> (Double g)-> Stream.of(10.0) )
+						.withStream( (Double d)->(Double e)->(Double f)-> (Double g)-> (Double h)->
 											Stream.of(10.0) )
-						.with(()->Stream.of(10.0) )
+						.addStream(()->Stream.of(10.0) )
 						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
 									(Double g)->(Double h)->(Double i)->
 									base*(1.0+bonus)*woot*f*g*h*i).unwrap();
@@ -277,16 +273,16 @@ public class DoTest {
 	}
 	@Test
 	public void do9Just(){
-		Stream<Double> s = UntypedDo.with(()->Stream.of(10.00,5.00,100.30))
-						.and((Double d)->Stream.of(2.0))
-						.and((Double d)->(Double e)->Stream.of(10.0))
-						.and((Double d)->(Double e)->(Double f)->Stream.of(10.0))
-						.and( (Double d)->(Double e)->(Double f)-> (Double g)-> Stream.of(10.0) )
-						.and( (Double d)->(Double e)->(Double f)-> (Double g)-> (Double h)->
+		Stream<Double> s = Do.add(Stream.of(10.00,5.00,100.30))
+						.withStream((Double d)->Stream.of(2.0))
+						.withStream((Double d)->(Double e)->Stream.of(10.0))
+						.withStream((Double d)->(Double e)->(Double f)->Stream.of(10.0))
+						.withStream( (Double d)->(Double e)->(Double f)-> (Double g)-> Stream.of(10.0) )
+						.withStream( (Double d)->(Double e)->(Double f)-> (Double g)-> (Double h)->
 											Stream.of(10.0) )
-						.and( (Double d)->(Double e)->(Double f)-> (Double g)-> (Double h)-> (Double i) ->
+						.withStream( (Double d)->(Double e)->(Double f)-> (Double g)-> (Double h)-> (Double i) ->
 											Stream.of(10.0) )
-						.with(()->Stream.of(10.0) )
+						.addStream(()->Stream.of(10.0) )
 						.yield((Double base)->(Double bonus)->(Double woot) -> (Double f)->
 									(Double g)->(Double h)->(Double i)->(Double j)->
 									base*(1.0+bonus)*woot*f*g*h*i*j).unwrap();

@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 
 import org.pcollections.PStack;
 
+import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.monads.AnyM;
 import com.aol.cyclops.lambda.monads.TraversableM;
 	public class DoComp5<T1,T2,T3,T4,T5> extends DoComp{
@@ -623,7 +624,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 		 * @return For comprehension result
 		 */
 		public <R> AnyM<R> yield(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,R>>>>> f){
-			return this.yieldInternal(f);
+			return AsAnyM.notTypeSafeAnyM(this.yieldInternal(f));
 		}
 		
 		

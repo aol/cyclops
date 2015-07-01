@@ -66,7 +66,6 @@ public class Monads extends AsAnyM{
         }
 		</pre>
 	 * 
-	 * @param c Monad type to traverse
 	 * @param seq List of Monads
 	 * @param fn Function to apply 
 	 * @return Monad with a list
@@ -74,8 +73,8 @@ public class Monads extends AsAnyM{
 	public static <T,R> AnyM<List<R>> traverse(Collection<AnyM<T>> seq, Function<T,R> fn){
 		if(seq.size()==0)
 			return anyM(Optional.empty());
-		return asMonad(new ComprehenderSelector().selectComprehender(seq.iterator().next().getClass()).of(1))
-								.flatMap(in-> monad(seq.stream()).flatten().flatMap((Function)fn).unwrap()
+		return asMonad(new ComprehenderSelector().selectComprehender(seq.iterator().next().unwrap().getClass()).of(1))
+								.flatMap(in-> monad(seq.stream().map(it->it.unwrap())).flatten().flatMap((Function)fn).unwrap()
 									).anyM();
 	}
 	public static <T,R> AnyM<List<R>> traverse(Stream<AnyM<T>> seq, Function<T,R> fn){
@@ -100,7 +99,6 @@ public class Monads extends AsAnyM{
 	  }</pre>
 	 * 
 	 * @see com.aol.cyclops.lambda.api.AsAnyMList for helper methods to convert a List of Monads / Collections to List of AnyM
-	 * @param c The type of Monad to convert
 	 * @param seq List of monads to convert
 	 * @return Monad with a List
 	 */ 
@@ -109,7 +107,7 @@ public class Monads extends AsAnyM{
 		if(seq.size()==0)
 			return anyM(Optional.empty());
 		else
-			return AsGenericMonad.asMonad(new ComprehenderSelector().selectComprehender(seq.iterator().next().getClass()).of(1))
+			return AsGenericMonad.asMonad(new ComprehenderSelector().selectComprehender(seq.iterator().next().unwrap().getClass()).of(1))
 				.flatMap(in-> monad(seq.stream().map(it->it.unwrap())).flatten().unwrap()).anyM();
 	}
 	public static <T1>  AnyM<Stream<T1>> sequence(Stream<AnyM<T1>> seq){

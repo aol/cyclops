@@ -624,7 +624,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 		 * @return For comprehension result
 		 */
 		public <R> AnyM<R> yield(Function<T1,Function<T2,Function<T3,Function<T4,R>>>> f){
-			return AsAnyM.anyM(this.yieldInternal(f));
+			return AsAnyM.notTypeSafeAnyM(this.yieldInternal(f));
 		}
 		
 		
