@@ -25,8 +25,14 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 			super(assigned);
 			
 		}
-		
-
+		public <T6> DoComp6<T1,T2,T3,T4,T5,Character> add(CharSequence seq){
+			return new DoComp6(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),seq)));
+			
+		}
+		public <T6> DoComp6<T1,T2,T3,T4,T5,T6> add(T6... values){
+			return new DoComp6(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),Stream.of(values))));
+			
+		}
 		public  DoComp6<T1,T2,T3,T4,T5,Integer> times(int times){
 			return new DoComp6(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),times)));
 			
@@ -242,7 +248,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T6> DoComp6<T1,T2,T3,T4,T5,T6> add(Supplier<T6> o){
-			return new DoComp6(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
+			return new DoComp6(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),(Supplier)()->o)));
 			
 		}
 		

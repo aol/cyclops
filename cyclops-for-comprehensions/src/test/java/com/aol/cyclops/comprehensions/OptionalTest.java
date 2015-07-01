@@ -81,7 +81,7 @@ public class OptionalTest {
 				
 		
 		Object result =  Do.add(one)
-							.withOptional(v1->Optional.of(v1))
+							.withOptional(v1-> { System.out.println(v1); return Optional.of(v1);})
 							.filter(v1->v2->v1>2)
 							.yield(v1->v2-> f2.apply(v1, v2)).unwrap();
 		

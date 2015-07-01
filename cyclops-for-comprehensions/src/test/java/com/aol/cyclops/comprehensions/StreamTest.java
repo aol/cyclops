@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import lombok.val;
 
@@ -28,26 +29,26 @@ public class StreamTest {
 	@Test
 	public void arrayStream() {
 		
-		Seq<String> res = Do.add(new String[]{"hello world","hello"}) 
+		List<String> res = Do.add(new String[]{"hello world","hello"}) 
 							.yield( v1->  v1 + "1")
-							.unwrap();
+							.toTraversable().toList();
 		List<String> expected = Arrays.asList("hello world1", "hello1");
 		
 		
 		
-		assertThat(expected, equalTo( res.toList()));
+		assertThat(expected, equalTo( res));
 	}
 	@Test
 	public void stringStream() {
 		
-		Seq<String> res = Do.add("hello world") 
-							.yield( v-> ""+ v + "1").unwrap();
+		List<String> res = Do.add("hello world") 
+							.yield( v-> ""+ v + "1").<String>traversable().toList();
 		List<String> expected = Arrays.asList("h1", "e1", "l1", "l1", "o1",  " 1", "w1", "o1", "r1", 
 				"l1", "d1");
 		
 		
 		
-		assertThat(expected, equalTo( res.toList()));
+		assertThat(expected,equalTo( res));
 	}
 	@Test
 	public void stringStreamWithNull() {
@@ -135,13 +136,14 @@ public class StreamTest {
 		
 		Map<String,Integer> m = new HashMap<>();
 		m.put("hello",10);
-		Seq<String> res = Do.add(m) 
-							.yield( v-> ""+ v + "*").unwrap();
+		List<String> res = Do.add(m.entrySet().stream()) 
+							.yield( v-> ""+ v + "*").toTraversable().toList();
 		List<String> expected = Arrays.asList("hello=10*");
 		
 		
 		
-		assertThat(expected, equalTo( res.toList()));
+		
+		assertThat(expected, equalTo( res));
 	}
 	
 	static enum MyEnum{FIRST, SECOND, THIRD}

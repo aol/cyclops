@@ -23,6 +23,9 @@ public class Do {
 	public static  DoComp1<Integer> times(int times){
 		return new DoComp0(ConsPStack.empty()).times(times);	
 	}
+	public static  DoComp1<Character> add(CharSequence seq){
+		return new DoComp0(ConsPStack.empty()).add(seq);
+	}
 	public static <T1> DoComp1<T1> add(T1... values){
 		return new DoComp0(ConsPStack.empty()).add(values);
 	}

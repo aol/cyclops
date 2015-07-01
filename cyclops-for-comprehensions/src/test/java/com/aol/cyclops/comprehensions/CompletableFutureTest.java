@@ -54,7 +54,7 @@ public class CompletableFutureTest {
 		val f = CompletableFuture.completedFuture("hello world");
 		val f2 = CompletableFuture.completedFuture("2");
 		val f3 = CompletableFuture.completedFuture("3");
-		CompletableFuture<String> result = Do.add((Supplier<Supplier<String>>)()->(Supplier<String>)()->"hello world")
+		CompletableFuture<String> result = Do.add((Supplier<String>)()->"hello world")
 											 .add(f2)
 											 .add(f3)
 											 .yield(v1->v2->v3 -> v1 +v2 +v3)

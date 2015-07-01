@@ -267,11 +267,12 @@ public class UntypedDo {
 		
 		 @SuppressWarnings({"rawtypes","unchecked"})
 		private Object handleNext(Entry e,ComprehensionData c,List<String> assigned){
+			 List<String>  newList = new ArrayList(assigned); 
 			if(e.getValue() instanceof Guard){
 				
 				final Function f = ((Guard)e.getValue()).getF();
 				c.filter( ()-> {
-							List<String>  newList = new ArrayList(assigned); 
+							
 							return unwrapNestedFunction(c, f, newList);
 								
 								}  );
@@ -281,7 +282,7 @@ public class UntypedDo {
 				
 				final Function f = ((Assignment)e.getValue()).getF();
 				c.$(e.getKey(), ()-> {
-									List<String>  newList = new ArrayList(assigned); 
+									
 									return unwrapNestedFunction(c, f, newList);
 								
 								}  );

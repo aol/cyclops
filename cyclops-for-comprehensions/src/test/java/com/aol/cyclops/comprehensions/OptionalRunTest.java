@@ -36,23 +36,7 @@ public class OptionalRunTest {
 		assertThat(result.get(),equalTo(8));
 
 	}
-	
-	@Test
-	public void testForComphrensions4(){
-		Optional<Integer> one = Optional.of(1);
-		Optional<Integer> empty = Optional.of(3);
-		BiFunction<Integer, Integer, Integer> f2 = (a, b) -> a * b;
-
-		ForComprehensions.foreach4(c -> c.flatMapAs$1(one)
-														.flatMapAs$2((Vars4<Integer,Integer,Integer,Integer> v)->empty)
-														.flatMapAs$3(v->Optional.empty())
-														.mapAs$4(v->Optional.empty())
-														.run(v->{ result= f2.apply(v.$1(), v.$2());}));
 		
-		assertThat(result,equalTo(null));
-
-	}
-	
 	@Test
 	public void test1(){
 		Optional<Integer> one = Optional.of(1);
@@ -60,26 +44,11 @@ public class OptionalRunTest {
 		BiFunction<Integer, Integer, Integer> f2 = (a, b) -> a * b;
 
 		
-		ForComprehensions.foreach1(c ->  c.mapAs$1(one)
-										  .run((Vars1<Integer> v)->{result =f2.apply(v.$1(), 10);}));
+		Optional<Integer> result  = Do.add(one)
+								.yield(v-> f2.apply(v, 10)).unwrap();
 
-		assertThat(result,equalTo(10));
-
-	}
-	@Test
-	public void test2(){
-		Optional<Integer> one = Optional.of(3);
-		Optional<Integer> empty = Optional.of(3);
-		BiFunction<Integer,Integer,Integer> f2 = (a,b) -> a *b; 
-		
-				
-		
-		ForComprehensions.foreach2(c -> c.flatMapAs$1(one)
-										.mapAs$2((Vars2<Integer,Integer> v)->Optional.of(v.$1()))
-										.filter(v->v.<Integer>$1()>2)
-										.run(v->{result = f2.apply(v.$1(), v.$2());}));
-		
-		assertThat(result,equalTo(9));
+		assertThat(result.get(),equalTo(10));
 
 	}
+	
 }

@@ -33,6 +33,10 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 
 		}
 
+		public  DoComp1<Character> add(CharSequence seq){
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),seq)));
+
+		}
 		public  DoComp1<Integer> times(int times){
 			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),times)));
 			
@@ -212,7 +216,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 
 		/**
 		 * Add a Callable as next nested level in the comprehension
-		 * 
+		 * Will behave as a CompletableFuture i.e. executed asynchronously 
 		 * 
 		 * 
 		 * <pre>{@code   Do
@@ -234,6 +238,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 
 		/**
 		 * Add a Supplier as next nested level in the comprehension
+		 * Will behave as a CompletableFuture i.e. executed asynchronously 
 		 * 
 		 * 
 		 * 
@@ -248,7 +253,7 @@ import com.aol.cyclops.lambda.monads.TraversableM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T1> DoComp1<T1> add(Supplier<T1> o){
-			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),(Supplier)()->o)));
 			
 		}
 		
