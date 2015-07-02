@@ -1,12 +1,10 @@
 package com.aol.cyclops.lambda.monads;
 
-import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
+import static com.aol.cyclops.lambda.api.AsAnyM.*;
 import static com.aol.cyclops.lambda.api.AsAnyMList.collectionToAnyMList;
 import static com.aol.cyclops.lambda.api.AsAnyMList.completableFutureToAnyMList;
 import static com.aol.cyclops.lambda.api.AsAnyMList.optionalToAnyMList;
 import static com.aol.cyclops.lambda.api.AsAnyMList.streamToAnyMList;
-import static com.aol.cyclops.lambda.monads.AnyMonads.optionalToAnyM;
-import static com.aol.cyclops.lambda.monads.AnyMonads.streamToAnyM;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;

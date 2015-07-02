@@ -2,7 +2,7 @@ package com.aol.cyclops.lambda.monads;
 
 import static com.aol.cyclops.internal.AsGenericMonad.asMonad;
 import static com.aol.cyclops.internal.AsGenericMonad.monad;
-import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
+import static com.aol.cyclops.lambda.api.AsAnyM.*;
 import static com.aol.cyclops.lambda.api.AsAnyMList.collectionToAnyMList;
 import static com.aol.cyclops.lambda.api.AsAnyMList.completableFutureToAnyMList;
 import static com.aol.cyclops.lambda.api.AsAnyMList.optionalToAnyMList;

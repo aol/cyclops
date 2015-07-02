@@ -2,52 +2,18 @@ package com.aol.cyclops.lambda.monads;
 
 import static com.aol.cyclops.internal.AsGenericMonad.asMonad;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.stream.BaseStream;
-import java.util.stream.Stream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-
-import org.jooq.lambda.Seq;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import com.aol.cyclops.internal.AsGenericMonad;
 import com.aol.cyclops.lambda.api.AsAnyMList;
-import com.nurkiewicz.lazyseq.LazySeq;
 
 public class AnyMonads extends AsAnyMList{
-	public static final <T,R> Function<? super T,AnyM<? extends R>> streamToAnyM(Function<? super T,? extends BaseStream<R,?>> fn){
-		return t -> AsGenericMonad.asMonad(fn.apply(t)).anyM();
-	}
-	public static final <T,R> Function<? super T,AnyM<? extends R>> futureToAnyM(Function<? super T,? extends CompletableFuture<R>> fn){
-		return t -> AsGenericMonad.asMonad(fn.apply(t)).anyM();
-	}
-	public static final <T,R> Function<? super T,AnyM<? extends R>> optionalToAnyM(Function<? super T,? extends Optional<R>> fn){
-		return t -> AsGenericMonad.asMonad(fn.apply(t)).anyM();
-	}
-	public static final <T,R> Function<? super T,AnyM<? extends R>> lazySeqToAnyM(Function<? super T,? extends LazySeq<R>> fn){
-		return t -> AsGenericMonad.asMonad(fn.apply(t)).anyM();
-	}
-	public static final <T,R> Function<? super T,AnyM<? extends R>> seqToAnyM(Function<? super T,? extends Seq<R>> fn){
-		return t -> AsGenericMonad.asMonad(fn.apply(t)).anyM();
-	}
-	public static final <T,R> Function<? super T,SequenceM<? extends R>> streamToSequenceM(Function<? super T,? extends BaseStream<R,?>> fn){
-		return t -> AsGenericMonad.asMonad(fn.apply(t)).sequence();
-	}
-	public static final <T,R> Function<? super T,SequenceM<? extends R>> futureToSequenceM(Function<? super T,? extends CompletableFuture<R>> fn){
-		return t -> AsGenericMonad.asMonad(fn.apply(t)).sequence();
-	}
-	public static final <T,R> Function<? super T,SequenceM<? extends R>> optionalToSequenceM(Function<? super T,? extends Optional<R>> fn){
-		return t -> AsGenericMonad.asMonad(fn.apply(t)).sequence();
-	}
-	public static final <T,R> Function<? super T,SequenceM<? extends R>> lazySeqToSequenceM(Function<? super T,? extends LazySeq<R>> fn){
-		return t -> AsGenericMonad.asMonad(fn.apply(t)).sequence();
-	}
-	public static final <T,R> Function<? super T,SequenceM<? extends R>> seqToSequenceM(Function<? super T,? extends Seq<R>> fn){
-		return t -> AsGenericMonad.asMonad(fn.apply(t)).sequence();
-	}
+	
 	/**
 	 * Lift a function so it accepts a Monad and returns a Monad (simplex view of a wrapped Monad)
 	 * Simplex view simplifies type related challenges. The actual native type is not specified here.

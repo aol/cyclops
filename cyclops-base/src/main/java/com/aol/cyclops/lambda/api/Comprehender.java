@@ -9,9 +9,12 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
+import com.aol.cyclops.streams.StreamUtils;
+import com.nurkiewicz.lazyseq.LazySeq;
 
 /**
  * Interface for defining how Comprehensions should work for a type
@@ -105,7 +108,7 @@ public interface Comprehender<T> {
 		
 	}
 	static <T> T unwrapOtherMonadTypes(Comprehender<T> comp,Object apply){
-
+		
 		if (comp.instanceOfT(apply))
 			return (T) apply;
 
@@ -114,6 +117,8 @@ public interface Comprehender<T> {
 				return comp.of(((Optional) apply).get());
 			return comp.empty();
 		}
+		
+		
 		
 		if (apply instanceof Stream) {
 			return comp.of(((Stream) apply).collect(Collectors.toList()));

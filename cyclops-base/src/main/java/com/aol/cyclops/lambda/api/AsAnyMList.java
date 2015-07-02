@@ -36,7 +36,7 @@ public class AsAnyMList extends AsAnyM{
 		return anyM.stream().map(i-> AsAnyM.anyM(i)).collect(Collectors.toList());
 	}
 	public static <T> List<AnyM<T>> iterableToAnyMList(Collection<Iterable<T>> anyM){
-		return anyM.stream().map(i-> AsAnyM.anyM(i)).collect(Collectors.toList());
+		return anyM.stream().map(i-> AsAnyM.anyMIterable(i)).collect(Collectors.toList());
 	}
 	public static <T> List<AnyM<T>> collectionToAnyMList(Collection<Collection<T>> anyM){
 		return anyM.stream().map(i-> AsAnyM.anyM(i)).collect(Collectors.toList());

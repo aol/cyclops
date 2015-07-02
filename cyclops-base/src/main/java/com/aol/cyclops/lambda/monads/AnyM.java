@@ -1,33 +1,24 @@
 package com.aol.cyclops.lambda.monads;
 
-import static com.aol.cyclops.internal.AsGenericMonad.asMonad;
-import static com.aol.cyclops.internal.AsGenericMonad.monad;
-
-import java.util.Comparator;
-import java.util.Iterator;
+import java.io.BufferedReader;
+import java.io.File;
+import java.net.URL;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.function.BiFunction;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
+import java.util.stream.BaseStream;
 import java.util.stream.Stream;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
-import com.aol.cyclops.internal.AsGenericMonad;
 import com.aol.cyclops.internal.Monad;
-import com.aol.cyclops.lambda.api.AsAnyM;
-import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;
-import com.aol.cyclops.lambda.api.Streamable;
 import com.aol.cyclops.lambda.api.Unwrapable;
-import com.aol.cyclops.streams.Pair;
-import com.aol.cyclops.streams.StreamUtils;
 import com.nurkiewicz.lazyseq.LazySeq;
 
 /**
@@ -91,6 +82,18 @@ public class AnyM<T> implements Unwrapable{
 		return monad.liftAndBind(fn).anyM();
 	
 	}
+	public final  AnyM<Character> liftAndBindCharSequence(Function<? super T,CharSequence> fn) {
+		return monad.liftAndBind(fn).anyM();
+	}
+	public final  AnyM<String> liftAndBindFile(Function<? super T,File> fn) {
+		return monad.liftAndBind(fn).anyM();
+	}
+	public final  AnyM<String> liftAndBindURL(Function<? super T, URL> fn) {
+		return monad.liftAndBind(fn).anyM();
+	}
+	public final  AnyM<String> liftAndBindBufferedReader(Function<? super T,BufferedReader> fn) {
+		return monad.liftAndBind(fn).anyM();
+	}
 	
 	/**
 	 * join / flatten one level of a nested hierarchy
@@ -107,7 +110,10 @@ public class AnyM<T> implements Unwrapable{
 	 * 
 	 * <pre>{@code 
 	 * 
-	 * List<Integer> result = monad(Stream.of(1,2,3,4)).<Integer>aggregate(monad(Optional.of(5))).toList();
+	 * List<Integer> result = anyM(Stream.of(1,2,3,4))
+	 * 							.aggregate(anyM(Optional.of(5)))
+	 * 							.asSequence()
+	 * 							.toList();
 		
 		assertThat(result,equalTo(Arrays.asList(1,2,3,4,5)));
 		}</pre>
@@ -121,15 +127,59 @@ public class AnyM<T> implements Unwrapable{
 	public final  <R> AnyM<List<R>> aggregateUntyped(AnyM<?> next){
 		return monad.aggregate(next.monad).anyM();
 	}
-	
+	public void forEach(Consumer<? super T> action) {
+		monad.forEach(action);
+		
+	}
 	
 	/**
 	 * flatMap operation
 	 * 
 	 * @param fn
-	 * @return
+	 * @return 
 	 */
 	public final <R> AnyM<R> flatMap(Function<? super T,AnyM<? extends R>> fn) {
+		return monad.flatMap(in -> fn.apply(in).unwrap()).anyM();
+	}
+	
+	public final <R> AnyM<R> flatMapStream(Function<? super T,BaseStream<? extends R,?>> fn) {
+		return monad.flatMap(in -> fn.apply(in)).anyM();
+	}
+	/**
+	 * flatMapping to a Stream will result in the Stream being converted to a List, if the host Monad
+	 * type is not a Stream (or Stream like type). (i.e.
+	 *  <pre>
+	 *  {@code  
+	 *   AnyM<Integer> opt = anyM(Optional.of(20));
+	 *   Optional<List<Integer>> optionalList = opt.flatMap( i -> anyM(Stream.of(1,2,i))).unwrap();  
+	 *   
+	 *   //Optional [1,2,20]
+	 *  }</pre>
+	 *  
+	 *  In such cases using Arrays.asList would be more performant
+	 *  <pre>
+	 *  {@code  
+	 *   AnyM<Integer> opt = anyM(Optional.of(20));
+	 *   Optional<List<Integer>> optionalList = opt.flatMapCollection( i -> asList(1,2,i))).unwrap();  
+	 *   
+	 *   //Optional [1,2,20]
+	 *  }</pre>
+	 * @param fn
+	 * @return
+	 */
+	public final <R> AnyM<R> flatMapCollection(Function<? super T,Collection<? extends R>> fn) {
+		return monad.flatMap(in -> fn.apply(in)).anyM();
+	}
+	public final <R> AnyM<R> flatMapOptional(Function<? super T,Optional<? extends R>> fn) {
+		return monad.flatMap(in -> fn.apply(in)).anyM();
+	}
+	public final <R> AnyM<R> flatMapCompletableFuture(Function<? super T,CompletableFuture<? extends R>> fn) {
+		return monad.flatMap(in -> fn.apply(in)).anyM();
+	}
+	public final <R> AnyM<R> flatMapLazySeq(Function<? super T,LazySeq<? extends R>> fn) {
+		return monad.flatMap(in -> fn.apply(in)).anyM();
+	}
+	public final <R> AnyM<R> flatMapSequenceM(Function<? super T,SequenceM<? extends R>> fn) {
 		return monad.flatMap(in -> fn.apply(in).unwrap()).anyM();
 	}
 	

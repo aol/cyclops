@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 import com.aol.cyclops.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.lambda.monads.AnyM;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
+import com.nurkiewicz.lazyseq.LazySeq;
 
 
 public class AsAnyM {
@@ -285,6 +286,9 @@ public class AsAnyM {
 	public static <T> AnyM<T> anyM(Collection<T> anyM){
 		return convertToAnyM(anyM);
 	}
+	public static <T> AnyM<T> anyM(LazySeq<T> anyM){
+		return new MonadWrapper<>(anyM).anyM();
+	}
 	/**
 	 * Create a Monad wrapper from an Iterable
 		 * Create a duck typed Monad wrapper. Using AnyM we focus only on the underlying type
@@ -327,7 +331,7 @@ public class AsAnyM {
 	 * @param anyM to wrap
 	 * @return Duck typed Monad
 	 */
-	public static <T> AnyM<T> anyM(Iterable<T> anyM){
+	public static <T> AnyM<T> anyMIterable(Iterable<T> anyM){
 		return convertToAnyM(anyM);
 	}
 	/**

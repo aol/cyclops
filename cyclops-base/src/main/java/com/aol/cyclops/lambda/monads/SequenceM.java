@@ -1,14 +1,17 @@
 package com.aol.cyclops.lambda.monads;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.BaseStream;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -626,7 +629,53 @@ public class SequenceM<T> implements Unwrapable {
 	public final <R> SequenceM<R> flatMap(Function<? super T,SequenceM<? extends R>> fn) {
 		return monad.flatMap(in -> fn.apply(in).unwrap()).sequence();
 	}
+	public final <R> SequenceM<R> flatMapAnyM(Function<? super T,AnyM<? extends R>> fn) {
+		return monad.flatMap(in -> fn.apply(in).unwrap()).sequence();
+	}
+	/**
+	 * Convenience method & performance optimisation
+	 * 
+	 * flatMapping to a Stream will result in the Stream being converted to a List, if the host Monad
+	 * type is not a Stream. (i.e.
+	 *  <pre>
+	 *  {@code  
+	 *   AnyM<Integer> opt = anyM(Optional.of(20));
+	 *   Optional<List<Integer>> optionalList = opt.flatMap( i -> anyM(Stream.of(1,2,i))).unwrap();  
+	 *   
+	 *   //Optional [1,2,20]
+	 *  }</pre>
+	 *  
+	 *  In such cases using Arrays.asList would be more performant
+	 *  <pre>
+	 *  {@code  
+	 *   AnyM<Integer> opt = anyM(Optional.of(20));
+	 *   Optional<List<Integer>> optionalList = opt.flatMapCollection( i -> asList(1,2,i))).unwrap();  
+	 *   
+	 *   //Optional [1,2,20]
+	 *  }</pre>
+	 * @param fn
+	 * @return
+	 */
+	public final <R> SequenceM<R> flatMapCollection(Function<? super T,Collection<? extends R>> fn) {
+		return monad.flatMap(in -> fn.apply(in)).sequence();
+	}
+	public final <R> SequenceM<R> flatMapStream(Function<? super T,BaseStream<? extends R,?>> fn) {
+		return monad.flatMap(in -> fn.apply(in)).sequence();
+	}
+	public final <R> SequenceM<R> flatMapOptional(Function<? super T,Optional<? extends R>> fn) {
+		return monad.flatMap(in -> fn.apply(in)).sequence();
+	}
+	public final <R> SequenceM<R> flatMapCompletableFuture(Function<? super T,CompletableFuture<? extends R>> fn) {
+		return monad.flatMap(in -> fn.apply(in)).sequence();
+	}
+	public final <R> SequenceM<R> flatMapLazySeq(Function<? super T,LazySeq<? extends R>> fn) {
+		return monad.flatMap(in -> fn.apply(in)).sequence();
+	}
 	public final   SequenceM<T>  filter(Predicate<? super T> fn){
 		return monad.filter(fn).sequence();
+	}
+	public void forEach(Consumer<? super T> action) {
+		monad.forEach(action);
+		
 	}
 }

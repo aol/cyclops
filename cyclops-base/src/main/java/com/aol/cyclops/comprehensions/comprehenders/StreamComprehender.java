@@ -10,6 +10,8 @@ import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.streams.StreamUtils;
+import com.nurkiewicz.lazyseq.LazySeq;
 
 public class StreamComprehender implements Comprehender<Stream> {
 	public Class getTargetClass(){
@@ -45,9 +47,14 @@ public class StreamComprehender implements Comprehender<Stream> {
 		return Stream.of(o);
 	}
 	static <T> T unwrapOtherMonadTypes(Comprehender<T> comp,Object apply){
+		
+		if(apply instanceof LazySeq){
+			apply = StreamUtils.stream(((LazySeq)apply).iterator());
+		}
 		if(apply instanceof Collection){
 			return (T)((Collection)apply).stream();
 		}
+		
 		return Comprehender.unwrapOtherMonadTypes(comp,apply);
 		
 	}

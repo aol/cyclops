@@ -821,7 +821,7 @@ public class Core extends Functions {
 	 * @return Duck typed Monad
 	 */
 	public static <T> AnyM<T> anyM(Iterable<T> anyM){
-		return AnyMonads.anyM(anyM);
+		return AnyMonads.anyMIterable(anyM);
 	}
 	/**
 	 * Create a Monad wrapper from an Iterator

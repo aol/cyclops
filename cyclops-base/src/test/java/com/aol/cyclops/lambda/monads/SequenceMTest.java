@@ -1,6 +1,6 @@
 package com.aol.cyclops.lambda.monads;
 
-import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
+import static com.aol.cyclops.lambda.api.AsAnyM.anyMIterable;
 import static com.aol.cyclops.lambda.monads.AnyMonads.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;

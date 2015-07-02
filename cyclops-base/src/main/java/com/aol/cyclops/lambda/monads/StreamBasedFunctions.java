@@ -13,6 +13,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.lambda.api.AsStreamable;
@@ -218,6 +219,8 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	default Stream<T> stream(){
 		if(unwrap() instanceof Stream)
 			return (Stream)unwrap();
+		if(unwrap() instanceof Iterable)
+			return StreamSupport.stream(((Iterable)unwrap()).spliterator(), false);
 		Stream stream = Stream.of(1);
 		return (Stream)withMonad((Stream)new ComprehenderSelector().selectComprehender(
 				stream).executeflatMap(stream, i-> unwrap())).flatMap(Function.identity()).unwrap();
