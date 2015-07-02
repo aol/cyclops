@@ -43,6 +43,7 @@ import com.aol.simple.react.capacity.monitor.LimitingMonitor;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.config.MaxActive;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
+import com.aol.simple.react.reactivestreams.FutureStreamAsyncPublisher;
 import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
@@ -58,7 +59,9 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  * @author johnmcclean
  *
  */
-public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, LazyToQueue<U> {
+
+public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, LazyToQueue<U>, FutureStreamAsyncPublisher<U> {
+
 	/* 
 	 * Change task executor for the next stage of the Stream
 	 * 
@@ -140,9 +143,15 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 */
 	LazyFutureStream<U> withAsync(boolean async);
 	
+	default void cancel()	{
+		FutureStream.super.cancel();
+	}
 	default void forEach(Consumer<? super U> c){
 		LazyStream.super.forEach(c);
-		//FutureStream.super.forEach(c);
+		
+	}
+	default Queue<U> toQueue(){
+		return LazyToQueue.super.toQueue();
 	}
 	/*
 	 * (non-Javadoc)

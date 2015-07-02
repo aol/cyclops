@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
@@ -28,9 +29,15 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 	private final List<CompletableFuture<T>> active = new ArrayList<>();
 	@Getter
 	private final MaxActive maxActive;
+	private final Function<CompletableFuture, T> safeJoin;
 	
-	public EmptyCollector(){
+	EmptyCollector(){
 		maxActive = MaxActive.defaultValue.factory.getInstance();
+		safeJoin = cf -> (T)cf.join();
+	}
+	EmptyCollector(MaxActive maxActive){
+		this.maxActive = maxActive;
+		safeJoin = cf -> (T)cf.join();
 	}
 	
 	/* 
@@ -47,7 +54,8 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 				
 				
 				
-				List<CompletableFuture> toRemove = active.stream().filter(cf -> cf.isDone()).collect(Collectors.toList());
+				List<CompletableFuture> toRemove = active.stream().filter(cf -> cf.isDone()).peek(this::handleExceptions).collect(Collectors.toList());
+				
 				active.removeAll(toRemove);
 				if(active.size()>maxActive.getReduceTo()){
 					CompletableFuture promise=  new CompletableFuture();
@@ -65,6 +73,10 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 		
 	}
 
+	private void handleExceptions(CompletableFuture cf){
+		if(cf.isCompletedExceptionally())
+			 safeJoin.apply(cf);
+	}
 	
 	@Override
 	public LazyResultConsumer<T> withResults(Collection<CompletableFuture<T>> t) {
@@ -78,7 +90,7 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 	 */
 	@Override
 	public Collection<CompletableFuture<T>> getResults() {
-		active.stream().forEach(cf -> cf.join());
+		active.stream().forEach(cf ->  safeJoin.apply(cf));
 		active.clear();
 		return new ArrayList<>();
 	}

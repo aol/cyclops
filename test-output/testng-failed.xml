@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite verbose="0" name="Failed suite [Default suite]" parallel="false">
+  <test name="Default test(failed)" preserve-order="false">
+    <classes>
+      <class name="com.aol.simple.react.reactivestreams.TckSynchronousPublisherTest">
+        <methods>
+          <include name="untested_spec304_requestShouldNotPerformHeavyComputations"/>
+          <include name="untested_spec305_cancelMustNotSynchronouslyPerformHeavyCompuatation"/>
+          <include name="untested_spec106_mustConsiderSubscriptionCancelledAfterOnErrorOrOnCompleteHasBeenCalled"/>
+          <include name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfrontAndCompleteAsExpected"/>
+          <include name="untested_spec109_subscribeShouldNotThrowNonFatalThrowable"/>
+          <include name="optional_spec104_mustSignalOnErrorWhenFails"/>
+          <include name="setUp"/>
+          <include name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingOneByOne"/>
+          <include name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfront"/>
+          <include name="untested_spec110_rejectASubscriptionRequestIfTheSameSubscriberSubscribesTwice"/>
+          <include name="optional_spec111_maySupportMultiSubscribe"/>
+          <include name="required_spec109_mayRejectCallsToSubscribeIfPublisherIsUnableOrUnwillingToServeThemRejectionMustTriggerOnErrorAfterOnSubscribe"/>
+          <include name="untested_spec107_mustNotEmitFurtherSignalsOnceOnErrorHasBeenSignalled"/>
+          <include name="untested_spec108_possiblyCanceledSubscriptionShouldNotReceiveOnErrorOrOnCompleteSignals"/>
+        </methods>
+      </class>
+    </classes>
+  </test>
+</suite>

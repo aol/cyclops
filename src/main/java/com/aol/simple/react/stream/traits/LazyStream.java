@@ -11,9 +11,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
-import java.util.stream.Stream;
 
-import com.aol.simple.react.collectors.lazy.BatchingCollector;
 import com.aol.simple.react.collectors.lazy.EmptyCollector;
 import com.aol.simple.react.collectors.lazy.IncrementalReducer;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
@@ -52,11 +50,13 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	}
 
 	default void runThread(Runnable r) {
-		new Thread(() -> new Runner(r).run(getLastActive(),new EmptyCollector(getLazyCollector().getMaxActive()))).start();
+		Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
+		new Thread(() -> new Runner(r).run(getLastActive(),new EmptyCollector(getLazyCollector().getMaxActive(),safeJoin))).start();
 
 	}
 	default Continuation runContinuation(Runnable r) {
-		return new Runner(r).runContinuations(getLastActive(),new EmptyCollector(getLazyCollector().getMaxActive()));
+		Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
+		return new Runner(r).runContinuations(getLastActive(),new EmptyCollector(getLazyCollector().getMaxActive(),safeJoin));
 
 	}
 	/**
@@ -72,6 +72,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	 * Trigger a lazy stream
 	 */
 	default void run() {
+		//this needs to use an elastic pool of executors
 		run(ThreadPools.getLazyExecutor());
 
 	}
@@ -110,6 +111,9 @@ public interface LazyStream<U> extends BlockingStream<U>{
 		
 
 	}
+	
+	
+	
 	default void forEach(Consumer<? super U> c){
 
 		

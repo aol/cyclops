@@ -1,7 +1,24 @@
 import org.gradle.api.artifacts.maven.MavenDeployment
 
+buildscript {
+	repositories {
+		jcenter()
+		
+	}
+
+	dependencies {
+		classpath 'com.bmuschko:gradle-nexus-plugin:2.2'
+		classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.0'
+	
+	}
+}
+plugins {
+	id 'me.champeau.gradle.jmh' version '0.2.0'
+ }
 def custom ={ "$rootDir/gradle/${it}.gradle"} //find custom plugins locally
 
+ 
+apply plugin: 'me.champeau.gradle.jmh'
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
@@ -11,30 +28,23 @@ apply plugin: 'jacoco'
 apply from: custom('jacoco-version')
 
 sourceCompatibility = 1.8
-version = '0.96'
+version = '0.97'
 jar {
     manifest {
         attributes 'Implementation-Title': 'Simple React', 'Implementation-Version': version
     }
 }
+
 apply from: custom('jacoco-config')
 apply from: custom('jacoco-excludes')
 
-buildscript {
-    repositories {
-        jcenter()
-    }
 
-    dependencies {
-        classpath 'com.bmuschko:gradle-nexus-plugin:2.2'
-		classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.0'
-    }
-}
 repositories {
     mavenCentral()
 	jcenter()
 
 }
+
 configurations {
 	provided
 }
@@ -46,12 +56,16 @@ dependencies {
 	compile 'com.nurkiewicz.asyncretry:asyncretry:0.0.6'
 	compile 'uk.co.real-logic:Agrona:0.3.1'
 	compile group: 'org.slf4j', name: 'jcl-over-slf4j', version:'1.6.1'
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+	compile 'org.reactivestreams:reactive-streams:1.0.0'
+	testCompile 'org.reactivestreams:reactive-streams-tck:1.0.0'
+	testCompile group: 'junit', name: 'junit', version: '4.12'
 	testCompile group: 'org.hamcrest', name: 'hamcrest-all', version:'1.3'
 	testCompile group: 'org.mockito', name: 'mockito-all', version:'1.9.5'
 	testCompile 'com.aol.cyclops:cyclops-core:4.0.2'
+	testCompile group: 'org.testng', name: 'testng', version:'5.14.10'
 	provided group: 'org.projectlombok', name: 'lombok', version:'1.16.4'
-	provided 'com.aol.cyclops:cyclops-base:4.0.2'
+	provided 'com.aol.cyclops:cyclops-base:4.0.3'
+	
 	
 
 }
@@ -68,9 +82,10 @@ test {
     systemProperties 'property': 'value'
 }
 
+
 modifyPom {
 	project {
-		name 'SimpleReact'
+		name 'simple-react'
 		description 'Simple Fluent Api for Functional Reactive Programming with Java 8'
 		url 'https://github.com/aol/simple-react'
 		inceptionYear '2015'
@@ -98,6 +113,21 @@ modifyPom {
 				id 'johnmcclean-aol'
 				name 'John McClean'
 				email 'john.mcclean@teamaol.com'
+			}
+			developer {
+				id 'kewangie'
+				name 'Ke Wang'
+				email 'ke.wang@teamaol.com'
+			}
+			developer {
+				id 'tkountis'
+				name 'Thomas Kountis Wang'
+				email 'thomas.kountis@adtech.com'
+			}
+			developer {
+				id 'colinfkennedy'
+				name 'Colin Kennedy'
+				email 'Colin.Kennedy@teamaol.com'
 			}
 		}
 	}

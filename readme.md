@@ -1,6 +1,10 @@
-#SimpleReact : Powerful Future Streams & Async Data Structures for Java 8
+#simple-react : Powerful Future Streams & Async Data Structures for Java 8
 
-SimpleReact is a Java 8 concurrent Streaming library. We provide three Stream types, and three asynchronous data structures.
+simple-react is a Reactive Streams implementation that also implements, and significantly enhances, the JDK 8 Stream interface, to provide powerful asynchronous Streams backed by your choice of wait-free (with or without mechanical sympathy) or blocking queues. simple-react reuses standard Java 8 functional interfaces and libraries such as CompletableFuture.
+
+LazyFutureStream pulls 'chains' of asynchronous CompletableFuture tasks into existance.
+
+![screen shot 2015-07-02 at 9 43 51 pm](https://cloud.githubusercontent.com/assets/9964792/8487360/8565cd32-2103-11e5-8253-26813dae66f5.png)
 
 ## Build Status 
 
@@ -44,13 +48,13 @@ See [A Simple Api, and a Rich Api](https://github.com/aol/simple-react/wiki/A-si
 * [Search Maven](http://search.maven.org/#search%7Cga%7C1%7Ccom.aol.simplereact)
 
 
-For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:'0.85'
+For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:'0.97'
 
 ##Documentation
 
 * [Reactive programming with Java 8 and simple-react: The Tutorial](https://medium.com/@johnmcclean/reactive-programming-with-java-8-and-simple-react-the-tutorial-3634f512eeb1)
 * [wiki](https://github.com/aol/simple-react/wiki)
-* [Javadoc](http://www.javadoc.io/doc/com.aol.simplereact/simple-react/0.84)
+* [Javadoc](http://www.javadoc.io/doc/com.aol.simplereact/simple-react/0.97)
 * [Articles on medium](https://medium.com/search?q=simplereact)
 
 

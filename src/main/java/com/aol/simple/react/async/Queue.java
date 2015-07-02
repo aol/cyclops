@@ -103,11 +103,11 @@ public class Queue<T> implements Adapter<T> {
 	 */
 	public Seq<T> stream() {
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
-		return Seq.seq(closingStream(this::ensureOpen,new AlwaysContinue()));
+		return Seq.seq(closingStream(this::get,new AlwaysContinue()));
 	}
 	public Seq<T> stream(Continueable s) {
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
-		return Seq.seq(closingStream(this::ensureOpen,s));
+		return Seq.seq(closingStream(this::get,s));
 	}
 	
 	public Seq<Collection<T>> streamBatch(Continueable s,Function<Supplier<T>,Supplier<Collection<T>>> batcher) {
@@ -394,6 +394,14 @@ public class Queue<T> implements Adapter<T> {
 			
 			return result.stream().filter(it -> it!=POISON_PILL).collect(Collectors.toList());
 		}
+	}
+
+
+	public int size() {
+		return queue.size();
+	}
+	public boolean isOpen() {
+		return this.open;
 	}
 	
 
