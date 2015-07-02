@@ -1,5 +1,8 @@
 package com.aol.cyclops.lambda.monads;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -670,6 +673,44 @@ public class SequenceM<T> implements Unwrapable {
 	}
 	public final <R> SequenceM<R> flatMapLazySeq(Function<? super T,LazySeq<? extends R>> fn) {
 		return monad.flatMap(in -> fn.apply(in)).sequence();
+	}
+	
+	/**
+	 * Perform a flatMap operation where the result will be a flattened stream of Characters
+	 * from the CharSequence returned by the supplied function.
+	 * 
+	 * @param fn
+	 * @return
+	 */
+	public final  SequenceM<Character> liftAndBindCharSequence(Function<? super T,CharSequence> fn) {
+		return monad.liftAndBind(fn).sequence();
+	}
+	/**
+	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
+	 * from the text loaded from the supplied files.
+	 * @param fn
+	 * @return
+	 */
+	public final  SequenceM<String> liftAndBindFile(Function<? super T,File> fn) {
+		return monad.liftAndBind(fn).sequence();
+	}
+	/**
+	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
+	 * from the text loaded from the supplied URLs 
+	 * @param fn
+	 * @return
+	 */
+	public final  SequenceM<String> liftAndBindURL(Function<? super T, URL> fn) {
+		return monad.liftAndBind(fn).sequence();
+	}
+	/**
+	  *  Perform a flatMap operation where the result will be a flattened stream of Strings
+	 * from the text loaded from the supplied BufferedReaders
+	 * @param fn
+	 * @return
+	 */
+	public final SequenceM<String> liftAndBindBufferedReader(Function<? super T,BufferedReader> fn) {
+		return monad.liftAndBind(fn).sequence();
 	}
 	public final   SequenceM<T>  filter(Predicate<? super T> fn){
 		return monad.filter(fn).sequence();

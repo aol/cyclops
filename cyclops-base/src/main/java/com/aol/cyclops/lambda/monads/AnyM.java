@@ -1,8 +1,13 @@
 package com.aol.cyclops.lambda.monads;
 
+import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -95,6 +100,23 @@ public class AnyM<T> implements Unwrapable{
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
 	 * from the text loaded from the supplied files.
+	 * 
+	 * <pre>
+	 * {@code
+	 * 		List<String> result = anyM("input.file")
+								.map(getClass().getClassLoader()::getResource)
+								.peek(System.out::println)
+								.map(URL::getFile)
+								.liftAndBindFile(File::new)
+								.asSequence()
+								.toList();
+		
+		assertThat(result,equalTo(Arrays.asList("hello","world")));
+	 * 
+	 * }
+	 * 
+	 * </pre>
+	 * 
 	 * @param fn
 	 * @return
 	 */

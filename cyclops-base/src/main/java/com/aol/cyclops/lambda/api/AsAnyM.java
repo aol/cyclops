@@ -1,5 +1,9 @@
 package com.aol.cyclops.lambda.api;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.net.URL;
+import java.sql.ResultSet;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -290,6 +294,39 @@ public class AsAnyM {
 		return new MonadWrapper<>(anyM).anyM();
 	}
 	/**
+	 * Construct an AnyM backed by a Stream of text from the lines of the supplied file
+	 * 
+	 *
+	 */
+	public static  AnyM<String> anyMFromFile(File anyM){
+		return AsAnyM.convertToAnyM(anyM);
+	}
+	/**
+	 * Construct an AnyM backed by a Stream of text from the lines of the BufferedReader
+	 * 
+	 *
+	 */
+	public static  AnyM<String> anyMFromBufferedReader(BufferedReader anyM){
+		return AsAnyM.convertToAnyM(anyM);
+	}
+	/**
+	 * Construct an AnyM backed by a Stream of text from the lines of the URL
+	 * 
+	 *
+	 */
+	public static  AnyM<String> anyMFromURL(URL anyM){
+		return AsAnyM.convertToAnyM(anyM);
+	}
+	/**
+	 * Construct an AnyM backed by a Stream of Characters from the text of a String
+	 * 
+	 *
+	 */
+	public static  AnyM<Character> anyMFromCharSequence(CharSequence anyM){
+		return AsAnyM.convertToAnyM(anyM);
+	}
+	
+	/**
 	 * Create a Monad wrapper from an Iterable
 		 * Create a duck typed Monad wrapper. Using AnyM we focus only on the underlying type
 	 * e.g. instead of 
@@ -423,51 +460,7 @@ public class AsAnyM {
 	public static <T> AnyM<T> anyM(T... values){
 		return anyM(Stream.of(values));
 	}
-	/**
-	 * Create a Monad wrapper from an Object
-		 * Create a duck typed Monad wrapper. Using AnyM we focus only on the underlying type
-	 * e.g. instead of 
-	 * <pre>
-	 * {@code 
-	 *  Monad<Stream<Integer>,Integer> stream;
-	 * 
-	 * we can write
-	 * 
-	 *   AnyM<Integer> stream;
-	 * }</pre>
-	 *  
-	 * The wrapped Monaad should have equivalent methods for
-	 * 
-	 * <pre>
-	 * {@code 
-	 * map(F f)
-	 * 
-	 * flatMap(F<x,MONAD> fm)
-	 * 
-	 * and optionally 
-	 * 
-	 * filter(P p)
-	 * }
-	 * </pre>
-	 * 
-	 * A Comprehender instance can be created and registered for new Monad Types. Cyclops will attempt
-	 * to manage any Monad type (via the InvokeDynamicComprehender) althouh behaviour is best guaranteed with
-	 * customised Comprehenders.
-	 * 
-	 * Where F is a Functional Interface of any type that takes a single parameter and returns
-	 * a result.	 
-	 * Where P is a Functional Interface of any type that takes a single parameter and returns
-	 * a boolean
-	 * 
-	 *  flatMap operations on the duck typed Monad can return any Monad type
-	 *  
-	 * 
-	 * @param anyM to wrap
-	 * @return Duck typed Monad
-	 */
-	public static <T> AnyM<T> toAnyM(Object anyM){
-		return new MonadWrapper<>(anyM).anyM();
-	}
+
 	/**
 	 * Create a Monad wrapper from an Object that will be converted to Monadic form if neccessary by the registered
 	 * MonadicConverters. You can register your own MonadicConverter instances and / or change the priorities of currently registered converters.
