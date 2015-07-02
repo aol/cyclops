@@ -2,14 +2,14 @@
 <testng-results>
   <reporter-output>
   </reporter-output>
-  <suite name="Default suite" duration-ms="4899" started-at="2015-06-19T17:01:07Z" finished-at="2015-06-19T17:01:11Z">
+  <suite name="Default suite" duration-ms="4867" started-at="2015-07-02T23:18:44Z" finished-at="2015-07-02T23:18:49Z">
     <groups>
     </groups>
-    <test name="Default test" duration-ms="4899" started-at="2015-06-19T17:01:07Z" finished-at="2015-06-19T17:01:11Z">
-      <class name="com.aol.simple.react.reactivestreams.TckSynchronousPublisherTest">
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="4" started-at="2015-06-19T17:01:07Z" finished-at="2015-06-19T17:01:07Z">
+    <test name="Default test" duration-ms="4867" started-at="2015-07-02T23:18:44Z" finished-at="2015-07-02T23:18:49Z">
+      <class name="com.aol.simple.react.reactivestreams.TckAsynchronousPublisherTest">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="4" started-at="2015-07-02T23:18:44Z" finished-at="2015-07-02T23:18:44Z">
         </test-method>
-        <test-method status="SKIP" signature="optional_spec104_mustSignalOnErrorWhenFails()" name="optional_spec104_mustSignalOnErrorWhenFails" duration-ms="14" started-at="2015-06-19T17:01:07Z" finished-at="2015-06-19T17:01:07Z">
+        <test-method status="SKIP" signature="optional_spec104_mustSignalOnErrorWhenFails()" name="optional_spec104_mustSignalOnErrorWhenFails" duration-ms="7" started-at="2015-07-02T23:18:44Z" finished-at="2015-07-02T23:18:44Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Skipping because no error state Publisher provided, and the test requires it. Please implement PublisherVerification#createFailedPublisher to run this test.]]>
@@ -48,11 +48,11 @@
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-06-19T17:01:07Z" finished-at="2015-06-19T17:01:07Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:44Z" finished-at="2015-07-02T23:18:44Z">
         </test-method>
-        <test-method status="PASS" signature="optional_spec105_emptyStreamMustTerminateBySignallingOnComplete()" name="optional_spec105_emptyStreamMustTerminateBySignallingOnComplete" duration-ms="397" started-at="2015-06-19T17:01:07Z" finished-at="2015-06-19T17:01:07Z">
+        <test-method status="PASS" signature="optional_spec105_emptyStreamMustTerminateBySignallingOnComplete()" name="optional_spec105_emptyStreamMustTerminateBySignallingOnComplete" duration-ms="388" started-at="2015-07-02T23:18:44Z" finished-at="2015-07-02T23:18:44Z">
         </test-method>
-        <test-method status="SKIP" signature="optional_spec111_maySupportMultiSubscribe()" name="optional_spec111_maySupportMultiSubscribe" duration-ms="3" started-at="2015-06-19T17:01:07Z" finished-at="2015-06-19T17:01:07Z">
+        <test-method status="SKIP" signature="optional_spec111_maySupportMultiSubscribe()" name="optional_spec111_maySupportMultiSubscribe" duration-ms="2" started-at="2015-07-02T23:18:44Z" finished-at="2015-07-02T23:18:44Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Skipped because tested publisher does NOT implement this OPTIONAL requirement.]]>
@@ -91,11 +91,9 @@
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:07Z" finished-at="2015-06-19T17:01:07Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:44Z" finished-at="2015-07-02T23:18:44Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-06-19T17:01:07Z" finished-at="2015-06-19T17:01:07Z">
-        </test-method>
-        <test-method status="SKIP" signature="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfront()" name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfront" duration-ms="2" started-at="2015-06-19T17:01:07Z" finished-at="2015-06-19T17:01:07Z">
+        <test-method status="SKIP" signature="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfront()" name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfront" duration-ms="2" started-at="2015-07-02T23:18:44Z" finished-at="2015-07-02T23:18:44Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Skipped because tested publisher does NOT implement this OPTIONAL requirement.]]>
@@ -134,9 +132,11 @@
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:07Z" finished-at="2015-06-19T17:01:07Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:44Z" finished-at="2015-07-02T23:18:44Z">
         </test-method>
-        <test-method status="SKIP" signature="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfrontAndCompleteAsExpected()" name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfrontAndCompleteAsExpected" duration-ms="2" started-at="2015-06-19T17:01:07Z" finished-at="2015-06-19T17:01:07Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:44Z" finished-at="2015-07-02T23:18:44Z">
+        </test-method>
+        <test-method status="SKIP" signature="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfrontAndCompleteAsExpected()" name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfrontAndCompleteAsExpected" duration-ms="2" started-at="2015-07-02T23:18:44Z" finished-at="2015-07-02T23:18:44Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Skipped because tested publisher does NOT implement this OPTIONAL requirement.]]>
@@ -175,9 +175,9 @@
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:07Z" finished-at="2015-06-19T17:01:07Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:44Z" finished-at="2015-07-02T23:18:44Z">
         </test-method>
-        <test-method status="SKIP" signature="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingOneByOne()" name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingOneByOne" duration-ms="2" started-at="2015-06-19T17:01:07Z" finished-at="2015-06-19T17:01:07Z">
+        <test-method status="SKIP" signature="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingOneByOne()" name="optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingOneByOne" duration-ms="2" started-at="2015-07-02T23:18:44Z" finished-at="2015-07-02T23:18:44Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Skipped because tested publisher does NOT implement this OPTIONAL requirement.]]>
@@ -216,31 +216,31 @@
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="required_createPublisher1MustProduceAStreamOfExactly1Element()" name="required_createPublisher1MustProduceAStreamOfExactly1Element" duration-ms="11" started-at="2015-06-19T17:01:07Z" finished-at="2015-06-19T17:01:07Z">
+        <test-method status="PASS" signature="required_createPublisher1MustProduceAStreamOfExactly1Element()" name="required_createPublisher1MustProduceAStreamOfExactly1Element" duration-ms="10" started-at="2015-07-02T23:18:44Z" finished-at="2015-07-02T23:18:44Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:07Z" finished-at="2015-06-19T17:01:07Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:44Z" finished-at="2015-07-02T23:18:44Z">
         </test-method>
-        <test-method status="PASS" signature="required_createPublisher3MustProduceAStreamOfExactly3Elements()" name="required_createPublisher3MustProduceAStreamOfExactly3Elements" duration-ms="3" started-at="2015-06-19T17:01:07Z" finished-at="2015-06-19T17:01:07Z">
+        <test-method status="PASS" signature="required_createPublisher3MustProduceAStreamOfExactly3Elements()" name="required_createPublisher3MustProduceAStreamOfExactly3Elements" duration-ms="4" started-at="2015-07-02T23:18:44Z" finished-at="2015-07-02T23:18:44Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:07Z" finished-at="2015-06-19T17:01:07Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:44Z" finished-at="2015-07-02T23:18:44Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:07Z" finished-at="2015-06-19T17:01:07Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:44Z" finished-at="2015-07-02T23:18:44Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec101_subscriptionRequestMustResultInTheCorrectNumberOfProducedElements()" name="required_spec101_subscriptionRequestMustResultInTheCorrectNumberOfProducedElements" duration-ms="914" started-at="2015-06-19T17:01:07Z" finished-at="2015-06-19T17:01:08Z">
+        <test-method status="PASS" signature="required_spec101_subscriptionRequestMustResultInTheCorrectNumberOfProducedElements()" name="required_spec101_subscriptionRequestMustResultInTheCorrectNumberOfProducedElements" duration-ms="918" started-at="2015-07-02T23:18:44Z" finished-at="2015-07-02T23:18:45Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec102_maySignalLessThanRequestedAndTerminateSubscription()" name="required_spec102_maySignalLessThanRequestedAndTerminateSubscription" duration-ms="2" started-at="2015-06-19T17:01:08Z" finished-at="2015-06-19T17:01:08Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:45Z" finished-at="2015-07-02T23:18:45Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:08Z" finished-at="2015-06-19T17:01:08Z">
+        <test-method status="PASS" signature="required_spec102_maySignalLessThanRequestedAndTerminateSubscription()" name="required_spec102_maySignalLessThanRequestedAndTerminateSubscription" duration-ms="2" started-at="2015-07-02T23:18:45Z" finished-at="2015-07-02T23:18:45Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:08Z" finished-at="2015-06-19T17:01:08Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:45Z" finished-at="2015-07-02T23:18:45Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec105_mustSignalOnCompleteWhenFiniteStreamTerminates()" name="required_spec105_mustSignalOnCompleteWhenFiniteStreamTerminates" duration-ms="305" started-at="2015-06-19T17:01:08Z" finished-at="2015-06-19T17:01:08Z">
+        <test-method status="PASS" signature="required_spec105_mustSignalOnCompleteWhenFiniteStreamTerminates()" name="required_spec105_mustSignalOnCompleteWhenFiniteStreamTerminates" duration-ms="305" started-at="2015-07-02T23:18:45Z" finished-at="2015-07-02T23:18:45Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:08Z" finished-at="2015-06-19T17:01:08Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:45Z" finished-at="2015-07-02T23:18:45Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec107_mustNotEmitFurtherSignalsOnceOnCompleteHasBeenSignalled()" name="required_spec107_mustNotEmitFurtherSignalsOnceOnCompleteHasBeenSignalled" duration-ms="305" started-at="2015-06-19T17:01:08Z" finished-at="2015-06-19T17:01:09Z">
+        <test-method status="PASS" signature="required_spec107_mustNotEmitFurtherSignalsOnceOnCompleteHasBeenSignalled()" name="required_spec107_mustNotEmitFurtherSignalsOnceOnCompleteHasBeenSignalled" duration-ms="307" started-at="2015-07-02T23:18:45Z" finished-at="2015-07-02T23:18:46Z">
         </test-method>
-        <test-method status="SKIP" signature="required_spec109_mayRejectCallsToSubscribeIfPublisherIsUnableOrUnwillingToServeThemRejectionMustTriggerOnErrorAfterOnSubscribe()" name="required_spec109_mayRejectCallsToSubscribeIfPublisherIsUnableOrUnwillingToServeThemRejectionMustTriggerOnErrorAfterOnSubscribe" duration-ms="1" started-at="2015-06-19T17:01:09Z" finished-at="2015-06-19T17:01:09Z">
+        <test-method status="SKIP" signature="required_spec109_mayRejectCallsToSubscribeIfPublisherIsUnableOrUnwillingToServeThemRejectionMustTriggerOnErrorAfterOnSubscribe()" name="required_spec109_mayRejectCallsToSubscribeIfPublisherIsUnableOrUnwillingToServeThemRejectionMustTriggerOnErrorAfterOnSubscribe" duration-ms="1" started-at="2015-07-02T23:18:46Z" finished-at="2015-07-02T23:18:46Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Skipping because no error state Publisher provided, and the test requires it. Please implement PublisherVerification#createFailedPublisher to run this test.]]>
@@ -279,73 +279,73 @@
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:09Z" finished-at="2015-06-19T17:01:09Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:46Z" finished-at="2015-07-02T23:18:46Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-06-19T17:01:09Z" finished-at="2015-06-19T17:01:09Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:46Z" finished-at="2015-07-02T23:18:46Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec109_mustIssueOnSubscribeForNonNullSubscriber()" name="required_spec109_mustIssueOnSubscribeForNonNullSubscriber" duration-ms="1" started-at="2015-06-19T17:01:09Z" finished-at="2015-06-19T17:01:09Z">
+        <test-method status="PASS" signature="required_spec109_mustIssueOnSubscribeForNonNullSubscriber()" name="required_spec109_mustIssueOnSubscribeForNonNullSubscriber" duration-ms="2" started-at="2015-07-02T23:18:46Z" finished-at="2015-07-02T23:18:46Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec109_subscribeThrowNPEOnNullSubscriber()" name="required_spec109_subscribeThrowNPEOnNullSubscriber" duration-ms="2" started-at="2015-06-19T17:01:09Z" finished-at="2015-06-19T17:01:09Z">
+        <test-method status="PASS" signature="required_spec109_subscribeThrowNPEOnNullSubscriber()" name="required_spec109_subscribeThrowNPEOnNullSubscriber" duration-ms="2" started-at="2015-07-02T23:18:46Z" finished-at="2015-07-02T23:18:46Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:09Z" finished-at="2015-06-19T17:01:09Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:46Z" finished-at="2015-07-02T23:18:46Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:09Z" finished-at="2015-06-19T17:01:09Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-07-02T23:18:46Z" finished-at="2015-07-02T23:18:46Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec302_mustAllowSynchronousRequestCallsFromOnNextAndOnSubscribe()" name="required_spec302_mustAllowSynchronousRequestCallsFromOnNextAndOnSubscribe" duration-ms="304" started-at="2015-06-19T17:01:09Z" finished-at="2015-06-19T17:01:09Z">
+        <test-method status="PASS" signature="required_spec302_mustAllowSynchronousRequestCallsFromOnNextAndOnSubscribe()" name="required_spec302_mustAllowSynchronousRequestCallsFromOnNextAndOnSubscribe" duration-ms="307" started-at="2015-07-02T23:18:46Z" finished-at="2015-07-02T23:18:46Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:09Z" finished-at="2015-06-19T17:01:09Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:46Z" finished-at="2015-07-02T23:18:46Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec303_mustNotAllowUnboundedRecursion()" name="required_spec303_mustNotAllowUnboundedRecursion" duration-ms="13" started-at="2015-06-19T17:01:09Z" finished-at="2015-06-19T17:01:09Z">
+        <test-method status="PASS" signature="required_spec303_mustNotAllowUnboundedRecursion()" name="required_spec303_mustNotAllowUnboundedRecursion" duration-ms="3" started-at="2015-07-02T23:18:46Z" finished-at="2015-07-02T23:18:46Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec306_afterSubscriptionIsCancelledRequestMustBeNops()" name="required_spec306_afterSubscriptionIsCancelledRequestMustBeNops" duration-ms="305" started-at="2015-06-19T17:01:09Z" finished-at="2015-06-19T17:01:09Z">
+        <test-method status="PASS" signature="required_spec306_afterSubscriptionIsCancelledRequestMustBeNops()" name="required_spec306_afterSubscriptionIsCancelledRequestMustBeNops" duration-ms="305" started-at="2015-07-02T23:18:46Z" finished-at="2015-07-02T23:18:46Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:09Z" finished-at="2015-06-19T17:01:09Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:46Z" finished-at="2015-07-02T23:18:46Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec307_afterSubscriptionIsCancelledAdditionalCancelationsMustBeNops()" name="required_spec307_afterSubscriptionIsCancelledAdditionalCancelationsMustBeNops" duration-ms="304" started-at="2015-06-19T17:01:09Z" finished-at="2015-06-19T17:01:09Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:46Z" finished-at="2015-07-02T23:18:46Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:09Z" finished-at="2015-06-19T17:01:09Z">
+        <test-method status="PASS" signature="required_spec307_afterSubscriptionIsCancelledAdditionalCancelationsMustBeNops()" name="required_spec307_afterSubscriptionIsCancelledAdditionalCancelationsMustBeNops" duration-ms="303" started-at="2015-07-02T23:18:46Z" finished-at="2015-07-02T23:18:47Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec309_requestNegativeNumberMustSignalIllegalArgumentException()" name="required_spec309_requestNegativeNumberMustSignalIllegalArgumentException" duration-ms="306" started-at="2015-06-19T17:01:09Z" finished-at="2015-06-19T17:01:10Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-07-02T23:18:47Z" finished-at="2015-07-02T23:18:47Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:09Z" finished-at="2015-06-19T17:01:09Z">
+        <test-method status="PASS" signature="required_spec309_requestNegativeNumberMustSignalIllegalArgumentException()" name="required_spec309_requestNegativeNumberMustSignalIllegalArgumentException" duration-ms="306" started-at="2015-07-02T23:18:47Z" finished-at="2015-07-02T23:18:47Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:10Z" finished-at="2015-06-19T17:01:10Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-07-02T23:18:47Z" finished-at="2015-07-02T23:18:47Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec309_requestZeroMustSignalIllegalArgumentException()" name="required_spec309_requestZeroMustSignalIllegalArgumentException" duration-ms="307" started-at="2015-06-19T17:01:10Z" finished-at="2015-06-19T17:01:10Z">
+        <test-method status="PASS" signature="required_spec309_requestZeroMustSignalIllegalArgumentException()" name="required_spec309_requestZeroMustSignalIllegalArgumentException" duration-ms="306" started-at="2015-07-02T23:18:47Z" finished-at="2015-07-02T23:18:47Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:10Z" finished-at="2015-06-19T17:01:10Z">
+        <test-method status="PASS" signature="required_spec312_cancelMustMakeThePublisherToEventuallyStopSignaling()" name="required_spec312_cancelMustMakeThePublisherToEventuallyStopSignaling" duration-ms="610" started-at="2015-07-02T23:18:47Z" finished-at="2015-07-02T23:18:48Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec312_cancelMustMakeThePublisherToEventuallyStopSignaling()" name="required_spec312_cancelMustMakeThePublisherToEventuallyStopSignaling" duration-ms="608" started-at="2015-06-19T17:01:10Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:47Z" finished-at="2015-07-02T23:18:47Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec313_cancelMustMakeThePublisherEventuallyDropAllReferencesToTheSubscriber()" name="required_spec313_cancelMustMakeThePublisherEventuallyDropAllReferencesToTheSubscriber" duration-ms="322" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="1" started-at="2015-07-02T23:18:48Z" finished-at="2015-07-02T23:18:48Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="PASS" signature="required_spec313_cancelMustMakeThePublisherEventuallyDropAllReferencesToTheSubscriber()" name="required_spec313_cancelMustMakeThePublisherEventuallyDropAllReferencesToTheSubscriber" duration-ms="322" started-at="2015-07-02T23:18:48Z" finished-at="2015-07-02T23:18:48Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec317_mustNotSignalOnErrorWhenPendingAboveLongMaxValue()" name="required_spec317_mustNotSignalOnErrorWhenPendingAboveLongMaxValue" duration-ms="307" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:48Z" finished-at="2015-07-02T23:18:48Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="PASS" signature="required_spec317_mustNotSignalOnErrorWhenPendingAboveLongMaxValue()" name="required_spec317_mustNotSignalOnErrorWhenPendingAboveLongMaxValue" duration-ms="306" started-at="2015-07-02T23:18:48Z" finished-at="2015-07-02T23:18:48Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec317_mustSupportACumulativePendingElementCountUpToLongMaxValue()" name="required_spec317_mustSupportACumulativePendingElementCountUpToLongMaxValue" duration-ms="2" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="PASS" signature="required_spec317_mustSupportACumulativePendingElementCountUpToLongMaxValue()" name="required_spec317_mustSupportACumulativePendingElementCountUpToLongMaxValue" duration-ms="2" started-at="2015-07-02T23:18:48Z" finished-at="2015-07-02T23:18:48Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:48Z" finished-at="2015-07-02T23:18:48Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="PASS" signature="required_spec317_mustSupportAPendingElementCountUpToLongMaxValue()" name="required_spec317_mustSupportAPendingElementCountUpToLongMaxValue" duration-ms="1" started-at="2015-07-02T23:18:48Z" finished-at="2015-07-02T23:18:48Z">
         </test-method>
-        <test-method status="PASS" signature="required_spec317_mustSupportAPendingElementCountUpToLongMaxValue()" name="required_spec317_mustSupportAPendingElementCountUpToLongMaxValue" duration-ms="2" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:48Z" finished-at="2015-07-02T23:18:48Z">
         </test-method>
-        <test-method status="PASS" signature="required_validate_boundedDepthOfOnNextAndRequestRecursion()" name="required_validate_boundedDepthOfOnNextAndRequestRecursion" duration-ms="0" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="PASS" signature="required_validate_boundedDepthOfOnNextAndRequestRecursion()" name="required_validate_boundedDepthOfOnNextAndRequestRecursion" duration-ms="0" started-at="2015-07-02T23:18:48Z" finished-at="2015-07-02T23:18:48Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:48Z" finished-at="2015-07-02T23:18:48Z">
         </test-method>
-        <test-method status="PASS" signature="required_validate_maxElementsFromPublisher()" name="required_validate_maxElementsFromPublisher" duration-ms="0" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="PASS" signature="required_validate_maxElementsFromPublisher()" name="required_validate_maxElementsFromPublisher" duration-ms="1" started-at="2015-07-02T23:18:48Z" finished-at="2015-07-02T23:18:48Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:48Z" finished-at="2015-07-02T23:18:48Z">
         </test-method>
-        <test-method status="PASS" signature="stochastic_spec103_mustSignalOnMethodsSequentially()" name="stochastic_spec103_mustSignalOnMethodsSequentially" duration-ms="85" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:48Z" finished-at="2015-07-02T23:18:48Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="PASS" signature="stochastic_spec103_mustSignalOnMethodsSequentially()" name="stochastic_spec103_mustSignalOnMethodsSequentially" duration-ms="80" started-at="2015-07-02T23:18:48Z" finished-at="2015-07-02T23:18:49Z">
         </test-method>
-        <test-method status="SKIP" signature="untested_spec106_mustConsiderSubscriptionCancelledAfterOnErrorOrOnCompleteHasBeenCalled()" name="untested_spec106_mustConsiderSubscriptionCancelledAfterOnErrorOrOnCompleteHasBeenCalled" duration-ms="0" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="SKIP" signature="untested_spec106_mustConsiderSubscriptionCancelledAfterOnErrorOrOnCompleteHasBeenCalled()" name="untested_spec106_mustConsiderSubscriptionCancelledAfterOnErrorOrOnCompleteHasBeenCalled" duration-ms="0" started-at="2015-07-02T23:18:49Z" finished-at="2015-07-02T23:18:49Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified by this TCK.]]>
@@ -383,9 +383,9 @@
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:49Z" finished-at="2015-07-02T23:18:49Z">
         </test-method>
-        <test-method status="SKIP" signature="untested_spec107_mustNotEmitFurtherSignalsOnceOnErrorHasBeenSignalled()" name="untested_spec107_mustNotEmitFurtherSignalsOnceOnErrorHasBeenSignalled" duration-ms="0" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="SKIP" signature="untested_spec107_mustNotEmitFurtherSignalsOnceOnErrorHasBeenSignalled()" name="untested_spec107_mustNotEmitFurtherSignalsOnceOnErrorHasBeenSignalled" duration-ms="0" started-at="2015-07-02T23:18:49Z" finished-at="2015-07-02T23:18:49Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified by this TCK.]]>
@@ -423,11 +423,11 @@
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:49Z" finished-at="2015-07-02T23:18:49Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:49Z" finished-at="2015-07-02T23:18:49Z">
         </test-method>
-        <test-method status="SKIP" signature="untested_spec108_possiblyCanceledSubscriptionShouldNotReceiveOnErrorOrOnCompleteSignals()" name="untested_spec108_possiblyCanceledSubscriptionShouldNotReceiveOnErrorOrOnCompleteSignals" duration-ms="1" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="SKIP" signature="untested_spec108_possiblyCanceledSubscriptionShouldNotReceiveOnErrorOrOnCompleteSignals()" name="untested_spec108_possiblyCanceledSubscriptionShouldNotReceiveOnErrorOrOnCompleteSignals" duration-ms="2" started-at="2015-07-02T23:18:49Z" finished-at="2015-07-02T23:18:49Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified by this TCK.]]>
@@ -465,7 +465,9 @@
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="SKIP" signature="untested_spec109_subscribeShouldNotThrowNonFatalThrowable()" name="untested_spec109_subscribeShouldNotThrowNonFatalThrowable" duration-ms="0" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:49Z" finished-at="2015-07-02T23:18:49Z">
+        </test-method>
+        <test-method status="SKIP" signature="untested_spec109_subscribeShouldNotThrowNonFatalThrowable()" name="untested_spec109_subscribeShouldNotThrowNonFatalThrowable" duration-ms="1" started-at="2015-07-02T23:18:49Z" finished-at="2015-07-02T23:18:49Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified by this TCK.]]>
@@ -503,11 +505,9 @@
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:49Z" finished-at="2015-07-02T23:18:49Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
-        </test-method>
-        <test-method status="SKIP" signature="untested_spec110_rejectASubscriptionRequestIfTheSameSubscriberSubscribesTwice()" name="untested_spec110_rejectASubscriptionRequestIfTheSameSubscriberSubscribesTwice" duration-ms="0" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="SKIP" signature="untested_spec110_rejectASubscriptionRequestIfTheSameSubscriberSubscribesTwice()" name="untested_spec110_rejectASubscriptionRequestIfTheSameSubscriberSubscribesTwice" duration-ms="1" started-at="2015-07-02T23:18:49Z" finished-at="2015-07-02T23:18:49Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified by this TCK.]]>
@@ -545,7 +545,7 @@
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="SKIP" signature="untested_spec304_requestShouldNotPerformHeavyComputations()" name="untested_spec304_requestShouldNotPerformHeavyComputations" duration-ms="0" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="SKIP" signature="untested_spec304_requestShouldNotPerformHeavyComputations()" name="untested_spec304_requestShouldNotPerformHeavyComputations" duration-ms="1" started-at="2015-07-02T23:18:49Z" finished-at="2015-07-02T23:18:49Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified by this TCK.]]>
@@ -583,11 +583,9 @@
             </full-stacktrace>
           </exception>
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:49Z" finished-at="2015-07-02T23:18:49Z">
         </test-method>
-        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
-        </test-method>
-        <test-method status="SKIP" signature="untested_spec305_cancelMustNotSynchronouslyPerformHeavyCompuatation()" name="untested_spec305_cancelMustNotSynchronouslyPerformHeavyCompuatation" duration-ms="0" started-at="2015-06-19T17:01:11Z" finished-at="2015-06-19T17:01:11Z">
+        <test-method status="SKIP" signature="untested_spec305_cancelMustNotSynchronouslyPerformHeavyCompuatation()" name="untested_spec305_cancelMustNotSynchronouslyPerformHeavyCompuatation" duration-ms="1" started-at="2015-07-02T23:18:49Z" finished-at="2015-07-02T23:18:49Z">
           <exception class="org.testng.SkipException">
             <message>
               <![CDATA[Not verified by this TCK.]]>
@@ -624,6 +622,8 @@
 ]]>
             </full-stacktrace>
           </exception>
+        </test-method>
+        <test-method status="PASS" signature="setUp()" name="setUp" is-config="true" duration-ms="0" started-at="2015-07-02T23:18:49Z" finished-at="2015-07-02T23:18:49Z">
         </test-method>
       </class>
     </test>

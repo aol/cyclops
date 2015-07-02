@@ -18,7 +18,7 @@ public class TckSynchronousPublisherTest extends PublisherVerification<Long>{
 
 	@Override
 	public Publisher<Long> createPublisher(long elements) {
-		return LazyFutureStream.iterate(0l, i->i+1l).limit(elements);
+		return LazyFutureStream.iterate(0l, i->i+1l).sync().limit(elements);
 		
 	}
 
