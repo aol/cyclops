@@ -569,6 +569,19 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 				stream).executeflatMap(stream, i-> unwrap()));
 		 return r.flatMap(e->e);
 	}
+	default <R,NT> Monad<R,NT> lazySeqMonad(){
+		LazySeq stream = LazySeq.of(1);
+		 Monad r = this.<LazySeq,T>withMonad((LazySeq)new ComprehenderSelector().selectComprehender(
+				stream).executeflatMap(stream, i-> unwrap()));
+		 return r.flatMap(e->e);
+	}
+	
+	default <R> LazySeq<R> lazySeq(){
+		
+		LazySeq stream = LazySeq.of(1);
+		return (LazySeq)withMonad((LazySeq)new ComprehenderSelector().selectComprehender(
+				stream).executeflatMap(stream, i-> unwrap())).flatMap(Function.identity()).unwrap();
+	}
 	/**
 	 * @return this monad converted to a Parallel Stream, via streamedMonad() wraped in Monad interface
 	 */

@@ -331,7 +331,7 @@ public class AnyMTest {
 											.asSequence()
 											.zip(Stream.of(2,3,4), 
 													(a,b) -> Arrays.asList(a,b))
-													.stream();
+													.toStream();
 		
 		
 		List<Integer> zip = zipped.collect(Collectors.toList()).get(1);
@@ -347,7 +347,7 @@ public class AnyMTest {
 									.sliding(2)
 									.collect(Collectors.toList());
 		
-		
+	System.out.println(list);
 		assertThat(list.get(0),hasItems(1,2));
 		assertThat(list.get(1),hasItems(2,3));
 	}

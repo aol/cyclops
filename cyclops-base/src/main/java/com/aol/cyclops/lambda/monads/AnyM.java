@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
+import com.aol.cyclops.internal.AsGenericMonad;
 import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Unwrapable;
@@ -332,7 +333,7 @@ public class AnyM<T> implements Unwrapable{
 	 * @return A Sequence that wraps a Stream
 	 */
 	public final <T> SequenceM<T> toSequence(){
-		return monad.streamedMonad().sequence();
+		return monad.lazySeqMonad().sequence();
 	}
 	
 	/**
