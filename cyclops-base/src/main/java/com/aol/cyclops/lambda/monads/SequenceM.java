@@ -58,6 +58,36 @@ public class SequenceM<T> implements Unwrapable {
 		return (R)monad;
 	}
 	/**
+	 * Type safe unwrap
+	 * 
+	 * @return Stream with current wrapped values
+	 */
+	public final Stream<T> unwrapStream(){
+		
+		Stream unwrapper = Stream.of(1);
+		return (Stream)new ComprehenderSelector()
+							.selectComprehender(unwrapper)
+							.executeflatMap(unwrapper, i-> unwrap());
+		
+	}
+	public final Optional<List<T>> unwrapOptional(){
+		
+		Optional unwrapper = Optional.of(1);
+		return (Optional)new ComprehenderSelector()
+							.selectComprehender(unwrapper)
+							.executeflatMap(unwrapper, i-> unwrap());
+		
+	}
+	public final CompletableFuture<List<T>> unwrapCompletableFuture(){
+		
+		CompletableFuture unwrapper = CompletableFuture.completedFuture(1);
+		return (CompletableFuture)new ComprehenderSelector()
+							.selectComprehender(unwrapper)
+							.executeflatMap(unwrapper, i-> unwrap());
+		
+	}
+	
+	/**
 	 * Convert to a Stream with the values repeated specified times
 	 * 
 	 * @param times

@@ -94,4 +94,25 @@ public class StreamUtilsTest {
 		assertThat(result.get(2),equalTo(2.0));
     }
 
+	@Test
+	public void testSkipUntil(){
+		assertThat(StreamUtils.skipUntil(Stream.of(4,3,6,7),i->i==6).collect(Collectors.toList()),
+				equalTo(Arrays.asList(6,7)));
+	}
+	@Test
+	public void testSkipWhile(){
+		assertThat(StreamUtils.skipWhile(Stream.of(4,3,6,7).sorted(),i->i<6).collect(Collectors.toList()),
+				equalTo(Arrays.asList(6,7)));
+	}
+	
+	@Test
+	public void testLimitWhile(){
+		assertThat(StreamUtils.limitWhile(Stream.of(4,3,6,7).sorted(),i->i<6).collect(Collectors.toList()),
+				equalTo(Arrays.asList(3,4)));
+	}
+	@Test
+	public void testLimitUntil(){
+		assertThat(StreamUtils.limitUntil(Stream.of(4,3,6,7),i->i==6).collect(Collectors.toList()),
+				equalTo(Arrays.asList(4,3)));
+	}
 }

@@ -11,6 +11,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -24,7 +25,63 @@ import com.nurkiewicz.lazyseq.LazySeq;
 
 public class StreamUtils{
 	
-	
+	/**
+	 * skip elements in Stream until Predicate holds true
+	 * 	<pre>
+	 * {@code  StreamUtils.skipUntil(Stream.of(4,3,6,7),i->i==6).collect(Collectors.toList())
+	 *  // [6,7]
+	 *  }</pre>
+
+	 * @param stream Stream to skip elements from 
+	 * @param predicate to apply
+	 * @return Stream with elements skipped
+	 */
+	public static <U> Stream<U> skipUntil(Stream<U> stream,Predicate<? super U> predicate){
+		return LazySeq.of(stream.iterator()).dropWhile(predicate.negate()).stream();
+	}
+	/**
+	 * skip elements in a Stream while Predicate holds true
+	 * 
+	 * <pre>
+	 * 
+	 * {@code  StreamUtils.skipWhile(Stream.of(4,3,6,7).sorted(),i->i<6).collect(Collectors.toList())
+	 *  // [6,7]
+	 *  }</pre>
+	 * @param stream
+	 * @param predicate
+	 * @return
+	 */
+	public static <U> Stream<U> skipWhile(Stream<U> stream,Predicate<? super U> predicate){
+		return LazySeq.of(stream.iterator()).dropWhile(predicate).stream();
+	}
+	/**
+	 * Take elements from a stream while the predicates hold
+	 * <pre>
+	 * {@code StreamUtils.limitWhile(Stream.of(4,3,6,7).sorted(),i->i<6).collect(Collectors.toList());
+	 * //[4,3]
+	 * }
+	 * </pre>
+	 * @param stream
+	 * @param predicate
+	 * @return
+	 */
+	public static <U> Stream<U> limitWhile(Stream<U> stream,Predicate<? super U> predicate){
+		return LazySeq.of(stream.iterator()).takeWhile(predicate).stream();
+	}
+	/**
+	 * Take elements from a Stream until the predicate holds
+	 *  <pre>
+	 * {@code StreamUtils.limitUntil(Stream.of(4,3,6,7),i->i==6).collect(Collectors.toList());
+	 * //[4,3]
+	 * }
+	 * </pre>
+	 * @param stream
+	 * @param predicate
+	 * @return
+	 */
+	public static <U> Stream<U> limitUntil(Stream<U> stream,Predicate<? super U> predicate){
+		return LazySeq.of(stream.iterator()).takeWhile(predicate.negate()).stream();
+	}
 	/**
 	 * Reverse a Stream
 	 * 
