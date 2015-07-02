@@ -268,16 +268,14 @@ public class SequenceM<T> implements Unwrapable {
 
 	/**
 	 *
-	 * Monad converted to Stream via stream() and sorted - to access nested
-	 * collections in non-Stream monads as a stream use streamedMonad() first
 	 * 
 	 * e.g.
 	 * 
 	 * <pre>
 	 * {@code 
-	 *    monad(Optional.of(Arrays.asList(1,2,3))).sorted( (a,b)->b-a)  // Monad[Stream[List[1,2,3]]]
+	 *    anyM(Optional.of(Arrays.asList(1,2,3))).asSequence().sorted( (a,b)->b-a)  // Monad[Stream[List[1,2,3]]]
 	 *    
-	 *     monad(Optional.of(Arrays.asList(1,2,3))).streamedMonad().sorted( (a,b)->b-a) // Monad[Stream[3,2,1]]
+	 *     anyM(Optional.of(Arrays.asList(1,2,3))).toSequence().sorted( (a,b)->b-a) // Monad[Stream[3,2,1]]
 	 *  }
 	 * </pre>
 	 * 
@@ -293,11 +291,10 @@ public class SequenceM<T> implements Unwrapable {
 
 	/**
 	 * <pre>
-	 * {@code assertThat(monad(Stream.of(4,3,6,7)).skip(2).toList(),equalTo(Arrays.asList(6,7))); }
+	 * {@code assertThat(anyM(Stream.of(4,3,6,7)).asSequence().skip(2).toList(),equalTo(Arrays.asList(6,7))); }
 	 * </pre>
 	 * 
-	 * NB to access nested collections in non-Stream monads as a stream use
-	 * streamedMonad() first
+	
 	 * 
 	 * @param num
 	 *            Number of elemenets to skip
@@ -310,12 +307,10 @@ public class SequenceM<T> implements Unwrapable {
 
 	/**
 	 * 
-	 * NB to access nested collections in non-Stream monads as a stream use
-	 * streamedMonad() first
 	 * 
 	 * <pre>
 	 * {@code
-	 * assertThat(monad(Stream.of(4,3,6,7)).sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
+	 * assertThat(anyM(Stream.of(4,3,6,7)).asSequence().sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
 	 * }
 	 * </pre>
 	 * 
@@ -330,11 +325,9 @@ public class SequenceM<T> implements Unwrapable {
 
 	/**
 	 * 
-	 * NB to access nested collections in non-Stream monads as a stream use
-	 * streamedMonad() first
 	 * 
 	 * <pre>
-	 * {@code assertThat(monad(Stream.of(4,3,6,7)).skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));}
+	 * {@code assertThat(anyM(Stream.of(4,3,6,7)).asSequence().skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));}
 	 * </pre>
 	 * 
 	 * 
@@ -348,11 +341,10 @@ public class SequenceM<T> implements Unwrapable {
 	}
 
 	/**
-	 * NB to access nested collections in non-Stream monads as a stream use
-	 * streamedMonad() first
+	 * 
 	 * 
 	 * <pre>
-	 * {@code assertThat(monad(Stream.of(4,3,6,7)).limit(2).toList(),equalTo(Arrays.asList(4,3)));}
+	 * {@code assertThat(anyM(Stream.of(4,3,6,7)).asSequence().limit(2).toList(),equalTo(Arrays.asList(4,3)));}
 	 * </pre>
 	 * 
 	 * @param num
@@ -368,7 +360,7 @@ public class SequenceM<T> implements Unwrapable {
 	 * streamedMonad() first
 	 * 
 	 * <pre>
-	 * {@code assertThat(monad(Stream.of(4,3,6,7)).sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));}
+	 * {@code assertThat(anyM(Stream.of(4,3,6,7)).asSequence().sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));}
 	 * </pre>
 	 * 
 	 * @param p
@@ -384,7 +376,7 @@ public class SequenceM<T> implements Unwrapable {
 	 * streamedMonad() first
 	 * 
 	 * <pre>
-	 * {@code assertThat(monad(Stream.of(4,3,6,7)).limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3))); }
+	 * {@code assertThat(anyM(Stream.of(4,3,6,7)).limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3))); }
 	 * </pre>
 	 * 
 	 * @param p
