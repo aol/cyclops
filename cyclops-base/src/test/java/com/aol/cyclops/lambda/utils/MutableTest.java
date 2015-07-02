@@ -1,6 +1,6 @@
 package com.aol.cyclops.lambda.utils;
 
-import static com.aol.cyclops.lambda.utils.Lambda.λ2;
+import static com.aol.cyclops.lambda.utils.Lambda.l2;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -24,7 +24,7 @@ public class MutableTest {
 	public void inClosure(){
 		Mutable<Integer> myInt = new Mutable<>(0);
 		
-		λ2((Integer i)-> (Integer j)-> myInt.set(i*j)).apply(10).apply(20);
+		l2((Integer i)-> (Integer j)-> myInt.set(i*j)).apply(10).apply(20);
 		
 		assertThat(myInt.get(),
 				is(200));

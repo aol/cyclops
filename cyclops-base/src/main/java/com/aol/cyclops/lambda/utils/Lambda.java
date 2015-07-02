@@ -20,7 +20,7 @@ public class Lambda {
 	 * @param func
 	 * @return supplied function
 	 */
-	public static <T1,R> Function<T1,R> λ1(Function<T1,R> func){
+	public static <T1,R> Function<T1,R> l1(Function<T1,R> func){
 		return func;
 	}
 	/**
@@ -34,7 +34,7 @@ public class Lambda {
 	 * @param biFunc
 	 * @return supplied function
 	 */
-	public static <T1,T2,R> Function<T1,Function<T2,R>> λ2(Function<T1,Function<T2,R>> biFunc){
+	public static <T1,T2,R> Function<T1,Function<T2,R>> l2(Function<T1,Function<T2,R>> biFunc){
 		return biFunc;
 	}
 	/**
@@ -62,7 +62,7 @@ public class Lambda {
 	 * @param quadFunc
 	 * @return supplied function
 	 */
-	public static <T1,T2,T3,T4,R> Function<T1,Function<T2,Function<T3,Function<T4,R>>>> λ4(Function<T1,Function<T2,Function<T3,Function<T4,R>>>> quadFunc){
+	public static <T1,T2,T3,T4,R> Function<T1,Function<T2,Function<T3,Function<T4,R>>>> l4(Function<T1,Function<T2,Function<T3,Function<T4,R>>>> quadFunc){
 		return   quadFunc;
 	}
 	/**
@@ -76,7 +76,7 @@ public class Lambda {
 	 * @param pentFunc
 	 * @return supplied function
 	 */
-	public static <T1,T2,T3,T4,T5,R> Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,R>>>>> λ5(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,R>>>>> pentFunc){
+	public static <T1,T2,T3,T4,T5,R> Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,R>>>>> l5(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,R>>>>> pentFunc){
 		return   pentFunc;
 	}
 	/**
@@ -90,7 +90,7 @@ public class Lambda {
 	 * @param hexFunc
 	 * @return supplied function
 	 */
-	public static <T1,T2,T3,T4,T5,T6,R> Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,R>>>>>>  λ6(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,R>>>>>> hexFunc){
+	public static <T1,T2,T3,T4,T5,T6,R> Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,R>>>>>>  l6(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,R>>>>>> hexFunc){
 		return   hexFunc;
 	}
 	/**
@@ -104,7 +104,7 @@ public class Lambda {
 	 * @param heptFunc
 	 * @return supplied function
 	 */
-	public static <T1,T2,T3,T4,T5,T6,T7,R> Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,R>>>>>>>  λ7(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,R>>>>>>> heptFunc){
+	public static <T1,T2,T3,T4,T5,T6,T7,R> Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,R>>>>>>>  l7(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,R>>>>>>> heptFunc){
 		return   heptFunc;
 	}
 	/**
@@ -118,7 +118,7 @@ public class Lambda {
 	 * @param octFunc
 	 * @return supplied function
 	 */
-	public static <T1,T2,T3,T4,T5,T6,T7,T8,R> Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,Function<T8,R>>>>>>>>  λ8(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,Function<T8,R>>>>>>>> octFunc){
+	public static <T1,T2,T3,T4,T5,T6,T7,T8,R> Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,Function<T8,R>>>>>>>>  l8(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,Function<T8,R>>>>>>>> octFunc){
 		return  octFunc;
 	}
 }
