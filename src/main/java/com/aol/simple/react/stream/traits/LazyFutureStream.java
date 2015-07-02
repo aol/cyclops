@@ -33,6 +33,7 @@ import java.util.stream.StreamSupport;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
+import org.reactivestreams.Subscriber;
 
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Continueable;
@@ -44,6 +45,7 @@ import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.config.MaxActive;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.reactivestreams.FutureStreamAsyncPublisher;
+import com.aol.simple.react.reactivestreams.FutureStreamSynchronousPublisher;
 import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
@@ -60,8 +62,14 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  *
  */
 
-public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, LazyToQueue<U>, FutureStreamAsyncPublisher<U> {
+public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, LazyToQueue<U>, FutureStreamAsyncPublisher<U>,FutureStreamSynchronousPublisher<U> {
 
+	default void  subscribe(Subscriber<? super U> s){
+		if(isAsync())
+			FutureStreamAsyncPublisher.super.subscribe(s);
+		else
+			FutureStreamSynchronousPublisher.super.subscribe(s);
+	}
 	/* 
 	 * Change task executor for the next stage of the Stream
 	 * 

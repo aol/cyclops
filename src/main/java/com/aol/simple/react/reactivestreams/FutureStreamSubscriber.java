@@ -2,12 +2,7 @@ package com.aol.simple.react.reactivestreams;
 
 
 
-import java.util.Iterator;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 
 import lombok.Getter;
@@ -18,10 +13,6 @@ import org.reactivestreams.Subscription;
 import com.aol.simple.react.async.Continueable;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.Queue.ClosedQueueException;
-import com.aol.simple.react.collectors.lazy.EmptyCollector;
-import com.aol.simple.react.exceptions.SimpleReactProcessingException;
-import com.aol.simple.react.stream.StreamWrapper;
-import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.traits.Continuation;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
