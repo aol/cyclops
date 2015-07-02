@@ -2,7 +2,9 @@
 
 simple-react is a Reactive Streams implementation that also implements, and significantly enhances, the JDK 8 Stream interface, to provide powerful asynchronous Streams backed by your choice of wait-free (with or without mechanical sympathy) or blocking queues. simple-react reuses standard Java 8 functional interfaces and libraries such as CompletableFuture.
 
-![screen shot 2015-07-02 at 9 29 25 pm](https://cloud.githubusercontent.com/assets/9964792/8487076/73e4d4ec-2101-11e5-80e7-fc6eb24a2921.png)
+LazyFutureStream pulls 'chains' of asynchronous CompletableFuture tasks into existance.
+
+![screen shot 2015-07-02 at 9 43 51 pm](https://cloud.githubusercontent.com/assets/9964792/8487360/8565cd32-2103-11e5-8253-26813dae66f5.png)
 
 ## Build Status 
 
