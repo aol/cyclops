@@ -91,6 +91,19 @@ public class AnyM<T> implements Unwrapable{
 	 * Perform a flatMap operation where the result will be a flattened stream of Characters
 	 * from the CharSequence returned by the supplied function.
 	 * 
+	 * <pre>
+	 * {@code
+	 * List<Character> result = anyM("input.file")
+								.liftAndBindCharSequence(i->"hello world")
+								.asSequence()
+								.toList();
+		
+		assertThat(result,equalTo(Arrays.asList('h','e','l','l','o',' ','w','o','r','l','d')));
+	 * 
+	 * }</pre>
+	 * 
+	 * 
+	 * 
 	 * @param fn
 	 * @return
 	 */
@@ -126,6 +139,20 @@ public class AnyM<T> implements Unwrapable{
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
 	 * from the text loaded from the supplied URLs 
+	 * <pre>
+	 * {@code 
+	 * List<String> result = anyM("input.file")
+								.liftAndBindURL(getClass().getClassLoader()::getResource)
+								.asSequence()
+								.toList();
+		
+		assertThat(result,equalTo(Arrays.asList("hello","world")));
+	 * 
+	 * }
+	 * 
+	 * </pre>
+	 * 
+	 * 
 	 * @param fn
 	 * @return
 	 */
