@@ -82,15 +82,40 @@ public class AnyM<T> implements Unwrapable{
 		return monad.liftAndBind(fn).anyM();
 	
 	}
+	/**
+	 * Perform a flatMap operation where the result will be a flattened stream of Characters
+	 * from the CharSequence returned by the supplied function.
+	 * 
+	 * @param fn
+	 * @return
+	 */
 	public final  AnyM<Character> liftAndBindCharSequence(Function<? super T,CharSequence> fn) {
 		return monad.liftAndBind(fn).anyM();
 	}
+	/**
+	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
+	 * from the text loaded from the supplied files.
+	 * @param fn
+	 * @return
+	 */
 	public final  AnyM<String> liftAndBindFile(Function<? super T,File> fn) {
 		return monad.liftAndBind(fn).anyM();
 	}
+	/**
+	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
+	 * from the text loaded from the supplied URLs 
+	 * @param fn
+	 * @return
+	 */
 	public final  AnyM<String> liftAndBindURL(Function<? super T, URL> fn) {
 		return monad.liftAndBind(fn).anyM();
 	}
+	/**
+	  *  Perform a flatMap operation where the result will be a flattened stream of Strings
+	 * from the text loaded from the supplied BufferedReaders
+	 * @param fn
+	 * @return
+	 */
 	public final  AnyM<String> liftAndBindBufferedReader(Function<? super T,BufferedReader> fn) {
 		return monad.liftAndBind(fn).anyM();
 	}
@@ -142,6 +167,12 @@ public class AnyM<T> implements Unwrapable{
 		return monad.flatMap(in -> fn.apply(in).unwrap()).anyM();
 	}
 	
+	/**
+	 * Convenience method to allow method reference support, when flatMap return type is a Stream
+	 * 
+	 * @param fn
+	 * @return
+	 */
 	public final <R> AnyM<R> flatMapStream(Function<? super T,BaseStream<? extends R,?>> fn) {
 		return monad.flatMap(in -> fn.apply(in)).anyM();
 	}
@@ -170,6 +201,12 @@ public class AnyM<T> implements Unwrapable{
 	public final <R> AnyM<R> flatMapCollection(Function<? super T,Collection<? extends R>> fn) {
 		return monad.flatMap(in -> fn.apply(in)).anyM();
 	}
+	/**
+	 * Convenience method to allow method reference support, when flatMap return type is a Optional
+	 * 
+	 * @param fn
+	 * @return
+	 */
 	public final <R> AnyM<R> flatMapOptional(Function<? super T,Optional<? extends R>> fn) {
 		return monad.flatMap(in -> fn.apply(in)).anyM();
 	}
@@ -188,11 +225,12 @@ public class AnyM<T> implements Unwrapable{
 	
 	/**
 	 * Sequence the contents of a Monad.  e.g.
-	 * Turn an <pre>{@code Optional<List<Integer>>  into Stream<Integer> }</pre>
+	 * Turn an <pre>
+	 * 	{@code Optional<List<Integer>>  into Stream<Integer> }</pre>
 	 * 
 	 * <pre>{@code
 	 * List<Integer> list = anyM(Optional.of(Arrays.asList(1,2,3,4,5,6)))
-											.traversable(c->c.stream())
+											.<Integer>toSequence(c->c.stream())
 											.collect(Collectors.toList());
 		
 		
@@ -201,7 +239,7 @@ public class AnyM<T> implements Unwrapable{
 	 * 
 	 * }</pre>
 	 * 
-	 * @return A Monad that wraps a Stream
+	 * @return A Sequence that wraps a Stream
 	 */
 	public final <NT> SequenceM<NT> toSequence(Function<T,Stream<NT>> fn){
 		return monad.flatMapToStream((Function)fn)
@@ -209,15 +247,15 @@ public class AnyM<T> implements Unwrapable{
 	}
 	/**
 	 *  <pre>{@code Optional<List<Integer>>  into Stream<Integer> }</pre>
-	 * Less type safe equivalent, but may be more accessible equivalent to  
+	 * Less type safe equivalent, but may be more accessible than toSequence(fn) i.e. 
 	 * <pre>
 	 * {@code 
-	 *    sequence(Function<T,Stream<NT>> fn)
+	 *    toSequence(Function<T,Stream<NT>> fn)
 	 *   }
 	 *   </pre>
 	 *  <pre>{@code
 	 * List<Integer> list = anyM(Optional.of(Arrays.asList(1,2,3,4,5,6)))
-											.traversable()
+											.<Integer>toSequence()
 											.collect(Collectors.toList());
 		
 		
@@ -225,7 +263,7 @@ public class AnyM<T> implements Unwrapable{
 	 * 
 	 * }</pre>
 	
-	 * @return A Monad that wraps a Stream
+	 * @return A Sequence that wraps a Stream
 	 */
 	public final <T> SequenceM<T> toSequence(){
 		return monad.streamedMonad().sequence();
@@ -241,51 +279,6 @@ public class AnyM<T> implements Unwrapable{
 		return monad.sequence();
 		
 	}
-	
-	/**
-	 * Create a duck typed Monad wrapper. Using AnyM we focus only on the underlying type
-	 * e.g. instead of 
-	 * <pre>
-	 * {@code 
-	 *  Monad<Stream<Integer>,Integer> stream;
-	 * 
-	 * we can write
-	 * 
-	 *   AnyM<Integer> stream;
-	 * }</pre>
-	 *  
-	 * The wrapped Monaad should have equivalent methods for
-	 * 
-	 * <pre>
-	 * {@code 
-	 * map(F f)
-	 * 
-	 * flatMap(F<x,MONAD> fm)
-	 * 
-	 * and optionally 
-	 * 
-	 * filter(P p)
-	 * }
-	 * </pre>
-	 * 
-	 * A Comprehender instance can be created and registered for new Monad Types. Cyclops will attempt
-	 * to manage any Monad type (via the InvokeDynamicComprehender) althouh behaviour is best guaranteed with
-	 * customised Comprehenders.
-	 * 
-	 * Where F is a Functional Interface of any type that takes a single parameter and returns
-	 * a result.	 
-	 * Where P is a Functional Interface of any type that takes a single parameter and returns
-	 * a boolean
-	 * 
-	 *  flatMap operations on the duck typed Monad can return any Monad type
-	 *  
-	 * 
-	 * @param o to wrap
-	 * @return Duck typed Monad
-	 
-	public static <T> AnyM<T> of(Object o){
-		return AsAnyM.notTypeSafeAnyM(o);
-	}*/
 	
 	
 		
