@@ -208,7 +208,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 	 * @return Aggregated Monad
 	 */
 	default <R> Monad<MONAD,R> aggregate(Monad<?,?> next){
-		Stream concat = StreamUtils.concat(stream(),next.stream() );
+		Stream concat = StreamUtils.concat(createLazySeq().stream(),next.createLazySeq().stream() );
 		
 		return (Monad)withMonad(new ComprehenderSelector().selectComprehender(
 				unwrap()).of(monad(concat)

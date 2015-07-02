@@ -23,6 +23,6 @@ public class MonadWrapper<MONAD,T> implements Monad<MONAD,T>, Decomposable{
 	}
 	@Override
 	public <X> SequenceM<X>  sequence(){
-		return new  SequenceM<X>((Monad)this);	
+		return new  SequenceM(this.createLazySeq());	
 	}
 }

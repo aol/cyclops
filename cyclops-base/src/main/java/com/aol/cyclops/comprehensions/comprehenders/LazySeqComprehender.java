@@ -1,5 +1,7 @@
 package com.aol.cyclops.comprehensions.comprehenders;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -35,7 +37,7 @@ public class LazySeqComprehender implements Comprehender<LazySeq> {
 	public LazySeq flatMap(LazySeq t, Function fn) {
 		return t.flatMap(fn);
 	}
-
+	
 	@Override
 	public LazySeq of(Object o) {
 		return LazySeq.of(o);
@@ -52,6 +54,7 @@ public class LazySeqComprehender implements Comprehender<LazySeq> {
 	}
 	static LazySeq unwrapOtherMonadTypes(Comprehender<LazySeq> comp,Object apply){
 
+		
 		if(apply instanceof LazySeq)
 			return (LazySeq)apply;
 		

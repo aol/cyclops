@@ -31,7 +31,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @param c Predicate to check if all match
 	 */
 	default  void  allMatch(Predicate<T> c) {
-		stream().allMatch(c);
+		createLazySeq().allMatch(c);
 	}
 	/**
 	 * True if a single element matches when Monad converted to a Stream
@@ -39,7 +39,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @param c Predicate to check if any match
 	 */
 	default  void  anyMatch(Predicate<T> c) {
-		stream().anyMatch(c);
+		createLazySeq().anyMatch(c);
 	}
 	/**
 	 * @return First matching element in sequential order
@@ -48,7 +48,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * 
 	 */
 	default  Optional<T>  findFirst() {
-		return stream().findFirst();
+		return createLazySeq().stream().findFirst();
 	}
 	/**
 	 * @return first matching element,  but order is not guaranteed
@@ -56,7 +56,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * (non-deterministic) 
 	 */
 	default  Optional<T>  findAny() {
-		return stream().findAny();
+		return createLazySeq().stream().findAny();
 	}
 	
 	/**
@@ -67,7 +67,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return Reduce result
 	 */
 	default  <R> R mapReduce(Monoid<R> reducer){
-		return reducer.mapReduce(stream());
+		return reducer.mapReduce(createLazySeq().stream());
 	}
 	/**
 	 *  Attempt to map this Monad to the same type as the supplied Monoid, using supplied function
@@ -78,7 +78,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return Reduce result
 	 */
 	default  <R> R mapReduce(Function<T,R> mapper, Monoid<R> reducer){
-		return reducer.reduce(stream().map(mapper));
+		return reducer.reduce(createLazySeq().stream().map(mapper));
 	}
 	
 	/**
@@ -88,7 +88,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return Collected result
 	 */
 	default <R, A> R collect(Collector<T,A,R> collector){
-		return stream().collect(collector);
+		return createLazySeq().stream().collect(collector);
 	}
 	/**
 	 * Apply multiple collectors Simulataneously to this Monad
@@ -111,7 +111,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return  List of results
 	 */
 	default  List collect(Stream<Collector> collectors){
-		return StreamUtils.collect(stream(),collectors);
+		return StreamUtils.collect(createLazySeq().stream(),collectors);
 	}
 	
 	/**
@@ -123,7 +123,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return reduced values
 	 */
 	default  T reduce(Monoid<T> reducer){
-		return reducer.reduce(stream());
+		return reducer.reduce(createLazySeq().stream());
 	}
 	
 	/**
@@ -135,7 +135,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return
 	 */
 	default List<T> reduce(Stream<Monoid<T>> reducers){
-		return StreamUtils.reduce(stream(), reducers);
+		return StreamUtils.reduce(createLazySeq().stream(), reducers);
 	}
 	/**
      * Reduce with multiple reducers in parallel
@@ -146,7 +146,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return
 	 */
 	default List<T> reduce(Iterable<Monoid<T>> reducers){
-		return StreamUtils.reduce(stream(), reducers);
+		return StreamUtils.reduce(createLazySeq().stream(), reducers);
 	}
 	
 	/**
@@ -166,7 +166,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return Reduce result
 	 */
 	default <T> T foldLeftMapToType(Monoid<T> reducer){
-		return reducer.mapReduce(stream());
+		return reducer.mapReduce(createLazySeq().stream());
 	}
 	/**
 	 * 
@@ -175,7 +175,8 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return Reduced result
 	 */
 	default T foldRight(Monoid<T> reducer){
-		return reducer.reduce(StreamUtils.reverse(stream()));
+		
+		return reducer.reduce(StreamUtils.reverse(createLazySeq().stream()));
 	}
 	/**
 	 *  Attempt to map this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
@@ -185,31 +186,31 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return Reduce result
 	 */
 	default <T> T foldRightMapToType(Monoid<T> reducer){
-		return reducer.mapReduce(StreamUtils.reverse(stream()));
+		return reducer.mapReduce(StreamUtils.reverse(createLazySeq().stream()));
 	}
 	/**
 	 * @return Underlying monad converted to a Streamable instance
 	 */
 	default Streamable<T> toStreamable(){
-		return  AsStreamable.asStreamable(stream());
+		return  AsStreamable.asStreamable(createLazySeq());
 	}
 	/**
 	 * @return This monad converted to a set
 	 */
 	default Set<T> toSet(){
-		return (Set)stream().collect(Collectors.toSet());
+		return (Set)createLazySeq().stream().collect(Collectors.toSet());
 	}
 	/**
 	 * @return this monad converted to a list
 	 */
 	default List<T> toList(){
-		return (List)stream().collect(Collectors.toList());
+		return (List)createLazySeq().stream().collect(Collectors.toList());
 	}
 	/**
 	 * @return  calls to stream() but more flexible on type for inferencing purposes.
 	 */
 	default <T> Stream<T> toStream(){
-		return (Stream)stream();
+		return (Stream)createLazySeq();
 	}
 	/**
 	 * Unwrap this Monad into a Stream.
@@ -226,6 +227,15 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 				stream).executeflatMap(stream, i-> unwrap())).flatMap(Function.identity()).unwrap();
 		
 	}
+	default LazySeq<T> createLazySeq(){
+		 if(unwrap() instanceof LazySeq)
+			return (LazySeq)unwrap();
+		if(unwrap() instanceof Iterable)
+			return LazySeq.of((Iterable)unwrap());
+		
+		return lazySeq();
+			
+	}
 	/**
 	 * Convert to a Stream with the values repeated specified times
 	 * 
@@ -234,7 +244,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 */
 	default Monad<Stream<T>,T> cycle(int times){
 		
-		return monad(StreamUtils.cycle(times,AsStreamable.asStreamable(stream())));
+		return monad(StreamUtils.cycle(times,AsStreamable.asStreamable(createLazySeq())));
 		
 	}
 	
@@ -253,7 +263,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return Stream with reduced values repeated
 	 */
 	default Monad<Stream<T>,T> cycle(Monoid<T> m,int times){
-		return monad(StreamUtils.cycle(times,AsStreamable.asStreamable(m.reduce(stream()))));
+		return monad(StreamUtils.cycle(times,AsStreamable.asStreamable(m.reduce(createLazySeq().stream()))));
 	}
 	
 	
@@ -290,7 +300,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return Repeating Stream
 	 */
 	default  Monad<Stream<T>,T> cycleWhile(Predicate<? super T> predicate){
-		return monad(LazySeq.of(StreamUtils.cycle(stream()).iterator()).takeWhile(predicate).stream());
+		return monad(LazySeq.of(StreamUtils.cycle(createLazySeq().stream()).iterator()).takeWhile(predicate).stream());
 	}
 	/**
 	 * Repeat in a Stream until specified predicate holds
@@ -299,7 +309,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return Repeating Stream
 	 */
 	default  Monad<Stream<T>,T> cycleUntil(Predicate<? super T> predicate){
-		return monad(LazySeq.of(StreamUtils.cycle(stream()).iterator()).takeWhile(predicate.negate()).stream());
+		return monad(LazySeq.of(StreamUtils.cycle(createLazySeq().stream()).iterator()).takeWhile(predicate.negate()).stream());
 	}
 	/**
 	 * Generic zip function. E.g. Zipping a Stream and an Optional
@@ -315,7 +325,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return Stream zipping two Monads
 	 */
 	default <MONAD2,S,R> Monad<Stream<R>,R> zip(Monad<MONAD2,? extends S> second, BiFunction<? super T, ? super S, ? extends R> zipper){
-		return monad((Stream)LazySeq.of(stream().iterator()).zip(LazySeq.of(second.stream().iterator()), zipper).stream());
+		return monad((Stream)LazySeq.of(createLazySeq().iterator()).zip(LazySeq.of(second.createLazySeq().iterator()), zipper).stream());
 	}
 	
 	/**
@@ -333,7 +343,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return This monad zipped with a Stream
 	 */
 	default <S,R> Monad<Stream<R>,R> zip(Stream<? extends S> second, BiFunction<? super T, ? super S, ? extends R> zipper){
-		return monad((Stream)LazySeq.of(stream().iterator()).zip(LazySeq.of(second.iterator()), zipper).stream());
+		return monad((Stream)LazySeq.of(createLazySeq().iterator()).zip(LazySeq.of(second.iterator()), zipper).stream());
 	}
 	/**
 	 * Create a sliding view over this monad's contents
@@ -342,7 +352,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return Stream with sliding view over monad
 	 */
 	default Monad<Stream<List<T>>,List<T>> sliding(int windowSize){
-		return monad((Stream)LazySeq.of(stream().iterator()).sliding(windowSize).stream());
+		return monad(createLazySeq().sliding(windowSize).stream());
 	}
 	
 	/**
@@ -364,7 +374,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return Stream with elements grouped by size
 	 */
 	default Monad<Stream<List<T>>,List<T>> grouped(int groupSize){
-		return monad(LazySeq.of(stream().iterator()).grouped(groupSize).stream());
+		return monad(LazySeq.of(createLazySeq().iterator()).grouped(groupSize).stream());
 	}
 	/**
 	 * 
@@ -376,7 +386,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return True if Monad starts with Iterable sequence of data
 	 */
 	default boolean startsWith(Iterable<T> iterable){
-		return LazySeq.of(stream().iterator()).startsWith(iterable);
+		return LazySeq.of(createLazySeq().iterator()).startsWith(iterable);
 		
 	}
 	/**
@@ -386,7 +396,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return True if Monad starts with Iterators sequence of data
 	 */
 	default boolean startsWith(Iterator<T> iterator){
-		return LazySeq.of(stream().iterator()).startsWith(iterator);
+		return LazySeq.of(createLazySeq().iterator()).startsWith(iterator);
 		
 	}
 	
@@ -402,7 +412,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 		}</pre>
 	 */
 	default Monad<Stream<T>,T> distinct(){
-		return monad(LazySeq.of(stream().iterator()).distinct().stream());
+		return monad(LazySeq.of(createLazySeq().iterator()).distinct().stream());
 	}
 	/**
 	 * Scan left using supplied Monoid
@@ -417,7 +427,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return
 	 */
 	default Monad<Stream<T>,T> scanLeft(Monoid<T> monoid){
-		return monad(LazySeq.of(stream().iterator()).scan(monoid.zero(), monoid.reducer()).stream());
+		return monad(LazySeq.of(createLazySeq().iterator()).scan(monoid.zero(), monoid.reducer()).stream());
 	}
 	
 	/**
@@ -435,7 +445,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * 
 	 */
 	default Monad<Stream<T>,T> sorted(){
-		return monad(stream().sorted());
+		return monad(createLazySeq().sorted());
 	}
 	/**
 	 *	 
@@ -455,7 +465,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return Sorted Monad
 	 */
 	default Monad<Stream<T>,T> sorted(Comparator<? super T > c){
-		return monad(stream().sorted(c));   
+		return monad(createLazySeq().sorted(c));   
 	}
 	/**
 	 * <pre>{@code assertThat(monad(Stream.of(4,3,6,7)).skip(2).toList(),equalTo(Arrays.asList(6,7))); }</pre>
@@ -466,7 +476,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return Monad converted to Stream with specified number of elements skipped
 	 */
 	default Monad<Stream<T>,T> skip(int num){
-		return monad(stream()
+		return monad(createLazySeq().stream()
 					.skip(num));
 	}
 	/**
@@ -481,7 +491,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return Monad converted to Stream with elements skipped while predicate holds
 	 */
 	default Monad<Stream<T>,T> skipWhile(Predicate<? super T> p){
-		return monad(LazySeq.of(stream().iterator())
+		return monad(LazySeq.of(createLazySeq().iterator())
 				.dropWhile(p)
 				.stream());
 	}
@@ -496,7 +506,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return Monad converted to Stream with elements skipped until predicate holds
 	 */
 	default Monad<Stream<T>,T> skipUntil(Predicate<? super T> p){
-		return monad(LazySeq.of(stream().iterator())
+		return monad(LazySeq.of(createLazySeq().iterator())
 				.dropWhile(p.negate())
 				.stream());
 	}
@@ -509,7 +519,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return Monad converted to Stream with elements up to num
 	 */
 	default Monad<Stream<T>,T> limit(int num){
-		return monad(stream()
+		return monad(createLazySeq()
 				.limit(num));
 	}
 	/**
@@ -524,7 +534,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return Monad converted to Stream with limited elements
 	 */
 	default Monad<Stream<T>,T> limitWhile(Predicate<? super T> p){
-		return monad(LazySeq.of(stream().iterator())
+		return monad(LazySeq.of(createLazySeq().iterator())
 					.takeWhile(p)
 					.stream());
 	}
@@ -541,7 +551,7 @@ public interface StreamBasedFunctions<MONAD,T> extends Streamable<T>  {
 	 * @return Monad converted to Stream with limited elements
 	 */
 	default Monad<Stream<T>,T> limitUntil(Predicate<? super T> p){
-		return monad(LazySeq.of(stream().iterator())
+		return monad(LazySeq.of(createLazySeq().iterator())
 					.takeWhile(p.negate()).stream());
 	}
 	/**
