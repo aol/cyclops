@@ -15,8 +15,10 @@ import java.util.stream.Stream;
 
 
 
+
 import org.junit.Test;
 
+import com.aol.cyclops.lambda.monads.SequenceM.HeadAndTail;
 import com.aol.cyclops.streams.StreamUtils;
 
 public class HeadTailTest {
@@ -25,11 +27,12 @@ public class HeadTailTest {
 	public void headTailReplay(){
 	
 		SequenceM<String> helloWorld = anyM("hello","world","last").toSequence();
-		String head = helloWorld.head();
-		assertThat(head,equalTo("hello"));
+		HeadAndTail<String> headAndTail = helloWorld.headAndTail();
+		 String head = headAndTail.head();
+		 assertThat(head,equalTo("hello"));
 		
-		SequenceM<String> tail = helloWorld.tail();
-		assertThat(tail.head(),equalTo("world"));
+		SequenceM<String> tail =  headAndTail.tail();
+		assertThat(tail.headAndTail().head(),equalTo("world"));
 		
 	}
 }
