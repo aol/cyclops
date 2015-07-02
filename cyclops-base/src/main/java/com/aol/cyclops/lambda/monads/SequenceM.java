@@ -260,6 +260,7 @@ public class SequenceM<T> implements Unwrapable {
 		return monad(monad.scan(monoid.zero(), monoid.reducer()).stream());
 	}
 
+	
 	/**
 	 * @return Monad converted to Stream via stream() and sorted - to access
 	 *         nested collections in non-Stream monads as a stream use

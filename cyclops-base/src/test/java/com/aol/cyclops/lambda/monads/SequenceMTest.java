@@ -8,12 +8,14 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Test;
 
+import com.aol.cyclops.streams.StreamUtils;
 import com.nurkiewicz.lazyseq.LazySeq;
 
 public class SequenceMTest {
@@ -39,6 +41,14 @@ public class SequenceMTest {
 				  				.peek(System.out::println)
 				  				.collect(Collectors.toList());
 		assertThat(Arrays.asList(2,6),equalTo(list));
+	}
+	@Test
+	public void headAndTailTest(){
+		Stream<String> s = Stream.of("hello","world");
+		Iterator<String> it = s.iterator();
+		String head = it.next();
+		Stream<String> tail = StreamUtils.stream(it);
+		tail.forEach(System.out::println);
 	}
 	@Test
 	public void testFlatMap() {
