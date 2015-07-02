@@ -1,8 +1,14 @@
 package com.aol.cyclops.lambda.monads;
 
+import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -679,6 +685,17 @@ public class SequenceM<T> implements Unwrapable {
 	 * Perform a flatMap operation where the result will be a flattened stream of Characters
 	 * from the CharSequence returned by the supplied function.
 	 * 
+	 * <pre>
+	 * {@code 
+	 *   List<Character> result = anyM("input.file")
+									.asSequence()
+									.liftAndBindCharSequence(i->"hello world")
+									.toList();
+		
+		assertThat(result,equalTo(Arrays.asList('h','e','l','l','o',' ','w','o','r','l','d')));
+	 * }
+	 * </pre>
+	 * 
 	 * @param fn
 	 * @return
 	 */
@@ -688,6 +705,24 @@ public class SequenceM<T> implements Unwrapable {
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
 	 * from the text loaded from the supplied files.
+	 * 
+	 * <pre>
+	 * {@code
+	 * 
+		List<String> result = anyM("input.file")
+								.asSequence()
+								.map(getClass().getClassLoader()::getResource)
+								.peek(System.out::println)
+								.map(URL::getFile)
+								.liftAndBindFile(File::new)
+								.toList();
+		
+		assertThat(result,equalTo(Arrays.asList("hello","world")));
+	 * 
+	 * }
+	 * 
+	 * </pre>
+	 * 
 	 * @param fn
 	 * @return
 	 */
@@ -697,6 +732,19 @@ public class SequenceM<T> implements Unwrapable {
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
 	 * from the text loaded from the supplied URLs 
+	 * 
+	 * <pre>
+	 * {@code 
+	 * List<String> result = anyM("input.file")
+								.asSequence()
+								.liftAndBindURL(getClass().getClassLoader()::getResource)
+								.toList();
+		
+		assertThat(result,equalTo(Arrays.asList("hello","world")));
+	 * 
+	 * }
+	 * </pre>
+	 * 
 	 * @param fn
 	 * @return
 	 */
@@ -706,6 +754,20 @@ public class SequenceM<T> implements Unwrapable {
 	/**
 	  *  Perform a flatMap operation where the result will be a flattened stream of Strings
 	 * from the text loaded from the supplied BufferedReaders
+	 * 
+	 * <pre>
+	 * List<String> result = anyM("input.file")
+								.asSequence()
+								.map(getClass().getClassLoader()::getResourceAsStream)
+								.map(InputStreamReader::new)
+								.liftAndBindBufferedReader(BufferedReader::new)
+								.toList();
+		
+		assertThat(result,equalTo(Arrays.asList("hello","world")));
+	 * 
+	 * </pre>
+	 * 
+	 * 
 	 * @param fn
 	 * @return
 	 */

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
@@ -162,6 +163,22 @@ public class AnyM<T> implements Unwrapable{
 	/**
 	  *  Perform a flatMap operation where the result will be a flattened stream of Strings
 	 * from the text loaded from the supplied BufferedReaders
+	 * 
+	 * <pre>
+	 * {@code
+	 * List<String> result = anyM("input.file")
+								.map(getClass().getClassLoader()::getResourceAsStream)
+								.map(InputStreamReader::new)
+								.liftAndBindBufferedReader(BufferedReader::new)
+								.asSequence()
+								.toList();
+		
+		assertThat(result,equalTo(Arrays.asList("hello","world")));
+	 * 
+	 * }
+	 * 
+	 * 
+	 * 
 	 * @param fn
 	 * @return
 	 */

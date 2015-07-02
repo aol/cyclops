@@ -14,17 +14,17 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-public class LiftAndBindTest {
+public class LiftAndBindSequenceMTest {
 	@Test
 	public void testLiftAndBindFile(){
 		
 		
 		List<String> result = anyM("input.file")
+								.asSequence()
 								.map(getClass().getClassLoader()::getResource)
 								.peek(System.out::println)
 								.map(URL::getFile)
 								.liftAndBindFile(File::new)
-								.asSequence()
 								.toList();
 		
 		assertThat(result,equalTo(Arrays.asList("hello","world")));
@@ -34,8 +34,8 @@ public class LiftAndBindTest {
 		
 		
 		List<String> result = anyM("input.file")
-								.liftAndBindURL(getClass().getClassLoader()::getResource)
 								.asSequence()
+								.liftAndBindURL(getClass().getClassLoader()::getResource)
 								.toList();
 		
 		assertThat(result,equalTo(Arrays.asList("hello","world")));
@@ -45,9 +45,9 @@ public class LiftAndBindTest {
 		
 		
 		List<Character> result = anyM("input.file")
-								.liftAndBindCharSequence(i->"hello world")
-								.asSequence()
-								.toList();
+									.asSequence()
+									.liftAndBindCharSequence(i->"hello world")
+									.toList();
 		
 		assertThat(result,equalTo(Arrays.asList('h','e','l','l','o',' ','w','o','r','l','d')));
 	}
@@ -56,10 +56,10 @@ public class LiftAndBindTest {
 		
 		
 		List<String> result = anyM("input.file")
+								.asSequence()
 								.map(getClass().getClassLoader()::getResourceAsStream)
 								.map(InputStreamReader::new)
 								.liftAndBindBufferedReader(BufferedReader::new)
-								.asSequence()
 								.toList();
 		
 		assertThat(result,equalTo(Arrays.asList("hello","world")));
