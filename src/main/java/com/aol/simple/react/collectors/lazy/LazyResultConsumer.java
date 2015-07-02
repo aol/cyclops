@@ -34,6 +34,7 @@ public interface LazyResultConsumer<T> extends Consumer<CompletableFuture<T>>{
 	public Collection<CompletableFuture<T>> getAllResults();
 
 	public MaxActive getMaxActive();
+	
 
 	public ConfigurableStream<T> getBlocking();
 }

@@ -68,7 +68,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		this.error =  new ConsumerHolder(a->{});
 		this.errorHandler = Optional.of((e) -> { error.forward.accept(e); log.error(e.getMessage(), e);});
 		this.eager = false;
-		this.waitStrategy = new LimitingMonitor();
+		this.waitStrategy = new LimitingMonitor(lazyReact.getMaxActive());
 		this.lazyCollector = new BatchingCollector<>(this);
 		this.queueFactory = QueueFactories.unboundedNonBlockingQueue();
 		this.subscription = new Subscription();

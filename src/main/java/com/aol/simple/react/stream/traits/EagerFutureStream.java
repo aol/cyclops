@@ -84,7 +84,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * Change the Retry Executor used in this stream for subsequent stages
 	 * <pre>
 	 * {@code
-	 * List<String> result = new SimpleReact().react(() -> 1)
+	 * List<String> result = new EagerReact().react(() -> 1)
 				.withRetrier(executor)
 				.capture(e -> error = e)
 				.retry(serviceMock).block();
@@ -1778,7 +1778,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		return EagerReact
 				.builder()
 				.async(false)
-				.executor(new ForkJoinPool(1))
+				.executor(Executors.newFixedThreadPool(1))
 				.retrier(
 						RetryBuilder.getDefaultInstance().withScheduler(
 								Executors.newScheduledThreadPool(1))).build();

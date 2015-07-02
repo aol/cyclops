@@ -37,8 +37,11 @@ import org.jooq.lambda.tuple.Tuple2;
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Continueable;
 import com.aol.simple.react.async.Queue;
+import com.aol.simple.react.async.QueueFactories;
 import com.aol.simple.react.async.QueueFactory;
+import com.aol.simple.react.capacity.monitor.LimitingMonitor;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
+import com.aol.simple.react.config.MaxActive;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.reactivestreams.FutureStreamAsyncPublisher;
 import com.aol.simple.react.stream.CloseableIterator;
@@ -56,18 +59,73 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  * @author johnmcclean
  *
  */
+
 public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, LazyToQueue<U>, FutureStreamAsyncPublisher<U> {
 
+	/* 
+	 * Change task executor for the next stage of the Stream
+	 * 
+	 * <pre>
+	 * {@code
+	 *  LazyFutureStream.of(1,2,3,4)
+	 *  					.map(this::loadFromDb)
+	 *  					.withTaskExecutor(parallelBuilder().getExecutor())
+	 *  					.map(this::processOnDifferentExecutor)
+	 *  					.toList();
+	 * }
+	 * </pre>
+	 * 
+	 *	@param e New executor to use
+	 *	@return Stream ready for next stage definition
+	 * @see com.aol.simple.react.stream.traits.ConfigurableStream#withTaskExecutor(java.util.concurrent.Executor)
+	 */
 	LazyFutureStream<U> withTaskExecutor(Executor e);
-
+	/* 
+	 * Change the Retry Executor used in this stream for subsequent stages
+	 * <pre>
+	 * {@code
+	 * List<String> result = new LazyReact().react(() -> 1)
+				.withRetrier(executor)
+				.capture(e -> error = e)
+				.retry(serviceMock).block();
+	 * 
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 *	@param retry Retry executor to use
+	 *	@return Stream 
+	 * @see com.aol.simple.react.stream.traits.ConfigurableStream#withRetrier(com.nurkiewicz.asyncretry.RetryExecutor)
+	 */
 	LazyFutureStream<U> withRetrier(RetryExecutor retry);
 
 	LazyFutureStream<U> withWaitStrategy(Consumer<CompletableFuture> c);
 
-	LazyFutureStream<U> withEager(boolean eager);
+	//LazyFutureStream<U> withEager(boolean eager);
 
 	LazyFutureStream<U> withLazyCollector(LazyResultConsumer<U> lazy);
-
+	/* 
+	 * Change the QueueFactory type for the next phase of the Stream.
+	 * Default for EagerFutureStream is an unbounded blocking queue, but other types 
+	 * will work fine for a subset of the tasks (e.g. an unbonunded non-blocking queue).
+	 * 
+	 * <pre>
+	 * {@code
+	 * List<Collection<String>> collected = LazyFutureStream
+				.react(data)
+				.withQueueFactory(QueueFactories.boundedQueue(1))
+				.onePer(1, TimeUnit.SECONDS)
+				.batchByTime(10, TimeUnit.SECONDS)
+				.limit(15)
+				.toList();
+	 * }
+	 * </pre>
+	 *	@param queue Queue factory to use for subsequent stages
+	 *	@return Stream
+	 * @see com.aol.simple.react.stream.traits.ConfigurableStream#withQueueFactory(com.aol.simple.react.async.QueueFactory)
+     * @see com.aol.simple.react.stream.traits.LazyFutureStream#unboundedWaitFree()
+     * @see com.aol.simple.react.stream.traits.LazyFutureStream#boundedWaitFree(int size)
+	 */
 	LazyFutureStream<U> withQueueFactory(QueueFactory<U> queue);
 
 	LazyFutureStream<U> withErrorHandler(
@@ -76,6 +134,13 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	LazyFutureStream<U> withSubscription(Continueable sub);
 
 	LazyFutureStream<U> withLastActive(StreamWrapper streamWrapper);
+	/* 
+	 * Convert this stream into an async / sync stream
+	 * 
+	 *	@param async true if aysnc stream
+	 *	@return
+	 * @see com.aol.simple.react.stream.traits.ConfigurableStream#withAsync(boolean)
+	 */
 	LazyFutureStream<U> withAsync(boolean async);
 	
 	default void cancel()	{
@@ -137,6 +202,46 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 		return (LazyFutureStream<U>)FutureStream.super.async();
 	}
 	
+	/**
+	 * This is the default setting, internal queues are backed by a ConcurrentLinkedQueue
+	 * This operator will return the next stage to using this Queue type if it has been changed
+	 * 
+	 * @return LazyFutureStream backed by a ConcurrentLinkedQueue
+	 */ 
+	default LazyFutureStream<U> unboundedWaitFree(){
+		return this.withQueueFactory(QueueFactories.unboundedNonBlockingQueue());
+	}
+	/**
+	 * Use an Agrona ManyToOneConcurrentArrayQueue for the next operations (wait-free, mechanical sympathy).
+	 * Note Queued data will be somewhat limited by configured concurrency level, but that flatMap operations
+	 * can increase the amount of data to be buffered significantly.
+	 * 
+	 * @param size Buffer size
+	 * @return LazyFutureStream backed by an Agrona ManyToOneConcurrentArrayQueue
+	 */
+	default LazyFutureStream<U> boundedWaitFree(int size){
+		return this.withQueueFactory(QueueFactories.boundedNonBlockingQueue(size));
+	}
+	/**
+	 * Configure the max active concurrent tasks. The last set value wins, this can't be set per stage.
+	 * 
+	 * <pre>
+	 *    {@code
+	 *    	List<String> data = new LazyReact().react(urlFile)
+	 *    										.maxActive(100)
+	 *    										.flatMap(this::loadUrls)
+	 *    										.map(this::callUrls)
+	 *    										.block();
+	 *    }
+	 * </pre>
+	 * 
+	 * @param concurrentTasks Maximum number of active task chains
+	 * @return LazyFutureStream with new limits set
+	 */
+	default LazyFutureStream<U> maxActive(int concurrentTasks){
+		return this.withWaitStrategy(new LimitingMonitor(
+					new MaxActive(concurrentTasks, concurrentTasks)));
+	}
 	default <R> LazyFutureStream<R> thenSync(final Function<U, R> fn){
 		return (LazyFutureStream<R>)FutureStream.super.thenSync(fn);
 	}
@@ -291,12 +396,14 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 * elements of the Stream
 	 * 
 	 * e.g.
+	 * <pre>
 	 * <code>
 	 * 
 	 * LazyFutureStream.of(10,20,25,30,41,43).shard(ImmutableMap.of("even",new
-	 * Queue(),"odd",new Queue(),element-&gt; element%2==0? "even" : "odd");
+	 * 															Queue(),"odd",new Queue(),element-&gt; element%2==0? "even" : "odd");
 	 * 
 	 * </code>
+	 * </pre>
 	 * results in 2 Streams "even": 10,20,30 "odd" : 25,41,43
 	 * 
 	 * @param shards
@@ -1170,7 +1277,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 * @return LazyReact instance
 	 */
 	public static LazyReact parallelBuilder(int parallelism) {
-		return LazyReact.builder().executor(new ForkJoinPool(parallelism))
+		return LazyReact.builder().executor(Executors.newFixedThreadPool(parallelism))
 				.retrier(new RetryBuilder().parallelism(parallelism)).build();
 	}
 
@@ -1200,7 +1307,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 		return LazyReact
 				.builder()
 				.async(false)
-				.executor(new ForkJoinPool(1))
+				.executor(Executors.newFixedThreadPool(1))
 				.retrier(
 						RetryBuilder.getDefaultInstance().withScheduler(
 								Executors.newScheduledThreadPool(2))).build();
@@ -1299,7 +1406,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 			stream = ((FutureStream) stream).toQueue().stream(
 					((FutureStream) stream).getSubscription());
 		LazyReact react =new LazyReact(ThreadPools.getSequential(), RetryBuilder.getDefaultInstance()
-						.withScheduler(ThreadPools.getSequentialRetry()),false);
+						.withScheduler(ThreadPools.getSequentialRetry()),false, new MaxActive(1,1));
 		return new LazyFutureStreamImpl<T>(react,
 				stream.map(CompletableFuture::completedFuture));
 	}

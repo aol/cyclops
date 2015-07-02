@@ -254,7 +254,8 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	default FutureStream<Collection<U>> batchBySize(int size, Supplier<Collection<U>> supplier) {
 		Queue queue = toQueue();
 		Function<Supplier<U>, Supplier<Collection<U>>> fn = s -> {
-			return () -> {Collection<U> list = supplier.get();
+			return () -> {
+				Collection<U> list = supplier.get();
 			try {
 				for (int i = 0; i < size; i++) {
 					

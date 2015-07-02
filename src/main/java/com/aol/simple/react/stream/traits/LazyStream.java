@@ -46,8 +46,6 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	default void run(Executor e) {
 		SimpleReact reactor  = SequentialElasticPools.simpleReact.nextReactor();
 		reactor.react(() -> run(new NonCollector())).peek(n-> SequentialElasticPools.simpleReact.populate(reactor));
-	
-		
 
 	}
 
