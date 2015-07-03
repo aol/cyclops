@@ -1,5 +1,7 @@
 package com.aol.cyclops.streams;
 
+import java.util.stream.Stream;
+
 import lombok.AllArgsConstructor;
 
 import com.aol.cyclops.lambda.monads.SequenceM;
@@ -15,5 +17,9 @@ public class HeadAndTail<T> {
 
 	public SequenceM<T> tail() {
 		return tail;
+	}
+	
+	public Stream<T> tailStream(){
+		return tail().stream();
 	}
 }

@@ -9,14 +9,25 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Spliterator;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntFunction;
+import java.util.function.ToLongFunction;
 import java.util.stream.BaseStream;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
@@ -434,7 +445,7 @@ public class SequenceM<T> implements Unwrapable {
 	/**
 	 * @return this monad converted to a Parallel Stream, via streamedMonad() wraped in Monad interface
 	 */
-	public final <NT> SequenceM<NT> parallel(){
+	public final SequenceM<T> parallel(){
 		return (SequenceM)monad(monad.parallel());
 	}
 	
@@ -454,10 +465,10 @@ public class SequenceM<T> implements Unwrapable {
 	public final  boolean  anyMatch(Predicate<? super T> c) {
 		return monad.anyMatch(c);
 	}
-	public  boolean xMatch(int num, Predicate<T> c) {
+	public  boolean xMatch(int num, Predicate<? super T> c) {
 		return monad.map(t -> c.test(t)) .collect(Collectors.counting()) == num;
 	}
-	public final  boolean  noneMatch(Predicate<T> c) {
+	public final  boolean  noneMatch(Predicate<? super T> c) {
 		return monad.allMatch(c.negate());
 	}
 	public final  String mkString(String sep){
@@ -547,6 +558,11 @@ public class SequenceM<T> implements Unwrapable {
 	public final <R, A> R collect(Collector<? super T, A, R> collector){
 		return monad.collect(collector);
 	}
+	public final  <R> R collect(Supplier<R> supplier,
+            BiConsumer<R, ? super T> accumulator,
+            BiConsumer<R, R> combiner){
+		return monad.collect(supplier, accumulator, combiner);
+	}
 	/**
 	 * Apply multiple collectors Simulataneously to this Monad
 	 * 
@@ -579,9 +595,20 @@ public class SequenceM<T> implements Unwrapable {
 	 * @return reduced values
 	 */
 	public final  T reduce(Monoid<T> reducer){
+		
 		return reducer.reduce(monad);
 	}
-	
+	public final Optional<T> reduce(BinaryOperator<T> accumulator){
+		 return monad.reduce(accumulator);
+	 } 
+	 public final T reduce(T identity, BinaryOperator<T> accumulator){
+		 return monad.reduce(identity, accumulator);
+	 }
+	 public final <U> U reduce(U identity,
+             BiFunction<U, ? super T, U> accumulator,
+             BinaryOperator<U> combiner){
+		 return monad.reduce(identity, accumulator, combiner);
+	 }
 	/**
      * Reduce with multiple reducers in parallel
 	 * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was one value
@@ -864,5 +891,74 @@ public class SequenceM<T> implements Unwrapable {
 	public void forEach(Consumer<? super T> action) {
 		monad.forEach(action);
 		
+	}
+	
+	public Iterator<T> iterator() {
+		return monad.iterator();
+	}
+	
+	public Spliterator<T> spliterator() {
+		return monad.spliterator();
+	}
+	
+	public boolean isParallel() {
+		return monad.isParallel();
+	}
+	
+	public SequenceM<T> sequential() {
+		return monad(monad.sequential());
+	}
+	
+	
+	public SequenceM<T> unordered() {
+		return monad(monad.unordered());
+	}
+	
+	
+	
+	
+	public IntStream mapToInt(ToIntFunction<? super T> mapper) {
+		return monad.mapToInt(mapper);
+	}
+	
+	public LongStream mapToLong(ToLongFunction<? super T> mapper) {
+		return monad.mapToLong(mapper);
+	}
+	
+	public DoubleStream mapToDouble(ToDoubleFunction<? super T> mapper) {
+		return monad.mapToDouble(mapper);
+	}
+	
+	public IntStream flatMapToInt(
+			Function<? super T, ? extends IntStream> mapper) {
+		return monad.flatMapToInt(mapper);
+	}
+	
+	public LongStream flatMapToLong(
+			Function<? super T, ? extends LongStream> mapper) {
+		return monad.flatMapToLong(mapper);
+	}
+	
+	public DoubleStream flatMapToDouble(
+			Function<? super T, ? extends DoubleStream> mapper) {
+		return monad.flatMapToDouble(mapper);
+	}
+
+	
+	public void forEachOrdered(Consumer<? super T> action) {
+		monad.forEachOrdered(action);
+		
+	}
+	
+	public Object[] toArray() {
+		return monad.toArray();
+	}
+	
+	public <A> A[] toArray(IntFunction<A[]> generator) {
+		return monad.toArray(generator);
+	}
+	
+	public long count() {
+		return monad.count();
 	}
 }
