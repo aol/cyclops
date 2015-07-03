@@ -47,10 +47,10 @@ Perform nested operations on Collections or Monads.
 
 ### Example 
 
-    Stream<Double> s = Do.with(asList(10.00,5.00,100.30))
-						.with(asList(2.0))
-						.and((Double d)->(Double e)->asList(e*d*10.0))
-						.yield((Double i)->(Double j)->(Double k) -> i*(1.0+j)*k);
+    Stream<Double> s = Do.add(asList(10.00,5.00,100.30))
+						.add(asList(2.0))
+						.with( d -> e ->asList(e*d*10.0))
+						.yield(i -> j -> k  -> i*(1.0+j)*k).unwrap();
 		
 	double total = s.collect(Collectors.summingDouble(t->t));
 
@@ -91,29 +91,38 @@ Features include
 		
 	}
 
-## Extensible Generic Monad Operations
+## Extensible Generic Monad Operations with AnyM and SequenceM
 
 ### Example
 
 flatMap (bind) across Stream and Optional types (null entries are removed)
 
-      List<Integer> list = As.<Stream<Integer>,List<Integer>>asMonad(Stream.of(Arrays.asList(1,3),null))
-				.bind(Optional::ofNullable)
-				.map(i->i.size())
-				.peek(System.out::println)
-				.toList();
+      List<Integer> list = anyM(Stream.of(Arrays.asList(1,3),null))
+									.flatMap(d->anyM(Optional.ofNullable(d)))
+									.map(i->i.size())
+									.peek(System.out::println)
+									.asSequence()
+									.toList();
+									
 		assertThat(Arrays.asList(2),equalTo(list));
 
 ### Example
 
 Lift a File to a Stream
 
+With a file "input.fil" that contains two lines
 
-		List<String> result = AsGenericMonad.<Stream<String>,String>asMonad(Stream.of("input.file"))
+hello
+world
+
+We can stream the contents like so...
+
+		List<String> result = anyM("input.file")
 								.map(getClass().getClassLoader()::getResource)
 								.peek(System.out::println)
 								.map(URL::getFile)
-								.<Stream<String>,String>liftAndbind(File::new)
+								.liftAndBindFile(File::new)
+								.asSequence()
 								.toList();
 		
 		assertThat(result,equalTo(Arrays.asList("hello","world")));
