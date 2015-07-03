@@ -123,6 +123,15 @@ We can stream the contents like so...
 								.toList();
 		
 		assertThat(result,equalTo(Arrays.asList("hello","world")));
+		
+For multiple files...
+
+		List<String> result = anyM("./input.file","./input2.file")
+								.liftAndBindFile(File::new)
+								.asSequence()
+								.toList();
+		
+		assertThat(result,equalTo(Arrays.asList("hello","world","hello2","world2")));
 
 ## Power Tuples 
 
