@@ -222,8 +222,7 @@ public class AnyM<T> implements Unwrapable{
 		return monad.aggregate(next.monad).anyM();
 	}
 	public void forEach(Consumer<? super T> action) {
-		monad.forEach(action);
-		
+		asSequence().forEach(action);	
 	}
 	
 	/**
@@ -335,8 +334,9 @@ public class AnyM<T> implements Unwrapable{
 	 * @return A Sequence that wraps a Stream
 	 */
 	public final <T> SequenceM<T> toSequence(){
-		return monad.lazySeqMonad().sequence();
+		return monad.streamedMonad().sequence();
 	}
+	
 	
 	/**
 	 * Wrap this Monad's contents as a Sequence without disaggreating it. .e.

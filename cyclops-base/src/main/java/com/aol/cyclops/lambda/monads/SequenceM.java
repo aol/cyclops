@@ -22,10 +22,13 @@ import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 
 import com.aol.cyclops.internal.AsGenericMonad;
+import com.aol.cyclops.internal.Monad;
+import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Streamable;
 import com.aol.cyclops.lambda.api.Unwrapable;
+import com.aol.cyclops.streams.HeadAndTail;
 import com.aol.cyclops.streams.StreamUtils;
 import com.nurkiewicz.lazyseq.LazySeq;
 
@@ -483,31 +486,16 @@ public class SequenceM<T> implements Unwrapable {
 	}
 	
 	
-	@AllArgsConstructor
-	static class HeadAndTail<T>{
-		private final T head;
-		private final SequenceM<T> tail;
-		
-		public T head(){
-			return head;
-		}
-		public SequenceM<T> tail(){
-			return tail;
-		}
-	}
+	
 	/**
 	 * 
 	 * @return
 	 */
 	public final  HeadAndTail<T> headAndTail(){
-		Iterator<T> it = monad.iterator();
-		return new HeadAndTail(it.next(),new SequenceM(StreamUtils.stream(it)));
+		return StreamUtils.headAndTail(monad);
 	}
 	public final  Optional<HeadAndTail<T>> headAndTailOptional(){
-		Iterator<T> it = monad.iterator();
-		if(it.hasNext())
-			return Optional.empty();
-		return Optional.of(new HeadAndTail(it.next(),new SequenceM(StreamUtils.stream(it))));
+		return StreamUtils.headAndTailOptional(monad);
 	}
 	
 	/**
@@ -729,10 +717,10 @@ public class SequenceM<T> implements Unwrapable {
 	 * @return
 	 */
 	public final <R> SequenceM<R> flatMap(Function<? super T,SequenceM<? extends R>> fn) {
-		return AsGenericMonad.<LazySeq<T>,T>asMonad(monad).bind(in -> fn.apply(in).unwrap()).sequence();
+		return AsGenericMonad.<Stream<T>,T>asMonad(monad).bind(in -> fn.apply(in).unwrap()).sequence();
 	}
 	public final <R> SequenceM<R> flatMapAnyM(Function<? super T,AnyM<? extends R>> fn) {
-		return AsGenericMonad.<LazySeq<T>,T>asMonad(monad).bind(in -> fn.apply(in).unwrap()).sequence();
+		return AsGenericMonad.<Stream<T>,T>asMonad(monad).bind(in -> fn.apply(in).unwrap()).sequence();
 	}
 	/**
 	 * Convenience method & performance optimisation
@@ -762,10 +750,13 @@ public class SequenceM<T> implements Unwrapable {
 		return AsGenericMonad.<Stream<T>,T>asMonad(monad).bind(in -> fn.apply(in)).sequence();
 	}
 	public final <R> SequenceM<R> flatMapStream(Function<? super T,BaseStream<? extends R,?>> fn) {
-		return AsGenericMonad.<Stream<T>,T>asMonad( monad).bind(in -> fn.apply(in)).sequence();
+		 Monad<Object,T> m = AsGenericMonad.asMonad(monad);
+		return m.flatMap(in -> fn.apply(in)).sequence();
 	}
 	public final <R> SequenceM<R> flatMapOptional(Function<? super T,Optional<? extends R>> fn) {
-		return AsGenericMonad.<Stream<T>,T>asMonad(monad).bind(in -> fn.apply(in)).sequence();
+		 Monad<Object,T> m = AsGenericMonad.asMonad(monad);
+		 return m.flatMap(in -> fn.apply(in)).sequence();
+	//	return AsGenericMonad.<Stream<T>,T>asMonad(monad).bind(in -> fn.apply(in)).sequence();
 	}
 	public final <R> SequenceM<R> flatMapCompletableFuture(Function<? super T,CompletableFuture<? extends R>> fn) {
 		return AsGenericMonad.<Stream<T>,T>asMonad(monad).bind(in -> fn.apply(in)).sequence();

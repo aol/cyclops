@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.BiConsumer;
@@ -18,12 +19,29 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Streamable;
+import com.aol.cyclops.lambda.monads.SequenceM;
 import com.nurkiewicz.lazyseq.LazySeq;
 
 public class StreamUtils{
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public final  static <T> HeadAndTail<T> headAndTail(Stream<T> stream){
+		Iterator<T> it = stream.iterator();
+		return new HeadAndTail(it.next(),AsAnyM.anyM(stream(it)).asSequence());
+	}
+	public final  static <T> Optional<HeadAndTail<T>> headAndTailOptional(Stream<T> stream){
+		Iterator<T> it = stream.iterator();
+		if(it.hasNext())
+			return Optional.empty();
+		return Optional.of(new HeadAndTail(it.next(),AsAnyM.anyM(stream(it)).asSequence()));
+	}
 	
 	/**
 	 * skip elements in Stream until Predicate holds true
