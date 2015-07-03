@@ -117,10 +117,7 @@ With a file "input.file" that contains two lines
 
 We can stream the contents like so...
 
-		List<String> result = anyM("input.file")
-								.map(getClass().getClassLoader()::getResource)
-								.peek(System.out::println)
-								.map(URL::getFile)
+		List<String> result = anyM("./input.file")
 								.liftAndBindFile(File::new)
 								.asSequence()
 								.toList();
