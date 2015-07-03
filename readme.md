@@ -98,7 +98,7 @@ Features include
 flatMap (bind) across Stream and Optional types (null entries are removed)
 
       List<Integer> list = anyM(Stream.of(Arrays.asList(1,3),null))
-									.flatMap(d->anyM(Optional.ofNullable(d)))
+									.flatMapOptional(d-> Optional.ofNullable(d))
 									.map(i->i.size())
 									.peek(System.out::println)
 									.asSequence()
@@ -110,10 +110,10 @@ flatMap (bind) across Stream and Optional types (null entries are removed)
 
 Lift a File to a Stream
 
-With a file "input.fil" that contains two lines
+With a file "input.file" that contains two lines 
 
-hello
-world
+* hello
+* world
 
 We can stream the contents like so...
 
