@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -14,9 +15,17 @@ import org.junit.Test;
 
 
 public class DoFiltersTest {
-	
+	static class Bean {
+		public Integer getNumber(){
+			return null;
+		}
+	}
+	public Bean getCount(){
+		return null;
+	}
 	@Test
 	public void do2(){
+		
 		Stream<Double> s = Do.add(asList(10.00,5.00,100.30))
 							.withCollection( d-> asList(2.0))
 							.filter(d-> e ->     (e*d)>10.00)
@@ -24,6 +33,10 @@ public class DoFiltersTest {
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(330.9));
+	}
+	private Object getPerson() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	@Test
 	public void do1(){

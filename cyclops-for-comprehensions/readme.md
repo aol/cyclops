@@ -14,8 +14,8 @@ Simplify deeply nested looping (over Collections, even  Streams, Optionals and m
 
 Two supported formats
 
-1. do nototation
-2. scala like syntax
+1. Type Do Notation via Do.add / with
+2. Untpyed Do Notation via UntypedDo.add  / with
 
 
 
@@ -23,7 +23,7 @@ Two supported formats
 
 	List<Integer> list= Arrays.asList(1,2,3);
 	
-	Stream<Integer> stream = Do.with(list)
+	Stream<Integer> stream = Do.add(list)
 								.yield((Integer i)-> i +2);
 				
 										
@@ -35,24 +35,24 @@ Yield, Filter and 'and' take curried functions
 
 (That is a chain of single input parameter functions)
 
-		Stream<Integer> stream = Do.with(asList(20,30))
-								   .and((Integer i)->asList(1,2,3))
-								   .yield((Integer i)-> (Integer j) -> i + j+2);
+		Stream<Integer> stream = Do.add(asList(20,30))
+								   .with( i->asList(1,2,3))
+								   .yield(i-> j -> i + j+2);
 
 Parameters are stack based, the parameter to the first function is an index into the first Collection or Monad, the parameter to the second function is an index into the second Collection or Monad and so on.
 
 The above code could be rewritten as 
 
-		Stream<Integer> stream = Do.with(asList(20,30))
-								   .and((Integer any)->asList(1,2,3))
-								   .yield((Integer x)-> (Integer y) -> x + y+2);
+		Stream<Integer> stream = Do.add(asList(20,30))
+								   .with(any->asList(1,2,3))
+								   .yield(x-> y -> x + y+2);
 
 And it would work in exactly the same way
 
 		List<Integer> list= Arrays.asList(1,2,3);
-		Stream<Integer> stream = Do.with(list)
-								.filter((Integer a) -> a>2)
-								.yield((Integer a)-> a +2);
+		Stream<Integer> stream = Do.add(list)
+								.filter(a -> a>2)
+								.yield(a-> a +2);
 				
 										
 		
@@ -76,15 +76,14 @@ We can iterate over them using Java 5 'foreach' syntax
 
 The equivalent for comprehension would be 
 
-     ForComprehensions.foreach1(c -> c.mapAs$1(list)
-                                	  .run( (Vars1<String> v) -> System.out.println(v.$1())
-                                	  
- or with Do Notation
- 	
-    Do.with(list)
-      .yield( (String element) -> {System.out.println(element); return null; } );                            	  
+    	
+    Do.add(list)
+      .yield( element ->  element )
+      .forEach(System.out::println);  
+      
+ We have simply converted the list to a Stream and are using Stream forEach to iterate over it.                        	  
                                       
-If we nest our looping
+But.. if we nest our looping
 	
 	  List<Integer> numbers = Arrays.asList(1,2,3,4);
 
@@ -96,15 +95,11 @@ If we nest our looping
 
 Things start to become a little unwieldy, but a little less so with for comprehensions
       
-     ForComprehensions.foreach2(c -> c.flatMapAs$1(list)
-                                      .mapAs$2((Vars2<String,Integer> v)->numbers)                                                    
-                                      .run(v -> System.out.println(v.$1()+v.$2())
-
-With Do notation
-
-    Do.with(list)
-      .and((String element) -> numbers)
-      .yield( (String element) -> (Integer num) -> {System.out.println(element + num); return null; } );
+     
+    Do.add(list)
+      .with(element -> numbers)
+      .yield(  element -> num  -> element + num )
+      .forEach(System.out::println);
       
                                   
 Let's add a third level of nesting
@@ -122,18 +117,12 @@ Let's add a third level of nesting
     
  And the for comprehension looks like 
    
-     ForComprehensions.foreach3(c -> c.flatMapAs$1(list)
-                                      .flatMapAs$2((Vars<String,Integer,Date> v) -> numbers)
-                                      .mapAs$2(v -> dates)                                                    
-                                      .run( v-> System.out.println(v.$1()+v.$2()+v.$3())
- 
- 
- With Do notation
-
-    Do.with(list)
-      .andJustAdd(numbers)
-      .andJustAdd(dates)
-      .yield( (String element) -> (Integer num) -> (Date date) -> {System.out.println(element + num+":"+date) ; return null; } );
+    
+    Do.add(list)
+      .add(numbers)
+      .add(dates)
+      .yield( element ->  num ->  date -> element + num+":"+date )
+      .forEach(System.out::println);
  
  
  Stream map
@@ -153,13 +142,15 @@ Can be written as
  
  Running a for comprehension over a list (stream) and an Optional
  
-     val strs = Arrays.asList("hello","world");  //using Lombok val
-	 val opt = Optional.of("cool");
+   		
+		List<String> strs = Arrays.asList("hello","world");
+		Optional<String> opt = Optional.of("cool");
 		
 		
-	  Seq<String> results = ForComprehensions.foreach2( c-> c.flatMapAs$1(strs)
-										 .mapAs$2((Vars2<String,String> v) -> opt)
-										 .yield( v -> v.$1() + v.$2()));
+		Do.add(strs)
+          .add(opt)
+          .yield(v1->v2 -> v1 + v2)
+          .forEach(System.out::println);
 										 
 Outputs : [hellocool, worldcool]
 
@@ -167,13 +158,14 @@ Outputs : [hellocool, worldcool]
 Or the other way around 
 
 
-        val strs = Arrays.asList("hello","world");
-		val opt = Optional.of("cool");
+      	List<String> strs strs = Arrays.asList("hello","world");
+		Optional<String> opt = Optional.of("cool");
 		
-		
-		Optional<List<String>> results = ForComprehensions.foreach2( c-> c.flatMapAs$1(opt)
-										 .mapAs$2( (Vars2<String,String> v) -> strs)
-										 .yield( v -> v.<String>$1() + v.$2()));
+		Do.add(opt)
+		  .add(strs)
+		  .yield(v1->v2 -> v1+ v2)
+		  .<String>toSequence()
+		  .forEach(System.out::println);
 		
 		assertThat(results.get(),hasItem("coolhello"));
 		assertThat(results.get(),hasItem("coolworld"));
@@ -223,23 +215,9 @@ Cyclops for comphrensions allow deeply nested iterations or monadic operations t
 
 The Cyclops implementation is pure Java however, and although it will revert to dynamic execution when it needs to, reflection can be avoided entirely.
 
-### Features
+### Custom interfaces
 
  
-1. Nested iteration over Collections & Maps
-* Nested iteration over JDK 8 Monads - Stream, Optional, CompletableFuture
-* Nested iteration over any external Monad e.g. Functional Java, Javaslang, TotallyLazy (by reflection, or register a Comprehender)
-* Strict and looser typing    
-* Fluent step builder interfaces with semantic naming
-* Built in support for 3 levels of nesting
-    
-    stream.flatMap ( s1 -> stream2.flatMap( s2 -> stream3.map (s3 -> s3+s2+s1)));
-    
-    foreach3 (c -> c.flatMapAs$1(stream)
-                   .flatMapAs$2(stream2)
-                   .mapAs$3(stream3)
-                   .yield(()->$3()+$2()+$1());
-
 * Support for custom interface definition with virtually unlimited nesting
 
     Stream<Integer> stream = foreachX(Custom.class,  
@@ -251,19 +229,7 @@ The Cyclops implementation is pure Java however, and although it will revert to 
 	Optional<Integer> empty = Optional.empty();
 	BiFunction<Integer,Integer,Integer> f2 = (a,b) -> a *b; 
 		
-	Object result =  foreach2(c -> c.flatMapAs$1(one)
-									.mapAs$2(v->empty)
-									.yield((Vars2<Integer,Integer> v)->{return f2.apply(v.$1(), v.$2());}));
-
-Each call to $ results in flatMap call apart from the last one which results in map. guard can be used for filtering.
-The c.$1() and c.$2() calls capture the result of the operations at c.$1(_) and c.$2(_).
-
-### There are 4 For Comphrension classes
-
-* ForComprehensions :- static foreach methods with looser typing, and provides entry point to custom For Comprehensions
-* ForComprehension1 :- Stricter typing, offers $1 operations only
-* ForComprehension2 :- Stricter typing, offer $1 and $2 operations
-* ForComprehension3 :- Stricter typing, offer $1, $2 and $3 operations
+	
 
 ### Auto-Seq upscaling
 
