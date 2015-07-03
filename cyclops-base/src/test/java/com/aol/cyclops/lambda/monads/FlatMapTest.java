@@ -25,7 +25,7 @@ public class FlatMapTest {
 	}
 	@Test
 	public void flatMapCollection(){
-		System.out.println(anyM(Optional.of(20)).flatMapCollection(i->Arrays.asList(1,2,i) ).unwrap());
+		
 	assertThat(	anyM(Optional.of(20)).flatMapCollection(i->Arrays.asList(1,2,i) ).toSequence().toList(),equalTo(Arrays.asList(1,2,20)));
 	}
 	@Test

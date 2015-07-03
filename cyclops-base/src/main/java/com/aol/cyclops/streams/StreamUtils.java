@@ -2,6 +2,7 @@ package com.aol.cyclops.streams;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import com.aol.cyclops.lambda.monads.SequenceM;
 import com.nurkiewicz.lazyseq.LazySeq;
 
 public class StreamUtils{
+	
 	
 	/**
 	 * 
