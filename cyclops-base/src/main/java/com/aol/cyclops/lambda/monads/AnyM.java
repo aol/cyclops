@@ -1,14 +1,8 @@
 package com.aol.cyclops.lambda.monads;
 
-import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -221,8 +215,7 @@ public class AnyM<T> implements Unwrapable{
 		return monad.aggregate(next.monad).anyM();
 	}
 	public void forEach(Consumer<? super T> action) {
-		monad.forEach(action);
-		
+		asSequence().forEach(action);	
 	}
 	
 	/**
@@ -336,6 +329,7 @@ public class AnyM<T> implements Unwrapable{
 	public final <T> SequenceM<T> toSequence(){
 		return monad.streamedMonad().sequence();
 	}
+	
 	
 	/**
 	 * Wrap this Monad's contents as a Sequence without disaggreating it. .e.

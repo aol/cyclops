@@ -115,7 +115,7 @@ public interface MonadFunctions<MONAD,T>{
 		
 		return asMonad(monad(stream()).map(value ->new ComprehenderSelector()
 							.selectComprehender(reducer.zero().getClass()).of(value))
-							.reduce((Monoid)reducer));		
+							.sequence().reduce((Monoid)reducer));		
 	}
 	
 	

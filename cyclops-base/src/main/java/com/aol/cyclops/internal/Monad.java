@@ -12,6 +12,9 @@ import static com.aol.cyclops.internal.AsGenericMonad.monad;
 
 
 
+
+
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -25,6 +28,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.api.AsStreamable;
@@ -35,7 +39,7 @@ import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.lambda.monads.Filterable;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.SequenceM;
-import com.aol.cyclops.lambda.monads.StreamBasedFunctions;
+
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.streams.Pair;
 import com.nurkiewicz.lazyseq.LazySeq;
@@ -57,22 +61,70 @@ import com.nurkiewicz.lazyseq.LazySeq;
  * @param <MONAD>
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunctions<MONAD,T>,Functor<T>, Filterable<T>{
+public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,Functor<T>, Filterable<T>{
 	
 	
 	public <MONAD,T> Monad<MONAD,T> withMonad(Object invoke);
 	//public Object unwrap();
-	default Monad<Stream<T>,T> cycle(int times){
-		return StreamBasedFunctions.super.cycle(times);
-	}
+	
 	default <T> Monad<MONAD,T> withFunctor(T functor){
 		return withMonad(functor);
 	}
 	default Object getFunctor(){
 		return unwrap();
 	}
+	/**
+	 * Transform the contents of a Monad into a Monad wrapping a Stream e.g.
+	 * Turn an <pre>{@code Optional<List<Integer>>  into Stream<Integer> }</pre>
+	 * 
+	 * <pre>{@code
+	 * List<List<Integer>> list = monad(Optional.of(Arrays.asList(1,2,3,4,5,6)))
+											.<Stream<Integer>,Integer>streamedMonad()
+											.grouped(3)
+											.collect(Collectors.toList());
+		
+		
+		assertThat(list.get(0),hasItems(1,2,3));
+		assertThat(list.get(1),hasItems(4,5,6));
+	 * 
+	 * }</pre>
+	 * 
+	 * 
+	 * @return A Monad that wraps a Stream
+	 */
+	default <R,NT> Monad<R,NT> streamedMonad(){
+		Stream stream = Stream.of(1);
+		 Monad r = this.<Stream,T>withMonad((Stream)new ComprehenderSelector().selectComprehender(
+				stream).executeflatMap(stream, i-> unwrap()));
+		 return r.flatMap(e->e);
+	}
+	/**
+	 * Unwrap this Monad into a Stream.
+	 * If the underlying monad is a Stream it is returned
+	 * Otherwise we flatMap the underlying monad to a Stream type
+	 */
 	default Stream<T> stream(){
-		return StreamBasedFunctions.super.stream();
+		if(unwrap() instanceof Stream)
+			return (Stream)unwrap();
+		if(unwrap() instanceof Iterable)
+			return StreamSupport.stream(((Iterable)unwrap()).spliterator(), false);
+		Stream stream = Stream.of(1);
+		return (Stream)withMonad((Stream)new ComprehenderSelector().selectComprehender(
+				stream).executeflatMap(stream, i-> unwrap()))//.flatMap(Function.identity())
+				.unwrap();
+		
+	}
+	
+	/**
+	 * Convert to a Stream with the values repeated specified times
+	 * 
+	 * @param times Times values should be repeated within a Stream
+	 * @return Stream with values repeated
+	 */
+	default Monad<Stream<T>,T> cycle(int times){
+		
+		return monad(StreamUtils.cycle(times,AsStreamable.asStreamable(stream())));
+		
 	}
 	@Override
 	default Filterable<T> withFilterable(T filter){
@@ -213,7 +265,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 		return (Monad)withMonad(new ComprehenderSelector().selectComprehender(
 				unwrap()).of(monad(concat)
 						.flatMap(Function.identity())
-						.toList()))
+						.sequence().collect(Collectors.toList())))
 						.bind(Function.identity() );
 	}
 	default <MONAD2,NT>  Monad<MONAD2,NT> monadMap(Function<? super MONAD,? extends NT> fn) {
@@ -262,8 +314,8 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,StreamBasedFunct
 	 * }</pre>
 	 * 
 	 */
-	public <X> AnyM<X> anyM();
-	public <X> SequenceM<X>  sequence();
+	public <T> AnyM<T> anyM();
+	public <T> SequenceM<T>  sequence();
 	/**
 	 * Create a duck typed Monad wrapper. Using AnyM we focus only on the underlying type
 	 * e.g. instead of 

@@ -1,5 +1,8 @@
 package com.aol.cyclops.comprehensions.comprehenders;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -34,7 +37,7 @@ public class LazySeqComprehender implements Comprehender<LazySeq> {
 	public LazySeq flatMap(LazySeq t, Function fn) {
 		return t.flatMap(fn);
 	}
-
+	
 	@Override
 	public LazySeq of(Object o) {
 		return LazySeq.of(o);
@@ -51,34 +54,20 @@ public class LazySeqComprehender implements Comprehender<LazySeq> {
 	}
 	static LazySeq unwrapOtherMonadTypes(Comprehender<LazySeq> comp,Object apply){
 
+		
 		if(apply instanceof LazySeq)
 			return (LazySeq)apply;
 		
 
-		if (apply instanceof Optional) {
-			if (((Optional) apply).isPresent())
-				return comp.of(((Optional) apply).get());
-			return comp.empty();
+		if(apply instanceof Collection){
+			return LazySeq.of((Collection)apply);
 		}
 		
 		if (apply instanceof Stream) {
 			return LazySeq.of( ((Stream)apply).iterator());
 		}
-		if (apply instanceof IntStream) {
-			return comp.of(((IntStream) apply).boxed().collect(Collectors.toList()));
-		}
-		if (apply instanceof DoubleStream) {
-			return comp.of(((DoubleStream) apply).boxed().collect(Collectors.toList()));
-		}
-		if (apply instanceof LongStream) {
-			return comp.of(((DoubleStream) apply).boxed().collect(Collectors.toList()));
-		}
-		if (apply instanceof CompletableFuture) {
-			return comp.of(((CompletableFuture) apply).join());
-		}
-
-		return (LazySeq) new ComprehenderSelector().selectComprehender(apply)
-				.resolveForCrossTypeFlatMap(comp,apply);
+		return Comprehender.unwrapOtherMonadTypes(comp,apply);
+		
 
 	}
 }
