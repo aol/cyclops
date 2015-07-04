@@ -1,0 +1,8 @@
+com.aol.cyclops.javaslang.comprehenders.TryComprehender
+com.aol.cyclops.javaslang.comprehenders.ListComprehender
+com.aol.cyclops.javaslang.comprehenders.StreamComprehender
+com.aol.cyclops.javaslang.comprehenders.EitherComprehender
+com.aol.cyclops.javaslang.comprehenders.OptionComprehender
+com.aol.cyclops.javaslang.comprehenders.LeftProjectionComprehender
+com.aol.cyclops.javaslang.comprehenders.RightProjectionComprehender
+com.aol.cyclops.javaslang.comprehenders.ArbitraryComprehender

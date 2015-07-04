@@ -49,7 +49,10 @@ public class StreamComprehender implements Comprehender<Stream> {
 	static <T> T unwrapOtherMonadTypes(Comprehender<T> comp,Object apply){
 		
 		if(apply instanceof LazySeq){
-			apply = StreamUtils.stream(((LazySeq)apply).iterator());
+			return (T)StreamUtils.stream(((LazySeq)apply).iterator());
+		}
+		if(apply instanceof Iterable){
+			return (T)StreamUtils.stream(((Iterable)apply));
 		}
 		if(apply instanceof Collection){
 			return (T)((Collection)apply).stream();

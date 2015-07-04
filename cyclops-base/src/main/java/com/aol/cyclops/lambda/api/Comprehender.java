@@ -76,7 +76,7 @@ public interface Comprehender<T> {
 	 * @param fn FlatMap function that returns different type
 	 * @return flatMap applied and return type converted back to host type, non-Monadic return values lifted into a Monadic form
 	 */
-	default T liftAndFlatMap(T t, Function fn){
+	default Object liftAndFlatMap(T t, Function fn){
 		
 		return executeflatMap(t,input ->liftObject(this,fn.apply(input)));
 	
@@ -88,12 +88,12 @@ public interface Comprehender<T> {
 	 * @param fn JDK Function to wrap
 	 * @return Result of call to <pre>{@code t.flatMap( i -> fn.apply(i)); }</pre>
 	 */
-	default T executeflatMap(T t, Function fn){
+	default Object executeflatMap(T t, Function fn){
 		return flatMap(t,input -> unwrapOtherMonadTypes(this,fn.apply(input)));
 	}
 	
 	
-	public T flatMap(T t, Function fn);
+	public Object flatMap(T t, Function fn);
 	
 	default boolean instanceOfT(Object apply){
 		return getTargetClass().isAssignableFrom(apply.getClass());

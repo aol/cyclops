@@ -1,5 +1,6 @@
 package com.aol.cyclops.lambda.monads;
 
+import static com.aol.cyclops.internal.AsGenericMonad.monad;
 import static com.aol.cyclops.lambda.api.AsAnyM.*;
 import static com.aol.cyclops.lambda.api.AsAnyMList.collectionToAnyMList;
 import static com.aol.cyclops.lambda.api.AsAnyMList.completableFutureToAnyMList;
@@ -34,7 +35,28 @@ import com.aol.cyclops.lambda.api.Streamable;
 
 
 public class AnyMTest {
-
+	@Test
+	public void testForEach() {
+		   anyM(Stream.of(asList(1,3)))
+				  				.flatMap(c->anyM(c.stream()))
+				  				.forEach(System.out::println);
+				  				
+	}
+	@Test
+	public void testForEachCf() {
+		   anyM(CompletableFuture.completedFuture(asList(1,3)))
+				  
+				  				.forEach(System.out::println);
+				  				
+	}
+	@Test
+	public void testForEachCfFlatMapToStream() {
+		   anyM(CompletableFuture.completedFuture(asList(1,3)))
+		   						.flatMap(c->anyM(c.stream()))
+		   						.toSequence()
+				  				.forEach(System.out::println);
+				  				
+	}
 	 
 	
 	@Test
@@ -497,6 +519,8 @@ public class AnyMTest {
 	 assertThat(applied.toSequence().toList(),equalTo(Arrays.asList(2, 2, 3, 4, 4, 6)));
 	 
 	}
+	
+	
 	@Test
 	public void testApplyMOptional(){
 	 AnyM<Integer> applied =anyM(Optional.of(2)).applyM(anyM(Optional.of( (Integer a)->a+1)) );

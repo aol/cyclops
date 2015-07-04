@@ -172,42 +172,57 @@ Or the other way around
 		
 Outputs : [[coolhello],[coolworld]]
 
+**The first type used controls the interaction!**
+
+## Visualisation of CompletableFuture / Stream mixed combinations
+
+**CompletableFuture defined first**
+![do - completablefuture and stream](https://cloud.githubusercontent.com/assets/9964792/7887748/42efba28-062b-11e5-911a-5067e9095928.png)
+
+
+**Stream defined first**
+![do - stream and completablefuture](https://cloud.githubusercontent.com/assets/9964792/7887756/53519b2a-062b-11e5-9249-217d6c904a5e.png)
+
 ## Filtering
+
+Guards (filter commands) can be placed at any stage of a for comprehension. E.g.
+
+                 Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
+						.and((Double d)->Arrays.asList(2.0))
+						.filter((Double d)-> (Double e) -> e*d>10.00)
+						.yield((Double base)->(Double bonus)-> base*(1.0+bonus));
+		
+		double total = s.collect(Collectors.summingDouble(t->t));
+		assertThat(total,equalTo(330.9));
 
 ## Convert any Object to a Monad
 
 ### Stream conversions
 
-Collection to Stream
-Iterable to Stream
-Iterator to Stream
-Array to Stream
-Int to IntStream.range(int)
-File to Stream
-URL to Stream
-BufferedReader to Stream
-InputStream to Stream
-ResultSet to Stream
-Enum to Stream
-String to Stream
+* Collection to Stream
+* Iterable to Stream
+* Iterator to Stream
+* Array to Stream
+* Int to IntStream.range(int)
+* File to Stream
+* URL to Stream
+* BufferedReader to Stream
+* InputStream to Stream
+* ResultSet to Stream
+* Enum to Stream
+* String to Stream
 
-ObjectToStreamConverter
+* ObjectToStreamConverter
 
 ### Optional conversions
 
-NullToOptionalConverter
-Optional<Primitive> to Optional
+* NullToOptionalConverter
+* Optional<Primitive> to Optional
 
 ### CompletableFuture Conversionss
 
-Callable to CompletableFuture
-Supplier to CompletableFuture
-
-## Dynamic Proxy Caching
-
-To support Monads that use non standard Functional interfaces, Cyclops will create / cache and reuse dynamic proxies that wrap JDK8 Functional interfaces in suitable wrappers.
-
-
+* Callable to CompletableFuture
+* Supplier to CompletableFuture
 
 ## Cyclops Monadic For Comprehensions
 

@@ -1,6 +1,6 @@
 rootProject.name = 'com.aol.cyclops'
 include ':cyclops-pattern-matching'
-include ':cyclops-converters'
+include ':cyclops-javaslang'
 include ':cyclops-base'
 include ':cyclops-functions'
 include ':cyclops-core'
