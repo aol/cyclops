@@ -14,6 +14,16 @@ Pacakage com.aol.cyclops.javaslang contains converters for types from various fu
 * jooλ
 * simple-react
 
+Supported Javaslang Monads include
+
+* Try
+* Either
+* Option
+* Stream
+* List
+
+These are available in Cyclops Comprehensions, or via Cyclops AnyM.
+
 ## Example flatMap a Javaslang Try, returning an JDK Optional
 
     assertThat(Javaslang.anyM(Try.of(this::success))
@@ -26,4 +36,4 @@ Pacakage com.aol.cyclops.javaslang contains converters for types from various fu
 
 
 * [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-javaslang/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-javaslang)
-* [Javadoc for Cyclops Pattern Matching](http://www.javadoc.io/doc/com.aol.cyclops/cyclops-javaslang/5.0.0)
+* [Javadoc for Cyclops Javaslang](http://www.javadoc.io/doc/com.aol.cyclops/cyclops-javaslang/5.0.0)
