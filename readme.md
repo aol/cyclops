@@ -1,4 +1,4 @@
-<img width="145" alt="cyclops" src="https://cloud.githubusercontent.com/assets/9964792/8509305/4b0518d6-2294-11e5-83f5-10945539f73d.png">
+<img alt="cyclops" src="https://cloud.githubusercontent.com/assets/9964792/8509305/4b0518d6-2294-11e5-83f5-10945539f73d.png">
 
 Powerful, modular extensions for Java 8. Take what you need or want.
 
