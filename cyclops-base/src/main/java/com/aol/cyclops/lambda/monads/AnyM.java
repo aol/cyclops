@@ -386,7 +386,7 @@ public class AnyM<T> implements Unwrapable{
 	 * @param fn
 	 * @return
 	 */
-	public final <R> AnyM<R> simpleFilter(AnyM<Predicate<? super T>> fn){
+	public final  <R> AnyM<R> simpleFilter(AnyM<Predicate<? super T>> fn){
 		return  monad.simpleFilter(fn.monad).anyM();
 			
 	
@@ -400,7 +400,7 @@ public class AnyM<T> implements Unwrapable{
 	 * 
 	 * <pre>{@code 
 	 * 	
-	 *   Simplex<Optional<Integer>> applied =monad(Optional.of(2)).replicateM(5).simplex();
+	 *   AnyM<Optional<Integer>> applied =monad(Optional.of(2)).replicateM(5).simplex();
 		 assertThat(applied.unwrap(),equalTo(Optional.of(Arrays.asList(2,2,2,2,2))));
 		 
 		 }</pre>
@@ -426,7 +426,7 @@ public class AnyM<T> implements Unwrapable{
 	 * @param reducer
 	 * @return
 	 */
-	public final <R> AnyM<R> reduceM(Monoid<R> reducer){
+	public final  <R> AnyM<R> reduceM(Monoid<R> reducer){
 	//	List(2, 8, 3, 1).foldLeftM(0) {binSmalls} -> Optional(14)
 	//	convert to list Optionals
 		

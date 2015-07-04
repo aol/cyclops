@@ -1,20 +1,23 @@
 package com.aol.cyclops.javaslang;
 
-import java.util.ArrayList;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.Arrays;
 import java.util.Optional;
 
 import javaslang.collection.List;
 import javaslang.collection.Stream;
-import javaslang.control.Option;
 import javaslang.control.Failure;
 import javaslang.control.Left;
+import javaslang.control.Option;
 import javaslang.control.Right;
 import javaslang.control.Success;
 import javaslang.control.Try;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import javaslang.test.Arbitrary;
+import javaslang.test.Gen;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.cyclops.lambda.monads.AnyMonads;
@@ -166,6 +169,13 @@ public class AnyJavaslangMTest {
 	public void streamTest(){
 		assertThat(Javaslang.anyM(Stream.of("hello world"))
 				.map(String::toUpperCase)
+				.toSequence()
+				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
+	}
+	@Test @Ignore
+	public void arbritrayTest(){
+		assertThat(Javaslang.anyM(Arbitrary.list(Gen.of("hello world").arbitrary()))
+			//	.map(String::toUpperCase)
 				.toSequence()
 				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
 	}

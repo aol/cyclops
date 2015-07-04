@@ -2,17 +2,22 @@ package com.aol.cyclops.javaslang.comprehenders;
 
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javaslang.control.Either;
 import javaslang.control.Either.LeftProjection;
 import javaslang.control.Either.RightProjection;
 import javaslang.control.Left;
+import javaslang.control.None;
 import javaslang.control.Right;
 
 import com.aol.cyclops.lambda.api.Comprehender;
 
 public class LeftProjectionComprehender implements Comprehender<LeftProjection>{
 
+	public Object filter(LeftProjection t, Predicate p){
+		return t.filter(x->p.test(x));
+	}
 	@Override
 	public Object map(LeftProjection t, Function fn) {
 		return t.map(x ->fn.apply(x));
@@ -30,7 +35,7 @@ public class LeftProjectionComprehender implements Comprehender<LeftProjection>{
 
 	@Override
 	public LeftProjection empty() {
-		return new Right(null).left();
+		return new Left(null).left().filter(x->false);
 	}
 
 	@Override

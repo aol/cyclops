@@ -1,15 +1,21 @@
 package com.aol.cyclops.javaslang.comprehenders;
 
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javaslang.control.Either;
 import javaslang.control.Left;
+import javaslang.control.None;
 import javaslang.control.Right;
+import javaslang.control.Either.LeftProjection;
 
 import com.aol.cyclops.lambda.api.Comprehender;
 
 public class EitherComprehender implements Comprehender<Either> {
 
+	public Object filter(Either t, Predicate p){
+		return t.right().filter(x->p.test(x));
+	}
 	@Override
 	public Object map(Either t, Function fn) {
 		return t.right().map(e->fn.apply(e));
@@ -27,7 +33,7 @@ public class EitherComprehender implements Comprehender<Either> {
 
 	@Override
 	public Either empty() {
-		return new Left(null);
+		return new Right(None.instance());
 	}
 
 	@Override

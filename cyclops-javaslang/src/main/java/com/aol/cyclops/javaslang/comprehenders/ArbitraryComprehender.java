@@ -1,7 +1,10 @@
 package com.aol.cyclops.javaslang.comprehenders;
 
 import java.util.function.Function;
+
+import javaslang.control.None;
 import javaslang.test.*;
+
 import com.aol.cyclops.lambda.api.Comprehender;
 
 public class ArbitraryComprehender implements Comprehender<Arbitrary> {
@@ -23,7 +26,7 @@ public class ArbitraryComprehender implements Comprehender<Arbitrary> {
 
 	@Override
 	public Arbitrary empty() {
-		return Gen.fail("empty not supported!").arbitrary();
+		return Gen.of(None.instance()).arbitrary();
 	}
 
 	@Override

@@ -11,12 +11,16 @@ import javaslang.control.Failure;
 import javaslang.control.Option;
 import javaslang.control.Right;
 import javaslang.control.Try;
+import javaslang.test.Arbitrary;
 
 import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.monads.AnyM;
 
 public class Javaslang {
 
+	public static <T> AnyM<T> anyM(Arbitrary<T> arbM){
+		return AsAnyM.notTypeSafeAnyM(arbM);
+	}
 	public static <T> AnyM<T> anyM(Try<T> tryM){
 		return AsAnyM.notTypeSafeAnyM(tryM);
 	}
