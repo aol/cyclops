@@ -31,6 +31,12 @@ Powerful, modular extensions for Java 8. Take what you need or want.
 * Cyclops Trampoline : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-trampoline/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-trampoline)
 * Cyclops Enable Switch : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-enable-switch/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-enable-switch)
 * Cyclops Power Tuples : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-power-tuples/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-power-tuples)
+* Cyclops Javaslang : [![Maven Central : cyclops-javaslang](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-javaslang/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-javaslang)
+* Cyclops All : [![Maven Central : cyclops-all](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-all/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-all)
+
+
+**NB** Cyclops All includes all Cyclops module except the integration modules (currently cyclops-javaslang).
+
 
 
 ![cyclops module relationship - class diagram](https://cloud.githubusercontent.com/assets/9964792/7887668/af2f6b4e-062a-11e5-9194-a2a4b6d25c96.png)
