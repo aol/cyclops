@@ -1,6 +1,8 @@
-#simple-react : Powerful Future Streams & Async Data Structures for Java 8
+<img  alt="simple-react" src="https://cloud.githubusercontent.com/assets/9964792/8509314/b83d71d2-2294-11e5-859d-6959cda7aa1c.png">
 
-simple-react is a Reactive Streams implementation that also implements, and significantly enhances, the JDK 8 Stream interface, to provide powerful asynchronous Streams backed by your choice of wait-free (with or without mechanical sympathy) or blocking queues. simple-react reuses standard Java 8 functional interfaces and libraries such as CompletableFuture.
+#Powerful Future Streams & Async Data Structures for Java 8
+
+simple-react is a Reactive Streams implementation that also implements, and significantly enhances, the JDK 8 Stream interface, to provide powerful asynchronous Streams backed by your choice of wait-free queues (with or without mechanical sympathy) or blocking queues. simple-react reuses standard Java 8 functional interfaces and libraries such as CompletableFuture.
 
 LazyFutureStream pulls 'chains' of asynchronous CompletableFuture tasks into existance.
 
