@@ -1,16 +1,16 @@
-package com.aol.cyclops.javaslang.comprehenders;
+package com.aol.cyclops.functionaljava.comprehenders;
 
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import javaslang.control.Either;
-import javaslang.control.Either.LeftProjection;
-import javaslang.control.Either.RightProjection;
-import javaslang.control.Left;
-import javaslang.control.Right;
+
+
+
 
 import com.aol.cyclops.lambda.api.Comprehender;
+
+import fj.data.Either.LeftProjection;
 
 public class RightProjectionComprehender implements Comprehender<RightProjection>{
 	@Override
