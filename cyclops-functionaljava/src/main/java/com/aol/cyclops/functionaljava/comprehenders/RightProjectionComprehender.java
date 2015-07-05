@@ -8,9 +8,15 @@ import java.util.function.Predicate;
 
 
 
+
+
+
 import com.aol.cyclops.lambda.api.Comprehender;
 
+import fj.data.Either;
+import fj.data.Option;
 import fj.data.Either.LeftProjection;
+import fj.data.Either.RightProjection;
 
 public class RightProjectionComprehender implements Comprehender<RightProjection>{
 	@Override
@@ -24,17 +30,17 @@ public class RightProjectionComprehender implements Comprehender<RightProjection
 
 	@Override
 	public Object flatMap(RightProjection t, Function fn) {
-		return t.flatMap(x->fn.apply(x));
+		return t.bind(x->fn.apply(x));
 	}
 
 	@Override
 	public RightProjection of(Object o) {
-		return new Right(o).right();
+		return  Either.right(o).right();
 	}
 
 	@Override
 	public RightProjection empty() {
-		return new Right(null).right().filter(x->false);
+		return  Either.right(Option.none()).right();
 	}
 
 	@Override
@@ -43,9 +49,9 @@ public class RightProjectionComprehender implements Comprehender<RightProjection
 	}
 	public Object resolveForCrossTypeFlatMap(Comprehender comp,RightProjection apply){
 		
-		Optional present =  apply.toJavaOptional();
-		if(present.isPresent())
-			return comp.of(apply.get());
+		Option present =  apply.toOption();
+		if(present.isSome())
+			return comp.of(present.some());
 		else
 			return comp.empty();
 		
