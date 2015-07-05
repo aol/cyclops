@@ -16,8 +16,11 @@ import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
+import com.aol.cyclops.internal.AsGenericMonad;
 import com.aol.cyclops.internal.Monad;
+import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.api.Monoid;
+import com.aol.cyclops.lambda.api.Streamable;
 import com.aol.cyclops.lambda.api.Unwrapable;
 import com.nurkiewicz.lazyseq.LazySeq;
 
@@ -214,6 +217,7 @@ public class AnyM<T> implements Unwrapable{
 	public final  <R> AnyM<List<R>> aggregateUntyped(AnyM<?> next){
 		return monad.aggregate(next.monad).anyM();
 	}
+	@Deprecated //to be removed in 6.0.0
 	public void forEach(Consumer<? super T> action) {
 		asSequence().forEach(action);	
 	}
@@ -235,6 +239,15 @@ public class AnyM<T> implements Unwrapable{
 	 * @return
 	 */
 	public final <R> AnyM<R> flatMapStream(Function<? super T,BaseStream<? extends R,?>> fn) {
+		return monad.flatMap(in -> fn.apply(in)).anyM();
+	}
+	/**
+	 * Convenience method to allow method reference support, when flatMap return type is a Streamable
+	 * 
+	 * @param fn
+	 * @return
+	 */
+	public final <R> AnyM<R> flatMapStreamable(Function<? super T,Streamable<R>> fn) {
 		return monad.flatMap(in -> fn.apply(in)).anyM();
 	}
 	/**
@@ -352,7 +365,7 @@ public class AnyM<T> implements Unwrapable{
 	 * e.g. with Streams
 	 * <pre>{@code 
 	 * 
-	 * Simplex<Integer> applied =monad(Stream.of(1,2,3)).applyM(monad(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2))).simplex();
+	 * AnyM<Integer> applied =anyM(Stream.of(1,2,3)).applyM(anyM(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2))).simplex();
 	
 	 	assertThat(applied.toList(),equalTo(Arrays.asList(2, 2, 3, 4, 4, 6)));
 	 }</pre>
@@ -360,7 +373,7 @@ public class AnyM<T> implements Unwrapable{
 	 * with Optionals 
 	 * <pre>{@code
 	 * 
-	 *  Simplex<Integer> applied =monad(Optional.of(2)).applyM(monad(Optional.of( (Integer a)->a+1)) ).simplex();
+	 *  Any<Integer> applied =anyM(Optional.of(2)).applyM(anyM(Optional.of( (Integer a)->a+1)) );
 		assertThat(applied.toList(),equalTo(Arrays.asList(3)));}</pre>
 	 * 
 	 * @param fn
@@ -376,23 +389,50 @@ public class AnyM<T> implements Unwrapable{
 	 * e.g.
 	 * 
 	 * <pre>{@code
-	 *  Simplex<Stream<Integer>> applied = monad(Stream.of(1,2,3))
-	 *    									.filterM(monad(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3)))
+	 *  AnyM<AnyM<Integer>> applied = anyM(Stream.of(1,2,3))
+	 *    									.filterM(anyM(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3)))
 	 *    									.simplex();
 	 * 
-	 * //results in Stream.of(Stream.of(1),Stream.of(2),Stream.of(())
+	 *  //results in AnyM((AnyM(1),AnyM(2),AnyM(())
+	 * //or in terms of the underlying monad as Stream.of(Stream.of(1),Stream.of(2),Stream.of(())
 	 * }</pre>
 	 * 
 	 * @param fn
 	 * @return
 	 */
-	public final  <R> AnyM<R> simpleFilter(AnyM<Predicate<? super T>> fn){
-		return  monad.simpleFilter(fn.monad).anyM();
+	public final   AnyM<AnyM<T>> simpleFilter(AnyM<Predicate<? super T>> fn){
+		return  monad.simpleFilter(fn.monad).anyM().map(t->AsAnyM.notTypeSafeAnyM(t));
 			
 	
 	//	filterM((a: Int) => List(a > 2, a % 2 == 0), List(1, 2, 3), ListMonad),
 	//List(List(3), Nil, List(2, 3), List(2), List(3),
 	//	  Nil, List(2, 3), List(2))												
+	}
+	public final   AnyM<Stream<T>> simpleFilter(Stream<Predicate<? super T>> fn){
+		return  monad.simpleFilter(AsGenericMonad.asMonad(fn)).anyM();
+													
+	}
+	public final   AnyM<Stream<T>> simpleFilter(Streamable<Predicate<? super T>> fn){
+		return  monad.simpleFilter(AsGenericMonad.asMonad(fn)).anyM();
+													
+	}
+	public final   AnyM<Optional<T>> simpleFilter(Optional<Predicate<? super T>> fn){
+		return  monad.simpleFilter(AsGenericMonad.asMonad(fn)).anyM();
+													
+	}
+	public final   AnyM<CompletableFuture<T>> simpleFilter(CompletableFuture<Predicate<? super T>> fn){
+		return  monad.simpleFilter(AsGenericMonad.asMonad(fn)).anyM();
+													
+	}
+	public final   AnyM<LazySeq<T>> simpleFilter(LazySeq<Predicate<? super T>> fn){
+		return  monad.simpleFilter(AsGenericMonad.asMonad(fn)).anyM();
+													
+	}
+	public <T> AnyM<T> unit(T value){
+		return monad.unit(value);
+	}
+	public <T> AnyM<T> empty(){
+		return (AnyM)unit(null).filter(t->false);
 	}
 	/**
 	 * 
@@ -409,7 +449,7 @@ public class AnyM<T> implements Unwrapable{
 	 * @param times number of times to replicate
 	 * @return Replicated Monad
 	 */
-	public final <R> AnyM<R> replicateM(int times){
+	public final AnyM<List<T>> replicateM(int times){
 		
 		return monad.replicateM(times).anyM();		
 	}
@@ -426,11 +466,29 @@ public class AnyM<T> implements Unwrapable{
 	 * @param reducer
 	 * @return
 	 */
-	public final  <R> AnyM<R> reduceM(Monoid<R> reducer){
+	public final   AnyM<T> reduceMOptional(Monoid<Optional<T>> reducer){
+		return monad.reduceM(reducer).anyM();
+	}
+	public final   AnyM<T> reduceMStream(Monoid<Stream<T>> reducer){
+		return monad.reduceM(reducer).anyM();
+	}
+	public final   AnyM<T> reduceMStreamable(Monoid<Streamable<T>> reducer){
+		return monad.reduceM(reducer).anyM();
+	}
+	public final   AnyM<T> reduceMCompletableFuture(Monoid<CompletableFuture<T>> reducer){
+		return monad.reduceM(reducer).anyM();
+	}
+	public final   AnyM<T> reduceMLazySeq(Monoid<LazySeq<T>> reducer){
+		return monad.reduceM(reducer).anyM();
+	}
+	public final   AnyM<T> reduceM(Monoid<AnyM<T>> reducer){
 	//	List(2, 8, 3, 1).foldLeftM(0) {binSmalls} -> Optional(14)
 	//	convert to list Optionals
 		
-		return monad.reduceM(reducer).anyM();		
+		
+	
+		return monad.reduceM(Monoid.of(reducer.zero().unwrap(), (a,b)-> reducer.combiner().apply(AsAnyM.notTypeSafeAnyM(a), 
+				AsAnyM.notTypeSafeAnyM(b)))).anyM();		
 	}
 	
 	

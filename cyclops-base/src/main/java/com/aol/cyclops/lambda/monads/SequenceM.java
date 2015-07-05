@@ -61,6 +61,10 @@ public class SequenceM<T> implements Unwrapable {
 	public final <R> R unwrap(){
 		return (R)monad;
 	}
+	public final <T1> SequenceM<T1> flatten(){
+		return AsGenericMonad.monad(monad).flatten().sequence();
+		
+	}
 	/**
 	 * Type safe unwrap
 	 * 

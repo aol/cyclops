@@ -33,6 +33,8 @@ import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Reducers;
 import com.aol.cyclops.lambda.api.Streamable;
 
+import fj.Function;
+
 
 public class AnyMTest {
 	@Test
@@ -543,11 +545,19 @@ public class AnyMTest {
 		assertThat(applied.toSequence().toList(),equalTo(Arrays.asList()));
 	 
 	}
-
 	@Test
 	public void testSimpleFilter(){
-	 AnyM<Stream<Integer>> applied =anyM(Stream.of(1,2,3))
+	 AnyM<AnyM<Integer>> applied =anyM(Stream.of(1,2,3))
 			 							.simpleFilter(anyM(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3)));
+	
+	
+	 assertThat(applied.map(s->s.asSequence().collect(Collectors.toList())).asSequence().toList(),equalTo(Arrays.asList(Arrays.asList(1), Arrays.asList(2),Arrays.asList())));
+	
+	}
+	@Test
+	public void testSimpleFilterStream(){
+	 AnyM<Stream<Integer>> applied =anyM(Stream.of(1,2,3))
+			 							.simpleFilter(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3));
 	
 	
 	 assertThat(applied.map(s->s.collect(Collectors.toList())).asSequence().toList(),equalTo(Arrays.asList(Arrays.asList(1), Arrays.asList(2),Arrays.asList())));
@@ -555,10 +565,10 @@ public class AnyMTest {
 	}
 	@Test
 	public void testSimpleFilterOptional(){
-	 AnyM<Optional<Integer>> applied =anyM(Optional.of(2))
+	 AnyM<AnyM<Integer>> applied =anyM(Optional.of(2))
 			 							.simpleFilter(anyM(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3)));
 	
-	 assertThat(applied.toSequence().toList(),equalTo(Arrays.asList(2)));
+	 assertThat(applied.toSequence().flatten().toList(),equalTo(Arrays.asList(2)));
 	
 	}
 	
@@ -569,7 +579,7 @@ public class AnyMTest {
 	}
 	@Test
 	public void testReplicateMStream(){
-		 AnyM<Integer> applied =anyM(Stream.of(2,3,4)).replicateM(5);
+		 AnyM<List<Integer>> applied =anyM(Stream.of(2,3,4)).replicateM(5);
 		 assertThat(applied.toSequence().toList(),equalTo(Arrays.asList(2,3,4,2,3,4,2,3,4,2,3,4,2,3,4)));
 	}
 	
@@ -620,7 +630,7 @@ public class AnyMTest {
 	public void testReduceM(){
 		Monoid<Optional<Integer>> optionalAdd = Monoid.of(Optional.of(0), (a,b)-> Optional.of(a.get()+b.get()));
 		
-		assertThat(anyM(Stream.of(2,8,3,1)).reduceM(optionalAdd).unwrap(),equalTo(Optional.of(14)));
+		assertThat(anyM(Stream.of(2,8,3,1)).reduceMOptional(optionalAdd).unwrap(),equalTo(Optional.of(14)));
 	}
 	
 	@Test

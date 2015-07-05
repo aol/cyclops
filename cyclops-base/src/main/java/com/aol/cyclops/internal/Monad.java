@@ -185,7 +185,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,Functor<T>, Filt
 	 * @return Flattened / joined one level
 	 */
 	default <T1> Monad<T,T1> flatten(){
-		return (Monad)this.flatMap( t->   (MONAD)t );
+		return (Monad)this.flatMap( t->  t instanceof AnyM ?   (MONAD)((AnyM)t).unwrap() : (MONAD)t );
 	}
 	
 	/**
