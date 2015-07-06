@@ -46,7 +46,7 @@ public class StreamComprehender implements Comprehender<Stream> {
 		if(apply instanceof Iterable)
 			return Stream.iterableStream( ((Iterable)apply));
 		if(apply instanceof LazySeq){
-			apply = Stream.iteratorStream(((LazySeq)apply).iterator());
+			return Stream.iteratorStream(((LazySeq)apply).iterator());
 		}
 		
 		

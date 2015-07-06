@@ -48,7 +48,7 @@ public class ListComprehender implements Comprehender<List> {
 		if(apply instanceof Iterable)
 			return List.list( ((Iterable)apply).iterator());
 		if(apply instanceof LazySeq){
-			apply = List.list(((LazySeq)apply).iterator());
+			return  List.list(((LazySeq)apply).iterator());
 		}
 		if(apply instanceof Collection){
 			return List.list((Collection)apply);
