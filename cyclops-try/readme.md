@@ -26,9 +26,9 @@ Throwing exceptions from methods breaks referential transparency and introduces 
 
 	int total = Try.catchExceptions(RuntimeException.class)
 					.run(()-> exceptionalMethod())
-					.onFail(e-> { logger.error(e); return 0;})
+					.onFail(logger::error)
 					.map(i->i+bonus)
-					.get()
+					.orElse(0);
 
 ## Try allows only specified Exceptions to be caught
 	
