@@ -11,6 +11,7 @@ Cyclops Try offers an alternative way to manage exception handling.
 *	Support Try with Resources 
 *	Integrate with JDK Optional and Stream
 * 	Encapsulate success and failed states
+* 	Fail fast outside of run blocks
 *	Offer functional composition over encapsulated state
 	
 	
@@ -25,7 +26,7 @@ Throwing exceptions from methods breaks referential transparency and introduces 
 
 	int total = Try.catchExceptions(RuntimeException.class)
 					.run(()-> exceptionalMethod())
-					.onFail(e->logger.error(e))
+					.onFail(e-> { logger.error(e); return 0;})
 					.map(i->i+bonus)
 					.get()
 

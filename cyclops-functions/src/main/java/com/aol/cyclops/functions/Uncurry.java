@@ -2,11 +2,15 @@ package com.aol.cyclops.functions;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 //#http://java.dzone.com/articles/whats-wrong-java-8-currying-vs
 public class Uncurry extends UncurryConsumer{
 
 	
+	public static <T1,R> Function<T1,R> uncurry(Function<T1,Supplier<R>> func){
+		return  (t1) ->func.apply(t1).get();
+	}
 	public static <T1,T2,R> BiFunction<T1,T2,R> uncurry2(Function<T2,Function<T1,R>> biFunc){
 		return  (t2 , t1) -> biFunc.apply(t1).apply(t2);
 	}
