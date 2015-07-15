@@ -1,0 +1,12 @@
+com.aol.cyclops.functionaljava.comprehenders.EitherComprehender
+com.aol.cyclops.functionaljava.comprehenders.IOComprehender
+com.aol.cyclops.functionaljava.comprehenders.IterableWComprehender
+com.aol.cyclops.functionaljava.comprehenders.LeftProjectionComprehender
+com.aol.cyclops.functionaljava.comprehenders.ListComprehender
+com.aol.cyclops.functionaljava.comprehenders.OptionComprehender
+com.aol.cyclops.functionaljava.comprehenders.ReaderComprehender
+com.aol.cyclops.functionaljava.comprehenders.RightProjectionComprehender
+com.aol.cyclops.functionaljava.comprehenders.StreamComprehender
+com.aol.cyclops.functionaljava.comprehenders.TrampolineComprehender
+com.aol.cyclops.functionaljava.comprehenders.ValidationComprehender
+com.aol.cyclops.functionaljava.comprehenders.WriterComprehender

@@ -31,10 +31,10 @@ configurations {
 }
 dependencies {
 	compile project(':cyclops-base')
-	provided 'com.google.guava:guava:18.0'
+//	provided 'com.google.guava:guava:18.0'
 	provided group: 'com.aol.simplereact', name:'simple-react', version:'0.97'
-	provided 'com.javaslang:javaslang:1.2.2'
-	provided 'com.nurkiewicz.lazyseq:lazyseq:0.0.1'
+//	provided 'com.javaslang:javaslang:1.2.2'
+//	provided 'com.nurkiewicz.lazyseq:lazyseq:0.0.1'
 	provided group: 'org.projectlombok', name: 'lombok', version:'1.14.2'
 	provided "org.functionaljava:functionaljava:4.3"
 	provided "org.functionaljava:functionaljava-java8:4.3"
