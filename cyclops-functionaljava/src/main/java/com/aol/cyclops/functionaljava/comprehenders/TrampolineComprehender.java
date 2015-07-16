@@ -13,7 +13,7 @@ public class TrampolineComprehender implements Comprehender<Trampoline>{
 	
 	@Override
 	public Object resolveForCrossTypeFlatMap(Comprehender comp, Trampoline apply) {
-		return apply.run();
+		return comp.of(apply.run());
 	}
 
 	@Override

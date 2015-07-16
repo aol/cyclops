@@ -7,6 +7,7 @@ com.aol.cyclops.functionaljava.comprehenders.OptionComprehender
 com.aol.cyclops.functionaljava.comprehenders.ReaderComprehender
 com.aol.cyclops.functionaljava.comprehenders.RightProjectionComprehender
 com.aol.cyclops.functionaljava.comprehenders.StreamComprehender
+com.aol.cyclops.functionaljava.comprehenders.StateComprehender
 com.aol.cyclops.functionaljava.comprehenders.TrampolineComprehender
 com.aol.cyclops.functionaljava.comprehenders.ValidationComprehender
 com.aol.cyclops.functionaljava.comprehenders.WriterComprehender

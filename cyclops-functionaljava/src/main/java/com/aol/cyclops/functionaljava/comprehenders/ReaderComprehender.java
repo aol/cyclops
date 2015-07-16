@@ -11,7 +11,7 @@ public class ReaderComprehender implements Comprehender<Reader>{
 	
 	@Override
 	public Object resolveForCrossTypeFlatMap(Comprehender comp, Reader apply) {
-		return apply.getFunction();
+		return comp.of(apply.getFunction());
 	}
 
 	@Override
