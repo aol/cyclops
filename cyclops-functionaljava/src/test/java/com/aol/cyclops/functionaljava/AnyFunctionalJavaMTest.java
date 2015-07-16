@@ -21,7 +21,7 @@ import fj.data.List;
 import fj.data.Option;
 import fj.data.Stream;
 
-public class AnyJavaslangMTest {
+public class AnyFunctionalJavaMTest {
 
 
 	private String success(){

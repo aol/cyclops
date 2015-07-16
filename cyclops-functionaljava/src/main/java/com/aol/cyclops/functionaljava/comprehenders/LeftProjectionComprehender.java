@@ -17,6 +17,7 @@ import fj.data.Either.LeftProjection;
 import fj.data.Option;
 
 public class LeftProjectionComprehender implements Comprehender<LeftProjection>{
+
 	@Override
 	public Object filter(LeftProjection t, Predicate p){
 		return t.filter(x->p.test(x));

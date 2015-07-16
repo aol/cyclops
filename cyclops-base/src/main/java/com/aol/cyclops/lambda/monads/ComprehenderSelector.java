@@ -24,11 +24,13 @@ public class ComprehenderSelector {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Comprehender selectComprehender(Object structure) {
 
-		return comprehenders.getRegisteredComprehenders().stream()
-				.filter(e -> e.getKey().isAssignableFrom(structure.getClass()))
-				.map(e->e.getValue())
-				.findFirst()
-				.orElse(new InvokeDynamicComprehender(Optional.ofNullable(structure)
-				.map(Object::getClass)));
+		Comprehender selected =  comprehenders.getRegisteredComprehenders().stream()
+											.filter(e -> e.getKey().isAssignableFrom(structure.getClass()))
+											.map(e->e.getValue())
+											.findFirst()
+											.orElse(new InvokeDynamicComprehender(Optional.ofNullable(structure)
+											.map(Object::getClass)));
+		return selected;
 	}
+	
 }

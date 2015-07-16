@@ -23,7 +23,7 @@ public class FJ {
 			return AsAnyM.notTypeSafeAnyM(Optional.empty());
 	}
 	public static <T> AnyM<T> anyM(Either<T,?>.LeftProjection<T,?> lM){
-		if(lM.toOption().isNone())
+		if(lM.toOption().isSome()) //works in the opposite way to javaslang
 			return AsAnyM.notTypeSafeAnyM(Either.right(lM.value()).right());
 		else
 			return AsAnyM.notTypeSafeAnyM(Optional.empty());
