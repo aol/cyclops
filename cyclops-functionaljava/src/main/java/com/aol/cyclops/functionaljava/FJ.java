@@ -21,9 +21,35 @@ import fj.data.Stream;
 import fj.data.Validation;
 import fj.data.Writer;
 
+/**
+ * FunctionalJava Cyclops integration point
+ * 
+ * @author johnmcclean
+ *
+ */
 public class FJ {
 	
+	/**
+	 * Methods for making working with FJ's Trampoline a little more Java8 friendly
+	 *
+	 */
 	public static class Trampoline{
+		/**
+		 * 
+		 * <pre>
+		 * {@code
+		 * List<String> list = FJ.anyM(FJ.Trampoline.suspend(() -> Trampoline.pure("hello world")))
+								.map(String::toUpperCase)
+								.asSequence()
+								.toList();
+		      // ["HELLO WORLD"]
+		 * }
+		 * </pre>
+		 * 
+		 * @param s Suspend using a Supplier
+		 * 
+		 * @return Next Trampoline stage
+		 */
 		public static <T> fj.control.Trampoline<T> suspend(Supplier<fj.control.Trampoline<T>> s ){
 			return fj.control.Trampoline.suspend(new P1<fj.control.Trampoline<T>>(){
 
@@ -35,6 +61,21 @@ public class FJ {
 			});
 		}
 	}
+	/**
+	 * Unwrap an AnyM to a Reader
+	 * 
+	 * <pre>
+	 * {@code 
+	 *   FJ.unwrapReader(FJ.anyM(Reader.unit( (Integer a) -> "hello "+a ))
+						.map(String::toUpperCase))
+						.f(10)
+	 * 
+	 * }
+	 * </pre>
+	 * 
+	 * @param anyM Monad to unwrap
+	 * @return unwrapped reader
+	 */
 	public static final <A,B> Reader<A,B> unwrapReader(AnyM<B> anyM){
 		
 		Reader unwrapper = Reader.unit(a->1);
@@ -43,7 +84,20 @@ public class FJ {
 							.executeflatMap(unwrapper, i-> anyM.unwrap());
 		
 	}
-	public static final <A,B> Writer<A,B> unwrapWriter(AnyM<B> anyM,Writer<B,B> unwrapper){
+	/**
+	 * <pre>
+	 * {@code 
+	 * 		FJ.unwrapWriter(FJ.anyM(writer)
+				.map(String::toUpperCase),writer)
+				.value()
+	 * }
+	 * </pre>
+	 * 
+	 * @param anyM AnyM to unwrap to Writer
+	 * @param unwrapper Writer of same type to do unwrapping
+	 * @return Unwrapped writer
+	 */
+	public static final <A,B> Writer<A,B> unwrapWriter(AnyM<B> anyM,Writer<B,?> unwrapper){
 		
 		
 		return (Writer)new ComprehenderSelector()
@@ -51,6 +105,19 @@ public class FJ {
 							.executeflatMap(unwrapper, i-> anyM.unwrap());
 		
 	}
+	/**
+	 * <pre>
+	 * {@code 
+	 * 		FJ.unwrapState(FJ.anyM(State.constant("hello"))
+								.map(String::toUpperCase))
+								.run("")
+								._2()
+	 * 
+	 * }
+	 * </pre>
+	 * @param anyM AnyM to unwrap to State monad
+	 * @return State monad
+	 */
 	public static final <A,B> State<A,B> unwrapState(AnyM<B> anyM){
 		
 		State unwrapper = State.constant(1);
@@ -59,6 +126,19 @@ public class FJ {
 							.executeflatMap(unwrapper, i-> anyM.unwrap());
 		
 	}
+	/**
+	 * <pre>
+	 * {@code
+	 *    FJ.unwrapIO( 
+				FJ.anyM(IOFunctions.lazy(a->{ System.out.println("hello world"); return a;}))
+				.map(a-> {System.out.println("hello world2"); return a;})   )
+				.run();
+	 * 
+	 * }
+	 * </pre>
+	 * @param anyM to unwrap to IO Monad
+	 * @return IO Monad
+	 */
 	public static final <B> IO<B> unwrapIO(AnyM<B> anyM){
 		
 		IO unwrapper = IOFunctions.unit(1);
