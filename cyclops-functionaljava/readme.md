@@ -1,6 +1,6 @@
 # Javaslang Integration
 
-v5.0.0 of cyclops-functionaljava requires v4.3.3 of FunctionalJava.
+v5.0.0 of cyclops-functionaljava is built using v4.4 of FunctionalJava.
 
 
 
@@ -10,6 +10,7 @@ Pacakage com.aol.cyclops.functionaljava contains converters for types from vario
 
 * JDK
 * Guava
+* Javaslang
 * jooλ
 * simple-react
 

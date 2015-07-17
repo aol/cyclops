@@ -35,8 +35,8 @@ public class FromFunctionalJava {
 	}
 	public static<T> Option<T> option(fj.data.Option<T> o){
 		if(o.isNone())
-			return Option.of(null);
-		return Option.of(o.valueE("failed"));
+			return Option.none();
+		return Option.of(o.some());
 	}
 	public static<L,R> Either<L,R> either(fj.data.Either<L,R> e){
 		if(e.isLeft())
