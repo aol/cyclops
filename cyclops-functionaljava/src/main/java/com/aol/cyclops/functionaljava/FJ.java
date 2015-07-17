@@ -1,11 +1,13 @@
 package com.aol.cyclops.functionaljava;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.monads.AnyM;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 
+import fj.P1;
 import fj.control.Trampoline;
 import fj.data.Either;
 import fj.data.IO;
@@ -20,6 +22,19 @@ import fj.data.Validation;
 import fj.data.Writer;
 
 public class FJ {
+	
+	public static class Trampoline{
+		public static <T> fj.control.Trampoline<T> suspend(Supplier<fj.control.Trampoline<T>> s ){
+			return fj.control.Trampoline.suspend(new P1<fj.control.Trampoline<T>>(){
+
+				@Override
+				public fj.control.Trampoline<T> _1() {
+					return s.get();
+				}
+			
+			});
+		}
+	}
 	public static final <A,B> Reader<A,B> unwrapReader(AnyM<B> anyM){
 		
 		Reader unwrapper = Reader.unit(a->1);
@@ -79,7 +94,7 @@ public class FJ {
 	public static <T> AnyM<T> anyM(Reader<?,T> readerM){
 		return AsAnyM.notTypeSafeAnyM(readerM);
 	}
-	public static <T> AnyM<T> anyM(Trampoline<T> trampolineM){
+	public static <T> AnyM<T> anyM(fj.control.Trampoline<T> trampolineM){
 		return AsAnyM.notTypeSafeAnyM(trampolineM);
 	}
 	public static <T> AnyM<T> anyM(IterableW<T> iterableWM){

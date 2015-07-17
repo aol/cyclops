@@ -8,15 +8,13 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.SystemOutRule;
 
 import com.aol.cyclops.lambda.monads.AnyMonads;
-import com.sun.net.httpserver.Authenticator.Failure;
-import com.sun.net.httpserver.Authenticator.Success;
 
 import fj.Monoid;
-import fj.P1;
-import fj.Try;
 import fj.control.Trampoline;
 import fj.data.Either;
 import fj.data.IOFunctions;
@@ -30,7 +28,9 @@ import fj.data.Validation;
 import fj.data.Writer;
 
 public class AnyFunctionalJavaMTest {
-
+	@Rule
+    public final SystemOutRule sout = new SystemOutRule().enableLog();
+    private static final String SEP = System.getProperty("line.separator");
 
 	private String success(){
 		return "hello world";
@@ -174,15 +174,12 @@ public class AnyFunctionalJavaMTest {
 	}
 	@Test
 	public void trampolineTest(){
-		assertThat(FJ.anyM(Trampoline.suspend(new P1<Trampoline<String>>() {
-					public Trampoline<String> _1(){
-						return Trampoline.pure(finalStage());
-					}
-				}))
+		assertThat(FJ.anyM(FJ.Trampoline.suspend(()-> Trampoline.pure(finalStage())))
 				.map(String::toUpperCase)
 				.asSequence()
 				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
 	}
+	
 	@Test
 	public void readerTest(){
 		
@@ -241,6 +238,16 @@ public class AnyFunctionalJavaMTest {
 		
 	}
 	@Test 
+	public void writerUnwrapTest(){
+		
+		
+		Writer<String,String> writer = Writer.unit("lower", "", Monoid.stringMonoid);
+		assertThat(FJ.unwrapWriter(FJ.anyM(writer)
+				.map(String::toUpperCase),writer).value(),equalTo("LOWER"));
+				
+		
+	}
+	@Test 
 	public void writerUpperCaseTest(){
 		
 		
@@ -277,6 +284,8 @@ public class AnyFunctionalJavaMTest {
 		FJ.unwrapIO( 
 				FJ.anyM(IOFunctions.lazy(a->{ System.out.println("hello world"); return a;}))
 				.map(a-> {System.out.println("hello world2"); return a;})   ).run();
-		
+		  assertThat(
+                  "hello world" + SEP +
+                  "hello world2" + SEP ,equalTo( sout.getLog()));
 	}
 }
