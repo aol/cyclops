@@ -13,7 +13,7 @@ Pacakage com.aol.cyclops.functionaljava contains converters for types from vario
 * jooλ
 * simple-react
 
-Supported Javaslang Monads include
+Supported Functional Java Monads include
 
 * IO
 * Either
