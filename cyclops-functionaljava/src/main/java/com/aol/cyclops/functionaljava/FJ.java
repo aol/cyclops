@@ -1,12 +1,15 @@
 package com.aol.cyclops.functionaljava;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.monads.AnyM;
+import com.aol.cyclops.lambda.monads.AnyMonads;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 
+import fj.Monoid;
 import fj.P1;
 import fj.control.Trampoline;
 import fj.data.Either;
@@ -147,61 +150,231 @@ public class FJ {
 							.executeflatMap(unwrapper, i-> anyM.unwrap());
 		
 	}
+	/**
+	 * 
+	 * <pre>
+	 * {@code
+	 * FJ.anyM(IOFunctions.lazy(a->{ System.out.println("hello world"); return a;}))
+	 * }
+	 * </pre>
+	 * 
+	 * @param ioM Construct an AnyM from the supplied IO Monad
+	 * @return AnyM
+	 */
 	public static <T> AnyM<T> anyM(IO<T> ioM){
 		return AsAnyM.notTypeSafeAnyM(ioM);
 	}
+	/**
+	 * <pre>
+	 * {@code
+	 * AnyM<String> anyM  = FJ.anyM(State.constant("hello"))
+							.map(String::toUpperCase)
+		}
+		</pre>
+	 * @param stateM Construct an AnyM from the supplied State Monad
+	 * @return AnyM
+	 */
 	public static <T> AnyM<T> anyM(State<?,T> stateM){
 		return AsAnyM.notTypeSafeAnyM(stateM);
 	}
-	public static <T> AnyM<T> anyM(Validation<?,T> eitherM){
-		return AsAnyM.notTypeSafeAnyM(eitherM);
+	/**
+	 * <pre>
+	 * {@code
+	 * FJ.anyM(Validation.success(success()))
+			.map(String::toUpperCase)
+			.toSequence()
+			.toList()
+	 * }
+	 * 
+	 * @param validationM to  construct an AnyM from
+	 * @return AnyM
+	 */
+	public static <T> AnyM<T> anyM(Validation<?,T> validationM){
+		return AsAnyM.notTypeSafeAnyM(validationM);
 	}
 	
-	//even with the same types keeps things simpler
+	
+	/**
+	 * uses the same types keeps things simpler
+	 * 
+	 * <pre>
+	 * {@code
+	 * FJ.anyM(Writer.unit("lower", "", Monoid.stringMonoid))
+				.flatMap(a->FJ.anyMValue(Writer.unit("hello",Monoid.stringMonoid)))
+	 * }
+	 * 
+	 * @param writerM to construct an AnyM from
+	 * @return AnyM
+	 */
 	public static <T> AnyM<T> anyM(Writer<T,T> writerM){
 		return AsAnyM.notTypeSafeAnyM(writerM);
 	}
+	/**
+	 * <pre>
+	 * {@code
+	 * FJ.anyMValue(Writer.unit("hello",Monoid.stringMonoid))
+	 * }
+	 * </pre>
+	 * 
+	 * @param writerM to construct an AnyM from
+	 * @return AnyM
+	 */
 	public static <T> AnyM<T> anyMValue(Writer<T,?> writerM){
 			return AsAnyM.notTypeSafeAnyM(writerM);
 	}
 	/**
+	 * <pre>
+	 * {@code 
+	 * 	FJ.anyM(Reader.unit( (Integer a) -> "hello "+a )
+	 * }
+	 * </pre>
+	 * 
 	 * Create an AnyM, input type will be ignored, while Reader is wrapped in AnyM
 	 * Extract to access and provide input value
 	 * 
-	 * @param readerM
-	 * @return
+	 * @param readerM to create AnyM from 
+	 * @return AnyM
 	 */
 	public static <T> AnyM<T> anyM(Reader<?,T> readerM){
 		return AsAnyM.notTypeSafeAnyM(readerM);
 	}
+	/**
+	 * <pre>
+	 * {@code
+	 * FJ.anyM(FJ.Trampoline.suspend(()-> Trampoline.pure(finalStage()))
+	 * }
+	 * </pre>
+	 * 
+	 * @param trampolineM to create AnyM from
+	 * @return AnyM
+	 */
 	public static <T> AnyM<T> anyM(fj.control.Trampoline<T> trampolineM){
 		return AsAnyM.notTypeSafeAnyM(trampolineM);
 	}
+	/**
+	 * <pre>
+	 * {@code
+	 * FJ.anyM(IterableW.wrap(Arrays.asList("hello world")))
+				.map(String::toUpperCase)
+				.toSequence()
+				.toList()
+	 * 
+	 * }
+	 * 
+	 * @param iterableWM to create AnyM from
+	 * @return AnyM
+	 */
 	public static <T> AnyM<T> anyM(IterableW<T> iterableWM){
 		return AsAnyM.notTypeSafeAnyM(iterableWM);
 	}
+	/**
+	 * (Right biased)
+	 * <pre>
+	 * {@code 
+	 * FJ.anyM(Either.right("hello world"))
+			.map(String::toUpperCase)
+			.flatMapOptional(Optional::of)
+			.toSequence()
+			.toList()
+	 * }
+	 * </pre>
+	 * 
+	 * @param eitherM to construct AnyM from
+	 * @return AnyM
+	 */
 	public static <T> AnyM<T> anyM(Either<?,T> eitherM){
 		return AsAnyM.notTypeSafeAnyM(eitherM);
 	}
+	/**
+	 * <pre>
+	 * {@code
+	 * FJ.anyM(Either.right("hello world").right())
+			.map(String::toUpperCase)
+			.toSequence()
+			.toList()
+			
+			//[HELLO WORLD]
+	 * }</pre>
+	 * 
+	 * 
+	 * @param rM Right projection to construct AnyM from
+	 * @return AnyM
+	 */
 	public static <T> AnyM<T> anyM(Either<?,T>.RightProjection<?,T> rM){
 		if(rM.toOption().isSome())
 			return AsAnyM.notTypeSafeAnyM(Either.right(rM.value()).right());
 		else
 			return AsAnyM.notTypeSafeAnyM(Optional.empty());
 	}
+	/**
+	 * <pre>
+	 * {@code
+	 *  FJ.anyM(Either.<String,String>left("hello world").left())
+			.map(String::toUpperCase)
+			.flatMapOptional(Optional::of)
+			.toSequence()
+			.toList() 
+	 * }
+	 * //[HELLO WORLD]
+	 * </pre>
+	 * 
+	 * @param lM Left Projection to construct AnyM from
+	 * @return AnyM
+	 */
 	public static <T> AnyM<T> anyM(Either<T,?>.LeftProjection<T,?> lM){
 		if(lM.toOption().isSome()) //works in the opposite way to javaslang
 			return AsAnyM.notTypeSafeAnyM(Either.right(lM.value()).right());
 		else
 			return AsAnyM.notTypeSafeAnyM(Optional.empty());
 	}
-	public static <T> AnyM<T> anyM(Option<T> tryM){
-		return AsAnyM.notTypeSafeAnyM(tryM);
+	/**
+	 * <pre>
+	 * {@code
+	 * FJ.anyM(Option.some("hello world"))
+				.map(String::toUpperCase)
+				.toSequence()
+				.toList()
+	 * }
+	 * //[HELLO WORLD]
+	 * </pre>
+	 * 
+	 * @param optionM to construct AnyM from
+	 * @return AnyM
+	 */
+	public static <T> AnyM<T> anyM(Option<T> optionM){
+		return AsAnyM.notTypeSafeAnyM(optionM);
 	}
-	public static <T> AnyM<T> anyM(Stream<T> tryM){
-		return AsAnyM.notTypeSafeAnyM(tryM);
+	/**
+	 * <pre>
+	 * {@code
+	 * FJ.anyM(Stream.stream("hello world"))
+				.map(String::toUpperCase)
+				.flatMap(i->AnyMonads.anyM(java.util.stream.Stream.of(i)))
+				.toSequence()
+				.toList()
+	 * }
+	 *  //[HELLO WORLD]
+	 * </pre>
+	 * 
+	 * @param streamM to construct AnyM from
+	 * @return AnyM
+	 */
+	public static <T> AnyM<T> anyM(Stream<T> streamM){
+		return AsAnyM.notTypeSafeAnyM(streamM);
 	}
-	public static <T> AnyM<T> anyM(List<T> tryM){
-		return AsAnyM.notTypeSafeAnyM(tryM);
+	/**
+	 * <pre>
+	 * {@code 
+	 * FJ.anyM(List.list("hello world"))
+				.map(String::toUpperCase)
+				.toSequence()
+				.toList()
+	 * }
+	 * </pre>
+	 * @param listM to Construct AnyM from
+	 * @return AnyM
+	 */
+	public static <T> AnyM<T> anyM(List<T> listM){
+		return AsAnyM.notTypeSafeAnyM(listM);
 	}
 }
