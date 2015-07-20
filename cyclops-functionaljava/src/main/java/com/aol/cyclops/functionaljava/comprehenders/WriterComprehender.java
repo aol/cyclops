@@ -16,7 +16,7 @@ public class WriterComprehender implements Comprehender<Writer>{
 	
 	@Override
 	public Object resolveForCrossTypeFlatMap(Comprehender comp, Writer apply) {
-		return apply.value();
+		return comp.of(apply.value());
 	}
 
 	@Override

@@ -15,7 +15,7 @@ public class StateComprehender implements Comprehender<State>{
 	
 	@Override
 	public Object resolveForCrossTypeFlatMap(Comprehender comp, State apply) {
-		return apply;
+		return comp.of(apply.run(null)._2());
 	}
 
 	@Override

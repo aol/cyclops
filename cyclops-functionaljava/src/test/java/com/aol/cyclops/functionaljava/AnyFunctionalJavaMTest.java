@@ -264,7 +264,8 @@ public class AnyFunctionalJavaMTest {
 	
 		assertThat(FJ.anyM(Writer.unit("lower", "", Monoid.stringMonoid))
 				.flatMap(a->FJ.anyMValue(Writer.unit("hello",Monoid.stringMonoid)))
-				.<Writer<String,String>>unwrap().value(),equalTo("hello"));
+				.map(String::toUpperCase)
+				.<Writer<String,String>>unwrap().value(),equalTo("HELLO"));
 				
 		
 	}
@@ -275,6 +276,16 @@ public class AnyFunctionalJavaMTest {
 		
 		assertThat(FJ.unwrapState(FJ.anyM(State.constant("hello"))
 			.map(String::toUpperCase)).run("")._2()
+				,equalTo("HELLO"));
+	}
+	@Test
+	public void stateFlatMapTest(){
+	
+		
+		assertThat(FJ.unwrapState(FJ.anyM(State.constant("hello"))
+				.flatMap(s->FJ.anyM(State.constant(s.toUpperCase() )))
+			
+					).run("")._2()
 				,equalTo("HELLO"));
 	}
 	@Test

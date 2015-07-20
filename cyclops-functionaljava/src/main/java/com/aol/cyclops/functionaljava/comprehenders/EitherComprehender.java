@@ -6,9 +6,11 @@ import java.util.function.Predicate;
 
 
 
+
 import com.aol.cyclops.lambda.api.Comprehender;
 
 import fj.data.Either;
+import fj.data.Option;
 
 public class EitherComprehender implements Comprehender<Either> {
 
@@ -32,7 +34,7 @@ public class EitherComprehender implements Comprehender<Either> {
 
 	@Override
 	public Either empty() {
-		return Either.right(null);
+		return Either.right(Option.none());
 	}
 
 	@Override

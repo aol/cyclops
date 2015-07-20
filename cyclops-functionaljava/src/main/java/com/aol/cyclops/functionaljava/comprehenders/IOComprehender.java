@@ -15,7 +15,7 @@ public class IOComprehender implements Comprehender<IO>{
 	
 	@Override
 	public Object resolveForCrossTypeFlatMap(Comprehender comp, IO apply) {
-		return Option.none();
+		return comp.empty();
 	}
 
 	@Override
