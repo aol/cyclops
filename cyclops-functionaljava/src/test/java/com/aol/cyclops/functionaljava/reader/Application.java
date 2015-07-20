@@ -9,10 +9,10 @@ public class Application {
 	UserRepositoryImpl repo = new UserRepositoryImpl();
 	
 	
-	public Map userInfo(String username) {
+	public Map<String,String> userInfo(String username) {
 		return run(new UserInfo().userInfo(username));
 	 }
-	private Map run( Reader<UserRepository, Map> reader){
+	private Map<String,String>  run( Reader<UserRepository, Map<String,String> > reader){
 			return reader.f(repo);
 	}
 	static class UserRepositoryImpl implements UserRepository{
