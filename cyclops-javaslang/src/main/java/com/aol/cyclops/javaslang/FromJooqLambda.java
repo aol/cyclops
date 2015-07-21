@@ -1,12 +1,5 @@
 package com.aol.cyclops.javaslang;
-import javaslang.Function1;
-import javaslang.Function2;
-import javaslang.Function3;
-import javaslang.Function4;
-import javaslang.Function5;
-import javaslang.Function6;
-import javaslang.Function7;
-import javaslang.Function8;
+
 import javaslang.Tuple0;
 import javaslang.Tuple1;
 import javaslang.Tuple2;
@@ -17,7 +10,16 @@ import javaslang.Tuple6;
 import javaslang.Tuple7;
 import javaslang.Tuple8;
 
-public class Fromjooλ{
+import org.jooq.lambda.function.Function1;
+import org.jooq.lambda.function.Function2;
+import org.jooq.lambda.function.Function3;
+import org.jooq.lambda.function.Function4;
+import org.jooq.lambda.function.Function5;
+import org.jooq.lambda.function.Function6;
+import org.jooq.lambda.function.Function7;
+import org.jooq.lambda.function.Function8;
+
+public class FromJooqLambda{
 	public static <T,R>  Function1<T,R> f1(org.jooq.lambda.function.Function1<T,R> fn){
 		return (t) -> fn.apply(t);
 	}

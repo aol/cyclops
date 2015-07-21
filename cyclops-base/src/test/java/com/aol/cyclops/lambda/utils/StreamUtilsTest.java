@@ -34,8 +34,11 @@ public class StreamUtilsTest {
 
 	@Test
 	public void testReversedStream() {
+		
 		assertThat(StreamUtils.reversedStream(Arrays.asList(1,2,3)).collect(Collectors.toList())
 				,equalTo(Arrays.asList(3,2,1)));
+		
+		
 	}
 
 	@Test
@@ -96,8 +99,11 @@ public class StreamUtilsTest {
 
 	@Test
 	public void testSkipUntil(){
+		
 		assertThat(StreamUtils.skipUntil(Stream.of(4,3,6,7),i->i==6).collect(Collectors.toList()),
 				equalTo(Arrays.asList(6,7)));
+		
+		
 	}
 	@Test
 	public void testSkipWhile(){

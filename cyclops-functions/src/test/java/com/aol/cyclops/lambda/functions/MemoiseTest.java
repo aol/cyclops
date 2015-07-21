@@ -36,6 +36,7 @@ public class MemoiseTest {
 		assertThat(s.get(),equalTo(1));
 		assertThat(s.get(),equalTo(1));
 		assertThat(s.get(),equalTo(1));
+		
 	}
 
 	@Test

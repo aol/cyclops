@@ -27,7 +27,7 @@ import fj.P6;
 import fj.P7;
 import fj.P8;
 
-public class Fromjooλ{
+public class FromJooqLambda{
 	public static <T,R>  F<T,R> f1(Function1<T,R> fn){
 		return (t) -> fn.apply(t);
 	}

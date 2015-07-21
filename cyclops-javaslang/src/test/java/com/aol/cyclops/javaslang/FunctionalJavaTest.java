@@ -11,12 +11,12 @@ import com.aol.cyclops.javaslang.FromFunctionalJava;
 public class FunctionalJavaTest {
 
 	@Test
-	public void testFromFunctionalJavaλ() {
+	public void testFromFunctionalJavaf() {
 		assertThat(FromFunctionalJava.f1((Integer a)->a*100).apply(2),is(200));
 		
 	}
 	@Test
-	public void testFromFunctionalJavaλ2(){
+	public void testFromFunctionalJavaf2(){
 		assertThat(FromFunctionalJava.f2((Integer a,Integer b)->a*b).curried().apply(100).apply(5),is(500));
 	}
 	@Test
