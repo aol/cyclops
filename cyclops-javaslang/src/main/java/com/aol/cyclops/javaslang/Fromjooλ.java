@@ -1,4 +1,12 @@
 package com.aol.cyclops.javaslang;
+import javaslang.Function1;
+import javaslang.Function2;
+import javaslang.Function3;
+import javaslang.Function4;
+import javaslang.Function5;
+import javaslang.Function6;
+import javaslang.Function7;
+import javaslang.Function8;
 import javaslang.Tuple0;
 import javaslang.Tuple1;
 import javaslang.Tuple2;
@@ -10,6 +18,30 @@ import javaslang.Tuple7;
 import javaslang.Tuple8;
 
 public class Fromjooλ{
+	public static <T,R>  Function1<T,R> f1(org.jooq.lambda.function.Function1<T,R> fn){
+		return (t) -> fn.apply(t);
+	}
+	public static <T,X,R>  Function2<T,X,R> f2(org.jooq.lambda.function.Function2<T,X,R> fn){
+		return (t,x) -> fn.apply(t,x);
+	}
+	public static <T1,T2,T3,R>  Function3<T1,T2,T3,R> f3(org.jooq.lambda.function.Function3<T1,T2,T3,R> fn){
+		return (t1,t2,t3) -> fn.apply(t1,t2,t3);
+	}
+	public static <T1,T2,T3,T4,R>  Function4<T1,T2,T3,T4,R> f4(org.jooq.lambda.function.Function4<T1,T2,T3,T4,R> fn){
+		return (t1,t2,t3,t4) -> fn.apply(t1,t2,t3,t4);
+	}
+	public static <T1,T2,T3,T4,T5,R>  Function5<T1,T2,T3,T4,T5,R> f5(org.jooq.lambda.function.Function5<T1,T2,T3,T4,T5,R> fn){
+		return (t1,t2,t3,t4,t5) -> fn.apply(t1,t2,t3,t4,t5);
+	}
+	public static <T1,T2,T3,T4,T5,T6,R>  Function6<T1,T2,T3,T4,T5,T6,R> f6(org.jooq.lambda.function.Function6<T1,T2,T3,T4,T5,T6,R> fn){
+		return (t1,t2,t3,t4,t5,t6) -> fn.apply(t1,t2,t3,t4,t5,t6);
+	}
+	public static <T1,T2,T3,T4,T5,T6,T7,R>  Function7<T1,T2,T3,T4,T5,T6,T7,R> f7(org.jooq.lambda.function.Function7<T1,T2,T3,T4,T5,T6,T7,R> fn){
+		return (t1,t2,t3,t4,t5,t6,t7) -> fn.apply(t1,t2,t3,t4,t5,t6,t7);
+	}
+	public static <T1,T2,T3,T4,T5,T6,T7,T8,R>  Function8<T1,T2,T3,T4,T5,T6,T7,T8,R> f8(org.jooq.lambda.function.Function8<T1,T2,T3,T4,T5,T6,T7,T8,R> fn){
+		return (t1,t2,t3,t4,t5,t6,t7,t8) -> fn.apply(t1,t2,t3,t4,t5,t6,t7,t8);
+	}
 	public static  Tuple0 tuple(org.jooq.lambda.tuple.Tuple0 t){
 		return Tuple0.instance();
 	}

@@ -12,12 +12,12 @@ public class FunctionalJavaTest {
 
 	@Test
 	public void testFromFunctionalJavaλ() {
-		assertThat(FromFunctionalJava.λ((Integer a)->a*100).apply(2),is(200));
+		assertThat(FromFunctionalJava.f1((Integer a)->a*100).apply(2),is(200));
 		
 	}
 	@Test
 	public void testFromFunctionalJavaλ2(){
-		assertThat(FromFunctionalJava.λ2((Integer a,Integer b)->a*b).curried().apply(100).apply(5),is(500));
+		assertThat(FromFunctionalJava.f2((Integer a,Integer b)->a*b).curried().apply(100).apply(5),is(500));
 	}
 	@Test
 	public void testFromFunctionalJavaOption(){
