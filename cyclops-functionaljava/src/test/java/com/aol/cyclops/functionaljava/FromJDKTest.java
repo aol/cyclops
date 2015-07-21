@@ -14,12 +14,12 @@ public class FromJDKTest {
 
     @Test
     public void testJDKλ() {
-        assertThat(FromJDK.λ((Integer a)->a*100).f(2),is(200));
+        assertThat(FromJDK.f1((Integer a)->a*100).f(2),is(200));
 
     }
     @Test
     public void testJDKλ2(){
-        assertThat(FromJDK.λ2((Integer a,Integer b)->a*b).f(100,5),is(500));
+        assertThat(FromJDK.f2((Integer a,Integer b)->a*b).f(100,5),is(500));
     }
     @Test
     public void testJDKOption(){

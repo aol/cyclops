@@ -11,7 +11,7 @@ import static org.junit.Assert.assertThat;
 public class FromGuavaTest {
     @Test
     public void testGuavaλ() {
-        assertThat(FromGuava.λ((Integer a)->a*100).f(2),is(200));
+        assertThat(FromGuava.f1((Integer a)->a*100).f(2),is(200));
 
     }
     @Test
