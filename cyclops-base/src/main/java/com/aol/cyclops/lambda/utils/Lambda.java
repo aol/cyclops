@@ -48,7 +48,7 @@ public class Lambda {
 	 * @param triFunc
 	 * @return supplied function
 	 */
-	public static <T1,T2,T3,R> Function<T1,Function<T2,Function<T3,R>>> λ3(Function<T1,Function<T2,Function<T3,R>>> triFunc){
+	public static <T1,T2,T3,R> Function<T1,Function<T2,Function<T3,R>>> l3(Function<T1,Function<T2,Function<T3,R>>> triFunc){
 		return   triFunc;
 	}
 	/**
