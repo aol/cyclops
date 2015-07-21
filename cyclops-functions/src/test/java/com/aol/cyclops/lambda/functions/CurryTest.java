@@ -1,31 +1,22 @@
 package com.aol.cyclops.lambda.functions;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 import org.junit.Test;
 
 import com.aol.cyclops.functions.Curry;
-
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
 public class CurryTest {
 
 	@Test
 	public void testBiFunc() {
 		
-		
-		BiFunction<Integer,Integer,Integer> add= (i,j) -> i+j;
-		Function<Integer,Integer> add5 = Curry.curry2(add).apply(5);
-		
-		int total = add5.apply(10); //15
-		
-		
-		
 		BiFunction<Integer,Integer,String> fn= (i,j) -> "" + (i+j) + "hello";
 		assertThat(Curry.curry2(fn).apply(1).apply(2),equalTo("3hello"));
-		
 	}
+	
 	@Test
 	public void testBiFuncInPlace() {
 		

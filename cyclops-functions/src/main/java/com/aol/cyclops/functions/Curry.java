@@ -2,11 +2,14 @@ package com.aol.cyclops.functions;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 //#http://java.dzone.com/articles/whats-wrong-java-8-currying-vs
 public class Curry extends CurryConsumer{
 
-	
+	public static <T1,R> Function<T1,Supplier<R>> curry(Function<T1,R> func){
+		return  t1 -> ()->func.apply(t1);
+	}
 	public static <T1,T2,R> Function<T1,Function<T2,R>> curry2(BiFunction<T1,T2,R> biFunc){
 		return  t1 -> t2 -> biFunc.apply(t1,t2);
 	}
