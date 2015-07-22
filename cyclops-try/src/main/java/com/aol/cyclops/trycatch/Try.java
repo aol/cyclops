@@ -192,6 +192,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, St
 	 * @param classes Exceptions to catch during map / flatMap
 	 * @return Try instance
 	 */
+	@SafeVarargs
 	public static <T,X extends Throwable> Try<T,X> of(T value,Class<? extends Throwable>... classes){
 		return new Success<>(value,classes);
 	}

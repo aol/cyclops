@@ -1,5 +1,6 @@
 package com.aol.cyclops.functionaljava;
 
+import static com.aol.cyclops.functionaljava.FJ.anyM;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -182,6 +183,10 @@ public class AnyFunctionalJavaMTest {
 	
 	@Test
 	public void readerTest(){
+		
+		anyM(Reader.unit( (Integer a) -> "hello "+a ))
+			.map(String::toUpperCase);
+		
 		
 		assertThat(FJ.unwrapReader(FJ.anyM(Reader.unit( (Integer a) -> "hello "+a ))
 						.map(String::toUpperCase)).f(10),equalTo("HELLO 10"));

@@ -1,5 +1,7 @@
 package com.aol.cyclops.functionaljava.reader;
 
+import static com.aol.cyclops.functionaljava.FJ.anyM;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,13 +14,12 @@ import fj.data.Reader;
 public class UserInfo implements Users {
 
 	public Reader<UserRepository,Map<String,String> > userInfo(String username) {
-		return	FJ.unwrapReader(extractUserInfo(username));
-	}
-
-	private AnyM<Map<String,String> > extractUserInfo(String username) {
-		return Do.add(FJ.anyM(this.findUser(username)))
-				 .withAnyM(user -> FJ.anyM(this.getUser(user.getSupervisor().getId())))
-				 .yield(user -> boss -> buildMap(user,boss));
+		
+		return Do.add(anyM(findUser(username)))
+				 .withAnyM(user -> anyM(getUser(user.getSupervisor().getId())))
+				 .yield(user -> boss -> buildMap(user,boss)).unwrap();
+		
+		
 	}
 
 	private Map<String,String>  buildMap(User user, User boss) {
