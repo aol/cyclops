@@ -2,6 +2,11 @@
 
 Powerful Pattern Matching for Java. Use lambda's, hamcrest or scala-like wildcards!
 
+
+<img width="880" alt="screen shot 2015-07-22 at 10 14 06 pm" src="https://cloud.githubusercontent.com/assets/9964792/8837606/0a2d9368-30bf-11e5-9690-eaa96bb56cc5.png">
+
+
+
 ![pattern matching](https://cloud.githubusercontent.com/assets/9964792/8334707/3827c1e2-1a91-11e5-87b1-604905a75ecb.png)
   
 # How to get Cyclops Pattern Matching 
