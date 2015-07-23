@@ -24,10 +24,11 @@ public class ScalaParserExampleTest {
 		parser = new ScalaParserExample();
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void testEval() {
 		
-		// 1 + 2 * X*X
+		// 1 + (2 * (X*X))
 		val expr = new Add(new Const(1), new Mult(new Const(2), new Mult(new X(), new X()))); 
 		
 
@@ -35,6 +36,9 @@ public class ScalaParserExampleTest {
 		
 		val df = parser.derive(expr);
 		assertThat(parser.eval(df, 3), is(12));
+		
+		
+		
 		val simple = parser.simplify(expr);
 		System.out.println(simple);
 	}	
