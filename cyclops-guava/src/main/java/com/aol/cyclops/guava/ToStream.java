@@ -1,12 +1,12 @@
 package com.aol.cyclops.guava;
 
-import com.aol.simple.react.stream.traits.LazyFutureStream;
-import com.google.common.collect.FluentIterable;
-import com.nurkiewicz.lazyseq.LazySeq;
+import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
 
-import java.util.stream.Stream;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
+import com.google.common.collect.FluentIterable;
+import com.nurkiewicz.lazyseq.LazySeq;
 
 /**
  * Created by johnmcclean on 4/8/15.

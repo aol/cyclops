@@ -5,14 +5,11 @@ import com.aol.cyclops.lambda.monads.AnyM;
 import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
 
-import fj.data.Option;
-import fj.data.Stream;
-
 public class Guava {
 	/**
 	 * <pre>
 	 * {@code
-	 * FJ.anyM(Optional.of("hello world"))
+	 * Guava.anyM(Optional.of("hello world"))
 				.map(String::toUpperCase)
 				.toSequence()
 				.toList()
