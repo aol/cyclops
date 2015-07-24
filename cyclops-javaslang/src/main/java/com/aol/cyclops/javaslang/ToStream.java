@@ -19,7 +19,7 @@ public class ToStream {
     public static <T> Stream<T> toStream(javaslang.collection.Stream<T> s){
         return Seq.seq(s.iterator());
     }
-    public static <T> Seq<T> toJooλ(javaslang.collection.Stream<T> s){
+    public static <T> Seq<T> toJooqLambda(javaslang.collection.Stream<T> s){
         return Seq.seq(s.iterator());
     }
     public static <T> LazyFutureStream<T> toFutureStream(javaslang.collection.Stream<T> s){

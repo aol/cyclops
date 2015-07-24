@@ -690,6 +690,7 @@ public class SequenceM<T> implements Unwrapable {
 	 * @return this monad converted to a list
 	 */
 	public final List<T> toList(){
+	
 		return (List)monad.collect(Collectors.toList());
 	}
 	/**

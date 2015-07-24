@@ -14,6 +14,7 @@ public class ComprehensionTest {
 
 	@Test
 	public void cfList(){
+		
 		CompletableFuture<String> future = CompletableFuture.supplyAsync(this::loadData);
 		CompletableFuture<List<String>> results1 = Do.add(future)
  														.add(Javaslang.anyM(List.of("first","second")))
@@ -21,6 +22,7 @@ public class ComprehensionTest {
  														.unwrap();
 		
 		System.out.println(results1.join());
+		
 	}
 	private String loadData(){
 		return "loaded";

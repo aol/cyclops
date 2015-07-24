@@ -31,8 +31,8 @@ public class ToStreamTest {
     }
 
     @Test
-    public void testToJooλ() throws Exception {
-        assertThat(ToStream.toJooλ(Stream.of(1, 2, 3, 4)).collect(Collectors.toList()).size(), is(4));
+    public void testToJooqLambda() throws Exception {
+        assertThat(ToStream.toJooqLambda(Stream.of(1, 2, 3, 4)).collect(Collectors.toList()).size(), is(4));
     }
 
     @Test    @Ignore

@@ -51,11 +51,13 @@ public class LiftTest {
 	
 	@Test
 	public void testLiftAndStream(){
+		
 		val divide = AnyMonads.liftM2(this::divide);
 		
 		AnyM<Integer> result = divide.apply(anyM(Try.of(2, ArithmeticException.class)), anyM(Stream.of(10,1,2,3)));
 		
 		assertThat(result.<Try<List<Integer>,ArithmeticException>>unwrap().get(),equalTo(Arrays.asList(0, 2, 1, 0)));
+		
 	}
 	
 	@Test(expected=ArithmeticException.class)

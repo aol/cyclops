@@ -22,11 +22,12 @@ public class ScalaParserExample {
 	//http://kerflyn.wordpress.com/2011/02/14/playing-with-scalas-pattern-matching/
 	//See C# impl here :- https://github.com/dotnet/roslyn/issues/206
 	//paper : http://lampwww.epfl.ch/~emir/written/MatchingObjectsWithPatterns-TR.pdf
+	
 	public Integer eval(Expression expression, int xValue){
 		
 		return Matching.when().isType( (X x)-> xValue)
 				.when().isType((Const c) -> c.getValue())
-				.when().isType((Add a) ->  { System.out.println("!add"); return eval(a.getLeft(),xValue) + eval(a.getRight(),xValue);})
+				.when().isType((Add a) ->   eval(a.getLeft(),xValue) + eval(a.getRight(),xValue))
 				.when().isType( (Mult m) -> eval(m.getLeft(),xValue) * eval(m.getRight(),xValue))
 				.when().isType( (Neg n) ->  -eval(n.getExpr(),xValue))
 				.match(expression).orElse(1);
