@@ -1,6 +1,6 @@
 # Guava Integration
 
-v5.0.0 of cyclops-javaslang requires 
+v5.0.0 of cyclops-javaslang requires Guava 18.0 or above
 
 
 
