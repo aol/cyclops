@@ -11,12 +11,14 @@ import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 
 import fj.Monoid;
 import fj.P1;
+import fj.Semigroup;
 import fj.control.Trampoline;
 import fj.data.Either;
 import fj.data.IO;
 import fj.data.IOFunctions;
 import fj.data.IterableW;
 import fj.data.List;
+import fj.data.NonEmptyList;
 import fj.data.Option;
 import fj.data.Reader;
 import fj.data.State;
@@ -64,6 +66,9 @@ public class FJ {
 			});
 		}
 	}
+	
+	
+	
 	/**
 	 * Unwrap an AnyM to a Reader
 	 * 
