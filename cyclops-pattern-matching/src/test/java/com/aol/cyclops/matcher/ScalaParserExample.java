@@ -36,14 +36,20 @@ public class ScalaParserExample {
 		
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	
+	
 	public Expression derive(Expression e){
+	
+		
 		return Matching.when().isType((X x)-> new Const(1))
 					.when().isType((Const c)-> new Const(0))
 					.when().isType((Add a) -> new Add(derive(a.getLeft()),derive(a.getRight())))
 					.when().isType( (Mult m) -> new Add(new Mult(derive(m.getLeft()), m.getRight()), new Mult(m.getLeft(), derive(m.getRight()))))
 					.when().isType( (Neg n) -> new Neg(derive(n.getExpr())))
 					.match(e).get();
-					
+		
+		
 	}
 	
 	
@@ -67,6 +73,8 @@ public class ScalaParserExample {
 				.apply(e).orElse(e);
 
 	}
+	
+	
 	
 	public Expression deeplyNestedExample(Expression e){
 		

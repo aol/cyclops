@@ -1,8 +1,11 @@
+
+<img width="873" alt="screen shot 2015-07-22 at 10 19 24 pm" src="https://cloud.githubusercontent.com/assets/9964792/8837752/e478f5bc-30bf-11e5-972d-e6ac54e80b7a.png">
+
 # Features
 
 Extensible components for Java 8
 
-*  Generic Monad operations
+*  Generic Monad operations via AnyM and SequenceM
 *  Specific and InvokeDynamic based Monadic comprehension (for use in cyclops-for-comprehension and elsewhere)
 *  Mutable / LazyImmutable Utils for working with Closures / captured values & variables
 *  Stream utils - e.g. reverse a stream
