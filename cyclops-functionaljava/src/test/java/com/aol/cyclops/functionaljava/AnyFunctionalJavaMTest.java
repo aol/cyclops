@@ -1,6 +1,7 @@
 package com.aol.cyclops.functionaljava;
 
 import static com.aol.cyclops.functionaljava.FJ.anyM;
+import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -40,6 +41,16 @@ public class AnyFunctionalJavaMTest {
 	private String exceptional(){
 		
 		throw new RuntimeException();
+	}
+	@Test
+	public void flatMapCrossTypeNotCollectionUnwrap(){
+		assertThat(FJ.anyM(Option.some(1))
+							.flatMap(i->FJ.anyM(Stream.stream(i+2)))
+							.unwrap(),equalTo(Option.some(Arrays.asList(3))));
+	}
+	@Test
+	public void flatMapCrossTypeNotCollection(){
+		assertThat(FJ.anyM(Option.some(1)).flatMap(i->FJ.anyM(Stream.stream(i+2))).toSequence().toList(),equalTo(Arrays.asList(3)));
 	}
 	@Test
 	public void eitherTest(){
@@ -170,6 +181,30 @@ public class AnyFunctionalJavaMTest {
 				.toSequence()
 				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
 	}
+	@Test
+	public void JDKstreamFlatMapTest(){
+		assertThat(AnyMonads.anyM(java.util.stream.Stream.of("hello world"))
+				.map(String::toUpperCase)
+				.flatMap(i->FJ.anyM(Stream.stream(i)))
+				.toSequence()
+				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
+	}
+	@Test
+	public void JDKOptionFlatMapTest(){
+		assertThat(AnyMonads.anyM(java.util.stream.Stream.of("hello world"))
+				.map(String::toUpperCase)
+				.flatMap(i->FJ.anyM(Option.some(i)))
+				.toSequence()
+				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
+	}
+	@Test
+	public void JDKOptionEmptyFlatMapTest(){
+		assertThat(AnyMonads.anyM(java.util.stream.Stream.of("hello world"))
+				.map(String::toUpperCase)
+				.flatMap(i->FJ.anyM(Option.none()))
+				.toSequence()
+				.toList(),equalTo(Arrays.asList()));
+	}
 	public String finalStage(){
 		return "hello world";
 	}
@@ -293,6 +328,8 @@ public class AnyFunctionalJavaMTest {
 					).run("")._2()
 				,equalTo("HELLO"));
 	}
+	
+	
 	@Test
 	public void ioTest() throws IOException{
 		

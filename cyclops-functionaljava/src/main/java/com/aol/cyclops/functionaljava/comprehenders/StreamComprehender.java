@@ -6,6 +6,7 @@ import java.util.function.Function;
 
 
 
+
 import com.aol.cyclops.lambda.api.Comprehender;
 import com.nurkiewicz.lazyseq.LazySeq;
 
@@ -52,6 +53,9 @@ public class StreamComprehender implements Comprehender<Stream> {
 		
 		return Comprehender.unwrapOtherMonadTypes(comp,apply);
 		
+	}
+	public Object resolveForCrossTypeFlatMap(Comprehender comp,Stream apply){
+		return comp.of(apply.toCollection());
 	}
 
 }
