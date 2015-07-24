@@ -1,4 +1,4 @@
-package com.aol.cyclops.guava.comprehenders;
+package com.aol.cyclops.guava;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
