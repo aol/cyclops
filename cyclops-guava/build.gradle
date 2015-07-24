@@ -1,0 +1,103 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'com.bmuschko.nexus'
+apply plugin: 'maven-publish'
+
+buildscript {
+	repositories {
+		jcenter()
+	}
+
+	dependencies {
+		classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
+		
+	}
+}
+
+sourceCompatibility = 1.8
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Cyclops Guava', 'Implementation-Version': version
+    }
+}
+
+repositories {
+    mavenCentral()
+
+}
+configurations {
+	provided
+}
+dependencies {
+	compile project(':cyclops-base')
+	provided 'com.google.guava:guava:18.0'
+	provided group: 'com.aol.simplereact', name:'simple-react', version:'0.97'
+	provided 'com.javaslang:javaslang:1.2.2'
+	provided 'com.nurkiewicz.lazyseq:lazyseq:0.0.1'
+	provided group: 'org.projectlombok', name: 'lombok', version:'1.14.2'
+	provided "org.functionaljava:functionaljava:4.3"
+	provided "org.functionaljava:functionaljava-java8:4.3"
+	testCompile project(':cyclops-for-comprehensions')
+	testCompile group: 'junit', name: 'junit', version: '4.12'
+	testCompile  group: 'org.hamcrest', name: 'hamcrest-all', version:'1.3'
+	testCompile group: 'org.mockito', name: 'mockito-all', version:'1.9.5'
+}
+sourceSets {
+	main.compileClasspath += [configurations.provided]
+	test.compileClasspath += [configurations.provided]
+	test.runtimeClasspath += [configurations.provided]
+}
+eclipse.classpath.plusConfigurations += [configurations.provided]  // Eclipse users only
+test {
+    systemProperties 'property': 'value'
+}
+
+
+
+modifyPom {
+	project {
+		name 'cyclops-javaslang'
+		description 'Converters and Comprehenders for Javaslang'
+		url 'https://github.com/aol/cyclops'
+		inceptionYear '2015'
+
+		groupId 'com.aol.cyclops'
+		artifactId 'cyclops-javaslang'
+		version "$version"
+		
+		scm {
+			url 'ssh://git@github.com:aol/cyclops.git'
+			connection 'ssh://git@github.com:aol/cyclops.git'
+			developerConnection 'ssh://git@github.com:aol/cyclops.git'
+		}
+
+		licenses {
+			license {
+				name 'The MIT License (MIT)'
+				url 'https://github.com/aol/cyclops/blob/master/licence.txt'
+				distribution 'repo'
+			}
+		}
+
+		developers {
+			developer {
+				id 'johnmcclean-aol'
+				name 'John McClean'
+				email 'john.mcclean@teamaol.com'
+			}
+		}
+	}
+}
+
+extraArchive {
+        sources = true
+        tests = true
+        javadoc = true
+}
+
+nexus {
+       sign = true
+        repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+        snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots'	
+}
