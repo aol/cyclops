@@ -313,7 +313,6 @@ public class AnyFunctionalJavaMTest {
 	@Test
 	public void stateTest(){
 	
-		
 		assertThat(FJ.unwrapState(FJ.anyM(State.constant("hello"))
 			.map(String::toUpperCase)).run("")._2()
 				,equalTo("HELLO"));
