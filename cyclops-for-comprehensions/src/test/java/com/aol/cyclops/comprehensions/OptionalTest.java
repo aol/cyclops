@@ -17,7 +17,7 @@ public class OptionalTest {
 		Optional<Integer> two = Optional.of(2);
 		Optional<Integer> three = Optional.of(3);
 		Optional<Integer> four = Optional.of(4);
-		BiFunction<Integer, Integer, Integer> f2 = (a, b) ->{ System.out.println(a);return  a * b; };
+		BiFunction<Integer, Integer, Integer> f2 = (a, b) -> a * b;
 
 	
 		Optional<Integer> result =  Do.add(two)
