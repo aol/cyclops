@@ -25,10 +25,18 @@ public class OptionalComprehender implements Comprehender<Optional>{
 		if(t.isPresent())
 			o = java.util.Optional.of(t.get());
 		
-		java.util.Optional res =  o.flatMap(r->fn.apply(r));
+		java.util.Optional res = o.flatMap(r-> unwrap((Optional)fn.apply(r)));
 		Optional ret = Optional.absent();
 		if(res.isPresent())
 			ret = Optional.of(res.get());
+		return ret;
+		
+	}
+	private java.util.Optional unwrap(Optional res){
+		
+		java.util.Optional ret = java.util.Optional.empty();
+		if(res.isPresent())
+			ret = java.util.Optional.of(res.get());
 		return ret;
 	}
 
