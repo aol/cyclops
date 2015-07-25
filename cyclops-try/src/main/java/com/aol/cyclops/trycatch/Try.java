@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.val;
 
 import com.aol.cyclops.lambda.api.Streamable;
+import com.aol.cyclops.lambda.monads.AnyM;
 import com.aol.cyclops.value.ValueObject;
 
 /**
@@ -41,6 +42,18 @@ import com.aol.cyclops.value.ValueObject;
  */
 public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, Streamable<T> {
 
+	/**
+	 * @return This monad, wrapped as AnyM of Success
+	 */
+	public AnyM<T> anyM();
+	/**
+	 * @return This monad, wrapped as AnyM of Failure
+	 */
+	public AnyM<X> anyMFailure();
+	/**
+	 * @return This monad, wrapped as AnyM of Success
+	 */
+	public AnyM<T> anyMSuccess();
 	/**
 	 * @return Successful value or will throw Throwable (X) if Failire
 	 */

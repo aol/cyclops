@@ -12,6 +12,8 @@ import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+import com.aol.cyclops.lambda.api.AsAnyM;
+import com.aol.cyclops.lambda.monads.AnyM;
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
 /**
@@ -32,6 +34,24 @@ public class Failure<T,X extends Throwable> implements Try<T,X> {
 	private final X error;
 	
 	/**
+	 * @return This monad, wrapped as AnyM of Success
+	 */
+	public AnyM<T> anyM(){
+		return this.anyMSuccess();
+	}
+	/**
+	 * @return This monad, wrapped as AnyM of Failure
+	 */
+	public AnyM<X> anyMFailure(){
+		return AsAnyM.notTypeSafeAnyM(this);
+	}
+	/**
+	 * @return This monad, wrapped as AnyM of Success
+	 */
+	public AnyM<T> anyMSuccess(){
+		return AsAnyM.notTypeSafeAnyM(Optional.empty());
+	}
+	/**
 	 * Construct a Failure instance from a throwable
 	 * 
 	 * @param error for Failure
@@ -39,6 +59,15 @@ public class Failure<T,X extends Throwable> implements Try<T,X> {
 	 */
 	public static <T,X extends Throwable> Failure<T,X> of(X error){
 		return new Failure<>(error);
+	}
+	/**
+	 * Construct a Failure instance from a throwable
+	 * 
+	 * @param error for Failure
+	 * @return new Failure with error
+	 */
+	public static <T,X extends Throwable> AnyM<X> anyMOf(X error){
+		return new Failure<>(error).anyMFailure();
 	}
 	/* 
 	 *	@return throws an Exception

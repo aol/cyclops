@@ -967,7 +967,39 @@ public class SequenceM<T> implements Unwrapable, Stream<T> {
 	public long count() {
 		return monad.count();
 	}
-	
+	/**
+	 * Returns a stream with a given value interspersed between any two values
+	 * of this stream.
+	 * 
+	 * 
+	 * // (1, 0, 2, 0, 3, 0, 4) SequenceM.of(1, 2, 3, 4).intersperse(0)
+	 * 
+	 */
+	public  SequenceM<T> intersperse(T value) {
+		return SequenceM.fromStream(monad.flatMap(t -> Stream.of(value, t).skip(1)));
+	}
+	/**
+	 * Keep only those elements in a stream that are of a given type.
+	 * 
+	 * 
+	 * // (1, 2, 3) SequenceM.of(1, "a", 2, "b",3).ofType(Integer.class)
+	 * 
+	 */
+	@SuppressWarnings("unchecked")
+	public <U> SequenceM<U> ofType(Class<U> type) {
+		return SequenceM.fromStream(monad.filter(type::isInstance).map(t -> (U) t));
+	}
+	/**
+	 * Cast all elements in a stream to a given type, possibly throwing a
+	 * {@link ClassCastException}.
+	 * 
+	 * 
+	 * // ClassCastException SequenceM.of(1, "a", 2, "b", 3).cast(Integer.class)
+	 * 
+	 */
+	public <U> SequenceM<U> cast(Class<U> type) {
+		return SequenceM.fromStream(monad.map(type::cast));
+	}
 	/**
 	 * Lazily converts this SequenceM into a Collection. This does not trigger the Stream. E.g.
 	 * Collection is not thread safe on the first iteration.

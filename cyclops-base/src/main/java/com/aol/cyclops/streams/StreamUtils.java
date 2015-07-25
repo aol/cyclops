@@ -607,6 +607,40 @@ public class StreamUtils{
 	}
 	
 	/**
+	 * Returns a stream with a given value interspersed between any two values
+	 * of this stream.
+	 * 
+	 * 
+	 * // (1, 0, 2, 0, 3, 0, 4) StreamUtils.intersperse(Stream.of(1, 2, 3, 4),0)
+	 * 
+	 */
+	public static <T> Stream<T> intersperse(Stream<T> stream, T value) {
+		return stream.flatMap(t -> Stream.of(value, t).skip(1));
+	}
+	/**
+	 * Keep only those elements in a stream that are of a given type.
+	 * 
+	 * 
+	 * // (1, 2, 3) StreamUtils.ofType(Stream.of(1, "a", 2, "b", 3,Integer.class)
+	 * 
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T, U> Stream<U> ofType(Stream<T> stream, Class<U> type) {
+		return stream.filter(type::isInstance).map(t -> (U) t);
+	}
+
+	/**
+	 * Cast all elements in a stream to a given type, possibly throwing a
+	 * {@link ClassCastException}.
+	 * 
+	 * 
+	 * // ClassCastException StreamUtils.cast(Stream.of(1, "a", 2, "b", 3),Integer.class)
+	 * 
+	 */
+	public static <T, U> Stream<U> cast(Stream<T> stream, Class<U> type) {
+		return stream.map(type::cast);
+	}
+	/**
 	 * flatMap operation
 	 * 
 	 * @param fn

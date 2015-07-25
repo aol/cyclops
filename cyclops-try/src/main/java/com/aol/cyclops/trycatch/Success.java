@@ -8,11 +8,13 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.lambda.utils.ExceptionSoftener;
-
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+
+import com.aol.cyclops.lambda.api.AsAnyM;
+import com.aol.cyclops.lambda.monads.AnyM;
+import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
 /**
  * Class that represents a Successful Try
@@ -42,13 +44,44 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 	public T get(){
 		return value;
 	}
-
+	/**
+	 * @return This monad wrapped as AnyM
+	 */
+	public AnyM<T> anyM(){
+		return AsAnyM.notTypeSafeAnyM(this);
+	}
+	/**
+	 * @return This monad, wrapped as AnyM of Failure
+	 */
+	public AnyM<X> anyMFailure(){
+		return AsAnyM.notTypeSafeAnyM(Optional.empty());
+	}
+	/**
+	 * @return This monad, wrapped as AnyM of Success
+	 */
+	public AnyM<T> anyMSuccess(){
+		return anyM();
+	}
 	/**
 	 * @param value Successful value
 	 * @return new Success with value
 	 */
 	public static <T,X extends Throwable> Success<T,X> of(T value){
 		return new Success<>(value,new Class[0]);
+	}
+	/**
+	 * @param value Successful value
+	 * @return new Success with value
+	 */
+	public static <T,X extends Throwable> AnyM<T> anyMOf(T value,Class<? extends Throwable>[] classes){
+		return new Success<>(value,classes).anyM();
+	}
+	/**
+	 * @param value Successful value
+	 * @return new Success with value
+	 */
+	public static <T,X extends Throwable> AnyM<T> anyMOf(T value){
+		return new Success<>(value,new Class[0]).anyM();
 	}
 	/**
 	 * @param value Successful value

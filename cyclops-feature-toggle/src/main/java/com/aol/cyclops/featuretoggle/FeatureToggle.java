@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.lambda.api.Streamable;
+import com.aol.cyclops.lambda.monads.AnyM;
 import com.aol.cyclops.value.ValueObject;
 
 
@@ -24,6 +25,18 @@ public interface FeatureToggle<F> extends Supplier<F>, ValueObject, Streamable<F
 	boolean isEnabled();
 	boolean isDisabled();
 	
+	/**
+	 * @return This monad, wrapped as AnyM
+	 */
+	public AnyM<F> anyM();
+	/**
+	 * @return This monad, wrapped as AnyM of Disabled
+	 */
+	public AnyM<F> anyMDisabled();
+	/**
+	 * @return This monad, wrapped as AnyM of Enabled
+	 */
+	public AnyM<F> anyMEnabled();
 	F get();
 	
 	default <T extends Iterable<?>> T unapply(){

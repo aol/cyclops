@@ -1,6 +1,10 @@
 package com.aol.cyclops.featuretoggle;
 
 import java.util.Objects;
+import java.util.Optional;
+
+import com.aol.cyclops.lambda.api.AsAnyM;
+import com.aol.cyclops.lambda.monads.AnyM;
 
 import lombok.Value;
 
@@ -26,7 +30,42 @@ public class Enabled<F> implements FeatureToggle<F>{
    
 
 	private final F enabled;
-
+	/**
+	 * @return This monad, wrapped as AnyM
+	 */
+	public AnyM<F> anyM(){
+		return AsAnyM.notTypeSafeAnyM(this);
+	}
+	/**
+	 * @return This monad, wrapped as AnyM of Disabled
+	 */
+	public AnyM<F> anyMDisabled(){
+		return  AsAnyM.notTypeSafeAnyM(Optional.empty());
+	}
+	/**
+	 * @return This monad, wrapped as AnyM of Enabled
+	 */
+	public AnyM<F> anyMEnabled(){
+		return anyM();
+	}
+	/**
+	 * Create a new enabled switch
+	 * 
+	 * @param f switch value
+	 * @return enabled switch
+	 */
+	public static <F> Enabled<F> of(F f){
+		return new Enabled<F>(f);
+	}
+	/**
+	 * Create a new enabled switch
+	 * 
+	 * @param f switch value
+	 * @return enabled switch
+	 */
+	public static <F> AnyM<F> anyMOf(F f){
+		return new Enabled<F>(f).anyM();
+	}
     /* 
      *	@return
      * @see com.aol.cyclops.enableswitch.Switch#get()
