@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
@@ -731,14 +732,30 @@ public class StreamUtils{
 	}
 
 	 /**
-	   * Projects an immutable collection of this stream.
+	   * Projects an immutable collection of this stream. Initial iteration over the collection is not thread safe 
+	   * (can't be performed by multiple threads concurrently) subsequent iterations are.
 	   *
 	   * @return An immutable collection of this stream.
 	   */
 	  public static final <A> Collection<A> toLazyCollection(Stream<A> stream) {
 		  	return toLazyCollection(stream.iterator());
 	  }	
-		  public static final <A> Collection<A> toLazyCollection(Iterator<A> iterator) {
+	  public static final <A> Collection<A> toLazyCollection(Iterator<A> iterator){
+		  return toLazyCollection(iterator,false);
+	  }
+	  /**
+	   * Lazily constructs a Collection from specified Stream. Collections iterator may be safely used
+	   * concurrently by multiple threads.
+	 * @param stream
+	 * @return
+	 */
+	public static final <A> Collection<A> toConcurrentLazyCollection(Stream<A> stream) {
+		  	return toConcurrentLazyCollection(stream.iterator());
+	  }	
+	  public static final <A> Collection<A> toConcurrentLazyCollection(Iterator<A> iterator){
+		  return toLazyCollection(iterator,true);
+	  }
+	 private static final <A> Collection<A> toLazyCollection(Iterator<A> iterator,boolean concurrent) {
 	    return new AbstractCollection<A>() {
 	    	
 	    @Override  
@@ -771,7 +788,10 @@ public class StreamUtils{
 	      }
 	      List<A> data =new ArrayList<>();
 	     
-	      boolean complete=false;
+	      volatile boolean complete=false;
+	      
+	      Object lock = new Object();
+	      ReentrantLock rlock = new ReentrantLock();
 	      public Iterator<A> iterator() {
 	    	  if(complete)
 	    		  return data.iterator();
@@ -779,31 +799,49 @@ public class StreamUtils{
 	    		  int current = -1;
 				@Override
 				public boolean hasNext() {
-					if(current==data.size()-1 && !complete){
-						boolean result = iterator.hasNext();
-						complete = !result;
-						return result;
+					
+					if(concurrent){
+						
+						rlock.lock();
 					}
-					if(current<data.size())
-						return true;
-					return false;
+					try{
+						if(current==data.size()-1 && !complete){
+							boolean result = iterator.hasNext();
+							complete = !result;
+							return result;
+						}
+						if(current<data.size())
+							return true;
+						return false;
+					}finally{
+						if(concurrent)
+							rlock.unlock();
+					}
 				}
 
-				@Override
-				public A next() {
-					if(current<data.size() &&!complete){
-						data.add(iterator.next());
+					@Override
+					public A next() {
 						
-						return data.get(++current);
+						if (concurrent) {
+
+							rlock.lock();
+						}
+						try {
+							if (current < data.size() && !complete) {
+								data.add(iterator.next());
+
+								return data.get(++current);
+							}
+							current++;
+							return data.get(current);
+						} finally {
+							if (concurrent)
+								rlock.unlock();
+						}
+
 					}
-					current++;
-					return data.get(current);
-						
-					
-					
-				}
-	    		  
-	    	  };
+
+				};
 	        
 	      }
 
@@ -818,5 +856,5 @@ public class StreamUtils{
 	      }
 	    };
 	  }
-		
+	
 }

@@ -15,20 +15,41 @@ public class AsStreamable {
 		return new CoercedStreamable(collectStream(toCoerce));
 	}
 	/**
-	 * @param toCoerce Makes Stream repeatable, Lazily copies values so not suitable
-	 *        for concurrent restreaming
+	 * @param toCoerce Efficiently / lazily Makes Stream repeatable, not thread safe, on initial iteration
 	 * @return
 	 */
 	public static <T> Streamable<T> asStreamable(Stream<T> toCoerce){
 		return new CoercedStreamable(collectStream(toCoerce));
 	}
-	public static <T> Streamable<T> asStreamableEager(Stream<T> toCoerce){
-		return new CoercedStreamable(toCoerce.collect(Collectors.toList()));
-	}
 	public static <T> Streamable<T> asStreamable(Iterable<T> toCoerce){
 		return new CoercedStreamable(collectStream(toCoerce));
 	}
+	/**
+	 * @param toCoerce Efficiently / lazily Makes Stream repeatable, guards iteration with locks on initial iteration
+	 * @return
+	 */
+	public static <T> Streamable<T> asConcurrentStreamable(Stream<T> toCoerce){
+		return new CoercedStreamable(collectStreamConcurrent(toCoerce));
+	}
+	public static <T> Streamable<T> asConcurrentStreamable(Iterable<T> toCoerce){
+		return new CoercedStreamable(collectStreamConcurrent(toCoerce));
+	}
 	
+	private static <T> T collectStreamConcurrent(T object){
+		if(object instanceof Stream){
+			
+			Collection c = StreamUtils.toLazyCollection((Stream)object);
+			return (T)new Iterable(){
+
+				@Override
+				public Iterator iterator() {
+					return c.iterator();
+				}
+				
+		};
+		}
+		return object;
+	}
 	
 	private static <T> T collectStream(T object){
 		if(object instanceof Stream){

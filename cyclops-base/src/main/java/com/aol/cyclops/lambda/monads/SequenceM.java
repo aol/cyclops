@@ -968,17 +968,37 @@ public class SequenceM<T> implements Unwrapable, Stream<T> {
 		return monad.count();
 	}
 	
+	/**
+	 * Construct a Sequence from the provided elements
+	 * @param elements To Construct sequence from
+	 * @return
+	 */
 	public static <T> SequenceM<T> of(T... elements){
 		return new SequenceM(Stream.of(elements));
 	}
+	/**
+	 * Construct a Sequence from a Stream
+	 * @param stream Stream to construct Sequence from
+	 * @return
+	 */
 	public static <T> SequenceM<T> fromStream(Stream<T> stream){
 		return new SequenceM(stream);
 	}
-	public static <T> SequenceM<T> fromLazySeq(LazySeq<T> stream){
-		return new SequenceM(stream);
+	/** 
+	 * Construct a Sequence from a LazySeq
+	 * @param lazySeq to construct Sequence from
+	 * @return
+	 */
+	public static <T> SequenceM<T> fromLazySeq(LazySeq<T> lazySeq){
+		return new SequenceM(lazySeq);
 	}
-	public static <T> SequenceM<T> fromIterable(Iterable<T> stream){
-		return new SequenceM(StreamUtils.stream(stream));
+	/**
+	 * Construct a Sequence from an Iterable
+	 * @param iterable  to construct Sequence from
+	 * @return SequenceM
+	 */
+	public static <T> SequenceM<T> fromIterable(Iterable<T> iterable){
+		return new SequenceM(StreamUtils.stream(iterable));
 	}
 	@Override
 	public Stream<T> onClose(Runnable closeHandler) {
