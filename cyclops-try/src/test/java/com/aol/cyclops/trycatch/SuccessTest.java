@@ -7,7 +7,6 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -24,6 +23,20 @@ public class SuccessTest {
 
 	Success<Integer,FileNotFoundException> success;
 	final Integer value = 10;
+	
+	
+	public Try<String,FileNotFoundException> load(String filename){
+		return Success.of("test-data");
+	}
+	
+	public void process(){
+		
+		Try<String,FileNotFoundException> attempt = load("data");
+		
+		attempt.map(String::toUpperCase)
+				.peek(System.out::println);
+	
+	}
 	
 	@Before
 	public void setup(){

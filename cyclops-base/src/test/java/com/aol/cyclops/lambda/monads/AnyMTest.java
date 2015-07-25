@@ -147,10 +147,14 @@ public class AnyMTest {
 	}
 	@Test
 	public void testToListFlatten(){
+		
+	
 		assertThat(anyM(Stream.of(1,2,3,null))
-					.bind(Optional::ofNullable)
+					.flatMapOptional(Optional::ofNullable)
 					.asSequence()
 					.toList(),equalTo(Arrays.asList(1,2,3)));
+	
+	
 	}
 	@Test
 	public void testToListOptional(){
@@ -377,6 +381,7 @@ public class AnyMTest {
 	}
 	@Test
 	public void grouped(){
+		
 		List<List<Integer>> list = anyM(Stream.of(1,2,3,4,5,6))
 									.asSequence()
 									.grouped(3)
@@ -385,9 +390,11 @@ public class AnyMTest {
 		
 		assertThat(list.get(0),hasItems(1,2,3));
 		assertThat(list.get(1),hasItems(4,5,6));
+	
 	}
 	@Test
 	public void groupedOptional(){
+		
 		List<List<Integer>> list = anyM(Optional.of(Arrays.asList(1,2,3,4,5,6)))
 											.<Integer>toSequence()
 											.grouped(3)
@@ -396,6 +403,7 @@ public class AnyMTest {
 		
 		assertThat(list.get(0),hasItems(1,2,3));
 		assertThat(list.get(1),hasItems(4,5,6));
+		
 	}
 	
 	@Test
@@ -574,13 +582,19 @@ public class AnyMTest {
 	
 	@Test
 	public void testReplicateM(){
+		
 		 AnyM<List<Integer>> applied =anyM(Optional.of(2)).replicateM(5);
 		 assertThat(applied.unwrap(),equalTo(Optional.of(Arrays.asList(2,2,2,2,2))));
+	
 	}
 	@Test
 	public void testReplicateMStream(){
-		 AnyM<List<Integer>> applied =anyM(Stream.of(2,3,4)).replicateM(5);
-		 assertThat(applied.toSequence().toList(),equalTo(Arrays.asList(2,3,4,2,3,4,2,3,4,2,3,4,2,3,4)));
+	
+		AnyM<List<Integer>> replicated =anyM(Stream.of(2,3,4)).replicateM(5);
+		
+		assertThat(replicated.toSequence().toList(),
+						equalTo(Arrays.asList(2,3,4 ,2,3,4 ,2,3,4 ,2,3,4 ,2,3,4)));
+	
 	}
 	
 	@Test

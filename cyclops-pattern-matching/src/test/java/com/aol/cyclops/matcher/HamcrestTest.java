@@ -40,12 +40,23 @@ public class HamcrestTest {
 
 	@Test
 	public void multipleHamcrestMatchersAnyMatch() {
-		assertThat(Matching.when().anyMatch(containsString("hello"), containsString("world33")).thenApply(message -> message).match("hello world")
-				.get(), is("hello world"));
-
+		
 		assertThat(
-				Matching.when().allMatch(containsString("goodbye"), containsString("universe")).thenApply(message -> message).match("hello world"),
-				is(Optional.empty()));
+				
+				
+				Matching.when().anyMatch(containsString("hello"), 
+											containsString("world33"))
+						.thenApply(message -> message)
+						.match("hello world")
+						.get()
+						
+						
+						
+						, is("hello world"));
+
+		assertThat(Matching.when().allMatch(containsString("goodbye"), containsString("universe"))
+					.thenApply(message -> message).match("hello world"),
+					is(Optional.empty()));
 	}
 
 	@Test

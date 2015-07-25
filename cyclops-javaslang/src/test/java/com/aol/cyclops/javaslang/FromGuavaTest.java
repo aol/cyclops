@@ -10,8 +10,8 @@ import static org.junit.Assert.assertThat;
  */
 public class FromGuavaTest {
     @Test
-    public void testGuavaλ() {
-        assertThat(FromGuava.λ((Integer a)->a*100).apply(2),is(200));
+    public void testGuavaf() {
+        assertThat(FromGuava.f1((Integer a)->a*100).apply(2),is(200));
 
     }
     @Test

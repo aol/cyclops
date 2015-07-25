@@ -19,6 +19,7 @@ import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.streams.StreamUtils;
 
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.averagingInt;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.joining;
@@ -34,8 +35,18 @@ public class StreamUtilsTest {
 
 	@Test
 	public void testReversedStream() {
+		
+		
+		
+		StreamUtils.reversedStream(asList(1,2,3))
+				.map(i->i*100)
+				.forEach(System.out::println);
+		
+		
 		assertThat(StreamUtils.reversedStream(Arrays.asList(1,2,3)).collect(Collectors.toList())
 				,equalTo(Arrays.asList(3,2,1)));
+		
+		
 	}
 
 	@Test
@@ -96,8 +107,11 @@ public class StreamUtilsTest {
 
 	@Test
 	public void testSkipUntil(){
+		
 		assertThat(StreamUtils.skipUntil(Stream.of(4,3,6,7),i->i==6).collect(Collectors.toList()),
 				equalTo(Arrays.asList(6,7)));
+		
+		
 	}
 	@Test
 	public void testSkipWhile(){

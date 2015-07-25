@@ -28,10 +28,10 @@ public class ScalaParserExampleTest {
 	@Test
 	public void testEval() {
 		
+
 		// 1 + (2 * (X*X))
 		val expr = new Add(new Const(1), new Mult(new Const(2), new Mult(new X(), new X()))); 
 		
-
 		assertThat(parser.eval(expr, 3),is(19));
 		
 		val df = parser.derive(expr);

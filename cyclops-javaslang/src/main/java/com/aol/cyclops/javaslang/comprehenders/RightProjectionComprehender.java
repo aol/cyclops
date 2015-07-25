@@ -13,7 +13,8 @@ import javaslang.control.Right;
 import com.aol.cyclops.lambda.api.Comprehender;
 
 public class RightProjectionComprehender implements Comprehender<RightProjection>{
-	public Object filter(LeftProjection t, Predicate p){
+	@Override
+	public Object filter(RightProjection t, Predicate p){
 		return t.filter(x->p.test(x));
 	}
 	@Override

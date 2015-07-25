@@ -5,7 +5,7 @@ import org.junit.Test;
 import java.util.Optional;
 
 
-import static com.aol.cyclops.javaslang.FromJDK.λ2;
+import static com.aol.cyclops.javaslang.FromJDK.f2;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -15,13 +15,13 @@ import static org.junit.Assert.assertThat;
 public class FromJDKTest {
 
     @Test
-    public void testJDKλ() {
-        assertThat(FromJDK.λ((Integer a)->a*100).apply(2),is(200));
+    public void testJDKf() {
+        assertThat(FromJDK.f1((Integer a)->a*100).apply(2),is(200));
 
     }
     @Test
-    public void testJDKλ2(){
-        assertThat(λ2((Integer a,Integer b)->a*b).curried().apply(100).apply(5),is(500));
+    public void testJDKf2(){
+        assertThat(f2((Integer a,Integer b)->a*b).curried().apply(100).apply(5),is(500));
     }
     @Test
     public void testJDKOption(){

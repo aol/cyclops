@@ -1,12 +1,13 @@
 package com.aol.cyclops.comprehensions.donotation.typed;
 
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.function.Function;
 
 import lombok.AllArgsConstructor;
 
 import org.pcollections.PStack;
+import org.pcollections.PVector;
+import org.pcollections.TreePVector;
 
 import com.aol.cyclops.comprehensions.ComprehensionData;
 import com.aol.cyclops.comprehensions.ForComprehensions;
@@ -30,8 +31,8 @@ public abstract class DoComp {
 	}
 	
 	 @SuppressWarnings({"rawtypes","unchecked"})
-	private Object handleNext(Entry e,ComprehensionData c,List<String> assigned){
-		 List<String>  newList = new ArrayList(assigned); 
+	private Object handleNext(Entry e,ComprehensionData c,PVector<String> newList){
+		
 		if(e.getValue() instanceof Guard){
 			
 			final Function f = ((Guard)e.getValue()).getF();
@@ -64,7 +65,7 @@ public abstract class DoComp {
 	 }
 	private Object build(
 			ComprehensionData c, Function f) {
-		Mutable<List<String>> vars = new Mutable<>(new ArrayList());
+		Mutable<PVector<String>> vars = new Mutable<>(TreePVector.empty());
 		assigned.stream().forEach(e-> addToVar(e,vars,handleNext(e,c,vars.get())));
 		Mutable<Object> var = new Mutable<>(f);
 		
@@ -75,7 +76,7 @@ public abstract class DoComp {
 		
 	}
 	private Object unwrapNestedFunction(ComprehensionData c, Function f,
-			List<String> vars) {
+			PVector<String> vars) {
 		Function next = f;
 		Object result = null;
 		for(String e : vars){
@@ -91,9 +92,10 @@ public abstract class DoComp {
 		return result;
 	}
 
-	private Object addToVar(Entry e,Mutable<List<String>> vars, Object handleNext) {
+	private Object addToVar(Entry e,Mutable<PVector<String>> vars, Object handleNext) {
 		if(!(e.getValue() instanceof Guard)){	
-			vars.get().add(e.getKey());
+			PVector<String> vector = vars.get();
+			vars.set(vector.plus(vector.size(),e.getKey()));
 		}
 		return handleNext;
 	}

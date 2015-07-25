@@ -14,12 +14,20 @@ public class AppyAsyncTest {
 		assertThat(methodTuple1().callAsync(this::method3).join(),equalTo("10"));
 		
 	}
+	
 	@Test
 	public void testConvertT2(){
 		
 		assertThat(methodTuple2().callAsync(this::method2).join(),equalTo("10hello"));
 		
 	}
+	public PTuple2<Integer,String> methodTuple2(){
+		return PowerTuples.tuple(10,"hello");
+	}
+	public String method2(Integer number, String value){
+		return "" + number + value;
+	}
+	
 	@Test
 	public void testConvertT3(){
 		
@@ -60,18 +68,14 @@ public class AppyAsyncTest {
 	public PTuple1<Integer> methodTuple1(){
 		return PowerTuples.tuple(10);
 	}
-	public PTuple2<Integer,String> methodTuple2(){
-		return PowerTuples.tuple(10,"hello");
-	}
+	
 	public PTuple3<Integer,String,Integer> methodTuple3(){
 		return PowerTuples.tuple(10,"hello",3);
 	}
 	public String method3params(Integer number, String value,Integer num2){
 		return "" + number + value + num2;
 	}
-	public String method2(Integer number, String value){
-		return "" + number + value;
-	}
+	
 	public String method3(Integer number){
 		return "" + number;
 	}

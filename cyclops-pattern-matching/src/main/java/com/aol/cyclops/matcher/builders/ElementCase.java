@@ -90,7 +90,8 @@ public class ElementCase<X> extends CaseBeingBuilt {
 	 *            Hamcrest Matchers that will trigger this case
 	 * @return Next Step in the Case Builder process
 	 */
-	public <V> InMatchOfBuilder<V, X> allMatch(Matcher<V>... matchers) {
+	@SafeVarargs
+	public final <V> InMatchOfBuilder<V, X> allMatch(Matcher<V>... matchers) {
 
 		return new InMatchOfBuilder<V, X>(allOf(matchers), patternMatcher, this);
 	}
@@ -102,7 +103,8 @@ public class ElementCase<X> extends CaseBeingBuilt {
 	 *            Hamcrest Matchers that will trigger this case
 	 * @return Next Step in the Case Builder process
 	 */
-	public <V> InMatchOfBuilder<V, X> anyMatch(Matcher<V>... matchers) {
+	@SafeVarargs
+	public final  <V> InMatchOfBuilder<V, X> anyMatch(Matcher<V>... matchers) {
 
 		return new InMatchOfBuilder<V, X>(anyOf(matchers), patternMatcher, this);
 	}
@@ -114,7 +116,8 @@ public class ElementCase<X> extends CaseBeingBuilt {
 	 *            Hamcrest Matchers that will trigger this case
 	 * @return Next Step in the Case Builder process
 	 */
-	public <V> InMatchOfBuilder<V, X> noneMatch(Matcher<V>... matchers) {
+	@SafeVarargs
+	public final <V> InMatchOfBuilder<V, X> noneMatch(Matcher<V>... matchers) {
 		return new InMatchOfBuilder<V, X>(allOf(Stream.of(matchers).map(m -> not(m)).collect(Collectors.toList())), patternMatcher, this);
 	}
 
