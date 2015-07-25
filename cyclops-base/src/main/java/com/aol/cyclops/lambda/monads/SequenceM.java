@@ -44,7 +44,7 @@ import com.aol.cyclops.streams.StreamUtils;
 import com.nurkiewicz.lazyseq.LazySeq;
 
 
-public class SequenceM<T> implements Unwrapable {
+public class SequenceM<T> implements Unwrapable, Stream<T> {
 	private final Stream<T> monad;
 	SequenceM(LazySeq<T> seq){
 		monad = seq.stream();
@@ -229,7 +229,7 @@ public class SequenceM<T> implements Unwrapable {
 	 *            Zip funciton
 	 * @return This monad zipped with a Stream
 	 */
-	public final <S, R> SequenceM<R> zip(Stream<? extends S> second,
+	public final <S, R> SequenceM<R> zipStream(Stream<? extends S> second,
 			BiFunction<? super T, ? super S, ? extends R> zipper) {
 		return monad((Stream)steamToLazySeq().zip(LazySeq.of(second.iterator()), zipper).stream());
 	}
@@ -361,7 +361,7 @@ public class SequenceM<T> implements Unwrapable {
 	 * @return Monad converted to Stream with specified number of elements
 	 *         skipped
 	 */
-	public final SequenceM<T> skip(int num) {
+	public final SequenceM<T> skip(long num) {
 		return monad(steamToLazySeq().drop(num));
 	}
 
@@ -411,7 +411,7 @@ public class SequenceM<T> implements Unwrapable {
 	 *            Limit element size to num
 	 * @return Monad converted to Stream with elements up to num
 	 */
-	public final SequenceM<T> limit(int num) {
+	public final SequenceM<T> limit(long num) {
 		return monad(monad.limit(num));
 	}
 
@@ -748,8 +748,9 @@ public class SequenceM<T> implements Unwrapable {
 	 * @param fn
 	 * @return
 	 */
-	public final <R> SequenceM<R> flatMap(Function<? super T,SequenceM<? extends R>> fn) {
-		return AsGenericMonad.<Stream<T>,T>asMonad(monad).bind(in -> fn.apply(in).unwrap()).sequence();
+	public final <R> SequenceM<R> flatMap(Function<? super T,? extends Stream<? extends R>> fn) {
+		
+		return AsGenericMonad.<Stream<T>,T>asMonad(monad).bind(in -> fn.apply(in)).sequence();
 	}
 	public final <R> SequenceM<R> flatMapAnyM(Function<? super T,AnyM<? extends R>> fn) {
 		return AsGenericMonad.<Stream<T>,T>asMonad(monad).bind(in -> fn.apply(in).unwrap()).sequence();
@@ -979,4 +980,15 @@ public class SequenceM<T> implements Unwrapable {
 	public static <T> SequenceM<T> fromIterable(Iterable<T> stream){
 		return new SequenceM(StreamUtils.stream(stream));
 	}
+	@Override
+	public Stream<T> onClose(Runnable closeHandler) {
+		
+		return this;
+	}
+	@Override
+	public void close() {
+		
+		
+	}
+	
 }

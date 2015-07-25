@@ -289,7 +289,7 @@ public class MonadTest {
 	
 	@Test
 	public void zipStream(){
-		Stream<List<Integer>> zipped = monad(Stream.of(1,2,3)).<Integer>sequence().zip(Stream.of(2,3,4), 
+		Stream<List<Integer>> zipped = monad(Stream.of(1,2,3)).<Integer>sequence().zipStream(Stream.of(2,3,4), 
 													(a,b) -> Arrays.asList(a,b))
 													.stream();
 		

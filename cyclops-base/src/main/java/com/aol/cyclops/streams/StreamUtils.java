@@ -398,7 +398,7 @@ public class StreamUtils{
 	 *            Zip funciton
 	 * @return This monad zipped with a Stream
 	 */
-	public final static <T,S,R> Stream<R> zip(Stream<T> stream,Stream<? extends S> second,
+	public final static <T,S,R> Stream<R> zipStream(Stream<T> stream,Stream<? extends S> second,
 			BiFunction<? super T, ? super S, ? extends R> zipper) {
 		return (Stream)steamToLazySeq(stream).zip(LazySeq.of(second.iterator()), zipper).stream();
 	}
