@@ -23,6 +23,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.comprehensions.donotation.UntypedDo;
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
+import com.aol.cyclops.lambda.monads.SequenceM;
 
 public class StreamTest {
 	
@@ -53,7 +54,7 @@ public class StreamTest {
 	@Test
 	public void stringStreamWithNull() {
 		
-		Seq<String> res =  Do.add(  "hello world") 
+		SequenceM<String> res =  Do.add(  "hello world") 
 							.add((Iterable<String>)null)
 							.yield( v1-> v2-> ""+ v1 + v2)
 							.unwrap();
@@ -66,7 +67,7 @@ public class StreamTest {
 	@Test @Ignore
 	public void urlStream() throws MalformedURLException {
 		val url = new URL("http://www.aol.com");
-		Seq<String> res = Do.add (url) 
+		SequenceM<String> res = Do.add (url) 
 									 .yield( v1->  v1 + "New line!").unwrap();
 		List<String> expected = Arrays.asList("h1", "e1", "l1", "l1", "o1",  " 1", "w1", "o1", "r1", 
 				"l1", "d1");
@@ -78,7 +79,7 @@ public class StreamTest {
 	@Test
 	public void bufferedReaderStream() {
 		
-		Seq<String> res = Do.add(  new BufferedReader(new InputStreamReader(this.getClass().getClassLoader()
+		SequenceM<String> res = Do.add(  new BufferedReader(new InputStreamReader(this.getClass().getClassLoader()
                                	.getResourceAsStream("input.file")))) 
                               .yield( v -> ""+ v + "*").unwrap();
 		List<String> expected = Arrays.asList("line 1*","line 2*","line 3*");
@@ -90,7 +91,7 @@ public class StreamTest {
 	@Test
 	public void urlStream2() {
 		URL url =this.getClass().getClassLoader().getResource("input.file");
-		Seq<String> res = Do.add (url) 
+		SequenceM<String> res = Do.add (url) 
 							.yield( v-> ""+ v+ "*").unwrap();
 		List<String> expected = Arrays.asList("line 1*","line 2*","line 3*");
 		
@@ -102,7 +103,7 @@ public class StreamTest {
 	public void fileStream2() {
 		URL url =this.getClass().getClassLoader().getResource("input.file");
 		File file = new File(url.getFile());
-		Seq<String> res = Do.add(  file) 
+		SequenceM<String> res = Do.add(  file) 
 							 .yield( v-> ""+ v + "*").unwrap();
 		List<String> expected = Arrays.asList("line 1*","line 2*","line 3*");
 		
@@ -113,7 +114,7 @@ public class StreamTest {
 	@Test
 	public void enumStream() {
 		
-		Seq<String> res = UntypedDo.add ( MyEnum.class) 
+		SequenceM<String> res = UntypedDo.add ( MyEnum.class) 
 									 .yield( v -> ""+ v + "*");
 		List<String> expected = Arrays.asList("FIRST*","SECOND*","THIRD*");
 		
@@ -124,7 +125,7 @@ public class StreamTest {
 	@Test
 	public void iterableStream() {
 		
-		Seq<String> res = Do.add(  new MyIterable()) 
+		SequenceM<String> res = Do.add(  new MyIterable()) 
 							.yield( v->  v + "*").unwrap();
 		List<String> expected = Arrays.asList("hello*","world*");
 		

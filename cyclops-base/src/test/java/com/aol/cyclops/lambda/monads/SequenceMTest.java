@@ -20,6 +20,14 @@ import com.nurkiewicz.lazyseq.LazySeq;
 
 public class SequenceMTest {
 
+	@Test
+	public void testLazy(){
+		Collection<Integer> col = SequenceM.of(1,2,3,4,5)
+											.peek(System.out::println)
+											.toLazyCollection();
+		System.out.println("first!");
+		col.forEach(System.out::println);
+	}
 	int peek = 0;
 	@Test
 	public void testPeek() {

@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.aol.cyclops.lambda.monads.SequenceM;
+
 public interface Streamable<T> extends Iterable<T>{
 
 	default Iterator<T> iterator(){
@@ -15,6 +17,9 @@ public interface Streamable<T> extends Iterable<T>{
 		return this;
 	}
 	
+	default SequenceM<T> sequenceM(){
+		return SequenceM.fromStream(stream());
+	}
 	default Stream<T> stream(){
 		Object streamable = getStreamable();
 		if(streamable instanceof Stream)

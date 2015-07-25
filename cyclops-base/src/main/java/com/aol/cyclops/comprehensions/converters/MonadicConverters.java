@@ -10,21 +10,14 @@ import org.pcollections.PStack;
 
 import com.aol.cyclops.lambda.api.MonadicConverter;
 import com.aol.cyclops.lambda.api.Reducers;
+import com.aol.cyclops.lambda.monads.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
 
 public class MonadicConverters {
 	
 
-	private final  StreamUpscaler upscaler = getConverter();
-	private static StreamUpscaler getConverter() {
-		try{
-			Class.forName("org.jooq.lambda.Seq");
-			return stream -> Seq.seq(stream);
-		}catch(ClassNotFoundException e){
-			return  stream -> stream;
-		}
-		
-	}
+	private final  StreamUpscaler upscaler =  stream -> SequenceM.fromStream(stream);
+	
 	@Getter
 	private final static PStack<MonadicConverter> converters;
 	

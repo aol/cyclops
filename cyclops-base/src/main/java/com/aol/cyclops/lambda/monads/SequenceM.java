@@ -969,6 +969,57 @@ public class SequenceM<T> implements Unwrapable, Stream<T> {
 	}
 	
 	/**
+	 * Lazily converts this SequenceM into a Collection. This does not trigger the Stream. E.g.
+	 * Collection is not thread safe on the first iteration.
+	 * <pre>
+	 * {@code 
+	 * Collection<Integer> col = SequenceM.of(1,2,3,4,5)
+											.peek(System.out::println)
+											.toLazyCollection();
+		System.out.println("first!");
+		col.forEach(System.out::println);
+	 * }
+	 * 
+	 * //Will print out "first!" before anything else
+	 * </pre>
+	 * @return
+	 */
+	public Collection<T> toLazyCollection(){
+		return StreamUtils.toLazyCollection(monad);
+	}
+	/**
+	 * Lazily converts this SequenceM into a Collection. This does not trigger the Stream. E.g.
+	 * 
+	 * <pre>
+	 * {@code 
+	 * Collection<Integer> col = SequenceM.of(1,2,3,4,5)
+											.peek(System.out::println)
+											.toConcurrentLazyCollection();
+		System.out.println("first!");
+		col.forEach(System.out::println);
+	 * }
+	 * 
+	 * //Will print out "first!" before anything else
+	 * </pre>
+	 * @return
+	 */
+	public Collection<T> toConcurrentLazyCollection(){
+		return StreamUtils.toConcurrentLazyCollection(monad);
+	}
+	
+	/**
+	 * @return Streamable that can replay this SequenceM
+	 */
+	public Streamable<T> toLazyStreamable(){
+		return AsStreamable.asStreamable(monad);
+	}
+	/**
+	 * @return Streamable that replay this SequenceM
+	 */
+	public Streamable<T> toConcurrentLazyStreamable(){
+		return AsStreamable.asConcurrentStreamable(monad);
+	}
+	/**
 	 * Construct a Sequence from the provided elements
 	 * @param elements To Construct sequence from
 	 * @return
