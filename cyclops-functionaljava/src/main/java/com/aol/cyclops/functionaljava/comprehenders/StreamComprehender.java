@@ -6,18 +6,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.function.Function;
 
-
-
-
-
-
-
-
-
 import com.aol.cyclops.lambda.api.Comprehender;
-import com.google.common.base.Objects;
 import com.nurkiewicz.lazyseq.LazySeq;
 
 import fj.data.Stream;
@@ -86,7 +78,8 @@ public class StreamComprehender implements Comprehender<Stream> {
 	    	  while(it1.hasNext()){
 	    		  if(!it2.hasNext())
 	    			  return false;
-	    		  if(!Objects.equal(it1.next(),it2.next()))
+	    		  
+	    		  if(!Objects.equals(it1.next(),it2.next()))
 	    			  return false;
 	    	  }
 	    	  if(it2.hasNext())

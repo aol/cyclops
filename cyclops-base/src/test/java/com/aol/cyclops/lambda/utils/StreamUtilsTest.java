@@ -27,6 +27,10 @@ import static java.util.stream.Collectors.mapping;
 public class StreamUtilsTest {
 
 	@Test
+	public void testToLazyCollection(){
+		System.out.println(StreamUtils.toLazyCollection(Stream.of(1,2,3,4)).size());
+	}
+	@Test
 	public void testReverse() {
 		
 		assertThat(StreamUtils.reverse(Stream.of(1,2,3)).collect(Collectors.toList())

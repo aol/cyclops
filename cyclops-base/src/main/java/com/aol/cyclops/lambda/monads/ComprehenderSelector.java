@@ -1,8 +1,8 @@
 package com.aol.cyclops.lambda.monads;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
 import com.aol.cyclops.comprehensions.comprehenders.InvokeDynamicComprehender;
@@ -12,7 +12,7 @@ public class ComprehenderSelector {
 
 	private final Comprehenders comprehenders = new Comprehenders();
 	@SuppressWarnings("rawtypes")
-	private final Map<Class,Comprehender> cache= new HashMap<>();
+	private final ConcurrentMap<Class,Comprehender> cache= new ConcurrentHashMap<>();
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Comprehender selectComprehender(Class structure) {

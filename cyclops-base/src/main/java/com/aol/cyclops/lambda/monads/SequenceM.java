@@ -966,4 +966,17 @@ public class SequenceM<T> implements Unwrapable {
 	public long count() {
 		return monad.count();
 	}
+	
+	public static <T> SequenceM<T> of(T... elements){
+		return new SequenceM(Stream.of(elements));
+	}
+	public static <T> SequenceM<T> fromStream(Stream<T> stream){
+		return new SequenceM(stream);
+	}
+	public static <T> SequenceM<T> fromLazySeq(LazySeq<T> stream){
+		return new SequenceM(stream);
+	}
+	public static <T> SequenceM<T> fromIterable(Iterable<T> stream){
+		return new SequenceM(StreamUtils.stream(stream));
+	}
 }

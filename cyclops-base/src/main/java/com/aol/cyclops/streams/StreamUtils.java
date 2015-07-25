@@ -3,6 +3,7 @@ package com.aol.cyclops.streams;
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
+import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,6 +11,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
@@ -727,5 +730,93 @@ public class StreamUtils{
 		return AsAnyM.anyM(stream).asSequence().liftAndBindBufferedReader(fn).stream();
 	}
 
+	 /**
+	   * Projects an immutable collection of this stream.
+	   *
+	   * @return An immutable collection of this stream.
+	   */
+	  public static final <A> Collection<A> toLazyCollection(Stream<A> stream) {
+		  	return toLazyCollection(stream.iterator());
+	  }	
+		  public static final <A> Collection<A> toLazyCollection(Iterator<A> iterator) {
+	    return new AbstractCollection<A>() {
+	    	
+	    @Override  
+	    public boolean equals(Object o){
+	    	  if(o==null)
+	    		  return false;
+	    	  if(! (o instanceof Collection))
+	    		  return false;
+	    	  Collection<A> c = (Collection)o;
+	    	  Iterator<A> it1 = iterator();
+	    	  Iterator<A> it2 = c.iterator();
+	    	  while(it1.hasNext()){
+	    		  if(!it2.hasNext())
+	    			  return false;
+	    		  if(!Objects.equals(it1.next(),it2.next()))
+	    			  return false;
+	    	  }
+	    	  if(it2.hasNext())
+	    		  return false;
+	    	  return true;
+	      }
+	      @Override  
+	      public int hashCode(){
+	    	  Iterator<A> it1 = iterator();
+	    	  List<A> arrayList= new ArrayList<>();
+	    	  while(it1.hasNext()){
+	    		  arrayList.add(it1.next());
+	    	  }
+	    	  return Objects.hashCode(arrayList.toArray());
+	      }
+	      List<A> data =new ArrayList<>();
+	     
+	      boolean complete=false;
+	      public Iterator<A> iterator() {
+	    	  if(complete)
+	    		  return data.iterator();
+	    	  return new Iterator<A>(){
+	    		  int current = -1;
+				@Override
+				public boolean hasNext() {
+					if(current==data.size()-1 && !complete){
+						boolean result = iterator.hasNext();
+						complete = !result;
+						return result;
+					}
+					if(current<data.size())
+						return true;
+					return false;
+				}
+
+				@Override
+				public A next() {
+					if(current<data.size() &&!complete){
+						data.add(iterator.next());
+						
+						return data.get(++current);
+					}
+					current++;
+					return data.get(current);
+						
+					
+					
+				}
+	    		  
+	    	  };
+	        
+	      }
+
+	      public int size() {
+	    	  if(complete)
+	    		  return data.size();
+	    	  Iterator it = iterator();
+	    	  while(it.hasNext())
+	    		  it.next();
+	    	  
+	    	  return data.size();
+	      }
+	    };
+	  }
 		
 }
