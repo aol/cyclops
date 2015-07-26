@@ -33,7 +33,14 @@ public interface Streamable<T> extends Iterable<T>{
 													false));
 	}
 	
+	public static <T> Streamable<T> fromStream(Stream<T> stream){
+		return AsStreamable.asStreamable(stream);
+	}
+	public static <T> Streamable<T> fromIterable(Iterable<T> iterable){
+		return AsStreamable.asStreamable(iterable);
+	}
 	public static<T> Streamable<T> of(T... values){
+		
 		return new Streamable<T>(){
 			public Stream<T> stream(){
 				return Stream.of(values);

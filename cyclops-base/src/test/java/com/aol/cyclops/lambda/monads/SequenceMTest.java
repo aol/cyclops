@@ -3,11 +3,13 @@ package com.aol.cyclops.lambda.monads;
 import static com.aol.cyclops.lambda.api.AsAnyM.anyMIterable;
 import static com.aol.cyclops.lambda.monads.AnyMonads.*;
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -57,6 +59,50 @@ public class SequenceMTest {
 		String head = it.next();
 		Stream<String> tail = StreamUtils.stream(it);
 		tail.forEach(System.out::println);
+	}
+	@Test
+	public void testOfType() {
+
+		
+
+		assertThat(SequenceM.of(1, "a", 2, "b", 3, null).ofType(Integer.class).toList(),containsInAnyOrder(1, 2, 3));
+
+		assertThat(SequenceM.of(1, "a", 2, "b", 3, null).ofType(Integer.class).toList(),not(containsInAnyOrder("a", "b",null)));
+
+		assertThat(SequenceM.of(1, "a", 2, "b", 3, null)
+
+				.ofType(Serializable.class).toList(),containsInAnyOrder(1, "a", 2, "b", 3));
+
+	}
+
+	@Test
+	public void testCastPast() {
+		SequenceM.of(1, "a", 2, "b", 3, null).cast(Date.class).map(d -> d.getTime());
+	
+
+
+
+	}
+	@Test
+	public void testIntersperse() {
+		
+		assertThat(SequenceM.of(1,2,3).intersperse(0).toList(),equalTo(Arrays.asList(1,0,2,0,3)));
+	
+
+
+
+	}
+	
+	@Test
+	public void collectIterables(){
+		List result = SequenceM.of(1, 2, 3).collectIterable(
+				Arrays.asList(Collectors.toList(),
+						Collectors.summingInt(Integer::intValue),
+						Collectors.averagingInt(Integer::intValue)));
+
+		assertThat(result.get(0), equalTo(Arrays.asList(1, 2, 3)));
+		assertThat(result.get(1), equalTo(6));
+		assertThat(result.get(2), equalTo(2.0));
 	}
 	@Test
 	public void testFlatMap() {

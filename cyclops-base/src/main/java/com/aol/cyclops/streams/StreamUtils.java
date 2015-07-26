@@ -11,7 +11,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -66,6 +65,19 @@ public class StreamUtils{
 	}
 	
 	/**
+	 * extract head and tail together
+	 * 
+	 * <pre>
+	 * {@code 
+	 *  Stream<String> helloWorld = Stream.of("hello","world","last");
+		HeadAndTail<String> headAndTail = StreamUtils.headAndTail(helloWorld);
+		 String head = headAndTail.head();
+		 assertThat(head,equalTo("hello"));
+		
+		SequenceM<String> tail =  headAndTail.tail();
+		assertThat(tail.headAndTail().head(),equalTo("world"));
+	 * }
+	 * </pre>
 	 * 
 	 * @return
 	 */
@@ -73,9 +85,20 @@ public class StreamUtils{
 		Iterator<T> it = stream.iterator();
 		return new HeadAndTail(it.next(),AsAnyM.anyM(stream(it)).asSequence());
 	}
+	/**
+	 * <pre>
+	 * {@code 
+	 *  Stream<String> helloWorld = Stream.of();
+		Optional<HeadAndTail<String>> headAndTail = StreamUtils.headAndTailOptional(helloWorld);
+		assertTrue(!headAndTail.isPresent());
+	 * }
+	 * </pre>
+	 * @param stream to extract head and tail from
+	 * @return
+	 */
 	public final  static <T> Optional<HeadAndTail<T>> headAndTailOptional(Stream<T> stream){
 		Iterator<T> it = stream.iterator();
-		if(it.hasNext())
+		if(!it.hasNext())
 			return Optional.empty();
 		return Optional.of(new HeadAndTail(it.next(),AsAnyM.anyM(stream(it)).asSequence()));
 	}
@@ -230,6 +253,14 @@ public class StreamUtils{
 	}
 	/**
 	 * Create a stream from a map
+	 * <pre>
+	 * {@code 
+	 * 	Map<String,String> map = new HashMap<>();
+		map.put("hello","world");
+		assertThat(StreamUtils.stream(map).collect(Collectors.toList()),equalTo(Arrays.asList(new AbstractMap.SimpleEntry("hello","world"))));
+
+	 * }</pre>
+	 * 
 	 * 
 	 * @param it Iterator to convert to a Stream
 	 * @return Stream from a map
@@ -285,6 +316,15 @@ public class StreamUtils{
 	/**
 	 * Simultanously reduce a stream with multiple reducers
 	 * 
+	 * <pre>
+	 * {@code 
+	 *  Monoid<String> concat = Monoid.of("",(a,b)->a+b);
+		Monoid<String> join = Monoid.of("",(a,b)->a+","+b);
+		assertThat(StreamUtils.reduce(Stream.of("hello", "world", "woo!"),Stream.of(concat,join))
+		                 ,equalTo(Arrays.asList("helloworldwoo!",",hello,world,woo!")));
+	 * }
+	 * </pre>
+	 * 
 	 *  @param stream Stream to reduce
 	 * @param reducers Reducers to reduce Stream
 	 * @return Reduced Stream values as List entries
@@ -297,7 +337,18 @@ public class StreamUtils{
 	
 	/**
 	 *  Apply multiple Collectors, simultaneously to a Stream
-	 * 
+	 * <pre>
+	 * {@code 
+	 * List result = StreamUtils.collect(Stream.of(1,2,3),
+								Stream.of(Collectors.toList(),
+								Collectors.summingInt(Integer::intValue),
+								Collectors.averagingInt(Integer::intValue)));
+		
+		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));
+		assertThat(result.get(1),equalTo(6));
+		assertThat(result.get(2),equalTo(2.0));
+	 * }
+	 * </pre>
 	 * @param stream Stream to collect
 	 * @param collectors Collectors to apply
 	 * @return Result as a list
@@ -307,7 +358,18 @@ public class StreamUtils{
 	}
 	/**
 	 *  Apply multiple Collectors, simultaneously to a Stream
-	 * 
+	 * <pre>
+	 * {@code 
+	 * List result = StreamUtils.collect(Stream.of(1,2,3),
+								Arrays.asList(Collectors.toList(),
+								Collectors.summingInt(Integer::intValue),
+								Collectors.averagingInt(Integer::intValue)));
+		
+		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));
+		assertThat(result.get(1),equalTo(6));
+		assertThat(result.get(2),equalTo(2.0));
+	 * }
+	 * </pre>
 	 * @param stream Stream to collect
 	 * @param collectors Collectors to apply
 	 * @return Result as a list
@@ -348,7 +410,15 @@ public class StreamUtils{
 	
 	/**
 	 * Repeat in a Stream while specified predicate holds
-	 * 
+	 * <pre>
+	 * {@code 
+	 *  int count =0;
+	 *  
+		assertThat(StreamUtils.cycleWhile(Stream.of(1,2,2)
+											,next -> count++<6 )
+											.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2)));
+	 * }
+	 * </pre>
 	 * @param predicate
 	 *            repeat while true
 	 * @return Repeating Stream
@@ -633,16 +703,23 @@ public class StreamUtils{
 	 * Cast all elements in a stream to a given type, possibly throwing a
 	 * {@link ClassCastException}.
 	 * 
-	 * 
+	 * <pre>
+	 * {@code
 	 * // ClassCastException StreamUtils.cast(Stream.of(1, "a", 2, "b", 3),Integer.class)
-	 * 
+	 *  }
 	 */
 	public static <T, U> Stream<U> cast(Stream<T> stream, Class<U> type) {
 		return stream.map(type::cast);
 	}
 	/**
 	 * flatMap operation
-	 * 
+	 * <pre>
+	 * {@code 
+	 * 		assertThat(StreamUtils.flatMapSequenceM(Stream.of(1,2,3),
+	 * 							i->SequenceM.of(i+2)).collect(Collectors.toList()),
+	 * 								equalTo(Arrays.asList(3,4,5)));
+	 * }
+	 * </pre>
 	 * @param fn
 	 * @return
 	 */
@@ -653,21 +730,79 @@ public class StreamUtils{
 		return AsAnyM.anyM(stream).asSequence().flatMapAnyM(fn).stream();
 	}
 	
+	/**
+	 * flatMap operation that allows a Collection to be returned
+	 * <pre>
+	 * {@code 
+	 * 	assertThat(StreamUtils.flatMapCollection(Stream.of(20),i->Arrays.asList(1,2,i))
+	 * 								.collect(Collectors.toList()),
+	 * 								equalTo(Arrays.asList(1,2,20)));
+
+	 * }
+	 * </pre>
+	 *
+	 */
 	public final static <T,R> Stream<R> flatMapCollection(Stream<T> stream,Function<? super T,Collection<? extends R>> fn) {
 		return AsAnyM.anyM(stream).asSequence().flatMapCollection(fn).stream();
 		
 	}
+	/**
+	 * <pre>
+	 * {@code 
+	 * 	assertThat(StreamUtils.flatMapStream(Stream.of(1,2,3),
+	 * 							i->Stream.of(i)).collect(Collectors.toList()),
+	 * 							equalTo(Arrays.asList(1,2,3)));
+
+	 * 
+	 * }
+	 * </pre>
+	 *
+	 */
 	public final static <T,R> Stream<R> flatMapStream(Stream<T> stream,Function<? super T,BaseStream<? extends R,?>> fn) {
 		return AsAnyM.anyM(stream).asSequence().flatMapStream(fn).stream();
 	}
+	/**
+	 * cross type flatMap, removes null entries
+     * <pre>
+     * {@code 
+     * 	 assertThat(StreamUtils.flatMapOptional(Stream.of(1,2,3,null),
+     * 										Optional::ofNullable)
+     * 										.collect(Collectors.toList()),
+     * 										equalTo(Arrays.asList(1,2,3)));
+
+     * }
+     * </pre>
+	 */
 	public final static <T,R> Stream<R> flatMapOptional(Stream<T> stream,Function<? super T,Optional<? extends R>> fn) {
 		return AsAnyM.anyM(stream).asSequence().flatMapOptional(fn).stream();
 		
 	}
+	/**
+	 *<pre>
+	 * {@code 
+	 * 	assertThat(StreamUtils.flatMapCompletableFuture(Stream.of(1,2,3),
+	 * 								i->CompletableFuture.completedFuture(i+2))
+	 * 								.collect(Collectors.toList()),
+	 * 								equalTo(Arrays.asList(3,4,5)));
+
+	 * }
+	 *</pre>
+	 */
 	public final static <T,R> Stream<R> flatMapCompletableFuture(Stream<T> stream,Function<? super T,CompletableFuture<? extends R>> fn) {
 		return AsAnyM.anyM(stream).asSequence().flatMapCompletableFuture(fn).stream();
 		
 	}
+	/**
+	 * <pre>
+	 * {@code 
+	 * 	 assertThat(StreamUtils.flatMapLazySeq(Stream.of(1,2,3),
+	 * 											i->LazySeq.of(i+2))
+	 * 											.collect(Collectors.toList()),
+	 * 											equalTo(Arrays.asList(3,4,5)));
+
+	 * }
+	 * </pre>
+	 */
 	public final static <T,R> Stream<R>  flatMapLazySeq(Stream<T> stream,Function<? super T,LazySeq<? extends R>> fn) {
 		return AsAnyM.anyM(stream).asSequence().flatMapLazySeq(fn).stream();
 		
