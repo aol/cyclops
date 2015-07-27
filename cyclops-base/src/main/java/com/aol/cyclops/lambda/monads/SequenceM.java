@@ -47,6 +47,7 @@ import com.aol.cyclops.streams.Triple;
 import com.nurkiewicz.lazyseq.LazySeq;
 
 
+
 public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	private final Stream<T> monad;
 	
@@ -300,7 +301,7 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	 * @return Repeating Stream
 	 */
 	public final SequenceM<T> cycleWhile(Predicate<? super T> predicate) {
-		return monad(LazySeq.of(StreamUtils.cycle(monad).iterator()).takeWhile(predicate).stream());
+		return monad(StreamUtils.cycle(monad)).limitWhile(predicate);
 	}
 
 	/**
@@ -311,7 +312,7 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	 * @return Repeating Stream
 	 */
 	public final SequenceM<T> cycleUntil(Predicate<? super T> predicate) {
-		return monad(LazySeq.of(StreamUtils.cycle(monad).iterator()).takeWhile(predicate.negate()).stream());
+		return monad(StreamUtils.cycle(monad)).limitWhile(predicate.negate());
 	}
 	public final <S> SequenceM<Pair<T,S>> zip(Stream<? extends S> second){
 		return zipStream(second,(a,b)->new Pair<>(a,b));
@@ -347,7 +348,7 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	 */
 	public final <S, R> SequenceM<R> zip(SequenceM<? extends S> second,
 			BiFunction<? super T, ? super S, ? extends R> zipper) {
-		return monad((Stream)LazySeq.of(createLazySeq().iterator()).zip(LazySeq.of(second.createLazySeq().iterator()), zipper).stream());
+		return monad(StreamUtils.zip(monad,second, zipper));
 		
 	}
 	public final <S, R> SequenceM<R> zip(AnyM<? extends S> second,
@@ -410,7 +411,7 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	 * @return Stream with elements grouped by size
 	 */
 	public final SequenceM<List<T>> grouped(int groupSize) {
-		return monad(LazySeq.of(createLazySeq().iterator()).grouped(groupSize).stream());
+		return monad(StreamUtils.grouped(monad,groupSize));
 	}
 	public final <K> Map<K, List<T>> groupBy(Function<? super T, ? extends K> classifier) {
 		return collect(Collectors.groupingBy(classifier));
@@ -994,7 +995,7 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	 * @return
 	 */
 	public final  SequenceM<Character> liftAndBindCharSequence(Function<? super T,CharSequence> fn) {
-		return AsGenericMonad.<LazySeq<T>,T>asMonad(monad).liftAndBind(fn).sequence();
+		return AsGenericMonad.<Stream<T>,T>asMonad(monad).liftAndBind(fn).sequence();
 	}
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -1021,7 +1022,7 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	 * @return
 	 */
 	public final  SequenceM<String> liftAndBindFile(Function<? super T,File> fn) {
-		return AsGenericMonad.<LazySeq<T>,T>asMonad(monad).liftAndBind(fn).sequence();
+		return AsGenericMonad.<Stream<T>,T>asMonad(monad).liftAndBind(fn).sequence();
 	}
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
