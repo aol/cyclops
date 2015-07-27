@@ -4,7 +4,7 @@ import static com.aol.cyclops.lambda.monads.SequenceM.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -24,7 +24,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.streams.Pair;
-
+import com.aol.cyclops.streams.Quadruple;
+import com.aol.cyclops.streams.Triple;
 
 
 //see BaseSequentialSeqTest for in order tests
@@ -74,6 +75,53 @@ public  class BaseSequenceMTest {
 		
 		List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
+		
+		
+	}
+	@Test
+	public void zip3(){
+		List<Triple<Integer,Integer,Character>> list =
+				of(1,2,3,4,5,6).zip3(of(100,200,300,400),of('a','b','c'))
+												.peek(it -> System.out.println(it))
+												
+												.collect(Collectors.toList());
+		
+		List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+		assertThat(right,hasItem(100));
+		assertThat(right,hasItem(200));
+		assertThat(right,hasItem(300));
+		assertThat(right,not(hasItem(400)));
+		
+		List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
+		
+		List<Character> three = list.stream().map(t -> t.v3).collect(Collectors.toList());
+		assertThat(Arrays.asList('a','b','c'),hasItem(three.get(0)));
+		
+		
+	}
+	@Test
+	public void zip4(){
+		List<Quadruple<Integer,Integer,Character,String>> list =
+				of(1,2,3,4,5,6).zip4(of(100,200,300,400),of('a','b','c'),of("hello","world"))
+												.peek(it -> System.out.println(it))
+												
+												.collect(Collectors.toList());
+		System.out.println(list);
+		List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+		assertThat(right,hasItem(100));
+		assertThat(right,hasItem(200));
+		assertThat(right,not(hasItem(300)));
+		assertThat(right,not(hasItem(400)));
+		
+		List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
+		
+		List<Character> three = list.stream().map(t -> t.v3).collect(Collectors.toList());
+		assertThat(Arrays.asList('a','b','c'),hasItem(three.get(0)));
+	
+		List<String> four = list.stream().map(t -> t.v4).collect(Collectors.toList());
+		assertThat(Arrays.asList("hello","world"),hasItem(four.get(0)));
 		
 		
 	}
@@ -503,6 +551,41 @@ public  class BaseSequenceMTest {
 		       
 		        
 		    }
+
+	@Test
+	public void testUnzip3() {
+		// order is not guaranteed as populated asynchronously
+		Supplier<SequenceM<Triple<Integer, String, Long>>> s = () -> of(
+				new Triple(1, "a", 2l), new Triple(2, "b", 3l), new Triple(3,
+						"c", 4l));
+
+		Triple<SequenceM<Integer>, SequenceM<String>, SequenceM<Long>> u1 = SequenceM
+				.unzip3(s.get());
+
+		assertTrue(u1.v1.toList().containsAll(Arrays.asList(1, 2, 3)));
+
+		assertTrue(u1.v2.toList().containsAll(asList("a", "b", "c")));
+		assertTrue(u1.v3.toList().containsAll(asList(2l, 3l, 4l)));
+
+	}
+	@Test
+	public void testUnzip4() {
+		// order is not guaranteed as populated asynchronously
+		Supplier<SequenceM<Quadruple<Integer, String, Long,Character>>> s = () -> of(
+				new Quadruple(1, "a", 2l,'z'), new Quadruple(2, "b", 3l,'y'), new Quadruple(3,
+						"c", 4l,'x'));
+
+		Quadruple<SequenceM<Integer>, SequenceM<String>, SequenceM<Long>,SequenceM<Character>> u1 = SequenceM
+				.unzip4(s.get());
+
+		assertTrue(u1.v1.toList().containsAll(Arrays.asList(1, 2, 3)));
+
+		assertTrue(u1.v2.toList().containsAll(asList("a", "b", "c")));
+		
+		assertTrue(u1.v3.toList().containsAll(asList(2l, 3l, 4l)));
+		assertTrue(u1.v4.toList().containsAll(asList('z', 'y', 'x')));
+
+	}
 		   
 	
 	

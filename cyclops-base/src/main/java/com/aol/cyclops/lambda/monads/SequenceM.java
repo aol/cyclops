@@ -1,13 +1,5 @@
 package com.aol.cyclops.lambda.monads;
 
-import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
-import static com.aol.cyclops.lambda.monads.SequenceM.of;
-import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
@@ -48,7 +40,9 @@ import com.aol.cyclops.lambda.api.Streamable;
 import com.aol.cyclops.lambda.api.Unwrapable;
 import com.aol.cyclops.streams.HeadAndTail;
 import com.aol.cyclops.streams.Pair;
+import com.aol.cyclops.streams.Quadruple;
 import com.aol.cyclops.streams.StreamUtils;
+import com.aol.cyclops.streams.Triple;
 import com.nurkiewicz.lazyseq.LazySeq;
 
 
@@ -200,6 +194,17 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 		Streamable<T> streamable = Streamable.fromStream(monad);
 		return new Pair(streamable.sequenceM(),streamable.sequenceM());
 	}
+	@SuppressWarnings("unchecked")
+	public final Triple<SequenceM<T>,SequenceM<T>,SequenceM<T>> triplicate(){
+		Streamable<T> streamable = Streamable.fromStream(monad);
+		return new Triple(streamable.sequenceM(),streamable.sequenceM(),streamable.sequenceM());
+	}
+	@SuppressWarnings("unchecked")
+	public final Quadruple<SequenceM<T>,SequenceM<T>,SequenceM<T>,SequenceM<T>> quadruplicate(){
+		Streamable<T> streamable = Streamable.fromStream(monad);
+		return new Quadruple(streamable.sequenceM(),streamable.sequenceM(),streamable.sequenceM(),streamable.sequenceM());
+	}
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public final Pair<Optional<T>,SequenceM<T>> splitAtHead(){
 		Pair<SequenceM<T>,SequenceM<T>> pair = splitAt(1);
 		return new Pair(pair.v1.unwrapOptional()
@@ -218,6 +223,14 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	public final static <T,U> Pair<SequenceM<T>,SequenceM<U>> unzip(SequenceM<Pair<T,U>> sequence){
 		Pair<SequenceM<Pair<T,U>>,SequenceM<Pair<T,U>>> pair = sequence.duplicate();
 		return new Pair(pair.v1.map(Pair::_1),pair.v2.map(Pair::_2));
+	}
+	public final static <T1,T2,T3> Triple<SequenceM<T1>,SequenceM<T2>,SequenceM<T3>> unzip3(SequenceM<Triple<T1,T2,T3>> sequence){
+		Triple<SequenceM<Triple<T1,T2,T3>>,SequenceM<Triple<T1,T2,T3>>,SequenceM<Triple<T1,T2,T3>>> triple = sequence.triplicate();
+		return new Triple(triple.v1.map(Triple::_1),triple.v2.map(Triple::_2),triple.v3.map(Triple::_3));
+	}
+	public final static <T1,T2,T3,T4> Quadruple<SequenceM<T1>,SequenceM<T2>,SequenceM<T3>,SequenceM<T4>> unzip4(SequenceM<Quadruple<T1,T2,T3,T4>> sequence){
+		Quadruple<SequenceM<Quadruple<T1,T2,T3,T4>>,SequenceM<Quadruple<T1,T2,T3,T4>>,SequenceM<Quadruple<T1,T2,T3,T4>>,SequenceM<Quadruple<T1,T2,T3,T4>>> quad = sequence.quadruplicate();
+		return new Quadruple(quad.v1.map(Quadruple::_1),quad.v2.map(Quadruple::_2),quad.v3.map(Quadruple::_3),quad.v4.map(Quadruple::_4));
 	}
 	
 	/**
@@ -297,6 +310,14 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	}
 	public final <S> SequenceM<Pair<T,S>> zip(Stream<? extends S> second){
 		return zipStream(second,(a,b)->new Pair<>(a,b));
+	}
+	public final <S,U> SequenceM<Triple<T,S,U>> zip3(Stream<? extends S> second,Stream<? extends U> third){
+		return zip(second).zip(third).map(p -> new Triple(p._1()._1(),p._1()._2(),p._2()));
+		
+	}
+	public final <T2,T3,T4> SequenceM<Quadruple<T,T2,T3,T4>> zip4(Stream<T2> second,Stream<T3> third,Stream<T4> fourth){
+		return zip3(second,third).zip(fourth).map(t ->  new Quadruple(t._1()._1(), t._1()._2(),t._1()._3(),t._2()));
+		
 	}
 	public final  SequenceM<Pair<T,Long>> zipWithIndex(){
 		return zipStream(LongStream.iterate(0, i->i+1),(a,b)->new Pair<>(a,b));
