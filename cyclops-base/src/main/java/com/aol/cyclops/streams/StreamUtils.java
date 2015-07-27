@@ -912,7 +912,7 @@ public class StreamUtils{
 		return stream.map(t->t.toString()).collect(Collectors.joining(sep));
 	}
 	public final  static<T> String join(Stream<T> stream, String sep,String start,String end){
-		return stream.map(t->t.toString()).collect(Collectors.joining(start,end,sep));
+		return stream.map(t->t.toString()).collect(Collectors.joining(sep,start,end));
 	}
 	
 	

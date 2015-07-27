@@ -5,6 +5,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -218,6 +219,10 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	public final Pair<SequenceM<T>,SequenceM<T>> splitBy(Predicate<T> splitter){
 		Pair<SequenceM<T>,SequenceM<T>> pair = duplicate();
 		return new Pair(pair.v1.limitWhile(splitter),pair.v2.skipWhile(splitter));
+	}
+	public final Pair<SequenceM<T>,SequenceM<T>> partition(Predicate<T> splitter){
+		Pair<SequenceM<T>,SequenceM<T>> pair = duplicate();
+		return new Pair(pair.v1.filter(splitter),pair.v2.filter(splitter.negate()));
 	}
 	
 	public final static <T,U> Pair<SequenceM<T>,SequenceM<U>> unzip(SequenceM<Pair<T,U>> sequence){
@@ -446,7 +451,7 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	}
 	
 	public final SequenceM<T> scanRight(Monoid<T> monoid) {
-		return monad(StreamUtils.scanLeft(reverse(),monoid));
+		return monad(reverse().scanLeft(monoid.zero(), (u, t) -> monoid.combiner().apply(t, u)));
 	}
 	public final<U> SequenceM<T> scanRight(T identity,BiFunction<T,T,T>  combiner) {
 		return scanRight(Monoid.of(identity,combiner));
@@ -607,7 +612,7 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 		return StreamUtils.join(monad,sep);
 	}
 	public final   String join(String sep,String start, String end){
-		return StreamUtils.join(monad,start, sep, end);
+		return StreamUtils.join(monad, sep,start, end);
 	}
 	
 	
@@ -1283,6 +1288,35 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	}
 	public static <T> SequenceM<T> empty() {
 		return SequenceM.of();
+	}
+	public SequenceM<T> shuffle() {
+		List<T> list = toList();
+		Collections.shuffle(list);
+		return new SequenceM(list.stream());
+	}
+	public SequenceM<T> appendStream(Stream<T> stream) {
+		return new SequenceM(Stream.concat(monad, stream));
+	}
+	public SequenceM<T> prependStream(Stream<T> stream) {
+		return new SequenceM(Stream.concat(stream,monad));
+	}
+	public SequenceM<T> append(T... values) {
+		return appendStream(Stream.of(values));
+	}
+	public SequenceM<T> prepend(T... values) {
+		return new SequenceM(Stream.of(values)).appendStream(monad);
+	}
+	public SequenceM<T> insertAt(int pos, T... values) {
+		Pair<SequenceM<T>,SequenceM<T>> pair = this.duplicate();
+		return pair.v1.limit(pos).append(values).appendStream(pair.v2.skip(pos));	
+	}
+	public SequenceM<T> deleteBetween(int start,int end) {
+		Pair<SequenceM<T>,SequenceM<T>> pair = this.duplicate();
+		return pair.v1.limit(start).appendStream(pair.v2.skip(end));	
+	}
+	public SequenceM<T> insertStreamAt(int pos, SequenceM<T> stream) {
+		Pair<SequenceM<T>,SequenceM<T>> pair = this.duplicate();
+		return pair.v1.limit(pos).appendStream(stream).appendStream(pair.v2.skip(pos));	
 	}
 	
 }
