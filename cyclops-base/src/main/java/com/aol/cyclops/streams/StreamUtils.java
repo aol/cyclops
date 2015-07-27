@@ -1,5 +1,7 @@
 package com.aol.cyclops.streams;
 
+
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
@@ -30,13 +32,18 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.pcollections.ConsPStack;
+import org.pcollections.PStack;
+
 import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.api.AsStreamable;
 import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.lambda.api.Streamable;
 import com.aol.cyclops.lambda.monads.AnyM;
 import com.aol.cyclops.lambda.monads.SequenceM;
+import com.aol.cyclops.lambda.utils.Mutable;
 import com.nurkiewicz.lazyseq.LazySeq;
+
 
 public class StreamUtils{
 	
@@ -115,7 +122,7 @@ public class StreamUtils{
 	 * @return Stream with elements skipped
 	 */
 	public static <U> Stream<U> skipUntil(Stream<U> stream,Predicate<? super U> predicate){
-		return LazySeq.of(stream.iterator()).dropWhile(predicate.negate()).stream();
+		return skipWhile(stream,predicate.negate());
 	}
 	/**
 	 * skip elements in a Stream while Predicate holds true
@@ -130,7 +137,44 @@ public class StreamUtils{
 	 * @return
 	 */
 	public static <U> Stream<U> skipWhile(Stream<U> stream,Predicate<? super U> predicate){
-		return LazySeq.of(stream.iterator()).dropWhile(predicate).stream();
+		Iterator<U> it = stream.iterator();
+		return StreamUtils.stream(new Iterator<U>(){
+			U next;
+			boolean nextSet = false;
+			boolean init =false;
+			@Override
+			public boolean hasNext() {
+				if(init)
+					return it.hasNext();
+				try{
+					while(it.hasNext()){
+						
+						next = it.next();
+						nextSet = true;
+						
+						if(!predicate.test(next))
+							return true;
+					
+					}
+					return false;
+				}finally{
+					init =true;
+				}
+			}
+
+			@Override
+			public U next() {
+				if(!init){
+					hasNext();
+				}
+				if(nextSet){
+					nextSet = false;
+					return next;
+				}
+				return it.next();
+			}
+			
+		});
 	}
 	/**
 	 * Take elements from a stream while the predicates hold
@@ -144,7 +188,50 @@ public class StreamUtils{
 	 * @return
 	 */
 	public static <U> Stream<U> limitWhile(Stream<U> stream,Predicate<? super U> predicate){
-		return LazySeq.of(stream.iterator()).takeWhile(predicate).stream();
+		Iterator<U> it = stream.iterator();
+		return StreamUtils.stream(new Iterator<U>(){
+			U next;
+			boolean nextSet = false;
+			boolean stillGoing =true;
+			@Override
+			public boolean hasNext() {
+				if(!stillGoing)
+					return false;
+				if(nextSet)
+					return stillGoing;
+				
+				if (it.hasNext()) {
+					next = it.next();
+					nextSet = true;
+					if (!predicate.test(next)) {
+						stillGoing = false;
+					}
+					
+				} else {
+					stillGoing = false;
+				}
+				return stillGoing;
+				
+					
+			}
+
+			@Override
+			public U next() {
+				System.out.println("next " + next);
+				if(nextSet){
+					nextSet = false;
+					return next;
+				}
+				System.out.println("Still going " + stillGoing);
+				
+				U local = it.next();
+				if(stillGoing){
+					stillGoing = !predicate.test(local);
+				}
+				return local;
+			}
+			
+		});
 	}
 	/**
 	 * Take elements from a Stream until the predicate holds
@@ -158,10 +245,18 @@ public class StreamUtils{
 	 * @return
 	 */
 	public static <U> Stream<U> limitUntil(Stream<U> stream,Predicate<? super U> predicate){
-		return LazySeq.of(stream.iterator()).takeWhile(predicate.negate()).stream();
+		return limitWhile(stream,predicate.negate());
+		
 	}
 	/**
 	 * Reverse a Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat(StreamUtils.reverse(Stream.of(1,2,3)).collect(Collectors.toList())
+				,equalTo(Arrays.asList(3,2,1)));
+	 * }
+	 * </pre>
 	 * 
 	 * @param stream Stream to reverse
 	 * @return Reversed stream
@@ -171,6 +266,18 @@ public class StreamUtils{
 	}
 	/**
 	 * Create a reversed Stream from a List
+	 * <pre>
+	 * {@code 
+	 * StreamUtils.reversedStream(asList(1,2,3))
+				.map(i->i*100)
+				.forEach(System.out::println);
+		
+		
+		assertThat(StreamUtils.reversedStream(Arrays.asList(1,2,3)).collect(Collectors.toList())
+				,equalTo(Arrays.asList(3,2,1)));
+	 * 
+	 * }
+	 * </pre>
 	 * 
 	 * @param list List to create a reversed Stream from
 	 * @return Reversed Stream
@@ -180,6 +287,15 @@ public class StreamUtils{
 	}
 	/**
 	 * Create a new Stream that infiniteable cycles the provided Stream
+	 * 
+	 * <pre>
+	 * {@code 		
+	 * assertThat(StreamUtils.cycle(Stream.of(1,2,3))
+	 * 						.limit(6)
+	 * 						.collect(Collectors.toList()),
+	 * 								equalTo(Arrays.asList(1,2,3,1,2,3)));
+		}
+	 * </pre>
 	 * @param s Stream to cycle
 	 * @return New cycling stream
 	 */
@@ -196,7 +312,15 @@ public class StreamUtils{
 	}
 	
 	/**
-	 * Create a Stream that infiniteable cycles the provided Streamable
+	 * Create a Stream that finitely cycles the provided Streamable, provided number of times
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat(StreamUtils.cycle(3,Streamable.of(1,2,2))
+								.collect(Collectors.toList()),
+									equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
+	 * }
+	 * </pre>
 	 * @param s Streamable to cycle
 	 * @return New cycling stream
 	 */
@@ -206,7 +330,15 @@ public class StreamUtils{
 	
 	/**
 	 * Create a stream from an iterable
+	 * <pre>
+	 * {@code 
+	 * 	assertThat(StreamUtils.stream(Arrays.asList(1,2,3))
+	 * 								.collect(Collectors.toList()),
+	 * 									equalTo(Arrays.asList(1,2,3)));
+
 	 * 
+	 * }
+	 * </pre>
 	 * @param it Iterable to convert to a Stream
 	 * @return Stream from iterable
 	 */
@@ -214,9 +346,20 @@ public class StreamUtils{
 		return StreamSupport.stream(it.spliterator(),
 					false);
 	}
+	public static <U> Stream<U> stream(Spliterator<U> it){
+		return StreamSupport.stream(it,
+					false);
+	}
 	/**
 	 * Create a stream from an iterator
-	 * 
+	 * <pre>
+	 * {@code 
+	 * 	assertThat(StreamUtils.stream(Arrays.asList(1,2,3).iterator())	
+	 * 							.collect(Collectors.toList()),
+	 * 								equalTo(Arrays.asList(1,2,3)));
+
+	 * }
+	 * </pre>
 	 * @param it Iterator to convert to a Stream
 	 * @return Stream from iterator
 	 */
@@ -269,7 +412,7 @@ public class StreamUtils{
 		return it.entrySet().stream();
 	}
 	/**
-	 * Simultanously reduce a stream with multiple reducers
+	 * Simultaneously reduce a stream with multiple reducers
 	 * 
 	 * <pre>{@code
 	 * 
@@ -380,7 +523,19 @@ public class StreamUtils{
 	}
 	/**
 	 * Apply multiple Collectors, simultaneously to a Stream
+	 * <pre>
+	 * {@code
+	 * List result = StreamUtils.collect(Stream.of(1,2,3),
+								Streamable.<Collector>of(Collectors.toList(),
+								Collectors.summingInt(Integer::intValue),
+								Collectors.averagingInt(Integer::intValue)));
+		
+		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));
+		assertThat(result.get(1),equalTo(6));
+		assertThat(result.get(2),equalTo(2.0));
 	 * 
+	 * }
+	 * </pre>
 	 * @param stream Stream to collect
 	 * @param collectors  Collectors to apply
 	 * @return Result as a list
@@ -424,24 +579,44 @@ public class StreamUtils{
 	 * @return Repeating Stream
 	 */
 	public final static <T> Stream<T> cycleWhile(Stream<T>  stream,Predicate<? super T> predicate) {
-		return LazySeq.of(StreamUtils.cycle(stream).iterator()).takeWhile(predicate).stream();
+		return StreamUtils.limitWhile(StreamUtils.cycle(stream),predicate);
 	}
 
 	/**
 	 * Repeat in a Stream until specified predicate holds
 	 * 
+	 * <pre>
+	 * {@code 
+	 * 	count =0;
+		assertThat(StreamUtils.cycleUntil(Stream.of(1,2,2,3)
+											,next -> count++>10 )
+											.collect(Collectors.toList()),equalTo(Arrays.asList(1, 2, 2, 3, 1, 2, 2, 3, 1, 2, 2)));
+
+	 * }
+	 * </pre>
 	 * @param predicate
 	 *            repeat while true
 	 * @return Repeating Stream
 	 */
 	public final static <T> Stream<T> cycleUntil(Stream<T> stream,Predicate<? super T> predicate) {
-		return LazySeq.of(StreamUtils.cycle(stream).iterator()).takeWhile(predicate.negate()).stream();
+		return StreamUtils.limitUntil(StreamUtils.cycle(stream),predicate);
 	}
 
 	/**
 	 * Generic zip function. E.g. Zipping a Stream and an Optional
 	 * 
-	 * 
+	 * <pre>
+	 * {@code 
+	 * Stream<List<Integer>> zipped = StreamUtils.zip(Stream.of(1,2,3)
+												,SequenceM.of(2,3,4), 
+													(a,b) -> Arrays.asList(a,b));
+		
+		
+		List<Integer> zip = zipped.collect(Collectors.toList()).get(1);
+		assertThat(zip.get(0),equalTo(2));
+		assertThat(zip.get(1),equalTo(3));
+	 * }
+	 * </pre>
 	 * @param second
 	 *            Monad to zip with
 	 * @param zipper
@@ -450,9 +625,41 @@ public class StreamUtils{
 	 */
 	public final static <T,S, R> Stream<R> zip(Stream<T> stream,SequenceM<? extends S> second,
 			BiFunction<? super T, ? super S, ? extends R> zipper) {
-		return (Stream)LazySeq.of(stream.iterator()).zip(LazySeq.of(second.stream().iterator()), zipper).stream();
+		Iterator<T> left = stream.iterator();
+		Iterator<? extends S> right = second.stream().iterator();
+		return StreamUtils.stream(new Iterator<R>(){
+
+			@Override
+			public boolean hasNext() {
+				return left.hasNext() && right.hasNext();
+			}
+
+			@Override
+			public R next() {
+				return zipper.apply(left.next(), right.next());
+			}
+			
+		});
 		
 	}
+	/**
+	 *  Generic zip function. E.g. Zipping a Stream and an Optional
+	 * 
+	 * <pre>
+	 * {@code
+	 * Stream<List<Integer>> zipped = StreamUtils.zip(Stream.of(1,2,3)
+										,anyM(Optional.of(2)), 
+											(a,b) -> Arrays.asList(a,b));
+		
+		
+		List<Integer> zip = zipped.collect(Collectors.toList()).get(0);
+		assertThat(zip.get(0),equalTo(1));
+		assertThat(zip.get(1),equalTo(2));
+	 * 
+	 * }
+	 * </pre>
+	 
+	 */
 	public final static <T,S, R> Stream<R> zip(Stream<T> stream,AnyM<? extends S> second,
 			BiFunction<? super T, ? super S, ? extends R> zipper) {
 		return zip(stream,second.toSequence(), zipper);
@@ -461,7 +668,18 @@ public class StreamUtils{
 	/**
 	 * Zip this Monad with a Stream
 	 * 
-	 
+	   <pre>
+	   {@code 
+	   Stream<List<Integer>> zipped = StreamUtils.zipStream(Stream.of(1,2,3)
+												,Stream.of(2,3,4), 
+													(a,b) -> Arrays.asList(a,b));
+		
+		
+		List<Integer> zip = zipped.collect(Collectors.toList()).get(1);
+		assertThat(zip.get(0),equalTo(2));
+		assertThat(zip.get(1),equalTo(3));
+	   }
+	   </pre>
 	 * 
 	 * @param second
 	 *            Stream to zip with
@@ -469,44 +687,144 @@ public class StreamUtils{
 	 *            Zip funciton
 	 * @return This monad zipped with a Stream
 	 */
-	public final static <T,S,R> Stream<R> zipStream(Stream<T> stream,Stream<? extends S> second,
+	public final static <T,S,R> Stream<R> zipStream(Stream<T> stream,BaseStream<? extends S,? extends BaseStream<? extends S,?>> second,
 			BiFunction<? super T, ? super S, ? extends R> zipper) {
-		return (Stream)steamToLazySeq(stream).zip(LazySeq.of(second.iterator()), zipper).stream();
+		Iterator<T> left = stream.iterator();
+		Iterator<? extends S> right = second.iterator();
+		return StreamUtils.stream(new Iterator<R>(){
+
+			@Override
+			public boolean hasNext() {
+				return left.hasNext() && right.hasNext();
+			}
+
+			@Override
+			public R next() {
+				return zipper.apply(left.next(), right.next());
+			}
+			
+		});
+				
 	}
 
 	/**
-	 * Create a sliding view over this monad
-	 * 
+	 * Create a sliding view over this Stream
+	 * <pre>
+	 * {@code 
+	 * List<List<Integer>> list = StreamUtils.sliding(Stream.of(1,2,3,4,5,6)
+												,2,1)
+									.collect(Collectors.toList());
+		
+	
+		assertThat(list.get(0),hasItems(1,2));
+		assertThat(list.get(1),hasItems(2,3));
+	 * }
+	 * </pre>
 	 * @param windowSize
 	 *            Size of sliding window
 	 * @return Stream with sliding view over monad
 	 */
+	public final static <T> Stream<List<T>> sliding(Stream<T> stream,int windowSize,int increment) {
+		Iterator<T> it = stream.iterator();
+		Mutable<PStack<T>> list = Mutable.of(ConsPStack.empty());
+		return StreamUtils.stream(new Iterator<List<T>>(){
+			
+			@Override
+			public boolean hasNext() {
+				return it.hasNext();
+			}
+
+			@Override
+			public List<T> next() {
+				for(int i=0;i<increment && list.get().size()>0;i++)
+					 list.mutate(var -> var.minus(0));
+				for (int i = 0; list.get().size() < windowSize; i++) {
+					if(it.hasNext()){
+						list.mutate(var -> var.plus(Math.max(0,var.size()),it.next()));
+					}
+					
+				}
+				return list.get();
+			}
+			
+		});
+	}
+	/**
+	 * Create a sliding view over this Stream
+	 * <pre>
+	 * {@code 
+	 * List<List<Integer>> list = StreamUtils.sliding(Stream.of(1,2,3,4,5,6)
+												,2)
+									.collect(Collectors.toList());
+		
+	
+		assertThat(list.get(0),hasItems(1,2));
+		assertThat(list.get(1),hasItems(2,3));
+	 * }
+	 * </pre> 
+	 * 
+	 * @param stream Stream to create sliding view on
+	 * @param windowSize size of window
+	 * @return
+	 */
 	public final static <T> Stream<List<T>> sliding(Stream<T> stream,int windowSize) {
-		return steamToLazySeq(stream).sliding(windowSize).stream();
+		return sliding(stream,windowSize,1);
 	}
 
 	/**
 	 * Group elements in a Monad into a Stream
 	 * 
-	
-	 * 
+	   <pre>
+	   {@code 
+	 * 	List<List<Integer>> list = StreamUtils.grouped(Stream.of(1,2,3,4,5,6)
+														,3)
+													.collect(Collectors.toList());
+		
+		
+		assertThat(list.get(0),hasItems(1,2,3));
+		assertThat(list.get(1),hasItems(4,5,6));
+		}
+	 * </pre>
 	 * @param groupSize
 	 *            Size of each Group
 	 * @return Stream with elements grouped by size
 	 */
 	public final static<T> Stream<List<T>> grouped(Stream<T> stream,int groupSize) {
-		return LazySeq.of(stream.iterator()).grouped(groupSize).stream();
+		Iterator<T> it = stream.iterator();
+		return StreamUtils.stream(new Iterator<List<T>>(){
+			
+			@Override
+			public boolean hasNext() {
+				return it.hasNext();
+			}
+
+			@Override
+			public List<T> next() {
+				List<T> list = new ArrayList<>();
+				for (int i = 0; i < groupSize; i++) {
+					if(it.hasNext())
+						list.add(it.next());
+					
+				}
+				return list;
+			}
+			
+		});
+		
+		
 	}
 
 
-
+	
 	/**
 	 * Scan left using supplied Monoid
 	 * 
 	 * <pre>
 	 * {@code  
 	 * 
-	 * 	assertEquals(asList("", "a", "ab", "abc"),StreamUtils.scanLeft(Stream.of("a", "b", "c"),Reducers.toString("")).collect(Collectors.toList());
+	 * 	assertEquals(asList("", "a", "ab", "abc"),
+	 * 					StreamUtils.scanLeft(Stream.of("a", "b", "c"),Reducers.toString(""))
+	 * 			.collect(Collectors.toList());
 	 *         
 	 *         }
 	 * </pre>
@@ -515,8 +833,45 @@ public class StreamUtils{
 	 * @return
 	 */
 	public final static <T> Stream<T> scanLeft(Stream<T> stream,Monoid<T> monoid) {
-		return steamToLazySeq(stream).scan(monoid.zero(), monoid.reducer()).stream();
+		Iterator<T> it = stream.iterator();
+		return StreamUtils.stream(new Iterator<T>() {
+				boolean init = false;
+				T next = monoid.zero();
+
+	            @Override
+	            public boolean hasNext() {
+	            	if(!init)
+	            		return true;
+	                return it.hasNext();
+	            }
+
+	            @Override
+	            public T next() {
+	                if (!init) {
+	                    init = true;
+	                    return monoid.zero();
+	                } 
+	                return next = monoid.combiner().apply(next, it.next());
+	                
+	                
+	            }
+	        
+			
+		});
+
 	}
+	/**
+	 * Convert a Stream to a LazySeq
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat(Arrays.asList(1,2,3),equalTo(StreamUtils.steamToLazySeq(Stream.of(1,2,3)).toList()));
+	 * }
+	 * </pre>
+	 * 
+	 * @param LazySeq
+	 * @return
+	 */
 	public  static <T> LazySeq<T> steamToLazySeq(Stream<T> stream) {
 		return LazySeq.of(stream.iterator());
 	}
@@ -524,35 +879,56 @@ public class StreamUtils{
 	
 	
 	
+	/**
+	 * Check that there are specified number of matches of predicate in the Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 *  assertTrue(StreamUtils.xMatch(Stream.of(1,2,3,5,6,7),3, i->i>4));
+	 * }
+	 * </pre>
+	 * 
+	 */
 	public  static <T> boolean xMatch(Stream<T> stream,int num, Predicate<? super T> c) {
-		return stream.map(t -> c.test(t)) .collect(Collectors.counting()) == num;
+		
+		return stream.filter(t -> c.test(t)) .collect(Collectors.counting()) == num;
 	}
+	/**
+	 * <pre>
+	 * {@code 
+     * assertThat(StreamUtils.noneMatch(of(1,2,3,4,5),it-> it==5000),equalTo(true));
+     * }
+     * </pre>
+     *
+	 */
 	public final static <T>  boolean  noneMatch(Stream<T> stream,Predicate<? super T> c) {
 		return stream.allMatch(c.negate());
 	}
-	public final static  <T> String mkString(Stream<T> stream,String sep){
-		return steamToLazySeq(stream).mkString(sep);
+	
+	public final static  <T> String join(Stream<T> stream){
+		return stream.map(t->t.toString()).collect(Collectors.joining());
 	}
-	public final  static<T> String mkString(Stream<T> stream,String start, String sep,String end){
-		return steamToLazySeq(stream).mkString(start, sep, end);
+	public final static  <T> String join(Stream<T> stream,String sep){
+		return stream.map(t->t.toString()).collect(Collectors.joining(sep));
 	}
-	public final  static<T> String mkString(Stream<T> stream,String start, String sep,String end,boolean lazy){
-		return steamToLazySeq(stream).mkString(start, sep, end, lazy);
-		
+	public final  static<T> String join(Stream<T> stream, String sep,String start,String end){
+		return stream.map(t->t.toString()).collect(Collectors.joining(start,end,sep));
 	}
 	
-	public final static   <T,C extends Comparable<? super C>> Optional<T> minBy(Stream<T> stream,Function<T,C> f){
-		return steamToLazySeq(stream).minBy(f);
+	
+	public final static  <T,C extends Comparable<? super C>>  Optional<T> minBy(Stream<T> stream,Function<T,C> f){
+		Optional<Pair<C,T>> o = stream.map(in->new Pair<C,T>(f.apply(in),in)).min(Comparator.comparing(n->n._1(),Comparator.naturalOrder()));
+		return	o.map(p->p._2());
 	}
 	public final  static<T> Optional<T> min(Stream<T> stream,Comparator<? super T> comparator){
-		return steamToLazySeq(stream).min(comparator);
+		return stream.collect(Collectors.minBy(comparator));
 	}
 	public final static <T,C extends Comparable<? super C>> Optional<T> maxBy(Stream<T> stream,Function<T,C> f){
-		
-		return steamToLazySeq(stream).maxBy(f);
+		Optional<Pair<C,T>> o = stream.map(in->new Pair<C,T>(f.apply(in),in)).max(Comparator.comparing(n->n._1(),Comparator.naturalOrder()));
+		return	o.map(p->p._2());
 	}
 	public final static<T> Optional<T> max(Stream<T> stream,Comparator<? super T> comparator){
-		return steamToLazySeq(stream).max(comparator);
+		return stream.collect(Collectors.maxBy(comparator));
 	}
 	
 	
@@ -655,17 +1031,28 @@ public class StreamUtils{
 	 * @return True if Monad starts with Iterable sequence of data
 	 */
 	public final static <T> boolean startsWith(Stream<T> stream,Iterable<T> iterable){
-		return steamToLazySeq(stream).startsWith(iterable);
+		return startsWith(stream,iterable.iterator());
 		
 	}
 	/**
-	 * 	<pre>{@code assertTrueStreamUtils.startsWith(Stream.of(1,2,3,4),Arrays.asList(1,2,3).iterator())) }</pre>
+	 * 	<pre>
+	 * {@code
+	 * 		 assertTrue(StreamUtils.startsWith(Stream.of(1,2,3,4),Arrays.asList(1,2,3).iterator())) 
+	 * }</pre>
 
 	 * @param iterator
 	 * @return True if Monad starts with Iterators sequence of data
 	 */
 	public final static <T> boolean startsWith(Stream<T> stream,Iterator<T> iterator){
-		return steamToLazySeq(stream).startsWith(iterator);
+		Iterator<T> it = stream.iterator();
+		while(iterator.hasNext()){
+			if(!it.hasNext())
+				return false;
+			if(!Objects.equals(it.next(), iterator.next()))
+				return false;
+		}
+		return true;
+		
 		
 	}
 	
@@ -680,18 +1067,22 @@ public class StreamUtils{
 	 * Returns a stream with a given value interspersed between any two values
 	 * of this stream.
 	 * 
-	 * 
-	 * // (1, 0, 2, 0, 3, 0, 4) StreamUtils.intersperse(Stream.of(1, 2, 3, 4),0)
-	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat(Arrays.asList(1, 0, 2, 0, 3, 0, 4),
+	 * 			equalTo( StreamUtils.intersperse(Stream.of(1, 2, 3, 4),0));
+	 * }
+	 * </pre>
 	 */
 	public static <T> Stream<T> intersperse(Stream<T> stream, T value) {
-		return stream.flatMap(t -> Stream.of(value, t).skip(1));
+		return stream.flatMap(t -> Stream.of(value, t)).skip(1);
 	}
 	/**
 	 * Keep only those elements in a stream that are of a given type.
 	 * 
 	 * 
-	 * // (1, 2, 3) StreamUtils.ofType(Stream.of(1, "a", 2, "b", 3,Integer.class)
+	 * assertThat(Arrays.asList(1, 2, 3), 
+	 *      equalTo( StreamUtils.ofType(Stream.of(1, "a", 2, "b", 3,Integer.class));
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
@@ -705,7 +1096,8 @@ public class StreamUtils{
 	 * 
 	 * <pre>
 	 * {@code
-	 * // ClassCastException StreamUtils.cast(Stream.of(1, "a", 2, "b", 3),Integer.class)
+	 * StreamUtils.cast(Stream.of(1, "a", 2, "b", 3),Integer.class)
+	 *  // throws ClassCastException
 	 *  }
 	 */
 	public static <T, U> Stream<U> cast(Stream<T> stream, Class<U> type) {
@@ -965,7 +1357,7 @@ public class StreamUtils{
 	    	  if(complete)
 	    		  return data.iterator();
 	    	  return new Iterator<A>(){
-	    		  int current = -1;
+	    		int current = -1;
 				@Override
 				public boolean hasNext() {
 					
@@ -974,13 +1366,17 @@ public class StreamUtils{
 						rlock.lock();
 					}
 					try{
+						
 						if(current==data.size()-1 && !complete){
 							boolean result = iterator.hasNext();
 							complete = !result;
+							
 							return result;
 						}
-						if(current<data.size())
+						if(current+1<data.size()){
+							
 							return true;
+						}
 						return false;
 					}finally{
 						if(concurrent)
@@ -997,13 +1393,15 @@ public class StreamUtils{
 						}
 						try {
 							if (current < data.size() && !complete) {
-								data.add(iterator.next());
+								if(iterator.hasNext())
+									data.add(iterator.next());
 
 								return data.get(++current);
 							}
-							current++;
+							current++;	
 							return data.get(current);
 						} finally {
+							
 							if (concurrent)
 								rlock.unlock();
 						}

@@ -19,6 +19,7 @@ public class UnwrapTest {
 		Stream<String> stream = anyM("hello","world").asSequence().unwrapStream();
 		assertThat(stream.collect(Collectors.toList()),equalTo(Arrays.asList("hello","world")));
 	}
+	
 	@Test
 	public void unwrapOptional(){
 		Optional<List<String>> stream = anyM("hello","world")

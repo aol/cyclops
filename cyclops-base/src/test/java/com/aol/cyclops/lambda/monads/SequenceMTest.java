@@ -5,6 +5,7 @@ import static com.aol.cyclops.lambda.monads.AnyMonads.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -92,7 +93,14 @@ public class SequenceMTest {
 
 
 	}
-	
+	@Test(expected=ClassCastException.class)
+	public void cast(){
+		SequenceM.of(1,2,3).cast(String.class).collect(Collectors.toList());
+	}
+	@Test
+	public void xMatch(){
+		assertTrue(SequenceM.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
+	}
 	@Test
 	public void collectIterables(){
 		List result = SequenceM.of(1, 2, 3).collectIterable(
