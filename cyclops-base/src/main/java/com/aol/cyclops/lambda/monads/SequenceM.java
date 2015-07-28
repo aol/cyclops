@@ -959,13 +959,23 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	public final  <C extends Comparable<? super C>> Optional<T> minBy(Function<T,C> f){
 		return StreamUtils.minBy(monad,f);
 	}
+	/* (non-Javadoc)
+	 * @see java.util.stream.Stream#min(java.util.Comparator)
+	 */
 	public final   Optional<T> min(Comparator<? super T> comparator){
 		return  StreamUtils.min(monad,comparator);
 	}
+	/**
+	 * Extract the maximum as determined by the supplied function
+	 * 
+	 */
 	public final  <C extends Comparable<? super C>> Optional<T> maxBy(Function<T,C> f){
 		
 		return StreamUtils.maxBy(monad,f);
 	}
+	/* (non-Javadoc)
+	 * @see java.util.stream.Stream#max(java.util.Comparator)
+	 */
 	public final  Optional<T> max(Comparator<? super T> comparator){
 		return StreamUtils.max(monad,comparator);
 	}
@@ -973,7 +983,7 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	
 	
 	/**
-	 * extract head and tail together
+	 * extract head and tail together, where head is expected to be present
 	 * 
 	 * <pre>
 	 * {@code
@@ -991,6 +1001,19 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	public final  HeadAndTail<T> headAndTail(){
 		return StreamUtils.headAndTail(monad);
 	}
+	/**
+	 * extract head and tail together, where no head or tail may be present
+	 * 
+	 * <pre>
+	 * {@code 
+	 * SequenceM<String> helloWorld = SequenceM.of();
+		Optional<HeadAndTail<String>> headAndTail = helloWorld.headAndTailOptional();
+		assertTrue(!headAndTail.isPresent());
+	 * 
+	 * }
+	 * </pre>
+	 * @return
+	 */
 	public final  Optional<HeadAndTail<T>> headAndTailOptional(){
 		return StreamUtils.headAndTailOptional(monad);
 	}
@@ -1044,6 +1067,9 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	public final <R, A> R collect(Collector<? super T, A, R> collector){
 		return monad.collect(collector);
 	}
+	/* (non-Javadoc)
+	 * @see java.util.stream.Stream#collect(java.util.function.Supplier, java.util.function.BiConsumer, java.util.function.BiConsumer)
+	 */
 	public final  <R> R collect(Supplier<R> supplier,
             BiConsumer<R, ? super T> accumulator,
             BiConsumer<R, R> combiner){
@@ -1113,10 +1139,16 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	public final Optional<T> reduce(BinaryOperator<T> accumulator){
 		 return monad.reduce(accumulator);
 	 } 
-	 public final T reduce(T identity, BinaryOperator<T> accumulator){
+	 /* (non-Javadoc)
+	 * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BinaryOperator)
+	 */
+	public final T reduce(T identity, BinaryOperator<T> accumulator){
 		 return monad.reduce(identity, accumulator);
 	 }
-	 public final <U> U reduce(U identity,
+	 /* (non-Javadoc)
+	 * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BiFunction, java.util.function.BinaryOperator)
+	 */
+	public final <U> U reduce(U identity,
              BiFunction<U, ? super T, U> accumulator,
              BinaryOperator<U> combiner){
 		 return monad.reduce(identity, accumulator, combiner);
@@ -1153,6 +1185,15 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	public final T foldLeft(Monoid<T> reducer){
 		return reduce(reducer);
 	}
+	/**
+	 * foldLeft : immutable reduction from left to right
+	 * <pre>
+	 * {@code 
+	 * 
+	 * assertTrue(SequenceM.of("a", "b", "c").foldLeft("", String::concat).equals("abc"));
+	 * }
+	 * </pre>
+	 */
 	public final T foldLeft(T identity,  BinaryOperator<T> accumulator){
 		 return monad.reduce(identity, accumulator);
 	 }
@@ -1175,6 +1216,18 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	public final T foldRight(Monoid<T> reducer){
 		return reducer.reduce(StreamUtils.reverse(monad));
 	}
+	/**
+	 * Immutable reduction from right to left
+	 * <pre>
+	 * {@code 
+	 *  assertTrue(SequenceM.of("a","b","c").foldRight("", String::concat).equals("cba"));
+	 * }
+	 * </pre>
+	 * 
+	 * @param identity
+	 * @param accumulator
+	 * @return
+	 */
 	public final T foldRight(T identity,  BinaryOperator<T> accumulator){
 		 return foldRight(Monoid.of(identity, accumulator));
 	 }
@@ -1228,8 +1281,9 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	
 	/**
 	 * 
-	 * <pre>{@code 
-	 * assertTrue(monad(Stream.of(1,2,3,4)).startsWith(Arrays.asList(1,2,3)));
+	 * <pre>
+	 * {@code 
+	 *  assertTrue(monad(Stream.of(1,2,3,4)).startsWith(Arrays.asList(1,2,3)));
 	 * }</pre>
 	 * 
 	 * @param iterable
@@ -1250,25 +1304,51 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 		
 	}
 	
+	/**
+	 * @return this SequenceM converted to AnyM format
+	 */
 	public AnyM<T> anyM(){
 		return new AnyM<>(AsGenericMonad.asMonad(monad));
 	}
+	/* (non-Javadoc)
+	 * @see java.util.stream.Stream#map(java.util.function.Function)
+	 */
 	public final  <R> SequenceM<R> map(Function<? super T,? extends R> fn){
 		return new SequenceM(monad.map(fn));
 	}
+	/* (non-Javadoc)
+	 * @see java.util.stream.Stream#peek(java.util.function.Consumer)
+	 */
 	public final   SequenceM<T>  peek(Consumer<? super T> c) {
 		return new SequenceM(monad.peek(c));
 	}
 	/**
 	 * flatMap operation
-	 * 
-	 * @param fn
-	 * @return
+	 * <pre>
+	 * {@code
+	 * 	assertThat(this.<Integer>of(1,2).flatMap(i -> asList(i, -i).stream()).toList(),equalTo(asList(1, -1, 2, -2)));		
+ 
+	 * }
+	 * </pre>
+	 * @param fn to be applied
+	 * @return new stage in Sequence with flatMap operation to be lazily applied
 	 */
 	public final <R> SequenceM<R> flatMap(Function<? super T,? extends Stream<? extends R>> fn) {
 		
 		return AsGenericMonad.<Stream<T>,T>asMonad(monad).bind(in -> fn.apply(in)).sequence();
 	}
+	/**
+	 * Allows flatMap return type to be any Monad type
+	 * <pre>
+	 * {@code 
+	 * 	assertThat(anyM(Seq.of(1,2,3)).asSequence().flatMapAnyM(i-> anyM(CompletableFuture.completedFuture(i+2))).toList(),equalTo(Arrays.asList(3,4,5)));
+
+	 * }</pre>
+	 * 
+	 * 
+	 * @param fn to be applied
+	 * @return new stage in Sequence with flatMap operation to be lazily applied
+	 */
 	public final <R> SequenceM<R> flatMapAnyM(Function<? super T,AnyM<? extends R>> fn) {
 		return AsGenericMonad.<Stream<T>,T>asMonad(monad).bind(in -> fn.apply(in).unwrap()).sequence();
 	}
@@ -1299,15 +1379,55 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	public final <R> SequenceM<R> flatMapCollection(Function<? super T,Collection<? extends R>> fn) {
 		return AsGenericMonad.<Stream<T>,T>asMonad(monad).bind(in -> fn.apply(in)).sequence();
 	}
+	/**
+	 * flatMap operation
+	 * 
+	 * <pre>
+	 * {@code 
+	 * 	assertThat(anyM(Stream.of(1,2,3)).asSequence().flatMapStream(i->Stream.of(i)).toList(),equalTo(Arrays.asList(1,2,3)));
+
+	 * }
+	 * </pre>
+	 * 
+	 * @param fn to be applied
+	 * @return new stage in Sequence with flatMap operation to be lazily applied
+	*/
 	public final <R> SequenceM<R> flatMapStream(Function<? super T,BaseStream<? extends R,?>> fn) {
 		 Monad<Object,T> m = AsGenericMonad.asMonad(monad);
 		return m.flatMap(in -> fn.apply(in)).sequence();
 	}
+	/**
+	 * flatMap to optional - will result in null values being removed
+	 * <pre>
+	 * {@code 
+	 * 	assertThat(SequenceM.of(1,2,3,null).flatMapOptional(Optional::ofNullable)
+			      										.collect(Collectors.toList()),
+			      										equalTo(Arrays.asList(1,2,3)));
+	 * }
+	 * </pre>
+	 * @param fn
+	 * @return
+	 */
 	public final <R> SequenceM<R> flatMapOptional(Function<? super T,Optional<? extends R>> fn) {
 		 Monad<Object,T> m = AsGenericMonad.asMonad(monad);
 		 return m.flatMap(in -> fn.apply(in)).sequence();
 	
 	}
+	/**
+	 * flatMap to CompletableFuture - will block until Future complete, although (for non-blocking behaviour use AnyM 
+	 *       wrapping CompletableFuture and flatMap to Stream there)
+	 *       
+	 *  <pre>
+	 *  {@code
+	 *  	assertThat(SequenceM.of(1,2,3).flatMapCompletableFuture(i->CompletableFuture.completedFuture(i+2))
+				  								.collect(Collectors.toList()),
+				  								equalTo(Arrays.asList(3,4,5)));
+	 *  }
+	 *  </pre>
+	 *       
+	 * @param fn
+	 * @return
+	 */
 	public final <R> SequenceM<R> flatMapCompletableFuture(Function<? super T,CompletableFuture<? extends R>> fn) {
 		return AsGenericMonad.<Stream<T>,T>asMonad(monad).bind(in -> fn.apply(in)).sequence();
 	}

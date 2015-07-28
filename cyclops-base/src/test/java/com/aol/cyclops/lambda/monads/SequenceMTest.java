@@ -13,6 +13,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -89,6 +91,19 @@ public class SequenceMTest {
 
 
 
+	}
+	
+	@Test
+	public void flatMapCompletableFuture(){
+		assertThat(SequenceM.of(1,2,3).flatMapCompletableFuture(i->CompletableFuture.completedFuture(i+2))
+				  								.collect(Collectors.toList()),
+				  								equalTo(Arrays.asList(3,4,5)));
+	}
+	@Test
+	public void flatMapOptional(){
+		assertThat(SequenceM.of(1,2,3,null).flatMapOptional(Optional::ofNullable)
+			      										.collect(Collectors.toList()),
+			      										equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void testIntersperse() {

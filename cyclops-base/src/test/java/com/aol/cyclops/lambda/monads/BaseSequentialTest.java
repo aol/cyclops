@@ -517,7 +517,7 @@ public class BaseSequentialTest {
 		    public void testFoldRight(){
 		    	 	Supplier<SequenceM<String>> s = () -> of("a", "b", "c");
 
-			        assertTrue(s.get().foldRight("", String::concat).contains("a"));
+			        assertTrue(s.get().foldRight("", String::concat).equals("cba"));
 			        assertTrue(s.get().foldRight("", String::concat).contains("b"));
 			        assertTrue(s.get().foldRight("", String::concat).contains("c"));
 			        assertEquals(3, (int) s.get().map(str->str.length()).foldRight(0, (t, u) -> u + t));
