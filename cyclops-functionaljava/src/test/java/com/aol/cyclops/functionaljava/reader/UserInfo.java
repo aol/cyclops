@@ -15,6 +15,11 @@ public class UserInfo implements Users {
 
 	public Reader<UserRepository,Map<String,String> > userInfo(String username) {
 		
+		Do.add(anyM(findUser(username)))
+		 		.withAnyM(user ->anyM(getUser(user.getSupervisor().getId())))
+		 		.yield(user -> boss -> "user:"+username+" boss is "+boss.getName());
+		
+		
 		return Do.add(anyM(findUser(username)))
 				 .withAnyM(user -> anyM(getUser(user.getSupervisor().getId())))
 				 .yield(user -> boss -> buildMap(user,boss)).unwrap();

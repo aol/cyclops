@@ -12,6 +12,13 @@ import java.util.stream.StreamSupport;
 import com.aol.cyclops.lambda.monads.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
 
+/**
+ * Represents something that can generate a Stream, repeatedly
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Data type for Stream
+ */
 public interface Streamable<T> extends Iterable<T>{
 
 	default Iterator<T> iterator(){
@@ -21,9 +28,15 @@ public interface Streamable<T> extends Iterable<T>{
 		return this;
 	}
 	
+	/**
+	 * @return SequenceM from this Streamable
+	 */
 	default SequenceM<T> sequenceM(){
 		return SequenceM.fromStream(stream());
 	}
+	/**
+	 * @return New Stream
+	 */
 	default Stream<T> stream(){
 		Object streamable = getStreamable();
 		if(streamable instanceof Stream)
@@ -37,12 +50,30 @@ public interface Streamable<T> extends Iterable<T>{
 													false));
 	}
 	
+	/**
+	 * (Lazily) Construct a Streamable from a Stream.
+	 * 
+	 * @param stream to construct Streamable from
+	 * @return Streamable
+	 */
 	public static <T> Streamable<T> fromStream(Stream<T> stream){
 		return AsStreamable.asStreamable(stream);
 	}
+	/**
+	 * (Lazily) Construct a Streamable from an Iterable.
+	 * 
+	 * @param iterable to construct Streamable from
+	 * @return Streamable
+	 */
 	public static <T> Streamable<T> fromIterable(Iterable<T> iterable){
 		return AsStreamable.asStreamable(iterable);
 	}
+	/**
+	 * Construct a Streamable that returns an efficient Stream with the values reversed.
+	 * 
+	 * @param values to construct Stream from (reversed)
+	 * @return (reversed) Streamable
+	 */
 	public static<T> Streamable<T> reveresedOf(T... values){
 		
 		return new Streamable<T>(){
@@ -51,6 +82,13 @@ public interface Streamable<T> extends Iterable<T>{
 			}
 		};
 	}
+	/**
+	 * Construct a Streamable that returns an efficient Stream with the values in the 
+	 * supplied list reversed
+	 * 
+	 * @param values to construct a Stream from (reversed)
+	 * @return (reversed) Streamable
+	 */
 	public static<T> Streamable<T> reveresedOfList(ArrayList<T> values){
 		
 		return new Streamable<T>(){
@@ -59,6 +97,12 @@ public interface Streamable<T> extends Iterable<T>{
 			}
 		};
 	}
+	/**
+	 * Construct a Streamable that returns a Stream
+	 * 
+	 * @param values to construct Streamable from
+	 * @return Streamable
+	 */
 	public static<T> Streamable<T> of(T... values){
 		
 		return new Streamable<T>(){
