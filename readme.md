@@ -15,24 +15,39 @@ Powerful, modular extensions for Java 8. Take what you need or want.
 * [Enable Switch](https://github.com/aol/cyclops/wiki/Enable-and-disable-production-features)
 * [Utils for working with Functions](https://github.com/aol/cyclops/wiki/Utilities-for-working-with-Java-8-Functions)
 
+## Cyclops features
+
+* [Very powerful Stream processing with SequenceM](http://static.javadoc.io/com.aol.cyclops/cyclops-base/5.1.0/com/aol/cyclops/lambda/monads/SequenceM.html)
+* [Very powerful Stream processing with StreamUtils](http://static.javadoc.io/com.aol.cyclops/cyclops-base/5.1.0/com/aol/cyclops/streams/StreamUtils.html)
+* Memoisation 
 
 [Cyclops Wiki](https://github.com/aol/cyclops/wiki)
 
 
+# Cyclops articles across the web
 
-## Cyclops module overview
+* [Introducting the Cyclops Monad API](https://medium.com/@johnmcclean/introducing-the-cyclops-monad-api-a7a6b7967f4d)
+* [Easier Try with Cyclops](http://rdafbn.blogspot.com/2015/06/java-8-easier-with-cyclops-try.html)
+* [4 flavors of Java 8 Functions](https://medium.com/@johnmcclean/4-flavours-of-java-8-functions-6cafbcf5bb4f)
+* [Memoise Functions in Java 8](http://rdafbn.blogspot.com/2015/06/memoize-functions-in-java-8.html)
+* [Strategy Pattern in Java 8 ](http://rdafbn.blogspot.com/2015/06/startegy-pattern-in-java-8.html)
+* [Pattern Matching in Java 8](https://medium.com/@johnmcclean/pattern-matching-in-cyclops-for-java-8-21a4912bfe4d)
+* [Functional Feature Toggling](https://medium.com/@johnmcclean/feature-toggling-with-cyclops-a29d1eead62c)
+* [Dependency injection using the Reader Monad in Java8](https://medium.com/@johnmcclean/dependency-injection-using-the-reader-monad-in-java8-9056d9501c75)
 
-* Cyclops Base : [![Maven Central : cyclops-base](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-base/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-base)
-* Cyclops For Comprehensions : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-for-comprehensions/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-for-comprehensions)
-* Cyclops Pattern Matching : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-pattern-matching/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-pattern-matching)
-* Cyclops Functions : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-functions/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-functions)
-* Cyclops Core : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-core)
-* Cyclops Try : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-try/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-try)
-* Cyclops Trampoline : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-trampoline/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-trampoline)
-* Cyclops Enable Switch : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-enable-switch/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-enable-switch)
-* Cyclops Power Tuples : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-power-tuples/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-power-tuples)
-* Cyclops Javaslang : [![Maven Central : cyclops-javaslang](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-javaslang/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-javaslang)
+
+
+## Cyclops modules on Maven Central!
+
+To import all modules use cyclops-all. For individual modules, see bottom of this page!
+
 * Cyclops All : [![Maven Central : cyclops-all](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-all/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-all)
+
+Import integration modules individually as needed.
+
+* Cyclops Javaslang : [![Maven Central : cyclops-javaslang](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-javaslang/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-javaslang)
+* Cyclops Functional Java : [![Maven Central : cyclops-javaslang](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-functionaljava/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-functionaljava)
+* Cyclops Guava : [![Maven Central : cyclops-guava](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-guava/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-guava)
 
 
 **NB** Cyclops All includes all Cyclops module except the integration modules (currently cyclops-javaslang).
@@ -295,29 +310,7 @@ Mutable represents a captured variable inside a Java 8 closure. Because of the e
 
 
 
-## cyclops-converters 
 
-Conversion utilities across Java 8 functional libraries (JAVASLANG, TottalyLazy, FunctionalJava, Guava, jooλ)
-
-* Immutable Java classes
-* Immutable Java Collections
-* Efficient lazy execution
-* Streams and sequences
-* Actors
-* Safe concurrency
-* Reactive programming
-
-
-Integrates 
-
-* Project Lombok : for immutable builders and withers
-* Google Guava : for fast non-modifiable collections
-* totallylazy : persistent collections, sequences, monads, actors
-* javaslang : immutable collections, streams & sequences, monads, tuples, exception handling
-* functionalJava : immutable collections, streams & sequences, monads, actors
-* lazySeq : lazy Sequence
-* jooλ : sequences, tuples,  exception handling
-* simple-react : concurrent streaming library
 
 
 ## Attribution
@@ -326,3 +319,14 @@ Integrates
 * Feature Toggle pic by Jason Zack Licenced under  [Creative Commons Attribution-Share Alike 2.5 Generic](https://creativecommons.org/licenses/by-sa/2.5/deed.en) : https://commons.wikimedia.org/wiki/File:On-Off_Switch.jpg 
 
 
+## Maven for individual modules
+
+* Cyclops Base : [![Maven Central : cyclops-base](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-base/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-base)
+* Cyclops For Comprehensions : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-for-comprehensions/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-for-comprehensions)
+* Cyclops Pattern Matching : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-pattern-matching/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-pattern-matching)
+* Cyclops Functions : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-functions/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-functions)
+* Cyclops Core : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-core)
+* Cyclops Try : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-try/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-try)
+* Cyclops Trampoline : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-trampoline/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-trampoline)
+* Cyclops Enable Switch : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-enable-switch/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-enable-switch)
+* Cyclops Power Tuples : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-power-tuples/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-power-tuples)
