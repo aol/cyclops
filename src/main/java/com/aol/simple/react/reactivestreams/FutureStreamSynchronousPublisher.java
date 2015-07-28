@@ -18,6 +18,13 @@ import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.stream.StreamWrapper;
 
+/**
+ * Reactive Streams publisher, that publishes on the calling thread
+ * 
+ * @author johnmcclean
+ *
+ * @param <T>
+ */
 public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
 	StreamWrapper getLastActive();
 	void cancel();
