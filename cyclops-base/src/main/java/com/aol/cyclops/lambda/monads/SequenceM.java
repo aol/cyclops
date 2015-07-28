@@ -1,7 +1,5 @@
 package com.aol.cyclops.lambda.monads;
 
-import static com.aol.cyclops.lambda.monads.SequenceM.of;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
@@ -298,19 +296,63 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 		Pair<SequenceM<T>,SequenceM<T>> pair = duplicate();
 		return new Pair(pair.v1.limitWhile(splitter),pair.v2.skipWhile(splitter));
 	}
+	/**
+	 * Partition a Stream into two one a per element basis, based on predicate's boolean value
+	 * <pre>
+	 * {@code 
+	 *  SequenceM.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0) 
+	 *  
+	 *  //SequenceM[1,3,5], SequenceM[2,4,6]
+	 * }
+	 *
+	 * </pre>
+	 */
 	public final Pair<SequenceM<T>,SequenceM<T>> partition(Predicate<T> splitter){
 		Pair<SequenceM<T>,SequenceM<T>> pair = duplicate();
 		return new Pair(pair.v1.filter(splitter),pair.v2.filter(splitter.negate()));
 	}
 	
+	/**
+	 * Unzip a zipped Stream 
+	 * 
+	 * <pre>
+	 * {@code 
+	 *  unzip(SequenceM.of(new Pair(1, "a"), new Pair(2, "b"), new Pair(3, "c")))
+	 *  
+	 *  // SequenceM[1,2,3], SequenceM[a,b,c]
+	 * }
+	 * 
+	 * </pre>
+	 * 
+	 */
 	public final static <T,U> Pair<SequenceM<T>,SequenceM<U>> unzip(SequenceM<Pair<T,U>> sequence){
 		Pair<SequenceM<Pair<T,U>>,SequenceM<Pair<T,U>>> pair = sequence.duplicate();
 		return new Pair(pair.v1.map(Pair::_1),pair.v2.map(Pair::_2));
 	}
+	/**
+	 * Unzip a zipped Stream into 3
+	 * <pre>
+	 * {@code 
+	 *    unzip3(SequenceM.of(new Triple(1, "a", 2l), new Triple(2, "b", 3l), new Triple(3,"c", 4l)))
+	 * }
+	 * // SequenceM[1,2,3], SequenceM[a,b,c], SequenceM[2l,3l,4l]
+	 * </pre>
+	 */
 	public final static <T1,T2,T3> Triple<SequenceM<T1>,SequenceM<T2>,SequenceM<T3>> unzip3(SequenceM<Triple<T1,T2,T3>> sequence){
 		Triple<SequenceM<Triple<T1,T2,T3>>,SequenceM<Triple<T1,T2,T3>>,SequenceM<Triple<T1,T2,T3>>> triple = sequence.triplicate();
 		return new Triple(triple.v1.map(Triple::_1),triple.v2.map(Triple::_2),triple.v3.map(Triple::_3));
 	}
+	/**
+	 * Unzip a zipped Stream into 4
+	 * 
+	 * <pre>
+	 * {@code 
+	 * unzip4(SequenceM.of(new Quadruple(1, "a", 2l,'z'), new Quadruple(2, "b", 3l,'y'), new Quadruple(3,
+						"c", 4l,'x')));
+		}
+		// SequenceM[1,2,3], SequenceM[a,b,c], SequenceM[2l,3l,4l], SequenceM[z,y,x]
+	 * </pre>
+	 */
 	public final static <T1,T2,T3,T4> Quadruple<SequenceM<T1>,SequenceM<T2>,SequenceM<T3>,SequenceM<T4>> unzip4(SequenceM<Quadruple<T1,T2,T3,T4>> sequence){
 		Quadruple<SequenceM<Quadruple<T1,T2,T3,T4>>,SequenceM<Quadruple<T1,T2,T3,T4>>,SequenceM<Quadruple<T1,T2,T3,T4>>,SequenceM<Quadruple<T1,T2,T3,T4>>> quad = sequence.quadruplicate();
 		return new Quadruple(quad.v1.map(Quadruple::_1),quad.v2.map(Quadruple::_2),quad.v3.map(Quadruple::_3),quad.v4.map(Quadruple::_4));
@@ -340,9 +382,7 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 		
 	}
 
-	private Stream<T> createLazySeq() {
-		return monad;
-	}
+	
 	/**
 	 * 
 	 * Convert to a Stream, repeating the resulting structure specified times
@@ -373,6 +413,15 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	/**
 	 * Repeat in a Stream while specified predicate holds
 	 * 
+	 * <pre>
+	 * {@code
+	 * count =0;
+		assertThat(anyM(Stream.of(1,2,2)).asSequence()
+											.cycleWhile(next -> count++<6)
+											.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2)));
+	 * }
+	 * </pre>
+	 * 
 	 * @param predicate
 	 *            repeat while true
 	 * @return Repeating Stream
@@ -383,6 +432,16 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 
 	/**
 	 * Repeat in a Stream until specified predicate holds
+	 * <pre>
+	 * {@code 
+	 * 	count =0;
+		assertThat(anyM(Stream.of(1,2,2)).asSequence()
+											.cycleUntil(next -> count++>6)
+											.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2,1)));
+
+	 * 
+	 * }
+	 * 
 	 * 
 	 * @param predicate
 	 *            repeat while true
@@ -391,17 +450,63 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	public final SequenceM<T> cycleUntil(Predicate<? super T> predicate) {
 		return monad(StreamUtils.cycle(monad)).limitWhile(predicate.negate());
 	}
+	/**
+	 * Zip 2 streams into one
+	 * 
+	 * <pre>
+	 * {@code 
+	 * List<Pair<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
+       // [[1,"a"],[2,"b"]]
+		 } 
+	 * </pre>
+	 * 
+	 */
 	public final <S> SequenceM<Pair<T,S>> zip(Stream<? extends S> second){
 		return zipStream(second,(a,b)->new Pair<>(a,b));
 	}
+	/**
+	 * zip 3 Streams into one
+	 * <pre>
+	 * {@code 
+	 * List<Triple<Integer,Integer,Character>> list =
+				of(1,2,3,4,5,6).zip3(of(100,200,300,400),of('a','b','c'))
+											.collect(Collectors.toList());
+	 * 
+	 * //[[1,100,'a'],[2,200,'b'],[3,300,'c']]
+	 * }
+	 * 
+	 *</pre>
+	 */
 	public final <S,U> SequenceM<Triple<T,S,U>> zip3(Stream<? extends S> second,Stream<? extends U> third){
 		return zip(second).zip(third).map(p -> new Triple(p._1()._1(),p._1()._2(),p._2()));
 		
 	}
+	/**
+	 * zip 4 Streams into 1
+	 * 
+	 * <pre>
+	 * {@code 
+	 * List<Quadruple<Integer,Integer,Character,String>> list =
+				of(1,2,3,4,5,6).zip4(of(100,200,300,400),of('a','b','c'),of("hello","world"))
+												.collect(Collectors.toList());
+			
+	 * }
+	 *  //[[1,100,'a',"hello"],[2,200,'b',"world"]]
+	 * </pre>
+	 */
 	public final <T2,T3,T4> SequenceM<Quadruple<T,T2,T3,T4>> zip4(Stream<T2> second,Stream<T3> third,Stream<T4> fourth){
 		return zip3(second,third).zip(fourth).map(t ->  new Quadruple(t._1()._1(), t._1()._2(),t._1()._3(),t._2()));
 		
 	}
+	/** 
+	 * Add an index to the current Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertEquals(asList(new Pair("a", 0L), new Pair("b", 1L)), of("a", "b").zipWithIndex().toList());
+	 * }
+	 * </pre>
+	 */
 	public final  SequenceM<Pair<T,Long>> zipWithIndex(){
 		return zipStream(LongStream.iterate(0, i->i+1),(a,b)->new Pair<>(a,b));
 	}
@@ -428,6 +533,24 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 		return monad(StreamUtils.zip(monad,second, zipper));
 		
 	}
+	/**
+	 * Zip this SequenceM against any monad type.
+	 * 
+	 * <pre>
+	 * {@code
+	 * Stream<List<Integer>> zipped = anyM(Stream.of(1,2,3))
+										.asSequence()
+										.zip(anyM(Optional.of(2)), 
+											(a,b) -> Arrays.asList(a,b)).toStream();
+		
+		
+		List<Integer> zip = zipped.collect(Collectors.toList()).get(0);
+		assertThat(zip.get(0),equalTo(1));
+		assertThat(zip.get(1),equalTo(2));
+	 * }
+	 * </pre>
+	 * 
+	 */
 	public final <S, R> SequenceM<R> zip(AnyM<? extends S> second,
 			BiFunction<? super T, ? super S, ? extends R> zipper) {
 		return zip(second.toSequence(), zipper);
@@ -458,18 +581,56 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	}
 
 	/**
-	 * Create a sliding view over this monad
+	 * Create a sliding view over this Sequence
 	 * 
+	 * <pre>
+	 * {@code 
+	 * List<List<Integer>> list = anyM(Stream.of(1,2,3,4,5,6))
+									.asSequence()
+									.sliding(2)
+									.collect(Collectors.toList());
+		
+	
+		assertThat(list.get(0),hasItems(1,2));
+		assertThat(list.get(1),hasItems(2,3));
+	 * 
+	 * }
+	 * 
+	 * </pre>
 	 * @param windowSize
 	 *            Size of sliding window
-	 * @return Stream with sliding view over monad
+	 * @return SequenceM with sliding view
 	 */
 	public final SequenceM<List<T>> sliding(int windowSize) {
 		return monad(StreamUtils.sliding(monad,windowSize));
 	}
+	/**
+	 *  Create a sliding view over this Sequence
+	 * <pre>
+	 * {@code 
+	 * List<List<Integer>> list = anyM(Stream.of(1,2,3,4,5,6))
+									.asSequence()
+									.sliding(3,2)
+									.collect(Collectors.toList());
+		
+	
+		assertThat(list.get(0),hasItems(1,2,3));
+		assertThat(list.get(1),hasItems(3,4,5));
+	 * 
+	 * }
+	 * 
+	 * </pre>
+	 * 
+	 * @param windowSize number of elements in each batch
+	 * @param increment for each window
+	 * @return SequenceM with sliding view
+	 */
+	public final SequenceM<List<T>> sliding(int windowSize,int increment) {
+		return monad(StreamUtils.sliding(monad,windowSize,increment));
+	}
 
 	/**
-	 * Group elements in a Monad into a Stream
+	 * Group elements in a Stream
 	 * 
 	 * <pre>
 	 * {
@@ -490,6 +651,19 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	public final SequenceM<List<T>> grouped(int groupSize) {
 		return monad(StreamUtils.grouped(monad,groupSize));
 	}
+	/**
+	 * Use classifier function to group elements in this Sequence into a Map
+	 * <pre>
+	 * {@code 
+	 * Map<Integer, List<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
+		        assertEquals(asList(2, 4), map1.get(0));
+		        assertEquals(asList(1, 3), map1.get(1));
+		        assertEquals(2, map1.size());
+	 * 
+	 * }
+	 * 
+	 * </pre>
+	 */
 	public final <K> Map<K, List<T>> groupBy(Function<? super T, ? extends K> classifier) {
 		return collect(Collectors.groupingBy(classifier));
 	}
@@ -498,9 +672,11 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	 * Return the distinct Stream of elements
 	 * 
 	 * <pre>{@code List<Integer> list =
-	 * monad(Optional.of(Arrays.asList(1,2,2,2,5,6)))
-	 * .<Stream<Integer>,Integer>streamedMonad() .distinct()
-	 * .collect(Collectors.toList()); }</pre>
+	 *        anyM(Optional.of(Arrays.asList(1,2,2,2,5,6)))
+	 *           .<Stream<Integer>,Integer>toSequence() .distinct()
+	 *				 .collect(Collectors.toList()); 
+	 * }
+	 *</pre>
 	 */
 	public final SequenceM<T> distinct() {
 		return monad(monad.distinct());
@@ -523,14 +699,43 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	public final SequenceM<T> scanLeft(Monoid<T> monoid) {
 		return monad(StreamUtils.scanLeft(monad,monoid));
 	}
+	/**
+	 * Scan left
+	 * <pre>
+	 * {@code 
+	 *  assertThat(of("a", "b", "c").scanLeft("", String::concat).toList().size(),
+        		is(4));
+	 * }
+	 * </pre>
+	 */
 	public final SequenceM<T> scanLeft(T identity,BiFunction<T, T, T>  combiner) {
 		
 		return scanLeft(Monoid.of(identity,combiner));
 	}
 	
+	/**
+	 * Scan right
+	 * <pre>
+	 * {@code 
+	 * assertThat(of("a", "b", "c").scanRight(Monoid.of("", String::concat)).toList().size(),
+            is(asList("", "c", "bc", "abc").size()));
+	 * }
+	 * </pre>
+	 */
 	public final SequenceM<T> scanRight(Monoid<T> monoid) {
 		return monad(reverse().scanLeft(monoid.zero(), (u, t) -> monoid.combiner().apply(t, u)));
 	}
+	/**
+	 * Scan right
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat(of("a", "ab", "abc").map(str->str.length()).scanRight(0, (t, u) -> u + t).toList().size(),
+            is(asList(0, 3, 5, 6).size()));
+	 * 
+	 * }
+	 * </pre>
+	 */
 	public final<U> SequenceM<T> scanRight(T identity,BiFunction<T,T,T>  combiner) {
 		return scanRight(Monoid.of(identity,combiner));
 	}
@@ -548,9 +753,11 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	}
 
 	/**
-	 *
-	 * 
-	 * 
+	 *<pre>
+	 * {@code 
+	 * 	assertThat(anyM(Stream.of(4,3,6,7)).asSequence().sorted((a,b) -> b-a).toList(),equalTo(Arrays.asList(7,6,4,3)));
+	 * }
+	 * </pre>
 	 * @param c
 	 *            Compartor to sort with
 	 * @return Sorted Monad
@@ -663,7 +870,11 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	
 	/**
 	 * True if predicate matches all elements when Monad converted to a Stream
-	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat(of(1,2,3,4,5).allMatch(it-> it>0 && it <6),equalTo(true));
+	 * }
+	 * </pre>
 	 * @param c Predicate to check if all match
 	 */
 	public final  boolean  allMatch(Predicate<? super T> c) {
@@ -671,29 +882,80 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	}
 	/**
 	 * True if a single element matches when Monad converted to a Stream
-	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat(of(1,2,3,4,5).anyMatch(it-> it.equals(3)),equalTo(true));
+	 * }
+	 * </pre>
 	 * @param c Predicate to check if any match
 	 */
 	public final  boolean  anyMatch(Predicate<? super T> c) {
 		return monad.anyMatch(c);
 	}
+	/**
+	 * Check that there are specified number of matches of predicate in the Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 *  assertTrue(SequenceM.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
+	 * }
+	 * </pre>
+	 * 
+	 */
 	public  boolean xMatch(int num, Predicate<? super T> c) {
 		return monad.filter(t -> c.test(t)) .collect(Collectors.counting()) == num;
 	}
+	/* 
+	 * <pre>
+	 * {@code 
+	 * assertThat(of(1,2,3,4,5).noneMatch(it-> it==5000),equalTo(true));
+	 * 
+	 * }
+	 * </pre>
+	 */
 	public final  boolean  noneMatch(Predicate<? super T> c) {
 		return monad.allMatch(c.negate());
 	}
+	/**
+	 * <pre>
+	 * {@code
+	 *  assertEquals("123".length(),of(1, 2, 3).join().length());
+	 * }
+	 * </pre>
+	 * 
+	 * @return Stream as concatenated String
+	 */
 	public final  String join(){
 		return StreamUtils.join(monad,"");
 	}
+	/**
+	 * <pre>
+	 * {@code
+	 * assertEquals("1, 2, 3".length(), of(1, 2, 3).join(", ").length());
+	 * }
+	 * </pre>
+	 * @return Stream as concatenated String
+	 */
 	public final  String join(String sep){
 		return StreamUtils.join(monad,sep);
 	}
+	/**
+	 * <pre>
+	 * {@code 
+	 * assertEquals("^1|2|3$".length(), of(1, 2, 3).join("|", "^", "$").length());
+	 * }
+	 * </pre> 
+	 *  @return Stream as concatenated String
+	 */
 	public final   String join(String sep,String start, String end){
 		return StreamUtils.join(monad, sep,start, end);
 	}
 	
 	
+	/**
+	 * Extract the minimum as determined by supplied function
+	 * 
+	 */
 	public final  <C extends Comparable<? super C>> Optional<T> minBy(Function<T,C> f){
 		return StreamUtils.minBy(monad,f);
 	}
@@ -1044,7 +1306,7 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	public final <R> SequenceM<R> flatMapOptional(Function<? super T,Optional<? extends R>> fn) {
 		 Monad<Object,T> m = AsGenericMonad.asMonad(monad);
 		 return m.flatMap(in -> fn.apply(in)).sequence();
-	//	return AsGenericMonad.<Stream<T>,T>asMonad(monad).bind(in -> fn.apply(in)).sequence();
+	
 	}
 	public final <R> SequenceM<R> flatMapCompletableFuture(Function<? super T,CompletableFuture<? extends R>> fn) {
 		return AsGenericMonad.<Stream<T>,T>asMonad(monad).bind(in -> fn.apply(in)).sequence();
@@ -1372,26 +1634,127 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 		Collections.shuffle(list);
 		return new SequenceM(list.stream());
 	}
+	/**
+	 * Append Stream to this SequenceM
+	 * 
+	 * <pre>
+	 * {@code 
+	 * List<String> result = 	of(1,2,3).appendStream(of(100,200,300))
+										.map(it ->it+"!!")
+										.collect(Collectors.toList());
+
+			assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
+	 * }
+	 * </pre>
+	 * 
+	 * @param stream to append
+	 * @return SequenceM with Stream appended
+	 */
 	public SequenceM<T> appendStream(Stream<T> stream) {
 		return new SequenceM(Stream.concat(monad, stream));
 	}
+	/**
+	 * Prepend Stream to this SequenceM
+	 * 
+	 * <pre>
+	 * {@code 
+	 * List<String> result = of(1,2,3).prependStream(of(100,200,300))
+				.map(it ->it+"!!").collect(Collectors.toList());
+
+			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
+	 * 
+	 * }
+	 * </pre>
+	 * 
+	 * @param stream to Prepend
+	 * @return SequenceM with Stream prepended
+	 */
 	public SequenceM<T> prependStream(Stream<T> stream) {
 		return new SequenceM(Stream.concat(stream,monad));
 	}
+	/**
+	 * Append values to the end of this SequenceM
+	 * <pre>
+	 * {@code 
+	 * List<String> result = 	of(1,2,3).append(100,200,300)
+										.map(it ->it+"!!")
+										.collect(Collectors.toList());
+
+			assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
+	 * }
+	 * </pre>
+	 * @param values to append
+	 * @return SequenceM with appended values
+	 */
 	public SequenceM<T> append(T... values) {
 		return appendStream(Stream.of(values));
 	}
+	/**
+	 * Prepend given values to the start of the Stream
+	 * <pre>
+	 * {@code 
+	 * List<String> result = 	of(1,2,3).prepend(100,200,300)
+				.map(it ->it+"!!").collect(Collectors.toList());
+
+			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
+	 * }
+	 * @param values to prepend
+	 * @return SequenceM with values prepended
+	 */
 	public SequenceM<T> prepend(T... values) {
 		return new SequenceM(Stream.of(values)).appendStream(monad);
 	}
+	/**
+	 * Insert data into a stream at given position
+	 * <pre>
+	 * {@code 
+	 * List<String> result = 	of(1,2,3).insertAt(1,100,200,300)
+				.map(it ->it+"!!").collect(Collectors.toList());
+
+			assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
+	 * 
+	 * }
+	 * </pre>
+	 * @param pos to insert data at
+	 * @param values to insert
+	 * @return Stream with new data inserted
+	 */
 	public SequenceM<T> insertAt(int pos, T... values) {
 		Pair<SequenceM<T>,SequenceM<T>> pair = this.duplicatePos(pos);
 		return pair.v1.limit(pos).append(values).appendStream(pair.v2.skip(pos));	
 	}
+	/**
+	 * Delete elements between given indexes in a Stream
+	 * <pre>
+	 * {@code 
+	 * List<String> result = 	of(1,2,3,4,5,6).deleteBetween(2,4)
+				.map(it ->it+"!!").collect(Collectors.toList());
+
+			assertThat(result,equalTo(Arrays.asList("1!!","2!!","5!!","6!!")));
+	 * }
+	 * </pre>
+	 * @param start index
+	 * @param end index
+	 * @return Stream with elements removed
+	 */
 	public SequenceM<T> deleteBetween(int start,int end) {
 		Pair<SequenceM<T>,SequenceM<T>> pair = this.duplicatePos(start);
 		return pair.v1.limit(start).appendStream(pair.v2.skip(end));	
 	}
+	/**
+	 * Insert a Stream into the middle of this stream at the specified position
+	 * <pre>
+	 * {@code 
+	 * List<String> result = 	of(1,2,3).insertStreamAt(1,of(100,200,300))
+				.map(it ->it+"!!").collect(Collectors.toList());
+
+			assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
+	 * }
+	 * </pre>
+	 * @param pos to insert Stream at
+	 * @param stream to insert
+	 * @return newly conjoined SequenceM
+	 */
 	public SequenceM<T> insertStreamAt(int pos, SequenceM<T> stream) {
 		Pair<SequenceM<T>,SequenceM<T>> pair = this.duplicatePos(pos);
 		return pair.v1.limit(pos).appendStream(stream).appendStream(pair.v2.skip(pos));	

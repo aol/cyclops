@@ -95,7 +95,7 @@ public class BaseSequentialTest {
 		}
 		@Test
 		public void deleteBetween(){
-		List<String> result = 	of(1,2,3,4,5,6).deleteBetween(2,4)
+			List<String> result = 	of(1,2,3,4,5,6).deleteBetween(2,4)
 				.map(it ->it+"!!").collect(Collectors.toList());
 
 			assertThat(result,equalTo(Arrays.asList("1!!","2!!","5!!","6!!")));

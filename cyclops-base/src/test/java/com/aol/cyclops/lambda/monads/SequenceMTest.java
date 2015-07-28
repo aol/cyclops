@@ -23,6 +23,7 @@ import com.nurkiewicz.lazyseq.LazySeq;
 
 public class SequenceMTest {
 
+	
 	@Test
 	public void splitBy(){
 		assertThat( SequenceM.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4).v1.toList(),equalTo(Arrays.asList(1,2,3)));

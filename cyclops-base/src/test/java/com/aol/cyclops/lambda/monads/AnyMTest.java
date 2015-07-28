@@ -91,6 +91,13 @@ public class AnyMTest {
 											.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2)));
 	}
 	@Test
+	public void testCycleUntil(){
+		count =0;
+		assertThat(anyM(Stream.of(1,2,2)).asSequence()
+											.cycleUntil(next -> count++>6)
+											.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2,1)));
+	}
+	@Test
 	public void testCycle(){
 		assertThat(anyM(Stream.of(1,2,2)).asSequence()
 											.cycle(3).collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
@@ -375,9 +382,20 @@ public class AnyMTest {
 									.sliding(2)
 									.collect(Collectors.toList());
 		
-	System.out.println(list);
+	
 		assertThat(list.get(0),hasItems(1,2));
 		assertThat(list.get(1),hasItems(2,3));
+	}
+	@Test
+	public void slidingIncrement(){
+		List<List<Integer>> list = anyM(Stream.of(1,2,3,4,5,6))
+									.asSequence()
+									.sliding(3,2)
+									.collect(Collectors.toList());
+		
+	
+		assertThat(list.get(0),hasItems(1,2,3));
+		assertThat(list.get(1),hasItems(3,4,5));
 	}
 	@Test
 	public void grouped(){

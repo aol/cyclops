@@ -741,7 +741,7 @@ public class StreamUtils{
 			public List<T> next() {
 				for(int i=0;i<increment && list.get().size()>0;i++)
 					 list.mutate(var -> var.minus(0));
-				for (int i = 0; list.get().size() < windowSize; i++) {
+				for (int i = 0; list.get().size() < windowSize && it.hasNext(); i++) {
 					if(it.hasNext()){
 						list.mutate(var -> var.plus(Math.max(0,var.size()),it.next()));
 					}

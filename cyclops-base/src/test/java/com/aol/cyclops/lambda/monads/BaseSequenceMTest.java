@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.aol.cyclops.lambda.api.Monoid;
 import com.aol.cyclops.streams.Pair;
 import com.aol.cyclops.streams.Quadruple;
 import com.aol.cyclops.streams.Triple;
@@ -251,7 +252,11 @@ public  class BaseSequenceMTest {
     	assertThat(of("a", "ab", "abc").map(str->str.length()).scanLeft(0, (u, t) -> u + t).toList().size(), 
     			is(asList(0, 1, 3, 6).size()));
     }
-
+    @Test
+    public void testScanRightStringConcatMonoid() {
+        assertThat(of("a", "b", "c").scanRight(Monoid.of("", String::concat)).toList().size(),
+            is(asList("", "c", "bc", "abc").size()));
+    }
     @Test
     public void testScanRightStringConcat() {
         assertThat(of("a", "b", "c").scanRight("", String::concat).toList().size(),
