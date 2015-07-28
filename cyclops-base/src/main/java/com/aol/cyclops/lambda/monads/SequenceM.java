@@ -1,5 +1,7 @@
 package com.aol.cyclops.lambda.monads;
 
+import static com.aol.cyclops.lambda.monads.SequenceM.of;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
@@ -180,7 +182,8 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 		return new SequenceM(StreamUtils.cycle(monad));
 	}
 	/**
-	 * Duplicate a Stream
+	 * Duplicate a Stream, buffers intermediate values, leaders may change positions so a limit
+	 * can be safely applied to the leading stream. Not thread-safe.
 	 * <pre>
 	 * {@code 
 	 *  Pair<SequenceM<Integer>, SequenceM<Integer>> copies =of(1,2,3,4,5,6).duplicate();
@@ -202,6 +205,17 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 		Pair<Iterator<T>,Iterator<T>> pair = StreamUtils.toBufferingDuplicator(monad.iterator(),pos);	
 		return new Pair(new SequenceM(StreamUtils.stream(pair._1())),new SequenceM(StreamUtils.stream(pair._2())));
 	}
+	/**
+	 * Triplicates a Stream
+	 * Buffers intermediate values, leaders may change positions so a limit
+	 * can be safely applied to the leading stream. Not thread-safe.
+	 * <pre>
+	 * {@code 
+	 * 	Triple<SequenceM<Triple<T1,T2,T3>>,SequenceM<Triple<T1,T2,T3>>,SequenceM<Triple<T1,T2,T3>>> triple = sequence.triplicate();
+	
+	 * }
+	 * </pre>
+	 */
 	@SuppressWarnings("unchecked")
 	public final Triple<SequenceM<T>,SequenceM<T>,SequenceM<T>> triplicate(){
 		
@@ -213,6 +227,20 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 		return new Triple(its.collect(Collectors.toList()));
 		
 	}
+	/**
+	 * Makes four copies of a Stream
+	 * Buffers intermediate values, leaders may change positions so a limit
+	 * can be safely applied to the leading stream. Not thread-safe. 
+	 * 
+	 * <pre>
+	 * {@code
+	 * 
+	 * 		Quadruple<SequenceM<Quadruple<T1,T2,T3,T4>>,SequenceM<Quadruple<T1,T2,T3,T4>>,SequenceM<Quadruple<T1,T2,T3,T4>>,SequenceM<Quadruple<T1,T2,T3,T4>>> quad = sequence.quadruplicate();
+
+	 * }
+	 * </pre>
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public final Quadruple<SequenceM<T>,SequenceM<T>,SequenceM<T>,SequenceM<T>> quadruplicate(){
 		Stream<SequenceM<T>> its = StreamUtils.toBufferingCopier(monad.iterator(),4)
@@ -222,6 +250,18 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 
 		return new Quadruple(its.collect(Collectors.toList()));
 	}
+	/**
+	 * Split a Stream at it's head (similar to headAndTail)
+	 * <pre>
+	 * {@code 
+	 * SequenceM.of(1,2,3).splitAtHead()
+	 * 
+	 *  //Optional[1], SequenceM[2,3]
+	 * }
+	 * 
+	 * </pre>
+	 * 
+	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public final Pair<Optional<T>,SequenceM<T>> splitAtHead(){
 		Pair<SequenceM<T>,SequenceM<T>> pair = splitAt(1);
@@ -229,10 +269,31 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 							.flatMap( l-> l.size()>0 ? Optional.of(l.get(0)) : Optional.empty()  )
 							,pair.v2);
 	}
+	/**
+	 * Split at supplied location 
+	 * <pre>
+	 * {@code 
+	 * SequenceM.of(1,2,3).splitAt(1)
+	 * 
+	 *  //SequenceM[1], SequenceM[2,3]
+	 * }
+	 * 
+	 * </pre>
+	 */
 	public final Pair<SequenceM<T>,SequenceM<T>> splitAt(int where){
 		Pair<SequenceM<T>,SequenceM<T>> pair = duplicate();
 		return new Pair(pair.v1.limit(where),pair.v2.skip(where));
 	}
+	/**
+	 * Split stream at point where predicate no longer holds
+	 * <pre>
+	 * {@code
+	 *   SequenceM.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)
+	 *   
+	 *   //SequenceM[1,2,3] SequenceM[4,5,6]
+	 * }
+	 * </pre>
+	 */
 	public final Pair<SequenceM<T>,SequenceM<T>> splitBy(Predicate<T> splitter){
 		Pair<SequenceM<T>,SequenceM<T>> pair = duplicate();
 		return new Pair(pair.v1.limitWhile(splitter),pair.v2.skipWhile(splitter));

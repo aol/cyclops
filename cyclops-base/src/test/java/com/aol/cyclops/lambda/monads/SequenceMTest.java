@@ -24,6 +24,11 @@ import com.nurkiewicz.lazyseq.LazySeq;
 public class SequenceMTest {
 
 	@Test
+	public void splitBy(){
+		assertThat( SequenceM.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4).v1.toList(),equalTo(Arrays.asList(1,2,3)));
+		assertThat( SequenceM.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4).v2.toList(),equalTo(Arrays.asList(4,5,6)));
+	}
+	@Test
 	public void testLazy(){
 		Collection<Integer> col = SequenceM.of(1,2,3,4,5)
 											.peek(System.out::println)
