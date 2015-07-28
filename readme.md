@@ -19,7 +19,7 @@ Powerful, modular extensions for Java 8. Take what you need or want.
 
 * [Very powerful Stream processing with SequenceM](http://static.javadoc.io/com.aol.cyclops/cyclops-base/5.1.0/com/aol/cyclops/lambda/monads/SequenceM.html)
 * [Very powerful Stream processing with StreamUtils](http://static.javadoc.io/com.aol.cyclops/cyclops-base/5.1.0/com/aol/cyclops/streams/StreamUtils.html)
-* Memoisation 
+* [Memoisation](http://static.javadoc.io/com.aol.cyclops/cyclops-functions/5.1.0/com/aol/cyclops/functions/Memoise.html)
 
 [Cyclops Wiki](https://github.com/aol/cyclops/wiki)
 
