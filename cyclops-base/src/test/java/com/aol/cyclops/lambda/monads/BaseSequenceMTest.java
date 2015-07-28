@@ -533,28 +533,39 @@ public  class BaseSequenceMTest {
 		        assertEquals(asList(), SequenceM.of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v2.toList());
 		    }
 
-		 @Test
-		    public void testUnzip() {
-		    	//order is not guaranteed as populated asynchronously
-		        Supplier<SequenceM<Pair<Integer, String>>> s = () -> of(new Pair(1, "a"), new Pair(2, "b"), new Pair(3, "c"));
+	@Test
+	public void testUnzip() {
 
-		       
-		        Pair<SequenceM<Integer>, SequenceM<String>> u1 = SequenceM.unzip(s.get());
-		      
-		      
-		        assertTrue(u1.v1.toList().containsAll(Arrays.asList(1, 2, 3)));
-		       
-		       
-		       
-		        assertTrue(u1.v2.toList().containsAll(asList("a", "b", "c")));
+		Supplier<SequenceM<Pair<Integer, String>>> s = () -> of(
+				new Pair(1, "a"), new Pair(2, "b"), new Pair(3, "c"));
 
-		       
-		        
-		    }
+		Pair<SequenceM<Integer>, SequenceM<String>> u1 = SequenceM.unzip(s
+				.get());
+
+		assertTrue(u1.v1.toList().containsAll(Arrays.asList(1, 2, 3)));
+
+		assertTrue(u1.v2.toList().containsAll(asList("a", "b", "c")));
+
+	}
 
 	@Test
-	public void testUnzip3() {
-		// order is not guaranteed as populated asynchronously
+	public void testUnzipWithLimits() {
+		
+		Supplier<SequenceM<Pair<Integer, String>>> s = () -> of(
+				new Pair(1, "a"), new Pair(2, "b"), new Pair(3, "c"));
+
+		Pair<SequenceM<Integer>, SequenceM<String>> u1 = SequenceM.unzip(s
+				.get());
+
+		assertTrue(u1.v1.limit(2).toList().containsAll(Arrays.asList(1, 2)));
+
+		assertTrue(u1.v2.toList().containsAll(asList("a", "b", "c")));
+
+	}
+
+	@Test
+	public void testUnzip3WithLimits() {
+		
 		Supplier<SequenceM<Triple<Integer, String, Long>>> s = () -> of(
 				new Triple(1, "a", 2l), new Triple(2, "b", 3l), new Triple(3,
 						"c", 4l));
@@ -562,15 +573,36 @@ public  class BaseSequenceMTest {
 		Triple<SequenceM<Integer>, SequenceM<String>, SequenceM<Long>> u1 = SequenceM
 				.unzip3(s.get());
 
-		assertTrue(u1.v1.toList().containsAll(Arrays.asList(1, 2, 3)));
+		assertTrue(u1.v1.limit(1).toList().containsAll(Arrays.asList(1)));
 
+		
+
+		assertTrue(u1.v2.limit(2).toList().containsAll(asList("a", "b")));
+		assertTrue(u1.v3.toList().containsAll(asList(2l, 3l, 4l)));
+
+	}
+	@Test
+	public void testUnzip3() {
+		
+		Supplier<SequenceM<Triple<Integer, String, Long>>> s = () -> of(
+				new Triple(1, "a", 2l), new Triple(2, "b", 3l), new Triple(3,
+						"c", 4l));
+
+		Triple<SequenceM<Integer>, SequenceM<String>, SequenceM<Long>> u1 = SequenceM
+				.unzip3(s.get());
+
+		
+		assertTrue(u1.v1.toList().containsAll(Arrays.asList(1, 2, 3)));
+		
+	
+		
 		assertTrue(u1.v2.toList().containsAll(asList("a", "b", "c")));
 		assertTrue(u1.v3.toList().containsAll(asList(2l, 3l, 4l)));
 
 	}
 	@Test
 	public void testUnzip4() {
-		// order is not guaranteed as populated asynchronously
+		
 		Supplier<SequenceM<Quadruple<Integer, String, Long,Character>>> s = () -> of(
 				new Quadruple(1, "a", 2l,'z'), new Quadruple(2, "b", 3l,'y'), new Quadruple(3,
 						"c", 4l,'x'));
@@ -584,6 +616,24 @@ public  class BaseSequenceMTest {
 		
 		assertTrue(u1.v3.toList().containsAll(asList(2l, 3l, 4l)));
 		assertTrue(u1.v4.toList().containsAll(asList('z', 'y', 'x')));
+
+	}
+	@Test
+	public void testUnzip4WithLimits() {
+		
+		Supplier<SequenceM<Quadruple<Integer, String, Long,Character>>> s = () -> of(
+				new Quadruple(1, "a", 2l,'z'), new Quadruple(2, "b", 3l,'y'), new Quadruple(3,
+						"c", 4l,'x'));
+
+		Quadruple<SequenceM<Integer>, SequenceM<String>, SequenceM<Long>,SequenceM<Character>> u1 = SequenceM
+				.unzip4(s.get());
+
+		assertTrue(u1.v1.limit(1).toList().containsAll(Arrays.asList(1)));
+
+		assertTrue(u1.v2.limit(2).toList().containsAll(asList("a", "b")));
+		
+		assertTrue(u1.v3.limit(3).toList().containsAll(asList(2l, 3l, 4l)));
+		assertTrue(u1.v4.limit(4).toList().containsAll(asList('z', 'y', 'x')));
 
 	}
 		   

@@ -15,7 +15,7 @@ public class Quadruple<T1,T2,T3,T4> {
 		v1 = (T1)list.get(0);
 		v2 = (T2)list.get(1);
 		v3 = (T3)list.get(2);
-		v4 = (T4)list.get(2);
+		v4 = (T4)list.get(3);
 	}
 	public T1 _1(){
 		return v1;

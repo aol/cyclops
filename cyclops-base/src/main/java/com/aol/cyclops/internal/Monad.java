@@ -207,22 +207,13 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,Functor<T>, Filt
 	}
 	
 	default <R> Monad<Stream<R>,R> flatMapToStream(Function<? super MONAD,Stream<? extends R>> fn){
-		//Stream stream = Stream.of(1);
-	//	List<Stream>
-	//	Stream<List<Integer>>
-	//	System.out.println(unwrap());
-	//	return monad(stream.flatMap(i->fn.apply(unwrap())));
+		
 		
 		Stream stream = Stream.of(1);
 		 Monad r = this.<Stream,T>withMonad((Stream)new ComprehenderSelector().selectComprehender(
 				stream).executeflatMap(stream, i-> unwrap()));
 		 return r.flatMap(e->e);
-		 /**
-		Stream stream = Stream.of(1);
-		 Monad r = this.<Stream,T>withMonad((Stream)new ComprehenderSelector().selectComprehender(
-				stream).executeflatMap(stream, i-> { return bind((Function)fn)
-														.peek(System.out::println).unwrap();}));
-		 return r.flatMap(e->e);**/
+		 
 	}
 	
 	default <R> Monad<CompletableFuture<R>,R> flatMapToCompletableFuture(Function<? super MONAD,CompletableFuture<? extends R>> fn){

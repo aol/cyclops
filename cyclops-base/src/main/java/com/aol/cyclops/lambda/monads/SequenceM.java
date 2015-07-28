@@ -193,18 +193,34 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	 * @return duplicated stream
 	 */
 	public final Pair<SequenceM<T>,SequenceM<T>> duplicate(){
-		Streamable<T> streamable = Streamable.fromStream(monad);
-		return new Pair(streamable.sequenceM(),streamable.sequenceM());
+		
+		Pair<Iterator<T>,Iterator<T>> pair = StreamUtils.toBufferingDuplicator(monad.iterator());	
+		return new Pair(new SequenceM(StreamUtils.stream(pair._1())),new SequenceM(StreamUtils.stream(pair._2())));
+	}
+	private final Pair<SequenceM<T>,SequenceM<T>> duplicatePos(int pos){
+		
+		Pair<Iterator<T>,Iterator<T>> pair = StreamUtils.toBufferingDuplicator(monad.iterator(),pos);	
+		return new Pair(new SequenceM(StreamUtils.stream(pair._1())),new SequenceM(StreamUtils.stream(pair._2())));
 	}
 	@SuppressWarnings("unchecked")
 	public final Triple<SequenceM<T>,SequenceM<T>,SequenceM<T>> triplicate(){
-		Streamable<T> streamable = Streamable.fromStream(monad);
-		return new Triple(streamable.sequenceM(),streamable.sequenceM(),streamable.sequenceM());
+		
+		Stream<SequenceM<T>> its = StreamUtils.toBufferingCopier(monad.iterator(),3)
+										.stream()
+										.map(it -> StreamUtils.stream(it))
+										.map(stream -> new SequenceM<>(stream));
+		
+		return new Triple(its.collect(Collectors.toList()));
+		
 	}
 	@SuppressWarnings("unchecked")
 	public final Quadruple<SequenceM<T>,SequenceM<T>,SequenceM<T>,SequenceM<T>> quadruplicate(){
-		Streamable<T> streamable = Streamable.fromStream(monad);
-		return new Quadruple(streamable.sequenceM(),streamable.sequenceM(),streamable.sequenceM(),streamable.sequenceM());
+		Stream<SequenceM<T>> its = StreamUtils.toBufferingCopier(monad.iterator(),4)
+				.stream()
+				.map(it -> StreamUtils.stream(it))
+				.map(stream -> new SequenceM<>(stream));
+
+		return new Quadruple(its.collect(Collectors.toList()));
 	}
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public final Pair<Optional<T>,SequenceM<T>> splitAtHead(){
@@ -1308,15 +1324,15 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 		return new SequenceM(Stream.of(values)).appendStream(monad);
 	}
 	public SequenceM<T> insertAt(int pos, T... values) {
-		Pair<SequenceM<T>,SequenceM<T>> pair = this.duplicate();
+		Pair<SequenceM<T>,SequenceM<T>> pair = this.duplicatePos(pos);
 		return pair.v1.limit(pos).append(values).appendStream(pair.v2.skip(pos));	
 	}
 	public SequenceM<T> deleteBetween(int start,int end) {
-		Pair<SequenceM<T>,SequenceM<T>> pair = this.duplicate();
+		Pair<SequenceM<T>,SequenceM<T>> pair = this.duplicatePos(start);
 		return pair.v1.limit(start).appendStream(pair.v2.skip(end));	
 	}
 	public SequenceM<T> insertStreamAt(int pos, SequenceM<T> stream) {
-		Pair<SequenceM<T>,SequenceM<T>> pair = this.duplicate();
+		Pair<SequenceM<T>,SequenceM<T>> pair = this.duplicatePos(pos);
 		return pair.v1.limit(pos).appendStream(stream).appendStream(pair.v2.skip(pos));	
 	}
 	
