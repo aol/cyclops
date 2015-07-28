@@ -83,6 +83,16 @@ modifyPom {
 				name 'John McClean'
 				email 'john.mcclean@teamaol.com'
 			}
+			developer {
+				id 'The-Royal-We'
+				name 'Brendan Carroll'
+				email 'brendan.carroll@teamaol.com'
+			}
+			developer {
+				id 'marcocast'
+				name 'Marco Castigliego'
+				email 'marco.castigliego@teamaol.com'
+			}
 		}
 	}
 }
