@@ -17,6 +17,13 @@ import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.stream.StreamWrapper;
 
+/**
+ * Reactive Streams publisher that uses a separate thread  (non-calling thread) to publish on
+ * 
+ * @author johnmcclean
+ *
+ * @param <T>
+ */
 public interface FutureStreamAsyncPublisher<T> extends Publisher<T> {
 	StreamWrapper getLastActive();
 	void cancel();
@@ -28,6 +35,10 @@ public interface FutureStreamAsyncPublisher<T> extends Publisher<T> {
 		FutureStreamAsyncPublisher.this.subscribe(s);
 	}
 	
+	/* 
+	 * @param s ReactiveStreams Subscriber
+	 * @see org.reactivestreams.Publisher#subscribe(org.reactivestreams.Subscriber)
+	 */
 	default void  subscribe(Subscriber<? super T> s){
 	
 		try {
@@ -50,8 +61,6 @@ public interface FutureStreamAsyncPublisher<T> extends Publisher<T> {
 				{
 					CompletableFuture.runAsync( ()-> {
 						processRequests(s, it); 
-						
-					
 					}, getPublisherExecutor());
 				}
 				private void processRequests(Subscriber<? super T> s,
