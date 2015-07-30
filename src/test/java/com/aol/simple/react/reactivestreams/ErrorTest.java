@@ -1,7 +1,8 @@
 package com.aol.simple.react.reactivestreams;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,10 +10,11 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.Assert;
 
+
+
+import org.junit.Ignore;
 import org.junit.Test;
-import org.omg.CORBA.Environment;
 import org.reactivestreams.Processor;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -41,7 +43,7 @@ public class ErrorTest {
 		assertThat(sub.getStream().toList(),equalTo(Arrays.asList(1,2,3)));
 	}
 	List<Integer> result;
-	@Test
+	@Test @Ignore
 	public void testProcessorPublish() throws InterruptedException{
 		
 		result = new ArrayList<>();
