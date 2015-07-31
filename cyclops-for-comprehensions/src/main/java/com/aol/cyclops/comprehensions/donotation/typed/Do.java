@@ -26,8 +26,8 @@ public class Do {
 	public static  DoComp1<Character> add(CharSequence seq){
 		return new DoComp0(ConsPStack.empty()).add(seq);
 	}
-	public static <T1> DoComp1<T1> add(T1... values){
-		return new DoComp0(ConsPStack.empty()).add(values);
+	public static <T1> DoComp1<T1> addValues(T1... values){
+		return new DoComp0(ConsPStack.empty()).addValues(values);
 	}
 	/**
 	 * Add a Iterable as next nested level in the comprehension

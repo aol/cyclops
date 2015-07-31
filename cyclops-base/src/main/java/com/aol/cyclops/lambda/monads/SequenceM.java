@@ -1875,7 +1875,7 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	 * @param stream to insert
 	 * @return newly conjoined SequenceM
 	 */
-	public SequenceM<T> insertStreamAt(int pos, SequenceM<T> stream) {
+	public SequenceM<T> insertStreamAt(int pos, Stream<T> stream) {
 		Pair<SequenceM<T>,SequenceM<T>> pair = this.duplicatePos(pos);
 		return pair.v1.limit(pos).appendStream(stream).appendStream(pair.v2.skip(pos));	
 	}

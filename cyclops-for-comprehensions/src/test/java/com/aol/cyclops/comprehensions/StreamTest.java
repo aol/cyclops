@@ -30,7 +30,7 @@ public class StreamTest {
 	@Test
 	public void arrayStream() {
 		
-		List<String> res = Do.add(new String[]{"hello world","hello"}) 
+		List<String> res = Do.addValues(new String[]{"hello world","hello"}) 
 							.yield( v1->  v1 + "1")
 							.asSequence().toList();
 		List<String> expected = Arrays.asList("hello world1", "hello1");

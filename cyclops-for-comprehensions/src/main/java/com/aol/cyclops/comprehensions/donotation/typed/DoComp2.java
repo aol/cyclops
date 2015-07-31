@@ -29,7 +29,7 @@ import com.aol.cyclops.lambda.monads.SequenceM;
 			return new DoComp3(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),seq)));
 			
 		}
-		public <T3> DoComp3<T1,T2,T3> add(T3...  values){
+		public <T3> DoComp3<T1,T2,T3> addValues(T3...  values){
 			return new DoComp3(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),Stream.of(values))));
 			
 		}

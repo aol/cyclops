@@ -38,13 +38,13 @@ test {
 
 modifyPom {
 	project {
-		name 'cyclops-power-tuples'
+		name 'cyclops-tuples'
 		description 'Tuples for Java 8'
 		url 'http://advertising.com'
 		inceptionYear '2015'
 
 		groupId 'com.aol.cyclops'
-		artifactId 'cyclops-power-tuples'
+		artifactId 'cyclops-tuples'
 		version "$version"
 		
 		scm {
