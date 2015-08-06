@@ -1,6 +1,7 @@
 package com.aol.cyclops.lambda.mixins;
 
-import static org.junit.Assert.fail;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 
@@ -9,10 +10,6 @@ import lombok.Value;
 import org.junit.Test;
 
 import com.aol.cyclops.lambda.api.AsDecomposable;
-
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 public class CoerceToDecomposableTest {
 
 	@Test

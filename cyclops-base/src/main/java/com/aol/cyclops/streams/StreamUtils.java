@@ -50,6 +50,15 @@ import com.nurkiewicz.lazyseq.LazySeq;
 
 public class StreamUtils{
 	
+	public final static <T> Stream<T> optionalToStream(Optional<T> optional){
+		if(optional.isPresent())
+			return Stream.of(optional.get());
+		return Stream.of();
+	}
+	public final static <T> Stream<T> completableFutureToStream(CompletableFuture<T> future){
+		return Stream.of(future.join());
+			
+	}
 	/**
 	 * Convert to a Stream with the result of a reduction operation repeated
 	 * specified times

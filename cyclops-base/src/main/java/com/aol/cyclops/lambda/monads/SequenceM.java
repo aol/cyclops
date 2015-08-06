@@ -1377,7 +1377,8 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	 * @return
 	 */
 	public final <R> SequenceM<R> flatMapCollection(Function<? super T,Collection<? extends R>> fn) {
-		return AsGenericMonad.<Stream<T>,T>asMonad(monad).bind(in -> fn.apply(in)).sequence();
+		return new SequenceM<>(monad.flatMap( in->fn.apply(in).stream()));
+		
 	}
 	/**
 	 * flatMap operation
@@ -1393,8 +1394,8 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	 * @return new stage in Sequence with flatMap operation to be lazily applied
 	*/
 	public final <R> SequenceM<R> flatMapStream(Function<? super T,BaseStream<? extends R,?>> fn) {
-		 Monad<Object,T> m = AsGenericMonad.asMonad(monad);
-		return m.flatMap(in -> fn.apply(in)).sequence();
+		return new SequenceM<>(monad.flatMap( in->StreamUtils.stream(fn.apply(in).iterator())));
+
 	}
 	/**
 	 * flatMap to optional - will result in null values being removed
@@ -1409,8 +1410,7 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	 * @return
 	 */
 	public final <R> SequenceM<R> flatMapOptional(Function<? super T,Optional<? extends R>> fn) {
-		 Monad<Object,T> m = AsGenericMonad.asMonad(monad);
-		 return m.flatMap(in -> fn.apply(in)).sequence();
+		return new SequenceM<>(monad.flatMap( in->StreamUtils.optionalToStream(fn.apply(in))));
 	
 	}
 	/**
@@ -1429,7 +1429,7 @@ public class SequenceM<T> implements Unwrapable, Stream<T>, Iterable<T>{
 	 * @return
 	 */
 	public final <R> SequenceM<R> flatMapCompletableFuture(Function<? super T,CompletableFuture<? extends R>> fn) {
-		return AsGenericMonad.<Stream<T>,T>asMonad(monad).bind(in -> fn.apply(in)).sequence();
+		return new SequenceM<>(monad.flatMap( in->StreamUtils.completableFutureToStream(fn.apply(in))));
 	}
 	public final <R> SequenceM<R> flatMapLazySeq(Function<? super T,LazySeq<? extends R>> fn) {
 		return AsGenericMonad.<Stream<T>,T>asMonad(monad).bind(in -> fn.apply(in)).sequence();

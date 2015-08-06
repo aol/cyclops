@@ -1,12 +1,8 @@
 package com.aol.cyclops.comprehensions.comprehenders;
 
-import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.lambda.api.Comprehender;
