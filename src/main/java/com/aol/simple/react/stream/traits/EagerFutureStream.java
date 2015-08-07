@@ -385,6 +385,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 				.batchBySize(size);
 
 	}
+	
 
 	/**
 	 * Batch the elements in this stream into Collections of specified size The
@@ -522,59 +523,9 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		return (EagerFutureStream<U>) FutureStream.super.xPer(x, time, unit);
 	}
 
-	/**
-	 * Organise elements in a Stream into a Collections based on the time period
-	 * they pass through this stage
-	 * 
-	 * <pre>
-	 * {@code 
-	 * 	EagerFutureStream.of(1,2,3,4,5,6)
-	 * 					.batchByTime(15000,TimeUnit.MICROSECONDS);
-	 * 
-	 * }
-	 * 
-	 * </pre>
-	 * 
-	 * @param time
-	 *            Time period during which all elements should be collected
-	 * @param unit
-	 *            Time unit during which all elements should be collected
-	 * @return Stream of Lists
-	 */
-	default EagerFutureStream<Collection<U>> batchByTime(long time,
-			TimeUnit unit) {
-		return (EagerFutureStream<Collection<U>>) FutureStream.super
-				.batchByTime(time, unit);
-	}
+	
 
-	/**
-	 * Organise elements in a Stream into a Collections based on the time period
-	 * they pass through this stage
-	 * 
-	 * <pre>
-	 * {@code 
-	 * 
-	 *   EagerFutureStream.of(1,1,1,1,1,1)
-	 *   				  .batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>())
-	 *   				  .toList()
-	 * 
-	 * }
-	 * </pre>
-	 * 
-	 * @param time
-	 *            Time period during which all elements should be collected
-	 * @param unit
-	 *            Time unit during which all elements should be collected
-	 * @param factory
-	 *            Instantiates the collections used in the batching
-	 * @return Stream of collections
-	 */
-	default EagerFutureStream<Collection<U>> batchByTime(long time,
-			TimeUnit unit, Supplier<Collection<U>> factory) {
-		return (EagerFutureStream<Collection<U>>) FutureStream.super
-				.batchByTime(time, unit, factory);
-
-	}
+	
 
 	/**
 	 * Similar to zip and withLatest, except will always take the latest from

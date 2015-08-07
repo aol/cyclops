@@ -1,7 +1,7 @@
 package com.aol.simple.react.base;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
@@ -158,6 +158,30 @@ public abstract class BaseSequentialSeqTest {
 	public void batchBySize(){
 		System.out.println(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()));
 		assertThat(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()).size(),is(2));
+	}
+	@Test
+	public void batchBySizeAndTimeSize(){
+		
+		assertThat(of(1,2,3,4,5,6).batchBySizeAndTime(3,10,TimeUnit.SECONDS).toList().get(0).size(),is(3));
+	}
+	@Test
+	public void batchBySizeAndTimeTime(){
+		
+		
+		assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(100);return 6;})
+						.batchBySizeAndTime(30,160,TimeUnit.MILLISECONDS)
+						.toList()
+						.get(0)
+						,not(hasItem(6)));
+	}
+	@Test
+	public void batchByTime2(){
+		
+		assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(100);return 6;})
+						.batchByTime(60,TimeUnit.MILLISECONDS)
+						.toList()
+						.get(0)
+						,not(hasItem(6)));
 	}
 	@Test
 	public void batchBySizeSet(){

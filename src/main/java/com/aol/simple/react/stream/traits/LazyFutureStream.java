@@ -15,7 +15,6 @@ import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -516,6 +515,40 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 				.batchBySize(size);
 
 	}
+	/* 
+	 * Batch the elements in the Stream by a combination of Size and Time
+	 * If batch exceeds max size it will be split
+	 * If batch exceeds max time it will be split
+	 * Excludes Null values (neccessary for timeout handling)
+	 * 
+	 * <pre>
+	 * {@code
+	 * assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(100);return 6;})
+						.batchBySizeAndTime(30,60,TimeUnit.MILLISECONDS)
+						.toList()
+						.get(0)
+						,not(hasItem(6)));
+		}
+	 * </pre>
+	 * 
+	 * <pre>
+	 * {@code
+	 * 	
+		assertThat(of(1,2,3,4,5,6).batchBySizeAndTime(3,10,TimeUnit.SECONDS).toList().get(0).size(),is(3));
+
+	 * }</pre>
+	 * 
+	 *	@param size Max batch size
+	 *	@param time Max time length
+	 *	@param unit time unit
+	 *	@return batched stream
+	 * @see com.aol.simple.react.stream.traits.FutureStream#batchBySizeAndTime(int, long, java.util.concurrent.TimeUnit)
+	 */
+	default LazyFutureStream<List<U>> batchBySizeAndTime(int size,long time, TimeUnit unit) {
+		return (LazyFutureStream<List<U>>) FutureStream.super
+				.batchBySizeAndTime(size,time,unit);
+
+	}
 
 	/**
 	 * Batch the elements in this stream into Collections of specified size The
@@ -606,6 +639,15 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	/**
 	 * Organise elements in a Stream into a Collections based on the time period
 	 * they pass through this stage
+	 * 
+	 * <pre>
+	 * {@code 
+	 * 	LazyFutureStream.react(()->load1(),()->load2(),()->load3(),()->load4(),()->load5(),()->load6())
+	 * 					.batchByTime(15000,TimeUnit.MICROSECONDS);
+	 * 
+	 * }
+	 * 
+	 * </pre>
 	 * 
 	 * @param time
 	 *            Time period during which all elements should be collected

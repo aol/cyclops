@@ -167,7 +167,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 				
 			};
 		};
-		return fromStream(queue.streamBatch(getSubscription(), fn));
+		return fromStream(queue.streamBatchNoTimeout(getSubscription(), fn));
 		
 		
 	}
@@ -205,6 +205,42 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	}
 	
 	/**
+	 * Batch the elements in the Stream by a combination of Size and Time
+	 * If batch exceeds max size it will be split
+	 * If batch exceeds max time it will be split
+	 * Excludes Null values (neccessary for timeout handling)
+	 * 
+	 * @return
+	 */
+	default FutureStream<List<U>> batchBySizeAndTime(int size,long time, TimeUnit unit) { 
+	    Queue queue = toQueue();
+	    Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = s -> {
+	        return () -> {
+	            SimpleTimer timer = new SimpleTimer();
+	            List<U> list = new ArrayList<>();
+	            try {
+	                do {
+	                    if(list.size()==size){
+	                        return list;
+	                    }
+	                    U result = s.apply(unit.toNanos(time)-timer.getElapsedNanoseconds(), TimeUnit.NANOSECONDS);
+	                    
+	                    if(result!=null)
+							list.add(result);
+	                    
+						
+						
+	                   } while (timer.getElapsedNanoseconds()<unit.toNanos(time));
+	            } catch (ClosedQueueException e) {
+
+	                throw new ClosedQueueException(list);
+	            }
+	            return list;
+	        };
+	    };
+	    return fromStream(queue.streamBatch(getSubscription(), fn));
+	}
+	/**
 	 * 
 	 * Batch the elements in this stream into Lists of specified size
 	 * 
@@ -230,7 +266,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 			return list;
 			};
 		};
-		return fromStream(queue.streamBatch(getSubscription(), fn));
+		return fromStream(queue.streamBatchNoTimeout(getSubscription(), fn));
 	}
 	/**
 	 * Batch elements into a Stream of collections with user defined function
@@ -240,7 +276,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 */
 	default FutureStream<Collection<U>> batch(Function<Supplier<U>, Supplier<Collection<U>>> fn){
 		Queue queue = toQueue();
-		return fromStream(queue.streamBatch(getSubscription(), fn));
+		return fromStream(queue.streamBatchNoTimeout(getSubscription(), fn));
 	}
 	
 	/**
@@ -271,7 +307,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 			return list;
 			};
 		};
-		return fromStream(queue.streamBatch(getSubscription(), fn));
+		return fromStream(queue.streamBatchNoTimeout(getSubscription(), fn));
 	}
 	/**
 	 * Introduce a random delay between events in a stream
@@ -493,6 +529,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 
 	/**
 	 * Organise elements in a Stream into a Collections based on the time period they pass through this stage
+	 * Excludes Null values (neccessary for timeout handling)
 	 * 
 	 * @param time Time period during which all elements should be collected
 	 * @param unit Time unit during which all elements should be collected
@@ -500,13 +537,15 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 */
 	default FutureStream<Collection<U>> batchByTime(long time, TimeUnit unit) {
 		Queue queue = toQueue();
-		Function<Supplier<U>, Supplier<Collection<U>>> fn = s -> {
+		Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = s -> {
 			return () -> {
 				SimpleTimer timer = new SimpleTimer();
 				List<U> list = new ArrayList<>();
 				try {
 					do {
-						list.add(s.get());
+						U result = s.apply(unit.toNanos(time)-timer.getElapsedNanoseconds(), TimeUnit.NANOSECONDS);
+						if(result!=null)
+							list.add(result);
 					} while (timer.getElapsedNanoseconds()<unit.toNanos(time));
 				} catch (ClosedQueueException e) {
 					
@@ -527,13 +566,16 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 */
 	default FutureStream<Collection<U>> batchByTime(long time, TimeUnit unit,Supplier<Collection<U>> factory) {
 		Queue queue = toQueue();
-		Function<Supplier<U>, Supplier<Collection<U>>> fn = s -> {
+		Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = s -> {
 			return () -> {
 				SimpleTimer timer = new SimpleTimer();
 				Collection<U> list = factory.get();
 				try {
 					do {
-						list.add(s.get());
+						U result = s.apply(unit.toNanos(time)-timer.getElapsedNanoseconds(), TimeUnit.NANOSECONDS);
+						if(result!=null)
+							list.add(result);
+						
 					} while (timer.getElapsedNanoseconds()<unit.toNanos(time));
 				} catch (ClosedQueueException e) {
 					
