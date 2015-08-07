@@ -892,6 +892,53 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 		return (EagerFutureStream) FutureStream.super.flatMap(flatFn);
 	}
+	/**
+	 * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
+	 * If in async mode this operation is performed asyncrhonously
+	 * If in sync mode this operation is performed synchronously
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat( new EagerReact()
+										.of(1,2,3)
+										.flatMapCompletableFuture(i->CompletableFuture.completedFuture(i))
+										.block(),equalTo(Arrays.asList(1,2,3)));
+	 * }
+	 * </pre>
+	 * In this example the result of the flatMapCompletableFuture is 'flattened' to the raw integer values
+	 * 
+	 * 
+	 * @param flatFn flatMap function
+	 * @return Flatten Stream with flatFn applied
+	 */
+	default <R> EagerFutureStream<R> flatMapCompletableFuture(
+			Function<U, CompletableFuture<R>> flatFn) {
+		return (EagerFutureStream) FutureStream.super.flatMapCompletableFuture(flatFn);
+	}
+	/**
+	 * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
+	 * This operation is performed synchronously
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat( new EagerReact()
+										.of(1,2,3)
+										.flatMapCompletableFutureSync(i->CompletableFuture.completedFuture(i))
+										.block(),equalTo(Arrays.asList(1,2,3)));
+	 * }
+	 * </pre>
+	 * In this example the result of the flatMapCompletableFuture is 'flattened' to the raw integer values
+	 * 
+	 * 
+	 * @param flatFn flatMap function
+	 * @return Flatten Stream with flatFn applied
+	 */
+	default <R> EagerFutureStream<R> flatMapCompletableFutureSync(
+			Function<U, CompletableFuture<R>> flatFn) {
+		
+		return (EagerFutureStream) FutureStream.super.flatMapCompletableFutureSync(flatFn);
+	}
+
 
 	/*
 	 * <pre>

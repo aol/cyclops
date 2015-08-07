@@ -234,7 +234,7 @@ public interface SimpleReactStream<U> extends
 	 *         the dataflow
 	 */
 	@SuppressWarnings("unchecked")
-	default  <R> SimpleReactStream<R> then(final Function<U, R> fn) {
+	default  <R> SimpleReactStream<R> then(final Function<U,R> fn) {
 		if(!this.isAsync())
 			return thenSync(fn);
 		Function<Stream<CompletableFuture>,Stream<CompletableFuture>> streamMapper = s ->s.map(ft -> ft.thenApplyAsync(SimpleReactStream.<U,R>handleExceptions(fn),getTaskExecutor()));
@@ -242,7 +242,6 @@ public interface SimpleReactStream<U> extends
 	}
 	
 	/**
-	 * Can only be used on Eager Streams
 	 * 
 	 * Applies a function to this phase independent on the main flow.
 	 * Convenience over taking a reference to this phase and splitting it.
@@ -258,6 +257,14 @@ public interface SimpleReactStream<U> extends
 								getTaskExecutor())));
 		return this;
 	}
+	/**
+	 * 
+	 * Applies a function to this phase independent on the main flow, continues on the currently executing thread.
+	 * Convenience over taking a reference to this phase and splitting it.
+	 * 
+	 * @param fn Function to be applied to each completablefuture on completion
+	 * @return This phase in Stream
+	 */
 	default   SimpleReactStream<U> doOnEachSync(final Function<U, U> fn) {
 		
 		getLastActive().stream(s ->s.peek(
@@ -308,6 +315,57 @@ public interface SimpleReactStream<U> extends
 
 			}
 		};
+	}
+	/**
+	 * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
+	 * If in async mode this operation is performed asyncrhonously
+	 * If in sync mode this operation is performed synchronously
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat( new SimpleReact()
+										.of(1,2,3)
+										.flatMapCompletableFuture(i->CompletableFuture.completedFuture(i))
+										.block(),equalTo(Arrays.asList(1,2,3)));
+	 * }
+	 * </pre>
+	 *
+	 * In this example the result of the flatMapCompletableFuture is 'flattened' to the raw integer values
+	 * 
+	 * 
+	 * @param flatFn flatMap function
+	 * @return Flatten Stream with flatFn applied
+	 */
+	default <R> SimpleReactStream<R> flatMapCompletableFuture(
+			Function<U, CompletableFuture<R>> flatFn) {
+		if(!this.isAsync())
+			return flatMapCompletableFutureSync(flatFn);
+		Function<Stream<CompletableFuture>,Stream<CompletableFuture>> streamMapper = s ->(Stream)s.map(ft -> ft.thenComposeAsync(SimpleReactStream.handleExceptions(flatFn),getTaskExecutor()));
+		return (SimpleReactStream<R>) this.withLastActive(getLastActive().stream(streamMapper));
+	}
+	/**
+	 * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
+	 * This operation is performed synchronously
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat( new SimpleReact()
+										.of(1,2,3)
+										.flatMapCompletableFutureSync(i->CompletableFuture.completedFuture(i))
+										.block(),equalTo(Arrays.asList(1,2,3)));
+	 * }
+	 *</pre>
+	 * In this example the result of the flatMapCompletableFuture is 'flattened' to the raw integer values
+	 * 
+	 * 
+	 * @param flatFn flatMap function
+	 * @return Flatten Stream with flatFn applied
+	 */
+	default <R> SimpleReactStream<R> flatMapCompletableFutureSync(
+			Function<U, CompletableFuture<R>> flatFn) {
+		
+		Function<Stream<CompletableFuture>,Stream<CompletableFuture>> streamMapper = s ->(Stream)s.map(ft -> ft.thenCompose(SimpleReactStream.handleExceptions(flatFn)));
+		return (SimpleReactStream<R>) this.withLastActive(getLastActive().stream(streamMapper));
 	}
 
 	/**

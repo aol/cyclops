@@ -99,7 +99,7 @@ public class LazyReact extends BaseLazySimpleReact {
 		this.executor = Executors.newFixedThreadPool(threadPoolSize);
 		this.retrier = new RetryBuilder().parallelism(threadPoolSize);
 		this.async = true;
-		this.maxActive = new MaxActive(threadPoolSize,concurrency);
+		this.maxActive = new MaxActive(concurrency,threadPoolSize);
 		
 	}
 	

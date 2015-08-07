@@ -868,6 +868,52 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	default <R> FutureStream<R> fromStream(Stream<R> stream) {
 		return (FutureStream) SimpleReactStream.super.fromStream(stream);
 	}
+	/**
+	 * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
+	 * If in async mode this operation is performed asyncrhonously
+	 * If in sync mode this operation is performed synchronously
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat( new LazyReact()
+										.of(1,2,3)
+										.flatMapCompletableFuture(i->CompletableFuture.completedFuture(i))
+										.block(),equalTo(Arrays.asList(1,2,3)));
+	 * }</pre>
+	 *
+	 * In this example the result of the flatMapCompletableFuture is 'flattened' to the raw integer values
+	 * 
+	 * 
+	 * @param flatFn flatMap function
+	 * @return Flatten Stream with flatFn applied
+	 */
+	default <R> FutureStream<R> flatMapCompletableFuture(
+			Function<U, CompletableFuture<R>> flatFn) {
+		return (FutureStream) SimpleReactStream.super.flatMapCompletableFuture(flatFn);
+	}
+	/**
+	 * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
+	 * This operation is performed synchronously
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat( new LazyReact()
+										.of(1,2,3)
+										.flatMapCompletableFutureSync(i->CompletableFuture.completedFuture(i))
+										.block(),equalTo(Arrays.asList(1,2,3)));
+	 * }
+	 * </pre>
+	 * In this example the result of the flatMapCompletableFuture is 'flattened' to the raw integer values
+	 * 
+	 * 
+	 * @param flatFn flatMap function
+	 * @return Flatten Stream with flatFn applied
+	 */
+	default <R> FutureStream<R> flatMapCompletableFutureSync(
+			Function<U, CompletableFuture<R>> flatFn) {
+		
+		return (FutureStream) SimpleReactStream.super.flatMapCompletableFutureSync(flatFn);
+	}
 
 	/*
 	 * @see org.jooq.lambda.Seq#flatMap(java.util.function.Function)
