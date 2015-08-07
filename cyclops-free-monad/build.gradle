@@ -12,8 +12,11 @@ jar {
 repositories {
     mavenCentral()
 }
-
+configurations {
+	provided
+}
 dependencies {
+	provided group: 'org.projectlombok', name: 'lombok', version:'1.16.2'
 	compile "org.functionaljava:functionaljava:4.3"
 	compile "org.functionaljava:functionaljava-java8:4.3"
 	compile project(':cyclops-pattern-matching')
@@ -24,9 +27,13 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
-test {
-    systemProperties 'property': 'value'
+sourceSets {
+	main.compileClasspath += [configurations.provided]
+	test.compileClasspath += [configurations.provided]
+	test.runtimeClasspath += [configurations.provided]
 }
+
+eclipse.classpath.plusConfigurations += [configurations.provided]  // Eclipse users only
 
 uploadArchives {
     repositories {

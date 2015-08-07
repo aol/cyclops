@@ -22,6 +22,10 @@ test {
 }
 
 subprojects {
+	apply plugin: 'eclipse'
+	
+	
+	
 	if (JavaVersion.current().isJava8Compatible()) {
 		allprojects {
 		  tasks.withType(Javadoc) {
@@ -29,4 +33,7 @@ subprojects {
 		  }
 		}
 	  }
+	
+	
+	
 }
