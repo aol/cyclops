@@ -100,7 +100,7 @@ import com.aol.cyclops.lambda.monads.SequenceM;
 		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T1> DoComp1<T1> add(Stream<T1> o){
+		public <T1> DoComp1<T1> addStream(Stream<T1> o){
 			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
 			
 		}
@@ -119,7 +119,7 @@ import com.aol.cyclops.lambda.monads.SequenceM;
 		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public  <T1> DoComp1<T1> add(BaseStream<T1,?> o){
+		public  <T1> DoComp1<T1> addBaseStream(BaseStream<T1,?> o){
 			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
 			
 		}

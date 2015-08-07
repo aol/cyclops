@@ -138,8 +138,10 @@ public class StreamTest {
 		
 		Map<String,Integer> m = new HashMap<>();
 		m.put("hello",10);
-		List<String> res = Do.add(m.entrySet().stream()) 
-							.yield( v-> ""+ v + "*").asSequence().toList();
+		List<String> res = Do.addStream(m.entrySet().stream()) 
+								.yield( v-> ""+ v + "*")
+								.asSequence()
+								.toList();
 		List<String> expected = Arrays.asList("hello=10*");
 		
 		

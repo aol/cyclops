@@ -86,8 +86,8 @@ public class Do {
 	 * @param o Defines next level in comprehension
 	 * @return Next stage in for comprehension builder
 	 */
-	public  static <T1> DoComp1<T1> add(Stream<T1> o){
-		return new DoComp0(ConsPStack.empty()).add(o);		
+	public  static <T1> DoComp1<T1> addStream(Stream<T1> o){
+		return new DoComp0(ConsPStack.empty()).addStream(o);		
 	}
 	
 	/**
@@ -105,8 +105,8 @@ public class Do {
 	 * @param o Defines next level in comprehension
 	 * @return Next stage in for comprehension builder
 	 */
-	public  static  <T1> DoComp1<T1> add(BaseStream<T1,?> o){
-		return new DoComp0(ConsPStack.empty()).add(o);		
+	public  static  <T1> DoComp1<T1> addBaseStream(BaseStream<T1,?> o){
+		return new DoComp0(ConsPStack.empty()).addBaseStream(o);		
 	}
 	
 

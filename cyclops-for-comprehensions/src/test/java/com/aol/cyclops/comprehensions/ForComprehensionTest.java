@@ -34,7 +34,7 @@ public class ForComprehensionTest {
 		@Test
 		public void intstream() {
 			
-			IntStream res = (IntStream)Do.add (IntStream.range(1,3)) 
+			IntStream res = (IntStream)Do.addBaseStream(IntStream.range(1,3)) 
 										 .yield( v1-> v1 + 1).unwrap();
 			List<Integer> expected = Arrays.asList(2,3);
 			
@@ -58,7 +58,7 @@ public class ForComprehensionTest {
 			
 			
 			
-			LongStream res = Do.add(LongStream.range(1l,30l))
+			LongStream res = Do.addBaseStream(LongStream.range(1l,30l))
 								.addBaseStream(()-> LongStream.range(6l,10l))
 								.yield(  v1->v2 ->  v1 * v2 + 1l).unwrap();
 			
@@ -82,7 +82,7 @@ public class ForComprehensionTest {
 		public void doubleStream() {
 			
 			
-			DoubleStream res =Do.add ( DoubleStream.of(10.00,20.00))
+			DoubleStream res =Do.addBaseStream( DoubleStream.of(10.00,20.00))
 										.addBaseStream(()->DoubleStream.of(2.00,3.50))
 										.addBaseStream(()->DoubleStream.of(25.50))
 										.yield( v1->v2->v3-> ( v1 * v2 * v3 )).unwrap();

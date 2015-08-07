@@ -4,17 +4,13 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import lombok.val;
 
 import org.junit.Test;
-
-import com.aol.cyclops.comprehensions.donotation.UntypedDo;
 public class DoListsTest {
 	
 

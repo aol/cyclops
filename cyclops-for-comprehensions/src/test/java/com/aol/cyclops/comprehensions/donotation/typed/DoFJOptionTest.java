@@ -2,19 +2,15 @@ package com.aol.cyclops.comprehensions.donotation.typed;
 
 
 import static com.aol.cyclops.lambda.api.AsAnyM.notTypeSafeAnyM;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.util.function.BiFunction;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.donotation.UntypedDo;
-import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.monads.AnyM;
 
-import fj.data.Either;
 import fj.data.Option;
 
 public class DoFJOptionTest {
