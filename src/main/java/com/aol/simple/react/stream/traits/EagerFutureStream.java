@@ -3,11 +3,14 @@ package com.aol.simple.react.stream.traits;
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -16,6 +19,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -26,6 +30,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import lombok.Value;
+
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -33,6 +39,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Continueable;
 import com.aol.simple.react.async.Queue;
+import com.aol.simple.react.async.Queue.ClosedQueueException;
 import com.aol.simple.react.async.QueueFactory;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
@@ -42,6 +49,10 @@ import com.aol.simple.react.stream.eager.EagerFutureStreamImpl;
 import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
+import com.aol.simple.react.stream.traits.operators.BatchByTimeAndSize;
+import com.aol.simple.react.stream.traits.operators.EagerDebounce;
+import com.aol.simple.react.threads.SequentialElasticPools;
+import com.aol.simple.react.util.SimpleTimer;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -284,7 +295,24 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 *         windows
 	 */
 	default EagerFutureStream<U> debounce(long time, TimeUnit unit) {
-		return (EagerFutureStream<U>) FutureStream.super.debounce(time, unit);
+		
+		Queue<U> queue = toQueue();
+		
+		
+		long timeNanos =  unit.toNanos(time);
+	
+		
+		Supplier<Optional<U>> nextValue =new EagerDebounce<>(0,queue,timeNanos);
+		
+		EagerFutureStream<U> stream = this.async().map(u->nextValue.get()).sync().filter(Optional::isPresent).map(Optional::get);
+		if(this.isAsync())
+			return stream.async();
+		return stream;
+		
+	}
+	@Value
+	static class QueueValue<T>{
+		T val;
 	}
 
 	/**
@@ -346,7 +374,53 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	default EagerFutureStream<U> control(Function<Supplier<U>, Supplier<U>> fn) {
 		return (EagerFutureStream<U>) FutureStream.super.control(fn);
 	}
+	/* 
+	 * Batch the elements in the Stream by a combination of Size and Time
+	 * If batch exceeds max size it will be split
+	 * If batch exceeds max time it will be split
+	 * Excludes Null values (neccessary for timeout handling)
+	 * 
+	 * <pre>
+	 * {@code
+	 * assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(100);return 6;})
+						.batchBySizeAndTime(30,60,TimeUnit.MILLISECONDS)
+						.toList()
+						.get(0)
+						,not(hasItem(6)));
+		}
+	 * </pre>
+	 * 
+	 * <pre>
+	 * {@code
+	 * 	
+		assertThat(of(1,2,3,4,5,6).batchBySizeAndTime(3,10,TimeUnit.SECONDS).toList().get(0).size(),is(3));
 
+	 * }</pre>
+	 * 
+	 *	@param size Max batch size
+	 *	@param time Max time length
+	 *	@param unit time unit
+	 *	@return batched stream
+	 * @see com.aol.simple.react.stream.traits.FutureStream#batchBySizeAndTime(int, long, java.util.concurrent.TimeUnit)
+	 */
+	default EagerFutureStream<List<U>> batchBySizeAndTime(int size,long time, TimeUnit unit) { 
+	    Queue<U> queue = toQueue();
+	    
+	    Function<BiFunction<Long, TimeUnit, U>, Supplier<Optional<List<U>>>> fn = 
+	    		new BatchByTimeAndSize<U>(queue,size,time,unit).liftOptional();
+	   
+	    Executor exec = this.getTaskExecutor();
+	    
+	    EagerFutureStream<List<U>> stream = this.sync()
+	    										.map(u-> {synchronized(queue){return fn.apply((t,un)-> queue.poll(t,un)).get();}})
+	    										.filter(Optional::isPresent)
+	    										.map(Optional::get)
+	    										.withTaskExecutor(exec);
+		if(this.isAsync())
+			return stream.async();
+		return stream;
+	}
+	
 	/**
 	 * Batch elements into a Stream of collections with user defined function
 	 * 
@@ -1392,6 +1466,27 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	default EagerFutureStream<U> reverse() {
 		return fromStream(FutureStream.super.reverse());
 	}
+	/**
+	 * Reversed, operating on the underlying futures.
+	 * <pre>
+	 * {@code 
+	 * 
+	 * // (3, 2, 1) EagerFutureStream.of(1, 2, 3).reverse()
+	 * }</pre>
+	 * 
+	 * @return
+	 */
+	default EagerFutureStream<U> reverseFutures() {
+		StreamWrapper lastActive = getLastActive();
+		ListIterator<CompletableFuture> it = lastActive.list().listIterator();
+		List<CompletableFuture> result = new ArrayList<>();
+		while(it.hasPrevious())
+			result.add(it.previous());
+		
+		StreamWrapper limited = lastActive.withList( result);
+		return this.withLastActive(limited);
+		
+	}
 
 	
 	
@@ -1818,6 +1913,13 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/**
 	 *  Create a sequential synchronous stream
 	 * @see Stream#of(Object)
+	 * 
+	 * NB. best practice for production systems is to use the builder EagerReact, by default
+	 * all EagerFutureStreams created by this method use a common thread pool with a single thread.
+	 * This behaviour can be changed to create a new thead pool each time via ThreadPools.setUseCommon(false);
+	 * Neither solution is optimal for production systems and EagerFutureStreams - see SequentialElasticPools.eagerReact to autoscale
+	 * and return EagerReact instances from a pool
+
 	 */
 	static <T> EagerFutureStream<T> of(T value) {
 		return of((Stream) Stream.of(value));
@@ -1826,6 +1928,13 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/**
 	 * Create a sequential synchronous stream
 	 * @see Stream#of(Object[])
+	 * 
+	 * NB. best practice for production systems is to use the builder EagerReact, by default
+	 * all EagerFutureStreams created by this method use a common thread pool with a single thread.
+	 * This behaviour can be changed to create a new thead pool each time via ThreadPools.setUseCommon(false);
+	 * Neither solution is optimal for production systems and EagerFutureStreams - see SequentialElasticPools.eagerReact to autoscale
+	 * and return EagerReact instances from a pool
+
 	 */
 	@SafeVarargs
 	static <T> EagerFutureStream<T> of(T... values) {
@@ -1841,6 +1950,13 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 	/**
 	 * Wrap a Stream into a Sequential synchronous FutureStream.
+	 
+	 *NB. best practice for production systems is to use the builder EagerReact, by default
+	 * all EagerFutureStreams created by this method use a common thread pool with a single thread.
+	 * This behaviour can be changed to create a new thead pool each time via ThreadPools.setUseCommon(false);
+	 * Neither solution is optimal for production systems and EagerFutureStreams - see SequentialElasticPools.eagerReact to autoscale
+	 * and return EagerReact instances from a pool
+
 	 */
 	static <T> EagerFutureStream<T> of(Stream<T> stream) {
 		if (stream instanceof FutureStream)
@@ -1855,6 +1971,14 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 	/**
 	 * Wrap an Iterable into a FutureStream.
+	 * 
+	 * NB. best practice for production systems is to use the builder EagerReact, by default
+	 * all EagerFutureStreams created by this method use a common thread pool with a single thread.
+	 * This behaviour can be changed to create a new thead pool each time via ThreadPools.setUseCommon(false);
+	 * Neither solution is optimal for production systems and EagerFutureStreams - see SequentialElasticPools.eagerReact to autoscale
+	 * and return EagerReact instances from a pool
+	 * 
+	 * 
 	 */
 	static <T> EagerFutureStream<T> ofIterable(Iterable<T> iterable) {
 		return of(iterable.iterator());
@@ -1862,6 +1986,13 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 	/**
 	 * Wrap an Iterator into a FutureStream.
+	 * 
+	 * NB. best practice for production systems is to use the builder EagerReact, by default
+	 * all EagerFutureStreams created by this method use a common thread pool with a single thread.
+	 * This behaviour can be changed to create a new thead pool each time via ThreadPools.setUseCommon(false);
+	 * Neither solution is optimal for production systems and EagerFutureStreams - see SequentialElasticPools.eagerReact to autoscale
+	 * and return EagerReact instances from a pool
+
 	 */
 	static <T> EagerFutureStream<T> of(Iterator<T> iterator) {
 		return of(StreamSupport.stream(

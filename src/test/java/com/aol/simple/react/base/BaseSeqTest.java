@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
@@ -174,6 +175,34 @@ public abstract class BaseSeqTest {
 	public void batchBySize(){
 		System.out.println(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()));
 		assertThat(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()).size(),is(2));
+	}
+	@Test
+	public void batchBySizeAndTimeSize(){
+		
+		assertThat(of(1,2,3,4,5,6).batchBySizeAndTime(3,10,TimeUnit.SECONDS).toList().get(0).size(),is(3));
+	}
+	@Test
+	public void batchBySizeAndTimeTime(){
+		
+		for(int i=0;i<5;i++){
+			
+			List<List<Integer>> list = react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
+					.batchBySizeAndTime(30,10,TimeUnit.MICROSECONDS)
+					.toList();
+			
+			assertThat(list
+							.get(0)
+							,not(hasItem(6)));
+		}
+	}
+	@Test
+	public void batchByTime2(){
+		for(int i=0;i<500;i++)
+			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(100);return 6;})
+							.batchByTime(60,TimeUnit.MILLISECONDS)
+							.toList()
+							.get(0)
+							,not(hasItem(6)));
 	}
 	@Test
 	public void batchBySizeSet(){

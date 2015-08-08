@@ -140,6 +140,11 @@ public class Queue<T> implements Adapter<T> {
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
 		return Seq.seq(closingStream(batcher.apply(()->ensureOpen(this.timeout,this.timeUnit)),s));
 	}
+	public Seq<CompletableFuture<T>> streamControlFutures(Continueable s,Function<Supplier<T>,CompletableFuture<T>> batcher) {
+		
+		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
+		return Seq.seq(closingStreamFutures(()->batcher.apply(()->ensureOpen(this.timeout,this.timeUnit)),s));
+	}
 
 	private Stream<Collection<T>> closingStreamBatch(Supplier<Collection<T>> s, Continueable sub){
 		
@@ -155,8 +160,15 @@ public class Queue<T> implements Adapter<T> {
 		
 		 return st;
 	}
-	
+	private Stream<CompletableFuture<T>> closingStreamFutures(Supplier<CompletableFuture<T>> s, Continueable sub){
+		
+		Stream<CompletableFuture<T>> st = StreamSupport.stream(
+	                new ClosingSpliterator(Long.MAX_VALUE, s,sub,this), false);
+		
+		 return st;
+	}
 
+	
 	/**
 	 * @return Infinite (until Queue is closed) Stream of CompletableFutures
 	 *         that can be used as input into a SimpleReact concurrent dataflow
@@ -270,6 +282,9 @@ public class Queue<T> implements Adapter<T> {
 	private static class PoisonPill { }
 
 
+	public T poll(long time, TimeUnit unit) throws QueueTimeoutException{
+		return this.ensureOpen(time, unit);
+	}
 	public T get(){
 		
 		return ensureOpen(this.timeout,this.timeUnit);

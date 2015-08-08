@@ -167,21 +167,25 @@ public abstract class BaseSequentialSeqTest {
 	@Test
 	public void batchBySizeAndTimeTime(){
 		
-		
-		assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(100);return 6;})
-						.batchBySizeAndTime(30,160,TimeUnit.MILLISECONDS)
-						.toList()
-						.get(0)
-						,not(hasItem(6)));
+		for(int i=0;i<500;i++){
+			
+			List<List<Integer>> list = react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
+					.batchBySizeAndTime(30,10,TimeUnit.MICROSECONDS)
+					.toList();
+			
+			assertThat(list
+							.get(0)
+							,not(hasItem(6)));
+		}
 	}
 	@Test
 	public void batchByTime2(){
-		
-		assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(100);return 6;})
-						.batchByTime(60,TimeUnit.MILLISECONDS)
-						.toList()
-						.get(0)
-						,not(hasItem(6)));
+		for(int i=0;i<500;i++)
+			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(100);return 6;})
+							.batchByTime(60,TimeUnit.MILLISECONDS)
+							.toList()
+							.get(0)
+							,not(hasItem(6)));
 	}
 	@Test
 	public void batchBySizeSet(){
@@ -210,6 +214,7 @@ public abstract class BaseSequentialSeqTest {
 	@Test
 	public void debounce(){
 		SimpleTimer timer = new SimpleTimer();
+		
 		
 		assertThat(of(1,2,3,4,5,6).debounce(1000,TimeUnit.SECONDS).collect(Collectors.toList()).size(),is(1));
 		

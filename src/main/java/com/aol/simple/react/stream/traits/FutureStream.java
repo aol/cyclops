@@ -47,6 +47,7 @@ import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.stream.traits.operators.BatchByTimeAndSize;
 import com.aol.simple.react.util.SimpleTimer;
 
 public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
@@ -213,32 +214,10 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 * @return
 	 */
 	default FutureStream<List<U>> batchBySizeAndTime(int size,long time, TimeUnit unit) { 
-	    Queue queue = toQueue();
-	    Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = s -> {
-	        return () -> {
-	            SimpleTimer timer = new SimpleTimer();
-	            List<U> list = new ArrayList<>();
-	            try {
-	                do {
-	                    if(list.size()==size){
-	                        return list;
-	                    }
-	                    U result = s.apply(unit.toNanos(time)-timer.getElapsedNanoseconds(), TimeUnit.NANOSECONDS);
-	                    
-	                    if(result!=null)
-							list.add(result);
-	                    
-						
-						
-	                   } while (timer.getElapsedNanoseconds()<unit.toNanos(time));
-	            } catch (ClosedQueueException e) {
-
-	                throw new ClosedQueueException(list);
-	            }
-	            return list;
-	        };
-	    };
-	    return fromStream(queue.streamBatch(getSubscription(), fn));
+	 
+	    Queue<U> queue = toQueue();
+	    Function<BiFunction<Long,TimeUnit,U>, Supplier<List<U>>> fn = new BatchByTimeAndSize<>(queue,size,time,unit);
+	    return (FutureStream)fromStream(queue.streamBatch(getSubscription(), (Function)fn));
 	}
 	/**
 	 * 
