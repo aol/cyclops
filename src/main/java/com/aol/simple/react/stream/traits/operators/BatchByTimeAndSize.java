@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.Queue.ClosedQueueException;
+import com.aol.simple.react.async.Queue.QueueTimeoutException;
 import com.aol.simple.react.util.SimpleTimer;
 
 @AllArgsConstructor
@@ -35,16 +36,21 @@ public class BatchByTimeAndSize<U> implements Function<BiFunction<Long,TimeUnit,
                     if(list.size()==size){
                         return list;
                     }
-                     U result = s.apply(nanos-timer.getElapsedNanoseconds(), TimeUnit.NANOSECONDS);
+                      U result = s.apply(nanos-timer.getElapsedNanoseconds(), TimeUnit.NANOSECONDS);
                     if(result!=null)
 						list.add(result);
-                    
+                   
 					
 					
                    } while (timer.getElapsedNanoseconds()<nanos);
-            } catch (ClosedQueueException e) {
+            }catch(QueueTimeoutException e) {
+            	
+            }
+			catch (ClosedQueueException e) {
+            	
             	throw new ClosedQueueException(list);
             }
+           
             return list;
         };
 	}

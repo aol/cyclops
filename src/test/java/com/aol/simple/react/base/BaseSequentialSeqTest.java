@@ -170,9 +170,10 @@ public abstract class BaseSequentialSeqTest {
 		for(int i=0;i<500;i++){
 			
 			List<List<Integer>> list = react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
-					.batchBySizeAndTime(30,10,TimeUnit.MICROSECONDS)
+					.batchBySizeAndTime(30,10,TimeUnit.MILLISECONDS)
 					.toList();
-			
+			if(list.size()==0)
+				System.out.println(i+":"+list);
 			assertThat(list
 							.get(0)
 							,not(hasItem(6)));

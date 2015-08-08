@@ -413,6 +413,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	    
 	    EagerFutureStream<List<U>> stream = this.sync()
 	    										.map(u-> {synchronized(queue){return fn.apply((t,un)-> queue.poll(t,un)).get();}})
+	    										
 	    										.filter(Optional::isPresent)
 	    										.map(Optional::get)
 	    										.withTaskExecutor(exec);
