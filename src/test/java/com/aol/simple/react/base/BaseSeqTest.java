@@ -199,7 +199,7 @@ public abstract class BaseSeqTest {
 	}
 	@Test
 	public void batchByTime2(){
-		for(int i=0;i<500;i++){
+		for(int i=0;i<5;i++){
 			System.out.println(i);
 			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(100);return 6;})
 							.batchByTime(30,TimeUnit.MILLISECONDS)
