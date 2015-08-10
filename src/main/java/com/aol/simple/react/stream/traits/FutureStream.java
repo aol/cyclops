@@ -109,7 +109,10 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 */
 	default Iterator<Collection<U>> chunkLastReadIterator(){
 		
-		Queue.QueueReader reader =  new Queue.QueueReader(this.withQueueFactory(QueueFactories.unboundedQueue()).toQueue(q->q.withTimeout(100).withTimeUnit(TimeUnit.MICROSECONDS)),null);
+		Queue.QueueReader reader =  new Queue.QueueReader(this.withQueueFactory(QueueFactories.unboundedQueue()).toQueue()
+												//.toQueue(q->q.withTimeout(100)
+												//.withTimeUnit(TimeUnit.MICROSECONDS))
+												,null);
 		class Chunker implements Iterator<Collection<U>> {
 			volatile boolean open =true;
 			@Override

@@ -31,11 +31,11 @@ public class BatchByTimeAndSize<U> implements Function<BiFunction<Long,TimeUnit,
 			Collection<U> list= new ArrayList<>();
 			
 			int passes=0;
-			do{ //each  batch should be non-empty unless queue closed
+			
 				list = buildNextBatch(s);
 				passes++;
 				
-			}while(list.size()==0);
+			
             
            
             return list;
