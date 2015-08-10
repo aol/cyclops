@@ -193,12 +193,14 @@ public class Queue<T> implements Adapter<T> {
 	private T ensureOpen(final long timeout, TimeUnit timeUnit) {
 		if(!open && queue.size()==0)
 			throw new ClosedQueueException();
-		
+		final  SimpleTimer timer = new SimpleTimer();
+		final long timeoutNanos = timeUnit.toNanos(timeout);
 		T data = null;
 		try {
 			if(this.continuation!=null){
 				while(open && (data = ensureClear(queue.poll()))==null){
 					continuation = continuation.proceed();
+					handleTimeout(timer,timeoutNanos);
 				}
 				if(data!=null)
 					return (T)nillSafe(ensureNotPoisonPill(ensureClear(data)));
@@ -223,6 +225,12 @@ public class Queue<T> implements Adapter<T> {
 			this.sizeSignal.set(queue.size());
 
 		return (T)nillSafe(data);
+		
+	}
+
+	private void handleTimeout(SimpleTimer timer, long timeout) {
+		if(timer.getElapsedNanoseconds()>timeout)
+			throw new QueueTimeoutException();
 		
 	}
 

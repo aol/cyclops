@@ -1,5 +1,6 @@
 package com.aol.simple.react.stream.traits.operators;
 
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -11,46 +12,53 @@ import java.util.function.Supplier;
 
 import lombok.AllArgsConstructor;
 
+import com.aol.simple.react.async.Continueable;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.Queue.ClosedQueueException;
 import com.aol.simple.react.async.Queue.QueueTimeoutException;
 import com.aol.simple.react.util.SimpleTimer;
+/*
+ * considerations
+ * 
+ *  1. read time out (loop again)
+ *  2. Queue closed - return result
+ *  3. entry should always be non-empty while queue is open (at list one result)
+ */
 
 @AllArgsConstructor
-public class BatchByTimeAndSize<U> implements Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> {
+public class BatchByTime<U> implements Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>>{
 
-
-	private final int size;
 	private final long time;
 	private final TimeUnit unit;
+	private final Continueable subscription;
+	private final Queue<U> queue;
 	private final Supplier<Collection<U>> factory;
 	@Override
 	public Supplier<Collection<U>> apply(BiFunction<Long, TimeUnit, U> s) {
-		
-		return ()->{
+		return () -> {
+			
 			Collection<U> list= new ArrayList<>();
 			
-			int passes=0;
-			do{ //each  batch should be non-empty unless queue closed
-				list = buildNextBatch(s);
-				passes++;
-				
-			}while(list.size()==0);
-            
-           
-            return list;
-        };
+				int passes=0;
+				do{ //each  batch should be non-empty unless queue closed
+					list = buildNextBatch(s,passes);
+					passes++;
+					
+				}while(list.size()==0);
+			
+			
+			return list;
+		};
+	
 	}
-	private Collection<U> buildNextBatch(BiFunction<Long, TimeUnit, U> s) {
+	private Collection<U> buildNextBatch(BiFunction<Long, TimeUnit, U> s, int passes) {
 		Collection<U> list = factory.get();
 		SimpleTimer timer = new SimpleTimer();
 		do {
 			long timeout = Math.min(1000l,unit.toNanos(time)-timer.getElapsedNanoseconds());
 				try{
 					
-					if(list.size()==size){
-                        return list;
-                    }
+						
 						
 						U result = s.apply(timeout, TimeUnit.NANOSECONDS);
 						
@@ -76,7 +84,7 @@ public class BatchByTimeAndSize<U> implements Function<BiFunction<Long,TimeUnit,
 			} catch (ClosedQueueException e) {
 				
 				return Optional.ofNullable((List<U>)e.getCurrentData()).
-						flatMap(list-> list.isEmpty() ? Optional.empty() : Optional.of(list));
+								flatMap(list-> list.isEmpty() ? Optional.empty() : Optional.of(list));
 			}
 		};
 	}

@@ -17,12 +17,14 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -197,17 +199,21 @@ public abstract class BaseSeqTest {
 	}
 	@Test
 	public void batchByTime2(){
-		for(int i=0;i<500;i++)
+		for(int i=0;i<500;i++){
+			System.out.println(i);
 			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(100);return 6;})
-							.batchByTime(60,TimeUnit.MILLISECONDS)
+							.batchByTime(30,TimeUnit.MILLISECONDS)
 							.toList()
 							.get(0)
 							,not(hasItem(6)));
+		}
 	}
 	@Test
 	public void batchBySizeSet(){
-		 
+		
+		
 		assertThat(of(1,1,1,1,1,1).batchBySize(3,()->new TreeSet<Integer>()).block().get(0).size(),is(1));
+		
 		assertThat(of(1,1,1,1,1,1).batchBySize(3,()->new TreeSet<>()).block().get(1).size(),is(1));
 	}
 	@Test
@@ -262,8 +268,11 @@ public abstract class BaseSeqTest {
 	}
 	@Test
 	public void batchByTimeSet(){
-		
-		assertThat(of(1,1,1,1,1,1).batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>()).block().get(0).size(),is(1));
+		for(int i=0;i<5000;i++){
+			List <Collection<Integer>> set = of(1,1,1,1,1,1).batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>()).block();
+			
+			assertThat(set.get(0).size(),is(1));
+			}
 	}
 	@Test
 	public void batchByTimeInternalSize(){

@@ -6,23 +6,24 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ExponentialBackofWaitStrategy<T> implements WaitStrategy<T> {
 
-	private final long backoffNanos; 
+	private final double backoffNanos; 
 	private final double coefficient;
 	
 	public ExponentialBackofWaitStrategy(){
-		this.backoffNanos=1l;
-		this.coefficient=1.3;
+		this.backoffNanos=1;
+		this.coefficient=1.1;
 	}
 
 	@Override
 	public T take(WaitStrategy.Takeable<T> t)
 			throws InterruptedException {
-		long currentBackoff = backoffNanos;
+		double currentBackoff = backoffNanos;
 		T result;
 
 		while ((result = t.take()) == null) {
-			LockSupport.parkNanos(currentBackoff);
-			currentBackoff = (long) (currentBackoff * coefficient);
+			LockSupport.parkNanos((long)currentBackoff);
+			currentBackoff = (currentBackoff * coefficient);
+			
 		}
 
 		return result;
@@ -30,10 +31,11 @@ public class ExponentialBackofWaitStrategy<T> implements WaitStrategy<T> {
 
 	@Override
 	public boolean offer(WaitStrategy.Offerable o) throws InterruptedException {
-		long currentBackoff = backoffNanos;
+		double currentBackoff = backoffNanos;
 		while (!o.offer()) {
-			LockSupport.parkNanos(currentBackoff);
-			currentBackoff = (long) (currentBackoff * coefficient);
+			LockSupport.parkNanos((long)currentBackoff);
+			currentBackoff = (currentBackoff * coefficient);
+			
 		}
 		return true;
 	}

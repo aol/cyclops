@@ -29,7 +29,7 @@ public interface EagerToQueue<U> extends ToQueue<U> {
 	default Queue<U> toQueue() {
 		Queue<U> queue = this.getQueueFactory().build();
 
-		 thenSync(it -> queue.offer(it)).allOf(it ->queue.close());
+		 thenSync(it -> queue.offer(it)).allOf(it ->{System.out.println("closing");return queue.close();});
 
 		return queue;
 	}

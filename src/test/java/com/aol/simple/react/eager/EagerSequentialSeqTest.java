@@ -2,7 +2,9 @@ package com.aol.simple.react.eager;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertThat;
 
@@ -31,7 +33,7 @@ public class EagerSequentialSeqTest extends BaseSequentialSeqTest {
 	
 	
 	@Override
-	protected <U> FutureStream<U> react(Supplier<U>... array) {
+	protected <U> EagerFutureStream<U> react(Supplier<U>... array) {
 		
 		return EagerFutureStream.sequentialCommonBuilder().react(array);
 		
@@ -46,9 +48,10 @@ public class EagerSequentialSeqTest extends BaseSequentialSeqTest {
 		SimpleTimer timer = new SimpleTimer();
 	//	System.out.println(of(1,2,3,4,5,6));
 	//	System.out.println(of(1,2,3,4,5,6).debounce(1000,TimeUnit.SECONDS).toList());
-		for(int i=0;i<500;i++)
+		for(int i=0;i<500;i++){
+			System.out.println(i);
 			assertThat(of(1,2,3,4,5,6).debounce(1000,TimeUnit.SECONDS).collect(Collectors.toList()).size(),is(1));
-		
+		}
 	}
 	@Test
 	public void debounceOkEager(){
@@ -57,6 +60,20 @@ public class EagerSequentialSeqTest extends BaseSequentialSeqTest {
 			assertThat(of(1,2,3,4,5,6).debounce(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),is(6));
 		}
 		
+	}
+	@Test
+	public void batchBySizeAndTimeTime(){
+		
+		for(int i=0;i<10;i++){
+			List<List<Integer>> list = react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
+					.batchBySizeAndTime(30,10,TimeUnit.MILLISECONDS)
+					.toList();
+			if(list.size()==0)
+				System.out.println(i+":"+list);
+			assertThat(list
+							.get(0)
+							,not(hasItem(6)));
+		}
 	}
 	@Test
 	public void batchSinceLastReadIterator() throws InterruptedException{

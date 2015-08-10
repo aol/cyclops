@@ -6,7 +6,6 @@ import static java.util.Spliterators.spliteratorUnknownSize;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -19,7 +18,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -39,7 +37,6 @@ import org.jooq.lambda.tuple.Tuple2;
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Continueable;
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.async.Queue.ClosedQueueException;
 import com.aol.simple.react.async.QueueFactory;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
@@ -49,10 +46,10 @@ import com.aol.simple.react.stream.eager.EagerFutureStreamImpl;
 import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
+import com.aol.simple.react.stream.traits.operators.BatchBySize;
+import com.aol.simple.react.stream.traits.operators.BatchByTime;
 import com.aol.simple.react.stream.traits.operators.BatchByTimeAndSize;
-import com.aol.simple.react.stream.traits.operators.EagerDebounce;
-import com.aol.simple.react.threads.SequentialElasticPools;
-import com.aol.simple.react.util.SimpleTimer;
+import com.aol.simple.react.stream.traits.operators.Debounce;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -302,9 +299,16 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		long timeNanos =  unit.toNanos(time);
 	
 		
-		Supplier<Optional<U>> nextValue =new EagerDebounce<>(0,queue,timeNanos);
+		Function<Supplier<U>, Supplier<Optional<U>>> nextValue =new Debounce<U>(timeNanos,1l,false).liftOptional();
 		
-		EagerFutureStream<U> stream = this.async().map(u->nextValue.get()).sync().filter(Optional::isPresent).map(Optional::get);
+		EagerFutureStream<U> stream = this.async()
+							.map(u-> {synchronized(queue){return nextValue.apply(()-> queue.poll(1,TimeUnit.MICROSECONDS)).get();}})
+							.sync()
+							.filter(Optional::isPresent)
+							.map(Optional::get);
+			
+			//batchXXX, chunkXX, onePer, xPer, jitter, debounce should all use this pattern
+			
 		if(this.isAsync())
 			return stream.async();
 		return stream;
@@ -407,19 +411,44 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	    Queue<U> queue = toQueue();
 	    
 	    Function<BiFunction<Long, TimeUnit, U>, Supplier<Optional<List<U>>>> fn = 
-	    		new BatchByTimeAndSize<U>(queue,size,time,unit).liftOptional();
+	    		new BatchByTimeAndSize(size,time,unit,()->new ArrayList<>()).liftOptional();
 	   
-	    Executor exec = this.getTaskExecutor();
+	   
 	    
-	    EagerFutureStream<List<U>> stream = this.sync()
+	    EagerFutureStream<List<U>> stream = this.async()
 	    										.map(u-> {synchronized(queue){return fn.apply((t,un)-> queue.poll(t,un)).get();}})
-	    										
+	    										.sync()
 	    										.filter(Optional::isPresent)
-	    										.map(Optional::get)
-	    										.withTaskExecutor(exec);
+	    										.map(Optional::get);
+	    
+	    //batchXXX, chunkXX, onePer, xPer, jitter, debounce should all use this pattern
+	    
 		if(this.isAsync())
 			return stream.async();
 		return stream;
+	}
+	/**
+	 * Organise elements in a Stream into a Collections based on the time period they pass through this stage
+	 * Excludes Null values (neccessary for timeout handling)
+	 * 
+	 * @param time Time period during which all elements should be collected
+	 * @param unit Time unit during which all elements should be collected
+	 * @return Stream of Lists
+	 */
+	default EagerFutureStream<Collection<U>> batchByTime(long time, TimeUnit unit) {
+		Queue<U>  queue = toQueue();
+		Function<BiFunction<Long,TimeUnit,U>, Supplier<Optional<Collection<U>>>> fn = new BatchByTime<U>(time,unit,
+				this.getSubscription(),queue,
+				()->new ArrayList<>()).liftOptional();
+		long timeout = Math.min(1000,unit.toNanos(time));
+		EagerFutureStream<Collection<U>> stream = this.async()
+											.map(u-> {synchronized(queue){return fn.apply((t,un)-> queue.poll(timeout,TimeUnit.NANOSECONDS)).get();}})
+											.sync()
+											.filter(Optional::isPresent)
+											.map(Optional::get);
+		 if(this.isAsync())
+				return stream.async();
+			return stream;
 	}
 	
 	/**
@@ -456,8 +485,17 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * @return Stream of Lists
 	 */
 	default EagerFutureStream<Collection<U>> batchBySize(int size) {
-		return (EagerFutureStream<Collection<U>>) FutureStream.super
-				.batchBySize(size);
+		Queue<U>  queue = toQueue();
+		Function<Supplier<U>, Supplier<Optional<Collection<U>>>> fn = new BatchBySize<U>(size,this.getSubscription(),queue, ()->new ArrayList<>()).liftOptional();
+		 
+		EagerFutureStream<Collection<U>> stream = this.async() //has to run asynchronously to make sure queue gets closed first
+											.map(u-> {synchronized(queue){return fn.apply(()-> queue.poll(1,TimeUnit.MICROSECONDS)).get();}})
+											.sync()
+											.filter(Optional::isPresent)
+											.map(Optional::get);
+		 if(this.isAsync())
+				return stream.async();
+			return stream;
 
 	}
 	

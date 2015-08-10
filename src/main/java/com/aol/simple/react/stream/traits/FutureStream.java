@@ -47,7 +47,10 @@ import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.stream.traits.operators.BatchBySize;
+import com.aol.simple.react.stream.traits.operators.BatchByTime;
 import com.aol.simple.react.stream.traits.operators.BatchByTimeAndSize;
+import com.aol.simple.react.stream.traits.operators.Debounce;
 import com.aol.simple.react.util.SimpleTimer;
 
 public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
@@ -216,7 +219,21 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	default FutureStream<List<U>> batchBySizeAndTime(int size,long time, TimeUnit unit) { 
 	 
 	    Queue<U> queue = toQueue();
-	    Function<BiFunction<Long,TimeUnit,U>, Supplier<List<U>>> fn = new BatchByTimeAndSize<>(queue,size,time,unit);
+	    Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTimeAndSize<>(size,time,unit,()->new ArrayList<>());
+	    return (FutureStream)fromStream(queue.streamBatch(getSubscription(), (Function)fn));
+	}
+	/**
+	 * Batch the elements in the Stream by a combination of Size and Time
+	 * If batch exceeds max size it will be split
+	 * If batch exceeds max time it will be split
+	 * Excludes Null values (neccessary for timeout handling)
+	 * 
+	 * @return
+	 */
+	default <C extends Collection<U>> FutureStream<C> batchBySizeAndTime(int size,long time, TimeUnit unit, Supplier<C> factory) { 
+	 
+	    Queue<U> queue = toQueue();
+	    Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTimeAndSize(size,time,unit,factory);
 	    return (FutureStream)fromStream(queue.streamBatch(getSubscription(), (Function)fn));
 	}
 	/**
@@ -228,23 +245,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 */
 	default FutureStream<Collection<U>> batchBySize(int size) {
 		Queue queue = toQueue();
-		Function<Supplier<U>, Supplier<Collection<U>>> fn = s -> {
-			return () -> {List<U> list = new ArrayList<>();
-			try {
-				for (int i = 0; i < size; i++) {
-					
-					list.add(s.get());
-					getSubscription().closeQueueIfFinished(queue);
-				}
-			} catch (ClosedQueueException e) {
-				if(list.size()>0)
-					throw new ClosedQueueException(list);
-				else
-					throw new ClosedQueueException();
-			}
-			return list;
-			};
-		};
+		Function<Supplier<U>, Supplier<Collection<U>>> fn = new BatchBySize(size,this.getSubscription(),queue,()->new ArrayList<>());
 		return fromStream(queue.streamBatchNoTimeout(getSubscription(), fn));
 	}
 	/**
@@ -268,24 +269,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 */
 	default FutureStream<Collection<U>> batchBySize(int size, Supplier<Collection<U>> supplier) {
 		Queue queue = toQueue();
-		Function<Supplier<U>, Supplier<Collection<U>>> fn = s -> {
-			return () -> {
-				Collection<U> list = supplier.get();
-			try {
-				for (int i = 0; i < size; i++) {
-					
-					list.add(s.get());
-					getSubscription().closeQueueIfFinished(queue);
-				}
-			} catch (ClosedQueueException e) {
-				if(list.size()>0)
-					throw new ClosedQueueException(list);
-				else
-					throw new ClosedQueueException();
-			}
-			return list;
-			};
-		};
+		Function<Supplier<U>, Supplier<Collection<U>>> fn = new BatchBySize(size,this.getSubscription(),queue,supplier);
 		return fromStream(queue.streamBatchNoTimeout(getSubscription(), fn));
 	}
 	/**
@@ -396,31 +380,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	default FutureStream<U> debounce(long time, TimeUnit unit) {
 		Queue queue = toQueue();
 		long timeNanos =  unit.toNanos(time);
-		Function<Supplier<U>, Supplier<U>> fn = s -> {
-			
-			return () -> {
-				SimpleTimer timer=  new SimpleTimer();
-				Optional<U> result = Optional.empty();
-				try {
-					long elapsedNanos= 1;
-					while(elapsedNanos>0){
-					
-						result = Optional.of(s.get());
-						elapsedNanos= timeNanos - timer.getElapsedNanoseconds();
-					
-					}
-						
-						
-						
-				} catch (ClosedQueueException e) {
-					if(result.isPresent())
-						throw new ClosedQueueException(result);
-					else
-						throw new ClosedQueueException();
-				}
-				return result.get();
-			};
-		};
+		Function<Supplier<U>, Supplier<U>> fn = new Debounce<>(timeNanos,1l,true);
 		return fromStream(queue.streamControl(getSubscription(), fn));
 	}
 	/**
@@ -516,23 +476,9 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 */
 	default FutureStream<Collection<U>> batchByTime(long time, TimeUnit unit) {
 		Queue queue = toQueue();
-		Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = s -> {
-			return () -> {
-				SimpleTimer timer = new SimpleTimer();
-				List<U> list = new ArrayList<>();
-				try {
-					do {
-						U result = s.apply(unit.toNanos(time)-timer.getElapsedNanoseconds(), TimeUnit.NANOSECONDS);
-						if(result!=null)
-							list.add(result);
-					} while (timer.getElapsedNanoseconds()<unit.toNanos(time));
-				} catch (ClosedQueueException e) {
-					
-					throw new ClosedQueueException(list);
-				}
-				return list;
-			};
-		};
+		Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTime<U>(time,unit,
+				this.getSubscription(),queue,()->new ArrayList<>());
+		
 		return fromStream(queue.streamBatch(getSubscription(), fn));
 	}
 	/**
@@ -545,24 +491,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 */
 	default FutureStream<Collection<U>> batchByTime(long time, TimeUnit unit,Supplier<Collection<U>> factory) {
 		Queue queue = toQueue();
-		Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = s -> {
-			return () -> {
-				SimpleTimer timer = new SimpleTimer();
-				Collection<U> list = factory.get();
-				try {
-					do {
-						U result = s.apply(unit.toNanos(time)-timer.getElapsedNanoseconds(), TimeUnit.NANOSECONDS);
-						if(result!=null)
-							list.add(result);
-						
-					} while (timer.getElapsedNanoseconds()<unit.toNanos(time));
-				} catch (ClosedQueueException e) {
-					
-					throw new ClosedQueueException(list);
-				}
-				return list;
-			};
-		};
+		Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTime<U>(time,unit, this.getSubscription(),queue,factory);
 		return fromStream(queue.streamBatch(getSubscription(), fn));
 	}
 
