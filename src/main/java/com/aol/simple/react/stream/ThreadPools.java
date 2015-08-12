@@ -30,7 +30,7 @@ public class ThreadPools {
 
 	public static enum ExecutionMode{ CURRENT, COMMON_FREE, NEW_FREE}
 	
-	@Setter
+	
 	private static volatile boolean useCommon = true;
 	public static Executor getStandard() {
 		if(useCommon)
@@ -60,5 +60,11 @@ public class ThreadPools {
 			return commonLazyExecutor;
 		else
 			return  new ForkJoinPool(1); 
+	}
+	public static boolean isUseCommon() {
+		return useCommon;
+	}
+	public static void setUseCommon(boolean useCommon) {
+		ThreadPools.useCommon = useCommon;
 	}
 }

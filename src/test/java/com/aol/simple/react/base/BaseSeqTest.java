@@ -106,7 +106,7 @@ public abstract class BaseSeqTest {
 		}
 		return "jello";
 	}
-	private int value2() {
+	protected int value2() {
 		try {
 			Thread.sleep(250);
 		} catch (InterruptedException e) {
@@ -160,13 +160,7 @@ public abstract class BaseSeqTest {
 		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==5));
 		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==6));
 	}
-	@Test
-	public void skipUntil(){
-		System.out.println(react(()->1,()->2,()->3,()->4,()->value2())
-				.skipUntil(react(()->value())).collect(Collectors.toList()));
-		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).allMatch(it-> it==200));
-		assertThat(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).count(),is(1l));
-	}
+	
 	@Test
 	public void takeUntil(){
 		System.out.println(react(()->1,()->2,()->3,()->4,()->value2())

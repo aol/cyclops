@@ -726,6 +726,8 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 		return (LazyFutureStream<U>) FutureStream.firstOf(futureStreams);
 	}
 
+	
+	
 	/*
 	 * 
 	 * React to new events with the supplied function on the supplied

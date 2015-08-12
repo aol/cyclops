@@ -884,9 +884,19 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 */
 	@Override
 	default FutureStream<U> merge(SimpleReactStream<U> s) {
+		if(s instanceof LazyFutureStream)
+			return merge(new FutureStream[]{(FutureStream)s});
 		return (FutureStream) SimpleReactStream.super.merge(s);
 	}
+	default FutureStream<U> merge(FutureStream<U>... streams) {
+		Queue queue =new Queue();
+		addToQueue(queue);
+		Seq.of(streams).forEach(s->s.addToQueue(queue));
+		
+		return fromStream(queue.stream(this.getSubscription()));
+	}
 
+	
 	/*
 	 * @see
 	 * com.aol.simple.react.stream.traits.SimpleReactStream#onFail(java.util

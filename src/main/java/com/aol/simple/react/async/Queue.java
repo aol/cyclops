@@ -2,6 +2,8 @@ package com.aol.simple.react.async;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -17,13 +19,10 @@ import java.util.stream.StreamSupport;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.experimental.Wither;
 
 import org.jooq.lambda.Seq;
-import org.jooq.lambda.fi.util.function.CheckedSupplier;
 
-import com.aol.simple.react.async.WaitStrategy.Takeable;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.stream.traits.Continuation;
@@ -69,8 +68,8 @@ public class Queue<T> implements Adapter<T> {
 	@Getter
 	private final Signal<Integer> sizeSignal;
 	
-	@Setter
-	private  volatile Continuation continuation;
+	
+	private  List<Continuation> continuation= new ArrayList<>();
 	private volatile boolean shuttingDown = false;
 
 
@@ -189,6 +188,31 @@ public class Queue<T> implements Adapter<T> {
 		stream.collect(Collectors.toCollection(() -> queue));
 		return true;
 	}
+	private void handleContinuation(){
+	//	System.out.println(continuation);
+		continuation = Seq.seq(continuation)
+							.<Optional<Continuation>>map(c -> {
+								try{ 
+								return Optional.of(c.proceed());
+							}catch(ClosedQueueException e){
+								
+							
+								
+								return Optional.empty();
+							}
+								
+							})
+							.filter(Optional::isPresent)
+							.map(Optional::get)
+							.toList();
+	
+	//	System.out.println("after:"+continuation);
+		if(continuation.size()==0){
+		//	System.out.println("closing and queueing");
+			this.close();
+			throw new ClosedQueueException();
+		}
+	}
 
 	private T ensureOpen(final long timeout, TimeUnit timeUnit) {
 		if(!open && queue.size()==0)
@@ -197,9 +221,13 @@ public class Queue<T> implements Adapter<T> {
 		final long timeoutNanos = timeUnit.toNanos(timeout);
 		T data = null;
 		try {
-			if(this.continuation!=null){
+			if(this.continuation.size()>0){
+				
+			
 				while(open && (data = ensureClear(queue.poll()))==null){
-					continuation = continuation.proceed();
+					
+					handleContinuation();
+					
 					if(timeout!=-1)
 						handleTimeout(timer,timeoutNanos);
 				}
@@ -275,6 +303,13 @@ public class Queue<T> implements Adapter<T> {
 		public boolean isDataPresent(){
 			return currentData != NOT_PRESENT;
 		}
+
+		@Override
+		public synchronized Throwable fillInStackTrace() {
+			return this;
+		}
+		
+		
 	}
 
 	/**
@@ -448,6 +483,8 @@ public class Queue<T> implements Adapter<T> {
 		return this.open;
 	}
 	
-
+	public void addContinuation(Continuation c){
+		this.continuation.add(c);
+	}
 	
 }

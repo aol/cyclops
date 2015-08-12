@@ -1295,24 +1295,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 			return (EagerFutureStream) merge((SimpleReactStream) other);
 		return fromStream(FutureStream.super.concat(other));
 	}
-	/**
-	 * Concatenate two streams.
-	 * 
-	 * <pre>
-	 * {@code 
-	 * // (1, 2, 3, 4, 5, 6) 
-	 *  EagerFutureStream.of(1, 2,3).concat(EagerFutureStream.of(4, 5, 6))
-	 * 
-	 * 
-	 * }
-	 * </pre>
-	 * @see #concat(Stream[])
-	 */
-	default FutureStream<U> concat(SimpleReactStream<U> other) {
-
-		return (EagerFutureStream) merge((SimpleReactStream) other);
-
-	}
+	
 
 	/**
 	 * Concatenate two streams.
@@ -1339,7 +1322,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 */
 	@SuppressWarnings({ "unchecked" })
 	default EagerFutureStream<U> concat(U... other) {
-		return (EagerFutureStream<U>) concat((SimpleReactStream) EagerFutureStream
+		return (EagerFutureStream<U>) concat( EagerFutureStream
 				.of(other));
 	}
 

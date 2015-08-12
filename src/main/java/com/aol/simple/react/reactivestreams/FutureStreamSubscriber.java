@@ -76,7 +76,7 @@ public class FutureStreamSubscriber<T> implements Subscriber<T> {
 	public void onComplete() {
 		
 		if(queue!=null){
-			queue.setContinuation(new Continuation( () -> {
+			queue.addContinuation(new Continuation( () -> {
 						throw new ClosedQueueException();
 			}));
 			queue.close();

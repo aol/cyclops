@@ -37,7 +37,26 @@ public class LazySequentialSeqTest extends BaseSequentialSeqTest {
 	protected <U> FutureStream<U> react(Supplier<U>... array) {
 		return LazyFutureStream.react(array);
 	}
+	@Test
+	public void concatStreams(){
+	List<String> result = 	of(1,2,3).concat(of(100,200,300))
+			.map(it ->it+"!!").collect(Collectors.toList());
 
+		assertThat(result,equalTo(Arrays.asList("1!!","2!!","100!!","200!!","3!!","300!!")));
+	}
+	
+	@Test
+	public void merge(){
+	List<String> result = 	of(1,2,3).merge(of(100,200,300))
+			.map(it ->it+"!!").collect(Collectors.toList());
+
+		assertThat(result,equalTo(Arrays.asList("1!!","2!!","100!!","200!!","3!!","300!!")));
+	}
+	@Test
+	public void combine(){
+		
+		assertThat(of(1,2,3,4,5,6).combineLatest(of(3)).collect(Collectors.toList()).size(),greaterThan(5));
+	}
 	@Test
 	public void batchSinceLastReadIterator() throws InterruptedException{
 		Iterator<Collection<Integer>> it = of(1,2,3,4,5,6).chunkLastReadIterator();

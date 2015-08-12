@@ -278,20 +278,7 @@ public abstract class BaseSequentialSeqTest {
 
 		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
 	}
-	@Test
-	public void concatStreams(){
-	List<String> result = 	of(1,2,3).concat(of(100,200,300))
-			.map(it ->it+"!!").collect(Collectors.toList());
-
-		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
-	}
-	@Test
-	public void merge(){
-	List<String> result = 	of(1,2,3).merge(of(100,200,300))
-			.map(it ->it+"!!").collect(Collectors.toList());
-
-		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
-	}
+	
 	@Test
 	public void zip(){
 		List<Tuple2<Integer,Integer>> list =

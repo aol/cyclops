@@ -10,6 +10,7 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -38,7 +39,13 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	
 
 	
-	
+	@Test
+	public void skipUntil(){
+		System.out.println(react(()->1,()->2,()->3,()->4,()->value2())
+				.skipUntil(react(()->value())).collect(Collectors.toList()));
+		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).noneMatch(it-> it==1));
+		assertThat(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).count(),is(3l));
+	}
 	@Test
 	public void testZipWithFutures(){
 		FutureStream stream = of("a","b");

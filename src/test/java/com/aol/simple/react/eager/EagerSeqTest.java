@@ -43,6 +43,13 @@ public class EagerSeqTest extends BaseSeqTest {
 		
 	}
 	@Test
+	public void skipUntil(){
+		System.out.println(react(()->1,()->2,()->3,()->4,()->value2())
+				.skipUntil(react(()->value())).collect(Collectors.toList()));
+		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).allMatch(it-> it==200));
+		assertThat(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).count(),is(1l));
+	}
+	@Test
 	public void batchBySize(){
 		System.out.println(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()));
 		for(int i=0;i<5000;i++)

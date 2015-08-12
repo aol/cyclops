@@ -6,6 +6,7 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 
 import com.aol.simple.react.async.Queue;
+import com.aol.simple.react.async.Queue.ClosedQueueException;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.lazy.LazyReact;
 
@@ -31,8 +32,10 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 		
 		
 		Continuation continuation = thenSync(queue::add).runContinuation(() -> {
-			queue.close(); });
-		queue.setContinuation(continuation);
+			queue.close();
+			//throw new ClosedQueueException();
+			});
+		queue.addContinuation(continuation);
 		return queue;
 	}
 
@@ -49,12 +52,22 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 
 		Continuation continuation = thenSync(queue::add).runContinuation(() -> {
 			queue.close();
-			
+			//throw new ClosedQueueException();
 		});
-		queue.setContinuation(continuation);
+		queue.addContinuation(continuation);
 		return queue;
 	}
 
+	default void addToQueue(Queue queue){
+		
+
+		Continuation continuation = thenSync(queue::add).runContinuation(() -> {
+		//	queue.close();
+			throw new ClosedQueueException();
+		});
+		queue.addContinuation(continuation);
+		
+	}
 	/* 
 	 * Populate provided queues with the sharded data from this Stream.
 	 * 

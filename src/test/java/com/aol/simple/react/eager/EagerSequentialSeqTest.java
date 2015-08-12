@@ -1,6 +1,7 @@
 package com.aol.simple.react.eager;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
@@ -8,6 +9,7 @@ import static org.hamcrest.Matchers.not;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertThat;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -46,6 +48,20 @@ public class EagerSequentialSeqTest extends BaseSequentialSeqTest {
 	@Override
 	protected <U> EagerFutureStream<U> of(U... array) {
 		return EagerFutureStream.sequentialCurrentBuilder().of(array);
+	}
+	@Test
+	public void concatStreams(){
+	List<String> result = 	of(1,2,3).concat(of(100,200,300))
+			.map(it ->it+"!!").collect(Collectors.toList());
+
+		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
+	}
+	@Test
+	public void merge(){
+	List<String> result = 	of(1,2,3).merge(of(100,200,300))
+			.map(it ->it+"!!").collect(Collectors.toList());
+
+		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
 	}
 	@Test
 	public void batchByTime2(){

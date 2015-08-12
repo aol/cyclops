@@ -38,5 +38,6 @@ public interface ToQueue <U>{
 	 * @return Populated Queue.
 	 */
 	abstract  Queue<U> toQueue(Function<Queue,Queue> modifier);
+	void addToQueue(Queue queue);
 	
 }
