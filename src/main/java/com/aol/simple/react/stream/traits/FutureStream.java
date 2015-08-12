@@ -109,10 +109,10 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 */
 	default Iterator<Collection<U>> chunkLastReadIterator(){
 		
-		Queue.QueueReader reader =  new Queue.QueueReader(this.withQueueFactory(QueueFactories.unboundedQueue()).toQueue()
-												//.toQueue(q->q.withTimeout(100)
-												//.withTimeUnit(TimeUnit.MICROSECONDS))
-												,null);
+		Queue.QueueReader reader =  new Queue.QueueReader(this.withQueueFactory(QueueFactories.unboundedQueue())
+																	.toQueue(q->q.withTimeout(100)
+																	.withTimeUnit(TimeUnit.MICROSECONDS))
+																	,null);
 		class Chunker implements Iterator<Collection<U>> {
 			volatile boolean open =true;
 			@Override
@@ -246,9 +246,9 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 * @param size Size of lists elements should be batched into
 	 * @return Stream of Lists
 	 */
-	default FutureStream<Collection<U>> batchBySize(int size) {
+	default FutureStream<List<U>> batchBySize(int size) {
 		Queue queue = toQueue();
-		Function<Supplier<U>, Supplier<Collection<U>>> fn = new BatchBySize(size,this.getSubscription(),queue,()->new ArrayList<>());
+		Function<Supplier<U>, Supplier<List<U>>> fn = new BatchBySize(size,this.getSubscription(),queue,()->new ArrayList<>());
 		return fromStream(queue.streamBatchNoTimeout(getSubscription(), fn));
 	}
 	/**
@@ -257,7 +257,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 *           This function should return a Supplier which creates a collection of the batched values
 	 * @return Stream of batched values
 	 */
-	default FutureStream<Collection<U>> batch(Function<Supplier<U>, Supplier<Collection<U>>> fn){
+	default <C extends Collection<U>>FutureStream<C> batch(Function<Supplier<U>, Supplier<C>> fn){
 		Queue queue = toQueue();
 		return fromStream(queue.streamBatchNoTimeout(getSubscription(), fn));
 	}
@@ -270,7 +270,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 * @param supplier Create the batch holding collection
 	 * @return Stream of Collections
 	 */
-	default FutureStream<Collection<U>> batchBySize(int size, Supplier<Collection<U>> supplier) {
+	default <C extends Collection<U>>FutureStream<C> batchBySize(int size, Supplier<C> supplier) {
 		Queue queue = toQueue();
 		Function<Supplier<U>, Supplier<Collection<U>>> fn = new BatchBySize(size,this.getSubscription(),queue,supplier);
 		return fromStream(queue.streamBatchNoTimeout(getSubscription(), fn));

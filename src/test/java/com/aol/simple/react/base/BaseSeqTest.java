@@ -52,6 +52,7 @@ import com.aol.simple.react.util.SimpleTimer;
 //see BaseSequentialSeqTest for in order tests
 public abstract class BaseSeqTest {
 	abstract protected <U> FutureStream<U> of(U... array);
+	abstract protected <U> FutureStream<U> ofThread(U... array);
 	abstract protected <U> FutureStream<U> react(Supplier<U>... array);
 	FutureStream<Integer> empty;
 	FutureStream<Integer> nonEmpty;
@@ -176,7 +177,8 @@ public abstract class BaseSeqTest {
 	@Test
 	public void batchBySize(){
 		System.out.println(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()));
-		assertThat(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()).size(),is(2));
+		for(int i=0;i<1000;i++)
+			assertThat(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()).size(),is(2));
 	}
 	@Test
 	public void batchBySizeAndTimeSize(){
@@ -197,17 +199,7 @@ public abstract class BaseSeqTest {
 							,not(hasItem(6)));
 		}
 	}
-	@Test
-	public void batchByTime2(){
-		for(int i=0;i<5;i++){
-			System.out.println(i);
-			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(100);return 6;})
-							.batchByTime(30,TimeUnit.MILLISECONDS)
-							.toList()
-							.get(0)
-							,not(hasItem(6)));
-		}
-	}
+	
 	@Test
 	public void batchBySizeSet(){
 		
@@ -243,9 +235,9 @@ public abstract class BaseSeqTest {
 	}
 	@Test
 	public void debounceOk(){
-		SimpleTimer timer = new SimpleTimer();
 		
-		assertThat(of(1,2,3,4,5,6).debounce(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),is(6));
+		for(int i=0;i<100;i++)
+			assertThat(of(1,2,3,4,5,6).debounce(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),is(6));
 		
 	}
 	@Test
@@ -269,8 +261,8 @@ public abstract class BaseSeqTest {
 	@Test
 	public void batchByTimeSet(){
 		for(int i=0;i<5000;i++){
-			List <Collection<Integer>> set = of(1,1,1,1,1,1).batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>()).block();
-			
+			List <Collection<Integer>> set = ofThread(1,1,1,1,1,1).batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>()).block();
+			System.out.println(set);
 			assertThat(set.get(0).size(),is(1));
 			}
 	}

@@ -14,18 +14,18 @@ import com.aol.simple.react.async.Queue.ClosedQueueException;
 import com.aol.simple.react.async.Queue.QueueTimeoutException;
 
 @AllArgsConstructor
-public class BatchBySize<U> implements Function<Supplier<U>, Supplier<Collection<U>>>{
+public class BatchBySize<U, C extends Collection<U>> implements Function<Supplier<U>, Supplier<C>>{
 
 
 	private final int size;
 	private final Continueable subscription;
 	private final Queue<U> queue;
-	private final Supplier<Collection<U>> factory;
+	private final Supplier<C> factory;
 	@Override
-	public Supplier<Collection<U>> apply(Supplier<U> s) {
+	public Supplier<C> apply(Supplier<U> s) {
 		
 			return () -> {
-				Collection<U> list = factory.get();
+				C list = factory.get();
 				try {
 					for (int i = 0; i < size; i++) {
 						try{
@@ -46,13 +46,13 @@ public class BatchBySize<U> implements Function<Supplier<U>, Supplier<Collection
 			};
 		
 	}
-	public Function<Supplier<U>, Supplier<Optional<Collection<U>>>> liftOptional(){
+	public Function<Supplier<U>, Supplier<Optional<C>>> liftOptional(){
 		return s->  () -> {
 			try {
 				return Optional.of(this.apply(s).get());
 			} catch (ClosedQueueException e) {
 				
-				return Optional.ofNullable((List<U>)e.getCurrentData()).
+				return Optional.ofNullable((C)e.getCurrentData()).
 						flatMap(list-> list.isEmpty() ? Optional.empty() : Optional.of(list));
 			}
 		};

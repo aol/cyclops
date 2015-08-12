@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,12 +26,16 @@ public class LazySequentialSeqTest extends BaseSequentialSeqTest {
 
 	@Override
 	protected <U> LazyFutureStream<U> of(U... array) {
-		return LazyFutureStream.sequentialBuilder().of(array);
+		return LazyFutureStream.of(array);
+	}
+	@Override
+	protected <U> LazyFutureStream<U> ofThread(U... array) {
+		return LazyFutureStream.ofThread(array);
 	}
 
 	@Override
 	protected <U> FutureStream<U> react(Supplier<U>... array) {
-		return LazyFutureStream.sequentialBuilder().react(array);
+		return LazyFutureStream.react(array);
 	}
 
 	@Test
@@ -47,6 +52,17 @@ public class LazySequentialSeqTest extends BaseSequentialSeqTest {
 		
 	
 		
+	}
+	@Test
+	public void batchByTime2(){
+		for(int i=0;i<10;i++){
+			
+			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(100);return 6;})
+							.batchByTime(60,TimeUnit.MILLISECONDS)
+							.toList()
+							.get(0)
+							,not(hasItem(6)));
+		}
 	}
 	
 	@Test 

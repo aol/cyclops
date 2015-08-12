@@ -21,6 +21,7 @@ import org.pcollections.HashPMap;
 import org.pcollections.HashTreePMap;
 
 import com.aol.simple.react.extractors.Extractors;
+import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
@@ -31,7 +32,7 @@ public class AllOfTest {
 	public void allOf(){
 		List<HashPMap<String, List<Integer>>> result =
 		
-		 LazyFutureStream.sequentialBuilder().react(()->1,()->2,()->3)
+				LazyReact.sequentialBuilder().react(()->1,()->2,()->3)
 		 									 .map(it->it+100)
 		 									 .peek(System.out::println)
 		 									 .allOf((List<Integer> c)-> { System.out.println(c);return HashTreePMap.singleton("numbers",c);})

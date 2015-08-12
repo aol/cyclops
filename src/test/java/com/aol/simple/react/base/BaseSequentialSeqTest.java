@@ -41,6 +41,7 @@ import com.aol.simple.react.util.SimpleTimer;
 public abstract class BaseSequentialSeqTest {
 
 	abstract protected  <U> FutureStream<U> of(U... array);
+	abstract protected  <U> FutureStream<U> ofThread(U... array);
 	abstract protected <U> FutureStream<U> react(Supplier<U>... array);
 	
 	FutureStream<Integer> empty;
@@ -178,17 +179,7 @@ public abstract class BaseSequentialSeqTest {
 							,not(hasItem(6)));
 		}
 	}
-	@Test
-	public void batchByTime2(){
-		for(int i=0;i<10;i++){
-			
-			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(100);return 6;})
-							.batchByTime(60,TimeUnit.MILLISECONDS)
-							.toList()
-							.get(0)
-							,not(hasItem(6)));
-		}
-	}
+	
 	
 	@Test
 	public void batchBySizeSet(){

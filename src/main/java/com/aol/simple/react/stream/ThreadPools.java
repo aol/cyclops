@@ -11,6 +11,13 @@ import lombok.Setter;
 public class ThreadPools {
 	@Getter
 	private static final Executor commonFreeThread =  Executors.newFixedThreadPool(1);
+	//(Runnable r)  -> r.run();
+	
+	@Getter
+	private static final  Executor currentThreadExecutor = (Runnable r)  -> r.run();
+	      
+ 
+	
 	
 	@Getter
 	private static final Executor commonLazyExecutor = new ForkJoinPool(1);
@@ -21,7 +28,7 @@ public class ThreadPools {
 	@Getter
 	private static final ScheduledExecutorService commonStanardRetry = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
 
-	
+	public static enum ExecutionMode{ CURRENT, COMMON_FREE, NEW_FREE}
 	
 	@Setter
 	private static volatile boolean useCommon = true;

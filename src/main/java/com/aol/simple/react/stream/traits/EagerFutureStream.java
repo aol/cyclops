@@ -18,6 +18,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -27,8 +28,6 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-import lombok.Value;
 
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
@@ -47,9 +46,9 @@ import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.operators.BatchBySize;
-import com.aol.simple.react.stream.traits.operators.BatchByTime;
 import com.aol.simple.react.stream.traits.operators.BatchByTimeAndSize;
-import com.aol.simple.react.stream.traits.operators.Debounce;
+import com.aol.simple.react.util.SimpleTimer;
+import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -270,7 +269,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	/**
 	 * Can be used to debounce (accept a single data point from a unit of time)
 	 * data. This drops data. For a method that slows emissions and keeps data
-	 * #see#onePer
+	 * @see LazyFutureStream#onePer(long, TimeUnit)
 	 * 
 	 * <pre>
 	 * {@code 
@@ -292,33 +291,18 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 *         windows
 	 */
 	default EagerFutureStream<U> debounce(long time, TimeUnit unit) {
+		long[] last = {0l};
+		return this.filter(next-> {synchronized(last){
+					if(System.nanoTime()-last[0]>unit.toNanos(time)){ 
+						last[0]= System.nanoTime(); 
+					return true;
+					} 
+					return false;}
+		});
 		
-		Queue<U> queue = toQueue();
 		
-		
-		long timeNanos =  unit.toNanos(time);
+	}
 	
-		
-		Function<Supplier<U>, Supplier<Optional<U>>> nextValue =new Debounce<U>(timeNanos,1l,false).liftOptional();
-		
-		EagerFutureStream<U> stream = this.async()
-							.map(u-> {synchronized(queue){return nextValue.apply(()-> queue.poll(1,TimeUnit.MICROSECONDS)).get();}})
-							.sync()
-							.filter(Optional::isPresent)
-							.map(Optional::get);
-			
-			//batchXXX, chunkXX, onePer, xPer, jitter, debounce should all use this pattern
-			
-		if(this.isAsync())
-			return stream.async();
-		return stream;
-		
-	}
-	@Value
-	static class QueueValue<T>{
-		T val;
-	}
-
 	/**
 	 * Return a Stream with the same values as this Stream, but with all values
 	 * omitted until the provided stream starts emitting values. Provided Stream
@@ -407,48 +391,83 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 *	@return batched stream
 	 * @see com.aol.simple.react.stream.traits.FutureStream#batchBySizeAndTime(int, long, java.util.concurrent.TimeUnit)
 	 */
-	default EagerFutureStream<List<U>> batchBySizeAndTime(int size,long time, TimeUnit unit) { 
-	    Queue<U> queue = toQueue();
-	    
-	    Function<BiFunction<Long, TimeUnit, U>, Supplier<Optional<List<U>>>> fn = 
-	    		new BatchByTimeAndSize(size,time,unit,()->new ArrayList<>()).liftOptional();
-	   
-	   
-	    
-	    EagerFutureStream<List<U>> stream = this.async()
-	    										.map(u-> {synchronized(queue){return fn.apply((t,un)-> queue.poll(t,un)).get();}})
-	    										.sync()
-	    										.filter(Optional::isPresent)
-	    										.map(Optional::get);
-	    
-	    //batchXXX, chunkXX, onePer, xPer, jitter, debounce should all use this pattern
-	    
-		if(this.isAsync())
-			return stream.async();
-		return stream;
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	default EagerFutureStream<List<U>> batchBySizeAndTime(int batchSize,long time, TimeUnit unit) { 
+		int size = this.getLastActive().list().size();
+		List[] list = {new ArrayList<U>()};
+		int[] count = {0};
+		SimpleTimer[] timer = {new SimpleTimer()};
+		return (EagerFutureStream)this.map(next-> { 
+				synchronized(timer){
+					count[0]++;
+					if(unit.toNanos(time)-timer[0].getElapsedNanoseconds()>0 && list[0].size()+1<batchSize){
+						
+						list[0].add(next);
+						
+					} else{
+						list[0].add(next);
+						
+						List<U> result = list[0];
+						list[0] = new ArrayList<U>();
+						 timer[0] = new SimpleTimer();
+						return result;
+						
+					}
+					if(count[0]==size){
+						list[0].add(next);
+						
+						List<U> result = list[0];
+						list[0] = new ArrayList<U>();
+						return result;
+					}
+					return new ArrayList();
+				}
+			}	).filter(l->l.size()>0);
 	}
 	/**
 	 * Organise elements in a Stream into a Collections based on the time period they pass through this stage
-	 * Excludes Null values (neccessary for timeout handling)
+	 * This version uses locks - for a lock free implementation choose 
+	 * @see LazyFutureStream#batchByTime(long, TimeUnit)
+	 * 
+	 * Will always include the next value over the batch time in current batch (again @see LazyFutureStream#batchByTime(long, TimeUnit)
+	 * for a more powerful alternative that does not).
 	 * 
 	 * @param time Time period during which all elements should be collected
 	 * @param unit Time unit during which all elements should be collected
 	 * @return Stream of Lists
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	default EagerFutureStream<Collection<U>> batchByTime(long time, TimeUnit unit) {
-		Queue<U>  queue = toQueue();
-		Function<BiFunction<Long,TimeUnit,U>, Supplier<Optional<Collection<U>>>> fn = new BatchByTime<U>(time,unit,
-				this.getSubscription(),queue,
-				()->new ArrayList<>()).liftOptional();
-		long timeout = Math.min(1000,unit.toNanos(time));
-		EagerFutureStream<Collection<U>> stream = this.async()
-											.map(u-> {synchronized(queue){return fn.apply((t,un)-> queue.poll(timeout,TimeUnit.NANOSECONDS)).get();}})
-											.sync()
-											.filter(Optional::isPresent)
-											.map(Optional::get);
-		 if(this.isAsync())
-				return stream.async();
-			return stream;
+	
+		int size = this.getLastActive().list().size();
+		List[] list = {new ArrayList<U>()};
+		int[] count = {0};
+		SimpleTimer[] timer = {new SimpleTimer()};
+		return (EagerFutureStream)this.map(next-> { 
+				synchronized(timer){
+					count[0]++;
+					if(unit.toNanos(time)-timer[0].getElapsedNanoseconds()>0){
+						
+						list[0].add(next);
+					} else{
+						list[0].add(next);
+						List<U> result = list[0];
+						list[0] = new ArrayList<U>();
+						 timer[0] = new SimpleTimer();
+						return result;
+						
+					}
+					if(count[0]==size){
+						list[0].add(next);
+						
+						List<U> result = list[0];
+						list[0] = new ArrayList<U>();
+						return result;
+					}
+					return new ArrayList();
+				}
+			}	).filter(l->l.size()>0);
+		
 	}
 	
 	/**
@@ -462,9 +481,9 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 *            values
 	 * @return Stream of batched values
 	 */
-	default EagerFutureStream<Collection<U>> batch(
-			Function<Supplier<U>, Supplier<Collection<U>>> fn) {
-		return (EagerFutureStream<Collection<U>>) FutureStream.super.batch(fn);
+	default <C extends Collection<U>> EagerFutureStream<C> batch(
+			Function<Supplier<U>, Supplier<C>> fn) {
+		return (EagerFutureStream<C>) FutureStream.super.batch(fn);
 	}
 
 	/**
@@ -484,18 +503,8 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 *            Size of lists elements should be batched into
 	 * @return Stream of Lists
 	 */
-	default EagerFutureStream<Collection<U>> batchBySize(int size) {
-		Queue<U>  queue = toQueue();
-		Function<Supplier<U>, Supplier<Optional<Collection<U>>>> fn = new BatchBySize<U>(size,this.getSubscription(),queue, ()->new ArrayList<>()).liftOptional();
-		 
-		EagerFutureStream<Collection<U>> stream = this.async() //has to run asynchronously to make sure queue gets closed first
-											.map(u-> {synchronized(queue){return fn.apply(()-> queue.poll(1,TimeUnit.MICROSECONDS)).get();}})
-											.sync()
-											.filter(Optional::isPresent)
-											.map(Optional::get);
-		 if(this.isAsync())
-				return stream.async();
-			return stream;
+	default EagerFutureStream<List<U>> batchBySize(int size) {
+		return batchBySize(size,()->new ArrayList<>());
 
 	}
 	
@@ -520,16 +529,29 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 *            Create the batch holding collection
 	 * @return Stream of Collections
 	 */
-	default EagerFutureStream<Collection<U>> batchBySize(int size,
-			Supplier<Collection<U>> supplier) {
-		return (EagerFutureStream<Collection<U>>) FutureStream.super
-				.batchBySize(size, supplier);
+	default <C extends Collection<U>> EagerFutureStream<C> batchBySize(int size,
+			Supplier<C> supplier) {
+		Queue<U>  queue = toQueue();
+		Function<Supplier<U>, Supplier<Optional<C>>> fn = new BatchBySize<U,C>(size,this.getSubscription(),queue, supplier)
+																	.liftOptional();
+		 
+		EagerFutureStream<C> stream = this.async() 
+											.map(u-> {synchronized(queue){return fn.apply(()-> queue.poll(1,TimeUnit.MICROSECONDS)).get();}})
+											.filter(Optional::isPresent)
+											.map(Optional::get);
+		 if(this.isAsync())
+				return stream.async();
+			return stream;
 
 	}
 
 	/**
 	 * Introduce a random delay between events in a stream Can be used to
 	 * prevent behaviour synchronizing within a system
+	 * EagerFutureStreams will batch results before jittering
+	 * 
+	 * For a better implementation see  @see LazyFutureStream#jitter(long)
+	 * 
 	 * <pre>
 	 * {@code
 	 * 
@@ -1648,7 +1670,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * @return Next SimpleReact stage
 	 */
 	public static <U> EagerFutureStream<U> parallel(U... array) {
-		return new EagerReact().of(Arrays.asList(array));
+		return parallelCommonBuilder().of(Arrays.asList(array));
 	}
 
 	/*
@@ -1931,77 +1953,129 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 								ThreadPools.getCommonFreeThreadRetry()))
 				.build();
 	}
-
-	
 	/**
-	 *  Create a parallel asynchronous stream
-	 * @see Stream#of(Object)
+	 * @return new EagerReact builder configured to run on a separate thread
+	 *         (non-blocking current thread), sequentially Common free thread
+	 *         Executor from
 	 */
-	static <T> EagerFutureStream<T> react(Supplier<T> value) {
-		return  new EagerReact().react(value);
+	public static EagerReact sequentialCurrentBuilder() {
+		return EagerReact
+				.builder()
+				.async(false)
+				.executor(ThreadPools.getCurrentThreadExecutor())
+				.retrier(
+						RetryBuilder.getDefaultInstance().withScheduler(
+								ThreadPools.getCommonFreeThreadRetry()))
+				.build();
 	}
 
 	/**
-	 * Create a parallel asynchronous stream
+	 *  Create a 'free threaded' asynchronous stream that runs on the supplied CompletableFutures executor service (unless async operator invoked
+	 *  , in which it will switch to the common 'free' thread executor)
+	 *  Subsequent tasks will be executed synchronously unless the async() operator is invoked.
+	 *  
+	 * @see Stream#of(Object)
+	 */
+	static <T> EagerFutureStream<T> eagerFutureStreamFrom(Stream<CompletableFuture<T>> stream) {
+		return  new EagerReact(ThreadPools.getSequential(),new AsyncRetryExecutor(ThreadPools.getSequentialRetry()),false)
+									.fromStream(stream);
+	}
+	/**
+	 *  Create a 'free threaded' asynchronous stream that runs on the supplied CompletableFutures executor service (unless async operator invoked
+	 *  , in which it will switch to the common 'free' thread executor)
+	 *  Subsequent tasks will be executed synchronously unless the async() operator is invoked.
+	 *  
+	 * @see Stream#of(Object)
+	 */
+	static <T> EagerFutureStream<T> eagerFutureStream(CompletableFuture<T> value) {
+		return  new EagerReact(ThreadPools.getSequential(),new AsyncRetryExecutor(ThreadPools.getSequentialRetry()),false)
+									.fromStream(Stream.of(value));
+	}
+	/**
+	 *  Create a 'free threaded' asynchronous stream that runs on a single thread (not current)
+	 *  The supplier will be executed asyncrhonously, subsequent tasks will be executed synchronously unless the async() operator
+	 *  is invoked.
+	 *  
+	 * @see Stream#of(Object)
+	 */
+	static <T> EagerFutureStream<T> eagerFutureStream(CompletableFuture<T>... values) {
+		return  new EagerReact(ThreadPools.getSequential(),new AsyncRetryExecutor(ThreadPools.getSequentialRetry()),false)
+									.fromStream(Stream.of(values));
+	}
+
+	
+	/**
+	 *  Create a 'free threaded' asynchronous stream that runs on a single thread (not current)
+	 *  The supplier will be executed asyncrhonously, subsequent tasks will be executed synchronously unless the async() operator
+	 *  is invoked.
+	 *  
+	 * @see Stream#of(Object)
+	 */
+	static <T> EagerFutureStream<T> react(Supplier<T> value) {
+		return  new EagerReact(ThreadPools.getSequential(),new AsyncRetryExecutor(ThreadPools.getSequentialRetry()),false).react(value);
+	}
+
+	/**
+	 * Create a 'free threaded' asynchronous stream that runs on a single thread (not current)
+	 * The supplier will be executed asyncrhonously, subsequent tasks will be executed synchronously unless the async() operator is invoked.
 	 * @see Stream#of(Object[])
 	 */
 	@SafeVarargs
 	static <T> EagerFutureStream<T> react(Supplier<T>... values) {
-		return  new EagerReact().react(values);
+		return  new EagerReact(ThreadPools.getSequential(),new AsyncRetryExecutor(ThreadPools.getSequentialRetry()),false).react(values);
 	}
 	/**
-	 *  Create a sequential synchronous stream
+	 *  Create a sequential synchronous stream that runs on the current thread
 	 * @see Stream#of(Object)
 	 * 
-	 * NB. best practice for production systems is to use the builder EagerReact, by default
-	 * all EagerFutureStreams created by this method use a common thread pool with a single thread.
-	 * This behaviour can be changed to create a new thead pool each time via ThreadPools.setUseCommon(false);
-	 * Neither solution is optimal for production systems and EagerFutureStreams - see SequentialElasticPools.eagerReact to autoscale
-	 * and return EagerReact instances from a pool
-
 	 */
 	static <T> EagerFutureStream<T> of(T value) {
-		return of((Stream) Stream.of(value));
+		return eagerFutureStream((Stream) Stream.of(value));
 	}
 
 	/**
-	 * Create a sequential synchronous stream
+	 * Create a sequential synchronous stream that runs on the current thread
 	 * @see Stream#of(Object[])
 	 * 
-	 * NB. best practice for production systems is to use the builder EagerReact, by default
-	 * all EagerFutureStreams created by this method use a common thread pool with a single thread.
-	 * This behaviour can be changed to create a new thead pool each time via ThreadPools.setUseCommon(false);
-	 * Neither solution is optimal for production systems and EagerFutureStreams - see SequentialElasticPools.eagerReact to autoscale
-	 * and return EagerReact instances from a pool
-
 	 */
 	@SafeVarargs
 	static <T> EagerFutureStream<T> of(T... values) {
-		return of((Stream) Stream.of(values));
+		return eagerFutureStream((Stream) Stream.of(values));
+	}
+	/**
+	 *  Create a sequential synchronous stream that runs on the current thread
+	 * @see Stream#of(Object)
+	 * 
+	 */
+	static <T> EagerFutureStream<T> ofThread(T value) {
+		return  new EagerReact(ThreadPools.getSequential(),new AsyncRetryExecutor(ThreadPools.getSequentialRetry()),false).of(value);
+	}
+
+	/**
+	 * Create a sequential synchronous stream that runs on the current thread
+	 * @see Stream#of(Object[])
+	 * 
+	 */
+	@SafeVarargs
+	static <T> EagerFutureStream<T> ofThread(T... values) {
+		return  new EagerReact(ThreadPools.getSequential(),new AsyncRetryExecutor(ThreadPools.getSequentialRetry()),false).of(values);
 	}
 
 	/**
 	 * @see Stream#empty()
 	 */
 	static <T> EagerFutureStream<T> empty() {
-		return of((Stream) Seq.empty());
+		return eagerFutureStream((Stream) Seq.empty());
 	}
 
 	/**
-	 * Wrap a Stream into a Sequential synchronous FutureStream.
-	 
-	 *NB. best practice for production systems is to use the builder EagerReact, by default
-	 * all EagerFutureStreams created by this method use a common thread pool with a single thread.
-	 * This behaviour can be changed to create a new thead pool each time via ThreadPools.setUseCommon(false);
-	 * Neither solution is optimal for production systems and EagerFutureStreams - see SequentialElasticPools.eagerReact to autoscale
-	 * and return EagerReact instances from a pool
-
+	 * Wrap a Stream into a Sequential synchronous FutureStream that runs on the current thread 
 	 */
-	static <T> EagerFutureStream<T> of(Stream<T> stream) {
+	static <T> EagerFutureStream<T> eagerFutureStream(Stream<T> stream) {
 		if (stream instanceof FutureStream)
 			return (EagerFutureStream<T>) stream;
 		EagerReact er = new EagerReact(
-		ThreadPools.getSequential(), RetryBuilder.getDefaultInstance()
+		ThreadPools.getCurrentThreadExecutor(), RetryBuilder.getDefaultInstance()
 		.withScheduler(ThreadPools.getSequentialRetry()),false);
 		
 		return new EagerFutureStreamImpl<T>(er,
@@ -2009,32 +2083,20 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	}
 
 	/**
-	 * Wrap an Iterable into a FutureStream.
-	 * 
-	 * NB. best practice for production systems is to use the builder EagerReact, by default
-	 * all EagerFutureStreams created by this method use a common thread pool with a single thread.
-	 * This behaviour can be changed to create a new thead pool each time via ThreadPools.setUseCommon(false);
-	 * Neither solution is optimal for production systems and EagerFutureStreams - see SequentialElasticPools.eagerReact to autoscale
-	 * and return EagerReact instances from a pool
+	 * Wrap an Iterable into a FutureStream that runs on the current thread
 	 * 
 	 * 
 	 */
-	static <T> EagerFutureStream<T> ofIterable(Iterable<T> iterable) {
-		return of(iterable.iterator());
+	static <T> EagerFutureStream<T> eagerFutureStream(Iterable<T> iterable) {
+		return eagerFutureStream(iterable.iterator());
 	}
 
 	/**
-	 * Wrap an Iterator into a FutureStream.
+	 * Wrap an Iterator into a FutureStream that runs on the current thread
 	 * 
-	 * NB. best practice for production systems is to use the builder EagerReact, by default
-	 * all EagerFutureStreams created by this method use a common thread pool with a single thread.
-	 * This behaviour can be changed to create a new thead pool each time via ThreadPools.setUseCommon(false);
-	 * Neither solution is optimal for production systems and EagerFutureStreams - see SequentialElasticPools.eagerReact to autoscale
-	 * and return EagerReact instances from a pool
-
 	 */
-	static <T> EagerFutureStream<T> of(Iterator<T> iterator) {
-		return of(StreamSupport.stream(
+	static <T> EagerFutureStream<T> eagerFutureStream(Iterator<T> iterator) {
+		return eagerFutureStream(StreamSupport.stream(
 				spliteratorUnknownSize(iterator, ORDERED), false));
 	}
 

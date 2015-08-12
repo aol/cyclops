@@ -38,10 +38,25 @@ public class EagerSequentialSeqTest extends BaseSequentialSeqTest {
 		return EagerFutureStream.sequentialCommonBuilder().react(array);
 		
 	}
+	@Override
+	protected <U> EagerFutureStream<U> ofThread(U... array) {
+		return EagerFutureStream.ofThread(array);
+	}
 	
 	@Override
 	protected <U> EagerFutureStream<U> of(U... array) {
-		return EagerFutureStream.sequentialCommonBuilder().of(array);
+		return EagerFutureStream.sequentialCurrentBuilder().of(array);
+	}
+	@Test
+	public void batchByTime2(){
+		for(int i=0;i<10;i++){
+			
+			assertThat(react(()->1,()->2,()->3,()->4,()->{sleep(100);return 5;},()->6)
+							.batchByTime(60,TimeUnit.MILLISECONDS)
+							.toList()
+							.get(0)
+							,not(hasItem(6)));
+		}
 	}
 	@Test
 	public void debounceEager(){
@@ -65,7 +80,7 @@ public class EagerSequentialSeqTest extends BaseSequentialSeqTest {
 	public void batchBySizeAndTimeTime(){
 		
 		for(int i=0;i<10;i++){
-			List<List<Integer>> list = react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
+			List<List<Integer>> list = react(()->1,()->2,()->3,()->4,()->{sleep(150);return 5;},()-> 6)
 					.batchBySizeAndTime(30,10,TimeUnit.MILLISECONDS)
 					.toList();
 			if(list.size()==0)

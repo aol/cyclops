@@ -392,6 +392,88 @@ public class LazyReact extends BaseLazySimpleReact {
 	
 	
 	
+	/**
+	 * @return Lazy SimpleReact for handling infinite streams
+	 */
+	public static LazyReact parallelBuilder() {
+		return new LazyReact();
+	}
+
+	/**
+	 * Construct a new LazyReact builder, with a new task executor and retry
+	 * executor with configured number of threads
+	 * 
+	 * @param parallelism
+	 *            Number of threads task executor should have
+	 * @return LazyReact instance
+	 */
+	public static LazyReact parallelBuilder(int parallelism) {
+		return LazyReact.builder().executor(Executors.newFixedThreadPool(parallelism))
+				.retrier(new RetryBuilder().parallelism(parallelism)).build();
+	}
+
+	/**
+	 * @return new LazyReact builder configured with standard parallel executor
+	 *         By default this is the ForkJoinPool common instance but is
+	 *         configurable in the ThreadPools class
+	 * 
+	 * @see ThreadPools#getStandard() see RetryBuilder#getDefaultInstance()
+	 */
+	public static LazyReact parallelCommonBuilder() {
+		return LazyReact
+				.builder()
+				.executor(ThreadPools.getStandard())
+				.retrier(
+						RetryBuilder.getDefaultInstance().withScheduler(
+								ThreadPools.getCommonFreeThreadRetry()))
+				.build();
+	}
+
+	/**
+	 * @return new LazyReact builder configured to run on a separate thread
+	 *         (non-blocking current thread), sequentially New ForkJoinPool will
+	 *         be created
+	 */
+	public static LazyReact sequentialBuilder() {
+		return LazyReact
+				.builder()
+				.async(false)
+				.executor(Executors.newFixedThreadPool(1))
+				.retrier(
+						RetryBuilder.getDefaultInstance().withScheduler(
+								Executors.newScheduledThreadPool(2))).build();
+	}
+
+	/**
+	 * @return LazyReact builder configured to run on a separate thread
+	 *         (non-blocking current thread), sequentially Common free thread
+	 *         Executor from
+	 */
+	public static LazyReact sequentialCommonBuilder() {
+		return LazyReact
+				.builder()
+				.async(false)
+				.executor(ThreadPools.getCommonFreeThread())
+				.retrier(
+						RetryBuilder.getDefaultInstance().withScheduler(
+								ThreadPools.getCommonFreeThreadRetry()))
+				.build();
+	}
+	/**
+	 * @return LazyReact builder configured to run on a separate thread
+	 *         (non-blocking current thread), sequentially Common free thread
+	 *         Executor from
+	 */
+	public static LazyReact sequentialCurrentBuilder() {
+		return LazyReact
+				.builder()
+				.async(false)
+				.executor(ThreadPools.getCurrentThreadExecutor())
+				.retrier(
+						RetryBuilder.getDefaultInstance().withScheduler(
+								ThreadPools.getCommonFreeThreadRetry()))
+				.build();
+	}
 	
 
 }

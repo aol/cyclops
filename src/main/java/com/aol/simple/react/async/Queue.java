@@ -200,7 +200,6 @@ public class Queue<T> implements Adapter<T> {
 			if(this.continuation!=null){
 				while(open && (data = ensureClear(queue.poll()))==null){
 					continuation = continuation.proceed();
-					System.out.println(timeoutNanos);
 					if(timeout!=-1)
 						handleTimeout(timer,timeoutNanos);
 				}

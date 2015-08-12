@@ -1,5 +1,6 @@
 package com.aol.simple.react.stream;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -137,6 +138,12 @@ public abstract class BaseSimpleReact {
 
 	public <U> SimpleReactStream<U> of(U...array){
 		return of(Stream.of(array));
+	}
+	public <U> SimpleReactStream<U> reactTo(CompletableFuture<U> cf){
+		return this.construct(Stream.of(cf), Arrays.asList(cf));
+	}
+	public <U> SimpleReactStream<U> observe(CompletableFuture<U>... cf){
+		return this.construct(Stream.of(cf), Arrays.asList(cf));
 	}
 	
 	

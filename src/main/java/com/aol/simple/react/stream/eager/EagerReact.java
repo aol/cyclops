@@ -21,6 +21,7 @@ import lombok.experimental.Wither;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
+import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -73,7 +74,7 @@ public class EagerReact extends BaseSimpleReact{
 	public EagerReact(Executor executor) {
 		
 		this.executor = executor;
-		this.retrier = null;
+		this.retrier = new AsyncRetryExecutor(ThreadPools.getStandardRetry());
 		this.async=true;
 		
 	}

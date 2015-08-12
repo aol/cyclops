@@ -90,7 +90,7 @@ public class PushableStreamBuilder{
 	 */
 	public <T>  PushableLazyFutureStream<T> pushableLazyFutureStream(){
 		Queue<T> q = createQueue();
-		return new PushableLazyFutureStream<T>(q,LazyFutureStream.of((Stream<T>)q.stream()));
+		return new PushableLazyFutureStream<T>(q,LazyFutureStream.lazyFutureStream((Stream<T>)q.stream()));
 	}
 
 	/**
@@ -123,7 +123,7 @@ public class PushableStreamBuilder{
 	 */
 	public <T> LazyFutureStream<T> pushableLazyFutureStream(Adapter<T> adapter){
 		
-		return LazyFutureStream.of((Stream<T>)adapter.stream());
+		return LazyFutureStream.lazyFutureStream((Stream<T>)adapter.stream());
 	}
 	
 	/**

@@ -2,8 +2,6 @@ package com.aol.simple.react.collectors.lazy;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,6 +12,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.aol.simple.react.config.MaxActive;
+import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
@@ -22,7 +21,7 @@ public class BatchingCollectorTest {
 	BatchingCollector collector;
 	 @Before
 	 public void setup(){
-		 collector = new BatchingCollector(LazyFutureStream.sequentialBuilder().of(1)).withResults(new ArrayList());
+		 collector = new BatchingCollector(LazyReact.sequentialBuilder().of(1)).withResults(new ArrayList());
 	 }
 	@Test
 	public void testAccept() {

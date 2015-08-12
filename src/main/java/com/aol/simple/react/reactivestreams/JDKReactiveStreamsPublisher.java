@@ -1,5 +1,7 @@
 package com.aol.simple.react.reactivestreams;
 
+import static com.aol.simple.react.stream.traits.LazyFutureStream.lazyFutureStream;
+
 import java.util.stream.Stream;
 
 import lombok.Value;
@@ -54,9 +56,9 @@ public class JDKReactiveStreamsPublisher<T> implements Publisher<T>{
 	@Override
 	public void subscribe(Subscriber<? super T> s) {
 		if(synchronous)
-			LazyFutureStream.of(wrappedStream).sync().subscribe(s);
+			lazyFutureStream(wrappedStream).sync().subscribe(s);
 		else
-			LazyFutureStream.of(wrappedStream).async().subscribe(s);
+			lazyFutureStream(wrappedStream).async().subscribe(s);
 			
 	}
 

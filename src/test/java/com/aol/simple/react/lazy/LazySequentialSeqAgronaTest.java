@@ -18,6 +18,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.simple.react.base.BaseSequentialSeqTest;
+import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
@@ -25,12 +26,16 @@ public class LazySequentialSeqAgronaTest extends BaseSequentialSeqTest {
 
 	@Override
 	protected <U> LazyFutureStream<U> of(U... array) {
-		return LazyFutureStream.sequentialBuilder().of(array).boundedWaitFree(1000);
+		return LazyFutureStream.of(array).boundedWaitFree(1000);
+	}
+	@Override
+	protected <U> LazyFutureStream<U> ofThread(U... array) {
+		return LazyFutureStream.ofThread(array).boundedWaitFree(1000);
 	}
 
 	@Override
 	protected <U> FutureStream<U> react(Supplier<U>... array) {
-		return LazyFutureStream.sequentialBuilder().react(array).boundedWaitFree(1000);
+		return LazyReact.sequentialBuilder().react(array).boundedWaitFree(1000);
 	}
 
 	@Test
