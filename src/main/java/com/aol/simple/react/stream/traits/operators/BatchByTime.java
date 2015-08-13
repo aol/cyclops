@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -33,9 +34,11 @@ public class BatchByTime<U> implements Function<BiFunction<Long,TimeUnit,U>, Sup
 	private final Continueable subscription;
 	private final Queue<U> queue;
 	private final Supplier<Collection<U>> factory;
+	
 	@Override
 	public Supplier<Collection<U>> apply(BiFunction<Long, TimeUnit, U> s) {
 		return () -> {
+			
 			
 			Collection<U> list= new ArrayList<>();
 			
@@ -57,22 +60,24 @@ public class BatchByTime<U> implements Function<BiFunction<Long,TimeUnit,U>, Sup
 				try{
 					
 						
-						
+					
 						U result = s.apply(timeout, TimeUnit.NANOSECONDS);
 						
-						if(result!=null)
+						if(result!=null){
 							list.add(result);
+						
+						}
 					
 				}catch(QueueTimeoutException e) {
-					//retry if queue access timed out but not closed
 					
 					
 		        }catch (ClosedQueueException e) {
-					
+		        	
 					throw new ClosedQueueException(list);
 				}
 				
 			} while (timer.getElapsedNanoseconds()<unit.toNanos(time));
+	
 		return list;
 	}
 	public Function<BiFunction<Long,TimeUnit,U>, Supplier<Optional<Collection<U>>>> liftOptional(){

@@ -3,6 +3,7 @@ package com.aol.simple.react.lazy;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -14,6 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,6 +28,7 @@ import org.pcollections.HashTreePMap;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
+import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
@@ -522,20 +525,172 @@ public class Tutorial {
 	}
 
 	@Test
+	public void filterAndLimit(){
+		LazyFutureStream.of(1,2,3,4,5,6,7,8,9,10)
+					.limit(6)
+					.filter(i->i%2==0)
+					.forEach(System.out::println);
+	}
+	@Test
+	public void filterAndLimitInfinite(){
+	
+		LazyReact
+				.parallelCommonBuilder()
+					.iterateInfinitely("", last -> nextFile())
+					.limit(100)
+					.map(d->Arrays.asList())
+					.filter(i-> !i.isEmpty())
+					.forEach(System.out::println);
+	}
+	
+	@Test
+	public void testFilterAndFlatMapWithFilter(){
+		count=0;
+		LazyFutureStream.of(1,2,3).limit(2)
+		.flatMap(a->Arrays.asList(10,20,30,40).stream())
+		.limit(6)
+		.forEach(next->count++);
+		
+		assertThat(count,equalTo(6));
+	}
+	@Test
+	public void testFilterAndFlatMapWithFilterRunOnCurrent(){
+		count=0;
+		LazyFutureStream.of(1,2,3).limit(2)
+		.flatMap(a->Arrays.asList(10,20,30,40).stream())
+		.limit(6)
+		.peek(next->count++)
+		.runOnCurrent();
+		
+		assertThat(count,equalTo(6));
+	}
+	@Test
+	public void testFilterAndFlatMapWithFilterList(){
+		count=0;
+		List list = LazyFutureStream.of(1,2,3).limit(2)
+		.flatMap(a->Arrays.asList(10,20,30,40).stream())
+		.limit(6)
+		.toList();
+		
+		assertThat(list.size(),equalTo(6));
+	}
+	int count2 =0;
+	@Test
+	public void batchByTimeFiltered() {
+		count2=0;
+		LazyReact
+				.parallelCommonBuilder()
+				.iterateInfinitely("", last -> nextFile())
+				.limit(100)
+				
+				.map(this::readFileToString)
+				.map(this::parseJson)
+				//.filter(i->false)
+								.batchByTime(1, TimeUnit.MICROSECONDS)
+				
+				.peek(batch -> System.out.println("batched : " + batch))
+				.filter(c->!c.isEmpty())
+				
+				.map(this::processOrders)
+				.forEach(next -> count2= count2+next.size());
+		
+		assertThat(count2,equalTo(100));
+	}
+	@Test
+	public void batchByTimeFilteredEager() {
+		count2=0;
+		EagerFutureStream
+				.parallelCommonBuilder()
+				.of(list100())
+				.limit(100)
+				
+				.map(this::readFileToString)
+				.map(this::parseJson)
+				//.filter(i->false)
+								.batchByTime(1, TimeUnit.MICROSECONDS)
+				
+				.peek(batch -> System.out.println("batched : " + batch))
+				.filter(c->!c.isEmpty())
+				
+				.map(this::processOrders)
+				.forEach(next -> count2= count2+next.size());
+		
+		assertThat(count2,equalTo(100));
+	}
+
+	private List<String> list100() {
+		List col = new ArrayList();
+		for(int i=0;i<100;i++)
+			col.add(""+i);
+		return col;
+	}
+	@Test
+	public void batchByTimeFilteredForEach() {
+		count2=0;
+		LazyReact
+				.parallelCommonBuilder()
+				.iterateInfinitely("", last -> nextFile())
+				.limit(100)
+				
+				.map(this::readFileToString)
+				.map(this::parseJson)
+				//.filter(i->false)
+				
+				.batchByTime(1, TimeUnit.MICROSECONDS)
+				
+				.peek(batch -> System.out.println("batched : " + batch))
+				.filter(c->!c.isEmpty())
+				
+				.map(this::processOrders)
+				.toList().stream().forEach(next -> count2= count2+next.size());;
+		
+		assertThat(count2,equalTo(100));
+	}
+	@Test
+	public void batchByTimeFilteredForEachEager() {
+		count2=0;
+		EagerFutureStream
+				.parallelCommonBuilder()
+				.of(list100())
+				.limit(100)
+				
+				.map(this::readFileToString)
+				.map(this::parseJson)
+				//.filter(i->false)
+				
+				.batchByTime(1, TimeUnit.MICROSECONDS)
+				
+				.peek(batch -> System.out.println("batched : " + batch))
+				.filter(c->!c.isEmpty())
+				
+				.map(this::processOrders)
+				.toList().stream().forEach(next -> count2= count2+next.size());;
+		
+		assertThat(count2,equalTo(100));
+	}
+	@Test
 	public void batchByTime() {
 
 		LazyReact
 				.parallelCommonBuilder()
 				.iterateInfinitely("", last -> nextFile())
 				.limit(100)
+				
 				.map(this::readFileToString)
 				.map(this::parseJson)
-				.batchByTime(1, TimeUnit.MICROSECONDS)
+				
+				.peek(next->System.out.println("Counter " +count2++))
+				.batchByTime(10, TimeUnit.MICROSECONDS)
 				.peek(batch -> System.out.println("batched : " + batch))
+				.filter(c->!c.isEmpty())
+				
 				.map(this::processOrders)
+				.forEach(System.out::println);
+			/**	
 				.flatMap(Collection::stream)
 				.peek(individual -> System.out.println("Flattened : "
-						+ individual)).forEach(this::save);
+						+ individual))
+				.forEach(this::save);**/
 
 	}
 

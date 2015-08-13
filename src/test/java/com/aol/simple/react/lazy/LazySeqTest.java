@@ -50,8 +50,8 @@ public class LazySeqTest extends BaseSeqTest {
 	public void batchByTime2(){
 		for(int i=0;i<5;i++){
 			System.out.println(i);
-			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(100);return 6;})
-							.batchByTime(30,TimeUnit.MILLISECONDS)
+			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
+							.batchByTime(10,TimeUnit.MICROSECONDS)
 							.toList()
 							.get(0)
 							,not(hasItem(6)));

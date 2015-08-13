@@ -64,12 +64,16 @@ public class Runner {
 				cont[0] =  new Continuation( () -> {	
 					try {
 						
-						if(it.hasNext()){
 							
-							CompletableFuture f = it.next();
-							
-							collector.accept(f);
-						}
+						
+							if(it.hasNext()){
+								
+								CompletableFuture f = it.next();
+								handleFilter(cont,f);//if completableFuture has been filtered out, we need to move to the next one instead
+									
+								collector.accept(f);
+							}
+						
 						if(it.hasNext())
 							return cont[0];
 						else {
@@ -90,6 +94,18 @@ public class Runner {
 		
 		
 
+	}
+	
+	private <T> void handleFilter(Continuation[] cont, CompletableFuture<T> f){
+		
+		f.exceptionally( e-> {
+			if ((e.getCause() instanceof FilteredExecutionPathException)) {
+				
+				return (T)cont[0].proceed();
+			}
+			
+			throw (RuntimeException)e;
+		});
 	}
 	
 	

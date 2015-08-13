@@ -67,7 +67,7 @@ public class LazySequentialSeqTest extends BaseSequentialSeqTest {
 		
 		Collection two = it.next();
 		
-		assertThat(one.size(),is(1));
+		assertThat(one.size(),greaterThan(0));
 		assertThat(two.size(),greaterThan(0));
 		
 	
@@ -77,8 +77,8 @@ public class LazySequentialSeqTest extends BaseSequentialSeqTest {
 	public void batchByTime2(){
 		for(int i=0;i<10;i++){
 			
-			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(100);return 6;})
-							.batchByTime(60,TimeUnit.MILLISECONDS)
+			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
+							.batchByTime(60,TimeUnit.MICROSECONDS)
 							.toList()
 							.get(0)
 							,not(hasItem(6)));

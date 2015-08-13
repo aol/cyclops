@@ -169,9 +169,9 @@ public abstract class BaseSequentialSeqTest {
 	public void batchBySizeAndTimeTime(){
 		
 		for(int i=0;i<10;i++){
-			
+			System.out.println(i);
 			List<List<Integer>> list = react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
-					.batchBySizeAndTime(30,10,TimeUnit.MILLISECONDS)
+					.batchBySizeAndTime(10,10,TimeUnit.MICROSECONDS)
 					.toList();
 			
 			assertThat(list

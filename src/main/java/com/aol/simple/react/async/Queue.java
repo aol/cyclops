@@ -197,8 +197,6 @@ public class Queue<T> implements Adapter<T> {
 		stream.collect(Collectors.toCollection(() -> queue));
 		return true;
 	}
-	
-
 	private T ensureOpen(final long timeout, TimeUnit timeUnit) {
 		if(!open && queue.size()==0)
 			throw new ClosedQueueException();
@@ -208,13 +206,14 @@ public class Queue<T> implements Adapter<T> {
 		try {
 			if(this.continuationStrategy!=null){
 				
-			
+				
 				while(open && (data = ensureClear(queue.poll()))==null){
 					
 					this.continuationStrategy.handleContinuation();
 					
 					if(timeout!=-1)
 						handleTimeout(timer,timeoutNanos);
+					
 				}
 				if(data!=null)
 					return (T)nillSafe(ensureNotPoisonPill(ensureClear(data)));
@@ -243,8 +242,10 @@ public class Queue<T> implements Adapter<T> {
 	}
 
 	private void handleTimeout(SimpleTimer timer, long timeout) {
-		if(timer.getElapsedNanoseconds()>timeout)
+		if(timer.getElapsedNanoseconds()>timeout){
+			
 			throw new QueueTimeoutException();
+		}
 		
 	}
 
@@ -293,7 +294,7 @@ public class Queue<T> implements Adapter<T> {
 		public synchronized Throwable fillInStackTrace() {
 			return this;
 		}
-		
+	
 		
 	}
 
@@ -305,6 +306,12 @@ public class Queue<T> implements Adapter<T> {
 	 */
 	public static class QueueTimeoutException extends
 			SimpleReactProcessingException {
+		@Override
+		public synchronized Throwable fillInStackTrace() {
+			
+			return this;
+		}
+
 		private static final long serialVersionUID = 1L;
 	}
 

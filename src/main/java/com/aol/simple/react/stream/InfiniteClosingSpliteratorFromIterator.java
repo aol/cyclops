@@ -50,7 +50,6 @@ public class InfiniteClosingSpliteratorFromIterator<T>  implements Spliterator<T
 	        }catch(ClosedQueueException e){
 	        	return false;
 	        }catch(Exception e){
-	        	e.printStackTrace();
 	        	return false;
 	        }
 	        

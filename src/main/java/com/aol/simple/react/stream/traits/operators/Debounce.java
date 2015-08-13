@@ -52,7 +52,7 @@ public class Debounce<T> implements Function<Supplier<T>, Supplier<T>>{
 			try {
 				return Optional.of(this.apply(biF).get());
 			} catch (ClosedQueueException e) {
-				System.out.println(e.getCurrentData());
+				
 				return Optional.ofNullable((Optional<T>)e.getCurrentData())
 							.flatMap(t->t);
 			}

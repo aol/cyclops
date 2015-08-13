@@ -127,8 +127,8 @@ public interface LazyStream<U> extends BlockingStream<U>{
 				
 				collector.getConsumer().accept(next);
 				this.getWaitStrategy().accept(next);
-				
 				collector.forEach(c, safeJoin);
+				
 			});
 		} catch (SimpleReactProcessingException e) {
 			
