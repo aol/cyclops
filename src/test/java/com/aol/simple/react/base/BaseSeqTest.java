@@ -187,7 +187,7 @@ public abstract class BaseSeqTest {
 		for(int i=0;i<5;i++){
 			
 			List<List<Integer>> list = react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
-					.batchBySizeAndTime(30,10,TimeUnit.MICROSECONDS)
+					.batchBySizeAndTime(30,1,TimeUnit.MICROSECONDS)
 					.toList();
 			
 			assertThat(list

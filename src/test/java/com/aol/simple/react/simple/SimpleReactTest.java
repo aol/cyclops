@@ -64,7 +64,7 @@ public class SimpleReactTest {
 	}
 	@Test
 	public void futureStreamIterator(){
-		assertThat(SimpleReactStream.of(Arrays.asList(1,2,3,4).iterator()).block().size(),is(4));
+		assertThat(SimpleReactStream.simpleReactStream(Arrays.asList(1,2,3,4).iterator()).block().size(),is(4));
 	}
 	@Test
 	public void futureStreamIterable(){
