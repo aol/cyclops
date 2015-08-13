@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -18,8 +20,10 @@ import lombok.Getter;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 
+import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.ThreadPools;
+import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
@@ -293,7 +297,90 @@ public class EagerReact extends BaseSimpleReact{
 		return (EagerFutureStream)super.reactIterable(actions);
 	}
 
-	
+	/**
+	 * @return EagerReact for handling finite streams
+	 * @see SimpleReact#SimpleReact()
+	 */
+	public static EagerReact parallelBuilder() {
+		return new EagerReact();
+	}
+
+	/**
+	 * Construct a new EagerReact builder, with a new task executor and retry
+	 * executor with configured number of threads
+	 * 
+	 * @param parallelism
+	 *            Number of threads task executor should have
+	 * @return eager EagerReact instance
+	 */
+	public static EagerReact parallelBuilder(int parallelism) {
+		return EagerReact.builder().executor(new ForkJoinPool(parallelism)).retrier(new RetryBuilder().parallelism(parallelism)).build();
+		
+	}
+
+	/**
+	 * @return new EagerReact builder configured with standard parallel executor
+	 *         By default this is the ForkJoinPool common instance but is
+	 *         configurable in the ThreadPools class
+	 * 
+	 * @see ThreadPools#getStandard() see RetryBuilder#getDefaultInstance()
+	 */
+	public static EagerReact parallelCommonBuilder() {
+		return EagerReact
+				.builder()
+				.async(true)
+				.executor(ThreadPools.getStandard())
+				.retrier(
+						RetryBuilder.getDefaultInstance().withScheduler(
+								ThreadPools.getCommonFreeThreadRetry()))
+				.build();
+	}
+
+	/**
+	 * @return new eager EagerReact builder configured to run on a separate
+	 *         thread (non-blocking current thread), sequentially New
+	 *         ForkJoinPool will be created
+	 */
+	public static EagerReact sequentialBuilder() {
+		return EagerReact
+				.builder()
+				.async(false)
+				.executor(Executors.newFixedThreadPool(1))
+				.retrier(
+						RetryBuilder.getDefaultInstance().withScheduler(
+								Executors.newScheduledThreadPool(1))).build();
+	}
+
+	/**
+	 * @return new EagerReact builder configured to run on a separate thread
+	 *         (non-blocking current thread), sequentially Common free thread
+	 *         Executor from
+	 */
+	public static EagerReact sequentialCommonBuilder() {
+		return EagerReact
+				.builder()
+				.async(false)
+				.executor(ThreadPools.getCommonFreeThread())
+				.retrier(
+						RetryBuilder.getDefaultInstance().withScheduler(
+								ThreadPools.getCommonFreeThreadRetry()))
+				.build();
+	}
+	/**
+	 * @return new EagerReact builder configured to run on a separate thread
+	 *         (non-blocking current thread), sequentially Common free thread
+	 *         Executor from
+	 */
+	public static EagerReact sequentialCurrentBuilder() {
+		return EagerReact
+				.builder()
+				.async(false)
+				.executor(ThreadPools.getCurrentThreadExecutor())
+				.retrier(
+						RetryBuilder.getDefaultInstance().withScheduler(
+								ThreadPools.getCommonFreeThreadRetry()))
+				.build();
+	}
 	
 
 }

@@ -8,8 +8,7 @@ import java.util.stream.IntStream;
 
 import org.junit.Test;
 
-import com.aol.simple.react.stream.traits.EagerFutureStream;
-import com.aol.simple.react.stream.traits.LazyFutureStream;
+import com.aol.simple.react.stream.eager.EagerReact;
 
 public class EagerTest {
 
@@ -28,7 +27,7 @@ public class EagerTest {
 		
 		
 		
-		assertThat(EagerFutureStream.parallelCommonBuilder()
+		assertThat(EagerReact.parallelCommonBuilder()
 						.react(()->slow(),()->1,()->2)
 						.peek(System.out::println)
 						.convertToLazyStream()
@@ -43,7 +42,7 @@ public class EagerTest {
 		
 		
 		
-		assertThat(EagerFutureStream.parallelCommonBuilder()
+		assertThat(EagerReact.parallelCommonBuilder()
 						.react(()->slow(),()->1,()->2)
 						.peek(System.out::println)
 						.convertToLazyStream()
@@ -58,13 +57,13 @@ public class EagerTest {
 	
 	@Test
 	public void testPrimitiveStream(){
-		EagerFutureStream.parallelCommonBuilder()
+		EagerReact.parallelCommonBuilder()
 		.of(IntStream.range(0, 1000))
 		.forEach(System.out::println);
 	}
 	@Test
 	public void jitter(){
-		EagerFutureStream.parallelCommonBuilder()
+		EagerReact.parallelCommonBuilder()
 						.of(IntStream.range(0, 100))
 						.map(it -> it*100)
 						.jitter(10l)
@@ -73,7 +72,7 @@ public class EagerTest {
 	}
 	@Test 
 	public void jitterSequential(){
-		EagerFutureStream.sequentialCommonBuilder()
+		EagerReact.sequentialCommonBuilder()
 						.of(IntStream.range(0, 100))
 						.map(it -> it*100)
 						.jitter(100000l)
@@ -83,7 +82,7 @@ public class EagerTest {
 	@Test
 	public void doOnEach(){
 		String[] found = {""};
-		String res = EagerFutureStream.sequentialBuilder().react(()->"hello").doOnEach(it->{ found[0]=it;return "world";}).map(it->it+"!").first();
+		String res = EagerReact.sequentialBuilder().react(()->"hello").doOnEach(it->{ found[0]=it;return "world";}).map(it->it+"!").first();
 		while("".equals(found[0])){
 			Thread.yield();
 		}
@@ -93,28 +92,28 @@ public class EagerTest {
 	
 	@Test
 	public void eagerReactStream(){
-		EagerFutureStream.sequentialBuilder()
+		EagerReact.sequentialBuilder()
 			.react( ()-> 1 )
 			.map(list -> 1+2)
 			.block();
 	}
 	@Test
 	public void eagerParallel(){
-		EagerFutureStream.parallelBuilder()
+		EagerReact.parallelBuilder()
 			.react( ()-> 1 )
 			.map(list -> 1+2)
 			.block();
 	}
 	@Test
 	public void eagerReactStreamList(){
-		EagerFutureStream.sequentialBuilder()
+		EagerReact.sequentialBuilder()
 			.react( asList(()-> 1 ))
 			.map(list -> 1+2)
 			.block();
 	}
 	@Test
 	public void eagerParallelList(){
-		EagerFutureStream.parallelBuilder()
+		EagerReact.parallelBuilder()
 			.react( asList(()-> 1 ))
 			.map(list -> 1+2)
 			.block();

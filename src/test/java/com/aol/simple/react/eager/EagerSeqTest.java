@@ -23,8 +23,8 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import com.aol.simple.react.base.BaseSeqTest;
+import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
-import com.aol.simple.react.stream.traits.FutureStream;
 
 public class EagerSeqTest extends BaseSeqTest {
  
@@ -39,7 +39,7 @@ public class EagerSeqTest extends BaseSeqTest {
 	
 	@Override
 	protected <U> EagerFutureStream<U> react(Supplier<U>... array) {
-		return EagerFutureStream.parallelBuilder().react(array);
+		return EagerReact.parallelBuilder().react(array);
 		
 	}
 	@Test

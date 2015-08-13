@@ -1,12 +1,13 @@
 package com.aol.simple.react.base;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
@@ -34,7 +35,7 @@ import org.junit.Test;
 import org.pcollections.HashTreePMap;
 
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.stream.traits.EagerFutureStream;
+import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.util.SimpleTimer;
 
@@ -152,7 +153,7 @@ public abstract class BaseSequentialSeqTest {
 	@Test
 	public void takeUntil(){
 		
-		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).takeUntil(EagerFutureStream.sequentialBuilder().react(()->value())).noneMatch(it-> it==200));
+		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).takeUntil(EagerReact.sequentialBuilder().react(()->value())).noneMatch(it-> it==200));
 		
 	}
 	@Test
@@ -171,7 +172,7 @@ public abstract class BaseSequentialSeqTest {
 		for(int i=0;i<10;i++){
 			System.out.println(i);
 			List<List<Integer>> list = react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
-					.batchBySizeAndTime(10,10,TimeUnit.MICROSECONDS)
+					.batchBySizeAndTime(10,1,TimeUnit.MICROSECONDS)
 					.toList();
 			
 			assertThat(list

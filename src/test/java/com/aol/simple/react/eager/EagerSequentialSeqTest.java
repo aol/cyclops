@@ -37,7 +37,7 @@ public class EagerSequentialSeqTest extends BaseSequentialSeqTest {
 	@Override
 	protected <U> EagerFutureStream<U> react(Supplier<U>... array) {
 		
-		return EagerFutureStream.sequentialCommonBuilder().react(array);
+		return EagerReact.sequentialCommonBuilder().react(array);
 		
 	}
 	@Override
@@ -47,7 +47,7 @@ public class EagerSequentialSeqTest extends BaseSequentialSeqTest {
 	
 	@Override
 	protected <U> EagerFutureStream<U> of(U... array) {
-		return EagerFutureStream.sequentialCurrentBuilder().of(array);
+		return EagerReact.sequentialCurrentBuilder().of(array);
 	}
 	@Test
 	public void concatStreams(){

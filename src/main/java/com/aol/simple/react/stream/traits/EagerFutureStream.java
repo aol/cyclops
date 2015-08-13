@@ -1645,17 +1645,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		return fromStream(FutureStream.super.intersperse(value));
 	}
 
-	/**
-	 * Construct an Eager SimpleReact Stream from specified array
-	 * 
-	 * @param array
-	 *            Values to react to
-	 * @return Next SimpleReact stage
-	 */
-	public static <U> EagerFutureStream<U> parallel(U... array) {
-		return parallelCommonBuilder().of(Arrays.asList(array));
-	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1867,91 +1857,104 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		return split;
 	}
 
-	/**
-	 * @return EagerReact for handling finite streams
-	 * @see SimpleReact#SimpleReact()
+
+
+
+	/* 
+	 *	@return Convert to standard JDK 8 Stream
+	 * @see com.aol.simple.react.stream.traits.FutureStream#stream()
 	 */
-	public static EagerReact parallelBuilder() {
-		return new EagerReact();
+	@Override
+	default Stream<U> stream() {
+		return FutureStream.super.stream();
+	}
+	/* 
+	 *	@return New version of this stream converted to execute asynchronously and in parallel
+	 * @see com.aol.simple.react.stream.traits.FutureStream#parallel()
+	 */
+	@Override
+	default EagerFutureStream<U> parallel(){
+		return this.withAsync(true).withTaskExecutor(EagerReact.parallelBuilder().getExecutor());
+	}
+	/* 
+	 *	@return  New version of this stream  converted to execute synchronously and sequentially
+	 * @see com.aol.simple.react.stream.traits.FutureStream#sequential()
+	 */
+	@Override
+	default EagerFutureStream<U> sequential(){
+		return this.withAsync(false).withTaskExecutor(EagerReact.sequentialBuilder().getExecutor());
 	}
 
-	/**
-	 * Construct a new EagerReact builder, with a new task executor and retry
-	 * executor with configured number of threads
+
+
+
+	
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param parallelism
-	 *            Number of threads task executor should have
-	 * @return eager EagerReact instance
+	 * @see org.jooq.lambda.Seq#unordered()
 	 */
-	public static EagerReact parallelBuilder(int parallelism) {
-		return EagerReact.builder().executor(new ForkJoinPool(parallelism)).retrier(new RetryBuilder().parallelism(parallelism)).build();
-		
+	@Override
+	default EagerFutureStream<U> unordered() {
+		return this;
 	}
 
-	/**
-	 * @return new EagerReact builder configured with standard parallel executor
-	 *         By default this is the ForkJoinPool common instance but is
-	 *         configurable in the ThreadPools class
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @see ThreadPools#getStandard() see RetryBuilder#getDefaultInstance()
+	 * @see org.jooq.lambda.Seq#onClose(java.lang.Runnable)
 	 */
-	public static EagerReact parallelCommonBuilder() {
-		return EagerReact
-				.builder()
-				.async(true)
-				.executor(ThreadPools.getStandard())
-				.retrier(
-						RetryBuilder.getDefaultInstance().withScheduler(
-								ThreadPools.getCommonFreeThreadRetry()))
-				.build();
+	@Override
+	default EagerFutureStream<U> onClose(Runnable closeHandler) {
+
+		return (EagerFutureStream)FutureStream.super.onClose(closeHandler);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.jooq.lambda.Seq#sorted()
+	 */
+	@Override
+	default EagerFutureStream<U> sorted() {
+		return (EagerFutureStream<U>)fromStream(FutureStream.super.sorted());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.jooq.lambda.Seq#sorted(java.util.Comparator)
+	 */
+	@Override
+	default EagerFutureStream<U> sorted(Comparator<? super U> comparator) {
+		return (EagerFutureStream<U>)fromStream(FutureStream.super.sorted(comparator));
 	}
 
 	/**
-	 * @return new eager EagerReact builder configured to run on a separate
-	 *         thread (non-blocking current thread), sequentially New
-	 *         ForkJoinPool will be created
+	 * Give a function access to the current stage of a SimpleReact Stream
+	 * 
+	 * @param consumer
+	 *            Consumer that will recieve current stage
+	 * @return Self (current stage)
 	 */
-	public static EagerReact sequentialBuilder() {
-		return EagerReact
-				.builder()
-				.async(false)
-				.executor(Executors.newFixedThreadPool(1))
-				.retrier(
-						RetryBuilder.getDefaultInstance().withScheduler(
-								Executors.newScheduledThreadPool(1))).build();
+	default EagerFutureStream<U> self(Consumer<FutureStream<U>> consumer) {
+		return (com.aol.simple.react.stream.traits.EagerFutureStream<U>)FutureStream.super.self(consumer);
 	}
+	
+
 
 	/**
-	 * @return new EagerReact builder configured to run on a separate thread
-	 *         (non-blocking current thread), sequentially Common free thread
-	 *         Executor from
+	 * Construct an Eager SimpleReact Stream from specified array
+	 * 
+	 * @param array
+	 *            Values to react to
+	 * @return Next SimpleReact stage
 	 */
-	public static EagerReact sequentialCommonBuilder() {
-		return EagerReact
-				.builder()
-				.async(false)
-				.executor(ThreadPools.getCommonFreeThread())
-				.retrier(
-						RetryBuilder.getDefaultInstance().withScheduler(
-								ThreadPools.getCommonFreeThreadRetry()))
-				.build();
-	}
-	/**
-	 * @return new EagerReact builder configured to run on a separate thread
-	 *         (non-blocking current thread), sequentially Common free thread
-	 *         Executor from
-	 */
-	public static EagerReact sequentialCurrentBuilder() {
-		return EagerReact
-				.builder()
-				.async(false)
-				.executor(ThreadPools.getCurrentThreadExecutor())
-				.retrier(
-						RetryBuilder.getDefaultInstance().withScheduler(
-								ThreadPools.getCommonFreeThreadRetry()))
-				.build();
+	public static <U> EagerFutureStream<U> parallel(U... array) {
+		return EagerReact.parallelCommonBuilder().of(Arrays.asList(array));
 	}
 
+	
 	/**
 	 *  Create a 'free threaded' asynchronous stream that runs on the supplied CompletableFutures executor service (unless async operator invoked
 	 *  , in which it will switch to the common 'free' thread executor)
@@ -2083,88 +2086,6 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 				spliteratorUnknownSize(iterator, ORDERED), false));
 	}
 
-
-
-	/* 
-	 *	@return Convert to standard JDK 8 Stream
-	 * @see com.aol.simple.react.stream.traits.FutureStream#stream()
-	 */
-	@Override
-	default Stream<U> stream() {
-		return FutureStream.super.stream();
-	}
-	/* 
-	 *	@return New version of this stream converted to execute asynchronously and in parallel
-	 * @see com.aol.simple.react.stream.traits.FutureStream#parallel()
-	 */
-	@Override
-	default EagerFutureStream<U> parallel(){
-		return this.withAsync(true).withTaskExecutor(parallelBuilder().getExecutor());
-	}
-	/* 
-	 *	@return  New version of this stream  converted to execute synchronously and sequentially
-	 * @see com.aol.simple.react.stream.traits.FutureStream#sequential()
-	 */
-	@Override
-	default EagerFutureStream<U> sequential(){
-		return this.withAsync(false).withTaskExecutor(sequentialBuilder().getExecutor());
-	}
-
-
-
-
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.jooq.lambda.Seq#unordered()
-	 */
-	@Override
-	default EagerFutureStream<U> unordered() {
-		return this;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.jooq.lambda.Seq#onClose(java.lang.Runnable)
-	 */
-	@Override
-	default EagerFutureStream<U> onClose(Runnable closeHandler) {
-
-		return (EagerFutureStream)FutureStream.super.onClose(closeHandler);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.jooq.lambda.Seq#sorted()
-	 */
-	@Override
-	default EagerFutureStream<U> sorted() {
-		return (EagerFutureStream<U>)fromStream(FutureStream.super.sorted());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.jooq.lambda.Seq#sorted(java.util.Comparator)
-	 */
-	@Override
-	default EagerFutureStream<U> sorted(Comparator<? super U> comparator) {
-		return (EagerFutureStream<U>)fromStream(FutureStream.super.sorted(comparator));
-	}
-
-	/**
-	 * Give a function access to the current stage of a SimpleReact Stream
-	 * 
-	 * @param consumer
-	 *            Consumer that will recieve current stage
-	 * @return Self (current stage)
-	 */
-	default EagerFutureStream<U> self(Consumer<FutureStream<U>> consumer) {
-		return (com.aol.simple.react.stream.traits.EagerFutureStream<U>)FutureStream.super.self(consumer);
-	}
 
 	
 
