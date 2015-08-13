@@ -39,6 +39,11 @@ import com.aol.simple.react.stream.traits.LazyFutureStream;
 public class LazySeqTest extends BaseSeqTest {
 	
 	@Test
+	public void switchOnNextMultiple(){
+		assertThat(react(()->1,()->2).switchOnNext( react(()->'a',()->'b'),
+						react(()->100,()->200)).toList().size(),equalTo(6));
+	}
+	@Test
 	public void skipUntil(){
 		System.out.println(react(()->1,()->2,()->3,()->4,()->value2())
 				.skipUntil(react(()->value())).collect(Collectors.toList()));

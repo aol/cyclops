@@ -1,6 +1,7 @@
 package com.aol.simple.react.eager;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
@@ -41,6 +42,11 @@ public class EagerSeqTest extends BaseSeqTest {
 	protected <U> EagerFutureStream<U> react(Supplier<U>... array) {
 		return EagerReact.parallelBuilder().react(array);
 		
+	}
+	@Test
+	public void mergeMultiple(){
+		assertThat(react(()->1,()->2).switchOnNext(react(()->'a',()->'b'),
+						react(()->100,()->200)).toList().size(),equalTo(6));
 	}
 	@Test
 	public void skipUntil(){

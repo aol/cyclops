@@ -33,9 +33,11 @@ import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.StageWithResults;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
+import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.simple.SimpleReactStreamImpl;
 import com.aol.simple.react.stream.traits.ConfigurableStream.SimpleReactConfigurableStream;
+import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.policy.AbortRetryException;
 
 
@@ -521,22 +523,39 @@ public interface SimpleReactStream<U> extends
 
 	}
 	
-	/**
-	 * Merge this reactive dataflow with another of the same type. To merge
-	 * flows of different types use the static method merge and merge to a
-	 * common ancestor.
+	/*
+	  * Merge two simple-react Streams, by merging the Stream of underlying
+	 * futures - not suitable for merging infinite Streams - use   
+	 * see LazyFutureStream#switchOnNext for infinite Streams
 	 * 
-	 * @param s
-	 *            Reactive stage builder to merge with
-	 * @return Merged dataflow
+	 * <pre>
+	 * {@code 
+	 * List<String> result = 	SimpleReactStream.of(1,2,3)
+	 * 											 .merge(LazyFutureStream.of(100,200,300))
+												  .map(it ->it+"!!")
+												  .toList();
+
+		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
+	 * 
+	 * }
+	 * </pre>
+	 * 
+	 * @param s Stream to merge
+	 * 
+	 * @return Next stage in stream
+	 * 
+	 * @see
+	 * com.aol.simple.react.stream.traits.FutureStream#merge(com.aol.simple.
+	 * react.stream.traits.SimpleReactStream)
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	default SimpleReactStream<U> merge(SimpleReactStream<U> s) {
-		List merged = Stream.of(this.getLastActive().list(), s.getLastActive().list())
+	default SimpleReactStream<U> merge(SimpleReactStream<U>... s) {
+		List merged = Stream.concat(Stream.of(this),Stream.of(s)).map(stream -> stream.getLastActive().list())
 				.flatMap(Collection::stream).collect(Collectors.toList());
 		return (SimpleReactStream<U>) this.withLastActive(new StreamWrapper(merged));
 	}
 	
+	 
 	/**
 	 * Merge this reactive dataflow with another - recommended for merging
 	 * different types. To merge flows of the same type the instance method
@@ -755,145 +774,22 @@ public interface SimpleReactStream<U> extends
 
 	}
 
-	
-	
-	
 	/**
-	 * Construct a SimpleReact Stage from a supplied array
+	 * Convert between an Lazy and Eager future stream,
+	 * can be used to take advantages of each approach during a single Stream
 	 * 
-	 * @param array
-	 *            Array of value to form the reactive stream / sequence
-	 * @return SimpleReact Stage
+	 * @return An EagerFutureStream from this LazyFutureStream, will use the same executors
 	 */
-	public static <U> SimpleReactStream<U> parallelOf(U... array) {
-		return new SimpleReact().of(Arrays.asList(array));
-	}
-
-	/**
-	 * @return  An Eager SimpleReact instance 
-	 *  @see SimpleReact#SimpleReact()
-	 */
-	public static SimpleReact parallelBuilder() {
-		return new SimpleReact();
-	}
-
-	/**
-	 * Construct a new SimpleReact builder, with a new task executor and retry executor
-	 * with configured number of threads 
-	 * 
-	 * @param parallelism Number of threads task executor should have
-	 * @return eager SimpleReact instance
-	 */
-	public static SimpleReact parallelBuilder(int parallelism) {
-		return SimpleReact.builder().executor(new ForkJoinPool(parallelism))
-				.retrier(new RetryBuilder().parallelism(parallelism)).build();
-	}
-
-	/**
-	 * @return new eager SimpleReact builder configured with standard parallel executor
-	 * By default this is the ForkJoinPool common instance but is configurable in the ThreadPools class
-	 * 
-	 * @see ThreadPools#getStandard()
-	 * see RetryBuilder#getDefaultInstance()
-	 */
-	public static SimpleReact parallelCommonBuilder() {
-		return SimpleReact.builder().executor(ThreadPools.getStandard()).async(true)
-		.retrier(RetryBuilder.getDefaultInstance().withScheduler(ThreadPools.getCommonFreeThreadRetry())).build();
-		
-	}
-
-	/**
-	 * @return new eager SimpleReact builder configured to run on a separate thread (non-blocking current thread), sequentially
-	 * New ForkJoinPool will be created
-	 */
-	public static SimpleReact sequentialBuilder() {
-		return SimpleReact.builder().async(false).executor(new ForkJoinPool(1))
-				.retrier(RetryBuilder.getDefaultInstance().withScheduler(Executors.newScheduledThreadPool(1))).build();
-	}
-
-	/**
-	 * @return new eager SimpleReact builder configured to run on a separate thread (non-blocking current thread), sequentially
-	 * Common free thread Executor from
-	 */
-	public static SimpleReact sequentialCommonBuilder() {
-		return SimpleReact.builder().async(false).executor(ThreadPools.getCommonFreeThread())
-				.retrier(RetryBuilder.getDefaultInstance().withScheduler(ThreadPools.getCommonFreeThreadRetry())).build();
-	}
-
-	/**
-	 *  Create a parallel asynchronous stream
-	 * @see Stream#of(Object)
-	 */
-	static <T> SimpleReactStream<T> react(Supplier<T> value) {
-		return  new SimpleReact().react(value);
-	}
-
-	/**
-	 * Create a parallel asynchronous stream
-	 * @see Stream#of(Object[])
-	 */
-	@SafeVarargs
-	static <T> SimpleReactStream<T> react(Supplier<T>... values) {
-		return  new SimpleReact().react(values);
+	default EagerFutureStream<U> convertToEagerStream(){
+		return new EagerReact(getTaskExecutor()).withRetrier(getRetrier()).fromStream((Stream)getLastActive().stream());
 	}
 	
-	/**
-	 * @see Stream#of(Object)
-	 */
-	static <T> SimpleReactStream<T> of(T value) {
-		return of((Stream) Seq.of(value));
-	}
-
-	/**
-	 * @see Stream#of(Object[])
-	 */
-	@SafeVarargs
-	static <T> SimpleReactStream<T> of(T... values) {
-		return of((Stream) Seq.of(values));
-	}
-
-	/**
-	 * @see Stream#empty()
-	 */
-	static <T> SimpleReactStream<T> empty() {
-		return of((Stream) Seq.empty());
-	}
-
+	
+	
 
 
 
 	
-	
-	
-	/**
-	 * Wrap a Stream into a SimpleReactStream.
-	 */
-	static <T> SimpleReactStream<T> of(Stream<T> stream) {
-		
-		if (stream instanceof FutureStream)
-			stream = ((FutureStream) stream).toQueue().stream(((FutureStream) stream).getSubscription());
-
-		SimpleReact sr = new SimpleReact(ThreadPools.getSequential(), RetryBuilder
-				.getDefaultInstance().withScheduler(
-						ThreadPools.getSequentialRetry()),false);
-		return new SimpleReactStreamImpl<T>(sr,
-				stream.map(CompletableFuture::completedFuture),null);
-	}
-
-	/**
-	 * Wrap an Iterable into a FutureStream.
-	 */
-	static <T> SimpleReactStream<T> ofIterable(Iterable<T> iterable) {
-		return of(iterable.iterator());
-	}
-
-	/**
-	 * Wrap an Iterator into a FutureStream.
-	 */
-	static <T> SimpleReactStream<T> of(Iterator<T> iterator) {
-		return of(StreamSupport.stream(
-				spliteratorUnknownSize(iterator, ORDERED), false));
-	}
 
 	/* 
 	 * Execute subsequent stages on the completing thread (until async called)
@@ -922,5 +818,125 @@ public interface SimpleReactStream<U> extends
 		return this.withAsync(true);
 	}
 
+	/**
+	 * Create a 'free threaded' asynchronous stream that runs on a single thread (not current)
+	 * The supplier will be executed asyncrhonously, subsequent tasks will be executed synchronously unless the async() operator is invoked.
+	 * 
+	 */
+	static <T> SimpleReactStream<T> react(Supplier<T> value) {
+		return   new SimpleReact(ThreadPools.getSequential(),new AsyncRetryExecutor(ThreadPools.getSequentialRetry()),false).react(value);
+	}
+	/**
+	 * Create a 'free threaded' asynchronous stream that runs on a single thread (not current)
+	 * The supplier will be executed asyncrhonously, subsequent tasks will be executed synchronously unless the async() operator is invoked.
+	 * 
+	 */
+	@SafeVarargs
+	static <T> SimpleReactStream<T> react(Supplier<T>... values) {
+		return   new SimpleReact(ThreadPools.getSequential(),new AsyncRetryExecutor(ThreadPools.getSequentialRetry()),false).react(values);
+	}
+	
+	/**
+	 *  Create a sequential synchronous stream that runs on the current thread
+	 * 
+	 * 
+	 */
+	static <T> SimpleReactStream<T> of(T value) {
+		return simpleReactStream((Stream) Seq.of(value));
+	}
+
+	/**
+	 *  Create a sequential synchronous stream that runs on the current thread
+	 * 
+	 * 
+	 */
+	@SafeVarargs
+	static <T> SimpleReactStream<T> of(T... values) {
+		return simpleReactStream((Stream) Seq.of(values));
+	}
+
+	/**
+	 *  Create an empty sequential synchronous stream that runs on the current thread
+	 * 
+	 * 
+	 */
+	static <T> SimpleReactStream<T> empty() {
+		return simpleReactStream((Stream) Seq.empty());
+	}
+	/**
+	 * Construct an SimpleReactStream  from specified array, that will run in parallel
+	 * on the common Parallel executor service (by default the Common ForkJoinPool) see ThreadPools#setUseCommon 
+	 * to change to a different pool
+	 * 
+	 * @param array
+	 *            Array of value to form the reactive stream / sequence
+	 * @return SimpleReact Stage
+	 */
+	public static <U> SimpleReactStream<U> parallel(U... array) {
+		return SimpleReact.parallelCommonBuilder().of(Arrays.asList(array));
+	}
+	
+	/**
+	 *  Create a 'free threaded' asynchronous stream that runs on the supplied CompletableFutures executor service (unless async operator invoked
+	 *  , in which it will switch to the common 'free' thread executor)
+	 *  Subsequent tasks will be executed synchronously unless the async() operator is invoked.
+	 *  
+	 * @see Stream#of(Object)
+	 */
+	static <T> SimpleReactStream<T> simpleReactStreamFrom(Stream<CompletableFuture<T>> stream) {
+		return  new SimpleReact(ThreadPools.getSequential(),new AsyncRetryExecutor(ThreadPools.getSequentialRetry()),false)
+									.fromStream(stream);
+	}
+	/**
+	 *  Create a 'free threaded' asynchronous stream that runs on the supplied CompletableFutures executor service (unless async operator invoked
+	 *  , in which it will switch to the common 'free' thread executor)
+	 *  Subsequent tasks will be executed synchronously unless the async() operator is invoked.
+	 *  
+	 * @see Stream#of(Object)
+	 */
+	static <T> SimpleReactStream<T> simpleReactStream(CompletableFuture<T> value) {
+		return  new SimpleReact(ThreadPools.getSequential(),new AsyncRetryExecutor(ThreadPools.getSequentialRetry()),false)
+									.fromStream(Stream.of(value));
+	}
+	/**
+	 *  Create a 'free threaded' asynchronous stream that runs on a single thread (not current)
+	 *  The supplier will be executed asyncrhonously, subsequent tasks will be executed synchronously unless the async() operator
+	 *  is invoked.
+	 *  
+	 * @see Stream#of(Object)
+	 */
+	static <T> SimpleReactStream<T> simpleReactStream(CompletableFuture<T>... values) {
+		return  new SimpleReact(ThreadPools.getSequential(),new AsyncRetryExecutor(ThreadPools.getSequentialRetry()),false)
+									.fromStream(Stream.of(values));
+	}
+	/**
+	 * Wrap a Stream into a SimpleReactStream.
+	 */
+	static <T> SimpleReactStream<T> simpleReactStream(Stream<T> stream) {
+		
+		if (stream instanceof FutureStream)
+			stream = ((FutureStream) stream).toQueue().stream(((FutureStream) stream).getSubscription());
+
+		SimpleReact sr = new SimpleReact(ThreadPools.getCurrentThreadExecutor(), RetryBuilder
+				.getDefaultInstance().withScheduler(
+						ThreadPools.getSequentialRetry()),false);
+		return new SimpleReactStreamImpl<T>(sr,
+				stream.map(CompletableFuture::completedFuture),null);
+	}
+
+	/**
+	 * Wrap an Iterable into a FutureStream.
+	 */
+	static <T> SimpleReactStream<T> simpleReactStream(Iterable<T> iterable) {
+		return simpleReactStream(iterable.iterator());
+	}
+
+	/**
+	 * Wrap an Iterator into a FutureStream.
+	 */
+	static <T> SimpleReactStream<T> simpleReactStream(Iterator<T> iterator) {
+		return simpleReactStream(StreamSupport.stream(
+				spliteratorUnknownSize(iterator, ORDERED), false));
+	}
 	
 }

@@ -8,6 +8,7 @@ import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -17,6 +18,7 @@ import lombok.experimental.Builder;
 import lombok.Getter;
 import lombok.experimental.Wither;
 
+import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
@@ -205,7 +207,56 @@ public class SimpleReact  extends BaseSimpleReact{
 		return async;
 	}
 	
-	
+	/**
+	 * @return  An Eager SimpleReact instance 
+	 *  @see SimpleReact#SimpleReact()
+	 */
+	public static SimpleReact parallelBuilder() {
+		return new SimpleReact();
+	}
+
+	/**
+	 * Construct a new SimpleReact builder, with a new task executor and retry executor
+	 * with configured number of threads 
+	 * 
+	 * @param parallelism Number of threads task executor should have
+	 * @return eager SimpleReact instance
+	 */
+	public static SimpleReact parallelBuilder(int parallelism) {
+		return SimpleReact.builder().executor(new ForkJoinPool(parallelism))
+				.retrier(new RetryBuilder().parallelism(parallelism)).build();
+	}
+
+	/**
+	 * @return new eager SimpleReact builder configured with standard parallel executor
+	 * By default this is the ForkJoinPool common instance but is configurable in the ThreadPools class
+	 * 
+	 * @see ThreadPools#getStandard()
+	 * see RetryBuilder#getDefaultInstance()
+	 */
+	public static SimpleReact parallelCommonBuilder() {
+		return SimpleReact.builder().executor(ThreadPools.getStandard()).async(true)
+		.retrier(RetryBuilder.getDefaultInstance().withScheduler(ThreadPools.getCommonFreeThreadRetry())).build();
+		
+	}
+
+	/**
+	 * @return new eager SimpleReact builder configured to run on a separate thread (non-blocking current thread), sequentially
+	 * New ForkJoinPool will be created
+	 */
+	public static SimpleReact sequentialBuilder() {
+		return SimpleReact.builder().async(false).executor(new ForkJoinPool(1))
+				.retrier(RetryBuilder.getDefaultInstance().withScheduler(Executors.newScheduledThreadPool(1))).build();
+	}
+
+	/**
+	 * @return new eager SimpleReact builder configured to run on a separate thread (non-blocking current thread), sequentially
+	 * Common free thread Executor from
+	 */
+	public static SimpleReact sequentialCommonBuilder() {
+		return SimpleReact.builder().async(false).executor(ThreadPools.getCommonFreeThread())
+				.retrier(RetryBuilder.getDefaultInstance().withScheduler(ThreadPools.getCommonFreeThreadRetry())).build();
+	}
 		
 	
 }

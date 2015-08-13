@@ -272,13 +272,6 @@ public abstract class BaseSequentialSeqTest {
 		}
 	}
 	
-	@Test
-	public void concat(){
-	List<String> result = 	of(1,2,3).concat(100,200,300)
-			.map(it ->it+"!!").collect(Collectors.toList());
-
-		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
-	}
 	
 	@Test
 	public void zip(){

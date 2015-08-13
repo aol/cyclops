@@ -3,7 +3,6 @@ package com.aol.simple.react.stream.traits;
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -14,7 +13,6 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -681,7 +679,8 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 				.batchByTime(time, unit, factory);
 
 	}
-
+	
+	
 	/**
 	 * Similar to zip and withLatest, except will always take the latest from
 	 * either Stream (merged with last available from the other). By contrast
@@ -765,7 +764,21 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	}
 
 	/*
-	 * Merge two SimpleReact Streams
+	 * Merge two simple-react Streams, by merging the Stream of underlying
+	 * futures - not suitable for merging infinite Streams unless all supplied
+	 * Streams are LazyFutureStreams - use  LazyFutureStream#switchOnNext for infinite Streams
+	 * 
+	 * <pre>
+	 * {@code 
+	 * List<String> result = 	LazyFutureStream.of(1,2,3)
+	 * 											 .merge(LazyFutureStream.of(100,200,300))
+												  .map(it ->it+"!!")
+												  .toList();
+
+		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
+	 * 
+	 * }
+	 * </pre>
 	 * 
 	 * @param s Stream to merge
 	 * 
@@ -776,9 +789,42 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 * react.stream.traits.SimpleReactStream)
 	 */
 	@Override
-	default LazyFutureStream<U> merge(SimpleReactStream<U> s) {
-		return (LazyFutureStream) FutureStream.super.merge(s);
+	default LazyFutureStream<U> merge(SimpleReactStream<U>... streams) {
+		return (LazyFutureStream<U>) (Stream.of(streams).allMatch( stream -> stream instanceof LazyFutureStream) ?
+									switchOnNextStream(Seq.of(streams).cast(LazyFutureStream.class) ) : FutureStream.super.merge(streams));
 	}
+	/**
+	 * Merges this stream and the supplied Streams into a single Stream where the next value
+	 * is the next returned across any of the involved Streams. Suitable for merging infinite streams
+	 * 
+	 * <pre>
+	 * {@code
+	 * 	LazyFutureStream<Integer> fast =  ... //  [1,2,3,4,5,6,7..]
+	 * 	LazyFutureStream<Integer> slow =  ... //  [100,200,300,400,500,600..]
+	 * 
+	 *  LazyFutureStream<Integer> merged = fast.switchOnNext(slow);  //[1,2,3,4,5,6,7,8,100,9,10,11,12,13,14,15,16,200..] 
+	 * }
+	 * 
+	 * 
+	 * @param streams
+	 * @return
+	 */
+	default <R> LazyFutureStream<R> switchOnNext(LazyFutureStream<?>... streams){
+		Queue queue = Queue.createMergeQueue(); 
+		addToQueue(queue);
+		Seq.of(streams).forEach(s->s.addToQueue(queue));
+		
+		return fromStream(queue.stream(this.getSubscription()));
+	}
+	default <R> LazyFutureStream<R> switchOnNextStream(Stream<LazyFutureStream> stream){
+		Queue queue = Queue.createMergeQueue(); 
+		addToQueue(queue);
+		stream.forEach(s->s.addToQueue(queue));
+		
+		return fromStream(queue.stream(this.getSubscription()));
+	}
+	
+	
 
 	/*
 	 * Define failure handling for this stage in a stream. Recovery function
@@ -1002,8 +1048,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	default LazyFutureStream<U> concat(Stream<U> other) {
 
 		SimpleReactStream stream = other instanceof SimpleReactStream ? (SimpleReactStream) other
-				: SimpleReactStream.sequentialCommonBuilder()
-						.of(other);
+				: LazyFutureStream.lazyFutureStream(other);
 		return (LazyFutureStream) merge(stream);
 	}
 

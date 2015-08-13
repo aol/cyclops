@@ -660,8 +660,6 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 	
 
-	
-
 	/**
 	 * Similar to zip and withLatest, except will always take the latest from
 	 * either Stream (merged with last available from the other). By contrast
@@ -781,7 +779,9 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	}
 
 	/*
-	 * Merge two simple-react Streams
+	 * Merge two simple-react Streams, by merging the Stream of underlying
+	 * futures - not suitable for merging infinite Streams - use   
+	 * see LazyFutureStream#switchOnNext for infinite Streams
 	 * 
 	 * <pre>
 	 * {@code 
@@ -804,10 +804,28 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * react.stream.traits.SimpleReactStream)
 	 */
 	@Override
-	default EagerFutureStream<U> merge(SimpleReactStream<U> s) {
-		return (EagerFutureStream) FutureStream.super.merge(s);
+	default FutureStream<U> merge(SimpleReactStream<U>... streams) {
+		return (FutureStream)FutureStream.super.merge(streams);		
 	}
-
+	/**
+	 * Merges this stream and the supplied Streams into a single Stream where the next value
+	 * is the next returned across any of the involved Streams
+	 * 
+	 * <pre>
+	 * {@code
+	 * 	LazyFutureStream<Integer> fast =  ... //  [1,2,3,4,5,6,7..]
+	 * 	EagerFutureStream<Integer> slow =  ... //  [100,200,300,400,500,600..]
+	 * 
+	 *  LazyFutureStream<Integer> merged = fast.switchOnNext(slow);  //[1,2,3,4,5,6,7,8,100,9,10,11,12,13,14,15,16,200..] 
+	 * }
+	 * 
+	 * 
+	 * @param streams
+	 * @return
+	 */
+	default <R> EagerFutureStream<R> switchOnNext(FutureStream<?>... streams){
+		return (EagerFutureStream)merge((SimpleReactStream[])streams);
+	}
 	/*
 	 * Define failure handling for this stage in a stream. Recovery function
 	 * will be called after an excption Will be passed a
@@ -1941,10 +1959,28 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		return (com.aol.simple.react.stream.traits.EagerFutureStream<U>)FutureStream.super.self(consumer);
 	}
 	
+	/**
+	 * Merge two reactive dataflows with one and another.
+	 * 
+	 * @param s1
+	 *            Reactive stage builder to merge
+	 * @param s2
+	 *            Reactive stage builder to merge
+	 * @return Merged dataflow
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static <R> FutureStream<R> merge(EagerFutureStream s1, EagerFutureStream s2) {
+		List merged = Stream
+				.of(s1.getLastActive().list(), s2.getLastActive().list())
+				.flatMap(Collection::stream).collect(Collectors.toList());
+		return (FutureStream<R>) s1.withLastActive(new StreamWrapper(merged));
+	}
 
 
 	/**
-	 * Construct an Eager SimpleReact Stream from specified array
+	 * Construct an EagerFutureStream Stream from specified array, that will run in parallel
+	 * on the common Parallel executor service (by default the Common ForkJoinPool) see ThreadPools#setUseCommon 
+	 * to change to a different pool
 	 * 
 	 * @param array
 	 *            Values to react to

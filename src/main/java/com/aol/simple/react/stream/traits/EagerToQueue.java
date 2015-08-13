@@ -51,7 +51,7 @@ public interface EagerToQueue<U> extends ToQueue<U> {
 	}
 	default void addToQueue(Queue queue){
 		 thenSync(it -> queue.offer(it))
-		  	.allOf(it ->queue.close());
+		  		.allOf(it ->queue.close());
 	}
 	/* 
 	 * Populate provided queues with the sharded data from this Stream.

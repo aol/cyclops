@@ -58,7 +58,7 @@ public class SimpleReactTest {
 	}
 	@Test
 	public void streamParallelOf(){
-		SimpleReactStream value = SimpleReactStream.parallelOf(1,2);
+		SimpleReactStream value = SimpleReactStream.parallel(1,2);
 		
 		assertThat(value.getTaskExecutor(),is(ForkJoinPool.commonPool()));
 	}
@@ -68,16 +68,16 @@ public class SimpleReactTest {
 	}
 	@Test
 	public void futureStreamIterable(){
-		assertThat(SimpleReactStream.ofIterable(Arrays.asList(1,2,3,4)).block().size(),is(4));
+		assertThat(SimpleReactStream.simpleReactStream(Arrays.asList(1,2,3,4)).block().size(),is(4));
 	}
 	
 	@Test
 	public void futureStreamTest(){
-		assertThat(SimpleReactStream.of((Stream)LazyFutureStream.of(1,2,3,4)).block().size(),is(4));
+		assertThat(SimpleReactStream.simpleReactStream((Stream)LazyFutureStream.of(1,2,3,4)).block().size(),is(4));
 	}
 	@Test
 	public void futureStreamFromStreamTest(){
-		assertThat(SimpleReactStream.of(Stream.of(1,2,3,4)).block().size(),is(4));
+		assertThat(SimpleReactStream.simpleReactStream(Stream.of(1,2,3,4)).block().size(),is(4));
 	}
 	@Test
 	public void syncTest(){

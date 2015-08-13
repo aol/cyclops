@@ -882,24 +882,21 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	}
 
 	/*
+	 * Merges this stream with the supplied Stream
+	 * to merge Streams of different type 
+	 *
+	 * 
 	 * @see
 	 * com.aol.simple.react.stream.traits.SimpleReactStream#merge(com.aol.simple
 	 * .react.stream.traits.SimpleReactStream)
 	 */
 	@Override
-	default FutureStream<U> merge(SimpleReactStream<U> s) {
-		if(s instanceof LazyFutureStream)
-			return merge(new FutureStream[]{(FutureStream)s});
-		return (FutureStream) SimpleReactStream.super.merge(s);
+	default FutureStream<U> merge(SimpleReactStream<U>... streams) {
+		return (FutureStream)SimpleReactStream.super.merge(streams);		
 	}
-	default FutureStream<U> merge(FutureStream<U>... streams) {
-		Queue queue = Queue.createMergeQueue();
-		addToQueue(queue);
-		Seq.of(streams).forEach(s->s.addToQueue(queue));
-		
-		return fromStream(queue.stream(this.getSubscription()));
-	}
+	
 
+	
 	
 	/*
 	 * @see
@@ -1496,24 +1493,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		return stream.skip(f).limit(t);
 	}
 
-	/**
-	 * Merge this reactive dataflow with another - recommended for merging
-	 * different types. To merge flows of the same type the instance method
-	 * merge is more appropriate.
-	 * 
-	 * @param s1
-	 *            Reactive stage builder to merge
-	 * @param s2
-	 *            Reactive stage builder to merge
-	 * @return Merged dataflow
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <R> FutureStream<R> merge(FutureStream s1, FutureStream s2) {
-		List merged = Stream
-				.of(s1.getLastActive().list(), s2.getLastActive().list())
-				.flatMap(Collection::stream).collect(Collectors.toList());
-		return (FutureStream<R>) s1.withLastActive(new StreamWrapper(merged));
-	}
+	
 
 	
 	/* 

@@ -19,17 +19,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -43,9 +39,9 @@ import org.junit.Test;
 import org.pcollections.HashTreePMap;
 
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.stream.CloseableIterator;
+import com.aol.simple.react.stream.eager.EagerReact;
+import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.traits.FutureStream;
-import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.util.SimpleTimer;
 
 
@@ -114,6 +110,12 @@ public abstract class BaseSeqTest {
 			e.printStackTrace();
 		}
 		return 200;
+	}
+	
+	@Test
+	public void mergeMultipleMixed(){
+		assertThat(react(()->1,()->2).merge(new LazyReact().react(()->-1,()->-2),
+						new EagerReact().react(()->100,()->200)).toList().size(),equalTo(6));
 	}
 	@Test
 	public void combine(){
