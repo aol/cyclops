@@ -6,8 +6,8 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.async.QueueFactory;
 import com.aol.simple.react.async.Queue.ClosedQueueException;
+import com.aol.simple.react.async.factories.QueueFactory;
 
 public interface EagerToQueue<U> extends ToQueue<U> {
 

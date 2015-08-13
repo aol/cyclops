@@ -5,8 +5,9 @@ import static org.hamcrest.Matchers.*;
 
 import org.junit.Test;
 
-import com.aol.simple.react.async.WaitStrategy.Offerable;
-import com.aol.simple.react.async.WaitStrategy.Takeable;
+import com.aol.simple.react.async.wait.DirectWaitStrategy;
+import com.aol.simple.react.async.wait.WaitStrategy.Offerable;
+import com.aol.simple.react.async.wait.WaitStrategy.Takeable;
 
 import static org.junit.Assert.assertThat;
 public class DirectWaitStrategyTest {

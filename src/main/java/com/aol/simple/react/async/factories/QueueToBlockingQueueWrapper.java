@@ -1,4 +1,4 @@
-package com.aol.simple.react.async;
+package com.aol.simple.react.async.factories;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-class QueueToBlockingQueueWrapper implements BlockingQueue{
+public class QueueToBlockingQueueWrapper implements BlockingQueue{
 		
 		java.util.Queue queue;
 

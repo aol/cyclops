@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.async.QueueFactory;
+import com.aol.simple.react.async.factories.QueueFactory;
 
 /**
  * 

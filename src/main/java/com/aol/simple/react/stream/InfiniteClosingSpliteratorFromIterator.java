@@ -6,9 +6,9 @@ import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import com.aol.simple.react.async.Continueable;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.Queue.ClosedQueueException;
+import com.aol.simple.react.async.subscription.Continueable;
 
 public class InfiniteClosingSpliteratorFromIterator<T>  implements Spliterator<T> {
 	    private long estimate;

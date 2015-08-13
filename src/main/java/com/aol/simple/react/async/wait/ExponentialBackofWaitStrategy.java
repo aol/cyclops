@@ -1,4 +1,4 @@
-package com.aol.simple.react.async;
+package com.aol.simple.react.async.wait;
 
 import java.util.concurrent.locks.LockSupport;
 

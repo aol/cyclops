@@ -7,8 +7,9 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import com.aol.simple.react.async.WaitStrategy.Offerable;
-import com.aol.simple.react.async.WaitStrategy.Takeable;
+import com.aol.simple.react.async.wait.SpinWait;
+import com.aol.simple.react.async.wait.WaitStrategy.Offerable;
+import com.aol.simple.react.async.wait.WaitStrategy.Takeable;
 import com.aol.simple.react.util.SimpleTimer;
 
 public class SpinWaitTest {

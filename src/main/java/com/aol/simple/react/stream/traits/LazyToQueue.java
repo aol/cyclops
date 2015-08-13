@@ -33,7 +33,7 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 		
 		Continuation continuation = thenSync(queue::add).runContinuation(() -> {
 			queue.close();
-			//throw new ClosedQueueException();
+			
 			});
 		queue.addContinuation(continuation);
 		return queue;
@@ -52,7 +52,7 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 
 		Continuation continuation = thenSync(queue::add).runContinuation(() -> {
 			queue.close();
-			//throw new ClosedQueueException();
+			
 		});
 		queue.addContinuation(continuation);
 		return queue;
@@ -62,7 +62,6 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 		
 
 		Continuation continuation = thenSync(queue::add).runContinuation(() -> {
-		//	queue.close();
 			throw new ClosedQueueException();
 		});
 		queue.addContinuation(continuation);

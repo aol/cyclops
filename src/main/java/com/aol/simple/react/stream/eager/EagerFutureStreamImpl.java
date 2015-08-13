@@ -15,10 +15,10 @@ import lombok.Builder;
 import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
 
-import com.aol.simple.react.async.AlwaysContinue;
-import com.aol.simple.react.async.Continueable;
-import com.aol.simple.react.async.QueueFactories;
-import com.aol.simple.react.async.QueueFactory;
+import com.aol.simple.react.async.factories.QueueFactories;
+import com.aol.simple.react.async.factories.QueueFactory;
+import com.aol.simple.react.async.subscription.AlwaysContinue;
+import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.capacity.monitor.LimitingMonitor;
 import com.aol.simple.react.collectors.lazy.BatchingCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;

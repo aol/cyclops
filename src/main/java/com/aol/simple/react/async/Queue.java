@@ -2,8 +2,6 @@ package com.aol.simple.react.async;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -23,11 +21,16 @@ import lombok.experimental.Wither;
 
 import org.jooq.lambda.Seq;
 
-import com.aol.simple.react.exceptions.ExceptionSoftener;
+import com.aol.cyclops.lambda.utils.ExceptionSoftener;
+import com.aol.simple.react.async.factories.QueueFactories;
+import com.aol.simple.react.async.factories.QueueToBlockingQueueWrapper;
+import com.aol.simple.react.async.subscription.AlwaysContinue;
+import com.aol.simple.react.async.subscription.Continueable;
+import com.aol.simple.react.async.wait.DirectWaitStrategy;
+import com.aol.simple.react.async.wait.WaitStrategy;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.stream.traits.Continuation;
 import com.aol.simple.react.util.SimpleTimer;
-
 
 /**
  * Inspired by scalaz-streams async.Queue (functionally similar, but Blocking)
@@ -69,7 +72,7 @@ public class Queue<T> implements Adapter<T> {
 	private final Signal<Integer> sizeSignal;
 	
 	
-	private  List<Continuation> continuation= new ArrayList<>();
+	private ContinuationStrategy continuationStrategy;
 	private volatile boolean shuttingDown = false;
 
 
@@ -108,7 +111,13 @@ public class Queue<T> implements Adapter<T> {
 	public Queue( java.util.Queue<T> q, WaitStrategy<T> consumer,WaitStrategy<T> producer){
 		this(new QueueToBlockingQueueWrapper(q),Signal.queueBackedSignal(),consumer,producer);
 	}
+	
 
+	public static<T> Queue<T> createMergeQueue(){
+		Queue<T> q= new Queue<>();
+		q.continuationStrategy=new StreamOfContinuations(q);
+		return q;
+	}
 	/**
 	 * @return Sequential Infinite (until Queue is closed) Stream of data from
 	 *         this Queue
@@ -188,31 +197,7 @@ public class Queue<T> implements Adapter<T> {
 		stream.collect(Collectors.toCollection(() -> queue));
 		return true;
 	}
-	private void handleContinuation(){
-	//	System.out.println(continuation);
-		continuation = Seq.seq(continuation)
-							.<Optional<Continuation>>map(c -> {
-								try{ 
-								return Optional.of(c.proceed());
-							}catch(ClosedQueueException e){
-								
-							
-								
-								return Optional.empty();
-							}
-								
-							})
-							.filter(Optional::isPresent)
-							.map(Optional::get)
-							.toList();
 	
-	//	System.out.println("after:"+continuation);
-		if(continuation.size()==0){
-		//	System.out.println("closing and queueing");
-			this.close();
-			throw new ClosedQueueException();
-		}
-	}
 
 	private T ensureOpen(final long timeout, TimeUnit timeUnit) {
 		if(!open && queue.size()==0)
@@ -221,12 +206,12 @@ public class Queue<T> implements Adapter<T> {
 		final long timeoutNanos = timeUnit.toNanos(timeout);
 		T data = null;
 		try {
-			if(this.continuation.size()>0){
+			if(this.continuationStrategy!=null){
 				
 			
 				while(open && (data = ensureClear(queue.poll()))==null){
 					
-					handleContinuation();
+					this.continuationStrategy.handleContinuation();
 					
 					if(timeout!=-1)
 						handleTimeout(timer,timeoutNanos);
@@ -484,7 +469,9 @@ public class Queue<T> implements Adapter<T> {
 	}
 	
 	public void addContinuation(Continuation c){
-		this.continuation.add(c);
+		if(this.continuationStrategy==null)
+			continuationStrategy = new SingleContinuation(this);
+		this.continuationStrategy.addContinuation(c);
 	}
 	
 }

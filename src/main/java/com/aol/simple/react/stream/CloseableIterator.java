@@ -4,8 +4,8 @@ import java.util.Iterator;
 
 import lombok.AllArgsConstructor;
 
-import com.aol.simple.react.async.Continueable;
 import com.aol.simple.react.async.Queue;
+import com.aol.simple.react.async.subscription.Continueable;
 
 @AllArgsConstructor
 public class CloseableIterator<T> implements Iterator<T>{

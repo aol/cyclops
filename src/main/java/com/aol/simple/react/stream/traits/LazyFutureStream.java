@@ -35,10 +35,10 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Subscriber;
 
 import com.aol.simple.react.RetryBuilder;
-import com.aol.simple.react.async.Continueable;
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.async.QueueFactories;
-import com.aol.simple.react.async.QueueFactory;
+import com.aol.simple.react.async.factories.QueueFactories;
+import com.aol.simple.react.async.factories.QueueFactory;
+import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.capacity.monitor.LimitingMonitor;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.config.MaxActive;

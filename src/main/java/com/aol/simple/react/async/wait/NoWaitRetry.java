@@ -1,4 +1,4 @@
-package com.aol.simple.react.async;
+package com.aol.simple.react.async.wait;
 
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
@@ -6,7 +6,7 @@ import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 public class NoWaitRetry<T> implements WaitStrategy<T> {
 
 	@Override
-	public T take(com.aol.simple.react.async.WaitStrategy.Takeable<T> t) throws InterruptedException {
+	public T take(com.aol.simple.react.async.wait.WaitStrategy.Takeable<T> t) throws InterruptedException {
 		T result;
 		
 			while((result = t.take())==null){

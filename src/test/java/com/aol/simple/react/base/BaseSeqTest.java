@@ -256,9 +256,12 @@ public abstract class BaseSeqTest {
 	public void batchByTimeSet(){
 		for(int i=0;i<5000;i++){
 			List <Collection<Integer>> set = ofThread(1,1,1,1,1,1).batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>()).block();
-			System.out.println(set);
+			
 			assertThat(set.get(0).size(),is(1));
-			}
+			
+			
+			
+		}
 	}
 	@Test
 	public void batchByTimeInternalSize(){

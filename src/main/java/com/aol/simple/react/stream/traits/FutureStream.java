@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Spliterator;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiConsumer;
@@ -39,10 +40,13 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.async.Queue;
+import com.aol.simple.react.async.Signal;
 import com.aol.simple.react.async.Queue.ClosedQueueException;
 import com.aol.simple.react.async.Queue.QueueReader;
 import com.aol.simple.react.async.Queue.QueueTimeoutException;
-import com.aol.simple.react.async.QueueFactories;
+import com.aol.simple.react.async.StreamOfContinuations;
+import com.aol.simple.react.async.factories.QueueFactories;
+import com.aol.simple.react.async.wait.DirectWaitStrategy;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
@@ -223,7 +227,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 
 	    Queue<U> queue = toQueue();
 	    Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTimeAndSize<>(size,time,unit,()->new ArrayList<>());
-	    return (FutureStream)fromStream(queue.streamBatch(getSubscription(), (Function)fn));
+	    return (FutureStream)fromStream(queue.streamBatch(getSubscription(), (Function)fn)).filter(c->!((Collection)c).isEmpty());
 	}
 	/**
 	 * Batch the elements in the Stream by a combination of Size and Time
@@ -482,7 +486,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTime<U>(time,unit,
 				this.getSubscription(),queue,()->new ArrayList<>());
 		
-		return fromStream(queue.streamBatch(getSubscription(), fn));
+		return fromStream(queue.streamBatch(getSubscription(), fn)).filter(c->!((Collection)c).isEmpty());
 	}
 	/**
 	 * Organise elements in a Stream into a Collections based on the time period they pass through this stage
@@ -495,7 +499,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	default FutureStream<Collection<U>> batchByTime(long time, TimeUnit unit,Supplier<Collection<U>> factory) {
 		Queue queue = toQueue();
 		Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTime<U>(time,unit, this.getSubscription(),queue,factory);
-		return fromStream(queue.streamBatch(getSubscription(), fn));
+		return fromStream(queue.streamBatch(getSubscription(), fn)).filter(c->!((Collection)c).isEmpty());
 	}
 
 	/**
@@ -889,7 +893,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		return (FutureStream) SimpleReactStream.super.merge(s);
 	}
 	default FutureStream<U> merge(FutureStream<U>... streams) {
-		Queue queue =new Queue();
+		Queue queue = Queue.createMergeQueue();
 		addToQueue(queue);
 		Seq.of(streams).forEach(s->s.addToQueue(queue));
 		

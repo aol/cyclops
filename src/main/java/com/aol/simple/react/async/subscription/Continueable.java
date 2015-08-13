@@ -1,4 +1,6 @@
-package com.aol.simple.react.async;
+package com.aol.simple.react.async.subscription;
+
+import com.aol.simple.react.async.Queue;
 
 public interface Continueable {
 

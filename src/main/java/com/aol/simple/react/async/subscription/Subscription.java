@@ -1,4 +1,4 @@
-package com.aol.simple.react.async;
+package com.aol.simple.react.async.subscription;
 
 
 import java.util.HashMap;
@@ -15,6 +15,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import org.jooq.lambda.Seq;
+
+import com.aol.simple.react.async.Queue;
 
 @Getter
 @Setter

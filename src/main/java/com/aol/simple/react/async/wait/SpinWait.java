@@ -1,14 +1,16 @@
-package com.aol.simple.react.async;
+package com.aol.simple.react.async.wait;
+
+import java.util.concurrent.locks.LockSupport;
 
 
-public class YieldWait<T> implements WaitStrategy<T> {
+public class SpinWait<T> implements WaitStrategy<T> {
 
 	@Override
 	public T take(WaitStrategy.Takeable<T> t) throws InterruptedException {
 		T result;
 
 		while ((result = t.take()) == null) {
-			Thread.yield();
+			LockSupport.parkNanos(1l);
 		}
 
 		return result;
@@ -17,7 +19,7 @@ public class YieldWait<T> implements WaitStrategy<T> {
 	@Override
 	public boolean offer(WaitStrategy.Offerable o) throws InterruptedException {
 		while (!o.offer()) {
-			Thread.yield();
+			LockSupport.parkNanos(1l);
 		}
 		return true;
 	}

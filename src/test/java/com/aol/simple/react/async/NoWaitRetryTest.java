@@ -6,8 +6,9 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import com.aol.simple.react.async.WaitStrategy.Offerable;
-import com.aol.simple.react.async.WaitStrategy.Takeable;
+import com.aol.simple.react.async.wait.NoWaitRetry;
+import com.aol.simple.react.async.wait.WaitStrategy.Offerable;
+import com.aol.simple.react.async.wait.WaitStrategy.Takeable;
 
 public class NoWaitRetryTest {
 	int called = 0;

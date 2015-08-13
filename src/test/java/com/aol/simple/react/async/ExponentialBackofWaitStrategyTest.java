@@ -5,8 +5,9 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import com.aol.simple.react.async.WaitStrategy.Offerable;
-import com.aol.simple.react.async.WaitStrategy.Takeable;
+import com.aol.simple.react.async.wait.ExponentialBackofWaitStrategy;
+import com.aol.simple.react.async.wait.WaitStrategy.Offerable;
+import com.aol.simple.react.async.wait.WaitStrategy.Takeable;
 import com.aol.simple.react.util.SimpleTimer;
 
 public class ExponentialBackofWaitStrategyTest {

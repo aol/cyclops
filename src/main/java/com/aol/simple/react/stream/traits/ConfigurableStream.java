@@ -5,8 +5,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
-import com.aol.simple.react.async.Continueable;
-import com.aol.simple.react.async.QueueFactory;
+import com.aol.simple.react.async.factories.QueueFactory;
+import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.StreamWrapper;

@@ -8,10 +8,10 @@ import java.util.function.Supplier;
 
 import lombok.AllArgsConstructor;
 
-import com.aol.simple.react.async.Continueable;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.Queue.ClosedQueueException;
 import com.aol.simple.react.async.Queue.QueueTimeoutException;
+import com.aol.simple.react.async.subscription.Continueable;
 
 @AllArgsConstructor
 public class BatchBySize<U, C extends Collection<U>> implements Function<Supplier<U>, Supplier<C>>{

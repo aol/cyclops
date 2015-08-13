@@ -8,6 +8,7 @@ import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 import com.aol.simple.react.async.Queue.ClosedQueueException;
+import com.aol.simple.react.async.subscription.Continueable;
 
 
 public class ClosingSpliterator<T> implements Spliterator<T> {

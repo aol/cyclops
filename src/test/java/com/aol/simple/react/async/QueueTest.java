@@ -24,6 +24,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.LazyFutureStream;

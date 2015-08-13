@@ -25,9 +25,9 @@ import java.util.stream.StreamSupport;
 import org.jooq.lambda.Seq;
 
 import com.aol.simple.react.RetryBuilder;
-import com.aol.simple.react.async.Continueable;
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.async.QueueFactory;
+import com.aol.simple.react.async.factories.QueueFactory;
+import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.StageWithResults;
