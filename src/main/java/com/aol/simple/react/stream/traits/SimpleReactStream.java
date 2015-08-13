@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
@@ -243,6 +245,14 @@ public interface SimpleReactStream<U> extends
 		return (SimpleReactStream<R>) this.withLastActive(getLastActive().stream(streamMapper));
 	}
 	
+	
+	default List<SimpleReactStream<U>> copySimpleReactStream(final int times){
+		return StreamCopier.toBufferingCopier(getLastActive().stream().iterator(), times)
+				.stream()
+				.map(it->StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false))
+				.<SimpleReactStream<U>>map(fs-> this.getSimpleReact().construct(fs, this.getOriginalFutures()))
+				.collect(Collectors.toList());
+	}
 	/**
 	 * 
 	 * Applies a function to this phase independent on the main flow.

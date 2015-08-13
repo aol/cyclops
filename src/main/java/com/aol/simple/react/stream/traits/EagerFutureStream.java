@@ -15,10 +15,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -44,9 +41,7 @@ import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.eager.EagerFutureStreamImpl;
 import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.lazy.LazyReact;
-import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.operators.BatchBySize;
-import com.aol.simple.react.stream.traits.operators.BatchByTimeAndSize;
 import com.aol.simple.react.util.SimpleTimer;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
@@ -777,7 +772,10 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	default <R> EagerFutureStream<R> then(final Function<U, R> fn) {
 		return (EagerFutureStream) FutureStream.super.then(fn);
 	}
-
+	default List<EagerFutureStream<U>> copy(final int times){
+		return (List)FutureStream.super.copySimpleReactStream(times);
+		
+	}
 	/*
 	 * Merge two simple-react Streams, by merging the Stream of underlying
 	 * futures - not suitable for merging infinite Streams - use   

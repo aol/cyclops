@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -32,6 +33,7 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import lombok.AllArgsConstructor;
 
@@ -51,6 +53,7 @@ import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.traits.operators.BatchBySize;
 import com.aol.simple.react.stream.traits.operators.BatchByTime;
 import com.aol.simple.react.stream.traits.operators.BatchByTimeAndSize;
@@ -70,6 +73,12 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		return (fs1,fs2) -> fs1.flatMap( v1-> (FutureStream)fs2.map(v2->fn.apply(v1,v2)));
 	}
 	
+	default Collection<U> toLazyCollection(){
+		return ToLazyCollection.toLazyCollection(this.iterator());
+	}
+	default Collection<U> toConcurrentLazyCollection(){
+		return ToLazyCollection.toConcurrentLazyCollection(this.iterator());
+	}
 	/**
 	 * Zip two Streams, zipping against the underlying futures of this stream
 	 * 
@@ -816,6 +825,8 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	default <R> FutureStream<R> then(final Function<U, R> fn) {
 		return (FutureStream) SimpleReactStream.super.then(fn);
 	}
+	
+	
 
 	/*
 	 * @see

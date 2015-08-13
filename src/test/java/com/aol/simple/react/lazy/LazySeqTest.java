@@ -39,6 +39,21 @@ import com.aol.simple.react.stream.traits.LazyFutureStream;
 public class LazySeqTest extends BaseSeqTest {
 	
 	@Test
+	public void copy(){
+		LazyFutureStream.of(1,2,3,4,5,6)
+				.map(i->i+2)
+				.copy(5)
+				.forEach(s -> System.out.println(s.toList()));
+	}
+	@Test
+	public void lazyCollection(){
+		Collection<Integer> col = LazyFutureStream.of(1,2,3,4,5,6)
+				.map(i->i+2)
+				.toLazyCollection();
+			
+		assertThat(col.size(),equalTo(6));
+	}
+	@Test
 	public void switchOnNextMultiple(){
 		assertThat(react(()->1,()->2).switchOnNext( react(()->'a',()->'b'),
 						react(()->100,()->200)).toList().size(),equalTo(6));

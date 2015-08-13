@@ -763,6 +763,11 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 		return (LazyFutureStream) FutureStream.super.then(fn);
 	}
 
+	default List<LazyFutureStream<U>> copy(final int times){
+		return (List)FutureStream.super.copySimpleReactStream(times);
+		
+	}
+	
 	/*
 	 * Merge two simple-react Streams, by merging the Stream of underlying
 	 * futures - not suitable for merging infinite Streams unless all supplied
