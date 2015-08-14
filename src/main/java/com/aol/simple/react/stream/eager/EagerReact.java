@@ -53,9 +53,18 @@ public class EagerReact extends BaseSimpleReact{
 	
 	
 	
+	
+	
 	public EagerReact(Executor executor, RetryExecutor retrier,
 			Boolean async) {
-		super();
+		super(ThreadPools.getQueueCopyExecutor());
+		this.executor = executor;
+		this.retrier = retrier;
+		this.async = Optional.ofNullable(async).orElse(true);
+	}
+	public EagerReact(Executor executor, RetryExecutor retrier,
+			Boolean async,Executor queueCopyExecutor) {
+		super(queueCopyExecutor);
 		this.executor = executor;
 		this.retrier = retrier;
 		this.async = Optional.ofNullable(async).orElse(true);
@@ -78,11 +87,14 @@ public class EagerReact extends BaseSimpleReact{
 	 * @param executor Executor to use
 	 */
 	public EagerReact(Executor executor) {
-		
+		super(ThreadPools.getQueueCopyExecutor());
 		this.executor = executor;
 		this.retrier = new AsyncRetryExecutor(ThreadPools.getStandardRetry());
 		this.async=true;
 		
+	}
+	public EagerReact withQueueCopyExecutor(Executor queueCopyExecutor){
+		return new EagerReact(this.executor,this.retrier,this.async,queueCopyExecutor);
 	}
 	
 	
@@ -90,6 +102,11 @@ public class EagerReact extends BaseSimpleReact{
 	public <U> EagerFutureStream<U> construct(Stream s,
 			List<CompletableFuture> org) {
 		return (EagerFutureStream) new EagerFutureStreamImpl<U>( this,s,org);
+	}
+	public <U> EagerFutureStream<U> fromStreamAsync(final Stream<CompletableFuture<U>> stream) {
+
+		Stream s = stream;
+		return  construct( Stream.of(),null).fromStreamOfFutures(s);
 	}
 	/* 
 	 * Construct a EagerFutureStream from the provided Stream of completableFutures

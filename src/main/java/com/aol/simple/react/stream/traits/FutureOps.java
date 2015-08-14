@@ -254,6 +254,14 @@ public class FutureOps<T> implements IntOperators<T>,DoubleOperators<T>, LongOpe
 	}
 	
 	/**
+	 * Perform an asynchronous findAny operation
+	 * 	 @see java.util.stream.Stream#findFirst()
+	 * */
+	public CompletableFuture<T> firstValue(){
+		return CompletableFuture.supplyAsync(()->stream.firstValue(),exec);
+	}
+	
+	/**
 	 * Perform an asynchronous All Match operation
 	 * 	 @see java.util.stream.Stream#allMatch()
 	 * */

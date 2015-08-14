@@ -24,8 +24,8 @@ public class EagerPipesTest {
 		Queue queue = new Queue();
 		queue.add("world");
 		queue.close();
-		Pipes.register("hello",queue);
-		assertThat(PipesToEagerStreams.stream("hello").limit(1).toList(),equalTo(Arrays.asList("world")));
+		
+		assertThat(PipesToEagerStreams.stream(queue).limit(1).toList(),equalTo(Arrays.asList("world")));
 	}
 	@Test
 	public void testStreamIO() {
@@ -33,7 +33,7 @@ public class EagerPipesTest {
 		queue.add("world");
 		queue.close();
 		Pipes.register("hello",queue);
-		assertThat(PipesToEagerStreams.streamIOBound("hello").limit(1).toList(),equalTo(Arrays.asList("world")));
+		assertThat(PipesToEagerStreams.streamIOBound(queue).limit(1).toList(),equalTo(Arrays.asList("world")));
 	}
 	@Test
 	public void testStreamCPU() {
@@ -41,16 +41,16 @@ public class EagerPipesTest {
 		queue.add("world");
 		queue.close();
 		Pipes.register("hello",queue);
-		assertThat(PipesToEagerStreams.streamCPUBound("hello").limit(1).toList(),equalTo(Arrays.asList("world")));
+		assertThat(PipesToEagerStreams.streamCPUBound(queue).limit(1).toList(),equalTo(Arrays.asList("world")));
 	}
 	@Test
 	public void cpuBound() {
 		Queue queue = new Queue();
 		queue.add("world");
 		queue.close();
-		EagerFutureStream<String> stream = PipesToEagerStreams.registerForCPU("hello", queue);
+		EagerFutureStream<String> stream = PipesToEagerStreams.streamCPUBound( queue);
 		
-		assertTrue(Pipes.get("hello").isPresent());
+		
 		assertThat(stream.limit(1).toList(),equalTo(Arrays.asList("world")));
 	}
 	@Test
@@ -58,9 +58,9 @@ public class EagerPipesTest {
 		Queue queue = new Queue();
 		queue.add("world");
 		queue.close();
-		EagerFutureStream<String> stream = PipesToEagerStreams.registerForIO("hello", queue);
+		EagerFutureStream<String> stream = PipesToEagerStreams.streamIOBound( queue);
 		
-		assertTrue(Pipes.get("hello").isPresent());
+		
 		assertThat(stream.limit(1).toList(),equalTo(Arrays.asList("world")));
 	}
 }

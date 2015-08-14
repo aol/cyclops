@@ -169,7 +169,7 @@ public interface SimpleReactStream<U> extends
 		
 		
 		return (SimpleReactStream<R>) this.withLastActive(getLastActive()
-				.withNewStream(stream.map(CompletableFuture::completedFuture)));
+				.withNewStream(stream.map(CompletableFuture::completedFuture),this.getSimpleReact()));
 	}
 	
 
@@ -183,7 +183,7 @@ public interface SimpleReactStream<U> extends
 			Stream<CompletableFuture<R>> stream) {
 		Stream noType = stream;
 		return (SimpleReactStream<R>) this.withLastActive(getLastActive()
-				.withNewStream(noType));
+				.withNewStream(noType,this.getSimpleReact()));
 	}
 	default <R> SimpleReactStream<R> fromStreamCompletableFutureReplace(
 			Stream<CompletableFuture<R>> stream) {

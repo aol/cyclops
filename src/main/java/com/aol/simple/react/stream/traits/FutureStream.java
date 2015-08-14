@@ -1185,6 +1185,9 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	default Optional<U> findFirst() {
 		return toQueue().stream(getSubscription()).findFirst();
 	}
+	default U firstValue() {
+		return toQueue().stream(getSubscription()).findFirst().get();
+	}
 
 	/*
 	 * (non-Javadoc)

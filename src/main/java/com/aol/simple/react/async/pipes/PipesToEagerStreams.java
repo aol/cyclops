@@ -5,11 +5,15 @@ import static com.aol.simple.react.async.pipes.Pipes.registered;
 import java.util.stream.Stream;
 
 import com.aol.simple.react.async.Adapter;
+import com.aol.simple.react.stream.ThreadPools;
+import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
+import com.aol.simple.react.threads.SequentialElasticPools;
+import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 
 public class PipesToEagerStreams {
 	/**
-	 * Register a Queue, and get back a listening EagerFutureStream optimized for CPU Bound operations
+	 * Pass in a Queue, and get back a listening EagerFutureStream optimized for CPU Bound operations
 	 * 
 	 * Convert the EagerFutureStream to async mode to fan out operations across threads, after the first fan out operation definition 
 	 * it should be converted to sync mode
@@ -30,12 +34,12 @@ public class PipesToEagerStreams {
 	 * @param adapter
 	 * @return EagerFutureStream from supplied Queue, optimisied for CPU bound operation
 	 */
-	public static <V> EagerFutureStream<V> registerForCPU(Object key, Adapter<V> adapter){
-		registered.put(key, adapter);
-		return EagerReactors.cpuReact.from(adapter.stream());
+	public static <V> EagerFutureStream<V> streamCPUBound(Adapter<V> adapter){
+		
+		return EagerReactors.cpuReact.fromStreamAsync(adapter.streamCompletableFutures());
 	}
 	/**
-	 * Register a Queue, and get back a listening EagerFutureStream optimized for IO Bound operations
+	 * Pass in a Queue, and get back a listening EagerFutureStream optimized for IO Bound operations
 	 * 
 	 * <pre>
 	 * {@code
@@ -50,36 +54,22 @@ public class PipesToEagerStreams {
 	 * 
 	 * }</pre>
 	 * 
-	 * @param key : Adapter identifier
+	 * 
 	 * @param adapter
 	 * @return EagerFutureStream from supplied Queue
 	 */
-	public static <V> EagerFutureStream<V> registerForIO(Object key, Adapter<V> adapter){
-		registered.put(key, adapter);
-		return EagerReactors.ioReact.from(adapter.stream());
+	public static <V> EagerFutureStream<V> streamIOBound(Adapter<V> adapter){
+		
+		return EagerReactors.ioReact.fromStreamAsync(adapter.streamCompletableFutures());
 	}
 	/**
-	 * @param key : Queue identifier
+	 * 
 	 * @return EagerFutureStream that reads from specified Queue
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <V> EagerFutureStream<V> stream(Object key){
-		return EagerFutureStream.eagerFutureStream(Stream.of()).fromStream( ((Adapter)registered.get(key)).stream());
+	public static <V> EagerFutureStream<V> stream(Adapter<V> adapter){
+		return new EagerReact(ThreadPools.getSequential(),new AsyncRetryExecutor(ThreadPools.getSequentialRetry()),false).fromStreamAsync(adapter.streamCompletableFutures());
 	}
-	/**
-	 * @param key : Queue identifier
-	 * @return EagerFutureStream that reads from specified Queue
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <V> EagerFutureStream<V> streamIOBound(Object key){
-		return EagerReactors.ioReact.from(((Adapter)registered.get(key)).stream());
-	}
-	/**
-	 * @param key : Queue identifier
-	 * @return EagerFutureStream that reads from specified Queue
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <V> EagerFutureStream<V> streamCPUBound(Object key){
-		return EagerReactors.cpuReact.from(((Adapter)registered.get(key)).stream());
-	}
+	
+	
 }

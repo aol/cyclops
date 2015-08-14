@@ -21,6 +21,7 @@ import lombok.experimental.Wither;
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.ThreadPools;
+import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -69,19 +70,30 @@ public class SimpleReact  extends BaseSimpleReact{
 	 * @param executor Executor this SimpleReact instance will use to execute concurrent tasks.
 	 */
 	public SimpleReact(Executor executor) {
+		super(ThreadPools.getQueueCopyExecutor());
 		this.executor = executor;
 		this.retrier = null;
 		
 		this.async =true;
 	}
 	public SimpleReact(Executor executor,RetryExecutor retrier) {
+		super(ThreadPools.getQueueCopyExecutor());
+		this.executor = executor;
+		this.retrier = retrier;
+		
+		this.async =true;
+	}
+	public SimpleReact(Executor executor,RetryExecutor retrier,Executor queueCopier) {
+		super(queueCopier);
 		this.executor = executor;
 		this.retrier = retrier;
 		
 		this.async =true;
 	}
 	
-	
+	public SimpleReact withQueueCopyExecutor(Executor queueCopyExecutor){
+		return new SimpleReact(this.executor,this.retrier,queueCopyExecutor);
+	}
 	/**
 	 * Start a reactive dataflow from a stream of CompletableFutures.
 	 * 

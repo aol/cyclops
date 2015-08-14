@@ -7,31 +7,27 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import lombok.Getter;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.simple.react.async.Adapter;
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.async.pipes.Pipes;
 import com.aol.simple.react.async.pipes.PipesToEagerStreams;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
 public class EagerReactiveTest {
 	
 
-		@Test
-		public void testNoPipe() {
-			Pipes.clear();
-			assertFalse(new MyResource().queue().isPresent());
-		}
-		@Test
+		
+		@Test 
 		public void testPipe() {
-			EagerFutureStream<String> stream = PipesToEagerStreams.registerForIO("hello", new Queue<String>());
-			assertTrue(new MyResource().queue().isPresent());
-			
+			Queue<String> queue=new Queue<String>();
+			EagerFutureStream<String> stream = PipesToEagerStreams.streamIOBound(queue);
+			new MyResource().queue(queue);
+			queue.close();
+			System.out.println("hello");
 			assertThat(stream.limit(1).toList(),equalTo(Arrays.asList("world")));
 			
 		}
@@ -110,8 +106,8 @@ public class EagerReactiveTest {
 			String val;
 			
 			
-			public Optional<Adapter<String>> queue(){
-				return this.enqueue("hello","world");
+			public void queue(Queue<String> queue){
+				queue.offer("world");
 			}
 			public EagerFutureStream<String> asyncIOStream(){
 				List<String> collection = new ArrayList<>();

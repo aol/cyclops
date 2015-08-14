@@ -1,11 +1,20 @@
 package com.aol.simple.react.async.pipes;
 
+import static com.aol.simple.react.async.pipes.Pipes.registered;
+import static com.aol.simple.react.stream.traits.LazyFutureStream.lazyFutureStream;
+
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Stream;
+
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
 
 import com.aol.simple.react.async.Adapter;
+import com.aol.simple.react.reactivestreams.JDKReactiveStreamsSubscriber;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
+import com.aol.simple.react.threads.SequentialElasticPools;
 
 /**
  * Store for Pipes for cross-thread communication
@@ -54,6 +63,41 @@ public class Pipes {
 	public static void clear() {
 		 registered.clear();
 		
+	}
+	
+	/**
+	 * @param key for registered simple-react async.Adapter
+	 * @return A Reactive Streams Publisher Registered for the given key
+	 */
+	public static<T> Optional<Publisher<T>> publisher(Object key){
+		if(!registered.containsKey(key))
+			return Optional.empty();
+		return Optional.of(LazyFutureStream.lazyFutureStream(((Adapter)registered.get(key)).stream()).async());
+	}
+	/**
+	 * @param key for registered simple-react async.Adapter
+	 * @param subscriber Reactive Streams subscriber for data on this pipe
+	 */
+	public static<T> void subscribeTo(Object key,Subscriber<T> subscriber){
+		LazyFutureStream.lazyFutureStream(((Adapter)registered.get(key)).stream())
+						.async().subscribe(subscriber);
+	}
+	/**
+	 * @param key for registered simple-react async.Adapter
+	 * @param publisher Reactive Streams publisher  to push data onto this pipe
+	 */
+	public static<T> void publishTo(Object key,Publisher<T> publisher){
+		JDKReactiveStreamsSubscriber<T> sub = new JDKReactiveStreamsSubscriber<>();
+		publisher.subscribe(sub);
+		registered.get(key).fromStream((Stream)sub.getStream());
+	}
+	/**
+	 * @param key for registered simple-react async.Adapter
+	 * @param publisher Reactive Streams publisher  to push data onto this pipe
+	 */
+	public static<T> void publishToAsync(Object key,Publisher<T> publisher){
+		SequentialElasticPools.eagerReact.react(er->er.of(publisher)
+								.peek(p->publishTo(key,p)));
 	}
 	
 }

@@ -16,6 +16,23 @@ import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.stream.traits.Continuation;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
+/**
+ * Create a LazyFutureStream Subscriber
+ * 
+ * to use 
+ * 
+ * <pre>
+ * {@code 
+ * FutureStreamSubscriber<Long> sub = new FutureStreamSubscriber<>();
+ * reactivePublisher.subscribe(sub);
+ * LazyFutureStream<Long> stream = sub.getStream();
+ * 
+ * }</pre>
+ * 
+ * @author johnmcclean
+ *
+ * @param <T>
+ */
 public class FutureStreamSubscriber<T> implements Subscriber<T> {
 	
 	

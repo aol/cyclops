@@ -6,7 +6,6 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ScheduledExecutorService;
 
 import lombok.Getter;
-import lombok.Setter;
 
 public class ThreadPools {
 	@Getter
@@ -16,7 +15,8 @@ public class ThreadPools {
 	@Getter
 	private static final  Executor currentThreadExecutor = (Runnable r)  -> r.run();
 	      
- 
+	@Getter
+	private static final Executor queueCopyExecutor = Executors.newFixedThreadPool(1);
 	
 	
 	@Getter

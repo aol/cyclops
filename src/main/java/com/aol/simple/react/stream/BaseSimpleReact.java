@@ -16,14 +16,16 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
-@AllArgsConstructor
+
 public abstract class BaseSimpleReact {
 
-	
+	@Getter
+	private final Executor queueService;
 	protected abstract Executor getExecutor();
 
 	protected abstract  RetryExecutor getRetrier();
@@ -35,6 +37,12 @@ public abstract class BaseSimpleReact {
 			List<CompletableFuture> org);
 
 	
+	protected BaseSimpleReact(){
+		queueService=null;
+	}
+	protected BaseSimpleReact(Executor queueService){
+		this.queueService=queueService;
+	}
 	
 	
 	public SimpleReactStream<Integer> range(int startInclusive, int endExclusive){
@@ -89,6 +97,7 @@ public abstract class BaseSimpleReact {
 		Stream s = stream;
 		return  construct( s,null);
 	}
+	
 	/**
 	 * Start a reactive dataflow from a stream.
 	 * 
