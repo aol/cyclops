@@ -29,16 +29,8 @@ public class BatchByTimeAndSize<U> implements Function<BiFunction<Long,TimeUnit,
 		
 		return ()->{
 			Collection<U> list= new ArrayList<>();
-			
-			int passes=0;
-			
-				list = buildNextBatch(s);
-				passes++;
-				
-			
-            
-           
-            return list;
+			list = buildNextBatch(s);
+			return list;
         };
 	}
 	private Collection<U> buildNextBatch(BiFunction<Long, TimeUnit, U> s) {

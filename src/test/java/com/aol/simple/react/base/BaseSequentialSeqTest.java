@@ -106,6 +106,24 @@ public abstract class BaseSequentialSeqTest {
 		return 200;
 	}
 	@Test
+	public void sliding(){
+		List<List<Integer>> list = of(1,2,3,4,5,6).sliding(2)
+									.collect(Collectors.toList());
+		
+	
+		assertThat(list.get(0),hasItems(1,2));
+		assertThat(list.get(1),hasItems(2,3));
+	}
+	@Test
+	public void slidingInc(){
+		List<List<Integer>> list = of(1,2,3,4,5,6).sliding(3,2)
+									.collect(Collectors.toList());
+		
+	
+		assertThat(list.get(0),hasItems(1,2,3));
+		assertThat(list.get(1),hasItems(3,4,5));
+	}
+	@Test
 	public void combine(){
 		
 		assertThat(of(1,2,3,4,5,6).combineLatest(of(3)).collect(Collectors.toList()).size(),greaterThan(5));

@@ -1,4 +1,4 @@
-package com.aol.simple.react.stream.traits;
+package com.aol.simple.react.stream.traits.operators;
 
 import java.util.ArrayList;
 import java.util.Iterator;

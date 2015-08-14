@@ -39,6 +39,7 @@ import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.simple.SimpleReactStreamImpl;
 import com.aol.simple.react.stream.traits.ConfigurableStream.SimpleReactConfigurableStream;
+import com.aol.simple.react.stream.traits.operators.StreamCopier;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.policy.AbortRetryException;
 
@@ -247,6 +248,7 @@ public interface SimpleReactStream<U> extends
 	
 	
 	default List<SimpleReactStream<U>> copySimpleReactStream(final int times){
+		Stream.of(1,2,3,4).forEach(System.out::println);
 		return StreamCopier.toBufferingCopier(getLastActive().stream().iterator(), times)
 				.stream()
 				.map(it->StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false))

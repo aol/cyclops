@@ -11,9 +11,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiConsumer;
@@ -33,7 +32,6 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import lombok.AllArgsConstructor;
 
@@ -42,22 +40,19 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.async.Signal;
 import com.aol.simple.react.async.Queue.ClosedQueueException;
 import com.aol.simple.react.async.Queue.QueueReader;
 import com.aol.simple.react.async.Queue.QueueTimeoutException;
-import com.aol.simple.react.async.StreamOfContinuations;
 import com.aol.simple.react.async.factories.QueueFactories;
-import com.aol.simple.react.async.wait.DirectWaitStrategy;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
-import com.aol.simple.react.stream.StreamWrapper;
-import com.aol.simple.react.stream.lazy.LazyReact;
+import com.aol.simple.react.stream.traits.future.operators.ToLazyCollection;
 import com.aol.simple.react.stream.traits.operators.BatchBySize;
 import com.aol.simple.react.stream.traits.operators.BatchByTime;
 import com.aol.simple.react.stream.traits.operators.BatchByTimeAndSize;
 import com.aol.simple.react.stream.traits.operators.Debounce;
+import com.aol.simple.react.stream.traits.operators.SlidingWindow;
 import com.aol.simple.react.util.SimpleTimer;
 
 public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
@@ -1011,6 +1006,65 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	@Override
 	default Object[] toArray() {
 		return toQueue().stream(getSubscription()).toArray();
+	}
+	
+	/**
+	 * Create a sliding view over this Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * //futureStream of [1,2,3,4,5,6]
+	 *		 
+	 * List<List<Integer>> list = futureStream.sliding(2)
+									.collect(Collectors.toList());
+		
+	
+		assertThat(list.get(0),hasItems(1,2));
+		assertThat(list.get(1),hasItems(2,3));
+	 * }
+	 * </pre>
+	 * @param size
+	 *            Size of sliding window
+	 * @return Stream with sliding view over data in this stream
+	 */
+	default FutureStream<List<U>> sliding(int size){
+		return this.fromStream(SlidingWindow.sliding(this,size, 1));
+	}
+	/**
+	 * Create a sliding view over this Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * //futureStream of [1,2,3,4,5,6,7,8]
+	 *		 
+	 * List<List<Integer>> list = futureStream.sliding(3,2)
+									.collect(Collectors.toList());
+		
+	
+		assertThat(list.get(0),hasItems(1,2,3));
+		assertThat(list.get(1),hasItems(3,4,5));
+	 * }
+	 * </pre>
+	 * @param size
+	 *            Size of sliding window
+	 * @return Stream with sliding view over data in this stream
+	 */
+	default FutureStream<List<U>> sliding(int size, int increment){
+		return this.fromStream(SlidingWindow.sliding(this,size, increment));
+	}
+	
+	/**
+	 * @return An extensive set of asyncrhonous terminal operations
+	 */
+	default FutureOps<U> futureOperations(){
+		return new FutureOps<>(this.getTaskExecutor(),this);
+	}
+	/**
+	 * @param executor to execute terminal ops asynchronously on
+	 * @return An extensive set of asyncrhonous terminal operations
+	 */
+	default FutureOps<U> futureOperations(Executor executor){
+		return new FutureOps<>(executor,this);
 	}
 
 	/*

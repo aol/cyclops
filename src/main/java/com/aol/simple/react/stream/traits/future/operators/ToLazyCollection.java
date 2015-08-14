@@ -1,4 +1,4 @@
-package com.aol.simple.react.stream.traits;
+package com.aol.simple.react.stream.traits.future.operators;
 
 import java.util.AbstractCollection;
 import java.util.ArrayList;
