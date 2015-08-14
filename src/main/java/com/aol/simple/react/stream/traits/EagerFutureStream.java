@@ -1985,7 +1985,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * @return Next SimpleReact stage
 	 */
 	public static <U> EagerFutureStream<U> parallel(U... array) {
-		return EagerReact.parallelCommonBuilder().of(Arrays.asList(array));
+		return EagerReact.parallelCommonBuilder().from(Arrays.asList(array));
 	}
 
 	
@@ -2107,7 +2107,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * 
 	 * 
 	 */
-	static <T> EagerFutureStream<T> eagerFutureStream(Iterable<T> iterable) {
+	static <T> EagerFutureStream<T> eagerFutureStreamFromIterable(Iterable<T> iterable) {
 		return eagerFutureStream(iterable.iterator());
 	}
 

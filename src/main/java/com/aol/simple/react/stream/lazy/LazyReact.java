@@ -1,5 +1,6 @@
 package com.aol.simple.react.stream.lazy;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -23,6 +24,7 @@ import com.aol.simple.react.config.MaxActive;
 import com.aol.simple.react.stream.BaseLazySimpleReact;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
+import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -103,7 +105,12 @@ public class LazyReact extends BaseLazySimpleReact {
 		
 	}
 	
-	
+	public <U> LazyFutureStream<U> from(CompletableFuture<U> cf){
+		return this.construct(Stream.of(cf), Arrays.asList(cf));
+	}
+	public <U> LazyFutureStream<U> from(CompletableFuture<U>... cf){
+		return this.construct(Stream.of(cf), Arrays.asList(cf));
+	}
 	/* 
 	 * Construct a new Stream from another Stream
 	 * 
@@ -128,7 +135,7 @@ public class LazyReact extends BaseLazySimpleReact {
 	 */
 	@Override
 	public LazyFutureStream<Integer> range(int startInclusive, int endExclusive){
-		return of(IntStream.range(startInclusive, endExclusive));
+		return from(IntStream.range(startInclusive, endExclusive));
 	}
 
 	/* 
@@ -167,9 +174,9 @@ public class LazyReact extends BaseLazySimpleReact {
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
 	 */
 	@Override
-	public <U> LazyFutureStream<U> of(Stream<U> stream) {
+	public <U> LazyFutureStream<U> from(Stream<U> stream) {
 		
-		return (LazyFutureStream)super.of(stream);
+		return (LazyFutureStream)super.from(stream);
 	}
 
 	/* 
@@ -181,9 +188,9 @@ public class LazyReact extends BaseLazySimpleReact {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public  LazyFutureStream<Integer> of(IntStream stream) {
+	public  LazyFutureStream<Integer> from(IntStream stream) {
 		
-		return (LazyFutureStream)super.of(stream);
+		return (LazyFutureStream)super.from(stream);
 	}
 
 	/* 
@@ -194,9 +201,9 @@ public class LazyReact extends BaseLazySimpleReact {
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
 	 */
 	@Override
-	public  LazyFutureStream<Double> of(DoubleStream stream) {
+	public  LazyFutureStream<Double> from(DoubleStream stream) {
 		
-		return (LazyFutureStream)super.of(stream);
+		return (LazyFutureStream)super.from(stream);
 	}
 	
 
@@ -208,9 +215,9 @@ public class LazyReact extends BaseLazySimpleReact {
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
 	 */
 	@Override
-	public  LazyFutureStream<Long> of(LongStream stream) {
+	public  LazyFutureStream<Long> from(LongStream stream) {
 		
-		return (LazyFutureStream)super.of(stream);
+		return (LazyFutureStream)super.from(stream);
 	}
 	
 	/* 
@@ -248,9 +255,9 @@ public class LazyReact extends BaseLazySimpleReact {
 	 * @return Next stage in the reactive flow
 	 */
 	@Override
-	public <U> LazyFutureStream<U> of(Iterator<U> iterator) {
+	public <U> LazyFutureStream<U> from(Iterator<U> iterator) {
 		
-		return (LazyFutureStream)super.of(iterator);
+		return (LazyFutureStream)super.from(iterator);
 	}
 
 	/**
@@ -261,9 +268,9 @@ public class LazyReact extends BaseLazySimpleReact {
 	 * @return Next stage in the reactive flow
 	 */
 	@Override
-	public <R> LazyFutureStream<R> of(Collection<R> collection) {
+	public <R> LazyFutureStream<R> from(Collection<R> collection) {
 		
-		return (LazyFutureStream)super.of(collection);
+		return (LazyFutureStream)super.from(collection);
 	}
 
 	
@@ -342,7 +349,7 @@ public class LazyReact extends BaseLazySimpleReact {
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#ofIterable(java.lang.Iterable)
 	 */
 	@Override
-	public <U> LazyFutureStream<U> ofIterable(Iterable<U> iter) {
+	public <U> LazyFutureStream<U> fromIterable(Iterable<U> iter) {
 		
 		return (LazyFutureStream)super.of(iter);
 	}

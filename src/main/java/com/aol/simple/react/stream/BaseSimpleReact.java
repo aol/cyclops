@@ -38,7 +38,7 @@ public abstract class BaseSimpleReact {
 	
 	
 	public SimpleReactStream<Integer> range(int startInclusive, int endExclusive){
-		return of(IntStream.range(startInclusive, endExclusive));
+		return from(IntStream.range(startInclusive, endExclusive));
 	}
 	/**
 	 * Start a reactive flow from a JDK Iterator
@@ -47,8 +47,8 @@ public abstract class BaseSimpleReact {
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public <U> SimpleReactStream<U> of(final Iterator<U> iterator){
-		return of(StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED),false));
+	public <U> SimpleReactStream<U> from(final Iterator<U> iterator){
+		return from(StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED),false));
 		
 	
 	}
@@ -60,8 +60,8 @@ public abstract class BaseSimpleReact {
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public <R> SimpleReactStream<R> of(final Collection<R> collection){
-		return of(collection.stream());
+	public <R> SimpleReactStream<R> from(final Collection<R> collection){
+		return from(collection.stream());
 	}
 
 
@@ -72,8 +72,8 @@ public abstract class BaseSimpleReact {
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public <U> SimpleReactStream<U> ofIterable(final Iterable<U> iter){
-		return this.of(StreamSupport.stream(Spliterators.spliteratorUnknownSize(iter.iterator(), Spliterator.ORDERED),false));
+	public <U> SimpleReactStream<U> fromIterable(final Iterable<U> iter){
+		return this.from(StreamSupport.stream(Spliterators.spliteratorUnknownSize(iter.iterator(), Spliterator.ORDERED),false));
 	
 	}
 
@@ -95,7 +95,7 @@ public abstract class BaseSimpleReact {
 	 * @param stream that will be used to drive the reactive dataflow
 	 * @return Next stage in the reactive flow
 	 */
-	public <U> SimpleReactStream<U> of(final Stream<U> stream) {
+	public <U> SimpleReactStream<U> from(final Stream<U> stream) {
 		
 		Stream s = stream.map(it -> CompletableFuture.completedFuture(it));
 		return construct( s,null);
@@ -106,9 +106,9 @@ public abstract class BaseSimpleReact {
 	 * @param stream that will be used to drive the reactive dataflow
 	 * @return Next stage in the reactive flow
 	 */
-	public <U> SimpleReactStream<U> of(final IntStream stream) {
+	public <U> SimpleReactStream<U> from(final IntStream stream) {
 		
-		return (SimpleReactStream<U>)of(stream.boxed());
+		return (SimpleReactStream<U>)from(stream.boxed());
 	
 	}
 	/**
@@ -117,9 +117,9 @@ public abstract class BaseSimpleReact {
 	 * @param stream that will be used to drive the reactive dataflow
 	 * @return Next stage in the reactive flow
 	 */
-	public <U> SimpleReactStream<U> of(final DoubleStream stream) {
+	public <U> SimpleReactStream<U> from(final DoubleStream stream) {
 		
-		return (SimpleReactStream<U>)of(stream.boxed());
+		return (SimpleReactStream<U>)from(stream.boxed());
 	
 	}
 	/**
@@ -128,21 +128,21 @@ public abstract class BaseSimpleReact {
 	 * @param stream that will be used to drive the reactive dataflow
 	 * @return Next stage in the reactive flow
 	 */
-	public <U> SimpleReactStream<U> of(final LongStream stream) {
+	public <U> SimpleReactStream<U> from(final LongStream stream) {
 		
-		return (SimpleReactStream<U>)of(stream.boxed());
+		return (SimpleReactStream<U>)from(stream.boxed());
 	
 	}
 	
 
 
 	public <U> SimpleReactStream<U> of(U...array){
-		return of(Stream.of(array));
+		return from(Stream.of(array));
 	}
-	public <U> SimpleReactStream<U> reactTo(CompletableFuture<U> cf){
+	public <U> SimpleReactStream<U> from(CompletableFuture<U> cf){
 		return this.construct(Stream.of(cf), Arrays.asList(cf));
 	}
-	public <U> SimpleReactStream<U> observe(CompletableFuture<U>... cf){
+	public <U> SimpleReactStream<U> from(CompletableFuture<U>... cf){
 		return this.construct(Stream.of(cf), Arrays.asList(cf));
 	}
 	

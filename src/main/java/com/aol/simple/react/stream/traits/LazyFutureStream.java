@@ -1769,7 +1769,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	/**
 	 * Wrap an Iterable into a FutureStream that runs on the current thread
 	 */
-	static <T> LazyFutureStream<T> lazyFutureStream(Iterable<T> iterable) {
+	static <T> LazyFutureStream<T> lazyFutureStreamFromIterable(Iterable<T> iterable) {
 		return lazyFutureStream(iterable.iterator());
 	}
 

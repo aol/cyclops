@@ -56,7 +56,7 @@ public class PushableStreamBuilder{
 	public  <T>  PushableLazyFutureStream<T> pushable(ReactPool<LazyReact> s){
 		
 		Queue<T> q = createQueue();
-		return new PushableLazyFutureStream<T>(q,s.nextReactor().of(q.stream()));
+		return new PushableLazyFutureStream<T>(q,s.nextReactor().from(q.stream()));
 		
 	}
 

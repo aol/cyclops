@@ -83,7 +83,7 @@ public class LazyTest {
 	@Test 
 	public void debounce() {
 		System.out.println(LazyReact.sequentialCommonBuilder()
-				.of(IntStream.range(0, 1000000))
+				.from(IntStream.range(0, 1000000))
 				.limit(100)
 				.debounce(100, TimeUnit.MILLISECONDS)
 				.peek(System.out::println)
@@ -97,7 +97,7 @@ public class LazyTest {
 				.peek(System.out::println);
 		assertThat(
 				LazyReact.sequentialCommonBuilder()
-						.of(IntStream.range(0, 100000))
+						.from(IntStream.range(0, 100000))
 						.skipUntil(stoppingStream).peek(System.out::println)
 						.block().size(), greaterThan(0));
 	}
@@ -109,7 +109,7 @@ public class LazyTest {
 				.sequentialBuilder().react(() -> 100).then(this::sleep)
 				.peek(System.out::println);
 		System.out.println(LazyReact.sequentialCommonBuilder()
-				.of(IntStream.range(0, 1000000))
+				.from(IntStream.range(0, 1000000))
 				// .peek(System.out::println)
 				.takeUntil(stoppingStream).peek(System.out::println).block()
 				.size());

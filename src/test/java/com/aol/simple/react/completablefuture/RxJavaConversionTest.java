@@ -43,7 +43,7 @@ public class RxJavaConversionTest {
 	}
 	@Test
 	public void rxConversionTestSkip() throws InterruptedException, ExecutionException{
-		List<String> titles = new EagerReact().of(query("Hello, world!").get())
+		List<String> titles = new EagerReact().from(query("Hello, world!").get())
 								.<String>then(url -> getTitle(url))
 								.filter(Objects::nonNull)
 								.skip(5)

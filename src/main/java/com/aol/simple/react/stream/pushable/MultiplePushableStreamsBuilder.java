@@ -35,7 +35,7 @@ public class MultiplePushableStreamsBuilder<T>  {
 	 */
 	public  LazyFutureStream<T> pushable(ReactPool<LazyReact> s){
 		
-		return s.nextReactor().of(topic.stream());
+		return s.nextReactor().from(topic.stream());
 		
 	}
 

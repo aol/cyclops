@@ -201,7 +201,7 @@ public class ErrorTest {
 			list.add(i);
 		}
 
-		return LazyFutureStream.lazyFutureStream(list);
+		return LazyFutureStream.lazyFutureStreamFromIterable(list);
 				
 	
 	}

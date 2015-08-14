@@ -1,5 +1,6 @@
 package com.aol.simple.react.stream.eager;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -25,6 +26,7 @@ import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -111,9 +113,9 @@ public class EagerReact extends BaseSimpleReact{
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
 	 */
 	@Override
-	public <U> EagerFutureStream<U> of(Stream<U> stream) {
+	public <U> EagerFutureStream<U> from(Stream<U> stream) {
 		
-		return (EagerFutureStream)super.of(stream);
+		return (EagerFutureStream)super.from(stream);
 	}
 
 	/* 
@@ -124,9 +126,9 @@ public class EagerReact extends BaseSimpleReact{
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
 	 */
 	@Override
-	public EagerFutureStream<Integer> of(IntStream stream) {
+	public EagerFutureStream<Integer> from(IntStream stream) {
 		
-		return (EagerFutureStream)super.of(stream);
+		return (EagerFutureStream)super.from(stream);
 	}
 
 	/* 
@@ -137,9 +139,9 @@ public class EagerReact extends BaseSimpleReact{
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
 	 */
 	@Override
-	public  EagerFutureStream<Double> of(DoubleStream stream) {
+	public  EagerFutureStream<Double> from(DoubleStream stream) {
 		
-		return (EagerFutureStream)super.of(stream);
+		return (EagerFutureStream)super.from(stream);
 	}
 	
 
@@ -151,9 +153,9 @@ public class EagerReact extends BaseSimpleReact{
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
 	 */
 	@Override
-	public  EagerFutureStream<Long> of(LongStream stream) {
+	public  EagerFutureStream<Long> from(LongStream stream) {
 		
-		return (EagerFutureStream)super.of(stream);
+		return (EagerFutureStream)super.from(stream);
 	}
 	/* 
 	 * Construct a EagerFutureStream from array
@@ -199,9 +201,9 @@ public class EagerReact extends BaseSimpleReact{
 	 * @return Next stage in the reactive flow
 	 */
 	@Override
-	public <U> EagerFutureStream<U> of(Iterator<U> iterator) {
+	public <U> EagerFutureStream<U> from(Iterator<U> iterator) {
 		
-		return (EagerFutureStream)super.of(iterator);
+		return (EagerFutureStream)super.from(iterator);
 	}
 
 	/**
@@ -212,9 +214,9 @@ public class EagerReact extends BaseSimpleReact{
 	 * @return Next stage in the reactive flow
 	 */
 	@Override
-	public <R> EagerFutureStream<R> of(Collection<R> collection) {
+	public <R> EagerFutureStream<R> from(Collection<R> collection) {
 		
-		return (EagerFutureStream)super.of(collection);
+		return (EagerFutureStream)super.from(collection);
 	}
 
 
@@ -250,7 +252,7 @@ public class EagerReact extends BaseSimpleReact{
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#ofIterable(java.lang.Iterable)
 	 */
 	@Override
-	public <U> EagerFutureStream<U> ofIterable(Iterable<U> iter) {
+	public <U> EagerFutureStream<U> fromIterable(Iterable<U> iter) {
 		
 		return (EagerFutureStream)super.of(iter);
 	}
@@ -296,7 +298,12 @@ public class EagerReact extends BaseSimpleReact{
 		
 		return (EagerFutureStream)super.reactIterable(actions);
 	}
-
+	public <U> EagerFutureStream<U> from(CompletableFuture<U> cf){
+		return this.construct(Stream.of(cf), Arrays.asList(cf));
+	}
+	public <U> EagerFutureStream<U> from(CompletableFuture<U>... cf){
+		return this.construct(Stream.of(cf), Arrays.asList(cf));
+	}
 	/**
 	 * @return EagerReact for handling finite streams
 	 * @see SimpleReact#SimpleReact()

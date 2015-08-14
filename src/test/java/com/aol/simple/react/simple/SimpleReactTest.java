@@ -68,7 +68,7 @@ public class SimpleReactTest {
 	}
 	@Test
 	public void futureStreamIterable(){
-		assertThat(SimpleReactStream.simpleReactStream(Arrays.asList(1,2,3,4)).block().size(),is(4));
+		assertThat(SimpleReactStream.simpleReactStreamFromIterable(Arrays.asList(1,2,3,4)).block().size(),is(4));
 	}
 	
 	@Test
@@ -114,14 +114,14 @@ public class SimpleReactTest {
 	@Test
 	public void whenChainEmptyBlockReturns(){
 		new SimpleReact(new ForkJoinPool(1))
-		.of(new ArrayList<>())
+		.from(new ArrayList<>())
 		.block();
 	}
 
 	@Test
 	public void whenChainEmptyBlockReturnsWithBreakout(){
 		new SimpleReact(new ForkJoinPool(1))
-		.of(new ArrayList<>())
+		.from(new ArrayList<>())
 		.block(status->false);
 	}
 	

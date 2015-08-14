@@ -903,7 +903,7 @@ public interface SimpleReactStream<U> extends
 	 * @return SimpleReact Stage
 	 */
 	public static <U> SimpleReactStream<U> parallel(U... array) {
-		return SimpleReact.parallelCommonBuilder().of(Arrays.asList(array));
+		return SimpleReact.parallelCommonBuilder().from(Arrays.asList(array));
 	}
 	
 	/**
@@ -957,7 +957,7 @@ public interface SimpleReactStream<U> extends
 	/**
 	 * Wrap an Iterable into a FutureStream.
 	 */
-	static <T> SimpleReactStream<T> simpleReactStream(Iterable<T> iterable) {
+	static <T> SimpleReactStream<T> simpleReactStreamFromIterable(Iterable<T> iterable) {
 		return simpleReactStream(iterable.iterator());
 	}
 

@@ -52,13 +52,11 @@ public class LazySeqFutureTest extends BaseSeqFutureTest{
 
 	    @Test
 	    public void testZipWithIndex() {
-	        assertEquals(asList(),of().zipWithIndex().futureOperations().toList());
-	     //   System.out.println( of("a").zipWithIndex().toList().get(0));
+	        assertEquals(asList(),of().zipWithIndex().futureOperations().toList().join());
+	   
 	       
-	      assertThat( of("a").zipWithIndex().map(t->t.v2).findFirst().get(),is(0l));
-	      assertEquals(asList(tuple("a", 0L)), of("a").zipWithIndex().toList());
-	     //   assertEquals(asList(tuple("a", 0L), tuple("b", 1L)), of("a", "b").zipWithIndex().toList());
-	       //assertThat(asList(tuple("a", 0L), tuple("b", 1L), tuple("c", 2L)), is(of("a", "b", "c").zipWithIndex().toList()));
+	      assertThat( of("a").zipWithIndex().map(t->t.v2).futureOperations().findFirst().join().get(),is(0l));
+	      assertEquals(asList(tuple("a", 0L)), of("a").zipWithIndex().futureOperations().toList().join());
 	    }
 
 	   

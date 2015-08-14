@@ -58,13 +58,13 @@ public class EagerTest {
 	@Test
 	public void testPrimitiveStream(){
 		EagerReact.parallelCommonBuilder()
-		.of(IntStream.range(0, 1000))
+		.from(IntStream.range(0, 1000))
 		.forEach(System.out::println);
 	}
 	@Test
 	public void jitter(){
 		EagerReact.parallelCommonBuilder()
-						.of(IntStream.range(0, 100))
+						.from(IntStream.range(0, 100))
 						.map(it -> it*100)
 						.jitter(10l)
 						.peek(System.out::println)
@@ -73,7 +73,7 @@ public class EagerTest {
 	@Test 
 	public void jitterSequential(){
 		EagerReact.sequentialCommonBuilder()
-						.of(IntStream.range(0, 100))
+						.from(IntStream.range(0, 100))
 						.map(it -> it*100)
 						.jitter(100000l)
 						.peek(System.out::println)
