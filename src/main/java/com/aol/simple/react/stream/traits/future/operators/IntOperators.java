@@ -9,6 +9,11 @@ import java.util.stream.IntStream;
 
 public interface IntOperators<T>  extends HasStream<T>, HasExec{
 	
+	/**
+	 * Perform an asynchronous sum operation
+	 * @see java.util.stream.Stream#mapToInt(ToIntFunction)
+	 * 	 @see java.util.stream.IntStream#sum()
+	 * */
 	default  CompletableFuture<Integer> sumInt(ToIntFunction<T> fn){
 		
 		return CompletableFuture.supplyAsync(()->getStream()
@@ -16,6 +21,11 @@ public interface IntOperators<T>  extends HasStream<T>, HasExec{
 								.sum(),getExec());
 				
 	}
+	/**
+	 * Perform an asynchronous max operation
+	 * @see java.util.stream.Stream#mapToInt(ToIntFunction)
+	 * 	 @see java.util.stream.IntStream#max()
+	 * */
 	default  CompletableFuture<OptionalInt> maxInt(ToIntFunction<T> fn){
 		
 		return CompletableFuture.supplyAsync(()->getStream()
@@ -23,6 +33,11 @@ public interface IntOperators<T>  extends HasStream<T>, HasExec{
 								.max(),getExec());
 				
 	}
+	/**
+	 * Perform an asynchronous min operation
+	 * @see java.util.stream.Stream#mapToInt(ToIntFunction)
+	 * 	 @see java.util.stream.IntStream#min()
+	 * */
 	default  CompletableFuture<OptionalInt> minInt(ToIntFunction<T> fn){
 		
 		return CompletableFuture.supplyAsync(()->getStream()
@@ -30,6 +45,11 @@ public interface IntOperators<T>  extends HasStream<T>, HasExec{
 								.min(),getExec());
 				
 	}
+	/**
+	 * Perform an asynchronous average operation
+	 * @see java.util.stream.Stream#mapToInt(ToIntFunction)
+	 * 	 @see java.util.stream.IntStream#average()
+	 * */
 	default CompletableFuture<OptionalDouble> averageInt(ToIntFunction<T> fn){
 		
 		return CompletableFuture.supplyAsync(()->getStream()
@@ -37,6 +57,11 @@ public interface IntOperators<T>  extends HasStream<T>, HasExec{
 								.average(),getExec());
 				
 	}
+	/**
+	 * Perform an asynchronous summaryStatistics operation
+	 * @see java.util.stream.Stream#mapToInt(ToIntFunction)
+	 * 	 @see java.util.stream.IntStream#summaryStatistics()
+	 * */
 	default  CompletableFuture<IntSummaryStatistics> summaryStatisticsInt(ToIntFunction<T> fn){
 		
 		return CompletableFuture.supplyAsync(()->getStream()

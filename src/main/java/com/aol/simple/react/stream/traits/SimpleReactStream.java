@@ -868,6 +868,24 @@ public interface SimpleReactStream<U> extends
 	}
 
 	/**
+	 *  Create a sequential synchronous stream that runs on the current thread
+	 * @see Stream#of(Object)
+	 * 
+	 */
+	static <T> SimpleReactStream<T> ofThread(T value) {
+		return  new SimpleReact(ThreadPools.getSequential(),new AsyncRetryExecutor(ThreadPools.getSequentialRetry()),false).of(value);
+	}
+
+	/**
+	 * Create a sequential synchronous stream that runs on the current thread
+	 * @see Stream#of(Object[])
+	 * 
+	 */
+	@SafeVarargs
+	static <T> SimpleReactStream<T> ofThread(T... values) {
+		return  new SimpleReact(ThreadPools.getSequential(),new AsyncRetryExecutor(ThreadPools.getSequentialRetry()),false).of(values);
+	}
+	/**
 	 *  Create an empty sequential synchronous stream that runs on the current thread
 	 * 
 	 * 
