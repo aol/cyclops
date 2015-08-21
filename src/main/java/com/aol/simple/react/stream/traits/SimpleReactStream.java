@@ -53,6 +53,10 @@ public interface SimpleReactStream<U> extends
 	
 	Continueable getSubscription();
 	
+	default EagerFutureStream<U> advanced(){
+		return new EagerReact(getTaskExecutor()).withRetrier(getRetrier()).fromStream((Stream)getLastActive().stream());
+	}
+	
 	/* 
 	 * React to new events with the supplied function on the supplied Executor
 	 * 

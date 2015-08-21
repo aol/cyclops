@@ -17,6 +17,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -1311,7 +1312,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 			return (EagerFutureStream) merge((SimpleReactStream) other);
 		return fromStream(FutureStream.super.concat(other));
 	}
-	
+
 
 	/**
 	 * Concatenate two streams.
@@ -1646,6 +1647,116 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	}
 
 	/**
+     * Cross join 2 streams into one.
+     * <p>
+     * <pre>{@code 
+     * // (tuple(1, "a"), tuple(1, "b"), tuple(2, "a"), tuple(2, "b"))
+     * LazyFutureStream.of(1, 2).crossJoin(LazyFutureStream.of("a", "b"))
+     * }</pre>
+     */
+	default <T> EagerFutureStream<Tuple2<U, T>> crossJoin(Stream<T> other) {
+	     return (EagerFutureStream)FutureStream.super.crossJoin(other);
+	}
+	
+	/**
+     * Produce this stream, or an alternative stream from the
+     * {@code value}, in case this stream is empty.
+     */
+	default EagerFutureStream<U> onEmpty(U value){
+		
+		return (EagerFutureStream)FutureStream.super.onEmpty(value);
+	}
+	/**
+     * Produce this stream, or an alternative stream from the
+     * {@code supplier}, in case this stream is empty.
+     */
+	default EagerFutureStream<U> onEmptyGet(Supplier<U> supplier){
+		return (EagerFutureStream)FutureStream.super.onEmptyGet(supplier);
+	}
+	/**
+     * Produce this stream, or an alternative stream from the
+     * {@code supplier}, in case this stream is empty.
+     */
+	default <X extends Throwable> EagerFutureStream<U> onEmptyThrow(Supplier<X> supplier) {
+			return (EagerFutureStream)FutureStream.super.onEmptyThrow(supplier);
+	}
+    /**
+     * Inner join 2 streams into one.
+     * <p>
+     * <pre>{@code 
+     * // (tuple(1, 1), tuple(2, 2))
+     * EagerFutureStream.of(1, 2, 3).innerJoin(Seq.of(1, 2), t -> Objects.equals(t.v1, t.v2))
+     * }</code>
+     */
+    default <T> EagerFutureStream<Tuple2<U, T>> innerJoin(Stream<T> other, BiPredicate<U, T> predicate) {
+    	return (EagerFutureStream)FutureStream.super.innerJoin(other,predicate);
+       
+    }
+
+    /**
+     * Left outer join 2 streams into one.
+     * <p>
+     * <pre>{@code
+     * // (tuple(1, 1), tuple(2, 2), tuple(3, null))
+     * EagerFutureStream.of(1, 2, 3).leftOuterJoin(Seq.of(1, 2), t -> Objects.equals(t.v1, t.v2))
+     * }</pre>
+     */
+    default <T> EagerFutureStream<Tuple2<U, T>> leftOuterJoin(Stream<T> other, BiPredicate<U, T> predicate) {
+
+    	return (EagerFutureStream)FutureStream.super.leftOuterJoin(other,predicate);
+    }
+
+    /**
+     * Right outer join 2 streams into one.
+     * <p>
+     * <pre> {@code 
+     * // (tuple(1, 1), tuple(2, 2), tuple(null, 3))
+     * EagerFutureStream.of(1, 2).rightOuterJoin(Seq.of(1, 2, 3), t -> Objects.equals(t.v1, t.v2))
+     * }</code>
+     */
+    default <T> EagerFutureStream<Tuple2<U, T>> rightOuterJoin(Stream<T> other, BiPredicate<U, T> predicate) {
+        return  (EagerFutureStream)FutureStream.super.rightOuterJoin(other,predicate);
+    }
+   
+	/**
+	 * Repeat in a Stream while specified predicate holds
+	 * <pre>
+	 * {@code 
+	 *  int count =0;
+	 *  
+		assertThat(EagerFutureStream.of(1,2,2).cycleWhile(next -> count++<6 )
+											.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2)));
+	 * }
+	 * </pre>
+	 * @param predicate
+	 *            repeat while true
+	 * @return Repeating Stream
+	 */
+	default  EagerFutureStream<U> cycleWhile(Predicate<? super U> predicate) {
+		return cycle().limitWhile(predicate);
+	}
+
+	/**
+	 * Repeat in a Stream until specified predicate holds
+	 * 
+	 * <pre>
+	 * {@code 
+	 * 	count =0;
+		assertThat(EagerFutureStream.of(1,2,2,3).cycleUntil(next -> count++>10 )
+											.collect(Collectors.toList()),equalTo(Arrays.asList(1, 2, 2, 3, 1, 2, 2, 3, 1, 2, 2)));
+
+	 * }
+	 * </pre>
+	 * @param predicate
+	 *            repeat while true
+	 * @return Repeating Stream
+	 */
+	default  EagerFutureStream<U> cycleUntil(Predicate<? super U> predicate) {
+		
+		return cycle().limitUntil(predicate);
+	}
+	
+	/**
 	 * Returns a stream with a given value interspersed between any two values
 	 * of this stream.
 	 * <pre>
@@ -1720,12 +1831,39 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	@Override
 	default Tuple2<Seq<U>, Seq<U>> duplicate() {
 
-		Tuple2<Seq<U>, Seq<U>> duplicated = FutureStream.super.duplicate();
-		return new Tuple2(fromStream(duplicated.v1), fromStream(duplicated.v2));
+		List<EagerFutureStream<U>> duplicated = this.copy(2);
+		return new Tuple2(fromStream(duplicated.get(0)), fromStream(duplicated.get(1)));
 	}
-
-	
-
+	/**
+	 * Create a Stream that infinitely cycles this Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat(EagerFutureStream.of(1,2,2).cycle().limit(6)
+								.collect(Collectors.toList()),
+									equalTo(Arrays.asList(1,2,2,1,2,2));
+	 * }
+	 * </pre>
+	 * @return New cycling stream
+	 */
+	default EagerFutureStream<U> cycle(){
+		return (EagerFutureStream)FutureStream.super.cycle();
+	}
+	/**
+	 * Create a Stream that finitely cycles this Stream, provided number of times
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat(EagerFutureStream.of(1,2,2).cycle(3)
+								.collect(Collectors.toList()),
+									equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
+	 * }
+	 * </pre>
+	 * @return New cycling stream
+	 */
+	default EagerFutureStream<U> cycle(int times){
+		return (EagerFutureStream)FutureStream.super.cycle(times);
+	}
 	
 
 	/**

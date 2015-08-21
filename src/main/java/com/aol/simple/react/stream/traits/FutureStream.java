@@ -1,5 +1,7 @@
 package com.aol.simple.react.stream.traits;
 
+import static org.jooq.lambda.tuple.Tuple.tuple;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -55,7 +58,7 @@ import com.aol.simple.react.stream.traits.operators.Debounce;
 import com.aol.simple.react.stream.traits.operators.SlidingWindow;
 import com.aol.simple.react.util.SimpleTimer;
 
-public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
+public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 		 BlockingStream<U>, SimpleReactStream<U>, ToQueue<U> {
 
 	static final ExceptionSoftener softener = ExceptionSoftener.singleton.factory
@@ -91,7 +94,124 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		
 		return (FutureStream<Tuple2<U,R>>)futureStream;
 
+	
 	}
+	
+	/* 
+	 * @see org.jooq.lambda.Seq#crossJoin(java.util.stream.Stream)
+	 */
+	@Override
+	default <T> FutureStream<Tuple2<U, T>> crossJoin(Stream<T> other) {
+	        return fromStream(Seq.crossJoin(this, other));
+	}
+	
+	
+	/**
+     * Produce this stream, or an alternative stream from the
+     * {@code value}, in case this stream is empty.
+     */
+	@Override
+	default FutureStream<U> onEmpty(U value){
+		return fromStream(Seq.super.onEmpty(value));
+	}
+	/**
+     * Produce this stream, or an alternative stream from the
+     * {@code supplier}, in case this stream is empty.
+     */
+	@Override
+	default FutureStream<U> onEmptyGet(Supplier<U> supplier){
+		return fromStream(Seq.super.onEmptyGet(supplier));
+	}
+	 /**
+     * Produce this stream, or an alternative stream from the
+     * {@code supplier}, in case this stream is empty.
+     */
+	@Override
+	default <X extends Throwable> FutureStream<U> onEmptyThrow(Supplier<X> supplier) {
+			return fromStream(Seq.super.onEmptyThrow(supplier));
+	}
+    /**
+     * Inner join 2 streams into one.
+     * <p>
+     * <code><pre>
+     * // (tuple(1, 1), tuple(2, 2))
+     * Seq.of(1, 2, 3).innerJoin(Seq.of(1, 2), t -> Objects.equals(t.v1, t.v2))
+     * </pre></code>
+     */
+	@Override
+    default <T> FutureStream<Tuple2<U, T>> innerJoin(Stream<T> other, BiPredicate<U, T> predicate) {
+
+       
+        RepeatableStream<T> s = new RepeatableStream<>(ToLazyCollection.toLazyCollection(other.iterator()));
+
+        return flatMap(t -> s.stream()
+                           .filter(u -> predicate.test(t, u))
+                           .map(u -> tuple(t, u)));
+    }
+
+    /**
+     * Left outer join 2 streams into one.
+     * <p>
+     * <code><pre>
+     * // (tuple(1, 1), tuple(2, 2), tuple(3, null))
+     * Seq.of(1, 2, 3).leftOuterJoin(Seq.of(1, 2), t -> Objects.equals(t.v1, t.v2))
+     * </pre></code>
+     */
+    default <T> FutureStream<Tuple2<U, T>> leftOuterJoin(Stream<T> other, BiPredicate<U, T> predicate) {
+
+    	 RepeatableStream<T> s = new RepeatableStream<>(ToLazyCollection.toLazyCollection(other.iterator()));
+
+        return flatMap(t -> Seq.seq(s.stream())
+                           .filter(u -> predicate.test(t, u))
+                           .onEmpty(null)
+                           .map(u -> tuple(t, u)));
+    }
+
+    /**
+     * Right outer join 2 streams into one.
+     * <p>
+     * <code><pre>
+     * // (tuple(1, 1), tuple(2, 2), tuple(null, 3))
+     * Seq.of(1, 2).rightOuterJoin(Seq.of(1, 2, 3), t -> Objects.equals(t.v1, t.v2))
+     * </pre></code>
+     */
+    default <T> FutureStream<Tuple2<U, T>> rightOuterJoin(Stream<T> other, BiPredicate<U, T> predicate) {
+        return fromStream(Seq.super.rightOuterJoin(other, predicate));
+    }
+   
+	/**
+	
+	
+	/**
+	 * Create a Stream that infiniteable cycles the provided Streamable
+	 * @param s Streamable to cycle
+	 * @return New cycling stream
+	 */
+	@Override
+	default FutureStream<U> cycle(){
+		RepeatableStream s = new RepeatableStream(ToLazyCollection.toLazyCollection(toQueue().stream(getSubscription()).iterator()));
+		return fromStream(Stream.iterate(s.stream(),s1-> s.stream()).flatMap(i->i));
+	}
+	
+	/**
+	 * Create a Stream that finitely cycles the provided Streamable, provided number of times
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat(StreamUtils.cycle(3,Streamable.of(1,2,2))
+								.collect(Collectors.toList()),
+									equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
+	 * }
+	 * </pre>
+	 * @param s Streamable to cycle
+	 * @return New cycling stream
+	 */
+	default FutureStream<U> cycle(int times){
+		RepeatableStream s = new RepeatableStream(ToLazyCollection.toLazyCollection(toQueue().stream(getSubscription()).iterator()));
+		return fromStream(Stream.iterate(s.stream(),s1-> s.stream()).limit(times).flatMap(i->i));
+	}
+	
+	
 	/**
 	 * Zip two Streams, zipping against the underlying futures of both Streams
 	 * Placeholders (Futures) will be populated immediately in the new zipped Stream and results
@@ -1262,7 +1382,6 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 			}
 			
 		}, getSubscription(),q);
-		
 		
 	}
 

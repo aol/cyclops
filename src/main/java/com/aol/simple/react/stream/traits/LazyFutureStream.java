@@ -1,5 +1,6 @@
 package com.aol.simple.react.stream.traits;
 
+import static com.aol.simple.react.stream.traits.NullValue.NULL;
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 
@@ -16,6 +17,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -50,6 +52,7 @@ import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.lazy.LazyFutureStreamImpl;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.lazy.ParallelReductionConfig;
+import com.aol.simple.react.stream.traits.future.operators.ToLazyCollection;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -796,7 +799,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	@Override
 	default LazyFutureStream<U> merge(SimpleReactStream<U>... streams) {
 		return (LazyFutureStream<U>) (Stream.of(streams).allMatch( stream -> stream instanceof LazyFutureStream) ?
-									switchOnNextStream(Seq.of(streams).cast(LazyFutureStream.class) ) : FutureStream.super.merge(streams));
+							switchOnNextValue(Seq.of(streams).cast(LazyFutureStream.class) ) : FutureStream.super.merge(streams));
 	}
 	/**
 	 * Merges this stream and the supplied Streams into a single Stream where the next value
@@ -807,28 +810,43 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 * 	LazyFutureStream<Integer> fast =  ... //  [1,2,3,4,5,6,7..]
 	 * 	LazyFutureStream<Integer> slow =  ... //  [100,200,300,400,500,600..]
 	 * 
-	 *  LazyFutureStream<Integer> merged = fast.switchOnNext(slow);  //[1,2,3,4,5,6,7,8,100,9,10,11,12,13,14,15,16,200..] 
+	 *  LazyFutureStream<Integer> merged = fast.switchOnNextValue(Stream.of(slow));  //[1,2,3,4,5,6,7,8,100,9,10,11,12,13,14,15,16,200..] 
 	 * }
 	 * 
 	 * 
 	 * @param streams
 	 * @return
 	 */
-	default <R> LazyFutureStream<R> switchOnNext(LazyFutureStream<?>... streams){
+	default <R> LazyFutureStream<R> switchOnNextValue(Stream<LazyFutureStream> streams){
+		Queue queue = Queue.createMergeQueue(); 
+		addToQueue(queue);
+		streams.forEach(s->s.addToQueue(queue));
+		
+		return fromStream(queue.stream(this.getSubscription()));
+	}
+	/**
+	 * Merges this stream and the supplied Streams into a single Stream where the next value
+	 * is the next returned across any of the involved Streams. Suitable for merging infinite streams
+	 * 
+	 * <pre>
+	 * {@code
+	 * 	LazyFutureStream<Integer> fast =  ... //  [1,2,3,4,5,6,7..]
+	 * 	LazyFutureStream<Integer> slow =  ... //  [100,200,300,400,500,600..]
+	 * 
+	 *  LazyFutureStream<Integer> merged = fast.mergeLatest(slow);  //[1,2,3,4,5,6,7,8,100,9,10,11,12,13,14,15,16,200..] 
+	 * }
+	 * 
+	 * 
+	 * @param streams
+	 * @return
+	 */
+	default <R> LazyFutureStream<R> mergeLatest(LazyFutureStream<?>... streams){
 		Queue queue = Queue.createMergeQueue(); 
 		addToQueue(queue);
 		Seq.of(streams).forEach(s->s.addToQueue(queue));
 		
 		return fromStream(queue.stream(this.getSubscription()));
 	}
-	default <R> LazyFutureStream<R> switchOnNextStream(Stream<LazyFutureStream> stream){
-		Queue queue = Queue.createMergeQueue(); 
-		addToQueue(queue);
-		stream.forEach(s->s.addToQueue(queue));
-		
-		return fromStream(queue.stream(this.getSubscription()));
-	}
-	
 	
 
 	/*
@@ -1056,6 +1074,34 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 				: LazyFutureStream.lazyFutureStream(other);
 		return (LazyFutureStream) merge(stream);
 	}
+	 /**
+     * Concatenate two streams.
+     * <p>
+     * <code><pre>
+     * // (1, 2, 3, 4)
+     * LazyFutureStream.of(1, 2, 3).concat(4)
+     * </pre></code>
+     *
+     * @see #concat(Stream[])
+     */
+    default LazyFutureStream<U> concat(U other) {
+        return concat(Stream.of(other));
+    }
+
+    /**
+     * Concatenate two streams.
+     * <p>
+     * <code><pre>
+     * // (1, 2, 3, 4, 5, 6)
+     * LazyFutureStream.of(1, 2, 3).concat(4, 5, 6)
+     * </pre></code>
+     *
+     * @see #concat(Stream[])
+     */
+    @SuppressWarnings({ "unchecked" })
+    default LazyFutureStream<U> concat(U... other) {
+        return concat(Stream.of(other));
+    }
 
 	/*
 	 * Cast all elements in this stream to specified type. May throw {@link
@@ -1169,31 +1215,88 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 * @see org.jooq.lambda.Seq#distinct()
 	 */
 	@Override
-	default Seq<U> distinct() {
+	default LazyFutureStream<U> distinct() {
 
-		return toQueue().stream(getSubscription()).distinct();
+		return fromStream(toQueue().stream(getSubscription()).distinct());
 	}
 
 	/**
-	 * Duplicate a Streams into two equivalent Streams.
+	 * Duplicate a LazyFutureStream into two equivalent Streams. 
+	 * Two LazyFutureStreams are 
+	 * returned but Seq interface specifies return type is Seq. See duplicateFutureStream to
+	 * see an alternative which returns LazyFutureStream
 	 * 
-	 * <code> 
+	 * <pre>
+	 * {@code 
 	 * 
 	 * // tuple((1, 2, 3), (1, 2, 3)) 
 	 * 
 	 * LazyFutureStream.of(1, 2, 3).duplicate()
-	 * </code>
+	 * }
+	 * </pre>
+	 *
+	 * @see LazyFutureStream#copy(int)
 	 *
 	 * @see #duplicate(Stream)
 	 */
 	@Override
 	default Tuple2<Seq<U>, Seq<U>> duplicate() {
-		Tuple2<Seq<U>, Seq<U>> duplicated = FutureStream.super.duplicate();
+		List<LazyFutureStream<U>> duplicated = this.copy(2);
+		return new Tuple2(duplicated.get(0), duplicated.get(2));
+	}
+	/*
+	 * <pre>
+	 * {@code 
+	 * 
+	 * // tuple((1, 2, 3), (1, 2, 3)) 
+	 * 
+	 * LazyFutureStream.of(1, 2, 3).duplicate()
+	 * }
+	 * </pre>
+	 *
+	 * @see LazyFutureStream#copy(int)
+	 *
+	 * @see #duplicate(Stream)
+	 */
+	default Tuple2<Seq<U>, Seq<U>> duplicateFutureStream() {
+		Tuple2 duplicated = this.duplicate();
 		return new Tuple2(duplicated.v1, duplicated.v2);
+	}
+	/**
+	 * Create a Stream that infinitely cycles this Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat(LazyFutureStream.of(1,2,2).cycle().limit(6)
+								.collect(Collectors.toList()),
+									equalTo(Arrays.asList(1,2,2,1,2,2));
+	 * }
+	 * </pre>
+	 * @return New cycling stream
+	 */
+	default LazyFutureStream<U> cycle(){
+		return (LazyFutureStream)FutureStream.super.cycle();
+	}
+	/**
+	 * Create a Stream that finitely cycles this Stream, provided number of times
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat(LazyFutureStream.of(1,2,2).cycle(3)
+								.collect(Collectors.toList()),
+									equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
+	 * }
+	 * </pre>
+	 * @return New cycling stream
+	 */
+	default LazyFutureStream<U> cycle(int times){
+		return (LazyFutureStream)FutureStream.super.cycle(times);
 	}
 
 	/**
-	 * Partition a stream into two given a predicate.
+	 * Partition a stream in two given a predicate. Two LazyFutureStreams are 
+	 * returned but Seq interface specifies return type is Seq. See partitionFutureStream to
+	 * see an alternative which returns LazyFutureStream
 	 * 
 	 * <code>
 	 * 
@@ -1203,6 +1306,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 * 
 	 * </code>
 	 * 
+	 * @see #partitionFutureStream(Predicate)
 	 * @see #partition(Stream, Predicate)
 	 */
 	@Override
@@ -1210,6 +1314,27 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 		Tuple2<Seq<U>, Seq<U>> partitioned = FutureStream.super
 				.partition(predicate);
 		return new Tuple2(partitioned.v1, partitioned.v2);
+	}
+	/**
+	 * Partition an LazyFutureStream into two LazyFutureStreams given a
+	 * predicate.
+	 * <pre>
+	 * {@code 
+	 * LazyFutureStream.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0)
+	 * 
+	 * results in
+	 * 
+	 * tuple((1, 3, 5), (2, 4, 6))
+	 * }</pre>
+	 * @param predicate
+	 *            Predicate to split Stream
+	 * @return LazyFutureStream
+	 * @see #partition(Predicate)
+	 */
+	default Tuple2<LazyFutureStream<U>, LazyFutureStream<U>> partitionFutureStream(
+			Predicate<? super U> predicate) {
+		Tuple2 partition = partition(predicate);
+		return (Tuple2<LazyFutureStream<U>, LazyFutureStream<U>>) partition;
 	}
 
 	@Override
@@ -1247,6 +1372,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 *
 	 * @see #zip(Stream, Stream)
 	 */
+	@Override
 	default <T> LazyFutureStream<Tuple2<U, T>> zip(Seq<T> other) {
 		return fromStream(zip(this, other));
 	}
@@ -1262,6 +1388,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 *
 	 * @see #zip(Seq, BiFunction)
 	 */
+	@Override
 	default <T, R> LazyFutureStream<R> zip(Seq<T> other,
 			BiFunction<U, T, R> zipper) {
 		return fromStream(zip(this, other, zipper));
@@ -1392,7 +1519,116 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 		return fromStream(limitUntil(this, predicate));
 	}
 
+	/**
+     * Cross join 2 streams into one.
+     * <p>
+     * <pre>{@code 
+     * // (tuple(1, "a"), tuple(1, "b"), tuple(2, "a"), tuple(2, "b"))
+     * LazyFutureStream.of(1, 2).crossJoin(LazyFutureStream.of("a", "b"))
+     * }</pre>
+     */
+	default <T> LazyFutureStream<Tuple2<U, T>> crossJoin(Stream<T> other) {
+	     return (LazyFutureStream)FutureStream.super.crossJoin(other);
+	}
+	
+	/**
+     * Produce this stream, or an alternative stream from the
+     * {@code value}, in case this stream is empty.
+     */
+	default LazyFutureStream<U> onEmpty(U value){
+		
+		return (LazyFutureStream)FutureStream.super.onEmpty(value);
+	}
+	/**
+     * Produce this stream, or an alternative stream from the
+     * {@code supplier}, in case this stream is empty.
+     */
+	default LazyFutureStream<U> onEmptyGet(Supplier<U> supplier){
+		return (LazyFutureStream)FutureStream.super.onEmptyGet(supplier);
+	}
+	/**
+     * Produce this stream, or an alternative stream from the
+     * {@code supplier}, in case this stream is empty.
+     */
+	default <X extends Throwable> LazyFutureStream<U> onEmptyThrow(Supplier<X> supplier) {
+			return (LazyFutureStream)FutureStream.super.onEmptyThrow(supplier);
+	}
+    /**
+     * Inner join 2 streams into one.
+     * <p>
+     * <pre>{@code 
+     * // (tuple(1, 1), tuple(2, 2))
+     * LazyFutureStream.of(1, 2, 3).innerJoin(Seq.of(1, 2), t -> Objects.equals(t.v1, t.v2))
+     * }</code>
+     */
+    default <T> LazyFutureStream<Tuple2<U, T>> innerJoin(Stream<T> other, BiPredicate<U, T> predicate) {
+    	return (LazyFutureStream)FutureStream.super.innerJoin(other,predicate);
+       
+    }
 
+    /**
+     * Left outer join 2 streams into one.
+     * <p>
+     * <pre>{@code
+     * // (tuple(1, 1), tuple(2, 2), tuple(3, null))
+     * LazyFutureStream.of(1, 2, 3).leftOuterJoin(Seq.of(1, 2), t -> Objects.equals(t.v1, t.v2))
+     * }</pre>
+     */
+    default <T> LazyFutureStream<Tuple2<U, T>> leftOuterJoin(Stream<T> other, BiPredicate<U, T> predicate) {
+
+    	return (LazyFutureStream)FutureStream.super.leftOuterJoin(other,predicate);
+    }
+
+    /**
+     * Right outer join 2 streams into one.
+     * <p>
+     * <pre> {@code 
+     * // (tuple(1, 1), tuple(2, 2), tuple(null, 3))
+     * LazyFutureStream.of(1, 2).rightOuterJoin(Seq.of(1, 2, 3), t -> Objects.equals(t.v1, t.v2))
+     * }</code>
+     */
+    default <T> LazyFutureStream<Tuple2<U, T>> rightOuterJoin(Stream<T> other, BiPredicate<U, T> predicate) {
+        return  (LazyFutureStream)FutureStream.super.rightOuterJoin(other,predicate);
+    }
+   
+	/**
+	 * Repeat in a Stream while specified predicate holds
+	 * <pre>
+	 * {@code 
+	 *  int count =0;
+	 *  
+		assertThat(LazyFutureStream.of(1,2,2).cycleWhile(next -> count++<6 )
+											.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2)));
+	 * }
+	 * </pre>
+	 * @param predicate
+	 *            repeat while true
+	 * @return Repeating Stream
+	 */
+	default  LazyFutureStream<U> cycleWhile(Predicate<? super U> predicate) {
+		return cycle().limitWhile(predicate);
+	}
+
+	/**
+	 * Repeat in a Stream until specified predicate holds
+	 * 
+	 * <pre>
+	 * {@code 
+	 * 	count =0;
+		assertThat(LazyFutureStream.of(1,2,2,3).cycleUntil(next -> count++>10 )
+											.collect(Collectors.toList()),equalTo(Arrays.asList(1, 2, 2, 3, 1, 2, 2, 3, 1, 2, 2)));
+
+	 * }
+	 * </pre>
+	 * @param predicate
+	 *            repeat while true
+	 * @return Repeating Stream
+	 */
+	default  LazyFutureStream<U> cycleUntil(Predicate<? super U> predicate) {
+		
+		return cycle().limitUntil(predicate);
+	}
+	
 
 	/**
 	 * Zip two streams into one.
@@ -1462,7 +1698,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 		return limitUntil(stream, predicate.negate());
 	}
 
-	public final static Object NULL = new Object();
+
 
 	/**
 	 * Returns a stream ed to all elements for which a predicate evaluates to

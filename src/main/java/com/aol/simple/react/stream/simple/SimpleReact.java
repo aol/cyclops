@@ -66,6 +66,16 @@ public class SimpleReact  extends BaseSimpleReact{
 		this( ThreadPools.getStandard());
 	}
 	
+	public SimpleReact(Executor executor, RetryExecutor retrier,
+			 Boolean async) {
+		super(ThreadPools.getQueueCopyExecutor());
+		this.executor = Optional.ofNullable(executor).orElse(
+				new ForkJoinPool(Runtime.getRuntime().availableProcessors()));
+		this.retrier = retrier;
+		
+		this.async = Optional.ofNullable(async).orElse(true);
+	}
+	
 	/**
 	 * @param executor Executor this SimpleReact instance will use to execute concurrent tasks.
 	 */
@@ -205,15 +215,7 @@ public class SimpleReact  extends BaseSimpleReact{
 	
 	
 	
-	public SimpleReact(Executor executor, RetryExecutor retrier,
-			 Boolean async) {
-		
-		this.executor = Optional.ofNullable(executor).orElse(
-				new ForkJoinPool(Runtime.getRuntime().availableProcessors()));
-		this.retrier = retrier;
-		
-		this.async = Optional.ofNullable(async).orElse(true);
-	}
+	
 
 	public boolean isAsync(){
 		return async;

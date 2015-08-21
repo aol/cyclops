@@ -291,7 +291,7 @@ public class Queue<T> implements Adapter<T> {
 		}
 
 		@Override
-		public synchronized Throwable fillInStackTrace() {
+		public Throwable fillInStackTrace() {
 			return this;
 		}
 	
@@ -307,7 +307,7 @@ public class Queue<T> implements Adapter<T> {
 	public static class QueueTimeoutException extends
 			SimpleReactProcessingException {
 		@Override
-		public synchronized Throwable fillInStackTrace() {
+		public Throwable fillInStackTrace() {
 			
 			return this;
 		}

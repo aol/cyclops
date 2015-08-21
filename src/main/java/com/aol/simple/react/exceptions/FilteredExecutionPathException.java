@@ -4,7 +4,7 @@ public class FilteredExecutionPathException extends
 		SimpleReactProcessingException {
 
 	@Override
-	public synchronized Throwable fillInStackTrace() {
+	public Throwable fillInStackTrace() {
 		return this;
 	}
 

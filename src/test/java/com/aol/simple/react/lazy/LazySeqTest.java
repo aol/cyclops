@@ -55,7 +55,7 @@ public class LazySeqTest extends BaseSeqTest {
 	}
 	@Test
 	public void switchOnNextMultiple(){
-		assertThat(react(()->1,()->2).switchOnNext( react(()->'a',()->'b'),
+		assertThat(react(()->1,()->2).mergeLatest( react(()->'a',()->'b'),
 						react(()->100,()->200)).toList().size(),equalTo(6));
 	}
 	@Test

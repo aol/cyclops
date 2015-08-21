@@ -47,6 +47,16 @@ public class FutureOps<T> implements IntOperators<T>,DoubleOperators<T>, LongOpe
 	public CompletableFuture<List<T>> toList(){
 		return CompletableFuture.supplyAsync(()->stream.toList(),exec);
 	}
+	public CompletableFuture<T> lastValue(){
+		return CompletableFuture.supplyAsync(()->{ List<T> l= stream.toList(); return l.get(l.size()-1);},exec);
+	}
+	
+	public CompletableFuture<T> single(){
+		return CompletableFuture.supplyAsync(()->{ List<T> l= stream.toList(); if(l.size()==1){ return l.get(l.size()-1); }
+			throw new UnsupportedOperationException("single only works for Streams with a single value");},exec);
+	}
+	
+	
 	/**
 	 * Asynchronously convert  this Stream into a List
 	 *  <pre>
