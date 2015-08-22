@@ -8,7 +8,7 @@ import java.util.stream.StreamSupport;
 
 import lombok.AllArgsConstructor;
 
-import com.aol.simple.react.async.Subscription;
+import com.aol.simple.react.async.subscription.Subscription;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 
 public abstract class BaseLazySimpleReact extends BaseSimpleReact{

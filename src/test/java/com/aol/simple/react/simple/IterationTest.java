@@ -20,7 +20,7 @@ public class IterationTest {
 	public void testIterate() throws InterruptedException, ExecutionException {
 		List<Integer> list = Arrays.asList(1,2,3,4);
 		List<String> strings = new SimpleReact()
-				.<Integer> of(list.iterator())
+				.<Integer> from(list.iterator())
 				.peek(it -> System.out.println(it))
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
@@ -33,7 +33,7 @@ public class IterationTest {
 	public void testReactWithCollection() throws InterruptedException, ExecutionException {
 		List<Integer> list = Arrays.asList(1,2,3,4);
 		List<String> strings = new SimpleReact()
-				.<Integer> of(list)
+				.<Integer> from(list)
 				.peek(it -> System.out.println(it))
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
@@ -47,7 +47,7 @@ public class IterationTest {
 	public void testReactWithCollectionOfStrings() throws InterruptedException, ExecutionException {
 		List<String> list = Arrays.asList("hello","world","$da^","along","$orrupted",null);
 		int count  = new SimpleReact()
-				.of(list)
+				.from(list)
 				.capture(e -> e.printStackTrace())
 				.filter(it -> !it.startsWith("$"))
 			
@@ -64,7 +64,7 @@ public class IterationTest {
 	public void testIterateLargeMaxSize() throws InterruptedException, ExecutionException {
 		List<Integer> list = Arrays.asList(1,2,3,4);
 		List<String> strings = new SimpleReact()
-				.<Integer> of(list.iterator())
+				.<Integer> from(list.iterator())
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.block();
@@ -76,7 +76,7 @@ public class IterationTest {
 	public void testIterateEmptyIterator() throws InterruptedException, ExecutionException {
 		List<Integer> list = Arrays.asList();
 		List<String> strings = new SimpleReact()
-				.<Integer> of(list.iterator())
+				.<Integer> from(list.iterator())
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.block();
@@ -90,7 +90,7 @@ public class IterationTest {
 		
 		Iterator<Integer> iterator = createInfiniteIterator();
 		List<String> strings = new SimpleReact()
-				.<Integer> of(iterator)
+				.<Integer> from(iterator)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.block();
@@ -102,7 +102,7 @@ public class IterationTest {
 	public void testIterateMaxSize0() throws InterruptedException, ExecutionException {
 		Iterator<Integer> iterator = createInfiniteIterator();
 		List<String> strings = new SimpleReact()
-				.<Integer> of(iterator)
+				.<Integer> from(iterator)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.block();

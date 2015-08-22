@@ -1,5 +1,7 @@
 package com.aol.simple.react.stream.traits;
 
+import static org.jooq.lambda.tuple.Tuple.tuple;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,10 +14,12 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Spliterator;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -42,14 +46,19 @@ import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.Queue.ClosedQueueException;
 import com.aol.simple.react.async.Queue.QueueReader;
 import com.aol.simple.react.async.Queue.QueueTimeoutException;
-import com.aol.simple.react.async.QueueFactories;
+import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
-import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.stream.traits.future.operators.ToLazyCollection;
+import com.aol.simple.react.stream.traits.operators.BatchBySize;
+import com.aol.simple.react.stream.traits.operators.BatchByTime;
+import com.aol.simple.react.stream.traits.operators.BatchByTimeAndSize;
+import com.aol.simple.react.stream.traits.operators.Debounce;
+import com.aol.simple.react.stream.traits.operators.SlidingWindow;
 import com.aol.simple.react.util.SimpleTimer;
 
-public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
+public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 		 BlockingStream<U>, SimpleReactStream<U>, ToQueue<U> {
 
 	static final ExceptionSoftener softener = ExceptionSoftener.singleton.factory
@@ -62,6 +71,23 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		return (fs1,fs2) -> fs1.flatMap( v1-> (FutureStream)fs2.map(v2->fn.apply(v1,v2)));
 	}
 	
+	default Collection<U> toLazyCollection(){
+		return ToLazyCollection.toLazyCollection(this.iterator());
+	}
+	default Collection<U> toConcurrentLazyCollection(){
+		return ToLazyCollection.toConcurrentLazyCollection(this.iterator());
+	}
+	/**
+	 * @return single element from this Stream if it is a single element Stream
+	 * 			otherwise throw an UnsupportedOperationException
+	 */
+	default U single(){
+		 List<U> l= toList(); 
+		 if(l.size()==1){ 
+			 return l.get(l.size()-1); 
+			 }
+		throw new UnsupportedOperationException("single only works for Streams with a single value");
+	}
 	/**
 	 * Zip two Streams, zipping against the underlying futures of this stream
 	 * 
@@ -79,7 +105,85 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		
 		return (FutureStream<Tuple2<U,R>>)futureStream;
 
+	
 	}
+	
+	/* 
+	 * @see org.jooq.lambda.Seq#crossJoin(java.util.stream.Stream)
+	 */
+	@Override
+	default <T> FutureStream<Tuple2<U, T>> crossJoin(Stream<T> other) {
+	        return fromStream(Seq.crossJoin(this, other));
+	}
+	
+	
+	/**
+     * Produce this stream, or an alternative stream from the
+     * {@code value}, in case this stream is empty.
+     */
+	@Override
+	default FutureStream<U> onEmpty(U value){
+		return fromStream(Seq.super.onEmpty(value));
+	}
+	/**
+     * Produce this stream, or an alternative stream from the
+     * {@code supplier}, in case this stream is empty.
+     */
+	@Override
+	default FutureStream<U> onEmptyGet(Supplier<U> supplier){
+		return fromStream(Seq.super.onEmptyGet(supplier));
+	}
+	 /**
+     * Produce this stream, or an alternative stream from the
+     * {@code supplier}, in case this stream is empty.
+     */
+	@Override
+	default <X extends Throwable> FutureStream<U> onEmptyThrow(Supplier<X> supplier) {
+			return fromStream(Seq.super.onEmptyThrow(supplier));
+	}
+    
+	/* 
+	 * @see org.jooq.lambda.Seq#innerJoin(java.util.stream.Stream, java.util.function.BiPredicate)
+	 */
+	@Override
+    default <T> FutureStream<Tuple2<U, T>> innerJoin(Stream<T> other, BiPredicate<U, T> predicate) {
+
+       
+        RepeatableStream<T> s = new RepeatableStream<>(ToLazyCollection.toLazyCollection(other.iterator()));
+
+        return flatMap(t -> s.stream()
+                           .filter(u -> predicate.test(t, u))
+                           .map(u -> tuple(t, u)));
+    }
+
+    
+    /* 
+     * @see org.jooq.lambda.Seq#leftOuterJoin(java.util.stream.Stream, java.util.function.BiPredicate)
+     */
+	@Override
+    default <T> FutureStream<Tuple2<U, T>> leftOuterJoin(Stream<T> other, BiPredicate<U, T> predicate) {
+
+    	 RepeatableStream<T> s = new RepeatableStream<>(ToLazyCollection.toLazyCollection(other.iterator()));
+
+        return flatMap(t -> Seq.seq(s.stream())
+                           .filter(u -> predicate.test(t, u))
+                           .onEmpty(null)
+                           .map(u -> tuple(t, u)));
+    }
+
+	/* 
+	 * @see org.jooq.lambda.Seq#rightOuterJoin(java.util.stream.Stream, java.util.function.BiPredicate)
+	 */
+	@Override
+    default <T> FutureStream<Tuple2<U, T>> rightOuterJoin(Stream<T> other, BiPredicate<U, T> predicate) {
+        return fromStream(Seq.super.rightOuterJoin(other, predicate));
+    }
+   
+	
+	
+	
+	
+	
 	/**
 	 * Zip two Streams, zipping against the underlying futures of both Streams
 	 * Placeholders (Futures) will be populated immediately in the new zipped Stream and results
@@ -105,7 +209,10 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 */
 	default Iterator<Collection<U>> chunkLastReadIterator(){
 		
-		Queue.QueueReader reader =  new Queue.QueueReader(this.withQueueFactory(QueueFactories.unboundedQueue()).toQueue(q->q.withTimeout(100).withTimeUnit(TimeUnit.MICROSECONDS)),null);
+		Queue.QueueReader reader =  new Queue.QueueReader(this.withQueueFactory(QueueFactories.unboundedQueue())
+																	.toQueue(q->q.withTimeout(100)
+																	.withTimeUnit(TimeUnit.MICROSECONDS))
+																	,null);
 		class Chunker implements Iterator<Collection<U>> {
 			volatile boolean open =true;
 			@Override
@@ -167,7 +274,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 				
 			};
 		};
-		return fromStream(queue.streamBatch(getSubscription(), fn));
+		return fromStream(queue.streamBatchNoTimeout(getSubscription(), fn));
 		
 		
 	}
@@ -205,32 +312,44 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	}
 	
 	/**
+	 * Batch the elements in the Stream by a combination of Size and Time
+	 * If batch exceeds max size it will be split
+	 * If batch exceeds max time it will be split
+	 * Excludes Null values (neccessary for timeout handling)
+	 * 
+	 * @return
+	 */
+	default FutureStream<List<U>> batchBySizeAndTime(int size,long time, TimeUnit unit) { 
+	 
+	    Queue<U> queue = toQueue();
+	    Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTimeAndSize<>(size,time,unit,()->new ArrayList<>());
+	    return (FutureStream)fromStream(queue.streamBatch(getSubscription(), (Function)fn)).filter(c->!((Collection)c).isEmpty());
+	}
+	/**
+	 * Batch the elements in the Stream by a combination of Size and Time
+	 * If batch exceeds max size it will be split
+	 * If batch exceeds max time it will be split
+	 * Excludes Null values (neccessary for timeout handling)
+	 * 
+	 * @return
+	 */
+	default <C extends Collection<U>> FutureStream<C> batchBySizeAndTime(int size,long time, TimeUnit unit, Supplier<C> factory) { 
+	 
+	    Queue<U> queue = toQueue();
+	    Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTimeAndSize(size,time,unit,factory);
+	    return (FutureStream)fromStream(queue.streamBatch(getSubscription(), (Function)fn));
+	}
+	/**
 	 * 
 	 * Batch the elements in this stream into Lists of specified size
 	 * 
 	 * @param size Size of lists elements should be batched into
 	 * @return Stream of Lists
 	 */
-	default FutureStream<Collection<U>> batchBySize(int size) {
+	default FutureStream<List<U>> batchBySize(int size) {
 		Queue queue = toQueue();
-		Function<Supplier<U>, Supplier<Collection<U>>> fn = s -> {
-			return () -> {List<U> list = new ArrayList<>();
-			try {
-				for (int i = 0; i < size; i++) {
-					
-					list.add(s.get());
-					getSubscription().closeQueueIfFinished(queue);
-				}
-			} catch (ClosedQueueException e) {
-				if(list.size()>0)
-					throw new ClosedQueueException(list);
-				else
-					throw new ClosedQueueException();
-			}
-			return list;
-			};
-		};
-		return fromStream(queue.streamBatch(getSubscription(), fn));
+		Function<Supplier<U>, Supplier<List<U>>> fn = new BatchBySize(size,this.getSubscription(),queue,()->new ArrayList<>());
+		return fromStream(queue.streamBatchNoTimeout(getSubscription(), fn));
 	}
 	/**
 	 * Batch elements into a Stream of collections with user defined function
@@ -238,9 +357,9 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 *           This function should return a Supplier which creates a collection of the batched values
 	 * @return Stream of batched values
 	 */
-	default FutureStream<Collection<U>> batch(Function<Supplier<U>, Supplier<Collection<U>>> fn){
+	default <C extends Collection<U>>FutureStream<C> batch(Function<Supplier<U>, Supplier<C>> fn){
 		Queue queue = toQueue();
-		return fromStream(queue.streamBatch(getSubscription(), fn));
+		return fromStream(queue.streamBatchNoTimeout(getSubscription(), fn));
 	}
 	
 	/**
@@ -251,27 +370,10 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 * @param supplier Create the batch holding collection
 	 * @return Stream of Collections
 	 */
-	default FutureStream<Collection<U>> batchBySize(int size, Supplier<Collection<U>> supplier) {
+	default <C extends Collection<U>>FutureStream<C> batchBySize(int size, Supplier<C> supplier) {
 		Queue queue = toQueue();
-		Function<Supplier<U>, Supplier<Collection<U>>> fn = s -> {
-			return () -> {
-				Collection<U> list = supplier.get();
-			try {
-				for (int i = 0; i < size; i++) {
-					
-					list.add(s.get());
-					getSubscription().closeQueueIfFinished(queue);
-				}
-			} catch (ClosedQueueException e) {
-				if(list.size()>0)
-					throw new ClosedQueueException(list);
-				else
-					throw new ClosedQueueException();
-			}
-			return list;
-			};
-		};
-		return fromStream(queue.streamBatch(getSubscription(), fn));
+		Function<Supplier<U>, Supplier<Collection<U>>> fn = new BatchBySize(size,this.getSubscription(),queue,supplier);
+		return fromStream(queue.streamBatchNoTimeout(getSubscription(), fn));
 	}
 	/**
 	 * Introduce a random delay between events in a stream
@@ -381,31 +483,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	default FutureStream<U> debounce(long time, TimeUnit unit) {
 		Queue queue = toQueue();
 		long timeNanos =  unit.toNanos(time);
-		Function<Supplier<U>, Supplier<U>> fn = s -> {
-			
-			return () -> {
-				SimpleTimer timer=  new SimpleTimer();
-				Optional<U> result = Optional.empty();
-				try {
-					long elapsedNanos= 1;
-					while(elapsedNanos>0){
-					
-						result = Optional.of(s.get());
-						elapsedNanos= timeNanos - timer.getElapsedNanoseconds();
-					
-					}
-						
-						
-						
-				} catch (ClosedQueueException e) {
-					if(result.isPresent())
-						throw new ClosedQueueException(result);
-					else
-						throw new ClosedQueueException();
-				}
-				return result.get();
-			};
-		};
+		Function<Supplier<U>, Supplier<U>> fn = new Debounce<>(timeNanos,1l,true);
 		return fromStream(queue.streamControl(getSubscription(), fn));
 	}
 	/**
@@ -493,6 +571,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 
 	/**
 	 * Organise elements in a Stream into a Collections based on the time period they pass through this stage
+	 * Excludes Null values (neccessary for timeout handling)
 	 * 
 	 * @param time Time period during which all elements should be collected
 	 * @param unit Time unit during which all elements should be collected
@@ -500,22 +579,10 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 */
 	default FutureStream<Collection<U>> batchByTime(long time, TimeUnit unit) {
 		Queue queue = toQueue();
-		Function<Supplier<U>, Supplier<Collection<U>>> fn = s -> {
-			return () -> {
-				SimpleTimer timer = new SimpleTimer();
-				List<U> list = new ArrayList<>();
-				try {
-					do {
-						list.add(s.get());
-					} while (timer.getElapsedNanoseconds()<unit.toNanos(time));
-				} catch (ClosedQueueException e) {
-					
-					throw new ClosedQueueException(list);
-				}
-				return list;
-			};
-		};
-		return fromStream(queue.streamBatch(getSubscription(), fn));
+		Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTime<U>(time,unit,
+				this.getSubscription(),queue,()->new ArrayList<>());
+		
+		return fromStream(queue.streamBatch(getSubscription(), fn)).filter(c->!((Collection)c).isEmpty());
 	}
 	/**
 	 * Organise elements in a Stream into a Collections based on the time period they pass through this stage
@@ -527,22 +594,8 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	 */
 	default FutureStream<Collection<U>> batchByTime(long time, TimeUnit unit,Supplier<Collection<U>> factory) {
 		Queue queue = toQueue();
-		Function<Supplier<U>, Supplier<Collection<U>>> fn = s -> {
-			return () -> {
-				SimpleTimer timer = new SimpleTimer();
-				Collection<U> list = factory.get();
-				try {
-					do {
-						list.add(s.get());
-					} while (timer.getElapsedNanoseconds()<unit.toNanos(time));
-				} catch (ClosedQueueException e) {
-					
-					throw new ClosedQueueException(list);
-				}
-				return list;
-			};
-		};
-		return fromStream(queue.streamBatch(getSubscription(), fn));
+		Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTime<U>(time,unit, this.getSubscription(),queue,factory);
+		return fromStream(queue.streamBatch(getSubscription(), fn)).filter(c->!((Collection)c).isEmpty());
 	}
 
 	/**
@@ -859,6 +912,8 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	default <R> FutureStream<R> then(final Function<U, R> fn) {
 		return (FutureStream) SimpleReactStream.super.then(fn);
 	}
+	
+	
 
 	/*
 	 * @see
@@ -925,15 +980,22 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	}
 
 	/*
+	 * Merges this stream with the supplied Stream
+	 * to merge Streams of different type 
+	 *
+	 * 
 	 * @see
 	 * com.aol.simple.react.stream.traits.SimpleReactStream#merge(com.aol.simple
 	 * .react.stream.traits.SimpleReactStream)
 	 */
 	@Override
-	default FutureStream<U> merge(SimpleReactStream<U> s) {
-		return (FutureStream) SimpleReactStream.super.merge(s);
+	default FutureStream<U> merge(SimpleReactStream<U>... streams) {
+		return (FutureStream)SimpleReactStream.super.merge(streams);		
 	}
+	
 
+	
+	
 	/*
 	 * @see
 	 * com.aol.simple.react.stream.traits.SimpleReactStream#onFail(java.util
@@ -1036,6 +1098,65 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	@Override
 	default Object[] toArray() {
 		return toQueue().stream(getSubscription()).toArray();
+	}
+	
+	/**
+	 * Create a sliding view over this Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * //futureStream of [1,2,3,4,5,6]
+	 *		 
+	 * List<List<Integer>> list = futureStream.sliding(2)
+									.collect(Collectors.toList());
+		
+	
+		assertThat(list.get(0),hasItems(1,2));
+		assertThat(list.get(1),hasItems(2,3));
+	 * }
+	 * </pre>
+	 * @param size
+	 *            Size of sliding window
+	 * @return Stream with sliding view over data in this stream
+	 */
+	default FutureStream<List<U>> sliding(int size){
+		return this.fromStream(SlidingWindow.sliding(this,size, 1));
+	}
+	/**
+	 * Create a sliding view over this Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * //futureStream of [1,2,3,4,5,6,7,8]
+	 *		 
+	 * List<List<Integer>> list = futureStream.sliding(3,2)
+									.collect(Collectors.toList());
+		
+	
+		assertThat(list.get(0),hasItems(1,2,3));
+		assertThat(list.get(1),hasItems(3,4,5));
+	 * }
+	 * </pre>
+	 * @param size
+	 *            Size of sliding window
+	 * @return Stream with sliding view over data in this stream
+	 */
+	default FutureStream<List<U>> sliding(int size, int increment){
+		return this.fromStream(SlidingWindow.sliding(this,size, increment));
+	}
+	
+	/**
+	 * @return An extensive set of asyncrhonous terminal operations
+	 */
+	default FutureOps<U> futureOperations(){
+		return new FutureOps<>(this.getTaskExecutor(),this);
+	}
+	/**
+	 * @param executor to execute terminal ops asynchronously on
+	 * @return An extensive set of asyncrhonous terminal operations
+	 */
+	default FutureOps<U> futureOperations(Executor executor){
+		return new FutureOps<>(executor,this);
 	}
 
 	/*
@@ -1156,6 +1277,9 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 	default Optional<U> findFirst() {
 		return toQueue().stream(getSubscription()).findFirst();
 	}
+	default U firstValue() {
+		return toQueue().stream(getSubscription()).findFirst().get();
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -1230,7 +1354,6 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 			}
 			
 		}, getSubscription(),q);
-		
 		
 	}
 
@@ -1529,24 +1652,7 @@ public interface FutureStream<U> extends Seq<U>, ConfigurableStream<U>,
 		return stream.skip(f).limit(t);
 	}
 
-	/**
-	 * Merge this reactive dataflow with another - recommended for merging
-	 * different types. To merge flows of the same type the instance method
-	 * merge is more appropriate.
-	 * 
-	 * @param s1
-	 *            Reactive stage builder to merge
-	 * @param s2
-	 *            Reactive stage builder to merge
-	 * @return Merged dataflow
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <R> FutureStream<R> merge(FutureStream s1, FutureStream s2) {
-		List merged = Stream
-				.of(s1.getLastActive().list(), s2.getLastActive().list())
-				.flatMap(Collection::stream).collect(Collectors.toList());
-		return (FutureStream<R>) s1.withLastActive(new StreamWrapper(merged));
-	}
+	
 
 	
 	/* 

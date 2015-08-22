@@ -8,6 +8,7 @@ import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 import com.aol.simple.react.async.Queue.ClosedQueueException;
+import com.aol.simple.react.async.subscription.Continueable;
 
 
 public class ClosingSpliterator<T> implements Spliterator<T> {
@@ -51,17 +52,20 @@ public class ClosingSpliterator<T> implements Spliterator<T> {
 			
 				
             try{ 
-            
+            	
             	action.accept(s.get());
             	subscription.closeQueueIfFinished(queue);
              return true;
             }catch(ClosedQueueException e){
+            
             	if(e.isDataPresent())
             		action.accept((T)e.getCurrentData());
             	return false;
             }catch(Exception e){
             	
             	return false;
+            }finally {
+            	
             }
             
 		}

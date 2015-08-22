@@ -6,11 +6,18 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ScheduledExecutorService;
 
 import lombok.Getter;
-import lombok.Setter;
 
 public class ThreadPools {
 	@Getter
 	private static final Executor commonFreeThread =  Executors.newFixedThreadPool(1);
+	//(Runnable r)  -> r.run();
+	
+	@Getter
+	private static final  Executor currentThreadExecutor = (Runnable r)  -> r.run();
+	      
+	@Getter
+	private static final Executor queueCopyExecutor = Executors.newFixedThreadPool(1);
+	
 	
 	@Getter
 	private static final Executor commonLazyExecutor = new ForkJoinPool(1);
@@ -21,9 +28,9 @@ public class ThreadPools {
 	@Getter
 	private static final ScheduledExecutorService commonStanardRetry = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
 
+	public static enum ExecutionMode{ CURRENT, COMMON_FREE, NEW_FREE}
 	
 	
-	@Setter
 	private static volatile boolean useCommon = true;
 	public static Executor getStandard() {
 		if(useCommon)
@@ -53,5 +60,11 @@ public class ThreadPools {
 			return commonLazyExecutor;
 		else
 			return  new ForkJoinPool(1); 
+	}
+	public static boolean isUseCommon() {
+		return useCommon;
+	}
+	public static void setUseCommon(boolean useCommon) {
+		ThreadPools.useCommon = useCommon;
 	}
 }

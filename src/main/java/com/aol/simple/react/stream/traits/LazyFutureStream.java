@@ -1,9 +1,9 @@
 package com.aol.simple.react.stream.traits;
 
+import static com.aol.simple.react.stream.traits.NullValue.NULL;
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -14,11 +14,10 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -36,10 +35,10 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Subscriber;
 
 import com.aol.simple.react.RetryBuilder;
-import com.aol.simple.react.async.Continueable;
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.async.QueueFactories;
-import com.aol.simple.react.async.QueueFactory;
+import com.aol.simple.react.async.factories.QueueFactories;
+import com.aol.simple.react.async.factories.QueueFactory;
+import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.capacity.monitor.LimitingMonitor;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.config.MaxActive;
@@ -53,6 +52,8 @@ import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.lazy.LazyFutureStreamImpl;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.lazy.ParallelReductionConfig;
+import com.aol.simple.react.stream.traits.future.operators.ToLazyCollection;
+import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -62,7 +63,9 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  *
  */
 
-public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, LazyToQueue<U>, FutureStreamAsyncPublisher<U>,FutureStreamSynchronousPublisher<U> {
+public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, LazyToQueue<U>, 
+										FutureStreamAsyncPublisher<U>,
+										FutureStreamSynchronousPublisher<U> {
 
 	default void  subscribe(Subscriber<? super U> s){
 		if(isAsync())
@@ -498,9 +501,9 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 *            values
 	 * @return Stream of batched values
 	 */
-	default LazyFutureStream<Collection<U>> batch(
-			Function<Supplier<U>, Supplier<Collection<U>>> fn) {
-		return (LazyFutureStream<Collection<U>>) FutureStream.super.batch(fn);
+	default <C extends Collection<U>> LazyFutureStream<C> batch(
+			Function<Supplier<U>, Supplier<C>> fn) {
+		return (LazyFutureStream<C>) FutureStream.super.batch(fn);
 	}
 
 	/**
@@ -511,9 +514,43 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 *            Size of lists elements should be batched into
 	 * @return Stream of Lists
 	 */
-	default LazyFutureStream<Collection<U>> batchBySize(int size) {
-		return (LazyFutureStream<Collection<U>>) FutureStream.super
+	default  LazyFutureStream<List<U>> batchBySize(int size) {
+		return (LazyFutureStream<List<U>>) FutureStream.super
 				.batchBySize(size);
+
+	}
+	/* 
+	 * Batch the elements in the Stream by a combination of Size and Time
+	 * If batch exceeds max size it will be split
+	 * If batch exceeds max time it will be split
+	 * Excludes Null values (neccessary for timeout handling)
+	 * 
+	 * <pre>
+	 * {@code
+	 * assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(100);return 6;})
+						.batchBySizeAndTime(30,60,TimeUnit.MILLISECONDS)
+						.toList()
+						.get(0)
+						,not(hasItem(6)));
+		}
+	 * </pre>
+	 * 
+	 * <pre>
+	 * {@code
+	 * 	
+		assertThat(of(1,2,3,4,5,6).batchBySizeAndTime(3,10,TimeUnit.SECONDS).toList().get(0).size(),is(3));
+
+	 * }</pre>
+	 * 
+	 *	@param size Max batch size
+	 *	@param time Max time length
+	 *	@param unit time unit
+	 *	@return batched stream
+	 * @see com.aol.simple.react.stream.traits.FutureStream#batchBySizeAndTime(int, long, java.util.concurrent.TimeUnit)
+	 */
+	default LazyFutureStream<List<U>> batchBySizeAndTime(int size,long time, TimeUnit unit) {
+		return (LazyFutureStream<List<U>>) FutureStream.super
+				.batchBySizeAndTime(size,time,unit);
 
 	}
 
@@ -527,9 +564,9 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 *            Create the batch holding collection
 	 * @return Stream of Collections
 	 */
-	default LazyFutureStream<Collection<U>> batchBySize(int size,
-			Supplier<Collection<U>> supplier) {
-		return (LazyFutureStream<Collection<U>>) FutureStream.super
+	default <C extends Collection<U>> LazyFutureStream<C> batchBySize(int size,
+			Supplier<C> supplier) {
+		return (LazyFutureStream<C>) FutureStream.super
 				.batchBySize(size, supplier);
 
 	}
@@ -607,6 +644,15 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 * Organise elements in a Stream into a Collections based on the time period
 	 * they pass through this stage
 	 * 
+	 * <pre>
+	 * {@code 
+	 * 	LazyFutureStream.react(()->load1(),()->load2(),()->load3(),()->load4(),()->load5(),()->load6())
+	 * 					.batchByTime(15000,TimeUnit.MICROSECONDS);
+	 * 
+	 * }
+	 * 
+	 * </pre>
+	 * 
 	 * @param time
 	 *            Time period during which all elements should be collected
 	 * @param unit
@@ -636,7 +682,8 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 				.batchByTime(time, unit, factory);
 
 	}
-
+	
+	
 	/**
 	 * Similar to zip and withLatest, except will always take the latest from
 	 * either Stream (merged with last available from the other). By contrast
@@ -681,6 +728,8 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 		return (LazyFutureStream<U>) FutureStream.firstOf(futureStreams);
 	}
 
+	
+	
 	/*
 	 * 
 	 * React to new events with the supplied function on the supplied
@@ -717,8 +766,27 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 		return (LazyFutureStream) FutureStream.super.then(fn);
 	}
 
+	default List<LazyFutureStream<U>> copy(final int times){
+		return (List)FutureStream.super.copySimpleReactStream(times);
+		
+	}
+	
 	/*
-	 * Merge two SimpleReact Streams
+	 * Merge two simple-react Streams, by merging the Stream of underlying
+	 * futures - not suitable for merging infinite Streams unless all supplied
+	 * Streams are LazyFutureStreams - use  LazyFutureStream#switchOnNext for infinite Streams
+	 * 
+	 * <pre>
+	 * {@code 
+	 * List<String> result = 	LazyFutureStream.of(1,2,3)
+	 * 											 .merge(LazyFutureStream.of(100,200,300))
+												  .map(it ->it+"!!")
+												  .toList();
+
+		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
+	 * 
+	 * }
+	 * </pre>
 	 * 
 	 * @param s Stream to merge
 	 * 
@@ -729,9 +797,57 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 * react.stream.traits.SimpleReactStream)
 	 */
 	@Override
-	default LazyFutureStream<U> merge(SimpleReactStream<U> s) {
-		return (LazyFutureStream) FutureStream.super.merge(s);
+	default LazyFutureStream<U> merge(SimpleReactStream<U>... streams) {
+		return (LazyFutureStream<U>) (Stream.of(streams).allMatch( stream -> stream instanceof LazyFutureStream) ?
+							switchOnNextValue(Seq.of(streams).cast(LazyFutureStream.class) ) : FutureStream.super.merge(streams));
 	}
+	/**
+	 * Merges this stream and the supplied Streams into a single Stream where the next value
+	 * is the next returned across any of the involved Streams. Suitable for merging infinite streams
+	 * 
+	 * <pre>
+	 * {@code
+	 * 	LazyFutureStream<Integer> fast =  ... //  [1,2,3,4,5,6,7..]
+	 * 	LazyFutureStream<Integer> slow =  ... //  [100,200,300,400,500,600..]
+	 * 
+	 *  LazyFutureStream<Integer> merged = fast.switchOnNextValue(Stream.of(slow));  //[1,2,3,4,5,6,7,8,100,9,10,11,12,13,14,15,16,200..] 
+	 * }
+	 * </pre>
+	 * 
+	 * @param streams
+	 * @return
+	 */
+	default <R> LazyFutureStream<R> switchOnNextValue(Stream<LazyFutureStream> streams){
+		Queue queue = Queue.createMergeQueue(); 
+		addToQueue(queue);
+		streams.forEach(s->s.addToQueue(queue));
+		
+		return fromStream(queue.stream(this.getSubscription()));
+	}
+	/**
+	 * Merges this stream and the supplied Streams into a single Stream where the next value
+	 * is the next returned across any of the involved Streams. Suitable for merging infinite streams
+	 * 
+	 * <pre>
+	 * {@code
+	 * 	LazyFutureStream<Integer> fast =  ... //  [1,2,3,4,5,6,7..]
+	 * 	LazyFutureStream<Integer> slow =  ... //  [100,200,300,400,500,600..]
+	 * 
+	 *  LazyFutureStream<Integer> merged = fast.mergeLatest(slow);  //[1,2,3,4,5,6,7,8,100,9,10,11,12,13,14,15,16,200..] 
+	 * }
+	 * </pre>
+	 * 
+	 * @param streams
+	 * @return
+	 */
+	default <R> LazyFutureStream<R> mergeLatest(LazyFutureStream<?>... streams){
+		Queue queue = Queue.createMergeQueue(); 
+		addToQueue(queue);
+		Seq.of(streams).forEach(s->s.addToQueue(queue));
+		
+		return fromStream(queue.stream(this.getSubscription()));
+	}
+	
 
 	/*
 	 * Define failure handling for this stage in a stream. Recovery function
@@ -955,10 +1071,41 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	default LazyFutureStream<U> concat(Stream<U> other) {
 
 		SimpleReactStream stream = other instanceof SimpleReactStream ? (SimpleReactStream) other
-				: SimpleReactStream.sequentialCommonBuilder()
-						.of(other);
+				: LazyFutureStream.lazyFutureStream(other);
 		return (LazyFutureStream) merge(stream);
 	}
+	 /**
+     * Concatenate two streams.
+     * 
+     * <pre>
+     * {@code
+     * // (1, 2, 3, 4)
+     * LazyFutureStream.of(1, 2, 3).concat(4)
+     * }
+     * </pre>
+     *
+     * @see #concat(Stream[])
+     */
+    default LazyFutureStream<U> concat(U other) {
+        return concat(Stream.of(other));
+    }
+
+    /**
+     * Concatenate two streams.
+     * 
+     * <pre>
+     * {@code 
+     * // (1, 2, 3, 4, 5, 6)
+     * LazyFutureStream.of(1, 2, 3).concat(4, 5, 6)
+     * }
+     * </pre>
+     *
+     * @see #concat(Stream[])
+     */
+    @SuppressWarnings({ "unchecked" })
+    default LazyFutureStream<U> concat(U... other) {
+        return concat(Stream.of(other));
+    }
 
 	/*
 	 * Cast all elements in this stream to specified type. May throw {@link
@@ -1065,48 +1212,68 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 
 	}
 
-	/**
-	 * Construct an Lazy SimpleReact Stream from specified array
-	 * 
-	 * @param array
-	 *            Values to react to
-	 * @return Next SimpleReact stage
-	 */
-	public static <U> LazyFutureStream<U> parallel(U... array) {
-		return new LazyReact().of(Arrays.asList(array));
-	}
-
+	
 	/*
 	 * @return distinct elements in this Stream (must be a finite stream!)
 	 * 
 	 * @see org.jooq.lambda.Seq#distinct()
 	 */
 	@Override
-	default Seq<U> distinct() {
+	default LazyFutureStream<U> distinct() {
 
-		return toQueue().stream(getSubscription()).distinct();
+		return fromStream(toQueue().stream(getSubscription()).distinct());
 	}
 
 	/**
-	 * Duplicate a Streams into two equivalent Streams.
+	 * Duplicate a LazyFutureStream into two equivalent Streams. 
+	 * Two LazyFutureStreams are 
+	 * returned but Seq interface specifies return type is Seq. See duplicateFutureStream to
+	 * see an alternative which returns LazyFutureStream
 	 * 
-	 * <code> 
+	 * <pre>
+	 * {@code 
 	 * 
 	 * // tuple((1, 2, 3), (1, 2, 3)) 
 	 * 
 	 * LazyFutureStream.of(1, 2, 3).duplicate()
-	 * </code>
+	 * }
+	 * </pre>
+	 *
+	 * @see LazyFutureStream#copy(int)
 	 *
 	 * @see #duplicate(Stream)
 	 */
 	@Override
 	default Tuple2<Seq<U>, Seq<U>> duplicate() {
-		Tuple2<Seq<U>, Seq<U>> duplicated = FutureStream.super.duplicate();
+		List<LazyFutureStream<U>> duplicated = this.copy(2);
+		return new Tuple2(duplicated.get(0), duplicated.get(1));
+	}
+	/*
+	 * <pre>
+	 * {@code 
+	 * 
+	 * // tuple((1, 2, 3), (1, 2, 3)) 
+	 * 
+	 * LazyFutureStream.of(1, 2, 3).duplicate()
+	 * }
+	 * </pre>
+	 *
+	 * @see LazyFutureStream#copy(int)
+	 *
+	 * @see #duplicate(Stream)
+	 */
+	default Tuple2<Seq<U>, Seq<U>> duplicateFutureStream() {
+		Tuple2 duplicated = this.duplicate();
 		return new Tuple2(duplicated.v1, duplicated.v2);
 	}
-
+	
+	
+	
+	
 	/**
-	 * Partition a stream into two given a predicate.
+	 * Partition a stream in two given a predicate. Two LazyFutureStreams are 
+	 * returned but Seq interface specifies return type is Seq. See partitionFutureStream to
+	 * see an alternative which returns LazyFutureStream
 	 * 
 	 * <code>
 	 * 
@@ -1116,6 +1283,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 * 
 	 * </code>
 	 * 
+	 * @see #partitionFutureStream(Predicate)
 	 * @see #partition(Stream, Predicate)
 	 */
 	@Override
@@ -1123,6 +1291,27 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 		Tuple2<Seq<U>, Seq<U>> partitioned = FutureStream.super
 				.partition(predicate);
 		return new Tuple2(partitioned.v1, partitioned.v2);
+	}
+	/**
+	 * Partition an LazyFutureStream into two LazyFutureStreams given a
+	 * predicate.
+	 * <pre>
+	 * {@code 
+	 * LazyFutureStream.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0)
+	 * 
+	 * results in
+	 * 
+	 * tuple((1, 3, 5), (2, 4, 6))
+	 * }</pre>
+	 * @param predicate
+	 *            Predicate to split Stream
+	 * @return LazyFutureStream
+	 * @see #partition(Predicate)
+	 */
+	default Tuple2<LazyFutureStream<U>, LazyFutureStream<U>> partitionFutureStream(
+			Predicate<? super U> predicate) {
+		Tuple2 partition = partition(predicate);
+		return (Tuple2<LazyFutureStream<U>, LazyFutureStream<U>>) partition;
 	}
 
 	@Override
@@ -1160,6 +1349,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 *
 	 * @see #zip(Stream, Stream)
 	 */
+	@Override
 	default <T> LazyFutureStream<Tuple2<U, T>> zip(Seq<T> other) {
 		return fromStream(zip(this, other));
 	}
@@ -1175,6 +1365,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 *
 	 * @see #zip(Seq, BiFunction)
 	 */
+	@Override
 	default <T, R> LazyFutureStream<R> zip(Seq<T> other,
 			BiFunction<U, T, R> zipper) {
 		return fromStream(zip(this, other, zipper));
@@ -1306,180 +1497,151 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	}
 
 	/**
-	 * Construct a SimpleReact Stage from a supplied array
+     * Cross join 2 streams into one.
+     * <p>
+     * <pre>{@code 
+     * // (tuple(1, "a"), tuple(1, "b"), tuple(2, "a"), tuple(2, "b"))
+     * LazyFutureStream.of(1, 2).crossJoin(LazyFutureStream.of("a", "b"))
+     * }</pre>
+     */
+	default <T> LazyFutureStream<Tuple2<U, T>> crossJoin(Stream<T> other) {
+	     return (LazyFutureStream)FutureStream.super.crossJoin(other);
+	}
+	
+	/**
+     * Produce this stream, or an alternative stream from the
+     * {@code value}, in case this stream is empty.
+     */
+	default LazyFutureStream<U> onEmpty(U value){
+		
+		return (LazyFutureStream)FutureStream.super.onEmpty(value);
+	}
+	/**
+     * Produce this stream, or an alternative stream from the
+     * {@code supplier}, in case this stream is empty.
+     */
+	default LazyFutureStream<U> onEmptyGet(Supplier<U> supplier){
+		return (LazyFutureStream)FutureStream.super.onEmptyGet(supplier);
+	}
+	/**
+     * Produce this stream, or an alternative stream from the
+     * {@code supplier}, in case this stream is empty.
+     */
+	default <X extends Throwable> LazyFutureStream<U> onEmptyThrow(Supplier<X> supplier) {
+			return (LazyFutureStream)FutureStream.super.onEmptyThrow(supplier);
+	}
+    /**
+     * Inner join 2 streams into one.
+     * 
+     * <pre>
+     * {@code 
+     * // (tuple(1, 1), tuple(2, 2))
+     * LazyFutureStream.of(1, 2, 3).innerJoin(Seq.of(1, 2), t -> Objects.equals(t.v1, t.v2))
+     * }</pre>
+     */
+    default <T> LazyFutureStream<Tuple2<U, T>> innerJoin(Stream<T> other, BiPredicate<U, T> predicate) {
+    	return (LazyFutureStream)FutureStream.super.innerJoin(other,predicate);
+       
+    }
+
+    /**
+     * Left outer join 2 streams into one.
+     * <p>
+     * <pre>
+     * {@code
+     * // (tuple(1, 1), tuple(2, 2), tuple(3, null))
+     * LazyFutureStream.of(1, 2, 3).leftOuterJoin(Seq.of(1, 2), t -> Objects.equals(t.v1, t.v2))
+     * }</pre>
+     */
+    default <T> LazyFutureStream<Tuple2<U, T>> leftOuterJoin(Stream<T> other, BiPredicate<U, T> predicate) {
+
+    	return (LazyFutureStream)FutureStream.super.leftOuterJoin(other,predicate);
+    }
+
+    /**
+     * Right outer join 2 streams into one.
+     * <p>
+     * <pre> 
+     * {@code 
+     * // (tuple(1, 1), tuple(2, 2), tuple(null, 3))
+     * LazyFutureStream.of(1, 2).rightOuterJoin(Seq.of(1, 2, 3), t -> Objects.equals(t.v1, t.v2))
+     * }</pre>
+     */
+    default <T> LazyFutureStream<Tuple2<U, T>> rightOuterJoin(Stream<T> other, BiPredicate<U, T> predicate) {
+        return  (LazyFutureStream)FutureStream.super.rightOuterJoin(other,predicate);
+    }
+    /**
+	 * Create a Stream that infinitely cycles this Stream
 	 * 
-	 * @param array
-	 *            Array of value to form the reactive stream / sequence
-	 * @return SimpleReact Stage
+	 * <pre>
+	 * {@code 
+	 * assertThat(LazyFutureStream.of(1,2,2).cycle().limit(6)
+								.collect(Collectors.toList()),
+									equalTo(Arrays.asList(1,2,2,1,2,2));
+	 * }
+	 * </pre>
+	 * @return New cycling stream
 	 */
-	public static <U> LazyFutureStream<U> parallelOf(U... array) {
-		return new LazyReact().of(Arrays.asList(array));
+	@Override
+	default LazyFutureStream<U> cycle(){
+		RepeatableStream s = new RepeatableStream(ToLazyCollection.toLazyCollection(toQueue().stream(getSubscription()).iterator()));
+		return fromStream(Stream.iterate(s.stream(),s1-> s.stream()).flatMap(i->i));
 	}
-
+	
 	/**
-	 * @return Lazy SimpleReact for handling infinite streams
-	 */
-	public static LazyReact parallelBuilder() {
-		return new LazyReact();
-	}
-
-	/**
-	 * Construct a new LazyReact builder, with a new task executor and retry
-	 * executor with configured number of threads
+	 * Create a Stream that finitely cycles this Stream, provided number of times
 	 * 
-	 * @param parallelism
-	 *            Number of threads task executor should have
-	 * @return LazyReact instance
+	 * <pre>
+	 * {@code 
+	 * assertThat(LazyFutureStream.of(1,2,2).cycle(3)
+								.collect(Collectors.toList()),
+									equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
+	 * }
+	 * </pre>
+	 * @return New cycling stream
 	 */
-	public static LazyReact parallelBuilder(int parallelism) {
-		return LazyReact.builder().executor(Executors.newFixedThreadPool(parallelism))
-				.retrier(new RetryBuilder().parallelism(parallelism)).build();
+	default LazyFutureStream<U> cycle(int times){
+		RepeatableStream s = new RepeatableStream(ToLazyCollection.toLazyCollection(toQueue().stream(getSubscription()).iterator()));
+		return fromStream(Stream.iterate(s.stream(),s1-> s.stream()).limit(times).flatMap(i->i));
+	}
+	/**
+	 * Repeat in a Stream while specified predicate holds
+	 * <pre>
+	 * {@code 
+	 *  int count =0;
+	 *  
+		assertThat(LazyFutureStream.of(1,2,2).cycleWhile(next -> count++<6 )
+											.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2)));
+	 * }
+	 * </pre>
+	 * @param predicate
+	 *            repeat while true
+	 * @return Repeating Stream
+	 */
+	default  LazyFutureStream<U> cycleWhile(Predicate<? super U> predicate) {
+		return cycle().limitWhile(predicate);
 	}
 
 	/**
-	 * @return new LazyReact builder configured with standard parallel executor
-	 *         By default this is the ForkJoinPool common instance but is
-	 *         configurable in the ThreadPools class
+	 * Repeat in a Stream until specified predicate holds
 	 * 
-	 * @see ThreadPools#getStandard() see RetryBuilder#getDefaultInstance()
-	 */
-	public static LazyReact parallelCommonBuilder() {
-		return LazyReact
-				.builder()
-				.executor(ThreadPools.getStandard())
-				.retrier(
-						RetryBuilder.getDefaultInstance().withScheduler(
-								ThreadPools.getCommonFreeThreadRetry()))
-				.build();
-	}
+	 * <pre>
+	 * {@code 
+	 * 	count =0;
+		assertThat(LazyFutureStream.of(1,2,2,3).cycleUntil(next -> count++>10 )
+											.collect(Collectors.toList()),equalTo(Arrays.asList(1, 2, 2, 3, 1, 2, 2, 3, 1, 2, 2)));
 
-	/**
-	 * @return new LazyReact builder configured to run on a separate thread
-	 *         (non-blocking current thread), sequentially New ForkJoinPool will
-	 *         be created
+	 * }
+	 * </pre>
+	 * @param predicate
+	 *            repeat while true
+	 * @return Repeating Stream
 	 */
-	public static LazyReact sequentialBuilder() {
-		return LazyReact
-				.builder()
-				.async(false)
-				.executor(Executors.newFixedThreadPool(1))
-				.retrier(
-						RetryBuilder.getDefaultInstance().withScheduler(
-								Executors.newScheduledThreadPool(2))).build();
+	default  LazyFutureStream<U> cycleUntil(Predicate<? super U> predicate) {
+		
+		return cycle().limitUntil(predicate);
 	}
-
-	/**
-	 * @return LazyReact builder configured to run on a separate thread
-	 *         (non-blocking current thread), sequentially Common free thread
-	 *         Executor from
-	 */
-	public static LazyReact sequentialCommonBuilder() {
-		return LazyReact
-				.builder()
-				.async(false)
-				.executor(ThreadPools.getCommonFreeThread())
-				.retrier(
-						RetryBuilder.getDefaultInstance().withScheduler(
-								ThreadPools.getCommonFreeThreadRetry()))
-				.build();
-	}
-
-	/**
-	 *  Create a parallel asynchronous stream
-	 * @see Stream#of(Object)
-	 */
-	static <T> LazyFutureStream<T> react(Supplier<T> value) {
-		return  new LazyReact().react(value);
-	}
-
-	/**
-	 * Create a parallel asynchronous stream
-	 * @see Stream#of(Object[])
-	 */
-	@SafeVarargs
-	static <T> LazyFutureStream<T> react(Supplier<T>... values) {
-		return  new LazyReact().react(values);
-	}
-	/**
-	 * @see Stream#of(Object)
-	 */
-	static <T> LazyFutureStream<T> of(T value) {
-		return of((Stream) Seq.of(value));
-	}
-
-	/**
-	 * @see Stream#of(Object[])
-	 */
-	@SafeVarargs
-	static <T> LazyFutureStream<T> of(T... values) {
-		return of((Stream) Seq.of(values));
-	}
-
-	/**
-	 * @see Stream#empty()
-	 */
-	static <T> LazyFutureStream<T> empty() {
-		return of((Stream) Seq.empty());
-	}
-
-	/**
-	 * @see Stream#iterate(Object, UnaryOperator)
-	 */
-	static <T> LazyFutureStream<T> iterate(final T seed,
-			final UnaryOperator<T> f) {
-		return of((Stream) Seq.iterate(seed, f));
-	}
-
-	/**
-	 * @see Stream#generate(Supplier)
-	 */
-	static LazyFutureStream<Void> generate() {
-		return generate(() -> null);
-	}
-
-	/**
-	 * @see Stream#generate(Supplier)
-	 */
-	static <T> LazyFutureStream<T> generate(T value) {
-		return generate(() -> value);
-	}
-
-	/**
-	 * @see Stream#generate(Supplier)
-	 */
-	static <T> LazyFutureStream<T> generate(Supplier<T> s) {
-		return of(Stream.generate(s));
-	}
-
-	/**
-	 * Wrap a Stream into a FutureStream.
-	 */
-	static <T> LazyFutureStream<T> of(Stream<T> stream) {
-		if (stream instanceof LazyFutureStream)
-			return (LazyFutureStream<T>) stream;
-		if (stream instanceof FutureStream)
-			stream = ((FutureStream) stream).toQueue().stream(
-					((FutureStream) stream).getSubscription());
-		LazyReact react =new LazyReact(ThreadPools.getSequential(), RetryBuilder.getDefaultInstance()
-						.withScheduler(ThreadPools.getSequentialRetry()),false, new MaxActive(1,1));
-		return new LazyFutureStreamImpl<T>(react,
-				stream.map(CompletableFuture::completedFuture));
-	}
-
-	/**
-	 * Wrap an Iterable into a FutureStream.
-	 */
-	static <T> LazyFutureStream<T> ofIterable(Iterable<T> iterable) {
-		return of(iterable.iterator());
-	}
-
-	/**
-	 * Wrap an Iterator into a FutureStream.
-	 */
-	static <T> LazyFutureStream<T> of(Iterator<T> iterator) {
-		return of(StreamSupport.stream(
-				spliteratorUnknownSize(iterator, ORDERED), false));
-	}
+	
 
 	/**
 	 * Zip two streams into one.
@@ -1549,7 +1711,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 		return limitUntil(stream, predicate.negate());
 	}
 
-	public final static Object NULL = new Object();
+
 
 	/**
 	 * Returns a stream ed to all elements for which a predicate evaluates to
@@ -1618,14 +1780,14 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 * @see com.aol.simple.react.stream.traits.FutureStream#parallel()
 	 */
 	default LazyFutureStream<U> parallel(){
-		return this.withAsync(true).withTaskExecutor(parallelBuilder().getExecutor());
+		return this.withAsync(true).withTaskExecutor(LazyReact.parallelBuilder().getExecutor());
 	}
 	/* 
 	 *	@return New version of this stream  converted to execute synchronously and sequentially
 	 * @see com.aol.simple.react.stream.traits.FutureStream#sequential()
 	 */
 	default LazyFutureStream<U> sequential(){
-		return this.withAsync(false).withTaskExecutor(sequentialBuilder().getExecutor());
+		return this.withAsync(false).withTaskExecutor(LazyReact.sequentialBuilder().getExecutor());
 	}
 
 
@@ -1685,5 +1847,189 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	LazyFutureStream<U> withParallelReduction(
 			ParallelReductionConfig parallelReductionConfig);
 
+	/**
+	 * Construct an parallel LazyFutureStream from specified array, using the configured
+	 * standard parallel thread pool. By default this is the Common ForkJoinPool. 
+	 * To use a different thread pool, the recommended approach is to construct your own LazyReact builder 
+	 * 
+	 * @see ThreadPools#getStandard()
+	 * @see ThreadPools#setUseCommon(boolean)
+	 * 
+	 * @param array
+	 *            Values to react to
+	 * @return Next SimpleReact stage
+	 */
+	public static <U> LazyFutureStream<U> parallel(U... array) {
+		return  LazyReact.parallelCommonBuilder().of(array);
+	}
+
+	
+
+	
+	/**
+	 *  Create a 'free threaded' asynchronous stream that runs on the supplied CompletableFutures executor service (unless async operator invoked
+	 *  , in which it will switch to the common 'free' thread executor)
+	 *  Subsequent tasks will be executed synchronously unless the async() operator is invoked.
+	 *  
+	 * 
+	 */
+	static <T> LazyFutureStream<T> lazyFutureStreamFrom(Stream<CompletableFuture<T>> stream) {
+		return  new LazyReact(ThreadPools.getSequential()).withRetrier(new AsyncRetryExecutor(ThreadPools.getSequentialRetry())).withAsync(false)
+									.fromStream(stream);
+	}
+	/**
+	 *  Create a 'free threaded' asynchronous stream that runs on the supplied CompletableFutures executor service (unless async operator invoked
+	 *  , in which it will switch to the common 'free' thread executor)
+	 *  Subsequent tasks will be executed synchronously unless the async() operator is invoked.
+	 *  
+	 *
+	 */
+	static <T> LazyFutureStream<T> lazyFutureStream(CompletableFuture<T> value) {
+		return  new LazyReact(ThreadPools.getSequential()).withRetrier(new AsyncRetryExecutor(ThreadPools.getSequentialRetry())).withAsync(false)
+									.fromStream(Stream.of(value));
+	}
+	/**
+	 *  Create a 'free threaded' asynchronous stream that runs on a single thread (not current)
+	 *  The supplier will be executed asyncrhonously, subsequent tasks will be executed synchronously unless the async() operator
+	 *  is invoked.
+	 *  
+	 * 
+	 */
+	static <T> LazyFutureStream<T> lazyFutureStream(CompletableFuture<T>... values) {
+		return  new LazyReact(ThreadPools.getSequential()).withRetrier(new AsyncRetryExecutor(ThreadPools.getSequentialRetry())).withAsync(false)
+									.fromStream(Stream.of(values));
+	}
+
+
+	/**
+	 *  Create a 'free threaded' asynchronous stream that runs on a single thread (not current)
+	 *  The supplier will be executed asyncrhonously, subsequent tasks will be executed synchronously unless the async() operator
+	 *  is invoked.
+	 *  
+	 * @see Stream#of(Object)
+	 */
+	static <T> LazyFutureStream<T> react(Supplier<T> value) {
+		return  new LazyReact(ThreadPools.getSequential()).withRetrier(new AsyncRetryExecutor(ThreadPools.getSequentialRetry())).withAsync(false).react(value);
+	}
+
+	/**
+	 Create a 'free threaded' asynchronous stream that runs on a single thread (not current)
+	 * The supplier will be executed asyncrhonously, subsequent tasks will be executed synchronously unless the async() operator is invoked.
+
+	 */
+	@SafeVarargs
+	static <T> LazyFutureStream<T> react(Supplier<T>... values) {
+		return  new LazyReact(ThreadPools.getSequential()).withRetrier(new AsyncRetryExecutor(ThreadPools.getSequentialRetry())).withAsync(false).react(values);
+	}
+	/**
+	 * Create a sequential synchronous stream that runs on the current thread
+	 * 
+	 */
+	static <T> LazyFutureStream<T> of(T value) {
+		return lazyFutureStream((Stream) Seq.of(value));
+	}
+
+	/**
+	 * Create a sequential synchronous stream that runs on the current thread
+	 * 
+	 */
+	@SafeVarargs
+	static <T> LazyFutureStream<T> of(T... values) {
+		return lazyFutureStream((Stream) Seq.of(values));
+	}
+	/**
+	 * Create a sequential synchronous stream that runs on a free thread (commonFreeThread executor by default, shared
+	 * across any instances created in this manner. 
+	 * @see com.aol.simple.react.stream.ThreadPools#setUseCommon(boolean) 
+	 * 
+	 */
+	static <T> LazyFutureStream<T> ofThread(T value) {
+		return (LazyFutureStream)ofThread(new Object[]{value});
+	}
+
+	/**
+	 * Create a sequential synchronous stream that runs on a free thread (commonFreeThread executor by default, shared
+	 * across any instances created in this manner. 
+	 * @see com.aol.simple.react.stream.ThreadPools#setUseCommon(boolean) 
+	 * 
+	 */
+	@SafeVarargs
+	static <T> LazyFutureStream<T> ofThread(T... values) {
+		LazyReact react =new LazyReact(ThreadPools.getSequential(), RetryBuilder.getDefaultInstance()
+				.withScheduler(ThreadPools.getSequentialRetry()),false, new MaxActive(1,1));
+		return new LazyFutureStreamImpl<T>(react, Stream.of(values).map(CompletableFuture::completedFuture));
+		
+	}
+
+	/**
+	 * Create a sequential synchronous stream that runs on the current thread
+	 */
+	static <T> LazyFutureStream<T> empty() {
+		return lazyFutureStream((Stream) Seq.empty());
+	}
+
+	/**
+	 * @see Stream#iterate(Object, UnaryOperator)
+	 */
+	static <T> LazyFutureStream<T> iterate(final T seed,
+			final UnaryOperator<T> f) {
+		return lazyFutureStream((Stream) Seq.iterate(seed, f));
+	}
+
+	/**
+	 * Generate an infinite Stream of null values that runs on the current thread
+	 * @see Stream#generate(Supplier)
+	 */
+	static LazyFutureStream<Void> generate() {
+		return generate(() -> null);
+	}
+
+	/**
+	 * Generate an infinite Stream of given value that runs on the current thread
+	 * @see Stream#generate(Supplier)
+	 */
+	static <T> LazyFutureStream<T> generate(T value) {
+		return generate(() -> value);
+	}
+
+	/**
+	 * Generate an infinite Stream of value returned from Supplier that runs on the current thread
+	 * @see Stream#generate(Supplier)
+	 */
+	static <T> LazyFutureStream<T> generate(Supplier<T> s) {
+		return lazyFutureStream(Stream.generate(s));
+	}
+
+	/**
+	 * Wrap a Stream into a FutureStream that runs on the current thread
+	 */
+	static <T> LazyFutureStream<T> lazyFutureStream(Stream<T> stream) {
+		if (stream instanceof LazyFutureStream)
+			return (LazyFutureStream<T>) stream;
+		if (stream instanceof FutureStream)
+			stream = ((FutureStream) stream).toQueue().stream(
+					((FutureStream) stream).getSubscription());
+		LazyReact react =new LazyReact(ThreadPools.getCurrentThreadExecutor(), RetryBuilder.getDefaultInstance()
+						.withScheduler(ThreadPools.getSequentialRetry()),false, new MaxActive(1,1));
+		return new LazyFutureStreamImpl<T>(react,
+				stream.map(CompletableFuture::completedFuture));
+	}
+
+	/**
+	 * Wrap an Iterable into a FutureStream that runs on the current thread
+	 */
+	static <T> LazyFutureStream<T> lazyFutureStreamFromIterable(Iterable<T> iterable) {
+		return lazyFutureStream(iterable.iterator());
+	}
+
+	/**
+	 * Wrap an Iterator into a FutureStream that runs on the current thread
+	 */
+	static <T> LazyFutureStream<T> lazyFutureStream(Iterator<T> iterator) {
+		return lazyFutureStream(StreamSupport.stream(
+				spliteratorUnknownSize(iterator, ORDERED), false));
+	}
+	
+	
 
 }

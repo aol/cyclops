@@ -3,12 +3,14 @@ package com.aol.simple.react.lazy;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
 import static org.jooq.lambda.tuple.Tuple.tuple;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,14 +27,69 @@ public class LazySequentialSeqTest extends BaseSequentialSeqTest {
 
 	@Override
 	protected <U> LazyFutureStream<U> of(U... array) {
-		return LazyFutureStream.sequentialBuilder().of(array);
+		return LazyFutureStream.of(array);
+	}
+	@Override
+	protected <U> LazyFutureStream<U> ofThread(U... array) {
+		return LazyFutureStream.ofThread(array);
 	}
 
 	@Override
 	protected <U> FutureStream<U> react(Supplier<U>... array) {
-		return LazyFutureStream.sequentialBuilder().react(array);
+		return LazyFutureStream.react(array);
 	}
+	@Test
+    public void testCycle() {
+        assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle().limit(6).toList());
+        assertEquals(asList(1, 2, 3, 1, 2, 3), of(1, 2, 3).cycle().limit(6).toList());
+    }
+	@Test
+    public void testCycleTimes() {
+        assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle(3).toList());
+       
+    }
+	int count =0;
+	@Test
+    public void testCycleWhile() {
+		count =0;
+        assertEquals(asList(1, 2,3, 1, 2,3),of(1, 2, 3).cycleWhile(next->count++<6).toList());
+       
+    }
+	@Test
+    public void testCycleUntil() {
+		count =0;
+        assertEquals(asList(1, 2,3, 1, 2,3),of(1, 2, 3).cycleUntil(next->count++==6).toList());
+       
+    }
+	
+	@Test
+	public void concatStreams(){
+	List<String> result = 	of(1,2,3).concat(of(100,200,300))
+			.map(it ->it+"!!").collect(Collectors.toList());
 
+		assertThat(result,equalTo(Arrays.asList("1!!","2!!","100!!","200!!","3!!","300!!")));
+	}
+	@Test
+	public void concat(){
+	List<String> result = 	of(1,2,3).concat(100,200,300)
+			.map(it ->it+"!!").collect(Collectors.toList());
+
+		assertThat(result,equalTo(Arrays.asList("1!!","2!!","100!!","200!!","3!!","300!!")));
+	}
+	
+	@Test
+	public void merge(){
+	List<String> result = 	of(1,2,3).merge(of(100,200,300))
+									.map(it ->it+"!!")
+									.collect(Collectors.toList());
+
+		assertThat(result,equalTo(Arrays.asList("1!!","2!!","100!!","200!!","3!!","300!!")));
+	}
+	@Test
+	public void combine(){
+		
+		assertThat(of(1,2,3,4,5,6).combineLatest(of(3)).collect(Collectors.toList()).size(),greaterThan(5));
+	}
 	@Test
 	public void batchSinceLastReadIterator() throws InterruptedException{
 		Iterator<Collection<Integer>> it = of(1,2,3,4,5,6).chunkLastReadIterator();
@@ -42,16 +99,29 @@ public class LazySequentialSeqTest extends BaseSequentialSeqTest {
 		
 		Collection two = it.next();
 		
-		assertThat(one.size(),is(1));
+		assertThat(one.size(),greaterThan(0));
 		assertThat(two.size(),greaterThan(0));
 		
 	
 		
 	}
+	@Test
+	public void batchByTime2(){
+		for(int i=0;i<10;i++){
+			
+			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
+							.batchByTime(1,TimeUnit.MICROSECONDS)
+							.toList()
+							.get(0)
+							,not(hasItem(6)));
+		}
+	}
 	
 	@Test 
 	public void batchSinceLastRead() throws InterruptedException{
-		List<Collection> cols = of(1,2,3,4,5,6).chunkSinceLastRead().peek(it->{sleep(50);}).collect(Collectors.toList());
+		List<Collection> cols = of(1,2,3,4,5,6).chunkSinceLastRead()
+											.peek(it->{sleep(50);})
+											.collect(Collectors.toList());
 		
 		System.out.println(cols.get(0));
 		assertThat(cols.get(0).size(),is(1));

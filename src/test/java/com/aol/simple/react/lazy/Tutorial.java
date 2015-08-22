@@ -3,6 +3,7 @@ package com.aol.simple.react.lazy;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -14,6 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,8 +26,10 @@ import org.junit.Test;
 import org.pcollections.HashTreePMap;
 
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.async.QueueFactories;
+import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
+import com.aol.simple.react.stream.eager.EagerReact;
+import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
@@ -40,9 +44,9 @@ public class Tutorial {
 	@Test
 	public void zipByResults() {
 
-		EagerFutureStream<String> a = EagerFutureStream.parallelCommonBuilder().react(
+		EagerFutureStream<String> a = EagerReact.parallelCommonBuilder().react(
 				() -> slowest(), () -> fast(), () -> slow());
-		EagerFutureStream<Integer> b = EagerFutureStream.sequentialCommonBuilder().of(
+		EagerFutureStream<Integer> b = EagerReact.sequentialCommonBuilder().of(
 				1, 2, 3, 4, 5, 6);
 
 		a.zip(b).peek(System.out::println);
@@ -55,7 +59,7 @@ public class Tutorial {
 	@Test
 	public void zipWithIndex() {
 
-		LazyFutureStream.sequentialCommonBuilder()
+		LazyReact.sequentialCommonBuilder()
 				.react(() -> slowest(), () -> fast(), () -> slow())
 				.zipWithIndex().forEach(System.out::println);
 
@@ -65,7 +69,7 @@ public class Tutorial {
 	@Test
 	public void zipFuturesWithIndex() {
 
-		EagerFutureStream.parallelCommonBuilder()
+		EagerReact.parallelCommonBuilder()
 				.react(() -> slowest(), () -> fast(), () -> slow())
 				.zipFuturesWithIndex().forEach(System.out::println);
 
@@ -74,22 +78,22 @@ public class Tutorial {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void combineLatest() {
-		LazyFutureStream
+		LazyReact
 				.parallelCommonBuilder()
 				.react(() -> slowest(), () -> fast(), () -> slow())
 				.combineLatest(
-						LazyFutureStream.sequentialCommonBuilder().of(1, 2, 3, 4, 5,
+						LazyReact.sequentialCommonBuilder().of(1, 2, 3, 4, 5,
 								6)).forEach(System.out::println);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Test
 	public void withLatest() {
-		LazyFutureStream
+		LazyReact
 				.sequentialBuilder()
 				.react(() -> slowest(), () -> fast(), () -> slow())
 				.withLatest(
-						LazyFutureStream.sequentialCommonBuilder().of(1, 2, 3, 4, 5,
+						LazyReact.sequentialCommonBuilder().of(1, 2, 3, 4, 5,
 								6)).forEach(System.out::println);
 	}
 
@@ -97,13 +101,13 @@ public class Tutorial {
 	@Test
 	public void zipByFutures() {
 
-		LazyFutureStream.parallelCommonBuilder()
+		LazyReact.parallelCommonBuilder()
 				.react(() -> slowest(), () -> fast(), () -> slow())
 				.flatMap(it -> it.chars().boxed()).forEach(System.out::println);
 
-		EagerFutureStream<String> a = EagerFutureStream.parallelCommonBuilder()
+		EagerFutureStream<String> a = EagerReact.parallelCommonBuilder()
 				.react(() -> slowest(), () -> fast(), () -> slow());
-		EagerFutureStream<Integer> b = EagerFutureStream.sequentialCommonBuilder()
+		EagerFutureStream<Integer> b = EagerReact.sequentialCommonBuilder()
 				.of(1, 2, 3, 4, 5, 6);
 
 		a.zipFutures(b).forEach(System.out::println);
@@ -133,7 +137,7 @@ public class Tutorial {
 				withUniformJitter(). // add between +/- 100 ms randomly
 				withMaxRetries(1);
 
-		List<String> results = LazyFutureStream.sequentialCommonBuilder()
+		List<String> results = LazyReact.sequentialCommonBuilder()
 				.withRetrier(retrier)
 				.react(() -> "new event1", () -> "new event2")
 				.retry(this::unreliable).onFail(e -> "default")
@@ -157,7 +161,7 @@ public class Tutorial {
 		shards.put(1, new Queue<>());
 		shards.put(2, new Queue<>());
 
-		Map<Integer, LazyFutureStream<User>> sharded = LazyFutureStream
+		Map<Integer, LazyFutureStream<User>> sharded = LazyReact
 				.sequentialCommonBuilder().react(() -> loadUserData())
 				.flatMap(Collection::stream)
 				.shard(shards, user -> user.getUserId() % 3);
@@ -175,15 +179,15 @@ public class Tutorial {
 	@Test
 	public void firstOf(){
 		
-		EagerFutureStream<String> stream1 =EagerFutureStream.sequentialCommonBuilder()
+		EagerFutureStream<String> stream1 =EagerReact.sequentialCommonBuilder()
 													.react(() -> loadFromDb())
 													.map(this::convertToStandardFormat);
 
-		EagerFutureStream<String> stream2 = EagerFutureStream.sequentialCommonBuilder()
+		EagerFutureStream<String> stream2 = EagerReact.sequentialCommonBuilder()
 													.react(() -> loadFromService1())
 													.map(this::convertToStandardFormat);
 
-		EagerFutureStream<String> stream3 = EagerFutureStream.sequentialCommonBuilder()
+		EagerFutureStream<String> stream3 = EagerReact.sequentialCommonBuilder()
 													.react(() -> loadFromService2())
 													.map(this::convertToStandardFormat);
 
@@ -201,7 +205,7 @@ public class Tutorial {
 		
 
 
-		LazyFutureStream.parallelCommonBuilder().react(() -> loadFromDb(),() -> loadFromService1(),
+		LazyReact.parallelCommonBuilder().react(() -> loadFromDb(),() -> loadFromService1(),
 														() -> loadFromService2())
 						.map(this::convertToStandardFormat)
 						.peek(System.out::println)
@@ -233,7 +237,7 @@ public class Tutorial {
 
 	@Test
 	public void allOf(){
-		 LazyFutureStream.sequentialCommonBuilder().react(()->1,()->2,()->3)
+		 LazyReact.sequentialCommonBuilder().react(()->1,()->2,()->3)
 		 									 .map(it->it+100)
 		 									 .peek(System.out::println)
 		 									 .allOf(c-> HashTreePMap.singleton("numbers",c))
@@ -249,8 +253,8 @@ public class Tutorial {
 	
 	@Test
 	public void testFilter(){
-		LazyFutureStream.sequentialCommonBuilder()
-		.of(loadUserData())
+		LazyReact.sequentialCommonBuilder()
+		.from(loadUserData())
 		.filter(User::hasPurchased)
 		.forEach(System.out::println);
 	}
@@ -258,7 +262,7 @@ public class Tutorial {
 	@Test
 	public void filterMapReduceFlatMap() {
 		int totalVisits = 
-				LazyFutureStream.sequentialCommonBuilder()
+				LazyReact.sequentialCommonBuilder()
 											.react(() -> loadUserData())
 											.flatMap(Collection::stream)
 											.filter(User::hasPurchased)
@@ -318,11 +322,11 @@ public class Tutorial {
 
 	@Test
 	public void skipUntil() {
-		FutureStream<Boolean> stoppingStream = LazyFutureStream
+		FutureStream<Boolean> stoppingStream = LazyReact
 				.sequentialCommonBuilder().react(() -> 1000).then(this::sleep)
 				.peek(System.out::println);
-		System.out.println(EagerFutureStream.sequentialCommonBuilder()
-				.of(IntStream.range(0, 1000000))
+		System.out.println(EagerReact.sequentialCommonBuilder()
+				.from(IntStream.range(0, 1000000))
 				// .peek(System.out::println)
 				.skipUntil(stoppingStream).peek(System.out::println).block()
 				.size());
@@ -342,8 +346,8 @@ public class Tutorial {
 
 	@Test
 	public void jitter() {
-		LazyFutureStream.sequentialCommonBuilder()
-				.of(IntStream.range(0, 1000))
+		LazyReact.sequentialCommonBuilder()
+				.from(IntStream.range(0, 1000))
 				.map(it -> it * 100).jitter(100l)
 				.peek(System.out::println).runOnCurrent();
 	}
@@ -351,8 +355,8 @@ public class Tutorial {
 	@Test
 	public void fixedDelay() {
 
-		LazyFutureStream.sequentialCommonBuilder()
-				.of(IntStream.range(0, 1000))
+		LazyReact.sequentialCommonBuilder()
+				.from(IntStream.range(0, 1000))
 				.fixedDelay(1l, TimeUnit.MICROSECONDS).peek(System.out::println)
 				.runOnCurrent();
 	}
@@ -363,7 +367,7 @@ public class Tutorial {
 		List<String> files = Arrays.asList("/tmp/1.data", "/tmp/2.data");
 
 		List<Status> data = SequentialElasticPools.lazyReact.react(er -> er
-				.of(files).map(this::loadData)
+				.from(files).map(this::loadData)
 				.peek(System.out::println).map(this::saveData)
 				.collect(Collectors.toList()));
 
@@ -398,7 +402,7 @@ public class Tutorial {
 
 	@Test
 	public void debounce() {
-		LazyFutureStream.sequentialCommonBuilder()
+		LazyReact.sequentialCommonBuilder()
 				.iterateInfinitely(0, it -> it + 1)
 				.limit(100)
 				.debounce(100, TimeUnit.MILLISECONDS).peek(System.out::println)
@@ -408,7 +412,7 @@ public class Tutorial {
 	@Test
 	public void onePerSecond() {
 
-		LazyFutureStream.sequentialCommonBuilder()
+		LazyReact.sequentialCommonBuilder()
 				.iterateInfinitely(0, it -> it + 1)
 				.limit(100)
 				.onePer(1, TimeUnit.MICROSECONDS)
@@ -446,7 +450,7 @@ public class Tutorial {
 	@Test
 	@Ignore
 	public void onePerSecondAndBatch() {
-		List<Collection<String>> collected = LazyFutureStream
+		List<Collection<String>> collected = LazyReact
 				.sequentialCommonBuilder().reactInfinitely(() -> status)
 				.withQueueFactory(QueueFactories.boundedQueue(1))
 				.onePer(1, TimeUnit.SECONDS).batchByTime(10, TimeUnit.SECONDS)
@@ -459,7 +463,7 @@ public class Tutorial {
 	 */
 	@Test @Ignore
 	public void secondsTimeInterval() {
-		List<Collection<Integer>> collected = LazyFutureStream
+		List<Collection<Integer>> collected = LazyReact
 				.sequentialCommonBuilder().iterateInfinitely(0, it -> it + 1)
 				//.limit(100)
 				.withQueueFactory(QueueFactories.boundedQueue(1))
@@ -472,9 +476,9 @@ public class Tutorial {
 	@Test
 	@Ignore
 	public void range() {
-		List<Collection<Integer>> collected = LazyFutureStream
+		List<List<Integer>> collected = LazyReact
 				.sequentialCommonBuilder()
-				.of(IntStream.range(0, 10)).batchBySize(5)
+				.from(IntStream.range(0, 10)).batchBySize(5)
 				.block();
 		System.out.println(collected);
 	}
@@ -504,7 +508,7 @@ public class Tutorial {
 	@Test
 	public void batchBySize() {
 
-		LazyFutureStream
+		LazyReact
 				.parallelCommonBuilder()
 				.iterateInfinitely("", last -> nextFile())
 				.limit(100)
@@ -521,27 +525,179 @@ public class Tutorial {
 	}
 
 	@Test
-	public void batchByTime() {
-
-		LazyFutureStream
+	public void filterAndLimit(){
+		LazyFutureStream.of(1,2,3,4,5,6,7,8,9,10)
+					.limit(6)
+					.filter(i->i%2==0)
+					.forEach(System.out::println);
+	}
+	@Test
+	public void filterAndLimitInfinite(){
+	
+		LazyReact
+				.parallelCommonBuilder()
+					.iterateInfinitely("", last -> nextFile())
+					.limit(100)
+					.map(d->Arrays.asList())
+					.filter(i-> !i.isEmpty())
+					.forEach(System.out::println);
+	}
+	
+	@Test
+	public void testFilterAndFlatMapWithFilter(){
+		count=0;
+		LazyFutureStream.of(1,2,3).limit(2)
+		.flatMap(a->Arrays.asList(10,20,30,40).stream())
+		.limit(6)
+		.forEach(next->count++);
+		
+		assertThat(count,equalTo(6));
+	}
+	@Test
+	public void testFilterAndFlatMapWithFilterRunOnCurrent(){
+		count=0;
+		LazyFutureStream.of(1,2,3).limit(2)
+		.flatMap(a->Arrays.asList(10,20,30,40).stream())
+		.limit(6)
+		.peek(next->count++)
+		.runOnCurrent();
+		
+		assertThat(count,equalTo(6));
+	}
+	@Test
+	public void testFilterAndFlatMapWithFilterList(){
+		count=0;
+		List list = LazyFutureStream.of(1,2,3).limit(2)
+		.flatMap(a->Arrays.asList(10,20,30,40).stream())
+		.limit(6)
+		.toList();
+		
+		assertThat(list.size(),equalTo(6));
+	}
+	int count2 =0;
+	@Test
+	public void batchByTimeFiltered() {
+		count2=0;
+		LazyReact
 				.parallelCommonBuilder()
 				.iterateInfinitely("", last -> nextFile())
 				.limit(100)
+				
 				.map(this::readFileToString)
 				.map(this::parseJson)
-				.batchByTime(1, TimeUnit.MICROSECONDS)
+				//.filter(i->false)
+								.batchByTime(1, TimeUnit.MICROSECONDS)
+				
 				.peek(batch -> System.out.println("batched : " + batch))
+				.filter(c->!c.isEmpty())
+				
 				.map(this::processOrders)
+				.forEach(next -> count2= count2+next.size());
+		
+		assertThat(count2,equalTo(100));
+	}
+	@Test
+	public void batchByTimeFilteredEager() {
+		count2=0;
+		EagerReact
+				.parallelCommonBuilder()
+				.from(list100())
+				.limit(100)
+				
+				.map(this::readFileToString)
+				.map(this::parseJson)
+				//.filter(i->false)
+								.batchByTime(1, TimeUnit.MICROSECONDS)
+				
+				.peek(batch -> System.out.println("batched : " + batch))
+				.filter(c->!c.isEmpty())
+				
+				.map(this::processOrders)
+				.forEach(next -> count2= count2+next.size());
+		
+		assertThat(count2,equalTo(100));
+	}
+
+	private List<String> list100() {
+		List col = new ArrayList();
+		for(int i=0;i<100;i++)
+			col.add(""+i);
+		return col;
+	}
+	@Test
+	public void batchByTimeFilteredForEach() {
+		count2=0;
+		LazyReact
+				.parallelCommonBuilder()
+				.iterateInfinitely("", last -> nextFile())
+				.limit(100)
+				
+				.map(this::readFileToString)
+				.map(this::parseJson)
+				//.filter(i->false)
+				
+				.batchByTime(1, TimeUnit.MICROSECONDS)
+				
+				.peek(batch -> System.out.println("batched : " + batch))
+				.filter(c->!c.isEmpty())
+				
+				.map(this::processOrders)
+				.toList().stream().forEach(next -> count2= count2+next.size());;
+		
+		assertThat(count2,equalTo(100));
+	}
+	@Test
+	public void batchByTimeFilteredForEachEager() {
+		count2=0;
+		EagerReact
+				.parallelCommonBuilder()
+				.from(list100())
+				.limit(100)
+				
+				.map(this::readFileToString)
+				.map(this::parseJson)
+				//.filter(i->false)
+				
+				.batchByTime(1, TimeUnit.MICROSECONDS)
+				
+				.peek(batch -> System.out.println("batched : " + batch))
+				.filter(c->!c.isEmpty())
+				
+				.map(this::processOrders)
+				.toList().stream().forEach(next -> count2= count2+next.size());;
+		
+		assertThat(count2,equalTo(100));
+	}
+	@Test
+	public void batchByTime() {
+
+		LazyReact
+				.parallelCommonBuilder()
+				.iterateInfinitely("", last -> nextFile())
+				.limit(100)
+				
+				.map(this::readFileToString)
+				.map(this::parseJson)
+				
+				.peek(next->System.out.println("Counter " +count2++))
+				.batchByTime(10, TimeUnit.MICROSECONDS)
+				.peek(batch -> System.out.println("batched : " + batch))
+				.filter(c->!c.isEmpty())
+				
+				.map(this::processOrders)
+				.forEach(System.out::println);
+			/**	
 				.flatMap(Collection::stream)
 				.peek(individual -> System.out.println("Flattened : "
-						+ individual)).forEach(this::save);
+						+ individual))
+				.forEach(this::save);**/
 
 	}
 
 	@Test
 	public void chunkSinceLastRead() {
 
-		LazyFutureStream
+		LazyReact
 				.parallelCommonBuilder()
 				.iterateInfinitely("", last -> nextFile())
 				.limit(100)

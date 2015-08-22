@@ -10,17 +10,34 @@ import lombok.Getter;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import com.aol.simple.react.async.Continueable;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.Queue.ClosedQueueException;
+import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.stream.traits.Continuation;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
+/**
+ * Create a LazyFutureStream Subscriber
+ * 
+ * to use 
+ * 
+ * <pre>
+ * {@code 
+ * FutureStreamSubscriber<Long> sub = new FutureStreamSubscriber<>();
+ * reactivePublisher.subscribe(sub);
+ * LazyFutureStream<Long> stream = sub.getStream();
+ * 
+ * }</pre>
+ * 
+ * @author johnmcclean
+ *
+ * @param <T>
+ */
 public class FutureStreamSubscriber<T> implements Subscriber<T> {
 	
 	
 	protected LazyFutureStream stream(){
-		Continueable subscription =  new com.aol.simple.react.async.Subscription();
+		Continueable subscription =  new com.aol.simple.react.async.subscription.Subscription();
 		return LazyFutureStream.of()
 					.withSubscription(subscription)
 					.fromStream(queue.stream(subscription));
@@ -76,7 +93,7 @@ public class FutureStreamSubscriber<T> implements Subscriber<T> {
 	public void onComplete() {
 		
 		if(queue!=null){
-			queue.setContinuation(new Continuation( () -> {
+			queue.addContinuation(new Continuation( () -> {
 						throw new ClosedQueueException();
 			}));
 			queue.close();

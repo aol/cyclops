@@ -24,6 +24,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.aol.simple.react.async.factories.QueueFactories;
+import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
@@ -237,9 +239,9 @@ public class QueueTest {
 		count1 = 100000;
 
 		Queue<Integer> q = new Queue(new LinkedBlockingQueue());
-		LazyFutureStream.parallelBuilder().reactInfinitely(() -> count++)
+		LazyReact.parallelBuilder().reactInfinitely(() -> count++)
 				.then(it -> q.offer(it)).run(new ForkJoinPool(1));
-		LazyFutureStream.parallelBuilder().reactInfinitely(() -> count1++)
+		LazyReact.parallelBuilder().reactInfinitely(() -> count1++)
 				.then(it -> q.offer(it)).run(new ForkJoinPool(1));
 
 		List<Integer> result = q.stream().limit(1000)

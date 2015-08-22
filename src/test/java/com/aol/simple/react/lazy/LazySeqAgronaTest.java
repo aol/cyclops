@@ -1,12 +1,16 @@
 package com.aol.simple.react.lazy;
 
 import static com.aol.simple.react.stream.traits.LazyFutureStream.parallel;
-import static com.aol.simple.react.stream.traits.LazyFutureStream.parallelBuilder;
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.not;
 import static org.jooq.lambda.tuple.Tuple.tuple;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -23,11 +27,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.async.QueueFactories;
+import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.base.BaseSeqTest;
 import com.aol.simple.react.stream.ThreadPools;
-import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.traits.EagerFutureStream;
+import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
@@ -36,7 +39,13 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	
 
 	
-	
+	@Test
+	public void skipUntil(){
+		System.out.println(react(()->1,()->2,()->3,()->4,()->value2())
+				.skipUntil(react(()->value())).collect(Collectors.toList()));
+		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).noneMatch(it-> it==1));
+		assertThat(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).count(),is(3l));
+	}
 	@Test
 	public void testZipWithFutures(){
 		FutureStream stream = of("a","b");
@@ -118,7 +127,7 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	@Test
 	public void zipFastSlow() {
 		Queue q = new Queue();
-		LazyFutureStream.parallelBuilder().reactInfinitely(() -> sleep(100))
+		LazyReact.parallelBuilder().reactInfinitely(() -> sleep(100))
 				.then(it -> q.add("100")).run(new ForkJoinPool(1));
 		parallel(1, 2, 3, 4, 5, 6).zip(q.stream())
 				.peek(it -> System.out.println(it))
@@ -129,13 +138,13 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	@Test @Ignore
 	public void testBackPressureWhenZippingUnevenStreams() throws InterruptedException {
 
-		LazyFutureStream stream =  parallelBuilder().withExecutor(new ForkJoinPool(2))
+		LazyFutureStream stream =  LazyReact.parallelBuilder().withExecutor(new ForkJoinPool(2))
 								.reactInfinitely(() -> "100").peek(System.out::println)
 				.withQueueFactory(QueueFactories.boundedQueue(2));
 		Queue fast = stream.toQueue();
 
 		Thread t = new Thread(() -> {
-			parallelBuilder().withExecutor(new ForkJoinPool(2)).range(0,10).peek(c -> sleep(10))
+			LazyReact.parallelBuilder().withExecutor(new ForkJoinPool(2)).range(0,10).peek(c -> sleep(10))
 					.zip(fast.stream()).forEach(it -> {
 					});
 		});
@@ -151,11 +160,11 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	@Test 
 	public void testBackPressureWhenZippingUnevenStreams2() {
 
-		Queue fast = parallelBuilder().withExecutor(new ForkJoinPool(2)).reactInfinitely(() -> "100")
+		Queue fast = LazyReact.parallelBuilder().withExecutor(new ForkJoinPool(2)).reactInfinitely(() -> "100")
 				.withQueueFactory(QueueFactories.boundedQueue(10)).toQueue();
 
 		new Thread(() -> {
-			parallelBuilder().withExecutor(new ForkJoinPool(2)).range(0,1000).peek(c -> sleep(10))
+			LazyReact.parallelBuilder().withExecutor(new ForkJoinPool(2)).range(0,1000).peek(c -> sleep(10))
 					.zip(fast.stream()).forEach(it -> {
 					});
 		}).start();
@@ -224,8 +233,13 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 		return parallel(array).boundedWaitFree(1000);
 	}
 	@Override
+	protected <U> LazyFutureStream<U> ofThread(U... array) {
+
+		return parallel(array).boundedWaitFree(1000);
+	}
+	@Override
 	protected <U> LazyFutureStream<U> react(Supplier<U>... array) {
-		return LazyFutureStream.parallelBuilder().react(array);
+		return LazyReact.parallelBuilder().react(array);
 		
 	}
 	protected Object sleep(int i) {

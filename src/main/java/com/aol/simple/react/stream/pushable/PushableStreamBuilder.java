@@ -10,7 +10,7 @@ import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.async.Adapter;
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.async.QueueFactories;
+import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
@@ -56,7 +56,7 @@ public class PushableStreamBuilder{
 	public  <T>  PushableLazyFutureStream<T> pushable(ReactPool<LazyReact> s){
 		
 		Queue<T> q = createQueue();
-		return new PushableLazyFutureStream<T>(q,s.nextReactor().of(q.stream()));
+		return new PushableLazyFutureStream<T>(q,s.nextReactor().from(q.stream()));
 		
 	}
 
@@ -90,7 +90,7 @@ public class PushableStreamBuilder{
 	 */
 	public <T>  PushableLazyFutureStream<T> pushableLazyFutureStream(){
 		Queue<T> q = createQueue();
-		return new PushableLazyFutureStream<T>(q,LazyFutureStream.of((Stream<T>)q.stream()));
+		return new PushableLazyFutureStream<T>(q,LazyFutureStream.lazyFutureStream((Stream<T>)q.stream()));
 	}
 
 	/**
@@ -123,7 +123,7 @@ public class PushableStreamBuilder{
 	 */
 	public <T> LazyFutureStream<T> pushableLazyFutureStream(Adapter<T> adapter){
 		
-		return LazyFutureStream.of((Stream<T>)adapter.stream());
+		return LazyFutureStream.lazyFutureStream((Stream<T>)adapter.stream());
 	}
 	
 	/**

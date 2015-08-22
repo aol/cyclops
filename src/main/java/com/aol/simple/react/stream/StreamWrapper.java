@@ -15,6 +15,7 @@ import lombok.Builder;
 import lombok.experimental.Wither;
 
 import com.aol.simple.react.stream.traits.FutureStream;
+import com.aol.simple.react.threads.SequentialElasticPools;
 
 
 @Wither
@@ -73,11 +74,13 @@ public class StreamWrapper{
 	}
 	
 	
-	public StreamWrapper withNewStream(Stream<CompletableFuture> stream){
+	public StreamWrapper withNewStream(Stream<CompletableFuture> stream, BaseSimpleReact simple){
+		if(simple.getQueueService()==null)
+			System.out.println(simple);
 		if(!eager)
 			return withStream(stream);
 		else
-			return new StreamWrapper(new AsyncList(stream));
+			return new StreamWrapper(new AsyncList(stream,simple.getQueueService()));
 	}
 	public StreamWrapper stream(Function<Stream<CompletableFuture>,Stream<CompletableFuture>> action){
 		if(async!=null)
@@ -109,10 +112,13 @@ public class StreamWrapper{
 	
 	
 	static class AsyncList{
-		private final static Executor service = Executors.newSingleThreadExecutor();
+		
+		private final Executor service;
+		// = Executors.newSingleThreadExecutor();
 		private final CompletableFuture<List<CompletableFuture>> async;
 		
-		public AsyncList(Stream<CompletableFuture> stream){
+		public AsyncList(Stream<CompletableFuture> stream,Executor service){
+			
 				
 			if(stream instanceof FutureStream)
 				async = CompletableFuture.completedFuture(stream.collect(Collectors.toList()));
@@ -121,17 +127,19 @@ public class StreamWrapper{
 												
 		
 		
-	
+			this.service= service;
 		}
-		public AsyncList(CompletableFuture<Stream<CompletableFuture>> stream){
+		public AsyncList(CompletableFuture<Stream<CompletableFuture>> cf,Executor service){
+			//use elastic pool to execute asyn
 			
-			async = stream.thenApplyAsync(st ->st.collect(Collectors.toList()),service);
+				async = cf.thenApplyAsync(st ->st.collect(Collectors.toList()),service);
+				this.service= service;
 			
 		}
 		
 		
 		public AsyncList stream(Function<Stream<CompletableFuture>,Stream<CompletableFuture>> action){
-			return new AsyncList(async.thenApply(list-> action.apply(list.stream())));
+			return new AsyncList(async.thenApply(list-> action.apply(list.stream())),service);
 			
 		}
 	}

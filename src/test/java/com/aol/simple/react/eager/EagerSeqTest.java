@@ -1,9 +1,13 @@
 package com.aol.simple.react.eager;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.jooq.lambda.tuple.Tuple.tuple;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -12,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -20,8 +25,8 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import com.aol.simple.react.base.BaseSeqTest;
+import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
-import com.aol.simple.react.stream.traits.FutureStream;
 
 public class EagerSeqTest extends BaseSeqTest {
  
@@ -29,13 +34,56 @@ public class EagerSeqTest extends BaseSeqTest {
 	protected <U> EagerFutureStream<U> of(U... array) {
 		return EagerFutureStream.parallel(array);
 	}
-	
 	@Override
-	protected <U> FutureStream<U> react(Supplier<U>... array) {
-		return EagerFutureStream.parallelBuilder().react(array);
-		
+	protected <U> EagerFutureStream<U> ofThread(U... array) {
+		return EagerFutureStream.ofThread(array);
 	}
 	
+	@Override
+	protected <U> EagerFutureStream<U> react(Supplier<U>... array) {
+		return EagerReact.parallelBuilder().react(array);
+		
+	}
+	@Test(expected=UnsupportedOperationException.class)
+    public void testCycle() {
+    	  of(1).cycle().limit(6).toList();
+      
+    }
+	@Test
+	public void mergeMultiple(){
+		assertThat(react(()->1,()->2).switchOnNext(react(()->'a',()->'b'),
+						react(()->100,()->200)).toList().size(),equalTo(6));
+	}
+	@Test
+	public void skipUntil(){
+		System.out.println(react(()->1,()->2,()->3,()->4,()->value2())
+				.skipUntil(react(()->value())).collect(Collectors.toList()));
+		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).allMatch(it-> it==200));
+		assertThat(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).count(),is(1l));
+	}
+	@Test
+	public void batchBySize(){
+		System.out.println(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()));
+		for(int i=0;i<5000;i++)
+			assertThat(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()).size(),is(2));
+	}
+	@Test
+	public void batchBySize2(){
+		System.out.println(react(()->1,()->2,()->3,()->4,()->{sleep(100);return 5;},()->{sleep(110);return 6;}).batchBySize(3).collect(Collectors.toList()));
+		for(int i=0;i<50;i++)
+			assertThat(react(()->1,()->2,()->3,()->4,()->{sleep(100);return 5;},()->{sleep(110);return 6;}).batchBySize(3).collect(Collectors.toList()).size(),is(2));
+	}
+	@Test
+	public void batchByTime2(){
+		for(int i=0;i<5;i++){
+			System.out.println(i);
+			assertThat(react(()->1,()->2,()->3,()->4,()->{sleep(100);return 5;},()->{sleep(110);return 6;})
+							.batchByTime(30,TimeUnit.MILLISECONDS)
+							.toList()
+							.get(0)
+							,not(hasItem(6)));
+		}
+	}
 	@Test
 	public void batchSinceLastReadIterator() throws InterruptedException{
 		Iterator<Collection<Object>> it = react(()->1,()->2,()->3,()->4,()->5,()->value()).chunkLastReadIterator();

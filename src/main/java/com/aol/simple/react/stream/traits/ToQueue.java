@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.async.QueueFactory;
+import com.aol.simple.react.async.factories.QueueFactory;
 
 /**
  * 
@@ -38,5 +38,6 @@ public interface ToQueue <U>{
 	 * @return Populated Queue.
 	 */
 	abstract  Queue<U> toQueue(Function<Queue,Queue> modifier);
+	void addToQueue(Queue queue);
 	
 }

@@ -35,7 +35,7 @@ public class LazyTest {
 		
 		
 		
-		assertThat(LazyFutureStream.parallelCommonBuilder()
+		assertThat(LazyReact.parallelCommonBuilder()
 						.react(()->slow(),()->1,()->2)
 						.peek(System.out::println)
 						.convertToEagerStream()
@@ -50,7 +50,7 @@ public class LazyTest {
 		
 		
 		
-		assertThat(LazyFutureStream.parallelCommonBuilder()
+		assertThat(LazyReact.parallelCommonBuilder()
 						.react(()->slow(),()->1,()->2)
 						.peek(System.out::println)
 						.convertToEagerStream()
@@ -65,7 +65,7 @@ public class LazyTest {
 	
 	@Test
 	public void zipWithIndexApi(){
-		LazyFutureStream.parallelCommonBuilder()
+		LazyReact.parallelCommonBuilder()
 		.react(() -> 2, () -> 1, () -> 2)
 		
 		.zipWithIndex()
@@ -82,8 +82,8 @@ public class LazyTest {
 	}
 	@Test 
 	public void debounce() {
-		System.out.println(LazyFutureStream.sequentialCommonBuilder()
-				.of(IntStream.range(0, 1000000))
+		System.out.println(LazyReact.sequentialCommonBuilder()
+				.from(IntStream.range(0, 1000000))
 				.limit(100)
 				.debounce(100, TimeUnit.MILLISECONDS)
 				.peek(System.out::println)
@@ -92,12 +92,12 @@ public class LazyTest {
 
 	@Test @Ignore
 	public void skipUntil() {
-		FutureStream<Boolean> stoppingStream = LazyFutureStream
+		FutureStream<Boolean> stoppingStream = LazyReact
 				.sequentialBuilder().react(() -> 50).then(this::sleep)
 				.peek(System.out::println);
 		assertThat(
-				LazyFutureStream.sequentialCommonBuilder()
-						.of(IntStream.range(0, 100000))
+				LazyReact.sequentialCommonBuilder()
+						.from(IntStream.range(0, 100000))
 						.skipUntil(stoppingStream).peek(System.out::println)
 						.block().size(), greaterThan(0));
 	}
@@ -105,11 +105,11 @@ public class LazyTest {
 	@Test
 	@Ignore
 	public void takeUntil() {
-		FutureStream<Boolean> stoppingStream = LazyFutureStream
+		FutureStream<Boolean> stoppingStream = LazyReact
 				.sequentialBuilder().react(() -> 100).then(this::sleep)
 				.peek(System.out::println);
-		System.out.println(LazyFutureStream.sequentialCommonBuilder()
-				.of(IntStream.range(0, 1000000))
+		System.out.println(LazyReact.sequentialCommonBuilder()
+				.from(IntStream.range(0, 1000000))
 				// .peek(System.out::println)
 				.takeUntil(stoppingStream).peek(System.out::println).block()
 				.size());
@@ -129,7 +129,7 @@ public class LazyTest {
 
 	@Test
 	public void lazyReactStream() {
-		assertThat(LazyFutureStream.sequentialBuilder().react(() -> 1).map(list -> 1 + 2)
+		assertThat(LazyReact.sequentialBuilder().react(() -> 1).map(list -> 1 + 2)
 				.block(),equalTo(Arrays.asList(3)));
 	}
 	@Test
@@ -140,19 +140,19 @@ public class LazyTest {
 
 	@Test
 	public void lazyParallel() {
-		assertThat(LazyFutureStream.parallelBuilder().react(() -> 1).map(list -> 1 + 2)
+		assertThat(LazyReact.parallelBuilder().react(() -> 1).map(list -> 1 + 2)
 				.block(),equalTo(Arrays.asList(3)));
 	}
 
 	@Test
 	public void lazyReactStreamList() {
-		assertThat(LazyFutureStream.sequentialBuilder().react(asList(() -> 1))
+		assertThat(LazyReact.sequentialBuilder().react(asList(() -> 1))
 				.map(list -> 1 + 2).block(),equalTo(Arrays.asList(3)));
 	}
 
 	@Test
 	public void lazyParallelList() {
-		assertThat(LazyFutureStream.parallelBuilder().react(asList(() -> 1))
+		assertThat(LazyReact.parallelBuilder().react(asList(() -> 1))
 				.map(list -> 1 + 2).block(),equalTo(Arrays.asList(3)));
 	}
 }

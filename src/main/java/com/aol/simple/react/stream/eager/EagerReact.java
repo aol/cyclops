@@ -1,11 +1,14 @@
 package com.aol.simple.react.stream.eager;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -18,9 +21,13 @@ import lombok.Getter;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 
+import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.ThreadPools;
+import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
+import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -46,9 +53,18 @@ public class EagerReact extends BaseSimpleReact{
 	
 	
 	
+	
+	
 	public EagerReact(Executor executor, RetryExecutor retrier,
 			Boolean async) {
-		super();
+		super(ThreadPools.getQueueCopyExecutor());
+		this.executor = executor;
+		this.retrier = retrier;
+		this.async = Optional.ofNullable(async).orElse(true);
+	}
+	public EagerReact(Executor executor, RetryExecutor retrier,
+			Boolean async,Executor queueCopyExecutor) {
+		super(queueCopyExecutor);
 		this.executor = executor;
 		this.retrier = retrier;
 		this.async = Optional.ofNullable(async).orElse(true);
@@ -71,11 +87,14 @@ public class EagerReact extends BaseSimpleReact{
 	 * @param executor Executor to use
 	 */
 	public EagerReact(Executor executor) {
-		
+		super(ThreadPools.getQueueCopyExecutor());
 		this.executor = executor;
-		this.retrier = null;
+		this.retrier = new AsyncRetryExecutor(ThreadPools.getStandardRetry());
 		this.async=true;
 		
+	}
+	public EagerReact withQueueCopyExecutor(Executor queueCopyExecutor){
+		return new EagerReact(this.executor,this.retrier,this.async,queueCopyExecutor);
 	}
 	
 	
@@ -83,6 +102,11 @@ public class EagerReact extends BaseSimpleReact{
 	public <U> EagerFutureStream<U> construct(Stream s,
 			List<CompletableFuture> org) {
 		return (EagerFutureStream) new EagerFutureStreamImpl<U>( this,s,org);
+	}
+	public <U> EagerFutureStream<U> fromStreamAsync(final Stream<CompletableFuture<U>> stream) {
+
+		Stream s = stream;
+		return  construct( Stream.of(),null).fromStreamOfFutures(s);
 	}
 	/* 
 	 * Construct a EagerFutureStream from the provided Stream of completableFutures
@@ -106,9 +130,9 @@ public class EagerReact extends BaseSimpleReact{
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
 	 */
 	@Override
-	public <U> EagerFutureStream<U> of(Stream<U> stream) {
+	public <U> EagerFutureStream<U> from(Stream<U> stream) {
 		
-		return (EagerFutureStream)super.of(stream);
+		return (EagerFutureStream)super.from(stream);
 	}
 
 	/* 
@@ -119,9 +143,9 @@ public class EagerReact extends BaseSimpleReact{
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
 	 */
 	@Override
-	public EagerFutureStream<Integer> of(IntStream stream) {
+	public EagerFutureStream<Integer> from(IntStream stream) {
 		
-		return (EagerFutureStream)super.of(stream);
+		return (EagerFutureStream)super.from(stream);
 	}
 
 	/* 
@@ -132,9 +156,9 @@ public class EagerReact extends BaseSimpleReact{
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
 	 */
 	@Override
-	public  EagerFutureStream<Double> of(DoubleStream stream) {
+	public  EagerFutureStream<Double> from(DoubleStream stream) {
 		
-		return (EagerFutureStream)super.of(stream);
+		return (EagerFutureStream)super.from(stream);
 	}
 	
 
@@ -146,9 +170,9 @@ public class EagerReact extends BaseSimpleReact{
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
 	 */
 	@Override
-	public  EagerFutureStream<Long> of(LongStream stream) {
+	public  EagerFutureStream<Long> from(LongStream stream) {
 		
-		return (EagerFutureStream)super.of(stream);
+		return (EagerFutureStream)super.from(stream);
 	}
 	/* 
 	 * Construct a EagerFutureStream from array
@@ -194,9 +218,9 @@ public class EagerReact extends BaseSimpleReact{
 	 * @return Next stage in the reactive flow
 	 */
 	@Override
-	public <U> EagerFutureStream<U> of(Iterator<U> iterator) {
+	public <U> EagerFutureStream<U> from(Iterator<U> iterator) {
 		
-		return (EagerFutureStream)super.of(iterator);
+		return (EagerFutureStream)super.from(iterator);
 	}
 
 	/**
@@ -207,9 +231,9 @@ public class EagerReact extends BaseSimpleReact{
 	 * @return Next stage in the reactive flow
 	 */
 	@Override
-	public <R> EagerFutureStream<R> of(Collection<R> collection) {
+	public <R> EagerFutureStream<R> from(Collection<R> collection) {
 		
-		return (EagerFutureStream)super.of(collection);
+		return (EagerFutureStream)super.from(collection);
 	}
 
 
@@ -245,7 +269,7 @@ public class EagerReact extends BaseSimpleReact{
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#ofIterable(java.lang.Iterable)
 	 */
 	@Override
-	public <U> EagerFutureStream<U> ofIterable(Iterable<U> iter) {
+	public <U> EagerFutureStream<U> fromIterable(Iterable<U> iter) {
 		
 		return (EagerFutureStream)super.of(iter);
 	}
@@ -291,8 +315,96 @@ public class EagerReact extends BaseSimpleReact{
 		
 		return (EagerFutureStream)super.reactIterable(actions);
 	}
+	public <U> EagerFutureStream<U> from(CompletableFuture<U> cf){
+		return this.construct(Stream.of(cf), Arrays.asList(cf));
+	}
+	public <U> EagerFutureStream<U> from(CompletableFuture<U>... cf){
+		return this.construct(Stream.of(cf), Arrays.asList(cf));
+	}
+	/**
+	 * @return EagerReact for handling finite streams
+	 * @see SimpleReact#SimpleReact()
+	 */
+	public static EagerReact parallelBuilder() {
+		return new EagerReact();
+	}
 
-	
+	/**
+	 * Construct a new EagerReact builder, with a new task executor and retry
+	 * executor with configured number of threads
+	 * 
+	 * @param parallelism
+	 *            Number of threads task executor should have
+	 * @return eager EagerReact instance
+	 */
+	public static EagerReact parallelBuilder(int parallelism) {
+		return EagerReact.builder().executor(new ForkJoinPool(parallelism)).retrier(new RetryBuilder().parallelism(parallelism)).build();
+		
+	}
+
+	/**
+	 * @return new EagerReact builder configured with standard parallel executor
+	 *         By default this is the ForkJoinPool common instance but is
+	 *         configurable in the ThreadPools class
+	 * 
+	 * @see ThreadPools#getStandard() see RetryBuilder#getDefaultInstance()
+	 */
+	public static EagerReact parallelCommonBuilder() {
+		return EagerReact
+				.builder()
+				.async(true)
+				.executor(ThreadPools.getStandard())
+				.retrier(
+						RetryBuilder.getDefaultInstance().withScheduler(
+								ThreadPools.getCommonFreeThreadRetry()))
+				.build();
+	}
+
+	/**
+	 * @return new eager EagerReact builder configured to run on a separate
+	 *         thread (non-blocking current thread), sequentially New
+	 *         ForkJoinPool will be created
+	 */
+	public static EagerReact sequentialBuilder() {
+		return EagerReact
+				.builder()
+				.async(false)
+				.executor(Executors.newFixedThreadPool(1))
+				.retrier(
+						RetryBuilder.getDefaultInstance().withScheduler(
+								Executors.newScheduledThreadPool(1))).build();
+	}
+
+	/**
+	 * @return new EagerReact builder configured to run on a separate thread
+	 *         (non-blocking current thread), sequentially Common free thread
+	 *         Executor from
+	 */
+	public static EagerReact sequentialCommonBuilder() {
+		return EagerReact
+				.builder()
+				.async(false)
+				.executor(ThreadPools.getCommonFreeThread())
+				.retrier(
+						RetryBuilder.getDefaultInstance().withScheduler(
+								ThreadPools.getCommonFreeThreadRetry()))
+				.build();
+	}
+	/**
+	 * @return new EagerReact builder configured to run on a separate thread
+	 *         (non-blocking current thread), sequentially Common free thread
+	 *         Executor from
+	 */
+	public static EagerReact sequentialCurrentBuilder() {
+		return EagerReact
+				.builder()
+				.async(false)
+				.executor(ThreadPools.getCurrentThreadExecutor())
+				.retrier(
+						RetryBuilder.getDefaultInstance().withScheduler(
+								ThreadPools.getCommonFreeThreadRetry()))
+				.build();
+	}
 	
 
 }

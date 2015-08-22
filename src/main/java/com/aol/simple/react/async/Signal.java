@@ -45,7 +45,8 @@ public class Signal<T> {
 	 * @return Signal backed by a queue
 	 */
 	public static <T> Signal<T> queueBackedSignal(){
-		return new Signal<T>(new Queue<T>(new LinkedBlockingQueue<T>(),null),new Queue<T>(new LinkedBlockingQueue<T>(),null));
+		return new Signal<T>(new Queue<T>(new LinkedBlockingQueue<T>(),null),
+				new Queue<T>(new LinkedBlockingQueue<T>(),null));
 	}
 	
 	/**

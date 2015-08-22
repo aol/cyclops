@@ -7,6 +7,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -16,16 +17,20 @@ import java.util.stream.StreamSupport;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.experimental.Wither;
 
 import org.jooq.lambda.Seq;
 
-import com.aol.simple.react.exceptions.ExceptionSoftener;
+import com.aol.cyclops.lambda.utils.ExceptionSoftener;
+import com.aol.simple.react.async.factories.QueueFactories;
+import com.aol.simple.react.async.factories.QueueToBlockingQueueWrapper;
+import com.aol.simple.react.async.subscription.AlwaysContinue;
+import com.aol.simple.react.async.subscription.Continueable;
+import com.aol.simple.react.async.wait.DirectWaitStrategy;
+import com.aol.simple.react.async.wait.WaitStrategy;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.stream.traits.Continuation;
 import com.aol.simple.react.util.SimpleTimer;
-
 
 /**
  * Inspired by scalaz-streams async.Queue (functionally similar, but Blocking)
@@ -55,18 +60,19 @@ public class Queue<T> implements Adapter<T> {
 	private final int timeout;
 	private final TimeUnit timeUnit;
 	
-	private final int offerTimeout;
+	private final long offerTimeout;
 	private final TimeUnit offerTimeUnit;
 	private final int maxPoisonPills;
 
 	@Getter(AccessLevel.PACKAGE)
 	private final BlockingQueue<T> queue;
-	
+	private final WaitStrategy<T> consumerWait;
+	private final WaitStrategy<T> producerWait;
 	@Getter
 	private final Signal<Integer> sizeSignal;
 	
-	@Setter
-	private  volatile Continuation continuation;
+	
+	private ContinuationStrategy continuationStrategy;
 	private volatile boolean shuttingDown = false;
 
 
@@ -77,7 +83,7 @@ public class Queue<T> implements Adapter<T> {
 		this(new LinkedBlockingQueue<>());
 	}
 	
-	Queue(BlockingQueue<T> queue,Signal<Integer> sizeSignal) {
+	Queue(BlockingQueue<T> queue,Signal<Integer> sizeSignal,WaitStrategy<T> consumer,WaitStrategy<T> producer) {
 		this.queue = queue;
 		timeout = -1;
 		timeUnit = TimeUnit.MILLISECONDS;
@@ -85,15 +91,33 @@ public class Queue<T> implements Adapter<T> {
 		offerTimeout= Integer.MAX_VALUE;
 		offerTimeUnit = TimeUnit.DAYS;
 		this.sizeSignal = sizeSignal;
+		this.consumerWait=consumer;
+		this.producerWait=producer;
 	}
 	/**
+	 * Queue accepts a BlockingQueue to make use of Blocking semantics
+	 *
+	 * 
 	 * @param queue
 	 *            BlockingQueue to back this Queue
 	 */
 	public Queue(BlockingQueue<T> queue) {
-		this(queue,Signal.queueBackedSignal());
+		this(queue,Signal.queueBackedSignal(), new DirectWaitStrategy<T>(),new DirectWaitStrategy<T>());
 	}
+	Queue(BlockingQueue<T> queue, Signal<Integer>  sizeSignal) {
+		this(queue,sizeSignal,  new DirectWaitStrategy<T>(),new DirectWaitStrategy<T>());
+	}
+	
+	public Queue( java.util.Queue<T> q, WaitStrategy<T> consumer,WaitStrategy<T> producer){
+		this(new QueueToBlockingQueueWrapper(q),Signal.queueBackedSignal(),consumer,producer);
+	}
+	
 
+	public static<T> Queue<T> createMergeQueue(){
+		Queue<T> q= new Queue<>();
+		q.continuationStrategy=new StreamOfContinuations(q);
+		return q;
+	}
 	/**
 	 * @return Sequential Infinite (until Queue is closed) Stream of data from
 	 *         this Queue
@@ -109,16 +133,25 @@ public class Queue<T> implements Adapter<T> {
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
 		return Seq.seq(closingStream(this::get,s));
 	}
-	
-	public Seq<Collection<T>> streamBatch(Continueable s,Function<Supplier<T>,Supplier<Collection<T>>> batcher) {
+	public Seq<Collection<T>> streamBatchNoTimeout(Continueable s,Function<Supplier<T>,Supplier<Collection<T>>> batcher) {
 		
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
-		return Seq.seq(closingStreamBatch(batcher.apply(this::ensureOpen),s));
+		return Seq.seq(closingStreamBatch(batcher.apply(()->ensureOpen(this.timeout,this.timeUnit)),s));
+	}
+	public Seq<Collection<T>> streamBatch(Continueable s,Function<BiFunction<Long,TimeUnit,T>,Supplier<Collection<T>>> batcher) {
+		
+		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
+		return Seq.seq(closingStreamBatch(batcher.apply((timeout,timeUnit)->ensureOpen(timeout,timeUnit)),s));
 	}
 	public Seq<T> streamControl(Continueable s,Function<Supplier<T>,Supplier<T>> batcher) {
 		
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
-		return Seq.seq(closingStream(batcher.apply(this::ensureOpen),s));
+		return Seq.seq(closingStream(batcher.apply(()->ensureOpen(this.timeout,this.timeUnit)),s));
+	}
+	public Seq<CompletableFuture<T>> streamControlFutures(Continueable s,Function<Supplier<T>,CompletableFuture<T>> batcher) {
+		
+		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
+		return Seq.seq(closingStreamFutures(()->batcher.apply(()->ensureOpen(this.timeout,this.timeUnit)),s));
 	}
 
 	private Stream<Collection<T>> closingStreamBatch(Supplier<Collection<T>> s, Continueable sub){
@@ -135,8 +168,15 @@ public class Queue<T> implements Adapter<T> {
 		
 		 return st;
 	}
-	
+	private Stream<CompletableFuture<T>> closingStreamFutures(Supplier<CompletableFuture<T>> s, Continueable sub){
+		
+		Stream<CompletableFuture<T>> st = StreamSupport.stream(
+	                new ClosingSpliterator(Long.MAX_VALUE, s,sub,this), false);
+		
+		 return st;
+	}
 
+	
 	/**
 	 * @return Infinite (until Queue is closed) Stream of CompletableFutures
 	 *         that can be used as input into a SimpleReact concurrent dataflow
@@ -157,16 +197,23 @@ public class Queue<T> implements Adapter<T> {
 		stream.collect(Collectors.toCollection(() -> queue));
 		return true;
 	}
-
-	private T ensureOpen() {
+	private T ensureOpen(final long timeout, TimeUnit timeUnit) {
 		if(!open && queue.size()==0)
 			throw new ClosedQueueException();
-		
+		final  SimpleTimer timer = new SimpleTimer();
+		final long timeoutNanos = timeUnit.toNanos(timeout);
 		T data = null;
 		try {
-			if(this.continuation!=null){
+			if(this.continuationStrategy!=null){
+				
+				
 				while(open && (data = ensureClear(queue.poll()))==null){
-					continuation = continuation.proceed();
+					
+					this.continuationStrategy.handleContinuation();
+					
+					if(timeout!=-1)
+						handleTimeout(timer,timeoutNanos);
+					
 				}
 				if(data!=null)
 					return (T)nillSafe(ensureNotPoisonPill(ensureClear(data)));
@@ -175,9 +222,9 @@ public class Queue<T> implements Adapter<T> {
 				throw new ClosedQueueException();
 		
 			if (timeout == -1)
-				data = ensureClear(queue.take());
+				data = ensureClear(consumerWait.take(()->queue.take()));
 			else {
-				data = ensureClear(queue.poll(timeout, timeUnit));
+				data = ensureClear(consumerWait.take(()->queue.poll(timeout, timeUnit)));
 				if (data == null)
 					throw new QueueTimeoutException();
 			}
@@ -191,6 +238,14 @@ public class Queue<T> implements Adapter<T> {
 			this.sizeSignal.set(queue.size());
 
 		return (T)nillSafe(data);
+		
+	}
+
+	private void handleTimeout(SimpleTimer timer, long timeout) {
+		if(timer.getElapsedNanoseconds()>timeout){
+			
+			throw new QueueTimeoutException();
+		}
 		
 	}
 
@@ -234,6 +289,13 @@ public class Queue<T> implements Adapter<T> {
 		public boolean isDataPresent(){
 			return currentData != NOT_PRESENT;
 		}
+
+		@Override
+		public Throwable fillInStackTrace() {
+			return this;
+		}
+	
+		
 	}
 
 	/**
@@ -244,15 +306,24 @@ public class Queue<T> implements Adapter<T> {
 	 */
 	public static class QueueTimeoutException extends
 			SimpleReactProcessingException {
+		@Override
+		public Throwable fillInStackTrace() {
+			
+			return this;
+		}
+
 		private static final long serialVersionUID = 1L;
 	}
 
 	private static class PoisonPill { }
 
 
+	public T poll(long time, TimeUnit unit) throws QueueTimeoutException{
+		return this.ensureOpen(time, unit);
+	}
 	public T get(){
 		
-		return ensureOpen();
+		return ensureOpen(this.timeout,this.timeUnit);
 		
 	}
 	/**
@@ -293,7 +364,7 @@ public class Queue<T> implements Adapter<T> {
 		if(!open)
 			throw new ClosedQueueException();
 		try {
-			boolean result =  this.queue.offer((T)nullSafe(data),this.offerTimeout,this.offerTimeUnit);
+			boolean result =  producerWait.offer(()->this.queue.offer((T)nullSafe(data),this.offerTimeout,this.offerTimeUnit));
 			
 			if(sizeSignal!=null)
 				this.sizeSignal.set(queue.size());
@@ -373,7 +444,7 @@ public class Queue<T> implements Adapter<T> {
 			return queue.queue.size();
 		}
 		public T next(){
-			last = queue.ensureOpen();
+			last = queue.ensureOpen(queue.timeout,queue.timeUnit);
 			return last;
 		}
 		public boolean isOpen() {
@@ -385,7 +456,7 @@ public class Queue<T> implements Adapter<T> {
 				queue.queue.drainTo(result);
 			else{
 				try{
-					result.add(queue.ensureOpen());
+					result.add(queue.ensureOpen(queue.timeout,queue.timeUnit));
 				}catch(ClosedQueueException e){
 					queue.open=false;
 					throw e;
@@ -404,6 +475,10 @@ public class Queue<T> implements Adapter<T> {
 		return this.open;
 	}
 	
-
+	public void addContinuation(Continuation c){
+		if(this.continuationStrategy==null)
+			continuationStrategy = new SingleContinuation(this);
+		this.continuationStrategy.addContinuation(c);
+	}
 	
 }

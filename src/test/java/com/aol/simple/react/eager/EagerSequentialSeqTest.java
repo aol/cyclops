@@ -1,43 +1,119 @@
 package com.aol.simple.react.eager;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.jooq.lambda.tuple.Tuple.tuple;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import com.aol.simple.react.base.BaseSequentialSeqTest;
 import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
-import com.aol.simple.react.stream.traits.FutureStream;
-import com.aol.simple.react.threads.ReactPool;
+import com.aol.simple.react.util.SimpleTimer;
 
 public class EagerSequentialSeqTest extends BaseSequentialSeqTest {
 	
 	
 	@Override
-	protected <U> FutureStream<U> react(Supplier<U>... array) {
+	protected <U> EagerFutureStream<U> react(Supplier<U>... array) {
 		
-		return EagerFutureStream.sequentialCommonBuilder().react(array);
+		return EagerReact.sequentialCommonBuilder().react(array);
 		
+	}
+	@Override
+	protected <U> EagerFutureStream<U> ofThread(U... array) {
+		return EagerFutureStream.ofThread(array);
 	}
 	
 	@Override
 	protected <U> EagerFutureStream<U> of(U... array) {
-		return EagerFutureStream.sequentialCommonBuilder().of(array);
+		return EagerReact.sequentialCurrentBuilder().of(array);
+	}
+	@Test(expected=UnsupportedOperationException.class)
+    public void testCycle() {
+       of(1, 2).cycle().limit(6).toList();
+        
+    }
+	@Test
+	public void concatStreams(){
+	List<String> result = 	of(1,2,3).concat(of(100,200,300))
+			.map(it ->it+"!!").collect(Collectors.toList());
+
+		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
+	}
+	@Test
+	public void concat(){
+	List<String> result = 	of(1,2,3).concat(100,200,300)
+			.map(it ->it+"!!").collect(Collectors.toList());
+
+		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
+	}
+	
+	@Test
+	public void merge(){
+	List<String> result = 	of(1,2,3).merge(of(100,200,300))
+			.map(it ->it+"!!").collect(Collectors.toList());
+
+		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
+	}
+	@Test
+	public void batchByTime2(){
+		for(int i=0;i<10;i++){
+			
+			assertThat(react(()->1,()->2,()->3,()->4,()->{sleep(100);return 5;},()->6)
+							.batchByTime(60,TimeUnit.MILLISECONDS)
+							.toList()
+							.get(0)
+							,not(hasItem(6)));
+		}
+	}
+	@Test
+	public void debounceEager(){
+		SimpleTimer timer = new SimpleTimer();
+	//	System.out.println(of(1,2,3,4,5,6));
+	//	System.out.println(of(1,2,3,4,5,6).debounce(1000,TimeUnit.SECONDS).toList());
+		for(int i=0;i<500;i++){
+			System.out.println(i);
+			assertThat(of(1,2,3,4,5,6).debounce(1000,TimeUnit.SECONDS).collect(Collectors.toList()).size(),is(1));
+		}
+	}
+	@Test
+	public void debounceOkEager(){
+		for(int i=0;i<500;i++){
+			System.out.println(i);
+			assertThat(of(1,2,3,4,5,6).debounce(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),is(6));
+		}
+		
+	}
+	@Test
+	public void batchBySizeAndTimeTime(){
+		
+		for(int i=0;i<10;i++){
+			List<List<Integer>> list = react(()->1,()->2,()->3,()->4,()->{sleep(150);return 5;},()-> 6)
+					.batchBySizeAndTime(30,10,TimeUnit.MILLISECONDS)
+					.toList();
+			if(list.size()==0)
+				System.out.println(i+":"+list);
+			assertThat(list
+							.get(0)
+							,not(hasItem(6)));
+		}
 	}
 	@Test
 	public void batchSinceLastReadIterator() throws InterruptedException{

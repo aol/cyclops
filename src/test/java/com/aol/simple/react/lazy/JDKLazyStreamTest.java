@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.simple.react.base.BaseJDKStreamTest;
+import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.lazy.ParallelReductionConfig;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
@@ -19,7 +20,7 @@ public class JDKLazyStreamTest extends BaseJDKStreamTest{
 
 	public <U> LazyFutureStream<U> of(U... array){
 	 
-		return LazyFutureStream.parallelBuilder().of(Arrays.asList(array));
+		return LazyReact.parallelBuilder().from(Arrays.asList(array));
 	}
 	
 	@Test

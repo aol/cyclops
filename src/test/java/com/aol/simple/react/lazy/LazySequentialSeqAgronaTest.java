@@ -18,6 +18,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.simple.react.base.BaseSequentialSeqTest;
+import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
@@ -25,14 +26,40 @@ public class LazySequentialSeqAgronaTest extends BaseSequentialSeqTest {
 
 	@Override
 	protected <U> LazyFutureStream<U> of(U... array) {
-		return LazyFutureStream.sequentialBuilder().of(array).boundedWaitFree(1000);
+		return LazyFutureStream.of(array).boundedWaitFree(1000);
+	}
+	@Override
+	protected <U> LazyFutureStream<U> ofThread(U... array) {
+		return LazyFutureStream.ofThread(array).boundedWaitFree(1000);
 	}
 
 	@Override
 	protected <U> FutureStream<U> react(Supplier<U>... array) {
-		return LazyFutureStream.sequentialBuilder().react(array).boundedWaitFree(1000);
+		return LazyReact.sequentialBuilder().react(array).boundedWaitFree(1000);
 	}
 
+	@Test
+	public void concatStreams(){
+	List<String> result = 	of(1,2,3).concat(of(100,200,300))
+			.map(it ->it+"!!").collect(Collectors.toList());
+
+		assertThat(result,equalTo(Arrays.asList("1!!","2!!","100!!","200!!","3!!","300!!")));
+	}
+	@Test
+	public void concat(){
+	List<String> result = 	of(1,2,3).concat(100,200,300)
+			.map(it ->it+"!!").collect(Collectors.toList());
+
+		assertThat(result,equalTo(Arrays.asList("1!!","2!!","100!!","200!!","3!!","300!!")));
+	}
+	
+	@Test
+	public void merge(){
+	List<String> result = 	of(1,2,3).merge(of(100,200,300))
+			.map(it ->it+"!!").collect(Collectors.toList());
+
+		assertThat(result,equalTo(Arrays.asList("1!!","2!!","100!!","200!!","3!!","300!!")));
+	}
 	@Test
 	public void batchSinceLastReadIterator() throws InterruptedException{
 		Iterator<Collection<Integer>> it = of(1,2,3,4,5,6).chunkLastReadIterator();

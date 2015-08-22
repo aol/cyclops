@@ -75,7 +75,8 @@ public class BatchingCollector<T> implements LazyResultConsumer<T>{
 				if(active.size()>maxActive.getReduceTo()){
 					CompletableFuture promise=  new CompletableFuture();
 					CompletableFuture.anyOf(active.toArray(new CompletableFuture[0]))
-									.thenAccept(cf -> promise.complete(true));
+									.thenAccept(cf -> promise.complete(true))
+									.exceptionally(e->{ promise.complete(true); return null;});
 					
 					promise.join();
 				}

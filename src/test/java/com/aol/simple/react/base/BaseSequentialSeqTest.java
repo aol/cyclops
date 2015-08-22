@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
@@ -34,13 +35,14 @@ import org.junit.Test;
 import org.pcollections.HashTreePMap;
 
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.stream.traits.EagerFutureStream;
+import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.util.SimpleTimer;
 
 public abstract class BaseSequentialSeqTest {
 
 	abstract protected  <U> FutureStream<U> of(U... array);
+	abstract protected  <U> FutureStream<U> ofThread(U... array);
 	abstract protected <U> FutureStream<U> react(Supplier<U>... array);
 	
 	FutureStream<Integer> empty;
@@ -104,6 +106,24 @@ public abstract class BaseSequentialSeqTest {
 		return 200;
 	}
 	@Test
+	public void sliding(){
+		List<List<Integer>> list = of(1,2,3,4,5,6).sliding(2)
+									.collect(Collectors.toList());
+		
+	
+		assertThat(list.get(0),hasItems(1,2));
+		assertThat(list.get(1),hasItems(2,3));
+	}
+	@Test
+	public void slidingInc(){
+		List<List<Integer>> list = of(1,2,3,4,5,6).sliding(3,2)
+									.collect(Collectors.toList());
+		
+	
+		assertThat(list.get(0),hasItems(1,2,3));
+		assertThat(list.get(1),hasItems(3,4,5));
+	}
+	@Test
 	public void combine(){
 		
 		assertThat(of(1,2,3,4,5,6).combineLatest(of(3)).collect(Collectors.toList()).size(),greaterThan(5));
@@ -151,7 +171,7 @@ public abstract class BaseSequentialSeqTest {
 	@Test
 	public void takeUntil(){
 		
-		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).takeUntil(EagerFutureStream.sequentialBuilder().react(()->value())).noneMatch(it-> it==200));
+		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).takeUntil(EagerReact.sequentialBuilder().react(()->value())).noneMatch(it-> it==200));
 		
 	}
 	@Test
@@ -159,6 +179,27 @@ public abstract class BaseSequentialSeqTest {
 		System.out.println(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()));
 		assertThat(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()).size(),is(2));
 	}
+	@Test
+	public void batchBySizeAndTimeSize(){
+		
+		assertThat(of(1,2,3,4,5,6).batchBySizeAndTime(3,10,TimeUnit.SECONDS).toList().get(0).size(),is(3));
+	}
+	@Test
+	public void batchBySizeAndTimeTime(){
+		
+		for(int i=0;i<10;i++){
+			System.out.println(i);
+			List<List<Integer>> list = react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
+					.batchBySizeAndTime(10,1,TimeUnit.MICROSECONDS)
+					.toList();
+			
+			assertThat(list
+							.get(0)
+							,not(hasItem(6)));
+		}
+	}
+	
+	
 	@Test
 	public void batchBySizeSet(){
 		
@@ -187,13 +228,13 @@ public abstract class BaseSequentialSeqTest {
 	public void debounce(){
 		SimpleTimer timer = new SimpleTimer();
 		
+		
 		assertThat(of(1,2,3,4,5,6).debounce(1000,TimeUnit.SECONDS).collect(Collectors.toList()).size(),is(1));
 		
 	}
 	@Test
 	public void debounceOk(){
-		SimpleTimer timer = new SimpleTimer();
-		
+		System.out.println(of(1,2,3,4,5,6).debounce(1,TimeUnit.NANOSECONDS).toList());
 		assertThat(of(1,2,3,4,5,6).debounce(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),is(6));
 		
 	}
@@ -213,7 +254,7 @@ public abstract class BaseSequentialSeqTest {
 	}
 	@Test
 	public void batchByTime(){
-		assertThat(of(1,2,3,4,5,6).batchByTime(1500,TimeUnit.MICROSECONDS).collect(Collectors.toList()).size(),is(1));
+		assertThat(of(1,2,3,4,5,6).batchByTime(1,TimeUnit.SECONDS).collect(Collectors.toList()).size(),is(1));
 	}
 	@Test
 	public void batchByTimeSet(){
@@ -249,27 +290,7 @@ public abstract class BaseSequentialSeqTest {
 		}
 	}
 	
-	@Test
-	public void concat(){
-	List<String> result = 	of(1,2,3).concat(100,200,300)
-			.map(it ->it+"!!").collect(Collectors.toList());
-
-		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
-	}
-	@Test
-	public void concatStreams(){
-	List<String> result = 	of(1,2,3).concat(of(100,200,300))
-			.map(it ->it+"!!").collect(Collectors.toList());
-
-		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
-	}
-	@Test
-	public void merge(){
-	List<String> result = 	of(1,2,3).merge(of(100,200,300))
-			.map(it ->it+"!!").collect(Collectors.toList());
-
-		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
-	}
+	
 	@Test
 	public void zip(){
 		List<Tuple2<Integer,Integer>> list =
@@ -439,11 +460,7 @@ public abstract class BaseSequentialSeqTest {
         
     }
 
-    @Test
-    public void testCycle() {
-        assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle().limit(6).toList());
-        assertEquals(asList(1, 2, 3, 1, 2, 3), of(1, 2, 3).cycle().limit(6).toList());
-    }
+    
     
     @Test
     public void testIterable() {

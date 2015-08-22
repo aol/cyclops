@@ -6,7 +6,8 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.async.QueueFactory;
+import com.aol.simple.react.async.Queue.ClosedQueueException;
+import com.aol.simple.react.async.factories.QueueFactory;
 
 public interface EagerToQueue<U> extends ToQueue<U> {
 
@@ -43,9 +44,14 @@ public interface EagerToQueue<U> extends ToQueue<U> {
 	 */
 	default Queue<U> toQueue(Function<Queue,Queue> modifier){
 		  Queue<U> queue = modifier.apply(this.getQueueFactory().build());
-		  thenSync(it -> queue.offer(it)).allOf(it ->queue.close());
+		  thenSync(it -> queue.offer(it))
+		  	.allOf(it ->queue.close());
 
 			return queue;
+	}
+	default void addToQueue(Queue queue){
+		 thenSync(it -> queue.offer(it))
+		  		.allOf(it ->queue.close());
 	}
 	/* 
 	 * Populate provided queues with the sharded data from this Stream.

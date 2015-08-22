@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
@@ -16,17 +17,15 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -40,15 +39,16 @@ import org.junit.Test;
 import org.pcollections.HashTreePMap;
 
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.stream.CloseableIterator;
+import com.aol.simple.react.stream.eager.EagerReact;
+import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.traits.FutureStream;
-import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.util.SimpleTimer;
 
 
 //see BaseSequentialSeqTest for in order tests
 public abstract class BaseSeqTest {
 	abstract protected <U> FutureStream<U> of(U... array);
+	abstract protected <U> FutureStream<U> ofThread(U... array);
 	abstract protected <U> FutureStream<U> react(Supplier<U>... array);
 	FutureStream<Integer> empty;
 	FutureStream<Integer> nonEmpty;
@@ -102,7 +102,7 @@ public abstract class BaseSeqTest {
 		}
 		return "jello";
 	}
-	private int value2() {
+	protected int value2() {
 		try {
 			Thread.sleep(250);
 		} catch (InterruptedException e) {
@@ -110,6 +110,12 @@ public abstract class BaseSeqTest {
 			e.printStackTrace();
 		}
 		return 200;
+	}
+	
+	@Test
+	public void mergeMultipleMixed(){
+		assertThat(react(()->1,()->2).merge(new LazyReact().react(()->-1,()->-2),
+						new EagerReact().react(()->100,()->200)).toList().size(),equalTo(6));
 	}
 	@Test
 	public void combine(){
@@ -156,13 +162,7 @@ public abstract class BaseSeqTest {
 		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==5));
 		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==6));
 	}
-	@Test
-	public void skipUntil(){
-		System.out.println(react(()->1,()->2,()->3,()->4,()->value2())
-				.skipUntil(react(()->value())).collect(Collectors.toList()));
-		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).allMatch(it-> it==200));
-		assertThat(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).count(),is(1l));
-	}
+	
 	@Test
 	public void takeUntil(){
 		System.out.println(react(()->1,()->2,()->3,()->4,()->value2())
@@ -173,12 +173,35 @@ public abstract class BaseSeqTest {
 	@Test
 	public void batchBySize(){
 		System.out.println(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()));
-		assertThat(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()).size(),is(2));
+		for(int i=0;i<1000;i++)
+			assertThat(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()).size(),is(2));
 	}
 	@Test
+	public void batchBySizeAndTimeSize(){
+		
+		assertThat(of(1,2,3,4,5,6).batchBySizeAndTime(3,10,TimeUnit.SECONDS).toList().get(0).size(),is(3));
+	}
+	@Test
+	public void batchBySizeAndTimeTime(){
+		
+		for(int i=0;i<5;i++){
+			
+			List<List<Integer>> list = react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
+					.batchBySizeAndTime(30,1,TimeUnit.MICROSECONDS)
+					.toList();
+			
+			assertThat(list
+							.get(0)
+							,not(hasItem(6)));
+		}
+	}
+	
+	@Test
 	public void batchBySizeSet(){
-		 
+		
+		
 		assertThat(of(1,1,1,1,1,1).batchBySize(3,()->new TreeSet<Integer>()).block().get(0).size(),is(1));
+		
 		assertThat(of(1,1,1,1,1,1).batchBySize(3,()->new TreeSet<>()).block().get(1).size(),is(1));
 	}
 	@Test
@@ -208,9 +231,9 @@ public abstract class BaseSeqTest {
 	}
 	@Test
 	public void debounceOk(){
-		SimpleTimer timer = new SimpleTimer();
 		
-		assertThat(of(1,2,3,4,5,6).debounce(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),is(6));
+		for(int i=0;i<100;i++)
+			assertThat(of(1,2,3,4,5,6).debounce(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),is(6));
 		
 	}
 	@Test
@@ -233,8 +256,14 @@ public abstract class BaseSeqTest {
 	}
 	@Test
 	public void batchByTimeSet(){
-		
-		assertThat(of(1,1,1,1,1,1).batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>()).block().get(0).size(),is(1));
+		for(int i=0;i<5000;i++){
+			List <Collection<Integer>> set = ofThread(1,1,1,1,1,1).batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>()).block();
+			
+			assertThat(set.get(0).size(),is(1));
+			
+			
+			
+		}
 	}
 	@Test
 	public void batchByTimeInternalSize(){
@@ -441,11 +470,7 @@ public abstract class BaseSeqTest {
         
     }
 
-    @Test
-    public void testCycle() {
-    	   assertEquals(asList(1, 1, 1, 1, 1,1),of(1).cycle().limit(6).toList());
-      
-    }
+    
     
     @Test
     public void testIterable() {
