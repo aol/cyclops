@@ -1,7 +1,5 @@
 package com.aol.simple.react.async.wait;
 
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 public interface WaitStrategy <T>{
 

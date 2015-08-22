@@ -78,6 +78,17 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 		return ToLazyCollection.toConcurrentLazyCollection(this.iterator());
 	}
 	/**
+	 * @return single element from this Stream if it is a single element Stream
+	 * 			otherwise throw an UnsupportedOperationException
+	 */
+	default U single(){
+		 List<U> l= toList(); 
+		 if(l.size()==1){ 
+			 return l.get(l.size()-1); 
+			 }
+		throw new UnsupportedOperationException("single only works for Streams with a single value");
+	}
+	/**
 	 * Zip two Streams, zipping against the underlying futures of this stream
 	 * 
 	 * @param other

@@ -816,7 +816,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * 	EagerFutureStream<Integer> slow =  ... //  [100,200,300,400,500,600..]
 	 * 
 	 *  LazyFutureStream<Integer> merged = fast.switchOnNext(slow);  //[1,2,3,4,5,6,7,8,100,9,10,11,12,13,14,15,16,200..] 
-	 * }
+	 * }</pre>
 	 * 
 	 * 
 	 * @param streams
@@ -1686,7 +1686,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
      * <pre>{@code 
      * // (tuple(1, 1), tuple(2, 2))
      * EagerFutureStream.of(1, 2, 3).innerJoin(Seq.of(1, 2), t -> Objects.equals(t.v1, t.v2))
-     * }</code>
+     * }</pre>
      */
     default <T> EagerFutureStream<Tuple2<U, T>> innerJoin(Stream<T> other, BiPredicate<U, T> predicate) {
     	return (EagerFutureStream)FutureStream.super.innerJoin(other,predicate);
@@ -1712,7 +1712,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
      * <pre> {@code 
      * // (tuple(1, 1), tuple(2, 2), tuple(null, 3))
      * EagerFutureStream.of(1, 2).rightOuterJoin(Seq.of(1, 2, 3), t -> Objects.equals(t.v1, t.v2))
-     * }</code>
+     * }</pre>
      */
     default <T> EagerFutureStream<Tuple2<U, T>> rightOuterJoin(Stream<T> other, BiPredicate<U, T> predicate) {
         return  (EagerFutureStream)FutureStream.super.rightOuterJoin(other,predicate);

@@ -10,7 +10,6 @@ import java.util.stream.StreamSupport;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
-import com.aol.cyclops.lambda.utils.Mutable;
 
 public class SlidingWindow {
 	

@@ -1,6 +1,6 @@
 package com.aol.simple.react.async.wait;
 
-import com.aol.cyclops.lambda.utils.ExceptionSoftener;
+
 
 
 public class NoWaitRetry<T> implements WaitStrategy<T> {
