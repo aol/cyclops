@@ -141,14 +141,10 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 	default <X extends Throwable> FutureStream<U> onEmptyThrow(Supplier<X> supplier) {
 			return fromStream(Seq.super.onEmptyThrow(supplier));
 	}
-    /**
-     * Inner join 2 streams into one.
-     * <p>
-     * <code><pre>
-     * // (tuple(1, 1), tuple(2, 2))
-     * Seq.of(1, 2, 3).innerJoin(Seq.of(1, 2), t -> Objects.equals(t.v1, t.v2))
-     * </pre></code>
-     */
+    
+	/* 
+	 * @see org.jooq.lambda.Seq#innerJoin(java.util.stream.Stream, java.util.function.BiPredicate)
+	 */
 	@Override
     default <T> FutureStream<Tuple2<U, T>> innerJoin(Stream<T> other, BiPredicate<U, T> predicate) {
 
@@ -160,14 +156,11 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
                            .map(u -> tuple(t, u)));
     }
 
-    /**
-     * Left outer join 2 streams into one.
-     * <p>
-     * <code><pre>
-     * // (tuple(1, 1), tuple(2, 2), tuple(3, null))
-     * Seq.of(1, 2, 3).leftOuterJoin(Seq.of(1, 2), t -> Objects.equals(t.v1, t.v2))
-     * </pre></code>
+    
+    /* 
+     * @see org.jooq.lambda.Seq#leftOuterJoin(java.util.stream.Stream, java.util.function.BiPredicate)
      */
+	@Override
     default <T> FutureStream<Tuple2<U, T>> leftOuterJoin(Stream<T> other, BiPredicate<U, T> predicate) {
 
     	 RepeatableStream<T> s = new RepeatableStream<>(ToLazyCollection.toLazyCollection(other.iterator()));
@@ -178,49 +171,17 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
                            .map(u -> tuple(t, u)));
     }
 
-    /**
-     * Right outer join 2 streams into one.
-     * <p>
-     * <code><pre>
-     * // (tuple(1, 1), tuple(2, 2), tuple(null, 3))
-     * Seq.of(1, 2).rightOuterJoin(Seq.of(1, 2, 3), t -> Objects.equals(t.v1, t.v2))
-     * </pre></code>
-     */
+	/* 
+	 * @see org.jooq.lambda.Seq#rightOuterJoin(java.util.stream.Stream, java.util.function.BiPredicate)
+	 */
+	@Override
     default <T> FutureStream<Tuple2<U, T>> rightOuterJoin(Stream<T> other, BiPredicate<U, T> predicate) {
         return fromStream(Seq.super.rightOuterJoin(other, predicate));
     }
    
-	/**
 	
 	
-	/**
-	 * Create a Stream that infiniteable cycles the provided Streamable
-	 * @param s Streamable to cycle
-	 * @return New cycling stream
-	 */
-	@Override
-	default FutureStream<U> cycle(){
-		RepeatableStream s = new RepeatableStream(ToLazyCollection.toLazyCollection(toQueue().stream(getSubscription()).iterator()));
-		return fromStream(Stream.iterate(s.stream(),s1-> s.stream()).flatMap(i->i));
-	}
 	
-	/**
-	 * Create a Stream that finitely cycles the provided Streamable, provided number of times
-	 * 
-	 * <pre>
-	 * {@code 
-	 * assertThat(StreamUtils.cycle(3,Streamable.of(1,2,2))
-								.collect(Collectors.toList()),
-									equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
-	 * }
-	 * </pre>
-	 * @param s Streamable to cycle
-	 * @return New cycling stream
-	 */
-	default FutureStream<U> cycle(int times){
-		RepeatableStream s = new RepeatableStream(ToLazyCollection.toLazyCollection(toQueue().stream(getSubscription()).iterator()));
-		return fromStream(Stream.iterate(s.stream(),s1-> s.stream()).limit(times).flatMap(i->i));
-	}
 	
 	
 	/**

@@ -10,6 +10,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
 import static org.jooq.lambda.tuple.Tuple.tuple;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -45,6 +46,11 @@ public class LazySeqTest extends BaseSeqTest {
 				.copy(5)
 				.forEach(s -> System.out.println(s.toList()));
 	}
+	@Test
+    public void testCycle() {
+    	   assertEquals(asList(1, 1, 1, 1, 1,1),of(1).cycle().limit(6).toList());
+      
+    }
 	@Test
 	public void lazyCollection(){
 		Collection<Integer> col = LazyFutureStream.of(1,2,3,4,5,6)

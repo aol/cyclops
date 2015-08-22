@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.jooq.lambda.tuple.Tuple.tuple;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -43,6 +44,11 @@ public class EagerSeqTest extends BaseSeqTest {
 		return EagerReact.parallelBuilder().react(array);
 		
 	}
+	@Test(expected=UnsupportedOperationException.class)
+    public void testCycle() {
+    	  of(1).cycle().limit(6).toList();
+      
+    }
 	@Test
 	public void mergeMultiple(){
 		assertThat(react(()->1,()->2).switchOnNext(react(()->'a',()->'b'),

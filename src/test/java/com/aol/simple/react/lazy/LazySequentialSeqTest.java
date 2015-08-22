@@ -3,6 +3,7 @@ package com.aol.simple.react.lazy;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
 import static org.jooq.lambda.tuple.Tuple.tuple;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
@@ -37,6 +38,30 @@ public class LazySequentialSeqTest extends BaseSequentialSeqTest {
 	protected <U> FutureStream<U> react(Supplier<U>... array) {
 		return LazyFutureStream.react(array);
 	}
+	@Test
+    public void testCycle() {
+        assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle().limit(6).toList());
+        assertEquals(asList(1, 2, 3, 1, 2, 3), of(1, 2, 3).cycle().limit(6).toList());
+    }
+	@Test
+    public void testCycleTimes() {
+        assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle(3).toList());
+       
+    }
+	int count =0;
+	@Test
+    public void testCycleWhile() {
+		count =0;
+        assertEquals(asList(1, 2,3, 1, 2,3),of(1, 2, 3).cycleWhile(next->count++<6).toList());
+       
+    }
+	@Test
+    public void testCycleUntil() {
+		count =0;
+        assertEquals(asList(1, 2,3, 1, 2,3),of(1, 2, 3).cycleUntil(next->count++==6).toList());
+       
+    }
+	
 	@Test
 	public void concatStreams(){
 	List<String> result = 	of(1,2,3).concat(of(100,200,300))

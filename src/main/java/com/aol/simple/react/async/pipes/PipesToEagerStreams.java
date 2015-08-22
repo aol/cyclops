@@ -30,7 +30,7 @@ public class PipesToEagerStreams {
 		      .forEach(System.out::println);
 	 * 
 	 * }</pre>
-	 * @param key : Adapter identifier
+	 *
 	 * @param adapter
 	 * @return EagerFutureStream from supplied Queue, optimisied for CPU bound operation
 	 */

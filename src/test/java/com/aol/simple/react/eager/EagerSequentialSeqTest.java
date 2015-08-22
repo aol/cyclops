@@ -7,28 +7,24 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.jooq.lambda.tuple.Tuple.tuple;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import com.aol.simple.react.base.BaseSequentialSeqTest;
 import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
-import com.aol.simple.react.stream.traits.FutureStream;
-import com.aol.simple.react.threads.ReactPool;
 import com.aol.simple.react.util.SimpleTimer;
 
 public class EagerSequentialSeqTest extends BaseSequentialSeqTest {
@@ -49,6 +45,11 @@ public class EagerSequentialSeqTest extends BaseSequentialSeqTest {
 	protected <U> EagerFutureStream<U> of(U... array) {
 		return EagerReact.sequentialCurrentBuilder().of(array);
 	}
+	@Test(expected=UnsupportedOperationException.class)
+    public void testCycle() {
+       of(1, 2).cycle().limit(6).toList();
+        
+    }
 	@Test
 	public void concatStreams(){
 	List<String> result = 	of(1,2,3).concat(of(100,200,300))

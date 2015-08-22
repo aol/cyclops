@@ -460,11 +460,7 @@ public abstract class BaseSequentialSeqTest {
         
     }
 
-    @Test
-    public void testCycle() {
-        assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle().limit(6).toList());
-        assertEquals(asList(1, 2, 3, 1, 2, 3), of(1, 2, 3).cycle().limit(6).toList());
-    }
+    
     
     @Test
     public void testIterable() {

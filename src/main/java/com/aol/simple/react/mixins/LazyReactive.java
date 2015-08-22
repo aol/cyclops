@@ -45,7 +45,7 @@ public interface LazyReactive {
 	 * input to the function supplied. The user Function should create a LazyFutureStream with any
 	 * business logic stages predefined. This method will handle elastic scaling and pooling of Executor
 	 * services. User code should call a terminal op on the returned LazyFutureStream
-	 * @see Reactive#run(com.aol.simple.react.stream.traits.LazyFutureStream)
+	 * @see #run(com.aol.simple.react.stream.traits.LazyFutureStream)
 	 * 
 	 * @param react Function that generates a LazyFutureStream from a LazyReact builder
 	 * @return Generated LazyFutureStream

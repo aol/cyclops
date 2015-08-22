@@ -85,7 +85,7 @@ public class FutureOps<T> implements IntOperators<T>,DoubleOperators<T>, LongOpe
 	/**
 	 * Asynchronously capture the minimum value in this stream using the provided function
 	 * 
-	 * @See org.jooq.lambda.Seq#minBy(Function)
+	 * @see org.jooq.lambda.Seq#minBy(Function)
 	 */
 	public  <U extends Comparable<U>> CompletableFuture<Optional<T>> minBy(Function<T, U> function){
 		return CompletableFuture.supplyAsync(()->stream.minBy(function));
@@ -280,21 +280,21 @@ public class FutureOps<T> implements IntOperators<T>,DoubleOperators<T>, LongOpe
 	
 	/**
 	 * Perform an asynchronous All Match operation
-	 * 	 @see java.util.stream.Stream#allMatch()
+	 * 	@see java.util.stream.Stream#allMatch(Predicate)
 	 * */
 	public CompletableFuture<Boolean> allMatch(Predicate<? super T> predicate){
 		return CompletableFuture.supplyAsync(()->stream.allMatch(predicate),exec);
 	}
 	/**
 	 * Perform an asynchronous Any Match operation
-	 * 	 @see java.util.stream.Stream#anyMatch()
+	 * 	 @see java.util.stream.Stream#anyMatch(Predicate)
 	 * */
 	public CompletableFuture<Boolean>   anyMatch(Predicate<? super T> predicate){
 		return CompletableFuture.supplyAsync(()->stream.anyMatch(predicate),exec);
 	}
 	/**
 	 * Perform an asynchronous Any Match operation
-	 * 	 @see java.util.stream.Stream#noneMatch()
+	 * 	 @see java.util.stream.Stream#noneMatch(Predicate)
 	 * */
 	public CompletableFuture<Boolean>   noneMatch(Predicate<? super T> predicate){
 		return CompletableFuture.supplyAsync(()->stream.noneMatch(predicate),exec);

@@ -1718,43 +1718,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
         return  (EagerFutureStream)FutureStream.super.rightOuterJoin(other,predicate);
     }
    
-	/**
-	 * Repeat in a Stream while specified predicate holds
-	 * <pre>
-	 * {@code 
-	 *  int count =0;
-	 *  
-		assertThat(EagerFutureStream.of(1,2,2).cycleWhile(next -> count++<6 )
-											.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2)));
-	 * }
-	 * </pre>
-	 * @param predicate
-	 *            repeat while true
-	 * @return Repeating Stream
-	 */
-	default  EagerFutureStream<U> cycleWhile(Predicate<? super U> predicate) {
-		return cycle().limitWhile(predicate);
-	}
-
-	/**
-	 * Repeat in a Stream until specified predicate holds
-	 * 
-	 * <pre>
-	 * {@code 
-	 * 	count =0;
-		assertThat(EagerFutureStream.of(1,2,2,3).cycleUntil(next -> count++>10 )
-											.collect(Collectors.toList()),equalTo(Arrays.asList(1, 2, 2, 3, 1, 2, 2, 3, 1, 2, 2)));
-
-	 * }
-	 * </pre>
-	 * @param predicate
-	 *            repeat while true
-	 * @return Repeating Stream
-	 */
-	default  EagerFutureStream<U> cycleUntil(Predicate<? super U> predicate) {
-		
-		return cycle().limitUntil(predicate);
-	}
+	
 	
 	/**
 	 * Returns a stream with a given value interspersed between any two values
@@ -1835,34 +1799,15 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		return new Tuple2(fromStream(duplicated.get(0)), fromStream(duplicated.get(1)));
 	}
 	/**
-	 * Create a Stream that infinitely cycles this Stream
+	 * UnsupportedOperation for EagerFutureStreams
+	 * Requires ability to support infinite Streams
 	 * 
-	 * <pre>
-	 * {@code 
-	 * assertThat(EagerFutureStream.of(1,2,2).cycle().limit(6)
-								.collect(Collectors.toList()),
-									equalTo(Arrays.asList(1,2,2,1,2,2));
-	 * }
-	 * </pre>
-	 * @return New cycling stream
+	 * 
+	 * @return throws UnsupportedOperationException
 	 */
+	@Override
 	default EagerFutureStream<U> cycle(){
-		return (EagerFutureStream)FutureStream.super.cycle();
-	}
-	/**
-	 * Create a Stream that finitely cycles this Stream, provided number of times
-	 * 
-	 * <pre>
-	 * {@code 
-	 * assertThat(EagerFutureStream.of(1,2,2).cycle(3)
-								.collect(Collectors.toList()),
-									equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
-	 * }
-	 * </pre>
-	 * @return New cycling stream
-	 */
-	default EagerFutureStream<U> cycle(int times){
-		return (EagerFutureStream)FutureStream.super.cycle(times);
+		throw new UnsupportedOperationException("cycle not supported for EagerFutureStreams");
 	}
 	
 

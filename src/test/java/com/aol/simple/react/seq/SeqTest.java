@@ -8,11 +8,12 @@ import java.util.function.Supplier;
 
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class SeqTest {
 
-	@Test
+	@Test @Ignore
 	public void testUnzipWithLimits() {
 		
 		Supplier<Seq<Tuple2<Integer, String>>> s = () -> Seq.of(

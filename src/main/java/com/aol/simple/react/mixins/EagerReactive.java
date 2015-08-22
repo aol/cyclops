@@ -98,7 +98,7 @@ public interface EagerReactive {
 	 * input to the function supplied. The user Function should create a EagerFutureStream with any
 	 * business logic stages predefined. This method will handle elastic scaling and pooling of Executor
 	 * services. User code should call a terminal op on the returned EagerFutureStream
-	 * @see Reactive#run(com.aol.simple.react.stream.traits.EagerFutureStream)
+	 * 
 	 * 
 	 * @param react Function that generates a EagerFutureStream from a EagerReact builder
 	 * @return Generated EagerFutureStream
