@@ -13,8 +13,6 @@ import java.util.Spliterators;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -29,9 +27,11 @@ import org.jooq.lambda.Seq;
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.factories.QueueFactory;
+import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
+import com.aol.simple.react.stream.EagerStreamWrapper;
 import com.aol.simple.react.stream.StageWithResults;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
@@ -70,7 +70,7 @@ public interface SimpleReactStream<U> extends
 		
 		return (SimpleReactStream<R>) this.withLastActive(
 				getLastActive().stream(s -> s.map(
-						(ft) -> ft.thenApplyAsync(SimpleReactStream.<U,R>handleExceptions(fn)))));
+						(ft) -> ft.thenApplyAsync(SimpleReactStream.<U,R>handleExceptions(fn),getTaskExecutor()))));
 	}
 	/* 
 	 * React to new events with the supplied function on the supplied Executor
@@ -101,20 +101,20 @@ public interface SimpleReactStream<U> extends
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	default <T, R> SimpleReactStream<R> allOf(final Collector collector,
 			final Function<T, R> fn) {
-		CompletableFuture[] array = lastActiveArray(getLastActive());
-		CompletableFuture cf = CompletableFuture.allOf(array);
+		FastFuture[] array = lastActiveArray(getLastActive());
+		FastFuture cf = FastFuture.allOf(array);
 		Function<Exception, T> f = (Exception e) -> {
 			BlockingStreamHelper.capture(e,getErrorHandler());
 			return BlockingStreamHelper.block(this,Collectors.toList(),
-					new StreamWrapper(Stream.of(array), true));
+					new EagerStreamWrapper(Stream.of(array), true));
 		};
-		CompletableFuture onFail = cf.exceptionally(f);
-		CompletableFuture onSuccess = onFail.thenApplyAsync((result) -> {
+		FastFuture onFail = cf.exceptionally(f);
+		FastFuture onSuccess = onFail.thenApplyAsync((result) -> {
 			return new StageWithResults(this.getTaskExecutor(),null, result).submit(() -> (R)fn
 					.apply(BlockingStreamHelper.aggregateResults(collector, Stream.of(array)
 							.collect(Collectors.toList()),getErrorHandler())));
 		}, getTaskExecutor());
-		return (SimpleReactStream<R>) withLastActive(new StreamWrapper(onSuccess,
+		return (SimpleReactStream<R>) withLastActive(new EagerStreamWrapper(onSuccess,
 				isEager()));
 
 	}
@@ -128,11 +128,11 @@ public interface SimpleReactStream<U> extends
 	 */
 	default <R> SimpleReactStream<R> anyOf(
 			final Function<U, R> fn) {
-		CompletableFuture[] array = lastActiveArray(getLastActive());
-		CompletableFuture cf = CompletableFuture.anyOf(array);
-		CompletableFuture onSuccess = cf.thenApplyAsync(fn,getTaskExecutor());
+		FastFuture[] array = lastActiveArray(getLastActive());
+		FastFuture cf = FastFuture.anyOf(array);
+		FastFuture onSuccess = cf.thenApplyAsync(fn,getTaskExecutor());
 		
-		return (SimpleReactStream<R>) withLastActive(new StreamWrapper(onSuccess,
+		return (SimpleReactStream<R>) withLastActive(new EagerStreamWrapper(onSuccess,
 				isEager()));
 
 	}
@@ -141,8 +141,8 @@ public interface SimpleReactStream<U> extends
 	
 
 	@SuppressWarnings("rawtypes")
-	static CompletableFuture[] lastActiveArray(StreamWrapper lastActive) {
-		return lastActive.list().toArray(new CompletableFuture[0]);
+	static FastFuture[] lastActiveArray(StreamWrapper lastActive) {
+		return lastActive.list().toArray(new FastFuture[0]);
 	}
 	
 	/**
@@ -160,7 +160,7 @@ public interface SimpleReactStream<U> extends
 	 */
 	@SuppressWarnings("unchecked")
 	default <R> SimpleReactStream<R> retry(final Function<U, R> fn) {
-		Function<Stream<CompletableFuture>,Stream<CompletableFuture>>  mapper = stream -> stream.map(
+		Function<Stream<FastFuture>,Stream<FastFuture>>  mapper = stream -> stream.map(
 				(ft) -> ft.thenApplyAsync(res -> 
 				getRetrier().getWithRetry( ()->SimpleReactStream.<U,R>handleExceptions(fn).apply((U)res)).join(),getTaskExecutor() ));
 
@@ -173,7 +173,7 @@ public interface SimpleReactStream<U> extends
 		
 		
 		return (SimpleReactStream<R>) this.withLastActive(getLastActive()
-				.withNewStream(stream.map(CompletableFuture::completedFuture),this.getSimpleReact()));
+				.withNewStream(stream.map(FastFuture::completedFuture),this.getSimpleReact()));
 	}
 	
 
@@ -246,7 +246,7 @@ public interface SimpleReactStream<U> extends
 	default  <R> SimpleReactStream<R> then(final Function<U,R> fn) {
 		if(!this.isAsync())
 			return thenSync(fn);
-		Function<Stream<CompletableFuture>,Stream<CompletableFuture>> streamMapper = s ->s.map(ft -> ft.thenApplyAsync(SimpleReactStream.<U,R>handleExceptions(fn),getTaskExecutor()));
+		Function<Stream<FastFuture>,Stream<FastFuture>> streamMapper = s ->s.map(ft -> ft.thenApplyAsync(SimpleReactStream.<U,R>handleExceptions(fn),getTaskExecutor()));
 		return (SimpleReactStream<R>) this.withLastActive(getLastActive().stream(streamMapper));
 	}
 	
@@ -358,7 +358,7 @@ public interface SimpleReactStream<U> extends
 			Function<U, CompletableFuture<R>> flatFn) {
 		if(!this.isAsync())
 			return flatMapCompletableFutureSync(flatFn);
-		Function<Stream<CompletableFuture>,Stream<CompletableFuture>> streamMapper = s ->(Stream)s.map(ft -> ft.thenComposeAsync(SimpleReactStream.handleExceptions(flatFn),getTaskExecutor()));
+		Function<Stream<FastFuture>,Stream<FastFuture>> streamMapper = s ->(Stream)s.map(ft -> ft.thenComposeAsync(SimpleReactStream.handleExceptions(flatFn),getTaskExecutor()));
 		return (SimpleReactStream<R>) this.withLastActive(getLastActive().stream(streamMapper));
 	}
 	/**
@@ -382,7 +382,7 @@ public interface SimpleReactStream<U> extends
 	default <R> SimpleReactStream<R> flatMapCompletableFutureSync(
 			Function<U, CompletableFuture<R>> flatFn) {
 		
-		Function<Stream<CompletableFuture>,Stream<CompletableFuture>> streamMapper = s ->(Stream)s.map(ft -> ft.thenCompose(SimpleReactStream.handleExceptions(flatFn)));
+		Function<Stream<FastFuture>,Stream<FastFuture>> streamMapper = s ->(Stream)s.map(ft -> ft.thenCompose(SimpleReactStream.handleExceptions(flatFn)));
 		return (SimpleReactStream<R>) this.withLastActive(getLastActive().stream(streamMapper));
 	}
 
@@ -475,6 +475,7 @@ public interface SimpleReactStream<U> extends
 
 		return getLastActive()
 				.stream()
+				.map(FastFuture::toCompletableFuture)
 				.map(future -> (CompletableFuture<R>) future.thenApplyAsync(fn,
 						getTaskExecutor())).collect(Collectors.toList());
 	}
@@ -493,14 +494,15 @@ public interface SimpleReactStream<U> extends
 	 */
 	@SuppressWarnings("unchecked")
 	default SimpleReactStream<U> filter(final Predicate<? super U> p) {
+		
 		if(!isAsync())
 			return filterSync(p);
-	Function<Stream<CompletableFuture>,Stream<CompletableFuture>> fn = s -> s.map(ft -> ft.thenApplyAsync((in) -> {
+		Function<Stream<FastFuture>,Stream<FastFuture>> fn = s -> s.map(ft -> ft.thenApplyAsync((in) -> {
 			if (!p.test((U) in)) {
 				throw new FilteredExecutionPathException();
 			}
 			return in;
-		}));
+		},getTaskExecutor()));
 		return (SimpleReactStream<U>) this.withLastActive(getLastActive()
 				.stream(fn));
 
@@ -518,7 +520,7 @@ public interface SimpleReactStream<U> extends
 	 *         the dataflow
 	 */
 	default SimpleReactStream<U> filterSync(final Predicate<? super U> p) {
-		Function<Stream<CompletableFuture>,Stream<CompletableFuture>> fn = s -> s.map(ft -> ft.thenApply((in) -> {
+		Function<Stream<FastFuture>,Stream<FastFuture>> fn = s -> s.map(ft -> ft.thenApply((in) -> {
 				if (!p.test((U) in)) {
 					throw new FilteredExecutionPathException();
 				}
@@ -568,7 +570,7 @@ public interface SimpleReactStream<U> extends
 	default SimpleReactStream<U> merge(SimpleReactStream<U>... s) {
 		List merged = Stream.concat(Stream.of(this),Stream.of(s)).map(stream -> stream.getLastActive().list())
 				.flatMap(Collection::stream).collect(Collectors.toList());
-		return (SimpleReactStream<U>) this.withLastActive(new StreamWrapper(merged));
+		return (SimpleReactStream<U>) this.withLastActive(new EagerStreamWrapper(merged));
 	}
 	
 	 
@@ -587,7 +589,7 @@ public interface SimpleReactStream<U> extends
 	public static <R> SimpleReactStream<R> merge(SimpleReactStream s1, SimpleReactStream s2) {
 		List merged = Stream.of(s1.getLastActive().list(), s2.getLastActive().list())
 				.flatMap(Collection::stream).collect(Collectors.toList());
-		return (SimpleReactStream<R>) s1.withLastActive(new StreamWrapper(merged));
+		return (SimpleReactStream<R>) s1.withLastActive(new EagerStreamWrapper(merged));
 	}
 	
 	/**
@@ -669,7 +671,7 @@ public interface SimpleReactStream<U> extends
 	 */
 	default SimpleReactStream<U> onFail(Class<? extends Throwable> exceptionClass, final Function<? extends SimpleReactFailedStageException, U> fn){
 		
-		Function<Stream<CompletableFuture>,Stream<CompletableFuture>> mapper = s -> s.map((ft) -> ft.exceptionally((t) -> {
+		Function<Stream<FastFuture>,Stream<FastFuture>> mapper = s -> s.map((ft) -> ft.exceptionally((t) -> {
 			if (t instanceof FilteredExecutionPathException)
 				throw (FilteredExecutionPathException) t;
 			Throwable throwable =(Throwable)t;
@@ -955,7 +957,7 @@ public interface SimpleReactStream<U> extends
 				.getDefaultInstance().withScheduler(
 						ThreadPools.getSequentialRetry()),false);
 		return new SimpleReactStreamImpl<T>(sr,
-				stream.map(CompletableFuture::completedFuture),null);
+				stream.map(FastFuture::completedFuture),null);
 	}
 
 	/**

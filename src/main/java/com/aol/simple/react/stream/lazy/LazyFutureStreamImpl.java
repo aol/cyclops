@@ -14,18 +14,19 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Value;
 import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
 
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.async.factories.QueueFactory;
+import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.async.subscription.Subscription;
 import com.aol.simple.react.capacity.monitor.LimitingMonitor;
 import com.aol.simple.react.collectors.lazy.BatchingCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.stream.BaseSimpleReact;
+import com.aol.simple.react.stream.LazyStreamWrapper;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.threads.ReactPool;
@@ -44,7 +45,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	private final Optional<Consumer<Throwable>> errorHandler;
 	private final StreamWrapper lastActive;
 	private final boolean eager;
-	private final Consumer<CompletableFuture> waitStrategy;
+	private final Consumer<FastFuture> waitStrategy;
 	private final LazyResultConsumer<U> lazyCollector;
 	private final QueueFactory<U> queueFactory;
 	private final LazyReact simpleReact;
@@ -64,7 +65,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		
 		this.simpleReact = lazyReact;
 		Stream s = stream;
-		this.lastActive = new StreamWrapper(s, false);
+		this.lastActive = new LazyStreamWrapper(s, new FastFuture());
 		this.error =  new ConsumerHolder(a->{});
 		this.errorHandler = Optional.of((e) -> { error.forward.accept(e); log.error(e.getMessage(), e);});
 		this.eager = false;

@@ -10,6 +10,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -20,6 +21,7 @@ import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 
 import com.aol.simple.react.RetryBuilder;
+import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.config.MaxActive;
 import com.aol.simple.react.stream.BaseLazySimpleReact;
 import com.aol.simple.react.stream.ThreadPools;
@@ -106,10 +108,13 @@ public class LazyReact extends BaseLazySimpleReact {
 	}
 	
 	public <U> LazyFutureStream<U> from(CompletableFuture<U> cf){
-		return this.construct(Stream.of(cf), Arrays.asList(cf));
+		return this.construct(Stream.of(FastFuture.fromCompletableFuture(cf)), Arrays.asList(FastFuture.fromCompletableFuture(cf)));
+
 	}
 	public <U> LazyFutureStream<U> from(CompletableFuture<U>... cf){
-		return this.construct(Stream.of(cf), Arrays.asList(cf));
+		return (LazyFutureStream)this.construct(Stream.of(cf).map(FastFuture::fromCompletableFuture), 
+				(List)Stream.of(cf).map(FastFuture::fromCompletableFuture).collect(Collectors.toList()));
+
 	}
 	/* 
 	 * Construct a new Stream from another Stream
@@ -120,7 +125,7 @@ public class LazyReact extends BaseLazySimpleReact {
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#construct(java.util.stream.Stream, java.util.List)
 	 */
 	@Override
-	public <U> LazyFutureStream<U> construct(Stream s,List<CompletableFuture> org) {
+	public <U> LazyFutureStream<U> construct(Stream s,List<FastFuture> org) {
 		
 		return (LazyFutureStream) new LazyFutureStreamImpl<U>( this,s);
 

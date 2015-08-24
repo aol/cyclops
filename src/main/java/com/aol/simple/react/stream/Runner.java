@@ -2,13 +2,12 @@ package com.aol.simple.react.stream;
 
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
 
 import lombok.AllArgsConstructor;
 
 import com.aol.simple.react.async.Queue.ClosedQueueException;
+import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.collectors.lazy.EmptyCollector;
-import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.stream.traits.Continuation;
@@ -42,7 +41,7 @@ public class Runner {
 	}
 	public Continuation  runContinuations(StreamWrapper lastActive,EmptyCollector collector) {
 
-		Iterator<CompletableFuture> it = lastActive.stream().iterator();
+		Iterator<FastFuture> it = lastActive.stream().iterator();
 		
 			Continuation[] cont  = new Continuation[1];
 				
@@ -68,7 +67,7 @@ public class Runner {
 						
 							if(it.hasNext()){
 								
-								CompletableFuture f = it.next();
+								FastFuture f = it.next();
 								handleFilter(cont,f);//if completableFuture has been filtered out, we need to move to the next one instead
 									
 								collector.accept(f);
@@ -96,7 +95,7 @@ public class Runner {
 
 	}
 	
-	private <T> void handleFilter(Continuation[] cont, CompletableFuture<T> f){
+	private <T> void handleFilter(Continuation[] cont, FastFuture<T> f){
 		
 		f.exceptionally( e-> {
 			if ((e.getCause() instanceof FilteredExecutionPathException)) {

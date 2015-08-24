@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
+import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.config.MaxActive;
 import com.aol.simple.react.stream.traits.ConfigurableStream;
 
@@ -14,7 +15,7 @@ import com.aol.simple.react.stream.traits.ConfigurableStream;
  *
  * @param <T>
  */
-public interface LazyResultConsumer<T> extends Consumer<CompletableFuture<T>>{
+public interface LazyResultConsumer<T> extends Consumer<FastFuture<T>>{
 
 	/**
 	 * Used to generate a new instance for result collection - populates the supplied Collection
@@ -22,16 +23,16 @@ public interface LazyResultConsumer<T> extends Consumer<CompletableFuture<T>>{
 	 * @param t Collection to be populated
 	 * @return Consumer that will populate the collection
 	 */
-	public LazyResultConsumer<T> withResults(Collection<CompletableFuture<T>> t);
+	public LazyResultConsumer<T> withResults(Collection<FastFuture<T>> t);
 
 	/**
 	 * @return Completed results
 	 */
-	public Collection<CompletableFuture<T>> getResults();
+	public Collection<FastFuture<T>> getResults();
 	/**
 	 * @return Completed  and active results
 	 */
-	public Collection<CompletableFuture<T>> getAllResults();
+	public Collection<FastFuture<T>> getAllResults();
 
 	public MaxActive getMaxActive();
 	

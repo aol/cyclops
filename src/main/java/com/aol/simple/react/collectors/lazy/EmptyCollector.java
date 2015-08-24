@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
 
+import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.config.MaxActive;
 import com.aol.simple.react.stream.traits.ConfigurableStream;
 /**
@@ -26,10 +27,10 @@ import com.aol.simple.react.stream.traits.ConfigurableStream;
 public class EmptyCollector<T> implements LazyResultConsumer<T> {
 	
 
-	private final List<CompletableFuture<T>> active = new ArrayList<>();
+	private final List<FastFuture<T>> active = new ArrayList<>();
 	@Getter
 	private final MaxActive maxActive;
-	private final Function<CompletableFuture, T> safeJoin;
+	private final Function<FastFuture, T> safeJoin;
 	
 	EmptyCollector(){
 		maxActive = MaxActive.defaultValue.factory.getInstance();
@@ -45,7 +46,7 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 	 * @see java.util.function.Consumer#accept(java.lang.Object)
 	 */
 	@Override
-	public void accept(CompletableFuture<T> t) {
+	public void accept(FastFuture<T> t) {
 		active.add(t);
 		
 		if(active.size()>maxActive.getMaxActive()){
@@ -54,7 +55,7 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 				
 				
 				
-				List<CompletableFuture> toRemove = active.stream().filter(cf -> cf.isDone()).peek(this::handleExceptions).collect(Collectors.toList());
+				List<FastFuture> toRemove = active.stream().filter(cf -> cf.isDone()).peek(this::handleExceptions).collect(Collectors.toList());
 				
 				active.removeAll(toRemove);
 				if(active.size()>maxActive.getReduceTo()){
@@ -73,13 +74,13 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 		
 	}
 
-	private void handleExceptions(CompletableFuture cf){
+	private void handleExceptions(FastFuture cf){
 		if(cf.isCompletedExceptionally())
 			 safeJoin.apply(cf);
 	}
 	
 	@Override
-	public LazyResultConsumer<T> withResults(Collection<CompletableFuture<T>> t) {
+	public LazyResultConsumer<T> withResults(Collection<FastFuture<T>> t) {
 		
 		return this.withMaxActive(maxActive);
 	}
@@ -89,7 +90,7 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 	 * @see com.aol.simple.react.collectors.lazy.LazyResultConsumer#getResults()
 	 */
 	@Override
-	public Collection<CompletableFuture<T>> getResults() {
+	public Collection<FastFuture<T>> getResults() {
 		active.stream().forEach(cf ->  safeJoin.apply(cf));
 		active.clear();
 		return new ArrayList<>();
@@ -98,7 +99,7 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 	 *	@return empty list
 	 * @see com.aol.simple.react.collectors.lazy.LazyResultConsumer#getAllResults()
 	 */
-	public Collection<CompletableFuture<T>> getAllResults() {
+	public Collection<FastFuture<T>> getAllResults() {
 		return getResults();
 	}
 

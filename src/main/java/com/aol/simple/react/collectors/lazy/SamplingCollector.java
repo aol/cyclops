@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 
+import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.config.MaxActive;
 import com.aol.simple.react.stream.traits.ConfigurableStream;
 
@@ -44,7 +45,7 @@ public class SamplingCollector<T> implements LazyResultConsumer<T>{
 	 * @see java.util.function.Consumer#accept(java.lang.Object)
 	 */
 	@Override
-	public void accept(CompletableFuture<T> t) {
+	public void accept(FastFuture<T> t) {
 		if(count++%sampleRate ==0)
 			consumer.accept(t);
 		
@@ -54,7 +55,7 @@ public class SamplingCollector<T> implements LazyResultConsumer<T>{
 	 * @see com.aol.simple.react.collectors.lazy.LazyResultConsumer#withResults(java.util.Collection)
 	 */
 	@Override
-	public LazyResultConsumer<T> withResults(Collection<CompletableFuture<T>> t) {
+	public LazyResultConsumer<T> withResults(Collection<FastFuture<T>> t) {
 		return this.withConsumer(consumer.withResults(t));
 	}
 
@@ -62,11 +63,11 @@ public class SamplingCollector<T> implements LazyResultConsumer<T>{
 	 * @see com.aol.simple.react.collectors.lazy.LazyResultConsumer#getResults()
 	 */
 	@Override
-	public Collection<CompletableFuture<T>> getResults() {
+	public Collection<FastFuture<T>> getResults() {
 		return consumer.getResults();
 	}
 	@Override
-	public Collection<CompletableFuture<T>> getAllResults() {
+	public Collection<FastFuture<T>> getAllResults() {
 		return consumer.getResults();
 	}
 

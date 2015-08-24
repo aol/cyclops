@@ -2,7 +2,6 @@ package com.aol.simple.react.stream.traits;
 
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -12,6 +11,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
+import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.collectors.lazy.EmptyCollector;
 import com.aol.simple.react.collectors.lazy.IncrementalReducer;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
@@ -29,7 +29,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	StreamWrapper getLastActive();
 	LazyResultConsumer<U> getLazyCollector();
 	@SuppressWarnings("rawtypes")
-	Consumer<CompletableFuture> getWaitStrategy();
+	Consumer<FastFuture> getWaitStrategy();
 	Optional<Consumer<Throwable>> getErrorHandler();
 	 ParallelReductionConfig getParallelReduction();
 	
@@ -50,12 +50,12 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	}
 
 	default void runThread(Runnable r) {
-		Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
+		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
 		new Thread(() -> new Runner(r).run(getLastActive(),new EmptyCollector(getLazyCollector().getMaxActive(),safeJoin))).start();
 
 	}
 	default Continuation runContinuation(Runnable r) {
-		Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
+		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
 		return new Runner(r).runContinuations(getLastActive(),new EmptyCollector(getLazyCollector().getMaxActive(),safeJoin));
 
 	}
@@ -118,7 +118,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 
 		
 	
-		Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
+		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
 		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().withResults(new ArrayList<>()), this,
 				getParallelReduction());
 		try {
@@ -140,7 +140,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	}
 	
 	default Optional<U> reduce(BinaryOperator<U> accumulator){
-		Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
+		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
 		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().withResults(new ArrayList<>()), this,
 			getParallelReduction());
 		Optional[] result =  {Optional.empty()};
@@ -170,7 +170,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	}
 	default U reduce(U identity, BinaryOperator<U> accumulator){
 		
-		Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
+		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
 		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().withResults(new ArrayList<>()), this,
 			getParallelReduction());
 		Object[] result =  {identity};
@@ -189,7 +189,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	}
 	
 	default<T> T reduce(T identity, BiFunction<T,? super U,T> accumulator, BinaryOperator<T> combiner){
-		Function<CompletableFuture,U> safeJoin = (CompletableFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
+		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
 		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().withResults(new ArrayList<>()), this,
 			getParallelReduction());
 		Object[] result =  {identity};

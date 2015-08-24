@@ -29,11 +29,472 @@ div.shootout {padding:2em;border:3px #4854A8 solid}
 <body>
 <table cellspacing=0 cellpadding=0 class="param">
 <tr><th>Test</th><th class="numi">Methods<br/>Passed</th><th class="numi">Scenarios<br/>Passed</th><th class="numi"># skipped</th><th class="numi"># failed</th><th class="numi">Total<br/>Time</th><th class="numi">Included<br/>Groups</th><th class="numi">Excluded<br/>Groups</th></tr>
-<tr><td style="text-align:left;padding-right:2em">Default test</td><td class="numi">0</td><td class="numi">0</td><td class="numi">0</td><td class="numi">0</td><td class="numi">0.0 seconds</td><td class="numi"></td><td class="numi"></td></tr>
+<tr><td style="text-align:left;padding-right:2em">Default test</td><td class="numi">14</td><td class="numi">14</td><td class="numi_attn">13</td><td class="numi">0</td><td class="numi">2.3 seconds</td><td class="numi"></td><td class="numi"></td></tr>
 </table>
 <a id="summary"></a>
 <table cellspacing=0 cellpadding=0 class="passed">
 <tr><th>Class</th><th>Method</th><th># of<br/>Scenarios</th><th>Time<br/>(Msecs)</th></tr>
+<tr><th colspan="4">Default test &#8212; skipped</th></tr>
+<tr class="skippedodd"><td rowspan="13">com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest<td><a href="#m1"><b>untested_spec311_requestMaySynchronouslyCallOnCompleteOrOnError</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedodd"><td><a href="#m2"><b>untested_spec204_mustConsiderTheSubscriptionAsCancelledInAfterRecievingOnCompleteOrOnError</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedodd"><td><a href="#m3"><b>untested_spec316_requestMustNotThrowExceptionAndMustOnErrorTheSubscriber</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedodd"><td><a href="#m4"><b>untested_spec213_failingOnSignalInvocation</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr><tr class="skippedodd"><td><a href="#m5"><b>untested_spec315_cancelMustNotThrowExceptionAndMustSignalOnError</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr><tr class="skippedodd"><td><a href="#m6"><b>untested_spec207_mustEnsureAllCallsOnItsSubscriptionTakePlaceFromTheSameThreadOrTakeCareOfSynchronization</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr><tr class="skippedodd"><td><a href="#m7"><b>untested_spec206_mustCallSubscriptionCancelIfItIsNoLongerValid</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr><tr class="skippedodd"><td><a href="#m8"><b>untested_spec301_mustNotBeCalledOutsideSubscriberContext</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr><tr class="skippedodd"><td><a href="#m9"><b>untested_spec310_requestMaySynchronouslyCallOnNextOnSubscriber</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedodd"><td><a href="#m10"><b>untested_spec314_cancelMayCauseThePublisherToShutdownIfNoOtherSubscriptionExists</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedodd"><td><a href="#m11"><b>untested_spec212_mustNotCallOnSubscribeMoreThanOnceBasedOnObjectEquality_specViolation</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr><tr class="skippedodd"><td><a href="#m12"><b>untested_spec211_mustMakeSureThatAllCallsOnItsMethodsHappenBeforeTheProcessingOfTheRespectiveEvents</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr><tr class="skippedodd"><td><a href="#m13"><b>untested_spec202_shouldAsynchronouslyDispatch</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr><th colspan="4">Default test &#8212; passed</th></tr>
+<tr class="passedodd"><td rowspan="14">com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest<td><a href="#m14"><b>required_spec201_mustSignalDemandViaSubscriptionRequest</b>  </a></td><td class="numi">1</td><td class="numi">2</td></tr><tr class="passedodd"><td><a href="#m15"><b>required_spec203_mustNotCallMethodsOnSubscriptionOrPublisherInOnError</b>  </a></td><td class="numi">1</td><td class="numi">2</td></tr><tr class="passedodd"><td><a href="#m16"><b>required_spec210_mustBePreparedToReceiveAnOnErrorSignalWithoutPrecedingRequestCall</b>  </a></td><td class="numi">1</td><td class="numi">3</td></tr><tr class="passedodd"><td><a href="#m17"><b>required_spec203_mustNotCallMethodsOnSubscriptionOrPublisherInOnComplete</b>  </a></td><td class="numi">1</td><td class="numi">3</td></tr><tr class="passedodd"><td><a href="#m18"><b>required_spec213_onError_mustThrowNullPointerExceptionWhenParametersAreNull</b>  </a></td><td class="numi">1</td><td class="numi">3</td></tr><tr class="passedodd"><td><a href="#m19"><b>required_spec213_onSubscribe_mustThrowNullPointerExceptionWhenParametersAreNull</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m20"><b>required_spec209_mustBePreparedToReceiveAnOnCompleteSignalWithoutPrecedingRequestCall</b>  </a></td><td class="numi">1</td><td class="numi">303</td></tr><tr class="passedodd"><td><a href="#m21"><b>required_spec308_requestMustRegisterGivenNumberElementsToBeProduced</b>  </a></td><td class="numi">1</td><td class="numi">611</td></tr><tr class="passedodd"><td><a href="#m22"><b>required_spec210_mustBePreparedToReceiveAnOnErrorSignalWithPrecedingRequestCall</b>  </a></td><td class="numi">1</td><td class="numi">2</td></tr><tr class="passedodd"><td><a href="#m23"><b>required_spec208_mustBePreparedToReceiveOnNextSignalsAfterHavingCalledSubscriptionCancel</b>  </a></td><td class="numi">1</td><td class="numi">306</td></tr><tr class="passedodd"><td><a href="#m24"><b>required_exerciseWhiteboxHappyPath</b>  </a></td><td class="numi">1</td><td class="numi">397</td></tr><tr class="passedodd"><td><a href="#m25"><b>required_spec205_mustCallSubscriptionCancelIfItAlreadyHasAnSubscriptionAndReceivesAnotherOnSubscribeSignal</b>  </a></td><td class="numi">1</td><td class="numi">303</td></tr><tr class="passedodd"><td><a href="#m26"><b>required_spec209_mustBePreparedToReceiveAnOnCompleteSignalWithPrecedingRequestCall</b>  </a></td><td class="numi">1</td><td class="numi">307</td></tr><tr class="passedodd"><td><a href="#m27"><b>required_spec213_onNext_mustThrowNullPointerExceptionWhenParametersAreNull</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
 </table>
 <h1>Default test</h1>
+<a id="m1"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:untested_spec311_requestMaySynchronouslyCallOnCompleteOrOnError</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec311_requestMaySynchronouslyCallOnCompleteOrOnError(SubscriberWhiteboxVerification.java:448)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m2"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:untested_spec204_mustConsiderTheSubscriptionAsCancelledInAfterRecievingOnCompleteOrOnError</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec204_mustConsiderTheSubscriptionAsCancelledInAfterRecievingOnCompleteOrOnError(SubscriberWhiteboxVerification.java:201)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m3"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:untested_spec316_requestMustNotThrowExceptionAndMustOnErrorTheSubscriber</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec316_requestMustNotThrowExceptionAndMustOnErrorTheSubscriber(SubscriberWhiteboxVerification.java:466)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m4"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:untested_spec213_failingOnSignalInvocation</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec213_failingOnSignalInvocation(SubscriberWhiteboxVerification.java:345)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m5"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:untested_spec315_cancelMustNotThrowExceptionAndMustSignalOnError</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec315_cancelMustNotThrowExceptionAndMustSignalOnError(SubscriberWhiteboxVerification.java:460)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m6"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:untested_spec207_mustEnsureAllCallsOnItsSubscriptionTakePlaceFromTheSameThreadOrTakeCareOfSynchronization</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec207_mustEnsureAllCallsOnItsSubscriptionTakePlaceFromTheSameThreadOrTakeCareOfSynchronization(SubscriberWhiteboxVerification.java:246)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m7"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:untested_spec206_mustCallSubscriptionCancelIfItIsNoLongerValid</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec206_mustCallSubscriptionCancelIfItIsNoLongerValid(SubscriberWhiteboxVerification.java:240)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m8"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:untested_spec301_mustNotBeCalledOutsideSubscriberContext</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec301_mustNotBeCalledOutsideSubscriberContext(SubscriberWhiteboxVerification.java:418)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m9"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:untested_spec310_requestMaySynchronouslyCallOnNextOnSubscriber</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec310_requestMaySynchronouslyCallOnNextOnSubscriber(SubscriberWhiteboxVerification.java:442)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m10"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:untested_spec314_cancelMayCauseThePublisherToShutdownIfNoOtherSubscriptionExists</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec314_cancelMayCauseThePublisherToShutdownIfNoOtherSubscriptionExists(SubscriberWhiteboxVerification.java:454)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m11"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:untested_spec212_mustNotCallOnSubscribeMoreThanOnceBasedOnObjectEquality_specViolation</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec212_mustNotCallOnSubscribeMoreThanOnceBasedOnObjectEquality_specViolation(SubscriberWhiteboxVerification.java:339)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m12"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:untested_spec211_mustMakeSureThatAllCallsOnItsMethodsHappenBeforeTheProcessingOfTheRespectiveEvents</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec211_mustMakeSureThatAllCallsOnItsMethodsHappenBeforeTheProcessingOfTheRespectiveEvents(SubscriberWhiteboxVerification.java:333)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m13"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:untested_spec202_shouldAsynchronouslyDispatch</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec202_shouldAsynchronouslyDispatch(SubscriberWhiteboxVerification.java:115)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m14"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:required_spec201_mustSignalDemandViaSubscriptionRequest</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m15"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:required_spec203_mustNotCallMethodsOnSubscriptionOrPublisherInOnError</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m16"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:required_spec210_mustBePreparedToReceiveAnOnErrorSignalWithoutPrecedingRequestCall</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m17"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:required_spec203_mustNotCallMethodsOnSubscriptionOrPublisherInOnComplete</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m18"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:required_spec213_onError_mustThrowNullPointerExceptionWhenParametersAreNull</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m19"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:required_spec213_onSubscribe_mustThrowNullPointerExceptionWhenParametersAreNull</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m20"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:required_spec209_mustBePreparedToReceiveAnOnCompleteSignalWithoutPrecedingRequestCall</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m21"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:required_spec308_requestMustRegisterGivenNumberElementsToBeProduced</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m22"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:required_spec210_mustBePreparedToReceiveAnOnErrorSignalWithPrecedingRequestCall</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m23"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:required_spec208_mustBePreparedToReceiveOnNextSignalsAfterHavingCalledSubscriptionCancel</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m24"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:required_exerciseWhiteboxHappyPath</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m25"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:required_spec205_mustCallSubscriptionCancelIfItAlreadyHasAnSubscriptionAndReceivesAnotherOnSubscribeSignal</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m26"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:required_spec209_mustBePreparedToReceiveAnOnCompleteSignalWithPrecedingRequestCall</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m27"></a><h2>com.aol.simple.react.reactivestreams.TckWhiteBoxSubscriberTest:required_spec213_onNext_mustThrowNullPointerExceptionWhenParametersAreNull</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
 </body></html>

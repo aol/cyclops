@@ -1,18 +1,18 @@
 package com.aol.simple.react.collectors.lazy;
 
-import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-
-import java.util.concurrent.CompletableFuture;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.simple.react.capacity.monitor.LimitingMonitor;
+import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.config.MaxActive;
 
 public class EmptyCollectorTest {
@@ -25,12 +25,12 @@ public class EmptyCollectorTest {
 	@Test
 	public void testAccept() {
 		for(int i=0;i<1000;i++){
-			collector.accept(CompletableFuture.completedFuture(10l));
+			collector.accept(FastFuture.completedFuture(10l));
 		}
 	}
 	@Test
 	public void testAcceptMock() {
-		CompletableFuture cf = mock(CompletableFuture.class);
+		FastFuture cf = mock(FastFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){
 			collector.accept(cf);
@@ -40,7 +40,7 @@ public class EmptyCollectorTest {
 	@Test
 	public void testAcceptMock495() {
 		collector = new EmptyCollector(new MaxActive(500,5));
-		CompletableFuture cf = mock(CompletableFuture.class);
+		FastFuture cf = mock(FastFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){
 			collector.accept(cf);
@@ -50,7 +50,7 @@ public class EmptyCollectorTest {
 	@Test
 	public void testAcceptMock50() {
 		collector = new EmptyCollector(new MaxActive(500,450));
-		CompletableFuture cf = mock(CompletableFuture.class);
+		FastFuture cf = mock(FastFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){
 			collector.accept(cf);

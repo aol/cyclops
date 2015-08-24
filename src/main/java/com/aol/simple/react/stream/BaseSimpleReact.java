@@ -9,15 +9,16 @@ import java.util.Spliterators;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -34,7 +35,7 @@ public abstract class BaseSimpleReact {
 
 	
 	public abstract <U>  SimpleReactStream<U> construct(Stream s, 
-			List<CompletableFuture> org);
+			List<FastFuture> org);
 
 	
 	protected BaseSimpleReact(){
@@ -149,10 +150,11 @@ public abstract class BaseSimpleReact {
 		return from(Stream.of(array));
 	}
 	public <U> SimpleReactStream<U> from(CompletableFuture<U> cf){
-		return this.construct(Stream.of(cf), Arrays.asList(cf));
+		return this.construct(Stream.of(FastFuture.fromCompletableFuture(cf)), Arrays.asList(FastFuture.fromCompletableFuture(cf)));
 	}
 	public <U> SimpleReactStream<U> from(CompletableFuture<U>... cf){
-		return this.construct(Stream.of(cf), Arrays.asList(cf));
+		return (SimpleReactStream)this.construct(Stream.of(cf).map(FastFuture::fromCompletableFuture), 
+						(List)Stream.of(cf).map(FastFuture::fromCompletableFuture).collect(Collectors.toList()));
 	}
 	
 	

@@ -1,7 +1,10 @@
 package com.aol.simple.react.collectors.lazy;
 
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.config.MaxActive;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
@@ -26,12 +30,12 @@ public class BatchingCollectorTest {
 	@Test
 	public void testAccept() {
 		for(int i=0;i<1000;i++){
-			collector.accept(CompletableFuture.completedFuture(10l));
+			collector.accept(FastFuture.completedFuture(10l));
 		}
 	}
 	@Test
 	public void testAcceptMock() {
-		CompletableFuture cf = mock(CompletableFuture.class);
+		FastFuture cf = mock(FastFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){
 			collector.accept(cf);
@@ -41,7 +45,7 @@ public class BatchingCollectorTest {
 	@Test
 	public void testAcceptMock495() {
 		collector = new BatchingCollector(new MaxActive(500,5),EagerFutureStream.of(1)).withResults(new ArrayList<>());
-		CompletableFuture cf = mock(CompletableFuture.class);
+		FastFuture cf = mock(FastFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){
 			collector.accept(cf);
@@ -51,7 +55,7 @@ public class BatchingCollectorTest {
 	@Test
 	public void testAcceptMock50() {
 		collector = new BatchingCollector(new MaxActive(500,450),EagerFutureStream.of(1)).withResults(new ArrayList<>());
-		CompletableFuture cf = mock(CompletableFuture.class);
+		FastFuture cf = mock(FastFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){
 			collector.accept(cf);
@@ -62,7 +66,7 @@ public class BatchingCollectorTest {
 	@Test
 	public void testBuilder() {
 		collector = BatchingCollector.builder().blocking(LazyFutureStream.of(1)).maxActive(new MaxActive(2,1)).results(new ArrayList<>()).build();
-		CompletableFuture cf = Mockito.mock(CompletableFuture.class);
+		FastFuture cf = Mockito.mock(FastFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){
 			collector.accept(cf);
@@ -73,7 +77,7 @@ public class BatchingCollectorTest {
 	@Test
 	public void testWithMaxActive() {
 		collector = collector.withMaxActive(new MaxActive(10000,5));
-		CompletableFuture cf = Mockito.mock(CompletableFuture.class);
+		FastFuture cf = Mockito.mock(FastFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){
 			collector.accept(cf);
@@ -84,7 +88,7 @@ public class BatchingCollectorTest {
 	@Test
 	public void testBatchingCollectorMaxActive() {
 		collector = new BatchingCollector(new MaxActive(10,5),EagerFutureStream.of(1)).withResults(new HashSet<>());
-		CompletableFuture cf = Mockito.mock(CompletableFuture.class);
+		FastFuture cf = Mockito.mock(FastFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){
 			collector.accept(cf);

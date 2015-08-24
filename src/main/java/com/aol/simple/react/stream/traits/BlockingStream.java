@@ -19,7 +19,7 @@ import com.aol.simple.react.extractors.Extractor;
 import com.aol.simple.react.extractors.Extractors;
 import com.aol.simple.react.stream.MissingValue;
 import com.aol.simple.react.stream.Status;
-import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.stream.EagerStreamWrapper;
 
 public interface BlockingStream<U> extends ConfigurableStream<U>{
 

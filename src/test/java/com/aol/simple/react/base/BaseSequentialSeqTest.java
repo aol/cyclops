@@ -579,7 +579,7 @@ public abstract class BaseSequentialSeqTest {
 	   
 	    @Test
 	    public void testSkipWhile() {
-	    	 Supplier<Seq<Integer>> s = () -> Seq.of(1, 2, 3, 4, 5);
+	    	 Supplier<Seq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	         assertEquals(asList(1, 2, 3, 4, 5), s.get().skipWhile(i -> false).toList());
 	         assertEquals(asList(3, 4, 5), s.get().skipWhile(i -> i % 3 != 0).toList());
@@ -590,7 +590,7 @@ public abstract class BaseSequentialSeqTest {
 
 	    @Test
 	    public void testSkipUntil() {
-	    	Supplier<Seq<Integer>> s = () -> Seq.of(1, 2, 3, 4, 5);
+	    	Supplier<Seq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertEquals(asList(), s.get().skipUntil(i -> false).toList());
 	        assertEquals(asList(3, 4, 5), s.get().skipUntil(i -> i % 3 == 0).toList());
@@ -601,14 +601,14 @@ public abstract class BaseSequentialSeqTest {
 
 	    @Test
 	    public void testSkipUntilWithNulls() {
-	    	 Supplier<Seq<Integer>> s = () -> Seq.of(1, 2, null, 3, 4, 5);
+	    	 Supplier<Seq<Integer>> s = () -> of(1, 2, null, 3, 4, 5);
 
 	         assertEquals(asList(1, 2, null, 3, 4, 5), s.get().skipUntil(i -> true).toList());
 	    }
 
 	    @Test
 	    public void testLimitWhile() {
-	    	 Supplier<Seq<Integer>> s = () -> Seq.of(1, 2, 3, 4, 5);
+	    	 Supplier<Seq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	         assertEquals(asList(), s.get().limitWhile(i -> false).toList());
 	         assertEquals(asList(1, 2), s.get().limitWhile(i -> i % 3 != 0).toList());

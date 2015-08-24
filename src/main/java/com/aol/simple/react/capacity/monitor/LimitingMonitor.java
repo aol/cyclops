@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
 
+import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.config.MaxActive;
 
 /**
@@ -21,9 +22,9 @@ import com.aol.simple.react.config.MaxActive;
  */
 @Wither
 @AllArgsConstructor
-public class LimitingMonitor implements Consumer<CompletableFuture>{
+public class LimitingMonitor implements Consumer<FastFuture>{
 
-	private final List<CompletableFuture> active = new ArrayList<>(1000);
+	private final List<FastFuture> active = new ArrayList<>(1000);
 	private final MaxActive maxActive;
 	
 
@@ -43,7 +44,7 @@ public class LimitingMonitor implements Consumer<CompletableFuture>{
 	 * @see java.util.function.Consumer#accept(java.lang.Object)
 	 */
 	@Override
-	public void accept(CompletableFuture n) {
+	public void accept(FastFuture n) {
 		
 		active.add(n);
 			
@@ -53,7 +54,7 @@ public class LimitingMonitor implements Consumer<CompletableFuture>{
 			
 			while(active.size()>maxActive.getReduceTo()){
 				LockSupport.parkNanos(0l);
-				List<CompletableFuture> toRemove = active.stream().filter(cf -> cf.isDone()).collect(Collectors.toList());
+				List<FastFuture> toRemove = active.stream().filter(cf -> cf.isDone()).collect(Collectors.toList());
 				active.removeAll(toRemove);
 				
 			}

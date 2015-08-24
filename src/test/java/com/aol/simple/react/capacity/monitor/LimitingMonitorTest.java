@@ -1,17 +1,16 @@
 package com.aol.simple.react.capacity.monitor;
 
-import static org.junit.Assert.fail;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-
-import java.util.concurrent.CompletableFuture;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.config.MaxActive;
 
 public class LimitingMonitorTest {
@@ -24,12 +23,12 @@ public class LimitingMonitorTest {
 	@Test
 	public void testAccept() {
 		for(int i=0;i<1000;i++){
-			waiter.accept(CompletableFuture.completedFuture(10l));
+			waiter.accept(FastFuture.completedFuture(10l));
 		}
 	}
 	@Test
 	public void testAcceptMock() {
-		CompletableFuture cf = mock(CompletableFuture.class);
+		FastFuture cf = mock(FastFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){
 			waiter.accept(cf);
@@ -39,7 +38,7 @@ public class LimitingMonitorTest {
 	@Test
 	public void testAcceptMock495() {
 		waiter = new LimitingMonitor(new MaxActive(500,5));
-		CompletableFuture cf = mock(CompletableFuture.class);
+		FastFuture cf = mock(FastFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){
 			waiter.accept(cf);
@@ -49,7 +48,7 @@ public class LimitingMonitorTest {
 	@Test
 	public void testAcceptMock50() {
 		waiter = new LimitingMonitor(new MaxActive(500,450));
-		CompletableFuture cf = mock(CompletableFuture.class);
+		FastFuture cf = mock(FastFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){
 			waiter.accept(cf);
@@ -62,7 +61,7 @@ public class LimitingMonitorTest {
 	@Test
 	public void testWithMaxActive() {
 		waiter = waiter.withMaxActive(new MaxActive(10000,5));
-		CompletableFuture cf = Mockito.mock(CompletableFuture.class);
+		FastFuture cf = Mockito.mock(FastFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){
 			waiter.accept(cf);
@@ -73,7 +72,7 @@ public class LimitingMonitorTest {
 	@Test
 	public void testActiveSpinWaiterMaxActive() {
 		waiter = new LimitingMonitor(new MaxActive(10,5));
-		CompletableFuture cf = Mockito.mock(CompletableFuture.class);
+		FastFuture cf = Mockito.mock(FastFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){
 			waiter.accept(cf);

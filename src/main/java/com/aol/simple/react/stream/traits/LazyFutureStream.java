@@ -38,6 +38,7 @@ import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.async.factories.QueueFactory;
+import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.capacity.monitor.LimitingMonitor;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
@@ -46,6 +47,7 @@ import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.reactivestreams.FutureStreamAsyncPublisher;
 import com.aol.simple.react.reactivestreams.FutureStreamSynchronousPublisher;
 import com.aol.simple.react.stream.CloseableIterator;
+import com.aol.simple.react.stream.EagerStreamWrapper;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.eager.EagerReact;
@@ -53,7 +55,6 @@ import com.aol.simple.react.stream.lazy.LazyFutureStreamImpl;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.lazy.ParallelReductionConfig;
 import com.aol.simple.react.stream.traits.future.operators.ToLazyCollection;
-import com.aol.simple.react.stream.traits.operators.SlidingWindow;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -111,7 +112,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 */
 	LazyFutureStream<U> withRetrier(RetryExecutor retry);
 
-	LazyFutureStream<U> withWaitStrategy(Consumer<CompletableFuture> c);
+	LazyFutureStream<U> withWaitStrategy(Consumer<FastFuture> c);
 
 	//LazyFutureStream<U> withEager(boolean eager);
 
