@@ -1,14 +1,9 @@
 package com.aol.simple.react.async.pipes;
 
-import static com.aol.simple.react.async.pipes.Pipes.registered;
-
-import java.util.stream.Stream;
-
 import com.aol.simple.react.async.Adapter;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
-import com.aol.simple.react.threads.SequentialElasticPools;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 
 public class PipesToEagerStreams {
@@ -20,7 +15,7 @@ public class PipesToEagerStreams {
 	 * 
 	 *  <pre>
 	 * {@code
-	 * EagerFutureStream<String> stream = Pipes.registerForCPU("test", QueueFactories.
+	 * EagerFutureStream<String> stream = PipesToEagerStreams.registerForCPU("test", QueueFactories.
 											<String>boundedNonBlockingQueue(100)
 												.build());
 		stream.filter(it->it!=null)

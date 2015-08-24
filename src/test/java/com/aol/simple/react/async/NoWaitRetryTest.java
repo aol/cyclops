@@ -6,6 +6,9 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import uk.co.real_logic.agrona.concurrent.ManyToOneConcurrentArrayQueue;
+
+import com.aol.simple.react.async.wait.ExponentialBackofWaitStrategy;
 import com.aol.simple.react.async.wait.NoWaitRetry;
 import com.aol.simple.react.async.wait.WaitStrategy.Offerable;
 import com.aol.simple.react.async.wait.WaitStrategy.Takeable;
@@ -39,4 +42,13 @@ public class NoWaitRetryTest {
 		assertThat(called,equalTo(100));
 	}
 
+	@Test
+	public void testwithQueue(){
+		Queue<String> q = new Queue<>(new ManyToOneConcurrentArrayQueue<String>(100),
+									new NoWaitRetry<>(),
+									new NoWaitRetry<>());
+		
+		q.offer("hello");
+		assertThat(q.get(),equalTo("hello"));
+	}
 }

@@ -44,7 +44,7 @@ public class Pipes {
 	 * Pipes.register("test", QueueFactories.
 											<String>boundedNonBlockingQueue(100)
 												.build());
-		LazyFutureStream<String> stream =  Pipes.cpuBoundStream("test");
+		LazyFutureStream<String> stream =  PipesToLazyStreams.cpuBoundStream("test");
 		stream.filter(it->it!=null).peek(System.out::println).run();
 	 * 
 	 * }</pre>

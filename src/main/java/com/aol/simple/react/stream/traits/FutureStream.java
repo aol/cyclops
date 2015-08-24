@@ -71,13 +71,49 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 		return (fs1,fs2) -> fs1.flatMap( v1-> (FutureStream)fs2.map(v2->fn.apply(v1,v2)));
 	}
 	
+	/**
+	 * 
+	 * <pre>
+	 * {@code 
+	 * Collection<Integer> col = LazyFutureStream.of(1,2,3,4,5,6)
+				.map(i->i+2)
+				.toLazyCollection();
+	 * }
+	 * </pre>
+	 * 
+	 * @return a LazyCollection from this Stream
+	 * 			Collection will not be populated until methods are accessed.
+	 * 			(Eager streams may populate a LazyColleciton in the background however)
+	 */
 	default Collection<U> toLazyCollection(){
 		return ToLazyCollection.toLazyCollection(this.iterator());
 	}
+	/**
+	 * Create a LazyCollection access to which is synchronized
+	 * <pre>
+	 * {@code 
+	 * Collection<Integer> col = LazyFutureStream.of(1,2,3,4,5,6)
+				.map(i->i+2)
+				.toConcurrentLazyCollection();
+	 * }
+	 * </pre>
+	 * 
+	 * @return a LazyCollection from this Stream
+	 * 			Collection will not be populated until methods are accessed.
+	 * 			(Eager streams may populate a LazyColleciton in the background however)
+	 */
 	default Collection<U> toConcurrentLazyCollection(){
 		return ToLazyCollection.toConcurrentLazyCollection(this.iterator());
 	}
 	/**
+	 * <pre>
+	 * {@code 
+	 * 	 int num  =	LazyFutureStream.of(1).single();
+	 * 
+	 *  //num is 1
+	 * }
+	 * </pre>
+	 * 
 	 * @return single element from this Stream if it is a single element Stream
 	 * 			otherwise throw an UnsupportedOperationException
 	 */
@@ -1277,6 +1313,19 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 	default Optional<U> findFirst() {
 		return toQueue().stream(getSubscription()).findFirst();
 	}
+	/**
+	 * <pre>
+	 * {@code 
+	 * 	int first = LazyFutureStream.of(1,2,3,4)
+	 * 					.firstValue();
+	 *  
+	 *   //first is 1
+	 * }
+	 * </pre>
+	 * 
+	 * @return the firstValue in this stream - same as findFirst but doesn't 
+	 * 				return an Optional. Will throw an exception if empty
+	 */
 	default U firstValue() {
 		return toQueue().stream(getSubscription()).findFirst().get();
 	}

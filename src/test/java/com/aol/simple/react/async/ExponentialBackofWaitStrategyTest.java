@@ -5,6 +5,9 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
+import uk.co.real_logic.agrona.concurrent.ManyToOneConcurrentArrayQueue;
+
+import com.aol.simple.react.async.wait.DirectWaitStrategy;
 import com.aol.simple.react.async.wait.ExponentialBackofWaitStrategy;
 import com.aol.simple.react.async.wait.WaitStrategy.Offerable;
 import com.aol.simple.react.async.wait.WaitStrategy.Takeable;
@@ -41,6 +44,15 @@ public class ExponentialBackofWaitStrategyTest {
 		assertThat(result,equalTo(true));
 		assertThat(called,equalTo(150));
 		assertThat(timer.getElapsedNanoseconds(),greaterThan(10000000l));
+	}
+	@Test
+	public void testwithQueue(){
+		Queue<String> q = new Queue<>(new ManyToOneConcurrentArrayQueue<String>(100),
+									new ExponentialBackofWaitStrategy<>(),
+									new ExponentialBackofWaitStrategy<>());
+		
+		q.offer("hello");
+		assertThat(q.get(),equalTo("hello"));
 	}
 
 }

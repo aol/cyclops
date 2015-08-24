@@ -14,7 +14,7 @@ public class PipesToLazyStreams {
 	 * 
 	 *  <pre>
 	 * {@code
-	 * LazyFutureStream<String> stream = Pipes.registerForCPU("test", QueueFactories.
+	 * LazyFutureStream<String> stream = PipesToLazyStreams.registerForCPU("test", QueueFactories.
 											<String>boundedNonBlockingQueue(100)
 												.build());
 		stream.filter(it->it!=null)

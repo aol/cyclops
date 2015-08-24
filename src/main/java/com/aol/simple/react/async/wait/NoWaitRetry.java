@@ -3,6 +3,13 @@ package com.aol.simple.react.async.wait;
 
 
 
+/**
+ * Repeatedly retry to take or offer element to Queue if full or data unavailable
+ * 
+ * @author johnmcclean
+ *
+ * @param <T>
+ */
 public class NoWaitRetry<T> implements WaitStrategy<T> {
 
 	@Override

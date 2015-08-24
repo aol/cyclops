@@ -6,6 +6,9 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import uk.co.real_logic.agrona.concurrent.ManyToOneConcurrentArrayQueue;
+
+import com.aol.simple.react.async.wait.SpinWait;
 import com.aol.simple.react.async.wait.YieldWait;
 import com.aol.simple.react.async.wait.WaitStrategy.Offerable;
 import com.aol.simple.react.async.wait.WaitStrategy.Takeable;
@@ -37,6 +40,15 @@ public class YieldWaitTest {
 		boolean result = new YieldWait<String>().offer(offerable);
 		assertThat(result,equalTo(true));
 		assertThat(called,equalTo(100));
+	}
+	@Test
+	public void testwithQueue(){
+		Queue<String> q = new Queue<>(new ManyToOneConcurrentArrayQueue<String>(100),
+									new YieldWait<>(),
+									new YieldWait<>());
+		
+		q.offer("hello");
+		assertThat(q.get(),equalTo("hello"));
 	}
 
 }

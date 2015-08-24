@@ -1746,7 +1746,52 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	default EagerFutureStream<U> distinct() {
 		return fromStream(toQueue().stream().distinct());
 	}
-
+	/**
+	 * Create a sliding view over this Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * //futureStream of [1,2,3,4,5,6]
+	 *		 
+	 * List<List<Integer>> list = futureStream.sliding(2)
+									.collect(Collectors.toList());
+		
+	
+		assertThat(list.get(0),hasItems(1,2));
+		assertThat(list.get(1),hasItems(2,3));
+	 * }
+	 * </pre>
+	 * @param size
+	 *            Size of sliding window
+	 * @return Stream with sliding view over data in this stream
+	 */
+	@Override
+	default EagerFutureStream<List<U>> sliding(int size){
+		return (EagerFutureStream)FutureStream.super.sliding(size);
+	}
+	/**
+	 * Create a sliding view over this Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * //futureStream of [1,2,3,4,5,6,7,8]
+	 *		 
+	 * List<List<Integer>> list = futureStream.sliding(3,2)
+									.collect(Collectors.toList());
+		
+	
+		assertThat(list.get(0),hasItems(1,2,3));
+		assertThat(list.get(1),hasItems(3,4,5));
+	 * }
+	 * </pre>
+	 * @param size
+	 *            Size of sliding window
+	 * @return Stream with sliding view over data in this stream
+	 */
+	@Override
+	default EagerFutureStream<List<U>> sliding(int size, int increment){
+		return (EagerFutureStream)FutureStream.super.sliding(size,increment);
+	}
 	/**
 	 * Duplicate a Stream into two equivalent LazyFutureStreams, underlying
 	 * Stream of Futures is duplicated

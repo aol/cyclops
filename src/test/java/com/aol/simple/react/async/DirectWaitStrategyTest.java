@@ -5,7 +5,11 @@ import static org.hamcrest.Matchers.*;
 
 import org.junit.Test;
 
+import uk.co.real_logic.agrona.concurrent.ManyToOneConcurrentArrayQueue;
+
+import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.async.wait.DirectWaitStrategy;
+import com.aol.simple.react.async.wait.NoWaitRetry;
 import com.aol.simple.react.async.wait.WaitStrategy.Offerable;
 import com.aol.simple.react.async.wait.WaitStrategy.Takeable;
 
@@ -33,6 +37,16 @@ public class DirectWaitStrategyTest {
 		boolean result = new DirectWaitStrategy<String>().offer(offerable);
 		assertThat(result,equalTo(false));
 		assertThat(called,equalTo(1));
+	}
+	
+	@Test
+	public void testwithQueue(){
+		Queue<String> q = new Queue<>(new ManyToOneConcurrentArrayQueue<String>(100),
+									new DirectWaitStrategy<>(),
+									new DirectWaitStrategy<>());
+		
+		q.offer("hello");
+		assertThat(q.get(),equalTo("hello"));
 	}
 
 }

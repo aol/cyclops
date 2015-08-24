@@ -53,6 +53,7 @@ import com.aol.simple.react.stream.lazy.LazyFutureStreamImpl;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.lazy.ParallelReductionConfig;
 import com.aol.simple.react.stream.traits.future.operators.ToLazyCollection;
+import com.aol.simple.react.stream.traits.operators.SlidingWindow;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -766,6 +767,21 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 		return (LazyFutureStream) FutureStream.super.then(fn);
 	}
 
+	/**
+	 * Copy this Stream the specified number of times
+	 * 
+	 * <pre>
+	 * {@code 
+	 * LazyFutureStream.of(1,2,3,4,5,6)
+				.map(i->i+2)
+				.copy(5)
+				.forEach(s -> System.out.println(s.toList()));
+	 * 
+	 * }</pre>
+	 * 
+	 * @param times to copy this Stream
+	 * @return List with specified number of copies
+	 */
 	default List<LazyFutureStream<U>> copy(final int times){
 		return (List)FutureStream.super.copySimpleReactStream(times);
 		
@@ -1223,7 +1239,52 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 
 		return fromStream(toQueue().stream(getSubscription()).distinct());
 	}
-
+	/**
+	 * Create a sliding view over this Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * //futureStream of [1,2,3,4,5,6]
+	 *		 
+	 * List<List<Integer>> list = futureStream.sliding(2)
+									.collect(Collectors.toList());
+		
+	
+		assertThat(list.get(0),hasItems(1,2));
+		assertThat(list.get(1),hasItems(2,3));
+	 * }
+	 * </pre>
+	 * @param size
+	 *            Size of sliding window
+	 * @return Stream with sliding view over data in this stream
+	 */
+	@Override
+	default LazyFutureStream<List<U>> sliding(int size){
+		return (LazyFutureStream)FutureStream.super.sliding(size);
+	}
+	/**
+	 * Create a sliding view over this Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * //futureStream of [1,2,3,4,5,6,7,8]
+	 *		 
+	 * List<List<Integer>> list = futureStream.sliding(3,2)
+									.collect(Collectors.toList());
+		
+	
+		assertThat(list.get(0),hasItems(1,2,3));
+		assertThat(list.get(1),hasItems(3,4,5));
+	 * }
+	 * </pre>
+	 * @param size
+	 *            Size of sliding window
+	 * @return Stream with sliding view over data in this stream
+	 */
+	@Override
+	default LazyFutureStream<List<U>> sliding(int size, int increment){
+		return (LazyFutureStream)FutureStream.super.sliding(size,increment);
+	}
 	/**
 	 * Duplicate a LazyFutureStream into two equivalent Streams. 
 	 * Two LazyFutureStreams are 
