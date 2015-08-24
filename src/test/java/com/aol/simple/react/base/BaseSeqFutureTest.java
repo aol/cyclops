@@ -74,6 +74,7 @@ public abstract class BaseSeqFutureTest {
                 (acc, next) -> acc+next,
                 Integer::sum).join(),is(1500));
 	}
+	
 	@Test
 	public void testFindFirst(){
 		assertThat(Arrays.asList(1,2,3),hasItem(of(1,2,3,4,5).filter(it -> it <3).futureOperations()
@@ -81,7 +82,8 @@ public abstract class BaseSeqFutureTest {
 	}
 	@Test
 	public void testFindAny(){
-		assertThat(Arrays.asList(1,2,3),hasItem(of(1,2,3,4,5).filter(it -> it <3).findAny().get()));
+		assertThat(Arrays.asList(1,2,3),hasItem(of(1,2,3,4,5).filter(it -> it <3)
+							.futureOperations().findAny().join().get()));
 	}
 	@Test
 	public void testAnyMatch(){
@@ -117,7 +119,7 @@ public abstract class BaseSeqFutureTest {
 	}
 	@Test
 	public void testToCollection() {
-		assertThat( Arrays.asList(1,2,3,4,5),equalTo(of(1,5,3,4,2).futureOperations()
+		assertThat( Arrays.asList(1,2,3,4,5),equalTo(of(1,2,3,4,5).futureOperations()
 				.toCollection(()->new ArrayList()).join()));
 	}
 
