@@ -33,8 +33,8 @@ public class FastFuture<T> {
 	private boolean isFirstAsync=false;
 	@Getter
 	private boolean completedExceptionally=false;
-	private Object result = new UnSet();
-	private Object exception = new UnSet();
+	private Object result = UNSET;
+	private Object exception = UNSET;
 	private static UnSet UNSET = new UnSet();
 	static class UnSet{}
 	@Wither
@@ -52,6 +52,18 @@ public class FastFuture<T> {
 		this.builder = new ExecutionPipeline();
 		this.pipeline = null;
 	}
+	private T result(){
+		while(result==UNSET){
+			Thread.yield();
+		}
+		return (T)result;	
+	}
+	private Throwable exception(){
+		while(exception==UNSET){
+			Thread.yield();
+		}
+		return (Throwable)exception;	
+	}
 	
 	private FastFuture(FinalPipeline pipeline,int max){
 		this.max = max;
@@ -65,10 +77,7 @@ public class FastFuture<T> {
 		while(!done){
 			LockSupport.parkNanos(spin++);
 		}
-		while(result==UNSET){
-			Thread.yield();
-		}
-		return (T)result;	
+		return result();
 	}
 	public static <T> FastFuture<T> completedFuture(T value){
 		FastFuture<T> f = new FastFuture();
@@ -103,7 +112,7 @@ public class FastFuture<T> {
 					if(allOf.count==allOf.max){
 						List res = new ArrayList(futures.length);
 						for(FastFuture resNext : futures)
-							res.add(resNext.result);
+							res.add(resNext.result());
 						allOf.result =res;
 						allOf.done();
 					}
@@ -185,7 +194,7 @@ public class FastFuture<T> {
 	}
 	
 	public void clearFast() {
-		result =null;
+		result =UNSET;
 		this.done=false;	
 	}
 	
@@ -201,7 +210,7 @@ public class FastFuture<T> {
 	public <R> FastFuture<R> thenApplyAsync(Function<T,R> fn,Executor exec){
 		if(done){
 			done=false;
-			Runnable command = ()-> set((T)fn.apply((T)result));
+			Runnable command = ()-> set((T)fn.apply((T)result()));
 			exec.execute( command);
 		}
 		return (FastFuture)this.withBuilder(builder.thenApplyAsync(fn, exec));
@@ -209,7 +218,7 @@ public class FastFuture<T> {
 	public  FastFuture<T> peek(Consumer<T> c){
 		if(done){
 			
-			c.accept((T)result);
+			c.accept((T)result());
 		}
 		this.builder = builder.peek(c);
 		return this;
