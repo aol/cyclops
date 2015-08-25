@@ -97,12 +97,37 @@ public class FastFuture<T> {
 	}
 	public FastFuture<T> populateFromCompletableFuture(CompletableFuture<T> cf){
 		cf.thenAccept(i->this.set(i));
+		cf.exceptionally(t-> {
+			return completedExceptionally(t);
+		});
 		return this;
+	}
+	
+	private T completedExceptionally(Throwable t){
+
+		System.out.println("Completed exceptionally!");
+		for(int i =0;i<this.pipeline.firstRecover.length;i++){
+			try{
+				T res =  this.set((T)pipeline.firstRecover[i].apply(t));
+				System.out.println(res);
+				return res;
+			}catch(Throwable e){
+				this.exception =e;
+			}
+		}
+		if(exception==UNSET)
+			exception =t;
+		this.completedExceptionally=true;
+		this.done =true;
+		throw (RuntimeException)exception();
 	}
 	
 	public static <T>FastFuture<T> fromCompletableFuture(CompletableFuture<T> cf){
 		FastFuture<T> f = new FastFuture<>();
 		cf.thenAccept(i->f.set(i));
+		cf.exceptionally(t-> {
+			return f.completedExceptionally(t);
+		});
 		return f;
 	}
 	
@@ -116,8 +141,6 @@ public class FastFuture<T> {
 		for(FastFuture next : futures){
 			next.peek(v->{ 
 					allOf.count++;
-					System.out.println(allOf.count++);
-					
 					if(allOf.count==allOf.max){
 						List res = new ArrayList(futures.length);
 						for(FastFuture resNext : futures)
@@ -156,11 +179,13 @@ public class FastFuture<T> {
 			}
 			Function op = pipeline.functions[0];
 			if(this.isFirstAsync){
+				System.out.println("First Async exec with " +  use);
 				this.pipeline.executors[0].execute(()->{
 					set(()->(T)op.apply(use),1);
 				});
 				return (R)result;
 			}else{
+				
 				return set(result,0);
 			}
 		}catch(Throwable t){
@@ -174,16 +199,19 @@ public class FastFuture<T> {
 	}
 	public <R> R set(Supplier<T> result,int index){
 		try{
-			
+			System.out.println("Setting index " + index);
 			Object current = result.get();
 			
 			Function op = pipeline.functions[index];
+			System.out.println("before " + current);
 			current = op.apply(current);
+			System.out.println("after " + current);
 			
 			final Object use = current;
 			if(index+1<pipeline.functions.length){
+					System.out.println("Async exec with " +  use);
 					this.pipeline.executors[index+1].execute(()->{
-						set(()->(T)op.apply(use),index+1);
+						set(()->(T)use,index+1);
 					});
 					return (R)result;
 			}
@@ -225,15 +253,23 @@ public class FastFuture<T> {
 	}
 	public <R> FastFuture<R> thenApplyAsync(Function<T,R> fn,Executor exec){
 		if(done){
+			try{
+				System.out.println("Then apply! " + this.completedExceptionally);
+				throw new RuntimeException();
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+		/**if(done){
 			done=false;
 			Runnable command = ()-> set((T)fn.apply((T)result()));
 			exec.execute( command);
-		}
+		}**/
 		return (FastFuture)this.withBuilder(builder.thenApplyAsync(fn, exec));
 	}
 	public  FastFuture<T> peek(Consumer<T> c){
 		if(done){
-			
+			System.out.println("eager peeking!");
 			c.accept((T)result());
 		}
 		this.builder = builder.peek(c);

@@ -11,7 +11,8 @@ import lombok.ToString;
 public class FinalPipeline {
 	public final Function[] functions;
 	public final Executor[] executors;
+	public final Function[] firstRecover;
 	public static FinalPipeline empty() {
-		return new FinalPipeline(new Function[0],new Executor[0]);
+		return new FinalPipeline(new Function[0],new Executor[0],null);
 	}
 }
