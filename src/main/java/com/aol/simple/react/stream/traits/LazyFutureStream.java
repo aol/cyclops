@@ -47,8 +47,7 @@ import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.reactivestreams.FutureStreamAsyncPublisher;
 import com.aol.simple.react.reactivestreams.FutureStreamSynchronousPublisher;
 import com.aol.simple.react.stream.CloseableIterator;
-import com.aol.simple.react.stream.EagerStreamWrapper;
-import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.stream.LazyStreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.lazy.LazyFutureStreamImpl;
@@ -147,7 +146,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 
 	LazyFutureStream<U> withSubscription(Continueable sub);
 
-	LazyFutureStream<U> withLastActive(StreamWrapper streamWrapper);
+	LazyFutureStream<U> withLastActive(LazyStreamWrapper streamWrapper);
 	/* 
 	 * Convert this stream into an async / sync stream
 	 * 
@@ -294,7 +293,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	
 	
 	default <R> LazyFutureStream<R> map(Function<? super U, ? extends R> mapper) {
-		return (LazyFutureStream<R>)LazyCopyLazyCopyFutureStream.super.map(mapper);
+		return (LazyFutureStream<R>)LazyCopyFutureStream.super.map(mapper);
 	}
 	/**
 	 * Zip this Stream with an index, but Zip based on the underlying tasks, not completed results.
@@ -394,7 +393,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 
 	default <R> LazyFutureStream<Tuple2<U,R>> zipFutures(FutureStream<R> other) {
-		return (LazyFutureStream<Tuple2<U,R>>)LazyCopyLazyCopyFutureStream.super.zipFutures(other);
+		return (LazyFutureStream<Tuple2<U,R>>)LazyCopyFutureStream.super.zipFutures(other);
 
 	}
 	
@@ -404,7 +403,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 *         since last read attempt into a collection
 	 */
 	default LazyFutureStream<Collection<U>> chunkSinceLastRead() {
-		return (LazyFutureStream<Collection<U>>) LazyCopyLazyCopyFutureStream.super
+		return (LazyFutureStream<Collection<U>>) LazyCopyFutureStream.super
 				.chunkSinceLastRead();
 	}
 
@@ -431,7 +430,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 	default <K> Map<K, LazyFutureStream<U>> shard(Map<K, Queue<U>> shards,
 			Function<U, K> sharder) {
-		Map map = LazyCopyLazyCopyFutureStream.super.shard(shards, sharder);
+		Map map = LazyCopyFutureStream.super.shard(shards, sharder);
 		return (Map<K, LazyFutureStream<U>>) map;
 	}
 
@@ -461,8 +460,8 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 * @return Next stage in the Stream but with all values skipped until the
 	 *         provided Stream starts emitting
 	 */
-	default <T> LazyFutureStream<U> skipUntil(FutureStream<T> s) {
-		return (LazyFutureStream<U>) LazyCopyLazyCopyFutureStream.super.skipUntil(s);
+	default <T> LazyFutureStream<U> skipUntil(LazyCopyFutureStream<T> s) {
+		return (LazyFutureStream<U>) LazyCopyFutureStream.super.skipUntil(s);
 	}
 
 	/**
@@ -476,8 +475,8 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 * @return Next stage in the Stream but will only emit values until provided
 	 *         Stream starts emitting values
 	 */
-	default <T> LazyFutureStream<U> takeUntil(FutureStream<T> s) {
-		return (LazyFutureStream<U>) LazyCopyLazyCopyFutureStream.super.takeUntil(s);
+	default <T> LazyFutureStream<U> takeUntil(LazyCopyFutureStream<T> s) {
+		return (LazyFutureStream<U>) LazyCopyFutureStream.super.takeUntil(s);
 	}
 
 	/**
@@ -701,7 +700,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 *            Stream to merge with
 	 * @return Stream of Tuples with the latest values from either stream
 	 */
-	default <T> LazyFutureStream<Tuple2<U, T>> combineLatest(FutureStream<T> s) {
+	default <T> LazyFutureStream<Tuple2<U, T>> combineLatest(LazyCopyFutureStream<T> s) {
 		return (LazyFutureStream<Tuple2<U, T>>) LazyCopyFutureStream.super
 				.combineLatest(s);
 	}
@@ -718,7 +717,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 *            Stream to merge with
 	 * @return Stream of Tuples with the latest values from this stream
 	 */
-	default <T> LazyFutureStream<Tuple2<U, T>> withLatest(FutureStream<T> s) {
+	default <T> LazyFutureStream<Tuple2<U, T>> withLatest(LazyCopyFutureStream<T> s) {
 		return (LazyFutureStream<Tuple2<U, T>>) LazyCopyFutureStream.super
 				.withLatest(s);
 	}
@@ -1041,14 +1040,14 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 * @see
 	 * com.aol.simple.react.stream.FutureStreamImpl#allOf(java.util.stream.Collector
 	 * , java.util.function.Function)
-	 */
+	 
 	@Override
 	default <T, R> LazyFutureStream<R> allOf(Collector collector,
 			Function<T, R> fn) {
 
 		return (LazyFutureStream) LazyCopyFutureStream.super.allOf(collector, fn);
 	}
-
+*/
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1166,7 +1165,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 * @see com.aol.simple.react.stream.traits.FutureStream#ofType(java.lang.Class)
 	 */
 	@Override
-	default <U> FutureStream<U> ofType(Class<U> type) {
+	default <U> LazyFutureStream<U> ofType(Class<U> type) {
 		return (LazyFutureStream<U>) LazyCopyFutureStream.super.ofType(type);
 	}
 

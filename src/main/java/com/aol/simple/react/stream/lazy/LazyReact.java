@@ -111,12 +111,12 @@ public class LazyReact extends BaseLazySimpleReact {
 	}
 	
 	public <U> LazyFutureStream<U> from(CompletableFuture<U> cf){
-		return this.construct(Stream.of(FastFuture.fromCompletableFuture(cf)), Arrays.asList(FastFuture.fromCompletableFuture(cf)));
+		return this.construct(Stream.of(FastFuture.fromCompletableFuture(cf)), null);
 
 	}
 	public <U> LazyFutureStream<U> from(CompletableFuture<U>... cf){
 		return (LazyFutureStream)this.construct(Stream.of(cf).map(FastFuture::fromCompletableFuture), 
-				(List)Stream.of(cf).map(FastFuture::fromCompletableFuture).collect(Collectors.toList()));
+				null);
 
 	}
 	/* 

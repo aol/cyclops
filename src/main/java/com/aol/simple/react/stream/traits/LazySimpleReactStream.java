@@ -55,7 +55,7 @@ public interface LazySimpleReactStream<U> extends
 	
 	LazySimpleReactStream<U> withTaskExecutor(Executor e);
 	LazySimpleReactStream<U> withRetrier(RetryExecutor retry);
-	LazySimpleReactStream<U> withWaitStrategy(Consumer<FastFuture<U>> c);
+//	LazySimpleReactStream<U> withWaitStrategy(Consumer<FastFuture<U>> c);
 	LazySimpleReactStream<U> withLazyCollector(LazyResultConsumer<U> lazy);
 	LazySimpleReactStream<U> withQueueFactory(QueueFactory<U> queue);
 	

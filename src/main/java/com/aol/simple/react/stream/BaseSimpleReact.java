@@ -21,7 +21,7 @@ import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 
-public abstract class BaseSimpleReact {
+public abstract class BaseSimpleReact implements ReactBuilder{
 
 	@Getter
 	private final Executor queueService;

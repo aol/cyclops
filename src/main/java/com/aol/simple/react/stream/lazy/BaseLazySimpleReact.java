@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 import com.aol.simple.react.async.subscription.Subscription;
 import com.aol.simple.react.stream.InfiniteClosingSpliterator;
 import com.aol.simple.react.stream.InfiniteClosingSpliteratorFromIterator;
-import com.aol.simple.react.stream.traits.SimpleReactStream;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public abstract class BaseLazySimpleReact extends BaseSimpleReact{
 	
@@ -28,10 +28,10 @@ public abstract class BaseLazySimpleReact extends BaseSimpleReact{
 	 * @param s Supplier to generate the infinite flow
 	 * @return Next stage in the flow
 	 */
-	public <U> SimpleReactStream< U> reactInfinitely(final Supplier<U> s) {
+	public <U> LazyFutureStream< U> reactInfinitely(final Supplier<U> s) {
 		
 		Subscription sub = new Subscription();
-		SimpleReactStream stream = construct(StreamSupport.stream(
+		LazyFutureStream stream = construct(StreamSupport.stream(
                 new InfiniteClosingSpliterator(Long.MAX_VALUE, () -> s.get(),sub), false),
 				null).withSubscription(sub);
 		
@@ -50,10 +50,10 @@ public abstract class BaseLazySimpleReact extends BaseSimpleReact{
 	 * @param s Supplier to generate the infinite flow
 	 * @return Next stage in the flow
 	 */
-	public <U> SimpleReactStream< U> reactInfinitelyAsync(final Supplier<U> s) {
+	public <U> LazyFutureStream< U> reactInfinitelyAsync(final Supplier<U> s) {
 		
 		Subscription sub = new Subscription();
-		SimpleReactStream stream = construct(StreamSupport.stream(
+		LazyFutureStream stream = construct(StreamSupport.stream(
                 new InfiniteClosingSpliterator(Long.MAX_VALUE, () -> CompletableFuture.supplyAsync(s),sub), false),
 				null).withSubscription(sub);
 		
@@ -69,7 +69,7 @@ public abstract class BaseLazySimpleReact extends BaseSimpleReact{
 	 * @param f Function that performs the iteration
 	 * @return Next stage in the flow / stream
 	 */
-	public <U> SimpleReactStream<U> iterateInfinitely(final U seed, final UnaryOperator<U> f){
+	public <U> LazyFutureStream<U> iterateInfinitely(final U seed, final UnaryOperator<U> f){
 		
 		Subscription sub = new Subscription();
 		 final Iterator<CompletableFuture<U>> iterator = new Iterator<CompletableFuture<U>> () {

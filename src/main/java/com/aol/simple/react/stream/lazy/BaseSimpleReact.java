@@ -19,11 +19,12 @@ import java.util.stream.StreamSupport;
 import lombok.Getter;
 
 import com.aol.simple.react.async.future.FastFuture;
-import com.aol.simple.react.stream.traits.SimpleReactStream;
+import com.aol.simple.react.stream.ReactBuilder;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 
-public abstract class BaseSimpleReact {
+public abstract class BaseSimpleReact implements ReactBuilder {
 
 	@Getter
 	private final Executor queueService;
@@ -34,9 +35,9 @@ public abstract class BaseSimpleReact {
 	protected abstract boolean isAsync() ;
 
 	
-	public abstract <U>  SimpleReactStream<U> construct(Stream s, 
+	public abstract <U>  LazyFutureStream<U> construct(Stream s, 
 			List<FastFuture> org);
-	public abstract <U>  SimpleReactStream<U> constructFutures(Stream<CompletableFuture<U>> s, 
+	public abstract <U>  LazyFutureStream<U> constructFutures(Stream<CompletableFuture<U>> s, 
 			List<FastFuture> org);
 
 	
@@ -48,7 +49,7 @@ public abstract class BaseSimpleReact {
 	}
 	
 	
-	public SimpleReactStream<Integer> range(int startInclusive, int endExclusive){
+	public LazyFutureStream<Integer> range(int startInclusive, int endExclusive){
 		return from(IntStream.range(startInclusive, endExclusive));
 	}
 	/**
@@ -58,7 +59,7 @@ public abstract class BaseSimpleReact {
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public <U> SimpleReactStream<U> from(final Iterator<U> iterator){
+	public <U> LazyFutureStream<U> from(final Iterator<U> iterator){
 		return from(StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED),false));
 		
 	
@@ -71,7 +72,7 @@ public abstract class BaseSimpleReact {
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public <R> SimpleReactStream<R> from(final Collection<R> collection){
+	public <R> LazyFutureStream<R> from(final Collection<R> collection){
 		return from(collection.stream());
 	}
 
@@ -83,7 +84,7 @@ public abstract class BaseSimpleReact {
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public <U> SimpleReactStream<U> fromIterable(final Iterable<U> iter){
+	public <U> LazyFutureStream<U> fromIterable(final Iterable<U> iter){
 		return this.from(StreamSupport.stream(Spliterators.spliteratorUnknownSize(iter.iterator(), Spliterator.ORDERED),false));
 	
 	}
@@ -95,7 +96,7 @@ public abstract class BaseSimpleReact {
 	 * @param stream of CompletableFutures that will be used to drive the reactive dataflow
 	 * @return Next stage in the reactive flow
 	 */
-	public <U> SimpleReactStream<U> fromStream(final Stream<CompletableFuture<U>> stream) {
+	public <U> LazyFutureStream<U> fromStream(final Stream<CompletableFuture<U>> stream) {
 
 		Stream s = stream;
 		return  construct( s,null);
@@ -107,7 +108,7 @@ public abstract class BaseSimpleReact {
 	 * @param stream that will be used to drive the reactive dataflow
 	 * @return Next stage in the reactive flow
 	 */
-	public <U> SimpleReactStream<U> from(final Stream<U> stream) {
+	public <U> LazyFutureStream<U> from(final Stream<U> stream) {
 		
 		//Stream s = stream.map(it -> FastFuture.completedFuture(it));
 		return construct( stream,null);
@@ -118,9 +119,9 @@ public abstract class BaseSimpleReact {
 	 * @param stream that will be used to drive the reactive dataflow
 	 * @return Next stage in the reactive flow
 	 */
-	public <U> SimpleReactStream<U> from(final IntStream stream) {
+	public <U> LazyFutureStream<U> from(final IntStream stream) {
 		
-		return (SimpleReactStream<U>)from(stream.boxed());
+		return (LazyFutureStream<U>)from(stream.boxed());
 	
 	}
 	/**
@@ -129,9 +130,9 @@ public abstract class BaseSimpleReact {
 	 * @param stream that will be used to drive the reactive dataflow
 	 * @return Next stage in the reactive flow
 	 */
-	public <U> SimpleReactStream<U> from(final DoubleStream stream) {
+	public <U> LazyFutureStream<U> from(final DoubleStream stream) {
 		
-		return (SimpleReactStream<U>)from(stream.boxed());
+		return (LazyFutureStream<U>)from(stream.boxed());
 	
 	}
 	/**
@@ -140,22 +141,22 @@ public abstract class BaseSimpleReact {
 	 * @param stream that will be used to drive the reactive dataflow
 	 * @return Next stage in the reactive flow
 	 */
-	public <U> SimpleReactStream<U> from(final LongStream stream) {
+	public <U> LazyFutureStream<U> from(final LongStream stream) {
 		
-		return (SimpleReactStream<U>)from(stream.boxed());
+		return (LazyFutureStream<U>)from(stream.boxed());
 	
 	}
 	
 
 
-	public <U> SimpleReactStream<U> of(U...array){
+	public <U> LazyFutureStream<U> of(U...array){
 		return from(Stream.of(array));
 	}
-	public <U> SimpleReactStream<U> from(CompletableFuture<U> cf){
+	public <U> LazyFutureStream<U> from(CompletableFuture<U> cf){
 		return this.construct(Stream.of(FastFuture.fromCompletableFuture(cf)), Arrays.asList(FastFuture.fromCompletableFuture(cf)));
 	}
-	public <U> SimpleReactStream<U> from(CompletableFuture<U>... cf){
-		return (SimpleReactStream)this.construct(Stream.of(cf).map(FastFuture::fromCompletableFuture), 
+	public <U> LazyFutureStream<U> from(CompletableFuture<U>... cf){
+		return (LazyFutureStream)this.construct(Stream.of(cf).map(FastFuture::fromCompletableFuture), 
 						(List)Stream.of(cf).map(FastFuture::fromCompletableFuture).collect(Collectors.toList()));
 	}
 	
@@ -173,7 +174,7 @@ public abstract class BaseSimpleReact {
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public <U> SimpleReactStream<U> react(final Collection<Supplier<U>> actions) {
+	public <U> LazyFutureStream<U> react(final Collection<Supplier<U>> actions) {
 
 		return react((Supplier[]) actions.toArray(new Supplier[] {}));
 	}
@@ -187,7 +188,7 @@ public abstract class BaseSimpleReact {
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public <U> SimpleReactStream<U> react(final Stream<Supplier<U>> actions) {
+	public <U> LazyFutureStream<U> react(final Stream<Supplier<U>> actions) {
 
 		return construct(actions.map(
 				next -> CompletableFuture.supplyAsync(next, getExecutor())),
@@ -204,7 +205,7 @@ public abstract class BaseSimpleReact {
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public <U> SimpleReactStream<U> react(final Iterator<Supplier<U>> actions) {
+	public <U> LazyFutureStream<U> react(final Iterator<Supplier<U>> actions) {
 
 		return construct(StreamSupport.stream(Spliterators.spliteratorUnknownSize(actions, Spliterator.ORDERED),false).map(
 				next -> CompletableFuture.supplyAsync(next, getExecutor())),null);
@@ -220,7 +221,7 @@ public abstract class BaseSimpleReact {
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public <U> SimpleReactStream<U> reactIterable(final Iterable<Supplier<U>> actions) {
+	public <U> LazyFutureStream<U> reactIterable(final Iterable<Supplier<U>> actions) {
 
 		return construct(StreamSupport.stream(Spliterators.spliteratorUnknownSize(actions.iterator(), Spliterator.ORDERED),false).map(
 				next -> CompletableFuture.supplyAsync(next, getExecutor())),
@@ -235,7 +236,7 @@ public abstract class BaseSimpleReact {
 	 *            downstream jobs will react too
 	 * @return Next stage in the reactive flow
 	 */
-	public <U> SimpleReactStream<U> react(final Supplier<U>... actions) {
+	public <U> LazyFutureStream<U> react(final Supplier<U>... actions) {
 
 		return this.<U> reactI(actions);
 
@@ -247,7 +248,7 @@ public abstract class BaseSimpleReact {
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	protected <U> SimpleReactStream<U> reactI(final Supplier<U>... actions) {
+	protected <U> LazyFutureStream<U> reactI(final Supplier<U>... actions) {
 		
 		
 			return constructFutures(Stream.of(actions).map(
