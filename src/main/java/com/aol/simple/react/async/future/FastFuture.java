@@ -155,7 +155,9 @@ public class FastFuture<T> {
 				return set(result,0);
 			}
 		}catch(Throwable t){
+			exception = t;
 			completedExceptionally =true;
+			
 			ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(t);
 		}
 		return (R)result;
@@ -181,6 +183,7 @@ public class FastFuture<T> {
 			
 			
 		}catch(Throwable t){
+			exception = t;
 			completedExceptionally =true;
 			ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(t);
 		}
@@ -229,24 +232,20 @@ public class FastFuture<T> {
 		return (FastFuture)this.withBuilder(builder.thenApply(fn));
 	}
 	public <X extends Throwable> FastFuture<T> exceptionally(Function<X,T> fn){
-		if(completedExceptionally){
-			try{
-				result = fn.apply((X)exception);
-				done();
-			}catch(Throwable t){
-				
-			}
-		}else if(pipeline!=null){
+		if(pipeline!=null){
 			doAfter= fn;
 		}
-		if(done){
+		if(done && completedExceptionally ){
 			try{
-				result = doAfter.apply((X)exception);
+				result = doAfter.apply((X)exception());
 				doAfter = null;
 				done();
 			}catch(Throwable t){
-				
+				exception = t;
 			}
+			return this;
+		}else if(done){
+			return this;
 		}
 		return (FastFuture)this.withBuilder(builder.exceptionally(fn));
 	}
