@@ -45,7 +45,7 @@ public class FastFuture<T> {
 	private final int max;
 	
 	private Function doAfter;
-	Executor exec;
+	
 	
 	public FastFuture(){
 		max=0;
@@ -133,7 +133,7 @@ public class FastFuture<T> {
 	
 	//Stream.of(values).map(v->fastFutures.next().set(v))
 	public <R> R set(T result){
-		System.out.println("Setting!");
+		System.out.println("Setting! " + result);
 		return set(()->result);
 	}
 	public <R> R set(Supplier<T> result){
@@ -147,7 +147,7 @@ public class FastFuture<T> {
 			}
 			Function op = pipeline.functions[0];
 			if(this.isFirstAsync){
-				this.exec.execute(()->{
+				this.pipeline.executors[0].execute(()->{
 					set(()->(T)op.apply(use),1);
 				});
 				return (R)result;
@@ -172,7 +172,7 @@ public class FastFuture<T> {
 			
 			final Object use = current;
 			if(index+1<pipeline.functions.length){
-					this.exec.execute(()->{
+					this.pipeline.executors[index+1].execute(()->{
 						set(()->(T)op.apply(use),index+1);
 					});
 					return (R)result;

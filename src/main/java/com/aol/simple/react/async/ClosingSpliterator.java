@@ -62,7 +62,7 @@ public class ClosingSpliterator<T> implements Spliterator<T> {
             		action.accept((T)e.getCurrentData());
             	return false;
             }catch(Exception e){
-            	
+            	e.printStackTrace();
             	return false;
             }finally {
             	

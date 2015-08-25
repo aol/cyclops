@@ -459,8 +459,12 @@ public class Queue<T> implements Adapter<T> {
 				queue.queue.drainTo(result);
 			else{
 				try{
+					System.out.println("Ensure open!");
 					result.add(queue.ensureOpen(queue.timeout,queue.timeUnit));
+					System.out.println("result1 " + result);
+					
 				}catch(ClosedQueueException e){
+					e.printStackTrace();
 					queue.open=false;
 					throw e;
 				}

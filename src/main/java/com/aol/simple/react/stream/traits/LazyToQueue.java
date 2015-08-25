@@ -32,7 +32,7 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 		
 		
 		Continuation continuation = thenSync(next->{System.out.println(next);return next;}).thenSync(queue::add)
-										.peek(System.out::println)
+										//.peek(System.out::println)
 										.runContinuation(() -> {
 											System.out.println("Closing!");
 			queue.close();

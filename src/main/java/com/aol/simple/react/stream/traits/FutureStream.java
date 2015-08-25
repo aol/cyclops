@@ -304,7 +304,9 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 			return () -> {
 				
 				try {
-					return chunker.next();
+					Collection<U> res =  chunker.next();
+					System.out.println("Next is " +res);
+					return res;
 				} catch (ClosedQueueException e) {
 					e.printStackTrace();
 					throw new ClosedQueueException();

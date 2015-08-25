@@ -302,6 +302,7 @@ public interface SimpleReactStream<U> extends
 		if(!isAsync())
 			return peekSync(consumer);
 		return (SimpleReactStream<U>) then((t) -> {
+			System.out.println("Peeking " + t);
 			consumer.accept(t);
 			return (U) t;
 		});

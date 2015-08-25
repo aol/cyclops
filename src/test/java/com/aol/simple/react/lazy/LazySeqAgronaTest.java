@@ -113,8 +113,11 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	}
 	@Test
 	public void batchSinceLastRead() throws InterruptedException{
-		List<Collection> cols = of(1,2,3,4,5,6).chunkSinceLastRead().peek(System.out::println).peek(it->{sleep(50);}).collect(Collectors.toList());
-		
+		List<Collection> cols = of(1,2,3,4,5,6).chunkSinceLastRead()
+										.peek(System.out::println)
+										.peek(it->{sleep(50);})
+										.collect(Collectors.toList());
+		System.out.println(cols);
 		System.out.println(cols.get(0));
 		assertThat(cols.get(0).size(),is(1));
 		assertThat(cols.size(),greaterThan(0));
