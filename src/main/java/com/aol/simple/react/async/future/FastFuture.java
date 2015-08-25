@@ -95,6 +95,11 @@ public class FastFuture<T> {
 		return f;
 		
 	}
+	public FastFuture<T> populateFromCompletableFuture(CompletableFuture<T> cf){
+		cf.thenAccept(i->this.set(i));
+		return this;
+	}
+	
 	public static <T>FastFuture<T> fromCompletableFuture(CompletableFuture<T> cf){
 		FastFuture<T> f = new FastFuture<>();
 		cf.thenAccept(i->f.set(i));

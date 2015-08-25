@@ -65,7 +65,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		
 		this.simpleReact = lazyReact;
 		Stream s = stream;
-		this.lastActive = new LazyStreamWrapper(s, new FastFuture());
+		this.lastActive = new LazyStreamWrapper(s, new FastFuture(), lazyReact.isStreamOfFutures());
 		this.error =  new ConsumerHolder(a->{});
 		this.errorHandler = Optional.of((e) -> { error.forward.accept(e); log.error(e.getMessage(), e);});
 		this.eager = false;

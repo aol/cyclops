@@ -16,6 +16,7 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
@@ -26,7 +27,7 @@ import com.aol.simple.react.config.MaxActive;
 import com.aol.simple.react.stream.BaseLazySimpleReact;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
-import com.aol.simple.react.stream.traits.SimpleReactStream;
+import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -40,6 +41,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  * @author johnmcclean
  *
  */
+
 @Builder
 @Wither
 public class LazyReact extends BaseLazySimpleReact {
@@ -55,6 +57,8 @@ public class LazyReact extends BaseLazySimpleReact {
 	private final Boolean async;
 	@Getter
 	private final MaxActive maxActive;
+	@Getter
+	private boolean streamOfFutures =false;
 	
 	/* 
 	 *	@return true if async
@@ -129,6 +133,13 @@ public class LazyReact extends BaseLazySimpleReact {
 		
 		return (LazyFutureStream) new LazyFutureStreamImpl<U>( this,s);
 
+	}
+	
+	@Override
+	public <U> LazyFutureStream<U> constructFutures(
+			Stream<CompletableFuture<U>> s, List<FastFuture> org) {
+		
+		return this.withStreamOfFutures(true).construct((Stream)s, org);
 	}
 	/* 
 	 * Generate an LazyFutureStream that is a range of Integers
@@ -338,13 +349,20 @@ public class LazyReact extends BaseLazySimpleReact {
 	 * @param async If true each task will be submitted to an executor service
 	 */
 	public LazyReact(Executor executor, RetryExecutor retrier,
-			Boolean async, MaxActive maxActive) {
+			Boolean async, MaxActive maxActive, boolean streamOfFutures) {
 		super();
 		this.executor = executor;
 		this.retrier = retrier;
 		this.async = Optional.ofNullable(async).orElse(true);
 		this.maxActive = Optional.ofNullable(maxActive).orElse(MaxActive.defaultValue.factory.getInstance());
+		this.streamOfFutures = streamOfFutures;
 	}
+
+	public LazyReact(Executor currentThreadExecutor,
+			AsyncRetryExecutor withScheduler, boolean b, MaxActive maxActive2) {
+		this(currentThreadExecutor,withScheduler,b,maxActive2,false);
+	}
+
 
 	/* 
 	 * Build an LazyFutureStream from the supplied iterable
@@ -486,6 +504,9 @@ public class LazyReact extends BaseLazySimpleReact {
 								ThreadPools.getCommonFreeThreadRetry()))
 				.build();
 	}
+
+
+	
 	
 
 }

@@ -3,6 +3,7 @@ package com.aol.simple.react.stream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -21,14 +22,15 @@ public class LazyStreamWrapper implements StreamWrapper{
 	private final Queue<FastFuture> futures = new LinkedList<>();
 	int maxSize = 100;
 
+	private boolean streamCompletableFutures =false;
 	
-	@Getter
 	private FastFuture pipeline;
-//	private FinalPipeline finalPipeline;
-	public LazyStreamWrapper(Stream values,FastFuture pipeline){
+
+	public LazyStreamWrapper(Stream values,FastFuture pipeline, boolean streamCompletableFutures){
 		
 		this.values = values;//values.map(this::nextFuture);//.map( future->returnFuture(future));
 		this.pipeline = pipeline;
+		this.streamCompletableFutures=streamCompletableFutures;
 		
 	}
 	public LazyStreamWrapper(Stream values){
@@ -39,20 +41,29 @@ public class LazyStreamWrapper implements StreamWrapper{
 	}
 	
 	public Stream<FastFuture> injectFutures(){
+		System.out.println("futures?"+streamCompletableFutures);
+		if(streamCompletableFutures)
+			return convertCompletableFutures();
+		Stream<FastFuture> result = values
+									.map(this::nextFutureAndSet);
 		
-		Stream<FastFuture> result = values.peek(System.out::println)
-									.map(this::nextFuture);
-		
-		System.out.println("Injected!");
 		return result;
 	}
-	
-	private FastFuture nextFuture(Object value){
+	private Stream<FastFuture> convertCompletableFutures(){
+		System.out.println("Convert from CompletableFuture");
+		return values.map(cf -> nextFuture().populateFromCompletableFuture( (CompletableFuture)cf));
+	}
+	private FastFuture nextFuture(){
 		
 		FastFuture f =  futures.poll();
 		if(f==null){
 			f = pipeline.build();
 		}
+		return f;
+	}
+	private FastFuture nextFutureAndSet(Object value){
+		
+		FastFuture f =  nextFuture();
 		f.set(value);
 		return f;
 	}
@@ -62,12 +73,13 @@ public class LazyStreamWrapper implements StreamWrapper{
 			futures.offer(f);
 		return result;
 	}
+	//FIXME clean this up (requires separating FutureStream implementations)
 	public StreamWrapper stream(Function<Stream<FastFuture>,Stream<FastFuture>> action){
 		pipeline = action.apply(Stream.of(pipeline)).collect(Collectors.toList()).get(0);
 		return this;
 	}
 	public StreamWrapper withNewStream(Stream values, BaseSimpleReact simple){
-		return new LazyStreamWrapper(values, new FastFuture());
+		return new LazyStreamWrapper(values, new FastFuture(),false);
 	}
 	
 	public StreamWrapper withNewStream(Stream values){

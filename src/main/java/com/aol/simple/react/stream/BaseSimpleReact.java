@@ -36,6 +36,8 @@ public abstract class BaseSimpleReact {
 	
 	public abstract <U>  SimpleReactStream<U> construct(Stream s, 
 			List<FastFuture> org);
+	public abstract <U>  SimpleReactStream<U> constructFutures(Stream<CompletableFuture<U>> s, 
+			List<FastFuture> org);
 
 	
 	protected BaseSimpleReact(){
@@ -248,7 +250,7 @@ public abstract class BaseSimpleReact {
 	protected <U> SimpleReactStream<U> reactI(final Supplier<U>... actions) {
 		
 		
-			return construct(Stream.of(actions).map(
+			return constructFutures(Stream.of(actions).map(
 				next -> CompletableFuture.supplyAsync(next, this.getExecutor())),null);
 		
 		

@@ -135,13 +135,13 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 		if(other instanceof FutureStream)
 			return zipFutures((FutureStream)other);
 		Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other));
-		Seq<Tuple2<FastFuture<U>,R>> withType = (Seq<Tuple2<FastFuture<U>,R>>)seq;
-		Stream futureStream = fromStreamOfFutures((Stream)withType.map(t ->t.v1.thenApply(v -> Tuple.tuple(t.v1.join(),t.v2)))
-				);
+	//	Seq<Tuple2<FastFuture<U>,R>> withType = (Seq<Tuple2<FastFuture<U>,R>>)seq;
+	//	Stream futureStream = fromStreamOfFutures((Stream)withType.map(t ->t.v1.thenApply(v -> Tuple.tuple(t.v1.join(),t.v2)))
+		//		);
 
 		
-		return (FutureStream<Tuple2<U,R>>)futureStream;
-
+		//return (FutureStream<Tuple2<U,R>>)futureStream;
+		return fromStream(seq);
 	
 	}
 	
