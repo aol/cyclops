@@ -4,8 +4,10 @@ import java.util.concurrent.Executor;
 import java.util.function.Function;
 
 import lombok.AllArgsConstructor;
+import lombok.ToString;
 
 @AllArgsConstructor
+@ToString
 public class FinalPipeline {
 	public final Function[] functions;
 	public final Executor[] executors;

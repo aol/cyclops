@@ -2,6 +2,7 @@ package com.aol.simple.react.async.future;
 
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -10,7 +11,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
+import uk.co.real_logic.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
@@ -30,16 +33,18 @@ public class FastFuture<T> {
 	private boolean isFirstAsync=false;
 	@Getter
 	private boolean completedExceptionally=false;
-	private Object result;
-	
+	private Object result = new UnSet();
+	private Object exception = new UnSet();
+	private static UnSet UNSET = new UnSet();
+	static class UnSet{}
 	@Wither
-	ExecutionPipeline builder;
-	final FinalPipeline pipeline;
+	public ExecutionPipeline builder;
+	FinalPipeline pipeline;
 
 	volatile int count=0;
 	private final int max;
 	
-	
+	private Function doAfter;
 	Executor exec;
 	
 	public FastFuture(){
@@ -51,16 +56,16 @@ public class FastFuture<T> {
 	private FastFuture(FinalPipeline pipeline,int max){
 		this.max = max;
 		this.builder = new ExecutionPipeline();
-		this.pipeline = null;
+		this.pipeline = pipeline;
 	}
 	
 	public T join(){
-		CompletableFuture<T> f;
+		System.out.println("joining! " + done + " : " + result);
 		long spin=1;
 		while(!done){
 			LockSupport.parkNanos(spin++);
 		}
-		while(result==null){
+		while(result==UNSET){
 			Thread.yield();
 		}
 		return (T)result;	
@@ -86,14 +91,20 @@ public class FastFuture<T> {
 	
 	
 	public static <R> FastFuture<List<R>> allOf(FastFuture... futures){
-		
+		System.out.println("All off! " + futures.length);
 		FastFuture allOf = new FastFuture(FinalPipeline.empty(),futures.length);
+		
 		
 		for(FastFuture next : futures){
 			next.peek(v->{ 
 					allOf.count++;
+					System.out.println(allOf.count++);
+					
 					if(allOf.count==allOf.max){
-						allOf.result =1;
+						List res = new ArrayList(futures.length);
+						for(FastFuture resNext : futures)
+							res.add(resNext.result);
+						allOf.result =res;
 						allOf.done();
 					}
 					
@@ -113,11 +124,18 @@ public class FastFuture<T> {
 	
 	//Stream.of(values).map(v->fastFutures.next().set(v))
 	public <R> R set(T result){
+		System.out.println("Setting!");
 		return set(()->result);
 	}
 	public <R> R set(Supplier<T> result){
 		try{
+			
 			final Object use = result.get();
+			if(pipeline.functions.length==0){
+				done();
+				this.result = (T)use;
+				return (R)this.result;
+			}
 			Function op = pipeline.functions[0];
 			if(this.isFirstAsync){
 				this.exec.execute(()->{
@@ -135,9 +153,12 @@ public class FastFuture<T> {
 	}
 	public <R> R set(Supplier<T> result,int index){
 		try{
-			Object current = result;
+			
+			Object current = result.get();
+			
 			Function op = pipeline.functions[index];
 			current = op.apply(current);
+			
 			final Object use = current;
 			if(index+1<pipeline.functions.length){
 					this.exec.execute(()->{
@@ -157,7 +178,10 @@ public class FastFuture<T> {
 		return (R)this.result;
 	}
 	private boolean done(){
+		System.out.println("done!");
+		this.completedExceptionally=false;
 		return this.done =true;
+		
 	}
 	
 	public void clearFast() {
@@ -175,16 +199,46 @@ public class FastFuture<T> {
 		return (FastFuture)this.withBuilder(builder.thenComposeAsync((Function)fn, exec));
 	}
 	public <R> FastFuture<R> thenApplyAsync(Function<T,R> fn,Executor exec){
+		if(done){
+			done=false;
+			Runnable command = ()-> set((T)fn.apply((T)result));
+			exec.execute( command);
+		}
 		return (FastFuture)this.withBuilder(builder.thenApplyAsync(fn, exec));
 	}
 	public  FastFuture<T> peek(Consumer<T> c){
+		if(done){
+			
+			c.accept((T)result);
+		}
 		this.builder = builder.peek(c);
 		return this;
 	}
 	public <R> FastFuture<R> thenApply(Function<T,R> fn){
+		
+		System.out.println("then apply " + done + " : " + result);
 		return (FastFuture)this.withBuilder(builder.thenApply(fn));
 	}
 	public <X extends Throwable> FastFuture<T> exceptionally(Function<X,T> fn){
+		if(completedExceptionally){
+			try{
+				result = fn.apply((X)exception);
+				done();
+			}catch(Throwable t){
+				
+			}
+		}else if(pipeline!=null){
+			doAfter= fn;
+		}
+		if(done){
+			try{
+				result = doAfter.apply((X)exception);
+				doAfter = null;
+				done();
+			}catch(Throwable t){
+				
+			}
+		}
 		return (FastFuture)this.withBuilder(builder.exceptionally(fn));
 	}
 	public <X extends Throwable> FastFuture<T> whenComplete(BiConsumer<T,X> fn){

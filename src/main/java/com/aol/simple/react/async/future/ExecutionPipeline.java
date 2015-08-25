@@ -6,9 +6,11 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import lombok.ToString;
+
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
-
+@ToString
 public class ExecutionPipeline {
 	private final PStack<Function> functionList;
 	private final PStack<Executor> execList;

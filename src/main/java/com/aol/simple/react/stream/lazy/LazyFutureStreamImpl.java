@@ -2,7 +2,6 @@ package com.aol.simple.react.stream.lazy;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -43,7 +42,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 
 
 	private final Optional<Consumer<Throwable>> errorHandler;
-	private final StreamWrapper lastActive;
+	private final LazyStreamWrapper lastActive;
 	private final boolean eager;
 	private final Consumer<FastFuture> waitStrategy;
 	private final LazyResultConsumer<U> lazyCollector;
@@ -54,6 +53,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	private final List originalFutures=  null;
 	private final ParallelReductionConfig parallelReduction;
 	private final ConsumerHolder error;
+	/** FIXME : Potential memory leak creating a new Thread Pool for each Stream **/
 	private final ExecutorService publisherExecutor = Executors.newFixedThreadPool(1);
 	@AllArgsConstructor
 	static class ConsumerHolder{
@@ -61,7 +61,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	}
 	
 	
-	public LazyFutureStreamImpl(LazyReact lazyReact, final Stream<CompletableFuture<U>> stream) {
+	public LazyFutureStreamImpl(LazyReact lazyReact, final Stream<U> stream) {
 		
 		this.simpleReact = lazyReact;
 		Stream s = stream;
@@ -138,6 +138,12 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	public LazyFutureStream<U> withRetrier(RetryExecutor retry) {
 		return this.withSimpleReact(simpleReact.withRetrier(retry));
 	}
+	@Override
+	public LazyFutureStream<U> withLastActive(StreamWrapper w) {
+		return new LazyFutureStreamImpl<U>(errorHandler, (LazyStreamWrapper)w, eager, waitStrategy, lazyCollector, queueFactory, simpleReact, subscription, parallelReduction, error);
+		
+	}
+	
 	
   
 	

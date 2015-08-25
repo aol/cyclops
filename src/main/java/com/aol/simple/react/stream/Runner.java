@@ -17,12 +17,12 @@ public class Runner {
 
 	private final Runnable runnable;
 	
-	public boolean  run(StreamWrapper lastActive,EmptyCollector collector) {
+	public boolean  run(LazyStreamWrapper lastActive,EmptyCollector collector) {
 
 		
 
 		try {
-			lastActive.stream().forEach(n -> {
+			lastActive.injectFutures().forEach(n -> {
 
 				collector.accept(n);
 			});
@@ -39,9 +39,9 @@ public class Runner {
 		return true;
 
 	}
-	public Continuation  runContinuations(StreamWrapper lastActive,EmptyCollector collector) {
+	public Continuation  runContinuations(LazyStreamWrapper lastActive,EmptyCollector collector) {
 
-		Iterator<FastFuture> it = lastActive.stream().iterator();
+		Iterator<FastFuture> it = lastActive.injectFutures().iterator();
 		
 			Continuation[] cont  = new Continuation[1];
 				
@@ -79,10 +79,13 @@ public class Runner {
 							return finish.proceed();
 						}
 					} catch (SimpleReactProcessingException e) {
+						e.printStackTrace();
 						
 					}catch(java.util.concurrent.CompletionException e){
+						e.printStackTrace();
 						
 					}catch(Throwable e){
+						e.printStackTrace();
 					}
 					return finishNoCollect;
 							

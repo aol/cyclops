@@ -107,8 +107,8 @@ public abstract class BaseSimpleReact {
 	 */
 	public <U> SimpleReactStream<U> from(final Stream<U> stream) {
 		
-		Stream s = stream.map(it -> CompletableFuture.completedFuture(it));
-		return construct( s,null);
+		//Stream s = stream.map(it -> FastFuture.completedFuture(it));
+		return construct( stream,null);
 	}
 	/**
 	 * Start a reactive dataflow from a stream.

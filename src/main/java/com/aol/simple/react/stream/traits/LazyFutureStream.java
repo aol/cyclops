@@ -321,11 +321,13 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	default LazyFutureStream<Tuple2<U,Long>> zipFuturesWithIndex() {
 
 		Seq seq = Seq.seq(getLastActive().stream().iterator()).zipWithIndex();
-		Seq<Tuple2<CompletableFuture<U>,Long>> withType = (Seq<Tuple2<CompletableFuture<U>,Long>>)seq;
-		Stream futureStream =  withType.map(t ->t.v1.thenApplyAsync(v -> Tuple.tuple(t.v1.join(),t.v2)));
-		FutureStream noType = fromStreamOfFutures(futureStream);
+	//	Seq<Tuple2<FastFuture<U>,Long>> withType = (Seq<Tuple2<FastFuture<U>,Long>>)seq;
+	//	Stream futureStream =  withType.map(t ->t.v1.thenApplyAsync(v -> Tuple.tuple(t.v1.join(),t.v2),
+	//			getTaskExecutor()));
+	//	FutureStream noType = fromStreamOfFutures(futureStream);
 		
-		return (LazyFutureStream<Tuple2<U,Long>>)noType;
+	//	return (LazyFutureStream<Tuple2<U,Long>>)noType;
+		return fromStream(seq);
 		
 	}
 	/**
@@ -346,8 +348,9 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	default Tuple2<Seq<U>, Seq<U>> duplicateFuturesSeq() {
 		
 		Stream stream = getLastActive().stream();
-		Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>> duplicated = Seq
-				.seq((Stream<CompletableFuture<U>>) stream).duplicate();
+		
+		Tuple2<Seq<FastFuture<U>>, Seq<FastFuture<U>>> duplicated = Seq
+				.seq((Stream<FastFuture<U>>) stream).duplicate();
 		return new Tuple2(fromStreamOfFutures(duplicated.v1),
 				fromStreamOfFutures(duplicated.v2));
 	}
@@ -1055,7 +1058,8 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	@Override
 	default <R> LazyFutureStream<R> fromStream(Stream<R> stream) {
 
-		return (LazyFutureStream) FutureStream.super.fromStream(stream);
+		return (LazyFutureStream) this.withLastActive(getLastActive()
+				.withNewStream(stream,this.getSimpleReact()));
 	}
 
 	/*
@@ -1067,11 +1071,12 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 */
 	@Override
 	default <R> LazyFutureStream<R> fromStreamOfFutures(
-			Stream<CompletableFuture<R>> stream) {
+			Stream<FastFuture<R>> stream) {
 
-		return (LazyFutureStream) FutureStream.super
-				.fromStreamOfFutures(stream);
+		return (LazyFutureStream) this.withLastActive(getLastActive()
+				.withNewStream(stream));
 	}
+	
 
 	/**
 	 * Concatenate two streams.
@@ -2019,7 +2024,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	static <T> LazyFutureStream<T> ofThread(T... values) {
 		LazyReact react =new LazyReact(ThreadPools.getSequential(), RetryBuilder.getDefaultInstance()
 				.withScheduler(ThreadPools.getSequentialRetry()),false, new MaxActive(1,1));
-		return new LazyFutureStreamImpl<T>(react, Stream.of(values).map(CompletableFuture::completedFuture));
+		return new LazyFutureStreamImpl<T>(react, Stream.of(values));
 		
 	}
 
@@ -2074,7 +2079,8 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 		LazyReact react =new LazyReact(ThreadPools.getCurrentThreadExecutor(), RetryBuilder.getDefaultInstance()
 						.withScheduler(ThreadPools.getSequentialRetry()),false, new MaxActive(1,1));
 		return new LazyFutureStreamImpl<T>(react,
-				stream.map(CompletableFuture::completedFuture));
+				stream);
+		
 	}
 
 	/**

@@ -30,7 +30,7 @@ public abstract class BaseLazySimpleReact extends BaseSimpleReact{
 		
 		Subscription sub = new Subscription();
 		SimpleReactStream stream = construct(StreamSupport.stream(
-                new InfiniteClosingSpliterator(Long.MAX_VALUE, () -> CompletableFuture.completedFuture(s.get()),sub), false),
+                new InfiniteClosingSpliterator(Long.MAX_VALUE, () -> s.get(),sub), false),
 				null).withSubscription(sub);
 		
 		return stream;

@@ -16,9 +16,9 @@ import com.aol.simple.react.collectors.lazy.EmptyCollector;
 import com.aol.simple.react.collectors.lazy.IncrementalReducer;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
+import com.aol.simple.react.stream.LazyStreamWrapper;
 import com.aol.simple.react.stream.MissingValue;
 import com.aol.simple.react.stream.Runner;
-import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.lazy.ParallelReductionConfig;
 import com.aol.simple.react.stream.simple.SimpleReact;
@@ -26,7 +26,7 @@ import com.aol.simple.react.threads.SequentialElasticPools;
 
 public interface LazyStream<U> extends BlockingStream<U>{
 	
-	StreamWrapper getLastActive();
+	LazyStreamWrapper getLastActive();
 	LazyResultConsumer<U> getLazyCollector();
 	@SuppressWarnings("rawtypes")
 	Consumer<FastFuture> getWaitStrategy();
@@ -92,8 +92,9 @@ public interface LazyStream<U> extends BlockingStream<U>{
 				.of(getLazyCollector().withResults( new ArrayList<>())) : Optional.empty();
 
 		try {
-			this.getLastActive().stream().forEach(n -> {
-
+			System.out.println("Last Active!");
+			this.getLastActive().injectFutures().forEach(n -> {
+				System.out.println(n);
 				batcher.ifPresent(c -> c.accept(n));
 				this.getWaitStrategy().accept(n);
 				
@@ -122,7 +123,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().withResults(new ArrayList<>()), this,
 				getParallelReduction());
 		try {
-			this.getLastActive().stream().forEach(next -> {
+			this.getLastActive().injectFutures().forEach(next -> {
 
 				
 				collector.getConsumer().accept(next);
@@ -145,7 +146,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 			getParallelReduction());
 		Optional[] result =  {Optional.empty()};
 		try {
-			this.getLastActive().stream().forEach(next -> {
+			this.getLastActive().injectFutures().forEach(next -> {
 
 				
 				collector.getConsumer().accept(next);
@@ -175,7 +176,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 			getParallelReduction());
 		Object[] result =  {identity};
 		try {
-			this.getLastActive().stream().forEach(next -> {
+			this.getLastActive().injectFutures().forEach(next -> {
 
 				
 				collector.getConsumer().accept(next);
@@ -194,7 +195,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 			getParallelReduction());
 		Object[] result =  {identity};
 		try {
-			this.getLastActive().stream().forEach(next -> {
+			this.getLastActive().injectFutures().forEach(next -> {
 
 				
 				collector.getConsumer().accept(next);
@@ -211,7 +212,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 		LazyResultConsumer<U> batcher =  getLazyCollector().withResults( new ArrayList<>());
 
 		try {
-			this.getLastActive().stream().forEach(n -> {
+			this.getLastActive().injectFutures().forEach(n -> {
 
 				batcher.accept(n);
 				this.getWaitStrategy().accept(n);

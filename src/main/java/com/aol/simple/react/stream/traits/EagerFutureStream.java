@@ -1142,7 +1142,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 */
 	@Override
 	default <R> EagerFutureStream<R> fromStreamOfFutures(
-			Stream<CompletableFuture<R>> stream) {
+			Stream<FastFuture<R>> stream) {
 
 		return (EagerFutureStream) FutureStream.super
 				.fromStreamOfFutures(stream);

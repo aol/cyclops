@@ -8,11 +8,11 @@ import com.aol.simple.react.async.future.FastFuture;
 
 public interface StreamWrapper {
 	public StreamWrapper stream(Function<Stream<FastFuture>,Stream<FastFuture>> action);
-	public StreamWrapper withNewStream(Stream<FastFuture> stream, BaseSimpleReact simple);
+	public StreamWrapper withNewStream(Stream stream, BaseSimpleReact simple);
 	public List<FastFuture> list();
-	public Stream<FastFuture> stream();
+	public Stream stream();
 	
 	public StreamWrapper  withList(List<FastFuture> list);
-	public StreamWrapper withStream(Stream<FastFuture> noType);
+	public StreamWrapper withStream(Stream noType);
 	
 }

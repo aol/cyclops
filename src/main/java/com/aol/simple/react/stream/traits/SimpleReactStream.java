@@ -184,7 +184,7 @@ public interface SimpleReactStream<U> extends
 	 * @return SimpleReactStream
 	 */
 	default <R> SimpleReactStream<R> fromStreamOfFutures(
-			Stream<CompletableFuture<R>> stream) {
+			Stream<FastFuture<R>> stream) {
 		Stream noType = stream;
 		return (SimpleReactStream<R>) this.withLastActive(getLastActive()
 				.withNewStream(noType,this.getSimpleReact()));
@@ -255,8 +255,8 @@ public interface SimpleReactStream<U> extends
 		Stream.of(1,2,3,4).forEach(System.out::println);
 		return (List)StreamCopier.toBufferingCopier(getLastActive().stream().iterator(), times)
 				.stream()
-				.map(it->StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false))
-				.<SimpleReactStream<U>>map(fs-> this.getSimpleReact().construct(fs, this.getOriginalFutures()))
+				.map(it->StreamSupport.stream(Spliterators.spliteratorUnknownSize((Iterator)it, Spliterator.ORDERED), false))
+				.<SimpleReactStream<U>>map(fs-> this.getSimpleReact().construct((Stream)fs, this.getOriginalFutures()))
 				.collect(Collectors.toList());
 	}
 	/**
@@ -473,11 +473,12 @@ public interface SimpleReactStream<U> extends
 	@SuppressWarnings("unchecked")
 	default <R> List<CompletableFuture<R>> with(final Function<U, R> fn) {
 
-		return getLastActive()
+		return null;
+	/**	return getLastActive()
 				.stream()
 				.map(FastFuture::toCompletableFuture)
 				.map(future -> (CompletableFuture<R>) future.thenApplyAsync(fn,
-						getTaskExecutor())).collect(Collectors.toList());
+						getTaskExecutor())).collect(Collectors.toList());**/
 	}
 	
 	

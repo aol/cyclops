@@ -47,6 +47,7 @@ import com.aol.simple.react.async.Queue.ClosedQueueException;
 import com.aol.simple.react.async.Queue.QueueReader;
 import com.aol.simple.react.async.Queue.QueueTimeoutException;
 import com.aol.simple.react.async.factories.QueueFactories;
+import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
@@ -134,7 +135,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 		if(other instanceof FutureStream)
 			return zipFutures((FutureStream)other);
 		Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other));
-		Seq<Tuple2<CompletableFuture<U>,R>> withType = (Seq<Tuple2<CompletableFuture<U>,R>>)seq;
+		Seq<Tuple2<FastFuture<U>,R>> withType = (Seq<Tuple2<FastFuture<U>,R>>)seq;
 		Stream futureStream = fromStreamOfFutures((Stream)withType.map(t ->t.v1.thenApply(v -> Tuple.tuple(t.v1.join(),t.v2)))
 				);
 
@@ -231,13 +232,13 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 
 	default <R> FutureStream<Tuple2<U,R>> zipFutures(FutureStream<R> other) {
 		Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other.getLastActive().stream()));
-		Seq<Tuple2<CompletableFuture<U>,CompletableFuture<R>>> withType = (Seq<Tuple2<CompletableFuture<U>,CompletableFuture<R>>>)seq;
-		Stream futureStream =  fromStreamOfFutures((Stream)withType.map(t ->CompletableFuture.allOf(t.v1,t.v2).thenApply(v -> Tuple.tuple(t.v1.join(),t.v2.join())))
-				);
+	//	Seq<Tuple2<FastFuture<U>,FastFuture<R>>> withType = (Seq<Tuple2<FastFuture<U>,FastFuture<R>>>)seq;
+//		Stream futureStream =  fromStreamOfFutures((Stream)withType.map(t ->FastFuture.allOf(t.v1,t.v2).thenApply(v -> Tuple.tuple(t.v1.join(),t.v2.join())))
+	//			);
 		
-		return (FutureStream<Tuple2<U,R>>)futureStream;
+	//	return (FutureStream<Tuple2<U,R>>)futureStream;
 		
-
+		return fromStream(seq);
 	}
 	
 	/**
@@ -281,6 +282,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 	 * @return a Stream that batches all completed elements from this stream since last read attempt into a collection
 	 */
 	default FutureStream<Collection<U>> chunkSinceLastRead(){
+		System.out.println("Chunk!");
 		Queue queue = this.withQueueFactory(QueueFactories.unboundedQueue()).toQueue();
 		Queue.QueueReader reader =  new Queue.QueueReader(queue,null);
 		class Chunker implements Iterator<Collection<U>> {
@@ -304,7 +306,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 				try {
 					return chunker.next();
 				} catch (ClosedQueueException e) {
-					
+					e.printStackTrace();
 					throw new ClosedQueueException();
 				}
 				
@@ -935,7 +937,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 	 * fromStreamCompletableFuture(java.util.stream.Stream)
 	 */
 	default <R> FutureStream<R> fromStreamOfFutures(
-			Stream<CompletableFuture<R>> stream) {
+			Stream<FastFuture<R>> stream) {
 		return (FutureStream) SimpleReactStream.super
 				.fromStreamOfFutures(stream);
 	}
@@ -1439,10 +1441,13 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 	 */
 	@Override
 	default Seq<U> sequential() {
+		return null;
+		/*
 		Queue q = toQueue();
 		q.fromStream(getLastActive().stream().map(it -> it.join()));
 		q.close();
 		return q.stream();
+		**/
 	}
 
 
@@ -1549,9 +1554,11 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 	 */
 	@Override
 	default Seq<U> onClose(Runnable closeHandler) {
-
+		return null;
+/**
 		return Seq.seq(getLastActive().stream().onClose(closeHandler)
 				.map(it -> (U) it.join()));
+				**/
 	}
 
 	/*
