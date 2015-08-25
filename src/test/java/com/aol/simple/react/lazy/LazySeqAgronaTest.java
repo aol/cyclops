@@ -183,7 +183,7 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 
 	@Test
 	public void testOfType() {
-		
+		System.out.println("list: "+of(1, 2,  3,null).ofType(Integer.class).toList());
 		assertThat(of(1, "a", 2, "b", 3, null).ofType(Integer.class).toList(),containsInAnyOrder(1, 2, 3));
 		assertThat(of(1, "a", 2, "b", 3, null).ofType(Integer.class).toList(),not(containsInAnyOrder("a", "b",null)));
 		assertThat(of(1, "a", 2, "b", 3, null)

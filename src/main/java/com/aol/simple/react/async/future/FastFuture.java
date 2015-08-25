@@ -5,6 +5,7 @@ package com.aol.simple.react.async.future;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiConsumer;
@@ -19,6 +20,7 @@ import lombok.Getter;
 import lombok.experimental.Wither;
 
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
+import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 /*
  * @author John McClean
  * assumptions
@@ -77,6 +79,8 @@ public class FastFuture<T> {
 		while(!done){
 			LockSupport.parkNanos(spin++);
 		}
+		if(completedExceptionally)
+			ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(new CompletionException(exception()));
 		return result();
 	}
 	public static <T> FastFuture<T> completedFuture(T value){
@@ -157,8 +161,9 @@ public class FastFuture<T> {
 		}catch(Throwable t){
 			exception = t;
 			completedExceptionally =true;
+			done=true;
 			
-			ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(t);
+			
 		}
 		return (R)result;
 	}
@@ -184,8 +189,11 @@ public class FastFuture<T> {
 			
 		}catch(Throwable t){
 			exception = t;
+			
 			completedExceptionally =true;
-			ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(t);
+			done=true;
+			t.printStackTrace();
+		//	ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(t);
 		}
 		return (R)this.result;
 	}
