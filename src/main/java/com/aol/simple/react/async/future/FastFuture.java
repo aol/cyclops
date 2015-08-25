@@ -222,11 +222,9 @@ public class FastFuture<T> {
 			
 		}catch(Throwable t){
 			exception = t;
-			
 			completedExceptionally =true;
 			done=true;
-			t.printStackTrace();
-		//	ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(t);
+				
 		}
 		return (R)this.result;
 	}
@@ -260,11 +258,6 @@ public class FastFuture<T> {
 				e.printStackTrace();
 			}
 		}
-		/**if(done){
-			done=false;
-			Runnable command = ()-> set((T)fn.apply((T)result()));
-			exec.execute( command);
-		}**/
 		return (FastFuture)this.withBuilder(builder.thenApplyAsync(fn, exec));
 	}
 	public  FastFuture<T> peek(Consumer<T> c){

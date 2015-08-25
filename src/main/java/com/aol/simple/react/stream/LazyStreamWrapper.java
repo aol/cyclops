@@ -16,7 +16,7 @@ import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.async.future.FinalPipeline;
 
 @AllArgsConstructor
-public class LazyStreamWrapper implements StreamWrapper{
+public class LazyStreamWrapper {
 	@Wither
 	private final Stream values;
 	private final Queue<FastFuture> futures = new LinkedList<>();
@@ -74,37 +74,25 @@ public class LazyStreamWrapper implements StreamWrapper{
 		return result;
 	}
 	//FIXME clean this up (requires separating FutureStream implementations)
-	public StreamWrapper stream(Function<Stream<FastFuture>,Stream<FastFuture>> action){
+	public LazyStreamWrapper stream(Function<Stream<FastFuture>,Stream<FastFuture>> action){
 		pipeline = action.apply(Stream.of(pipeline)).collect(Collectors.toList()).get(0);
 		return this;
 	}
-	public StreamWrapper withNewStream(Stream values, BaseSimpleReact simple){
+	public LazyStreamWrapper withNewStream(Stream values, BaseSimpleReact simple){
 		return new LazyStreamWrapper(values, new FastFuture(),false);
 	}
 	
-	public StreamWrapper withNewStream(Stream values){
+	public LazyStreamWrapper withNewStream(Stream values){
 		return new LazyStreamWrapper(values);
 	}
 
-	@Override
-	public List<FastFuture> list() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
+	
 	public Stream stream() {
 		return values;
 	}
 
-	@Override
-	public StreamWrapper withList(List<FastFuture> list) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public StreamWrapper withStream(Stream noType) {
+	
+	public LazyStreamWrapper withStream(Stream noType) {
 		return this.withValues(noType);
 	}
 	

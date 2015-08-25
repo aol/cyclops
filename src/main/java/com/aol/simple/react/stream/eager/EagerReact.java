@@ -12,7 +12,6 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -23,13 +22,11 @@ import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 
 import com.aol.simple.react.RetryBuilder;
-import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
-import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -102,7 +99,8 @@ public class EagerReact extends BaseSimpleReact{
 	
 	
 	@Override
-	public <U> EagerFutureStream<U> construct(Stream s, List<FastFuture> org) {
+	public <U> EagerFutureStream<U> construct(Stream s,
+			List<CompletableFuture> org) {
 		return (EagerFutureStream) new EagerFutureStreamImpl<U>( this,s,org);
 	}
 	public <U> EagerFutureStream<U> fromStreamAsync(final Stream<CompletableFuture<U>> stream) {
@@ -318,12 +316,10 @@ public class EagerReact extends BaseSimpleReact{
 		return (EagerFutureStream)super.reactIterable(actions);
 	}
 	public <U> EagerFutureStream<U> from(CompletableFuture<U> cf){
-		return this.construct(Stream.of(FastFuture.fromCompletableFuture(cf)), Arrays.asList(FastFuture.fromCompletableFuture(cf)));
-
+		return this.construct(Stream.of(cf), Arrays.asList(cf));
 	}
 	public <U> EagerFutureStream<U> from(CompletableFuture<U>... cf){
-		return (EagerFutureStream)this.construct(Stream.of(cf).map(FastFuture::fromCompletableFuture), 
-				(List)Stream.of(cf).map(FastFuture::fromCompletableFuture).collect(Collectors.toList()));
+		return this.construct(Stream.of(cf), Arrays.asList(cf));
 	}
 	/**
 	 * @return EagerReact for handling finite streams
@@ -409,7 +405,6 @@ public class EagerReact extends BaseSimpleReact{
 								ThreadPools.getCommonFreeThreadRetry()))
 				.build();
 	}
-	
 	
 
 }

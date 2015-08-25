@@ -34,12 +34,12 @@ public class BatchingCollector<T> implements LazyResultConsumer<T>{
 	@Getter
 	private final MaxActive maxActive;
 	@Getter
-	private final BlockingStream<T> blocking;
+	private final BlockingStream<T,FastFuture<T>> blocking;
 	
 	/**
 	 * @param maxActive Controls batch size
 	 */
-	public BatchingCollector(MaxActive maxActive,BlockingStream<T> blocking){
+	public BatchingCollector(MaxActive maxActive,BlockingStream<T,FastFuture<T>> blocking){
 		this.maxActive = maxActive;
 		this.results =null;
 		this.blocking = blocking;
@@ -47,7 +47,7 @@ public class BatchingCollector<T> implements LazyResultConsumer<T>{
 	/**
 	 * Batching Collector with default Max Active settings
 	 */
-	public BatchingCollector(BlockingStream<T> blocking){
+	public BatchingCollector(BlockingStream<T,FastFuture<T>> blocking){
 		this.maxActive = MaxActive.defaultValue.factory.getInstance();
 		this.results =null;
 		this.blocking = blocking;

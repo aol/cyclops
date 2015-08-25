@@ -15,7 +15,7 @@ import org.reactivestreams.Subscription;
 
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
-import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.stream.LazyStreamWrapper;
 
 /**
  * Reactive Streams publisher that uses a separate thread  (non-calling thread) to publish on
@@ -25,7 +25,7 @@ import com.aol.simple.react.stream.StreamWrapper;
  * @param <T>
  */
 public interface FutureStreamAsyncPublisher<T> extends Publisher<T> {
-	StreamWrapper getLastActive();
+	LazyStreamWrapper getLastActive();
 	void cancel();
 	void forwardErrors(Consumer<Throwable> c);
 	

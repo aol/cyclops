@@ -34,12 +34,10 @@ import org.jooq.lambda.tuple.Tuple2;
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.factories.QueueFactory;
-import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.EagerStreamWrapper;
-import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.eager.EagerFutureStreamImpl;
 import com.aol.simple.react.stream.eager.EagerReact;
@@ -58,6 +56,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  *
  */
 public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
+	EagerStreamWrapper getLastActive();
 	/* 
 	 * Convert this stream into an async / sync stream
 	 * 
@@ -105,11 +104,6 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	EagerFutureStream<U> withRetrier(RetryExecutor retry);
 
 	
-	EagerFutureStream<U> withWaitStrategy(Consumer<FastFuture> c);
-
-	
-
-	EagerFutureStream<U> withLazyCollector(LazyResultConsumer<U> lazy);
 
 	/* 
 	 * Change the QueueFactory type for the next phase of the Stream.
@@ -196,7 +190,6 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 *  EagerFutureStream.sequentialBuilder().react(()->1,()->2,()->3)
 		 									 .map(it->it+100) //add 100
 		 									 .toList();
-
 	 * }
 	 * //results in [100,200,300]
 	 * </pre>
@@ -380,7 +373,6 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * {@code
 	 * 	
 		assertThat(of(1,2,3,4,5,6).batchBySizeAndTime(3,10,TimeUnit.SECONDS).toList().get(0).size(),is(3));
-
 	 * }</pre>
 	 * 
 	 *	@param size Max batch size
@@ -790,7 +782,6 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * 											 .merge(LazyFutureStream.of(100,200,300))
 												  .map(it ->it+"!!")
 												  .toList();
-
 		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
 	 * 
 	 * }
@@ -805,7 +796,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * react.stream.traits.SimpleReactStream)
 	 */
 	@Override
-	default FutureStream<U> merge(SimpleReactStream<U>... streams) {
+	default FutureStream<U> merge(SimpleReactStreamInterface<U>... streams) {
 		return (FutureStream)FutureStream.super.merge(streams);		
 	}
 	/**
@@ -1119,7 +1110,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		return (EagerFutureStream) FutureStream.super.anyOf(fn);
 	}
 
-	EagerFutureStream<U> withLastActive(StreamWrapper streamWrapper);
+	EagerFutureStream<U> withLastActive(EagerStreamWrapper streamWrapper);
 
 	/*
 	 * (non-Javadoc)
@@ -1142,7 +1133,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 */
 	@Override
 	default <R> EagerFutureStream<R> fromStreamOfFutures(
-			Stream<FastFuture<R>> stream) {
+			Stream<CompletableFuture<R>> stream) {
 
 		return (EagerFutureStream) FutureStream.super
 				.fromStreamOfFutures(stream);
@@ -1194,8 +1185,8 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 */
 	default EagerFutureStream<U> limitFutures(long maxSize) {
 
-		StreamWrapper lastActive = getLastActive();
-		StreamWrapper limited = lastActive.withList((List<FastFuture>)lastActive.stream()
+		EagerStreamWrapper lastActive = getLastActive();
+		EagerStreamWrapper limited = lastActive.withList(lastActive.stream()
 				.limit(maxSize).collect(Collectors.toList()));
 		return this.withLastActive(limited);
 
@@ -1237,15 +1228,13 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * 
 	 * //[loadFast]
 	 * </pre>	 
-
-
 	 * 
 	 * @param n
 	 * @return
 	 */
 	default EagerFutureStream<U> skipFutures(long n) {
-		StreamWrapper lastActive = getLastActive();
-		StreamWrapper limited = lastActive.withList((List<FastFuture>)lastActive.stream().skip(n)
+		EagerStreamWrapper lastActive = getLastActive();
+		EagerStreamWrapper limited = lastActive.withList(lastActive.stream().skip(n)
 				.collect(Collectors.toList()));
 		return this.withLastActive(limited);
 	}
@@ -1360,7 +1349,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 	default EagerFutureStream<U> sliceFutures(long from, long to) {
 		List noType = Seq.seq(getLastActive().stream()).slice(from, to)
-				.toList();
+				.collect(Collectors.toList());
 		return fromListCompletableFuture(noType);
 	}
 
@@ -1540,13 +1529,13 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * @return
 	 */
 	default EagerFutureStream<U> reverseFutures() {
-		StreamWrapper lastActive = getLastActive();
-		ListIterator<FastFuture> it = lastActive.list().listIterator();
-		List<FastFuture> result = new ArrayList<>();
+		EagerStreamWrapper lastActive = getLastActive();
+		ListIterator<CompletableFuture> it = lastActive.list().listIterator();
+		List<CompletableFuture> result = new ArrayList<>();
 		while(it.hasPrevious())
 			result.add(it.previous());
 		
-		StreamWrapper limited = lastActive.withList( result);
+		EagerStreamWrapper limited = lastActive.withList( result);
 		return this.withLastActive(limited);
 		
 	}

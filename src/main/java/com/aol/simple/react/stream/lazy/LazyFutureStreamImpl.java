@@ -84,7 +84,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	}
 
 	
-	public BaseSimpleReact getPopulator(){
+	public LazyReact getPopulator(){
 		return pool.nextReactor();
 	}
 	public void returnPopulator(BaseSimpleReact service){

@@ -47,7 +47,7 @@ import com.aol.simple.react.async.Queue.ClosedQueueException;
 import com.aol.simple.react.async.Queue.QueueReader;
 import com.aol.simple.react.async.Queue.QueueTimeoutException;
 import com.aol.simple.react.async.factories.QueueFactories;
-import com.aol.simple.react.async.subscription.Continueable;
+import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
@@ -59,19 +59,19 @@ import com.aol.simple.react.stream.traits.operators.Debounce;
 import com.aol.simple.react.stream.traits.operators.SlidingWindow;
 import com.aol.simple.react.util.SimpleTimer;
 
-public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,CompletableFuture<U>>,
-		 BlockingStream<U,CompletableFuture<U>>, SimpleReactStream<U>, ToQueue<U> {
+public interface LazyCopyFutureStream<U> extends Seq<U>,
+		 BlockingStream<U,FastFuture<U>>, 
+		 LazySimpleReactStream<U>, ToQueue<U> {
 
 	static final ExceptionSoftener softener = ExceptionSoftener.singleton.factory
 			.getInstance();
 	
-	static <T,R> Function<FutureStream<T>,FutureStream<R>> lift(Function<T,R> fn){
+	static <T,R> Function<LazyCopyFutureStream<T>,LazyCopyFutureStream<R>> lift(Function<T,R> fn){
 		return fs -> fs.map(v->fn.apply(v));
 	}
-	static <T1,T2,R> BiFunction<FutureStream<T1>,FutureStream<T2>,FutureStream<R>> lift2(BiFunction<T1,T2,R> fn){
-		return (fs1,fs2) -> fs1.flatMap( v1-> (FutureStream)fs2.map(v2->fn.apply(v1,v2)));
+	static <T1,T2,R> BiFunction<LazyCopyFutureStream<T1>,LazyCopyFutureStream<T2>,LazyCopyFutureStream<R>> lift2(BiFunction<T1,T2,R> fn){
+		return (fs1,fs2) -> fs1.flatMap( v1-> (LazyCopyFutureStream)fs2.map(v2->fn.apply(v1,v2)));
 	}
-	Continueable getSubscription();
 	
 	/**
 	 * 
@@ -132,17 +132,17 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @param other
 	 * @return
 	 */
-	default <R> FutureStream<Tuple2<U,R>> zipFutures(Stream<R> other) {
-		if(other instanceof FutureStream)
-			return zipFutures((FutureStream)other);
+	default <R> LazyCopyFutureStream<Tuple2<U,R>> zipFutures(Stream<R> other) {
+		if(other instanceof LazyCopyFutureStream)
+			return zipFutures((LazyCopyFutureStream)other);
 		Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other));
-		Seq<Tuple2<CompletableFuture<U>,R>> withType = (Seq<Tuple2<CompletableFuture<U>,R>>)seq;
-		Stream futureStream = fromStreamOfFutures((Stream)withType.map(t ->t.v1.thenApply(v -> Tuple.tuple(t.v1.join(),t.v2)))
-				);
+	//	Seq<Tuple2<FastFuture<U>,R>> withType = (Seq<Tuple2<FastFuture<U>,R>>)seq;
+	//	Stream futureStream = fromStreamOfFutures((Stream)withType.map(t ->t.v1.thenApply(v -> Tuple.tuple(t.v1.join(),t.v2)))
+		//		);
 
 		
-		return (FutureStream<Tuple2<U,R>>)futureStream;
-
+		//return (FutureStream<Tuple2<U,R>>)futureStream;
+		return fromStream(seq);
 	
 	}
 	
@@ -150,7 +150,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @see org.jooq.lambda.Seq#crossJoin(java.util.stream.Stream)
 	 */
 	@Override
-	default <T> FutureStream<Tuple2<U, T>> crossJoin(Stream<T> other) {
+	default <T> LazyCopyFutureStream<Tuple2<U, T>> crossJoin(Stream<T> other) {
 	        return fromStream(Seq.crossJoin(this, other));
 	}
 	
@@ -160,7 +160,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
      * {@code value}, in case this stream is empty.
      */
 	@Override
-	default FutureStream<U> onEmpty(U value){
+	default LazyCopyFutureStream<U> onEmpty(U value){
 		return fromStream(Seq.super.onEmpty(value));
 	}
 	/**
@@ -168,7 +168,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
      * {@code supplier}, in case this stream is empty.
      */
 	@Override
-	default FutureStream<U> onEmptyGet(Supplier<U> supplier){
+	default LazyCopyFutureStream<U> onEmptyGet(Supplier<U> supplier){
 		return fromStream(Seq.super.onEmptyGet(supplier));
 	}
 	 /**
@@ -176,7 +176,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
      * {@code supplier}, in case this stream is empty.
      */
 	@Override
-	default <X extends Throwable> FutureStream<U> onEmptyThrow(Supplier<X> supplier) {
+	default <X extends Throwable> LazyCopyFutureStream<U> onEmptyThrow(Supplier<X> supplier) {
 			return fromStream(Seq.super.onEmptyThrow(supplier));
 	}
     
@@ -184,7 +184,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @see org.jooq.lambda.Seq#innerJoin(java.util.stream.Stream, java.util.function.BiPredicate)
 	 */
 	@Override
-    default <T> FutureStream<Tuple2<U, T>> innerJoin(Stream<T> other, BiPredicate<U, T> predicate) {
+    default <T> LazyCopyFutureStream<Tuple2<U, T>> innerJoin(Stream<T> other, BiPredicate<U, T> predicate) {
 
        
         RepeatableStream<T> s = new RepeatableStream<>(ToLazyCollection.toLazyCollection(other.iterator()));
@@ -199,7 +199,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
      * @see org.jooq.lambda.Seq#leftOuterJoin(java.util.stream.Stream, java.util.function.BiPredicate)
      */
 	@Override
-    default <T> FutureStream<Tuple2<U, T>> leftOuterJoin(Stream<T> other, BiPredicate<U, T> predicate) {
+    default <T> LazyCopyFutureStream<Tuple2<U, T>> leftOuterJoin(Stream<T> other, BiPredicate<U, T> predicate) {
 
     	 RepeatableStream<T> s = new RepeatableStream<>(ToLazyCollection.toLazyCollection(other.iterator()));
 
@@ -213,7 +213,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @see org.jooq.lambda.Seq#rightOuterJoin(java.util.stream.Stream, java.util.function.BiPredicate)
 	 */
 	@Override
-    default <T> FutureStream<Tuple2<U, T>> rightOuterJoin(Stream<T> other, BiPredicate<U, T> predicate) {
+    default <T> LazyCopyFutureStream<Tuple2<U, T>> rightOuterJoin(Stream<T> other, BiPredicate<U, T> predicate) {
         return fromStream(Seq.super.rightOuterJoin(other, predicate));
     }
    
@@ -231,15 +231,15 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @return New Sequence of CompletableFutures
 	 */
 
-	default <R> FutureStream<Tuple2<U,R>> zipFutures(FutureStream<R> other) {
+	default <R> LazyCopyFutureStream<Tuple2<U,R>> zipFutures(LazyCopyFutureStream<R> other) {
 		Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other.getLastActive().stream()));
-		Seq<Tuple2<CompletableFuture<U>,CompletableFuture<R>>> withType = (Seq<Tuple2<CompletableFuture<U>,CompletableFuture<R>>>)seq;
-		Stream futureStream =  fromStreamOfFutures((Stream)withType.map(t ->CompletableFuture.allOf(t.v1,t.v2).thenApply(v -> Tuple.tuple(t.v1.join(),t.v2.join())))
-				);
+	//	Seq<Tuple2<FastFuture<U>,FastFuture<R>>> withType = (Seq<Tuple2<FastFuture<U>,FastFuture<R>>>)seq;
+//		Stream futureStream =  fromStreamOfFutures((Stream)withType.map(t ->FastFuture.allOf(t.v1,t.v2).thenApply(v -> Tuple.tuple(t.v1.join(),t.v2.join())))
+	//			);
 		
-		return (FutureStream<Tuple2<U,R>>)futureStream;
+	//	return (FutureStream<Tuple2<U,R>>)futureStream;
 		
-
+		return fromStream(seq);
 	}
 	
 	/**
@@ -282,7 +282,8 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	/**
 	 * @return a Stream that batches all completed elements from this stream since last read attempt into a collection
 	 */
-	default FutureStream<Collection<U>> chunkSinceLastRead(){
+	default LazyCopyFutureStream<Collection<U>> chunkSinceLastRead(){
+		System.out.println("Chunk!");
 		Queue queue = this.withQueueFactory(QueueFactories.unboundedQueue()).toQueue();
 		Queue.QueueReader reader =  new Queue.QueueReader(queue,null);
 		class Chunker implements Iterator<Collection<U>> {
@@ -304,9 +305,11 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 			return () -> {
 				
 				try {
-					return chunker.next();
+					Collection<U> res =  chunker.next();
+					System.out.println("Next is " +res);
+					return res;
 				} catch (ClosedQueueException e) {
-					
+					e.printStackTrace();
 					throw new ClosedQueueException();
 				}
 				
@@ -331,7 +334,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @param sharder Function to split split incoming elements into shards
 	 * @return Map of new sharded Streams
 	 */
-	default <K> Map<K, ? extends FutureStream<U>> shard(
+	default <K> Map<K, ? extends LazyCopyFutureStream<U>> shard(
 			Map<K, Queue<U>> shards, Function<U, K> sharder) {
 		toQueue(shards, sharder);
 		return shards
@@ -357,11 +360,11 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * 
 	 * @return
 	 */
-	default FutureStream<List<U>> batchBySizeAndTime(int size,long time, TimeUnit unit) { 
+	default LazyCopyFutureStream<List<U>> batchBySizeAndTime(int size,long time, TimeUnit unit) { 
 	 
 	    Queue<U> queue = toQueue();
 	    Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTimeAndSize<>(size,time,unit,()->new ArrayList<>());
-	    return (FutureStream)fromStream(queue.streamBatch(getSubscription(), (Function)fn)).filter(c->!((Collection)c).isEmpty());
+	    return (LazyCopyFutureStream)fromStream(queue.streamBatch(getSubscription(), (Function)fn)).filter(c->!((Collection)c).isEmpty());
 	}
 	/**
 	 * Batch the elements in the Stream by a combination of Size and Time
@@ -371,11 +374,11 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * 
 	 * @return
 	 */
-	default <C extends Collection<U>> FutureStream<C> batchBySizeAndTime(int size,long time, TimeUnit unit, Supplier<C> factory) { 
+	default <C extends Collection<U>> LazyCopyFutureStream<C> batchBySizeAndTime(int size,long time, TimeUnit unit, Supplier<C> factory) { 
 	 
 	    Queue<U> queue = toQueue();
 	    Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTimeAndSize(size,time,unit,factory);
-	    return (FutureStream)fromStream(queue.streamBatch(getSubscription(), (Function)fn));
+	    return (LazyCopyFutureStream)fromStream(queue.streamBatch(getSubscription(), (Function)fn));
 	}
 	/**
 	 * 
@@ -384,7 +387,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @param size Size of lists elements should be batched into
 	 * @return Stream of Lists
 	 */
-	default FutureStream<List<U>> batchBySize(int size) {
+	default LazyCopyFutureStream<List<U>> batchBySize(int size) {
 		Queue queue = toQueue();
 		Function<Supplier<U>, Supplier<List<U>>> fn = new BatchBySize(size,this.getSubscription(),queue,()->new ArrayList<>());
 		return fromStream(queue.streamBatchNoTimeout(getSubscription(), fn));
@@ -395,7 +398,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 *           This function should return a Supplier which creates a collection of the batched values
 	 * @return Stream of batched values
 	 */
-	default <C extends Collection<U>>FutureStream<C> batch(Function<Supplier<U>, Supplier<C>> fn){
+	default <C extends Collection<U>>LazyCopyFutureStream<C> batch(Function<Supplier<U>, Supplier<C>> fn){
 		Queue queue = toQueue();
 		return fromStream(queue.streamBatchNoTimeout(getSubscription(), fn));
 	}
@@ -408,7 +411,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @param supplier Create the batch holding collection
 	 * @return Stream of Collections
 	 */
-	default <C extends Collection<U>>FutureStream<C> batchBySize(int size, Supplier<C> supplier) {
+	default <C extends Collection<U>>LazyCopyFutureStream<C> batchBySize(int size, Supplier<C> supplier) {
 		Queue queue = toQueue();
 		Function<Supplier<U>, Supplier<Collection<U>>> fn = new BatchBySize(size,this.getSubscription(),queue,supplier);
 		return fromStream(queue.streamBatchNoTimeout(getSubscription(), fn));
@@ -420,7 +423,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @param jitterInNanos Max number of nanos for jitter (random number less than this will be selected)/
 	 * @return Next stage in Stream with jitter applied
 	 */
-	default FutureStream<U> jitter(long jitterInNanos){
+	default LazyCopyFutureStream<U> jitter(long jitterInNanos){
 		Queue queue = toQueue();
 		Random r = new Random();
 		Function<Supplier<U>, Supplier<U>> fn = s -> {
@@ -468,7 +471,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @param unit TimeUnit for emissions
 	 * @return Next Stage of the Stream
 	 */
-	default FutureStream<U> fixedDelay(long time, TimeUnit unit) {
+	default LazyCopyFutureStream<U> fixedDelay(long time, TimeUnit unit) {
 		Queue queue = toQueue();
 		Function<Supplier<U>, Supplier<U>> fn = s -> {
 			return () -> {
@@ -505,7 +508,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 *           This function should return a Supplier which returns the desired result for the next element (or just the next element).
 	 * @return Next stage in Stream
 	 */
-	default FutureStream<U> control(Function<Supplier<U>, Supplier<U>> fn){
+	default LazyCopyFutureStream<U> control(Function<Supplier<U>, Supplier<U>> fn){
 		Queue queue = toQueue();
 		return fromStream(queue.streamControl(getSubscription(), fn));
 	}
@@ -518,7 +521,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @param unit Time unit for specified time
 	 * @return Next stage of stream, with only 1 element per specified time windows
 	 */
-	default FutureStream<U> debounce(long time, TimeUnit unit) {
+	default LazyCopyFutureStream<U> debounce(long time, TimeUnit unit) {
 		Queue queue = toQueue();
 		long timeNanos =  unit.toNanos(time);
 		Function<Supplier<U>, Supplier<U>> fn = new Debounce<>(timeNanos,1l,true);
@@ -531,7 +534,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @param unit Time unit for frequency period
 	 * @return Stream with emissions slowed down by specified emission frequency
 	 */
-	default FutureStream<U> onePer(long time, TimeUnit unit) {
+	default LazyCopyFutureStream<U> onePer(long time, TimeUnit unit) {
 		Queue queue = toQueue();
 		Function<Supplier<U>, Supplier<U>> fn = s -> {
 			
@@ -570,7 +573,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @param unit Frequency time unit
 	 * @return Stream with emissions slowed down by specified emission frequency
 	 */
-	default FutureStream<U> xPer(int x,long time, TimeUnit unit) {
+	default LazyCopyFutureStream<U> xPer(int x,long time, TimeUnit unit) {
 		Queue queue = toQueue();
 		Function<Supplier<U>, Supplier<U>> fn = s -> {
 			SimpleTimer[] timer=  {new SimpleTimer()};
@@ -615,7 +618,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @param unit Time unit during which all elements should be collected
 	 * @return Stream of Lists
 	 */
-	default FutureStream<Collection<U>> batchByTime(long time, TimeUnit unit) {
+	default LazyCopyFutureStream<Collection<U>> batchByTime(long time, TimeUnit unit) {
 		Queue queue = toQueue();
 		Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTime<U>(time,unit,
 				this.getSubscription(),queue,()->new ArrayList<>());
@@ -630,7 +633,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @param factory Instantiates the collections used in the batching
 	 * @return Stream of collections
 	 */
-	default FutureStream<Collection<U>> batchByTime(long time, TimeUnit unit,Supplier<Collection<U>> factory) {
+	default LazyCopyFutureStream<Collection<U>> batchByTime(long time, TimeUnit unit,Supplier<Collection<U>> factory) {
 		Queue queue = toQueue();
 		Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTime<U>(time,unit, this.getSubscription(),queue,factory);
 		return fromStream(queue.streamBatch(getSubscription(), fn)).filter(c->!((Collection)c).isEmpty());
@@ -644,7 +647,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @param s Stream to merge with
 	 * @return Stream of Tuples with the latest values from this stream
 	 */
-	default <T> FutureStream<Tuple2<U, T>> withLatest(FutureStream<T> s) {
+	default <T> LazyCopyFutureStream<Tuple2<U, T>> withLatest(LazyCopyFutureStream<T> s) {
 		return fromStream(withLatest(this, s));
 	}
 	/**
@@ -655,7 +658,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @param s Stream to merge with
 	 * @return  Stream of Tuples with the latest values from either stream
 	 */
-	default <T> FutureStream<Tuple2<U, T>> combineLatest(FutureStream<T> s) {
+	default <T> LazyCopyFutureStream<Tuple2<U, T>> combineLatest(LazyCopyFutureStream<T> s) {
 		return fromStream(combineLatest(this, s));
 	}
 	/**
@@ -665,7 +668,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @param s Stream that will start the emission of values from this stream
 	 * @return Next stage in the Stream but with all values skipped until the provided Stream starts emitting
 	 */
-	default<T>  FutureStream<U> skipUntil(FutureStream<T> s) {
+	default<T>  LazyCopyFutureStream<U> skipUntil(LazyCopyFutureStream<T> s) {
 		return fromStream(skipUntil(this, s));
 	}
 	/**
@@ -676,7 +679,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @param s Stream that will stop the emission of values from this stream
 	 * @return Next stage in the Stream but will only emit values until provided Stream starts emitting values
 	 */
-	default<T>  FutureStream<U> takeUntil(FutureStream<T> s) {
+	default<T>  LazyCopyFutureStream<U> takeUntil(LazyCopyFutureStream<T> s) {
 		return fromStream(takeUntil(this, s));
 	}
 
@@ -696,8 +699,8 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @param active Stream not to close
 	 * @param all  All streams potentially including the active stream
 	 */
-	static void closeOthers(FutureStream active, List<FutureStream> all){
-		all.stream().filter(next -> next!=active).filter(s -> s.isEager()).forEach(FutureStream::cancel);
+	static void closeOthers(LazyCopyFutureStream active, List<LazyCopyFutureStream> all){
+		all.stream().filter(next -> next!=active).filter(s -> s.isEager()).forEach(LazyCopyFutureStream::cancel);
 		
 	}
 	
@@ -707,12 +710,12 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @param futureStreams Streams to race
 	 * @return First Stream to start emitting values
 	 */
-	static <U> FutureStream<U> firstOf(FutureStream<U>... futureStreams) {
-		List<Tuple2<FutureStream<U>, QueueReader>> racers = Stream
+	static <U> LazyCopyFutureStream<U> firstOf(LazyCopyFutureStream<U>... futureStreams) {
+		List<Tuple2<LazyCopyFutureStream<U>, QueueReader>> racers = Stream
 				.of(futureStreams)
 				.map(s -> Tuple.tuple(s,new Queue.QueueReader(s.toQueue(),null))).collect(Collectors.toList());
 		while(true){
-		for(Tuple2<FutureStream<U>,Queue.QueueReader> q: racers){
+		for(Tuple2<LazyCopyFutureStream<U>,Queue.QueueReader> q: racers){
 			if(q.v2.notEmpty()){
 				closeOthers(q.v2.getQueue(),racers.stream().map(t -> t.v2.getQueue()).collect(Collectors.toList()));
 				closeOthers(q.v1,racers.stream().map(t -> t.v1).collect(Collectors.toList()));
@@ -731,8 +734,8 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * Zip two streams into one. Uses the latest values from each rather than waiting for both
 	 * 
 	 */
-	static <T1, T2> Seq<Tuple2<T1, T2>> combineLatest(FutureStream<T1> left,
-			FutureStream<T2> right) {
+	static <T1, T2> Seq<Tuple2<T1, T2>> combineLatest(LazyCopyFutureStream<T1> left,
+			LazyCopyFutureStream<T2> right) {
 		return combineLatest(left, right, Tuple::tuple);
 	}
 	@AllArgsConstructor
@@ -747,8 +750,8 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * values. Uses the latest values from each rather than waiting for both.
 	 * 
 	 */
-	static <T1, T2, R> Seq<R> combineLatest(FutureStream<T1> left,
-			FutureStream<T2> right, BiFunction<T1, T2, R> zipper) {
+	static <T1, T2, R> Seq<R> combineLatest(LazyCopyFutureStream<T1> left,
+			LazyCopyFutureStream<T2> right, BiFunction<T1, T2, R> zipper) {
 		
 		Queue q = left.map(it->new Val(Val.Pos.left,it)).merge(right.map(it->new Val(Val.Pos.right,it))).toQueue();
 		final Iterator<Val> it = q.stream(left.getSubscription()).iterator();
@@ -784,8 +787,8 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * Zip two streams into one. Uses the latest values from each rather than waiting for both
 	 * 
 	 */
-	static <T1, T2> Seq<Tuple2<T1, T2>> withLatest(FutureStream<T1> left,
-			FutureStream<T2> right) {
+	static <T1, T2> Seq<Tuple2<T1, T2>> withLatest(LazyCopyFutureStream<T1> left,
+			LazyCopyFutureStream<T2> right) {
 		return withLatest(left, right, Tuple::tuple);
 	}
 	/**
@@ -793,8 +796,8 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * values. Uses the latest values from each rather than waiting for both.
 	 * 
 	 */
-	static <T1, T2, R> Seq<R> withLatest(FutureStream<T1> left,
-			FutureStream<T2> right, BiFunction<T1, T2, R> zipper) {
+	static <T1, T2, R> Seq<R> withLatest(LazyCopyFutureStream<T1> left,
+			LazyCopyFutureStream<T2> right, BiFunction<T1, T2, R> zipper) {
 		
 		Queue q = left.map(it->new Val(Val.Pos.left,it)).merge(right.map(it->new Val(Val.Pos.right,it))).toQueue();
 		final Iterator<Val> it = q.stream(left.getSubscription()).iterator();
@@ -829,8 +832,8 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	}
 	
 	
-	static <T1, T2> Seq<T1> skipUntil(FutureStream<T1> left,
-			FutureStream<T2> right) {
+	static <T1, T2> Seq<T1> skipUntil(LazyCopyFutureStream<T1> left,
+			LazyCopyFutureStream<T2> right) {
 		
 		Queue q = left.map(it->new Val(Val.Pos.left,it)).merge(right.map(it->new Val(Val.Pos.right,it))).toQueue();
 		final Iterator<Val> it = q.stream(left.getSubscription()).iterator();
@@ -868,8 +871,8 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 
 		return Seq.seq(new Zip()).filter(next->!(next instanceof Optional));
 	}
-	static <T1, T2> Seq<T1> takeUntil(FutureStream<T1> left,
-			FutureStream<T2> right) {
+	static <T1, T2> Seq<T1> takeUntil(LazyCopyFutureStream<T1> left,
+			LazyCopyFutureStream<T2> right) {
 		
 		Queue q = left.map(it->new Val(Val.Pos.left,it)).merge(right.map(it->new Val(Val.Pos.right,it))).toQueue();
 		final Iterator<Val> it = q.stream(left.getSubscription()).iterator();
@@ -911,55 +914,55 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	
 	/*
 	 * @see
-	 * com.aol.simple.react.stream.traits.SimpleReactStream#retry(java.util.
+	 * com.aol.simple.react.stream.traits.LazySimpleReactStream#retry(java.util.
 	 * function.Function)
 	 */
-	default <R> FutureStream<R> retry(final Function<U, R> fn) {
-		return (FutureStream) SimpleReactStream.super.retry(fn);
+	default <R> LazyCopyFutureStream<R> retry(final Function<U, R> fn) {
+		return (LazyCopyFutureStream) LazySimpleReactStream.super.retry(fn);
 	}
 
 	/*
 	 * @see
-	 * com.aol.simple.react.stream.traits.SimpleReactStream#allOf(java.util.
+	 * com.aol.simple.react.stream.traits.LazySimpleReactStream#allOf(java.util.
 	 * stream.Collector, java.util.function.Function)
-	 */
-	default <T, R> FutureStream<R> allOf(final Collector collector,
+	 
+	default <T, R> LazyCopyFutureStream<R> allOf(final Collector collector,
 			final Function<T, R> fn) {
-		return (FutureStream) SimpleReactStream.super.allOf(collector, fn);
+		return (LazyCopyFutureStream) LazySimpleReactStream.super.allOf(collector, fn);
 	}
 
-	default <R> FutureStream<R> anyOf(final Function<U, R> fn) {
-		return (FutureStream) SimpleReactStream.super.anyOf(fn);
+	default <R> LazyCopyFutureStream<R> anyOf(final Function<U, R> fn) {
+		return (LazyCopyFutureStream) LazySimpleReactStream.super.anyOf(fn);
 	}
-
+*/
 	/*
-	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#
+	 * @see com.aol.simple.react.stream.traits.LazySimpleReactStream#
 	 * fromStreamCompletableFuture(java.util.stream.Stream)
-	 */
-	default <R> FutureStream<R> fromStreamOfFutures(
-			Stream<CompletableFuture<R>> stream) {
-		return (FutureStream) SimpleReactStream.super
+	 
+	default <R> LazyCopyFutureStream<R> fromStreamOfFutures(
+			Stream<FastFuture<R>> stream) {
+		return (LazyCopyFutureStream) LazySimpleReactStream.super
 				.fromStreamOfFutures(stream);
-	}
+	}*/
 
 	/*
 	 * @see
-	 * com.aol.simple.react.stream.traits.SimpleReactStream#then(java.util.function
+	 * com.aol.simple.react.stream.traits.LazySimpleReactStream#then(java.util.function
 	 * .Function)
 	 */
-	default <R> FutureStream<R> then(final Function<U, R> fn) {
-		return (FutureStream) SimpleReactStream.super.then(fn);
+	default <R> LazyCopyFutureStream<R> then(final Function<U, R> fn) {
+		return (LazyCopyFutureStream) LazySimpleReactStream.super.then(fn);
 	}
 	
 	
 
 	/*
 	 * @see
-	 * com.aol.simple.react.stream.traits.SimpleReactStream#fromStream(java.
+	 * com.aol.simple.react.stream.traits.LazySimpleReactStream#fromStream(java.
 	 * util.stream.Stream)
 	 */
-	default <R> FutureStream<R> fromStream(Stream<R> stream) {
-		return (FutureStream) SimpleReactStream.super.fromStream(stream);
+	default <R> LazyCopyFutureStream<R> fromStream(Stream<R> stream) {
+		return (LazyCopyFutureStream) LazySimpleReactStream.super.fromStream(stream);
 	}
 	/**
 	 * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
@@ -980,9 +983,9 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @param flatFn flatMap function
 	 * @return Flatten Stream with flatFn applied
 	 */
-	default <R> FutureStream<R> flatMapCompletableFuture(
+	default <R> LazyCopyFutureStream<R> flatMapCompletableFuture(
 			Function<U, CompletableFuture<R>> flatFn) {
-		return (FutureStream) SimpleReactStream.super.flatMapCompletableFuture(flatFn);
+		return (LazyCopyFutureStream) LazySimpleReactStream.super.flatMapCompletableFuture(flatFn);
 	}
 	/**
 	 * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
@@ -1002,19 +1005,19 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @param flatFn flatMap function
 	 * @return Flatten Stream with flatFn applied
 	 */
-	default <R> FutureStream<R> flatMapCompletableFutureSync(
+	default <R> LazyCopyFutureStream<R> flatMapCompletableFutureSync(
 			Function<U, CompletableFuture<R>> flatFn) {
 		
-		return (FutureStream) SimpleReactStream.super.flatMapCompletableFutureSync(flatFn);
+		return (LazyCopyFutureStream) LazySimpleReactStream.super.flatMapCompletableFutureSync(flatFn);
 	}
 
 	/*
 	 * @see org.jooq.lambda.Seq#flatMap(java.util.function.Function)
 	 */
 	@Override
-	default <R> FutureStream<R> flatMap(
+	default <R> LazyCopyFutureStream<R> flatMap(
 			Function<? super U, ? extends Stream<? extends R>> flatFn) {
-		return (FutureStream) SimpleReactStream.super.flatMap(flatFn);
+		return (LazyCopyFutureStream) LazySimpleReactStream.super.flatMap(flatFn);
 	}
 
 	/*
@@ -1023,59 +1026,59 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 *
 	 * 
 	 * @see
-	 * com.aol.simple.react.stream.traits.SimpleReactStream#merge(com.aol.simple
-	 * .react.stream.traits.SimpleReactStream)
-	 */
-	@Override
-	default FutureStream<U> merge(SimpleReactStreamInterface<U>... streams) {
-		return (FutureStream)SimpleReactStream.super.merge(streams);		
-	}
+	 * com.aol.simple.react.stream.traits.LazySimpleReactStream#merge(com.aol.simple
+	 * .react.stream.traits.LazySimpleReactStream)
 	
+	@Override
+	default LazyCopyFutureStream<U> merge(LazySimpleReactStream<U>... streams) {
+		return (LazyCopyFutureStream)LazySimpleReactStream.super.merge(streams);		
+	}
+	 */
 
 	
 	
 	/*
 	 * @see
-	 * com.aol.simple.react.stream.traits.SimpleReactStream#onFail(java.util
+	 * com.aol.simple.react.stream.traits.LazySimpleReactStream#onFail(java.util
 	 * .function.Function)
 	 */
 	@Override
-	default FutureStream<U> onFail(
+	default LazyCopyFutureStream<U> onFail(
 			final Function<? extends SimpleReactFailedStageException, U> fn) {
-		return (FutureStream) SimpleReactStream.super.onFail(fn);
+		return (LazyCopyFutureStream) LazySimpleReactStream.super.onFail(fn);
 	}
 
 	/*
 	 * 
 	 * @see
-	 * com.aol.simple.react.stream.traits.SimpleReactStream#onFail(java.lang
+	 * com.aol.simple.react.stream.traits.LazySimpleReactStream#onFail(java.lang
 	 * .Class, java.util.function.Function)
 	 */
-	default FutureStream<U> onFail(Class<? extends Throwable> exceptionClass,
+	default LazyCopyFutureStream<U> onFail(Class<? extends Throwable> exceptionClass,
 			final Function<? extends SimpleReactFailedStageException, U> fn) {
-		return (FutureStream) SimpleReactStream.super
+		return (LazyCopyFutureStream) LazySimpleReactStream.super
 				.onFail(exceptionClass, fn);
 	}
 
 	/*
 	 * @see
-	 * com.aol.simple.react.stream.traits.SimpleReactStream#capture(java.util
+	 * com.aol.simple.react.stream.traits.LazySimpleReactStream#capture(java.util
 	 * .function.Consumer)
 	 */
 	@Override
-	default FutureStream<U> capture(
+	default LazyCopyFutureStream<U> capture(
 			final Consumer<? extends Throwable> errorHandler) {
-		return (FutureStream) SimpleReactStream.super.capture(errorHandler);
+		return (LazyCopyFutureStream) LazySimpleReactStream.super.capture(errorHandler);
 	}
 
 	/*
 	 * @see
-	 * com.aol.simple.react.stream.traits.SimpleReactStream#allOf(java.util.
+	 * com.aol.simple.react.stream.traits.LazySimpleReactStream#allOf(java.util.
 	 * function.Function)
 	 */
 	@Override
-	default <T, R> FutureStream<R> allOf(final Function<List<T>, R> fn) {
-		return (FutureStream) SimpleReactStream.super.allOf(fn);
+	default <T, R> LazyCopyFutureStream<R> allOf(final Function<List<T>, R> fn) {
+		return (LazyCopyFutureStream) LazySimpleReactStream.super.allOf(fn);
 	}
 
 	
@@ -1085,15 +1088,15 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @see org.jooq.lambda.Seq#peek(java.util.function.Consumer)
 	 */
 	@Override
-	default FutureStream<U> peek(final Consumer<? super U> consumer) {
-		return (FutureStream) SimpleReactStream.super.peek(consumer);
+	default LazyCopyFutureStream<U> peek(final Consumer<? super U> consumer) {
+		return (LazyCopyFutureStream) LazySimpleReactStream.super.peek(consumer);
 	}
 
 	/*
 	 * @see org.jooq.lambda.Seq#filter(java.util.function.Predicate)
 	 */
-	default FutureStream<U> filter(final Predicate<? super U> p) {
-		return (FutureStream) SimpleReactStream.super.filter(p);
+	default LazyCopyFutureStream<U> filter(final Predicate<? super U> p) {
+		return (LazyCopyFutureStream) LazySimpleReactStream.super.filter(p);
 	}
 
 	/**
@@ -1157,7 +1160,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 *            Size of sliding window
 	 * @return Stream with sliding view over data in this stream
 	 */
-	default FutureStream<List<U>> sliding(int size){
+	default LazyCopyFutureStream<List<U>> sliding(int size){
 		return this.fromStream(SlidingWindow.sliding(this,size, 1));
 	}
 	/**
@@ -1179,7 +1182,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 *            Size of sliding window
 	 * @return Stream with sliding view over data in this stream
 	 */
-	default FutureStream<List<U>> sliding(int size, int increment){
+	default LazyCopyFutureStream<List<U>> sliding(int size, int increment){
 		return this.fromStream(SlidingWindow.sliding(this,size, increment));
 	}
 	
@@ -1187,14 +1190,14 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @return An extensive set of asyncrhonous terminal operations
 	 */
 	default FutureOps<U> futureOperations(){
-		return new FutureOps<>(this.getTaskExecutor(),this);
+		return new FutureOps<U>(this.getTaskExecutor(),this);
 	}
 	/**
 	 * @param executor to execute terminal ops asynchronously on
 	 * @return An extensive set of asyncrhonous terminal operations
 	 */
 	default FutureOps<U> futureOperations(Executor executor){
-		return new FutureOps<>(executor,this);
+		return new FutureOps<U>(executor,this);
 	}
 
 	/*
@@ -1382,7 +1385,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	  *	@return
 	  * @see org.jooq.lambda.Seq#reverse()
 	  */
-	default FutureStream<U> reverse() {
+	default LazyCopyFutureStream<U> reverse() {
 	        return fromStream(Seq.seq(reversedIterator()));
 	   }
 	default Iterator<U> reversedIterator(){
@@ -1441,10 +1444,13 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 */
 	@Override
 	default Seq<U> sequential() {
+		return null;
+		/*
 		Queue q = toQueue();
 		q.fromStream(getLastActive().stream().map(it -> it.join()));
 		q.close();
 		return q.stream();
+		**/
 	}
 
 
@@ -1473,7 +1479,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 *
 	 * @see #intersperse(Stream, Object)
 	 */
-	default FutureStream<U> intersperse(U value) {
+	default LazyCopyFutureStream<U> intersperse(U value) {
 		return intersperse(this, value);
 	}
 
@@ -1487,13 +1493,13 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 */
 
 	@Override
-	default <U> FutureStream<U> cast(Class<U> type) {
-		return (FutureStream<U>) cast(this, type);
+	default <U> LazyCopyFutureStream<U> cast(Class<U> type) {
+		return (LazyCopyFutureStream<U>) cast(this, type);
 	}
 
 	@Override
-	default <U> FutureStream<U> ofType(Class<U> type) {
-		return (FutureStream<U>) ofType(this, type);
+	default <U> LazyCopyFutureStream<U> ofType(Class<U> type) {
+		return (LazyCopyFutureStream<U>) ofType(this, type);
 	}
 
 	/**
@@ -1505,7 +1511,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	static <T, U> FutureStream<U> ofType(FutureStream<T> stream, Class<U> type) {
+	static <T, U> LazyCopyFutureStream<U> ofType(LazyCopyFutureStream<T> stream, Class<U> type) {
 		return stream.filter(type::isInstance).map(t -> (U) t);
 	}
 
@@ -1518,7 +1524,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * 3).cast(Integer.class)
 	 * 
 	 */
-	static <T, U> FutureStream<U> cast(FutureStream<T> stream, Class<U> type) {
+	static <T, U> LazyCopyFutureStream<U> cast(LazyCopyFutureStream<T> stream, Class<U> type) {
 		return stream.map(type::cast);
 	}
 
@@ -1530,7 +1536,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * // (1, 0, 2, 0, 3, 0, 4) Seq.of(1, 2, 3, 4).intersperse(0)
 	 * 
 	 */
-	static <T> FutureStream<T> intersperse(FutureStream<T> stream, T value) {
+	static <T> LazyCopyFutureStream<T> intersperse(LazyCopyFutureStream<T> stream, T value) {
 		return stream.flatMap(t -> Stream.of(value, t).skip(1));
 	}
 
@@ -1540,7 +1546,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @see org.jooq.lambda.Seq#unordered()
 	 */
 	@Override
-	default FutureStream<U> unordered() {
+	default LazyCopyFutureStream<U> unordered() {
 		return this;
 	}
 
@@ -1551,9 +1557,11 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 */
 	@Override
 	default Seq<U> onClose(Runnable closeHandler) {
-
+		return null;
+/**
 		return Seq.seq(getLastActive().stream().onClose(closeHandler)
 				.map(it -> (U) it.join()));
+				**/
 	}
 
 	/*
@@ -1573,7 +1581,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * @see org.jooq.lambda.Seq#map(java.util.function.Function)
 	 */
 	@Override
-	default <R> FutureStream<R> map(Function<? super U, ? extends R> mapper) {
+	default <R> LazyCopyFutureStream<R> map(Function<? super U, ? extends R> mapper) {
 		return then((Function) mapper);
 	}
 
@@ -1667,8 +1675,8 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 *            Consumer that will recieve current stage
 	 * @return Self (current stage)
 	 */
-	default FutureStream<U> self(Consumer<FutureStream<U>> consumer) {
-		return (FutureStream<U>) then((t) -> {
+	default LazyCopyFutureStream<U> self(Consumer<LazyCopyFutureStream<U>> consumer) {
+		return (LazyCopyFutureStream<U>) then((t) -> {
 			consumer.accept(this);
 			return (U) t;
 		});
@@ -1696,7 +1704,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * // (4, 5) EagerFutureStream.of(1, 2, 3, 4, 5, 6).slice(3, 5)
 	 * 
 	 */
-	static <T> Seq<T> slice(FutureStream<T> stream, long from, long to) {
+	static <T> Seq<T> slice(LazyCopyFutureStream<T> stream, long from, long to) {
 		long f = Math.max(from, 0);
 		long t = Math.max(to - f, 0);
 
@@ -1713,10 +1721,10 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 * Switch to sync for non-blocking tasks when desired thread utlisation reached
 	 * 
 	 *	@return Version of FutureStream that will use sync CompletableFuture methods
-	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#sync()
+	 * @see com.aol.simple.react.stream.traits.LazySimpleReactStream#sync()
 	 */
-	default FutureStream<U> sync(){
-		return (FutureStream<U>)SimpleReactStream.super.sync();
+	default LazyCopyFutureStream<U> sync(){
+		return (LazyCopyFutureStream<U>)LazySimpleReactStream.super.sync();
 	}
 	
 
@@ -1728,10 +1736,10 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U,Completable
 	 *
 	 * 
 	 *	@return Version of FutureStream that will use async CompletableFuture methods
-	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#async()
+	 * @see com.aol.simple.react.stream.traits.LazySimpleReactStream#async()
 	 */
-	default FutureStream<U> async(){
-		return (FutureStream<U>) SimpleReactStream.super.async();
+	default LazyCopyFutureStream<U> async(){
+		return (LazyCopyFutureStream<U>) LazySimpleReactStream.super.async();
 	}
 	
 }

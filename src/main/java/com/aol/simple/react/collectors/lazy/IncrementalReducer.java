@@ -28,7 +28,7 @@ import com.aol.simple.react.stream.traits.BlockingStream;
 @AllArgsConstructor
 public class IncrementalReducer<T> {
 	private final LazyResultConsumer<T> consumer;
-	private final BlockingStream<T> blocking;
+	private final BlockingStream<T,FastFuture<T>> blocking;
 	private final ParallelReductionConfig config;
 	
 	public void forEach(Consumer<? super T> c, Function<FastFuture,T> safeJoin){

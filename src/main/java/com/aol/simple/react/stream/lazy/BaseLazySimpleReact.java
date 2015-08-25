@@ -1,4 +1,4 @@
-package com.aol.simple.react.stream;
+package com.aol.simple.react.stream.lazy;
 
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
@@ -9,6 +9,8 @@ import java.util.stream.StreamSupport;
 import lombok.AllArgsConstructor;
 
 import com.aol.simple.react.async.subscription.Subscription;
+import com.aol.simple.react.stream.InfiniteClosingSpliterator;
+import com.aol.simple.react.stream.InfiniteClosingSpliteratorFromIterator;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 
 public abstract class BaseLazySimpleReact extends BaseSimpleReact{

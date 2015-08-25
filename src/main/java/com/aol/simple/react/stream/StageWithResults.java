@@ -19,12 +19,12 @@ public class StageWithResults<RS,U> {
 	private final ExceptionSoftener exceptionSoftener = ExceptionSoftener.singleton.factory.getInstance();
 	private final Executor taskExecutor;
 	
-	private final ConfigurableStream<U> stage;
+	private final ConfigurableStream<U,Object> stage;
 	@Getter
 	private final RS results;
 	
 
-	public StageWithResults(ConfigurableStream<U> stage, RS results) {
+	public StageWithResults(ConfigurableStream<U,Object> stage, RS results) {
 		
 		this.taskExecutor = stage.getTaskExecutor();
 		this.stage = stage;

@@ -24,7 +24,7 @@ import com.aol.simple.react.stream.lazy.ParallelReductionConfig;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.threads.SequentialElasticPools;
 
-public interface LazyStream<U> extends BlockingStream<U>{
+public interface LazyStream<U> extends BlockingStream<U,FastFuture<U>>{
 	
 	LazyStreamWrapper getLastActive();
 	LazyResultConsumer<U> getLazyCollector();

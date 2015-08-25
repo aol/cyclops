@@ -108,7 +108,7 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 	 * @see com.aol.simple.react.collectors.lazy.LazyResultConsumer#getBlocking()
 	 */
 	@Override
-	public ConfigurableStream<T> getBlocking() {
+	public ConfigurableStream<T,FastFuture<T>> getBlocking() {
 	
 		return null;
 	}

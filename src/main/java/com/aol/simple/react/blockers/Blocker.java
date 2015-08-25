@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.pcollections.ConsPStack;
 
-import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.ThrowsSoftened;
 import com.aol.simple.react.stream.Status;
@@ -30,7 +29,7 @@ public class Blocker<U> {
 
 	private final ExceptionSoftener exceptionSoftener = ExceptionSoftener.singleton.factory.getInstance();
 	@SuppressWarnings("rawtypes")
-	private final List<FastFuture> lastActive;
+	private final List<CompletableFuture> lastActive;
 	private final Optional<Consumer<Throwable>> errorHandler;
 	private final CompletableFuture<List<U>> promise = new CompletableFuture<>();
 

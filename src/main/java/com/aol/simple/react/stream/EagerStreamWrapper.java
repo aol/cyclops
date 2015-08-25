@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -13,21 +14,21 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.experimental.Wither;
 
-import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.stream.traits.FutureStream;
+import com.aol.simple.react.threads.SequentialElasticPools;
 
 
 @Wither
 @AllArgsConstructor
 @Builder
-public class EagerStreamWrapper implements StreamWrapper{
+public class EagerStreamWrapper{
 	@SuppressWarnings("rawtypes")
-	private final List<FastFuture> list;
-	private final Stream<FastFuture> stream;
+	private final List<CompletableFuture> list;
+	private final Stream<CompletableFuture> stream;
 	private final boolean eager;
 	private final AsyncList async;
 	
-	public EagerStreamWrapper(List<FastFuture> list){
+	public EagerStreamWrapper(List<CompletableFuture> list){
 		this.list = list;
 		this.stream = null;
 		this.eager = true;
@@ -39,7 +40,7 @@ public class EagerStreamWrapper implements StreamWrapper{
 		this.async = async;
 		this.eager = true;
 	}
-	public EagerStreamWrapper(Stream<FastFuture> stream,boolean eager){
+	public EagerStreamWrapper(Stream<CompletableFuture> stream,boolean eager){
 		this.stream = stream;
 		if(eager){
 			list = stream.collect(Collectors.toList());
@@ -49,8 +50,17 @@ public class EagerStreamWrapper implements StreamWrapper{
 		 async= null;
 		this.eager = eager;
 	}
-	
-	public EagerStreamWrapper(FastFuture cf, boolean eager) {
+	public EagerStreamWrapper(Stream<CompletableFuture> stream,Collector c,boolean eager){
+		this.stream = stream;
+		 async=null;
+		if(eager){
+			list = (List<CompletableFuture>)stream.collect(c);
+		}else{
+			list = null;
+		}
+		this.eager = eager;
+	}
+	public EagerStreamWrapper(CompletableFuture cf, boolean eager) {
 		 async= null;
 		if(eager){
 			list = Arrays.asList(cf);
@@ -64,7 +74,7 @@ public class EagerStreamWrapper implements StreamWrapper{
 	}
 	
 	
-	public EagerStreamWrapper withNewStream(Stream<FastFuture> stream, BaseSimpleReact simple){
+	public EagerStreamWrapper withNewStream(Stream<CompletableFuture> stream, BaseSimpleReact simple){
 		if(simple.getQueueService()==null)
 			System.out.println(simple);
 		if(!eager)
@@ -72,7 +82,7 @@ public class EagerStreamWrapper implements StreamWrapper{
 		else
 			return new EagerStreamWrapper(new AsyncList(stream,simple.getQueueService()));
 	}
-	public EagerStreamWrapper stream(Function<Stream<FastFuture>,Stream<FastFuture>> action){
+	public EagerStreamWrapper stream(Function<Stream<CompletableFuture>,Stream<CompletableFuture>> action){
 		if(async!=null)
 			return new EagerStreamWrapper(async.stream(action));
 		else if(eager)
@@ -82,7 +92,7 @@ public class EagerStreamWrapper implements StreamWrapper{
 		return new EagerStreamWrapper(action.apply(stream),false);
 	}
 	
-	public Stream<FastFuture> stream(){
+	public Stream<CompletableFuture> stream(){
 		if(async!=null)
 			return async.async.join().stream();
 		if(eager)
@@ -91,7 +101,7 @@ public class EagerStreamWrapper implements StreamWrapper{
 			return stream;
 	}
 	
-	public List<FastFuture> list(){
+	public List<CompletableFuture> list(){
 		if(async!=null)
 			return async.async.join();
 		if(eager)
@@ -105,9 +115,9 @@ public class EagerStreamWrapper implements StreamWrapper{
 		
 		private final Executor service;
 		// = Executors.newSingleThreadExecutor();
-		private final CompletableFuture<List<FastFuture>> async;
+		private final CompletableFuture<List<CompletableFuture>> async;
 		
-		public AsyncList(Stream<FastFuture> stream,Executor service){
+		public AsyncList(Stream<CompletableFuture> stream,Executor service){
 			
 				
 			if(stream instanceof FutureStream)
@@ -119,7 +129,7 @@ public class EagerStreamWrapper implements StreamWrapper{
 		
 			this.service= service;
 		}
-		public AsyncList(CompletableFuture<Stream<FastFuture>> cf,Executor service){
+		public AsyncList(CompletableFuture<Stream<CompletableFuture>> cf,Executor service){
 			//use elastic pool to execute asyn
 			
 				async = cf.thenApplyAsync(st ->st.collect(Collectors.toList()),service);
@@ -128,7 +138,7 @@ public class EagerStreamWrapper implements StreamWrapper{
 		}
 		
 		
-		public AsyncList stream(Function<Stream<FastFuture>,Stream<FastFuture>> action){
+		public AsyncList stream(Function<Stream<CompletableFuture>,Stream<CompletableFuture>> action){
 			return new AsyncList(async.thenApply(list-> action.apply(list.stream())),service);
 			
 		}

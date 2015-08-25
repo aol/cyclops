@@ -24,7 +24,6 @@ import lombok.experimental.Wither;
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.config.MaxActive;
-import com.aol.simple.react.stream.BaseLazySimpleReact;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;

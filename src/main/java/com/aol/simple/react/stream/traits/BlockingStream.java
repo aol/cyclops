@@ -1,34 +1,20 @@
 package com.aol.simple.react.stream.traits;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.aol.simple.react.blockers.Blocker;
-import com.aol.simple.react.exceptions.ExceptionSoftener;
-import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.exceptions.ThrowsSoftened;
 import com.aol.simple.react.extractors.Extractor;
 import com.aol.simple.react.extractors.Extractors;
-import com.aol.simple.react.stream.MissingValue;
-import com.aol.simple.react.stream.Status;
 import com.aol.simple.react.stream.EagerStreamWrapper;
+import com.aol.simple.react.stream.LazyStreamWrapper;
+import com.aol.simple.react.stream.Status;
 
-public interface BlockingStream<U> extends ConfigurableStream<U>{
-
-	
-	
-	
-
-	
-	
+public interface BlockingStream<U,F> extends ConfigurableStream<U,F>{
 
 
 	/**
@@ -56,8 +42,17 @@ public interface BlockingStream<U> extends ConfigurableStream<U>{
 	 */
 	@ThrowsSoftened({ InterruptedException.class, ExecutionException.class })
 	default List<U> block() {
-		return BlockingStreamHelper.block(this,Collectors.toList(), getLastActive());
+		Object lastActive = getLastActive();
+		if(lastActive instanceof EagerStreamWrapper){
+			EagerStreamWrapper last = (EagerStreamWrapper)lastActive;
+			return BlockingStreamHelper.block(this,Collectors.toList(), last);
+		}else{
+			LazyStreamWrapper last = (LazyStreamWrapper)lastActive;
+			return BlockingStreamHelper.block(this,Collectors.toList(), last);
+		}
 	}
+
+	 Object getLastActive();
 
 	/**
 	 * @param collector
@@ -70,7 +65,15 @@ public interface BlockingStream<U> extends ConfigurableStream<U>{
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@ThrowsSoftened({ InterruptedException.class, ExecutionException.class })
 	default <R> R block(final Collector collector) {
-		return (R) BlockingStreamHelper.block(this,collector, getLastActive());
+		Object lastActive = getLastActive();
+		if(lastActive instanceof EagerStreamWrapper){
+			EagerStreamWrapper last = (EagerStreamWrapper)lastActive;
+			return (R) BlockingStreamHelper.block(this,collector, last);
+		}else{
+			LazyStreamWrapper last = (LazyStreamWrapper)lastActive;
+			return (R) BlockingStreamHelper.block(this,collector,last);
+		}
+		
 	}
 
 	
@@ -133,54 +136,9 @@ public interface BlockingStream<U> extends ConfigurableStream<U>{
 		return (R) extractor.extract(block());
 	}
 
-	/**
-	 * React and <b>block</b> with <b>breakout</b>
-	 * 
-	 * Sometimes you may not need to block until all the work is complete, one
-	 * result or a subset may be enough. To faciliate this, block can accept a
-	 * Predicate functional interface that will allow SimpleReact to stop
-	 * blocking the current thread when the Predicate has been fulfilled. E.g.
-	 * 
-	 * <code>
-	  	List&lt;String&gt; strings = new SimpleReact().&lt;Integer, Integer&gt; react(() -&gt; 1, () -&gt; 2, () -&gt; 3)
-				.then(it -&gt; it * 100)
-				.then(it -&gt; "*" + it)
-				.block(status -&gt; status.getCompleted()&gt;1);
-	  </code>
-	 * 
-	 * In this example the current thread will unblock once more than one result
-	 * has been returned.
-	 * 
-	 * @param breakout
-	 *            Predicate that determines whether the block should be
-	 *            continued or removed
-	 * @return List of Completed results of currently active stage at full
-	 *         completion point or when breakout triggered (which ever comes
-	 *         first). throws InterruptedException,ExecutionException
-	 */
-	@ThrowsSoftened({ InterruptedException.class, ExecutionException.class })
-	default List<U> block(final Predicate<Status> breakout) {
-		return new Blocker<U>(getLastActive().list(), getErrorHandler()).block(breakout);
-	}
+	
 
-	/**
-	 * @param collector
-	 *            to perform aggregation / reduction operation on the results
-	 *            (e.g. to Collect into a List or String)
-	 * @param breakout
-	 *            Predicate that determines whether the block should be
-	 *            continued or removed
-	 * @return Completed results of currently active stage at full completion
-	 *         point or when breakout triggered (which ever comes first), in
-	 *         aggregated in form determined by collector throws
-	 *         InterruptedException,ExecutionException
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@ThrowsSoftened({ InterruptedException.class, ExecutionException.class })
-	default  <R> R block(final Collector collector,
-			final Predicate<Status> breakout) {
-		return (R) block(breakout).stream().collect(collector);
-	}
+	
 
 	
 

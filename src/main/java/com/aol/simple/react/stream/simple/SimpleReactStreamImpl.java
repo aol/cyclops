@@ -2,6 +2,7 @@ package com.aol.simple.react.stream.simple;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -17,14 +18,12 @@ import lombok.extern.slf4j.Slf4j;
 
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.async.factories.QueueFactory;
-import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.async.subscription.AlwaysContinue;
 import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.capacity.monitor.LimitingMonitor;
 import com.aol.simple.react.collectors.lazy.BatchingCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.stream.BaseSimpleReact;
-import com.aol.simple.react.stream.EagerStreamWrapper;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.traits.EagerToQueue;
@@ -44,7 +43,7 @@ public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>,EagerToQue
 	private final Optional<Consumer<Throwable>> errorHandler;
 	private final StreamWrapper lastActive;
 	private final boolean eager;
-	private final Consumer<FastFuture> waitStrategy;
+	private final Consumer<CompletableFuture> waitStrategy;
 	private final LazyResultConsumer<U> lazyCollector;
 	private final QueueFactory<U> queueFactory;
 	private final SimpleReact simpleReact;
@@ -52,11 +51,11 @@ public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>,EagerToQue
 	private final ReactPool<BaseSimpleReact> pool = ReactPool.elasticPool(()->new LazyReact(Executors.newSingleThreadExecutor()));
 	private final List originalFutures;
 	
-	public SimpleReactStreamImpl(final SimpleReact simpleReact, final Stream<FastFuture<U>> stream,
-			List<FastFuture> originalFutures) {
+	public SimpleReactStreamImpl(final SimpleReact simpleReact, final Stream<CompletableFuture<U>> stream,
+			List<CompletableFuture> originalFutures) {
 		this.simpleReact = simpleReact;
 		Stream s = stream;
-		this.lastActive = new EagerStreamWrapper(s, true);
+		this.lastActive = new StreamWrapper(s, true);
 		this.originalFutures = originalFutures!=null ? originalFutures : this.lastActive.list();
 		this.errorHandler = Optional.of((e) -> log.error(e.getMessage(), e));
 		this.eager = true;

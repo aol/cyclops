@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.async.factories.QueueFactory;
-import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.async.subscription.AlwaysContinue;
 import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.capacity.monitor.LimitingMonitor;
@@ -25,7 +24,6 @@ import com.aol.simple.react.collectors.lazy.BatchingCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.EagerStreamWrapper;
-import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -40,14 +38,14 @@ public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 
 
 	private final Optional<Consumer<Throwable>> errorHandler;
-	private final StreamWrapper lastActive;
+	private final EagerStreamWrapper lastActive;
 	private final boolean eager;
-	private final Consumer<FastFuture> waitStrategy;
-	private final LazyResultConsumer<U> lazyCollector;
+	//private final Consumer<CompletableFuture> waitStrategy;
+	//private final LazyResultConsumer<U> lazyCollector;
 	private final QueueFactory<U> queueFactory;
 	private final EagerReact simpleReact;
 	private final Continueable subscription;
-	private final List<FastFuture> originalFutures;
+	private final List<CompletableFuture> originalFutures;
 	
 
 	/**
@@ -64,7 +62,7 @@ public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 	public EagerFutureStreamImpl(EagerReact eagerReact,final Stream<CompletableFuture<U>> stream) {
 		this(eagerReact, stream,null);
 	}
-	public EagerFutureStreamImpl(EagerReact eagerReact, final Stream<CompletableFuture<U>> stream,List<FastFuture> org) {
+	public EagerFutureStreamImpl(EagerReact eagerReact, final Stream<CompletableFuture<U>> stream,List<CompletableFuture> org) {
 		this.simpleReact =eagerReact;
 
 		Stream s = stream;
@@ -73,8 +71,8 @@ public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 		this.errorHandler = Optional.of((e) -> log.error(e.getMessage(), e));
 		this.eager = true;
 
-		this.waitStrategy = new LimitingMonitor();
-		this.lazyCollector = new BatchingCollector<>(this);
+	//	this.waitStrategy = new LimitingMonitor();
+	//	this.lazyCollector = new BatchingCollector<>(this);
 		this.queueFactory = QueueFactories.unboundedQueue();
 		subscription = new AlwaysContinue();
 		

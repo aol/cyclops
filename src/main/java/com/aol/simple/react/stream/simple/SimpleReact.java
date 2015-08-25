@@ -14,14 +14,14 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import lombok.Getter;
 import lombok.experimental.Builder;
+import lombok.Getter;
 import lombok.experimental.Wither;
 
 import com.aol.simple.react.RetryBuilder;
-import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.ThreadPools;
+import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -50,7 +50,7 @@ public class SimpleReact  extends BaseSimpleReact{
 	private final Boolean async;
 	
 	@Override
-	public <U> SimpleReactStream<U> construct(Stream s, List<FastFuture> originalFutures) {
+	public <U> SimpleReactStream<U> construct(Stream s, List<CompletableFuture> originalFutures) {
 		return  new SimpleReactStreamImpl<U>( this,s, originalFutures);
 	}
 	
@@ -144,7 +144,7 @@ public class SimpleReact  extends BaseSimpleReact{
 	public <U> SimpleReactStream<U> react(final Stream<Supplier<U>> actions) {
 
 		return new SimpleReactStreamImpl<U>(this,actions.map(
-				next -> FastFuture.fromCompletableFuture(CompletableFuture.supplyAsync(next, executor))),
+				next -> CompletableFuture.supplyAsync(next, executor)),
 				null);
 		
 	}
@@ -161,7 +161,7 @@ public class SimpleReact  extends BaseSimpleReact{
 	public <U> SimpleReactStream<U> react(final Iterator<Supplier<U>> actions) {
 
 		return new SimpleReactStreamImpl<U>(this,StreamSupport.stream(Spliterators.spliteratorUnknownSize(actions, Spliterator.ORDERED),false).map(
-				next -> FastFuture.fromCompletableFuture(CompletableFuture.supplyAsync(next, executor))),
+				next -> CompletableFuture.supplyAsync(next, executor)),
 				null);
 		
 	}
@@ -178,7 +178,7 @@ public class SimpleReact  extends BaseSimpleReact{
 	public <U> SimpleReactStream<U> reactIterable(final Iterable<Supplier<U>> actions) {
 
 		return new SimpleReactStreamImpl<U>(this,StreamSupport.stream(Spliterators.spliteratorUnknownSize(actions.iterator(), Spliterator.ORDERED),false).map(
-				next -> FastFuture.fromCompletableFuture(CompletableFuture.supplyAsync(next, executor))),
+				next -> CompletableFuture.supplyAsync(next, executor)),
 				null);
 		
 	}
@@ -207,7 +207,7 @@ public class SimpleReact  extends BaseSimpleReact{
 		
 		
 			return new SimpleReactStreamImpl<U>(this,Stream.of(actions).map(
-				next -> FastFuture.fromCompletableFuture(CompletableFuture.supplyAsync(next, executor))),
+				next -> CompletableFuture.supplyAsync(next, executor)),
 				null);
 		
 		
@@ -274,3 +274,5 @@ public class SimpleReact  extends BaseSimpleReact{
 		
 	
 }
+Status API Training Shop Blog About Pricing
+© 2015 GitHub, Inc. Terms Privacy Security Contact Help

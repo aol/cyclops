@@ -1,4 +1,4 @@
-package com.aol.simple.react.stream;
+package com.aol.simple.react.stream.lazy;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,6 +9,7 @@ import java.util.Spliterators;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -17,6 +18,7 @@ import java.util.stream.StreamSupport;
 
 import lombok.Getter;
 
+import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -33,7 +35,9 @@ public abstract class BaseSimpleReact {
 
 	
 	public abstract <U>  SimpleReactStream<U> construct(Stream s, 
-			List<CompletableFuture> org);
+			List<FastFuture> org);
+	public abstract <U>  SimpleReactStream<U> constructFutures(Stream<CompletableFuture<U>> s, 
+			List<FastFuture> org);
 
 	
 	protected BaseSimpleReact(){
@@ -105,8 +109,8 @@ public abstract class BaseSimpleReact {
 	 */
 	public <U> SimpleReactStream<U> from(final Stream<U> stream) {
 		
-		Stream s = stream.map(it -> CompletableFuture.completedFuture(it));
-		return construct( s,null);
+		//Stream s = stream.map(it -> FastFuture.completedFuture(it));
+		return construct( stream,null);
 	}
 	/**
 	 * Start a reactive dataflow from a stream.
@@ -148,10 +152,11 @@ public abstract class BaseSimpleReact {
 		return from(Stream.of(array));
 	}
 	public <U> SimpleReactStream<U> from(CompletableFuture<U> cf){
-		return this.construct(Stream.of(cf), Arrays.asList(cf));
+		return this.construct(Stream.of(FastFuture.fromCompletableFuture(cf)), Arrays.asList(FastFuture.fromCompletableFuture(cf)));
 	}
 	public <U> SimpleReactStream<U> from(CompletableFuture<U>... cf){
-		return this.construct(Stream.of(cf), Arrays.asList(cf));
+		return (SimpleReactStream)this.construct(Stream.of(cf).map(FastFuture::fromCompletableFuture), 
+						(List)Stream.of(cf).map(FastFuture::fromCompletableFuture).collect(Collectors.toList()));
 	}
 	
 	
@@ -245,7 +250,7 @@ public abstract class BaseSimpleReact {
 	protected <U> SimpleReactStream<U> reactI(final Supplier<U>... actions) {
 		
 		
-			return construct(Stream.of(actions).map(
+			return constructFutures(Stream.of(actions).map(
 				next -> CompletableFuture.supplyAsync(next, this.getExecutor())),null);
 		
 		
