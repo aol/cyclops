@@ -145,5 +145,11 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	
 	
   
-	
+	/**
+	 * Cancel the CompletableFutures in this stage of the stream
+	 */
+	public void cancel()	{
+		this.subscription.closeAll();
+		//also need to mark cancelled =true and check during collection
+	}
 }

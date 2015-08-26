@@ -55,7 +55,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  * @author johnmcclean
  *
  */
-public interface EagerFutureStream<U> extends EagerBaseFutureStream<U>, EagerToQueue<U> {
+public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	EagerStreamWrapper getLastActive();
 	/* 
 	 * Convert this stream into an async / sync stream

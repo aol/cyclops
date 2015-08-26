@@ -536,7 +536,7 @@ public interface SimpleReactStreamInterface<U>{
 	 *
 	 */
 	SimpleReactStreamInterface<U> async();
-	Queue toQueue();
+	Queue<U> toQueue();
 
 	
 	

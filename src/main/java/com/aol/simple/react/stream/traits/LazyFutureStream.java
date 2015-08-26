@@ -4,6 +4,7 @@ import static com.aol.simple.react.stream.traits.NullValue.NULL;
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -15,6 +16,7 @@ import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -36,6 +38,8 @@ import org.reactivestreams.Subscriber;
 
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Queue;
+import com.aol.simple.react.async.Queue.ClosedQueueException;
+import com.aol.simple.react.async.Queue.QueueTimeoutException;
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.async.factories.QueueFactory;
 import com.aol.simple.react.async.future.FastFuture;
@@ -64,7 +68,8 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  *
  */
 
-public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream<U>, LazyToQueue<U>, 
+public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, LazyToQueue<U>,
+										ConfigurableStream<U,FastFuture<U>>,
 										FutureStreamAsyncPublisher<U>,
 										FutureStreamSynchronousPublisher<U> {
 
@@ -156,9 +161,6 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 	LazyFutureStream<U> withAsync(boolean async);
 	
-	default void cancel()	{
-		LazyCopyLazyCopyFutureStream.super.cancel();
-	}
 	default void forEach(Consumer<? super U> c){
 		LazyStream.super.forEach(c);
 		
@@ -199,7 +201,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#sync()
 	 */
 	default LazyFutureStream<U> sync(){
-		return (LazyFutureStream<U>)LazyCopyLazyCopyFutureStream.super.sync();
+		return this.withAsync(false);
 	}
 	/* 
 	 * Execute subsequent stages by submission to an Executor for async execution
@@ -212,7 +214,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#async()
 	 */
 	default LazyFutureStream<U> async(){
-		return (LazyFutureStream<U>)LazyCopyLazyCopyFutureStream.super.async();
+		return this.withAsync(true);
 	}
 	
 	/**
@@ -256,7 +258,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 					new MaxActive(concurrentTasks, concurrentTasks)));
 	}
 	default <R> LazyFutureStream<R> thenSync(final Function<U, R> fn){
-		return (LazyFutureStream<R>)LazyCopyLazyCopyFutureStream.super.thenSync(fn);
+		return (LazyFutureStream<R>)LazySimpleReactStream.super.thenSync(fn);
 	}
 
 	default void closeAll(){
@@ -291,9 +293,22 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 		return new EagerReact(getTaskExecutor()).withRetrier(getRetrier()).fromStream((Stream)getLastActive().stream());
 	}
 	
-	
+	/* 
+	 * Apply a function to all items in the stream.
+	 * <pre>
+	 * {@code
+	 *  LazyFutureStream.sequentialBuilder().react(()->1,()->2,()->3)
+		 									 .map(it->it+100) //add 100
+		 									 .toList();
+	 * }
+	 * //results in [100,200,300]
+	 * </pre>
+	 *	@param mapper Function to be applied to all items in the Stream
+	 *	@return
+	 * @see com.aol.simple.react.stream.traits.FutureStream#map(java.util.function.Function)
+	 */
 	default <R> LazyFutureStream<R> map(Function<? super U, ? extends R> mapper) {
-		return (LazyFutureStream<R>)LazyCopyFutureStream.super.map(mapper);
+		return (LazyFutureStream<R>)FutureStream.super.then((Function)mapper);
 	}
 	/**
 	 * Zip this Stream with an index, but Zip based on the underlying tasks, not completed results.
@@ -321,12 +336,6 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	default LazyFutureStream<Tuple2<U,Long>> zipFuturesWithIndex() {
 
 		Seq seq = Seq.seq(getLastActive().stream().iterator()).zipWithIndex();
-	//	Seq<Tuple2<FastFuture<U>,Long>> withType = (Seq<Tuple2<FastFuture<U>,Long>>)seq;
-	//	Stream futureStream =  withType.map(t ->t.v1.thenApplyAsync(v -> Tuple.tuple(t.v1.join(),t.v2),
-	//			getTaskExecutor()));
-	//	FutureStream noType = fromStreamOfFutures(futureStream);
-		
-	//	return (LazyFutureStream<Tuple2<U,Long>>)noType;
 		return fromStream(seq);
 		
 	}
@@ -380,7 +389,11 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 * @return
 	 */
 	default <R> LazyFutureStream<Tuple2<U,R>> zipFutures(Stream<R> other) {
-		return (LazyFutureStream<Tuple2<U,R>>)LazyCopyLazyCopyFutureStream.super.zipFutures(other);
+		if(other instanceof FutureStream)
+			return zipFutures((FutureStream)other);
+		Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other));
+	
+		return fromStream(seq);
 
 	}
 	/**
@@ -393,7 +406,8 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 
 	default <R> LazyFutureStream<Tuple2<U,R>> zipFutures(FutureStream<R> other) {
-		return (LazyFutureStream<Tuple2<U,R>>)LazyCopyFutureStream.super.zipFutures(other);
+		Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other.getLastActive().stream()));
+		return fromStream(seq);
 
 	}
 	
@@ -403,8 +417,37 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 *         since last read attempt into a collection
 	 */
 	default LazyFutureStream<Collection<U>> chunkSinceLastRead() {
-		return (LazyFutureStream<Collection<U>>) LazyCopyFutureStream.super
-				.chunkSinceLastRead();
+		Queue.QueueReader reader = new Queue.QueueReader(this.withQueueFactory(
+				QueueFactories.unboundedQueue()).toQueue(
+				q -> q.withTimeout(100).withTimeUnit(TimeUnit.MICROSECONDS)),
+				null);
+		class Chunker implements Iterator<Collection<U>> {
+			volatile boolean open = true;
+
+			@Override
+			public boolean hasNext() {
+
+				return open == true && reader.isOpen();
+			}
+
+			@Override
+			public Collection<U> next() {
+
+				while (hasNext()) {
+					try {
+						return reader.drainToOrBlock();
+					} catch (ClosedQueueException e) {
+						open = false;
+						return new ArrayList<>();
+					} catch (QueueTimeoutException e) {
+						LockSupport.parkNanos(0l);
+					}
+				}
+				return new ArrayList<>();
+
+			}
+		}
+		return new Chunker();
 	}
 
 	/**
@@ -430,7 +473,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 	default <K> Map<K, LazyFutureStream<U>> shard(Map<K, Queue<U>> shards,
 			Function<U, K> sharder) {
-		Map map = LazyCopyFutureStream.super.shard(shards, sharder);
+		Map map = FutureStream.super.shard(shards, sharder);
 		return (Map<K, LazyFutureStream<U>>) map;
 	}
 
@@ -447,7 +490,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 *         windows
 	 */
 	default LazyFutureStream<U> debounce(long time, TimeUnit unit) {
-		return (LazyFutureStream<U>) LazyCopyLazyCopyFutureStream.super.debounce(time, unit);
+		return (LazyFutureStream<U>) FutureStream.super.debounce(time, unit);
 	}
 
 	/**
@@ -460,8 +503,8 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 * @return Next stage in the Stream but with all values skipped until the
 	 *         provided Stream starts emitting
 	 */
-	default <T> LazyFutureStream<U> skipUntil(LazyCopyFutureStream<T> s) {
-		return (LazyFutureStream<U>) LazyCopyFutureStream.super.skipUntil(s);
+	default <T> LazyFutureStream<U> skipUntil(FutureStream<T> s) {
+		return (LazyFutureStream<U>) FutureStream.super.skipUntil(s);
 	}
 
 	/**
@@ -475,8 +518,8 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 * @return Next stage in the Stream but will only emit values until provided
 	 *         Stream starts emitting values
 	 */
-	default <T> LazyFutureStream<U> takeUntil(LazyCopyFutureStream<T> s) {
-		return (LazyFutureStream<U>) LazyCopyFutureStream.super.takeUntil(s);
+	default <T> LazyFutureStream<U> takeUntil(FutureStream<T> s) {
+		return (LazyFutureStream<U>) FutureStream.super.takeUntil(s);
 	}
 
 	/**
@@ -492,7 +535,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 * @return Next stage in Stream
 	 */
 	default LazyFutureStream<U> control(Function<Supplier<U>, Supplier<U>> fn) {
-		return (LazyFutureStream<U>) LazyCopyFutureStream.super.control(fn);
+		return (LazyFutureStream<U>)FutureStream.super.control(fn);
 	}
 
 	/**
@@ -508,7 +551,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 	default <C extends Collection<U>> LazyFutureStream<C> batch(
 			Function<Supplier<U>, Supplier<C>> fn) {
-		return (LazyFutureStream<C>) LazyCopyFutureStream.super.batch(fn);
+		return (LazyFutureStream<C>) FutureStream.super.batch(fn);
 	}
 
 	/**
@@ -520,7 +563,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 * @return Stream of Lists
 	 */
 	default  LazyFutureStream<List<U>> batchBySize(int size) {
-		return (LazyFutureStream<List<U>>) LazyCopyFutureStream.super
+		return (LazyFutureStream<List<U>>) FutureStream.super
 				.batchBySize(size);
 
 	}
@@ -554,7 +597,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 * @see com.aol.simple.react.stream.traits.FutureStream#batchBySizeAndTime(int, long, java.util.concurrent.TimeUnit)
 	 */
 	default LazyFutureStream<List<U>> batchBySizeAndTime(int size,long time, TimeUnit unit) {
-		return (LazyFutureStream<List<U>>) LazyCopyFutureStream.super
+		return (LazyFutureStream<List<U>>) FutureStream.super
 				.batchBySizeAndTime(size,time,unit);
 
 	}
@@ -571,7 +614,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 	default <C extends Collection<U>> LazyFutureStream<C> batchBySize(int size,
 			Supplier<C> supplier) {
-		return (LazyFutureStream<C>) LazyCopyFutureStream.super
+		return (LazyFutureStream<C>) FutureStream.super
 				.batchBySize(size, supplier);
 
 	}
@@ -586,7 +629,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 * @return Next stage in Stream with jitter applied
 	 */
 	default LazyFutureStream<U> jitter(long jitterInNanos) {
-		return (LazyFutureStream<U>) LazyCopyFutureStream.super.jitter(jitterInNanos);
+		return (LazyFutureStream<U>) FutureStream.super.jitter(jitterInNanos);
 	}
 
 	/**
@@ -612,7 +655,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 * @return Next Stage of the Stream
 	 */
 	default LazyFutureStream<U> fixedDelay(long time, TimeUnit unit) {
-		return (LazyFutureStream<U>) LazyCopyFutureStream.super.fixedDelay(time, unit);
+		return (LazyFutureStream<U>) FutureStream.super.fixedDelay(time, unit);
 	}
 
 	/**
@@ -625,7 +668,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 * @return Stream with emissions slowed down by specified emission frequency
 	 */
 	default LazyFutureStream<U> onePer(long time, TimeUnit unit) {
-		return (LazyFutureStream<U>) LazyCopyFutureStream.super.onePer(time, unit);
+		return (LazyFutureStream<U>) FutureStream.super.onePer(time, unit);
 
 	}
 
@@ -642,7 +685,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 * @return Stream with emissions slowed down by specified emission frequency
 	 */
 	default FutureStream<U> xPer(int x, long time, TimeUnit unit) {
-		return (LazyFutureStream<U>) LazyCopyFutureStream.super.xPer(x, time, unit);
+		return (LazyFutureStream<U>) FutureStream.super.xPer(x, time, unit);
 	}
 
 	/**
@@ -665,7 +708,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 * @return Stream of Lists
 	 */
 	default LazyFutureStream<Collection<U>> batchByTime(long time, TimeUnit unit) {
-		return (LazyFutureStream<Collection<U>>) LazyCopyFutureStream.super
+		return (LazyFutureStream<Collection<U>>) FutureStream.super
 				.batchByTime(time, unit);
 	}
 
@@ -683,7 +726,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 	default LazyFutureStream<Collection<U>> batchByTime(long time,
 			TimeUnit unit, Supplier<Collection<U>> factory) {
-		return (LazyFutureStream<Collection<U>>) LazyCopyFutureStream.super
+		return (LazyFutureStream<Collection<U>>) FutureStream.super
 				.batchByTime(time, unit, factory);
 
 	}
@@ -700,8 +743,8 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 *            Stream to merge with
 	 * @return Stream of Tuples with the latest values from either stream
 	 */
-	default <T> LazyFutureStream<Tuple2<U, T>> combineLatest(LazyCopyFutureStream<T> s) {
-		return (LazyFutureStream<Tuple2<U, T>>) LazyCopyFutureStream.super
+	default <T> LazyFutureStream<Tuple2<U, T>> combineLatest(FutureStream<T> s) {
+		return (LazyFutureStream<Tuple2<U, T>>) FutureStream.super
 				.combineLatest(s);
 	}
 
@@ -717,8 +760,8 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 *            Stream to merge with
 	 * @return Stream of Tuples with the latest values from this stream
 	 */
-	default <T> LazyFutureStream<Tuple2<U, T>> withLatest(LazyCopyFutureStream<T> s) {
-		return (LazyFutureStream<Tuple2<U, T>>) LazyCopyFutureStream.super
+	default <T> LazyFutureStream<Tuple2<U, T>> withLatest(FutureStream<T> s) {
+		return (LazyFutureStream<Tuple2<U, T>>) FutureStream.super
 				.withLatest(s);
 	}
 
@@ -748,7 +791,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 	default <R> LazyFutureStream<R> then(final Function<U, R> fn,
 			Executor service) {
-		return (LazyFutureStream<R>) LazyCopyFutureStream.super.then(fn, service);
+		return (LazyFutureStream<R>) FutureStream.super.then(fn, service);
 	}
 
 	/**
@@ -768,7 +811,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 * .Function)
 	 */
 	default <R> LazyFutureStream<R> then(final Function<U, R> fn) {
-		return (LazyFutureStream) LazyCopyFutureStream.super.then(fn);
+		return (LazyFutureStream) FutureStream.super.then(fn);
 	}
 
 	/**
@@ -787,7 +830,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 * @return List with specified number of copies
 	 */
 	default List<LazyFutureStream<U>> copy(final int times){
-		return (List)LazyCopyFutureStream.super.copySimpleReactStream(times);
+		return (List)FutureStream.super.copySimpleReactStream(times);
 		
 	}
 	
@@ -819,7 +862,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	@Override
 	default LazyFutureStream<U> merge(SimpleReactStreamInterface<U>... streams) {
 		return (LazyFutureStream<U>) (Stream.of(streams).allMatch( stream -> stream instanceof LazyFutureStream) ?
-							switchOnNextValue(Seq.of(streams).cast(LazyFutureStream.class) ) : LazyCopyFutureStream.super.merge(streams));
+							switchOnNextValue(Seq.of(streams).cast(LazyFutureStream.class) ) : FutureStream.super.merge(streams));
 	}
 	/**
 	 * Merges this stream and the supplied Streams into a single Stream where the next value
@@ -886,7 +929,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	@Override
 	default LazyFutureStream<U> onFail(
 			final Function<? extends SimpleReactFailedStageException, U> fn) {
-		return (LazyFutureStream) LazyCopyFutureStream.super.onFail(fn);
+		return (LazyFutureStream) FutureStream.super.onFail(fn);
 	}
 
 	/*
@@ -906,7 +949,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	default LazyFutureStream<U> onFail(
 			Class<? extends Throwable> exceptionClass,
 			final Function<? extends SimpleReactFailedStageException, U> fn) {
-		return (LazyFutureStream) LazyCopyFutureStream.super.onFail(exceptionClass, fn);
+		return (LazyFutureStream) FutureStream.super.onFail(exceptionClass, fn);
 	}
 
 	/*
@@ -923,7 +966,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	@Override
 	default LazyFutureStream<U> capture(
 			final Consumer<? extends Throwable> errorHandler) {
-		return (LazyFutureStream) LazyCopyFutureStream.super.capture(errorHandler);
+		return (LazyFutureStream) FutureStream.super.capture(errorHandler);
 	}
 
 	/*
@@ -933,12 +976,12 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 	@Override
 	default <T, R> LazyFutureStream<R> allOf(final Function<List<T>, R> fn) {
-		return (LazyFutureStream) LazyCopyFutureStream.super.allOf(fn);
+		return (LazyFutureStream) FutureStream.super.allOf(fn);
 	}
 
 	default <R> LazyFutureStream<R> anyOf(Function<U, R> fn) {
 
-		return (LazyFutureStream) LazyCopyFutureStream.super.anyOf(fn);
+		return (LazyFutureStream) FutureStream.super.anyOf(fn);
 	}
 
 	/*
@@ -948,7 +991,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 	@Override
 	default LazyFutureStream<U> peek(final Consumer<? super U> consumer) {
-		return (LazyFutureStream) LazyCopyFutureStream.super.peek(consumer);
+		return (LazyFutureStream) FutureStream.super.peek(consumer);
 	}
 
 	/*
@@ -957,7 +1000,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 * .Predicate)
 	 */
 	default LazyFutureStream<U> filter(final Predicate<? super U> p) {
-		return (LazyFutureStream) LazyCopyFutureStream.super.filter(p);
+		return (LazyFutureStream) FutureStream.super.filter(p);
 	}
 
 	/*
@@ -971,7 +1014,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	default <R> LazyFutureStream<R> flatMap(
 			Function<? super U, ? extends Stream<? extends R>> flatFn) {
 
-		return (LazyFutureStream) LazyCopyFutureStream.super.flatMap(flatFn);
+		return (LazyFutureStream) FutureStream.super.flatMap(flatFn);
 	}
 
 	/**
@@ -995,7 +1038,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 	default <R> LazyFutureStream<R> flatMapCompletableFuture(
 			Function<U, CompletableFuture<R>> flatFn) {
-		return (LazyFutureStream) LazyCopyFutureStream.super.flatMapCompletableFuture(flatFn);
+		return (LazyFutureStream) FutureStream.super.flatMapCompletableFuture(flatFn);
 	}
 	/**
 	 * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
@@ -1018,7 +1061,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	default <R> LazyFutureStream<R> flatMapCompletableFutureSync(
 			Function<U, CompletableFuture<R>> flatFn) {
 		
-		return (LazyFutureStream) LazyCopyFutureStream.super.flatMapCompletableFutureSync(flatFn);
+		return (LazyFutureStream) FutureStream.super.flatMapCompletableFutureSync(flatFn);
 	}
 
 	/*
@@ -1031,7 +1074,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	@Override
 	default <R> LazyFutureStream<R> retry(Function<U, R> fn) {
 
-		return (LazyFutureStream) LazyCopyFutureStream.super.retry(fn);
+		return (LazyFutureStream) FutureStream.super.retry(fn);
 	}
 
 	/*
@@ -1045,7 +1088,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	default <T, R> LazyFutureStream<R> allOf(Collector collector,
 			Function<T, R> fn) {
 
-		return (LazyFutureStream) LazyCopyFutureStream.super.allOf(collector, fn);
+		return (LazyFutureStream) FutureStream.super.allOf(collector, fn);
 	}
 */
 	/*
@@ -1146,7 +1189,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 	@Override
 	default <U> LazyFutureStream<U> cast(Class<U> type) {
-		return (LazyFutureStream<U>) LazyCopyFutureStream.super.cast(type);
+		return (LazyFutureStream<U>) FutureStream.super.cast(type);
 	}
 
 	/**
@@ -1166,7 +1209,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 	@Override
 	default <U> LazyFutureStream<U> ofType(Class<U> type) {
-		return (LazyFutureStream<U>) LazyCopyFutureStream.super.ofType(type);
+		return (LazyFutureStream<U>) FutureStream.super.ofType(type);
 	}
 
 	/**
@@ -1185,7 +1228,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 	@Override
 	default LazyFutureStream<U> intersperse(U value) {
-		return (LazyFutureStream<U>) LazyCopyFutureStream.super.intersperse(value);
+		return (LazyFutureStream<U>) FutureStream.super.intersperse(value);
 	}
 
 	/*
@@ -1266,7 +1309,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 	@Override
 	default LazyFutureStream<List<U>> sliding(int size){
-		return (LazyFutureStream)LazyCopyFutureStream.super.sliding(size);
+		return (LazyFutureStream)FutureStream.super.sliding(size);
 	}
 	/**
 	 * Create a sliding view over this Stream
@@ -1289,7 +1332,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 	@Override
 	default LazyFutureStream<List<U>> sliding(int size, int increment){
-		return (LazyFutureStream)LazyCopyFutureStream.super.sliding(size,increment);
+		return (LazyFutureStream)FutureStream.super.sliding(size,increment);
 	}
 	/**
 	 * Duplicate a LazyFutureStream into two equivalent Streams. 
@@ -1355,7 +1398,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 	@Override
 	default Tuple2<Seq<U>, Seq<U>> partition(Predicate<? super U> predicate) {
-		Tuple2<Seq<U>, Seq<U>> partitioned = LazyCopyFutureStream.super
+		Tuple2<Seq<U>, Seq<U>> partitioned = FutureStream.super
 				.partition(predicate);
 		return new Tuple2(partitioned.v1, partitioned.v2);
 	}
@@ -1384,7 +1427,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	@Override
 	default LazyFutureStream<U> slice(long from, long to) {
 
-		return fromStream(LazyCopyFutureStream.super.slice(from, to));
+		return fromStream(FutureStream.super.slice(from, to));
 	}
 
 	/**
@@ -1403,7 +1446,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 *      
 	 */
 	default LazyFutureStream<Tuple2<U, Long>> zipWithIndex() {
-		return (LazyFutureStream)fromStream(LazyCopyFutureStream.super.zipWithIndex());
+		return (LazyFutureStream)fromStream(FutureStream.super.zipWithIndex());
 	}
 
 	/**
@@ -1449,7 +1492,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	@Override
 	default <T> LazyFutureStream<T> scanLeft(T seed,
 			BiFunction<T, ? super U, T> function) {
-		return fromStream(LazyCopyFutureStream.super.scanLeft(seed, function));
+		return fromStream(FutureStream.super.scanLeft(seed, function));
 	}
 
 	/**
@@ -1463,7 +1506,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	@Override
 	default <R> LazyFutureStream<R> scanRight(R seed,
 			BiFunction<? super U, R, R> function) {
-		return (LazyFutureStream)LazyCopyFutureStream.super.scanRight(seed, function);
+		return (LazyFutureStream)FutureStream.super.scanRight(seed, function);
 	}
 
 	/**
@@ -1475,7 +1518,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 	@Override
 	default LazyFutureStream<U> reverse() {
-		return (LazyFutureStream)LazyCopyFutureStream.super.reverse();
+		return (LazyFutureStream)FutureStream.super.reverse();
 	}
 
 	/**
@@ -1487,7 +1530,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 	@Override
 	default LazyFutureStream<U> shuffle() {
-		return fromStream(LazyCopyFutureStream.super.shuffle());
+		return fromStream(FutureStream.super.shuffle());
 	}
 
 	/**
@@ -1499,7 +1542,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 	@Override
 	default LazyFutureStream<U> shuffle(Random random) {
-		return fromStream(LazyCopyFutureStream.super.shuffle(random));
+		return fromStream(FutureStream.super.shuffle(random));
 	}
 
 	/**
@@ -1515,7 +1558,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 	@Override
 	default LazyFutureStream<U> skipWhile(Predicate<? super U> predicate) {
-		return fromStream(LazyCopyFutureStream.super.skipWhile(predicate));
+		return fromStream(FutureStream.super.skipWhile(predicate));
 	}
 
 	/**
@@ -1530,7 +1573,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 	@Override
 	default LazyFutureStream<U> skipUntil(Predicate<? super U> predicate) {
-		return fromStream(LazyCopyFutureStream.super.skipUntil(predicate));
+		return fromStream(FutureStream.super.skipUntil(predicate));
 	}
 
 	/**
@@ -1572,7 +1615,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
      * }</pre>
      */
 	default <T> LazyFutureStream<Tuple2<U, T>> crossJoin(Stream<T> other) {
-	     return (LazyFutureStream)LazyCopyFutureStream.super.crossJoin(other);
+	     return (LazyFutureStream)FutureStream.super.crossJoin(other);
 	}
 	
 	/**
@@ -1581,21 +1624,21 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
      */
 	default LazyFutureStream<U> onEmpty(U value){
 		
-		return (LazyFutureStream)LazyCopyFutureStream.super.onEmpty(value);
+		return (LazyFutureStream)FutureStream.super.onEmpty(value);
 	}
 	/**
      * Produce this stream, or an alternative stream from the
      * {@code supplier}, in case this stream is empty.
      */
 	default LazyFutureStream<U> onEmptyGet(Supplier<U> supplier){
-		return (LazyFutureStream)LazyCopyFutureStream.super.onEmptyGet(supplier);
+		return (LazyFutureStream)FutureStream.super.onEmptyGet(supplier);
 	}
 	/**
      * Produce this stream, or an alternative stream from the
      * {@code supplier}, in case this stream is empty.
      */
 	default <X extends Throwable> LazyFutureStream<U> onEmptyThrow(Supplier<X> supplier) {
-			return (LazyFutureStream)LazyCopyFutureStream.super.onEmptyThrow(supplier);
+			return (LazyFutureStream)FutureStream.super.onEmptyThrow(supplier);
 	}
     /**
      * Inner join 2 streams into one.
@@ -1607,7 +1650,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
      * }</pre>
      */
     default <T> LazyFutureStream<Tuple2<U, T>> innerJoin(Stream<T> other, BiPredicate<U, T> predicate) {
-    	return (LazyFutureStream)LazyCopyFutureStream.super.innerJoin(other,predicate);
+    	return (LazyFutureStream)FutureStream.super.innerJoin(other,predicate);
        
     }
 
@@ -1622,7 +1665,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
      */
     default <T> LazyFutureStream<Tuple2<U, T>> leftOuterJoin(Stream<T> other, BiPredicate<U, T> predicate) {
 
-    	return (LazyFutureStream)LazyCopyFutureStream.super.leftOuterJoin(other,predicate);
+    	return (LazyFutureStream)FutureStream.super.leftOuterJoin(other,predicate);
     }
 
     /**
@@ -1635,7 +1678,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
      * }</pre>
      */
     default <T> LazyFutureStream<Tuple2<U, T>> rightOuterJoin(Stream<T> other, BiPredicate<U, T> predicate) {
-        return  (LazyFutureStream)LazyCopyFutureStream.super.rightOuterJoin(other,predicate);
+        return  (LazyFutureStream)FutureStream.super.rightOuterJoin(other,predicate);
     }
     /**
 	 * Create a Stream that infinitely cycles this Stream
@@ -1839,7 +1882,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */ 
 	@Override
 	default Stream<U> stream() {
-		return LazyCopyFutureStream.super.stream();
+		return FutureStream.super.stream();
 	}
 
 	/* 
@@ -1877,7 +1920,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	@Override
 	default LazyFutureStream<U> onClose(Runnable closeHandler) {
 
-		return (LazyFutureStream)LazyCopyFutureStream.super.onClose(closeHandler);
+		return (LazyFutureStream)FutureStream.super.onClose(closeHandler);
 	}
 
 	/*
@@ -1887,7 +1930,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 	@Override
 	default LazyFutureStream<U> sorted() {
-		return (LazyFutureStream<U>)fromStream(LazyCopyFutureStream.super.sorted());
+		return (LazyFutureStream<U>)fromStream(FutureStream.super.sorted());
 	}
 
 	/*
@@ -1897,7 +1940,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 */
 	@Override
 	default LazyFutureStream<U> sorted(Comparator<? super U> comparator) {
-		return (LazyFutureStream<U>)fromStream(LazyCopyFutureStream.super.sorted(comparator));
+		return (LazyFutureStream<U>)fromStream(FutureStream.super.sorted(comparator));
 	}
 
 	/**
@@ -1908,7 +1951,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,LazyCopyFutureStream
 	 * @return Self (current stage)
 	 */
 	default LazyFutureStream<U> self(Consumer<FutureStream<U>> consumer) {
-		return (com.aol.simple.react.stream.traits.LazyFutureStream<U>)LazyCopyFutureStream.super.self(consumer);
+		return (com.aol.simple.react.stream.traits.LazyFutureStream<U>)FutureStream.super.self(consumer);
 	}
 
 	LazyFutureStream<U> withParallelReduction(

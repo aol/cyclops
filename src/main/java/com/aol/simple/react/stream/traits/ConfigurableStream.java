@@ -14,8 +14,6 @@ public interface ConfigurableStream<T,C> {
 
 	ConfigurableStream<T,C> withTaskExecutor(Executor e);
 	ConfigurableStream<T,C> withRetrier(RetryExecutor retry);
-	//ConfigurableStream<T,C> withWaitStrategy(Consumer<C> c);
-	//ConfigurableStream<T,C> withLazyCollector(LazyResultConsumer<T> lazy);
 	ConfigurableStream<T,C> withQueueFactory(QueueFactory<T> queue);
 	
 	ConfigurableStream<T,C>  withErrorHandler(Optional<Consumer<Throwable>> errorHandler);
