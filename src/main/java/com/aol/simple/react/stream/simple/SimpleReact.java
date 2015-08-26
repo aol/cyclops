@@ -51,8 +51,8 @@ public class SimpleReact  extends BaseSimpleReact{
 	private final Boolean async;
 	
 	@Override
-	public <U> SimpleReactStream<U> construct(Stream s, List<CompletableFuture> originalFutures) {
-		return  new SimpleReactStreamImpl<U>( this,s, originalFutures);
+	public <U> SimpleReactStream<U> construct(Stream s) {
+		return  new SimpleReactStreamImpl<U>( this,s);
 	}
 	
 	
@@ -145,8 +145,7 @@ public class SimpleReact  extends BaseSimpleReact{
 	public <U> SimpleReactStream<U> react(final Stream<Supplier<U>> actions) {
 
 		return new SimpleReactStreamImpl<U>(this,actions.map(
-				next -> CompletableFuture.supplyAsync(next, executor)),
-				null);
+				next -> CompletableFuture.supplyAsync(next, executor)));
 		
 	}
 	/**
@@ -162,8 +161,7 @@ public class SimpleReact  extends BaseSimpleReact{
 	public <U> SimpleReactStream<U> react(final Iterator<Supplier<U>> actions) {
 
 		return new SimpleReactStreamImpl<U>(this,StreamSupport.stream(Spliterators.spliteratorUnknownSize(actions, Spliterator.ORDERED),false).map(
-				next -> CompletableFuture.supplyAsync(next, executor)),
-				null);
+				next -> CompletableFuture.supplyAsync(next, executor)));
 		
 	}
 	/**
@@ -179,8 +177,7 @@ public class SimpleReact  extends BaseSimpleReact{
 	public <U> SimpleReactStream<U> reactIterable(final Iterable<Supplier<U>> actions) {
 
 		return new SimpleReactStreamImpl<U>(this,StreamSupport.stream(Spliterators.spliteratorUnknownSize(actions.iterator(), Spliterator.ORDERED),false).map(
-				next -> CompletableFuture.supplyAsync(next, executor)),
-				null);
+				next -> CompletableFuture.supplyAsync(next, executor)));
 		
 	}
 	/**
@@ -208,8 +205,7 @@ public class SimpleReact  extends BaseSimpleReact{
 		
 		
 			return new SimpleReactStreamImpl<U>(this,Stream.of(actions).map(
-				next -> CompletableFuture.supplyAsync(next, executor)),
-				null);
+				next -> CompletableFuture.supplyAsync(next, executor)));
 		
 		
 	}

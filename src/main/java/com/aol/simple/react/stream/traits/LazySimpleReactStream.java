@@ -1,30 +1,17 @@
 package com.aol.simple.react.stream.traits;
 
-import static java.util.Spliterator.ORDERED;
-import static java.util.Spliterators.spliteratorUnknownSize;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
-import org.jooq.lambda.Seq;
-
-import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.factories.QueueFactory;
 import com.aol.simple.react.async.future.FastFuture;
@@ -32,21 +19,13 @@ import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
-import com.aol.simple.react.stream.EagerStreamWrapper;
 import com.aol.simple.react.stream.LazyStreamWrapper;
-import com.aol.simple.react.stream.StageWithResults;
-import com.aol.simple.react.stream.ThreadPools;
-import com.aol.simple.react.stream.eager.EagerReact;
-import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.simple.SimpleReactStreamImpl;
-import com.aol.simple.react.stream.traits.operators.StreamCopier;
-import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.nurkiewicz.asyncretry.policy.AbortRetryException;
 
 
 public interface LazySimpleReactStream<U> extends  
-				BlockingStream<U,FastFuture<U>>, 
+				BlockingStream<U>, 
 				ConfigurableStream<U,FastFuture<U>>, 
 				ToQueue<U>,
 				SimpleReactStream<U>{
@@ -55,7 +34,6 @@ public interface LazySimpleReactStream<U> extends
 	
 	LazySimpleReactStream<U> withTaskExecutor(Executor e);
 	LazySimpleReactStream<U> withRetrier(RetryExecutor retry);
-//	LazySimpleReactStream<U> withWaitStrategy(Consumer<FastFuture<U>> c);
 	LazySimpleReactStream<U> withLazyCollector(LazyResultConsumer<U> lazy);
 	LazySimpleReactStream<U> withQueueFactory(QueueFactory<U> queue);
 	
@@ -67,6 +45,8 @@ public interface LazySimpleReactStream<U> extends
 	
 	LazySimpleReactStream<U> withLastActive(LazyStreamWrapper streamWrapper);
 	abstract LazyStreamWrapper<U> getLastActive();
+	
+	
 	
 	/* 
 	 * React to new events with the supplied function on the supplied Executor
@@ -100,65 +80,7 @@ public interface LazySimpleReactStream<U> extends
 	}
 	
 	
-	/**
-	 * @param collector
-	 *            to perform aggregation / reduction operation on the results
-	 *            from active stage (e.g. to Collect into a List or String)
-	 * @param fn
-	 *            Function that receives the results of all currently active
-	 *            tasks as input
-	 * @return A new builder object that can be used to define the next stage in
-	 *         the dataflow
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	default <T, R> LazySimpleReactStream<R> allOf(final Collector collector,
-			final Function<T, R> fn) {
-		FastFuture[] array = lastActiveArray(getLastActive());
-		FastFuture cf = FastFuture.allOf(array);
-		Function<Exception, T> f = (Exception e) -> {
-			BlockingStreamHelper.capture(e,getErrorHandler());
-			return BlockingStreamHelper.block(this,Collectors.toList(),
-					new EagerStreamWrapper(Stream.of(array), true));
-		};
-		FastFuture onFail = cf.exceptionally(f);
-		FastFuture onSuccess = onFail.thenApplyAsync((result) -> {
-			return new StageWithResults(this.getTaskExecutor(),null, result).submit(() -> (R)fn
-					.apply(BlockingStreamHelper.aggregateResults(collector, Stream.of(array)
-							.collect(Collectors.toList()),getErrorHandler())));
-		}, getTaskExecutor());
-		return (LazySimpleReactStream<R>) withLastActive(new EagerStreamWrapper(onSuccess,
-				isEager()));
-
-	} */
-	/**
-	 * React to the completion of any of the events in the previous stage. Will not work reliably with Streams
-	 * where filter has been applied in earlier stages. (As Filter completes the Stream for events that are filtered out, they
-	 * potentially shortcircuit the completion of the stage).
-	 * 
-	 * @param fn Function to apply when any of the previous events complete
-	 * @return Next stage in the stream
-	
-	default <R> LazySimpleReactStream<R> anyOf(
-			final Function<U, R> fn) {
-		FastFuture[] array = lastActiveArray(getLastActive());
-		FastFuture cf = FastFuture.anyOf(array);
-		FastFuture onSuccess = cf.thenApplyAsync(fn,getTaskExecutor());
-		
-		return (LazySimpleReactStream<R>) withLastActive(new LazyStreamWrapper(onSuccess,
-				isEager()));
-
-	}
-	
-
-	
-
-	@SuppressWarnings("rawtypes")
-	static FastFuture[] lastActiveArray(LazyStreamWrapper lastActive) {
-		List<FastFuture> list = lastActive.stream()
-					.collect(Collectors.toList());
-			return		list.toArray(new FastFuture[0]);
-	}
-	 */
 	/**
 	 * Will execute this phase on the RetryExecutor (default or user supplied).
 	 * The RetryExecutor can be changed via withRetrier.
@@ -192,31 +114,7 @@ public interface LazySimpleReactStream<U> extends
 	}
 	
 
-	/**
-	 * Construct a SimpleReactStream from provided Stream of CompletableFutures
-	 * 
-	 * @param stream JDK Stream to construct new SimpleReactStream from
-	 * @return SimpleReactStream
 	
-	default <R> LazySimpleReactStream<R> fromStreamOfFutures(
-			Stream<FastFuture<R>> stream) {
-		Stream noType = stream;
-		return (LazySimpleReactStream<R>) this.withLastActive(getLastActive()
-				.withNewStream(noType,this.getSimpleReact()));
-	}
-	default <R> LazySimpleReactStream<R> fromStreamCompletableFutureReplace(
-			Stream<CompletableFuture<R>> stream) {
-		Stream noType = stream;
-		return (LazySimpleReactStream<R>) this.withLastActive(getLastActive()
-				.withStream(noType));
-	}
-
-	default <R> LazySimpleReactStream<R> fromListCompletableFuture(
-			List<CompletableFuture<R>> list) {
-		List noType = list;
-		return (LazySimpleReactStream<R>) this.withLastActive(getLastActive()
-				.withList(noType));
-	} */
 	
 	/**
 	 * React <b>then</b>
@@ -265,15 +163,7 @@ public interface LazySimpleReactStream<U> extends
 		return (LazySimpleReactStream<R>) this.withLastActive(getLastActive().operation(streamMapper));
 	}
 	
-	/**
-	default List<LazySimpleReactStream<U>> copySimpleReactStream(final int times){
-		Stream.of(1,2,3,4).forEach(System.out::println);
-		return (List)StreamCopier.toBufferingCopier(getLastActive().stream().iterator(), times)
-				.stream()
-				.map(it->StreamSupport.stream(Spliterators.spliteratorUnknownSize((Iterator)it, Spliterator.ORDERED), false))
-				.<LazySimpleReactStream<U>>map(fs-> this.getSimpleReact().construct((Stream)fs, this.getOriginalFutures()))
-				.collect(Collectors.toList());
-	}**/
+	
 	/**
 	 * 
 	 * Applies a function to this phase independent on the main flow.
@@ -414,49 +304,14 @@ public interface LazySimpleReactStream<U> extends
 			Function<? super U, ? extends Stream<? extends R>> flatFn) {
 
 		//need to pass in a builder in the constructor and build using it
-		return (LazySimpleReactStream)getSimpleReact().construct( Stream.of(), getOriginalFutures()).withSubscription(getSubscription()).withQueueFactory((QueueFactory<Object>) getQueueFactory())	
+		return (LazySimpleReactStream)getSimpleReact().construct( Stream.of()).withSubscription(getSubscription()).withQueueFactory((QueueFactory<Object>) getQueueFactory())	
 				.fromStream(
 						toQueue()
 								.stream(getSubscription())
 								.flatMap(flatFn));
 	}
 	
-	
-	/**
-	 * 
-	 * flatMap / bind implementation that returns the correct type (SimpleReactStream)
-	 * 
-	 * @param stream Stream to flatMap
-	 * @param flatFn flatMap function
-	 * @return
-	 */
-	static <U,R> LazySimpleReactStream<R> bind(LazySimpleReactStream<U> stream,
-			Function< U, LazySimpleReactStream<R>> flatFn) {
-
-		return join(stream.then(flatFn));
 		
-	}
-	
-	/**
-	 * flatten nested SimpleReactStreams
-	 * 
-	 * @param stream Stream to flatten
-	 * @return flattened Stream
-	 */
-	static <U,R> LazySimpleReactStream<R> join(LazySimpleReactStream<LazySimpleReactStream<U>> stream){
-		Queue queue =  stream.getQueueFactory().build();
-		stream.then(it -> it.sync().then(queue::offer)).allOf(it ->queue.close());
-		 return stream.fromStream(queue.stream(stream.getSubscription()));
-	
-	}
-	
-	
-
-	List getOriginalFutures();
-
-	
-	
-	
 	
 	/**
 	 * Removes elements that do not match the supplied predicate from the
@@ -517,57 +372,8 @@ public interface LazySimpleReactStream<U> extends
 
 	}
 	
-	/*
-	  * Merge two simple-react Streams, by merging the Stream of underlying
-	 * futures - not suitable for merging infinite Streams - use   
-	 * see LazyFutureStream#switchOnNext for infinite Streams
-	 * 
-	 * <pre>
-	 * {@code 
-	 * List<String> result = 	SimpleReactStream.of(1,2,3)
-	 * 											 .merge(LazyFutureStream.of(100,200,300))
-												  .map(it ->it+"!!")
-												  .toList();
-
-		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
-	 * 
-	 * }
-	 * </pre>
-	 * 
-	 * @param s Stream to merge
-	 * 
-	 * @return Next stage in stream
-	 * 
-	 * @see
-	 * com.aol.simple.react.stream.traits.FutureStream#merge(com.aol.simple.
-	 * react.stream.traits.SimpleReactStream)
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	default LazySimpleReactStream<U> merge(LazySimpleReactStream<U>... s) {
-		List merged = Stream.concat(Stream.of(this),Stream.of(s)).map(stream -> stream.getLastActive().list())
-				.flatMap(Collection::stream).collect(Collectors.toList());
-		return (LazySimpleReactStream<U>) this.withLastActive(new EagerStreamWrapper(merged));
-	} */
 	
-	 
-	/**
-	 * Merge this reactive dataflow with another - recommended for merging
-	 * different types. To merge flows of the same type the instance method
-	 * merge is more appropriate.
-	 * 
-	 * @param s1
-	 *            Reactive stage builder to merge
-	 * @param s2
-	 *            Reactive stage builder to merge
-	 * @return Merged dataflow
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <R> LazySimpleReactStream<R> merge(LazySimpleReactStream s1, LazySimpleReactStream s2) {
-		List merged = Stream.of(s1.getLastActive().list(), s2.getLastActive().list())
-				.flatMap(Collection::stream).collect(Collectors.toList());
-		return (LazySimpleReactStream<R>) s1.withLastActive(new EagerStreamWrapper(merged));
-	}
-	 */
 	/**
 	 * React <b>onFail</b>
 	 * 
@@ -722,53 +528,7 @@ public interface LazySimpleReactStream<U> extends
 	
 	
 
-	/**
-	 * React and <b>allOf</b>
-	 * 
-	 * allOf is a non-blocking equivalent of block. The current thread is not
-	 * impacted by the calculations, but the reactive chain does not continue
-	 * until all currently alloted tasks complete. The allOf task is then
-	 * provided with a list of the results from the previous tasks in the chain.
-	 * 
-	 * <pre>
-	  {@code
-	  boolean blocked[] = {false};
-		new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-				
-				.then(it -> {
-					try {
-						Thread.sleep(50000);
-					} catch (Exception e) {
-						
-					}
-					blocked[0] =true;
-					return 10;
-				})
-				.allOf( it -> it.size());
 
-		
-		assertThat(blocked[0],is(false));
-	  
-	  }
-		</pre>
-	 * 
-	 * In this example, the current thread will continue and assert that it is
-	 * not blocked, allOf could continue and be executed in a separate thread.
-	 * 
-	 * @param fn
-	 *            Function that recieves the results of all currently active
-	 *            tasks as input
-	 * @return A new builder object that can be used to define the next stage in
-	 *         the dataflow
-	 */
-	@SuppressWarnings("unchecked")
-	default <T, R> LazySimpleReactStream<R> allOf(final Function<List<T>, R> fn) {
-
-		return (LazySimpleReactStream<R>) allOf(Collectors.toList(), (Function<R, U>) fn);
-
-	}
-
-	
 
 
 	

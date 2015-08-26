@@ -64,14 +64,7 @@ public class LazySeqTest extends BaseSeqTest {
 		assertThat(react(()->1,()->2).mergeLatest( react(()->'a',()->'b'),
 						react(()->100,()->200)).toList().size(),equalTo(6));
 	}
-	@Test
-	public void skipUntil(){
-		System.out.println(react(()->1,()->2,()->3,()->4,()->value2())
-				.skipUntil(react(()->value())).collect(Collectors.toList()));
-		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).noneMatch(it-> it==1));
-		assertThat(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).count(),is(3l));
-	}
-
+	
 	@Test
 	public void batchByTime2(){
 		for(int i=0;i<5;i++){

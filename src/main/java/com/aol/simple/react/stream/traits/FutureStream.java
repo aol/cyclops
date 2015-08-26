@@ -44,6 +44,7 @@ import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.async.factories.QueueFactory;
 import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
+import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.traits.future.operators.ToLazyCollection;
@@ -66,6 +67,32 @@ public interface FutureStream<U> extends Seq<U>, SimpleReactStream<U>, ToQueue<U
 		return (fs1,fs2) -> fs1.flatMap( v1-> (FutureStream)fs2.map(v2->fn.apply(v1,v2)));
 	}
 	
+	default CloseableIterator<U> iterator() {
+		return SimpleReactStream.super.iterator();
+	}
+	/* 
+	 * Execute subsequent stages on the completing thread (until async called)
+	 * 10X faster than async execution.
+	 * Use async for blocking IO or distributing work across threads or cores.
+	 * Switch to sync for non-blocking tasks when desired thread utlisation reached
+	 * 
+	 *	@return Version of FutureStream that will use sync CompletableFuture methods
+	 * 
+	 */
+	 FutureStream<U> sync();
+	/* 
+	 * Execute subsequent stages by submission to an Executor for async execution
+	 * 10X slower than sync execution.
+	 * Use async for blocking IO or distributing work across threads or cores.
+	 * Switch to sync for non-blocking tasks when desired thread utlisation reached
+	 *
+	 * 
+	 *	@return Version of FutureStream that will use async CompletableFuture methods
+	 *
+	 */
+	FutureStream<U> async();
+	
+	public boolean isAsync();
 	/**
 	 * 
 	 * <pre>
@@ -473,6 +500,8 @@ public interface FutureStream<U> extends Seq<U>, SimpleReactStream<U>, ToQueue<U
 		};
 		return fromStream(queue.streamControl(getSubscription(), fn));
 	}
+	
+	
 	/**
 	 * Allows clients to control the emission of data for the next phase of the Stream.
 	 * The user specified function can delay, drop, or change elements
@@ -612,49 +641,9 @@ public interface FutureStream<U> extends Seq<U>, SimpleReactStream<U>, ToQueue<U
 		return fromStream(queue.streamBatch(getSubscription(), fn)).filter(c->!((Collection)c).isEmpty());
 	}
 
-	/**
-	 * 
-	 * Similar to zip and combineLatest, except will always take the latest from this Stream while taking the last available value from the provided stream.
-	 * By contrast zip takes new / latest values from both Streams and combineLatest takes the latest from either Stream (merged with last available from the other).
-	 * 
-	 * @param s Stream to merge with
-	 * @return Stream of Tuples with the latest values from this stream
-	 */
-	default <T> FutureStream<Tuple2<U, T>> withLatest(FutureStream<T> s) {
-		return fromStream(FutureStreamFunctions.withLatest(this, s));
-	}
-	/**
-	 * Similar to zip and withLatest, except will always take the latest from either Stream (merged with last available from the other).
-	 * By contrast zip takes new / latest values from both Streams and withLatest will always take the latest from this Stream while 
-	 * taking the last available value from the provided stream.
-	 * 
-	 * @param s Stream to merge with
-	 * @return  Stream of Tuples with the latest values from either stream
-	 */
-	default <T> FutureStream<Tuple2<U, T>> combineLatest(FutureStream<T> s) {
-		return fromStream(FutureStreamFunctions.combineLatest(this, s));
-	}
-	/**
-	 * Return a Stream with the same values as this Stream, but with all values omitted until the provided stream starts emitting values.
-	 * Provided Stream ends the stream of values from this stream.
-	 * 
-	 * @param s Stream that will start the emission of values from this stream
-	 * @return Next stage in the Stream but with all values skipped until the provided Stream starts emitting
-	 */
-	default<T>  FutureStream<U> skipUntil(FutureStream<T> s) {
-		return fromStream(FutureStreamFunctions.skipUntil(this, s));
-	}
-	/**
-	 * Return a Stream with the same values, but will stop emitting values once the provided Stream starts to emit values.
-	 * e.g. if the provided Stream is asynchronously refreshing state from some remote store, this stream can proceed until
-	 * the provided Stream succeeds in retrieving data.
-	 * 
-	 * @param s Stream that will stop the emission of values from this stream
-	 * @return Next stage in the Stream but will only emit values until provided Stream starts emitting values
-	 */
-	default<T>  FutureStream<U> takeUntil(FutureStream<T> s) {
-		return fromStream(FutureStreamFunctions.takeUntil(this, s));
-	}
+
+	
+	FutureStream<U> onFail(final Function<SimpleReactFailedStageException, U> fn);
 
 	<R> FutureStream<R> fromStream(Stream<R> stream);
 	 <R> FutureStream<R> flatMap(
@@ -663,7 +652,7 @@ public interface FutureStream<U> extends Seq<U>, SimpleReactStream<U>, ToQueue<U
 	 FutureStream<U> filter(final Predicate<? super U> p) ;
 	 FutureStream<U> peek(final Consumer<? super U> consumer);
 
-
+	 FutureStream<U> capture(final Consumer<? extends Throwable> errorHandler);
 	/**
 	 * Stream supporting methods
 	 */
@@ -925,22 +914,7 @@ public interface FutureStream<U> extends Seq<U>, SimpleReactStream<U>, ToQueue<U
 				accumulator, combiner);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.stream.BaseStream#iterator()
-	 */
-	@Override
-	default CloseableIterator<U> iterator() {
-
-		Queue<U> q = toQueue();
-		if (getSubscription().closed())
-			return new CloseableIterator<>(Arrays.<U> asList().iterator(),
-					getSubscription(),null);
-		
-		return new CloseableIterator<>(q.stream(getSubscription())
-				.iterator(), getSubscription(),q);
-	}
+	
 	
  
 	

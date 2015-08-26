@@ -93,7 +93,6 @@ public class FastFuture<T> {
 		CompletableFuture<T> f = new CompletableFuture<>();
 		this.peek(i->f.complete(i));
 		return f;
-		
 	}
 	public FastFuture<T> populateFromCompletableFuture(CompletableFuture<T> cf){
 		cf.thenAccept(i->this.set(i));

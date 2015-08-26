@@ -78,22 +78,22 @@ public class Tutorial {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void combineLatest() {
-		LazyReact
+		EagerReact
 				.parallelCommonBuilder()
 				.react(() -> slowest(), () -> fast(), () -> slow())
 				.combineLatest(
-						LazyReact.sequentialCommonBuilder().of(1, 2, 3, 4, 5,
+						EagerReact.sequentialCommonBuilder().of(1, 2, 3, 4, 5,
 								6)).forEach(System.out::println);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Test
 	public void withLatest() {
-		LazyReact
+		EagerReact
 				.sequentialBuilder()
 				.react(() -> slowest(), () -> fast(), () -> slow())
 				.withLatest(
-						LazyReact.sequentialCommonBuilder().of(1, 2, 3, 4, 5,
+						EagerReact.sequentialCommonBuilder().of(1, 2, 3, 4, 5,
 								6)).forEach(System.out::println);
 	}
 
@@ -237,7 +237,7 @@ public class Tutorial {
 
 	@Test
 	public void allOf(){
-		 LazyReact.sequentialCommonBuilder().react(()->1,()->2,()->3)
+		 EagerReact.sequentialCommonBuilder().react(()->1,()->2,()->3)
 		 									 .map(it->it+100)
 		 									 .peek(System.out::println)
 		 									 .allOf(c-> HashTreePMap.singleton("numbers",c))
@@ -322,7 +322,7 @@ public class Tutorial {
 
 	@Test
 	public void skipUntil() {
-		FutureStream<Boolean> stoppingStream = LazyReact
+		EagerFutureStream<Boolean> stoppingStream = EagerReact
 				.sequentialCommonBuilder().react(() -> 1000).then(this::sleep)
 				.peek(System.out::println);
 		System.out.println(EagerReact.sequentialCommonBuilder()

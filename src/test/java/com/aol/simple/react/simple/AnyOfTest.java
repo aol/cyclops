@@ -13,13 +13,14 @@ import java.util.concurrent.ExecutionException;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 
 public class AnyOfTest {
 
 	@Test
 	public void testAnyOfFailure(){
-		new SimpleReact().react(()-> { throw new RuntimeException();},()->"hello",()->"world")
+		new EagerReact().react(()-> { throw new RuntimeException();},()->"hello",()->"world")
 				//.onFail(it -> it.getMessage())
 				.capture(e -> 
 				  e.printStackTrace())
@@ -32,7 +33,7 @@ public class AnyOfTest {
 	@Test
 	public void testAnyOfCompletableFutureOnFailRecovers(){
 		List<String> urls = Arrays.asList("hello","world","2");
-		List<String> result = new SimpleReact().fromStream(urls.stream()
+		List<String> result = new EagerReact().fromStream(urls.stream()
 				.<CompletableFuture<String>>map(it ->  handle(it)))
 				
 				.capture(e -> 
@@ -47,7 +48,7 @@ public class AnyOfTest {
 	@Test
 	public void testAnyOfCompletableExceptionally(){
 		List<String> urls = Arrays.asList("hello","world","2");
-		List<String> result = new SimpleReact().fromStream(urls.stream()
+		List<String> result = new EagerReact().fromStream(urls.stream()
 				.<CompletableFuture<String>>map(it ->  handle(it)))
 				
 				.capture(e -> 
@@ -62,7 +63,7 @@ public class AnyOfTest {
 	@Test
 	public void testAnyOfCompletableOnFail(){
 		List<String> urls = Arrays.asList("hello","world","2");
-		String result = new SimpleReact().fromStream(urls.stream()
+		String result = new EagerReact().fromStream(urls.stream()
 				.<CompletableFuture<String>>map(it ->  handle(it)))
 				.onFail(it ->"hello")
 				.capture(e -> 
@@ -78,7 +79,7 @@ public class AnyOfTest {
 	@Test @Ignore
 	public void testAnyOfCompletableFilter(){
 		List<String> urls = Arrays.asList("hello","world","2");
-		String result = new SimpleReact().fromStream(urls.stream()
+		String result = new EagerReact().fromStream(urls.stream()
 				.<CompletableFuture<String>>map(it ->  handle(it)))
 				.onFail(it ->"hello")
 				.filter(it-> !"2".equals(it))
@@ -97,7 +98,7 @@ public class AnyOfTest {
 	@Test @Ignore //unreliable with filter, as filtered records count as completed.
 	public void testAnyOfCompletableFilterNoError(){
 	
-		String result = new SimpleReact().of("hello","world","2")
+		String result = new EagerReact().of("hello","world","2")
 				.onFail(it ->"hello")
 				.filter(it-> !"2".equals(it))
 				.peek(it -> 
@@ -113,7 +114,7 @@ public class AnyOfTest {
 	@Test
 	public void testAnyOfCompletableFilterNoTarget(){
 		List<String> urls = Arrays.asList("hello","world","2");
-		String result = new SimpleReact().fromStream(urls.stream()
+		String result = new EagerReact().fromStream(urls.stream()
 				.<CompletableFuture<String>>map(it ->  handle(it)))
 				.onFail(it ->"hello")
 				.filter(it-> !"3".equals(it))
@@ -148,7 +149,7 @@ public class AnyOfTest {
 
 		boolean blocked[] = { false };
 
-		new SimpleReact().<Integer> react(() -> 1)
+		new EagerReact().<Integer> react(() -> 1)
 
 		.then(it -> {
 			try {

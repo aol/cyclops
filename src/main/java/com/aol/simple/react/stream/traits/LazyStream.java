@@ -24,12 +24,12 @@ import com.aol.simple.react.stream.lazy.ParallelReductionConfig;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.threads.SequentialElasticPools;
 
-public interface LazyStream<U> extends BlockingStream<U,FastFuture<U>>{
+public interface LazyStream<U> extends BlockingStream<U>{
 	
 	LazyStreamWrapper<U> getLastActive();
 	LazyResultConsumer<U> getLazyCollector();
-	@SuppressWarnings("rawtypes")
-	Consumer<FastFuture> getWaitStrategy();
+	
+	Consumer<FastFuture<U>> getWaitStrategy();
 	Optional<Consumer<Throwable>> getErrorHandler();
 	 ParallelReductionConfig getParallelReduction();
 	

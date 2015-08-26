@@ -1,23 +1,19 @@
 package com.aol.simple.react.stream.lazy;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
@@ -26,6 +22,7 @@ import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.async.subscription.Subscription;
 import com.aol.simple.react.config.MaxActive;
+import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.InfiniteClosingSpliterator;
 import com.aol.simple.react.stream.InfiniteClosingSpliteratorFromIterator;
 import com.aol.simple.react.stream.ThreadPools;
@@ -137,7 +134,7 @@ public class LazyReact extends BaseSimpleReact {
 
 	}
 	
-	@Override
+	
 	public <U> LazyFutureStream<U> constructFutures(
 			Stream<CompletableFuture<U>> s) {
 		
@@ -535,5 +532,6 @@ public class LazyReact extends BaseSimpleReact {
 	      return  construct(StreamSupport.stream(  new InfiniteClosingSpliteratorFromIterator(Long.MAX_VALUE,iterator,sub),false));
 
 	}
+	
 
 }

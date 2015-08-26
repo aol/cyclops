@@ -76,10 +76,7 @@ public class SamplingCollector<T> implements LazyResultConsumer<T>{
 		return consumer.getMaxActive();
 	}
 
-	@Override
-	public ConfigurableStream<T,FastFuture<T>> getBlocking() {
-		return consumer.getBlocking();
-	}
+	
 
 	
 

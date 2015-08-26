@@ -108,12 +108,7 @@ public class SamplingCollectorTest {
 			return null;
 		}
 
-		@Override
-		public ConfigurableStream getBlocking() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
+		
 		@Override
 		public Collection getAllResults() {
 			// TODO Auto-generated method stub

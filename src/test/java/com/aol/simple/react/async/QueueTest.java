@@ -11,7 +11,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -27,8 +26,7 @@ import org.junit.Test;
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.traits.LazyFutureStream;
-import com.aol.simple.react.stream.traits.EagerSimpleReactStream;
+import com.aol.simple.react.stream.traits.SimpleReactStream;
 
 public class QueueTest {
 
@@ -115,7 +113,7 @@ public class QueueTest {
 	public void backPressureTimeoutTestVeryHigh() {
 		Queue<Integer> q = new Queue<Integer>(new LinkedBlockingQueue<>(2))
 				.withOfferTimeout(1).withOfferTimeUnit(TimeUnit.DAYS);
-		EagerSimpleReactStream<Boolean> s = new SimpleReact().react(
+		SimpleReactStream<Boolean> s = new SimpleReact().react(
 				() -> offerAndIncrementFound(q),
 				() -> offerAndIncrementFound(q),
 				() -> offerAndIncrementFound(q),

@@ -40,23 +40,17 @@ public class SimpleReactStreamImpl<U> implements EagerSimpleReactStream<U>,Eager
 
 	private final Optional<Consumer<Throwable>> errorHandler;
 	private final EagerStreamWrapper lastActive;
-	private final boolean eager;
 	private final QueueFactory<U> queueFactory;
 	private final SimpleReact simpleReact;
 	private final Continueable subscription;
 	
-	private final List originalFutures;
 	
-	public SimpleReactStreamImpl(final SimpleReact simpleReact, final Stream<CompletableFuture<U>> stream,
-			List<CompletableFuture> originalFutures) {
+	public SimpleReactStreamImpl(final SimpleReact simpleReact, final Stream<CompletableFuture<U>> stream) {
 		this.simpleReact = simpleReact;
 		Stream s = stream;
 		this.lastActive = new EagerStreamWrapper(s, true);
-		this.originalFutures = originalFutures!=null ? originalFutures : this.lastActive.list();
+		
 		this.errorHandler = Optional.of((e) -> log.error(e.getMessage(), e));
-		this.eager = true;
-	//	this.waitStrategy = new LimitingMonitor();
-	//	this.lazyCollector = new BatchingCollector<>(this);
 		this.queueFactory = QueueFactories.unboundedQueue();
 		this.subscription = new AlwaysContinue();
 		

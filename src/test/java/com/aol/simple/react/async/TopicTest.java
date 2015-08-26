@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,8 +21,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.EagerSimpleReactStream;
+import com.aol.simple.react.stream.traits.SimpleReactStream;
 
 public class TopicTest {
 
@@ -59,7 +58,7 @@ public class TopicTest {
 			
 		//read from the topic concurrently in 2 threads
 		
-		EagerSimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
+		SimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
 			.react(()->parallel()
 				.fromStream(topic.stream())
 				.then(it -> it + "*")
@@ -146,7 +145,7 @@ public class TopicTest {
 		
 		Topic<Integer> topic = new Topic<>();
 		
-		EagerSimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
+		SimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
 			.react(()->parallel()
 				.fromStream(topic.streamCompletableFutures())
 				.then(it -> it + "*")
@@ -191,7 +190,7 @@ public class TopicTest {
 		
 		Topic<Integer> topic = new Topic<>();
 		
-		EagerSimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
+		SimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
 			.react(()->parallel()
 				.fromStream(topic.stream())
 				.then(it -> it + "*")

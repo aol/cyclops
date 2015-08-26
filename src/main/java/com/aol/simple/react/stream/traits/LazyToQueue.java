@@ -12,9 +12,6 @@ import com.aol.simple.react.stream.lazy.LazyReact;
 
 public interface LazyToQueue<U> extends ToQueue<U> {
 
-	<T, R> LazyFutureStream<R> allOf(final Collector collector,
-			final Function<T, R> fn);
-
 	<R> LazyFutureStream<R> then(final Function<U, R> fn,
 			Executor exec);
 

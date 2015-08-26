@@ -1,19 +1,18 @@
 package com.aol.simple.react.simple;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import com.aol.simple.react.stream.simple.SimpleReact;
+import com.aol.simple.react.stream.eager.EagerReact;
 
 public class ResultCollectionTest {
 	
@@ -23,7 +22,7 @@ public class ResultCollectionTest {
 	public void testBlock() throws InterruptedException, ExecutionException {
 
 		
-		List<String> strings = new SimpleReact()
+		List<String> strings = new EagerReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
@@ -35,12 +34,12 @@ public class ResultCollectionTest {
 	@Test
 	public void testBlockToSet() throws InterruptedException, ExecutionException {
 
-		Set<String> strings = new SimpleReact()
+		Set<String> strings = new EagerReact()
 				.<Integer> react(() -> 1, () -> 1, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				
-				.<Set<String>>block(Collectors.toSet());
+				.block(Collectors.toSet());
 
 		assertThat(strings.size(), is(2));
 
@@ -48,7 +47,7 @@ public class ResultCollectionTest {
 	@Test
 	public void testBreakout() throws InterruptedException, ExecutionException {
 		Throwable[] error = { null };
-		List<String> strings = new SimpleReact()
+		List<String> strings = new EagerReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
@@ -65,7 +64,7 @@ public class ResultCollectionTest {
 	@Test
 	public void testBreakoutToSet() throws InterruptedException, ExecutionException {
 		Throwable[] error = { null };
-		Set<String> strings = new SimpleReact()
+		Set<String> strings = new EagerReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
@@ -85,7 +84,7 @@ public class ResultCollectionTest {
 	public void testBreakoutException() throws InterruptedException,
 			ExecutionException {
 		Throwable[] error = { null };
-		List<String> strings = new SimpleReact()
+		List<String> strings = new EagerReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.<String>then(it -> {
@@ -104,7 +103,7 @@ public class ResultCollectionTest {
 	public void testBreakoutExceptionTimes() throws InterruptedException,
 			ExecutionException {
 		count =0;
-		List<String> strings = new SimpleReact()
+		List<String> strings = new EagerReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.<String>then(it -> {
@@ -123,7 +122,7 @@ public class ResultCollectionTest {
 	public void testBreakoutAllCompleted() throws InterruptedException,
 			ExecutionException {
 		count =0;
-		List<Integer> results = new SimpleReact()
+		List<Integer> results = new EagerReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
@@ -143,7 +142,7 @@ public class ResultCollectionTest {
 	public void testBreakoutAllCompletedAndTime() throws InterruptedException,
 			ExecutionException {
 		count =0;
-		List<Integer> results = new SimpleReact()
+		List<Integer> results = new EagerReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
@@ -162,7 +161,7 @@ public class ResultCollectionTest {
 	public void testBreakoutInEffective() throws InterruptedException,
 			ExecutionException {
 		Throwable[] error = { null };
-		List<String> strings = new SimpleReact()
+		List<String> strings = new EagerReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {

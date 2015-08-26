@@ -1,12 +1,13 @@
 package com.aol.simple.react.stream.traits;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import com.aol.simple.react.blockers.Blocker;
 import com.aol.simple.react.exceptions.ThrowsSoftened;
 import com.aol.simple.react.extractors.Extractor;
 import com.aol.simple.react.extractors.Extractors;
@@ -14,9 +15,9 @@ import com.aol.simple.react.stream.EagerStreamWrapper;
 import com.aol.simple.react.stream.LazyStreamWrapper;
 import com.aol.simple.react.stream.Status;
 
-public interface BlockingStream<U,F> extends ConfigurableStream<U,F>{
+public interface BlockingStream<U> {
 
-
+	Optional<Consumer<Throwable>> getErrorHandler();
 	/**
 	 * React and <b>block</b>
 	 * 
@@ -64,7 +65,7 @@ public interface BlockingStream<U,F> extends ConfigurableStream<U,F>{
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@ThrowsSoftened({ InterruptedException.class, ExecutionException.class })
-	default <R> R block(final Collector collector) {
+	default <R, A> R  block(final Collector<? super U, A, R> collector) {
 		Object lastActive = getLastActive();
 		if(lastActive instanceof EagerStreamWrapper){
 			EagerStreamWrapper last = (EagerStreamWrapper)lastActive;

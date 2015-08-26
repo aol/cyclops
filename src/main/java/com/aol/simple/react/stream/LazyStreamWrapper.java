@@ -16,9 +16,9 @@ import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.async.future.FinalPipeline;
 
 @AllArgsConstructor
-public class LazyStreamWrapper<U> implements StreamWrapper {
+public class LazyStreamWrapper<U> implements StreamWrapper<U> {
 	@Wither
-	private final Stream values;
+	private final Stream<U> values;
 	private final Queue<FastFuture> futures = new LinkedList<>();
 	int maxSize = 100;
 
@@ -49,6 +49,11 @@ public class LazyStreamWrapper<U> implements StreamWrapper {
 		
 		return result;
 	}
+	
+	public LazyStreamWrapper<U> concat(Stream<U> concatWith){
+		return this.withValues(Stream.concat(values, concatWith));
+	}
+	
 	private Stream<FastFuture> convertCompletableFutures(){
 		System.out.println("Convert from CompletableFuture");
 		return values.map(cf -> nextFuture().populateFromCompletableFuture( (CompletableFuture)cf));
@@ -87,7 +92,7 @@ public class LazyStreamWrapper<U> implements StreamWrapper {
 	}
 
 	
-	public Stream stream() {
+	public Stream<U> stream() {
 		return values;
 	}
 

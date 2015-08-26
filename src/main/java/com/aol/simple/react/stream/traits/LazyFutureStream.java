@@ -74,6 +74,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 										FutureStreamSynchronousPublisher<U> {
 
 	Continueable getSubscription();
+	void cancel();
 	default void  subscribe(Subscriber<? super U> s){
 		if(isAsync())
 			FutureStreamAsyncPublisher.super.subscribe(s);
@@ -117,7 +118,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 */
 	LazyFutureStream<U> withRetrier(RetryExecutor retry);
 
-	LazyFutureStream<U> withWaitStrategy(Consumer<FastFuture> c);
+	LazyFutureStream<U> withWaitStrategy(Consumer<FastFuture<U>> c);
 
 	//LazyFutureStream<U> withEager(boolean eager);
 
@@ -457,34 +458,6 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 		return (LazyFutureStream<U>) FutureStream.super.debounce(time, unit);
 	}
 
-	/**
-	 * Return a Stream with the same values as this Stream, but with all values
-	 * omitted until the provided stream starts emitting values. Provided Stream
-	 * ends the stream of values from this stream.
-	 * 
-	 * @param s
-	 *            Stream that will start the emission of values from this stream
-	 * @return Next stage in the Stream but with all values skipped until the
-	 *         provided Stream starts emitting
-	 */
-	default <T> LazyFutureStream<U> skipUntil(FutureStream<T> s) {
-		return (LazyFutureStream<U>) FutureStream.super.skipUntil(s);
-	}
-
-	/**
-	 * Return a Stream with the same values, but will stop emitting values once
-	 * the provided Stream starts to emit values. e.g. if the provided Stream is
-	 * asynchronously refreshing state from some remote store, this stream can
-	 * proceed until the provided Stream succeeds in retrieving data.
-	 * 
-	 * @param s
-	 *            Stream that will stop the emission of values from this stream
-	 * @return Next stage in the Stream but will only emit values until provided
-	 *         Stream starts emitting values
-	 */
-	default <T> LazyFutureStream<U> takeUntil(FutureStream<T> s) {
-		return (LazyFutureStream<U>) FutureStream.super.takeUntil(s);
-	}
 
 	/**
 	 * Allows clients to control the emission of data for the next phase of the
@@ -696,38 +669,9 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	}
 	
 	
-	/**
-	 * Similar to zip and withLatest, except will always take the latest from
-	 * either Stream (merged with last available from the other). By contrast
-	 * zip takes new / latest values from both Streams and withLatest will
-	 * always take the latest from this Stream while taking the last available
-	 * value from the provided stream.
-	 * 
-	 * @param s
-	 *            Stream to merge with
-	 * @return Stream of Tuples with the latest values from either stream
-	 */
-	default <T> LazyFutureStream<Tuple2<U, T>> combineLatest(FutureStream<T> s) {
-		return (LazyFutureStream<Tuple2<U, T>>) FutureStream.super
-				.combineLatest(s);
-	}
 
-	/**
-	 * 
-	 * Similar to zip and combineLatest, except will always take the latest from
-	 * this Stream while taking the last available value from the provided
-	 * stream. By contrast zip takes new / latest values from both Streams and
-	 * combineLatest takes the latest from either Stream (merged with last
-	 * available from the other).
-	 * 
-	 * @param s
-	 *            Stream to merge with
-	 * @return Stream of Tuples with the latest values from this stream
-	 */
-	default <T> LazyFutureStream<Tuple2<U, T>> withLatest(FutureStream<T> s) {
-		return (LazyFutureStream<Tuple2<U, T>>) FutureStream.super
-				.withLatest(s);
-	}
+
+	
 
 	/**
 	 * Return first Stream out of provided Streams that starts emitted results 
@@ -737,7 +681,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 */
 	@SafeVarargs
 	static <U> LazyFutureStream<U> firstOf(LazyFutureStream<U>... futureStreams) {
-		return (LazyFutureStream<U>) FutureStreamFunctions.firstOf(futureStreams);
+		return (LazyFutureStream<U>) EagerFutureStreamFunctions.firstOf(futureStreams);
 	}
 
 	
@@ -775,7 +719,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * .Function)
 	 */
 	default <R> LazyFutureStream<R> then(final Function<U, R> fn) {
-		return (LazyFutureStream) FutureStream.super.then(fn);
+		return (LazyFutureStream) LazySimpleReactStream.super.then(fn);
 	}
 
 	/**
@@ -798,36 +742,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 		
 	}
 	
-	/*
-	 * Merge two simple-react Streams, by merging the Stream of underlying
-	 * futures - not suitable for merging infinite Streams unless all supplied
-	 * Streams are LazyFutureStreams - use  LazyFutureStream#switchOnNext for infinite Streams
-	 * 
-	 * <pre>
-	 * {@code 
-	 * List<String> result = 	LazyFutureStream.of(1,2,3)
-	 * 											 .merge(LazyFutureStream.of(100,200,300))
-												  .map(it ->it+"!!")
-												  .toList();
-
-		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
-	 * 
-	 * }
-	 * </pre>
-	 * 
-	 * @param s Stream to merge
-	 * 
-	 * @return Next stage in stream
-	 * 
-	 * @see
-	 * com.aol.simple.react.stream.traits.FutureStream#merge(com.aol.simple.
-	 * react.stream.traits.SimpleReactStream)
-	 */
-	@Override
-	default LazyFutureStream<U> merge(SimpleReactStream<U>... streams) {
-		return (LazyFutureStream<U>) (Stream.of(streams).allMatch( stream -> stream instanceof LazyFutureStream) ?
-							switchOnNextValue(Seq.of(streams).cast(LazyFutureStream.class) ) :LazySimpleReactStream.super.merge(streams));
-	}
+	
 	/**
 	 * Merges this stream and the supplied Streams into a single Stream where the next value
 	 * is the next returned across any of the involved Streams. Suitable for merging infinite streams
@@ -933,20 +848,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 		return (LazyFutureStream) LazySimpleReactStream.super.capture(errorHandler);
 	}
 
-	/*
-	 * @see
-	 * com.aol.simple.react.stream.traits.FutureStream#allOf(java.util.function
-	 * .Function)
-	 */
-	@Override
-	default <T, R> LazyFutureStream<R> allOf(final Function<List<T>, R> fn) {
-		return (LazyFutureStream) LazySimpleReactStream.super.allOf(fn);
-	}
-
-	default <R> LazyFutureStream<R> anyOf(Function<U, R> fn) {
-
-		return (LazyFutureStream) LazySimpleReactStream.super.anyOf(fn);
-	}
+	
 
 	/*
 	 * @see
@@ -1099,9 +1001,8 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	@Override
 	default LazyFutureStream<U> concat(Stream<U> other) {
 
-		SimpleReactStream stream = other instanceof SimpleReactStream ? (SimpleReactStream) other
-				: LazyFutureStream.lazyFutureStream(other);
-		return (LazyFutureStream) merge(stream);
+		return this.withLastActive(this.getLastActive().concat(other));
+		
 	}
 	 /**
      * Concatenate two streams.

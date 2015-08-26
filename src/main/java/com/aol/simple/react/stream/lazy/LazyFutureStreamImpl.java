@@ -51,6 +51,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	private final static ReactPool<LazyReact> pool = ReactPool.elasticPool(()->new LazyReact(Executors.newSingleThreadExecutor()));
 	private final ParallelReductionConfig parallelReduction;
 	private final ConsumerHolder error;
+	
 	/** FIXME : Potential memory leak creating a new Thread Pool for each Stream **/
 	private final ExecutorService publisherExecutor = Executors.newFixedThreadPool(1);
 	@AllArgsConstructor
@@ -94,6 +95,9 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		return block(collector);
 	}
 
+	public void close(){
+		
+	}
 
 
 	@Override

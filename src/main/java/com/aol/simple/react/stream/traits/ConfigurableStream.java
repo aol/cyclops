@@ -22,8 +22,7 @@ public interface ConfigurableStream<T,C> {
 	
 	abstract Executor getTaskExecutor();
 	abstract RetryExecutor getRetrier();
-	abstract boolean isEager();
-	abstract BaseSimpleReact getSimpleReact();
+	BaseSimpleReact getSimpleReact();
 	Optional<Consumer<Throwable>> getErrorHandler();
 	boolean isAsync();
 	

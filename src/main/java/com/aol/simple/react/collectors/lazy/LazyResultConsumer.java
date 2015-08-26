@@ -37,5 +37,5 @@ public interface LazyResultConsumer<T> extends Consumer<FastFuture<T>>{
 	public MaxActive getMaxActive();
 	
 
-	public ConfigurableStream<T,FastFuture<T>> getBlocking();
+	
 }

@@ -35,7 +35,6 @@ import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.factories.QueueFactory;
 import com.aol.simple.react.async.subscription.Continueable;
-import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.EagerStreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
@@ -55,7 +54,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  * @author johnmcclean
  *
  */
-public interface EagerFutureStream<U> extends FutureStream<U>, EagerSimpleReactStream<U>,EagerToQueue<U> {
+public interface EagerFutureStream<U> extends Seq<U>,FutureStream<U>, EagerSimpleReactStream<U>,EagerToQueue<U>{
 	EagerStreamWrapper getLastActive();
 	/* 
 	 * Convert this stream into an async / sync stream
@@ -247,15 +246,12 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerSimpleReactS
 	 * phase
 	 */
 	default void cancel() {
-		cancelOriginal();
+		
 		FutureStream.super.cancel();
 
 	}
 
-	/**
-	 * Cancel the original tasks that populated the EagerFuturestream
-	 */
-	void cancelOriginal();
+	
 
 	/**
 	 * Can be used to debounce (accept a single data point from a unit of time)
@@ -294,49 +290,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerSimpleReactS
 		
 	}
 	
-	/**
-	 * Return a Stream with the same values as this Stream, but with all values
-	 * omitted until the provided stream starts emitting values. Provided Stream
-	 * ends the stream of values from this stream.
-	 <pre>
-	  {@code 
-	 * 			EagerFutureStream.react(()->loadNext(1),()->loadNext(2),()->3,()->4,()->loadNext(4))
-	 * 							 .skipUntil(EagerFutureStream.react(()->loadFromDb()))
-	 * 							 .toList();
-	 * }
-	 * </pre>
-	 * @param s
-	 *            Stream that will start the emission of values from this stream
-	 * @return Next stage in the Stream but with all values skipped until the
-	 *         provided Stream starts emitting
-	 */
-	default <T> EagerFutureStream<U> skipUntil(FutureStream<T> s) {
-		return (EagerFutureStream<U>) FutureStream.super.skipUntil(s);
-	}
-
-	/**
-	 * Return a Stream with the same values, but will stop emitting values once
-	 * the provided Stream starts to emit values. e.g. if the provided Stream is
-	 * asynchronously refreshing state from some remote store, this stream can
-	 * proceed until the provided Stream succeeds in retrieving data.
-	 * 
-	 * <pre>
-	 * {@code 
-	 * 			EagerFutureStream.react(()->loadNext(1),()->loadNext(2),()->3,()->4,()->loadNext(4))
-	 * 							 .takeUntil(EagerFutureStream.react(()->loadFromDb()))
-	 * 							 .toList();
-	 * }
-	 * 
-	 * </pre>
-	 * 
-	 * @param s
-	 *            Stream that will stop the emission of values from this stream
-	 * @return Next stage in the Stream but will only emit values until provided
-	 *         Stream starts emitting values
-	 */
-	default <T> EagerFutureStream<U> takeUntil(FutureStream<T> s) {
-		return (EagerFutureStream<U>) FutureStream.super.takeUntil(s);
-	}
+	
 
 	/**
 	 * Allows clients to control the emission of data for the next phase of the
@@ -649,56 +603,50 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerSimpleReactS
 	}
 
 	
-
-	/**
-	 * Similar to zip and withLatest, except will always take the latest from
-	 * either Stream (merged with last available from the other). By contrast
-	 * zip takes new / latest values from both Streams and withLatest will
-	 * always take the latest from this Stream while taking the last available
-	 * value from the provided stream.
-	 * 
-	 * <pre>
-	 * {@code
-	 *    EagerFutureStream.of(1,2,3,4,5,6)
-	 *    				   .combineLatest(react(()->3,()->value()))
-	 *    				   .toList();
-	 * }
-	 * </pre>
-	 * @param s
-	 *            Stream to merge with
-	 * @return Stream of Tuples with the latest values from either stream
-	 */
-	default <T> EagerFutureStream<Tuple2<U, T>> combineLatest(FutureStream<T> s) {
-		return (EagerFutureStream<Tuple2<U, T>>) FutureStream.super
-				.combineLatest(s);
-	}
-
 	/**
 	 * 
-	 * Similar to zip and combineLatest, except will always take the latest from
-	 * this Stream while taking the last available value from the provided
-	 * stream. By contrast zip takes new / latest values from both Streams and
-	 * combineLatest takes the latest from either Stream (merged with last
-	 * available from the other).
+	 * Similar to zip and combineLatest, except will always take the latest from this Stream while taking the last available value from the provided stream.
+	 * By contrast zip takes new / latest values from both Streams and combineLatest takes the latest from either Stream (merged with last available from the other).
 	 * 
-	 * <pre>
-	 * {@code
-	 * EagerFutureStream.of(1,2,3,4,5,6)
-	 * 					.withLatest(of(30,40,50,60,70,80,90,100,110,120,140))
-						.toList();
-	 * 
-	 * }
-	 * 
-	 * </pre>
-	 * 
-	 * @param s
-	 *            Stream to merge with
+	 * @param s Stream to merge with
 	 * @return Stream of Tuples with the latest values from this stream
 	 */
-	default <T> EagerFutureStream<Tuple2<U, T>> withLatest(FutureStream<T> s) {
-		return (EagerFutureStream<Tuple2<U, T>>) FutureStream.super
-				.withLatest(s);
+	default <T> FutureStream<Tuple2<U, T>> withLatest(EagerFutureStream<T> s) {
+		return fromStream(EagerFutureStreamFunctions.withLatest(this, s));
 	}
+	/**
+	 * Similar to zip and withLatest, except will always take the latest from either Stream (merged with last available from the other).
+	 * By contrast zip takes new / latest values from both Streams and withLatest will always take the latest from this Stream while 
+	 * taking the last available value from the provided stream.
+	 * 
+	 * @param s Stream to merge with
+	 * @return  Stream of Tuples with the latest values from either stream
+	 */
+	default <T> FutureStream<Tuple2<U, T>> combineLatest(EagerSimpleReactStream<T> s) {
+		return fromStream(EagerFutureStreamFunctions.combineLatest(this, s));
+	}
+	/**
+	 * Return a Stream with the same values as this Stream, but with all values omitted until the provided stream starts emitting values.
+	 * Provided Stream ends the stream of values from this stream.
+	 * 
+	 * @param s Stream that will start the emission of values from this stream
+	 * @return Next stage in the Stream but with all values skipped until the provided Stream starts emitting
+	 */
+	default<T>  FutureStream<U> skipUntil(EagerFutureStream<T> s) {
+		return fromStream(EagerFutureStreamFunctions.skipUntil(this, s));
+	}
+	/**
+	 * Return a Stream with the same values, but will stop emitting values once the provided Stream starts to emit values.
+	 * e.g. if the provided Stream is asynchronously refreshing state from some remote store, this stream can proceed until
+	 * the provided Stream succeeds in retrieving data.
+	 * 
+	 * @param s Stream that will stop the emission of values from this stream
+	 * @return Next stage in the Stream but will only emit values until provided Stream starts emitting values
+	 */
+	default<T>  FutureStream<U> takeUntil(EagerFutureStream<T> s) {
+		return fromStream(EagerFutureStreamFunctions.takeUntil(this, s));
+	}
+
 
 	/**
 	 * Return first Stream out of provided Streams that starts emitted results 
@@ -719,7 +667,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerSimpleReactS
 	 */
 	static <U> EagerFutureStream<U> firstOf(
 			EagerFutureStream<U>... futureStreams) {
-		return (EagerFutureStream<U>) FutureStreamFunctions.firstOf(futureStreams);
+		return (EagerFutureStream<U>) EagerFutureStreamFunctions.firstOf(futureStreams);
 	}
 
 	/*
@@ -796,7 +744,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerSimpleReactS
 	 * react.stream.traits.SimpleReactStream)
 	 */
 	@Override
-	default EagerFutureStream<U> merge(SimpleReactStream<U>... streams) {
+	default EagerFutureStream<U> merge(EagerSimpleReactStream<U>... streams) {
 		return (EagerFutureStream)EagerSimpleReactStream.super.merge(streams);		
 	}
 	/**

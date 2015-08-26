@@ -79,7 +79,7 @@ public class LazySequentialSeqTest extends BaseSequentialSeqTest {
 	
 	@Test
 	public void merge(){
-	List<String> result = 	of(1,2,3).merge(of(100,200,300))
+	List<String> result = 	of(1,2,3).mergeLatest(of(100,200,300))
 									.map(it ->it+"!!")
 									.collect(Collectors.toList());
 
@@ -88,7 +88,7 @@ public class LazySequentialSeqTest extends BaseSequentialSeqTest {
 	@Test
 	public void combine(){
 		
-		assertThat(of(1,2,3,4,5,6).combineLatest(of(3)).collect(Collectors.toList()).size(),greaterThan(5));
+		assertThat(of(1,2,3,4,5,6).mergeLatest(of(3)).collect(Collectors.toList()).size(),greaterThan(5));
 	}
 	@Test
 	public void batchSinceLastReadIterator() throws InterruptedException{

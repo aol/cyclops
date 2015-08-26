@@ -55,7 +55,7 @@ public class LazySequentialSeqAgronaTest extends BaseSequentialSeqTest {
 	
 	@Test
 	public void merge(){
-	List<String> result = 	of(1,2,3).merge(of(100,200,300))
+	List<String> result = 	of(1,2,3).mergeLatest(of(100,200,300))
 			.map(it ->it+"!!").collect(Collectors.toList());
 
 		assertThat(result,equalTo(Arrays.asList("1!!","2!!","100!!","200!!","3!!","300!!")));

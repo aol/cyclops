@@ -15,7 +15,7 @@ import java.util.concurrent.ForkJoinPool;
 import org.junit.Test;
 
 import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.traits.EagerSimpleReactStream;
+import com.aol.simple.react.stream.traits.SimpleReactStream;
 
 public class CompletableFutureTest {
 	@Test
@@ -26,7 +26,7 @@ public class CompletableFutureTest {
 		
 		
 		
-		EagerSimpleReactStream<String> convertedToStrings = new SimpleReact()
+		SimpleReactStream<String> convertedToStrings = new SimpleReact()
 								.fromStream(queue.stream())
 								.<String>then(it ->  it + "*");
 								
