@@ -17,6 +17,7 @@ import java.util.stream.StreamSupport;
 
 import lombok.Getter;
 
+import com.aol.simple.react.stream.traits.EagerSimpleReactStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -116,7 +117,7 @@ public abstract class BaseSimpleReact implements ReactBuilder{
 	 */
 	public <U> SimpleReactStream<U> from(final IntStream stream) {
 		
-		return (SimpleReactStream<U>)from(stream.boxed());
+		return (EagerSimpleReactStream<U>)from(stream.boxed());
 	
 	}
 	/**
@@ -125,9 +126,9 @@ public abstract class BaseSimpleReact implements ReactBuilder{
 	 * @param stream that will be used to drive the reactive dataflow
 	 * @return Next stage in the reactive flow
 	 */
-	public <U> SimpleReactStream<U> from(final DoubleStream stream) {
+	public <U> EagerSimpleReactStream<U> from(final DoubleStream stream) {
 		
-		return (SimpleReactStream<U>)from(stream.boxed());
+		return (EagerSimpleReactStream<U>)from(stream.boxed());
 	
 	}
 	/**
@@ -136,9 +137,9 @@ public abstract class BaseSimpleReact implements ReactBuilder{
 	 * @param stream that will be used to drive the reactive dataflow
 	 * @return Next stage in the reactive flow
 	 */
-	public <U> SimpleReactStream<U> from(final LongStream stream) {
+	public <U> EagerSimpleReactStream<U> from(final LongStream stream) {
 		
-		return (SimpleReactStream<U>)from(stream.boxed());
+		return (EagerSimpleReactStream<U>)from(stream.boxed());
 	
 	}
 	

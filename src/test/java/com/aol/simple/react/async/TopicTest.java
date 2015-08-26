@@ -23,7 +23,7 @@ import org.junit.Test;
 
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.FutureStream;
-import com.aol.simple.react.stream.traits.SimpleReactStream;
+import com.aol.simple.react.stream.traits.EagerSimpleReactStream;
 
 public class TopicTest {
 
@@ -59,7 +59,7 @@ public class TopicTest {
 			
 		//read from the topic concurrently in 2 threads
 		
-		SimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
+		EagerSimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
 			.react(()->parallel()
 				.fromStream(topic.stream())
 				.then(it -> it + "*")
@@ -146,7 +146,7 @@ public class TopicTest {
 		
 		Topic<Integer> topic = new Topic<>();
 		
-		SimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
+		EagerSimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
 			.react(()->parallel()
 				.fromStream(topic.streamCompletableFutures())
 				.then(it -> it + "*")
@@ -191,7 +191,7 @@ public class TopicTest {
 		
 		Topic<Integer> topic = new Topic<>();
 		
-		SimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
+		EagerSimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
 			.react(()->parallel()
 				.fromStream(topic.stream())
 				.then(it -> it + "*")

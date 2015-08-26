@@ -49,7 +49,7 @@ public interface LazySimpleReactStream<U> extends
 				BlockingStream<U,FastFuture<U>>, 
 				ConfigurableStream<U,FastFuture<U>>, 
 				ToQueue<U>,
-				SimpleReactStreamInterface<U>{
+				SimpleReactStream<U>{
 	
 
 	

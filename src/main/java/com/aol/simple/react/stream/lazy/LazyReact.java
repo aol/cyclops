@@ -15,6 +15,7 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,7 +24,10 @@ import lombok.experimental.Wither;
 
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.future.FastFuture;
+import com.aol.simple.react.async.subscription.Subscription;
 import com.aol.simple.react.config.MaxActive;
+import com.aol.simple.react.stream.InfiniteClosingSpliterator;
+import com.aol.simple.react.stream.InfiniteClosingSpliteratorFromIterator;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
@@ -43,7 +47,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 
 @Builder
 @Wither
-public class LazyReact extends BaseLazySimpleReact {
+public class LazyReact extends BaseSimpleReact {
 	
 	@Getter
 	private final Executor executor;
@@ -111,12 +115,11 @@ public class LazyReact extends BaseLazySimpleReact {
 	}
 	
 	public <U> LazyFutureStream<U> from(CompletableFuture<U> cf){
-		return this.construct(Stream.of(FastFuture.fromCompletableFuture(cf)), null);
+		return this.construct(Stream.of(FastFuture.fromCompletableFuture(cf)));
 
 	}
 	public <U> LazyFutureStream<U> from(CompletableFuture<U>... cf){
-		return (LazyFutureStream)this.construct(Stream.of(cf).map(FastFuture::fromCompletableFuture), 
-				null);
+		return (LazyFutureStream)this.construct(Stream.of(cf).map(FastFuture::fromCompletableFuture));
 
 	}
 	/* 
@@ -128,7 +131,7 @@ public class LazyReact extends BaseLazySimpleReact {
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#construct(java.util.stream.Stream, java.util.List)
 	 */
 	@Override
-	public <U> LazyFutureStream<U> construct(Stream s,List<FastFuture> org) {
+	public <U> LazyFutureStream<U> construct(Stream s) {
 		
 		return (LazyFutureStream) new LazyFutureStreamImpl<U>( this,s);
 
@@ -136,9 +139,9 @@ public class LazyReact extends BaseLazySimpleReact {
 	
 	@Override
 	public <U> LazyFutureStream<U> constructFutures(
-			Stream<CompletableFuture<U>> s, List<FastFuture> org) {
+			Stream<CompletableFuture<U>> s) {
 		
-		return this.withStreamOfFutures(true).construct((Stream)s, org);
+		return this.withStreamOfFutures(true).construct((Stream)s);
 	}
 	/* 
 	 * Generate an LazyFutureStream that is a range of Integers
@@ -290,51 +293,7 @@ public class LazyReact extends BaseLazySimpleReact {
 
 	
 
-	/**
-	 * Generate an infinite LazyFutureStream
-	 * 
-	 * The flow will run indefinitely unless / until the provided Supplier throws an Exception
-	 * 
-	 * @see com.aol.simple.react.async.Queue   SimpleReact Queue for a way to create a more managable infinit flow
-	 * 
-	 * @param s Supplier to generate the infinite flow
-	 * @return Next stage in the flow
-	 */
-	@Override
-	public <U> LazyFutureStream<U> reactInfinitely(Supplier<U> s) {
-		
-		return (LazyFutureStream)super.reactInfinitely(s);
-	}
-	/**
-	 * Generate an infinite reactive flow. Requires a lazy flow. Supplier may be executed multiple times in parallel asynchronously by populating thread.
-	 * Active CompletableFutures may grow rapidly.
-	 * 
-	 * The flow will run indefinitely unless / until the provided Supplier throws an Exception
-	 * 
-	 * @see com.aol.simple.react.async.Queue   SimpleReact Queue for a way to create a more managable infinit flow
-	 * 
-	 * @param s Supplier to generate the infinite flow
-	 * @return Next stage in the flow
-	 */
-	public <U> LazyFutureStream< U> reactInfinitelyAsync(final Supplier<U> s) {
-		return (LazyFutureStream<U>)super.reactInfinitelyAsync(s);
-		
-
-	}
-	/* 
-	 * Create an Infinite LazyFutureStream using provided params
-	 * 
-	 *	@param seed Initial value
-	 *	@param f Generates subsequent values for the stream
-	 *	@return Infinite LazyFutureStream
-	 * @see com.aol.simple.react.stream.BaseSimpleReact#iterateInfinitely(java.lang.Object, java.util.function.UnaryOperator)
-	 */
-	@Override
-	public <U> LazyFutureStream<U> iterateInfinitely(U seed, UnaryOperator<U> f) {
 	
-		return (LazyFutureStream)super.iterateInfinitely(seed, f);
-	}
-
 	
 
 	@Override
@@ -506,6 +465,75 @@ public class LazyReact extends BaseLazySimpleReact {
 
 
 	
-	
+	/**
+	 * Generate an infinite reactive flow. Requires a lazy flow. Supplier will be executed multiple times sequentially / synchronously by populating thread.
+	 * 
+	 * 
+	 * The flow will run indefinitely unless / until the provided Supplier throws an Exception
+	 * 
+	 * @see com.aol.simple.react.async.Queue   SimpleReact Queue for a way to create a more managable infinit flow
+	 * 
+	 * @param s Supplier to generate the infinite flow
+	 * @return Next stage in the flow
+	 */
+	public <U> LazyFutureStream< U> reactInfinitely(final Supplier<U> s) {
+		
+		Subscription sub = new Subscription();
+		LazyFutureStream stream = construct(StreamSupport.stream(
+                new InfiniteClosingSpliterator(Long.MAX_VALUE, () -> s.get(),sub), false)).withSubscription(sub);
+		
+		return stream;
+		
+
+	}
+	/**
+	 * Generate an infinite reactive flow. Requires a lazy flow. Supplier may be executed multiple times in parallel asynchronously by populating thread.
+	 * Active CompletableFutures may grow rapidly.
+	 * 
+	 * The flow will run indefinitely unless / until the provided Supplier throws an Exception
+	 * 
+	 * @see com.aol.simple.react.async.Queue   SimpleReact Queue for a way to create a more managable infinit flow
+	 * 
+	 * @param s Supplier to generate the infinite flow
+	 * @return Next stage in the flow
+	 */
+	public <U> LazyFutureStream< U> reactInfinitelyAsync(final Supplier<U> s) {
+		
+		Subscription sub = new Subscription();
+		LazyFutureStream stream = construct(StreamSupport.stream(
+                new InfiniteClosingSpliterator(Long.MAX_VALUE, () -> CompletableFuture.supplyAsync(s),sub), false)).withSubscription(sub);
+		
+		return stream;
+		
+
+	}
+	private static final Object NONE = new Object();
+	/**
+	 * Iterate infinitely using the supplied seed and function
+	 * 
+	 * @param seed Initial value
+	 * @param f Function that performs the iteration
+	 * @return Next stage in the flow / stream
+	 */
+	public <U> LazyFutureStream<U> iterateInfinitely(final U seed, final UnaryOperator<U> f){
+		
+		Subscription sub = new Subscription();
+		 final Iterator<CompletableFuture<U>> iterator = new Iterator<CompletableFuture<U>> () {
+	            @SuppressWarnings("unchecked")
+	            CompletableFuture<U> t = CompletableFuture.completedFuture((U) NONE);
+
+	            @Override
+	            public boolean hasNext() {
+	                return true;
+	            }
+
+	            @Override
+	            public CompletableFuture<U>  next() {
+	                return t = (t.join() == NONE) ? CompletableFuture.completedFuture(seed) : CompletableFuture.completedFuture(f.apply(t.join()));
+	            }
+	        };
+	      return  construct(StreamSupport.stream(  new InfiniteClosingSpliteratorFromIterator(Long.MAX_VALUE,iterator,sub),false));
+
+	}
 
 }

@@ -773,7 +773,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 */
 	@SafeVarargs
 	static <U> LazyFutureStream<U> firstOf(LazyFutureStream<U>... futureStreams) {
-		return (LazyFutureStream<U>) FutureStream.firstOf(futureStreams);
+		return (LazyFutureStream<U>) FutureStreamFunctions.firstOf(futureStreams);
 	}
 
 	
@@ -860,7 +860,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	 * react.stream.traits.SimpleReactStream)
 	 */
 	@Override
-	default LazyFutureStream<U> merge(SimpleReactStreamInterface<U>... streams) {
+	default LazyFutureStream<U> merge(SimpleReactStream<U>... streams) {
 		return (LazyFutureStream<U>) (Stream.of(streams).allMatch( stream -> stream instanceof LazyFutureStream) ?
 							switchOnNextValue(Seq.of(streams).cast(LazyFutureStream.class) ) : FutureStream.super.merge(streams));
 	}
@@ -1135,7 +1135,7 @@ public interface LazyFutureStream<U> extends  LazyStream<U>,FutureStream<U>, Laz
 	@Override
 	default LazyFutureStream<U> concat(Stream<U> other) {
 
-		SimpleReactStream stream = other instanceof SimpleReactStream ? (SimpleReactStream) other
+		EagerSimpleReactStream stream = other instanceof EagerSimpleReactStream ? (EagerSimpleReactStream) other
 				: LazyFutureStream.lazyFutureStream(other);
 		return (LazyFutureStream) merge(stream);
 	}

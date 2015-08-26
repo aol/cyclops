@@ -21,7 +21,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.traits.SimpleReactStream;
+import com.aol.simple.react.stream.traits.EagerSimpleReactStream;
 
 public class GeneratorTest {
 	volatile int  count;

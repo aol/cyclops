@@ -16,7 +16,7 @@ import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.async.future.FinalPipeline;
 
 @AllArgsConstructor
-public class LazyStreamWrapper {
+public class LazyStreamWrapper implements StreamWrapper {
 	@Wither
 	private final Stream values;
 	private final Queue<FastFuture> futures = new LinkedList<>();

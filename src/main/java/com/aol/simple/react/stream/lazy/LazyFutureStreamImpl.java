@@ -138,7 +138,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		return this.withSimpleReact(simpleReact.withRetrier(retry));
 	}
 	@Override
-	public LazyFutureStream<U> withLastActive(StreamWrapper w) {
+	public LazyFutureStream<U> withLastActive(LazyStreamWrapper w) {
 		return new LazyFutureStreamImpl<U>(errorHandler, (LazyStreamWrapper)w, eager, waitStrategy, lazyCollector, queueFactory, simpleReact, subscription, parallelReduction, error);
 		
 	}

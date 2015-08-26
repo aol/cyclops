@@ -35,10 +35,8 @@ public abstract class BaseSimpleReact implements ReactBuilder {
 	protected abstract boolean isAsync() ;
 
 	
-	public abstract <U>  LazyFutureStream<U> construct(Stream s, 
-			List<FastFuture> org);
-	public abstract <U>  LazyFutureStream<U> constructFutures(Stream<CompletableFuture<U>> s, 
-			List<FastFuture> org);
+	public abstract <U>  LazyFutureStream<U> construct(Stream s);
+	public abstract <U>  LazyFutureStream<U> constructFutures(Stream<CompletableFuture<U>> s);
 
 	
 	protected BaseSimpleReact(){
@@ -99,7 +97,7 @@ public abstract class BaseSimpleReact implements ReactBuilder {
 	public <U> LazyFutureStream<U> fromStream(final Stream<CompletableFuture<U>> stream) {
 
 		Stream s = stream;
-		return  construct( s,null);
+		return  constructFutures( s);
 	}
 	
 	/**
@@ -111,7 +109,7 @@ public abstract class BaseSimpleReact implements ReactBuilder {
 	public <U> LazyFutureStream<U> from(final Stream<U> stream) {
 		
 		//Stream s = stream.map(it -> FastFuture.completedFuture(it));
-		return construct( stream,null);
+		return construct( stream);
 	}
 	/**
 	 * Start a reactive dataflow from a stream.
@@ -153,11 +151,10 @@ public abstract class BaseSimpleReact implements ReactBuilder {
 		return from(Stream.of(array));
 	}
 	public <U> LazyFutureStream<U> from(CompletableFuture<U> cf){
-		return this.construct(Stream.of(FastFuture.fromCompletableFuture(cf)), Arrays.asList(FastFuture.fromCompletableFuture(cf)));
+		return this.construct(Stream.of(FastFuture.fromCompletableFuture(cf)));
 	}
 	public <U> LazyFutureStream<U> from(CompletableFuture<U>... cf){
-		return (LazyFutureStream)this.construct(Stream.of(cf).map(FastFuture::fromCompletableFuture), 
-						(List)Stream.of(cf).map(FastFuture::fromCompletableFuture).collect(Collectors.toList()));
+		return (LazyFutureStream)this.construct(Stream.of(cf).map(FastFuture::fromCompletableFuture));
 	}
 	
 	
@@ -191,8 +188,7 @@ public abstract class BaseSimpleReact implements ReactBuilder {
 	public <U> LazyFutureStream<U> react(final Stream<Supplier<U>> actions) {
 
 		return construct(actions.map(
-				next -> CompletableFuture.supplyAsync(next, getExecutor())),
-				null);
+				next -> CompletableFuture.supplyAsync(next, getExecutor())));
 		
 	}
 	/**
@@ -208,7 +204,7 @@ public abstract class BaseSimpleReact implements ReactBuilder {
 	public <U> LazyFutureStream<U> react(final Iterator<Supplier<U>> actions) {
 
 		return construct(StreamSupport.stream(Spliterators.spliteratorUnknownSize(actions, Spliterator.ORDERED),false).map(
-				next -> CompletableFuture.supplyAsync(next, getExecutor())),null);
+				next -> CompletableFuture.supplyAsync(next, getExecutor())));
 		
 	}
 	/**
@@ -224,8 +220,7 @@ public abstract class BaseSimpleReact implements ReactBuilder {
 	public <U> LazyFutureStream<U> reactIterable(final Iterable<Supplier<U>> actions) {
 
 		return construct(StreamSupport.stream(Spliterators.spliteratorUnknownSize(actions.iterator(), Spliterator.ORDERED),false).map(
-				next -> CompletableFuture.supplyAsync(next, getExecutor())),
-				null);
+				next -> CompletableFuture.supplyAsync(next, getExecutor())));
 		
 	}
 	/**
@@ -252,7 +247,7 @@ public abstract class BaseSimpleReact implements ReactBuilder {
 		
 		
 			return constructFutures(Stream.of(actions).map(
-				next -> CompletableFuture.supplyAsync(next, this.getExecutor())),null);
+				next -> CompletableFuture.supplyAsync(next, this.getExecutor())));
 		
 		
 	}

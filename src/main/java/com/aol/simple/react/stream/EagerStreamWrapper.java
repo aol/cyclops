@@ -21,7 +21,7 @@ import com.aol.simple.react.threads.SequentialElasticPools;
 @Wither
 @AllArgsConstructor
 @Builder
-public class EagerStreamWrapper{
+public class EagerStreamWrapper implements StreamWrapper{
 	@SuppressWarnings("rawtypes")
 	private final List<CompletableFuture> list;
 	private final Stream<CompletableFuture> stream;

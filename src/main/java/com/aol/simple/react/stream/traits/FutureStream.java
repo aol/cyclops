@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Spliterator;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
@@ -29,29 +28,24 @@ import java.util.function.Supplier;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-import lombok.AllArgsConstructor;
-
 import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.Queue.ClosedQueueException;
-import com.aol.simple.react.async.Queue.QueueReader;
 import com.aol.simple.react.async.Queue.QueueTimeoutException;
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.async.factories.QueueFactory;
 import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
-import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
+import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.traits.future.operators.ToLazyCollection;
 import com.aol.simple.react.stream.traits.operators.BatchBySize;
 import com.aol.simple.react.stream.traits.operators.BatchByTime;
@@ -60,7 +54,7 @@ import com.aol.simple.react.stream.traits.operators.Debounce;
 import com.aol.simple.react.stream.traits.operators.SlidingWindow;
 import com.aol.simple.react.util.SimpleTimer;
 
-public interface FutureStream<U> extends Seq<U>, SimpleReactStreamInterface<U>, ToQueue<U> {
+public interface FutureStream<U> extends Seq<U>, SimpleReactStream<U>, ToQueue<U> {
 
 	static final ExceptionSoftener softener = ExceptionSoftener.singleton.factory
 			.getInstance();
@@ -131,19 +125,7 @@ public interface FutureStream<U> extends Seq<U>, SimpleReactStreamInterface<U>, 
 	 * @param other
 	 * @return
 	 */
-	 <R> FutureStream<Tuple2<U,R>> zipFutures(Stream<R> other);/** {
-		if(other instanceof FutureStream)
-			return zipFutures((FutureStream)other);
-		Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other));
-		Seq<Tuple2<CompletableFuture<U>,R>> withType = (Seq<Tuple2<CompletableFuture<U>,R>>)seq;
-		Stream futureStream = fromStreamOfFutures((Stream)withType.map(t ->t.v1.thenApply(v -> Tuple.tuple(t.v1.join(),t.v2)))
-				);
-
-		
-		return (FutureStream<Tuple2<U,R>>)futureStream;
-
-	
-	}**/
+	 <R> FutureStream<Tuple2<U,R>> zipFutures(Stream<R> other);
 	
 	/* 
 	 * @see org.jooq.lambda.Seq#crossJoin(java.util.stream.Stream)
@@ -231,16 +213,7 @@ public interface FutureStream<U> extends Seq<U>, SimpleReactStreamInterface<U>, 
 	 */
 
 	<R> FutureStream<Tuple2<U,R>> zipFutures(FutureStream<R> other);
-	/**{
-		Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other.getLastActive().stream()));
-		Seq<Tuple2<CompletableFuture<U>,CompletableFuture<R>>> withType = (Seq<Tuple2<CompletableFuture<U>,CompletableFuture<R>>>)seq;
-		Stream futureStream =  fromStreamOfFutures((Stream)withType.map(t ->CompletableFuture.allOf(t.v1,t.v2).thenApply(v -> Tuple.tuple(t.v1.join(),t.v2.join())))
-				);
-		
-		return (FutureStream<Tuple2<U,R>>)futureStream;
-		
 
-	}**/
 	
 	/**
 	 * @return an Iterator that chunks all completed elements from this stream since last it.next() call into a collection
@@ -867,10 +840,10 @@ public interface FutureStream<U> extends Seq<U>, SimpleReactStreamInterface<U>, 
 	 * @see java.util.stream.Stream#count()
 	 */
 	@Override
-	long count();/** {
+	default long count(){
 
 		return getLastActive().stream().count();
-	}**/
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -1158,10 +1131,7 @@ public interface FutureStream<U> extends Seq<U>, SimpleReactStreamInterface<U>, 
 	 * @see org.jooq.lambda.Seq#close()
 	 */
 	@Override
-	void close();/** {
-		getLastActive().stream().close();
-
-	}**/
+	void close();
 
 	/*
 	 * (non-Javadoc)
@@ -1307,5 +1277,6 @@ public interface FutureStream<U> extends Seq<U>, SimpleReactStreamInterface<U>, 
 	
 	 Continueable getSubscription();
 	 Executor getTaskExecutor();
+	 StreamWrapper getLastActive();
 	
 }

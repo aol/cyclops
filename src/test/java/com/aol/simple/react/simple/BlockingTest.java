@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 
 import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.traits.SimpleReactStream;
+import com.aol.simple.react.stream.traits.EagerSimpleReactStream;
 
 public class BlockingTest {
 
@@ -253,7 +253,7 @@ public class BlockingTest {
 	@Test
 	public void testFirstSimple() throws InterruptedException, ExecutionException {
 
-		SimpleReactStream<Integer> stage = new SimpleReact()
+		EagerSimpleReactStream<Integer> stage = new SimpleReact()
 		.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
 		.then( it -> sleep(it));

@@ -4,6 +4,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.simple.react.stream.traits.EagerSimpleReactStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 
 /**
@@ -46,7 +47,7 @@ public class SimpleReactStreamComprehender implements Comprehender<SimpleReactSt
 	public Class getTargetClass() {
 		return SimpleReactStream.class;
 	}
-	public Object resolveForCrossTypeFlatMap(Comprehender comp,SimpleReactStream apply){
+	public Object resolveForCrossTypeFlatMap(Comprehender comp,EagerSimpleReactStream apply){
 		return comp.of(apply.block());
 	}
 }
