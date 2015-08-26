@@ -13,11 +13,11 @@ import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.stream.traits.Continuation;
 
 @AllArgsConstructor
-public class Runner {
+public class Runner<U> {
 
 	private final Runnable runnable;
 	
-	public boolean  run(LazyStreamWrapper lastActive,EmptyCollector collector) {
+	public boolean  run(LazyStreamWrapper<U> lastActive,EmptyCollector<U> collector) {
 
 		
 

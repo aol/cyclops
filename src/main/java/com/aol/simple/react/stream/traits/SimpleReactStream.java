@@ -402,7 +402,7 @@ public interface SimpleReactStream<U>{
 	 *         the dataflow
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	SimpleReactStream<U> onFail(final Function<? extends SimpleReactFailedStageException, U> fn) ;
+	SimpleReactStream<U> onFail(final Function<SimpleReactFailedStageException, U> fn) ;
 
 	/**
 	 * Recover for a particular class of exceptions only. Chain onFail methods from specific Exception classes
@@ -431,7 +431,7 @@ public interface SimpleReactStream<U>{
 	 * @param fn Recovery function
 	 * @return recovery value
 	 */
-	SimpleReactStream<U> onFail(Class<? extends Throwable> exceptionClass, final Function<? extends SimpleReactFailedStageException, U> fn);
+	SimpleReactStream<U> onFail(Class<? extends Throwable> exceptionClass, final Function<SimpleReactFailedStageException, U> fn);
 	
 
 	/**

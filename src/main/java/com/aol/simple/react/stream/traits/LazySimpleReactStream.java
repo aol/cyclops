@@ -66,7 +66,7 @@ public interface LazySimpleReactStream<U> extends
 	Continueable getSubscription();
 	
 	LazySimpleReactStream<U> withLastActive(LazyStreamWrapper streamWrapper);
-	abstract LazyStreamWrapper getLastActive();
+	abstract LazyStreamWrapper<U> getLastActive();
 	
 	/* 
 	 * React to new events with the supplied function on the supplied Executor
@@ -80,8 +80,8 @@ public interface LazySimpleReactStream<U> extends
 
 		
 		return (LazySimpleReactStream<R>) this.withLastActive(
-				getLastActive().stream(s -> s.map(
-						(ft) -> ft.thenApplyAsync(LazySimpleReactStream.<U,R>handleExceptions(fn),getTaskExecutor()))));
+				getLastActive().operation(
+						(ft) -> ft.thenApplyAsync(LazySimpleReactStream.<U,R>handleExceptions(fn),getTaskExecutor())));
 	}
 	/* 
 	 * React to new events with the supplied function on the supplied Executor
@@ -90,12 +90,13 @@ public interface LazySimpleReactStream<U> extends
 	 *	@param service Service to execute function on 
 	 *	@return next stage in the Stream
 	 */
+	@SuppressWarnings("unchecked")
 	default <R> LazySimpleReactStream<R> thenSync(final Function<U, R> fn) {
 		
 		
 		return (LazySimpleReactStream<R>) this.withLastActive(
-				getLastActive().stream(s -> s.map(
-						(ft) -> ft.thenApply(LazySimpleReactStream.<U,R>handleExceptions(fn)))));
+				getLastActive().operation(
+						(ft) -> ft.thenApply(LazySimpleReactStream.<U,R>handleExceptions(fn))));
 	}
 	
 	
@@ -173,11 +174,12 @@ public interface LazySimpleReactStream<U> extends
 	 */
 	@SuppressWarnings("unchecked")
 	default <R> LazySimpleReactStream<R> retry(final Function<U, R> fn) {
-		Function<Stream<FastFuture>,Stream<FastFuture>>  mapper = stream -> stream.map(
+		Function<FastFuture<U>,FastFuture<R>> mapper =
 				(ft) -> ft.thenApplyAsync(res -> 
-				getRetrier().getWithRetry( ()->LazySimpleReactStream.<U,R>handleExceptions(fn).apply((U)res)).join(),getTaskExecutor() ));
+				getRetrier().getWithRetry( ()->LazySimpleReactStream.<U,R>handleExceptions(fn)
+						.apply((U)res)).join(),getTaskExecutor() );
 
-		return (LazySimpleReactStream<R>) this.withLastActive(getLastActive().stream(mapper));
+		return (LazySimpleReactStream<R>) this.withLastActive(getLastActive().operation(mapper));
 	}
 	
 	
@@ -259,8 +261,8 @@ public interface LazySimpleReactStream<U> extends
 	default  <R> LazySimpleReactStream<R> then(final Function<U,R> fn) {
 		if(!this.isAsync())
 			return thenSync(fn);
-		Function<Stream<FastFuture>,Stream<FastFuture>> streamMapper = s ->s.map(ft -> ft.thenApplyAsync(LazySimpleReactStream.<U,R>handleExceptions(fn),getTaskExecutor()));
-		return (LazySimpleReactStream<R>) this.withLastActive(getLastActive().stream(streamMapper));
+		Function<FastFuture<U>,FastFuture<R>> streamMapper = ft -> ft.thenApplyAsync(LazySimpleReactStream.<U,R>handleExceptions(fn),getTaskExecutor());
+		return (LazySimpleReactStream<R>) this.withLastActive(getLastActive().operation(streamMapper));
 	}
 	
 	/**
@@ -283,9 +285,9 @@ public interface LazySimpleReactStream<U> extends
 	default   LazySimpleReactStream<U> doOnEach(final Function<U, U> fn) {
 		if(!isAsync())
 			return doOnEachSync(fn);
-		getLastActive().stream(s ->s.peek(
+		getLastActive().operation(
 						(ft) -> ft.thenApplyAsync(LazySimpleReactStream.<U,U>handleExceptions(fn),
-								getTaskExecutor())));
+								getTaskExecutor()));
 		return this;
 	}
 	/**
@@ -298,8 +300,8 @@ public interface LazySimpleReactStream<U> extends
 	 */
 	default   LazySimpleReactStream<U> doOnEachSync(final Function<U, U> fn) {
 		
-		getLastActive().stream(s ->s.peek(
-						(ft) -> ft.thenApply(LazySimpleReactStream.<U,U>handleExceptions(fn))));
+		getLastActive().operation(
+						(ft) -> ft.thenApply(LazySimpleReactStream.<U,U>handleExceptions(fn)));
 		return this;
 	}
 	/**
@@ -315,7 +317,7 @@ public interface LazySimpleReactStream<U> extends
 		if(!isAsync())
 			return peekSync(consumer);
 		return (LazySimpleReactStream<U>) then((t) -> {
-			System.out.println("Peeking " + t);
+			
 			consumer.accept(t);
 			return (U) t;
 		});
@@ -372,8 +374,8 @@ public interface LazySimpleReactStream<U> extends
 			Function<U, CompletableFuture<R>> flatFn) {
 		if(!this.isAsync())
 			return flatMapCompletableFutureSync(flatFn);
-		Function<Stream<FastFuture>,Stream<FastFuture>> streamMapper = s ->(Stream)s.map(ft -> ft.thenComposeAsync(LazySimpleReactStream.handleExceptions(flatFn),getTaskExecutor()));
-		return (LazySimpleReactStream<R>) this.withLastActive(getLastActive().stream(streamMapper));
+		Function<FastFuture<U>,FastFuture<R>> streamMapper = ft -> ft.thenComposeAsync(LazySimpleReactStream.handleExceptions(flatFn),getTaskExecutor());
+		return (LazySimpleReactStream<R>) this.withLastActive(getLastActive().operation(streamMapper));
 	}
 	/**
 	 * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
@@ -396,8 +398,8 @@ public interface LazySimpleReactStream<U> extends
 	default <R> LazySimpleReactStream<R> flatMapCompletableFutureSync(
 			Function<U, CompletableFuture<R>> flatFn) {
 		
-		Function<Stream<FastFuture>,Stream<FastFuture>> streamMapper = s ->(Stream)s.map(ft -> ft.thenCompose(LazySimpleReactStream.handleExceptions(flatFn)));
-		return (LazySimpleReactStream<R>) this.withLastActive(getLastActive().stream(streamMapper));
+		Function<FastFuture<U>,FastFuture<R>> streamMapper = ft -> ft.thenCompose(LazySimpleReactStream.handleExceptions(flatFn));
+		return (LazySimpleReactStream<R>) this.withLastActive(getLastActive().operation(streamMapper));
 	}
 
 	/**
@@ -452,48 +454,7 @@ public interface LazySimpleReactStream<U> extends
 
 	List getOriginalFutures();
 
-	/**
-	 * 
-	 * React <b>with</b>
-	 * 
-	 * Asynchronously apply the function supplied to the currently active event
-	 * tasks in the dataflow.
-	 * 
-	 * While most methods in this class are fluent, and return a reference to a
-	 * SimpleReact Stage builder, this method can be used this method to access
-	 * the underlying CompletableFutures.
-	 * 
-	 * <pre>
-	 	{@code 
-	 	List<CompletableFuture<Integer>> futures = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-									.with((it) -> it * 100);
-		}
-		</pre>
-	 * 
-	 * In this instance, 3 suppliers generate 3 numbers. These may be executed
-	 * in parallel, when they complete each number will be multiplied by 100 -
-	 * as a separate parrellel task (handled by a ForkJoinPool or configurable
-	 * task executor). A List of Future objects will be returned immediately
-	 * from Simple React and the tasks will be executed asynchronously.
-	 * 
-	 * React with does not block.
-	 * 
-	 * @param fn
-	 *            Function to be applied to the results of the currently active
-	 *            event tasks
-	 * @return A list of CompletableFutures which will contain the result of the
-	 *         application of the supplied function
-	 */
-	@SuppressWarnings("unchecked")
-	default <R> List<CompletableFuture<R>> with(final Function<U, R> fn) {
-
-		return null;
-	/**	return getLastActive()
-				.stream()
-				.map(FastFuture::toCompletableFuture)
-				.map(future -> (CompletableFuture<R>) future.thenApplyAsync(fn,
-						getTaskExecutor())).collect(Collectors.toList());**/
-	}
+	
 	
 	
 	
@@ -512,14 +473,14 @@ public interface LazySimpleReactStream<U> extends
 		
 		if(!isAsync())
 			return filterSync(p);
-		Function<Stream<FastFuture>,Stream<FastFuture>> fn = s -> s.map(ft -> ft.thenApplyAsync((in) -> {
+		Function<FastFuture<U>,FastFuture<U>> fn = ft -> ft.thenApplyAsync((in) -> {
 			if (!p.test((U) in)) {
 				throw new FilteredExecutionPathException();
 			}
 			return in;
-		},getTaskExecutor()));
+		},getTaskExecutor());
 		return (LazySimpleReactStream<U>) this.withLastActive(getLastActive()
-				.stream(fn));
+				.operation(fn));
 
 	}
 	/**
@@ -535,14 +496,14 @@ public interface LazySimpleReactStream<U> extends
 	 *         the dataflow
 	 */
 	default LazySimpleReactStream<U> filterSync(final Predicate<? super U> p) {
-		Function<Stream<FastFuture>,Stream<FastFuture>> fn = s -> s.map(ft -> ft.thenApply((in) -> {
+		Function<FastFuture<U>,FastFuture<U>> fn =  ft -> ft.thenApply((in) -> {
 				if (!p.test((U) in)) {
 					throw new FilteredExecutionPathException();
 				}
 				return in;
-			}));
+			});
 			return (LazySimpleReactStream<U>) this.withLastActive(getLastActive()
-					.stream(fn));
+					.operation(fn));
 
 		}
 	/**
@@ -653,7 +614,7 @@ public interface LazySimpleReactStream<U> extends
 	 *         the dataflow
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	default LazySimpleReactStream<U> onFail(final Function<? extends SimpleReactFailedStageException, U> fn) {
+	default LazySimpleReactStream<U> onFail(final Function<SimpleReactFailedStageException, U> fn) {
 		return onFail(Throwable.class,fn);
 	}
 
@@ -684,9 +645,9 @@ public interface LazySimpleReactStream<U> extends
 	 * @param fn Recovery function
 	 * @return recovery value
 	 */
-	default LazySimpleReactStream<U> onFail(Class<? extends Throwable> exceptionClass, final Function<? extends SimpleReactFailedStageException, U> fn){
+	default LazySimpleReactStream<U> onFail(Class<? extends Throwable> exceptionClass, final Function<SimpleReactFailedStageException, U> fn){
 		
-		Function<Stream<FastFuture>,Stream<FastFuture>> mapper = s -> s.map((ft) -> ft.exceptionally((t) -> {
+		Function<FastFuture<U>,FastFuture<U>> mapper =(ft) -> ft.exceptionally((t) -> {
 			if (t instanceof FilteredExecutionPathException)
 				throw (FilteredExecutionPathException) t;
 			Throwable throwable =(Throwable)t;
@@ -695,12 +656,12 @@ public interface LazySimpleReactStream<U> extends
 			
 			SimpleReactFailedStageException simpleReactException = assureSimpleReactException( throwable);//exceptions from initial supplier won't be wrapper in SimpleReactFailedStageException
 			if(exceptionClass.isAssignableFrom(simpleReactException.getCause().getClass()))
-		    	return ((Function) fn).apply(simpleReactException);
+		    	return  fn.apply((SimpleReactFailedStageException)simpleReactException);
 		    throw simpleReactException;
 				
-		}));
+		});
 		return (LazySimpleReactStream<U>) this.withLastActive(getLastActive()
-				.stream(mapper));
+				.operation(mapper));
 	}
 	
 
@@ -807,50 +768,8 @@ public interface LazySimpleReactStream<U> extends
 
 	}
 
-	/**
-	 * Convert between an Lazy and Eager future stream,
-	 * can be used to take advantages of each approach during a single Stream
-	 * 
-	 * @return An EagerFutureStream from this LazyFutureStream, will use the same executors
-	 */
-	default EagerFutureStream<U> convertToEagerStream(){
-		return new EagerReact(getTaskExecutor()).withRetrier(getRetrier()).fromStream((Stream)getLastActive().stream());
-	}
-	
-	
 	
 
 
-
-	
-
-	/* 
-	 * Execute subsequent stages on the completing thread (until async called)
-	 * 10X faster than async execution.
-	 * Use async for blocking IO or distributing work across threads or cores.
-	 * Switch to sync for non-blocking tasks when desired thread utlisation reached
-	 * 
-	 *	@return Version of FutureStream that will use sync CompletableFuture methods
-	 * 
-	 */
-	default LazySimpleReactStream<U> sync(){
-		return this.withAsync(false);
-	}
-	
-	/* 
-	 * Execute subsequent stages by submission to an Executor for async execution
-	 * 10X slower than sync execution.
-	 * Use async for blocking IO or distributing work across threads or cores.
-	 * Switch to sync for non-blocking tasks when desired thread utlisation reached
-	 *
-	 * 
-	 *	@return Version of FutureStream that will use async CompletableFuture methods
-	 *
-	 */
-	default LazySimpleReactStream<U> async(){
-		return this.withAsync(true);
-	}
-
-	
 	
 }

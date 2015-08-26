@@ -665,7 +665,7 @@ public interface EagerSimpleReactStream<U> extends SimpleReactStream<U>,
 	 *         the dataflow
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	default EagerSimpleReactStream<U> onFail(final Function<? extends SimpleReactFailedStageException, U> fn) {
+	default EagerSimpleReactStream<U> onFail(final Function<SimpleReactFailedStageException, U> fn) {
 		return onFail(Throwable.class,fn);
 	}
 
@@ -696,7 +696,7 @@ public interface EagerSimpleReactStream<U> extends SimpleReactStream<U>,
 	 * @param fn Recovery function
 	 * @return recovery value
 	 */
-	default EagerSimpleReactStream<U> onFail(Class<? extends Throwable> exceptionClass, final Function<? extends SimpleReactFailedStageException, U> fn){
+	default EagerSimpleReactStream<U> onFail(Class<? extends Throwable> exceptionClass, final Function<SimpleReactFailedStageException, U> fn){
 		
 		Function<Stream<CompletableFuture>,Stream<CompletableFuture>> mapper = s -> s.map((ft) -> ft.exceptionally((t) -> {
 			if (t instanceof FilteredExecutionPathException)

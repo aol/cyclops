@@ -41,15 +41,14 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 
 
 	private final Optional<Consumer<Throwable>> errorHandler;
-	private final LazyStreamWrapper lastActive;
+	private final LazyStreamWrapper<U> lastActive;
 	private final boolean eager;
-	private final Consumer<FastFuture> waitStrategy;
+	private final Consumer<FastFuture<U>> waitStrategy;
 	private final LazyResultConsumer<U> lazyCollector;
 	private final QueueFactory<U> queueFactory;
 	private final LazyReact simpleReact;
 	private final Continueable subscription;
 	private final static ReactPool<LazyReact> pool = ReactPool.elasticPool(()->new LazyReact(Executors.newSingleThreadExecutor()));
-	private final List originalFutures=  null;
 	private final ParallelReductionConfig parallelReduction;
 	private final ConsumerHolder error;
 	/** FIXME : Potential memory leak creating a new Thread Pool for each Stream **/
@@ -63,12 +62,12 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	public LazyFutureStreamImpl(LazyReact lazyReact, final Stream<U> stream) {
 		
 		this.simpleReact = lazyReact;
-		Stream s = stream;
-		this.lastActive = new LazyStreamWrapper(s, new FastFuture(), lazyReact.isStreamOfFutures());
+		
+		this.lastActive = new LazyStreamWrapper<>(stream, new FastFuture<>(), lazyReact.isStreamOfFutures());
 		this.error =  new ConsumerHolder(a->{});
 		this.errorHandler = Optional.of((e) -> { error.forward.accept(e); log.error(e.getMessage(), e);});
 		this.eager = false;
-		this.waitStrategy = new LimitingMonitor(lazyReact.getMaxActive());
+		this.waitStrategy = new LimitingMonitor<>(lazyReact.getMaxActive());
 		this.lazyCollector = new BatchingCollector<>(this);
 		this.queueFactory = QueueFactories.unboundedNonBlockingQueue();
 		this.subscription = new Subscription();

@@ -26,7 +26,7 @@ import com.aol.simple.react.threads.SequentialElasticPools;
 
 public interface LazyStream<U> extends BlockingStream<U,FastFuture<U>>{
 	
-	LazyStreamWrapper getLastActive();
+	LazyStreamWrapper<U> getLastActive();
 	LazyResultConsumer<U> getLazyCollector();
 	@SuppressWarnings("rawtypes")
 	Consumer<FastFuture> getWaitStrategy();
@@ -123,7 +123,7 @@ public interface LazyStream<U> extends BlockingStream<U,FastFuture<U>>{
 		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().withResults(new ArrayList<>()), this,
 				getParallelReduction());
 		try {
-			this.getLastActive().injectFutures().forEach(next -> {
+			this.getLastActive().injectFutures().forEach( next -> {
 
 				
 				collector.getConsumer().accept(next);

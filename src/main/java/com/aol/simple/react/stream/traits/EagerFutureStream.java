@@ -845,7 +845,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerSimpleReactS
 	 */
 	@Override
 	default EagerFutureStream<U> onFail(
-			final Function<? extends SimpleReactFailedStageException, U> fn) {
+			final Function<SimpleReactFailedStageException, U> fn) {
 		return (EagerFutureStream) EagerSimpleReactStream.super.onFail(fn);
 	}
 
@@ -875,7 +875,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerSimpleReactS
 	@Override
 	default EagerFutureStream<U> onFail(
 			Class<? extends Throwable> exceptionClass,
-			final Function<? extends SimpleReactFailedStageException, U> fn) {
+			final Function<SimpleReactFailedStageException, U> fn) {
 		return (EagerFutureStream) EagerSimpleReactStream.super
 				.onFail(exceptionClass, fn);
 	}

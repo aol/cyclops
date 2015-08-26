@@ -22,9 +22,9 @@ import com.aol.simple.react.config.MaxActive;
  */
 @Wither
 @AllArgsConstructor
-public class LimitingMonitor implements Consumer<FastFuture>{
+public class LimitingMonitor<U> implements Consumer<FastFuture<U>>{
 
-	private final List<FastFuture> active = new ArrayList<>(1000);
+	private final List<FastFuture<U>> active = new ArrayList<>(1000);
 	private final MaxActive maxActive;
 	
 
