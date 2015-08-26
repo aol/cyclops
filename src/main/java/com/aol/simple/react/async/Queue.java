@@ -444,24 +444,24 @@ public class Queue<T> implements Adapter<T> {
 			return queue.queue.size();
 		}
 		public T next(){
-			System.out.println("next!");
+			
 			last = queue.ensureOpen(queue.timeout,queue.timeUnit);
-			System.out.println("next is !" +  last);
+			
 			return last;
 		}
 		public boolean isOpen() {
 			return queue.open || notEmpty();
 		}
 		public Collection<T> drainToOrBlock() {
-			System.out.println("draining!");
+			
 			Collection<T> result = new ArrayList<>();
 			if(size()>0)
 				queue.queue.drainTo(result);
 			else{
 				try{
-					System.out.println("Ensure open!");
+					
 					result.add(queue.ensureOpen(queue.timeout,queue.timeUnit));
-					System.out.println("result1 " + result);
+					
 					
 				}catch(ClosedQueueException e){
 					e.printStackTrace();
@@ -469,7 +469,7 @@ public class Queue<T> implements Adapter<T> {
 					throw e;
 				}
 			}
-			System.out.println("result " + result);
+			
 			return result.stream().filter(it -> it!=POISON_PILL).collect(Collectors.toList());
 		}
 	}

@@ -1,7 +1,10 @@
 package com.aol.simple.react.stream.traits;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
@@ -11,6 +14,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.factories.QueueFactory;
@@ -20,6 +24,7 @@ import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.LazyStreamWrapper;
+import com.aol.simple.react.stream.traits.operators.StreamCopier;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.nurkiewicz.asyncretry.policy.AbortRetryException;
 
@@ -311,7 +316,14 @@ public interface LazySimpleReactStream<U> extends
 								.flatMap(flatFn));
 	}
 	
+	default List<SimpleReactStream<U>> copySimpleReactStream(final int times){
 		
+		return (List)StreamCopier.toBufferingCopier(iterator(), times)
+				.stream()
+				.map(it->StreamSupport.stream(Spliterators.spliteratorUnknownSize((Iterator)it, Spliterator.ORDERED), false))
+				.<SimpleReactStream<U>>map(fs-> (SimpleReactStream)this.getSimpleReact().construct((Stream)fs))
+				.collect(Collectors.toList());
+	}	
 	
 	/**
 	 * Removes elements that do not match the supplied predicate from the

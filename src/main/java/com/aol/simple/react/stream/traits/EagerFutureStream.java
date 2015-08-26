@@ -747,25 +747,7 @@ public interface EagerFutureStream<U> extends Seq<U>,FutureStream<U>, EagerSimpl
 	default EagerFutureStream<U> merge(EagerSimpleReactStream<U>... streams) {
 		return (EagerFutureStream)EagerSimpleReactStream.super.merge(streams);		
 	}
-	/**
-	 * Merges this stream and the supplied Streams into a single Stream where the next value
-	 * is the next returned across any of the involved Streams
-	 * 
-	 * <pre>
-	 * {@code
-	 * 	LazyFutureStream<Integer> fast =  ... //  [1,2,3,4,5,6,7..]
-	 * 	EagerFutureStream<Integer> slow =  ... //  [100,200,300,400,500,600..]
-	 * 
-	 *  LazyFutureStream<Integer> merged = fast.switchOnNext(slow);  //[1,2,3,4,5,6,7,8,100,9,10,11,12,13,14,15,16,200..] 
-	 * }</pre>
-	 * 
-	 * 
-	 * @param streams
-	 * @return
-	 */
-	default <R> EagerFutureStream<R> switchOnNext(FutureStream<?>... streams){
-		return (EagerFutureStream)merge((EagerSimpleReactStream[])streams);
-	}
+	
 	/*
 	 * Define failure handling for this stage in a stream. Recovery function
 	 * will be called after an excption Will be passed a
@@ -2053,11 +2035,11 @@ public interface EagerFutureStream<U> extends Seq<U>,FutureStream<U>, EagerSimpl
 	 * @return Merged dataflow
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <R> FutureStream<R> merge(EagerFutureStream s1, EagerFutureStream s2) {
-		List merged = Stream
-				.of(s1.getLastActive().list(), s2.getLastActive().list())
+	public static <R> EagerFutureStream<R> merge(EagerFutureStream... s) {
+		List merged = Stream.of(s).map(s1->s1.getLastActive().list())
+				
 				.flatMap(Collection::stream).collect(Collectors.toList());
-		return (FutureStream<R>) s1.withLastActive(new EagerStreamWrapper(merged));
+		return (EagerFutureStream<R>) s[0].withLastActive(new EagerStreamWrapper(merged));
 	}
 
 

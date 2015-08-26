@@ -291,7 +291,9 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * @return An EagerFutureStream from this LazyFutureStream, will use the same executors
 	 */
 	default EagerFutureStream<U> convertToEagerStream(){
-		return new EagerReact(getTaskExecutor()).withRetrier(getRetrier()).fromStream((Stream)getLastActive().stream());
+		return new EagerReact(getTaskExecutor()).withRetrier(getRetrier()).fromStream((Stream)getLastActive()
+																		.injectFutures()
+																		.map(f->CompletableFuture.completedFuture(f.join())));
 	}
 	
 	/* 

@@ -48,7 +48,7 @@ public class SimpleReactStreamImpl<U> implements EagerSimpleReactStream<U>,Eager
 	public SimpleReactStreamImpl(final SimpleReact simpleReact, final Stream<CompletableFuture<U>> stream) {
 		this.simpleReact = simpleReact;
 		Stream s = stream;
-		this.lastActive = new EagerStreamWrapper(s, true);
+		this.lastActive = new EagerStreamWrapper(s);
 		
 		this.errorHandler = Optional.of((e) -> log.error(e.getMessage(), e));
 		this.queueFactory = QueueFactories.unboundedQueue();

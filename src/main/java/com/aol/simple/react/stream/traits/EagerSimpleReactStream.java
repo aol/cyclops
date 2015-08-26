@@ -66,7 +66,14 @@ public interface EagerSimpleReactStream<U> extends SimpleReactStream<U>,
 	Continueable getSubscription();
 	
 	
-	
+	default List<SimpleReactStream<U>> copySimpleReactStream(final int times){
+		Stream.of(1,2,3,4).forEach(System.out::println);
+		return (List)StreamCopier.toBufferingCopier(getLastActive().stream().iterator(), times)
+				.stream()
+				.map(it->StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false))
+				.<SimpleReactStream<U>>map(fs-> this.getSimpleReact().construct(fs))
+				.collect(Collectors.toList());
+	}
 	/* 
 	 * React to new events with the supplied function on the supplied Executor
 	 * 
@@ -116,7 +123,7 @@ public interface EagerSimpleReactStream<U> extends SimpleReactStream<U>,
 		Function<Exception, T> f = (Exception e) -> {
 			BlockingStreamHelper.capture(e,getErrorHandler());
 			return BlockingStreamHelper.block(this,Collectors.toList(),
-					new EagerStreamWrapper(Stream.of(array), true));
+					new EagerStreamWrapper(Stream.of(array)));
 		};
 		CompletableFuture onFail = cf.exceptionally(f);
 		CompletableFuture onSuccess = onFail.thenApplyAsync((result) -> {
@@ -124,8 +131,7 @@ public interface EagerSimpleReactStream<U> extends SimpleReactStream<U>,
 					.apply(BlockingStreamHelper.aggregateResultsCompletable(collector, Stream.of(array)
 							.collect(Collectors.toList()),getErrorHandler())));
 		}, getTaskExecutor());
-		return (EagerSimpleReactStream<R>) withLastActive(new EagerStreamWrapper(onSuccess,
-				true));
+		return (EagerSimpleReactStream<R>) withLastActive(new EagerStreamWrapper(onSuccess));
 
 	}
 	/**
@@ -142,7 +148,7 @@ public interface EagerSimpleReactStream<U> extends SimpleReactStream<U>,
 		CompletableFuture cf = CompletableFuture.anyOf(array);
 		CompletableFuture onSuccess = cf.thenApplyAsync(fn,getTaskExecutor());
 		
-		return (EagerSimpleReactStream<R>) withLastActive(new EagerStreamWrapper(onSuccess,true));
+		return (EagerSimpleReactStream<R>) withLastActive(new EagerStreamWrapper(onSuccess));
 
 	}
 	
@@ -543,6 +549,7 @@ public interface EagerSimpleReactStream<U> extends SimpleReactStream<U>,
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	default EagerSimpleReactStream<U> merge(EagerSimpleReactStream<U>... s) {
+		
 		List merged = Stream.concat(Stream.of(this),Stream.of(s))
 				.map(stream -> ((EagerSimpleReactStream)stream).getLastActive().list())
 				.flatMap(Collection::stream).collect(Collectors.toList());

@@ -45,12 +45,12 @@ public class LimitingMonitor<U> implements Consumer<FastFuture<U>>{
 	 */
 	@Override
 	public void accept(FastFuture n) {
-		
+		if(n.isDone())
+			return;
 		active.add(n);
 			
 		
-		System.out.println(active);
-		System.out.println(maxActive);
+		
 		if(active.size()>maxActive.getMaxActive()){
 			
 			while(active.size()>maxActive.getReduceTo()){

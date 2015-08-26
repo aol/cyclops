@@ -48,14 +48,7 @@ public interface SimpleReactStream<U> extends BlockingStream<U>{
 	
 	
 	
-	default List<SimpleReactStream<U>> copySimpleReactStream(final int times){
-		
-		return (List)StreamCopier.toBufferingCopier(iterator(), times)
-				.stream()
-				.map(it->StreamSupport.stream(Spliterators.spliteratorUnknownSize((Iterator)it, Spliterator.ORDERED), false))
-				.<SimpleReactStream<U>>map(fs-> (SimpleReactStream)this.getSimpleReact().construct((Stream)fs))
-				.collect(Collectors.toList());
-	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

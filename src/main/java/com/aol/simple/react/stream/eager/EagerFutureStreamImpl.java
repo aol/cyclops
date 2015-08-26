@@ -59,7 +59,7 @@ public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 		this.simpleReact =eagerReact;
 
 		Stream s = stream;
-		this.lastActive = new EagerStreamWrapper(s, true);
+		this.lastActive = new EagerStreamWrapper(s);
 		this.errorHandler = Optional.of((e) -> log.error(e.getMessage(), e));
 		
 
