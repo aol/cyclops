@@ -17,7 +17,8 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 
 	<R> LazyFutureStream<R> thenSync(final Function<U, R> fn);
 	LazyReact getPopulator();
-
+	
+	
 	/**
 	 * Convert the current Stream to a simple-react Queue
 	 * 
@@ -28,13 +29,16 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 		System.out.println("To queue!");
 		
 		
-		Continuation continuation = thenSync(next->{System.out.println(next);return next;}).thenSync(queue::add)
+		Continuation continuation = thenSync(next->{System.out.println("bang before!"+next);return next;})
+								.thenSync(d->{ queue.add(d); return d;})
+									//.thenSync(d->{System.out.println("hello world" + d); return d;})
 										//.peek(System.out::println)
 										.runContinuation(() -> {
 											System.out.println("Closing!");
 			queue.close();
 			
 			});
+		System.out.println("setting up continuations");
 		queue.addContinuation(continuation);
 		return queue;
 	}

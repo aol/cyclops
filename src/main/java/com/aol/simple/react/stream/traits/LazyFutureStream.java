@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
@@ -36,6 +38,7 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Subscriber;
 
+import com.aol.cyclops.streams.StreamUtils;
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.Queue.ClosedQueueException;
@@ -1002,8 +1005,11 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	default LazyFutureStream<U> concat(Stream<U> other) {
-
-		return this.withLastActive(this.getLastActive().concat(other));
+		return fromStream(Stream.concat(StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator(), Spliterator.ORDERED),
+				false),StreamSupport.stream(Spliterators.spliteratorUnknownSize(other.iterator(), Spliterator.ORDERED),
+						false)));
+		
+		
 		
 	}
 	 /**
@@ -1222,8 +1228,9 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 */
 	@Override
 	default Tuple2<Seq<U>, Seq<U>> duplicate() {
-		List<LazyFutureStream<U>> duplicated = this.copy(2);
-		return new Tuple2(duplicated.get(0), duplicated.get(1));
+		return FutureStream.super.duplicate();
+	//	List<LazyFutureStream<U>> duplicated = this.copy(2);
+	//	return new Tuple2(duplicated.get(0), duplicated.get(1));
 	}
 	/*
 	 * <pre>

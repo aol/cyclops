@@ -41,6 +41,7 @@ public class Runner<U> {
 	}
 	public Continuation  runContinuations(LazyStreamWrapper lastActive,EmptyCollector collector) {
 
+		
 		Iterator<FastFuture> it = lastActive.injectFutures().iterator();
 		
 			Continuation[] cont  = new Continuation[1];
@@ -68,6 +69,7 @@ public class Runner<U> {
 							if(it.hasNext()){
 								
 								FastFuture f = it.next();
+								
 								handleFilter(cont,f);//if completableFuture has been filtered out, we need to move to the next one instead
 									
 								collector.accept(f);
@@ -99,8 +101,9 @@ public class Runner<U> {
 	}
 	
 	private <T> void handleFilter(Continuation[] cont, FastFuture<T> f){
-		
+		System.out.println("handle filter");
 		f.exceptionally( e-> {
+			e.printStackTrace();
 			if ((e.getCause() instanceof FilteredExecutionPathException)) {
 				
 				return (T)cont[0].proceed();

@@ -479,7 +479,7 @@ public class LazyReact extends BaseSimpleReact {
 	public <U> LazyFutureStream< U> reactInfinitely(final Supplier<U> s) {
 		
 		Subscription sub = new Subscription();
-		LazyFutureStream stream = construct(StreamSupport.stream(
+		LazyFutureStream stream = constructFutures(StreamSupport.stream(
                 new InfiniteClosingSpliterator(Long.MAX_VALUE, () -> s.get(),sub), false)).withSubscription(sub);
 		
 		return stream;
@@ -500,7 +500,7 @@ public class LazyReact extends BaseSimpleReact {
 	public <U> LazyFutureStream< U> reactInfinitelyAsync(final Supplier<U> s) {
 		
 		Subscription sub = new Subscription();
-		LazyFutureStream stream = construct(StreamSupport.stream(
+		LazyFutureStream stream = constructFutures(StreamSupport.stream(
                 new InfiniteClosingSpliterator(Long.MAX_VALUE, () -> CompletableFuture.supplyAsync(s),sub), false)).withSubscription(sub);
 		
 		return stream;
@@ -518,9 +518,9 @@ public class LazyReact extends BaseSimpleReact {
 	public <U> LazyFutureStream<U> iterateInfinitely(final U seed, final UnaryOperator<U> f){
 		
 		Subscription sub = new Subscription();
-		 final Iterator<CompletableFuture<U>> iterator = new Iterator<CompletableFuture<U>> () {
+		 final Iterator<U> iterator = new Iterator<U> () {
 	            @SuppressWarnings("unchecked")
-	            CompletableFuture<U> t = CompletableFuture.completedFuture((U) NONE);
+	            U t = (U) NONE;
 
 	            @Override
 	            public boolean hasNext() {
@@ -528,8 +528,8 @@ public class LazyReact extends BaseSimpleReact {
 	            }
 
 	            @Override
-	            public CompletableFuture<U>  next() {
-	                return t = (t.join() == NONE) ? CompletableFuture.completedFuture(seed) : CompletableFuture.completedFuture(f.apply(t.join()));
+	            public U  next() {
+	                return t = (t == NONE) ? seed : f.apply(t);
 	            }
 	        };
 	      return  construct(StreamSupport.stream(  new InfiniteClosingSpliteratorFromIterator(Long.MAX_VALUE,iterator,sub),false));

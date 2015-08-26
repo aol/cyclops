@@ -62,13 +62,16 @@ public class LazyStreamWrapper<U> implements StreamWrapper<U> {
 		
 		FastFuture f =  futures.poll();
 		if(f==null){
+		
 			f = pipeline.build();
+			
 		}
 		return f;
 	}
 	private FastFuture nextFutureAndSet(Object value){
 		
 		FastFuture f =  nextFuture();
+	
 		f.set(value);
 		return f;
 	}

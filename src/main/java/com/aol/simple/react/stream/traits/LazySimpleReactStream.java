@@ -238,6 +238,7 @@ public interface LazySimpleReactStream<U> extends
 			try {
 				return fn.apply(input);
 			} catch (Throwable t) {
+				
 				if(t instanceof AbortRetryException)//special case for retry
 					throw t;
 				throw new SimpleReactFailedStageException(input, t);

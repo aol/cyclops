@@ -46,7 +46,6 @@ public class FastFuture<T> {
 	volatile int count=0;
 	private final int max;
 	
-	private Function doAfter;
 	
 	
 	public FastFuture(){
@@ -204,6 +203,7 @@ public class FastFuture<T> {
 			
 			Function op = pipeline.functions[index];
 			
+			
 			current = op.apply(current);
 			
 			
@@ -226,6 +226,7 @@ public class FastFuture<T> {
 			done=true;
 				
 		}
+		
 		return (R)this.result;
 	}
 	private boolean done(){
@@ -261,40 +262,25 @@ public class FastFuture<T> {
 		return (FastFuture)this.withBuilder(builder.thenApplyAsync(fn, exec));
 	}
 	public  FastFuture<T> peek(Consumer<T> c){
-		if(done){
-			
-			c.accept((T)result());
-		}
+		
 		this.builder = builder.peek(c);
 		return this;
 	}
 	public <R> FastFuture<R> thenApply(Function<T,R> fn){
 		
-		
-		return (FastFuture)this.withBuilder(builder.thenApply(fn));
+		return  (FastFuture)this.withBuilder(builder.thenApply(fn));
+
 	}
+	
 	public <X extends Throwable> FastFuture<T> exceptionally(Function<X,T> fn){
-		if(pipeline!=null){
-			doAfter= fn;
-		}
-		if(done && completedExceptionally ){
-			try{
-				result = doAfter.apply((X)exception());
-				doAfter = null;
-				done();
-			}catch(Throwable t){
-				exception = t;
-			}
-			return this;
-		}else if(done){
-			return this;
-		}
+		
 		return (FastFuture)this.withBuilder(builder.exceptionally(fn));
 	}
 	public <X extends Throwable> FastFuture<T> whenComplete(BiConsumer<T,X> fn){
 		return (FastFuture)this.withBuilder(builder.whenComplete(fn));
 	}
 	public FastFuture<T> build() {
+		
 		return new FastFuture(this.builder.toFinalPipeline(),0);
 	}
 	

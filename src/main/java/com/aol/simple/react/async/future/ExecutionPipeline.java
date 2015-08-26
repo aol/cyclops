@@ -52,7 +52,7 @@ public class ExecutionPipeline {
 		
 	}
 	public<T,R> ExecutionPipeline thenApply(Function<T,R> fn){
-		return new ExecutionPipeline(swapFn(fn),execList);
+		return new ExecutionPipeline(swapComposeFn(fn),execList);
 		
 		
 	}
@@ -121,12 +121,20 @@ public class ExecutionPipeline {
 		
 		return functionList.plus(functionList.size(),fn);
 	}
+	
 	private PStack<Function> swapFn(Function fn){
 		if(functionList.size()==0)
 			return functionList.plus(fn);
 		Function before = functionList.get(functionList.size()-1);
 		PStack<Function> removed = functionList.minus(functionList.size()-1);
-		
 		return removed.plus(removed.size(),fn);
+		//return removed.plus(removed.size(),fn.compose(before));
+	}
+	private PStack<Function> swapComposeFn(Function fn){
+		if(functionList.size()==0)
+			return functionList.plus(fn);
+		Function before = functionList.get(functionList.size()-1);
+		PStack<Function> removed = functionList.minus(functionList.size()-1);
+		return removed.plus(removed.size(),fn.compose(before));
 	}
 }

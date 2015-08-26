@@ -47,6 +47,9 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 	 */
 	@Override
 	public void accept(FastFuture<T> t) {
+	//	if(t.isDone())
+		//	return;
+		
 		active.add(t);
 		
 		if(active.size()>maxActive.getMaxActive()){
@@ -55,13 +58,16 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 				
 				
 				
-				List<FastFuture> toRemove = active.stream().filter(cf -> cf.isDone()).peek(this::handleExceptions).collect(Collectors.toList());
+				List<FastFuture> toRemove = active.stream()
+												  .filter(cf -> cf.isDone())
+												  .peek(this::handleExceptions)
+												  .collect(Collectors.toList());
 				
 				active.removeAll(toRemove);
 				if(active.size()>maxActive.getReduceTo()){
 					CompletableFuture promise=  new CompletableFuture();
-					CompletableFuture.anyOf(active.toArray(new CompletableFuture[0]))
-									.thenAccept(cf -> promise.complete(true));
+					FastFuture.anyOf(active.toArray(new FastFuture[0]))
+									.thenApply(cf -> promise.complete(true));
 					
 					promise.join();
 				}

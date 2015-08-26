@@ -335,7 +335,7 @@ public class Queue<T> implements Adapter<T> {
 	 * @return true if successfully added.
 	 */
 	public boolean add(T data){
-	
+		
 		try{
 			boolean result = queue.add((T)nullSafe(data));
 			if(true){
