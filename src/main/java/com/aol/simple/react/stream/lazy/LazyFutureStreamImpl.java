@@ -24,8 +24,8 @@ import com.aol.simple.react.async.subscription.Subscription;
 import com.aol.simple.react.capacity.monitor.LimitingMonitor;
 import com.aol.simple.react.collectors.lazy.BatchingCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
-import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.LazyStreamWrapper;
+import com.aol.simple.react.stream.ReactBuilder;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.threads.ReactPool;
 import com.nurkiewicz.asyncretry.RetryExecutor;
@@ -86,7 +86,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	public LazyReact getPopulator(){
 		return pool.nextReactor();
 	}
-	public void returnPopulator(BaseSimpleReact service){
+	public void returnPopulator(LazyReact service){
 		pool.populate(service);
 	}
 	

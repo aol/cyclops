@@ -1,5 +1,6 @@
 package com.aol.simple.react.stream.traits;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -31,6 +32,7 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.async.Queue;
+import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.stream.CloseableIterator;
 
 public interface FutureStream<U> extends Seq<U> {
@@ -886,5 +888,7 @@ public interface FutureStream<U> extends Seq<U> {
 	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#async()
 	 */
 	FutureStream<U> async();
+	Queue<U> toQueue();
+	Continueable getSubscription();
 	
 }
