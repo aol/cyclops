@@ -27,6 +27,7 @@ import com.aol.simple.react.stream.InfiniteClosingSpliterator;
 import com.aol.simple.react.stream.InfiniteClosingSpliteratorFromIterator;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
+import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -119,6 +120,7 @@ public class LazyReact extends BaseSimpleReact {
 		return (LazyFutureStream)this.construct(Stream.of(cf).map(FastFuture::fromCompletableFuture));
 
 	}
+	
 	/* 
 	 * Construct a new Stream from another Stream
 	 * 
@@ -164,7 +166,7 @@ public class LazyReact extends BaseSimpleReact {
 	public <U> LazyFutureStream<U> fromStream(
 			Stream<CompletableFuture<U>> stream) {
 	
-		return (LazyFutureStream)super.fromStream(stream);
+		return  constructFutures(stream);
 	}
 
 	/* 
@@ -177,7 +179,7 @@ public class LazyReact extends BaseSimpleReact {
 	@SafeVarargs
 	public final <U> LazyFutureStream<U> react(final Supplier<U>... actions) {
 
-		return (LazyFutureStream)super.reactI(actions);
+		return (LazyFutureStream)reactI(actions);
 
 	}
 	
@@ -191,7 +193,7 @@ public class LazyReact extends BaseSimpleReact {
 	@Override
 	public <U> LazyFutureStream<U> from(Stream<U> stream) {
 		
-		return (LazyFutureStream)super.from(stream);
+		return construct( stream);
 	}
 
 	/* 
@@ -296,7 +298,8 @@ public class LazyReact extends BaseSimpleReact {
 	@Override
 	protected <U> LazyFutureStream<U> reactI(Supplier<U>... actions) {
 		
-		return (LazyFutureStream)super.reactI(actions);
+		return constructFutures(Stream.of(actions).map(
+				next -> CompletableFuture.supplyAsync(next, this.getExecutor())));
 	}
 	/**
 	 * @param executor Task Executor for concurrent tasks

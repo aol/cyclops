@@ -74,6 +74,7 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	@Test
 	public void duplicateFutures(){
 		List<String> list = of("a","b").duplicateFutures().v1.block();
+		System.out.println(list);
 		assertThat(sortedList(list),is(asList("a","b")));
 	}
 	private <T> List<T> sortedList(List<T> list) {
