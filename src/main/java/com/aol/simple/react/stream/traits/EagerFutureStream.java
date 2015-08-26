@@ -751,7 +751,23 @@ public interface EagerFutureStream<U> extends Seq<U>,FutureStream<U>, EagerSimpl
 	default EagerFutureStream<U> merge(EagerSimpleReactStream<U>... streams) {
 		return (EagerFutureStream)EagerSimpleReactStream.super.merge(streams);		
 	}
-	
+	/**
+	 * Merge two reactive dataflows with one and another.
+	 * 
+	 * @param s1
+	 *            Reactive stage builder to merge
+	 * @param s2
+	 *            Reactive stage builder to merge
+	 * @return Merged dataflow
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static <R> EagerFutureStream<R> mergeMultiple(EagerFutureStream... s) {
+		List merged = Stream.of(s).map(s1->s1.getLastActive().list())
+				
+				.flatMap(Collection::stream).collect(Collectors.toList());
+		return (EagerFutureStream<R>) s[0].withLastActive(new EagerStreamWrapper(merged));
+	}
+
 	/*
 	 * Define failure handling for this stage in a stream. Recovery function
 	 * will be called after an excption Will be passed a

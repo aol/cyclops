@@ -241,21 +241,5 @@ public class EagerFutureStreamFunctions {
 
 		return Seq.seq(new Zip()).filter(next->!(next instanceof Optional));
 	}
-	/**
-	 * Merge two reactive dataflows with one and another.
-	 * 
-	 * @param s1
-	 *            Reactive stage builder to merge
-	 * @param s2
-	 *            Reactive stage builder to merge
-	 * @return Merged dataflow
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <R> EagerFutureStream<R> merge(EagerFutureStream... s) {
-		List merged = Stream.of(s).map(s1->s1.getLastActive().list())
-				
-				.flatMap(Collection::stream).collect(Collectors.toList());
-		return (EagerFutureStream<R>) s[0].withLastActive(new EagerStreamWrapper(merged));
-	}
 
 }

@@ -111,7 +111,7 @@ public class EagerSeqTest extends BaseSeqTest {
     }
 	@Test
 	public void mergeMultiple(){
-		assertThat(EagerFutureStream.merge( react(()->1,()->2), react(()->'a',()->'b'),
+		assertThat(EagerFutureStream.mergeMultiple( react(()->1,()->2), react(()->'a',()->'b'),
 						react(()->100,()->200)).toList().size(),equalTo(6));
 	}
 	@Test
