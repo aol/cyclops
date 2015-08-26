@@ -16,6 +16,7 @@ import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
 
+import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.async.factories.QueueFactory;
 import com.aol.simple.react.async.subscription.AlwaysContinue;
@@ -91,6 +92,9 @@ public class SimpleReactStreamImpl<U> implements EagerSimpleReactStream<U>,Eager
 		return this.simpleReact.isAsync();
 	}
 
+	public Queue<U> toQueue(){
+		return EagerToQueue.super.toQueue();
+	}
 
 
 	@Override

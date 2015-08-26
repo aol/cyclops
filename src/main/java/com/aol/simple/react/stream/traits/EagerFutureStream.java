@@ -56,6 +56,10 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  */
 public interface EagerFutureStream<U> extends Seq<U>,FutureStream<U>, EagerSimpleReactStream<U>,EagerToQueue<U>{
 	EagerStreamWrapper getLastActive();
+	
+	default Queue<U> toQueue(){
+		return EagerToQueue.super.toQueue();
+	}
 	/* 
 	 * Convert this stream into an async / sync stream
 	 * 
@@ -2025,22 +2029,7 @@ public interface EagerFutureStream<U> extends Seq<U>,FutureStream<U>, EagerSimpl
 		return (com.aol.simple.react.stream.traits.EagerFutureStream<U>)FutureStream.super.self(consumer);
 	}
 	
-	/**
-	 * Merge two reactive dataflows with one and another.
-	 * 
-	 * @param s1
-	 *            Reactive stage builder to merge
-	 * @param s2
-	 *            Reactive stage builder to merge
-	 * @return Merged dataflow
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <R> EagerFutureStream<R> merge(EagerFutureStream... s) {
-		List merged = Stream.of(s).map(s1->s1.getLastActive().list())
-				
-				.flatMap(Collection::stream).collect(Collectors.toList());
-		return (EagerFutureStream<R>) s[0].withLastActive(new EagerStreamWrapper(merged));
-	}
+
 
 
 	/**
