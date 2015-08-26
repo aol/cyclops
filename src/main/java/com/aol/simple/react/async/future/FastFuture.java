@@ -86,6 +86,7 @@ public class FastFuture<T> {
 	public static <T> FastFuture<T> completedFuture(T value){
 		FastFuture<T> f = new FastFuture();
 		f.result =value;
+		f.done=true;
 		return f;
 	}
 	
