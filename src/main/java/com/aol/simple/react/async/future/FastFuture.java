@@ -25,7 +25,11 @@ import com.aol.cyclops.lambda.utils.ExceptionSoftener;
  * assumptions
  * 1. only on thread may join at a time
  * 2. only map / mapAsync/ exceptionally/ allOf and anyOf are neccessary
- * 3. single writer / single reader (may be different threads though)
+ * 3. For results / errors : single writer (one thread executing a task at a time, one thread sets the result or error) 
+ * 						/ single reader (simple-react Stream)
+ * 4. For post-hoc event listeners : single writer (simple-react Stream adds event listeners) : single reader (only one thread can read event listeners - 
+ * 						either the thread that sets the result / error and eventually done,
+ * 							or if done already set - the calling thread can execute post-hoc events)
  */
 @AllArgsConstructor
 public class FastFuture<T> {
@@ -34,9 +38,8 @@ public class FastFuture<T> {
 	private volatile boolean done=false;
 	private volatile OneToOneConcurrentArrayQueue<Consumer<OnComplete>> queue;
 	private volatile Consumer<OnComplete> essential;
-	private boolean isFirstAsync=false;
 	@Getter
-	private boolean completedExceptionally=false;
+	private volatile boolean completedExceptionally=false;
 	private final AtomicReference result = new AtomicReference(UNSET);
 	private final AtomicReference exception = new AtomicReference(UNSET);
 	private static UnSet UNSET = new UnSet();
@@ -103,6 +106,7 @@ public class FastFuture<T> {
 	public CompletableFuture<T> toCompletableFuture(){
 		CompletableFuture<T> f = new CompletableFuture<>();
 		this.peek(i->f.complete(i));
+		this.exceptionally(e-> { f.completeExceptionally(e); throw (RuntimeException)e;});
 		return f;
 	}
 	public FastFuture<T> populateFromCompletableFuture(CompletableFuture<T> cf){
