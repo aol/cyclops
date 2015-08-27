@@ -133,7 +133,7 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 
 	}
 
-	@Test @Ignore
+	@Test 
 	public void testBackPressureWhenZippingUnevenStreams() throws InterruptedException {
 
 		LazyFutureStream stream =  LazyReact.parallelBuilder().withExecutor(new ForkJoinPool(2))

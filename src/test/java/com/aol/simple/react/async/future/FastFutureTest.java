@@ -44,7 +44,7 @@ public class FastFutureTest {
 			for(int i=0;i<100;i++){
 				
 				FastFuture f2 = next.build();
-				System.out.println(f2.pipeline);
+				
 				f2.set("hello world" + suffix.toString());
 				f2.join();
 				FastFuture f3 = next.build();

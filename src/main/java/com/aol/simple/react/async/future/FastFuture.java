@@ -7,43 +7,45 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import uk.co.real_logic.agrona.concurrent.ManyToOneConcurrentArrayQueue;
-import uk.co.real_logic.agrona.concurrent.OneToOneConcurrentArrayQueue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
+import uk.co.real_logic.agrona.concurrent.OneToOneConcurrentArrayQueue;
 
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
-import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 /*
  * @author John McClean
  * assumptions
  * 1. only on thread may join at a time
  * 2. only map / mapAsync/ exceptionally/ allOf and anyOf are neccessary
+ * 3. single writer / single reader (may be different threads though)
  */
 @AllArgsConstructor
 public class FastFuture<T> {
 
 	@Getter
 	private volatile boolean done=false;
+	private volatile OneToOneConcurrentArrayQueue<Consumer<OnComplete>> queue;
+	private volatile Consumer<OnComplete> essential;
 	private boolean isFirstAsync=false;
 	@Getter
 	private boolean completedExceptionally=false;
-	private Object result = UNSET;
-	private Object exception = UNSET;
+	private final AtomicReference result = new AtomicReference(UNSET);
+	private final AtomicReference exception = new AtomicReference(UNSET);
 	private static UnSet UNSET = new UnSet();
 	static class UnSet{}
 	@Wither
-	public ExecutionPipeline builder;
-	FinalPipeline pipeline;
+	private ExecutionPipeline builder;
+	private FinalPipeline pipeline;
 
-	volatile int count=0;
+	private volatile int count=0;
 	private final int max;
 	
 	
@@ -54,16 +56,18 @@ public class FastFuture<T> {
 		this.pipeline = null;
 	}
 	private T result(){
-		while(result==UNSET){
+		Object res =  UNSET;
+		while((res =result.get())==UNSET){
 			Thread.yield();
 		}
-		return (T)result;	
+		return (T)res;	
 	}
 	private Throwable exception(){
-		while(exception==UNSET){
+		Object result =  UNSET;
+		while((result = exception.get())==UNSET){
 			Thread.yield();
 		}
-		return (Throwable)exception;	
+		return (Throwable)result;	
 	}
 	
 	private FastFuture(FinalPipeline pipeline,int max){
@@ -91,7 +95,7 @@ public class FastFuture<T> {
 	}
 	public static <T> FastFuture<T> completedFuture(T value){
 		FastFuture<T> f = new FastFuture();
-		f.result =value;
+		f.result.lazySet(value);
 		f.done=true;
 		return f;
 	}
@@ -119,11 +123,11 @@ public class FastFuture<T> {
 				
 				
 			}catch(Throwable e){
-				this.exception =e;
+				this.exception.lazySet(e);
 			}
 		}
-		if(exception==UNSET)
-			exception =t;
+		if(exception.get()==UNSET)
+			exception.lazySet(t);
 		this.completedExceptionally=true;
 		this.done =true;
 		throw (RuntimeException)exception();
@@ -153,7 +157,7 @@ public class FastFuture<T> {
 						List res = new ArrayList(futures.length);
 						for(FastFuture resNext : futures)
 							res.add(resNext.result());
-						allOf.result =res;
+						allOf.result.lazySet(res);
 						allOf.done();
 					}
 					
@@ -167,7 +171,7 @@ public class FastFuture<T> {
 		
 		for(FastFuture next : futures){
 			next.onComplete(v->{ 
-				anyOf.result = true;
+				anyOf.result.lazySet(true);
 				anyOf.done();
 			  	
 			});
@@ -183,8 +187,8 @@ public class FastFuture<T> {
 			
 			final Object use = result;
 			if(pipeline.functions.length==0){
+				this.result.lazySet(use);
 				done();
-				this.result = (T)use;
 				return;
 			}
 			Function op = pipeline.functions[0];
@@ -200,7 +204,7 @@ public class FastFuture<T> {
 			}
 		}catch(Throwable t){
 			
-			exception = t;
+			exception.lazySet(t);
 			completedExceptionally =true;
 			handleOnComplete(true);
 			done=true;
@@ -214,9 +218,6 @@ public class FastFuture<T> {
 			
 			Object current = result.get();
 			
-		//	current = op.apply(current);
-			
-			
 			final Object use = current;
 			if(index<pipeline.functions.length){
 					Function op = pipeline.functions[index];
@@ -226,13 +227,13 @@ public class FastFuture<T> {
 					return;
 			}
 			
-			this.result = current;
+			this.result.lazySet(current);
 			done();
 			
 			
 		}catch(Throwable t){
 			
-			exception = t;
+			exception.lazySet(t);
 			completedExceptionally =true;
 			handleOnComplete(true);
 			done=true;
@@ -249,7 +250,7 @@ public class FastFuture<T> {
 	}
 	
 	public void clearFast() {
-		result =UNSET;
+		result.lazySet(UNSET);
 		this.done=false;	
 	}
 	
@@ -289,13 +290,14 @@ public class FastFuture<T> {
 		return new FastFuture(this.builder.toFinalPipeline(),0);
 	}
 	
-	OneToOneConcurrentArrayQueue<Consumer<OnComplete>> queue = new OneToOneConcurrentArrayQueue<>(5);
-	Consumer<OnComplete> essential;
+	
 	
 	public void essential(Consumer<OnComplete> fn){
 		this.essential=fn;
 	}
 	public void onComplete(Consumer<OnComplete> fn){
+		if(queue==null)
+			queue =  new OneToOneConcurrentArrayQueue<>(5);
 		while(!queue.offer(fn))
 			queue.poll();
 		if(done)
@@ -303,17 +305,19 @@ public class FastFuture<T> {
 	}
 	private void handleOnComplete(boolean force){
 		
-		if( ( !queue.isEmpty() || essential!=null) && (force || done)){
+		if( ( (queue!=null && !queue.isEmpty()) || essential!=null) && (force || done)){
 			OnComplete c = new OnComplete(!completedExceptionally && done ? result() : null,
 					completedExceptionally ? exception() : null,this.completedExceptionally);
 			if(essential!=null){
 				essential.accept(c);
 				essential =null;
 			}
-			while(!queue.isEmpty()){
-				Consumer<OnComplete>  next = queue.poll();
-				if(next!=null)
-					next.accept(c);
+			if(queue!=null){
+				while(!queue.isEmpty()){
+					Consumer<OnComplete>  next = queue.poll();
+					if(next!=null)
+						next.accept(c);
+				}
 			}
 			
 		}
