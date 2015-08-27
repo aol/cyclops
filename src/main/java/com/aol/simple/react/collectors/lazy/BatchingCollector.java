@@ -58,6 +58,7 @@ public class BatchingCollector<T> implements LazyResultConsumer<T>{
 	 */
 	@Override
 	public void accept(FastFuture<T> t) {
+		
 		active.add(t);
 		
 		if(active.size()>maxActive.getMaxActive()){
@@ -66,13 +67,12 @@ public class BatchingCollector<T> implements LazyResultConsumer<T>{
 				
 				
 				List<FastFuture<T>> toRemove = active.stream().filter(cf -> cf.isDone()).collect(Collectors.toList());
-				active.removeAll(toRemove);
+				active.removeAll(toRemove);	
 				results.addAll(toRemove);
 				if(active.size()>maxActive.getReduceTo()){
 					CompletableFuture promise=  new CompletableFuture();
-					CompletableFuture.anyOf(active.toArray(new CompletableFuture[0]))
-									.thenAccept(cf -> promise.complete(true))
-									.exceptionally(e->{ promise.complete(true); return null;});
+					FastFuture.anyOf(active.toArray(new FastFuture[0]))
+									.onComplete(cf -> promise.complete(true));
 					
 					promise.join();
 				}
@@ -97,6 +97,7 @@ public class BatchingCollector<T> implements LazyResultConsumer<T>{
 	 */
 	public Collection<FastFuture<T>> getAllResults(){
 		results.addAll(active);
+		active.clear();
 		return results;
 	}
 	 

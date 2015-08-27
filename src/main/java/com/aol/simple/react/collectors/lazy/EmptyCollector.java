@@ -47,8 +47,7 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 	 */
 	@Override
 	public void accept(FastFuture<T> t) {
-	//	if(t.isDone())
-		//	return;
+		
 		
 		active.add(t);
 		
@@ -67,7 +66,7 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 				if(active.size()>maxActive.getReduceTo()){
 					CompletableFuture promise=  new CompletableFuture();
 					FastFuture.anyOf(active.toArray(new FastFuture[0]))
-									.thenApply(cf -> promise.complete(true));
+									.onComplete(cf -> promise.complete(true));
 					
 					promise.join();
 				}

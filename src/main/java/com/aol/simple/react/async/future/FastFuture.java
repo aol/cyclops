@@ -12,9 +12,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import uk.co.real_logic.agrona.concurrent.ManyToOneConcurrentArrayQueue;
+import uk.co.real_logic.agrona.concurrent.OneToOneConcurrentArrayQueue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
@@ -71,7 +71,14 @@ public class FastFuture<T> {
 		this.builder = new ExecutionPipeline();
 		this.pipeline = pipeline;
 	}
-	
+	public void await(){
+		
+		long spin=1;
+		while(!done){
+			LockSupport.parkNanos(spin++);
+		}
+		
+	}
 	public T join(){
 	
 		long spin=1;
@@ -97,19 +104,20 @@ public class FastFuture<T> {
 	public FastFuture<T> populateFromCompletableFuture(CompletableFuture<T> cf){
 		cf.thenAccept(i->this.set(i));
 		cf.exceptionally(t-> {
-			return completedExceptionally(t);
+			completedExceptionally(t);
+			return join();
 		});
 		return this;
 	}
 	
-	private T completedExceptionally(Throwable t){
+	private void completedExceptionally(Throwable t){
 
 		
 		for(int i =0;i<this.pipeline.firstRecover.length;i++){
 			try{
-				T res =  this.set((T)pipeline.firstRecover[i].apply(t));
+				 this.set((T)pipeline.firstRecover[i].apply(t));
 				
-				return res;
+				
 			}catch(Throwable e){
 				this.exception =e;
 			}
@@ -125,7 +133,8 @@ public class FastFuture<T> {
 		FastFuture<T> f = new FastFuture<>();
 		cf.thenAccept(i->f.set(i));
 		cf.exceptionally(t-> {
-			return f.completedExceptionally(t);
+			f.completedExceptionally(t);
+			return f.join();
 		});
 		return f;
 	}
@@ -157,24 +166,26 @@ public class FastFuture<T> {
 		FastFuture anyOf = new FastFuture();
 		
 		for(FastFuture next : futures){
-			next.peek(v->anyOf.done=true);
+			next.onComplete(v->{ 
+				anyOf.result = true;
+				anyOf.done();
+			  	
+			});
 		}
 		return anyOf;
 	}
 	
 	
-	public <R> R set(T result){
-		
-		return set(()->result);
-	}
-	public <R> R set(Supplier<T> result){
+	
+	public void set(T result){
+	
 		try{
 			
-			final Object use = result.get();
+			final Object use = result;
 			if(pipeline.functions.length==0){
 				done();
 				this.result = (T)use;
-				return (R)this.result;
+				return;
 			}
 			Function op = pipeline.functions[0];
 			if(this.isFirstAsync){
@@ -182,38 +193,37 @@ public class FastFuture<T> {
 				this.pipeline.executors[0].execute(()->{
 					set(()->(T)op.apply(use),1);
 				});
-				return (R)result;
-			}else{
 				
-				return set(result,0);
+			}else{
+				set(()->(T)op.apply(use),1);
+			
 			}
 		}catch(Throwable t){
+			
 			exception = t;
 			completedExceptionally =true;
+			handleOnComplete(true);
 			done=true;
 			
 			
 		}
-		return (R)result;
+		
 	}
-	public <R> R set(Supplier<T> result,int index){
+	public void set(Supplier<T> result,int index){
 		try{
 			
 			Object current = result.get();
 			
-			Function op = pipeline.functions[index];
-			
-			
-			current = op.apply(current);
+		//	current = op.apply(current);
 			
 			
 			final Object use = current;
-			if(index+1<pipeline.functions.length){
-					
-					this.pipeline.executors[index+1].execute(()->{
-						set(()->(T)use,index+1);
+			if(index<pipeline.functions.length){
+					Function op = pipeline.functions[index];
+					this.pipeline.executors[index].execute(()->{
+						set(()->(T)op.apply(use),index+1);
 					});
-					return (R)result;
+					return;
 			}
 			
 			this.result = current;
@@ -221,16 +231,18 @@ public class FastFuture<T> {
 			
 			
 		}catch(Throwable t){
+			
 			exception = t;
 			completedExceptionally =true;
+			handleOnComplete(true);
 			done=true;
 				
 		}
 		
-		return (R)this.result;
+		
 	}
 	private boolean done(){
-		
+		handleOnComplete(true);
 		this.completedExceptionally=false;
 		return this.done =true;
 		
@@ -251,20 +263,13 @@ public class FastFuture<T> {
 		return (FastFuture)this.withBuilder(builder.thenComposeAsync((Function)fn, exec));
 	}
 	public <R> FastFuture<R> thenApplyAsync(Function<T,R> fn,Executor exec){
-		if(done){
-			try{
-				
-				throw new RuntimeException();
-			}catch(Exception e){
-				e.printStackTrace();
-			}
-		}
+		
 		return (FastFuture)this.withBuilder(builder.thenApplyAsync(fn, exec));
 	}
 	public  FastFuture<T> peek(Consumer<T> c){
 		
-		this.builder = builder.peek(c);
-		return this;
+		return (FastFuture)this.withBuilder( builder.peek(c));
+		
 	}
 	public <R> FastFuture<R> thenApply(Function<T,R> fn){
 		
@@ -284,5 +289,41 @@ public class FastFuture<T> {
 		return new FastFuture(this.builder.toFinalPipeline(),0);
 	}
 	
+	OneToOneConcurrentArrayQueue<Consumer<OnComplete>> queue = new OneToOneConcurrentArrayQueue<>(5);
+	Consumer<OnComplete> essential;
+	
+	public void essential(Consumer<OnComplete> fn){
+		this.essential=fn;
+	}
+	public void onComplete(Consumer<OnComplete> fn){
+		while(!queue.offer(fn))
+			queue.poll();
+		if(done)
+			handleOnComplete(false);
+	}
+	private void handleOnComplete(boolean force){
+		
+		if( ( !queue.isEmpty() || essential!=null) && (force || done)){
+			OnComplete c = new OnComplete(!completedExceptionally && done ? result() : null,
+					completedExceptionally ? exception() : null,this.completedExceptionally);
+			if(essential!=null){
+				essential.accept(c);
+				essential =null;
+			}
+			while(!queue.isEmpty()){
+				Consumer<OnComplete>  next = queue.poll();
+				if(next!=null)
+					next.accept(c);
+			}
+			
+		}
+	
+	}
+	@AllArgsConstructor
+	public static class OnComplete{
+		public final Object result;
+		public final Throwable exception;
+		public final boolean exceptionally;
+	}
 	
 }

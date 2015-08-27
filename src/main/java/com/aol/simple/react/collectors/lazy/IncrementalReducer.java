@@ -38,7 +38,7 @@ public class IncrementalReducer<T> {
 	}
 	public void forEachResults( Collection<FastFuture<T>> results,Consumer<? super T> c,
 			Function<FastFuture, T> safeJoin) {
-		Stream<FastFuture<T>> stream = consumer.getResults().stream();
+		Stream<FastFuture<T>> stream = results.stream();//consumer.getResults().stream();
 		Stream<FastFuture<T>> streamToUse = this.config.isParallel() ? stream.parallel() : stream;
 		streamToUse.map(safeJoin).filter(v -> v != MissingValue.MISSING_VALUE).forEach(c);
 		consumer.getResults().clear();

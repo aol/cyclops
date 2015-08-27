@@ -479,7 +479,7 @@ public class LazyReact extends BaseSimpleReact {
 	public <U> LazyFutureStream< U> reactInfinitely(final Supplier<U> s) {
 		
 		Subscription sub = new Subscription();
-		LazyFutureStream stream = constructFutures(StreamSupport.stream(
+		LazyFutureStream stream = construct(StreamSupport.stream(
                 new InfiniteClosingSpliterator(Long.MAX_VALUE, () -> s.get(),sub), false)).withSubscription(sub);
 		
 		return stream;

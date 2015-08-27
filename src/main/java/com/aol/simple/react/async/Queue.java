@@ -464,7 +464,7 @@ public class Queue<T> implements Adapter<T> {
 					
 					
 				}catch(ClosedQueueException e){
-					e.printStackTrace();
+				
 					queue.open=false;
 					throw e;
 				}

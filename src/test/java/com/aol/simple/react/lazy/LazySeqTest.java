@@ -187,16 +187,35 @@ public class LazySeqTest extends BaseSeqTest {
 		t.join();
 	
 	}
-
+	@Test
+	public void reactInfinitely(){
+		 assertThat(LazyReact.sequentialBuilder().reactInfinitely(() -> "100")
+		 	.limit(100)
+		 	.toList().size(),equalTo(100));
+	}
+	@Test 
+	public void streamFromQueue() {
+		assertThat( LazyReact.sequentialBuilder().reactInfinitely(() -> "100")
+			.limit(100)
+			.withQueueFactory(QueueFactories.boundedQueue(10)).toQueue()
+			.stream().collect(Collectors.toList()).size(),equalTo(100));
+		 
+	}
 	@Test 
 	public void testBackPressureWhenZippingUnevenStreams2() {
 
 		Queue fast = LazyReact.parallelBuilder().withExecutor(new ForkJoinPool(2)).reactInfinitely(() -> "100")
+				.peek(System.out::println)
 				.withQueueFactory(QueueFactories.boundedQueue(10)).toQueue();
 
 		new Thread(() -> {
-			LazyReact.parallelBuilder().withExecutor(new ForkJoinPool(2)).range(0,1000).peek(c -> sleep(10))
+			
+			
+			LazyReact.parallelBuilder().withExecutor(new ForkJoinPool(2)).range(0,1000)
+			.peek(System.out::println)
+			.peek(c -> sleep(10))
 					.zip(fast.stream()).forEach(it -> {
+					
 					});
 		}).start();
 		;

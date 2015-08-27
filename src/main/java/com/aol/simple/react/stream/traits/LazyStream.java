@@ -92,9 +92,9 @@ public interface LazyStream<U> extends BlockingStream<U>{
 				.of(getLazyCollector().withResults( new ArrayList<>())) : Optional.empty();
 
 		try {
-			System.out.println("Last Active!");
+		
 			this.getLastActive().injectFutures().forEach(n -> {
-				System.out.println(n);
+				
 				batcher.ifPresent(c -> c.accept(n));
 				this.getWaitStrategy().accept(n);
 				

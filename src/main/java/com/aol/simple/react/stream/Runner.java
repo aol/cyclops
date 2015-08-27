@@ -55,8 +55,8 @@ public class Runner<U> {
 				
 				});
 				Continuation finishNoCollect = new Continuation( () -> {
-					
 					runnable.run();
+					
 					throw new ClosedQueueException();
 					
 				});
@@ -81,13 +81,13 @@ public class Runner<U> {
 							return finish.proceed();
 						}
 					} catch (SimpleReactProcessingException e) {
-						e.printStackTrace();
+						
 						
 					}catch(java.util.concurrent.CompletionException e){
-						e.printStackTrace();
+						
 						
 					}catch(Throwable e){
-						e.printStackTrace();
+						
 					}
 					return finishNoCollect;
 							
@@ -101,15 +101,14 @@ public class Runner<U> {
 	}
 	
 	private <T> void handleFilter(Continuation[] cont, FastFuture<T> f){
-		System.out.println("handle filter");
-		f.exceptionally( e-> {
-			e.printStackTrace();
-			if ((e.getCause() instanceof FilteredExecutionPathException)) {
+		f.essential( event -> {
+			
+			if (event.exception !=null && (event.exception.getCause() instanceof FilteredExecutionPathException)) {
 				
-				return (T)cont[0].proceed();
+				 cont[0].proceed();
+				
 			}
 			
-			throw (RuntimeException)e;
 		});
 	}
 	

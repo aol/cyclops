@@ -429,7 +429,7 @@ public class Tutorial {
 		return "Status saved:" + s.getId();
 	}
 
-	int count = 0;
+	volatile int count = 0;
 
 	private Status readStatus() {
 		return new Status();
@@ -575,26 +575,35 @@ public class Tutorial {
 		assertThat(list.size(),equalTo(6));
 	}
 	int count2 =0;
+	int count3 =0;
+	volatile int otherCount;
+	volatile int peek =0;
 	@Test
 	public void batchByTimeFiltered() {
 		count2=0;
-		LazyReact
+		List<Collection<Map>> result = new ArrayList<>();
+				LazyReact
 				.parallelCommonBuilder()
 				.iterateInfinitely("", last -> nextFile())
-				.limit(100)
+				.limit(1000)
 				
 				.map(this::readFileToString)
 				.map(this::parseJson)
+				.peek(i->System.out.println(++otherCount))
 				//.filter(i->false)
-								.batchByTime(1, TimeUnit.MICROSECONDS)
+				.batchByTime(1, TimeUnit.MICROSECONDS)
 				
-				.peek(batch -> System.out.println("batched : " + batch))
-				.filter(c->!c.isEmpty())
-				
+				.peek(batch -> System.out.println("batched : " + batch + ":" + (++peek)))
+			//	.filter(c->!c.isEmpty())
+				.peek(batch->count3= count3+batch.size())
 				.map(this::processOrders)
-				.forEach(next -> count2= count2+next.size());
-		
-		assertThat(count2,equalTo(100));
+				//.toList();
+				.forEach(next -> { result.add(next); count2= count2+next.size();});
+	//	assertThat(size,equalTo(100));
+		System.out.println("In flight count " + count3 + " :" + otherCount);
+		System.out.println(result.size());
+		System.out.println(result);
+		assertThat(count2,equalTo(1000));
 	}
 	@Test
 	public void batchByTimeFilteredEager() {

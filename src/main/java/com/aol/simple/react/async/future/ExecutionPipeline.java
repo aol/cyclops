@@ -32,8 +32,8 @@ public class ExecutionPipeline {
 		firstRecover= ConsPStack.empty();
 	}
 	public <T> ExecutionPipeline peek(Consumer<T> c){
-		this.<T,Object>thenApply(i->{c.accept(i); return i;});
-		return this;
+		return this.<T,Object>thenApply(i->{c.accept(i); return i;});
+		
 	}
 	
 	public  <T,R> ExecutionPipeline thenApplyAsync(Function<T,R> fn,Executor exec){
