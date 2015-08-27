@@ -754,10 +754,9 @@ public interface EagerFutureStream<U> extends Seq<U>,FutureStream<U>, EagerSimpl
 	/**
 	 * Merge two reactive dataflows with one and another.
 	 * 
-	 * @param s1
-	 *            Reactive stage builder to merge
-	 * @param s2
-	 *            Reactive stage builder to merge
+	 * @param s Streams to merge
+	 *            
+	 *
 	 * @return Merged dataflow
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })

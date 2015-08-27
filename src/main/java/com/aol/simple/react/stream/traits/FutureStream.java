@@ -983,15 +983,8 @@ public interface FutureStream<U> extends Seq<U>, SimpleReactStream<U>, ToQueue<U
 	 * @see com.aol.simple.react.stream.traits.FutureStream#sequential()
 	 */
 	@Override
-	 Seq<U> sequential();/** {
-		Queue q = toQueue();
-		q.fromStream(getLastActive().stream().map(it -> it.join()));
-		q.close();
-		return q.stream();
-	}**/
-
-
-
+	 Seq<U> sequential();
+	
 	@Override
 	default Stream<U> stream() {
 		return toQueue().stream(getSubscription());
@@ -1021,11 +1014,6 @@ public interface FutureStream<U> extends Seq<U>, SimpleReactStream<U>, ToQueue<U
 	}
 
 	/*
-	 * 
-	 * @param type
-	 * 
-	 * @return
-	 * 
 	 * @see org.jooq.lambda.Seq#cast(java.lang.Class)
 	 */
 
@@ -1093,11 +1081,7 @@ public interface FutureStream<U> extends Seq<U>, SimpleReactStream<U>, ToQueue<U
 	 * @see org.jooq.lambda.Seq#onClose(java.lang.Runnable)
 	 */
 	@Override
-	Seq<U> onClose(Runnable closeHandler);/** {
-
-		return Seq.seq(getLastActive().stream().onClose(closeHandler)
-				.map(it -> (U) it.join()));
-	}**/
+	Seq<U> onClose(Runnable closeHandler);
 
 	/*
 	 * (non-Javadoc)
