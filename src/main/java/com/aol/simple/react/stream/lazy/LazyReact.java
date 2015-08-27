@@ -347,7 +347,8 @@ public class LazyReact extends BaseSimpleReact {
 	@Override
 	public <U> LazyFutureStream<U> react(Stream<Supplier<U>> actions) {
 	
-		return (LazyFutureStream)super.react(actions);
+		return constructFutures(actions.map(
+				next -> CompletableFuture.supplyAsync(next, getExecutor())));
 	}
 
 	/* 
@@ -500,7 +501,7 @@ public class LazyReact extends BaseSimpleReact {
 	public <U> LazyFutureStream< U> reactInfinitelyAsync(final Supplier<U> s) {
 		
 		Subscription sub = new Subscription();
-		LazyFutureStream stream = constructFutures(StreamSupport.stream(
+		LazyFutureStream stream = construct(StreamSupport.stream(
                 new InfiniteClosingSpliterator(Long.MAX_VALUE, () -> CompletableFuture.supplyAsync(s),sub), false)).withSubscription(sub);
 		
 		return stream;

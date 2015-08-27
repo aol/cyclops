@@ -188,7 +188,7 @@ public class FastFuture<T> {
 				return;
 			}
 			Function op = pipeline.functions[0];
-			if(this.isFirstAsync){
+			if(this.pipeline.executors[0]!=null){
 				
 				this.pipeline.executors[0].execute(()->{
 					set(()->(T)op.apply(use),1);

@@ -138,6 +138,7 @@ public class LazyReactiveTest {
 				return this.cpuStream().of(collection).map(str-> Thread.currentThread().getId()).toSet();
 			}
 			public void asyncIO(){
+				List l = this.ioStream().of("hello").map(String::toUpperCase).peek(str->val=str).block();
 				this.ioStream().of("hello").map(String::toUpperCase).peek(str->val=str).block();
 			}
 			public void asyncCPU(){

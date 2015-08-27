@@ -48,13 +48,11 @@ public class ExecutionPipeline {
 	
 	public<T,R> ExecutionPipeline thenCompose(Function<T,CompletableFuture<R>> fn){
 		Function<T,R> unpacked= t-> fn.apply(t).join();
-		return new ExecutionPipeline(swapFn(unpacked),execList);
-		
+		return new ExecutionPipeline(swapFn(unpacked),execList.size()==0?execList.plus(null)  : execList);
+
 	}
 	public<T,R> ExecutionPipeline thenApply(Function<T,R> fn){
-		return new ExecutionPipeline(swapComposeFn(fn),execList);
-		
-		
+		return new ExecutionPipeline(swapComposeFn(fn),execList.size()==0?execList.plus(null)  : execList);
 	}
 	public <X extends Throwable,T> ExecutionPipeline exceptionally(Function<X,T> fn){
 		if(functionList.size()>0){
