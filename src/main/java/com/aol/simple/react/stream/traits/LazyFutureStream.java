@@ -54,7 +54,9 @@ import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.reactivestreams.FutureStreamAsyncPublisher;
 import com.aol.simple.react.reactivestreams.FutureStreamSynchronousPublisher;
 import com.aol.simple.react.stream.CloseableIterator;
+import com.aol.simple.react.stream.EagerStreamWrapper;
 import com.aol.simple.react.stream.LazyStreamWrapper;
+import com.aol.simple.react.stream.StageWithResults;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.lazy.LazyFutureStreamImpl;
@@ -84,6 +86,9 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 		else
 			FutureStreamSynchronousPublisher.super.subscribe(s);
 	}
+	
+	
+	
 	/* 
 	 * Change task executor for the next stage of the Stream
 	 * 
@@ -296,7 +301,14 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	default EagerFutureStream<U> convertToEagerStream(){
 		return new EagerReact(getTaskExecutor()).withRetrier(getRetrier()).fromStream((Stream)getLastActive()
 																		.injectFutures()
-																		.map(f->CompletableFuture.completedFuture(f.join())));
+																		.map(f-> {
+																			try{
+																				return CompletableFuture.completedFuture(f.join());
+																			}catch(Throwable t){
+																				return new CompletableFuture().completeExceptionally(t);
+																			}
+																		}));
+																		
 	}
 	
 	/* 

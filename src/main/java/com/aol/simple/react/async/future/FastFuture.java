@@ -13,6 +13,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -46,6 +47,7 @@ public class FastFuture<T> {
 	static class UnSet{}
 	@Wither
 	private ExecutionPipeline builder;
+	@Getter
 	private FinalPipeline pipeline;
 
 	private volatile int count=0;
@@ -73,7 +75,7 @@ public class FastFuture<T> {
 		return (Throwable)result;	
 	}
 	
-	private FastFuture(FinalPipeline pipeline,int max){
+	public FastFuture(FinalPipeline pipeline,int max){
 		this.max = max;
 		this.builder = new ExecutionPipeline();
 		this.pipeline = pipeline;
@@ -332,6 +334,20 @@ public class FastFuture<T> {
 		public final Object result;
 		public final Throwable exception;
 		public final boolean exceptionally;
+	}
+	public static FastFuture anyOf(Stream<FastFuture> futures) {
+		FastFuture anyOf = new FastFuture();
+		
+		futures.forEach(next -> {
+			next.onComplete(v->{ 
+				anyOf.result.lazySet(true);
+				anyOf.done();
+			  	
+			});
+		});
+		
+		
+		return anyOf;
 	}
 	
 }

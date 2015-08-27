@@ -19,7 +19,7 @@ import com.aol.simple.react.async.future.FinalPipeline;
 public class LazyStreamWrapper<U> implements StreamWrapper<U> {
 	@Wither
 	private final Stream<U> values;
-	private final Queue<FastFuture> futures = new LinkedList<>();
+	
 	int maxSize = 100;
 
 	private boolean streamCompletableFutures =false;
@@ -41,11 +41,17 @@ public class LazyStreamWrapper<U> implements StreamWrapper<U> {
 	}
 	
 	public Stream<FastFuture> injectFutures(){
-	
+		FastFuture f= pipeline.build();
+		Function<Object,FastFuture> factory = v -> {
+			FastFuture next = new FastFuture(f.getPipeline(),0); 
+			next.set(v); 
+			return next;
+		};
 		if(streamCompletableFutures)
-			return convertCompletableFutures();
+			return convertCompletableFutures(f.getPipeline());
+		
 		Stream<FastFuture> result = values
-									.map(this::nextFutureAndSet);
+									.map(factory);
 		
 		return result;
 	}
@@ -54,34 +60,14 @@ public class LazyStreamWrapper<U> implements StreamWrapper<U> {
 		return this.withValues(Stream.concat(values, concatWith));
 	}
 	
-	private Stream<FastFuture> convertCompletableFutures(){
+	private Stream<FastFuture> convertCompletableFutures(FinalPipeline pipeline){
 		
-		return values.map(cf -> nextFuture().populateFromCompletableFuture( (CompletableFuture)cf));
+		return values.map(cf -> new FastFuture(pipeline,0).populateFromCompletableFuture( (CompletableFuture)cf));
 	}
-	private FastFuture nextFuture(){
-		
-		FastFuture f =  futures.poll();
-		if(f==null){
-		
-			f = pipeline.build();
-			
-		}
-		return f;
-	}
-	private FastFuture nextFutureAndSet(Object value){
-		
-		FastFuture f =  nextFuture();
 	
-		f.set(value);
-		return f;
-	}
-	private <T> T returnFuture(FastFuture f){
-		T result = (T)f.join();
-		if(futures.size()<maxSize)
-			futures.offer(f);
-		return result;
-	}
-	//FIXME clean this up (requires separating FutureStream implementations)
+	
+	
+	
 	public <R> LazyStreamWrapper<R> operation(Function<FastFuture<U>,FastFuture<R>> action){
 		pipeline = action.apply(pipeline);
 		return (LazyStreamWrapper)this;

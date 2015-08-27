@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.collectors.lazy.EmptyCollector;
@@ -87,7 +88,6 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	 */
 	default <A,R> R run(Collector<U,A,R> collector) {
 
-		
 		Optional<LazyResultConsumer<U>> batcher = collector.supplier().get() != null ? Optional
 				.of(getLazyCollector().withResults( new ArrayList<>())) : Optional.empty();
 

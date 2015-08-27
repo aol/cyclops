@@ -23,7 +23,9 @@ import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
+import com.aol.simple.react.stream.EagerStreamWrapper;
 import com.aol.simple.react.stream.LazyStreamWrapper;
+import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.traits.operators.StreamCopier;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.nurkiewicz.asyncretry.policy.AbortRetryException;
@@ -66,7 +68,7 @@ public interface LazySimpleReactStream<U> extends
 		
 		return (LazySimpleReactStream<R>) this.withLastActive(
 				getLastActive().operation(
-						(ft) -> ft.thenApplyAsync(LazySimpleReactStream.<U,R>handleExceptions(fn),getTaskExecutor())));
+						(ft) -> ft.thenApplyAsync(LazySimpleReactStream.<U,R>handleExceptions(fn),service)));
 	}
 	/* 
 	 * React to new events with the supplied function on the supplied Executor
