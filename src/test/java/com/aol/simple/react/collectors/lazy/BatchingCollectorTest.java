@@ -25,7 +25,7 @@ public class BatchingCollectorTest {
 	BatchingCollector collector;
 	 @Before
 	 public void setup(){
-		 collector = new BatchingCollector(LazyReact.sequentialBuilder().of(1)).withResults(new ArrayList());
+		 collector = new BatchingCollector(MaxActive.defaultValue.factory.getInstance(),LazyReact.sequentialBuilder().of(1)).withResults(new ArrayList());
 	 }
 	@Test
 	public void testAccept() {

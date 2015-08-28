@@ -24,7 +24,7 @@ import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 /*
  * @author John McClean
  * assumptions
- * 1. only on thread may join at a time
+ * 1. join is read once
  * 2. only map / mapAsync/ exceptionally/ allOf and anyOf are neccessary
  * 3. For results / errors : single writer (one thread executing a task at a time, one thread sets the result or error) 
  * 						/ single reader (simple-react Stream)
@@ -43,6 +43,7 @@ public class FastFuture<T> {
 	private volatile boolean completedExceptionally=false;
 	private final AtomicReference result = new AtomicReference(UNSET);
 	private final AtomicReference exception = new AtomicReference(UNSET);
+	private final Consumer<FastFuture<T>> doFinally;
 	private static UnSet UNSET = new UnSet();
 	static class UnSet{}
 	
@@ -57,7 +58,7 @@ public class FastFuture<T> {
 	
 	public FastFuture(){
 		max=0;
-		
+		this.doFinally=null;
 		this.pipeline = null;
 	}
 	private T result(){
@@ -74,10 +75,16 @@ public class FastFuture<T> {
 		}
 		return (Throwable)result;	
 	}
-	
+	public FastFuture(FinalPipeline pipeline,Consumer<FastFuture<T>> doFinally){
+		this.max = 0;
+		this.pipeline = pipeline;
+		this.doFinally = doFinally;
+		
+	}
 	public FastFuture(FinalPipeline pipeline,int max){
 		this.max = max;
 		this.pipeline = pipeline;
+		this.doFinally=null;
 	}
 	public void await(){
 		
@@ -88,14 +95,19 @@ public class FastFuture<T> {
 		
 	}
 	public T join(){
-	
-		long spin=1;
-		while(!done){
-			LockSupport.parkNanos(spin++);
+		
+		try{
+			long spin=1;
+			while(!done){
+				LockSupport.parkNanos(spin++);
+			}
+			if(completedExceptionally)
+				ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(new CompletionException(exception()));
+			return result();
+		}finally{
+			if(doFinally!=null)
+				doFinally.accept(this);
 		}
-		if(completedExceptionally)
-			ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(new CompletionException(exception()));
-		return result();
 	}
 	public static <T> FastFuture<T> completedFuture(T value){
 		FastFuture<T> f = new FastFuture();
@@ -258,11 +270,15 @@ public class FastFuture<T> {
 			
 			
 		}catch(Throwable t){
-			
+			if(t instanceof CompletedException){
+				if(this.doFinally!=null)
+					doFinally.accept(this);
+			}
 			exception.lazySet(t);
 			completedExceptionally =true;
 			handleOnComplete(true);
 			done=true;
+			
 				
 		}
 		
@@ -276,13 +292,15 @@ public class FastFuture<T> {
 	}
 	
 	public void clearFast() {
-		result.lazySet(UNSET);
+		result.set(UNSET);
+		exception.set(UNSET);
+		queue = null;
+		essential = null;
+		this.completedExceptionally=false;
 		this.done=false;	
 	}
 	
-	public void cancel(boolean cancel){
-		
-	}
+	
 	
 	
 	
@@ -318,6 +336,7 @@ public class FastFuture<T> {
 			}
 			
 		}
+		
 	
 	}
 	@AllArgsConstructor

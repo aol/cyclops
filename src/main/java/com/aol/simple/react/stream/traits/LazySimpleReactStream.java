@@ -42,7 +42,7 @@ public interface LazySimpleReactStream<U> extends
 	
 	LazySimpleReactStream<U> withTaskExecutor(Executor e);
 	LazySimpleReactStream<U> withRetrier(RetryExecutor retry);
-	LazySimpleReactStream<U> withLazyCollector(LazyResultConsumer<U> lazy);
+	
 	LazySimpleReactStream<U> withQueueFactory(QueueFactory<U> queue);
 	
 	LazySimpleReactStream<U>  withErrorHandler(Optional<Consumer<Throwable>> errorHandler);

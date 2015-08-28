@@ -1,6 +1,7 @@
 package com.aol.simple.react.stream.traits;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
@@ -10,7 +11,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.collectors.lazy.EmptyCollector;
@@ -29,7 +29,7 @@ import com.aol.simple.react.threads.SequentialElasticPools;
 public interface LazyStream<U> extends BlockingStream<U>{
 	
 	LazyStreamWrapper<U> getLastActive();
-	LazyResultConsumer<U> getLazyCollector();
+	Supplier<LazyResultConsumer<U>> getLazyCollector();
 	
 	
 	Optional<Consumer<Throwable>> getErrorHandler();
@@ -93,7 +93,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	default <A,R> R run(Collector<U,A,R> collector) {
 
 		Optional<LazyResultConsumer<U>> batcher = collector.supplier().get() != null ? Optional
-				.of(getLazyCollector().withResults( new ArrayList<>())) : Optional.empty();
+				.of(getLazyCollector().get().withResults( new ArrayList<>())) : Optional.empty();
 
 		try {
 		
@@ -124,7 +124,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 		
 	
 		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
-		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().withResults(new ArrayList<>()), this,
+		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().get().withResults(new ArrayList<>()), this,
 				getParallelReduction());
 		try {
 			this.getLastActive().injectFutures().forEach( next -> {
@@ -146,7 +146,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	
 	default Optional<U> reduce(BinaryOperator<U> accumulator){
 		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
-		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().withResults(new ArrayList<>()), this,
+		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().get().withResults(new ArrayList<>()), this,
 			getParallelReduction());
 		Optional[] result =  {Optional.empty()};
 		try {
@@ -176,7 +176,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	default U reduce(U identity, BinaryOperator<U> accumulator){
 		
 		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
-		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().withResults(new ArrayList<>()), this,
+		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().get().withResults(new ArrayList<>()), this,
 			getParallelReduction());
 		Object[] result =  {identity};
 		try {
@@ -195,7 +195,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	
 	default<T> T reduce(T identity, BiFunction<T,? super U,T> accumulator, BinaryOperator<T> combiner){
 		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
-		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().withResults(new ArrayList<>()), this,
+		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().get().withResults(new ArrayList<>()), this,
 			getParallelReduction());
 		Object[] result =  {identity};
 		try {
@@ -212,7 +212,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	}
 	
 	default <R> R collect(Supplier<R> supplier, BiConsumer<R,? super U> accumulator, BiConsumer<R,R> combiner){
-		LazyResultConsumer<U> batcher =  getLazyCollector().withResults( new ArrayList<>());
+		LazyResultConsumer<U> batcher =  getLazyCollector().get().withResults( new ArrayList<>());
 
 		try {
 			this.getLastActive().injectFutures().forEach(n -> {

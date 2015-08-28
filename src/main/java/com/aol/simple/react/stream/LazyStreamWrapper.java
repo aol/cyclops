@@ -1,15 +1,18 @@
 package com.aol.simple.react.stream;
 
+import java.util.ArrayDeque;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.experimental.Wither;
 
 import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.async.future.FinalPipeline;
 import com.aol.simple.react.async.future.PipelineBuilder;
+import com.aol.simple.react.async.future.pool.FuturePool;
 
 @AllArgsConstructor
 public class LazyStreamWrapper<U> implements StreamWrapper<U> {
@@ -21,8 +24,8 @@ public class LazyStreamWrapper<U> implements StreamWrapper<U> {
 	private boolean streamCompletableFutures =false;
 	
 	private PipelineBuilder pipeline;
-	
-	
+	@Getter
+	private FuturePool pool = new FuturePool(new ArrayDeque(100), 100);
 	public LazyStreamWrapper(Stream values, boolean streamCompletableFutures){
 		
 		this.values = values;//values.map(this::nextFuture);//.map( future->returnFuture(future));
@@ -42,8 +45,9 @@ public class LazyStreamWrapper<U> implements StreamWrapper<U> {
 	public Stream<FastFuture> injectFutures(){
 		FastFuture f= pipeline.build();
 		Function<Object,FastFuture> factory = v -> {
-			FastFuture next = new FastFuture(f.getPipeline(),0); 
-			next.set(v); 
+			
+			FastFuture next = pool.next( ()->new FastFuture<>(f.getPipeline(), fut->pool.done(fut))); 
+			next.set(v);
 			return next;
 		};
 		if(streamCompletableFutures)
@@ -61,7 +65,7 @@ public class LazyStreamWrapper<U> implements StreamWrapper<U> {
 	
 	private Stream<FastFuture> convertCompletableFutures(FinalPipeline pipeline){
 		
-		return values.map(cf -> new FastFuture(pipeline,0).populateFromCompletableFuture( (CompletableFuture)cf));
+		return values.map(cf ->  pool.next( ()->new FastFuture<>(pipeline, fut->pool.done(fut))).populateFromCompletableFuture( (CompletableFuture)cf));
 	}
 	
 	

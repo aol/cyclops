@@ -44,14 +44,6 @@ public class BatchingCollector<T> implements LazyResultConsumer<T>{
 		this.results =null;
 		this.blocking = blocking;
 	}
-	/**
-	 * Batching Collector with default Max Active settings
-	 */
-	public BatchingCollector(BlockingStream<T> blocking){
-		this.maxActive = MaxActive.defaultValue.factory.getInstance();
-		this.results =null;
-		this.blocking = blocking;
-	}
 	
 	/* (non-Javadoc)
 	 * @see java.util.function.Consumer#accept(java.lang.Object)

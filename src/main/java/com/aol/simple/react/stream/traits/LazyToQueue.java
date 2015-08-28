@@ -2,12 +2,12 @@ package com.aol.simple.react.stream.traits;
 
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collector;
 
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.Queue.ClosedQueueException;
-import com.aol.simple.react.stream.BaseSimpleReact;
+import com.aol.simple.react.async.future.CompletedException;
 import com.aol.simple.react.stream.lazy.LazyReact;
 
 public interface LazyToQueue<U> extends ToQueue<U> {
@@ -18,7 +18,7 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 	<R> LazyFutureStream<R> thenSync(final Function<U, R> fn);
 	LazyReact getPopulator();
 	
-	
+	LazyFutureStream<U> peekSync(final Consumer<? super U> consumer);
 	/**
 	 * Convert the current Stream to a simple-react Queue
 	 * 
@@ -29,12 +29,16 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 		
 		
 		
-		Continuation continuation =  thenSync(d->{ queue.add(d); return d;}).runContinuation(() -> {
+		Continuation continuation =  peekSync(queue::add)
+									.peekSync(v-> { throw new CompletedException(v);})
+										.runContinuation(() -> {
 										queue.close();});
 		
 		queue.addContinuation(continuation);
 		return queue;
 	}
+
+	
 
 	/* 
 	 * Convert the current Stream to a simple-react Queue.
@@ -48,7 +52,9 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 		Queue<U> queue = fn.apply(this.getQueueFactory().build());
 
 		
-		Continuation continuation = thenSync(queue::add).runContinuation(() -> {
+		Continuation continuation = thenSync(queue::add)
+									.peekSync(v-> { throw new CompletedException(v);})
+									.runContinuation(() -> {
 			queue.close();
 			
 		});
@@ -59,7 +65,9 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 	default void addToQueue(Queue queue){
 		
 
-		Continuation continuation = thenSync(queue::add).runContinuation(() -> {
+		Continuation continuation = thenSync(queue::add)
+										.peekSync(v-> { throw new CompletedException(v);})
+										.runContinuation(() -> {
 			throw new ClosedQueueException();
 		});
 		queue.addContinuation(continuation);

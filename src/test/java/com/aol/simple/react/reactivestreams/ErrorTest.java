@@ -10,9 +10,6 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-
-
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.reactivestreams.Processor;
@@ -20,6 +17,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import com.aol.simple.react.stream.traits.LazyFutureStream;
+@Ignore
 public class ErrorTest {
 	@Test
 	public void testSubscribe(){
@@ -98,7 +96,7 @@ public class ErrorTest {
 		assertThat(result,equalTo(Arrays.asList(1,2,3,4)));
 		
 	}
-	@Test
+	@Test @Ignore
 	public void testProcessor(){
 		FutureStreamSubscriber<Long> sub = new FutureStreamSubscriber();
 		System.out.println("End of chain sub " + System.identityHashCode(sub));

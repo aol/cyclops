@@ -6,6 +6,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
@@ -44,7 +45,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	private final LazyStreamWrapper<U> lastActive;
 	
 	
-	private final LazyResultConsumer<U> lazyCollector;
+	private final Supplier<LazyResultConsumer<U>> lazyCollector;
 	private final QueueFactory<U> queueFactory;
 	private final LazyReact simpleReact;
 	private final Continueable subscription;
@@ -68,7 +69,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		this.lastActive = new LazyStreamWrapper<>(stream, lazyReact.isStreamOfFutures());
 		this.error =  new ConsumerHolder(a->{});
 		this.errorHandler = Optional.of((e) -> { error.forward.accept(e); log.error(e.getMessage(), e);});
-		this.lazyCollector = new BatchingCollector<>(this);
+		this.lazyCollector = ()->new BatchingCollector<U>(getMaxActive(),this);
 		this.queueFactory = QueueFactories.unboundedNonBlockingQueue();
 		this.subscription = new Subscription();
 		this.parallelReduction = ParallelReductionConfig.defaultValue;
@@ -145,6 +146,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 				queueFactory, simpleReact, subscription, parallelReduction, error,this.publisherExecutor,maxActive);
 		
 	}
+	
 	
 	
   

@@ -119,7 +119,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	LazyFutureStream<U> withRetrier(RetryExecutor retry);
 
 
-	LazyFutureStream<U> withLazyCollector(LazyResultConsumer<U> lazy);
+	LazyFutureStream<U> withLazyCollector(Supplier<LazyResultConsumer<U>> lazy);
 	/* 
 	 * Change the QueueFactory type for the next phase of the Stream.
 	 * Default for EagerFutureStream is an unbounded blocking queue, but other types 
@@ -257,7 +257,9 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	default <R> LazyFutureStream<R> thenSync(final Function<U, R> fn){
 		return (LazyFutureStream<R>)LazySimpleReactStream.super.thenSync(fn);
 	}
-
+	default  LazyFutureStream<U> peekSync(final Consumer<? super U> consumer) {
+		return (LazyFutureStream<U>)LazySimpleReactStream.super.peekSync(consumer);
+	}
 	default void closeAll(){
 		getSubscription().closeAll();
 	}
