@@ -46,7 +46,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	 * 
 	 * 
 	 */
-	default void run(Executor e) {
+	default void runOn(Executor e) {
 		SimpleReact reactor  = SequentialElasticPools.simpleReact.nextReactor();
 		reactor.react(() -> run(new NonCollector())).peek(n-> SequentialElasticPools.simpleReact.populate(reactor));
 
@@ -72,12 +72,13 @@ public interface LazyStream<U> extends BlockingStream<U>{
 		run(new NonCollector());
 
 	}
+	
 	/**
 	 * Trigger a lazy stream
 	 */
 	default void run() {
-		//this needs to use an elastic pool of executors
-		run(ThreadPools.getLazyExecutor());
+		//FIXME this should use an elastic pool of executors try {  } finally { }
+		runOn(ThreadPools.getLazyExecutor());
 
 	}
 

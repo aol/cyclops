@@ -238,9 +238,9 @@ public class QueueTest {
 
 		Queue<Integer> q = new Queue(new LinkedBlockingQueue());
 		LazyReact.parallelBuilder().reactInfinitely(() -> count++)
-				.then(it -> q.offer(it)).run(new ForkJoinPool(1));
+				.then(it -> q.offer(it)).runOn(new ForkJoinPool(1));
 		LazyReact.parallelBuilder().reactInfinitely(() -> count1++)
-				.then(it -> q.offer(it)).run(new ForkJoinPool(1));
+				.then(it -> q.offer(it)).runOn(new ForkJoinPool(1));
 
 		List<Integer> result = q.stream().limit(1000)
 				.peek(it -> System.out.println(it))

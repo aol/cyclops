@@ -64,7 +64,7 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 				active.removeAll(toRemove);
 				if(active.size()>maxActive.getReduceTo()){
 					CompletableFuture promise=  new CompletableFuture();
-					FastFuture.anyOf(active.toArray(new FastFuture[0]))
+					FastFuture.xOf(active.size()-maxActive.getReduceTo(),active.toArray(new FastFuture[0]))
 									.onComplete(cf -> promise.complete(true));
 					
 					promise.join();

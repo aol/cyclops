@@ -178,17 +178,13 @@ public class FastFuture<T> {
 	public static <R> FastFuture<List<R>> xOf(int x,FastFuture... futures){
 		//needs to use onComplete
 		FastFuture xOf = new FastFuture(FinalPipeline.empty(),x);
-		
-		
 		for(FastFuture next : futures){
 			next.onComplete(v->{ 
 					xOf.count++;
-					if(xOf.count==xOf.max){
-						List res = new ArrayList(futures.length);
-						for(FastFuture resNext : futures)
-							res.add(resNext.result());
-						xOf.result.lazySet(res);
+					if(xOf.count>=xOf.max){
+						xOf.result.lazySet(true);
 						xOf.done();
+						
 					}
 					
 			});
@@ -295,10 +291,12 @@ public class FastFuture<T> {
 		this.essential=fn;
 	}
 	public void onComplete(Consumer<OnComplete> fn){
+		
 		if(queue==null)
 			queue =  new OneToOneConcurrentArrayQueue<>(5);
 		while(!queue.offer(fn))
 			queue.poll();
+		
 		if(done)
 			handleOnComplete(false);
 	}
