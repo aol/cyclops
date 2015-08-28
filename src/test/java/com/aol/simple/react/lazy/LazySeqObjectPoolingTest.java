@@ -37,7 +37,7 @@ import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
-public abstract class LazySeqTest extends BaseSeqTest {
+public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	
 	@Test
 	public void copy(){
@@ -70,8 +70,9 @@ public abstract class LazySeqTest extends BaseSeqTest {
 		for(int i=0;i<5;i++){
 			System.out.println(i);
 			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
-						
+					
 							.batchByTime(10,TimeUnit.MICROSECONDS)
+								.peek(System.out::println)
 							.toList()
 							.get(0)
 							,not(hasItem(6)));
@@ -278,7 +279,24 @@ public abstract class LazySeqTest extends BaseSeqTest {
 
 	}
 
-	
+	@Override
+	protected <U> LazyFutureStream<U> of(U... array) {
+		return new LazyReact()
+							.objectPoolingOn()
+							.of(array);
+	}
+	@Override
+	protected <U> LazyFutureStream<U> ofThread(U... array) {
+		return new LazyReact()
+							.objectPoolingOn()
+							.of(array);
+	}
+
+	@Override
+	protected <U> LazyFutureStream<U> react(Supplier<U>... array) {
+		return new LazyReact().objectPoolingOn()
+								.react(array);
+	}
 	protected Object sleep(int i) {
 		try {
 			Thread.currentThread().sleep(i);
@@ -288,13 +306,5 @@ public abstract class LazySeqTest extends BaseSeqTest {
 		}
 		return i;
 	}
-	
-	@Override
-	protected abstract <U> LazyFutureStream<U> of(U... array);
-	@Override
-	protected abstract <U> LazyFutureStream<U> ofThread(U... array);
-
-	@Override
-	protected abstract <U> LazyFutureStream<U> react(Supplier<U>... array);
 
 }

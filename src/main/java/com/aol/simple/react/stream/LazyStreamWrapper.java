@@ -27,7 +27,7 @@ public class LazyStreamWrapper<U> implements StreamWrapper<U> {
 	public LazyStreamWrapper(Stream values, LazyReact react){
 		
 		this.values = values;
-		this.pipeline = new PipelineBuilder();
+		this.pipeline = new PipelineBuilder(react.isAutoOptimize(),react.getExecutor());
 		
 		this.react = react;
 		if(react.isPoolingActive())

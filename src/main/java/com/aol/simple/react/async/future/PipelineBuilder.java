@@ -13,13 +13,18 @@ import lombok.experimental.Wither;
 @Wither
 public class PipelineBuilder {
 	
-	ExecutionPipeline builder;
-	private boolean autoOptimise; //fan out then syncrhonous there after
-	private Executor optimisingExec;
+	private final ExecutionPipeline builder;
+	private final boolean autoOptimise; //fan out then syncrhonous there after
+	private final Executor optimisingExec;
 	public PipelineBuilder(){
 		builder = new ExecutionPipeline();
 		autoOptimise=false;
 		optimisingExec=null;
+	}
+	public PipelineBuilder(boolean autoOptimise,Executor optimisingExec){
+		builder = new ExecutionPipeline();
+		this.autoOptimise=autoOptimise;
+		this.optimisingExec=optimisingExec;
 	}
 	public <T,R> PipelineBuilder thenCompose(Function<T,CompletableFuture<R>> fn){
 		if(autoOptimise && builder.functionListSize()==0) 

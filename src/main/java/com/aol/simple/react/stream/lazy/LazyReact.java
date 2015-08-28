@@ -15,8 +15,10 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import lombok.Getter;
+import lombok.ToString;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
+import lombok.extern.slf4j.Slf4j;
 
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.future.FastFuture;
@@ -44,6 +46,8 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 
 @Builder
 @Wither
+@ToString
+@Slf4j 
 public class LazyReact extends BaseSimpleReact {
 	
 	@Getter
@@ -62,7 +66,8 @@ public class LazyReact extends BaseSimpleReact {
 	private final boolean streamOfFutures;
 	@Getter
 	private final boolean poolingActive;
-	
+	@Getter
+	private final boolean autoOptimize;
 	
 	/* 
 	 *	@return true if async
@@ -99,6 +104,7 @@ public class LazyReact extends BaseSimpleReact {
 		this.publisherExecutor=null;
 		this.streamOfFutures=false;
 		this.poolingActive=false;
+		this.autoOptimize=true;
 	}
 	
 	/**
@@ -117,6 +123,7 @@ public class LazyReact extends BaseSimpleReact {
 		this.publisherExecutor=null;
 		this.streamOfFutures=false;
 		this.poolingActive=false;
+		this.autoOptimize=true;
 	}
 	
 	public <U> LazyFutureStream<U> from(CompletableFuture<U> cf){
@@ -138,7 +145,7 @@ public class LazyReact extends BaseSimpleReact {
 	 */
 	@Override
 	public <U> LazyFutureStream<U> construct(Stream s) {
-		
+		this.log.debug("Constructing Stream with {}",this);
 		return (LazyFutureStream) new LazyFutureStreamImpl<U>( this,s);
 
 	}
@@ -146,12 +153,22 @@ public class LazyReact extends BaseSimpleReact {
 	
 	public <U> LazyFutureStream<U> constructFutures(
 			Stream<CompletableFuture<U>> s) {
-		
-		return this.withStreamOfFutures(true).construct((Stream)s);
+		LazyReact toUse = this.withStreamOfFutures(true);
+		this.log.debug("Constructing Stream with {}",toUse);
+		return toUse.construct((Stream)s);
 	}
 	
 	public LazyReact objectPoolingOn(){
 		return this.withPoolingActive(true);
+	}
+	public LazyReact objectPoolingOff(){
+		return this.withPoolingActive(false);
+	}
+	public LazyReact autoOptimiseOn(){
+		return this.withAutoOptimize(true);
+	}
+	public LazyReact autoOptimiseOff(){
+		return this.withAutoOptimize(false);
 	}
 	public LazyReact async(){
 		return this.withAsync(true);
@@ -325,7 +342,9 @@ public class LazyReact extends BaseSimpleReact {
 	 * @param async If true each task will be submitted to an executor service
 	 */
 	public LazyReact(Executor executor, RetryExecutor retrier,
-			Boolean async, MaxActive maxActive, Executor pub,boolean streamOfFutures, boolean objectPoolingActive) {
+			Boolean async, MaxActive maxActive, Executor pub,boolean streamOfFutures, 
+			boolean objectPoolingActive,
+			boolean autoOptimize) {
 		super();
 		this.executor = executor;
 		this.retrier = retrier;
@@ -334,11 +353,12 @@ public class LazyReact extends BaseSimpleReact {
 		this.streamOfFutures = streamOfFutures;
 		this.publisherExecutor=pub;
 		this.poolingActive = objectPoolingActive;
+		this.autoOptimize = autoOptimize;
 	}
 
 	public LazyReact(Executor currentThreadExecutor,
-			AsyncRetryExecutor withScheduler, boolean b, MaxActive maxActive2) {
-		this(currentThreadExecutor,withScheduler,b,maxActive2,null,false,false);
+			AsyncRetryExecutor withScheduler, boolean async, MaxActive maxActive2) {
+		this(currentThreadExecutor,withScheduler,async,maxActive2,null,false,false,async);
 	}
 
 
