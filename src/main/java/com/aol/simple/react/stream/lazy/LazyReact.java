@@ -27,7 +27,6 @@ import com.aol.simple.react.stream.InfiniteClosingSpliterator;
 import com.aol.simple.react.stream.InfiniteClosingSpliteratorFromIterator;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
-import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -51,15 +50,18 @@ public class LazyReact extends BaseSimpleReact {
 	private final Executor executor;
 	@Getter
 	private final RetryExecutor retrier;
-	@Getter
-	private final boolean eager = false;
+	
 	
 	
 	private final Boolean async;
 	@Getter
 	private final MaxActive maxActive;
 	@Getter
+	private final Executor publisherExecutor;
+	@Getter
 	private boolean streamOfFutures =false;
+	
+	
 	
 	/* 
 	 *	@return true if async
@@ -93,7 +95,7 @@ public class LazyReact extends BaseSimpleReact {
 		this.retrier = null;
 		this.async = true;
 		this.maxActive = MaxActive.defaultValue.factory.getInstance();
-		
+		this.publisherExecutor=null;
 	}
 	
 	/**
@@ -109,7 +111,7 @@ public class LazyReact extends BaseSimpleReact {
 		this.retrier = new RetryBuilder().parallelism(threadPoolSize);
 		this.async = true;
 		this.maxActive = new MaxActive(concurrency,threadPoolSize);
-		
+		this.publisherExecutor=null;
 	}
 	
 	public <U> LazyFutureStream<U> from(CompletableFuture<U> cf){
@@ -307,18 +309,19 @@ public class LazyReact extends BaseSimpleReact {
 	 * @param async If true each task will be submitted to an executor service
 	 */
 	public LazyReact(Executor executor, RetryExecutor retrier,
-			Boolean async, MaxActive maxActive, boolean streamOfFutures) {
+			Boolean async, MaxActive maxActive, Executor pub,boolean streamOfFutures) {
 		super();
 		this.executor = executor;
 		this.retrier = retrier;
 		this.async = Optional.ofNullable(async).orElse(true);
 		this.maxActive = Optional.ofNullable(maxActive).orElse(MaxActive.defaultValue.factory.getInstance());
 		this.streamOfFutures = streamOfFutures;
+		this.publisherExecutor=pub;
 	}
 
 	public LazyReact(Executor currentThreadExecutor,
 			AsyncRetryExecutor withScheduler, boolean b, MaxActive maxActive2) {
-		this(currentThreadExecutor,withScheduler,b,maxActive2,false);
+		this(currentThreadExecutor,withScheduler,b,maxActive2,null,false);
 	}
 
 

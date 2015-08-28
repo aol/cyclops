@@ -1,19 +1,15 @@
 package com.aol.simple.react.stream;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.experimental.Wither;
 
 import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.async.future.FinalPipeline;
+import com.aol.simple.react.async.future.PipelineBuilder;
 
 @AllArgsConstructor
 public class LazyStreamWrapper<U> implements StreamWrapper<U> {
@@ -24,19 +20,22 @@ public class LazyStreamWrapper<U> implements StreamWrapper<U> {
 
 	private boolean streamCompletableFutures =false;
 	
-	private FastFuture pipeline;
-
-	public LazyStreamWrapper(Stream values,FastFuture pipeline, boolean streamCompletableFutures){
+	private PipelineBuilder pipeline;
+	
+	
+	public LazyStreamWrapper(Stream values, boolean streamCompletableFutures){
 		
 		this.values = values;//values.map(this::nextFuture);//.map( future->returnFuture(future));
-		this.pipeline = pipeline;
+		this.pipeline = new PipelineBuilder();
 		this.streamCompletableFutures=streamCompletableFutures;
 		
 	}
+	
+	
 	public LazyStreamWrapper(Stream values){
 		
 		this.values =values;
-		this.pipeline = new FastFuture();
+		this.pipeline = new PipelineBuilder();
 		
 	}
 	
@@ -68,12 +67,12 @@ public class LazyStreamWrapper<U> implements StreamWrapper<U> {
 	
 	
 	
-	public <R> LazyStreamWrapper<R> operation(Function<FastFuture<U>,FastFuture<R>> action){
+	public <R> LazyStreamWrapper<R> operation(Function<PipelineBuilder,PipelineBuilder> action){
 		pipeline = action.apply(pipeline);
 		return (LazyStreamWrapper)this;
 	}
-	public LazyStreamWrapper withNewStream(Stream values, BaseSimpleReact simple){
-		return new LazyStreamWrapper(values, new FastFuture(),false);
+	public <R> LazyStreamWrapper<R> withNewStream(Stream<R> values, BaseSimpleReact simple){
+		return new LazyStreamWrapper<R>(values,false);
 	}
 	
 	public LazyStreamWrapper withNewStream(Stream values){

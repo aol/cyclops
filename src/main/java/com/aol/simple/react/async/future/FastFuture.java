@@ -45,8 +45,8 @@ public class FastFuture<T> {
 	private final AtomicReference exception = new AtomicReference(UNSET);
 	private static UnSet UNSET = new UnSet();
 	static class UnSet{}
-	@Wither
-	private ExecutionPipeline builder;
+	
+	
 	@Getter
 	private FinalPipeline pipeline;
 
@@ -57,7 +57,7 @@ public class FastFuture<T> {
 	
 	public FastFuture(){
 		max=0;
-		this.builder = new ExecutionPipeline();
+		
 		this.pipeline = null;
 	}
 	private T result(){
@@ -77,7 +77,6 @@ public class FastFuture<T> {
 	
 	public FastFuture(FinalPipeline pipeline,int max){
 		this.max = max;
-		this.builder = new ExecutionPipeline();
 		this.pipeline = pipeline;
 	}
 	public void await(){
@@ -104,12 +103,17 @@ public class FastFuture<T> {
 		f.done=true;
 		return f;
 	}
-	
+
 	public CompletableFuture<T> toCompletableFuture(){
 		CompletableFuture<T> f = new CompletableFuture<>();
-		this.peek(i->f.complete(i));
-		this.exceptionally(e-> { f.completeExceptionally(e); throw (RuntimeException)e;});
+		this.onComplete(c->{
+			if(c.exceptionally)
+				f.completeExceptionally(c.exception);
+			else
+				f.complete((T)c.result);
+		});
 		return f;
+		
 	}
 	public FastFuture<T> populateFromCompletableFuture(CompletableFuture<T> cf){
 		cf.thenAccept(i->this.set(i));
@@ -152,12 +156,12 @@ public class FastFuture<T> {
 	
 	
 	public static <R> FastFuture<List<R>> allOf(FastFuture... futures){
-		
+		//needs to use onComplete
 		FastFuture allOf = new FastFuture(FinalPipeline.empty(),futures.length);
 		
 		
 		for(FastFuture next : futures){
-			next.peek(v->{ 
+			next.onComplete(v->{ 
 					allOf.count++;
 					if(allOf.count==allOf.max){
 						List res = new ArrayList(futures.length);
@@ -170,6 +174,26 @@ public class FastFuture<T> {
 			});
 		}
 		return allOf;
+	}
+	public static <R> FastFuture<List<R>> xOf(int x,FastFuture... futures){
+		//needs to use onComplete
+		FastFuture xOf = new FastFuture(FinalPipeline.empty(),x);
+		
+		
+		for(FastFuture next : futures){
+			next.onComplete(v->{ 
+					xOf.count++;
+					if(xOf.count==xOf.max){
+						List res = new ArrayList(futures.length);
+						for(FastFuture resNext : futures)
+							res.add(resNext.result());
+						xOf.result.lazySet(res);
+						xOf.done();
+					}
+					
+			});
+		}
+		return xOf;
 	}
 	public static <R> FastFuture<List<R>> anyOf(FastFuture... futures){
 		
@@ -263,38 +287,7 @@ public class FastFuture<T> {
 	public void cancel(boolean cancel){
 		
 	}
-	public <R> FastFuture<R> thenCompose(Function<T,CompletableFuture<R>> fn){
-		return (FastFuture)this.withBuilder(builder.thenCompose((Function)fn));
-	}
-	public <R> FastFuture<R> thenComposeAsync(Function<T,CompletableFuture<R>> fn,Executor exec){
-		return (FastFuture)this.withBuilder(builder.thenComposeAsync((Function)fn, exec));
-	}
-	public <R> FastFuture<R> thenApplyAsync(Function<T,R> fn,Executor exec){
-		
-		return (FastFuture)this.withBuilder(builder.thenApplyAsync(fn, exec));
-	}
-	public  FastFuture<T> peek(Consumer<T> c){
-		
-		return (FastFuture)this.withBuilder( builder.peek(c));
-		
-	}
-	public <R> FastFuture<R> thenApply(Function<T,R> fn){
-		
-		return  (FastFuture)this.withBuilder(builder.thenApply(fn));
-
-	}
 	
-	public <X extends Throwable> FastFuture<T> exceptionally(Function<X,T> fn){
-		
-		return (FastFuture)this.withBuilder(builder.exceptionally(fn));
-	}
-	public <X extends Throwable> FastFuture<T> whenComplete(BiConsumer<T,X> fn){
-		return (FastFuture)this.withBuilder(builder.whenComplete(fn));
-	}
-	public FastFuture<T> build() {
-		
-		return new FastFuture(this.builder.toFinalPipeline(),0);
-	}
 	
 	
 	

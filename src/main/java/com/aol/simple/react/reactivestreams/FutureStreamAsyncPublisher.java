@@ -25,11 +25,15 @@ import com.aol.simple.react.stream.LazyStreamWrapper;
  * @param <T>
  */
 public interface FutureStreamAsyncPublisher<T> extends Publisher<T> {
-	LazyStreamWrapper getLastActive();
+	LazyStreamWrapper<T> getLastActive();
 	void cancel();
 	void forwardErrors(Consumer<Throwable> c);
+	FutureStreamAsyncPublisher<T> withPublisherExecutor(Executor ex);
 	
 	Executor getPublisherExecutor();
+	default void  subscribeOn(Subscriber<? super T> s, Executor ex){
+		this.withPublisherExecutor(ex).subscribeAsync(s);
+	}
 	
 	default void subscribeAsync(Subscriber<? super T> s){
 		FutureStreamAsyncPublisher.this.subscribe(s);

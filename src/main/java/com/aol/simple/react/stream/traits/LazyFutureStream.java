@@ -80,6 +80,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
 	Continueable getSubscription();
 	void cancel();
+	<R> LazyFutureStream<R> withLastActive(LazyStreamWrapper<R> streamWrapper);
 	default void  subscribe(Subscriber<? super U> s){
 		if(isAsync())
 			FutureStreamAsyncPublisher.super.subscribe(s);
@@ -160,7 +161,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
 	LazyFutureStream<U> withSubscription(Continueable sub);
 
-	LazyFutureStream<U> withLastActive(LazyStreamWrapper streamWrapper);
+	
 	/* 
 	 * Convert this stream into an async / sync stream
 	 * 

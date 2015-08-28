@@ -135,4 +135,7 @@ public class ExecutionPipeline {
 		PStack<Function> removed = functionList.minus(functionList.size()-1);
 		return removed.plus(removed.size(),fn.compose(before));
 	}
+	int functionListSize(){
+		return this.functionList.size();
+	}
 }

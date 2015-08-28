@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
+import java.util.concurrent.ForkJoinPool;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +33,7 @@ public class PipesTest {
 
 	@Test
 	public void publisherAbsent(){
-		assertFalse(Pipes.publisher("hello").isPresent());
+		assertFalse(Pipes.publisher("hello",ForkJoinPool.commonPool()).isPresent());
 	}
 	@Test
 	public void publisherPresent(){
@@ -44,7 +45,7 @@ public class PipesTest {
 		JDKReactiveStreamsSubscriber subscriber = new JDKReactiveStreamsSubscriber ();
 		Queue queue = new Queue();
 		Pipes.register("hello", queue);
-		Pipes.publisher("hello").get().subscribe(subscriber);
+		Pipes.publisher("hello",ForkJoinPool.commonPool()).get().subscribe(subscriber);
 		queue.offer("world");
 		queue.close();
 		assertThat(subscriber.getStream().findAny().get(),equalTo("world"));
@@ -54,7 +55,7 @@ public class PipesTest {
 		JDKReactiveStreamsSubscriber subscriber = new JDKReactiveStreamsSubscriber ();
 		Queue queue = new Queue();
 		Pipes.register("hello", queue);
-		Pipes.subscribeTo("hello",subscriber);
+		Pipes.subscribeTo("hello",subscriber,ForkJoinPool.commonPool());
 		queue.offer("world");
 		queue.close();
 		assertThat(subscriber.getStream().findAny().get(),equalTo("world"));

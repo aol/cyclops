@@ -19,6 +19,7 @@ import java.util.stream.StreamSupport;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.factories.QueueFactory;
 import com.aol.simple.react.async.future.FastFuture;
+import com.aol.simple.react.async.future.PipelineBuilder;
 import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.FilteredExecutionPathException;
@@ -50,7 +51,7 @@ public interface LazySimpleReactStream<U> extends
 	
 	Continueable getSubscription();
 	
-	LazySimpleReactStream<U> withLastActive(LazyStreamWrapper streamWrapper);
+	<R> LazySimpleReactStream<R> withLastActive(LazyStreamWrapper<R> streamWrapper);
 	abstract LazyStreamWrapper<U> getLastActive();
 	
 	
@@ -66,7 +67,7 @@ public interface LazySimpleReactStream<U> extends
 		
 
 		
-		return (LazySimpleReactStream<R>) this.withLastActive(
+		return this.withLastActive(
 				getLastActive().operation(
 						(ft) -> ft.thenApplyAsync(LazySimpleReactStream.<U,R>handleExceptions(fn),service)));
 	}
@@ -81,7 +82,7 @@ public interface LazySimpleReactStream<U> extends
 	default <R> LazySimpleReactStream<R> thenSync(final Function<U, R> fn) {
 		
 		
-		return (LazySimpleReactStream<R>) this.withLastActive(
+		return  this.withLastActive(
 				getLastActive().operation(
 						(ft) -> ft.thenApply(LazySimpleReactStream.<U,R>handleExceptions(fn))));
 	}
@@ -103,22 +104,16 @@ public interface LazySimpleReactStream<U> extends
 	 */
 	@SuppressWarnings("unchecked")
 	default <R> LazySimpleReactStream<R> retry(final Function<U, R> fn) {
-		Function<FastFuture<U>,FastFuture<R>> mapper =
+		Function<PipelineBuilder,PipelineBuilder> mapper =
 				(ft) -> ft.thenApplyAsync(res -> 
 				getRetrier().getWithRetry( ()->LazySimpleReactStream.<U,R>handleExceptions(fn)
 						.apply((U)res)).join(),getTaskExecutor() );
 
-		return (LazySimpleReactStream<R>) this.withLastActive(getLastActive().operation(mapper));
+		return  this.withLastActive(getLastActive().operation(mapper));
 	}
 	
 	
 	
-	default <R> LazySimpleReactStream<R> fromStream(Stream<R> stream) {
-		
-		
-		return (LazySimpleReactStream<R>) this.withLastActive(getLastActive()
-				.withNewStream(stream.map(FastFuture::completedFuture),this.getSimpleReact()));
-	}
 	
 
 	
@@ -166,7 +161,7 @@ public interface LazySimpleReactStream<U> extends
 	default  <R> LazySimpleReactStream<R> then(final Function<U,R> fn) {
 		if(!this.isAsync())
 			return thenSync(fn);
-		Function<FastFuture<U>,FastFuture<R>> streamMapper = ft -> ft.thenApplyAsync(LazySimpleReactStream.<U,R>handleExceptions(fn),getTaskExecutor());
+		Function<PipelineBuilder,PipelineBuilder> streamMapper = ft -> ft.thenApplyAsync(LazySimpleReactStream.<U,R>handleExceptions(fn),getTaskExecutor());
 		return (LazySimpleReactStream<R>) this.withLastActive(getLastActive().operation(streamMapper));
 	}
 	
@@ -272,8 +267,8 @@ public interface LazySimpleReactStream<U> extends
 			Function<U, CompletableFuture<R>> flatFn) {
 		if(!this.isAsync())
 			return flatMapCompletableFutureSync(flatFn);
-		Function<FastFuture<U>,FastFuture<R>> streamMapper = ft -> ft.thenComposeAsync(LazySimpleReactStream.handleExceptions(flatFn),getTaskExecutor());
-		return (LazySimpleReactStream<R>) this.withLastActive(getLastActive().operation(streamMapper));
+		Function<PipelineBuilder,PipelineBuilder> streamMapper = ft -> ft.thenComposeAsync(LazySimpleReactStream.handleExceptions(flatFn),getTaskExecutor());
+		return  this.withLastActive(getLastActive().operation(streamMapper));
 	}
 	/**
 	 * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
@@ -296,8 +291,8 @@ public interface LazySimpleReactStream<U> extends
 	default <R> LazySimpleReactStream<R> flatMapCompletableFutureSync(
 			Function<U, CompletableFuture<R>> flatFn) {
 		
-		Function<FastFuture<U>,FastFuture<R>> streamMapper = ft -> ft.thenCompose(LazySimpleReactStream.handleExceptions(flatFn));
-		return (LazySimpleReactStream<R>) this.withLastActive(getLastActive().operation(streamMapper));
+		Function<PipelineBuilder,PipelineBuilder> streamMapper = ft -> ft.thenCompose(LazySimpleReactStream.handleExceptions(flatFn));
+		return  this.withLastActive(getLastActive().operation(streamMapper));
 	}
 
 	/**
@@ -343,13 +338,13 @@ public interface LazySimpleReactStream<U> extends
 		
 		if(!isAsync())
 			return filterSync(p);
-		Function<FastFuture<U>,FastFuture<U>> fn = ft -> ft.thenApplyAsync((in) -> {
+		Function<PipelineBuilder,PipelineBuilder> fn = ft -> ft.thenApplyAsync((in) -> {
 			if (!p.test((U) in)) {
 				throw new FilteredExecutionPathException();
 			}
 			return in;
 		},getTaskExecutor());
-		return (LazySimpleReactStream<U>) this.withLastActive(getLastActive()
+		return  this.withLastActive(getLastActive()
 				.operation(fn));
 
 	}
@@ -366,13 +361,13 @@ public interface LazySimpleReactStream<U> extends
 	 *         the dataflow
 	 */
 	default LazySimpleReactStream<U> filterSync(final Predicate<? super U> p) {
-		Function<FastFuture<U>,FastFuture<U>> fn =  ft -> ft.thenApply((in) -> {
+		Function<PipelineBuilder,PipelineBuilder> fn =  ft -> ft.thenApply((in) -> {
 				if (!p.test((U) in)) {
 					throw new FilteredExecutionPathException();
 				}
 				return in;
 			});
-			return (LazySimpleReactStream<U>) this.withLastActive(getLastActive()
+			return  this.withLastActive(getLastActive()
 					.operation(fn));
 
 		}
@@ -468,7 +463,7 @@ public interface LazySimpleReactStream<U> extends
 	 */
 	default LazySimpleReactStream<U> onFail(Class<? extends Throwable> exceptionClass, final Function<SimpleReactFailedStageException, U> fn){
 		
-		Function<FastFuture<U>,FastFuture<U>> mapper =(ft) -> ft.exceptionally((t) -> {
+		Function<PipelineBuilder,PipelineBuilder> mapper =(ft) -> ft.exceptionally((t) -> {
 			if (t instanceof FilteredExecutionPathException)
 				throw (FilteredExecutionPathException) t;
 			Throwable throwable =(Throwable)t;
@@ -481,7 +476,7 @@ public interface LazySimpleReactStream<U> extends
 		    throw simpleReactException;
 				
 		});
-		return (LazySimpleReactStream<U>) this.withLastActive(getLastActive()
+		return this.withLastActive(getLastActive()
 				.operation(mapper));
 	}
 	
@@ -537,7 +532,7 @@ public interface LazySimpleReactStream<U> extends
 	 */
 	@SuppressWarnings("unchecked")
 	default LazySimpleReactStream<U> capture(final Consumer<? extends Throwable> errorHandler) {
-		return (LazySimpleReactStream)this.withErrorHandler(Optional
+		return this.withErrorHandler(Optional
 				.of((Consumer<Throwable>) errorHandler));
 	}
 	

@@ -10,11 +10,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class FastFutureTest {
-	FastFuture<String> future;
+	PipelineBuilder future;
 	
 	@Before
 	public void setup(){
-		future = new FastFuture<>();
+		future = new PipelineBuilder();
 		sizes = new ArrayList<>();
 		sizes2 = new ArrayList<>();
 		sizes3 = new ArrayList<>();
@@ -26,28 +26,26 @@ public class FastFutureTest {
 	@Test
 	public void testThenApplyAsync() {
 		try{
-			future = future.thenApplyAsync(String::toUpperCase, ForkJoinPool.commonPool())
-						.peek(System.out::println);
-			FastFuture<Integer> next = future.thenApply(s->s.length())
-			.thenApply(l->{ sizes.add(l); return l;})
-				.peek(System.out::println);
-			
-			
-			next = next.thenApplyAsync(l->l+2, ForkJoinPool.commonPool())
-					.peek(System.out::println)
-			.thenApply(l->{ sizes2.add(l); return l;})
-			.thenApplyAsync(l->l+2, ForkJoinPool.commonPool())
+			future = future.<String,String>thenApplyAsync(String::toUpperCase, ForkJoinPool.commonPool())
+						.peek(System.out::println)
+						.<String,Integer>thenApply(s->s.length())
+						.thenApply(l->{ sizes.add((Integer)l); return l;})
+						.peek(System.out::println)
+						.<Integer,Integer>thenApplyAsync(l->l+2, ForkJoinPool.commonPool())
+						.peek(System.out::println)
+			.<Integer,Integer>thenApply(l->{ sizes2.add(l); return l;})
+			.<Integer,Integer>thenApplyAsync(l->l+2, ForkJoinPool.commonPool())
 			.peek(System.out::println)
 			
-			.thenApply(l->{ sizes3.add(l); return l;});
+			.<Integer,Integer>thenApply(l->{ sizes3.add(l); return l;});
 			StringBuilder suffix = new StringBuilder();
 			for(int i=0;i<100;i++){
 				
-				FastFuture f2 = next.build();
+				FastFuture f2 = future.build();
 				
 				f2.set("hello world" + suffix.toString());
 				f2.join();
-				FastFuture f3 = next.build();
+				FastFuture f3 = future.build();
 				f3.set("hello world2"+ suffix.toString());
 				f3.join();
 				suffix.append(""+i);
