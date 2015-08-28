@@ -102,11 +102,7 @@ public class SamplingCollectorTest {
 			return null;
 		}
 
-		@Override
-		public MaxActive getMaxActive() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+		
 
 		
 		@Override

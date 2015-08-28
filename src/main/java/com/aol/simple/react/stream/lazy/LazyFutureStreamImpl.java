@@ -21,9 +21,9 @@ import com.aol.simple.react.async.factories.QueueFactory;
 import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.async.subscription.Subscription;
-import com.aol.simple.react.capacity.monitor.LimitingMonitor;
 import com.aol.simple.react.collectors.lazy.BatchingCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
+import com.aol.simple.react.config.MaxActive;
 import com.aol.simple.react.stream.LazyStreamWrapper;
 import com.aol.simple.react.stream.ReactBuilder;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
@@ -42,8 +42,8 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 
 	private final Optional<Consumer<Throwable>> errorHandler;
 	private final LazyStreamWrapper<U> lastActive;
-	private final boolean eager;
-	private final Consumer<FastFuture<U>> waitStrategy;
+	
+	
 	private final LazyResultConsumer<U> lazyCollector;
 	private final QueueFactory<U> queueFactory;
 	private final LazyReact simpleReact;
@@ -53,6 +53,8 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	private final ConsumerHolder error;
 	
 	private final Executor publisherExecutor;
+	private final MaxActive maxActive;
+	
 	@AllArgsConstructor
 	static class ConsumerHolder{
 		volatile Consumer<Throwable> forward;
@@ -66,14 +68,12 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		this.lastActive = new LazyStreamWrapper<>(stream, lazyReact.isStreamOfFutures());
 		this.error =  new ConsumerHolder(a->{});
 		this.errorHandler = Optional.of((e) -> { error.forward.accept(e); log.error(e.getMessage(), e);});
-		this.eager = false;
-		this.waitStrategy = new LimitingMonitor<>(lazyReact.getMaxActive());
 		this.lazyCollector = new BatchingCollector<>(this);
 		this.queueFactory = QueueFactories.unboundedNonBlockingQueue();
 		this.subscription = new Subscription();
 		this.parallelReduction = ParallelReductionConfig.defaultValue;
 		this.publisherExecutor = lazyReact.getPublisherExecutor();
-		
+		this.maxActive = lazyReact.getMaxActive();
 		
 	}
 	
@@ -141,8 +141,8 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	}
 	@Override
 	public LazyFutureStream<U> withLastActive(LazyStreamWrapper w) {
-		return new LazyFutureStreamImpl<U>(errorHandler, (LazyStreamWrapper)w, eager, waitStrategy, lazyCollector, 
-				queueFactory, simpleReact, subscription, parallelReduction, error,this.publisherExecutor);
+		return new LazyFutureStreamImpl<U>(errorHandler, (LazyStreamWrapper)w,  lazyCollector, 
+				queueFactory, simpleReact, subscription, parallelReduction, error,this.publisherExecutor,maxActive);
 		
 	}
 	

@@ -71,10 +71,7 @@ public class SamplingCollector<T> implements LazyResultConsumer<T>{
 		return consumer.getResults();
 	}
 
-	@Override
-	public MaxActive getMaxActive() {
-		return consumer.getMaxActive();
-	}
+	
 
 	
 

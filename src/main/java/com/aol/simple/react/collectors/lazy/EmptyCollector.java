@@ -13,7 +13,6 @@ import lombok.experimental.Wither;
 
 import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.config.MaxActive;
-import com.aol.simple.react.stream.traits.ConfigurableStream;
 /**
  * A collector that periodically joins active completablefutures
  * but does not store the results
@@ -85,7 +84,7 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 	}
 	
 	@Override
-	public LazyResultConsumer<T> withResults(Collection<FastFuture<T>> t) {
+	public EmptyCollector<T> withResults(Collection<FastFuture<T>> t) {
 		
 		return this.withMaxActive(maxActive);
 	}

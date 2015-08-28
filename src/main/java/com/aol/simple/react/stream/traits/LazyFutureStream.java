@@ -4,7 +4,6 @@ import static com.aol.simple.react.stream.traits.NullValue.NULL;
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -18,7 +17,6 @@ import java.util.Spliterators;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -28,7 +26,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -38,25 +35,19 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Subscriber;
 
-import com.aol.cyclops.streams.StreamUtils;
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.async.Queue.ClosedQueueException;
-import com.aol.simple.react.async.Queue.QueueTimeoutException;
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.async.factories.QueueFactory;
 import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.async.subscription.Continueable;
-import com.aol.simple.react.capacity.monitor.LimitingMonitor;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.config.MaxActive;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.reactivestreams.FutureStreamAsyncPublisher;
 import com.aol.simple.react.reactivestreams.FutureStreamSynchronousPublisher;
 import com.aol.simple.react.stream.CloseableIterator;
-import com.aol.simple.react.stream.EagerStreamWrapper;
 import com.aol.simple.react.stream.LazyStreamWrapper;
-import com.aol.simple.react.stream.StageWithResults;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.lazy.LazyFutureStreamImpl;
@@ -127,9 +118,6 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 */
 	LazyFutureStream<U> withRetrier(RetryExecutor retry);
 
-	LazyFutureStream<U> withWaitStrategy(Consumer<FastFuture<U>> c);
-
-	//LazyFutureStream<U> withEager(boolean eager);
 
 	LazyFutureStream<U> withLazyCollector(LazyResultConsumer<U> lazy);
 	/* 
@@ -264,8 +252,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * @return LazyFutureStream with new limits set
 	 */
 	default LazyFutureStream<U> maxActive(int concurrentTasks){
-		return this.withWaitStrategy(new LimitingMonitor(
-					new MaxActive(concurrentTasks, concurrentTasks)));
+		return null;
 	}
 	default <R> LazyFutureStream<R> thenSync(final Function<U, R> fn){
 		return (LazyFutureStream<R>)LazySimpleReactStream.super.thenSync(fn);

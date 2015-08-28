@@ -1,6 +1,5 @@
 package com.aol.simple.react.stream.eager;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -19,9 +18,6 @@ import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.async.factories.QueueFactory;
 import com.aol.simple.react.async.subscription.AlwaysContinue;
 import com.aol.simple.react.async.subscription.Continueable;
-import com.aol.simple.react.capacity.monitor.LimitingMonitor;
-import com.aol.simple.react.collectors.lazy.BatchingCollector;
-import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.EagerStreamWrapper;
 import com.aol.simple.react.stream.traits.EagerFutureStream;

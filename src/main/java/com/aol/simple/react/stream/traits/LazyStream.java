@@ -16,6 +16,7 @@ import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.collectors.lazy.EmptyCollector;
 import com.aol.simple.react.collectors.lazy.IncrementalReducer;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
+import com.aol.simple.react.config.MaxActive;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.stream.LazyStreamWrapper;
 import com.aol.simple.react.stream.MissingValue;
@@ -30,10 +31,11 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	LazyStreamWrapper<U> getLastActive();
 	LazyResultConsumer<U> getLazyCollector();
 	
-	Consumer<FastFuture<U>> getWaitStrategy();
+	
 	Optional<Consumer<Throwable>> getErrorHandler();
 	 ParallelReductionConfig getParallelReduction();
-	
+	 MaxActive getMaxActive();
+	 
 	/**
 	 * Trigger a lazy stream as a task on the provided Executor
 	 * 
@@ -52,12 +54,13 @@ public interface LazyStream<U> extends BlockingStream<U>{
 
 	default void runThread(Runnable r) {
 		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
-		new Thread(() -> new Runner(r).run(getLastActive(),new EmptyCollector(getLazyCollector().getMaxActive(),safeJoin))).start();
+		new Thread(() -> new Runner(r).run(getLastActive(),new EmptyCollector(getMaxActive(),safeJoin))).start();
 
 	}
+	
 	default Continuation runContinuation(Runnable r) {
 		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
-		return new Runner(r).runContinuations(getLastActive(),new EmptyCollector(getLazyCollector().getMaxActive(),safeJoin));
+		return new Runner(r).runContinuations(getLastActive(),new EmptyCollector(getMaxActive(),safeJoin));
 
 	}
 	/**
@@ -96,7 +99,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 			this.getLastActive().injectFutures().forEach(n -> {
 				
 				batcher.ifPresent(c -> c.accept(n));
-				this.getWaitStrategy().accept(n);
+			
 				
 			});
 		} catch (SimpleReactProcessingException e) {
@@ -127,7 +130,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 
 				
 				collector.getConsumer().accept(next);
-				this.getWaitStrategy().accept(next);
+				
 				collector.forEach(c, safeJoin);
 				
 			});
@@ -150,7 +153,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 
 				
 				collector.getConsumer().accept(next);
-				this.getWaitStrategy().accept(next);
+			
 				
 				
 				if(!result[0].isPresent())
@@ -180,7 +183,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 
 				
 				collector.getConsumer().accept(next);
-				this.getWaitStrategy().accept(next);
+			
 				result[0] = collector.reduce(safeJoin,(U)result[0],accumulator);	
 			});
 		} catch (SimpleReactProcessingException e) {
@@ -199,7 +202,6 @@ public interface LazyStream<U> extends BlockingStream<U>{
 
 				
 				collector.getConsumer().accept(next);
-				this.getWaitStrategy().accept(next);
 				result[0] = collector.reduce(safeJoin,(T)result[0],accumulator,combiner);	
 			});
 		} catch (SimpleReactProcessingException e) {
@@ -215,7 +217,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 			this.getLastActive().injectFutures().forEach(n -> {
 
 				batcher.accept(n);
-				this.getWaitStrategy().accept(n);
+			
 				
 			});
 		} catch (SimpleReactProcessingException e) {
