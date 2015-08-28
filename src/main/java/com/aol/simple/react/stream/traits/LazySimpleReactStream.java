@@ -177,9 +177,9 @@ public interface LazySimpleReactStream<U> extends
 	default   LazySimpleReactStream<U> doOnEach(final Function<U, U> fn) {
 		if(!isAsync())
 			return doOnEachSync(fn);
-		getLastActive().operation(
+		this.withLastActive(getLastActive().operation(
 						(ft) -> ft.thenApplyAsync(LazySimpleReactStream.<U,U>handleExceptions(fn),
-								getTaskExecutor()));
+								getTaskExecutor())));
 		return this;
 	}
 	/**

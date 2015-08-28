@@ -129,7 +129,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 		try {
 			this.getLastActive().injectFutures().forEach( next -> {
 
-				
+				System.out.println(next);
 				collector.getConsumer().accept(next);
 				
 				collector.forEach(c, safeJoin);

@@ -77,12 +77,13 @@ public class BatchByTime<U> implements Function<BiFunction<Long,TimeUnit,U>, Sup
 					
 					
 		        }catch (ClosedQueueException e) {
-		        	
+		        	e.printStackTrace();
+		        	System.out.println(list);
 					throw new ClosedQueueException(list);
 				}
 				
 			} while (timer.getElapsedNanoseconds()<unit.toNanos(time));
-	
+		
 		return list;
 	}
 	public Function<BiFunction<Long,TimeUnit,U>, Supplier<Optional<Collection<U>>>> liftOptional(){

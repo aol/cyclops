@@ -46,6 +46,7 @@ import com.aol.simple.react.config.MaxActive;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.reactivestreams.FutureStreamAsyncPublisher;
 import com.aol.simple.react.reactivestreams.FutureStreamSynchronousPublisher;
+import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.CloseableIterator;
 import com.aol.simple.react.stream.LazyStreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
@@ -72,6 +73,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	Continueable getSubscription();
 	void cancel();
 	<R> LazyFutureStream<R> withLastActive(LazyStreamWrapper<R> streamWrapper);
+	LazyReact getSimpleReact();
 	default void  subscribe(Subscriber<? super U> s){
 		if(isAsync())
 			FutureStreamAsyncPublisher.super.subscribe(s);

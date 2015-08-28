@@ -13,44 +13,41 @@ import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.async.future.FinalPipeline;
 import com.aol.simple.react.async.future.PipelineBuilder;
 import com.aol.simple.react.async.future.pool.FuturePool;
+import com.aol.simple.react.stream.lazy.LazyReact;
 
 @AllArgsConstructor
 public class LazyStreamWrapper<U> implements StreamWrapper<U> {
 	@Wither
 	private final Stream<U> values;
-	
-	int maxSize = 100;
-
-	private boolean streamCompletableFutures =false;
-	
+	@Wither
+	private final LazyReact react;
 	private PipelineBuilder pipeline;
-	@Getter
-	private FuturePool pool = new FuturePool(new ArrayDeque(100), 100);
-	public LazyStreamWrapper(Stream values, boolean streamCompletableFutures){
+	private final FuturePool pool;
+	
+	public LazyStreamWrapper(Stream values, LazyReact react){
 		
-		this.values = values;//values.map(this::nextFuture);//.map( future->returnFuture(future));
+		this.values = values;
 		this.pipeline = new PipelineBuilder();
-		this.streamCompletableFutures=streamCompletableFutures;
 		
+		this.react = react;
+		if(react.isPoolingActive())
+			pool = new FuturePool(new ArrayDeque(react.getMaxActive().getMaxActive()), react.getMaxActive().getMaxActive());
+		else
+			pool = null;
 	}
 	
 	
-	public LazyStreamWrapper(Stream values){
 		
-		this.values =values;
-		this.pipeline = new PipelineBuilder();
-		
-	}
 	
 	public Stream<FastFuture> injectFutures(){
 		FastFuture f= pipeline.build();
 		Function<Object,FastFuture> factory = v -> {
 			
-			FastFuture next = pool.next( ()->new FastFuture<>(f.getPipeline(), fut->pool.done(fut))); 
+			FastFuture next = pool!=null ? pool.next( ()->new FastFuture<>(f.getPipeline(), fut->pool.done(fut))) : new FastFuture<>(f.getPipeline(),0) ; 
 			next.set(v);
 			return next;
 		};
-		if(streamCompletableFutures)
+		if(react.isStreamOfFutures())
 			return convertCompletableFutures(f.getPipeline());
 		
 		Stream<FastFuture> result = values
@@ -65,23 +62,32 @@ public class LazyStreamWrapper<U> implements StreamWrapper<U> {
 	
 	private Stream<FastFuture> convertCompletableFutures(FinalPipeline pipeline){
 		
-		return values.map(cf ->  pool.next( ()->new FastFuture<>(pipeline, fut->pool.done(fut))).populateFromCompletableFuture( (CompletableFuture)cf));
+		return values.map(cf -> buildPool(pipeline).populateFromCompletableFuture( (CompletableFuture)cf));
 	}
 	
 	
 	
 	
+	private FastFuture buildPool(FinalPipeline pipeline) {
+		System.out.println("pool is " + pool + " : " + pipeline );
+		return  pool!=null ? pool.next( ()->new FastFuture<>(pipeline, fut->pool.done(fut))) : new FastFuture<>(pipeline,0) ; 
+	}
+
+
+
+
 	public <R> LazyStreamWrapper<R> operation(Function<PipelineBuilder,PipelineBuilder> action){
 		pipeline = action.apply(pipeline);
 		return (LazyStreamWrapper)this;
 	}
-	public <R> LazyStreamWrapper<R> withNewStream(Stream<R> values, BaseSimpleReact simple){
-		return new LazyStreamWrapper<R>(values,false);
+	public <R> LazyStreamWrapper<R> withNewStream(Stream<R> values){
+		return new LazyStreamWrapper((Stream)values,react);
+	}
+	public <R> LazyStreamWrapper<R> withNewStream(Stream<R> values,LazyReact react){
+		return new LazyStreamWrapper((Stream)values,react.withStreamOfFutures(false));
 	}
 	
-	public LazyStreamWrapper withNewStream(Stream values){
-		return new LazyStreamWrapper(values);
-	}
+	
 
 	
 	public Stream<U> stream() {

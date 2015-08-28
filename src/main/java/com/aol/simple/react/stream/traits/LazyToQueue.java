@@ -30,7 +30,7 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 		
 		
 		Continuation continuation =  peekSync(queue::add)
-									.peekSync(v-> { throw new CompletedException(v);})
+										.self( s-> { if(this.getPopulator().isPoolingActive()) s.peekSync(v-> { throw new CompletedException(v);});})
 										.runContinuation(() -> {
 										queue.close();});
 		
@@ -53,11 +53,8 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 
 		
 		Continuation continuation = thenSync(queue::add)
-									.peekSync(v-> { throw new CompletedException(v);})
-									.runContinuation(() -> {
-			queue.close();
-			
-		});
+									.self( s-> { if(this.getPopulator().isPoolingActive()) s.peekSync(v-> { throw new CompletedException(v);});})
+									.runContinuation(() -> {queue.close();});
 		queue.addContinuation(continuation);
 		return queue;
 	}
@@ -66,7 +63,7 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 		
 
 		Continuation continuation = thenSync(queue::add)
-										.peekSync(v-> { throw new CompletedException(v);})
+										.self( s-> { if(this.getPopulator().isPoolingActive()) s.peekSync(v-> { throw new CompletedException(v);});})
 										.runContinuation(() -> {
 			throw new ClosedQueueException();
 		});
