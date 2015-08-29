@@ -46,36 +46,36 @@ matchType : matches by type only
 ### Clean match statements
 
 The cleanest way to use the Matchable instance is to encapsulate your matching logic inside a method with a name that indicates the intention of the matching. E.g.
-
+```java
 	double benefits = employee.match(this::calcEmployeeBenefits);
 	
 	private CheckValues<I,T> calcEmployeeBenefits(CheckValues<I,T> c){
 		return c.with(__,Bonus.PAYABLE,__).then(e->e.salary()*e.bonus())
 		        .with(__,__,__).then(e->e.salary());
 	}
-	
+```	
 * match example
 
-
+```java
 	new MyCase(4,2,3).match(this::message,"how are you?");
 	
 	private <I,T> CheckValues<Object, T> message(CheckValues<I, T> c) {
 		return c.with(1,2,3).then(i->"hello")
 				.with(4,5,6).then(i->"goodbye");
 	}
-	
+```	
 Returns the default message "how are you?"	as values 4,2,3 don't match 1,2,3 or 4,5,6
 
 * _match example
-
+```java
     new MyCase(4,5,6)._match(c ->c.isType( (MyCase ce)-> "hello").with(1,2,3),"goodbye")
-   
+```   
 Returns "goodbye" as altough the type matches, 1,2,3 doesn't match 4,5,6
 
 * matchType example
-
+```java
 	new MyCase(4,5,6).matchType(c ->c.isType((MyCase ce) -> "hello")
-	
+```	
 Returns "hello" as MyCase is an instance of MyCase
 
 ### Wildcards
@@ -86,9 +86,9 @@ contains a number of Wildcard Predicates
 
 Predicates.__   (double underscore) indicates a wild card
 
-
+```java
     new MyCase(4,5,6)._match(c ->c.isType( (MyCase ce)-> "hello").with(___,5,6),"goodbye")
-
+```
 The first value can be a Wildcard, the second and third should be 5 & 6.
 
 Predicates.ANY() can also be used as a Wildcard. ANY() is capitalised to differentiate from Hamcrest Matchers any()
@@ -100,13 +100,13 @@ It is possible to recursivley match on values. For example if the entity being m
 com.aol.cyclops.matcher.Predicates.with  - facilitates recursive matching
 
 e.g.
-
+```java
     new MyCase(1,new MyEntity(10,11),6)._match(c ->c.isType( (MyCase ce)-> "hello").with(___,with(10,__),6),"goodbye")
 
 or in fully expanded form 
 
 	new MyCase(1,new MyEntity(10,11),6)._match(c ->c.isType( (MyCase ce)-> "hello").with(Predicates.___,Predicates.with(10,Predicates.__),6),"goodbye")
-
+```
 ### Interfaces that extend Matchable
 
 * ValueObject
@@ -114,17 +114,17 @@ or in fully expanded form
 * CachedValues, PTuple1-8
 
 ## Coercing any Object to a Matchable
-
+```java
     As.asMatchable(myObject).match(this::makeFinancialDecision)
-
+```
 com.aol.cyclops.dynamic.As provides a range of methods to dynamically convert types/
 
 # The Decomposable Interface  / Trait
 
 The Decomposable Interface defines an unapply method that is used to convert the implementing Object into an iterable. This can be used to control how Cyclops performs recursive decomposition.
-
+```java
 	public <I extends Iterable<?>> I unapply();
-	
+```	
 ### Interfaces that extend Decomposable
 
 * ValueObject
@@ -132,9 +132,9 @@ The Decomposable Interface defines an unapply method that is used to convert the
 * CachedValues, PTuple1-8
 
 ## Coercing any Object to a Decomposable
-
+```java
     As.asDecomposable(myObject).unapply().forEach(System.out::println);
-
+```
 com.aol.cyclops.dynamic.As provides a range of methods to dynamically convert types
 
 # Creating Case classes
@@ -147,7 +147,7 @@ Lombok provides a number of annotations that make creating case classes simpler.
 ## A sealed type hierarchy
 
 An example sealed hierarchy (ValueObject implies both Matchable and Decomposable)
-
+```java
 	@AllArgsConstructor(access=AccessLevel.PRIVATE) 
 	public static class CaseClass implements ValueObject { } 
 	@Value public static class MyCase1 extends CaseClass { int var1; String var2; }
@@ -155,7 +155,7 @@ An example sealed hierarchy (ValueObject implies both Matchable and Decomposable
 
     CaseClass result;
     return result.match(this::handleBusinessCases);
-    
+```    
     
 ## The Matching class
 
@@ -220,18 +220,19 @@ Streams
 Examples : 
 
 ### With Hamcrest
-
+```java
     Matching.when().isMatch(hasItem("hello2")).thenConsume(System.out::println)
 							.match(Arrays.asList("hello","world"))
 	
+```
 methods xxMatch accept Hamcrest Matchers
 							
 ### Matching multiple
-
+```java
      Stream<Integer> resultStream = Matching.when().isValue(100).thenApply(v-> v+100)
 											.when().isType((Integer i) -> i)
 											.matchMany(100);
-											
+```											
 Use the matchMany method to instruct cylops to return all results that match
 
 ### Inside a Stream
@@ -239,38 +240,38 @@ Use the matchMany method to instruct cylops to return all results that match
 #### flatMap
 
 Use asStreamFunction to Stream multiple results back out of a set of Cases.
-
+```java
      Integer num = Stream.of(1)
 							.flatMap(Matching.when().isValue(1).thenApply(i->i+10).asStreamFunction())
 							.findFirst()
 							.get();							
-
+```
 asStreamFunction converts the MatchingInstance into a function that returns a Stream. Perfect for use within flatMap.
 
 #### map
-	
+```java	
 	Integer num = Stream.of(1)
 							.map(Matching.when().isValue(1).thenApply(i->i+10))
 							.findFirst()
 							.get().get();	
-
+```
 Or drop the second get() (which unwraps from an Optional) with
-
+```java
 
 	Integer num = Stream.of(1)
 							.map(Matching.when().isValue(1).thenApply(i->i+10).asUnwrappedFunction())
 							.findFirst()
 							.get();	
 							
-							
+```							
 ### Async execution	
 
 Use the Async suffix - available on the Cases object, when calling match to run the pattern matching asynchronously, potentially on another thread.
-
+```java
 		CompletableFuture<Integer> result =	Matching.when().isValue(100).thenApply(this::expensiveOperation1)
 													.when().isType((Integer i) -> this.exepensiveOperation2(i))
 													.cases()
-													.matchAsync(100)		
+													.matchAsync(100)	```	
 ## The PatternMatcher class
 
 The PatternMatcher builder is the core builder for Cyclops Cases, that other builder instances leverage to build pattern matching cases. It's API is unsuitable for general use in most applications, but can leveraged to build application specific Matching builders.
