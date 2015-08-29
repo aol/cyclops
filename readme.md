@@ -69,14 +69,14 @@ Perform nested operations on Collections or Monads.
 ![for comprehensions](https://cloud.githubusercontent.com/assets/9964792/7887680/c6ac127c-062a-11e5-9ad7-ad4553761e8d.png)
 
 ### Example 
-
+```java
     Stream<Double> s = Do.add(asList(10.00,5.00,100.30))
 						.add(asList(2.0))
 						.with( d -> e ->asList(e*d*10.0))
 						.yield(i -> j -> k  -> i*(1.0+j)*k).unwrap();
 		
 	double total = s.collect(Collectors.summingDouble(t->t));
-
+```
 ## Pattern Matching
 
 Advanced Scala-like pattern matching for Java 8. Match recursively against most Objects / datastructures.
@@ -103,7 +103,7 @@ Features include
 * Fluent step builders
 
 ### Example 
-
+```java
     private <I,T> CheckValues<Object, T> cases(CheckValues<I, T> c) {
 		return c.with(1,2,3).then(i->"hello")
 				.with(4,5,6).then(i->"goodbye");
@@ -113,13 +113,13 @@ Features include
 		assertThat(As.asMatchable(new MyCase(1,2,3)).match(this::cases),equalTo("hello"));
 		
 	}
-
+```
 ## Extensible Generic Monad Operations with AnyM and SequenceM
 
 ### Example
 
 flatMap (bind) across Stream and Optional types (null entries are removed)
-
+```java
       List<Integer> list = anyM(Stream.of(Arrays.asList(1,3),null))
 									.flatMapOptional(d-> Optional.ofNullable(d))
 									.map(i->i.size())
@@ -128,7 +128,7 @@ flatMap (bind) across Stream and Optional types (null entries are removed)
 									.toList();
 									
 		assertThat(Arrays.asList(2),equalTo(list));
-
+```
 ### Example
 
 Lift a File to a Stream
@@ -139,23 +139,23 @@ With a file "input.file" that contains two lines
 * world
 
 We can stream the contents like so...
-
+```java
 		List<String> result = anyM("./input.file")
 								.liftAndBindFile(File::new)
 								.asSequence()
 								.toList();
 		
 		assertThat(result,equalTo(Arrays.asList("hello","world")));
-		
+```		
 For multiple files...
-
+```java
 		List<String> result = anyM("./input.file","./input2.file")
 								.liftAndBindFile(File::new)
 								.asSequence()
 								.toList();
 		
 		assertThat(result,equalTo(Arrays.asList("hello","world","hello2","world2")));
-
+```
 ## Power Tuples 
 
 Features include
@@ -182,7 +182,7 @@ vMemoization
 Utilise the heap rather than the Stack for (tail) recursive algorithms in Java.
    
  The Java code below will result in a Stackoverflow error  
-   
+ ```java  
     @Test @Ignore
 	public void trampolineTest1(){
 		
@@ -196,10 +196,10 @@ Utilise the heap rather than the Stack for (tail) recursive algorithms in Java.
 		else
 			return loop1(times-1,sum+times);
 	}  
-
+```
 The same code using Trampoline works fine.
 
-
+```java
     @Test
     public void trampolineTest(){
 
@@ -214,7 +214,7 @@ The same code using Trampoline works fine.
        else
           return Trampoline.more(()->loop(times-1,sum+times));
      }
-     
+```    
 ## Try : functional exception handling
 
 Cyclops Try is similar to, but functionally different from the Scala (and JAVASLANG) Try monads. 
@@ -231,13 +231,13 @@ Features
 
 
 ### Example : Try with resources
-
+```java
     Try.catchExceptions(FileNotFoundException.class,IOException.class)
 				   .init(()->new BufferedReader(new FileReader("file.txt")))
 				   .tryWithResources(this::read)
 				   .onFail(this::recover)
 				   .map(this::continueProcessing)
-				
+```				
 ## Production Enable / Disable Switch
 
 * Enable / Disable classes (Pattern Match by type)
@@ -247,11 +247,11 @@ Features
 * Biased towards enabled (right biased).
 
 ### Example
-
+```java
 	Switch<Feature> switch = createSwitch(config);
 	
     switch.map(this::processData); //if live, data is processed, otherwise nothing happens
-    
+ ```   
 
 ## Traits
 
@@ -289,7 +289,7 @@ This is a class that helps work around the limitations of Java 8 lambda expressi
 LazyImmutable allows a capture value to be set exactly once
 
 E.g. from cyclops-pattern-matching the code to make an Extractor memoised ->
-
+```java
     public static final <T,R > Extractor<T,R> memoised( Extractor<T,R> extractor){
 		final LazyImmutable<R> value = new LazyImmutable<>();
 		return input -> {
@@ -298,19 +298,19 @@ E.g. from cyclops-pattern-matching the code to make an Extractor memoised ->
 		};
 		
 	}
-
+```
 computeIfAbsent is used to extract the value from the LazyImmutable, and takes a Supplier as an argument. The Supplier is only invoked once (the first time).
 
 ### Mutable
 
 Mutable represents a captured variable inside a Java 8 closure. Because of the effectively final rule we can't access variables from within a Closure, but we can mutate the state of captured Objects. Mutable holds a value we would like mutate (if really, really, neccessary)
-
+```java
      Mutable<Integer> timesCalled = Mutable.of(0);
      Function<String,String> fn = input -> {
      			return input + timesCalled.mutate(v -> v+1);
      }
 
-
+```
 
 
 
