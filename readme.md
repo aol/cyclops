@@ -21,7 +21,7 @@ LazyFutureStream pulls 'chains' of asynchronous CompletableFuture tasks into exi
 
 * SimpleReactStream : this provides [a simple, focused API for Streaming Futures](https://github.com/aol/simple-react#simplereactstream--a-simple-fluent-api-for-functional-reactive-programming-with-java-8) based on the Promises / A++ spec.
 
-* [EagerFutureStream](https://github.com/aol/simple-react/wiki/EagerFutureStream) : An easy to use JDK 8 Stream of CompletableFutures, with all of the SimpleReact API methods, and scala-like [jOOλ Seq](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.5/org/jooq/lambda/Seq.html) methods too. EagerFutureStream kicks of future tasks eagerly and can be run in either parallel or sequential (free-threaded) modes.
+* [EagerFutureStream](https://github.com/aol/simple-react/wiki/EagerFutureStream) : An easy to use JDK 8 Stream of CompletableFutures, with all of the SimpleReact API methods, and scala-like [jOOλ Seq](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.6/org/jooq/lambda/Seq.html) methods too. EagerFutureStream kicks of future tasks eagerly and can be run in either parallel or sequential (free-threaded) modes.
 
 * [LazyFutureStream](https://github.com/aol/simple-react/wiki/LazyFutureStream) : Provides a Lazy JDK 8 Stream of CompletableFutures (and Seq, and SimpleReact API methods). Can be used for constant proccessing (e.g. of data coming in off a SimpleReact asynchronous queue).
  
@@ -39,7 +39,7 @@ LazyFutureStream pulls 'chains' of asynchronous CompletableFuture tasks into exi
  
 
 
-SimpleReact is a parallel Stream library that implements java.util.stream.Stream. Under the hood, SimpleReact manages parallel streams as a stream of CompletableFutures. SimpleReact provides a simple core API based on the Promises / A++ spec, while also providing a full rich range of options by implementing both JDK 8 Stream, and the scala-like [jOOλ Seq](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.5/org/jooq/lambda/Seq.html). SimpleReact goes beyond the traditional Java 8 Streaming interface by offering failure recovery, capture and retry functionality.
+SimpleReact is a parallel Stream library that implements java.util.stream.Stream. Under the hood, SimpleReact manages parallel streams as a stream of CompletableFutures. SimpleReact provides a simple core API based on the Promises / A++ spec, while also providing a full rich range of options by implementing both JDK 8 Stream, and the scala-like [jOOλ Seq](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.6/org/jooq/lambda/Seq.html). SimpleReact goes beyond the traditional Java 8 Streaming interface by offering failure recovery, capture and retry functionality.
 
 It is an easy to use, concurrent, reactive programming library for JDK 8.  It provides a focused, simple and limited core Reactive API aimed at solving the 90% use case - but without adding complexity. It is a core goal of SimpleReact to integrate with JDK 8 Stream libraries for maximum reuse and plugability.
 
@@ -52,13 +52,13 @@ See [A Simple Api, and a Rich Api](https://github.com/aol/simple-react/wiki/A-si
 * [Search Maven](http://search.maven.org/#search%7Cga%7C1%7Ccom.aol.simplereact)
 
 
-For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:'0.97'
+For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:'0.99'
 
 ##Documentation
 
 * [Reactive programming with Java 8 and simple-react: The Tutorial](https://medium.com/@johnmcclean/reactive-programming-with-java-8-and-simple-react-the-tutorial-3634f512eeb1)
 * [wiki](https://github.com/aol/simple-react/wiki)
-* [Javadoc](http://www.javadoc.io/doc/com.aol.simplereact/simple-react/0.97)
+* [Javadoc](http://www.javadoc.io/doc/com.aol.simplereact/simple-react/0.99)
 * [Articles on medium](https://medium.com/search?q=simplereact)
 
 
