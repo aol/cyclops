@@ -91,7 +91,17 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	 * @return Collection of results
 	 */
 	default <A,R> R run(Collector<U,A,R> collector) {
-
+/**		if(getLastActive().isSequential()){ 
+			//if single threaded we can simply push from each Future into the collection to be returned
+			if(collector.supplier().get()==null){
+				forEach(r->{});
+				return null;
+			}
+			A col = collector.supplier().get();
+			forEach(r->collector.accumulator().accept(col,r));
+			return collector.finisher().apply(col);
+		
+		}**/
 		Optional<LazyResultConsumer<U>> batcher = collector.supplier().get() != null ? Optional
 				.of(getLazyCollector().get().withResults( new ArrayList<>())) : Optional.empty();
 
@@ -129,22 +139,34 @@ public interface LazyStream<U> extends BlockingStream<U>{
 		try {
 			this.getLastActive().operation(f-> f.peek(c)).injectFutures().forEach( next -> {
 				
-		//	 collector.getConsumer().accept(next);
+			 collector.getConsumer().accept(next);
 				
-				collector.forEach(c, safeJoin);
+		
 				
 			});
 		} catch (SimpleReactProcessingException e) {
 			
 		}
-	//	collector.getConsumer().block();
-		collector.forEachResults(collector.getConsumer().getAllResults(),c, safeJoin);
+		collector.getConsumer().block();
+	
 		
 		
 
 	}
 	
 	default Optional<U> reduce(BinaryOperator<U> accumulator){
+/**		if(getLastActive().isSequential()){ 
+			Object[] result = {null};
+			forEach(r-> {
+				if(result[0]==null)
+					result[0]=r;
+				else{
+					result[0]=accumulator.apply((U)result[0], r);
+				}
+			});
+			return (Optional)Optional.ofNullable(result[0]);
+		
+		}**/
 		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
 		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().get().withResults(new ArrayList<>()), this,
 			getParallelReduction());

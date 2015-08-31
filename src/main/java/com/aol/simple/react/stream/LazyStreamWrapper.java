@@ -98,6 +98,13 @@ public class LazyStreamWrapper<U> implements StreamWrapper<U> {
 	public LazyStreamWrapper withStream(Stream noType) {
 		return this.withValues(noType);
 	}
+
+
+
+
+	public boolean isSequential() {
+		return this.pipeline.isSequential();
+	}
 	
 	
 	

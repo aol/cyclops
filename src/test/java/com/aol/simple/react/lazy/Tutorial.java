@@ -598,13 +598,14 @@ public class Tutorial {
 					.peek(batch->count3= count3+batch.size())
 					.map(this::processOrders)
 					//.toList();
-					.forEach(next -> { result.addAll((Collection)next); count2.getAndAdd(next.size());});
+					.forEach(next -> { //result.addAll((Collection)next); 
+					count2.getAndAdd(next.size());});
 		//	assertThat(size,equalTo(100));
 			
 			System.out.println("In flight count " + count3 + " :" + otherCount);
 			System.out.println(result.size());
 			System.out.println(result);
-			System.out.println(x);
+			System.out.println("x" +x);
 			assertThat(count2.get(),equalTo(1000));
 		}
 	}

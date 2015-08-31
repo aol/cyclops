@@ -293,9 +293,10 @@ public class FastFuture<T> {
 		result.set(UNSET);
 		exception.set(UNSET);
 		this.forXOf = null;
-		essential = null;
+		this.essential = null;
+		this.count.set(0);
+		this.max.set(0);
 		this.completedExceptionally=false;
-		readers = new HashSet<>();
 		this.done=false;	
 	}
 	
@@ -317,10 +318,9 @@ public class FastFuture<T> {
 		
 		if(done){
 			fn.accept(buildOnComplete());
-			//handleOnComplete(false);
 		}
 	}
-	Set<Long> readers = new HashSet<>();
+	
 	private void handleOnComplete(boolean force){
 		if(forXOf!=null)
 			forXOf.accept(buildOnComplete());

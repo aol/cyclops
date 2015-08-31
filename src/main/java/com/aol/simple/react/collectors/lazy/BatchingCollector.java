@@ -66,7 +66,6 @@ public class BatchingCollector<T> implements LazyResultConsumer<T>{
 				if(active.size()>maxActive.getReduceTo()){
 					CompletableFuture promise=  new CompletableFuture();
 					FastFuture.xOf(active.size()-maxActive.getReduceTo(),() -> {
-						System.out.println("On complete!");
 						promise.complete(true);
 					},active.toArray(new FastFuture[0]));
 					
@@ -82,12 +81,8 @@ public class BatchingCollector<T> implements LazyResultConsumer<T>{
 	public void block(){
 		if(active.size()==0)
 			return;
-		CompletableFuture promise=  new CompletableFuture();
-		FastFuture.allOf(() -> {
-			
-			promise.complete(true);
-		},active.toArray(new FastFuture[0]));
-		promise.join();
+		active.stream().peek(f->{try{ f.join();}catch(Exception e){}}).forEach(a->{});
+	
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.simple.react.collectors.lazy.LazyResultConsumer#getResults()
