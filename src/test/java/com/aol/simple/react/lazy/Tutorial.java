@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -577,7 +578,8 @@ public class Tutorial {
 	int count2 =0;
 	@Test
 	public void batchByTimeFiltered() {
-		count2=0;
+		for(int x=0;x<100;x++){
+		AtomicInteger count2= new AtomicInteger(0);
 		LazyReact
 				.parallelCommonBuilder()
 				.iterateInfinitely("", last -> nextFile())
@@ -592,9 +594,10 @@ public class Tutorial {
 				.filter(c->!c.isEmpty())
 				
 				.map(this::processOrders)
-				.forEach(next -> count2= count2+next.size());
+				.forEach(next -> count2.getAndAdd(next.size()));
 		
-		assertThat(count2,equalTo(100));
+		assertThat(count2.get(),equalTo(100));
+		}
 	}
 	@Test
 	public void batchByTimeFilteredEager() {
