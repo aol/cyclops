@@ -1,7 +1,6 @@
 package com.aol.simple.react.stream.traits;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
@@ -11,6 +10,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
+import java.util.stream.Stream;
 
 import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.collectors.lazy.EmptyCollector;
@@ -91,7 +91,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	 * @return Collection of results
 	 */
 	default <A,R> R run(Collector<U,A,R> collector) {
-/**		if(getLastActive().isSequential()){ 
+		if(getLastActive().isSequential()){ 
 			//if single threaded we can simply push from each Future into the collection to be returned
 			if(collector.supplier().get()==null){
 				forEach(r->{});
@@ -101,7 +101,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 			forEach(r->collector.accumulator().accept(col,r));
 			return collector.finisher().apply(col);
 		
-		}**/
+		}
 		Optional<LazyResultConsumer<U>> batcher = collector.supplier().get() != null ? Optional
 				.of(getLazyCollector().get().withResults( new ArrayList<>())) : Optional.empty();
 
@@ -155,7 +155,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	}
 	
 	default Optional<U> reduce(BinaryOperator<U> accumulator){
-/**		if(getLastActive().isSequential()){ 
+		if(getLastActive().isSequential()){ 
 			Object[] result = {null};
 			forEach(r-> {
 				if(result[0]==null)
@@ -166,7 +166,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 			});
 			return (Optional)Optional.ofNullable(result[0]);
 		
-		}**/
+		}
 		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
 		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().get().withResults(new ArrayList<>()), this,
 			getParallelReduction());
@@ -196,7 +196,18 @@ public interface LazyStream<U> extends BlockingStream<U>{
 			
 	}
 	default U reduce(U identity, BinaryOperator<U> accumulator){
+		if(getLastActive().isSequential()){ 
+			Object[] result = {identity};
+			forEach(r-> {
+				if(result[0]==null)
+					result[0]=r;
+				else{
+					result[0]=accumulator.apply((U)result[0], r);
+				}
+			});
+			return (U)result[0];
 		
+		}
 		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
 		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().get().withResults(new ArrayList<>()), this,
 			getParallelReduction());
@@ -216,6 +227,20 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	}
 	
 	default<T> T reduce(T identity, BiFunction<T,? super U,T> accumulator, BinaryOperator<T> combiner){
+		
+		if(getLastActive().isSequential()){ 
+			Object[] result = {identity};
+			forEach(r-> {
+				if(result[0]==null)
+					result[0]=r;
+				else{
+					result[0]= accumulator.apply((T)result[0], r);
+				}
+			});
+			return (T)result[0];
+		
+		}
+		
 		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
 		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().get().withResults(new ArrayList<>()), this,
 			getParallelReduction());
@@ -234,24 +259,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	}
 	
 	default <R> R collect(Supplier<R> supplier, BiConsumer<R,? super U> accumulator, BiConsumer<R,R> combiner){
-		LazyResultConsumer<U> batcher =  getLazyCollector().get().withResults( new ArrayList<>());
-
-		try {
-			this.getLastActive().injectFutures().forEach(n -> {
-
-				batcher.accept(n);
-			
-				
-			});
-		} catch (SimpleReactProcessingException e) {
-			
-		}
-		
-		
-		return (R)batcher.getAllResults().stream()
-									.map(cf ->  BlockingStreamHelper.getSafe(cf,getErrorHandler()))
-									.filter(v -> v != MissingValue.MISSING_VALUE)
-									.collect((Supplier)supplier,(BiConsumer)accumulator,(BiConsumer)combiner);
+		return (R)this.run((Collector)Collector.of(supplier, accumulator, ( a,b)-> { combiner.accept(a, b); return a;}));
 		
 	}
 	
