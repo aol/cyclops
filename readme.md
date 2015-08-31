@@ -21,7 +21,7 @@ LazyFutureStream pulls 'chains' of asynchronous CompletableFuture tasks into exi
 
 * SimpleReactStream : this provides [a simple, focused API for Streaming Futures](https://github.com/aol/simple-react#simplereactstream--a-simple-fluent-api-for-functional-reactive-programming-with-java-8) based on the Promises / A++ spec.
 
-* [EagerFutureStream](https://github.com/aol/simple-react/wiki/EagerFutureStream) : An easy to use JDK 8 Stream of CompletableFutures, with all of the SimpleReact API methods, and scala-like [jOOλ Seq](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.5/org/jooq/lambda/Seq.html) methods too. EagerFutureStream kicks of future tasks eagerly and can be run in either parallel or sequential (free-threaded) modes.
+* [EagerFutureStream](https://github.com/aol/simple-react/wiki/EagerFutureStream) : An easy to use JDK 8 Stream of CompletableFutures, with all of the SimpleReact API methods, and scala-like [jOOλ Seq](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.6/org/jooq/lambda/Seq.html) methods too. EagerFutureStream kicks of future tasks eagerly and can be run in either parallel or sequential (free-threaded) modes.
 
 * [LazyFutureStream](https://github.com/aol/simple-react/wiki/LazyFutureStream) : Provides a Lazy JDK 8 Stream of CompletableFutures (and Seq, and SimpleReact API methods). Can be used for constant proccessing (e.g. of data coming in off a SimpleReact asynchronous queue).
  
@@ -39,7 +39,7 @@ LazyFutureStream pulls 'chains' of asynchronous CompletableFuture tasks into exi
  
 
 
-SimpleReact is a parallel Stream library that implements java.util.stream.Stream. Under the hood, SimpleReact manages parallel streams as a stream of CompletableFutures. SimpleReact provides a simple core API based on the Promises / A++ spec, while also providing a full rich range of options by implementing both JDK 8 Stream, and the scala-like [jOOλ Seq](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.5/org/jooq/lambda/Seq.html). SimpleReact goes beyond the traditional Java 8 Streaming interface by offering failure recovery, capture and retry functionality.
+SimpleReact is a parallel Stream library that implements java.util.stream.Stream. Under the hood, SimpleReact manages parallel streams as a stream of CompletableFutures. SimpleReact provides a simple core API based on the Promises / A++ spec, while also providing a full rich range of options by implementing both JDK 8 Stream, and the scala-like [jOOλ Seq](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.6/org/jooq/lambda/Seq.html). SimpleReact goes beyond the traditional Java 8 Streaming interface by offering failure recovery, capture and retry functionality.
 
 It is an easy to use, concurrent, reactive programming library for JDK 8.  It provides a focused, simple and limited core Reactive API aimed at solving the 90% use case - but without adding complexity. It is a core goal of SimpleReact to integrate with JDK 8 Stream libraries for maximum reuse and plugability.
 
@@ -52,13 +52,13 @@ See [A Simple Api, and a Rich Api](https://github.com/aol/simple-react/wiki/A-si
 * [Search Maven](http://search.maven.org/#search%7Cga%7C1%7Ccom.aol.simplereact)
 
 
-For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:'0.97'
+For Gradle : compile group: 'com.aol.simplereact', name:'simple-react', version:'0.99'
 
 ##Documentation
 
 * [Reactive programming with Java 8 and simple-react: The Tutorial](https://medium.com/@johnmcclean/reactive-programming-with-java-8-and-simple-react-the-tutorial-3634f512eeb1)
 * [wiki](https://github.com/aol/simple-react/wiki)
-* [Javadoc](http://www.javadoc.io/doc/com.aol.simplereact/simple-react/0.97)
+* [Javadoc](http://www.javadoc.io/doc/com.aol.simplereact/simple-react/0.99)
 * [Articles on medium](https://medium.com/search?q=simplereact)
 
 
@@ -309,50 +309,50 @@ SimpleReact starts with an array of Suppliers which generate data other function
 ##Example 1 : reacting with completablefutures
 
 React **with**
-
+```java
 			List<CompletableFuture<Integer>> futures = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.with(it -> it * 100);
-
+```
 In this instance, 3 suppliers generate 3 numbers. These may be executed in parallel, when they complete each number will be multiplied by 100 - as a separate parrellel task (handled by a ForkJoinPool or configurable task executor). A List of Future objects will be returned immediately from Simple React and the tasks will be executed asynchronously.
 React with does not block.
 ##Example 2 : chaining
 
 React **then** / **map**
-
+```java
 	 	new SimpleReact()
 	 			.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 
-
+```
 React then allows event reactors to be chained. Unlike React with, which returns a collection of Future references, React then is a fluent interface that returns the React builder - allowing further reactors to be added to the chain.
 React then does not block.
 React with can be called after React then which gives access to the full CompleteableFuture api. CompleteableFutures can be passed back into SimpleReact via SimpleReact.react(streamOfCompleteableFutures);
 See this blog post for examples of what can be achieved via CompleteableFuture :- http://www.nurkiewicz.com/2013/12/promises-and-completablefuture.html
 
 React **retry**
-
+```java
 	 	new SimpleReact()
 	 			.<Integer> react(() -> url1, () -> url2, () -> url3)
 				.retry(it -> readRemoteService(it))
 				.then(it ->  extractData(it))
 				.then(it -> writeToQueue(it))
 
-
+```
 Retry allows a stage to be retried a configurable number of times. Retry functionlity is provided by async-retry (https://github.com/nurkiewicz/async-retry), that provides a very configurable mechanism for asynchronous retrying based on CompletableFutures.
 In SimpleReact a RetryExecutors can be plugged in at any stage. Once plugged in it will be used for the current and subsequent stages of the Stream (until replaced).
 
 e.g.  
-
+```java
 	new SimpleReact()
 		.<Integer> react(() -> url1, () -> url2, () -> url3)
 		.withRetrier(retryExecutor)
 		.retry(it -> readRemoteService(it))
-
+```
 To configure a retry executor follow the instructions on https://github.com/nurkiewicz/async-retry. E.g :-
 
-		
+```java		
     ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     RetryExecutor executor = new AsyncRetryExecutor(scheduler).
        retryOn(SocketException.class).
@@ -360,31 +360,31 @@ To configure a retry executor follow the instructions on https://github.com/nurk
        withMaxDelay(10_000).               //10 seconds
        withUniformJitter().                //add between +/- 100 ms randomly
        withMaxRetries(20);
-       
+```    
 React and **flatMap**       
        
 ##Example 3: blocking
 
 React and **block**
-
+```java
 			List<String> strings = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.block();
-						
+```						
 In this example, once the current thread of execution meets the React block method, it will block until all tasks have been completed. The result will be returned as a List. The Reactive tasks triggered by the Suppliers are non-blocking, and are not impacted by the block method until they are complete. Block, only blocks the current thread.
 
 ##Example 4: breakout
 
 Sometimes you may not need to block until all the work is complete, one result or a subset may be enough. To faciliate this, block can accept a Predicate functional interface that will allow SimpleReact to stop blocking the current thread when the Predicate has been fulfilled. E.g.
-
+```java
 			List<String> strings = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.block(status -> status.getCompleted()>1);
-
+```
 In this example the current thread will unblock once more than one result has been returned. The available fields on the status object are :-
 completed
 errors
@@ -395,7 +395,7 @@ elapsedMillis
 
 React **onFail**
 onFail allows disaster recovery for each task (a separate onFail should be configured for each react phase that can fail). E.g. if reading data from an external service fails, but default value is acceptable - onFail is a suitable mechanism to set the default value.
-
+```java
 			List<String> strings = new SimpleReact()
 				.<Integer> react(() -> 100, () -> 2, () -> 3)
 				.then(it -> {
@@ -407,7 +407,7 @@ onFail allows disaster recovery for each task (a separate onFail should be confi
 				.onFail(e -> 1)
 				.then(it -> "*" + it)
 				.block();
-
+```
 In this example, should the first "then" phase fail, the default value of 1 will be used instead.
 
 ##Example 6: non-blocking
@@ -415,7 +415,7 @@ In this example, should the first "then" phase fail, the default value of 1 will
 React and **allOf**
 
 allOf is a non-blocking equivalent of block. The current thread is not impacted by the calculations, but the reactive chain does not continue until all currently alloted tasks complete. The allOf task is then provided with a list of the results from the previous tasks in the chain. Any parallelStreams used inside allOf will reuse the SimpleReact ExecutorService - if it is a ForkJoinPool (which it is by default), rather than the Common ForkJoinPool parallelStreams use by default. 
-
+```java
         	boolean blocked[] = {false};
 			new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)	
@@ -432,11 +432,11 @@ allOf is a non-blocking equivalent of block. The current thread is not impacted 
 
 		
 			assertThat(blocked[0],is(false));
-
+```
 In this example, the current thread will continue and assert that it is not blocked, allOf could continue and be executed in a separate thread.
 
 first() is a useful method to extract a single value from a dataflow that ends in allOf. E.g. 
-
+```java
 
         	boolean blocked[] = {false};
 			int size = new SimpleReact()
@@ -454,9 +454,9 @@ first() is a useful method to extract a single value from a dataflow that ends i
 
 		
 			assertThat(blocked[0],is(false));
-
+```
 ##Example 7: non-blocking with the Stream api
-
+```java
              List<Integer> result =new SimpleReact()
              	.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> {
@@ -473,7 +473,7 @@ first() is a useful method to extract a single value from a dataflow that ends i
 			assertThat(result.size(),is(1));
 			assertThat(result.get(0),is(990));
 
-
+```
 In this example we block the current thread to get the final result, the allOf task uses the Streams api to setup another FRP chain that takes the inputs from our initial parellel jobs ([1,2,3] -> [200,400,600]), and does a filter / map/ reduce on them in parallel.
 
 ##Example 6 : capturing exceptions
@@ -481,7 +481,7 @@ In this example we block the current thread to get the final result, the allOf t
 React *capture*
 
 onFail is used for disaster recovery (when it is possible to recover) - capture is used to capture those occasions where the full pipeline has failed and is unrecoverable.
-
+```java
 			List<String> strings = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
@@ -503,7 +503,7 @@ onFail is used for disaster recovery (when it is possible to recover) - capture 
 				.capture(e -> logger.error(e.getMessage(),e))
 				.block();
 
-
+```
 In this case, strings will only contain the two successful results (for ()->1 and ()->3), an exception for the chain starting from Supplier ()->2 will be logged by capture. Capture will not capture the exception thrown when an Integer value of 100 is found, but will catch the exception when the String value "*200" is passed along the chain.
 
 ##Example 7 : using the Streams Api
@@ -519,7 +519,7 @@ It is possible to reuse the internal SimpleReact ExecutorService for JDK 8 paral
 A way to merge all these steps into a single method is also provided (submitAndBlock). 
 
 Example :
-
+```java
 		 Integer result = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 200)
@@ -528,9 +528,9 @@ Example :
 								.filter(f -> f > 300)
 								.map(m -> m - 5)
 								.reduce(0, (acc, next) -> acc + next));
-								
+```								
 To use a different ExecutorService than SimpleReact's internal ExecutorService leverae parallelStream directly from block() 
-
+```java
 			ImmutableMap<String,Integer> dataSizes = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 30,()->400)
 				.then(it -> it * 100)
@@ -543,7 +543,7 @@ To use a different ExecutorService than SimpleReact's internal ExecutorService l
 					      .putAll(acc)
 					      .putAll(next)
 					      .build());
-
+```
 In this example the converted Strings are filtered by length and an ImmutableMap created using the Java 8 Streams Api.
 
 
@@ -552,37 +552,37 @@ In this example the converted Strings are filtered by length and an ImmutableMap
 Particularly during debugging and troubleshooting it can be very useful to check the results at a given stage in the dataflow. Just like within the Streams Api, the peek method can allow you to do this.
 
 Example :
-
+```java
 	List<String> strings = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.<String>then(it -> "*" + it)
 				.peek((String it) -> logger.info("Value is {}",it))
 				.block();
-				
+```				
 ##Example 9 : filtering results
 
 The filter method allows users to filter out results they are not interested in.
 
 Example :
-
+```java
 	List<String> result = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> "*" + it)
 				.filter(it -> it.startsWith("*1"))
 				.block();
-
+```
 ##Example 10 : Concurrent iteration
 
 SimpleReact provides a mechanism for starting a dataflow an iterator.
-
+```java
 	List<Integer> list = Arrays.asList(1,2,3,4);
 	List<String> strings = new SimpleReact()
 				.<Integer> react(list.iterator() ,list.size())
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.block(); 
-				
+```				
 ##Example 11 : Infinite generators & iterators
 
 Since v0.2 SimpleReact supports fully Infinite Streams, See :- 
@@ -592,18 +592,18 @@ https://medium.com/@johnmcclean/plumbing-java-8-streams-with-queues-topics-and-s
 
 
 SimpleReact provides a mechanism over JDK Stream iterate and generate which will create 'infinite' Streams of data to react to. Because SimpleReact eagerly collects these Streams (when converting to *active* CompletableFutures), the SimpleReact api always requires a maximum size parameter to be set.
-
+```java
 	List<String> strings = new SimpleReact()
 				.<Integer> react(() -> count++ ,SimpleReact.times(4))
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.capture(e -> capture++)
 				.block();
-
+```
 ##Example 12 : Splitting and merging SimpleReact dataflows
 
 A simple example below where a dataflow is split into 3, processed separately then merged back into a single flow.
-
+```java
 	Stage<String> stage = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> "*" + it);
@@ -616,7 +616,7 @@ A simple example below where a dataflow is split into 3, processed separately th
 		stage3 = stage3.then(it -> it+"%");
 		
 		List<String> result = stage1.merge(stage2).merge(stage3).block();
-
+```
       #Feature matrix
 
 
