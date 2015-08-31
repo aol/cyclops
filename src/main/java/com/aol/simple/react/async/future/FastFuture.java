@@ -3,13 +3,13 @@ package com.aol.simple.react.async.future;
 
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -17,8 +17,7 @@ import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.experimental.Wither;
-import uk.co.real_logic.agrona.concurrent.OneToOneConcurrentArrayQueue;
+import uk.co.real_logic.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 /*
@@ -37,7 +36,7 @@ public class FastFuture<T> {
 
 	@Getter
 	private volatile boolean done=false;
-	private volatile OneToOneConcurrentArrayQueue<Consumer<OnComplete>> queue;
+	private volatile Consumer<OnComplete> forXOf;
 	private volatile Consumer<OnComplete> essential;
 	@Getter
 	private volatile boolean completedExceptionally=false;
@@ -138,21 +137,29 @@ public class FastFuture<T> {
 	
 	private void completedExceptionally(Throwable t){
 
-		
+
+		Throwable finalError = t;
 		for(int i =0;i<this.pipeline.firstRecover.length;i++){
 			try{
 				 this.set((T)pipeline.firstRecover[i].apply(t));
-				
+				 return;
 				
 			}catch(Throwable e){
+				finalError =e;
 				this.exception.lazySet(e);
 			}
 		}
-		if(exception.get()==UNSET)
-			exception.lazySet(t);
-		this.completedExceptionally=true;
-		this.done =true;
+		this.completeExceptionally(finalError);
+	
 		throw (RuntimeException)exception();
+	}
+	private void completeExceptionally(Throwable t) {
+		exception.lazySet(t);
+		completedExceptionally =true;
+		handleOnComplete(true);
+		if(pipeline.onFail!=null)
+			pipeline.onFail.accept(t);
+		done=true;
 	}
 	
 	public static <T>FastFuture<T> fromCompletableFuture(CompletableFuture<T> cf){
@@ -187,15 +194,15 @@ public class FastFuture<T> {
 		}
 		return allOf;
 	}
-	public static <R> FastFuture<List<R>> xOf(int x,FastFuture... futures){
+	public static <R> FastFuture<List<R>> xOf(int x,Runnable onComplete,FastFuture... futures){
 		//needs to use onComplete
 		FastFuture xOf = new FastFuture(FinalPipeline.empty(),x);
 		for(FastFuture next : futures){
 			next.onComplete(v->{ 
 					xOf.count++;
 					if(xOf.count>=xOf.max){
-						xOf.result.lazySet(true);
-						xOf.done();
+					
+						onComplete.run();
 						
 					}
 					
@@ -241,11 +248,8 @@ public class FastFuture<T> {
 			
 			}
 		}catch(Throwable t){
-			
-			exception.lazySet(t);
-			completedExceptionally =true;
-			handleOnComplete(true);
-			done=true;
+		
+			completeExceptionally(t);
 			
 			
 		}
@@ -274,11 +278,8 @@ public class FastFuture<T> {
 				if(this.doFinally!=null)
 					doFinally.accept(this);
 			}
-			exception.lazySet(t);
-			completedExceptionally =true;
-			handleOnComplete(true);
-			done=true;
 			
+			completeExceptionally(t);
 				
 		}
 		
@@ -294,9 +295,10 @@ public class FastFuture<T> {
 	public void clearFast() {
 		result.set(UNSET);
 		exception.set(UNSET);
-		queue = null;
+		this.forXOf = null;
 		essential = null;
 		this.completedExceptionally=false;
+		readers = new HashSet<>();
 		this.done=false;	
 	}
 	
@@ -307,37 +309,34 @@ public class FastFuture<T> {
 	
 	public void essential(Consumer<OnComplete> fn){
 		this.essential=fn;
+		if(done){
+			fn.accept(buildOnComplete());
+			
+		}
 	}
 	public void onComplete(Consumer<OnComplete> fn){
 		
-		if(queue==null)
-			queue =  new OneToOneConcurrentArrayQueue<>(5);
-		while(!queue.offer(fn))
-			queue.poll();
+		this.forXOf = fn;
 		
-		if(done)
-			handleOnComplete(false);
-	}
-	private void handleOnComplete(boolean force){
-		
-		if( ( (queue!=null && !queue.isEmpty()) || essential!=null) && (force || done)){
-			OnComplete c = new OnComplete(!completedExceptionally && done ? result() : null,
-					completedExceptionally ? exception() : null,this.completedExceptionally);
-			if(essential!=null){
-				essential.accept(c);
-				essential =null;
-			}
-			if(queue!=null){
-				while(!queue.isEmpty()){
-					Consumer<OnComplete>  next = queue.poll();
-					if(next!=null)
-						next.accept(c);
-				}
-			}
-			
+		if(done){
+			fn.accept(buildOnComplete());
+			//handleOnComplete(false);
 		}
+	}
+	Set<Long> readers = new HashSet<>();
+	private void handleOnComplete(boolean force){
+		if(forXOf!=null)
+			forXOf.accept(buildOnComplete());
+		
+		if(this.essential!=null)
+			this.essential.accept(buildOnComplete());
 		
 	
+	}
+	private OnComplete buildOnComplete() {
+		OnComplete c = new OnComplete(!completedExceptionally && done ? result() : null,
+				completedExceptionally ? exception() : null,this.completedExceptionally);
+		return c;
 	}
 	@AllArgsConstructor
 	public static class OnComplete{

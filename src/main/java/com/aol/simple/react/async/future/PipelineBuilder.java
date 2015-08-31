@@ -72,4 +72,10 @@ public class PipelineBuilder {
 		
 		return new FastFuture<T>(this.builder.toFinalPipeline(),0);
 	}
+	public PipelineBuilder onFail(Consumer<Throwable> onFail) {
+		return this.withBuilder(builder.onFail(onFail));
+	}
+	public boolean isSequential() {
+		return this.builder.isSequential();
+	}
 }

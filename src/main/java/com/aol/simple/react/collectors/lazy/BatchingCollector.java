@@ -65,11 +65,10 @@ public class BatchingCollector<T> implements LazyResultConsumer<T>{
 				results.addAll(toRemove);
 				if(active.size()>maxActive.getReduceTo()){
 					CompletableFuture promise=  new CompletableFuture();
-					FastFuture.xOf(active.size()-maxActive.getReduceTo(),active.toArray(new FastFuture[0]))
-									.onComplete(cf -> {
-										System.out.println("On complete!");
-										promise.complete(true);
-									});
+					FastFuture.xOf(active.size()-maxActive.getReduceTo(),() -> {
+						System.out.println("On complete!");
+						promise.complete(true);
+					},active.toArray(new FastFuture[0]));
 					
 					promise.join();
 				}

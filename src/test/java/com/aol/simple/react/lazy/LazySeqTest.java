@@ -15,6 +15,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -48,6 +49,7 @@ public abstract class LazySeqTest extends BaseSeqTest {
 	}
 	@Test
     public void testCycle() {
+		for(int i=0;i<1000;i++)
     	   assertEquals(asList(1, 1, 1, 1, 1,1),of(1).cycle().limit(6).toList());
       
     }
@@ -128,17 +130,19 @@ public abstract class LazySeqTest extends BaseSeqTest {
 	
 	@Test
 	public void batchSinceLastReadIterator() throws InterruptedException{
-		Iterator<Collection<Integer>> it = of(1,2,3,4,5,6).chunkLastReadIterator();
-	
-		Thread.sleep(10);
 		
-		Collection one = it.next();
+			Iterator<Collection<Integer>> it = of(1,2,3,4,5,6).chunkLastReadIterator();
 		
-		Collection two = it.next();
+			
+			List<Integer> list = new ArrayList<>();
+			while(it.hasNext())
+				list.addAll(it.next());
+			
+			
+			
+			assertThat(list.size(),equalTo(6));
+			
 		
-		
-		assertThat(one.size(),greaterThan(0));
-		assertThat(two.size(),greaterThan(0));
 		
 	
 		
