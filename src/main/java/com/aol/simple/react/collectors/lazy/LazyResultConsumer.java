@@ -34,6 +34,8 @@ public interface LazyResultConsumer<T> extends Consumer<FastFuture<T>>{
 	 */
 	public Collection<FastFuture<T>> getAllResults();
 
+	public void block();
+
 	
 	
 

@@ -89,7 +89,16 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 		
 		return this.withMaxActive(maxActive);
 	}
-
+	public void block(){
+		if(active.size()==0)
+			return;
+		CompletableFuture promise=  new CompletableFuture();
+		FastFuture.allOf(() -> {
+			
+			promise.complete(true);
+		},active.toArray(new FastFuture[0]));
+		promise.join();
+	}
 	/* 
 	 *	@return empty list
 	 * @see com.aol.simple.react.collectors.lazy.LazyResultConsumer#getResults()

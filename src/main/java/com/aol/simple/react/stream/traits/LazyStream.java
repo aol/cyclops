@@ -127,10 +127,9 @@ public interface LazyStream<U> extends BlockingStream<U>{
 		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().get().withResults(new ArrayList<>()), this,
 				getParallelReduction());
 		try {
-			this.getLastActive().injectFutures().forEach( next -> {
-
+			this.getLastActive().operation(f-> f.peek(c)).injectFutures().forEach( next -> {
 				
-				collector.getConsumer().accept(next);
+		//	 collector.getConsumer().accept(next);
 				
 				collector.forEach(c, safeJoin);
 				
@@ -138,6 +137,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 		} catch (SimpleReactProcessingException e) {
 			
 		}
+	//	collector.getConsumer().block();
 		collector.forEachResults(collector.getConsumer().getAllResults(),c, safeJoin);
 		
 		

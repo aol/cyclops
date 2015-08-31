@@ -13,9 +13,9 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,7 +32,6 @@ import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
-import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.threads.SequentialElasticPools;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
@@ -574,40 +573,44 @@ public class Tutorial {
 		
 		assertThat(list.size(),equalTo(6));
 	}
-	int count2 =0;
+	AtomicInteger count2 =new AtomicInteger(0);
 	int count3 =0;
 	volatile int otherCount;
 	volatile int peek =0;
 	@Test
 	public void batchByTimeFiltered() {
-		count2=0;
-		List<Collection<Map>> result = new ArrayList<>();
-				LazyReact
-				.parallelCommonBuilder()
-				.iterateInfinitely("", last -> nextFile())
-				.limit(1000)
-				
-				.map(this::readFileToString)
-				.map(this::parseJson)
-				.peek(i->System.out.println(++otherCount))
-				//.filter(i->false)
-				.batchByTime(1, TimeUnit.MICROSECONDS)
-				
-				.peek(batch -> System.out.println("batched : " + batch + ":" + (++peek)))
-			//	.filter(c->!c.isEmpty())
-				.peek(batch->count3= count3+batch.size())
-				.map(this::processOrders)
-				//.toList();
-				.forEach(next -> { result.add(next); count2= count2+next.size();});
-	//	assertThat(size,equalTo(100));
-		System.out.println("In flight count " + count3 + " :" + otherCount);
-		System.out.println(result.size());
-		System.out.println(result);
-		assertThat(count2,equalTo(1000));
+		for(int x=0;x<10;x++){
+			count2=new AtomicInteger(0);
+			List<Collection<Map>> result = new ArrayList<>();
+					LazyReact
+					.parallelCommonBuilder()
+					.iterateInfinitely("", last -> nextFile())
+					.limit(1000)
+					
+					.map(this::readFileToString)
+					.map(this::parseJson)
+					.peek(i->System.out.println(++otherCount))
+					//.filter(i->false)
+					.batchByTime(1, TimeUnit.MICROSECONDS)
+					
+					.peek(batch -> System.out.println("batched : " + batch + ":" + (++peek)))
+				//	.filter(c->!c.isEmpty())
+					.peek(batch->count3= count3+batch.size())
+					.map(this::processOrders)
+					//.toList();
+					.forEach(next -> { result.addAll((Collection)next); count2.getAndAdd(next.size());});
+		//	assertThat(size,equalTo(100));
+			
+			System.out.println("In flight count " + count3 + " :" + otherCount);
+			System.out.println(result.size());
+			System.out.println(result);
+			System.out.println(x);
+			assertThat(count2.get(),equalTo(1000));
+		}
 	}
 	@Test
 	public void batchByTimeFilteredEager() {
-		count2=0;
+		count2=new AtomicInteger(0);
 		EagerReact
 				.parallelCommonBuilder()
 				.from(list100())
@@ -622,9 +625,9 @@ public class Tutorial {
 				.filter(c->!c.isEmpty())
 				
 				.map(this::processOrders)
-				.forEach(next -> count2= count2+next.size());
+				.forEach(next -> count2.getAndAdd(next.size()));
 		
-		assertThat(count2,equalTo(100));
+		assertThat(count2.get(),equalTo(100));
 	}
 
 	private List<String> list100() {
@@ -635,7 +638,7 @@ public class Tutorial {
 	}
 	@Test
 	public void batchByTimeFilteredForEach() {
-		count2=0;
+		count2=new AtomicInteger(0);
 		LazyReact
 				.parallelCommonBuilder()
 				.iterateInfinitely("", last -> nextFile())
@@ -651,13 +654,13 @@ public class Tutorial {
 				.filter(c->!c.isEmpty())
 				
 				.map(this::processOrders)
-				.toList().stream().forEach(next -> count2= count2+next.size());;
+				.toList().stream().forEach(next ->  count2.getAndAdd(next.size()));;
 		
-		assertThat(count2,equalTo(100));
+		assertThat(count2.get(),equalTo(100));
 	}
 	@Test
 	public void batchByTimeFilteredForEachEager() {
-		count2=0;
+		count2=new AtomicInteger(0);
 		EagerReact
 				.parallelCommonBuilder()
 				.from(list100())
@@ -673,9 +676,9 @@ public class Tutorial {
 				.filter(c->!c.isEmpty())
 				
 				.map(this::processOrders)
-				.toList().stream().forEach(next -> count2= count2+next.size());;
+				.toList().stream().forEach(next -> count2.getAndAdd(next.size()));
 		
-		assertThat(count2,equalTo(100));
+		assertThat(count2.get(),equalTo(100));
 	}
 	@Test
 	public void batchByTime() {
@@ -688,7 +691,7 @@ public class Tutorial {
 				.map(this::readFileToString)
 				.map(this::parseJson)
 				
-				.peek(next->System.out.println("Counter " +count2++))
+				.peek(next->System.out.println("Counter " +count2.incrementAndGet()))
 				.batchByTime(10, TimeUnit.MICROSECONDS)
 				.peek(batch -> System.out.println("batched : " + batch))
 				.filter(c->!c.isEmpty())

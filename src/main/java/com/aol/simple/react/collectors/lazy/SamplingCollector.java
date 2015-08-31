@@ -50,7 +50,9 @@ public class SamplingCollector<T> implements LazyResultConsumer<T>{
 			consumer.accept(t);
 		
 	}
-
+	public void block(){
+		consumer.block();
+	}
 	/* (non-Javadoc)
 	 * @see com.aol.simple.react.collectors.lazy.LazyResultConsumer#withResults(java.util.Collection)
 	 */

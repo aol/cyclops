@@ -110,6 +110,12 @@ public class SamplingCollectorTest {
 			// TODO Auto-generated method stub
 			return null;
 		}
+
+		@Override
+		public void block() {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
 }

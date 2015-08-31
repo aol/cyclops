@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
@@ -50,13 +51,13 @@ public class FastFuture<T> {
 	@Getter
 	private FinalPipeline pipeline;
 
-	private volatile int count=0;
-	private final int max;
+	private final AtomicInteger count= new AtomicInteger(0);
+	private final AtomicInteger max= new AtomicInteger(0);
 	
 	
 	
 	public FastFuture(){
-		max=0;
+		max.set(0);
 		this.doFinally=null;
 		this.pipeline = null;
 	}
@@ -75,13 +76,13 @@ public class FastFuture<T> {
 		return (Throwable)result;	
 	}
 	public FastFuture(FinalPipeline pipeline,Consumer<FastFuture<T>> doFinally){
-		this.max = 0;
+		this.max.set( 0);
 		this.pipeline = pipeline;
 		this.doFinally = doFinally;
 		
 	}
 	public FastFuture(FinalPipeline pipeline,int max){
-		this.max = max;
+		this.max.set(max);
 		this.pipeline = pipeline;
 		this.doFinally=null;
 	}
@@ -174,20 +175,16 @@ public class FastFuture<T> {
 	
 	
 	
-	public static <R> FastFuture<List<R>> allOf(FastFuture... futures){
+	public static <R> FastFuture<List<R>> allOf(Runnable onComplete,FastFuture... futures){
 		//needs to use onComplete
 		FastFuture allOf = new FastFuture(FinalPipeline.empty(),futures.length);
 		
 		
 		for(FastFuture next : futures){
 			next.onComplete(v->{ 
-					allOf.count++;
-					if(allOf.count==allOf.max){
-						List res = new ArrayList(futures.length);
-						for(FastFuture resNext : futures)
-							res.add(resNext.result());
-						allOf.result.lazySet(res);
-						allOf.done();
+					
+					if(allOf.count.incrementAndGet()==allOf.max.get()){
+						onComplete.run();
 					}
 					
 			});
@@ -199,8 +196,8 @@ public class FastFuture<T> {
 		FastFuture xOf = new FastFuture(FinalPipeline.empty(),x);
 		for(FastFuture next : futures){
 			next.onComplete(v->{ 
-					xOf.count++;
-					if(xOf.count>=xOf.max){
+				
+					if(xOf.count.incrementAndGet()>=xOf.max.get()){
 					
 						onComplete.run();
 						

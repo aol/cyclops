@@ -107,7 +107,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * {@code
 	 * List<String> result = new LazyReact().react(() -> 1)
 				.withRetrier(executor)
-				.capture(e -> error = e)
+				.(e -> error = e)
 				.retry(serviceMock).block();
 	 * 
 	 * }
@@ -146,9 +146,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 */
 	LazyFutureStream<U> withQueueFactory(QueueFactory<U> queue);
 
-	LazyFutureStream<U> withErrorHandler(
-			Optional<Consumer<Throwable>> errorHandler);
-
+	
 	LazyFutureStream<U> withSubscription(Continueable sub);
 
 	
