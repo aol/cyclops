@@ -16,7 +16,7 @@ public class InfiniteClosingSpliteratorFromIterator<T>  implements Spliterator<T
 	    private final Continueable subscription;
 	   
 
-	    protected InfiniteClosingSpliteratorFromIterator(long estimate,Iterator<T> it,
+	    public InfiniteClosingSpliteratorFromIterator(long estimate,Iterator<T> it,
 	    		Continueable subscription) {
 	        this.estimate = estimate;
 	        this.it = it;

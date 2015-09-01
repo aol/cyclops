@@ -99,14 +99,13 @@ public class EagerReact extends BaseSimpleReact{
 	
 	
 	@Override
-	public <U> EagerFutureStream<U> construct(Stream s,
-			List<CompletableFuture> org) {
-		return (EagerFutureStream) new EagerFutureStreamImpl<U>( this,s,org);
+	public <U> EagerFutureStream<U> construct(Stream s) {
+		return (EagerFutureStream) new EagerFutureStreamImpl<U>( this,s);
 	}
 	public <U> EagerFutureStream<U> fromStreamAsync(final Stream<CompletableFuture<U>> stream) {
 
 		Stream s = stream;
-		return  construct( Stream.of(),null).fromStreamOfFutures(s);
+		return  construct( Stream.of()).fromStreamOfFutures(s);
 	}
 	/* 
 	 * Construct a EagerFutureStream from the provided Stream of completableFutures
@@ -316,10 +315,10 @@ public class EagerReact extends BaseSimpleReact{
 		return (EagerFutureStream)super.reactIterable(actions);
 	}
 	public <U> EagerFutureStream<U> from(CompletableFuture<U> cf){
-		return this.construct(Stream.of(cf), Arrays.asList(cf));
+		return this.construct(Stream.of(cf));
 	}
 	public <U> EagerFutureStream<U> from(CompletableFuture<U>... cf){
-		return this.construct(Stream.of(cf), Arrays.asList(cf));
+		return this.construct(Stream.of(cf));
 	}
 	/**
 	 * @return EagerReact for handling finite streams

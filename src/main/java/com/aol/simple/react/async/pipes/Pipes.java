@@ -6,6 +6,7 @@ import static com.aol.simple.react.stream.traits.LazyFutureStream.lazyFutureStre
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executor;
 import java.util.stream.Stream;
 
 import org.reactivestreams.Publisher;
@@ -69,18 +70,28 @@ public class Pipes {
 	 * @param key for registered simple-react async.Adapter
 	 * @return A Reactive Streams Publisher Registered for the given key
 	 */
+	public static<T> Optional<Publisher<T>> publisher(Object key, Executor publishWith){
+		if(!registered.containsKey(key))
+			return Optional.empty();
+		return Optional.of(LazyFutureStream.lazyFutureStream(((Adapter)registered.get(key)).stream()).async()
+				.withPublisherExecutor(publishWith));
+	}
+	/**
+	 * @param key for registered simple-react async.Adapter
+	 * @return A Reactive Streams Publisher Registered for the given key
+	 */
 	public static<T> Optional<Publisher<T>> publisher(Object key){
 		if(!registered.containsKey(key))
 			return Optional.empty();
-		return Optional.of(LazyFutureStream.lazyFutureStream(((Adapter)registered.get(key)).stream()).async());
+		return Optional.of(LazyFutureStream.lazyFutureStream(((Adapter)registered.get(key)).stream()).sync());
 	}
 	/**
 	 * @param key for registered simple-react async.Adapter
 	 * @param subscriber Reactive Streams subscriber for data on this pipe
 	 */
-	public static<T> void subscribeTo(Object key,Subscriber<T> subscriber){
+	public static<T> void subscribeTo(Object key,Subscriber<T> subscriber,Executor subscribeOn){
 		LazyFutureStream.lazyFutureStream(((Adapter)registered.get(key)).stream())
-						.async().subscribe(subscriber);
+						.async().withPublisherExecutor(subscribeOn).subscribe(subscriber);
 	}
 	/**
 	 * @param key for registered simple-react async.Adapter

@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Spliterator;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
@@ -29,27 +28,25 @@ import java.util.function.Supplier;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-import lombok.AllArgsConstructor;
-
 import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.Queue.ClosedQueueException;
-import com.aol.simple.react.async.Queue.QueueReader;
 import com.aol.simple.react.async.Queue.QueueTimeoutException;
 import com.aol.simple.react.async.factories.QueueFactories;
+import com.aol.simple.react.async.factories.QueueFactory;
+import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.CloseableIterator;
+import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.traits.future.operators.ToLazyCollection;
 import com.aol.simple.react.stream.traits.operators.BatchBySize;
 import com.aol.simple.react.stream.traits.operators.BatchByTime;
@@ -58,8 +55,7 @@ import com.aol.simple.react.stream.traits.operators.Debounce;
 import com.aol.simple.react.stream.traits.operators.SlidingWindow;
 import com.aol.simple.react.util.SimpleTimer;
 
-public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
-		 BlockingStream<U>, SimpleReactStream<U>, ToQueue<U> {
+public interface FutureStream<U> extends Seq<U>, SimpleReactStream<U>, ToQueue<U> {
 
 	static final ExceptionSoftener softener = ExceptionSoftener.singleton.factory
 			.getInstance();
@@ -71,6 +67,32 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 		return (fs1,fs2) -> fs1.flatMap( v1-> (FutureStream)fs2.map(v2->fn.apply(v1,v2)));
 	}
 	
+	default CloseableIterator<U> iterator() {
+		return SimpleReactStream.super.iterator();
+	}
+	/* 
+	 * Execute subsequent stages on the completing thread (until async called)
+	 * 10X faster than async execution.
+	 * Use async for blocking IO or distributing work across threads or cores.
+	 * Switch to sync for non-blocking tasks when desired thread utlisation reached
+	 * 
+	 *	@return Version of FutureStream that will use sync CompletableFuture methods
+	 * 
+	 */
+	 FutureStream<U> sync();
+	/* 
+	 * Execute subsequent stages by submission to an Executor for async execution
+	 * 10X slower than sync execution.
+	 * Use async for blocking IO or distributing work across threads or cores.
+	 * Switch to sync for non-blocking tasks when desired thread utlisation reached
+	 *
+	 * 
+	 *	@return Version of FutureStream that will use async CompletableFuture methods
+	 *
+	 */
+	FutureStream<U> async();
+	
+	public boolean isAsync();
 	/**
 	 * 
 	 * <pre>
@@ -130,19 +152,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 	 * @param other
 	 * @return
 	 */
-	default <R> FutureStream<Tuple2<U,R>> zipFutures(Stream<R> other) {
-		if(other instanceof FutureStream)
-			return zipFutures((FutureStream)other);
-		Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other));
-		Seq<Tuple2<CompletableFuture<U>,R>> withType = (Seq<Tuple2<CompletableFuture<U>,R>>)seq;
-		Stream futureStream = fromStreamOfFutures((Stream)withType.map(t ->t.v1.thenApply(v -> Tuple.tuple(t.v1.join(),t.v2)))
-				);
-
-		
-		return (FutureStream<Tuple2<U,R>>)futureStream;
-
-	
-	}
+	 <R> FutureStream<Tuple2<U,R>> zipFutures(Stream<R> other);
 	
 	/* 
 	 * @see org.jooq.lambda.Seq#crossJoin(java.util.stream.Stream)
@@ -229,16 +239,8 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 	 * @return New Sequence of CompletableFutures
 	 */
 
-	default <R> FutureStream<Tuple2<U,R>> zipFutures(FutureStream<R> other) {
-		Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other.getLastActive().stream()));
-		Seq<Tuple2<CompletableFuture<U>,CompletableFuture<R>>> withType = (Seq<Tuple2<CompletableFuture<U>,CompletableFuture<R>>>)seq;
-		Stream futureStream =  fromStreamOfFutures((Stream)withType.map(t ->CompletableFuture.allOf(t.v1,t.v2).thenApply(v -> Tuple.tuple(t.v1.join(),t.v2.join())))
-				);
-		
-		return (FutureStream<Tuple2<U,R>>)futureStream;
-		
+	<R> FutureStream<Tuple2<U,R>> zipFutures(FutureStream<R> other);
 
-	}
 	
 	/**
 	 * @return an Iterator that chunks all completed elements from this stream since last it.next() call into a collection
@@ -314,6 +316,8 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 		
 		
 	}
+	FutureStream<U> withQueueFactory(
+			QueueFactory<U> qf);
 	/**
 	 * Break a stream into multiple Streams based of some characteristic of the elements of the Stream
 	 * 
@@ -361,6 +365,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 	    Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTimeAndSize<>(size,time,unit,()->new ArrayList<>());
 	    return (FutureStream)fromStream(queue.streamBatch(getSubscription(), (Function)fn)).filter(c->!((Collection)c).isEmpty());
 	}
+	
 	/**
 	 * Batch the elements in the Stream by a combination of Size and Time
 	 * If batch exceeds max size it will be split
@@ -495,6 +500,8 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 		};
 		return fromStream(queue.streamControl(getSubscription(), fn));
 	}
+	
+	
 	/**
 	 * Allows clients to control the emission of data for the next phase of the Stream.
 	 * The user specified function can delay, drop, or change elements
@@ -634,466 +641,18 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 		return fromStream(queue.streamBatch(getSubscription(), fn)).filter(c->!((Collection)c).isEmpty());
 	}
 
-	/**
-	 * 
-	 * Similar to zip and combineLatest, except will always take the latest from this Stream while taking the last available value from the provided stream.
-	 * By contrast zip takes new / latest values from both Streams and combineLatest takes the latest from either Stream (merged with last available from the other).
-	 * 
-	 * @param s Stream to merge with
-	 * @return Stream of Tuples with the latest values from this stream
-	 */
-	default <T> FutureStream<Tuple2<U, T>> withLatest(FutureStream<T> s) {
-		return fromStream(withLatest(this, s));
-	}
-	/**
-	 * Similar to zip and withLatest, except will always take the latest from either Stream (merged with last available from the other).
-	 * By contrast zip takes new / latest values from both Streams and withLatest will always take the latest from this Stream while 
-	 * taking the last available value from the provided stream.
-	 * 
-	 * @param s Stream to merge with
-	 * @return  Stream of Tuples with the latest values from either stream
-	 */
-	default <T> FutureStream<Tuple2<U, T>> combineLatest(FutureStream<T> s) {
-		return fromStream(combineLatest(this, s));
-	}
-	/**
-	 * Return a Stream with the same values as this Stream, but with all values omitted until the provided stream starts emitting values.
-	 * Provided Stream ends the stream of values from this stream.
-	 * 
-	 * @param s Stream that will start the emission of values from this stream
-	 * @return Next stage in the Stream but with all values skipped until the provided Stream starts emitting
-	 */
-	default<T>  FutureStream<U> skipUntil(FutureStream<T> s) {
-		return fromStream(skipUntil(this, s));
-	}
-	/**
-	 * Return a Stream with the same values, but will stop emitting values once the provided Stream starts to emit values.
-	 * e.g. if the provided Stream is asynchronously refreshing state from some remote store, this stream can proceed until
-	 * the provided Stream succeeds in retrieving data.
-	 * 
-	 * @param s Stream that will stop the emission of values from this stream
-	 * @return Next stage in the Stream but will only emit values until provided Stream starts emitting values
-	 */
-	default<T>  FutureStream<U> takeUntil(FutureStream<T> s) {
-		return fromStream(takeUntil(this, s));
-	}
-
-	/**
-	 * Close all queues except the active one
-	 * 
-	 * @param active Queue not to close
-	 * @param all All queues potentially including the active queue
-	 */
-	static void closeOthers(Queue active, List<Queue> all){
-		all.stream().filter(next -> next!=active).forEach(Queue::closeAndClear);
-		
-	}
-	/**
-	 * Close all streams except the active one
-	 * 
-	 * @param active Stream not to close
-	 * @param all  All streams potentially including the active stream
-	 */
-	static void closeOthers(FutureStream active, List<FutureStream> all){
-		all.stream().filter(next -> next!=active).filter(s -> s.isEager()).forEach(FutureStream::cancel);
-		
-	}
-	
-	/**
-	 * Return first Stream out of provided Streams that starts emitted results 
-	 * 
-	 * @param futureStreams Streams to race
-	 * @return First Stream to start emitting values
-	 */
-	static <U> FutureStream<U> firstOf(FutureStream<U>... futureStreams) {
-		List<Tuple2<FutureStream<U>, QueueReader>> racers = Stream
-				.of(futureStreams)
-				.map(s -> Tuple.tuple(s,new Queue.QueueReader(s.toQueue(),null))).collect(Collectors.toList());
-		while(true){
-		for(Tuple2<FutureStream<U>,Queue.QueueReader> q: racers){
-			if(q.v2.notEmpty()){
-				closeOthers(q.v2.getQueue(),racers.stream().map(t -> t.v2.getQueue()).collect(Collectors.toList()));
-				closeOthers(q.v1,racers.stream().map(t -> t.v1).collect(Collectors.toList()));
-				return q.v1.fromStream(q.v2.getQueue().stream(q.v1.getSubscription()));
-			}
-				
-		}
-		LockSupport.parkNanos(1l);
-		}
-
-		
-
-	}
-
-	/**
-	 * Zip two streams into one. Uses the latest values from each rather than waiting for both
-	 * 
-	 */
-	static <T1, T2> Seq<Tuple2<T1, T2>> combineLatest(FutureStream<T1> left,
-			FutureStream<T2> right) {
-		return combineLatest(left, right, Tuple::tuple);
-	}
-	@AllArgsConstructor
-	static class Val<T>{
-		enum Pos { left,right};
-		Pos pos;
-		T val;
-	}
-
-	/**
-	 * Zip two streams into one using a {@link BiFunction} to produce resulting. 
-	 * values. Uses the latest values from each rather than waiting for both.
-	 * 
-	 */
-	static <T1, T2, R> Seq<R> combineLatest(FutureStream<T1> left,
-			FutureStream<T2> right, BiFunction<T1, T2, R> zipper) {
-		
-		Queue q = left.map(it->new Val(Val.Pos.left,it)).merge(right.map(it->new Val(Val.Pos.right,it))).toQueue();
-		final Iterator<Val> it = q.stream(left.getSubscription()).iterator();
-		
-
-		class Zip implements Iterator<R> {
-			T1 lastLeft = null;
-			T2 lastRight = null;
-			@Override
-			public boolean hasNext() {
-
-				return it.hasNext();
-			}
-
-			@Override
-			public R next() {
-				Val v =it.next();
-				if(v.pos== Val.Pos.left)
-					lastLeft = (T1)v.val;
-				else
-					lastRight = (T2)v.val;
-			
-				return zipper.apply(lastLeft, lastRight);
-				
-
-			}
-		}
-
-		return Seq.seq(new Zip());
-	}
-	
-	/**
-	 * Zip two streams into one. Uses the latest values from each rather than waiting for both
-	 * 
-	 */
-	static <T1, T2> Seq<Tuple2<T1, T2>> withLatest(FutureStream<T1> left,
-			FutureStream<T2> right) {
-		return withLatest(left, right, Tuple::tuple);
-	}
-	/**
-	 * Zip two streams into one using a {@link BiFunction} to produce resulting. 
-	 * values. Uses the latest values from each rather than waiting for both.
-	 * 
-	 */
-	static <T1, T2, R> Seq<R> withLatest(FutureStream<T1> left,
-			FutureStream<T2> right, BiFunction<T1, T2, R> zipper) {
-		
-		Queue q = left.map(it->new Val(Val.Pos.left,it)).merge(right.map(it->new Val(Val.Pos.right,it))).toQueue();
-		final Iterator<Val> it = q.stream(left.getSubscription()).iterator();
-		
-
-		class Zip implements Iterator<R> {
-			T1 lastLeft = null;
-			T2 lastRight = null;
-			@Override
-			public boolean hasNext() {
-
-				return it.hasNext();
-			}
-
-			@Override
-			public R next() {
-				Val v =it.next();
-				if(v.pos== Val.Pos.left){
-					lastLeft = (T1)v.val;
-					return zipper.apply(lastLeft, lastRight);
-				}
-				else
-					lastRight = (T2)v.val;
-			
-				return (R)Optional.empty();
-				
-
-			}
-		}
-
-		return Seq.seq(new Zip()).filter(next->!(next instanceof Optional));
-	}
-	
-	
-	static <T1, T2> Seq<T1> skipUntil(FutureStream<T1> left,
-			FutureStream<T2> right) {
-		
-		Queue q = left.map(it->new Val(Val.Pos.left,it)).merge(right.map(it->new Val(Val.Pos.right,it))).toQueue();
-		final Iterator<Val> it = q.stream(left.getSubscription()).iterator();
-		
-		final Object missingValue = new Object();
-		class Zip implements Iterator<T1> {
-			Optional<T1> lastLeft = Optional.empty();
-			Optional<T2> lastRight = Optional.empty();
-			@Override
-			public boolean hasNext() {
-
-				return it.hasNext();
-			}
-
-			@Override
-			public T1 next() {
-				Val v =it.next();
-				if(v.pos== Val.Pos.left){
-					if(lastRight.isPresent())
-						lastLeft = Optional.of((T1)v.val);
-				}
-				else
-					lastRight = Optional.of((T2)v.val);
-				if(!lastRight.isPresent())
-					return (T1)Optional.empty();
-				if(lastLeft.isPresent())
-					return lastLeft.get();
-				else
-					return (T1)Optional.empty();
-				
-				
-
-			}
-		}
-
-		return Seq.seq(new Zip()).filter(next->!(next instanceof Optional));
-	}
-	static <T1, T2> Seq<T1> takeUntil(FutureStream<T1> left,
-			FutureStream<T2> right) {
-		
-		Queue q = left.map(it->new Val(Val.Pos.left,it)).merge(right.map(it->new Val(Val.Pos.right,it))).toQueue();
-		final Iterator<Val> it = q.stream(left.getSubscription()).iterator();
-		
-		final Object missingValue = new Object();
-		class Zip implements Iterator<T1> {
-			Optional<T1> lastLeft = Optional.empty();
-			Optional<T2> lastRight = Optional.empty();
-			boolean closed= false;
-			@Override
-			public boolean hasNext() {
-				
-				return !closed && it.hasNext();
-			}
-
-			@Override
-			public T1 next() {
-				Val v =it.next();
-				if(v.pos== Val.Pos.left)
-					lastLeft = Optional.of((T1)v.val);
-				else
-					lastRight = Optional.of((T2)v.val);
-				
-				if(!lastRight.isPresent() && lastLeft.isPresent())
-					return lastLeft.get();
-				else{
-					closed= true;
-					return (T1)Optional.empty();
-				}
-				
-				
-
-			}
-		}
-
-		return Seq.seq(new Zip()).filter(next->!(next instanceof Optional));
-	}
 
 	
-	/*
-	 * @see
-	 * com.aol.simple.react.stream.traits.SimpleReactStream#retry(java.util.
-	 * function.Function)
-	 */
-	default <R> FutureStream<R> retry(final Function<U, R> fn) {
-		return (FutureStream) SimpleReactStream.super.retry(fn);
-	}
+	FutureStream<U> onFail(final Function<SimpleReactFailedStageException, U> fn);
 
-	/*
-	 * @see
-	 * com.aol.simple.react.stream.traits.SimpleReactStream#allOf(java.util.
-	 * stream.Collector, java.util.function.Function)
-	 */
-	default <T, R> FutureStream<R> allOf(final Collector collector,
-			final Function<T, R> fn) {
-		return (FutureStream) SimpleReactStream.super.allOf(collector, fn);
-	}
-
-	default <R> FutureStream<R> anyOf(final Function<U, R> fn) {
-		return (FutureStream) SimpleReactStream.super.anyOf(fn);
-	}
-
-	/*
-	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#
-	 * fromStreamCompletableFuture(java.util.stream.Stream)
-	 */
-	default <R> FutureStream<R> fromStreamOfFutures(
-			Stream<CompletableFuture<R>> stream) {
-		return (FutureStream) SimpleReactStream.super
-				.fromStreamOfFutures(stream);
-	}
-
-	/*
-	 * @see
-	 * com.aol.simple.react.stream.traits.SimpleReactStream#then(java.util.function
-	 * .Function)
-	 */
-	default <R> FutureStream<R> then(final Function<U, R> fn) {
-		return (FutureStream) SimpleReactStream.super.then(fn);
-	}
+	<R> FutureStream<R> fromStream(Stream<R> stream);
+	 <R> FutureStream<R> flatMap(
+				Function<? super U, ? extends Stream<? extends R>> flatFn);
 	
-	
+	 FutureStream<U> filter(final Predicate<? super U> p) ;
+	 FutureStream<U> peek(final Consumer<? super U> consumer);
 
-	/*
-	 * @see
-	 * com.aol.simple.react.stream.traits.SimpleReactStream#fromStream(java.
-	 * util.stream.Stream)
-	 */
-	default <R> FutureStream<R> fromStream(Stream<R> stream) {
-		return (FutureStream) SimpleReactStream.super.fromStream(stream);
-	}
-	/**
-	 * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
-	 * If in async mode this operation is performed asyncrhonously
-	 * If in sync mode this operation is performed synchronously
-	 * 
-	 * <pre>
-	 * {@code 
-	 * assertThat( new LazyReact()
-										.of(1,2,3)
-										.flatMapCompletableFuture(i->CompletableFuture.completedFuture(i))
-										.block(),equalTo(Arrays.asList(1,2,3)));
-	 * }</pre>
-	 *
-	 * In this example the result of the flatMapCompletableFuture is 'flattened' to the raw integer values
-	 * 
-	 * 
-	 * @param flatFn flatMap function
-	 * @return Flatten Stream with flatFn applied
-	 */
-	default <R> FutureStream<R> flatMapCompletableFuture(
-			Function<U, CompletableFuture<R>> flatFn) {
-		return (FutureStream) SimpleReactStream.super.flatMapCompletableFuture(flatFn);
-	}
-	/**
-	 * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
-	 * This operation is performed synchronously
-	 * 
-	 * <pre>
-	 * {@code 
-	 * assertThat( new LazyReact()
-										.of(1,2,3)
-										.flatMapCompletableFutureSync(i->CompletableFuture.completedFuture(i))
-										.block(),equalTo(Arrays.asList(1,2,3)));
-	 * }
-	 * </pre>
-	 * In this example the result of the flatMapCompletableFuture is 'flattened' to the raw integer values
-	 * 
-	 * 
-	 * @param flatFn flatMap function
-	 * @return Flatten Stream with flatFn applied
-	 */
-	default <R> FutureStream<R> flatMapCompletableFutureSync(
-			Function<U, CompletableFuture<R>> flatFn) {
-		
-		return (FutureStream) SimpleReactStream.super.flatMapCompletableFutureSync(flatFn);
-	}
-
-	/*
-	 * @see org.jooq.lambda.Seq#flatMap(java.util.function.Function)
-	 */
-	@Override
-	default <R> FutureStream<R> flatMap(
-			Function<? super U, ? extends Stream<? extends R>> flatFn) {
-		return (FutureStream) SimpleReactStream.super.flatMap(flatFn);
-	}
-
-	/*
-	 * Merges this stream with the supplied Stream
-	 * to merge Streams of different type 
-	 *
-	 * 
-	 * @see
-	 * com.aol.simple.react.stream.traits.SimpleReactStream#merge(com.aol.simple
-	 * .react.stream.traits.SimpleReactStream)
-	 */
-	@Override
-	default FutureStream<U> merge(SimpleReactStream<U>... streams) {
-		return (FutureStream)SimpleReactStream.super.merge(streams);		
-	}
-	
-
-	
-	
-	/*
-	 * @see
-	 * com.aol.simple.react.stream.traits.SimpleReactStream#onFail(java.util
-	 * .function.Function)
-	 */
-	@Override
-	default FutureStream<U> onFail(
-			final Function<? extends SimpleReactFailedStageException, U> fn) {
-		return (FutureStream) SimpleReactStream.super.onFail(fn);
-	}
-
-	/*
-	 * 
-	 * @see
-	 * com.aol.simple.react.stream.traits.SimpleReactStream#onFail(java.lang
-	 * .Class, java.util.function.Function)
-	 */
-	default FutureStream<U> onFail(Class<? extends Throwable> exceptionClass,
-			final Function<? extends SimpleReactFailedStageException, U> fn) {
-		return (FutureStream) SimpleReactStream.super
-				.onFail(exceptionClass, fn);
-	}
-
-	/*
-	 * @see
-	 * com.aol.simple.react.stream.traits.SimpleReactStream#capture(java.util
-	 * .function.Consumer)
-	 */
-	@Override
-	default FutureStream<U> capture(
-			final Consumer<? extends Throwable> errorHandler) {
-		return (FutureStream) SimpleReactStream.super.capture(errorHandler);
-	}
-
-	/*
-	 * @see
-	 * com.aol.simple.react.stream.traits.SimpleReactStream#allOf(java.util.
-	 * function.Function)
-	 */
-	@Override
-	default <T, R> FutureStream<R> allOf(final Function<List<T>, R> fn) {
-		return (FutureStream) SimpleReactStream.super.allOf(fn);
-	}
-
-	
-	
-	
-	/*
-	 * @see org.jooq.lambda.Seq#peek(java.util.function.Consumer)
-	 */
-	@Override
-	default FutureStream<U> peek(final Consumer<? super U> consumer) {
-		return (FutureStream) SimpleReactStream.super.peek(consumer);
-	}
-
-	/*
-	 * @see org.jooq.lambda.Seq#filter(java.util.function.Predicate)
-	 */
-	default FutureStream<U> filter(final Predicate<? super U> p) {
-		return (FutureStream) SimpleReactStream.super.filter(p);
-	}
-
+	 FutureStream<U> capture(final Consumer<? extends Throwable> errorHandler);
 	/**
 	 * Stream supporting methods
 	 */
@@ -1187,6 +746,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 	default FutureOps<U> futureOperations(){
 		return new FutureOps<>(this.getTaskExecutor(),this);
 	}
+	
 	/**
 	 * @param executor to execute terminal ops asynchronously on
 	 * @return An extensive set of asyncrhonous terminal operations
@@ -1269,7 +829,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 	 * @see java.util.stream.Stream#count()
 	 */
 	@Override
-	default long count() {
+	default long count(){
 
 		return getLastActive().stream().count();
 	}
@@ -1354,22 +914,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 				accumulator, combiner);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.stream.BaseStream#iterator()
-	 */
-	@Override
-	default CloseableIterator<U> iterator() {
-
-		Queue<U> q = toQueue();
-		if (getSubscription().closed())
-			return new CloseableIterator<>(Arrays.<U> asList().iterator(),
-					getSubscription(),null);
-		
-		return new CloseableIterator<>(q.stream(getSubscription())
-				.iterator(), getSubscription(),q);
-	}
+	
 	
  
 	
@@ -1438,15 +983,8 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 	 * @see com.aol.simple.react.stream.traits.FutureStream#sequential()
 	 */
 	@Override
-	default Seq<U> sequential() {
-		Queue q = toQueue();
-		q.fromStream(getLastActive().stream().map(it -> it.join()));
-		q.close();
-		return q.stream();
-	}
-
-
-
+	 Seq<U> sequential();
+	
 	@Override
 	default Stream<U> stream() {
 		return toQueue().stream(getSubscription());
@@ -1476,11 +1014,6 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 	}
 
 	/*
-	 * 
-	 * @param type
-	 * 
-	 * @return
-	 * 
 	 * @see org.jooq.lambda.Seq#cast(java.lang.Class)
 	 */
 
@@ -1548,11 +1081,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 	 * @see org.jooq.lambda.Seq#onClose(java.lang.Runnable)
 	 */
 	@Override
-	default Seq<U> onClose(Runnable closeHandler) {
-
-		return Seq.seq(getLastActive().stream().onClose(closeHandler)
-				.map(it -> (U) it.join()));
-	}
+	Seq<U> onClose(Runnable closeHandler);
 
 	/*
 	 * (non-Javadoc)
@@ -1560,10 +1089,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 	 * @see org.jooq.lambda.Seq#close()
 	 */
 	@Override
-	default void close() {
-		getLastActive().stream().close();
-
-	}
+	void close();
 
 	/*
 	 * (non-Javadoc)
@@ -1572,7 +1098,7 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 	 */
 	@Override
 	default <R> FutureStream<R> map(Function<? super U, ? extends R> mapper) {
-		return then((Function) mapper);
+		return (FutureStream)then((Function) mapper);
 	}
 
 	/*
@@ -1704,32 +1230,11 @@ public interface FutureStream<U> extends Seq<U>,ConfigurableStream<U>,
 	
 
 	
-	/* 
-	 * Execute subsequent stages on the completing thread (until async called)
-	 * 10X faster than async execution.
-	 * Use async for blocking IO or distributing work across threads or cores.
-	 * Switch to sync for non-blocking tasks when desired thread utlisation reached
-	 * 
-	 *	@return Version of FutureStream that will use sync CompletableFuture methods
-	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#sync()
-	 */
-	default FutureStream<U> sync(){
-		return (FutureStream<U>)SimpleReactStream.super.sync();
-	}
 	
 
-	/* 
-	 * Execute subsequent stages by submission to an Executor for async execution
-	 * 10X slower than sync execution.
-	 * Use async for blocking IO or distributing work across threads or cores.
-	 * Switch to sync for non-blocking tasks when desired thread utlisation reached
-	 *
-	 * 
-	 *	@return Version of FutureStream that will use async CompletableFuture methods
-	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#async()
-	 */
-	default FutureStream<U> async(){
-		return (FutureStream<U>) SimpleReactStream.super.async();
-	}
+	
+	 Continueable getSubscription();
+	 Executor getTaskExecutor();
+	 StreamWrapper getLastActive();
 	
 }

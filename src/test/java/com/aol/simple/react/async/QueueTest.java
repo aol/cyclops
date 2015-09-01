@@ -11,7 +11,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -27,7 +26,6 @@ import org.junit.Test;
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 
 public class QueueTest {
@@ -240,9 +238,9 @@ public class QueueTest {
 
 		Queue<Integer> q = new Queue(new LinkedBlockingQueue());
 		LazyReact.parallelBuilder().reactInfinitely(() -> count++)
-				.then(it -> q.offer(it)).run(new ForkJoinPool(1));
+				.then(it -> q.offer(it)).runOn(new ForkJoinPool(1));
 		LazyReact.parallelBuilder().reactInfinitely(() -> count1++)
-				.then(it -> q.offer(it)).run(new ForkJoinPool(1));
+				.then(it -> q.offer(it)).runOn(new ForkJoinPool(1));
 
 		List<Integer> result = q.stream().limit(1000)
 				.peek(it -> System.out.println(it))

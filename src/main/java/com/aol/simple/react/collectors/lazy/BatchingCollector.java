@@ -4,19 +4,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BinaryOperator;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 
+import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.config.MaxActive;
-import com.aol.simple.react.stream.MissingValue;
 import com.aol.simple.react.stream.traits.BlockingStream;
 
 /**
@@ -33,8 +30,8 @@ import com.aol.simple.react.stream.traits.BlockingStream;
 public class BatchingCollector<T> implements LazyResultConsumer<T>{
 
 	@Getter
-	private final Collection<CompletableFuture<T>> results;
-	private final List<CompletableFuture<T>> active = new ArrayList<>();
+	private final Collection<FastFuture<T>> results;
+	private final List<FastFuture<T>> active = new ArrayList<>();
 	@Getter
 	private final MaxActive maxActive;
 	@Getter
@@ -48,20 +45,13 @@ public class BatchingCollector<T> implements LazyResultConsumer<T>{
 		this.results =null;
 		this.blocking = blocking;
 	}
-	/**
-	 * Batching Collector with default Max Active settings
-	 */
-	public BatchingCollector(BlockingStream<T> blocking){
-		this.maxActive = MaxActive.defaultValue.factory.getInstance();
-		this.results =null;
-		this.blocking = blocking;
-	}
 	
 	/* (non-Javadoc)
 	 * @see java.util.function.Consumer#accept(java.lang.Object)
 	 */
 	@Override
-	public void accept(CompletableFuture<T> t) {
+	public void accept(FastFuture<T> t) {
+		
 		active.add(t);
 		
 		if(active.size()>maxActive.getMaxActive()){
@@ -69,14 +59,16 @@ public class BatchingCollector<T> implements LazyResultConsumer<T>{
 			while(active.size()>maxActive.getReduceTo()){
 				
 				
-				List<CompletableFuture<T>> toRemove = active.stream().filter(cf -> cf.isDone()).collect(Collectors.toList());
-				active.removeAll(toRemove);
+				List<FastFuture<T>> toRemove = active.stream()
+														.filter(cf -> cf.isDone())
+														.collect(Collectors.toList());
+				active.removeAll(toRemove);	
 				results.addAll(toRemove);
 				if(active.size()>maxActive.getReduceTo()){
 					CompletableFuture promise=  new CompletableFuture();
-					CompletableFuture.anyOf(active.toArray(new CompletableFuture[0]))
-									.thenAccept(cf -> promise.complete(true))
-									.exceptionally(e->{ promise.complete(true); return null;});
+					FastFuture.xOf(active.size()-maxActive.getReduceTo(),() -> {
+						promise.complete(true);
+					},active.toArray(new FastFuture[0]));
 					
 					promise.join();
 				}
@@ -87,11 +79,16 @@ public class BatchingCollector<T> implements LazyResultConsumer<T>{
 		
 		
 	}
+	public void block(Function<FastFuture<T>,T> safeJoin){
+		if(active.size()==0)
+			return;
+		active.stream().peek(f-> safeJoin.apply(f)).forEach(a->{});
 	
+	}
 	/* (non-Javadoc)
 	 * @see com.aol.simple.react.collectors.lazy.LazyResultConsumer#getResults()
 	 */
-	public Collection<CompletableFuture<T>> getResults(){
+	public Collection<FastFuture<T>> getResults(){
 		
 		return results;
 	}
@@ -99,8 +96,9 @@ public class BatchingCollector<T> implements LazyResultConsumer<T>{
 	 *	@return all results (including active)
 	 * @see com.aol.simple.react.collectors.lazy.LazyResultConsumer#getAllResults()
 	 */
-	public Collection<CompletableFuture<T>> getAllResults(){
+	public Collection<FastFuture<T>> getAllResults(){
 		results.addAll(active);
+		active.clear();
 		return results;
 	}
 	 

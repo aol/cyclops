@@ -2,25 +2,23 @@ package com.aol.simple.react.stream.traits;
 
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collector;
 
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.Queue.ClosedQueueException;
-import com.aol.simple.react.stream.BaseSimpleReact;
+import com.aol.simple.react.async.future.CompletedException;
 import com.aol.simple.react.stream.lazy.LazyReact;
 
 public interface LazyToQueue<U> extends ToQueue<U> {
 
-	abstract <T, R> LazyFutureStream<R> allOf(final Collector collector,
-			final Function<T, R> fn);
-
-	abstract <R> LazyFutureStream<R> then(final Function<U, R> fn,
+	<R> LazyFutureStream<R> then(final Function<U, R> fn,
 			Executor exec);
 
-	abstract <R> LazyFutureStream<R> thenSync(final Function<U, R> fn);
-	abstract <T extends BaseSimpleReact> T getPopulator();
-
+	<R> LazyFutureStream<R> thenSync(final Function<U, R> fn);
+	LazyReact getPopulator();
+	
+	LazyFutureStream<U> peekSync(final Consumer<? super U> consumer);
 	/**
 	 * Convert the current Stream to a simple-react Queue
 	 * 
@@ -28,16 +26,19 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 	 */
 	default Queue<U> toQueue() {
 		Queue<U> queue = this.getQueueFactory().build();
-
 		
 		
-		Continuation continuation = thenSync(queue::add).runContinuation(() -> {
-			queue.close();
-			
-			});
+		
+		Continuation continuation =  peekSync(queue::add)
+										.self( s-> { if(this.getPopulator().isPoolingActive()) s.peekSync(v-> { throw new CompletedException(v);});})
+										.runContinuation(() -> {
+										queue.close();});
+		
 		queue.addContinuation(continuation);
 		return queue;
 	}
+
+	
 
 	/* 
 	 * Convert the current Stream to a simple-react Queue.
@@ -50,10 +51,10 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 	default Queue<U> toQueue(Function<Queue, Queue> fn) {
 		Queue<U> queue = fn.apply(this.getQueueFactory().build());
 
-		Continuation continuation = thenSync(queue::add).runContinuation(() -> {
-			queue.close();
-			
-		});
+		
+		Continuation continuation = thenSync(queue::add)
+									.self( s-> { if(this.getPopulator().isPoolingActive()) s.peekSync(v-> { throw new CompletedException(v);});})
+									.runContinuation(() -> {queue.close();});
 		queue.addContinuation(continuation);
 		return queue;
 	}
@@ -61,7 +62,9 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 	default void addToQueue(Queue queue){
 		
 
-		Continuation continuation = thenSync(queue::add).runContinuation(() -> {
+		Continuation continuation = thenSync(queue::add)
+										.self( s-> { if(this.getPopulator().isPoolingActive()) s.peekSync(v-> { throw new CompletedException(v);});})
+										.runContinuation(() -> {
 			throw new ClosedQueueException();
 		});
 		queue.addContinuation(continuation);
@@ -88,7 +91,7 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 
 	}
 
-	abstract <T extends BaseSimpleReact> void returnPopulator(T service);
+	void returnPopulator(LazyReact service);
 
 	default U add(U value, Queue<U> queue) {
 		if (!queue.add(value))

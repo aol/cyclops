@@ -39,13 +39,7 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	
 
 	
-	@Test
-	public void skipUntil(){
-		System.out.println(react(()->1,()->2,()->3,()->4,()->value2())
-				.skipUntil(react(()->value())).collect(Collectors.toList()));
-		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).noneMatch(it-> it==1));
-		assertThat(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).count(),is(3l));
-	}
+	
 	@Test
 	public void testZipWithFutures(){
 		FutureStream stream = of("a","b");
@@ -80,6 +74,7 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	@Test
 	public void duplicateFutures(){
 		List<String> list = of("a","b").duplicateFutures().v1.block();
+		System.out.println(list);
 		assertThat(sortedList(list),is(asList("a","b")));
 	}
 	private <T> List<T> sortedList(List<T> list) {
@@ -113,8 +108,11 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	}
 	@Test
 	public void batchSinceLastRead() throws InterruptedException{
-		List<Collection> cols = of(1,2,3,4,5,6).chunkSinceLastRead().peek(System.out::println).peek(it->{sleep(50);}).collect(Collectors.toList());
-		
+		List<Collection> cols = of(1,2,3,4,5,6).chunkSinceLastRead()
+										.peek(System.out::println)
+										.peek(it->{sleep(50);})
+										.collect(Collectors.toList());
+		System.out.println(cols);
 		System.out.println(cols.get(0));
 		assertThat(cols.get(0).size(),is(1));
 		assertThat(cols.size(),greaterThan(0));
@@ -128,14 +126,14 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	public void zipFastSlow() {
 		Queue q = new Queue();
 		LazyReact.parallelBuilder().reactInfinitely(() -> sleep(100))
-				.then(it -> q.add("100")).run(new ForkJoinPool(1));
+				.then(it -> q.add("100")).runOn(new ForkJoinPool(1));
 		parallel(1, 2, 3, 4, 5, 6).zip(q.stream())
 				.peek(it -> System.out.println(it))
 				.collect(Collectors.toList());
 
 	}
 
-	@Test @Ignore
+	@Test 
 	public void testBackPressureWhenZippingUnevenStreams() throws InterruptedException {
 
 		LazyFutureStream stream =  LazyReact.parallelBuilder().withExecutor(new ForkJoinPool(2))
@@ -180,7 +178,7 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 
 	@Test
 	public void testOfType() {
-		
+		System.out.println("list: "+of(1, 2,  3,null).ofType(Integer.class).toList());
 		assertThat(of(1, "a", 2, "b", 3, null).ofType(Integer.class).toList(),containsInAnyOrder(1, 2, 3));
 		assertThat(of(1, "a", 2, "b", 3, null).ofType(Integer.class).toList(),not(containsInAnyOrder("a", "b",null)));
 		assertThat(of(1, "a", 2, "b", 3, null)

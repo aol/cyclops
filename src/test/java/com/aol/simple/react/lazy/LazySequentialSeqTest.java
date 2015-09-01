@@ -20,6 +20,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.simple.react.base.BaseSequentialSeqTest;
+import com.aol.simple.react.stream.traits.EagerFutureStream;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
@@ -61,25 +62,51 @@ public class LazySequentialSeqTest extends BaseSequentialSeqTest {
         assertEquals(asList(1, 2,3, 1, 2,3),of(1, 2, 3).cycleUntil(next->count++==6).toList());
        
     }
-	
+	@Test
+	public void iteratorMap(){
+			
+		assertThat( of(1)
+				.peek(i-> System.out.println("peek1 " +  i))
+				.map(i->i*2)
+				.peek(i-> System.out.println("peek2 " +  i))
+				.iterator().next(),equalTo(2));
+	}
+	@Test
+	public void duplicateMap(){
+		assertThat(of(1,2,3).map(i->i*2).duplicate().v1.toList(),equalTo(Arrays.asList(2,4,6)));
+	}
+	@Test
+	public void concatStreamsJDK(){
+	List<String> result = 	of(1,2,3).concat(Stream.of(100,200,300))
+			.map(it ->it+"!!").collect(Collectors.toList());
+
+		assertThat(result,hasItems("1!!","2!!","100!!","200!!","3!!","300!!"));
+	}
 	@Test
 	public void concatStreams(){
 	List<String> result = 	of(1,2,3).concat(of(100,200,300))
 			.map(it ->it+"!!").collect(Collectors.toList());
 
-		assertThat(result,equalTo(Arrays.asList("1!!","2!!","100!!","200!!","3!!","300!!")));
+		assertThat(result,containsInAnyOrder("1!!","2!!","100!!","200!!","3!!","300!!"));
+	}
+	@Test
+	public void concatStreamsEager(){
+	List<String> result = 	of(1,2,3).concat(EagerFutureStream.of(100,200,300))
+			.map(it ->it+"!!").collect(Collectors.toList());
+
+		assertThat(result,containsInAnyOrder("1!!","2!!","100!!","200!!","3!!","300!!"));
 	}
 	@Test
 	public void concat(){
 	List<String> result = 	of(1,2,3).concat(100,200,300)
 			.map(it ->it+"!!").collect(Collectors.toList());
 
-		assertThat(result,equalTo(Arrays.asList("1!!","2!!","100!!","200!!","3!!","300!!")));
+		assertThat(result,containsInAnyOrder("1!!","2!!","100!!","200!!","3!!","300!!"));
 	}
 	
 	@Test
 	public void merge(){
-	List<String> result = 	of(1,2,3).merge(of(100,200,300))
+	List<String> result = 	of(1,2,3).mergeLatest(of(100,200,300))
 									.map(it ->it+"!!")
 									.collect(Collectors.toList());
 
@@ -88,7 +115,7 @@ public class LazySequentialSeqTest extends BaseSequentialSeqTest {
 	@Test
 	public void combine(){
 		
-		assertThat(of(1,2,3,4,5,6).combineLatest(of(3)).collect(Collectors.toList()).size(),greaterThan(5));
+		assertThat(of(1,2,3,4,5,6).mergeLatest(of(3)).collect(Collectors.toList()).size(),greaterThan(5));
 	}
 	@Test
 	public void batchSinceLastReadIterator() throws InterruptedException{

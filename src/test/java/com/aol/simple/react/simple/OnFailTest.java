@@ -37,8 +37,24 @@ public class OnFailTest {
 		assertThat(shouldNeverBeReached.get(),equalTo(0));
 		
 	}
+	@Test
+	public void chained2(){
+		new SimpleReact().react(()->1,()->2)
+			.then(this::throwException)
+			.then(i->i+2)
+			.onFail(IOException.class, e-> shouldNeverBeCalled.incrementAndGet())
+			.onFail(RuntimeException.class, e-> shouldBeCalled.incrementAndGet())
+			.onFail(ClosedQueueException.class, e-> shouldNeverBeReached.incrementAndGet())
+			.block();
+		
+		assertThat(shouldNeverBeCalled.get(),equalTo(0));
+		assertThat(shouldBeCalled.get(),equalTo(2));
+		assertThat(shouldNeverBeReached.get(),equalTo(0));
+		
+	}
 	private int throwException(int num) {
 		throw new MyRuntimeTimeException();
 	}
+	
 	static class MyRuntimeTimeException extends RuntimeException {}
 }

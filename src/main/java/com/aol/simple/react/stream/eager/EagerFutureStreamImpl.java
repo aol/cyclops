@@ -1,6 +1,5 @@
 package com.aol.simple.react.stream.eager;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -10,8 +9,8 @@ import java.util.stream.Stream;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,12 +18,8 @@ import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.async.factories.QueueFactory;
 import com.aol.simple.react.async.subscription.AlwaysContinue;
 import com.aol.simple.react.async.subscription.Continueable;
-import com.aol.simple.react.capacity.monitor.LimitingMonitor;
-import com.aol.simple.react.collectors.lazy.BatchingCollector;
-import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.stream.BaseSimpleReact;
-import com.aol.simple.react.stream.StreamWrapper;
-import com.aol.simple.react.stream.lazy.LazyReact;
+import com.aol.simple.react.stream.EagerStreamWrapper;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -39,14 +34,10 @@ public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 
 
 	private final Optional<Consumer<Throwable>> errorHandler;
-	private final StreamWrapper lastActive;
-	private final boolean eager;
-	private final Consumer<CompletableFuture> waitStrategy;
-	private final LazyResultConsumer<U> lazyCollector;
+	private final EagerStreamWrapper lastActive;
 	private final QueueFactory<U> queueFactory;
 	private final EagerReact simpleReact;
 	private final Continueable subscription;
-	private final List<CompletableFuture> originalFutures;
 	
 
 	/**
@@ -60,29 +51,21 @@ public class EagerFutureStreamImpl<U> implements EagerFutureStream<U>{
 	 *            Stream that will generate the events that will be reacted to.
 	 * 
 	 */
-	public EagerFutureStreamImpl(EagerReact eagerReact,final Stream<CompletableFuture<U>> stream) {
-		this(eagerReact, stream,null);
-	}
-	public EagerFutureStreamImpl(EagerReact eagerReact, final Stream<CompletableFuture<U>> stream,List<CompletableFuture> org) {
+	public EagerFutureStreamImpl(EagerReact eagerReact, final Stream<CompletableFuture<U>> stream) {
 		this.simpleReact =eagerReact;
 
 		Stream s = stream;
-		this.lastActive = new StreamWrapper(s, true);
-		this.originalFutures = org!=null ? org : this.lastActive.list();
+		this.lastActive = new EagerStreamWrapper(s);
 		this.errorHandler = Optional.of((e) -> log.error(e.getMessage(), e));
-		this.eager = true;
+		
 
-		this.waitStrategy = new LimitingMonitor();
-		this.lazyCollector = new BatchingCollector<>(this);
+	
 		this.queueFactory = QueueFactories.unboundedQueue();
 		subscription = new AlwaysContinue();
 		
 	}
 	
-	public void cancelOriginal(){
-		this.originalFutures.stream().forEach(cf -> cf.cancel(true));
-	}
-
+	
 	@Override
 	public <R, A> R collect(Collector<? super U, A, R> collector) {
 		return block(collector);

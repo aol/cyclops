@@ -58,10 +58,11 @@ public class ReactPoolTest {
 	
 	@Test
 	public void testElastic(){
-		
-		ReactPool<LazyReact> pool = ReactPool.elasticPool(()->new LazyReact());
-		List<String> result = pool.react( (er) -> er.react(()->"hello",()->"world").block() );
-		assertThat(result.size(),is(2));
+		for(int i=0;i<1000;i++){
+			ReactPool<LazyReact> pool = ReactPool.elasticPool(()->new LazyReact());
+			List<String> result = pool.react( (er) -> er.react(()->"hello",()->"world").block() );
+			assertThat(result.size(),is(2));
+		}
 	}
 	@Test
 	public void testUnbounded(){

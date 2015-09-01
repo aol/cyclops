@@ -188,13 +188,10 @@ public abstract class BaseSequentialSQLTest {
 	        assertEquals(asList(2, 3), of(2, 3).onEmptyGet(() -> 1).toList());
 	        assertEquals(asList(2, 3), of(2, 3).onEmptyThrow(() -> new X()).toList());
 	    }
-	    @Test(expected=X.class)
-	    public void testOnEmptyThrows(){
-	    	of().onEmptyThrow(() -> new X()).toList();
-	    }
+	   
 
 	    @SuppressWarnings("serial")
-	    class X extends Exception {}
+		public class X extends Exception {}
 
 	    @Test
 	    public void testConcat() {

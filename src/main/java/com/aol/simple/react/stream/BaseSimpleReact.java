@@ -1,9 +1,7 @@
 package com.aol.simple.react.stream;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.concurrent.CompletableFuture;
@@ -15,14 +13,13 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 
-public abstract class BaseSimpleReact {
+public abstract class BaseSimpleReact implements ReactBuilder{
 
 	@Getter
 	private final Executor queueService;
@@ -33,8 +30,7 @@ public abstract class BaseSimpleReact {
 	protected abstract boolean isAsync() ;
 
 	
-	public abstract <U>  SimpleReactStream<U> construct(Stream s, 
-			List<CompletableFuture> org);
+	public abstract <U>  SimpleReactStream<U> construct(Stream s);
 
 	
 	protected BaseSimpleReact(){
@@ -95,7 +91,7 @@ public abstract class BaseSimpleReact {
 	public <U> SimpleReactStream<U> fromStream(final Stream<CompletableFuture<U>> stream) {
 
 		Stream s = stream;
-		return  construct( s,null);
+		return  construct( s);
 	}
 	
 	/**
@@ -107,7 +103,7 @@ public abstract class BaseSimpleReact {
 	public <U> SimpleReactStream<U> from(final Stream<U> stream) {
 		
 		Stream s = stream.map(it -> CompletableFuture.completedFuture(it));
-		return construct( s,null);
+		return construct( s);
 	}
 	/**
 	 * Start a reactive dataflow from a stream.
@@ -149,10 +145,10 @@ public abstract class BaseSimpleReact {
 		return from(Stream.of(array));
 	}
 	public <U> SimpleReactStream<U> from(CompletableFuture<U> cf){
-		return this.construct(Stream.of(cf), Arrays.asList(cf));
+		return this.construct(Stream.of(cf));
 	}
 	public <U> SimpleReactStream<U> from(CompletableFuture<U>... cf){
-		return this.construct(Stream.of(cf), Arrays.asList(cf));
+		return this.construct(Stream.of(cf));
 	}
 	
 	
@@ -186,8 +182,7 @@ public abstract class BaseSimpleReact {
 	public <U> SimpleReactStream<U> react(final Stream<Supplier<U>> actions) {
 
 		return construct(actions.map(
-				next -> CompletableFuture.supplyAsync(next, getExecutor())),
-				null);
+				next -> CompletableFuture.supplyAsync(next, getExecutor())));
 		
 	}
 	/**
@@ -203,7 +198,7 @@ public abstract class BaseSimpleReact {
 	public <U> SimpleReactStream<U> react(final Iterator<Supplier<U>> actions) {
 
 		return construct(StreamSupport.stream(Spliterators.spliteratorUnknownSize(actions, Spliterator.ORDERED),false).map(
-				next -> CompletableFuture.supplyAsync(next, getExecutor())),null);
+				next -> CompletableFuture.supplyAsync(next, getExecutor())));
 		
 	}
 	/**
@@ -219,8 +214,7 @@ public abstract class BaseSimpleReact {
 	public <U> SimpleReactStream<U> reactIterable(final Iterable<Supplier<U>> actions) {
 
 		return construct(StreamSupport.stream(Spliterators.spliteratorUnknownSize(actions.iterator(), Spliterator.ORDERED),false).map(
-				next -> CompletableFuture.supplyAsync(next, getExecutor())),
-				null);
+				next -> CompletableFuture.supplyAsync(next, getExecutor())));
 		
 	}
 	/**
@@ -244,17 +238,8 @@ public abstract class BaseSimpleReact {
 	 */
 	@SuppressWarnings("unchecked")
 	protected <U> SimpleReactStream<U> reactI(final Supplier<U>... actions) {
-		
-		
 			return construct(Stream.of(actions).map(
-				next -> CompletableFuture.supplyAsync(next, this.getExecutor())),null);
-		
-		
+				next -> CompletableFuture.supplyAsync(next, this.getExecutor())));
 	}
-	
-	
-	
-	
 		
-	
 }

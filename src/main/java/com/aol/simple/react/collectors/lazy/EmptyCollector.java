@@ -11,8 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
 
+import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.config.MaxActive;
-import com.aol.simple.react.stream.traits.ConfigurableStream;
 /**
  * A collector that periodically joins active completablefutures
  * but does not store the results
@@ -26,26 +26,25 @@ import com.aol.simple.react.stream.traits.ConfigurableStream;
 public class EmptyCollector<T> implements LazyResultConsumer<T> {
 	
 
-	private final List<CompletableFuture<T>> active = new ArrayList<>();
+	private final List<FastFuture<T>> active = new ArrayList<>();
 	@Getter
 	private final MaxActive maxActive;
-	private final Function<CompletableFuture, T> safeJoin;
+	private final Function<FastFuture<T>, T> safeJoin;
 	
 	EmptyCollector(){
-		maxActive = MaxActive.defaultValue.factory.getInstance();
+		maxActive = MaxActive.IO;
 		safeJoin = cf -> (T)cf.join();
 	}
-	EmptyCollector(MaxActive maxActive){
-		this.maxActive = maxActive;
-		safeJoin = cf -> (T)cf.join();
-	}
+	
 	
 	/* 
 	 *	@param t Result type
 	 * @see java.util.function.Consumer#accept(java.lang.Object)
 	 */
 	@Override
-	public void accept(CompletableFuture<T> t) {
+	public void accept(FastFuture<T> t) {
+		
+		
 		active.add(t);
 		
 		if(active.size()>maxActive.getMaxActive()){
@@ -54,13 +53,17 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 				
 				
 				
-				List<CompletableFuture> toRemove = active.stream().filter(cf -> cf.isDone()).peek(this::handleExceptions).collect(Collectors.toList());
+				List<FastFuture> toRemove = active.stream()
+												  .filter(cf -> cf.isDone())
+												  .peek(this::handleExceptions)
+												  .collect(Collectors.toList());
 				
 				active.removeAll(toRemove);
 				if(active.size()>maxActive.getReduceTo()){
 					CompletableFuture promise=  new CompletableFuture();
-					CompletableFuture.anyOf(active.toArray(new CompletableFuture[0]))
-									.thenAccept(cf -> promise.complete(true));
+					FastFuture.xOf(active.size()-maxActive.getReduceTo(),() -> promise.complete(true),
+											active.toArray(new FastFuture[0]));
+									
 					
 					promise.join();
 				}
@@ -72,24 +75,35 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 		
 		
 	}
+	
+	
+	public void add(FastFuture<T> t) {
+		active.add(t);
+	}
 
-	private void handleExceptions(CompletableFuture cf){
+	private void handleExceptions(FastFuture cf){
 		if(cf.isCompletedExceptionally())
 			 safeJoin.apply(cf);
 	}
 	
 	@Override
-	public LazyResultConsumer<T> withResults(Collection<CompletableFuture<T>> t) {
+	public EmptyCollector<T> withResults(Collection<FastFuture<T>> t) {
 		
 		return this.withMaxActive(maxActive);
 	}
-
+	public void block(Function<FastFuture<T>,T> safeJoin){
+		
+		if(active.size()==0)
+			return;
+		active.stream().peek(cf-> safeJoin.apply(cf)).forEach(a->{});
+		
+	}
 	/* 
 	 *	@return empty list
 	 * @see com.aol.simple.react.collectors.lazy.LazyResultConsumer#getResults()
 	 */
 	@Override
-	public Collection<CompletableFuture<T>> getResults() {
+	public Collection<FastFuture<T>> getResults() {
 		active.stream().forEach(cf ->  safeJoin.apply(cf));
 		active.clear();
 		return new ArrayList<>();
@@ -98,18 +112,13 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 	 *	@return empty list
 	 * @see com.aol.simple.react.collectors.lazy.LazyResultConsumer#getAllResults()
 	 */
-	public Collection<CompletableFuture<T>> getAllResults() {
+	public Collection<FastFuture<T>> getAllResults() {
 		return getResults();
 	}
-
-	/* 
-	 *	@return null
-	 * @see com.aol.simple.react.collectors.lazy.LazyResultConsumer#getBlocking()
-	 */
-	@Override
-	public ConfigurableStream<T> getBlocking() {
-	
-		return null;
+	public boolean hasCapacity(int i) {
+		return maxActive.getMaxActive()+i>active.size();
 	}
+
+	
 	
 }

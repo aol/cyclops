@@ -7,7 +7,6 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.jooq.lambda.tuple.Tuple.tuple;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -26,6 +25,7 @@ import org.junit.Test;
 
 import com.aol.simple.react.base.BaseSeqTest;
 import com.aol.simple.react.stream.eager.EagerReact;
+import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
 
 public class EagerSeqTest extends BaseSeqTest {
@@ -44,6 +44,66 @@ public class EagerSeqTest extends BaseSeqTest {
 		return EagerReact.parallelBuilder().react(array);
 		
 	}
+	
+	@Test
+	public void combine(){
+		
+		assertThat(of(1,2,3,4,5,6).combineLatest(of(3)).collect(Collectors.toList()).size(),greaterThan(5));
+	}
+	@Test
+	public void combineLatest(){
+		
+		assertThat(of(1,2,3,4,5,6).combineLatest(react(()->3,()->value())).collect(Collectors.toList()).size(),greaterThan(5));
+	}
+	@Test
+	public void combineValues(){
+		for(int i=0;i<1000;i++){
+			Stream<Tuple2<Integer,Integer>> s = of(1,2,3,4,5,6).combineLatest(of(3));
+			List<Tuple2<Integer,Integer>> list = s.collect(Collectors.toList());
+			System.out.println(i + " : " +  list);
+			
+		//	assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v2==null));
+			
+			assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> (it.v1 == null ? -1 : it.v1)==1));
+			assertTrue(list.stream().anyMatch(it-> (it.v1 == null ? -1 : it.v1)==2));
+			assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> (it.v1 == null ? -1 : it.v1)==3));
+			assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> (it.v1 == null ? -1 : it.v1)==4));
+			assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> (it.v1 == null ? -1 : it.v1)==5));
+			assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> (it.v1 == null ? -1 : it.v1)==6));
+		}
+	}
+	@Test
+	public void withLatest(){
+		
+		assertThat(of(1,2,3,4,5,6).withLatest(of(30,40,50,60,70,80,90,100,110,120,140))
+				.collect(Collectors.toList()).size(),is(6));
+		
+	}
+	/**
+	@Test
+	public void mergeMultipleMixed(){
+		assertThat(react(()->1,()->2).merge(new SimpleReact().react(()->-1,()->-2),
+						new EagerReact().react(()->100,()->200)).toList().size(),equalTo(6));
+	}**/
+	@Test
+	public void withLatestValues(){
+		assertTrue(of(1,2,3,4,5,6).withLatest(of(30,40,50,60,70,80,90,100,110,120,140)).anyMatch(it-> it.v2==null));
+		//assertTrue(of(1,2,3,4,5,6).combine(of(3)).oneMatch(it-> it.v2==3));
+		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==1));
+		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==2));
+		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==3));
+		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==4));
+		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==5));
+		assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> it.v1==6));
+	}
+	
+	@Test
+	public void takeUntil(){
+		System.out.println(react(()->1,()->2,()->3,()->4,()->value2())
+				.takeUntil(react(()->value())).collect(Collectors.toList()));
+		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).takeUntil(react(()->value())).noneMatch(it-> it==200));
+		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).takeUntil(react(()->value())).anyMatch(it-> it==1));
+	}
 	@Test(expected=UnsupportedOperationException.class)
     public void testCycle() {
     	  of(1).cycle().limit(6).toList();
@@ -51,7 +111,7 @@ public class EagerSeqTest extends BaseSeqTest {
     }
 	@Test
 	public void mergeMultiple(){
-		assertThat(react(()->1,()->2).switchOnNext(react(()->'a',()->'b'),
+		assertThat(EagerFutureStream.mergeMultiple( react(()->1,()->2), react(()->'a',()->'b'),
 						react(()->100,()->200)).toList().size(),equalTo(6));
 	}
 	@Test

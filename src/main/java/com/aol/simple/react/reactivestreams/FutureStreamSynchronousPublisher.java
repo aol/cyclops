@@ -5,8 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -16,7 +14,7 @@ import org.reactivestreams.Subscription;
 
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
-import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.stream.LazyStreamWrapper;
 
 /**
  * Reactive Streams publisher, that publishes on the calling thread
@@ -26,7 +24,7 @@ import com.aol.simple.react.stream.StreamWrapper;
  * @param <T>
  */
 public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
-	StreamWrapper getLastActive();
+	LazyStreamWrapper getLastActive();
 	void cancel();
 	void forwardErrors(Consumer<Throwable> c);
 	

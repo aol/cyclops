@@ -1,29 +1,28 @@
 package com.aol.simple.react.stream;
 
 import java.util.Iterator;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import lombok.AllArgsConstructor;
 
 import com.aol.simple.react.async.Queue.ClosedQueueException;
+import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.collectors.lazy.EmptyCollector;
-import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.stream.traits.Continuation;
 
 @AllArgsConstructor
-public class Runner {
+public class Runner<U> {
 
 	private final Runnable runnable;
 	
-	public boolean  run(StreamWrapper lastActive,EmptyCollector collector) {
+	public boolean  run(LazyStreamWrapper<U> lastActive,EmptyCollector<U> collector) {
 
 		
 
 		try {
-			lastActive.stream().forEach(n -> {
+			lastActive.injectFutures().forEach(n -> {
 
 				collector.accept(n);
 			});
@@ -40,9 +39,10 @@ public class Runner {
 		return true;
 
 	}
-	public Continuation  runContinuations(StreamWrapper lastActive,EmptyCollector collector) {
+	public Continuation  runContinuations(LazyStreamWrapper lastActive,EmptyCollector collector) {
 
-		Iterator<CompletableFuture> it = lastActive.stream().iterator();
+		
+		Iterator<FastFuture> it = lastActive.injectFutures().iterator();
 		
 			Continuation[] cont  = new Continuation[1];
 				
@@ -55,8 +55,8 @@ public class Runner {
 				
 				});
 				Continuation finishNoCollect = new Continuation( () -> {
-					
 					runnable.run();
+					
 					throw new ClosedQueueException();
 					
 				});
@@ -65,10 +65,12 @@ public class Runner {
 					try {
 						
 							
-						
+							
 							if(it.hasNext()){
 								
-								CompletableFuture f = it.next();
+								
+								FastFuture f = it.next();
+								
 								handleFilter(cont,f);//if completableFuture has been filtered out, we need to move to the next one instead
 									
 								collector.accept(f);
@@ -81,9 +83,12 @@ public class Runner {
 						}
 					} catch (SimpleReactProcessingException e) {
 						
+						
 					}catch(java.util.concurrent.CompletionException e){
 						
+						
 					}catch(Throwable e){
+						
 					}
 					return finishNoCollect;
 							
@@ -96,15 +101,16 @@ public class Runner {
 
 	}
 	
-	private <T> void handleFilter(Continuation[] cont, CompletableFuture<T> f){
-		
-		f.exceptionally( e-> {
-			if ((e.getCause() instanceof FilteredExecutionPathException)) {
+	private <T> void handleFilter(Continuation[] cont, FastFuture<T> f){
+		AtomicInteger called=  new AtomicInteger(0);
+		f.essential( event -> {
+			
+			if (event.exception !=null && (event.exception.getCause() instanceof FilteredExecutionPathException)) {
+				if(called.compareAndSet(0, 1))
+					cont[0].proceed();
 				
-				return (T)cont[0].proceed();
 			}
 			
-			throw (RuntimeException)e;
 		});
 	}
 	

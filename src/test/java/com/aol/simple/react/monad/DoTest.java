@@ -13,6 +13,7 @@ import com.aol.cyclops.comprehensions.donotation.typed.Do;
 import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.monads.AnyM;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
+import com.aol.simple.react.stream.traits.EagerSimpleReactStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 
@@ -38,7 +39,7 @@ public class DoTest {
 	@Test
 	public void doTestSimple(){
 		for(int i=0;i<1000;i++){
-		SimpleReactStream<Integer> result = Do.add(anyM(SimpleReactStream.of(1,2,3)))
+		EagerSimpleReactStream<Integer> result = Do.add(anyM(SimpleReactStream.of(1,2,3)))
 												.add(Optional.of(2))
 												.yield((Integer a) -> (Integer b) -> a+b)
 												.unwrap();

@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.stream.BaseSimpleReact;
+import com.aol.simple.react.stream.ReactBuilder;
 
 /**
  * Maintain a pool of x-react builders
@@ -20,7 +21,7 @@ import com.aol.simple.react.stream.BaseSimpleReact;
  *
  * @param <REACTOR> x-react builder type (SimpleReact, EagerReact, LazyReact)
  */
-public class ReactPool<REACTOR extends BaseSimpleReact> {
+public class ReactPool<REACTOR extends ReactBuilder> {
 	
 	private final BlockingQueue<REACTOR> queue;
 	private final ExceptionSoftener softener = ExceptionSoftener.singleton.factory
@@ -50,7 +51,7 @@ public class ReactPool<REACTOR extends BaseSimpleReact> {
 	 * @param reactors Create a bounded pool of the specified REACTORs
 	 * @return ReactPool
 	 */
-	public static <REACTOR extends BaseSimpleReact> ReactPool<REACTOR> boundedPool(Collection<REACTOR> reactors){
+	public static <REACTOR extends ReactBuilder> ReactPool<REACTOR> boundedPool(Collection<REACTOR> reactors){
 		 ReactPool<REACTOR> r = new ReactPool<>(reactors.size());
 		 reactors.forEach(r::populate);
 		 return r;
@@ -61,7 +62,7 @@ public class ReactPool<REACTOR extends BaseSimpleReact> {
 	 * @param reactors Create a unbounded pool of the specified REACTORs, additional REACTORs can be added via populate
 	 * @return ReactPool
 	 */
-	public static <REACTOR extends BaseSimpleReact> ReactPool<REACTOR> unboundedPool(Collection<REACTOR> reactors){
+	public static <REACTOR extends ReactBuilder> ReactPool<REACTOR> unboundedPool(Collection<REACTOR> reactors){
 		 ReactPool<REACTOR> r = new ReactPool<>();
 		 reactors.forEach(r::populate);
 		 return r;
@@ -74,7 +75,7 @@ public class ReactPool<REACTOR extends BaseSimpleReact> {
 	 * @param supplier To create new REACTORs
 	 * @return ReactPool
 	 */
-	public static <REACTOR extends BaseSimpleReact> ReactPool<REACTOR> elasticPool(Supplier<REACTOR> supplier){
+	public static <REACTOR extends ReactBuilder> ReactPool<REACTOR> elasticPool(Supplier<REACTOR> supplier){
 		 return new ReactPool<>(supplier);
 		
 	}

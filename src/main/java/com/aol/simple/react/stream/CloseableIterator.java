@@ -24,7 +24,8 @@ public class CloseableIterator<T> implements Iterator<T>{
 		subscription.closeAll(queue);
 	}
 	public T next() {
-		return iterator.next();
+		T next = iterator.next();
+		return next;
 	}
 	
 }

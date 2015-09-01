@@ -39,6 +39,7 @@ import org.pcollections.HashTreePMap;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.traits.FutureStream;
+import com.aol.simple.react.stream.traits.EagerFutureStreamFunctions;
 import com.aol.simple.react.util.SimpleTimer;
 
 public abstract class BaseSequentialSeqTest {
@@ -80,13 +81,13 @@ public abstract class BaseSequentialSeqTest {
 	@Test @Ignore
 	public void firstOf(){
 		
-		assertTrue(FutureStream.firstOf(of(1,2,3,4),react(()->value()),
+		assertTrue(EagerFutureStreamFunctions.firstOf(of(1,2,3,4),react(()->value()),
 				react(()->value())).anyMatch(it-> it.equals(1)));
-		assertTrue(FutureStream.firstOf(of(1,2,3,4),react(()->value()),
+		assertTrue(EagerFutureStreamFunctions.firstOf(of(1,2,3,4),react(()->value()),
 				react(()->value())).anyMatch(it-> it.equals(2)));
-		assertTrue(FutureStream.firstOf(of(1,2,3,4),react(()->value()),
+		assertTrue(EagerFutureStreamFunctions.firstOf(of(1,2,3,4),react(()->value()),
 				react(()->value())).anyMatch(it-> it.equals(3)));
-		assertTrue(FutureStream.firstOf(of(1,2,3,4),react(()->value()),
+		assertTrue(EagerFutureStreamFunctions.firstOf(of(1,2,3,4),react(()->value()),
 				react(()->value())).anyMatch(it-> it.equals(4)));
 	}
 	protected Object value() {
@@ -98,7 +99,7 @@ public abstract class BaseSequentialSeqTest {
 		}
 		return "jello";
 	}
-	private int value2() {
+	protected int value2() {
 		try {
 			Thread.sleep(250);
 		} catch (InterruptedException e) {
@@ -143,57 +144,7 @@ public abstract class BaseSequentialSeqTest {
 		assertThat(list.get(0),hasItems(1,2,3));
 		assertThat(list.get(1),hasItems(3,4,5));
 	}
-	@Test
-	public void combine(){
-		
-		assertThat(of(1,2,3,4,5,6).combineLatest(of(3)).collect(Collectors.toList()).size(),greaterThan(5));
-	}
-	@Test
-	public void combineValues(){
-		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v2==null));
-		//assertTrue(of(1,2,3,4,5,6).combine(of(3)).oneMatch(it-> it.v2==3));
-		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v1==1));
-		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v1==2));
-		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v1==3));
-		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v1==4));
-		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v1==5));
-		assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it-> it.v1==6));
-	}
-	@Test
-	public void withLatest(){
-		
-			assertThat(of(1,2,3,4,5,6).withLatest(of(30,40,50,60,70,80,90,100,110,120,140))
-				.collect(Collectors.toList()).size(),is(6));
-		
-		
-	}
-	@Test
-	public void withLatestValues(){
-		for(int i=0;i<100;i++){
-			
-		//	assertTrue(of(1,2,3,4,5,6).withLatest(of(30,40,50,60,70,80,90,100,110,120,140)).anyMatch(it-> it.v2==null));
-			assertTrue(of(1,2,3,4,5,6).combineLatest(of(3)).anyMatch(it->  (it.v1 == null ? -1 : it.v1)==1));
-			assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> (it.v1 == null ? -1 : it.v1)==2));
-			assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> (it.v1 == null ? -1 : it.v1)==3));
-			assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> (it.v1 == null ? -1 : it.v1)==4));
-			assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> (it.v1 == null ? -1 : it.v1)==5));
-			assertTrue(of(1,2,3,4,5,6).withLatest(of(3)).anyMatch(it-> (it.v1 == null ? -1 : it.v1)==6));
-		}
-	}
 	
-	@Test @Ignore
-	public void skipUntil(){
-		System.out.println(react(()->1,()->2,()->3,()->4,()->value2())
-				.skipUntil(react(()->value())).collect(Collectors.toList()));
-		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).allMatch(it-> it==200));
-		assertThat(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).count(),is(1l));
-	}
-	@Test
-	public void takeUntil(){
-		
-		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).takeUntil(EagerReact.sequentialBuilder().react(()->value())).noneMatch(it-> it==200));
-		
-	}
 	@Test
 	public void batchBySize(){
 		System.out.println(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()));
@@ -579,7 +530,7 @@ public abstract class BaseSequentialSeqTest {
 	   
 	    @Test
 	    public void testSkipWhile() {
-	    	 Supplier<Seq<Integer>> s = () -> Seq.of(1, 2, 3, 4, 5);
+	    	 Supplier<Seq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	         assertEquals(asList(1, 2, 3, 4, 5), s.get().skipWhile(i -> false).toList());
 	         assertEquals(asList(3, 4, 5), s.get().skipWhile(i -> i % 3 != 0).toList());
@@ -590,7 +541,7 @@ public abstract class BaseSequentialSeqTest {
 
 	    @Test
 	    public void testSkipUntil() {
-	    	Supplier<Seq<Integer>> s = () -> Seq.of(1, 2, 3, 4, 5);
+	    	Supplier<Seq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertEquals(asList(), s.get().skipUntil(i -> false).toList());
 	        assertEquals(asList(3, 4, 5), s.get().skipUntil(i -> i % 3 == 0).toList());
@@ -601,14 +552,14 @@ public abstract class BaseSequentialSeqTest {
 
 	    @Test
 	    public void testSkipUntilWithNulls() {
-	    	 Supplier<Seq<Integer>> s = () -> Seq.of(1, 2, null, 3, 4, 5);
+	    	 Supplier<Seq<Integer>> s = () -> of(1, 2, null, 3, 4, 5);
 
 	         assertEquals(asList(1, 2, null, 3, 4, 5), s.get().skipUntil(i -> true).toList());
 	    }
 
 	    @Test
 	    public void testLimitWhile() {
-	    	 Supplier<Seq<Integer>> s = () -> Seq.of(1, 2, 3, 4, 5);
+	    	 Supplier<Seq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	         assertEquals(asList(), s.get().limitWhile(i -> false).toList());
 	         assertEquals(asList(1, 2), s.get().limitWhile(i -> i % 3 != 0).toList());

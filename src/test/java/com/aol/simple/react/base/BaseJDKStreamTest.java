@@ -202,7 +202,10 @@ public abstract class BaseJDKStreamTest {
 	@Test
 	public void testPeek(){
 		val = null;
-		of(1).map(it->it+100).peek(it -> val=it).collect(Collectors.toList());
+		List l = of(1).map(it->it+100)
+						.peek(it -> val=it)
+						.collect(Collectors.toList());
+		System.out.println(l);
 		assertThat(val,is(101));
 	}
 		

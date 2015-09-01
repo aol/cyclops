@@ -35,9 +35,8 @@ import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.factories.QueueFactory;
 import com.aol.simple.react.async.subscription.Continueable;
-import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
-import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.stream.EagerStreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.eager.EagerFutureStreamImpl;
 import com.aol.simple.react.stream.eager.EagerReact;
@@ -55,7 +54,12 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  * @author johnmcclean
  *
  */
-public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
+public interface EagerFutureStream<U> extends Seq<U>,FutureStream<U>, EagerSimpleReactStream<U>,EagerToQueue<U>{
+	EagerStreamWrapper getLastActive();
+	
+	default Queue<U> toQueue(){
+		return EagerToQueue.super.toQueue();
+	}
 	/* 
 	 * Convert this stream into an async / sync stream
 	 * 
@@ -103,11 +107,6 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	EagerFutureStream<U> withRetrier(RetryExecutor retry);
 
 	
-	EagerFutureStream<U> withWaitStrategy(Consumer<CompletableFuture> c);
-
-	
-
-	EagerFutureStream<U> withLazyCollector(LazyResultConsumer<U> lazy);
 
 	/* 
 	 * Change the QueueFactory type for the next phase of the Stream.
@@ -149,7 +148,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * @return next stage in the Stream
 	 */
 	default <R> EagerFutureStream<R> thenSync(final Function<U, R> fn){
-		 return (EagerFutureStream<R>)FutureStream.super.thenSync(fn);
+		 return (EagerFutureStream<R>)EagerSimpleReactStream.super.thenSync(fn);
 	 }
 	/* 
 	 * Execute subsequent stages on the completing thread (until async called)
@@ -161,7 +160,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#sync()
 	 */
 	default EagerFutureStream<U> sync(){
-		return (EagerFutureStream<U>)FutureStream.super.sync();
+		return this.withAsync(false);
 	}
 	/* 
 	 * Execute subsequent stages by submission to an Executor for async execution
@@ -174,7 +173,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * @see com.aol.simple.react.stream.traits.SimpleReactStream#async()
 	 */
 	default EagerFutureStream<U> async(){
-		return (EagerFutureStream<U>)FutureStream.super.async();
+		return this.withAsync(true);
 	}
 
 	
@@ -194,7 +193,6 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 *  EagerFutureStream.sequentialBuilder().react(()->1,()->2,()->3)
 		 									 .map(it->it+100) //add 100
 		 									 .toList();
-
 	 * }
 	 * //results in [100,200,300]
 	 * </pre>
@@ -252,15 +250,12 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * phase
 	 */
 	default void cancel() {
-		cancelOriginal();
+		
 		FutureStream.super.cancel();
 
 	}
 
-	/**
-	 * Cancel the original tasks that populated the EagerFuturestream
-	 */
-	void cancelOriginal();
+	
 
 	/**
 	 * Can be used to debounce (accept a single data point from a unit of time)
@@ -299,49 +294,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		
 	}
 	
-	/**
-	 * Return a Stream with the same values as this Stream, but with all values
-	 * omitted until the provided stream starts emitting values. Provided Stream
-	 * ends the stream of values from this stream.
-	 <pre>
-	  {@code 
-	 * 			EagerFutureStream.react(()->loadNext(1),()->loadNext(2),()->3,()->4,()->loadNext(4))
-	 * 							 .skipUntil(EagerFutureStream.react(()->loadFromDb()))
-	 * 							 .toList();
-	 * }
-	 * </pre>
-	 * @param s
-	 *            Stream that will start the emission of values from this stream
-	 * @return Next stage in the Stream but with all values skipped until the
-	 *         provided Stream starts emitting
-	 */
-	default <T> EagerFutureStream<U> skipUntil(FutureStream<T> s) {
-		return (EagerFutureStream<U>) FutureStream.super.skipUntil(s);
-	}
-
-	/**
-	 * Return a Stream with the same values, but will stop emitting values once
-	 * the provided Stream starts to emit values. e.g. if the provided Stream is
-	 * asynchronously refreshing state from some remote store, this stream can
-	 * proceed until the provided Stream succeeds in retrieving data.
-	 * 
-	 * <pre>
-	 * {@code 
-	 * 			EagerFutureStream.react(()->loadNext(1),()->loadNext(2),()->3,()->4,()->loadNext(4))
-	 * 							 .takeUntil(EagerFutureStream.react(()->loadFromDb()))
-	 * 							 .toList();
-	 * }
-	 * 
-	 * </pre>
-	 * 
-	 * @param s
-	 *            Stream that will stop the emission of values from this stream
-	 * @return Next stage in the Stream but will only emit values until provided
-	 *         Stream starts emitting values
-	 */
-	default <T> EagerFutureStream<U> takeUntil(FutureStream<T> s) {
-		return (EagerFutureStream<U>) FutureStream.super.takeUntil(s);
-	}
+	
 
 	/**
 	 * Allows clients to control the emission of data for the next phase of the
@@ -378,7 +331,6 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * {@code
 	 * 	
 		assertThat(of(1,2,3,4,5,6).batchBySizeAndTime(3,10,TimeUnit.SECONDS).toList().get(0).size(),is(3));
-
 	 * }</pre>
 	 * 
 	 *	@param size Max batch size
@@ -655,56 +607,50 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	}
 
 	
-
-	/**
-	 * Similar to zip and withLatest, except will always take the latest from
-	 * either Stream (merged with last available from the other). By contrast
-	 * zip takes new / latest values from both Streams and withLatest will
-	 * always take the latest from this Stream while taking the last available
-	 * value from the provided stream.
-	 * 
-	 * <pre>
-	 * {@code
-	 *    EagerFutureStream.of(1,2,3,4,5,6)
-	 *    				   .combineLatest(react(()->3,()->value()))
-	 *    				   .toList();
-	 * }
-	 * </pre>
-	 * @param s
-	 *            Stream to merge with
-	 * @return Stream of Tuples with the latest values from either stream
-	 */
-	default <T> EagerFutureStream<Tuple2<U, T>> combineLatest(FutureStream<T> s) {
-		return (EagerFutureStream<Tuple2<U, T>>) FutureStream.super
-				.combineLatest(s);
-	}
-
 	/**
 	 * 
-	 * Similar to zip and combineLatest, except will always take the latest from
-	 * this Stream while taking the last available value from the provided
-	 * stream. By contrast zip takes new / latest values from both Streams and
-	 * combineLatest takes the latest from either Stream (merged with last
-	 * available from the other).
+	 * Similar to zip and combineLatest, except will always take the latest from this Stream while taking the last available value from the provided stream.
+	 * By contrast zip takes new / latest values from both Streams and combineLatest takes the latest from either Stream (merged with last available from the other).
 	 * 
-	 * <pre>
-	 * {@code
-	 * EagerFutureStream.of(1,2,3,4,5,6)
-	 * 					.withLatest(of(30,40,50,60,70,80,90,100,110,120,140))
-						.toList();
-	 * 
-	 * }
-	 * 
-	 * </pre>
-	 * 
-	 * @param s
-	 *            Stream to merge with
+	 * @param s Stream to merge with
 	 * @return Stream of Tuples with the latest values from this stream
 	 */
-	default <T> EagerFutureStream<Tuple2<U, T>> withLatest(FutureStream<T> s) {
-		return (EagerFutureStream<Tuple2<U, T>>) FutureStream.super
-				.withLatest(s);
+	default <T> FutureStream<Tuple2<U, T>> withLatest(EagerFutureStream<T> s) {
+		return fromStream(EagerFutureStreamFunctions.withLatest(this, s));
 	}
+	/**
+	 * Similar to zip and withLatest, except will always take the latest from either Stream (merged with last available from the other).
+	 * By contrast zip takes new / latest values from both Streams and withLatest will always take the latest from this Stream while 
+	 * taking the last available value from the provided stream.
+	 * 
+	 * @param s Stream to merge with
+	 * @return  Stream of Tuples with the latest values from either stream
+	 */
+	default <T> FutureStream<Tuple2<U, T>> combineLatest(EagerSimpleReactStream<T> s) {
+		return fromStream(EagerFutureStreamFunctions.combineLatest(this, s));
+	}
+	/**
+	 * Return a Stream with the same values as this Stream, but with all values omitted until the provided stream starts emitting values.
+	 * Provided Stream ends the stream of values from this stream.
+	 * 
+	 * @param s Stream that will start the emission of values from this stream
+	 * @return Next stage in the Stream but with all values skipped until the provided Stream starts emitting
+	 */
+	default<T>  FutureStream<U> skipUntil(EagerFutureStream<T> s) {
+		return fromStream(EagerFutureStreamFunctions.skipUntil(this, s));
+	}
+	/**
+	 * Return a Stream with the same values, but will stop emitting values once the provided Stream starts to emit values.
+	 * e.g. if the provided Stream is asynchronously refreshing state from some remote store, this stream can proceed until
+	 * the provided Stream succeeds in retrieving data.
+	 * 
+	 * @param s Stream that will stop the emission of values from this stream
+	 * @return Next stage in the Stream but will only emit values until provided Stream starts emitting values
+	 */
+	default<T>  FutureStream<U> takeUntil(EagerFutureStream<T> s) {
+		return fromStream(EagerFutureStreamFunctions.takeUntil(this, s));
+	}
+
 
 	/**
 	 * Return first Stream out of provided Streams that starts emitted results 
@@ -725,7 +671,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 */
 	static <U> EagerFutureStream<U> firstOf(
 			EagerFutureStream<U>... futureStreams) {
-		return (EagerFutureStream<U>) FutureStream.firstOf(futureStreams);
+		return (EagerFutureStream<U>) EagerFutureStreamFunctions.firstOf(futureStreams);
 	}
 
 	/*
@@ -740,7 +686,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 */
 	default <R> EagerFutureStream<R> then(final Function<U, R> fn,
 			Executor service) {
-		return (EagerFutureStream<R>) FutureStream.super.then(fn, service);
+		return (EagerFutureStream<R>) EagerSimpleReactStream.super.then(fn, service);
 	}
 
 	/**
@@ -755,7 +701,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * @return This phase in Stream
 	 */
 	default EagerFutureStream<U> doOnEach(final Function<U, U> fn) {
-		return (EagerFutureStream) FutureStream.super.doOnEach(fn);
+		return (EagerFutureStream) EagerSimpleReactStream.super.doOnEach(fn);
 	}
 
 	/*
@@ -771,10 +717,10 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * .Function)
 	 */
 	default <R> EagerFutureStream<R> then(final Function<U, R> fn) {
-		return (EagerFutureStream) FutureStream.super.then(fn);
+		return (EagerFutureStream) EagerSimpleReactStream.super.then(fn);
 	}
 	default List<EagerFutureStream<U>> copy(final int times){
-		return (List)FutureStream.super.copySimpleReactStream(times);
+		return (List)EagerSimpleReactStream.super.copySimpleReactStream(times);
 		
 	}
 	/*
@@ -788,7 +734,6 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * 											 .merge(LazyFutureStream.of(100,200,300))
 												  .map(it ->it+"!!")
 												  .toList();
-
 		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
 	 * 
 	 * }
@@ -803,28 +748,25 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * react.stream.traits.SimpleReactStream)
 	 */
 	@Override
-	default FutureStream<U> merge(SimpleReactStream<U>... streams) {
-		return (FutureStream)FutureStream.super.merge(streams);		
+	default EagerFutureStream<U> merge(EagerSimpleReactStream<U>... streams) {
+		return (EagerFutureStream)EagerSimpleReactStream.super.merge(streams);		
 	}
 	/**
-	 * Merges this stream and the supplied Streams into a single Stream where the next value
-	 * is the next returned across any of the involved Streams
+	 * Merge two reactive dataflows with one and another.
 	 * 
-	 * <pre>
-	 * {@code
-	 * 	LazyFutureStream<Integer> fast =  ... //  [1,2,3,4,5,6,7..]
-	 * 	EagerFutureStream<Integer> slow =  ... //  [100,200,300,400,500,600..]
-	 * 
-	 *  LazyFutureStream<Integer> merged = fast.switchOnNext(slow);  //[1,2,3,4,5,6,7,8,100,9,10,11,12,13,14,15,16,200..] 
-	 * }</pre>
-	 * 
-	 * 
-	 * @param streams
-	 * @return
+	 * @param s Streams to merge
+	 *            
+	 *
+	 * @return Merged dataflow
 	 */
-	default <R> EagerFutureStream<R> switchOnNext(FutureStream<?>... streams){
-		return (EagerFutureStream)merge((SimpleReactStream[])streams);
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static <R> EagerFutureStream<R> mergeMultiple(EagerFutureStream... s) {
+		List merged = Stream.of(s).map(s1->s1.getLastActive().list())
+				
+				.flatMap(Collection::stream).collect(Collectors.toList());
+		return (EagerFutureStream<R>) s[0].withLastActive(new EagerStreamWrapper(merged));
 	}
+
 	/*
 	 * Define failure handling for this stage in a stream. Recovery function
 	 * will be called after an excption Will be passed a
@@ -852,8 +794,8 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 */
 	@Override
 	default EagerFutureStream<U> onFail(
-			final Function<? extends SimpleReactFailedStageException, U> fn) {
-		return (EagerFutureStream) FutureStream.super.onFail(fn);
+			final Function<SimpleReactFailedStageException, U> fn) {
+		return (EagerFutureStream) EagerSimpleReactStream.super.onFail(fn);
 	}
 
 	/*
@@ -882,8 +824,8 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	@Override
 	default EagerFutureStream<U> onFail(
 			Class<? extends Throwable> exceptionClass,
-			final Function<? extends SimpleReactFailedStageException, U> fn) {
-		return (EagerFutureStream) FutureStream.super
+			final Function<SimpleReactFailedStageException, U> fn) {
+		return (EagerFutureStream) EagerSimpleReactStream.super
 				.onFail(exceptionClass, fn);
 	}
 
@@ -911,7 +853,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	@Override
 	default EagerFutureStream<U> capture(
 			final Consumer<? extends Throwable> errorHandler) {
-		return (EagerFutureStream) FutureStream.super.capture(errorHandler);
+		return (EagerFutureStream)EagerSimpleReactStream.super.capture(errorHandler);
 	}
 
 	/*
@@ -932,7 +874,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 */
 	@Override
 	default <T, R> EagerFutureStream<R> allOf(final Function<List<T>, R> fn) {
-		return (EagerFutureStream) FutureStream.super.allOf(fn);
+		return (EagerFutureStream) EagerSimpleReactStream.super.allOf(fn);
 	}
 
 	/*
@@ -942,7 +884,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 */
 	@Override
 	default EagerFutureStream<U> peek(final Consumer<? super U> consumer) {
-		return (EagerFutureStream) FutureStream.super.peek(consumer);
+		return (EagerFutureStream) EagerSimpleReactStream.super.peek(consumer);
 	}
 
 	/*
@@ -963,7 +905,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * .Predicate)
 	 */
 	default EagerFutureStream<U> filter(final Predicate<? super U> p) {
-		return (EagerFutureStream) FutureStream.super.filter(p);
+		return (EagerFutureStream) EagerSimpleReactStream.super.filter(p);
 	}
 
 	/*
@@ -993,7 +935,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	default <R> EagerFutureStream<R> flatMap(
 			Function<? super U, ? extends Stream<? extends R>> flatFn) {
 
-		return (EagerFutureStream) FutureStream.super.flatMap(flatFn);
+		return (EagerFutureStream) EagerSimpleReactStream.super.flatMap(flatFn);
 	}
 	/**
 	 * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
@@ -1016,7 +958,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 */
 	default <R> EagerFutureStream<R> flatMapCompletableFuture(
 			Function<U, CompletableFuture<R>> flatFn) {
-		return (EagerFutureStream) FutureStream.super.flatMapCompletableFuture(flatFn);
+		return (EagerFutureStream) EagerSimpleReactStream.super.flatMapCompletableFuture(flatFn);
 	}
 	/**
 	 * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
@@ -1039,7 +981,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	default <R> EagerFutureStream<R> flatMapCompletableFutureSync(
 			Function<U, CompletableFuture<R>> flatFn) {
 		
-		return (EagerFutureStream) FutureStream.super.flatMapCompletableFutureSync(flatFn);
+		return (EagerFutureStream)EagerSimpleReactStream.super.flatMapCompletableFutureSync(flatFn);
 	}
 
 
@@ -1067,7 +1009,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	@Override
 	default <R> EagerFutureStream<R> retry(Function<U, R> fn) {
 
-		return (EagerFutureStream) FutureStream.super.retry(fn);
+		return (EagerFutureStream) EagerSimpleReactStream.super.retry(fn);
 	}
 
 	/*
@@ -1094,7 +1036,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	default <T, R> EagerFutureStream<R> allOf(Collector collector,
 			Function<T, R> fn) {
 
-		return (EagerFutureStream) FutureStream.super.allOf(collector, fn);
+		return (EagerFutureStream) EagerSimpleReactStream.super.allOf(collector, fn);
 	}
 
 	/* 
@@ -1114,10 +1056,10 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 */
 	default <R> EagerFutureStream<R> anyOf(Function<U, R> fn) {
 
-		return (EagerFutureStream) FutureStream.super.anyOf(fn);
+		return (EagerFutureStream) EagerSimpleReactStream.super.anyOf(fn);
 	}
 
-	EagerFutureStream<U> withLastActive(StreamWrapper streamWrapper);
+	EagerFutureStream<U> withLastActive(EagerStreamWrapper streamWrapper);
 
 	/*
 	 * (non-Javadoc)
@@ -1128,7 +1070,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 */
 	@Override
 	default <R> EagerFutureStream<R> fromStream(Stream<R> stream) {
-		return (EagerFutureStream) FutureStream.super.fromStream(stream);
+		return (EagerFutureStream) EagerSimpleReactStream.super.fromStream(stream);
 	}
 
 	/*
@@ -1142,7 +1084,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	default <R> EagerFutureStream<R> fromStreamOfFutures(
 			Stream<CompletableFuture<R>> stream) {
 
-		return (EagerFutureStream) FutureStream.super
+		return (EagerFutureStream) EagerSimpleReactStream.super
 				.fromStreamOfFutures(stream);
 	}
 
@@ -1192,8 +1134,8 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 */
 	default EagerFutureStream<U> limitFutures(long maxSize) {
 
-		StreamWrapper lastActive = getLastActive();
-		StreamWrapper limited = lastActive.withList(lastActive.stream()
+		EagerStreamWrapper lastActive = getLastActive();
+		EagerStreamWrapper limited = lastActive.withList(lastActive.stream()
 				.limit(maxSize).collect(Collectors.toList()));
 		return this.withLastActive(limited);
 
@@ -1235,15 +1177,13 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * 
 	 * //[loadFast]
 	 * </pre>	 
-
-
 	 * 
 	 * @param n
 	 * @return
 	 */
 	default EagerFutureStream<U> skipFutures(long n) {
-		StreamWrapper lastActive = getLastActive();
-		StreamWrapper limited = lastActive.withList(lastActive.stream().skip(n)
+		EagerStreamWrapper lastActive = getLastActive();
+		EagerStreamWrapper limited = lastActive.withList(lastActive.stream().skip(n)
 				.collect(Collectors.toList()));
 		return this.withLastActive(limited);
 	}
@@ -1308,8 +1248,8 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	default EagerFutureStream<U> concat(Stream<U> other) {
-		if (other instanceof SimpleReactStream)
-			return (EagerFutureStream) merge((SimpleReactStream) other);
+		if (other instanceof EagerSimpleReactStream)
+			return (EagerFutureStream) merge((EagerSimpleReactStream) other);
 		return fromStream(FutureStream.super.concat(other));
 	}
 
@@ -1422,8 +1362,17 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * @return
 	 */
 	default <R> EagerFutureStream<Tuple2<U,R>> zipFutures(Stream<R> other) {
-		return (EagerFutureStream<Tuple2<U,R>>)FutureStream.super.zipFutures(other);
+		if(other instanceof FutureStream)
+			return zipFutures((FutureStream)other);
+		Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other));
+		Seq<Tuple2<CompletableFuture<U>,R>> withType = (Seq<Tuple2<CompletableFuture<U>,R>>)seq;
+		Stream futureStream = fromStreamOfFutures((Stream)withType.map(t ->t.v1.thenApply(v -> Tuple.tuple(t.v1.join(),t.v2)))
+				);
 
+		
+		return (EagerFutureStream<Tuple2<U,R>>)futureStream;
+
+	
 	}
 	/**
 	 * Zip two Streams, zipping against the underlying futures of both Streams
@@ -1434,7 +1383,13 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * @return New Sequence of CompletableFutures
 	 */
 	default <R> EagerFutureStream<Tuple2<U,R>> zipFutures(FutureStream<R> other) {
-		return (EagerFutureStream<Tuple2<U,R>>)FutureStream.super.zipFutures(other);
+		Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other.getLastActive().stream()));
+		Seq<Tuple2<CompletableFuture<U>,CompletableFuture<R>>> withType = (Seq<Tuple2<CompletableFuture<U>,CompletableFuture<R>>>)seq;
+		Stream futureStream =  fromStreamOfFutures((Stream)withType.map(t ->CompletableFuture.allOf(t.v1,t.v2).thenApply(v -> Tuple.tuple(t.v1.join(),t.v2.join())))
+				);
+		
+		return (EagerFutureStream<Tuple2<U,R>>)futureStream;
+		
 
 	}
 
@@ -1538,13 +1493,13 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 * @return
 	 */
 	default EagerFutureStream<U> reverseFutures() {
-		StreamWrapper lastActive = getLastActive();
+		EagerStreamWrapper lastActive = getLastActive();
 		ListIterator<CompletableFuture> it = lastActive.list().listIterator();
 		List<CompletableFuture> result = new ArrayList<>();
 		while(it.hasPrevious())
 			result.add(it.previous());
 		
-		StreamWrapper limited = lastActive.withList( result);
+		EagerStreamWrapper limited = lastActive.withList( result);
 		return this.withLastActive(limited);
 		
 	}
@@ -1968,7 +1923,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	default <R> EagerFutureStream<R> fromListCompletableFuture(
 			List<CompletableFuture<R>> list) {
 
-		return (EagerFutureStream) FutureStream.super
+		return (EagerFutureStream) EagerSimpleReactStream.super
 				.fromListCompletableFuture(list);
 	}
 
@@ -2003,7 +1958,10 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 
 
 
+	default void close() {
+		getLastActive().stream().close();
 
+	}
 	/* 
 	 *	@return Convert to standard JDK 8 Stream
 	 * @see com.aol.simple.react.stream.traits.FutureStream#stream()
@@ -2050,8 +2008,9 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 	 */
 	@Override
 	default EagerFutureStream<U> onClose(Runnable closeHandler) {
-
-		return (EagerFutureStream)FutureStream.super.onClose(closeHandler);
+		return fromStream(Seq.seq(getLastActive().stream().onClose(closeHandler)
+				.map(it -> (U) it.join())));
+		
 	}
 
 	/*
@@ -2085,22 +2044,7 @@ public interface EagerFutureStream<U> extends FutureStream<U>, EagerToQueue<U> {
 		return (com.aol.simple.react.stream.traits.EagerFutureStream<U>)FutureStream.super.self(consumer);
 	}
 	
-	/**
-	 * Merge two reactive dataflows with one and another.
-	 * 
-	 * @param s1
-	 *            Reactive stage builder to merge
-	 * @param s2
-	 *            Reactive stage builder to merge
-	 * @return Merged dataflow
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <R> FutureStream<R> merge(EagerFutureStream s1, EagerFutureStream s2) {
-		List merged = Stream
-				.of(s1.getLastActive().list(), s2.getLastActive().list())
-				.flatMap(Collection::stream).collect(Collectors.toList());
-		return (FutureStream<R>) s1.withLastActive(new StreamWrapper(merged));
-	}
+
 
 
 	/**

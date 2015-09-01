@@ -2,11 +2,11 @@ package com.aol.simple.react.stream.lazy;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
@@ -14,19 +14,19 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Value;
 import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
 
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.async.factories.QueueFactory;
+import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.async.subscription.Subscription;
-import com.aol.simple.react.capacity.monitor.LimitingMonitor;
 import com.aol.simple.react.collectors.lazy.BatchingCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
-import com.aol.simple.react.stream.BaseSimpleReact;
-import com.aol.simple.react.stream.StreamWrapper;
+import com.aol.simple.react.config.MaxActive;
+import com.aol.simple.react.stream.LazyStreamWrapper;
+import com.aol.simple.react.stream.ReactBuilder;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.threads.ReactPool;
 import com.nurkiewicz.asyncretry.RetryExecutor;
@@ -42,39 +42,39 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 
 
 	private final Optional<Consumer<Throwable>> errorHandler;
-	private final StreamWrapper lastActive;
-	private final boolean eager;
-	private final Consumer<CompletableFuture> waitStrategy;
-	private final LazyResultConsumer<U> lazyCollector;
+	private final LazyStreamWrapper<U> lastActive;
+	
+	
+	private final Supplier<LazyResultConsumer<U>> lazyCollector;
 	private final QueueFactory<U> queueFactory;
 	private final LazyReact simpleReact;
 	private final Continueable subscription;
-	private final static ReactPool<BaseSimpleReact> pool = ReactPool.elasticPool(()->new LazyReact(Executors.newSingleThreadExecutor()));
-	private final List originalFutures=  null;
+	private final static ReactPool<LazyReact> pool = ReactPool.elasticPool(()->new LazyReact(Executors.newSingleThreadExecutor()));
 	private final ParallelReductionConfig parallelReduction;
 	private final ConsumerHolder error;
-	private final ExecutorService publisherExecutor = Executors.newFixedThreadPool(1);
+	
+	private final Executor publisherExecutor;
+	private final MaxActive maxActive;
+	
 	@AllArgsConstructor
 	static class ConsumerHolder{
 		volatile Consumer<Throwable> forward;
 	}
 	
 	
-	public LazyFutureStreamImpl(LazyReact lazyReact, final Stream<CompletableFuture<U>> stream) {
+	public LazyFutureStreamImpl(LazyReact lazyReact, final Stream<U> stream) {
 		
 		this.simpleReact = lazyReact;
-		Stream s = stream;
-		this.lastActive = new StreamWrapper(s, false);
+		
+		this.lastActive = new LazyStreamWrapper<>(stream, lazyReact);
 		this.error =  new ConsumerHolder(a->{});
 		this.errorHandler = Optional.of((e) -> { error.forward.accept(e); log.error(e.getMessage(), e);});
-		this.eager = false;
-		this.waitStrategy = new LimitingMonitor(lazyReact.getMaxActive());
-		this.lazyCollector = new BatchingCollector<>(this);
+		this.lazyCollector = ()->new BatchingCollector<U>(getMaxActive(),this);
 		this.queueFactory = QueueFactories.unboundedNonBlockingQueue();
 		this.subscription = new Subscription();
 		this.parallelReduction = ParallelReductionConfig.defaultValue;
-		
-		
+		this.publisherExecutor = lazyReact.getPublisherExecutor();
+		this.maxActive = lazyReact.getMaxActive();
 		
 	}
 	
@@ -83,10 +83,10 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	}
 
 	
-	public BaseSimpleReact getPopulator(){
+	public LazyReact getPopulator(){
 		return pool.nextReactor();
 	}
-	public void returnPopulator(BaseSimpleReact service){
+	public void returnPopulator(LazyReact service){
 		pool.populate(service);
 	}
 	
@@ -95,6 +95,9 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		return block(collector);
 	}
 
+	public void close(){
+		
+	}
 
 
 	@Override
@@ -137,7 +140,21 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	public LazyFutureStream<U> withRetrier(RetryExecutor retry) {
 		return this.withSimpleReact(simpleReact.withRetrier(retry));
 	}
+	@Override
+	public LazyFutureStream<U> withLastActive(LazyStreamWrapper w) {
+		return new LazyFutureStreamImpl<U>(errorHandler, (LazyStreamWrapper)w,  lazyCollector, 
+				queueFactory, simpleReact, subscription, parallelReduction, error,this.publisherExecutor,maxActive);
+		
+	}
+	
+	
 	
   
-	
+	/**
+	 * Cancel the CompletableFutures in this stage of the stream
+	 */
+	public void cancel()	{
+		this.subscription.closeAll();
+		//also need to mark cancelled =true and check during collection
+	}
 }

@@ -335,7 +335,7 @@ public class Queue<T> implements Adapter<T> {
 	 * @return true if successfully added.
 	 */
 	public boolean add(T data){
-	
+		
 		try{
 			boolean result = queue.add((T)nullSafe(data));
 			if(true){
@@ -444,20 +444,27 @@ public class Queue<T> implements Adapter<T> {
 			return queue.queue.size();
 		}
 		public T next(){
+			
 			last = queue.ensureOpen(queue.timeout,queue.timeUnit);
+			
 			return last;
 		}
 		public boolean isOpen() {
 			return queue.open || notEmpty();
 		}
 		public Collection<T> drainToOrBlock() {
+			
 			Collection<T> result = new ArrayList<>();
 			if(size()>0)
 				queue.queue.drainTo(result);
 			else{
 				try{
+					
 					result.add(queue.ensureOpen(queue.timeout,queue.timeUnit));
+					
+					
 				}catch(ClosedQueueException e){
+				
 					queue.open=false;
 					throw e;
 				}

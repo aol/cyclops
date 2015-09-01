@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
+import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
@@ -25,7 +26,7 @@ public class StreamTest {
 		
 		
 		List<String> strings = new SimpleReact()
-								.<String>fromStream(new SimpleReact()
+								.<String>fromStream(new EagerReact()
 												.<Integer> react(() -> 1, () -> 2, () -> 3)
 												.with(it -> "*" + it).stream())
 								.then(it ->  it + "*")

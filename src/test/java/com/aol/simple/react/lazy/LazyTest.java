@@ -90,30 +90,9 @@ public class LazyTest {
 				.block().size());
 	}
 
-	@Test @Ignore
-	public void skipUntil() {
-		FutureStream<Boolean> stoppingStream = LazyReact
-				.sequentialBuilder().react(() -> 50).then(this::sleep)
-				.peek(System.out::println);
-		assertThat(
-				LazyReact.sequentialCommonBuilder()
-						.from(IntStream.range(0, 100000))
-						.skipUntil(stoppingStream).peek(System.out::println)
-						.block().size(), greaterThan(0));
-	}
+	
 
-	@Test
-	@Ignore
-	public void takeUntil() {
-		FutureStream<Boolean> stoppingStream = LazyReact
-				.sequentialBuilder().react(() -> 100).then(this::sleep)
-				.peek(System.out::println);
-		System.out.println(LazyReact.sequentialCommonBuilder()
-				.from(IntStream.range(0, 1000000))
-				// .peek(System.out::println)
-				.takeUntil(stoppingStream).peek(System.out::println).block()
-				.size());
-	}
+	
 
 	private boolean sleep(int i) {
 

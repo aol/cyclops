@@ -15,6 +15,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -37,7 +38,7 @@ import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
-public class LazySeqTest extends BaseSeqTest {
+public abstract class LazySeqTest extends BaseSeqTest {
 	
 	@Test
 	public void copy(){
@@ -48,6 +49,7 @@ public class LazySeqTest extends BaseSeqTest {
 	}
 	@Test
     public void testCycle() {
+		for(int i=0;i<1000;i++)
     	   assertEquals(asList(1, 1, 1, 1, 1,1),of(1).cycle().limit(6).toList());
       
     }
@@ -64,19 +66,13 @@ public class LazySeqTest extends BaseSeqTest {
 		assertThat(react(()->1,()->2).mergeLatest( react(()->'a',()->'b'),
 						react(()->100,()->200)).toList().size(),equalTo(6));
 	}
-	@Test
-	public void skipUntil(){
-		System.out.println(react(()->1,()->2,()->3,()->4,()->value2())
-				.skipUntil(react(()->value())).collect(Collectors.toList()));
-		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).noneMatch(it-> it==1));
-		assertThat(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).count(),is(3l));
-	}
-
+	
 	@Test
 	public void batchByTime2(){
 		for(int i=0;i<5;i++){
 			System.out.println(i);
-			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
+			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(500);return 6;})
+						
 							.batchByTime(10,TimeUnit.MICROSECONDS)
 							.toList()
 							.get(0)
@@ -134,17 +130,19 @@ public class LazySeqTest extends BaseSeqTest {
 	
 	@Test
 	public void batchSinceLastReadIterator() throws InterruptedException{
-		Iterator<Collection<Integer>> it = of(1,2,3,4,5,6).chunkLastReadIterator();
-	
-		Thread.sleep(10);
 		
-		Collection one = it.next();
+			Iterator<Collection<Integer>> it = of(1,2,3,4,5,6).chunkLastReadIterator();
 		
-		Collection two = it.next();
+			
+			List<Integer> list = new ArrayList<>();
+			while(it.hasNext())
+				list.addAll(it.next());
+			
+			
+			
+			assertThat(list.size(),equalTo(6));
+			
 		
-		
-		assertThat(one.size(),greaterThan(0));
-		assertThat(two.size(),greaterThan(0));
 		
 	
 		
@@ -166,7 +164,7 @@ public class LazySeqTest extends BaseSeqTest {
 	public void zipFastSlow() {
 		Queue q = new Queue();
 		LazyReact.parallelBuilder().reactInfinitely(() -> sleep(100))
-				.then(it -> q.add("100")).run(new ForkJoinPool(1));
+				.then(it -> q.add("100")).runOn(new ForkJoinPool(1));
 		parallel(1, 2, 3, 4, 5, 6).zip(q.stream())
 				.peek(it -> System.out.println(it))
 				.collect(Collectors.toList());
@@ -194,16 +192,35 @@ public class LazySeqTest extends BaseSeqTest {
 		t.join();
 	
 	}
-
+	@Test
+	public void reactInfinitely(){
+		 assertThat(LazyReact.sequentialBuilder().reactInfinitely(() -> "100")
+		 	.limit(100)
+		 	.toList().size(),equalTo(100));
+	}
+	@Test 
+	public void streamFromQueue() {
+		assertThat( LazyReact.sequentialBuilder().reactInfinitely(() -> "100")
+			.limit(100)
+			.withQueueFactory(QueueFactories.boundedQueue(100)).toQueue()
+			.stream().collect(Collectors.toList()).size(),equalTo(100));
+		 
+	}
 	@Test 
 	public void testBackPressureWhenZippingUnevenStreams2() {
 
 		Queue fast = LazyReact.parallelBuilder().withExecutor(new ForkJoinPool(2)).reactInfinitely(() -> "100")
+				.peek(System.out::println)
 				.withQueueFactory(QueueFactories.boundedQueue(10)).toQueue();
 
 		new Thread(() -> {
-			LazyReact.parallelBuilder().withExecutor(new ForkJoinPool(2)).range(0,1000).peek(c -> sleep(10))
+			
+			
+			LazyReact.parallelBuilder().withExecutor(new ForkJoinPool(2)).range(0,1000)
+			.peek(System.out::println)
+			.peek(c -> sleep(10))
 					.zip(fast.stream()).forEach(it -> {
+					
 					});
 		}).start();
 		;
@@ -265,21 +282,7 @@ public class LazySeqTest extends BaseSeqTest {
 
 	}
 
-	@Override
-	protected <U> LazyFutureStream<U> of(U... array) {
-
-		return parallel(array);
-	}
-	@Override
-	protected <U> LazyFutureStream<U> ofThread(U... array) {
-
-		return parallel(array);
-	}
-	@Override
-	protected <U> LazyFutureStream<U> react(Supplier<U>... array) {
-		return LazyReact.parallelBuilder().react(array);
-		
-	}
+	
 	protected Object sleep(int i) {
 		try {
 			Thread.currentThread().sleep(i);
@@ -289,5 +292,13 @@ public class LazySeqTest extends BaseSeqTest {
 		}
 		return i;
 	}
+	
+	@Override
+	protected abstract <U> LazyFutureStream<U> of(U... array);
+	@Override
+	protected abstract <U> LazyFutureStream<U> ofThread(U... array);
+
+	@Override
+	protected abstract <U> LazyFutureStream<U> react(Supplier<U>... array);
 
 }

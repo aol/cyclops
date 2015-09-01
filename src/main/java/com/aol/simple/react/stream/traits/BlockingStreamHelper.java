@@ -7,29 +7,41 @@ import java.util.function.Consumer;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.FilteredExecutionPathException;
+import com.aol.simple.react.stream.EagerStreamWrapper;
+import com.aol.simple.react.stream.LazyStreamWrapper;
 import com.aol.simple.react.stream.MissingValue;
-import com.aol.simple.react.stream.StreamWrapper;
 
 public class BlockingStreamHelper {
 	final static ExceptionSoftener exceptionSoftener = ExceptionSoftener.singleton.factory
 			.getInstance();
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	static <R> R block(BlockingStream blocking,final Collector collector, final StreamWrapper lastActive) {
+	static <R> R block(BlockingStream blocking,final Collector collector, final EagerStreamWrapper lastActive) {
 		Stream<CompletableFuture> stream = lastActive.stream();
-		if(!blocking.isEager()){
-			return (R)((LazyStream)blocking).run(collector);
 		
-			//stream = lastActive.stream().collect(Collectors.toList()).stream();
-		}
 		return (R) stream.map((future) -> {
 			return  BlockingStreamHelper.getSafe(future,blocking.getErrorHandler());
 		}).filter(v -> v != MissingValue.MISSING_VALUE).collect(collector);
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
+	static <R> R block(BlockingStream blocking,final Collector collector, final LazyStreamWrapper lastActive) {
+		Stream<FastFuture> stream = lastActive.stream();
+		
+		return (R)((LazyStream)blocking).run(collector);
+		
+			
+	}
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	static <R> R aggregateResults(final Collector collector,
+			final List<FastFuture> completedFutures, Optional<Consumer<Throwable>> errorHandler) {
+		return (R) completedFutures.stream().map(next -> getSafe(next,errorHandler))
+				.filter(v -> v != MissingValue.MISSING_VALUE).collect(collector);
+	}
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	static <R> R aggregateResultsCompletable(final Collector collector,
 			final List<CompletableFuture> completedFutures, Optional<Consumer<Throwable>> errorHandler) {
 		return (R) completedFutures.stream().map(next -> getSafe(next,errorHandler))
 				.filter(v -> v != MissingValue.MISSING_VALUE).collect(collector);
@@ -41,6 +53,18 @@ public class BlockingStreamHelper {
 				handler.accept(e.getCause());
 			}
 		});
+	}
+	@SuppressWarnings("rawtypes")
+	static Object getSafe(final FastFuture next,Optional<Consumer<Throwable>> errorHandler) {
+		try {
+			return next.join();
+		} catch (RuntimeException e) {
+			capture(e,errorHandler);
+		} catch (Exception e) {
+			capture(e,errorHandler);
+		}
+
+		return MissingValue.MISSING_VALUE;
 	}
 	@SuppressWarnings("rawtypes")
 	static Object getSafe(final CompletableFuture next,Optional<Consumer<Throwable>> errorHandler) {
