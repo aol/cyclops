@@ -268,7 +268,7 @@ public class FastFuture<T> {
 		}
 		
 	}
-	public void set(Supplier<T> result,int index){
+	private void set(Supplier<T> result,int index){
 		try{
 			
 			Object current = result.get();
@@ -352,7 +352,6 @@ public class FastFuture<T> {
 		
 		if(this.essential!=null)
 			this.essential.accept(buildOnComplete());
-		
 	
 	}
 	private OnComplete buildOnComplete() {

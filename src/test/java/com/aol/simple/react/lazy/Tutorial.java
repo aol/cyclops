@@ -579,6 +579,7 @@ public class Tutorial {
 	volatile int peek =0;
 	@Test
 	public void batchByTimeFiltered() {
+
 		for(int x=0;x<10;x++){
 			count2=new AtomicInteger(0);
 			List<Collection<Map>> result = new ArrayList<>();
@@ -607,6 +608,7 @@ public class Tutorial {
 			System.out.println(result);
 			System.out.println("x" +x);
 			assertThat(count2.get(),equalTo(1000));
+
 		}
 	}
 	@Test
