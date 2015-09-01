@@ -103,25 +103,27 @@ public interface LazyStream<U> extends BlockingStream<U>{
 		
 		}
 	
-	
-		Optional<LazyResultConsumer<U>> batcher = collector.supplier().get() != null ? Optional
-				.of(getLazyCollector().get().withResults( new ArrayList<>())) : Optional.empty();
+		Function<FastFuture<U>,U> safeJoin = (FastFuture<U> cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
+		LazyResultConsumer<U> batcher = collector.supplier().get() != null ? getLazyCollector().get().withResults( new ArrayList<>())
+				: new EmptyCollector<>(this.getMaxActive(),safeJoin);
 
 		try {
 		
 			this.getLastActive().injectFutures().forEach(n -> {
 				
-				batcher.ifPresent(c -> c.accept(n));
+				batcher.accept(n);
 			
 				
 			});
 		} catch (SimpleReactProcessingException e) {
 			
 		}
-		if (collector.supplier().get() == null)
+		if (collector.supplier().get() == null){
+			batcher.block(safeJoin);
 			return null;
+		}
 		
-		return (R)batcher.get().getAllResults().stream()
+		return (R)batcher.getAllResults().stream()
 									.map(cf -> BlockingStreamHelper.getSafe(cf,getErrorHandler()))
 									.filter(v -> v != MissingValue.MISSING_VALUE)
 									.collect((Collector)collector);
@@ -131,9 +133,9 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	
 	
 	
-	Queue<U> toQueue();
+	
 	default void forEach(Consumer<? super U> c){
-		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
+		Function<FastFuture<U>,U> safeJoin = (FastFuture<U> cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
 
 		if(getLastActive().isSequential()){ 
 			//if single threaded we can simply push from each Future into the collection to be returned
@@ -156,14 +158,12 @@ public interface LazyStream<U> extends BlockingStream<U>{
 			this.getLastActive().operation(f-> f.peek(c)).injectFutures().forEach( next -> {
 				
 			 collector.getConsumer().accept(next);
-				
-		
-				
+			
 			});
 		} catch (SimpleReactProcessingException e) {
 			
 		}
-		collector.getConsumer().block();
+		collector.getConsumer().block(safeJoin);
 	
 		
 		
@@ -189,12 +189,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 		Optional[] result =  {Optional.empty()};
 		try {
 			this.getLastActive().injectFutures().forEach(next -> {
-
-				
 				collector.getConsumer().accept(next);
-			
-				
-				
 				if(!result[0].isPresent())
 					result[0] = collector.reduce(safeJoin,accumulator);
 				else

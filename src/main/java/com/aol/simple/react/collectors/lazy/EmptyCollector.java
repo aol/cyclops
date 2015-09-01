@@ -29,16 +29,13 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 	private final List<FastFuture<T>> active = new ArrayList<>();
 	@Getter
 	private final MaxActive maxActive;
-	private final Function<FastFuture, T> safeJoin;
+	private final Function<FastFuture<T>, T> safeJoin;
 	
 	EmptyCollector(){
 		maxActive = MaxActive.IO;
 		safeJoin = cf -> (T)cf.join();
 	}
-	EmptyCollector(MaxActive maxActive){
-		this.maxActive = maxActive;
-		safeJoin = cf -> (T)cf.join();
-	}
+	
 	
 	/* 
 	 *	@param t Result type
@@ -47,8 +44,7 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 	@Override
 	public void accept(FastFuture<T> t) {
 		
-		//if(t.isDone())
-		//	return;
+		
 		active.add(t);
 		
 		if(active.size()>maxActive.getMaxActive()){
@@ -59,7 +55,7 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 				
 				List<FastFuture> toRemove = active.stream()
 												  .filter(cf -> cf.isDone())
-												 // .peek(this::handleExceptions)
+												  .peek(this::handleExceptions)
 												  .collect(Collectors.toList());
 				
 				active.removeAll(toRemove);
@@ -95,15 +91,12 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 		
 		return this.withMaxActive(maxActive);
 	}
-	public void block(){
+	public void block(Function<FastFuture<T>,T> safeJoin){
+		
 		if(active.size()==0)
 			return;
-		CompletableFuture promise=  new CompletableFuture();
-		FastFuture.allOf(() -> {
-			
-			promise.complete(true);
-		},active.toArray(new FastFuture[0]));
-		promise.join();
+		active.stream().peek(cf-> safeJoin.apply(cf)).forEach(a->{});
+		
 	}
 	/* 
 	 *	@return empty list

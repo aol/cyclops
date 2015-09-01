@@ -41,7 +41,7 @@ public class ReactToList {
 			values.add(i);
 	
 		
-		LazyReact lazy = LazyReact.parallelBuilder(8).autoOptimiseOn()
+		LazyReact lazy = LazyReact.parallelBuilder(8).autoOptimizeOn()
 				.withMaxActive(MaxActive.CPU);
 		SimpleTimer t = new SimpleTimer();
 		

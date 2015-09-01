@@ -39,7 +39,7 @@ public class EmptyCollectorTest {
 	}
 	@Test
 	public void testAcceptMock495() {
-		collector = new EmptyCollector(new MaxActive(500,5));
+		collector = new EmptyCollector<>(new MaxActive(500,5),cf -> cf.join());
 		FastFuture cf = mock(FastFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){
@@ -49,7 +49,7 @@ public class EmptyCollectorTest {
 	}
 	@Test
 	public void testAcceptMock50() {
-		collector = new EmptyCollector(new MaxActive(500,450));
+		collector = new EmptyCollector<>(new MaxActive(500,450),cf -> cf.join());
 		FastFuture cf = mock(FastFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){

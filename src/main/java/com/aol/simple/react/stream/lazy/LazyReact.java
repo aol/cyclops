@@ -112,14 +112,14 @@ public class LazyReact extends BaseSimpleReact {
 	 * Max concurrent tasks is determined by concurrency
 	 * 
 	 * @param threadPoolSize
-	 * @param concurrency
+	 * @param maxActiveTasks
 	 */
-	public LazyReact(int threadPoolSize, int concurrency) {
+	public LazyReact(int threadPoolSize, int maxActiveTasks) {
 		
 		this.executor = Executors.newFixedThreadPool(threadPoolSize);
 		this.retrier = new RetryBuilder().parallelism(threadPoolSize);
 		this.async = true;
-		this.maxActive = new MaxActive(concurrency,threadPoolSize);
+		this.maxActive = new MaxActive(maxActiveTasks,threadPoolSize);
 		this.publisherExecutor=null;
 		this.streamOfFutures=false;
 		this.poolingActive=false;
@@ -158,24 +158,106 @@ public class LazyReact extends BaseSimpleReact {
 		return toUse.construct((Stream)s);
 	}
 	
+	/**
+	 * Turn objectPooling on for any Streams created by the returned LazyReact builder
+	 * This improves performance for Streams with very large numbers of elements, by reusing
+	 * Future instances. By default Object Pooling is Off.
+	 * <pre>
+	 * {@code 
+	 *  return new LazyReact()
+						.objectPoolingOn()
+						.range(0,5_000_000_000)
+						.map(this::process)
+						.forEach(System.out::println);
+	   }
+	 * @return New LazyReact builder with Object pooling on.
+	 */
 	public LazyReact objectPoolingOn(){
 		return this.withPoolingActive(true);
 	}
+	/**
+	 * Turn objectPooling off for any Streams created by the returned LazyReact builder. By default Object Pooling is Off.
+	 * 
+	 * <pre>
+	 * {@code 
+	 * 	LazyReact react; 
+	 *  
+	 *    react.objectPoolingOff()
+						.range(0,5_000)
+						.map(this::process)
+						.forEach(System.out::println);
+	 * }
+	 * </pre>
+	 * 
+	 * @return New LazyReact builder with Object pooling off.
+	 */
 	public LazyReact objectPoolingOff(){
 		return this.withPoolingActive(false);
 	}
-	public LazyReact autoOptimiseOn(){
+	/**
+	 * Turn on automatic threading optimization. Tasks will be 'fanned' out across threads initially
+	 * and subsequent task completion events will trigger further processing on the same thread. Where
+	 * operations require working on the results of multiple tasks, data will be forwarded to a Queue, data
+	 * read from the queue will then also be 'fanned' out for processing across threads (with subsequent events
+	 *  again occuring on the same thread). This is equivalent to optimal use of the async() and sync() operators
+	 * on a Stream. autoOptimize overrides direct calls to sync() and async() on the Stream.
+	 * By default autoOptimize is On.
+	 * 
+	 * <pre>
+	 * {@code 
+	 * new LazyReact().autoOptimizeOn()
+	 *                  .range(0, 1_000_000)
+						.map(i->i+2)
+						.map(i->Thread.currentThread().getId())
+						.peek(System.out::println)
+						.runOnCurrent();
+	 * }
+	 * </pre>
+	 * @return
+	 */
+	public LazyReact autoOptimizeOn(){
 		return this.withAutoOptimize(true);
 	}
-	public LazyReact autoOptimiseOff(){
+	/**
+	 * Turn off automatic threading management. This allows use async() and sync() to control fan out directly in a LazyFutureStream
+	 * By default autoOptimize is On.
+	 * 
+	 * 	 * <pre>
+	 * {@code 
+	 * 	LazyReact react; 
+	 *  
+	 *    react.autoOptimizeOff()
+					    .range(0, 1_000_000)
+						.map(i->i+2)
+						.map(i->Thread.currentThread().getId())
+						.peek(System.out::println)
+						.runOnCurrent();
+	 * }
+	 * </pre>
+	 * 
+	 * @return
+	 */
+	public LazyReact autoOptimizeOff(){
 		return this.withAutoOptimize(false);
 	}
+	/**
+	 * Start any created Streams in asyncrhonous mode - that is tasks will be submited to an Executor to be run.
+	 * 
+	 * @return LazyReact that creates Streams in async mode
+	 */
 	public LazyReact async(){
 		return this.withAsync(true);
 	}
+	/**
+	 * Start any created Streams in syncrhonous mode - that is tasks will be executed on the calling thread
+	 * 
+	 * @return LazyReact that creates Streams in sync mode
+	 */
 	public LazyReact sync(){
 		return this.withAsync(false);
 	}
+	
+	
 	
 	/* 
 	 * Generate an LazyFutureStream that is a range of Integers

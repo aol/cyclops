@@ -3,6 +3,7 @@ package com.aol.simple.react.collectors.lazy;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.config.MaxActive;
@@ -34,7 +35,7 @@ public interface LazyResultConsumer<T> extends Consumer<FastFuture<T>>{
 	 */
 	public Collection<FastFuture<T>> getAllResults();
 
-	public void block();
+	public void block(Function<FastFuture<T>,T> safeJoin);
 
 	
 	

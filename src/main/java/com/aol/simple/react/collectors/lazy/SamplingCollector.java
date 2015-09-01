@@ -2,6 +2,7 @@ package com.aol.simple.react.collectors.lazy;
 
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 import lombok.AllArgsConstructor;
 import lombok.experimental.Builder;
@@ -50,8 +51,8 @@ public class SamplingCollector<T> implements LazyResultConsumer<T>{
 			consumer.accept(t);
 		
 	}
-	public void block(){
-		consumer.block();
+	public void block(Function<FastFuture<T>,T> safeJoin){
+		consumer.block(safeJoin);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.simple.react.collectors.lazy.LazyResultConsumer#withResults(java.util.Collection)

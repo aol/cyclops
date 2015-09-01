@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import lombok.AllArgsConstructor;
 
@@ -112,10 +113,12 @@ public class SamplingCollectorTest {
 		}
 
 		@Override
-		public void block() {
+		public void block(Function safeJoin) {
 			// TODO Auto-generated method stub
 			
 		}
+
+		
 		
 	}
 }

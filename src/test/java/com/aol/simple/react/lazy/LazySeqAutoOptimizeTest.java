@@ -12,19 +12,19 @@ public class LazySeqAutoOptimizeTest extends LazySeqTest {
 	@Override
 	protected <U> LazyFutureStream<U> of(U... array) {
 		return new LazyReact()
-							.autoOptimiseOn()
+							.autoOptimizeOn()
 							.of(array);
 	}
 	@Override
 	protected <U> LazyFutureStream<U> ofThread(U... array) {
 		return new LazyReact()
-							.autoOptimiseOn()
+							.autoOptimizeOn()
 							.of(array);
 	}
 
 	@Override
 	protected <U> LazyFutureStream<U> react(Supplier<U>... array) {
-		return new LazyReact().autoOptimiseOn()
+		return new LazyReact().autoOptimizeOn()
 								.react(array);
 	}
 	@Test
@@ -40,7 +40,7 @@ public class LazySeqAutoOptimizeTest extends LazySeqTest {
 	}
 	@Test
 	public void longRunForEach(){
-		new LazyReact().autoOptimiseOn().range(0, 1_000_000)
+		new LazyReact().autoOptimizeOn().range(0, 1_000_000)
 						.map(i->i+2)
 						.map(i->Thread.currentThread().getId())
 					//	.peek(System.out::println)
@@ -49,7 +49,7 @@ public class LazySeqAutoOptimizeTest extends LazySeqTest {
 	}
 	@Test
 	public void longRun(){
-		new LazyReact().autoOptimiseOn().range(0, 1_000_000)
+		new LazyReact().autoOptimizeOn().range(0, 1_000_000)
 						.map(i->i+2)
 						.map(i->Thread.currentThread().getId())
 					//	.peek(System.out::println)
