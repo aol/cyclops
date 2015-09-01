@@ -100,7 +100,7 @@ public class LazyReact extends BaseSimpleReact {
 		this.executor = executor;
 		this.retrier = null;
 		this.async = true;
-		this.maxActive = MaxActive.defaultValue.factory.getInstance();
+		this.maxActive = MaxActive.IO;
 		this.publisherExecutor=null;
 		this.streamOfFutures=false;
 		this.poolingActive=false;
@@ -349,7 +349,7 @@ public class LazyReact extends BaseSimpleReact {
 		this.executor = executor;
 		this.retrier = retrier;
 		this.async = Optional.ofNullable(async).orElse(true);
-		this.maxActive = Optional.ofNullable(maxActive).orElse(MaxActive.defaultValue.factory.getInstance());
+		this.maxActive = Optional.ofNullable(maxActive).orElse(MaxActive.IO);
 		this.streamOfFutures = streamOfFutures;
 		this.publisherExecutor=pub;
 		this.poolingActive = objectPoolingActive;
@@ -466,6 +466,7 @@ public class LazyReact extends BaseSimpleReact {
 	public static LazyReact sequentialBuilder() {
 		return LazyReact
 				.builder()
+				.maxActive(MaxActive.CPU)
 				.async(false)
 				.executor(Executors.newFixedThreadPool(1))
 				.retrier(

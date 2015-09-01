@@ -72,7 +72,7 @@ public class EmptyCollectorTest {
 
 	@Test
 	public void testGetMaxActive() {
-		assertThat(collector.getMaxActive().getMaxActive(),is(MaxActive.defaultValue.factory.getInstance().getMaxActive()));
+		assertThat(collector.getMaxActive().getMaxActive(),is(MaxActive.IO.getMaxActive()));
 	}
 
 	

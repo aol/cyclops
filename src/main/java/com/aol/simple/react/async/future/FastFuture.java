@@ -21,6 +21,7 @@ import lombok.Getter;
 import uk.co.real_logic.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
+import com.aol.simple.react.exceptions.SimpleReactCompletionException;
 /*
  * @author John McClean
  * assumptions
@@ -102,12 +103,15 @@ public class FastFuture<T> {
 				LockSupport.parkNanos(spin++);
 			}
 			if(completedExceptionally)
-				ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(new CompletionException(exception()));
+				ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(new SimpleReactCompletionException(exception()));
 			return result();
 		}finally{
-			if(doFinally!=null)
-				doFinally.accept(this);
+			 markComplete();
 		}
+	}
+	public void markComplete(){
+		if(doFinally!=null)
+			doFinally.accept(this);
 	}
 	public static <T> FastFuture<T> completedFuture(T value){
 		FastFuture<T> f = new FastFuture();

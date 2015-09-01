@@ -202,7 +202,7 @@ public abstract class LazySeqTest extends BaseSeqTest {
 	public void streamFromQueue() {
 		assertThat( LazyReact.sequentialBuilder().reactInfinitely(() -> "100")
 			.limit(100)
-			.withQueueFactory(QueueFactories.boundedQueue(10)).toQueue()
+			.withQueueFactory(QueueFactories.boundedQueue(100)).toQueue()
 			.stream().collect(Collectors.toList()).size(),equalTo(100));
 		 
 	}

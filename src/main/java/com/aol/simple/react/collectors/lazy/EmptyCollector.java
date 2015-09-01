@@ -32,7 +32,7 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 	private final Function<FastFuture, T> safeJoin;
 	
 	EmptyCollector(){
-		maxActive = MaxActive.defaultValue.factory.getInstance();
+		maxActive = MaxActive.IO;
 		safeJoin = cf -> (T)cf.join();
 	}
 	EmptyCollector(MaxActive maxActive){
@@ -47,7 +47,8 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 	@Override
 	public void accept(FastFuture<T> t) {
 		
-		
+		//if(t.isDone())
+		//	return;
 		active.add(t);
 		
 		if(active.size()>maxActive.getMaxActive()){
@@ -58,7 +59,7 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 				
 				List<FastFuture> toRemove = active.stream()
 												  .filter(cf -> cf.isDone())
-												  .peek(this::handleExceptions)
+												 // .peek(this::handleExceptions)
 												  .collect(Collectors.toList());
 				
 				active.removeAll(toRemove);
@@ -77,6 +78,11 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 		
 		
 		
+	}
+	
+	
+	public void add(FastFuture<T> t) {
+		active.add(t);
 	}
 
 	private void handleExceptions(FastFuture cf){
@@ -115,6 +121,9 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 	 */
 	public Collection<FastFuture<T>> getAllResults() {
 		return getResults();
+	}
+	public boolean hasCapacity(int i) {
+		return maxActive.getMaxActive()+i>active.size();
 	}
 
 	

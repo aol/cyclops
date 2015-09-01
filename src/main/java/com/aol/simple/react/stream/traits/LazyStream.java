@@ -10,8 +10,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
-import java.util.stream.Stream;
 
+import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.collectors.lazy.EmptyCollector;
 import com.aol.simple.react.collectors.lazy.IncrementalReducer;
@@ -102,6 +102,8 @@ public interface LazyStream<U> extends BlockingStream<U>{
 			return collector.finisher().apply(col);
 		
 		}
+	
+	
 		Optional<LazyResultConsumer<U>> batcher = collector.supplier().get() != null ? Optional
 				.of(getLazyCollector().get().withResults( new ArrayList<>())) : Optional.empty();
 
@@ -129,11 +131,25 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	
 	
 	
+	Queue<U> toQueue();
 	default void forEach(Consumer<? super U> c){
-
-		
-	
 		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
+
+		if(getLastActive().isSequential()){ 
+			//if single threaded we can simply push from each Future into the collection to be returned
+			try {
+				this.getLastActive().operation(f-> f.peek(c)).injectFutures().forEach( next -> {
+					safeJoin.apply(next);
+			
+					
+				});
+			} catch (SimpleReactProcessingException e) {
+				
+			}
+		
+			return;
+		}
+	
 		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().get().withResults(new ArrayList<>()), this,
 				getParallelReduction());
 		try {

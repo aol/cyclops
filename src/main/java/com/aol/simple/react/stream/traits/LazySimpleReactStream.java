@@ -532,7 +532,9 @@ public interface LazySimpleReactStream<U> extends
 	 */
 	@SuppressWarnings("unchecked")
 	default LazySimpleReactStream<U> capture(final Consumer<? extends Throwable> errorHandler) {
-		return this.withLastActive(this.getLastActive().operation(pipeline->pipeline.onFail((Consumer)errorHandler)));
+		return this.withErrorHandler(Optional
+				.of((Consumer<Throwable>) errorHandler));
+	//	return this.withLastActive(this.getLastActive().operation(pipeline->pipeline.onFail((Consumer)errorHandler)));
 	}
 	
 	

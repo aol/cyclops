@@ -12,7 +12,6 @@ import static org.hamcrest.Matchers.not;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -33,6 +32,7 @@ import org.junit.Test;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.base.BaseSeqTest;
+import com.aol.simple.react.config.MaxActive;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.traits.FutureStream;

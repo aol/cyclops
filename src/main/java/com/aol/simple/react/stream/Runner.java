@@ -65,8 +65,9 @@ public class Runner<U> {
 					try {
 						
 							
-						
+							
 							if(it.hasNext()){
+								
 								
 								FastFuture f = it.next();
 								
