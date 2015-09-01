@@ -239,7 +239,7 @@ public class FastFutureTest {
 
 	@Test
 	public void essential_notCompleted_race() throws InterruptedException {
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 10_000; i++) {
 			CountDownLatch race = new CountDownLatch(1);
 			CountDownLatch init = new CountDownLatch(1);
 			called = false;
@@ -257,13 +257,14 @@ public class FastFutureTest {
 				f.essential(event -> called = true);
 			});
 			t1.start();
+			init.await();
 			race.countDown();
 			f.set(10);
-
+		
 			t1.join();
 			assertTrue(f.isDone());
 
-			assertTrue(called);
+			assertTrue(called); 
 		}
 
 	}

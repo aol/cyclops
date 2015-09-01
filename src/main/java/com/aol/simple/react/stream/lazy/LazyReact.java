@@ -170,6 +170,7 @@ public class LazyReact extends BaseSimpleReact {
 						.map(this::process)
 						.forEach(System.out::println);
 	   }
+	   </pre>
 	 * @return New LazyReact builder with Object pooling on.
 	 */
 	public LazyReact objectPoolingOn(){
@@ -222,7 +223,7 @@ public class LazyReact extends BaseSimpleReact {
 	 * Turn off automatic threading management. This allows use async() and sync() to control fan out directly in a LazyFutureStream
 	 * By default autoOptimize is On.
 	 * 
-	 * 	 * <pre>
+	 *  <pre>
 	 * {@code 
 	 * 	LazyReact react; 
 	 *  
@@ -624,7 +625,7 @@ public class LazyReact extends BaseSimpleReact {
 	public <U> LazyFutureStream< U> reactInfinitelyAsync(final Supplier<U> s) {
 		
 		Subscription sub = new Subscription();
-		LazyFutureStream stream = construct(StreamSupport.stream(
+		LazyFutureStream stream = constructFutures(StreamSupport.stream(
                 new InfiniteClosingSpliterator(Long.MAX_VALUE, () -> CompletableFuture.supplyAsync(s),sub), false)).withSubscription(sub);
 		
 		return stream;

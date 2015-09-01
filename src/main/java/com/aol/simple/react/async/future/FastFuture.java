@@ -95,6 +95,11 @@ public class FastFuture<T> {
 		}
 		
 	}
+	/**
+	 * Join which can be called exactly once!
+	 * 
+	 * @return Result
+	 */
 	public T join(){
 		
 		try{
@@ -122,7 +127,10 @@ public class FastFuture<T> {
 
 	public CompletableFuture<T> toCompletableFuture(){
 		CompletableFuture<T> f = new CompletableFuture<>();
+		AtomicInteger count = new AtomicInteger(0);
 		this.onComplete(c->{
+			if(!count.compareAndSet(0, 1))
+				return;
 			if(c.exceptionally)
 				f.completeExceptionally(c.exception);
 			else
@@ -185,8 +193,10 @@ public class FastFuture<T> {
 		
 		
 		for(FastFuture next : futures){
+			AtomicInteger count = new AtomicInteger(0);
 			next.onComplete(v->{ 
-					
+				if(!count.compareAndSet(0, 1))
+					return;
 					if(allOf.count.incrementAndGet()==allOf.max.get()){
 						onComplete.run();
 					}
@@ -199,8 +209,10 @@ public class FastFuture<T> {
 		//needs to use onComplete
 		FastFuture xOf = new FastFuture(FinalPipeline.empty(),x);
 		for(FastFuture next : futures){
+			AtomicInteger count = new AtomicInteger(0);
 			next.onComplete(v->{ 
-				
+					if(!count.compareAndSet(0, 1))
+						return;
 					if(xOf.count.incrementAndGet()>=xOf.max.get()){
 					
 						onComplete.run();
@@ -309,18 +321,27 @@ public class FastFuture<T> {
 	
 	
 	
+	/**
+	 * Called at least once on complete
+	 * 
+	 * @param fn
+	 */
 	public void essential(Consumer<OnComplete> fn){
-		this.essential=fn;
-		if(done){
+		this.essential=fn; //set - could also be called on a separate thread
+		if(done){ //can be called again
 			fn.accept(buildOnComplete());
-			
 		}
 	}
+	/**
+	 * Called at least once on complete
+	 * 
+	 * @param fn
+	 */
 	public void onComplete(Consumer<OnComplete> fn){
 		
-		this.forXOf = fn;
+		this.forXOf = fn; //set - could also be called on a separate thread
 		
-		if(done){
+		if(done){ //can be called again
 			fn.accept(buildOnComplete());
 		}
 	}

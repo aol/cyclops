@@ -1,7 +1,7 @@
 package com.aol.simple.react.stream;
 
 import java.util.Iterator;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import lombok.AllArgsConstructor;
 
@@ -102,11 +102,12 @@ public class Runner<U> {
 	}
 	
 	private <T> void handleFilter(Continuation[] cont, FastFuture<T> f){
+		AtomicInteger called=  new AtomicInteger(0);
 		f.essential( event -> {
 			
 			if (event.exception !=null && (event.exception.getCause() instanceof FilteredExecutionPathException)) {
-				
-				 cont[0].proceed();
+				if(called.compareAndSet(0, 1))
+					cont[0].proceed();
 				
 			}
 			
