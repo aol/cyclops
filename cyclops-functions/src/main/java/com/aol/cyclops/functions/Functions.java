@@ -6,7 +6,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.lambda.monads.AnyM;
+import com.aol.cyclops.sequence.AnyM;
 
 public class Functions extends Uncurry {
 	/**

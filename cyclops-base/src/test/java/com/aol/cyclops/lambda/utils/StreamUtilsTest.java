@@ -24,11 +24,11 @@ import lombok.val;
 
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.api.AsStreamable;
-import com.aol.cyclops.lambda.api.Monoid;
-import com.aol.cyclops.lambda.api.Reducers;
 import com.aol.cyclops.lambda.api.Streamable;
-import com.aol.cyclops.lambda.monads.SequenceM;
+import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.sequence.Reducers;
+import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.streams.AsStreamable;
 import com.aol.cyclops.streams.HeadAndTail;
 import com.aol.cyclops.streams.StreamUtils;
 

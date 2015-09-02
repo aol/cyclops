@@ -20,8 +20,8 @@ import java.util.stream.Stream;
 
 import org.pcollections.PStack;
 
-import com.aol.cyclops.lambda.monads.AnyM;
-import com.aol.cyclops.lambda.monads.SequenceM;
+import com.aol.cyclops.sequence.AnyM;
+import com.aol.cyclops.sequence.SequenceM;
 	public class DoComp0 extends DoComp{
 		public DoComp0(PStack<Entry> assigned) {
 			super(assigned);

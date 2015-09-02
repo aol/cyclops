@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.invokedynamic.ReflectionCache;
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
 /**

@@ -10,6 +10,8 @@ import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
 import org.junit.Test;
+
+import com.aol.cyclops.closures.mutable.Mutable;
 public class MutableTest {
 
 	@Test

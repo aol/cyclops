@@ -10,9 +10,9 @@ import lombok.experimental.Wither;
 import org.pcollections.HashTreePMap;
 import org.pcollections.PMap;
 
-import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.matcher.ActionWithReturn;
 import com.aol.cyclops.matcher.Cases;
+import com.aol.cyclops.objects.Decomposable;
 /**
  * 
  * Pattern Matching builder instance

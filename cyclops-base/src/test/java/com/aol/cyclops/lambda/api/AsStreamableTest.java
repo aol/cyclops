@@ -10,6 +10,8 @@ import java.util.stream.Stream;
 import lombok.val;
 
 import org.junit.Test;
+
+import com.aol.cyclops.streams.AsStreamable;
 public class AsStreamableTest {
 
 	@Test

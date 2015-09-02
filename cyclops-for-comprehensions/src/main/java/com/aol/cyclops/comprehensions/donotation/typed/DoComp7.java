@@ -18,8 +18,8 @@ import java.util.stream.Stream;
 import org.pcollections.PStack;
 
 import com.aol.cyclops.lambda.api.AsAnyM;
-import com.aol.cyclops.lambda.monads.AnyM;
-import com.aol.cyclops.lambda.monads.SequenceM;
+import com.aol.cyclops.sequence.AnyM;
+import com.aol.cyclops.sequence.SequenceM;
 	public class DoComp7<T1,T2,T3,T4,T5,T6,T7> extends DoComp{
 		public DoComp7(PStack<Entry> assigned) {
 			super(assigned);

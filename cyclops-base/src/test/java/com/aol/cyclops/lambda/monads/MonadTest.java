@@ -37,9 +37,10 @@ import com.aol.cyclops.internal.AsGenericMonad;
 import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.lambda.api.AsAnyMList;
 import com.aol.cyclops.lambda.api.AsAnyM;
-import com.aol.cyclops.lambda.api.Monoid;
-import com.aol.cyclops.lambda.api.Reducers;
 import com.aol.cyclops.lambda.api.Streamable;
+import com.aol.cyclops.sequence.AnyM;
+import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.sequence.Reducers;
 import com.aol.cyclops.streams.StreamUtils;
 
 

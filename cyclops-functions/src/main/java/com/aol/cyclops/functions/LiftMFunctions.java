@@ -3,8 +3,8 @@ package com.aol.cyclops.functions;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import com.aol.cyclops.lambda.monads.AnyM;
 import com.aol.cyclops.lambda.monads.AnyMonads;
+import com.aol.cyclops.sequence.AnyM;
 
 
 /**

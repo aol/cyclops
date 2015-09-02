@@ -12,6 +12,9 @@ import java.util.function.Supplier;
 import lombok.val;
 
 import org.junit.Test;
+
+import com.aol.cyclops.closures.immutable.LazyImmutable;
+import com.aol.cyclops.closures.immutable.LazyImmutableSetMoreThanOnceException;
 public class ImmutableClosedValueTest {
 
 	@Test

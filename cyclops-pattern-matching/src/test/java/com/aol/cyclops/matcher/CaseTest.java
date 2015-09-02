@@ -18,8 +18,8 @@ import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.matcher.builders.Matching;
+import com.aol.cyclops.objects.Decomposable;
 
 public class CaseTest {
 	Case<Integer,Integer,Function<Integer,Integer>> case1;

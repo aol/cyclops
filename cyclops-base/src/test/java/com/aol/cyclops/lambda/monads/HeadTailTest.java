@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.junit.Test;
 
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.HeadAndTail;
 
 public class HeadTailTest {

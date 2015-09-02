@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 import org.jooq.lambda.Seq;
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.monads.SequenceM;
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
 import com.nurkiewicz.lazyseq.LazySeq;
 public class FlatMapStreamUtilsTest {

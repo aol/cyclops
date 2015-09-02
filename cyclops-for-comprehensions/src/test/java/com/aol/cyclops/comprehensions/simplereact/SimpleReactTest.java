@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
 import com.aol.cyclops.lambda.api.AsAnyM;
-import com.aol.cyclops.lambda.monads.AnyM;
+import com.aol.cyclops.sequence.AnyM;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;

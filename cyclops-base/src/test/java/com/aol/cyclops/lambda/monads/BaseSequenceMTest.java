@@ -1,6 +1,6 @@
 package com.aol.cyclops.lambda.monads;
 
-import static com.aol.cyclops.lambda.monads.SequenceM.of;
+import static com.aol.cyclops.sequence.SequenceM.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -23,7 +23,8 @@ import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.api.Monoid;
+import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.Pair;
 import com.aol.cyclops.streams.Quadruple;
 import com.aol.cyclops.streams.Triple;

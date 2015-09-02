@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.Pair;
 public class BaseSequentialTest {
 

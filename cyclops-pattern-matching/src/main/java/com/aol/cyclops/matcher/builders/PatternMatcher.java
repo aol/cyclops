@@ -21,7 +21,6 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
-import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.matcher.Action;
 import com.aol.cyclops.matcher.ActionWithReturn;
 import com.aol.cyclops.matcher.Case;
@@ -30,6 +29,7 @@ import com.aol.cyclops.matcher.ChainOfResponsibility;
 import com.aol.cyclops.matcher.Extractor;
 import com.aol.cyclops.matcher.Extractors;
 import com.aol.cyclops.matcher.Two;
+import com.aol.cyclops.objects.Decomposable;
 import com.nurkiewicz.lazyseq.LazySeq;
 
 

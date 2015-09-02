@@ -1,13 +1,18 @@
 package com.aol.cyclops.lambda.api;
 
 import static org.junit.Assert.*;
+
 import java.util.stream.Stream;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import static org.hamcrest.Matchers.equalTo;
+
 import org.junit.Test;
+
+import com.aol.cyclops.sequence.Monoid;
 
 public class AsGenericMonoidTest {
 

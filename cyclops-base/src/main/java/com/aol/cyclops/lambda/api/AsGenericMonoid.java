@@ -3,6 +3,9 @@ package com.aol.cyclops.lambda.api;
 import java.util.Arrays;
 import java.util.function.BiFunction;
 
+import com.aol.cyclops.invokedynamic.InvokeDynamic;
+import com.aol.cyclops.sequence.Monoid;
+
 import lombok.AllArgsConstructor;
 
 public class AsGenericMonoid {

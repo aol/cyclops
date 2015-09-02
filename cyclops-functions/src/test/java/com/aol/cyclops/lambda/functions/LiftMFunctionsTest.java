@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.functions.LiftMFunctions;
 import com.aol.cyclops.lambda.api.Streamable;
-import com.aol.cyclops.lambda.monads.AnyM;
+import com.aol.cyclops.sequence.AnyM;
 public class LiftMFunctionsTest {
 
 	public Integer one(String word){

@@ -9,7 +9,7 @@ import lombok.Value;
 
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.api.AsDecomposable;
+import com.aol.cyclops.objects.AsDecomposable;
 public class CoerceToDecomposableTest {
 
 	@Test

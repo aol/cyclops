@@ -27,9 +27,10 @@ import lombok.val;
 
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.api.Monoid;
-import com.aol.cyclops.lambda.api.Reducers;
 import com.aol.cyclops.lambda.api.Streamable;
+import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.sequence.Reducers;
+import com.aol.cyclops.sequence.SequenceM;
 public class StreamTest {
 	 public static <U> SequenceM<U> of(U... array){
 		 return anyM(array).asSequence();

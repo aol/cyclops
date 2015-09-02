@@ -3,6 +3,7 @@ package com.aol.cyclops.lambda.api;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.aol.cyclops.invokedynamic.ReflectionCache;
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
 public interface TupleWrapper {
