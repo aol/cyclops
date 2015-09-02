@@ -3,51 +3,21 @@ package com.aol.cyclops.internal;
 import static com.aol.cyclops.internal.AsGenericMonad.asMonad;
 import static com.aol.cyclops.internal.AsGenericMonad.monad;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.aol.cyclops.lambda.api.AsAnyM;
-import com.aol.cyclops.lambda.api.Streamable;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.lambda.monads.Filterable;
 import com.aol.cyclops.lambda.monads.Functor;
-import com.aol.cyclops.sequence.AnyM;
-import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.streams.AsStreamable;
-import com.aol.cyclops.streams.StreamUtils;
-import com.aol.cyclops.streams.Pair;
-import com.nurkiewicz.lazyseq.LazySeq;
+
 
 
 
@@ -70,7 +40,6 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,Functor<T>, Filt
 	
 	
 	public <MONAD,T> Monad<MONAD,T> withMonad(Object invoke);
-	//public Object unwrap();
 	
 	default <T> Monad<MONAD,T> withFunctor(T functor){
 		return withMonad(functor);
@@ -256,7 +225,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,Functor<T>, Filt
 	 * @return Aggregated Monad
 	 */
 	default <R> Monad<MONAD,R> aggregate(Monad<?,?> next){
-		Stream concat = StreamUtils.concat(stream(),next.stream() );
+		Stream concat = Stream.concat(stream(),next.stream() );
 		
 		return (Monad)withMonad(new ComprehenderSelector().selectComprehender(
 				unwrap()).of(monad(concat)

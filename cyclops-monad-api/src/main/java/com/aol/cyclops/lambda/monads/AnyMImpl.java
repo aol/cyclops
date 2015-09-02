@@ -19,12 +19,10 @@ import lombok.AllArgsConstructor;
 import com.aol.cyclops.internal.AsGenericMonad;
 import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.lambda.api.AsAnyM;
-import com.aol.cyclops.lambda.api.Streamable;
-import com.aol.cyclops.sequence.AnyM;
+import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.Unwrapable;
-import com.nurkiewicz.lazyseq.LazySeq;
+import com.aol.cyclops.sequence.Streamable;
 
 /**
  * 
@@ -289,9 +287,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	public final <R> AnyM<R> flatMapCompletableFuture(Function<? super T,CompletableFuture<? extends R>> fn) {
 		return monad.flatMap(in -> fn.apply(in)).anyM();
 	}
-	public final <R> AnyM<R> flatMapLazySeq(Function<? super T,LazySeq<? extends R>> fn) {
-		return monad.flatMap(in -> fn.apply(in)).anyM();
-	}
+	
 	public final <R> AnyM<R> flatMapSequenceM(Function<? super T,SequenceM<? extends R>> fn) {
 		return monad.flatMap(in -> fn.apply(in).unwrap()).anyM();
 	}
@@ -426,10 +422,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 		return  monad.simpleFilter(AsGenericMonad.asMonad(fn)).anyM();
 													
 	}
-	public final   AnyM<LazySeq<T>> simpleFilter(LazySeq<Predicate<? super T>> fn){
-		return  monad.simpleFilter(AsGenericMonad.asMonad(fn)).anyM();
-													
-	}
+	
 	public <T> AnyM<T> unit(T value){
 		return monad.unit(value);
 	}

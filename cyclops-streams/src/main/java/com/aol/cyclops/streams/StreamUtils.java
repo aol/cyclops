@@ -31,7 +31,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import com.aol.cyclops.closures.mutable.Mutable;
+
 import lombok.AllArgsConstructor;
 
 import org.jooq.lambda.Seq;
@@ -39,6 +39,8 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
+import com.aol.cyclops.closures.mutable.Mutable;
+import com.aol.cyclops.internal.AsGenericMonad;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.Monoid;
@@ -1071,7 +1073,7 @@ public class StreamUtils{
 	}
 	
 	
-	public static<T> SequenceM<T> sequenceM(Stream<T> stream){
+	public final static<T> SequenceM<T> sequenceM(Stream<T> stream){
 		if(stream instanceof SequenceM)
 			return (SequenceM)stream;
 		return new SequenceMImpl(stream);
@@ -1216,10 +1218,9 @@ public class StreamUtils{
 	 * 
 	 * @param fn
 	 * @return
-	 */
+	 *///rename -flatMapCharSequence
 	public final static <T> Stream<Character> liftAndBindCharSequence(Stream<T> stream,Function<? super T,CharSequence> fn) {
-		return AsAnyM.anyM(stream).asSequence().liftAndBindCharSequence(fn).stream();
-		
+		return AsGenericMonad.<Stream<T>,T>asMonad(stream).liftAndBind(fn).sequence();
 	}
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -1245,7 +1246,7 @@ public class StreamUtils{
 	 * @return
 	 */
 	public final static <T> Stream<String> liftAndBindFile(Stream<T> stream,Function<? super T,File> fn) {
-		return AsAnyM.anyM(stream).asSequence().liftAndBindFile(fn).stream();
+		return AsGenericMonad.<Stream<T>,T>asMonad(stream).liftAndBind(fn).sequence();	
 	}
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -1266,9 +1267,7 @@ public class StreamUtils{
 	 * @return
 	 */
 	public final  static <T> Stream<String> liftAndBindURL(Stream<T> stream,Function<? super T, URL> fn) {
-		
-		return AsGenericMonad.<Stream<T>,T>asStreamUtils.sequenceM(monad).liftAndBind(fn).sequence();
-				
+		return AsGenericMonad.<Stream<T>,T>asMonad(stream).liftAndBind(fn).sequence();			
 	}
 	/**
 	  *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -1290,7 +1289,7 @@ public class StreamUtils{
 	 * @return
 	 */
 	public final static <T> Stream<String> liftAndBindBufferedReader(Stream<T> stream,Function<? super T,BufferedReader> fn) {
-		return AsAnyM.anyM(stream).asSequence().liftAndBindBufferedReader(fn).stream();
+		return AsGenericMonad.<Stream<T>,T>asMonad(stream).liftAndBind(fn).sequence();
 	}
 
 	 /**

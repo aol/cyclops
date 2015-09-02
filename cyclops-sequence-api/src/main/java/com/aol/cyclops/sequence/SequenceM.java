@@ -39,7 +39,6 @@ import org.jooq.lambda.tuple.Tuple4;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.future.FutureOperations;
 
-import fj.Monoid;
 
 
 

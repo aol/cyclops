@@ -10,12 +10,11 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import java.util.stream.BaseStream;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.pcollections.ConsPStack;
 
-import com.aol.cyclops.sequence.AnyM;
+import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 
 public class Do {

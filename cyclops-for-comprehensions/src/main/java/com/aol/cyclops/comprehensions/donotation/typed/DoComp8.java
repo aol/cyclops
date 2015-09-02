@@ -4,8 +4,7 @@ import java.util.function.Function;
 
 import org.pcollections.PStack;
 
-import com.aol.cyclops.lambda.api.AsAnyM;
-import com.aol.cyclops.sequence.AnyM;
+import com.aol.cyclops.monad.AnyM;
 
 
 public class DoComp8<T,T1,T2,T3,T4,T5,T6,T7> extends DoComp{

@@ -10,10 +10,10 @@ import java.util.stream.StreamSupport;
 
 import lombok.AllArgsConstructor;
 
-import com.aol.cyclops.lambda.api.Streamable;
+import com.aol.cyclops.sequence.Streamable;
 
 @AllArgsConstructor
-public class ReversedIterator<U> implements Streamable<U>{
+public class ReversedIterator<U> implements StreamableMixin<U>{
 	
 	private final List<U> list;
 	

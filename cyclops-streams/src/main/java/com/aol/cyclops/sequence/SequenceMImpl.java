@@ -1411,7 +1411,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return
 	 */
 	public final  SequenceM<Character> liftAndBindCharSequence(Function<? super T,CharSequence> fn) {
-		return AsGenericMonad.<Stream<T>,T>asStreamUtils.sequenceM(monad).liftAndBind(fn).sequence();
+		return StreamUtils.sequenceM(StreamUtils.liftAndBindCharSequence(monad, fn));
 	}
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -1438,7 +1438,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return
 	 */
 	public final  SequenceM<String> liftAndBindFile(Function<? super T,File> fn) {
-		return AsGenericMonad.<Stream<T>,T>asStreamUtils.sequenceM(monad).liftAndBind(fn).sequence();
+		return StreamUtils.sequenceM(StreamUtils.liftAndBindFile(monad, fn));
 	}
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -1460,7 +1460,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return
 	 */
 	public final  SequenceM<String> liftAndBindURL(Function<? super T, URL> fn) {
-		return AsGenericMonad.<Stream<T>,T>monad(monad).liftAndBind(fn).sequence();
+		return StreamUtils.sequenceM(StreamUtils.liftAndBindURL(monad, fn));
 	}
 	/**
 	  *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -1483,7 +1483,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return
 	 */
 	public final SequenceM<String> liftAndBindBufferedReader(Function<? super T,BufferedReader> fn) {
-		return AsGenericMonad.<Stream<T>,T>asStreamUtils.sequenceM(monad).liftAndBind(fn).sequence();
+		return StreamUtils.sequenceM(StreamUtils.liftAndBindBufferedReader(monad, fn));
 	}
 	public final   SequenceM<T>  filter(Predicate<? super T> fn){
 		return StreamUtils.sequenceM(monad.filter(fn));

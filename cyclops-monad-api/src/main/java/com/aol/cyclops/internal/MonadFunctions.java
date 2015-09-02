@@ -4,16 +4,14 @@ package com.aol.cyclops.internal;
 import static com.aol.cyclops.internal.AsGenericMonad.asMonad;
 import static com.aol.cyclops.internal.AsGenericMonad.monad;
 
-import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.lambda.api.AsAnyM;
+import org.jooq.lambda.tuple.Tuple2;
+
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.sequence.Monoid;
-import com.aol.cyclops.streams.Pair;
 
 public interface MonadFunctions<MONAD,T>{
 	public <R> Monad<MONAD,T> bind(Function<? super T,? extends R> fn);
@@ -64,9 +62,9 @@ public interface MonadFunctions<MONAD,T>{
 	 * @return
 	 */
 	default <NT,R> Monad<NT,R> simpleFilter(Monad<?,Predicate<? super T>> fn){
-		return  (Monad)this.bind(v-> fn.map(innerFn -> new Pair(v,innerFn.test(v)))
-													.filter(p->(boolean)p._2())
-													.map(Pair::_1))
+		return  (Monad)this.bind(v-> fn.map(innerFn -> new Tuple2(v,innerFn.test(v)))
+													.filter(p->(boolean)p.v2())
+													.map(Tuple2::v1))
 													.map(m -> ((Monad) m).unwrap());
 		
 		

@@ -4,8 +4,8 @@ import lombok.Value;
 import lombok.experimental.Wither;
 
 import com.aol.cyclops.internal.Monad;
+import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.objects.Decomposable;
-import com.aol.cyclops.sequence.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 
 @Value
@@ -25,6 +25,7 @@ public class MonadWrapper<MONAD,T> implements Monad<MONAD,T>, Decomposable{
 	}
 	@Override
 	public SequenceM<T>  sequence(){
-		return new  SequenceM(this.stream());	
+		//FIXME : plugin or similar to create the SequenceM
+		return null;//new  SequenceMImpl(this.stream());	
 	}
 }

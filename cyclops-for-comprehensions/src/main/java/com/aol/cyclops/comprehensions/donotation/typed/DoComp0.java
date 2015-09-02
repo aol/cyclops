@@ -10,17 +10,13 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.BaseStream;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import org.pcollections.PStack;
 
-import com.aol.cyclops.sequence.AnyM;
+import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 	public class DoComp0 extends DoComp{
 		public DoComp0(PStack<Entry> assigned) {

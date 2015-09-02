@@ -3,19 +3,16 @@ package com.aol.cyclops.lambda.api;
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
-import java.sql.ResultSet;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
-import com.aol.cyclops.sequence.AnyM;
-import com.nurkiewicz.lazyseq.LazySeq;
+import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.sequence.Streamable;
 
 
 public class AsAnyM {
@@ -290,9 +287,7 @@ public class AsAnyM {
 	public static <T> AnyM<T> anyM(Collection<T> anyM){
 		return convertToAnyM(anyM);
 	}
-	public static <T> AnyM<T> anyM(LazySeq<T> anyM){
-		return new MonadWrapper<>(anyM).anyM();
-	}
+	
 	/**
 	 * Construct an AnyM backed by a Stream of text from the lines of the supplied file
 	 * 

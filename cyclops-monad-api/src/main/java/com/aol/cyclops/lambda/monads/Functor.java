@@ -5,9 +5,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
-import com.aol.cyclops.lambda.utils.ExceptionSoftener;
-
 
 /**
  * An interoperability trait that wraps &amp; encapsulates any Functor type
@@ -42,9 +39,9 @@ public interface Functor<T> {
 		} catch (InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
-			ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(e);
+			throw (RuntimeException)e;
 		}
-		return null;
+		
 	}
 	
 	/**

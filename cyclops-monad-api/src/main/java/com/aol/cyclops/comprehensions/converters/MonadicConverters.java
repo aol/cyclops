@@ -1,6 +1,9 @@
 package com.aol.cyclops.comprehensions.converters;
 
 import java.util.ServiceLoader;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.StreamSupport;
 
 import lombok.Getter;
 import lombok.val;
@@ -15,7 +18,7 @@ import com.sun.xml.internal.ws.util.StreamUtils;
 public class MonadicConverters {
 	
 
-	private final  StreamUpscaler upscaler =  stream -> SequenceM.fromStream(stream);
+	private final  StreamUpscaler upscaler =  stream -> stream;//SequenceM.fromStream(stream);
 	
 	@Getter
 	private final static PStack<MonadicConverter> converters;
@@ -23,7 +26,8 @@ public class MonadicConverters {
 	
 	static {
 		val loader  = ServiceLoader.load(MonadicConverter.class);
-		converters = Reducers.<MonadicConverter>toPStack().mapReduce(StreamUtils.stream(loader.iterator()).sorted((a,b) ->  b.priority()-a.priority()));
+		converters = Reducers.<MonadicConverter>toPStack().mapReduce(StreamSupport.stream(Spliterators.spliteratorUnknownSize(loader.iterator(), Spliterator.ORDERED),
+				false).sorted((a,b) ->  b.priority()-a.priority()));
 		
 	}
 	
