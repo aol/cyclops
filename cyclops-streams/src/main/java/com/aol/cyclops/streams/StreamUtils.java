@@ -44,9 +44,11 @@ import com.aol.cyclops.internal.AsGenericMonad;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.sequence.ReversedIterator;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.SequenceMImpl;
-import com.aol.cyclops.sequence.Streamable;
+import com.aol.cyclops.sequence.streamable.AsStreamable;
+import com.aol.cyclops.sequence.streamable.Streamable;
 
 
 
@@ -81,7 +83,7 @@ public class StreamUtils{
 	 * @return Stream with reduced values repeated
 	 */
 	public final static <T> Stream<T> cycle(Stream<T> stream,Monoid<T> m, int times) {
-		return StreamUtils.cycle(times,AsStreamable.asStreamable(m.reduce(stream)));
+		return StreamUtils.cycle(times,AsStreamable.fromObject(m.reduce(stream)));
 		
 	}
 	
@@ -314,7 +316,7 @@ public class StreamUtils{
 	 * @return New cycling stream
 	 */
 	public static <U> Stream<U> cycle(Stream<U> s){
-		return cycle(AsStreamable.asStreamable(s));
+		return cycle(AsStreamable.fromStream(s));
 	}
 	/**
 	 * Create a Stream that infiniteable cycles the provided Streamable
@@ -511,7 +513,7 @@ public class StreamUtils{
 	 * @return Result as a list
 	 */
 	public static <T,A,R> List<R> collect(Stream<T> stream, Stream<Collector> collectors){
-		return collect(stream, AsStreamable.<Collector>asStreamable(collectors));
+		return collect(stream, AsStreamable.<Collector>fromStream(collectors));
 	}
 	/**
 	 *  Apply multiple Collectors, simultaneously to a Stream
@@ -533,7 +535,7 @@ public class StreamUtils{
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T,A,R> List<R> collect(Stream<T> stream, Iterable<Collector> collectors){
-		return collect(stream, AsStreamable.<Collector>asStreamable(collectors));
+		return collect(stream, AsStreamable.<Collector>fromIterable(collectors));
 	}
 	/**
 	 * Apply multiple Collectors, simultaneously to a Stream
@@ -1004,7 +1006,7 @@ public class StreamUtils{
 	 * @return Underlying monad converted to a Streamable instance
 	 */
 	public final static <T> Streamable<T> toStreamable(Stream<T> stream){
-		return  AsStreamable.asStreamable(stream);
+		return  AsStreamable.fromStream(stream);
 	}
 	/**
 	 * @return This monad converted to a set
@@ -1184,6 +1186,10 @@ public class StreamUtils{
 	public final static <T,R> Stream<R> flatMapOptional(Stream<T> stream,Function<? super T,Optional<? extends R>> fn) {
 		return AsAnyM.anyM(stream).asSequence().flatMapOptional(fn).stream();
 		
+	}
+	
+	public final static <T,R> SequenceM<R> flatten(Stream<T> stream) {
+		return AsGenericMonad.asMonad(stream).flatten().sequence();
 	}
 	/**
 	 *<pre>

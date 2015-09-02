@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.sequence.Streamable;
+import com.aol.cyclops.sequence.streamable.Streamable;
 
 
 public class AsAnyMList extends AsAnyM{

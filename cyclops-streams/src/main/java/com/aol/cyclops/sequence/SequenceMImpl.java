@@ -39,16 +39,11 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
 import com.aol.cyclops.internal.AsGenericMonad;
-import com.aol.cyclops.lambda.api.Streamable;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.streams.AnyStreamable;
-import com.aol.cyclops.streams.AsStreamable;
-import com.aol.cyclops.streams.Pair;
-import com.aol.cyclops.streams.Quadruple;
+import com.aol.cyclops.sequence.streamable.AsStreamable;
+import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.StreamUtils;
-import com.aol.cyclops.streams.Triple;
-import com.nurkiewicz.lazyseq.LazySeq;
 
 
 
@@ -85,7 +80,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return Flattened / joined one level
 	 */
 	public final <T1> SequenceM<T1> flatten(){
-		return AsGenericMonad.StreamUtils.sequenceM(monad).flatten().sequence();
+		return StreamUtils.flatten(monad);
 		
 	}
 	/**
@@ -165,7 +160,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return Stream with values repeated
 	 */
 	public final SequenceM<T> cycle(int times) {
-		return new SequenceMImpl(StreamUtils.cycle(times,AsStreamable.asStreamable(monad)));
+		return new SequenceMImpl(StreamUtils.cycle(times,AsStreamable.fromStream(monad)));
 	}
 	/**
 	 * Convert to a Stream with the values infinitely cycled
@@ -336,7 +331,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return Stream with reduced values repeated
 	 */
 	public final SequenceM<T> cycle(Monoid<T> m, int times) {
-		return StreamUtils.sequenceM(StreamUtils.cycle(times,AsStreamable.asStreamable(m.reduce(monad))));
+		return StreamUtils.sequenceM(StreamUtils.cycle(times,Streamable.of(m.reduce(monad))));
 		
 	}
 
@@ -917,7 +912,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 */
 	public final  <U extends Comparable<U>> Optional<T> minBy(Function<T, U> function){
 		
-		return StreamUtils.minBy(monad,f);
+		return StreamUtils.minBy(monad,function);
 	}
 	/* (non-Javadoc)
 	 * @see java.util.stream.Stream#min(java.util.Comparator)
@@ -1204,7 +1199,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return Underlying monad converted to a Streamable instance
 	 */
 	public final Streamable<T> toStreamable(){
-		return  AsStreamable.asStreamable(stream());
+		return  AsStreamable.fromStream(stream());
 	}
 	/**
 	 * @return This monad converted to a set
@@ -1267,7 +1262,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return this SequenceM converted to AnyM format
 	 */
 	public AnyM<T> anyM(){
-		return new AnyM<>(AsGenericMonad.asStreamUtils.sequenceM(monad));
+		return AsGenericMonad.fromStream(monad).anyM();
 	}
 	/* (non-Javadoc)
 	 * @see java.util.stream.Stream#map(java.util.function.Function)

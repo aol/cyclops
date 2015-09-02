@@ -15,8 +15,8 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.Streamable;
 import com.aol.cyclops.sequence.Unwrapable;
+import com.aol.cyclops.sequence.streamable.Streamable;
 
 /**
  * 
@@ -36,7 +36,7 @@ public interface AnyM<T> extends Unwrapable{
 	 <R> R unwrap();
 	
 
-	 <X> X monad();
+	 <X extends Object> X monad();
 	
 	   AnyM<T>  filter(Predicate<? super T> fn);
 	/* (non-Javadoc)

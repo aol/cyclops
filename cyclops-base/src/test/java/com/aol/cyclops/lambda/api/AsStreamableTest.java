@@ -11,12 +11,12 @@ import lombok.val;
 
 import org.junit.Test;
 
-import com.aol.cyclops.streams.AsStreamable;
+import com.aol.cyclops.sequence.streamable.AsStreamable;
 public class AsStreamableTest {
 
 	@Test
 	public void testAsStreamableT() {
-		val result = AsStreamable.<Integer>asStreamable(Arrays.asList(1,2,3)).stream().map(i->i+2).collect(Collectors.toList());
+		val result = AsStreamable.<Integer>fromIterable(Arrays.asList(1,2,3)).stream().map(i->i+2).collect(Collectors.toList());
 		
 		assertThat(result,equalTo(Arrays.asList(3,4,5)));
 	}
@@ -24,7 +24,7 @@ public class AsStreamableTest {
 	@Test
 	public void testAsStreamableStreamOfT() {
 		Stream<Integer> stream = Stream.of(1,2,3,4,5);
-		val streamable = AsStreamable.<Integer>asStreamable(stream);
+		val streamable = AsStreamable.<Integer>fromStream(stream);
 		val result1 = streamable.stream().map(i->i+2).collect(Collectors.toList());
 		val result2 = streamable.stream().map(i->i+2).collect(Collectors.toList());
 		val result3 = streamable.stream().map(i->i+2).collect(Collectors.toList());

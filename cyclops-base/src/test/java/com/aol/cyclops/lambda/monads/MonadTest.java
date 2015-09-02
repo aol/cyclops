@@ -1,7 +1,7 @@
 package com.aol.cyclops.lambda.monads;
 
 import static com.aol.cyclops.internal.AsGenericMonad.asMonad;
-import static com.aol.cyclops.internal.AsGenericMonad.monad;
+import static com.aol.cyclops.internal.AsGenericMonad.fromStream;
 import static com.aol.cyclops.lambda.api.AsAnyM.*;
 import static com.aol.cyclops.lambda.api.AsAnyMList.collectionToAnyMList;
 import static com.aol.cyclops.lambda.api.AsAnyMList.completableFutureToAnyMList;
@@ -290,7 +290,7 @@ public class MonadTest {
 	
 	@Test
 	public void zipStream(){
-		Stream<List<Integer>> zipped = monad(Stream.of(1,2,3)).<Integer>sequence().zipStream(Stream.of(2,3,4), 
+		Stream<List<Integer>> zipped = fromStream(Stream.of(1,2,3)).<Integer>sequence().zipStream(Stream.of(2,3,4), 
 													(a,b) -> Arrays.asList(a,b))
 													.stream();
 		
@@ -317,7 +317,7 @@ public class MonadTest {
 	
 	@Test
 	public void aggregate(){
-		List<Integer> result = monad(Stream.of(1,2,3,4)).<Integer>aggregate(monad(Optional.of(5))).<Integer>sequence().toList();
+		List<Integer> result = fromStream(Stream.of(1,2,3,4)).<Integer>aggregate(monad(Optional.of(5))).<Integer>sequence().toList();
 		
 		assertThat(result,equalTo(Arrays.asList(1,2,3,4,5)));
 	}
@@ -340,7 +340,7 @@ public class MonadTest {
 	
 	@Test
 	public void testApplyM(){
-	 AnyM<Integer> applied =monad(Stream.of(1,2,3)).applyM(monad(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2))).anyM();
+	 AnyM<Integer> applied =fromStream(Stream.of(1,2,3)).applyM(fromStream(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2))).anyM();
 	
 	 assertThat(applied.toSequence().toList(),equalTo(Arrays.asList(2, 2, 3, 4, 4, 6)));
 	 
@@ -370,7 +370,7 @@ public class MonadTest {
 
 	@Test
 	public void testSimpleFilter(){
-	 AnyM<Stream<Integer>> applied =monad(Stream.of(1,2,3)).simpleFilter(monad(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3))).anyM();
+	 AnyM<Stream<Integer>> applied =fromStream(Stream.of(1,2,3)).simpleFilter(fromStream(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3))).anyM();
 	
 	// System.out.println(applied.toList());
 	 assertThat(applied.map(s->s.collect(Collectors.toList())).asSequence().toList(),equalTo(Arrays.asList(Arrays.asList(1), Arrays.asList(2),Arrays.asList())));
@@ -378,7 +378,7 @@ public class MonadTest {
 	}
 	@Test
 	public void testSimpleFilterOptional(){
-	 AnyM<Optional<Integer>> applied =monad(Optional.of(2)).simpleFilter(monad(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3))).anyM();
+	 AnyM<Optional<Integer>> applied =monad(Optional.of(2)).simpleFilter(fromStream(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3))).anyM();
 	
 	 assertThat(applied.toSequence().toList(),equalTo(Arrays.asList(2)));
 	
@@ -391,41 +391,41 @@ public class MonadTest {
 	}
 	@Test
 	public void testReplicateMStream(){
-		 AnyM<Integer> applied =monad(Stream.of(2,3,4)).replicateM(5).anyM();
+		 AnyM<Integer> applied =fromStream(Stream.of(2,3,4)).replicateM(5).anyM();
 		 assertThat(applied.toSequence().toList(),equalTo(Arrays.asList(2,3,4,2,3,4,2,3,4,2,3,4,2,3,4)));
 	}
 	
 	@Test
 	public void testSorted(){
-		assertThat(monad(Stream.of(4,3,6,7)).anyM().asSequence().sorted().toList(),equalTo(Arrays.asList(3,4,6,7)));
+		assertThat(fromStream(Stream.of(4,3,6,7)).anyM().asSequence().sorted().toList(),equalTo(Arrays.asList(3,4,6,7)));
 	}
 	@Test
 	public void testSortedCompartor(){
-		assertThat(monad(Stream.of(4,3,6,7)).<Integer>sequence().sorted((a,b) -> b-a).toList(),equalTo(Arrays.asList(7,6,4,3)));
+		assertThat(fromStream(Stream.of(4,3,6,7)).<Integer>sequence().sorted((a,b) -> b-a).toList(),equalTo(Arrays.asList(7,6,4,3)));
 	}
 	@Test
 	public void testSkip(){
-		assertThat(monad(Stream.of(4,3,6,7)).sequence().skip(2).toList(),equalTo(Arrays.asList(6,7)));
+		assertThat(fromStream(Stream.of(4,3,6,7)).sequence().skip(2).toList(),equalTo(Arrays.asList(6,7)));
 	}
 	@Test
 	public void testSkipUntil(){
-		assertThat(monad(Stream.of(4,3,6,7)).<Integer>sequence().skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));
+		assertThat(fromStream(Stream.of(4,3,6,7)).<Integer>sequence().skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));
 	}
 	@Test
 	public void testSkipWhile(){
-		assertThat(monad(Stream.of(4,3,6,7)).<Integer>sequence().sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
+		assertThat(fromStream(Stream.of(4,3,6,7)).<Integer>sequence().sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
 	}
 	@Test
 	public void testLimit(){
-		assertThat(monad(Stream.of(4,3,6,7)).<Integer>sequence().limit(2).toList(),equalTo(Arrays.asList(4,3)));
+		assertThat(fromStream(Stream.of(4,3,6,7)).<Integer>sequence().limit(2).toList(),equalTo(Arrays.asList(4,3)));
 	}
 	@Test
 	public void testLimitUntil(){
-		assertThat(monad(Stream.of(4,3,6,7)).<Integer>sequence().limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3)));
+		assertThat(fromStream(Stream.of(4,3,6,7)).<Integer>sequence().limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3)));
 	}
 	@Test
 	public void testLimitWhile(){
-		assertThat(monad(Stream.of(4,3,6,7)).<Integer>sequence().sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));
+		assertThat(fromStream(Stream.of(4,3,6,7)).<Integer>sequence().sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));
 	}
 	
 	@Test
@@ -442,7 +442,7 @@ public class MonadTest {
 	public void testReduceM(){
 		Monoid<Optional<Integer>> optionalAdd = Monoid.of(Optional.of(0), (a,b)-> Optional.of(a.get()+b.get()));
 		
-		assertThat(monad(Stream.of(2,8,3,1)).reduceM(optionalAdd).unwrap(),equalTo(Optional.of(14)));
+		assertThat(fromStream(Stream.of(2,8,3,1)).reduceM(optionalAdd).unwrap(),equalTo(Optional.of(14)));
 	}
 	
 	

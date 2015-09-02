@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 import com.aol.cyclops.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.sequence.Streamable;
+import com.aol.cyclops.sequence.streamable.Streamable;
 
 
 public class AsAnyM {

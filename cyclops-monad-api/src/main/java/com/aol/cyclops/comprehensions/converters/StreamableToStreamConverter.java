@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 import lombok.val;
 
 import com.aol.cyclops.lambda.api.MonadicConverter;
-import com.aol.cyclops.sequence.Streamable;
+import com.aol.cyclops.sequence.streamable.Streamable;
 
 public class StreamableToStreamConverter implements MonadicConverter<Stream>{
 

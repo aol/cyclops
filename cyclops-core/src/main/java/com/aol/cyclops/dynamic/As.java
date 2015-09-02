@@ -20,7 +20,7 @@ import com.aol.cyclops.objects.AsDecomposable;
 import com.aol.cyclops.objects.Decomposable;
 import com.aol.cyclops.sequence.AnyM;
 import com.aol.cyclops.sequence.Monoid;
-import com.aol.cyclops.streams.AsStreamable;
+import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.trampoline.Trampoline;
 import com.aol.cyclops.value.AsStreamableValue;
 import com.aol.cyclops.value.AsValue;
@@ -37,7 +37,7 @@ public interface As {
 	 * @return Replayable Stream
 	 */
 	public static <T> Streamable<T> asStreamable(Object toCoerce){
-		return AsStreamable.asStreamable(toCoerce);
+		return AsStreamable.fromStream(toCoerce);
 	}
 	/**
 	 * Wrap the stream as a replayable Stream
@@ -46,7 +46,7 @@ public interface As {
 	 * @return Replayable Stream
 	 */
 	public static <T> Streamable<T> asStreamable(Stream<T> toCoerce){
-		return AsStreamable.asStreamable(toCoerce);
+		return AsStreamable.fromStream(toCoerce);
 	}
 
 	/**

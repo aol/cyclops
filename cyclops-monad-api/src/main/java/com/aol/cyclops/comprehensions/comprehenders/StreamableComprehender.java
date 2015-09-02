@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.lambda.api.Comprehender;
-import com.aol.cyclops.sequence.Streamable;
+import com.aol.cyclops.sequence.streamable.Streamable;
 
 public class StreamableComprehender implements Comprehender {
 	public Class getTargetClass(){

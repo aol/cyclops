@@ -1,4 +1,4 @@
-package com.aol.cyclops.streams;
+package com.aol.cyclops.sequence.streamable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,10 +8,8 @@ import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.invokedynamic.InvokeDynamic;
 import com.aol.cyclops.objects.AsDecomposable;
+import com.aol.cyclops.sequence.SeqUtils;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.SequenceMImpl;
-import com.aol.cyclops.sequence.streamable.AsStreamable;
-import com.aol.cyclops.sequence.streamable.Streamable;
 
 /**
  * Represents something that can generate a Stream, repeatedly
@@ -20,7 +18,7 @@ import com.aol.cyclops.sequence.streamable.Streamable;
  *
  * @param <T> Data type for Stream
  */
-public interface StreamableMixin<T> extends Streamable<T>,Iterable<T>{
+public interface Streamable<T> extends Iterable<T>{
 
 	default Iterator<T> iterator(){
 		return stream().iterator();
@@ -33,7 +31,8 @@ public interface StreamableMixin<T> extends Streamable<T>,Iterable<T>{
 	 * @return SequenceM from this Streamable
 	 */
 	default SequenceM<T> sequenceM(){
-		return SequenceMImpl.fromStream(stream());
+		return null;
+	//	return SequenceM.fromStream(stream());
 	}
 	/**
 	 * @return New Stream
@@ -75,11 +74,11 @@ public interface StreamableMixin<T> extends Streamable<T>,Iterable<T>{
 	 * @param values to construct Stream from (reversed)
 	 * @return (reversed) Streamable
 	 */
-	public static<T> StreamableMixin<T> reveresedOf(T... values){
+	public static<T> Streamable<T> reveresedOf(T... values){
 		
-		return new StreamableMixin<T>(){
+		return new Streamable<T>(){
 			public Stream<T> stream(){
-				return StreamUtils.reversedStream(Arrays.asList(values));
+				return SeqUtils.reversedStream(Arrays.asList(values));
 			}
 		};
 	}
@@ -90,26 +89,30 @@ public interface StreamableMixin<T> extends Streamable<T>,Iterable<T>{
 	 * @param values to construct a Stream from (reversed)
 	 * @return (reversed) Streamable
 	 */
-	public static<T> StreamableMixin<T> reveresedOfList(ArrayList<T> values){
+	public static<T> Streamable<T> reveresedOfList(ArrayList<T> values){
 		
-		return new StreamableMixin<T>(){
+		return new Streamable<T>(){
 			public Stream<T> stream(){
-				return StreamUtils.reversedStream(values);
+				return SeqUtils.reversedStream(values);
 			}
 		};
 	}
+	
+	
 	/**
 	 * Construct a Streamable that returns a Stream
 	 * 
 	 * @param values to construct Streamable from
 	 * @return Streamable
 	 */
-	public static<T> StreamableMixin<T> of(T... values){
+	public static<T> Streamable<T> of(T... values){
 		
-		return new StreamableMixin<T>(){
+		return new Streamable<T>(){
 			public Stream<T> stream(){
 				return Stream.of(values);
 			}
 		};
 	}
+	
+	
 }

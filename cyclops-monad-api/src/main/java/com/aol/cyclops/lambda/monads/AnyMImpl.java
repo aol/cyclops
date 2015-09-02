@@ -22,7 +22,7 @@ import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.Streamable;
+import com.aol.cyclops.sequence.streamable.Streamable;
 
 /**
  * 
@@ -44,7 +44,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	}
 	
 
-	public final <MONAD> Monad<MONAD,T> monad(){
+	public final Monad monad(){
 		return (Monad)monad;
 	}
 	
@@ -473,9 +473,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	public final   AnyM<T> reduceMCompletableFuture(Monoid<CompletableFuture<T>> reducer){
 		return monad.reduceM(reducer).anyM();
 	}
-	public final   AnyM<T> reduceMLazySeq(Monoid<LazySeq<T>> reducer){
-		return monad.reduceM(reducer).anyM();
-	}
+	
 	public final   AnyM<T> reduceM(Monoid<AnyM<T>> reducer){
 	//	List(2, 8, 3, 1).foldLeftM(0) {binSmalls} -> Optional(14)
 	//	convert to list Optionals

@@ -1,7 +1,7 @@
 package com.aol.cyclops.internal;
 
 import static com.aol.cyclops.internal.AsGenericMonad.asMonad;
-import static com.aol.cyclops.internal.AsGenericMonad.monad;
+import static com.aol.cyclops.internal.AsGenericMonad.fromStream;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -16,7 +16,10 @@ import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.lambda.monads.Filterable;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.sequence.SeqUtils;
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.sequence.streamable.Streamable;
+import com.sun.xml.internal.ws.util.StreamUtils;
 
 
 
@@ -97,7 +100,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,Functor<T>, Filt
 	 */
 	default Monad<Stream<T>,T> cycle(int times){
 		
-		return monad(StreamUtils.cycle(times,AsStreamable.asStreamable(stream())));
+		return fromStream(SeqUtils.cycle(times,Streamable.fromStream(stream())));
 		
 	}
 	@Override
@@ -228,7 +231,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,Functor<T>, Filt
 		Stream concat = Stream.concat(stream(),next.stream() );
 		
 		return (Monad)withMonad(new ComprehenderSelector().selectComprehender(
-				unwrap()).of(monad(concat)
+				unwrap()).of(fromStream(concat)
 						.flatMap(Function.identity())
 						.sequence().collect(Collectors.toList())))
 						.bind(Function.identity() );

@@ -2,7 +2,7 @@ package com.aol.cyclops.internal;
 
 
 import static com.aol.cyclops.internal.AsGenericMonad.asMonad;
-import static com.aol.cyclops.internal.AsGenericMonad.monad;
+import static com.aol.cyclops.internal.AsGenericMonad.fromStream;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -111,7 +111,7 @@ public interface MonadFunctions<MONAD,T>{
 	//	List(2, 8, 3, 1).foldLeftM(0) {binSmalls} -> Optional(14)
 	//	convert to list Optionals
 		
-		return asMonad(monad(stream()).map(value ->new ComprehenderSelector()
+		return asMonad(fromStream(stream()).map(value ->new ComprehenderSelector()
 							.selectComprehender(reducer.zero().getClass()).of(value))
 							.sequence().reduce((Monoid)reducer));		
 	}

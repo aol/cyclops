@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
-import com.aol.cyclops.sequence.Streamable;
+import com.aol.cyclops.sequence.streamable.Streamable;
 
 public class AsGenericMonad {
 
@@ -113,7 +113,7 @@ public class AsGenericMonad {
 	 * 
 	 * @return Duck typed Monad
 	 */	
-	public static <T> Monad<Stream<T>,T> monad(Stream<T> monad){
+	public static <T> Monad<Stream<T>,T> fromStream(Stream<T> monad){
 		return new MonadWrapper<>(monad);
 	}
 	/**
@@ -318,7 +318,7 @@ public class AsGenericMonad {
 	 * @return Duck typed Monad
 	 */
 	public static <T> Monad<Stream<T>,T> monad(T... values){
-		return monad(Stream.of(values));
+		return fromStream(Stream.of(values));
 	}
 	/**
 	 * Create a Monad wrapper from an Object

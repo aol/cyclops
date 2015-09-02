@@ -3,6 +3,7 @@ package com.aol.cyclops.sequence;
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -30,6 +31,7 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
@@ -38,6 +40,8 @@ import org.jooq.lambda.tuple.Tuple4;
 
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.future.FutureOperations;
+import com.aol.cyclops.sequence.streamable.Streamable;
+import com.sun.xml.internal.ws.util.StreamUtils;
 
 
 
@@ -1449,5 +1453,84 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>{
 //	batchBySize();
 //	batchByTime();
 //	batchBySizeAndTime()
+	
+	/**
+	 * Construct a Sequence from the provided elements
+	 * @param elements To Construct sequence from
+	 * @return
+	 */
+	public static <T> SequenceM<T> of(T... elements){
+		return SequenceMFactory.instance.sequenceM(Stream.of(elements));
+		
+	}
+	/**
+	 * Construct a Reveresed Sequence from the provided elements
+	 * @param elements To Construct sequence from
+	 * @return
+	 */
+	public static <T> SequenceM<T> reversedOf(T... elements){
+		return SequenceMFactory.instance.sequenceM(SeqUtils.reversedStream(Arrays.asList(elements)));
+		
+	}
+	/**
+	 * Construct a Reveresed Sequence from the provided elements
+	 * @param elements To Construct sequence from
+	 * @return
+	 */
+	public static <T> SequenceM<T> reversedListOf(List<T> elements){
+		return SequenceMFactory.instance.sequenceM(SeqUtils.reversedStream(elements));
+
+	}
+	public static SequenceM<Integer> range(int start, int end){
+		IntStream range = IntStream.range(start, end);
+		return SequenceMFactory.instance.sequenceM(Seq.seq(range));
+
+	}
+	/**
+	 * Construct a Sequence from a Stream
+	 * @param stream Stream to construct Sequence from
+	 * @return
+	 */
+	public static <T> SequenceM<T> fromStream(Stream<T> stream){
+		if(stream instanceof SequenceM)
+			return (SequenceM)stream;
+		return SequenceMFactory.instance.sequenceM(stream);
+	}
+	/**
+	 * Construct a Sequence from a Stream
+	 * @param stream Stream to construct Sequence from
+	 * @return
+	 */
+	public static SequenceM<Integer> fromIntStream(IntStream stream){
+		
+		return SequenceMFactory.instance.sequenceM(Seq.seq(stream));
+	}
+	/**
+	 * Construct a Sequence from a Stream
+	 * @param stream Stream to construct Sequence from
+	 * @return
+	 */
+	public static SequenceM<Long> fromLongStream(LongStream stream){
+		
+		return SequenceMFactory.instance.sequenceM(Seq.seq(stream));
+	}
+	/**
+	 * Construct a Sequence from a Stream
+	 * @param stream Stream to construct Sequence from
+	 * @return
+	 */
+	public static SequenceM<Double> fromDoubleStream(DoubleStream stream){
+		
+		return SequenceMFactory.instance.sequenceM(Seq.seq(stream));
+	}
+	
+	/**
+	 * Construct a Sequence from an Iterable
+	 * @param iterable  to construct Sequence from
+	 * @return SequenceM
+	 */
+	public static <T> SequenceM<T> fromIterable(Iterable<T> iterable){
+		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(iterable.spliterator(),false));
+	}
 	
 }

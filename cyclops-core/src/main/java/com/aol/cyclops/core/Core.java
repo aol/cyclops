@@ -97,7 +97,7 @@ public class Core extends Functions {
 	 * @return Replayable Stream
 	 */
 	public static <T> Streamable<T> asStreamable(Object toCoerce){
-		return As.asStreamable(toCoerce);
+		return As.fromStream(toCoerce);
 	}
 	/**
 	 * Wrap the stream as a replayable Stream
@@ -106,7 +106,7 @@ public class Core extends Functions {
 	 * @return Replayable Stream
 	 */
 	public static <T> Streamable<T> asStreamable(Stream<T> toCoerce){
-		return As.asStreamable(toCoerce);
+		return As.fromStream(toCoerce);
 	}
 
 	/**
