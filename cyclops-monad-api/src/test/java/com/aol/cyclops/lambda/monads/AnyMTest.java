@@ -31,7 +31,6 @@ import org.junit.Test;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.Reducers;
-import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
 
 
@@ -337,7 +336,7 @@ public class AnyMTest {
 	public void zipOptional(){
 		Stream<List<Integer>> zipped = anyM(Stream.of(1,2,3))
 										.asSequence()
-										.zip(anyM(Optional.of(2)), 
+										.zipAnyM(anyM(Optional.of(2)), 
 											(a,b) -> Arrays.asList(a,b)).toStream();
 		
 		

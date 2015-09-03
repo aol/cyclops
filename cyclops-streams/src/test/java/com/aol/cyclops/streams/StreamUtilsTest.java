@@ -1,5 +1,7 @@
 package com.aol.cyclops.streams;
 
+import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
@@ -24,20 +26,12 @@ import lombok.val;
 
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.api.Streamable;
+import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.Reducers;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
-import com.aol.cyclops.streams.HeadAndTail;
-import com.aol.cyclops.streams.StreamUtils;
-
-import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.averagingInt;
-import static java.util.stream.Collectors.counting;
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.mapping;
+import com.aol.cyclops.sequence.streamable.Streamable;
 public class StreamUtilsTest {
 	@Test
 	public void headTailReplay(){
@@ -272,7 +266,7 @@ public class StreamUtilsTest {
 	
 	@Test
 	public void zipOptional(){
-		Stream<List<Integer>> zipped = StreamUtils.zip(Stream.of(1,2,3)
+		Stream<List<Integer>> zipped = StreamUtils.zipAnyM(Stream.of(1,2,3)
 										,anyM(Optional.of(2)), 
 											(a,b) -> Arrays.asList(a,b));
 		
@@ -284,7 +278,7 @@ public class StreamUtilsTest {
 	}
 	@Test
 	public void zipOptionalSequence(){
-		Stream<List<Integer>> zipped = StreamUtils.zip(Stream.of(1,2,3)
+		Stream<List<Integer>> zipped = StreamUtils.zipAnyM(Stream.of(1,2,3)
 										,anyM(Optional.of(2)), 
 											(a,b) -> Arrays.asList(a,b));
 		
@@ -308,7 +302,7 @@ public class StreamUtilsTest {
 	}
 	@Test
 	public void zipSequence(){
-		Stream<List<Integer>> zipped = StreamUtils.zip(Stream.of(1,2,3)
+		Stream<List<Integer>> zipped = StreamUtils.zipSequence(Stream.of(1,2,3)
 												,SequenceM.of(2,3,4), 
 													(a,b) -> Arrays.asList(a,b));
 		
@@ -362,10 +356,7 @@ public class StreamUtilsTest {
         
     }
 	
-	@Test
-	public void convertStreamToLazySeq(){
-		assertThat(Arrays.asList(1,2,3),equalTo(StreamUtils.steamToLazySeq(Stream.of(1,2,3)).toList()));
-	}
+	
 	@Test
 	public void xMatch(){
 		assertTrue(StreamUtils.xMatch(Stream.of(1,2,3,5,6,7),3, i->i>4));

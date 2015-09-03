@@ -7,9 +7,7 @@ import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-
-
-import com.aol.cyclops.lambda.utils.LazyImmutable;
+import com.aol.cyclops.closures.immutable.LazyImmutable;
 import com.aol.cyclops.matcher.builders.ADTPredicateBuilder;
 /**
  * An interface / trait for building functionally compositional pattern matching cases

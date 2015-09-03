@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 
 import org.pcollections.PStack;
 
+import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 	public class DoComp6<T1,T2,T3,T4,T5,T6> extends DoComp{

@@ -13,8 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 import com.aol.cyclops.lambda.api.AsAnyM;
-import com.aol.cyclops.lambda.monads.AnyM;
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
+import com.aol.cyclops.monad.AnyM;
 
 /**
  * Class that represents the Failure of a Try

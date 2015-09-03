@@ -18,12 +18,12 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.streams.Pair;
 public class BaseSequentialTest {
 
 	<U> SequenceM<U> of(U... array){
@@ -104,7 +104,7 @@ public class BaseSequentialTest {
 		
 		@Test
 		public void zip(){
-			List<Pair<Integer,Integer>> list =
+			List<Tuple2<Integer,Integer>> list =
 					of(1,2,3,4,5,6).zip(of(100,200,300,400))
 													.peek(it -> System.out.println(it)).collect(Collectors.toList());
 			
@@ -122,7 +122,7 @@ public class BaseSequentialTest {
 		
 		@Test
 		public void zip2of(){
-			List<Pair<Integer,Integer>> list =of(1,2,3,4,5,6).zip(of(100,200,300,400)).peek(it -> System.out.println(it)).collect(Collectors.toList());
+			List<Tuple2<Integer,Integer>> list =of(1,2,3,4,5,6).zip(of(100,200,300,400)).peek(it -> System.out.println(it)).collect(Collectors.toList());
 		
 			List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
 			assertThat(right,hasItem(100));
@@ -138,7 +138,7 @@ public class BaseSequentialTest {
 		public void zipInOrder(){
 			
 			//this is not 100% reliable for EagerSequenceM use zipFutures instead
-				List<Pair<Integer,Integer>> list =  of(1,2,3,4,5,6).limit(6)
+				List<Tuple2<Integer,Integer>> list =  of(1,2,3,4,5,6).limit(6)
 															.zip( of(100,200,300,400).limit(4))
 															.collect(Collectors.toList());
 				
@@ -288,7 +288,7 @@ public class BaseSequentialTest {
 		
 		@Test
 		public void testDuplicate(){
-			 Pair<SequenceM<Integer>, SequenceM<Integer>> copies =of(1,2,3,4,5,6).duplicate();
+			 Tuple2<SequenceM<Integer>, SequenceM<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
 			 assertTrue(copies.v1.anyMatch(i->i==2));
 			 assertTrue(copies.v2.anyMatch(i->i==2));
 		}
@@ -325,7 +325,7 @@ public class BaseSequentialTest {
 		    }
 		    @Test
 		    public void testZipDifferingLength() {
-		        List<Pair<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
+		        List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
 
 		        assertEquals(2, list.size());
 		        assertTrue(asList(1,2).contains( list.get(0).v1));
@@ -341,8 +341,8 @@ public class BaseSequentialTest {
 		    	//assertEquals(asList(), of().zipWithIndex().toList());
 		       // assertEquals(asList(tuple("a", 0L)), of("a").zip(of(0L)).toList());
 		        //assertEquals(asList(tuple("a", 0L)), of("a").zipWithIndex().toList());
-		    	assertEquals(asList(new Pair("a", 0L), new Pair("b", 1L)), of("a", "b").zipWithIndex().toList());
-		        assertEquals(asList(new Pair("a", 0L), new Pair("b", 1L), new Pair("c", 2L)), of("a", "b", "c").zipWithIndex().toList());
+		    	assertEquals(asList(new Tuple2("a", 0L), new Tuple2("b", 1L)), of("a", "b").zipWithIndex().toList());
+		        assertEquals(asList(new Tuple2("a", 0L), new Tuple2("b", 1L), new Tuple2("c", 2L)), of("a", "b", "c").zipWithIndex().toList());
 		    }
 
 		   
@@ -489,9 +489,9 @@ public class BaseSequentialTest {
 
 		    @Test
 		    public void testUnzip() {
-		        Supplier<SequenceM<Pair<Integer, String>>> s = () -> of(new Pair(1, "a"), new Pair(2, "b"), new Pair(3, "c"));
+		        Supplier<SequenceM<Tuple2<Integer, String>>> s = () -> of(new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c"));
 
-		        Pair<SequenceM<Integer>, SequenceM<String>> u1 = SequenceM.unzip(s.get());
+		        Tuple2<SequenceM<Integer>, SequenceM<String>> u1 = SequenceM.unzip(s.get());
 		        assertThat(u1.v1.toList(),equalTo(asList(1, 2, 3)));
 		        assertThat(u1.v2.toList(),equalTo(asList("a", "b", "c")));
 

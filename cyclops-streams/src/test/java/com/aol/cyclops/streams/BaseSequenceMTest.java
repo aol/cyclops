@@ -20,14 +20,15 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
+import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.streams.Pair;
-import com.aol.cyclops.streams.Quadruple;
-import com.aol.cyclops.streams.Triple;
+
 
 
 //see BaseSequentialSeqTest for in order tests
@@ -63,7 +64,7 @@ public  class BaseSequenceMTest {
 	
 	@Test
 	public void zip(){
-		List<Pair<Integer,Integer>> list =
+		List<Tuple2<Integer,Integer>> list =
 				of(1,2,3,4,5,6).zip(of(100,200,300,400))
 												.peek(it -> System.out.println(it))
 												
@@ -82,7 +83,7 @@ public  class BaseSequenceMTest {
 	}
 	@Test
 	public void zip3(){
-		List<Triple<Integer,Integer,Character>> list =
+		List<Tuple3<Integer,Integer,Character>> list =
 				of(1,2,3,4,5,6).zip3(of(100,200,300,400),of('a','b','c'))
 												.peek(it -> System.out.println(it))
 												
@@ -104,7 +105,7 @@ public  class BaseSequenceMTest {
 	}
 	@Test
 	public void zip4(){
-		List<Quadruple<Integer,Integer,Character,String>> list =
+		List<Tuple4<Integer,Integer,Character,String>> list =
 				of(1,2,3,4,5,6).zip4(of(100,200,300,400),of('a','b','c'),of("hello","world"))
 												.peek(it -> System.out.println(it))
 												
@@ -131,7 +132,7 @@ public  class BaseSequenceMTest {
 	@Test
 	public void zip2of(){
 		
-		List<Pair<Integer,Integer>> list =of(1,2,3,4,5,6)
+		List<Tuple2<Integer,Integer>> list =of(1,2,3,4,5,6)
 											.zip(of(100,200,300,400))
 											.peek(it -> System.out.println(it))
 											.collect(Collectors.toList());
@@ -150,7 +151,7 @@ public  class BaseSequenceMTest {
 	@Test
 	public void zipInOrder(){
 		
-		List<Pair<Integer,Integer>> list =  of(1,2,3,4,5,6)
+		List<Tuple2<Integer,Integer>> list =  of(1,2,3,4,5,6)
 													.zip( of(100,200,300,400))
 													.collect(Collectors.toList());
 		
@@ -297,7 +298,7 @@ public  class BaseSequenceMTest {
 	
 	@Test
 	public void testDuplicate(){
-		 Pair<SequenceM<Integer>, SequenceM<Integer>> copies =of(1,2,3,4,5,6).duplicate();
+		 Tuple2<SequenceM<Integer>, SequenceM<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
 		 assertTrue(copies.v1.anyMatch(i->i==2));
 		 assertTrue(copies.v2.anyMatch(i->i==2));
 	}
@@ -345,7 +346,7 @@ public  class BaseSequenceMTest {
 	   
 	    @Test
 	    public void testZipDifferingLength() {
-	        List<Pair<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
+	        List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
 
 	        assertEquals(2, list.size());
 	        assertTrue(asList(1,2).contains( list.get(0).v1));
@@ -362,7 +363,7 @@ public  class BaseSequenceMTest {
 	     
 	       
 	      assertThat( of("a").zipWithIndex().map(t->t.v2).findFirst().get(),is(0l));
-	      assertEquals(asList(new Pair("a", 0L)), of("a").zipWithIndex().toList());
+	      assertEquals(asList(new Tuple2("a", 0L)), of("a").zipWithIndex().toList());
 	     
 	    }
 
@@ -542,10 +543,10 @@ public  class BaseSequenceMTest {
 	@Test
 	public void testUnzip() {
 
-		Supplier<SequenceM<Pair<Integer, String>>> s = () -> of(
-				new Pair(1, "a"), new Pair(2, "b"), new Pair(3, "c"));
+		Supplier<SequenceM<Tuple2<Integer, String>>> s = () -> of(
+				new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c"));
 
-		Pair<SequenceM<Integer>, SequenceM<String>> u1 = SequenceM.unzip(s
+		Tuple2<SequenceM<Integer>, SequenceM<String>> u1 = SequenceM.unzip(s
 				.get());
 
 		assertTrue(u1.v1.toList().containsAll(Arrays.asList(1, 2, 3)));
@@ -557,10 +558,10 @@ public  class BaseSequenceMTest {
 	@Test
 	public void testUnzipWithLimits() {
 		
-		Supplier<SequenceM<Pair<Integer, String>>> s = () -> of(
-				new Pair(1, "a"), new Pair(2, "b"), new Pair(3, "c"));
+		Supplier<SequenceM<Tuple2<Integer, String>>> s = () -> of(
+				new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c"));
 
-		Pair<SequenceM<Integer>, SequenceM<String>> u1 = SequenceM.unzip(s
+		Tuple2<SequenceM<Integer>, SequenceM<String>> u1 = SequenceM.unzip(s
 				.get());
 
 		assertTrue(u1.v1.limit(2).toList().containsAll(Arrays.asList(1, 2)));
@@ -572,11 +573,11 @@ public  class BaseSequenceMTest {
 	@Test
 	public void testUnzip3WithLimits() {
 		
-		Supplier<SequenceM<Triple<Integer, String, Long>>> s = () -> of(
-				new Triple(1, "a", 2l), new Triple(2, "b", 3l), new Triple(3,
+		Supplier<SequenceM<Tuple3<Integer, String, Long>>> s = () -> of(
+				new Tuple3(1, "a", 2l), new Tuple3(2, "b", 3l), new Tuple3(3,
 						"c", 4l));
 
-		Triple<SequenceM<Integer>, SequenceM<String>, SequenceM<Long>> u1 = SequenceM
+		Tuple3<SequenceM<Integer>, SequenceM<String>, SequenceM<Long>> u1 = SequenceM
 				.unzip3(s.get());
 
 		assertTrue(u1.v1.limit(1).toList().containsAll(Arrays.asList(1)));
@@ -590,11 +591,11 @@ public  class BaseSequenceMTest {
 	@Test
 	public void testUnzip3() {
 		
-		Supplier<SequenceM<Triple<Integer, String, Long>>> s = () -> of(
-				new Triple(1, "a", 2l), new Triple(2, "b", 3l), new Triple(3,
+		Supplier<SequenceM<Tuple3<Integer, String, Long>>> s = () -> of(
+				new Tuple3(1, "a", 2l), new Tuple3(2, "b", 3l), new Tuple3(3,
 						"c", 4l));
 
-		Triple<SequenceM<Integer>, SequenceM<String>, SequenceM<Long>> u1 = SequenceM
+		Tuple3<SequenceM<Integer>, SequenceM<String>, SequenceM<Long>> u1 = SequenceM
 				.unzip3(s.get());
 
 		
@@ -609,11 +610,11 @@ public  class BaseSequenceMTest {
 	@Test
 	public void testUnzip4() {
 		
-		Supplier<SequenceM<Quadruple<Integer, String, Long,Character>>> s = () -> of(
-				new Quadruple(1, "a", 2l,'z'), new Quadruple(2, "b", 3l,'y'), new Quadruple(3,
+		Supplier<SequenceM<Tuple4<Integer, String, Long,Character>>> s = () -> of(
+				new Tuple4(1, "a", 2l,'z'), new Tuple4(2, "b", 3l,'y'), new Tuple4(3,
 						"c", 4l,'x'));
 
-		Quadruple<SequenceM<Integer>, SequenceM<String>, SequenceM<Long>,SequenceM<Character>> u1 = SequenceM
+		Tuple4<SequenceM<Integer>, SequenceM<String>, SequenceM<Long>,SequenceM<Character>> u1 = SequenceM
 				.unzip4(s.get());
 
 		assertTrue(u1.v1.toList().containsAll(Arrays.asList(1, 2, 3)));
@@ -627,11 +628,11 @@ public  class BaseSequenceMTest {
 	@Test
 	public void testUnzip4WithLimits() {
 		
-		Supplier<SequenceM<Quadruple<Integer, String, Long,Character>>> s = () -> of(
-				new Quadruple(1, "a", 2l,'z'), new Quadruple(2, "b", 3l,'y'), new Quadruple(3,
+		Supplier<SequenceM<Tuple4<Integer, String, Long,Character>>> s = () -> of(
+				new Tuple4(1, "a", 2l,'z'), new Tuple4(2, "b", 3l,'y'), new Tuple4(3,
 						"c", 4l,'x'));
 
-		Quadruple<SequenceM<Integer>, SequenceM<String>, SequenceM<Long>,SequenceM<Character>> u1 = SequenceM
+		Tuple4<SequenceM<Integer>, SequenceM<String>, SequenceM<Long>,SequenceM<Character>> u1 = SequenceM
 				.unzip4(s.get());
 
 		assertTrue(u1.v1.limit(1).toList().containsAll(Arrays.asList(1)));

@@ -9,7 +9,7 @@ import lombok.extern.java.Log;
 
 public interface SequenceMFactory {
 
-	public <T> SequenceM<T> sequenceM(Stream<T> s);
+	public <T> SequenceM<T> sequenceM(Stream<T> s,Object data);
 	
 	public final static SequenceMFactory instance = MetaFactory.get();
 	@Log

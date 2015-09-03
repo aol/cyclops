@@ -28,6 +28,7 @@ configurations {
 }
 dependencies {
 	compile project(':cyclops-invokedynamic')
+	compile 'org.reactivestreams:reactive-streams:1.0.0'
 	compile 'org.pcollections:pcollections:2.1.2'
 	compile 'org.jooq:jool:0.9.7'
 	provided group: 'org.projectlombok', name: 'lombok', version:'1.16.2'

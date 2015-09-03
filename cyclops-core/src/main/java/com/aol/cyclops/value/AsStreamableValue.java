@@ -1,16 +1,5 @@
 package com.aol.cyclops.value;
 
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import com.aol.cyclops.invokedynamic.ReflectionCache;
-import com.aol.cyclops.lambda.utils.ExceptionSoftener;
-import com.aol.cyclops.matcher.builders.Matching;
-import com.aol.cyclops.matcher.builders.MatchingInstance;
-import com.aol.cyclops.matcher.builders.PatternMatcher;
-import com.aol.cyclops.matcher.builders.CheckType;
-import com.aol.cyclops.matcher.builders.CheckTypeAndValues;
 
 /**
  * Corerce an Object to implement the StreamableValue interface

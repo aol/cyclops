@@ -1,35 +1,17 @@
 package com.aol.cyclops.streams;
-import static com.aol.cyclops.lambda.api.AsAnyM.*;
-import static com.aol.cyclops.lambda.api.AsAnyMList.collectionToAnyMList;
-import static com.aol.cyclops.lambda.api.AsAnyMList.completableFutureToAnyMList;
-import static com.aol.cyclops.lambda.api.AsAnyMList.optionalToAnyMList;
-import static com.aol.cyclops.lambda.api.AsAnyMList.streamToAnyMList;
+import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
-import lombok.val;
 
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.api.Streamable;
-import com.aol.cyclops.sequence.Monoid;
-import com.aol.cyclops.sequence.Reducers;
 import com.aol.cyclops.sequence.SequenceM;
 public class StreamTest {
 	 public static <U> SequenceM<U> of(U... array){
@@ -202,6 +184,7 @@ public class StreamTest {
 
 	@Test
 	public void collectSBB(){
+		
 		List<Integer> list = of(1,2,3,4,5).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
 		assertThat(list.size(),equalTo(5));
 	}

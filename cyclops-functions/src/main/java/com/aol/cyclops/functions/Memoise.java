@@ -11,6 +11,7 @@ import java.util.function.Supplier;
 import lombok.Value;
 import lombok.val;
 
+import com.aol.cyclops.closures.immutable.LazyImmutable;
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
 public class Memoise {

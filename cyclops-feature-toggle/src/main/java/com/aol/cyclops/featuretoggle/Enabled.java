@@ -3,10 +3,10 @@ package com.aol.cyclops.featuretoggle;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.aol.cyclops.lambda.api.AsAnyM;
-import com.aol.cyclops.lambda.monads.AnyM;
-
 import lombok.Value;
+
+import com.aol.cyclops.lambda.api.AsAnyM;
+import com.aol.cyclops.monad.AnyM;
 
 /**
  * An enabled switch

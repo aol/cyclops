@@ -1,5 +1,4 @@
 package com.aol.cyclops.streams;
-import static com.aol.cyclops.lambda.api.AsAnyM.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -13,8 +12,6 @@ import org.jooq.lambda.Seq;
 import org.junit.Test;
 
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.streams.StreamUtils;
-import com.nurkiewicz.lazyseq.LazySeq;
 public class FlatMapStreamUtilsTest {
 
 	@Test
@@ -34,10 +31,7 @@ public class FlatMapStreamUtilsTest {
 	public void flatMap2(){
 		assertThat(StreamUtils.flatMapStream(Stream.of(1,2,3),i->Stream.of(i+2)).collect(Collectors.toList()),equalTo(Arrays.asList(3,4,5)));
 	}
-	@Test
-	public void flatMapToLazySeq(){
-		assertThat(StreamUtils.flatMapLazySeq(Stream.of(1,2,3),i->LazySeq.of(i+2)).collect(Collectors.toList()),equalTo(Arrays.asList(3,4,5)));
-	}
+	
 	@Test
 	public void flatMapToSeq(){
 		

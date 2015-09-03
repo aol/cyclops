@@ -48,6 +48,7 @@ import com.aol.cyclops.closures.mutable.Mutable;
 import com.aol.cyclops.internal.AsGenericMonad;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.HeadAndTail;
+import com.aol.cyclops.sequence.HotStream;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.ReversedIterator;
 import com.aol.cyclops.sequence.SeqUtils;
@@ -938,7 +939,7 @@ public class StreamUtils{
 	 * </pre>
 	 
 	 */
-	public final static <T,S, R> Stream<R> zip(Stream<T> stream,AnyM<? extends S> second,
+	public final static <T,S, R> Stream<R> zipAnyM(Stream<T> stream,AnyM<? extends S> second,
 			BiFunction<? super T, ? super S, ? extends R> zipper) {
 		return zipSequence(stream,second.toSequence(), zipper);
 	}
@@ -1351,6 +1352,11 @@ public class StreamUtils{
 		if(stream instanceof SequenceM)
 			return (SequenceM)stream;
 		return new SequenceMImpl(stream);
+	}
+	public final static<T> SequenceM<T> sequenceM(Stream<T> stream,Object dataForReversal){
+		if(stream instanceof SequenceM)
+			return (SequenceM)stream;
+		return new SequenceMImpl(stream,dataForReversal);
 	}
 	
 	/**
@@ -1843,5 +1849,8 @@ public class StreamUtils{
 				}
 				
 			});
+	  }
+	  public final static <T> HotStream<T> hotStream(Stream<T> stream,Executor exec){
+		  return new HotStreamImpl<>(stream).init(exec);
 	  }
 }

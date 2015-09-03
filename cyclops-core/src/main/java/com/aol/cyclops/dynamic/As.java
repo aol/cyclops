@@ -1,26 +1,21 @@
 package com.aol.cyclops.dynamic;
 
-import java.util.Arrays;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.internal.AsGenericMonad;
-import com.aol.cyclops.internal.Monad;
-import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.api.AsFunctor;
 import com.aol.cyclops.lambda.api.AsGenericMonoid;
 import com.aol.cyclops.lambda.api.AsMappable;
 import com.aol.cyclops.lambda.api.AsSupplier;
 import com.aol.cyclops.lambda.api.Mappable;
-import com.aol.cyclops.lambda.api.Streamable;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.matcher.AsMatchable;
 import com.aol.cyclops.matcher.Matchable;
 import com.aol.cyclops.objects.AsDecomposable;
 import com.aol.cyclops.objects.Decomposable;
-import com.aol.cyclops.sequence.AnyM;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
+import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.trampoline.Trampoline;
 import com.aol.cyclops.value.AsStreamableValue;
 import com.aol.cyclops.value.AsValue;

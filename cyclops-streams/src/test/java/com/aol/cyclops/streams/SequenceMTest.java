@@ -1,9 +1,10 @@
 package com.aol.cyclops.streams;
 
-import static com.aol.cyclops.lambda.api.AsAnyM.anyMIterable;
-import static com.aol.cyclops.lambda.monads.AnyMonads.*;
+import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -21,8 +22,6 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.streams.StreamUtils;
-import com.nurkiewicz.lazyseq.LazySeq;
 
 public class SequenceMTest {
 
@@ -134,25 +133,5 @@ public class SequenceMTest {
 		assertThat(result.get(1), equalTo(6));
 		assertThat(result.get(2), equalTo(2.0));
 	}
-	@Test
-	public void testFlatMap() {
-		System.out.println(LazySeq.of(1)
-					.flatMap(i-> LazySeq.of( asList(1,3)))
-					.toList());
-		System.out.println(Stream.of(1)
-				.flatMap(i-> Stream.of((asList(1,3))))
-				.collect(Collectors.toList()));
-		
-		/**
-		
-		System.out.println( anyM(Stream.of(asList(1,3)))
-				  				.asSequence().toList());
-		  List<Integer> list = anyM(Stream.of(asList(1,3)))
-				  				.asSequence()
-				  				.flatMap(c->anyM(c.stream()).asSequence())
-				  				.map(i->i*2)
-				  				.peek(System.out::println)
-				  				.collect(Collectors.toList());
-		assertThat(Arrays.asList(2,6),equalTo(list)); **/
-	}
+	
 }

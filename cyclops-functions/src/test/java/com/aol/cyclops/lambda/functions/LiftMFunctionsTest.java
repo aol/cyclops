@@ -1,6 +1,6 @@
 package com.aol.cyclops.lambda.functions;
 
-import static com.aol.cyclops.lambda.api.AsAnyM.*;
+import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -13,8 +13,8 @@ import lombok.val;
 import org.junit.Test;
 
 import com.aol.cyclops.functions.LiftMFunctions;
-import com.aol.cyclops.lambda.api.Streamable;
-import com.aol.cyclops.sequence.AnyM;
+import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.sequence.streamable.Streamable;
 public class LiftMFunctionsTest {
 
 	public Integer one(String word){

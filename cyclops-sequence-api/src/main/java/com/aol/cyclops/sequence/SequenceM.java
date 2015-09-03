@@ -1,9 +1,5 @@
 package com.aol.cyclops.sequence;
 
-import static java.util.Comparator.comparing;
-import static java.util.Comparator.naturalOrder;
-import static org.jooq.lambda.tuple.Tuple.tuple;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
@@ -15,11 +11,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -44,16 +41,21 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.future.FutureOperations;
+import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
+import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsPublisher;
+import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsSubscriber;
 import com.aol.cyclops.sequence.streamable.Streamable;
 
 
 
 
 
-public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>{
+public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>, Publisher<T>{
 	
 	@Override
 	<R> R unwrap();
@@ -326,7 +328,20 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>{
 	 * </pre>
 	 * 
 	 */
-	<S> SequenceM<Tuple2<T,S>> zip(Stream<? extends S> second);
+	<U> SequenceM<Tuple2<T, U>> zipStream(Stream<U> other);
+	/**
+	 * Zip 2 streams into one
+	 * 
+	 * <pre>
+	 * {@code 
+	 * List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
+       // [[1,"a"],[2,"b"]]
+		 } 
+	 * </pre>
+	 * 
+	 */
+	@Override
+	<U> SequenceM<Tuple2<T, U>> zip(Seq<U> other);
 	/**
 	 * zip 3 Streams into one
 	 * <pre>
@@ -383,7 +398,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>{
 	 *            Zipping function
 	 * @return Stream zipping two Monads
 	 */
-	<S, R> SequenceM<R> zip(SequenceM<? extends S> second,
+	<S, R> SequenceM<R> zipSequence(SequenceM<? extends S> second,
 			BiFunction<? super T, ? super S, ? extends R> zipper) ;
 	/**
 	 * Zip this SequenceM against any monad type.
@@ -403,10 +418,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>{
 	 * </pre>
 	 * 
 	 */
-	default <S, R> SequenceM<R> zip(AnyM<? extends S> second,
-			BiFunction<? super T, ? super S, ? extends R> zipper) {
-		return zip(second.toSequence(), zipper);
-	}
+	<S, R> SequenceM<R> zipAnyM(AnyM<? extends S> second,
+			BiFunction<? super T, ? super S, ? extends R> zipper) ;
 
 	/**
 	 * Zip this Monad with a Stream
@@ -834,20 +847,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>{
 	 */
 	<R> R mapReduce(Function<? super T,? extends R> mapper, Monoid<R> reducer);
 	
-	/**
-	 * Mutable reduction / collection over this Monad converted to a Stream
-	 * 
-	 * @param collector Collection operation definition
-	 * @return Collected result
-	 
-	 <R, A> R collect(Collector<? super T, A, R> collector);
-	 */
-	/* (non-Javadoc)
-	 * @see java.util.stream.Stream#collect(java.util.function.Supplier, java.util.function.BiConsumer, java.util.function.BiConsumer)
-	 */
-	 <R> R collect(Supplier<R> supplier,
-            BiConsumer<R, ? super T> accumulator,
-            BiConsumer<R, R> combiner);
+
 	/**
 	 * Apply multiple collectors Simulataneously to this Monad
 	 * 
@@ -1450,7 +1450,6 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>{
 	boolean endsWith(Iterable<T> iterable);
 //	window(Predicate p);
 
-//	HotStream hotStream(Executor e,Supplier<Adapter<T>> s);
 	HotStream<T> hotStream(Executor e);
 
 	T firstValue();
@@ -1461,13 +1460,16 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>{
 //	batchByTime();
 //	batchBySizeAndTime()
 	
+	public static <T> Subscriber<T> subscriber(){
+		return ReactiveStreamsLoader.subscriber.get().subscribe();
+	}
 	/**
 	 * Construct a Sequence from the provided elements
 	 * @param elements To Construct sequence from
 	 * @return
 	 */
 	public static <T> SequenceM<T> of(T... elements){
-		return SequenceMFactory.instance.sequenceM(Stream.of(elements));
+		return SequenceMFactory.instance.sequenceM(Stream.of(elements),elements);
 		
 	}
 	/**
@@ -1476,7 +1478,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>{
 	 * @return
 	 */
 	public static <T> SequenceM<T> reversedOf(T... elements){
-		return SequenceMFactory.instance.sequenceM(SeqUtils.reversedStream(Arrays.asList(elements)));
+		return SequenceMFactory.instance.sequenceM(SeqUtils.reversedStream(Arrays.asList(elements)),null);
 		
 	}
 	/**
@@ -1485,12 +1487,12 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>{
 	 * @return
 	 */
 	public static <T> SequenceM<T> reversedListOf(List<T> elements){
-		return SequenceMFactory.instance.sequenceM(SeqUtils.reversedStream(elements));
+		return SequenceMFactory.instance.sequenceM(SeqUtils.reversedStream(elements),null);
 
 	}
 	public static SequenceM<Integer> range(int start, int end){
 		IntStream range = IntStream.range(start, end);
-		return SequenceMFactory.instance.sequenceM(Seq.seq(range));
+		return SequenceMFactory.instance.sequenceM(Seq.seq(range),null);
 
 	}
 	/**
@@ -1501,7 +1503,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>{
 	public static <T> SequenceM<T> fromStream(Stream<T> stream){
 		if(stream instanceof SequenceM)
 			return (SequenceM)stream;
-		return SequenceMFactory.instance.sequenceM(stream);
+		return SequenceMFactory.instance.sequenceM(stream,null);
 	}
 	/**
 	 * Construct a Sequence from a Stream
@@ -1510,7 +1512,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>{
 	 */
 	public static SequenceM<Integer> fromIntStream(IntStream stream){
 		
-		return SequenceMFactory.instance.sequenceM(Seq.seq(stream));
+		return SequenceMFactory.instance.sequenceM(Seq.seq(stream),null);
 	}
 	/**
 	 * Construct a Sequence from a Stream
@@ -1519,7 +1521,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>{
 	 */
 	public static SequenceM<Long> fromLongStream(LongStream stream){
 		
-		return SequenceMFactory.instance.sequenceM(Seq.seq(stream));
+		return SequenceMFactory.instance.sequenceM(Seq.seq(stream),null);
 	}
 	/**
 	 * Construct a Sequence from a Stream
@@ -1528,7 +1530,16 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>{
 	 */
 	public static SequenceM<Double> fromDoubleStream(DoubleStream stream){
 		
-		return SequenceMFactory.instance.sequenceM(Seq.seq(stream));
+		return SequenceMFactory.instance.sequenceM(Seq.seq(stream),null);
+	}
+	/**
+	 * Construct a Sequence from a List (prefer this method if the source is a list,
+	 * as it allows more efficient Stream reversal).
+	 * @param iterable  to construct Sequence from
+	 * @return SequenceM
+	 */
+	public static <T> SequenceM<T> fromList(List<T> list){
+		return SequenceMFactory.instance.sequenceM(list.stream(),list);
 	}
 	
 	/**
@@ -1537,19 +1548,65 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>{
 	 * @return SequenceM
 	 */
 	public static <T> SequenceM<T> fromIterable(Iterable<T> iterable){
-		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(iterable.spliterator(),false));
+		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(iterable.spliterator(),false),null);
+	}
+	/**
+	 * Unzip a zipped Stream 
+	 * 
+	 * <pre>
+	 * {@code 
+	 *  unzip(SequenceM.of(new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c")))
+	 *  
+	 *  // SequenceM[1,2,3], SequenceM[a,b,c]
+	 * }
+	 * 
+	 * </pre>
+	 * 
+	 */
+	public static <T,U> Tuple2<SequenceM<T>,SequenceM<U>> unzip(SequenceM<Tuple2<T,U>> sequence){
+		Tuple2<SequenceM<Tuple2<T,U>>,SequenceM<Tuple2<T,U>>> tuple2 = sequence.duplicateSequence();
+		return new Tuple2(tuple2.v1.map(Tuple2::v1),tuple2.v2.map(Tuple2::v2));
+	}
+	/**
+	 * Unzip a zipped Stream into 3
+	 * <pre>
+	 * {@code 
+	 *    unzip3(SequenceM.of(new Tuple3(1, "a", 2l), new Tuple3(2, "b", 3l), new Tuple3(3,"c", 4l)))
+	 * }
+	 * // SequenceM[1,2,3], SequenceM[a,b,c], SequenceM[2l,3l,4l]
+	 * </pre>
+	 */
+	public static <T1,T2,T3> Tuple3<SequenceM<T1>,SequenceM<T2>,SequenceM<T3>> unzip3(SequenceM<Tuple3<T1,T2,T3>> sequence){
+		Tuple3<SequenceM<Tuple3<T1,T2,T3>>,SequenceM<Tuple3<T1,T2,T3>>,SequenceM<Tuple3<T1,T2,T3>>> tuple3 = sequence.triplicate();
+		return new Tuple3(tuple3.v1.map(Tuple3::v1),tuple3.v2.map(Tuple3::v2),tuple3.v3.map(Tuple3::v3));
+	}
+	/**
+	 * Unzip a zipped Stream into 4
+	 * 
+	 * <pre>
+	 * {@code 
+	 * unzip4(SequenceM.of(new Tuple4(1, "a", 2l,'z'), new Tuple4(2, "b", 3l,'y'), new Tuple4(3,
+						"c", 4l,'x')));
+		}
+		// SequenceM[1,2,3], SequenceM[a,b,c], SequenceM[2l,3l,4l], SequenceM[z,y,x]
+	 * </pre>
+	 */
+	public static <T1,T2,T3,T4> Tuple4<SequenceM<T1>,SequenceM<T2>,SequenceM<T3>,SequenceM<T4>> unzip4(SequenceM<Tuple4<T1,T2,T3,T4>> sequence){
+		Tuple4<SequenceM<Tuple4<T1,T2,T3,T4>>,SequenceM<Tuple4<T1,T2,T3,T4>>,SequenceM<Tuple4<T1,T2,T3,T4>>,SequenceM<Tuple4<T1,T2,T3,T4>>> quad = sequence.quadruplicate();
+		return new Tuple4(quad.v1.map(Tuple4::v1),quad.v2.map(Tuple4::v2),quad.v3.map(Tuple4::v3),quad.v4.map(Tuple4::v4));
 	}
 	
 	
-	<U> Seq<Tuple2<T, U>> crossJoin(Stream<U> other) ;
-	<U> Seq<Tuple2<T, U>> innerJoin(Stream<U> other, BiPredicate<T, U> predicate);
-	<U> Seq<Tuple2<T, U>> leftOuterJoin(Stream<U> other, BiPredicate<T, U> predicate);
-	 <U> Seq<Tuple2<T, U>> rightOuterJoin(Stream<U> other, BiPredicate<T, U> predicate);
-	 Seq<T> onEmpty(T value);
-	 Seq<T> onEmptyGet(Supplier<T> supplier);
-	 <X extends Throwable> Seq<T> onEmptyThrow(Supplier<X> supplier);
-	 Seq<T> concat(Stream<T> other);
-	 Seq<T> concat(T other);
+	
+	<U> SequenceM<Tuple2<T, U>> crossJoin(Stream<U> other) ;
+	<U> SequenceM<Tuple2<T, U>> innerJoin(Stream<U> other, BiPredicate<T, U> predicate);
+	<U> SequenceM<Tuple2<T, U>> leftOuterJoin(Stream<U> other, BiPredicate<T, U> predicate);
+	 <U> SequenceM<Tuple2<T, U>> rightOuterJoin(Stream<U> other, BiPredicate<T, U> predicate);
+	 SequenceM<T> onEmpty(T value);
+	 SequenceM<T> onEmptyGet(Supplier<T> supplier);
+	 <X extends Throwable> SequenceM<T> onEmptyThrow(Supplier<X> supplier);
+	 SequenceM<T> concat(Stream<T> other);
+	 SequenceM<T> concat(T other);
 	    /**
 	     * Concatenate two streams.
 	     * <p>
@@ -1561,7 +1618,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>{
 	     * @see #concat(Stream[])
 	     */
 	   
-	   Seq<T> concat(T... other);
+	   SequenceM<T> concat(T... other);
 
 	    
 	    /**
@@ -1572,19 +1629,9 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>{
 	     * Seq.of(1, 1, 2, -2, 3).distinct(Math::abs)
 	     * </pre></code>
 	     */
-	    default <U> Seq<T> distinct(Function<? super T, ? extends U> keyExtractor);
+	    <U> SequenceM<T> distinct(Function<? super T, ? extends U> keyExtractor);
 
-	    /**
-	     * Zip two streams into one.
-	     * <p>
-	     * <code><pre>
-	     * // (tuple(1, "a"), tuple(2, "b"), tuple(3, "c"))
-	     * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"))
-	     * </pre></code>
-	     *
-	     * @see #zip(Stream, Stream)
-	     */
-	    <U> Seq<Tuple2<T, U>> zip(Seq<U> other) ;
+	  
 	    /**
 	     * Zip two streams into one using a {@link BiFunction} to produce resulting values.
 	     * <p>
@@ -1595,31 +1642,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>{
 	     *
 	     * @see #zip(Seq, BiFunction)
 	     */
-	    <U, R> Seq<R> zip(Seq<U> other, BiFunction<T, U, R> zipper);
-
-	 
-	    /**
-	     * Fold a Stream to the left.
-	     * <p>
-	     * <code><pre>
-	     * // "abc"
-	     * Seq.of("a", "b", "c").foldLeft("", (u, t) -> u + t)
-	     * </pre></code>
-	     */
-	    <U> U foldLeft(U seed, BiFunction<U, ? super T, U> function) ;
-
-	    /**
-	     * Fold a Stream to the right.
-	     * <p>
-	     * <code><pre>
-	     * // "cba"
-	     * Seq.of("a", "b", "c").foldRight("", (t, u) -> u + t)
-	     * </pre></code>
-	     */
-	    <U> U foldRight(U seed, BiFunction<? super T, U, U> function);
-
-	   
-
+	    <U, R> SequenceM<R> zip(Seq<U> other, BiFunction<T, U, R> zipper);
 	    
 
 	    /**
@@ -1630,7 +1653,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>{
 	     * Seq.of(1, 2, 3).shuffle(new Random())
 	     * </pre></code>
 	     */
-	    Seq<T> shuffle(Random random);
+	    SequenceM<T> shuffle(Random random);
 
 	    
 	    
@@ -1644,7 +1667,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>{
 	     *
 	     * @see #slice(Stream, long, long)
 	     */
-	    Seq<T> slice(long from, long to);
+	    SequenceM<T> slice(long from, long to);
 	    
 
 
@@ -1652,8 +1675,13 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>{
 	    /**
 	     * Sort by the results of function.
 	     */
-	    <U extends Comparable<? super U>> Seq<T> sorted(Function<? super T, ? extends U> function);
+	    <U extends Comparable<? super U>> SequenceM<T> sorted(Function<? super T, ? extends U> function);
 	 
 	 
+	    SequenceM<T> xPer(int x, long time, TimeUnit t);
+	    SequenceM<T> onePer(long time, TimeUnit t);
+	    SequenceM<T> debounce(long time, TimeUnit t);
+	    SequenceM<List<T>> batchByTimeAndSize(int size, long time, TimeUnit t);
+	    SequenceM<List<T>> batchByTime(long time, TimeUnit t);
 	
 }
