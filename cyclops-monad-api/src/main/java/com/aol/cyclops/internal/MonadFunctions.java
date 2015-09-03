@@ -14,7 +14,8 @@ import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.sequence.Monoid;
 
 public interface MonadFunctions<MONAD,T>{
-	public <R> Monad<MONAD,T> bind(Function<? super T,? extends R> fn);
+	 <R> Monad<MONAD,R> bind(Function<? super T,?> fn);
+	//public <R> Monad<MONAD,T> bind(Function<? super T,? extends R> fn);
 	public Stream<T> stream();
 	public <MONAD,T> MONAD unit(T value);
 	public Monad<Stream<T>,T> cycle(int times);

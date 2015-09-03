@@ -41,10 +41,12 @@ import org.pcollections.PStack;
 
 import com.aol.cyclops.closures.mutable.Mutable;
 import com.aol.cyclops.internal.AsGenericMonad;
+import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.ReversedIterator;
+import com.aol.cyclops.sequence.SeqUtils;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.SequenceMImpl;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
@@ -561,8 +563,8 @@ public class StreamUtils{
 		
 		
 		final Supplier supplier =  ()-> collectors.stream().map(c->c.supplier().get()).collect(Collectors.toList());
-		final BiConsumer accumulator = (acc,next) -> {  Seq.of(collectors.stream().iterator()).<Object,Tuple2<Collector,Object>>zip(
-																Seq.of((List)acc),(a,b)->new Tuple2<Collector,Object>(a,b))
+		final BiConsumer accumulator = (acc,next) -> {  Seq.seq(collectors.stream().iterator()).<Object,Tuple2<Collector,Object>>zip(
+																Seq.seq((List)acc),(a,b)->new Tuple2<Collector,Object>(a,b))
 													
 													.forEach( t -> t.v1().accumulator().accept(t.v2(),next));
 		};
@@ -620,7 +622,7 @@ public class StreamUtils{
 	}
 
 	/**
-	 * Generic zip function. E.g. Zipping a Stream and an Optional
+	 * Generic zip function. E.g. Zipping a Stream and a Sequence
 	 * 
 	 * <pre>
 	 * {@code 
@@ -639,11 +641,11 @@ public class StreamUtils{
 	 * @param zipper
 	 *            Zipping function
 	 * @return Stream zipping two Monads
-	 */
-	public final static <T,S, R> Stream<R> zip(Stream<T> stream,SequenceMImpl<? extends S> second,
+	*/
+	public final static <T,S, R> Stream<R> zipSequence(Stream<T> stream,Stream<? extends S> second,
 			BiFunction<? super T, ? super S, ? extends R> zipper) {
 		Iterator<T> left = stream.iterator();
-		Iterator<? extends S> right = second.stream().iterator();
+		Iterator<? extends S> right = second.iterator();
 		return StreamUtils.stream(new Iterator<R>(){
 
 			@Override
@@ -658,7 +660,7 @@ public class StreamUtils{
 			
 		});
 		
-	}
+	} 
 	/**
 	 *  Generic zip function. E.g. Zipping a Stream and an Optional
 	 * 
@@ -679,7 +681,7 @@ public class StreamUtils{
 	 */
 	public final static <T,S, R> Stream<R> zip(Stream<T> stream,AnyM<? extends S> second,
 			BiFunction<? super T, ? super S, ? extends R> zipper) {
-		return zip(stream,second.toSequence(), zipper);
+		return zipSequence(stream,second.toSequence(), zipper);
 	}
 
 	/**
@@ -1133,11 +1135,12 @@ public class StreamUtils{
 	 * @param fn
 	 * @return
 	 */
-	public final static <T,R> Stream<R> flatMapSequenceM(Stream<T> stream,Function<? super T,SequenceMImpl<? extends R>> fn) {
-		return AsAnyM.anyM(stream).asSequence().flatMap(fn).stream();
+	public final static <T,R> Stream<R> flatMapSequenceM(Stream<T> stream,Function<? super T,SequenceM<? extends R>> fn) {
+		return stream.flatMap(fn);
 	}
 	public final static <T,R> Stream<R> flatMapAnyM(Stream<T> stream,Function<? super T,AnyM<? extends R>> fn) {
-		return AsAnyM.anyM(stream).asSequence().flatMapAnyM(fn).stream();
+		Monad<Stream<T>,R> streamMonad = AsGenericMonad.<Stream<T>,T>asMonad(stream).bind(in -> fn.apply(in).unwrap());
+		return streamMonad.stream();
 	}
 	
 	/**
@@ -1153,7 +1156,7 @@ public class StreamUtils{
 	 *
 	 */
 	public final static <T,R> Stream<R> flatMapCollection(Stream<T> stream,Function<? super T,Collection<? extends R>> fn) {
-		return AsAnyM.anyM(stream).asSequence().flatMapCollection(fn).stream();
+		return stream.flatMap(fn.andThen(c->c.stream()));
 		
 	}
 	/**
@@ -1169,7 +1172,14 @@ public class StreamUtils{
 	 *
 	 */
 	public final static <T,R> Stream<R> flatMapStream(Stream<T> stream,Function<? super T,BaseStream<? extends R,?>> fn) {
-		return AsAnyM.anyM(stream).asSequence().flatMapStream(fn).stream();
+		return stream.flatMap(fn.andThen(bs -> { 
+			
+			if(bs instanceof Stream) 
+				return (Stream<R>)bs;
+			else
+				return StreamUtils.stream(bs.iterator());
+			
+		}));
 	}
 	/**
 	 * cross type flatMap, removes null entries
@@ -1184,7 +1194,7 @@ public class StreamUtils{
      * </pre>
 	 */
 	public final static <T,R> Stream<R> flatMapOptional(Stream<T> stream,Function<? super T,Optional<? extends R>> fn) {
-		return AsAnyM.anyM(stream).asSequence().flatMapOptional(fn).stream();
+		return stream.flatMap( in->StreamUtils.optionalToStream(fn.apply(in)));
 		
 	}
 	
@@ -1298,137 +1308,7 @@ public class StreamUtils{
 		return AsGenericMonad.<Stream<T>,T>asMonad(stream).liftAndBind(fn).sequence();
 	}
 
-	 /**
-	   * Projects an immutable collection of this stream. Initial iteration over the collection is not thread safe 
-	   * (can't be performed by multiple threads concurrently) subsequent iterations are.
-	   *
-	   * @return An immutable collection of this stream.
-	   */
-	  public static final <A> Collection<A> toLazyCollection(Stream<A> stream) {
-		  	return toLazyCollection(stream.iterator());
-	  }	
-	  public static final <A> Collection<A> toLazyCollection(Iterator<A> iterator){
-		  return toLazyCollection(iterator,false);
-	  }
-	  /**
-	   * Lazily constructs a Collection from specified Stream. Collections iterator may be safely used
-	   * concurrently by multiple threads.
-	 * @param stream
-	 * @return
-	 */
-	public static final <A> Collection<A> toConcurrentLazyCollection(Stream<A> stream) {
-		  	return toConcurrentLazyCollection(stream.iterator());
-	  }	
-	  public static final <A> Collection<A> toConcurrentLazyCollection(Iterator<A> iterator){
-		  return toLazyCollection(iterator,true);
-	  }
-	 private static final <A> Collection<A> toLazyCollection(Iterator<A> iterator,boolean concurrent) {
-	    return new AbstractCollection<A>() {
-	    	
-	    @Override  
-	    public boolean equals(Object o){
-	    	  if(o==null)
-	    		  return false;
-	    	  if(! (o instanceof Collection))
-	    		  return false;
-	    	  Collection<A> c = (Collection)o;
-	    	  Iterator<A> it1 = iterator();
-	    	  Iterator<A> it2 = c.iterator();
-	    	  while(it1.hasNext()){
-	    		  if(!it2.hasNext())
-	    			  return false;
-	    		  if(!Objects.equals(it1.next(),it2.next()))
-	    			  return false;
-	    	  }
-	    	  if(it2.hasNext())
-	    		  return false;
-	    	  return true;
-	      }
-	      @Override  
-	      public int hashCode(){
-	    	  Iterator<A> it1 = iterator();
-	    	  List<A> arrayList= new ArrayList<>();
-	    	  while(it1.hasNext()){
-	    		  arrayList.add(it1.next());
-	    	  }
-	    	  return Objects.hashCode(arrayList.toArray());
-	      }
-	      List<A> data =new ArrayList<>();
-	     
-	      volatile boolean complete=false;
-	      
-	      Object lock = new Object();
-	      ReentrantLock rlock = new ReentrantLock();
-	      public Iterator<A> iterator() {
-	    	  if(complete)
-	    		  return data.iterator();
-	    	  return new Iterator<A>(){
-	    		int current = -1;
-				@Override
-				public boolean hasNext() {
-					
-					if(concurrent){
-						
-						rlock.lock();
-					}
-					try{
-						
-						if(current==data.size()-1 && !complete){
-							boolean result = iterator.hasNext();
-							complete = !result;
-							
-							return result;
-						}
-						if(current+1<data.size()){
-							
-							return true;
-						}
-						return false;
-					}finally{
-						if(concurrent)
-							rlock.unlock();
-					}
-				}
-
-					@Override
-					public A next() {
-						
-						if (concurrent) {
-
-							rlock.lock();
-						}
-						try {
-							if (current < data.size() && !complete) {
-								if(iterator.hasNext())
-									data.add(iterator.next());
-
-								return data.get(++current);
-							}
-							current++;	
-							return data.get(current);
-						} finally {
-							
-							if (concurrent)
-								rlock.unlock();
-						}
-
-					}
-
-				};
-	        
-	      }
-
-	      public int size() {
-	    	  if(complete)
-	    		  return data.size();
-	    	  Iterator it = iterator();
-	    	  while(it.hasNext())
-	    		  it.next();
-	    	  
-	    	  return data.size();
-	      }
-	    };
-	  }
+	
 	 public static final <A> Tuple2<Iterator<A>,Iterator<A>> toBufferingDuplicator(Iterator<A> iterator) {
 		 return toBufferingDuplicator(iterator,Long.MAX_VALUE);
 	 }
@@ -1552,4 +1432,34 @@ public class StreamUtils{
 			this.total = total;
 		}
 	 }
+	 
+	 
+	 
+	 
+	 
+	 /**
+	   * Projects an immutable collection of this stream. Initial iteration over the collection is not thread safe 
+	   * (can't be performed by multiple threads concurrently) subsequent iterations are.
+	   *
+	   * @return An immutable collection of this stream.
+	   */
+	  public static final <A> Collection<A> toLazyCollection(Stream<A> stream) {
+		  return SeqUtils.toLazyCollection(stream.iterator());
+	  }	
+	  public static final <A> Collection<A> toLazyCollection(Iterator<A> iterator){
+		   return SeqUtils.toLazyCollection(iterator);
+	  }
+	  /**
+	   * Lazily constructs a Collection from specified Stream. Collections iterator may be safely used
+	   * concurrently by multiple threads.
+	 * @param stream
+	 * @return
+	 */
+	public static final <A> Collection<A> toConcurrentLazyCollection(Stream<A> stream) {
+		  return SeqUtils.toConcurrentLazyCollection(stream.iterator());
+	  }	
+	  public static final <A> Collection<A> toConcurrentLazyCollection(Iterator<A> iterator){
+		  return SeqUtils.toConcurrentLazyCollection(iterator);
+	  }
+	
 }

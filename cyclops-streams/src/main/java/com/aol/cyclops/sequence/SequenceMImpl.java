@@ -482,9 +482,9 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 *            Zipping function
 	 * @return Stream zipping two Monads
 	 */
-	public final <S, R> SequenceM<R> zip(SequenceM<? extends S> second,
+	public final <S, R> SequenceM<R> zipSequence(SequenceM<? extends S> second,
 			BiFunction<? super T, ? super S, ? extends R> zipper) {
-		return StreamUtils.sequenceM(StreamUtils.zip(monad,second, zipper));
+		return StreamUtils.sequenceM(StreamUtils.zipSequence(monad,second, zipper));
 		
 	}
 	/**
@@ -1288,8 +1288,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return new stage in Sequence with flatMap operation to be lazily applied
 	 */
 	public final <R> SequenceM<R> flatMap(Function<? super T,? extends Stream<? extends R>> fn) {
-		
-		return AsGenericMonad.<Stream<T>,T>asStreamUtils.sequenceM(monad).bind(in -> fn.apply(in)).sequence();
+		return StreamUtils.sequenceM(monad.flatMap(fn));
 	}
 	/**
 	 * Allows flatMap return type to be any Monad type
@@ -1304,7 +1303,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return new stage in Sequence with flatMap operation to be lazily applied
 	 */
 	public final <R> SequenceM<R> flatMapAnyM(Function<? super T,AnyM<? extends R>> fn) {
-		return AsGenericMonad.<Stream<T>,T>asStreamUtils.sequenceM(monad).bind(in -> fn.apply(in).unwrap()).sequence();
+		return StreamUtils.sequenceM(StreamUtils.flatMapAnyM(monad,fn));
 	}
 	/**
 	 * Convenience method & performance optimisation
@@ -1331,7 +1330,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return
 	 */
 	public final <R> SequenceM<R> flatMapCollection(Function<? super T,Collection<? extends R>> fn) {
-		return new SequenceMImpl<>(monad.flatMap( in->fn.apply(in).stream()));
+		return StreamUtils.sequenceM(StreamUtils.flatMapCollection(monad,fn));
 		
 	}
 	/**
@@ -1348,7 +1347,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return new stage in Sequence with flatMap operation to be lazily applied
 	*/
 	public final <R> SequenceM<R> flatMapStream(Function<? super T,BaseStream<? extends R,?>> fn) {
-		return new SequenceMImpl<>(monad.flatMap( in->StreamUtils.stream(fn.apply(in).iterator())));
+		return StreamUtils.sequenceM(StreamUtils.flatMapStream(monad,fn));
 
 	}
 	/**
@@ -1364,7 +1363,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return
 	 */
 	public final <R> SequenceM<R> flatMapOptional(Function<? super T,Optional<? extends R>> fn) {
-		return new SequenceMImpl<>(monad.flatMap( in->StreamUtils.optionalToStream(fn.apply(in))));
+		return StreamUtils.sequenceM(StreamUtils.flatMapOptional(monad,fn));
 	
 	}
 	/**
@@ -1383,7 +1382,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return
 	 */
 	public final <R> SequenceM<R> flatMapCompletableFuture(Function<? super T,CompletableFuture<? extends R>> fn) {
-		return StreamUtils.sequenceM(StreamUtils.flatMapCompletableFuture(monad, fn));
+		return StreamUtils.sequenceM(StreamUtils.flatMapCompletableFuture(monad,fn));
 	}
 	
 	

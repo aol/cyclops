@@ -136,7 +136,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,Functor<T>, Filt
 	 * @param fn flatMap function
 	 * @return flatMapped monad
 	 */
-	default <R> Monad<MONAD,T> bind(Function<? super T,? extends R> fn){
+	default <R> Monad<MONAD,R> bind(Function<? super T,?> fn){
 		return withMonad((MONAD)new ComprehenderSelector().selectComprehender(
 				unwrap())
 				.executeflatMap(unwrap(), fn));
