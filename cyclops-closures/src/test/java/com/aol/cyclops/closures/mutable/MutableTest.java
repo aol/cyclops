@@ -1,17 +1,14 @@
-package com.aol.cyclops.lambda.utils;
+package com.aol.cyclops.closures.mutable;
 
-import static com.aol.cyclops.lambda.utils.Lambda.l2;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
-import java.util.function.BiFunction;
+import java.util.function.*;
 import java.util.stream.Stream;
 
 import org.junit.Test;
-
-import com.aol.cyclops.closures.mutable.Mutable;
 public class MutableTest {
 
 	@Test
@@ -26,7 +23,8 @@ public class MutableTest {
 	public void inClosure(){
 		Mutable<Integer> myInt = new Mutable<>(0);
 		
-		l2((Integer i)-> (Integer j)-> myInt.set(i*j)).apply(10).apply(20);
+	  Function<Integer,Function<Integer,Mutable<Integer>>> fn = ((Integer i)-> (Integer j)-> myInt.set(i*j));
+	  fn.apply(10).apply(20);
 		
 		assertThat(myInt.get(),
 				is(200));

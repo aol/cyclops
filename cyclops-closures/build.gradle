@@ -47,13 +47,13 @@ test {
 
 modifyPom {
 	project {
-		name 'cyclops-functions'
-		description 'Function utils for Java 8'
+		name 'cyclops-closures'
+		description 'Closure utils for Java 8'
 		url 'http://advertising.com'
 		inceptionYear '2015'
 
 		groupId 'com.aol.cyclops'
-		artifactId 'cyclops-functions'
+		artifactId 'cyclops-closures'
 		version "$version"
 		
 		scm {

@@ -1,6 +1,7 @@
 package com.aol.cyclops.internal;
-
 import static com.aol.cyclops.internal.AsGenericMonad.asMonad;
+import static com.aol.cyclops.internal.AsGenericMonad.monad;
+
 import static com.aol.cyclops.internal.AsGenericMonad.fromStream;
 
 import java.util.Optional;

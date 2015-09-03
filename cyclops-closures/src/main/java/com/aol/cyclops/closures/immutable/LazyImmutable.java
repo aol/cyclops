@@ -29,9 +29,9 @@ import lombok.ToString;
  *
  * @param <T>
  */
-@ToString @EqualsAndHashCode
+@ToString
 public class LazyImmutable<T> implements Supplier<T>{
-	private final Object UNSET = new Object();
+	private final static Object UNSET = new Object();
 	private AtomicReference value = new AtomicReference<>(UNSET);
 	private volatile boolean set=false;
 	

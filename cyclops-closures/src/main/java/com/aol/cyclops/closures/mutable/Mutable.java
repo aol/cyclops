@@ -36,7 +36,7 @@ import lombok.ToString;
 @ToString @EqualsAndHashCode
 public class Mutable<T> implements Supplier<T>{
 
-	private volatile T var;
+	private T var;
 	
 	/**
 	 * Create a Mutable variable, which can be mutated inside a Closure 

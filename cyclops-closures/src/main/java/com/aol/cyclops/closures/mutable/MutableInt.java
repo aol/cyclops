@@ -36,14 +36,14 @@ import lombok.ToString;
 @ToString @EqualsAndHashCode
 public class MutableInt implements IntSupplier{
 
-	private volatile int var;
+	private int var;
 	
 	/**
 	 * Create a Mutable variable, which can be mutated inside a Closure 
 	 * 
 	 * e.g.
 	 * <pre>{@code
-	 *   Mutable<Integer> num = Mutable.of(20);
+	 *   MutableInt num = MutableInt.of(20);
 	 *   
 	 *   Stream.of(1,2,3,4).map(i->i*10).peek(i-> num.mutate(n->n+i)).foreach(System.out::println);
 	 *   

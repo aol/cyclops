@@ -36,7 +36,7 @@ import lombok.ToString;
 @ToString @EqualsAndHashCode
 public class MutableDouble implements DoubleSupplier{
 
-	private volatile double var;
+	private double var;
 	
 	/**
 	 * Create a Mutable variable, which can be mutated inside a Closure 

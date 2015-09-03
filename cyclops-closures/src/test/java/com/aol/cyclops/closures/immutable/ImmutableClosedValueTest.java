@@ -1,20 +1,18 @@
-package com.aol.cyclops.lambda.utils;
+package com.aol.cyclops.closures.immutable;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import lombok.val;
 
 import org.junit.Test;
-
-import com.aol.cyclops.closures.immutable.LazyImmutable;
-import com.aol.cyclops.closures.immutable.LazyImmutableSetMoreThanOnceException;
 public class ImmutableClosedValueTest {
 
 	@Test
@@ -29,24 +27,33 @@ public class ImmutableClosedValueTest {
 		LazyImmutable<Integer> value = new LazyImmutable<>();
 		Supplier s= () -> value.setOnce(10);
 		value.setOnce(20); //first time set
-		try{
-			s.get();
-		}catch(LazyImmutableSetMoreThanOnceException e){
-			
-		}
+		
+		s.get();
+		
 		
 		assertThat(value.get(),is(20));
 	}
 
-	@Test(expected=LazyImmutableSetMoreThanOnceException.class)
-	public void testSetOnce2AttemptsException() {
+	@Test
+	public void race() throws InterruptedException{
+		for(int i=0;i<1_000;i++){
 		LazyImmutable<Integer> value = new LazyImmutable<>();
-		Supplier s= () -> value.setOnce(10);
-		value.setOnce(20); //first time set
-		s.get();
-		
-		fail("Exception expected");
-		
+			CountDownLatch init = new CountDownLatch(1);
+			CountDownLatch finished = new CountDownLatch(1);
+			CompletableFuture<Integer> readThread = new CompletableFuture<Integer>();
+			Thread t = new Thread ( ()->{
+				init.countDown();
+				value.setOnce(20);
+				readThread.complete(value.get());
+				finished.countDown();
+			});
+			t.start();
+			init.await();
+			value.setOnce(10);
+			int readLocal = value.get();
+			finished.await();
+			assertEquals(readLocal,(int)readThread.join());
+		}
 	}
 
 	@Test
@@ -72,7 +79,7 @@ public class ImmutableClosedValueTest {
 		value.setOnce(10);
 		val value2 = new LazyImmutable<Integer>();
 		value2.setOnce(10);
-		assertThat(value,equalTo(value2));
+		assertThat(value.get(),equalTo(value2.get()));
 	}
 	@Test
 	public void testHashcode(){
@@ -80,7 +87,7 @@ public class ImmutableClosedValueTest {
 		value.setOnce(10);
 		val value2 = new LazyImmutable<Integer>();
 		value2.setOnce(10);
-		assertThat(value.hashCode(),equalTo(value2.hashCode()));
+		assertThat(value.get().hashCode(),equalTo(value2.get().hashCode()));
 	}
 	@Test
 	public void testHashcodeFalse(){
@@ -121,7 +128,7 @@ public class ImmutableClosedValueTest {
 	public void testLeftIdentity(){
 		int a = 10;
 		Function<Integer,LazyImmutable<Integer> >f = i->LazyImmutable.of(i+10);
-		assertThat(LazyImmutable.of(a).flatMap(f), equalTo( f.apply(10)));
+		assertThat(LazyImmutable.of(a).flatMap(f).get(), equalTo( f.apply(10).get()));
 		
 	}
 	@Test
@@ -129,7 +136,7 @@ public class ImmutableClosedValueTest {
 		int a = 10;
 		val m = LazyImmutable.of(a);
 		
-		assertThat(m.flatMap(LazyImmutable::of), equalTo( m));
+		assertThat(m.flatMap(LazyImmutable::of).get(), equalTo( m.get()));
 		
 	}
 	@Test
@@ -138,7 +145,7 @@ public class ImmutableClosedValueTest {
 		val m = LazyImmutable.of(a);
 		Function<Integer,LazyImmutable<Integer> >f = i->LazyImmutable.of(i+10);
 		Function<Integer,LazyImmutable<Integer> >g = i->LazyImmutable.of(i*10);
-		assertThat(m.flatMap(f).flatMap(g), equalTo( m.flatMap(x -> f.apply(x).flatMap(g))));
+		assertThat(m.flatMap(f).flatMap(g).get(), equalTo( m.flatMap(x -> f.apply(x).flatMap(g)).get()));
 	}
 	
 	@Test

@@ -36,7 +36,7 @@ import lombok.ToString;
 @ToString @EqualsAndHashCode
 public class MutableLong implements LongSupplier{
 
-	private volatile long var;
+	private long var;
 	
 	/**
 	 * Create a Mutable variable, which can be mutated inside a Closure 
