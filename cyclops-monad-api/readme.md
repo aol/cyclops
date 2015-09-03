@@ -11,7 +11,7 @@ Works by either using a registered 'Comprehender' that handles the actual method
 
 # AnyM
 
-## Examples
+## Operators
 
 * aggregate
 * applyM
@@ -23,6 +23,20 @@ Works by either using a registered 'Comprehender' that handles the actual method
 * reduceM
 * simpleFilter
 
+
+## Examples
+
+
+Wrap a Stream inside an AnyM, and a Optional inside another, and aggregate their values
+
+```java
+List<Integer> result = anyM(Stream.of(1,2,3,4))
+								.aggregate(anyM(Optional.of(5)))
+								.asSequence()
+								.toList();
+		
+assertThat(result,equalTo(Arrays.asList(1,2,3,4,5)));
+```
 # AsAnyM / AsAnyMList: factory methods
 
 # AnyMonadFunctions
@@ -45,6 +59,10 @@ Works by either using a registered 'Comprehender' that handles the actual method
 
 cyclops-invokedynamic
 cyclops-sequence-api
+
+## Recommended in conjection with
+
+cyclops-streams
 
 # Getting cyclops-monad-api
 

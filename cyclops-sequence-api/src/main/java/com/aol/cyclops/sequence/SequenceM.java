@@ -1,5 +1,9 @@
 package com.aol.cyclops.sequence;
 
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.naturalOrder;
+import static org.jooq.lambda.tuple.Tuple.tuple;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
@@ -10,12 +14,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -222,7 +229,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>{
 	 *
 	 * </pre>
 	 */
-	<X extends SequenceM<T>> Tuple2<X,X> partitionSequence(Predicate<T> splitter);
+	Tuple2<SequenceM<T>,SequenceM<T>> partitionSequence(Predicate<T> splitter);
 	
 	
 	
@@ -1438,13 +1445,13 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>{
 	 * @return newly conjoined SequenceM
 	 */
 	SequenceM<T> insertStreamAt(int pos, Stream<T> stream);
-	FutureOperations futureOperations(Executor exec);
+	FutureOperations<T> futureOperations(Executor exec);
 	
-	boolean endsWith();
+	boolean endsWith(Iterable<T> iterable);
 //	window(Predicate p);
 
 //	HotStream hotStream(Executor e,Supplier<Adapter<T>> s);
-	HotStream hotStream(Executor e);
+	HotStream<T> hotStream(Executor e);
 
 	T firstValue();
 	
@@ -1532,5 +1539,121 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>{
 	public static <T> SequenceM<T> fromIterable(Iterable<T> iterable){
 		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(iterable.spliterator(),false));
 	}
+	
+	
+	<U> Seq<Tuple2<T, U>> crossJoin(Stream<U> other) ;
+	<U> Seq<Tuple2<T, U>> innerJoin(Stream<U> other, BiPredicate<T, U> predicate);
+	<U> Seq<Tuple2<T, U>> leftOuterJoin(Stream<U> other, BiPredicate<T, U> predicate);
+	 <U> Seq<Tuple2<T, U>> rightOuterJoin(Stream<U> other, BiPredicate<T, U> predicate);
+	 Seq<T> onEmpty(T value);
+	 Seq<T> onEmptyGet(Supplier<T> supplier);
+	 <X extends Throwable> Seq<T> onEmptyThrow(Supplier<X> supplier);
+	 Seq<T> concat(Stream<T> other);
+	 Seq<T> concat(T other);
+	    /**
+	     * Concatenate two streams.
+	     * <p>
+	     * <code><pre>
+	     * // (1, 2, 3, 4, 5, 6)
+	     * Seq.of(1, 2, 3).concat(4, 5, 6)
+	     * </pre></code>
+	     *
+	     * @see #concat(Stream[])
+	     */
+	   
+	   Seq<T> concat(T... other);
+
+	    
+	    /**
+	     * Get a stream of distinct keys.
+	     * <p>
+	     * <code><pre>
+	     * // (1, 2, 3)
+	     * Seq.of(1, 1, 2, -2, 3).distinct(Math::abs)
+	     * </pre></code>
+	     */
+	    default <U> Seq<T> distinct(Function<? super T, ? extends U> keyExtractor);
+
+	    /**
+	     * Zip two streams into one.
+	     * <p>
+	     * <code><pre>
+	     * // (tuple(1, "a"), tuple(2, "b"), tuple(3, "c"))
+	     * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"))
+	     * </pre></code>
+	     *
+	     * @see #zip(Stream, Stream)
+	     */
+	    <U> Seq<Tuple2<T, U>> zip(Seq<U> other) ;
+	    /**
+	     * Zip two streams into one using a {@link BiFunction} to produce resulting values.
+	     * <p>
+	     * <code><pre>
+	     * // ("1:a", "2:b", "3:c")
+	     * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"), (i, s) -> i + ":" + s)
+	     * </pre></code>
+	     *
+	     * @see #zip(Seq, BiFunction)
+	     */
+	    <U, R> Seq<R> zip(Seq<U> other, BiFunction<T, U, R> zipper);
+
+	 
+	    /**
+	     * Fold a Stream to the left.
+	     * <p>
+	     * <code><pre>
+	     * // "abc"
+	     * Seq.of("a", "b", "c").foldLeft("", (u, t) -> u + t)
+	     * </pre></code>
+	     */
+	    <U> U foldLeft(U seed, BiFunction<U, ? super T, U> function) ;
+
+	    /**
+	     * Fold a Stream to the right.
+	     * <p>
+	     * <code><pre>
+	     * // "cba"
+	     * Seq.of("a", "b", "c").foldRight("", (t, u) -> u + t)
+	     * </pre></code>
+	     */
+	    <U> U foldRight(U seed, BiFunction<? super T, U, U> function);
+
+	   
+
+	    
+
+	    /**
+	     * Shuffle a stream using specified source of randomness
+	     * <p>
+	     * <code><pre>
+	     * // e.g. (2, 3, 1)
+	     * Seq.of(1, 2, 3).shuffle(new Random())
+	     * </pre></code>
+	     */
+	    Seq<T> shuffle(Random random);
+
+	    
+	    
+	    /**
+	     * Returns a limited interval from a given Stream.
+	     * <p>
+	     * <code><pre>
+	     * // (4, 5)
+	     * Seq.of(1, 2, 3, 4, 5, 6).slice(3, 5)
+	     * </pre></code>
+	     *
+	     * @see #slice(Stream, long, long)
+	     */
+	    Seq<T> slice(long from, long to);
+	    
+
+
+	    
+	    /**
+	     * Sort by the results of function.
+	     */
+	    <U extends Comparable<? super U>> Seq<T> sorted(Function<? super T, ? extends U> function);
+	 
+	 
 	
 }

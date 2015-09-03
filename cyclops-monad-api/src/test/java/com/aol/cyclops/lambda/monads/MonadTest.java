@@ -79,7 +79,7 @@ public class MonadTest {
     @Test
     public void satisfiesLaw3Associativity() {
     	assertThat(monadicValue.monadFlatMap(f).monadFlatMap(g)
-            ,equalTo(monadicValue.monadFlatMap( input ->f.apply(input).monadFlatMap(g))));
+            ,equalTo((Monad)monadicValue.monadFlatMap( input ->f.apply(input).monadFlatMap(g))));
     }
 	
 	@Test
@@ -331,7 +331,7 @@ public class MonadTest {
 	
 	@Test
 	public void testApplyM(){
-	 AnyM<Integer> applied =fromStream(Stream.of(1,2,3)).applyM(fromStream(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2))).anyM();
+	 AnyM<Integer> applied =fromStream(Stream.of(1,2,3)).applyM(monad(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2))).anyM();
 	
 	 assertThat(applied.toSequence().toList(),equalTo(Arrays.asList(2, 2, 3, 4, 4, 6)));
 	 
@@ -361,7 +361,7 @@ public class MonadTest {
 
 	@Test
 	public void testSimpleFilter(){
-	 AnyM<Stream<Integer>> applied =fromStream(Stream.of(1,2,3)).simpleFilter(fromStream(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3))).anyM();
+	 AnyM<Stream<Integer>> applied =fromStream(Stream.of(1,2,3)).simpleFilter(monad(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3))).anyM();
 	
 	// System.out.println(applied.toList());
 	 assertThat(applied.map(s->s.collect(Collectors.toList())).asSequence().toList(),equalTo(Arrays.asList(Arrays.asList(1), Arrays.asList(2),Arrays.asList())));
@@ -369,7 +369,7 @@ public class MonadTest {
 	}
 	@Test
 	public void testSimpleFilterOptional(){
-	 AnyM<Optional<Integer>> applied =monad(Optional.of(2)).simpleFilter(fromStream(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3))).anyM();
+	 AnyM<Optional<Integer>> applied =monad(Optional.of(2)).simpleFilter(monad(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3))).anyM();
 	
 	 assertThat(applied.toSequence().toList(),equalTo(Arrays.asList(2)));
 	

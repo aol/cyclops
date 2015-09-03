@@ -3,11 +3,13 @@ package com.aol.cyclops.sequence.streamable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.invokedynamic.InvokeDynamic;
 import com.aol.cyclops.objects.AsDecomposable;
+import com.aol.cyclops.sequence.ReversedIterator;
 import com.aol.cyclops.sequence.SeqUtils;
 import com.aol.cyclops.sequence.SequenceM;
 
@@ -26,13 +28,25 @@ public interface Streamable<T> extends Iterable<T>{
 	default  Object getStreamable(){
 		return this;
 	}
-	
+	default SequenceM<T> reveresedSequenceM(){
+		return SequenceM.fromStream(reveresedStream());
+	}
 	/**
 	 * @return SequenceM from this Streamable
 	 */
 	default SequenceM<T> sequenceM(){
-		return null;
-	//	return SequenceM.fromStream(stream());
+		return SequenceM.fromStream(stream());
+	}
+	default Stream<T> reveresedStream(){
+		Object streamable = getStreamable();
+		if(streamable instanceof List){
+			return StreamSupport.stream(new ReversedIterator((List)streamable).spliterator(),false);
+		}
+		if(streamable instanceof Object[]){
+			List arrayList = Arrays.asList((Object[])streamable);
+			return StreamSupport.stream(new ReversedIterator(arrayList).spliterator(),false);
+		}
+		return SeqUtils.reverse(stream());
 	}
 	/**
 	 * @return New Stream
@@ -68,35 +82,7 @@ public interface Streamable<T> extends Iterable<T>{
 	public static <T> Streamable<T> fromIterable(Iterable<T> iterable){
 		return AsStreamable.fromIterable(iterable);
 	}
-	/**
-	 * Construct a Streamable that returns an efficient Stream with the values reversed.
-	 * 
-	 * @param values to construct Stream from (reversed)
-	 * @return (reversed) Streamable
-	 */
-	public static<T> Streamable<T> reveresedOf(T... values){
-		
-		return new Streamable<T>(){
-			public Stream<T> stream(){
-				return SeqUtils.reversedStream(Arrays.asList(values));
-			}
-		};
-	}
-	/**
-	 * Construct a Streamable that returns an efficient Stream with the values in the 
-	 * supplied list reversed
-	 * 
-	 * @param values to construct a Stream from (reversed)
-	 * @return (reversed) Streamable
-	 */
-	public static<T> Streamable<T> reveresedOfList(ArrayList<T> values){
-		
-		return new Streamable<T>(){
-			public Stream<T> stream(){
-				return SeqUtils.reversedStream(values);
-			}
-		};
-	}
+
 	
 	
 	/**
@@ -110,6 +96,9 @@ public interface Streamable<T> extends Iterable<T>{
 		return new Streamable<T>(){
 			public Stream<T> stream(){
 				return Stream.of(values);
+			}
+			public Object getStreamable(){
+				return values;
 			}
 		};
 	}
