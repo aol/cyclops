@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -1033,6 +1034,48 @@ public class StreamUtils{
 	 * <pre>
 	 * {@code 
 	 * List<List<Integer>> list = StreamUtils.sliding(Stream.of(1,2,3,4,5,6)
+												,2,1)
+									.collect(Collectors.toList());
+		
+	
+		assertThat(list.get(0),hasItems(1,2));
+		assertThat(list.get(1),hasItems(2,3));
+	 * }
+	 * </pre>
+	 * @param windowSize
+	 *            Size of sliding window
+	 * @return Stream with sliding view over monad
+	 */
+	public final static <T> Stream<Streamable<T>> window(Stream<T> stream,int windowSize,int increment) {
+		Iterator<T> it = stream.iterator();
+		Mutable<PStack<T>> list = Mutable.of(ConsPStack.empty());
+		return StreamUtils.stream(new Iterator<Streamable<T>>(){
+			
+			@Override
+			public boolean hasNext() {
+				return it.hasNext();
+			}
+
+			@Override
+			public Streamable<T> next() {
+				for(int i=0;i<increment && list.get().size()>0;i++)
+					 list.mutate(var -> var.minus(0));
+				for (int i = 0; list.get().size() < windowSize && it.hasNext(); i++) {
+					if(it.hasNext()){
+						list.mutate(var -> var.plus(Math.max(0,var.size()),it.next()));
+					}
+					
+				}
+				return Streamable.fromIterable(list.get());
+			}
+			
+		});
+	}
+	/**
+	 * Create a sliding view over this Stream
+	 * <pre>
+	 * {@code 
+	 * List<List<Integer>> list = StreamUtils.sliding(Stream.of(1,2,3,4,5,6)
 												,2)
 									.collect(Collectors.toList());
 		
@@ -1738,6 +1781,30 @@ public class StreamUtils{
 		  return SeqUtils.toConcurrentLazyCollection(iterator);
 	  }
 	
+	  public final static <T> Stream<Streamable<T>> windowByTime(Stream<T> stream, long time, TimeUnit t){
+			Iterator<T> it = stream.iterator();
+			long toRun = t.toNanos(time);
+			return StreamUtils.stream(new Iterator<Streamable<T>>(){
+				@Override
+				public boolean hasNext() {
+					return it.hasNext();
+				}
+				@Override
+				public Streamable<T> next() {
+					
+					List<T> list = new ArrayList<>();
+					while(list.size()==0 && it.hasNext()){
+						long start = System.nanoTime();
+						while(System.nanoTime()-start> toRun && it.hasNext()){
+							list.add(it.next());
+						
+						}
+					}
+					return Streamable.fromIterable(list);
+				}
+				
+			});
+	  }
 	  public final static <T> Stream<List<T>> batchByTime(Stream<T> stream, long time, TimeUnit t){
 			Iterator<T> it = stream.iterator();
 			long toRun = t.toNanos(time);
@@ -1756,7 +1823,87 @@ public class StreamUtils{
 					return list;
 				}
 				
+			}).filter(l->l.size()>0);
+	  }
+	  private static final Object UNSET = new Object();
+	  public final static <T> Stream<Streamable<T>> windowStatefullyWhile(Stream<T> stream,BiPredicate<Streamable<T>,T> predicate){
+			Iterator<T> it = stream.iterator();
+			return StreamUtils.stream(new Iterator<Streamable<T>>(){
+				Streamable<T> last= Streamable.empty();
+				T value = (T)UNSET;
+				@Override
+				public boolean hasNext() {
+					return value!=UNSET || it.hasNext();
+				}
+				@Override
+				public Streamable<T> next() {
+					
+					List<T> list = new ArrayList<>();
+					if(value!=UNSET)
+						list.add(value);
+					
+					while(list.size()==0&& it.hasNext()){
+						while(it.hasNext() && predicate.test(last,value=it.next())){
+							list.add(value);
+							value=(T)UNSET;
+						}
+					}
+					return last = Streamable.fromIterable(list);
+				}
+				
 			});
+	  }
+	  public final static <T> Stream<Streamable<T>> windowWhile(Stream<T> stream,Predicate<T> predicate){
+			Iterator<T> it = stream.iterator();
+			return StreamUtils.stream(new Iterator<Streamable<T>>(){
+				T value = (T)UNSET;
+				@Override
+				public boolean hasNext() {
+					return value!=UNSET || it.hasNext();
+				}
+				@Override
+				public Streamable<T> next() {
+					
+					List<T> list = new ArrayList<>();
+					if(value!=UNSET)
+						list.add(value);
+					T value;
+					while(list.size()==0&& it.hasNext()){
+						while(it.hasNext() && predicate.test(value=it.next())){
+							list.add(value);
+							value=(T)UNSET;
+						}
+					}
+					return Streamable.fromIterable(list);
+				}
+				
+			});
+	  }
+	  public final static <T> Stream<List<T>> batchWhile(Stream<T> stream,Predicate<T> predicate){
+			Iterator<T> it = stream.iterator();
+			return StreamUtils.stream(new Iterator<List<T>>(){
+				T value = (T)UNSET;
+				@Override
+				public boolean hasNext() {
+					return value!=UNSET || it.hasNext();
+				}
+				@Override
+				public List<T> next() {
+					
+					List<T> list = new ArrayList<>();
+					if(value!=UNSET)
+						list.add(value);
+					while(it.hasNext() && predicate.test(value=it.next())){
+						list.add(value);
+						value=(T)UNSET;
+					}
+					return list;
+				}
+				
+			}).filter(l->l.size()>0);
+	  }
+	  public final static <T> Stream<List<T>> batchUntil(Stream<T> stream,Predicate<T> predicate){
+			return batchWhile(stream,predicate.negate());
 	  }
 	  public final static <T> Stream<List<T>> batchByTimeAndSize(Stream<T> stream,int size, long time, TimeUnit t){
 			Iterator<T> it = stream.iterator();
@@ -1775,6 +1922,30 @@ public class StreamUtils{
 						list.add(it.next());
 					}
 					return list;
+				}
+				
+			}).filter(l->l.size()>0);
+	  }
+	  public final static <T> Stream<Streamable<T>> windowByTimeAndSize(Stream<T> stream,int size, long time, TimeUnit t){
+			Iterator<T> it = stream.iterator();
+			long toRun = t.toNanos(time);
+			return StreamUtils.stream(new Iterator<Streamable<T>>(){
+				@Override
+				public boolean hasNext() {
+					return it.hasNext();
+				}
+				@Override
+				public Streamable<T> next() {
+					
+					
+					List<T> list = new ArrayList<>();
+					while(list.size()==0&& it.hasNext()){
+						long start = System.nanoTime();
+						while(System.nanoTime()-start> toRun && it.hasNext() && list.size()<size){
+							list.add(it.next());
+						}
+					}
+					return Streamable.fromIterable(list);
 				}
 				
 			});

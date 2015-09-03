@@ -29,6 +29,7 @@ import java.util.function.Supplier;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
+import java.util.function.UnaryOperator;
 import java.util.stream.BaseStream;
 import java.util.stream.Collector;
 import java.util.stream.DoubleStream;
@@ -1448,7 +1449,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	FutureOperations<T> futureOperations(Executor exec);
 	
 	boolean endsWith(Iterable<T> iterable);
-//	window(Predicate p);
+	window(Predicate p);
 
 	HotStream<T> hotStream(Executor e);
 
@@ -1550,6 +1551,20 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	public static <T> SequenceM<T> fromIterable(Iterable<T> iterable){
 		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(iterable.spliterator(),false),null);
 	}
+    /**
+     * @see Stream#iterate(Object, UnaryOperator)
+     */
+    static <T> SequenceM<T> iterate(final T seed, final UnaryOperator<T> f) {
+        return SequenceMFactory.instance.sequenceM(Stream.iterate(seed, f),null);
+    }
+
+   
+    /**
+     * @see Stream#generate(Supplier)
+     */
+    static <T> SequenceM<T> generate(Supplier<T> s) {
+        return SequenceMFactory.instance.sequenceM(Stream.generate(s),null);
+    }
 	/**
 	 * Unzip a zipped Stream 
 	 * 

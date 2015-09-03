@@ -102,6 +102,9 @@ public interface Streamable<T> extends Iterable<T>{
 			}
 		};
 	}
+	public static <T> Streamable<T> empty(){
+		return of();
+	}
 	
 	
 }
