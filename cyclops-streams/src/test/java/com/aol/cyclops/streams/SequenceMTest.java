@@ -1,4 +1,4 @@
-package com.aol.cyclops.lambda.monads;
+package com.aol.cyclops.streams;
 
 import static com.aol.cyclops.lambda.api.AsAnyM.anyMIterable;
 import static com.aol.cyclops.lambda.monads.AnyMonads.*;

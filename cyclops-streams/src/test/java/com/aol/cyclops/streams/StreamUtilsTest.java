@@ -1,4 +1,4 @@
-package com.aol.cyclops.lambda.utils;
+package com.aol.cyclops.streams;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;

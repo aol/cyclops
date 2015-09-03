@@ -1,4 +1,4 @@
-package com.aol.cyclops.lambda.utils;
+package com.aol.cyclops.streams;
 
 import static com.aol.cyclops.lambda.api.AsAnyM.*;
 import static org.hamcrest.Matchers.equalTo;

@@ -47,7 +47,7 @@ test {
 
 modifyPom {
 	project {
-		name 'cyclops-functions'
+		name 'cyclops-invokedynamic'
 		description 'Function utils for Java 8'
 		url 'http://advertising.com'
 		inceptionYear '2015'

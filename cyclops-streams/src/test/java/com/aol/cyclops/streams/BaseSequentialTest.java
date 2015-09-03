@@ -1,4 +1,4 @@
-package com.aol.cyclops.lambda.monads;
+package com.aol.cyclops.streams;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;

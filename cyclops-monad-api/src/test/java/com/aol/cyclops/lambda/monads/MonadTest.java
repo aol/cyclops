@@ -1,28 +1,22 @@
 package com.aol.cyclops.lambda.monads;
-
-import static com.aol.cyclops.internal.AsGenericMonad.asMonad;
 import static com.aol.cyclops.internal.AsGenericMonad.fromStream;
-import static com.aol.cyclops.lambda.api.AsAnyM.*;
+import static com.aol.cyclops.internal.AsGenericMonad.monad;
+import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
 import static com.aol.cyclops.lambda.api.AsAnyMList.collectionToAnyMList;
 import static com.aol.cyclops.lambda.api.AsAnyMList.completableFutureToAnyMList;
 import static com.aol.cyclops.lambda.api.AsAnyMList.optionalToAnyMList;
 import static com.aol.cyclops.lambda.api.AsAnyMList.streamToAnyMList;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItems;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.Serializable;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -35,13 +29,10 @@ import org.junit.Test;
 
 import com.aol.cyclops.internal.AsGenericMonad;
 import com.aol.cyclops.internal.Monad;
-import com.aol.cyclops.lambda.api.AsAnyMList;
-import com.aol.cyclops.lambda.api.AsAnyM;
-import com.aol.cyclops.lambda.api.Streamable;
-import com.aol.cyclops.sequence.AnyM;
+import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.Reducers;
-import com.aol.cyclops.streams.StreamUtils;
+import com.aol.cyclops.sequence.streamable.Streamable;
 
 
 public class MonadTest {

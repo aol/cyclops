@@ -1,7 +1,6 @@
 package com.aol.cyclops.lambda.monads;
 
-import static com.aol.cyclops.internal.AsGenericMonad.monad;
-import static com.aol.cyclops.lambda.api.AsAnyM.*;
+import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
 import static com.aol.cyclops.lambda.api.AsAnyMList.collectionToAnyMList;
 import static com.aol.cyclops.lambda.api.AsAnyMList.completableFutureToAnyMList;
 import static com.aol.cyclops.lambda.api.AsAnyMList.optionalToAnyMList;
@@ -29,12 +28,11 @@ import lombok.val;
 
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.api.Streamable;
-import com.aol.cyclops.sequence.AnyM;
+import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.Reducers;
-
-import fj.Function;
+import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.sequence.streamable.Streamable;
 
 
 public class AnyMTest {
@@ -64,6 +62,7 @@ public class AnyMTest {
 	
 	@Test
 	public void test() {
+	
 		  List<Integer> list = anyM(Stream.of(asList(1,3)))
 				  				.flatMap(c->anyM(c.stream()))
 				  				.asSequence()
@@ -460,7 +459,7 @@ public class AnyMTest {
     public void testCollectors() {
 		List result = anyM(Stream.of(1,2,3))
 							.asSequence()
-							.collect(Stream.of(Collectors.toList(),Collectors.summingInt(Integer::intValue),Collectors.averagingInt(Integer::intValue)));
+							.collectStream(Stream.of(Collectors.toList(),Collectors.summingInt(Integer::intValue),Collectors.averagingInt(Integer::intValue)));
 		
 		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));
 		assertThat(result.get(1),equalTo(6));

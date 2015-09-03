@@ -16,7 +16,7 @@ public class UnwrapTest {
 
 	@Test
 	public void unwrap(){
-		Stream<String> stream = anyM("hello","world").asSequence().unwrapStream();
+		Stream<String> stream = anyM("hello","world").asSequence().stream();
 		assertThat(stream.collect(Collectors.toList()),equalTo(Arrays.asList("hello","world")));
 	}
 	
