@@ -61,9 +61,17 @@ import com.aol.cyclops.sequence.spliterators.ReversableSpliterator;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.future.FutureOperationsImpl;
+import com.aol.cyclops.streams.operators.BatchByTimeAndSizeOperator;
+import com.aol.cyclops.streams.operators.BatchByTimeOperator;
+import com.aol.cyclops.streams.operators.BatchWhileOperator;
+import com.aol.cyclops.streams.operators.DebounceOperator;
 import com.aol.cyclops.streams.operators.LimitWhileOperator;
 import com.aol.cyclops.streams.operators.LimitWhileTimeOperator;
+import com.aol.cyclops.streams.operators.OnePerOperator;
 import com.aol.cyclops.streams.operators.SkipWhileTimeOperator;
+import com.aol.cyclops.streams.operators.WindowByTimeAndSizeOperator;
+import com.aol.cyclops.streams.operators.WindowStatefullyWhileOperator;
+import com.aol.cyclops.streams.operators.WindowWhileOperator;
 
 @UtilityClass 
 public class StreamUtils{
@@ -1774,207 +1782,35 @@ public class StreamUtils{
 			});
 	  }
 	  public final static <T> Stream<List<T>> batchByTime(Stream<T> stream, long time, TimeUnit t){
-			Iterator<T> it = stream.iterator();
-			long toRun = t.toNanos(time);
-			return StreamUtils.stream(new Iterator<List<T>>(){
-				long start = System.nanoTime();
-				@Override
-				public boolean hasNext() {
-					return it.hasNext();
-				}
-				@Override
-				public List<T> next() {
-					
-					List<T> list = new ArrayList<>();
-					while(System.nanoTime()-start< toRun && it.hasNext()){
-						list.add(it.next());
-					}
-					if(list.size()==0 && it.hasNext()) //time unit may be too small
-						list.add(it.next());
-					start = System.nanoTime();
-					return list;
-				}
-				
-			}).filter(l->l.size()>0);
+			return new BatchByTimeOperator<>(stream).batchByTime(time,t);
 	  }
 	  private static final Object UNSET = new Object();
 	  public final static <T> Stream<Streamable<T>> windowStatefullyWhile(Stream<T> stream,BiPredicate<Streamable<T>,T> predicate){
-			Iterator<T> it = stream.iterator();
-			return StreamUtils.stream(new Iterator<Streamable<T>>(){
-				Streamable<T> last= Streamable.empty();
-				T value = (T)UNSET;
-				@Override
-				public boolean hasNext() {
-					return value!=UNSET || it.hasNext();
-				}
-				@Override
-				public Streamable<T> next() {
-					
-					List<T> list = new ArrayList<>();
-					if(value!=UNSET)
-						list.add(value);
-					
-					while(list.size()==0&& it.hasNext()){
-						while(it.hasNext() && predicate.test(last,value=it.next())){
-							list.add(value);
-							value=(T)UNSET;
-						}
-					}
-					return last = Streamable.fromIterable(list);
-				}
-				
-			});
+			return new WindowStatefullyWhileOperator<>(stream).windowStatefullyWhile(predicate);
 	  }
 	  public final static <T> Stream<Streamable<T>> windowWhile(Stream<T> stream,Predicate<T> predicate){
-			Iterator<T> it = stream.iterator();
-			return StreamUtils.stream(new Iterator<Streamable<T>>(){
-				T value = (T)UNSET;
-				@Override
-				public boolean hasNext() {
-					return value!=UNSET || it.hasNext();
-				}
-				@Override
-				public Streamable<T> next() {
-					
-					List<T> list = new ArrayList<>();
-					if(value!=UNSET)
-						list.add(value);
-					T value;
-					while(list.size()==0&& it.hasNext()){
-						while(it.hasNext() && predicate.test(value=it.next())){
-							list.add(value);
-							value=(T)UNSET;
-						}
-					}
-					return Streamable.fromIterable(list);
-				}
-				
-			});
+			return new WindowWhileOperator<>(stream).windowWhile(predicate);
 	  }
 	  public final static <T> Stream<List<T>> batchWhile(Stream<T> stream,Predicate<T> predicate){
-			Iterator<T> it = stream.iterator();
-			return StreamUtils.stream(new Iterator<List<T>>(){
-				T value = (T)UNSET;
-				@Override
-				public boolean hasNext() {
-					return value!=UNSET || it.hasNext();
-				}
-				@Override
-				public List<T> next() {
-					
-					List<T> list = new ArrayList<>();
-					if(value!=UNSET)
-						list.add(value);
-					while(it.hasNext() && predicate.test(value=it.next())){
-						list.add(value);
-						value=(T)UNSET;
-					}
-					return list;
-				}
-				
-			}).filter(l->l.size()>0);
+			return new BatchWhileOperator<T,List<T>>(stream).batchWhile(predicate);
+	  }
+	  public final static <T, C extends Collection<T>> Stream<C> batchWhile(Stream<T> stream,Predicate<T> predicate,Supplier<C> factory){
+			return new BatchWhileOperator<T,C>(stream,factory).batchWhile(predicate);
 	  }
 	  public final static <T> Stream<List<T>> batchUntil(Stream<T> stream,Predicate<T> predicate){
 			return batchWhile(stream,predicate.negate());
 	  }
 	  public final static <T> Stream<List<T>> batchBySizeAndTime(Stream<T> stream,int size, long time, TimeUnit t){
-			Iterator<T> it = stream.iterator();
-			long toRun = t.toNanos(time);
-			return StreamUtils.stream(new Iterator<List<T>>(){
-				long start = System.nanoTime();
-				@Override
-				public boolean hasNext() {
-					return it.hasNext();
-				}
-				@Override
-				public List<T> next() {
-					
-					
-					List<T> list = new ArrayList<>();
-					while(System.nanoTime()-start< toRun && it.hasNext() && list.size()<size){
-						list.add(it.next());
-					}
-					start = System.nanoTime();
-					return list;
-				}
-				
-			}).filter(l->l.size()>0);
+			return new BatchByTimeAndSizeOperator<T>(stream).batchBySizeAndTime(size, time, t);
 	  }
 	  public final static <T> Stream<Streamable<T>> windowBySizeAndTime(Stream<T> stream,int size, long time, TimeUnit t){
-			Iterator<T> it = stream.iterator();
-			long toRun = t.toNanos(time);
-			return StreamUtils.stream(new Iterator<Streamable<T>>(){
-				long start = System.nanoTime();
-				@Override
-				public boolean hasNext() {
-					return it.hasNext();
-				}
-				@Override
-				public Streamable<T> next() {
-					
-					
-					List<T> list = new ArrayList<>();
-					while(list.size()==0&& it.hasNext()){
-						
-						while(System.nanoTime()-start< toRun && it.hasNext() && list.size()<size){
-							list.add(it.next());
-						}
-						start = System.nanoTime();
-					}
-				
-					return Streamable.fromIterable(list);
-				}
-				
-			});
+		  return new WindowByTimeAndSizeOperator<>(stream).windowBySizeAndTime(size, time, t);
 	  }
 	  public final static <T> Stream<T> debounce(Stream<T> stream, long time, TimeUnit t){
-			Iterator<T> it = stream.iterator();
-			long timeNanos = t.toNanos(time);
-			return StreamUtils.stream(new Iterator<T>(){
-				volatile long last = 0;
-				@Override
-				public boolean hasNext() {
-					return it.hasNext();
-				}
-				@Override
-				public T next() {
-					long elapsedNanos = 1;
-					T nextValue=null;
-					while(elapsedNanos>0 && it.hasNext()){
-							
-							nextValue = it.next();
-							if(last==0)
-								last= System.nanoTime();
-							elapsedNanos= timeNanos - (System.nanoTime()-last);
-					}
-					
-					
-					
-					last= System.nanoTime();
-					return nextValue;
-				}
-				
-			});
+			return new DebounceOperator<>(stream).debounce(time, t);
 	  }
 	  public final static <T> Stream<T> onePer(Stream<T> stream, long time, TimeUnit t){
-			Iterator<T> it = stream.iterator();
-			long next = t.toNanos(time);
-			return StreamUtils.stream(new Iterator<T>(){
-				volatile long last = -1;
-				@Override
-				public boolean hasNext() {
-					return it.hasNext();
-				}
-				@Override
-				public T next() {
-					T nextValue = it.next();
-					LockSupport.parkNanos(next-System.nanoTime()-last);
-					
-					last= System.nanoTime();
-					return nextValue;
-				}
-				
-			});
+			return new OnePerOperator<>(stream).onePer(time,t);
 	  }
 	  public final  static <T> Stream<T> jitter(Stream<T> stream,long jitterInNanos){
 		  Iterator<T> it = stream.iterator();

@@ -1768,6 +1768,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	SequenceM<Streamable<T>> windowByTime(long time, TimeUnit t);
 	SequenceM<List<T>> batchUntil(Predicate<T> predicate);
 	SequenceM<List<T>> batchWhile(Predicate<T> predicate);
-	
+	<C extends Collection<T>>  SequenceM<C> batchWhile(Predicate<T> predicate, Supplier<C> factory);
+	<C extends Collection<T>>  SequenceM<C> batchUntil(Predicate<T> predicate, Supplier<C> factory);
 
 }

@@ -1845,11 +1845,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	}
 
 
-	@Override
-	public List collectStream(Stream<Collector> collectors) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 
 	@Override
@@ -2000,33 +1996,12 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 				this.reversable);
 	}
 
-	
-
-	@Override
-	public <C extends Collection<T>> SequenceM<C> batchBySizeAndTime(int size,
-			long time, TimeUnit unit, Supplier<C> factory) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <C extends Collection<T>> SequenceM<C> batchByTime(long time,
-			TimeUnit unit, Supplier<C> factory) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Override
 	public SequenceM<List<T>> batchBySize(int size) {
 		return StreamUtils.sequenceM(StreamUtils.grouped(monad, size),this.reversable);
 	}
 
-	@Override
-	public <C extends Collection<T>> SequenceM<C> batchBySize(int size,
-			Supplier<C> supplier) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	@Override
 	public SequenceM<T> fixedDelay(long l, TimeUnit unit) {
@@ -2075,5 +2050,36 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	@Override
 	public SequenceM<List<T>> batchWhile(Predicate<T> predicate) {
 		return StreamUtils.sequenceM(StreamUtils.batchWhile(monad,predicate), this.reversable);
+	}
+	@Override
+	public List collectStream(Stream<Collector> collectors) {
+		return StreamUtils.collect(monad,collectors);
+	}
+	@Override
+	public<C extends Collection<T>>  SequenceM<C> batchWhile(Predicate<T> predicate, Supplier<C> factory) {
+		return StreamUtils.sequenceM(StreamUtils.batchWhile(monad,predicate,factory), this.reversable);
+	}
+	@Override
+	public<C extends Collection<T>>  SequenceM<C> batchUntil(Predicate<T> predicate, Supplier<C> factory) {
+		return StreamUtils.sequenceM(StreamUtils.batchWhile(monad,predicate.negate(),factory), this.reversable);
+	}
+	@Override
+	public <C extends Collection<T>> SequenceM<C> batchBySizeAndTime(int size,
+			long time, TimeUnit unit, Supplier<C> factory) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <C extends Collection<T>> SequenceM<C> batchByTime(long time,
+			TimeUnit unit, Supplier<C> factory) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public <C extends Collection<T>> SequenceM<C> batchBySize(int size,
+			Supplier<C> supplier) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
