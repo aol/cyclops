@@ -22,7 +22,7 @@ public class LiftAndBindStreamUtilsTest {
 	public void testLiftAndBindFile(){
 		
 		
-		List<String> result = StreamUtils.liftAndBindFile(Stream.of("input.file")
+		List<String> result = StreamUtils.flatMapFile(Stream.of("input.file")
 								
 								.map(getClass().getClassLoader()::getResource)
 								.peek(System.out::println)
@@ -36,7 +36,7 @@ public class LiftAndBindStreamUtilsTest {
 	public void testLiftAndBindURL(){
 		
 		
-		List<String> result = StreamUtils.liftAndBindURL(Stream.of("input.file")
+		List<String> result = StreamUtils.flatMapURL(Stream.of("input.file")
 								
 								,getClass().getClassLoader()::getResource)
 								.collect(Collectors.toList());
@@ -47,7 +47,7 @@ public class LiftAndBindStreamUtilsTest {
 	public void testLiftAndBindString(){
 		
 		
-		List<Character> result = StreamUtils.liftAndBindCharSequence(Stream.of("input.file"),i->"hello world")
+		List<Character> result = StreamUtils.flatMapCharSequence(Stream.of("input.file"),i->"hello world")
 									.collect(Collectors.toList());
 		
 		assertThat(result,equalTo(Arrays.asList('h','e','l','l','o',' ','w','o','r','l','d')));
@@ -56,7 +56,7 @@ public class LiftAndBindStreamUtilsTest {
 	public void testLiftAndBindBufferedReader(){
 		
 		
-		List<String> result = StreamUtils.liftAndBindBufferedReader(Stream.of("input.file")
+		List<String> result = StreamUtils.flatMapBufferedReader(Stream.of("input.file")
 								.map(getClass().getClassLoader()::getResourceAsStream)
 								.map(InputStreamReader::new)
 								,in-> new BufferedReader(in))

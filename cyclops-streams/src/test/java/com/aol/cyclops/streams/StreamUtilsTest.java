@@ -325,7 +325,7 @@ public class StreamUtilsTest {
 	@Test
 	public void grouped(){
 		
-		List<List<Integer>> list = StreamUtils.grouped(Stream.of(1,2,3,4,5,6)
+		List<List<Integer>> list = StreamUtils.batchBySize(Stream.of(1,2,3,4,5,6)
 														,3)
 													.collect(Collectors.toList());
 		

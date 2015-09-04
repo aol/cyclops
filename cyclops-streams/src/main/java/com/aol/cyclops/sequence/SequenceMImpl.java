@@ -57,24 +57,24 @@ import com.aol.cyclops.streams.StreamUtils;
 
 
 public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
-	private final Seq<T> monad;
+	private final Seq<T> stream;
 	private final Optional<ReversableSpliterator> reversable;
 	
 	public SequenceMImpl(Stream<T> stream){
-		monad = Seq.seq(stream);
+		this.stream = Seq.seq(stream);
 		this.reversable = Optional.empty();
 		
 	}
 	
 	public SequenceMImpl(Stream<T> stream,ReversableSpliterator rev){
-		monad = Seq.seq(stream);
+		this.stream = Seq.seq(stream);
 		this.reversable = Optional.of(rev);
 		
 	}
 	
 	
 	public final <R> R unwrap(){
-		return (R)monad;
+		return (R)stream;
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return Flattened / joined one level
 	 */
 	public final <T1> SequenceM<T1> flatten(){
-		return StreamUtils.flatten(monad);
+		return StreamUtils.flatten(stream);
 		
 	}
 	/**
@@ -114,7 +114,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 */
 	public final Stream<T> unwrapStream(){
 		
-		return monad;
+		return stream;
 		
 	}
 	/**
@@ -131,7 +131,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return
 	 */
 	public final Optional<List<T>> unwrapOptional(){
-		return StreamUtils.streamToOptional(monad);
+		return StreamUtils.streamToOptional(stream);
 		
 	}
 	/**
@@ -146,7 +146,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return
 	 */
 	public final CompletableFuture<List<T>> unwrapCompletableFuture(){
-		return StreamUtils.streamToCompletableFuture(monad);
+		return StreamUtils.streamToCompletableFuture(stream);
 		
 		
 	}
@@ -168,7 +168,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return Stream with values repeated
 	 */
 	public final SequenceM<T> cycle(int times) {
-		return StreamUtils.sequenceM(StreamUtils.cycle(times,AsStreamable.fromStream(monad)),reversable);
+		return StreamUtils.sequenceM(StreamUtils.cycle(times,AsStreamable.fromStream(stream)),reversable);
 	}
 	/**
 	 * Convert to a Stream with the values infinitely cycled
@@ -182,7 +182,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return Stream with values repeated
 	 */
 	public final SequenceM<T> cycle() {
-		return StreamUtils.sequenceM(StreamUtils.cycle(monad),reversable);
+		return StreamUtils.sequenceM(StreamUtils.cycle(stream),reversable);
 	}
 	/**
 	 * Duplicate a Stream, buffers intermediate values, leaders may change positions so a limit
@@ -199,7 +199,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return duplicated stream
 	 */
 	public final Tuple2<SequenceM<T>,SequenceM<T>> duplicateSequence(){
-		Tuple2<Stream<T>,Stream<T>> tuple = StreamUtils.duplicate(monad);
+		Tuple2<Stream<T>,Stream<T>> tuple = StreamUtils.duplicate(stream);
 		return tuple.map1(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())))
 			  	.map2(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())));
 	}
@@ -217,7 +217,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	@SuppressWarnings("unchecked")
 	public final Tuple3<SequenceM<T>,SequenceM<T>,SequenceM<T>> triplicate(){
 		
-		Tuple3<Stream<T>,Stream<T>,Stream<T>> tuple = StreamUtils.triplicate(monad);
+		Tuple3<Stream<T>,Stream<T>,Stream<T>> tuple = StreamUtils.triplicate(stream);
 		return tuple.map1(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())))
 					.map2(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())))
 					.map3(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())));
@@ -242,7 +242,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 */
 	@SuppressWarnings("unchecked")
 	public final Tuple4<SequenceM<T>,SequenceM<T>,SequenceM<T>,SequenceM<T>> quadruplicate(){
-		Tuple4<Stream<T>,Stream<T>,Stream<T>,Stream<T>> tuple = StreamUtils.quadruplicate(monad);
+		Tuple4<Stream<T>,Stream<T>,Stream<T>,Stream<T>> tuple = StreamUtils.quadruplicate(stream);
 		return tuple.map1(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())))
 				  	.map2(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())))
 					.map3(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())))
@@ -279,7 +279,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * </pre>
 	 */
 	public final Tuple2<SequenceM<T>,SequenceM<T>> splitAt(int where){
-		return StreamUtils.splitAt(monad, where)
+		return StreamUtils.splitAt(stream, where)
 				   .map1(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())))
 				   .map2(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())));
 		
@@ -295,7 +295,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * </pre>
 	 */
 	public final Tuple2<SequenceM<T>,SequenceM<T>> splitBy(Predicate<T> splitter){
-		return StreamUtils.splitBy(monad, splitter)
+		return StreamUtils.splitBy(stream, splitter)
 				   .map1(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())))
 				   .map2(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())));
 	}
@@ -311,7 +311,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * </pre>
 	 */
 	public final Tuple2<SequenceM<T>,SequenceM<T>> partitionSequence(Predicate<T> splitter){
-		return StreamUtils.partition(monad, splitter)
+		return StreamUtils.partition(stream, splitter)
 				 		.map1(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())))
 				 		 .map2(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())));
 	}
@@ -338,7 +338,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return Stream with reduced values repeated
 	 */
 	public final SequenceM<T> cycle(Monoid<T> m, int times) {
-		return StreamUtils.sequenceM(StreamUtils.cycle(times,Streamable.of(m.reduce(monad))),reversable);
+		return StreamUtils.sequenceM(StreamUtils.cycle(times,Streamable.of(m.reduce(stream))),reversable);
 		
 	}
 
@@ -388,7 +388,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 */
 	public final SequenceM<T> cycleWhile(Predicate<? super T> predicate) {
 	
-		return StreamUtils.sequenceM(StreamUtils.cycle(monad),reversable).limitWhile(predicate);
+		return StreamUtils.sequenceM(StreamUtils.cycle(stream),reversable).limitWhile(predicate);
 	}
 
 	/**
@@ -409,7 +409,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return Repeating Stream
 	 */
 	public final SequenceM<T> cycleUntil(Predicate<? super T> predicate) {
-		return StreamUtils.sequenceM(StreamUtils.cycle(monad),reversable).limitWhile(predicate.negate());
+		return StreamUtils.sequenceM(StreamUtils.cycle(stream),reversable).limitWhile(predicate.negate());
 	}
 	/**
 	 * Zip 2 streams into one
@@ -491,7 +491,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 */
 	public final <S, R> SequenceM<R> zipSequence(SequenceM<? extends S> second,
 			BiFunction<? super T, ? super S, ? extends R> zipper) {
-		return StreamUtils.sequenceM(StreamUtils.zipSequence(monad,second, zipper),Optional.empty());
+		return StreamUtils.sequenceM(StreamUtils.zipSequence(stream,second, zipper),Optional.empty());
 		
 	}
 	/**
@@ -538,7 +538,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 */
 	public final <S, R> SequenceM<R> zipStream(BaseStream<? extends S,? extends BaseStream<? extends S,?>> second,
 			BiFunction<? super T, ? super S, ? extends R> zipper) {
-		return StreamUtils.sequenceM(StreamUtils.zipStream(monad,second, zipper),Optional.empty());
+		return StreamUtils.sequenceM(StreamUtils.zipStream(stream,second, zipper),Optional.empty());
 	}
 
 	/**
@@ -563,7 +563,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return SequenceM with sliding view
 	 */
 	public final SequenceM<List<T>> sliding(int windowSize) {
-		return StreamUtils.sequenceM(StreamUtils.sliding(monad,windowSize),reversable);
+		return StreamUtils.sequenceM(StreamUtils.sliding(stream,windowSize),reversable);
 	}
 	/**
 	 *  Create a sliding view over this Sequence
@@ -587,7 +587,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return SequenceM with sliding view
 	 */
 	public final SequenceM<List<T>> sliding(int windowSize,int increment) {
-		return StreamUtils.sequenceM(StreamUtils.sliding(monad,windowSize,increment),reversable);
+		return StreamUtils.sequenceM(StreamUtils.sliding(stream,windowSize,increment),reversable);
 	}
 
 	/**
@@ -610,7 +610,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return Stream with elements grouped by size
 	 */
 	public final SequenceM<List<T>> grouped(int groupSize) {
-		return StreamUtils.sequenceM(StreamUtils.grouped(monad,groupSize),reversable);
+		return StreamUtils.sequenceM(StreamUtils.batchBySize(stream,groupSize),reversable);
 	}
 	/**
 	 * Use classifier function to group elements in this Sequence into a Map
@@ -640,7 +640,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 *</pre>
 	 */
 	public final SequenceM<T> distinct() {
-		return StreamUtils.sequenceM(monad.distinct(),reversable);
+		return StreamUtils.sequenceM(stream.distinct(),reversable);
 	}
 
 	/**
@@ -658,7 +658,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return
 	 */
 	public final SequenceM<T> scanLeft(Monoid<T> monoid) {
-		return StreamUtils.sequenceM(StreamUtils.scanLeft(monad,monoid),reversable);
+		return StreamUtils.sequenceM(StreamUtils.scanLeft(stream,monoid),reversable);
 	}
 	/**
 	 * Scan left
@@ -670,7 +670,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * </pre>
 	 */
 	public final <U> SequenceM<U> scanLeft(U seed, BiFunction<U, ? super T, U> function) {
-		return StreamUtils.sequenceM(monad.scanLeft(seed, function),reversable);
+		return StreamUtils.sequenceM(stream.scanLeft(seed, function),reversable);
 		
 	}
 	
@@ -699,7 +699,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 */
 	public final<U> SequenceM<U> scanRight(U identity,BiFunction<? super T, U, U>  combiner){
 		
-		return StreamUtils.sequenceM(StreamUtils.scanRight(monad,identity,combiner),reversable);
+		return StreamUtils.sequenceM(StreamUtils.scanRight(stream,identity,combiner),reversable);
 	}
 	
 
@@ -711,7 +711,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * 
 	 */
 	public final SequenceM<T> sorted() {
-		return StreamUtils.sequenceM(monad.sorted(),reversable);
+		return StreamUtils.sequenceM(stream.sorted(),reversable);
 	}
 
 	/**
@@ -725,7 +725,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return Sorted Monad
 	 */
 	public final SequenceM<T> sorted(Comparator<? super T> c) {
-		return StreamUtils.sequenceM(monad.sorted(c),reversable);
+		return StreamUtils.sequenceM(stream.sorted(c),reversable);
 	}
 
 	/**
@@ -741,7 +741,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 *         skipped
 	 */
 	public final SequenceM<T> skip(long num) {
-		return StreamUtils.sequenceM( monad.skip(num),reversable);
+		return StreamUtils.sequenceM( stream.skip(num),reversable);
 	}
 
 	/**
@@ -759,7 +759,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 *         holds
 	 */
 	public final SequenceM<T> skipWhile(Predicate<? super T> p) {
-		return StreamUtils.sequenceM(StreamUtils.skipWhile(monad, p),reversable);
+		return StreamUtils.sequenceM(StreamUtils.skipWhile(stream, p),reversable);
 	}
 
 	/**
@@ -776,7 +776,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 *         holds
 	 */
 	public final SequenceM<T> skipUntil(Predicate<? super T> p) {
-		return StreamUtils.sequenceM(StreamUtils.skipUntil(monad,p),reversable);
+		return StreamUtils.sequenceM(StreamUtils.skipUntil(stream,p),reversable);
 	}
 
 	/**
@@ -791,7 +791,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return Monad converted to Stream with elements up to num
 	 */
 	public final SequenceM<T> limit(long num) {
-		return StreamUtils.sequenceM(monad.limit(num),reversable);
+		return StreamUtils.sequenceM(stream.limit(num),reversable);
 	}
 
 	/**
@@ -806,7 +806,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return Monad converted to Stream with limited elements
 	 */
 	public final SequenceM<T> limitWhile(Predicate<? super T> p) {
-		return StreamUtils.sequenceM(StreamUtils.limitWhile(monad,p),reversable);
+		return StreamUtils.sequenceM(StreamUtils.limitWhile(stream,p),reversable);
 	}
 
 	/**
@@ -821,7 +821,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return Monad converted to Stream with limited elements
 	 */
 	public final SequenceM<T> limitUntil(Predicate<? super T> p) {
-		return StreamUtils.sequenceM(StreamUtils.limitUntil(monad,p),reversable);
+		return StreamUtils.sequenceM(StreamUtils.limitUntil(stream,p),reversable);
 	}
 	/**
 	 * @return does nothing - returns this
@@ -841,7 +841,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @param c Predicate to check if all match
 	 */
 	public final  boolean  allMatch(Predicate<? super T> c) {
-		return monad.allMatch(c);
+		return stream.allMatch(c);
 	}
 	/**
 	 * True if a single element matches when Monad converted to a Stream
@@ -853,7 +853,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @param c Predicate to check if any match
 	 */
 	public final  boolean  anyMatch(Predicate<? super T> c) {
-		return monad.anyMatch(c);
+		return stream.anyMatch(c);
 	}
 	/**
 	 * Check that there are specified number of matches of predicate in the Stream
@@ -866,7 +866,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * 
 	 */
 	public  boolean xMatch(int num, Predicate<? super T> c) {
-		return monad.filter(t -> c.test(t)) .collect(Collectors.counting()) == num;
+		return stream.filter(t -> c.test(t)) .collect(Collectors.counting()) == num;
 	}
 	/* 
 	 * <pre>
@@ -877,7 +877,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * </pre>
 	 */
 	public final  boolean  noneMatch(Predicate<? super T> c) {
-		return monad.allMatch(c.negate());
+		return stream.allMatch(c.negate());
 	}
 	/**
 	 * <pre>
@@ -889,7 +889,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return Stream as concatenated String
 	 */
 	public final  String join(){
-		return StreamUtils.join(monad,"");
+		return StreamUtils.join(stream,"");
 	}
 	/**
 	 * <pre>
@@ -900,7 +900,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return Stream as concatenated String
 	 */
 	public final  String join(String sep){
-		return StreamUtils.join(monad,sep);
+		return StreamUtils.join(stream,sep);
 	}
 	/**
 	 * <pre>
@@ -911,7 +911,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 *  @return Stream as concatenated String
 	 */
 	public final   String join(String sep,String start, String end){
-		return StreamUtils.join(monad, sep,start, end);
+		return StreamUtils.join(stream, sep,start, end);
 	}
 	
 	
@@ -921,26 +921,26 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 */
 	public final  <U extends Comparable<U>> Optional<T> minBy(Function<T, U> function){
 		
-		return StreamUtils.minBy(monad,function);
+		return StreamUtils.minBy(stream,function);
 	}
 	/* (non-Javadoc)
 	 * @see java.util.stream.Stream#min(java.util.Comparator)
 	 */
 	public final   Optional<T> min(Comparator<? super T> comparator){
-		return  StreamUtils.min(monad,comparator);
+		return  StreamUtils.min(stream,comparator);
 	}
 	/**
 	 * Extract the maximum as determined by the supplied function
 	 * 
 	 */
 	public final  <C extends Comparable<C>> Optional<T> maxBy(Function<T,C> f){
-		return StreamUtils.maxBy(monad,f);
+		return StreamUtils.maxBy(stream,f);
 	}
 	/* (non-Javadoc)
 	 * @see java.util.stream.Stream#max(java.util.Comparator)
 	 */
 	public final  Optional<T> max(Comparator<? super T> comparator){
-		return StreamUtils.max(monad,comparator);
+		return StreamUtils.max(stream,comparator);
 	}
 	
 	
@@ -962,7 +962,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return
 	 */
 	public final  HeadAndTail<T> headAndTail(){
-		return StreamUtils.headAndTail(monad);
+		return StreamUtils.headAndTail(stream);
 	}
 	/**
 	 * extract head and tail together, where no head or tail may be present
@@ -978,7 +978,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return
 	 */
 	public final  Optional<HeadAndTail<T>> headAndTailOptional(){
-		return StreamUtils.headAndTailOptional(monad);
+		return StreamUtils.headAndTailOptional(stream);
 	}
 	
 	/**
@@ -988,7 +988,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * 
 	 */
 	public final  Optional<T>  findFirst() {
-		return monad.findFirst();
+		return stream.findFirst();
 	}
 	/**
 	 * @return first matching element,  but order is not guaranteed
@@ -996,7 +996,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * (non-deterministic) 
 	 */
 	public final  Optional<T>  findAny() {
-		return monad.findAny();
+		return stream.findAny();
 	}
 	
 	/**
@@ -1007,7 +1007,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return Reduce result
 	 */
 	public final  <R> R mapReduce(Monoid<R> reducer){
-		return reducer.mapReduce(monad);
+		return reducer.mapReduce(stream);
 	}
 	/**
 	 *  Attempt to map this Monad to the same type as the supplied Monoid, using supplied function
@@ -1018,7 +1018,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return Reduce result
 	 */
 	public final  <R> R mapReduce(Function<? super T,? extends R> mapper, Monoid<R> reducer){
-		return reducer.reduce(monad.map(mapper));
+		return reducer.reduce(stream.map(mapper));
 	}
 	
 	/**
@@ -1028,7 +1028,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return Collected result
 	 */
 	public final <R, A> R collect(Collector<? super T, A, R> collector){
-		return monad.collect(collector);
+		return stream.collect(collector);
 	}
 	/* (non-Javadoc)
 	 * @see java.util.stream.Stream#collect(java.util.function.Supplier, java.util.function.BiConsumer, java.util.function.BiConsumer)
@@ -1036,7 +1036,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	public final  <R> R collect(Supplier<R> supplier,
             BiConsumer<R, ? super T> accumulator,
             BiConsumer<R, R> combiner){
-		return monad.collect(supplier, accumulator, combiner);
+		return stream.collect(supplier, accumulator, combiner);
 	}
 	/**
 	 * Apply multiple collectors Simulataneously to this Monad
@@ -1056,7 +1056,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return  List of results
 	 */
 	public final  List collect(Stream<Collector> collectors){
-		return StreamUtils.collect(monad,collectors);
+		return StreamUtils.collect(stream,collectors);
 	}
 	/**
 	 *  Apply multiple Collectors, simultaneously to a Stream
@@ -1078,7 +1078,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public <R> List<R> collectIterable(Iterable<Collector> collectors){
-		return StreamUtils.collect(monad, collectors);
+		return StreamUtils.collect(stream, collectors);
 	}
 	
 	/**
@@ -1089,7 +1089,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 */
 	public final  T reduce(Monoid<T> reducer){
 		
-		return reducer.reduce(monad);
+		return reducer.reduce(stream);
 	}
 	/* 
 	 * <pre>
@@ -1100,13 +1100,13 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * 
 	 */
 	public final Optional<T> reduce(BinaryOperator<T> accumulator){
-		 return monad.reduce(accumulator);
+		 return stream.reduce(accumulator);
 	 } 
 	 /* (non-Javadoc)
 	 * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BinaryOperator)
 	 */
 	public final T reduce(T identity, BinaryOperator<T> accumulator){
-		 return monad.reduce(identity, accumulator);
+		 return stream.reduce(identity, accumulator);
 	 }
 	 /* (non-Javadoc)
 	 * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BiFunction, java.util.function.BinaryOperator)
@@ -1114,7 +1114,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	public final <U> U reduce(U identity,
              BiFunction<U, ? super T, U> accumulator,
              BinaryOperator<U> combiner){
-		 return monad.reduce(identity, accumulator, combiner);
+		 return stream.reduce(identity, accumulator, combiner);
 	 }
 	/**
      * Reduce with multiple reducers in parallel
@@ -1125,7 +1125,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return
 	 */
 	public final List<T> reduce(Stream<Monoid<T>> reducers){
-		return StreamUtils.reduce(monad, reducers);
+		return StreamUtils.reduce(stream, reducers);
 	}
 	/**
      * Reduce with multiple reducers in parallel
@@ -1136,7 +1136,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return
 	 */
 	public final List<T> reduce(Iterable<Monoid<T>> reducers){
-		return StreamUtils.reduce(monad, reducers);
+		return StreamUtils.reduce(stream, reducers);
 	}
 	
 	/**
@@ -1158,7 +1158,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * </pre>
 	 */
 	public final T foldLeft(T identity,  BinaryOperator<T> accumulator){
-		 return monad.reduce(identity, accumulator);
+		 return stream.reduce(identity, accumulator);
 	 }
 	/**
 	 *  Attempt to map this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
@@ -1168,7 +1168,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return Reduce result
 	 */
 	public final <T> T foldLeftMapToType(Monoid<T> reducer){
-		return reducer.mapReduce(monad);
+		return reducer.mapReduce(stream);
 	}
 	/**
 	 * 
@@ -1192,7 +1192,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return
 	 */
 	public final<U> U foldRight(U seed, BiFunction<? super T, U, U> function){
-		 return monad.foldRight(seed, function);
+		 return stream.foldRight(seed, function);
 	 }
 	/**
 	 *  Attempt to map this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
@@ -1214,23 +1214,23 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return This monad converted to a set
 	 */
 	public final Set<T> toSet(){
-		return (Set)monad.collect(Collectors.toSet());
+		return (Set)stream.collect(Collectors.toSet());
 	}
 	/**
 	 * @return this monad converted to a list
 	 */
 	public final List<T> toList(){
 	
-		return (List)monad.collect(Collectors.toList());
+		return (List)stream.collect(Collectors.toList());
 	}
 	public final <C extends Collection<T>> C toCollection(Supplier<C> collectionFactory) {
-        return monad.collect(Collectors.toCollection(collectionFactory));
+        return stream.collect(Collectors.toCollection(collectionFactory));
     }
 	/**
 	 * @return  calls to stream() but more flexible on type for inferencing purposes.
 	 */
 	public final <T> Stream<T> toStream(){
-		return (Stream<T>) monad;
+		return (Stream<T>) stream;
 	}
 	/**
 	 * Unwrap this Monad into a Stream.
@@ -1238,7 +1238,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * Otherwise we flatMap the underlying monad to a Stream type
 	 */
 	public final Stream<T> stream(){
-		 return monad;
+		 return stream;
 			
 	}
 	
@@ -1253,7 +1253,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return True if Monad starts with Iterable sequence of data
 	 */
 	public final boolean startsWith(Iterable<T> iterable){
-		return StreamUtils.startsWith(monad,iterable);
+		return StreamUtils.startsWith(stream,iterable);
 		
 	}
 	/**
@@ -1263,7 +1263,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return True if Monad starts with Iterators sequence of data
 	 */
 	public final boolean startsWith(Iterator<T> iterator){
-		return StreamUtils.startsWith(monad,iterator);
+		return StreamUtils.startsWith(stream,iterator);
 		
 	}
 	
@@ -1271,19 +1271,19 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return this SequenceM converted to AnyM format
 	 */
 	public AnyM<T> anyM(){
-		return AsGenericMonad.fromStream(monad).anyM();
+		return AsGenericMonad.fromStream(stream).anyM();
 	}
 	/* (non-Javadoc)
 	 * @see java.util.stream.Stream#map(java.util.function.Function)
 	 */
 	public final  <R> SequenceM<R> map(Function<? super T,? extends R> fn){
-		return new SequenceMImpl(monad.map(fn));
+		return new SequenceMImpl(stream.map(fn));
 	}
 	/* (non-Javadoc)
 	 * @see java.util.stream.Stream#peek(java.util.function.Consumer)
 	 */
 	public final   SequenceM<T>  peek(Consumer<? super T> c) {
-		return new SequenceMImpl(monad.peek(c));
+		return new SequenceMImpl(stream.peek(c));
 	}
 	/**
 	 * flatMap operation
@@ -1297,7 +1297,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return new stage in Sequence with flatMap operation to be lazily applied
 	 */
 	public final <R> SequenceM<R> flatMap(Function<? super T,? extends Stream<? extends R>> fn) {
-		return StreamUtils.sequenceM(monad.flatMap(fn),reversable);
+		return StreamUtils.sequenceM(stream.flatMap(fn),reversable);
 	}
 	/**
 	 * Allows flatMap return type to be any Monad type
@@ -1312,7 +1312,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return new stage in Sequence with flatMap operation to be lazily applied
 	 */
 	public final <R> SequenceM<R> flatMapAnyM(Function<? super T,AnyM<? extends R>> fn) {
-		return StreamUtils.sequenceM(StreamUtils.flatMapAnyM(monad,fn),reversable);
+		return StreamUtils.sequenceM(StreamUtils.flatMapAnyM(stream,fn),reversable);
 	}
 	/**
 	 * Convenience method & performance optimisation
@@ -1339,7 +1339,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return
 	 */
 	public final <R> SequenceM<R> flatMapCollection(Function<? super T,Collection<? extends R>> fn) {
-		return StreamUtils.sequenceM(StreamUtils.flatMapCollection(monad,fn),Optional.empty());
+		return StreamUtils.sequenceM(StreamUtils.flatMapCollection(stream,fn),Optional.empty());
 		
 	}
 	/**
@@ -1356,7 +1356,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return new stage in Sequence with flatMap operation to be lazily applied
 	*/
 	public final <R> SequenceM<R> flatMapStream(Function<? super T,BaseStream<? extends R,?>> fn) {
-		return StreamUtils.sequenceM(StreamUtils.flatMapStream(monad,fn),reversable);
+		return StreamUtils.sequenceM(StreamUtils.flatMapStream(stream,fn),reversable);
 
 	}
 	/**
@@ -1372,7 +1372,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return
 	 */
 	public final <R> SequenceM<R> flatMapOptional(Function<? super T,Optional<? extends R>> fn) {
-		return StreamUtils.sequenceM(StreamUtils.flatMapOptional(monad,fn),reversable);
+		return StreamUtils.sequenceM(StreamUtils.flatMapOptional(stream,fn),reversable);
 	
 	}
 	/**
@@ -1391,7 +1391,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return
 	 */
 	public final <R> SequenceM<R> flatMapCompletableFuture(Function<? super T,CompletableFuture<? extends R>> fn) {
-		return StreamUtils.sequenceM(StreamUtils.flatMapCompletableFuture(monad,fn),reversable);
+		return StreamUtils.sequenceM(StreamUtils.flatMapCompletableFuture(stream,fn),reversable);
 	}
 	
 	
@@ -1403,7 +1403,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * {@code 
 	 *   List<Character> result = anyM("input.file")
 									.asSequence()
-									.liftAndBindCharSequence(i->"hello world")
+									.flatMapCharSequence(i->"hello world")
 									.toList();
 		
 		assertThat(result,equalTo(Arrays.asList('h','e','l','l','o',' ','w','o','r','l','d')));
@@ -1413,8 +1413,8 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @param fn
 	 * @return
 	 */
-	public final  SequenceM<Character> liftAndBindCharSequence(Function<? super T,CharSequence> fn) {
-		return StreamUtils.sequenceM(StreamUtils.liftAndBindCharSequence(monad, fn),reversable);
+	public final  SequenceM<Character> flatMapCharSequence(Function<? super T,CharSequence> fn) {
+		return StreamUtils.sequenceM(StreamUtils.flatMapCharSequence(stream, fn),reversable);
 	}
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -1440,8 +1440,8 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @param fn
 	 * @return
 	 */
-	public final  SequenceM<String> liftAndBindFile(Function<? super T,File> fn) {
-		return StreamUtils.sequenceM(StreamUtils.liftAndBindFile(monad, fn),reversable);
+	public final  SequenceM<String> flatMapFile(Function<? super T,File> fn) {
+		return StreamUtils.sequenceM(StreamUtils.flatMapFile(stream, fn),reversable);
 	}
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -1462,8 +1462,8 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @param fn
 	 * @return
 	 */
-	public final  SequenceM<String> liftAndBindURL(Function<? super T, URL> fn) {
-		return StreamUtils.sequenceM(StreamUtils.liftAndBindURL(monad, fn),reversable);
+	public final  SequenceM<String> flatMapURL(Function<? super T, URL> fn) {
+		return StreamUtils.sequenceM(StreamUtils.flatMapURL(stream, fn),reversable);
 	}
 	/**
 	  *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -1485,84 +1485,84 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @param fn
 	 * @return
 	 */
-	public final SequenceM<String> liftAndBindBufferedReader(Function<? super T,BufferedReader> fn) {
-		return StreamUtils.sequenceM(StreamUtils.liftAndBindBufferedReader(monad, fn),reversable);
+	public final SequenceM<String> flatMapBufferedReader(Function<? super T,BufferedReader> fn) {
+		return StreamUtils.sequenceM(StreamUtils.flatMapBufferedReader(stream, fn),reversable);
 	}
 	public final   SequenceM<T>  filter(Predicate<? super T> fn){
-		return StreamUtils.sequenceM(monad.filter(fn),reversable);
+		return StreamUtils.sequenceM(stream.filter(fn),reversable);
 	}
 	public void forEach(Consumer<? super T> action) {
-		monad.forEach(action);
+		stream.forEach(action);
 		
 	}
 	
 	public Iterator<T> iterator() {
-		return monad.iterator();
+		return stream.iterator();
 	}
 	
 	public Spliterator<T> spliterator() {
-		return monad.spliterator();
+		return stream.spliterator();
 	}
 	
 	public boolean isParallel() {
-		return monad.isParallel();
+		return stream.isParallel();
 	}
 	
 	public SequenceM<T> sequential() {
-		return StreamUtils.sequenceM(monad.sequential(),reversable);
+		return StreamUtils.sequenceM(stream.sequential(),reversable);
 	}
 	
 	
 	public SequenceM<T> unordered() {
-		return StreamUtils.sequenceM(monad.unordered(),reversable);
+		return StreamUtils.sequenceM(stream.unordered(),reversable);
 	}
 	
 	
 	
 	
 	public IntStream mapToInt(ToIntFunction<? super T> mapper) {
-		return monad.mapToInt(mapper);
+		return stream.mapToInt(mapper);
 	}
 	
 	public LongStream mapToLong(ToLongFunction<? super T> mapper) {
-		return monad.mapToLong(mapper);
+		return stream.mapToLong(mapper);
 	}
 	
 	public DoubleStream mapToDouble(ToDoubleFunction<? super T> mapper) {
-		return monad.mapToDouble(mapper);
+		return stream.mapToDouble(mapper);
 	}
 	
 	public IntStream flatMapToInt(
 			Function<? super T, ? extends IntStream> mapper) {
-		return monad.flatMapToInt(mapper);
+		return stream.flatMapToInt(mapper);
 	}
 	
 	public LongStream flatMapToLong(
 			Function<? super T, ? extends LongStream> mapper) {
-		return monad.flatMapToLong(mapper);
+		return stream.flatMapToLong(mapper);
 	}
 	
 	public DoubleStream flatMapToDouble(
 			Function<? super T, ? extends DoubleStream> mapper) {
-		return monad.flatMapToDouble(mapper);
+		return stream.flatMapToDouble(mapper);
 	}
 
 	
 	public void forEachOrdered(Consumer<? super T> action) {
-		monad.forEachOrdered(action);
+		stream.forEachOrdered(action);
 		
 	}
 	
 	public Object[] toArray() {
-		return monad.toArray();
+		return stream.toArray();
 	}
 	
 	public <A> A[] toArray(IntFunction<A[]> generator) {
-		return monad.toArray(generator);
+		return stream.toArray(generator);
 	}
 	
 	public long count() {
-		return monad.count();
+		return stream.count();
 	}
 	/**
 	 * Returns a stream with a given value interspersed between any two values
@@ -1574,7 +1574,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 */
 	public  SequenceM<T> intersperse(T value) {
 	
-		return StreamUtils.sequenceM(monad.flatMap(t -> Stream.of(value,t)).skip(1l),reversable);
+		return StreamUtils.sequenceM(stream.flatMap(t -> Stream.of(value,t)).skip(1l),reversable);
 	}
 	/**
 	 * Keep only those elements in a stream that are of a given type.
@@ -1585,7 +1585,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 */
 	@SuppressWarnings("unchecked")
 	public <U> SequenceM<U> ofType(Class<U> type) {
-		return StreamUtils.sequenceM(StreamUtils.ofType(monad, type),reversable);
+		return StreamUtils.sequenceM(StreamUtils.ofType(stream, type),reversable);
 	}
 	/**
 	 * Cast all elements in a stream to a given type, possibly throwing a
@@ -1596,7 +1596,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * 
 	 */
 	public <U> SequenceM<U> cast(Class<U> type) {
-		return StreamUtils.sequenceM(StreamUtils.cast(monad, type),reversable);
+		return StreamUtils.sequenceM(StreamUtils.cast(stream, type),reversable);
 	}
 	/**
 	 * Lazily converts this SequenceM into a Collection. This does not trigger the Stream. E.g.
@@ -1615,7 +1615,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return
 	 */
 	public Collection<T> toLazyCollection(){
-		return StreamUtils.toLazyCollection(monad);
+		return StreamUtils.toLazyCollection(stream);
 	}
 	/**
 	 * Lazily converts this SequenceM into a Collection. This does not trigger the Stream. E.g.
@@ -1634,20 +1634,20 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return
 	 */
 	public Collection<T> toConcurrentLazyCollection(){
-		return StreamUtils.toConcurrentLazyCollection(monad);
+		return StreamUtils.toConcurrentLazyCollection(stream);
 	}
 	
 	/**
 	 * @return Streamable that can replay this SequenceM
 	 */
 	public Streamable<T> toLazyStreamable(){
-		return StreamUtils.toConcurrentLazyStreamable(monad);
+		return StreamUtils.toConcurrentLazyStreamable(stream);
 	}
 	/**
 	 * @return Streamable that replay this SequenceM
 	 */
 	public Streamable<T> toConcurrentLazyStreamable(){
-		return StreamUtils.toConcurrentLazyStreamable(monad);
+		return StreamUtils.toConcurrentLazyStreamable(stream);
 		
 	}
 	public SequenceM<T> reverse(){
@@ -1655,7 +1655,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 			reversable.ifPresent(r->r.invert());
 			return this;
 		}
-		return StreamUtils.sequenceM(StreamUtils.reverse(monad),reversable);
+		return StreamUtils.sequenceM(StreamUtils.reverse(stream),reversable);
 	}
 	
 	
@@ -1671,7 +1671,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	}
 
 	public SequenceM<T> shuffle() {
-		return StreamUtils.sequenceM(StreamUtils.shuffle(monad).stream(),reversable);
+		return StreamUtils.sequenceM(StreamUtils.shuffle(stream).stream(),reversable);
 	
 	}
 	/**
@@ -1691,7 +1691,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return SequenceM with Stream appended
 	 */
 	public SequenceM<T> appendStream(Stream<T> stream) {
-		return StreamUtils.sequenceM(StreamUtils.appendStream(monad,stream),Optional.empty());
+		return StreamUtils.sequenceM(StreamUtils.appendStream(stream,stream),Optional.empty());
 	}
 	/**
 	 * Prepend Stream to this SequenceM
@@ -1711,7 +1711,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 */
 	public SequenceM<T> prependStream(Stream<T> stream) {
 		
-		return StreamUtils.sequenceM(StreamUtils.prependStream(monad,stream),Optional.empty());
+		return StreamUtils.sequenceM(StreamUtils.prependStream(stream,stream),Optional.empty());
 	}
 	/**
 	 * Append values to the end of this SequenceM
@@ -1728,7 +1728,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return SequenceM with appended values
 	 */
 	public SequenceM<T> append(T... values) {
-		return StreamUtils.sequenceM(StreamUtils.append(monad, values),Optional.empty());
+		return StreamUtils.sequenceM(StreamUtils.append(stream, values),Optional.empty());
 		
 	}
 	/**
@@ -1744,7 +1744,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return SequenceM with values prepended
 	 */
 	public SequenceM<T> prepend(T... values) {
-		return StreamUtils.sequenceM(StreamUtils.prepend(monad, values),Optional.empty());
+		return StreamUtils.sequenceM(StreamUtils.prepend(stream, values),Optional.empty());
 	}
 	/**
 	 * Insert data into a stream at given position
@@ -1762,7 +1762,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return Stream with new data inserted
 	 */
 	public SequenceM<T> insertAt(int pos, T... values) {
-		return StreamUtils.sequenceM(StreamUtils.insertAt(monad, pos, values),Optional.empty());
+		return StreamUtils.sequenceM(StreamUtils.insertAt(stream, pos, values),Optional.empty());
 		
 	}
 	/**
@@ -1780,7 +1780,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return Stream with elements removed
 	 */
 	public SequenceM<T> deleteBetween(int start,int end) {
-		return StreamUtils.sequenceM(StreamUtils.deleteBetween(monad, start, end),Optional.empty());
+		return StreamUtils.sequenceM(StreamUtils.deleteBetween(stream, start, end),Optional.empty());
 	}
 	/**
 	 * Insert a Stream into the middle of this stream at the specified position
@@ -1798,50 +1798,50 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 */
 	public SequenceM<T> insertStreamAt(int pos, Stream<T> stream) {
 		
-		return StreamUtils.sequenceM(StreamUtils.insertStreamAt(monad, pos,stream),Optional.empty());
+		return StreamUtils.sequenceM(StreamUtils.insertStreamAt(stream, pos,stream),Optional.empty());
 		
 	}
 
 	@Override
 	public FutureOperations<T> futureOperations(Executor exec) {
-		return StreamUtils.futureOperations(monad,exec);
+		return StreamUtils.futureOperations(stream,exec);
 	}
 
 
 	@Override
 	public boolean endsWith(Iterable<T> iterable) {
-		return StreamUtils.endsWith(monad, iterable);
+		return StreamUtils.endsWith(stream, iterable);
 	}
 
 
 	@Override
 	public HotStream<T> hotStream(Executor e) {
-		return StreamUtils.hotStream(monad, e);
+		return StreamUtils.hotStream(stream, e);
 	}
 
 
 	@Override
 	public T firstValue() {
-		return StreamUtils.firstValue(monad);
+		return StreamUtils.firstValue(stream);
 	}
 
 
 	@Override
 	public void subscribe(Subscriber<? super T> s) {
-		 ReactiveStreamsLoader.publisher.get().subscribe(monad,s);	
+		 ReactiveStreamsLoader.publisher.get().subscribe(stream,s);	
 	}
 
 
 	@Override
 	public <U> SequenceM<Tuple2<T, U>> zip(Seq<U> other) {
-		return StreamUtils.sequenceM(monad.zip(other),reversable);
+		return StreamUtils.sequenceM(stream.zip(other),reversable);
 	}
 
 
 	@Override
 	public <S, R> SequenceM<R> zipAnyM(AnyM<? extends S> second,
 			BiFunction<? super T, ? super S, ? extends R> zipper) {
-		return StreamUtils.sequenceM(StreamUtils.zipAnyM(monad,second,zipper),reversable);
+		return StreamUtils.sequenceM(StreamUtils.zipAnyM(stream,second,zipper),reversable);
 	}
 
 
@@ -1850,89 +1850,89 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 
 	@Override
 	public <U> SequenceM<Tuple2<T, U>> crossJoin(Stream<U> other) {
-		return StreamUtils.sequenceM(monad.crossJoin(other),reversable);
+		return StreamUtils.sequenceM(stream.crossJoin(other),reversable);
 	}
 
 
 	@Override
 	public <U> SequenceM<Tuple2<T, U>> innerJoin(Stream<U> other,
 			BiPredicate<T, U> predicate) {
-		return StreamUtils.sequenceM(monad.innerJoin(other, predicate),reversable);
+		return StreamUtils.sequenceM(stream.innerJoin(other, predicate),reversable);
 	}
 
 
 	@Override
 	public <U> SequenceM<Tuple2<T, U>> leftOuterJoin(Stream<U> other,
 			BiPredicate<T, U> predicate) {
-		return StreamUtils.sequenceM(monad.leftOuterJoin(other, predicate),reversable);
+		return StreamUtils.sequenceM(stream.leftOuterJoin(other, predicate),reversable);
 	}
 
 
 	@Override
 	public <U> SequenceM<Tuple2<T, U>> rightOuterJoin(Stream<U> other,
 			BiPredicate<T, U> predicate) {
-		return StreamUtils.sequenceM(monad.rightOuterJoin(other, predicate),reversable);
+		return StreamUtils.sequenceM(stream.rightOuterJoin(other, predicate),reversable);
 	}
 
 
 	@Override
 	public SequenceM<T> onEmpty(T value) {
-		return StreamUtils.sequenceM(monad.onEmpty(value),Optional.empty());
+		return StreamUtils.sequenceM(stream.onEmpty(value),Optional.empty());
 	}
 
 
 	@Override
 	public SequenceM<T> onEmptyGet(Supplier<T> supplier) {
-		return StreamUtils.sequenceM(monad.onEmptyGet(supplier),Optional.empty());
+		return StreamUtils.sequenceM(stream.onEmptyGet(supplier),Optional.empty());
 	}
 
 
 	@Override
 	public <X extends Throwable> SequenceM<T> onEmptyThrow(Supplier<X> supplier) {
-		return StreamUtils.sequenceM(monad.onEmptyThrow(supplier),Optional.empty());
+		return StreamUtils.sequenceM(stream.onEmptyThrow(supplier),Optional.empty());
 	}
 
 
 	@Override
 	public SequenceM<T> concat(Stream<T> other) {
-		return StreamUtils.sequenceM(monad.concat(other),Optional.empty());
+		return StreamUtils.sequenceM(stream.concat(other),Optional.empty());
 	}
 
 
 	@Override
 	public SequenceM<T> concat(T other) {
-		return StreamUtils.sequenceM(monad.concat(other),Optional.empty());
+		return StreamUtils.sequenceM(stream.concat(other),Optional.empty());
 	}
 
 
 	@Override
 	public SequenceM<T> concat(T... other) {
-		return StreamUtils.sequenceM(monad.concat(other),Optional.empty());
+		return StreamUtils.sequenceM(stream.concat(other),Optional.empty());
 	}
 
 
 	@Override
 	public <U> SequenceM<T> distinct(
 			Function<? super T, ? extends U> keyExtractor) {
-		return StreamUtils.sequenceM(monad.distinct(keyExtractor),reversable);
+		return StreamUtils.sequenceM(stream.distinct(keyExtractor),reversable);
 	}
 
 
 	@Override
 	public <U, R> SequenceM<R> zip(Seq<U> other, BiFunction<T, U, R> zipper) {
-		return StreamUtils.sequenceM(monad.zip(other, zipper),Optional.empty());
+		return StreamUtils.sequenceM(stream.zip(other, zipper),Optional.empty());
 	}
 
 
 	@Override
 	public SequenceM<T> shuffle(Random random) {
-		return StreamUtils.sequenceM(monad.shuffle(random),reversable);
+		return StreamUtils.sequenceM(stream.shuffle(random),reversable);
 	}
 
 
 	@Override
 	public SequenceM<T> slice(long from, long to) {
-		return StreamUtils.sequenceM(monad.slice(from,to),reversable);
+		return StreamUtils.sequenceM(stream.slice(from,to),reversable);
 	}
 	
 
@@ -1940,38 +1940,38 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	@Override
 	public <U extends Comparable<? super U>> SequenceM<T> sorted(
 			Function<? super T, ? extends U> function) {
-		return StreamUtils.sequenceM(monad.sorted(function),reversable);
+		return StreamUtils.sequenceM(stream.sorted(function),reversable);
 	}
 
 
 	@Override
 	public <U> SequenceM<Tuple2<T, U>> zipStream(Stream<U> other) {
-		return StreamUtils.sequenceM(StreamUtils.zipStream(monad, other,Tuple::tuple),Optional.empty());
+		return StreamUtils.sequenceM(StreamUtils.zipStream(stream, other,Tuple::tuple),Optional.empty());
 	}
 
 	@Override
 	public SequenceM<T> xPer(int x, long time, TimeUnit t) {
-		return StreamUtils.sequenceM(StreamUtils.xPer(monad, x,time,t),reversable);
+		return StreamUtils.sequenceM(StreamUtils.xPer(stream, x,time,t),reversable);
 	}
 
 	@Override
 	public SequenceM<T> onePer(long time, TimeUnit t) {
-		return StreamUtils.sequenceM(StreamUtils.onePer(monad,time,t),reversable);
+		return StreamUtils.sequenceM(StreamUtils.onePer(stream,time,t),reversable);
 	}
 
 	@Override
 	public SequenceM<T> debounce(long time, TimeUnit t) {
-		return StreamUtils.sequenceM(StreamUtils.debounce(monad, time,t),reversable);
+		return StreamUtils.sequenceM(StreamUtils.debounce(stream, time,t),reversable);
 	}
 
 	@Override
 	public SequenceM<List<T>> batchBySizeAndTime(int size, long time, TimeUnit t) {
-		return StreamUtils.sequenceM(StreamUtils.batchBySizeAndTime(monad, size, time,t),reversable);
+		return StreamUtils.sequenceM(StreamUtils.batchBySizeAndTime(stream, size, time,t),reversable);
 	}
 
 	@Override
 	public SequenceM<List<T>> batchByTime(long time, TimeUnit t) {
-		return StreamUtils.sequenceM(StreamUtils.batchByTime(monad, time,t),reversable);
+		return StreamUtils.sequenceM(StreamUtils.batchByTime(stream, time,t),reversable);
 	}
 
 	@Override
@@ -1981,105 +1981,119 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 
 	@Override
 	public boolean endsWith(Stream<T> iterable) {
-		return StreamUtils.endsWith(monad,()->iterable.iterator());
+		return StreamUtils.endsWith(stream,()->iterable.iterator());
 	}
 
 	@Override
 	public SequenceM<T> skip(long time, TimeUnit unit) {
-		return StreamUtils.sequenceM(StreamUtils.skip(monad,time,unit),
+		return StreamUtils.sequenceM(StreamUtils.skip(stream,time,unit),
 				this.reversable);
 	}
 
 	@Override
 	public SequenceM<T> limit(long time, TimeUnit unit) {
-		return StreamUtils.sequenceM(StreamUtils.limit(monad,time,unit),
+		return StreamUtils.sequenceM(StreamUtils.limit(stream,time,unit),
 				this.reversable);
 	}
 
 	@Override
 	public SequenceM<List<T>> batchBySize(int size) {
-		return StreamUtils.sequenceM(StreamUtils.grouped(monad, size),this.reversable);
+		return StreamUtils.sequenceM(StreamUtils.batchBySize(stream, size),this.reversable);
 	}
 
 	
 
 	@Override
 	public SequenceM<T> fixedDelay(long l, TimeUnit unit) {
-		return StreamUtils.sequenceM(StreamUtils.fixedDelay(monad,l,unit),
+		return StreamUtils.sequenceM(StreamUtils.fixedDelay(stream,l,unit),
 				this.reversable);
 	}
 
 	@Override
 	public SequenceM<T> jitter(long l) {
-		return StreamUtils.sequenceM(StreamUtils.jitter(monad,l),
+		return StreamUtils.sequenceM(StreamUtils.jitter(stream,l),
 				this.reversable);
 	}
 
 	@Override
 	public SequenceM<Streamable<T>> windowBySizeAndTime(int size, long time,
 			TimeUnit t) {
-		return StreamUtils.sequenceM(StreamUtils.windowBySizeAndTime(monad,size,time,t), this.reversable);
+		return StreamUtils.sequenceM(StreamUtils.windowBySizeAndTime(stream,size,time,t), this.reversable);
 	}
 
 	@Override
 	public SequenceM<Streamable<T>> windowWhile(Predicate<T> predicate) {
-		return StreamUtils.sequenceM(StreamUtils.windowWhile(monad,predicate), this.reversable);
+		return StreamUtils.sequenceM(StreamUtils.windowWhile(stream,predicate), this.reversable);
 	}
 
 	@Override
 	public SequenceM<Streamable<T>> windowUntil(Predicate<T> predicate) {
-		return StreamUtils.sequenceM(StreamUtils.windowWhile(monad,predicate.negate()), this.reversable);
+		return StreamUtils.sequenceM(StreamUtils.windowWhile(stream,predicate.negate()), this.reversable);
 	}
 
 	@Override
 	public SequenceM<Streamable<T>> windowStatefullyWhile(
 			BiPredicate<Streamable<T>, T> predicate) {
-		return StreamUtils.sequenceM(StreamUtils.windowStatefullyWhile(monad, predicate), this.reversable);
+		return StreamUtils.sequenceM(StreamUtils.windowStatefullyWhile(stream, predicate), this.reversable);
 	}
 
 	@Override
 	public SequenceM<Streamable<T>> windowByTime(long time, TimeUnit t) {
-		return StreamUtils.sequenceM(StreamUtils.windowByTime(monad, time,t), this.reversable);
+		return StreamUtils.sequenceM(StreamUtils.windowByTime(stream, time,t), this.reversable);
 	}
 
 	@Override
 	public SequenceM<List<T>> batchUntil(Predicate<T> predicate) {
-		return StreamUtils.sequenceM(StreamUtils.batchUntil(monad,predicate), this.reversable);
+		return StreamUtils.sequenceM(StreamUtils.batchUntil(stream,predicate), this.reversable);
 	}
 
 	@Override
 	public SequenceM<List<T>> batchWhile(Predicate<T> predicate) {
-		return StreamUtils.sequenceM(StreamUtils.batchWhile(monad,predicate), this.reversable);
+		return StreamUtils.sequenceM(StreamUtils.batchWhile(stream,predicate), this.reversable);
 	}
 	@Override
 	public List collectStream(Stream<Collector> collectors) {
-		return StreamUtils.collect(monad,collectors);
+		return StreamUtils.collect(stream,collectors);
 	}
 	@Override
 	public<C extends Collection<T>>  SequenceM<C> batchWhile(Predicate<T> predicate, Supplier<C> factory) {
-		return StreamUtils.sequenceM(StreamUtils.batchWhile(monad,predicate,factory), this.reversable);
+		return StreamUtils.sequenceM(StreamUtils.batchWhile(stream,predicate,factory), this.reversable);
 	}
 	@Override
 	public<C extends Collection<T>>  SequenceM<C> batchUntil(Predicate<T> predicate, Supplier<C> factory) {
-		return StreamUtils.sequenceM(StreamUtils.batchWhile(monad,predicate.negate(),factory), this.reversable);
+		return StreamUtils.sequenceM(StreamUtils.batchWhile(stream,predicate.negate(),factory), this.reversable);
 	}
 	@Override
 	public <C extends Collection<T>> SequenceM<C> batchBySizeAndTime(int size,
 			long time, TimeUnit unit, Supplier<C> factory) {
-		// TODO Auto-generated method stub
-		return null;
+		return StreamUtils.sequenceM(StreamUtils.batchBySizeAndTime(stream, size,time, unit, factory),this.reversable);
+
 	}
 
 	@Override
 	public <C extends Collection<T>> SequenceM<C> batchByTime(long time,
 			TimeUnit unit, Supplier<C> factory) {
-		// TODO Auto-generated method stub
-		return null;
+		return StreamUtils.sequenceM(StreamUtils.batchByTime(stream, time, unit, factory),this.reversable);
 	}
 	@Override
 	public <C extends Collection<T>> SequenceM<C> batchBySize(int size,
-			Supplier<C> supplier) {
-		// TODO Auto-generated method stub
-		return null;
+			Supplier<C> factory) {
+		return StreamUtils.sequenceM(StreamUtils.batchBySize(stream, size,factory),this.reversable);
+
+	}
+
+	@Override
+	public SequenceM<T> skipLast(int num) {
+		return StreamUtils.sequenceM(StreamUtils.skipLast(stream,num),this.reversable);
+	}
+
+	@Override
+	public SequenceM<T> limitLast(int num) {
+		return StreamUtils.sequenceM(StreamUtils.limitLast(stream,num),this.reversable);
+	}
+
+	@Override
+	public SequenceM<T> recover(Function<Throwable, T> fn) {
+		return StreamUtils.sequenceM(StreamUtils.recover(stream,fn),this.reversable);
 	}
 }

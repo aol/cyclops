@@ -61,13 +61,20 @@ import com.aol.cyclops.sequence.spliterators.ReversableSpliterator;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.future.FutureOperationsImpl;
+import com.aol.cyclops.streams.operators.BatchBySizeOperator;
 import com.aol.cyclops.streams.operators.BatchByTimeAndSizeOperator;
 import com.aol.cyclops.streams.operators.BatchByTimeOperator;
 import com.aol.cyclops.streams.operators.BatchWhileOperator;
 import com.aol.cyclops.streams.operators.DebounceOperator;
+import com.aol.cyclops.streams.operators.LimitLastOperator;
 import com.aol.cyclops.streams.operators.LimitWhileOperator;
 import com.aol.cyclops.streams.operators.LimitWhileTimeOperator;
+import com.aol.cyclops.streams.operators.MultiCollectOperator;
+import com.aol.cyclops.streams.operators.MultiReduceOperator;
 import com.aol.cyclops.streams.operators.OnePerOperator;
+import com.aol.cyclops.streams.operators.RecoverOperator;
+import com.aol.cyclops.streams.operators.SkipLastOperator;
+import com.aol.cyclops.streams.operators.SkipWhileOperator;
 import com.aol.cyclops.streams.operators.SkipWhileTimeOperator;
 import com.aol.cyclops.streams.operators.WindowByTimeAndSizeOperator;
 import com.aol.cyclops.streams.operators.WindowStatefullyWhileOperator;
@@ -410,6 +417,15 @@ public class StreamUtils{
 	public static <U> Stream<U> skipUntil(Stream<U> stream,Predicate<? super U> predicate){
 		return skipWhile(stream,predicate.negate());
 	}
+	public static <U> Stream<U> skipLast(Stream<U> stream,int num){
+		return new SkipLastOperator<>(stream,num).skipLast();
+	}
+	public static <U> Stream<U> limitLast(Stream<U> stream,int num){
+		return new LimitLastOperator<>(stream,num).limitLast();
+	}
+	public static <T> Stream<T> recover(Stream<T> stream,Function<Throwable, T> fn){
+		return new RecoverOperator<>(stream).recover(fn);
+	}
 	/**
 	 * skip elements in a Stream while Predicate holds true
 	 * 
@@ -423,44 +439,7 @@ public class StreamUtils{
 	 * @return
 	 */
 	public static <U> Stream<U> skipWhile(Stream<U> stream,Predicate<? super U> predicate){
-		Iterator<U> it = stream.iterator();
-		return StreamUtils.stream(new Iterator<U>(){
-			U next;
-			boolean nextSet = false;
-			boolean init =false;
-			@Override
-			public boolean hasNext() {
-				if(init)
-					return it.hasNext();
-				try{
-					while(it.hasNext()){
-						
-						next = it.next();
-						nextSet = true;
-						
-						if(!predicate.test(next))
-							return true;
-					
-					}
-					return false;
-				}finally{
-					init =true;
-				}
-			}
-
-			@Override
-			public U next() {
-				if(!init){
-					hasNext();
-				}
-				if(nextSet){
-					nextSet = false;
-					return next;
-				}
-				return it.next();
-			}
-			
-		});
+		return new SkipWhileOperator<U>(stream).skipWhile(predicate);
 	}
 	public static <U> Stream<U> limit(Stream<U> stream,long time, TimeUnit unit){
 		return new LimitWhileTimeOperator<U>(stream).limitWhile(time,unit);
@@ -685,31 +664,8 @@ public class StreamUtils{
 	 */
 	@SuppressWarnings({"rawtypes","unchecked"})
 	public static <R> List<R> reduce(Stream<R> stream,Iterable<Monoid<R>> reducers){
-	
-		Monoid<R> m = new Monoid(){
-			public List zero(){
-				return stream(reducers).map(r->r.zero()).collect(Collectors.toList());
-			}
-			public BiFunction<List,List,List> combiner(){
-				return (c1,c2) -> { 
-					List l= new ArrayList<>();
-					int i =0;
-					for(Monoid next : reducers){
-						l.add(next.combiner().apply(c1.get(i),c2.get(0)));
-						i++;
-					}
-					
-					
-					return l;
-				};
-			}
-			
+		return new MultiReduceOperator<R>(stream).reduce(reducers);
 		
-			public Stream mapToType(Stream stream){
-				return (Stream) stream.map(value->Arrays.asList(value));
-			}
-		};
-		return (List)m.mapReduce(stream);
 	}
 	/**
 	 * Simultanously reduce a stream with multiple reducers
@@ -797,26 +753,7 @@ public class StreamUtils{
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T> List collect(Stream<T> stream, Streamable<Collector> collectors){
-		
-		
-		final Supplier supplier =  ()-> collectors.stream().map(c->c.supplier().get()).collect(Collectors.toList());
-		final BiConsumer accumulator = (acc,next) -> {  Seq.seq(collectors.stream().iterator()).<Object,Tuple2<Collector,Object>>zip(
-																Seq.seq((List)acc),(a,b)->new Tuple2<Collector,Object>(a,b))
-													
-													.forEach( t -> t.v1().accumulator().accept(t.v2(),next));
-		};
-		final BinaryOperator combiner = (t1,t2)->  {
-			Iterator t1It = ((Iterable)t1).iterator();
-			Iterator t2It =  ((Iterable)t2).iterator();
-			return collectors.stream().map(c->c.combiner().apply(t1It.next(),t2It.next())).collect(Collectors.toList());
-		};
-		Function finisher = t1 -> {
-			Iterator t1It = ((Iterable)t1).iterator();
-			return collectors.stream().map(c->c.finisher().apply(t1It.next())).collect(Collectors.toList());
-		};
-		 Collector col = Collector.of( supplier,accumulator , combiner,finisher);
-			
-		 return (List)stream.collect(col);
+		return new MultiCollectOperator<T>(stream).collect(collectors);
 	}
 	
 	/**
@@ -1087,27 +1024,13 @@ public class StreamUtils{
 	 *            Size of each Group
 	 * @return Stream with elements grouped by size
 	 */
-	public final static<T> Stream<List<T>> grouped(Stream<T> stream,int groupSize) {
-		Iterator<T> it = stream.iterator();
-		return StreamUtils.stream(new Iterator<List<T>>(){
-			
-			@Override
-			public boolean hasNext() {
-				return it.hasNext();
-			}
-
-			@Override
-			public List<T> next() {
-				List<T> list = new ArrayList<>();
-				for (int i = 0; i < groupSize; i++) {
-					if(it.hasNext())
-						list.add(it.next());
-					
-				}
-				return list;
-			}
-			
-		});
+	public final static<T> Stream<List<T>> batchBySize(Stream<T> stream,int groupSize) {
+		return new BatchBySizeOperator<T,List<T>>(stream).batchBySize(groupSize);
+		
+		
+	}
+	public final static<T, C extends Collection<T>> Stream<C> batchBySize(Stream<T> stream,int groupSize, Supplier<C> factory) {
+		return new BatchBySizeOperator<T,C>(stream,factory).batchBySize(groupSize);
 		
 		
 	}
@@ -1528,7 +1451,7 @@ public class StreamUtils{
 	 * @param fn
 	 * @return
 	 *///rename -flatMapCharSequence
-	public final static <T> Stream<Character> liftAndBindCharSequence(Stream<T> stream,Function<? super T,CharSequence> fn) {
+	public final static <T> Stream<Character> flatMapCharSequence(Stream<T> stream,Function<? super T,CharSequence> fn) {
 		return AsGenericMonad.<Stream<T>,T>asMonad(stream).liftAndBind(fn).sequence();
 	}
 	/**
@@ -1554,7 +1477,7 @@ public class StreamUtils{
 	 * @param fn
 	 * @return
 	 */
-	public final static <T> Stream<String> liftAndBindFile(Stream<T> stream,Function<? super T,File> fn) {
+	public final static <T> Stream<String> flatMapFile(Stream<T> stream,Function<? super T,File> fn) {
 		return AsGenericMonad.<Stream<T>,T>asMonad(stream).liftAndBind(fn).sequence();	
 	}
 	/**
@@ -1575,7 +1498,7 @@ public class StreamUtils{
 	 * @param fn
 	 * @return
 	 */
-	public final  static <T> Stream<String> liftAndBindURL(Stream<T> stream,Function<? super T, URL> fn) {
+	public final  static <T> Stream<String> flatMapURL(Stream<T> stream,Function<? super T, URL> fn) {
 		return AsGenericMonad.<Stream<T>,T>asMonad(stream).liftAndBind(fn).sequence();			
 	}
 	/**
@@ -1597,7 +1520,7 @@ public class StreamUtils{
 	 * @param fn
 	 * @return
 	 */
-	public final static <T> Stream<String> liftAndBindBufferedReader(Stream<T> stream,Function<? super T,BufferedReader> fn) {
+	public final static <T> Stream<String> flatMapBufferedReader(Stream<T> stream,Function<? super T,BufferedReader> fn) {
 		return AsGenericMonad.<Stream<T>,T>asMonad(stream).liftAndBind(fn).sequence();
 	}
 
@@ -1782,7 +1705,10 @@ public class StreamUtils{
 			});
 	  }
 	  public final static <T> Stream<List<T>> batchByTime(Stream<T> stream, long time, TimeUnit t){
-			return new BatchByTimeOperator<>(stream).batchByTime(time,t);
+			return new BatchByTimeOperator<T,List<T>>(stream).batchByTime(time,t);
+	  }
+	  public final static  <T, C extends Collection<T>> Stream<C> batchByTime(Stream<T> stream, long time, TimeUnit t, Supplier<C> factory){
+			return new BatchByTimeOperator<T,C>(stream,factory).batchByTime(time,t);
 	  }
 	  private static final Object UNSET = new Object();
 	  public final static <T> Stream<Streamable<T>> windowStatefullyWhile(Stream<T> stream,BiPredicate<Streamable<T>,T> predicate){
@@ -1801,7 +1727,10 @@ public class StreamUtils{
 			return batchWhile(stream,predicate.negate());
 	  }
 	  public final static <T> Stream<List<T>> batchBySizeAndTime(Stream<T> stream,int size, long time, TimeUnit t){
-			return new BatchByTimeAndSizeOperator<T>(stream).batchBySizeAndTime(size, time, t);
+			return new BatchByTimeAndSizeOperator<T,List<T>>(stream).batchBySizeAndTime(size, time, t);
+	  }
+	  public final static <T, C extends Collection<T>> Stream<C>   batchBySizeAndTime(Stream<T> stream,int size, long time, TimeUnit t,Supplier<C> factory){
+			return new BatchByTimeAndSizeOperator<T,C>(stream,factory).batchBySizeAndTime(size, time, t);
 	  }
 	  public final static <T> Stream<Streamable<T>> windowBySizeAndTime(Stream<T> stream,int size, long time, TimeUnit t){
 		  return new WindowByTimeAndSizeOperator<>(stream).windowBySizeAndTime(size, time, t);

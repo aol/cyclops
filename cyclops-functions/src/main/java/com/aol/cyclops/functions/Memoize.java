@@ -14,7 +14,7 @@ import lombok.val;
 import com.aol.cyclops.closures.immutable.LazyImmutable;
 import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
-public class Memoise {
+public class Memoize {
 
 	/**
 	 * Convert a Supplier into one that caches it's result

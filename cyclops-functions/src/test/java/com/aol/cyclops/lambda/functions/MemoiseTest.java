@@ -1,11 +1,11 @@
 package com.aol.cyclops.lambda.functions;
 
-import static com.aol.cyclops.functions.Memoise.memoiseBiFunction;
-import static com.aol.cyclops.functions.Memoise.memoiseCallable;
-import static com.aol.cyclops.functions.Memoise.memoiseFunction;
-import static com.aol.cyclops.functions.Memoise.memoisePredicate;
-import static com.aol.cyclops.functions.Memoise.memoiseQuadFunction;
-import static com.aol.cyclops.functions.Memoise.memoiseSupplier;
+import static com.aol.cyclops.functions.Memoize.memoiseBiFunction;
+import static com.aol.cyclops.functions.Memoize.memoiseCallable;
+import static com.aol.cyclops.functions.Memoize.memoiseFunction;
+import static com.aol.cyclops.functions.Memoize.memoisePredicate;
+import static com.aol.cyclops.functions.Memoize.memoiseQuadFunction;
+import static com.aol.cyclops.functions.Memoize.memoiseSupplier;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -20,7 +20,7 @@ import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.functions.Memoise;
+import com.aol.cyclops.functions.Memoize;
 public class MemoiseTest {
 
 	int called= 0;
@@ -79,7 +79,7 @@ public class MemoiseTest {
 	}
 	@Test
 	public void testMemoiseTriFunction(){
-		val cached = Memoise.memoiseTriFunction(this::mult);
+		val cached = Memoize.memoiseTriFunction(this::mult);
 		
 		assertThat(cached.apply(1,2,3),equalTo(6));
 		assertThat(cached.apply(1,2,3),equalTo(6));

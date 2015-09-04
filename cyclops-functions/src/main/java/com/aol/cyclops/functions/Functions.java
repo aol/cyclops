@@ -16,7 +16,7 @@ public class Functions extends Uncurry {
 	 * @return Memoised Supplier
 	 */
 	public static <T> Supplier<T> memoiseSupplier(Supplier<T> s){
-		return Memoise.memoiseSupplier(s);
+		return Memoize.memoiseSupplier(s);
 	}
 	/**
 	 * Convert a Callable into one that caches it's result
@@ -25,7 +25,7 @@ public class Functions extends Uncurry {
 	 * @return Memoised Callable
 	 */
 	public static <T> Callable<T> memoiseCallable(Callable<T> s){
-		return Memoise.memoiseCallable(s);
+		return Memoize.memoiseCallable(s);
 	}
 	
 	/**
@@ -35,7 +35,7 @@ public class Functions extends Uncurry {
 	 * @return Memoised Function
 	 */
 	public static <T,R> Function<T,R> memoiseFunction(Function<T,R> fn){
-		return Memoise.memoiseFunction(fn);
+		return Memoize.memoiseFunction(fn);
 	}
 	
 	/**
@@ -45,7 +45,7 @@ public class Functions extends Uncurry {
 	 * @return Memoised BiFunction
 	 */
 	public static <T1,T2 , R> BiFunction<T1, T2, R> memoiseBiFunction(BiFunction<T1, T2, R> fn) {
-		return Memoise.memoiseBiFunction(fn);
+		return Memoize.memoiseBiFunction(fn);
 	}
 	/**
 	 * Convert a TriFunction into one that caches it's result
@@ -54,7 +54,7 @@ public class Functions extends Uncurry {
 	 * @return Memoised TriFunction
 	 */
 	public static <T1,T2,T3, R> TriFunction<T1, T2,T3, R> memoiseTriFunction(TriFunction<T1, T2,T3, R> fn) {
-		return Memoise.memoiseTriFunction(fn);
+		return Memoize.memoiseTriFunction(fn);
 	}
 	/**
 	 * Convert a QuadFunction into one that caches it's result
@@ -63,7 +63,7 @@ public class Functions extends Uncurry {
 	 * @return Memoised TriFunction
 	 */
 	public static <T1,T2,T3,T4, R> QuadFunction<T1, T2,T3, T4,R> memoiseQuadFunction(QuadFunction<T1, T2,T3,T4, R> fn) {
-		return Memoise.memoiseQuadFunction(fn);
+		return Memoize.memoiseQuadFunction(fn);
 	}
 	/**
 	 * Convert a Predicate into one that caches it's result
@@ -72,7 +72,7 @@ public class Functions extends Uncurry {
 	 * @return Memoised Predicate
 	 */
 	public static <T> Predicate<T> memoisePredicate(Predicate<T> p) {
-		return Memoise.memoisePredicate(p);
+		return Memoize.memoisePredicate(p);
 	}
 	/**
 	 * Lift a function so it accepts a Monad and returns a Monad (simplex view of a wrapped Monad)

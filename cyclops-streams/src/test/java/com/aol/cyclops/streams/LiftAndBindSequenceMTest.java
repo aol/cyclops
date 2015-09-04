@@ -24,7 +24,7 @@ public class LiftAndBindSequenceMTest {
 								.map(getClass().getClassLoader()::getResource)
 								.peek(System.out::println)
 								.map(URL::getFile)
-								.liftAndBindFile(File::new)
+								.flatMapFile(File::new)
 								.toList();
 		
 		assertThat(result,equalTo(Arrays.asList("hello","world")));
@@ -35,7 +35,7 @@ public class LiftAndBindSequenceMTest {
 		
 		List<String> result = anyM("input.file")
 								.asSequence()
-								.liftAndBindURL(getClass().getClassLoader()::getResource)
+								.flatMapURL(getClass().getClassLoader()::getResource)
 								.toList();
 		
 		assertThat(result,equalTo(Arrays.asList("hello","world")));
@@ -46,7 +46,7 @@ public class LiftAndBindSequenceMTest {
 		
 		List<Character> result = anyM("input.file")
 									.asSequence()
-									.liftAndBindCharSequence(i->"hello world")
+									.flatMapCharSequence(i->"hello world")
 									.toList();
 		
 		assertThat(result,equalTo(Arrays.asList('h','e','l','l','o',' ','w','o','r','l','d')));
@@ -59,7 +59,7 @@ public class LiftAndBindSequenceMTest {
 								.asSequence()
 								.map(getClass().getClassLoader()::getResourceAsStream)
 								.map(InputStreamReader::new)
-								.liftAndBindBufferedReader(BufferedReader::new)
+								.flatMapBufferedReader(BufferedReader::new)
 								.toList();
 		
 		assertThat(result,equalTo(Arrays.asList("hello","world")));

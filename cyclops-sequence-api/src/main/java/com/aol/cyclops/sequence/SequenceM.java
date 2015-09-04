@@ -16,6 +16,7 @@ import java.util.Spliterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
@@ -1153,7 +1154,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param fn
 	 * @return
 	 */
-	SequenceM<Character> liftAndBindCharSequence(Function<? super T,CharSequence> fn);
+	SequenceM<Character> flatMapCharSequence(Function<? super T,CharSequence> fn);
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
 	 * from the text loaded from the supplied files.
@@ -1178,7 +1179,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param fn
 	 * @return
 	 */
-	SequenceM<String> liftAndBindFile(Function<? super T,File> fn);
+	SequenceM<String> flatMapFile(Function<? super T,File> fn);
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
 	 * from the text loaded from the supplied URLs 
@@ -1198,7 +1199,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param fn
 	 * @return
 	 */
-	SequenceM<String> liftAndBindURL(Function<? super T, URL> fn) ;
+	SequenceM<String> flatMapURL(Function<? super T, URL> fn) ;
 	/**
 	  *  Perform a flatMap operation where the result will be a flattened stream of Strings
 	 * from the text loaded from the supplied BufferedReaders
@@ -1219,7 +1220,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param fn
 	 * @return
 	 */
-	SequenceM<String> liftAndBindBufferedReader(Function<? super T,BufferedReader> fn);
+	SequenceM<String> flatMapBufferedReader(Function<? super T,BufferedReader> fn);
 	public  SequenceM<T>  filter(Predicate<? super T> fn);
 	void forEach(Consumer<? super T> action);
 	
@@ -1452,6 +1453,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	boolean endsWith(Stream<T> iterable);
 	SequenceM<T> skip(long time, final TimeUnit unit);
 	SequenceM<T> limit(long time, final TimeUnit unit);
+	SequenceM<T> skipLast(int num);
+	SequenceM<T> limitLast(int num);
 
 	HotStream<T> hotStream(Executor e);
 	
@@ -1771,4 +1774,31 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	<C extends Collection<T>>  SequenceM<C> batchWhile(Predicate<T> predicate, Supplier<C> factory);
 	<C extends Collection<T>>  SequenceM<C> batchUntil(Predicate<T> predicate, Supplier<C> factory);
 
+	SequenceM<T> recover(final Function<Throwable, T> fn);
+	default SequenceM<T> onEmptySwitch(Supplier<Stream<T>> switchTo){
+		return SequenceM.fromStream(onEmptyGet((Supplier)switchTo).flatMap(s->(Stream)s));
+	}
+	default <R> SequenceM<R> retry(Function<T,R> fn){
+		Function<T,R> retry = t-> {
+			int count = 7;
+			int sleep =2000;
+			Throwable exception=null;
+			while(count-->0){
+				try{
+					return fn.apply(t);
+				}catch(Throwable e){
+					exception = e;
+				}
+				try {
+					Thread.sleep(sleep);
+				} catch (InterruptedException e) {
+					throw (RuntimeException)(Exception)e;
+				}
+				sleep=sleep*2;
+			}
+			throw (RuntimeException)(Exception)exception;
+		};
+		return map(retry);
+	}
+	
 }
