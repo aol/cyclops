@@ -10,6 +10,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
@@ -222,5 +223,6 @@ public interface FutureOperations<T> extends IntOperators<T>,DoubleOperators<T>,
 	 * 	 @see java.util.stream.Stream#noneMatch(Predicate)
 	 * */
 	public CompletableFuture<Boolean>   noneMatch(Predicate<? super T> predicate);
+	public void forEach(Consumer<T> object);
 	
 }

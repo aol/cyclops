@@ -11,13 +11,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
-import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
@@ -48,8 +46,9 @@ import org.reactivestreams.Subscriber;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
-import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsPublisher;
-import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsSubscriber;
+import com.aol.cyclops.sequence.spliterators.ReversingArraySpliterator;
+import com.aol.cyclops.sequence.spliterators.ReversingListSpliterator;
+import com.aol.cyclops.sequence.spliterators.ReversingRangeSpliterator;
 import com.aol.cyclops.sequence.streamable.Streamable;
 
 
@@ -1134,7 +1133,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @return
 	 */
 	<R> SequenceM<R> flatMapCompletableFuture(Function<? super T,CompletableFuture<? extends R>> fn);
-//	 <R> SequenceM<R> flatMapLazySeq(Function<? super T,LazySeq<? extends R>> fn);
+
 	/**
 	 * Perform a flatMap operation where the result will be a flattened stream of Characters
 	 * from the CharSequence returned by the supplied function.
@@ -1449,11 +1448,33 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	FutureOperations<T> futureOperations(Executor exec);
 	
 	boolean endsWith(Iterable<T> iterable);
-	window(Predicate p);
+	boolean endsWith(Stream<T> iterable);
+	SequenceM<T> skip(long time, final TimeUnit unit);
+	SequenceM<T> limit(long time, final TimeUnit unit);
 
 	HotStream<T> hotStream(Executor e);
-
+	
 	T firstValue();
+	T single();
+//	<X extends Throwable,R> SequenceM<T> onFail(Class<X> e,Function<X,R> fn);
+	default Optional<T> elementAt(long index){
+		return this.zipWithIndex()
+				   .filter(t->t.v2==index)
+				   .findFirst()
+				   .map(t->t.v1());
+	}
+	
+	default SequenceM<Tuple2<T,Long>> elapsed(){
+		long[] last = {System.currentTimeMillis()};
+		return zip(SequenceM.generate( ()->{long now =System.currentTimeMillis();
+		long result = last[0]- now;
+		last[0]=now;
+		return result;
+		} ));
+	}
+	default SequenceM<Tuple2<T,Long>> timestamp(){
+		return zip(SequenceM.generate( ()->System.currentTimeMillis()));
+	}
 	
 //	void publish(Subscriber sub);
 	
@@ -1470,7 +1491,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @return
 	 */
 	public static <T> SequenceM<T> of(T... elements){
-		return SequenceMFactory.instance.sequenceM(Stream.of(elements),elements);
+		ReversingArraySpliterator array = new ReversingArraySpliterator<T>(elements,false,0);
+		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(array, false),array);
 		
 	}
 	/**
@@ -1479,7 +1501,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @return
 	 */
 	public static <T> SequenceM<T> reversedOf(T... elements){
-		return SequenceMFactory.instance.sequenceM(SeqUtils.reversedStream(Arrays.asList(elements)),null);
+		ReversingArraySpliterator array = new ReversingArraySpliterator<T>(elements, true,0);
+		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(array, false),array);
 		
 	}
 	/**
@@ -1488,12 +1511,13 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @return
 	 */
 	public static <T> SequenceM<T> reversedListOf(List<T> elements){
-		return SequenceMFactory.instance.sequenceM(SeqUtils.reversedStream(elements),null);
+		ReversingListSpliterator list = new ReversingListSpliterator<T>(elements, true);
+		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(list, false),list);
 
 	}
 	public static SequenceM<Integer> range(int start, int end){
-		IntStream range = IntStream.range(start, end);
-		return SequenceMFactory.instance.sequenceM(Seq.seq(range),null);
+		ReversingRangeSpliterator range = new ReversingRangeSpliterator(start, end, false);
+		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(range, false),range);
 
 	}
 	/**
@@ -1540,7 +1564,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @return SequenceM
 	 */
 	public static <T> SequenceM<T> fromList(List<T> list){
-		return SequenceMFactory.instance.sequenceM(list.stream(),list);
+		ReversingListSpliterator array = new ReversingListSpliterator<T>(list,false);
+		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(array, false),array);
 	}
 	
 	/**
@@ -1612,91 +1637,107 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	}
 	
 	
+	<U> SequenceM<Tuple2<T, U>> crossJoin(Stream<U> other);
+
+	<U> SequenceM<Tuple2<T, U>> innerJoin(Stream<U> other,
+			BiPredicate<T, U> predicate);
+
+	<U> SequenceM<Tuple2<T, U>> leftOuterJoin(Stream<U> other,
+			BiPredicate<T, U> predicate);
+
+	<U> SequenceM<Tuple2<T, U>> rightOuterJoin(Stream<U> other,
+			BiPredicate<T, U> predicate);
+
+	SequenceM<T> onEmpty(T value);
+
+	SequenceM<T> onEmptyGet(Supplier<T> supplier);
+
+	<X extends Throwable> SequenceM<T> onEmptyThrow(Supplier<X> supplier);
+
+	SequenceM<T> concat(Stream<T> other);
+
+	SequenceM<T> concat(T other);
+
+	/**
+	 * Concatenate two streams.
+	 * <p>
+	 * <code><pre>
+	 * // (1, 2, 3, 4, 5, 6)
+	 * Seq.of(1, 2, 3).concat(4, 5, 6)
+	 * </pre></code>
+	 *
+	 * @see #concat(Stream[])
+	 */
+
+	SequenceM<T> concat(T... other);
+
+	/**
+	 * Get a stream of distinct keys.
+	 * <p>
+	 * <code><pre>
+	 * // (1, 2, 3)
+	 * Seq.of(1, 1, 2, -2, 3).distinct(Math::abs)
+	 * </pre></code>
+	 */
+	<U> SequenceM<T> distinct(Function<? super T, ? extends U> keyExtractor);
+
+	/**
+	 * Zip two streams into one using a {@link BiFunction} to produce resulting
+	 * values.
+	 * <p>
+	 * <code><pre>
+	 * // ("1:a", "2:b", "3:c")
+	 * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"), (i, s) -> i + ":" + s)
+	 * </pre></code>
+	 *
+	 * @see #zip(Seq, BiFunction)
+	 */
+	<U, R> SequenceM<R> zip(Seq<U> other, BiFunction<T, U, R> zipper);
+
+	/**
+	 * Shuffle a stream using specified source of randomness
+	 * <p>
+	 * <code><pre>
+	 * // e.g. (2, 3, 1)
+	 * Seq.of(1, 2, 3).shuffle(new Random())
+	 * </pre></code>
+	 */
+	SequenceM<T> shuffle(Random random);
+
+	/**
+	 * Returns a limited interval from a given Stream.
+	 * <p>
+	 * <code><pre>
+	 * // (4, 5)
+	 * Seq.of(1, 2, 3, 4, 5, 6).slice(3, 5)
+	 * </pre></code>
+	 *
+	 * @see #slice(Stream, long, long)
+	 */
+	SequenceM<T> slice(long from, long to);
+
+	/**
+	 * Sort by the results of function.
+	 */
+	<U extends Comparable<? super U>> SequenceM<T> sorted(
+			Function<? super T, ? extends U> function);
+
+	SequenceM<T> xPer(int x, long time, TimeUnit t);
+
+	SequenceM<T> onePer(long time, TimeUnit t);
+
+	SequenceM<T> debounce(long time, TimeUnit t);
+
+	SequenceM<List<T>> batchBySizeAndTime(int size, long time, TimeUnit t);
+	<C extends Collection<T>> SequenceM<C> batchBySizeAndTime(int size,long time, TimeUnit unit, Supplier<C> factory);
+	SequenceM<List<T>> batchByTime(long time, TimeUnit t);
+	<C extends Collection<T>> SequenceM<C> batchByTime(long time, TimeUnit unit, Supplier<C> factory);
+	SequenceM<List<T>> batchBySize(int size);
+	<C extends Collection<T>>SequenceM<C> batchBySize(int size, Supplier<C> supplier);
+
+	SequenceM<T> fixedDelay(long l, TimeUnit microseconds);
+
+	SequenceM<T> jitter(long l);
 	
-	<U> SequenceM<Tuple2<T, U>> crossJoin(Stream<U> other) ;
-	<U> SequenceM<Tuple2<T, U>> innerJoin(Stream<U> other, BiPredicate<T, U> predicate);
-	<U> SequenceM<Tuple2<T, U>> leftOuterJoin(Stream<U> other, BiPredicate<T, U> predicate);
-	 <U> SequenceM<Tuple2<T, U>> rightOuterJoin(Stream<U> other, BiPredicate<T, U> predicate);
-	 SequenceM<T> onEmpty(T value);
-	 SequenceM<T> onEmptyGet(Supplier<T> supplier);
-	 <X extends Throwable> SequenceM<T> onEmptyThrow(Supplier<X> supplier);
-	 SequenceM<T> concat(Stream<T> other);
-	 SequenceM<T> concat(T other);
-	    /**
-	     * Concatenate two streams.
-	     * <p>
-	     * <code><pre>
-	     * // (1, 2, 3, 4, 5, 6)
-	     * Seq.of(1, 2, 3).concat(4, 5, 6)
-	     * </pre></code>
-	     *
-	     * @see #concat(Stream[])
-	     */
-	   
-	   SequenceM<T> concat(T... other);
 
-	    
-	    /**
-	     * Get a stream of distinct keys.
-	     * <p>
-	     * <code><pre>
-	     * // (1, 2, 3)
-	     * Seq.of(1, 1, 2, -2, 3).distinct(Math::abs)
-	     * </pre></code>
-	     */
-	    <U> SequenceM<T> distinct(Function<? super T, ? extends U> keyExtractor);
-
-	  
-	    /**
-	     * Zip two streams into one using a {@link BiFunction} to produce resulting values.
-	     * <p>
-	     * <code><pre>
-	     * // ("1:a", "2:b", "3:c")
-	     * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"), (i, s) -> i + ":" + s)
-	     * </pre></code>
-	     *
-	     * @see #zip(Seq, BiFunction)
-	     */
-	    <U, R> SequenceM<R> zip(Seq<U> other, BiFunction<T, U, R> zipper);
-	    
-
-	    /**
-	     * Shuffle a stream using specified source of randomness
-	     * <p>
-	     * <code><pre>
-	     * // e.g. (2, 3, 1)
-	     * Seq.of(1, 2, 3).shuffle(new Random())
-	     * </pre></code>
-	     */
-	    SequenceM<T> shuffle(Random random);
-
-	    
-	    
-	    /**
-	     * Returns a limited interval from a given Stream.
-	     * <p>
-	     * <code><pre>
-	     * // (4, 5)
-	     * Seq.of(1, 2, 3, 4, 5, 6).slice(3, 5)
-	     * </pre></code>
-	     *
-	     * @see #slice(Stream, long, long)
-	     */
-	    SequenceM<T> slice(long from, long to);
-	    
-
-
-	    
-	    /**
-	     * Sort by the results of function.
-	     */
-	    <U extends Comparable<? super U>> SequenceM<T> sorted(Function<? super T, ? extends U> function);
-	 
-	 
-	    SequenceM<T> xPer(int x, long time, TimeUnit t);
-	    SequenceM<T> onePer(long time, TimeUnit t);
-	    SequenceM<T> debounce(long time, TimeUnit t);
-	    SequenceM<List<T>> batchByTimeAndSize(int size, long time, TimeUnit t);
-	    SequenceM<List<T>> batchByTime(long time, TimeUnit t);
-	
 }

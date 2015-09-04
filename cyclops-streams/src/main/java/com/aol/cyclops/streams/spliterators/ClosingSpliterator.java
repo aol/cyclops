@@ -1,4 +1,4 @@
-package com.aol.cyclops.streams;
+package com.aol.cyclops.streams.spliterators;
 
 import java.util.Objects;
 import java.util.Queue;
@@ -13,7 +13,7 @@ public class ClosingSpliterator<T> implements Spliterator<T> {
     private final Queue<T> queue;
     private final AtomicBoolean open;
 
-    protected ClosingSpliterator(long estimate,	
+    public ClosingSpliterator(long estimate,	
     		Queue queue, AtomicBoolean open) {
         this.estimate = estimate;
         this.open = open;
@@ -38,8 +38,10 @@ public class ClosingSpliterator<T> implements Spliterator<T> {
 	public boolean tryAdvance(Consumer<? super T> action) {
 		 Objects.requireNonNull(action);
 		
-			if(!open.get() && queue.size()==0)
+			if(!open.get() && queue.size()==0){
+				System.out.println(open.get() + " : " + queue.size());
 				return false;
+			}
         
         	T value;
         	if((value=queue.poll())!=null)

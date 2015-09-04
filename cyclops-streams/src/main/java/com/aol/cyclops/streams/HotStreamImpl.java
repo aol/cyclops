@@ -1,5 +1,6 @@
 package com.aol.cyclops.streams;
 
+import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -13,6 +14,7 @@ import uk.co.real_logic.agrona.concurrent.OneToOneConcurrentArrayQueue;
 
 import com.aol.cyclops.sequence.HotStream;
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.streams.spliterators.ClosingSpliterator;
 
 public class HotStreamImpl<T> implements HotStream<T>{
 
@@ -27,26 +29,35 @@ public class HotStreamImpl<T> implements HotStream<T>{
 	
 	public HotStream<T> init(Executor exec){
 		CompletableFuture.runAsync( ()-> {
-				stream.forEach(a->{
-					for(int i=0;i<connected;i++){
+			
+			stream.forEach(a->{
+					int local = connected;
+					
+					for(int i=0;i<local;i++){
+					
 						connections.get(i).offer(a);
 					}
-					open.set(false);
+					
+					
 				});
+				
+				open.set(false); 
+				System.out.println("finished!"); 
+					
 		},exec);
 		return this;
 	}
+	@Override
 	public SequenceM<T> connect(){
 		return connect(new OneToOneConcurrentArrayQueue<T>(256));
 	}
-	public <R extends Stream<T>> R connectTo(Function<SequenceM<T>,R> to) {
-		return to.apply(connect(new OneToOneConcurrentArrayQueue<T>(256)));
-	}
+	
 	@Override
 	public SequenceM<T> connect(Queue<T> queue) {
-		connections.getAndSet(connected++, queue);
+		connections.getAndSet(connected, queue);
+		connected++;
 		return StreamUtils.sequenceM(StreamSupport.stream(
-                new ClosingSpliterator(Long.MAX_VALUE, queue,open), false));
+                new ClosingSpliterator(Long.MAX_VALUE, queue,open), false),Optional.empty());
 	}
 
 	@Override

@@ -2,19 +2,29 @@ package com.aol.cyclops.streams.future;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.DoubleSummaryStatistics;
+import java.util.IntSummaryStatistics;
 import java.util.List;
+import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
+import java.util.OptionalLong;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntFunction;
+import java.util.function.ToLongFunction;
 import java.util.stream.Collector;
 
 import lombok.AllArgsConstructor;
@@ -302,6 +312,12 @@ public class FutureOperationsImpl<T> implements FutureOperations<T>, DoubleOpera
 	 * */
 	public CompletableFuture<Boolean>   noneMatch(Predicate<? super T> predicate){
 		return CompletableFuture.supplyAsync(()->stream.noneMatch(predicate),exec);
+	}
+	
+	@Override
+	public void forEach(Consumer<T> c) {
+		 CompletableFuture.runAsync(()->stream.forEach(c),exec);
+		
 	}
 	
 }

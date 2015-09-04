@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import com.aol.cyclops.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
 import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
 
 
@@ -453,7 +454,7 @@ public class AsAnyM {
 	 * @return Duck typed Monad
 	 */
 	public static <T> AnyM<T> anyM(T... values){
-		return anyM(Stream.of(values));
+		return anyM(SequenceM.of(values));
 	}
 
 	/**

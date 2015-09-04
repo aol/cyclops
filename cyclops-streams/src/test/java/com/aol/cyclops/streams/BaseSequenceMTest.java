@@ -71,6 +71,7 @@ public  class BaseSequenceMTest {
 												.collect(Collectors.toList());
 		
 		List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+		
 		assertThat(right,hasItem(100));
 		assertThat(right,hasItem(200));
 		assertThat(right,hasItem(300));
@@ -276,7 +277,26 @@ public  class BaseSequenceMTest {
 
     @Test
     public void testReverse() {
-        assertThat( of(1, 2, 3).reverse().toList().size(), is(asList(3, 2, 1).size()));
+
+        assertThat( of(1, 2, 3).reverse().toList(), equalTo(asList(3, 2, 1)));
+    }
+    @Test
+    public void testReverseList() {
+    	
+        assertThat( SequenceM.fromList(Arrays.asList(10,400,2,-1))
+        				.reverse().toList(), equalTo(asList(-1, 2, 400,10)));
+    }
+    @Test
+    public void testReverseListLimit() {
+    	
+        assertThat( SequenceM.fromList(Arrays.asList(10,400,2,-1)).limit(2)
+        				.reverse().toList(), equalTo(asList(-1, 2)));
+    }
+    @Test
+    public void testReverseRange() {
+    	
+        assertThat( SequenceM.range(0,10)
+        				.reverse().toList(), equalTo(asList(9,8,7,6,5,4,3,2,1,0)));
     }
 
    

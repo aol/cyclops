@@ -25,7 +25,8 @@ public class MonadWrapper<MONAD,T> implements Monad<MONAD,T>, Decomposable{
 	}
 	@Override
 	public SequenceM<T>  sequence(){
-		//FIXME : plugin or similar to create the SequenceM
-		return null;//new  SequenceMImpl(this.stream());	
+		if(monad instanceof SequenceM)
+			return ((SequenceM)monad);
+		return SequenceM.fromStream(this.stream());
 	}
 }

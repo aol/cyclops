@@ -56,6 +56,7 @@ import com.aol.cyclops.sequence.SeqUtils;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.SequenceMImpl;
 import com.aol.cyclops.sequence.future.FutureOperations;
+import com.aol.cyclops.sequence.spliterators.ReversableSpliterator;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.future.FutureOperationsImpl;
@@ -363,7 +364,7 @@ public class StreamUtils{
 	 */
 	public final  static <T> HeadAndTail<T> headAndTail(Stream<T> stream){
 		Iterator<T> it = stream.iterator();
-		return new HeadAndTail(it.next(),sequenceM(stream(it)));
+		return new HeadAndTail(it.next(),sequenceM(stream(it),Optional.empty()));
 	}
 	/**
 	 * <pre>
@@ -380,7 +381,7 @@ public class StreamUtils{
 		Iterator<T> it = stream.iterator();
 		if(!it.hasNext())
 			return Optional.empty();
-		return Optional.of(new HeadAndTail(it.next(),sequenceM(stream(it))));
+		return Optional.of(new HeadAndTail(it.next(),sequenceM(stream(it),Optional.empty())));
 	}
 	
 	/**
@@ -685,7 +686,7 @@ public class StreamUtils{
 		return it.entrySet().stream();
 	}
 	public final static <T> FutureOperations<T> futureOperations(Stream<T> stream,Executor exec){
-		return new FutureOperationsImpl<T>(exec,sequenceM(stream));
+		return new FutureOperationsImpl<T>(exec,sequenceM(stream,Optional.empty()));
 	}
 	public final static <T> T firstValue(Stream<T> stream){
 		return stream.findAny().get();
@@ -1391,16 +1392,14 @@ public class StreamUtils{
 	}
 	
 	
-	public final static<T> SequenceM<T> sequenceM(Stream<T> stream){
+	public final static<T> SequenceM<T> sequenceM(Stream<T> stream,Optional<ReversableSpliterator> rev){
 		if(stream instanceof SequenceM)
 			return (SequenceM)stream;
+		if(rev.isPresent())
+			return new SequenceMImpl(stream,rev.get());
 		return new SequenceMImpl(stream);
 	}
-	public final static<T> SequenceM<T> sequenceM(Stream<T> stream,Object dataForReversal){
-		if(stream instanceof SequenceM)
-			return (SequenceM)stream;
-		return new SequenceMImpl(stream,dataForReversal);
-	}
+	
 	
 	/**
 	 * Returns a stream with a given value interspersed between any two values
@@ -1785,6 +1784,7 @@ public class StreamUtils{
 			Iterator<T> it = stream.iterator();
 			long toRun = t.toNanos(time);
 			return StreamUtils.stream(new Iterator<Streamable<T>>(){
+				long start = System.nanoTime();
 				@Override
 				public boolean hasNext() {
 					return it.hasNext();
@@ -1793,13 +1793,14 @@ public class StreamUtils{
 				public Streamable<T> next() {
 					
 					List<T> list = new ArrayList<>();
-					while(list.size()==0 && it.hasNext()){
-						long start = System.nanoTime();
-						while(System.nanoTime()-start> toRun && it.hasNext()){
+					
+					while(System.nanoTime()-start> toRun && it.hasNext()){
 							list.add(it.next());
-						
-						}
 					}
+					if(list.size()==0 && it.hasNext()) //time unit may be too small
+						list.add(it.next());
+					start = System.nanoTime();
+					
 					return Streamable.fromIterable(list);
 				}
 				
@@ -1809,17 +1810,21 @@ public class StreamUtils{
 			Iterator<T> it = stream.iterator();
 			long toRun = t.toNanos(time);
 			return StreamUtils.stream(new Iterator<List<T>>(){
+				long start = System.nanoTime();
 				@Override
 				public boolean hasNext() {
 					return it.hasNext();
 				}
 				@Override
 				public List<T> next() {
-					long start = System.nanoTime();
+					
 					List<T> list = new ArrayList<>();
-					while(System.nanoTime()-start> toRun && it.hasNext()){
+					while(System.nanoTime()-start< toRun && it.hasNext()){
 						list.add(it.next());
 					}
+					if(list.size()==0 && it.hasNext()) //time unit may be too small
+						list.add(it.next());
+					start = System.nanoTime();
 					return list;
 				}
 				
@@ -1905,22 +1910,24 @@ public class StreamUtils{
 	  public final static <T> Stream<List<T>> batchUntil(Stream<T> stream,Predicate<T> predicate){
 			return batchWhile(stream,predicate.negate());
 	  }
-	  public final static <T> Stream<List<T>> batchByTimeAndSize(Stream<T> stream,int size, long time, TimeUnit t){
+	  public final static <T> Stream<List<T>> batchBySizeAndTime(Stream<T> stream,int size, long time, TimeUnit t){
 			Iterator<T> it = stream.iterator();
 			long toRun = t.toNanos(time);
 			return StreamUtils.stream(new Iterator<List<T>>(){
+				long start = System.nanoTime();
 				@Override
 				public boolean hasNext() {
 					return it.hasNext();
 				}
 				@Override
 				public List<T> next() {
-					long start = System.nanoTime();
+					
 					
 					List<T> list = new ArrayList<>();
-					while(System.nanoTime()-start> toRun && it.hasNext() && list.size()<size){
+					while(System.nanoTime()-start< toRun && it.hasNext() && list.size()<size){
 						list.add(it.next());
 					}
+					start = System.nanoTime();
 					return list;
 				}
 				
@@ -1930,6 +1937,7 @@ public class StreamUtils{
 			Iterator<T> it = stream.iterator();
 			long toRun = t.toNanos(time);
 			return StreamUtils.stream(new Iterator<Streamable<T>>(){
+				long start = System.nanoTime();
 				@Override
 				public boolean hasNext() {
 					return it.hasNext();
@@ -1940,11 +1948,13 @@ public class StreamUtils{
 					
 					List<T> list = new ArrayList<>();
 					while(list.size()==0&& it.hasNext()){
-						long start = System.nanoTime();
-						while(System.nanoTime()-start> toRun && it.hasNext() && list.size()<size){
+						
+						while(System.nanoTime()-start< toRun && it.hasNext() && list.size()<size){
 							list.add(it.next());
 						}
+						start = System.nanoTime();
 					}
+				
 					return Streamable.fromIterable(list);
 				}
 				

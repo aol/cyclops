@@ -60,7 +60,7 @@ assertThat(result,equalTo(Arrays.asList(1,2,3,4,5)));
 cyclops-invokedynamic
 cyclops-sequence-api
 
-## Recommended in conjection with
+## Recommended in conjunction with
 
 cyclops-streams
 

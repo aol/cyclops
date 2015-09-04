@@ -13,12 +13,11 @@ import org.pcollections.PStack;
 import com.aol.cyclops.lambda.api.MonadicConverter;
 import com.aol.cyclops.sequence.Reducers;
 import com.aol.cyclops.sequence.SequenceM;
-import com.sun.xml.internal.ws.util.StreamUtils;
 
 public class MonadicConverters {
 	
 
-	private final  StreamUpscaler upscaler =  stream -> stream;//SequenceM.fromStream(stream);
+	private final  StreamUpscaler upscaler =  stream ->SequenceM.fromStream(stream);
 	
 	@Getter
 	private final static PStack<MonadicConverter> converters;
