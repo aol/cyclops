@@ -37,6 +37,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -1455,7 +1456,13 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	HotStream<T> hotStream(Executor e);
 	
 	T firstValue();
-	T single();
+	default T single(){
+		 List<T> l= toList(); 
+		 if(l.size()==1){ 
+			 return l.get(l.size()-1); 
+			 }
+		throw new UnsupportedOperationException("single only works for Streams with a single value");
+	}
 //	<X extends Throwable,R> SequenceM<T> onFail(Class<X> e,Function<X,R> fn);
 	default Optional<T> elementAt(long index){
 		return this.zipWithIndex()
@@ -1639,11 +1646,27 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	
 	<U> SequenceM<Tuple2<T, U>> crossJoin(Stream<U> other);
 
-	<U> SequenceM<Tuple2<T, U>> innerJoin(Stream<U> other,
-			BiPredicate<T, U> predicate);
+	default <U> SequenceM<Tuple2<T, U>> innerJoin(Stream<U> other,
+			BiPredicate<T, U> predicate){
+		 Streamable<U> s = Streamable.fromIterable(SequenceM.fromStream(other).toLazyCollection());
 
-	<U> SequenceM<Tuple2<T, U>> leftOuterJoin(Stream<U> other,
-			BiPredicate<T, U> predicate);
+	        return flatMap(t -> s.stream()
+	                           .filter(u -> predicate.test(t, u))
+	                           .map(u -> Tuple.tuple(t, u)));
+	}
+
+	default <U> SequenceM<Tuple2<T, U>> leftOuterJoin(Stream<U> other,
+			BiPredicate<T, U> predicate)
+		{
+
+		 Streamable<U> s =Streamable.fromIterable(SequenceM.fromStream(other).toLazyCollection());
+
+	        return flatMap(t -> Seq.seq(s.stream())
+	                           .filter(u -> predicate.test(t, u))
+	                           .onEmpty(null)
+	                           .map(u -> Tuple.tuple(t, u)));
+	    
+	}
 
 	<U> SequenceM<Tuple2<T, U>> rightOuterJoin(Stream<U> other,
 			BiPredicate<T, U> predicate);
@@ -1738,6 +1761,13 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	SequenceM<T> fixedDelay(long l, TimeUnit microseconds);
 
 	SequenceM<T> jitter(long l);
+	SequenceM<Streamable<T>> windowBySizeAndTime(int size, long time, TimeUnit t);
+	SequenceM<Streamable<T>> windowWhile(Predicate<T> predicate);
+	SequenceM<Streamable<T>> windowUntil(Predicate<T> predicate);
+	SequenceM<Streamable<T>> windowStatefullyWhile(BiPredicate<Streamable<T>,T> predicate);
+	SequenceM<Streamable<T>> windowByTime(long time, TimeUnit t);
+	SequenceM<List<T>> batchUntil(Predicate<T> predicate);
+	SequenceM<List<T>> batchWhile(Predicate<T> predicate);
 	
 
 }

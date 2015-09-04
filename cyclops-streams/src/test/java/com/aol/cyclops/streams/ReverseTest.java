@@ -40,4 +40,34 @@ public class ReverseTest {
 				 .count(),equalTo(100L));
 		
 	}
+	@Test
+	public void skipArray() throws InterruptedException{
+		
+		List<Integer> list= new ArrayList<>();
+		for(int i=0;i<1000;i++)
+			list.add(i);
+		assertThat(SequenceM.of(list.toArray())
+				 .skip(100)
+				 .count(),equalTo(900L));
+		
+	}
+	@Test
+	public void skipRange() throws InterruptedException{
+		
+		assertThat(SequenceM.range(0,1000)
+				 .skip(100)
+				 .count(),equalTo(900L));
+	}
+	@Test
+	public void skipList() throws InterruptedException{
+		
+		List<Integer> list= new ArrayList<>();
+		for(int i=0;i<1000;i++)
+			list.add(i);
+		assertThat(SequenceM.fromList(list)
+				 .skip(100)
+				 .count(),equalTo(900L));
+		
+	}
+	
 }

@@ -23,6 +23,8 @@ import java.util.stream.IntStream;
 import lombok.Value;
 
 import org.junit.Test;
+
+import com.aol.cyclops.sequence.streamable.Streamable;
 public class BatchingTest {
 	@Test
 	public void batchByTime2(){
@@ -33,6 +35,18 @@ public class BatchingTest {
 							.batchByTime(10,TimeUnit.MICROSECONDS)
 							.toList()
 							.get(0)
+							,not(hasItem(6)));
+		}
+	}
+	@Test
+	public void windowwByTime2(){
+		for(int i=0;i<5;i++){
+			System.out.println(i);
+			assertThat(of(1,2,3,4,5, 6)
+						
+							.windowByTime(10,TimeUnit.MICROSECONDS)
+							.toList()
+							.get(0).sequenceM().toList()
 							,not(hasItem(6)));
 		}
 	}
@@ -91,6 +105,7 @@ public class BatchingTest {
 				.forEach(a->{});
 
 	}
+	
 	private Object nextFile() {
 		return "hello";
 	}
@@ -129,6 +144,36 @@ public class BatchingTest {
 		}
 	}
 	@Test
+	public void windowByTimeFiltered() {
+
+		for(int x=0;x<10;x++){
+			count2=new AtomicInteger(0);
+			List<Collection<Map>> result = new ArrayList<>();
+					
+					iterate("", last -> "hello")
+					.limit(1000)
+					
+					.peek(i->System.out.println(++otherCount))
+			
+					.windowByTime(1, TimeUnit.MICROSECONDS)
+					
+					.peek(batch -> System.out.println("batched : " + batch + ":" + (++peek)))
+				
+					.peek(batch->count3= count3+(int)batch.stream().count())
+					
+					.forEach(next -> { 
+					count2.getAndAdd((int)next.stream().count());});
+		
+			
+			System.out.println("In flight count " + count3 + " :" + otherCount);
+			System.out.println(result.size());
+			System.out.println(result);
+			System.out.println("x" +x);
+			assertThat(count2.get(),equalTo(1000));
+
+		}
+	}
+	@Test
 	public void batchByTimex() {
 
 		
@@ -140,6 +185,24 @@ public class BatchingTest {
 				.batchByTime(10, TimeUnit.MICROSECONDS)
 				.peek(batch -> System.out.println("batched : " + batch))
 				.filter(c->!c.isEmpty())
+				
+				
+				.forEach(System.out::println);
+			
+
+	}
+	@Test
+	public void windowByTimex() {
+
+		
+				iterate("", last -> "next")
+				.limit(100)
+				
+				
+				.peek(next->System.out.println("Counter " +count2.incrementAndGet()))
+				.windowByTime(10, TimeUnit.MICROSECONDS)
+				.peek(batch -> System.out.println("batched : " + batch))
+				.filter(c->! (c.stream().count()==0))
 				
 				
 				.forEach(System.out::println);
@@ -161,6 +224,14 @@ public class BatchingTest {
 						.size(),is(3));
 	}
 	@Test
+	public void windowBySizeAndTimeSize(){
+		
+		assertThat(of(1,2,3,4,5,6)
+						.windowBySizeAndTime(3,10,TimeUnit.SECONDS)
+						.toList().get(0).stream()
+						.count(),is(3l));
+	}
+	@Test
 	public void batchBySizeAndTimeTime(){
 		
 		for(int i=0;i<10;i++){
@@ -171,6 +242,23 @@ public class BatchingTest {
 			
 			assertThat(list
 							.get(0)
+							,not(hasItem(6)));
+		}
+	}
+	@Test
+	public void windowBySizeAndTimeTime(){
+		
+		for(int i=0;i<10;i++){
+			System.out.println(i);
+			List<Streamable<Integer>> list = of(1,2,3,4,5,6)
+					.windowBySizeAndTime(10,1,TimeUnit.MICROSECONDS)
+					
+					.toList();
+			
+			assertThat(list
+							.get(0)
+							.sequenceM()
+							.toList()
 							,not(hasItem(6)));
 		}
 	}
@@ -240,6 +328,10 @@ public class BatchingTest {
 	@Test
 	public void batchByTimeInternalSize(){
 		assertThat(of(1,2,3,4,5,6).batchByTime(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),greaterThan(5));
+	}
+	@Test
+	public void windowByTimeInternalSize(){
+		assertThat(of(1,2,3,4,5,6).windowByTime(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),greaterThan(5));
 	}
 
 }

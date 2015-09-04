@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -60,6 +61,9 @@ import com.aol.cyclops.sequence.spliterators.ReversableSpliterator;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.future.FutureOperationsImpl;
+import com.aol.cyclops.streams.operators.LimitWhileOperator;
+import com.aol.cyclops.streams.operators.LimitWhileTimeOperator;
+import com.aol.cyclops.streams.operators.SkipWhileTimeOperator;
 
 @UtilityClass 
 public class StreamUtils{
@@ -450,6 +454,12 @@ public class StreamUtils{
 			
 		});
 	}
+	public static <U> Stream<U> limit(Stream<U> stream,long time, TimeUnit unit){
+		return new LimitWhileTimeOperator<U>(stream).limitWhile(time,unit);
+	}
+	public static <U> Stream<U> skip(Stream<U> stream,long time, TimeUnit unit){
+		return new SkipWhileTimeOperator<U>(stream).skipWhile(time,unit);
+	}
 	/**
 	 * Take elements from a stream while the predicates hold
 	 * <pre>
@@ -462,50 +472,7 @@ public class StreamUtils{
 	 * @return
 	 */
 	public static <U> Stream<U> limitWhile(Stream<U> stream,Predicate<? super U> predicate){
-		Iterator<U> it = stream.iterator();
-		return StreamUtils.stream(new Iterator<U>(){
-			U next;
-			boolean nextSet = false;
-			boolean stillGoing =true;
-			@Override
-			public boolean hasNext() {
-				if(!stillGoing)
-					return false;
-				if(nextSet)
-					return stillGoing;
-				
-				if (it.hasNext()) {
-					next = it.next();
-					nextSet = true;
-					if (!predicate.test(next)) {
-						stillGoing = false;
-					}
-					
-				} else {
-					stillGoing = false;
-				}
-				return stillGoing;
-				
-					
-			}
-
-			@Override
-			public U next() {
-				
-				if(nextSet){
-					nextSet = false;
-					return next;
-				}
-				
-				
-				U local = it.next();
-				if(stillGoing){
-					stillGoing = !predicate.test(local);
-				}
-				return local;
-			}
-			
-		});
+		return new LimitWhileOperator<U>(stream).limitWhile(predicate);
 	}
 	/**
 	 * Take elements from a Stream until the predicate holds
@@ -1933,7 +1900,7 @@ public class StreamUtils{
 				
 			}).filter(l->l.size()>0);
 	  }
-	  public final static <T> Stream<Streamable<T>> windowByTimeAndSize(Stream<T> stream,int size, long time, TimeUnit t){
+	  public final static <T> Stream<Streamable<T>> windowBySizeAndTime(Stream<T> stream,int size, long time, TimeUnit t){
 			Iterator<T> it = stream.iterator();
 			long toRun = t.toNanos(time);
 			return StreamUtils.stream(new Iterator<Streamable<T>>(){
@@ -1964,7 +1931,7 @@ public class StreamUtils{
 			Iterator<T> it = stream.iterator();
 			long timeNanos = t.toNanos(time);
 			return StreamUtils.stream(new Iterator<T>(){
-				volatile long last = 1;
+				volatile long last = 0;
 				@Override
 				public boolean hasNext() {
 					return it.hasNext();
@@ -1973,9 +1940,11 @@ public class StreamUtils{
 				public T next() {
 					long elapsedNanos = 1;
 					T nextValue=null;
-					while(elapsedNanos>0){
-						
+					while(elapsedNanos>0 && it.hasNext()){
+							
 							nextValue = it.next();
+							if(last==0)
+								last= System.nanoTime();
 							elapsedNanos= timeNanos - (System.nanoTime()-last);
 					}
 					
@@ -2002,6 +1971,58 @@ public class StreamUtils{
 					LockSupport.parkNanos(next-System.nanoTime()-last);
 					
 					last= System.nanoTime();
+					return nextValue;
+				}
+				
+			});
+	  }
+	  public final  static <T> Stream<T> jitter(Stream<T> stream,long jitterInNanos){
+		  Iterator<T> it = stream.iterator();
+		  Random r = new Random();
+			return StreamUtils.stream(new Iterator<T>(){
+				
+				@Override
+				public boolean hasNext() {
+					return it.hasNext();
+				}
+				@Override
+				public T next() {
+					T nextValue = it.next();
+					try {
+						long elapsedNanos= (long)(jitterInNanos * r.nextDouble());
+						long millis = elapsedNanos/1000000;
+						int nanos = (int)(elapsedNanos - millis*1000000);
+						Thread.sleep(Math.max(0,millis),Math.max(0,nanos));
+						
+					} catch (InterruptedException e) {
+						throw (RuntimeException)(Exception)e;
+					}
+					return nextValue;
+				}
+				
+			});
+	  }
+	  public final  static <T> Stream<T> fixedDelay(Stream<T> stream,long time, TimeUnit unit){
+		  Iterator<T> it = stream.iterator();
+			
+			return StreamUtils.stream(new Iterator<T>(){
+				
+				@Override
+				public boolean hasNext() {
+					return it.hasNext();
+				}
+				@Override
+				public T next() {
+					T nextValue = it.next();
+					try {
+						long elapsedNanos= unit.toNanos(time);
+						long millis = elapsedNanos/1000000;
+						int nanos = (int)(elapsedNanos - millis*1000000);
+						Thread.sleep(Math.max(0,millis),Math.max(0,nanos));
+						
+					} catch (InterruptedException e) {
+						throw (RuntimeException)(Exception)e;
+					}
 					return nextValue;
 				}
 				

@@ -1985,27 +1985,22 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 
 	@Override
 	public boolean endsWith(Stream<T> iterable) {
-		// TODO Auto-generated method stub
-		return false;
+		return StreamUtils.endsWith(monad,()->iterable.iterator());
 	}
 
 	@Override
 	public SequenceM<T> skip(long time, TimeUnit unit) {
-		// TODO Auto-generated method stub
-		return null;
+		return StreamUtils.sequenceM(StreamUtils.skip(monad,time,unit),
+				this.reversable);
 	}
 
 	@Override
 	public SequenceM<T> limit(long time, TimeUnit unit) {
-		// TODO Auto-generated method stub
-		return null;
+		return StreamUtils.sequenceM(StreamUtils.limit(monad,time,unit),
+				this.reversable);
 	}
 
-	@Override
-	public T single() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	@Override
 	public <C extends Collection<T>> SequenceM<C> batchBySizeAndTime(int size,
@@ -2023,8 +2018,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 
 	@Override
 	public SequenceM<List<T>> batchBySize(int size) {
-		// TODO Auto-generated method stub
-		return null;
+		return StreamUtils.sequenceM(StreamUtils.grouped(monad, size),this.reversable);
 	}
 
 	@Override
@@ -2035,14 +2029,51 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	}
 
 	@Override
-	public SequenceM<T> fixedDelay(long l, TimeUnit microseconds) {
-		// TODO Auto-generated method stub
-		return null;
+	public SequenceM<T> fixedDelay(long l, TimeUnit unit) {
+		return StreamUtils.sequenceM(StreamUtils.fixedDelay(monad,l,unit),
+				this.reversable);
 	}
 
 	@Override
 	public SequenceM<T> jitter(long l) {
-		// TODO Auto-generated method stub
-		return null;
+		return StreamUtils.sequenceM(StreamUtils.jitter(monad,l),
+				this.reversable);
+	}
+
+	@Override
+	public SequenceM<Streamable<T>> windowBySizeAndTime(int size, long time,
+			TimeUnit t) {
+		return StreamUtils.sequenceM(StreamUtils.windowBySizeAndTime(monad,size,time,t), this.reversable);
+	}
+
+	@Override
+	public SequenceM<Streamable<T>> windowWhile(Predicate<T> predicate) {
+		return StreamUtils.sequenceM(StreamUtils.windowWhile(monad,predicate), this.reversable);
+	}
+
+	@Override
+	public SequenceM<Streamable<T>> windowUntil(Predicate<T> predicate) {
+		return StreamUtils.sequenceM(StreamUtils.windowWhile(monad,predicate.negate()), this.reversable);
+	}
+
+	@Override
+	public SequenceM<Streamable<T>> windowStatefullyWhile(
+			BiPredicate<Streamable<T>, T> predicate) {
+		return StreamUtils.sequenceM(StreamUtils.windowStatefullyWhile(monad, predicate), this.reversable);
+	}
+
+	@Override
+	public SequenceM<Streamable<T>> windowByTime(long time, TimeUnit t) {
+		return StreamUtils.sequenceM(StreamUtils.windowByTime(monad, time,t), this.reversable);
+	}
+
+	@Override
+	public SequenceM<List<T>> batchUntil(Predicate<T> predicate) {
+		return StreamUtils.sequenceM(StreamUtils.batchUntil(monad,predicate), this.reversable);
+	}
+
+	@Override
+	public SequenceM<List<T>> batchWhile(Predicate<T> predicate) {
+		return StreamUtils.sequenceM(StreamUtils.batchWhile(monad,predicate), this.reversable);
 	}
 }
