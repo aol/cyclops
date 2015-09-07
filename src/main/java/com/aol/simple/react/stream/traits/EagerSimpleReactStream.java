@@ -67,7 +67,7 @@ public interface EagerSimpleReactStream<U> extends SimpleReactStream<U>,
 	
 	
 	default List<SimpleReactStream<U>> copySimpleReactStream(final int times){
-		Stream.of(1,2,3,4).forEach(System.out::println);
+		
 		return (List)StreamCopier.toBufferingCopier(getLastActive().stream().iterator(), times)
 				.stream()
 				.map(it->StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false))

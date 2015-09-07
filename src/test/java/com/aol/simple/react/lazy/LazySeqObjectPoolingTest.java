@@ -10,8 +10,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
 import static org.jooq.lambda.tuple.Tuple.tuple;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -39,7 +38,22 @@ import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class LazySeqObjectPoolingTest extends BaseSeqTest {
-	
+	volatile Throwable error;
+	@Test
+	public void iterate(){
+		error= null;
+		 new LazyReact()
+		 		.objectPoolingOn()
+		 		.iterateInfinitely(1,i->i+1)
+		 		.limit(1_000_000)
+		 		.map(x->x+2)
+		 		.capture(e->{error=e; e.printStackTrace();})
+		 		.forEach(a->{});
+		 if(error!=null)
+			 error.printStackTrace();
+		
+		 assertNull(error);
+	}
 	@Test
 	public void copy(){
 		LazyFutureStream.of(1,2,3,4,5,6)

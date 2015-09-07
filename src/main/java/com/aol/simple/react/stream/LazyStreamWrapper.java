@@ -70,7 +70,6 @@ public class LazyStreamWrapper<U> implements StreamWrapper<U> {
 	
 	
 	private FastFuture buildPool(FinalPipeline pipeline) {
-		System.out.println("pool is " + pool + " : " + pipeline );
 		return  pool!=null ? pool.next( ()->new FastFuture<>(pipeline, fut->pool.done(fut))) : new FastFuture<>(pipeline,0) ; 
 	}
 

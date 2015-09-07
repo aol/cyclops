@@ -77,8 +77,8 @@ public class BatchByTime<U> implements Function<BiFunction<Long,TimeUnit,U>, Sup
 					
 					
 		        }catch (ClosedQueueException e) {
-		        	e.printStackTrace();
-		        	System.out.println(list);
+		        	
+		        	
 					throw new ClosedQueueException(list);
 				}
 				
