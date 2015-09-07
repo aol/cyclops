@@ -18,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class FastFutureTest {
+	private static final int TIMES = 10_000;
 	PipelineBuilder future;
 
 	@Before
@@ -193,7 +194,7 @@ public class FastFutureTest {
 		}
 	}
 
-	boolean called = false;
+	volatile boolean called = false;
 
 	@Test
 	public void onComplete_alreadyCompleted() {
@@ -239,7 +240,7 @@ public class FastFutureTest {
 
 	@Test
 	public void essential_notCompleted_race() throws InterruptedException {
-		for (int i = 0; i < 10_000; i++) {
+		for (int i = 0; i < TIMES; i++) {
 			CountDownLatch race = new CountDownLatch(1);
 			CountDownLatch init = new CountDownLatch(1);
 			called = false;
@@ -255,6 +256,7 @@ public class FastFutureTest {
 				}
 
 				f.essential(event -> called = true);
+				
 			});
 			t1.start();
 			init.await();
@@ -262,9 +264,11 @@ public class FastFutureTest {
 			f.set(10);
 		
 			t1.join();
+			
 			assertTrue(f.isDone());
 
 			assertTrue(called); 
+			
 		}
 
 	}
@@ -272,7 +276,7 @@ public class FastFutureTest {
 	@Test
 	public void essentialReversed_notCompleted_race()
 			throws InterruptedException {
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < TIMES; i++) {
 			System.out.println(i);
 			CountDownLatch race = new CountDownLatch(1);
 			CountDownLatch init = new CountDownLatch(1);
@@ -306,7 +310,7 @@ public class FastFutureTest {
 	@Test
 	public void essential_withNoPipeline_notCompleted_race()
 			throws InterruptedException {
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < TIMES; i++) {
 			CountDownLatch race = new CountDownLatch(1);
 			CountDownLatch init = new CountDownLatch(1);
 			called = false;
@@ -336,7 +340,7 @@ public class FastFutureTest {
 
 	@Test
 	public void onComplete_notCompleted_race() throws InterruptedException {
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < TIMES; i++) {
 			CountDownLatch race = new CountDownLatch(1);
 			CountDownLatch init = new CountDownLatch(1);
 			called = false;
@@ -368,7 +372,7 @@ public class FastFutureTest {
 	@Test
 	public void onCompleteReversed_notCompleted_race()
 			throws InterruptedException {
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < TIMES; i++) {
 			CountDownLatch race = new CountDownLatch(1);
 			CountDownLatch init = new CountDownLatch(1);
 			called = false;
@@ -400,7 +404,7 @@ public class FastFutureTest {
 	@Test
 	public void onCompleteWithNoPipeline_notCompleted_race()
 			throws InterruptedException {
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < TIMES; i++) {
 			CountDownLatch race = new CountDownLatch(1);
 			CountDownLatch init = new CountDownLatch(1);
 			called = false;

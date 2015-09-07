@@ -11,7 +11,7 @@ public class LazyReactors {
 	private static void setCPUBoundThreadPoolSize(int size){
 		CPUBoundThreadPoolSize=size;
 	}
-	public final static LazyReact ioReact = new LazyReact(IOThreadPoolSize,IOThreadPoolSize);
-	public final static LazyReact cpuReact = new LazyReact(CPUBoundThreadPoolSize,CPUBoundThreadPoolSize);
+	public final static LazyReact ioReact = new LazyReact(IOThreadPoolSize,IOThreadPoolSize).autoOptimizeOn();
+	public final static LazyReact cpuReact = new LazyReact(CPUBoundThreadPoolSize,CPUBoundThreadPoolSize).autoOptimizeOn();
 	
 }

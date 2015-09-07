@@ -299,9 +299,11 @@ public class FastFuture<T> {
 		
 	}
 	private boolean done(){
-		handleOnComplete(true);
 		this.completedExceptionally=false;
-		return this.done =true;
+		this.done =true;
+		handleOnComplete(true);
+		
+		return true;
 		
 	}
 	
@@ -365,19 +367,6 @@ public class FastFuture<T> {
 		public final Throwable exception;
 		public final boolean exceptionally;
 	}
-	public static FastFuture anyOf(Stream<FastFuture> futures) {
-		FastFuture anyOf = new FastFuture();
-		
-		futures.forEach(next -> {
-			next.onComplete(v->{ 
-				anyOf.result.lazySet(true);
-				anyOf.done();
-			  	
-			});
-		});
-		
-		
-		return anyOf;
-	}
+	
 	
 }
