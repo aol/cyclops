@@ -431,5 +431,89 @@ public class FastFutureTest {
 		}
 
 	}
+	volatile boolean complete= false;
+	@Test
+	public void testAllOf() throws InterruptedException {
+		for (int i = 0; i < TIMES; i++) {
+			complete =false;
+			FastFuture f1= new FastFuture(FinalPipeline.empty(),a->{});
+			
+			FastFuture f2= new FastFuture(FinalPipeline.empty(),a->{});
+			CountDownLatch race = new CountDownLatch(1);
+			FastFuture allOf = FastFuture.allOf(()->complete=true,f1,f2);
+			new Thread(()->{
+				race.countDown();
+				f1.set("done");
+				f2.set("with");
+			}).start();
+			try {
+				race.await();
+			} catch (Exception e) {
+				
+				e.printStackTrace();
+			}
+			
+			
+			race.await();
+			while(!complete){}
+			
+		}
+		
+	}
+	@Test
+	public void testAnyOf() {
+		for (int i = 0; i < TIMES; i++) {
+			complete =false;
+			FastFuture f1= new FastFuture(FinalPipeline.empty(),a->{});
+			
+			FastFuture f2= new FastFuture(FinalPipeline.empty(),a->{});
+			CountDownLatch race = new CountDownLatch(1);
+			FastFuture anyOf = FastFuture.anyOf(f1,f2);
+			new Thread(()->{
+				race.countDown();
+				
+				f1.set("done");
+				f2.set("with");
+			}).start();
+			try {
+				race.await();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			anyOf.join();
+		}
+		
+		
+	}
+	@Test
+	public void testXOf() {
+		for (int i = 0; i < TIMES; i++) {
+			complete =false;
+			FastFuture f1= new FastFuture(FinalPipeline.empty(),a->{});
+			
+			FastFuture f2= new FastFuture(FinalPipeline.empty(),a->{});
+			CountDownLatch race = new CountDownLatch(1);
+			FastFuture xOf = FastFuture.xOf(2,()->complete=true,f1,f2);
+			new Thread(()->{
+				race.countDown();
+				
+				f1.set("done");
+				
+				f2.set("with");
+			}).start();
+			try {
+				race.await();
+			} catch (Exception e) {
+			
+				e.printStackTrace();
+			}
+			
+			while(!complete){}
+			
+		}
+		
+	}
 
 }
