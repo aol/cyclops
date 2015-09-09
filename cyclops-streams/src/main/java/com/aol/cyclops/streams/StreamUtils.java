@@ -48,6 +48,7 @@ import org.pcollections.PStack;
 
 import com.aol.cyclops.closures.mutable.Mutable;
 import com.aol.cyclops.internal.AsGenericMonad;
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.HotStream;
@@ -424,7 +425,12 @@ public class StreamUtils{
 		return new LimitLastOperator<>(stream,num).limitLast();
 	}
 	public static <T> Stream<T> recover(Stream<T> stream,Function<Throwable, T> fn){
-		return new RecoverOperator<>(stream).recover(fn);
+		return new RecoverOperator<>(stream,Throwable.class).recover(fn);
+	}
+	public static <T,EX extends Throwable> Stream<T> recover(Stream<T> stream,Class<EX> type,
+						Function<EX, T> fn){
+		return new RecoverOperator<T>(stream,(Class)type)
+								.recover((Function)fn);
 	}
 	/**
 	 * skip elements in a Stream while Predicate holds true
@@ -1760,7 +1766,8 @@ public class StreamUtils{
 						Thread.sleep(Math.max(0,millis),Math.max(0,nanos));
 						
 					} catch (InterruptedException e) {
-						throw (RuntimeException)(Exception)e;
+						ExceptionSoftener.throwSoftenedException(e);
+						return null;
 					}
 					return nextValue;
 				}
@@ -1786,7 +1793,8 @@ public class StreamUtils{
 						Thread.sleep(Math.max(0,millis),Math.max(0,nanos));
 						
 					} catch (InterruptedException e) {
-						throw (RuntimeException)(Exception)e;
+						ExceptionSoftener.throwSoftenedException(e);
+						return null;
 					}
 					return nextValue;
 				}

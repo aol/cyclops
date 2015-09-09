@@ -44,25 +44,20 @@ public class CaseTest {
 	
 	@Test
 	public void testChaining(){
-		ActionWithReturn<String,Integer> act = hello ->10;
+		TypedFunction<String,Integer> act = hello ->10;
 		val caze = Case.of(t->true, act);
 		
 		assertThat(caze.filter(t -> t.v2.getType()!=null).mapFunction(fn -> input ->20).match("hello").get(),is(20));
 	}
 	@Test
 	public void testChainingFilterFails(){
-		ActionWithReturn<String,Integer> act = hello ->10;
+		TypedFunction<String,Integer> act = hello ->10;
 		val caze = Case.of(t->true, act);
 		
 		assertThat(caze.filter(t -> t.v2.getType()==null).mapFunction(fn -> input ->20).match("hello").isPresent(),is(false));
 	}
 	
-	@Test
-	public void andThenTest(){
-		Case<Object,Set,Function<Object,Set>> cse = Case.of(input-> input instanceof Map, input-> ((Map)input).keySet());
-		val cases = Cases.of(cse).map(c -> c.andThen((Cases)Matching.whenIterable().allHoldNoType(__,2).thenExtract(Extractors.<Integer>get(1)).thenApply(i->i*2)
-													.whenIterable().allHoldNoType(2,__).thenExtract(Extractors.<Integer>get(1)).thenApply(i->i*3).cases()));
-	}
+	
 	
 	@Test
 	public void testfilterReturnsEmpty(){

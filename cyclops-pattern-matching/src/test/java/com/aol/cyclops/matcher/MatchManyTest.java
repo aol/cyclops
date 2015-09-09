@@ -21,6 +21,7 @@ public class MatchManyTest {
 	int found = 0;
 	@Test
 	public void matchManyFromStream(){
+		
 		found = 0;
 		List data = new PatternMatcher().inCaseOfType((String s) -> s.trim())
 				.inCaseOfType((Integer i) -> i+100)

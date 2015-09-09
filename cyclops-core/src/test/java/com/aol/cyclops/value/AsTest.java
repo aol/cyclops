@@ -62,7 +62,7 @@ public class AsTest {
 	}
 	@Test
 	public void testAsStreamableT() {
-		val result = As.<Integer>asStreamable(Arrays.asList(1,2,3)).stream().map(i->i+2).collect(Collectors.toList());
+		val result = As.<Integer>asStreamableFromObject(Arrays.asList(1,2,3)).stream().map(i->i+2).collect(Collectors.toList());
 		
 		assertThat(result,equalTo(Arrays.asList(3,4,5)));
 	}

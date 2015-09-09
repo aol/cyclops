@@ -26,6 +26,7 @@ dependencies {
 
 	
 	compile project(':cyclops-functions')
+	compile project(':cyclops-monad-functions')
 	compile project(':cyclops-pattern-matching')
 	compile project(':cyclops-trampoline')
 	compile project(':cyclops-base')

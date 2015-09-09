@@ -4,7 +4,7 @@ import java.util.function.Predicate;
 
 import lombok.AllArgsConstructor;
 
-import com.aol.cyclops.matcher.ActionWithReturn;
+import com.aol.cyclops.matcher.TypedFunction;
 
 @AllArgsConstructor
 public  class _LastStep<X,V,T> {
@@ -14,7 +14,7 @@ public  class _LastStep<X,V,T> {
 	private Predicate<V>[] predicates;
 	private final PatternMatcher patternMatcher;
 	
-	public final <X> CheckValues<X,T> then(ActionWithReturn<T,X> fn){
+	public final <X> CheckValues<X,T> then(TypedFunction<T,X> fn){
 		return new _Simpler_Case(patternMatcher.inCaseOfManyType(predicate, fn,
 				predicates)).withType(clazz);
 	}

@@ -2096,4 +2096,10 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	public SequenceM<T> recover(Function<Throwable, T> fn) {
 		return StreamUtils.sequenceM(StreamUtils.recover(stream,fn),this.reversable);
 	}
+
+	@Override
+	public <EX extends Throwable> SequenceM<T> recover(Class<EX> exceptionClass,
+			Function<EX, T> fn) {
+		return StreamUtils.sequenceM(StreamUtils.recover(stream,exceptionClass,fn),this.reversable);
+	}
 }

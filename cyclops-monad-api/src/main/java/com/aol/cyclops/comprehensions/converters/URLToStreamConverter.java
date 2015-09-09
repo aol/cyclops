@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import lombok.val;
 
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.lambda.api.MonadicConverter;
 
 public class URLToStreamConverter implements MonadicConverter<Stream> {
@@ -32,7 +33,8 @@ public class URLToStreamConverter implements MonadicConverter<Stream> {
 			return in.lines();
 			
 		} catch (IOException e) {
-			throw (RuntimeException)(Exception)e;
+			ExceptionSoftener.throwSoftenedException(e);
+			return null;
 		}
 		
 	}

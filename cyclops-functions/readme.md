@@ -1,3 +1,16 @@
+# cyclops-functions
+
+Light weight module (no dependencies) which adds the following features for Java 8 Functions, Consumers and Suppliers 
+
+* Caching / Memoization
+* Currying
+* Partial Application
+* Type inference
+
+## Caching / Memiozation
+
+Use static Memoize methods on Memoize utility class to create a cachable reference to a function, suppler or method. Provide custom cache interfaces via the Cachable functional interface
+
 ## Currying
 
 Cyclops can convert any function (with up to 8 inputs) or method reference into a chain of one method functions (Currying). This technique is a useful (and more safe) alternative to Closures. The Curried function can be created and values explicitly passed in rather than captured by the compiler (where-upon they may change).
@@ -47,4 +60,16 @@ Cyclops can convert any function (with up to 8 inputs) or method reference into 
 
      UncurryConsumer.uncurry2((Integer a)->(Integer b) -> value = a+b ).accept(2,3);
 	 assertThat(value,equalTo(5));
+	 
+# Dependencies
+
+none
+
+# Getting cyclops-functions
+
+## Gradle
+
+where x.y.z represents the latest version
+
+compile 'com.aol.cyclops:cyclops-functions:x.y.z'	 
    

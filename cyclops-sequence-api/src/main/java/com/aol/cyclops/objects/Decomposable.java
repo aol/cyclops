@@ -2,6 +2,7 @@ package com.aol.cyclops.objects;
 
 import java.util.stream.Collectors;
 
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.invokedynamic.ReflectionCache;
 
 /**
@@ -33,12 +34,14 @@ public interface Decomposable{
 				
 					return f.get(unwrap());
 				} catch (Exception e) {
-					throw (RuntimeException)e;
+					ExceptionSoftener.throwSoftenedException(e);
+					return null;
 				
 				}
 			}).collect(Collectors.toList());
 		} catch (Exception e) {
-			throw (RuntimeException)e;
+			ExceptionSoftener.throwSoftenedException(e);
+			return null;
 		}
 		
 	}

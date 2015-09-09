@@ -22,7 +22,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
 import com.aol.cyclops.matcher.Action;
-import com.aol.cyclops.matcher.ActionWithReturn;
+import com.aol.cyclops.matcher.TypedFunction;
 import com.aol.cyclops.matcher.Case;
 import com.aol.cyclops.matcher.Cases;
 import com.aol.cyclops.matcher.ChainOfResponsibility;
@@ -211,7 +211,7 @@ public class PatternMatcher implements Function{
 			
 		return t -> p.test(extractIfType(t,extractor));
 	}
-	ActionWithReturn extractorAction(Extractor extractor, ActionWithReturn action){
+	TypedFunction extractorAction(Extractor extractor, TypedFunction action){
 		if(extractor==null)
 			return action;
 		return input -> action.apply(extractor.apply(input));
@@ -452,7 +452,7 @@ public class PatternMatcher implements Function{
 		return matcher[0];
 	}
 	
-	 public <T,V,X> PatternMatcher inCaseOfManyType(Predicate master,ActionWithReturn<T,X> a,
+	 public <T,V,X> PatternMatcher inCaseOfManyType(Predicate master,TypedFunction<T,X> a,
     		 Predicate<V>... predicates){
 		
 		LazySeq<Predicate<V>> pred = LazySeq.of(predicates);
@@ -464,7 +464,7 @@ public class PatternMatcher implements Function{
 	}
 	 
 	
-     public <V,X> PatternMatcher inCaseOfMany(ActionWithReturn<List<V>,X> a,
+     public <V,X> PatternMatcher inCaseOfMany(TypedFunction<List<V>,X> a,
     		 Predicate<V>... predicates){
 		
 		LazySeq<Predicate<V>> pred = LazySeq.of(predicates);
@@ -481,7 +481,7 @@ public class PatternMatcher implements Function{
 			return Arrays.asList(a);
 	}
 
-	public <V,X> PatternMatcher inMatchOfMany(ActionWithReturn<List<V>,X> a,
+	public <V,X> PatternMatcher inMatchOfMany(TypedFunction<List<V>,X> a,
 			Matcher<V>... predicates){
 		
 		LazySeq<Matcher<V>> pred = (LazySeq<Matcher<V>>) LazySeq.of(predicates);
@@ -505,7 +505,7 @@ public class PatternMatcher implements Function{
 		
 	}
 	public <T,R,V,V1,X>  PatternMatcher inMatchOfMatchers(Two<Matcher<V>,Matcher<V1>> predicates,
-				ActionWithReturn<R,X> a,Extractor<T,R> extractor){
+				TypedFunction<R,X> a,Extractor<T,R> extractor){
 			
 			LazySeq<Object> pred = LazySeq.of(predicates);
 			
@@ -526,7 +526,7 @@ public class PatternMatcher implements Function{
 			
 	}
 	public <T,R,V,V1,X> PatternMatcher inCaseOfPredicates(Two<Predicate<V>,Predicate<V1>> predicates,
-							ActionWithReturn<R,X> a,Extractor<T,R> extractor){
+							TypedFunction<R,X> a,Extractor<T,R> extractor){
 		
 		LazySeq<Object> pred = LazySeq.of(predicates);
 		
@@ -535,14 +535,14 @@ public class PatternMatcher implements Function{
 	}
 	
 	
-	public <T,R,X> PatternMatcher inCaseOfStream(Stream<Predicate> predicates, ActionWithReturn<R,X> a,Extractor<T,R> extractor){
+	public <T,R,X> PatternMatcher inCaseOfStream(Stream<Predicate> predicates, TypedFunction<R,X> a,Extractor<T,R> extractor){
 
 		LazySeq<Object> pred = LazySeq.<Object>of((Iterator)predicates.iterator());
 		return inCaseOfThenExtract(it -> seq(it).zip(pred,(a1,b1)->Two.tuple(a1,b1)).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
 		
 	}
 	
-	public <T,R,X> PatternMatcher inMatchOfSeq(Stream<Matcher> predicates, ActionWithReturn<R,X> a,Extractor<T,R> extractor){
+	public <T,R,X> PatternMatcher inMatchOfSeq(Stream<Matcher> predicates, TypedFunction<R,X> a,Extractor<T,R> extractor){
 
 		LazySeq<Object> pred = LazySeq.of(predicates);
 		return inMatchOfThenExtract(new BaseMatcher(){
@@ -597,22 +597,22 @@ public class PatternMatcher implements Function{
 		return withCases(cases.append(index(),Case.of(extractorPredicate(extractor,predicate),extractorAction(extractor,new ActionWithReturnWrapper(a)))));
 		
 	}
-	public <V,X> PatternMatcher inCaseOfValue(V value,ActionWithReturn<V,X> a){
+	public <V,X> PatternMatcher inCaseOfValue(V value,TypedFunction<V,X> a){
 		
 		return inCaseOfThenExtract(it -> Objects.equals(it, value), a, null);
 		
 	}
-	public <V,X> PatternMatcher inCaseOfType(ActionWithReturn<V,X> a){
+	public <V,X> PatternMatcher inCaseOfType(TypedFunction<V,X> a){
 		val type = a.getType();
 		val clazz = type.parameterType(type.parameterCount()-1);
 		return inCaseOfThenExtract(it -> it.getClass().isAssignableFrom(clazz), a, null);
 		
 	}
-	public <V,X> PatternMatcher inCaseOf(Predicate<V> match,ActionWithReturn<V,X> a){
+	public <V,X> PatternMatcher inCaseOf(Predicate<V> match,TypedFunction<V,X> a){
 		return inCaseOfThenExtract(match, a, null);
 		
 	}
-	public <R,T,X> PatternMatcher inCaseOfThenExtract(Predicate<T> match,ActionWithReturn<R,X> a, Extractor<T,R> extractor){
+	public <R,T,X> PatternMatcher inCaseOfThenExtract(Predicate<T> match,TypedFunction<R,X> a, Extractor<T,R> extractor){
 		
 		return withCases(cases.append(index(),Case.of(match,extractorAction(extractor,a))));
 		
@@ -620,13 +620,13 @@ public class PatternMatcher implements Function{
 	
 	
 	
-	public <R,V,T,X> PatternMatcher inCaseOf( Extractor<T,R> ext,Predicate<V> match,ActionWithReturn<V,X> a){
+	public <R,V,T,X> PatternMatcher inCaseOf( Extractor<T,R> ext,Predicate<V> match,TypedFunction<V,X> a){
 		val extractor = Extractors.memoised(ext);
 		return withCases(cases.append(index(),Case.of(extractorPredicate(extractor,match),extractorAction(extractor,a))));
 		
 	}
 	
-	public <R,V,T,X> PatternMatcher inCaseOfType( Extractor<T,R> ext,ActionWithReturn<V,X> a){
+	public <R,V,T,X> PatternMatcher inCaseOfType( Extractor<T,R> ext,TypedFunction<V,X> a){
 		val extractor = Extractors.memoised(ext);
 		val type = a.getType();
 		val clazz = type.parameterType(type.parameterCount()-1);
@@ -634,7 +634,7 @@ public class PatternMatcher implements Function{
 		return withCases(cases.append(index(),Case.of(extractorPredicate(extractor,predicate),extractorAction(extractor,a))));
 		
 	}
-	public <R,V,T,X> PatternMatcher inCaseOfValue(V value, Extractor<T,R> ext,ActionWithReturn<V,X> a){
+	public <R,V,T,X> PatternMatcher inCaseOfValue(V value, Extractor<T,R> ext,TypedFunction<V,X> a){
 		val extractor = Extractors.memoised(ext);
 		Predicate predicate = it -> Objects.equals(it, value);
 		return withCases(cases.append(index(),Case.of(extractorPredicate(extractor,predicate),extractorAction(extractor,a))));
@@ -643,11 +643,11 @@ public class PatternMatcher implements Function{
 	
 	
 	/**hamcrest **/
-	public <V,X> PatternMatcher inMatchOf(Matcher<V> match,ActionWithReturn<V,X> a){
+	public <V,X> PatternMatcher inMatchOf(Matcher<V> match,TypedFunction<V,X> a){
 		Predicate<V> predicate = it->match.matches(it);
 		return inCaseOfThenExtract(predicate, a, null);
 	}
-	public <R,T,X> PatternMatcher inMatchOfThenExtract(Matcher<T> match,ActionWithReturn<R,X> a, Extractor<T,R> extractor){
+	public <R,T,X> PatternMatcher inMatchOfThenExtract(Matcher<T> match,TypedFunction<R,X> a, Extractor<T,R> extractor){
 		Predicate<T> predicate = it->match.matches(it);
 		return withCases(cases.append(index(),Case.of(predicate,
 				extractorAction(extractor,a))));
@@ -655,7 +655,7 @@ public class PatternMatcher implements Function{
 	}
 	
 	
-	public <R,V,T,X> PatternMatcher inMatchOf( Extractor<T,R> ext,Matcher<V> match,ActionWithReturn<V,X> a){
+	public <R,V,T,X> PatternMatcher inMatchOf( Extractor<T,R> ext,Matcher<V> match,TypedFunction<V,X> a){
 		val extractor = Extractors.memoised(ext);
 		Predicate<V> predicate = it->match.matches(it);
 		return withCases(cases.append(index(),Case.of(extractorPredicate(extractor,predicate),extractorAction(extractor,a))));

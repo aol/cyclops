@@ -5,8 +5,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.invokedynamic.ReflectionCache;
-import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 
 /**
  * Interface that represents an Object that can be converted to a map
@@ -33,12 +33,12 @@ public interface Mappable {
 
 							return f.get(o);
 						} catch (Exception e) {
-							ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(e);
+							ExceptionSoftener.throwSoftenedException(e);
 							return null;
 						}
 					}));
 		} catch (Exception e) {
-			ExceptionSoftener.singleton.factory.getInstance()
+			ExceptionSoftener
 					.throwSoftenedException(e);
 			return null;
 		}

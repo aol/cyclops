@@ -8,7 +8,7 @@ import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import com.aol.cyclops.lambda.utils.ExceptionSoftener;
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 
 /**
  * Extract generic type info from Lambda expressions
@@ -22,7 +22,6 @@ import com.aol.cyclops.lambda.utils.ExceptionSoftener;
  *
  */
 class LambdaTypeExtractor {
-	private static final ExceptionSoftener softener = ExceptionSoftener.singleton.factory.getInstance();
 	
 	/**
 	 * Extract generic type info from a Serializable Lambda expression
@@ -35,7 +34,7 @@ class LambdaTypeExtractor {
 		try{
 			return extractChecked(serializable);
 		}catch(Exception e){
-			softener.throwSoftenedException(e);
+			ExceptionSoftener.throwSoftenedException(e);
 			return null;
 		}
 	}

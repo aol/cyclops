@@ -22,6 +22,7 @@ import org.pcollections.HashTreePSet;
 import org.pcollections.PMap;
 import org.pcollections.PSet;
 
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.invokedynamic.InvokeDynamic;
 import com.aol.cyclops.lambda.api.Comprehender;
 
@@ -104,13 +105,15 @@ public class InvokeDynamicComprehender implements Comprehender {
 				try {
 					return new ConstantCallSite(MethodHandles.publicLookup().unreflect(m2));
 				} catch (Exception e) {
-					throw (RuntimeException)e;
+					ExceptionSoftener.throwSoftenedException(e);
+					return null;
 				}
 				
 			}).dynamicInvoker().invoke(t,proxy.proxy);
 		
 		} catch (Throwable e) {
-			throw (RuntimeException)e;
+			ExceptionSoftener.throwSoftenedException(e);
+			return null;
 		}finally{
 			release(z,proxy);
 		}

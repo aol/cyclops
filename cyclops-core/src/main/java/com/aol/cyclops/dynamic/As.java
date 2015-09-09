@@ -31,8 +31,8 @@ public interface As {
 	 * @param toCoerce Object to wrap as a replayable Stream
 	 * @return Replayable Stream
 	 */
-	public static <T> Streamable<T> asStreamable(Object toCoerce){
-		return AsStreamable.fromStream(toCoerce);
+	public static <T> Streamable<T> asStreamableFromObject(Object toCoerce){
+		return AsStreamable.fromObject(toCoerce);
 	}
 	/**
 	 * Wrap the stream as a replayable Stream
@@ -41,7 +41,7 @@ public interface As {
 	 * @return Replayable Stream
 	 */
 	public static <T> Streamable<T> asStreamable(Stream<T> toCoerce){
-		return AsStreamable.fromStream(toCoerce);
+		return AsStreamable.fromObject(toCoerce);
 	}
 
 	/**

@@ -15,7 +15,7 @@ import lombok.experimental.Wither;
 
 import org.hamcrest.Matcher;
 
-import com.aol.cyclops.matcher.ActionWithReturn;
+import com.aol.cyclops.matcher.TypedFunction;
 import com.aol.cyclops.matcher.Extractor;
 import com.aol.cyclops.matcher.builders.CaseBuilder.InCaseOfBuilder;
 import com.aol.cyclops.matcher.builders.CaseBuilder.InCaseOfBuilderExtractor;
@@ -54,7 +54,7 @@ public class ElementCase<X> extends CaseBeingBuilt {
 	 *            Action for the new Case, Predicate for the Case will be created from the input type to the Action.
 	 * @return Completed Case
 	 */
-	public <T, R> MatchingInstance<T, R> isType(ActionWithReturn<T, R> a) {
+	public <T, R> MatchingInstance<T, R> isType(TypedFunction<T, R> a) {
 
 		return new MatchingInstance<>(this.withPatternMatcher(patternMatcher.inCaseOfType(a)));
 

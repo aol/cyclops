@@ -12,8 +12,8 @@ import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.lambda.api.AsAnyM;
-import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 import com.aol.cyclops.monad.AnyM;
 
 /**
@@ -113,7 +113,7 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 	private Throwable orThrow(Optional<Throwable> findFirst, Throwable t) {
 		if(findFirst.isPresent())
 			return findFirst.get();
-		ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(t);
+		ExceptionSoftener.throwSoftenedException(t);
 		return null;
 	}
 

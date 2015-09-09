@@ -3,7 +3,6 @@ package com.aol.cyclops.sequence;
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -16,7 +15,6 @@ import java.util.Spliterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
@@ -37,6 +35,8 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import lombok.SneakyThrows;
+
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -45,6 +45,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
@@ -1775,6 +1776,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	<C extends Collection<T>>  SequenceM<C> batchUntil(Predicate<T> predicate, Supplier<C> factory);
 
 	SequenceM<T> recover(final Function<Throwable, T> fn);
+	<EX extends Throwable> SequenceM<T> recover(Class<EX> exceptionClass, final Function<EX, T> fn);
 	default SequenceM<T> onEmptySwitch(Supplier<Stream<T>> switchTo){
 		return SequenceM.fromStream(onEmptyGet((Supplier)switchTo).flatMap(s->(Stream)s));
 	}
@@ -1792,11 +1794,13 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 				try {
 					Thread.sleep(sleep);
 				} catch (InterruptedException e) {
-					throw (RuntimeException)(Exception)e;
+					ExceptionSoftener.throwSoftenedException(e);
+					return null;
 				}
 				sleep=sleep*2;
 			}
-			throw (RuntimeException)(Exception)exception;
+			ExceptionSoftener.throwSoftenedException(exception);
+			return null;
 		};
 		return map(retry);
 	}

@@ -92,7 +92,8 @@ public class InvokeDynamic {
 									return new ConstantCallSite(MethodHandles
 											.publicLookup().unreflect(m2));
 								} catch (Exception e) {
-									throw (RuntimeException)e;
+									ExceptionSoftener.throwSoftenedException(e);
+									return null;
 								}
 								
 							}).dynamicInvoker();
@@ -104,7 +105,7 @@ public class InvokeDynamic {
 				return mh.invoke(obj,args[0],args[1]);
 
 		} catch (Throwable e) {
-			throw (RuntimeException)e;
+			ExceptionSoftener.throwSoftenedException(e);
 		} finally {
 
 		}

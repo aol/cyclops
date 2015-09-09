@@ -10,8 +10,8 @@ import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.closures.immutable.LazyImmutable;
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.invokedynamic.ReflectionCache;
-import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 import com.aol.cyclops.objects.AsDecomposable;
 import com.aol.cyclops.objects.Decomposable;
 import com.nurkiewicz.lazyseq.LazySeq;
@@ -74,7 +74,7 @@ public class Extractors {
 				try {
 				return u.apply(t);
 			}catch (Throwable e) {
-				ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(e);
+				ExceptionSoftener.throwSoftenedException(e);
 			}
 			return null;
 		};

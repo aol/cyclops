@@ -10,8 +10,8 @@ import java.util.stream.Stream;
 import lombok.Value;
 
 import com.aol.cyclops.lambda.monads.Functor;
-import com.aol.cyclops.matcher.Matchable;
 import com.aol.cyclops.matcher.builders.CheckType;
+import com.aol.cyclops.matcher.recursive.Matchable;
 import com.aol.cyclops.trampoline.Trampoline;
 
 import fj.data.Either;

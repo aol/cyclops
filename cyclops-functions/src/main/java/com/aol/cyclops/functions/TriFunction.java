@@ -2,6 +2,8 @@ package com.aol.cyclops.functions;
 
 import java.util.function.Function;
 
+import com.aol.cyclops.functions.currying.Curry;
+
 public interface TriFunction<S1, S2, S3,R> {
 
 	public R apply(S1 a,S2 b,S3 c);

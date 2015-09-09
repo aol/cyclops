@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.comprehensions.donotation.UntypedDo;
 import com.aol.cyclops.lambda.monads.Functor;
-import com.aol.cyclops.matcher.Matchable;
+import com.aol.cyclops.matcher.recursive.Matchable;
 import com.aol.cyclops.monad.FreeTest.Box;
 
 public class DecisionTest {

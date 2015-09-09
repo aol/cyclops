@@ -5,6 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
+
 
 /**
  * An interoperability trait that wraps &amp; encapsulates any Functor type
@@ -39,7 +41,8 @@ public interface Functor<T> {
 		} catch (InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
-			throw (RuntimeException)e;
+			ExceptionSoftener.throwSoftenedException(e);
+			return null;
 		}
 		
 	}

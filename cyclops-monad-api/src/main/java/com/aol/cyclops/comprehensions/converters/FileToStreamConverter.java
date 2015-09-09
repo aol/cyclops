@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.lambda.api.MonadicConverter;
 
 public class FileToStreamConverter implements MonadicConverter<Stream> {
@@ -24,7 +25,8 @@ public class FileToStreamConverter implements MonadicConverter<Stream> {
 		try {
 			return Files.lines(Paths.get( ((File)f).getAbsolutePath()));
 		} catch (IOException e) {
-			throw (RuntimeException)(Exception)e;
+			ExceptionSoftener.throwSoftenedException(e);
+			return null;
 		}
 	
 	}

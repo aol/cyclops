@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 
 import lombok.val;
 
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.lambda.api.MonadicConverter;
 
 public class ResultsetToStreamConverter implements MonadicConverter<Stream> {
@@ -31,7 +32,8 @@ public class ResultsetToStreamConverter implements MonadicConverter<Stream> {
 					try {
 						hasNext = resultset.next();
 					} catch (SQLException e) {
-						throw (RuntimeException)((Exception)e);
+						ExceptionSoftener.throwSoftenedException(e);
+						
 					}
 				return hasNext;
 			}

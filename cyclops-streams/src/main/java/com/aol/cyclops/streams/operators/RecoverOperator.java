@@ -6,26 +6,41 @@ import java.util.stream.Stream;
 
 import lombok.Value;
 
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.streams.StreamUtils;
 @Value
 public class RecoverOperator<T> {
 	Stream<T> stream;
+	Class<Throwable> type;
+	private static final Object UNSET = new Object();
 	public Stream<T> recover(Function<Throwable,T> fn){
 		Iterator<T> it = stream.iterator();
 		
 		return StreamUtils.stream(new Iterator<T>(){
-			
+			T result = (T)UNSET;
 			@Override
 			public boolean hasNext() {
-				return it.hasNext();
+				try{
+					return it.hasNext();
+				}catch(Throwable t){
+					if(type.isAssignableFrom(t.getClass())){
+						result= fn.apply(t);
+						return true;
+					}
+					ExceptionSoftener.throwSoftenedException(t);
+					return false;
+				}
+				
 			}
 			@Override
 			public T next() {
-				try{
-					return it.next();
-				}catch(Throwable t){
-					return fn.apply(t);
+				if(result!=UNSET){
+					T toReturn = result;
+					result = (T)UNSET;
+					return toReturn;
 				}
+				return it.next();
+				
 			}
 			
 		});
