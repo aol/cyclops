@@ -1,49 +1,41 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'com.bmuschko.nexus'
+apply plugin: 'maven-publish'
+
 buildscript {
 	repositories {
 		jcenter()
 	}
 
 	dependencies {
-		classpath 'com.bmuschko:gradle-nexus-plugin:2.2'
+		classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
 		
 	}
 }
 
 sourceCompatibility = 1.8
 
-buildscript {
-	repositories {
-		jcenter()
-	}
-
-	dependencies {
-		classpath 'com.bmuschko:gradle-nexus-plugin:2.2'
-		
-	}
-}
 jar {
     manifest {
-        attributes 'Implementation-Title': 'Gradle Quickstart', 'Implementation-Version': version
+        attributes 'Implementation-Title': 'Cyclops Base', 'Implementation-Version': version
     }
 }
 
 repositories {
     mavenCentral()
-	
 }
 configurations {
 	provided
 }
 
 dependencies {
+	compile project(':cyclops-invokedynamic')	
 	provided group: 'org.projectlombok', name: 'lombok', version:"${lombokVersion}"
+	testCompile 'org.functionaljava:functionaljava:4.3'
+	testCompile group: 'junit', name: 'junit', version: '4.12'
 	testCompile group: 'org.hamcrest', name: 'hamcrest-all', version:'1.3'
-    testCompile group: 'junit', name: 'junit', version: '4.4'
 }
-
 sourceSets {
 	main.compileClasspath += [configurations.provided]
 	test.compileClasspath += [configurations.provided]
@@ -52,19 +44,20 @@ sourceSets {
 
 eclipse.classpath.plusConfigurations += [configurations.provided]  // Eclipse users only
 
+
 test {
     systemProperties 'property': 'value'
 }
 
 modifyPom {
 	project {
-		name 'cyclops-trampoline'
-		description 'Lambda utils for Java 8'
-		url 'http://advertising.com'
+		name 'cyclops-mixins'
+		description 'Mixins for Java 8'
+		url 'https://github.com/aol/cyclops'
 		inceptionYear '2015'
 
 		groupId 'com.aol.cyclops'
-		artifactId 'cyclops-trampoline'
+		artifactId 'cyclops-mixins'
 		version "$version"
 		
 		scm {
@@ -80,12 +73,22 @@ modifyPom {
 				distribution 'repo'
 			}
 		}
-		
+
 		developers {
 			developer {
 				id 'johnmcclean-aol'
 				name 'John McClean'
 				email 'john.mcclean@teamaol.com'
+			}
+			developer {
+				id 'The-Royal-We'
+				name 'Brendan Carroll'
+				email 'brendan.carroll@teamaol.com'
+			}
+			developer {
+				id 'marcocast'
+				name 'Marco Castigliego'
+				email 'marco.castigliego@teamaol.com'
 			}
 		}
 	}
@@ -102,6 +105,5 @@ nexus {
         repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
         snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots'	
 }
-
 
 

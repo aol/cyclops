@@ -9,6 +9,8 @@ Works by either using a registered 'Comprehender' that handles the actual method
 [Introducing the cyclops monad api](https://medium.com/@johnmcclean/introducing-the-cyclops-monad-api-a7a6b7967f4d)
 
 
+<img width="873" alt="screen shot 2015-07-22 at 10 19 24 pm" src="https://cloud.githubusercontent.com/assets/9964792/8837752/e478f5bc-30bf-11e5-972d-e6ac54e80b7a.png">
+
 # AnyM
 
 ## Operators
@@ -71,3 +73,36 @@ cyclops-streams
 where x.y.z represents the latest version
 
 compile 'com.aol.cyclops:cyclops-monad-api:x.y.z'
+
+
+# Monoids
+
+Fit the Stream.reduce signature. Can be used to wrap any Monoid type (e.g. functional java).
+
+
+	Monoid.of("",(a,b)->a+b).reduce(Stream.of("a","b","c"));
+	
+Produces "abc"
+	 
+	fj.Monoid m = fj.Monoid.monoid((Integer a) -> (Integer b) -> a+b,0);
+	Monoid<Integer> sum = As.asMonoid(m);
+		
+	assertThat(sum.reduce(Stream.of(1,2,3)),equalTo(6));
+	
+Use in conjunction with Power Tuples or StreamUtils for Multiple simultanous reduction on a Stream.
+
+
+### Coerce to Decomposable
+
+The Decomposable interface specifies an unapply method (with a default implementation) that decomposes an Object into it's elemental parts. It used used in both Cyclops Pattern Matching (for recursively matching against Case classes) and Cyclops for comprehensions (where Decomposables can be lifted to Streams automatically on input - if desired).
+
+     @Test
+	public void test() {
+		assertThat(AsDecomposable.asDecomposable(new MyCase("key",10))
+				.unapply(),equalTo(Arrays.asList("key",10)));
+	}
+	
+	@Value
+	static class MyCase { String key; int value;}
+	
+	

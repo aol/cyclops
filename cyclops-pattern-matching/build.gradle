@@ -27,12 +27,16 @@ configurations {
 	provided
 }
 dependencies {
-	//compile 'com.aol.cyclops:cyclops-base:4.0.0'
-	compile project(':cyclops-base')
-	compile 'org.pcollections:pcollections:2.1.2'
+	
+	compile project(':cyclops-streams')
+	compile project(':cyclops-closures')
+	testCompile project(':cyclops-mixins')
+	compile project(':cyclops-sequence-api')
+	provided 'com.nurkiewicz.lazyseq:lazyseq:0.0.1'
+	compile "org.pcollections:pcollections:${pcollectionsVersion}"
 	compile group: 'org.slf4j', name: 'jcl-over-slf4j', version:'1.6.1'
 	compile group: 'org.hamcrest', name: 'hamcrest-all', version:'1.3'
-	provided group: 'org.projectlombok', name: 'lombok', version:'1.16.2'
+	provided group: 'org.projectlombok', name: 'lombok', version:"${lombokVersion}"
 	testCompile group: 'com.google.guava', name: 'guava', version: '18.0'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }

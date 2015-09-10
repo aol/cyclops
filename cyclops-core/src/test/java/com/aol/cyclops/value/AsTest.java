@@ -5,7 +5,6 @@ import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -20,7 +19,6 @@ import lombok.val;
 import org.junit.Test;
 
 import com.aol.cyclops.dynamic.As;
-import com.aol.cyclops.matcher.Matchable;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.sequence.Monoid;
 

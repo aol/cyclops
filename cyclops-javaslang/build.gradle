@@ -30,7 +30,6 @@ configurations {
 	provided
 }
 dependencies {
-	compile project(':cyclops-base')
 	provided 'com.google.guava:guava:18.0'
 	provided group: 'com.aol.simplereact', name:'simple-react', version:'0.97'
 	provided 'com.javaslang:javaslang:1.2.2'

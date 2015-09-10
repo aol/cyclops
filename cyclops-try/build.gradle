@@ -28,7 +28,7 @@ configurations {
 }
 
 dependencies {
-	provided group: 'org.projectlombok', name: 'lombok', version:'1.16.2'
+	provided group: 'org.projectlombok', name: 'lombok', version:"${lombokVersion}"
 	compile project(':cyclops-core')
 	testCompile project(':cyclops-tuples')
 	testCompile group: 'org.hamcrest', name: 'hamcrest-all', version:'1.3'

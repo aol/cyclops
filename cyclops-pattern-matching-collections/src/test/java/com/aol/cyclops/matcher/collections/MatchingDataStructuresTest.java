@@ -19,7 +19,7 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.matcher.CollectionMatching;
+import com.aol.cyclops.matcher.CollectionMatcher;
 import com.aol.cyclops.matcher.Extractors;
 import com.aol.cyclops.matcher.Two;
 import com.aol.cyclops.matcher.builders.Matching;
@@ -29,7 +29,7 @@ public class MatchingDataStructuresTest {
 	
 	@Test
 	public void allValues(){
-		assertThat(CollectionMatching.whenIterable().allValues(1,ANY(),2).thenApply(l->"case1")
+		assertThat(CollectionMatcher.whenIterable().allValues(1,ANY(),2).thenApply(l->"case1")
 			.whenIterable().allValues(1,3,2).thenApply(l->"case2")
 			.whenIterable().bothTrue((Integer i)->i==1,(String s)->s.length()>0)
 					.thenExtract(Extractors.<Integer,String>of(0,1))
@@ -42,7 +42,7 @@ public class MatchingDataStructuresTest {
 	public void inCaseOfManySingle() {
 		
 		assertThat(
-				CollectionMatching.whenIterable().allTrue((Person p) -> p.isTall())
+				CollectionMatcher.whenIterable().allTrue((Person p) -> p.isTall())
 											.thenApply(list -> list.get(0).getName() + " is tall")
 						.whenIterable().allTrue((Person p) -> p.isTall())
 											.thenApply(list -> list.get(0).getName() + " is tall")
@@ -54,7 +54,7 @@ public class MatchingDataStructuresTest {
 	public void inCaseOfManyDouble() {
 		Predicate<Person> isTall = (Person p) -> p.isTall();
 		assertThat(
-				CollectionMatching.whenIterable().allTrue(isTall)
+				CollectionMatcher.whenIterable().allTrue(isTall)
 										.thenApply(list -> list.get(0).getName() + " is tall")
 						.match(new Person("bob"),new Person("bob")).get(), is("bob is tall"));
 	}
@@ -62,7 +62,7 @@ public class MatchingDataStructuresTest {
 	public void inCaseOfManyList() {
 		Predicate<Person> isTall = (Person p) -> p.isTall();
 		assertThat(
-				CollectionMatching.whenIterable().allTrue(isTall)
+				CollectionMatcher.whenIterable().allTrue(isTall)
 										.thenApply(list -> list.get(0).getName() + " is tall")
 										
 						.apply(asList(new Person("bob"))).get(), is("bob is tall"));
@@ -72,21 +72,21 @@ public class MatchingDataStructuresTest {
 	@Test
 	public void  inMatchOfManyList() {
 		assertThat(
-				CollectionMatching.whenIterable().allMatch(samePropertyValuesAs(new Person("bob")))
+				CollectionMatcher.whenIterable().allMatch(samePropertyValuesAs(new Person("bob")))
 											.thenApply(list -> list.get(0).getName())
 						.apply(asList(new Person("bob"))).get(), is("bob"));
 	}
 	@Test
 	public void  inMatchOfManySingle() {
 		assertThat(
-				CollectionMatching.whenIterable().allMatch(samePropertyValuesAs(new Person("bob")))
+				CollectionMatcher.whenIterable().allMatch(samePropertyValuesAs(new Person("bob")))
 												.thenApply(list -> list.get(0).getName())
 						.apply(new Person("bob")).get(), is("bob"));
 	}
 	@Test
 	public void  inMatchOfManyDouble() {
 		assertThat(
-				CollectionMatching.whenIterable().allMatch(samePropertyValuesAs(new Person("bob")))
+				CollectionMatcher.whenIterable().allMatch(samePropertyValuesAs(new Person("bob")))
 										.thenApply(list -> list.get(0).getName())
 						.match(new Person("bob"), new Person("two")).get(), is("bob"));
 	}
@@ -96,7 +96,7 @@ public class MatchingDataStructuresTest {
 	public void  inMatchOfMatchers() {
 
 		assertThat(
-				CollectionMatching.whenIterable().bothMatch(samePropertyValuesAs(new Person("bob")),anything())
+				CollectionMatcher.whenIterable().bothMatch(samePropertyValuesAs(new Person("bob")),anything())
 											.thenExtract(Extractors.<Person>first())
 											.thenApply(bob->bob.getName())
 											.apply(Two.tuple(new Person("bob"),"boo hoo!")).get(),is("bob"));
@@ -105,7 +105,7 @@ public class MatchingDataStructuresTest {
 	public void  inMatchOfMatchersSingle() {
 
 		assertThat(
-				CollectionMatching.whenIterable().bothMatch(samePropertyValuesAs(new Person("bob")),any(String.class))
+				CollectionMatcher.whenIterable().bothMatch(samePropertyValuesAs(new Person("bob")),any(String.class))
 											.thenExtract(Extractors.<Person>first())
 											.thenApply(bob -> bob.getName())
 						.match(new Person("bob"), "boo hoo!").get(),is("bob"));
@@ -113,9 +113,9 @@ public class MatchingDataStructuresTest {
 
 	@Test
 	public void  inCaseOfPredicates() {
-		CollectionMatching.whenIterable().allTrueNoType((Person p) -> p.isTall(),p->true).thenExtract(Extractors.<Person>first())
+		CollectionMatcher.whenIterable().allTrueNoType((Person p) -> p.isTall(),p->true).thenExtract(Extractors.<Person>first())
 								.thenApply(p -> p.getName() + " is tall").apply(new Person("bob")).get();
-		String result = CollectionMatching.<String>whenIterable().allTrueNoType((Person p) -> p.isTall(),p->true)
+		String result = CollectionMatcher.<String>whenIterable().allTrueNoType((Person p) -> p.isTall(),p->true)
 												.thenExtract(Extractors.<Person>first())
 												.thenApply(p -> p.getName() + " is tall")
 						.apply(new Person("bob")).get();
@@ -124,7 +124,7 @@ public class MatchingDataStructuresTest {
 	@Test
 	public void  inCaseOfPredicatesMultiple() {
 		
-		String result = CollectionMatching.<String>whenIterable().allTrueNoType( (Person p) -> p.isTall(), p->true)
+		String result = CollectionMatcher.<String>whenIterable().allTrueNoType( (Person p) -> p.isTall(), p->true)
 													.thenExtract(Extractors.<Person>first())
 													.thenApply(p->p.getName() + " is tall") 
 								.whenIterable().allTrueNoType( (Person p) -> p.isTall(), p->true)
@@ -138,7 +138,7 @@ public class MatchingDataStructuresTest {
 	@Test
 	public void inCaseOfTuple() {
 
-		String result = CollectionMatching.whenIterable()
+		String result = CollectionMatcher.whenIterable()
 										.threeTrue((Person p) -> p.isTall(),(Address a)->a.getCountry().equals("Ireland"), p->true)
 										.thenExtract( Extractors.<Person,Address>of(0,1))
 										.thenApply(t->t.v1.getName() + " is tall and lives in " + t.v2.getCity())
@@ -158,7 +158,7 @@ public class MatchingDataStructuresTest {
 	@Test
 	public void inCaseOfTupleUnsuitableObject() {
 
-		String result = CollectionMatching.whenIterable().threeTrue((Person p) -> p.isTall(),(Address a)->a.getCountry().equals("Ireland"),p->true)
+		String result = CollectionMatcher.whenIterable().threeTrue((Person p) -> p.isTall(),(Address a)->a.getCountry().equals("Ireland"),p->true)
 													.thenExtract(Extractors.<Person,Address>of(0,1))
 													.thenApply(t-> t.v1.getName() + " is tall and lives in " + t.v2.getCity())
 														
@@ -176,7 +176,7 @@ public class MatchingDataStructuresTest {
 	@Test
 	public void inMatchOfTuple() {
 		
-		String result = CollectionMatching.whenIterable().bothMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob")),anything())
+		String result = CollectionMatcher.whenIterable().bothMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob")),anything())
 											.thenExtract(Extractors.<Person,Address>of(0,1))
 											.thenApply(t->t.v1.getName() + " is tall and lives in " + t.v2.getCity())
 									.match(new Person("bob"),new Address()).get();
@@ -195,7 +195,7 @@ public class MatchingDataStructuresTest {
 		
 		Predicate<Person> isTall = (Person p) -> p.isTall();
 
-		CollectionMatching.whenIterable().allTrue(isTall)
+		CollectionMatcher.whenIterable().allTrue(isTall)
 					.thenConsume(list -> value = list.get(0).getName() + " is tall")
 				.whenIterable().allTrue(isTall)
 					.thenConsume(list -> value = list.get(0).getName() + " is tall")	
@@ -208,7 +208,7 @@ public class MatchingDataStructuresTest {
 		
 		
 
-		CollectionMatching.whenIterable().allTrue((Person p) -> p.isTall()).thenConsume(list -> value = list.get(0).getName() + " is tall")
+		CollectionMatcher.whenIterable().allTrue((Person p) -> p.isTall()).thenConsume(list -> value = list.get(0).getName() + " is tall")
 				.match(new Person("bob"));
 
 		assertThat(value, is("bob is tall"));
@@ -218,14 +218,14 @@ public class MatchingDataStructuresTest {
 		
 		
 
-		CollectionMatching.whenIterable().allTrue((Person p) -> p.isTall()).thenConsume(list -> value = list.get(0).getName() + " is tall")
+		CollectionMatcher.whenIterable().allTrue((Person p) -> p.isTall()).thenConsume(list -> value = list.get(0).getName() + " is tall")
 				.match(new Person("bob"),new Person("two"));
 
 		assertThat(value, is("bob is tall"));
 	}
 	@Test
 	public void   matchOfManyList(){
-		CollectionMatching.whenIterable().allMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob"))).thenConsume(list -> value = list.get(0).getName())
+		CollectionMatcher.whenIterable().allMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob"))).thenConsume(list -> value = list.get(0).getName())
 					.apply(
 				asList(new Person("bob")));
 		assertThat(value, is("bob"));
@@ -233,7 +233,7 @@ public class MatchingDataStructuresTest {
 	}
 	@Test
 	public void   matchOfManySingle(){
-		CollectionMatching.whenIterable().allMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob"))).thenConsume(list -> value = list.get(0).getName())
+		CollectionMatcher.whenIterable().allMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob"))).thenConsume(list -> value = list.get(0).getName())
 					.apply(
 				new Person("bob"));
 		assertThat(value, is("bob"));
@@ -241,7 +241,7 @@ public class MatchingDataStructuresTest {
 	}
 	@Test
 	public void   matchOfManyDouble(){
-		CollectionMatching.whenIterable().allMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob"))).thenConsume(list -> value = list.get(0).getName())
+		CollectionMatcher.whenIterable().allMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob"))).thenConsume(list -> value = list.get(0).getName())
 					.match(
 				new Person("bob"),new Person("two"));
 		assertThat(value, is("bob"));
@@ -252,7 +252,7 @@ public class MatchingDataStructuresTest {
 	@Test
 	public void  matchOfMatchers(){
 
-		CollectionMatching.whenIterable().bothMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob")),anything())
+		CollectionMatcher.whenIterable().bothMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob")),anything())
 																.thenExtract(Extractors.<Person>first())
 																.thenApply(bob-> value =bob.getName())
 									.whenIterable().bothMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob2")),anything())
@@ -271,7 +271,7 @@ public class MatchingDataStructuresTest {
 		
 		
 		
-		CollectionMatching.whenIterable().bothTrue((Person p) -> p.isTall(),p->true).thenExtract(Extractors.<Person>first()).thenApply( p->value = p.getName() + " is tall" )
+		CollectionMatcher.whenIterable().bothTrue((Person p) -> p.isTall(),p->true).thenExtract(Extractors.<Person>first()).thenApply( p->value = p.getName() + " is tall" )
 				.whenIterable().bothTrue((Person p) -> p.isTall(),p->true).thenExtract(Extractors.<Person>first()).thenApply( p->value = p.getName() + " is tall" )
 								.apply(new Person("bob"));
 		
@@ -282,7 +282,7 @@ public class MatchingDataStructuresTest {
 	@Test
 	public void  caseOfTuple(){
 
-		CollectionMatching.whenIterable().allTrueNoType((Person p) -> p.isTall(),(Address a)->a.getCountry().equals("Ireland"),  p->true)
+		CollectionMatcher.whenIterable().allTrueNoType((Person p) -> p.isTall(),(Address a)->a.getCountry().equals("Ireland"),  p->true)
 								.thenExtract(Extractors.<Person,Address>of(0,1))
 								.thenApply(t->value = t.v1.getName() + " is tall and lives in " + t.v2.getCity())
 				.whenIterable()
@@ -297,7 +297,7 @@ public class MatchingDataStructuresTest {
 			
 	@Test
 	public void matchOfTuple(){
-		CollectionMatching.whenIterable().bothMatch(samePropertyValuesAs(new Person("bob")),anything())
+		CollectionMatcher.whenIterable().bothMatch(samePropertyValuesAs(new Person("bob")),anything())
 					.thenExtract(Extractors.<Person,Address>of(0,1))
 					.thenApply(t->value = t.v1.getName() + " is tall and lives in " + t.v2.getCity())
 				

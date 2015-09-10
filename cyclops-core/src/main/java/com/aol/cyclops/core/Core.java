@@ -23,8 +23,8 @@ import com.aol.cyclops.lambda.monads.AnyMonads;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.matcher.Case;
 import com.aol.cyclops.matcher.Cases;
+import com.aol.cyclops.matcher.CollectionMatcher;
 import com.aol.cyclops.matcher.Extractors;
-import com.aol.cyclops.matcher.Matchable;
 import com.aol.cyclops.matcher.Predicates;
 import com.aol.cyclops.matcher.builders.ADTPredicateBuilder;
 import com.aol.cyclops.matcher.builders.CheckTypeAndValues;
@@ -33,6 +33,8 @@ import com.aol.cyclops.matcher.builders.IterableCase;
 import com.aol.cyclops.matcher.builders.Matching;
 import com.aol.cyclops.matcher.builders.MatchingInstance;
 import com.aol.cyclops.matcher.builders.StreamCase;
+import com.aol.cyclops.matcher.recursive.Matchable;
+import com.aol.cyclops.matcher.recursive.RecursiveMatcher;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.objects.Decomposable;
 import com.aol.cyclops.sequence.Monoid;
@@ -471,7 +473,7 @@ public class Core extends Functions {
 	 * @return Case Class style Pattern Matching Builder
 	 */
 	public static final<USER_VALUE> CheckTypeAndValues<USER_VALUE> matchWhenValues(){
-		return Matching.whenValues();
+		return RecursiveMatcher.when();
 	}
 	/**
 	 * Create a builder for Matching against a provided Object as is (i.e. the Steps this builder provide assume you don't wish to disaggregate it and
@@ -493,7 +495,7 @@ public class Core extends Functions {
 	 * @return Iterable / Collection based Pattern Matching Builder
 	 */
 	public static final<USER_VALUE> IterableCase<USER_VALUE> matchWhenIterable(){
-		return Matching.whenIterable();
+		return CollectionMatcher.whenIterable();
 	}
 	
 	/**
@@ -503,7 +505,7 @@ public class Core extends Functions {
 	 * @return Stream based Pattern Matching Builder
 	 */
 	public static final  StreamCase matchWhenFromStream(){
-		return Matching.whenFromStream();
+		return CollectionMatcher.whenFromStream();
 	}
 	
 	
