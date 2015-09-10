@@ -17,7 +17,7 @@ public class MutableDoubleTest {
 		    
 		Stream.of(1,2,3,4).map(i->i*10).peek(i-> num.mutate(n->n+i)).forEach(System.out::println);
 		    
-		assertThat(num.getAsDouble(),is(120));
+		assertThat(num.getAsDouble(),is(120.0));
 	}
 	@Test
 	public void inClosure(){
@@ -27,7 +27,7 @@ public class MutableDoubleTest {
 	  fn.apply(10).apply(20);
 		
 		assertThat(myInt.getAsDouble(),
-				is(200));
+				is(200.0));
 	}
 	@Test
 	public void inClosure2(){
@@ -37,17 +37,17 @@ public class MutableDoubleTest {
 		fn.apply(10,20);
 		
 		assertThat(myInt.getAsDouble(),
-				is(200));
+				is(200.0));
 	}
 
 	@Test
 	public void testSet() {
-		assertThat(new MutableDouble().set(1000).getAsDouble(),is(1000));
+		assertThat(new MutableDouble().set(1000).getAsDouble(),is(1000.0));
 	}
 
 	@Test
 	public void testClosedVar() {
-		assertThat(new MutableDouble(10).getAsDouble(),equalTo(10));
+		assertThat(new MutableDouble(10).getAsDouble(),equalTo(10.0));
 	}
 	@Test
 	public void testClosedVarEquals() {

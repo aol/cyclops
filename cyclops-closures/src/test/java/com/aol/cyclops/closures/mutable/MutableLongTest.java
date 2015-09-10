@@ -17,7 +17,7 @@ public class MutableLongTest {
 		    
 		Stream.of(1,2,3,4).map(i->i*10).peek(i-> num.mutate(n->n+i)).forEach(System.out::println);
 		    
-		assertThat(num.getAsLong(),is(120));
+		assertThat(num.getAsLong(),is(120l));
 	}
 	@Test
 	public void inClosure(){
@@ -27,7 +27,7 @@ public class MutableLongTest {
 	  fn.apply(10).apply(20);
 		
 		assertThat(myInt.getAsLong(),
-				is(200));
+				is(200l));
 	}
 	@Test
 	public void inClosure2(){
@@ -37,17 +37,17 @@ public class MutableLongTest {
 		fn.apply(10,20);
 		
 		assertThat(myInt.getAsLong(),
-				is(200));
+				is(200l));
 	}
 
 	@Test
 	public void testSet() {
-		assertThat(new MutableLong().set(1000).getAsLong(),is(1000));
+		assertThat(new MutableLong().set(1000).getAsLong(),is(1000l));
 	}
 
 	@Test
 	public void testClosedVar() {
-		assertThat(new MutableLong(10).getAsLong(),equalTo(10));
+		assertThat(new MutableLong(10).getAsLong(),equalTo(10l));
 	}
 	@Test
 	public void testClosedVarEquals() {
