@@ -72,14 +72,14 @@ public class RecursiveMatcherInstance <T, X> implements Function<T, Optional<X>>
 	 * @param a Action from which the Predicate (by param type) and Function will be extracted to build a Pattern Matching case
 	 * @return Next step in Case builder
 	 */
-	public final <R> CheckTypeAndValues<X>.AndMembersMatchBuilder<T, R> whenIsType(TypedFunction<T, R> a) {
+	public final <T,R> CheckTypeAndValues<X>.AndMembersMatchBuilder<T, R> whenIsType(TypedFunction<T, R> a) {
 
-		return  new  CheckTypeAndValues(new PatternMatcher()).isType(a);
+		return  new  CheckTypeAndValues(this.cse.getPatternMatcher()).isType(a);
 
 	}
-	public  final <R> CheckTypeAndValues<X>.AndMembersMatchBuilder<T, R> whenIsType(Class<T> t,Function<T, R> f) {
+	public  final <T,R> CheckTypeAndValues<X>.AndMembersMatchBuilder<T, R> whenIsType(Class<T> t,Function<T, R> f) {
 
-		return  new  CheckTypeAndValues(new PatternMatcher()).isType(new TypedFunction<T,R>(){
+		return  new  CheckTypeAndValues(this.cse.getPatternMatcher()).isType(new TypedFunction<T,R>(){
 
 			@Override
 			public R apply(T t) {

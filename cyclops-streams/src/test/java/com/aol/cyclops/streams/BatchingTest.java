@@ -31,19 +31,28 @@ public class BatchingTest {
 		for(int i=0;i<5;i++){
 			System.out.println(i);
 			assertThat(of(1,2,3,4,5, 6)
-						
+							.map(n-> n==6? sleep(1) : n)
 							.batchByTime(10,TimeUnit.MICROSECONDS)
 							.toList()
 							.get(0)
 							,not(hasItem(6)));
 		}
 	}
+	private Integer sleep(int i) {
+		try {
+			Thread.sleep(i);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return i;
+	}
 	@Test
 	public void windowwByTime2(){
 		for(int i=0;i<5;i++){
 			System.out.println(i);
 			assertThat(of(1,2,3,4,5, 6)
-						
+							.map(n-> n==6? sleep(1) : n)
 							.windowByTime(10,TimeUnit.MICROSECONDS)
 							.toList()
 							.get(0).sequenceM().toList()
@@ -251,6 +260,7 @@ public class BatchingTest {
 		for(int i=0;i<10;i++){
 			System.out.println(i);
 			List<Streamable<Integer>> list = of(1,2,3,4,5,6)
+					.map(n-> n==6? sleep(1) : n)
 					.windowBySizeAndTime(10,1,TimeUnit.MICROSECONDS)
 					
 					.toList();

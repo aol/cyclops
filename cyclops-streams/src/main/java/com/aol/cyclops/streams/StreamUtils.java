@@ -1698,7 +1698,7 @@ public class StreamUtils{
 					
 					List<T> list = new ArrayList<>();
 					
-					while(System.nanoTime()-start> toRun && it.hasNext()){
+					while(System.nanoTime()-start< toRun && it.hasNext()){
 							list.add(it.next());
 					}
 					if(list.size()==0 && it.hasNext()) //time unit may be too small

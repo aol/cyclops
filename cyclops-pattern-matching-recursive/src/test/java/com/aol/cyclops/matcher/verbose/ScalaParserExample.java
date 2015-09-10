@@ -1,21 +1,18 @@
-package com.aol.cyclops.matcher;
-
-
+package com.aol.cyclops.matcher.verbose;
 import static com.aol.cyclops.matcher.Predicates.ANY;
 import static com.aol.cyclops.matcher.Predicates.__;
 import static com.aol.cyclops.matcher.Predicates.type;
 import static com.aol.cyclops.matcher.Predicates.with;
-
-import java.util.function.Function;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Value;
-import lombok.val;
 
-import com.aol.cyclops.matcher.ScalaParserExample.Mult;
 import com.aol.cyclops.matcher.builders.Matching;
 import com.aol.cyclops.matcher.recursive.RecursiveMatcher;
+import com.aol.cyclops.matcher.verbose.ScalaParserExample.Add;
+import com.aol.cyclops.matcher.verbose.ScalaParserExample.Const;
+import com.aol.cyclops.matcher.verbose.ScalaParserExample.Mult;
+import com.aol.cyclops.matcher.verbose.ScalaParserExample.Neg;
 import com.aol.cyclops.objects.Decomposable;
 
 public class ScalaParserExample {
@@ -26,11 +23,11 @@ public class ScalaParserExample {
 	
 	public Integer eval(Expression expression, int xValue){
 		
-		return Matching.whenIsType( (X x)-> xValue)
-				.whenIsType((Const c) -> c.getValue())
-				.whenIsType((Add a) ->   eval(a.getLeft(),xValue) + eval(a.getRight(),xValue))
-				.whenIsType( (Mult m) -> eval(m.getLeft(),xValue) * eval(m.getRight(),xValue))
-				.whenIsType( (Neg n) ->  -eval(n.getExpr(),xValue))
+		return Matching.when().isType( (X x)-> xValue)
+				.when().isType((Const c) -> c.getValue())
+				.when().isType((Add a) ->   eval(a.getLeft(),xValue) + eval(a.getRight(),xValue))
+				.when().isType( (Mult m) -> eval(m.getLeft(),xValue) * eval(m.getRight(),xValue))
+				.when().isType( (Neg n) ->  -eval(n.getExpr(),xValue))
 				.match(expression).orElse(1);
 		
 		
@@ -43,11 +40,11 @@ public class ScalaParserExample {
 	public Expression derive(Expression e){
 	
 		
-		return Matching.whenIsType((X x)-> new Const(1))
-					.whenIsType((Const c)-> new Const(0))
-					.whenIsType((Add a) -> new Add(derive(a.getLeft()),derive(a.getRight())))
-					.whenIsType( (Mult m) -> new Add(new Mult(derive(m.getLeft()), m.getRight()), new Mult(m.getLeft(), derive(m.getRight()))))
-					.whenIsType( (Neg n) -> new Neg(derive(n.getExpr())))
+		return Matching.when().isType((X x)-> new Const(1))
+					.when().isType((Const c)-> new Const(0))
+					.when().isType((Add a) -> new Add(derive(a.getLeft()),derive(a.getRight())))
+					.when().isType( (Mult m) -> new Add(new Mult(derive(m.getLeft()), m.getRight()), new Mult(m.getLeft(), derive(m.getRight()))))
+					.when().isType( (Neg n) -> new Neg(derive(n.getExpr())))
 					.match(e).get();
 		
 		
@@ -59,17 +56,19 @@ public class ScalaParserExample {
 
 		
 		return RecursiveMatcher.<Expression>when().isType( (Mult m)->new Const(0)).with(new Const(0),__)
-						.whenIsType( (Mult m)->new Const(0)).with(__,new Const(0))
-						.whenIsType((Mult m)-> simplify(m.right)).with(new Const(1))
-						.whenIsType( (Mult m) -> simplify(m.getLeft())).with(__,new Const(1))
-						.whenIsType( (Mult<Const,Const> m) -> new Const(m.left.value * m.right.value))
+						.when().isType( (Mult m)->new Const(0)).with(__,new Const(0))
+						.when().isType((Mult m)-> simplify(m.right)).with(new Const(1))
+						.when().isType( (Mult m) -> simplify(m.getLeft())).with(__,new Const(1))
+						.when().isType( (Mult<Const,Const> m) -> new Const(m.left.value * m.right.value))
 													.with(ANY(Const.class),ANY(Const.class))
-						.whenIsType((Add a) -> simplify(a.right)).with(new Const(0),__)
-						.whenIsType((Add a)-> simplify(a.left)).with(__,new Const(0))
+						.when().isType((Add a) -> simplify(a.right)).with(new Const(0),__)
+						.when().isType((Add a)-> simplify(a.left)).with(__,new Const(0))
 					
-						.whenIsType( (Add<Const,Const> a) -> new Const(a.left.value + a.right.value)).with(ANY(Const.class), ANY(Const.class))
-						.whenIsType( (Neg<Const> n) -> new Const(-n.expr.value)).with(new Neg<Const>(null),ANY(Const.class))
-						.apply(e).orElse(e);
+						.when().isType( (Add<Const,Const> a) -> new Const(a.left.value + a.right.value)).with(ANY(Const.class), ANY(Const.class))
+						.when().isType( (Neg<Const> n) -> new Const(-n.expr.value)).with(new Neg<Const>(null),ANY(Const.class))
+												
+						
+				.apply(e).orElse(e);
 
 	}
 	
@@ -79,8 +78,8 @@ public class ScalaParserExample {
 		
 		return RecursiveMatcher.<Expression>when().isType( (Add<Const,Mult> a)-> new Const(1))
 									.with(__,type(Mult.class).with(__,new Const(0)))
-				.whenIsType( (Add<Mult,Const> a)-> new Const(0)).with(type(Mult.class).with(__,new Const(0)),__)
-				.whenIsType( (Add<Add,Const> a)-> new Const(-100)).with(with(__,new Const(2)),__)
+				.when().isType( (Add<Mult,Const> a)-> new Const(0)).with(type(Mult.class).with(__,new Const(0)),__)
+				.when().isType( (Add<Add,Const> a)-> new Const(-100)).with(with(__,new Const(2)),__)
 				
 				
 				.apply(e).orElse(new Const(-1));
@@ -98,4 +97,3 @@ public class ScalaParserExample {
 	
 	
 }
-

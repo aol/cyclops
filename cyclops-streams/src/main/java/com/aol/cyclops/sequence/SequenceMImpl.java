@@ -1691,7 +1691,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return SequenceM with Stream appended
 	 */
 	public SequenceM<T> appendStream(Stream<T> stream) {
-		return StreamUtils.sequenceM(StreamUtils.appendStream(stream,stream),Optional.empty());
+		return StreamUtils.sequenceM(StreamUtils.appendStream(this.stream,stream),Optional.empty());
 	}
 	/**
 	 * Prepend Stream to this SequenceM
@@ -1711,7 +1711,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 */
 	public SequenceM<T> prependStream(Stream<T> stream) {
 		
-		return StreamUtils.sequenceM(StreamUtils.prependStream(stream,stream),Optional.empty());
+		return StreamUtils.sequenceM(StreamUtils.prependStream(this.stream,stream),Optional.empty());
 	}
 	/**
 	 * Append values to the end of this SequenceM
@@ -1798,7 +1798,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 */
 	public SequenceM<T> insertStreamAt(int pos, Stream<T> stream) {
 		
-		return StreamUtils.sequenceM(StreamUtils.insertStreamAt(stream, pos,stream),Optional.empty());
+		return StreamUtils.sequenceM(StreamUtils.insertStreamAt(this.stream, pos,stream),Optional.empty());
 		
 	}
 

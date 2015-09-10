@@ -64,7 +64,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 */
 	public <V> Step<V, X> whenIsValue(V value) {
 
-		return (Step<V,X>)new ElementCase<>(new PatternMatcher()).isValue(value);
+		return (Step<V,X>)new ElementCase<>(this.cse.getPatternMatcher()).isValue(value);
 
 	}
 
@@ -78,7 +78,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 */
 	public <T, R> MatchingInstance<T, R> whenIsType(TypedFunction<T, R> a) {
 
-		return new ElementCase<>(new PatternMatcher()).isType(a);
+		return new ElementCase<>(this.cse.getPatternMatcher()).isType(a);
 
 	}
 
@@ -90,7 +90,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 * @return Next Step in the Case Builder process
 	 */
 	public <V> InCaseOfBuilder<V> whenIsTrue(Predicate<V> match) {
-		return new ElementCase<>(new PatternMatcher()).isTrue(match);
+		return new ElementCase<>(this.cse.getPatternMatcher()).isTrue(match);
 	}
 
 	/**
@@ -102,7 +102,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 */
 	public <V> InMatchOfBuilder<V, X> whenIsMatch(Matcher<V> match) {
 
-		return (InMatchOfBuilder)new ElementCase<>(new PatternMatcher()).isMatch(match);
+		return (InMatchOfBuilder)new ElementCase<>(this.cse.getPatternMatcher()).isMatch(match);
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	@SafeVarargs
 	public final <V> InMatchOfBuilder<V, X> whenAllMatch(Matcher<V>... matchers) {
 
-		return (InMatchOfBuilder)new ElementCase<>(new PatternMatcher()).allMatch(matchers);
+		return (InMatchOfBuilder)new ElementCase<>(this.cse.getPatternMatcher()).allMatch(matchers);
 	}
 
 	/**
@@ -128,7 +128,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	@SafeVarargs
 	public final  <V> InMatchOfBuilder<V, X> whenAnyMatch(Matcher<V>... matchers) {
 
-		return (InMatchOfBuilder)new ElementCase<>(new PatternMatcher()).anyMatch(matchers);
+		return (InMatchOfBuilder)new ElementCase<>(this.cse.getPatternMatcher()).anyMatch(matchers);
 	}
 
 	/**
@@ -140,7 +140,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 */
 	@SafeVarargs
 	public final <V> InMatchOfBuilder<V, X> whenNoneMatch(Matcher<V>... matchers) {
-		return (InMatchOfBuilder)new ElementCase<>(new PatternMatcher()).noneMatch(matchers);
+		return (InMatchOfBuilder)new ElementCase<>(this.cse.getPatternMatcher()).noneMatch(matchers);
 	}
 
 	
