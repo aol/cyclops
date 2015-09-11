@@ -45,7 +45,7 @@ public class BatchingTest {
 				.size(),equalTo(2));
 		assertThat(SequenceM.of(1,2,3,4,5,6)
 				.batchWhile(i->i%3!=0)
-				.toList(),equalTo(Arrays.asList(1,2,3)));
+				.toList(),equalTo(Arrays.asList(Arrays.asList(1,2,3),Arrays.asList(4,5,6))));
 	}
 	@Test
 	public void batchUntilCollection(){
@@ -63,7 +63,7 @@ public class BatchingTest {
 				.toList().size(),equalTo(2));
 		assertThat(SequenceM.of(1,2,3,4,5,6)
 				.batchWhile(i->i%3!=0,()->new ArrayList<>())
-				.toList(),equalTo(Arrays.asList(1,2,3)));
+				.toList(),equalTo(Arrays.asList(Arrays.asList(1,2,3),Arrays.asList(4,5,6))));
 	}
 	@Test
 	public void batchByTime2(){

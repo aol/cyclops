@@ -76,7 +76,7 @@ public interface Monoid<T> {
 		return reduce(mapToType(toReduce));
 	}
 	default T reduce(Stream<T> toReduce){
-		return toReduce.reduce(reducer()).orElse(zero());
+		return toReduce.reduce(zero(),reducer());
 	}
 	
 	public static <T> Monoid<T> of(T zero, Function<T,Function<T,T>> combiner,Function<?,T> mapToType){

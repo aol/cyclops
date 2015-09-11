@@ -41,10 +41,19 @@ public class BatchWhileOperator<T, C extends Collection<T>> {
 				C list = factory.get();
 				if(value!=UNSET)
 					list.add(value);
-				while(it.hasNext() && predicate.test(value=it.next())){
-					list.add(value);
-					value=(T)UNSET;
-				}
+				T value;
+				
+label:					while(it.hasNext()) {
+							value=it.next();
+							list.add(value);
+							
+							if(!predicate.test(value)){
+								value=(T)UNSET;
+								break label;
+							}
+							value=(T)UNSET;
+						
+					}
 				return list;
 			}
 			
