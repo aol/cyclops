@@ -29,11 +29,2040 @@ div.shootout {padding:2em;border:3px #4854A8 solid}
 <body>
 <table cellspacing=0 cellpadding=0 class="param">
 <tr><th>Test</th><th class="numi">Methods<br/>Passed</th><th class="numi">Scenarios<br/>Passed</th><th class="numi"># skipped</th><th class="numi"># failed</th><th class="numi">Total<br/>Time</th><th class="numi">Included<br/>Groups</th><th class="numi">Excluded<br/>Groups</th></tr>
-<tr><td style="text-align:left;padding-right:2em">Default test</td><td class="numi">0</td><td class="numi">0</td><td class="numi">0</td><td class="numi">0</td><td class="numi">0.0 seconds</td><td class="numi"></td><td class="numi"></td></tr>
+<tr><td style="text-align:left;padding-right:2em">Default test</td><td class="numi">70</td><td class="numi">70</td><td class="numi_attn">54</td><td class="numi">0</td><td class="numi">16.0 seconds</td><td class="numi"></td><td class="numi"></td></tr>
 </table>
 <a id="summary"></a>
 <table cellspacing=0 cellpadding=0 class="passed">
 <tr><th>Class</th><th>Method</th><th># of<br/>Scenarios</th><th>Time<br/>(Msecs)</th></tr>
+<tr><th colspan="4">Default test &#8212; skipped</th></tr>
+<tr class="skippedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest<td><a href="#m1"><b>untested_spec316_requestMustNotThrowExceptionAndMustOnErrorTheSubscriber</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="skippedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m2"><b>untested_spec108_possiblyCanceledSubscriptionShouldNotReceiveOnErrorOrOnCompleteSignals</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="skippedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m3"><b>optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfront</b>  </a></td><td class="numi">1</td><td class="numi">2</td></tr>
+<tr class="skippedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest<td><a href="#m4"><b>untested_spec308_blackbox_requestMustRegisterGivenNumberElementsToBeProduced</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="skippedodd"><td rowspan="2">com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest<td><a href="#m5"><b>untested_spec310_requestMaySynchronouslyCallOnNextOnSubscriber</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr><tr class="skippedodd"><td><a href="#m6"><b>untested_spec315_cancelMustNotThrowExceptionAndMustSignalOnError</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="skippedeven"><td rowspan="3">com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest<td><a href="#m7"><b>untested_spec311_blackbox_requestMaySynchronouslyCallOnCompleteOrOnError</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr><tr class="skippedeven"><td><a href="#m8"><b>untested_spec301_blackbox_mustNotBeCalledOutsideSubscriberContext</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedeven"><td><a href="#m9"><b>untested_spec208_blackbox_mustBePreparedToReceiveOnNextSignalsAfterHavingCalledSubscriptionCancel</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="skippedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m10"><b>untested_spec109_subscribeShouldNotThrowNonFatalThrowable</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="skippedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m11"><b>untested_spec304_requestShouldNotPerformHeavyComputations</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="skippedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m12"><b>untested_spec108_possiblyCanceledSubscriptionShouldNotReceiveOnErrorOrOnCompleteSignals</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="skippedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest<td><a href="#m13"><b>untested_spec204_blackbox_mustConsiderTheSubscriptionAsCancelledInAfterRecievingOnCompleteOrOnError</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="skippedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m14"><b>optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfrontAndCompleteAsExpected</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="skippedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest<td><a href="#m15"><b>untested_spec316_blackbox_requestMustNotThrowExceptionAndMustOnErrorTheSubscriber</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="skippedodd"><td rowspan="2">com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest<td><a href="#m16"><b>untested_spec314_cancelMayCauseThePublisherToShutdownIfNoOtherSubscriptionExists</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedodd"><td><a href="#m17"><b>untested_spec207_mustEnsureAllCallsOnItsSubscriptionTakePlaceFromTheSameThreadOrTakeCareOfSynchronization</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="skippedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m18"><b>optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingOneByOne</b>  </a></td><td class="numi">1</td><td class="numi">2</td></tr>
+<tr class="skippedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest<td><a href="#m19"><b>untested_spec207_blackbox_mustEnsureAllCallsOnItsSubscriptionTakePlaceFromTheSameThreadOrTakeCareOfSynchronization</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="skippedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m20"><b>untested_spec107_mustNotEmitFurtherSignalsOnceOnErrorHasBeenSignalled</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="skippedodd"><td rowspan="2">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m21"><b>untested_spec305_cancelMustNotSynchronouslyPerformHeavyCompuatation</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedodd"><td><a href="#m22"><b>untested_spec109_subscribeShouldNotThrowNonFatalThrowable</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="skippedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest<td><a href="#m23"><b>untested_spec311_requestMaySynchronouslyCallOnCompleteOrOnError</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="skippedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m24"><b>optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingOneByOne</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="skippedeven"><td rowspan="2">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m25"><b>untested_spec106_mustConsiderSubscriptionCancelledAfterOnErrorOrOnCompleteHasBeenCalled</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedeven"><td><a href="#m26"><b>untested_spec110_rejectASubscriptionRequestIfTheSameSubscriberSubscribesTwice</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="skippedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m27"><b>untested_spec106_mustConsiderSubscriptionCancelledAfterOnErrorOrOnCompleteHasBeenCalled</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="skippedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest<td><a href="#m28"><b>untested_spec212_blackbox_mustNotCallOnSubscribeMoreThanOnceBasedOnObjectEquality</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="skippedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m29"><b>optional_spec111_maySupportMultiSubscribe</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="skippedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest<td><a href="#m30"><b>untested_spec213_failingOnSignalInvocation</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="skippedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m31"><b>optional_spec104_mustSignalOnErrorWhenFails</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="skippedeven"><td rowspan="3">com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest<td><a href="#m32"><b>untested_spec202_shouldAsynchronouslyDispatch</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr><tr class="skippedeven"><td><a href="#m33"><b>untested_spec212_mustNotCallOnSubscribeMoreThanOnceBasedOnObjectEquality_specViolation</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr><tr class="skippedeven"><td><a href="#m34"><b>untested_spec301_mustNotBeCalledOutsideSubscriberContext</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="skippedodd"><td rowspan="2">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m35"><b>untested_spec110_rejectASubscriptionRequestIfTheSameSubscriberSubscribesTwice</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedodd"><td><a href="#m36"><b>untested_spec304_requestShouldNotPerformHeavyComputations</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="skippedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest<td><a href="#m37"><b>untested_spec202_blackbox_shouldAsynchronouslyDispatch</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="skippedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m38"><b>optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfrontAndCompleteAsExpected</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="skippedeven"><td rowspan="2">com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest<td><a href="#m39"><b>untested_spec213_blackbox_failingOnSignalInvocation</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedeven"><td><a href="#m40"><b>untested_spec206_blackbox_mustCallSubscriptionCancelIfItIsNoLongerValid</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="skippedodd"><td rowspan="2">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m41"><b>optional_spec104_mustSignalOnErrorWhenFails</b>  </a></td><td class="numi">1</td><td class="numi">8</td></tr><tr class="skippedodd"><td><a href="#m42"><b>optional_spec111_maySupportMultiSubscribe</b>  </a></td><td class="numi">1</td><td class="numi">2</td></tr>
+<tr class="skippedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m43"><b>untested_spec107_mustNotEmitFurtherSignalsOnceOnErrorHasBeenSignalled</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="skippedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m44"><b>required_spec109_mayRejectCallsToSubscribeIfPublisherIsUnableOrUnwillingToServeThemRejectionMustTriggerOnErrorAfterOnSubscribe</b>  </a></td><td class="numi">1</td><td class="numi">2</td></tr>
+<tr class="skippedeven"><td rowspan="2">com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest<td><a href="#m45"><b>untested_spec211_blackbox_mustMakeSureThatAllCallsOnItsMethodsHappenBeforeTheProcessingOfTheRespectiveEvents</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedeven"><td><a href="#m46"><b>untested_spec310_blackbox_requestMaySynchronouslyCallOnNextOnSubscriber</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="skippedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest<td><a href="#m47"><b>untested_spec211_mustMakeSureThatAllCallsOnItsMethodsHappenBeforeTheProcessingOfTheRespectiveEvents</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="skippedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m48"><b>optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfront</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="skippedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest<td><a href="#m49"><b>untested_spec314_blackbox_cancelMayCauseThePublisherToShutdownIfNoOtherSubscriptionExists</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="skippedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m50"><b>untested_spec305_cancelMustNotSynchronouslyPerformHeavyCompuatation</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="skippedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest<td><a href="#m51"><b>untested_spec315_blackbox_cancelMustNotThrowExceptionAndMustSignalOnError</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="skippedeven"><td rowspan="2">com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest<td><a href="#m52"><b>untested_spec206_mustCallSubscriptionCancelIfItIsNoLongerValid</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr><tr class="skippedeven"><td><a href="#m53"><b>untested_spec204_mustConsiderTheSubscriptionAsCancelledInAfterRecievingOnCompleteOrOnError</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="skippedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m54"><b>required_spec109_mayRejectCallsToSubscribeIfPublisherIsUnableOrUnwillingToServeThemRejectionMustTriggerOnErrorAfterOnSubscribe</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr><th colspan="4">Default test &#8212; passed</th></tr>
+<tr class="passedodd"><td rowspan="3">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m55"><b>optional_spec105_emptyStreamMustTerminateBySignallingOnComplete</b>  </a></td><td class="numi">1</td><td class="numi">398</td></tr><tr class="passedodd"><td><a href="#m56"><b>required_spec105_mustSignalOnCompleteWhenFiniteStreamTerminates</b>  </a></td><td class="numi">1</td><td class="numi">307</td></tr><tr class="passedodd"><td><a href="#m57"><b>required_spec312_cancelMustMakeThePublisherToEventuallyStopSignaling</b>  </a></td><td class="numi">1</td><td class="numi">4565</td></tr>
+<tr class="passedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest<td><a href="#m58"><b>required_spec213_onError_mustThrowNullPointerExceptionWhenParametersAreNull</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="passedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m59"><b>required_spec109_mustIssueOnSubscribeForNonNullSubscriber</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="passedeven"><td rowspan="2">com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest<td><a href="#m60"><b>required_spec209_blackbox_mustBePreparedToReceiveAnOnCompleteSignalWithPrecedingRequestCall</b>  </a></td><td class="numi">1</td><td class="numi">303</td></tr><tr class="passedeven"><td><a href="#m61"><b>required_spec213_blackbox_onSubscribe_mustThrowNullPointerExceptionWhenParametersAreNull</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="passedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m62"><b>required_spec307_afterSubscriptionIsCancelledAdditionalCancelationsMustBeNops</b>  </a></td><td class="numi">1</td><td class="numi">304</td></tr>
+<tr class="passedeven"><td rowspan="2">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m63"><b>required_spec303_mustNotAllowUnboundedRecursion</b>  </a></td><td class="numi">1</td><td class="numi">2</td></tr><tr class="passedeven"><td><a href="#m64"><b>required_spec317_mustSupportACumulativePendingElementCountUpToLongMaxValue</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="passedodd"><td rowspan="2">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m65"><b>required_spec306_afterSubscriptionIsCancelledRequestMustBeNops</b>  </a></td><td class="numi">1</td><td class="numi">304</td></tr><tr class="passedodd"><td><a href="#m66"><b>stochastic_spec103_mustSignalOnMethodsSequentially</b>  </a></td><td class="numi">1</td><td class="numi">53</td></tr>
+<tr class="passedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest<td><a href="#m67"><b>required_spec201_blackbox_mustSignalDemandViaSubscriptionRequest</b>  </a></td><td class="numi">1</td><td class="numi">8</td></tr>
+<tr class="passedodd"><td rowspan="2">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m68"><b>required_spec309_requestZeroMustSignalIllegalArgumentException</b>  </a></td><td class="numi">1</td><td class="numi">304</td></tr><tr class="passedodd"><td><a href="#m69"><b>required_spec317_mustSupportAPendingElementCountUpToLongMaxValue</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="passedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest<td><a href="#m70"><b>required_spec203_blackbox_mustNotCallMethodsOnSubscriptionOrPublisherInOnError</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="passedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest<td><a href="#m71"><b>required_spec208_mustBePreparedToReceiveOnNextSignalsAfterHavingCalledSubscriptionCancel</b>  </a></td><td class="numi">1</td><td class="numi">305</td></tr>
+<tr class="passedeven"><td rowspan="3">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m72"><b>optional_spec105_emptyStreamMustTerminateBySignallingOnComplete</b>  </a></td><td class="numi">1</td><td class="numi">308</td></tr><tr class="passedeven"><td><a href="#m73"><b>required_spec102_maySignalLessThanRequestedAndTerminateSubscription</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m74"><b>required_spec309_requestNegativeNumberMustSignalIllegalArgumentException</b>  </a></td><td class="numi">1</td><td class="numi">305</td></tr>
+<tr class="passedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest<td><a href="#m75"><b>required_spec205_mustCallSubscriptionCancelIfItAlreadyHasAnSubscriptionAndReceivesAnotherOnSubscribeSignal</b>  </a></td><td class="numi">1</td><td class="numi">306</td></tr>
+<tr class="passedeven"><td rowspan="2">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m76"><b>required_spec101_subscriptionRequestMustResultInTheCorrectNumberOfProducedElements</b>  </a></td><td class="numi">1</td><td class="numi">918</td></tr><tr class="passedeven"><td><a href="#m77"><b>required_validate_boundedDepthOfOnNextAndRequestRecursion</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="passedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest<td><a href="#m78"><b>required_spec213_blackbox_onError_mustThrowNullPointerExceptionWhenParametersAreNull</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="passedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest<td><a href="#m79"><b>required_spec203_mustNotCallMethodsOnSubscriptionOrPublisherInOnComplete</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="passedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m80"><b>required_spec309_requestNegativeNumberMustSignalIllegalArgumentException</b>  </a></td><td class="numi">1</td><td class="numi">305</td></tr>
+<tr class="passedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest<td><a href="#m81"><b>required_spec213_onNext_mustThrowNullPointerExceptionWhenParametersAreNull</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="passedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m82"><b>required_spec303_mustNotAllowUnboundedRecursion</b>  </a></td><td class="numi">1</td><td class="numi">4</td></tr>
+<tr class="passedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m83"><b>required_spec313_cancelMustMakeThePublisherEventuallyDropAllReferencesToTheSubscriber</b>  </a></td><td class="numi">1</td><td class="numi">343</td></tr>
+<tr class="passedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m84"><b>required_spec317_mustSupportACumulativePendingElementCountUpToLongMaxValue</b>  </a></td><td class="numi">1</td><td class="numi">2</td></tr>
+<tr class="passedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m85"><b>required_spec312_cancelMustMakeThePublisherToEventuallyStopSignaling</b>  </a></td><td class="numi">1</td><td class="numi">610</td></tr>
+<tr class="passedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest<td><a href="#m86"><b>required_spec205_blackbox_mustCallSubscriptionCancelIfItAlreadyHasAnSubscriptionAndReceivesAnotherOnSubscribeSignal</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="passedeven"><td rowspan="5">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m87"><b>required_spec102_maySignalLessThanRequestedAndTerminateSubscription</b>  </a></td><td class="numi">1</td><td class="numi">2</td></tr><tr class="passedeven"><td><a href="#m88"><b>required_createPublisher3MustProduceAStreamOfExactly3Elements</b>  </a></td><td class="numi">1</td><td class="numi">3</td></tr><tr class="passedeven"><td><a href="#m89"><b>required_spec302_mustAllowSynchronousRequestCallsFromOnNextAndOnSubscribe</b>  </a></td><td class="numi">1</td><td class="numi">307</td></tr><tr class="passedeven"><td><a href="#m90"><b>required_spec317_mustSupportAPendingElementCountUpToLongMaxValue</b>  </a></td><td class="numi">1</td><td class="numi">2</td></tr><tr class="passedeven"><td><a href="#m91"><b>required_validate_maxElementsFromPublisher</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="passedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m92"><b>required_createPublisher3MustProduceAStreamOfExactly3Elements</b>  </a></td><td class="numi">1</td><td class="numi">2</td></tr>
+<tr class="passedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m93"><b>required_spec107_mustNotEmitFurtherSignalsOnceOnCompleteHasBeenSignalled</b>  </a></td><td class="numi">1</td><td class="numi">307</td></tr>
+<tr class="passedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m94"><b>required_spec317_mustNotSignalOnErrorWhenPendingAboveLongMaxValue</b>  </a></td><td class="numi">1</td><td class="numi">306</td></tr>
+<tr class="passedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest<td><a href="#m95"><b>required_spec203_mustNotCallMethodsOnSubscriptionOrPublisherInOnError</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="passedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m96"><b>required_spec317_mustNotSignalOnErrorWhenPendingAboveLongMaxValue</b>  </a></td><td class="numi">1</td><td class="numi">307</td></tr>
+<tr class="passedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest<td><a href="#m97"><b>required_spec210_blackbox_mustBePreparedToReceiveAnOnErrorSignalWithPrecedingRequestCall</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="passedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest<td><a href="#m98"><b>required_spec210_mustBePreparedToReceiveAnOnErrorSignalWithoutPrecedingRequestCall</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="passedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m99"><b>required_spec109_subscribeThrowNPEOnNullSubscriber</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="passedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest<td><a href="#m100"><b>required_exerciseWhiteboxHappyPath</b>  </a></td><td class="numi">1</td><td class="numi">306</td></tr>
+<tr class="passedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m101"><b>required_spec313_cancelMustMakeThePublisherEventuallyDropAllReferencesToTheSubscriber</b>  </a></td><td class="numi">1</td><td class="numi">328</td></tr>
+<tr class="passedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m102"><b>required_spec101_subscriptionRequestMustResultInTheCorrectNumberOfProducedElements</b>  </a></td><td class="numi">1</td><td class="numi">909</td></tr>
+<tr class="passedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest<td><a href="#m103"><b>required_spec213_blackbox_onNext_mustThrowNullPointerExceptionWhenParametersAreNull</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="passedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest<td><a href="#m104"><b>required_spec213_onSubscribe_mustThrowNullPointerExceptionWhenParametersAreNull</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="passedeven"><td rowspan="2">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m105"><b>required_spec109_subscribeThrowNPEOnNullSubscriber</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m106"><b>stochastic_spec103_mustSignalOnMethodsSequentially</b>  </a></td><td class="numi">1</td><td class="numi">42</td></tr>
+<tr class="passedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest<td><a href="#m107"><b>required_spec209_mustBePreparedToReceiveAnOnCompleteSignalWithoutPrecedingRequestCall</b>  </a></td><td class="numi">1</td><td class="numi">303</td></tr>
+<tr class="passedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m108"><b>required_spec309_requestZeroMustSignalIllegalArgumentException</b>  </a></td><td class="numi">1</td><td class="numi">303</td></tr>
+<tr class="passedodd"><td rowspan="2">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m109"><b>required_validate_maxElementsFromPublisher</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m110"><b>required_spec302_mustAllowSynchronousRequestCallsFromOnNextAndOnSubscribe</b>  </a></td><td class="numi">1</td><td class="numi">305</td></tr>
+<tr class="passedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest<td><a href="#m111"><b>required_spec210_mustBePreparedToReceiveAnOnErrorSignalWithPrecedingRequestCall</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="passedodd"><td rowspan="2">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m112"><b>required_spec306_afterSubscriptionIsCancelledRequestMustBeNops</b>  </a></td><td class="numi">1</td><td class="numi">306</td></tr><tr class="passedodd"><td><a href="#m113"><b>required_spec107_mustNotEmitFurtherSignalsOnceOnCompleteHasBeenSignalled</b>  </a></td><td class="numi">1</td><td class="numi">307</td></tr>
+<tr class="passedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest<td><a href="#m114"><b>required_spec203_blackbox_mustNotCallMethodsOnSubscriptionOrPublisherInOnComplete</b>  </a></td><td class="numi">1</td><td class="numi">2</td></tr>
+<tr class="passedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m115"><b>required_spec105_mustSignalOnCompleteWhenFiniteStreamTerminates</b>  </a></td><td class="numi">1</td><td class="numi">304</td></tr>
+<tr class="passedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest<td><a href="#m116"><b>required_createPublisher1MustProduceAStreamOfExactly1Element</b>  </a></td><td class="numi">1</td><td class="numi">10</td></tr>
+<tr class="passedodd"><td rowspan="3">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m117"><b>required_createPublisher1MustProduceAStreamOfExactly1Element</b>  </a></td><td class="numi">1</td><td class="numi">4</td></tr><tr class="passedodd"><td><a href="#m118"><b>required_validate_boundedDepthOfOnNextAndRequestRecursion</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m119"><b>required_spec109_mustIssueOnSubscribeForNonNullSubscriber</b>  </a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="passedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest<td><a href="#m120"><b>required_spec201_mustSignalDemandViaSubscriptionRequest</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="passedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest<td><a href="#m121"><b>required_spec307_afterSubscriptionIsCancelledAdditionalCancelationsMustBeNops</b>  </a></td><td class="numi">1</td><td class="numi">303</td></tr>
+<tr class="passedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest<td><a href="#m122"><b>required_spec308_requestMustRegisterGivenNumberElementsToBeProduced</b>  </a></td><td class="numi">1</td><td class="numi">610</td></tr>
+<tr class="passedodd"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest<td><a href="#m123"><b>required_spec209_blackbox_mustBePreparedToReceiveAnOnCompleteSignalWithoutPrecedingRequestCall</b>  </a></td><td class="numi">1</td><td class="numi">1</td></tr>
+<tr class="passedeven"><td rowspan="1">com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest<td><a href="#m124"><b>required_spec209_mustBePreparedToReceiveAnOnCompleteSignalWithPrecedingRequestCall</b>  </a></td><td class="numi">1</td><td class="numi">301</td></tr>
 </table>
 <h1>Default test</h1>
+<a id="m1"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:untested_spec316_requestMustNotThrowExceptionAndMustOnErrorTheSubscriber</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec316_requestMustNotThrowExceptionAndMustOnErrorTheSubscriber(SubscriberWhiteboxVerification.java:466)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m2"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:untested_spec108_possiblyCanceledSubscriptionShouldNotReceiveOnErrorOrOnCompleteSignals</h2>
+<div style="padding-left:3em">
+<p>Not verified by this TCK.</p>
+org.reactivestreams.tck.PublisherVerification.notVerified(PublisherVerification.java:1166)
+<br/>at org.reactivestreams.tck.PublisherVerification.untested_spec108_possiblyCanceledSubscriptionShouldNotReceiveOnErrorOrOnCompleteSignals(PublisherVerification.java:442)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m3"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfront</h2>
+<div style="padding-left:3em">
+<p>Skipped because tested publisher does NOT implement this OPTIONAL requirement.</p>
+org.reactivestreams.tck.PublisherVerification.notVerified(PublisherVerification.java:1180)
+<br/>at org.reactivestreams.tck.PublisherVerification.optionalActivePublisherTest(PublisherVerification.java:1119)
+<br/>at org.reactivestreams.tck.PublisherVerification.optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfront(PublisherVerification.java:608)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m4"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:untested_spec308_blackbox_requestMustRegisterGivenNumberElementsToBeProduced</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberBlackboxVerification.notVerified(SubscriberBlackboxVerification.java:522)
+<br/>at org.reactivestreams.tck.SubscriberBlackboxVerification.untested_spec308_blackbox_requestMustRegisterGivenNumberElementsToBeProduced(SubscriberBlackboxVerification.java:416)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m5"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:untested_spec310_requestMaySynchronouslyCallOnNextOnSubscriber</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec310_requestMaySynchronouslyCallOnNextOnSubscriber(SubscriberWhiteboxVerification.java:442)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m6"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:untested_spec315_cancelMustNotThrowExceptionAndMustSignalOnError</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec315_cancelMustNotThrowExceptionAndMustSignalOnError(SubscriberWhiteboxVerification.java:460)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m7"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:untested_spec311_blackbox_requestMaySynchronouslyCallOnCompleteOrOnError</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberBlackboxVerification.notVerified(SubscriberBlackboxVerification.java:522)
+<br/>at org.reactivestreams.tck.SubscriberBlackboxVerification.untested_spec311_blackbox_requestMaySynchronouslyCallOnCompleteOrOnError(SubscriberBlackboxVerification.java:428)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m8"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:untested_spec301_blackbox_mustNotBeCalledOutsideSubscriberContext</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberBlackboxVerification.notVerified(SubscriberBlackboxVerification.java:522)
+<br/>at org.reactivestreams.tck.SubscriberBlackboxVerification.untested_spec301_blackbox_mustNotBeCalledOutsideSubscriberContext(SubscriberBlackboxVerification.java:410)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m9"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:untested_spec208_blackbox_mustBePreparedToReceiveOnNextSignalsAfterHavingCalledSubscriptionCancel</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberBlackboxVerification.notVerified(SubscriberBlackboxVerification.java:522)
+<br/>at org.reactivestreams.tck.SubscriberBlackboxVerification.untested_spec208_blackbox_mustBePreparedToReceiveOnNextSignalsAfterHavingCalledSubscriptionCancel(SubscriberBlackboxVerification.java:230)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m10"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:untested_spec109_subscribeShouldNotThrowNonFatalThrowable</h2>
+<div style="padding-left:3em">
+<p>Not verified by this TCK.</p>
+org.reactivestreams.tck.PublisherVerification.notVerified(PublisherVerification.java:1166)
+<br/>at org.reactivestreams.tck.PublisherVerification.untested_spec109_subscribeShouldNotThrowNonFatalThrowable(PublisherVerification.java:448)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m11"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:untested_spec304_requestShouldNotPerformHeavyComputations</h2>
+<div style="padding-left:3em">
+<p>Not verified by this TCK.</p>
+org.reactivestreams.tck.PublisherVerification.notVerified(PublisherVerification.java:1166)
+<br/>at org.reactivestreams.tck.PublisherVerification.untested_spec304_requestShouldNotPerformHeavyComputations(PublisherVerification.java:791)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m12"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:untested_spec108_possiblyCanceledSubscriptionShouldNotReceiveOnErrorOrOnCompleteSignals</h2>
+<div style="padding-left:3em">
+<p>Not verified by this TCK.</p>
+org.reactivestreams.tck.PublisherVerification.notVerified(PublisherVerification.java:1166)
+<br/>at org.reactivestreams.tck.PublisherVerification.untested_spec108_possiblyCanceledSubscriptionShouldNotReceiveOnErrorOrOnCompleteSignals(PublisherVerification.java:442)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m13"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:untested_spec204_blackbox_mustConsiderTheSubscriptionAsCancelledInAfterRecievingOnCompleteOrOnError</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberBlackboxVerification.notVerified(SubscriberBlackboxVerification.java:522)
+<br/>at org.reactivestreams.tck.SubscriberBlackboxVerification.untested_spec204_blackbox_mustConsiderTheSubscriptionAsCancelledInAfterRecievingOnCompleteOrOnError(SubscriberBlackboxVerification.java:182)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m14"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfrontAndCompleteAsExpected</h2>
+<div style="padding-left:3em">
+<p>Skipped because tested publisher does NOT implement this OPTIONAL requirement.</p>
+org.reactivestreams.tck.PublisherVerification.notVerified(PublisherVerification.java:1180)
+<br/>at org.reactivestreams.tck.PublisherVerification.optionalActivePublisherTest(PublisherVerification.java:1119)
+<br/>at org.reactivestreams.tck.PublisherVerification.optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfrontAndCompleteAsExpected(PublisherVerification.java:641)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m15"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:untested_spec316_blackbox_requestMustNotThrowExceptionAndMustOnErrorTheSubscriber</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberBlackboxVerification.notVerified(SubscriberBlackboxVerification.java:522)
+<br/>at org.reactivestreams.tck.SubscriberBlackboxVerification.untested_spec316_blackbox_requestMustNotThrowExceptionAndMustOnErrorTheSubscriber(SubscriberBlackboxVerification.java:446)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m16"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:untested_spec314_cancelMayCauseThePublisherToShutdownIfNoOtherSubscriptionExists</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec314_cancelMayCauseThePublisherToShutdownIfNoOtherSubscriptionExists(SubscriberWhiteboxVerification.java:454)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m17"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:untested_spec207_mustEnsureAllCallsOnItsSubscriptionTakePlaceFromTheSameThreadOrTakeCareOfSynchronization</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec207_mustEnsureAllCallsOnItsSubscriptionTakePlaceFromTheSameThreadOrTakeCareOfSynchronization(SubscriberWhiteboxVerification.java:246)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m18"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingOneByOne</h2>
+<div style="padding-left:3em">
+<p>Skipped because tested publisher does NOT implement this OPTIONAL requirement.</p>
+org.reactivestreams.tck.PublisherVerification.notVerified(PublisherVerification.java:1180)
+<br/>at org.reactivestreams.tck.PublisherVerification.optionalActivePublisherTest(PublisherVerification.java:1119)
+<br/>at org.reactivestreams.tck.PublisherVerification.optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingOneByOne(PublisherVerification.java:557)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m19"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:untested_spec207_blackbox_mustEnsureAllCallsOnItsSubscriptionTakePlaceFromTheSameThreadOrTakeCareOfSynchronization</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberBlackboxVerification.notVerified(SubscriberBlackboxVerification.java:522)
+<br/>at org.reactivestreams.tck.SubscriberBlackboxVerification.untested_spec207_blackbox_mustEnsureAllCallsOnItsSubscriptionTakePlaceFromTheSameThreadOrTakeCareOfSynchronization(SubscriberBlackboxVerification.java:223)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m20"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:untested_spec107_mustNotEmitFurtherSignalsOnceOnErrorHasBeenSignalled</h2>
+<div style="padding-left:3em">
+<p>Not verified by this TCK.</p>
+org.reactivestreams.tck.PublisherVerification.notVerified(PublisherVerification.java:1166)
+<br/>at org.reactivestreams.tck.PublisherVerification.untested_spec107_mustNotEmitFurtherSignalsOnceOnErrorHasBeenSignalled(PublisherVerification.java:436)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m21"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:untested_spec305_cancelMustNotSynchronouslyPerformHeavyCompuatation</h2>
+<div style="padding-left:3em">
+<p>Not verified by this TCK.</p>
+org.reactivestreams.tck.PublisherVerification.notVerified(PublisherVerification.java:1166)
+<br/>at org.reactivestreams.tck.PublisherVerification.untested_spec305_cancelMustNotSynchronouslyPerformHeavyCompuatation(PublisherVerification.java:797)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m22"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:untested_spec109_subscribeShouldNotThrowNonFatalThrowable</h2>
+<div style="padding-left:3em">
+<p>Not verified by this TCK.</p>
+org.reactivestreams.tck.PublisherVerification.notVerified(PublisherVerification.java:1166)
+<br/>at org.reactivestreams.tck.PublisherVerification.untested_spec109_subscribeShouldNotThrowNonFatalThrowable(PublisherVerification.java:448)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m23"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:untested_spec311_requestMaySynchronouslyCallOnCompleteOrOnError</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec311_requestMaySynchronouslyCallOnCompleteOrOnError(SubscriberWhiteboxVerification.java:448)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m24"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingOneByOne</h2>
+<div style="padding-left:3em">
+<p>Skipped because tested publisher does NOT implement this OPTIONAL requirement.</p>
+org.reactivestreams.tck.PublisherVerification.notVerified(PublisherVerification.java:1180)
+<br/>at org.reactivestreams.tck.PublisherVerification.optionalActivePublisherTest(PublisherVerification.java:1119)
+<br/>at org.reactivestreams.tck.PublisherVerification.optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingOneByOne(PublisherVerification.java:557)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m25"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:untested_spec106_mustConsiderSubscriptionCancelledAfterOnErrorOrOnCompleteHasBeenCalled</h2>
+<div style="padding-left:3em">
+<p>Not verified by this TCK.</p>
+org.reactivestreams.tck.PublisherVerification.notVerified(PublisherVerification.java:1166)
+<br/>at org.reactivestreams.tck.PublisherVerification.untested_spec106_mustConsiderSubscriptionCancelledAfterOnErrorOrOnCompleteHasBeenCalled(PublisherVerification.java:413)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m26"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:untested_spec110_rejectASubscriptionRequestIfTheSameSubscriberSubscribesTwice</h2>
+<div style="padding-left:3em">
+<p>Not verified by this TCK.</p>
+org.reactivestreams.tck.PublisherVerification.notVerified(PublisherVerification.java:1166)
+<br/>at org.reactivestreams.tck.PublisherVerification.untested_spec110_rejectASubscriptionRequestIfTheSameSubscriberSubscribesTwice(PublisherVerification.java:537)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m27"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:untested_spec106_mustConsiderSubscriptionCancelledAfterOnErrorOrOnCompleteHasBeenCalled</h2>
+<div style="padding-left:3em">
+<p>Not verified by this TCK.</p>
+org.reactivestreams.tck.PublisherVerification.notVerified(PublisherVerification.java:1166)
+<br/>at org.reactivestreams.tck.PublisherVerification.untested_spec106_mustConsiderSubscriptionCancelledAfterOnErrorOrOnCompleteHasBeenCalled(PublisherVerification.java:413)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m28"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:untested_spec212_blackbox_mustNotCallOnSubscribeMoreThanOnceBasedOnObjectEquality</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberBlackboxVerification.notVerified(SubscriberBlackboxVerification.java:522)
+<br/>at org.reactivestreams.tck.SubscriberBlackboxVerification.untested_spec212_blackbox_mustNotCallOnSubscribeMoreThanOnceBasedOnObjectEquality(SubscriberBlackboxVerification.java:317)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m29"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:optional_spec111_maySupportMultiSubscribe</h2>
+<div style="padding-left:3em">
+<p>Skipped because tested publisher does NOT implement this OPTIONAL requirement.</p>
+org.reactivestreams.tck.PublisherVerification.notVerified(PublisherVerification.java:1180)
+<br/>at org.reactivestreams.tck.PublisherVerification.optionalActivePublisherTest(PublisherVerification.java:1119)
+<br/>at org.reactivestreams.tck.PublisherVerification.optional_spec111_maySupportMultiSubscribe(PublisherVerification.java:543)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m30"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:untested_spec213_failingOnSignalInvocation</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec213_failingOnSignalInvocation(SubscriberWhiteboxVerification.java:345)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m31"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:optional_spec104_mustSignalOnErrorWhenFails</h2>
+<div style="padding-left:3em">
+<p>Skipping because no error state Publisher provided, and the test requires it. Please implement PublisherVerification#createFailedPublisher to run this test.</p>
+org.reactivestreams.tck.PublisherVerification.potentiallyPendingTest(PublisherVerification.java:1147)
+<br/>at org.reactivestreams.tck.PublisherVerification.whenHasErrorPublisherTest(PublisherVerification.java:1136)
+<br/>at org.reactivestreams.tck.PublisherVerification.optional_spec104_mustSignalOnErrorWhenFails(PublisherVerification.java:346)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m32"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:untested_spec202_shouldAsynchronouslyDispatch</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec202_shouldAsynchronouslyDispatch(SubscriberWhiteboxVerification.java:115)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m33"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:untested_spec212_mustNotCallOnSubscribeMoreThanOnceBasedOnObjectEquality_specViolation</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec212_mustNotCallOnSubscribeMoreThanOnceBasedOnObjectEquality_specViolation(SubscriberWhiteboxVerification.java:339)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m34"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:untested_spec301_mustNotBeCalledOutsideSubscriberContext</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec301_mustNotBeCalledOutsideSubscriberContext(SubscriberWhiteboxVerification.java:418)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m35"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:untested_spec110_rejectASubscriptionRequestIfTheSameSubscriberSubscribesTwice</h2>
+<div style="padding-left:3em">
+<p>Not verified by this TCK.</p>
+org.reactivestreams.tck.PublisherVerification.notVerified(PublisherVerification.java:1166)
+<br/>at org.reactivestreams.tck.PublisherVerification.untested_spec110_rejectASubscriptionRequestIfTheSameSubscriberSubscribesTwice(PublisherVerification.java:537)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m36"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:untested_spec304_requestShouldNotPerformHeavyComputations</h2>
+<div style="padding-left:3em">
+<p>Not verified by this TCK.</p>
+org.reactivestreams.tck.PublisherVerification.notVerified(PublisherVerification.java:1166)
+<br/>at org.reactivestreams.tck.PublisherVerification.untested_spec304_requestShouldNotPerformHeavyComputations(PublisherVerification.java:791)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m37"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:untested_spec202_blackbox_shouldAsynchronouslyDispatch</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberBlackboxVerification.notVerified(SubscriberBlackboxVerification.java:522)
+<br/>at org.reactivestreams.tck.SubscriberBlackboxVerification.untested_spec202_blackbox_shouldAsynchronouslyDispatch(SubscriberBlackboxVerification.java:100)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m38"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfrontAndCompleteAsExpected</h2>
+<div style="padding-left:3em">
+<p>Skipped because tested publisher does NOT implement this OPTIONAL requirement.</p>
+org.reactivestreams.tck.PublisherVerification.notVerified(PublisherVerification.java:1180)
+<br/>at org.reactivestreams.tck.PublisherVerification.optionalActivePublisherTest(PublisherVerification.java:1119)
+<br/>at org.reactivestreams.tck.PublisherVerification.optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfrontAndCompleteAsExpected(PublisherVerification.java:641)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m39"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:untested_spec213_blackbox_failingOnSignalInvocation</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberBlackboxVerification.notVerified(SubscriberBlackboxVerification.java:522)
+<br/>at org.reactivestreams.tck.SubscriberBlackboxVerification.untested_spec213_blackbox_failingOnSignalInvocation(SubscriberBlackboxVerification.java:323)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m40"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:untested_spec206_blackbox_mustCallSubscriptionCancelIfItIsNoLongerValid</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberBlackboxVerification.notVerified(SubscriberBlackboxVerification.java:522)
+<br/>at org.reactivestreams.tck.SubscriberBlackboxVerification.untested_spec206_blackbox_mustCallSubscriptionCancelIfItIsNoLongerValid(SubscriberBlackboxVerification.java:217)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m41"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:optional_spec104_mustSignalOnErrorWhenFails</h2>
+<div style="padding-left:3em">
+<p>Skipping because no error state Publisher provided, and the test requires it. Please implement PublisherVerification#createFailedPublisher to run this test.</p>
+org.reactivestreams.tck.PublisherVerification.potentiallyPendingTest(PublisherVerification.java:1147)
+<br/>at org.reactivestreams.tck.PublisherVerification.whenHasErrorPublisherTest(PublisherVerification.java:1136)
+<br/>at org.reactivestreams.tck.PublisherVerification.optional_spec104_mustSignalOnErrorWhenFails(PublisherVerification.java:346)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m42"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:optional_spec111_maySupportMultiSubscribe</h2>
+<div style="padding-left:3em">
+<p>Skipped because tested publisher does NOT implement this OPTIONAL requirement.</p>
+org.reactivestreams.tck.PublisherVerification.notVerified(PublisherVerification.java:1180)
+<br/>at org.reactivestreams.tck.PublisherVerification.optionalActivePublisherTest(PublisherVerification.java:1119)
+<br/>at org.reactivestreams.tck.PublisherVerification.optional_spec111_maySupportMultiSubscribe(PublisherVerification.java:543)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m43"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:untested_spec107_mustNotEmitFurtherSignalsOnceOnErrorHasBeenSignalled</h2>
+<div style="padding-left:3em">
+<p>Not verified by this TCK.</p>
+org.reactivestreams.tck.PublisherVerification.notVerified(PublisherVerification.java:1166)
+<br/>at org.reactivestreams.tck.PublisherVerification.untested_spec107_mustNotEmitFurtherSignalsOnceOnErrorHasBeenSignalled(PublisherVerification.java:436)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m44"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:required_spec109_mayRejectCallsToSubscribeIfPublisherIsUnableOrUnwillingToServeThemRejectionMustTriggerOnErrorAfterOnSubscribe</h2>
+<div style="padding-left:3em">
+<p>Skipping because no error state Publisher provided, and the test requires it. Please implement PublisherVerification#createFailedPublisher to run this test.</p>
+org.reactivestreams.tck.PublisherVerification.potentiallyPendingTest(PublisherVerification.java:1147)
+<br/>at org.reactivestreams.tck.PublisherVerification.whenHasErrorPublisherTest(PublisherVerification.java:1136)
+<br/>at org.reactivestreams.tck.PublisherVerification.required_spec109_mayRejectCallsToSubscribeIfPublisherIsUnableOrUnwillingToServeThemRejectionMustTriggerOnErrorAfterOnSubscribe(PublisherVerification.java:506)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m45"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:untested_spec211_blackbox_mustMakeSureThatAllCallsOnItsMethodsHappenBeforeTheProcessingOfTheRespectiveEvents</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberBlackboxVerification.notVerified(SubscriberBlackboxVerification.java:522)
+<br/>at org.reactivestreams.tck.SubscriberBlackboxVerification.untested_spec211_blackbox_mustMakeSureThatAllCallsOnItsMethodsHappenBeforeTheProcessingOfTheRespectiveEvents(SubscriberBlackboxVerification.java:311)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m46"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:untested_spec310_blackbox_requestMaySynchronouslyCallOnNextOnSubscriber</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberBlackboxVerification.notVerified(SubscriberBlackboxVerification.java:522)
+<br/>at org.reactivestreams.tck.SubscriberBlackboxVerification.untested_spec310_blackbox_requestMaySynchronouslyCallOnNextOnSubscriber(SubscriberBlackboxVerification.java:422)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m47"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:untested_spec211_mustMakeSureThatAllCallsOnItsMethodsHappenBeforeTheProcessingOfTheRespectiveEvents</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec211_mustMakeSureThatAllCallsOnItsMethodsHappenBeforeTheProcessingOfTheRespectiveEvents(SubscriberWhiteboxVerification.java:333)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m48"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfront</h2>
+<div style="padding-left:3em">
+<p>Skipped because tested publisher does NOT implement this OPTIONAL requirement.</p>
+org.reactivestreams.tck.PublisherVerification.notVerified(PublisherVerification.java:1180)
+<br/>at org.reactivestreams.tck.PublisherVerification.optionalActivePublisherTest(PublisherVerification.java:1119)
+<br/>at org.reactivestreams.tck.PublisherVerification.optional_spec111_multicast_mustProduceTheSameElementsInTheSameSequenceToAllOfItsSubscribersWhenRequestingManyUpfront(PublisherVerification.java:608)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m49"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:untested_spec314_blackbox_cancelMayCauseThePublisherToShutdownIfNoOtherSubscriptionExists</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberBlackboxVerification.notVerified(SubscriberBlackboxVerification.java:522)
+<br/>at org.reactivestreams.tck.SubscriberBlackboxVerification.untested_spec314_blackbox_cancelMayCauseThePublisherToShutdownIfNoOtherSubscriptionExists(SubscriberBlackboxVerification.java:434)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m50"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:untested_spec305_cancelMustNotSynchronouslyPerformHeavyCompuatation</h2>
+<div style="padding-left:3em">
+<p>Not verified by this TCK.</p>
+org.reactivestreams.tck.PublisherVerification.notVerified(PublisherVerification.java:1166)
+<br/>at org.reactivestreams.tck.PublisherVerification.untested_spec305_cancelMustNotSynchronouslyPerformHeavyCompuatation(PublisherVerification.java:797)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m51"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:untested_spec315_blackbox_cancelMustNotThrowExceptionAndMustSignalOnError</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberBlackboxVerification.notVerified(SubscriberBlackboxVerification.java:522)
+<br/>at org.reactivestreams.tck.SubscriberBlackboxVerification.untested_spec315_blackbox_cancelMustNotThrowExceptionAndMustSignalOnError(SubscriberBlackboxVerification.java:440)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m52"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:untested_spec206_mustCallSubscriptionCancelIfItIsNoLongerValid</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec206_mustCallSubscriptionCancelIfItIsNoLongerValid(SubscriberWhiteboxVerification.java:240)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m53"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:untested_spec204_mustConsiderTheSubscriptionAsCancelledInAfterRecievingOnCompleteOrOnError</h2>
+<div style="padding-left:3em">
+<p>Not verified using this TCK.</p>
+org.reactivestreams.tck.SubscriberWhiteboxVerification.notVerified(SubscriberWhiteboxVerification.java:779)
+<br/>at org.reactivestreams.tck.SubscriberWhiteboxVerification.untested_spec204_mustConsiderTheSubscriptionAsCancelledInAfterRecievingOnCompleteOrOnError(SubscriberWhiteboxVerification.java:201)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m54"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:required_spec109_mayRejectCallsToSubscribeIfPublisherIsUnableOrUnwillingToServeThemRejectionMustTriggerOnErrorAfterOnSubscribe</h2>
+<div style="padding-left:3em">
+<p>Skipping because no error state Publisher provided, and the test requires it. Please implement PublisherVerification#createFailedPublisher to run this test.</p>
+org.reactivestreams.tck.PublisherVerification.potentiallyPendingTest(PublisherVerification.java:1147)
+<br/>at org.reactivestreams.tck.PublisherVerification.whenHasErrorPublisherTest(PublisherVerification.java:1136)
+<br/>at org.reactivestreams.tck.PublisherVerification.required_spec109_mayRejectCallsToSubscribeIfPublisherIsUnableOrUnwillingToServeThemRejectionMustTriggerOnErrorAfterOnSubscribe(PublisherVerification.java:506)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br/>at java.lang.reflect.Method.invoke(Method.java:497)
+<br/>at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:74)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:749)
+<br/>at org.testng.TestRunner.run(TestRunner.java:600)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:312)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:274)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:223)
+<br/>at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+<br/>at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+<br/>at org.testng.TestNG.runSuitesSequentially(TestNG.java:1039)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:964)
+<br/>at org.testng.TestNG.run(TestNG.java:900)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:110)
+<br/>at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:205)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:174)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m55"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:optional_spec105_emptyStreamMustTerminateBySignallingOnComplete</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m56"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:required_spec105_mustSignalOnCompleteWhenFiniteStreamTerminates</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m57"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:required_spec312_cancelMustMakeThePublisherToEventuallyStopSignaling</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m58"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:required_spec213_onError_mustThrowNullPointerExceptionWhenParametersAreNull</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m59"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:required_spec109_mustIssueOnSubscribeForNonNullSubscriber</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m60"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:required_spec209_blackbox_mustBePreparedToReceiveAnOnCompleteSignalWithPrecedingRequestCall</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m61"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:required_spec213_blackbox_onSubscribe_mustThrowNullPointerExceptionWhenParametersAreNull</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m62"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:required_spec307_afterSubscriptionIsCancelledAdditionalCancelationsMustBeNops</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m63"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:required_spec303_mustNotAllowUnboundedRecursion</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m64"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:required_spec317_mustSupportACumulativePendingElementCountUpToLongMaxValue</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m65"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:required_spec306_afterSubscriptionIsCancelledRequestMustBeNops</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m66"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:stochastic_spec103_mustSignalOnMethodsSequentially</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m67"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:required_spec201_blackbox_mustSignalDemandViaSubscriptionRequest</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m68"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:required_spec309_requestZeroMustSignalIllegalArgumentException</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m69"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:required_spec317_mustSupportAPendingElementCountUpToLongMaxValue</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m70"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:required_spec203_blackbox_mustNotCallMethodsOnSubscriptionOrPublisherInOnError</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m71"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:required_spec208_mustBePreparedToReceiveOnNextSignalsAfterHavingCalledSubscriptionCancel</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m72"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:optional_spec105_emptyStreamMustTerminateBySignallingOnComplete</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m73"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:required_spec102_maySignalLessThanRequestedAndTerminateSubscription</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m74"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:required_spec309_requestNegativeNumberMustSignalIllegalArgumentException</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m75"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:required_spec205_mustCallSubscriptionCancelIfItAlreadyHasAnSubscriptionAndReceivesAnotherOnSubscribeSignal</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m76"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:required_spec101_subscriptionRequestMustResultInTheCorrectNumberOfProducedElements</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m77"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:required_validate_boundedDepthOfOnNextAndRequestRecursion</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m78"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:required_spec213_blackbox_onError_mustThrowNullPointerExceptionWhenParametersAreNull</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m79"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:required_spec203_mustNotCallMethodsOnSubscriptionOrPublisherInOnComplete</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m80"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:required_spec309_requestNegativeNumberMustSignalIllegalArgumentException</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m81"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:required_spec213_onNext_mustThrowNullPointerExceptionWhenParametersAreNull</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m82"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:required_spec303_mustNotAllowUnboundedRecursion</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m83"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:required_spec313_cancelMustMakeThePublisherEventuallyDropAllReferencesToTheSubscriber</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m84"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:required_spec317_mustSupportACumulativePendingElementCountUpToLongMaxValue</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m85"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:required_spec312_cancelMustMakeThePublisherToEventuallyStopSignaling</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m86"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:required_spec205_blackbox_mustCallSubscriptionCancelIfItAlreadyHasAnSubscriptionAndReceivesAnotherOnSubscribeSignal</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m87"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:required_spec102_maySignalLessThanRequestedAndTerminateSubscription</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m88"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:required_createPublisher3MustProduceAStreamOfExactly3Elements</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m89"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:required_spec302_mustAllowSynchronousRequestCallsFromOnNextAndOnSubscribe</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m90"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:required_spec317_mustSupportAPendingElementCountUpToLongMaxValue</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m91"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:required_validate_maxElementsFromPublisher</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m92"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:required_createPublisher3MustProduceAStreamOfExactly3Elements</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m93"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:required_spec107_mustNotEmitFurtherSignalsOnceOnCompleteHasBeenSignalled</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m94"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:required_spec317_mustNotSignalOnErrorWhenPendingAboveLongMaxValue</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m95"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:required_spec203_mustNotCallMethodsOnSubscriptionOrPublisherInOnError</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m96"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:required_spec317_mustNotSignalOnErrorWhenPendingAboveLongMaxValue</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m97"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:required_spec210_blackbox_mustBePreparedToReceiveAnOnErrorSignalWithPrecedingRequestCall</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m98"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:required_spec210_mustBePreparedToReceiveAnOnErrorSignalWithoutPrecedingRequestCall</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m99"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:required_spec109_subscribeThrowNPEOnNullSubscriber</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m100"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:required_exerciseWhiteboxHappyPath</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m101"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:required_spec313_cancelMustMakeThePublisherEventuallyDropAllReferencesToTheSubscriber</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m102"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:required_spec101_subscriptionRequestMustResultInTheCorrectNumberOfProducedElements</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m103"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:required_spec213_blackbox_onNext_mustThrowNullPointerExceptionWhenParametersAreNull</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m104"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:required_spec213_onSubscribe_mustThrowNullPointerExceptionWhenParametersAreNull</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m105"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:required_spec109_subscribeThrowNPEOnNullSubscriber</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m106"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:stochastic_spec103_mustSignalOnMethodsSequentially</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m107"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:required_spec209_mustBePreparedToReceiveAnOnCompleteSignalWithoutPrecedingRequestCall</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m108"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:required_spec309_requestZeroMustSignalIllegalArgumentException</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m109"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:required_validate_maxElementsFromPublisher</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m110"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:required_spec302_mustAllowSynchronousRequestCallsFromOnNextAndOnSubscribe</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m111"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:required_spec210_mustBePreparedToReceiveAnOnErrorSignalWithPrecedingRequestCall</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m112"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:required_spec306_afterSubscriptionIsCancelledRequestMustBeNops</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m113"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:required_spec107_mustNotEmitFurtherSignalsOnceOnCompleteHasBeenSignalled</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m114"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:required_spec203_blackbox_mustNotCallMethodsOnSubscriptionOrPublisherInOnComplete</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m115"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:required_spec105_mustSignalOnCompleteWhenFiniteStreamTerminates</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m116"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckSynchronousPublisherTest:required_createPublisher1MustProduceAStreamOfExactly1Element</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m117"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:required_createPublisher1MustProduceAStreamOfExactly1Element</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m118"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:required_validate_boundedDepthOfOnNextAndRequestRecursion</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m119"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:required_spec109_mustIssueOnSubscribeForNonNullSubscriber</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m120"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:required_spec201_mustSignalDemandViaSubscriptionRequest</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m121"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckAsynchronousPublisherTest:required_spec307_afterSubscriptionIsCancelledAdditionalCancelationsMustBeNops</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m122"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:required_spec308_requestMustRegisterGivenNumberElementsToBeProduced</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m123"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckBlackBoxSubscriberTest:required_spec209_blackbox_mustBePreparedToReceiveAnOnCompleteSignalWithoutPrecedingRequestCall</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m124"></a><h2>com.aol.simple.react.reactivestreams.jdk.TckWhiteBoxSubscriberTest:required_spec209_mustBePreparedToReceiveAnOnCompleteSignalWithPrecedingRequestCall</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
 </body></html>

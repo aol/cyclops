@@ -21,13 +21,13 @@ import lombok.experimental.Wither;
 
 import org.jooq.lambda.Seq;
 
-import com.aol.cyclops.lambda.utils.ExceptionSoftener;
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.async.factories.QueueToBlockingQueueWrapper;
 import com.aol.simple.react.async.subscription.AlwaysContinue;
 import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.async.wait.DirectWaitStrategy;
 import com.aol.simple.react.async.wait.WaitStrategy;
+import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.stream.traits.Continuation;
 import com.aol.simple.react.util.SimpleTimer;

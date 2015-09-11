@@ -2,25 +2,19 @@ package com.aol.simple.react.async.future;
 
 
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import uk.co.real_logic.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 
-import com.aol.cyclops.lambda.utils.ExceptionSoftener;
+import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactCompletionException;
 /*
  * @author John McClean

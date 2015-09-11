@@ -1,6 +1,7 @@
 package com.aol.simple.react.reactivestreams.jdk;
 
 
+import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
 import org.reactivestreams.Publisher;
@@ -21,7 +22,8 @@ public class TckAsynchronousPublisherTest extends PublisherVerification<Long>{
 
 	@Override
 	public Publisher<Long> createPublisher(long elements) {
-		return JDKReactiveStreamsPublisher.ofAsync(Stream.iterate(0l, i->i+1l).limit(elements));
+		return JDKReactiveStreamsPublisher.ofAsync(Stream.iterate(0l, i->i+1l).limit(elements), 
+				Executors.newFixedThreadPool(1));
 		
 	}
 

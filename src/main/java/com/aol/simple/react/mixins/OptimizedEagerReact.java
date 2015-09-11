@@ -3,10 +3,10 @@ package com.aol.simple.react.mixins;
 import java.util.Collection;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import lombok.AllArgsConstructor;
 
-import com.aol.cyclops.streams.StreamUtils;
 import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
 
@@ -143,7 +143,8 @@ public class OptimizedEagerReact {
 	 * @return EagerFutureStream
 	 */
 	public <T> EagerFutureStream<T> ofIterable(Iterable<T> iterable) {
-		return react(StreamUtils.stream(iterable).map(e -> supplier(e)));
+		return react(StreamSupport.stream(iterable.spliterator(),
+				false).map(e -> supplier(e)));
 	}
 
 	/**

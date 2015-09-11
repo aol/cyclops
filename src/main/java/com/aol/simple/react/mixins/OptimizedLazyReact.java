@@ -3,10 +3,10 @@ package com.aol.simple.react.mixins;
 import java.util.Collection;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import lombok.AllArgsConstructor;
 
-import com.aol.cyclops.streams.StreamUtils;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
@@ -143,7 +143,8 @@ public class OptimizedLazyReact {
 	 * @return LazyFutureStream
 	 */
 	public <T> LazyFutureStream<T> ofIterable(Iterable<T> iterable) {
-		return react(StreamUtils.stream(iterable).map(e -> supplier(e)));
+		return react(StreamSupport.stream(iterable.spliterator(),
+				false).map(e -> supplier(e)));
 	}
 
 	/**
