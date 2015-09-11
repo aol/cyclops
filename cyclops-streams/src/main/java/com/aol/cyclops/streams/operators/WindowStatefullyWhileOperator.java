@@ -30,13 +30,23 @@ public class WindowStatefullyWhileOperator<T> {
 				List<T> list = new ArrayList<>();
 				if(value!=UNSET)
 					list.add(value);
-				
-				while(list.size()==0&& it.hasNext()){
-					while(it.hasNext() && predicate.test(last,value=it.next())){
-						list.add(value);
-						value=(T)UNSET;
+				T value;
+				while(list.size()==0 && it.hasNext()){
+label:					while(it.hasNext()) {
+							value=it.next();
+							list.add(value);
+							
+							if(!predicate.test(last,value)){
+								value=(T)UNSET;
+								break label;
+							}
+							value=(T)UNSET;
+						
 					}
+					
+						
 				}
+				
 				return last = Streamable.fromIterable(list);
 			}
 			

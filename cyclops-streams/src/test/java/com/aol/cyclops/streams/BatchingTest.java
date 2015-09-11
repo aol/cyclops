@@ -11,6 +11,7 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +25,46 @@ import lombok.Value;
 
 import org.junit.Test;
 
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
 public class BatchingTest {
+	@Test
+	public void batchUntil(){
+		assertThat(SequenceM.of(1,2,3,4,5,6)
+				.batchUntil(i->i%3==0)
+				.toList().size(),equalTo(2));
+		assertThat(SequenceM.of(1,2,3,4,5,6)
+				.batchUntil(i->i%3==0)
+				.toList().get(0),equalTo(Arrays.asList(1,2,3)));
+	}
+	@Test
+	public void batchWhile(){
+		assertThat(SequenceM.of(1,2,3,4,5,6)
+				.batchWhile(i->i%3!=0)
+				.toList()
+				.size(),equalTo(2));
+		assertThat(SequenceM.of(1,2,3,4,5,6)
+				.batchWhile(i->i%3!=0)
+				.toList(),equalTo(Arrays.asList(1,2,3)));
+	}
+	@Test
+	public void batchUntilCollection(){
+		assertThat(SequenceM.of(1,2,3,4,5,6)
+				.batchUntil(i->i%3==0,()->new ArrayList<>())
+				.toList().size(),equalTo(2));
+		assertThat(SequenceM.of(1,2,3,4,5,6)
+				.batchUntil(i->i%3==0,()->new ArrayList<>())
+				.toList().get(0),equalTo(Arrays.asList(1,2,3)));
+	}
+	@Test
+	public void batchWhileCollection(){
+		assertThat(SequenceM.of(1,2,3,4,5,6)
+				.batchWhile(i->i%3!=0,()->new ArrayList<>())
+				.toList().size(),equalTo(2));
+		assertThat(SequenceM.of(1,2,3,4,5,6)
+				.batchWhile(i->i%3!=0,()->new ArrayList<>())
+				.toList(),equalTo(Arrays.asList(1,2,3)));
+	}
 	@Test
 	public void batchByTime2(){
 		for(int i=0;i<5;i++){

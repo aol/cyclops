@@ -26,11 +26,46 @@ public class WindowingTest {
 		empty = of();
 		nonEmpty = of(1);
 	}
+	
 	@Test
 	public void windowWhile(){
-		SequenceM.of(1,2,3,4,5,6)
+		assertThat(SequenceM.of(1,2,3,4,5,6)
 				.windowWhile(i->i%3!=0)
-				.forEach(System.out::println);
+				.toList().size(),equalTo(2));
+		assertThat(SequenceM.of(1,2,3,4,5,6)
+				.windowWhile(i->i%3!=0)
+				.toList().get(0).sequenceM().toList(),equalTo(Arrays.asList(1,2,3)));
+	}
+	@Test
+	public void windowUntil(){
+		assertThat(SequenceM.of(1,2,3,4,5,6)
+				.windowUntil(i->i%3==0)
+				.toList().size(),equalTo(2));
+		assertThat(SequenceM.of(1,2,3,4,5,6)
+				.windowUntil(i->i%3==0)
+				.toList().get(0).sequenceM().toList(),equalTo(Arrays.asList(1,2,3)));
+	}
+	@Test
+	public void windowUntilEmpty(){
+		assertThat(SequenceM.<Integer>of()
+				.windowUntil(i->i%3==0)
+				.toList().size(),equalTo(0));
+	}
+	@Test
+	public void windowStatefullyWhile(){
+		
+		assertThat(SequenceM.of(1,2,3,4,5,6)
+				.windowStatefullyWhile((s,i)->s.sequenceM().toList().contains(4) ? true : false)
+				.toList().size(),equalTo(5));
+		
+	}
+	@Test
+	public void windowStatefullyWhileEmpty(){
+		
+		assertThat(SequenceM.of()
+				.windowStatefullyWhile((s,i)->s.sequenceM().toList().contains(4) ? true : false)
+				.toList().size(),equalTo(0));
+		
 	}
 	@Test
 	public void sliding() {

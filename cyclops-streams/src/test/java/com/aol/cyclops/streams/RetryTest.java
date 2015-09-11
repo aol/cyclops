@@ -72,7 +72,7 @@ public class RetryTest {
 					.recover(e->"hello")
 					.firstValue(),equalTo("hello"));
 	}
-
+	
 	@Test
 	public void recover2IO(){
 		assertThat(SequenceM.of(1,2,3,4)

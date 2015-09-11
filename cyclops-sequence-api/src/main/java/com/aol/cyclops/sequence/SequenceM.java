@@ -1,10 +1,5 @@
 package com.aol.cyclops.sequence;
 
-import static com.aol.cyclops.sequence.SequenceM.of;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
@@ -16,10 +11,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -31,7 +26,6 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.BaseStream;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -54,6 +48,7 @@ import com.aol.cyclops.sequence.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.sequence.spliterators.ReversingListSpliterator;
 import com.aol.cyclops.sequence.spliterators.ReversingRangeSpliterator;
 import com.aol.cyclops.sequence.streamable.Streamable;
+
 
 
 
@@ -2044,7 +2039,30 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 */
 	<U> SequenceM<Tuple2<T, U>> rightOuterJoin(Stream<U> other,
 			BiPredicate<T, U> predicate);
-
+	/** If this SequenceM is empty replace it with a another Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat(SequenceM.of(4,5,6)
+							.onEmptySwitch(()->SequenceM.of(1,2,3))
+							.toList(),
+							equalTo(Arrays.asList(4,5,6)));
+	 * }
+	 * </pre>
+	 * @param switchTo Supplier that will generate the alternative Stream
+	 * @return SequenceM that will switch to an alternative Stream if empty
+	 */
+	default SequenceM<T> onEmptySwitch(Supplier<Stream<T>> switchTo){
+		AtomicBoolean called=  new AtomicBoolean(false);
+		return SequenceM.fromStream(onEmptyGet((Supplier)()->{
+				called.set(true); 
+				return switchTo.get();
+		}).flatMap(s->{
+			if(called.get())
+				return (Stream)s;
+			return Stream.of(s);
+		}));
+	}
 	/* (non-Javadoc)
 	 * @see org.jooq.lambda.Seq#onEmpty(java.lang.Object)
 	 */
@@ -2331,19 +2349,180 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @return SequenceM windowed while predicate holds
 	 */
 	SequenceM<Streamable<T>> windowWhile(Predicate<T> predicate);
+	/**
+	 * Create a Sequence of Streamables (replayable Streams / Sequences) where each Streamable is populated 
+	 * until the supplied predicate holds. When the predicate failsa new window/ Stremable opens
+	 * <pre>
+	 * {@code 
+	 * SequenceM.of(1,2,3,4,5,6)
+				.windowUntil(i->i%3==0)
+				.forEach(System.out::println);
+	 *   
+	 *  StreamableImpl(streamable=[1, 2, 3]) 
+	 *  StreamableImpl(streamable=[4, 5, 6])
+	 * }
+	 * </pre>
+	 * @param predicate Window until true
+	 * @return SequenceM windowed until predicate holds
+	 */
 	SequenceM<Streamable<T>> windowUntil(Predicate<T> predicate);
+	/**
+	 * Create SequenceM of Streamables  (replayable Streams / Sequences) where each Streamable is populated 
+	 * while the supplied bipredicate holds. The bipredicate recieves the Streamable from the last window as
+	 * well as the current value and can choose to aggregate the current value or create  a new window
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat(SequenceM.of(1,2,3,4,5,6)
+				.windowStatefullyWhile((s,i)->s.sequenceM().toList().contains(4) ? true : false)
+				.toList().size(),equalTo(5));
+	 * }
+	 * </pre>
+	 * 
+	 * @param predicate Window while true
+	 * @return SequenceM windowed while predicate holds
+	 */
 	SequenceM<Streamable<T>> windowStatefullyWhile(BiPredicate<Streamable<T>,T> predicate);
+	/**
+	 * Create SequenceM of Streamables  (replayable Streams / Sequences) where each Streamable is populated
+	 * within a specified time window
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat(SequenceM.of(1,2,3,4,5, 6)
+							.map(n-> n==6? sleep(1) : n)
+							.windowByTime(10,TimeUnit.MICROSECONDS)
+							.toList()
+							.get(0).sequenceM().toList()
+							,not(hasItem(6)));
+	 * }
+	 * </pre>
+	 * @param time max time per window 
+	 * @param t time unit per window
+	 * @return SequenceM windowed by time
+	 */
 	SequenceM<Streamable<T>> windowByTime(long time, TimeUnit t);
+	/**
+	 * Create a SequenceM batched by List, where each batch is populated until the predicate holds
+	 * <pre>
+	 * {@code 
+	 *  assertThat(SequenceM.of(1,2,3,4,5,6)
+				.batchUntil(i->i%3==0)
+				.toList()
+				.size(),equalTo(2));
+	 * }
+	 * </pre>
+	 * @param predicate Batch until predicate holds, then open next batch
+	 * @return SequenceM batched into lists determined by the predicate supplied
+	 */
 	SequenceM<List<T>> batchUntil(Predicate<T> predicate);
+	/**
+	 * Create a SequenceM batched by List, where each batch is populated while the predicate holds
+	 * <pre>
+	 * {@code 
+	 * assertThat(SequenceM.of(1,2,3,4,5,6)
+				.batchWhile(i->i%3!=0)
+				.toList().size(),equalTo(2));
+	
+	 * }
+	 * </pre>
+	 * @param predicate Batch while predicate holds, then open next batch
+	 * @return SequenceM batched into lists determined by the predicate supplied
+	 */
 	SequenceM<List<T>> batchWhile(Predicate<T> predicate);
+	/**
+	 * Create a SequenceM batched by a Collection, where each batch is populated while the predicate holds
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat(SequenceM.of(1,2,3,4,5,6)
+				.batchWhile(i->i%3!=0)
+				.toList()
+				.size(),equalTo(2));
+	 * }
+	 * </pre>
+	 * @param predicate Batch while predicate holds, then open next batch
+	 * @param factory Collection factory
+	 * @return SequenceM batched into collections determined by the predicate supplied
+	 */
 	<C extends Collection<T>>  SequenceM<C> batchWhile(Predicate<T> predicate, Supplier<C> factory);
+	/**
+	 * Create a SequenceM batched by a Collection, where each batch is populated until the predicate holds
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat(SequenceM.of(1,2,3,4,5,6)
+				.batchUntil(i->i%3!=0)
+				.toList()
+				.size(),equalTo(2));
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param predicate Batch until predicate holds, then open next batch
+	 * @param factory Collection factory
+	 * @return SequenceM batched into collections determined by the predicate supplied
+	 */
 	<C extends Collection<T>>  SequenceM<C> batchUntil(Predicate<T> predicate, Supplier<C> factory);
 
+	/**
+	 * Recover from an exception with an alternative value
+	 * <pre>
+	 * {@code 
+	 * assertThat(SequenceM.of(1,2,3,4)
+						   .map(i->i+2)
+						   .map(u->{throw new RuntimeException();})
+						   .recover(e->"hello")
+						   .firstValue(),equalTo("hello"));
+	 * }
+	 * </pre>
+	 * @param fn Function that accepts a Throwable and returns an alternative value
+	 * @return SequenceM that can recover from an Exception
+	 */
 	SequenceM<T> recover(final Function<Throwable, T> fn);
+	/**
+	 * Recover from a particular exception type
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat(SequenceM.of(1,2,3,4)
+					.map(i->i+2)
+					.map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
+					.recover(IOException.class,e->"hello")
+					.firstValue(),equalTo("hello"));
+	 * 
+	 * }
+	 * </pre>
+	 * 
+	 * @param exceptionClass Type to recover from
+	 * @param fn That accepts an error and returns an alternative value
+	 * @return Sequence that can recover from a particular exception
+	 */
 	<EX extends Throwable> SequenceM<T> recover(Class<EX> exceptionClass, final Function<EX, T> fn);
-	default SequenceM<T> onEmptySwitch(Supplier<Stream<T>> switchTo){
-		return SequenceM.fromStream(onEmptyGet((Supplier)switchTo).flatMap(s->(Stream)s));
-	}
+	
+	
+	/**
+	 * Retry a transformation if it fails. Default settings are to retry up to 7 times, with an doubling
+	 * backoff period starting @ 2 seconds delay before retry.
+	 * 
+	 * <pre>
+	 * {@code 
+	 * given(serviceMock.apply(anyInt())).willThrow(
+				new RuntimeException(new SocketException("First")),
+				new RuntimeException(new IOException("Second"))).willReturn(
+				"42");
+
+	
+		String result = SequenceM.of( 1,  2, 3)
+				.retry(serviceMock)
+				.firstValue();
+
+		assertThat(result, is("42"));
+	 * }
+	 * </pre>
+	 * @param fn Function to retry if fails
+	 * 
+	 */
 	default <R> SequenceM<R> retry(Function<T,R> fn){
 		Function<T,R> retry = t-> {
 			int count = 7;

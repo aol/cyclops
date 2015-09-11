@@ -27,6 +27,24 @@ import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
 
 public class SequenceMTest {
+	
+	@Test
+	public void onEmptySwitchEmpty(){
+		assertThat(SequenceM.of()
+							.onEmptySwitch(()->SequenceM.of(1,2,3))
+							.toList(),
+							equalTo(Arrays.asList(1,2,3)));
+				
+	}
+	@Test
+	public void onEmptySwitch(){
+		assertThat(SequenceM.of(4,5,6)
+							.onEmptySwitch(()->SequenceM.of(1,2,3))
+							.toList(),
+							equalTo(Arrays.asList(4,5,6)));
+				
+	}
+	
 	@Test
 	public void elapsedIsPositive(){
 		

@@ -35,7 +35,6 @@ label:					while(it.hasNext()) {
 							list.add(value);
 							
 							if(!predicate.test(value)){
-								System.out.println("failed");
 								value=(T)UNSET;
 								break label;
 							}
