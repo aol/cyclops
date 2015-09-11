@@ -27,6 +27,12 @@ public class WindowingTest {
 		nonEmpty = of(1);
 	}
 	@Test
+	public void windowWhile(){
+		SequenceM.of(1,2,3,4,5,6)
+				.windowWhile(i->i%3!=0)
+				.forEach(System.out::println);
+	}
+	@Test
 	public void sliding() {
 		List<List<Integer>> list = SequenceM.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
 

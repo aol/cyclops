@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -67,6 +68,28 @@ public class ReverseTest {
 		assertThat(SequenceM.fromList(list)
 				 .skip(100)
 				 .count(),equalTo(900L));
+		
+	}
+	@Test
+	public void reversedOfArray() throws InterruptedException{
+		List<Integer> list= new ArrayList<>();
+		list.add(1);
+		list.add(2);
+		
+		assertThat(SequenceM.reversedOf(1,2)
+							.toList(),
+							equalTo(Arrays.asList(2,1)));
+		
+	}
+	@Test
+	public void reversedOfList() throws InterruptedException{
+		List<Integer> list= new ArrayList<>();
+		list.add(1);
+		list.add(2);
+		
+		assertThat(SequenceM.reversedListOf(list)
+							.toList(),
+							equalTo(Arrays.asList(2,1)));
 		
 	}
 	

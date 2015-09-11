@@ -225,6 +225,14 @@ public class BatchingTest {
 		assertThat(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()).size(),is(2));
 	}
 	@Test
+	public void batchBySizeAndTimeSizeCollection(){
+		
+		assertThat(of(1,2,3,4,5,6)
+						.batchBySizeAndTime(3,10,TimeUnit.SECONDS,()->new ArrayList<>())
+						.toList().get(0)
+						.size(),is(3));
+	}
+	@Test
 	public void batchBySizeAndTimeSize(){
 		
 		assertThat(of(1,2,3,4,5,6)
@@ -241,12 +249,34 @@ public class BatchingTest {
 						.count(),is(3l));
 	}
 	@Test
+	public void windowBySizeAndTimeSizeEmpty(){
+		
+		assertThat(of()
+						.windowBySizeAndTime(3,10,TimeUnit.SECONDS)
+						.toList()
+						.size(),is(0));
+	}
+	@Test
 	public void batchBySizeAndTimeTime(){
 		
 		for(int i=0;i<10;i++){
 			System.out.println(i);
 			List<List<Integer>> list = of(1,2,3,4,5,6)
 					.batchBySizeAndTime(10,1,TimeUnit.MICROSECONDS)
+					.toList();
+			
+			assertThat(list
+							.get(0)
+							,not(hasItem(6)));
+		}
+	}
+	@Test
+	public void batchBySizeAndTimeTimeCollection(){
+		
+		for(int i=0;i<10;i++){
+			System.out.println(i);
+			List<ArrayList<Integer>> list = of(1,2,3,4,5,6)
+					.batchBySizeAndTime(10,1,TimeUnit.MICROSECONDS,()->new ArrayList<>())
 					.toList();
 			
 			assertThat(list
@@ -279,6 +309,11 @@ public class BatchingTest {
 		
 		assertThat(of(1,1,1,1,1,1).batchBySize(3,()->new TreeSet<>()).toList().get(0).size(),is(1));
 		assertThat(of(1,1,1,1,1,1).batchBySize(3,()->new TreeSet<>()).toList().get(1).size(),is(1));
+	}
+	@Test
+	public void batchBySizeSetEmpty(){
+		
+		assertThat(of().batchBySize(3,()->new TreeSet<>()).toList().size(),is(0));
 	}
 	@Test
 	public void batchBySizeInternalSize(){
@@ -338,6 +373,10 @@ public class BatchingTest {
 	@Test
 	public void batchByTimeInternalSize(){
 		assertThat(of(1,2,3,4,5,6).batchByTime(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),greaterThan(5));
+	}
+	@Test
+	public void batchByTimeInternalSizeCollection(){
+		assertThat(of(1,2,3,4,5,6).batchByTime(1,TimeUnit.NANOSECONDS,()->new ArrayList<>()).collect(Collectors.toList()).size(),greaterThan(5));
 	}
 	@Test
 	public void windowByTimeInternalSize(){

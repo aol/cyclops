@@ -29,11 +29,21 @@ public class WindowWhileOperator<T> {
 				if(value!=UNSET)
 					list.add(value);
 				T value;
-				while(list.size()==0&& it.hasNext()){
-					while(it.hasNext() && predicate.test(value=it.next())){
-						list.add(value);
-						value=(T)UNSET;
+				while(list.size()==0 && it.hasNext()){
+label:					while(it.hasNext()) {
+							value=it.next();
+							list.add(value);
+							
+							if(!predicate.test(value)){
+								System.out.println("failed");
+								value=(T)UNSET;
+								break label;
+							}
+							value=(T)UNSET;
+						
 					}
+					
+						
 				}
 				return Streamable.fromIterable(list);
 			}

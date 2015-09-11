@@ -12,27 +12,27 @@ import com.aol.cyclops.sequence.SeqUtils;
 
 public class AsStreamable {
 	public static <T> Streamable<T> fromObject(Object toCoerce){
-		return new CoercedStreamable(collectStream(toCoerce));
+		return new StreamableImpl(collectStream(toCoerce));
 	}
 	/**
 	 * @param toCoerce Efficiently / lazily Makes Stream repeatable, not thread safe, on initial iteration
 	 * @return
 	 */
 	public static <T> Streamable<T> fromStream(Stream<T> toCoerce){
-		return new CoercedStreamable(collectStream(toCoerce));
+		return new StreamableImpl(collectStream(toCoerce));
 	}
 	public static <T> Streamable<T> fromIterable(Iterable<T> toCoerce){
-		return new CoercedStreamable(collectStream(toCoerce));
+		return new StreamableImpl(collectStream(toCoerce));
 	}
 	/**
 	 * @param toCoerce Efficiently / lazily Makes Stream repeatable, guards iteration with locks on initial iteration
 	 * @return
 	 */
 	public static <T> Streamable<T> synchronizedFromStream(Stream<T> toCoerce){
-		return new CoercedStreamable(collectStreamConcurrent(toCoerce));
+		return new StreamableImpl(collectStreamConcurrent(toCoerce));
 	}
 	public static <T> Streamable<T> synchronizedFromIterable(Iterable<T> toCoerce){
-		return new CoercedStreamable(collectStreamConcurrent(toCoerce));
+		return new StreamableImpl(collectStreamConcurrent(toCoerce));
 	}
 	
 	private static <T> T collectStreamConcurrent(T object){
@@ -66,10 +66,5 @@ public class AsStreamable {
 		}
 		return object;
 	}
-	@Value
-	public static class CoercedStreamable<T> implements Streamable<T>{
-		@Getter
-		private final T streamable;
-		
-	}
+	
 }

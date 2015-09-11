@@ -26,7 +26,7 @@ public class ReversingListSpliterator<T> implements Spliterator<T>, ReversableSp
 			
 		}
 		
-		public  ReversableSpliterator invert(){
+		public  ReversingListSpliterator<T> invert(){
 			setReverse(!isReverse());
 			it = list.listIterator(list.size());
 			return this;

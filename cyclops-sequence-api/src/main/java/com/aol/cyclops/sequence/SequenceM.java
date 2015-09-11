@@ -1,15 +1,13 @@
 package com.aol.cyclops.sequence;
 
 import static com.aol.cyclops.sequence.SequenceM.of;
-import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -18,7 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
-import java.util.Spliterator;
+import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
@@ -28,12 +26,8 @@ import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.function.ToDoubleFunction;
-import java.util.function.ToIntFunction;
-import java.util.function.ToLongFunction;
 import java.util.function.UnaryOperator;
 import java.util.stream.BaseStream;
 import java.util.stream.Collector;
@@ -50,16 +44,18 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.future.FutureOperations;
+import com.aol.cyclops.sequence.reactivestreams.CyclopsSubscriber;
 import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
 import com.aol.cyclops.sequence.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.sequence.spliterators.ReversingListSpliterator;
 import com.aol.cyclops.sequence.spliterators.ReversingRangeSpliterator;
 import com.aol.cyclops.sequence.streamable.Streamable;
+
+
 
 
 
@@ -1825,11 +1821,32 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	
 
 	
-	public static <T> Subscriber<T> subscriber(){
+	/**
+	 * Create a subscriber that can listen to Reactive Streams (simple-react, RxJava
+	 * AkkaStreams, Kontraktor, QuadarStreams etc)
+	 * 
+	 * <pre>
+	 * {@code
+	 * CyclopsSubscriber<Integer> sub = SequenceM.subscriber();
+		SequenceM.of(1,2,3).subscribe(sub);
+		sub.sequenceM().forEach(System.out::println);
+		
+		  1 
+		  2
+		  3
+	 * }
+	 * 
+	 *</pre>
+	 * 
+	 * @return A reactive-streams Subscriber
+	 */
+	public static <T> CyclopsSubscriber<T> subscriber(){
 		return ReactiveStreamsLoader.subscriber.get().subscribe();
 	}
+	
+	
 	/**
-	 * Construct a Sequence from the provided elements
+	 * Create an efficiently reversable Sequence from the provided elements
 	 * @param elements To Construct sequence from
 	 * @return
 	 */
@@ -1840,24 +1857,33 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	}
 	/**
 	 * Construct a Reveresed Sequence from the provided elements
+	 * Can be reversed (again) efficiently
 	 * @param elements To Construct sequence from
 	 * @return
 	 */
 	public static <T> SequenceM<T> reversedOf(T... elements){
-		ReversingArraySpliterator array = new ReversingArraySpliterator<T>(elements, true,0);
+		ReversingArraySpliterator array = new ReversingArraySpliterator<T>(elements, false,0).invert();
 		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(array, false),array);
 		
 	}
 	/**
 	 * Construct a Reveresed Sequence from the provided elements
+	 * Can be reversed (again) efficiently
 	 * @param elements To Construct sequence from
 	 * @return
 	 */
 	public static <T> SequenceM<T> reversedListOf(List<T> elements){
-		ReversingListSpliterator list = new ReversingListSpliterator<T>(elements, true);
+		ReversingListSpliterator list = new ReversingListSpliterator<T>(elements, false).invert();
 		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(list, false),list);
 
 	}
+	/**
+	 * Create an efficiently reversable Sequence that produces the integers between start 
+	 * and end
+	 * @param start Number of range to start from
+	 * @param end Number for range to end at
+	 * @return Range SequenceM
+	 */
 	public static SequenceM<Integer> range(int start, int end){
 		ReversingRangeSpliterator range = new ReversingRangeSpliterator(start, end, false);
 		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(range, false),range);
@@ -1980,8 +2006,14 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#crossJoin(java.util.stream.Stream)
+	 */
 	<U> SequenceM<Tuple2<T, U>> crossJoin(Stream<U> other);
 
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#innerJoin(java.util.stream.Stream, java.util.function.BiPredicate)
+	 */
 	default <U> SequenceM<Tuple2<T, U>> innerJoin(Stream<U> other,
 			BiPredicate<T, U> predicate){
 		 Streamable<U> s = Streamable.fromIterable(SequenceM.fromStream(other).toLazyCollection());
@@ -1991,6 +2023,9 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	                           .map(u -> Tuple.tuple(t, u)));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#leftOuterJoin(java.util.stream.Stream, java.util.function.BiPredicate)
+	 */
 	default <U> SequenceM<Tuple2<T, U>> leftOuterJoin(Stream<U> other,
 			BiPredicate<T, U> predicate)
 		{
@@ -2004,100 +2039,297 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	    
 	}
 
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#rightOuterJoin(java.util.stream.Stream, java.util.function.BiPredicate)
+	 */
 	<U> SequenceM<Tuple2<T, U>> rightOuterJoin(Stream<U> other,
 			BiPredicate<T, U> predicate);
 
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#onEmpty(java.lang.Object)
+	 */
 	SequenceM<T> onEmpty(T value);
 
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#onEmptyGet(java.util.function.Supplier)
+	 */
 	SequenceM<T> onEmptyGet(Supplier<T> supplier);
 
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#onEmptyThrow(java.util.function.Supplier)
+	 */
 	<X extends Throwable> SequenceM<T> onEmptyThrow(Supplier<X> supplier);
 
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#concat(java.util.stream.Stream)
+	 */
 	SequenceM<T> concat(Stream<T> other);
 
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#concat(java.lang.Object)
+	 */
 	SequenceM<T> concat(T other);
 
-	/**
-	 * Concatenate two streams.
-	 * <p>
-	 * <code><pre>
-	 * // (1, 2, 3, 4, 5, 6)
-	 * Seq.of(1, 2, 3).concat(4, 5, 6)
-	 * </pre></code>
-	 *
-	 * @see #concat(Stream[])
+	
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#concat(java.lang.Object[])
 	 */
-
 	SequenceM<T> concat(T... other);
 
-	/**
-	 * Get a stream of distinct keys.
-	 * <p>
-	 * <code><pre>
-	 * // (1, 2, 3)
-	 * Seq.of(1, 1, 2, -2, 3).distinct(Math::abs)
-	 * </pre></code>
+	
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#distinct(java.util.function.Function)
 	 */
 	<U> SequenceM<T> distinct(Function<? super T, ? extends U> keyExtractor);
 
-	/**
-	 * Zip two streams into one using a {@link BiFunction} to produce resulting
-	 * values.
-	 * <p>
-	 * <code><pre>
-	 * // ("1:a", "2:b", "3:c")
-	 * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"), (i, s) -> i + ":" + s)
-	 * </pre></code>
-	 *
-	 * @see #zip(Seq, BiFunction)
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
 	 */
 	<U, R> SequenceM<R> zip(Seq<U> other, BiFunction<T, U, R> zipper);
 
-	/**
-	 * Shuffle a stream using specified source of randomness
-	 * <p>
-	 * <code><pre>
-	 * // e.g. (2, 3, 1)
-	 * Seq.of(1, 2, 3).shuffle(new Random())
-	 * </pre></code>
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#shuffle(java.util.Random)
 	 */
 	SequenceM<T> shuffle(Random random);
 
-	/**
-	 * Returns a limited interval from a given Stream.
-	 * <p>
-	 * <code><pre>
-	 * // (4, 5)
-	 * Seq.of(1, 2, 3, 4, 5, 6).slice(3, 5)
-	 * </pre></code>
-	 *
-	 * @see #slice(Stream, long, long)
+	
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#slice(long, long)
 	 */
 	SequenceM<T> slice(long from, long to);
 
-	/**
-	 * Sort by the results of function.
+	
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#sorted(java.util.function.Function)
 	 */
 	<U extends Comparable<? super U>> SequenceM<T> sorted(
 			Function<? super T, ? extends U> function);
 
+	/**
+	 * emit x elements per time period 
+	 * 
+	 * <pre>
+	 * {@code 
+	 *  SimpleTimer timer = new SimpleTimer();
+		assertThat(SequenceM.of(1,2,3,4,5,6)
+		                    .xPer(6,100000000,TimeUnit.NANOSECONDS)
+		                    .collect(Collectors.toList()).size(),is(6));
+
+	 * }
+	 * </pre>
+	 * @param x number of elements to emit
+	 * @param time period
+	 * @param t Time unit
+	 * @return SequenceM that emits x elements per time period
+	 */
 	SequenceM<T> xPer(int x, long time, TimeUnit t);
 
+	/**
+	 * emit one element per time period
+	 * <pre>
+	 * {@code 
+	 * SequenceM.iterate("", last -> "next")
+				.limit(100)
+				.batchBySize(10)
+				.onePer(1, TimeUnit.MICROSECONDS)
+				.peek(batch -> System.out.println("batched : " + batch))
+				.flatMap(Collection::stream)
+				.peek(individual -> System.out.println("Flattened : "
+						+ individual))
+				.forEach(a->{});
+	 * }
+	 * @param time period
+	 * @param t Time unit
+	 * @return SequenceM that emits 1 element per time period
+	 */
 	SequenceM<T> onePer(long time, TimeUnit t);
 
+	/**
+	 * Allow one element through per time period, drop all other 
+	 * elements in that time period
+	 * 
+	 * <pre>
+	 * {@code 
+	 * SequenceM.of(1,2,3,4,5,6)
+	 *          .debounce(1000,TimeUnit.SECONDS).toList();
+	 *          
+	 * // 1 
+	 * }</pre>
+	 * 
+	 * @param time
+	 * @param t
+	 * @return
+	 */
 	SequenceM<T> debounce(long time, TimeUnit t);
 
+	/**
+	 * Batch elements by size into a List
+	 * 
+	 * <pre>
+	 * {@code
+	 * SequenceM.of(1,2,3,4,5,6)
+				.batchBySizeAndTime(3,10,TimeUnit.SECONDS)
+				.toList();
+			
+	 * //[[1,2,3],[4,5,6]] 
+	 * }
+	 * 
+	 * @param size Max size of a batch
+	 * @param time (Max) time period to build a single batch in
+	 * @param t time unit for batch
+	 * @return SequenceM batched by size and time
+	 */
 	SequenceM<List<T>> batchBySizeAndTime(int size, long time, TimeUnit t);
+	/**
+	 *  Batch elements by size into a collection created by the supplied factory 
+	 * <pre>
+	 * {@code 
+	 * List<ArrayList<Integer>> list = of(1,2,3,4,5,6)
+					.batchBySizeAndTime(10,1,TimeUnit.MICROSECONDS,()->new ArrayList<>())
+					.toList();
+	 * }
+	 * </pre>
+	 * @param size Max size of a batch
+	 * @param time (Max) time period to build a single batch in
+	 * @param unit time unit for batch
+	 * @param factory Collection factory
+	 * @return SequenceM batched by size and time
+	 */
 	<C extends Collection<T>> SequenceM<C> batchBySizeAndTime(int size,long time, TimeUnit unit, Supplier<C> factory);
+	/**
+	 * Batch elements in a Stream by time period
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat(SequenceM.of(1,2,3,4,5,6).batchByTime(1,TimeUnit.SECONDS).collect(Collectors.toList()).size(),is(1));
+	 * assertThat(SequenceM.of(1,2,3,4,5,6).batchByTime(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),greaterThan(5));
+	 * }
+	 * </pre>
+	 * 
+	 * @param time - time period to build a single batch in
+	 * @param t  time unit for batch
+	 * @return SequenceM batched into lists by time period
+	 */
 	SequenceM<List<T>> batchByTime(long time, TimeUnit t);
+	/**
+	 * Batch elements by time into a collection created by the supplied factory 
+	 * 
+	 * <pre>
+	 * {@code 
+	 *   assertThat(SequenceM.of(1,1,1,1,1,1)
+	 *                       .batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>())
+	 *                       .toList()
+	 *                       .get(0)
+	 *                       .size(),is(1));
+	 * }
+	 * </pre>
+	 * 
+	 * @param time - time period to build a single batch in
+	 * @param unit time unit for batch
+	 * @param factory Collection factory
+	 * @return SequenceM batched into collection types by time period
+	 */
 	<C extends Collection<T>> SequenceM<C> batchByTime(long time, TimeUnit unit, Supplier<C> factory);
+	/**
+	 * Batch elements in a Stream by size into Lists
+	 * 
+	 * <pre>
+	 * {@code 
+	 *  assertThat(SequenceM.of(1,2,3,4,5,6)
+	 *                      .batchBySize(3)
+	 *                      .collect(Collectors.toList())
+	 *                      .size(),is(2));
+	 * }
+	 * @param size of batch
+	 * @return SequenceM batched by size into Lists
+	 */
 	SequenceM<List<T>> batchBySize(int size);
+	/**
+	 * Batch elements in a Stream by size into a collection created by the supplied factory 
+	 * <pre>
+	 * {@code
+	 * assertThat(SequenceM.of(1,1,1,1,1,1)
+	 * 						.batchBySize(3,()->new TreeSet<>())
+	 * 						.toList()
+	 * 						.get(0)
+	 * 						.size(),is(1));
+	 * }
+	 * 
+	 * @param size batch size
+	 * @param supplier Collection factory
+	 * @return SequenceM batched into collection types by size
+	 */
 	<C extends Collection<T>>SequenceM<C> batchBySize(int size, Supplier<C> supplier);
 
-	SequenceM<T> fixedDelay(long l, TimeUnit microseconds);
+	/**
+	 * emit elements after a fixed delay
+	 * <pre>
+	 * {@code 
+	 * 	SimpleTimer timer = new SimpleTimer();
+		assertThat(SequenceM.of(1,2,3,4,5,6)
+							.fixedDelay(10000,TimeUnit.NANOSECONDS)
+							.collect(Collectors.toList())
+							.size(),is(6));
+		assertThat(timer.getElapsedNanoseconds(),greaterThan(60000l));
+	 * }
+	 * </pre>
+	 * @param l time length in nanos of the delay
+	 * @param unit for the delay
+	 * @return SequenceM that emits each element after a fixed delay
+	 */
+	SequenceM<T> fixedDelay(long l, TimeUnit unit);
 
-	SequenceM<T> jitter(long l);
-	SequenceM<Streamable<T>> windowBySizeAndTime(int size, long time, TimeUnit t);
+	/**
+	 * Introduce a random jitter / time delay between the emission of elements
+	 * <pre>
+	 * {@code 
+	 * SimpleTimer timer = new SimpleTimer();
+		assertThat(SequenceM.of(1,2,3,4,5,6)
+							.jitter(10000)
+							.collect(Collectors.toList())
+							.size(),is(6));
+		assertThat(timer.getElapsedNanoseconds(),greaterThan(20000l));
+	 * }
+	 * </pre>
+	 * @param maxJitterPeriodInNanos - random number less than this is used for each jitter
+	 * @return Sequence with a random jitter between element emission
+	 */
+	SequenceM<T> jitter(long maxJitterPeriodInNanos);
+	/**
+	 * Create a Sequence of Streamables (replayable Streams / Sequences) where each Streamable is populated up to a max size,
+	 * or for max period of time
+	 * <pre>
+	 * {@code 
+	 * assertThat(SequenceM.of(1,2,3,4,5,6)
+						.windowBySizeAndTime(3,10,TimeUnit.SECONDS)
+						.toList()
+						.get(0)
+						.stream()
+						.count(),is(3l));
+	 * 
+	 * }
+	 * @param maxSize of window
+	 * @param maxTime of window
+	 * @param maxTimeUnit of window
+	 * @return Windowed SequenceM
+	 */
+	SequenceM<Streamable<T>> windowBySizeAndTime(int maxSize, long maxTime, TimeUnit maxTimeUnit);
+	/**
+	 * Create a Sequence of Streamables (replayable Streams / Sequences) where each Streamable is populated 
+	 * while the supplied predicate holds. When the predicate failsa new window/ Stremable opens
+	 * <pre>
+	 * {@code 
+	 * SequenceM.of(1,2,3,4,5,6)
+				.windowWhile(i->i%3!=0)
+				.forEach(System.out::println);
+	 *   
+	 *  StreamableImpl(streamable=[1, 2, 3]) 
+	 *  StreamableImpl(streamable=[4, 5, 6])
+	 * }
+	 * </pre>
+	 * @param predicate Window while true
+	 * @return SequenceM windowed while predicate holds
+	 */
 	SequenceM<Streamable<T>> windowWhile(Predicate<T> predicate);
 	SequenceM<Streamable<T>> windowUntil(Predicate<T> predicate);
 	SequenceM<Streamable<T>> windowStatefullyWhile(BiPredicate<Streamable<T>,T> predicate);

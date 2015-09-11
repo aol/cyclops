@@ -26,7 +26,7 @@ public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableS
         return IMMUTABLE;
     }
     
-    public ReversableSpliterator invert(){
+    public ReversingArraySpliterator<T> invert(){
 		setReverse(!isReverse());
 		index = array.length-1;
 		return this;
