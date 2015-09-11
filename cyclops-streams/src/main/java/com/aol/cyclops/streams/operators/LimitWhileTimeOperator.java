@@ -23,10 +23,8 @@ public class LimitWhileTimeOperator<U> {
 			@Override
 			public boolean hasNext() {
 				stillGoing = System.nanoTime()-start < allowed;
-				
 				if(!stillGoing)
 					return false;
-				
 				return it.hasNext();
 					
 			}

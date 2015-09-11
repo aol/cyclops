@@ -5,8 +5,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -16,16 +15,130 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Test;
 
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.sequence.streamable.Streamable;
 
 public class SequenceMTest {
-
+	@Test
+	public void limitTime(){
+		List<Integer> result = SequenceM.of(1,2,3,4,5,6)
+										.peek(i->sleep(i*100))
+										.limit(1000,TimeUnit.MILLISECONDS)
+										.toList();
+		
+		
+		assertThat(result,equalTo(Arrays.asList(1,2,3,4)));
+	}
+	@Test
+	public void skipTime(){
+		List<Integer> result = SequenceM.of(1,2,3,4,5,6)
+										.peek(i->sleep(i*100))
+										.skip(1000,TimeUnit.MILLISECONDS)
+										.toList();
+		
+		
+		assertThat(result,equalTo(Arrays.asList(4,5,6)));
+	}
+	private int sleep(Integer i) {
+		try {
+			Thread.currentThread().sleep(i);
+		} catch (InterruptedException e) {
+			
+		}
+		return i;
+	}
+	@Test
+	public void endsWith(){
+		assertTrue(SequenceM.of(1,2,3,4,5,6)
+				.endsWith(Arrays.asList(5,6)));
+	}
+	@Test
+	public void endsWithFalse(){
+		assertFalse(SequenceM.of(1,2,3,4,5,6)
+				.endsWith(Arrays.asList(5,6,7)));
+	}
+	@Test
+	public void endsWithToLong(){
+		assertFalse(SequenceM.of(1,2,3,4,5,6)
+				.endsWith(Arrays.asList(0,1,2,3,4,5,6)));
+	}
+	@Test
+	public void endsWithEmpty(){
+		assertTrue(SequenceM.of(1,2,3,4,5,6)
+				.endsWith(Arrays.asList()));
+	}
+	@Test
+	public void endsWithWhenEmpty(){
+		assertFalse(SequenceM.of()
+				.endsWith(Arrays.asList(1,2,3,4,5,6)));
+	}
+	@Test
+	public void endsWithBothEmpty(){
+		assertTrue(SequenceM.<Integer>of()
+				.endsWith(Arrays.asList()));
+	}
+	@Test
+	public void endsWithStream(){
+		assertTrue(SequenceM.of(1,2,3,4,5,6)
+				.endsWith(Stream.of(5,6)));
+	}
+	@Test
+	public void endsWithFalseStream(){
+		assertFalse(SequenceM.of(1,2,3,4,5,6)
+				.endsWith(Stream.of(5,6,7)));
+	}
+	@Test
+	public void endsWithToLongStream(){
+		assertFalse(SequenceM.of(1,2,3,4,5,6)
+				.endsWith(Stream.of(0,1,2,3,4,5,6)));
+	}
+	@Test
+	public void endsWithEmptyStream(){
+		assertTrue(SequenceM.of(1,2,3,4,5,6)
+				.endsWith(Stream.of()));
+	}
+	@Test
+	public void endsWithWhenEmptyStream(){
+		assertFalse(SequenceM.of()
+				.endsWith(Stream.of(1,2,3,4,5,6)));
+	}
+	@Test
+	public void endsWithBothEmptyStream(){
+		assertTrue(SequenceM.<Integer>of()
+				.endsWith(Stream.of()));
+	}
+	@Test
+	public void anyMTest(){
+		List<Integer> list = SequenceM.of(1,2,3,4,5,6)
+								.anyM().filter(i->i>3).asSequence().toList();
+		
+		assertThat(list,equalTo(Arrays.asList(4,5,6)));
+	}
+	@Test
+	public void streamable(){
+		Streamable<Integer> repeat = SequenceM.of(1,2,3,4,5,6)
+												.map(i->i+2)
+												.toStreamable();
+		
+		assertThat(repeat.sequenceM().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.sequenceM().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+	}
 	
+	@Test
+	public void concurrentLazyStreamable(){
+		Streamable<Integer> repeat = SequenceM.of(1,2,3,4,5,6)
+												.map(i->i+2)
+												.toConcurrentLazyStreamable();
+		
+		assertThat(repeat.sequenceM().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.sequenceM().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+	}
 	@Test
 	public void splitBy(){
 		assertThat( SequenceM.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4).v1.toList(),equalTo(Arrays.asList(1,2,3)));
@@ -38,6 +151,16 @@ public class SequenceMTest {
 											.toLazyCollection();
 		System.out.println("first!");
 		col.forEach(System.out::println);
+		assertThat(col.size(),equalTo(5));
+	}
+	@Test
+	public void testLazyCollection(){
+		Collection<Integer> col = SequenceM.of(1,2,3,4,5)
+											.peek(System.out::println)
+											.toConcurrentLazyCollection();
+		System.out.println("first!");
+		col.forEach(System.out::println);
+		assertThat(col.size(),equalTo(5));
 	}
 	int peek = 0;
 	@Test

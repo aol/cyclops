@@ -1,5 +1,8 @@
 package com.aol.cyclops.guava;
 
+import static com.aol.simple.react.stream.traits.LazyFutureStream.lazyFutureStream;
+import static org.jooq.lambda.Seq.seq;
+
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
@@ -17,13 +20,13 @@ public class ToStream {
         return fj.data.Stream.stream(s);
     }
     public static <T> Stream<T> toStream(FluentIterable<T> s){
-        return Seq.seq(s.iterator());
+        return seq(s.iterator());
     }
     public static <T> Seq<T> toJooqLambda(FluentIterable<T> s){
-        return Seq.seq(s.iterator());
+        return seq(s.iterator());
     }
     public static <T> LazyFutureStream<T> toFutureStream(FluentIterable<T> s){
-        return LazyFutureStream.of(s.iterator());
+        return lazyFutureStream(s.iterator());
     }
 
     public static <T> LazySeq<T> toLazySeq(FluentIterable<T> s){

@@ -24,6 +24,8 @@ public class BatchBySizeOperator<T, C extends Collection<T>> {
 		this.factory=factory2;
 	}
 	public Stream<C> batchBySize(int groupSize){
+		if(groupSize<1)
+			throw new IllegalArgumentException("Batch size must be 1 or more");
 		Iterator<T> it = stream.iterator();
 		return StreamUtils.stream(new Iterator<C>(){
 			

@@ -130,7 +130,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * </pre>
 	 * @return
 	 */
-	public final Optional<List<T>> unwrapOptional(){
+	public final Optional<List<T>> toOptional(){
 		return StreamUtils.streamToOptional(stream);
 		
 	}
@@ -145,7 +145,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * </pre>
 	 * @return
 	 */
-	public final CompletableFuture<List<T>> unwrapCompletableFuture(){
+	public final CompletableFuture<List<T>> toCompletableFuture(){
 		return StreamUtils.streamToCompletableFuture(stream);
 		
 		
@@ -263,7 +263,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public final Tuple2<Optional<T>,SequenceM<T>> splitSequenceAtHead(){
 		Tuple2<SequenceM<T>,SequenceM<T>> Tuple2 = splitAt(1);
-		return new Tuple2(Tuple2.v1.unwrapOptional()
+		return new Tuple2(Tuple2.v1.toOptional()
 							.flatMap( l-> l.size()>0 ? Optional.of(l.get(0)) : Optional.empty()  )
 							,Tuple2.v2);
 	} 
@@ -1205,7 +1205,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 		return reducer.mapReduce(reverse());
 	}
 	/**
-	 * @return Underlying monad converted to a Streamable instance
+	 * @return Underlying Stream (lazily) converted to a Streamable instance
 	 */
 	public final Streamable<T> toStreamable(){
 		return  AsStreamable.fromStream(stream());
@@ -1641,7 +1641,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return Streamable that can replay this SequenceM
 	 */
 	public Streamable<T> toLazyStreamable(){
-		return StreamUtils.toConcurrentLazyStreamable(stream);
+		return StreamUtils.toLazyStreamable(stream);
 	}
 	/**
 	 * @return Streamable that replay this SequenceM

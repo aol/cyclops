@@ -1,8 +1,15 @@
 package com.aol.cyclops.sequence;
 
+import static com.aol.cyclops.sequence.SequenceM.of;
+import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -35,8 +42,6 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import lombok.SneakyThrows;
-
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -68,7 +73,9 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * <pre>
 	 * {@code 
-	 *  assertThat(SequenceM.<Integer>of(Arrays.asList(1,2)).flatten().toList().size(),equalTo(asList(1,  2).size()));		
+	 *  SequenceM.of(Arrays.asList(1,2)).flatten();
+	 *  
+	 *  //stream of (1,  2);		
 	 *  
 	 *  // or more advanced example 
 	 *  
@@ -89,37 +96,37 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * Type safe unwrap 
 	 * <pre>
 	 * {@code 
-	 * Optional<List<String>> stream = anyM("hello","world")
-											.asSequence()
-											.unwrapOptional();
+	 * Optional<List<String>> stream = SequenceM.of("hello","world")
+												.toOptional();
+												
 		assertThat(stream.get(),equalTo(Arrays.asList("hello","world")));
 	 * }
 	 * 
 	 * </pre>
 	 * @return
 	 */
-	Optional<List<T>> unwrapOptional();
+	Optional<List<T>> toOptional();
 	/**
 	 * <pre>
 	 * {@code 
-	 * CompletableFuture<List<String>> cf = anyM("hello","world")
-											.asSequence()
-											.unwrapCompletableFuture();
+	 * CompletableFuture<List<String>> cf = SequenceM.of("hello","world")
+											.toCompletableFuture();
 		assertThat(cf.join(),equalTo(Arrays.asList("hello","world")));
 	 * }
 	 * </pre>
 	 * @return
 	 */
-	CompletableFuture<List<T>> unwrapCompletableFuture();
+	CompletableFuture<List<T>> toCompletableFuture();
 	
 	/**
 	 * Convert to a Stream with the values repeated specified times
 	 * 
 	 * <pre>
 	 * {@code 
-	 * 		assertThat(anyM(Stream.of(1,2,2)).asSequence()
-											.cycle(3).collect(Collectors.toList()),
-											equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
+	 * 		assertThat(SequenceM.of(1,2,2)
+								.cycle(3)
+								.collect(Collectors.toList()),
+								equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
 
 	 * 
 	 * }
@@ -134,7 +141,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * <pre>
 	 * {@code 
-	 *   assertEquals(asList(1, 1, 1, 1, 1,1),of(1).cycle().limit(6).toList());
+	 *   assertEquals(asList(1, 1, 1, 1, 1,1),SequenceM.of(1).cycle().limit(6).toList());
 	 *   }
 	 * </pre>
 	 * 
@@ -290,9 +297,9 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * <pre>
 	 * {@code
 	 * count =0;
-		assertThat(anyM(Stream.of(1,2,2)).asSequence()
-											.cycleWhile(next -> count++<6)
-											.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2)));
+		assertThat(SequenceM.of(1,2,2)
+							.cycleWhile(next -> count++<6)
+							.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2)));
 	 * }
 	 * </pre>
 	 * 
@@ -307,9 +314,9 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * <pre>
 	 * {@code 
 	 * 	count =0;
-		assertThat(anyM(Stream.of(1,2,2)).asSequence()
-											.cycleUntil(next -> count++>6)
-											.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2,1)));
+		assertThat(SequenceM.of(1,2,2)
+							.cycleUntil(next -> count++>6)
+							.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2,1)));
 
 	 * 
 	 * }
@@ -529,10 +536,10 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	/*
 	 * Return the distinct Stream of elements
 	 * 
-	 * <pre>{@code List<Integer> list =
-	 *        anyM(Optional.of(Arrays.asList(1,2,2,2,5,6)))
-	 *           .<Stream<Integer>,Integer>toSequence() .distinct()
-	 *				 .collect(Collectors.toList()); 
+	 * <pre>
+	 * {@code List<Integer> list =  SequenceM.of(1,2,2,2,5,6)
+	 *           	 						 .distinct()
+	 *				 						 .collect(Collectors.toList()); 
 	 * }
 	 *</pre>
 	 */
@@ -544,7 +551,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * <pre>
 	 * {@code  
 	 * 
-	 * 	assertEquals(asList("", "a", "ab", "abc"),monad(Stream.of("a", "b", "c")).scanLeft(Reducers.toString("")).toList());
+	 * 	assertEquals(asList("", "a", "ab", "abc"),SequenceM.of("a", "b", "c")
+	 * 													.scanLeft(Reducers.toString("")).toList());
 	 *         
 	 *         }
 	 * </pre>
@@ -600,7 +608,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	/**
 	 *<pre>
 	 * {@code 
-	 * 	assertThat(anyM(Stream.of(4,3,6,7)).asSequence().sorted((a,b) -> b-a).toList(),equalTo(Arrays.asList(7,6,4,3)));
+	 * 	assertThat(SequenceM.of(4,3,6,7).sorted((a,b) -> b-a).toList(),equalTo(Arrays.asList(7,6,4,3)));
 	 * }
 	 * </pre>
 	 * @param c
@@ -611,7 +619,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 
 	/**
 	 * <pre>
-	 * {@code assertThat(anyM(Stream.of(4,3,6,7)).asSequence().skip(2).toList(),equalTo(Arrays.asList(6,7))); }
+	 * {@code assertThat(SequenceM.of(4,3,6,7).skip(2).toList(),equalTo(Arrays.asList(6,7))); }
 	 * </pre>
 	 * 
 	
@@ -627,7 +635,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * <pre>
 	 * {@code
-	 * assertThat(anyM(Stream.of(4,3,6,7)).asSequence().sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
+	 * assertThat(SequenceM.of(4,3,6,7).sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
 	 * }
 	 * </pre>
 	 * 
@@ -642,7 +650,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * 
 	 * <pre>
-	 * {@code assertThat(anyM(Stream.of(4,3,6,7)).asSequence().skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));}
+	 * {@code assertThat(SequenceM.of(4,3,6,7).skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));}
 	 * </pre>
 	 * 
 	 * 
@@ -657,7 +665,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * 
 	 * <pre>
-	 * {@code assertThat(anyM(Stream.of(4,3,6,7)).asSequence().limit(2).toList(),equalTo(Arrays.asList(4,3)));}
+	 * {@code assertThat(SequenceM.of(4,3,6,7).limit(2).toList(),equalTo(Arrays.asList(4,3));}
 	 * </pre>
 	 * 
 	 * @param num
@@ -670,7 +678,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 *
 	 * 
 	 * <pre>
-	 * {@code assertThat(anyM(Stream.of(4,3,6,7)).asSequence().sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));}
+	 * {@code assertThat(SequenceM.of(4,3,6,7).sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));}
 	 * </pre>
 	 * 
 	 * @param p
@@ -682,7 +690,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * 
 	 * <pre>
-	 * {@code assertThat(anyM(Stream.of(4,3,6,7)).limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3))); }
+	 * {@code assertThat(SequenceM.of(4,3,6,7).limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3))); }
 	 * </pre>
 	 * 
 	 * @param p
@@ -691,7 +699,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 */
 	SequenceM<T> limitUntil(Predicate<? super T> p);
 	/**
-	 * @return this monad converted to a Parallel Stream, via streamedMonad() wraped in the SequenceM interface
+	 * @return Does nothing SequenceM is for Sequential Streams
+	 * 	 
 	 */
 	SequenceM<T> parallel();
 	
@@ -699,7 +708,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * True if predicate matches all elements when Monad converted to a Stream
 	 * <pre>
 	 * {@code 
-	 * assertThat(of(1,2,3,4,5).allMatch(it-> it>0 && it <6),equalTo(true));
+	 * assertThat(SequenceM.of(1,2,3,4,5).allMatch(it-> it>0 && it <6),equalTo(true));
 	 * }
 	 * </pre>
 	 * @param c Predicate to check if all match
@@ -709,7 +718,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * True if a single element matches when Monad converted to a Stream
 	 * <pre>
 	 * {@code 
-	 * assertThat(of(1,2,3,4,5).anyMatch(it-> it.equals(3)),equalTo(true));
+	 * assertThat(SequenceM.of(1,2,3,4,5).anyMatch(it-> it.equals(3)),equalTo(true));
 	 * }
 	 * </pre>
 	 * @param c Predicate to check if any match
@@ -738,7 +747,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	/**
 	 * <pre>
 	 * {@code
-	 *  assertEquals("123".length(),of(1, 2, 3).join().length());
+	 *  assertEquals("123".length(),SequenceM.of(1, 2, 3).join().length());
 	 * }
 	 * </pre>
 	 * 
@@ -748,7 +757,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	/**
 	 * <pre>
 	 * {@code
-	 * assertEquals("1, 2, 3".length(), of(1, 2, 3).join(", ").length());
+	 * assertEquals("1, 2, 3".length(), SequenceM.of(1, 2, 3).join(", ").length());
 	 * }
 	 * </pre>
 	 * @return Stream as concatenated String
@@ -820,21 +829,42 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	
 	/**
 	 * @return First matching element in sequential order
+	 * <pre>
+	 * {@code
+	 * SequenceM.of(1,2,3,4,5).filter(it -> it <3).findFirst().get();
 	 * 
+	 * //3
+	 * }
+	 * </pre>
 	 * (deterministic)
 	 * 
 	 */
 	Optional<T>  findFirst() ;
 	/**
 	 * @return first matching element,  but order is not guaranteed
+	 * <pre>
+	 * {@code
+	 * SequenceM.of(1,2,3,4,5).filter(it -> it <3).findAny().get();
+	 * 
+	 * //3
+	 * }
+	 * </pre>
+	 * 
 	 * 
 	 * (non-deterministic) 
 	 */
 	 Optional<T>  findAny();
 	
 	/**
-	 * Attempt to map this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
+	 * Attempt to map this Sequence to the same type as the supplied Monoid (Reducer)
 	 * Then use Monoid to reduce values
+	 * <pre>
+	 * {@code 
+	 * SequenceM.of("hello","2","world","4").mapReduce(Reducers.toCountInt());
+	 * 
+	 * //4
+	 * }
+	 * </pre>
 	 * 
 	 * @param reducer Monoid to reduce values
 	 * @return Reduce result
@@ -843,6 +873,27 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	/**
 	 *  Attempt to map this Monad to the same type as the supplied Monoid, using supplied function
 	 *  Then use Monoid to reduce values
+	 *  
+	 *  <pre>
+	 *  {@code
+	 *  SequenceM.of("one","two","three","four")
+	 *           .mapReduce(this::toInt,Reducers.toTotalInt());
+	 *  
+	 *  //10
+	 *  
+	 *  int toInt(String s){
+		if("one".equals(s))
+			return 1;
+		if("two".equals(s))
+			return 2;
+		if("three".equals(s))
+			return 3;
+		if("four".equals(s))
+			return 4;
+		return -1;
+	   }
+	 *  }
+	 *  </pre>
 	 *  
 	 * @param mapper Function to map Monad type
 	 * @param reducer Monoid to reduce values
@@ -891,7 +942,12 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	<R> List<R> collectIterable(Iterable<Collector> collectors);
 	
 	/**
+	 * <pre>
+	 * {@code 
+	 * SequenceM.of("hello","2","world","4").reduce(Reducers.toString(","));
 	 * 
+	 * //hello,2,world,4
+	 * }</pre>
 	 * 
 	 * @param reducer Use supplied Monoid to reduce values
 	 * @return reduced values
@@ -921,6 +977,20 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was one value
 	 * To reduce over the values on the list, called streamedMonad() first. I.e. streamedMonad().reduce(reducer)
 	 * 
+	 * <pre>
+	 * {@code 
+	 * Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
+	   Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
+	   List<Integer> result = SequenceM.of(1,2,3,4)
+						.reduce(Arrays.asList(sum,mult).stream() );
+				
+		 
+		assertThat(result,equalTo(Arrays.asList(10,24)));
+	 * 
+	 * }
+	 * </pre>
+	 * 
+	 * 
 	 * @param reducers
 	 * @return
 	 */
@@ -930,6 +1000,18 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was one value
 	 * To reduce over the values on the list, called streamedMonad() first. I.e. streamedMonad().reduce(reducer)
 	 * 
+	 * <pre>
+	 * {@code 
+	 * Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
+		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
+		List<Integer> result = SequenceM.of(1,2,3,4))
+										.reduce(Arrays.asList(sum,mult) );
+				
+		 
+		assertThat(result,equalTo(Arrays.asList(10,24)));
+	 * 
+	 * }
+	 * 
 	 * @param reducers
 	 * @return
 	 */
@@ -937,7 +1019,14 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	
 	/**
 	 * 
-	 * 
+	 *  
+		<pre>
+		{@code
+		SequenceM.of("a","b","c").foldLeft(Reducers.toString(""));
+       
+        // "abc"
+        }
+        </pre>
 	 * @param reducer Use supplied Monoid to reduce values starting via foldLeft
 	 * @return Reduced result
 	 */
@@ -956,13 +1045,26 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 *  Attempt to map this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
 	 * Then use Monoid to reduce values
 	 * 
+	 * <pre>
+		{@code
+		SequenceM.of(1,2,3).foldLeftMapToType(Reducers.toString(""));
+       
+        // "123"
+        }
+        </pre>
 	 * @param reducer Monoid to reduce values
 	 * @return Reduce result
 	 */
 	<T> T foldLeftMapToType(Monoid<T> reducer);
 	/**
 	 * 
-	 * 
+	 * <pre>
+		{@code
+		SequenceM.of("a","b","c").foldRight(Reducers.toString(""));
+       
+        // "cab"
+        }
+        </pre>
 	 * @param reducer Use supplied Monoid to reduce values starting via foldRight
 	 * @return Reduced result
 	 */
@@ -983,32 +1085,55 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	/**
 	 *  Attempt to map this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
 	 * Then use Monoid to reduce values
+	 * <pre>
+		{@code
+		SequenceM.of(1,2,3).foldRightMapToType(Reducers.toString(""));
+       
+        // "321"
+        }
+        </pre>
+	 * 
 	 * 
 	 * @param reducer Monoid to reduce values
 	 * @return Reduce result
 	 */
 	public <T> T foldRightMapToType(Monoid<T> reducer);
 	/**
-	 * @return Underlying monad converted to a Streamable instance
+	 * <pre>
+	 * {@code 
+	 * 	Streamable<Integer> repeat = SequenceM.of(1,2,3,4,5,6)
+												.map(i->i*2)
+												.toStreamable();
+		
+		repeat.sequenceM().toList(); //Arrays.asList(2,4,6,8,10,12));
+		repeat.sequenceM().toList() //Arrays.asList(2,4,6,8,10,12));
+	 * 
+	 * }
+	 * 
+	 * @return Lazily Convert to a repeatable Streamable
+	 * 
 	 */
 	public  Streamable<T> toStreamable();
 	/**
-	 * @return This monad converted to a set
+	 * @return This Stream converted to a set
 	 */
 	public Set<T> toSet();
 	/**
-	 * @return this monad converted to a list
+	 * @return this Stream converted to a list
 	 */
 	public  List<T> toList();
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#toCollection(java.util.function.Supplier)
+	 */
 	public  <C extends Collection<T>> C toCollection(Supplier<C> collectionFactory);
 	/**
+	 * Convert this SequenceM into a Stream
+	 *  
 	 * @return  calls to stream() but more flexible on type for inferencing purposes.
 	 */
 	public  <T> Stream<T> toStream();
 	/**
-	 * Unwrap this Monad into a Stream.
-	 * If the underlying monad is a Stream it is returned
-	 * Otherwise we flatMap the underlying monad to a Stream type
+	 * Convert this SequenceM into a Stream
 	 */
 	public Stream<T> stream();
 	
@@ -1016,7 +1141,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * <pre>
 	 * {@code 
-	 *  assertTrue(monad(Stream.of(1,2,3,4)).startsWith(Arrays.asList(1,2,3)));
+	 *  assertTrue(SequenceM.of(1,2,3,4).startsWith(Arrays.asList(1,2,3)));
 	 * }</pre>
 	 * 
 	 * @param iterable
@@ -1024,7 +1149,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 */
 	boolean startsWith(Iterable<T> iterable);
 	/**
-	 * 	<pre>{@code assertTrue(monad(Stream.of(1,2,3,4)).startsWith(Arrays.asList(1,2,3).iterator())) }</pre>
+	 * 	<pre>{@code assertTrue(SequenceM.of(1,2,3,4).startsWith(Arrays.asList(1,2,3).iterator())) }</pre>
 
 	 * @param iterator
 	 * @return True if Monad starts with Iterators sequence of data
@@ -1039,15 +1164,19 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @see java.util.stream.Stream#map(java.util.function.Function)
 	 */
 	<R> SequenceM<R> map(Function<? super T,? extends R> fn);
+	
 	/* (non-Javadoc)
 	 * @see java.util.stream.Stream#peek(java.util.function.Consumer)
 	 */
 	SequenceM<T>  peek(Consumer<? super T> c) ;
+	
 	/**
 	 * flatMap operation
 	 * <pre>
 	 * {@code
-	 * 	assertThat(this.<Integer>of(1,2).flatMap(i -> asList(i, -i).stream()).toList(),equalTo(asList(1, -1, 2, -2)));		
+	 * 	assertThat(SequenceM.of(1,2)
+	 * 						.flatMap(i -> asList(i, -i).stream())
+	 * 						.toList(),equalTo(asList(1, -1, 2, -2)));		
  
 	 * }
 	 * </pre>
@@ -1059,7 +1188,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * Allows flatMap return type to be any Monad type
 	 * <pre>
 	 * {@code 
-	 * 	assertThat(anyM(Seq.of(1,2,3)).asSequence().flatMapAnyM(i-> anyM(CompletableFuture.completedFuture(i+2))).toList(),equalTo(Arrays.asList(3,4,5)));
+	 * 	assertThat(SequenceM.of(1,2,3)).flatMapAnyM(i-> anyM(CompletableFuture.completedFuture(i+2))).toList(),equalTo(Arrays.asList(3,4,5)));
 
 	 * }</pre>
 	 * 
@@ -1069,26 +1198,18 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 */
 	<R> SequenceM<R> flatMapAnyM(Function<? super T,AnyM<? extends R>> fn);
 	/**
-	 * Convenience method & performance optimisation
+	 * FlatMap where the result is a Collection, flattens the resultant collections into the
+	 * host SequenceM
+	 * <pre>
+	 * {@code 
+	 * 	SequenceM.of(1,2)
+	 * 			.flatMap(i -> asList(i, -i))
+	 *          .toList();
+	 *          
+	 *   //1,-1,2,-2       
+	 * }
+	 * </pre>
 	 * 
-	 * flatMapping to a Stream will result in the Stream being converted to a List, if the host Monad
-	 * type is not a Stream. (i.e.
-	 *  <pre>
-	 *  {@code  
-	 *   AnyM<Integer> opt = anyM(Optional.of(20));
-	 *   Optional<List<Integer>> optionalList = opt.flatMap( i -> anyM(Stream.of(1,2,i))).unwrap();  
-	 *   
-	 *   //Optional [1,2,20]
-	 *  }</pre>
-	 *  
-	 *  In such cases using Arrays.asList would be more performant
-	 *  <pre>
-	 *  {@code  
-	 *   AnyM<Integer> opt = anyM(Optional.of(20));
-	 *   Optional<List<Integer>> optionalList = opt.flatMapCollection( i -> asList(1,2,i))).unwrap();  
-	 *   
-	 *   //Optional [1,2,20]
-	 *  }</pre>
 	 * @param fn
 	 * @return
 	 */
@@ -1098,7 +1219,9 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * <pre>
 	 * {@code 
-	 * 	assertThat(anyM(Stream.of(1,2,3)).asSequence().flatMapStream(i->Stream.of(i)).toList(),equalTo(Arrays.asList(1,2,3)));
+	 * 	assertThat(SequenceM.of(1,2,3)
+	 *                      .flatMapStream(i->IntStream.of(i))
+	 *                      .toList(),equalTo(Arrays.asList(1,2,3)));
 
 	 * }
 	 * </pre>
@@ -1111,9 +1234,10 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * flatMap to optional - will result in null values being removed
 	 * <pre>
 	 * {@code 
-	 * 	assertThat(SequenceM.of(1,2,3,null).flatMapOptional(Optional::ofNullable)
-			      										.collect(Collectors.toList()),
-			      										equalTo(Arrays.asList(1,2,3)));
+	 * 	assertThat(SequenceM.of(1,2,3,null)
+	 *                      .flatMapOptional(Optional::ofNullable)
+			      			.collect(Collectors.toList()),
+			      			equalTo(Arrays.asList(1,2,3)));
 	 * }
 	 * </pre>
 	 * @param fn
@@ -1143,9 +1267,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * <pre>
 	 * {@code 
-	 *   List<Character> result = anyM("input.file")
-									.asSequence()
-									.liftAndBindCharSequence(i->"hello world")
+	 *   List<Character> result = SequenceM.of("input.file")
+									.flatMapCharSequence(i->"hello world")
 									.toList();
 		
 		assertThat(result,equalTo(Arrays.asList('h','e','l','l','o',' ','w','o','r','l','d')));
@@ -1163,12 +1286,11 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * <pre>
 	 * {@code
 	 * 
-		List<String> result = anyM("input.file")
-								.asSequence()
+		List<String> result = SequenceM.of("input.file")
 								.map(getClass().getClassLoader()::getResource)
 								.peek(System.out::println)
 								.map(URL::getFile)
-								.liftAndBindFile(File::new)
+								.flatMapFile(File::new)
 								.toList();
 		
 		assertThat(result,equalTo(Arrays.asList("hello","world")));
@@ -1187,9 +1309,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * <pre>
 	 * {@code 
-	 * List<String> result = anyM("input.file")
-								.asSequence()
-								.liftAndBindURL(getClass().getClassLoader()::getResource)
+	 * List<String> result = SequenceM.of("input.file")
+								.flatMapURL(getClass().getClassLoader()::getResource)
 								.toList();
 		
 		assertThat(result,equalTo(Arrays.asList("hello","world")));
@@ -1206,8 +1327,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * from the text loaded from the supplied BufferedReaders
 	 * 
 	 * <pre>
-	 * List<String> result = anyM("input.file")
-								.asSequence()
+	 * List<String> result = SequenceM.of("input.file")
 								.map(getClass().getClassLoader()::getResourceAsStream)
 								.map(InputStreamReader::new)
 								.liftAndBindBufferedReader(BufferedReader::new)
@@ -1222,46 +1342,30 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @return
 	 */
 	SequenceM<String> flatMapBufferedReader(Function<? super T,BufferedReader> fn);
-	public  SequenceM<T>  filter(Predicate<? super T> fn);
-	void forEach(Consumer<? super T> action);
+
+	/* (non-Javadoc)
+	 * @see java.util.stream.Stream#filter(java.util.function.Predicate)
+	 */
+	SequenceM<T>  filter(Predicate<? super T> fn);
+
 	
 	
-	Iterator<T> iterator();
-	 Spliterator<T> spliterator() ;
+
 	
-	boolean isParallel() ;
-	
+	/* (non-Javadoc)
+	 * @see java.util.stream.BaseStream#sequential()
+	 */
 	SequenceM<T> sequential() ;
 	
 	
+	/* (non-Javadoc)
+	 * @see java.util.stream.BaseStream#unordered()
+	 */
 	SequenceM<T> unordered();
 	
 	
 	
 	
-	IntStream mapToInt(ToIntFunction<? super T> mapper);
-	
-	LongStream mapToLong(ToLongFunction<? super T> mapper);
-	
-	public DoubleStream mapToDouble(ToDoubleFunction<? super T> mapper);
-	
-	public IntStream flatMapToInt(
-			Function<? super T, ? extends IntStream> mapper);
-	
-	public LongStream flatMapToLong(
-			Function<? super T, ? extends LongStream> mapper) ;
-	
-	public DoubleStream flatMapToDouble(
-			Function<? super T, ? extends DoubleStream> mapper) ;
-
-	
-	public void forEachOrdered(Consumer<? super T> action);
-	
-	public Object[] toArray();
-	
-	public <A> A[] toArray(IntFunction<A[]> generator) ;
-	
-	public long count();
 	/**
 	 * Returns a stream with a given value interspersed between any two values
 	 * of this stream.
@@ -1270,7 +1374,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * // (1, 0, 2, 0, 3, 0, 4) SequenceM.of(1, 2, 3, 4).intersperse(0)
 	 * 
 	 */
-	public  SequenceM<T> intersperse(T value) ;
+	SequenceM<T> intersperse(T value);
 	/**
 	 * Keep only those elements in a stream that are of a given type.
 	 * 
@@ -1279,7 +1383,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	public <U> SequenceM<U> ofType(Class<U> type);
+	<U> SequenceM<U> ofType(Class<U> type);
+	
 	/**
 	 * Cast all elements in a stream to a given type, possibly throwing a
 	 * {@link ClassCastException}.
@@ -1288,7 +1393,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * // ClassCastException SequenceM.of(1, "a", 2, "b", 3).cast(Integer.class)
 	 * 
 	 */
-	public <U> SequenceM<U> cast(Class<U> type);
+	<U> SequenceM<U> cast(Class<U> type);
+	
 	/**
 	 * Lazily converts this SequenceM into a Collection. This does not trigger the Stream. E.g.
 	 * Collection is not thread safe on the first iteration.
@@ -1305,7 +1411,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * </pre>
 	 * @return
 	 */
-	public Collection<T> toLazyCollection();
+	Collection<T> toLazyCollection();
 	/**
 	 * Lazily converts this SequenceM into a Collection. This does not trigger the Stream. E.g.
 	 * 
@@ -1322,30 +1428,60 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * </pre>
 	 * @return
 	 */
-	public Collection<T> toConcurrentLazyCollection();
+	 Collection<T> toConcurrentLazyCollection();
+	
 	
 	/**
-	 * @return Streamable that can replay this SequenceM
-	 */
-	public Streamable<T> toLazyStreamable();
-	/**
-	 * @return Streamable that replay this SequenceM
+	 * <pre>
+	 * {@code 
+	 * Streamable<Integer> repeat = SequenceM.of(1,2,3,4,5,6)
+												.map(i->i+2)
+												.toConcurrentLazyStreamable();
+		
+		assertThat(repeat.sequenceM().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.sequenceM().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+	 * }
+	 * </pre>
+	 * @return Streamable that replay this SequenceM, populated lazily and can be populated
+	 * across threads
 	 */
 	public Streamable<T> toConcurrentLazyStreamable();
+	
+	/* 
+	 * Potentially efficient Sequence reversal. Is efficient if
+	 * 
+	 * - Sequence created via a range
+	 * - Sequence created via a List
+	 * - Sequence created via an Array / var args
+	 * 
+	 * Otherwise Sequence collected into a Collection prior to reversal
+	 * 
+	 * <pre>
+	 * {@code
+	 *  assertThat( of(1, 2, 3).reverse().toList(), equalTo(asList(3, 2, 1)));
+	 *  }
+	 * </pre>
+	 */
 	public SequenceM<T> reverse();
 	
+	/* (non-Javadoc)
+	 * @see java.util.stream.BaseStream#onClose(java.lang.Runnable)
+	 */
 	@Override
 	public SequenceM<T> onClose(Runnable closeHandler) ;
-	@Override
-	public void close();
 	
+	
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#shuffle()
+	 */
 	public SequenceM<T> shuffle();
 	/**
 	 * Append Stream to this SequenceM
 	 * 
 	 * <pre>
 	 * {@code 
-	 * List<String> result = 	of(1,2,3).appendStream(of(100,200,300))
+	 * List<String> result = 	SequenceM.of(1,2,3)
+	 *                                  .appendStream(SequenceM.of(100,200,300))
 										.map(it ->it+"!!")
 										.collect(Collectors.toList());
 
@@ -1362,8 +1498,10 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * <pre>
 	 * {@code 
-	 * List<String> result = of(1,2,3).prependStream(of(100,200,300))
-				.map(it ->it+"!!").collect(Collectors.toList());
+	 * List<String> result = SequenceM.of(1,2,3)
+	 * 								  .prependStream(of(100,200,300))
+									  .map(it ->it+"!!")
+									  .collect(Collectors.toList());
 
 			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
 	 * 
@@ -1378,7 +1516,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * Append values to the end of this SequenceM
 	 * <pre>
 	 * {@code 
-	 * List<String> result = 	of(1,2,3).append(100,200,300)
+	 * List<String> result = SequenceM.of(1,2,3)
+	 * 								   .append(100,200,300)
 										.map(it ->it+"!!")
 										.collect(Collectors.toList());
 
@@ -1393,8 +1532,10 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * Prepend given values to the start of the Stream
 	 * <pre>
 	 * {@code 
-	 * List<String> result = 	of(1,2,3).prepend(100,200,300)
-				.map(it ->it+"!!").collect(Collectors.toList());
+	 * List<String> result = 	SequenceM.of(1,2,3)
+	 * 									 .prepend(100,200,300)
+										 .map(it ->it+"!!")
+										 .collect(Collectors.toList());
 
 			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
 	 * }
@@ -1406,8 +1547,10 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * Insert data into a stream at given position
 	 * <pre>
 	 * {@code 
-	 * List<String> result = 	of(1,2,3).insertAt(1,100,200,300)
-				.map(it ->it+"!!").collect(Collectors.toList());
+	 * List<String> result = 	SequenceM.of(1,2,3)
+	 * 									 .insertAt(1,100,200,300)
+										 .map(it ->it+"!!")
+										 .collect(Collectors.toList());
 
 			assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
 	 * 
@@ -1422,8 +1565,10 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * Delete elements between given indexes in a Stream
 	 * <pre>
 	 * {@code 
-	 * List<String> result = 	of(1,2,3,4,5,6).deleteBetween(2,4)
-				.map(it ->it+"!!").collect(Collectors.toList());
+	 * List<String> result = 	SequenceM.of(1,2,3,4,5,6)
+	 * 									 .deleteBetween(2,4)
+										 .map(it ->it+"!!")
+										 .collect(Collectors.toList());
 
 			assertThat(result,equalTo(Arrays.asList("1!!","2!!","5!!","6!!")));
 	 * }
@@ -1437,8 +1582,10 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * Insert a Stream into the middle of this stream at the specified position
 	 * <pre>
 	 * {@code 
-	 * List<String> result = 	of(1,2,3).insertStreamAt(1,of(100,200,300))
-				.map(it ->it+"!!").collect(Collectors.toList());
+	 * List<String> result = 	SequenceM.of(1,2,3)
+	 * 									 .insertStreamAt(1,of(100,200,300))
+										 .map(it ->it+"!!")
+										 .collect(Collectors.toList());
 
 			assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
 	 * }
@@ -1448,11 +1595,76 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @return newly conjoined SequenceM
 	 */
 	SequenceM<T> insertStreamAt(int pos, Stream<T> stream);
+	
+	/**
+	 * Access asynchronous terminal operations (each returns a Future)
+	 * 
+	 * @param exec Executor to use for Stream execution
+	 * @return Async Future Terminal Operations
+	 */
 	FutureOperations<T> futureOperations(Executor exec);
 	
+	/**
+	 * <pre>
+	 * {@code
+	 *  assertTrue(SequenceM.of(1,2,3,4,5,6)
+				.endsWith(Arrays.asList(5,6)));
+	 * 
+	 * }
+	 * 
+	 * @param iterable Values to check 
+	 * @return true if SequenceM ends with values in the supplied iterable
+	 */
 	boolean endsWith(Iterable<T> iterable);
-	boolean endsWith(Stream<T> iterable);
+	/**
+	 * <pre>
+	 * {@code
+	 * assertTrue(SequenceM.of(1,2,3,4,5,6)
+				.endsWith(Stream.of(5,6))); 
+	 * }
+	 * </pre>
+	 * 
+	 * @param stream Values to check 
+	 * @return true if SequenceM endswith values in the supplied Stream
+	 */
+	boolean endsWith(Stream<T> stream);
+	/**
+	 * Skip all elements until specified time period has passed
+	 * <pre>
+	 * {@code 
+	 * List<Integer> result = SequenceM.of(1,2,3,4,5,6)
+										.peek(i->sleep(i*100))
+										.skip(1000,TimeUnit.MILLISECONDS)
+										.toList();
+		
+		
+		//[4,5,6]
+	 * 
+	 * }
+	 * </pre>
+	 * 
+	 * @param time Length of time
+	 * @param unit Time unit
+	 * @return SequenceM that skips all elements until time period has elapsed
+	 */
 	SequenceM<T> skip(long time, final TimeUnit unit);
+	/**
+	 * Return all elements until specified time period has elapsed
+	 * <pre>
+	 * {@code 
+	 * List<Integer> result = SequenceM.of(1,2,3,4,5,6)
+										.peek(i->sleep(i*100))
+										.limit(1000,TimeUnit.MILLISECONDS)
+										.toList();
+		
+		
+		//[1,2,3,4]
+	 * }
+	 * </pre>
+	 * @param time Length of time
+	 * @param unit Time unit
+	 * @return SequenceM that returns all elements until time period has elapsed
+	 */
 	SequenceM<T> limit(long time, final TimeUnit unit);
 	SequenceM<T> skipLast(int num);
 	SequenceM<T> limitLast(int num);
@@ -1467,12 +1679,19 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 			 }
 		throw new UnsupportedOperationException("single only works for Streams with a single value");
 	}
-//	<X extends Throwable,R> SequenceM<T> onFail(Class<X> e,Function<X,R> fn);
+
 	default Optional<T> elementAt(long index){
 		return this.zipWithIndex()
 				   .filter(t->t.v2==index)
 				   .findFirst()
 				   .map(t->t.v1());
+	}
+	default Tuple2<T,SequenceM<T>> get(long index){
+		 Tuple2<SequenceM<T>, SequenceM<T>> tuple = this.duplicateSequence();
+		 return tuple.map1(s->s.zipWithIndex()
+				   .filter(t->t.v2==index)
+				   .findFirst()
+				   .map(t->t.v1()).get());
 	}
 	
 	default SequenceM<Tuple2<T,Long>> elapsed(){
@@ -1487,11 +1706,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 		return zip(SequenceM.generate( ()->System.currentTimeMillis()));
 	}
 	
-//	void publish(Subscriber sub);
-	
-//	batchBySize();
-//	batchByTime();
-//	batchBySizeAndTime()
+
 	
 	public static <T> Subscriber<T> subscriber(){
 		return ReactiveStreamsLoader.subscriber.get().subscribe();

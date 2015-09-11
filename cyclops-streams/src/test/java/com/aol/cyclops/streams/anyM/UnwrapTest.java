@@ -24,28 +24,28 @@ public class UnwrapTest {
 	public void unwrapOptional(){
 		Optional<List<String>> stream = anyM("hello","world")
 											.asSequence()
-											.unwrapOptional();
+											.toOptional();
 		assertThat(stream.get(),equalTo(Arrays.asList("hello","world")));
 	}
 	@Test
 	public void unwrapOptionalList(){
 		Optional<List<String>> stream = anyM(Optional.of(Arrays.asList("hello","world")))
 												.<String>toSequence()
-												.unwrapOptional();
+												.toOptional();
 		assertThat(stream.get(),equalTo(Arrays.asList("hello","world")));
 	}
 	@Test
 	public void unwrapCompletableFuture(){
 		CompletableFuture<List<String>> cf = anyM("hello","world")
 											.asSequence()
-											.unwrapCompletableFuture();
+											.toCompletableFuture();
 		assertThat(cf.join(),equalTo(Arrays.asList("hello","world")));
 	}
 	@Test
 	public void unwrapCompletableFutureList(){
 		CompletableFuture<List<String>> cf = anyM(CompletableFuture.completedFuture(Arrays.asList("hello","world")))
 												.<String>toSequence()
-												.unwrapCompletableFuture();
+												.toCompletableFuture();
 		assertThat(cf.join(),equalTo(Arrays.asList("hello","world")));
 	}
 }

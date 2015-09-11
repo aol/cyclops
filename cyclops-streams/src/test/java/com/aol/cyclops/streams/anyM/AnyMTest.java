@@ -40,13 +40,14 @@ public class AnyMTest {
 	public void testForEach() {
 		   anyM(Stream.of(asList(1,3)))
 				  				.flatMap(c->anyM(c.stream()))
+				  				.toSequence()
 				  				.forEach(System.out::println);
 				  				
 	}
 	@Test
 	public void testForEachCf() {
 		   anyM(CompletableFuture.completedFuture(asList(1,3)))
-				  
+		   						.toSequence()
 				  				.forEach(System.out::println);
 				  				
 	}

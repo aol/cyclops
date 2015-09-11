@@ -107,7 +107,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @param fn
 	 * @return
 	 */
-	public final  AnyM<Character> liftAndBindCharSequence(Function<? super T,CharSequence> fn) {
+	public final  AnyM<Character> flatMapCharSequence(Function<? super T,CharSequence> fn) {
 		return monad.liftAndBind(fn).anyM();
 	}
 	/**
@@ -133,7 +133,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @param fn
 	 * @return
 	 */
-	public final  AnyM<String> liftAndBindFile(Function<? super T,File> fn) {
+	public final  AnyM<String> flatMapFile(Function<? super T,File> fn) {
 		return monad.liftAndBind(fn).anyM();
 	}
 	/**
@@ -156,7 +156,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @param fn
 	 * @return
 	 */
-	public final  AnyM<String> liftAndBindURL(Function<? super T, URL> fn) {
+	public final  AnyM<String> flatMapURL(Function<? super T, URL> fn) {
 		return monad.liftAndBind(fn).anyM();
 	}
 	/**
@@ -181,7 +181,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @param fn
 	 * @return
 	 */
-	public final  AnyM<String> liftAndBindBufferedReader(Function<? super T,BufferedReader> fn) {
+	public final  AnyM<String> flatMapBufferedReader(Function<? super T,BufferedReader> fn) {
 		return monad.liftAndBind(fn).anyM();
 	}
 	
@@ -483,7 +483,6 @@ public class AnyMImpl<T> implements AnyM<T>{
 		return monad.reduceM(Monoid.of(reducer.zero().unwrap(), (a,b)-> reducer.combiner().apply(AsAnyM.notTypeSafeAnyM(a), 
 				AsAnyM.notTypeSafeAnyM(b)))).anyM();		
 	}
-	
 	
 	
 	@Override

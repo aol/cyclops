@@ -73,6 +73,7 @@ public class BaseSequentialTest {
 
 			assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
 		}
+		
 		@Test
 		public void prependStreams(){
 		List<String> result = 	of(1,2,3).prependStream(of(100,200,300))
@@ -230,29 +231,7 @@ public class BaseSequentialTest {
 			
 		}
 
-	    @Test
-	    public void testScanLeftStringConcat() {
-	        assertThat(of("a", "b", "c").scanLeft("", String::concat).toList(),
-	        		is(asList("", "a", "ab", "abc")));
-	    }
-	    @Test
-	    public void testScanLeftSum() {
-	    	assertThat(of("a", "ab", "abc").map(str->str.length()).scanLeft(0, (u, t) -> u + t).toList(), 
-	    			is(asList(0, 1, 3, 6)));
-	    }
-
-	    @Test
-	    public void testScanRightStringConcat() {
-	        assertThat(of("a", "b", "c").scanRight("", String::concat).toList(),
-	            is(asList("", "c", "bc", "abc")));
-	    }
-	    @Test
-	    public void testScanRightSum() {
-	    	assertThat(of("a", "ab", "abc").map(str-> str.length()).scanRight(0, (t, u) -> u + t).toList(),
-	            is(asList(0, 3, 5, 6)));
-
-	        
-	    }
+	 
 
 	    
 

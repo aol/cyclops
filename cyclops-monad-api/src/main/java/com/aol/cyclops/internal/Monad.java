@@ -88,7 +88,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,Functor<T>, Filt
 			return StreamSupport.stream(((Iterable)unwrap()).spliterator(), false);
 		Stream stream = Stream.of(1);
 		return (Stream)withMonad((Stream)new ComprehenderSelector().selectComprehender(
-				stream).executeflatMap(stream, i-> unwrap()))//.flatMap(Function.identity())
+				stream).executeflatMap(stream, i-> unwrap()))
 				.unwrap();
 		
 	}

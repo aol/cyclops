@@ -50,8 +50,7 @@ public interface Monoid<T> {
 	default BinaryOperator<T> reducer(){
 		return (a,b) -> combiner().apply(a,b);
 	}
-	//Options : split this interface into 2 with Reducer extends Monoid and move all
-	//non monoid code into Reducer - or rename this interface as Reducer
+	
 	default Stream<T> mapToType(Stream stream){
 		return (Stream)stream;
 	}
@@ -77,7 +76,7 @@ public interface Monoid<T> {
 		return reduce(mapToType(toReduce));
 	}
 	default T reduce(Stream<T> toReduce){
-		return toReduce.reduce(zero(),reducer());
+		return toReduce.reduce(reducer()).orElse(zero());
 	}
 	
 	public static <T> Monoid<T> of(T zero, Function<T,Function<T,T>> combiner,Function<?,T> mapToType){

@@ -85,7 +85,7 @@ public interface AnyM<T> extends Unwrapable{
 	 * @param fn
 	 * @return
 	 */
-	  AnyM<Character> liftAndBindCharSequence(Function<? super T,CharSequence> fn);
+	  AnyM<Character> flatMapCharSequence(Function<? super T,CharSequence> fn);
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
 	 * from the text loaded from the supplied files.
@@ -109,7 +109,7 @@ public interface AnyM<T> extends Unwrapable{
 	 * @param fn
 	 * @return
 	 */
-	  AnyM<String> liftAndBindFile(Function<? super T,File> fn);
+	  AnyM<String> flatMapFile(Function<? super T,File> fn);
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
 	 * from the text loaded from the supplied URLs 
@@ -130,7 +130,7 @@ public interface AnyM<T> extends Unwrapable{
 	 * @param fn
 	 * @return
 	 */
-	  AnyM<String> liftAndBindURL(Function<? super T, URL> fn) ;
+	  AnyM<String> flatMapURL(Function<? super T, URL> fn) ;
 	/**
 	  *  Perform a flatMap operation where the result will be a flattened stream of Strings
 	 * from the text loaded from the supplied BufferedReaders
@@ -153,7 +153,7 @@ public interface AnyM<T> extends Unwrapable{
 	 * @param fn
 	 * @return
 	 */
-	  AnyM<String> liftAndBindBufferedReader(Function<? super T,BufferedReader> fn) ;
+	  AnyM<String> flatMapBufferedReader(Function<? super T,BufferedReader> fn) ;
 	
 	/**
 	 * join / flatten one level of a nested hierarchy
@@ -180,8 +180,7 @@ public interface AnyM<T> extends Unwrapable{
 	 */
 	  AnyM<T> aggregate(AnyM<T> next);
 	  <R> AnyM<List<R>> aggregateUntyped(AnyM<?> next);
-	@Deprecated //to be removed in 6.0.0
-	public void forEach(Consumer<? super T> action);
+	
 	
 	/**
 	 * flatMap operation
@@ -382,5 +381,10 @@ public interface AnyM<T> extends Unwrapable{
 	
 	@Override
     public String toString() ;
-	
+	default Optional<List<T>> toOptional(){
+		return this.<T>toSequence().toOptional();
+	}
+	default CompletableFuture<List<T>> toCompletableFuture(){
+		return this.<T>toSequence().toCompletableFuture();
+	}
 }

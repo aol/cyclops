@@ -22,11 +22,11 @@ public class Reducers {
 		return Monoid.of("", (a,b) -> a + joiner +b);
 	}
 	public static Monoid<Integer> toTotalInt(){
-		return Monoid.of(0, (a,b) -> a+b);
+		return Monoid.of(0, a->b -> a+b,(x) -> Integer.valueOf(""+x));
 	}
 	public static Monoid<Integer> toCountInt(){
 		
-		return Monoid.of(0, a ->b -> a+1,(x) -> Integer.valueOf(""+x));
+		return Monoid.of(0, a ->b -> a+1,(x) -> 1);
 	}
 	
 	public static Monoid<Double> toTotalDouble(){
