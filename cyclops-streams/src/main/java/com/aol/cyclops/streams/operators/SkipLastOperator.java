@@ -32,7 +32,7 @@ public class SkipLastOperator<T> {
 
 			@Override
 			public T next() {
-				if(finished)
+				if(finished && buffer.size()==0)
 					throw new NoSuchElementException();
 				return buffer.pop();
 			}

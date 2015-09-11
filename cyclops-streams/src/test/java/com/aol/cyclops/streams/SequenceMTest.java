@@ -13,9 +13,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,6 +27,70 @@ import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
 
 public class SequenceMTest {
+	@Test
+	public void elapsedIsPositive(){
+		
+		
+		assertTrue(SequenceM.of(1,2,3,4,5).elapsed().noneMatch(t->t.v2<0));
+	}
+	@Test
+	public void timeStamp(){
+		
+		
+		assertTrue(SequenceM.of(1,2,3,4,5)
+							.timestamp()
+							.allMatch(t-> t.v2 <= System.currentTimeMillis()));
+		
+
+	}
+	@Test
+	public void get0(){
+		assertThat(SequenceM.of(1).get(0).v1,equalTo(1));
+	}
+	@Test
+	public void getMultple(){
+		assertThat(SequenceM.of(1,2,3,4,5).get(2).v1,equalTo(3));
+	}
+	@Test
+	public void getMultpleStream(){
+		assertThat(SequenceM.of(1,2,3,4,5).get(2).v2.toList(),equalTo(Arrays.asList(1,2,3,4,5)));
+	}
+	@Test(expected=NoSuchElementException.class)
+	public void getMultiple1(){
+		SequenceM.of(1).get(1);
+	}
+	@Test(expected=NoSuchElementException.class)
+	public void getEmpty(){
+		SequenceM.of().get(0);
+	}
+	@Test
+	public void elementAt0(){
+		assertTrue(SequenceM.of(1).elementAt(0).isPresent());
+	}
+	@Test
+	public void elementAtMultple(){
+		assertThat(SequenceM.of(1,2,3,4,5).elementAt(2).get(),equalTo(3));
+	}
+	@Test
+	public void elementAt1(){
+		assertFalse(SequenceM.of(1).elementAt(1).isPresent());
+	}
+	@Test
+	public void elementAtEmpty(){
+		assertFalse(SequenceM.of().elementAt(0).isPresent());
+	}
+	@Test
+	public void singleTest(){
+		assertThat(SequenceM.of(1).single(),equalTo(1));
+	}
+	@Test(expected=UnsupportedOperationException.class)
+	public void singleEmpty(){
+		SequenceM.of().single();
+	}
+	@Test(expected=UnsupportedOperationException.class)
+	public void single2(){
+		SequenceM.of(1,2).single();
+	}
 	@Test
 	public void limitTime(){
 		List<Integer> result = SequenceM.of(1,2,3,4,5,6)
@@ -36,6 +102,16 @@ public class SequenceMTest {
 		assertThat(result,equalTo(Arrays.asList(1,2,3,4)));
 	}
 	@Test
+	public void limitTimeEmpty(){
+		List<Integer> result = SequenceM.<Integer>of()
+										.peek(i->sleep(i*100))
+										.limit(1000,TimeUnit.MILLISECONDS)
+										.toList();
+		
+		
+		assertThat(result,equalTo(Arrays.asList()));
+	}
+	@Test
 	public void skipTime(){
 		List<Integer> result = SequenceM.of(1,2,3,4,5,6)
 										.peek(i->sleep(i*100))
@@ -45,6 +121,16 @@ public class SequenceMTest {
 		
 		assertThat(result,equalTo(Arrays.asList(4,5,6)));
 	}
+	@Test
+	public void skipTimeEmpty(){
+		List<Integer> result = SequenceM.<Integer>of()
+										.peek(i->sleep(i*100))
+										.skip(1000,TimeUnit.MILLISECONDS)
+										.toList();
+		
+		
+		assertThat(result,equalTo(Arrays.asList()));
+	}
 	private int sleep(Integer i) {
 		try {
 			Thread.currentThread().sleep(i);
@@ -52,6 +138,30 @@ public class SequenceMTest {
 			
 		}
 		return i;
+	}
+	@Test
+	public void testSkipLast(){
+		assertThat(SequenceM.of(1,2,3,4,5)
+							.skipLast(2)
+							.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
+	}
+	@Test
+	public void testSkipLastEmpty(){
+		assertThat(SequenceM.of()
+							.skipLast(2)
+							.collect(Collectors.toList()),equalTo(Arrays.asList()));
+	}
+	@Test
+	public void testLimitLast(){
+		assertThat(SequenceM.of(1,2,3,4,5)
+							.limitLast(2)
+							.collect(Collectors.toList()),equalTo(Arrays.asList(4,5)));
+	}
+	@Test
+	public void testLimitLastEmpty(){
+		assertThat(SequenceM.of()
+							.limitLast(2)
+							.collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
 	@Test
 	public void endsWith(){

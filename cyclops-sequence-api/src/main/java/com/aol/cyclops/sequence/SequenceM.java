@@ -22,6 +22,7 @@ import java.util.Spliterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
@@ -36,6 +37,7 @@ import java.util.function.ToLongFunction;
 import java.util.function.UnaryOperator;
 import java.util.stream.BaseStream;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -1666,26 +1668,114 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @return SequenceM that returns all elements until time period has elapsed
 	 */
 	SequenceM<T> limit(long time, final TimeUnit unit);
+	/**
+	 * assertThat(SequenceM.of(1,2,3,4,5)
+							.skipLast(2)
+							.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
+	 * 
+	 * @param num
+	 * @return
+	 */
 	SequenceM<T> skipLast(int num);
+	/**
+	 * Limit results to the last x elements in a SequenceM
+	 * <pre>
+	 * {@code 
+	 * 	assertThat(SequenceM.of(1,2,3,4,5)
+							.limitLast(2)
+							.collect(Collectors.toList()),equalTo(Arrays.asList(4,5)));
+	 * 
+	 * }
+	 * 
+	 * @param num of elements to return (last elements)
+	 * @return SequenceM limited to last num elements
+	 */
 	SequenceM<T> limitLast(int num);
 
+	/**
+	 * Turns this SequenceM into a HotStream, a connectable Stream, being executed on a thread on the 
+	 * supplied executor, that is producing data
+	 * <pre>
+	 * {@code 
+	 *  HotStream<Integer> ints = SequenceM.range(0,Integer.MAX_VALUE)
+											.hotStream(exec)
+											
+		
+		ints.connect().forEach(System.out::println);									
+	 *  //print out all the ints
+	 *  //multiple consumers are possible, so other Streams can connect on different Threads
+	 *  
+	 * }
+	 * </pre>
+	 * @param e Executor to execute this SequenceM on
+	 * @return a Connectable HotStream
+	 */
 	HotStream<T> hotStream(Executor e);
 	
+	/**
+	 * <pre>
+	 * {@code 
+	 * 	assertThat(SequenceM.of(1,2,3,4)
+					.map(u->{throw new RuntimeException();})
+					.recover(e->"hello")
+					.firstValue(),equalTo("hello"));
+	 * }
+	 * </pre>
+	 * @return first value in this Stream
+	 */
 	T firstValue();
+	
+	/**
+	 * <pre>
+	 * {@code 
+	 * assertThat(SequenceM.of(1).single(),equalTo(1));
+	 * }
+	 * </pre>
+	 * 
+	 * @return a single value or an exception if 0/1 values in this Stream
+	 */
 	default T single(){
-		 List<T> l= toList(); 
-		 if(l.size()==1){ 
-			 return l.get(l.size()-1); 
-			 }
+		Iterator<T> it = iterator();
+		if(it.hasNext()){
+			T result = it.next();
+			if(!it.hasNext())
+				return result;
+		}
+			
 		throw new UnsupportedOperationException("single only works for Streams with a single value");
+		
 	}
 
+	/**
+	 * Return the elementAt index or Optional.empty
+	 * <pre>
+	 * {@code
+	 * 	assertThat(SequenceM.of(1,2,3,4,5).elementAt(2).get(),equalTo(3));
+	 * }
+	 * </pre>
+	 * @param index to extract element from
+	 * @return elementAt index
+	 */
 	default Optional<T> elementAt(long index){
 		return this.zipWithIndex()
 				   .filter(t->t.v2==index)
 				   .findFirst()
 				   .map(t->t.v1());
 	}
+	/**
+	 * Gets the element at index, and returns a Tuple containing the element (it must be present)
+	 * and a lazy copy of the Sequence for further processing.
+	 * 
+	 * <pre>
+	 * {@code 
+	 * SequenceM.of(1,2,3,4,5).get(2).v1
+	 * //3
+	 * }
+	 * </pre>
+	 * 
+	 * @param index to extract element from
+	 * @return Element and Sequence
+	 */
 	default Tuple2<T,SequenceM<T>> get(long index){
 		 Tuple2<SequenceM<T>, SequenceM<T>> tuple = this.duplicateSequence();
 		 return tuple.map1(s->s.zipWithIndex()
@@ -1694,14 +1784,41 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 				   .map(t->t.v1()).get());
 	}
 	
+	/**
+	 * <pre>
+	 * {@code 
+	 * SequenceM.of(1,2,3,4,5)
+				 .elapsed()
+				 .forEach(System.out::println);
+	 * }
+	 * </pre>
+	 * 
+	 * @return Sequence that adds the time between elements in millis to each element
+	 */
 	default SequenceM<Tuple2<T,Long>> elapsed(){
-		long[] last = {System.currentTimeMillis()};
-		return zip(SequenceM.generate( ()->{long now =System.currentTimeMillis();
-		long result = last[0]- now;
-		last[0]=now;
+		AtomicLong last = new AtomicLong(System.currentTimeMillis());
+		
+		return zip(SequenceM.generate( ()->{
+		long now =System.currentTimeMillis();
+		
+		long result =  now-last.get();
+		last.set(now);
 		return result;
 		} ));
 	}
+	/**
+	 * <pre>
+	 * {@code
+	 *    SequenceM.of(1,2,3,4,5)
+				   .timestamp()
+				   .forEach(System.out::println)
+	 * 
+	 * }
+	 * 
+	 * </pre>
+	 * 
+	 * @return Sequence that adds a timestamp to each element
+	 */
 	default SequenceM<Tuple2<T,Long>> timestamp(){
 		return zip(SequenceM.generate( ()->System.currentTimeMillis()));
 	}
