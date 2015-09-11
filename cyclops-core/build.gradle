@@ -34,8 +34,6 @@ dependencies {
 	compile project(':cyclops-pattern-matching-recursive')
 	compile project(':cyclops-trampoline')
 	compile project(':cyclops-mixins')
-	compile project(':cyclops-try')
-	compile project(':cyclops-feature-toggle')
 	compile project(':cyclops-for-comprehensions')
 	provided group: 'org.projectlombok', name: 'lombok', version:'1.16.2'
 	testCompile 'org.functionaljava:functionaljava:4.3'
