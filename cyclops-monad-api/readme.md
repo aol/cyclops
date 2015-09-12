@@ -1,5 +1,7 @@
 # cyclops-monad-api
 
+cyclops-monad-api is normally used by other cyclops modules, but library writers may like to make use of it. Instructions to import it in standalone format are at the bottom of this page.
+
 An alternative to higher-kinded types for providing a common interface over classes that define map / flatMap / filter (etc) methods or their equivalent.
 
 Works by either using a registered 'Comprehender' that handles the actual method invocations, or by taking advantage of InvokeDynamic facility introduced in Java 7 that can make the performance of a dynamic method call almost equivalent to a static call.
@@ -66,28 +68,23 @@ cyclops-sequence-api
 
 cyclops-streams
 
-# Getting cyclops-monad-api
-
-## Gradle
-
-where x.y.z represents the latest version
-
-compile 'com.aol.cyclops:cyclops-monad-api:x.y.z'
 
 
 # Monoids
 
 Fit the Stream.reduce signature. Can be used to wrap any Monoid type (e.g. functional java).
 
-
+```java
 	Monoid.of("",(a,b)->a+b).reduce(Stream.of("a","b","c"));
+```
 	
 Produces "abc"
-	 
+```java 
 	fj.Monoid m = fj.Monoid.monoid((Integer a) -> (Integer b) -> a+b,0);
 	Monoid<Integer> sum = As.asMonoid(m);
 		
 	assertThat(sum.reduce(Stream.of(1,2,3)),equalTo(6));
+```
 	
 Use in conjunction with Power Tuples or StreamUtils for Multiple simultanous reduction on a Stream.
 
@@ -96,6 +93,7 @@ Use in conjunction with Power Tuples or StreamUtils for Multiple simultanous red
 
 The Decomposable interface specifies an unapply method (with a default implementation) that decomposes an Object into it's elemental parts. It used used in both Cyclops Pattern Matching (for recursively matching against Case classes) and Cyclops for comprehensions (where Decomposables can be lifted to Streams automatically on input - if desired).
 
+```java
      @Test
 	public void test() {
 		assertThat(AsDecomposable.asDecomposable(new MyCase("key",10))
@@ -104,5 +102,26 @@ The Decomposable interface specifies an unapply method (with a default implement
 	
 	@Value
 	static class MyCase { String key; int value;}
+```
 	
+## Getting cyclops-monad-api
+
+* [![Maven Central : cyclops-monad-api](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-monad-api/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-monad-api)
+
+
+## Gradle
+
+where x.y.z represents the latest version
+
+compile 'com.aol.cyclops:cyclops-monad-api:x.y.z'
+
+## Maven
+
+```xml
+<dependency>
+    <groupId>com.aol.cyclops</groupId>
+    <artifactId>cyclops-monad-api</artifactId>
+    <version>x.y.z</version>
+</dependency>
+```
 	

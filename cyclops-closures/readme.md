@@ -1,5 +1,27 @@
 # cyclops-closures
 
+
+## Getting cyclops-closures
+
+* [![Maven Central : cyclops-closures](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-closures/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-closures)
+
+
+## Gradle
+
+where x.y.z represents the latest version
+
+compile 'com.aol.cyclops:cyclops-closures:x.y.z'
+
+## Maven
+
+```xml
+<dependency>
+    <groupId>com.aol.cyclops</groupId>
+    <artifactId>cyclops-closures</artifactId>
+    <version>x.y.z</version>
+</dependency>
+```
+
 Utilities for working with Lambda expressions that capture values or variables in the enclosing scope.
 
 * Mutable

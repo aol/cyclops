@@ -1,8 +1,29 @@
 # Guava Integration
 
-v5.0.0 of cyclops-javaslang requires Guava 18.0 or above
+## Getting cyclops-guava
+
+* [![Maven Central : cyclops-guava](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-guava/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-guava)
 
 
+## Gradle
+
+where x.y.z represents the latest version
+
+compile 'com.aol.cyclops:cyclops-guava:x.y.z'
+
+## Maven
+
+```xml
+<dependency>
+    <groupId>com.aol.cyclops</groupId>
+    <artifactId>cyclops-guava</artifactId>
+    <version>x.y.z</version>
+</dependency>
+```
+
+# Features
+
+Currently requires Guava 18.0 or above
 
 Use Guava.anyM to create wrapped Guava Monads.
 

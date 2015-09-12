@@ -11,6 +11,24 @@ Defines an api for more advanced sequential Streams. Extends java.util.stream.St
 
 This primarily defines the interfaces to be used for cyclops Streaming, for an implementation see cyclops-stream.
 
+# The Decomposable Interface  / Trait
+
+The Decomposable Interface defines an unapply method that is used to convert the implementing Object into an iterable. This can be used to control how Cyclops performs recursive decomposition.
+
+	public <I extends Iterable<?>> I unapply();
+	
+### Interfaces that extend Decomposable
+
+* ValueObject
+* StreamableValue
+* CachedValues, PTuple1-8
+
+## Coercing any Object to a Decomposable
+
+    As.asDecomposable(myObject).unapply().forEach(System.out::println);
+
+com.aol.cyclops.dynamic.As provides a range of methods to dynamically convert types
+
 # Dependencies
 
 cyclops-invokedynamic

@@ -1,12 +1,34 @@
 # Cyclops for comprehensions
 
+## Getting cyclops-for-comprehensions
+
+* [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-for-comprehensions/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-for-comprehensions)
+
+
+## Gradle
+
+where x.y.z represents the latest version
+
+compile 'com.aol.cyclops:cyclops-for-comprehensions:x.y.z'
+
+## Maven
+
+```xml
+<dependency>
+    <groupId>com.aol.cyclops</groupId>
+    <artifactId>cyclops-for-comprehensions</artifactId>
+    <version>x.y.z</version>
+</dependency>
+```
+
+# Features
+
 Simplify deeply nested looping (over Collections, even  Streams, Optionals and more!).
 
 ![for comprehensions](https://cloud.githubusercontent.com/assets/9964792/7887680/c6ac127c-062a-11e5-9ad7-ad4553761e8d.png)
 
-# Getting Cyclops For Comprehensions
+# Docs
 
-* [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-for-comprehensions/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-for-comprehensions)
 * [Javadoc for Cyclops For Comprehensions](http://www.javadoc.io/doc/com.aol.cyclops/cyclops-for-comprehensions/4.0.2)
 * [Wiki for Extensible For Comprehensions](https://github.com/aol/cyclops/wiki/Extensible-For-Comprehensions-for-Java-8)
 
@@ -20,7 +42,7 @@ Two supported formats
 
 
 # Do Notation
-
+```java
 	List<Integer> list= Arrays.asList(1,2,3);
 	
 	Stream<Integer> stream = Do.add(list)
@@ -29,26 +51,30 @@ Two supported formats
 										
 		
 	assertThat(Arrays.asList(3,4,5),equalTo(stream.collect(Collectors.toList())));
-
+```
 
 Yield, Filter and 'and' take curried functions
 
 (That is a chain of single input parameter functions)
 
+```java
 		Stream<Integer> stream = Do.add(asList(20,30))
 								   .with( i->asList(1,2,3))
 								   .yield(i-> j -> i + j+2);
+```
 
 Parameters are stack based, the parameter to the first function is an index into the first Collection or Monad, the parameter to the second function is an index into the second Collection or Monad and so on.
 
 The above code could be rewritten as 
 
+```java
 		Stream<Integer> stream = Do.add(asList(20,30))
 								   .with(any->asList(1,2,3))
 								   .yield(x-> y -> x + y+2);
-
+```
 And it would work in exactly the same way
 
+```java
 		List<Integer> list= Arrays.asList(1,2,3);
 		Stream<Integer> stream = Do.add(list)
 								.filter(a -> a>2)
@@ -57,34 +83,37 @@ And it would work in exactly the same way
 										
 		
 		assertThat(Arrays.asList(5),equalTo(stream.collect(Collectors.toList())));
-
+```
 
 # for comprehensions explained
 
 For comprehensions are useful for iterating over nested structures (e.g. collections, Streams, Optionals, CompletableFutures or other Monads).
     
 Given a list of Strings 
-
+```java
      List<String> list = Arrays.asList("hello","world","3");
-     
+ ```
 We can iterate over them using Java 5 'foreach' syntax
      
+```java
      for(String element : list){
      	System.out.println(element);
      }
-     
+```   
 
 The equivalent for comprehension would be 
 
-    	
+ ```java   	
     Do.add(list)
       .yield( element ->  element )
       .forEach(System.out::println);  
-      
+ ```
+     
  We have simply converted the list to a Stream and are using Stream forEach to iterate over it.                        	  
                                       
 But.. if we nest our looping
-	
+
+```java	
 	  List<Integer> numbers = Arrays.asList(1,2,3,4);
 
 	  for(String element : list){
@@ -92,18 +121,20 @@ But.. if we nest our looping
      		System.out.println(element + num);
      	  }
       }                              
+```
 
 Things start to become a little unwieldy, but a little less so with for comprehensions
       
-     
+ ```java    
     Do.add(list)
       .with(element -> numbers)
       .yield(  element -> num  -> element + num )
       .forEach(System.out::println);
-      
+ ```     
                                   
 Let's add a third level of nesting
 
+```java
     List<Date> dates = Arrays.asList(new Date(),new Date(0));
 
     for(String element : list){
@@ -114,35 +145,38 @@ Let's add a third level of nesting
      		
      	  }
       }
+ ```
     
  And the for comprehension looks like 
    
-    
+```java  
     Do.add(list)
       .add(numbers)
       .add(dates)
       .yield( element ->  num ->  date -> element + num+":"+date )
       .forEach(System.out::println);
- 
+ ```
  
  Stream map
-      
+  
+```java    
      list.stream()
          .map(element -> element.toUpperCase())
          .collect(Collectors.toList());
-         
+ ```        
          
 Can be written as
 
+```java
 	  ForComprehensions.foreach1(c -> c.mapAs$1(list))
 	                                   .yield( (Vars1<String> v) -> c.$1().toUpperCase())
 	                    .collect(Collectors.toList());
-     
+```    
  ## Mixing types
  
  Running a for comprehension over a list (stream) and an Optional
  
-   		
+  ```java 		
 		List<String> strs = Arrays.asList("hello","world");
 		Optional<String> opt = Optional.of("cool");
 		
@@ -151,13 +185,14 @@ Can be written as
           .add(opt)
           .yield(v1->v2 -> v1 + v2)
           .forEach(System.out::println);
+```
 										 
 Outputs : [hellocool, worldcool]
 
 
 Or the other way around 
 
-
+```java
       	List<String> strs strs = Arrays.asList("hello","world");
 		Optional<String> opt = Optional.of("cool");
 		
@@ -169,6 +204,7 @@ Or the other way around
 		
 		assertThat(results.get(),hasItem("coolhello"));
 		assertThat(results.get(),hasItem("coolworld"));
+```
 		
 Outputs : [[coolhello],[coolworld]]
 
@@ -186,7 +222,7 @@ Outputs : [[coolhello],[coolworld]]
 ## Filtering
 
 Guards (filter commands) can be placed at any stage of a for comprehension. E.g.
-
+```java
                  Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
 						.and((Double d)->Arrays.asList(2.0))
 						.filter((Double d)-> (Double e) -> e*d>10.00)
@@ -194,7 +230,7 @@ Guards (filter commands) can be placed at any stage of a for comprehension. E.g.
 		
 		double total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(330.9));
-
+```
 ## Convert any Object to a Monad
 
 ### Stream conversions
@@ -234,7 +270,7 @@ The Cyclops implementation is pure Java however, and although it will revert to 
 
  
 * Support for custom interface definition with virtually unlimited nesting
-
+```java
     Stream<Integer> stream = foreachX(Custom.class,  
 									c-> c.myVar(list)
 										.yield(()->c.myVar()+3)
@@ -243,10 +279,10 @@ The Cyclops implementation is pure Java however, and although it will revert to 
     Optional<Integer> one = Optional.of(1);
 	Optional<Integer> empty = Optional.empty();
 	BiFunction<Integer,Integer,Integer> f2 = (a,b) -> a *b; 
-		
+```		
 	
 
-### Auto-Seq upscaling
+
 
 
 ### For more info
