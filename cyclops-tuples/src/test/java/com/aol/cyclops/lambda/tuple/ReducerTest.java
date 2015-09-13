@@ -12,7 +12,7 @@ import lombok.val;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.api.Monoid;
+import com.aol.cyclops.sequence.Monoid;
  
 public class ReducerTest {
 

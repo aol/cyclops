@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.aol.cyclops.lambda.utils.ExceptionSoftener;
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 
 public class DynamicInvoker {
 
@@ -40,7 +40,7 @@ public class DynamicInvoker {
 			try {
 				return Files.lines(Paths.get( ((File)o).getAbsolutePath()));
 			} catch (IOException e) {
-				ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(e);
+				ExceptionSoftener.throwSoftenedException(e);
 			}
 		}
 		else if(o instanceof URL){
@@ -50,7 +50,7 @@ public class DynamicInvoker {
 				        ((URL)o).openStream()));
 				return ((BufferedReader)o).lines();
 			} catch (IOException e) {
-				ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(e);
+				ExceptionSoftener.throwSoftenedException(e);
 			}
 				
 		}else if(o!=null && o.getClass().isArray())
@@ -70,13 +70,13 @@ public class DynamicInvoker {
 					try {
 						return new ConstantCallSite(MethodHandles.publicLookup().unreflect(m2));
 					} catch (Exception e) {
-						ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(e);
+						ExceptionSoftener.throwSoftenedException(e);
 					}
 					return null;
 				}).dynamicInvoker().invoke(t);
 			
 			} catch (Throwable e) {
-				ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(e);
+				ExceptionSoftener.throwSoftenedException(e);
 			}
 			return null;
 		}

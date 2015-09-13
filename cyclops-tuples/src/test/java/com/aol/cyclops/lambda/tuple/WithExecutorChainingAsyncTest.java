@@ -1,6 +1,6 @@
 package com.aol.cyclops.lambda.tuple;
 
-import static com.aol.cyclops.functions.Curry.*;
+import static com.aol.cyclops.functions.currying.Curry.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -9,7 +9,7 @@ import java.util.concurrent.ForkJoinPool;
 
 import org.junit.Test;
 
-import com.aol.cyclops.functions.Curry;
+
 import com.aol.cyclops.functions.QuintFunction;
 
 public class WithExecutorChainingAsyncTest {

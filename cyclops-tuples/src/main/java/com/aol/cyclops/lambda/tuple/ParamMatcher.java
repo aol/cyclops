@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.lambda.utils.ExceptionSoftener;
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 
 class ParamMatcher {
 
@@ -29,7 +29,7 @@ class ParamMatcher {
 					
 				}
 		}
-		ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(t);
+		ExceptionSoftener.throwSoftenedException(t);
 		return null;
 	}
 	 private List<Object> order(List<Object> values,Constructor c) {
