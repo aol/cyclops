@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
-import com.aol.cyclops.functionaljava.FJ;
-import com.aol.cyclops.lambda.monads.AnyM;
 
 import fj.data.Reader;
 

@@ -44,7 +44,7 @@ public class ReductionTest {
 	public void reduceWithMonoidJoin(){
 		SequenceM.of("hello","2","world","4").join(",");
 		assertThat(SequenceM.of("hello","2","world","4").reduce(Reducers.toString(",")),
-				equalTo("hello,2,world,4"));
+				equalTo(",hello,2,world,4"));
 	}
 	@Test
     public void testCollectors() {
