@@ -26,6 +26,7 @@ dependencies {
 
 	compile project(':cyclops-closures')
 	compile project(':cyclops-functions')
+	compile project(':cyclops-monad-functions')
 	compile project(':cyclops-monad-api')
 	compile project(':cyclops-streams')
 	compile project(':cyclops-monad-functions')

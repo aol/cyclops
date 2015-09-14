@@ -51,7 +51,21 @@ where x.y.z represents the latest version
 
 compile 'com.aol.cyclops:cyclops-streams:x.y.z'
 
-# StreamUtils
+# Operators
+
+Large number of Stream operators available on SequenceM or as static methods for java.util.Stream (SequenceM extends java.util.Stream)
+
+* Reactive Streams support
+* Connectable Hot Streams 
+* [Core Operators](https://github.com/aol/cyclops/blob/master/cyclops-sequence-api/src/main/java/com/aol/cyclops/sequence/SequenceM.java)
+* [Async Operators](https://github.com/aol/cyclops/blob/master/cyclops-sequence-api/src/main/java/com/aol/cyclops/sequence/future/FutureOperations.java)
+* [Async Operators ints](https://github.com/aol/cyclops/blob/master/cyclops-sequence-api/src/main/java/com/aol/cyclops/sequence/future/IntOperators.java)
+* [Async Operators doubles](https://github.com/aol/cyclops/blob/master/cyclops-sequence-api/src/main/java/com/aol/cyclops/sequence/future/DoubleOperators.java)
+* [Async Operators longss](https://github.com/aol/cyclops/blob/master/cyclops-sequence-api/src/main/java/com/aol/cyclops/sequence/future/LongOperators.java)
+* [Available as static methods](https://github.com/aol/cyclops/blob/master/cyclops-streams/src/main/java/com/aol/cyclops/streams/StreamUtils.java)
+
+
+## StreamUtils
 
 ## Multiple simultanous reduction with Monoids
 
