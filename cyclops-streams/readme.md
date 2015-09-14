@@ -1,6 +1,7 @@
 # cyclops-streams
 
-Defines an api for more advanced sequential Streams. Extends java.util.stream.Stream and jool.Seq to add even more functionality. Reactive Streams support available if simple-react added to the classpath.
+java.util.Streams on steriods! An implementation of the cyclops-sequence-api for more advanced sequential Streams. Extends java.util.stream.Stream and jool.Seq to add even more functionality. 
+Easy to use Reactive Streams support available if simple-react is added to the classpath.
 
 ## Getting cyclops-streams
 
