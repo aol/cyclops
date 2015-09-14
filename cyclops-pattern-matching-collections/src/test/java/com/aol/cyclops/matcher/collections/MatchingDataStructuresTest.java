@@ -29,6 +29,8 @@ public class MatchingDataStructuresTest {
 	
 	@Test
 	public void allValues(){
+	
+		
 		assertThat(CollectionMatcher.whenIterable().allValues(1,ANY(),2).thenApply(l->"case1")
 			.whenIterable().allValues(1,3,2).thenApply(l->"case2")
 			.whenIterable().bothTrue((Integer i)->i==1,(String s)->s.length()>0)

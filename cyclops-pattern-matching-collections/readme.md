@@ -34,7 +34,6 @@ compile 'com.aol.cyclops:cyclops-pattern-matching-collections:x.y.z'
               
 
 * [Javadoc for Cyclops Pattern Matching](http://www.javadoc.io/doc/com.aol.cyclops/cyclops-pattern-matching-collections/6.0.0)
-* [Pattern Matching Wiki](https://github.com/aol/cyclops/wiki/Pattern-matching-:-Pattern-Matching-for-Java-8)
 
 # Pattern Matching Structure & Examples
 
@@ -51,12 +50,13 @@ At the top level the operators are
 
 Second level operators are
 
-Iteables 
-
 * *allTrue* : all the predicates must match
 * *bothTrue* : both the predicates must match
 * *allMatch* : all the hamcrest matchers must match
+* *bothTrue* : both the hamcrest matchers must match
 * *allHold* : allows mix of predicates, hamcrest matchers and prototype values all of which must hold
+* *allValues* : check all values in the supplied array match the first values in the iterable
+
 
 Streams
 
@@ -72,5 +72,58 @@ Further Operators
 
 
 
-Examples : 
+# Examples : 
 
+## bothMatch
+
+```java
+CollectionMatcher.whenIterable().bothMatch(samePropertyValuesAs(new Person("bob")),anything())
+											.thenExtract(Extractors.<Person>first())
+											.thenApply(bob->bob.getId())
+				.whenIterable().bothMatch(samePropertyValuesAs(new Person("alice")),"boo hoo!")		
+									.thenExtract(Extractors.<Person>first())
+											.thenApply(alice->alice.getId())		
+											.apply(Two.tuple(new Person("bob"),"boo hoo!"))
+											
+	//bob's id
+```
+
+## allValues 
+
+Match against all values in a collection
+
+```java
+	CollectionMatcher.whenIterable().allValues(1, ANY(), 2).thenApply(l -> "case1")
+						 .whenIterable().allValues(1, 3, 2).thenApply(l -> "case2")
+						 .whenIterable().bothTrue((Integer i) -> i == 1, (String s) -> s.length() > 0).thenExtract(Extractors.<Integer, String> of(0, 1)).thenApply(t -> t.v1 + t.v2)
+						 .match(1, "hello", 2);
+						 
+ //case1						 
+```		
+		
+## Stream of responsibility
+
+Define a Stream of matching cases, use the first matching case found
+```java
+		Stream<ChainImpl> chain = Stream.of(new LessThanAndMultiply(5,10),new LessThanAndMultiply(7,100));
+		int result = CollectionMatcher.whenFromStream().streamOfResponsibility(chain).match(6).get();
+		
+		assertThat(result,is(600));
+		
+	@AllArgsConstructor
+	  static class LessThanAndMultiply implements ChainOfResponsibility<Integer,Integer>{
+		int max;
+		int mult;
+		@Override
+		public boolean test(Integer t) {
+			return t<max;
+		}
+
+		@Override
+		public Integer apply(Integer t) {
+			return t*mult;
+		}
+		
+	}
+		
+```
