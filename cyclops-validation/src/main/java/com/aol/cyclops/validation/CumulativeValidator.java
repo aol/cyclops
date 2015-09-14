@@ -31,6 +31,25 @@ public class CumulativeValidator<T,R,E> {
 
 	private final Validator<T,R,E> validation;
 	private final CumulativeValidator<T,R,E> next;
+	/**
+	 * Add another validation to this cumulative validator
+	 * <pre>
+	 * {@code
+	 * CumulativeValidator<User,String,String> validator = CumulativeValidator.of((User user)->user.age>18, "too young", "age ok")
+	 * 	ValidationResults<String,String> results  = validator.isValid(user->user.email!=null, "user email null","email ok")
+												.accumulate(new User(10,"email@email.com"));
+	
+		assertThat(results.getResults().size(),equalTo(2));
+		}
+	 * 
+	 * }</pre>
+	 * 
+	 * 
+	 * @param valid Validation Predicate to check
+	 * @param error Error to return if validation predicate fails
+	 * @param result Result to return if validation predicate succeeds
+	 * @return
+	 */
 	public  CumulativeValidator<T,R,E> isValid(Predicate<T> valid, E error, R result){
 		return new CumulativeValidator<>(Validator.of(valid, error, result),null);
 	}

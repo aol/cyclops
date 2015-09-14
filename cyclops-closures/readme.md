@@ -22,6 +22,8 @@ compile 'com.aol.cyclops:cyclops-closures:x.y.z'
 </dependency>
 ```
 
+# Overview
+
 Utilities for working with Lambda expressions that capture values or variables in the enclosing scope.
 
 * Mutable
