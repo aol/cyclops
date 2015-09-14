@@ -1,14 +1,30 @@
 # Cyclops Production Feature Toggle
 
+
+## Getting cyclops-feature-toggle
+
+* [![Maven Central : cyclops-feature-toggle](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-feature-toggle/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-feature-toggle)
+
+
+## Gradle
+
+where x.y.z represents the latest version
+
+compile 'com.aol.cyclops:cyclops-feature-toggle:x.y.z'
+```xml
+<dependency>
+    <groupId>com.aol.cyclops</groupId>
+    <artifactId>cyclops-feature-toggle</artifactId>
+    <version>x.y.z</version>
+</dependency>
+```
+
+#Features 
+
 Cyclops Feature Toggle makes delivering on CI/CD easy by making it very simple to turn production features on & off!
 
 ![production switch](https://cloud.githubusercontent.com/assets/9964792/8335310/ce07a846-1a94-11e5-837a-ef73b2f930d7.png)
 
-# Getting Cyclops Feature Toggle
-
-*  [![Maven Central : cyclops-production-switch](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-enable-switch/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-enable-switch)
-* [Cyclops Production Switch javadoc](http://www.javadoc.io/doc/com.aol.cyclops/enable-switch/4.0.3)
-* [Feature Toggle Wiki](https://github.com/aol/cyclops/wiki/Enable-and-disable-production-features)
 
 ### Rationale
 
@@ -27,37 +43,37 @@ Concrete type that conveys that a feature may be disabled or may be enabled (swi
 
 The most basic way to use it is (if you are used to programming imperatively)
 
-
+```java
     if(featureDisabled) 
           return FeatureToggle.disable(data);
     else
         return FeatureToggle.enable(data);
 
-
+```
 
 Now elsewhere you can check if the switch is enabled or disabled
 
-
+```java
     if(switch.isEnabled()){
           loadDataToDb(switch.get());
     }
 
-</pre>
+```
 
 ### More advanced usage
  
 Switch can abstract away entirely the logic for managing whether a feature is enabled or disabled. Users can just code the enabled case and Switch will automatically make sure nothing happens when disabled.
 
 The statement above can be rewritten as -
-
+```java
 
     switch.map(data -> loadDataToTheDb(data));
-
+```
 ### Example usage
 
 Creating the Switch 
 
-
+```java
     public synchronized FeatureToggle<Supplier<List<DomainExpression>>> readFile() {
 		Supplier<List<DomainExpression>> s = ()->serialisedFileReader.readFileFromDisk(rawDomainRuleFileLocation);
 		if (rawDomainEnabled) {
@@ -66,11 +82,11 @@ Creating the Switch
 		return new Disabled(s);
 
 	}
-
+```
 
 Using the Switch 
 
-
+```java
     FeatureToggle<Supplier<List<DomainExpression>>> domainExpressions; //lazy load data from db
      ...
 
@@ -81,4 +97,4 @@ Using the Switch
 			
 		});
 
-
+```

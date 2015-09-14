@@ -18,8 +18,8 @@ import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.matcher.builders.Matching;
+import com.aol.cyclops.objects.Decomposable;
 
 public class CaseTest {
 	Case<Integer,Integer,Function<Integer,Integer>> case1;
@@ -44,25 +44,20 @@ public class CaseTest {
 	
 	@Test
 	public void testChaining(){
-		ActionWithReturn<String,Integer> act = hello ->10;
+		TypedFunction<String,Integer> act = hello ->10;
 		val caze = Case.of(t->true, act);
 		
 		assertThat(caze.filter(t -> t.v2.getType()!=null).mapFunction(fn -> input ->20).match("hello").get(),is(20));
 	}
 	@Test
 	public void testChainingFilterFails(){
-		ActionWithReturn<String,Integer> act = hello ->10;
+		TypedFunction<String,Integer> act = hello ->10;
 		val caze = Case.of(t->true, act);
 		
 		assertThat(caze.filter(t -> t.v2.getType()==null).mapFunction(fn -> input ->20).match("hello").isPresent(),is(false));
 	}
 	
-	@Test
-	public void andThenTest(){
-		Case<Object,Set,Function<Object,Set>> cse = Case.of(input-> input instanceof Map, input-> ((Map)input).keySet());
-		val cases = Cases.of(cse).map(c -> c.andThen((Cases)Matching.whenIterable().allHoldNoType(__,2).thenExtract(Extractors.<Integer>get(1)).thenApply(i->i*2)
-													.whenIterable().allHoldNoType(2,__).thenExtract(Extractors.<Integer>get(1)).thenApply(i->i*3).cases()));
-	}
+	
 	
 	@Test
 	public void testfilterReturnsEmpty(){

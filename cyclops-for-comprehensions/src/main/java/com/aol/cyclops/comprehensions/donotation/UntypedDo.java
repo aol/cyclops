@@ -2,7 +2,6 @@ package com.aol.cyclops.comprehensions.donotation;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -12,9 +11,9 @@ import lombok.Value;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
+import com.aol.cyclops.closures.mutable.Mutable;
 import com.aol.cyclops.comprehensions.ComprehensionData;
 import com.aol.cyclops.comprehensions.ForComprehensions;
-import com.aol.cyclops.lambda.utils.Mutable;
 
 /**
  * Do notation for comprehensions

@@ -7,12 +7,9 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import com.aol.cyclops.guava.Guava;
 import com.aol.cyclops.lambda.monads.AnyMonads;
 import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
-
-import fj.data.Option;
 
 public class AnyGuavaMTest {
 

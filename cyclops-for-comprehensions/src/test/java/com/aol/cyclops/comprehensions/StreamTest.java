@@ -23,7 +23,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.comprehensions.donotation.UntypedDo;
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
-import com.aol.cyclops.lambda.monads.SequenceM;
+import com.aol.cyclops.sequence.SequenceM;
 
 public class StreamTest {
 	

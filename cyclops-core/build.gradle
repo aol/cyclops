@@ -24,11 +24,16 @@ configurations {
 }
 dependencies {
 
-	
+	compile project(':cyclops-closures')
 	compile project(':cyclops-functions')
+	compile project(':cyclops-monad-api')
+	compile project(':cyclops-streams')
+	compile project(':cyclops-monad-functions')
 	compile project(':cyclops-pattern-matching')
+	compile project(':cyclops-pattern-matching-collections')
+	compile project(':cyclops-pattern-matching-recursive')
 	compile project(':cyclops-trampoline')
-	compile project(':cyclops-base')
+	compile project(':cyclops-mixins')
 	compile project(':cyclops-for-comprehensions')
 	provided group: 'org.projectlombok', name: 'lombok', version:'1.16.2'
 	testCompile 'org.functionaljava:functionaljava:4.3'

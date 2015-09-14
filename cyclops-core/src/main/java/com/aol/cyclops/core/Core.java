@@ -13,23 +13,18 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.closures.immutable.LazyImmutable;
+import com.aol.cyclops.closures.mutable.Mutable;
 import com.aol.cyclops.dynamic.As;
 import com.aol.cyclops.functions.Functions;
 import com.aol.cyclops.lambda.api.AsAnyM;
-import com.aol.cyclops.lambda.api.Decomposable;
 import com.aol.cyclops.lambda.api.Mappable;
-import com.aol.cyclops.lambda.api.Monoid;
-import com.aol.cyclops.lambda.api.Reducers;
-import com.aol.cyclops.lambda.api.Streamable;
-import com.aol.cyclops.lambda.monads.AnyM;
 import com.aol.cyclops.lambda.monads.AnyMonads;
 import com.aol.cyclops.lambda.monads.Functor;
-import com.aol.cyclops.lambda.utils.LazyImmutable;
-import com.aol.cyclops.lambda.utils.Mutable;
 import com.aol.cyclops.matcher.Case;
 import com.aol.cyclops.matcher.Cases;
+import com.aol.cyclops.matcher.CollectionMatcher;
 import com.aol.cyclops.matcher.Extractors;
-import com.aol.cyclops.matcher.Matchable;
 import com.aol.cyclops.matcher.Predicates;
 import com.aol.cyclops.matcher.builders.ADTPredicateBuilder;
 import com.aol.cyclops.matcher.builders.CheckTypeAndValues;
@@ -38,6 +33,13 @@ import com.aol.cyclops.matcher.builders.IterableCase;
 import com.aol.cyclops.matcher.builders.Matching;
 import com.aol.cyclops.matcher.builders.MatchingInstance;
 import com.aol.cyclops.matcher.builders.StreamCase;
+import com.aol.cyclops.matcher.recursive.Matchable;
+import com.aol.cyclops.matcher.recursive.RecursiveMatcher;
+import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.objects.Decomposable;
+import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.sequence.Reducers;
+import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.trampoline.Trampoline;
 import com.aol.cyclops.value.StreamableValue;
@@ -97,7 +99,7 @@ public class Core extends Functions {
 	 * @return Replayable Stream
 	 */
 	public static <T> Streamable<T> asStreamable(Object toCoerce){
-		return As.asStreamable(toCoerce);
+		return As.asStreamableFromObject(toCoerce);
 	}
 	/**
 	 * Wrap the stream as a replayable Stream
@@ -471,7 +473,7 @@ public class Core extends Functions {
 	 * @return Case Class style Pattern Matching Builder
 	 */
 	public static final<USER_VALUE> CheckTypeAndValues<USER_VALUE> matchWhenValues(){
-		return Matching.whenValues();
+		return RecursiveMatcher.when();
 	}
 	/**
 	 * Create a builder for Matching against a provided Object as is (i.e. the Steps this builder provide assume you don't wish to disaggregate it and
@@ -493,7 +495,7 @@ public class Core extends Functions {
 	 * @return Iterable / Collection based Pattern Matching Builder
 	 */
 	public static final<USER_VALUE> IterableCase<USER_VALUE> matchWhenIterable(){
-		return Matching.whenIterable();
+		return CollectionMatcher.whenIterable();
 	}
 	
 	/**
@@ -503,7 +505,7 @@ public class Core extends Functions {
 	 * @return Stream based Pattern Matching Builder
 	 */
 	public static final  StreamCase matchWhenFromStream(){
-		return Matching.whenFromStream();
+		return CollectionMatcher.whenFromStream();
 	}
 	
 	

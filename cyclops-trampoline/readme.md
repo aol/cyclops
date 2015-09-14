@@ -2,10 +2,33 @@
 
 Simple standalone trampoline implementation for stackless recursion and simulating co-routines / continuations.
 
+## Getting cyclops-trampoline
+
+* [![Maven Central : cyclops-trampoline](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-trampoline/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-trampoline)
+
+
+## Gradle
+
+where x.y.z represents the latest version
+
+compile 'com.aol.cyclops:cyclops-trampoline:x.y.z'
+
+## Maven
+
+```xml
+<dependency>
+    <groupId>com.aol.cyclops</groupId>
+    <artifactId>cyclops-trampoline</artifactId>
+    <version>x.y.z</version>
+</dependency>
+```
+# Overview
+
+
 ## Stackless recursion
 
 Trampolines can be used to turn tail recursive calls into a more iterative form, lessening the likelihood of StackOverflow errors 
-
+```java
 	@Test
 	public void trampolineTest(){
 		
@@ -19,10 +42,10 @@ Trampolines can be used to turn tail recursive calls into a more iterative form,
 		else
 			return Trampoline.more(()->loop(times-1,sum+times));
 	}
-	
+```
 
 The code above could be further simplified using static imports
-
+```java
 	@Test
 	public void trampolineTest(){
 		
@@ -36,12 +59,13 @@ The code above could be further simplified using static imports
 		else
 			return more(()->loop(times-1,sum+times));
 	}
-	
+```	
 
 ## Simulating coroutines and continuations
 
 Trampolines can be used to interleave the execution of different functions on the same thread, in a generic if ugly way
 
+```java
 	List results;
 	@Test
 	public void coroutine(){
@@ -69,3 +93,4 @@ Trampolines can be used to interleave the execution of different functions on th
 		}
 		
 	} 
+```

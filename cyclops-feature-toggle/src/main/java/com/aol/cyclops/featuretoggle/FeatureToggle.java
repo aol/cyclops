@@ -7,8 +7,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.lambda.api.Streamable;
-import com.aol.cyclops.lambda.monads.AnyM;
+import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.value.ValueObject;
 
 

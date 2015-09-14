@@ -9,10 +9,10 @@ import org.pcollections.PStack;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
+import com.aol.cyclops.closures.mutable.Mutable;
 import com.aol.cyclops.comprehensions.ComprehensionData;
 import com.aol.cyclops.comprehensions.ForComprehensions;
-import com.aol.cyclops.lambda.api.Unwrapable;
-import com.aol.cyclops.lambda.utils.Mutable;
+import com.aol.cyclops.sequence.Unwrapable;
 
 @AllArgsConstructor
 public abstract class DoComp {

@@ -26,7 +26,7 @@ public class HamcrestTest {
 
 	@Test
 	public void hamcrest1() {
-		Matching.whenValues(c -> c.isMatch(hasItem("hello2")).thenConsume(System.out::println)).match(Arrays.asList("hello", "world"));
+		Matching.when().isMatch(hasItem("hello2")).thenConsume(System.out::println).match(Arrays.asList("hello", "world"));
 	}
 
 	@Test
@@ -70,13 +70,15 @@ public class HamcrestTest {
 
 	@Test
 	public void hamcrestViaNew() {
+		
+		
 		Matching.when().isMatch(hasItem("hello2")).thenConsume(System.out::println).when().isMatch(contains("world", "hello", "unexpected"))
 				.thenConsume(System.err::println).match(Arrays.asList("hello", "world"));
 	}
 
 	@Test
 	public void hasAnyOrderTest() {
-		assertTrue(Matching.<Boolean> whenValues(c -> c.isMatch(containsInAnyOrder("world", "hello")).thenApply(list -> true))
+		assertTrue(Matching.<Boolean> when().isMatch(containsInAnyOrder("world", "hello")).thenApply(list -> true)
 				.apply(Arrays.asList("hello", "world")).get());
 	}
 
@@ -94,10 +96,12 @@ public class HamcrestTest {
 
 	@Test
 	public void hamcrestWithPostExtractor() {
+		
 		assertEquals("world",
-				Matching.whenValues(c -> c.isMatch(containsInAnyOrder("world", "hello")).thenExtract(Extractors.at(1)).thenApply(value -> value))
-
-				.apply(Arrays.asList("hello", "world")).get());
+				Matching.when().isMatch(containsInAnyOrder("world", "hello"))
+								.thenExtract(Extractors.at(1))
+								.thenApply(value -> value)
+								.apply(Arrays.asList("hello", "world")).get());
 	}
 
 	@Test

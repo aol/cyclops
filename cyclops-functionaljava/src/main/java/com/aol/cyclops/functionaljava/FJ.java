@@ -1,24 +1,18 @@
 package com.aol.cyclops.functionaljava;
 
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.aol.cyclops.lambda.api.AsAnyM;
-import com.aol.cyclops.lambda.monads.AnyM;
-import com.aol.cyclops.lambda.monads.AnyMonads;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
+import com.aol.cyclops.monad.AnyM;
 
-import fj.Monoid;
 import fj.P1;
-import fj.Semigroup;
-import fj.control.Trampoline;
 import fj.data.Either;
 import fj.data.IO;
 import fj.data.IOFunctions;
 import fj.data.IterableW;
 import fj.data.List;
-import fj.data.NonEmptyList;
 import fj.data.Option;
 import fj.data.Reader;
 import fj.data.State;

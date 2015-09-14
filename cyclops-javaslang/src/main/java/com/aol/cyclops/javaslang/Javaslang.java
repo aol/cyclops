@@ -7,14 +7,13 @@ import javaslang.collection.Stream;
 import javaslang.control.Either;
 import javaslang.control.Either.LeftProjection;
 import javaslang.control.Either.RightProjection;
-import javaslang.control.Failure;
 import javaslang.control.Option;
 import javaslang.control.Right;
 import javaslang.control.Try;
 import javaslang.test.Arbitrary;
 
 import com.aol.cyclops.lambda.api.AsAnyM;
-import com.aol.cyclops.lambda.monads.AnyM;
+import com.aol.cyclops.monad.AnyM;
 
 public class Javaslang {
 

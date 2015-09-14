@@ -1,8 +1,20 @@
 package com.aol.cyclops.matcher.builders;
 
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.core.AllOf.allOf;
+import static org.hamcrest.core.AnyOf.anyOf;
+
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.hamcrest.Matcher;
 
 import com.aol.cyclops.matcher.Cases;
+import com.aol.cyclops.matcher.TypedFunction;
+import com.aol.cyclops.matcher.builders.CaseBuilder.InCaseOfBuilder;
+import com.aol.cyclops.matcher.builders.CaseBuilder.InMatchOfBuilder;
 
 /**
  * Pattern Matching builder
@@ -21,30 +33,10 @@ public class Matching {
 	 * @return Pattern Mather Builder
 	 */
 	public static final <T,X> MatchingInstance<T,X> of(Cases<T,X,? extends Function<T,X>> cases){
-		return new MatchingInstance(new CheckTypeAndValues(new PatternMatcher().withCases(cases)));
+		return new MatchingInstance(new ElementCase(new PatternMatcher().withCases(cases)));
 	}
 	
-	/**
-	 * Create a builder for Matching on Case classes. This is the closest builder
-	 * for Scala / ML style pattern matching.
-	 * 
-	 * Case classes can be constructed succintly in Java with Lombok or jADT
-	 * e.g.
-	 * <pre>{@code
-	 * \@Value final class CaseClass implements Decomposable { int field1; String field2;}
-	 * }</pre>
-	 * 
-	 * Use with static imports from the Predicates class to get wildcards via '__' or ANY()
-	 * And to apply nested / recursive matching via Predicates.type(  ).with (   )
-	 * 
-	 * Match disaggregated elements by type, value, JDK 8 Predicate or Hamcrest Matcher
-	 * 
-	 * @return Case Class style Pattern Matching Builder
-	 */
-	public static final<USER_VALUE> CheckTypeAndValues<USER_VALUE> whenValues(){
-		CheckTypeAndValues cse = new  CheckTypeAndValues(new PatternMatcher());
-		return cse;
-	}
+	
 	/**
 	 * Create a builder for Matching against a provided Object as is (i.e. the Steps this builder provide assume you don't wish to disaggregate it and
 	 * match on it's decomposed parts separately).
@@ -58,103 +50,95 @@ public class Matching {
 		return cse;
 	}
 	
+	
 	/**
-	 * Create a builder for matching on the disaggregated elements of a collection.
+	 * Build a Case which is triggered when the user input matches the supplied Value (via Objects.equals)
 	 * 
-	 * Allows matching by type, value, JDK 8 Predicate, or Hamcrest Matcher per element
-	 * 
-	 * @return Iterable / Collection based Pattern Matching Builder
+	 * @param value
+	 *            will be compared to input provided in match method
+	 * @return Next step in this Case builder
 	 */
-	public static final<USER_VALUE> IterableCase<USER_VALUE> whenIterable(){
-		IterableCase cse = new IterableCase(new PatternMatcher());
-		return cse;
-	}
-	
-	/**
-	 * Create a builder that builds Pattern Matching Cases from Streams of data.
-	 * 
-	 * 
-	 * @return Stream based Pattern Matching Builder
-	 */
-	public static final  StreamCase whenFromStream(){
-		StreamCase cse = new StreamCase(new PatternMatcher());
-		return cse;
-	}
-	
-	
-	
-	
-	
-	/**
-	 * Create a builder for Matching on Case classes. This is the closest builder
-	 * for Scala / ML style pattern matching.
-	 * 
-	 * Case classes can be constructed succintly in Java with Lombok or jADT
-	 * e.g.
-	 * <pre>{@code
-	 * \@Value final class CaseClass implements Decomposable { int field1; String field2;}
-	 * }</pre>
-	 * 
-	 * Use with static imports from the Predicates class to get wildcards via '__' or ANY()
-	 * And to apply nested / recursive matching via Predicates.type(  ).with (   )
-	 * 
-	 * Match disaggregated elements by type, value, JDK 8 Predicate or Hamcrest Matcher
+	public static final <V,X> Step<V, X> whenIsValue(V value) {
 
-	 * 
-	 * @param fn Function that accepts the Case for Case classes and returns the output of that builder
-	 * @return Pattern Matching Builder
-	 */
-	@Deprecated
-	public static final<X> MatchingInstance<? extends Object,X> when(Function<CheckTypeAndValues<? extends Object>,MatchingInstance<? extends Object,X>> fn){
-		CheckTypeAndValues cse = new CheckTypeAndValues(new PatternMatcher());
-		return fn.apply(cse);
-		
+		return (Step<V,X>)new ElementCase<>(new PatternMatcher()).isValue(value);
+
 	}
+
 	/**
-     * Create a builder for Matching against a provided Object as is (i.e. the Steps this builder provide assume you don't wish to disaggregate it and
-	 * match on it's decomposed parts separately).
+	 * Create a completed Case which is triggered when matching input is of the same type (T) as the input parameter to ActionWithReturn. The
+	 * ActionWithReturn will then be executed and the result returned as the match result.
 	 * 
-	 * Allows matching by type, value, JDK 8 Predicate, or Hamcrest Matcher 
-	 * 
-	 * @param fn Function that accepts a Simplex Element based Pattern Matching Builder and returns it's output
-	 * @return Pattern Matching Builder
+	 * @param a
+	 *            Action for the new Case, Predicate for the Case will be created from the input type to the Action.
+	 * @return Completed Case
 	 */
-	@Deprecated
-	public static final<X> MatchingInstance<? extends Object,X> whenValues(Function<ElementCase<X>,MatchingInstance<? extends Object,X>>fn){
-		ElementCase<X> cse = new ElementCase(new PatternMatcher());
-		return fn.apply(cse);
-		
+	public static final <T, R> MatchingInstance<T, R> whenIsType(TypedFunction<T, R> a) {
+
+		return new ElementCase<>(new PatternMatcher()).isType(a);
+
 	}
-	
+
 	/**
-	 * Create a builder for matching on the disaggregated elements of a collection.
+	 * Build a Case which is triggered when the supplied Predicate holds
 	 * 
-	 * Allows matching by type, value, JDK 8 Predicate, or Hamcrest Matcher per element
-	 * 
-	 * @param fn a Function that accepts a Iterable / Collection based Pattern Matching Builder and returns it's output
-	 * @return Pattern Matching Builder
+	 * @param match
+	 *            Predicate which will trigger this case
+	 * @return Next Step in the Case Builder process
 	 */
-	@Deprecated
-	public static final<X> MatchingInstance<? extends Object,X> whenIterable(Function<IterableCase<? extends Object>,MatchingInstance<? extends Object,X>> fn){
-		IterableCase cse = new IterableCase(new PatternMatcher());
-		return fn.apply(cse);
-		
+	public static final <V> InCaseOfBuilder<V> whenIsTrue(Predicate<V> match) {
+		return new ElementCase<>(new PatternMatcher()).isTrue(match);
 	}
-	
-	
+
 	/**
-	 * Create a builder that builds Pattern Matching Cases from Streams of data.
+	 * Build a Case which is triggered when the supplied Hamcrest Matcher holds
 	 * 
-	 * @param fn a function that accepts a Stream based pattern matching builder
-	 * @return Pattern Matching Builder
+	 * @param match
+	 *            Hamcrest Matcher that will trigger this case
+	 * @return Next Step in the Case Builder process
 	 */
-	@Deprecated
-	public static final <T,X> MatchingInstance<T,X> whenFromStream(Function<CaseBeingBuilt,MatchingInstance<T,X>> fn){
-		StreamCase cse = new StreamCase(new PatternMatcher());
-		return fn.apply(cse);
-		
+	public static final <V,X> InMatchOfBuilder<V, X> whenIsMatch(Matcher<V> match) {
+
+		return (InMatchOfBuilder)new ElementCase<>(new PatternMatcher()).isMatch(match);
 	}
-	
+
+	/**
+	 * Build a Case which is triggered when all of the supplied Hamcrest Matchers holds
+	 * 
+	 * @param matchers
+	 *            Hamcrest Matchers that will trigger this case
+	 * @return Next Step in the Case Builder process
+	 */
+	@SafeVarargs
+	public static final <V,X> InMatchOfBuilder<V, X> whenAllMatch(Matcher<V>... matchers) {
+
+		return (InMatchOfBuilder)new ElementCase<>(new PatternMatcher()).allMatch(matchers);
+	}
+
+	/**
+	 * Build a Case which is triggered when any of the supplied Hamcrest Matchers holds
+	 * 
+	 * @param matchers
+	 *            Hamcrest Matchers that will trigger this case
+	 * @return Next Step in the Case Builder process
+	 */
+	@SafeVarargs
+	public static final  <V,X> InMatchOfBuilder<V, X> whenAnyMatch(Matcher<V>... matchers) {
+
+		return (InMatchOfBuilder)new ElementCase<>(new PatternMatcher()).anyMatch(matchers);
+	}
+
+	/**
+	 * Build a Case which is triggered when none of the supplied Hamcrest Matchers holds
+	 * 
+	 * @param matchers
+	 *            Hamcrest Matchers that will trigger this case
+	 * @return Next Step in the Case Builder process
+	 */
+	@SafeVarargs
+	public static final <V,X> InMatchOfBuilder<V, X> whenNoneMatch(Matcher<V>... matchers) {
+		return (InMatchOfBuilder)new ElementCase<>(new PatternMatcher()).noneMatch(matchers);
+	}
+
 
 	
 	

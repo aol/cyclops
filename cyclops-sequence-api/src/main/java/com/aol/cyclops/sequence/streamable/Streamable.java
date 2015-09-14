@@ -1,0 +1,110 @@
+package com.aol.cyclops.sequence.streamable;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import com.aol.cyclops.invokedynamic.InvokeDynamic;
+import com.aol.cyclops.objects.AsDecomposable;
+import com.aol.cyclops.sequence.ReversedIterator;
+import com.aol.cyclops.sequence.SeqUtils;
+import com.aol.cyclops.sequence.SequenceM;
+
+/**
+ * Represents something that can generate a Stream, repeatedly
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Data type for Stream
+ */
+public interface Streamable<T> extends Iterable<T>{
+
+	default Iterator<T> iterator(){
+		return stream().iterator();
+	}
+	default  Object getStreamable(){
+		return this;
+	}
+	default SequenceM<T> reveresedSequenceM(){
+		return SequenceM.fromStream(reveresedStream());
+	}
+	/**
+	 * @return SequenceM from this Streamable
+	 */
+	default SequenceM<T> sequenceM(){
+		return SequenceM.fromStream(stream());
+	}
+	default Stream<T> reveresedStream(){
+		Object streamable = getStreamable();
+		if(streamable instanceof List){
+			return StreamSupport.stream(new ReversedIterator((List)streamable).spliterator(),false);
+		}
+		if(streamable instanceof Object[]){
+			List arrayList = Arrays.asList((Object[])streamable);
+			return StreamSupport.stream(new ReversedIterator(arrayList).spliterator(),false);
+		}
+		return SeqUtils.reverse(stream());
+	}
+	/**
+	 * @return New Stream
+	 */
+	default Stream<T> stream(){
+		Object streamable = getStreamable();
+		if(streamable instanceof Stream)
+			return (Stream)streamable;
+		if(streamable instanceof Iterable)
+			return StreamSupport.stream(((Iterable)streamable).spliterator(), false);
+		return  new InvokeDynamic().stream(streamable).orElseGet( ()->
+								(Stream)StreamSupport.stream(AsDecomposable.asDecomposable(streamable)
+												.unapply()
+												.spliterator(),
+													false));
+	}
+	
+	/**
+	 * (Lazily) Construct a Streamable from a Stream.
+	 * 
+	 * @param stream to construct Streamable from
+	 * @return Streamable
+	 */
+	public static <T> Streamable<T> fromStream(Stream<T> stream){
+		return AsStreamable.fromStream(stream);
+	}
+	/**
+	 * (Lazily) Construct a Streamable from an Iterable.
+	 * 
+	 * @param iterable to construct Streamable from
+	 * @return Streamable
+	 */
+	public static <T> Streamable<T> fromIterable(Iterable<T> iterable){
+		return AsStreamable.fromIterable(iterable);
+	}
+
+	
+	
+	/**
+	 * Construct a Streamable that returns a Stream
+	 * 
+	 * @param values to construct Streamable from
+	 * @return Streamable
+	 */
+	public static<T> Streamable<T> of(T... values){
+		
+		return new Streamable<T>(){
+			public Stream<T> stream(){
+				return Stream.of(values);
+			}
+			public Object getStreamable(){
+				return values;
+			}
+		};
+	}
+	public static <T> Streamable<T> empty(){
+		return of();
+	}
+	
+	
+}

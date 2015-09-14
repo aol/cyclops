@@ -12,9 +12,9 @@ import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.lambda.api.AsAnyM;
-import com.aol.cyclops.lambda.monads.AnyM;
-import com.aol.cyclops.lambda.utils.ExceptionSoftener;
+import com.aol.cyclops.monad.AnyM;
 
 /**
  * Class that represents the Failure of a Try
@@ -74,7 +74,7 @@ public class Failure<T,X extends Throwable> implements Try<T,X> {
 	 * @see com.aol.cyclops.trycatch.Try#get()
 	 */
 	public T get(){
-		ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException((Throwable)error);
+		ExceptionSoftener.throwSoftenedException((Throwable)error);
 		return null;
 	}
 
@@ -252,7 +252,7 @@ public class Failure<T,X extends Throwable> implements Try<T,X> {
 	 */
 	@Override
 	public void throwException() {
-		ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(error);
+		ExceptionSoftener.throwSoftenedException(error);
 		
 	}
 	/* 

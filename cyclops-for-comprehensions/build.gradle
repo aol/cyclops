@@ -33,9 +33,10 @@ configurations {
 dependencies {
 
 
-	compile project(':cyclops-base')
-	provided group: 'org.projectlombok', name: 'lombok', version:'1.16.2'
-	provided 'org.jooq:jool:0.9.6'
+	compile project(':cyclops-monad-api')
+	compile project(':cyclops-streams')
+	provided group: 'org.projectlombok', name: 'lombok', version:"${lombokVersion}"
+	provided "org.jooq:jool:${joolVersion}"
 	compile 'org.pcollections:pcollections:2.1.2'
 	testCompile 'org.functionaljava:functionaljava:4.3'
 	testCompile 'com.aol.simplereact:simple-react:0.98'

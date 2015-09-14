@@ -17,7 +17,7 @@ import lombok.experimental.Wither;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
-import com.aol.cyclops.lambda.api.Decomposable;
+import com.aol.cyclops.objects.Decomposable;
 import com.nurkiewicz.lazyseq.LazySeq;
 
 /**

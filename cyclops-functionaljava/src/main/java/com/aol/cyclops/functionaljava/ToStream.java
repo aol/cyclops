@@ -1,12 +1,12 @@
 package com.aol.cyclops.functionaljava;
 
-import com.aol.simple.react.stream.traits.LazyFutureStream;
-import com.google.common.collect.FluentIterable;
-import com.nurkiewicz.lazyseq.LazySeq;
+import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
 
-import java.util.stream.Stream;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
+import com.google.common.collect.FluentIterable;
+import com.nurkiewicz.lazyseq.LazySeq;
 
 /**
  * Created by johnmcclean on 4/8/15.
@@ -23,7 +23,7 @@ public class ToStream {
         return Seq.seq(s.iterator());
     }
     public static <T> LazyFutureStream<T> toFutureStream(fj.data.Stream<T> s){
-        return LazyFutureStream.of(s.iterator());
+        return LazyFutureStream.lazyFutureStream(s.iterator());
     }
 
     public static <T> LazySeq<T> toLazySeq(fj.data.Stream<T> s){

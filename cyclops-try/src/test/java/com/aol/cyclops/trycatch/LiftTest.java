@@ -1,6 +1,6 @@
 package com.aol.cyclops.trycatch;
 
-import static com.aol.cyclops.lambda.api.AsAnyM.*;
+import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -13,8 +13,8 @@ import lombok.val;
 
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.monads.AnyM;
 import com.aol.cyclops.lambda.monads.AnyMonads;
+import com.aol.cyclops.monad.AnyM;
 
 
 public class LiftTest {

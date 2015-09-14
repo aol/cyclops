@@ -23,7 +23,7 @@ public class ToStream {
         return Seq.seq(s.iterator());
     }
     public static <T> LazyFutureStream<T> toFutureStream(javaslang.collection.Stream<T> s){
-        return LazyFutureStream.of(s.iterator());
+        return LazyFutureStream.lazyFutureStream(s.iterator());
     }
 
     public static <T> LazySeq<T> toLazySeq(javaslang.collection.Stream<T> s){

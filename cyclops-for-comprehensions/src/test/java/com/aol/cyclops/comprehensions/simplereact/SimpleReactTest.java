@@ -1,5 +1,8 @@
 package com.aol.cyclops.comprehensions.simplereact;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -7,14 +10,8 @@ import java.util.Optional;
 import org.junit.Test;
 
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
-import com.aol.cyclops.lambda.api.AsAnyM;
-import com.aol.cyclops.lambda.monads.AnyM;
 import com.aol.simple.react.stream.traits.EagerFutureStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
-import com.aol.simple.react.stream.traits.SimpleReactStream;
-
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 public class SimpleReactTest {
 	@Test
 	public void doTestLazy(){

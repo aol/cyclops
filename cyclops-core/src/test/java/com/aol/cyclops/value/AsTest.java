@@ -5,7 +5,6 @@ import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -20,9 +19,8 @@ import lombok.val;
 import org.junit.Test;
 
 import com.aol.cyclops.dynamic.As;
-import com.aol.cyclops.lambda.api.Monoid;
-import com.aol.cyclops.matcher.Matchable;
 import com.aol.cyclops.matcher.builders.CheckValues;
+import com.aol.cyclops.sequence.Monoid;
 
 public class AsTest {
 	
@@ -62,7 +60,7 @@ public class AsTest {
 	}
 	@Test
 	public void testAsStreamableT() {
-		val result = As.<Integer>asStreamable(Arrays.asList(1,2,3)).stream().map(i->i+2).collect(Collectors.toList());
+		val result = As.<Integer>asStreamableFromObject(Arrays.asList(1,2,3)).stream().map(i->i+2).collect(Collectors.toList());
 		
 		assertThat(result,equalTo(Arrays.asList(3,4,5)));
 	}

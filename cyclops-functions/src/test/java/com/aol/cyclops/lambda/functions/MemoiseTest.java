@@ -1,11 +1,11 @@
 package com.aol.cyclops.lambda.functions;
 
-import static com.aol.cyclops.functions.Memoise.memoiseBiFunction;
-import static com.aol.cyclops.functions.Memoise.memoiseCallable;
-import static com.aol.cyclops.functions.Memoise.memoiseFunction;
-import static com.aol.cyclops.functions.Memoise.memoisePredicate;
-import static com.aol.cyclops.functions.Memoise.memoiseQuadFunction;
-import static com.aol.cyclops.functions.Memoise.memoiseSupplier;
+import static com.aol.cyclops.functions.caching.Memoize.memoizeBiFunction;
+import static com.aol.cyclops.functions.caching.Memoize.memoizeCallable;
+import static com.aol.cyclops.functions.caching.Memoize.memoizeFunction;
+import static com.aol.cyclops.functions.caching.Memoize.memoizePredicate;
+import static com.aol.cyclops.functions.caching.Memoize.memoizeQuadFunction;
+import static com.aol.cyclops.functions.caching.Memoize.memoizeSupplier;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -20,7 +20,7 @@ import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.functions.Memoise;
+import com.aol.cyclops.functions.caching.Memoize;
 public class MemoiseTest {
 
 	int called= 0;
@@ -31,7 +31,7 @@ public class MemoiseTest {
 	@Test
 	public void testMemoiseSupplier() {
 		
-		Supplier<Integer> s = memoiseSupplier(()->++called);
+		Supplier<Integer> s = memoizeSupplier(()->++called);
 		assertThat(s.get(),equalTo(1));
 		assertThat(s.get(),equalTo(1));
 		assertThat(s.get(),equalTo(1));
@@ -41,7 +41,7 @@ public class MemoiseTest {
 
 	@Test
 	public void testMemoiseCallable() throws Exception {
-		Callable<Integer> s = memoiseCallable(()->++called);
+		Callable<Integer> s = memoizeCallable(()->++called);
 		assertThat(s.call(),equalTo(1));
 		assertThat(s.call(),equalTo(1));
 		assertThat(s.call(),equalTo(1));
@@ -50,7 +50,7 @@ public class MemoiseTest {
 
 	@Test
 	public void testMemoiseFunction() {
-		Function<Integer,Integer> s = memoiseFunction( a->a + ++called);
+		Function<Integer,Integer> s = memoizeFunction( a->a + ++called);
 		assertThat(s.apply(0),equalTo(1));
 		assertThat(s.apply(0),equalTo(1));
 		assertThat(s.apply(0),equalTo(1));
@@ -60,7 +60,7 @@ public class MemoiseTest {
 
 	@Test
 	public void testMemoiseBiFunction() {
-		BiFunction<Integer,Integer,Integer> s = memoiseBiFunction( (a,b)->a + ++called);
+		BiFunction<Integer,Integer,Integer> s = memoizeBiFunction( (a,b)->a + ++called);
 		assertThat(s.apply(0,1),equalTo(1));
 		assertThat(s.apply(0,1),equalTo(1));
 		assertThat(s.apply(0,1),equalTo(1));
@@ -70,7 +70,7 @@ public class MemoiseTest {
 
 	@Test
 	public void testMemoisePredicate() {
-		Predicate<Integer> s = memoisePredicate( a-> a==++called);
+		Predicate<Integer> s = memoizePredicate( a-> a==++called);
 		assertThat(s.test(0),equalTo(false));
 		assertThat(s.test(0),equalTo(false));
 		assertThat(s.test(2),equalTo(true));
@@ -79,7 +79,7 @@ public class MemoiseTest {
 	}
 	@Test
 	public void testMemoiseTriFunction(){
-		val cached = Memoise.memoiseTriFunction(this::mult);
+		val cached = Memoize.memoizeTriFunction(this::mult);
 		
 		assertThat(cached.apply(1,2,3),equalTo(6));
 		assertThat(cached.apply(1,2,3),equalTo(6));
@@ -93,7 +93,7 @@ public class MemoiseTest {
 	}
 	@Test
 	public void testMemoiseQuadFunction(){
-		val cached = memoiseQuadFunction(this::addAll);
+		val cached = memoizeQuadFunction(this::addAll);
 		
 		assertThat(cached.apply(1,2,3,4),equalTo(10));
 		assertThat(cached.apply(1,2,3,4),equalTo(10));

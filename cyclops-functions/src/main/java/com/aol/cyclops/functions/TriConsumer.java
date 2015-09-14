@@ -3,6 +3,8 @@ package com.aol.cyclops.functions;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import com.aol.cyclops.functions.currying.CurryConsumer;
+
 public interface TriConsumer<S1, S2, S3> {
 
 	public void accept(S1 a,S2 b,S3 c);

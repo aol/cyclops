@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
 
-import com.aol.cyclops.matcher.ActionWithReturn;
+import com.aol.cyclops.matcher.TypedFunction;
 import com.aol.cyclops.matcher.Case;
 import com.aol.cyclops.matcher.Cases;
 @AllArgsConstructor
@@ -25,7 +25,7 @@ public class CheckType<R> extends CaseBeingBuilt{
 	 * @param a Action for the new Case, Predicate for the Case will be created from the input type to the Action.
 	 * @return Completed Case
 	 */
-	public  <T,R> CheckType<R> isType(ActionWithReturn<T,R> a){
+	public  <T,R> CheckType<R> isType(TypedFunction<T,R> a){
 		
 		return (CheckType)this.withPatternMatcher(patternMatcher.inCaseOfType(a));
 		
