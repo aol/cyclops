@@ -1,17 +1,12 @@
 package com.aol.cyclops.validation;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import com.aol.cyclops.validation.ValidationTest.User;
-
-import fj.data.Validation;
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
+import fj.data.Validation;
 
 /**
  * A Cumulative Validator, that processes all validation steps and accumulates all results & errors

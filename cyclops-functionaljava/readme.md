@@ -31,12 +31,13 @@ These are available in Cyclops Comprehensions, or via Cyclops AnyM.
 
 ## Example flatMap a Functional Java List, that returns JdK Optional
 
+```java
 	FJ.anyM(List.list("hello world"))
 				.map(String::toUpperCase)
 				.flatMapOptional(Optional::of)
 				.toSequence()
 				.toList()
-    
+ ```
 			
 ## Get cyclops-functionaljava
 

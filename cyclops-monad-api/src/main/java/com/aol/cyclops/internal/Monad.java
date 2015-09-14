@@ -20,8 +20,6 @@ import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SeqUtils;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
-import com.sun.xml.internal.ws.util.StreamUtils;
-
 
 
 

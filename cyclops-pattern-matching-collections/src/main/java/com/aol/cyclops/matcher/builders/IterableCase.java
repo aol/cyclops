@@ -18,6 +18,7 @@ import com.aol.cyclops.matcher.Predicates;
 import com.aol.cyclops.matcher.Two;
 import com.aol.cyclops.matcher.TypedFunction;
 import com.nurkiewicz.lazyseq.LazySeq;
+
 /**
  * Case builder for handling iterables
  * Predicates match against each element in the Iterable

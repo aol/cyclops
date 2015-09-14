@@ -1,11 +1,6 @@
 package com.aol.cyclops.validation;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
-
 import java.util.function.Predicate;
-
-import com.aol.cyclops.validation.ValidationViaAddTest.User;
 
 import lombok.AllArgsConstructor;
 import fj.data.Validation;

@@ -94,8 +94,7 @@ public class Memoize {
 	 * @return Memoised Function
 	 */
 	public static <T,R> Function<T,R> memoizeFunction(Function<T,R> fn,Cachable<R> cache){
-		
-		return t -> cache.computeIfAbsent(t,(Function)fn);
+		return t -> (R)cache.computeIfAbsent(t,(Function)fn);
 	}
 	
 	/**

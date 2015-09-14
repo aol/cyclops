@@ -31,7 +31,9 @@ configurations {
 }
 dependencies {
 	compile project(':cyclops-mixins')
-       provided 'com.google.guava:guava:18.0'
+	compile project(':cyclops-monad-api')
+	compile project(':cyclops-streams')
+    provided 'com.google.guava:guava:18.0'
 	provided group: 'com.aol.simplereact', name:'simple-react', version:"${simpleReactVersion}"
 	provided 'com.nurkiewicz.lazyseq:lazyseq:0.0.1'
 	provided 'com.javaslang:javaslang:1.2.2'
