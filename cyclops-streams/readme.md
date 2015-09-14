@@ -27,7 +27,7 @@ compile 'com.aol.cyclops:cyclops-streams:x.y.z'
 
 * Fast sequential Streams that can run asyncrhonously
 * Reactive Stream Support
-* Efficient Stream reversal
+* Efficient Stream reversal and right based operations (foldRight / scanRight etc)
 * static Stream Utilities
 * SequenceM implementation
 * Terminal operations that return a Future to be populated asynchronously
