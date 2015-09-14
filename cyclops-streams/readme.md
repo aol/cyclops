@@ -2,6 +2,28 @@
 
 Defines an api for more advanced sequential Streams. Extends java.util.stream.Stream and jool.Seq to add even more functionality. Reactive Streams support available if simple-react added to the classpath.
 
+## Getting cyclops-streams
+
+* [![Maven Central : cyclops-streams](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-streams/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-streams)
+
+
+## Gradle
+
+where x.y.z represents the latest version
+
+compile 'com.aol.cyclops:cyclops-streams:x.y.z'
+
+## Maven
+
+```xml
+<dependency>
+    <groupId>com.aol.cyclops</groupId>
+    <artifactId>cyclops-streams</artifactId>
+    <version>x.y.z</version>
+</dependency>
+```
+# Overview
+
 * Fast sequential Streams that can run asyncrhonously
 * Reactive Stream Support
 * Efficient Stream reversal

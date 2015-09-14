@@ -2,6 +2,28 @@
 
 Cyclops Try offers an alternative way to manage exception handling.
 
+## Getting cyclops-try
+
+* [![Maven Central : cyclops-try](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-try/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-try)
+
+
+## Gradle
+
+where x.y.z represents the latest version
+
+compile 'com.aol.cyclops:cyclops-try:x.y.z'
+
+## Maven
+
+```xml
+<dependency>
+    <groupId>com.aol.cyclops</groupId>
+    <artifactId>cyclops-try</artifactId>
+    <version>x.y.z</version>
+</dependency>
+```
+
+
 #Goals
 
 * 	Offer similar functionality as Scala's Try, but with behaviour more in line with current Java development practices
