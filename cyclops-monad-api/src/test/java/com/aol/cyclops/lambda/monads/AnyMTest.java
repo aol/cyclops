@@ -28,7 +28,7 @@ import lombok.val;
 
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.monads.AnyMonadsFunctions;
+import com.aol.cyclops.lambda.monads.AnyMonads;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.Reducers;
@@ -49,7 +49,7 @@ public class AnyMTest {
                 .collect(Collectors.toList());
        
         
-        AnyM<Stream<Integer>> futureList = AnyMonadsFunctions.sequence(completableFutureToAnyMList(futures));
+        AnyM<Stream<Integer>> futureList = AnyMonads.sequence(completableFutureToAnyMList(futures));
         
  
         List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>unwrap().join();
@@ -71,7 +71,7 @@ public class AnyMTest {
                 .collect(Collectors.toList());
 
        
-        AnyM<List<String>> futureList = AnyMonadsFunctions.traverse( completableFutureToAnyMList(futures), (Integer i) -> "hello" +i);
+        AnyM<List<String>> futureList = AnyMonads.traverse( completableFutureToAnyMList(futures), (Integer i) -> "hello" +i);
    
         List<String> collected = futureList.<CompletableFuture<List<String>>>unwrap().join();
         assertThat(collected.size(),equalTo( list.size()));
@@ -93,7 +93,7 @@ public class AnyMTest {
 
 	@Test
 	public void testLiftMSimplex(){
-		val lifted = AnyMonadsFunctions.liftM((Integer a)->a+3);
+		val lifted = AnyMonads.liftM((Integer a)->a+3);
 		
 		AnyM<Integer> result = lifted.apply(anyM(Optional.of(3)));
 		
@@ -104,7 +104,7 @@ public class AnyMTest {
 	
 	@Test
 	public void testLiftM2Simplex(){
-		val lifted = AnyMonadsFunctions.liftM2((Integer a,Integer b)->a+b);
+		val lifted = AnyMonads.liftM2((Integer a,Integer b)->a+b);
 		
 		AnyM<Integer> result = lifted.apply(anyM(Optional.of(3)),anyM(Optional.of(4)));
 		
@@ -112,7 +112,7 @@ public class AnyMTest {
 	}
 	@Test
 	public void testLiftM2SimplexNull(){
-		val lifted = AnyMonadsFunctions.liftM2((Integer a,Integer b)->a+b);
+		val lifted = AnyMonads.liftM2((Integer a,Integer b)->a+b);
 		
 		AnyM<Integer> result = lifted.apply(anyM(Optional.of(3)),anyM(Optional.ofNullable(null)));
 		
@@ -124,7 +124,7 @@ public class AnyMTest {
 	}
 	@Test
 	public void testLiftM2Mixed(){
-		val lifted = AnyMonadsFunctions.liftM2(this::add); 
+		val lifted = AnyMonads.liftM2(this::add); 
 		
 		AnyM<Integer> result = lifted.apply(anyM(Optional.of(3)),anyM(Stream.of(4,6,7)));
 		

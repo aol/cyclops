@@ -9,7 +9,7 @@ import org.junit.Test;
 import fj.data.Validation;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static com.aol.cyclops.validation.Validator.isValid;
+import static com.aol.cyclops.validation.Validator.of;
 public class ValidationTest {
 
 	@Value
@@ -19,7 +19,7 @@ public class ValidationTest {
 	}
 	@Test
 	public void testAccumulate() {
-		ValidationResults results  = CumulativeValidator.of((User user)->user.age>18, "too young", "age ok")
+		ValidationResults<String,String> results  = CumulativeValidator.of((User user)->user.age>18, "too young", "age ok")
 												.isValid(user->user.email!=null, "user email null","email ok")
 												.accumulate(new User(10,"email@email.com"));
 	
@@ -37,9 +37,9 @@ public class ValidationTest {
 	@Test
 	public void testAccumulateFJ() {
 		User user = new User(10,"email@email.com");
-		ValidationResults results  = CumulativeValidator.of(emailOk(user))
-												.add(ageOk(user))
-												.accumulate();
+		ValidationResults<String,String> results  = CumulativeValidator.of(emailOk(user))
+														.add(ageOk(user))
+														.accumulate();
 	
 		System.out.println(results);
 	}

@@ -36,7 +36,7 @@ public class SequentialValidator<T, R, E> {
 		return result;
 
 	}
-	public <NT> SequentialValidator<NT, T, E> add(Validation<E, NT> validation) {
+	public <NT> SequentialValidator<NT, T, E> add(Validation<E, T> validation) {
 		return new SequentialValidator<NT, T, E>(Validator.convert(validation), this);
 	}
 	
@@ -50,13 +50,13 @@ public class SequentialValidator<T, R, E> {
 	public <NT> SequentialValidator<NT, T, E> isValid(
 			Predicate<NT> valid, E error, T result) {
 
-		return new SequentialValidator<NT, T, E>(Validator.isValid(valid, error, result), this);
+		return new SequentialValidator<NT, T, E>(Validator.of(valid, error, result), this);
 	}
 
 	public static <T, R, E> SequentialValidator<T, R, E> of(
 			Predicate<T> valid, E error, R result) {
 		return new SequentialValidator(
-				Validator.isValid(valid, error, result), null);
+				Validator.of(valid, error, result), null);
 	}
 	public static <T, R, E> SequentialValidator<T, R, E> of(Validation<E,T> validation) {
 		return new SequentialValidator(

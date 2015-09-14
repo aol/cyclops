@@ -27,7 +27,7 @@ import com.aol.cyclops.sequence.streamable.Streamable;
 /**
  * 
  * Wrapper for Any Monad type
- * @see AnyMonadsFunctions companion class for static helper methods
+ * @see AnyMonads companion class for static helper methods
  * 
  * @author johnmcclean
  *

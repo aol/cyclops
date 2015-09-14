@@ -11,14 +11,14 @@ public class Validator<T,R,E> {
     final E error;
     final R result;
     
-	public static <T,R,E> Validator<T,R,E> isValid(Predicate<T> valid, E error, R result){
+	public static <T,R,E> Validator<T,R,E> of(Predicate<T> valid, E error, R result){
 		return new Validator<>(valid,error,result);
 	}
-	public static <T,R,E> Validator<T,R,E>  convert(Validation<E,T> validation){
+	public static <T,R,E> Validator<T,R,E>  convert(Validation<E,R> validation){
 		if(validation.isSuccess())
-			return (Validator)isValid( t-> true,null,validation.success());
+			return (Validator)of( t-> true,null,validation.success());
 		
-		return (Validator)isValid( t-> false,validation.fail(),null);
+		return (Validator)of( t-> false,validation.fail(),null);
 	}
 	public boolean isValid(T input){
 		return valid.test(input);
