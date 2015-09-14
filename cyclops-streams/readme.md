@@ -36,21 +36,14 @@ compile 'com.aol.cyclops:cyclops-streams:x.y.z'
 
 # Dependencies
 
-cyclops-invokedynamic
-cyclops-monad-api
-cyclops-sequence-api
+* cyclops-invokedynamic
+* cyclops-monad-api
+* cyclops-sequence-api
 
 ## Recommended in conjunction with
 
 simple-react
 
-# Getting cyclops-sequence-api
-
-## Gradle
-
-where x.y.z represents the latest version
-
-compile 'com.aol.cyclops:cyclops-streams:x.y.z'
 
 # Operators
 
