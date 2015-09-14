@@ -27,8 +27,5 @@ public class Validator<T,R,E> {
 	public CumulativeValidator<T,R,E> cumulative(){
 		return new CumulativeValidator<>(this,null);
 	}
-	public SequentialValidator<T,R,E> sequential(){
-		return new SequentialValidator<>(this,null);
-	}
 	
 }

@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ValidationResults<T,E> {
-	List<ValidationResult<T,E>> results;
+	private final List<ValidationResult<T,E>> results;
 	
 	public String toString(){
 		return results.toString();

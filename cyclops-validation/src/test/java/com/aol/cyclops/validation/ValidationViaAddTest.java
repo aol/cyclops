@@ -25,14 +25,6 @@ public class ValidationViaAddTest {
 	
 		assertThat(results.getResults().size(),equalTo(2));
 	}
-	@Test
-	public void testSequence() {
-		User user = new User(10,"email@email.com");
-		ValidationResult result  = SequentialValidator.of((User u1)->u1.age>18, "too young", "age ok")
-												.add(Validator.of((User u2)->u2.email!=null, "user email null",user))
-												.sequence(user);
 	
-		assertThat(result.failure().get(),equalTo("too young"));
-	}
 	
 }
