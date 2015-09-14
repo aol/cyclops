@@ -12,7 +12,7 @@ public class Validator<T,R,E> {
     final R result;
     
 	public static <T,R,E> Validator<T,R,E> isValid(Predicate<T> valid, E error, R result){
-		return new Validator(valid,error,result);
+		return new Validator<>(valid,error,result);
 	}
 	public static <T,R,E> Validator<T,R,E>  convert(Validation<E,T> validation){
 		if(validation.isSuccess())

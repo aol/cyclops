@@ -8,6 +8,15 @@ import fj.data.Validation;
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
 
+/**
+ * A Cumulative Validator, that processes all validation steps and accumulates all results & errors
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Input type
+ * @param <R> Return type
+ * @param <E> Error type
+ */
 @AllArgsConstructor
 @Wither
 public class CumulativeValidator<T,R,E> {
@@ -15,13 +24,13 @@ public class CumulativeValidator<T,R,E> {
 	private final Validator<T,R,E> validation;
 	private final CumulativeValidator<T,R,E> next;
 
-	public static <T,R,E> CumulativeValidator<T,R,E> validate(Predicate<T> valid, E error, R result){
+	public static <T,R,E> CumulativeValidator<T,R,E> of(Predicate<T> valid, E error, R result){
 		return new CumulativeValidator(Validator.isValid(valid, error, result),null);
 	}
 	public  CumulativeValidator<T,R,E> isValid(Predicate<T> valid, E error, R result){
 		return new CumulativeValidator(Validator.isValid(valid, error, result),null);
 	}
-	public static <T,R,E> CumulativeValidator<T,R,E> isValid(Validation<E,T> validation){
+	public static <T,R,E> CumulativeValidator<T,R,E> of(Validation<E,T> validation){
 		return new CumulativeValidator(Validator.convert(validation),null);
 	}
 

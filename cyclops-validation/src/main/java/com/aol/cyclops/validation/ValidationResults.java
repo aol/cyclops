@@ -7,10 +7,11 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ValidationResults {
-	List<ValidationResult> results;
+public class ValidationResults<T,E> {
+	List<ValidationResult<T,E>> results;
 	
 	public String toString(){
 		return results.toString();
 	}
+	
 }

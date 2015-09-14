@@ -5,6 +5,15 @@ import java.util.function.Predicate;
 import fj.data.Validation;
 import lombok.AllArgsConstructor;
 
+/**
+ * A Validator that performs steps in sequence and stops on first failure
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Input type
+ * @param <R> Result type
+ * @param <E> Error type
+ */
 @AllArgsConstructor
 public class SequentialValidator<T, R, E> {
 
@@ -38,13 +47,18 @@ public class SequentialValidator<T, R, E> {
 
 		return new SequentialValidator<NT, T, E>(validation, this);
 	}
+	public <NT> SequentialValidator<NT, T, E> isValid(
+			Predicate<NT> valid, E error, T result) {
 
-	public static <T, R, E> SequentialValidator<T, R, E> isValid(
+		return new SequentialValidator<NT, T, E>(Validator.isValid(valid, error, result), this);
+	}
+
+	public static <T, R, E> SequentialValidator<T, R, E> of(
 			Predicate<T> valid, E error, R result) {
 		return new SequentialValidator(
 				Validator.isValid(valid, error, result), null);
 	}
-	public static <T, R, E> SequentialValidator<T, R, E> isValid(Validation<E,T> validation) {
+	public static <T, R, E> SequentialValidator<T, R, E> of(Validation<E,T> validation) {
 		return new SequentialValidator(
 				Validator.convert(validation), null);
 	}

@@ -5,8 +5,8 @@ import java.util.Optional;
 
 public interface ValidationResult<T,E> {
 	
-	public Optional<T> success();
-	public Optional<E> failure();
+	public Optional<? super T> success();
+	public Optional<? super E> failure();
 	
 }
 

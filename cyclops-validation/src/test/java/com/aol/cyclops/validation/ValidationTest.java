@@ -19,7 +19,7 @@ public class ValidationTest {
 	}
 	@Test
 	public void testAccumulate() {
-		ValidationResults results  = CumulativeValidator.validate((User user)->user.age>18, "too young", "age ok")
+		ValidationResults results  = CumulativeValidator.of((User user)->user.age>18, "too young", "age ok")
 												.isValid(user->user.email!=null, "user email null","email ok")
 												.accumulate(new User(10,"email@email.com"));
 	
@@ -28,8 +28,8 @@ public class ValidationTest {
 	@Test
 	public void testSequence() {
 		User user = new User(10,"email@email.com");
-		ValidationResult result  = SequentialValidator.isValid((User u1)->u1.age>18, "too young", "age ok")
-												.add(isValid((User u2)->u2.email!=null, "user email null",user))
+		ValidationResult result  = SequentialValidator.of((User u1)->u1.age>18, "too young", "age ok")
+												.isValid((User u2)->u2.email!=null, "user email null",user)
 												.sequence(user);
 	
 		assertThat(result.failure().get(),equalTo("too young"));
@@ -37,7 +37,7 @@ public class ValidationTest {
 	@Test
 	public void testAccumulateFJ() {
 		User user = new User(10,"email@email.com");
-		ValidationResults results  = CumulativeValidator.isValid(emailOk(user))
+		ValidationResults results  = CumulativeValidator.of(emailOk(user))
 												.add(ageOk(user))
 												.accumulate();
 	
@@ -46,7 +46,7 @@ public class ValidationTest {
 	@Test
 	public void testSequenceFJ() {
 		User user = new User(10,"email@email.com");
-		ValidationResult results  = SequentialValidator.isValid(emailOk(user))
+		ValidationResult results  = SequentialValidator.of(emailOk(user))
 												.add(ageOk(user))
 												.sequence();
 	

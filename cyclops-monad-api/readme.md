@@ -49,11 +49,7 @@ assertThat(result,equalTo(Arrays.asList(1,2,3,4,5)));
 * liftM2 : Lift a BiFunction to a function that accepts and returns any monad type (via AnyM).
 * sequence : Convert a collection of monads, to a single monad with a collection
 * traverse : Convert a collection of Monads to a single Monad with a wrapped Collection applying the supplied function in the process
-* applyM
-* reduceM
-* simpleFilter
-* cycle
-* replicateM
+
 
 # Examples
 
