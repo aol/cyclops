@@ -90,7 +90,7 @@ SequenceM.range(0,Integer.MAX_VALUE);
 List<Intger> list;
 SequenceM.fromList(list);
 
-Sequence.of(1,2,3)
+SequenceM.of(1,2,3)
         .reverse()
         .forEach(System.out::println);
 ```
