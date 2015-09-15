@@ -82,14 +82,17 @@ SequenceM streams can be created via creational Operators such as
 ### With efficient reversability
 
 
-range, of(List), of(..values) all result in Sequences that can be efficiently reversed
+range, of(List), of(..values) all result in Sequences that can be efficiently reversed (and used in scanRight, foldRight etc)
+
 ```java
 SequenceM.range(0,Integer.MAX_VALUE);
 
 List<Intger> list;
 SequenceM.fromList(list);
 
-Sequence.of(1,2,3);
+Sequence.of(1,2,3)
+        .reverse()
+        .forEach(System.out::println);
 ```
 
 ## recover / Retry
