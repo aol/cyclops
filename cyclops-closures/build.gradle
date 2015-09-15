@@ -16,7 +16,7 @@ sourceCompatibility = 1.8
 
 jar {
     manifest {
-        attributes 'Implementation-Title': 'Cyclops Lambda Utils', 'Implementation-Version': version
+        attributes 'Implementation-Title': 'Cyclops Closures', 'Implementation-Version': version
     }
 }
 

@@ -1,7 +1,23 @@
 # cyclops-streams
 
-java.util.Streams on steriods! An implementation of the cyclops-sequence-api for more advanced sequential Streams. Extends java.util.stream.Stream and jool.Seq to add even more functionality. 
+java.util.Streams on steriods! An implementation of the cyclops-sequence-api [SequenceM](http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/6.0.1/com/aol/cyclops/sequence/SequenceM.html) for more advanced sequential Streams. Extends [java.util.stream.Stream](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html) and [jool.Seq](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.7/org/jooq/lambda/Seq.html) to add even more functionality. 
 Easy to use Reactive Streams support available if simple-react is added to the classpath.
+
+Features include
+
+* Failure handling (recover / retry)
+* windowing / batching (by time, size, state, predicate)
+* zipping
+* HotStreams
+* reactive-streams
+* Asynchronous execution
+* Stream manipulation - insert/At, deleteAt
+* Frequency management (xPer, onePer, jitter, debounce)
+* Efficient reversal
+* StreamUtils - static methods for java.util.stream.Streams
+* Streamables - efficient / lazy replayable Streams as java.util.stream.Stream or SequenceM
+
+
 
 ## Getting cyclops-streams
 
@@ -34,6 +50,126 @@ compile 'com.aol.cyclops:cyclops-streams:x.y.z'
 * HotStream support
 
 
+
+
+# Operators
+
+Large number of Stream operators available on SequenceM or as static methods for java.util.Stream (SequenceM extends java.util.Stream)
+
+Javadoc 
+ 
+* [SequenceM](http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/6.0.1/com/aol/cyclops/sequence/SequenceM.html)
+* [Streamable](http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/6.0.1/com/aol/cyclops/sequence/streamable/Streamable.html)
+* [Async FutureOperations](http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/6.0.1/com/aol/cyclops/sequence/future/FutureOperations.html)
+* [Async IntOperators](http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/6.0.1/com/aol/cyclops/sequence/future/IntOperators.html)
+* [Async DoubleOperators](http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/6.0.1/com/aol/cyclops/sequence/future/DoubleOperators.html)
+* [Async LongOperators](http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/6.0.1/com/aol/cyclops/sequence/future/LongOperators.html)
+
+# Examples
+
+## Creating Streams
+
+SequenceM streams can be created via creational Operators such as
+
+* of
+* fromStream
+* fromIterable
+* fromList
+* fromIntStream
+* fromLongStream
+* fromDoubleStream
+
+### With efficient reversability
+
+
+range, of(List), of(..values) all result in Sequences that can be efficiently reversed
+```java
+SequenceM.range(0,Integer.MAX_VALUE);
+
+List<Intger> list;
+SequenceM.fromList(list);
+
+Sequence.of(1,2,3);
+```
+
+## recover / Retry
+
+Recover and retry operators allow different strategies for error recovery.
+
+Recover allows a default value to be provided when an exception occurs
+
+```java
+SequenceM.of(1,2,3,4)
+					.map(u->{throw new RuntimeException();})
+					.recover(e->"hello")
+					.firstValue()
+//hello
+```
+
+Recovery can be linked to specific exception types.
+
+```java
+SequenceM.of(1,2,3,4)
+					.map(i->i+2)
+					.map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
+					.recover(IOException.class,e->"hello")
+					.firstValue()
+//hello
+```
+
+With retry, a function will be called with an increasing back-off up to 7 times. 
+
+```java
+SequenceM.of( 1,  2, 3)
+				.retry(this::loadData)
+				.firstValue()
+```
+## FutureOperations
+
+FutureOperations allow a Stream to be executed Asynchronously with the result of a terminal operation captured in a Future.
+
+```java
+CompletableFuture<List<Integer>> list = SequenceM.of(1,2,3,4,5)
+         										 .futureOperations(exec)
+        										 .collect(Collectors.toList());
+        										 
+ // list populates Asynchronously
+ 
+ list.join()
+     .forEach(System.out::println);
+```
+
+
+
+## HotStream 
+
+HotStreams are executed immediately and asynchronously (on the provided Executor - they will make use of a single thread only). They are also connectable (by potentially multiple Streams), the connected Stream receive those elements emitted *after* they connect.
+
+```java
+HotStream<Integer> range = SequenceM.range(0,Integer.MAX_VALUE)
+									.peek(System.out::println)
+									.hotStream(Executors.fixedThreadPool(1));
+
+// will start printing out each value in range									
+									
+range.connect()
+	.limit(100)
+	.futureOperations(ForkJoinPool.commonPool())
+	.forEach(System.out::println);
+	
+//will print out the first 100 values it recieves (after joining) on a separate thread	
+```
+
+## Reactive Streams
+
+In conjunction with simple-react v0.99.3 and above SequenceM can be turned into a reactive-stream publisher or subscriber.
+```java
+CyclopsSubscriber<Integer> sub = SequenceM.subscriber();
+		SequenceM.of(1,2,3).subscribe(sub);
+		sub.sequenceM().toList();
+		
+//[1,2,3]
+```
 # Dependencies
 
 * cyclops-invokedynamic
@@ -43,61 +179,3 @@ compile 'com.aol.cyclops:cyclops-streams:x.y.z'
 ## Recommended in conjunction with
 
 simple-react
-
-
-# Operators
-
-Large number of Stream operators available on SequenceM or as static methods for java.util.Stream (SequenceM extends java.util.Stream)
-
-* Reactive Streams support
-* Connectable Hot Streams 
-* [Core Operators](https://github.com/aol/cyclops/blob/master/cyclops-sequence-api/src/main/java/com/aol/cyclops/sequence/SequenceM.java)
-* [Async Operators](https://github.com/aol/cyclops/blob/master/cyclops-sequence-api/src/main/java/com/aol/cyclops/sequence/future/FutureOperations.java)
-* [Async Operators ints](https://github.com/aol/cyclops/blob/master/cyclops-sequence-api/src/main/java/com/aol/cyclops/sequence/future/IntOperators.java)
-* [Async Operators doubles](https://github.com/aol/cyclops/blob/master/cyclops-sequence-api/src/main/java/com/aol/cyclops/sequence/future/DoubleOperators.java)
-* [Async Operators longss](https://github.com/aol/cyclops/blob/master/cyclops-sequence-api/src/main/java/com/aol/cyclops/sequence/future/LongOperators.java)
-* [Available as static methods](https://github.com/aol/cyclops/blob/master/cyclops-streams/src/main/java/com/aol/cyclops/streams/StreamUtils.java)
-
-
-## StreamUtils
-
-## Multiple simultanous reduction with Monoids
-
-    Monoid<String> concat = Monoid.of("",(a,b)->a+b);
-	Monoid<String> join = Monoid.of("",(a,b)->a+","+b);
-
-
-	StreamUtils.reduce(Stream.of("hello", "world", "woo!"),Stream.of(concat,join));
-
-Results in ["helloworldwoo!",",hello,world,woo!"]
-
-See also Monoid.reduce(Stream s)
-
-
-## Cycle 
-
-    StreamUtils.cycle(Stream.of(1,2,3)).limit(6).collect(Collectors.toList())
- 
- Results in [1,2,3,1,2,3]
- 
-## Reverse
-
-    StreamUtils.reverse(Stream.of(1,2,3)).collect(Collectors.toList())
-   
-Results in [3,2,1]  
-
-## Stream creation from Iterable and Iterator
-
-From Iterable
-
-    StreamUtils.stream(Arrays.asList(1,2,3)).collect(Collectors.toList())
-
-From Iterator
-
-	StreamUtils.stream(Arrays.asList(1,2,3).iterator()).collect(Collectors.toList())    
-	
-## Reverse a Stream
- 
- 
-     ReversedIterator.reversedStream(LazySeq.iterate(class1, c->c.getSuperclass())
-						.takeWhile(c->c!=Object.class).toList());

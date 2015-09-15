@@ -46,7 +46,7 @@ public class CumulativeValidator<T,R,E> {
 	 * @return
 	 */
 	public  CumulativeValidator<T,R,E> isValid(Predicate<T> valid, E error, R result){
-		return new CumulativeValidator<>(Validator.of(valid, error, result),null);
+		return add(Validator.of(valid, error, result));
 	}
 	
 	/**

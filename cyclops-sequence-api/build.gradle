@@ -16,7 +16,7 @@ sourceCompatibility = 1.8
 
 jar {
     manifest {
-        attributes 'Implementation-Title': 'Cyclops Lambda Utils', 'Implementation-Version': version
+        attributes 'Implementation-Title': 'Cyclops Sequence Api', 'Implementation-Version': version
     }
 }
 
@@ -50,13 +50,13 @@ test {
 
 modifyPom {
 	project {
-		name 'cyclops-functions'
+		name 'cyclops-sequence-api'
 		description 'Function utils for Java 8'
 		url 'http://advertising.com'
 		inceptionYear '2015'
 
 		groupId 'com.aol.cyclops'
-		artifactId 'cyclops-functions'
+		artifactId 'cyclops-sequence-api'
 		version "$version"
 		
 		scm {

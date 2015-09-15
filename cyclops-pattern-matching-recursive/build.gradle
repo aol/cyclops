@@ -15,7 +15,7 @@ sourceCompatibility = 1.8
 
 jar {
     manifest {
-        attributes 'Implementation-Title': 'Gradle Quickstart', 'Implementation-Version': version
+        attributes 'Implementation-Title': 'Cyclops Pattern Matching Recursive', 'Implementation-Version': version
     }
 }
 
@@ -47,13 +47,13 @@ test {
 
 modifyPom {
 	project {
-		name 'cyclops-pattern-matching'
+		name 'cyclops-pattern-matching-recursive'
 		description 'Advanced pattern matching for Java 8'
 		url 'http://advertising.com'
 		inceptionYear '2015'
 
 		groupId 'com.aol.cyclops'
-		artifactId 'cyclops-pattern-matching'
+		artifactId 'cyclops-pattern-matching-recursive'
 		version "$version" 
 		
 				scm {
