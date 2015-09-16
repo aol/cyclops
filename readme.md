@@ -1,13 +1,16 @@
-<img alt="cyclops" src="https://cloud.githubusercontent.com/assets/9964792/8509305/4b0518d6-2294-11e5-83f5-10945539f73d.png">
-
-Powerful, modular extensions for Java 8. Take what you need or want.
-
-![cyclops - duke2](https://cloud.githubusercontent.com/assets/9964792/8359084/28d79944-1b5c-11e5-9c56-2c44d33f3aed.png)
-
-# Cyclops Modules
+Powerful, lightweight & modular extensions for JDK 8. Import only the modules you need.
 
 [![Join the chat at https://gitter.im/aol/cyclops](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/aol/cyclops?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+<img alt="cyclops" src="https://cloud.githubusercontent.com/assets/9964792/8509305/4b0518d6-2294-11e5-83f5-10945539f73d.png">
+
+
+# Cyclops Modules & Features Including
+
+
+* [Powerful extensions to the Stream interface with SequenceM](http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/6.0.1/com/aol/cyclops/sequence/SequenceM.html)
+* [Static Stream functions with StreamUtils](http://static.javadoc.io/com.aol.cyclops/cyclops-streams/6.0.1/com/aol/cyclops/streams/StreamUtils.html)
+* [Memoization](http://static.javadoc.io/com.aol.cyclops/cyclops-functions/6.0.1/com/aol/cyclops/functions/caching/Memoize.html)
 * [Extensible For Comprehensions](https://github.com/aol/cyclops/wiki/Extensible-For-Comprehensions-for-Java-8)
 * [Pattern Matching](https://github.com/aol/cyclops/wiki/Pattern-matching-:-Pattern-Matching-for-Java-8)
 * [Advanced Monadic (Stream, Optional etc) cross-type operations](https://github.com/aol/cyclops/wiki/Monad-&-Stream-utilities)
@@ -17,11 +20,8 @@ Powerful, modular extensions for Java 8. Take what you need or want.
 * [Enable Switch](https://github.com/aol/cyclops/wiki/Enable-and-disable-production-features)
 * [Utils for working with Functions](https://github.com/aol/cyclops/wiki/Utilities-for-working-with-Java-8-Functions)
 
-## Cyclops features
 
-* [Very powerful Stream processing with SequenceM](http://static.javadoc.io/com.aol.cyclops/cyclops-base/5.1.0/com/aol/cyclops/lambda/monads/SequenceM.html)
-* [Very powerful Stream processing with StreamUtils](http://static.javadoc.io/com.aol.cyclops/cyclops-base/5.1.0/com/aol/cyclops/streams/StreamUtils.html)
-* [Memoisation](http://static.javadoc.io/com.aol.cyclops/cyclops-functions/5.1.0/com/aol/cyclops/functions/Memoise.html)
+
 
 [Cyclops Wiki](https://github.com/aol/cyclops/wiki)
 
@@ -37,6 +37,7 @@ Powerful, modular extensions for Java 8. Take what you need or want.
 * [Functional Feature Toggling](https://medium.com/@johnmcclean/feature-toggling-with-cyclops-a29d1eead62c)
 * [Dependency injection using the Reader Monad in Java8](https://medium.com/@johnmcclean/dependency-injection-using-the-reader-monad-in-java8-9056d9501c75)
 
+![cyclops - duke2](https://cloud.githubusercontent.com/assets/9964792/8359084/28d79944-1b5c-11e5-9c56-2c44d33f3aed.png)
 
 
 ## Cyclops modules on Maven Central!
