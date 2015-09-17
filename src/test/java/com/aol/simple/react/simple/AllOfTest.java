@@ -28,8 +28,8 @@ public class AllOfTest {
 	public void allOf(){
 		List<HashPMap<String, List<Integer>>> result =
 		
-				EagerReact.sequentialBuilder().react(()->1,()->2,()->3)
-		 									 .map(it->it+100)
+				SimpleReact.sequentialBuilder().react(()->1,()->2,()->3)
+		 									 .then(it->it+100)
 		 									 .peek(System.out::println)
 		 									 .allOf((List<Integer> c)-> { System.out.println(c);return HashTreePMap.singleton("numbers",c);})
 		 									 .peek(map -> System.out.println(map))

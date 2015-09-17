@@ -1,9 +1,7 @@
 package com.aol.simple.react.stream.simple;
 
-import java.security.Security;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -12,17 +10,21 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Supplier;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 
 import com.aol.simple.react.RetryBuilder;
-import com.aol.simple.react.stream.BaseSimpleReact;
-import com.aol.simple.react.stream.Status;
+import com.aol.simple.react.stream.ReactBuilder;
 import com.aol.simple.react.stream.ThreadPools;
+import com.aol.simple.react.stream.traits.EagerSimpleReactStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -39,8 +41,10 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 
 @Builder
 @Wither
-public class SimpleReact  extends BaseSimpleReact{
-
+@AllArgsConstructor
+public class SimpleReact implements ReactBuilder{
+	@Getter
+	private final Executor queueService;
 	@Getter
 	private final Executor executor;
 	@Getter
@@ -50,8 +54,8 @@ public class SimpleReact  extends BaseSimpleReact{
 	
 	private final Boolean async;
 	
-	@Override
-	public <U> SimpleReactStream<U> construct(Stream s) {
+	
+	public <U> EagerSimpleReactStream<U> construct(Stream s) {
 		return  new SimpleReactStreamImpl<U>( this,s);
 	}
 	
@@ -69,7 +73,7 @@ public class SimpleReact  extends BaseSimpleReact{
 	
 	public SimpleReact(Executor executor, RetryExecutor retrier,
 			 Boolean async) {
-		super(ThreadPools.getQueueCopyExecutor());
+		queueService = ThreadPools.getQueueCopyExecutor();
 		this.executor = Optional.ofNullable(executor).orElse(
 				new ForkJoinPool(Runtime.getRuntime().availableProcessors()));
 		this.retrier = retrier;
@@ -81,21 +85,21 @@ public class SimpleReact  extends BaseSimpleReact{
 	 * @param executor Executor this SimpleReact instance will use to execute concurrent tasks.
 	 */
 	public SimpleReact(Executor executor) {
-		super(ThreadPools.getQueueCopyExecutor());
+		queueService = ThreadPools.getQueueCopyExecutor();
 		this.executor = executor;
 		this.retrier = null;
 		
 		this.async =true;
 	}
 	public SimpleReact(Executor executor,RetryExecutor retrier) {
-		super(ThreadPools.getQueueCopyExecutor());
+		queueService = ThreadPools.getQueueCopyExecutor();
 		this.executor = executor;
 		this.retrier = retrier;
 		
 		this.async =true;
 	}
 	public SimpleReact(Executor executor,RetryExecutor retrier,Executor queueCopier) {
-		super(queueCopier);
+		queueService = ThreadPools.getQueueCopyExecutor();
 		this.executor = executor;
 		this.retrier = retrier;
 		
@@ -105,16 +109,7 @@ public class SimpleReact  extends BaseSimpleReact{
 	public SimpleReact withQueueCopyExecutor(Executor queueCopyExecutor){
 		return new SimpleReact(this.executor,this.retrier,queueCopyExecutor);
 	}
-	/**
-	 * Start a reactive dataflow from a stream of CompletableFutures.
-	 * 
-	 * @param stream of CompletableFutures that will be used to drive the reactive dataflow
-	 * @return Next stage in the reactive flow
-	 */
-	public <U> SimpleReactStream<U> fromStream(final Stream<CompletableFuture<U>> stream) {
-		return super.fromStream(stream);
-		
-	}
+	
 
 	
 	
@@ -128,7 +123,7 @@ public class SimpleReact  extends BaseSimpleReact{
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public <U> SimpleReactStream<U> react(final Collection<Supplier<U>> actions) {
+	public <U> EagerSimpleReactStream<U> react(final Collection<Supplier<U>> actions) {
 
 		return react((Supplier[]) actions.toArray(new Supplier[] {}));
 	}
@@ -142,7 +137,7 @@ public class SimpleReact  extends BaseSimpleReact{
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public <U> SimpleReactStream<U> react(final Stream<Supplier<U>> actions) {
+	public <U> EagerSimpleReactStream<U> react(final Stream<Supplier<U>> actions) {
 
 		return new SimpleReactStreamImpl<U>(this,actions.map(
 				next -> CompletableFuture.supplyAsync(next, executor)));
@@ -158,7 +153,7 @@ public class SimpleReact  extends BaseSimpleReact{
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public <U> SimpleReactStream<U> react(final Iterator<Supplier<U>> actions) {
+	public <U> EagerSimpleReactStream<U> react(final Iterator<Supplier<U>> actions) {
 
 		return new SimpleReactStreamImpl<U>(this,StreamSupport.stream(Spliterators.spliteratorUnknownSize(actions, Spliterator.ORDERED),false).map(
 				next -> CompletableFuture.supplyAsync(next, executor)));
@@ -174,7 +169,7 @@ public class SimpleReact  extends BaseSimpleReact{
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public <U> SimpleReactStream<U> reactIterable(final Iterable<Supplier<U>> actions) {
+	public <U> EagerSimpleReactStream<U> reactIterable(final Iterable<Supplier<U>> actions) {
 
 		return new SimpleReactStreamImpl<U>(this,StreamSupport.stream(Spliterators.spliteratorUnknownSize(actions.iterator(), Spliterator.ORDERED),false).map(
 				next -> CompletableFuture.supplyAsync(next, executor)));
@@ -189,9 +184,9 @@ public class SimpleReact  extends BaseSimpleReact{
 	 * @return Next stage in the reactive flow
 	 */
 	@SafeVarargs
-	public final <U> SimpleReactStream<U> react(final Supplier<U>... actions) {
+	public final <U> EagerSimpleReactStream<U> react(final Supplier<U>... actions) {
 
-		return super.react(actions);
+		return react(actions);
 
 	}
 	
@@ -201,7 +196,7 @@ public class SimpleReact  extends BaseSimpleReact{
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	protected <U> SimpleReactStream<U> reactI(final Supplier<U>... actions) {
+	protected <U> EagerSimpleReactStream<U> reactI(final Supplier<U>... actions) {
 		
 		
 			return new SimpleReactStreamImpl<U>(this,Stream.of(actions).map(
@@ -211,8 +206,28 @@ public class SimpleReact  extends BaseSimpleReact{
 	}
 	
 	
-	
-	
+	/**
+	 * Start a reactive dataflow from a stream.
+	 * 
+	 * @param stream that will be used to drive the reactive dataflow
+	 * @return Next stage in the reactive flow
+	 */
+	public <U> EagerSimpleReactStream<U> from(final Stream<U> stream) {
+		
+		Stream s = stream.map(it -> CompletableFuture.completedFuture(it));
+		return construct( s);
+	}
+	/**
+	 * Start a reactive flow from a Collection using an Iterator
+	 * 
+	 * @param collection - Collection SimpleReact will iterate over at the start of the flow
+	 *
+	 * @return Next stage in the reactive flow
+	 */
+	@SuppressWarnings("unchecked")
+	public <R> EagerSimpleReactStream<R> from(final Collection<R> collection){
+		return from(collection.stream());
+	}
 
 	public boolean isAsync(){
 		return async;
@@ -268,6 +283,99 @@ public class SimpleReact  extends BaseSimpleReact{
 		return SimpleReact.builder().async(false).executor(ThreadPools.getCommonFreeThread())
 				.retrier(RetryBuilder.getDefaultInstance().withScheduler(ThreadPools.getCommonFreeThreadRetry())).build();
 	}
+	
+	public EagerSimpleReactStream<Integer> range(int startInclusive, int endExclusive){
+		return from(IntStream.range(startInclusive, endExclusive));
+	}
+	/**
+	 * Start a reactive flow from a JDK Iterator
+	 * 
+	 * @param iterator SimpleReact will iterate over this iterator concurrently to start the reactive dataflow
+	 * @return Next stage in the reactive flow
+	 */
+	@SuppressWarnings("unchecked")
+	public <U> EagerSimpleReactStream<U> from(final Iterator<U> iterator){
+		return from(StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED),false));
 		
+	
+	}
+	
+
+	/**
+	 * Start a reactive flow from a JDK Iterator
+	 * 
+	 * @param iter SimpleReact will iterate over this iterator concurrently to start the reactive dataflow
+	 * @return Next stage in the reactive flow
+	 */
+	@SuppressWarnings("unchecked")
+	public <U> SimpleReactStream<U> fromIterable(final Iterable<U> iter){
+		return this.from(StreamSupport.stream(Spliterators.spliteratorUnknownSize(iter.iterator(), Spliterator.ORDERED),false));
+	
+	}
+
+	
+	/**
+	 * Start a reactive dataflow from a stream of CompletableFutures.
+	 * 
+	 * @param stream of CompletableFutures that will be used to drive the reactive dataflow
+	 * @return Next stage in the reactive flow
+	 */
+	public <U> SimpleReactStream<U> fromStream(final Stream<CompletableFuture<U>> stream) {
+
+		Stream s = stream;
+		return  construct( s);
+	}
+	
+	
+	/**
+	 * Start a reactive dataflow from a stream.
+	 * 
+	 * @param stream that will be used to drive the reactive dataflow
+	 * @return Next stage in the reactive flow
+	 */
+	public <U> EagerSimpleReactStream<Integer> from(final IntStream stream) {
+		
+		return from(stream.boxed());
+	
+	}
+	/**
+	 * Start a reactive dataflow from a stream.
+	 * 
+	 * @param stream that will be used to drive the reactive dataflow
+	 * @return Next stage in the reactive flow
+	 */
+	public <U> EagerSimpleReactStream<Double> from(final DoubleStream stream) {
+		
+		return from(stream.boxed());
+	
+	}
+	/**
+	 * Start a reactive dataflow from a stream.
+	 * 
+	 * @param stream that will be used to drive the reactive dataflow
+	 * @return Next stage in the reactive flow
+	 */
+	public <U> EagerSimpleReactStream<Long> from(final LongStream stream) {
+		
+		return from(stream.boxed());
+	
+	}
+	
+
+
+	public <U> EagerSimpleReactStream<U> of(U...array){
+		return from(Stream.of(array));
+	}
+	public <U> EagerSimpleReactStream<U> from(CompletableFuture<U> cf){
+		return this.construct(Stream.of(cf));
+	}
+	public <U> EagerSimpleReactStream<U> from(CompletableFuture<U>... cf){
+		return this.construct(Stream.of(cf));
+	}
+	
+	
+	
+	
+	
 	
 }

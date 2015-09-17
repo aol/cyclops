@@ -39,20 +39,18 @@ import org.junit.Test;
 import org.pcollections.HashTreePMap;
 
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.stream.eager.EagerReact;
-import com.aol.simple.react.stream.lazy.LazyReact;
-import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.EagerFutureStreamFunctions;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.util.SimpleTimer;
 
 
 //see BaseSequentialSeqTest for in order tests
 public abstract class BaseSeqTest {
-	abstract protected <U> FutureStream<U> of(U... array);
-	abstract protected <U> FutureStream<U> ofThread(U... array);
-	abstract protected <U> FutureStream<U> react(Supplier<U>... array);
-	FutureStream<Integer> empty;
-	FutureStream<Integer> nonEmpty;
+	abstract protected <U> LazyFutureStream<U> of(U... array);
+	abstract protected <U> LazyFutureStream<U> ofThread(U... array);
+	abstract protected <U> LazyFutureStream<U> react(Supplier<U>... array);
+	LazyFutureStream<Integer> empty;
+	LazyFutureStream<Integer> nonEmpty;
 
 	@Before
 	public void setup(){
@@ -62,38 +60,27 @@ public abstract class BaseSeqTest {
 
 	@Test
 	public void syncTest(){
-		FutureStream stream = of(1,2,3,4).sync();
+		LazyFutureStream stream = of(1,2,3,4).sync();
 		assertThat(stream.isAsync(),is(false));
 	}
 	@Test
 	public void asyncTest(){
-		FutureStream stream = of(1,2,3,4).async();
+		LazyFutureStream stream = of(1,2,3,4).async();
 		assertThat(stream.isAsync(),is(true));
 	}
 	@Test
 	public void syncAndAsyncTest(){
-		FutureStream stream = of(1,2,3,4).sync().async();
+		LazyFutureStream stream = of(1,2,3,4).sync().async();
 		assertThat(stream.isAsync(),is(true));
 	}
 	@Test
 	public void asyncSyncTest(){
-		FutureStream stream = of(1,2,3,4).async().sync();
+		LazyFutureStream stream = of(1,2,3,4).async().sync();
 		assertThat(stream.isAsync(),is(false));
 	}
 	
 	
-	@Test @Ignore
-	public void firstOf(){
-		
-		assertTrue(EagerFutureStreamFunctions.firstOf(of(1,2,3,4),react(()->value()),
-				react(()->value())).anyMatch(it-> it.equals(1)));
-		assertTrue(EagerFutureStreamFunctions.firstOf(of(1,2,3,4),react(()->value()),
-				react(()->value())).anyMatch(it-> it.equals(2)));
-		assertTrue(EagerFutureStreamFunctions.firstOf(of(1,2,3,4),react(()->value()),
-				react(()->value())).anyMatch(it-> it.equals(3)));
-		assertTrue(EagerFutureStreamFunctions.firstOf(of(1,2,3,4),react(()->value()),
-				react(()->value())).anyMatch(it-> it.equals(4)));
-	}
+	
 	protected Object value() {
 		try {
 			Thread.sleep(150);
@@ -202,7 +189,7 @@ public abstract class BaseSeqTest {
 	@Test
 	public void batchByTimeSet(){
 		for(int i=0;i<5000;i++){
-			List <Collection<Integer>> set = ofThread(1,1,1,1,1,1).batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>()).block();
+			List <TreeSet<Integer>> set = ofThread(1,1,1,1,1,1).batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>()).block();
 			
 			assertThat(set.get(0).size(),is(1));
 			
@@ -234,7 +221,7 @@ public abstract class BaseSeqTest {
 		
 			Map<Integer,Queue<Integer>> shards = HashTreePMap.singleton(0,new Queue<Integer>()).plus(1,new Queue());
 					
-			Map<Integer, ? extends FutureStream<Integer>> sharded = of(1,2,3,4,5,6).shard(shards,i -> i%2);
+			Map<Integer, ? extends LazyFutureStream<Integer>> sharded = of(1,2,3,4,5,6).shard(shards,i -> i%2);
 			sharded.get(0).forEach(next ->{
 				System.out.println ("next is " + next);
 			});
@@ -322,8 +309,8 @@ public abstract class BaseSeqTest {
 	@Test
 	public void shouldZipTwoFiniteSequencesOfSameSize() throws Exception {
 		
-		final FutureStream<String> first = of("A", "B", "C");
-		final FutureStream<Integer> second = of(1, 2, 3);
+		final LazyFutureStream<String> first = of("A", "B", "C");
+		final LazyFutureStream<Integer> second = of(1, 2, 3);
 
 		
 		final Seq<String> zipped = first.zip(second, (a, b) -> a + b);
@@ -336,8 +323,8 @@ public abstract class BaseSeqTest {
 
 	@Test
 	public void shouldTrimSecondFixedSeqIfLonger() throws Exception {
-		final FutureStream<String> first = of("A", "B", "C");
-		final FutureStream<Integer> second = of(1, 2, 3, 4);
+		final LazyFutureStream<String> first = of("A", "B", "C");
+		final LazyFutureStream<Integer> second = of(1, 2, 3, 4);
 
 		
 		final Seq<String> zipped = first.zip(second, (a, b) -> a + b);
@@ -347,8 +334,8 @@ public abstract class BaseSeqTest {
 
 	@Test
 	public void shouldTrimFirstFixedSeqIfLonger() throws Exception {
-		final FutureStream<String> first = of("A", "B", "C","D");
-		final FutureStream<Integer> second = of(1, 2, 3);
+		final LazyFutureStream<String> first = of("A", "B", "C","D");
+		final LazyFutureStream<Integer> second = of(1, 2, 3);
 		final Seq<String> zipped = first.zip(second, (a, b) -> a + b);
 
 		
@@ -537,7 +524,7 @@ public abstract class BaseSeqTest {
 
 	    @Test
 	    public void testSkipUntilWithNulls() {
-	        Supplier<FutureStream<Integer>> s = () -> of(1, 2, null, 3, 4, 5);
+	        Supplier<LazyFutureStream<Integer>> s = () -> of(1, 2, null, 3, 4, 5);
 	       
 	        assertTrue(s.get().skipUntil(i -> true).toList().containsAll(asList(1, 2, null, 3, 4, 5)));
 	    }

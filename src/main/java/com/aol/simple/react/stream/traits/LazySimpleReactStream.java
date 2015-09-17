@@ -11,22 +11,18 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.factories.QueueFactory;
 import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.async.future.PipelineBuilder;
 import com.aol.simple.react.async.subscription.Continueable;
-import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
-import com.aol.simple.react.stream.EagerStreamWrapper;
 import com.aol.simple.react.stream.LazyStreamWrapper;
-import com.aol.simple.react.stream.eager.EagerReact;
+import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.traits.operators.StreamCopier;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.nurkiewicz.asyncretry.policy.AbortRetryException;
@@ -39,7 +35,7 @@ public interface LazySimpleReactStream<U> extends
 				SimpleReactStream<U>{
 	
 
-	
+	LazyReact getSimpleReact();
 	LazySimpleReactStream<U> withTaskExecutor(Executor e);
 	LazySimpleReactStream<U> withRetrier(RetryExecutor retry);
 	
@@ -263,10 +259,10 @@ public interface LazySimpleReactStream<U> extends
 	 * @param flatFn flatMap function
 	 * @return Flatten Stream with flatFn applied
 	 */
-	default <R> LazySimpleReactStream<R> flatMapCompletableFuture(
+	default <R> LazySimpleReactStream<R> flatMapToCompletableFuture(
 			Function<U, CompletableFuture<R>> flatFn) {
 		if(!this.isAsync())
-			return flatMapCompletableFutureSync(flatFn);
+			return flatMapToCompletableFutureSync(flatFn);
 		Function<PipelineBuilder,PipelineBuilder> streamMapper = ft -> ft.thenComposeAsync(LazySimpleReactStream.handleExceptions(flatFn),getTaskExecutor());
 		return  this.withLastActive(getLastActive().operation(streamMapper));
 	}
@@ -288,7 +284,7 @@ public interface LazySimpleReactStream<U> extends
 	 * @param flatFn flatMap function
 	 * @return Flatten Stream with flatFn applied
 	 */
-	default <R> LazySimpleReactStream<R> flatMapCompletableFutureSync(
+	default <R> LazySimpleReactStream<R> flatMapToCompletableFutureSync(
 			Function<U, CompletableFuture<R>> flatFn) {
 		
 		Function<PipelineBuilder,PipelineBuilder> streamMapper = ft -> ft.thenCompose(LazySimpleReactStream.handleExceptions(flatFn));

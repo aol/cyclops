@@ -1,12 +1,9 @@
 package com.aol.simple.react.stream.traits;
 
-import static java.util.Spliterator.ORDERED;
-import static java.util.Spliterators.spliteratorUnknownSize;
-
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -17,7 +14,6 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,24 +21,19 @@ import java.util.stream.StreamSupport;
 
 import org.jooq.lambda.Seq;
 
-import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.factories.QueueFactory;
 import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.blockers.Blocker;
-import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.exceptions.ThrowsSoftened;
 import com.aol.simple.react.stream.EagerStreamWrapper;
+import com.aol.simple.react.stream.ReactBuilder;
 import com.aol.simple.react.stream.StageWithResults;
 import com.aol.simple.react.stream.Status;
-import com.aol.simple.react.stream.ThreadPools;
-import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.simple.SimpleReactStreamImpl;
 import com.aol.simple.react.stream.traits.operators.StreamCopier;
-import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.nurkiewicz.asyncretry.policy.AbortRetryException;
 
@@ -51,6 +42,8 @@ public interface EagerSimpleReactStream<U> extends SimpleReactStream<U>,
 				BlockingStream<U>, 
 				ConfigurableStream<U,CompletableFuture<U>>,
 				ToQueue<U>{
+	
+	SimpleReact getSimpleReact();
 	EagerSimpleReactStream<U> withLastActive(EagerStreamWrapper streamWrapper);
 	abstract EagerStreamWrapper getLastActive();
 	EagerSimpleReactStream<U> withTaskExecutor(Executor e);
@@ -64,9 +57,121 @@ public interface EagerSimpleReactStream<U> extends SimpleReactStream<U>,
 	EagerSimpleReactStream<U> withAsync(boolean b);
 	
 	Continueable getSubscription();
+	/**
+	 * Reversed, operating on the underlying futures.
+	 * <pre>
+	 * {@code 
+	 * 
+	 * // (3, 2, 1) EagerFutureStream.of(1, 2, 3).reverse()
+	 * }</pre>
+	 * 
+	 * @return
+	 */
+	default EagerSimpleReactStream<U> reverse() {
+		EagerStreamWrapper lastActive = getLastActive();
+		ListIterator<CompletableFuture> it = lastActive.list().listIterator();
+		List<CompletableFuture> result = new ArrayList<>();
+		while(it.hasPrevious())
+			result.add(it.previous());
+		
+		EagerStreamWrapper limited = lastActive.withList( result);
+		return this.withLastActive(limited);
+		
+	}
+	/**
+	 * Returns a limited interval from a given Stream.
+	 * 
+	 * <pre>
+	 * {@code 
+	 * // (4, 5) EagerFutureStream.of(1, 2, 3, 4, 5, 6).sliceFutures(3, 5)
+	 * }
+	 *</pre>
+	 * @see #slice(long, long)
+	 */
+
+	default EagerSimpleReactStream<U> slice(long from, long to) {
+		List noType = Seq.seq(getLastActive().stream()).slice(from, to)
+				.collect(Collectors.toList());
+		return fromListCompletableFuture(noType);
+	}
+	/**
+	 * Perform a limit operation on the underlying Stream of Futures
+	 * In contrast to EagerFutureStream#limit this removes entries basaed on their
+	 * start position
+	 * 
+	 * <pre>
+	 * {@code 
+	 * EagerFutureStream.of(()>loadSlow(),()>loadMedium(),()>loadFast())
+	 * 				.limitFutures(2)
+	 * }
+	 * 
+	 * //[loadSlow, loadMedium]
+	 * </pre>
+	 * 
+	 * 
+	 * 
+	 * @param maxSize The size of the subsequent Stream
+	 * @return limited Stream
+	 */
+	default EagerSimpleReactStream<U> limit(long maxSize) {
+
+		EagerStreamWrapper lastActive = getLastActive();
+		EagerStreamWrapper limited = lastActive.withList(lastActive.stream()
+				.limit(maxSize).collect(Collectors.toList()));
+		return this.withLastActive(limited);
+
+	}
+	/**
+	 * In contast to EagerFutureStream#skip skipFutures will skip the first n entries
+	 * of the underlying Stream of Futures.
+     * <pre>
+	 * {@code 
+	 * EagerFutureStream.of(()>loadSlow(),()>loadMedium(),()>loadFast())
+	 * 				.skip(2)
+	 * }
+	 * 
+	 * //[loadFast]
+	 * </pre>	 
+	 * 
+	 * @param n
+	 * @return
+	 */
+	default EagerSimpleReactStream<U> skip(long n) {
+		EagerStreamWrapper lastActive = getLastActive();
+		EagerStreamWrapper limited = lastActive.withList(lastActive.stream().skip(n)
+				.collect(Collectors.toList()));
+		return this.withLastActive(limited);
+	}
+	/**
+	 * Return a Stream with the same values as this Stream, but with all values omitted until the provided stream starts emitting values.
+	 * Provided Stream ends the stream of values from this stream.
+	 * 
+	 * @param s Stream that will start the emission of values from this stream
+	 * @return Next stage in the Stream but with all values skipped until the provided Stream starts emitting
+	 */
+	default<T>  Seq<U> skipUntil(EagerSimpleReactStream<T> s) {
+		return EagerFutureStreamFunctions.skipUntil(this, s);
+	}
+	/**
+	 * Return a Stream with the same values, but will stop emitting values once the provided Stream starts to emit values.
+	 * e.g. if the provided Stream is asynchronously refreshing state from some remote store, this stream can proceed until
+	 * the provided Stream succeeds in retrieving data.
+	 * 
+	 * @param s Stream that will stop the emission of values from this stream
+	 * @return Next stage in the Stream but will only emit values until provided Stream starts emitting values
+	 */
+	default<T>  Seq<U> takeUntil(EagerSimpleReactStream<T> s) {
+		return EagerFutureStreamFunctions.takeUntil(this, s);
+	}
 	
+	/**
+	 * Cancel the CompletableFutures in this stage of the stream
+	 */
+	default void cancel(){
+		this.streamCompletableFutures().forEach(next-> next.cancel(true));
+	}
 	
-	default List<SimpleReactStream<U>> copySimpleReactStream(final int times){
+	default List<EagerSimpleReactStream<U>> copySimpleReactStream(final int times){
 		
 		return (List)StreamCopier.toBufferingCopier(getLastActive().stream().iterator(), times)
 				.stream()
@@ -363,10 +468,10 @@ public interface EagerSimpleReactStream<U> extends SimpleReactStream<U>,
 	 * @param flatFn flatMap function
 	 * @return Flatten Stream with flatFn applied
 	 */
-	default <R> EagerSimpleReactStream<R> flatMapCompletableFuture(
+	default <R> EagerSimpleReactStream<R> flatMapToCompletableFuture(
 			Function<U, CompletableFuture<R>> flatFn) {
 		if(!this.isAsync())
-			return flatMapCompletableFutureSync(flatFn);
+			return flatMapToCompletableFutureSync(flatFn);
 		Function<Stream<CompletableFuture>,Stream<CompletableFuture>> streamMapper = s ->(Stream)s.map(ft -> 
 			ft.thenComposeAsync(EagerSimpleReactStream.handleExceptions(flatFn),getTaskExecutor()));
 		return (EagerSimpleReactStream<R>) this.withLastActive(getLastActive().stream(streamMapper));
@@ -389,7 +494,7 @@ public interface EagerSimpleReactStream<U> extends SimpleReactStream<U>,
 	 * @param flatFn flatMap function
 	 * @return Flatten Stream with flatFn applied
 	 */
-	default <R> EagerSimpleReactStream<R> flatMapCompletableFutureSync(
+	default <R> EagerSimpleReactStream<R> flatMapToCompletableFutureSync(
 			Function<U, CompletableFuture<R>> flatFn) {
 		
 		Function<Stream<CompletableFuture>,Stream<CompletableFuture>> streamMapper = s ->(Stream)s.map(ft -> ft.thenCompose(EagerSimpleReactStream.handleExceptions(flatFn)));
@@ -824,12 +929,12 @@ public interface EagerSimpleReactStream<U> extends SimpleReactStream<U>,
 	 * can be used to take advantages of each approach during a single Stream
 	 * 
 	 * @return An EagerFutureStream from this LazyFutureStream, will use the same executors
-	 */
+	
 	default EagerFutureStream<U> convertToEagerStream(){
 		return new EagerReact(getTaskExecutor()).withRetrier(getRetrier()).fromStream((Stream)getLastActive().stream());
 	}
 	
-	
+	 */
 	
 
 

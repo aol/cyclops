@@ -31,6 +31,7 @@ import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.exceptions.ThrowsSoftened;
 import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.CloseableIterator;
+import com.aol.simple.react.stream.ReactBuilder;
 import com.aol.simple.react.stream.Status;
 import com.aol.simple.react.stream.StreamWrapper;
 import com.aol.simple.react.stream.ThreadPools;
@@ -44,16 +45,68 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 public interface SimpleReactStream<U> extends BlockingStream<U>{
 
 	
-	BaseSimpleReact getSimpleReact();
+	ReactBuilder getSimpleReact();
 	
+	/**
+	 * Keep only those elements in a stream that are of a given type.
+	 * 
+	 * 
+	 * 
+	 * LazyFutureStream.of(1, "a", 2, "b", 3).ofType(Integer.class)
+	 * 
+	 * gives a Stream of (1,2,3)
+	 * 
+	 * LazyFutureStream.of(1, "a", 2, "b", 3).ofType(String.class)
+	 * 
+	 * gives a Stream of ("a","b")
+	 * 
+	 * @see com.aol.simple.react.stream.traits.FutureStream#ofType(java.lang.Class)
+	 */
+	default <U> SimpleReactStream<U> ofType(Class<U> type) {
+		return filterSync(type::isInstance).thenSync(t -> (U) t);
+	}
 	
+	/*
+	 * Cast all elements in this stream to specified type. May throw {@link
+	 * ClassCastException}.
+	 * 
+	 * SimpleReactStream.of(1, "a", 2, "b", 3).cast(Integer.class)
+	 * 
+	 * will throw a ClassCastException
+	 * 
+	 * @param type Type to cast to
+	 * 
+	 * @return SimpleReactStream
+	 * 
+	 */
+	default <U> SimpleReactStream<U> cast(Class<U> type) {
+		return this.thenSync(type::cast);
+		
+	}
 	
-	
+	/**
+	 * Returns a stream with a given value interspersed between any two values
+	 * of this stream.
+	 * 
+	 * <code>
+	 * 
+	 * // (1, 0, 2, 0, 3, 0, 4) 
+	 * 
+	 * SimpleReactStream.of(1, 2, 3, 4).intersperse(0)
+	 * 
+	 * </code>
+	 *
+	 * @see #intersperse(Stream, Object)
+	 */
+	default SimpleReactStream<U> intersperse(U value) {
+		return flatMap(t -> Stream.of(value, t).skip(1));
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 */
-	default CloseableIterator<U> iterator() {
+	default Iterator<U> iterator() {
 
 		Queue<U> q = toQueue();
 		if (getSubscription().closed())
@@ -108,7 +161,7 @@ public interface SimpleReactStream<U> extends BlockingStream<U>{
 	 * @return Next Stage in the Strea,
 	 */
 	@SuppressWarnings("unchecked")
-	<R> SimpleReactStream<R> retry(final Function<U, R> fn);
+	<R> Object retry(final Function<U, R> fn);
 	
 	
 	
@@ -223,7 +276,7 @@ public interface SimpleReactStream<U> extends BlockingStream<U>{
 	 * @param flatFn flatMap function
 	 * @return Flatten Stream with flatFn applied
 	 */
-	<R> SimpleReactStream<R> flatMapCompletableFuture(
+	<R> SimpleReactStream<R> flatMapToCompletableFuture(
 			Function<U, CompletableFuture<R>> flatFn);
 	/**
 	 * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
@@ -243,7 +296,7 @@ public interface SimpleReactStream<U> extends BlockingStream<U>{
 	 * @param flatFn flatMap function
 	 * @return Flatten Stream with flatFn applied
 	 */
-	<R> SimpleReactStream<R> flatMapCompletableFutureSync(
+	<R> SimpleReactStream<R> flatMapToCompletableFutureSync(
 			Function<U, CompletableFuture<R>> flatFn) ;
 
 	/**
@@ -427,13 +480,7 @@ public interface SimpleReactStream<U> extends BlockingStream<U>{
 
 	
 
-	/**
-	 * Convert between an Lazy and Eager future stream,
-	 * can be used to take advantages of each approach during a single Stream
-	 * 
-	 * @return An EagerFutureStream from this LazyFutureStream, will use the same executors
-	 */
-	EagerFutureStream<U> convertToEagerStream();
+
 	
 	
 	/* 
@@ -531,7 +578,7 @@ public interface SimpleReactStream<U> extends BlockingStream<U>{
 	 *            Array of value to form the reactive stream / sequence
 	 * @return SimpleReact Stage
 	 */
-	public static <U> SimpleReactStream<U> parallel(U... array) {
+	public static <U> EagerSimpleReactStream<U> parallel(U... array) {
 		return SimpleReact.parallelCommonBuilder().from(Arrays.asList(array));
 	}
 	
@@ -573,8 +620,8 @@ public interface SimpleReactStream<U> extends BlockingStream<U>{
 	 */
 	static <T> SimpleReactStream<T> simpleReactStream(Stream<T> stream) {
 		
-		if (stream instanceof FutureStream)
-			stream = ((FutureStream) stream).toQueue().stream(((FutureStream) stream).getSubscription());
+		if (stream instanceof LazyFutureStream)
+			stream = ((LazyFutureStream) stream).toQueue().stream(((LazyFutureStream) stream).getSubscription());
 
 		SimpleReact sr = new SimpleReact(ThreadPools.getCurrentThreadExecutor(), RetryBuilder
 				.getDefaultInstance().withScheduler(

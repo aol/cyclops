@@ -14,7 +14,7 @@ public class FlatMapTest {
 	public void flatMapCf(){
 		assertThat( new SimpleReact()
 										.of(1,2,3)
-										.flatMapCompletableFuture(i->CompletableFuture.completedFuture(i))
+										.flatMapToCompletableFuture(i->CompletableFuture.completedFuture(i))
 										.block(),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
@@ -22,14 +22,14 @@ public class FlatMapTest {
 		assertThat( new SimpleReact()
 										.of(1,2,3)
 										.sync()
-										.flatMapCompletableFuture(i->CompletableFuture.completedFuture(i))
+										.flatMapToCompletableFuture(i->CompletableFuture.completedFuture(i))
 										.block(),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void flatMapCfSync2(){
 		assertThat( new SimpleReact()
 										.of(1,2,3)
-										.flatMapCompletableFutureSync(i->CompletableFuture.completedFuture(i))
+										.flatMapToCompletableFutureSync(i->CompletableFuture.completedFuture(i))
 										.block(),equalTo(Arrays.asList(1,2,3)));
 	}
 }

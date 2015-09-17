@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.simple.react.stream.eager.EagerReact;
+import com.aol.simple.react.stream.lazy.LazyReact;
 
 
 public class RxJavaConversionTest {
@@ -26,7 +26,7 @@ public class RxJavaConversionTest {
 		
 		
 		
-		List<String> titles = new EagerReact().fromStream(Stream.of(query("Hello, world!")))
+		List<String> titles = new LazyReact().fromStream(Stream.of(query("Hello, world!")))
 				
 								.flatMap(Collection::stream)
 								.peek(System.out::println)
@@ -43,7 +43,7 @@ public class RxJavaConversionTest {
 	}
 	@Test
 	public void rxConversionTestSkip() throws InterruptedException, ExecutionException{
-		List<String> titles = new EagerReact().from(query("Hello, world!").get())
+		List<String> titles = new LazyReact().from(query("Hello, world!").get())
 								.<String>then(url -> getTitle(url))
 								.filter(Objects::nonNull)
 								.skip(5)

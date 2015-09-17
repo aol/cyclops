@@ -1,11 +1,13 @@
 package com.aol.simple.react.base;
 
-import static java.util.stream.Collectors.*;
-import static org.jooq.lambda.tuple.Tuple.collectors;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.mapping;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
+import static org.jooq.lambda.tuple.Tuple.collectors;
+import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -18,21 +20,20 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.simple.react.stream.traits.FutureStream;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 
 //see BaseSequentialSeqTest for in order tests
 public abstract class BaseSeqFutureTest {
-	abstract protected <U> FutureStream<U> of(U... array);
-	abstract protected <U> FutureStream<U> ofThread(U... array);
-	abstract protected <U> FutureStream<U> react(Supplier<U>... array);
-	FutureStream<Integer> empty;
-	FutureStream<Integer> nonEmpty;
+	abstract protected <U> LazyFutureStream<U> of(U... array);
+	abstract protected <U> LazyFutureStream<U> ofThread(U... array);
+	abstract protected <U> LazyFutureStream<U> react(Supplier<U>... array);
+	LazyFutureStream<Integer> empty;
+	LazyFutureStream<Integer> nonEmpty;
 
 	@Before
 	public void setup(){
@@ -220,7 +221,7 @@ public abstract class BaseSeqFutureTest {
 	  
 	    @Test
 	    public void testMinByMaxBy() {
-	        Supplier<FutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+	        Supplier<LazyFutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
 	        assertEquals(1, (int) s.get().futureOperations().maxBy(t -> Math.abs(t - 5)).join().get());
 	        assertEquals(5, (int) s.get().futureOperations().minBy(t -> Math.abs(t - 5)).join().get());
@@ -235,7 +236,7 @@ public abstract class BaseSeqFutureTest {
 	    @Test
 	    public void testFoldLeft() {
 	    	for(int i=0;i<100;i++){
-		        Supplier<FutureStream<String>> s = () -> of("a", "b", "c");
+		        Supplier<LazyFutureStream<String>> s = () -> of("a", "b", "c");
 	
 		        assertTrue(s.get().futureOperations().foldLeft("", String::concat).join().contains("a"));
 		        assertTrue(s.get().futureOperations().foldLeft("", String::concat).join().contains("b"));
@@ -250,7 +251,7 @@ public abstract class BaseSeqFutureTest {
 	    
 	    @Test
 	    public void testFoldRight(){
-	    	 	Supplier<FutureStream<String>> s = () -> of("a", "b", "c");
+	    	 	Supplier<LazyFutureStream<String>> s = () -> of("a", "b", "c");
 
 		        assertTrue(s.get().futureOperations().foldRight("", String::concat).join().contains("a"));
 		        assertTrue(s.get().futureOperations().foldRight("", String::concat).join().contains("b"));
@@ -260,7 +261,7 @@ public abstract class BaseSeqFutureTest {
 	    
 	    @Test
 	    public void testFoldLeftStringBuilder() {
-	        Supplier<FutureStream<String>> s = () -> of("a", "b", "c");
+	        Supplier<LazyFutureStream<String>> s = () -> of("a", "b", "c");
 
 	        
 	        assertTrue(s.get().futureOperations().foldLeft(new StringBuilder(), (u, t) -> u.append("-").append(t)).join().toString().contains("a"));
@@ -276,7 +277,7 @@ public abstract class BaseSeqFutureTest {
 
 	    @Test
 	    public void testFoldRighttringBuilder() {
-	        Supplier<FutureStream<String>> s = () -> of("a", "b", "c");
+	        Supplier<LazyFutureStream<String>> s = () -> of("a", "b", "c");
 
 	        
 	        assertTrue(s.get().futureOperations().foldRight(new StringBuilder(), (t, u) -> u.append("-").append(t)).join().toString().contains("a"));

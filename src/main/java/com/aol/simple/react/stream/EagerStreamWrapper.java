@@ -13,7 +13,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.experimental.Wither;
 
-import com.aol.simple.react.stream.traits.FutureStream;
+import com.aol.simple.react.stream.simple.SimpleReact;
+import com.aol.simple.react.stream.traits.EagerSimpleReactStream;
 
 @Wither
 @AllArgsConstructor
@@ -63,7 +64,7 @@ public class EagerStreamWrapper implements StreamWrapper {
 	}
 
 	public EagerStreamWrapper withNewStream(Stream<CompletableFuture> stream,
-			BaseSimpleReact simple) {
+			SimpleReact simple) {
 
 		return new EagerStreamWrapper(new AsyncList(stream,
 				simple.getQueueService()));
@@ -101,7 +102,7 @@ public class EagerStreamWrapper implements StreamWrapper {
 
 		public AsyncList(Stream<CompletableFuture> stream, Executor service) {
 
-			if (stream instanceof FutureStream)
+			if (stream instanceof EagerSimpleReactStream)
 				async = CompletableFuture.completedFuture(stream
 						.collect(Collectors.toList()));
 			else

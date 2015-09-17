@@ -1,6 +1,5 @@
 package com.aol.simple.react.stream.traits;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +14,6 @@ import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.Queue.QueueReader;
-import com.aol.simple.react.stream.EagerStreamWrapper;
 
 public class EagerFutureStreamFunctions {
 	/**
@@ -34,8 +32,8 @@ public class EagerFutureStreamFunctions {
 	 * @param active Stream not to close
 	 * @param all  All streams potentially including the active stream
 	 */
-	static void closeOthers(FutureStream active, List<FutureStream> all){
-		all.stream().filter(next -> next!=active).filter(s -> s instanceof EagerFutureStream).forEach(FutureStream::cancel);
+	static void closeOthers(EagerSimpleReactStream active, List<EagerSimpleReactStream> all){
+		all.stream().filter(next -> next!=active).filter(s -> s instanceof SimpleReactStream).forEach(EagerSimpleReactStream::cancel);
 		
 	}
 	/**
@@ -53,12 +51,12 @@ public class EagerFutureStreamFunctions {
 	 * @return First Stream to start emitting values
 	 */
 	@SafeVarargs
-	public static <U> FutureStream<U> firstOf(FutureStream<U>... futureStreams) {
-		List<Tuple2<FutureStream<U>, QueueReader>> racers = Stream
+	public static <U> EagerSimpleReactStream<U> firstOf(EagerSimpleReactStream<U>... futureStreams) {
+		List<Tuple2<EagerSimpleReactStream<U>, QueueReader>> racers = Stream
 				.of(futureStreams)
 				.map(s -> Tuple.tuple(s,new Queue.QueueReader(s.toQueue(),null))).collect(Collectors.toList());
 		while(true){
-		for(Tuple2<FutureStream<U>,Queue.QueueReader> q: racers){
+		for(Tuple2<EagerSimpleReactStream<U>,Queue.QueueReader> q: racers){
 			if(q.v2.notEmpty()){
 				EagerFutureStreamFunctions.closeOthers(q.v2.getQueue(),racers.stream().map(t -> t.v2.getQueue()).collect(Collectors.toList()));
 				EagerFutureStreamFunctions.closeOthers(q.v1,racers.stream().map(t -> t.v1).collect(Collectors.toList()));
@@ -163,10 +161,10 @@ public class EagerFutureStreamFunctions {
 	}
 	
 	
-	static <T1, T2> Seq<T1> skipUntil(EagerFutureStream<T1> left,
-			EagerFutureStream<T2> right) {
+	static <T1, T2> Seq<T1> skipUntil(EagerSimpleReactStream<T1> left,
+			EagerSimpleReactStream<T2> right) {
 		
-		Queue q = left.map(it->new Val(Val.Pos.left,it)).merge(right.map(it->new Val(Val.Pos.right,it))).toQueue();
+		Queue q = left.then(it->new Val(Val.Pos.left,it)).merge(right.then(it->new Val(Val.Pos.right,it))).toQueue();
 		final Iterator<Val> it = q.stream(left.getSubscription()).iterator();
 		
 		final Object missingValue = new Object();
@@ -202,10 +200,10 @@ public class EagerFutureStreamFunctions {
 
 		return Seq.seq(new Zip()).filter(next->!(next instanceof Optional));
 	}
-	static <T1, T2> Seq<T1> takeUntil(EagerFutureStream<T1> left,
-			EagerFutureStream<T2> right) {
+	static <T1, T2> Seq<T1> takeUntil(EagerSimpleReactStream<T1> left,
+			EagerSimpleReactStream<T2> right) {
 		
-		Queue q = left.map(it->new Val(Val.Pos.left,it)).merge(right.map(it->new Val(Val.Pos.right,it))).toQueue();
+		Queue q = left.then(it->new Val(Val.Pos.left,it)).merge(right.then(it->new Val(Val.Pos.right,it))).toQueue();
 		final Iterator<Val> it = q.stream(left.getSubscription()).iterator();
 		
 		final Object missingValue = new Object();

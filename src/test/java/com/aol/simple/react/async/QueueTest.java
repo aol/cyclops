@@ -1,6 +1,6 @@
 package com.aol.simple.react.async;
 
-import static com.aol.simple.react.stream.traits.EagerFutureStream.parallel;
+import static com.aol.simple.react.stream.traits.SimpleReactStream.parallel;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
@@ -327,7 +327,7 @@ public class QueueTest {
 		}, () -> q.offer(5));
 
 		Collection<String> results = parallel().fromStream(q.stream())
-				.then(it -> "*" + it).collect(Collectors.toList());
+				.then(it -> "*" + it).block();
 
 		assertThat(results.size(), lessThan(4));
 		assertThat(results, not(hasItem("*4")));
@@ -353,7 +353,7 @@ public class QueueTest {
 			List<String> result = parallel().fromStream(q.stream())
 					.then(it -> "*" + it).peek(it -> found.getAndAdd(1))
 					.peek(it -> System.out.println(it))
-					.collect(Collectors.toList());
+					.block();
 
 			assertThat(result, hasItem("*1"));
 

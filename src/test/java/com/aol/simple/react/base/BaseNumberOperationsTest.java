@@ -1,5 +1,8 @@
 package com.aol.simple.react.base;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
@@ -7,15 +10,13 @@ import java.util.function.Supplier;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.simple.react.stream.traits.FutureStream;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 public abstract class BaseNumberOperationsTest {
-	abstract protected <U> FutureStream<U> of(U... array);
-	abstract protected <U> FutureStream<U> ofThread(U... array);
-	abstract protected <U> FutureStream<U> react(Supplier<U>... array);
-	FutureStream<Integer> empty;
-	FutureStream<Integer> nonEmpty;
+	abstract protected <U> LazyFutureStream<U> of(U... array);
+	abstract protected <U> LazyFutureStream<U> ofThread(U... array);
+	abstract protected <U> LazyFutureStream<U> react(Supplier<U>... array);
+	LazyFutureStream<Integer> empty;
+	LazyFutureStream<Integer> nonEmpty;
 	private static final Executor exec = Executors.newFixedThreadPool(1);
 
 	@Before

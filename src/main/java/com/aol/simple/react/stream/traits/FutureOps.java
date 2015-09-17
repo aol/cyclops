@@ -28,7 +28,7 @@ import com.aol.simple.react.stream.traits.future.operators.LongOperators;
 public class FutureOps<T> implements IntOperators<T>,DoubleOperators<T>, LongOperators<T> {
 
 	private final Executor exec;
-	private final FutureStream<T> stream;
+	private final LazyFutureStream<T> stream;
 	
 	/**
 	 * Asynchronously convert  this Stream into a List
