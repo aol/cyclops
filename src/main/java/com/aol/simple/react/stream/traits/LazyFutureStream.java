@@ -7,6 +7,7 @@ import static java.util.Spliterators.spliteratorUnknownSize;
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -21,6 +22,7 @@ import java.util.Spliterators;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -61,6 +63,8 @@ import com.aol.cyclops.streams.HotStreamImpl;
 import com.aol.cyclops.streams.future.FutureOperationsImpl;
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.Queue;
+import com.aol.simple.react.async.Queue.ClosedQueueException;
+import com.aol.simple.react.async.Queue.QueueTimeoutException;
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.async.factories.QueueFactory;
 import com.aol.simple.react.async.future.FastFuture;
@@ -76,6 +80,7 @@ import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.lazy.LazyFutureStreamImpl;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.lazy.ParallelReductionConfig;
+import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.future.operators.ToLazyCollection;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
@@ -87,7 +92,8 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  *
  */
 
-public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStream<U>,SequenceM<U>, LazyToQueue<U>,
+public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStream<U>,
+											SequenceM<U>,Seq<U>, LazyToQueue<U>,
 										ConfigurableStream<U,FastFuture<U>>,
 										FutureStreamAsyncPublisher<U>,
 										FutureStreamSynchronousPublisher<U> {
@@ -104,6 +110,81 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 			FutureStreamAsyncPublisher.super.subscribe(s);
 		else
 			FutureStreamSynchronousPublisher.super.subscribe(s);
+	}
+	
+	/**
+	 * @return an Iterator that chunks all completed elements from this stream since last it.next() call into a collection
+	 */
+	default Iterator<Collection<U>> chunkLastReadIterator(){
+		
+		Queue.QueueReader reader =  new Queue.QueueReader(this.withQueueFactory(QueueFactories.unboundedQueue())
+																	.toQueue(q->q.withTimeout(100)
+																	.withTimeUnit(TimeUnit.MICROSECONDS))
+																	,null);
+		class Chunker implements Iterator<Collection<U>> {
+			volatile boolean open =true;
+			@Override
+			public boolean hasNext() {
+
+				return open == true && reader.isOpen();
+			}
+
+			@Override
+			public Collection<U> next() {
+				
+				while(hasNext()){
+					try{
+						return reader.drainToOrBlock();
+					}catch(ClosedQueueException e){
+						open =false;
+						return new ArrayList<>();
+					}catch(QueueTimeoutException e){
+						LockSupport.parkNanos(0l);
+					}
+				}
+				return new ArrayList<>();
+				
+
+			}
+		}
+		return new Chunker();
+	}
+	/**
+	 * @return a Stream that batches all completed elements from this stream since last read attempt into a collection
+	 */
+	default LazyFutureStream<Collection<U>> chunkSinceLastRead(){
+		Queue queue = this.withQueueFactory(QueueFactories.unboundedQueue()).toQueue();
+		Queue.QueueReader reader =  new Queue.QueueReader(queue,null);
+		class Chunker implements Iterator<Collection<U>> {
+			
+			@Override
+			public boolean hasNext() {
+
+				return reader.isOpen();
+			}
+
+			@Override
+			public Collection<U> next() {
+				return reader.drainToOrBlock();
+
+			}
+		}
+		Chunker chunker = new Chunker();
+		Function<Supplier<U>, Supplier<Collection<U>>> fn = s -> {
+			return () -> {
+				
+				try {
+					return chunker.next();
+				} catch (ClosedQueueException e) {
+					
+					throw new ClosedQueueException();
+				}
+				
+			};
+		};
+		return fromStream(queue.streamBatchNoTimeout(getSubscription(), fn));
+		
+		
 	}
 	
 	//terminal operations
@@ -326,9 +407,9 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * can be used to take advantages of each approach during a single Stream
 	 * 
 	 * @return An EagerFutureStream from this LazyFutureStream, will use the same executors
-	 
-	default EagerFutureStream<U> convertToEagerStream(){
-		return new EagerReact(getTaskExecutor()).withRetrier(getRetrier()).fromStream((Stream)getLastActive()
+	 */
+	default EagerSimpleReactStream<U> convertToSimpleReact(){
+		return new SimpleReact(getTaskExecutor()).withRetrier(getRetrier()).fromStream((Stream)getLastActive()
 																		.injectFutures()
 																		.map(f-> {
 																			try{
@@ -339,7 +420,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 																		}));
 																		
 	}
-	*/
+	
 	/* 
 	 * Apply a function to all items in the stream.
 	 * <pre>
@@ -1902,6 +1983,159 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
 	
 
+
+	@Override
+	default Spliterator<U> spliterator() {
+		return stream().spliterator();
+	}
+
+	@Override
+	default boolean isParallel() {
+		return false;
+	}
+
+	@Override
+	default IntStream mapToInt(ToIntFunction<? super U> mapper) {
+		return stream().mapToInt(mapper);
+	}
+
+	@Override
+	default LongStream mapToLong(ToLongFunction<? super U> mapper) {
+		return stream().mapToLong(mapper);
+	}
+
+	@Override
+	default DoubleStream mapToDouble(ToDoubleFunction<? super U> mapper) {
+		return stream().mapToDouble(mapper);
+	}
+
+	@Override
+	default IntStream flatMapToInt(
+			Function<? super U, ? extends IntStream> mapper) {
+		return stream().flatMapToInt(mapper);
+	}
+
+	@Override
+	default LongStream flatMapToLong(
+			Function<? super U, ? extends LongStream> mapper) {
+		return stream().flatMapToLong(mapper);
+	}
+
+	@Override
+	default DoubleStream flatMapToDouble(
+			Function<? super U, ? extends DoubleStream> mapper) {
+		return stream().flatMapToDouble(mapper);
+	}
+
+	@Override
+	default void forEachOrdered(Consumer<? super U> action) {
+		stream().forEachOrdered(action);
+		
+	}
+
+	@Override
+	default Object[] toArray() {
+		return stream().toArray();
+	}
+
+	@Override
+	default <A> A[] toArray(IntFunction<A[]> generator) {
+		return stream().toArray(generator);
+	}
+	@Override
+	default <K> Map<K, List<U>> groupBy(
+			Function<? super U, ? extends K> classifier) {
+		return Seq.seq(stream()).groupBy(classifier);
+	}
+
+	@Override
+	default boolean allMatch(Predicate<? super U> c) {
+		return SequenceM.fromStream(stream()).allMatch(c);
+	}
+
+	@Override
+	default  boolean anyMatch(Predicate<? super U> c) {
+		return SequenceM.fromStream(stream()).anyMatch(c);
+	}
+
+	@Override
+	default boolean noneMatch(Predicate<? super U> c) {
+		return SequenceM.fromStream(stream()).noneMatch(c);
+	}
+
+	@Override
+	default String join() {
+		return SequenceM.fromStream(stream()).join();
+	}
+
+	@Override
+	default String join(String sep) {
+		return SequenceM.fromStream(stream()).join(sep);
+	}
+
+	@Override
+	default String join(String sep, String start, String end) {
+		return SequenceM.fromStream(stream()).join(sep,start,end);
+	}
+
+	@Override
+	default <C extends Comparable<C>> Optional<U> minBy(Function<U, C> f) {
+		return SequenceM.fromStream(stream()).minBy(f);
+	}
+
+	@Override
+	default Optional<U> min(Comparator<? super U> comparator) {
+		return SequenceM.fromStream(stream()).min(comparator);
+	}
+
+	@Override
+	default <C extends Comparable<C>> Optional<U> maxBy(Function<U, C> f) {
+		return SequenceM.fromStream(stream()).maxBy(f);
+	}
+
+	@Override
+	default Optional<U> max(Comparator<? super U> comparator) {
+		return SequenceM.fromStream(stream()).max(comparator);
+	}
+
+	@Override
+	default Optional<U> findAny() {
+		return SequenceM.fromStream(stream()).findAny();
+	}
+
+	@Override
+	default U foldLeft(U identity, BinaryOperator<U> accumulator) {
+		return SequenceM.fromStream(stream()).foldLeft(identity, accumulator);
+	}
+
+	@Override
+	default U foldRight(U identity, BinaryOperator<U> accumulator) {
+		return SequenceM.fromStream(stream()).foldRight(identity,accumulator);
+	}
+
+	@Override
+	default Set<U> toSet() {
+		return SequenceM.fromStream(stream()).toSet();
+	}
+
+	@Override
+	default List<U> toList() {
+		return SequenceM.fromStream(stream()).toList();
+	}
+
+	@Override
+	default <C extends Collection<U>> C toCollection(
+			Supplier<C> collectionFactory) {
+		return SequenceM.fromStream(stream()).toCollection(collectionFactory);
+	}
+
+	@Override
+	default <R> SequenceM<U> distinct(
+			Function<? super U, ? extends R> keyExtractor) {
+		return SequenceM.fromStream(stream()).distinct();
+	}
+
+
 	@Override
 	default Tuple2<SequenceM<U>, SequenceM<U>> duplicateSequence() {
 		return SequenceM.fromStream(toQueue().stream(getSubscription())).duplicateSequence();
@@ -2400,9 +2634,20 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 				.batchWhile(predicate,factory));
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#sorted(java.util.function.Function)
+	 */
+	@Override
+	default <R extends Comparable<? super R>> LazyFutureStream<U> sorted(
+			Function<? super U, ? extends R> function){
+		return fromStream(SequenceM.fromStream(toQueue().stream(getSubscription()))
+				.sorted(function));
+	}
 	@Override
 	default <C extends Collection<U>> LazyFutureStream<C> batchUntil(
 			Predicate<U> predicate, Supplier<C> factory) {
+		
 		return fromStream(SequenceM.fromStream(toQueue().stream(getSubscription()))
 				.batchUntil(predicate,factory));
 	}
@@ -2524,8 +2769,8 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * @see com.aol.simple.react.stream.ThreadPools#setUseCommon(boolean) 
 	 * 
 	 */
-	static <T> LazyFutureStream<T> ofThread(T value) {
-		return (LazyFutureStream)ofThread(new Object[]{value});
+	static <T> LazyFutureStream<T> freeThread(T value) {
+		return (LazyFutureStream)freeThread(new Object[]{value});
 	}
 
 	/**
@@ -2535,7 +2780,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * 
 	 */
 	@SafeVarargs
-	static <T> LazyFutureStream<T> ofThread(T... values) {
+	static <T> LazyFutureStream<T> freeThread(T... values) {
 		LazyReact react =new LazyReact(ThreadPools.getSequential(), RetryBuilder.getDefaultInstance()
 				.withScheduler(ThreadPools.getSequentialRetry()),false, new MaxActive(1,1));
 		return new LazyFutureStreamImpl<T>(react, Stream.of(values));

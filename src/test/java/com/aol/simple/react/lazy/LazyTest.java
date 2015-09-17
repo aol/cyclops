@@ -1,21 +1,17 @@
 package com.aol.simple.react.lazy;
 
-import static org.junit.Assert.assertThat;
 import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.*;
-
 import com.aol.simple.react.stream.lazy.LazyReact;
-import com.aol.simple.react.stream.traits.EagerFutureStream;
-import com.aol.simple.react.stream.traits.FutureStream;
-import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class LazyTest {
 
@@ -38,9 +34,9 @@ public class LazyTest {
 		assertThat(LazyReact.parallelCommonBuilder()
 						.react(()->slow(),()->1,()->2)
 						.peek(System.out::println)
-						.convertToEagerStream()
-						.zipWithIndex()
-						.block().size(),is(3));
+						.convertToSimpleReact()
+						.allOf(list->list)
+						.block().size(),is(1));
 						
 	}
 
@@ -53,8 +49,8 @@ public class LazyTest {
 		assertThat(LazyReact.parallelCommonBuilder()
 						.react(()->slow(),()->1,()->2)
 						.peek(System.out::println)
-						.convertToEagerStream()
 						.zipWithIndex()
+						.convertToSimpleReact()
 						.peek(System.out::println)
 						.convertToLazyStream()
 						.map(it->slow())

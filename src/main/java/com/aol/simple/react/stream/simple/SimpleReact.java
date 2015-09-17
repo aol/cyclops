@@ -320,7 +320,7 @@ public class SimpleReact implements ReactBuilder{
 	 * @param stream of CompletableFutures that will be used to drive the reactive dataflow
 	 * @return Next stage in the reactive flow
 	 */
-	public <U> SimpleReactStream<U> fromStream(final Stream<CompletableFuture<U>> stream) {
+	public <U> EagerSimpleReactStream<U> fromStream(final Stream<CompletableFuture<U>> stream) {
 
 		Stream s = stream;
 		return  construct( s);

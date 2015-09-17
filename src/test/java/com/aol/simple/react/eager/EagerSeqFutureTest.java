@@ -26,7 +26,7 @@ public class EagerSeqFutureTest extends BaseSeqFutureTest{
 	}
 	@Override
 	protected <U> EagerFutureStream<U> ofThread(U... array) {
-		return EagerFutureStream.ofThread(array);
+		return EagerFutureStream.freeThread(array);
 	}
 	
 	@Override

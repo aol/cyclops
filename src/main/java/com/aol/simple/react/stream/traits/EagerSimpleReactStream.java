@@ -32,6 +32,7 @@ import com.aol.simple.react.stream.EagerStreamWrapper;
 import com.aol.simple.react.stream.ReactBuilder;
 import com.aol.simple.react.stream.StageWithResults;
 import com.aol.simple.react.stream.Status;
+import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.operators.StreamCopier;
 import com.nurkiewicz.asyncretry.RetryExecutor;
@@ -929,12 +930,13 @@ public interface EagerSimpleReactStream<U> extends SimpleReactStream<U>,
 	 * can be used to take advantages of each approach during a single Stream
 	 * 
 	 * @return An EagerFutureStream from this LazyFutureStream, will use the same executors
-	
-	default EagerFutureStream<U> convertToEagerStream(){
-		return new EagerReact(getTaskExecutor()).withRetrier(getRetrier()).fromStream((Stream)getLastActive().stream());
+	 */
+	default LazyFutureStream<U> convertToLazyStream(){
+		return new LazyReact(getTaskExecutor()).withRetrier(getRetrier())
+				.fromStream((Stream)getLastActive().stream());
 	}
 	
-	 */
+	
 	
 
 

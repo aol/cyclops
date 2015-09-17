@@ -1,7 +1,13 @@
 package com.aol.simple.react.lazy;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -16,14 +22,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.tuple.Tuple2;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.simple.react.base.BaseSequentialSeqTest;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.lazy.LazyReact;
-import com.aol.simple.react.stream.traits.EagerFutureStream;
-import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class LazySequentialSeqObjectPoolsTest extends BaseSequentialSeqTest {
@@ -44,7 +47,7 @@ public class LazySequentialSeqObjectPoolsTest extends BaseSequentialSeqTest {
 	}
 
 	@Override
-	protected <U> FutureStream<U> react(Supplier<U>... array) {
+	protected <U> LazyFutureStream<U> react(Supplier<U>... array) {
 		return new LazyReact(ThreadPools.getCommonFreeThread()).objectPoolingOn()
 								.sync()
 								.react(array);
@@ -101,7 +104,7 @@ public class LazySequentialSeqObjectPoolsTest extends BaseSequentialSeqTest {
 	}
 	@Test
 	public void concatStreamsEager(){
-	List<String> result = 	of(1,2,3).concat(EagerFutureStream.of(100,200,300))
+	List<String> result = 	of(1,2,3).concat(Stream.of(100,200,300))
 			.map(it ->it+"!!").collect(Collectors.toList());
 
 		assertThat(result,containsInAnyOrder("1!!","2!!","100!!","200!!","3!!","300!!"));

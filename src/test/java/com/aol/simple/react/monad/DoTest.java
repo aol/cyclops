@@ -11,8 +11,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
 import com.aol.cyclops.lambda.api.AsAnyM;
-import com.aol.cyclops.lambda.monads.AnyM;
-import com.aol.simple.react.stream.traits.EagerFutureStream;
+import com.aol.cyclops.monad.AnyM;
 import com.aol.simple.react.stream.traits.EagerSimpleReactStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
@@ -46,26 +45,8 @@ public class DoTest {
 		assertThat(result.block(),equalTo(Arrays.asList(3,4,5)));
 		}
 	}
-	@Test
-	public void doTestEager(){
-		for(int i=0;i<10;i++){
-		EagerFutureStream<Integer> result = Do.add(EagerFutureStream.of(1,2,3))
-												.add(Optional.of(2))
-												.yield((Integer a) -> (Integer b) -> a+b)
-												.unwrap();
-		assertThat(result.block(),equalTo(Arrays.asList(3,4,5)));
-		}
-	}
-	@Test
-	public void doTestEagerOptional(){
-		for(int i=0;i<1000;i++){
-		Optional<List<Integer>> result = Do.add(lookup("empty"))
-												.add(EagerFutureStream.of(1,2,3))
-												.yield((Integer a) -> (Integer b) -> a+b)
-												.unwrap();
-		assertThat(result.isPresent(),equalTo(false));
-		}
-	}
+	
+	
 	@Test
 	public void doTestLazyOptional(){
 		Optional<List<Integer>> result = Do.add(lookup("empty"))
@@ -82,14 +63,7 @@ public class DoTest {
 												.unwrap();
 		assertThat(result.isPresent(),equalTo(false));
 	}
-	@Test
-	public void doTestEagerOptionalEmptyStream(){
-		Optional<List<Integer>> result = Do.add(lookup("1"))
-												.add(EagerFutureStream.<Integer>of())
-												.yield((Integer a) -> (Integer b) -> a+b)
-												.unwrap();
-		assertThat(result.get().size(),equalTo(0));
-	}
+	
 	@Test
 	public void doTestLazyOptionalEmptyStream(){
 		Optional<List<Integer>> result = Do.add(lookup("1"))

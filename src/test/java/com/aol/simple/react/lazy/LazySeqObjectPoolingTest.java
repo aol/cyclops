@@ -10,7 +10,9 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
 import static org.jooq.lambda.tuple.Tuple.tuple;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -31,10 +33,8 @@ import org.junit.Test;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.base.BaseSeqTest;
-import com.aol.simple.react.config.MaxActive;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.lazy.LazyReact;
-import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class LazySeqObjectPoolingTest extends BaseSeqTest {
@@ -96,7 +96,7 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	
 	@Test
 	public void testZipWithFutures(){
-		FutureStream stream = of("a","b");
+		LazyFutureStream stream = of("a","b");
 		LazyFutureStream<Tuple2<Integer,String>> seq = of(1,2).zipFutures(stream);
 		List<Tuple2<Integer,String>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(Collectors.toList());
 		assertThat(result.size(),is(asList(tuple(1,"a"),tuple(2,"b")).size()));
@@ -258,8 +258,8 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	@Test @Ignore
 	public void shouldZipTwoInfiniteSequences() throws Exception {
 		
-		final FutureStream<Integer> units = LazyFutureStream.iterate(1,n -> n+1);
-		final FutureStream<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100);
+		final LazyFutureStream<Integer> units = LazyFutureStream.iterate(1,n -> n+1);
+		final LazyFutureStream<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100);
 		final Seq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
 
 		
@@ -270,7 +270,7 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	public void shouldZipFiniteWithInfiniteSeq() throws Exception {
 		ThreadPools.setUseCommon(false);
 		final Seq<Integer> units = LazyFutureStream.iterate(1,n -> n+1).limit(5);
-		final FutureStream<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100); // <-- MEMORY LEAK! - no auto-closing yet, so writes infinetely to it's async queue
+		final LazyFutureStream<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100); // <-- MEMORY LEAK! - no auto-closing yet, so writes infinetely to it's async queue
 		final Seq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
 		
 		assertThat(zipped.limit(5).join(),equalTo(LazyFutureStream.of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
@@ -280,7 +280,7 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	@Test
 	public void shouldZipInfiniteWithFiniteSeq() throws Exception {
 		ThreadPools.setUseCommon(false);
-		final FutureStream<Integer> units = LazyFutureStream.iterate(1,n -> n+1); // <-- MEMORY LEAK!- no auto-closing yet, so writes infinetely to it's async queue
+		final LazyFutureStream<Integer> units = LazyFutureStream.iterate(1,n -> n+1); // <-- MEMORY LEAK!- no auto-closing yet, so writes infinetely to it's async queue
 		final Seq<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100).limit(5);
 		final Seq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
 		assertThat(zipped.limit(5).join(),equalTo(LazyFutureStream.of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));

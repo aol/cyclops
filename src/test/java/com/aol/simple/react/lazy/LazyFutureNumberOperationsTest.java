@@ -13,7 +13,7 @@ public class LazyFutureNumberOperationsTest extends BaseNumberOperationsTest{
 	}
 	@Override
 	protected <U> LazyFutureStream<U> ofThread(U... array) {
-		return LazyFutureStream.ofThread(array);
+		return LazyFutureStream.freeThread(array);
 	}
 	
 	@Override

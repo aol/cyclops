@@ -13,7 +13,7 @@ public class EagerFutureNumberOperationsTest extends BaseNumberOperationsTest{
 	}
 	@Override
 	protected <U> EagerFutureStream<U> ofThread(U... array) {
-		return EagerFutureStream.ofThread(array);
+		return EagerFutureStream.freeThread(array);
 	}
 	
 	@Override

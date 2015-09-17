@@ -83,6 +83,9 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	
 
 
+
+
+
 	private final Optional<Consumer<Throwable>> errorHandler;
 	private final LazyStreamWrapper<U> lastActive;
 	
@@ -199,6 +202,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		this.subscription.closeAll();
 		//also need to mark cancelled =true and check during collection
 	}
+
 
 
 }

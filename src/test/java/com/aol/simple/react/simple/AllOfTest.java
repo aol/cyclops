@@ -18,7 +18,7 @@ import org.pcollections.HashPMap;
 import org.pcollections.HashTreePMap;
 
 import com.aol.simple.react.extractors.Extractors;
-import com.aol.simple.react.stream.eager.EagerReact;
+import com.aol.simple.react.stream.eager.SimpleReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 
 
@@ -40,7 +40,7 @@ public class AllOfTest {
 	
 	@Test
 	public void testAllOfFailure(){
-		new EagerReact().react(()-> { throw new RuntimeException();},()->"hello",()->"world")
+		new SimpleReact().react(()-> { throw new RuntimeException();},()->"hello",()->"world")
 				//.onFail(it -> it.getMessage())
 				.capture(e -> 
 				  e.printStackTrace())
@@ -53,7 +53,7 @@ public class AllOfTest {
 	@Test
 	public void testAllOfCompletableFutureOneFailsContinue(){
 		List<String> urls = Arrays.asList("hello","world","2");
-		List<String> result = new EagerReact().fromStream(urls.stream()
+		List<String> result = new SimpleReact().fromStream(urls.stream()
 				.<CompletableFuture<String>>map(it ->  handle(it)))
 				
 				.capture(e -> 
@@ -69,7 +69,7 @@ public class AllOfTest {
 	@Test
 	public void testAllOfCompletableOnFail(){
 		List<String> urls = Arrays.asList("hello","world","2");
-		List<String> result = new EagerReact().fromStream(urls.stream()
+		List<String> result = new SimpleReact().fromStream(urls.stream()
 				.<CompletableFuture<String>>map(it ->  handle(it)))
 				.onFail(it ->"hello")
 				.capture(e -> 
@@ -85,7 +85,7 @@ public class AllOfTest {
 	@Test
 	public void testAllOfCompletableFilter(){
 		List<String> urls = Arrays.asList("hello","world","2");
-		List<String> result = new EagerReact().fromStream(urls.stream()
+		List<String> result = new SimpleReact().fromStream(urls.stream()
 				.<CompletableFuture<String>>map(it ->  handle(it)))
 				.onFail(it ->"hello")
 				.filter(it-> !"2".equals(it))
@@ -128,7 +128,7 @@ public class AllOfTest {
 	@Test
 	public void testAllOfToSet() throws InterruptedException, ExecutionException {
 
-		Set<Integer> result = new EagerReact()
+		Set<Integer> result = new SimpleReact()
 		.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
 		.allOf(Collectors.toSet(), it -> {
@@ -145,7 +145,7 @@ public class AllOfTest {
 	public void testAllOfParallelStreams() throws InterruptedException,
 			ExecutionException {
 
-		Integer result = new EagerReact()
+		Integer result = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 				.<Integer> then(it -> {
 					return it * 200;
@@ -172,7 +172,7 @@ public class AllOfTest {
 	public void testAllOfParallelStreamsSkip() throws InterruptedException,
 			ExecutionException {
 
-		List<Integer> result = new EagerReact()
+		List<Integer> result = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 				.<Integer> then(it -> {
 					return it * 200;
@@ -197,7 +197,7 @@ public class AllOfTest {
 	public void testAllOfParallelStreamsSameForkJoinPool() throws InterruptedException,
 			ExecutionException {
 		Set<String> threadGroup = Collections.synchronizedSet(new TreeSet());
-		Integer result = new EagerReact()
+		Integer result = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 				.<Integer> then(it -> {
 					threadGroup.add(Thread.currentThread().getThreadGroup().getName());
@@ -226,7 +226,7 @@ public class AllOfTest {
 
 		boolean blocked[] = { false };
 
-		new EagerReact().<Integer> react(() -> 1)
+		new SimpleReact().<Integer> react(() -> 1)
 
 		.then(it -> {
 			try {
