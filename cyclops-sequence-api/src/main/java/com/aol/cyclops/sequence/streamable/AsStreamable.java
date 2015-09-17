@@ -38,7 +38,7 @@ public class AsStreamable {
 	private static <T> T collectStreamConcurrent(T object){
 		if(object instanceof Stream){
 			
-			Collection c = SeqUtils.toLazyCollection((Stream)object);
+			Collection c = SeqUtils.toConcurrentLazyCollection((Stream)object);
 			return (T)new Iterable(){
 
 				@Override
