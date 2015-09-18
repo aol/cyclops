@@ -1,7 +1,9 @@
 package com.aol.simple.react.monad;
 
+import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.lambda.api.Comprehender;
 import com.aol.simple.react.stream.traits.EagerSimpleReactStream;
@@ -30,7 +32,7 @@ public class SimpleReactStreamComprehender implements Comprehender<EagerSimpleRe
 
 	@Override
 	public EagerSimpleReactStream flatMap(EagerSimpleReactStream t, Function fn) {
-		return EagerSimpleReactStream.bind(t, fn);
+		return  EagerSimpleReactStream.bind(t,input -> unwrapOtherMonadTypes(this,fn.apply(input)));
 	}
 
 	@Override
@@ -45,9 +47,25 @@ public class SimpleReactStreamComprehender implements Comprehender<EagerSimpleRe
 
 	@Override
 	public Class getTargetClass() {
-		return SimpleReactStream.class;
+		return EagerSimpleReactStream.class;
 	}
 	public Object resolveForCrossTypeFlatMap(Comprehender comp,EagerSimpleReactStream apply){
 		return comp.of(apply.block());
 	}
+	static <T> T unwrapOtherMonadTypes(Comprehender<T> comp,Object apply){
+		
+		
+		
+		if(apply instanceof Collection){
+			return (T)((Collection)apply).stream();
+		}
+		if(apply instanceof Iterable){
+			 return (T)StreamSupport.stream(((Iterable)apply).spliterator(),
+						false);
+		}
+		
+		return Comprehender.unwrapOtherMonadTypes(comp,apply);
+		
+	}
+
 }

@@ -9,6 +9,7 @@ import static org.mockito.Matchers.anyInt;
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
@@ -82,8 +83,7 @@ public class RetryTest {
 					.recover(IOException.class,e->"hello")
 					.firstValue(),equalTo("hello"));
 	}
-	@Test(expected=IOException.class)
-	
+	@Test(expected=NoSuchElementException.class)
 	public void recoverIOUnhandledThrown(){
 		assertThat(LazyFutureStream.of(1,2,3,4)
 					.map(i->i+2)

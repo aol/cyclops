@@ -29,6 +29,7 @@ public class ReverseTest {
 			list.add(i);
 		assertThat(new LazyReact().fromIterable(list)
 				 .limit(100)
+				 .peek(System.out::println)
 				 .count(),equalTo(100L));
 		
 	}

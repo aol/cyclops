@@ -5,7 +5,9 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -17,8 +19,6 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -362,15 +362,20 @@ public class SequenceMTest {
 	@Test
 	public void testIntersperse() {
 		
-		assertThat(LazyFutureStream.of(1,2,3).intersperse(0).toList(),equalTo(Arrays.asList(1,0,2,0,3)));
+		assertThat(LazyFutureStream.of(1,2,3)
+						.intersperse(0)
+						.toList(),
+						equalTo(Arrays.asList(1,0,2,0,3)));
 	
 
 
 
 	}
-	@Test(expected=ClassCastException.class)
+	@Test
 	public void cast(){
-		LazyFutureStream.of(1,2,3).cast(String.class).collect(Collectors.toList());
+		LazyFutureStream.of(1,2,3).cast(String.class).collect(Collectors.toList())
+		.stream().map(i->i.getClass())
+		.allMatch(c->Integer.class.equals(c));
 	}
 	@Test
 	public void xMatch(){

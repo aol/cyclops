@@ -99,9 +99,9 @@ public interface SimpleReactStream<U> extends BlockingStream<U>{
 	 * @see #intersperse(Stream, Object)
 	 */
 	default SimpleReactStream<U> intersperse(U value) {
-		return flatMap(t -> Stream.of(value, t).skip(1));
+		return flatMap(t -> Stream.of(value, t)).skip(1);
 	}
-
+	public SimpleReactStream<U> skip(long n);
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -2655,15 +2655,14 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
 	@Override
 	default LazyFutureStream<U> recover(Function<Throwable, U> fn) {
-		return fromStream(SequenceM.fromStream(toQueue().stream(getSubscription()))
-				.recover(fn));
+		return this.onFail(e->fn.apply(e.getCause()));
+		
 	}
 
 	@Override
 	default <EX extends Throwable> LazyFutureStream<U> recover(
 			Class<EX> exceptionClass, Function<EX, U> fn) {
-		return fromStream(SequenceM.fromStream(toQueue().stream(getSubscription()))
-				.recover(exceptionClass,fn));
+		return this.onFail(exceptionClass,e->fn.apply((EX)e.getCause()));
 	}
 
 

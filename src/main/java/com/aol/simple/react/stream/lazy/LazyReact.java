@@ -3,6 +3,8 @@ package com.aol.simple.react.stream.lazy;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -455,7 +457,7 @@ public class LazyReact extends BaseSimpleReact {
 	@Override
 	public <U> LazyFutureStream<U> fromIterable(Iterable<U> iter) {
 		
-		return (LazyFutureStream)super.of(iter);
+		return this.from(StreamSupport.stream(Spliterators.spliteratorUnknownSize(iter.iterator(), Spliterator.ORDERED),false));
 	}
 
 

@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -128,13 +129,13 @@ public  class BaseSequenceMTest {
     @Test
     public void testReverseListLimit() {
     	
-        assertThat( LazyFutureStream.lazyFutureStreamFromIterable(Arrays.asList(10,400,2,-1)).limit(2)
-        				.reverse().toList(), equalTo(asList(-1, 2)));
+        assertThat( LazyFutureStream.lazyFutureStreamFromIterable(Arrays.asList(10,400,2,-1)).reverse().limit(2)
+        				.toList(), equalTo(asList(-1, 2)));
     }
     @Test
     public void testReverseRange() {
     	
-        assertThat( new LazyReact().range(0,10)
+        assertThat( LazyFutureStream.lazyFutureStream(IntStream.range(0,10).boxed())
         				.reverse().toList(), equalTo(asList(9,8,7,6,5,4,3,2,1,0)));
     }
 
@@ -220,12 +221,16 @@ public  class BaseSequenceMTest {
 		 assertTrue(copies.v3.limit(3).toList().size()==3);
 		 assertTrue(copies.v4.limit(3).toList().size()==3);
 	}
-	    @Test(expected=ClassCastException.class)
+	    @Test
 	    public void testCastException() {
 	    	of(1, "a", 2, "b", 3, null)
 	    			.peek(it ->System.out.println(it))
 	    			.cast(Integer.class)
-	    				.peek(it ->System.out.println(it)).toList();
+	    			.peek(i->System.out.println(i.getClass()))
+	    				.peek(it ->System.out.println(it))
+	    				.toList()
+	    				.stream().map(i->i.getClass())
+	    				.allMatch(c->Integer.class.equals(c));
 	    		
 	    }
 	   

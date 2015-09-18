@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
@@ -61,6 +62,7 @@ public class LiftAndBindStreamUtilsTest {
 								.map(getClass().getClassLoader()::getResourceAsStream)
 								.map(InputStreamReader::new)
 								,in-> new BufferedReader(in))
+								.peek(System.out::println)
 								.collect(Collectors.toList());
 		
 		assertThat(result,equalTo(Arrays.asList("hello","world")));
