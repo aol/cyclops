@@ -82,6 +82,8 @@ import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.lazy.ParallelReductionConfig;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.future.operators.ToLazyCollection;
+import com.aol.simple.react.stream.traits.operators.BatchByTime;
+import com.aol.simple.react.stream.traits.operators.BatchByTimeAndSize;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -677,8 +679,9 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * @see com.aol.simple.react.stream.traits.FutureStream#batchBySizeAndTime(int, long, java.util.concurrent.TimeUnit)
 	 */
 	default LazyFutureStream<List<U>> batchBySizeAndTime(int size,long time, TimeUnit unit) {
-		return fromStream(SequenceM.fromStream(toQueue().stream(getSubscription())).batchBySizeAndTime(size,time,unit));
-
+	    Queue<U> queue = toQueue();
+	    Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTimeAndSize<>(size,time,unit,()->new ArrayList<>());
+	    return (LazyFutureStream)fromStream(queue.streamBatch(getSubscription(), (Function)fn)).filter(c->!((Collection)c).isEmpty());
 	}
 
 	/**
@@ -786,8 +789,11 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * @return Stream of Lists
 	 */
 	default LazyFutureStream<List<U>> batchByTime(long time, TimeUnit unit) {
-		return fromStream(SequenceM.fromStream(toQueue().stream(getSubscription())).batchByTime(time,unit));
-	}
+		Queue queue = toQueue();
+		Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTime<U>(time,unit,
+				this.getSubscription(),queue,()->new ArrayList<>());
+		
+		return fromStream(queue.streamBatch(getSubscription(), fn)).filter(c->!((Collection)c).isEmpty());	}
 
 	/**
 	 * Organise elements in a Stream into a Collections based on the time period
@@ -803,8 +809,9 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 */
 	default  <C extends Collection<U>> LazyFutureStream<C> batchByTime(long time,
 			TimeUnit unit, Supplier<C> factory) {
-		return fromStream(SequenceM.fromStream(toQueue().stream(getSubscription())).batchByTime(time,unit,factory));
-
+		Queue queue = toQueue();
+		Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTime<U>(time,unit, this.getSubscription(),queue,(Supplier)factory);
+		return fromStream(queue.streamBatch(getSubscription(), fn)).filter(c->!((Collection)c).isEmpty());
 	}
 	
 	
@@ -2579,8 +2586,9 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	@Override
 	default <C extends Collection<U>> LazyFutureStream<C> batchBySizeAndTime(int size,
 			long time, TimeUnit unit, Supplier<C> factory) {
-		return fromStream(SequenceM.fromStream(toQueue().stream(getSubscription()))
-				.batchBySizeAndTime(size, time,unit, factory));
+			Queue<U> queue = toQueue();
+		    Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTimeAndSize(size,time,unit,factory);
+		    return (LazyFutureStream)fromStream(queue.streamBatch(getSubscription(), (Function)fn));
 	}
 
 	

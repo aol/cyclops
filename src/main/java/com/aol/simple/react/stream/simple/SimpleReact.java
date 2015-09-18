@@ -41,7 +41,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 
 @Builder
 @Wither
-@AllArgsConstructor
+
 public class SimpleReact implements ReactBuilder{
 	@Getter
 	private final Executor queueService;
@@ -249,7 +249,7 @@ public class SimpleReact implements ReactBuilder{
 	 * @return eager SimpleReact instance
 	 */
 	public static SimpleReact parallelBuilder(int parallelism) {
-		return SimpleReact.builder().executor(new ForkJoinPool(parallelism))
+		return SimpleReact.builder().executor(new ForkJoinPool(parallelism)).async(true)
 				.retrier(new RetryBuilder().parallelism(parallelism)).build();
 	}
 
@@ -371,6 +371,17 @@ public class SimpleReact implements ReactBuilder{
 	}
 	public <U> EagerSimpleReactStream<U> from(CompletableFuture<U>... cf){
 		return this.construct(Stream.of(cf));
+	}
+
+
+	public SimpleReact(Executor queueService, Executor executor,
+			RetryExecutor retrier, Boolean async) {
+		super();
+		this.queueService =Optional.ofNullable(queueService)
+								.orElse(ThreadPools.getQueueCopyExecutor());
+		this.executor = executor;
+		this.retrier = retrier;
+		this.async = Optional.ofNullable(async).orElse(true);
 	}
 	
 	
