@@ -379,7 +379,7 @@ public class SimpleReact implements ReactBuilder{
 		super();
 		this.queueService =Optional.ofNullable(queueService)
 								.orElse(ThreadPools.getQueueCopyExecutor());
-		this.executor = executor;
+		this.executor = Optional.ofNullable(executor).orElse(ThreadPools.getCurrentThreadExecutor());
 		this.retrier = retrier;
 		this.async = Optional.ofNullable(async).orElse(true);
 	}

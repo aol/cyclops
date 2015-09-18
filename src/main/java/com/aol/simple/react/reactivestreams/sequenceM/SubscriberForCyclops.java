@@ -1,4 +1,4 @@
-package com.aol.simple.react.lazy.sequenceM.reactivestreams;
+package com.aol.simple.react.reactivestreams.sequenceM;
 
 import org.reactivestreams.Subscription;
 
@@ -7,7 +7,7 @@ import com.aol.cyclops.sequence.reactivestreams.CyclopsSubscriber;
 import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsSubscriber;
 import com.aol.simple.react.reactivestreams.JDKReactiveStreamsSubscriber;
 
-public class MockSubscriber<T> implements ReactiveStreamsSubscriber<T> {
+public class SubscriberForCyclops<T> implements ReactiveStreamsSubscriber<T> {
 
 	@Override
 	public CyclopsSubscriber<T> subscribe() {

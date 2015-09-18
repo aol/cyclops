@@ -1647,7 +1647,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      * {@code supplier}, in case this stream is empty.
      */
 	default <X extends Throwable> LazyFutureStream<U> onEmptyThrow(Supplier<X> supplier) {
-		return fromStream(SequenceM.fromStream(toQueue().stream(getSubscription())).onEmptyThrow(supplier));
+		return fromStream(toQueue().stream(getSubscription()).onEmptyThrow(supplier));
 	}
     /**
      * Inner join 2 streams into one.
