@@ -1,4 +1,4 @@
-package com.aol.cyclops.streams;
+package com.aol.simple.react.lazy.sequenceM;
 
 import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
 import static org.hamcrest.Matchers.equalTo;
@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.sequence.Reducers;
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 
 public class ReductionTest {
@@ -20,12 +21,12 @@ public class ReductionTest {
 	@Test
 	public void reduceWithMonoid(){
 		
-		assertThat(SequenceM.of("hello","2","world","4").mapReduce(Reducers.toCountInt()),equalTo(4));
+		assertThat(LazyFutureStream.of("hello","2","world","4").mapReduce(Reducers.toCountInt()),equalTo(4));
 	}
 	@Test
 	public void reduceWithMonoid2(){
 		
-		assertThat(SequenceM.of("one","two","three","four").mapReduce(this::toInt,Reducers.toTotalInt()),
+		assertThat(LazyFutureStream.of("one","two","three","four").mapReduce(this::toInt,Reducers.toTotalInt()),
 						equalTo(10));
 	}
 	
@@ -42,13 +43,13 @@ public class ReductionTest {
 	}
 	@Test
 	public void reduceWithMonoidJoin(){
-		SequenceM.of("hello","2","world","4").join(",");
-		assertThat(SequenceM.of("hello","2","world","4").reduce(Reducers.toString(",")),
+		LazyFutureStream.of("hello","2","world","4").join(",");
+		assertThat(LazyFutureStream.of("hello","2","world","4").reduce(Reducers.toString(",")),
 				equalTo(",hello,2,world,4"));
 	}
 	@Test
     public void testCollectors() {
-		List result = SequenceM.of(1,2,3)
+		List result = LazyFutureStream.of(1,2,3)
 							.collectStream(Stream.of(Collectors.toList(),Collectors.summingInt(Integer::intValue),Collectors.averagingInt(Integer::intValue)));
 		
 		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));

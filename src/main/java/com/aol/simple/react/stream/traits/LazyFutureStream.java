@@ -1965,6 +1965,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 		return (R)this;
 	}
 
+	
 	@Override
 	default <T1>  LazyFutureStream<T1> flatten() {
 		return fromStream(SequenceM.fromStream(toQueue().stream(getSubscription())).flatten());

@@ -1,4 +1,4 @@
-package com.aol.cyclops.streams;
+package com.aol.simple.react.lazy.sequenceM;
 
 import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
 import static java.util.Arrays.asList;
@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,21 +26,23 @@ import org.junit.Test;
 
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.streams.StreamUtils;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class SequenceMTest {
 	
 	@Test
 	public void onEmptySwitchEmpty(){
-		assertThat(SequenceM.of()
-							.onEmptySwitch(()->SequenceM.of(1,2,3))
+		assertThat(LazyFutureStream.of()
+							.onEmptySwitch(()->LazyFutureStream.of(1,2,3))
 							.toList(),
 							equalTo(Arrays.asList(1,2,3)));
 				
 	}
 	@Test
 	public void onEmptySwitch(){
-		assertThat(SequenceM.of(4,5,6)
-							.onEmptySwitch(()->SequenceM.of(1,2,3))
+		assertThat(LazyFutureStream.of(4,5,6)
+							.onEmptySwitch(()->LazyFutureStream.of(1,2,3))
 							.toList(),
 							equalTo(Arrays.asList(4,5,6)));
 				
@@ -49,13 +52,13 @@ public class SequenceMTest {
 	public void elapsedIsPositive(){
 		
 		
-		assertTrue(SequenceM.of(1,2,3,4,5).elapsed().noneMatch(t->t.v2<0));
+		assertTrue(LazyFutureStream.of(1,2,3,4,5).elapsed().noneMatch(t->t.v2<0));
 	}
 	@Test
 	public void timeStamp(){
 		
 		
-		assertTrue(SequenceM.of(1,2,3,4,5)
+		assertTrue(LazyFutureStream.of(1,2,3,4,5)
 							.timestamp()
 							.allMatch(t-> t.v2 <= System.currentTimeMillis()));
 		
@@ -63,55 +66,55 @@ public class SequenceMTest {
 	}
 	@Test
 	public void get0(){
-		assertThat(SequenceM.of(1).get(0).v1,equalTo(1));
+		assertThat(LazyFutureStream.of(1).get(0).v1,equalTo(1));
 	}
 	@Test
 	public void getMultple(){
-		assertThat(SequenceM.of(1,2,3,4,5).get(2).v1,equalTo(3));
+		assertThat(LazyFutureStream.of(1,2,3,4,5).get(2).v1,equalTo(3));
 	}
 	@Test
 	public void getMultpleStream(){
-		assertThat(SequenceM.of(1,2,3,4,5).get(2).v2.toList(),equalTo(Arrays.asList(1,2,3,4,5)));
+		assertThat(LazyFutureStream.of(1,2,3,4,5).get(2).v2.toList(),equalTo(Arrays.asList(1,2,3,4,5)));
 	}
 	@Test(expected=NoSuchElementException.class)
 	public void getMultiple1(){
-		SequenceM.of(1).get(1);
+		LazyFutureStream.of(1).get(1);
 	}
 	@Test(expected=NoSuchElementException.class)
 	public void getEmpty(){
-		SequenceM.of().get(0);
+		LazyFutureStream.of().get(0);
 	}
 	@Test
 	public void elementAt0(){
-		assertTrue(SequenceM.of(1).elementAt(0).isPresent());
+		assertTrue(LazyFutureStream.of(1).elementAt(0).isPresent());
 	}
 	@Test
 	public void elementAtMultple(){
-		assertThat(SequenceM.of(1,2,3,4,5).elementAt(2).get(),equalTo(3));
+		assertThat(LazyFutureStream.of(1,2,3,4,5).elementAt(2).get(),equalTo(3));
 	}
 	@Test
 	public void elementAt1(){
-		assertFalse(SequenceM.of(1).elementAt(1).isPresent());
+		assertFalse(LazyFutureStream.of(1).elementAt(1).isPresent());
 	}
 	@Test
 	public void elementAtEmpty(){
-		assertFalse(SequenceM.of().elementAt(0).isPresent());
+		assertFalse(LazyFutureStream.of().elementAt(0).isPresent());
 	}
 	@Test
 	public void singleTest(){
-		assertThat(SequenceM.of(1).single(),equalTo(1));
+		assertThat(LazyFutureStream.of(1).single(),equalTo(1));
 	}
 	@Test(expected=UnsupportedOperationException.class)
 	public void singleEmpty(){
-		SequenceM.of().single();
+		LazyFutureStream.of().single();
 	}
 	@Test(expected=UnsupportedOperationException.class)
 	public void single2(){
-		SequenceM.of(1,2).single();
+		LazyFutureStream.of(1,2).single();
 	}
 	@Test
 	public void limitTime(){
-		List<Integer> result = SequenceM.of(1,2,3,4,5,6)
+		List<Integer> result = LazyFutureStream.of(1,2,3,4,5,6)
 										.peek(i->sleep(i*100))
 										.limit(1000,TimeUnit.MILLISECONDS)
 										.toList();
@@ -131,7 +134,7 @@ public class SequenceMTest {
 	}
 	@Test
 	public void skipTime(){
-		List<Integer> result = SequenceM.of(1,2,3,4,5,6)
+		List<Integer> result = LazyFutureStream.of(1,2,3,4,5,6)
 										.peek(i->sleep(i*100))
 										.skip(1000,TimeUnit.MILLISECONDS)
 										.toList();
@@ -159,51 +162,51 @@ public class SequenceMTest {
 	}
 	@Test
 	public void testSkipLast(){
-		assertThat(SequenceM.of(1,2,3,4,5)
+		assertThat(LazyFutureStream.of(1,2,3,4,5)
 							.skipLast(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void testSkipLastEmpty(){
-		assertThat(SequenceM.of()
+		assertThat(LazyFutureStream.of()
 							.skipLast(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
 	@Test
 	public void testLimitLast(){
-		assertThat(SequenceM.of(1,2,3,4,5)
+		assertThat(LazyFutureStream.of(1,2,3,4,5)
 							.limitLast(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList(4,5)));
 	}
 	@Test
 	public void testLimitLastEmpty(){
-		assertThat(SequenceM.of()
+		assertThat(LazyFutureStream.of()
 							.limitLast(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
 	@Test
 	public void endsWith(){
-		assertTrue(SequenceM.of(1,2,3,4,5,6)
+		assertTrue(LazyFutureStream.of(1,2,3,4,5,6)
 				.endsWith(Arrays.asList(5,6)));
 	}
 	@Test
 	public void endsWithFalse(){
-		assertFalse(SequenceM.of(1,2,3,4,5,6)
+		assertFalse(LazyFutureStream.of(1,2,3,4,5,6)
 				.endsWith(Arrays.asList(5,6,7)));
 	}
 	@Test
 	public void endsWithToLong(){
-		assertFalse(SequenceM.of(1,2,3,4,5,6)
+		assertFalse(LazyFutureStream.of(1,2,3,4,5,6)
 				.endsWith(Arrays.asList(0,1,2,3,4,5,6)));
 	}
 	@Test
 	public void endsWithEmpty(){
-		assertTrue(SequenceM.of(1,2,3,4,5,6)
+		assertTrue(LazyFutureStream.of(1,2,3,4,5,6)
 				.endsWith(Arrays.asList()));
 	}
 	@Test
 	public void endsWithWhenEmpty(){
-		assertFalse(SequenceM.of()
+		assertFalse(LazyFutureStream.of()
 				.endsWith(Arrays.asList(1,2,3,4,5,6)));
 	}
 	@Test
@@ -213,27 +216,27 @@ public class SequenceMTest {
 	}
 	@Test
 	public void endsWithStream(){
-		assertTrue(SequenceM.of(1,2,3,4,5,6)
+		assertTrue(LazyFutureStream.of(1,2,3,4,5,6)
 				.endsWith(Stream.of(5,6)));
 	}
 	@Test
 	public void endsWithFalseStream(){
-		assertFalse(SequenceM.of(1,2,3,4,5,6)
+		assertFalse(LazyFutureStream.of(1,2,3,4,5,6)
 				.endsWith(Stream.of(5,6,7)));
 	}
 	@Test
 	public void endsWithToLongStream(){
-		assertFalse(SequenceM.of(1,2,3,4,5,6)
+		assertFalse(LazyFutureStream.of(1,2,3,4,5,6)
 				.endsWith(Stream.of(0,1,2,3,4,5,6)));
 	}
 	@Test
 	public void endsWithEmptyStream(){
-		assertTrue(SequenceM.of(1,2,3,4,5,6)
+		assertTrue(LazyFutureStream.of(1,2,3,4,5,6)
 				.endsWith(Stream.of()));
 	}
 	@Test
 	public void endsWithWhenEmptyStream(){
-		assertFalse(SequenceM.of()
+		assertFalse(LazyFutureStream.of()
 				.endsWith(Stream.of(1,2,3,4,5,6)));
 	}
 	@Test
@@ -243,14 +246,14 @@ public class SequenceMTest {
 	}
 	@Test
 	public void anyMTest(){
-		List<Integer> list = SequenceM.of(1,2,3,4,5,6)
+		List<Integer> list = LazyFutureStream.of(1,2,3,4,5,6)
 								.anyM().filter(i->i>3).asSequence().toList();
 		
 		assertThat(list,equalTo(Arrays.asList(4,5,6)));
 	}
 	@Test
 	public void streamable(){
-		Streamable<Integer> repeat = SequenceM.of(1,2,3,4,5,6)
+		Streamable<Integer> repeat = LazyFutureStream.of(1,2,3,4,5,6)
 												.map(i->i*2)
 												.toStreamable();
 		
@@ -260,7 +263,7 @@ public class SequenceMTest {
 	
 	@Test
 	public void concurrentLazyStreamable(){
-		Streamable<Integer> repeat = SequenceM.of(1,2,3,4,5,6)
+		Streamable<Integer> repeat = LazyFutureStream.of(1,2,3,4,5,6)
 												.map(i->i*2)
 												.toConcurrentLazyStreamable();
 		
@@ -269,12 +272,12 @@ public class SequenceMTest {
 	}
 	@Test
 	public void splitBy(){
-		assertThat( SequenceM.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4).v1.toList(),equalTo(Arrays.asList(1,2,3)));
-		assertThat( SequenceM.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4).v2.toList(),equalTo(Arrays.asList(4,5,6)));
+		assertThat( LazyFutureStream.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4).v1.toList(),equalTo(Arrays.asList(1,2,3)));
+		assertThat( LazyFutureStream.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4).v2.toList(),equalTo(Arrays.asList(4,5,6)));
 	}
 	@Test
 	public void testLazy(){
-		Collection<Integer> col = SequenceM.of(1,2,3,4,5)
+		Collection<Integer> col = LazyFutureStream.of(1,2,3,4,5)
 											.peek(System.out::println)
 											.toLazyCollection();
 		System.out.println("first!");
@@ -283,7 +286,7 @@ public class SequenceMTest {
 	}
 	@Test
 	public void testLazyCollection(){
-		Collection<Integer> col = SequenceM.of(1,2,3,4,5)
+		Collection<Integer> col = LazyFutureStream.of(1,2,3,4,5)
 											.peek(System.out::println)
 											.toConcurrentLazyCollection();
 		System.out.println("first!");
@@ -325,11 +328,11 @@ public class SequenceMTest {
 
 		
 
-		assertThat(SequenceM.of(1, "a", 2, "b", 3, null).ofType(Integer.class).toList(),containsInAnyOrder(1, 2, 3));
+		assertThat(LazyFutureStream.of(1, "a", 2, "b", 3, null).ofType(Integer.class).toList(),containsInAnyOrder(1, 2, 3));
 
-		assertThat(SequenceM.of(1, "a", 2, "b", 3, null).ofType(Integer.class).toList(),not(containsInAnyOrder("a", "b",null)));
+		assertThat(LazyFutureStream.of(1, "a", 2, "b", 3, null).ofType(Integer.class).toList(),not(containsInAnyOrder("a", "b",null)));
 
-		assertThat(SequenceM.of(1, "a", 2, "b", 3, null)
+		assertThat(LazyFutureStream.of(1, "a", 2, "b", 3, null)
 
 				.ofType(Serializable.class).toList(),containsInAnyOrder(1, "a", 2, "b", 3));
 
@@ -337,7 +340,7 @@ public class SequenceMTest {
 
 	@Test
 	public void testCastPast() {
-		SequenceM.of(1, "a", 2, "b", 3, null).cast(Date.class).map(d -> d.getTime());
+		LazyFutureStream.of(1, "a", 2, "b", 3, null).cast(Date.class).map(d -> d.getTime());
 	
 
 
@@ -346,20 +349,20 @@ public class SequenceMTest {
 	
 	@Test
 	public void flatMapCompletableFuture(){
-		assertThat(SequenceM.of(1,2,3).flatMapCompletableFuture(i->CompletableFuture.completedFuture(i+2))
+		assertThat(LazyFutureStream.of(1,2,3).flatMapCompletableFuture(i->CompletableFuture.completedFuture(i+2))
 				  								.collect(Collectors.toList()),
 				  								equalTo(Arrays.asList(3,4,5)));
 	}
 	@Test
 	public void flatMapOptional(){
-		assertThat(SequenceM.of(1,2,3,null).flatMapOptional(Optional::ofNullable)
+		assertThat(LazyFutureStream.of(1,2,3,null).flatMapOptional(Optional::ofNullable)
 			      										.collect(Collectors.toList()),
 			      										equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void testIntersperse() {
 		
-		assertThat(SequenceM.of(1,2,3).intersperse(0).toList(),equalTo(Arrays.asList(1,0,2,0,3)));
+		assertThat(LazyFutureStream.of(1,2,3).intersperse(0).toList(),equalTo(Arrays.asList(1,0,2,0,3)));
 	
 
 
@@ -367,15 +370,16 @@ public class SequenceMTest {
 	}
 	@Test(expected=ClassCastException.class)
 	public void cast(){
-		SequenceM.of(1,2,3).cast(String.class).collect(Collectors.toList());
+		LazyFutureStream.of(1,2,3).cast(String.class).collect(Collectors.toList());
 	}
 	@Test
 	public void xMatch(){
-		assertTrue(SequenceM.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
+		assertTrue(LazyFutureStream.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
 	}
 	@Test
 	public void collectIterables(){
-		List result = SequenceM.of(1, 2, 3).collectIterable(
+		
+		List result = LazyFutureStream.of(1, 2, 3).collectIterable((List)
 				Arrays.asList(Collectors.toList(),
 						Collectors.summingInt(Integer::intValue),
 						Collectors.averagingInt(Integer::intValue)));

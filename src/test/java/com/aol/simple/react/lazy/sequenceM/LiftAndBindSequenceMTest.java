@@ -1,4 +1,4 @@
-package com.aol.cyclops.streams;
+package com.aol.simple.react.lazy.sequenceM;
 
 import static com.aol.cyclops.lambda.api.AsAnyM.*;
 import static org.hamcrest.Matchers.equalTo;
@@ -14,13 +14,14 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
+import com.aol.simple.react.stream.traits.LazyFutureStream;
+
 public class LiftAndBindSequenceMTest {
 	@Test
 	public void testLiftAndBindFile(){
 		
 		
-		List<String> result = anyM("input.file")
-								.asSequence()
+		List<String> result = LazyFutureStream.of("input.file")
 								.map(getClass().getClassLoader()::getResource)
 								.peek(System.out::println)
 								.map(URL::getFile)
@@ -33,8 +34,7 @@ public class LiftAndBindSequenceMTest {
 	public void testLiftAndBindURL(){
 		
 		
-		List<String> result = anyM("input.file")
-								.asSequence()
+		List<String> result = LazyFutureStream.of("input.file")
 								.flatMapURL(getClass().getClassLoader()::getResource)
 								.toList();
 		
@@ -44,8 +44,7 @@ public class LiftAndBindSequenceMTest {
 	public void testLiftAndBindString(){
 		
 		
-		List<Character> result = anyM("input.file")
-									.asSequence()
+		List<Character> result = LazyFutureStream.of("input.file")
 									.flatMapCharSequence(i->"hello world")
 									.toList();
 		
@@ -55,8 +54,7 @@ public class LiftAndBindSequenceMTest {
 	public void testLiftAndBindBufferedReader(){
 		
 		
-		List<String> result = anyM("input.file")
-								.asSequence()
+		List<String> result = LazyFutureStream.of("input.file")
 								.map(getClass().getClassLoader()::getResourceAsStream)
 								.map(InputStreamReader::new)
 								.flatMapBufferedReader(BufferedReader::new)

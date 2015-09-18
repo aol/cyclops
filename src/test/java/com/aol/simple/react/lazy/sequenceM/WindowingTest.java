@@ -1,6 +1,7 @@
-package com.aol.cyclops.streams;
+package com.aol.simple.react.lazy.sequenceM;
 
-import static com.aol.cyclops.sequence.SequenceM.of;
+
+import static com.aol.simple.react.stream.traits.LazyFutureStream.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
@@ -16,10 +17,11 @@ import org.junit.Test;
 
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class WindowingTest {
-	SequenceM<Integer> empty;
-	SequenceM<Integer> nonEmpty;
+	LazyFutureStream<Integer> empty;
+	LazyFutureStream<Integer> nonEmpty;
 
 	@Before
 	public void setup(){

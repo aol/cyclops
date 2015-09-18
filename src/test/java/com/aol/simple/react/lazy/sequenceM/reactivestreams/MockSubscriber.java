@@ -1,4 +1,4 @@
-package com.aol.cyclops.streams.reactivestreams;
+package com.aol.simple.react.lazy.sequenceM.reactivestreams;
 
 import org.reactivestreams.Subscription;
 

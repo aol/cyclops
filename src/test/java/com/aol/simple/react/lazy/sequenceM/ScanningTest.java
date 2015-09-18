@@ -1,6 +1,7 @@
-package com.aol.cyclops.streams;
+package com.aol.simple.react.lazy.sequenceM;
 
-import static com.aol.cyclops.sequence.SequenceM.of;
+
+import static com.aol.simple.react.stream.traits.LazyFutureStream.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -9,10 +10,12 @@ import org.junit.Test;
 
 import com.aol.cyclops.sequence.Reducers;
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class ScanningTest {
 	@Test
 	public void testScanLeftStringConcat() {
+		
 		assertThat(of("a", "b", "c").scanLeft("", String::concat).toList(), is(asList("", "a", "ab", "abc")));
 	}
 

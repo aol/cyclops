@@ -1,4 +1,4 @@
-package com.aol.cyclops.streams.hotstream;
+package com.aol.simple.react.lazy.sequenceM.hotstream;
 
 import static org.junit.Assert.assertTrue;
 
@@ -12,8 +12,10 @@ import java.util.stream.IntStream;
 import org.junit.Test;
 
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.simple.react.stream.lazy.LazyReact;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 
-import fj.data.Seq;
+
 
 public class HotStreamTest {
 	static final Executor exec = Executors.newFixedThreadPool(1);
@@ -22,7 +24,7 @@ public class HotStreamTest {
 	public void hotStream() throws InterruptedException{
 		value= null;
 		CountDownLatch latch = new CountDownLatch(1);
-		SequenceM.of(1,2,3)
+		LazyFutureStream.of(1,2,3)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())
 				.hotStream(exec);
@@ -39,7 +41,7 @@ public class HotStreamTest {
 			System.out.println(i);
 			value= null;
 			CountDownLatch latch = new CountDownLatch(1);
-			SequenceM.range(0,Integer.MAX_VALUE)
+			new LazyReact().range(0,Integer.MAX_VALUE)
 					.limit(100)
 					.peek(v->value=v)
 					.peek(v->latch.countDown())
@@ -59,7 +61,7 @@ public class HotStreamTest {
 	public void hotStreamConnectBlockingQueue() throws InterruptedException{
 		value= null;
 		CountDownLatch latch = new CountDownLatch(1);
-		SequenceM.range(0,Integer.MAX_VALUE)
+		new LazyReact().range(0,Integer.MAX_VALUE)
 				.limit(1000)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())

@@ -1,6 +1,5 @@
-package com.aol.cyclops.streams;
+package com.aol.simple.react.lazy.sequenceM;
 
-import static com.aol.cyclops.sequence.SequenceM.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
@@ -13,11 +12,12 @@ import java.util.function.Supplier;
 import org.junit.Test;
 
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class PartitionAndSplittingTest {
 	@Test
 	public void testSplitBy() {
-		Supplier<SequenceM<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+		Supplier<SequenceM<Integer>> s = () -> LazyFutureStream.of(1, 2, 3, 4, 5, 6);
 
 		assertEquals(6, s.get().splitBy(i -> i % 2 != 0).v1.toList().size() + s.get().splitBy(i -> i % 2 != 0).v2.toList().size());
 
@@ -30,7 +30,7 @@ public class PartitionAndSplittingTest {
 
 	@Test
 	public void testPartition() {
-		Supplier<SequenceM<Integer>> s = () -> SequenceM.of(1, 2, 3, 4, 5, 6);
+		Supplier<SequenceM<Integer>> s = () -> LazyFutureStream.of(1, 2, 3, 4, 5, 6);
 
 		assertEquals(asList(1, 3, 5), s.get().partition(i -> i % 2 != 0).v1.toList());
 		assertEquals(asList(2, 4, 6), s.get().partition(i -> i % 2 != 0).v2.toList());
@@ -49,7 +49,7 @@ public class PartitionAndSplittingTest {
 	}
 	@Test
 	public void testPartitionSequence() {
-		Supplier<SequenceM<Integer>> s = () -> SequenceM.of(1, 2, 3, 4, 5, 6);
+		Supplier<SequenceM<Integer>> s = () -> LazyFutureStream.of(1, 2, 3, 4, 5, 6);
 
 		assertEquals(asList(1, 3, 5), s.get().partitionSequence(i -> i % 2 != 0).v1.toList());
 		assertEquals(asList(2, 4, 6), s.get().partitionSequence(i -> i % 2 != 0).v2.toList());
@@ -70,7 +70,7 @@ public class PartitionAndSplittingTest {
 	@Test
 	public void testSplitAt() {
 		for (int i = 0; i < 1000; i++) {
-			Supplier<SequenceM<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+			Supplier<SequenceM<Integer>> s = () -> LazyFutureStream.of(1, 2, 3, 4, 5, 6);
 
 			assertEquals(asList(), s.get().splitAt(0).v1.toList());
 			assertTrue(s.get().splitAt(0).v2.toList().containsAll(asList(1, 2, 3, 4, 5, 6)));
@@ -94,43 +94,43 @@ public class PartitionAndSplittingTest {
 	@Test
 	public void testSplitAtHead() {
 
-		assertEquals(asList(), SequenceM.of(1).splitAtHead().v2.toList());
+		assertEquals(asList(), LazyFutureStream.of(1).splitAtHead().v2.toList());
 
-		assertEquals(Optional.empty(), of().splitAtHead().v1);
-		assertEquals(asList(), SequenceM.of().splitAtHead().v2.toList());
+		assertEquals(Optional.empty(),LazyFutureStream.of().splitAtHead().v1);
+		assertEquals(asList(), LazyFutureStream.of().splitAtHead().v2.toList());
 
-		assertEquals(Optional.of(1), SequenceM.of(1).splitAtHead().v1);
+		assertEquals(Optional.of(1), LazyFutureStream.of(1).splitAtHead().v1);
 
-		assertEquals(Optional.of(1), SequenceM.of(1, 2).splitAtHead().v1);
-		assertEquals(asList(2), SequenceM.of(1, 2).splitAtHead().v2.toList());
+		assertEquals(Optional.of(1), LazyFutureStream.of(1, 2).splitAtHead().v1);
+		assertEquals(asList(2), LazyFutureStream.of(1, 2).splitAtHead().v2.toList());
 
-		assertEquals(Optional.of(1), SequenceM.of(1, 2, 3).splitAtHead().v1);
-		assertEquals(Optional.of(2), SequenceM.of(1, 2, 3).splitAtHead().v2.splitAtHead().v1);
-		assertEquals(Optional.of(3), SequenceM.of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v1);
-		assertEquals(asList(2, 3), SequenceM.of(1, 2, 3).splitAtHead().v2.toList());
-		assertEquals(asList(3), SequenceM.of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.toList());
-		assertEquals(asList(), SequenceM.of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v2.toList());
+		assertEquals(Optional.of(1), LazyFutureStream.of(1, 2, 3).splitAtHead().v1);
+		assertEquals(Optional.of(2), LazyFutureStream.of(1, 2, 3).splitAtHead().v2.splitAtHead().v1);
+		assertEquals(Optional.of(3), LazyFutureStream.of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v1);
+		assertEquals(asList(2, 3), LazyFutureStream.of(1, 2, 3).splitAtHead().v2.toList());
+		assertEquals(asList(3), LazyFutureStream.of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.toList());
+		assertEquals(asList(), LazyFutureStream.of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v2.toList());
 	}
 
 	@Test
 	public void testSplitSequenceAtHead() {
 
-		assertEquals(asList(), SequenceM.of(1).splitSequenceAtHead().v2.toList());
+		assertEquals(asList(), LazyFutureStream.of(1).splitSequenceAtHead().v2.toList());
 
-		assertEquals(Optional.empty(), of().splitSequenceAtHead().v1);
-		assertEquals(asList(), SequenceM.of().splitSequenceAtHead().v2.toList());
+		assertEquals(Optional.empty(), LazyFutureStream.of().splitSequenceAtHead().v1);
+		assertEquals(asList(), LazyFutureStream.of().splitSequenceAtHead().v2.toList());
 
-		assertEquals(Optional.of(1), SequenceM.of(1).splitSequenceAtHead().v1);
+		assertEquals(Optional.of(1), LazyFutureStream.of(1).splitSequenceAtHead().v1);
 
-		assertEquals(Optional.of(1), SequenceM.of(1, 2).splitSequenceAtHead().v1);
-		assertEquals(asList(2), SequenceM.of(1, 2).splitSequenceAtHead().v2.toList());
+		assertEquals(Optional.of(1), LazyFutureStream.of(1, 2).splitSequenceAtHead().v1);
+		assertEquals(asList(2), LazyFutureStream.of(1, 2).splitSequenceAtHead().v2.toList());
 
-		assertEquals(Optional.of(1), SequenceM.of(1, 2, 3).splitSequenceAtHead().v1);
-		assertEquals(Optional.of(2), SequenceM.of(1, 2, 3).splitSequenceAtHead().v2.splitSequenceAtHead().v1);
-		assertEquals(Optional.of(3), SequenceM.of(1, 2, 3).splitSequenceAtHead().v2.splitSequenceAtHead().v2.splitSequenceAtHead().v1);
-		assertEquals(asList(2, 3), SequenceM.of(1, 2, 3).splitSequenceAtHead().v2.toList());
-		assertEquals(asList(3), SequenceM.of(1, 2, 3).splitSequenceAtHead().v2.splitSequenceAtHead().v2.toList());
-		assertEquals(asList(), SequenceM.of(1, 2, 3).splitSequenceAtHead().v2.splitSequenceAtHead().v2.splitSequenceAtHead().v2.toList());
+		assertEquals(Optional.of(1), LazyFutureStream.of(1, 2, 3).splitSequenceAtHead().v1);
+		assertEquals(Optional.of(2), LazyFutureStream.of(1, 2, 3).splitSequenceAtHead().v2.splitSequenceAtHead().v1);
+		assertEquals(Optional.of(3), LazyFutureStream.of(1, 2, 3).splitSequenceAtHead().v2.splitSequenceAtHead().v2.splitSequenceAtHead().v1);
+		assertEquals(asList(2, 3), LazyFutureStream.of(1, 2, 3).splitSequenceAtHead().v2.toList());
+		assertEquals(asList(3), LazyFutureStream.of(1, 2, 3).splitSequenceAtHead().v2.splitSequenceAtHead().v2.toList());
+		assertEquals(asList(), LazyFutureStream.of(1, 2, 3).splitSequenceAtHead().v2.splitSequenceAtHead().v2.splitSequenceAtHead().v2.toList());
 	}
 
 }

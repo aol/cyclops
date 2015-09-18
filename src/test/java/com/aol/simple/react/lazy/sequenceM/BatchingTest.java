@@ -18,7 +18,6 @@ import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import lombok.Value;
 
@@ -26,6 +25,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
+import com.aol.simple.react.util.SimpleTimer;
 public class BatchingTest {
 	@Test
 	public void batchUntil(){

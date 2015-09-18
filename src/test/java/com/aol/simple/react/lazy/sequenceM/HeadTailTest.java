@@ -1,5 +1,4 @@
-package com.aol.cyclops.streams;
-import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
+package com.aol.simple.react.lazy.sequenceM;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -10,13 +9,14 @@ import org.junit.Test;
 
 import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class HeadTailTest {
 
 	@Test
 	public void headTailReplay(){
 	
-		SequenceM<String> helloWorld = anyM("hello","world","last").toSequence();
+		SequenceM<String> helloWorld = LazyFutureStream.of("hello","world","last");
 		HeadAndTail<String> headAndTail = helloWorld.headAndTail();
 		 String head = headAndTail.head();
 		 assertThat(head,equalTo("hello"));
@@ -28,7 +28,7 @@ public class HeadTailTest {
 	@Test
 	public void headTailOptional(){
 	
-		SequenceM<String> helloWorld = SequenceM.of();
+		SequenceM<String> helloWorld = LazyFutureStream.of();
 		Optional<HeadAndTail<String>> headAndTail = helloWorld.headAndTailOptional();
 		assertTrue(!headAndTail.isPresent());
 		
