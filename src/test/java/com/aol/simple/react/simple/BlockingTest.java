@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import com.aol.simple.react.stream.eager.EagerReact;
+
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.EagerSimpleReactStream;
 
@@ -52,7 +52,7 @@ public class BlockingTest {
 	}
 	@Test
 	public void testTypeInferencingThenPredicate(){
-		List<String> result = new EagerReact().react(() -> "World",()-> "Hello").then( in -> "hello")
+		List<String> result = new SimpleReact().react(() -> "World",()-> "Hello").then( in -> "hello")
 				.block(state -> state.getCompleted()>3);
 		assertThat(result.size(),is(2));
 	
@@ -89,7 +89,7 @@ public class BlockingTest {
 	@Test
 	public void testBreakout() throws InterruptedException, ExecutionException {
 		Throwable[] error = { null };
-		List<String> strings = new EagerReact()
+		List<String> strings = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
@@ -108,7 +108,7 @@ public class BlockingTest {
 	@Test
 	public void testBreakoutToSet() throws InterruptedException, ExecutionException {
 		Throwable[] error = { null };
-		Set<String> strings = new EagerReact()
+		Set<String> strings = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
@@ -129,7 +129,7 @@ public class BlockingTest {
 	public void testBreakoutException() throws InterruptedException,
 			ExecutionException {
 		Throwable[] error = { null };
-		List<Integer> results = new EagerReact()
+		List<Integer> results = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.<Integer>then(it -> {
@@ -148,7 +148,7 @@ public class BlockingTest {
 	public void testBreakoutExceptionTimes() throws InterruptedException,
 			ExecutionException {
 		count =0;
-		List<Integer> results = new EagerReact()
+		List<Integer> results = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.<Integer>then(it -> {
@@ -165,7 +165,7 @@ public class BlockingTest {
 	public void testBreakoutAllCompleted() throws InterruptedException,
 			ExecutionException {
 		count =0;
-		List<Integer> results = new EagerReact()
+		List<Integer> results = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
@@ -185,7 +185,7 @@ public class BlockingTest {
 	public void testBreakoutAllCompletedStrings() throws InterruptedException,
 			ExecutionException {
 		count =0;
-		List<String> strings = new EagerReact()
+		List<String> strings = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
@@ -206,7 +206,7 @@ public class BlockingTest {
 	public void testBreakoutAllCompletedAndTime() throws InterruptedException,
 			ExecutionException {
 			count =0;
-			List<Integer> result = new EagerReact()
+			List<Integer> result = new SimpleReact()
 					.<Integer> react(() -> 1, () -> 2, () -> 3)
 					.then(it -> it * 100)
 					.then(it -> {
@@ -225,7 +225,7 @@ public class BlockingTest {
 	public void testBreakoutInEffective() throws InterruptedException,
 			ExecutionException {
 		Throwable[] error = { null };
-		List<String> strings = new EagerReact()
+		List<String> strings = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
@@ -254,7 +254,7 @@ public class BlockingTest {
 	@Test
 	public void testFirstSimple() throws InterruptedException, ExecutionException {
 
-		EagerSimpleReactStream<Integer> stage = new EagerReact()
+		EagerSimpleReactStream<Integer> stage = new SimpleReact()
 		.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
 		.then( it -> sleep(it));
@@ -271,7 +271,7 @@ public class BlockingTest {
 	@Test
 	public void testFirstAllOf() throws InterruptedException, ExecutionException {
 
-		Set<Integer> result = new EagerReact()
+		Set<Integer> result = new SimpleReact()
 		.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
 		.<Set<Integer>,Set<Integer>>allOf(Collectors.toSet(), it -> {
@@ -284,7 +284,7 @@ public class BlockingTest {
 	@Test
 	public void testLastAllOf() throws InterruptedException, ExecutionException {
 
-		Set<Integer> result = new EagerReact()
+		Set<Integer> result = new SimpleReact()
 		.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
 		.<Set<Integer>,Set<Integer>>allOf(Collectors.toSet(), it -> {

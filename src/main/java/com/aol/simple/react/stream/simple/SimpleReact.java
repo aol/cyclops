@@ -123,7 +123,7 @@ public class SimpleReact implements ReactBuilder{
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public <U> EagerSimpleReactStream<U> react(final Collection<Supplier<U>> actions) {
+	public <U> EagerSimpleReactStream<U> reactCollection(final Collection<Supplier<U>> actions) {
 
 		return react((Supplier[]) actions.toArray(new Supplier[] {}));
 	}
@@ -137,7 +137,7 @@ public class SimpleReact implements ReactBuilder{
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public <U> EagerSimpleReactStream<U> react(final Stream<Supplier<U>> actions) {
+	public <U> EagerSimpleReactStream<U> reactStream(final Stream<Supplier<U>> actions) {
 
 		return new SimpleReactStreamImpl<U>(this,actions.map(
 				next -> CompletableFuture.supplyAsync(next, executor)));
@@ -153,7 +153,7 @@ public class SimpleReact implements ReactBuilder{
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public <U> EagerSimpleReactStream<U> react(final Iterator<Supplier<U>> actions) {
+	public <U> EagerSimpleReactStream<U> reactIterator(final Iterator<Supplier<U>> actions) {
 
 		return new SimpleReactStreamImpl<U>(this,StreamSupport.stream(Spliterators.spliteratorUnknownSize(actions, Spliterator.ORDERED),false).map(
 				next -> CompletableFuture.supplyAsync(next, executor)));
@@ -186,7 +186,7 @@ public class SimpleReact implements ReactBuilder{
 	@SafeVarargs
 	public final <U> EagerSimpleReactStream<U> react(final Supplier<U>... actions) {
 
-		return react(actions);
+		return reactI(actions);
 
 	}
 	

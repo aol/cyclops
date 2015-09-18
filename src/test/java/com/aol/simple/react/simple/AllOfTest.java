@@ -18,7 +18,6 @@ import org.pcollections.HashPMap;
 import org.pcollections.HashTreePMap;
 
 import com.aol.simple.react.extractors.Extractors;
-import com.aol.simple.react.stream.eager.SimpleReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 
 

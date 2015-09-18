@@ -10,7 +10,6 @@ import java.util.concurrent.ExecutionException;
 
 import org.junit.Test;
 
-import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.EagerSimpleReactStream;
 
@@ -19,9 +18,9 @@ public class MergeTest {
 	@Test
 	public void testMerge() throws InterruptedException, ExecutionException {
 
-		EagerSimpleReactStream<String> stage1 = new EagerReact().<Integer> react(() -> 1,
+		EagerSimpleReactStream<String> stage1 = new SimpleReact().<Integer> react(() -> 1,
 				() -> 2, () -> 3).then(it -> "*" + it);
-		EagerSimpleReactStream<String> stage2 = new EagerReact().<Integer> react(() -> 4,
+		EagerSimpleReactStream<String> stage2 = new SimpleReact().<Integer> react(() -> 4,
 				() -> 5, () -> 6).then(it -> "*" + it);
 
 		List<String> result = stage1.merge(stage2).block();
@@ -34,9 +33,9 @@ public class MergeTest {
 	public void testMergeTypes() throws InterruptedException,
 			ExecutionException {
 
-		EagerSimpleReactStream<Integer> stage1 = new EagerReact().<Integer> react(() -> 1,
+		EagerSimpleReactStream<Integer> stage1 = new SimpleReact().<Integer> react(() -> 1,
 				() -> 2, () -> 3);
-		EagerSimpleReactStream<String> stage2 = new EagerReact().<Integer> react(() -> 4,
+		EagerSimpleReactStream<String> stage2 = new SimpleReact().<Integer> react(() -> 4,
 				() -> 5, () -> 6).then(it -> "*" + it);
 
 		List<Object> result = EagerSimpleReactStream.<Object> merge(stage1, stage2).block();
@@ -49,7 +48,7 @@ public class MergeTest {
 	public void testSplitAndMerge() throws InterruptedException,
 			ExecutionException {
 
-		EagerSimpleReactStream<String> stage = new EagerReact().<Integer> react(() -> 1,
+		EagerSimpleReactStream<String> stage = new SimpleReact().<Integer> react(() -> 1,
 				() -> 2, () -> 3).then(it -> "*" + it);
 		EagerSimpleReactStream<String> stage1 = stage.filter(it -> it.startsWith("*1"));
 		EagerSimpleReactStream<String> stage2 = stage.filter(it -> it.startsWith("*2"));
@@ -70,9 +69,9 @@ public class MergeTest {
 
 	@Test
 	public void mergeAndContinueProcessing() {
-		EagerSimpleReactStream<String> stage1 = new EagerReact().<Integer> react(() -> 1,
+		EagerSimpleReactStream<String> stage1 = new SimpleReact().<Integer> react(() -> 1,
 				() -> 2, () -> 3).then(it -> "*" + it);
-		EagerSimpleReactStream<String> stage2 = new EagerReact().<Integer> react(() -> 4,
+		EagerSimpleReactStream<String> stage2 = new SimpleReact().<Integer> react(() -> 4,
 				() -> 5, () -> 6).then(it -> "*" + it);
 
 		List<String> result = stage1.merge(stage2).then(it -> it +"*").block();
@@ -81,9 +80,9 @@ public class MergeTest {
 	}
 	@Test
 	public void mergeAndForkProcessing() {
-		EagerSimpleReactStream<String> stage1 = new EagerReact().<Integer> react(() -> 1,
+		EagerSimpleReactStream<String> stage1 = new SimpleReact().<Integer> react(() -> 1,
 				() -> 2, () -> 3).then(it -> "*" + it);
-		EagerSimpleReactStream<String> stage2 = new EagerReact().<Integer> react(() -> 4,
+		EagerSimpleReactStream<String> stage2 = new SimpleReact().<Integer> react(() -> 4,
 				() -> 5, () -> 6).then(it -> "*" + it);
 
 		List<String> result1 = stage1.merge(stage2).then(it -> it +"*")

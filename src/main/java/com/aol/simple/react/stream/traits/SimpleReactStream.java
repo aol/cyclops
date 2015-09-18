@@ -511,7 +511,7 @@ public interface SimpleReactStream<U> extends BlockingStream<U>{
 	 * The supplier will be executed asyncrhonously, subsequent tasks will be executed synchronously unless the async() operator is invoked.
 	 * 
 	 */
-	static <T> SimpleReactStream<T> react(Supplier<T> value) {
+	static <T> EagerSimpleReactStream<T> react(Supplier<T> value) {
 		return   new SimpleReact(ThreadPools.getSequential(),new AsyncRetryExecutor(ThreadPools.getSequentialRetry()),false).react(value);
 	}
 	/**
@@ -520,7 +520,7 @@ public interface SimpleReactStream<U> extends BlockingStream<U>{
 	 * 
 	 */
 	@SafeVarargs
-	static <T> SimpleReactStream<T> react(Supplier<T>... values) {
+	static <T> EagerSimpleReactStream<T> react(Supplier<T>... values) {
 		return   new SimpleReact(ThreadPools.getSequential(),new AsyncRetryExecutor(ThreadPools.getSequentialRetry()),false).react(values);
 	}
 	
@@ -529,7 +529,7 @@ public interface SimpleReactStream<U> extends BlockingStream<U>{
 	 * 
 	 * 
 	 */
-	static <T> SimpleReactStream<T> of(T value) {
+	static <T> EagerSimpleReactStream<T> of(T value) {
 		return simpleReactStream((Stream) Seq.of(value));
 	}
 
@@ -539,7 +539,7 @@ public interface SimpleReactStream<U> extends BlockingStream<U>{
 	 * 
 	 */
 	@SafeVarargs
-	static <T> SimpleReactStream<T> of(T... values) {
+	static <T> EagerSimpleReactStream<T> of(T... values) {
 		return simpleReactStream((Stream) Seq.of(values));
 	}
 
@@ -548,7 +548,7 @@ public interface SimpleReactStream<U> extends BlockingStream<U>{
 	 * @see Stream#of(Object)
 	 * 
 	 */
-	static <T> SimpleReactStream<T> ofThread(T value) {
+	static <T> EagerSimpleReactStream<T> freeThread(T value) {
 		return  new SimpleReact(ThreadPools.getSequential(),new AsyncRetryExecutor(ThreadPools.getSequentialRetry()),false).of(value);
 	}
 
@@ -558,7 +558,7 @@ public interface SimpleReactStream<U> extends BlockingStream<U>{
 	 * 
 	 */
 	@SafeVarargs
-	static <T> SimpleReactStream<T> ofThread(T... values) {
+	static <T> EagerSimpleReactStream<T> freeThread(T... values) {
 		return  new SimpleReact(ThreadPools.getSequential(),new AsyncRetryExecutor(ThreadPools.getSequentialRetry()),false).of(values);
 	}
 	/**
@@ -566,7 +566,7 @@ public interface SimpleReactStream<U> extends BlockingStream<U>{
 	 * 
 	 * 
 	 */
-	static <T> SimpleReactStream<T> empty() {
+	static <T> EagerSimpleReactStream<T> empty() {
 		return simpleReactStream((Stream) Seq.empty());
 	}
 	/**
@@ -611,14 +611,14 @@ public interface SimpleReactStream<U> extends BlockingStream<U>{
 	 *  
 	 * @see Stream#of(Object)
 	 */
-	static <T> SimpleReactStream<T> simpleReactStream(CompletableFuture<T>... values) {
+	static <T> EagerSimpleReactStream<T> simpleReactStream(CompletableFuture<T>... values) {
 		return  new SimpleReact(ThreadPools.getSequential(),new AsyncRetryExecutor(ThreadPools.getSequentialRetry()),false)
 									.fromStream(Stream.of(values));
 	}
 	/**
 	 * Wrap a Stream into a SimpleReactStream.
 	 */
-	static <T> SimpleReactStream<T> simpleReactStream(Stream<T> stream) {
+	static <T> EagerSimpleReactStream<T> simpleReactStream(Stream<T> stream) {
 		
 		if (stream instanceof LazyFutureStream)
 			stream = ((LazyFutureStream) stream).toQueue().stream(((LazyFutureStream) stream).getSubscription());
@@ -633,14 +633,14 @@ public interface SimpleReactStream<U> extends BlockingStream<U>{
 	/**
 	 * Wrap an Iterable into a FutureStream.
 	 */
-	static <T> SimpleReactStream<T> simpleReactStreamFromIterable(Iterable<T> iterable) {
+	static <T> EagerSimpleReactStream<T> simpleReactStreamFromIterable(Iterable<T> iterable) {
 		return simpleReactStream(iterable.iterator());
 	}
 
 	/**
 	 * Wrap an Iterator into a FutureStream.
 	 */
-	static <T> SimpleReactStream<T> simpleReactStream(Iterator<T> iterator) {
+	static <T> EagerSimpleReactStream<T> simpleReactStream(Iterator<T> iterator) {
 		return simpleReactStream(StreamSupport.stream(
 				spliteratorUnknownSize(iterator, ORDERED), false));
 	}

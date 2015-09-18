@@ -20,6 +20,8 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.factories.QueueFactory;
@@ -29,7 +31,6 @@ import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.exceptions.ThrowsSoftened;
 import com.aol.simple.react.stream.EagerStreamWrapper;
-import com.aol.simple.react.stream.ReactBuilder;
 import com.aol.simple.react.stream.StageWithResults;
 import com.aol.simple.react.stream.Status;
 import com.aol.simple.react.stream.lazy.LazyReact;
@@ -58,6 +59,151 @@ public interface EagerSimpleReactStream<U> extends SimpleReactStream<U>,
 	EagerSimpleReactStream<U> withAsync(boolean b);
 	
 	Continueable getSubscription();
+	
+	default  <T2> Seq<Tuple2<U, T2>> combineLatest(
+			EagerSimpleReactStream<T2> right) {
+		return EagerFutureStreamFunctions.combineLatest(this,right);
+	}
+	default  <T2> Seq<Tuple2<U, T2>> withLatest(
+			EagerSimpleReactStream<T2> right) {
+		return EagerFutureStreamFunctions.withLatest(this,right);
+	}
+	/**
+	 * Give a function access to the current stage of a SimpleReact Stream
+	 * 
+	 * @param consumer
+	 *            Consumer that will recieve current stage
+	 * @return Self (current stage)
+	 */
+	default EagerSimpleReactStream<U> self(Consumer<EagerSimpleReactStream<U>> consumer) {
+		return peek(n->consumer.accept(this));
+	}
+	/**
+	 * Split a stream at a given position. (Operates on futures)
+	 * <pre>
+	 * {@code  
+	 * // tuple((1, 2, 3), (4, 5, 6))
+	 *  EagerFutureStream.of(1, 2, 3, 4, 5,6).splitAt(3)
+	 *  
+	 *  }</pre>
+	 * @return 
+	 * 
+	 *
+	 * @see #splitAt(Stream, long)
+	 */
+	default Tuple2<EagerSimpleReactStream<U>, EagerSimpleReactStream<U>> splitAt(
+			long position) {
+		Stream stream = getLastActive().stream();
+		Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>> split = Seq
+				.seq((Stream<CompletableFuture<U>>) stream).splitAt(position);
+
+		return new Tuple2(
+				fromListCompletableFuture(split.v1.collect(Collectors.toList())),
+				fromListCompletableFuture(split.v2.collect(Collectors.toList())));
+	}
+	/**
+	 * Duplicate a Stream into two equivalent LazyFutureStreams, underlying
+	 * Stream of Futures is duplicated
+	 * <pre>
+	 * {@code 
+	 * EagerFutureStream.of(1, 2, 3).duplicate()
+	 * 
+	 * results in
+	 * 
+	 * tuple((1,2,3),(1,2,3))
+	 * }</pre>
+	 * Care should be taken not to use this method with infinite streams!
+	 * 
+	 * @return Two equivalent Streams
+	 * 
+	 * @see #duplicate()
+	 */
+
+	default Tuple2<EagerSimpleReactStream<U>, EagerSimpleReactStream<U>> duplicate() {
+		// unblocking impl
+		Stream stream = getLastActive().stream();
+		Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>> duplicated = Seq
+				.seq((Stream<CompletableFuture<U>>) stream).duplicate();
+		Tuple2 dup =new Tuple2(fromStreamOfFutures(duplicated.v1),
+				fromStreamOfFutures(duplicated.v2));
+	
+		return (Tuple2<EagerSimpleReactStream<U>,EagerSimpleReactStream<U>>) dup;
+	}
+	/**
+	 * Zip two Streams, zipping against the underlying futures of this stream
+	 * 
+	 * @param other
+	 * @return
+	 */
+	default <R> EagerSimpleReactStream<Tuple2<U,R>> zip(Stream<R> other) {
+		
+		Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other));
+		Seq<Tuple2<CompletableFuture<U>,R>> withType = (Seq<Tuple2<CompletableFuture<U>,R>>)seq;
+		EagerSimpleReactStream futureStream = fromStreamOfFutures((Stream)withType.map(t ->t.v1.thenApply(v -> Tuple.tuple(t.v1.join(),t.v2)))
+				);
+
+		
+		return (EagerSimpleReactStream<Tuple2<U,R>>)futureStream;
+
+	
+	}
+	/**
+	 * Zip two Streams, zipping against the underlying futures of both Streams
+	 * Placeholders (Futures) will be populated immediately in the new zipped Stream and results
+	 * will be populated asyncrhonously
+	 * 
+	 * @param other  Another FutureStream to zip Futures with
+	 * @return New Sequence of CompletableFutures
+	 */
+	default <R> EagerSimpleReactStream<Tuple2<U,R>> zip(EagerSimpleReactStream<R> other) {
+		Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other.getLastActive().stream()));
+		Seq<Tuple2<CompletableFuture<U>,CompletableFuture<R>>> withType = (Seq<Tuple2<CompletableFuture<U>,CompletableFuture<R>>>)seq;
+		EagerSimpleReactStream futureStream =  fromStreamOfFutures((Stream)withType.map(t ->CompletableFuture.allOf(t.v1,t.v2).thenApply(v -> Tuple.tuple(t.v1.join(),t.v2.join())))
+				);
+		
+		return (EagerSimpleReactStream<Tuple2<U,R>>)futureStream;
+		
+
+	}
+
+	/**
+	 * Zip this Stream with an index, but Zip based on the underlying tasks, not completed results.
+	 * 
+	 * e.g.
+	 * two functions that return method name, but take varying lengths of time.
+	 * <pre>
+	 * <code>
+	 * EagerFutureStream.react(()-&gt;takesALotOfTime(),()-&gt;veryQuick()).zipWithIndex();
+	 * 
+	 *  [["takesALotOfTime",0],["veryQuick",1]]
+	 *  
+	 *  Where as with standard zipWithIndex you would get a new Stream ordered by completion
+	 *  
+	 *  [["veryQuick",0],["takesALotOfTime",1]]
+	 * </code>
+	 * </pre>
+	 * @see #zipWithIndex(Stream)
+	 */
+	default EagerSimpleReactStream<Tuple2<U,Long>> zipWithIndex() {
+
+		Seq seq = Seq.seq(getLastActive().stream().iterator()).zipWithIndex();
+		Seq<Tuple2<CompletableFuture<U>,Long>> withType = (Seq<Tuple2<CompletableFuture<U>,Long>>)seq;
+		EagerSimpleReactStream futureStream =  fromStreamOfFutures((Stream)withType.map(t -> t.v1.thenApply(v -> 
+							Tuple.tuple(t.v1.join(),t.v2))));
+		return (EagerSimpleReactStream<Tuple2<U,Long>>)futureStream;
+		
+	}
+	/**
+	 * Return first Stream out of provided Streams that starts emitted results 
+	 * 
+	 * @param futureStreams Streams to race
+	 * @return First Stream to start emitting values
+	 */
+	@SafeVarargs
+	public static <U> EagerSimpleReactStream<U> firstOf(EagerSimpleReactStream<U>... futureStreams){
+		return EagerFutureStreamFunctions.firstOf(futureStreams);
+	}
+	
 	/**
 	 * Reversed, operating on the underlying futures.
 	 * <pre>

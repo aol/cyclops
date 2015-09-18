@@ -33,7 +33,6 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.simple.react.extractors.Extractors;
-import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
@@ -116,7 +115,7 @@ public class SimpleReactTest {
 
 	@Test
 	public void whenChainEmptyBlockReturnsWithBreakout(){
-		new EagerReact(new ForkJoinPool(1))
+		new SimpleReact(new ForkJoinPool(1))
 		.from(new ArrayList<>())
 		.block(status->false);
 	}
@@ -137,7 +136,7 @@ public class SimpleReactTest {
 	@Test
 	public void testReact() throws InterruptedException, ExecutionException {
 
-		List<CompletableFuture<Integer>> futures = new EagerReact()
+		List<CompletableFuture<Integer>> futures = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.with(it -> it * 100);
 
@@ -150,8 +149,8 @@ public class SimpleReactTest {
 	@Test
 	public void testReactList() throws InterruptedException, ExecutionException {
 
-		List<CompletableFuture<Integer>> futures = new EagerReact()
-				.<Integer> react(Arrays.asList(() -> 1, () -> 2, () -> 3))
+		List<CompletableFuture<Integer>> futures = new SimpleReact()
+				.<Integer> reactCollection(Arrays.asList(() -> 1, () -> 2, () -> 3))
 				.with(it -> it * 100);
 
 		assertThat(futures.get(0).get(), is(greaterThan(99)));
@@ -185,7 +184,7 @@ public class SimpleReactTest {
 	@Test
 	public void testReactString() throws InterruptedException,
 			ExecutionException {
-		List<CompletableFuture<String>> futures = new EagerReact()
+		List<CompletableFuture<String>> futures = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.with(it -> "*" + it);
 
@@ -199,7 +198,7 @@ public class SimpleReactTest {
 	@Test
 	public void testReactChain() throws InterruptedException,
 			ExecutionException {
-		List<String> strings = new EagerReact()
+		List<String> strings = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then((it) -> it * 100).then((it) -> "*" + it)
 				.block(status -> status.getCompleted() > 1);
@@ -214,7 +213,7 @@ public class SimpleReactTest {
 	@Test
 	public void testGenericExtract() throws InterruptedException, ExecutionException {
 
-		Set<Integer> result = new EagerReact()
+		Set<Integer> result = new SimpleReact()
 		.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
 		.<Set<Integer>,Set<Integer>>allOf(Collectors.toSet(), (Set<Integer> it) -> {

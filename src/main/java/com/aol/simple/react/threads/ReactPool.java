@@ -83,7 +83,7 @@ public class ReactPool<REACTOR extends ReactBuilder> {
 	/**
 	 * @return Synchronous pool requires consumers and producers of the ReactPool to be in sync
 	 */
-	public static <REACTOR extends BaseSimpleReact> ReactPool<REACTOR> syncrhonousPool(){
+	public static <REACTOR extends ReactBuilder> ReactPool<REACTOR> syncrhonousPool(){
 		
 		ReactPool<REACTOR> r = new ReactPool<>(new SynchronousQueue<>());
 		
