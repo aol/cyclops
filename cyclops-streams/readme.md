@@ -1,7 +1,7 @@
 # cyclops-streams
 
 java.util.Streams on steriods! An implementation of the cyclops-sequence-api [SequenceM](http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/6.0.1/com/aol/cyclops/sequence/SequenceM.html) for more advanced sequential Streams. Extends [java.util.stream.Stream](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html) and [jool.Seq](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.7/org/jooq/lambda/Seq.html) to add even more functionality. 
-Easy to use Reactive Streams support available if simple-react is added to the classpath.
+Easy to use Reactive Streams support available if simple-react (v0.99.3 and above) is added to the classpath.
 
 Features include
 
