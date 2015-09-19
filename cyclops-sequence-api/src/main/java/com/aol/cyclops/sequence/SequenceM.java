@@ -344,7 +344,9 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 */
 	@Override
-	<U> SequenceM<Tuple2<T, U>> zip(Seq<U> other);
+	default <U> SequenceM<Tuple2<T, U>> zip(Seq<U> other){
+		return fromStream(Seq.super.zip(other));
+	}
 	/**
 	 * zip 3 Streams into one
 	 * <pre>
@@ -382,7 +384,10 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * }
 	 * </pre>
 	 */
-	SequenceM<Tuple2<T,Long>> zipWithIndex();
+	 @Override
+	default SequenceM<Tuple2<T,Long>> zipWithIndex(){
+		return fromStream(Seq.super.zipWithIndex());
+	}
 	/**
 	 * Generic zip function. E.g. Zipping a Stream and an Optional
 	 * 
@@ -524,7 +529,10 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * </pre>
 	 */
-	<K> Map<K, List<T>> groupBy(Function<? super T, ? extends K> classifier);
+	@Override
+	default <K> Map<K, List<T>> groupBy(Function<? super T, ? extends K> classifier){
+		return Seq.super.groupBy(classifier);
+	}
 
 	/*
 	 * Return the distinct Stream of elements
@@ -706,7 +714,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * </pre>
 	 * @param c Predicate to check if all match
 	 */
-	 boolean  allMatch(Predicate<? super T> c);
+	boolean  allMatch(Predicate<? super T> c);
 	/**
 	 * True if a single element matches when Monad converted to a Stream
 	 * <pre>
@@ -2076,7 +2084,9 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	/* (non-Javadoc)
 	 * @see org.jooq.lambda.Seq#onEmptyThrow(java.util.function.Supplier)
 	 */
-	<X extends Throwable> SequenceM<T> onEmptyThrow(Supplier<X> supplier);
+	default <X extends Throwable> SequenceM<T> onEmptyThrow(Supplier<X> supplier){
+		return SequenceM.fromStream(Seq.super.onEmptyThrow(supplier));
+	}
 
 	/* (non-Javadoc)
 	 * @see org.jooq.lambda.Seq#concat(java.util.stream.Stream)

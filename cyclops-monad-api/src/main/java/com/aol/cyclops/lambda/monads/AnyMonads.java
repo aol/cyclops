@@ -104,7 +104,6 @@ public class AnyMonads extends AsAnyMList{
 	 * @return Monad with a List
 	 */ 
 	public static <T1>  AnyM<Stream<T1>> sequence(Collection<AnyM<T1>> seq){
-	
 		if(seq.size()==0)
 			return anyM(Optional.empty());
 		else

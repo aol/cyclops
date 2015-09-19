@@ -224,6 +224,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	public  Optional<X> match(Object t){
 		return cse.getPatternMatcher().match(t);
 	}
+	
 	/**
 	 * Immediately decompose the supplied parameter and pass it to the PatternMatcher for matching
 	 * 
