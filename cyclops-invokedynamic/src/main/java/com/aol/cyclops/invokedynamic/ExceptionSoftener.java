@@ -9,14 +9,13 @@ public class ExceptionSoftener {
 	
 	
 	
-	public static void throwSoftenedException(final Throwable e) {
-		new Thrower<RuntimeException>().uncheck(e);
+	public static RuntimeException throwSoftenedException(final Throwable e) {
+		throw ExceptionSoftener.<RuntimeException>uncheck(e);
 	}
-	static class Thrower<T extends Throwable> {
-		@SuppressWarnings("unchecked")
-			private void uncheck(Throwable throwable) throws T {
-			 	throw (T) throwable;
-			 }
+	
+	@SuppressWarnings("unchecked")
+	private static <T extends Throwable> T uncheck(Throwable throwable) throws T {
+		throw (T) throwable;
 	}
 			 
 			
