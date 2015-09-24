@@ -134,6 +134,7 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	@Test 
 	public void testBackPressureWhenZippingUnevenStreams() throws InterruptedException {
 
+		for(int i=0;i<100;i++){
 		LazyFutureStream stream =  LazyReact.parallelBuilder().withExecutor(new ForkJoinPool(2))
 								.reactInfinitely(() -> "100").peek(System.out::println)
 				.withQueueFactory(QueueFactories.boundedQueue(2));
@@ -150,6 +151,7 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 				.mapToInt(it -> (int) it).limit(5).max().getAsInt();
 		assertThat(max, is(2));
 		t.join();
+		}
 	
 	}
 

@@ -1,5 +1,8 @@
 package com.aol.simple.react.lazy;
 
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertThat;
+
 import java.util.function.Supplier;
 
 import org.junit.Test;
@@ -13,6 +16,7 @@ public class LazySequentialSQLTest extends BaseSequentialSQLTest {
 	protected <U> LazyFutureStream<U> of(U... array) {
 		return LazyFutureStream.of(array);
 	}
+
 	@Override
 	protected <U> LazyFutureStream<U> ofThread(U... array) {
 		return LazyFutureStream.freeThread(array);
@@ -22,8 +26,14 @@ public class LazySequentialSQLTest extends BaseSequentialSQLTest {
 	protected <U> LazyFutureStream<U> react(Supplier<U>... array) {
 		return LazyFutureStream.react(array);
 	}
-	 @Test(expected=X.class)
-	 public void testOnEmptyThrows(){
-	    	of().onEmptyThrow(() -> new X()).toList();
-	  }
+
+	Throwable ex;
+
+	@Test
+	public void testOnEmptyThrows() {
+		ex = null;
+		of().capture(e -> ex = e).onEmptyThrow(() -> new X()).toList();
+
+		assertThat(ex, instanceOf(X.class));
+	}
 }

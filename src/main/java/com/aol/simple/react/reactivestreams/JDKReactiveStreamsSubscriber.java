@@ -3,7 +3,10 @@ package com.aol.simple.react.reactivestreams;
 
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.IntConsumer;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import lombok.Getter;
@@ -15,7 +18,6 @@ import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.Queue.ClosedQueueException;
 import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.stream.traits.Continuation;
-import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 /**
  * 
@@ -34,15 +36,16 @@ public class JDKReactiveStreamsSubscriber<T> implements Subscriber<T> {
 		Continueable subscription =  new com.aol.simple.react.async.subscription.Subscription();
 		return queue.stream(subscription);
 	}
-	protected Queue<T> queue;
+	protected volatile Queue<T> queue;
 	@Getter
 	volatile Subscription subscription;
 	@Getter
-	protected Stream<T> stream;
-	Consumer errorHandler = e -> { };
+	protected volatile Stream<T> stream;
+	volatile Consumer errorHandler = e -> { };
 	
 	@Override
 	public void onSubscribe(final Subscription s) {
+	
 		Objects.requireNonNull(s);
 	
 		if(this.subscription!=null){

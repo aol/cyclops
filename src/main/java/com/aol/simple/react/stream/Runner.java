@@ -1,6 +1,7 @@
 package com.aol.simple.react.stream;
 
 import java.util.Iterator;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import lombok.AllArgsConstructor;
@@ -11,6 +12,7 @@ import com.aol.simple.react.collectors.lazy.EmptyCollector;
 import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.stream.traits.Continuation;
+
 
 @AllArgsConstructor
 public class Runner<U> {
@@ -87,8 +89,10 @@ public class Runner<U> {
 					}catch(java.util.concurrent.CompletionException e){
 						
 						
-					}catch(Throwable e){
+					}
+					catch(Throwable e){
 						
+						collector.getSafeJoin().apply(FastFuture.failedFuture(e));
 					}
 					return finishNoCollect;
 							

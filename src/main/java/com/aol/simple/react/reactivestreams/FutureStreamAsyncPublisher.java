@@ -61,7 +61,7 @@ public interface FutureStreamAsyncPublisher<T> extends Publisher<T> {
 				volatile boolean complete =false;
 				
 				volatile boolean cancelled = false;
-				ConcurrentLinkedQueue<Long> requests = new ConcurrentLinkedQueue<Long>();
+				final ConcurrentLinkedQueue<Long> requests = new ConcurrentLinkedQueue<Long>();
 				{
 					CompletableFuture.runAsync( ()-> {
 						processRequests(s, it); 
@@ -72,7 +72,7 @@ public interface FutureStreamAsyncPublisher<T> extends Publisher<T> {
 					List<CompletableFuture> results = new ArrayList<>();
 					while(!cancelled && !complete){
 						
-					activeLoop(s, it, results);
+						activeLoop(s, it, results);
 					
 					}
 				}

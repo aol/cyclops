@@ -160,15 +160,24 @@ public class FastFuture<T> {
 	
 		throw (RuntimeException)exception();
 	}
-	private void completeExceptionally(Throwable t) {
+	private FastFuture<T> completeExceptionally(Throwable t) {
 		exception.lazySet(t);
 		completedExceptionally =true;
 		handleOnComplete(true);
-		if(pipeline.onFail!=null)
+		if(pipeline!=null && pipeline.onFail!=null)
 			pipeline.onFail.accept(t);
 		done=true;
+		return this;
 	}
 	
+	public static <T> FastFuture<T> failedFuture(Throwable t){
+		return new FastFuture<T>().completeExceptionally(t);
+	}
+	/** Internal conversion method to convert CompletableFutures to FastFuture.
+	 * 
+	 * @param cf
+	 * @return
+	 */
 	public static <T>FastFuture<T> fromCompletableFuture(CompletableFuture<T> cf){
 		FastFuture<T> f = new FastFuture<>();
 		cf.thenAccept(i->f.set(i));
