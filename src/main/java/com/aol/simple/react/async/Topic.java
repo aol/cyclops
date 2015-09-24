@@ -2,8 +2,6 @@ package com.aol.simple.react.async;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -18,6 +16,8 @@ import org.pcollections.HashTreePMap;
 import org.pcollections.PMap;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
+
+import com.aol.cyclops.sequence.SequenceM;
 
 /**
  * A class that can accept input streams and generate output streams where data sent in the Topic is guaranteed to be
@@ -74,9 +74,9 @@ public class Topic<T> implements Adapter<T> {
 	}
 	
 	@Synchronized("lock")
-	private<R> Seq<R> connect(Function<Queue<T>,Seq<R>> streamCreator){
+	private<R> SequenceM<R> connect(Function<Queue<T>,SequenceM<R>> streamCreator){
 		Queue<T> queue = this.getNextQueue();
-		Seq<R> stream = streamCreator.apply(queue);
+		SequenceM<R> stream = streamCreator.apply(queue);
 
 		this.streamToQueue = streamToQueue.plus(stream,queue);
 		return stream;
@@ -97,7 +97,7 @@ public class Topic<T> implements Adapter<T> {
 	 * 
 	 * @return Stream of CompletableFutures that can be used as input into a SimpleReact concurrent dataflow
 	 */
-	public Seq<CompletableFuture<T>> streamCompletableFutures(){
+	public SequenceM<CompletableFuture<T>> streamCompletableFutures(){
 		return connect(q -> q.streamCompletableFutures());
 	}
 	
@@ -106,7 +106,7 @@ public class Topic<T> implements Adapter<T> {
 	 * It will be provided with an internal Queue as a mailbox. @see Topic.disconnect to disconnect from the topic
 	 * @return Stream of data
 	 */
-	public Seq<T> stream(){
+	public SequenceM<T> stream(){
 		
 		
 		return connect(q -> q.stream());

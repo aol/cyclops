@@ -3,7 +3,7 @@ package com.aol.simple.react.async;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.Seq;
+import com.aol.cyclops.sequence.SequenceM;
 
 /**
  * 
@@ -32,11 +32,11 @@ public interface Adapter<T> {
 	/**
 	 * @return Stream of data
 	 */
-	public Seq<T> stream();
+	public SequenceM<T> stream();
 	/**
 	 * @return Stream of CompletableFutures that can be used as input into a SimpleReact concurrent dataflow
 	 */
-	public Seq<CompletableFuture<T>> streamCompletableFutures();
+	public SequenceM<CompletableFuture<T>> streamCompletableFutures();
 	
 	/**
 	 * Close this adapter

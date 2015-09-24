@@ -21,6 +21,7 @@ import lombok.experimental.Wither;
 
 import org.jooq.lambda.Seq;
 
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.async.factories.QueueToBlockingQueueWrapper;
 import com.aol.simple.react.async.subscription.AlwaysContinue;
@@ -125,33 +126,33 @@ public class Queue<T> implements Adapter<T> {
 	 *         use queue.stream().parallel() to convert to a parallel Stream
 	 * </pre>
 	 */
-	public Seq<T> stream() {
+	public SequenceM<T> stream() {
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
-		return Seq.seq(closingStream(this::get,new AlwaysContinue()));
+		return SequenceM.fromStream(closingStream(this::get,new AlwaysContinue()));
 	}
-	public Seq<T> stream(Continueable s) {
+	public SequenceM<T> stream(Continueable s) {
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
-		return Seq.seq(closingStream(this::get,s));
+		return SequenceM.fromStream(closingStream(this::get,s));
 	}
-	public Seq<Collection<T>> streamBatchNoTimeout(Continueable s,Function<Supplier<T>,Supplier<Collection<T>>> batcher) {
+	public SequenceM<Collection<T>> streamBatchNoTimeout(Continueable s,Function<Supplier<T>,Supplier<Collection<T>>> batcher) {
 		
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
-		return Seq.seq(closingStreamBatch(batcher.apply(()->ensureOpen(this.timeout,this.timeUnit)),s));
+		return SequenceM.fromStream(closingStreamBatch(batcher.apply(()->ensureOpen(this.timeout,this.timeUnit)),s));
 	}
-	public Seq<Collection<T>> streamBatch(Continueable s,Function<BiFunction<Long,TimeUnit,T>,Supplier<Collection<T>>> batcher) {
+	public SequenceM<Collection<T>> streamBatch(Continueable s,Function<BiFunction<Long,TimeUnit,T>,Supplier<Collection<T>>> batcher) {
 		
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
-		return Seq.seq(closingStreamBatch(batcher.apply((timeout,timeUnit)->ensureOpen(timeout,timeUnit)),s));
+		return SequenceM.fromStream(closingStreamBatch(batcher.apply((timeout,timeUnit)->ensureOpen(timeout,timeUnit)),s));
 	}
-	public Seq<T> streamControl(Continueable s,Function<Supplier<T>,Supplier<T>> batcher) {
+	public SequenceM<T> streamControl(Continueable s,Function<Supplier<T>,Supplier<T>> batcher) {
 		
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
-		return Seq.seq(closingStream(batcher.apply(()->ensureOpen(this.timeout,this.timeUnit)),s));
+		return SequenceM.fromStream(closingStream(batcher.apply(()->ensureOpen(this.timeout,this.timeUnit)),s));
 	}
-	public Seq<CompletableFuture<T>> streamControlFutures(Continueable s,Function<Supplier<T>,CompletableFuture<T>> batcher) {
+	public SequenceM<CompletableFuture<T>> streamControlFutures(Continueable s,Function<Supplier<T>,CompletableFuture<T>> batcher) {
 		
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
-		return Seq.seq(closingStreamFutures(()->batcher.apply(()->ensureOpen(this.timeout,this.timeUnit)),s));
+		return SequenceM.fromStream(closingStreamFutures(()->batcher.apply(()->ensureOpen(this.timeout,this.timeUnit)),s));
 	}
 
 	private Stream<Collection<T>> closingStreamBatch(Supplier<Collection<T>> s, Continueable sub){
@@ -185,7 +186,7 @@ public class Queue<T> implements Adapter<T> {
 	 *         concurrency / parralellism via the constituent CompletableFutures
 	 * 
 	 */
-	public Seq<CompletableFuture<T>> streamCompletableFutures() {
+	public SequenceM<CompletableFuture<T>> streamCompletableFutures() {
 		return stream().map(CompletableFuture::completedFuture);
 	}
 
