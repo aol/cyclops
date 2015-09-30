@@ -67,9 +67,12 @@ public abstract class LazySeqTest extends BaseSeqTest {
 	
 	@Test
 	public void batchByTime2(){
-		for(int i=0;i<5;i++){
-			System.out.println(i);
-			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(500);return 6;})
+		
+		//for(int i=0;i<500;i++)
+		{
+			
+		//	System.out.println(i);
+			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(1000);return 6;})
 						
 							.batchByTime(10,TimeUnit.MICROSECONDS)
 							.toList()
@@ -81,22 +84,23 @@ public abstract class LazySeqTest extends BaseSeqTest {
 	@Test
 	public void testZipWithFutures(){
 		LazyFutureStream stream = of("a","b");
-		LazyFutureStream<Tuple2<Integer,String>> seq = of(1,2).zipFutures(stream);
+		LazyFutureStream<Tuple2<Integer,String>> seq = of(1,2).actOnFutures().zip(stream);
 		List<Tuple2<Integer,String>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(Collectors.toList());
+		System.out.println(result);
 		assertThat(result.size(),is(asList(tuple(1,"a"),tuple(2,"b")).size()));
 	}
 	
 	@Test
 	public void testZipWithFuturesStream(){
 		Stream stream = of("a","b");
-		LazyFutureStream<Tuple2<Integer,String>> seq = of(1,2).zipFutures(stream);
+		LazyFutureStream<Tuple2<Integer,String>> seq = of(1,2).actOnFutures().zip(stream);
 		List<Tuple2<Integer,String>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(Collectors.toList());
 		assertThat(result.size(),is(asList(tuple(1,"a"),tuple(2,"b")).size()));
 	}
 	@Test
 	public void testZipWithFuturesCoreStream(){
 		Stream stream = Stream.of("a","b");
-		LazyFutureStream<Tuple2<Integer,String>> seq = of(1,2).zipFutures(stream);
+		LazyFutureStream<Tuple2<Integer,String>> seq = of(1,2).actOnFutures().zip(stream);
 		List<Tuple2<Integer,String>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(Collectors.toList());
 		assertThat(result.size(),is(asList(tuple(1,"a"),tuple(2,"b")).size()));
 	}
@@ -105,13 +109,13 @@ public abstract class LazySeqTest extends BaseSeqTest {
 	@Test
 	public void testZipFuturesWithIndex(){
 		
-		 LazyFutureStream<Tuple2<String,Long>> seq = of("a","b").zipFuturesWithIndex();
+		 LazyFutureStream<Tuple2<String,Long>> seq = of("a","b").actOnFutures().zipWithIndex();
 		List<Tuple2<String,Long>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(Collectors.toList());
 		assertThat(result.size(),is(asList(tuple("a",0l),tuple("b",1l)).size()));
 	}
 	@Test
 	public void duplicateFutures(){
-		List<String> list = of("a","b").duplicateFutures().v1.block();
+		List<String> list = of("a","b").actOnFutures().duplicate().v1.block();
 		assertThat(sortedList(list),is(asList("a","b")));
 	}
 	private <T> List<T> sortedList(List<T> list) {
@@ -120,7 +124,7 @@ public abstract class LazySeqTest extends BaseSeqTest {
 
 	@Test
 	public void duplicateFutures2(){
-		List<String> list = of("a","b").duplicateFutures().v2.block();
+		List<String> list = of("a","b").actOnFutures().duplicate().v2.block();
 		assertThat(sortedList(list),is(asList("a","b")));
 	}
 	

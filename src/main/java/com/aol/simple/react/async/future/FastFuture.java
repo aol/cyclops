@@ -182,6 +182,7 @@ public class FastFuture<T> {
 		FastFuture<T> f = new FastFuture<>();
 		cf.thenAccept(i->f.set(i));
 		cf.exceptionally(t-> {
+			
 			f.completedExceptionally(t);
 			return f.join();
 		});
@@ -247,7 +248,8 @@ public class FastFuture<T> {
 		try{
 			
 			final Object use = result;
-			if(pipeline.functions.length==0){
+			
+			if(pipeline ==null || pipeline.functions.length==0){
 				this.result.lazySet(use);
 				done();
 				return;
@@ -264,10 +266,7 @@ public class FastFuture<T> {
 			
 			}
 		}catch(Throwable t){
-		
 			completeExceptionally(t);
-			
-			
 		}
 		
 	}

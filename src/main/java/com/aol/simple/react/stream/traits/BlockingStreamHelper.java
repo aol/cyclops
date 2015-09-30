@@ -55,7 +55,7 @@ public class BlockingStreamHelper {
 		});
 	}
 	@SuppressWarnings("rawtypes")
-	static Object getSafe(final FastFuture next,Optional<Consumer<Throwable>> errorHandler) {
+	public static Object getSafe(final FastFuture next,Optional<Consumer<Throwable>> errorHandler) {
 		try {
 			return next.join();
 		} catch (RuntimeException e) {

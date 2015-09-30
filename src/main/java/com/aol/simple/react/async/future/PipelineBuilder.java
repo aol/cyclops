@@ -9,6 +9,9 @@ import java.util.function.Function;
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
 
+import com.aol.cyclops.functions.caching.Cachable;
+import com.aol.cyclops.functions.caching.Memoize;
+
 @AllArgsConstructor
 @Wither
 public class PipelineBuilder {
@@ -16,20 +19,35 @@ public class PipelineBuilder {
 	private final ExecutionPipeline builder;
 	private final boolean autoOptimise; //fan out then syncrhonous there after
 	private final Executor optimisingExec;
+	private final boolean autoMemoize;
+	private final Cachable memoizeFactory;
 	public PipelineBuilder(){
 		builder = new ExecutionPipeline();
 		autoOptimise=false;
 		optimisingExec=null;
+		autoMemoize=false;
+		this.memoizeFactory=null;
 	}
-	public PipelineBuilder(boolean autoOptimise,Executor optimisingExec){
+	
+	private <T,R> Function<T,R> memoize(Function<T,R> fn){
+		if(!this.autoMemoize)
+			return fn;
+		if(memoizeFactory==null)
+			return Memoize.memoizeFunction(fn);
+		return Memoize.memoizeFunction(fn, memoizeFactory);
+	}
+	public PipelineBuilder(boolean autoOptimise,Executor optimisingExec
+		,boolean autoMemoize,Cachable memoizeFactory ){
 		builder = new ExecutionPipeline();
 		this.autoOptimise=autoOptimise;
 		this.optimisingExec=optimisingExec;
+		this.autoMemoize=autoMemoize;
+		this.memoizeFactory= memoizeFactory;
 	}
 	public <T,R> PipelineBuilder thenCompose(Function<T,CompletableFuture<R>> fn){
 		if(autoOptimise && builder.functionListSize()==0) 
 			return thenComposeAsync(fn,optimisingExec);
-		return this.withBuilder(builder.thenCompose((Function)fn));
+		return this.withBuilder(builder.thenCompose((Function)memoize(fn)));
 	}
 	public <T,R> PipelineBuilder thenComposeAsync(Function<T,CompletableFuture<R>> fn,Executor exec){
 		if(autoOptimise){//if we already have a function present, compose with that
@@ -37,7 +55,7 @@ public class PipelineBuilder {
 				return thenCompose(fn);
 		}
 		
-		return this.withBuilder(builder.thenComposeAsync((Function)fn, exec));
+		return this.withBuilder(builder.thenComposeAsync((Function)memoize(fn), exec));
 		
 	}
 	public <T,R> PipelineBuilder thenApplyAsync(Function<T,R> fn,Executor exec){
@@ -45,7 +63,7 @@ public class PipelineBuilder {
 			if(builder.functionListSize()>0)
 				return thenApply(fn);
 		}
-		return this.withBuilder(builder.thenApplyAsync(fn, exec));
+		return this.withBuilder(builder.thenApplyAsync(memoize(fn), exec));
 		
 		
 	}
@@ -56,8 +74,8 @@ public class PipelineBuilder {
 	}
 	public <T,R> PipelineBuilder thenApply(Function<T,R> fn){
 		if(autoOptimise && builder.functionListSize()==0)
-			return this.withBuilder(builder.thenApplyAsync(fn,  optimisingExec));
-		return  this.withBuilder(builder.thenApply(fn));
+			return this.withBuilder(builder.thenApplyAsync(memoize(fn),  optimisingExec));
+		return  this.withBuilder(builder.thenApply(memoize(fn)));
 
 	}
 	

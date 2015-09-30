@@ -69,7 +69,7 @@ public class Tutorial {
 
 		LazyReact.parallelCommonBuilder()
 				.react(() -> slowest(), () -> fast(), () -> slow())
-				.zipFuturesWithIndex().forEach(System.out::println);
+				.zipWithIndex().forEach(System.out::println);
 
 	}
 
@@ -108,7 +108,7 @@ public class Tutorial {
 		LazyFutureStream<Integer> b = LazyReact.sequentialCommonBuilder()
 				.of(1, 2, 3, 4, 5, 6);
 
-		a.zipFutures(b).forEach(System.out::println);
+		a.actOnFutures().zip(b).forEach(System.out::println);
 
 	}
 
