@@ -266,6 +266,7 @@ public class FastFuture<T> {
 			
 			}
 		}catch(Throwable t){
+			
 			completeExceptionally(t);
 		}
 		

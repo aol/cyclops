@@ -1,9 +1,11 @@
 package com.aol.simple.react.stream.traits.future.operators;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.tuple.Tuple;
@@ -300,14 +302,16 @@ public interface OperationsOnFutures<T> {
 	 *            Size of sliding window
 	 * @return SequenceM with sliding view
 	 */
-	default LazyFutureStream<Streamable<T>> sliding(int windowSize) {
+	default LazyFutureStream<List<T>> sliding(int windowSize) {
 
 		return (LazyFutureStream) fromStreamOfFutures((Stream) this
 				.getLastActive()
 				.<T> injectFuturesSeq()
 				.sliding(windowSize)
-				.map(list -> FastFuture.completedFuture(Streamable.of(list
-						.stream().map(f -> safeJoin(f))))));
+				.map(list-> Tuple.tuple(list,list.stream().map(f->f.toCompletableFuture())))
+				
+				.map(tuple-> FastFuture.fromCompletableFuture(CompletableFuture.allOf(tuple.v2.collect(Collectors.toList()).toArray(new CompletableFuture[0]))
+						.thenApply(v->tuple.v1.stream().map(f -> safeJoin(f)).collect(Collectors.toList())))));
 	}
 
 	/**
@@ -332,14 +336,17 @@ public interface OperationsOnFutures<T> {
 	 *            for each window
 	 * @return SequenceM with sliding view
 	 */
-	default LazyFutureStream<Streamable<T>> sliding(int windowSize,
+	default LazyFutureStream<List<T>> sliding(int windowSize,
 			int increment) {
 		return (LazyFutureStream) fromStreamOfFutures((Stream) this
 				.getLastActive()
 				.<T> injectFuturesSeq()
 				.sliding(windowSize, increment)
-				.map(list -> FastFuture.completedFuture(Streamable.of(list
-						.stream().map(f -> safeJoin(f))))));
+				.map(list-> Tuple.tuple(list,list.stream().map(f->f.toCompletableFuture())))
+				
+				.map(tuple-> FastFuture.fromCompletableFuture(CompletableFuture.allOf(tuple.v2.collect(Collectors.toList()).toArray(new CompletableFuture[0]))
+						.thenApply(v->tuple.v1.stream().map(f -> safeJoin(f)).collect(Collectors.toList())))));
+				
 	}
 
 	/**
@@ -361,13 +368,18 @@ public interface OperationsOnFutures<T> {
 	 *            Size of each Group
 	 * @return Stream with elements grouped by size
 	 */
-	default SequenceM<Streamable<T>> grouped(int groupSize) {
+	default SequenceM<List<T>> grouped(int groupSize) {
+		
 		return (LazyFutureStream) fromStreamOfFutures((Stream) this
 				.getLastActive()
 				.<T> injectFuturesSeq()
 				.grouped(groupSize)
-				.map(list -> FastFuture.completedFuture(Streamable.of(list
-						.stream().map(f -> safeJoin(f))))));
+				.map(list-> Tuple.tuple(list,list.stream().map(f->f.toCompletableFuture())))
+				
+				.map(tuple-> FastFuture.fromCompletableFuture(CompletableFuture.allOf(tuple.v2.collect(Collectors.toList()).toArray(new CompletableFuture[0]))
+						.thenApply(v->tuple.v1.stream().map(f -> safeJoin(f)).collect(Collectors.toList())))));
+			
+				
 	}
 
 	/**

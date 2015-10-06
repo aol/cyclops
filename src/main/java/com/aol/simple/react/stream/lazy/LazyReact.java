@@ -78,6 +78,10 @@ public class LazyReact implements ReactBuilder {
 	@Getter
 	private final Cachable memoizeCache;
 	
+	
+	public LazyReact autoMemoizeOn( Cachable memoizeCache){
+		return this.withAutoMemoize(true).withMemoizeCache(memoizeCache);
+	}
 	/* 
 	 *	@return true if async
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#isAsync()
