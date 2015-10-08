@@ -1,16 +1,22 @@
 package com.aol.simple.react.async.future;
 import lombok.experimental.Wither;
+
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
 import lombok.ToString;
 
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
+
+import com.aol.cyclops.functions.caching.Memoize;
 @ToString
 @AllArgsConstructor
 @Wither
@@ -96,6 +102,7 @@ public class ExecutionPipeline {
 	}
 	
 	public FinalPipeline toFinalPipeline(){
+		
 		return new FinalPipeline(functionList.toArray(new Function[0]),
 				execList.toArray(new Executor[0]), this.firstRecover.toArray(new Function[0]),
 				onFail);
@@ -129,7 +136,7 @@ public class ExecutionPipeline {
 		Function before = functionList.get(functionList.size()-1);
 		PStack<Function> removed = functionList.minus(functionList.size()-1);
 		return removed.plus(removed.size(),fn);
-		//return removed.plus(removed.size(),fn.compose(before));
+
 	}
 	private PStack<Function> swapComposeFn(Function fn){
 		if(functionList.size()==0){

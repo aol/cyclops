@@ -30,6 +30,7 @@ public class PipelineBuilder {
 	}
 	
 	private <T,R> Function<T,R> memoize(Function<T,R> fn){
+		
 		if(!this.autoMemoize)
 			return fn;
 		if(memoizeFactory==null)

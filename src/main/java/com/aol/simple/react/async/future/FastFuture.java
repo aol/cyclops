@@ -262,6 +262,7 @@ public class FastFuture<T> {
 				});
 				
 			}else{
+				
 				set(()->(T)op.apply(use),1);
 			
 			}
@@ -273,7 +274,7 @@ public class FastFuture<T> {
 	}
 	private void set(Supplier<T> result,int index){
 		try{
-			
+	
 			Object current = result.get();
 			
 			final Object use = current;

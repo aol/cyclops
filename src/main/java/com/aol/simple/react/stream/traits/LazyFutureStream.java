@@ -409,6 +409,8 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	default <R> R collect(Supplier<R> supplier, BiConsumer<R,? super U> accumulator, BiConsumer<R,R> combiner){
 		return LazyStream.super.collect(supplier, accumulator, combiner);
 	}
+	
+
 	/* 
 	 * Execute subsequent stages on the completing thread (until async called)
 	 * 10X faster than async execution.
@@ -2184,18 +2186,18 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
 	@Override
 	default Set<U> toSet() {
-		return SequenceM.fromStream(stream()).toSet();
+		return collect(Collectors.toSet());
 	}
 
 	@Override
 	default List<U> toList() {
-		return SequenceM.fromStream(stream()).toList();
+		 return collect(Collectors.toList());
 	}
 
 	@Override
 	default <C extends Collection<U>> C toCollection(
 			Supplier<C> collectionFactory) {
-		return SequenceM.fromStream(stream()).toCollection(collectionFactory);
+		return collect(Collectors.toCollection(collectionFactory));
 	}
 
 	@Override
