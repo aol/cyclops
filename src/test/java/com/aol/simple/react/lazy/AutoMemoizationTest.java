@@ -44,7 +44,7 @@ public class AutoMemoizationTest {
 						
 	    
 		System.out.println(result);
-		assertThat(called,greaterThan(4));
+		assertThat(called,greaterThan(3));
 		assertThat(result.size(),equalTo(4));
 	  }
 	

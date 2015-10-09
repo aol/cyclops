@@ -1589,7 +1589,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 *      
 	 */
 	default LazyFutureStream<Tuple2<U, Long>> zipWithIndex() {
-		return fromStream(fromStream(SequenceM.fromStream(toQueue().stream(getSubscription())).zipWithIndex()));
+		return fromStream(SequenceM.fromStream(toQueue().stream(getSubscription())).zipWithIndex());
 	}
 
 	/**

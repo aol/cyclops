@@ -1,7 +1,6 @@
 package com.aol.simple.react.lazy;
 
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.function.Supplier;
 
@@ -29,11 +28,11 @@ public class LazySequentialSQLTest extends BaseSequentialSQLTest {
 
 	Throwable ex;
 
-	@Test
+	@Test(expected=X.class)
 	public void testOnEmptyThrows() {
 		ex = null;
 		of().capture(e -> ex = e).onEmptyThrow(() -> new X()).toList();
 
-		assertThat(ex, instanceOf(X.class));
+		fail("Exception expected");
 	}
 }

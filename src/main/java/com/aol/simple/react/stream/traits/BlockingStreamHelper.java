@@ -28,7 +28,7 @@ public class BlockingStreamHelper {
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	static <R> R block(BlockingStream blocking,final Collector collector, final LazyStreamWrapper lastActive) {
-		Stream<FastFuture> stream = lastActive.stream();
+		
 		
 		return (R)((LazyStream)blocking).run(collector);
 		

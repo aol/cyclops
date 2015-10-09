@@ -48,7 +48,7 @@ public class ConcatTest {
 	List<String> result = 	of(1,2,3).actOnFutures().concat(100)
 			.map(it ->it+"!!").collect(Collectors.toList());
 
-		assertThat(result,containsInAnyOrder("1!!","2!!","100!!"));
+		assertThat(result,containsInAnyOrder("1!!","2!!","3!!","100!!"));
 	}
 	@Test
 	public void concatFutures(){

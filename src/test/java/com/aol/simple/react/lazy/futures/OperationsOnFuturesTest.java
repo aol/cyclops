@@ -2,48 +2,34 @@ package com.aol.simple.react.lazy.futures;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.lessThan;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.pcollections.HashTreePMap;
 
-import com.aol.cyclops.sequence.streamable.Streamable;
-import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
-import com.aol.simple.react.util.SimpleTimer;
 
 public class OperationsOnFuturesTest {
 
@@ -489,7 +475,7 @@ public class OperationsOnFuturesTest {
 	    @Test
 	    public void testReduceIdentity() {
 	       CompletableFuture<Integer> sum = of(1, 2, 3).actOnFutures()
-	        							.reduce(CompletableFuture.completedFuture(1),(cf1,cf2)-> cf1.thenCombine(cf2, (a,b)->a+b));
+	        							.reduce(CompletableFuture.completedFuture(0),(cf1,cf2)-> cf1.thenCombine(cf2, (a,b)->a+b));
 
 	        assertThat(sum.join(),equalTo(6));
 	    } 
@@ -540,7 +526,7 @@ public class OperationsOnFuturesTest {
 				.peek(it -> System.out.println(it)).cast(Integer.class)
 				.peek(it -> System.out.println(it)).actOnFutures().toList();
 
-		assertThat(ex.getCause().getClass(), equalTo(ClassCastException.class));
+		assertNull(ex); //simple-react no longer handling the futures
 	}
 
 	@Test

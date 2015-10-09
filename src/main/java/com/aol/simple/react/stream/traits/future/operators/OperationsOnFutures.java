@@ -1325,7 +1325,7 @@ public interface OperationsOnFutures<T> {
 	  * <pre>
 	  * {@code 
 	  *  CompletableFuture<Integer> sum = of(1, 2, 3).actOnFutures()
-	        							.reduce(CompletableFuture.completedFuture(1),(cf1,cf2)-> cf1.thenCombine(cf2, (a,b)->a+b));
+	        							.reduce(CompletableFuture.completedFuture(0),(cf1,cf2)-> cf1.thenCombine(cf2, (a,b)->a+b));
 
 	        assertThat(sum.join(),equalTo(6));
 	  * 
