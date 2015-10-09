@@ -1,6 +1,6 @@
 package com.aol.simple.react.async;
 
-import static com.aol.simple.react.stream.traits.SimpleReactStream.parallel;
+import static com.aol.simple.react.stream.traits.BaseSimpleReactStream.parallel;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -22,8 +22,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.traits.EagerSimpleReactStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
+import com.aol.simple.react.stream.traits.BaseSimpleReactStream;
 
 public class TopicTest {
 
@@ -59,7 +59,7 @@ public class TopicTest {
 			
 		//read from the topic concurrently in 2 threads
 		
-		SimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
+		BaseSimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
 			.react(()->parallel()
 				.fromStream(topic.stream())
 				.then(it -> it + "*")
@@ -146,7 +146,7 @@ public class TopicTest {
 		
 		Topic<Integer> topic = new Topic<>();
 		
-		SimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
+		BaseSimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
 			.react(()->parallel()
 				.fromStream(topic.streamCompletableFutures())
 				.then(it -> it + "*")
@@ -191,7 +191,7 @@ public class TopicTest {
 		
 		Topic<Integer> topic = new Topic<>();
 		
-		SimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
+		BaseSimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
 			.react(()->parallel()
 				.fromStream(topic.stream())
 				.then(it -> it + "*")

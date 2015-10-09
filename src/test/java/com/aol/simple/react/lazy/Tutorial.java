@@ -30,7 +30,7 @@ import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.traits.EagerSimpleReactStream;
+import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.threads.SequentialElasticPools;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
@@ -177,19 +177,19 @@ public class Tutorial {
 	@Test
 	public void firstOf(){
 		
-		EagerSimpleReactStream<String> stream1 =SimpleReact.sequentialCommonBuilder()
+		SimpleReactStream<String> stream1 =SimpleReact.sequentialCommonBuilder()
 													.react(() -> loadFromDb())
 													.then(this::convertToStandardFormat);
 
-		EagerSimpleReactStream<String> stream2 = SimpleReact.sequentialCommonBuilder()
+		SimpleReactStream<String> stream2 = SimpleReact.sequentialCommonBuilder()
 													.react(() -> loadFromService1())
 													.then(this::convertToStandardFormat);
 
-		EagerSimpleReactStream<String> stream3 = SimpleReact.sequentialCommonBuilder()
+		SimpleReactStream<String> stream3 = SimpleReact.sequentialCommonBuilder()
 													.react(() -> loadFromService2())
 													.then(this::convertToStandardFormat);
 
-		EagerSimpleReactStream.firstOf(stream1, stream2, stream3)
+		SimpleReactStream.firstOf(stream1, stream2, stream3)
 						.peek(System.out::println)
 						.then(this::saveData)
 						.block();
@@ -320,7 +320,7 @@ public class Tutorial {
 
 	@Test
 	public void skipUntil() {
-		EagerSimpleReactStream<Boolean> stoppingStream = SimpleReact
+		SimpleReactStream<Boolean> stoppingStream = SimpleReact
 				.sequentialCommonBuilder().react(() -> 1000).then(this::sleep)
 				.peek(System.out::println);
 		System.out.println(SimpleReact.sequentialCommonBuilder()

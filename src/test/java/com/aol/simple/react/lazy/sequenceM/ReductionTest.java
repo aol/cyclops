@@ -42,9 +42,33 @@ public class ReductionTest {
 		return -1;
 	}
 	@Test
+	public void foldLeftMapToTypeWithMonoidJoin(){
+		LazyFutureStream.of("hello","2","world","4").join(",");
+		assertThat(LazyFutureStream.of("hello","2","world","4").foldLeftMapToType(Reducers.toString(",")),
+				equalTo(",hello,2,world,4"));
+	}
+	@Test
+	public void foldLeftWithMonoidJoin(){
+		LazyFutureStream.of("hello","2","world","4").join(",");
+		assertThat(LazyFutureStream.of("hello","2","world","4").foldLeft(Reducers.toString(",")),
+				equalTo(",hello,2,world,4"));
+	}
+	@Test
 	public void reduceWithMonoidJoin(){
 		LazyFutureStream.of("hello","2","world","4").join(",");
 		assertThat(LazyFutureStream.of("hello","2","world","4").reduce(Reducers.toString(",")),
+				equalTo(",hello,2,world,4"));
+	}
+	@Test
+	public void reduceWithMonoidStreamJoin(){
+		LazyFutureStream.of("hello","2","world","4").join(",");
+		assertThat(LazyFutureStream.of("hello","2","world","4").reduce(Stream.of(Reducers.toString(","))),
+				equalTo(",hello,2,world,4"));
+	}
+	@Test
+	public void reduceWithMonoidListJoin(){
+		LazyFutureStream.of("hello","2","world","4").join(",");
+		assertThat(LazyFutureStream.of("hello","2","world","4").reduce(Arrays.asList(Reducers.toString(","))),
 				equalTo(",hello,2,world,4"));
 	}
 	@Test

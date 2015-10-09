@@ -14,7 +14,7 @@ import org.junit.Test;
 
 
 import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.traits.EagerSimpleReactStream;
+import com.aol.simple.react.stream.traits.SimpleReactStream;
 
 public class BlockingTest {
 
@@ -254,7 +254,7 @@ public class BlockingTest {
 	@Test
 	public void testFirstSimple() throws InterruptedException, ExecutionException {
 
-		EagerSimpleReactStream<Integer> stage = new SimpleReact()
+		SimpleReactStream<Integer> stage = new SimpleReact()
 		.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
 		.then( it -> sleep(it));

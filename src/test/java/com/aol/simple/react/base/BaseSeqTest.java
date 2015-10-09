@@ -42,7 +42,7 @@ import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.util.SimpleTimer;
 
-
+import static java.util.Comparator.comparing;
 //see BaseSequentialSeqTest for in order tests
 public abstract class BaseSeqTest {
 	abstract protected <U> LazyFutureStream<U> of(U... array);
@@ -227,6 +227,24 @@ public abstract class BaseSeqTest {
 			//assertThat(sharded.get(0).collect(Collectors.toList()),hasItem(6));
 		}
 	}
+	@Test
+    public void testSorted() {
+        LazyFutureStream<Tuple2<Integer, String>> t1 = of(tuple(2, "two"), tuple(1, "one"));
+        List<Tuple2<Integer, String>> s1 = t1.sorted().toList();
+        assertEquals(tuple(1, "one"), s1.get(0));
+        assertEquals(tuple(2, "two"), s1.get(1));
+
+        LazyFutureStream<Tuple2<Integer, String>> t2 = of(tuple(2, "two"), tuple(1, "one"));
+        List<Tuple2<Integer, String>> s2 = t2.sorted(comparing(t -> t.v1())).toList();
+        assertEquals(tuple(1, "one"), s2.get(0));
+        assertEquals(tuple(2, "two"), s2.get(1));
+
+        LazyFutureStream<Tuple2<Integer, String>> t3 = of(tuple(2, "two"), tuple(1, "one"));
+        List<Tuple2<Integer, String>> s3 = t3.sorted(t -> t.v1()).toList();
+        assertEquals(tuple(1, "one"), s3.get(0));
+        assertEquals(tuple(2, "two"), s3.get(1));
+    }
+
 	@Test
 	public void zip(){
 		List<Tuple2<Integer,Integer>> list =

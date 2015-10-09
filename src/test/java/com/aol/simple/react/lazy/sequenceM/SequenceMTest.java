@@ -30,7 +30,15 @@ import com.aol.cyclops.streams.StreamUtils;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class SequenceMTest {
-	
+	@Test
+	public void startsWith(){
+		assertTrue(LazyFutureStream.of(1,2,3,4)
+						.startsWith(Arrays.asList(1,2,3)));
+	}
+	@Test
+	public void startsWithIterator(){
+		assertTrue(LazyFutureStream.of(1,2,3,4).startsWith(Arrays.asList(1,2,3).iterator()));
+	}
 	@Test
 	public void onEmptySwitchEmpty(){
 		assertThat(LazyFutureStream.of()

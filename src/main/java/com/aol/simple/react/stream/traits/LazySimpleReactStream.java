@@ -32,7 +32,7 @@ public interface LazySimpleReactStream<U> extends
 				BlockingStream<U>, 
 				ConfigurableStream<U,FastFuture<U>>, 
 				ToQueue<U>,
-				SimpleReactStream<U>{
+				BaseSimpleReactStream<U>{
 	
 
 	LazyReact getSimpleReact();
@@ -310,12 +310,12 @@ public interface LazySimpleReactStream<U> extends
 								.flatMap(flatFn));
 	}
 	
-	default List<SimpleReactStream<U>> copySimpleReactStream(final int times){
+	default List<BaseSimpleReactStream<U>> copySimpleReactStream(final int times){
 		
 		return (List)StreamCopier.toBufferingCopier(iterator(), times)
 				.stream()
 				.map(it->StreamSupport.stream(Spliterators.spliteratorUnknownSize((Iterator)it, Spliterator.ORDERED), false))
-				.<SimpleReactStream<U>>map(fs-> (SimpleReactStream)this.getSimpleReact().construct((Stream)fs))
+				.<BaseSimpleReactStream<U>>map(fs-> (BaseSimpleReactStream)this.getSimpleReact().construct((Stream)fs))
 				.collect(Collectors.toList());
 	}	
 	

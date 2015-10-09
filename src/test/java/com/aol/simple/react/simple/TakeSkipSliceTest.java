@@ -16,13 +16,13 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.traits.EagerSimpleReactStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
+import com.aol.simple.react.stream.traits.BaseSimpleReactStream;
 public class TakeSkipSliceTest {
 	
 	@Test
 	public void skipUntil() {
-		EagerSimpleReactStream<Boolean> stoppingStream = SimpleReact
+		SimpleReactStream<Boolean> stoppingStream = SimpleReact
 				.sequentialCommonBuilder().react(() -> 1000)
 				.then(this::sleep)
 				.peek(System.out::println);
@@ -35,10 +35,10 @@ public class TakeSkipSliceTest {
 				.size());
 	}
 
-	public <T> EagerSimpleReactStream<T> react(Supplier<T>... s){
-		return SimpleReactStream.react(s);
+	public <T> SimpleReactStream<T> react(Supplier<T>... s){
+		return BaseSimpleReactStream.react(s);
 	}
-	public <T> EagerSimpleReactStream<T> of(T... s){
+	public <T> SimpleReactStream<T> of(T... s){
 		return new SimpleReact().of(s);
 	}
 	@Test
@@ -97,7 +97,7 @@ public class TakeSkipSliceTest {
 	}
 	@Test
 	public void testZipWithFutures(){
-		EagerSimpleReactStream stream = of("a","b");
+		SimpleReactStream stream = of("a","b");
 		List<Tuple2<Integer,String>> result = of(1,2).zip(stream).block();
 		
 		assertThat(result.size(),is(asList(tuple(1,"a"),tuple(2,"b")).size()));

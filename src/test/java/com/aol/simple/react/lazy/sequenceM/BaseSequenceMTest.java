@@ -58,7 +58,11 @@ public  class BaseSequenceMTest {
 		return 200;
 	}
 	
-	
+	@Test
+	public void toStream(){
+		List<Integer> list = of(1,2,3).toStream().collect(Collectors.toList());
+		assertThat(list,equalTo(Arrays.asList(1,2,3)));
+	}
 	@Test
 	public void batchBySize(){
 		System.out.println(of(1,2,3,4,5,6).grouped(3).collect(Collectors.toList()));

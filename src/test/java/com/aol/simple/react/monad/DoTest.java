@@ -12,9 +12,9 @@ import org.junit.Test;
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
 import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.monad.AnyM;
-import com.aol.simple.react.stream.traits.EagerSimpleReactStream;
-import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
+import com.aol.simple.react.stream.traits.BaseSimpleReactStream;
 
 public class DoTest {
 
@@ -32,13 +32,13 @@ public class DoTest {
 		assertThat(blocked,equalTo(Arrays.asList(3,4,5)));
 		}
 	}
-	public <T> AnyM<T> anyM(SimpleReactStream<T> stream){
+	public <T> AnyM<T> anyM(BaseSimpleReactStream<T> stream){
 		return AsAnyM.notTypeSafeAnyM(stream);
 	}
 	@Test
 	public void doTestSimple(){
 		for(int i=0;i<1000;i++){
-		EagerSimpleReactStream<Integer> result = Do.add(anyM(SimpleReactStream.of(1,2,3)))
+		SimpleReactStream<Integer> result = Do.add(anyM(BaseSimpleReactStream.of(1,2,3)))
 												.add(Optional.of(2))
 												.yield((Integer a) -> (Integer b) -> a+b)
 												.unwrap();
@@ -58,7 +58,7 @@ public class DoTest {
 	@Test
 	public void doTestSimpleOptional(){
 		Optional<List<Integer>> result = Do.add(lookup("empty"))
-												.add(anyM(SimpleReactStream.of(1,2,3)))
+												.add(anyM(BaseSimpleReactStream.of(1,2,3)))
 												.yield((Integer a) -> (Integer b) -> a+b)
 												.unwrap();
 		assertThat(result.isPresent(),equalTo(false));
@@ -76,7 +76,7 @@ public class DoTest {
 	@Test
 	public void doTestSimpleOptionalEmptyStream(){
 		Optional<List<Integer>> result = Do.add(lookup("1"))
-												.add(anyM(SimpleReactStream.<Integer>of()))
+												.add(anyM(BaseSimpleReactStream.<Integer>of()))
 												.yield((Integer a) -> (Integer b) -> a+b)
 												.unwrap();
 		assertThat(result.get().size(),equalTo(0));
