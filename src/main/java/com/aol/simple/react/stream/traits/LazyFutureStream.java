@@ -2284,6 +2284,9 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	}
 
 	
+	/* 
+	 * @see com.aol.cyclops.sequence.SequenceM#zip3(java.util.stream.Stream, java.util.stream.Stream)
+	 */
 	@Override
 	default <S, R> LazyFutureStream<Tuple3<U, S, R>> zip3(Stream<? extends S> second,
 			Stream<? extends R> third) {
@@ -2359,12 +2362,18 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	
 	
 
+	/* 
+	 * @see com.aol.cyclops.sequence.SequenceM#headAndTail()
+	 */
 	@Override
 	default HeadAndTail<U> headAndTail() {
 		return  SequenceM.fromStream(toQueue().stream(getSubscription()))
 				.headAndTail();
 	}
 
+	/* 
+	 * @see com.aol.cyclops.sequence.SequenceM#headAndTailOptional()
+	 */
 	@Override
 	default Optional<HeadAndTail<U>> headAndTailOptional() {
 		return  SequenceM.fromStream(toQueue().stream(getSubscription()))
@@ -2549,6 +2558,9 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 				.toConcurrentLazyCollection();
 	}
 
+	/* 
+	 * @see com.aol.cyclops.sequence.SequenceM#toConcurrentLazyStreamable()
+	 */
 	@Override
 	default Streamable<U> toConcurrentLazyStreamable() {
 		return  SequenceM.fromStream(toQueue().stream(getSubscription()))
@@ -2557,12 +2569,18 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
 	
 
+	/* 
+	 * @see com.aol.cyclops.sequence.SequenceM#appendStream(java.util.stream.Stream)
+	 */
 	@Override
 	default LazyFutureStream<U> appendStream(Stream<U> stream) {
 		return  fromStream(SequenceM.fromStream(toQueue().stream(getSubscription()))
 				.appendStream(stream));
 	}
 
+	/* 
+	 * @see com.aol.cyclops.sequence.SequenceM#prependStream(java.util.stream.Stream)
+	 */
 	@Override
 	default LazyFutureStream<U> prependStream(Stream<U> stream) {
 		return  fromStream(SequenceM.fromStream(toQueue().stream(getSubscription()))
@@ -2631,12 +2649,18 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 				.limit(time,unit));
 	}
 
+	/* 
+	 * @see com.aol.cyclops.sequence.SequenceM#skipLast(int)
+	 */
 	@Override
 	default LazyFutureStream<U> skipLast(int num) {
 		return  fromStream(SequenceM.fromStream(toQueue().stream(getSubscription()))
 				.skipLast(num));
 	}
 
+	/* 
+	 * @see com.aol.cyclops.sequence.SequenceM#limitLast(int)
+	 */
 	@Override
 	default LazyFutureStream<U> limitLast(int num) {
 		return  fromStream(SequenceM.fromStream(toQueue().stream(getSubscription()))

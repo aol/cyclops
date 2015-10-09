@@ -17,12 +17,12 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -39,7 +39,6 @@ import org.junit.Test;
 import org.pcollections.HashTreePMap;
 
 import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.stream.traits.EagerFutureStreamFunctions;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.util.SimpleTimer;
 
@@ -398,6 +397,16 @@ public abstract class BaseSeqTest {
 
         assertEquals(3, s.get().shuffle().toList().size());
         assertThat(s.get().shuffle().toList(), hasItems(1, 2, 3));
+
+        
+    }
+    @Test
+    public void testShuffleRandom() {
+    	Random r = new Random();
+        Supplier<Seq<Integer>> s = () ->of(1, 2, 3);
+
+        assertEquals(3, s.get().shuffle(r).toList().size());
+        assertThat(s.get().shuffle(r).toList(), hasItems(1, 2, 3));
 
         
     }

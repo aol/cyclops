@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
@@ -88,6 +89,168 @@ public class OperationsOnFuturesTest {
 				e.printStackTrace();
 			}
 			return 200;
+		}
+		@Test
+		public void testIntersperse() {
+			
+			assertThat(LazyFutureStream.of(1,2,3)
+							.actOnFutures()
+							.intersperse(0)
+							.toList(),
+							equalTo(Arrays.asList(1,0,2,0,3)));
+		
+
+
+
+		}
+		@Test
+		public void testIntersperseCf() {
+			
+			assertThat(LazyFutureStream.of(1,2,3)
+							.actOnFutures()
+							.intersperse(CompletableFuture.completedFuture(0))
+							.toList(),
+							equalTo(Arrays.asList(1,0,2,0,3)));
+		
+
+
+
+		}
+		@Test
+		public void prepend(){
+		List<String> result = 	of(1,2,3).actOnFutures().prepend(100,200,300)
+				.map(it ->it+"!!").collect(Collectors.toList());
+
+			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
+		}	
+		@Test
+		public void append(){
+			List<String> result = 	of(1,2,3).actOnFutures()
+											 .append(100,200,300)
+											 .map(it ->it+"!!")
+											 .collect(Collectors.toList());
+
+			assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
+		}
+		@Test
+		public void appendFutures(){
+			List<String> result = 	of(1,2,3).actOnFutures()
+											 .appendFutures(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300))
+											 .map(it ->it+"!!")
+											 .collect(Collectors.toList());
+
+			assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
+		}
+		@Test
+		public void appendStreamFutures(){
+			List<String> result = 	of(1,2,3).actOnFutures()
+											 .appendStreamFutures(Stream.of(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300)))
+											 .map(it ->it+"!!")
+											 .collect(Collectors.toList());
+
+			assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
+		}
+		@Test
+		public void prependStreams(){
+			List<String> result = 	of(1,2,3).actOnFutures()
+											.prependStream(of(100,200,300))
+											.map(it ->it+"!!")
+											.collect(Collectors.toList());
+
+			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
+		}
+		@Test
+		public void prependStreamsFutures(){
+			Stream<CompletableFuture<Integer>> streamOfFutures = Stream.of(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300));
+			List<String> result = 	of(1,2,3).actOnFutures()
+											.prependStreamFutures(streamOfFutures)
+											.map(it ->it+"!!")
+											.collect(Collectors.toList());
+
+			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
+		}
+		@Test
+		public void prependFutures(){
+			
+			List<String> result = 	of(1,2,3).actOnFutures()
+											.prependFutures(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300))
+											.map(it ->it+"!!")
+											.collect(Collectors.toList());
+
+			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
+		}
+		@Test
+		public void concatStreams(){
+			List<String> result = 	of(1,2,3).actOnFutures()
+										.appendStream(of(100,200,300))
+										.map(it ->it+"!!")
+										.collect(Collectors.toList());
+
+			assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
+		}
+		@Test
+		public void insertAt(){
+		List<String> result = 	of(1,2,3).actOnFutures()
+										 .insertAt(1,100,200,300)
+										 .map(it ->it+"!!")
+										 .collect(Collectors.toList());
+
+			assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
+		}
+		@Test
+		public void thenCombine(){
+			assertThat(of(1,2,3,4).actOnFutures().thenCombine((a,b)->a+b).toList(),equalTo(Arrays.asList(3,7)));
+		}
+		@Test
+		public void insertAtStream(){
+		List<String> result = 	of(1,2,3).actOnFutures()
+										.insertStreamAt(1,of(100,200,300))
+										.map(it ->it+"!!")
+										.collect(Collectors.toList());
+
+			assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
+		}
+		@Test
+		public void insertAtStreamFutures(){
+		Stream<CompletableFuture<Integer>> streamOfFutures = Stream.of(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300));
+
+		List<String> result = 	of(1,2,3).actOnFutures()
+										.insertStreamFuturesAt(1,streamOfFutures)
+										.map(it ->it+"!!")
+										.collect(Collectors.toList());
+
+			assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
+		}
+		@Test
+		public void deleteBetween(){
+			List<String> result = 	of(1,2,3,4,5,6).actOnFutures()
+												   .deleteBetween(2,4)
+												   .map(it ->it+"!!")
+												   .collect(Collectors.toList());
+
+			assertThat(result,equalTo(Arrays.asList("1!!","2!!","5!!","6!!")));
+		}
+		@Test
+		public void testSliceFutures(){
+			assertThat(of(1,2,3,4,5).actOnFutures().slice(3,4).block().size(),is(1));
+		}
+		@Test
+		public void testShuffleRandom() {
+			Random r = new Random();
+			Supplier<LazyFutureStream<Integer>> s = () -> of(1, 2, 3);
+
+			assertEquals(3, s.get().actOnFutures().shuffle(r).toList().size());
+			assertThat(s.get().actOnFutures().shuffle(r).toList(),
+				hasItems(1, 2, 3));
+		        
+		}
+		@Test
+		public void testLimit(){
+			assertThat(of(1,2,3,4,5).actOnFutures().limit(2).collect(Collectors.toList()).size(),is(2));
+		}
+		@Test
+		public void testSkip(){
+			assertThat(of(1,2,3,4,5).actOnFutures().skip(2).collect(Collectors.toList()).size(),is(3));
 		}
 		@Test
 	    public void testCycle() {
