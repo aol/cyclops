@@ -1,10 +1,22 @@
 package com.aol.simple.react.stream.traits.future.operators;
 
+import static com.aol.simple.react.stream.traits.LazyFutureStream.of;
+import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,6 +46,21 @@ public interface OperationsOnFutures<T> {
 	
 	public Continueable getSubscription();
 
+	/**
+	 * Reverse this Stream, by reversing the order in which the underlying Futures will be processed
+	 * <pre>
+	 * {@code 
+	 * LazyFutureStream.of(1, 2, 3).actOnFutures()
+	        						.reverse()
+	        						.toList();
+	        						
+	     //3,2,1   						
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @return reversed Stream
+	 */
 	default LazyFutureStream<T> reverse() {
 		return fromStreamOfFutures(this.getLastActive().injectFuturesSeq()
 				.reverse());
@@ -46,6 +73,7 @@ public interface OperationsOnFutures<T> {
 	 * <pre>
 	 * {@code 
 	 * 		assertThat(LazyFutureStream.of(1,2,2)
+	 *                              .actOnFutures()
 	 * 								.cycle(3)
 	 * 								.collect(Collectors.toList()),
 	 * 								equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
@@ -68,7 +96,10 @@ public interface OperationsOnFutures<T> {
 	 * 
 	 * <pre>
 	 * {@code 
-	 *   assertEquals(asList(1, 1, 1, 1, 1,1),LazyFutureStream.of(1).cycle().limit(6).toList());
+	 *   assertEquals(asList(1, 1, 1, 1, 1,1),LazyFutureStream.of(1)
+	 *   												.actOnFutures()
+	 *   												.cycle()
+	 *   												.limit(6).toList());
 	 *   }
 	 * </pre>
 	 * 
@@ -87,7 +118,7 @@ public interface OperationsOnFutures<T> {
 	 * <pre>
 	 * {@code
 	 	Tuple2<LazyFutureStream<<Integer>, LazyFutureStream<<Integer>> copies = of(1, 2, 3, 4, 5, 6)
-	 * 			.duplicate();
+	 * 			actOnFutures().duplicate();
 	 * 	assertTrue(copies.v1.anyMatch(i -> i == 2));
 	 * 	assertTrue(copies.v2.anyMatch(i -> i == 2));
 	 * 
@@ -107,17 +138,19 @@ public interface OperationsOnFutures<T> {
 	}
 
 	/**
-	 * Triplicates a Stream Buffers intermediate values, leaders may change
+	 * Triplicates a Stream. Buffers intermediate values, leaders may change
 	 * positions so a limit can be safely applied to the leading stream. Not
 	 * thread-safe.
 	 * 
 	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	Tuple3&lt;SequenceM&lt;Tuple3&lt;T1, T2, T3&gt;&gt;, SequenceM&lt;Tuple3&lt;T1, T2, T3&gt;&gt;, SequenceM&lt;Tuple3&lt;T1, T2, T3&gt;&gt;&gt; Tuple3 = sequence
-	 * 			.triplicate();
+	 * {@code 
+	 *  Tuple3<LazyFutureStream<Integer>, LazyFutureStream<Integer>, LazyFutureStream<Integer>> copies =of(1,2,3,4,5,6).actOnFutures().triplicate();
+		 assertTrue(copies.v1.anyMatch(i->i==2));
+		 assertTrue(copies.v2.anyMatch(i->i==2));
+		 assertTrue(copies.v3.anyMatch(i->i==2));
 	 * 
 	 * }
+	
 	 * </pre>
 	 */
 	@SuppressWarnings("unchecked")
@@ -135,16 +168,15 @@ public interface OperationsOnFutures<T> {
 	 * Makes four copies of a Stream Buffers intermediate values, leaders may
 	 * change positions so a limit can be safely applied to the leading stream.
 	 * Not thread-safe.
-	 * 
 	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	Tuple4&lt;SequenceM&lt;Tuple4&lt;T1, T2, T3, T4&gt;&gt;, SequenceM&lt;Tuple4&lt;T1, T2, T3, T4&gt;&gt;, SequenceM&lt;Tuple4&lt;T1, T2, T3, T4&gt;&gt;, SequenceM&lt;Tuple4&lt;T1, T2, T3, T4&gt;&gt;&gt; quad = sequence
-	 * 			.quadruplicate();
+	 * {@code 
+	 *  Tuple4<LazyFutureStream<Integer>, LazyFutureStream<Integer>, LazyFutureStream<Integer>,LazyFutureStream<Integer>> copies =of(1,2,3,4,5,6).actOnFutures().quadruplicate();
+		 assertTrue(copies.v1.anyMatch(i->i==2));
+		 assertTrue(copies.v2.anyMatch(i->i==2));
+		 assertTrue(copies.v3.anyMatch(i->i==2));
+		 assertTrue(copies.v4.anyMatch(i->i==2));
 	 * 
 	 * }
-	 * </pre>
-	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -164,7 +196,7 @@ public interface OperationsOnFutures<T> {
 	 * 
 	 * <pre>
 	 * {@code 
-	 * LazyFutureStream.of(1,2,3).splitAtHead()
+	 * LazyFutureStream.of(1,2,3).actOnFutures().splitAtHead()
 	 * 
 	 *  //Optional[1], SequenceM[2,3]
 	 * }
@@ -173,7 +205,7 @@ public interface OperationsOnFutures<T> {
 	 * 
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	default Tuple2<Optional<T>, LazyFutureStream<T>> splitSequenceAtHead() {
+	default Tuple2<Optional<T>, LazyFutureStream<T>> splitAtHead() {
 		return SequenceM
 				.<FastFuture<T>> fromStream(
 						(Stream<FastFuture<T>>) (Stream) this.getLastActive()
@@ -187,7 +219,7 @@ public interface OperationsOnFutures<T> {
 	 * 
 	 * <pre>
 	 * {@code 
-	 * LazyFutureStream.of(1,2,3).splitAt(1)
+	 * LazyFutureStream.of(1,2,3).actOnFutures().splitAt(1)
 	 * 
 	 *  //SequenceM[1], SequenceM[2,3]
 	 * }
@@ -202,14 +234,101 @@ public interface OperationsOnFutures<T> {
 				.map1(s -> fromStreamOfFutures(s))
 				.map2(s -> fromStreamOfFutures(s));
 	}
-	default <R> LazyFutureStream<Tuple2<T, R>> zip(Stream<R> other) {
+	
+	
+	/**
+	 * Zip two LazyFutureStreams by combining the underlying Futures
+	 * 
+	 * <pre>
+	 * {@code 
+	 * 
+	 * List<Tuple2<Integer,Integer>> list =
+					of(1,2,3,4,5,6).actOnFutures().zipLfs(of(100,200,300,400))
+													.peek(it -> System.out.println(it)).collect(Collectors.toList());
+	 * 
+	 * // [1,100],[2,200],[3,300],[4,400]
+	 * }
+	 * </pre>
+	 * 
+	 * @param other
+	 * @return
+	 */
+	default <R> LazyFutureStream<Tuple2<T, R>> zipLfs(LazyFutureStream<R> other) {
 
+		return (LazyFutureStream) fromStreamOfFutures((Stream) this
+				.getLastActive().injectFuturesSeq()
+				.map(f -> f.toCompletableFuture())
+				.zipStream(other.getLastActive().injectFuturesSeq()
+						.map(f -> f.toCompletableFuture()))
+				.map(t -> t.v1.thenApply(r -> Tuple.tuple(r, t.v2.join())))
+				.map(cf -> FastFuture.fromCompletableFuture(cf)));
+	}
+	/**
+	 * Zip two LazyFutureStreams using the provided combiner
+	 * 
+	 * <pre>
+	 * {@code 
+	 *  BiFunction<CompletableFuture<Integer>,CompletableFuture<Integer>,CompletableFuture<Tuple2<Integer,Integer>>> combiner = 
+					 			(cf1,cf2)->cf1.<Integer,Tuple2<Integer,Integer>>thenCombine(cf2, (v1,v2)->Tuple.tuple(v1,v2));
+			List<Tuple2<Integer,Integer>> list =
+					of(1,2,3,4,5,6).actOnFutures().zipLfs(of(100,200,300,400), combiner)
+													.peek(it -> System.out.println(it)).collect(Collectors.toList());
+			
+			List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+			assertThat(right,hasItem(100));
+			assertThat(right,hasItem(200));
+			assertThat(right,hasItem(300));
+			assertThat(right,hasItem(400));
+	 * 
+	 * 
+	 * }
+	 * </pre>
+	 * 
+	 */
+	default <R,T2> LazyFutureStream<R> zipLfs(LazyFutureStream<T2> other, BiFunction<CompletableFuture<T>,CompletableFuture<T2>,CompletableFuture<R>> combiner) {
+
+		return (LazyFutureStream) fromStreamOfFutures((Stream) this
+				.getLastActive().injectFuturesSeq()
+				.map(f -> f.toCompletableFuture())
+				.zipStream(other.getLastActive().injectFuturesSeq()
+						.map(f -> f.toCompletableFuture()))
+				.map(t -> combiner.apply(t.v1,t.v2))
+				.map(cf -> FastFuture.fromCompletableFuture(cf)));
+	}
+	
+	
+	/**
+	 * Zip two Streams. Futures from this Stream will be paired with data from provided Stream (if the other Stream is also a LazyFutureStream this operator will pair based on
+	 * Futures from this Stream with results from the other].
+	 * 
+	 * <pre>
+	 * {@code
+	 * List<Tuple2<Integer,Integer>> list =
+					of(1,2,3,4,5,6).actOnFutures().zip(of(100,200,300,400))
+													.peek(it -> System.out.println(it)).collect(Collectors.toList());
+	 * 
+	 * // [1,100],[2,200],[3,300],[4,400]
+	 * }
+	 * </pre>
+	 * 
+	 * Example with two LazyFutureStreams
+	 * <pre>
+	 * {@code
+	 * List<Tuple2<Integer,Integer>> list =
+					LazyFutureStream.of(slow,fast,med).actOnFutures().zip(LazyFutureStream.of(slow,fast,med))
+													.peek(it -> System.out.println(it)).collect(Collectors.toList());
+	 * 
+	 * // [slow,fast],[fast,med],[med,slow]
+	 * }
+	 * </pre>
+	 */
+	default <R> LazyFutureStream<Tuple2<T, R>> zip(Stream<R> other) {
+		
 		return (LazyFutureStream) fromStreamOfFutures((Stream) this
 				.getLastActive().injectFuturesSeq()
 				.map(f -> f.toCompletableFuture())
 				.zipStream(other)
 				.map(t -> t.v1.thenApply(r -> Tuple.tuple(r, t.v2)))
-				.peek(System.out::println)
 				.map(cf -> FastFuture.fromCompletableFuture(cf)));
 
 	}
@@ -239,6 +358,18 @@ public interface OperationsOnFutures<T> {
 				.map(cf -> FastFuture.fromCompletableFuture(cf)));
 
 	}
+	default <S, U> LazyFutureStream<Tuple3<T, S, U>> zip3Lfs(
+			LazyFutureStream<? extends S> second, LazyFutureStream<? extends U> third) {
+
+		return (LazyFutureStream) fromStreamOfFutures((Stream) this
+				.getLastActive().injectFuturesSeq()
+				.map(f -> f.toCompletableFuture()).zip3(second.getLastActive().injectFuturesSeq()
+						.map(f -> f.toCompletableFuture()), third.getLastActive().injectFuturesSeq()
+						.map(f -> f.toCompletableFuture()))
+				.map(t -> t.v1.thenApply(r -> Tuple.tuple(r, t.v2.join(), t.v3.join())))
+				.map(cf -> FastFuture.fromCompletableFuture(cf)));
+
+	}
 
 	/**
 	 * zip 4 Streams into 1
@@ -262,6 +393,19 @@ public interface OperationsOnFutures<T> {
 				.map(f -> f.toCompletableFuture())
 				.zip4(second, third, fourth)
 				.map(t -> t.v1.thenApply(r -> Tuple.tuple(r, t.v2, t.v3, t.v4)))
+				.map(cf -> FastFuture.fromCompletableFuture(cf)));
+	}
+	default <T2, T3, T4> SequenceM<Tuple4<T, T2, T3, T4>> zip4Lfs(
+			LazyFutureStream<T2> second, LazyFutureStream<T3> third, LazyFutureStream<T4> fourth) {
+		return (LazyFutureStream) fromStreamOfFutures((Stream) this
+				.getLastActive()
+				.injectFuturesSeq()
+				.map(f -> f.toCompletableFuture())
+				.zip4(second.getLastActive().injectFuturesSeq()
+						.map(f -> f.toCompletableFuture()), third.getLastActive().injectFuturesSeq()
+						.map(f -> f.toCompletableFuture()), fourth.getLastActive().injectFuturesSeq()
+						.map(f -> f.toCompletableFuture()))
+				.map(t -> t.v1.thenApply(r -> Tuple.tuple(r, t.v2.join(), t.v3.join(), t.v4.join())))
 				.map(cf -> FastFuture.fromCompletableFuture(cf)));
 	}
 
@@ -858,4 +1002,53 @@ public interface OperationsOnFutures<T> {
 				.slice(from, to));
 	}
 
+	
+	default SequenceM<CompletableFuture<T>> toStream(){
+		return this.getLastActive().injectFuturesSeq().map(f->f.toCompletableFuture());
+	}
+	default Set<CompletableFuture<T>> toSet() {
+		
+		return toStream().collect(Collectors.toSet());
+	}
+
+	default <R, A> R collect(Collector<? super CompletableFuture<T>, A, R> collector){
+		return toStream().collect(collector);
+	}
+	
+	default List<CompletableFuture<T>> toList() {
+		
+		return toStream().collect(Collectors.toList());
+	}
+
+	
+	default <C extends Collection<CompletableFuture<T>>> C toCollection(
+			Supplier<C> collectionFactory) {
+		
+		return toStream().collect(Collectors.toCollection(collectionFactory));
+	}
+	default Optional<CompletableFuture<T>> reduce(BinaryOperator<CompletableFuture<T>> accumulator){
+		return toStream().reduce(accumulator);
+	}
+	default CompletableFuture<T> foldRight(CompletableFuture<T> identity,  BinaryOperator<CompletableFuture<T>> accumulator){
+		
+		return toStream().foldRight(identity,accumulator);
+	}
+	
+	default CompletableFuture<T> foldLeft(CompletableFuture<T> identity,  BinaryOperator<CompletableFuture<T>> accumulator){
+		return toStream().foldLeft(identity,accumulator);
+	}
+	 /* (non-Javadoc)
+	 * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BinaryOperator)
+	 */
+	default CompletableFuture<T> reduce(CompletableFuture<T> identity, BinaryOperator<CompletableFuture<T>> accumulator){
+		return toStream().reduce(identity,accumulator);
+	}
+	 /* (non-Javadoc)
+	 * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BiFunction, java.util.function.BinaryOperator)
+	 */
+	default <U> CompletableFuture<U> reduce(CompletableFuture<U> identity,
+            BiFunction<CompletableFuture<U>, ? super CompletableFuture<T>, CompletableFuture<U>> accumulator,
+            BinaryOperator<CompletableFuture<U>> combiner){
+		return toStream().reduce(identity, accumulator, combiner);
+	}
 }

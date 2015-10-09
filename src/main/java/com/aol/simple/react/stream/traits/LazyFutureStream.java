@@ -2207,17 +2207,30 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	}
 
 
+	/* 
+	 *	Duplicate the data in this Stream. To duplicate into 2 LazyFutureStreams use actOnFutures#duplicate
+	 * @see com.aol.cyclops.sequence.SequenceM#duplicateSequence()
+	 */
 	@Override
 	default Tuple2<SequenceM<U>, SequenceM<U>> duplicateSequence() {
 		return SequenceM.fromStream(toQueue().stream(getSubscription())).duplicateSequence();
 	}
 
+	/* 
+	 * Triplicate the data in this Stream. To triplicate into 3 LazyFutureStreams use actOnFutures#triplicate
+	 * 
+	 * @see com.aol.cyclops.sequence.SequenceM#triplicate()
+	 */
 	@Override
 	default Tuple3<SequenceM<U>, SequenceM<U>, SequenceM<U>> triplicate() {
 		return SequenceM.fromStream(toQueue().stream(getSubscription())).triplicate();
 
 	}
 
+	/* 
+	 * Quadruplicate the data in this Stream. To quadruplicate into 3 LazyFutureStreams use actOnFutures#quadruplicate
+	 * @see com.aol.cyclops.sequence.SequenceM#quadruplicate()
+	 */
 	@Override
 	default Tuple4<SequenceM<U>, SequenceM<U>, SequenceM<U>, SequenceM<U>> quadruplicate() {
 		return SequenceM.fromStream(toQueue().stream(getSubscription())).quadruplicate();
