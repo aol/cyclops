@@ -8,6 +8,7 @@ import com.aol.simple.react.async.factories.QueueFactory;
 import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.stream.BaseSimpleReact;
+import com.aol.simple.react.stream.ReactBuilder;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 public interface ConfigurableStream<T,C> { 
@@ -22,7 +23,7 @@ public interface ConfigurableStream<T,C> {
 	
 	abstract Executor getTaskExecutor();
 	abstract RetryExecutor getRetrier();
-	BaseSimpleReact getSimpleReact();
+	ReactBuilder getSimpleReact();
 	Optional<Consumer<Throwable>> getErrorHandler();
 	boolean isAsync();
 	

@@ -10,13 +10,13 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -31,7 +31,6 @@ import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.base.BaseSeqTest;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.lazy.LazyReact;
-import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class LazySeqAgronaTest extends BaseSeqTest {
@@ -42,8 +41,8 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	
 	@Test
 	public void testZipWithFutures(){
-		FutureStream stream = of("a","b");
-		LazyFutureStream<Tuple2<Integer,String>> seq = of(1,2).zipFutures(stream);
+		LazyFutureStream stream = of("a","b");
+		LazyFutureStream<Tuple2<Integer,String>> seq = of(1,2).actOnFutures().zip(stream);
 		List<Tuple2<Integer,String>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(Collectors.toList());
 		assertThat(result.size(),is(asList(tuple(1,"a"),tuple(2,"b")).size()));
 	}
@@ -51,14 +50,14 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	@Test
 	public void testZipWithFuturesStream(){
 		Stream stream = of("a","b");
-		LazyFutureStream<Tuple2<Integer,String>> seq = of(1,2).zipFutures(stream);
+		LazyFutureStream<Tuple2<Integer,String>> seq = of(1,2).actOnFutures().zip(stream);
 		List<Tuple2<Integer,String>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(Collectors.toList());
 		assertThat(result.size(),is(asList(tuple(1,"a"),tuple(2,"b")).size()));
 	}
 	@Test
 	public void testZipWithFuturesCoreStream(){
 		Stream stream = Stream.of("a","b");
-		LazyFutureStream<Tuple2<Integer,String>> seq = of(1,2).zipFutures(stream);
+		LazyFutureStream<Tuple2<Integer,String>> seq = of(1,2).actOnFutures().zip(stream);
 		List<Tuple2<Integer,String>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(Collectors.toList());
 		assertThat(result.size(),is(asList(tuple(1,"a"),tuple(2,"b")).size()));
 	}
@@ -67,13 +66,13 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	@Test
 	public void testZipFuturesWithIndex(){
 		
-		 LazyFutureStream<Tuple2<String,Long>> seq = of("a","b").zipFuturesWithIndex();
+		 LazyFutureStream<Tuple2<String,Long>> seq = of("a","b").actOnFutures().zipWithIndex();
 		List<Tuple2<String,Long>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(Collectors.toList());
 		assertThat(result.size(),is(asList(tuple("a",0l),tuple("b",1l)).size()));
 	}
 	@Test
 	public void duplicateFutures(){
-		List<String> list = of("a","b").duplicateFutures().v1.block();
+		List<String> list = of("a","b").actOnFutures().duplicate().v1.block();
 		System.out.println(list);
 		assertThat(sortedList(list),is(asList("a","b")));
 	}
@@ -83,7 +82,7 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 
 	@Test
 	public void duplicateFutures2(){
-		List<String> list = of("a","b").duplicateFutures().v2.block();
+		List<String> list = of("a","b").actOnFutures().duplicate().v2.block();
 		assertThat(sortedList(list),is(asList("a","b")));
 	}
 	
@@ -133,9 +132,9 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 
 	}
 
-	@Test 
+	@Test  @Ignore
 	public void testBackPressureWhenZippingUnevenStreams() throws InterruptedException {
-
+		
 		LazyFutureStream stream =  LazyReact.parallelBuilder().withExecutor(new ForkJoinPool(2))
 								.reactInfinitely(() -> "100").peek(System.out::println)
 				.withQueueFactory(QueueFactories.boundedQueue(2));
@@ -148,10 +147,11 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 		});
 		t.start();
 
-		int max = fast.getSizeSignal().getDiscrete().stream()
-				.mapToInt(it -> (int) it).limit(5).max().getAsInt();
+		int max = fast.getSizeSignal().getDiscrete().stream().limit(300, TimeUnit.MILLISECONDS)
+				.mapToInt(it -> (int) it).max().getAsInt();
 		assertThat(max, is(2));
 		t.join();
+		
 	
 	}
 
@@ -187,8 +187,8 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	@Test @Ignore
 	public void shouldZipTwoInfiniteSequences() throws Exception {
 		
-		final FutureStream<Integer> units = LazyFutureStream.iterate(1,n -> n+1);
-		final FutureStream<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100);
+		final LazyFutureStream<Integer> units = LazyFutureStream.iterate(1,n -> n+1);
+		final LazyFutureStream<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100);
 		final Seq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
 
 		
@@ -199,7 +199,7 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	public void shouldZipFiniteWithInfiniteSeq() throws Exception {
 		ThreadPools.setUseCommon(false);
 		final Seq<Integer> units = LazyFutureStream.iterate(1,n -> n+1).limit(5);
-		final FutureStream<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100); // <-- MEMORY LEAK! - no auto-closing yet, so writes infinetely to it's async queue
+		final LazyFutureStream<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100); // <-- MEMORY LEAK! - no auto-closing yet, so writes infinetely to it's async queue
 		final Seq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
 		
 		assertThat(zipped.limit(5).join(),equalTo(LazyFutureStream.of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
@@ -209,7 +209,7 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	@Test
 	public void shouldZipInfiniteWithFiniteSeq() throws Exception {
 		ThreadPools.setUseCommon(false);
-		final FutureStream<Integer> units = LazyFutureStream.iterate(1,n -> n+1); // <-- MEMORY LEAK!- no auto-closing yet, so writes infinetely to it's async queue
+		final LazyFutureStream<Integer> units = LazyFutureStream.iterate(1,n -> n+1); // <-- MEMORY LEAK!- no auto-closing yet, so writes infinetely to it's async queue
 		final Seq<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100).limit(5);
 		final Seq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
 		assertThat(zipped.limit(5).join(),equalTo(LazyFutureStream.of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));

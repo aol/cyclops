@@ -51,7 +51,7 @@ public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
 				volatile boolean complete =false;
 				
 				volatile boolean cancelled = false;
-				Stack<Long> requests = new Stack<Long>();
+				final Stack<Long> requests = new Stack<Long>();
 				
 				
 				

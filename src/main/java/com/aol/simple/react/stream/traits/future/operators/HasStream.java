@@ -1,7 +1,7 @@
 package com.aol.simple.react.stream.traits.future.operators;
 
-import com.aol.simple.react.stream.traits.FutureStream;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public interface HasStream<T> {
-	FutureStream<T> getStream();
+	LazyFutureStream<T> getStream();
 }

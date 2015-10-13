@@ -3,18 +3,18 @@ package com.aol.simple.react.base;
 import static java.util.Arrays.asList;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
-
 import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 
 import org.junit.Test;
 
-import com.aol.simple.react.stream.traits.FutureStream;
+
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public abstract class BaseSequentialSQLTest {
-	abstract protected  <U> FutureStream<U> of(U... array);
-	abstract protected  <U> FutureStream<U> ofThread(U... array);
-	abstract protected <U> FutureStream<U> react(Supplier<U>... array);
+	abstract protected  <U> LazyFutureStream<U> of(U... array);
+	abstract protected  <U> LazyFutureStream<U> ofThread(U... array);
+	abstract protected <U> LazyFutureStream<U> react(Supplier<U>... array);
 	
 	 BiPredicate TRUE = (t, u) -> true;
 	 @Test

@@ -10,30 +10,14 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import java.util.function.Supplier;
 
-import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import com.aol.simple.react.base.BaseSeqFutureTest;
-import com.aol.simple.react.stream.eager.EagerReact;
-import com.aol.simple.react.stream.traits.EagerFutureStream;
-import com.aol.simple.react.stream.traits.FutureStream;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class LazySeqFutureTest extends BaseSeqFutureTest{
-	@Override
-	protected <U> EagerFutureStream<U> of(U... array) {
-		return EagerFutureStream.parallel(array);
-	}
-	@Override
-	protected <U> EagerFutureStream<U> ofThread(U... array) {
-		return EagerFutureStream.ofThread(array);
-	}
 	
-	@Override
-	protected <U> EagerFutureStream<U> react(Supplier<U>... array) {
-		return EagerReact.parallelBuilder().react(array);
-		
-	}
 	  @Test
 	    public void testZipDifferingLength() {
 	        List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d"))
@@ -62,7 +46,7 @@ public class LazySeqFutureTest extends BaseSeqFutureTest{
 	   
 	    @Test
 	    public void testSkipWhile() {
-	        Supplier<EagerFutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5);
+	        Supplier<LazyFutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertTrue(s.get().skipWhile(i -> false).futureOperations().toList().join().containsAll(asList(1, 2, 3, 4, 5)));
 	      
@@ -71,7 +55,7 @@ public class LazySeqFutureTest extends BaseSeqFutureTest{
 
 	    @Test
 	    public void testSkipUntil() {
-	        Supplier<EagerFutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5);
+	        Supplier<LazyFutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertEquals(asList(), s.get().skipUntil(i -> false).futureOperations().toList().join());
 	        assertTrue(s.get().skipUntil(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
@@ -79,7 +63,7 @@ public class LazySeqFutureTest extends BaseSeqFutureTest{
 
 	    @Test
 	    public void testSkipUntilWithNulls() {
-	        Supplier<EagerFutureStream<Integer>> s = () -> of(1, 2, null, 3, 4, 5);
+	        Supplier<LazyFutureStream<Integer>> s = () -> of(1, 2, null, 3, 4, 5);
 	       
 	        assertTrue(s.get().skipUntil(i -> true).futureOperations()
 	        				.toList().join().containsAll(asList(1, 2, null, 3, 4, 5)));
@@ -87,7 +71,7 @@ public class LazySeqFutureTest extends BaseSeqFutureTest{
 
 	    @Test
 	    public void testLimitWhile() {
-	        Supplier<EagerFutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5);
+	        Supplier<LazyFutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertEquals(asList(), s.get().limitWhile(i -> false).futureOperations().toList().join());
 	        assertTrue( s.get().limitWhile(i -> i < 3).futureOperations().toList().join().size()!=5);       
@@ -110,6 +94,21 @@ public class LazySeqFutureTest extends BaseSeqFutureTest{
 	        assertTrue(of(1, 2, null, 3, 4, 5).limitUntil(i -> false).futureOperations()
 	        				.toSet().join().containsAll(asList(1, 2, null, 3, 4, 5)));
 	    }
+
+		@Override
+		protected <U> LazyFutureStream<U> of(U... array) {
+			return LazyFutureStream.of(array);
+		}
+
+		@Override
+		protected <U> LazyFutureStream<U> ofThread(U... array) {
+			return LazyFutureStream.freeThread(array);
+		}
+
+		@Override
+		protected <U> LazyFutureStream<U> react(Supplier<U>... array) {
+			return LazyFutureStream.react(array);
+		}
 
 	   
 	

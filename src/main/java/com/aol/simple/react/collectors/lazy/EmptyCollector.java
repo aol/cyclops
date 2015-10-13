@@ -29,6 +29,7 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 	private final List<FastFuture<T>> active = new ArrayList<>();
 	@Getter
 	private final MaxActive maxActive;
+	@Getter
 	private final Function<FastFuture<T>, T> safeJoin;
 	
 	EmptyCollector(){

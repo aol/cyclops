@@ -29,9 +29,18 @@ public class Subscription implements Continueable{
 	
 	private final AtomicBoolean closed=  new AtomicBoolean(false);
 	
+	private final AtomicLong timeLimitNanos = new AtomicLong(-1);
+	
+	public long timeLimit(){
+		return timeLimitNanos.get();
+	}
 	public void registerSkip(long skip){
 		if(queues.size()>0)
 			limits.get(currentQueue()).addAndGet(skip);
+	}
+	public void registerTimeLimit(long nanos){
+		if(timeLimitNanos.get()==-1 || timeLimitNanos.get()>nanos)
+			timeLimitNanos.set(nanos);
 	}
 	public void registerLimit(long limit){
 		

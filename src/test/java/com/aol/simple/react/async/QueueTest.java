@@ -1,6 +1,6 @@
 package com.aol.simple.react.async;
 
-import static com.aol.simple.react.stream.traits.EagerFutureStream.parallel;
+import static com.aol.simple.react.stream.traits.BaseSimpleReactStream.parallel;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
@@ -26,7 +26,7 @@ import org.junit.Test;
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.traits.SimpleReactStream;
+import com.aol.simple.react.stream.traits.BaseSimpleReactStream;
 
 public class QueueTest {
 
@@ -113,7 +113,7 @@ public class QueueTest {
 	public void backPressureTimeoutTestVeryHigh() {
 		Queue<Integer> q = new Queue<Integer>(new LinkedBlockingQueue<>(2))
 				.withOfferTimeout(1).withOfferTimeUnit(TimeUnit.DAYS);
-		SimpleReactStream<Boolean> s = new SimpleReact().react(
+		BaseSimpleReactStream<Boolean> s = new SimpleReact().react(
 				() -> offerAndIncrementFound(q),
 				() -> offerAndIncrementFound(q),
 				() -> offerAndIncrementFound(q),
@@ -327,7 +327,7 @@ public class QueueTest {
 		}, () -> q.offer(5));
 
 		Collection<String> results = parallel().fromStream(q.stream())
-				.then(it -> "*" + it).collect(Collectors.toList());
+				.then(it -> "*" + it).block();
 
 		assertThat(results.size(), lessThan(4));
 		assertThat(results, not(hasItem("*4")));
@@ -353,7 +353,7 @@ public class QueueTest {
 			List<String> result = parallel().fromStream(q.stream())
 					.then(it -> "*" + it).peek(it -> found.getAndAdd(1))
 					.peek(it -> System.out.println(it))
-					.collect(Collectors.toList());
+					.block();
 
 			assertThat(result, hasItem("*1"));
 

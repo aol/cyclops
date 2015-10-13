@@ -2,7 +2,10 @@ package com.aol.simple.react.stream.lazy;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -20,13 +23,15 @@ import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
 
+import com.aol.cyclops.functions.caching.Cachable;
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.async.subscription.Subscription;
 import com.aol.simple.react.config.MaxActive;
-import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.InfiniteClosingSpliterator;
 import com.aol.simple.react.stream.InfiniteClosingSpliteratorFromIterator;
+import com.aol.simple.react.stream.ReactBuilder;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
@@ -48,7 +53,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 @Wither
 @ToString
 @Slf4j 
-public class LazyReact extends BaseSimpleReact {
+public class LazyReact implements ReactBuilder {
 	
 	@Getter
 	private final Executor executor;
@@ -68,7 +73,15 @@ public class LazyReact extends BaseSimpleReact {
 	private final boolean poolingActive;
 	@Getter
 	private final boolean autoOptimize;
+	@Getter
+	private final boolean autoMemoize;
+	@Getter
+	private final Cachable memoizeCache;
 	
+	
+	public LazyReact autoMemoizeOn( Cachable memoizeCache){
+		return this.withAutoMemoize(true).withMemoizeCache(memoizeCache);
+	}
 	/* 
 	 *	@return true if async
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#isAsync()
@@ -105,6 +118,8 @@ public class LazyReact extends BaseSimpleReact {
 		this.streamOfFutures=false;
 		this.poolingActive=false;
 		this.autoOptimize=true;
+		this.autoMemoize =false;
+		this.memoizeCache=null;
 	}
 	
 	/**
@@ -124,6 +139,8 @@ public class LazyReact extends BaseSimpleReact {
 		this.streamOfFutures=false;
 		this.poolingActive=false;
 		this.autoOptimize=true;
+		this.autoMemoize =false;
+		this.memoizeCache=null;
 	}
 	
 	public <U> LazyFutureStream<U> from(CompletableFuture<U> cf){
@@ -143,7 +160,6 @@ public class LazyReact extends BaseSimpleReact {
 	 *	@return
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#construct(java.util.stream.Stream, java.util.List)
 	 */
-	@Override
 	public <U> LazyFutureStream<U> construct(Stream s) {
 		this.log.debug("Constructing Stream with {}",this);
 		return (LazyFutureStream) new LazyFutureStreamImpl<U>( this,s);
@@ -268,9 +284,8 @@ public class LazyReact extends BaseSimpleReact {
 	 *	@return LazyFutureStream that is a range of Integers
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#range(int, int)
 	 */
-	@Override
 	public LazyFutureStream<Integer> range(int startInclusive, int endExclusive){
-		return from(IntStream.range(startInclusive, endExclusive));
+		return from(SequenceM.range(startInclusive, endExclusive));
 	}
 
 	/* 
@@ -280,7 +295,6 @@ public class LazyReact extends BaseSimpleReact {
 	 *	@return LazyFutureStream
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStream(java.util.stream.Stream)
 	 */
-	@Override
 	public <U> LazyFutureStream<U> fromStream(
 			Stream<CompletableFuture<U>> stream) {
 	
@@ -308,65 +322,12 @@ public class LazyReact extends BaseSimpleReact {
 	 *	@return LazyFutureStream
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
 	 */
-	@Override
 	public <U> LazyFutureStream<U> from(Stream<U> stream) {
 		
 		return construct( stream);
 	}
 
-	/* 
-	 *  Construct a EagerFutureStream from the provided Stream, Stream will be mapped to a Stream of CompeltableFutures internally
-	 * 
-	 *	@param stream Stream that serves as input to LazyFutureStream
-	 *	@return EagerFutureStream
-	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public  LazyFutureStream<Integer> from(IntStream stream) {
-		
-		return (LazyFutureStream)super.from(stream);
-	}
 
-	/* 
-	 *  Construct a EagerFutureStream from the provided Stream, Stream will be mapped to a Stream of CompeltableFutures internally
-	 * 
-	 *	@param stream Stream that serves as input to LazyFutureStream
-	 *	@return EagerFutureStream
-	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
-	 */
-	@Override
-	public  LazyFutureStream<Double> from(DoubleStream stream) {
-		
-		return (LazyFutureStream)super.from(stream);
-	}
-	
-
-	/* 
-	 *  Construct a EagerFutureStream from the provided Stream, Stream will be mapped to a Stream of CompeltableFutures internally
-	 * 
-	 *	@param stream Stream that serves as input to LazyFutureStream
-	 *	@return EagerFutureStream
-	 * @see com.aol.simple.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
-	 */
-	@Override
-	public  LazyFutureStream<Long> from(LongStream stream) {
-		
-		return (LazyFutureStream)super.from(stream);
-	}
-	
-	/* 
-	 * Construct a LazyFutureStream from array
-	 * 
-	 *	@param array Array that forms basis of Stream
-	 *	@return LazyFutureStream
-	 * @see com.aol.simple.react.stream.BaseSimpleReact#of(java.lang.Object[])
-	 */
-	@Override
-	public <U> LazyFutureStream<U> of(U... array) {
-		
-		return (LazyFutureStream)super.of(array);
-	}
 
 	/* 
 	 * 
@@ -377,43 +338,18 @@ public class LazyReact extends BaseSimpleReact {
 	 *	@return LazyFutureStream
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#react(java.util.List)
 	 */
-	@Override
 	public <U> LazyFutureStream<U> react(Collection<Supplier<U>> actions) {
 		
-		return (LazyFutureStream)super.react(actions);
+		SequenceM<Supplier<U>> seq = actions instanceof List ? SequenceM.fromList((List)actions) : SequenceM.fromIterable(actions);
+		return react(seq);
 	}
 
-	/**
-	 * Start a LazyFutureStream from a JDK Iterator
-	 * 
-	 * @param iterator SimpleReact will iterate over this iterator concurrently to start the reactive dataflow
-	 * @return Next stage in the reactive flow
-	 */
-	@Override
-	public <U> LazyFutureStream<U> from(Iterator<U> iterator) {
-		
-		return (LazyFutureStream)super.from(iterator);
-	}
 
-	/**
-	 * Start a LazyFutureStream from a Collection
-	 * 
-	 * @param collection - Collection Stream will be formed from
-	 *
-	 * @return Next stage in the reactive flow
-	 */
-	@Override
-	public <R> LazyFutureStream<R> from(Collection<R> collection) {
-		
-		return (LazyFutureStream)super.from(collection);
-	}
 
 	
 
 	
-	
 
-	@Override
 	protected <U> LazyFutureStream<U> reactI(Supplier<U>... actions) {
 		
 		return constructFutures(Stream.of(actions).map(
@@ -427,7 +363,8 @@ public class LazyReact extends BaseSimpleReact {
 	public LazyReact(Executor executor, RetryExecutor retrier,
 			Boolean async, MaxActive maxActive, Executor pub,boolean streamOfFutures, 
 			boolean objectPoolingActive,
-			boolean autoOptimize) {
+			boolean autoOptimize,
+			boolean autoMemoize, Cachable memoizeCache) {
 		super();
 		this.executor = executor;
 		this.retrier = retrier;
@@ -437,11 +374,14 @@ public class LazyReact extends BaseSimpleReact {
 		this.publisherExecutor=pub;
 		this.poolingActive = objectPoolingActive;
 		this.autoOptimize = autoOptimize;
+		this.autoMemoize =autoMemoize;
+		this.memoizeCache=memoizeCache;
 	}
 
 	public LazyReact(Executor currentThreadExecutor,
 			AsyncRetryExecutor withScheduler, boolean async, MaxActive maxActive2) {
-		this(currentThreadExecutor,withScheduler,async,maxActive2,null,false,false,async);
+		this(currentThreadExecutor,withScheduler,async,maxActive2,null,false,
+				false,async,false,null);
 	}
 
 
@@ -452,10 +392,9 @@ public class LazyReact extends BaseSimpleReact {
 	 *	@return LazyFutureStream
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#ofIterable(java.lang.Iterable)
 	 */
-	@Override
 	public <U> LazyFutureStream<U> fromIterable(Iterable<U> iter) {
-		
-		return (LazyFutureStream)super.of(iter);
+		SequenceM<U> seq = iter instanceof List ? SequenceM.fromList((List)iter) : SequenceM.fromIterable(iter);
+		return this.from(seq);
 	}
 
 
@@ -467,7 +406,6 @@ public class LazyReact extends BaseSimpleReact {
 	 *	@return LazyFutureStream
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#react(java.util.stream.Stream)
 	 */
-	@Override
 	public <U> LazyFutureStream<U> react(Stream<Supplier<U>> actions) {
 	
 		return constructFutures(actions.map(
@@ -482,10 +420,10 @@ public class LazyReact extends BaseSimpleReact {
 	 *	@return LazyFutureStream
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#react(java.util.Iterator)
 	 */
-	@Override
 	public <U> LazyFutureStream<U> react(Iterator<Supplier<U>> actions) {
 		
-		return (LazyFutureStream)super.react(actions);
+		return construct(StreamSupport.stream(Spliterators.spliteratorUnknownSize(actions, Spliterator.ORDERED),false).map(
+				next -> CompletableFuture.supplyAsync(next, getExecutor())));
 	}
 
 	/*
@@ -496,10 +434,10 @@ public class LazyReact extends BaseSimpleReact {
 	 *	@return
 	 * @see com.aol.simple.react.stream.BaseSimpleReact#reactIterable(java.lang.Iterable)
 	 */
-	@Override
 	public <U> LazyFutureStream<U> reactIterable(Iterable<Supplier<U>> actions) {
-		
-		return (LazyFutureStream)super.reactIterable(actions);
+		SequenceM<Supplier<U>> seq = actions instanceof List ? SequenceM.fromList((List)actions) : SequenceM.fromIterable(actions);
+		return construct(seq.map(
+				next -> CompletableFuture.supplyAsync(next, getExecutor())));
 	}
 	
 	
@@ -661,5 +599,71 @@ public class LazyReact extends BaseSimpleReact {
 
 	}
 	
+	
+	/**
+	 * Start a reactive flow from a JDK Iterator
+	 * 
+	 * @param iterator SimpleReact will iterate over this iterator concurrently to start the reactive dataflow
+	 * @return Next stage in the reactive flow
+	 */
+	@SuppressWarnings("unchecked")
+	public <U> LazyFutureStream<U> from(final Iterator<U> iterator){
+		return from(StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED),false));
+		
+	
+	}
+	/**
+	 * Start a reactive flow from a Collection using an Iterator
+	 * 
+	 * @param collection - Collection SimpleReact will iterate over at the start of the flow
+	 *
+	 * @return Next stage in the reactive flow
+	 */
+	@SuppressWarnings("unchecked")
+	public <R> LazyFutureStream<R> from(final Collection<R> collection){
+		return from(collection.stream());
+	}
 
+
+	
+
+	
+	
+	/**
+	 * Start a reactive dataflow from a stream.
+	 * 
+	 * @param stream that will be used to drive the reactive dataflow
+	 * @return Next stage in the reactive flow
+	 */
+	public  LazyFutureStream<Integer> from(final IntStream stream) {
+		
+		return from(stream.boxed());
+	
+	}
+	/**
+	 * Start a reactive dataflow from a stream.
+	 * 
+	 * @param stream that will be used to drive the reactive dataflow
+	 * @return Next stage in the reactive flow
+	 */
+	public  LazyFutureStream<Double> from(final DoubleStream stream) {
+		return from(stream.boxed());
+	}
+	/**
+	 * Start a reactive dataflow from a stream.
+	 * 
+	 * @param stream that will be used to drive the reactive dataflow
+	 * @return Next stage in the reactive flow
+	 */
+	public  LazyFutureStream<Long> from(final LongStream stream) {
+		return from(stream.boxed());
+	}
+	
+	public <U> LazyFutureStream<U> of(U...array){
+		return from(Stream.of(array));
+	}
+	
+	
+	
+	
 }

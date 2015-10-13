@@ -33,66 +33,65 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.simple.react.extractors.Extractors;
-import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
-import com.aol.simple.react.stream.traits.SimpleReactStream;
+import com.aol.simple.react.stream.traits.BaseSimpleReactStream;
 
 
 public class SimpleReactTest {
 	
 	@Test
 	public void streamOfEmpty(){
-		List value = SimpleReactStream.empty().block();
+		List value = BaseSimpleReactStream.empty().block();
 		assertThat(value.size(),is(0));
 	}
 	@Test
 	public void streamOfOne(){
-		Integer value = SimpleReactStream.of(1).first();
+		Integer value = BaseSimpleReactStream.of(1).first();
 		assertThat(value,is(1));
 	}
 	@Test
 	public void streamParallelOf(){
-		SimpleReactStream value = SimpleReactStream.parallel(1,2);
+		BaseSimpleReactStream value = BaseSimpleReactStream.parallel(1,2);
 		
 		assertThat(value.getTaskExecutor(),is(ForkJoinPool.commonPool()));
 	}
 	@Test
 	public void futureStreamIterator(){
-		assertThat(SimpleReactStream.simpleReactStream(Arrays.asList(1,2,3,4).iterator()).block().size(),is(4));
+		assertThat(BaseSimpleReactStream.simpleReactStream(Arrays.asList(1,2,3,4).iterator()).block().size(),is(4));
 	}
 	@Test
 	public void futureStreamIterable(){
-		assertThat(SimpleReactStream.simpleReactStreamFromIterable(Arrays.asList(1,2,3,4)).block().size(),is(4));
+		assertThat(BaseSimpleReactStream.simpleReactStreamFromIterable(Arrays.asList(1,2,3,4)).block().size(),is(4));
 	}
 	
 	@Test
 	public void futureStreamTest(){
-		assertThat(SimpleReactStream.simpleReactStream((Stream)LazyFutureStream.of(1,2,3,4)).block().size(),is(4));
+		assertThat(BaseSimpleReactStream.simpleReactStream((Stream)LazyFutureStream.of(1,2,3,4)).block().size(),is(4));
 	}
 	@Test
 	public void futureStreamFromStreamTest(){
-		assertThat(SimpleReactStream.simpleReactStream(Stream.of(1,2,3,4)).block().size(),is(4));
+		assertThat(BaseSimpleReactStream.simpleReactStream(Stream.of(1,2,3,4)).block().size(),is(4));
 	}
 	@Test
 	public void syncTest(){
-		SimpleReactStream stream = SimpleReactStream.of(1,2,3,4).sync();
+		BaseSimpleReactStream stream = BaseSimpleReactStream.of(1,2,3,4).sync();
 		assertThat(stream.isAsync(),is(false));
 	}
 	@Test
 	public void asyncTest(){
-		SimpleReactStream stream = SimpleReactStream.of(1,2,3,4).async();
+		BaseSimpleReactStream stream = BaseSimpleReactStream.of(1,2,3,4).async();
 		assertThat(stream.isAsync(),is(true));
 	}
 	@Test
 	public void syncAndAsyncTest(){
-		SimpleReactStream stream = SimpleReactStream.of(1,2,3,4).sync().async();
+		BaseSimpleReactStream stream = BaseSimpleReactStream.of(1,2,3,4).sync().async();
 		assertThat(stream.isAsync(),is(true));
 	}
 	@Test
 	public void asyncSyncTest(){
-		SimpleReactStream stream = SimpleReactStream.of(1,2,3,4).async().sync();
+		BaseSimpleReactStream stream = BaseSimpleReactStream.of(1,2,3,4).async().sync();
 		assertThat(stream.isAsync(),is(false));
 	}
 	
@@ -116,7 +115,7 @@ public class SimpleReactTest {
 
 	@Test
 	public void whenChainEmptyBlockReturnsWithBreakout(){
-		new EagerReact(new ForkJoinPool(1))
+		new SimpleReact(new ForkJoinPool(1))
 		.from(new ArrayList<>())
 		.block(status->false);
 	}
@@ -137,7 +136,7 @@ public class SimpleReactTest {
 	@Test
 	public void testReact() throws InterruptedException, ExecutionException {
 
-		List<CompletableFuture<Integer>> futures = new EagerReact()
+		List<CompletableFuture<Integer>> futures = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.with(it -> it * 100);
 
@@ -150,8 +149,8 @@ public class SimpleReactTest {
 	@Test
 	public void testReactList() throws InterruptedException, ExecutionException {
 
-		List<CompletableFuture<Integer>> futures = new EagerReact()
-				.<Integer> react(Arrays.asList(() -> 1, () -> 2, () -> 3))
+		List<CompletableFuture<Integer>> futures = new SimpleReact()
+				.<Integer> reactCollection(Arrays.asList(() -> 1, () -> 2, () -> 3))
 				.with(it -> it * 100);
 
 		assertThat(futures.get(0).get(), is(greaterThan(99)));
@@ -185,7 +184,7 @@ public class SimpleReactTest {
 	@Test
 	public void testReactString() throws InterruptedException,
 			ExecutionException {
-		List<CompletableFuture<String>> futures = new EagerReact()
+		List<CompletableFuture<String>> futures = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.with(it -> "*" + it);
 
@@ -199,7 +198,7 @@ public class SimpleReactTest {
 	@Test
 	public void testReactChain() throws InterruptedException,
 			ExecutionException {
-		List<String> strings = new EagerReact()
+		List<String> strings = new SimpleReact()
 				.<Integer> react(() -> 1, () -> 2, () -> 3)
 				.then((it) -> it * 100).then((it) -> "*" + it)
 				.block(status -> status.getCompleted() > 1);
@@ -214,7 +213,7 @@ public class SimpleReactTest {
 	@Test
 	public void testGenericExtract() throws InterruptedException, ExecutionException {
 
-		Set<Integer> result = new EagerReact()
+		Set<Integer> result = new SimpleReact()
 		.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
 		.<Set<Integer>,Set<Integer>>allOf(Collectors.toSet(), (Set<Integer> it) -> {
@@ -334,7 +333,7 @@ public class SimpleReactTest {
 	
 	@Test
 	public void testLargeChain(){
-		SimpleReactStream builder= new SimpleReact().react(() -> "Hello", () -> "World"); 
+		BaseSimpleReactStream builder= new SimpleReact().react(() -> "Hello", () -> "World"); 
 		 for(int i =0;i<1000;i++){
 			 builder = builder.then( input -> input + " " + counter++);
 		 }
@@ -343,8 +342,8 @@ public class SimpleReactTest {
 	}
 	@Test
 	public void testSeparatedChains(){
-		 SimpleReactStream<String> orgBuilder= new SimpleReact().react(() -> "Hello", () -> "World");//.split(2); 
-		 SimpleReactStream builder = orgBuilder;
+		 BaseSimpleReactStream<String> orgBuilder= new SimpleReact().react(() -> "Hello", () -> "World");//.split(2); 
+		 BaseSimpleReactStream builder = orgBuilder;
 		 for(int i =0;i<1000;i++){
 			 builder = builder.then( input -> input + " " + counter++);
 		 }
@@ -433,7 +432,7 @@ public class SimpleReactTest {
         final AtomicBoolean isRunning = new AtomicBoolean(true);
         final CountDownLatch startBarier = new CountDownLatch(1);
 
-        final SimpleReactStream<Integer> stage = new SimpleReact().<Integer>react(
+        final BaseSimpleReactStream<Integer> stage = new SimpleReact().<Integer>react(
                 () -> 1,
                 () -> 2,
                 () -> 3

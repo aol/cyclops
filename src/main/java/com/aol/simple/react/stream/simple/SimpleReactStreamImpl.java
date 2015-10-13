@@ -25,7 +25,7 @@ import com.aol.simple.react.stream.BaseSimpleReact;
 import com.aol.simple.react.stream.EagerStreamWrapper;
 import com.aol.simple.react.stream.ReactBuilder;
 import com.aol.simple.react.stream.lazy.LazyReact;
-import com.aol.simple.react.stream.traits.EagerSimpleReactStream;
+import com.aol.simple.react.stream.traits.SimpleReactStream;
 import com.aol.simple.react.stream.traits.EagerToQueue;
 import com.aol.simple.react.threads.ReactPool;
 import com.nurkiewicz.asyncretry.RetryExecutor;
@@ -35,7 +35,7 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 @Getter
 @Slf4j
 @AllArgsConstructor
-public class SimpleReactStreamImpl<U> implements EagerSimpleReactStream<U>,EagerToQueue<U>{
+public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>,EagerToQueue<U>{
 	
 
 
@@ -58,19 +58,19 @@ public class SimpleReactStreamImpl<U> implements EagerSimpleReactStream<U>,Eager
 	}
 	
 	@Override
-	public EagerSimpleReactStream<U> withAsync(boolean b) {
+	public SimpleReactStream<U> withAsync(boolean b) {
 		
 		return this.withSimpleReact(this.simpleReact.withAsync(b));
 	}
 	@Override
-	public <R> EagerSimpleReactStream<R> thenSync(final Function<U, R> fn){
-		return EagerSimpleReactStream.super.thenSync(fn);
+	public <R> SimpleReactStream<R> thenSync(final Function<U, R> fn){
+		return SimpleReactStream.super.thenSync(fn);
 	}
 
 	@Override
-	public <T, R> EagerSimpleReactStream<R> allOf(final Collector collector,
+	public <T, R> SimpleReactStream<R> allOf(final Collector collector,
 			final Function<T, R> fn){
-		return EagerSimpleReactStream.super.allOf(collector,fn);
+		return SimpleReactStream.super.allOf(collector,fn);
 	}
 
 	@Override
@@ -98,14 +98,14 @@ public class SimpleReactStreamImpl<U> implements EagerSimpleReactStream<U>,Eager
 
 
 	@Override
-	public EagerSimpleReactStream<U> withTaskExecutor(Executor e) {
+	public SimpleReactStream<U> withTaskExecutor(Executor e) {
 		return this.withSimpleReact(simpleReact.withExecutor(e));
 	}
 
 
 
 	@Override
-	public EagerSimpleReactStream<U> withRetrier(RetryExecutor retry) {
+	public SimpleReactStream<U> withRetrier(RetryExecutor retry) {
 		return this.withSimpleReact(simpleReact.withRetrier(retry));
 	}
 }

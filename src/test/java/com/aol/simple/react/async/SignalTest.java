@@ -1,6 +1,6 @@
 package com.aol.simple.react.async;
 
-import static com.aol.simple.react.stream.traits.EagerFutureStream.parallel;
+import static com.aol.simple.react.stream.traits.BaseSimpleReactStream.parallel;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -57,7 +57,7 @@ public class SignalTest {
 					.then(it -> "*" +it)
 					.peek(it -> incrementFound())
 					.peek(it -> System.out.println(it))
-					.collect(Collectors.toList());
+					.block();
 		} finally{
 			assertThat(found, is(3));
 		}

@@ -42,11 +42,11 @@ public class FutureStreamSubscriber<T> implements Subscriber<T> {
 					.withSubscription(subscription)
 					.fromStream(queue.stream(subscription));
 	}
-	protected Queue queue;
+	protected volatile Queue queue;
 	@Getter
 	volatile Subscription subscription;
 	@Getter
-	protected LazyFutureStream stream;
+	protected volatile LazyFutureStream stream;
 	
 	@Override
 	public void onSubscribe(final Subscription s) {
@@ -60,8 +60,7 @@ public class FutureStreamSubscriber<T> implements Subscriber<T> {
 		queue = new Queue(){
 			public T get(){
 				s.request(1);
-				
-					return (T)super.get();	
+				return (T)super.get();	
 			}
 		};
 	

@@ -13,7 +13,6 @@ import java.util.function.Supplier;
 
 import org.junit.Test;
 
-import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 
@@ -23,7 +22,7 @@ public class ReactPoolTest {
 	@Test
 	public void testReact(){
 		
-		ReactPool<EagerReact> pool = ReactPool.boundedPool(asList(new EagerReact(),new EagerReact()));
+		ReactPool<SimpleReact> pool = ReactPool.boundedPool(asList(new SimpleReact(),new SimpleReact()));
 		List<String> result = pool.react( (er) -> er.react(()->"hello",()->"world").block() );
 		assertThat(result.size(),is(2));
 	}
@@ -34,17 +33,17 @@ public class ReactPoolTest {
 	
 	@Test
 	public void testRoundRobin(){
-		EagerReact react1 = mock(EagerReact.class);
-		EagerReact react2 = mock(EagerReact.class);
+		SimpleReact react1 = mock(SimpleReact.class);
+		SimpleReact react2 = mock(SimpleReact.class);
 		
-		ReactPool<EagerReact> pool = ReactPool.boundedPool(asList(react1,react2));
+		ReactPool<SimpleReact> pool = ReactPool.boundedPool(asList(react1,react2));
 		List<Supplier<String>> suppliers = Arrays.asList(()->"hello",()->"world" );
-		pool.react( (er) -> er.react(suppliers));
-		pool.react( (er) -> er.react(suppliers));
+		pool.react( (er) -> er.reactCollection(suppliers));
+		pool.react( (er) -> er.reactCollection(suppliers));
 		
 		
-		verify(react1,times(1)).react(suppliers);
-		verify(react2,times(1)).react(suppliers);
+		verify(react1,times(1)).reactCollection(suppliers);
+		verify(react2,times(1)).reactCollection(suppliers);
 	}
 	
 	
@@ -74,21 +73,21 @@ public class ReactPoolTest {
 	}
 	@Test
 	public void testUnboundedRoundRobin(){
-		EagerReact react1 = mock(EagerReact.class);
-		EagerReact react2 = mock(EagerReact.class);
-		EagerReact react3 = mock(EagerReact.class);
+		SimpleReact react1 = mock(SimpleReact.class);
+		SimpleReact react2 = mock(SimpleReact.class);
+		SimpleReact react3 = mock(SimpleReact.class);
 		
-		ReactPool<EagerReact> pool = ReactPool.unboundedPool(asList(react1,react2));
+		ReactPool<SimpleReact> pool = ReactPool.unboundedPool(asList(react1,react2));
 		pool.populate(react3);
 		List<Supplier<String>> suppliers = Arrays.asList( ()->"hello",()->"world" );
-		pool.react( (er) -> er.react(suppliers));
-		pool.react( (er) -> er.react(suppliers));
-		pool.react( (er) -> er.react(suppliers));
+		pool.react( (er) -> er.reactCollection(suppliers));
+		pool.react( (er) -> er.reactCollection(suppliers));
+		pool.react( (er) -> er.reactCollection(suppliers));
 		
 		
-		verify(react1,times(1)).react(suppliers);
-		verify(react2,times(1)).react(suppliers);
-		verify(react3,times(1)).react(suppliers);
+		verify(react1,times(1)).reactCollection(suppliers);
+		verify(react2,times(1)).reactCollection(suppliers);
+		verify(react3,times(1)).reactCollection(suppliers);
 		
 	}
 	

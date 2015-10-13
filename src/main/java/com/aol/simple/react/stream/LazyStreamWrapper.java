@@ -1,15 +1,14 @@
 package com.aol.simple.react.stream;
 
-import java.util.ArrayDeque;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import uk.co.real_logic.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.experimental.Wither;
+import uk.co.real_logic.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.async.future.FinalPipeline;
 import com.aol.simple.react.async.future.PipelineBuilder;
@@ -28,18 +27,23 @@ public class LazyStreamWrapper<U> implements StreamWrapper<U> {
 	public LazyStreamWrapper(Stream values, LazyReact react){
 		
 		this.values = values;
-		this.pipeline = new PipelineBuilder(react.isAutoOptimize(),react.getExecutor());
+		this.pipeline = new PipelineBuilder(react.isAutoOptimize(),
+				react.getExecutor(),react.isAutoMemoize(),react.getMemoizeCache());
 		
 		this.react = react;
 		if(react.isPoolingActive())
 			pool = new FuturePool(new ManyToOneConcurrentArrayQueue(react.getMaxActive().getMaxActive()), react.getMaxActive().getMaxActive());
 		else
 			pool = null;
+		
+		
 	}
 	
 	
-		
 	
+	public SequenceM<FastFuture<U>> injectFuturesSeq(){
+		return (SequenceM)SequenceM.fromStream(injectFutures());
+	}
 	public Stream<FastFuture> injectFutures(){
 		FastFuture f= pipeline.build();
 		Function<Object,FastFuture> factory = v -> {
@@ -80,8 +84,8 @@ public class LazyStreamWrapper<U> implements StreamWrapper<U> {
 		pipeline = action.apply(pipeline);
 		return (LazyStreamWrapper)this;
 	}
-	public <R> LazyStreamWrapper<R> withNewStream(Stream<R> values){
-		return new LazyStreamWrapper((Stream)values,react);
+	public <R> LazyStreamWrapper<R> withNewStreamFutures(Stream<R> values){
+		return new LazyStreamWrapper((Stream)values,react.withStreamOfFutures(true));
 	}
 	public <R> LazyStreamWrapper<R> withNewStream(Stream<R> values,LazyReact react){
 		return new LazyStreamWrapper((Stream)values,react.withStreamOfFutures(false));

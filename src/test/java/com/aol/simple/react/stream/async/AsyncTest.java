@@ -5,10 +5,8 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.traits.EagerSimpleReactStream;
 
 public class AsyncTest {
 
@@ -22,11 +20,11 @@ public class AsyncTest {
 	}
 	@Test
 	public void testSequentialEager(){
-		assertThat(EagerReact.sequentialBuilder().isAsync(),is(false));
+		assertThat(SimpleReact.sequentialBuilder().isAsync(),is(false));
 	}
 	@Test
 	public void testSequentialCommonEager(){
-		assertThat(EagerReact.sequentialCommonBuilder().isAsync(),is(false));
+		assertThat(SimpleReact.sequentialCommonBuilder().isAsync(),is(false));
 	}
 	@Test
 	public void testSequentialSimple(){
@@ -50,15 +48,15 @@ public class AsyncTest {
 	}
 	@Test
 	public void testParallelEager(){
-		assertThat(EagerReact.parallelBuilder().isAsync(),is(true));
+		assertThat(SimpleReact.parallelBuilder().isAsync(),is(true));
 	}
 	@Test
 	public void testParallelEagerInt(){
-		assertThat(EagerReact.parallelBuilder(2).isAsync(),is(true));
+		assertThat(SimpleReact.parallelBuilder(2).isAsync(),is(true));
 	}
 	@Test
 	public void testParallelCommonEager(){
-		assertThat(EagerReact.parallelCommonBuilder().isAsync(),is(true));
+		assertThat(SimpleReact.parallelCommonBuilder().isAsync(),is(true));
 	}
 	@Test
 	public void testParallelSimple(){

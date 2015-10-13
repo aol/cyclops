@@ -107,7 +107,7 @@ public class Pipes {
 	 * @param publisher Reactive Streams publisher  to push data onto this pipe
 	 */
 	public static<T> void publishToAsync(Object key,Publisher<T> publisher){
-		SequentialElasticPools.eagerReact.react(er->er.of(publisher)
+		SequentialElasticPools.simpleReact.react(er->er.of(publisher)
 								.peek(p->publishTo(key,p)));
 	}
 	

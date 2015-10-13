@@ -1,20 +1,17 @@
 package com.aol.simple.react.simple;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class StreamTest {
 
@@ -26,7 +23,7 @@ public class StreamTest {
 		
 		
 		List<String> strings = new SimpleReact()
-								.<String>fromStream(new EagerReact()
+								.<String>fromStream(new SimpleReact()
 												.<Integer> react(() -> 1, () -> 2, () -> 3)
 												.with(it -> "*" + it).stream())
 								.then(it ->  it + "*")

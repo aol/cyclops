@@ -80,9 +80,11 @@ public class AutoclosingTest {
 			List<String> results = new LazyReact().reactInfinitely(()->nextValues()).withQueueFactory(()-> eventQueue())
 														  .flatMap(list -> list.stream())
 														  .peek(System.out::println)
+														  .actOnFutures()
 														  .limit(2)
 														  .flatMap(list -> list.stream())
 														  .peek(System.out::println)
+														  .actOnFutures()
 														  .limit(1)
 														  .collect(Collectors.toList());
 			

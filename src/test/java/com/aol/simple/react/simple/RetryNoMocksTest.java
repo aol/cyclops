@@ -13,7 +13,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
 
-import com.aol.simple.react.stream.eager.EagerReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
@@ -28,7 +27,7 @@ public class RetryNoMocksTest {
 		count = new AtomicInteger(0);
 		errors = Collections.synchronizedCollection(new ArrayList<>());
 		final RetryExecutor executor = new AsyncRetryExecutor(Executors.newSingleThreadScheduledExecutor());
-		List<Integer> result = new EagerReact().react(()->1,()->2,()->3)
+		List<Integer> result = new SimpleReact().react(()->1,()->2,()->3)
 												.withRetrier(executor)
 												.capture(e -> errors.add(e))
 												.retry(it -> throwOrReturn(it))

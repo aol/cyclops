@@ -43,4 +43,15 @@ public class AlwaysContinue implements Continueable{
 		
 		
 	}
+
+	@Override
+	public long timeLimit() {
+		
+		return -1;
+	}
+
+	@Override
+	public void registerTimeLimit(long nanos) {
+		
+	}
 }

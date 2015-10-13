@@ -1,6 +1,6 @@
 package com.aol.simple.react.async;
 
-import static com.aol.simple.react.stream.traits.EagerFutureStream.parallel;
+import static com.aol.simple.react.stream.traits.BaseSimpleReactStream.parallel;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -21,8 +22,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.traits.EagerSimpleReactStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
+import com.aol.simple.react.stream.traits.BaseSimpleReactStream;
 
 public class TopicTest {
 
@@ -58,17 +59,17 @@ public class TopicTest {
 			
 		//read from the topic concurrently in 2 threads
 		
-		SimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
+		BaseSimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
 			.react(()->parallel()
 				.fromStream(topic.stream())
 				.then(it -> it + "*")
-				.collect(Collectors.toList() ),
+				.block(),
 				
 				()->parallel()
 					.fromStream(topic.stream())
 					.then(it -> it + "!")
 					.peek(it->sleep(10)) //make sure takes slightly longer to complete
-					.collect( Collectors.toSet() )
+					.block( Collectors.toSet() )
 				
 				);
 		 
@@ -145,17 +146,17 @@ public class TopicTest {
 		
 		Topic<Integer> topic = new Topic<>();
 		
-		SimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
+		BaseSimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
 			.react(()->parallel()
 				.fromStream(topic.streamCompletableFutures())
 				.then(it -> it + "*")
-				.collect(Collectors.toList() ),
+				.block(Collectors.toList() ),
 				
 				()->parallel()
 					.fromStream(topic.streamCompletableFutures())
 					.then(it -> it + "!")
 				
-					.collect( Collectors.toSet())
+					.block( Collectors.toSet())
 				
 				);
 		
@@ -190,17 +191,17 @@ public class TopicTest {
 		
 		Topic<Integer> topic = new Topic<>();
 		
-		SimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
+		BaseSimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
 			.react(()->parallel()
 				.fromStream(topic.stream())
 				.then(it -> it + "*")
-				.collect(Collectors.toList() ),
+				.block(Collectors.toList() ),
 				
 				()->parallel()
 					.fromStream(topic.stream())
 					.then(it -> it + "!")
 				
-					.collect( Collectors.toSet() )
+					.block( Collectors.toSet() )
 				
 				);
 		

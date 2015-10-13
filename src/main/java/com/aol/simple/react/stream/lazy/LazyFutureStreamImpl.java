@@ -1,14 +1,46 @@
 package com.aol.simple.react.stream.lazy;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.net.URL;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
+import java.util.Spliterator;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntFunction;
+import java.util.function.ToLongFunction;
+import java.util.stream.BaseStream;
 import java.util.stream.Collector;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
+
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
+import org.jooq.lambda.tuple.Tuple4;
+import org.reactivestreams.Subscriber;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -17,6 +49,14 @@ import lombok.Getter;
 import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
 
+import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.sequence.HeadAndTail;
+import com.aol.cyclops.sequence.HotStream;
+import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.sequence.future.FutureOperations;
+import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.async.factories.QueueFactory;
 import com.aol.simple.react.async.future.FastFuture;
@@ -25,9 +65,11 @@ import com.aol.simple.react.async.subscription.Subscription;
 import com.aol.simple.react.collectors.lazy.BatchingCollector;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.config.MaxActive;
+import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
 import com.aol.simple.react.stream.LazyStreamWrapper;
 import com.aol.simple.react.stream.ReactBuilder;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
+import com.aol.simple.react.stream.traits.BaseSimpleReactStream;
 import com.aol.simple.react.threads.ReactPool;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -39,6 +81,9 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	
 	
+
+
+
 
 
 	private final Optional<Consumer<Throwable>> errorHandler;
@@ -157,4 +202,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		this.subscription.closeAll();
 		//also need to mark cancelled =true and check during collection
 	}
+
+
+
 }

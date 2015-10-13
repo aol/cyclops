@@ -1,7 +1,10 @@
 package com.aol.simple.react.lazy;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertThat;
 
@@ -14,12 +17,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.tuple.Tuple2;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.simple.react.base.BaseSequentialSeqTest;
 import com.aol.simple.react.stream.lazy.LazyReact;
-import com.aol.simple.react.stream.traits.FutureStream;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class LazySequentialSeqAgronaTest extends BaseSequentialSeqTest {
@@ -30,11 +31,11 @@ public class LazySequentialSeqAgronaTest extends BaseSequentialSeqTest {
 	}
 	@Override
 	protected <U> LazyFutureStream<U> ofThread(U... array) {
-		return LazyFutureStream.ofThread(array).boundedWaitFree(1000);
+		return LazyFutureStream.freeThread(array).boundedWaitFree(1000);
 	}
 
 	@Override
-	protected <U> FutureStream<U> react(Supplier<U>... array) {
+	protected <U> LazyFutureStream<U> react(Supplier<U>... array) {
 		return LazyReact.sequentialBuilder().react(array).boundedWaitFree(1000);
 	}
 
@@ -105,7 +106,7 @@ public class LazySequentialSeqAgronaTest extends BaseSequentialSeqTest {
 	@Test
 	public void testZipWithFutures(){
 		Stream stream = of("a","b");
-		List<Tuple2<Integer,String>> result = of(1,2).zipFutures(stream).block();
+		List<Tuple2<Integer,String>> result = of(1,2).actOnFutures().zip(stream).block();
 		
 		assertThat(result,is(asList(tuple(1,"a"),tuple(2,"b"))));
 	}
@@ -114,18 +115,18 @@ public class LazySequentialSeqAgronaTest extends BaseSequentialSeqTest {
 	@Test
 	public void testZipFuturesWithIndex(){
 		
-		List<Tuple2<String,Long>> result = of("a","b").zipFuturesWithIndex().block();
+		List<Tuple2<String,Long>> result = of("a","b").actOnFutures().zipWithIndex().block();
 		
 		assertThat(result,is(asList(tuple("a",0l),tuple("b",1l))));
 	}
 	@Test
 	public void duplicateFutures(){
-		List<String> list = of("a","b").duplicateFutures().v1.block();
+		List<String> list = of("a","b").actOnFutures().duplicate().v1.block();
 		assertThat(list,is(asList("a","b")));
 	}
 	@Test
 	public void duplicateFutures2(){
-		List<String> list = of("a","b").duplicateFutures().v2.block();
+		List<String> list = of("a","b").actOnFutures().duplicate().v2.block();
 		assertThat(list,is(asList("a","b")));
 	}
 }
