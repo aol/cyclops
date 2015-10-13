@@ -24,6 +24,7 @@ LazyFutureStream extends SequenceM which in turn extends [jOOλ Seq](http://www.
 ## SequenceM
 Provides the same advanced Stream-api but implemented as a pure, fast, single-threaded Stream that is suitable for typical CPU bound Stream operations. SequenceM Streams can be executed on the current thread or asynchronously on a targeted alternative thread.
 
+# Stream type overview
 
 | FEATURE                                          | SimpleReact         | SequenceM           | LazyFutureStream    | JDK 8 Stream (sequential) | JDK 8 Stream (parallel) |
 |--------------------------------------------------|---------------------|---------------------|---------------------|---------------------------|-------------------------| 
