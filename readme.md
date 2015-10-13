@@ -10,7 +10,7 @@ simple-react is a set of 3 Streams / Stream-like structures for different Java 8
 
 1. [SimpleReactStream](http://static.javadoc.io/com.aol.simplereact/simple-react/0.99.3/com/aol/simple/react/stream/traits/SimpleReactStream.html)
 2. [LazyFutureStream](http://static.javadoc.io/com.aol.simplereact/simple-react/0.99.3/com/aol/simple/react/stream/traits/LazyFutureStream.html)
-3. [SequenceM](http://www.javadoc.io/doc/com.aol.cyclops/cyclops-sequence-api/6.0.2) 
+3. [SequenceM](http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/6.0.2/com/aol/cyclops/sequence/SequenceM.html) 
 
 ## SimpleReactStream
 SimpleReact Stream provides a simple API for aggregate operations on CompletableFutures, as such is particularly well suited to asynchronous, multi-threaded tasks - such as simultaneously performing multiple I/O actions. Implemented under the hood as a Stream of CompletableFutures the SimpleReact Stream has three areas of focus. 
