@@ -67,7 +67,6 @@ import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.async.factories.QueueFactory;
 import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.async.subscription.Continueable;
-import com.aol.simple.react.base.BaseSequentialSQLTest.X;
 import com.aol.simple.react.collectors.lazy.LazyResultConsumer;
 import com.aol.simple.react.config.MaxActive;
 import com.aol.simple.react.exceptions.SimpleReactFailedStageException;
@@ -1350,7 +1349,6 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * 
 	 * gives a Stream of ("a","b")
 	 * 
-	 * @see com.aol.simple.react.stream.traits.FutureStream#ofType(java.lang.Class)
 	 */
 	@Override
 	default <U> LazyFutureStream<U> ofType(Class<U> type) {
@@ -1390,8 +1388,9 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 */
 	@Override
 	default LazyFutureStream<U> limit(long maxSize) {
-	
-		return fromStream(SequenceM.fromStream(toQueue().stream(getSubscription())).limit(maxSize));
+		Continueable sub = this.getSubscription();
+		sub.registerLimit(maxSize);
+		return fromStream(SequenceM.fromStream(toQueue().stream(sub)).limit(maxSize));
 		
 
 	}
@@ -1411,10 +1410,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	default LazyFutureStream<U> skip(long n) {
 		Continueable sub = this.getSubscription();
 		sub.registerSkip(n);
-		LazyStreamWrapper lastActive = getLastActive();
-		LazyStreamWrapper limited = lastActive.withStream(lastActive.stream().skip(
-				n));
-		return this.withLastActive(limited);
+		return fromStream(SequenceM.fromStream(toQueue().stream(sub)).skip(n));
 
 	}
 
@@ -2649,7 +2645,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * @see com.aol.cyclops.sequence.SequenceM#toStream()
 	 */
 	@Override
-	default Stream<U> toStream() {
+	default <U> Stream<U> toStream() {
 		return (Stream<U>)toQueue().stream(getSubscription());
 	}
 
@@ -2903,7 +2899,8 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 */
 	@Override
 	default LazyFutureStream<U> limit(long time, TimeUnit unit) {
-		return  fromStream(SequenceM.fromStream(toQueue().stream(getSubscription()))
+		getSubscription().registerTimeLimit(unit.toNanos(time));
+		return  fromStream(toQueue().stream(getSubscription())
 				.limit(time,unit));
 	}
 
@@ -2947,7 +2944,6 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 *  
 	 * }
 	 * </pre>
-	 * @param e Executor to execute this SequenceM on
 	 * @return a Connectable HotStream
 	 */
 	default HotStream<U> hotStream() {

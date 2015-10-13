@@ -60,7 +60,6 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U>{
 	 * 
 	 * gives a Stream of ("a","b")
 	 * 
-	 * @see com.aol.simple.react.stream.traits.FutureStream#ofType(java.lang.Class)
 	 */
 	default <U> BaseSimpleReactStream<U> ofType(Class<U> type) {
 		return filterSync(type::isInstance).thenSync(t -> (U) t);
@@ -96,7 +95,6 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U>{
 	 * 
 	 * </code>
 	 *
-	 * @see #intersperse(Stream, Object)
 	 */
 	default BaseSimpleReactStream<U> intersperse(U value) {
 		return flatMap(t -> Stream.of(value, t)).skip(1);

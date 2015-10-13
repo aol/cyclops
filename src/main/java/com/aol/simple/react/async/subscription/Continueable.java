@@ -16,4 +16,7 @@ public interface Continueable {
 	public void closeQueueIfFinishedStateless(Queue queue);
 
 	public void closeAll();
+
+	public long timeLimit();
+	public void registerTimeLimit(long nanos);
 }

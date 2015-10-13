@@ -4,6 +4,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.simple.react.async.subscription.Continueable;
 
 /**
  * 
@@ -33,6 +34,10 @@ public interface Adapter<T> {
 	 * @return Stream of data
 	 */
 	public SequenceM<T> stream();
+	/**
+	 * @return Stream of data
+	 */
+	public SequenceM<T> stream(Continueable s);
 	/**
 	 * @return Stream of CompletableFutures that can be used as input into a SimpleReact concurrent dataflow
 	 */

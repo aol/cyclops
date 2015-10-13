@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +33,19 @@ public class LazyPipesTest {
 		queue.add("world");
 		Pipes.register("hello",queue);
 		assertThat(PipesToLazyStreams.streamIOBound("hello").limit(1).toList(),equalTo(Arrays.asList("world")));
+
+	
+	
+	}
+	@Test
+	public void testStreamIOTime() {
+		Queue queue = new Queue();
+		queue.add("world");
+		Pipes.register("hello",queue);
+		assertThat(PipesToLazyStreams.streamIOBound("hello").limit(1, TimeUnit.SECONDS).toList(),equalTo(Arrays.asList("world")));
+
+	
+	
 	}
 	@Test
 	public void testStreamCPU() {

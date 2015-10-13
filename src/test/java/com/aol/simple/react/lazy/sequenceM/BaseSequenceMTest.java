@@ -60,7 +60,7 @@ public  class BaseSequenceMTest {
 	
 	@Test
 	public void toStream(){
-		List<Integer> list = of(1,2,3).toStream().collect(Collectors.toList());
+		List<Integer> list = LazyFutureStream.of(1,2,3).<Integer>toStream().collect(Collectors.toList());
 		assertThat(list,equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test

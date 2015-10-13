@@ -1,9 +1,9 @@
+
 package com.aol.simple.react.lazy.futures;
 
-import static com.aol.cyclops.sequence.SequenceM.of;
+
 import static com.aol.simple.react.stream.traits.LazyFutureStream.of;
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -13,7 +13,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.jooq.lambda.tuple.Tuple2;
@@ -22,7 +21,6 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.sequence.SequenceM;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class ZippingFuturesTest {

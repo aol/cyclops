@@ -63,13 +63,13 @@ public class ReductionTest {
 	public void reduceWithMonoidStreamJoin(){
 		LazyFutureStream.of("hello","2","world","4").join(",");
 		assertThat(LazyFutureStream.of("hello","2","world","4").reduce(Stream.of(Reducers.toString(","))),
-				equalTo(",hello,2,world,4"));
+				equalTo(Arrays.asList(",hello,2,world,4")));
 	}
 	@Test
 	public void reduceWithMonoidListJoin(){
 		LazyFutureStream.of("hello","2","world","4").join(",");
 		assertThat(LazyFutureStream.of("hello","2","world","4").reduce(Arrays.asList(Reducers.toString(","))),
-				equalTo(",hello,2,world,4"));
+				equalTo(Arrays.asList(",hello,2,world,4")));
 	}
 	@Test
     public void testCollectors() {

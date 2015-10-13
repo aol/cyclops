@@ -72,7 +72,7 @@ public class Queue<T> implements Adapter<T> {
 	@Getter
 	private final Signal<Integer> sizeSignal;
 	
-	
+	private volatile Continueable sub;
 	private ContinuationStrategy continuationStrategy;
 	private volatile boolean shuttingDown = false;
 
@@ -131,16 +131,18 @@ public class Queue<T> implements Adapter<T> {
 		return SequenceM.fromStream(closingStream(this::get,new AlwaysContinue()));
 	}
 	public SequenceM<T> stream(Continueable s) {
+		this.sub=s;
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
 		return SequenceM.fromStream(closingStream(this::get,s));
 	}
+	
 	public SequenceM<Collection<T>> streamBatchNoTimeout(Continueable s,Function<Supplier<T>,Supplier<Collection<T>>> batcher) {
-		
+		this.sub=s;
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
 		return SequenceM.fromStream(closingStreamBatch(batcher.apply(()->ensureOpen(this.timeout,this.timeUnit)),s));
 	}
 	public SequenceM<Collection<T>> streamBatch(Continueable s,Function<BiFunction<Long,TimeUnit,T>,Supplier<Collection<T>>> batcher) {
-		
+		this.sub=s;
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
 		return SequenceM.fromStream(closingStreamBatch(batcher.apply((timeout,timeUnit)->ensureOpen(timeout,timeUnit)),s));
 	}
@@ -150,7 +152,7 @@ public class Queue<T> implements Adapter<T> {
 		return SequenceM.fromStream(closingStream(batcher.apply(()->ensureOpen(this.timeout,this.timeUnit)),s));
 	}
 	public SequenceM<CompletableFuture<T>> streamControlFutures(Continueable s,Function<Supplier<T>,CompletableFuture<T>> batcher) {
-		
+		this.sub=s;
 		listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
 		return SequenceM.fromStream(closingStreamFutures(()->batcher.apply(()->ensureOpen(this.timeout,this.timeUnit)),s));
 	}
@@ -222,8 +224,16 @@ public class Queue<T> implements Adapter<T> {
 			if(!open && queue.size()==0)
 				throw new ClosedQueueException();
 		
-			if (timeout == -1)
-				data = ensureClear(consumerWait.take(()->queue.take()));
+			if (timeout == -1){
+				if(this.sub!=null && this.sub.timeLimit()>-1){
+					data =ensureClear(consumerWait.take(()->queue.poll(sub.timeLimit(),TimeUnit.NANOSECONDS)));
+					if (data == null)
+						throw new QueueTimeoutException();
+				}
+				
+				else
+					data = ensureClear(consumerWait.take(()->queue.take()));
+			}
 			else {
 				data = ensureClear(consumerWait.take(()->queue.poll(timeout, timeUnit)));
 				if (data == null)

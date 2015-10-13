@@ -1,6 +1,6 @@
 package com.aol.simple.react.lazy.sequenceM;
 
-import static com.aol.cyclops.sequence.SequenceM.of;
+
 import static com.aol.simple.react.stream.traits.LazyFutureStream.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;

@@ -3,6 +3,7 @@ package com.aol.simple.react.async.pipes;
 import static com.aol.simple.react.async.pipes.Pipes.registered;
 
 import com.aol.simple.react.async.Adapter;
+import com.aol.simple.react.async.subscription.Subscription;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class PipesToLazyStreams {
@@ -30,7 +31,9 @@ public class PipesToLazyStreams {
 	 */
 	public static <V> LazyFutureStream<V> registerForCPU(Object key, Adapter<V> adapter){
 		registered.put(key, adapter);
-		return LazyReactors.cpuReact.from(adapter.stream());
+		Subscription sub = new Subscription();
+		return LazyReactors.cpuReact.from(adapter.stream(sub))
+				.withSubscription(sub);
 	}
 	/**
 	 * Register a Queue, and get back a listening LazyFutureStream optimized for IO Bound operations
@@ -54,7 +57,9 @@ public class PipesToLazyStreams {
 	 */
 	public static <V> LazyFutureStream<V> registerForIO(Object key, Adapter<V> adapter){
 		registered.put(key, adapter);
-		return LazyReactors.ioReact.from(adapter.stream());
+		Subscription sub = new Subscription();
+		return LazyReactors.ioReact.from(adapter.stream(sub))
+				.withSubscription(sub);
 	}
 	/**
 	 * @param key : Queue identifier
@@ -62,7 +67,9 @@ public class PipesToLazyStreams {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <V> LazyFutureStream<V> stream(Object key){
-		return LazyFutureStream.lazyFutureStream(((Adapter)registered.get(key)).stream());
+		Subscription sub = new Subscription();
+		return LazyFutureStream.lazyFutureStream(((Adapter)registered.get(key)).stream(sub))
+							.withSubscription(sub);
 	}
 	/**
 	 * @param key : Queue identifier
@@ -70,7 +77,9 @@ public class PipesToLazyStreams {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <V> LazyFutureStream<V> streamIOBound(Object key){
-		return LazyReactors.ioReact.from(((Adapter)registered.get(key)).stream());
+		Subscription sub = new Subscription();
+		return LazyReactors.ioReact.from(((Adapter)registered.get(key)).stream(sub))
+							.withSubscription(sub);
 	}
 	/**
 	 * @param key : Queue identifier
@@ -78,6 +87,8 @@ public class PipesToLazyStreams {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <V> LazyFutureStream<V> streamCPUBound(Object key){
-		return LazyReactors.cpuReact.from(((Adapter)registered.get(key)).stream());
+		Subscription sub = new Subscription();
+		return LazyReactors.cpuReact.from(((Adapter)registered.get(key)).stream(sub))
+				.withSubscription(sub);
 	}
 }

@@ -89,7 +89,6 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
 	 * @return 
 	 * 
 	 *
-	 * @see #splitAt(Stream, long)
 	 */
 	default Tuple2<SimpleReactStream<U>, SimpleReactStream<U>> splitAt(
 			long position) {
@@ -182,7 +181,6 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
 	 *  [["veryQuick",0],["takesALotOfTime",1]]
 	 * </code>
 	 * </pre>
-	 * @see #zipWithIndex(Stream)
 	 */
 	default SimpleReactStream<Tuple2<U,Long>> zipWithIndex() {
 

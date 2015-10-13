@@ -7,16 +7,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
 
 import com.aol.simple.react.stream.lazy.LazyReact;
 
 public class AutoMemoizationTest {
-   volatile int called = 0;
+   AtomicInteger called = new AtomicInteger(0);
 	@Test
 	public void autoMemoize(){
-		called=0;
+		called.set(0);
 		Map cache = new ConcurrentHashMap<>();
 		LazyReact react = new LazyReact().autoMemoizeOn((key,fn)-> cache.computeIfAbsent(key,fn));
 		List result = react.of(1,1,1,1)
@@ -28,12 +29,12 @@ public class AutoMemoizationTest {
 						
 	    
 		System.out.println(result);
-		assertThat(called,equalTo(1));
+		assertThat(called.get(),equalTo(1));
 		assertThat(result.size(),equalTo(4));
 	  }
 	@Test
 	public void autoMemoizeOff(){
-		called=0;
+		called.set(0);
 		Map cache = new ConcurrentHashMap<>();
 		LazyReact react = new LazyReact();
 		List result = react.of(1,1,1,1)
@@ -44,13 +45,14 @@ public class AutoMemoizationTest {
 						
 	    
 		System.out.println(result);
-		assertThat(called,greaterThan(3));
+		
 		assertThat(result.size(),equalTo(4));
+		assertThat(called.get(),greaterThan(3));
 	  }
 	
 	@Test
 	public void autoMemoizeSet(){
-		called=0;
+		called.set(0);
 		Map cache = new ConcurrentHashMap<>();
 		LazyReact react = new LazyReact().autoMemoizeOn((key,fn)-> cache.computeIfAbsent(key,fn));
 		Set<Integer> result = react.of(1,1,1,1)
@@ -61,11 +63,11 @@ public class AutoMemoizationTest {
 						
 	    
 		System.out.println(result);
-		assertThat(called,equalTo(1));
+		assertThat(called.get(),equalTo(1));
 		assertThat(result.size(),equalTo(1));
 	  }
 	private int calc(int in){
-		called++;
+		called.incrementAndGet();
 		return in*2;
 	}
 }

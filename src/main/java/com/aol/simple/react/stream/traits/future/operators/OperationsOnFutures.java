@@ -1,17 +1,5 @@
 package com.aol.simple.react.stream.traits.future.operators;
 
-import static com.aol.simple.react.stream.traits.LazyFutureStream.of;
-import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +13,6 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -33,7 +20,6 @@ import org.jooq.lambda.tuple.Tuple4;
 
 import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.stream.LazyStreamWrapper;
@@ -183,6 +169,7 @@ public interface OperationsOnFutures<T> {
 		 assertTrue(copies.v4.anyMatch(i->i==2));
 	 * 
 	 * }
+	 * </pre>
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -570,7 +557,7 @@ public interface OperationsOnFutures<T> {
 	 * 
 	 * 
 	 * 
-	 * @param num
+	 * @param n
 	 *            Number of elemenets to skip
 	 * @return Stream with elements skipped
 	 */
@@ -590,7 +577,7 @@ public interface OperationsOnFutures<T> {
 	 * {@code assertThat(of(1,2,3,4,5).actOnFutures().limit(2).collect(Collectors.toList()).size(),is(2));}
 	 * </pre>
 	 * 
-	 * @param num
+	 * @param maxSize
 	 *            Limit element size to num
 	 * @return Limited Stream
 	 */
@@ -803,7 +790,7 @@ public interface OperationsOnFutures<T> {
 	 * 
 	 * @param values
 	 *            to append
-	 * @return LazyFutureStream<T> with appended values
+	 * @return LazyFutureStream with appended values
 	 */
 	default LazyFutureStream<T> append(T... values) {
 		return fromStreamOfFutures(this
@@ -853,6 +840,7 @@ public interface OperationsOnFutures<T> {
 	 * 
 	 * 						assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
 	 * }
+	 * </pre>
 	 * @param values to prepend
 	 * @return SequenceM with values prepended
 	 */
@@ -1036,7 +1024,7 @@ public interface OperationsOnFutures<T> {
 	 * 										.collect(Collectors.toList()),equalTo(Arrays.asList(4,5)));
 	 * 
 	 * }
-	 * 
+	 * </pre>
 	 * @param num of elements to return (last elements)
 	 * @return SequenceM limited to last num elements
 	 */
@@ -1199,7 +1187,6 @@ public interface OperationsOnFutures<T> {
      * }
      * </pre>
      *
-     * @see #slice(Stream, long, long)
      */
 	default LazyFutureStream<T> slice(long from, long to) {
 		return fromStreamOfFutures(this.getLastActive().injectFuturesSeq()

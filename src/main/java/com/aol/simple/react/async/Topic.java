@@ -18,6 +18,7 @@ import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.simple.react.async.subscription.Continueable;
 
 /**
  * A class that can accept input streams and generate output streams where data sent in the Topic is guaranteed to be
@@ -110,6 +111,12 @@ public class Topic<T> implements Adapter<T> {
 		
 		
 		return connect(q -> q.stream());
+		
+	}
+	public SequenceM<T> stream(Continueable s){
+		
+		
+		return connect(q -> q.stream(s));
 		
 	}
 
