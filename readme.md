@@ -8,7 +8,11 @@
 
 simple-react is a set of 3 Streams / Stream-like structures for different Java 8 use cases. They are 
 
-## SimpleReact
+1. SimpleReactStream
+2. LazyFutureStream
+3. SequenceM 
+
+## SimpleReactStream
 SimpleReact Stream provides a simple API for aggregate operations on CompletableFutures, as such is particularly well suited to asynchronous, multi-threaded tasks - such as simultaneously performing multiple I/O actions. Implemented under the hood as a Stream of CompletableFutures the SimpleReact Stream has three areas of focus. 
 1. Those tasks that can be modelled as chain of actions for each CompletableFuture. 
 2. Group operations on the Futures themselves (such as anyOf / allOf)
