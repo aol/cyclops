@@ -29,6 +29,10 @@ public class ToStreamTest {
         assertThat(ToStream.toStream(Stream.of(1, 2, 3, 4)).collect(Collectors.toList()).size(), is(4));
 
     }
+    @Test
+    public void testToSequenceM() throws Exception {
+        assertThat(ToStream.toSequenceM(Stream.of(1, 2, 3, 4)).collect(Collectors.toList()).size(), is(4));
+    }
 
     @Test
     public void testToJooqLambda() throws Exception {

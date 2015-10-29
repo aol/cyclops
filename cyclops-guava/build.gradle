@@ -33,9 +33,9 @@ dependencies {
 	compile project(':cyclops-mixins')
 	compile project(':cyclops-monad-api')
 	compile project(':cyclops-streams')
-	provided 'com.google.guava:guava:18.0'
-	provided group: 'com.aol.simplereact', name:'simple-react', version:'0.99.1'
-	provided 'com.javaslang:javaslang:1.2.2'
+	provided  'com.google.guava:guava:19.0-rc2'
+	provided group: 'com.aol.simplereact', name:'simple-react', version:'0.99.3'
+	provided 'com.javaslang:javaslang:2.0.0-beta'
 	provided 'com.nurkiewicz.lazyseq:lazyseq:0.0.1'
 	provided group: 'org.projectlombok', name: 'lombok', version:'1.14.2'
 	provided "org.functionaljava:functionaljava:4.4"

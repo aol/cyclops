@@ -37,13 +37,13 @@ public class StreamComprehender implements Comprehender<Stream> {
 	public Class getTargetClass() {
 		return Stream.class;
 	}
-	static Stream unwrapOtherMonadTypes(Comprehender<Stream> comp,Object apply){
+	static Stream unwrapOtherMonadTypes(Comprehender<Stream> comp,final Object apply){
 		if(apply instanceof java.util.stream.Stream)
-			return Stream.ofAll( ((java.util.stream.Stream)apply).iterator());
+			return Stream.ofAll( () -> ((java.util.stream.Stream)apply).iterator());
 		if(apply instanceof Iterable)
-			return Stream.ofAll( ((Iterable)apply).iterator());
+			return Stream.ofAll(((Iterable)apply));
 		if(apply instanceof LazySeq){
-			apply = Stream.ofAll(((LazySeq)apply).iterator());
+			return Stream.ofAll(()->((LazySeq)apply).iterator());
 		}
 		if(apply instanceof Collection){
 			return Stream.ofAll((Collection)apply);

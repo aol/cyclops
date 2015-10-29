@@ -4,14 +4,12 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import javaslang.control.Either;
 import javaslang.control.Either.LeftProjection;
-import javaslang.control.Either.RightProjection;
 import javaslang.control.Left;
-import javaslang.control.None;
-import javaslang.control.Right;
 
 import com.aol.cyclops.lambda.api.Comprehender;
+
+import fj.data.Option;
 
 public class LeftProjectionComprehender implements Comprehender<LeftProjection>{
 
@@ -35,7 +33,7 @@ public class LeftProjectionComprehender implements Comprehender<LeftProjection>{
 
 	@Override
 	public LeftProjection empty() {
-		return new Left(null).left().filter(x->false);
+		return new Left(Option.none()).left();
 	}
 
 	@Override

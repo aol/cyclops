@@ -1,17 +1,14 @@
 package com.aol.cyclops.guava;
 
-import javaslang.collection.Stream;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
-import org.junit.Before;
+import java.util.stream.Collectors;
+
 import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.collect.FluentIterable;
-
-import java.util.stream.Collectors;
-
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
 
 /**
  * Created by johnmcclean on 4/8/15.
@@ -30,6 +27,10 @@ public class ToStreamTest {
     public void testToStream() throws Exception {
         assertThat(ToStream.toStream(FluentIterable.of(new Integer[]{1, 2, 3, 4})).collect(Collectors.toList()).size(), is(4));
 
+    }
+    @Test
+    public void testToSequenceM() throws Exception {
+        assertThat(ToStream.toSequenceM(FluentIterable.of(new Integer[]{1, 2, 3, 4})).collect(Collectors.toList()).size(), is(4));
     }
 
     @Test

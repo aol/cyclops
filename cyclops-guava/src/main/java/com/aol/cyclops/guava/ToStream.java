@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
 
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.google.common.collect.FluentIterable;
 import com.nurkiewicz.lazyseq.LazySeq;
@@ -28,7 +29,9 @@ public class ToStream {
     public static <T> LazyFutureStream<T> toFutureStream(FluentIterable<T> s){
         return lazyFutureStream(s.iterator());
     }
-
+    public static <T> SequenceM<T> toSequenceM(FluentIterable<T> s){
+        return SequenceM.fromIterable(()->s.iterator());
+    }
     public static <T> LazySeq<T> toLazySeq(FluentIterable<T> s){
         return LazySeq.of(s.iterator());
     }
