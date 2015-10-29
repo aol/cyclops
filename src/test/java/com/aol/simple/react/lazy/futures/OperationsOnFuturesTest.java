@@ -467,10 +467,14 @@ public class OperationsOnFuturesTest {
 	    } 
 	    @Test
 	    public void testReduce() {
-	       CompletableFuture<Integer> sum = of(1, 2, 3).actOnFutures()
-	        							.reduce((cf1,cf2)-> cf1.thenCombine(cf2, (a,b)->a+b)).get();
+	    	
+	       CompletableFuture<Integer> sum = LazyFutureStream.of(1, 2, 3)
+	    		   											.actOnFutures()
+	    		   											.reduce((cf1,cf2)-> cf1.thenCombine(cf2, (a,b)->a+b)).get();
 
 	        assertThat(sum.join(),equalTo(6));
+	        
+	        
 	    }
 	    @Test
 	    public void testReduceIdentity() {

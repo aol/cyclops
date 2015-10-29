@@ -17,6 +17,7 @@ public class AutoMemoizationTest {
    AtomicInteger called = new AtomicInteger(0);
 	@Test
 	public void autoMemoize(){
+		
 		called.set(0);
 		Map cache = new ConcurrentHashMap<>();
 		LazyReact react = new LazyReact().autoMemoizeOn((key,fn)-> cache.computeIfAbsent(key,fn));
@@ -31,6 +32,8 @@ public class AutoMemoizationTest {
 		System.out.println(result);
 		assertThat(called.get(),equalTo(1));
 		assertThat(result.size(),equalTo(4));
+		
+		
 	  }
 	@Test
 	public void autoMemoizeOff(){

@@ -24,6 +24,7 @@ public class HotStreamTest {
 	public void hotStream() throws InterruptedException{
 		value= null;
 		CountDownLatch latch = new CountDownLatch(1);
+		
 		LazyFutureStream.of(1,2,3)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())

@@ -403,7 +403,7 @@ public interface OperationsOnFutures<T> {
 	 *</pre>
 	 *
 	 */
-	default <T2, T3, T4> SequenceM<Tuple4<T, T2, T3, T4>> zip4(
+	default <T2, T3, T4> LazyFutureStream<Tuple4<T, T2, T3, T4>> zip4(
 			Stream<T2> second, Stream<T3> third, Stream<T4> fourth) {
 		return (LazyFutureStream) fromStreamOfFutures((Stream) this
 				.getLastActive()
@@ -427,7 +427,7 @@ public interface OperationsOnFutures<T> {
 	 *}
 	 *</pre>
 	 */
-	default <T2, T3, T4> SequenceM<Tuple4<T, T2, T3, T4>> zip4Lfs(
+	default <T2, T3, T4> LazyFutureStream<Tuple4<T, T2, T3, T4>> zip4Lfs(
 			LazyFutureStream<T2> second, LazyFutureStream<T3> third, LazyFutureStream<T4> fourth) {
 		return (LazyFutureStream) fromStreamOfFutures((Stream) this
 				.getLastActive()
@@ -675,7 +675,7 @@ public interface OperationsOnFutures<T> {
 	 * 
 	 * @see org.jooq.lambda.Seq#shuffle()
 	 */
-	default SequenceM<T> shuffle() {
+	default LazyFutureStream<T> shuffle() {
 		return fromStreamOfFutures(this.getLastActive().injectFuturesSeq()
 				.shuffle());
 	}

@@ -380,6 +380,7 @@ public abstract class BaseSeqTest {
 
     @Test
     public void testScanLeftStringConcat() {
+    	
         assertThat(of("a", "b", "c").scanLeft("", String::concat).toList().size(),
         		is(4));
     }
