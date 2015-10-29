@@ -31,32 +31,35 @@ public class WindowingTest {
 	
 	@Test
 	public void windowWhile(){
-		assertThat(SequenceM.of(1,2,3,4,5,6)
+		assertThat(LazyFutureStream.of(1,2,3,4,5,6)
 				.windowWhile(i->i%3!=0)
 				.toList().size(),equalTo(2));
-		assertThat(SequenceM.of(1,2,3,4,5,6)
+		assertThat(LazyFutureStream.of(1,2,3,4,5,6)
 				.windowWhile(i->i%3!=0)
 				.toList().get(0).sequenceM().toList(),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void windowUntil(){
-		assertThat(SequenceM.of(1,2,3,4,5,6)
+		
+		
+		
+		assertThat(LazyFutureStream.of(1,2,3,4,5,6)
 				.windowUntil(i->i%3==0)
 				.toList().size(),equalTo(2));
-		assertThat(SequenceM.of(1,2,3,4,5,6)
+		assertThat(LazyFutureStream.of(1,2,3,4,5,6)
 				.windowUntil(i->i%3==0)
 				.toList().get(0).sequenceM().toList(),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void windowUntilEmpty(){
-		assertThat(SequenceM.<Integer>of()
+		assertThat(LazyFutureStream.<Integer>of()
 				.windowUntil(i->i%3==0)
 				.toList().size(),equalTo(0));
 	}
 	@Test
 	public void windowStatefullyWhile(){
 		
-		assertThat(SequenceM.of(1,2,3,4,5,6)
+		assertThat(LazyFutureStream.of(1,2,3,4,5,6)
 				.windowStatefullyWhile((s,i)->s.sequenceM().toList().contains(4) ? true : false)
 				.toList().size(),equalTo(5));
 		
@@ -64,14 +67,14 @@ public class WindowingTest {
 	@Test
 	public void windowStatefullyWhileEmpty(){
 		
-		assertThat(SequenceM.of()
+		assertThat(LazyFutureStream.of()
 				.windowStatefullyWhile((s,i)->s.sequenceM().toList().contains(4) ? true : false)
 				.toList().size(),equalTo(0));
 		
 	}
 	@Test
 	public void sliding() {
-		List<List<Integer>> list = SequenceM.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
+		List<List<Integer>> list = LazyFutureStream.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
 
 		assertThat(list.get(0), hasItems(1, 2));
 		assertThat(list.get(1), hasItems(2, 3));
@@ -79,7 +82,7 @@ public class WindowingTest {
 
 	@Test
 	public void slidingIncrement() {
-		List<List<Integer>> list = SequenceM.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+		List<List<Integer>> list = LazyFutureStream.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
 
 		assertThat(list.get(0), hasItems(1, 2, 3));
 		assertThat(list.get(1), hasItems(3, 4, 5));
@@ -88,7 +91,7 @@ public class WindowingTest {
 	@Test
 	public void grouped() {
 
-		List<List<Integer>> list = SequenceM.of(1, 2, 3, 4, 5, 6).grouped(3).collect(Collectors.toList());
+		List<List<Integer>> list = LazyFutureStream.of(1, 2, 3, 4, 5, 6).grouped(3).collect(Collectors.toList());
 
 		assertThat(list.get(0), hasItems(1, 2, 3));
 		assertThat(list.get(1), hasItems(4, 5, 6));
@@ -99,7 +102,7 @@ public class WindowingTest {
 	public void sliding2() {
 		
 
-		List<List<Integer>> sliding = SequenceM.of(1, 2, 3, 4, 5).sliding(2).toList();
+		List<List<Integer>> sliding = LazyFutureStream.of(1, 2, 3, 4, 5).sliding(2).toList();
 
 		assertThat(sliding, contains(asList(1, 2), asList(2, 3), asList(3, 4), asList(4, 5)));
 	}
@@ -107,7 +110,7 @@ public class WindowingTest {
 	@Test
 	public void slidingOverlap() {
 		
-		List<List<Integer>> sliding = SequenceM.of(1, 2, 3, 4, 5).sliding(3,2).toList();
+		List<List<Integer>> sliding = LazyFutureStream.of(1, 2, 3, 4, 5).sliding(3,2).toList();
 
 		assertThat(sliding, contains(asList(1, 2, 3), asList(3, 4, 5)));
 	}
@@ -116,14 +119,14 @@ public class WindowingTest {
 	public void slidingEmpty() {
 		
 
-		assertThat(SequenceM.of().sliding(1).toList().size(),equalTo(0));
+		assertThat(LazyFutureStream.of().sliding(1).toList().size(),equalTo(0));
 	}
 
 	@Test
 	public void slidingWithSmallWindowAtEnd() {
 		
 
-		List<List<Integer>> sliding = SequenceM.of(1, 2, 3, 4, 5).sliding(2,2).toList();
+		List<List<Integer>> sliding = LazyFutureStream.of(1, 2, 3, 4, 5).sliding(2,2).toList();
 
 		assertThat(sliding, contains(asList(1, 2), asList(3, 4), asList(5)));
 	}
@@ -147,25 +150,25 @@ public class WindowingTest {
 
 	@Test
 	public void groupedShorter() throws Exception {
-		final Streamable<Integer> fixed = Streamable.fromStream(of(5, 7, 9));
-		assertThat(fixed.sequenceM().grouped(4).get(0).v1,equalTo(Arrays.asList(5,7,9)));
-		assertThat(fixed.sequenceM().grouped(4).count(),equalTo(1l));
+		
+		assertThat(of(5, 7, 9).grouped(4).get(0).v1,equalTo(Arrays.asList(5,7,9)));
+		assertThat(of(5, 7, 9).grouped(4).count(),equalTo(1l));
 
 		
 	}
 
 	@Test
 	public void groupedEqualSize() throws Exception {
-		final Streamable<Integer> fixed = Streamable.fromStream(of(5, 7, 9));
-		assertThat(fixed.sequenceM().grouped(3).elementAt(0).get(),equalTo(Arrays.asList(5,7,9)));
-		assertThat(fixed.sequenceM().grouped(3).count(),equalTo(1l));
+		
+		assertThat(of(5, 7, 9).grouped(3).elementAt(0).get(),equalTo(Arrays.asList(5,7,9)));
+		assertThat(of(5, 7, 9).grouped(3).count(),equalTo(1l));
 	}
 
 	@Test
 	public void multipleGrouped() throws Exception {
 		final Streamable<Integer> fixed = Streamable.fromStream(of(5, 7, 9,10));
-		assertThat(fixed.sequenceM().grouped(3).elementAt(0).get(),equalTo(Arrays.asList(5,7,9)));
-		assertThat(fixed.sequenceM().grouped(3).count(),equalTo(2l));
+		assertThat(of(5, 7, 9,10).grouped(3).elementAt(0).get(),equalTo(Arrays.asList(5,7,9)));
+		assertThat(of(5, 7, 9,10).grouped(3).count(),equalTo(2l));
 		
 	}
 

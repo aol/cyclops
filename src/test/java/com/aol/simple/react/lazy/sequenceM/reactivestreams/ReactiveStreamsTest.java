@@ -14,10 +14,14 @@ public class ReactiveStreamsTest {
 
 	@Test
 	public void publishAndSubscribe(){
+		
 		CyclopsSubscriber<Integer> sub = SequenceM.subscriber();
+	
 		SequenceM.of(1,2,3).subscribe(sub);
+		
 		assertThat(sub.sequenceM().toList(),equalTo(
 				Arrays.asList(1,2,3)));
+		
 	}
 	@Test
 	public void publishAndSubscribeEmpty(){
