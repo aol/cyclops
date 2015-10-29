@@ -1,26 +1,24 @@
 package com.aol.cyclops.invokedynamic;
 
+import java.io.IOException;
 
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class ExceptionSoftener {
 
-	
-	
-	
-	public static void throwSoftenedException(final Throwable e) {
-		new Thrower<RuntimeException>().uncheck(e);
+	public static <T extends Throwable,R> R throwSoftenedException(final T e) {
+		uncheck(e);
+		return null;
 	}
-	static class Thrower<T extends Throwable> {
-		@SuppressWarnings("unchecked")
-			private void uncheck(Throwable throwable) throws T {
-			 	throw (T) throwable;
-			 }
+
+	private static <T extends Throwable> void uncheck(Throwable throwable) throws T {
+		throw (T) throwable;
+
 	}
-			 
-			
 	
+	public static Integer myTest(){
+		return throwSoftenedException(new IOException());
+	}
 
 }
-

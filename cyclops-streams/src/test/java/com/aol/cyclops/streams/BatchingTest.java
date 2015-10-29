@@ -10,6 +10,9 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -162,8 +165,7 @@ public class BatchingTest {
 	volatile int otherCount;
 	volatile int peek =0;
 	@Test
-	public void batchByTimeFiltered() {
-
+	public void batchByTimeFiltered() throws IOException {
 		for(int x=0;x<10;x++){
 			count2=new AtomicInteger(0);
 			List<Collection<Map>> result = new ArrayList<>();
