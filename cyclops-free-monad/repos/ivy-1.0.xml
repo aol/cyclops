@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
-  <info organisation="com.aol.cyclops" module="cyclops-free-monad" revision="1.0" status="integration" publication="20150919144644">
+  <info organisation="com.aol.cyclops" module="cyclops-free-monad" revision="1.0" status="integration" publication="20151029212530">
     <description/>
   </info>
   <configurations>
@@ -18,12 +18,12 @@
   <dependencies>
     <dependency org="org.functionaljava" name="functionaljava" rev="4.3" conf="compile-&gt;default"/>
     <dependency org="org.functionaljava" name="functionaljava-java8" rev="4.3" conf="compile-&gt;default"/>
-    <dependency org="com.aol.cyclops" name="cyclops-pattern-matching" rev="6.0.2" conf="compile-&gt;default"/>
-    <dependency org="com.aol.cyclops" name="cyclops-pattern-matching-recursive" rev="6.0.2" conf="compile-&gt;default"/>
-    <dependency org="com.aol.cyclops" name="cyclops-trampoline" rev="6.0.2" conf="compile-&gt;default"/>
-    <dependency org="com.aol.cyclops" name="cyclops-mixins" rev="6.0.2" conf="compile-&gt;default"/>
+    <dependency org="com.aol.cyclops" name="cyclops-pattern-matching" rev="6.0.3" conf="compile-&gt;default"/>
+    <dependency org="com.aol.cyclops" name="cyclops-pattern-matching-recursive" rev="6.0.3" conf="compile-&gt;default"/>
+    <dependency org="com.aol.cyclops" name="cyclops-trampoline" rev="6.0.3" conf="compile-&gt;default"/>
+    <dependency org="com.aol.cyclops" name="cyclops-mixins" rev="6.0.3" conf="compile-&gt;default"/>
     <dependency org="org.projectlombok" name="lombok" rev="1.16.2" conf="provided-&gt;default"/>
-    <dependency org="com.aol.cyclops" name="cyclops-for-comprehensions" rev="6.0.2" conf="testCompile-&gt;default"/>
+    <dependency org="com.aol.cyclops" name="cyclops-for-comprehensions" rev="6.0.3" conf="testCompile-&gt;default"/>
     <dependency org="junit" name="junit" rev="4.12" conf="testCompile-&gt;default"/>
   </dependencies>
 </ivy-module>
