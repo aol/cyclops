@@ -1565,7 +1565,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	@Override
 	default LazyFutureStream<U> slice(long from, long to) {
 		
-		return fromStream(fromStream(SequenceM.fromStream(toQueue().stream(getSubscription()))
+		return fromStream(SequenceM.fromStream(toQueue().stream(getSubscription())
 				.slice(from, to)));
 	}
 
@@ -1634,7 +1634,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	@Override
 	default <T> LazyFutureStream<T> scanLeft(T seed,
 			BiFunction<T, ? super U, T> function) {
-		return fromStream(fromStream(SequenceM.fromStream(toQueue().stream(getSubscription())).scanLeft(seed, function)));
+		return fromStream(SequenceM.fromStream(toQueue().stream(getSubscription())).scanLeft(seed, function));
 		
 	}
 
@@ -1649,7 +1649,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	@Override
 	default <R> LazyFutureStream<R> scanRight(R seed,
 			BiFunction<? super U, R, R> function) {
-		return fromStream(fromStream(SequenceM.fromStream(toQueue().stream(getSubscription())).scanRight(seed, function)));
+		return fromStream(SequenceM.fromStream(toQueue().stream(getSubscription())).scanRight(seed, function));
 		
 	}
 
