@@ -77,7 +77,7 @@ public class CasesTest {
 		assertThat(threads.size(),is(1));
 	}
 
-	@Test
+	@Test @Ignore
 	public void testParallel() {
 		Set<Long> threads = new HashSet<>();
 		val case1 = Case.of(input->true,input->{ threads.add(Thread.currentThread().getId());return "hello";});
