@@ -1,9 +1,9 @@
 package com.aol.cyclops.lambda.monads;
 
-import java.util.Collections;
-import java.util.List;
+import static org.junit.Assert.assertEquals;
+
 import java.util.Optional;
-import static org.junit.Assert.*;
+
 import org.junit.Test;
 
 import com.aol.cyclops.monad.AnyM;
