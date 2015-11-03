@@ -424,7 +424,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	}
 	
 	public <T> AnyM<T> unit(T value){
-		return monad.unit(value);
+		return AsAnyM.notTypeSafeAnyM(monad.unit(value));
 	}
 	public <T> AnyM<T> empty(){
 		return (AnyMImpl)unit(null).filter(t->false);
