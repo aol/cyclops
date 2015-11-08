@@ -32,7 +32,7 @@ Provides the same advanced Stream-api but implemented as a pure, fast, single-th
 
 | FEATURE                                          | SimpleReact         | SequenceM           | LazyFutureStream    | JDK 8 Stream (sequential) | JDK 8 Stream (parallel) |
 |--------------------------------------------------|---------------------|---------------------|---------------------|---------------------------|-------------------------| 
-| Multithreading                                   | Yes                 | No                  | Yes                 | No                        | No                      | 
+| Multithreading                                   | Yes                 | No                  | Yes                 | No                        | Yes                      | 
 | Optimized for multithreaded blocking I/O         | Yes                 | No                  | Yes                 | No                        | No                      |
 | Optimized for CPU bound operations               | No                  | Yes                 | No                  | Yes                       | Yes                     | 
 | Eager / Lazy                                     | Eager               | Lazy                | Lazy                | Lazy                      | Lazy                    | 
