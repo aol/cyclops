@@ -114,7 +114,7 @@ Recovery can be linked to specific exception types.
 ```java
 SequenceM.of(1,2,3,4)
 					.map(i->i+2)
-					.map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
+					.map(u->{throw ExceptionSoftener.throwSoftenedException( new IOException());})
 					.recover(IOException.class,e->"hello")
 					.firstValue()
 //hello
