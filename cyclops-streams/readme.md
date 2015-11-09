@@ -132,7 +132,9 @@ SequenceM.of( 1,  2, 3)
 FutureOperations allow a Stream to be executed Asynchronously with the result of a terminal operation captured in a Future.
 
 ```java
+Executor exec = Executors.newfixedThreadPool(1);
 CompletableFuture<List<Integer>> list = SequenceM.of(1,2,3,4,5)
+                                                 .map(this:expensiveOperation)
          										 .futureOperations(exec)
         										 .collect(Collectors.toList());
         										 
