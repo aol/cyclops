@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite hostname="ir000781" name="org.reactivestreams.tck.SubscriberWhiteboxVerification" tests="27" failures="0" timestamp="12 Nov 2015 16:28:30 GMT" time="2.27" errors="0">
+  <testcase name="required_exerciseWhiteboxHappyPath" time="0.387" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest"/>
+  <testcase name="required_spec201_mustSignalDemandViaSubscriptionRequest" time="0.002" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest"/>
+  <testcase name="required_spec203_mustNotCallMethodsOnSubscriptionOrPublisherInOnComplete" time="0.002" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest"/>
+  <testcase name="required_spec203_mustNotCallMethodsOnSubscriptionOrPublisherInOnError" time="0.002" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest"/>
+  <testcase name="required_spec205_mustCallSubscriptionCancelIfItAlreadyHasAnSubscriptionAndReceivesAnotherOnSubscribeSignal" time="0.305" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest"/>
+  <testcase name="required_spec208_mustBePreparedToReceiveOnNextSignalsAfterHavingCalledSubscriptionCancel" time="0.306" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest"/>
+  <testcase name="required_spec209_mustBePreparedToReceiveAnOnCompleteSignalWithPrecedingRequestCall" time="0.302" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest"/>
+  <testcase name="required_spec209_mustBePreparedToReceiveAnOnCompleteSignalWithoutPrecedingRequestCall" time="0.304" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest"/>
+  <testcase name="required_spec210_mustBePreparedToReceiveAnOnErrorSignalWithPrecedingRequestCall" time="0.002" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest"/>
+  <testcase name="required_spec210_mustBePreparedToReceiveAnOnErrorSignalWithoutPrecedingRequestCall" time="0.001" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest"/>
+  <testcase name="required_spec213_onError_mustThrowNullPointerExceptionWhenParametersAreNull" time="0.002" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest"/>
+  <testcase name="required_spec213_onNext_mustThrowNullPointerExceptionWhenParametersAreNull" time="0.001" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest"/>
+  <testcase name="required_spec213_onSubscribe_mustThrowNullPointerExceptionWhenParametersAreNull" time="0.001" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest"/>
+  <testcase name="required_spec308_requestMustRegisterGivenNumberElementsToBeProduced" time="0.608" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest"/>
+  <testcase name="untested_spec202_shouldAsynchronouslyDispatch" time="0.001" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest">
+    <skipped/>
+  </testcase>
+  <testcase name="untested_spec204_mustConsiderTheSubscriptionAsCancelledInAfterRecievingOnCompleteOrOnError" time="0.0" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest">
+    <skipped/>
+  </testcase>
+  <testcase name="untested_spec206_mustCallSubscriptionCancelIfItIsNoLongerValid" time="0.0" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest">
+    <skipped/>
+  </testcase>
+  <testcase name="untested_spec207_mustEnsureAllCallsOnItsSubscriptionTakePlaceFromTheSameThreadOrTakeCareOfSynchronization" time="0.0" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest">
+    <skipped/>
+  </testcase>
+  <testcase name="untested_spec211_mustMakeSureThatAllCallsOnItsMethodsHappenBeforeTheProcessingOfTheRespectiveEvents" time="0.0" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest">
+    <skipped/>
+  </testcase>
+  <testcase name="untested_spec212_mustNotCallOnSubscribeMoreThanOnceBasedOnObjectEquality_specViolation" time="0.001" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest">
+    <skipped/>
+  </testcase>
+  <testcase name="untested_spec213_failingOnSignalInvocation" time="0.0" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest">
+    <skipped/>
+  </testcase>
+  <testcase name="untested_spec301_mustNotBeCalledOutsideSubscriberContext" time="0.0" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest">
+    <skipped/>
+  </testcase>
+  <testcase name="untested_spec310_requestMaySynchronouslyCallOnNextOnSubscriber" time="0.001" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest">
+    <skipped/>
+  </testcase>
+  <testcase name="untested_spec311_requestMaySynchronouslyCallOnCompleteOrOnError" time="0.001" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest">
+    <skipped/>
+  </testcase>
+  <testcase name="untested_spec314_cancelMayCauseThePublisherToShutdownIfNoOtherSubscriptionExists" time="0.001" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest">
+    <skipped/>
+  </testcase>
+  <testcase name="untested_spec315_cancelMustNotThrowExceptionAndMustSignalOnError" time="0.001" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest">
+    <skipped/>
+  </testcase>
+  <testcase name="untested_spec316_requestMustNotThrowExceptionAndMustOnErrorTheSubscriber" time="0.001" classname="com.aol.cyclops.javaslang.reactivestreams.javaslang.TckWhiteBoxSubscriberTest">
+    <skipped/>
+  </testcase>
+</testsuite>

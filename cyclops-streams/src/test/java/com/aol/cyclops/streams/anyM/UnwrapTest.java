@@ -1,8 +1,8 @@
 package com.aol.cyclops.streams.anyM;
 import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +26,14 @@ public class UnwrapTest {
 											.asSequence()
 											.toOptional();
 		assertThat(stream.get(),equalTo(Arrays.asList("hello","world")));
+	}
+	@Test
+	public void unwrapOptionalEmpty(){
+		Optional<List<String>> opt = anyM(Optional.empty())
+											.<String>toSequence()
+											.toOptional();
+		System.out.println(opt);
+		assertFalse(opt.isPresent());
 	}
 	@Test
 	public void unwrapOptionalList(){

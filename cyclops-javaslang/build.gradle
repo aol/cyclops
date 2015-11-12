@@ -31,8 +31,11 @@ configurations {
 }
 dependencies {
 	compile project(':cyclops-monad-api')
+	compile 'org.reactivestreams:reactive-streams:1.0.0'
 	provided  'com.google.guava:guava:19.0-rc2'
-	provided group: 'com.aol.simplereact', name:'simple-react', version:"$simpleReactVersion"
+	compile ('com.aol.simplereact:simple-react:'+simpleReactVersion){
+		exclude group:'com.aol.cyclops'
+	}
 	provided 'com.javaslang:javaslang:2.0.0-beta'
 	provided 'com.nurkiewicz.lazyseq:lazyseq:0.0.1'
 	provided group: 'org.projectlombok', name: 'lombok', version:'1.14.2'
@@ -42,6 +45,7 @@ dependencies {
 	testCompile group: 'junit', name: 'junit', version: '4.12'
 	testCompile  group: 'org.hamcrest', name: 'hamcrest-all', version:'1.3'
 	testCompile group: 'org.mockito', name: 'mockito-all', version:'1.9.5'
+	testCompile 'org.reactivestreams:reactive-streams-tck:1.0.0'
 }
 sourceSets {
 	main.compileClasspath += [configurations.provided]

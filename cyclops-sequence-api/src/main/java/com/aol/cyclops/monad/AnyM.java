@@ -6,11 +6,17 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
+import java.util.OptionalLong;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.BaseStream;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.sequence.Monoid;
@@ -30,7 +36,57 @@ import com.aol.cyclops.sequence.streamable.Streamable;
 
 public interface AnyM<T> extends Unwrapable{
 	
-	
+	public static AnyM<Integer> fromRange(int start, int end){
+		return AnyM.fromStream(SequenceM.range(start, end));
+	}
+	public static <T> AnyM<T> fromStream(Stream<T> stream){
+		return AnyMFactory.instance.monad(stream);
+	}
+	public static AnyM<Integer> fromIntStream(IntStream stream){
+		return AnyMFactory.instance.monad(stream);
+	}
+	public static AnyM<Double> fromDoubleStream(DoubleStream stream){
+		return AnyMFactory.instance.monad(stream);
+	}
+	public static AnyM<Long> fromLongStream(LongStream stream){
+		return AnyMFactory.instance.monad(stream);
+	}
+	public static <T> AnyM<T> fromOptional(Optional<T> optional){
+		return AnyMFactory.instance.monad(optional);
+	}
+	public static  AnyM<Double> fromOptional(OptionalDouble optional){
+		return AnyMFactory.instance.of(optional);
+	}
+	public static  AnyM<Long> fromOptional(OptionalLong optional){
+		return AnyMFactory.instance.of(optional);
+	}
+	public static  AnyM<Integer> fromOptional(OptionalInt optional){
+		return AnyMFactory.instance.of(optional);
+	}
+	public static <T> AnyM<T> fromCompletableFuture(CompletableFuture<T> future){
+		return AnyMFactory.instance.monad(future);
+	}
+	public static <T> AnyM<T> fromCollection(Collection<T> collection){
+		return AnyMFactory.instance.of(collection);
+	}
+	public static <T> AnyM<T> fromIterable(Iterable<T> iterable){
+		return AnyMFactory.instance.of(iterable);
+	}
+	public static AnyM<String> fromFile(File file){
+		return AnyMFactory.instance.of(file);
+	}
+	public static AnyM<String> fromURL(URL url){
+		return AnyMFactory.instance.of(url);
+	}
+	public static <T> AnyM<T> ofConvertable(Object monad){
+		return AnyMFactory.instance.of(monad);
+	}
+	public static <T> AnyM<T> ofMonad(Object monad){
+		return AnyMFactory.instance.monad(monad);
+	}
+	public static <T> AnyM<T> ofNullable(Object monad){
+		return AnyMFactory.instance.monad(Optional.ofNullable(monad));
+	}
 	
 	
 	 <R> R unwrap();
@@ -370,8 +426,8 @@ public interface AnyM<T> extends Unwrapable{
 	 * @param reducer
 	 * @return
 	 */
-	   AnyM<T> reduceMOptional(Monoid<Optional<T>> reducer);
-	   AnyM<T> reduceMStream(Monoid<Stream<T>> reducer);
+	 AnyM<T> reduceMOptional(Monoid<Optional<T>> reducer);
+	 AnyM<T> reduceMStream(Monoid<Stream<T>> reducer);
 	   AnyM<T> reduceMStreamable(Monoid<Streamable<T>> reducer);
 	   AnyM<T> reduceMCompletableFuture(Monoid<CompletableFuture<T>> reducer);
 	  

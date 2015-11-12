@@ -1,43 +1,144 @@
 package com.aol.cyclops.lambda.monads;
 
 import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
-import static com.aol.cyclops.lambda.api.AsAnyMList.collectionToAnyMList;
 import static com.aol.cyclops.lambda.api.AsAnyMList.completableFutureToAnyMList;
-import static com.aol.cyclops.lambda.api.AsAnyMList.optionalToAnyMList;
-import static com.aol.cyclops.lambda.api.AsAnyMList.streamToAnyMList;
-import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItems;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.net.URL;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
+import java.util.OptionalLong;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import lombok.val;
 
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.monads.AnyMonads;
+import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.sequence.Monoid;
-import com.aol.cyclops.sequence.Reducers;
-import com.aol.cyclops.sequence.streamable.Streamable;
+
 
 
 public class AnyMTest {
-
 	
+	@Test
+	public void fromStreamLong(){
+		AnyM<Long> stream = AnyM.fromLongStream(LongStream.of(1));
+		assertThat(stream.unwrap(),instanceOf(LongStream.class));
+	}
+	@Test
+	public void fromStreamDouble(){
+		AnyM<Double> stream = AnyM.fromDoubleStream(DoubleStream.of(1));
+		assertThat(stream.unwrap(),instanceOf(DoubleStream.class));
+	}
+	@Test
+	public void fromStreamInt(){
+		AnyM<Integer> stream = AnyM.fromIntStream(IntStream.of(1));
+		assertThat(stream.unwrap(),instanceOf(IntStream.class));
+	}
+	@Test
+	public void fromStream(){
+		AnyM<Integer> stream = AnyM.fromStream(Stream.of(1));
+		assertThat(stream.unwrap(),instanceOf(Stream.class));
+	}
+	@Test
+	public void fromOptionalLong(){
+		AnyM<Long> opt = AnyM.fromOptional(OptionalLong.of(1));
+		assertThat(opt.unwrap(),instanceOf(Optional.class));
+	}
+	@Test
+	public void fromOptionalDouble(){
+		AnyM<Double> opt = AnyM.fromOptional(OptionalDouble.of(1));
+		assertThat(opt.unwrap(),instanceOf(Optional.class));
+	}
+	@Test
+	public void fromOptionalInt(){
+		AnyM<Integer> opt = AnyM.fromOptional(OptionalInt.of(1));
+		assertThat(opt.unwrap(),instanceOf(Optional.class));
+	}
+	@Test
+	public void fromOptional(){
+		AnyM<Integer> opt = AnyM.fromOptional(Optional.of(1));
+		assertThat(opt.unwrap(),instanceOf(Optional.class));
+	}
+	@Test
+	public void fromCompletableFuture(){
+		AnyM<Integer> future = AnyM.fromCompletableFuture(CompletableFuture.supplyAsync(()->1));
+		assertThat(future.unwrap(),instanceOf(CompletableFuture.class));
+	}
+	
+	@Test
+	public void ofNullable(){
+		AnyM<Integer> opt = AnyM.ofNullable(null);
+		assertThat(opt.unwrap(),instanceOf(Optional.class));
+	}
+	@Test
+	public void ofMonad(){
+		AnyM<Integer> opt = AnyM.ofMonad(Optional.of(1));
+		assertThat(opt.unwrap(),instanceOf(Optional.class));
+	}
+	@Test
+	public void ofConvertable(){
+		AnyM<Integer> future = AnyM.ofConvertable((Supplier<Integer>)()->1);
+		assertThat(future.unwrap(),instanceOf(CompletableFuture.class));
+	}
+	@Test
+	public void testList(){
+		AnyM<Integer> list = AsAnyM.anyMList(Arrays.asList(1,2,3));
+		assertThat(list.unwrap(),instanceOf(List.class));
+	}
+	@Test
+	public void testListMap(){
+		AnyM<Integer> list = AsAnyM.anyMList(Arrays.asList(1,2,3));
+		assertThat(list.map(i->i+2).unwrap(),equalTo(Arrays.asList(3,4,5)));
+	}
+	
+	@Test
+	public void testListFlatMap(){
+		AnyM<Integer> list = AsAnyM.anyMList(Arrays.asList(1,2,3));
+		assertThat(list.flatMapCollection(i->Arrays.asList(i+2,i-2)).unwrap(),equalTo(Arrays.asList(3,-1,4,0,5,1)));
+	}
+	@Test
+	public void testListFilter(){
+		AnyM<Integer> list = AsAnyM.anyMList(Arrays.asList(1,2,3));
+		assertThat(list.filter(i->i<3).unwrap(),equalTo(Arrays.asList(1,2)));
+	}
+	@Test
+	public void testSet(){
+		AnyM<Integer> set = AsAnyM.anyMSet(new HashSet<>(Arrays.asList(1,2,3)));
+		assertThat(set.unwrap(),instanceOf(Set.class));
+	}
+	@Test
+	public void testSetMap(){
+		AnyM<Integer> set = AsAnyM.anyMSet(new HashSet<>(Arrays.asList(1,2,3)));
+		assertThat(set.map(i->i+2).unwrap(),equalTo(new HashSet<>(Arrays.asList(3,4,5))));
+		
+	}
+	
+	@Test
+	public void testSetFlatMap(){
+		AnyM<Integer> set = AsAnyM.anyMSet(new HashSet<>(Arrays.asList(1,2,3)));
+		assertThat(set.flatMapCollection(i->Arrays.asList(i+2,i-2)).unwrap(),equalTo(new HashSet<>(Arrays.asList(3,-1,4,0,5,1))));
+		
+	}
+	@Test
+	public void testSetFilter(){
+		AnyM<Integer> set = AsAnyM.anyMSet(new HashSet<>(Arrays.asList(1,2,3)));
+		System.out.println(set.filter(i->i<3).unwrap().getClass());
+		assertThat(set.filter(i->i<3).unwrap(),equalTo(new HashSet<>(Arrays.asList(1,2))));
+	}
 	
 	@Test
 	public void testSequence(){
