@@ -39,7 +39,7 @@ dependencies {
 	provided "org.jooq:jool:${joolVersion}"
 	compile 'org.pcollections:pcollections:2.1.2'
 	testCompile 'org.functionaljava:functionaljava:4.3'
-	testCompile 'com.aol.simplereact:simple-react:0.98'
+	testCompile 'com.aol.simplereact:simple-react:'+simpleReactVersion
 	testCompile group: 'org.hamcrest', name: 'hamcrest-all', version:'1.3'
 	testCompile group: 'junit', name: 'junit', version: '4.12'
 	testCompile group: 'org.hsqldb', name:'hsqldb', version:'2.0.0'

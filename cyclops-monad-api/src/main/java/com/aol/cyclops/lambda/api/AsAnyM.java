@@ -1,11 +1,18 @@
 package com.aol.cyclops.lambda.api;
 
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertThat;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
@@ -248,12 +255,8 @@ public class AsAnyM {
 		 * Create a duck typed Monad wrapper. Using AnyM we focus only on the underlying type
 	 * e.g. instead of 
 	 * <pre>
-	 * {@code 
-	 *  Monad<Stream<Integer>,Integer> stream;
 	 * 
-	 * we can write
-	 * 
-	 *   AnyM<Integer> stream;
+	 *   AnyM<Integer> stream = AsAnyM.anyM(Arrays.asList(10,20,30));
 	 * }</pre>
 	 *  
 	 * The wrapped Monaad should have equivalent methods for
@@ -262,11 +265,18 @@ public class AsAnyM {
 	 * {@code 
 	 * map(F f)
 	 * 
-	 * flatMap(F<x,MONAD> fm)
+	 * stream.map(i->i+2);
+	 * 
+	 * flatMap(F<x,AnyM> fm)
+	 * 
+	 * stream.flatMap(i-> AsAnyM.anyM(loadData(i));
 	 * 
 	 * and optionally 
 	 * 
 	 * filter(P p)
+	 * 
+	 * stream.filter(i<20);
+	 * 
 	 * }
 	 * </pre>
 	 * 
@@ -288,7 +298,46 @@ public class AsAnyM {
 	public static <T> AnyM<T> anyM(Collection<T> anyM){
 		return convertToAnyM(anyM);
 	}
-	
+	/**
+	 * Create an AnyM backed by a list.
+	 * 
+	 *  Adds map,flatMap, filter methods - but not as efficient as using AsAnyM.anyM(Collection anyM) which converts the Collection to a Stream
+	 *  
+	 *  <pre>
+	 *  {@code
+	 *    AnyM<Integer> list = AsAnyM.anyMList(Arrays.asList(1,2,3));
+		  assertThat(list.unwrap(),instanceOf(List.class));
+	 *  
+	 *  }
+	 *  
+	 *  
+	 * @param anyM to wrap
+	 * @return Duck typed Monad
+	 */
+	public static <T> AnyM<T> anyMList(List<T> anyM){
+		return new MonadWrapper<>(anyM).anyM();
+	}
+	/**
+	 * Create an AnyM backed by a Set
+	 * 
+	 *  Adds map,flatMap, filter methods - but not as efficient as using AsAnyM.anyM(Collection anyM) which converts the Collection to a Stream
+	 *  
+	 *  <pre>
+	 *  {@code 
+	 *  
+	 *    AnyM<Integer> set = AsAnyM.anyMSet(new HashSet<>(Arrays.asList(1,2,3)));
+		  assertThat(set.unwrap(),instanceOf(Set.class));
+	 *  
+	 *  }
+	 *  </pre>
+	 *  
+	 *  
+	 * @param anyM to wrap
+	 * @return Duck typed Monad
+	 */
+	public static <T> AnyM<T> anyMSet(Set<T> anyM){
+		return new MonadWrapper<>(anyM).anyM();
+	}
 	/**
 	 * Construct an AnyM backed by a Stream of text from the lines of the supplied file
 	 * 

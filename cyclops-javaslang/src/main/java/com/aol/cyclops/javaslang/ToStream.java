@@ -3,6 +3,8 @@ package com.aol.cyclops.javaslang;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
+import javaslang.collection.Traversable;
+
 import org.jooq.lambda.Seq;
 
 import com.aol.cyclops.sequence.SequenceM;
@@ -25,6 +27,9 @@ public class ToStream {
         return Seq.seq(()->s.iterator());
     }
     public static <T> LazyFutureStream<T> toFutureStream(javaslang.collection.Stream<T> s){
+        return LazyFutureStream.lazyFutureStream(s.iterator());
+    }
+    public static <T> LazyFutureStream<T> toFutureStreamFromTraversable(Traversable<T> s){
         return LazyFutureStream.lazyFutureStream(s.iterator());
     }
     public static <T> SequenceM<T> toSequenceM(javaslang.collection.Stream<T> s){

@@ -24,24 +24,30 @@ public interface MonadFunctions<MONAD,T>{
 	 * Apply function/s inside supplied Monad to data in current Monad
 	 * 
 	 * e.g. with Streams
-	 * <pre>{@code 
+	 * <pre>
+	 * {@code 
 	 * 
-	 * Simplex<Integer> applied =monad(Stream.of(1,2,3)).applyM(monad(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2))).simplex();
+	 * AnyM<Integer> applied = AsAnyM.anyM(Stream.of(1,2,3))
+	 *                               .applyM(AsAnyM.anyM(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2)));
 	
-	 	assertThat(applied.toList(),equalTo(Arrays.asList(2, 2, 3, 4, 4, 6)));
+	 	assertThat(applied.toSequence().toList(),equalTo(Arrays.asList(2, 2, 3, 4, 4, 6)));
 	 }</pre>
 	 * 
 	 * with Optionals 
+	 * 
 	 * <pre>{@code
 	 * 
-	 *  AnyM<Integer> applied =monad(Optional.of(2)).applyM(monad(Optional.of( (Integer a)->a+1)) ).anyM();
-		assertThat(applied.toList(),equalTo(Arrays.asList(3)));
+	 *  AnyM<Integer> applied = AsAnyM.anyM(Optional.of(2))
+	 *                                .applyM( AsAnyM.anyM(Optional.of( (Integer a)->a+1)) );
+		
+		assertThat(applied.toSequence().toList(),equalTo(Arrays.asList(3)));
 		}
 	 * </pre>
 	 * @param fn
 	 * @return
 	 */
 	default <NT,R> Monad<NT,R> applyM(Monad<?,Function<? super T,? extends R>> fn){
+	
 		return (Monad)this.bind(v-> fn.map(innerFn -> innerFn.apply(v))
 							.unwrap());
 		
@@ -52,9 +58,9 @@ public interface MonadFunctions<MONAD,T>{
 	 * e.g.
 	 * 
 	 * <pre>{@code
-	 *  Simplex<Stream<Integer>> applied = monad(Stream.of(1,2,3))
-	 *    									.filterM(monad(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3)))
-	 *    									.simplex();
+	 *  AnyM<Integer> applied = AsAnyM.anyM(Stream.of(1,2,3))
+	 *    									.filterM(AsAnyM.anyM(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3)));
+	 *    									
 	 * 
 	 * //results in Stream.of(Stream.of(1),Stream.of(2),Stream.of(())
 	 * }</pre>
@@ -80,7 +86,9 @@ public interface MonadFunctions<MONAD,T>{
 	 * 
 	 * <pre>{@code 
 	 * 	
-	 *   Simplex<Optional<Integer>> applied =monad(Optional.of(2)).replicateM(5).simplex();
+	 *   AnyM<Integer> applied =AsAnyM.anyM(Optional.of(2))
+	 *                                .replicateM(5);
+	 *                                
 		 assertThat(applied.unwrap(),equalTo(Optional.of(Arrays.asList(2,2,2,2,2))));
 		 
 		 }</pre>
@@ -101,7 +109,7 @@ public interface MonadFunctions<MONAD,T>{
 	 * <pre>{@code 
 	 * Monoid<Optional<Integer>> optionalAdd = Monoid.of(Optional.of(0), (a,b)-> Optional.of(a.get()+b.get()));
 		
-		assertThat(monad(Stream.of(2,8,3,1)).reduceM(optionalAdd).unwrap(),equalTo(Optional.of(14)));
+		assertThat(AsAnyM.anyM(Stream.of(2,8,3,1)).reduceM(optionalAdd).unwrap(),equalTo(Optional.of(14)));
 		}</pre>
 	 * 
 	 * 
