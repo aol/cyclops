@@ -33,7 +33,7 @@ dependencies {
 	compile project(':cyclops-monad-api')
 	compile 'org.reactivestreams:reactive-streams:1.0.0'
 	provided  'com.google.guava:guava:19.0-rc2'
-	compile ('com.aol.simplereact:simple-react'+simpleReactVersion){
+	compile ('com.aol.simplereact:simple-react:'+simpleReactVersion){
 		exclude group:'com.aol.cyclops'
 	}
 	provided 'com.javaslang:javaslang:2.0.0-beta'

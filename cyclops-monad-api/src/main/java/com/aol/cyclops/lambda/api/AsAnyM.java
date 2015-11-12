@@ -1,14 +1,9 @@
 package com.aol.cyclops.lambda.api;
 
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertThat;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
