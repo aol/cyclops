@@ -26,7 +26,7 @@ assertThat(Javaslang.anyM(Try.of(this::success))
 ## For Comprehensions
 
 ```java
-        @Test
+    @Test
 	public void futureTest(){
 		
 		Try<String> result = 	Do.add(grind("arabica beans"))
