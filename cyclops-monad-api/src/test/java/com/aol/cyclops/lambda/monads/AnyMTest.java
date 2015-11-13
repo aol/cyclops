@@ -4,7 +4,7 @@ import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
 import static com.aol.cyclops.lambda.api.AsAnyMList.completableFutureToAnyMList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -32,7 +32,14 @@ import com.aol.cyclops.monad.AnyM;
 
 
 public class AnyMTest {
-	
+	@Test
+	public void flatMapWithListComprehender() {
+	    List<Integer> list = Arrays.asList(1,2,3);
+	    AnyM<Integer> any = AsAnyM.anyMList(list); 
+	    AnyM<Integer> mapped = any.flatMap(e -> any.unit(e));
+	    List<Integer> unwrapped = mapped.unwrap();
+	    assertEquals(list, unwrapped);
+	}
 	@Test
 	public void fromStreamLong(){
 		AnyM<Long> stream = AnyM.fromLongStream(LongStream.of(1));
