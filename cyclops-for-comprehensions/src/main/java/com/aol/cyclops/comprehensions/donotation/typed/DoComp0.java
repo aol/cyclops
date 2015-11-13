@@ -7,7 +7,9 @@ import java.io.File;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -20,21 +22,21 @@ import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 	public class DoComp0 extends DoComp{
 		public DoComp0(PStack<Entry> assigned) {
-			super(assigned);
+			super(assigned,null);
 			
 		}
 		
 		public <T1> DoComp1<T1> addValues(T1... values){
-			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),Stream.of(values))));
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),Stream.of(values))),orgType);
 
 		}
 
 		public  DoComp1<Character> add(CharSequence seq){
-			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),seq)));
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),seq)),orgType);
 
 		}
 		public  DoComp1<Integer> times(int times){
-			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),times)));
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),times)),orgType);
 			
 		}
 		/**
@@ -53,7 +55,12 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T1> DoComp1<T1> add(Iterable<T1> o){
-			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
+			Class orgType =null;
+			if(o instanceof List)
+				orgType = List.class;
+			else if(o instanceof Set)
+				orgType = Set.class;
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
 			
 		}
 		
@@ -75,7 +82,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T1> DoComp1<T1> add(Iterator<T1> o){
-			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
 			
 		}
 		
@@ -97,7 +104,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T1> DoComp1<T1> addStream(Stream<T1> o){
-			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
 			
 		}
 		/**
@@ -116,7 +123,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public  <T1> DoComp1<T1> addBaseStream(BaseStream<T1,?> o){
-			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
 			
 		}
 		
@@ -138,7 +145,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T1> DoComp1<T1> add(Optional<T1> o){
-			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
 			
 		}
 		
@@ -160,7 +167,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T1> DoComp1<T1> add(CompletableFuture<T1> o){
-			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
 			
 		}
 		
@@ -182,7 +189,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T1> DoComp1<T1> add(AnyM<T1> o){
-			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
 			
 		}
 		
@@ -204,7 +211,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T1> DoComp1<T1> add(SequenceM<T1> o){
-			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
 			
 		}
 		
@@ -226,7 +233,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T1> DoComp1<T1> add(Callable<T1> o){
-			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
 			
 		}
 		
@@ -249,7 +256,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T1> DoComp1<T1> add(Supplier<T1> o){
-			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),(Supplier)()->o)));
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),(Supplier)()->o)),orgType);
 			
 		}
 		
@@ -271,7 +278,12 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T1> DoComp1<T1> add(Collection<T1> o){
-			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
+			Class orgType =null;
+			if(o instanceof List)
+				orgType = List.class;
+			else if(o instanceof Set)
+				orgType = Set.class;
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
 			
 		}
 		
@@ -296,7 +308,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T1 extends String>  DoComp1<T1> add(File o){
-			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
 			
 		}
 		
@@ -318,7 +330,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T1 extends String>  DoComp1<T1> add(URL o){
-			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
 			
 		}
 		
@@ -340,7 +352,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T1 extends String>  DoComp1<T1> add(BufferedReader o){
-			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)));
+			return new DoComp1(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
 			
 		}
 

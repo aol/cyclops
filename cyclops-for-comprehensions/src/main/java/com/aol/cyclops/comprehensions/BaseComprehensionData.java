@@ -10,7 +10,6 @@ import java.util.function.Supplier;
 final class BaseComprehensionData {
 	
 	private ContextualExecutor delegate;
-	
 	private ContextualExecutor currentContext;
 
 	

@@ -1,5 +1,6 @@
 package com.aol.cyclops.lambda.monads;
 
+import lombok.AllArgsConstructor;
 import lombok.Value;
 import lombok.experimental.Wither;
 
@@ -9,9 +10,17 @@ import com.aol.cyclops.objects.Decomposable;
 import com.aol.cyclops.sequence.SequenceM;
 
 @Value
+@AllArgsConstructor
 public class MonadWrapper<MONAD,T> implements Monad<MONAD,T>, Decomposable{
 	@Wither
 	private final Object monad;
+	private final Class orgType;
+	
+	public MonadWrapper(Object monad){
+		this.monad = monad;
+		orgType= monad.getClass();
+	}
+	
 	public static <MONAD,T> Monad<MONAD,T>  of(Object of) {
 		return new MonadWrapper(of);
 		
@@ -21,7 +30,7 @@ public class MonadWrapper<MONAD,T> implements Monad<MONAD,T>, Decomposable{
 	}
 	@Override
 	public <X> AnyM<X> anyM(){
-		return new AnyMImpl<X>((Monad)this);	
+		return new AnyMImpl<X>((Monad)this,orgType);	
 	}
 	@Override
 	public SequenceM<T>  sequence(){

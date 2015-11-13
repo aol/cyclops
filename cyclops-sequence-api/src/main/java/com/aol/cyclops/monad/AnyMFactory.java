@@ -1,10 +1,6 @@
 package com.aol.cyclops.monad;
 
-import java.util.Optional;
 import java.util.logging.Level;
-import java.util.stream.Stream;
-
-import com.aol.cyclops.sequence.spliterators.ReversableSpliterator;
 
 import lombok.extern.java.Log;
 

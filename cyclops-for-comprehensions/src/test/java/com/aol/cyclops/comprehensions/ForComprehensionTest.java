@@ -100,7 +100,7 @@ public class ForComprehensionTest {
 			
 			Stream<Integer> res =Do.add(Arrays.asList(1,2))
 										.yield(v1 -> v1+1)
-										.unwrap();
+										.toSequence();;
 			
 			List<Integer> expected = Arrays.asList(2,3);
 		
@@ -115,15 +115,16 @@ public class ForComprehensionTest {
 			val some = some(1);
 			Supplier<Option<Integer>> s = ()->some;
 			List<Option<Integer>> list = Arrays.<Option<Integer>>asList(some(0), some(1),  none(),some(2), some(10));
-			Stream<Option<Integer>> res =Do.add(list)
+			List<Option<Integer>> res =Do.add(list)
 											.filter(v1 -> v1.filter( it -> it > 1).isSome())
-											.yield( v1-> v1.map(it->it+3) ).unwrap();
+											.yield( v1-> v1.map(it->it+3) )
+											.unwrap();
 				
 				
 			
 			List<Option> expected = Arrays.asList( some(5), some(13));
 			//println res
-			assertThat(res.collect(Collectors.toList()), equalTo(expected));
+			assertThat(res, equalTo(expected));
 		
 	}
 		

@@ -8,6 +8,7 @@ import static com.aol.cyclops.lambda.api.AsAnyMList.streamToAnyMList;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -36,6 +37,24 @@ import com.aol.cyclops.sequence.streamable.Streamable;
 
 
 public class AnyMTest {
+	
+	@Test
+	public void collectList(){
+		assertThat(AnyM.fromList(Arrays.asList(1,2,2)).collect(Collectors.toSet()).size(),equalTo(2));
+	}
+	@Test
+	public void flatMapWithListComprehender() {
+	    List<Integer> list = Arrays.asList(1,2,3);
+	    AnyM<Integer> any = AnyM.fromList(list); 
+	    AnyM<Integer> mapped = any.flatMap(e -> any.unit(e));
+	    List<Integer> unwrapped = mapped.unwrap();
+	    assertEquals(list, unwrapped);
+	}
+	@Test
+	public void testLisOfConvertable(){
+		AnyM<Integer> list = AnyM.ofConvertable(Arrays.asList(1,2,3));
+		assertThat(list.unwrap(),instanceOf(Stream.class));
+	}
 	@Test
 	public void testForEach() {
 		   anyM(Stream.of(asList(1,3)))

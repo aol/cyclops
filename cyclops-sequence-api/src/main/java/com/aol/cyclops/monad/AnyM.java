@@ -9,11 +9,13 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.BaseStream;
+import java.util.stream.Collector;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -36,8 +38,64 @@ import com.aol.cyclops.sequence.streamable.Streamable;
 
 public interface AnyM<T> extends Unwrapable{
 	
+	
+	
+	/**
+	 * Construct an AnyM instance that wraps a range from start (inclusive) to end (exclusive) provided
+	 * 
+	 * The AnyM will contain a SequenceM over the spefied range
+	 * 
+	 * @param start Inclusive start of the range
+	 * @param end Exclusive end of the range
+	 * @return AnyM range
+	 */
 	public static AnyM<Integer> fromRange(int start, int end){
+		
 		return AnyM.fromStream(SequenceM.range(start, end));
+	}
+	/**
+	 * Wrap a Streamable inside an AnyM
+	 * 
+	 * @param streamable wrap
+	 * @return
+	 */
+	public static <T> AnyM<T> fromStreamable(Streamable<T> streamable){
+		return AnyMFactory.instance.monad(streamable);
+	}
+	/**
+	 * Create an AnyM from a List
+	 * 
+	 * This AnyM will convert the List to a Stream under the covers, but will rematerialize the Stream as List
+	 * if wrap() is called
+	 * 
+	 * 
+	 * @param list to wrap inside an AnyM
+	 * @return AnyM wrapping a list
+	 */
+	public static <T> AnyM<T> fromList(List<T> list){
+		return AnyMFactory.instance.monad(list);
+	}
+	/**
+	 * Create an AnyM from a Set
+	 * 
+	 * This AnyM will convert the Set to a Stream under the covers, but will rematerialize the Stream as Set
+	 * if wrap() is called
+	 * 
+	 * 
+	 * @param list to wrap inside an AnyM
+	 * @return AnyM wrapping a Set
+	 */
+	public static <T> AnyM<T> fromSet(Set<T> set){
+		return AnyMFactory.instance.monad(set);
+	}
+	/**
+	 * Create an AnyM wrapping a Stream of the supplied data
+	 * 
+	 * @param streamData
+	 * @return
+	 */
+	public static <T> AnyM<T> fromArray(T... streamData){
+		return AnyMFactory.instance.monad(Stream.of(streamData));
 	}
 	public static <T> AnyM<T> fromStream(Stream<T> stream){
 		return AnyMFactory.instance.monad(stream);
@@ -78,9 +136,21 @@ public interface AnyM<T> extends Unwrapable{
 	public static AnyM<String> fromURL(URL url){
 		return AnyMFactory.instance.of(url);
 	}
+	/**
+	 * Take the supplied object and always attempt to convert it to a Monad type
+	 * 
+	 * @param monad
+	 * @return
+	 */
 	public static <T> AnyM<T> ofConvertable(Object monad){
 		return AnyMFactory.instance.of(monad);
 	}
+	/**
+	 * Take the supplied object and wrap it inside an AnyM - must be a supported monad type already
+	 * 
+	 * @param monad to wrap
+	 * @return Wrapped Monad
+	 */
 	public static <T> AnyM<T> ofMonad(Object monad){
 		return AnyMFactory.instance.monad(monad);
 	}
@@ -89,7 +159,19 @@ public interface AnyM<T> extends Unwrapable{
 	}
 	
 	
-	 <R> R unwrap();
+	 /* 
+	  * Unwraps the wrapped monad, in it's current state.
+	  * i.e. Lists or Sets may be Streams
+	  * (non-Javadoc)
+	 * @see com.aol.cyclops.sequence.Unwrapable#unwrap()
+	 */
+	<R> R unwrap();
+	
+	/**
+	 * Collect the contents of the monad wrapped by this AnyM into supplied collector
+	 */
+	public <R, A> R collect(Collector<? super T, A, R> collector);
+	
 	
 
 	 <X extends Object> X monad();
@@ -428,12 +510,13 @@ public interface AnyM<T> extends Unwrapable{
 	 */
 	 AnyM<T> reduceMOptional(Monoid<Optional<T>> reducer);
 	 AnyM<T> reduceMStream(Monoid<Stream<T>> reducer);
-	   AnyM<T> reduceMStreamable(Monoid<Streamable<T>> reducer);
-	   AnyM<T> reduceMCompletableFuture(Monoid<CompletableFuture<T>> reducer);
+	 AnyM<T> reduceMStreamable(Monoid<Streamable<T>> reducer);
+	 AnyM<T> reduceMCompletableFuture(Monoid<CompletableFuture<T>> reducer);
 	  
-	   AnyM<T> reduceM(Monoid<AnyM<T>> reducer);
+	 AnyM<T> reduceM(Monoid<AnyM<T>> reducer);
 	
 	
+	 
 	
 	@Override
     public String toString() ;

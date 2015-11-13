@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.BaseStream;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import lombok.AccessLevel;
@@ -37,12 +38,24 @@ import com.aol.cyclops.sequence.streamable.Streamable;
 public class AnyMImpl<T> implements AnyM<T>{
 	
 	private final Monad<Object,T> monad;
-	
+	private final Class initialType;
 	
 	public final <R> R unwrap(){
-		return (R)monad.unwrap();
+		return (R)new ComprehenderSelector().selectComprehender(initialType).unwrap(monad.unwrap());
 	}
-	
+	/**
+	 * Collect the contents of the monad wrapped by this AnyM into supplied collector
+	 */
+	@Override
+	public final <R, A> R collect(Collector<? super T, A, R> collector){
+		Object o = monad;
+		if(o instanceof Stream){
+			return (R)((Stream)o).collect(collector);
+		}
+		else{
+			return this.<T>toSequence().collect(collector);
+		}
+	}
 
 	public final Monad monad(){
 		return (Monad)monad;

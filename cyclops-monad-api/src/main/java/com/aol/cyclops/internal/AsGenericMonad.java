@@ -10,6 +10,7 @@ import com.aol.cyclops.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
 import com.aol.cyclops.sequence.streamable.Streamable;
 
+@Deprecated
 public class AsGenericMonad {
 
 	/**

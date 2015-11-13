@@ -18,7 +18,7 @@ public class DoListsTest {
 	public void do2(){
 		Stream<Double> s = Do.add(asList(10.00,5.00,100.30))
 						.withCollection( d -> asList(2.0))
-						.yield( base -> bonus-> base*(1.0+bonus)).unwrap();
+						.yield( base -> bonus-> base*(1.0+bonus)).toSequence();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(345.9));
@@ -26,7 +26,7 @@ public class DoListsTest {
 	@Test
 	public void do1(){
 		Stream<Double> s = Do.add(asList(10.00,5.00,100.30))
-						.yield( base-> base+10).unwrap();
+						.yield( base-> base+10).toSequence();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(145.3));
@@ -38,7 +38,7 @@ public class DoListsTest {
 		Stream<Double> s = Do.add(asList(10.00,5.00,100.30))
 						.withCollection( d ->asList(2.0))
 						.withCollection(d -> e->asList(10.0))
-						.yield(base ->bonus->woot -> base*(1.0+bonus)*woot).unwrap();
+						.yield(base ->bonus->woot -> base*(1.0+bonus)*woot).toSequence();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(3459.0));
@@ -49,7 +49,7 @@ public class DoListsTest {
 						.withCollection(d->asList(2.0))
 						.withCollection(d ->e ->asList(10.0))
 						.withCollection( d -> e-> f->asList(10.0))
-						.yield( base -> bonus->woot -> f -> base*(1.0+bonus)*woot*f).unwrap();
+						.yield( base -> bonus->woot -> f -> base*(1.0+bonus)*woot*f).toSequence();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(34590.0));
@@ -61,7 +61,7 @@ public class DoListsTest {
 						.withCollection( d-> e -> asList(10.0))
 						.withCollection( d -> e -> f -> asList(10.0))
 						.withCollection( d -> e -> f ->  g -> asList(10.0) )
-						.yield( base ->  bonus ->  woot ->  f -> g -> base*(1.0+bonus)*woot*f*g).unwrap();
+						.yield( base ->  bonus ->  woot ->  f -> g -> base*(1.0+bonus)*woot*f*g).toSequence();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(345900.0));
@@ -74,7 +74,7 @@ public class DoListsTest {
 								.withCollection( d ->  e ->  f -> asList(10.0))
 								.withCollection( d ->  e ->  f -> g -> asList(10.0) )
 								.withCollection( d -> e ->  f ->  g -> h -> asList(10.0) )
-								.yield( base ->  bonus -> woot  ->  f -> g ->  h -> base*(1.0+bonus)*woot*f*g*h).unwrap();
+								.yield( base ->  bonus -> woot  ->  f -> g ->  h -> base*(1.0+bonus)*woot*f*g*h).toSequence();
 
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
@@ -89,7 +89,7 @@ public class DoListsTest {
 							.withCollection( d -> e ->  f ->  g -> asList(10.0) )
 							.withCollection( d -> e -> f ->  g ->  h-> asList(10.0) )
 							.withCollection( d -> e -> f ->  g ->  h ->  i -> asList(10.0) )
-							.yield( base -> bonus -> woot ->  f -> g -> h -> i -> base*(1.0+bonus)*woot*f*g*h*i).unwrap();
+							.yield( base -> bonus -> woot ->  f -> g -> h -> i -> base*(1.0+bonus)*woot*f*g*h*i).toSequence();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(34590000.0));
@@ -105,7 +105,7 @@ public class DoListsTest {
 							.withCollection( d -> e ->  f ->  g ->  h ->  i -> asList(10.0) )
 							.withCollection( d -> e ->  f ->  g ->  h -> (Double i) -> (Double j) ->
 											Arrays.asList(10.0) )
-							.yield( base -> bonus ->  woot ->  f ->  g -> h -> i -> j -> base*(1.0+bonus)*woot*f*g*h*i*j).unwrap();
+							.yield( base -> bonus ->  woot ->  f ->  g -> h -> i -> j -> base*(1.0+bonus)*woot*f*g*h*i*j).toSequence();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(345900000.0));
@@ -117,7 +117,7 @@ public class DoListsTest {
 	public void do2Just(){
 		Stream<Double> s = Do.add(asList(10.00,5.00,100.30))
 								.add(asList(2.0))
-								.yield( base -> bonus -> base*(1.0+bonus)).unwrap();
+								.yield( base -> bonus -> base*(1.0+bonus)).toSequence();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(345.9));
@@ -129,7 +129,7 @@ public class DoListsTest {
 		Stream<Double> s = Do.add(asList(10.00,5.00,100.30))
 								.add(asList(2.0))
 								.add(asList(10.0))
-								.yield((Double base)->(Double bonus)->(Double woot) -> base*(1.0+bonus)*woot).unwrap();
+								.yield((Double base)->(Double bonus)->(Double woot) -> base*(1.0+bonus)*woot).toSequence();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(3459.0));
@@ -140,7 +140,7 @@ public class DoListsTest {
 							.add(Arrays.asList(2.0))
 							.withCollection( d -> e -> asList(10.0))
 							.add(asList(10.0))
-							.yield( base -> bonus -> woot ->  f -> base*(1.0+bonus)*woot*f).unwrap();
+							.yield( base -> bonus -> woot ->  f -> base*(1.0+bonus)*woot*f).toSequence();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(34590.0));
@@ -152,7 +152,7 @@ public class DoListsTest {
 							.withCollection( d -> e -> asList(10.0))
 							.withCollection( d -> e -> f -> asList(10.0))
 							.add( asList(10.0) )
-							.yield( base -> bonus -> woot  ->  f ->  g -> base*(1.0+bonus)*woot*f*g).unwrap();
+							.yield( base -> bonus -> woot  ->  f ->  g -> base*(1.0+bonus)*woot*f*g).toSequence();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(345900.0));
@@ -165,7 +165,7 @@ public class DoListsTest {
 							.withCollection((Double d)->(Double e)->(Double f)->Arrays.asList(10.0))
 							.withCollection( (Double d)->(Double e)->(Double f)-> (Double g)-> Arrays.asList(10.0) )
 							.add( asList(10.0) )
-							.yield( base -> bonus -> woot  ->  f -> g -> h -> base*(1.0+bonus)*woot*f*g*h).unwrap();
+							.yield( base -> bonus -> woot  ->  f -> g -> h -> base*(1.0+bonus)*woot*f*g*h).toSequence();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(3459000.0));
@@ -179,7 +179,7 @@ public class DoListsTest {
 						.withCollection( d -> e -> f ->  g -> asList(10.0) )
 						.withCollection( d -> e -> f ->  g -> h-> asList(10.0) )
 						.add(asList(10.0) )
-						.yield( base ->  bonus ->  woot ->   f -> g ->  h ->  i -> base*(1.0+bonus)*woot*f*g*h*i).unwrap();
+						.yield( base ->  bonus ->  woot ->   f -> g ->  h ->  i -> base*(1.0+bonus)*woot*f*g*h*i).toSequence();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(34590000.0));
@@ -194,7 +194,7 @@ public class DoListsTest {
 								.withCollection(  d ->  e -> f ->  g ->  h -> asList(10.0) )
 								.withCollection(  d ->  e -> f ->  g ->  h ->  i  -> asList(10.0) )
 								.add(Arrays.asList(10.0) )
-								.yield( base -> bonus -> woot  ->  f -> g -> h -> i -> j -> base*(1.0+bonus)*woot*f*g*h*i*j).unwrap();
+								.yield( base -> bonus -> woot  ->  f -> g -> h -> i -> j -> base*(1.0+bonus)*woot*f*g*h*i*j).toSequence();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(345900000.0));

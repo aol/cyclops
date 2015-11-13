@@ -14,27 +14,37 @@ import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.lambda.api.Comprehender;
 
-public class SetComprehender implements Comprehender<Set> {
+public class SetComprehender implements Comprehender<Object> {
 	public Class getTargetClass(){
 		return Set.class;
 	}
 	@Override
-	public Object filter(Set t, Predicate p) {
-		return t.stream().filter(p).collect(Collectors.toSet());
+	public Object filter(Object t, Predicate p) {
+		if(t instanceof Set)
+			return ((Set)t).stream().filter(p);
+		else
+			return ((Stream)t).filter(p);
 	}
 
 	@Override
-	public Object map(Set t, Function fn) {
-		return t.stream().map(fn).collect(Collectors.toSet());
+	public Object map(Object t, Function fn) {
+		if(t instanceof Set)
+			return ((Set)t).stream().map(fn);
+		else
+			return ((Stream)t).map(fn);
 	}
-	public Set executeflatMap(Set t, Function fn){
-		return flatMap(t,input -> unwrapOtherMonadTypes(this,fn.apply(input)));
+	
+	public Object executeflatMap(Object t, Function fn){
+		return flatMap(t,input -> unwrapOtherMonadTypesLC(this,fn.apply(input)));
 	}
 	@Override
-	public Set flatMap(Set t, Function fn) {
-		return (Set) t.stream().flatMap(fn).collect(Collectors.toSet());
+	public Object flatMap(Object t, Function fn) {
+		if(t instanceof Set)
+			return ((Set) t).stream().flatMap(fn);
+		else 
+			return ((Stream) t).flatMap(fn);
+			
 	}
-
 	@Override
 	public boolean instanceOfT(Object apply) {
 		return apply instanceof Stream;
@@ -43,25 +53,35 @@ public class SetComprehender implements Comprehender<Set> {
 	public Set empty() {
 		return Collections.unmodifiableSet(new HashSet());
 	}
+	
 	@Override
 	public Set of(Object o) {
 		Set set= new HashSet();
 		set.add(o);
 		return Collections.unmodifiableSet(set);
 	}
-	static <T> T unwrapOtherMonadTypes(Comprehender<T> comp,Object apply){
+	@Override 
+	public Set unwrap(Object o){
+		if(o instanceof Set)
+			return (Set)o;
+		else
+			return (Set)((Stream)o).collect(Collectors.toSet());
+	}
+	static Stream unwrapOtherMonadTypesLC(Comprehender comp,Object apply){
 		
 		
 		
 		if(apply instanceof Collection){
-			return (T)((Collection)apply).stream();
+			return ((Collection)apply).stream();
 		}
 		if(apply instanceof Iterable){
-			 return (T)StreamSupport.stream(((Iterable)apply).spliterator(),
+			 return StreamSupport.stream(((Iterable)apply).spliterator(),
 						false);
 		}
 		
-		return Comprehender.unwrapOtherMonadTypes(comp,apply);
+		Object o = Comprehender.unwrapOtherMonadTypes(comp,apply);
+		
+		return (Stream)o;
 		
 	}
 	

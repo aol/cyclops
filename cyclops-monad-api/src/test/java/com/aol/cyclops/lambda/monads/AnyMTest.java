@@ -50,7 +50,7 @@ public class AnyMTest {
 	@Test
 	public void flatMapWithListComprehender() {
 	    List<Integer> list = Arrays.asList(1,2,3);
-	    AnyM<Integer> any = AsAnyM.anyMList(list); 
+	    AnyM<Integer> any = AnyM.fromList(list); 
 	    AnyM<Integer> mapped = any.flatMap(e -> any.unit(e));
 	    List<Integer> unwrapped = mapped.unwrap();
 	    assertEquals(list, unwrapped);
@@ -115,6 +115,17 @@ public class AnyMTest {
 	public void ofConvertable(){
 		AnyM<Integer> future = AnyM.ofConvertable((Supplier<Integer>)()->1);
 		assertThat(future.unwrap(),instanceOf(CompletableFuture.class));
+	}
+	@Test
+	public void testLisOfMonad(){
+		AnyM<Integer> list = AnyM.ofMonad(Arrays.asList(1,2,3));
+		assertThat(list.unwrap(),instanceOf(List.class));
+	}
+	
+	@Test
+	public void testListFromList(){
+		AnyM<Integer> list = AnyM.fromList(Arrays.asList(1,2,3));
+		assertThat(list.unwrap(),instanceOf(List.class));
 	}
 	@Test
 	public void testList(){

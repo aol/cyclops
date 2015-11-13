@@ -19,14 +19,28 @@ import org.junit.Test;
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
 
 public class MixedTest {
-
 	@Test
-	public void mixedStreamOptional(){
+	public void mixedListOptional(){
 		val strs = Arrays.asList("hello","world");
 		val opt = Optional.of("cool");
 		
 		
-		Stream<String> results = Do.add(strs)
+		List<String> results = Do.add(strs)
+									.add(opt)
+									.yield(v1->v2 -> v1 + v2).unwrap();
+										 
+		
+		val list = results.stream().collect(Collectors.toList());
+		assertThat(list,hasItem("hellocool"));
+		assertThat(list,hasItem("worldcool"));
+	}
+	@Test
+	public void mixedStreamOptional(){
+		val strs = Stream.of("hello","world");
+		val opt = Optional.of("cool");
+		
+		
+		Stream<String> results = Do.addStream(strs)
 									.add(opt)
 									.yield(v1->v2 -> v1 + v2).unwrap();
 										 
