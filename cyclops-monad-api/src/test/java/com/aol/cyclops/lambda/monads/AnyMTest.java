@@ -50,7 +50,7 @@ public class AnyMTest {
 	@Test
 	public void flatMapWithListComprehender() {
 	    List<Integer> list = Arrays.asList(1,2,3);
-	    AnyM<Integer> any = AsAnyM.anyMList(list); 
+	    AnyM<Integer> any = AnyM.fromList(list); 
 	    AnyM<Integer> mapped = any.flatMap(e -> any.unit(e));
 	    List<Integer> unwrapped = mapped.unwrap();
 	    assertEquals(list, unwrapped);

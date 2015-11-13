@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -38,6 +39,24 @@ public interface AnyM<T> extends Unwrapable{
 	
 	public static AnyM<Integer> fromRange(int start, int end){
 		return AnyM.fromStream(SequenceM.range(start, end));
+	}
+	public static <T> AnyM<T> fromStreamable(Streamable<T> stream){
+		return AnyMFactory.instance.monad(stream);
+	}
+	public static <T> AnyM<T> fromList(List<T> list){
+		return AnyMFactory.instance.monad(list);
+	}
+	public static <T> AnyM<T> fromSet(Set<T> set){
+		return AnyMFactory.instance.monad(set);
+	}
+	/**
+	 * Create an AnyM wrapping a Stream of the supplied data
+	 * 
+	 * @param streamData
+	 * @return
+	 */
+	public static <T> AnyM<T> fromArray(T... streamData){
+		return AnyMFactory.instance.monad(Stream.of(streamData));
 	}
 	public static <T> AnyM<T> fromStream(Stream<T> stream){
 		return AnyMFactory.instance.monad(stream);
@@ -78,9 +97,21 @@ public interface AnyM<T> extends Unwrapable{
 	public static AnyM<String> fromURL(URL url){
 		return AnyMFactory.instance.of(url);
 	}
+	/**
+	 * Take the supplied object and always attempt to convert it to a Monad type
+	 * 
+	 * @param monad
+	 * @return
+	 */
 	public static <T> AnyM<T> ofConvertable(Object monad){
 		return AnyMFactory.instance.of(monad);
 	}
+	/**
+	 * Take the supplied object and wrap it inside an AnyM - must be a supported monad type already
+	 * 
+	 * @param monad to wrap
+	 * @return Wrapped Monad
+	 */
 	public static <T> AnyM<T> ofMonad(Object monad){
 		return AnyMFactory.instance.monad(monad);
 	}
@@ -428,12 +459,13 @@ public interface AnyM<T> extends Unwrapable{
 	 */
 	 AnyM<T> reduceMOptional(Monoid<Optional<T>> reducer);
 	 AnyM<T> reduceMStream(Monoid<Stream<T>> reducer);
-	   AnyM<T> reduceMStreamable(Monoid<Streamable<T>> reducer);
-	   AnyM<T> reduceMCompletableFuture(Monoid<CompletableFuture<T>> reducer);
+	 AnyM<T> reduceMStreamable(Monoid<Streamable<T>> reducer);
+	 AnyM<T> reduceMCompletableFuture(Monoid<CompletableFuture<T>> reducer);
 	  
-	   AnyM<T> reduceM(Monoid<AnyM<T>> reducer);
+	 AnyM<T> reduceM(Monoid<AnyM<T>> reducer);
 	
 	
+	 
 	
 	@Override
     public String toString() ;

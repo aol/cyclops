@@ -37,6 +37,14 @@ import com.aol.cyclops.sequence.streamable.Streamable;
 
 public class AnyMTest {
 	@Test
+	public void flatMapWithListComprehender() {
+	    List<Integer> list = Arrays.asList(1,2,3);
+	    AnyM<Integer> any = AnyM.fromList(list); 
+	    AnyM<Integer> mapped = any.flatMap(e -> any.unit(e));
+	    List<Integer> unwrapped = mapped.unwrap();
+	    assertEquals(list, unwrapped);
+	}
+	@Test
 	public void testForEach() {
 		   anyM(Stream.of(asList(1,3)))
 				  				.flatMap(c->anyM(c.stream()))

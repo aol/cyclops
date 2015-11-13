@@ -27,7 +27,7 @@ public class ListComprehender implements Comprehender<List> {
 		return t.stream().map(fn).collect(Collectors.toList());
 	}
 	public List executeflatMap(List t, Function fn){
-		return flatMap(t,input -> unwrapOtherMonadTypes(this,fn.apply(input)));
+		return flatMap(t,input -> unwrapOtherMonadTypesLC(this,fn.apply(input)));
 	}
 	@Override
 	public List flatMap(List t, Function fn) {
@@ -46,19 +46,20 @@ public class ListComprehender implements Comprehender<List> {
 	public List of(Object o) {
 		return Arrays.asList(o);
 	}
-	static <T> T unwrapOtherMonadTypes(Comprehender<T> comp,Object apply){
+	static Stream unwrapOtherMonadTypesLC(Comprehender comp,Object apply){
 		
 		
 		
 		if(apply instanceof Collection){
-			return (T)((Collection)apply).stream();
+			return ((Collection)apply).stream();
 		}
 		if(apply instanceof Iterable){
-			 return (T)StreamSupport.stream(((Iterable)apply).spliterator(),
+			 return StreamSupport.stream(((Iterable)apply).spliterator(),
 						false);
 		}
 		
-		return Comprehender.unwrapOtherMonadTypes(comp,apply);
+		Object o = Comprehender.unwrapOtherMonadTypes(comp,apply);
+		return (Stream)o;
 		
 	}
 	

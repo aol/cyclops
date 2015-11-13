@@ -49,19 +49,21 @@ public class SetComprehender implements Comprehender<Set> {
 		set.add(o);
 		return Collections.unmodifiableSet(set);
 	}
-	static <T> T unwrapOtherMonadTypes(Comprehender<T> comp,Object apply){
+	static Stream unwrapOtherMonadTypes(Comprehender comp,Object apply){
 		
 		
 		
 		if(apply instanceof Collection){
-			return (T)((Collection)apply).stream();
+			return ((Collection)apply).stream();
 		}
 		if(apply instanceof Iterable){
-			 return (T)StreamSupport.stream(((Iterable)apply).spliterator(),
+			 return StreamSupport.stream(((Iterable)apply).spliterator(),
 						false);
 		}
 		
-		return Comprehender.unwrapOtherMonadTypes(comp,apply);
+		Object o = Comprehender.unwrapOtherMonadTypes(comp,apply);
+		
+		return (Stream)o;
 		
 	}
 	

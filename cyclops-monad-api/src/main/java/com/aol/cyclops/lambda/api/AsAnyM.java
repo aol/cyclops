@@ -16,8 +16,8 @@ import com.aol.cyclops.lambda.monads.MonadWrapper;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
-
-
+//Use the creational methods on AnyM instead
+@Deprecated
 public class AsAnyM {
 
 	/**
