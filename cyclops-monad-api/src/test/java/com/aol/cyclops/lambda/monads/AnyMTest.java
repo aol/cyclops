@@ -4,7 +4,8 @@ import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
 import static com.aol.cyclops.lambda.api.AsAnyMList.completableFutureToAnyMList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -32,6 +33,20 @@ import com.aol.cyclops.monad.AnyM;
 
 
 public class AnyMTest {
+	@Test
+	public void createAnyMFromListOrOptional(){
+		List<Integer> list = Arrays.asList(1,2,3);
+		assertThat(AnyM.ofMonad(list).unwrap(),instanceOf(List.class));
+		Optional<Integer> opt = Optional.of(1);
+		assertThat(AnyM.ofMonad(opt).unwrap(),instanceOf(Optional.class));
+	}
+	@Test
+	public void createAnyMFromListOrOptionalAsAnyM(){
+		List<Integer> list = Arrays.asList(1,2,3);
+		assertThat(AsAnyM.notTypeSafeAnyM(list).unwrap(),instanceOf(List.class));
+		Optional<Integer> opt = Optional.of(1);
+		assertThat(AsAnyM.notTypeSafeAnyM(opt).unwrap(),instanceOf(Optional.class));
+	}
 	@Test
 	public void flatMapWithListComprehender() {
 	    List<Integer> list = Arrays.asList(1,2,3);
