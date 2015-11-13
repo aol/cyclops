@@ -21,8 +21,8 @@ public class DoListsTest {
 	@Test
 	public void do2(){
 		Stream<Double> s = UntypedDo.add(Arrays.asList(10.00,5.00,100.30))
-						.with((Double d)->Arrays.asList(2.0))
-						.yield((Double base)->(Double bonus)-> base*(1.0+bonus));
+								  .with((Double d)->Arrays.asList(2.0))
+								  .yield((Double base)->(Double bonus)-> base*(1.0+bonus));
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(345.9));

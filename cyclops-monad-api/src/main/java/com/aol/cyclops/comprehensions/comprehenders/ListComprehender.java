@@ -13,25 +13,36 @@ import org.pcollections.PVector;
 
 import com.aol.cyclops.lambda.api.Comprehender;
 
-public class ListComprehender implements Comprehender<List> {
+public class ListComprehender implements Comprehender {
 	public Class getTargetClass(){
 		return List.class;
 	}
 	@Override
-	public Object filter(List t, Predicate p) {
-		return t.stream().filter(p).collect(Collectors.toList());
+	public Object filter(Object t, Predicate p) {
+		if(t instanceof List)
+			return ((List)t).stream().filter(p);
+		else
+			return ((Stream)t).filter(p);
 	}
 
 	@Override
-	public Object map(List t, Function fn) {
-		return t.stream().map(fn).collect(Collectors.toList());
+	public Object map(Object t, Function fn) {
+		if(t instanceof List)
+			return ((List)t).stream().map(fn);
+		else
+			return ((Stream)t).map(fn);
 	}
-	public List executeflatMap(List t, Function fn){
+	
+	public Object executeflatMap(Object t, Function fn){
 		return flatMap(t,input -> unwrapOtherMonadTypesLC(this,fn.apply(input)));
 	}
 	@Override
-	public List flatMap(List t, Function fn) {
-		return (List) t.stream().flatMap(fn).collect(Collectors.toList());
+	public Object flatMap(Object t, Function fn) {
+		if(t instanceof List)
+			return ((List) t).stream().flatMap(fn);
+		else 
+			return ((Stream) t).flatMap(fn);
+			
 	}
 
 	@Override
@@ -46,6 +57,14 @@ public class ListComprehender implements Comprehender<List> {
 	public List of(Object o) {
 		return Arrays.asList(o);
 	}
+	
+	@Override 
+	public List unwrap(Object o){
+		if(o instanceof List)
+			return (List)o;
+		else
+			return (List)((Stream)o).collect(Collectors.toList());
+	}
 	static Stream unwrapOtherMonadTypesLC(Comprehender comp,Object apply){
 		
 		
@@ -59,6 +78,13 @@ public class ListComprehender implements Comprehender<List> {
 		}
 		
 		Object o = Comprehender.unwrapOtherMonadTypes(comp,apply);
+		if(o instanceof Collection){
+			return ((Collection)o).stream();
+		}
+		if(o instanceof Iterable){
+			 return StreamSupport.stream(((Iterable)o).spliterator(),
+						false);
+		}
 		return (Stream)o;
 		
 	}

@@ -1,6 +1,7 @@
 package com.aol.cyclops.comprehensions.converters;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
@@ -35,6 +36,8 @@ public class CollectionToStreamConverter implements MonadicConverter<Stream> {
 			return null; //should never happen
 		}
 	private Boolean shouldConvert(Class c) {
+		if(c.isAssignableFrom(List.class))
+			return false;
 		return !Stream.of(c.getMethods())
 		.filter(method -> "map".equals(method.getName()))
 		.filter(method -> method.getParameterCount()==1).findFirst().isPresent();

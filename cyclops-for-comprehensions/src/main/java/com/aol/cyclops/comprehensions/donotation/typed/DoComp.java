@@ -1,6 +1,7 @@
 package com.aol.cyclops.comprehensions.donotation.typed;
 
 
+import java.util.List;
 import java.util.function.Function;
 
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ import com.aol.cyclops.sequence.Unwrapable;
 public abstract class DoComp {
 	
 	PStack<Entry> assigned;
+	final Class orgType;
 	
 	protected PStack<Entry> addToAssigned(Function f){
 		return assigned.plus(assigned.size(),createEntry(f));

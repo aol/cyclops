@@ -45,12 +45,13 @@ Two supported formats
 ```java
 	List<Integer> list= Arrays.asList(1,2,3);
 	
-	Stream<Integer> stream = Do.add(list)
-								.yield((Integer i)-> i +2);
+	List<Integer> list = Do.add(list)
+								.yield((Integer i)-> i +2)
+								.unwrap();
 				
 										
 		
-	assertThat(Arrays.asList(3,4,5),equalTo(stream.collect(Collectors.toList())));
+	assertThat(Arrays.asList(3,4,5),equalTo(list));
 ```
 
 Yield, Filter and 'and' take curried functions
@@ -60,7 +61,8 @@ Yield, Filter and 'and' take curried functions
 ```java
 		Stream<Integer> stream = Do.add(asList(20,30))
 								   .with( i->asList(1,2,3))
-								   .yield(i-> j -> i + j+2);
+								   .yield(i-> j -> i + j+2)
+								   .asSequence();
 ```
 
 Parameters are stack based, the parameter to the first function is an index into the first Collection or Monad, the parameter to the second function is an index into the second Collection or Monad and so on.
@@ -70,7 +72,8 @@ The above code could be rewritten as
 ```java
 		Stream<Integer> stream = Do.add(asList(20,30))
 								   .with(any->asList(1,2,3))
-								   .yield(x-> y -> x + y+2);
+								   .yield(x-> y -> x + y+2)
+								   .asSequence();
 ```
 And it would work in exactly the same way
 
@@ -78,7 +81,8 @@ And it would work in exactly the same way
 		List<Integer> list= Arrays.asList(1,2,3);
 		Stream<Integer> stream = Do.add(list)
 								.filter(a -> a>2)
-								.yield(a-> a +2);
+								.yield(a-> a +2)
+								.asSequence();
 				
 										
 		
@@ -129,6 +133,7 @@ Things start to become a little unwieldy, but a little less so with for comprehe
     Do.add(list)
       .with(element -> numbers)
       .yield(  element -> num  -> element + num )
+      .unwrap()
       .forEach(System.out::println);
  ```     
                                   
@@ -154,6 +159,7 @@ Let's add a third level of nesting
       .add(numbers)
       .add(dates)
       .yield( element ->  num ->  date -> element + num+":"+date )
+      .unwrap()
       .forEach(System.out::println);
  ```
  
@@ -184,6 +190,7 @@ Can be written as
 		Do.add(strs)
           .add(opt)
           .yield(v1->v2 -> v1 + v2)
+          .unwrap()
           .forEach(System.out::println);
 ```
 										 
@@ -226,7 +233,8 @@ Guards (filter commands) can be placed at any stage of a for comprehension. E.g.
                  Stream<Double> s = Do.with(Arrays.asList(10.00,5.00,100.30))
 						.and((Double d)->Arrays.asList(2.0))
 						.filter((Double d)-> (Double e) -> e*d>10.00)
-						.yield((Double base)->(Double bonus)-> base*(1.0+bonus));
+						.yield((Double base)->(Double bonus)-> base*(1.0+bonus))
+						.asSequence();
 		
 		double total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(330.9));

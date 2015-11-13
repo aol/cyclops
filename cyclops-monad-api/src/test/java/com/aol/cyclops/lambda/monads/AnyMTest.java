@@ -117,6 +117,17 @@ public class AnyMTest {
 		assertThat(future.unwrap(),instanceOf(CompletableFuture.class));
 	}
 	@Test
+	public void testLisOfMonad(){
+		AnyM<Integer> list = AnyM.ofMonad(Arrays.asList(1,2,3));
+		assertThat(list.unwrap(),instanceOf(List.class));
+	}
+	
+	@Test
+	public void testListFromList(){
+		AnyM<Integer> list = AnyM.fromList(Arrays.asList(1,2,3));
+		assertThat(list.unwrap(),instanceOf(List.class));
+	}
+	@Test
 	public void testList(){
 		AnyM<Integer> list = AsAnyM.anyMList(Arrays.asList(1,2,3));
 		assertThat(list.unwrap(),instanceOf(List.class));

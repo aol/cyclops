@@ -45,6 +45,9 @@ public interface Comprehender<T> {
 		return 5;
 	}
 	
+	default T unwrap(Object o){
+		return (T)o;
+	}
 	/**
 	 * Wrapper around filter
 	 * 
