@@ -37,22 +37,10 @@ compile 'com.aol.cyclops:cyclops-pattern-matching-recursive:x.y.z'
 * [Pattern Matching Wiki](https://github.com/aol/cyclops/wiki/Pattern-matching-:-Pattern-Matching-for-Java-8)
 * [Pattern Matching in Cyclops](https://medium.com/@johnmcclean/pattern-matching-in-cyclops-for-java-8-21a4912bfe4d)
 
-# Pattern Matching Structure & Examples
+# Related Modules
 
-## Cyclops Pattern Matching is structured into two packages
-
-1. A core which holds the cases to be executed
-2. A set of builders which aims to make building pattern matching expressions simpler
-
-Builders can build ontop of builders. The matchable interface provides the highest level of abstraction and is the recommended starting point.
-
-Conversely Case and Cases provide the lowest level inputs into the pattern matcher.
-
-
-* Matchable : provides succint pattern matching for some of the most common case types.
-* Matching : provides a more powerful & flexible interface at the expense of increased verboseness
-* PatternMatcher : provides a more flexible interface at the expense of looser typing
-* Cases / Case : low level functional classes for building pattern matching cases
+[Core Pattern Matching Support](https://github.com/aol/cyclops/blob/master/cyclops-pattern-matching)
+[Pattern Matching for Collections](https://github.com/aol/cyclops/tree/master/cyclops-pattern-matching-collections)
 
 ## The Matchable interface / trait
 
