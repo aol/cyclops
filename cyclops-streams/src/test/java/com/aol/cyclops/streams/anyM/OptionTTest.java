@@ -1,10 +1,6 @@
 package com.aol.cyclops.streams.anyM;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import org.junit.Test;

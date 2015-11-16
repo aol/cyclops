@@ -1,7 +1,9 @@
 package com.aol.cyclops.lambda.monads.transformers;
 
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import lombok.Getter;
@@ -27,7 +29,7 @@ public class OptionalT<A> {
        return of(run.map(opt-> opt.filter(test)));
    }
 
-   public <B> OptionalT<B> map(Function1<A,B> f){
+   public <B> OptionalT<B> map(Function<A,B> f){
        return new OptionalT<B>(run.map(o-> o.map(f)));
    }
    public <B> OptionalT<B> flatMap(Function1<A,OptionalT<B>> f){
@@ -40,10 +42,18 @@ public class OptionalT<A> {
 	   
 	   
    }
-   
-   public static <A> OptionalT<A> fromAnyM(AnyM<A> anyM){
-	   return of(anyM.map(Optional::ofNullable));
-   }
+
+	public static <U, R> Function<OptionalT<U>, OptionalT<R>> lift(Function<U, R> fn) {
+		return optTu -> optTu.map(input -> fn.apply(input));
+	}
+
+	public static <U1, U2, R> BiFunction<OptionalT<U1>, OptionalT<U2>, OptionalT<R>> lift2(BiFunction<U1, U2, R> fn) {
+		return (optTu1, optTu2) -> optTu1.flatMap(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
+	}
+
+	public static <A> OptionalT<A> fromAnyM(AnyM<A> anyM) {
+		return of(anyM.map(Optional::ofNullable));
+	}
    
    public static <A> OptionalT<A> of(AnyM<Optional<A>> monads){
 	   return new OptionalT<>(monads);

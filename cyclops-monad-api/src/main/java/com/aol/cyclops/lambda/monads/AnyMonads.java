@@ -17,8 +17,8 @@ import com.aol.cyclops.monad.AnyM;
 public class AnyMonads extends AsAnyMList{
 	
 	/**
-	 * Lift a function so it accepts a Monad and returns a Monad (simplex view of a wrapped Monad)
-	 * Simplex view simplifies type related challenges. The actual native type is not specified here.
+	 * Lift a function so it accepts an AnyM and returns an AnyM (any monad)
+	 * AnyM view simplifies type related challenges.
 	 * 
 	 * @param fn
 	 * @return

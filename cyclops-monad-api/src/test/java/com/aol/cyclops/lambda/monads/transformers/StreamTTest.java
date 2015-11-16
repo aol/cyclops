@@ -1,64 +1,21 @@
 package com.aol.cyclops.lambda.monads.transformers;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Test;
 
 import com.aol.cyclops.monad.AnyM;
-public class OptionTTest {
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+public class StreamTTest {
 
 	String result = null;
-	
-	@Test
-	public void optionAndStream(){
-		Function<Integer,Integer> add2 = i -> i+2;
-		Function<OptionalT<Integer>, OptionalT<Integer>> optTAdd2 = OptionalT.lift(add2);
-		
-		Stream<Integer> withNulls = Stream.of(1,2,null);
-		AnyM<Integer> stream = AnyM.ofMonad(withNulls);
-		AnyM<Optional<Integer>> streamOpt = stream.map(Optional::ofNullable);
-		List<Integer> results = optTAdd2.apply(OptionalT.of(streamOpt))
-										.getRun()
-										.<Stream<Optional<Integer>>>unwrap()
-										.filter(Optional::isPresent)
-										.map(Optional::get)
-										.collect(Collectors.toList());
-		
-		assertThat(results,equalTo(Arrays.asList(3,4)));
-		
-	}
-	@Test
-	public void optionAndStreamAndFuture(){
-		BiFunction<Integer,Integer,Integer> add = (a,b) -> a+b;
-		BiFunction<OptionalT<Integer>,OptionalT<Integer>, OptionalT<Integer>> optTAdd2 = OptionalT.lift2(add);
-		
-		Stream<Integer> withNulls = Stream.of(1,2,null);
-		AnyM<Integer> stream = AnyM.ofMonad(withNulls);
-		AnyM<Optional<Integer>> streamOpt = stream.map(Optional::ofNullable);
-		
-		CompletableFuture<Optional<Integer>> two = CompletableFuture.completedFuture(Optional.of(2));
-		AnyM<Optional<Integer>> future=  AnyM.ofMonad(two);
-		List<Integer> results = optTAdd2.apply(OptionalT.of(streamOpt),OptionalT.of(future))
-										.getRun()
-										.<Stream<Optional<Integer>>>unwrap()
-										.filter(Optional::isPresent)
-										.map(Optional::get)
-										.collect(Collectors.toList());
-		
-		assertThat(results,equalTo(Arrays.asList(3,4)));
-		
-	}
-	
 	
 	@Test
 	public void filterFail(){
