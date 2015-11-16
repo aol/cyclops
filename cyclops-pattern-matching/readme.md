@@ -37,6 +37,11 @@ compile 'com.aol.cyclops:cyclops-pattern-matching:x.y.z'
 * [Javadoc for Cyclops Pattern Matching](http://www.javadoc.io/doc/com.aol.cyclops/cyclops-pattern-matching/5.0.0)
 * [Pattern Matching Wiki](https://github.com/aol/cyclops/wiki/Pattern-matching-:-Pattern-Matching-for-Java-8)
 
+# Related Modules
+
+[Recursive Pattern Matching Support](https://github.com/aol/cyclops/tree/master/cyclops-pattern-matching-recursive)
+[Pattern Matching for Collections](https://github.com/aol/cyclops/tree/master/cyclops-pattern-matching-collections)
+
 # Pattern Matching Structure & Examples
 
 ## Cyclops Pattern Matching is structured into two packages
