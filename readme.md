@@ -36,6 +36,7 @@ Powerful, lightweight & modular extensions for JDK 8. Import only the modules yo
 * [Pattern Matching in Java 8](https://medium.com/@johnmcclean/pattern-matching-in-cyclops-for-java-8-21a4912bfe4d)
 * [Functional Feature Toggling](https://medium.com/@johnmcclean/feature-toggling-with-cyclops-a29d1eead62c)
 * [Dependency injection using the Reader Monad in Java8](https://medium.com/@johnmcclean/dependency-injection-using-the-reader-monad-in-java8-9056d9501c75)
+* [Deterministic and Non-Deterministic Finite State Machines with Cyclops](http://sebastian-millies.blogspot.de/2015/11/deterministic-and-non-deterministic.html)
 
 ![cyclops - duke2](https://cloud.githubusercontent.com/assets/9964792/8359084/28d79944-1b5c-11e5-9c56-2c44d33f3aed.png)
 
