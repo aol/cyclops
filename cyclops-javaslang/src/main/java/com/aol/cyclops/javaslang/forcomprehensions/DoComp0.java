@@ -1,5 +1,5 @@
 
-package com.aol.cyclops.comprehensions.donotation.typed;
+package com.aol.cyclops.javaslang.forcomprehensions;
 
 
 import java.io.BufferedReader;
@@ -16,14 +16,26 @@ import java.util.function.Supplier;
 import java.util.stream.BaseStream;
 import java.util.stream.Stream;
 
+import javaslang.algebra.Monad;
+
+import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
+import com.aol.cyclops.comprehensions.donotation.typed.DoComp;
+import com.aol.cyclops.comprehensions.donotation.typed.Entry;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 	public class DoComp0 extends DoComp{
 		public DoComp0(PStack<Entry> assigned) {
 			super(assigned,null);
 			
+		}
+		
+		//${start}
+		
+		public <T1> DoComp1<T1> monad(Monad<T1> monad){
+			return new DoComp1(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),monad)),getOrgType());
+
 		}
 		
 		public <T1> DoComp1<T1> addValues(T1... values){

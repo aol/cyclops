@@ -1,5 +1,5 @@
 
-package com.aol.cyclops.comprehensions.donotation.typed;
+package com.aol.cyclops.javaslang.forcomprehensions;
 
 
 import java.io.BufferedReader;
@@ -15,9 +15,13 @@ import java.util.function.Supplier;
 import java.util.stream.BaseStream;
 import java.util.stream.Stream;
 
+import javaslang.algebra.Monad;
+
 import org.pcollections.PStack;
 
-import com.aol.cyclops.lambda.api.AsAnyM;
+import com.aol.cyclops.comprehensions.donotation.typed.DoComp;
+import com.aol.cyclops.comprehensions.donotation.typed.Entry;
+import com.aol.cyclops.comprehensions.donotation.typed.Guard;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
@@ -26,7 +30,10 @@ import com.aol.cyclops.sequence.SequenceM;
 			super(assigned,orgType);
 			
 		}
-		
+		//${start}
+		public <T4> DoComp4<T1,T2,T3,T4> monad(Monad<T4> monad){
+			return new DoComp4(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),monad)),getOrgType());
+		}
 		public  DoComp4<T1,T2,T3,Character> add(CharSequence seq){
 			return new DoComp4(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),seq)),getOrgType());
 			
@@ -454,6 +461,28 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T4> DoComp4<T1,T2,T3,T4> withOptional(Function<T1,Function<T2,Function<T3,Optional<T4>>>> f){
+			return new DoComp4(addToAssigned(f),getOrgType());
+			
+		}
+		
+		/**
+		 * Add a javaslang Monad  as next nested level in the comprehension
+		 * 
+		 * 
+		 * 
+		 * <pre>{@code   Do.withOptional((Integer i1) -> optional1)
+		 * 					.withOptional((Integer i1)->(Integer i2) -> optional2)
+		 * 				    .withMonad((Integer i1)->(Integer i2)->(Integer i3) -> queue)
+		 				   .filter((Integer i1)->(Integer i2)->(Integer i3) -> i1>5)
+					  	   .yield((Integer i1)->(Integer i2)->(Integer i3) -> i1+i2+i3);
+								
+			}</pre>
+		 * 
+		 * 
+		 * @param f Gives access to current pointers and defines next level in comprehension
+		 * @return Next stage in for comprehension builder
+		 */
+		public <T4> DoComp4<T1,T2,T3,T4> withMonad(Function<T1,Function<T2,Function<T3,Monad<T4>>>> f){
 			return new DoComp4(addToAssigned(f),getOrgType());
 			
 		}

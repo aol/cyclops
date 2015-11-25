@@ -21,6 +21,8 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+import javaslang.algebra.Monad;
+
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.Unwrapable;
@@ -88,6 +90,8 @@ public interface AnyM<T> extends Unwrapable{
 	public static <T> AnyM<T> fromSet(Set<T> set){
 		return AnyMFactory.instance.monad(set);
 	}
+	
+	
 	/**
 	 * Create an AnyM wrapping a Stream of the supplied data
 	 * 
@@ -96,6 +100,9 @@ public interface AnyM<T> extends Unwrapable{
 	 */
 	public static <T> AnyM<T> fromArray(T... streamData){
 		return AnyMFactory.instance.monad(Stream.of(streamData));
+	}
+	public static <T> AnyM<T> fromJavaslang(Monad<T> monad){
+		return AnyMFactory.instance.monad(monad);
 	}
 	public static <T> AnyM<T> fromStream(Stream<T> stream){
 		return AnyMFactory.instance.monad(stream);
@@ -167,10 +174,7 @@ public interface AnyM<T> extends Unwrapable{
 	 */
 	<R> R unwrap();
 	
-	/**
-	 * Collect the contents of the monad wrapped by this AnyM into supplied collector
-	 */
-	public <R, A> R collect(Collector<? super T, A, R> collector);
+	
 	
 	
 
@@ -521,9 +525,48 @@ public interface AnyM<T> extends Unwrapable{
 	@Override
     public String toString() ;
 	default Optional<List<T>> toOptional(){
+		
 		return this.<T>toSequence().toOptional();
 	}
 	default CompletableFuture<List<T>> toCompletableFuture(){
 		return this.<T>toSequence().toCompletableFuture();
 	}
+	
+	/**
+	 * Convert this monad into a List
+	 * <pre>
+	 * @{code 
+	 * 
+	 * Stream<Integer> becomes List<Integer>
+	 * Optional<Integer> becomes List<Integer>
+	 * Set<Integer> becomes List<Integer>
+	 * }
+	 * </pre>
+	 * 
+	 * @return AnyM as a List
+	 */
+	public List<T> toList();
+	/**
+	 * Convert this monad into a Set
+	 * <pre>
+	 * @{code 
+	 * 
+	 * Stream<Integer> becomes Set<Integer>
+	 * Optional<Integer> becomes Set<Integer>
+	 * List<Integer> becomes Set<Integer>
+	 * 
+	 * }
+	 * </pre>
+	 * 
+	 * @return AnyM as a Set
+	 */
+	public Set<T> toSet();
+	
+	/**
+	 * Collect the contents of the monad wrapped by this AnyM into supplied collector
+	 */
+	public <R, A> R collect(Collector<? super T, A, R> collector);
+	
+	 
+	
 }

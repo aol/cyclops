@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.function.Function;
 
 import javaslang.collection.Stream;
+import javaslang.collection.Tree;
 
 import com.aol.cyclops.lambda.api.Comprehender;
 import com.nurkiewicz.lazyseq.LazySeq;
@@ -30,7 +31,7 @@ public class StreamComprehender implements Comprehender<Stream> {
 
 	@Override
 	public Stream empty() {
-		return Stream.of();
+		return Stream.empty();
 	}
 
 	@Override

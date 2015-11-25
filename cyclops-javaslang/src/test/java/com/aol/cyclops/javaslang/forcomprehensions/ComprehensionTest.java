@@ -1,4 +1,4 @@
-package com.aol.cyclops.javaslang;
+package com.aol.cyclops.javaslang.forcomprehensions;
 
 
 import java.util.concurrent.CompletableFuture;
@@ -9,7 +9,6 @@ import lombok.Value;
 
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.donotation.typed.Do;
 
 public class ComprehensionTest {
 
@@ -18,7 +17,7 @@ public class ComprehensionTest {
 		
 		CompletableFuture<String> future = CompletableFuture.supplyAsync(this::loadData);
 		CompletableFuture<List<String>> results1 = Do.add(future)
- 														.add(Javaslang.anyM(List.ofAll("first","second")))
+ 														.monad(List.ofAll("first","second"))
  														.yield( loadedData -> localData-> loadedData + ":" + localData )
  														.unwrap();
 		

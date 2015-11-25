@@ -6,8 +6,16 @@ import static org.junit.Assert.assertThat;
 import java.util.Arrays;
 import java.util.Optional;
 
+import javaslang.Lazy;
+import javaslang.collection.Array;
+import javaslang.collection.CharSeq;
+import javaslang.collection.HashSet;
 import javaslang.collection.List;
+import javaslang.collection.Queue;
+import javaslang.collection.Stack;
 import javaslang.collection.Stream;
+import javaslang.collection.Vector;
+import javaslang.concurrent.Future;
 import javaslang.control.Failure;
 import javaslang.control.Left;
 import javaslang.control.Option;
@@ -24,6 +32,17 @@ import com.aol.cyclops.lambda.monads.AnyMonads;
 
 public class AnyJavaslangMTest {
 
+	@Test
+	public void testToList(){
+		assertThat(Javaslang.anyM(List.ofAll(1,2,3)).toList(), equalTo(Arrays.asList(1,2,3)));
+	}
+	@Test
+	public void monadTest(){
+		assertThat(Javaslang.anyMonad(Try.of(this::success))
+			.map(String::toUpperCase)
+			.toSequence()
+			.toList(),equalTo(Arrays.asList("HELLO WORLD")));
+	}
 	@Test
 	public void tryTest(){
 		assertThat(Javaslang.anyM(Try.of(this::success))
@@ -166,6 +185,37 @@ public class AnyJavaslangMTest {
 				.toList(),equalTo(Arrays.asList()));
 	}
 	@Test
+	public void futureTest(){
+		assertThat(Javaslang.anyMonad(Future.of(()->"hello world"))
+				.map(String::toUpperCase)
+				.toSequence()
+				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
+	}
+	@Test
+	public void futureFlatMapTest(){
+		assertThat(Javaslang.anyMonad(Future.of(()->"hello world"))
+				.map(String::toUpperCase)
+				.flatMapOptional(Optional::of)
+				.toSequence()
+				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
+	}
+	
+	@Test
+	public void lazyTest(){
+		assertThat(Javaslang.anyMonad(Lazy.of(()->"hello world"))
+				.map(String::toUpperCase)
+				.toSequence()
+				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
+	}
+	@Test
+	public void lazyFlatMapTest(){
+		assertThat(Javaslang.anyMonad(Lazy.of(()->"hello world"))
+				.map(String::toUpperCase)
+				.flatMapOptional(Optional::of)
+				.toSequence()
+				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
+	}
+	@Test
 	public void streamTest(){
 		assertThat(Javaslang.anyM(Stream.of("hello world"))
 				.map(String::toUpperCase)
@@ -199,6 +249,48 @@ public class AnyJavaslangMTest {
 		assertThat(Javaslang.anyM(Stream.of("hello world"))
 				.map(String::toUpperCase)
 				.flatMap(i->AnyMonads.anyM(java.util.stream.Stream.of(i)))
+				.toSequence()
+				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
+	}
+	@Test
+	public void arrayTest(){
+		assertThat(Javaslang.anyMonad(Array.of("hello world"))
+				.map(String::toUpperCase)
+				.toSequence()
+				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
+	}
+	@Test
+	public void charSeqTest(){
+		assertThat(Javaslang.anyMonad(CharSeq.of("hello world"))
+				.map(c->c.toString().toUpperCase().charAt(0))
+				.toSequence()
+				.join(),equalTo("HELLO WORLD"));
+	}
+	@Test
+	public void hashsetTest(){
+		assertThat(Javaslang.anyMonad(HashSet.of("hello world"))
+				.map(String::toUpperCase)
+				.toSequence()
+				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
+	}
+	@Test
+	public void queueTest(){
+		assertThat(Javaslang.anyMonad(Queue.of("hello world"))
+				.map(String::toUpperCase)
+				.toSequence()
+				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
+	}
+	@Test
+	public void stackTest(){
+		assertThat(Javaslang.anyMonad(Stack.of("hello world"))
+				.map(String::toUpperCase)
+				.toSequence()
+				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
+	}
+	@Test
+	public void vectorTest(){
+		assertThat(Javaslang.anyMonad(Vector.of("hello world"))
+				.map(String::toUpperCase)
 				.toSequence()
 				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
 	}

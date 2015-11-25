@@ -1,5 +1,5 @@
 
-package com.aol.cyclops.comprehensions.donotation.typed;
+package com.aol.cyclops.javaslang.forcomprehensions;
 
 
 import java.io.BufferedReader;
@@ -15,9 +15,13 @@ import java.util.function.Supplier;
 import java.util.stream.BaseStream;
 import java.util.stream.Stream;
 
+import javaslang.algebra.Monad;
+
 import org.pcollections.PStack;
 
-import com.aol.cyclops.lambda.api.AsAnyM;
+import com.aol.cyclops.comprehensions.donotation.typed.DoComp;
+import com.aol.cyclops.comprehensions.donotation.typed.Entry;
+import com.aol.cyclops.comprehensions.donotation.typed.Guard;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
@@ -25,6 +29,10 @@ import com.aol.cyclops.sequence.SequenceM;
 		public DoComp4(PStack<Entry> assigned, Class orgType) {
 			super(assigned,orgType);
 			
+		}
+		//${start}
+		public <T5> DoComp5<T1,T2,T3,T4,T5> monad(Monad<T5> monad){
+			return new DoComp5(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),monad)),getOrgType());
 		}
 		public <T5> DoComp5<T1,T2,T3,T4,Character> add(CharSequence seq){
 			return new DoComp5(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),seq)),getOrgType());
@@ -451,6 +459,28 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T5> DoComp5<T1,T2,T3,T4,T5> withOptional(Function<T1,Function<T2,Function<T3,Function<T4,Optional<T5>>>>> f){
+			return new DoComp5(addToAssigned(f),getOrgType());
+			
+		}
+		/**
+		 * Add a javaslang Monad as next nested level in the comprehension
+		 * 
+		 * 
+		 * 
+		 * <pre>{@code   Do.withOptional((Integer i1) -> optional1)
+		 *                 .withOptional((Integer i1)->(Integer i2) -> optional2)
+		 *                 .withOptional((Integer i1)->(Integer i2)->(Integer i3) -> optional3)
+		 *                 .withMonad((Integer i1)->(Integer i2)->(Integer i3)->(Integer i4) -> try)
+		 				   .filter((Integer i1)->(Integer i2)->(Integer i3)->(Integer i4) -> i1>5)
+					  	   .yield((Integer i1)->(Integer i2)->(Integer i3)->(Integer i4) -> i1+i2+i3+i4);
+								
+			}</pre>
+		 * 
+		 * 
+		 * @param f Gives access to current pointers and defines next level in comprehension
+		 * @return Next stage in for comprehension builder
+		 */
+		public <T5> DoComp5<T1,T2,T3,T4,T5> withMonad(Function<T1,Function<T2,Function<T3,Function<T4,Monad<T5>>>>> f){
 			return new DoComp5(addToAssigned(f),getOrgType());
 			
 		}

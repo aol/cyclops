@@ -20,39 +20,39 @@ public class ToStreamTest {
 
     @Test
     public void testToFluentIterable() throws Exception {
-        assertThat(ToStream.toFluentIterable(Stream.of(1, 2, 3, 4)).toList().size(), is(4));
+        assertThat(ToStream.toFluentIterable(Stream.ofAll(1, 2, 3, 4)).toList().size(), is(4));
 
     }
 
     @Test
     public void testToStream() throws Exception {
-        assertThat(ToStream.toStream(Stream.of(1, 2, 3, 4)).collect(Collectors.toList()).size(), is(4));
+        assertThat(ToStream.toStream(Stream.ofAll(1, 2, 3, 4)).collect(Collectors.toList()).size(), is(4));
 
     }
     @Test
     public void testToSequenceM() throws Exception {
-        assertThat(ToStream.toSequenceM(Stream.of(1, 2, 3, 4)).collect(Collectors.toList()).size(), is(4));
+        assertThat(ToStream.toSequenceM(Stream.ofAll(1, 2, 3, 4)).collect(Collectors.toList()).size(), is(4));
     }
 
     @Test
     public void testToJooqLambda() throws Exception {
-        assertThat(ToStream.toJooqLambda(Stream.of(1, 2, 3, 4)).collect(Collectors.toList()).size(), is(4));
+        assertThat(ToStream.toJooqLambda(Stream.ofAll(1, 2, 3, 4)).collect(Collectors.toList()).size(), is(4));
     }
 
     @Test    @Ignore
     public void testToFutureStream() throws Exception {
-        assertThat(ToStream.toFutureStream(Stream.of(1, 2, 3, 4)).collect(Collectors.toList()).size(), is(4));
+        assertThat(ToStream.toFutureStream(Stream.ofAll(1, 2, 3, 4)).collect(Collectors.toList()).size(), is(4));
     }
 
 
 
     @Test
     public void testToLazySeq() throws Exception {
-        assertThat(ToStream.toLazySeq(Stream.of(1, 2, 3, 4)).toList().size(), is(4));
+        assertThat(ToStream.toLazySeq(Stream.ofAll(1, 2, 3, 4)).toList().size(), is(4));
     }
 
     @Test
     public void testToFunctionalJavaStream() throws Exception {
-        assertThat(ToStream.toFunctionalJavaStream(Stream.of(1, 2, 3, 4)).toList().length(), is(4));
+        assertThat(ToStream.toFunctionalJavaStream(Stream.ofAll(1, 2, 3, 4)).toList().length(), is(4));
     }
 }

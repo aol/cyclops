@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -502,5 +503,19 @@ public class AnyMImpl<T> implements AnyM<T>{
     public String toString() {
         return String.format("AnyM(%s)", monad );
     }
+	@Override
+	public List<T> toList() {
+		if(this.monad.unwrap() instanceof Stream){
+			return asSequence().toList();
+		}
+		return this.<T>toSequence().toList();
+	}
+	@Override
+	public Set<T> toSet() {
+		if(this.monad.unwrap() instanceof Stream){
+			return asSequence().toSet();
+		}
+		return this.<T>toSequence().toSet();
+	}
 	
 }

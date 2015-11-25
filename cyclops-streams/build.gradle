@@ -32,6 +32,7 @@ dependencies {
 	compile project(':cyclops-closures')
 	compile 'uk.co.real-logic:Agrona:0.4.2'
 	provided group: 'org.projectlombok', name: 'lombok', version:"${lombokVersion}"
+	
 	testCompile group: 'com.aol.simplereact', name:'simple-react', version:"${simpleReactVersion}"
 	testCompile 'org.functionaljava:functionaljava:4.3'
 	testCompile group: 'org.hamcrest', name: 'hamcrest-all', version:'1.3'

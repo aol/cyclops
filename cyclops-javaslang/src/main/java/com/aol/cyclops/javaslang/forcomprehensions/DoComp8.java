@@ -1,10 +1,12 @@
-package com.aol.cyclops.comprehensions.donotation.typed;
+package com.aol.cyclops.javaslang.forcomprehensions;
 
 import java.util.function.Function;
 
 import org.pcollections.PStack;
 
-import com.aol.cyclops.lambda.api.AsAnyM;
+import com.aol.cyclops.comprehensions.donotation.typed.DoComp;
+import com.aol.cyclops.comprehensions.donotation.typed.Entry;
+import com.aol.cyclops.comprehensions.donotation.typed.Guard;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
 import com.aol.cyclops.monad.AnyM;
 
@@ -14,6 +16,7 @@ public class DoComp8<T,T1,T2,T3,T4,T5,T6,T7> extends DoComp{
 		super(assigned,orgType);
 		
 	}
+	//${start}
 	public  DoComp8<T,T1,T2,T3,T4,T5,T6,T7> filter(Function<T,Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,Boolean>>>>>>>> f){
 		return new DoComp8(getAssigned().plus(getAssigned().size(),new Entry("$$internalGUARD"+getAssigned().size(),new Guard(f))),getOrgType());
 	}

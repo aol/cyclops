@@ -1,20 +1,11 @@
 package com.aol.cyclops.streams.anyM;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Test;
 
 import com.aol.cyclops.lambda.monads.transformers.OptionalT;
-import com.aol.cyclops.lambda.monads.transformers.StreamT;
 import com.aol.cyclops.monad.AnyM;
 
 public class OptionTTest {

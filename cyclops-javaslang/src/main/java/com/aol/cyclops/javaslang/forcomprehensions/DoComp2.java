@@ -1,11 +1,10 @@
-package com.aol.cyclops.comprehensions.donotation.typed;
+package com.aol.cyclops.javaslang.forcomprehensions;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
@@ -14,8 +13,13 @@ import java.util.function.Supplier;
 import java.util.stream.BaseStream;
 import java.util.stream.Stream;
 
+import javaslang.algebra.Monad;
+
 import org.pcollections.PStack;
 
+import com.aol.cyclops.comprehensions.donotation.typed.DoComp;
+import com.aol.cyclops.comprehensions.donotation.typed.Entry;
+import com.aol.cyclops.comprehensions.donotation.typed.Guard;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
@@ -27,6 +31,10 @@ public class DoComp2<T1, T2> extends DoComp {
 
 	}
 
+	//${start}
+	public <T3> DoComp3<T1,T2,T3> monad(Monad<T3> monad){
+		return new DoComp3(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),monad)),getOrgType());
+	}
 	public DoComp3<T1, T2, Character> add(CharSequence seq) {
 		return new DoComp3(getAssigned().plus(getAssigned().size(), new Entry("$$monad" + getAssigned().size(), seq)),getOrgType());
 
@@ -480,6 +488,30 @@ public class DoComp2<T1, T2> extends DoComp {
 	 * @return Next stage in for comprehension builder
 	 */
 	public <T3> DoComp3<T1, T2, T3> withOptional(Function<T1, Function<T2, Optional<T3>>> f) {
+		return new DoComp3(addToAssigned(f),getOrgType());
+
+	}
+	/**
+	 * Add a Javaslang Monad as next nested level in the comprehension
+	 * 
+	 * 
+	 * 
+	 * <pre>
+	 * {@code   Do.withOptional((Integer i1) -> optional1)
+	 *            .withMonad((Integer i1)->(Integer i2) -> Arrqy.ofAll(i1+2,3,i2))
+	 * 		 	  .filter((Integer i1)->(Integer i2) -> i1>5)
+	 * 			 .yield((Integer i1)->(Integer i2) -> i1+i2);
+	 * 								
+	 * 			}
+	 * </pre>
+	 * 
+	 * 
+	 * @param f
+	 *            Gives access to current pointers and defines next level in
+	 *            comprehension
+	 * @return Next stage in for comprehension builder
+	 */
+	public <T3> DoComp3<T1, T2, T3> withMonad(Function<T1, Function<T2, Monad<T3>>> f) {
 		return new DoComp3(addToAssigned(f),getOrgType());
 
 	}

@@ -1,5 +1,5 @@
 
-package com.aol.cyclops.comprehensions.donotation.typed;
+package com.aol.cyclops.javaslang.forcomprehensions;
 
 
 import java.io.BufferedReader;
@@ -15,9 +15,14 @@ import java.util.function.Supplier;
 import java.util.stream.BaseStream;
 import java.util.stream.Stream;
 
+import javaslang.algebra.Monad;
+
+import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
-import com.aol.cyclops.lambda.api.AsAnyM;
+import com.aol.cyclops.comprehensions.donotation.typed.DoComp;
+import com.aol.cyclops.comprehensions.donotation.typed.Entry;
+import com.aol.cyclops.comprehensions.donotation.typed.Guard;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
@@ -26,7 +31,13 @@ import com.aol.cyclops.sequence.SequenceM;
 			super(assigned,orgType);
 			
 		}
-		public  DoComp2<T1,Character> add(CharSequence seq){
+		
+		//${start}
+		public <T2> DoComp2<T1,T2> monad(Monad<T2> monad){
+			return new DoComp2(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),monad)),getOrgType());
+		}
+		
+		public DoComp2<T1,Character> add(CharSequence seq){
 			return new DoComp2(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),seq)),getOrgType());
 			
 		}
@@ -658,6 +669,25 @@ import com.aol.cyclops.sequence.SequenceM;
 			
 		}
 		
+		/**
+		 * Add a BufferedReader as next nested level in the comprehension
+		 *
+		 *
+		 *
+		 * <pre>{@code   Do.withMonad((Integer i1) -> lazy)
+							.filter((String i1) -> i1>5)
+							 .yield((String i1) -> i1);
+								
+			}</pre>
+		 *
+		 *
+		 * @param f Gives access to current pointers and defines next level in comprehension
+		 * @return Next stage in for comprehension builder
+		 */
+		public <T2> DoComp2<T1,T2> withMonad(Function<T1,Monad<T2>> f){
+			return new DoComp2(addToAssigned(f),getOrgType());
+			
+		}
 
 
 		

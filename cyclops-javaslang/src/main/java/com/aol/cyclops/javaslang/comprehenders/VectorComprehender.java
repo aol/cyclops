@@ -3,50 +3,50 @@ package com.aol.cyclops.javaslang.comprehenders;
 import java.util.Collection;
 import java.util.function.Function;
 
-import javaslang.collection.List;
+import javaslang.collection.Vector;
 
 import com.aol.cyclops.lambda.api.Comprehender;
 import com.nurkiewicz.lazyseq.LazySeq;
 
-public class ListComprehender implements Comprehender<List> {
+public class VectorComprehender implements Comprehender<Vector> {
 
 	@Override
-	public Object map(List t, Function fn) {
+	public Object map(Vector t, Function fn) {
 		return t.map(s -> fn.apply(s));
 	}
 	@Override
-	public Object executeflatMap(List t, Function fn){
+	public Object executeflatMap(Vector t, Function fn){
 		return flatMap(t,input -> unwrapOtherMonadTypes(this,fn.apply(input)));
 	}
 	@Override
-	public Object flatMap(List t, Function fn) {
+	public Object flatMap(Vector t, Function fn) {
 		return t.flatMap(s->fn.apply(s));
 	}
 
 	@Override
-	public List of(Object o) {
-		return List.of(o);
+	public Vector of(Object o) {
+		return Vector.of(o);
 	}
 
 	@Override
-	public List empty() {
-		return List.empty();
+	public Vector empty() {
+		return Vector.empty();
 	}
 
 	@Override
 	public Class getTargetClass() {
-		return List.class;
+		return Vector.class;
 	}
-	static List unwrapOtherMonadTypes(Comprehender<List> comp,Object apply){
+	static Vector unwrapOtherMonadTypes(Comprehender<Vector> comp,Object apply){
 		if(apply instanceof java.util.stream.Stream)
-			return List.ofAll( ((java.util.stream.Stream)apply).iterator());
+			return Vector.ofAll( ((java.util.stream.Stream)apply).iterator());
 		if(apply instanceof Iterable)
-			return List.ofAll( ((Iterable)apply).iterator());
+			return Vector.ofAll( ((Iterable)apply).iterator());
 		if(apply instanceof LazySeq){
-			apply = List.ofAll(((LazySeq)apply).iterator());
+			apply = Vector.ofAll(((LazySeq)apply).iterator());
 		}
 		if(apply instanceof Collection){
-			return List.ofAll((Collection)apply);
+			return Vector.ofAll((Collection)apply);
 		}
 		
 		return Comprehender.unwrapOtherMonadTypes(comp,apply);

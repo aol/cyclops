@@ -1,12 +1,13 @@
 # Javaslang Integration
 
-v6.1.0 of cyclops-javaslang requires v2.0.0 of Javaslang.
+v6.2.0 of cyclops-javaslang requires v2.0.0 of Javaslang.
 
 # Features
 
 * AnyM / For Comprehension support for Javaslang Monads
 * reactive-streams implementation for Javaslang Traversables
 * conversion between Javaslang and other types
+* Javaslang Stream extensions (future operations, hot streams, stream manipulation)
 
 # Details & Examples
 
@@ -25,12 +26,14 @@ assertThat(Javaslang.anyM(Try.of(this::success))
 
 ## For Comprehensions
 
+Javaslang specific for-comprehensions
+
 ```java
     @Test
 	public void futureTest(){
 		
-		Try<String> result = 	Do.add(grind("arabica beans"))
-					  .add(heatWater(new Water(25)))
+		Try<String> result = 	Do.monad(grind("arabica beans"))
+					  .monad(heatWater(new Water(25)))
 					  .withAnyM(ground -> water -> Javaslang.anyM(brew(ground,water)))
 					  .add(frothMilk("milk"))
 					  .yield(ground ->water -> espresso->foam-> combine(espresso,foam))
@@ -108,7 +111,15 @@ Supported Javaslang Monads include
 * Either
 * Option
 * Stream
+* Future
+* Lazy
 * List
+* Array
+* Stack
+* Queue
+* Vector
+* HashSet
+
 
 These are available in Cyclops Comprehensions, or via Cyclops AnyM.
 
