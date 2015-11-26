@@ -114,12 +114,12 @@ public class StreamUtilsTest {
 		
 		
 		
-		StreamUtils.reversedStream(asList(1,2,3))
+		StreamUtils.reversedStream(javaslang.collection.List.ofAll(asList(1,2,3)))
 				.map(i->i*100)
 				.forEach(System.out::println);
 		
 		
-		assertThat(StreamUtils.reversedStream(Arrays.asList(1,2,3)).toJavaList()
+		assertThat(StreamUtils.reversedStream(javaslang.collection.List.ofAll(1,2,3)).toJavaList()
 				,equalTo(Arrays.asList(3,2,1)));
 		
 		
@@ -147,8 +147,15 @@ public class StreamUtilsTest {
 
 	@Test
 	public void testStreamMapOfKV() {
+		
 		Map<String,String> map = new HashMap<>();
 		map.put("hello","world");
+		assertThat(StreamUtils.stream(map).toJavaList(),equalTo(Arrays.asList(new AbstractMap.SimpleEntry("hello","world"))));
+	}
+	@Test
+	public void testStreamMapOfKVJavaslang() {
+		javaslang.collection.HashMap<String,String> map = javaslang.collection.HashMap.<String,String>empty().put("hello","world");
+		
 		assertThat(StreamUtils.stream(map).toJavaList(),equalTo(Arrays.asList(new AbstractMap.SimpleEntry("hello","world"))));
 	}
 	@Test
@@ -156,7 +163,7 @@ public class StreamUtilsTest {
 		List result = StreamUtils.collect(Stream.ofAll(1,2,3),
 								Streamable.<Collector>of(Collectors.toList(),
 								Collectors.summingInt(Integer::intValue),
-								Collectors.averagingInt(Integer::intValue)));
+								Collectors.averagingInt(Integer::intValue))).toJavaList();
 		
 		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));
 		assertThat(result.get(1),equalTo(6));
@@ -168,7 +175,7 @@ public class StreamUtilsTest {
 		List result = StreamUtils.collect(Stream.ofAll(1,2,3),
 								(Stream)Stream.ofAll(Collectors.toList(),
 								Collectors.summingInt(Integer::intValue),
-								Collectors.averagingInt(Integer::intValue)));
+								Collectors.averagingInt(Integer::intValue))).toJavaList();
 		
 		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));
 		assertThat(result.get(1),equalTo(6));
@@ -179,7 +186,7 @@ public class StreamUtilsTest {
 		List result = StreamUtils.collect(Stream.ofAll(1,2,3),
 								Arrays.asList(Collectors.toList(),
 								Collectors.summingInt(Integer::intValue),
-								Collectors.averagingInt(Integer::intValue)));
+								Collectors.averagingInt(Integer::intValue))).toJavaList();
 		
 		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));
 		assertThat(result.get(1),equalTo(6));
@@ -193,7 +200,7 @@ public class StreamUtilsTest {
 		
 		 assertThat(StreamUtils.reduce(Stream.ofAll("hello", "world", "woo!"),Stream.ofAll(concat,join))
 		                 
-		                  ,equalTo(Arrays.asList("helloworldwoo!",",hello,world,woo!")));
+		                  ,equalTo(javaslang.collection.List.ofAll("helloworldwoo!",",hello,world,woo!")));
 	}
 	@Test
 	public void reducer2(){
@@ -202,11 +209,13 @@ public class StreamUtilsTest {
 		val result = StreamUtils.reduce(Stream.ofAll(1,2,3,4),Arrays.asList(sum,mult));
 				
 		 
-		assertThat(result,equalTo(Arrays.asList(10,24)));
+		assertThat(result,equalTo(javaslang.collection.List.ofAll(10,24)));
 	}
 	@Test
     public void testCollectors() {
-		List result = StreamUtils.collect(Stream.ofAll(1,2,3),Arrays.asList(Collectors.toList(),Collectors.summingInt(Integer::intValue),Collectors.averagingInt(Integer::intValue)));
+		List result = StreamUtils.collect(Stream.ofAll(1,2,3),
+				Arrays.asList(Collectors.toList(),Collectors.summingInt(Integer::intValue),
+						Collectors.averagingInt(Integer::intValue))).toJavaList();
 		
 		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));
 		assertThat(result.get(1),equalTo(6));
@@ -317,6 +326,7 @@ public class StreamUtilsTest {
 	public void sliding(){
 		List<List<Integer>> list = StreamUtils.sliding(Stream.ofAll(1,2,3,4,5,6)
 												,2)
+												.map(l->l.toJavaList())
 									.toJavaList();
 		
 	
@@ -328,6 +338,7 @@ public class StreamUtilsTest {
 		
 		List<List<Integer>> list = StreamUtils.batchBySize(Stream.ofAll(1,2,3,4,5,6)
 														,3)
+														.map(l->l.toJavaList())
 													.toJavaList();
 		
 		

@@ -131,7 +131,65 @@ These are available in Cyclops Comprehensions, or via Cyclops AnyM.
 			.flatMapOptional(Optional::of)
 			.toSequence()
 			.toList(),equalTo(Arrays.asList("HELLO WORLD")));
-```			
+```	
+
+
+## HotStream example 
+
+Use StreamUtils to start a Stream emitting on another thread
+
+```java	
+volatile Object value;
+
+	public void hotStream() throws InterruptedException{
+		value= null;
+		CountDownLatch latch = new CountDownLatch(1);
+		StreamUtils.hotStream(Stream.ofAll(1,2,3)
+				.peek(v->value=v)
+				.peek(v->latch.countDown())
+				,exec);
+		
+		latch.await();
+		assertTrue(value!=null);
+	}
+		
+```
+
+Connect to a HotStream that is already emitting data
+
+```java
+StreamUtils.hotStream(Stream.range(0,Integer.MAX_VALUE)
+					.take(100)
+					.peek(v->value=v)
+					.peek(v->latch.countDown())
+					.peek(System.out::println)
+					,exec)
+					.connect()
+					.take(100)
+					.forEach(System.out::println);
+```
+
+## Augmenting existing Stream classes with Lombok ExtensionMethod
+
+```java
+@ExtensionMethod(StreamUtils.class)
+public  class FutureTest {
+
+
+	public void aysncStream(){ 
+	
+	  CompletableFuture<Integer> total =  Stream.of(1,2,3,4,5)
+	         									.map(it -> it*100)
+	        									.futureOperations(exec)
+			 									.reduce( (acc,next) -> acc+next);
+	
+	    //1500
+	}
+
+
+}
+```
+
 ## Get cyclops-javaslang
 
 

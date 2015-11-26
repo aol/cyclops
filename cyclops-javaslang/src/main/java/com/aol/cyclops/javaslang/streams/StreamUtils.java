@@ -4,18 +4,16 @@ package com.aol.cyclops.javaslang.streams;
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
-import java.util.Set;
 import java.util.Spliterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -31,13 +29,16 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import javaslang.Tuple2;
+import javaslang.Tuple3;
+import javaslang.Tuple4;
+import javaslang.collection.List;
+import javaslang.collection.Map;
+import javaslang.collection.Set;
 import javaslang.collection.Stream;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
 
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
@@ -62,8 +63,8 @@ public class StreamUtils{
 	
 	public final static <T> Optional<List<T>> streamToOptional(Stream<T> stream){
 		
-		List<T> collected = stream.toJavaList();
-		if(collected.size()==0)
+		List<T> collected = stream.toList();
+		if(collected.length()==0)
 			return Optional.empty();
 		return Optional.of(collected);
 	}
@@ -73,7 +74,7 @@ public class StreamUtils{
 		return Stream.empty();
 	}
 	public final static <T> CompletableFuture<List<T>> streamToCompletableFuture(Stream<T> stream){
-		return CompletableFuture.completedFuture(stream.toJavaList());
+		return CompletableFuture.completedFuture(stream.toList());
 			
 	}
 	public final static <T> Stream<T> completableFutureToStream(CompletableFuture<T> future){
@@ -92,8 +93,8 @@ public class StreamUtils{
 	 * </pre>
 	 */
 	public final  static <T>  Tuple2<Stream<T>,Stream<T>> splitAt(Stream<T> stream,int where){
-		Tuple2<Stream<T>,Stream<T>> Tuple2 = duplicate(stream);
-		return new Tuple2(Tuple2.v1.take(where),Tuple2.v2.drop(where));
+		Tuple2<Stream<T>,Stream<T>> tuple2 = duplicate(stream);
+		return new Tuple2(tuple2._1.take(where),tuple2._2.drop(where));
 	}
 	/**
 	 * Split stream at point where predicate no longer holds
@@ -107,7 +108,7 @@ public class StreamUtils{
 	 */
 	public final static <T> Tuple2<Stream<T>,Stream<T>> splitBy(Stream<T> stream,Predicate<T> splitter){
 		Tuple2<Stream<T>,Stream<T>> Tuple2 = duplicate(stream);
-		return new Tuple2(limitWhile(Tuple2.v1,splitter),skipWhile(Tuple2.v2,splitter));
+		return new Tuple2(limitWhile(Tuple2._1,splitter),skipWhile(Tuple2._2,splitter));
 	}
 	/**
 	 * Partition a Stream into two one a per element basis, based on predicate's boolean value
@@ -122,7 +123,7 @@ public class StreamUtils{
 	 */
 	public final static <T>  Tuple2<Stream<T>,Stream<T>> partition(Stream<T> stream,Predicate<T> splitter){
 		Tuple2<Stream<T>,Stream<T>> Tuple2 = duplicate(stream);
-		return new Tuple2(Tuple2.v1.filter(splitter),Tuple2.v2.filter(splitter.negate()));
+		return new Tuple2(Tuple2._1.filter(splitter),Tuple2._2.filter(splitter.negate()));
 	}
 	/**
 	 * Duplicate a Stream, buffers intermediate values, leaders may change positions so a limit
@@ -130,8 +131,8 @@ public class StreamUtils{
 	 * <pre>
 	 * {@code 
 	 *  Tuple2<Stream<Integer>, Stream<Integer>> copies =of(1,2,3,4,5,6).duplicate();
-		 assertTrue(copies.v1.anyMatch(i->i==2));
-		 assertTrue(copies.v2.anyMatch(i->i==2));
+		 assertTrue(copies._1.anyMatch(i->i==2));
+		 assertTrue(copies._2.anyMatch(i->i==2));
 	 * 
 	 * }
 	 * </pre>
@@ -141,12 +142,12 @@ public class StreamUtils{
 	public final static <T> Tuple2<Stream<T>,Stream<T>> duplicate(Stream<T> stream){
 		
 		Tuple2<Iterator<T>,Iterator<T>> Tuple2 = StreamUtils.toBufferingDuplicator(stream.iterator());	
-		return new Tuple2(StreamUtils.stream(Tuple2.v1()),StreamUtils.stream(Tuple2.v2()));
+		return new Tuple2(StreamUtils.stream(Tuple2._1()),StreamUtils.stream(Tuple2._2()));
 	}
 	private final static <T> Tuple2<Stream<T>,Stream<T>> duplicatePos(Stream<T> stream,int pos){
 		
 		Tuple2<Iterator<T>,Iterator<T>> Tuple2 = StreamUtils.toBufferingDuplicator(stream.iterator(),pos);	
-		return new Tuple2(StreamUtils.stream(Tuple2.v1()),StreamUtils.stream(Tuple2.v2()));
+		return new Tuple2(StreamUtils.stream(Tuple2._1()),StreamUtils.stream(Tuple2._2()));
 	}
 	/**
 	 * Triplicates a Stream
@@ -162,9 +163,8 @@ public class StreamUtils{
 	@SuppressWarnings("unchecked")
 	public final static <T> Tuple3<Stream<T>,Stream<T>,Stream<T>> triplicate(Stream<T> stream){
 		
-		Stream<Stream<T>> its = (Stream<Stream<T>>) StreamUtils.toBufferingCopier(stream.iterator(),3)
-										.stream()
-										.map(it -> StreamUtils.stream(it));
+		Stream<Stream<T>> its = Stream.ofAll(StreamUtils.toBufferingCopier(stream.iterator(),3)
+												.map(it -> StreamUtils.stream(it)));
 		Iterator<Stream<T>> it = its.iterator();
 		return new Tuple3(it.next(),it.next(),it.next());
 		
@@ -185,9 +185,8 @@ public class StreamUtils{
 	 */
 	@SuppressWarnings("unchecked")
 	public final static <T> Tuple4<Stream<T>,Stream<T>,Stream<T>,Stream<T>> quadruplicate(Stream<T> stream){
-		Stream<Stream<T>> its = (Stream<Stream<T>>) StreamUtils.toBufferingCopier(stream.iterator(),4)
-														.stream()
-														.map(it -> StreamUtils.stream(it));
+		Stream<Stream<T>> its = Stream.ofAll(StreamUtils.toBufferingCopier(stream.iterator(),4)
+																.map(it -> StreamUtils.stream(it)));
 		Iterator<Stream<T>> it = its.iterator();
 		return new Tuple4(it.next(),it.next(),it.next(),it.next());
 	}
@@ -279,7 +278,7 @@ public class StreamUtils{
 	 */
 	public static final<T> Stream<T> insertAt(Stream<T> stream,int pos, T... values) {
 		Tuple2<Stream<T>,Stream<T>> Tuple2 = duplicatePos(stream,pos);
-		return appendStream(append(Tuple2.v1.take(pos),values),Tuple2.v2.drop(pos));	
+		return appendStream(append(Tuple2._1.take(pos),values),Tuple2._2.drop(pos));	
 	}
 	/**
 	 * Delete elements between given indexes in a Stream
@@ -297,7 +296,7 @@ public class StreamUtils{
 	 */
 	public static final<T> Stream<T> deleteBetween(Stream<T> stream,int start,int end) {
 		Tuple2<Stream<T>,Stream<T>> Tuple2 = duplicatePos(stream,start);
-		return appendStream(Tuple2.v1.take(start),Tuple2.v2.drop(end));	
+		return appendStream(Tuple2._1.take(start),Tuple2._2.drop(end));	
 	}
 	/**
 	 * Insert a Stream into the middle of this stream at the specified position
@@ -316,7 +315,7 @@ public class StreamUtils{
 	public static final<T> Stream<T> insertStreamAt(Stream<T> stream1,int pos, Stream<T> insert) {
 		Tuple2<Stream<T>,Stream<T>> Tuple2 = duplicatePos(stream1,pos);
 	
-		return appendStream(appendStream(Tuple2.v1.take(pos),insert),Tuple2.v2.drop(pos));	
+		return appendStream(appendStream(Tuple2._1.take(pos),insert),Tuple2._2.drop(pos));	
 	}
 	/**
 	 * Convert to a Stream with the result of a reduction operation repeated
@@ -623,8 +622,25 @@ public class StreamUtils{
 	 * @param it Iterator to convert to a Stream
 	 * @return Stream from a map
 	 */
-	public final static <K,V> Stream<Map.Entry<K, V>> stream(Map<K,V> it){
+	public final static <K,V> Stream<java.util.Map.Entry<K, V>> stream(java.util.Map<K,V> it){
 		return FromJDK.stream(it.entrySet().stream());
+	}
+	/**
+	 * Create a stream from a map
+	 * <pre>
+	 * {@code 
+	 * HashMap<String,String> map = HashMap.<String,String>empty().put("hello","world");
+	  	
+		assertThat(StreamUtils.stream(map).collect(Collectors.toList()),equalTo(Arrays.asList(new AbstractMap.SimpleEntry("hello","world"))));
+
+	 * }</pre>
+	 * 
+	 * 
+	 * @param it Iterator to convert to a Stream
+	 * @return Stream from a map
+	 */
+	public final static <K,V> Stream<java.util.Map.Entry<K, V>> stream(Map<K,V> it){
+		return it.toStream().map(t-> new AbstractMap.SimpleEntry(t._1,t._2));
 	}
 	public final static <T> FutureOperations<T> futureOperations(Stream<T> stream,Executor exec){
 		return new FutureOperationsImpl<T>(exec,ToStream.toSequenceM(stream));
@@ -651,7 +667,7 @@ public class StreamUtils{
 	 */
 	@SuppressWarnings({"rawtypes","unchecked"})
 	public static <R> List<R> reduce(Stream<R> stream,Iterable<Monoid<R>> reducers){
-		return ToStream.toSequenceM(stream).reduce(reducers);
+		return List.ofAll(ToStream.toSequenceM(stream).reduce(reducers));
 		
 	}
 	/**
@@ -672,7 +688,7 @@ public class StreamUtils{
 	 */
 	@SuppressWarnings({"rawtypes","unchecked"})
 	public static <R> List<R> reduce(Stream<R> stream,Stream<Monoid<R>> reducers){
-		return ToStream.toSequenceM(stream).reduce(reducers);
+		return List.ofAll(ToStream.toSequenceM(stream).reduce(reducers));
 		
 		
 	}
@@ -743,7 +759,7 @@ public class StreamUtils{
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T> List collect(Stream<T> stream, Streamable<Collector> collectors){
 		
-		return new MultiCollectOperator<T>(ToStream.toSequenceM(stream)).collect(collectors);
+		return List.ofAll(new MultiCollectOperator<T>(ToStream.toSequenceM(stream)).collect(collectors));
 	}
 	
 	/**
@@ -909,7 +925,7 @@ public class StreamUtils{
 	 */
 	public final static <T> Stream<List<T>> sliding(Stream<T> stream,int windowSize,int increment) {
 		Iterator<T> it = stream.iterator();
-		Mutable<PStack<T>> list = Mutable.of(ConsPStack.empty());
+		Mutable<List<T>> list = Mutable.of(List.empty());
 		return StreamUtils.stream(new Iterator<List<T>>(){
 			
 			@Override
@@ -919,11 +935,11 @@ public class StreamUtils{
 
 			@Override
 			public List<T> next() {
-				for(int i=0;i<increment && list.get().size()>0;i++)
-					 list.mutate(var -> var.minus(0));
-				for (int i = 0; list.get().size() < windowSize && it.hasNext(); i++) {
+				for(int i=0;i<increment && list.get().length()>0;i++)
+					 list.mutate(var -> var.removeAt(0));
+				for (int i = 0; list.get().length() < windowSize && it.hasNext(); i++) {
 					if(it.hasNext()){
-						list.mutate(var -> var.plus(Math.max(0,var.size()),it.next()));
+						list.mutate(var -> var.append(it.next()));
 					}
 					
 				}
@@ -1015,7 +1031,7 @@ public class StreamUtils{
 	 * @return Stream with elements grouped by size
 	 */
 	public final static<T> Stream<List<T>> batchBySize(Stream<T> stream,int groupSize) {
-		return FromJDK.stream(ToStream.toSequenceM(stream).batchBySize(groupSize));
+		return FromJDK.stream(ToStream.toSequenceM(stream).batchBySize(groupSize).map(list->List.ofAll(list)));
 			
 	}
 	public final static<T, C extends Collection<T>> Stream<C> batchBySize(Stream<T> stream,int groupSize, Supplier<C> factory) {
@@ -1025,7 +1041,7 @@ public class StreamUtils{
 	}
 	public  final static <T> Streamable<T> shuffle(Stream<T> stream){
 	
-		List<T> list = stream.toJavaList();
+		java.util.List<T> list = stream.toJavaList();
 		Collections.shuffle(list);
 		return Streamable.fromIterable(list);
 	}
@@ -1125,15 +1141,15 @@ public class StreamUtils{
 	
 	
 	public final static  <T,C extends Comparable<C>>  Optional<T> minBy(Stream<T> stream,Function<T,C> f){
-		Optional<Tuple2<C,T>> o = ToStream.toSequenceM(stream).map(in->new Tuple2<C,T>(f.apply(in),in)).min(Comparator.comparing(n->n.v1(),Comparator.naturalOrder()));
-		return	o.map(p->p.v2());
+		Optional<Tuple2<C,T>> o = ToStream.toSequenceM(stream).map(in->new Tuple2<C,T>(f.apply(in),in)).min(Comparator.comparing(n->n._1(),Comparator.naturalOrder()));
+		return	o.map(p->p._2);
 	}
 	public final  static<T> Optional<T> min(Stream<T> stream,Comparator<? super T> comparator){
 		return ToStream.toSequenceM(stream).collect(Collectors.minBy(comparator));
 	}
 	public final static <T,C extends Comparable<? super C>> Optional<T> maxBy(Stream<T> stream,Function<T,C> f){
-		Optional<Tuple2<C,T>> o = ToStream.toSequenceM(stream).map(in->new Tuple2<C,T>(f.apply(in),in)).max(Comparator.comparing(n->n.v1(),Comparator.naturalOrder()));
-		return	o.map(p->p.v2());
+		Optional<Tuple2<C,T>> o = ToStream.toSequenceM(stream).map(in->new Tuple2<C,T>(f.apply(in),in)).max(Comparator.comparing(n->n._1(),Comparator.naturalOrder()));
+		return	o.map(p->p._2);
 	}
 	public final static<T> Optional<T> max(Stream<T> stream,Comparator<? super T> comparator){
 		return ToStream.toSequenceM(stream).collect(Collectors.maxBy(comparator));
@@ -1218,7 +1234,7 @@ public class StreamUtils{
 	 * @return This monad converted to a set
 	 */
 	public final static <T> Set<T> toSet(Stream<T> stream){
-		return (Set)stream.toJavaSet();
+		return stream.toSet();
 	}
 	/**
 	 * @return this monad converted to a list
@@ -1245,7 +1261,7 @@ public class StreamUtils{
 	}
 	public final static <T> boolean endsWith(Stream<T> stream,Iterable<T> iterable){
 		Iterator<T> it = iterable.iterator();
-		List<T> compare1 = new ArrayList<>();
+		java.util.List<T> compare1 = new ArrayList<>();
 		while(it.hasNext()){
 			compare1.add(it.next());
 		}
@@ -1521,12 +1537,12 @@ public class StreamUtils{
 				  new DuplicatingIterator(bufferFrom,bufferTo,iterator,pos,0));
 	 }
 	 public static final <A> List<Iterator<A>> toBufferingCopier(Iterator<A> iterator,int copies) {
-		List<Iterator<A>> result = new ArrayList<>();
-		List<CopyingIterator<A>> leaderboard = new LinkedList<>();
+		java.util.List<Iterator<A>> result = new ArrayList<>();
+		java.util.List<CopyingIterator<A>> leaderboard = new LinkedList<>();
 		LinkedList<A> buffer = new LinkedList<>();
 		 for(int i=0;i<copies;i++)
 			 result.add(new CopyingIterator(iterator,leaderboard,buffer,copies));
-		 return result;
+		 return List.ofAll(result);
 	 }
 	
 	 @AllArgsConstructor
@@ -1569,7 +1585,7 @@ public class StreamUtils{
 		 
 		 LinkedList<T> buffer;
 		 Iterator<T> it;
-		 List<CopyingIterator<T>> leaderboard = new LinkedList<>();
+		 java.util.List<CopyingIterator<T>> leaderboard = new LinkedList<>();
 		 boolean added=  false;
 		 int total = 0;
 		 int counter=0;
@@ -1626,7 +1642,7 @@ public class StreamUtils{
 		}
 
 		public CopyingIterator(Iterator<T> it,
-				List<CopyingIterator<T>> leaderboard,LinkedList<T> buffer,int total) {
+				java.util.List<CopyingIterator<T>> leaderboard,LinkedList<T> buffer,int total) {
 			
 			this.it = it;
 			this.leaderboard = leaderboard;
@@ -1676,7 +1692,7 @@ public class StreamUtils{
 				@Override
 				public Streamable<T> next() {
 					
-					List<T> list = new ArrayList<>();
+					java.util.List<T> list = new ArrayList<>();
 					
 					while(System.nanoTime()-start< toRun && it.hasNext()){
 							list.add(it.next());
@@ -1691,7 +1707,7 @@ public class StreamUtils{
 			});
 	  }
 	  public final static <T> Stream<List<T>> batchByTime(Stream<T> stream, long time, TimeUnit t){
-			return FromJDK.stream(ToStream.toSequenceM(stream).batchByTime(time, t));
+			return FromJDK.stream(ToStream.toSequenceM(stream).batchByTime(time, t).map(list->List.ofAll(list)));
 	  }
 	  public final static  <T, C extends Collection<T>> Stream<C> batchByTime(Stream<T> stream, long time, TimeUnit t, Supplier<C> factory){
 		  return FromJDK.stream(ToStream.toSequenceM(stream).batchByTime(time, t,factory));
@@ -1705,7 +1721,7 @@ public class StreamUtils{
 		  return FromJDK.stream(ToStream.toSequenceM(stream).windowWhile(predicate));
 	  }
 	  public final static <T> Stream<List<T>> batchWhile(Stream<T> stream,Predicate<T> predicate){
-		  return FromJDK.stream(ToStream.toSequenceM(stream).batchWhile(predicate));
+		  return FromJDK.stream(ToStream.toSequenceM(stream).batchWhile(predicate).map(list->List.ofAll(list)));
 	  }
 	  public final static <T, C extends Collection<T>> Stream<C> batchWhile(Stream<T> stream,Predicate<T> predicate,Supplier<C> factory){
 		  return FromJDK.stream(ToStream.toSequenceM(stream).batchWhile(predicate,factory));
@@ -1714,7 +1730,7 @@ public class StreamUtils{
 			return batchWhile(stream,predicate.negate());
 	  }
 	  public final static <T> Stream<List<T>> batchBySizeAndTime(Stream<T> stream,int size, long time, TimeUnit t){
-		  return FromJDK.stream(ToStream.toSequenceM(stream).batchBySizeAndTime(size,time,t));
+		  return FromJDK.stream(ToStream.toSequenceM(stream).batchBySizeAndTime(size,time,t).map(list->List.ofAll(list)));
 	  }
 	  public final static <T, C extends Collection<T>> Stream<C>   batchBySizeAndTime(Stream<T> stream,int size, long time, TimeUnit t,Supplier<C> factory){
 		  return FromJDK.stream(ToStream.toSequenceM(stream).batchBySizeAndTime(size,time,t,factory));
