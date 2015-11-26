@@ -21,8 +21,6 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-import javaslang.algebra.Monad;
-
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.Unwrapable;
@@ -101,9 +99,7 @@ public interface AnyM<T> extends Unwrapable{
 	public static <T> AnyM<T> fromArray(T... streamData){
 		return AnyMFactory.instance.monad(Stream.of(streamData));
 	}
-	public static <T> AnyM<T> fromJavaslang(Monad<T> monad){
-		return AnyMFactory.instance.monad(monad);
-	}
+	
 	public static <T> AnyM<T> fromStream(Stream<T> stream){
 		return AnyMFactory.instance.monad(stream);
 	}

@@ -38,10 +38,11 @@ dependencies {
 	compile ('com.aol.simplereact:simple-react:'+simpleReactVersion){
 		exclude group:'com.aol.cyclops'
 	}
+	provided group: 'org.projectlombok', name: 'lombok', version:"$lombokVersion"
 	provided  'com.google.guava:guava:19.0-rc2'
 	provided 'com.javaslang:javaslang:'+javaslangVersion
 	provided 'com.nurkiewicz.lazyseq:lazyseq:0.0.1'
-	provided group: 'org.projectlombok', name: 'lombok', version:'1.14.2'
+	
 	provided "org.functionaljava:functionaljava:4.4"
 	provided "org.functionaljava:functionaljava-java8:4.4"
 	testCompile 'commons-io:commons-io:2.4'
