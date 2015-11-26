@@ -17,7 +17,6 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
@@ -36,7 +35,6 @@ import javaslang.collection.Stream;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
 
-import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -50,35 +48,14 @@ import com.aol.cyclops.javaslang.FromJDK;
 import com.aol.cyclops.javaslang.ToStream;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.HeadAndTail;
-import com.aol.cyclops.sequence.HotStream;
 import com.aol.cyclops.sequence.Monoid;
-import com.aol.cyclops.sequence.ReversedIterator;
 import com.aol.cyclops.sequence.SeqUtils;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.SequenceMImpl;
 import com.aol.cyclops.sequence.future.FutureOperations;
-import com.aol.cyclops.sequence.spliterators.ReversableSpliterator;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.future.FutureOperationsImpl;
-import com.aol.cyclops.streams.operators.BatchBySizeOperator;
-import com.aol.cyclops.streams.operators.BatchByTimeAndSizeOperator;
-import com.aol.cyclops.streams.operators.BatchByTimeOperator;
-import com.aol.cyclops.streams.operators.BatchWhileOperator;
-import com.aol.cyclops.streams.operators.DebounceOperator;
-import com.aol.cyclops.streams.operators.LimitLastOperator;
-import com.aol.cyclops.streams.operators.LimitWhileOperator;
-import com.aol.cyclops.streams.operators.LimitWhileTimeOperator;
 import com.aol.cyclops.streams.operators.MultiCollectOperator;
-import com.aol.cyclops.streams.operators.MultiReduceOperator;
-import com.aol.cyclops.streams.operators.OnePerOperator;
-import com.aol.cyclops.streams.operators.RecoverOperator;
-import com.aol.cyclops.streams.operators.SkipLastOperator;
-import com.aol.cyclops.streams.operators.SkipWhileOperator;
-import com.aol.cyclops.streams.operators.SkipWhileTimeOperator;
-import com.aol.cyclops.streams.operators.WindowByTimeAndSizeOperator;
-import com.aol.cyclops.streams.operators.WindowStatefullyWhileOperator;
-import com.aol.cyclops.streams.operators.WindowWhileOperator;
 
 @UtilityClass 
 public class StreamUtils{
@@ -92,7 +69,7 @@ public class StreamUtils{
 	}
 	public final static <T> Stream<T> optionalToStream(Optional<T> optional){
 		if(optional.isPresent())
-			return Stream.of(optional.get());
+			return Stream.ofAll(optional.get());
 		return Stream.empty();
 	}
 	public final static <T> CompletableFuture<List<T>> streamToCompletableFuture(Stream<T> stream){
@@ -100,16 +77,16 @@ public class StreamUtils{
 			
 	}
 	public final static <T> Stream<T> completableFutureToStream(CompletableFuture<T> future){
-		return Stream.of(future.join());
+		return Stream.ofAll(future.join());
 			
 	}
 	/**
 	 * Split at supplied location 
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2,3).splitAt(1)
+	 * StreamUtils.splitAt(Stream.ofAll(1,2,3))
 	 * 
-	 *  //SequenceM[1], SequenceM[2,3]
+	 *  //Stream[1], Stream[2,3]
 	 * }
 	 * 
 	 * </pre>
@@ -122,9 +99,9 @@ public class StreamUtils{
 	 * Split stream at point where predicate no longer holds
 	 * <pre>
 	 * {@code
-	 *   SequenceM.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)
+	 *   StreamUtils.splitBy(Stream.ofAll(1, 2, 3, 4, 5, 6),i->i<4);
 	 *   
-	 *   //SequenceM[1,2,3] SequenceM[4,5,6]
+	 *   //Stream[1,2,3] Stream[4,5,6]
 	 * }
 	 * </pre>
 	 */
@@ -136,9 +113,9 @@ public class StreamUtils{
 	 * Partition a Stream into two one a per element basis, based on predicate's boolean value
 	 * <pre>
 	 * {@code 
-	 *  SequenceM.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0) 
+	 *  StreamUtils.partition(Stream.ofAll(1, 2, 3, 4, 5, 6),i -> i % 2 != 0) 
 	 *  
-	 *  //SequenceM[1,3,5], SequenceM[2,4,6]
+	 *  //Stream[1,3,5], Stream[2,4,6]
 	 * }
 	 *
 	 * </pre>
@@ -152,7 +129,7 @@ public class StreamUtils{
 	 * can be safely applied to the leading stream. Not thread-safe.
 	 * <pre>
 	 * {@code 
-	 *  Tuple2<SequenceM<Integer>, SequenceM<Integer>> copies =of(1,2,3,4,5,6).duplicate();
+	 *  Tuple2<Stream<Integer>, Stream<Integer>> copies =of(1,2,3,4,5,6).duplicate();
 		 assertTrue(copies.v1.anyMatch(i->i==2));
 		 assertTrue(copies.v2.anyMatch(i->i==2));
 	 * 
@@ -177,7 +154,7 @@ public class StreamUtils{
 	 * can be safely applied to the leading stream. Not thread-safe.
 	 * <pre>
 	 * {@code 
-	 * 	Tuple3<SequenceM<Tuple3<T1,T2,T3>>,SequenceM<Tuple3<T1,T2,T3>>,SequenceM<Tuple3<T1,T2,T3>>> Tuple3 = sequence.triplicate();
+	 * 	Tuple3<Stream<Tuple3<T1,T2,T3>>,Stream<Tuple3<T1,T2,T3>>,Stream<Tuple3<T1,T2,T3>>> Tuple3 = sequence.triplicate();
 	
 	 * }
 	 * </pre>
@@ -200,7 +177,7 @@ public class StreamUtils{
 	 * <pre>
 	 * {@code
 	 * 
-	 * 		Tuple4<SequenceM<Tuple4<T1,T2,T3,T4>>,SequenceM<Tuple4<T1,T2,T3,T4>>,SequenceM<Tuple4<T1,T2,T3,T4>>,SequenceM<Tuple4<T1,T2,T3,T4>>> quad = sequence.quadruplicate();
+	 * 		Tuple4<Stream<Tuple4<T1,T2,T3,T4>>,Stream<Tuple4<T1,T2,T3,T4>>,Stream<Tuple4<T1,T2,T3,T4>>,Stream<Tuple4<T1,T2,T3,T4>>> quad = sequence.quadruplicate();
 
 	 * }
 	 * </pre>
@@ -347,7 +324,7 @@ public class StreamUtils{
 	 * 
 	 * <pre>
 	 * {@code 
-	 *   		List<Integer> list = StreamUtils.cycle(Stream.of(1,2,2),Reducers.toCountInt(),3)
+	 *   		List<Integer> list = StreamUtils.cycle(Stream.ofAll(1,2,2),Reducers.toCountInt(),3)
 	 * 										.
 	 * 										.collect(Collectors.toList());
 	 * 	//is asList(3,3,3);
@@ -370,12 +347,12 @@ public class StreamUtils{
 	 * 
 	 * <pre>
 	 * {@code 
-	 *  Stream<String> helloWorld = Stream.of("hello","world","last");
+	 *  Stream<String> helloWorld = Stream.ofAll("hello","world","last");
 		HeadAndTail<String> headAndTail = StreamUtils.headAndTail(helloWorld);
 		 String head = headAndTail.head();
 		 assertThat(head,equalTo("hello"));
 		
-		SequenceM<String> tail =  headAndTail.tail();
+		Stream<String> tail =  headAndTail.tail();
 		assertThat(tail.headAndTail().head(),equalTo("world"));
 	 * }
 	 * </pre>
@@ -389,7 +366,7 @@ public class StreamUtils{
 	/**
 	 * <pre>
 	 * {@code 
-	 *  Stream<String> helloWorld = Stream.of();
+	 *  Stream<String> helloWorld = Stream.ofAll();
 		Optional<HeadAndTail<String>> headAndTail = StreamUtils.headAndTailOptional(helloWorld);
 		assertTrue(!headAndTail.isPresent());
 	 * }
@@ -407,7 +384,7 @@ public class StreamUtils{
 	/**
 	 * skip elements in Stream until Predicate holds true
 	 * 	<pre>
-	 * {@code  StreamUtils.skipUntil(Stream.of(4,3,6,7),i->i==6).collect(Collectors.toList())
+	 * {@code  StreamUtils.skipUntil(Stream.ofAll(4,3,6,7),i->i==6).collect(Collectors.toList())
 	 *  // [6,7]
 	 *  }</pre>
 
@@ -437,7 +414,7 @@ public class StreamUtils{
 	 * 
 	 * <pre>
 	 * 
-	 * {@code  StreamUtils.skipWhile(Stream.of(4,3,6,7).sorted(),i->i<6).collect(Collectors.toList())
+	 * {@code  StreamUtils.skipWhile(Stream.ofAll(4,3,6,7).sorted(),i->i<6).collect(Collectors.toList())
 	 *  // [6,7]
 	 *  }</pre>
 	 * @param stream
@@ -456,7 +433,7 @@ public class StreamUtils{
 	/**
 	 * Take elements from a stream while the predicates hold
 	 * <pre>
-	 * {@code StreamUtils.limitWhile(Stream.of(4,3,6,7).sorted(),i->i<6).collect(Collectors.toList());
+	 * {@code StreamUtils.limitWhile(Stream.ofAll(4,3,6,7).sorted(),i->i<6).collect(Collectors.toList());
 	 * //[4,3]
 	 * }
 	 * </pre>
@@ -470,7 +447,7 @@ public class StreamUtils{
 	/**
 	 * Take elements from a Stream until the predicate holds
 	 *  <pre>
-	 * {@code StreamUtils.limitUntil(Stream.of(4,3,6,7),i->i==6).collect(Collectors.toList());
+	 * {@code StreamUtils.limitUntil(Stream.ofAll(4,3,6,7),i->i==6).collect(Collectors.toList());
 	 * //[4,3]
 	 * }
 	 * </pre>
@@ -487,7 +464,7 @@ public class StreamUtils{
 	 * 
 	 * <pre>
 	 * {@code 
-	 * assertThat(StreamUtils.reverse(Stream.of(1,2,3)).collect(Collectors.toList())
+	 * assertThat(StreamUtils.reverse(Stream.ofAll(1,2,3)).collect(Collectors.toList())
 				,equalTo(Arrays.asList(3,2,1)));
 	 * }
 	 * </pre>
@@ -526,7 +503,7 @@ public class StreamUtils{
 	 * 
 	 * <pre>
 	 * {@code 		
-	 * assertThat(StreamUtils.cycle(Stream.of(1,2,3))
+	 * assertThat(StreamUtils.cycle(Stream.ofAll(1,2,3))
 	 * 						.limit(6)
 	 * 						.collect(Collectors.toList()),
 	 * 								equalTo(Arrays.asList(1,2,3,1,2,3)));
@@ -610,7 +587,7 @@ public class StreamUtils{
 	/**
 	 * Concat an Object and a Stream
 	 * If the Object is a Stream, Streamable or Iterable will be converted (or left) in Stream form and concatonated
-	 * Otherwise a new Stream.of(o) is created
+	 * Otherwise a new Stream.ofAll(o) is created
 	 * 
 	 * @param o Object to concat
 	 * @param stream  Stream to concat
@@ -627,7 +604,7 @@ public class StreamUtils{
 			first = FromJDK.stream(((Streamable)o).stream());
 		}
 		else{
-			first = Stream.of((U)o);
+			first = Stream.ofAll((U)o);
 		}
 		return first.appendAll(stream);
 		
@@ -662,7 +639,7 @@ public class StreamUtils{
 	 * 
 	 *  Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
 		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
-		val result = StreamUtils.reduce(Stream.of(1,2,3,4),Arrays.asList(sum,mult));
+		val result = StreamUtils.reduce(Stream.ofAll(1,2,3,4),Arrays.asList(sum,mult));
 				
 		 
 		assertThat(result,equalTo(Arrays.asList(10,24)));
@@ -684,7 +661,7 @@ public class StreamUtils{
 	 * {@code 
 	 *  Monoid<String> concat = Monoid.of("",(a,b)->a+b);
 		Monoid<String> join = Monoid.of("",(a,b)->a+","+b);
-		assertThat(StreamUtils.reduce(Stream.of("hello", "world", "woo!"),Stream.of(concat,join))
+		assertThat(StreamUtils.reduce(Stream.ofAll("hello", "world", "woo!"),Stream.ofAll(concat,join))
 		                 ,equalTo(Arrays.asList("helloworldwoo!",",hello,world,woo!")));
 	 * }
 	 * </pre>
@@ -704,8 +681,8 @@ public class StreamUtils{
 	 *  Apply multiple Collectors, simultaneously to a Stream
 	 * <pre>
 	 * {@code 
-	 * List result = StreamUtils.collect(Stream.of(1,2,3),
-								Stream.of(Collectors.toList(),
+	 * List result = StreamUtils.collect(Stream.ofAll(1,2,3),
+								Stream.ofAll(Collectors.toList(),
 								Collectors.summingInt(Integer::intValue),
 								Collectors.averagingInt(Integer::intValue)));
 		
@@ -726,7 +703,7 @@ public class StreamUtils{
 	 *  Apply multiple Collectors, simultaneously to a Stream
 	 * <pre>
 	 * {@code 
-	 * List result = StreamUtils.collect(Stream.of(1,2,3),
+	 * List result = StreamUtils.collect(Stream.ofAll(1,2,3),
 								Arrays.asList(Collectors.toList(),
 								Collectors.summingInt(Integer::intValue),
 								Collectors.averagingInt(Integer::intValue)));
@@ -748,7 +725,7 @@ public class StreamUtils{
 	 * Apply multiple Collectors, simultaneously to a Stream
 	 * <pre>
 	 * {@code
-	 * List result = StreamUtils.collect(Stream.of(1,2,3),
+	 * List result = StreamUtils.collect(Stream.ofAll(1,2,3),
 								Streamable.<Collector>of(Collectors.toList(),
 								Collectors.summingInt(Integer::intValue),
 								Collectors.averagingInt(Integer::intValue)));
@@ -775,7 +752,7 @@ public class StreamUtils{
 	 * {@code 
 	 *  int count =0;
 	 *  
-		assertThat(StreamUtils.cycleWhile(Stream.of(1,2,2)
+		assertThat(StreamUtils.cycleWhile(Stream.ofAll(1,2,2)
 											,next -> count++<6 )
 											.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2)));
 	 * }
@@ -794,7 +771,7 @@ public class StreamUtils{
 	 * <pre>
 	 * {@code 
 	 * 	count =0;
-		assertThat(StreamUtils.cycleUntil(Stream.of(1,2,2,3)
+		assertThat(StreamUtils.cycleUntil(Stream.ofAll(1,2,2,3)
 											,next -> count++>10 )
 											.collect(Collectors.toList()),equalTo(Arrays.asList(1, 2, 2, 3, 1, 2, 2, 3, 1, 2, 2)));
 
@@ -813,7 +790,7 @@ public class StreamUtils{
 	 * 
 	 * <pre>
 	 * {@code 
-	 * Stream<List<Integer>> zipped = StreamUtils.zip(Stream.of(1,2,3)
+	 * Stream<List<Integer>> zipped = StreamUtils.zip(Stream.ofAll(1,2,3)
 												,SequenceM.of(2,3,4), 
 													(a,b) -> Arrays.asList(a,b));
 		
@@ -853,7 +830,7 @@ public class StreamUtils{
 	 * 
 	 * <pre>
 	 * {@code
-	 * Stream<List<Integer>> zipped = StreamUtils.zip(Stream.of(1,2,3)
+	 * Stream<List<Integer>> zipped = StreamUtils.zip(Stream.ofAll(1,2,3)
 										,anyM(Optional.of(2)), 
 											(a,b) -> Arrays.asList(a,b));
 		
@@ -876,8 +853,8 @@ public class StreamUtils{
 	 * 
 	   <pre>
 	   {@code 
-	   Stream<List<Integer>> zipped = StreamUtils.zipStream(Stream.of(1,2,3)
-												,Stream.of(2,3,4), 
+	   Stream<List<Integer>> zipped = StreamUtils.zipStream(Stream.ofAll(1,2,3)
+												,Stream.ofAll(2,3,4), 
 													(a,b) -> Arrays.asList(a,b));
 		
 		
@@ -917,7 +894,7 @@ public class StreamUtils{
 	 * Create a sliding view over this Stream
 	 * <pre>
 	 * {@code 
-	 * List<List<Integer>> list = StreamUtils.sliding(Stream.of(1,2,3,4,5,6)
+	 * List<List<Integer>> list = StreamUtils.sliding(Stream.ofAll(1,2,3,4,5,6)
 												,2,1)
 									.collect(Collectors.toList());
 		
@@ -959,7 +936,7 @@ public class StreamUtils{
 	 * Create a sliding view over this Stream
 	 * <pre>
 	 * {@code 
-	 * List<List<Integer>> list = StreamUtils.sliding(Stream.of(1,2,3,4,5,6)
+	 * List<List<Integer>> list = StreamUtils.sliding(Stream.ofAll(1,2,3,4,5,6)
 												,2,1)
 									.collect(Collectors.toList());
 		
@@ -1001,7 +978,7 @@ public class StreamUtils{
 	 * Create a sliding view over this Stream
 	 * <pre>
 	 * {@code 
-	 * List<List<Integer>> list = StreamUtils.sliding(Stream.of(1,2,3,4,5,6)
+	 * List<List<Integer>> list = StreamUtils.sliding(Stream.ofAll(1,2,3,4,5,6)
 												,2)
 									.collect(Collectors.toList());
 		
@@ -1024,7 +1001,7 @@ public class StreamUtils{
 	 * 
 	   <pre>
 	   {@code 
-	 * 	List<List<Integer>> list = StreamUtils.grouped(Stream.of(1,2,3,4,5,6)
+	 * 	List<List<Integer>> list = StreamUtils.grouped(Stream.ofAll(1,2,3,4,5,6)
 														,3)
 													.collect(Collectors.toList());
 		
@@ -1068,7 +1045,7 @@ public class StreamUtils{
 	 * {@code  
 	 * 
 	 * 	assertEquals(asList("", "a", "ab", "abc"),
-	 * 					StreamUtils.scanLeft(Stream.of("a", "b", "c"),Reducers.toString(""))
+	 * 					StreamUtils.scanLeft(Stream.ofAll("a", "b", "c"),Reducers.toString(""))
 	 * 			.collect(Collectors.toList());
 	 *         
 	 *         }
@@ -1115,7 +1092,7 @@ public class StreamUtils{
 	 * 
 	 * <pre>
 	 * {@code 
-	 *  assertTrue(StreamUtils.xMatch(Stream.of(1,2,3,5,6,7),3, i->i>4));
+	 *  assertTrue(StreamUtils.xMatch(Stream.ofAll(1,2,3,5,6,7),3, i->i>4));
 	 * }
 	 * </pre>
 	 * 
@@ -1256,7 +1233,7 @@ public class StreamUtils{
 	/**
 	 * 
 	 * <pre>{@code 
-	 * assertTrue(StreamUtils.startsWith(Stream.of(1,2,3,4),Arrays.asList(1,2,3)));
+	 * assertTrue(StreamUtils.startsWith(Stream.ofAll(1,2,3,4),Arrays.asList(1,2,3)));
 	 * }</pre>
 	 * 
 	 * @param iterable
@@ -1284,7 +1261,7 @@ public class StreamUtils{
 	/**
 	 * 	<pre>
 	 * {@code
-	 * 		 assertTrue(StreamUtils.startsWith(Stream.of(1,2,3,4),Arrays.asList(1,2,3).iterator())) 
+	 * 		 assertTrue(StreamUtils.startsWith(Stream.ofAll(1,2,3,4),Arrays.asList(1,2,3).iterator())) 
 	 * }</pre>
 
 	 * @param iterator
@@ -1314,7 +1291,7 @@ public class StreamUtils{
 	 * <pre>
 	 * {@code 
 	 * assertThat(Arrays.asList(1, 0, 2, 0, 3, 0, 4),
-	 * 			equalTo( StreamUtils.intersperse(Stream.of(1, 2, 3, 4),0));
+	 * 			equalTo( StreamUtils.intersperse(Stream.ofAll(1, 2, 3, 4),0));
 	 * }
 	 * </pre>
 	 */
@@ -1326,7 +1303,7 @@ public class StreamUtils{
 	 * 
 	 * 
 	 * assertThat(Arrays.asList(1, 2, 3), 
-	 *      equalTo( StreamUtils.ofType(Stream.of(1, "a", 2, "b", 3,Integer.class));
+	 *      equalTo( StreamUtils.ofType(Stream.ofAll(1, "a", 2, "b", 3,Integer.class));
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
@@ -1340,7 +1317,7 @@ public class StreamUtils{
 	 * 
 	 * <pre>
 	 * {@code
-	 * StreamUtils.cast(Stream.of(1, "a", 2, "b", 3),Integer.class)
+	 * StreamUtils.cast(Stream.ofAll(1, "a", 2, "b", 3),Integer.class)
 	 *  // throws ClassCastException
 	 *  }
 	 */
@@ -1351,7 +1328,7 @@ public class StreamUtils{
 	 * flatMap operation
 	 * <pre>
 	 * {@code 
-	 * 		assertThat(StreamUtils.flatMapSequenceM(Stream.of(1,2,3),
+	 * 		assertThat(StreamUtils.flatMapSequenceM(Stream.ofAll(1,2,3),
 	 * 							i->SequenceM.of(i+2)).collect(Collectors.toList()),
 	 * 								equalTo(Arrays.asList(3,4,5)));
 	 * }
@@ -1371,7 +1348,7 @@ public class StreamUtils{
 	 * flatMap operation that allows a Collection to be returned
 	 * <pre>
 	 * {@code 
-	 * 	assertThat(StreamUtils.flatMapCollection(Stream.of(20),i->Arrays.asList(1,2,i))
+	 * 	assertThat(StreamUtils.flatMapCollection(Stream.ofAll(20),i->Arrays.asList(1,2,i))
 	 * 								.collect(Collectors.toList()),
 	 * 								equalTo(Arrays.asList(1,2,20)));
 
@@ -1386,8 +1363,8 @@ public class StreamUtils{
 	/**
 	 * <pre>
 	 * {@code 
-	 * 	assertThat(StreamUtils.flatMapStream(Stream.of(1,2,3),
-	 * 							i->Stream.of(i)).collect(Collectors.toList()),
+	 * 	assertThat(StreamUtils.flatMapStream(Stream.ofAll(1,2,3),
+	 * 							i->Stream.ofAll(i)).collect(Collectors.toList()),
 	 * 							equalTo(Arrays.asList(1,2,3)));
 
 	 * 
@@ -1402,7 +1379,7 @@ public class StreamUtils{
 			if(bs instanceof java.util.stream.Stream) 
 				return FromJDK.stream((java.util.stream.Stream<R>)bs);
 			else
-				return Stream.of(bs.iterator());
+				return Stream.ofAll(bs.iterator());
 			
 		}).apply(i));
 	}
@@ -1410,7 +1387,7 @@ public class StreamUtils{
 	 * cross type flatMap, removes null entries
      * <pre>
      * {@code 
-     * 	 assertThat(StreamUtils.flatMapOptional(Stream.of(1,2,3,null),
+     * 	 assertThat(StreamUtils.flatMapOptional(Stream.ofAll(1,2,3,null),
      * 										Optional::ofNullable)
      * 										.collect(Collectors.toList()),
      * 										equalTo(Arrays.asList(1,2,3)));
@@ -1429,7 +1406,7 @@ public class StreamUtils{
 	/**
 	 *<pre>
 	 * {@code 
-	 * 	assertThat(StreamUtils.flatMapCompletableFuture(Stream.of(1,2,3),
+	 * 	assertThat(StreamUtils.flatMapCompletableFuture(Stream.ofAll(1,2,3),
 	 * 								i->CompletableFuture.completedFuture(i+2))
 	 * 								.collect(Collectors.toList()),
 	 * 								equalTo(Arrays.asList(3,4,5)));
@@ -1449,7 +1426,7 @@ public class StreamUtils{
 	 * 
 	 * <pre>
 	 * {@code 
-	 *   List<Character> result = StreamUtils.liftAndBindCharSequence(Stream.of("input.file"),
+	 *   List<Character> result = StreamUtils.liftAndBindCharSequence(Stream.ofAll("input.file"),
 									.i->"hello world")
 									.toList();
 		
@@ -1470,7 +1447,7 @@ public class StreamUtils{
 	 * <pre>
 	 * {@code
 	 * 
-		List<String> result = StreamUtils.liftAndBindFile(Stream.of("input.file")
+		List<String> result = StreamUtils.liftAndBindFile(Stream.ofAll("input.file")
 								.map(getClass().getClassLoader()::getResource)
 								.peek(System.out::println)
 								.map(URL::getFile)
@@ -1495,7 +1472,7 @@ public class StreamUtils{
 	 * 
 	 * <pre>
 	 * {@code 
-	 * List<String> result = StreamUtils.liftAndBindURL(Stream.of("input.file")
+	 * List<String> result = StreamUtils.liftAndBindURL(Stream.ofAll("input.file")
 								,getClass().getClassLoader()::getResource)
 								.collect(Collectors.toList();
 		
@@ -1515,7 +1492,7 @@ public class StreamUtils{
 	 * from the text loaded from the supplied BufferedReaders
 	 * 
 	 * <pre>
-	 * List<String> result = StreamUtils.liftAndBindBufferedReader(Stream.of("input.file")
+	 * List<String> result = StreamUtils.liftAndBindBufferedReader(Stream.ofAll("input.file")
 								.map(getClass().getClassLoader()::getResourceAsStream)
 								.map(InputStreamReader::new)
 								,BufferedReader::new)
