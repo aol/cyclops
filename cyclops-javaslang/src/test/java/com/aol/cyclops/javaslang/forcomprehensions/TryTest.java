@@ -25,7 +25,7 @@ def prepareCappuccino(): Try[Cappuccino] = for {
 		
 		Try<String> result = 	Do.add(grind("arabica beans"))
 							  				 .monad(heatWater(new Water(25)))
-							  				 .withAnyM(ground -> water -> AnyM.fromJavaslang(brew(ground,water)))
+							  				 .withMonad(ground -> water -> brew(ground,water))
 							  				 .monad(frothMilk("milk"))
 							  				 .yield(ground ->water -> espresso->foam-> combine(espresso,foam))
 							  				 .unwrap();
