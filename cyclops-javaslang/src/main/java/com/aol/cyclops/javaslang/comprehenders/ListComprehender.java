@@ -30,7 +30,7 @@ public class ListComprehender implements Comprehender<List> {
 
 	@Override
 	public List empty() {
-		return List.of();
+		return List.empty();
 	}
 
 	@Override
@@ -39,14 +39,14 @@ public class ListComprehender implements Comprehender<List> {
 	}
 	static List unwrapOtherMonadTypes(Comprehender<List> comp,Object apply){
 		if(apply instanceof java.util.stream.Stream)
-			return List.of( ((java.util.stream.Stream)apply).iterator());
+			return List.ofAll( ((java.util.stream.Stream)apply).iterator());
 		if(apply instanceof Iterable)
-			return List.of( ((Iterable)apply).iterator());
+			return List.ofAll( ((Iterable)apply).iterator());
 		if(apply instanceof LazySeq){
-			apply = List.of(((LazySeq)apply).iterator());
+			apply = List.ofAll(((LazySeq)apply).iterator());
 		}
 		if(apply instanceof Collection){
-			return List.of((Collection)apply);
+			return List.ofAll((Collection)apply);
 		}
 		
 		return Comprehender.unwrapOtherMonadTypes(comp,apply);

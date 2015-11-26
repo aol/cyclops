@@ -27,15 +27,15 @@ import com.aol.cyclops.sequence.SequenceM;
 			
 		}
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,Character> add(CharSequence seq){
-			return new DoComp8(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),seq)),orgType);
+			return new DoComp8(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),seq)),getOrgType());
 			
 		}
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> addValues(T8... values){
-			return new DoComp8(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),Stream.of(values))),orgType);
+			return new DoComp8(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),Stream.of(values))),getOrgType());
 			
 		}
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,Integer> add(int times){
-			return new DoComp8(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),times)),orgType);
+			return new DoComp8(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),times)),getOrgType());
 			
 		}
 
@@ -55,7 +55,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(Iterable<T8> o){
-			return new DoComp8(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
+			return new DoComp8(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),o)),getOrgType());
 			
 		}
 		
@@ -77,7 +77,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(Iterator<T8> o){
-			return new DoComp8(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
+			return new DoComp8(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),o)),getOrgType());
 			
 		}
 		
@@ -99,7 +99,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> addStream(Supplier<Stream<T8>> o){
-			return new DoComp8(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
+			return new DoComp8(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),o)),getOrgType());
 			
 		}
 
@@ -119,7 +119,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> addBaseStream(Supplier<BaseStream<T8,?>> o){
-			return new DoComp8(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
+			return new DoComp8(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),o)),getOrgType());
 			
 		}
 		
@@ -141,7 +141,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(Optional<T8> o){
-			return new DoComp8(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
+			return new DoComp8(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),o)),getOrgType());
 			
 		}
 		
@@ -163,7 +163,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(CompletableFuture<T8> o){
-			return new DoComp8(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
+			return new DoComp8(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),o)),getOrgType());
 			
 		}
 		
@@ -185,7 +185,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(AnyM<T8> o){
-			return new DoComp8(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
+			return new DoComp8(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),o)),getOrgType());
 			
 		}
 		
@@ -207,7 +207,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(SequenceM<T8> o){
-			return new DoComp8(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
+			return new DoComp8(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),o)),getOrgType());
 			
 		}
 		
@@ -229,7 +229,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(Callable<T8> o){
-			return new DoComp8(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
+			return new DoComp8(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),o)),getOrgType());
 			
 		}
 		
@@ -251,7 +251,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(Supplier<T8> o){
-			return new DoComp8(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),(Supplier)()->o)),orgType);
+			return new DoComp8(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),(Supplier)()->o)),getOrgType());
 			
 		}
 		
@@ -273,7 +273,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(Collection<T8> o){
-			return new DoComp8(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
+			return new DoComp8(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),o)),getOrgType());
 			
 		}
 		
@@ -298,7 +298,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8 extends String>  DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(File o){
-			return new DoComp8(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
+			return new DoComp8(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),o)),getOrgType());
 			
 		}
 		
@@ -320,7 +320,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8 extends String>  DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(URL o){
-			return new DoComp8(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
+			return new DoComp8(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),o)),getOrgType());
 			
 		}
 		
@@ -342,7 +342,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8 extends String>  DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(BufferedReader o){
-			return new DoComp8(assigned.plus(assigned.size(),new Entry("$$monad"+assigned.size(),o)),orgType);
+			return new DoComp8(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),o)),getOrgType());
 			
 		}
 		
@@ -367,7 +367,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> withIterable(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,Iterable<T8>>>>>>>> f){
-			return new DoComp8(addToAssigned(f),orgType);
+			return new DoComp8(addToAssigned(f),getOrgType());
 			
 		}
 		
@@ -389,7 +389,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> withIterator(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,Iterator<T8>>>>>>>> f){
-			return new DoComp8(addToAssigned(f),orgType);
+			return new DoComp8(addToAssigned(f),getOrgType());
 			
 		}
 		
@@ -411,7 +411,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> withStream(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,Stream<T8>>>>>>>> f){
-			return new DoComp8(addToAssigned(f),orgType);
+			return new DoComp8(addToAssigned(f),getOrgType());
 			
 		}
 		/**
@@ -430,7 +430,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> withBaseStream(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,BaseStream<T8,?>>>>>>>> f){
-			return new DoComp8(addToAssigned(f),orgType);
+			return new DoComp8(addToAssigned(f),getOrgType());
 			
 		}
 		
@@ -452,7 +452,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> withOptional(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,Optional<T8>>>>>>>> f){
-			return new DoComp8(addToAssigned(f),orgType);
+			return new DoComp8(addToAssigned(f),getOrgType());
 			
 		}
 		
@@ -474,7 +474,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> withCompletableFuture(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,CompletableFuture<T8>>>>>>>> f){
-			return new DoComp8(addToAssigned(f),orgType);
+			return new DoComp8(addToAssigned(f),getOrgType());
 			
 		}
 		
@@ -496,7 +496,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> withAnyM(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,AnyM<T8>>>>>>>> f){
-			return new DoComp8(addToAssigned(f),orgType);
+			return new DoComp8(addToAssigned(f),getOrgType());
 			
 		}
 		
@@ -518,7 +518,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> withTraversableM(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,SequenceM<T8>>>>>>>> f){
-			return new DoComp8(addToAssigned(f),orgType);
+			return new DoComp8(addToAssigned(f),getOrgType());
 			
 		}
 		
@@ -540,7 +540,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> withCallable(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,Callable<T8>>>>>>>> f){
-			return new DoComp8(addToAssigned(f),orgType);
+			return new DoComp8(addToAssigned(f),getOrgType());
 			
 		}
 		
@@ -562,7 +562,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> withSupplier(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,Supplier<T8>>>>>>>> f){
-			return new DoComp8(addToAssigned(f),orgType);
+			return new DoComp8(addToAssigned(f),getOrgType());
 			
 		}
 		
@@ -584,7 +584,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> withCollection(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,Collection<T8>>>>>>>> f){
-			return new DoComp8(addToAssigned(f),orgType);
+			return new DoComp8(addToAssigned(f),getOrgType());
 			
 		}
 		
@@ -609,7 +609,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8 extends String> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> withFile(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,File>>>>>>> f){
-			return new DoComp8(addToAssigned(f),orgType);
+			return new DoComp8(addToAssigned(f),getOrgType());
 			
 		}
 		
@@ -631,7 +631,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8 extends String> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> withURL(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,URL>>>>>>> f){
-			return new DoComp8(addToAssigned(f),orgType);
+			return new DoComp8(addToAssigned(f),getOrgType());
 			
 		}
 		
@@ -653,7 +653,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Next stage in for comprehension builder
 		 */
 		public <T8 extends String> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> withBufferedReader(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,BufferedReader>>>>>>> f){
-			return new DoComp8(addToAssigned(f),orgType);
+			return new DoComp8(addToAssigned(f),getOrgType());
 			
 		}
 		
@@ -675,8 +675,8 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return For comprehension result
 		 */
 		public <R> AnyM<R> yield(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,R>>>>>>> f){
-			if(orgType!=null)
-				return new MonadWrapper(this.yieldInternal(f),this.orgType).anyM();
+			if(getOrgType()!=null)
+				return new MonadWrapper(this.yieldInternal(f),this.getOrgType()).anyM();
 			else
 				return AnyM.ofMonad(this.yieldInternal(f));
 		}
@@ -698,7 +698,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @return Current stage with guard / filter applied
 		 */
 		public  DoComp7<T1,T2,T3,T4,T5,T6,T7> filter(Function<T1,Function<T2,Function<T3,Function<T4,Function<T5,Function<T6,Function<T7,Boolean>>>>>>> f){
-			return new DoComp7(assigned.plus(assigned.size(),new Entry("$$internalGUARD"+assigned.size(),new Guard(f))),orgType);
+			return new DoComp7(getAssigned().plus(getAssigned().size(),new Entry("$$internalGUARD"+getAssigned().size(),new Guard(f))),getOrgType());
 		}
 		
 	}

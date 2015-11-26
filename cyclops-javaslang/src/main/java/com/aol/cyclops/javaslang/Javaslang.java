@@ -2,6 +2,7 @@ package com.aol.cyclops.javaslang;
 
 import java.util.Optional;
 
+import javaslang.algebra.Monad;
 import javaslang.collection.List;
 import javaslang.collection.Stream;
 import javaslang.control.Either;
@@ -16,7 +17,9 @@ import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.monad.AnyM;
 
 public class Javaslang {
-
+	public static <T> AnyM<T> anyMonad(Monad<T> monadM){
+		return AsAnyM.notTypeSafeAnyM(monadM);
+	}
 	public static <T> AnyM<T> anyM(Arbitrary<T> arbM){
 		return AsAnyM.notTypeSafeAnyM(arbM);
 	}

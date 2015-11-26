@@ -1,6 +1,5 @@
 package com.aol.cyclops.matcher.builders;
 
-import java.util.List;
 import java.util.function.Predicate;
 
 import lombok.AllArgsConstructor;
@@ -8,8 +7,8 @@ import lombok.AllArgsConstructor;
 import org.hamcrest.Matcher;
 
 import com.aol.cyclops.matcher.Action;
-import com.aol.cyclops.matcher.TypedFunction;
 import com.aol.cyclops.matcher.Extractor;
+import com.aol.cyclops.matcher.TypedFunction;
 
 public class CaseBuilder {
 	
@@ -62,7 +61,7 @@ public class CaseBuilder {
 		 * @param extractor to transform input data
 		 * @return Next step in the Case Builder
 		 */
-		public <T,R,X> Step<R,X> thenExtract(Extractor<T,R> extractor){
+		public <R,X> Step<R,X> thenExtract(Extractor<V,R> extractor){
 			return  new InCaseOfThenExtractStep(cse,matcher,match,extractor);
 		}
 		

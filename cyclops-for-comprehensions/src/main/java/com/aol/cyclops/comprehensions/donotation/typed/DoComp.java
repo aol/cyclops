@@ -18,14 +18,14 @@ import com.aol.cyclops.sequence.Unwrapable;
 @AllArgsConstructor
 public abstract class DoComp {
 	
-	PStack<Entry> assigned;
-	final Class orgType;
+	private PStack<Entry> assigned;
+	private final Class orgType;
 	
 	protected PStack<Entry> addToAssigned(Function f){
-		return assigned.plus(assigned.size(),createEntry(f));
+		return getAssigned().plus(getAssigned().size(),createEntry(f));
 	}
 	protected Entry createEntry(Function f){
-		return new Entry("$$monad"+assigned.size(),new Assignment(f));
+		return new Entry("$$monad"+getAssigned().size(),new Assignment(f));
 	}
 	
 	protected <T> T yieldInternal(Function f){
@@ -68,7 +68,7 @@ public abstract class DoComp {
 	private Object build(
 			ComprehensionData c, Function f) {
 		Mutable<PVector<String>> vars = new Mutable<>(TreePVector.empty());
-		assigned.stream().forEach(e-> addToVar(e,vars,handleNext(e,c,vars.get())));
+		getAssigned().stream().forEach(e-> addToVar(e,vars,handleNext(e,c,vars.get())));
 		Mutable<Object> var = new Mutable<>(f);
 		
 		return c.yield(()-> { 
@@ -100,6 +100,15 @@ public abstract class DoComp {
 			vars.set(vector.plus(vector.size(),e.getKey()));
 		}
 		return handleNext;
+	}
+	protected PStack<Entry> getAssigned() {
+		return assigned;
+	}
+	protected void setAssigned(PStack<Entry> assigned) {
+		this.assigned = assigned;
+	}
+	protected Class getOrgType() {
+		return orgType;
 	}
 
 }
