@@ -1,22 +1,33 @@
 package com.aol.cyclops.javaslang.caching;
 
 
-import static com.aol.cyclops.functions.caching.Memoize.*;
+import static com.aol.cyclops.javaslang.caching.Memoize.memoizeBiFunction;
+import static com.aol.cyclops.javaslang.caching.Memoize.memoizeCallable;
+import static com.aol.cyclops.javaslang.caching.Memoize.memoizeFunction;
+import static com.aol.cyclops.javaslang.caching.Memoize.memoizeFunction0;
+import static com.aol.cyclops.javaslang.caching.Memoize.memoizePredicate;
+import static com.aol.cyclops.javaslang.caching.Memoize.memoizeQuadFunction;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.concurrent.Callable;
-import java.util.function.BiFunction;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
+import javaslang.Function0;
+import javaslang.Function2;
 import lombok.val;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import com.aol.cyclops.functions.caching.Cacheable;
 import com.aol.cyclops.functions.caching.Memoize;
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 public class MemoiseTest {
 
 	int called= 0;
@@ -27,7 +38,7 @@ public class MemoiseTest {
 	@Test
 	public void testMemoiseSupplier() {
 		
-		Supplier<Integer> s = memoizeSupplier(()->++called);
+		Function0<Integer> s = memoizeFunction0(()->++called);
 		assertThat(s.get(),equalTo(1));
 		assertThat(s.get(),equalTo(1));
 		assertThat(s.get(),equalTo(1));
@@ -56,7 +67,30 @@ public class MemoiseTest {
 
 	@Test
 	public void testMemoiseBiFunction() {
-		BiFunction<Integer,Integer,Integer> s = memoizeBiFunction( (a,b)->a + ++called);
+		Function2<Integer,Integer,Integer> s = memoizeBiFunction( (a,b)->a + ++called);
+		assertThat(s.apply(0,1),equalTo(1));
+		assertThat(s.apply(0,1),equalTo(1));
+		assertThat(s.apply(0,1),equalTo(1));
+		assertThat(s.apply(1,1),equalTo(3));
+		assertThat(s.apply(1,1),equalTo(3));
+	}
+	@Test
+	public void testMemoiseBiFunctionWithCache	() {
+		Cache<Object, Integer> cache = CacheBuilder.newBuilder()
+			       .maximumSize(1000)
+			       .expireAfterWrite(10, TimeUnit.MINUTES)
+			       .build();
+	
+		Cacheable<Integer> cacheable = (key,fn)->  { 
+					try {
+						return cache.get(key,()->fn.apply(key));
+					} catch (ExecutionException e) {
+						 throw ExceptionSoftener.throwSoftenedException(e);
+					}
+		};
+		
+		Function2<Integer,Integer,Integer> s = memoizeBiFunction( (a,b)->a + ++called,
+										cacheable);
 		assertThat(s.apply(0,1),equalTo(1));
 		assertThat(s.apply(0,1),equalTo(1));
 		assertThat(s.apply(0,1),equalTo(1));

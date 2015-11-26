@@ -7,6 +7,7 @@ v6.2.0 of cyclops-javaslang requires v2.0.0 of Javaslang.
 * AnyM / For Comprehension support for Javaslang Monads
 * reactive-streams implementation for Javaslang Traversables
 * conversion between Javaslang and other types
+* Memoize javaslang functions with a configurable Cache (support LRU, or TTL)
 * Javaslang Stream extensions (future operations, hot streams, stream manipulation)
 
 # Details & Examples
@@ -188,6 +189,33 @@ public  class FutureTest {
 
 
 }
+```
+
+## Memoization with a Guava cache
+
+Example configuration for Memoization with a Guava cache with TTL of 10 minutes after writing
+
+```java
+		Cache<Object, Integer> cache = CacheBuilder.newBuilder()
+			       .maximumSize(1000)
+			       .expireAfterWrite(10, TimeUnit.MINUTES)
+			       .build();
+	
+		Cacheable<Integer> cacheable = (key,fn)->  { 
+					try {
+						return cache.get(key,()->fn.apply(key));
+					} catch (ExecutionException e) {
+						 throw ExceptionSoftener.throwSoftenedException(e);
+					}
+		};
+		
+		Function2<Integer,Integer,Integer> s = memoizeBiFunction( (a,b)->a + ++called,
+										cacheable);
+		assertThat(s.apply(0,1),equalTo(1));
+		assertThat(s.apply(0,1),equalTo(1));
+		assertThat(s.apply(0,1),equalTo(1));
+		assertThat(s.apply(1,1),equalTo(3));
+		assertThat(s.apply(1,1),equalTo(3));
 ```
 
 ## Get cyclops-javaslang

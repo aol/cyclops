@@ -16,7 +16,7 @@ import javaslang.Tuple3;
 import javaslang.Tuple4;
 import lombok.val;
 
-import com.aol.cyclops.functions.caching.Cachable;
+import com.aol.cyclops.functions.caching.Cacheable;
 
 public class Memoize {
 
@@ -34,10 +34,10 @@ public class Memoize {
 	 * Convert a Function0 into one that caches it's result
 	 * 
 	 * @param s Function0 to memoise
-	 * @param cache Cachable to store the results
+	 * @param cache Cacheable to store the results
 	 * @return Memoised Function0
 	 */
-	public static <T> Function0<T> memoizeFunction0(Function0<T> s,Cachable<T> cache){
+	public static <T> Function0<T> memoizeFunction0(Function0<T> s,Cacheable<T> cache){
 		
 		return () -> cache.computeIfAbsent("k",a->s.get());
 	}
@@ -46,10 +46,10 @@ public class Memoize {
 	 * Convert a Callable into one that caches it's result
 	 * 
 	 * @param s Callable to memoise
-	 * @param cache Cachable to store the results
+	 * @param cache Cacheable to store the results
 	 * @return Memoised Callable
 	 */
-	public static <T> Callable<T> memoizeCallable(Callable<T> s,Cachable<T> cache){
+	public static <T> Callable<T> memoizeCallable(Callable<T> s,Cacheable<T> cache){
 	
 		return () -> cache.computeIfAbsent("k",a -> { 
 			try { 
@@ -94,10 +94,10 @@ public class Memoize {
 	 * Convert a Function into one that caches it's result
 	 * 
 	 * @param fn Function to memoise
-	 * @param cache Cachable to store the results
+	 * @param cache Cacheable to store the results
 	 * @return Memoised Function
 	 */
-	public static <T,R> Function<T,R> memoizeFunction(Function1<T,R> fn,Cachable<R> cache){
+	public static <T,R> Function<T,R> memoizeFunction(Function1<T,R> fn,Cacheable<R> cache){
 		return t -> (R)cache.computeIfAbsent(t,(Function)fn);
 	}
 	
@@ -115,10 +115,10 @@ public class Memoize {
 	 * Convert a BiFunction into one that caches it's result
 	 * 
 	 * @param fn BiFunction to memoise
-	 * @param cache Cachable to store the results
+	 * @param cache Cacheable to store the results
 	 * @return Memoised BiFunction
 	 */
-	public static <T1,T2 , R> Function2<T1, T2, R> memoizeBiFunction(Function2<T1, T2, R> fn,Cachable<R> cache) {
+	public static <T1,T2 , R> Function2<T1, T2, R> memoizeBiFunction(Function2<T1, T2, R> fn,Cacheable<R> cache) {
 		val memoise2 = memoizeFunction((Tuple2<T1,T2> pair) -> fn.apply(pair._1,pair._2),cache);
 		return (t1,t2) -> memoise2.apply(new Tuple2<>(t1,t2));
 	}
@@ -136,10 +136,10 @@ public class Memoize {
 	 * Convert a Function3 into one that caches it's result
 	 * 
 	 * @param fn TriFunction to memoise
-	 * @param cache Cachable to store the results
+	 * @param cache Cacheable to store the results
 	 * @return Memoised TriFunction
 	 */
-	public static <T1,T2,T3, R> Function3<T1, T2,T3, R> memoizeTriFunction(Function3<T1, T2,T3, R> fn,Cachable<R> cache) {
+	public static <T1,T2,T3, R> Function3<T1, T2,T3, R> memoizeTriFunction(Function3<T1, T2,T3, R> fn,Cacheable<R> cache) {
 		val memoise2 = memoizeFunction((Tuple3<T1,T2,T3> triple) -> fn.apply(triple._1,triple._2,triple._3),cache);
 		return (t1,t2,t3) -> memoise2.apply(new Tuple3<>(t1,t2,t3));
 	}
@@ -157,10 +157,10 @@ public class Memoize {
 	 * Convert a QuadFunction into one that caches it's result
 	 * 
 	 * @param fn QuadFunction to memoise
-	 * @param cache Cachable to store the results
+	 * @param cache Cacheable to store the results
 	 * @return Memoised TriFunction
 	 */
-	public static <T1,T2,T3,T4, R> Function4<T1, T2,T3, T4,R> memoizeQuadFunction(Function4<T1, T2,T3,T4, R> fn,Cachable<R> cache) {
+	public static <T1,T2,T3,T4, R> Function4<T1, T2,T3, T4,R> memoizeQuadFunction(Function4<T1, T2,T3,T4, R> fn,Cacheable<R> cache) {
 		val memoise2 = memoizeFunction((Tuple4<T1,T2,T3,T4> quad) -> fn.apply(quad._1,quad._2,quad._3,quad._4),cache);
 		return (t1,t2,t3,t4) -> memoise2.apply(new Tuple4<>(t1,t2,t3,t4));
 	}
@@ -178,10 +178,10 @@ public class Memoize {
 	 * Convert a Predicate into one that caches it's result
 	 * 
 	 * @param p Predicate to memoise
-	 * @param cache Cachable to store the results
+	 * @param cache Cacheable to store the results
 	 * @return Memoised Predicate
 	 */
-	public static <T> Predicate<T> memoizePredicate(Predicate<T> p,Cachable<Boolean> cache) {
+	public static <T> Predicate<T> memoizePredicate(Predicate<T> p,Cacheable<Boolean> cache) {
 		Function<T, Boolean> memoised = memoizeFunction((Function1<T,Boolean>)t-> p.test(t),cache);
 		return (t) -> memoised.apply(t);
 	}
