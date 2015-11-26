@@ -149,7 +149,7 @@ public class MatchingTest {
 
 	@Test
 	public void testCaseOfThenExtractPredicateOfVActionOfVExtractorOfTR() {
-		Matching.when().isTrue(it-> it instanceof List).thenExtract(get(0))
+		Matching.when().isTrue((List<Object> it)-> it instanceof List).thenExtract(get(0))
 							.thenConsume(it->value=it)
 				.match(Arrays.asList(true,false,"hello"));
 		
@@ -158,10 +158,10 @@ public class MatchingTest {
 	@Test
 	public void testCaseOfThenExtractPredicateOfVActionOfVExtractorOfTRFalseSize() {
 		Matching.when().isTrue((List<Object> it)-> it.size()>3)
-							.thenExtract(at(0))
+							.thenExtract(get(0))
 							.thenConsume( it->value=it)
-				.when().isTrue((List<Object> it)-> it.size()>3).thenExtract(at(0)).thenConsume( it->value=it)
-				.when().isTrue(it->it instanceof Map).thenExtract(at(0)).thenConsume(it->value=it)
+				.when().isTrue((List<Object> it)-> it.size()>3).thenExtract(get(0)).thenConsume( it->value=it)
+				.when().isTrue(it->it instanceof Map).thenConsume(it->value=it)
 				.match(Arrays.asList(true,false,"hello"));
 		
 		assertThat(value,is(nullValue()));

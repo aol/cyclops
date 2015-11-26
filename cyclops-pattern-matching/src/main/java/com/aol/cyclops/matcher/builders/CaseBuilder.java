@@ -62,7 +62,7 @@ public class CaseBuilder {
 		 * @param extractor to transform input data
 		 * @return Next step in the Case Builder
 		 */
-		public <T,R,X> Step<R,X> thenExtract(Extractor<T,R> extractor){
+		public <R,X> Step<R,X> thenExtract(Extractor<V,R> extractor){
 			return  new InCaseOfThenExtractStep(cse,matcher,match,extractor);
 		}
 		
