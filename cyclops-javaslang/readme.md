@@ -35,8 +35,8 @@ Javaslang specific for-comprehensions
 		
 		Try<String> result = 	Do.monad(grind("arabica beans"))
 					  .monad(heatWater(new Water(25)))
-					  .withAnyM(ground -> water -> Javaslang.anyM(brew(ground,water)))
-					  .add(frothMilk("milk"))
+					  .withMonad(ground -> water -> brew(ground,water))
+					  .monad(frothMilk("milk"))
 					  .yield(ground ->water -> espresso->foam-> combine(espresso,foam))
 					  .unwrap();
 		
