@@ -9,7 +9,7 @@ import java.util.function.Function;
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
 
-import com.aol.cyclops.functions.caching.Cachable;
+import com.aol.cyclops.functions.caching.Cacheable;
 import com.aol.cyclops.functions.caching.Memoize;
 
 @AllArgsConstructor
@@ -20,7 +20,7 @@ public class PipelineBuilder {
 	private final boolean autoOptimise; //fan out then syncrhonous there after
 	private final Executor optimisingExec;
 	private final boolean autoMemoize;
-	private final Cachable memoizeFactory;
+	private final Cacheable memoizeFactory;
 	public PipelineBuilder(){
 		builder = new ExecutionPipeline();
 		autoOptimise=false;
@@ -38,7 +38,7 @@ public class PipelineBuilder {
 		return Memoize.memoizeFunction(fn, memoizeFactory);
 	}
 	public PipelineBuilder(boolean autoOptimise,Executor optimisingExec
-		,boolean autoMemoize,Cachable memoizeFactory ){
+		,boolean autoMemoize,Cacheable memoizeFactory ){
 		builder = new ExecutionPipeline();
 		this.autoOptimise=autoOptimise;
 		this.optimisingExec=optimisingExec;

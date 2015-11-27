@@ -23,7 +23,7 @@ import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
 
-import com.aol.cyclops.functions.caching.Cachable;
+import com.aol.cyclops.functions.caching.Cacheable;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.async.future.FastFuture;
@@ -76,10 +76,10 @@ public class LazyReact implements ReactBuilder {
 	@Getter
 	private final boolean autoMemoize;
 	@Getter
-	private final Cachable memoizeCache;
+	private final Cacheable memoizeCache;
 	
 	
-	public LazyReact autoMemoizeOn( Cachable memoizeCache){
+	public LazyReact autoMemoizeOn( Cacheable memoizeCache){
 		return this.withAutoMemoize(true).withMemoizeCache(memoizeCache);
 	}
 	/* 
@@ -364,7 +364,7 @@ public class LazyReact implements ReactBuilder {
 			Boolean async, MaxActive maxActive, Executor pub,boolean streamOfFutures, 
 			boolean objectPoolingActive,
 			boolean autoOptimize,
-			boolean autoMemoize, Cachable memoizeCache) {
+			boolean autoMemoize, Cacheable memoizeCache) {
 		super();
 		this.executor = executor;
 		this.retrier = retrier;
