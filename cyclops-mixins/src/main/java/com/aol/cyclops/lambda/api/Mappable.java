@@ -1,9 +1,8 @@
 package com.aol.cyclops.lambda.api;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.invokedynamic.ReflectionCache;
@@ -26,21 +25,15 @@ public interface Mappable {
 	default Map<String,?> toMap(){
 		try {
 			final Object o = unwrap();
-			return ReflectionCache.getFields(o.getClass())
-					.stream()
-					.collect(Collectors.toMap((Field f)->f.getName(),(Field f) ->{
-						try {
-
-							return f.get(o);
-						} catch (Exception e) {
-							ExceptionSoftener.throwSoftenedException(e);
-							return null;
-						}
-					}));
+			Map<String, Object> result = new HashMap<>();
+			for (Field f : ReflectionCache.getFields(o.getClass())) {
+			    result.put(f.getName(),f.get(o));
+			}
+			return result;
 		} catch (Exception e) {
-			ExceptionSoftener
+			throw ExceptionSoftener
 					.throwSoftenedException(e);
-			return null;
+			
 		}
 	}
 }
