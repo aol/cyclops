@@ -335,3 +335,26 @@ Mutable represents a captured variable inside a Java 8 closure. Because of the e
 * Cyclops Trampoline : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-trampoline/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-trampoline)
 * Cyclops Enable Switch : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-enable-switch/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-enable-switch)
 * Cyclops Power Tuples : [![Maven Central : cyclops-for-comprehensions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-power-tuples/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-power-tuples)
+
+
+## Javadoc
+
+    
+* http://www.javadoc.io/doc/com.aol.cyclops/cyclops-sequence-api
+* http://www.javadoc.io/doc/com.aol.cyclops/cyclops-streams
+* http://www.javadoc.io/doc/com.aol.cyclops/cyclops-monad-api
+* http://www.javadoc.io/doc/com.aol.cyclops/cyclops-monad-functions
+* http://www.javadoc.io/doc/com.aol.cyclops/cyclops-mixins
+* http://www.javadoc.io/doc/com.aol.cyclops/cyclops-invokedynamic
+* http://www.javadoc.io/doc/com.aol.cyclops/cyclops-for-comprehensions
+* http://www.javadoc.io/doc/com.aol.cyclops/cyclops-functions
+* http://www.javadoc.io/doc/com.aol.cyclops/cyclops-try
+* http://www.javadoc.io/doc/com.aol.cyclops/pattern-matching
+* http://www.javadoc.io/doc/com.aol.cyclops/cyclops-trampoline
+* http://www.javadoc.io/doc/com.aol.cyclops/cyclops-feature-toggle
+* http://www.javadoc.io/doc/com.aol.cyclops/cyclops-core
+* http://www.javadoc.io/doc/com.aol.cyclops/cyclops-power-tuples
+* http://www.javadoc.io/doc/com.aol.cyclops/cyclops-all
+* http://www.javadoc.io/doc/com.aol.cyclops/cyclops-javaslang
+* http://www.javadoc.io/doc/com.aol.cyclops/cyclops-functionaljava
+* http://www.javadoc.io/doc/com.aol.cyclops/cyclops-guava
