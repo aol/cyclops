@@ -179,7 +179,7 @@ public  class FutureTest {
 
 	public void aysncStream(){ 
 	
-	  CompletableFuture<Integer> total =  Stream.of(1,2,3,4,5)
+	  CompletableFuture<Integer> total =  Stream.ofAll(1,2,3,4,5)
 	         									.map(it -> it*100)
 	        									.futureOperations(exec)
 			 									.reduce( (acc,next) -> acc+next);
