@@ -177,7 +177,6 @@ public interface AnyM<T> extends Unwrapable{
 		return AnyMFactory.instance.monad(monad);
 	}
 	public static <T> AnyM<T> ofNullable(Object monad){
-		Objects.requireNonNull(monad);
 		return AnyMFactory.instance.monad(Optional.ofNullable(monad));
 	}
 	
