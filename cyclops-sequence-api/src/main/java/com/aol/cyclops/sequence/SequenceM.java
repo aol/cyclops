@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
@@ -1876,6 +1877,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @return
 	 */
 	public static <T> SequenceM<T> reversedListOf(List<T> elements){
+		Objects.requireNonNull(elements);
 		ReversingListSpliterator list = new ReversingListSpliterator<T>(elements, false).invert();
 		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(list, false),list);
 
@@ -1898,6 +1900,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @return
 	 */
 	public static <T> SequenceM<T> fromStream(Stream<T> stream){
+		Objects.requireNonNull(stream);
 		if(stream instanceof SequenceM)
 			return (SequenceM)stream;
 		return SequenceMFactory.instance.sequenceM(stream,null);
@@ -1908,7 +1911,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @return
 	 */
 	public static SequenceM<Integer> fromIntStream(IntStream stream){
-		
+		Objects.requireNonNull(stream);
 		return SequenceMFactory.instance.sequenceM(Seq.seq(stream),null);
 	}
 	/**
@@ -1917,7 +1920,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @return
 	 */
 	public static SequenceM<Long> fromLongStream(LongStream stream){
-		
+		Objects.requireNonNull(stream);
 		return SequenceMFactory.instance.sequenceM(Seq.seq(stream),null);
 	}
 	/**
@@ -1926,7 +1929,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @return
 	 */
 	public static SequenceM<Double> fromDoubleStream(DoubleStream stream){
-		
+		Objects.requireNonNull(stream);
 		return SequenceMFactory.instance.sequenceM(Seq.seq(stream),null);
 	}
 	/**
@@ -1936,6 +1939,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @return SequenceM
 	 */
 	public static <T> SequenceM<T> fromList(List<T> list){
+		Objects.requireNonNull(list);
 		ReversingListSpliterator array = new ReversingListSpliterator<T>(list,false);
 		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(array, false),array);
 	}
@@ -1946,6 +1950,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @return SequenceM
 	 */
 	public static <T> SequenceM<T> fromIterable(Iterable<T> iterable){
+		Objects.requireNonNull(iterable);
 		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(iterable.spliterator(),false),null);
 	}
     /**

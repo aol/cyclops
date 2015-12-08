@@ -5,6 +5,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
@@ -60,6 +61,7 @@ public interface AnyM<T> extends Unwrapable{
 	 * @return
 	 */
 	public static <T> AnyM<T> fromStreamable(Streamable<T> streamable){
+		 Objects.requireNonNull(streamable);
 		return AnyMFactory.instance.monad(streamable);
 	}
 	/**
@@ -73,6 +75,7 @@ public interface AnyM<T> extends Unwrapable{
 	 * @return AnyM wrapping a list
 	 */
 	public static <T> AnyM<T> fromList(List<T> list){
+		 Objects.requireNonNull(list);
 		return AnyMFactory.instance.monad(list);
 	}
 	/**
@@ -86,6 +89,7 @@ public interface AnyM<T> extends Unwrapable{
 	 * @return AnyM wrapping a Set
 	 */
 	public static <T> AnyM<T> fromSet(Set<T> set){
+		 Objects.requireNonNull(set);
 		return AnyMFactory.instance.monad(set);
 	}
 	
@@ -101,42 +105,55 @@ public interface AnyM<T> extends Unwrapable{
 	}
 	
 	public static <T> AnyM<T> fromStream(Stream<T> stream){
+		Objects.requireNonNull(stream);
 		return AnyMFactory.instance.monad(stream);
 	}
 	public static AnyM<Integer> fromIntStream(IntStream stream){
+		Objects.requireNonNull(stream);
 		return AnyMFactory.instance.monad(stream);
 	}
 	public static AnyM<Double> fromDoubleStream(DoubleStream stream){
+		Objects.requireNonNull(stream);
 		return AnyMFactory.instance.monad(stream);
 	}
 	public static AnyM<Long> fromLongStream(LongStream stream){
+		Objects.requireNonNull(stream);
 		return AnyMFactory.instance.monad(stream);
 	}
 	public static <T> AnyM<T> fromOptional(Optional<T> optional){
+		 Objects.requireNonNull(optional);
 		return AnyMFactory.instance.monad(optional);
 	}
 	public static  AnyM<Double> fromOptional(OptionalDouble optional){
+		Objects.requireNonNull(optional);
 		return AnyMFactory.instance.of(optional);
 	}
 	public static  AnyM<Long> fromOptional(OptionalLong optional){
+		Objects.requireNonNull(optional);
 		return AnyMFactory.instance.of(optional);
 	}
 	public static  AnyM<Integer> fromOptional(OptionalInt optional){
+		Objects.requireNonNull(optional);
 		return AnyMFactory.instance.of(optional);
 	}
 	public static <T> AnyM<T> fromCompletableFuture(CompletableFuture<T> future){
+		Objects.requireNonNull(future);
 		return AnyMFactory.instance.monad(future);
 	}
 	public static <T> AnyM<T> fromCollection(Collection<T> collection){
+		Objects.requireNonNull(collection);
 		return AnyMFactory.instance.of(collection);
 	}
 	public static <T> AnyM<T> fromIterable(Iterable<T> iterable){
+		Objects.requireNonNull(iterable);
 		return AnyMFactory.instance.of(iterable);
 	}
 	public static AnyM<String> fromFile(File file){
+		Objects.requireNonNull(file);
 		return AnyMFactory.instance.of(file);
 	}
 	public static AnyM<String> fromURL(URL url){
+		Objects.requireNonNull(url);
 		return AnyMFactory.instance.of(url);
 	}
 	/**
@@ -146,6 +163,7 @@ public interface AnyM<T> extends Unwrapable{
 	 * @return
 	 */
 	public static <T> AnyM<T> ofConvertable(Object monad){
+		Objects.requireNonNull(monad);
 		return AnyMFactory.instance.of(monad);
 	}
 	/**
@@ -155,6 +173,7 @@ public interface AnyM<T> extends Unwrapable{
 	 * @return Wrapped Monad
 	 */
 	public static <T> AnyM<T> ofMonad(Object monad){
+		Objects.requireNonNull(monad);
 		return AnyMFactory.instance.monad(monad);
 	}
 	public static <T> AnyM<T> ofNullable(Object monad){

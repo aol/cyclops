@@ -2,6 +2,7 @@
 package com.aol.cyclops.trycatch;
 
 import java.io.Closeable;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -12,6 +13,7 @@ import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.val;
 
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.value.ValueObject;
@@ -221,6 +223,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, St
 	@SafeVarargs
 	public static <T,X extends Throwable> Try<T,X> withCatch(CheckedSupplier<T,X> cf,
 						Class<? extends X>...classes){
+		Objects.requireNonNull(cf);
 		try{
 			return Success.of(cf.get());
 		}catch(Throwable t){
@@ -230,7 +233,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, St
 			if(error.isPresent())
 				return Failure.of((X)t);
 			else
-				throw new RuntimeException(t);
+				throw ExceptionSoftener.throwSoftenedException(t);
 		}
 		
 	}
@@ -244,6 +247,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, St
 	 */
 	@SafeVarargs
 	public static <X extends Throwable>  Try<Void,X> runWithCatch(CheckedRunnable cf,Class<? extends X>...classes){
+		Objects.requireNonNull(cf);
 		try{
 			cf.run();
 			return Success.of(null);
@@ -254,7 +258,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, St
 			if(error.isPresent())
 				return Failure.of((X)t);
 			else
-				throw new RuntimeException(t);
+				throw ExceptionSoftener.throwSoftenedException(t);
 		}
 		
 	}
