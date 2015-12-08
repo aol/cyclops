@@ -2,6 +2,7 @@
 package com.aol.cyclops.trycatch;
 
 import java.io.Closeable;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -222,6 +223,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, St
 	@SafeVarargs
 	public static <T,X extends Throwable> Try<T,X> withCatch(CheckedSupplier<T,X> cf,
 						Class<? extends X>...classes){
+		Objects.requireNonNull(cf);
 		try{
 			return Success.of(cf.get());
 		}catch(Throwable t){
@@ -245,6 +247,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, St
 	 */
 	@SafeVarargs
 	public static <X extends Throwable>  Try<Void,X> runWithCatch(CheckedRunnable cf,Class<? extends X>...classes){
+		Objects.requireNonNull(cf);
 		try{
 			cf.run();
 			return Success.of(null);
