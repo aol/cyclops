@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.val;
 
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.value.ValueObject;
@@ -230,7 +231,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, St
 			if(error.isPresent())
 				return Failure.of((X)t);
 			else
-				throw new RuntimeException(t);
+				throw ExceptionSoftener.throwSoftenedException(t);
 		}
 		
 	}
@@ -254,7 +255,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, St
 			if(error.isPresent())
 				return Failure.of((X)t);
 			else
-				throw new RuntimeException(t);
+				throw ExceptionSoftener.throwSoftenedException(t);
 		}
 		
 	}
