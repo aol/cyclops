@@ -19,8 +19,8 @@ Features include
 * StreamUtils - static methods for java.util.stream.Streams
 * Streamables - efficient / lazy replayable Streams as java.util.stream.Stream or SequenceM
 
-[See Streaming Examples wiki page for more details & examples](https://github.com/aol/cyclops/wiki/Streaming-examples)
-[Asynchronous operations](https://github.com/aol/cyclops/wiki/cyclops-streams-:-Asynchronous-Terminal-Operations)
+* [See Streaming Examples wiki page for more details & examples](https://github.com/aol/cyclops/wiki/Streaming-examples)
+* [Asynchronous operations](https://github.com/aol/cyclops/wiki/cyclops-streams-:-Asynchronous-Terminal-Operations)
 
 
 ## Getting cyclops-streams
