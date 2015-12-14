@@ -41,6 +41,7 @@ public class ZippingTest {
 												.peek(it -> System.out.println(it))
 												
 												.collect(Collectors.toList());
+		System.out.println(list);
 		
 		List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
 		
@@ -62,6 +63,7 @@ public class ZippingTest {
 												
 												.collect(Collectors.toList());
 		
+		System.out.println(list);
 		List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
 		assertThat(right,hasItem(100));
 		assertThat(right,hasItem(200));

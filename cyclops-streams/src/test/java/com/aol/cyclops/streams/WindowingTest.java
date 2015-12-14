@@ -53,7 +53,9 @@ public class WindowingTest {
 	}
 	@Test
 	public void windowStatefullyWhile(){
-		
+		System.out.println(SequenceM.of(1,2,3,4,5,6)
+				.windowStatefullyWhile((s,i)->s.sequenceM().toList().contains(4) ? true : false)
+				.toList());
 		assertThat(SequenceM.of(1,2,3,4,5,6)
 				.windowStatefullyWhile((s,i)->s.sequenceM().toList().contains(4) ? true : false)
 				.toList().size(),equalTo(5));
@@ -79,6 +81,7 @@ public class WindowingTest {
 	public void slidingIncrement() {
 		List<List<Integer>> list = SequenceM.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
 
+		System.out.println(list);
 		assertThat(list.get(0), hasItems(1, 2, 3));
 		assertThat(list.get(1), hasItems(3, 4, 5));
 	}
@@ -87,7 +90,7 @@ public class WindowingTest {
 	public void grouped() {
 
 		List<List<Integer>> list = SequenceM.of(1, 2, 3, 4, 5, 6).grouped(3).collect(Collectors.toList());
-
+		System.out.println(list);
 		assertThat(list.get(0), hasItems(1, 2, 3));
 		assertThat(list.get(1), hasItems(4, 5, 6));
 
