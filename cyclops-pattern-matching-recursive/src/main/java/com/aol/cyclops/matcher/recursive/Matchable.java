@@ -33,6 +33,22 @@ public interface Matchable{
 	default Object getMatchable(){
 		return this;
 	}
+	/**
+	 * Match against the values inside the matchable with a single case
+	 * 
+	 * <pre>
+	 * {@code
+	 * int result = Matchable.of(Optional.of(1))
+								.matches(c->c.hasValues(1).then(i->2));
+		//2						
+	 * }</pre>
+	 * 
+	 * Note, it is possible to continue to chain cases within a single case, but cleaner
+	 * to use the appropriate overloaded matches method that accepts two (or more) cases.
+	 * 
+	 * @param fn1 Describes the matching case
+	 * @return Result - this method requires a match or an NoSuchElement exception is thrown
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	default <T,R> R  matches(Function<CheckValues<T,R>,CheckValues<T,R>> fn1){
 		return (R) new MatchingInstance(new _Simpler_Case( fn1.apply( (CheckValues)

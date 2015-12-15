@@ -1,9 +1,10 @@
 package com.aol.cyclops.matcher;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import lombok.Value;
@@ -31,6 +32,20 @@ public class MatchableTest {
 		int a;
 		int b;
 		int c;
+	}
+	@Test
+	public void singleCase(){
+		int result = Matchable.of(Optional.of(1))
+								.matches(c->c.hasValues(1).then(i->2));
+		
+		assertThat(result,equalTo(2));
+	}
+	@Test(expected=NoSuchElementException.class)
+	public void singleCaseFail(){
+		 Matchable.of(Optional.of(2))
+								.matches(c->c.hasValues(1).then(i->2));
+		
+		fail("exception expected");
 	}
 	
 	@Test 
