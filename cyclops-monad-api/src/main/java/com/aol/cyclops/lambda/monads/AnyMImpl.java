@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
+import com.aol.cyclops.comprehensions.comprehenders.MaterializedList;
 import com.aol.cyclops.internal.AsGenericMonad;
 import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.lambda.api.AsAnyM;
@@ -101,6 +102,8 @@ public class AnyMImpl<T> implements AnyM<T>{
 		return monad.liftAndBind(fn).anyM();
 	
 	}
+	
+	
 	/**
 	 * Perform a flatMap operation where the result will be a flattened stream of Characters
 	 * from the CharSequence returned by the supplied function.
@@ -122,8 +125,15 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return
 	 */
 	public final  AnyM<Character> flatMapCharSequence(Function<? super T,CharSequence> fn) {
-		return monad.liftAndBind(fn).anyM();
+		return monad.liftAndBind(fn).anyM().map(this::takeFirst);
 	}
+	private <T> T takeFirst(Object o){
+		if(o instanceof MaterializedList){
+			return (T)((List)o).get(0);
+		}
+		return (T)o;
+	}
+	
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
 	 * from the text loaded from the supplied files.
@@ -148,7 +158,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return
 	 */
 	public final  AnyM<String> flatMapFile(Function<? super T,File> fn) {
-		return monad.liftAndBind(fn).anyM();
+		return monad.liftAndBind(fn).anyM().map(this::takeFirst);
 	}
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -171,7 +181,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return
 	 */
 	public final  AnyM<String> flatMapURL(Function<? super T, URL> fn) {
-		return monad.liftAndBind(fn).anyM();
+		return monad.liftAndBind(fn).anyM().map(this::takeFirst);
 	}
 	/**
 	  *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -196,7 +206,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return
 	 */
 	public final  AnyM<String> flatMapBufferedReader(Function<? super T,BufferedReader> fn) {
-		return monad.liftAndBind(fn).anyM();
+		return monad.liftAndBind(fn).anyM().map(this::takeFirst);
 	}
 	
 	/**
@@ -231,7 +241,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	public final  <R> AnyM<List<R>> aggregateUntyped(AnyM<?> next){
 		return monad.aggregate(next.monad()).anyM();
 	}
-	@Deprecated //to be removed in 6.0.0
+	
 	public void forEach(Consumer<? super T> action) {
 		asSequence().forEach(action);	
 	}
@@ -243,7 +253,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return 
 	 */
 	public final <R> AnyM<R> flatMap(Function<? super T,AnyM<? extends R>> fn) {
-		return monad.flatMap(in -> fn.apply(in).unwrap()).anyM();
+		return monad.flatMap(in -> fn.apply(in).unwrap()).anyM().map(this::takeFirst);
 	}
 	
 	/**
@@ -253,7 +263,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return
 	 */
 	public final <R> AnyM<R> flatMapStream(Function<? super T,BaseStream<? extends R,?>> fn) {
-		return monad.flatMap(in -> fn.apply(in)).anyM();
+		return monad.flatMap(in -> fn.apply(in)).anyM().map(this::takeFirst);
 	}
 	/**
 	 * Convenience method to allow method reference support, when flatMap return type is a Streamable
@@ -262,7 +272,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return
 	 */
 	public final <R> AnyM<R> flatMapStreamable(Function<? super T,Streamable<R>> fn) {
-		return monad.flatMap(in -> fn.apply(in)).anyM();
+		return monad.flatMap(in -> fn.apply(in)).anyM().map(this::takeFirst);
 	}
 	/**
 	 * flatMapping to a Stream will result in the Stream being converted to a List, if the host Monad
@@ -287,7 +297,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return
 	 */
 	public final <R> AnyM<R> flatMapCollection(Function<? super T,Collection<? extends R>> fn) {
-		return monad.flatMap(in -> fn.apply(in)).anyM();
+		return monad.flatMap(in -> fn.apply(in)).anyM().map(this::takeFirst);
 	}
 	/**
 	 * Convenience method to allow method reference support, when flatMap return type is a Optional

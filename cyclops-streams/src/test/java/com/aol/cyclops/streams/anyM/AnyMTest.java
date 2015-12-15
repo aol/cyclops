@@ -40,6 +40,20 @@ import com.aol.cyclops.sequence.streamable.Streamable;
 public class AnyMTest {
 	
 	@Test
+	public void multiReturn(){
+		AnyM<Integer> stream = AnyM.fromOptional(Optional.of(1))
+									.flatMapStream(i->Stream.of(1,2,i));
+		
+		stream.map(i->i+2);
+	}
+	@Test
+	public void multiReturnBind(){
+		AnyM<List<Integer>> stream = AnyM.fromOptional(Optional.of(1))
+										 .bind(i->Stream.of(1,2,i));
+		
+		stream.map(i->i.size());
+	}
+	@Test
 	public void collectList(){
 		assertThat(AnyM.fromList(Arrays.asList(1,2,2)).collect(Collectors.toSet()).size(),equalTo(2));
 	}

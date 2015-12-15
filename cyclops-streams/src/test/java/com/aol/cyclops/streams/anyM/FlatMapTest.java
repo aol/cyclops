@@ -28,7 +28,7 @@ public class FlatMapTest {
 	@Test
 	public void flatMapCrossTypeNotCollectionUnwrap(){
 
-		assertThat(anyM(Optional.of(1)).flatMapStream(i->Stream.of(i+2)).unwrap(),equalTo(Optional.of(Arrays.asList(3))));
+		assertThat(anyM(Optional.of(1)).flatMapStream(i->Stream.of(i+2)).unwrap(),equalTo(Optional.of(3)));
 	}
 	@Test
 	public void flatMapCollection(){
