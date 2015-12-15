@@ -68,7 +68,7 @@ public class OptionTTest {
 	}
 	@Test
 	public void filterSuccess(){
-		OptionalT<Integer> optionT = new OptionalT<>(AnyM.ofMonad(Stream.of(Optional.of(10))));
+		OptionalT<Integer> optionT = new OptionalT<>(AnyM.fromStream(Stream.of(Optional.of(10))));
 		assertThat(optionT.filter(num->num==10).getRun().<Stream<Optional<String>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Optional.of(10)));
 	}

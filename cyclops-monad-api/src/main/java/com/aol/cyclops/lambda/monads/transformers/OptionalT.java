@@ -13,13 +13,26 @@ import org.jooq.lambda.function.Function1;
 import com.aol.cyclops.monad.AnyM;
 
 
+/**
+ * Monad transformer for JDK Optional
+ * 
+ * @author johnmcclean
+ *
+ * @param <A>
+ */
 public class OptionalT<A> {
-   @Getter
-   final AnyM<Optional<A>> run;
-
+   
+   private final AnyM<Optional<A>> run;
+   
+   
    public OptionalT(final AnyM<Optional<A>> run){
        this.run = run;
    }
+   
+   public AnyM<Optional<A>> unwrap(){
+	   return run;
+   }
+
    
    public OptionalT<A> peek(Consumer<A> peek){
        return of(run.peek(opt-> opt.map(a-> { peek.accept(a); return a;})));
