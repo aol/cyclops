@@ -55,6 +55,26 @@ public interface Matchable{
 				new _Simpler_Case(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
 					.match(getMatchable()).get();
 	}
+	/**
+	 * Match against the values inside the matchable with two cases
+	 * 
+	 * <pre>
+	 * {@code 
+	 * int result = Matchable.listOfValues(1,2)
+								.matches(c->c.hasValues(1,3).then(i->2),
+										c->c.hasValues(1,2).then(i->3));
+										
+		//3								
+	 * 
+	 * }
+	 * </pre>
+	 *  Note, it is possible to continue to chain cases within a single case, but cleaner
+	 * to use the appropriate overloaded matches method that accepts three (or more) cases.
+	 * 
+	 * @param fn1 Describes a case
+	 * @param fn2 Describes a case
+	 * @return Result - this method requires a match or an NoSuchElement exception is thrown
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	default <T,R> R matches(Function<CheckValues<T,R>,CheckValues<T,R>> fn1,Function<CheckValues<T,R>,CheckValues<T,R>> fn2){
 		

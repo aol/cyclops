@@ -47,7 +47,14 @@ public class MatchableTest {
 		
 		fail("exception expected");
 	}
-	
+	@Test
+	public void cases2(){
+		int result = Matchable.listOfValues(1,2)
+								.matches(c->c.hasValues(1,3).then(i->2),
+										c->c.hasValues(1,2).then(i->3));
+		
+		assertThat(result,equalTo(3));
+	}
 	@Test 
 	public void matchable(){
 		Optional<Integer> result = Matchable.of(Optional.of(1))
