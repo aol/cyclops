@@ -8,9 +8,9 @@
 ## Gradle
 
 where x.y.z represents the latest version
-
+```groovy
 compile 'com.aol.cyclops:cyclops-for-comprehensions:x.y.z'
-
+```
 ## Maven
 
 ```xml
@@ -31,7 +31,8 @@ Simplify deeply nested looping (over Collections, even  Streams, Optionals and m
 
 * [Javadoc for Cyclops For Comprehensions](http://www.javadoc.io/doc/com.aol.cyclops/cyclops-for-comprehensions/4.0.2)
 * [Wiki for Extensible For Comprehensions](https://github.com/aol/cyclops/wiki/Extensible-For-Comprehensions-for-Java-8)
-
+* [For comprehension examples](https://github.com/aol/cyclops/wiki/For-Comprehension-Examples)
+* 
 # Overview of Cyclops For Comprehensions
 
 Two supported formats
