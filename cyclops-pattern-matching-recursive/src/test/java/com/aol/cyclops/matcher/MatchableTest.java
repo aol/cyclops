@@ -3,6 +3,7 @@ package com.aol.cyclops.matcher;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.util.List;
 import java.util.Optional;
 
 import lombok.Value;
@@ -16,44 +17,7 @@ import com.aol.cyclops.matcher.recursive.Matchable;
 import com.aol.cyclops.matcher.recursive.RecursiveMatcher;
 
 public class MatchableTest {
-	private <I,T> CheckValues<Object, T> cases(CheckValues<I, T> c) {
-		
-		return c.with(1,2,3).then(i->"hello")
-				.with(4,5,6).then(i->"goodbye");
-	}
-	@Test
-	public void test(){
-		assertThat(new MyCase(1,2,3).match(this::cases),equalTo("hello"));
-		
-	}
-	@Test
-	public void test2(){
-		assertThat(new MyCase(4,5,6).match(this::cases ),equalTo("goodbye"));
-		
-	}
-	@Test
-	public void test3(){
-		assertThat(new MyCase(4,2,3).match(this::cases,"default"   ),equalTo("default"));
-		
-	}
 
-	
-	@Test
-	public void test_(){
-	
-		
-		assertThat(new MyCase(4,5,6)._match(c ->c.isType( (MyCase ce)-> "hello").with(1,2,3),"goodbye") ,
-				  equalTo("goodbye"));
-		
-	}
-	@Test
-	public void test_2(){
-	
-		
-		assertThat(new MyCase(4,5,6)._match(c ->c.isType( (MyCase ce)-> "hello").with(4,5,6),"goodbye") ,
-				  equalTo("hello"));
-		
-	}
 	@Test
 	public void testMatch(){
 		
@@ -63,7 +27,7 @@ public class MatchableTest {
 		
 	}
 	@Value
-	static class MyCase  implements Matchable{
+	static class MyCase<R>  implements Matchable{
 		int a;
 		int b;
 		int c;
@@ -71,15 +35,23 @@ public class MatchableTest {
 	
 	@Test 
 	public void matchable(){
-		System.out.println(Matchable.from(Optional.of(1)).matches(c->c.hasValues(1).then(i->2)));
-		System.out.println(Matchable.from(Optional.empty()).matches(c->c.isEmpty().then(i->"hello")));
-		System.out.println(Matchable.from(Optional.empty()).matches(
+		Optional<Integer> result = Matchable.listOfValues(Optional.of(1))
+											.mayMatch(c->c.hasValues(2).then(i->2));
+		assertThat(Matchable.of(result)
+				 .matches(c->c.isEmpty().then(i->"hello")),equalTo("hello"));
+		
+		Integer result2 = Matchable.of(Optional.of(1))
+									.matches(c->c.hasValues(1).then(i->2));
+		
+		System.out.println(Matchable.of(Optional.of(1)).matches(c->c.hasValues(1).then(i->2)));
+		System.out.println(Matchable.of(Optional.empty()).matches(c->c.isEmpty().then(i->"hello")));
+		System.out.println(Matchable.of(Optional.empty()).matches(
 				 o->o.isEmpty().then(i->"hello"),
 				 o->o.hasValues(1).then(i->2)));
 		
-		System.out.println(Matchable.from(1)
+		System.out.println(Matchable.of(1)
 				                    .matchType(c->c.isType((Integer it)->"hello")));
-		System.out.println(Matchable.from(1)
+		System.out.println(Matchable.listOfValues(1,2,3)
 							        .matches(c->c.hasValuesWhere((Object i)->(i instanceof Integer)).then(i->2)));
 		
 	}

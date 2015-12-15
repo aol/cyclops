@@ -13,9 +13,9 @@ import com.nurkiewicz.lazyseq.LazySeq;
 
 
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
-public class CheckValues<X,T> {
+public class CheckValues<T,R> {
 	private final Class<T> clazz;
-	private final _Simpler_Case<X> simplerCase;
+	private final _Simpler_Case<R> simplerCase;
 	
 	/**
 	 * 
@@ -30,14 +30,14 @@ public class CheckValues<X,T> {
 	 */
 	@SafeVarargs
 	@Deprecated
-	public final <V> _LastStep<X,V,T> with(V... values) {
+	public final <V> _LastStep<R,V,T> with(V... values) {
 		
 		return hasValues(values);
 		
 
 	}
 	
-	public final <V> _LastStep<X,V,T> hasValues(V... values) {
+	public final <V> _LastStep<R,V,T> hasValues(V... values) {
 
 		
 		Predicate predicate = it -> Optional.of(it)
@@ -49,10 +49,10 @@ public class CheckValues<X,T> {
 				.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toList()
 				.toArray(new Predicate[0]);
 
-		return new _LastStep<X,V,T>(clazz,predicate,predicates,this.getPatternMatcher());
+		return new _LastStep<R,V,T>(clazz,predicate,predicates,this.getPatternMatcher());
 	}
 	@SafeVarargs
-	public final <V> _LastStep<X,V,T> hasValuesWhere(Predicate<V>... values) {
+	public final <V> _LastStep<R,V,T> hasValuesWhere(Predicate<V>... values) {
 
 		
 		Predicate predicate = it -> Optional.of(it)
@@ -64,10 +64,10 @@ public class CheckValues<X,T> {
 				.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toList()
 				.toArray(new Predicate[0]);
 
-		return new _LastStep<X,V,T>(clazz,predicate,predicates,this.getPatternMatcher());
+		return new _LastStep<R,V,T>(clazz,predicate,predicates,this.getPatternMatcher());
 	}
 	@SafeVarargs
-	public final <V> _LastStep<X,V,T> hasValuesMatch(Matcher<V>... values) {
+	public final <V> _LastStep<R,V,T> hasValuesMatch(Matcher<V>... values) {
 
 		
 		Predicate predicate = it -> Optional.of(it)
@@ -79,9 +79,9 @@ public class CheckValues<X,T> {
 				.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toList()
 				.toArray(new Predicate[0]);
 
-		return new _LastStep<X,V,T>(clazz,predicate,predicates,this.getPatternMatcher());
+		return new _LastStep<R,V,T>(clazz,predicate,predicates,this.getPatternMatcher());
 	}
-	public final <V> _LastStep<X,V,T> isEmpty() {
+	public final <V> _LastStep<R,V,T> isEmpty() {
 		
 		
 		
@@ -93,7 +93,7 @@ public class CheckValues<X,T> {
 		
 		Predicate<V>[] predicates = new Predicate[]{i->i==SeqUtils.EMPTY};
 
-		return new _LastStep<X,V,T>(clazz,predicate,predicates,this.getPatternMatcher());
+		return new _LastStep<R,V,T>(clazz,predicate,predicates,this.getPatternMatcher());
 
 	}
 

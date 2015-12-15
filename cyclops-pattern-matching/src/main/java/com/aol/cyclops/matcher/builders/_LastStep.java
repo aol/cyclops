@@ -7,14 +7,14 @@ import lombok.AllArgsConstructor;
 import com.aol.cyclops.matcher.TypedFunction;
 
 @AllArgsConstructor
-public  class _LastStep<X,V,T> {
+public  class _LastStep<R,V,T> {
 	
 	private final Class<T> clazz;
 	private final Predicate predicate;
 	private Predicate<V>[] predicates;
 	private final PatternMatcher patternMatcher;
 	
-	public final <X> CheckValues<X,T> then(TypedFunction<T,X> fn){
+	public final CheckValues<T,R> then(TypedFunction<T,R> fn){
 		return new _Simpler_Case(patternMatcher.inCaseOfManyType(predicate, fn,
 				predicates)).withType(clazz);
 	}
