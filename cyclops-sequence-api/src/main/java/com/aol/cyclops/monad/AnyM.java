@@ -156,6 +156,9 @@ public interface AnyM<T> extends Unwrapable{
 		Objects.requireNonNull(url);
 		return AnyMFactory.instance.of(url);
 	}
+	public static<T> AnyM<T> streamOf(T... vs){
+		return AnyM.fromStream(Stream.of(vs));
+	}
 	/**
 	 * Take the supplied object and always attempt to convert it to a Monad type
 	 * 
@@ -581,6 +584,7 @@ public interface AnyM<T> extends Unwrapable{
 	 * Collect the contents of the monad wrapped by this AnyM into supplied collector
 	 */
 	public <R, A> R collect(Collector<? super T, A, R> collector);
+	
 	
 	 
 	

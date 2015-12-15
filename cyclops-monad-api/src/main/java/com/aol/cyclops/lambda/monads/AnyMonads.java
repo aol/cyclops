@@ -72,7 +72,7 @@ public class AnyMonads extends AsAnyMList{
 	 */
 	public static <T,R> AnyM<List<R>> traverse(Collection<AnyM<T>> seq, Function<T,R> fn){
 		if(seq.size()==0)
-			return anyM(Optional.empty());
+			return AnyM.ofMonad(Optional.empty());
 		return asMonad(new ComprehenderSelector().selectComprehender(seq.iterator().next().unwrap().getClass()).of(1))
 								.flatMap(in-> asMonad(seq.stream().map(it->it.unwrap())).flatten().flatMap((Function)fn).unwrap()
 									).anyM();
@@ -114,7 +114,7 @@ public class AnyMonads extends AsAnyMList{
 	 */ 
 	public static <T1>  AnyM<Stream<T1>> sequence(Collection<AnyM<T1>> seq){
 		if(seq.size()==0)
-			return anyM(Optional.empty());
+			return AnyM.ofMonad(Optional.empty());
 		else
 			return asMonad(new ComprehenderSelector().selectComprehender(seq.iterator().next().unwrap().getClass()).of(1))
 				.flatMap(in-> AsGenericMonad.asMonad(seq.stream().map(it->it.unwrap())).flatten().unwrap()).anyM();

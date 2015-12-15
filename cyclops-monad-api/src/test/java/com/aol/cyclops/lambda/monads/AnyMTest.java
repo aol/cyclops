@@ -1,6 +1,5 @@
 package com.aol.cyclops.lambda.monads;
 
-import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
 import static com.aol.cyclops.lambda.api.AsAnyMList.completableFutureToAnyMList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
@@ -27,7 +26,6 @@ import lombok.val;
 
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.monad.AnyM;
 
 
@@ -43,9 +41,9 @@ public class AnyMTest {
 	@Test
 	public void createAnyMFromListOrOptionalAsAnyM(){
 		List<Integer> list = Arrays.asList(1,2,3);
-		assertThat(AsAnyM.notTypeSafeAnyM(list).unwrap(),instanceOf(List.class));
+		assertThat(AnyM.ofMonad(list).unwrap(),instanceOf(List.class));
 		Optional<Integer> opt = Optional.of(1);
-		assertThat(AsAnyM.notTypeSafeAnyM(opt).unwrap(),instanceOf(Optional.class));
+		assertThat(AnyM.ofMonad(opt).unwrap(),instanceOf(Optional.class));
 	}
 	@Test
 	public void flatMapWithListComprehender() {
@@ -129,46 +127,46 @@ public class AnyMTest {
 	}
 	@Test
 	public void testList(){
-		AnyM<Integer> list = AsAnyM.anyMList(Arrays.asList(1,2,3));
+		AnyM<Integer> list = AnyM.fromIterable(Arrays.asList(1,2,3));
 		assertThat(list.unwrap(),instanceOf(List.class));
 	}
 	@Test
 	public void testListMap(){
-		AnyM<Integer> list = AsAnyM.anyMList(Arrays.asList(1,2,3));
+		AnyM<Integer> list = AnyM.fromIterable(Arrays.asList(1,2,3));
 		assertThat(list.map(i->i+2).unwrap(),equalTo(Arrays.asList(3,4,5)));
 	}
 	
 	@Test
 	public void testListFlatMap(){
-		AnyM<Integer> list = AsAnyM.anyMList(Arrays.asList(1,2,3));
+		AnyM<Integer> list = AnyM.fromIterable(Arrays.asList(1,2,3));
 		assertThat(list.flatMapCollection(i->Arrays.asList(i+2,i-2)).unwrap(),equalTo(Arrays.asList(3,-1,4,0,5,1)));
 	}
 	@Test
 	public void testListFilter(){
-		AnyM<Integer> list = AsAnyM.anyMList(Arrays.asList(1,2,3));
+		AnyM<Integer> list = AnyM.fromIterable(Arrays.asList(1,2,3));
 		assertThat(list.filter(i->i<3).unwrap(),equalTo(Arrays.asList(1,2)));
 	}
 	@Test
 	public void testSet(){
-		AnyM<Integer> set = AsAnyM.anyMSet(new HashSet<>(Arrays.asList(1,2,3)));
+		AnyM<Integer> set = AnyM.fromIterable(new HashSet<>(Arrays.asList(1,2,3)));
 		assertThat(set.unwrap(),instanceOf(Set.class));
 	}
 	@Test
 	public void testSetMap(){
-		AnyM<Integer> set = AsAnyM.anyMSet(new HashSet<>(Arrays.asList(1,2,3)));
+		AnyM<Integer> set = AnyM.fromIterable(new HashSet<>(Arrays.asList(1,2,3)));
 		assertThat(set.map(i->i+2).unwrap(),equalTo(new HashSet<>(Arrays.asList(3,4,5))));
 		
 	}
 	
 	@Test
 	public void testSetFlatMap(){
-		AnyM<Integer> set = AsAnyM.anyMSet(new HashSet<>(Arrays.asList(1,2,3)));
+		AnyM<Integer> set = AnyM.fromIterable(new HashSet<>(Arrays.asList(1,2,3)));
 		assertThat(set.flatMapCollection(i->Arrays.asList(i+2,i-2)).unwrap(),equalTo(new HashSet<>(Arrays.asList(3,-1,4,0,5,1))));
 		
 	}
 	@Test
 	public void testSetFilter(){
-		AnyM<Integer> set = AsAnyM.anyMSet(new HashSet<>(Arrays.asList(1,2,3)));
+		AnyM<Integer> set = AnyM.fromIterable(new HashSet<>(Arrays.asList(1,2,3)));
 		System.out.println(set.filter(i->i<3).unwrap().getClass());
 		assertThat(set.filter(i->i<3).unwrap(),equalTo(new HashSet<>(Arrays.asList(1,2))));
 	}
@@ -220,7 +218,7 @@ public class AnyMTest {
 	@Test
 	public void testReplicateM(){
 		
-		 AnyM<List<Integer>> applied =anyM(Optional.of(2)).replicateM(5);
+		 AnyM<List<Integer>> applied =AnyM.fromOptional(Optional.of(2)).replicateM(5);
 		 assertThat(applied.unwrap(),equalTo(Optional.of(Arrays.asList(2,2,2,2,2))));
 	
 	}
@@ -229,7 +227,7 @@ public class AnyMTest {
 	public void testLiftMSimplex(){
 		val lifted = AnyMonads.liftM((Integer a)->a+3);
 		
-		AnyM<Integer> result = lifted.apply(anyM(Optional.of(3)));
+		AnyM<Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)));
 		
 		assertThat(result.<Optional<Integer>>unwrap().get(),equalTo(6));
 	}
@@ -240,7 +238,7 @@ public class AnyMTest {
 	public void testLiftM2Simplex(){
 		val lifted = AnyMonads.liftM2((Integer a,Integer b)->a+b);
 		
-		AnyM<Integer> result = lifted.apply(anyM(Optional.of(3)),anyM(Optional.of(4)));
+		AnyM<Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),AnyM.fromOptional(Optional.of(4)));
 		
 		assertThat(result.<Optional<Integer>>unwrap().get(),equalTo(7));
 	}
@@ -248,7 +246,7 @@ public class AnyMTest {
 	public void testLiftM2SimplexNull(){
 		val lifted = AnyMonads.liftM2((Integer a,Integer b)->a+b);
 		
-		AnyM<Integer> result = lifted.apply(anyM(Optional.of(3)),anyM(Optional.ofNullable(null)));
+		AnyM<Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),AnyM.fromOptional(Optional.ofNullable(null)));
 		
 		assertThat(result.<Optional<Integer>>unwrap().isPresent(),equalTo(false));
 	}
@@ -260,7 +258,7 @@ public class AnyMTest {
 	public void testLiftM2Mixed(){
 		val lifted = AnyMonads.liftM2(this::add); 
 		
-		AnyM<Integer> result = lifted.apply(anyM(Optional.of(3)),anyM(Stream.of(4,6,7)));
+		AnyM<Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),AnyM.fromStream(Stream.of(4,6,7)));
 		
 		
 		assertThat(result.<Optional<List<Integer>>>unwrap().get(),equalTo(Arrays.asList(7,9,10)));

@@ -11,12 +11,13 @@ import org.junit.Test;
 
 import com.aol.cyclops.dynamic.As;
 import com.aol.cyclops.lambda.monads.AnyMonads;
+import com.aol.cyclops.monad.AnyM;
 
 
 public class SwitchMonadTest {
 	@Test
 	public void switchTest(){
-		assertThat(AnyMonads.anyM(FeatureToggle.enable("hello world"))
+		assertThat(AnyM.ofMonad(FeatureToggle.enable("hello world"))
 						.map(o-> "2" + o)
 						.asSequence()
 						.toList(),equalTo(Arrays.asList("2hello world")));
@@ -25,7 +26,7 @@ public class SwitchMonadTest {
 	@Test
 	public void switchDisableInStream(){
 	
-		List<Integer> list = AnyMonads.anyM(Stream.of(1,2,3))
+		List<Integer> list = AnyM.fromStream(Stream.of(1,2,3))
 									.<Integer>bind(i ->  i==1 ? FeatureToggle.disable(i) : FeatureToggle.enable(i))
 									.asSequence()
 									.toList();

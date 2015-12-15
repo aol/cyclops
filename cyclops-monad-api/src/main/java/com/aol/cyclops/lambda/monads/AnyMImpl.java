@@ -21,7 +21,6 @@ import lombok.AllArgsConstructor;
 import com.aol.cyclops.comprehensions.comprehenders.MaterializedList;
 import com.aol.cyclops.internal.AsGenericMonad;
 import com.aol.cyclops.internal.Monad;
-import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
@@ -423,7 +422,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return
 	 */
 	public final   AnyM<AnyM<T>> simpleFilter(AnyM<Predicate<? super T>> fn){
-		return  monad.simpleFilter(fn.monad()).anyM().map(t->AsAnyM.notTypeSafeAnyM(t));
+		return  monad.simpleFilter(fn.monad()).anyM().map(t->AnyM.ofMonad(t));
 			
 	
 	//	filterM((a: Int) => List(a > 2, a % 2 == 0), List(1, 2, 3), ListMonad),
@@ -448,7 +447,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	}
 	
 	public <T> AnyM<T> unit(T value){
-		return AsAnyM.notTypeSafeAnyM(monad.unit(value));
+		return AnyM.ofMonad(monad.unit(value));
 	}
 	public <T> AnyM<T> empty(){
 		return (AnyMImpl)unit(null).filter(t->false);
@@ -504,8 +503,8 @@ public class AnyMImpl<T> implements AnyM<T>{
 		
 		
 	
-		return monad.reduceM(Monoid.of(reducer.zero().unwrap(), (a,b)-> reducer.combiner().apply(AsAnyM.notTypeSafeAnyM(a), 
-				AsAnyM.notTypeSafeAnyM(b)))).anyM();		
+		return monad.reduceM(Monoid.of(reducer.zero().unwrap(), (a,b)-> reducer.combiner().apply(AnyM.ofMonad(a), 
+				AnyM.ofMonad(b)))).anyM();		
 	}
 	
 	

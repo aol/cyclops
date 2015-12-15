@@ -29,6 +29,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.cyclops.lambda.monads.AnyMonads;
+import com.aol.cyclops.monad.AnyM;
 
 public class AnyJavaslangMTest {
 
@@ -248,7 +249,7 @@ public class AnyJavaslangMTest {
 	public void streamFlatMapTestJDK(){
 		assertThat(Javaslang.anyM(Stream.of("hello world"))
 				.map(String::toUpperCase)
-				.flatMap(i->AnyMonads.anyM(java.util.stream.Stream.of(i)))
+				.flatMap(i->AnyM.fromStream(java.util.stream.Stream.of(i)))
 				.toSequence()
 				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
 	}
