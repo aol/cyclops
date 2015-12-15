@@ -67,7 +67,7 @@ public class CheckValues<T,R> {
 		return new _LastStep<R,V,T>(clazz,predicate,predicates,this.getPatternMatcher());
 	}
 	@SafeVarargs
-	public final <V> _LastStep<R,V,T> hasValuesMatch(Matcher<V>... values) {
+	public final <V> _LastStep<R,V,T> hasValuesMatching(Matcher<V>... values) {
 
 		
 		Predicate predicate = it -> Optional.of(it)

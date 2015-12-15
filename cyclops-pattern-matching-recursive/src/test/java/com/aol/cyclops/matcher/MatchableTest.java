@@ -35,7 +35,7 @@ public class MatchableTest {
 	
 	@Test 
 	public void matchable(){
-		Optional<Integer> result = Matchable.listOfValues(Optional.of(1))
+		Optional<Integer> result = Matchable.of(Optional.of(1))
 											.mayMatch(c->c.hasValues(2).then(i->2));
 		assertThat(Matchable.of(result)
 				 .matches(c->c.isEmpty().then(i->"hello")),equalTo("hello"));
@@ -54,6 +54,14 @@ public class MatchableTest {
 		System.out.println(Matchable.listOfValues(1,2,3)
 							        .matches(c->c.hasValuesWhere((Object i)->(i instanceof Integer)).then(i->2)));
 		
+	}
+	@Test
+	public void recursive(){
+		String result = Matchable.listOfValues(1,new MyCase(4,5,6))
+				 				.matches(c->c.hasValues(Predicates.__,Predicates.hasValues(4,5,6))
+				 				.then(i->"rec"));
+		
+		assertThat(result,equalTo("rec"));
 	}
 
 }

@@ -104,7 +104,7 @@ public class AsTest {
 		List list = new ArrayList();
 		
 		assertThat(As.asValue(new Child(10,20))._match(c-> 
-			c.isType( (Child child) -> child.val).with(10,20))
+			c.isType( (Child child) -> child.val).hasValues(10,20))
 		,equalTo(10));
 	}
 	@Test
@@ -112,7 +112,7 @@ public class AsTest {
 		
 		
 		assertThat(As.asValue(new Child(10,20))._match(c-> 
-			c.isType( (Child child) -> child.val).with(20,20),50)
+			c.isType( (Child child) -> child.val).hasValues(20,20),50)
 		,equalTo(50));
 	}
 	@Test

@@ -47,7 +47,23 @@ public class ADTPredicateBuilder<T>{
 		 * @param values Matching rules for each element in the decomposed / unapplied user input
 		 * @return A single Predicate encompassing supplied rules
 		 */
-		public<V> Predicate with(V... values){
+		public<V> Predicate hasValues(V... values){
+			LazySeq<Predicate> predicates = LazySeq.of(values).map(nextValue->convertToPredicate(nextValue));
+			
+			return t -> toPredicate().test(t) 
+					  	&& SeqUtils.seq(Extractors.decompose().apply(t))
+							.zip(predicates,(a,b)->Two.tuple(a, b)).map(tuple -> tuple.v2.test(tuple.v1))
+							.allMatch(v->v==true);
+		}
+		public<V> Predicate hasValuesWhere(Predicate<V>... values){
+			LazySeq<Predicate> predicates = LazySeq.of(values).map(nextValue->convertToPredicate(nextValue));
+			
+			return t -> toPredicate().test(t) 
+					  	&& SeqUtils.seq(Extractors.decompose().apply(t))
+							.zip(predicates,(a,b)->Two.tuple(a, b)).map(tuple -> tuple.v2.test(tuple.v1))
+							.allMatch(v->v==true);
+		}
+		public<V> Predicate hasValuesMatching(Matcher<V>... values){
 			LazySeq<Predicate> predicates = LazySeq.of(values).map(nextValue->convertToPredicate(nextValue));
 			
 			return t -> toPredicate().test(t) 

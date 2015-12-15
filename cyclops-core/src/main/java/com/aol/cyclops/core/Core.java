@@ -1047,7 +1047,7 @@ public class Core extends Functions {
 	 * @return Predicate builder that can decompose Case class and match against specified values
 	 */
 	public	static<V> Predicate with(V... values){
-		return Predicates.with(values);
+		return Predicates.hasValues(values);
 	}
 	
 	

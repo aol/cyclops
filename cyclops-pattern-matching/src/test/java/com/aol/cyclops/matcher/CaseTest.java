@@ -1,7 +1,7 @@
 package com.aol.cyclops.matcher;
 
 import static com.aol.cyclops.matcher.Predicates.__;
-import static com.aol.cyclops.matcher.Predicates.with;
+import static com.aol.cyclops.matcher.Predicates.hasValues;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -93,12 +93,12 @@ public class CaseTest {
 		System.out.println(Object.class.isAssignableFrom(Person.class));
 		
 		val case2 = Case.of((Person p)->p.age>18,p->p.name + " can vote");
-		assertThat(case2.andWithValues(__,__,Predicates.with(__,__,"Ireland")).match(new Person("bob",19,new Address(10,"dublin","Ireland"))).isPresent(),is(true));
+		assertThat(case2.andWithValues(__,__,Predicates.hasValues(__,__,"Ireland")).match(new Person("bob",19,new Address(10,"dublin","Ireland"))).isPresent(),is(true));
 	}
 	@Test
 	public void testAndWithValuesNegative(){
 		val case2 = Case.of((Person p)->p.age>18,p->p.name + " can vote");
-		assertThat(case2.andWithValues(__,__,with(__,__,"Ireland")).match(new Person("bob",17,new Address(10,"dublin","Ireland"))).isPresent(),is(false));
+		assertThat(case2.andWithValues(__,__,hasValues(__,__,"Ireland")).match(new Person("bob",17,new Address(10,"dublin","Ireland"))).isPresent(),is(false));
 	}
 	@Test
 	public void testAndTrue(){
