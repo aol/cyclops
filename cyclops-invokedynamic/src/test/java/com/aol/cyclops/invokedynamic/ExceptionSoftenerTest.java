@@ -1,9 +1,10 @@
 package com.aol.cyclops.invokedynamic;
 
 import java.io.IOException;
-
+import java.util.function.Supplier;
+import static org.hamcrest.Matchers.*;
 import org.junit.Test;
-
+import static org.junit.Assert.*;
 public class ExceptionSoftenerTest {
 
 	@Test(expected=IOException.class)
@@ -18,5 +19,17 @@ public class ExceptionSoftenerTest {
 	public void rumtime() {
 		throw ExceptionSoftener.throwSoftenedException(new RuntimeException("hello"));
 	}
+	
+	private String get() throws IOException{
+		return "hello";
+	}
+	@Test
+	public void methodReference(){
+		Supplier<String> supplier = ExceptionSoftener.soften(this::get);
+		
+		assertThat(supplier.get(),equalTo("hello"));
+	}
+	
+
 
 }
