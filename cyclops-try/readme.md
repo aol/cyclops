@@ -10,8 +10,9 @@ Cyclops Try offers an alternative way to manage exception handling.
 ## Gradle
 
 where x.y.z represents the latest version
-
+```groovy
 compile 'com.aol.cyclops:cyclops-try:x.y.z'
+```
 
 ## Maven
 
@@ -36,12 +37,13 @@ compile 'com.aol.cyclops:cyclops-try:x.y.z'
 * 	Fail fast outside of run blocks
 *	Offer functional composition over encapsulated state
 	
-	
+
+[Try Examples](https://github.com/aol/cyclops/wiki/Try-examples)	
 
 # Why use Try
 
 Throwing exceptions from methods breaks referential transparency and introduces complex goto like control flow. If a method or function can enter an Exceptional state returning a Try object can allow calling code the cleanly handle the Exception or process the result. E.g.
-
+```java
 	private Try<Integer,RuntimeException> exceptionalMethod()
 
 // call method, log exception, add bonus amount if successful
@@ -51,7 +53,7 @@ Throwing exceptions from methods breaks referential transparency and introduces 
 					.onFail(logger::error)
 					.map(i->i+bonus)
 					.orElse(0);
-
+```
 ## Try allows only specified Exceptions to be caught
 	
 With Cyclops Try you can specify which exceptions to catch. This behaviour is similar to JDK Optional, in that you use Try to consciously encapsulate the exceptional state of the method - not to capture unknown exceptional states. 
@@ -63,7 +65,7 @@ With Optional, best practices is to use it when no result is valid result (not a
 For Try this would mean, if a function is trying to load a file handling FileNotFoundException and IOException is reasonable - handling ClassCastExceptions or NullPointerExceptions may hide bugs. Bugs that you would be better off finding in unit tests early in your development cycle.
 
 ## Try with resources
-
+```java
 	Try.catchExceptions(FileNotFoundException.class,IOException.class)
 				   .init(()->new BufferedReader(new FileReader("file.txt")))
 				   .tryWithResources(this::read)
@@ -80,36 +82,36 @@ For Try this would mean, if a function is trying to load a file handling FileNot
         String everything = sb.toString();
         return everything;
 	}
-
+```
 ### Try with multiple resources
 
 Any iterable can be used in the init method when using Try with resources, in Closeables returned in the Iterable will be closed after the main block has been executed.
-
+```java
     Try.catchExceptions(FileNotFoundException.class,IOException.class)
 	.init(()->Tuples.tuple(new BufferedReader(new FileReader("file.txt")),new   FileReader("hello")))
 				   .tryWithResources(this::read2)
-
+```
 ### Differentiated recovery
 
 onFail can recover from any Exception or specified Exceptions
-
+```java
      Try.runWithCatch(this::loadFile,FileNotFoundException.class,IOException.class)
 					.onFail(FileNotFoundException.class,extractFromMemoryCace())
 					.onFail(IOException.class,storeForTryLater())
 					.get()
-
+```
 ## Try versus Try / Catch
 
 ### Try as return type
 
 A JDK 8 readLine method 
-
+```java
 	public String readLine() throws IOException
-
+```
 Could be rewritten as
-
+```java
 	public Try<String,IOException> readLine()
-	
+```	
 This forces user code to handle the IOException (unlike Scala's Try monad). Try is less suitable for methods that return multiple different Exception types, although that is possibly a signal that your method is doing more than one thing and should be refactored.
 
 ### Checked and Unchecked Exceptions
@@ -117,14 +119,14 @@ This forces user code to handle the IOException (unlike Scala's Try monad). Try 
 Try naturally converts Checked Exceptions into Unchecked Exceptions. Consider a method that may throw the Checked IOExeption class. If application Code decides that IOException should NOT be handled, it can simply be thrown without requiring that the rest of the call stack become polluted with throws IOException declarations.
 
 E.g.
-
+```java
 	public Try<String,IOException> readLine();
 	
 	Try<String,IOException> result = readLine();
 	result.throwException(); //throws a softened version of IOException
 	
 	result.map(this::processResult)... 
-	
+```	
 ### Alternatives and differences
 
 This implementation of Try differs from both the Scala and the Javaslang version. Javaslang Try seems to be very similar in it's implementation to the Scala Try and both will capture all Exceptions thrown at any stage during composition. So if calling Try -> map -> flatMap -> map results in an exception during the map or flatMap state Try will revert to a failure state incorporating the thrown Exception.	
