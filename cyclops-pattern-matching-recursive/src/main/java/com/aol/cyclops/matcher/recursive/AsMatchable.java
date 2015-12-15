@@ -16,11 +16,16 @@ public class AsMatchable {
 		return new CoercedMatchable(toCoerce);
 	}
 	@AllArgsConstructor
-	public static class CoercedMatchable implements Matchable{
+	public static class CoercedMatchable implements Matchable<T>{
 		private final Object matchable;
+		private final T defaultValue;
 		@Override
 		public Object getMatchable(){
 			return matchable;
+		}
+		@Override
+		public T getDefaultValue(){
+			return defaultValue;
 		}
 	}
 }

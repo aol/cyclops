@@ -6,6 +6,8 @@ import java.util.function.Predicate;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
+import org.hamcrest.Matcher;
+
 import com.aol.cyclops.matcher.Predicates;
 import com.nurkiewicz.lazyseq.LazySeq;
 
@@ -27,11 +29,17 @@ public class CheckValues<X,T> {
 	 * @return Pattern Matcher builder with completed Case added to it
 	 */
 	@SafeVarargs
+	@Deprecated
 	public final <V> _LastStep<X,V,T> with(V... values) {
 		
+		return hasValues(values);
 		
-		
+
+	}
 	
+	public final <V> _LastStep<X,V,T> hasValues(V... values) {
+
+		
 		Predicate predicate = it -> Optional.of(it)
 				.map(v -> v.getClass().isAssignableFrom(clazz))
 				.orElse(false);
@@ -40,6 +48,50 @@ public class CheckValues<X,T> {
 		Predicate<V>[] predicates = LazySeq.of(values)
 				.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toList()
 				.toArray(new Predicate[0]);
+
+		return new _LastStep<X,V,T>(clazz,predicate,predicates,this.getPatternMatcher());
+	}
+	@SafeVarargs
+	public final <V> _LastStep<X,V,T> hasValuesWhere(Predicate<V>... values) {
+
+		
+		Predicate predicate = it -> Optional.of(it)
+				.map(v -> v.getClass().isAssignableFrom(clazz))
+				.orElse(false);
+		// add wildcard support
+		
+		Predicate<V>[] predicates = LazySeq.of(values)
+				.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toList()
+				.toArray(new Predicate[0]);
+
+		return new _LastStep<X,V,T>(clazz,predicate,predicates,this.getPatternMatcher());
+	}
+	@SafeVarargs
+	public final <V> _LastStep<X,V,T> hasValuesMatch(Matcher<V>... values) {
+
+		
+		Predicate predicate = it -> Optional.of(it)
+				.map(v -> v.getClass().isAssignableFrom(clazz))
+				.orElse(false);
+		// add wildcard support
+		
+		Predicate<V>[] predicates = LazySeq.of(values)
+				.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toList()
+				.toArray(new Predicate[0]);
+
+		return new _LastStep<X,V,T>(clazz,predicate,predicates,this.getPatternMatcher());
+	}
+	public final <V> _LastStep<X,V,T> isEmpty() {
+		
+		
+		
+		
+		Predicate predicate = it -> Optional.of(it)
+				.map(v -> v.getClass().isAssignableFrom(clazz))
+				.orElse(false);
+		// add wildcard support
+		
+		Predicate<V>[] predicates = new Predicate[]{i->i==SeqUtils.EMPTY};
 
 		return new _LastStep<X,V,T>(clazz,predicate,predicates,this.getPatternMatcher());
 

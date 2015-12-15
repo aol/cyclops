@@ -34,14 +34,14 @@ public interface Decomposable{
 				
 					return f.get(unwrap());
 				} catch (Exception e) {
-					ExceptionSoftener.throwSoftenedException(e);
-					return null;
+					throw ExceptionSoftener.throwSoftenedException(e);
+					
 				
 				}
 			}).collect(Collectors.toList());
 		} catch (Exception e) {
-			ExceptionSoftener.throwSoftenedException(e);
-			return null;
+			throw ExceptionSoftener.throwSoftenedException(e);
+			
 		}
 		
 	}

@@ -1,6 +1,9 @@
 package com.aol.cyclops.matcher.recursive;
 
+import java.util.Arrays;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.aol.cyclops.matcher.builders.CheckType;
 import com.aol.cyclops.matcher.builders.CheckTypeAndValues;
@@ -9,6 +12,7 @@ import com.aol.cyclops.matcher.builders.MatchingInstance;
 import com.aol.cyclops.matcher.builders.PatternMatcher;
 import com.aol.cyclops.matcher.builders.RecursiveMatcherInstance;
 import com.aol.cyclops.matcher.builders._Simpler_Case;
+import com.aol.cyclops.objects.Decomposable;
 
 
 /**
@@ -28,6 +32,37 @@ public interface Matchable{
 	default Object getMatchable(){
 		return this;
 	}
+	default <R,T,I> R  matches(Function<CheckValues<I,T>,CheckValues<I,T>> fn1){
+		return (R) new MatchingInstance(new _Simpler_Case( fn1.apply( (CheckValues)
+				new _Simpler_Case(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
+					.match(getMatchable()).get();
+	}
+	default <R,T,I> R  matches(Function<CheckValues<I,T>,CheckValues<I,T>> fn1,Function<CheckValues<I,T>,CheckValues<I,T>> fn2){
+		
+		return (R) new MatchingInstance(new _Simpler_Case( fn1.compose(fn2).apply( (CheckValues)
+					new _Simpler_Case(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
+						.match(getMatchable()).get();
+	}
+	default <R,T,I> R  matches(Function<CheckValues<I,T>,CheckValues<I,T>> fn1,Function<CheckValues<I,T>,CheckValues<I,T>> fn2,Function<CheckValues<I,T>,CheckValues<I,T>> fn3){
+		
+		return (R) new MatchingInstance(new _Simpler_Case( fn1.compose(fn2.compose(fn3)).apply( (CheckValues)
+					new _Simpler_Case(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
+						.match(getMatchable()).get();
+	}
+	default <R,T,I> R  matches(Function<CheckValues<I,T>,CheckValues<I,T>> fn1,Function<CheckValues<I,T>,CheckValues<I,T>> fn2,Function<CheckValues<I,T>,CheckValues<I,T>> fn3,
+											Function<CheckValues<I,T>,CheckValues<I,T>> fn4){
+		
+		return (R) new MatchingInstance(new _Simpler_Case( fn1.compose(fn2.compose(fn3).compose(fn4)).apply( (CheckValues)
+					new _Simpler_Case(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
+						.match(getMatchable()).get();
+	}
+	default <R,T,I> R  matches(Function<CheckValues<I,T>,CheckValues<I,T>> fn1,Function<CheckValues<I,T>,CheckValues<I,T>> fn2,Function<CheckValues<I,T>,CheckValues<I,T>> fn3,
+			Function<CheckValues<I,T>,CheckValues<I,T>> fn4,Function<CheckValues<I,T>,CheckValues<I,T>> fn5){
+
+			return (R) new MatchingInstance(new _Simpler_Case( fn1.compose(fn2.compose(fn3).compose(fn4).compose(fn5)).apply( (CheckValues)
+			new _Simpler_Case(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
+			.match(getMatchable()).get();
+	}
 	/**
 	 * <pre>{@code 
 	 *   new MyCase(1,2,3).matchValues(this::choseMessage)  
@@ -43,6 +78,7 @@ public interface Matchable{
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Deprecated //use matches
 	default <R,T,I> R  match(Function<CheckValues<I,T>,CheckValues<I,T>> fn){
 		
 		return (R) new MatchingInstance(new _Simpler_Case( fn.apply( (CheckValues)
@@ -50,6 +86,7 @@ public interface Matchable{
 						.match(getMatchable()).get();
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Deprecated //use matches
 	default <R,T,I> R  match(Function<CheckValues<I,T>,CheckValues<I,T>> fn, R defaultValue){
 		
 		return (R) new MatchingInstance(new _Simpler_Case( fn.apply( (CheckValues)
@@ -100,6 +137,7 @@ public interface Matchable{
 	 * @param fn Function to build the matching expression
 	 * @return Matching result
 	 */
+	@Deprecated //use matches
 	default <R,I> R _match(Function<CheckTypeAndValues<I>,RecursiveMatcherInstance> fn){
 		return (R)fn.apply( RecursiveMatcher.when()).match(getMatchable()).get();
 	}
@@ -113,7 +151,54 @@ public interface Matchable{
 	 * @param defaultValue Default value if matching expression does not match
 	 * @return Matching result
 	 */
+	@Deprecated //use matches
 	default <R,I> R _match(Function<CheckTypeAndValues<I>,RecursiveMatcherInstance> fn,R defaultValue){
 		return (R)fn.apply( RecursiveMatcher.when()).match(getMatchable()).orElse(defaultValue);
+	}
+	
+	/**
+	 * Create a new matchable that will match on the fields of the provided Object
+	 * 
+	 * @param o Object to match on it's fields
+	 * @return new Matchable
+	 */
+	public static Matchable ofValues(Object o){
+		return AsMatchable.asMatchable(o);
+	}
+	/**
+	 * Create a new matchable that will match on the fields of the provided Stream
+	 * 
+	 * @param o Object to match on it's fields
+	 * @return new Matchable
+	 */
+	public static<T> Matchable ofStream(Stream<T> o){
+		return AsMatchable.asMatchable(o.collect(Collectors.toList()));
+	}
+	/**
+	 * Create a new matchable that will match on the fields of the provided Decomposable
+	 * 
+	 * @param o Decomposable to match on it's fields
+	 * @return new Matchable
+	 */
+	public static Matchable ofDecomposable(Decomposable o){
+		return AsMatchable.asMatchable(o);
+	}
+	/**
+	 * Create a matchable that matches on the provided Object
+	 * 
+	 * @param o Object to match on
+	 * @return new Matchable
+	 */
+	public static Matchable of(Object o){
+		return AsMatchable.asMatchable(Arrays.asList(o));
+	}
+	/**
+	 * Create a matchable that matches on the provided Objects
+	 * 
+	 * @param o Objects to match on
+	 * @return new Matchable
+	 */
+	public static Matchable of(Object... o){
+		return AsMatchable.asMatchable(Arrays.asList(o));
 	}
 }
