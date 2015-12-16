@@ -32,10 +32,7 @@ public class AsTest {
 		
 		assertThat(sum.reduce(Stream.of(1,2,3)),equalTo(6));
 	}
-	private <I,T> CheckValues<Object, T> cases(CheckValues<I, T> c) {
-		return c.with(1,2,3).then(i->"hello")
-				.with(4,5,6).then(i->"goodbye");
-	}
+	
 	@AllArgsConstructor
 	static class MyCase2 {
 		int a;
@@ -46,7 +43,11 @@ public class AsTest {
 	public void asMatchableTest(){
 		
 		
-			assertThat(As.asMatchable(new MyCase2(1,2,3)).match(this::cases),equalTo("hello"));
+			assertThat(As.asMatchable(new MyCase2(1,2,3))
+					.matches(
+							c->c.hasValues(1,2,3).then(i->"hello"),
+							c->c.hasValues(4,5,6).then(i->"goodbye")
+							),equalTo("hello"));
 			
 	
 	}
@@ -54,7 +55,11 @@ public class AsTest {
 	public void asMatchableTest2(){
 		
 		
-			assertThat(As.asMatchable(new MyCase2(1,2,4)).match(this::cases,"default"),equalTo("default"));
+			assertThat(As.asMatchable(new MyCase2(1,2,3))
+					.mayMatch(
+							c->c.hasValues(1,2,3).then(i->"hello"),
+							c->c.hasValues(4,5,6).then(i->"goodbye")
+							).orElse("default"),equalTo("default"));
 			
 	
 	}
@@ -95,24 +100,27 @@ public class AsTest {
 	public void testAsValueMatch() {
 		List list = new ArrayList();
 		
-		assertThat(As.asValue(new Child(10,20)).matchType(c-> 
-			c.isType((Child child) -> child.val ))
+		assertThat(As.asValue(new Child(10,20))
+				.matches(c-> 
+							c.isType((Child child) -> child.val ).anyValues()
+						)
 		,equalTo(10));
 	}
 	@Test
 	public void testAsValue_Match() {
 		List list = new ArrayList();
 		
-		assertThat(As.asValue(new Child(10,20))._match(c-> 
-			c.isType( (Child child) -> child.val).hasValues(10,20))
+		assertThat(As.asValue(new Child(10,20)).<Parent,Integer>matches(c-> 
+				    c.isType((Child r)-> r.nextVal)
+				     .hasValues(10,20))
 		,equalTo(10));
 	}
 	@Test
 	public void testAsValue_MatchDefault() {
 		
 		
-		assertThat(As.asValue(new Child(10,20))._match(c-> 
-			c.isType( (Child child) -> child.val).hasValues(20,20),50)
+		assertThat(As.asValue(new Child(10,20)).<Child,Integer>mayMatch(c-> 
+			c.hasValues(20,20).then(i->i.nextVal)).orElse(50)
 		,equalTo(50));
 	}
 	@Test

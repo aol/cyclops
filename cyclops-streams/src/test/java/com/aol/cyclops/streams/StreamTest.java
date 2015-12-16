@@ -1,5 +1,4 @@
 package com.aol.cyclops.streams;
-import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -12,10 +11,11 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
+import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 public class StreamTest {
 	 public static <U> SequenceM<U> of(U... array){
-		 return anyM(array).asSequence();
+		 return AnyM.streamOf(array).asSequence();
 	 }
 
 	@Test

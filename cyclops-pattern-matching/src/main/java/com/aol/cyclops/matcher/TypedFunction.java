@@ -10,15 +10,15 @@ import java.util.function.Function;
  * @author johnmcclean
  *
  * @param <T> Input type
- * @param <X> Return type
+ * @param <R> Return type
  * 
  */
-public interface TypedFunction<T,X> extends Function<T,X>, Serializable {
+public interface TypedFunction<T,R> extends Function<T,R>, Serializable {
 	
 	/* 
 	 * @see java.util.function.Function#apply(java.lang.Object)
 	 */
-	public X apply(T t);
+	public R apply(T t);
 	
 	/**
 	 * @return MethodType info for the lambda expression that implements this interface

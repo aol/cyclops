@@ -50,8 +50,10 @@ public class FeatureToggleComprehender implements Comprehender<FeatureToggle>{
 	}
 	@Override
 	public Object resolveForCrossTypeFlatMap(Comprehender comp,FeatureToggle apply){
-		return apply.matchType( c -> c.isType((Enabled e)-> comp.of(e.get()))
-									 .isType( (Disabled d) -> comp.empty()));
+		return apply.matches(
+						c -> c.isType((Enabled e)-> comp.of(e.get())).anyValues(),
+						c->	c.isType( (Disabled d) -> comp.empty()).anyValues()
+					);
 	}
 
 }

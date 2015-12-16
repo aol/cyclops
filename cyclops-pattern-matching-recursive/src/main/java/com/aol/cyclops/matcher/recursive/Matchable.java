@@ -146,42 +146,6 @@ public interface Matchable{
 			.match(getMatchable());
 	}
 	
-	/**
-	 * Match against this matchable using simple matching interface
-	 * 
-	 * <pre>{@code 
-	 * return match(c -> 
-						c.caseOf( (Put p) -> new Put(p.key,p.value,(Action)fn.apply(p.next)))
-						 .caseOf((Delete d) -> new Delete(d.key,(Action)fn.apply(d.next)))
-						 .caseOf((Get g) -> new Get(g.key,(Function)g.next.andThen(fn)))
-					);
-	 * }</pre>
-	 * 
-	 * @param fn Function to build the matching expression
-	 * @return Matching result
-	 */
-	default <R> R matchType(Function<CheckType<? super R>,CheckType<? super R>> fn){
-		return new MatchingInstance<Object,R>(fn.apply( new CheckType<>( new PatternMatcher()))).match(getMatchable()).get();
-	} 
-	/**
-	 * Match against this matchable using simple matching interface
-	 * 
-	 * <pre>{@code 
-	 * return match(c -> 
-						 c.caseOf( (Put p) -> new Put(p.key,p.value,(Action)fn.apply(p.next)))
-						 .caseOf((Delete d) -> new Delete(d.key,(Action)fn.apply(d.next)))
-						 .caseOf((Get g) -> new Get(g.key,(Function)g.next.andThen(fn)))
-						 noOperation()
-					);
-	 * }</pre>
-	 * 
-	 * @param fn Function to build the matching expression
-	 * @param defaultValue Default value if matching expression does not match
-	 * @return Matching result
-	 */
-	default <R> R matchType(Function<CheckType<? super R>,CheckType<? super R>> fn,R defaultValue){
-		return new MatchingInstance<Object,R>(fn.apply( new CheckType<>( new PatternMatcher()))).match(getMatchable()).orElse(defaultValue);
-	}
 	
 	
 	

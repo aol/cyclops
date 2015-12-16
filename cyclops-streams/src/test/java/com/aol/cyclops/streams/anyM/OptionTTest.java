@@ -14,7 +14,7 @@ public class OptionTTest {
 	@Test
 	public void test() {
 		OptionalT<Integer> optionT = new OptionalT<>(AnyM.ofMonad(Stream.of(Optional.of(10))));
-		System.out.println(optionT.map(num->"hello world"+num).getRun().asSequence().firstValue());
+		System.out.println(optionT.map(num->"hello world"+num).unwrap().asSequence().firstValue());
 	}
 
 

@@ -22,7 +22,9 @@ public class MatchableTest {
 	@Test
 	public void testMatch(){
 		
-		assertThat(new MyCase(4,5,6).matchType(c ->c.isType((MyCase ce) -> "hello")) ,
+		assertThat(new MyCase(4,5,6).matches(c ->
+								c.isType((MyCase ce) -> "hello").anyValues()
+							) ,
 				  equalTo("hello"));
 		
 		
@@ -72,7 +74,7 @@ public class MatchableTest {
 				 o->o.hasValues(1).then(i->2)));
 		
 		System.out.println(Matchable.of(1)
-				                    .matchType(c->c.isType((Integer it)->"hello")));
+				                    .matches(c->c.isType((Integer it)->"hello").anyValues()));
 		System.out.println(Matchable.listOfValues(1,2,3)
 							        .matches(c->c.hasValuesWhere((Object i)->(i instanceof Integer)).then(i->2)));
 		

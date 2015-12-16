@@ -4,10 +4,13 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.Test;
 
 import com.aol.cyclops.lambda.monads.AnyMonads;
+import com.aol.cyclops.monad.AnyM;
 
 
 
@@ -15,7 +18,7 @@ public class TryMonadTest {
 
 	@Test
 	public void tryTest(){
-		assertThat(AnyMonads.anyM(Try.withCatch(()->"hello world"))
+		assertThat(AnyM.fromIterable(Try.withCatch(()->"hello world"))
 								.map(o-> "2" + o)
 								.asSequence()
 								.toList(),equalTo(Arrays.asList("2hello world")));
