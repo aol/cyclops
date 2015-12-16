@@ -16,7 +16,7 @@ public class ExceptionSoftener2Test {
 
 	@Test(expected=IOException.class)
 	public void testSoftenBooleanSupplierException() {
-		ExceptionSoftener.softenBooleanSupplier(()->{throw new IOException();});
+		ExceptionSoftener.softenBooleanSupplier(()->{throw new IOException();}).getAsBoolean();
 	
 	}
 
@@ -26,7 +26,7 @@ public class ExceptionSoftener2Test {
 	}
 	@Test(expected=IOException.class)
 	public void testSoftenIntSupplierException() {
-		ExceptionSoftener.softenIntSupplier(()->{throw new IOException();});
+		ExceptionSoftener.softenIntSupplier(()->{throw new IOException();}).getAsInt();
 	
 	}
 
@@ -36,7 +36,7 @@ public class ExceptionSoftener2Test {
 	}
 	@Test(expected=IOException.class)
 	public void testSoftenLongSupplierException() {
-		ExceptionSoftener.softenLongSupplier(()->{throw new IOException();});
+		ExceptionSoftener.softenLongSupplier(()->{throw new IOException();}).getAsLong();
 	
 	}
 
@@ -46,113 +46,165 @@ public class ExceptionSoftener2Test {
 	}
 	@Test(expected=IOException.class)
 	public void testSoftenDpubleSupplierException() {
-		ExceptionSoftener.softenDoubleSupplier(()->{throw new IOException();});
+		ExceptionSoftener.softenDoubleSupplier(()->{throw new IOException();}).getAsDouble();
 	
 	}
+	
 
 	@Test
 	public void testSoftenCheckedFunctionOfTR() {
-		fail("Not yet implemented");
+		assertThat(ExceptionSoftener.softenFunction((Integer a)->a+1).apply(1),equalTo(2));
 	}
+	@Test(expected=IOException.class)
+	public void testSoftenCheckedFunctionOfTRException() {
+		ExceptionSoftener.softenFunction(this::load).apply("input");
+	
+	}
+	public String load(String file) throws IOException{
+		throw new IOException();
+	}
+	
 
-	@Test
 	public void testSoftenIntFunction() {
-		fail("Not yet implemented");
+		assertThat(ExceptionSoftener.softenIntFunction(a->a+1).apply(1),equalTo(2));
+	}
+	@Test(expected=IOException.class)
+	public void testSoftenIntFunctionException() {
+		ExceptionSoftener.softenIntFunction(this::loadId).apply(2);
+	}
+	public int loadId(int id) throws IOException{
+		throw new IOException();
+	}
+	public long loadIdLong(long id) throws IOException{
+		throw new IOException();
 	}
 
-	@Test
+	
 	public void testSoftenLongFunction() {
-		fail("Not yet implemented");
+		assertThat(ExceptionSoftener.softenLongFunction(a->a+1).apply(1),equalTo(2));
 	}
 
-	@Test
+	@Test(expected=IOException.class)
+	public void testSoftenLongFunctionException() {
+		ExceptionSoftener.softenLongFunction(this::loadIdLong).apply(2);
+	}
+	public double loadIdDouble(double id) throws IOException{
+		throw new IOException();
+	}
+	
 	public void testSoftenDoubleFunction() {
-		fail("Not yet implemented");
+		assertThat(ExceptionSoftener.softenDoubleFunction(a->a+1).apply(1),equalTo(2));
+	}
+	@Test(expected=IOException.class)
+	public void testSoftenDoubleFunctionException() {
+		ExceptionSoftener.softenDoubleFunction(this::loadIdDouble).apply(2);
 	}
 
-	@Test
 	public void testSoftenLongToDoubleFunction() {
-		fail("Not yet implemented");
+		assertThat(ExceptionSoftener.softenLongToDoubleFunction(a->a+1).applyAsDouble(1l),equalTo(2));
 	}
 
-	@Test
+	
 	public void testSoftenLongToIntFunction() {
-		fail("Not yet implemented");
+		assertThat(ExceptionSoftener.softenLongToIntFunction(a->(int)(a+1)).applyAsInt(1l),equalTo(2));
 	}
 
-	@Test
+	
 	public void testSoftenIntToDoubleFunction() {
-		fail("Not yet implemented");
+		assertThat(ExceptionSoftener.softenIntToDoubleFunction(a->a+1).applyAsDouble(1),equalTo(2d));
 	}
 
-	@Test
+	
 	public void testSoftenIntToLongFunction() {
-		fail("Not yet implemented");
+		assertThat(ExceptionSoftener.softenIntToLongFunction(a->a+1).applyAsLong(1),equalTo(2l));
 	}
 
-	@Test
+	
 	public void testSoftenDoubleToIntFunction() {
-		fail("Not yet implemented");
+		assertThat(ExceptionSoftener.softenDoubleToIntFunction(a->1).applyAsInt(1),equalTo(1));
 	}
 
-	@Test
+	
 	public void testSoftenDoubleToLongFunction() {
-		fail("Not yet implemented");
+		assertThat(ExceptionSoftener.softenDoubleToLongFunction(a->3l).applyAsLong(1),equalTo(3l));
 	}
-
-	@Test
+	public String loadDir(String file,String dir) throws IOException{
+		throw new IOException();
+	}
+	@Test(expected=IOException.class)
 	public void testSoftenCheckedBiFunctionOfT1T2R() {
-		fail("Not yet implemented");
+		ExceptionSoftener.softenBiFunction(this::loadDir).apply("input","dir");
 	}
 
-	@Test
+	public boolean test(String input) throws IOException{
+		throw new IOException();
+	}
+	@Test(expected=IOException.class)
 	public void testSoftenCheckedPredicateOfT() {
-		fail("Not yet implemented");
+		ExceptionSoftener.softenPredicate(this::test).test("input");
 	}
 
-	@Test
+	public boolean testDouble(double input) throws IOException{
+		throw new IOException();
+	}
+	@Test(expected=IOException.class)
 	public void testSoftenDoublePredicate() {
-		fail("Not yet implemented");
+		ExceptionSoftener.softenDoublePredicate(this::testDouble).test(1d);
 	}
 
-	@Test
+	public boolean testInt(int input) throws IOException{
+		throw new IOException();
+	}
+	@Test(expected=IOException.class)
 	public void testSoftenIntPredicateCheckedIntPredicate() {
-		fail("Not yet implemented");
+		ExceptionSoftener.softenIntPredicate(this::testInt).test(1);
+	}
+	public boolean testLong(long input) throws IOException{
+		throw new IOException();
+	}
+	@Test(expected=IOException.class)
+	public void testSoftenLongPredicate() {
+		ExceptionSoftener.softenLongPredicate(this::testLong).test(1l);
 	}
 
-	@Test
-	public void testSoftenIntPredicateCheckedLongPredicate() {
-		fail("Not yet implemented");
+	public boolean testBiPredicate(long input,String input2) throws IOException{
+		throw new IOException();
 	}
-
-	@Test
+	@Test(expected=IOException.class)
 	public void testSoftenCheckedBiPredicateOfT1T2() {
-		fail("Not yet implemented");
+		ExceptionSoftener.softenBiPredicate(this::testBiPredicate).test(1l,"hello");
 	}
-
-	@Test
+	public boolean testConsumer(long input) throws IOException{
+		throw new IOException();
+	}
+	@Test(expected=IOException.class)
 	public void testSoftenCheckedConsumerOfT() {
-		fail("Not yet implemented");
+		ExceptionSoftener.softenConsumer(this::testConsumer).accept(1l);
 	}
-
-	@Test
+	public boolean testDoubleConsumer(double input) throws IOException{
+		throw new IOException();
+	}
+	
+	@Test(expected=IOException.class)
 	public void testSoftenDoubleConsumer() {
-		fail("Not yet implemented");
+		ExceptionSoftener.softenDoubleConsumer(this::testDoubleConsumer).accept(1d);
 	}
 
-	@Test
+	@Test(expected=IOException.class)
 	public void testSoftenIntConsumer() {
-		fail("Not yet implemented");
+		ExceptionSoftener.softenIntConsumer(this::testConsumer).accept(1);
 	}
 
-	@Test
+	@Test(expected=IOException.class)
 	public void testSoftenLongConsumer() {
-		fail("Not yet implemented");
+		ExceptionSoftener.softenLongConsumer(this::testConsumer).accept(1l);
 	}
-
-	@Test
+	public boolean testBiConsumer(long input,long input2) throws IOException{
+		throw new IOException();
+	}
+	@Test(expected=IOException.class)
 	public void testSoftenCheckedBiConsumerOfT1T2() {
-		fail("Not yet implemented");
+		ExceptionSoftener.softenBiConsumer(this::testBiConsumer).accept(1l,2l);
 	}
 
 }

@@ -4,7 +4,6 @@ import java.util.function.Function;
 
 import org.pcollections.PStack;
 
-import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
 import com.aol.cyclops.monad.AnyM;
 

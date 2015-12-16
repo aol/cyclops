@@ -23,7 +23,6 @@ compile 'com.aol.cyclops:cyclops-feature-toggle:x.y.z'
 
 Cyclops Feature Toggle makes delivering on CI/CD easy by making it very simple to turn production features on & off!
 
-![production switch](https://cloud.githubusercontent.com/assets/9964792/8335310/ce07a846-1a94-11e5-837a-ef73b2f930d7.png)
 
 
 ### Rationale
@@ -54,8 +53,9 @@ The most basic way to use it is (if you are used to programming imperatively)
 Now elsewhere you can check if the switch is enabled or disabled
 
 ```java
-    if(switch.isEnabled()){
-          loadDataToDb(switch.get());
+    FeatureToggle<Data> toggle;
+    if(toggle.isEnabled()){
+          loadDataToDb(toggle.get());
     }
 
 ```
@@ -67,7 +67,7 @@ Switch can abstract away entirely the logic for managing whether a feature is en
 The statement above can be rewritten as -
 ```java
 
-    switch.map(data -> loadDataToTheDb(data));
+    toggle.map(data -> loadDataToTheDb(data));
 ```
 ### Example usage
 
