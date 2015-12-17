@@ -33,6 +33,8 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+
+
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -2541,7 +2543,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	default <R> SequenceM<R> retry(Function<T,R> fn){
 		Function<T,R> retry = t-> {
 			int count = 7;
-			int sleep =2000;
+			int[] sleep ={2000};
 			Throwable exception=null;
 			while(count-->0){
 				try{
@@ -2549,18 +2551,36 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 				}catch(Throwable e){
 					exception = e;
 				}
-				try {
-					Thread.sleep(sleep);
-				} catch (InterruptedException e) {
-					ExceptionSoftener.throwSoftenedException(e);
-					return null;
-				}
-				sleep=sleep*2;
+				ExceptionSoftener.softenRunnable(()->Thread.sleep(sleep[0]));
+				
+				sleep[0]=sleep[0]*2;
 			}
 			ExceptionSoftener.throwSoftenedException(exception);
 			return null;
 		};
 		return map(retry);
 	}
+	
+	/**
+	 * Remove all occurances of the specified element from the SequenceM
+	 * @param t element to remove
+	 * @return Filtered Stream / SequenceM
+	 */
+	default SequenceM<T> remove(T t){
+		return this.filter(v->v!=t);
+	}
+	
+	/**
+	 * Generate the permutations based on values in the SequenceM
+	 * Makes use of Streamable to store intermediate stages in a collection 
+	 * (therfore this is not as efficient as calling permuations on a functional datastructure Stream implementation)
+	 * 
+	 * 
+	 * @return Permutations from this SequenceM
+	 */
+	default SequenceM<SequenceM<T>> permutations() {
+		Streamable<Streamable<T>> streamable = Streamable.fromStream(this).permutations();
+		return streamable.map(s->s.sequenceM()).sequenceM();
+	 }
 	
 }

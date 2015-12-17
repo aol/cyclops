@@ -25,7 +25,7 @@ public class ExceptionSoftenerTest {
 	}
 	@Test
 	public void methodReference(){
-		Supplier<String> supplier = ExceptionSoftener.soften(this::get);
+		Supplier<String> supplier = ExceptionSoftener.softenSupplier(this::get);
 		
 		assertThat(supplier.get(),equalTo("hello"));
 	}

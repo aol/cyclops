@@ -34,6 +34,7 @@ import java.util.function.Supplier;
 
 import lombok.experimental.UtilityClass;
 
+import org.jooq.lambda.fi.lang.CheckedRunnable;
 import org.jooq.lambda.fi.util.function.CheckedBiConsumer;
 import org.jooq.lambda.fi.util.function.CheckedBiFunction;
 import org.jooq.lambda.fi.util.function.CheckedBiPredicate;
@@ -90,7 +91,36 @@ import org.junit.Test;
  */
 @UtilityClass
 public class ExceptionSoftener {
-
+	/**
+	 * Soften a Runnable that throws a ChecekdException into a plain old Runnable
+	 * 
+	 * <pre>
+	 * {@code 
+	 * 
+	 * Runnable runnable = ExceptionSoftener.softenRunnable(this::run);
+	 * runnable.run() //thows IOException but doesn't need to declare it
+	 * 
+	 * private void  run() throws IOException{
+		 throw new IOException();
+	   }
+		ExceptionSoftener.softenRunnable(()->Thread.sleep(1000));
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param s Supplier with CheckedException
+	 * @return Supplier that throws the same exception, but doesn't need to declare it as a
+	 *  checked Exception
+	 */
+	public static  Runnable softenRunnable(CheckedRunnable s ){
+		return () -> {
+			try {
+				s.run();
+			} catch (Throwable e) {
+				throw throwSoftenedException(e);
+			}
+		};
+	}
 	
 	/**
 	 * Soften a Supplier that throws a ChecekdException into a plain old Supplier
@@ -98,7 +128,7 @@ public class ExceptionSoftener {
 	 * <pre>
 	 * {@code 
 	 * 
-	 * Supplier<String> supplier = ExceptionSoftener.soften(this::get);
+	 * Supplier<String> supplier = ExceptionSoftener.softenSupplier(this::get);
 	 * supplier.get(); //thows IOException but doesn't need to declare it
 	 * 
 	 * private String get() throws IOException{
@@ -113,7 +143,7 @@ public class ExceptionSoftener {
 	 * @return Supplier that throws the same exception, but doesn't need to declare it as a
 	 *  checked Exception
 	 */
-	public static <T> Supplier<T> soften(CheckedSupplier<T> s ){
+	public static <T> Supplier<T> softenSupplier(CheckedSupplier<T> s ){
 		return () -> {
 			try {
 				return s.get();

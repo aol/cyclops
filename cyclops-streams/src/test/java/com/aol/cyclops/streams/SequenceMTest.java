@@ -30,6 +30,19 @@ import com.aol.cyclops.sequence.streamable.Streamable;
 public class SequenceMTest {
 	
 	@Test
+    public void shouldComputePermutationsOfEmptyStream() {
+        assertThat(SequenceM.of().permutations().map(s->s.toList()).toList(),equalTo(Arrays.asList()));
+    }
+
+    @Test
+    public void shouldComputePermutationsOfNonEmptyStream() {
+    	System.out.println(SequenceM.of(1, 2, 3).permutations().map(s->s.toList()).toList());
+        assertThat(SequenceM.of(1, 2, 3).permutations().map(s->s.toList()).toList(),
+        		equalTo(SequenceM.of(SequenceM.of(1, 2, 3),
+        		SequenceM.of(1, 3, 2), SequenceM.of(2, 1, 3), SequenceM.of(2, 3, 1), SequenceM.of(3, 1, 2), SequenceM.of(3, 2, 1)).map(s->s.toList()).toList()));
+    }
+   
+	@Test
 	public void onEmptySwitchEmpty(){
 		assertThat(SequenceM.of()
 							.onEmptySwitch(()->SequenceM.of(1,2,3))
