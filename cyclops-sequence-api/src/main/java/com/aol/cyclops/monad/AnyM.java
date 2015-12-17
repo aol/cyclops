@@ -1,8 +1,11 @@
 package com.aol.cyclops.monad;
 
+import static com.aol.cyclops.monad.AnyM.ofMonad;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -97,68 +100,155 @@ public interface AnyM<T> extends Unwrapable{
 	/**
 	 * Create an AnyM wrapping a Stream of the supplied data
 	 * 
-	 * @param streamData
+	 * @param streamData values to populate a Stream
 	 * @return
 	 */
 	public static <T> AnyM<T> fromArray(T... streamData){
 		return AnyMFactory.instance.monad(Stream.of(streamData));
 	}
+	/**
+	 * Create an AnyM wrapping a Stream of the supplied data
+	 * 
+	 * Identical to fromArray, exists as it may appear functionally more obvious to users than fromArray (which fits the convention)
+	 * 
+	 * @param streamData values to populate a Stream
+	 * @return
+	 */
+	public static <T> AnyM<T> streamOf(T... streamData){
+		return AnyMFactory.instance.monad(Stream.of(streamData));
+	}
 	
+	/**
+	 * Create an AnyM instance that wraps a Stream
+	 * 
+	 * @param stream Stream to wrap
+	 * @return AnyM that wraps the provided Stream
+	 */
 	public static <T> AnyM<T> fromStream(Stream<T> stream){
 		Objects.requireNonNull(stream);
 		return AnyMFactory.instance.monad(stream);
 	}
+	/**
+	 * Create an AnyM instance that wraps an IntStream
+	 * 
+	 * @param stream IntStream to wrap
+	 * @return AnyM that wraps the provided IntStream
+	 */
 	public static AnyM<Integer> fromIntStream(IntStream stream){
 		Objects.requireNonNull(stream);
 		return AnyMFactory.instance.monad(stream);
 	}
+	/**
+	 * Create an AnyM instance that wraps an DoubleStream
+	 * 
+	 * @param stream DoubleStream to wrap
+	 * @return AnyM that wraps the provided DoubleStream
+	 */
 	public static AnyM<Double> fromDoubleStream(DoubleStream stream){
 		Objects.requireNonNull(stream);
 		return AnyMFactory.instance.monad(stream);
 	}
+	/**
+	 * Create an AnyM instance that wraps an LongStream
+	 * 
+	 * @param stream LongStream to wrap
+	 * @return AnyM that wraps the provided LongStream
+	 */
 	public static AnyM<Long> fromLongStream(LongStream stream){
 		Objects.requireNonNull(stream);
 		return AnyMFactory.instance.monad(stream);
 	}
+	/**
+	 * Create an AnyM instance that wraps an Optional
+	 * 
+	 * @param stream Optional to wrap
+	 * @return AnyM that wraps the provided Optonal
+	 */
 	public static <T> AnyM<T> fromOptional(Optional<T> optional){
 		 Objects.requireNonNull(optional);
 		return AnyMFactory.instance.monad(optional);
 	}
-	public static  AnyM<Double> fromOptional(OptionalDouble optional){
+	/**
+	 * Create an AnyM instance that wraps an OptionalDouble
+	 * 
+	 * @param stream Optional to wrap
+	 * @return AnyM that wraps the provided OptonalDouble
+	 */
+	public static  AnyM<Double> fromOptionalDouble(OptionalDouble optional){
 		Objects.requireNonNull(optional);
 		return AnyMFactory.instance.of(optional);
 	}
-	public static  AnyM<Long> fromOptional(OptionalLong optional){
+	/**
+	 * Create an AnyM instance that wraps an OptionalLong
+	 * 
+	 * @param stream OptionalLong to wrap
+	 * @return AnyM that wraps the provided OptonalLong
+	 */
+	public static  AnyM<Long> fromOptionalLong(OptionalLong optional){
 		Objects.requireNonNull(optional);
 		return AnyMFactory.instance.of(optional);
 	}
-	public static  AnyM<Integer> fromOptional(OptionalInt optional){
+	/**
+	 * Create an AnyM instance that wraps an OptionalInt
+	 * 
+	 * @param stream OptionalInt to wrap
+	 * @return AnyM that wraps the provided OptonalInt
+	 */
+	public static  AnyM<Integer> fromOptionalInt(OptionalInt optional){
 		Objects.requireNonNull(optional);
 		return AnyMFactory.instance.of(optional);
 	}
+	/**
+	 * Create an AnyM instance that wraps a CompletableFuture
+	 * 
+	 * @param stream CompletableFuture to wrap
+	 * @return AnyM that wraps the provided CompletableFuture
+	 */
 	public static <T> AnyM<T> fromCompletableFuture(CompletableFuture<T> future){
 		Objects.requireNonNull(future);
 		return AnyMFactory.instance.monad(future);
 	}
+	/**
+	 * Create an AnyM instance that wraps a Collection
+	 * 
+	 * @param stream Collection to wrap
+	 * @return AnyM that wraps the provided Collection
+	 */
 	public static <T> AnyM<T> fromCollection(Collection<T> collection){
 		Objects.requireNonNull(collection);
 		return AnyMFactory.instance.of(collection);
 	}
+	/**
+	 * Create an AnyM instance that wraps an Iterable
+	 * 
+	 * @param stream Iterable to wrap
+	 * @return AnyM that wraps the provided Iterable
+	 */
 	public static <T> AnyM<T> fromIterable(Iterable<T> iterable){
 		Objects.requireNonNull(iterable);
 		return AnyMFactory.instance.of(iterable);
 	}
+	/**
+	 * Create an AnyM instance that wraps an textual Stream from a file
+	 * 
+	 * @param stream File to generate text / line Stream from, and to wrap
+	 * @return AnyM that wraps the Stream generated from the provided file
+	 */
 	public static AnyM<String> fromFile(File file){
 		Objects.requireNonNull(file);
 		return AnyMFactory.instance.of(file);
 	}
+	/**
+	 * Create an AnyM instance that wraps an textual Stream from a URL
+	 * 
+	 * @param stream URL to generate text / line Stream from, and to wrap
+	 * @return AnyM that wraps the Stream generated from the provided url
+	 */
 	public static AnyM<String> fromURL(URL url){
 		Objects.requireNonNull(url);
 		return AnyMFactory.instance.of(url);
 	}
-	public static<T> AnyM<T> streamOf(T... vs){
-		return AnyM.fromStream(Stream.of(vs));
-	}
+	
 	/**
 	 * Take the supplied object and always attempt to convert it to a Monad type
 	 * 
@@ -179,8 +269,14 @@ public interface AnyM<T> extends Unwrapable{
 		Objects.requireNonNull(monad);
 		return AnyMFactory.instance.monad(monad);
 	}
-	public static <T> AnyM<T> ofNullable(Object monad){
-		return AnyMFactory.instance.monad(Optional.ofNullable(monad));
+	/**
+	 * Generate an AnyM that wraps an Optional from the provided nullable object
+	 * 
+	 * @param nullable - Nullable object to generate an optional from
+	 * @return AnyM wrapping an Optional created with the supplied nullable
+	 */
+	public static <T> AnyM<T> ofNullable(Object nullable){
+		return AnyMFactory.instance.monad(Optional.ofNullable(nullable));
 	}
 	
 	
@@ -198,20 +294,75 @@ public interface AnyM<T> extends Unwrapable{
 
 	 <X extends Object> X monad();
 	
-	   AnyM<T>  filter(Predicate<? super T> fn);
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Functor#map(java.util.function.Function)
+	/**
+	 * Perform a filter operation on the wrapped monad instance e.g.
+	 * 
+	 * <pre>
+	 * {@code
+	 *   AnyM.fromOptional(Optional.of(10)).filter(i->i<10);
+	 * 
+	 *   //AnyM[Optional.empty()]
+	 *   
+	 *   AnyM.fromStream(Stream.of(5,10)).filter(i->i<10);
+	 *   
+	 *   //AnyM[Stream[5]]
+	 * }
+	 * 
+	 * 
+	 * </pre>
+	 * 
+	 * @param p Filtering predicate
+	 * @return Filtered AnyM
 	 */
-	  <R> AnyM<R> map(Function<? super T,? extends R> fn);
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
+	AnyM<T>  filter(Predicate<? super T> p);
+	
+	
+	/**
+	 * Perform a map operation on the wrapped monad instance e.g. 
+	 * 
+	 * <pre>
+	 * {@code 
+	 *   AnyM.fromIterable(Try.runWithCatch(this::loadData))
+	 *   	 .map(data->transform(data))		
+	 *   
+	 *   AnyM.fromStream(Stream.of(1,2,3))
+	 *       .map(i->i+2);
+	 *   
+	 *   AnyM[Stream[3,4,5]]
+	 * }
+	 * </pre>
+	 * @param fn
+	 * @return
 	 */
-	   AnyM<T>  peek(Consumer<? super T> c) ;
+	<R> AnyM<R> map(Function<? super T,? extends R> fn);
+	
+	
+	/**
+	 * Perform a peek operation on the wrapped monad e.g.
+	 * 
+	 * <pre>
+	 * {@code 
+	 *   AnyM.fromCompletableFuture(CompletableFuture.supplyAsync(()->loadData())
+	 *       .peek(System.out::println)
+	 * }
+	 * </pre>
+	 * 
+	 * @param c Consumer to accept current data
+	 * @return AnyM after peek operation
+	 */
+	AnyM<T>  peek(Consumer<? super T> c) ;
 	
 	
 	/**
 	 * Perform a looser typed flatMap / bind operation
 	 * The return type can be another type other than the host type
+	 * 
+	 * <pre>
+	 * {@code 
+	 * AnyM<List<Integer>> m  = AnyM.fromStream(Stream.of(Arrays.asList(1,2,3),Arrays.asList(1,2,3)));
+	   AnyM<Integer> intM = m.bind(Collection::stream);
+	 * }
+	 * </pre>
 	 * 
 	 * @param fn flatMap function
 	 * @return flatMapped monad
@@ -461,7 +612,7 @@ public interface AnyM<T> extends Unwrapable{
 	 * e.g. with Streams
 	 * <pre>{@code 
 	 * 
-	 * AnyM<Integer> applied =anyM(Stream.of(1,2,3)).applyM(anyM(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2))).simplex();
+	 * AnyM<Integer> applied =anyM(Stream.of(1,2,3)).applyM(AnyM.fromStreamable(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2)));
 	
 	 	assertThat(applied.toList(),equalTo(Arrays.asList(2, 2, 3, 4, 4, 6)));
 	 }</pre>
@@ -469,8 +620,9 @@ public interface AnyM<T> extends Unwrapable{
 	 * with Optionals 
 	 * <pre>{@code
 	 * 
-	 *  Any<Integer> applied =anyM(Optional.of(2)).applyM(anyM(Optional.of( (Integer a)->a+1)) );
-		assertThat(applied.toList(),equalTo(Arrays.asList(3)));}</pre>
+	 *  Any<Integer> applied =anyM(Optional.of(2)).applyM(AnyM.fromOptional(Optional.of( (Integer a)->a+1)) );
+		assertThat(applied.toList(),equalTo(Arrays.asList(3)));}
+		</pre>
 	 * 
 	 * @param fn
 	 * @return
@@ -482,9 +634,9 @@ public interface AnyM<T> extends Unwrapable{
 	 * e.g.
 	 * 
 	 * <pre>{@code
-	 *  AnyM<AnyM<Integer>> applied = anyM(Stream.of(1,2,3))
-	 *    									.filterM(anyM(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3)))
-	 *    									.simplex();
+	 *  AnyM<AnyM<Integer>> applied = AnyM.fromStream(Stream.of(1,2,3))
+	 *    									.filterM(AnyM.fromStreamable(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3)));
+	 *    								
 	 * 
 	 *  //results in AnyM((AnyM(1),AnyM(2),AnyM(())
 	 * //or in terms of the underlying monad as Stream.of(Stream.of(1),Stream.of(2),Stream.of(())
@@ -507,7 +659,7 @@ public interface AnyM<T> extends Unwrapable{
 	 * 
 	 * <pre>{@code 
 	 * 	
-	 *   AnyM<Optional<Integer>> applied =monad(Optional.of(2)).replicateM(5).simplex();
+	 *   AnyM<Optional<Integer>> applied =AnyM.fromOptional(Optional.of(2)).replicateM(5);
 		 assertThat(applied.unwrap(),equalTo(Optional.of(Arrays.asList(2,2,2,2,2))));
 		 
 		 }</pre>
@@ -521,9 +673,9 @@ public interface AnyM<T> extends Unwrapable{
 	 * Perform a reduction where NT is a (native) Monad type
 	 * e.g. 
 	 * <pre>{@code 
-	 * Monoid<Optional<Integer>> optionalAdd = Monoid.of(Optional.of(0), (a,b)-> Optional.of(a.get()+b.get()));
+	 *   Monoid<Optional<Integer>> optionalAdd = Monoid.of(Optional.of(0), (a,b)-> Optional.of(a.get()+b.get()));
 		
-		assertThat(monad(Stream.of(2,8,3,1)).reduceM(optionalAdd).unwrap(),equalTo(Optional.of(14)));
+		assertThat(AnyM.fromStream(Stream.of(2,8,3,1)).reduceM(optionalAdd).unwrap(),equalTo(Optional.of(14)));
 		}</pre>
 	 * 
 	 * 
@@ -540,12 +692,21 @@ public interface AnyM<T> extends Unwrapable{
 	
 	 
 	
+	/**
+	 * @return String representation of this AnyM
+	 */
 	@Override
     public String toString() ;
+	/**
+	 * @return Convert this AnyM to an Optional
+	 */
 	default Optional<List<T>> toOptional(){
 		
 		return this.<T>toSequence().toOptional();
 	}
+	/**
+	 * @return Convert this AnyM to a CompletableFuture
+	 */
 	default CompletableFuture<List<T>> toCompletableFuture(){
 		return this.<T>toSequence().toCompletableFuture();
 	}
