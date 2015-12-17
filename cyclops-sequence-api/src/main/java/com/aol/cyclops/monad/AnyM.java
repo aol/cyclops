@@ -37,7 +37,7 @@ import com.aol.cyclops.sequence.streamable.Streamable;
  * 
  * @author johnmcclean
  *
- * @param <T>
+ * @param <T> type data wrapped by the underlying monad
  */
 
 public interface AnyM<T> extends Unwrapable{
@@ -651,7 +651,33 @@ public interface AnyM<T> extends Unwrapable{
 	   AnyM<Optional<T>> simpleFilter(Optional<Predicate<? super T>> fn);
 	   AnyM<CompletableFuture<T>> simpleFilter(CompletableFuture<Predicate<? super T>> fn);
 	  
+	/**
+	 * Construct a new instanceof AnyM using the type of the underlying wrapped monad
+	 * 
+	 * <pre>
+	 * {@code
+	 *   AnyM<Integer> ints = AnyM.fromList(Arrays.asList(1,2,3);
+	 *   AnyM<String> string = ints.unit("hello");
+	 * }
+	 * </pre>
+	 * 
+	 * @param value to embed inside the monad wrapped by AnyM
+	 * @return Newly instantated AnyM
+	 */
 	public <T> AnyM<T> unit(T value);
+	
+	/**
+	 * Construct an AnyM wrapping an empty instance of the wrapped type 
+	 * 
+	 * e.g.
+	 * <pre>
+	 * {@code 
+	 * Any<Integer> ints = AnyM.fromStream(Stream.of(1,2,3));
+	 * AnyM<Integer> empty=ints.empty();
+	 * }
+	 * </pre>
+	 * @return Empty AnyM
+	 */
 	public <T> AnyM<T> empty();
 	/**
 	 * 
@@ -660,7 +686,8 @@ public interface AnyM<T> extends Unwrapable{
 	 * <pre>{@code 
 	 * 	
 	 *   AnyM<Optional<Integer>> applied =AnyM.fromOptional(Optional.of(2)).replicateM(5);
-		 assertThat(applied.unwrap(),equalTo(Optional.of(Arrays.asList(2,2,2,2,2))));
+	 *   
+		 //AnyM[Optional[List(2,2,2,2,2)]]
 		 
 		 }</pre>
 	 * 
@@ -675,7 +702,9 @@ public interface AnyM<T> extends Unwrapable{
 	 * <pre>{@code 
 	 *   Monoid<Optional<Integer>> optionalAdd = Monoid.of(Optional.of(0), (a,b)-> Optional.of(a.get()+b.get()));
 		
-		assertThat(AnyM.fromStream(Stream.of(2,8,3,1)).reduceM(optionalAdd).unwrap(),equalTo(Optional.of(14)));
+		AnyM.fromStream(Stream.of(2,8,3,1)).reduceM(optionalAdd);
+		
+		//AnyM[Optional(14)];
 		}</pre>
 	 * 
 	 * 

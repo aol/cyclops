@@ -2583,4 +2583,20 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 		return streamable.map(s->s.sequenceM()).sequenceM();
 	 }
 	
+	default SequenceM<T> subStream(int start, int end){
+		return this.limit(end).deleteBetween(0, start);
+	}
+	default SequenceM<T> subStream(int start){
+		return deleteBetween(0, start);
+	}
+	default  SequenceM<SequenceM<T>> combinations(int size){
+		Streamable<Streamable<T>> streamable = Streamable.fromStream(this).combinations(size);
+		return streamable.map(s->s.sequenceM()).sequenceM();
+	}
+	
+	
+	
+	default int size(){
+		return this.toList().size();
+	}
 }
