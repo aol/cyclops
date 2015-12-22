@@ -49,7 +49,7 @@ public class SequenceMTest {
     
     @Test
     public void emptyAllCombinations() {
-        assertThat(SequenceM.of().combinations().toList(),equalTo(Arrays.asList()));
+        assertThat(SequenceM.of().combinations().map(s->s.toList()).toList(),equalTo(Arrays.asList(Arrays.asList())));
     }
 
     @Test

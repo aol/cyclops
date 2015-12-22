@@ -10,6 +10,7 @@ public interface AnyMFactory {
 
 	public <T> AnyM<T> of(Object o);
 	public <T> AnyM<T> monad(Object o);
+	public AnyMFunctions anyMonads();
 	
 	public final static AnyMFactory instance = MetaFactory.get();
 	@Log

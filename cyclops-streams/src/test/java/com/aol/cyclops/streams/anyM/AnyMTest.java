@@ -1,11 +1,11 @@
 package com.aol.cyclops.streams.anyM;
 
 
-import static com.aol.cyclops.lambda.api.AsAnyMList.collectionToAnyMList;
-import static com.aol.cyclops.lambda.api.AsAnyMList.completableFutureToAnyMList;
-import static com.aol.cyclops.lambda.api.AsAnyMList.optionalToAnyMList;
-import static com.aol.cyclops.lambda.api.AsAnyMList.streamToAnyMList;
 import static com.aol.cyclops.monad.AnyM.ofMonad;
+import static com.aol.cyclops.monad.AnyM.collectionToAnyMList;
+import static com.aol.cyclops.monad.AnyM.completableFutureToAnyMList;
+import static com.aol.cyclops.monad.AnyM.optionalToAnyMList;
+import static com.aol.cyclops.monad.AnyM.streamToAnyMList;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
@@ -30,8 +30,8 @@ import lombok.val;
 
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.monads.AnyMonads;
 import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.monad.AnyMonads;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.Reducers;
 import com.aol.cyclops.sequence.SequenceM;
@@ -245,7 +245,7 @@ public class AnyMTest {
                 .collect(Collectors.toList());
        
         
-        AnyM<Stream<Integer>> futureList = AnyMonads.sequence(completableFutureToAnyMList(futures));
+        AnyM<Stream<Integer>> futureList = AnyM.sequence(completableFutureToAnyMList(futures));
         
  
         List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>unwrap().join();
@@ -262,7 +262,7 @@ public class AnyMTest {
         
        
         
-		AnyM<Stream<Integer>> futureList = AnyMonads.sequence(collectionToAnyMList(asList(asList(1,2),asList(3,4) ) ) );
+		AnyM<Stream<Integer>> futureList = AnyM.sequence(collectionToAnyMList(asList(asList(1,2),asList(3,4) ) ) );
         
       
         assertThat(futureList.toSequence(c->  c)
@@ -275,7 +275,7 @@ public class AnyMTest {
         
        
         
-        AnyM<Stream<Integer>> result = AnyMonads.sequence(streamToAnyMList(asList(Stream.of(1,2),Stream.of(3,4))));
+        AnyM<Stream<Integer>> result = AnyM.sequence(streamToAnyMList(asList(Stream.of(1,2),Stream.of(3,4))));
         
  
        
@@ -290,7 +290,7 @@ public class AnyMTest {
         
        
         
-        AnyM<Stream<Integer>> futureList = AnyMonads.sequence(optionalToAnyMList(asList(Optional.of(7),Optional.of(8),Optional.of(9))));
+        AnyM<Stream<Integer>> futureList = AnyM.sequence(optionalToAnyMList(asList(Optional.of(7),Optional.of(8),Optional.of(9))));
         
  
         assertThat(futureList.toSequence().toList(),equalTo(Arrays.asList(7,8,9)));
@@ -342,7 +342,7 @@ public class AnyMTest {
                 .collect(Collectors.toList());
 
        
-        AnyM<List<String>> futureList = AnyMonads.traverse( completableFutureToAnyMList(futures), (Integer i) -> "hello" +i);
+        AnyM<List<String>> futureList = AnyM.traverse( completableFutureToAnyMList(futures), (Integer i) -> "hello" +i);
    
         List<String> collected = futureList.<CompletableFuture<List<String>>>unwrap().join();
         assertThat(collected.size(),equalTo( list.size()));
@@ -552,6 +552,7 @@ public class AnyMTest {
 		List<Integer> result = AnyM.fromStream(Stream.of(1,2,3,4))
 								.aggregate(ofMonad(Optional.of(5)))
 								.asSequence()
+								.<Integer>flatten()
 								.toList();
 		
 		assertThat(result,equalTo(Arrays.asList(1,2,3,4,5)));
@@ -559,7 +560,7 @@ public class AnyMTest {
 	@Test
 	public void aggregate2(){
 		List<Integer> result = ofMonad(Optional.of(Arrays.asList(1,2,3,4)))
-								.<Integer>aggregateUntyped(ofMonad(CompletableFuture.completedFuture(5)))
+								.<Integer>aggregate(ofMonad(CompletableFuture.completedFuture(5)))
 								.<Integer>toSequence()
 								.toList();
 		
@@ -568,7 +569,7 @@ public class AnyMTest {
 	@Test
 	public void aggregate3(){
 		List<Integer> result = ofMonad(Optional.of(Arrays.asList(1,2,3,4)))
-								.<Integer>aggregateUntyped(ofMonad(CompletableFuture.supplyAsync(()->Arrays.asList(5,6))))
+								.<Integer>aggregate(ofMonad(CompletableFuture.supplyAsync(()->Arrays.asList(5,6))))
 								.<Integer>toSequence()
 								.toList();
 		
@@ -686,7 +687,7 @@ public class AnyMTest {
 	
 	@Test
 	public void testLiftMSimplex(){
-		val lifted = AnyMonads.liftM((Integer a)->a+3);
+		val lifted = AnyM.liftM((Integer a)->a+3);
 		
 		AnyM<Integer> result = lifted.apply(ofMonad(Optional.of(3)));
 		
@@ -703,7 +704,7 @@ public class AnyMTest {
 	
 	@Test
 	public void testLiftM2Simplex(){
-		val lifted = AnyMonads.liftM2((Integer a,Integer b)->a+b);
+		val lifted = AnyM.liftM2((Integer a,Integer b)->a+b);
 		
 		AnyM<Integer> result = lifted.apply(ofMonad(Optional.of(3)),ofMonad(Optional.of(4)));
 		
@@ -711,7 +712,7 @@ public class AnyMTest {
 	}
 	@Test
 	public void testLiftM2SimplexNull(){
-		val lifted = AnyMonads.liftM2((Integer a,Integer b)->a+b);
+		val lifted = AnyM.liftM2((Integer a,Integer b)->a+b);
 		
 		AnyM<Integer> result = lifted.apply(ofMonad(Optional.of(3)),ofMonad(Optional.ofNullable(null)));
 		
@@ -723,7 +724,7 @@ public class AnyMTest {
 	}
 	@Test
 	public void testLiftM2Mixed(){
-		val lifted = AnyMonads.liftM2(this::add); 
+		val lifted = AnyM.liftM2(this::add); 
 		
 		AnyM<Integer> result = lifted.apply(ofMonad(Optional.of(3)),ofMonad(Stream.of(4,6,7)));
 		

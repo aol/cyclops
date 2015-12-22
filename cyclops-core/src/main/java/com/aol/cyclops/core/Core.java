@@ -15,7 +15,6 @@ import com.aol.cyclops.closures.mutable.Mutable;
 import com.aol.cyclops.dynamic.As;
 import com.aol.cyclops.functions.Functions;
 import com.aol.cyclops.lambda.api.Mappable;
-import com.aol.cyclops.lambda.monads.AnyMonads;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.matcher.Case;
 import com.aol.cyclops.matcher.Cases;
@@ -32,6 +31,7 @@ import com.aol.cyclops.matcher.builders.StreamCase;
 import com.aol.cyclops.matcher.recursive.Matchable;
 import com.aol.cyclops.matcher.recursive.RecursiveMatcher;
 import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.monad.AnyMonads;
 import com.aol.cyclops.objects.Decomposable;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.Reducers;
@@ -517,7 +517,7 @@ public class Core extends Functions {
 	 * @return
 	 */
 	public static <U,R> Function<AnyM<U>,AnyM<R>> liftM(Function<U,R> fn){
-		return AnyMonads.liftM(fn);
+		return AnyM.liftM(fn);
 	}
 	
 	
@@ -543,7 +543,7 @@ public class Core extends Functions {
 	 * @return Lifted BiFunction
 	 */
 	public static <U1,U2,R> BiFunction<AnyM<U1>,AnyM<U2>,AnyM<R>> liftM2(BiFunction<U1,U2,R> fn){
-		return AnyMonads.liftM2(fn);
+		return AnyM.liftM2(fn);
 	}
 	
 

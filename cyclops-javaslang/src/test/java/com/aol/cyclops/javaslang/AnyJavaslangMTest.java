@@ -28,8 +28,8 @@ import javaslang.test.Gen;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.monads.AnyMonads;
 import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.monad.AnyMonads;
 
 public class AnyJavaslangMTest {
 

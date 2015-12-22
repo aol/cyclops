@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.monads.AnyMonads;
+import com.aol.cyclops.monad.AnyMonads;
 import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
 

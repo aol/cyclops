@@ -1,12 +1,12 @@
 package com.aol.cyclops.monad;
 
-import static com.aol.cyclops.monad.AnyM.ofMonad;
+
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -15,15 +15,21 @@ import java.util.OptionalInt;
 import java.util.OptionalLong;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.BaseStream;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
+
+import org.jooq.lambda.function.Function3;
+import org.jooq.lambda.function.Function4;
+import org.jooq.lambda.function.Function5;
 
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
@@ -41,8 +47,243 @@ import com.aol.cyclops.sequence.streamable.ToStream;
  * @param <T> type data wrapped by the underlying monad
  */
 
-public interface AnyM<T> extends Unwrapable{
+public interface AnyM<T> extends Unwrapable, ToStream<T>{
+	public SequenceM<T> stream();
+	public static <T> List<AnyM<T>> notTypeSafeAnyMList(Collection<Object> anyM){
+		return anyM.stream().map(i-> (AnyM<T>)AnyM.ofMonad(i)).collect(Collectors.toList());
+	}
 	
+	public static <T> List<AnyM<T>> streamableToAnyMList(Collection<Streamable<T>> anyM){
+		return anyM.stream().map(i-> AnyM.fromStreamable(i)).collect(Collectors.toList());
+	}
+	
+	public static <T> List<AnyM<T>> streamToAnyMList(Collection<Stream<T>> anyM){
+		return anyM.stream().map(i-> AnyM.fromStream(i)).collect(Collectors.toList());
+	}
+	
+	public static <T> List<AnyM<T>> optionalToAnyMList(Collection<Optional<T>> anyM){
+		return anyM.stream().map(i-> AnyM.fromOptional(i)).collect(Collectors.toList());
+	}
+	
+	public static <T> List<AnyM<T>> completableFutureToAnyMList(Collection<CompletableFuture<T>> anyM){
+		return anyM.stream().map(i-> AnyM.fromCompletableFuture(i)).collect(Collectors.toList());
+	}
+	public static <T> List<AnyM<T>> iterableToAnyMList(Collection<Iterable<T>> anyM){
+		return anyM.stream().map(i-> AnyM.fromIterable(i)).collect(Collectors.toList());
+	}
+	public static <T> List<AnyM<T>> collectionToAnyMList(Collection<Collection<T>> anyM){
+		return anyM.stream().map(i-> AnyM.fromCollection(i)).collect(Collectors.toList());
+	}
+	public static <T> List<AnyM<T>> iteratorToAnyMList(Collection<Iterator<T>> anyM){
+		return anyM.stream().map(i-> AnyM.fromIterable(()->i)).collect(Collectors.toList());
+	}
+	/**
+	 * Convert a Collection of Monads to a Monad with a List applying the supplied function in the process
+	 * 
+	 * <pre>
+	 * {@code 
+       List<CompletableFuture<Integer>> futures = createFutures();
+       AnyM<List<String>> futureList = AnyMonads.traverse(AsAnyMList.anyMList(futures), (Integer i) -> "hello" +i);
+        }
+		</pre>
+	 * 
+	 * @param seq Collection of Monads
+	 * @param fn Function to apply 
+	 * @return Monad with a list
+	 */
+	public static <T,R> AnyM<List<R>> traverse(Collection<AnyM<T>> seq, Function<T,R> fn){
+		return AnyMFactory.instance.anyMonads().traverse(seq,fn);
+	}
+	/**
+	 * Convert a Stream of Monads to a Monad with a List applying the supplied function in the process
+	 * 
+	<pre>{@code 
+       Stream<CompletableFuture<Integer>> futures = createFutures();
+       AnyM<List<String>> futureList = AnyMonads.traverse(AsAnyMList.anyMList(futures), (Integer i) -> "hello" +i);
+        }
+		</pre>
+	 * 
+	 * @param seq Stream of Monads
+	 * @param fn Function to apply 
+	 * @return Monad with a list
+	 */
+	public static <T,R> AnyM<List<R>> traverse(Stream<AnyM<T>> seq, Function<T,R> fn){
+		
+		return AnyMFactory.instance.anyMonads().traverse(seq,fn);
+	}
+
+	
+	/**
+	 * Convert a Collection of Monads to a Monad with a List
+	 * 
+	 * <pre>
+	 * {@code
+		List<CompletableFuture<Integer>> futures = createFutures();
+		AnyM<List<Integer>> futureList = AnyMonads.sequence(AsAnyMList.anyMList(futures));
+
+	   //where AnyM wraps  CompletableFuture<List<Integer>>
+	  }</pre>
+	 * 
+	 * @see com.aol.cyclops.monad.AsAnyMList for helper methods to convert a List of Monads / Collections to List of AnyM
+	 * @param seq Collection of monads to convert
+	 * @return Monad with a List
+	 */ 
+	public static <T1>  AnyM<Stream<T1>> sequence(Collection<AnyM<T1>> seq){
+		return AnyMFactory.instance.anyMonads().sequence(seq);
+	}
+	/**
+	 * Convert a Stream of Monads to a Monad with a List
+	 * 
+	 * <pre>{@code
+		Stream<CompletableFuture<Integer>> futures = createFutures();
+		AnyM<List<Integer>> futureList = AnyMonads.sequence(AsAnyMList.anyMList(futures));
+
+	   //where AnyM wraps  CompletableFuture<List<Integer>>
+	  }</pre>
+	 * 
+	 * @see com.aol.cyclops.monad.AsAnyMList for helper methods to convert a List of Monads / Collections to List of AnyM
+	 * @param seq Stream of monads to convert
+	 * @return Monad with a List
+	 */
+	public static <T1>  AnyM<Stream<T1>> sequence(Stream<AnyM<T1>> seq){
+		return AnyMFactory.instance.anyMonads().sequence(seq);
+	}
+	/**
+	 * Lift a function so it accepts an AnyM and returns an AnyM (any monad)
+	 * AnyM view simplifies type related challenges.
+	 * 
+	 * @param fn
+	 * @return
+	 */
+	public static <U,R> Function<AnyM<U>,AnyM<R>> liftM(Function<U,R> fn){
+		return u -> u.map( input -> fn.apply(input)  );
+	}
+	
+	
+	/**
+	 * Lift a function so it accepts a Monad and returns a Monad (simplex view of a wrapped Monad)
+	 * AnyM view simplifies type related challenges. The actual native type is not specified here.
+	 * 
+	 * e.g.
+	 * 
+	 * <pre>{@code
+	 * 	BiFunction<AnyM<Integer>,AnyM<Integer>,AnyM<Integer>> add = Monads.liftM2(this::add);
+	 *   
+	 *  Optional<Integer> result = add.apply(getBase(),getIncrease());
+	 *  
+	 *   private Integer add(Integer a, Integer b){
+				return a+b;
+		}
+	 * }</pre>
+	 * The add method has no null handling, but we can lift the method to Monadic form, and use Optionals to automatically handle null / empty value cases.
+	 * 
+	 * 
+	 * @param fn BiFunction to lift
+	 * @return Lifted BiFunction
+	 */
+	public static <U1,U2,R> BiFunction<AnyM<U1>,AnyM<U2>,AnyM<R>> liftM2(BiFunction<U1,U2,R> fn){
+		
+		return (u1,u2) -> u1.bind( input1 -> u2.map(input2 -> fn.apply(input1,input2)  ).unwrap());
+	}
+	/**
+	 * Lift a jOOλ Function3  into Monadic form. A good use case it to take an existing method and lift it so it can accept and return monads
+	 * 
+	 * <pre>
+	 * {@code
+	 * Function3 <AnyM<Double>,AnyM<Entity>,AnyM<String>,AnyM<Integer>> fn = liftM3(this::myMethod);
+	 *    
+	 * }
+	 * </pre>
+	 * 
+	 * Now we can execute the Method with Streams, Optional, Futures, Try's etc to transparently inject iteration, null handling, async execution and / or error handling
+	 * 
+	 * @param fn Function to lift
+	 * @return Lifted function
+	 */
+	public static <U1,U2,U3,R> Function3<AnyM<U1>,AnyM<U2>,AnyM<U3>,AnyM<R>> liftM3(Function3<U1,U2,U3,R> fn){
+		return (u1,u2,u3) -> u1.bind( input1 -> 
+									u2.bind(input2 -> 
+										u3.map(input3->fn.apply(input1,input2,input3)  )).unwrap());
+	}
+	
+	/**
+	 * Lift a  jOOλ Function4 into Monadic form.
+	 * 
+	 * @param fn Quad funciton to lift
+	 * @return Lifted Quad function
+	 */
+	public static <U1,U2,U3,U4,R> Function4<AnyM<U1>,AnyM<U2>,AnyM<U3>,AnyM<U4>,AnyM<R>> liftM4(Function4<U1,U2,U3,U4,R> fn){
+		
+		return (u1,u2,u3,u4) -> u1.bind( input1 -> 
+										u2.bind(input2 -> 
+												u3.bind(input3->
+														u4.map(input4->fn.apply(input1,input2,input3,input4)  ))).unwrap());
+	}
+	
+	/**
+	 * Lift a  jOOλ Function5 (5 parameters) into Monadic form
+	 * 
+	 * @param fn Function to lift
+	 * @return Lifted Function
+	 */
+	public static <U1,U2,U3,U4,U5,R> Function5<AnyM<U1>,AnyM<U2>,AnyM<U3>,AnyM<U4>,AnyM<U5>,AnyM<R>> liftM5(Function5<U1,U2,U3,U4,U5,R> fn){
+		
+		return (u1,u2,u3,u4,u5) -> u1.bind( input1 -> 
+										u2.bind(input2 -> 
+												u3.bind(input3->
+														u4.bind(input4->
+															u5.map(input5->fn.apply(input1,input2,input3,input4,input5)  )))).unwrap());
+	}
+	
+	/**
+	 * Lift a Curried Function {@code(2 levels a->b->fn.apply(a,b) )} into Monadic form
+	 * 
+	 * @param fn Function to lift
+	 * @return Lifted function 
+	 */
+	public static <U1,U2,R> Function<AnyM<U1>,Function<AnyM<U2>,AnyM<R>>> liftM2(Function<U1,Function<U2,R>> fn){
+		return u1 -> u2 -> u1.bind( input1 -> u2.map(input2 -> fn.apply(input1).apply(input2)  ).unwrap());
+
+	}
+	/**
+	 * Lift a Curried Function {@code(3 levels a->b->c->fn.apply(a,b,c) )} into Monadic form
+	 * 
+	 * @param fn Function to lift
+	 * @return Lifted function 
+	 */
+	public static <U1,U2,U3,R> Function<AnyM<U1>,Function<AnyM<U2>,Function<AnyM<U3>,AnyM<R>>>> liftM3(Function<U1,Function<U2,Function<U3,R>>> fn){
+		return u1 -> u2 ->u3 -> u1.bind( input1 -> 
+									u2.bind(input2 -> 
+										u3.map(input3->fn.apply(input1).apply(input2).apply(input3)  )).unwrap());
+	}
+	
+	/**
+	 * Lift a Curried Function {@code(4 levels a->b->c->d->fn.apply(a,b,c,d) )} into Monadic form
+	 * 
+	 * @param fn Function to lift
+	 * @return Lifted function 
+	 */
+	public static <U1,U2,U3,U4,R> Function<AnyM<U1>,Function<AnyM<U2>,Function<AnyM<U3>,Function<AnyM<U4>,AnyM<R>>>>> liftM4(Function<U1,Function<U2,Function<U3,Function<U4,R>>>> fn){
+		
+		return u1->u2->u3->u4 -> u1.bind( input1 -> 
+										u2.bind(input2 -> 
+												u3.bind(input3->
+														u4.map(input4->fn.apply(input1).apply(input2).apply(input3).apply(input4)  ))).unwrap());
+	}
+	/**
+	 * Lift a Curried Function {@code (5 levels a->b->c->d->e->fn.apply(a,b,c,d,e) ) }into Monadic form
+	 * 
+	 * @param fn Function to lift
+	 * @return Lifted function 
+	 */
+	public static <U1,U2,U3,U4,U5,R> Function<AnyM<U1>,Function<AnyM<U2>,Function<AnyM<U3>,Function<AnyM<U4>,Function<AnyM<U5>,AnyM<R>>>>>> liftM5(Function<U1,Function<U2,Function<U3,Function<U4,Function<U5,R>>>>> fn){
+		
+		return u1 ->u2 ->u3 ->u4 ->u5  -> u1.bind( input1 -> 
+										   u2.bind(input2 -> 
+												u3.bind(input3->
+														u4.bind(input4->
+															u5.map(input5->fn.apply(input1).apply(input2).apply(input3).apply(input4).apply(input5)  )))).unwrap());
+	}
 	
 	
 	/**
@@ -479,9 +720,15 @@ public interface AnyM<T> extends Unwrapable{
 	 * 
 	 * <pre>{@code 
 	 * 
-	 * List<Integer> result = anyM(Stream.of(1,2,3,4))
+	 * AnyM.fromStream(Stream.of(1,2,3,4))
 	 * 							.aggregate(anyM(Optional.of(5)))
-	 * 							.asSequence()
+	 * 
+	 * AnyM[Stream[List[1,2,3,4,5]]
+	 * 
+	 * List<Integer> result = AnyM.fromStream(Stream.of(1,2,3,4))
+	 * 							.aggregate(anyM(Optional.of(5)))
+	 * 							.toSequence()
+	 *                          .flatten()
 	 * 							.toList();
 		
 		assertThat(result,equalTo(Arrays.asList(1,2,3,4,5)));
@@ -490,8 +737,9 @@ public interface AnyM<T> extends Unwrapable{
 	 * @param next Monad to aggregate content with
 	 * @return Aggregated Monad
 	 */
-	  AnyM<T> aggregate(AnyM<T> next);
-	  <R> AnyM<List<R>> aggregateUntyped(AnyM<?> next);
+	 AnyM<List<T>> aggregate(AnyM<T> next);
+	  
+
 	
 	
 	/**

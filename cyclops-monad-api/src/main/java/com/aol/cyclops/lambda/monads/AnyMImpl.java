@@ -13,6 +13,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.BaseStream;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import lombok.AccessLevel;
@@ -22,6 +23,7 @@ import com.aol.cyclops.comprehensions.comprehenders.MaterializedList;
 import com.aol.cyclops.internal.AsGenericMonad;
 import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.monad.AnyMonads;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
@@ -234,8 +236,9 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @param next Monad to aggregate content with
 	 * @return Aggregated Monad
 	 */
-	public final  AnyM<T> aggregate(AnyM<T> next){
-		return monad.aggregate(next.monad()).anyM();
+	public final  AnyM<List<T>> aggregate(AnyM<T> next){
+		return unit(Stream.concat(stream(), next.stream()).collect(Collectors.toList()));
+		
 	}
 	public final  <R> AnyM<List<R>> aggregateUntyped(AnyM<?> next){
 		return monad.aggregate(next.monad()).anyM();
@@ -505,6 +508,13 @@ public class AnyMImpl<T> implements AnyM<T>{
 	
 		return monad.reduceM(Monoid.of(reducer.zero().unwrap(), (a,b)-> reducer.combiner().apply(AnyM.ofMonad(a), 
 				AnyM.ofMonad(b)))).anyM();		
+	}
+	
+	public SequenceM<T> stream(){
+		if(this.monad.unwrap() instanceof Stream){
+			return asSequence();
+		}
+		return this.<T>toSequence();
 	}
 	
 	
