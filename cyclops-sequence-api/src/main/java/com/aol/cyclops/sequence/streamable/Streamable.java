@@ -70,6 +70,8 @@ import java.util.stream.StreamSupport;
 
 
 
+
+import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -224,10 +226,17 @@ public interface Streamable<T> extends Iterable<T>{
 	default <R> Streamable<R> flatMap(Function<? super T,Streamable<? extends R>> fn){
 		return Streamable.fromStream(sequenceM().flatMap(i->fn.apply(i).sequenceM()));
 	}
+	
+	default long count(){
+		return sequenceM().count();
+	}
 	default List<T> toList(){
 		if(getStreamable() instanceof List)
 			return (List)getStreamable();
 		return sequenceM().toList();
+	}
+	default  <R, A> R collect(Collector<? super T, A, R> collector){
+		return sequenceM().collect(collector);
 	}
 	default <C extends Collection<T>> C toCollection(Supplier<C> collectionFactory){
 		
@@ -369,6 +378,12 @@ public interface Streamable<T> extends Iterable<T>{
     	default Tuple2<Streamable<T>,Streamable<T>> duplicate(){
     		return Tuple.tuple(this,this);
     	}
+    	default Tuple3<Streamable<T>,Streamable<T>,Streamable<T>> triplicate(){
+    		return Tuple.tuple(this,this,this);
+    	}
+    	default Tuple4<Streamable<T>,Streamable<T>,Streamable<T>,Streamable<T>> quadruplicate(){
+    		return Tuple.tuple(this,this,this,this);
+    	}
     	
     	
     	
@@ -384,8 +399,12 @@ public interface Streamable<T> extends Iterable<T>{
     	 * </pre>
     	 */
     	default Tuple2<Streamable<T>,Streamable<T>> splitAt(int where){
+    		
     		return sequenceM().splitAt(where).map1(s->fromStream(s)).map2(s->fromStream(s));
     	}
+    	default Tuple2<Optional<T>, Streamable<T>> splitAtHead() {
+            return sequenceM().splitAtHead().map2(s->fromStream(s));
+        }
     	/**
     	 * Split stream at point where predicate no longer holds
     	 * <pre>
@@ -520,6 +539,9 @@ public interface Streamable<T> extends Iterable<T>{
     	 */
     	default <U> Streamable<Tuple2<T, U>> zip(Streamable<U> other){
     		return fromStream(sequenceM().zip(other.sequenceM()));
+    	}
+    	default <U,R> Streamable<R> zip(Streamable<U> other,BiFunction<T, U, R> zipper){
+    		return fromStream(sequenceM().zip(other.sequenceM(), zipper));
     	}
     	/**
     	 * zip 3 Streams into one
