@@ -20,7 +20,7 @@ Main feature of OptionalT is ability to perform data transformation using it. Yo
 OptionalT<Integer> optionalInteger2 = OptionalT.fromAnyM(AnyM.<Double> ofNullable(4)).map(s -> s.intValue());
 ```
 
-in case you need to use partial function you can use flatMap
+in case you need to use partial function you can use `flatMap`
 
 ```java
 private OptionalT<Integer> fromDouble(Double d) {
