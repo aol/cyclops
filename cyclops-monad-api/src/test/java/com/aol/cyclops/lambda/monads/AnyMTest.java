@@ -75,17 +75,17 @@ public class AnyMTest {
 	}
 	@Test
 	public void fromOptionalLong(){
-		AnyM<Long> opt = AnyM.fromOptional(OptionalLong.of(1));
+		AnyM<Long> opt = AnyM.fromOptionalLong(OptionalLong.of(1));
 		assertThat(opt.unwrap(),instanceOf(Optional.class));
 	}
 	@Test
 	public void fromOptionalDouble(){
-		AnyM<Double> opt = AnyM.fromOptional(OptionalDouble.of(1));
+		AnyM<Double> opt = AnyM.fromOptionalDouble(OptionalDouble.of(1));
 		assertThat(opt.unwrap(),instanceOf(Optional.class));
 	}
 	@Test
 	public void fromOptionalInt(){
-		AnyM<Integer> opt = AnyM.fromOptional(OptionalInt.of(1));
+		AnyM<Integer> opt = AnyM.fromOptionalInt(OptionalInt.of(1));
 		assertThat(opt.unwrap(),instanceOf(Optional.class));
 	}
 	@Test

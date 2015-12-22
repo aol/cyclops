@@ -17,11 +17,13 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -32,6 +34,8 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+
 
 
 
@@ -230,12 +234,33 @@ public interface Streamable<T> extends Iterable<T>{
 	default long count(){
 		return sequenceM().count();
 	}
+	
+    default void forEachOrdered(Consumer<? super T> action){
+    	sequenceM().forEachOrdered(action);
+    }
+
+    
+    default Object[] toArray(){
+    	return sequenceM().toArray();
+    }
+
+    
+    default <A> A[] toArray(IntFunction<A[]> generator){
+    	return sequenceM().toArray(generator);
+    }
 	default List<T> toList(){
+	
 		if(getStreamable() instanceof List)
 			return (List)getStreamable();
 		return sequenceM().toList();
 	}
+	default  <R> R collect(Supplier<R> supplier,
+            BiConsumer<R, ? super T> accumulator,
+            BiConsumer<R, R> combiner){
+		return sequenceM().collect(supplier,accumulator,combiner);
+	}
 	default  <R, A> R collect(Collector<? super T, A, R> collector){
+		
 		return sequenceM().collect(collector);
 	}
 	default <C extends Collection<T>> C toCollection(Supplier<C> collectionFactory){
@@ -946,7 +971,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * @param c Predicate to check if any match
     	 */
     	default boolean  anyMatch(Predicate<? super T> c){
-    		return sequenceM().allMatch(c);
+    		return sequenceM().anyMatch(c);
     	}
     	/**
     	 * Check that there are specified number of matches of predicate in the Stream
@@ -1401,6 +1426,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * @return new stage in Sequence with flatMap operation to be lazily applied
     	 */
     	default <R> Streamable<R> flatMapAnyM(Function<? super T,AnyM<? extends R>> fn){
+  
     		 return fromStream(sequenceM().flatMapAnyM(fn));
     	}
     	/**

@@ -14,7 +14,7 @@ import org.junit.Test;
 import com.aol.cyclops.sequence.streamable.Streamable;
 public class StreamTest {
 	 public static <U> Streamable<U> of(U... array){
-		 return Streamable.of(array).asSequence();
+		 return Streamable.of(array);
 	 }
 
 	@Test
@@ -93,48 +93,9 @@ public class StreamTest {
 		assertThat(of(1,2,3,4,5).min((t1,t2) -> t1-t2).get(),equalTo(1));
 	}
 	
-	@Test
-	public void testMapToInt(){
-		assertThat(of("1","2","3","4").mapToInt(it -> Integer.valueOf(it)).max().getAsInt(),equalTo(4));
-		
-	}
-
-	@Test
-	public void mapToLong() {
-		assertThat(of("1","2","3","4").mapToLong(it -> Long.valueOf(it)).max().getAsLong(),equalTo(4l));
-	}
-
-	@Test
-	public void mapToDouble() {
-		assertThat(of("1","2","3","4").mapToDouble(it -> Double.valueOf(it)).max().getAsDouble(),equalTo(4d));
-	}
-
 	
-	@Test
-	public void flatMapToInt() {
-		assertThat(of( asList("1","10"), asList("2"),asList("3"),asList("4"))
-				.flatMapToInt(list ->list.stream()
-						.mapToInt(Integer::valueOf)).max().getAsInt(),equalTo(10));
-	}
-
 	
-	@Test
-	public void flatMapToLong() {
-		assertThat(of( asList("1","10"), asList("2"),asList("3"),asList("4"))
-				.flatMapToLong(list ->list.stream().mapToLong(Long::valueOf)).max().getAsLong(),equalTo(10l));
-
-	}
-
 	
-	@Test
-	public void flatMapToDouble(){
-			
-		assertThat(of( asList("1","10"), 
-				asList("2"),asList("3"),asList("4"))
-				.flatMapToDouble(list ->list.stream()
-						.mapToDouble(Double::valueOf))
-						.max().getAsDouble(),equalTo(10d));
-	}
 
 	@Test
 	public void sorted() {
