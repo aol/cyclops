@@ -341,7 +341,7 @@ public interface Streamable<T> extends Iterable<T>{
     	/**
     	 * <pre>
     	 * {@code 
-    	 * CompletableFuture<List<String>> cf = SequenceM.of("hello","world")
+    	 * CompletableFuture<List<String>> cf = Streamable.of("hello","world")
     											.toCompletableFuture();
     		assertThat(cf.join(),equalTo(Arrays.asList("hello","world")));
     	 * }
@@ -357,7 +357,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * <pre>
     	 * {@code 
-    	 * 		assertThat(SequenceM.of(1,2,2)
+    	 * 		assertThat(Streamable.of(1,2,2)
     								.cycle(3)
     								.collect(Collectors.toList()),
     								equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
@@ -377,7 +377,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * <pre>
     	 * {@code 
-    	 *   assertEquals(asList(1, 1, 1, 1, 1,1),SequenceM.of(1).cycle().limit(6).toList());
+    	 *   assertEquals(asList(1, 1, 1, 1, 1,1),Streamable.of(1).cycle().limit(6).toList());
     	 *   }
     	 * </pre>
     	 * 
@@ -391,7 +391,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * can be safely applied to the leading stream. Not thread-safe.
     	 * <pre>
     	 * {@code 
-    	 *  Tuple2<SequenceM<Integer>, SequenceM<Integer>> copies =of(1,2,3,4,5,6).duplicate();
+    	 *  Tuple2<Streamable<Integer>, Streamable<Integer>> copies =of(1,2,3,4,5,6).duplicate();
     		 assertTrue(copies.v1.anyMatch(i->i==2));
     		 assertTrue(copies.v2.anyMatch(i->i==2));
     	 * 
@@ -416,9 +416,9 @@ public interface Streamable<T> extends Iterable<T>{
     	 * Split at supplied location 
     	 * <pre>
     	 * {@code 
-    	 * SequenceM.of(1,2,3).splitAt(1)
+    	 * Streamable.of(1,2,3).splitAt(1)
     	 * 
-    	 *  //SequenceM[1], SequenceM[2,3]
+    	 *  //Streamable[1], Streamable[2,3]
     	 * }
     	 * 
     	 * </pre>
@@ -434,9 +434,9 @@ public interface Streamable<T> extends Iterable<T>{
     	 * Split stream at point where predicate no longer holds
     	 * <pre>
     	 * {@code
-    	 *   SequenceM.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)
+    	 *   Streamable.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)
     	 *   
-    	 *   //SequenceM[1,2,3] SequenceM[4,5,6]
+    	 *   //Streamable[1,2,3] Streamable[4,5,6]
     	 * }
     	 * </pre>
     	 */
@@ -447,9 +447,9 @@ public interface Streamable<T> extends Iterable<T>{
     	 * Partition a Stream into two one a per element basis, based on predicate's boolean value
     	 * <pre>
     	 * {@code 
-    	 *  SequenceM.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0) 
+    	 *  Streamable.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0) 
     	 *  
-    	 *  //SequenceM[1,3,5], SequenceM[2,4,6]
+    	 *  //Streamable[1,3,5], Streamable[2,4,6]
     	 * }
     	 *
     	 * </pre>
@@ -516,7 +516,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * <pre>
     	 * {@code
     	 * count =0;
-    		assertThat(SequenceM.of(1,2,2)
+    		assertThat(Streamable.of(1,2,2)
     							.cycleWhile(next -> count++<6)
     							.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2)));
     	 * }
@@ -535,7 +535,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * <pre>
     	 * {@code 
     	 * 	count =0;
-    		assertThat(SequenceM.of(1,2,2)
+    		assertThat(Streamable.of(1,2,2)
     							.cycleUntil(next -> count++>6)
     							.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2,1)));
 
@@ -635,7 +635,7 @@ public interface Streamable<T> extends Iterable<T>{
     		return fromStream(sequenceM().zipSequence(second.sequenceM(), zipper));
     	}
     	/**
-    	 * Zip this SequenceM against any monad type.
+    	 * Zip this Streamable against any monad type.
     	 * 
     	 * <pre>
     	 * {@code
@@ -700,7 +700,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * </pre>
     	 * @param windowSize
     	 *            Size of sliding window
-    	 * @return SequenceM with sliding view
+    	 * @return Streamable with sliding view
     	 */
     	default Streamable<List<T>> sliding(int windowSize){
     		return fromStream(sequenceM().sliding(windowSize));
@@ -724,7 +724,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * @param windowSize number of elements in each batch
     	 * @param increment for each window
-    	 * @return SequenceM with sliding view
+    	 * @return Streamable with sliding view
     	 */
     	default Streamable<List<T>> sliding(int windowSize,int increment){
     		return fromStream(sequenceM().sliding(windowSize,increment));
@@ -777,7 +777,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * <pre>
     	 * {@code  
     	 * 
-    	 * 	assertEquals(asList("", "a", "ab", "abc"),SequenceM.of("a", "b", "c")
+    	 * 	assertEquals(asList("", "a", "ab", "abc"),Streamable.of("a", "b", "c")
     	 * 													.scanLeft(Reducers.toString("")).toList());
     	 *         
     	 *         }
@@ -833,7 +833,7 @@ public interface Streamable<T> extends Iterable<T>{
     	
     	/**
     	 * <pre>
-    	 * {@code assertThat(SequenceM.of(4,3,6,7)).sorted().toList(),equalTo(Arrays.asList(3,4,6,7))); }
+    	 * {@code assertThat(Streamable.of(4,3,6,7)).sorted().toList(),equalTo(Arrays.asList(3,4,6,7))); }
     	 * </pre>
     	 * 
     	 */
@@ -844,7 +844,7 @@ public interface Streamable<T> extends Iterable<T>{
     	/**
     	 *<pre>
     	 * {@code 
-    	 * 	assertThat(SequenceM.of(4,3,6,7).sorted((a,b) -> b-a).toList(),equalTo(Arrays.asList(7,6,4,3)));
+    	 * 	assertThat(Streamable.of(4,3,6,7).sorted((a,b) -> b-a).toList(),equalTo(Arrays.asList(7,6,4,3)));
     	 * }
     	 * </pre>
     	 * @param c
@@ -857,7 +857,7 @@ public interface Streamable<T> extends Iterable<T>{
 
     	/**
     	 * <pre>
-    	 * {@code assertThat(SequenceM.of(4,3,6,7).skip(2).toList(),equalTo(Arrays.asList(6,7))); }
+    	 * {@code assertThat(Streamable.of(4,3,6,7).skip(2).toList(),equalTo(Arrays.asList(6,7))); }
     	 * </pre>
     	 * 
     	
@@ -875,7 +875,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * <pre>
     	 * {@code
-    	 * assertThat(SequenceM.of(4,3,6,7).sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
+    	 * assertThat(Streamable.of(4,3,6,7).sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
     	 * }
     	 * </pre>
     	 * 
@@ -892,7 +892,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * 
     	 * <pre>
-    	 * {@code assertThat(SequenceM.of(4,3,6,7).skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));}
+    	 * {@code assertThat(Streamable.of(4,3,6,7).skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));}
     	 * </pre>
     	 * 
     	 * 
@@ -909,7 +909,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * 
     	 * <pre>
-    	 * {@code assertThat(SequenceM.of(4,3,6,7).limit(2).toList(),equalTo(Arrays.asList(4,3));}
+    	 * {@code assertThat(Streamable.of(4,3,6,7).limit(2).toList(),equalTo(Arrays.asList(4,3));}
     	 * </pre>
     	 * 
     	 * @param num
@@ -924,7 +924,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 *
     	 * 
     	 * <pre>
-    	 * {@code assertThat(SequenceM.of(4,3,6,7).sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));}
+    	 * {@code assertThat(Streamable.of(4,3,6,7).sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));}
     	 * </pre>
     	 * 
     	 * @param p
@@ -938,7 +938,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * 
     	 * <pre>
-    	 * {@code assertThat(SequenceM.of(4,3,6,7).limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3))); }
+    	 * {@code assertThat(Streamable.of(4,3,6,7).limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3))); }
     	 * </pre>
     	 * 
     	 * @param p
@@ -953,7 +953,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * True if predicate matches all elements when Monad converted to a Stream
     	 * <pre>
     	 * {@code 
-    	 * assertThat(SequenceM.of(1,2,3,4,5).allMatch(it-> it>0 && it <6),equalTo(true));
+    	 * assertThat(Streamable.of(1,2,3,4,5).allMatch(it-> it>0 && it <6),equalTo(true));
     	 * }
     	 * </pre>
     	 * @param c Predicate to check if all match
@@ -965,7 +965,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * True if a single element matches when Monad converted to a Stream
     	 * <pre>
     	 * {@code 
-    	 * assertThat(SequenceM.of(1,2,3,4,5).anyMatch(it-> it.equals(3)),equalTo(true));
+    	 * assertThat(Streamable.of(1,2,3,4,5).anyMatch(it-> it.equals(3)),equalTo(true));
     	 * }
     	 * </pre>
     	 * @param c Predicate to check if any match
@@ -978,7 +978,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * <pre>
     	 * {@code 
-    	 *  assertTrue(SequenceM.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
+    	 *  assertTrue(Streamable.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
     	 * }
     	 * </pre>
     	 * 
@@ -1000,7 +1000,7 @@ public interface Streamable<T> extends Iterable<T>{
     	/**
     	 * <pre>
     	 * {@code
-    	 *  assertEquals("123".length(),SequenceM.of(1, 2, 3).join().length());
+    	 *  assertEquals("123".length(),Streamable.of(1, 2, 3).join().length());
     	 * }
     	 * </pre>
     	 * 
@@ -1012,7 +1012,7 @@ public interface Streamable<T> extends Iterable<T>{
     	/**
     	 * <pre>
     	 * {@code
-    	 * assertEquals("1, 2, 3".length(), SequenceM.of(1, 2, 3).join(", ").length());
+    	 * assertEquals("1, 2, 3".length(), Streamable.of(1, 2, 3).join(", ").length());
     	 * }
     	 * </pre>
     	 * @return Stream as concatenated String
@@ -1069,7 +1069,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * @return First matching element in sequential order
     	 * <pre>
     	 * {@code
-    	 * SequenceM.of(1,2,3,4,5).filter(it -> it <3).findFirst().get();
+    	 * Streamable.of(1,2,3,4,5).filter(it -> it <3).findFirst().get();
     	 * 
     	 * //3
     	 * }
@@ -1084,7 +1084,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * @return first matching element,  but order is not guaranteed
     	 * <pre>
     	 * {@code
-    	 * SequenceM.of(1,2,3,4,5).filter(it -> it <3).findAny().get();
+    	 * Streamable.of(1,2,3,4,5).filter(it -> it <3).findAny().get();
     	 * 
     	 * //3
     	 * }
@@ -1102,7 +1102,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * Then use Monoid to reduce values
     	 * <pre>
     	 * {@code 
-    	 * SequenceM.of("hello","2","world","4").mapReduce(Reducers.toCountInt());
+    	 * Streamable.of("hello","2","world","4").mapReduce(Reducers.toCountInt());
     	 * 
     	 * //4
     	 * }
@@ -1120,7 +1120,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 *  
     	 *  <pre>
     	 *  {@code
-    	 *  SequenceM.of("one","two","three","four")
+    	 *  Streamable.of("one","two","three","four")
     	 *           .mapReduce(this::toInt,Reducers.toTotalInt());
     	 *  
     	 *  //10
@@ -1152,7 +1152,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * Apply multiple collectors Simulataneously to this Monad
     	 * 
     	 * <pre>{@code
-    	  	List result =SequenceM.of(1,2,3).collect(Stream.of(Collectors.toList(),
+    	  	List result =Streamable.of(1,2,3).collect(Stream.of(Collectors.toList(),
     	  															Collectors.summingInt(Integer::intValue),
     	  															Collectors.averagingInt(Integer::intValue)));
     		
@@ -1172,7 +1172,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 *  Apply multiple Collectors, simultaneously to a Stream
     	 * <pre>
     	 * {@code 
-    	 * List result = SequenceM.of(1,2,3).collect(
+    	 * List result = Streamable.of(1,2,3).collect(
     								Arrays.asList(Collectors.toList(),
     								Collectors.summingInt(Integer::intValue),
     								Collectors.averagingInt(Integer::intValue)));
@@ -1194,7 +1194,7 @@ public interface Streamable<T> extends Iterable<T>{
     	/**
     	 * <pre>
     	 * {@code 
-    	 * SequenceM.of("hello","2","world","4").reduce(Reducers.toString(","));
+    	 * Streamable.of("hello","2","world","4").reduce(Reducers.toString(","));
     	 * 
     	 * //hello,2,world,4
     	 * }</pre>
@@ -1208,7 +1208,7 @@ public interface Streamable<T> extends Iterable<T>{
     	/* 
     	 * <pre>
     	 * {@code 
-    	 * assertThat(SequenceM.of(1,2,3,4,5).map(it -> it*100).reduce( (acc,next) -> acc+next).get(),equalTo(1500));
+    	 * assertThat(Streamable.of(1,2,3,4,5).map(it -> it*100).reduce( (acc,next) -> acc+next).get(),equalTo(1500));
     	 * }
     	 * </pre>
     	 * 
@@ -1239,7 +1239,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * {@code 
     	 * Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
     	   Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
-    	   List<Integer> result = SequenceM.of(1,2,3,4)
+    	   List<Integer> result = Streamable.of(1,2,3,4)
     						.reduce(Arrays.asList(sum,mult).stream() );
     				
     		 
@@ -1264,7 +1264,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * {@code 
     	 * Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
     		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
-    		List<Integer> result = SequenceM.of(1,2,3,4))
+    		List<Integer> result = Streamable.of(1,2,3,4))
     										.reduce(Arrays.asList(sum,mult) );
     				
     		 
@@ -1284,7 +1284,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 *  
     		<pre>
     		{@code
-    		SequenceM.of("a","b","c").foldLeft(Reducers.toString(""));
+    		Streamable.of("a","b","c").foldLeft(Reducers.toString(""));
            
             // "abc"
             }
@@ -1300,7 +1300,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * <pre>
     	 * {@code 
     	 * 
-    	 * assertTrue(SequenceM.of("a", "b", "c").foldLeft("", String::concat).equals("abc"));
+    	 * assertTrue(Streamable.of("a", "b", "c").foldLeft("", String::concat).equals("abc"));
     	 * }
     	 * </pre>
     	 */
@@ -1313,7 +1313,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * <pre>
     		{@code
-    		SequenceM.of(1,2,3).foldLeftMapToType(Reducers.toString(""));
+    		Streamable.of(1,2,3).foldLeftMapToType(Reducers.toString(""));
            
             // "123"
             }
@@ -1328,7 +1328,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * <pre>
     		{@code
-    		SequenceM.of("a","b","c").foldRight(Reducers.toString(""));
+    		Streamable.of("a","b","c").foldRight(Reducers.toString(""));
            
             // "cab"
             }
@@ -1343,7 +1343,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * Immutable reduction from right to left
     	 * <pre>
     	 * {@code 
-    	 *  assertTrue(SequenceM.of("a","b","c").foldRight("", String::concat).equals("cba"));
+    	 *  assertTrue(Streamable.of("a","b","c").foldRight("", String::concat).equals("cba"));
     	 * }
     	 * </pre>
     	 * 
@@ -1359,7 +1359,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * Then use Monoid to reduce values
     	 * <pre>
     		{@code
-    		SequenceM.of(1,2,3).foldRightMapToType(Reducers.toString(""));
+    		Streamable.of(1,2,3).foldRightMapToType(Reducers.toString(""));
            
             // "321"
             }
@@ -1387,7 +1387,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * <pre>
     	 * {@code 
-    	 *  assertTrue(SequenceM.of(1,2,3,4).startsWith(Arrays.asList(1,2,3)));
+    	 *  assertTrue(Streamable.of(1,2,3,4).startsWith(Arrays.asList(1,2,3)));
     	 * }</pre>
     	 * 
     	 * @param iterable
@@ -1397,7 +1397,7 @@ public interface Streamable<T> extends Iterable<T>{
     		 return sequenceM().startsWith(iterable);
     	}	
     	/**
-    	 * 	<pre>{@code assertTrue(SequenceM.of(1,2,3,4).startsWith(Arrays.asList(1,2,3).iterator())) }</pre>
+    	 * 	<pre>{@code assertTrue(Streamable.of(1,2,3,4).startsWith(Arrays.asList(1,2,3).iterator())) }</pre>
 
     	 * @param iterator
     	 * @return True if Monad starts with Iterators sequence of data
@@ -1407,7 +1407,7 @@ public interface Streamable<T> extends Iterable<T>{
     	}
     	
     	/**
-    	 * @return this SequenceM converted to AnyM format
+    	 * @return this Streamable converted to AnyM format
     	 */
     	default AnyM<T> anyM(){
     		return AnyM.fromStreamable(this);
@@ -1417,7 +1417,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * Allows flatMap return type to be any Monad type
     	 * <pre>
     	 * {@code 
-    	 * 	assertThat(SequenceM.of(1,2,3)).flatMapAnyM(i-> anyM(CompletableFuture.completedFuture(i+2))).toList(),equalTo(Arrays.asList(3,4,5)));
+    	 * 	assertThat(Streamable.of(1,2,3)).flatMapAnyM(i-> anyM(CompletableFuture.completedFuture(i+2))).toList(),equalTo(Arrays.asList(3,4,5)));
 
     	 * }</pre>
     	 * 
@@ -1431,10 +1431,10 @@ public interface Streamable<T> extends Iterable<T>{
     	}
     	/**
     	 * FlatMap where the result is a Collection, flattens the resultant collections into the
-    	 * host SequenceM
+    	 * host Streamable
     	 * <pre>
     	 * {@code 
-    	 * 	SequenceM.of(1,2)
+    	 * 	Streamable.of(1,2)
     	 * 			.flatMap(i -> asList(i, -i))
     	 *          .toList();
     	 *          
@@ -1453,7 +1453,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * <pre>
     	 * {@code 
-    	 * 	assertThat(SequenceM.of(1,2,3)
+    	 * 	assertThat(Streamable.of(1,2,3)
     	 *                      .flatMapStream(i->IntStream.of(i))
     	 *                      .toList(),equalTo(Arrays.asList(1,2,3)));
 
@@ -1470,7 +1470,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * flatMap to optional - will result in null values being removed
     	 * <pre>
     	 * {@code 
-    	 * 	assertThat(SequenceM.of(1,2,3,null)
+    	 * 	assertThat(Streamable.of(1,2,3,null)
     	 *                      .flatMapOptional(Optional::ofNullable)
     			      			.collect(Collectors.toList()),
     			      			equalTo(Arrays.asList(1,2,3)));
@@ -1488,7 +1488,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 *       
     	 *  <pre>
     	 *  {@code
-    	 *  	assertThat(SequenceM.of(1,2,3).flatMapCompletableFuture(i->CompletableFuture.completedFuture(i+2))
+    	 *  	assertThat(Streamable.of(1,2,3).flatMapCompletableFuture(i->CompletableFuture.completedFuture(i+2))
     				  								.collect(Collectors.toList()),
     				  								equalTo(Arrays.asList(3,4,5)));
     	 *  }
@@ -1507,7 +1507,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * <pre>
     	 * {@code 
-    	 *   List<Character> result = SequenceM.of("input.file")
+    	 *   List<Character> result = Streamable.of("input.file")
     									.flatMapCharSequence(i->"hello world")
     									.toList();
     		
@@ -1528,7 +1528,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * <pre>
     	 * {@code
     	 * 
-    		List<String> result = SequenceM.of("input.file")
+    		List<String> result = Streamable.of("input.file")
     								.map(getClass().getClassLoader()::getResource)
     								.peek(System.out::println)
     								.map(URL::getFile)
@@ -1553,7 +1553,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * <pre>
     	 * {@code 
-    	 * List<String> result = SequenceM.of("input.file")
+    	 * List<String> result = Streamable.of("input.file")
     								.flatMapURL(getClass().getClassLoader()::getResource)
     								.toList();
     		
@@ -1573,7 +1573,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * from the text loaded from the supplied BufferedReaders
     	 * 
     	 * <pre>
-    	 * List<String> result = SequenceM.of("input.file")
+    	 * List<String> result = Streamable.of("input.file")
     								.map(getClass().getClassLoader()::getResourceAsStream)
     								.map(InputStreamReader::new)
     								.liftAndBindBufferedReader(BufferedReader::new)
@@ -1601,7 +1601,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * of this stream.
     	 * 
     	 * 
-    	 * // (1, 0, 2, 0, 3, 0, 4) SequenceM.of(1, 2, 3, 4).intersperse(0)
+    	 * // (1, 0, 2, 0, 3, 0, 4) Streamable.of(1, 2, 3, 4).intersperse(0)
     	 * 
     	 */
     	default  Streamable<T> intersperse(T value){
@@ -1611,7 +1611,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * Keep only those elements in a stream that are of a given type.
     	 * 
     	 * 
-    	 * // (1, 2, 3) SequenceM.of(1, "a", 2, "b",3).ofType(Integer.class)
+    	 * // (1, 2, 3) Streamable.of(1, "a", 2, "b",3).ofType(Integer.class)
     	 * 
     	 */
     	@SuppressWarnings("unchecked")
@@ -1624,7 +1624,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * {@link ClassCastException}.
     	 * 
     	 * 
-    	 * // ClassCastException SequenceM.of(1, "a", 2, "b", 3).cast(Integer.class)
+    	 * // ClassCastException Streamable.of(1, "a", 2, "b", 3).cast(Integer.class)
     	 * 
     	 */
     	default <U> Streamable<U> cast(Class<U> type){
@@ -1632,11 +1632,11 @@ public interface Streamable<T> extends Iterable<T>{
     	}
     	
     	/**
-    	 * Lazily converts this SequenceM into a Collection. This does not trigger the Stream. E.g.
+    	 * Lazily converts this Streamable into a Collection. This does not trigger the Stream. E.g.
     	 * Collection is not thread safe on the first iteration.
     	 * <pre>
     	 * {@code 
-    	 * Collection<Integer> col = SequenceM.of(1,2,3,4,5)
+    	 * Collection<Integer> col = Streamable.of(1,2,3,4,5)
     											.peek(System.out::println)
     											.toLazyCollection();
     		System.out.println("first!");
@@ -1651,11 +1651,11 @@ public interface Streamable<T> extends Iterable<T>{
     		return sequenceM().toLazyCollection();
     	}
     	/**
-    	 * Lazily converts this SequenceM into a Collection. This does not trigger the Stream. E.g.
+    	 * Lazily converts this Streamable into a Collection. This does not trigger the Stream. E.g.
     	 * 
     	 * <pre>
     	 * {@code 
-    	 * Collection<Integer> col = SequenceM.of(1,2,3,4,5)
+    	 * Collection<Integer> col = Streamable.of(1,2,3,4,5)
     											.peek(System.out::println)
     											.toConcurrentLazyCollection();
     		System.out.println("first!");
@@ -1701,12 +1701,12 @@ public interface Streamable<T> extends Iterable<T>{
     		return fromStream(sequenceM().shuffle());
     	}
     	/**
-    	 * Append Stream to this SequenceM
+    	 * Append Stream to this Streamable
     	 * 
     	 * <pre>
     	 * {@code 
-    	 * List<String> result = 	SequenceM.of(1,2,3)
-    	 *                                  .appendStream(SequenceM.of(100,200,300))
+    	 * List<String> result = 	Streamable.of(1,2,3)
+    	 *                                  .appendStream(Streamable.of(100,200,300))
     										.map(it ->it+"!!")
     										.collect(Collectors.toList());
 
@@ -1715,17 +1715,17 @@ public interface Streamable<T> extends Iterable<T>{
     	 * </pre>
     	 * 
     	 * @param stream to append
-    	 * @return SequenceM with Stream appended
+    	 * @return Streamable with Stream appended
     	 */
     	default Streamable<T> appendStreamable(Streamable<T> stream){
     		return fromStream(sequenceM().appendStream(stream.sequenceM()));
     	}
     	/**
-    	 * Prepend Stream to this SequenceM
+    	 * Prepend Stream to this Streamable
     	 * 
     	 * <pre>
     	 * {@code 
-    	 * List<String> result = SequenceM.of(1,2,3)
+    	 * List<String> result = Streamable.of(1,2,3)
     	 * 								  .prependStream(of(100,200,300))
     									  .map(it ->it+"!!")
     									  .collect(Collectors.toList());
@@ -1736,16 +1736,16 @@ public interface Streamable<T> extends Iterable<T>{
     	 * </pre>
     	 * 
     	 * @param stream to Prepend
-    	 * @return SequenceM with Stream prepended
+    	 * @return Streamable with Stream prepended
     	 */
     	default Streamable<T> prependStreamable(Streamable<T> stream){
     		return fromStream(sequenceM().prependStream(stream.sequenceM()));
     	}
     	/**
-    	 * Append values to the end of this SequenceM
+    	 * Append values to the end of this Streamable
     	 * <pre>
     	 * {@code 
-    	 * List<String> result = SequenceM.of(1,2,3)
+    	 * List<String> result = Streamable.of(1,2,3)
     	 * 								   .append(100,200,300)
     										.map(it ->it+"!!")
     										.collect(Collectors.toList());
@@ -1754,7 +1754,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * }
     	 * </pre>
     	 * @param values to append
-    	 * @return SequenceM with appended values
+    	 * @return Streamable with appended values
     	 */
     	default Streamable<T> append(T... values){
     		return fromStream(sequenceM().append(values));
@@ -1763,7 +1763,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * Prepend given values to the start of the Stream
     	 * <pre>
     	 * {@code 
-    	 * List<String> result = 	SequenceM.of(1,2,3)
+    	 * List<String> result = 	Streamable.of(1,2,3)
     	 * 									 .prepend(100,200,300)
     										 .map(it ->it+"!!")
     										 .collect(Collectors.toList());
@@ -1771,7 +1771,7 @@ public interface Streamable<T> extends Iterable<T>{
     			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
     	 * }
     	 * @param values to prepend
-    	 * @return SequenceM with values prepended
+    	 * @return Streamable with values prepended
     	 */
     	 default Streamable<T> prepend(T... values){
     		 return fromStream(sequenceM().prepend(values));
@@ -1780,7 +1780,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * Insert data into a stream at given position
     	 * <pre>
     	 * {@code 
-    	 * List<String> result = 	SequenceM.of(1,2,3)
+    	 * List<String> result = 	Streamable.of(1,2,3)
     	 * 									 .insertAt(1,100,200,300)
     										 .map(it ->it+"!!")
     										 .collect(Collectors.toList());
@@ -1800,7 +1800,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * Delete elements between given indexes in a Stream
     	 * <pre>
     	 * {@code 
-    	 * List<String> result = 	SequenceM.of(1,2,3,4,5,6)
+    	 * List<String> result = 	Streamable.of(1,2,3,4,5,6)
     	 * 									 .deleteBetween(2,4)
     										 .map(it ->it+"!!")
     										 .collect(Collectors.toList());
@@ -1819,7 +1819,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * Insert a Stream into the middle of this stream at the specified position
     	 * <pre>
     	 * {@code 
-    	 * List<String> result = 	SequenceM.of(1,2,3)
+    	 * List<String> result = 	Streamable.of(1,2,3)
     	 * 									 .insertStreamAt(1,of(100,200,300))
     										 .map(it ->it+"!!")
     										 .collect(Collectors.toList());
@@ -1829,7 +1829,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * </pre>
     	 * @param pos to insert Stream at
     	 * @param stream to insert
-    	 * @return newly conjoined SequenceM
+    	 * @return newly conjoined Streamable
     	 */
     	default Streamable<T> insertStreamableAt(int pos, Streamable<T> stream){
     		return fromStream(sequenceM().insertStreamAt(pos,stream.sequenceM()));
@@ -1848,13 +1848,13 @@ public interface Streamable<T> extends Iterable<T>{
     	/**
     	 * <pre>
     	 * {@code
-    	 *  assertTrue(SequenceM.of(1,2,3,4,5,6)
+    	 *  assertTrue(Streamable.of(1,2,3,4,5,6)
     				.endsWith(Arrays.asList(5,6)));
     	 * 
     	 * }
     	 * 
     	 * @param iterable Values to check 
-    	 * @return true if SequenceM ends with values in the supplied iterable
+    	 * @return true if Streamable ends with values in the supplied iterable
     	 */
     	default boolean endsWith(Iterable<T> iterable){
     		return sequenceM().endsWith(iterable);
@@ -1862,13 +1862,13 @@ public interface Streamable<T> extends Iterable<T>{
     	/**
     	 * <pre>
     	 * {@code
-    	 * assertTrue(SequenceM.of(1,2,3,4,5,6)
+    	 * assertTrue(Streamable.of(1,2,3,4,5,6)
     				.endsWith(Stream.of(5,6))); 
     	 * }
     	 * </pre>
     	 * 
     	 * @param stream Values to check 
-    	 * @return true if SequenceM endswith values in the supplied Stream
+    	 * @return true if Streamable endswith values in the supplied Stream
     	 */
     	default boolean endsWith(Streamable<T> stream){
     		return sequenceM().endsWith(stream);
@@ -1877,7 +1877,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * Skip all elements until specified time period has passed
     	 * <pre>
     	 * {@code 
-    	 * List<Integer> result = SequenceM.of(1,2,3,4,5,6)
+    	 * List<Integer> result = Streamable.of(1,2,3,4,5,6)
     										.peek(i->sleep(i*100))
     										.skip(1000,TimeUnit.MILLISECONDS)
     										.toList();
@@ -1890,7 +1890,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * @param time Length of time
     	 * @param unit Time unit
-    	 * @return SequenceM that skips all elements until time period has elapsed
+    	 * @return Streamable that skips all elements until time period has elapsed
     	 */
     	default Streamable<T> skip(long time, final TimeUnit unit){
     		return fromStream(sequenceM().skip(time,unit));
@@ -1899,7 +1899,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * Return all elements until specified time period has elapsed
     	 * <pre>
     	 * {@code 
-    	 * List<Integer> result = SequenceM.of(1,2,3,4,5,6)
+    	 * List<Integer> result = Streamable.of(1,2,3,4,5,6)
     										.peek(i->sleep(i*100))
     										.limit(1000,TimeUnit.MILLISECONDS)
     										.toList();
@@ -1910,13 +1910,13 @@ public interface Streamable<T> extends Iterable<T>{
     	 * </pre>
     	 * @param time Length of time
     	 * @param unit Time unit
-    	 * @return SequenceM that returns all elements until time period has elapsed
+    	 * @return Streamable that returns all elements until time period has elapsed
     	 */
     	default Streamable<T> limit(long time, final TimeUnit unit){
     		return fromStream(sequenceM().limit(time,unit));
     	}
     	/**
-    	 * assertThat(SequenceM.of(1,2,3,4,5)
+    	 * assertThat(Streamable.of(1,2,3,4,5)
     							.skipLast(2)
     							.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
     	 * 
@@ -1927,28 +1927,28 @@ public interface Streamable<T> extends Iterable<T>{
     		return fromStream(sequenceM().skipLast(num));
     	}
     	/**
-    	 * Limit results to the last x elements in a SequenceM
+    	 * Limit results to the last x elements in a Streamable
     	 * <pre>
     	 * {@code 
-    	 * 	assertThat(SequenceM.of(1,2,3,4,5)
+    	 * 	assertThat(Streamable.of(1,2,3,4,5)
     							.limitLast(2)
     							.collect(Collectors.toList()),equalTo(Arrays.asList(4,5)));
     	 * 
     	 * }
     	 * 
     	 * @param num of elements to return (last elements)
-    	 * @return SequenceM limited to last num elements
+    	 * @return Streamable limited to last num elements
     	 */
     	default Streamable<T> limitLast(int num){
     		return fromStream(sequenceM().limitLast(num));
     	}
 
     	/**
-    	 * Turns this SequenceM into a HotStream, a connectable Stream, being executed on a thread on the 
+    	 * Turns this Streamable into a HotStream, a connectable Stream, being executed on a thread on the 
     	 * supplied executor, that is producing data
     	 * <pre>
     	 * {@code 
-    	 *  HotStream<Integer> ints = SequenceM.range(0,Integer.MAX_VALUE)
+    	 *  HotStream<Integer> ints = Streamable.range(0,Integer.MAX_VALUE)
     											.hotStream(exec)
     											
     		
@@ -1958,7 +1958,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 *  
     	 * }
     	 * </pre>
-    	 * @param e Executor to execute this SequenceM on
+    	 * @param e Executor to execute this Streamable on
     	 * @return a Connectable HotStream
     	 */
     	default HotStream<T> hotStream(Executor e){
@@ -1968,7 +1968,7 @@ public interface Streamable<T> extends Iterable<T>{
     	/**
     	 * <pre>
     	 * {@code 
-    	 * 	assertThat(SequenceM.of(1,2,3,4)
+    	 * 	assertThat(Streamable.of(1,2,3,4)
     					.map(u->{throw new RuntimeException();})
     					.recover(e->"hello")
     					.firstValue(),equalTo("hello"));
@@ -1983,7 +1983,7 @@ public interface Streamable<T> extends Iterable<T>{
     	/**
     	 * <pre>
     	 * {@code 
-    	 * assertThat(SequenceM.of(1).single(),equalTo(1));
+    	 * assertThat(Streamable.of(1).single(),equalTo(1));
     	 * }
     	 * </pre>
     	 * 
@@ -1998,7 +1998,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * Return the elementAt index or Optional.empty
     	 * <pre>
     	 * {@code
-    	 * 	assertThat(SequenceM.of(1,2,3,4,5).elementAt(2).get(),equalTo(3));
+    	 * 	assertThat(Streamable.of(1,2,3,4,5).elementAt(2).get(),equalTo(3));
     	 * }
     	 * </pre>
     	 * @param index to extract element from
@@ -2013,7 +2013,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * <pre>
     	 * {@code 
-    	 * SequenceM.of(1,2,3,4,5).get(2).v1
+    	 * Streamable.of(1,2,3,4,5).get(2).v1
     	 * //3
     	 * }
     	 * </pre>
@@ -2028,7 +2028,7 @@ public interface Streamable<T> extends Iterable<T>{
     	/**
     	 * <pre>
     	 * {@code 
-    	 * SequenceM.of(1,2,3,4,5)
+    	 * Streamable.of(1,2,3,4,5)
     				 .elapsed()
     				 .forEach(System.out::println);
     	 * }
@@ -2042,7 +2042,7 @@ public interface Streamable<T> extends Iterable<T>{
     	/**
     	 * <pre>
     	 * {@code
-    	 *    SequenceM.of(1,2,3,4,5)
+    	 *    Streamable.of(1,2,3,4,5)
     				   .timestamp()
     				   .forEach(System.out::println)
     	 * 
@@ -2088,7 +2088,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * and end
     	 * @param start Number of range to start from
     	 * @param end Number for range to end at
-    	 * @return Range SequenceM
+    	 * @return Range Streamable
     	 */
     	public static Streamable<Integer> range(int start, int end){
     		return fromStream(SequenceM.range(start, end));
@@ -2100,7 +2100,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * and end
     	 * @param start Number of range to start from
     	 * @param end Number for range to end at
-    	 * @return Range SequenceM
+    	 * @return Range Streamable
     	 */
     	public static Streamable<Long> rangeLong(long start, long end){
     		return fromStream(SequenceM.rangeLong(start, end));
@@ -2163,9 +2163,9 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * <pre>
     	 * {@code 
-    	 *  unzip(SequenceM.of(new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c")))
+    	 *  unzip(Streamable.of(new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c")))
     	 *  
-    	 *  // SequenceM[1,2,3], SequenceM[a,b,c]
+    	 *  // Streamable[1,2,3], Streamable[a,b,c]
     	 * }
     	 * 
     	 * </pre>
@@ -2178,9 +2178,9 @@ public interface Streamable<T> extends Iterable<T>{
     	 * Unzip a zipped Stream into 3
     	 * <pre>
     	 * {@code 
-    	 *    unzip3(SequenceM.of(new Tuple3(1, "a", 2l), new Tuple3(2, "b", 3l), new Tuple3(3,"c", 4l)))
+    	 *    unzip3(Streamable.of(new Tuple3(1, "a", 2l), new Tuple3(2, "b", 3l), new Tuple3(3,"c", 4l)))
     	 * }
-    	 * // SequenceM[1,2,3], SequenceM[a,b,c], SequenceM[2l,3l,4l]
+    	 * // Streamable[1,2,3], Streamable[a,b,c], Streamable[2l,3l,4l]
     	 * </pre>
     	 */
     	public static <T1,T2,T3> Tuple3<Streamable<T1>,Streamable<T2>,Streamable<T3>> unzip3(Streamable<Tuple3<T1,T2,T3>> sequence){
@@ -2191,10 +2191,10 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * <pre>
     	 * {@code 
-    	 * unzip4(SequenceM.of(new Tuple4(1, "a", 2l,'z'), new Tuple4(2, "b", 3l,'y'), new Tuple4(3,
+    	 * unzip4(Streamable.of(new Tuple4(1, "a", 2l,'z'), new Tuple4(2, "b", 3l,'y'), new Tuple4(3,
     						"c", 4l,'x')));
     		}
-    		// SequenceM[1,2,3], SequenceM[a,b,c], SequenceM[2l,3l,4l], SequenceM[z,y,x]
+    		// Streamable[1,2,3], Streamable[a,b,c], Streamable[2l,3l,4l], Streamable[z,y,x]
     	 * </pre>
     	 */
     	public static <T1,T2,T3,T4> Tuple4<Streamable<T1>,Streamable<T2>,Streamable<T3>,Streamable<T4>> unzip4(Streamable<Tuple4<T1,T2,T3,T4>> sequence){
@@ -2235,7 +2235,7 @@ public interface Streamable<T> extends Iterable<T>{
     			BiPredicate<T, U> predicate){
     		return fromStream(sequenceM().rightOuterJoin(other.sequenceM(),predicate));
     	}
-    	/** If this SequenceM is empty replace it with a another Stream
+    	/** If this Streamable is empty replace it with a another Stream
     	 * 
     	 * <pre>
     	 * {@code 
@@ -2319,7 +2319,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * <pre>
     	 * {@code 
     	 *  SimpleTimer timer = new SimpleTimer();
-    		assertThat(SequenceM.of(1,2,3,4,5,6)
+    		assertThat(Streamable.of(1,2,3,4,5,6)
     		                    .xPer(6,100000000,TimeUnit.NANOSECONDS)
     		                    .collect(Collectors.toList()).size(),is(6));
 
@@ -2328,7 +2328,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * @param x number of elements to emit
     	 * @param time period
     	 * @param t Time unit
-    	 * @return SequenceM that emits x elements per time period
+    	 * @return Streamable that emits x elements per time period
     	 */
     	default Streamable<T> xPer(int x, long time, TimeUnit t){
     		return fromStream(sequenceM().xPer(x,time,t));
@@ -2339,7 +2339,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * emit one element per time period
     	 * <pre>
     	 * {@code 
-    	 * SequenceM.iterate("", last -> "next")
+    	 * Streamable.iterate("", last -> "next")
     				.limit(100)
     				.batchBySize(10)
     				.onePer(1, TimeUnit.MICROSECONDS)
@@ -2351,7 +2351,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * }
     	 * @param time period
     	 * @param t Time unit
-    	 * @return SequenceM that emits 1 element per time period
+    	 * @return Streamable that emits 1 element per time period
     	 */
     	default Streamable<T> onePer(long time, TimeUnit t){
     		return fromStream(sequenceM().onePer(time,t));
@@ -2364,7 +2364,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * <pre>
     	 * {@code 
-    	 * SequenceM.of(1,2,3,4,5,6)
+    	 * Streamable.of(1,2,3,4,5,6)
     	 *          .debounce(1000,TimeUnit.SECONDS).toList();
     	 *          
     	 * // 1 
@@ -2383,7 +2383,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * <pre>
     	 * {@code
-    	 * SequenceM.of(1,2,3,4,5,6)
+    	 * Streamable.of(1,2,3,4,5,6)
     				.batchBySizeAndTime(3,10,TimeUnit.SECONDS)
     				.toList();
     			
@@ -2393,7 +2393,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * @param size Max size of a batch
     	 * @param time (Max) time period to build a single batch in
     	 * @param t time unit for batch
-    	 * @return SequenceM batched by size and time
+    	 * @return Streamable batched by size and time
     	 */
     	default Streamable<List<T>> batchBySizeAndTime(int size, long time, TimeUnit t){
     		return fromStream(sequenceM().batchBySizeAndTime(size,time,t));
@@ -2411,7 +2411,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * @param time (Max) time period to build a single batch in
     	 * @param unit time unit for batch
     	 * @param factory Collection factory
-    	 * @return SequenceM batched by size and time
+    	 * @return Streamable batched by size and time
     	 */
     	default <C extends Collection<T>> Streamable<C> batchBySizeAndTime(int size,long time, TimeUnit unit, Supplier<C> factory){
     		return fromStream(sequenceM().batchBySizeAndTime(size,time,unit,factory));
@@ -2421,14 +2421,14 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * <pre>
     	 * {@code 
-    	 * assertThat(SequenceM.of(1,2,3,4,5,6).batchByTime(1,TimeUnit.SECONDS).collect(Collectors.toList()).size(),is(1));
-    	 * assertThat(SequenceM.of(1,2,3,4,5,6).batchByTime(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),greaterThan(5));
+    	 * assertThat(Streamable.of(1,2,3,4,5,6).batchByTime(1,TimeUnit.SECONDS).collect(Collectors.toList()).size(),is(1));
+    	 * assertThat(Streamable.of(1,2,3,4,5,6).batchByTime(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),greaterThan(5));
     	 * }
     	 * </pre>
     	 * 
     	 * @param time - time period to build a single batch in
     	 * @param t  time unit for batch
-    	 * @return SequenceM batched into lists by time period
+    	 * @return Streamable batched into lists by time period
     	 */
     	default Streamable<List<T>> batchByTime(long time, TimeUnit t){
     		return fromStream(sequenceM().batchByTime(time,t));
@@ -2438,7 +2438,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * <pre>
     	 * {@code 
-    	 *   assertThat(SequenceM.of(1,1,1,1,1,1)
+    	 *   assertThat(Streamable.of(1,1,1,1,1,1)
     	 *                       .batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>())
     	 *                       .toList()
     	 *                       .get(0)
@@ -2449,7 +2449,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * @param time - time period to build a single batch in
     	 * @param unit time unit for batch
     	 * @param factory Collection factory
-    	 * @return SequenceM batched into collection types by time period
+    	 * @return Streamable batched into collection types by time period
     	 */
     	default <C extends Collection<T>> Streamable<C> batchByTime(long time, TimeUnit unit, Supplier<C> factory){
     		return fromStream(sequenceM().batchByTime(time,unit,factory));
@@ -2459,13 +2459,13 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * <pre>
     	 * {@code 
-    	 *  assertThat(SequenceM.of(1,2,3,4,5,6)
+    	 *  assertThat(Streamable.of(1,2,3,4,5,6)
     	 *                      .batchBySize(3)
     	 *                      .collect(Collectors.toList())
     	 *                      .size(),is(2));
     	 * }
     	 * @param size of batch
-    	 * @return SequenceM batched by size into Lists
+    	 * @return Streamable batched by size into Lists
     	 */
     	default Streamable<List<T>> batchBySize(int size){
     		return fromStream(sequenceM().batchBySize(size));
@@ -2474,7 +2474,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * Batch elements in a Stream by size into a collection created by the supplied factory 
     	 * <pre>
     	 * {@code
-    	 * assertThat(SequenceM.of(1,1,1,1,1,1)
+    	 * assertThat(Streamable.of(1,1,1,1,1,1)
     	 * 						.batchBySize(3,()->new TreeSet<>())
     	 * 						.toList()
     	 * 						.get(0)
@@ -2483,7 +2483,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * @param size batch size
     	 * @param supplier Collection factory
-    	 * @return SequenceM batched into collection types by size
+    	 * @return Streamable batched into collection types by size
     	 */
     	default <C extends Collection<T>>Streamable<C> batchBySize(int size, Supplier<C> supplier){
     		return fromStream(sequenceM().batchBySize(size,supplier));
@@ -2494,7 +2494,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * <pre>
     	 * {@code 
     	 * 	SimpleTimer timer = new SimpleTimer();
-    		assertThat(SequenceM.of(1,2,3,4,5,6)
+    		assertThat(Streamable.of(1,2,3,4,5,6)
     							.fixedDelay(10000,TimeUnit.NANOSECONDS)
     							.collect(Collectors.toList())
     							.size(),is(6));
@@ -2503,7 +2503,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * </pre>
     	 * @param l time length in nanos of the delay
     	 * @param unit for the delay
-    	 * @return SequenceM that emits each element after a fixed delay
+    	 * @return Streamable that emits each element after a fixed delay
     	 */
     	default Streamable<T> fixedDelay(long l, TimeUnit unit){
     		return fromStream(sequenceM().fixedDelay(l,unit));
@@ -2514,7 +2514,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * <pre>
     	 * {@code 
     	 * SimpleTimer timer = new SimpleTimer();
-    		assertThat(SequenceM.of(1,2,3,4,5,6)
+    		assertThat(Streamable.of(1,2,3,4,5,6)
     							.jitter(10000)
     							.collect(Collectors.toList())
     							.size(),is(6));
@@ -2532,7 +2532,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * or for max period of time
     	 * <pre>
     	 * {@code 
-    	 * assertThat(SequenceM.of(1,2,3,4,5,6)
+    	 * assertThat(Streamable.of(1,2,3,4,5,6)
     						.windowBySizeAndTime(3,10,TimeUnit.SECONDS)
     						.toList()
     						.get(0)
@@ -2543,7 +2543,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * @param maxSize of window
     	 * @param maxTime of window
     	 * @param maxTimeUnit of window
-    	 * @return Windowed SequenceM
+    	 * @return Windowed Streamable
     	 */
     	default Streamable<Streamable<T>> windowBySizeAndTime(int maxSize, long maxTime, TimeUnit maxTimeUnit){
     		return fromStream(sequenceM().windowBySizeAndTime(maxSize,maxTime,maxTimeUnit));
@@ -2553,7 +2553,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * while the supplied predicate holds. When the predicate failsa new window/ Stremable opens
     	 * <pre>
     	 * {@code 
-    	 * SequenceM.of(1,2,3,4,5,6)
+    	 * Streamable.of(1,2,3,4,5,6)
     				.windowWhile(i->i%3!=0)
     				.forEach(System.out::println);
     	 *   
@@ -2562,7 +2562,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * }
     	 * </pre>
     	 * @param predicate Window while true
-    	 * @return SequenceM windowed while predicate holds
+    	 * @return Streamable windowed while predicate holds
     	 */
     	default Streamable<Streamable<T>> windowWhile(Predicate<T> predicate){
     		return fromStream(sequenceM().windowWhile(predicate));
@@ -2572,7 +2572,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * until the supplied predicate holds. When the predicate failsa new window/ Stremable opens
     	 * <pre>
     	 * {@code 
-    	 * SequenceM.of(1,2,3,4,5,6)
+    	 * Streamable.of(1,2,3,4,5,6)
     				.windowUntil(i->i%3==0)
     				.forEach(System.out::println);
     	 *   
@@ -2581,37 +2581,37 @@ public interface Streamable<T> extends Iterable<T>{
     	 * }
     	 * </pre>
     	 * @param predicate Window until true
-    	 * @return SequenceM windowed until predicate holds
+    	 * @return Streamable windowed until predicate holds
     	 */
     	default Streamable<Streamable<T>> windowUntil(Predicate<T> predicate){
     		return fromStream(sequenceM().windowUntil(predicate));
     	}
     	/**
-    	 * Create SequenceM of Streamables  (replayable Streams / Sequences) where each Streamable is populated 
+    	 * Create Streamable of Streamables  (replayable Streams / Sequences) where each Streamable is populated 
     	 * while the supplied bipredicate holds. The bipredicate recieves the Streamable from the last window as
     	 * well as the current value and can choose to aggregate the current value or create  a new window
     	 * 
     	 * <pre>
     	 * {@code 
-    	 * assertThat(SequenceM.of(1,2,3,4,5,6)
+    	 * assertThat(Streamable.of(1,2,3,4,5,6)
     				.windowStatefullyWhile((s,i)->s.sequenceM().toList().contains(4) ? true : false)
     				.toList().size(),equalTo(5));
     	 * }
     	 * </pre>
     	 * 
     	 * @param predicate Window while true
-    	 * @return SequenceM windowed while predicate holds
+    	 * @return Streamable windowed while predicate holds
     	 */
     	default Streamable<Streamable<T>> windowStatefullyWhile(BiPredicate<Streamable<T>,T> predicate){
     		return fromStream(sequenceM().windowStatefullyWhile(predicate));
     	}
     	/**
-    	 * Create SequenceM of Streamables  (replayable Streams / Sequences) where each Streamable is populated
+    	 * Create Streamable of Streamables  (replayable Streams / Sequences) where each Streamable is populated
     	 * within a specified time window
     	 * 
     	 * <pre>
     	 * {@code 
-    	 * assertThat(SequenceM.of(1,2,3,4,5, 6)
+    	 * assertThat(Streamable.of(1,2,3,4,5, 6)
     							.map(n-> n==6? sleep(1) : n)
     							.windowByTime(10,TimeUnit.MICROSECONDS)
     							.toList()
@@ -2621,49 +2621,49 @@ public interface Streamable<T> extends Iterable<T>{
     	 * </pre>
     	 * @param time max time per window 
     	 * @param t time unit per window
-    	 * @return SequenceM windowed by time
+    	 * @return Streamable windowed by time
     	 */
     	default Streamable<Streamable<T>> windowByTime(long time, TimeUnit t){
     		return fromStream(sequenceM().windowByTime(time,t));
     	}
     	/**
-    	 * Create a SequenceM batched by List, where each batch is populated until the predicate holds
+    	 * Create a Streamable batched by List, where each batch is populated until the predicate holds
     	 * <pre>
     	 * {@code 
-    	 *  assertThat(SequenceM.of(1,2,3,4,5,6)
+    	 *  assertThat(Streamable.of(1,2,3,4,5,6)
     				.batchUntil(i->i%3==0)
     				.toList()
     				.size(),equalTo(2));
     	 * }
     	 * </pre>
     	 * @param predicate Batch until predicate holds, then open next batch
-    	 * @return SequenceM batched into lists determined by the predicate supplied
+    	 * @return Streamable batched into lists determined by the predicate supplied
     	 */
     	default Streamable<List<T>> batchUntil(Predicate<T> predicate){
     		return fromStream(sequenceM().batchUntil(predicate));
     	}
     	/**
-    	 * Create a SequenceM batched by List, where each batch is populated while the predicate holds
+    	 * Create a Streamable batched by List, where each batch is populated while the predicate holds
     	 * <pre>
     	 * {@code 
-    	 * assertThat(SequenceM.of(1,2,3,4,5,6)
+    	 * assertThat(Streamable.of(1,2,3,4,5,6)
     				.batchWhile(i->i%3!=0)
     				.toList().size(),equalTo(2));
     	
     	 * }
     	 * </pre>
     	 * @param predicate Batch while predicate holds, then open next batch
-    	 * @return SequenceM batched into lists determined by the predicate supplied
+    	 * @return Streamable batched into lists determined by the predicate supplied
     	 */
     	default Streamable<List<T>> batchWhile(Predicate<T> predicate){
     		return fromStream(sequenceM().batchWhile(predicate));
     	}
     	/**
-    	 * Create a SequenceM batched by a Collection, where each batch is populated while the predicate holds
+    	 * Create a Streamable batched by a Collection, where each batch is populated while the predicate holds
     	 * 
     	 * <pre>
     	 * {@code 
-    	 * assertThat(SequenceM.of(1,2,3,4,5,6)
+    	 * assertThat(Streamable.of(1,2,3,4,5,6)
     				.batchWhile(i->i%3!=0)
     				.toList()
     				.size(),equalTo(2));
@@ -2671,17 +2671,17 @@ public interface Streamable<T> extends Iterable<T>{
     	 * </pre>
     	 * @param predicate Batch while predicate holds, then open next batch
     	 * @param factory Collection factory
-    	 * @return SequenceM batched into collections determined by the predicate supplied
+    	 * @return Streamable batched into collections determined by the predicate supplied
     	 */
     	default <C extends Collection<T>>  Streamable<C> batchWhile(Predicate<T> predicate, Supplier<C> factory){
     		return fromStream(sequenceM().batchWhile(predicate,factory));
     	}
     	/**
-    	 * Create a SequenceM batched by a Collection, where each batch is populated until the predicate holds
+    	 * Create a Streamable batched by a Collection, where each batch is populated until the predicate holds
     	 * 
     	 * <pre>
     	 * {@code 
-    	 * assertThat(SequenceM.of(1,2,3,4,5,6)
+    	 * assertThat(Streamable.of(1,2,3,4,5,6)
     				.batchUntil(i->i%3!=0)
     				.toList()
     				.size(),equalTo(2));
@@ -2691,7 +2691,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * @param predicate Batch until predicate holds, then open next batch
     	 * @param factory Collection factory
-    	 * @return SequenceM batched into collections determined by the predicate supplied
+    	 * @return Streamable batched into collections determined by the predicate supplied
     	 */
     	default <C extends Collection<T>>  Streamable<C> batchUntil(Predicate<T> predicate, Supplier<C> factory){
     		return fromStream(sequenceM().batchUntil(predicate,factory));
@@ -2702,7 +2702,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * Recover from an exception with an alternative value
     	 * <pre>
     	 * {@code 
-    	 * assertThat(SequenceM.of(1,2,3,4)
+    	 * assertThat(Streamable.of(1,2,3,4)
     						   .map(i->i+2)
     						   .map(u->{throw new RuntimeException();})
     						   .recover(e->"hello")
@@ -2710,7 +2710,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * }
     	 * </pre>
     	 * @param fn Function that accepts a Throwable and returns an alternative value
-    	 * @return SequenceM that can recover from an Exception
+    	 * @return Streamable that can recover from an Exception
     	 */
     	default Streamable<T> recover(final Function<Throwable, T> fn){
     		return fromStream(sequenceM().recover(fn));
@@ -2720,7 +2720,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * <pre>
     	 * {@code 
-    	 * assertThat(SequenceM.of(1,2,3,4)
+    	 * assertThat(Streamable.of(1,2,3,4)
     					.map(i->i+2)
     					.map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
     					.recover(IOException.class,e->"hello")
@@ -2731,7 +2731,7 @@ public interface Streamable<T> extends Iterable<T>{
     	 * 
     	 * @param exceptionClass Type to recover from
     	 * @param fn That accepts an error and returns an alternative value
-    	 * @return Sequence that can recover from a particular exception
+    	 * @return Streamable that can recover from a particular exception
     	 */
     	default <EX extends Throwable> Streamable<T> recover(Class<EX> exceptionClass, final Function<EX, T> fn){
     		return fromStream(sequenceM().recover(exceptionClass,fn));
@@ -2751,7 +2751,7 @@ public interface Streamable<T> extends Iterable<T>{
     				"42");
 
     	
-    		String result = SequenceM.of( 1,  2, 3)
+    		String result = Streamable.of( 1,  2, 3)
     				.retry(serviceMock)
     				.firstValue();
 
