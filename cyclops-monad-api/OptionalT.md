@@ -29,7 +29,7 @@ private OptionalT<Integer> fromDouble(Double d) {
 OptionalT<Integer> optionalInteger = OptionalT.fromAnyM(AnyM.<Double> ofNullable(4)).flatMap(this::fromDouble);
 ```
 
-OptionalT also support lifting. So if you can convert you A -> B function to OptionalT<A> -> OptionalT<B> 
+OptionalT also support lifting. So if you can convert you `A -> B` function to `OptionalT<A> -> OptionalT<B>` 
 function using lift method
 ```java
 Function<OptionalT<String>, OptionalT<Integer>> f = OptionalT.lift((String string) -> string.length());
