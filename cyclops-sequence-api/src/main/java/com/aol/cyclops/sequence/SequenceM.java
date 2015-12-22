@@ -35,6 +35,7 @@ import java.util.stream.StreamSupport;
 
 
 
+
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -49,7 +50,8 @@ import com.aol.cyclops.sequence.reactivestreams.CyclopsSubscriber;
 import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
 import com.aol.cyclops.sequence.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.sequence.spliterators.ReversingListSpliterator;
-import com.aol.cyclops.sequence.spliterators.ReversingRangeSpliterator;
+import com.aol.cyclops.sequence.spliterators.ReversingRangeIntSpliterator;
+import com.aol.cyclops.sequence.spliterators.ReversingRangeLongSpliterator;
 import com.aol.cyclops.sequence.streamable.Streamable;
 
 
@@ -1892,7 +1894,19 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @return Range SequenceM
 	 */
 	public static SequenceM<Integer> range(int start, int end){
-		ReversingRangeSpliterator range = new ReversingRangeSpliterator(start, end, false);
+		ReversingRangeIntSpliterator range = new ReversingRangeIntSpliterator(start, end, false);
+		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(range, false),range);
+
+	}
+	/**
+	 * Create an efficiently reversable Sequence that produces the integers between start 
+	 * and end
+	 * @param start Number of range to start from
+	 * @param end Number for range to end at
+	 * @return Range SequenceM
+	 */
+	public static SequenceM<Long> rangeLong(long start, long end){
+		ReversingRangeLongSpliterator range = new ReversingRangeLongSpliterator(start, end, false);
 		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(range, false),range);
 
 	}
