@@ -10,6 +10,7 @@ import org.pcollections.PMap;
 
 import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
 import com.aol.cyclops.comprehensions.comprehenders.InvokeDynamicComprehender;
+import com.aol.cyclops.comprehensions.comprehenders.MaterializedList;
 import com.aol.cyclops.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.lambda.api.Comprehender;
 import com.aol.cyclops.lambda.api.MonadicConverter;
@@ -44,14 +45,21 @@ class Yield<T> {
 				return process(yieldExecutor, context, s, lastExpansionName,index+1);
 			} else {
 				
-				return (T)comprehender._1.executeflatMap(comprehender._2,it ->{				 	
+				T result =  (T)comprehender._1.executeflatMap(comprehender._2,it ->{				 	
 						PMap newMap  =context.plus(lastExpansionName,it);
 						return process((ContextualExecutor)yieldExecutor, newMap, head.getFunction().executeAndSetContext( newMap), head.getName(),index+1);
 				 });
+				 return  (T)comprehender._1.map(result,this::takeFirst);
 			
 			}
 			
 		}
+	}
+	private <T> T takeFirst(Object o){
+		if(o instanceof MaterializedList){
+			return (T)((List)o).get(0);
+		}
+		return (T)o;
 	}
 
 	@AllArgsConstructor
