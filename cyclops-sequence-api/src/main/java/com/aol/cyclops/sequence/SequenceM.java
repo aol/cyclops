@@ -2577,6 +2577,14 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	
 	/**
 	 * Remove all occurances of the specified element from the SequenceM
+	 * <pre>
+	 * {@code
+	 * 	SequenceM.of(1,2,3,4,5,1,2,3).remove(1)
+	 * 
+	 *  //Streamable[2,3,4,5,2,3]
+	 * }
+	 * </pre>
+	 * 
 	 * @param t element to remove
 	 * @return Filtered Stream / SequenceM
 	 */
@@ -2587,7 +2595,6 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	/**
 	 * Generate the permutations based on values in the SequenceM
 	 * Makes use of Streamable to store intermediate stages in a collection 
-	 * (therfore this is not as efficient as calling permuations on a functional datastructure Stream implementation)
 	 * 
 	 * 
 	 * @return Permutations from this SequenceM
@@ -2597,19 +2604,70 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 		return streamable.map(s->s.sequenceM()).sequenceM();
 	 }
 	
+	/**
+	 * Return a Stream with elements before the provided start index removed, and elements after the provided
+	 * end index removed
+	 * 
+	 * <pre>
+	 * {@code 
+	 *   SequenceM.of(1,2,3,4,5,6).subStream(1,3);
+	 *   
+	 *   
+	 *   //SequenceM[2,3]
+	 * }
+	 * </pre>
+	 * 
+	 * @param start index inclusive
+	 * @param end index exclusive
+	 * @return Sequence between supplied indexes of original Sequence
+	 */
 	default SequenceM<T> subStream(int start, int end){
 		return this.limit(end).deleteBetween(0, start);
 	}
-	default SequenceM<T> subStream(int start){
-		return deleteBetween(0, start);
-	}
+	
+	/**
+	 * <pre>
+	 * {@code
+	 *   SequenceM.of(1,2,3).combinations(2)
+	 *   
+	 *   //SequenceM[SequenceM[1,2],SequenceM[1,3],SequenceM[2,3]]
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param size of combinations
+	 * @return All combinations of the elements in this stream of the specified size
+	 */
 	default  SequenceM<SequenceM<T>> combinations(int size){
 		Streamable<Streamable<T>> streamable = Streamable.fromStream(this).combinations(size);
+		return streamable.map(s->s.sequenceM()).sequenceM();
+	}
+	/**
+	 * <pre>
+	 * {@code
+	 *   SequenceM.of(1,2,3).combinations()
+	 *   
+	 *   //SequenceM[SequenceM[],SequenceM[1],SequenceM[2],SequenceM[3].SequenceM[1,2],SequenceM[1,3],SequenceM[2,3]
+	 *   			,SequenceM[1,2,3]]
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @return All combinations of the elements in this stream
+	 */
+	default  SequenceM<SequenceM<T>> combinations(){
+		Streamable<Streamable<T>> streamable = Streamable.fromStream(this).combinations();
 		return streamable.map(s->s.sequenceM()).sequenceM();
 	}
 	
 	
 	
+	
+	/**
+	 * [equivalent to count]
+	 * 
+	 * @return size
+	 */
 	default int size(){
 		return this.toList().size();
 	}

@@ -18,7 +18,7 @@ import com.aol.cyclops.monad.AnyM;
 public class DoListsTest {
 	
 	@Test
-	public void optionalList(){
+	public void optionalListMultiReturn(){
 		AnyM<Integer> anyM = Do.add(Optional.of(1))
 									 .withStream(i->Stream.of(i,2))
 									 .yield(a->b-> a+b);

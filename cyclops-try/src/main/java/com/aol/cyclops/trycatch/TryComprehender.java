@@ -78,8 +78,8 @@ public class TryComprehender implements Comprehender<Try> {
 	@Override
 	public Object resolveForCrossTypeFlatMap(Comprehender comp,Try apply){
 		
-		return apply.matchType(c->c.isType( (Success s) -> comp.of(apply.get()) )
-								   .isType( (Failure f) -> comp.empty()));
+		return apply.matches(c->c.isType( (Success s) -> comp.of(apply.get()) ).anyValues(),
+							 c->c.isType( (Failure f) -> comp.empty()).anyValues());
 	}
 	
 

@@ -31,16 +31,32 @@ import com.aol.cyclops.streams.StreamUtils;
 public class SequenceMTest {
 	
 	@Test
-    public void shouldComputePermutationsOfEmptyStream() {
+    public void emptyAllCombinations() {
         assertThat(Streamable.of().permutations().map(s->s.toList()).toList(),equalTo(Arrays.asList()));
     }
 
     @Test
-    public void shouldComputePermutationsOfNonEmptyStream() {
+    public void allCombinations3() {
     	System.out.println(Streamable.of(1, 2, 3).permutations().map(s->s.toList()).toList());
         assertThat(Streamable.of(1, 2, 3).permutations().map(s->s.toList()).toList(),
         		equalTo(Streamable.of(Streamable.of(1, 2, 3),
         		Streamable.of(1, 3, 2), Streamable.of(2, 1, 3), Streamable.of(2, 3, 1), Streamable.of(3, 1, 2), Streamable.of(3, 2, 1)).map(s->s.toList()).toList()));
+    }
+    
+
+    
+
+  
+
+    @Test
+    public void emptyCombinations() {
+        assertThat(Streamable.of().combinations(2).toList(),equalTo(Arrays.asList()));
+    }
+
+    @Test
+    public void combinations2() {
+        assertThat(Streamable.of(1, 2, 3).combinations(2).map(s->s.toList()).toList(),
+                equalTo(Arrays.asList(Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3))));
     }
    
 	@Test

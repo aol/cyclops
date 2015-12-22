@@ -15,7 +15,7 @@ import lombok.val;
 
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.sequence.streamable.ToStream;
 import com.aol.cyclops.value.ValueObject;
 
 /**
@@ -42,7 +42,7 @@ import com.aol.cyclops.value.ValueObject;
  * @param <T> Return type (success)
  * @param <X> Base Error type
  */
-public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, Streamable<T> {
+public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, ToStream<T> {
 
 	/**
 	 * @return This monad, wrapped as AnyM of Success

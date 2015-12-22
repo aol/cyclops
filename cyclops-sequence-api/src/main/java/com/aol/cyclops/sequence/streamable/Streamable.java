@@ -99,52 +99,8 @@ import com.aol.cyclops.sequence.future.FutureOperations;
  *
  * @param <T> Data type for Stream
  */
-public interface Streamable<T> extends Iterable<T>{
+public interface Streamable<T> extends ToStream<T>{
 
-	default Iterator<T> iterator(){
-		return stream().iterator();
-	}
-	default  Object getStreamable(){
-		return this;
-	}
-	default SequenceM<T> reveresedSequenceM(){
-		return SequenceM.fromStream(reveresedStream());
-	}
-	/**
-	 * @return SequenceM from this Streamable
-	 */
-	default SequenceM<T> sequenceM(){
-		return SequenceM.fromStream(stream());
-	}
-	default Stream<T> reveresedStream(){
-		Object streamable = getStreamable();
-		if(streamable instanceof List){
-			return StreamSupport.stream(new ReversedIterator((List)streamable).spliterator(),false);
-		}
-		if(streamable instanceof Object[]){
-			List arrayList = Arrays.asList((Object[])streamable);
-			return StreamSupport.stream(new ReversedIterator(arrayList).spliterator(),false);
-		}
-		return SeqUtils.reverse(stream());
-	}
-	default boolean isEmpty(){
-		return this.sequenceM().isEmpty();
-	}
-	/**
-	 * @return New Stream
-	 */
-	default Stream<T> stream(){
-		Object streamable = getStreamable();
-		if(streamable instanceof Stream)
-			return (Stream)streamable;
-		if(streamable instanceof Iterable)
-			return StreamSupport.stream(((Iterable)streamable).spliterator(), false);
-		return  new InvokeDynamic().stream(streamable).orElseGet( ()->
-								(Stream)StreamSupport.stream(AsDecomposable.asDecomposable(streamable)
-												.unapply()
-												.spliterator(),
-													false));
-	}
 	
 	/**
 	 * (Lazily) Construct a Streamable from a Stream.
@@ -188,27 +144,91 @@ public interface Streamable<T> extends Iterable<T>{
 		return of();
 	}
 	/**
+	 * <pre>
+	 * {@code 
+	 *   Streamable.of(1,2,3,4,5).tail()
+	 *   
+	 *   //Streamable[2,3,4,5]
+	 * }</pre>
+	 * 
 	 * @return The tail of this Streamable
 	 */
 	default Streamable<T> tail(){
 		return Streamable.fromStream(sequenceM().headAndTail().tail());
 	}
 	/**
+	 * <pre>
+	 * {@code 
+	 * Streamable.of(1,2,3,4,5).head()
+	 *  
+	 *  //1
+	 * }</pre>
 	 * @return The head of this Streamable
 	 */
 	default T head(){
 		return sequenceM().headAndTail().head();
 	}
 	
+	/**
+	 * Create a new Streamablw with all elements in this Streamable followed by the elements in the provided Streamable
+	 * 
+	 * <pre>
+	 * {@code 
+	 * 	Streamable.of(1,2,3).appendAll(Streamable.of(4,5,6))
+	 * 
+	 *   //Streamable[1,2,3,4,5,6]
+	 * }
+	 * </pre>
+	 * 
+	 * @param t Streamable to append
+	 * @return New Streamable with provided Streamable appended
+	 */
 	default Streamable<T> appendAll(Streamable<T> t){
 		return Streamable.fromStream(this.sequenceM().appendStream(t.sequenceM()));
 	}
+	/**
+	 * Remove all occurances of the specified element from the SequenceM
+	 * <pre>
+	 * {@code
+	 * 	Streamable.of(1,2,3,4,5,1,2,3).remove(1)
+	 * 
+	 *  //Streamable[2,3,4,5,2,3]
+	 * }
+	 * </pre>
+	 * 
+	 * @param t element to remove
+	 * @return Filtered Stream / SequenceM
+	 */
 	default Streamable<T> remove(T t){
 		return Streamable.fromStream( sequenceM().remove(t));
 	}
+	/**
+	 * Prepend given values to the start of the Stream
+	 * <pre>
+	 * {@code 
+	 * List<String> result = 	Streamable.of(1,2,3)
+	 * 									 .prepend(100,200,300)
+										 .map(it ->it+"!!")
+										 .collect(Collectors.toList());
+
+			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
+	 * }
+	 * @param values to prepend
+	 * @return Streamable with values prepended
+	 */
 	default Streamable<T> prepend(T t){
 		return Streamable.fromStream( sequenceM().prepend(t));
 	}
+	/*
+	 * Return the distinct Stream of elements
+	 * 
+	 * <pre>
+	 * {@code List<Integer> list =  Streamable.of(1,2,2,2,5,6)
+	 *           	 						 .distinct()
+	 *				 						 .collect(Collectors.toList()); 
+	 * }
+	 *</pre>
+	 */
 	default Streamable<T> distinct(){
 		return Streamable.fromStream( sequenceM().distinct());
 	}
@@ -263,11 +283,31 @@ public interface Streamable<T> extends Iterable<T>{
 		
 		return sequenceM().collect(collector);
 	}
+	/**
+	 * Add the contents of this Stream to the mutable collection supplied by 
+	 * the provided collectionFactory
+	 * 
+	 * <pre>
+	 * {@code 
+	 *   Streamable.of(1,2,3).toCollection( ()->new ArrayList());
+	 *   
+	 *   //ArrayList[1,2,3]
+	 * }
+	 * </pre>
+	 * 
+	 * @param collectionFactory
+	 * @return contents of this Stream in a mutable collection
+	 */
 	default <C extends Collection<T>> C toCollection(Supplier<C> collectionFactory){
 		
 		return sequenceM().toCollection(collectionFactory);
 	}
 	
+	/**
+	 * Generate the permutations based on values in the Streamable
+	
+	 * 
+	 */
     default Streamable<Streamable<T>> permutations() {
         if (isEmpty()) {
             return Streamable.empty();
@@ -284,15 +324,63 @@ public interface Streamable<T> extends Iterable<T>{
             }
         }
     }
+	/**
+	 * Return a Streamable with elements before the provided start index removed, and elements after the provided
+	 * end index removed
+	 * 
+	 * <pre>
+	 * {@code 
+	 *   Streamable.of(1,2,3,4,5,6).subStream(1,3);
+	 *   
+	 *   
+	 *   //Streamable[2,3]
+	 * }
+	 * </pre>
+	 * 
+	 * @param start index inclusive
+	 * @param end index exclusive
+	 * @return Sequence between supplied indexes of original Sequence
+	 */
     default Streamable<T> subStream(int start, int end){
     	return Streamable.fromStream(sequenceM().subStream(start,end));
     }
+    /**
+	 * Gets the element at index (it must be present)
+	 * 
+	 * <pre>
+	 * {@code 
+	 * Streamable.of(1,2,3,4,5).get(2)
+	 * //3
+	 * }
+	 * </pre>
+	 * 
+	 * @param index to extract element from
+	 * @return Element and Sequence
+	 */
     default T get(int index){
     	return this.sequenceM().get(index).v1;
     }
+    /**
+	 * [equivalent to count]
+	 * 
+	 * @return size
+	 */
     default int size(){
     	return sequenceM().size();
     }
+    /**
+	 * <pre>
+	 * {@code
+	 *   Streamable.of(1,2,3).combinations(2)
+	 *   
+	 *   //Streamable[Streamable[1,2],Streamable[1,3],Streamable[2,3]]
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param size of combinations
+	 * @return All combinations of the elements in this stream of the specified size
+	 */
     default  Streamable<Streamable<T>> combinations(int size) {
         if (size == 0) {
             return Streamable.of(Streamable.empty()); 
@@ -301,6 +389,23 @@ public interface Streamable<T> extends Iterable<T>{
                 <Streamable<T>> flatMap(i -> subStream(i+1, size()).combinations( size - 1).map(t -> t.prepend(get(i))).sequenceM()));
         }
     }
+    /**
+	 * <pre>
+	 * {@code
+	 *   Streamable.of(1,2,3).combinations()
+	 *   
+	 *   //Streamable[Streamable[],Streamable[1],Streamable[2],Streamable[3],Streamable[1,2],Streamable[1,3],Streamable[2,3]
+	 *   			,Streamable[1,2,3]]
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @return All combinations of the elements in this stream
+	 */
+    default  Streamable<Streamable<T>> combinations(){
+		return range(0, size()+1).map(this::combinations).flatMap(s->s);
+	    
+	}
     
     
     	/**
@@ -427,6 +532,20 @@ public interface Streamable<T> extends Iterable<T>{
     		
     		return sequenceM().splitAt(where).map1(s->fromStream(s)).map2(s->fromStream(s));
     	}
+    	/**
+    	 * Split this Streamable after the first element (if present)
+    	 * 
+    	 * <pre>
+    	 * {@code 
+    	 *  Streamable.of(1,2,3).splitAtHead()
+    	 *  
+    	 *  //Tuple[1,Streamable[2,3]]
+    	 *  
+    	 * }</pre>
+    	 * 
+    	 * 
+    	 * @return Split Streamable
+    	 */
     	default Tuple2<Optional<T>, Streamable<T>> splitAtHead() {
             return sequenceM().splitAtHead().map2(s->fromStream(s));
         }

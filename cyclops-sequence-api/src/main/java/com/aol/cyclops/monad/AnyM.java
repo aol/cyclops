@@ -29,6 +29,7 @@ import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.Unwrapable;
 import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.sequence.streamable.ToStream;
 
 /**
  * 
@@ -63,7 +64,7 @@ public interface AnyM<T> extends Unwrapable{
 	 * @param streamable wrap
 	 * @return
 	 */
-	public static <T> AnyM<T> fromStreamable(Streamable<T> streamable){
+	public static <T> AnyM<T> fromStreamable(ToStream<T> streamable){
 		 Objects.requireNonNull(streamable);
 		return AnyMFactory.instance.monad(streamable);
 	}
