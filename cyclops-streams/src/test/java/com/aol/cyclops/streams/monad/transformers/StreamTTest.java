@@ -45,12 +45,10 @@ public class StreamTTest {
 	@Test
 	public void filterFail(){
 		StreamT<Integer> streamT = StreamT.of(AnyM.ofMonad(Optional.of(Stream.of(10))));
-	//	assertThat(streamT.filter(num->num<10).unwrap().<Optional<Stream<String>>>unwrap()
-	//					.get().collect(Collectors.toList()),  equalTo(Arrays.asList()));
+		assertThat(streamT.filter(num->num<10).unwrap().<Optional<Stream<String>>>unwrap()
+						.get().collect(Collectors.toList()),  equalTo(Arrays.asList()));
 		
-		AnyM<Integer> integer = AnyM.ofMonad(streamT);
-		integer.map(i->i+1);
-		System.out.println(integer.toSequence().toList());
+		
 	}
 	@Test
 	public void filterSuccess(){

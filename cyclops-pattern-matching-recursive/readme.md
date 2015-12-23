@@ -24,6 +24,18 @@ compile 'com.aol.cyclops:cyclops-pattern-matching-recursive:x.y.z'
 ```
 # Overview
 
+## With the Matchable interface 
+
+```java
+Matchable.of(Optional.of(4))
+         .mayMatch(
+         		o-> o.isEmpty().then(i->"empty"),
+         		o-> o.hasValues(1).then(i->"one"),
+         		o-> o.hasValues(2).then(i->"two"),
+         		o-> o.hasValuesWhere(i->i>2).then(i->"many"),
+			).orElse("error")
+```
+
 <img width="880" alt="screen shot 2015-07-22 at 10 14 06 pm" src="https://cloud.githubusercontent.com/assets/9964792/8837606/0a2d9368-30bf-11e5-9690-eaa96bb56cc5.png">
 
 

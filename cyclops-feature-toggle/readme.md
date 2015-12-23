@@ -62,7 +62,7 @@ Now elsewhere you can check if the switch is enabled or disabled
 
 ### More advanced usage
  
-Switch can abstract away entirely the logic for managing whether a feature is enabled or disabled. Users can just code the enabled case and Switch will automatically make sure nothing happens when disabled.
+FeatureToggle  can abstract away entirely the logic for managing whether a feature is enabled or disabled. Users can just code the enabled case and FeatureToggle  will automatically make sure nothing happens when disabled.
 
 The statement above can be rewritten as -
 ```java
@@ -71,7 +71,7 @@ The statement above can be rewritten as -
 ```
 ### Example usage
 
-Creating the Switch 
+Creating the FeatureToggle 
 
 ```java
     public synchronized FeatureToggle<Supplier<List<DomainExpression>>> readFile() {
