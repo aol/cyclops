@@ -2,9 +2,9 @@ package com.aol.cyclops.streams.anyM;
 import static com.aol.cyclops.internal.AsGenericMonad.fromStream;
 import static com.aol.cyclops.internal.AsGenericMonad.monad;
 import static com.aol.cyclops.monad.AnyM.collectionToAnyMList;
-import static com.aol.cyclops.monad.AnyM.completableFutureToAnyMList;
-import static com.aol.cyclops.monad.AnyM.optionalToAnyMList;
-import static com.aol.cyclops.monad.AnyM.streamToAnyMList;
+import static com.aol.cyclops.monad.AnyM.listFromCompletableFuture;
+import static com.aol.cyclops.monad.AnyM.listFromOptional;
+import static com.aol.cyclops.monad.AnyM.listFromStream;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -206,7 +206,7 @@ public class MonadTest {
                 .collect(Collectors.toList());
        
         
-        AnyM<Stream<Integer>> futureList = AnyM.sequence(completableFutureToAnyMList(futures));
+        AnyM<Stream<Integer>> futureList = AnyM.sequence(listFromCompletableFuture(futures));
         
  
         List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>unwrap().join();
@@ -235,7 +235,7 @@ public class MonadTest {
         
        
         
-        AnyM<Stream<Integer>> result = AnyM.sequence(streamToAnyMList(asList(Stream.of(1,2),Stream.of(3,4))));
+        AnyM<Stream<Integer>> result = AnyM.sequence(listFromStream(asList(Stream.of(1,2),Stream.of(3,4))));
         
  
        
@@ -251,7 +251,7 @@ public class MonadTest {
         
 
         
-        AnyM<Stream<Integer>> futureList = AnyM.sequence(optionalToAnyMList(asList(Optional.of(7),Optional.of(8),Optional.of(9))));
+        AnyM<Stream<Integer>> futureList = AnyM.sequence(listFromOptional(asList(Optional.of(7),Optional.of(8),Optional.of(9))));
         
  
         assertThat(futureList.toSequence().toList(),equalTo(Arrays.asList(7,8,9)));
@@ -268,7 +268,7 @@ public class MonadTest {
                 .collect(Collectors.toList());
 
        
-        AnyM<List<String>> futureList = AnyM.traverse(completableFutureToAnyMList(futures), (Integer i) -> "hello" +i);
+        AnyM<List<String>> futureList = AnyM.traverse(listFromCompletableFuture(futures), (Integer i) -> "hello" +i);
    
         List<String> collected = futureList.<CompletableFuture<List<String>>>unwrap().join();
         assertThat(collected.size(),equalTo( list.size()));
