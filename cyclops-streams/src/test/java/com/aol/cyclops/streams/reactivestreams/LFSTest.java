@@ -3,6 +3,7 @@ package com.aol.cyclops.streams.reactivestreams;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.simple.react.stream.traits.LazyFutureStream;
@@ -10,7 +11,7 @@ import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 
 public class LFSTest {
 
-	@Test
+	@Test @Ignore
 	public void lfs() throws InterruptedException{
 		AsyncRetryExecutor retry =new AsyncRetryExecutor(Executors.newScheduledThreadPool(
 		           5)).withExponentialBackoff(1000, 5).withMaxDelay(10_000).withMaxRetries(3);

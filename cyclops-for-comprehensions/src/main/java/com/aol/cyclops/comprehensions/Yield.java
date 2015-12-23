@@ -49,14 +49,31 @@ class Yield<T> {
 						PMap newMap  =context.plus(lastExpansionName,it);
 						return process((ContextualExecutor)yieldExecutor, newMap, head.getFunction().executeAndSetContext( newMap), head.getName(),index+1);
 				 });
-				 return  (T)comprehender._1.map(result,this::takeFirst);
+				try{
+					return  (T)comprehender._1.map(result,this::takeFirst);
+				 
+				}catch(Goto g){
+					return (T)comprehender._1.empty();
+				}
 			
 			}
 			
 		}
 	}
+	
+	private static class Goto extends RuntimeException{
+
+		@Override
+		public synchronized Throwable fillInStackTrace() {
+			return null;
+		}
+		
+	}
 	private <T> T takeFirst(Object o){
 		if(o instanceof MaterializedList){
+			if(((List)o).size()==0)
+				throw new Goto();
+			
 			return (T)((List)o).get(0);
 		}
 		return (T)o;

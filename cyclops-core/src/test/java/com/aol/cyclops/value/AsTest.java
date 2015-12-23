@@ -59,7 +59,7 @@ public class AsTest {
 					.mayMatch(
 							c->c.hasValues(1,2,3).then(i->"hello"),
 							c->c.hasValues(4,5,6).then(i->"goodbye")
-							).orElse("default"),equalTo("default"));
+							).orElse("default"),equalTo("hello"));
 			
 	
 	}
@@ -113,7 +113,7 @@ public class AsTest {
 		assertThat(As.asValue(new Child(10,20)).<Parent,Integer>matches(c-> 
 				    c.isType((Child r)-> r.nextVal)
 				     .hasValues(10,20))
-		,equalTo(10));
+		,equalTo(20));
 	}
 	@Test
 	public void testAsValue_MatchDefault() {

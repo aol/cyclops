@@ -7,7 +7,6 @@ import lombok.val;
 import org.junit.Test;
 
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.monad.AnyMonads;
 
 public class LiftTest {
 
@@ -18,7 +17,7 @@ public class LiftTest {
 	@Test
 	public void testLift(){
 		
-		val add = AnyMonads.liftM2(this::add);
+		val add = AnyM.liftM2(this::add);
 		
 		AnyM<Integer> result = add.apply(AnyM.ofMonad(FeatureToggle.enable(2)), AnyM.ofMonad(FeatureToggle.enable(3)));
 		assertThat(result.<FeatureToggle<Integer>>unwrap().get(),equalTo(5));
@@ -28,7 +27,7 @@ public class LiftTest {
 	
 	
 	public void testLiftDisabled(){
-		val divide = AnyMonads.liftM2(this::add);
+		val divide = AnyM.liftM2(this::add);
 		
 		AnyM<Integer> result = divide.apply(AnyM.ofMonad(FeatureToggle.enable(2)), AnyM.ofMonad(FeatureToggle.disable(4)));
 		assertThat(result.<FeatureToggle<Integer>>unwrap().isDisabled(),equalTo(true));

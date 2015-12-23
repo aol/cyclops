@@ -24,7 +24,7 @@ public class LiftTest {
 	
 	@Test
 	public void testLift(){
-		val add =	AnyMonads.liftM2(this::add);
+		val add =	AnyM.liftM2(this::add);
 		
 		AnyM<Integer> result = add.apply(AnyM.fromIterable(Try.of(2, RuntimeException.class)), AnyM.fromIterable(Try.of(3,RuntimeException.class)));
 		assertThat(result.<Try<Integer,RuntimeException>>unwrap().get(),equalTo(5));
@@ -32,7 +32,7 @@ public class LiftTest {
 	
 	@Test
 	public void testLiftError(){
-		val divide = AnyMonads.liftM2(this::divide);
+		val divide = AnyM.liftM2(this::divide);
 		
 		AnyM<Integer> result = divide.apply(AnyM.fromIterable(Try.of(2, ArithmeticException.class)),AnyM.fromIterable(Try.of(0,ArithmeticException.class)));
 		System.out.println(result);
@@ -41,7 +41,7 @@ public class LiftTest {
 	
 	@Test
 	public void testLiftErrorAndStream(){
-		val divide = AnyMonads.liftM2(this::divide);
+		val divide = AnyM.liftM2(this::divide);
 		
 		AnyM<Integer> result = divide.apply(AnyM.fromIterable(Try.of(20, ArithmeticException.class)), AnyM.fromStream(Stream.of(4,1,2,3,0)));
 		System.out.println(result);
@@ -51,7 +51,7 @@ public class LiftTest {
 	@Test
 	public void testLiftAndStream(){
 		
-		val divide = AnyMonads.liftM2(this::divide);
+		val divide = AnyM.liftM2(this::divide);
 		
 		AnyM<Integer> result = divide.apply(AnyM.fromIterable(Try.of(2, ArithmeticException.class)), AnyM.fromStream(Stream.of(10,1,2,3)));
 		
@@ -61,7 +61,7 @@ public class LiftTest {
 	
 	@Test(expected=ArithmeticException.class)
 	public void testLiftNoExceptionType(){
-		val divide = AnyMonads.liftM2(this::divide);
+		val divide = AnyM.liftM2(this::divide);
 		
 		AnyM<Integer> result = divide.apply(AnyM.fromIterable(Try.of(2)),AnyM.fromIterable(Try.of(0)));
 		System.out.println(result);

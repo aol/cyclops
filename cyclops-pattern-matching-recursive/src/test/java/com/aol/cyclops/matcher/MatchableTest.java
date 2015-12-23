@@ -1,21 +1,20 @@
 package com.aol.cyclops.matcher;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Value;
 
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
-import com.aol.cyclops.matcher.builders.CheckValues;
-import com.aol.cyclops.matcher.builders.Matching;
 import com.aol.cyclops.matcher.recursive.Matchable;
-import com.aol.cyclops.matcher.recursive.RecursiveMatcher;
+
 
 public class MatchableTest {
 
@@ -87,5 +86,23 @@ public class MatchableTest {
 		
 		assertThat(result,equalTo("rec"));
 	}
-
+	
+	@Test
+	public void matchType(){
+		int result = Matchable.of(new Child(10,20)).matches(
+									c-> c.isType( (Child child) -> child.val).hasValues(10,20)
+									);
+		
+		assertThat(result,equalTo(10));
+	}
+	
+	@Value
+	static class Child extends Parent{
+		int nextVal;
+		public Child(int val,int nextVal) { super(val); this.nextVal = nextVal;}
+	}
+	@AllArgsConstructor(access=AccessLevel.PACKAGE)
+	static class Parent{
+		int val;
+	}
 }

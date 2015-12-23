@@ -127,10 +127,24 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return
 	 */
 	public final  AnyM<Character> flatMapCharSequence(Function<? super T,CharSequence> fn) {
-		return monad.liftAndBind(fn).anyM().map(this::takeFirst);
+		try{
+			return monad.liftAndBind(fn).anyM().map(this::takeFirst);
+		}catch(GotoAsEmpty e){
+			return empty();
+		}
+	}
+	private static class GotoAsEmpty extends RuntimeException{
+
+		@Override
+		public synchronized Throwable fillInStackTrace() {
+			return null;
+		}
+		
 	}
 	private <T> T takeFirst(Object o){
 		if(o instanceof MaterializedList){
+			if(((List)o).size()==0)
+				throw new GotoAsEmpty();
 			return (T)((List)o).get(0);
 		}
 		return (T)o;
@@ -160,7 +174,11 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return
 	 */
 	public final  AnyM<String> flatMapFile(Function<? super T,File> fn) {
-		return monad.liftAndBind(fn).anyM().map(this::takeFirst);
+		try{
+			return monad.liftAndBind(fn).anyM().map(this::takeFirst);
+		}catch(GotoAsEmpty e){
+			return empty();
+		}
 	}
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -183,7 +201,11 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return
 	 */
 	public final  AnyM<String> flatMapURL(Function<? super T, URL> fn) {
-		return monad.liftAndBind(fn).anyM().map(this::takeFirst);
+		try{
+			return monad.liftAndBind(fn).anyM().map(this::takeFirst);
+		}catch(GotoAsEmpty e){
+			return empty();
+		}
 	}
 	/**
 	  *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -208,7 +230,11 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return
 	 */
 	public final  AnyM<String> flatMapBufferedReader(Function<? super T,BufferedReader> fn) {
-		return monad.liftAndBind(fn).anyM().map(this::takeFirst);
+		try{
+			return monad.liftAndBind(fn).anyM().map(this::takeFirst);
+		}catch(GotoAsEmpty e){
+			return empty();
+		}
 	}
 	
 	/**
@@ -256,7 +282,11 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return 
 	 */
 	public final <R> AnyM<R> flatMap(Function<? super T,AnyM<? extends R>> fn) {
-		return monad.flatMap(in -> fn.apply(in).unwrap()).anyM().map(this::takeFirst);
+		try{
+			return monad.flatMap(in -> fn.apply(in).unwrap()).anyM().map(this::takeFirst);
+		}catch(GotoAsEmpty e){
+			return empty();
+		}
 	}
 	
 	/**
@@ -266,7 +296,11 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return
 	 */
 	public final <R> AnyM<R> flatMapStream(Function<? super T,BaseStream<? extends R,?>> fn) {
-		return monad.flatMap(in -> fn.apply(in)).anyM().map(this::takeFirst);
+		try{
+			return monad.flatMap(in -> fn.apply(in)).anyM().map(this::takeFirst);
+		}catch(GotoAsEmpty e){
+			return empty();
+		}
 	}
 	/**
 	 * Convenience method to allow method reference support, when flatMap return type is a Streamable
@@ -275,7 +309,11 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return
 	 */
 	public final <R> AnyM<R> flatMapStreamable(Function<? super T,Streamable<R>> fn) {
-		return monad.flatMap(in -> fn.apply(in)).anyM().map(this::takeFirst);
+		try{
+			return monad.flatMap(in -> fn.apply(in)).anyM().map(this::takeFirst);
+		}catch(GotoAsEmpty e){
+			return empty();
+		}
 	}
 	/**
 	 * flatMapping to a Stream will result in the Stream being converted to a List, if the host Monad
@@ -300,7 +338,11 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return
 	 */
 	public final <R> AnyM<R> flatMapCollection(Function<? super T,Collection<? extends R>> fn) {
-		return monad.flatMap(in -> fn.apply(in)).anyM().map(this::takeFirst);
+		try{
+			return monad.flatMap(in -> fn.apply(in)).anyM().map(this::takeFirst);
+		}catch(GotoAsEmpty e){
+			return empty();
+		}
 	}
 	/**
 	 * Convenience method to allow method reference support, when flatMap return type is a Optional

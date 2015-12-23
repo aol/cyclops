@@ -39,7 +39,7 @@ public class UnwrapTest {
 	}
 	@Test
 	public void unwrapOptionalList(){
-		Optional<List<String>> stream =AnyM.streamOf(Optional.of(Arrays.asList("hello","world")))
+		Optional<List<String>> stream =AnyM.fromOptional(Optional.of(Arrays.asList("hello","world")))
 												.<String>toSequence()
 												.toOptional();
 		assertThat(stream.get(),equalTo(Arrays.asList("hello","world")));
@@ -53,7 +53,7 @@ public class UnwrapTest {
 	}
 	@Test
 	public void unwrapCompletableFutureList(){
-		CompletableFuture<List<String>> cf = AnyM.streamOf(CompletableFuture.completedFuture(Arrays.asList("hello","world")))
+		CompletableFuture<List<String>> cf = AnyM.fromCompletableFuture(CompletableFuture.completedFuture(Arrays.asList("hello","world")))
 												.<String>toSequence()
 												.toCompletableFuture();
 		assertThat(cf.join(),equalTo(Arrays.asList("hello","world")));

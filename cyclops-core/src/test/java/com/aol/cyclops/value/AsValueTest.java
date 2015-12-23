@@ -12,6 +12,8 @@ import lombok.AllArgsConstructor;
 import lombok.Value;
 
 import org.junit.Test;
+
+import com.aol.cyclops.matcher.recursive.Matchable;
 public class AsValueTest {
 
 	@Test
@@ -31,6 +33,8 @@ public class AsValueTest {
 	@Test
 	public void testAsValue_Match() {
 		List list = new ArrayList();
+		
+		
 		
 		assertThat(AsValue.asValue(new Child(10,20)).matches(c-> 
 			c.isType( (Child child) -> child.val).hasValues(10,20))

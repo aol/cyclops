@@ -23,17 +23,19 @@ import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 
 import com.aol.cyclops.closures.mutable.Mutable;
+import com.aol.cyclops.comprehensions.donotation.Doable;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.matcher.builders.MatchingInstance;
 import com.aol.cyclops.matcher.builders.PatternMatcher;
 import com.aol.cyclops.matcher.builders._Simpler_Case;
 import com.aol.cyclops.sequence.Monoid;
-import com.aol.cyclops.value.StreamableValue;
+import com.aol.cyclops.sequence.streamable.ToStream;
+import com.aol.cyclops.value.ValueObject;
 import com.nurkiewicz.lazyseq.LazySeq;
 
 
 
-public interface CachedValues extends Iterable, StreamableValue, Comparable<CachedValues>{
+public interface CachedValues extends Iterable, ValueObject, ToStream, Doable, Comparable<CachedValues>{
 
 	
 	

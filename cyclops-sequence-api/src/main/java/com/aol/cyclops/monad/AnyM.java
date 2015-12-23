@@ -254,7 +254,9 @@ public interface AnyM<T> extends Unwrapable, ToStream<T>, ApplyM<T>,FlatMapM<T>,
 	 */
 	 <NT> SequenceM<NT> toSequence(Function<T,Stream<NT>> fn);
 	/**
-	 *  <pre>{@code Optional<List<Integer>>  into Stream<Integer> }</pre>
+	 *  <pre>
+	 *  {@code Optional<List<Integer>>  into Stream<Integer> }
+	 *  </pre>
 	 * Less type safe equivalent, but may be more accessible than toSequence(fn) i.e. 
 	 * <pre>
 	 * {@code 

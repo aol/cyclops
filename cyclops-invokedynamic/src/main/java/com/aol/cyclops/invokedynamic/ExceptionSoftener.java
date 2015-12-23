@@ -1,10 +1,6 @@
 package com.aol.cyclops.invokedynamic;
 
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
-import java.io.IOException;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -61,7 +57,6 @@ import org.jooq.lambda.fi.util.function.CheckedLongToDoubleFunction;
 import org.jooq.lambda.fi.util.function.CheckedLongToIntFunction;
 import org.jooq.lambda.fi.util.function.CheckedPredicate;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
-import org.junit.Test;
 
 /**
  * Utility class for softening exceptions
