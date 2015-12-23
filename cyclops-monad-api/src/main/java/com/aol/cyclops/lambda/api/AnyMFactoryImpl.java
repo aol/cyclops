@@ -1,6 +1,8 @@
 package com.aol.cyclops.lambda.api;
 
+import com.aol.cyclops.comprehensions.comprehenders.InvokeDynamicComprehender;
 import com.aol.cyclops.comprehensions.converters.MonadicConverters;
+import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.monad.AnyMFactory;
@@ -16,7 +18,11 @@ public class AnyMFactoryImpl implements AnyMFactory{
 	 */
 	@Override
 	public <T> AnyM<T> of(Object o) {
-		return new MonadWrapper<>(new MonadicConverters().convertToMonadicForm(o)).anyM();
+		
+		if(new ComprehenderSelector().selectComprehender(
+				o) instanceof InvokeDynamicComprehender)
+			return new MonadWrapper<>(new MonadicConverters().convertToMonadicForm(o)).anyM();
+		return new MonadWrapper<>(o).anyM();
 	}
 	/* This will accept the supplied monad as is
 	 * 

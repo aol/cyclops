@@ -634,6 +634,7 @@ public interface AnyM<T> extends Unwrapable, ToStream<T>, ApplyM<T>,FlatMapM<T>,
 	 */
 	public static <T> AnyM<T> fromIterable(Iterable<T> iterable){
 		Objects.requireNonNull(iterable);
+		
 		return AnyMFactory.instance.of(iterable);
 	}
 	/**
