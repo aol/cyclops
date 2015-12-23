@@ -23,7 +23,7 @@ public interface ApplyM<T> {
 	 * @param fn Stream of Functions to apply
 	 * @return AnyM with functions applied
 	 */
-	<R> AnyM<R> applyM(Stream<Function<? super T,? extends R>> fn);
+	public <R> AnyM<R> applyMStream(Stream<Function<? super T,? extends R>> fn);
 	/**
 	 * Apply function/s inside supplied Monad to data in current Monad
 	 * 
@@ -40,8 +40,8 @@ public interface ApplyM<T> {
 	 * @param fn Iterable of Functions to apply
 	 * @return AnyM with functions applied
 	 */
-	 default <R> AnyM<R> applyM(Iterable<Function<? super T,? extends R>> fn){
-		 return applyM(StreamSupport.stream(fn.spliterator(),false));
+	 default <R> AnyM<R> applyMIterable(Iterable<Function<? super T,? extends R>> fn){
+		 return applyMStream(StreamSupport.stream(fn.spliterator(),false));
 	 }
 	 /**
 		 * Apply function/s inside supplied Monad to data in current Monad
@@ -57,7 +57,7 @@ public interface ApplyM<T> {
 		 * @param fn
 		 * @return
 		 */
-	 <R> AnyM<R> applyM(Optional<Function<? super T,? extends R>> fn);
+	public <R> AnyM<R> applyMOptional(Optional<Function<? super T,? extends R>> fn);
 	 /**
 		 * Apply function/s inside supplied Monad to data in current Monad
 		 * 
@@ -71,6 +71,6 @@ public interface ApplyM<T> {
 		 * @param fn
 		 * @return
 		 */
-	 <R> AnyM<R> applyM(CompletableFuture<Function<? super T,? extends R>> fn);
-	 
+	public <R> AnyM<R> applyMCompletableFuture(CompletableFuture<Function<? super T,? extends R>> fn);
+	
 }

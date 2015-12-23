@@ -1,11 +1,10 @@
 package com.aol.cyclops.streams.anyM;
 
 
-import static com.aol.cyclops.monad.AnyM.ofMonad;
-import static com.aol.cyclops.monad.AnyM.collectionToAnyMList;
 import static com.aol.cyclops.monad.AnyM.listFromCompletableFuture;
 import static com.aol.cyclops.monad.AnyM.listFromOptional;
 import static com.aol.cyclops.monad.AnyM.listFromStream;
+import static com.aol.cyclops.monad.AnyM.ofMonad;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
@@ -21,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -31,10 +31,8 @@ import lombok.val;
 import org.junit.Test;
 
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.monad.AnyMonads;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.Reducers;
-import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
 
 
@@ -262,7 +260,7 @@ public class AnyMTest {
         
        
         
-		AnyM<Stream<Integer>> futureList = AnyM.sequence(collectionToAnyMList(asList(asList(1,2),asList(3,4) ) ) );
+		AnyM<Stream<Integer>> futureList = AnyM.sequence(AnyM.listFromCollection(asList(asList(1,2),asList(3,4) ) ) );
         
       
         assertThat(futureList.toSequence(c->  c)
@@ -578,7 +576,10 @@ public class AnyMTest {
 	
 	@Test
 	public void testApplyM(){
+	AnyM<Function<Integer,Integer>> anyM = AnyM.fromStreamable(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2));
+	
 	 AnyM<Integer> applied =	AnyM.fromStream(Stream.of(1,2,3))
+			
 			 							.applyM(AnyM.fromStreamable(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2)));
 	
 	 assertThat(applied.toSequence().toList(),equalTo(Arrays.asList(2, 2, 3, 4, 4, 6)));
@@ -588,14 +589,15 @@ public class AnyMTest {
 	
 	@Test
 	public void testApplyMOptional(){
-	 AnyM<Integer> applied =AnyM.fromOptional(Optional.of(2)).applyM(AnyM.fromOptional(Optional.of( (Integer a)->a+1)) );
+	 AnyM<Integer> applied =AnyM.fromOptional(Optional.of(2))
+			 						.applyMOptional(Optional.of( (Integer a)->a+1) );
 	
 	 assertThat(applied.toSequence().toList(),equalTo(Arrays.asList(3)));
 	 
 	}
 	@Test
 	public void testApplyMOptionalEmpty(){
-	 AnyM<Integer> applied =ofMonad(Optional.of(2)).applyM(ofMonad(Optional.empty()));
+	 AnyM<Integer> applied =ofMonad(Optional.of(2)).applyMOptional(Optional.empty());
 	
 	 assertThat(applied.toSequence().toList(),equalTo(Arrays.asList()));
 	 
@@ -608,32 +610,8 @@ public class AnyMTest {
 		assertThat(applied.toSequence().toList(),equalTo(Arrays.asList()));
 	 
 	}
-	@Test
-	public void testSimpleFilter(){
-	 AnyM<AnyM<Integer>> applied =AnyM.fromStream(Stream.of(1,2,3))
-			 							.simpleFilter(AnyM.fromStreamable(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3)));
 	
 	
-	 assertThat(applied.map(s->s.asSequence().collect(Collectors.toList())).asSequence().toList(),equalTo(Arrays.asList(Arrays.asList(1), Arrays.asList(2),Arrays.asList())));
-	
-	}
-	@Test
-	public void testSimpleFilterStream(){
-	 AnyM<Stream<Integer>> applied =AnyM.fromStream(Stream.of(1,2,3))
-			 							.simpleFilter(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3));
-	
-	
-	 assertThat(applied.map(s->s.collect(Collectors.toList())).asSequence().toList(),equalTo(Arrays.asList(Arrays.asList(1), Arrays.asList(2),Arrays.asList())));
-	
-	}
-	@Test
-	public void testSimpleFilterOptional(){
-	 AnyM<AnyM<Integer>> applied =AnyM.fromOptional(Optional.of(2))
-			 							.simpleFilter(AnyM.fromStreamable(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3)));
-	
-	 assertThat(applied.toSequence().flatten().toList(),equalTo(Arrays.asList(2)));
-	
-	}
 	
 	@Test
 	public void testReplicateM(){

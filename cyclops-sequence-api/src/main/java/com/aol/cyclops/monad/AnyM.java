@@ -310,7 +310,7 @@ public interface AnyM<T> extends Unwrapable, ToStream<T>, ApplyM<T>,FlatMapM<T>,
 	 * @param fn
 	 * @return
 	 */
-	 <R> AnyM<R> applyM(AnyM<Function<? super T,? extends R>> fn);
+	<R> AnyM<R> applyM(AnyM<Function<? super T,? extends R>> fn);
 	 
 	
 	  
@@ -378,7 +378,7 @@ public interface AnyM<T> extends Unwrapable, ToStream<T>, ApplyM<T>,FlatMapM<T>,
 		 */
 	  AnyM<T> reduceM(Monoid<AnyM<T>> reducer);
 	
-	
+	 
 	 
 	/**
 	 * @return String representation of this AnyM

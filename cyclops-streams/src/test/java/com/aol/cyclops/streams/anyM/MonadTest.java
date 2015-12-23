@@ -1,7 +1,6 @@
 package com.aol.cyclops.streams.anyM;
 import static com.aol.cyclops.internal.AsGenericMonad.fromStream;
 import static com.aol.cyclops.internal.AsGenericMonad.monad;
-import static com.aol.cyclops.monad.AnyM.collectionToAnyMList;
 import static com.aol.cyclops.monad.AnyM.listFromCompletableFuture;
 import static com.aol.cyclops.monad.AnyM.listFromOptional;
 import static com.aol.cyclops.monad.AnyM.listFromStream;
@@ -30,7 +29,6 @@ import com.aol.cyclops.internal.AsGenericMonad;
 import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.monad.AnyMonads;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.Reducers;
 import com.aol.cyclops.sequence.streamable.Streamable;
@@ -223,7 +221,7 @@ public class MonadTest {
         
        
         
-        AnyM<Stream<Integer>> futureList = AnyM.sequence(collectionToAnyMList(asList(Arrays.asList(1,2),Arrays.asList(3,4))));
+        AnyM<Stream<Integer>> futureList = AnyM.sequence(AnyM.listFromCollection(asList(Arrays.asList(1,2),Arrays.asList(3,4))));
         
  
         assertThat(futureList.toSequence().toList(),equalTo(Arrays.asList(1,2,3,4)));
