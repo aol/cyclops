@@ -25,7 +25,7 @@ public class OptionalT<A> {
    private final AnyM<Optional<A>> run;
    
    
-   public OptionalT(final AnyM<Optional<A>> run){
+   private OptionalT(final AnyM<Optional<A>> run){
        this.run = run;
    }
    
