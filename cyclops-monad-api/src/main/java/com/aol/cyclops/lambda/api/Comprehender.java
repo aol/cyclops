@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 import com.aol.cyclops.comprehensions.comprehenders.MaterializedList;
 import com.aol.cyclops.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
+import com.aol.cyclops.lambda.monads.transformers.StreamT;
 
 /**
  * Interface for defining how Comprehensions should work for a type
@@ -136,6 +137,8 @@ public interface Comprehender<T> {
 		if (apply instanceof CompletableFuture) {
 			return comp.of(((CompletableFuture) apply).join());
 		}
+		if(apply instanceof StreamT)
+			return comp.of( ((StreamT)apply).unwrap());
 
 		return (T) new ComprehenderSelector().selectComprehender(apply)
 				.resolveForCrossTypeFlatMap(comp,apply);
