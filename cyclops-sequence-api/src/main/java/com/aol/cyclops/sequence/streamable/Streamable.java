@@ -232,42 +232,128 @@ public interface Streamable<T> extends ToStream<T>{
 	default Streamable<T> distinct(){
 		return Streamable.fromStream( sequenceM().distinct());
 	}
-	default <U> U foldLeft(U seed, BiFunction<U, ? super T, U> function) {
-        return sequenceM().foldLeft(seed, function);
+	/**
+	 * Fold a Streamable Left
+	 * <pre>
+	 * {@code 
+	 *   Streamable.of("hello","world")
+	 *   			.foldLeft("",(a,b)->a+":"+b);
+	 *   
+	 *   //"hello:world"
+	 * }
+	 * </pre>
+	 * 
+	 * @param identity - identity value
+	 * @param function folding function
+	 * @return Value from reduction
+	 */
+	default <U> U foldLeft(U identity, BiFunction<U, ? super T, U> function) {
+        return sequenceM().foldLeft(identity, function);
     }
-	 default <U> U foldRight(U seed, BiFunction<? super T, U, U> function)  {
+	 /**
+	  * Fold a Streamable fromt the right
+	  * <pre>
+	 * {@code 
+	 *   Streamable.of("hello","world")
+	 *   			.foldRight("",(a,b)->a+":"+b);
+	 *   
+	 *   //"world:hello"
+	 * }
+	 * @param seed - identity value 
+	 * @param function folding function
+	 * @return Single reduced value
+	 */
+	default <U> U foldRight(U seed, BiFunction<? super T, U, U> function)  {
         return sequenceM().foldRight(seed, function);
     }
+	/**
+	 * Map the values in the Streamable from one set of values / types to another
+	 * 
+	 * <pre>
+	 * {@code 
+	 * 	Streamable.of(1,2,3).map(i->i+2);
+	 *  //Streamable[3,4,5]
+	 *  
+	 *  Streamable.of(1,2,3).map(i->"hello"+(i+2));
+	 *  
+	 *   //Streamable["hello3","hello4","hello5"]
+	 * }
+	 * </pre>
+	 * 
+	 * @param fn mapper function
+	 * @return Mapped Streamable
+	 */
 	default <R> Streamable<R> map(Function<? super T,? extends R> fn){
 		return Streamable.fromStream(sequenceM().map(fn));
 	}
+	/**
+	 * Peek at each value in a Streamable as it passes through unchanged
+	 * 
+	 * <pre>
+	 * {@code
+	 *    Streamable.of(1,2,3)
+	 *              .peek(System.out::println)
+	 *              .map(i->i+2);
+	 * }
+	 * </pre>
+	 * 
+	 * @param fn Consumer to peek with
+	 * @return Streamable that will peek at values as they pass through
+	 */
 	default  Streamable<T> peek(Consumer<? super T> fn){
 		return Streamable.fromStream(sequenceM().peek(fn));
 	}
+	/* (non-Javadoc)
+	 * @see java.util.stream.Stream#filtered(java.util.function.Predicate)
+	 */
 	default  Streamable<T> filter(Predicate<? super T> fn){
 		return Streamable.fromStream(sequenceM().filter(fn));
 	}
+	/* (non-Javadoc)
+	 * @see java.util.stream.Stream#flatMap(java.util.function.Function)
+	 */
 	default <R> Streamable<R> flatMap(Function<? super T,Streamable<? extends R>> fn){
 		return Streamable.fromStream(sequenceM().flatMap(i->fn.apply(i).sequenceM()));
 	}
 	
+	/**
+	 * @return number of elements in this Streamable
+	 */
 	default long count(){
 		return sequenceM().count();
 	}
-	
+	/* (non-Javadoc)
+	 * @see java.util.stream.Stream#forEachOrdered(java.util.function.Consumer)
+	 */
     default void forEachOrdered(Consumer<? super T> action){
     	sequenceM().forEachOrdered(action);
     }
 
-    
+    /* (non-Javadoc)
+	 * @see java.util.stream.Stream#toArray()
+	 */
     default Object[] toArray(){
     	return sequenceM().toArray();
     }
 
-    
+    /* (non-Javadoc)
+	 * @see java.util.stream.Stream#toArray(java.util.function.IntFunction)
+	 */
     default <A> A[] toArray(IntFunction<A[]> generator){
     	return sequenceM().toArray(generator);
     }
+	/**
+	 * <pre>
+	 * {@code 
+	 *   Streamable.of(1,2,3)
+	 *             .toList(); 
+	 * 
+	 *  //List[1,2,3]
+	 * }
+	 * </pre>
+	 * 
+	 * @return Streamable converted to a List
+	 */
 	default List<T> toList(){
 	
 		if(getStreamable() instanceof List)
