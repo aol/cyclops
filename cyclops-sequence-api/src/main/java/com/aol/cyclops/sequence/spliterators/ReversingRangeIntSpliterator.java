@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @AllArgsConstructor
-public class ReversingRangeSpliterator implements Spliterator.OfInt, ReversableSpliterator {
+public class ReversingRangeIntSpliterator implements Spliterator.OfInt, ReversableSpliterator {
   
     private int index;
     private final int max;
@@ -69,7 +69,7 @@ public class ReversingRangeSpliterator implements Spliterator.OfInt, ReversableS
 
 	@Override
 	public ReversableSpliterator copy() {
-		return new ReversingRangeSpliterator(index, max, reverse);
+		return new ReversingRangeIntSpliterator(index, max, reverse);
 	}
 
     

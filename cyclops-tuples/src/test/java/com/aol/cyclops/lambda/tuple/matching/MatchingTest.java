@@ -13,12 +13,12 @@ public class MatchingTest {
 
 	@Test
 	public void test(){
-		assertThat(PowerTuples.tuple(1,2,3).matchValues(c -> cases(c)   ),equalTo("hello"));
+		assertThat(PowerTuples.tuple(1,2,3).matches(
+									c->c.hasValues(1,2,3).then(i->"hello"),
+										c->c.hasValues(4,5,6).then(i->"goodbye")
+					),equalTo("hello"));
 		
 	}
 
-	private <I,T> CheckValues<Object, T> cases(CheckValues<I, T> c) {
-		return c.with(1,2,3).then(i->"hello")
-				.with(4,5,6).then(i->"goodbye");
-	}
+	
 }

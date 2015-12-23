@@ -6,8 +6,8 @@ import java.util.function.Function;
 import com.aol.cyclops.functions.QuadFunction;
 import com.aol.cyclops.functions.QuintFunction;
 import com.aol.cyclops.functions.TriFunction;
-import com.aol.cyclops.lambda.monads.AnyMonads;
 import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.monad.AnyMonads;
 
 
 /**
@@ -30,7 +30,7 @@ public class LiftMFunctions {
 	 * @return
 	 */
 	public static <U,R> Function<AnyM<U>,AnyM<R>> liftM(Function<U,R> fn){
-		return AnyMonads.liftM(fn);
+		return AnyM.liftM(fn);
 	}
 	
 	/**

@@ -8,13 +8,13 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.monads.AnyMonads;
 import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.monad.AnyMonads;
 
 public class UnitTest {
 	@Test
 	public void unitOptional() {
-	    AnyM<Integer> empty = AnyMonads.anyM(Optional.empty());
+	    AnyM<Integer> empty = AnyM.fromOptional(Optional.empty());
 	    AnyM<Integer> unit = empty.unit(1);
 	    Optional<Integer> unwrapped = unit.unwrap();
 	    assertEquals(Integer.valueOf(1), unwrapped.get());
@@ -22,7 +22,7 @@ public class UnitTest {
 
 	@Test
 	public void unitList() {
-	    AnyM<Integer> empty = AnyMonads.anyM(Collections.emptyList());
+	    AnyM<Integer> empty = AnyM.fromIterable(Collections.emptyList());
 	    AnyM<Integer> unit = empty.unit(1);
 	    List<Integer> unwrapped = unit.asSequence().toList();
 	    assertEquals(Integer.valueOf(1), unwrapped.get(0));

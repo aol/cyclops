@@ -10,6 +10,7 @@ import org.pcollections.PMap;
 
 import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
 import com.aol.cyclops.comprehensions.comprehenders.InvokeDynamicComprehender;
+import com.aol.cyclops.comprehensions.comprehenders.MaterializedList;
 import com.aol.cyclops.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.lambda.api.Comprehender;
 import com.aol.cyclops.lambda.api.MonadicConverter;
@@ -44,14 +45,38 @@ class Yield<T> {
 				return process(yieldExecutor, context, s, lastExpansionName,index+1);
 			} else {
 				
-				return (T)comprehender._1.executeflatMap(comprehender._2,it ->{				 	
+				T result =  (T)comprehender._1.executeflatMap(comprehender._2,it ->{				 	
 						PMap newMap  =context.plus(lastExpansionName,it);
 						return process((ContextualExecutor)yieldExecutor, newMap, head.getFunction().executeAndSetContext( newMap), head.getName(),index+1);
 				 });
+				try{
+					return  (T)comprehender._1.map(result,this::takeFirst);
+				 
+				}catch(Goto g){
+					return (T)comprehender._1.empty();
+				}
 			
 			}
 			
 		}
+	}
+	
+	private static class Goto extends RuntimeException{
+
+		@Override
+		public synchronized Throwable fillInStackTrace() {
+			return null;
+		}
+		
+	}
+	private <T> T takeFirst(Object o){
+		if(o instanceof MaterializedList){
+			if(((List)o).size()==0)
+				throw new Goto();
+			
+			return (T)((List)o).get(0);
+		}
+		return (T)o;
 	}
 
 	@AllArgsConstructor

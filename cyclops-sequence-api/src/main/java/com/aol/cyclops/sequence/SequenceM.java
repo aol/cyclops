@@ -33,6 +33,9 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+
+
+
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -47,7 +50,8 @@ import com.aol.cyclops.sequence.reactivestreams.CyclopsSubscriber;
 import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
 import com.aol.cyclops.sequence.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.sequence.spliterators.ReversingListSpliterator;
-import com.aol.cyclops.sequence.spliterators.ReversingRangeSpliterator;
+import com.aol.cyclops.sequence.spliterators.ReversingRangeIntSpliterator;
+import com.aol.cyclops.sequence.spliterators.ReversingRangeLongSpliterator;
 import com.aol.cyclops.sequence.streamable.Streamable;
 
 
@@ -1890,7 +1894,19 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @return Range SequenceM
 	 */
 	public static SequenceM<Integer> range(int start, int end){
-		ReversingRangeSpliterator range = new ReversingRangeSpliterator(start, end, false);
+		ReversingRangeIntSpliterator range = new ReversingRangeIntSpliterator(start, end, false);
+		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(range, false),range);
+
+	}
+	/**
+	 * Create an efficiently reversable Sequence that produces the integers between start 
+	 * and end
+	 * @param start Number of range to start from
+	 * @param end Number for range to end at
+	 * @return Range SequenceM
+	 */
+	public static SequenceM<Long> rangeLong(long start, long end){
+		ReversingRangeLongSpliterator range = new ReversingRangeLongSpliterator(start, end, false);
 		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(range, false),range);
 
 	}
@@ -2541,7 +2557,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	default <R> SequenceM<R> retry(Function<T,R> fn){
 		Function<T,R> retry = t-> {
 			int count = 7;
-			int sleep =2000;
+			int[] sleep ={2000};
 			Throwable exception=null;
 			while(count-->0){
 				try{
@@ -2549,13 +2565,9 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 				}catch(Throwable e){
 					exception = e;
 				}
-				try {
-					Thread.sleep(sleep);
-				} catch (InterruptedException e) {
-					ExceptionSoftener.throwSoftenedException(e);
-					return null;
-				}
-				sleep=sleep*2;
+				ExceptionSoftener.softenRunnable(()->Thread.sleep(sleep[0]));
+				
+				sleep[0]=sleep[0]*2;
 			}
 			ExceptionSoftener.throwSoftenedException(exception);
 			return null;
@@ -2563,4 +2575,100 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 		return map(retry);
 	}
 	
+	/**
+	 * Remove all occurances of the specified element from the SequenceM
+	 * <pre>
+	 * {@code
+	 * 	SequenceM.of(1,2,3,4,5,1,2,3).remove(1)
+	 * 
+	 *  //Streamable[2,3,4,5,2,3]
+	 * }
+	 * </pre>
+	 * 
+	 * @param t element to remove
+	 * @return Filtered Stream / SequenceM
+	 */
+	default SequenceM<T> remove(T t){
+		return this.filter(v->v!=t);
+	}
+	
+	/**
+	 * Generate the permutations based on values in the SequenceM
+	 * Makes use of Streamable to store intermediate stages in a collection 
+	 * 
+	 * 
+	 * @return Permutations from this SequenceM
+	 */
+	default SequenceM<SequenceM<T>> permutations() {
+		Streamable<Streamable<T>> streamable = Streamable.fromStream(this).permutations();
+		return streamable.map(s->s.sequenceM()).sequenceM();
+	 }
+	
+	/**
+	 * Return a Stream with elements before the provided start index removed, and elements after the provided
+	 * end index removed
+	 * 
+	 * <pre>
+	 * {@code 
+	 *   SequenceM.of(1,2,3,4,5,6).subStream(1,3);
+	 *   
+	 *   
+	 *   //SequenceM[2,3]
+	 * }
+	 * </pre>
+	 * 
+	 * @param start index inclusive
+	 * @param end index exclusive
+	 * @return Sequence between supplied indexes of original Sequence
+	 */
+	default SequenceM<T> subStream(int start, int end){
+		return this.limit(end).deleteBetween(0, start);
+	}
+	
+	/**
+	 * <pre>
+	 * {@code
+	 *   SequenceM.of(1,2,3).combinations(2)
+	 *   
+	 *   //SequenceM[SequenceM[1,2],SequenceM[1,3],SequenceM[2,3]]
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param size of combinations
+	 * @return All combinations of the elements in this stream of the specified size
+	 */
+	default  SequenceM<SequenceM<T>> combinations(int size){
+		Streamable<Streamable<T>> streamable = Streamable.fromStream(this).combinations(size);
+		return streamable.map(s->s.sequenceM()).sequenceM();
+	}
+	/**
+	 * <pre>
+	 * {@code
+	 *   SequenceM.of(1,2,3).combinations()
+	 *   
+	 *   //SequenceM[SequenceM[],SequenceM[1],SequenceM[2],SequenceM[3].SequenceM[1,2],SequenceM[1,3],SequenceM[2,3]
+	 *   			,SequenceM[1,2,3]]
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @return All combinations of the elements in this stream
+	 */
+	default  SequenceM<SequenceM<T>> combinations(){
+		Streamable<Streamable<T>> streamable = Streamable.fromStream(this).combinations();
+		return streamable.map(s->s.sequenceM()).sequenceM();
+	}
+	
+	
+	
+	
+	/**
+	 * [equivalent to count]
+	 * 
+	 * @return size
+	 */
+	default int size(){
+		return this.toList().size();
+	}
 }

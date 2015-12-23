@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
-import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.monad.AnyM;
 
 /**
@@ -48,13 +47,13 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 	 * @return This monad wrapped as AnyM
 	 */
 	public AnyM<T> anyM(){
-		return AsAnyM.notTypeSafeAnyM(this);
+		return AnyM.fromIterable(this);
 	}
 	/**
 	 * @return This monad, wrapped as AnyM of Failure
 	 */
 	public AnyM<X> anyMFailure(){
-		return AsAnyM.notTypeSafeAnyM(Optional.empty());
+		return AnyM.fromOptional(Optional.empty());
 	}
 	/**
 	 * @return This monad, wrapped as AnyM of Success

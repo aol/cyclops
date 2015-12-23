@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -13,15 +14,17 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.BaseStream;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
+import com.aol.cyclops.comprehensions.comprehenders.MaterializedList;
 import com.aol.cyclops.internal.AsGenericMonad;
 import com.aol.cyclops.internal.Monad;
-import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.monad.AnyMonads;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
@@ -101,6 +104,8 @@ public class AnyMImpl<T> implements AnyM<T>{
 		return monad.liftAndBind(fn).anyM();
 	
 	}
+	
+	
 	/**
 	 * Perform a flatMap operation where the result will be a flattened stream of Characters
 	 * from the CharSequence returned by the supplied function.
@@ -122,8 +127,29 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return
 	 */
 	public final  AnyM<Character> flatMapCharSequence(Function<? super T,CharSequence> fn) {
-		return monad.liftAndBind(fn).anyM();
+		try{
+			return monad.liftAndBind(fn).anyM().map(this::takeFirst);
+		}catch(GotoAsEmpty e){
+			return empty();
+		}
 	}
+	private static class GotoAsEmpty extends RuntimeException{
+
+		@Override
+		public synchronized Throwable fillInStackTrace() {
+			return null;
+		}
+		
+	}
+	private <T> T takeFirst(Object o){
+		if(o instanceof MaterializedList){
+			if(((List)o).size()==0)
+				throw new GotoAsEmpty();
+			return (T)((List)o).get(0);
+		}
+		return (T)o;
+	}
+	
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
 	 * from the text loaded from the supplied files.
@@ -148,7 +174,11 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return
 	 */
 	public final  AnyM<String> flatMapFile(Function<? super T,File> fn) {
-		return monad.liftAndBind(fn).anyM();
+		try{
+			return monad.liftAndBind(fn).anyM().map(this::takeFirst);
+		}catch(GotoAsEmpty e){
+			return empty();
+		}
 	}
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -171,7 +201,11 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return
 	 */
 	public final  AnyM<String> flatMapURL(Function<? super T, URL> fn) {
-		return monad.liftAndBind(fn).anyM();
+		try{
+			return monad.liftAndBind(fn).anyM().map(this::takeFirst);
+		}catch(GotoAsEmpty e){
+			return empty();
+		}
 	}
 	/**
 	  *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -196,7 +230,11 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return
 	 */
 	public final  AnyM<String> flatMapBufferedReader(Function<? super T,BufferedReader> fn) {
-		return monad.liftAndBind(fn).anyM();
+		try{
+			return monad.liftAndBind(fn).anyM().map(this::takeFirst);
+		}catch(GotoAsEmpty e){
+			return empty();
+		}
 	}
 	
 	/**
@@ -225,13 +263,14 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @param next Monad to aggregate content with
 	 * @return Aggregated Monad
 	 */
-	public final  AnyM<T> aggregate(AnyM<T> next){
-		return monad.aggregate(next.monad()).anyM();
+	public final  AnyM<List<T>> aggregate(AnyM<T> next){
+		return unit(Stream.concat(stream(), next.stream()).collect(Collectors.toList()));
+		
 	}
 	public final  <R> AnyM<List<R>> aggregateUntyped(AnyM<?> next){
 		return monad.aggregate(next.monad()).anyM();
 	}
-	@Deprecated //to be removed in 6.0.0
+	
 	public void forEach(Consumer<? super T> action) {
 		asSequence().forEach(action);	
 	}
@@ -243,7 +282,11 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return 
 	 */
 	public final <R> AnyM<R> flatMap(Function<? super T,AnyM<? extends R>> fn) {
-		return monad.flatMap(in -> fn.apply(in).unwrap()).anyM();
+		try{
+			return monad.flatMap(in -> fn.apply(in).unwrap()).anyM().map(this::takeFirst);
+		}catch(GotoAsEmpty e){
+			return empty();
+		}
 	}
 	
 	/**
@@ -253,7 +296,11 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return
 	 */
 	public final <R> AnyM<R> flatMapStream(Function<? super T,BaseStream<? extends R,?>> fn) {
-		return monad.flatMap(in -> fn.apply(in)).anyM();
+		try{
+			return monad.flatMap(in -> fn.apply(in)).anyM().map(this::takeFirst);
+		}catch(GotoAsEmpty e){
+			return empty();
+		}
 	}
 	/**
 	 * Convenience method to allow method reference support, when flatMap return type is a Streamable
@@ -262,7 +309,11 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return
 	 */
 	public final <R> AnyM<R> flatMapStreamable(Function<? super T,Streamable<R>> fn) {
-		return monad.flatMap(in -> fn.apply(in)).anyM();
+		try{
+			return monad.flatMap(in -> fn.apply(in)).anyM().map(this::takeFirst);
+		}catch(GotoAsEmpty e){
+			return empty();
+		}
 	}
 	/**
 	 * flatMapping to a Stream will result in the Stream being converted to a List, if the host Monad
@@ -287,7 +338,11 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @return
 	 */
 	public final <R> AnyM<R> flatMapCollection(Function<? super T,Collection<? extends R>> fn) {
-		return monad.flatMap(in -> fn.apply(in)).anyM();
+		try{
+			return monad.flatMap(in -> fn.apply(in)).anyM().map(this::takeFirst);
+		}catch(GotoAsEmpty e){
+			return empty();
+		}
 	}
 	/**
 	 * Convenience method to allow method reference support, when flatMap return type is a Optional
@@ -371,110 +426,29 @@ public class AnyMImpl<T> implements AnyM<T>{
 		
 	
 
-	/**
-	 * Apply function/s inside supplied Monad to data in current Monad
-	 * 
-	 * e.g. with Streams
-	 * <pre>{@code 
-	 * 
-	 * AnyM<Integer> applied =anyM(Stream.of(1,2,3)).applyM(anyM(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2))).simplex();
 	
-	 	assertThat(applied.toList(),equalTo(Arrays.asList(2, 2, 3, 4, 4, 6)));
-	 }</pre>
-	 * 
-	 * with Optionals 
-	 * <pre>{@code
-	 * 
-	 *  Any<Integer> applied =anyM(Optional.of(2)).applyM(anyM(Optional.of( (Integer a)->a+1)) );
-		assertThat(applied.toList(),equalTo(Arrays.asList(3)));}</pre>
-	 * 
-	 * @param fn
-	 * @return
-	 */
 	public final <R> AnyM<R> applyM(AnyM<Function<? super T,? extends R>> fn){
 		return monad.applyM(fn.monad()).anyM();
 		
 	}
-	/**
-	 * Filter current monad by each element in supplied Monad
-	 * 
-	 * e.g.
-	 * 
-	 * <pre>{@code
-	 *  AnyM<AnyM<Integer>> applied = anyM(Stream.of(1,2,3))
-	 *    									.filterM(anyM(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3)))
-	 *    									.simplex();
-	 * 
-	 *  //results in AnyM((AnyM(1),AnyM(2),AnyM(())
-	 * //or in terms of the underlying monad as Stream.of(Stream.of(1),Stream.of(2),Stream.of(())
-	 * }</pre>
-	 * 
-	 * @param fn
-	 * @return
-	 */
-	public final   AnyM<AnyM<T>> simpleFilter(AnyM<Predicate<? super T>> fn){
-		return  monad.simpleFilter(fn.monad()).anyM().map(t->AsAnyM.notTypeSafeAnyM(t));
-			
+		
 	
 	//	filterM((a: Int) => List(a > 2, a % 2 == 0), List(1, 2, 3), ListMonad),
 	//List(List(3), Nil, List(2, 3), List(2), List(3),
 	//	  Nil, List(2, 3), List(2))												
-	}
-	public final   AnyM<Stream<T>> simpleFilter(Stream<Predicate<? super T>> fn){
-		return  monad.simpleFilter(AsGenericMonad.asMonad(fn)).anyM();
-													
-	}
-	public final   AnyM<Stream<T>> simpleFilter(Streamable<Predicate<? super T>> fn){
-		return  monad.simpleFilter(AsGenericMonad.asMonad(fn)).anyM();
-													
-	}
-	public final   AnyM<Optional<T>> simpleFilter(Optional<Predicate<? super T>> fn){
-		return  monad.simpleFilter(AsGenericMonad.asMonad(fn)).anyM();
-													
-	}
-	public final   AnyM<CompletableFuture<T>> simpleFilter(CompletableFuture<Predicate<? super T>> fn){
-		return  monad.simpleFilter(AsGenericMonad.asMonad(fn)).anyM();
-													
-	}
 	
 	public <T> AnyM<T> unit(T value){
-		return AsAnyM.notTypeSafeAnyM(monad.unit(value));
+		return AnyM.ofMonad(monad.unit(value));
 	}
 	public <T> AnyM<T> empty(){
 		return (AnyMImpl)unit(null).filter(t->false);
 	}
-	/**
-	 * 
-	 * Replicate given Monad
-	 * 
-	 * <pre>{@code 
-	 * 	
-	 *   AnyM<Optional<Integer>> applied =monad(Optional.of(2)).replicateM(5).simplex();
-		 assertThat(applied.unwrap(),equalTo(Optional.of(Arrays.asList(2,2,2,2,2))));
-		 
-		 }</pre>
-	 * 
-	 * 
-	 * @param times number of times to replicate
-	 * @return Replicated Monad
-	 */
+	
 	public final AnyM<List<T>> replicateM(int times){
 		
 		return monad.replicateM(times).anyM();		
 	}
-	/**
-	 * Perform a reduction where NT is a (native) Monad type
-	 * e.g. 
-	 * <pre>{@code 
-	 * Monoid<Optional<Integer>> optionalAdd = Monoid.of(Optional.of(0), (a,b)-> Optional.of(a.get()+b.get()));
-		
-		assertThat(monad(Stream.of(2,8,3,1)).reduceM(optionalAdd).unwrap(),equalTo(Optional.of(14)));
-		}</pre>
-	 * 
-	 * 
-	 * @param reducer
-	 * @return
-	 */
+	
 	public final   AnyM<T> reduceMOptional(Monoid<Optional<T>> reducer){
 		return monad.reduceM(reducer).anyM();
 	}
@@ -482,6 +456,9 @@ public class AnyMImpl<T> implements AnyM<T>{
 		return monad.reduceM(reducer).anyM();
 	}
 	public final   AnyM<T> reduceMStreamable(Monoid<Streamable<T>> reducer){
+		return monad.reduceM(reducer).anyM();
+	}
+	public final   AnyM<T> reduceMIterable(Monoid<Iterable<T>> reducer){
 		return monad.reduceM(reducer).anyM();
 	}
 	public final   AnyM<T> reduceMCompletableFuture(Monoid<CompletableFuture<T>> reducer){
@@ -494,8 +471,15 @@ public class AnyMImpl<T> implements AnyM<T>{
 		
 		
 	
-		return monad.reduceM(Monoid.of(reducer.zero().unwrap(), (a,b)-> reducer.combiner().apply(AsAnyM.notTypeSafeAnyM(a), 
-				AsAnyM.notTypeSafeAnyM(b)))).anyM();		
+		return monad.reduceM(Monoid.of(reducer.zero().unwrap(), (a,b)-> reducer.combiner().apply(AnyM.ofMonad(a), 
+				AnyM.ofMonad(b)))).anyM();		
+	}
+	
+	public SequenceM<T> stream(){
+		if(this.monad.unwrap() instanceof Stream){
+			return asSequence();
+		}
+		return this.<T>toSequence();
 	}
 	
 	
@@ -516,6 +500,23 @@ public class AnyMImpl<T> implements AnyM<T>{
 			return asSequence().toSet();
 		}
 		return this.<T>toSequence().toSet();
+	}
+	@Override
+	public Iterator<T> iterator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public <R> AnyM<R> applyMStream(Stream<Function<? super T, ? extends R>> fn) {
+		return applyM(AnyM.fromStream(fn));
+	}
+	@Override
+	public <R> AnyM<R> applyMOptional(Optional<Function<? super T, ? extends R>> fn) {
+		return applyM(AnyM.fromOptional(fn));
+	}
+	@Override
+	public <R> AnyM<R> applyMCompletableFuture(CompletableFuture<Function<? super T, ? extends R>> fn) {
+		return applyM(AnyM.fromCompletableFuture(fn));
 	}
 	
 }

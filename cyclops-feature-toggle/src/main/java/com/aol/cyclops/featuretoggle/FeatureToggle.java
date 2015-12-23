@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.sequence.streamable.ToStream;
 import com.aol.cyclops.value.ValueObject;
 
 
@@ -20,7 +20,7 @@ import com.aol.cyclops.value.ValueObject;
  *
  * @param <F>
  */
-public interface FeatureToggle<F> extends Supplier<F>, ValueObject, Streamable<F> {
+public interface FeatureToggle<F> extends Supplier<F>, ValueObject, ToStream<F> {
 
 	boolean isEnabled();
 	boolean isDisabled();

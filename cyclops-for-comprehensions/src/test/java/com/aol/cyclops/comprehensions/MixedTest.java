@@ -74,12 +74,13 @@ public class MixedTest {
 		val opt = Optional.of("cool");
 		
 		
-		Optional<List<String>> results = Do.add(opt)
-												.add(strs)
-												.yield(v1->v2 -> v1+ v2).unwrap();
+		Optional<String> results = Do.add(opt)
+											.add(strs)
+											.yield(v1->v2 -> v1+ v2)
+											.unwrap();
 		
-		assertThat(results.get(),hasItem("coolhello"));
-		assertThat(results.get(),hasItem("coolworld"));
+		assertThat(results.get(),equalTo("coolhello"));
+		
 	}
 	@Test
 	public void mixedOptionalEmptyStream(){

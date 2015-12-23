@@ -12,6 +12,8 @@ import lombok.AllArgsConstructor;
 import lombok.Value;
 
 import org.junit.Test;
+
+import com.aol.cyclops.matcher.recursive.Matchable;
 public class AsValueTest {
 
 	@Test
@@ -24,24 +26,26 @@ public class AsValueTest {
 	public void testAsValueMatch() {
 		List list = new ArrayList();
 		
-		assertThat(AsValue.asValue(new Child(10,20)).matchType(c-> 
-			c.isType((Child child) -> child.val ))
+		assertThat(AsValue.asValue(new Child(10,20)).matches(c-> 
+			c.isType((Child child) -> child.val ).anyValues())
 		,equalTo(10));
 	}
 	@Test
 	public void testAsValue_Match() {
 		List list = new ArrayList();
 		
-		assertThat(AsValue.asValue(new Child(10,20))._match(c-> 
-			c.isType( (Child child) -> child.val).with(10,20))
+		
+		
+		assertThat(AsValue.asValue(new Child(10,20)).matches(c-> 
+			c.isType( (Child child) -> child.val).hasValues(10,20))
 		,equalTo(10));
 	}
 	@Test
 	public void testAsValue_MatchDefault() {
 		List list = new ArrayList();
 		
-		assertThat(AsValue.asValue(new Child(10,20))._match(c-> 
-			c.isType( (Child child) -> child.val).with(20,20),50)
+		assertThat(AsValue.asValue(new Child(10,20)).mayMatch(c-> 
+			c.isType( (Child child) -> child.val).hasValues(20,20)).orElse(50)
 		,equalTo(50));
 	}
 

@@ -60,6 +60,13 @@ public class ReverseTest {
 				 .count(),equalTo(900L));
 	}
 	@Test
+	public void skipRangeReversed() throws InterruptedException{
+		
+		assertThat(SequenceM.range(0,1000)
+				 .skip(100).reverse()
+				 .count(),equalTo(900L));
+	}
+	@Test
 	public void skipList() throws InterruptedException{
 		
 		List<Integer> list= new ArrayList<>();

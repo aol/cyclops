@@ -322,6 +322,7 @@ public class StreamUtils{
 		Tuple2<Stream<T>,Stream<T>> Tuple2 = duplicatePos(stream,start);
 		return appendStream(Tuple2.v1.limit(start),Tuple2.v2.skip(end));	
 	}
+	
 	/**
 	 * Insert a Stream into the middle of this stream at the specified position
 	 * <pre>

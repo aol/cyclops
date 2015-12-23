@@ -1,11 +1,9 @@
 package com.aol.cyclops.streams.anyM;
 import static com.aol.cyclops.internal.AsGenericMonad.fromStream;
 import static com.aol.cyclops.internal.AsGenericMonad.monad;
-import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
-import static com.aol.cyclops.lambda.api.AsAnyMList.collectionToAnyMList;
-import static com.aol.cyclops.lambda.api.AsAnyMList.completableFutureToAnyMList;
-import static com.aol.cyclops.lambda.api.AsAnyMList.optionalToAnyMList;
-import static com.aol.cyclops.lambda.api.AsAnyMList.streamToAnyMList;
+import static com.aol.cyclops.monad.AnyM.listFromCompletableFuture;
+import static com.aol.cyclops.monad.AnyM.listFromOptional;
+import static com.aol.cyclops.monad.AnyM.listFromStream;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -29,7 +27,6 @@ import org.junit.Test;
 
 import com.aol.cyclops.internal.AsGenericMonad;
 import com.aol.cyclops.internal.Monad;
-import com.aol.cyclops.lambda.monads.AnyMonads;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.Monoid;
@@ -207,7 +204,7 @@ public class MonadTest {
                 .collect(Collectors.toList());
        
         
-        AnyM<Stream<Integer>> futureList = AnyMonads.sequence(completableFutureToAnyMList(futures));
+        AnyM<Stream<Integer>> futureList = AnyM.sequence(listFromCompletableFuture(futures));
         
  
         List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>unwrap().join();
@@ -224,7 +221,7 @@ public class MonadTest {
         
        
         
-        AnyM<Stream<Integer>> futureList = AnyMonads.sequence(collectionToAnyMList(asList(Arrays.asList(1,2),Arrays.asList(3,4))));
+        AnyM<Stream<Integer>> futureList = AnyM.sequence(AnyM.listFromCollection(asList(Arrays.asList(1,2),Arrays.asList(3,4))));
         
  
         assertThat(futureList.toSequence().toList(),equalTo(Arrays.asList(1,2,3,4)));
@@ -236,7 +233,7 @@ public class MonadTest {
         
        
         
-        AnyM<Stream<Integer>> result = AnyMonads.sequence(streamToAnyMList(asList(Stream.of(1,2),Stream.of(3,4))));
+        AnyM<Stream<Integer>> result = AnyM.sequence(listFromStream(asList(Stream.of(1,2),Stream.of(3,4))));
         
  
        
@@ -252,7 +249,7 @@ public class MonadTest {
         
 
         
-        AnyM<Stream<Integer>> futureList = AnyMonads.sequence(optionalToAnyMList(asList(Optional.of(7),Optional.of(8),Optional.of(9))));
+        AnyM<Stream<Integer>> futureList = AnyM.sequence(listFromOptional(asList(Optional.of(7),Optional.of(8),Optional.of(9))));
         
  
         assertThat(futureList.toSequence().toList(),equalTo(Arrays.asList(7,8,9)));
@@ -269,7 +266,7 @@ public class MonadTest {
                 .collect(Collectors.toList());
 
        
-        AnyM<List<String>> futureList = AnyMonads.traverse(completableFutureToAnyMList(futures), (Integer i) -> "hello" +i);
+        AnyM<List<String>> futureList = AnyM.traverse(listFromCompletableFuture(futures), (Integer i) -> "hello" +i);
    
         List<String> collected = futureList.<CompletableFuture<List<String>>>unwrap().join();
         assertThat(collected.size(),equalTo( list.size()));
@@ -355,7 +352,7 @@ public class MonadTest {
 	@Test
 	public void testApplyMEmptyOptional(){
 		AnyM<Integer> empty= 	monad(Optional.empty()).anyM();
-		AnyM<Integer> applied =	empty.applyM(anyM(Optional.of((Integer a)->a+1)) );
+		AnyM<Integer> applied =	empty.applyM(AnyM.fromOptional(Optional.of((Integer a)->a+1)) );
 	
 		assertThat(applied.toSequence().toList(),equalTo(Arrays.asList()));
 	 
@@ -423,9 +420,9 @@ public class MonadTest {
 	
 	@Test
 	public void testLiftMSimplex(){
-		val lifted = AnyMonads.liftM((Integer a)->a+3);
+		val lifted = AnyM.liftM((Integer a)->a+3);
 		
-		AnyM<Integer> result = lifted.apply(anyM(Optional.of(3)));
+		AnyM<Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)));
 		
 		assertThat(result.<Optional<Integer>>unwrap().get(),equalTo(6));
 	}
@@ -441,17 +438,19 @@ public class MonadTest {
 	
 	@Test
 	public void testLiftM2Simplex(){
-		val lifted = AnyMonads.liftM2((Integer a,Integer b)->a+b);
+		val lifted = AnyM.liftM2((Integer a,Integer b)->a+b);
 		
-		AnyM<Integer> result = lifted.apply(anyM(Optional.of(3)),anyM(Optional.of(4)));
+		AnyM<Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),
+												AnyM.fromOptional(Optional.of(4)));
 		
 		assertThat(result.<Optional<Integer>>unwrap().get(),equalTo(7));
 	}
 	@Test
 	public void testLiftM2SimplexNull(){
-		val lifted = AnyMonads.liftM2((Integer a,Integer b)->a+b);
+		val lifted = AnyM.liftM2((Integer a,Integer b)->a+b);
 		
-		AnyM<Integer> result = lifted.apply(anyM(Optional.of(3)),anyM(Optional.ofNullable(null)));
+		AnyM<Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),
+										AnyM.fromOptional(Optional.ofNullable(null)));
 		
 		assertThat(result.<Optional<Integer>>unwrap().isPresent(),equalTo(false));
 	}
@@ -461,9 +460,10 @@ public class MonadTest {
 	}
 	@Test
 	public void testLiftM2Mixed(){
-		val lifted = AnyMonads.liftM2(this::add); 
+		val lifted = AnyM.liftM2(this::add); 
 		
-		AnyM<Integer> result = lifted.apply(anyM(Optional.of(3)),anyM(Stream.of(4,6,7)));
+		AnyM<Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),
+													AnyM.fromStream(Stream.of(4,6,7)));
 		
 		
 		assertThat(result.<Optional<List<Integer>>>unwrap().get(),equalTo(Arrays.asList(7,9,10)));

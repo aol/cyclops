@@ -458,7 +458,8 @@ public class PatternMatcher implements Function{
 		LazySeq<Predicate<V>> pred = LazySeq.of(predicates);
 		
 		
-		return inCaseOf(it -> master.test(it) && seq(Extractors.decompose().apply(it)).zip(pred,(a1,b1)->Two.tuple(a1,b1))
+		return inCaseOf(it -> master.test(it) && seq(Extractors.decompose().apply(it))
+				.zip(pred,(a1,b1)->Two.tuple(a1,b1))
 				.map(t -> t.v2.test((V)t.v1)).allMatch(v->v==true), a);
 		
 	}

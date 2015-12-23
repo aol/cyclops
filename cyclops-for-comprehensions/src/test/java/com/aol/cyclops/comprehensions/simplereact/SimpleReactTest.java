@@ -40,12 +40,12 @@ public class SimpleReactTest {
 	
 	@Test
 	public void doTestLazyOptionalEmptyStream(){
-		Optional<List<Integer>> result = Do.add(lookup("1"))
+		Optional<Integer> result = Do.add(lookup("1"))
 												.addStream(()->LazyFutureStream.<Integer>of())
 												.yield((Integer a) -> (Integer b) -> a+b)
 												.unwrap();
 		System.out.println(result);
-		assertThat(result.get().size(),equalTo(0));
+		assertThat(result.isPresent(),equalTo(false));
 	}
 	
 	

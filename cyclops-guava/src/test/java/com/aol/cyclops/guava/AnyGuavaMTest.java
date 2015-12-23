@@ -7,7 +7,8 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.monads.AnyMonads;
+import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.monad.AnyMonads;
 import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
 
@@ -59,7 +60,7 @@ public class AnyGuavaMTest {
 	public void streamFlatMapTestJDK(){
 		assertThat(Guava.anyM(FluentIterable.of(new String[]{"hello world"}))
 				.map(String::toUpperCase)
-				.flatMap(i->AnyMonads.anyM(java.util.stream.Stream.of(i)))
+				.flatMap(i->AnyM.fromStream(java.util.stream.Stream.of(i)))
 				.toSequence()
 				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
 	}

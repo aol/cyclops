@@ -11,7 +11,7 @@ import com.aol.cyclops.monad.AnyM;
 public class UnitTest {
 	@Test
 	public void unitOptional() {
-	    AnyM<Integer> empty = AnyMonads.anyM(Optional.empty());
+	    AnyM<Integer> empty = AnyM.ofMonad(Optional.empty());
 	    AnyM<Integer> unit = empty.unit(1);
 	    Optional<Integer> unwrapped = unit.unwrap();
 	    assertEquals(Integer.valueOf(1), unwrapped.get());

@@ -1,6 +1,5 @@
 package com.aol.cyclops.monad.functions;
 
-import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -13,7 +12,6 @@ import lombok.val;
 import org.junit.Test;
 
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.monad.functions.LiftMFunctions;
 import com.aol.cyclops.sequence.streamable.Streamable;
 public class LiftMFunctionsTest {
 
@@ -23,14 +21,14 @@ public class LiftMFunctionsTest {
 	@Test
 	public void testLiftM() {
 		String name = null;
-		assertThat(LiftMFunctions.liftM(this::one).apply(anyM(Optional.ofNullable(name))).unwrap(),
+		assertThat(LiftMFunctions.liftM(this::one).apply(AnyM.fromOptional(Optional.ofNullable(name))).unwrap(),
 				equalTo(Optional.empty()));
 	}
 	@Test
 	public void testLiftM2Simplex(){
 		val lifted = LiftMFunctions.liftM2((Integer a,Integer b)->a+b);
 		
-		AnyM<Integer> result = lifted.apply(anyM(Optional.of(3)),anyM(Optional.of(4)));
+		AnyM<Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),AnyM.fromOptional(Optional.of(4)));
 		
 		assertThat(result.<Optional<Integer>>unwrap().get(),equalTo(7));
 	}
@@ -39,7 +37,7 @@ public class LiftMFunctionsTest {
 	public void testLiftM2SimplexNull(){
 		val lifted = LiftMFunctions.liftM2((Integer a,Integer b)->a+b);
 		
-		AnyM<Integer> result = lifted.apply(anyM(Optional.of(3)),anyM(Optional.ofNullable(null)));
+		AnyM<Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),AnyM.fromOptional(Optional.ofNullable(null)));
 		
 		assertThat(result.<Optional<Integer>>unwrap().isPresent(),equalTo(false));
 	}
@@ -51,7 +49,8 @@ public class LiftMFunctionsTest {
 		Streamable<String> stream2 = Streamable.of("MixedCase","all lower");
 		
 		
-		AnyM<String> responses = LiftMFunctions.liftM2(this::response).apply(anyM(stream1), anyM(stream2));
+		AnyM<String> responses = LiftMFunctions.liftM2(this::response).apply(AnyM.fromStreamable(stream1), 
+				AnyM.fromStreamable(stream2));
 		
 		assertThat(responses.toSequence().toList(),equalTo(Arrays.asList("all upper::MIXEDCASE", 
 				"all upper::ALL LOWER", "mixed case::MIXEDCASE", "mixed case::ALL LOWER")));
@@ -64,7 +63,8 @@ public class LiftMFunctionsTest {
 		Streamable<String> stream2 = Streamable.of("MixedCase","all lower");
 		
 		
-		AnyM<String> responses = LiftMFunctions.liftM2(this::response).apply(anyM(stream1), anyM(stream2));
+		AnyM<String> responses = LiftMFunctions.liftM2(this::response).apply(AnyM.fromStream(stream1),
+				AnyM.fromStreamable(stream2));
 		
 		assertThat(responses.toSequence().toList(),equalTo(Arrays.asList("all upper::MIXEDCASE", 
 				"all upper::ALL LOWER", "mixed case::MIXEDCASE", "mixed case::ALL LOWER")));
@@ -74,46 +74,6 @@ public class LiftMFunctionsTest {
 	public String response(String input1, String input2){
 		return input1.toLowerCase() + "::" + input2.toUpperCase();
 	}
-/**
-	@Test
-	public void testLiftM2BiFunctionOfU1U2R() {
-		fail("Not yet implemented");
-	}
 
-	@Test
-	public void testLiftM3TriFunctionOfU1U2U3R() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testLiftM4QuadFunctionOfU1U2U3U4R() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testLiftM5QuintFunctionOfU1U2U3U4U5R() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testLiftM2FunctionOfU1FunctionOfU2R() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testLiftM3FunctionOfU1FunctionOfU2FunctionOfU3R() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testLiftM4FunctionOfU1FunctionOfU2FunctionOfU3FunctionOfU4R() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testLiftM5FunctionOfU1FunctionOfU2FunctionOfU3FunctionOfU4FunctionOfU5R() {
-		fail("Not yet implemented");
-	}
-	**/
 
 }

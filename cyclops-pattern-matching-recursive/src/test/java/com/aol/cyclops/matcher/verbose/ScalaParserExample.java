@@ -2,7 +2,7 @@ package com.aol.cyclops.matcher.verbose;
 import static com.aol.cyclops.matcher.Predicates.ANY;
 import static com.aol.cyclops.matcher.Predicates.__;
 import static com.aol.cyclops.matcher.Predicates.type;
-import static com.aol.cyclops.matcher.Predicates.with;
+import static com.aol.cyclops.matcher.Predicates.hasValues;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Value;
@@ -77,9 +77,9 @@ public class ScalaParserExample {
 	public Expression deeplyNestedExample(Expression e){
 		
 		return RecursiveMatcher.<Expression>when().isType( (Add<Const,Mult> a)-> new Const(1))
-									.with(__,type(Mult.class).with(__,new Const(0)))
-				.when().isType( (Add<Mult,Const> a)-> new Const(0)).with(type(Mult.class).with(__,new Const(0)),__)
-				.when().isType( (Add<Add,Const> a)-> new Const(-100)).with(with(__,new Const(2)),__)
+									.with(__,type(Mult.class).hasValues(__,new Const(0)))
+				.when().isType( (Add<Mult,Const> a)-> new Const(0)).with(type(Mult.class).hasValues(__,new Const(0)),__)
+				.when().isType( (Add<Add,Const> a)-> new Const(-100)).with(hasValues(__,new Const(2)),__)
 				
 				
 				.apply(e).orElse(new Const(-1));

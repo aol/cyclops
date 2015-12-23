@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import lombok.Value;
 
-import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.monad.AnyM;
 
 /**
@@ -43,13 +42,13 @@ public class Disabled<F> implements FeatureToggle<F>{
 	 * @return This monad, wrapped as AnyM
 	 */
 	public AnyM<F> anyM(){
-		return AsAnyM.notTypeSafeAnyM(Optional.empty());
+		return AnyM.fromOptional(Optional.empty());
 	}
 	/**
 	 * @return This monad, wrapped as AnyM of Disabled
 	 */
 	public AnyM<F> anyMDisabled(){
-		return  AsAnyM.notTypeSafeAnyM(this);
+		return  AnyM.fromStreamable(this);
 	}
 	/**
 	 * @return This monad, wrapped as AnyM of Enabled

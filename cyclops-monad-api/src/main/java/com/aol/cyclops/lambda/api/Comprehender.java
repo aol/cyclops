@@ -10,6 +10,7 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.comprehensions.comprehenders.MaterializedList;
 import com.aol.cyclops.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 
@@ -121,16 +122,16 @@ public interface Comprehender<T> {
 		
 		
 		if (apply instanceof Stream) {
-			return comp.of(((Stream) apply).collect(Collectors.toList()));
+			return comp.of(((Stream) apply).collect(Collectors.toCollection(MaterializedList::new)));
 		}
 		if (apply instanceof IntStream) {
-			return comp.of(((IntStream) apply).boxed().collect(Collectors.toList()));
+			return comp.of(((IntStream) apply).boxed().collect(Collectors.toCollection(MaterializedList::new)));
 		}
 		if (apply instanceof DoubleStream) {
-			return comp.of(((DoubleStream) apply).boxed().collect(Collectors.toList()));
+			return comp.of(((DoubleStream) apply).boxed().collect(Collectors.toCollection(MaterializedList::new)));
 		}
 		if (apply instanceof LongStream) {
-			return comp.of(((DoubleStream) apply).boxed().collect(Collectors.toList()));
+			return comp.of(((DoubleStream) apply).boxed().collect(Collectors.toCollection(MaterializedList::new)));
 		}
 		if (apply instanceof CompletableFuture) {
 			return comp.of(((CompletableFuture) apply).join());

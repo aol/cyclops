@@ -1,6 +1,9 @@
 package com.aol.cyclops.matcher.recursive;
 
+import java.util.Optional;
+
 import lombok.AllArgsConstructor;
+import lombok.experimental.Wither;
 
 public class AsMatchable {
 	
@@ -15,12 +18,15 @@ public class AsMatchable {
 	public static  Matchable asMatchable(Object toCoerce){
 		return new CoercedMatchable(toCoerce);
 	}
+	
 	@AllArgsConstructor
-	public static class CoercedMatchable implements Matchable{
+	public static class CoercedMatchable<T> implements Matchable{
 		private final Object matchable;
+
 		@Override
 		public Object getMatchable(){
 			return matchable;
 		}
+		
 	}
 }

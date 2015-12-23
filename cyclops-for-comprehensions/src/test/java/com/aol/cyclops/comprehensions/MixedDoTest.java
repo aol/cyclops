@@ -3,6 +3,7 @@ package com.aol.cyclops.comprehensions;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -25,7 +26,7 @@ public class MixedDoTest {
 		
 		
 		
-		CompletableFuture<List<String>> results1 = UntypedDo.add(future)
+		CompletableFuture<String> results1 = UntypedDo.add(future)
 									 				.add(()->Stream.of("first","second"))
 									 				.yield((String loadedData) -> (String local)-> loadedData + ":" + local );
 		
@@ -43,8 +44,8 @@ public class MixedDoTest {
 		
 		
 		
-		
-		assertThat(results1.join(),equalTo(results2.join()));
+		assertThat(results2.join(),equalTo(Arrays.asList("loaded:first", "loaded:second")));
+		assertThat(results1.join(),equalTo("loaded:first"));
 	
 		
 	}

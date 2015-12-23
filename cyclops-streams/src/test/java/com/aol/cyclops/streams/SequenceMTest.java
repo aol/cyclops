@@ -1,6 +1,6 @@
 package com.aol.cyclops.streams;
 
-import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
+
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
@@ -23,11 +23,53 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
+import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
 
 public class SequenceMTest {
 	
+	@Test
+	public void subStream(){
+		List<Integer> list = SequenceM.of(1,2,3,4,5,6).subStream(1,3).toList();
+		assertThat(list,equalTo(Arrays.asList(2,3)));
+	}
+	@Test
+    public void emptyPermutations() {
+        assertThat(SequenceM.of().permutations().map(s->s.toList()).toList(),equalTo(Arrays.asList()));
+    }
+
+    @Test
+    public void permuations3() {
+    	System.out.println(SequenceM.of(1, 2, 3).permutations().map(s->s.toList()).toList());
+        assertThat(SequenceM.of(1, 2, 3).permutations().map(s->s.toList()).toList(),
+        		equalTo(SequenceM.of(SequenceM.of(1, 2, 3),
+        		SequenceM.of(1, 3, 2), SequenceM.of(2, 1, 3), SequenceM.of(2, 3, 1), SequenceM.of(3, 1, 2), SequenceM.of(3, 2, 1)).map(s->s.toList()).toList()));
+    }
+    
+    @Test
+    public void emptyAllCombinations() {
+        assertThat(SequenceM.of().combinations().map(s->s.toList()).toList(),equalTo(Arrays.asList(Arrays.asList())));
+    }
+
+    @Test
+    public void allCombinations3() {
+        assertThat(SequenceM.of(1, 2, 3).combinations().map(s->s.toList()).toList(),equalTo(Arrays.asList(Arrays.asList(), Arrays.asList(1), Arrays.asList(2),
+        		Arrays.asList(3), Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3), Arrays.asList(1, 2, 3))));
+    }
+
+  
+
+    @Test
+    public void emptyCombinations() {
+        assertThat(SequenceM.of().combinations(2).toList(),equalTo(Arrays.asList()));
+    }
+
+    @Test
+    public void combinations2() {
+        assertThat(SequenceM.of(1, 2, 3).combinations(2).map(s->s.toList()).toList(),
+                equalTo(Arrays.asList(Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3))));
+    }
 	@Test
 	public void onEmptySwitchEmpty(){
 		assertThat(SequenceM.of()
@@ -294,8 +336,8 @@ public class SequenceMTest {
 	@Test
 	public void testPeek() {
 		peek = 0 ;
-		   anyM(Stream.of(asList(1,3)))
-				  				.flatMap(c->anyM(c.stream()))
+		   AnyM.fromStream(Stream.of(asList(1,3)))
+				  				.flatMap(c->AnyM.fromStream(c.stream()))
 				  				.asSequence()
 				  				.map(i->i*2)
 				  				.peek(i-> peek=i)
@@ -304,8 +346,8 @@ public class SequenceMTest {
 	}
 	@Test
 	public void testMap() {
-		  List<Integer> list = anyM(Stream.of(asList(1,3)))
-				  				.flatMap(c->anyM(c.stream()))
+		  List<Integer> list = AnyM.fromStream(Stream.of(asList(1,3)))
+				  				.flatMap(c->AnyM.fromStream(c.stream()))
 				  				.asSequence()
 				  				.map(i->i*2)
 				  				.peek(System.out::println)

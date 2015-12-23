@@ -13,46 +13,45 @@ import javaslang.control.Right;
 import javaslang.control.Try;
 import javaslang.test.Arbitrary;
 
-import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.monad.AnyM;
 
 public class Javaslang {
 	public static <T> AnyM<T> anyMonad(Monad<T> monadM){
-		return AsAnyM.notTypeSafeAnyM(monadM);
+		return AnyM.ofMonad(monadM);
 	}
 	public static <T> AnyM<T> anyM(Arbitrary<T> arbM){
-		return AsAnyM.notTypeSafeAnyM(arbM);
+		return AnyM.ofMonad(arbM);
 	}
 	public static <T> AnyM<T> anyM(Try<T> tryM){
-		return AsAnyM.notTypeSafeAnyM(tryM);
+		return AnyM.ofMonad(tryM);
 	}
 	public static <T> AnyM<T> anyMFailure(Try<T> tryM){
 		if(tryM.isFailure())
-			return AsAnyM.notTypeSafeAnyM(Try.of(()->tryM.toEither().left().get()));
-		return AsAnyM.notTypeSafeAnyM(Optional.empty());
+			return AnyM.ofMonad(Try.of(()->tryM.toEither().left().get()));
+		return AnyM.ofMonad(Optional.empty());
 	}
 	public static <T> AnyM<T> anyM(Either<?,T> tryM){
-		return AsAnyM.notTypeSafeAnyM(tryM);
+		return AnyM.ofMonad(tryM);
 	}
 	public static <T> AnyM<T> anyM(RightProjection<?,T> tryM){
 		if(tryM.toJavaOptional().isPresent())
-			return AsAnyM.notTypeSafeAnyM(new Right(tryM.get()));
+			return AnyM.ofMonad(new Right(tryM.get()));
 		else
-			return AsAnyM.notTypeSafeAnyM(Optional.empty());
+			return AnyM.ofMonad(Optional.empty());
 	}
 	public static <T> AnyM<T> anyM(LeftProjection<T,?> tryM){
 		if(tryM.toJavaOptional().isPresent())
-			return AsAnyM.notTypeSafeAnyM(new Right(tryM.get()));
+			return AnyM.ofMonad(new Right(tryM.get()));
 		else
-			return AsAnyM.notTypeSafeAnyM(Optional.empty());
+			return AnyM.ofMonad(Optional.empty());
 	}
 	public static <T> AnyM<T> anyM(Option<T> tryM){
-		return AsAnyM.notTypeSafeAnyM(tryM);
+		return AnyM.ofMonad(tryM);
 	}
 	public static <T> AnyM<T> anyM(Stream<T> tryM){
-		return AsAnyM.notTypeSafeAnyM(tryM);
+		return AnyM.ofMonad(tryM);
 	}
 	public static <T> AnyM<T> anyM(List<T> tryM){
-		return AsAnyM.notTypeSafeAnyM(tryM);
+		return AnyM.ofMonad(tryM);
 	}
 }

@@ -1,6 +1,5 @@
 package com.aol.cyclops.javaslang.streams;
 
-import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
@@ -27,6 +26,7 @@ import lombok.val;
 import org.junit.Test;
 
 import com.aol.cyclops.javaslang.ToStream;
+import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.Reducers;
@@ -277,7 +277,7 @@ public class StreamUtilsTest {
 	@Test
 	public void zipOptional(){
 		Stream<List<Integer>> zipped = StreamUtils.zipAnyM(Stream.ofAll(1,2,3)
-										,anyM(Optional.of(2)), 
+										,AnyM.fromOptional(Optional.of(2)), 
 											(a,b) -> Arrays.asList(a,b));
 		
 		
@@ -289,7 +289,7 @@ public class StreamUtilsTest {
 	@Test
 	public void zipOptionalSequence(){
 		Stream<List<Integer>> zipped = StreamUtils.zipAnyM(Stream.ofAll(1,2,3)
-										,anyM(Optional.of(2)), 
+										,AnyM.fromOptional(Optional.of(2)), 
 											(a,b) -> Arrays.asList(a,b));
 		
 		

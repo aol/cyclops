@@ -1,7 +1,6 @@
 package com.aol.cyclops.comprehensions.donotation.typed;
 
 
-import static com.aol.cyclops.lambda.api.AsAnyM.notTypeSafeAnyM;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -16,8 +15,8 @@ import fj.data.Option;
 public class DoFJOptionTest {
 	@Test
 	public void optionTest(){
-		AnyM<Integer> one = notTypeSafeAnyM(Option.some(1));
-		AnyM<Integer> empty = notTypeSafeAnyM(Option.none());
+		AnyM<Integer> one = AnyM.ofMonad(Option.some(1));
+		AnyM<Integer> empty = AnyM.ofMonad(Option.none());
 		BiFunction<Integer,Integer,Integer> f2 = (a,b) -> a *b; 
 		
 		Option result =  Do.add(one)
@@ -30,8 +29,8 @@ public class DoFJOptionTest {
 	}
 	@Test
 	public void optionTestWith(){
-		AnyM<Integer> one = notTypeSafeAnyM(Option.some(1));
-		AnyM<Integer> empty = notTypeSafeAnyM(Option.none());
+		AnyM<Integer> one = AnyM.ofMonad(Option.some(1));
+		AnyM<Integer> empty = AnyM.ofMonad(Option.none());
 		BiFunction<Integer,Integer,Integer> f2 = (a,b) -> a *b; 
 		
 		Option result =  Do.add(one)
@@ -44,8 +43,8 @@ public class DoFJOptionTest {
 	}
 	@Test
 	public void optionPositiveTest(){
-		AnyM<Integer> one = notTypeSafeAnyM(Option.some(1));
-		AnyM<Integer> empty = notTypeSafeAnyM(Option.some(3));
+		AnyM<Integer> one = AnyM.ofMonad(Option.some(1));
+		AnyM<Integer> empty = AnyM.ofMonad(Option.some(3));
 		BiFunction<Integer,Integer,Integer> f2 = (a,b) -> a *b; 
 		
 		Option result =  Do.add(one)
