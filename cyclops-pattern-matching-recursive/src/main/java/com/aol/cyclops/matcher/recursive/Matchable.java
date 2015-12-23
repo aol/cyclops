@@ -157,6 +157,8 @@ public interface Matchable{
 	 * @return new Matchable
 	 */
 	public static Matchable of(Object o){
+		if(o instanceof Stream)
+			return ofStream((Stream)o);
 		return AsMatchable.asMatchable(o);
 	}
 	/**

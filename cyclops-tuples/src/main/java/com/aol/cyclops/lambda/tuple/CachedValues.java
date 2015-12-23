@@ -28,6 +28,7 @@ import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.matcher.builders.MatchingInstance;
 import com.aol.cyclops.matcher.builders.PatternMatcher;
 import com.aol.cyclops.matcher.builders._Simpler_Case;
+import com.aol.cyclops.matcher.recursive.Matchable;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.streamable.ToStream;
 import com.aol.cyclops.value.ValueObject;
@@ -35,7 +36,7 @@ import com.nurkiewicz.lazyseq.LazySeq;
 
 
 
-public interface CachedValues extends Iterable, ValueObject, ToStream, Doable, Comparable<CachedValues>{
+public interface CachedValues extends Iterable, ValueObject, ToStream, Doable, Matchable, Comparable<CachedValues>{
 
 	
 	
@@ -52,20 +53,7 @@ public interface CachedValues extends Iterable, ValueObject, ToStream, Doable, C
 			return (X)c.to(to);
 		}
 	}
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <R,T,I> R  matchValues(Function<CheckValues<I,T>,CheckValues<I,T>> fn){
-		
-		return (R) new MatchingInstance(new _Simpler_Case( fn.apply( (CheckValues)
-					new _Simpler_Case(new PatternMatcher()).withType(this.getClass())).getPatternMatcher()))
-						.match(this).get();
-	}
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <R,T,I> R  matchValues(Function<CheckValues<I,T>,CheckValues<I,T>> fn, R defaultValue){
-		
-		return (R) new MatchingInstance(new _Simpler_Case( fn.apply( (CheckValues)
-					new _Simpler_Case(new PatternMatcher()).withType(this.getClass())).getPatternMatcher()))
-						.match(this).orElse(defaultValue);
-	}
+	
 	default <T extends CachedValues> ConvertStep<T> convert(){
 		return new ConvertStep(this);
 	}

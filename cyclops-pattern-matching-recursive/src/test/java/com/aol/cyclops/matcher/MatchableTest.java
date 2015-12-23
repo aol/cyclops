@@ -4,8 +4,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -63,19 +65,144 @@ public class MatchableTest {
 		assertThat(Matchable.of(result)
 				 .matches(c->c.isEmpty().then(i->"hello")),equalTo("hello"));
 		
+	}
+	@Test 
+	public void optionalMatch(){
 		Integer result2 = Matchable.of(Optional.of(1))
 									.matches(c->c.hasValues(1).then(i->2));
 		
-		System.out.println(Matchable.of(Optional.of(1)).matches(c->c.hasValues(1).then(i->2)));
-		System.out.println(Matchable.of(Optional.empty()).matches(c->c.isEmpty().then(i->"hello")));
-		System.out.println(Matchable.of(Optional.empty()).matches(
-				 o->o.isEmpty().then(i->"hello"),
-				 o->o.hasValues(1).then(i->2)));
+		assertThat(result2,equalTo(2));
+	}
+	@Test 
+	public void emptyList(){
 		
-		System.out.println(Matchable.of(1)
-				                    .matches(c->c.isType((Integer it)->"hello").anyValues()));
-		System.out.println(Matchable.listOfValues(1,2,3)
-							        .matches(c->c.hasValuesWhere((Object i)->(i instanceof Integer)).then(i->2)));
+		assertThat(Matchable.of(Arrays.asList()).matches(c->c.isEmpty().then(i->"hello")),equalTo("hello"));
+	}
+	@Test 
+	public void emptyStream(){
+		
+		assertThat(Matchable.of(Stream.of()).matches(c->c.isEmpty().then(i->"hello")),equalTo("hello"));
+	}
+	@Test 
+	public void emptyOptional(){
+		
+		assertThat(Matchable.of(Optional.empty()).matches(c->c.isEmpty().then(i->"hello")),equalTo("hello"));
+	}
+	@Test
+	public void emptyOptionalMultiple2(){
+		assertThat(Matchable.of(Optional.empty())
+				            .matches(
+				            			o-> o.isEmpty().then(i->"hello"),
+				            			o-> o.hasValues(1).then(i->""+2)
+				            		)
+				            		,equalTo("hello"));
+		
+		
+	}
+	@Test
+	public void emptyOptionalMultiple3(){
+		assertThat(Matchable.of(Optional.empty())
+				            .matches(
+				            			o-> o.isEmpty().then(i->"hello"),
+				            			o-> o.hasValues(1).then(i->""+2),
+				            			o-> o.hasValues(2).then(i->""+3)
+				            		)
+				            		,equalTo("hello"));
+		
+		
+	}
+	@Test
+	public void emptyOptionalMultiple4(){
+		assertThat(Matchable.of(Optional.of(3))
+				            .matches(
+				            			o-> o.isEmpty().then(i->"hello"),
+				            			o-> o.hasValues(1).then(i->""+2),
+				            			o-> o.hasValues(2).then(i->""+3),
+				            			o-> o.hasValues(3).then(i->""+4)
+				            		)
+				            		,equalTo("4"));
+		
+		
+	}
+	@Test
+	public void emptyOptionalMultiple5(){
+		assertThat(Matchable.of(Optional.of(4))
+				            .matches(
+				            			o-> o.isEmpty().then(i->"hello"),
+				            			o-> o.hasValues(1).then(i->""+2),
+				            			o-> o.hasValues(2).then(i->""+3),
+				            			o-> o.hasValues(3).then(i->""+4),
+				            			o-> o.hasValues(4).then(i->""+5)
+				            		)
+				            		,equalTo("5"));
+		
+		
+	}
+	@Test 
+	public void emptyOptionalMaybe(){
+		
+		assertThat(Matchable.of(Optional.empty()).mayMatch(c->c.isEmpty().then(i->"hello")).get(),equalTo("hello"));
+	}
+	@Test
+	public void emptyOptionalMultiple2Maybe(){
+		assertThat(Matchable.of(Optional.empty())
+				            .mayMatch(
+				            			o-> o.isEmpty().then(i->"hello"),
+				            			o-> o.hasValues(1).then(i->""+2)
+				            		).get()
+				            		,equalTo("hello"));
+		
+		
+	}
+	@Test
+	public void emptyOptionalMultiple3Maybe(){
+		assertThat(Matchable.of(Optional.empty())
+				            .mayMatch(
+				            			o-> o.isEmpty().then(i->"hello"),
+				            			o-> o.hasValues(1).then(i->""+2),
+				            			o-> o.hasValues(2).then(i->""+3)
+				            		).get()
+				            		,equalTo("hello"));
+		
+		
+	}
+	@Test
+	public void emptyOptionalMultiple4Maybe(){
+		assertThat(Matchable.of(Optional.of(3))
+				            .mayMatch(
+				            			o-> o.isEmpty().then(i->"hello"),
+				            			o-> o.hasValues(1).then(i->""+2),
+				            			o-> o.hasValues(2).then(i->""+3),
+				            			o-> o.hasValues(3).then(i->""+4)
+				            		).get()
+				            		,equalTo("4"));
+		
+		
+	}
+	@Test
+	public void emptyOptionalMultiple5Maybe(){
+		assertThat(Matchable.of(Optional.of(4))
+				            .mayMatch(
+				            			o-> o.isEmpty().then(i->"hello"),
+				            			o-> o.hasValues(1).then(i->""+2),
+				            			o-> o.hasValues(2).then(i->""+3),
+				            			o-> o.hasValues(3).then(i->""+4),
+				            			o-> o.hasValues(4).then(i->""+5)
+				            		).get()
+				            		,equalTo("5"));
+		
+		
+	}
+	public void matchByType(){
+		
+		assertThat(Matchable.of(1)
+				                    .matches(c->c.isType((Integer it)->"hello").anyValues()),
+				                    equalTo("hello"));
+	}
+	public void matchListOfValues(){
+		assertThat(Matchable.listOfValues(1,2,3)
+							        .matches(c->c.hasValuesWhere((Object i)->(i instanceof Integer)).then(i->2)),
+							        equalTo(2));
 		
 	}
 	@Test

@@ -67,7 +67,7 @@ public class AnyMTest {
 	@Test
 	public void testLisOfConvertable(){
 		AnyM<Integer> list = AnyM.ofConvertable(Arrays.asList(1,2,3));
-		assertThat(list.unwrap(),instanceOf(Stream.class));
+		assertThat(list.unwrap(),instanceOf(List.class));
 	}
 	@Test
 	public void testForEach() {
