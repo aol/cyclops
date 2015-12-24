@@ -144,11 +144,12 @@ public class LazyReact implements ReactBuilder {
 	}
 	
 	public <U> LazyFutureStream<U> from(CompletableFuture<U> cf){
-		return this.construct(Stream.of(FastFuture.fromCompletableFuture(cf)));
+		
+		return this.constructFutures(Stream.of(cf));
 
 	}
 	public <U> LazyFutureStream<U> from(CompletableFuture<U>... cf){
-		return (LazyFutureStream)this.construct(Stream.of(cf).map(FastFuture::fromCompletableFuture));
+		return (LazyFutureStream)this.constructFutures(Stream.of(cf));
 
 	}
 	

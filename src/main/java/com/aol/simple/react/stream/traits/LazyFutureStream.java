@@ -49,6 +49,9 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Subscriber;
 
+import com.aol.cyclops.comprehensions.donotation.typed.Do;
+import com.aol.cyclops.matcher.builders.CheckValues;
+import com.aol.cyclops.matcher.recursive.Matchable;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.HotStream;
@@ -100,6 +103,184 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 										FutureStreamSynchronousPublisher<U> {
 
 	
+	
+	default <R1,R2,R> LazyFutureStream<R> forEach3(Function<U,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
+													BiFunction<U,R1,? extends BaseStream<R2,? extends BaseStream<? extends R2,?>>> stream2,
+													Function<U,Function<R1,Function<R2,R>>> f ){
+		 return Do.add(this)
+				  .withBaseStream(u->stream1.apply(u))
+				  .withBaseStream(u->r1->stream2.apply(u,r1))
+				  .yield(f).unwrap();
+			
+	}
+	
+	
+
+
+	
+	
+	default <R1,R2,R> LazyFutureStream<R> forEach3(Function<U,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
+													BiFunction<U,R1,? extends BaseStream<R2,? extends BaseStream<? extends R2,?>>> stream2,
+															Function<U,Function<R1,Function<R2,Boolean>>> filterFunction,
+													Function<U,Function<R1,Function<R2,R>>> f ){
+		
+		 return Do.add(this)
+				  .withBaseStream(u->stream1.apply(u))
+				  .withBaseStream(u->r1->stream2.apply(u,r1))
+				  .filter(filterFunction)
+				  .yield(f).unwrap();
+			
+	}
+	
+	
+
+	
+	
+	
+	
+	/**
+	 * <pre>
+	 * {@code 
+	 * LazyFutureStream.of(1,2,3)
+						.forEach2(a->IntStream.range(10,13),
+									a->b->a+b);
+									
+	 * 
+	 *  //LFS[11,14,12,15,13,16]
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param stream1
+	 * @param f
+	 * @return
+	 */
+	default <R1,R> LazyFutureStream<R> forEach2(Function<U,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
+													Function<U,Function<R1,R>> f ){
+		 return Do.add(this)
+				  .withBaseStream(u->stream1.apply(u))
+				  .yield(f).unwrap();
+			
+	}
+
+	
+	default <R1,R> LazyFutureStream<R> forEach2(Function<U,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
+												Function<U, Function<R1, Boolean>> filterFunction,
+													Function<U,Function<R1,R>> f ){
+		 return Do.add(this)
+				  .withBaseStream(u->stream1.apply(u))
+				  .filter(filterFunction)
+				  .yield(f).unwrap();
+			
+	}
+	
+	
+	
+	
+	
+	default <R> LazyFutureStream<R> patternMatch(Function<CheckValues<U,R>,CheckValues<U,R>> fn1){
+		return map(u-> Matchable.listOfValues(u).matches(fn1));
+	}
+	default <R> LazyFutureStream<R> patternMatch(Function<CheckValues<U,R>,CheckValues<U,R>> fn1,Function<CheckValues<U,R>,CheckValues<U,R>> fn2){
+		return map(u-> Matchable.listOfValues(u).matches(fn1,fn2));
+	}
+	default <R> LazyFutureStream<R> patternMatch(Function<CheckValues<U,R>,CheckValues<U,R>> fn1,
+													Function<CheckValues<U,R>,CheckValues<U,R>> fn2,
+													Function<CheckValues<U,R>,CheckValues<U,R>> fn3){
+		return map(u-> Matchable.listOfValues(u).matches(fn1,fn2,fn3));
+	}
+	default <R> LazyFutureStream<R> patternMatch(Function<CheckValues<U,R>,CheckValues<U,R>> fn1, Function<CheckValues<U,R>,CheckValues<U,R>> fn2, 
+							Function<CheckValues<U,R>,CheckValues<U,R>> fn3,Function<CheckValues<U,R>,CheckValues<U,R>> fn4){
+					return map(u-> Matchable.listOfValues(u).matches(fn1,fn2,fn3,fn4));
+	}
+	default <R> LazyFutureStream<R> patternMatch(Function<CheckValues<U,R>,CheckValues<U,R>> fn1, Function<CheckValues<U,R>,CheckValues<U,R>> fn2, 
+			Function<CheckValues<U,R>,CheckValues<U,R>> fn3,Function<CheckValues<U,R>,CheckValues<U,R>> fn4,
+							Function<CheckValues<U,R>,CheckValues<U,R>> fn5){
+		return map(u-> Matchable.listOfValues(u).matches(fn1,fn2,fn3,fn4,fn5));
+	}
+	default <R> LazyFutureStream<R> patternMatchMaybe(R defaultValue,Function<CheckValues<U,R>,CheckValues<U,R>> fn1){
+		return  map(u-> Matchable.listOfValues(u).mayMatch(fn1).orElse(defaultValue));
+	}
+	default <R> LazyFutureStream<R> patternMatch(R defaultValue,Function<CheckValues<U,R>,CheckValues<U,R>> fn1,Function<CheckValues<U,R>,CheckValues<U,R>> fn2){
+		return map(u-> Matchable.listOfValues(u).mayMatch(fn1,fn2).orElse(defaultValue));
+	}
+	default <R> LazyFutureStream<R> patternMatch(R defaultValue,Function<CheckValues<U,R>,CheckValues<U,R>> fn1,
+													Function<CheckValues<U,R>,CheckValues<U,R>> fn2,
+													Function<CheckValues<U,R>,CheckValues<U,R>> fn3){
+		return map(u-> Matchable.listOfValues(u).mayMatch(fn1,fn2,fn3).orElse(defaultValue));
+	}
+	default <R> LazyFutureStream<R> patternMatch(R defaultValue,Function<CheckValues<U,R>,CheckValues<U,R>> fn1, Function<CheckValues<U,R>,CheckValues<U,R>> fn2, 
+							Function<CheckValues<U,R>,CheckValues<U,R>> fn3,Function<CheckValues<U,R>,CheckValues<U,R>> fn4){
+					return map(u-> Matchable.listOfValues(u).mayMatch(fn1,fn2,fn3,fn4).orElse(defaultValue));
+	}
+	default <R> LazyFutureStream<R> patternMatchMaybe(R defaultValue,Function<CheckValues<U,R>,CheckValues<U,R>> fn1, Function<CheckValues<U,R>,CheckValues<U,R>> fn2, 
+			Function<CheckValues<U,R>,CheckValues<U,R>> fn3,Function<CheckValues<U,R>,CheckValues<U,R>> fn4,
+							Function<CheckValues<U,R>,CheckValues<U,R>> fn5){
+		return map(u-> Matchable.listOfValues(u).mayMatch(fn1,fn2,fn3,fn4,fn5).orElse(defaultValue));
+	}
+	/**
+	 * Remove all occurances of the specified element from the SequenceM
+	 * <pre>
+	 * {@code
+	 * 	LazyFutureStream.of(1,2,3,4,5,1,2,3).remove(1)
+	 * 
+	 *  //LazyFutureStream[2,3,4,5,2,3]
+	 * }
+	 * </pre>
+	 * 
+	 * @param t element to remove
+	 * @return Filtered Stream
+	 */
+	default LazyFutureStream<U> remove(U t){
+		return fromStream(SequenceM.super.remove(t));
+	}
+	
+	/**
+	 * Return a Stream with elements before the provided start index removed, and elements after the provided
+	 * end index removed
+	 * 
+	 * <pre>
+	 * {@code 
+	 *   LazyFutureStream.of(1,2,3,4,5,6).subStream(1,3);
+	 *   
+	 *   
+	 *   //LazyFutureStream[2,3]
+	 * }
+	 * </pre>
+	 * 
+	 * @param start index inclusive
+	 * @param end index exclusive
+	 * @return LqzyFutureStream between supplied indexes of original Sequence
+	 */
+	default LazyFutureStream<U> subStream(int start, int end){
+		return fromStream(SequenceM.super.subStream(start, end));
+	}
+	/**
+	 * Generate the permutations based on values in the LazyFutureStream
+	 * Makes use of Streamable to store intermediate stages in a collection 
+	 * 
+	 * 
+	 * @return Permutations from this LazyFutureStream
+	 */
+	default LazyFutureStream<SequenceM<U>> permutations() {
+		return this.fromStream(SequenceM.super.permutations());
+	 }
+	/**
+	 * <pre>
+	 * {@code
+	 *   LazyFutureStream.of(1,2,3).combinations()
+	 *   
+	 *   //LazyFutureStream[SequenceM[],SequenceM[1],SequenceM[2],SequenceM[3].SequenceM[1,2],SequenceM[1,3],SequenceM[2,3]
+	 *   			,SequenceM[1,2,3]]
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @return All combinations of the elements in this stream
+	 */
+	default LazyFutureStream<SequenceM<U>> combinations() {
+		return this.fromStream(SequenceM.super.combinations());
+	 }
 	/**
 	 * LazyFutureStream operators act on the results of the previous stage by default. That means limiting, 
 	 * skipping, zipping all occur once results being to stream in from active Future tasks. This
@@ -497,9 +678,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * @param concurrentTasks Maximum number of active task chains
 	 * @return LazyFutureStream with new limits set
 	 */
-	default LazyFutureStream<U> maxActive(int concurrentTasks){
-		return null;
-	}
+	public LazyFutureStream<U> maxActive(int concurrentTasks);
 	/* 
 	 * Equivalent functionally to map / then but always applied on the completing thread (from the previous stage)
 	 * 

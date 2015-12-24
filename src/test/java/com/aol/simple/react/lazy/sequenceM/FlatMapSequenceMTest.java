@@ -1,5 +1,4 @@
 package com.aol.simple.react.lazy.sequenceM;
-import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -11,6 +10,7 @@ import java.util.stream.Stream;
 import org.jooq.lambda.Seq;
 import org.junit.Test;
 
+import com.aol.cyclops.monad.AnyM;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 public class FlatMapSequenceMTest {
 
@@ -20,7 +20,7 @@ public class FlatMapSequenceMTest {
 	}
 	@Test
 	public void flatMapCrossType(){
-		anyM(Optional.of(Arrays.asList(1,2,3)))
+		AnyM.fromOptional(Optional.of(Arrays.asList(1,2,3)))
 		.asSequence().forEach(System.out::println);
 	
 		assertThat(LazyFutureStream.of(Arrays.asList(1,2,3)).flatMapStream(i->Stream.of(i.size())).toList(),equalTo(Arrays.asList(3)));
@@ -51,7 +51,7 @@ public class FlatMapSequenceMTest {
 	@Test
 	public void flatMapSeqToSequenceM(){
 		
-		assertThat(LazyFutureStream.of(1,2,3).flatMapAnyM(i-> anyM(CompletableFuture.completedFuture(i+2))).toList(),equalTo(Arrays.asList(3,4,5)));
+		assertThat(LazyFutureStream.of(1,2,3).flatMapAnyM(i-> AnyM.fromCompletableFuture(CompletableFuture.completedFuture(i+2))).toList(),equalTo(Arrays.asList(3,4,5)));
 	}
 	
 	

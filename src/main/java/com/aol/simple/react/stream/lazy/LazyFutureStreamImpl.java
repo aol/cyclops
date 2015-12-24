@@ -191,6 +191,10 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 				queueFactory, simpleReact, subscription, parallelReduction, error,this.publisherExecutor,maxActive);
 		
 	}
+	@Override
+	public LazyFutureStream<U> maxActive(int max){
+		return this.withMaxActive(new MaxActive(max,max));
+	}
 	
 	
 	

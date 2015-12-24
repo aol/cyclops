@@ -1,6 +1,5 @@
 package com.aol.simple.react.lazy.sequenceM;
 
-import static com.aol.cyclops.lambda.api.AsAnyM.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -11,11 +10,9 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 

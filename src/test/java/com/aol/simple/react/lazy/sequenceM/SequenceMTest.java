@@ -1,6 +1,5 @@
 package com.aol.simple.react.lazy.sequenceM;
 
-import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
@@ -24,6 +23,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
+import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.StreamUtils;
@@ -305,8 +305,8 @@ public class SequenceMTest {
 	@Test
 	public void testPeek() {
 		peek = 0 ;
-		   anyM(Stream.of(asList(1,3)))
-				  				.flatMap(c->anyM(c.stream()))
+		AnyM.fromStream(Stream.of(asList(1,3)))
+				  				.flatMap(c->AnyM.fromStream(c.stream()))
 				  				.asSequence()
 				  				.map(i->i*2)
 				  				.peek(i-> peek=i)
@@ -315,8 +315,8 @@ public class SequenceMTest {
 	}
 	@Test
 	public void testMap() {
-		  List<Integer> list = anyM(Stream.of(asList(1,3)))
-				  				.flatMap(c->anyM(c.stream()))
+		  List<Integer> list = AnyM.fromStream(Stream.of(asList(1,3)))
+				  				.flatMap(c->AnyM.fromStream(c.stream()))
 				  				.asSequence()
 				  				.map(i->i*2)
 				  				.peek(System.out::println)

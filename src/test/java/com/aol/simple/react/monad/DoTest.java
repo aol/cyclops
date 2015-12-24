@@ -10,11 +10,10 @@ import java.util.Optional;
 import org.junit.Test;
 
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
-import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.monad.AnyM;
-import com.aol.simple.react.stream.traits.SimpleReactStream;
-import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.stream.traits.BaseSimpleReactStream;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
+import com.aol.simple.react.stream.traits.SimpleReactStream;
 
 public class DoTest {
 
@@ -33,7 +32,7 @@ public class DoTest {
 		}
 	}
 	public <T> AnyM<T> anyM(BaseSimpleReactStream<T> stream){
-		return AsAnyM.notTypeSafeAnyM(stream);
+		return AnyM.ofMonad(stream);
 	}
 	@Test
 	public void doTestSimple(){
