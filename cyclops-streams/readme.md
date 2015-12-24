@@ -62,12 +62,12 @@ Large number of Stream operators available on SequenceM or as static methods for
 
 Javadoc 
  
-* [SequenceM](http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/6.0.1/com/aol/cyclops/sequence/SequenceM.html)
-* [Streamable](http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/6.0.1/com/aol/cyclops/sequence/streamable/Streamable.html)
+* [SequenceM](http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/7.0.0/com/aol/cyclops/sequence/SequenceM.html)
+* [Streamable](http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/7.0.0/com/aol/cyclops/sequence/streamable/Streamable.html)
 * [Async FutureOperations](http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/6.0.1/com/aol/cyclops/sequence/future/FutureOperations.html)
-* [Async IntOperators](http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/6.0.1/com/aol/cyclops/sequence/future/IntOperators.html)
-* [Async DoubleOperators](http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/6.0.1/com/aol/cyclops/sequence/future/DoubleOperators.html)
-* [Async LongOperators](http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/6.0.1/com/aol/cyclops/sequence/future/LongOperators.html)
+* [Async IntOperators](http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/7.0.0/com/aol/cyclops/sequence/future/IntOperators.html)
+* [Async DoubleOperators](http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/7.0.0/com/aol/cyclops/sequence/future/DoubleOperators.html)
+* [Async LongOperators](http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/7.0.0/com/aol/cyclops/sequence/future/LongOperators.html)
 
 # Examples
 
