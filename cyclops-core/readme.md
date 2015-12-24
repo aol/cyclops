@@ -168,7 +168,9 @@ StreamableValue allows Pattern Matching and For Comprehensions on implementing c
 		}
 	}
 ```
+```java
     String result = As.<String>asSupplier(new Duck(),"quack").get()
+```
 
 Result is "quack" 
 
