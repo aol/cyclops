@@ -100,11 +100,15 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	
 	private final Executor publisherExecutor;
 	private final MaxActive maxActive;
+	@Wither(AccessLevel.PRIVATE)
+	@Getter
+	private final boolean decomposePatternMatching;
 	
 	@AllArgsConstructor
 	static class ConsumerHolder{
 		volatile Consumer<Throwable> forward;
 	}
+	
 	
 	
 	public LazyFutureStreamImpl(LazyReact lazyReact, final Stream<U> stream) {
@@ -120,9 +124,15 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		this.parallelReduction = ParallelReductionConfig.defaultValue;
 		this.publisherExecutor = lazyReact.getPublisherExecutor();
 		this.maxActive = lazyReact.getMaxActive();
+		this.decomposePatternMatching=false;
 		
 	}
-	
+	public LazyFutureStream<U> decompositionOn(){
+		return this.withDecomposePatternMatching(true);
+	}
+	public LazyFutureStream<U> decompositionOff(){
+		return this.withDecomposePatternMatching(false);
+	}
 	public void forwardErrors(Consumer<Throwable> c){
 		error.forward =c;
 	}
@@ -188,7 +198,8 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	@Override
 	public LazyFutureStream<U> withLastActive(LazyStreamWrapper w) {
 		return new LazyFutureStreamImpl<U>(errorHandler, (LazyStreamWrapper)w,  lazyCollector, 
-				queueFactory, simpleReact, subscription, parallelReduction, error,this.publisherExecutor,maxActive);
+				queueFactory, simpleReact, subscription, parallelReduction, error,this.publisherExecutor,maxActive,
+				this.decomposePatternMatching);
 		
 	}
 	@Override

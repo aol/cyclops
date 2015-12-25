@@ -50,6 +50,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
+import com.aol.cyclops.functions.currying.Curry;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.matcher.recursive.Matchable;
 import com.aol.cyclops.monad.AnyM;
@@ -139,6 +140,8 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	
 	
 	/**
+	 * Perform a two level nested internal iteration over this Stream and the supplied stream
+	 * 
 	 * <pre>
 	 * {@code 
 	 * LazyFutureStream.of(1,2,3)
@@ -151,72 +154,180 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * </pre>
 	 * 
 	 * 
-	 * @param stream1
-	 * @param f
-	 * @return
+	 * @param stream1 Nested Stream to iterate over
+	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
+	 * @return LazyFutureStream with elements generated via nested iteration
 	 */
 	default <R1,R> LazyFutureStream<R> forEach2(Function<U,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
-													Function<U,Function<R1,R>> f ){
+													Function<U,Function<R1,R>> yieldingFunction ){
 		 return Do.add(this)
 				  .withBaseStream(u->stream1.apply(u))
-				  .yield(f).unwrap();
+				  .yield(yieldingFunction).unwrap();
 			
 	}
 
 	
+	/**
+	 * Perform a two level nested internal iteration over this Stream and the supplied stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * LazyFutureStream.of(1,2,3)
+						.forEach2(a->IntStream.range(10,13),
+						            a->b-> a<3 && b>10,
+									a->b->a+b);
+									
+	 * 
+	 *  //LFS[14,15]
+	 * }
+	 * </pre>
+	 * @param stream1 Nested Stream to iterate over
+	 * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
+	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
+	 * @return
+	 */
 	default <R1,R> LazyFutureStream<R> forEach2(Function<U,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
 												Function<U, Function<R1, Boolean>> filterFunction,
-													Function<U,Function<R1,R>> f ){
+													Function<U,Function<R1,R>> yieldingFunction ){
 		 return Do.add(this)
 				  .withBaseStream(u->stream1.apply(u))
 				  .filter(filterFunction)
-				  .yield(f).unwrap();
+				  .yield(yieldingFunction).unwrap();
 			
 	}
 	
 	
-	
-	
-	
-	default <R> LazyFutureStream<R> patternMatch(Function<CheckValues<U,R>,CheckValues<U,R>> fn1){
-		return map(u-> Matchable.listOfValues(u).matches(fn1));
+	/**
+	 * Transform the elements of this Stream with a Pattern Matching case and default value
+	 * 
+	 * <pre>
+	 * {@code 
+	 * List<String> result = LazyFutureStream.of(1,2,3,4)
+											  .patternMatch("odd",
+													  	c->c.hasValuesWhere( (Integer i)->i%2==0 ).then(i->"even")
+													  )
+	 * }
+	 * // LazyFutureStream["odd","even","odd","even"]
+	 * </pre>
+	 * 
+	 * 
+	 * @param defaultValue Value if supplied case doesn't match
+	 * @param case1 Function to generate a case (or chain of cases as a single case)
+	 * @return LazyFutureStream where elements are transformed by pattern matching
+	 */
+	default <R> LazyFutureStream<R> patternMatch(R defaultValue,Function<CheckValues<U,R>,CheckValues<U,R>> case1){
+		
+		return  map(u-> Matchable.of(u).mayMatch(case1).orElse(defaultValue));
 	}
-	default <R> LazyFutureStream<R> patternMatch(Function<CheckValues<U,R>,CheckValues<U,R>> fn1,Function<CheckValues<U,R>,CheckValues<U,R>> fn2){
-		return map(u-> Matchable.listOfValues(u).matches(fn1,fn2));
+	/**
+	 * Transform the elements of this Stream with a Pattern Matching case and default value
+	 * 
+	 * <pre>
+	 * {@code 
+	 * List<String> result = LazyFutureStream.of(-2,01,2,3,4)
+	 *                                        .filter(i->i>0)
+											  .patternMatch("many",
+													  	c->c.hasValuesWhere( (Integer i)->i==1 ).then(i->"one"),
+													  	c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"two")
+													  )
+	 * }
+	 * // LazyFutureStream["one","two","many","many"]
+	 * </pre>
+	 * 
+	 * @param defaultValue Value if supplied cases don't match
+	 * @param case1 Function to generate a case (or chain of cases as a single case)
+	 * @param case2 Function to generate a case (or chain of cases as a single case)
+	 * @return  LazyFutureStream where elements are transformed by pattern matching
+	 */
+	default <R> LazyFutureStream<R> patternMatch(R defaultValue,Function<CheckValues<U,R>,CheckValues<U,R>> case1
+							,Function<CheckValues<U,R>,CheckValues<U,R>> case2){
+		return map(u-> Matchable.of(u).mayMatch(case1,case2).orElse(defaultValue));
 	}
-	default <R> LazyFutureStream<R> patternMatch(Function<CheckValues<U,R>,CheckValues<U,R>> fn1,
-													Function<CheckValues<U,R>,CheckValues<U,R>> fn2,
-													Function<CheckValues<U,R>,CheckValues<U,R>> fn3){
-		return map(u-> Matchable.listOfValues(u).matches(fn1,fn2,fn3));
-	}
-	default <R> LazyFutureStream<R> patternMatch(Function<CheckValues<U,R>,CheckValues<U,R>> fn1, Function<CheckValues<U,R>,CheckValues<U,R>> fn2, 
-							Function<CheckValues<U,R>,CheckValues<U,R>> fn3,Function<CheckValues<U,R>,CheckValues<U,R>> fn4){
-					return map(u-> Matchable.listOfValues(u).matches(fn1,fn2,fn3,fn4));
-	}
-	default <R> LazyFutureStream<R> patternMatch(Function<CheckValues<U,R>,CheckValues<U,R>> fn1, Function<CheckValues<U,R>,CheckValues<U,R>> fn2, 
-			Function<CheckValues<U,R>,CheckValues<U,R>> fn3,Function<CheckValues<U,R>,CheckValues<U,R>> fn4,
-							Function<CheckValues<U,R>,CheckValues<U,R>> fn5){
-		return map(u-> Matchable.listOfValues(u).matches(fn1,fn2,fn3,fn4,fn5));
-	}
-	default <R> LazyFutureStream<R> patternMatchMaybe(R defaultValue,Function<CheckValues<U,R>,CheckValues<U,R>> fn1){
-		return  map(u-> Matchable.listOfValues(u).mayMatch(fn1).orElse(defaultValue));
-	}
-	default <R> LazyFutureStream<R> patternMatch(R defaultValue,Function<CheckValues<U,R>,CheckValues<U,R>> fn1,Function<CheckValues<U,R>,CheckValues<U,R>> fn2){
-		return map(u-> Matchable.listOfValues(u).mayMatch(fn1,fn2).orElse(defaultValue));
-	}
+	/**
+	 * Transform the elements of this Stream with a Pattern Matching case and default value
+	 * 
+	 * <pre>
+	 * {@code 
+	 * List<String> result = LazyFutureStream.of(-2,01,2,3,4)
+	 *                                        .filter(i->i>0)
+											  .patternMatch("many",
+													  	c->c.hasValuesWhere( (Integer i)->i==1 ).then(i->"one"),
+													  	c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"two"),
+													  	c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"three")
+													  )
+	 * }
+	 * // LazyFutureStream["one","two","three","many"]
+	 * </pre>
+	 * @param defaultValue Value if supplied cases don't match
+	 * @param fn1 Function to generate a case (or chain of cases as a single case)
+	 * @param fn2 Function to generate a case (or chain of cases as a single case)
+	 * @param fn3 Function to generate a case (or chain of cases as a single case)
+	 * @return LazyFutureStream where elements are transformed by pattern matching
+	 */
 	default <R> LazyFutureStream<R> patternMatch(R defaultValue,Function<CheckValues<U,R>,CheckValues<U,R>> fn1,
 													Function<CheckValues<U,R>,CheckValues<U,R>> fn2,
 													Function<CheckValues<U,R>,CheckValues<U,R>> fn3){
-		return map(u-> Matchable.listOfValues(u).mayMatch(fn1,fn2,fn3).orElse(defaultValue));
+		
+		return map(u-> Matchable.of(u).mayMatch(fn1,fn2,fn3).orElse(defaultValue));
 	}
+	/**
+	 * Transform the elements of this Stream with a Pattern Matching case and default value
+	 * 
+	 * <pre>
+	 * {@code 
+	 * List<String> result = LazyFutureStream.of(-2,01,2,3,4,5)
+	 *                                        .filter(i->i>0)
+											  .patternMatch("many",
+													  	c->c.hasValuesWhere( (Integer i)->i==1 ).then(i->"one"),
+													  	c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"two"),
+													  	c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"three"),
+													  	c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"four")
+													  )
+	 * }
+	 * // LazyFutureStream["one","two","three","four","many"]
+	 * </pre>
+	 * @param defaultValue Value if supplied cases don't match
+	 * @param fn1  Function to generate a case (or chain of cases as a single case)
+	 * @param fn2  Function to generate a case (or chain of cases as a single case)
+	 * @param fn3  Function to generate a case (or chain of cases as a single case)
+	 * @param fn4  Function to generate a case (or chain of cases as a single case)
+	 * @return  LazyFutureStream where elements are transformed by pattern matching
+	 */
 	default <R> LazyFutureStream<R> patternMatch(R defaultValue,Function<CheckValues<U,R>,CheckValues<U,R>> fn1, Function<CheckValues<U,R>,CheckValues<U,R>> fn2, 
 							Function<CheckValues<U,R>,CheckValues<U,R>> fn3,Function<CheckValues<U,R>,CheckValues<U,R>> fn4){
-					return map(u-> Matchable.listOfValues(u).mayMatch(fn1,fn2,fn3,fn4).orElse(defaultValue));
+		Function<U,Matchable> matchable =Curry.curry2(MatchableCreator.<U>matchable()).apply(this);
+		return map(u-> Matchable.of(u).mayMatch(fn1,fn2,fn3,fn4).orElse(defaultValue));
 	}
-	default <R> LazyFutureStream<R> patternMatchMaybe(R defaultValue,Function<CheckValues<U,R>,CheckValues<U,R>> fn1, Function<CheckValues<U,R>,CheckValues<U,R>> fn2, 
+	/**
+	 * Transform the elements of this Stream with a Pattern Matching case and default value
+	 * 
+	 * <pre>
+	 * {@code 
+	 * List<String> result = LazyFutureStream.of(-2,01,2,3,4,5,6)
+	 *                                        .filter(i->i>0)
+											  .patternMatch("many",
+													  	c->c.hasValuesWhere( (Integer i)->i==1 ).then(i->"one"),
+													  	c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"two"),
+													  	c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"three"),
+													  	c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"four"),
+													  	c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"five")
+													  )
+	 * }
+	 * // LazyFutureStream["one","two","three","four","five","many"]
+	 * </pre>
+	 * @param defaultValue Value if supplied cases don't match
+	 * @param fn1 Function to generate a case (or chain of cases as a single case)
+	 * @param fn2 Function to generate a case (or chain of cases as a single case)
+	 * @param fn3 Function to generate a case (or chain of cases as a single case)
+	 * @param fn4 Function to generate a case (or chain of cases as a single case)
+	 * @param fn5 Function to generate a case (or chain of cases as a single case)
+	 * @return LazyFutureStream where elements are transformed by pattern matching
+	 */
+	default <R> LazyFutureStream<R> patternMatch(R defaultValue,Function<CheckValues<U,R>,CheckValues<U,R>> fn1, Function<CheckValues<U,R>,CheckValues<U,R>> fn2, 
 			Function<CheckValues<U,R>,CheckValues<U,R>> fn3,Function<CheckValues<U,R>,CheckValues<U,R>> fn4,
 							Function<CheckValues<U,R>,CheckValues<U,R>> fn5){
-		return map(u-> Matchable.listOfValues(u).mayMatch(fn1,fn2,fn3,fn4,fn5).orElse(defaultValue));
+		
+		return map(u-> Matchable.of(u).mayMatch(fn1,fn2,fn3,fn4,fn5).orElse(defaultValue));
 	}
 	/**
 	 * Remove all occurances of the specified element from the SequenceM
