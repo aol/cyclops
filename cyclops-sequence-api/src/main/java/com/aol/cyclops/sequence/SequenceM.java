@@ -1969,6 +1969,15 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 		Objects.requireNonNull(iterable);
 		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(iterable.spliterator(),false),null);
 	}
+	/**
+	 * Construct a Sequence from an Iterator
+	 * @param iterator  to construct Sequence from
+	 * @return SequenceM
+	 */
+	public static <T> SequenceM<T> fromIterator(Iterator<T> iterator){
+		Objects.requireNonNull(iterator);
+		return fromIterable( ()-> iterator);
+	}
     /**
      * @see Stream#iterate(Object, UnaryOperator)
      */

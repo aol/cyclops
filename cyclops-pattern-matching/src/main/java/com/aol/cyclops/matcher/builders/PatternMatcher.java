@@ -22,15 +22,17 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
 import com.aol.cyclops.matcher.Action;
-import com.aol.cyclops.matcher.TypedFunction;
 import com.aol.cyclops.matcher.Case;
 import com.aol.cyclops.matcher.Cases;
 import com.aol.cyclops.matcher.ChainOfResponsibility;
 import com.aol.cyclops.matcher.Extractor;
 import com.aol.cyclops.matcher.Extractors;
 import com.aol.cyclops.matcher.Two;
+import com.aol.cyclops.matcher.TypedFunction;
 import com.aol.cyclops.objects.Decomposable;
-import com.nurkiewicz.lazyseq.LazySeq;
+import com.aol.cyclops.sequence.SequenceM;
+
+import fj.data.vector.V;
 
 
 
@@ -275,7 +277,7 @@ public class PatternMatcher implements Function{
 	@SafeVarargs
 	public final <V> PatternMatcher caseOfMany(Action<List<V>> a,Predicate<V>... predicates){
 		
-		LazySeq<Predicate<V>> pred = LazySeq.of(predicates);
+		SequenceM<Predicate<V>> pred = SequenceM.of(predicates);
 		
 		
 		return caseOfThenExtract(it -> seq(it).zip(pred,(a1,b1)->Two.tuple(a1,b1))
@@ -303,7 +305,7 @@ public class PatternMatcher implements Function{
 	@SafeVarargs
 	public final <V> PatternMatcher matchOfMany(Action<List<V>> a,Matcher<V>... predicates){
 		
-		LazySeq<Matcher<V>> pred = LazySeq.of(predicates);
+		SequenceM<Matcher<V>> pred = SequenceM.of(predicates);
 		
 		
 		return matchOfThenExtract(new BaseMatcher(){
@@ -344,7 +346,7 @@ public class PatternMatcher implements Function{
 	public <T,R,V,V1>  PatternMatcher matchOfMatchers(Two<Matcher<V>,Matcher<V1>> predicates,
 				Action<R> a,Extractor<T,R> extractor){
 			
-			LazySeq<Object> pred = LazySeq.of(predicates);
+			SequenceM<Object> pred = SequenceM.fromIterable(predicates);
 			
 			return matchOfThenExtract(new BaseMatcher(){
 
@@ -383,9 +385,13 @@ public class PatternMatcher implements Function{
 	public <T,R,V,V1> PatternMatcher caseOfPredicates(Two<Predicate<V>,Predicate<V1>> predicates,
 							Action<R> a,Extractor<T,R> extractor){
 		
-		LazySeq<Object> pred = LazySeq.of(predicates);
+		SequenceM<Object> pred = SequenceM.fromIterable(predicates);
 		
-		return caseOfThenExtract(it -> seq(it).zip(pred,(a1,b1)->Two.tuple(a1,b1)).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
+		return caseOfThenExtract(it -> seq(it)
+							.zip(pred,(a1,b1)->Two.tuple(a1,b1))
+							.peek(System.out::println)
+							.map(t -> ((Predicate)t.v2).test(t.v1))
+								.allMatch(v->v==true), a, extractor);
 		
 	}
 	/**
@@ -407,7 +413,7 @@ public class PatternMatcher implements Function{
 	 */
 	public <T,R> PatternMatcher caseOfTuple(Iterable predicates, Action<R> a,Extractor<T,R> extractor){
 
-				LazySeq<Object> pred = LazySeq.of(predicates);
+		SequenceM<Object> pred = SequenceM.fromIterable(predicates);
 				return caseOfThenExtract(it -> seq(it).zip(pred,(a1,b1)->Two.tuple(a1,b1)).map(t -> (convertToPredicate(t.v2)).test(t.v1)).allMatch(v->v==true), a, extractor);
 				
 	}
@@ -422,7 +428,7 @@ public class PatternMatcher implements Function{
 	
 	public <T,R> PatternMatcher matchOfTuple(Iterable predicates, Action<R> a,Extractor<T,R> extractor){
 
-		LazySeq<Object> pred = LazySeq.of(predicates);
+		SequenceM<Object> pred = SequenceM.fromIterable(predicates);
 		return matchOfThenExtract(new BaseMatcher(){
 
 			@Override
@@ -455,7 +461,7 @@ public class PatternMatcher implements Function{
 	 public <T,V,X> PatternMatcher inCaseOfManyType(Predicate master,TypedFunction<T,X> a,
     		 Predicate<V>... predicates){
 		
-		LazySeq<Predicate<V>> pred = LazySeq.of(predicates);
+		 SequenceM<Predicate<V>> pred = SequenceM.of(predicates);
 		
 		
 		return inCaseOf(it -> master.test(it) && seq(Extractors.decompose().apply(it))
@@ -468,7 +474,7 @@ public class PatternMatcher implements Function{
      public <V,X> PatternMatcher inCaseOfMany(TypedFunction<List<V>,X> a,
     		 Predicate<V>... predicates){
 		
-		LazySeq<Predicate<V>> pred = LazySeq.of(predicates);
+    	 SequenceM<Predicate<V>> pred = SequenceM.of(predicates);
 		
 		
 		return inCaseOfThenExtract(it -> seq(it).zip(pred,(a1,b1)->Two.tuple(a1,b1))
@@ -485,7 +491,7 @@ public class PatternMatcher implements Function{
 	public <V,X> PatternMatcher inMatchOfMany(TypedFunction<List<V>,X> a,
 			Matcher<V>... predicates){
 		
-		LazySeq<Matcher<V>> pred = (LazySeq<Matcher<V>>) LazySeq.of(predicates);
+		SequenceM<Matcher<V>> pred = (SequenceM<Matcher<V>>) SequenceM.of(predicates);
 		
 		
 		return inMatchOfThenExtract(new BaseMatcher(){
@@ -508,7 +514,7 @@ public class PatternMatcher implements Function{
 	public <T,R,V,V1,X>  PatternMatcher inMatchOfMatchers(Two<Matcher<V>,Matcher<V1>> predicates,
 				TypedFunction<R,X> a,Extractor<T,R> extractor){
 			
-			LazySeq<Object> pred = LazySeq.of(predicates);
+			SequenceM<Object> pred = SequenceM.fromIterable(predicates);
 			
 			return inMatchOfThenExtract(new BaseMatcher(){
 
@@ -529,7 +535,7 @@ public class PatternMatcher implements Function{
 	public <T,R,V,V1,X> PatternMatcher inCaseOfPredicates(Two<Predicate<V>,Predicate<V1>> predicates,
 							TypedFunction<R,X> a,Extractor<T,R> extractor){
 		
-		LazySeq<Object> pred = LazySeq.of(predicates);
+		SequenceM<Object> pred = SequenceM.fromIterable(predicates);
 		
 		return inCaseOfThenExtract(it -> seq(it).zip(pred,(a1,b1)->Two.tuple(a1,b1)).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
 		
@@ -538,19 +544,19 @@ public class PatternMatcher implements Function{
 	
 	public <T,R,X> PatternMatcher inCaseOfStream(Stream<Predicate> predicates, TypedFunction<R,X> a,Extractor<T,R> extractor){
 
-		LazySeq<Object> pred = LazySeq.<Object>of((Iterator)predicates.iterator());
+		SequenceM<Object> pred = SequenceM.<Object>fromIterator((Iterator)predicates.iterator());
 		return inCaseOfThenExtract(it -> seq(it).zip(pred,(a1,b1)->Two.tuple(a1,b1)).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
 		
 	}
 	
 	public <T,R,X> PatternMatcher inMatchOfSeq(Stream<Matcher> predicates, TypedFunction<R,X> a,Extractor<T,R> extractor){
 
-		LazySeq<Object> pred = LazySeq.of(predicates);
+		SequenceM<Object> pred = SequenceM.fromStream((Stream)predicates);
 		return inMatchOfThenExtract(new BaseMatcher(){
 
 			@Override
 			public boolean matches(Object item) {
-				return LazySeq.of(item).zip(pred,(a1,b1)->Two.tuple(a1,b1)).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
+				return SequenceM.of(item).zip(pred,(a1,b1)->Two.tuple(a1,b1)).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
 			}
 
 			@Override

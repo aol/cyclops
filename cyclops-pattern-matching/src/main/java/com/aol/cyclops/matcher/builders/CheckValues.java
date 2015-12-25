@@ -10,7 +10,7 @@ import org.hamcrest.Matcher;
 
 import com.aol.cyclops.matcher.Predicates;
 import com.aol.cyclops.matcher.TypedFunction;
-import com.nurkiewicz.lazyseq.LazySeq;
+import com.aol.cyclops.sequence.SequenceM;
 
 
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
@@ -40,7 +40,7 @@ public class CheckValues<T,R> {
 					.orElse(false);
 			// add wildcard support
 			
-			Predicate<V>[] predicates = LazySeq.of(values)
+			Predicate<V>[] predicates = SequenceM.of(values)
 												.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toList()
 												.toArray(new Predicate[0]);
 
@@ -54,7 +54,7 @@ public class CheckValues<T,R> {
 					.orElse(false);
 			// add wildcard support
 			
-			Predicate<V>[] predicates = LazySeq.of(values)
+			Predicate<V>[] predicates = SequenceM.of(values)
 					.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toList()
 					.toArray(new Predicate[0]);
 
@@ -68,7 +68,7 @@ public class CheckValues<T,R> {
 					.orElse(false);
 			// add wildcard support
 			
-			Predicate<V>[] predicates = LazySeq.of(values)
+			Predicate<V>[] predicates = SequenceM.of(values)
 					.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toList()
 					.toArray(new Predicate[0]);
 
@@ -121,7 +121,7 @@ public class CheckValues<T,R> {
 				.orElse(false);
 		// add wildcard support
 		
-		Predicate<V>[] predicates = LazySeq.of(values)
+		Predicate<V>[] predicates = SequenceM.of(values)
 				.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toList()
 				.toArray(new Predicate[0]);
 
@@ -135,7 +135,7 @@ public class CheckValues<T,R> {
 				.orElse(false);
 		// add wildcard support
 		
-		Predicate<V>[] predicates = LazySeq.of(values)
+		Predicate<V>[] predicates = SequenceM.of(values)
 				.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toList()
 				.toArray(new Predicate[0]);
 
@@ -149,7 +149,7 @@ public class CheckValues<T,R> {
 											.orElse(false);
 		// add wildcard support
 		
-		Predicate<V>[] predicates = LazySeq.of(values)
+		Predicate<V>[] predicates = SequenceM.of(values)
 											.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toList()
 											.toArray(new Predicate[0]);
 

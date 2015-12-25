@@ -9,12 +9,9 @@ import lombok.Getter;
 import lombok.val;
 import lombok.experimental.Wither;
 
-import com.aol.cyclops.matcher.TypedFunction;
 import com.aol.cyclops.matcher.Predicates;
-import com.aol.cyclops.matcher.builders.CaseBeingBuilt;
-import com.aol.cyclops.matcher.builders.MatchingInstance;
-import com.aol.cyclops.matcher.builders.PatternMatcher;
-import com.nurkiewicz.lazyseq.LazySeq;
+import com.aol.cyclops.matcher.TypedFunction;
+import com.aol.cyclops.sequence.SequenceM;
 
 
 /**
@@ -80,7 +77,7 @@ public class CheckTypeAndValues<X> extends CaseBeingBuilt {
 					.map(v -> v.getClass().isAssignableFrom(clazz))
 					.orElse(false);
 			// add wildcard support
-			Predicate<V>[] predicates = LazySeq.of(values)
+			Predicate<V>[] predicates =SequenceM.of(values)
 					.map(nextValue -> convertToPredicate(nextValue)).toList()
 					.toArray(new Predicate[0]);
 
