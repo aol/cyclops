@@ -105,13 +105,31 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
 	
 	
+	/** 
+	 * Perform a two level nested internal iteration over this Stream and the supplied streams
+	  *<pre>
+	 * {@code 
+	 * LazyFutureStream.of(1,2)
+						.forEach2(a->IntStream.range(10,13),
+						.forEach2(a->b->Stream.of(""+(a+b),"hello world"),
+									a->b->c->c+":"a+":"+b);
+									
+	 * 
+	 *  //LFS[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
+	 * }
+	 * </pre> 
+	 * @param stream1 Nested Stream to iterate over
+	 * @param stream2 Nested Stream to iterate over
+	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
+	 * @return LazyFutureStream with elements generated via nested iteration
+	 */
 	default <R1,R2,R> LazyFutureStream<R> forEach3(Function<U,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
 													BiFunction<U,R1,? extends BaseStream<R2,? extends BaseStream<? extends R2,?>>> stream2,
-													Function<U,Function<R1,Function<R2,R>>> f ){
+													Function<U,Function<R1,Function<R2,R>>> yieldingFunction ){
 		 return Do.add(this)
 				  .withBaseStream(u->stream1.apply(u))
 				  .withBaseStream(u->r1->stream2.apply(u,r1))
-				  .yield(f).unwrap();
+				  .yield(yieldingFunction).unwrap();
 			
 	}
 	
@@ -120,16 +138,23 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
 	
 	
+	/**
+	 * @param stream1
+	 * @param stream2
+	 * @param filterFunction
+	 * @param yieldingFunction
+	 * @return
+	 */
 	default <R1,R2,R> LazyFutureStream<R> forEach3(Function<U,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
 													BiFunction<U,R1,? extends BaseStream<R2,? extends BaseStream<? extends R2,?>>> stream2,
 															Function<U,Function<R1,Function<R2,Boolean>>> filterFunction,
-													Function<U,Function<R1,Function<R2,R>>> f ){
+													Function<U,Function<R1,Function<R2,R>>> yieldingFunction ){
 		
 		 return Do.add(this)
 				  .withBaseStream(u->stream1.apply(u))
 				  .withBaseStream(u->r1->stream2.apply(u,r1))
 				  .filter(filterFunction)
-				  .yield(f).unwrap();
+				  .yield(yieldingFunction).unwrap();
 			
 	}
 	
