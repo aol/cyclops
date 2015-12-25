@@ -195,6 +195,64 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 				  .yield(yieldingFunction).unwrap();
 			
 	}
+	/**
+	 * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
+	 * etc to be injected, for example)
+	 * 
+	 * <pre>
+	 * {@code 
+	 * LazyFutureStream.of(1,2,3)
+						.forEachAnyM2(a->AnyM.fromIntStream(IntStream.range(10,13)),
+									a->b->a+b);
+									
+	 * 
+	 *  //LFS[11,14,12,15,13,16]
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param monad Nested Stream to iterate over
+	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
+	 * @return LazyFutureStream with elements generated via nested iteration
+	 */
+	default <R1,R> LazyFutureStream<R> forEachAnyM2(Function<U,? extends AnyM<R1>> monad, 
+													Function<U,Function<R1,R>> yieldingFunction ){
+		 return Do.add(this)
+				  .withAnyM(u->monad.apply(u))
+				  .yield(yieldingFunction).unwrap();
+			
+	}
+
+	
+	/**
+	 * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
+	 * etc to be injected, for example)
+	 * 
+	 * <pre>
+	 * {@code 
+	 * LazyFutureStream.of(1,2,3)
+						.forEach2(a->AnyM.fromIntStream(IntStream.range(10,13)),
+						            a->b-> a<3 && b>10,
+									a->b->a+b);
+									
+	 * 
+	 *  //LFS[14,15]
+	 * }
+	 * </pre>
+	 * @param monad Nested Stream to iterate over
+	 * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
+	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
+	 * @return
+	 */
+	default <R1,R> LazyFutureStream<R> forEachAnyM2(Function<U,? extends AnyM<R1>> monad, 
+												Function<U, Function<R1, Boolean>> filterFunction,
+													Function<U,Function<R1,R>> yieldingFunction ){
+		 return Do.add(this)
+				  .withAnyM(u->monad.apply(u))
+				  .filter(filterFunction)
+				  .yield(yieldingFunction).unwrap();
+			
+	}
 	
 	
 	/**
