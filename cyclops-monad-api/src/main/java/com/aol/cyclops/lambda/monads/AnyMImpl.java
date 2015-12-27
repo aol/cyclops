@@ -503,7 +503,6 @@ public class AnyMImpl<T> implements AnyM<T>{
 	}
 	@Override
 	public Iterator<T> iterator() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	@Override
@@ -517,6 +516,21 @@ public class AnyMImpl<T> implements AnyM<T>{
 	@Override
 	public <R> AnyM<R> applyMCompletableFuture(CompletableFuture<Function<? super T, ? extends R>> fn) {
 		return applyM(AnyM.fromCompletableFuture(fn));
+	}
+	@Override
+	public <R1, R> AnyM<R> forEachAnyM2(Function<T, ? extends AnyM<R1>> monad, Function<T, Function<R1, R>> yieldingFunction) {
+		if(AnyMForComprehensionFactory.instance==null){
+			System.err.println("ERROR : Unable to use AnyM for-comprehensions without cyclops-for-comprehensions on the classpath");
+		}
+		return AnyMForComprehensionFactory.instance.forEachAnyM2(this, monad, yieldingFunction);
+	}
+	@Override
+	public <R1, R> AnyM<R> forEachAnyM2(Function<T, ? extends AnyM<R1>> monad, Function<T, Function<R1, Boolean>> filterFunction,
+			Function<T, Function<R1, R>> yieldingFunction) {
+		if(AnyMForComprehensionFactory.instance==null){
+			System.err.println("ERROR : Unable to use AnyM for-comprehensions without cyclops-for-comprehensions on the classpath");
+		}
+		return AnyMForComprehensionFactory.instance.forEachAnyM2(this, monad, filterFunction,yieldingFunction);
 	}
 	
 }

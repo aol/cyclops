@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.Spliterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -52,6 +53,7 @@ import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
 import com.aol.cyclops.sequence.spliterators.ReversableSpliterator;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.streams.HotStreamImpl;
 import com.aol.cyclops.streams.StreamUtils;
 
 
@@ -70,6 +72,12 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 		this.stream = Seq.seq(stream);
 		this.reversable = Optional.of(rev);
 		
+	}
+	public HotStream<T> schedule(String cron,ScheduledExecutorService ex){
+		return new HotStreamImpl(this).schedule(cron,ex);
+	}
+	public HotStream<T> schedule(long delay,ScheduledExecutorService ex){
+		return new HotStreamImpl(this).schedule(delay,ex);
 	}
 	
 	

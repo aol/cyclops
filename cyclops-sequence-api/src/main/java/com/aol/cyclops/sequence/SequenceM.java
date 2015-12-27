@@ -14,6 +14,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -32,6 +33,7 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
 
 
 
@@ -2669,6 +2671,70 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 		return streamable.map(s->s.sequenceM()).sequenceM();
 	}
 	
+	/**
+	 * Execute this Stream on a schedule
+	 * 
+	 * <pre>
+	 * {@code
+	 *  //run at 8PM every night
+	 *  SequenceeM.generate(()->"next job:"+formatDate(new Date()))
+	 *            .map(this::processJob)
+	 *            .schedule("0 20 * * *",Executors.newScheduledThreadPool(1));
+	 * }
+	 * </pre>
+	 * 
+	 * Connect to the Scheduled Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * HotStream<Data> dataStream = SequenceeM.generate(()->"next job:"+formatDate(new Date()))
+	 *            							  .map(this::processJob)
+	 *            							  .schedule("0 20 * * *",Executors.newScheduledThreadPool(1));
+	 * 
+	 * 
+	 * data.connect().forEach(this::logToDB);
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * 
+	 * @param cron Expression that determines when each job will run
+	 * @param ex ScheduledExecutorService
+	 * @return Connectable HotStream of output from scheduled Stream
+	 */
+	HotStream<T> schedule(String cron,ScheduledExecutorService ex);
+	
+	/**
+	 * Execute this Stream on a schedule
+	 * 
+	 * <pre>
+	 * {@code
+	 *  //run every 60 seconds
+	 *  SequenceeM.generate(()->"next job:"+formatDate(new Date()))
+	 *            .map(this::processJob)
+	 *            .schedule(60_000,Executors.newScheduledThreadPool(1));
+	 * }
+	 * </pre>
+	 * 
+	 * Connect to the Scheduled Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * HotStream<Data> dataStream = SequenceeM.generate(()->"next job:"+formatDate(new Date()))
+	 *            							  .map(this::processJob)
+	 *            							  .schedule(60_000,Executors.newScheduledThreadPool(1));
+	 * 
+	 * 
+	 * data.connect().forEach(this::logToDB);
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param delay Between last element completes passing through the Stream until the next one starts
+	 * @param ex ScheduledExecutorService
+	 * @return Connectable HotStream of output from scheduled Stream
+	 */
+	HotStream<T> schedule(long delay,ScheduledExecutorService ex);
 	
 	
 	
