@@ -230,7 +230,7 @@ public class CronExpression {
                         if (hourField.matches(nextTime.getHour())) {
                             break;
                         }
-                        nextTime = nextTime.withHour(nextTime.getHour()+1);
+                        nextTime = nextTime.plus(1, ChronoUnit.HOURS);
                         nextTime = nextTime.withMinute(0);
                         nextTime = nextTime.withSecond(0);
                         
@@ -239,7 +239,7 @@ public class CronExpression {
                         break;
                     }
                    
-                    nextTime = nextTime.withDayOfMonth(nextTime.getDayOfMonth()+1);
+                    nextTime = nextTime.plus(1, ChronoUnit.DAYS);
                     nextTime = nextTime.withHour(0);
                     nextTime = nextTime.withMinute(0);
                     nextTime = nextTime.withSecond(0);
@@ -249,7 +249,7 @@ public class CronExpression {
                 if (monthField.matches(nextTime.getMonth().ordinal()+1)) {
                     break;
                 }
-                nextTime.withMonth(nextTime.getMonth().ordinal()+2);
+                nextTime = nextTime.plus(1, ChronoUnit.MONTHS);
                
                 nextTime = nextTime.withHour(0);
                 nextTime = nextTime.withDayOfMonth(1);
@@ -263,9 +263,10 @@ public class CronExpression {
             if (dayOfWeekField.matches(nextTime.toLocalDate())) {
                 break;
             }
-            nextTime.withDayOfYear(nextTime.getDayOfYear()+1);
+          
+            nextTime = nextTime.withDayOfYear(nextTime.getDayOfYear()+1);
             nextTime = nextTime.withHour(0);
-            nextTime = nextTime.withDayOfMonth(1);
+           
             nextTime = nextTime.withSecond(0);
             nextTime = nextTime.withMinute(0);
             nextTime = nextTime.withSecond(0);

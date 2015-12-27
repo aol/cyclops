@@ -19,6 +19,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -30,7 +31,9 @@ import java.util.TimeZone;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.hamcrest.Matchers.equalTo;
+
 import com.aol.cyclops.scheduling.embedded.fc.cron.CronExpression.CronFieldType;
 import com.aol.cyclops.scheduling.embedded.fc.cron.CronExpression.DayOfMonthField;
 import com.aol.cyclops.scheduling.embedded.fc.cron.CronExpression.DayOfWeekField;
@@ -231,117 +234,132 @@ public class CronExpressionTest {
         assertThat(new CronExpression("0 7,19 * * * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 13, 00,0,0,current)),equalTo(ZonedDateTime.of(2012, 4, 10, 13, 07,0,0,current)));
         assertThat(new CronExpression("0 7,19 * * * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 13, 07,0,0,current)),equalTo(ZonedDateTime.of(2012, 4, 10, 13, 19,0,0,current)));
     }
-    /**
+   
     @Test
     public void check_hour_number() throws Exception {
-        assertThat(new CronExpression("0 * 3 * * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 13, 01)),equalTo(ZonedDateTime.of(2012, 4, 11, 03, 00));
-        assertThat(new CronExpression("0 * 3 * * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 11, 03, 00)),equalTo(ZonedDateTime.of(2012, 4, 11, 03, 01));
-        assertThat(new CronExpression("0 * 3 * * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 11, 03, 59)),equalTo(ZonedDateTime.of(2012, 4, 12, 03, 00));
+        assertThat(new CronExpression("0 * 3 * * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 13, 01,0,0,current)),equalTo(ZonedDateTime.of(2012, 4, 11, 03, 00,0,0,current)));
+        assertThat(new CronExpression("0 * 3 * * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 11, 03, 00,0,0,current)),equalTo(ZonedDateTime.of(2012, 4, 11, 03, 01,0,0,current)));
+        assertThat(new CronExpression("0 * 3 * * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 11, 03, 59,0,0,current)),equalTo(ZonedDateTime.of(2012, 4, 12, 03, 00,0,0,current)));
     }
 
     @Test
     public void check_hour_increment() throws Exception {
-        assertThat(new CronExpression("0 * 0/15 * * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 13, 00)),equalTo(ZonedDateTime.of(2012, 4, 10, 15, 00));
-        assertThat(new CronExpression("0 * 0/15 * * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 15, 00)),equalTo(ZonedDateTime.of(2012, 4, 10, 15, 01));
-        assertThat(new CronExpression("0 * 0/15 * * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 15, 59)),equalTo(ZonedDateTime.of(2012, 4, 11, 00, 00));
-        assertThat(new CronExpression("0 * 0/15 * * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 11, 00, 00)),equalTo(ZonedDateTime.of(2012, 4, 11, 00, 01));
-        assertThat(new CronExpression("0 * 0/15 * * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 11, 15, 00)),equalTo(ZonedDateTime.of(2012, 4, 11, 15, 01));
+        assertThat(new CronExpression("0 * 0/15 * * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 13, 00,0,0,current)),equalTo(ZonedDateTime.of(2012, 4, 10, 15, 00,0,0,current)));
+        assertThat(new CronExpression("0 * 0/15 * * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 15, 00,0,0,current)),equalTo(ZonedDateTime.of(2012, 4, 10, 15, 1,0,0,current)));
+        assertThat(new CronExpression("0 * 0/15 * * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 15, 59,0,0,current)),equalTo(ZonedDateTime.of(2012, 4, 11, 00, 00,0,0,current)));
+        assertThat(new CronExpression("0 * 0/15 * * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 11, 00, 00,0,0,current)),equalTo(ZonedDateTime.of(2012, 4, 11, 00, 01,0,0,current)));
+        assertThat(new CronExpression("0 * 0/15 * * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 11, 15, 00,0,0,current)),equalTo(ZonedDateTime.of(2012, 4, 11, 15, 01,0,0,current)));
     }
 
     @Test
     public void check_hour_list() throws Exception {
-        assertThat(new CronExpression("0 * 7,19 * * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 13, 00)),equalTo(ZonedDateTime.of(2012, 4, 10, 19, 00));
-        assertThat(new CronExpression("0 * 7,19 * * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 19, 00)),equalTo(ZonedDateTime.of(2012, 4, 10, 19, 01));
-        assertThat(new CronExpression("0 * 7,19 * * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 19, 59)),equalTo(ZonedDateTime.of(2012, 4, 11, 07, 00));
+        assertThat(new CronExpression("0 * 7,19 * * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 13, 00,0,0,current)),equalTo(ZonedDateTime.of(2012, 4, 10, 19, 00,0,0,current)));
+        assertThat(new CronExpression("0 * 7,19 * * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 19, 00,0,0,current)),equalTo(ZonedDateTime.of(2012, 4, 10, 19, 01,0,0,current)));
+        assertThat(new CronExpression("0 * 7,19 * * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 19, 59,0,0,current)),equalTo(ZonedDateTime.of(2012, 4, 11, 07, 00,0,0,current)));
     }
-
+    
     @Test
     public void check_hour_shall_run_25_times_in_DST_change_to_wintertime() throws Exception {
         CronExpression cron = new CronExpression("0 1 * * * *");
-        DateTime start = ZonedDateTime.of(2011, 10, 30, 0, 0, 0, 0);
-        DateTime slutt = start.toLocalDate().plusDays(1).toDateTimeAtStartOfDay();
-        DateTime tid = start;
-        assertThat(Hours.hoursBetween(start, slutt).getHours(),equalTo(25);
+        ZonedDateTime start = ZonedDateTime.of(2011, 10, 30, 0, 0, 0, 0,current);
+        ZonedDateTime slutt = start.toLocalDate().plusDays(1).atStartOfDay(current);
+        ZonedDateTime tid = start;
+        assertThat(Duration.between(start, slutt).toHours(),equalTo(25L));
         int count=0;
-        DateTime lastTime = tid;
+        ZonedDateTime lastTime = tid;
         while(tid.isBefore(slutt)){
-            DateTime nextTime = cron.nextTimeAfter(tid);
-            assertThat(nextTime.isAfter(lastTime)).isTrue();
+            ZonedDateTime nextTime = cron.nextTimeAfter(tid);
+            assertTrue(nextTime.isAfter(lastTime));
             lastTime = nextTime;
             tid = tid.plusHours(1);
             count++;
         }
-        assertThat(count,equalTo(25);
+        assertThat(count,equalTo(25));
     }
-
+   
     @Test
     public void check_hour_shall_run_23_times_in_DST_change_to_summertime() throws Exception {
         CronExpression cron = new CronExpression("0 0 * * * *");
-        DateTime start = ZonedDateTime.of(2011, 03, 27, 0, 0, 0, 0);
-        DateTime slutt = start.toLocalDate().plusDays(1).toDateTimeAtStartOfDay();
-        DateTime tid = start;
-        assertThat(Hours.hoursBetween(start, slutt).getHours(),equalTo(23);
+        ZonedDateTime start = ZonedDateTime.of(2011, 03, 27, 0, 0, 0, 0,current);
+        ZonedDateTime slutt = start.toLocalDate().plusDays(1).atStartOfDay(current);
+        ZonedDateTime tid = start;
+        assertThat(Duration.between(start, slutt).toHours(),equalTo(23L));
         int count=0;
-        DateTime lastTime = tid;
+        ZonedDateTime lastTime = tid;
         while(tid.isBefore(slutt)){
-            DateTime nextTime = cron.nextTimeAfter(tid);
-            assertThat(nextTime.isAfter(lastTime)).isTrue();
+            ZonedDateTime nextTime = cron.nextTimeAfter(tid);
+            
+            System.out.println(lastTime);
+            System.out.println("next" + nextTime);
+            assertTrue(nextTime.isAfter(lastTime));
             lastTime = nextTime;
             tid = tid.plusHours(1);
             count++;
         }
-        assertThat(count,equalTo(23);
+        assertThat(count,equalTo(23));
     }
+   
 
     @Test
     public void check_dayOfMonth_number() throws Exception {
-        assertThat(new CronExpression("0 * * 3 * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 13, 00)),equalTo(ZonedDateTime.of(2012, 5, 03, 00, 00));
-        assertThat(new CronExpression("0 * * 3 * *").nextTimeAfter(ZonedDateTime.of(2012, 5, 03, 00, 00)),equalTo(ZonedDateTime.of(2012, 5, 03, 00, 01));
-        assertThat(new CronExpression("0 * * 3 * *").nextTimeAfter(ZonedDateTime.of(2012, 5, 03, 00, 59)),equalTo(ZonedDateTime.of(2012, 5, 03, 01, 00));
-        assertThat(new CronExpression("0 * * 3 * *").nextTimeAfter(ZonedDateTime.of(2012, 5, 03, 23, 59)),equalTo(ZonedDateTime.of(2012, 6, 03, 00, 00));
+        assertThat(new CronExpression("0 * * 3 * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 13, 00, 0,0,current)),equalTo(ZonedDateTime.of(2012, 5, 03, 00, 00, 0,0,current)));
+        assertThat(new CronExpression("0 * * 3 * *").nextTimeAfter(ZonedDateTime.of(2012, 5, 03, 00, 00, 0,0,current)),equalTo(ZonedDateTime.of(2012, 5, 03, 00, 01, 0,0,current)));
+        assertThat(new CronExpression("0 * * 3 * *").nextTimeAfter(ZonedDateTime.of(2012, 5, 03, 00, 59, 0,0,current)),equalTo(ZonedDateTime.of(2012, 5, 03, 01, 00, 0,0,current)));
+        assertThat(new CronExpression("0 * * 3 * *").nextTimeAfter(ZonedDateTime.of(2012, 5, 03, 23, 59, 0,0,current)),equalTo(ZonedDateTime.of(2012, 6, 03, 00, 00, 0,0,current)));
     }
 
     @Test
     public void check_dayOfMonth_increment() throws Exception {
-        assertThat(new CronExpression("0 0 0 1/15 * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 13, 00)),equalTo(ZonedDateTime.of(2012, 4, 16, 00, 00));
-        assertThat(new CronExpression("0 0 0 1/15 * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 16, 00, 00)),equalTo(ZonedDateTime.of(2012, 5, 01, 00, 00));
-        assertThat(new CronExpression("0 0 0 1/15 * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 30, 00, 00)),equalTo(ZonedDateTime.of(2012, 5, 01, 00, 00));
-        assertThat(new CronExpression("0 0 0 1/15 * *").nextTimeAfter(ZonedDateTime.of(2012, 5, 01, 00, 00)),equalTo(ZonedDateTime.of(2012, 5, 16, 00, 00));
+        assertThat(new CronExpression("0 0 0 1/15 * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 13, 00, 0,0,current)),equalTo(ZonedDateTime.of(2012, 4, 16, 00, 00, 0,0,current)));
+        assertThat(new CronExpression("0 0 0 1/15 * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 16, 00, 00, 0,0,current)),equalTo(ZonedDateTime.of(2012, 5, 01, 00, 00, 0,0,current)));
+        assertThat(new CronExpression("0 0 0 1/15 * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 30, 00, 00, 0,0,current)),equalTo(ZonedDateTime.of(2012, 5, 01, 00, 00, 0,0,current)));
+        assertThat(new CronExpression("0 0 0 1/15 * *").nextTimeAfter(ZonedDateTime.of(2012, 5, 01, 00, 00, 0,0,current)),equalTo(ZonedDateTime.of(2012, 5, 16, 00, 00, 0,0,current)));
     }
 
     @Test
     public void check_dayOfMonth_list() throws Exception {
-        assertThat(new CronExpression("0 0 0 7,19 * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 13, 00)),equalTo(ZonedDateTime.of(2012, 4, 19, 00, 00));
-        assertThat(new CronExpression("0 0 0 7,19 * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 19, 00, 00)),equalTo(ZonedDateTime.of(2012, 5, 07, 00, 00));
-        assertThat(new CronExpression("0 0 0 7,19 * *").nextTimeAfter(ZonedDateTime.of(2012, 5, 07, 00, 00)),equalTo(ZonedDateTime.of(2012, 5, 19, 00, 00));
-        assertThat(new CronExpression("0 0 0 7,19 * *").nextTimeAfter(ZonedDateTime.of(2012, 5, 30, 00, 00)),equalTo(ZonedDateTime.of(2012, 6, 07, 00, 00));
+        assertThat(new CronExpression("0 0 0 7,19 * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 13, 00, 0,0,current)),
+        		equalTo(ZonedDateTime.of(2012, 4, 19, 00, 00, 0,0,current)));
+        assertThat(new CronExpression("0 0 0 7,19 * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 19, 00, 00, 0,0,current)),
+        		equalTo(ZonedDateTime.of(2012, 5, 07, 00, 00, 0,0,current)));
+        assertThat(new CronExpression("0 0 0 7,19 * *").nextTimeAfter(ZonedDateTime.of(2012, 5, 07, 00, 00, 0,0,current)),
+        		equalTo(ZonedDateTime.of(2012, 5, 19, 00, 00, 0,0,current)));
+        assertThat(new CronExpression("0 0 0 7,19 * *").nextTimeAfter(ZonedDateTime.of(2012, 5, 30, 00, 00, 0,0,current)),
+        		equalTo(ZonedDateTime.of(2012, 6, 07, 00, 00, 0,0,current)));
     }
 
     @Test
     public void check_dayOfMonth_last() throws Exception {
-        assertThat(new CronExpression("0 0 0 L * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 13, 00)),equalTo(ZonedDateTime.of(2012, 4, 30, 00, 00));
-        assertThat(new CronExpression("0 0 0 L * *").nextTimeAfter(ZonedDateTime.of(2012, 2, 12, 00, 00)),equalTo(ZonedDateTime.of(2012, 2, 29, 00, 00));
+        assertThat(new CronExpression("0 0 0 L * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 13, 00, 0,0,current)),
+        		equalTo(ZonedDateTime.of(2012, 4, 30, 00, 00, 0,0,current)));
+        assertThat(new CronExpression("0 0 0 L * *").nextTimeAfter(ZonedDateTime.of(2012, 2, 12, 00, 00, 0,0,current)),equalTo(ZonedDateTime.of(2012, 2, 29, 00, 00, 0,0,current)));
     }
 
     @Test
     public void check_dayOfMonth_number_last_L() throws Exception {
-        assertThat(new CronExpression("0 0 0 3L * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 13, 00)),equalTo(ZonedDateTime.of(2012, 4, 30 - 3, 00, 00));
-        assertThat(new CronExpression("0 0 0 3L * *").nextTimeAfter(ZonedDateTime.of(2012, 2, 12, 00, 00)),equalTo(ZonedDateTime.of(2012, 2, 29 - 3, 00, 00));
+        assertThat(new CronExpression("0 0 0 3L * *").nextTimeAfter(ZonedDateTime.of(2012, 4, 10, 13, 00, 0,0,current)),
+        		equalTo(ZonedDateTime.of(2012, 4, 30 - 3, 00, 00, 0,0,current)));
+        assertThat(new CronExpression("0 0 0 3L * *").nextTimeAfter(ZonedDateTime.of(2012, 2, 12, 00, 00, 0,0,current)),
+        		equalTo(ZonedDateTime.of(2012, 2, 29 - 3, 00, 00, 0,0,current)));
     }
 
     @Test
     public void check_dayOfMonth_closest_weekday_W() throws Exception {
         // 9 - is weekday in may
-        assertThat(new CronExpression("0 0 0 9W * *").nextTimeAfter(ZonedDateTime.of(2012, 5, 2, 00, 00)),equalTo(ZonedDateTime.of(2012, 5, 9, 00, 00));
+        assertThat(new CronExpression("0 0 0 9W * *").nextTimeAfter(ZonedDateTime.of(2012, 5, 2, 00, 00, 0,0,current)),
+        		equalTo(ZonedDateTime.of(2012, 5, 9, 00, 00, 0,0,current)));
 
         // 9 - is weekday in may
-        assertThat(new CronExpression("0 0 0 9W * *").nextTimeAfter(ZonedDateTime.of(2012, 5, 8, 00, 00)),equalTo(ZonedDateTime.of(2012, 5, 9, 00, 00));
+        assertThat(new CronExpression("0 0 0 9W * *").nextTimeAfter(ZonedDateTime.of(2012, 5, 8, 00, 00, 0,0,current)),
+        		equalTo(ZonedDateTime.of(2012, 5, 9, 00, 00, 0,0,current)));
 
         // 9 - saturday, friday closest weekday in june
-        assertThat(new CronExpression("0 0 0 9W * *").nextTimeAfter(ZonedDateTime.of(2012, 5, 9, 00, 00)),equalTo(ZonedDateTime.of(2012, 6, 8, 00, 00));
+        assertThat(new CronExpression("0 0 0 9W * *").nextTimeAfter(ZonedDateTime.of(2012, 5, 9, 00, 00, 0,0,current)),
+        		equalTo(ZonedDateTime.of(2012, 6, 8, 00, 00, 0,0,current)));
 
         // 9 - sunday, monday closest weekday in september
-        assertThat(new CronExpression("0 0 0 9W * *").nextTimeAfter(ZonedDateTime.of(2012, 9, 1, 00, 00)),equalTo(ZonedDateTime.of(2012, 9, 10, 00, 00));
+        assertThat(new CronExpression("0 0 0 9W * *").nextTimeAfter(ZonedDateTime.of(2012, 9, 1, 00, 00, 0,0,current)),
+        		equalTo(ZonedDateTime.of(2012, 9, 10, 00, 00, 0,0,current)));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -356,37 +374,47 @@ public class CronExpressionTest {
 
     @Test
     public void check_month_number() throws Exception {
-        assertThat(new CronExpression("0 0 0 1 5 *").nextTimeAfter(ZonedDateTime.of(2012, 2, 12, 00, 00)),equalTo(ZonedDateTime.of(2012, 5, 1, 00, 00));
+        assertThat(new CronExpression("0 0 0 1 5 *").nextTimeAfter(ZonedDateTime.of(2012, 2, 12, 00, 00, 0,0,current)),
+        		equalTo(ZonedDateTime.of(2012, 5, 1, 00, 00, 0,0,current)));
     }
 
     @Test
     public void check_month_increment() throws Exception {
-        assertThat(new CronExpression("0 0 0 1 5/2 *").nextTimeAfter(ZonedDateTime.of(2012, 2, 12, 00, 00)),equalTo(ZonedDateTime.of(2012, 5, 1, 00, 00));
-        assertThat(new CronExpression("0 0 0 1 5/2 *").nextTimeAfter(ZonedDateTime.of(2012, 5, 1, 00, 00)),equalTo(ZonedDateTime.of(2012, 7, 1, 00, 00));
+        assertThat(new CronExpression("0 0 0 1 5/2 *").nextTimeAfter(ZonedDateTime.of(2012, 2, 12, 00, 00, 0,0,current)),
+        		equalTo(ZonedDateTime.of(2012, 5, 1, 00, 00, 0,0,current)));
+        assertThat(new CronExpression("0 0 0 1 5/2 *").nextTimeAfter(ZonedDateTime.of(2012, 5, 1, 00, 00, 0,0,current)),
+        		equalTo(ZonedDateTime.of(2012, 7, 1, 00, 00, 0,0,current)));
 
         // if rolling over year then reset month field (cron rules - increments only affect own field)
-        assertThat(new CronExpression("0 0 0 1 5/10 *").nextTimeAfter(ZonedDateTime.of(2012, 5, 1, 00, 00)),equalTo(ZonedDateTime.of(2013, 5, 1, 00, 00));
+        assertThat(new CronExpression("0 0 0 1 5/10 *").nextTimeAfter(ZonedDateTime.of(2012, 5, 1, 00, 00, 0,0,current)),
+        		equalTo(ZonedDateTime.of(2013, 5, 1, 00, 00, 0,0,current)));
     }
 
     @Test
     public void check_month_list() throws Exception {
-        assertThat(new CronExpression("0 0 0 1 3,7,12 *").nextTimeAfter(ZonedDateTime.of(2012, 2, 12, 00, 00)),equalTo(ZonedDateTime.of(2012, 3, 1, 00, 00));
-        assertThat(new CronExpression("0 0 0 1 3,7,12 *").nextTimeAfter(ZonedDateTime.of(2012, 3, 1, 00, 00)),equalTo(ZonedDateTime.of(2012, 7, 1, 00, 00));
-        assertThat(new CronExpression("0 0 0 1 3,7,12 *").nextTimeAfter(ZonedDateTime.of(2012, 7, 1, 00, 00)),equalTo(ZonedDateTime.of(2012, 12, 1, 00, 00));
+        assertThat(new CronExpression("0 0 0 1 3,7,12 *").nextTimeAfter(ZonedDateTime.of(2012, 2, 12, 00, 00, 0,0,current)),
+        		equalTo(ZonedDateTime.of(2012, 3, 1, 00, 00, 0,0,current)));
+        assertThat(new CronExpression("0 0 0 1 3,7,12 *").nextTimeAfter(ZonedDateTime.of(2012, 3, 1, 00, 00, 0,0,current)),
+        		equalTo(ZonedDateTime.of(2012, 7, 1, 00, 00, 0,0,current)));
+        assertThat(new CronExpression("0 0 0 1 3,7,12 *").nextTimeAfter(ZonedDateTime.of(2012, 7, 1, 00, 00, 0,0,current)),
+        		equalTo(ZonedDateTime.of(2012, 12, 1, 00, 00, 0,0,current)));
     }
 
     @Test
     public void check_month_list_by_name() throws Exception {
-        assertThat(new CronExpression("0 0 0 1 MAR,JUL,DEC *").nextTimeAfter(ZonedDateTime.of(2012, 2, 12, 00, 00)),equalTo(ZonedDateTime.of(2012, 3, 1, 00, 00));
-        assertThat(new CronExpression("0 0 0 1 MAR,JUL,DEC *").nextTimeAfter(ZonedDateTime.of(2012, 3, 1, 00, 00)),equalTo(ZonedDateTime.of(2012, 7, 1, 00, 00));
-        assertThat(new CronExpression("0 0 0 1 MAR,JUL,DEC *").nextTimeAfter(ZonedDateTime.of(2012, 7, 1, 00, 00)),equalTo(ZonedDateTime.of(2012, 12, 1, 00, 00));
+        assertThat(new CronExpression("0 0 0 1 MAR,JUL,DEC *").nextTimeAfter(ZonedDateTime.of(2012, 2, 12, 00, 00, 0,0,current)),
+        		equalTo(ZonedDateTime.of(2012, 3, 1, 00, 00, 0,0,current)));
+        assertThat(new CronExpression("0 0 0 1 MAR,JUL,DEC *").nextTimeAfter(ZonedDateTime.of(2012, 3, 1, 00, 00, 0,0,current)),
+        		equalTo(ZonedDateTime.of(2012, 7, 1, 00, 00, 0,0,current)));
+        assertThat(new CronExpression("0 0 0 1 MAR,JUL,DEC *").nextTimeAfter(ZonedDateTime.of(2012, 7, 1, 00, 00, 0,0,current)),
+        		equalTo(ZonedDateTime.of(2012, 12, 1, 00, 00, 0,0,current)));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void check_month_invalid_modifier() throws Exception {
         new CronExpression("0 0 0 1 ? *");
     }
-
+    /**
     @Test
     public void check_dayOfWeek_number() throws Exception {
         assertThat(new CronExpression("0 0 0 * * 3").nextTimeAfter(ZonedDateTime.of(2012, 4, 1, 00, 00)),equalTo(ZonedDateTime.of(2012, 4, 4, 00, 00));
