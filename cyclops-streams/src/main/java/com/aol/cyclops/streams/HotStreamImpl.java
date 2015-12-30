@@ -59,15 +59,19 @@ public class HotStreamImpl<T> implements HotStream<T>{
 						
 					}
 					finally{
-						if(it.hasNext()){
+						
 							scheduleInternal(it,cron,ex);
-						}
+						
 					}
+				 }else{
+					 open.set(false);
 				 }
 			}
 		}, delay, TimeUnit.MILLISECONDS);
 		return this;
 	}
+	
+	
 	public HotStream<T> scheduleFixedDelay(long delay,ScheduledExecutorService ex){
 		final Iterator<T> it = stream.iterator();
 		 ex.scheduleWithFixedDelay(()->{
@@ -84,7 +88,9 @@ public class HotStreamImpl<T> implements HotStream<T>{
 						}
 						
 					
-				}
+				}else{
+					 open.set(false);
+				 }
 			 }
 		}, delay,delay,TimeUnit.MILLISECONDS);
 		 return this;
@@ -107,7 +113,9 @@ public class HotStreamImpl<T> implements HotStream<T>{
 						}
 						
 					
-				}
+				}else{
+					 open.set(false);
+				 }
 			 }
 		}, 0,rate,TimeUnit.MILLISECONDS);
 		 return this;
@@ -129,7 +137,7 @@ public class HotStreamImpl<T> implements HotStream<T>{
 				});
 				
 				open.set(false); 
-				System.out.println("finished!"); 
+				
 					
 		},exec);
 		return this;

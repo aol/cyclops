@@ -345,7 +345,7 @@ public final class CronExpression implements Serializable, Cloneable {
      * @return the next valid date/time
      */
     public Date getNextInvalidTimeAfter(Date date) {
-        long difference = 1000;
+        long difference = 999;
         
         //move back to the nearest second so differences will be accurate
         Calendar adjustCal = Calendar.getInstance(getTimeZone());
@@ -360,14 +360,14 @@ public final class CronExpression implements Serializable, Cloneable {
         //keep getting the next included time until it's farther than one second
         // apart. At that point, lastDate is the last valid fire time. We return
         // the second immediately following it.
-        while (difference == 1000) {
+        while (difference == 999) {
             newDate = getTimeAfter(lastDate);
             if(newDate == null)
                 break;
             
             difference = newDate.getTime() - lastDate.getTime();
             
-            if (difference == 1000) {
+            if (difference == 999) {
                 lastDate = newDate;
             }
         }
