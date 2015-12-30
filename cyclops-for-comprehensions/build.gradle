@@ -34,7 +34,7 @@ dependencies {
 
 
 	compile project(':cyclops-monad-api')
-	compile project(':cyclops-streams')
+	compile project(':cyclops-sequence-api')
 	provided group: 'org.projectlombok', name: 'lombok', version:"${lombokVersion}"
 	provided "org.jooq:jool:${joolVersion}"
 	compile 'org.pcollections:pcollections:2.1.2'

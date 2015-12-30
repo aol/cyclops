@@ -45,44 +45,71 @@ public class HotStreamImpl<T> implements HotStream<T>{
 		long delay = d.getTime() - now.getTime(); 
 		
 		ex.schedule(()->{
-			if(it.hasNext()){
-				try{
-					T next = it.next();
-				
-					int local = connected;
+			synchronized(it){
+				if(it.hasNext()){
+					try{
+						T next = it.next();
 					
-					for(int i=0;i<local;i++){
-					
-						connections.get(i).offer(next);
+						int local = connected;
+						
+						for(int i=0;i<local;i++){
+						
+							connections.get(i).offer(next);
+						}
+						
 					}
-					
-				}
-				finally{
-					if(it.hasNext()){
-						scheduleInternal(it,cron,ex);
+					finally{
+						if(it.hasNext()){
+							scheduleInternal(it,cron,ex);
+						}
 					}
-				}
-			 }
+				 }
+			}
 		}, delay, TimeUnit.MILLISECONDS);
 		return this;
 	}
-	public HotStream<T> schedule(long delay,ScheduledExecutorService ex){
+	public HotStream<T> scheduleFixedDelay(long delay,ScheduledExecutorService ex){
 		final Iterator<T> it = stream.iterator();
 		 ex.scheduleWithFixedDelay(()->{
-			if(it.hasNext()){
-				
-					T next = it.next();
-				
-					int local = connected;
+			 synchronized(it){
+				if(it.hasNext()){
 					
-					for(int i=0;i<local;i++){
+						T next = it.next();
 					
-						connections.get(i).offer(next);
-					}
+						int local = connected;
+						
+						for(int i=0;i<local;i++){
+						
+							connections.get(i).offer(next);
+						}
+						
 					
-				
-			}
+				}
+			 }
 		}, delay,delay,TimeUnit.MILLISECONDS);
+		 return this;
+		
+	}
+	public HotStream<T> scheduleFixedRate(long rate,ScheduledExecutorService ex){
+		final Iterator<T> it = stream.iterator();
+		
+		 ex.scheduleAtFixedRate(()->{
+			 synchronized(it){
+				if(it.hasNext()){
+					
+						T next = it.next();
+					
+						int local = connected;
+						
+						for(int i=0;i<local;i++){
+						
+							connections.get(i).offer(next);
+						}
+						
+					
+				}
+			 }
+		}, 0,rate,TimeUnit.MILLISECONDS);
 		 return this;
 		
 	}

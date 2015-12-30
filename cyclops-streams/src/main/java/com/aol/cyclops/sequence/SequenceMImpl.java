@@ -45,6 +45,7 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Subscriber;
 
+import com.aol.cyclops.comprehensions.donotation.typed.Do;
 import com.aol.cyclops.internal.AsGenericMonad;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.monad.AnyM;
@@ -76,8 +77,11 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	public HotStream<T> schedule(String cron,ScheduledExecutorService ex){
 		return new HotStreamImpl(this).schedule(cron,ex);
 	}
-	public HotStream<T> schedule(long delay,ScheduledExecutorService ex){
-		return new HotStreamImpl(this).schedule(delay,ex);
+	public HotStream<T> scheduleFixedDelay(long delay,ScheduledExecutorService ex){
+		return new HotStreamImpl(this).scheduleFixedDelay(delay,ex);
+	}
+	public HotStream<T> scheduleFixedRate(long rate,ScheduledExecutorService ex){
+		return new HotStreamImpl(this).scheduleFixedRate(rate,ex);
 	}
 	
 	
@@ -2109,5 +2113,121 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	public <EX extends Throwable> SequenceM<T> recover(Class<EX> exceptionClass,
 			Function<EX, T> fn) {
 		return StreamUtils.sequenceM(StreamUtils.recover(stream,exceptionClass,fn),this.reversable);
+	}
+	
+	/** 
+	 * Perform a three level nested internal iteration over this Stream and the supplied streams
+	  *<pre>
+	 * {@code 
+	 * SequenceM.of(1,2)
+						.forEach2(a->IntStream.range(10,13),
+						.forEach2(a->b->Stream.of(""+(a+b),"hello world"),
+									a->b->c->c+":"a+":"+b);
+									
+	 * 
+	 *  //SequenceM[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
+	 * }
+	 * </pre> 
+	 * @param stream1 Nested Stream to iterate over
+	 * @param stream2 Nested Stream to iterate over
+	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
+	 * @return SequenceM with elements generated via nested iteration
+	 */
+	public <R1,R2,R> SequenceM<R> forEach3(Function<T,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
+													BiFunction<T,R1,? extends BaseStream<R2,? extends BaseStream<? extends R2,?>>> stream2,
+													Function<T,Function<R1,Function<R2,R>>> yieldingFunction ){
+		return Do.add(this)
+				  .withBaseStream(u->stream1.apply(u))
+				  .withBaseStream(u->r1->stream2.apply(u,r1))
+				  .yield(yieldingFunction).unwrap();
+			
+	}
+	
+	
+
+
+	
+	
+	/**
+	 * Perform a three level nested internal iteration over this Stream and the supplied streams
+	 * 
+	 * @param stream1 Nested Stream to iterate over
+	 * @param stream2 Nested Stream to iterate over
+	 * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
+	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
+	 * @return SequenceM with elements generated via nested iteration
+	 */
+	public <R1,R2,R> SequenceM<R> forEach3(Function<T,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
+													BiFunction<T,R1,? extends BaseStream<R2,? extends BaseStream<? extends R2,?>>> stream2,
+															Function<T,Function<R1,Function<R2,Boolean>>> filterFunction,
+													Function<T,Function<R1,Function<R2,R>>> yieldingFunction ){
+		
+		 return Do.add(this)
+				  .withBaseStream(u->stream1.apply(u))
+				  .withBaseStream(u->r1->stream2.apply(u,r1))
+				  .filter(filterFunction)
+				  .yield(yieldingFunction).unwrap();
+			
+	}
+	
+	
+
+	
+	
+	/**
+	 * Perform a two level nested internal iteration over this Stream and the supplied stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * SequenceM.of(1,2,3)
+						.forEach2(a->IntStream.range(10,13),
+									a->b->a+b);
+									
+	 * 
+	 *  /SequenceM[11,14,12,15,13,16]
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param stream1 Nested Stream to iterate over
+	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
+	 * @return SequenceM with elements generated via nested iteration
+	 */
+	public <R1,R> SequenceM<R> forEach2(Function<T,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
+													Function<T,Function<R1,R>> yieldingFunction ){
+		 return Do.add(this)
+				  .withBaseStream(u->stream1.apply(u))
+				  .yield(yieldingFunction).unwrap();
+			
+	}
+
+	
+	/**
+	 * Perform a two level nested internal iteration over this Stream and the supplied stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * SequenceM.of(1,2,3)
+						.forEach2(a->IntStream.range(10,13),
+						            a->b-> a<3 && b>10,
+									a->b->a+b);
+									
+	 * 
+	 *  //SequenceM[14,15]
+	 * }
+	 * </pre>
+	 * @param stream1 Nested Stream to iterate over
+	 * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
+	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
+	 * @return SequenceM with elements generated via nested iteration
+	 */
+	public <R1,R> SequenceM<R> forEach2(Function<T,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
+												Function<T, Function<R1, Boolean>> filterFunction,
+													Function<T,Function<R1,R>> yieldingFunction ){
+		 return Do.add(this)
+				  .withBaseStream(u->stream1.apply(u))
+				  .filter(filterFunction)
+				  .yield(yieldingFunction).unwrap();
+			
 	}
 }

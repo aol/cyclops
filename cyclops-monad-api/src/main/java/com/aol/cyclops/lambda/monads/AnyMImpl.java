@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -518,19 +519,39 @@ public class AnyMImpl<T> implements AnyM<T>{
 		return applyM(AnyM.fromCompletableFuture(fn));
 	}
 	@Override
-	public <R1, R> AnyM<R> forEachAnyM2(Function<T, ? extends AnyM<R1>> monad, Function<T, Function<R1, R>> yieldingFunction) {
+	public <R1, R> AnyM<R> forEach2(Function<T, ? extends AnyM<R1>> monad, Function<T, Function<R1, R>> yieldingFunction) {
 		if(AnyMForComprehensionFactory.instance==null){
 			System.err.println("ERROR : Unable to use AnyM for-comprehensions without cyclops-for-comprehensions on the classpath");
 		}
-		return AnyMForComprehensionFactory.instance.forEachAnyM2(this, monad, yieldingFunction);
+		return AnyMForComprehensionFactory.instance.forEach2(this, monad, yieldingFunction);
 	}
 	@Override
-	public <R1, R> AnyM<R> forEachAnyM2(Function<T, ? extends AnyM<R1>> monad, Function<T, Function<R1, Boolean>> filterFunction,
+	public <R1, R> AnyM<R> forEach2(Function<T, ? extends AnyM<R1>> monad, Function<T, Function<R1, Boolean>> filterFunction,
 			Function<T, Function<R1, R>> yieldingFunction) {
 		if(AnyMForComprehensionFactory.instance==null){
 			System.err.println("ERROR : Unable to use AnyM for-comprehensions without cyclops-for-comprehensions on the classpath");
 		}
-		return AnyMForComprehensionFactory.instance.forEachAnyM2(this, monad, filterFunction,yieldingFunction);
+		return AnyMForComprehensionFactory.instance.forEach2(this, monad, filterFunction,yieldingFunction);
+	}
+	@Override
+	public <R1,R2,R> AnyM<R> forEach3(Function<T,? extends AnyM<R1>> monad1, 
+			BiFunction<T,R1,? extends AnyM<R2>> monad2,
+			Function<T,Function<R1,Function<R2,R>>> yieldingFunction ){
+		if(AnyMForComprehensionFactory.instance==null){
+			System.err.println("ERROR : Unable to use AnyM for-comprehensions without cyclops-for-comprehensions on the classpath");
+		}
+		return AnyMForComprehensionFactory.instance.forEach3(this, monad1,monad2,yieldingFunction);
+	}
+	@Override
+	public <R1,R2,R> AnyM<R> forEach3(Function<T,? extends AnyM<R1>> monad1, 
+			BiFunction<T,R1,? extends AnyM<R2>> monad2,
+					Function<T,Function<R1,Function<R2,Boolean>>> filterFunction,
+			Function<T,Function<R1,Function<R2,R>>> yieldingFunction ){
+		if(AnyMForComprehensionFactory.instance==null){
+			System.err.println("ERROR : Unable to use AnyM for-comprehensions without cyclops-for-comprehensions on the classpath");
+		}
+		return AnyMForComprehensionFactory.instance.forEach3(this, monad1,monad2,filterFunction,yieldingFunction);
+		
 	}
 	
 }
