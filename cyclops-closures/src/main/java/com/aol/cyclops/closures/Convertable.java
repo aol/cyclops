@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -23,6 +24,13 @@ public interface Convertable<T> extends Iterable<T>{
 	
 	default Stream<T> toStream(){
 		return Stream.of(get()).filter(v->v!=null);
+	}
+	
+	default AtomicReference<T> toAtomicReference(){
+		return new AtomicReference<T>(get());
+	}
+	default Optional<AtomicReference<T>> toOptionalAtomicReference(){
+		return toOptional().map(u->new AtomicReference<T>(u));
 	}
 	
 	/**Get the contained value or else the provided alternative
