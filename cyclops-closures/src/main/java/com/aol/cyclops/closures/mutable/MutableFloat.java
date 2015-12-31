@@ -1,5 +1,10 @@
 package com.aol.cyclops.closures.mutable;
 
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import com.aol.cyclops.closures.Convertable;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -31,7 +36,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString @EqualsAndHashCode
-public class MutableFloat{
+public class MutableFloat implements Supplier<Float>, Consumer<Float>,Convertable<Float>{
 
 	private float var;
 	
@@ -79,6 +84,15 @@ public class MutableFloat{
 	}
 	public static interface FloatFunction{
 		float apply(float var);
+	}
+	@Override
+	public Float get() {
+		return var;
+	}
+	@Override
+	public void accept(Float t) {
+		set(t);
+		
 	}
 	
 }

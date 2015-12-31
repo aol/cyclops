@@ -1,7 +1,12 @@
 package com.aol.cyclops.closures.mutable;
 
+import java.util.OptionalInt;
+import java.util.function.IntConsumer;
 import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
+import java.util.stream.IntStream;
+
+import com.aol.cyclops.closures.Convertable;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -34,7 +39,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString @EqualsAndHashCode
-public class MutableInt implements IntSupplier{
+public class MutableInt implements IntSupplier, IntConsumer, Convertable<Integer>{
 
 	private int var;
 	
@@ -80,5 +85,20 @@ public class MutableInt implements IntSupplier{
 		this.var = varFn.apply(this.var);
 		return this;
 	}
+	public OptionalInt toOptionalInt(){
+		return OptionalInt.of(var);
+	}
 	
+	public IntStream toIntStream(){
+		return IntStream.of(var);
+	}
+	@Override
+	public Integer get() {
+		return getAsInt();
+	}
+	@Override
+	public void accept(int value) {
+		set(value);
+		
+	}
 }

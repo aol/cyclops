@@ -1,5 +1,10 @@
 package com.aol.cyclops.closures.mutable;
 
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import com.aol.cyclops.closures.Convertable;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -31,7 +36,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString @EqualsAndHashCode
-public class MutableByte{
+public class MutableByte implements Supplier<Byte>, Consumer<Byte>,Convertable<Byte>{
 
 	private byte var;
 	
@@ -79,6 +84,15 @@ public class MutableByte{
 	}
 	public static interface ByteFunction{
 		byte apply(byte var);
+	}
+	@Override
+	public void accept(Byte t) {
+		set(t);
+		
+	}
+	@Override
+	public Byte get() {
+		return getAsByte();
 	}
 	
 }

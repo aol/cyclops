@@ -1,7 +1,12 @@
 package com.aol.cyclops.closures.mutable;
 
+import java.util.OptionalDouble;
+import java.util.function.DoubleConsumer;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleSupplier;
+import java.util.stream.DoubleStream;
+
+import com.aol.cyclops.closures.Convertable;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -34,7 +39,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString @EqualsAndHashCode
-public class MutableDouble implements DoubleSupplier{
+public class MutableDouble implements DoubleSupplier, DoubleConsumer,Convertable<Double>{
 
 	private double var;
 	
@@ -79,6 +84,22 @@ public class MutableDouble implements DoubleSupplier{
 	public MutableDouble mutate(DoubleFunction<Double> varFn){
 		this.var = varFn.apply(this.var);
 		return this;
+	}
+	public OptionalDouble toOptionalDouble(){
+		return OptionalDouble.of(var);
+	}
+	
+	public DoubleStream toDoubleStream(){
+		return DoubleStream.of(var);
+	}
+	@Override
+	public Double get() {
+		return getAsDouble();
+	}
+	@Override
+	public void accept(double value) {
+		set(value);
+		
 	}
 	
 }

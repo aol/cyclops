@@ -1,7 +1,13 @@
 package com.aol.cyclops.closures.mutable;
 
+import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
+
+import com.aol.cyclops.closures.Convertable;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -34,7 +40,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString @EqualsAndHashCode
-public class Mutable<T> implements Supplier<T>{
+public class Mutable<T> implements Supplier<T>,Consumer<T>, Convertable<T>{
 
 	private T var;
 	
@@ -57,6 +63,35 @@ public class Mutable<T> implements Supplier<T>{
 	public static <T> Mutable<T> of(T var){
 		return new Mutable<T>(var);
 	}
+	
+	
+	/** 
+	 * Construct a Mutable that gets and sets an external value using the provided Supplier and Consumer
+	 * 
+	 * e.g.
+	 * <pre>
+	 * {@code 
+	 *    Mutable<Integer> mutable = Mutable.from(()->this.value*2,val->this.value=val);
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param s Supplier of an external value
+	 * @param c Consumer that sets an external value
+	 * @return Mutable that gets / sets an external (mutable) value
+	 */
+	public static <T> Mutable<T> fromExternal(Supplier<T> s, Consumer<T> c){
+		return new Mutable<T>(){
+			public T get(){
+				return s.get();
+			}
+			public Mutable<T> set(T value){
+					c.accept(value);
+					return this;
+			}
+		};
+	}
+	
 	/**
 	 * @return Current value
 	 */
@@ -80,5 +115,12 @@ public class Mutable<T> implements Supplier<T>{
 		this.var = varFn.apply(this.var);
 		return this;
 	}
+	@Override
+	public void accept(T t) {
+		set(t);
+		
+	}
+
+	
 	
 }

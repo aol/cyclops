@@ -1,7 +1,9 @@
 package com.aol.cyclops.closures.mutable;
 
 import java.util.function.BooleanSupplier;
-import java.util.function.DoubleFunction;
+import java.util.function.Consumer;
+
+import com.aol.cyclops.closures.Convertable;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -34,7 +36,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString @EqualsAndHashCode
-public class MutableBoolean implements BooleanSupplier{
+public class MutableBoolean implements BooleanSupplier, Consumer<Boolean>, Convertable<Boolean>{
 
 	private boolean var;
 	
@@ -82,6 +84,15 @@ public class MutableBoolean implements BooleanSupplier{
 	}
 	public static interface BooleanFunction{
 		boolean apply(boolean var);
+	}
+	@Override
+	public void accept(Boolean t) {
+		set(t);
+		
+	}
+	@Override
+	public Boolean get() {
+		return getAsBoolean();
 	}
 	
 }

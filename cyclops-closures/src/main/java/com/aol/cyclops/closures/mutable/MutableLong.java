@@ -1,7 +1,12 @@
 package com.aol.cyclops.closures.mutable;
 
+import java.util.OptionalLong;
+import java.util.function.LongConsumer;
 import java.util.function.LongFunction;
 import java.util.function.LongSupplier;
+import java.util.stream.LongStream;
+
+import com.aol.cyclops.closures.Convertable;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -34,7 +39,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString @EqualsAndHashCode
-public class MutableLong implements LongSupplier{
+public class MutableLong implements LongSupplier, LongConsumer,Convertable<Long>{
 
 	private long var;
 	
@@ -80,5 +85,20 @@ public class MutableLong implements LongSupplier{
 		this.var = varFn.apply(this.var);
 		return this;
 	}
+	public OptionalLong toOptionalLong(){
+		return OptionalLong.of(var);
+	}
 	
+	public LongStream toLongStream(){
+		return LongStream.of(var);
+	}
+	@Override
+	public Long get() {
+		return getAsLong();
+	}
+	@Override
+	public void accept(long value) {
+		set(value);
+		
+	}
 }

@@ -1,5 +1,10 @@
 package com.aol.cyclops.closures.mutable;
 
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import com.aol.cyclops.closures.Convertable;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -31,7 +36,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString @EqualsAndHashCode
-public class MutableShort{
+public class MutableShort implements Supplier<Short>, Consumer<Short>, Convertable<Short>{
 
 	private short var;
 	
@@ -79,6 +84,15 @@ public class MutableShort{
 	}
 	public static interface ShortFunction{
 		short apply(short var);
+	}
+	@Override
+	public Short get() {
+		return getAsShort();
+	}
+	@Override
+	public void accept(Short t) {
+		set(t);
+		
 	}
 	
 }

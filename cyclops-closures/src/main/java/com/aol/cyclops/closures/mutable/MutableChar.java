@@ -1,5 +1,10 @@
 package com.aol.cyclops.closures.mutable;
 
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import com.aol.cyclops.closures.Convertable;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -31,7 +36,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString @EqualsAndHashCode
-public class MutableChar {
+public class MutableChar implements Supplier<Character>, Consumer<Character>,Convertable<Character>{
 
 	private char var;
 	
@@ -79,6 +84,15 @@ public class MutableChar {
 	}
 	public static interface CharFunction{
 		char apply(char var);
+	}
+	@Override
+	public void accept(Character t) {
+		set(t);
+		
+	}
+	@Override
+	public Character get() {
+		return getAsChar();
 	}
 	
 }
