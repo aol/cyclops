@@ -37,7 +37,32 @@ public class SchedulingTest {
 				.peek(System.out::println)
 				.toList(),equalTo(Arrays.asList(1)));
 		
-		Thread.sleep(5000);
+		
+	}
+	@Test
+	public void fixedRateTest() throws InterruptedException{
+		assertThat(SequenceM.of(1,2,3,4)
+				.peek(i->count.incrementAndGet())
+				.peek(System.out::println)
+				.scheduleFixedRate(1000, ex)
+				.connect()
+				.debounce(1,TimeUnit.DAYS)
+				.peek(System.out::println)
+				.toList(),equalTo(Arrays.asList(1)));
+		
+		
+	}
+	@Test
+	public void fixedRateDelay() throws InterruptedException{
+		assertThat(SequenceM.of(1,2,3,4)
+				.peek(i->count.incrementAndGet())
+				.peek(System.out::println)
+				.scheduleFixedDelay(1000, ex)
+				.connect()
+				.debounce(1,TimeUnit.DAYS)
+				.peek(System.out::println)
+				.toList(),equalTo(Arrays.asList(1)));
+		
 		
 	}
 }
