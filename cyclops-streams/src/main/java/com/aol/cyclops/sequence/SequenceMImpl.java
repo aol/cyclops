@@ -75,13 +75,15 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 		
 	}
 	public HotStream<T> schedule(String cron,ScheduledExecutorService ex){
-		return new HotStreamImpl(this).schedule(cron,ex);
+		return StreamUtils.schedule(this, cron, ex);
+		
 	}
 	public HotStream<T> scheduleFixedDelay(long delay,ScheduledExecutorService ex){
-		return new HotStreamImpl(this).scheduleFixedDelay(delay,ex);
+		return StreamUtils.scheduleFixedDelay(this, delay, ex);
 	}
 	public HotStream<T> scheduleFixedRate(long rate,ScheduledExecutorService ex){
-		return new HotStreamImpl(this).scheduleFixedRate(rate,ex);
+		return StreamUtils.scheduleFixedRate(this, rate, ex);
+		
 	}
 	
 	

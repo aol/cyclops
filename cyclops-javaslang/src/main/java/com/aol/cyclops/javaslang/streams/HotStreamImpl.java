@@ -43,7 +43,7 @@ public class HotStreamImpl<T> implements JavaslangHotStream<T>{
 				});
 				
 				open.set(false); 
-				System.out.println("finished!"); 
+				
 					
 		},exec);
 		return this;
