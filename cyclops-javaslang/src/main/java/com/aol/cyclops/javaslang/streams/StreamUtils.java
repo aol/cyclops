@@ -57,7 +57,6 @@ import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.sequence.streamable.Streamable;
-import com.aol.cyclops.streams.HotStreamImpl;
 import com.aol.cyclops.streams.future.FutureOperationsImpl;
 import com.aol.cyclops.streams.operators.MultiCollectOperator;
 
@@ -90,7 +89,7 @@ public class StreamUtils{
 	 * <pre>
 	 * {@code
 	 *  //run at 8PM every night
-	 * StreamUtils.schedule(Stream.generate(()->"next job:"+formatDate(new Date()))
+	 * StreamUtils.schedule(Stream.gen(()->"next job:"+formatDate(new Date()))
 	 *            .map(this::processJob)
 	 *            ,"0 20 * * *",Executors.newScheduledThreadPool(1)));
 	 * }
@@ -100,7 +99,7 @@ public class StreamUtils{
 	 * 
 	 * <pre>
 	 * {@code 
-	 * HotStream<Data> dataStream = StreamUtils.schedule(Stream.generate(()->"next job:"+formatDate(new Date()))
+	 * HotStream<Data> dataStream = StreamUtils.schedule(Stream.gen(()->"next job:"+formatDate(new Date()))
 	 *            							  .map(this::processJob)
 	 *            							  ,"0 20 * * *",Executors.newScheduledThreadPool(1)));
 	 * 
@@ -115,8 +114,8 @@ public class StreamUtils{
 	 * @param ex ScheduledExecutorService
 	 * @return Connectable HotStream of output from scheduled Stream
 	 */
-	public static<T> HotStream<T> schedule(Stream<T> stream,String cron,ScheduledExecutorService ex){
-		return new HotStreamImpl(stream).schedule(cron,ex);
+	public static<T> JavaslangHotStream<T> schedule(Stream<T> stream,String cron,ScheduledExecutorService ex){
+		return new HotStreamImpl<>(stream).schedule(cron,ex);
 	}
 	
 	/**
@@ -125,7 +124,7 @@ public class StreamUtils{
 	 * <pre>
 	 * {@code
 	 *  //run every 60 seconds after last job completes
-	 *  StreamUtils.scheduleFixedDelay(Stream.generate(()->"next job:"+formatDate(new Date()))
+	 *  StreamUtils.scheduleFixedDelay(Stream.gen(()->"next job:"+formatDate(new Date()))
 	 *            .map(this::processJob)
 	 *            ,60_000,Executors.newScheduledThreadPool(1)));
 	 * }
@@ -135,7 +134,7 @@ public class StreamUtils{
 	 * 
 	 * <pre>
 	 * {@code 
-	 * HotStream<Data> dataStream = StreamUtils.scheduleFixedDelay(Stream.generate(()->"next job:"+formatDate(new Date()))
+	 * HotStream<Data> dataStream = StreamUtils.scheduleFixedDelay(Stream.gen(()->"next job:"+formatDate(new Date()))
 	 *            							  .map(this::processJob)
 	 *            							  ,60_000,Executors.newScheduledThreadPool(1)));
 	 * 
@@ -150,8 +149,8 @@ public class StreamUtils{
 	 * @param ex ScheduledExecutorService
 	 * @return Connectable HotStream of output from scheduled Stream
 	 */
-	public static <T> HotStream<T> scheduleFixedDelay(Stream<T> stream,long delay,ScheduledExecutorService ex){
-		return new HotStreamImpl(stream).scheduleFixedDelay(delay,ex);
+	public static <T> JavaslangHotStream<T> scheduleFixedDelay(Stream<T> stream,long delay,ScheduledExecutorService ex){
+		return new HotStreamImpl<>(stream).scheduleFixedDelay(delay,ex);
 	}
 	
 	/**
@@ -160,7 +159,7 @@ public class StreamUtils{
 	 * <pre>
 	 * {@code
 	 *  //run every 60 seconds
-	 *  StreamUtils.scheduleFixedRate(Stream.generate(()->"next job:"+formatDate(new Date()))
+	 *  StreamUtils.scheduleFixedRate(Stream.gen(()->"next job:"+formatDate(new Date()))
 	 *            .map(this::processJob),
 	 *            60_000,Executors.newScheduledThreadPool(1)));
 	 * }
@@ -170,7 +169,7 @@ public class StreamUtils{
 	 * 
 	 * <pre>
 	 * {@code 
-	 * HotStream<Data> dataStream = StreamUtils.scheduleFixedRate(Stream.generate(()->"next job:"+formatDate(new Date()))
+	 * HotStream<Data> dataStream = StreamUtils.scheduleFixedRate(Stream.gen(()->"next job:"+formatDate(new Date()))
 	 *            							  .map(this::processJob)
 	 *            							  ,60_000,Executors.newScheduledThreadPool(1)));
 	 * 
@@ -183,8 +182,8 @@ public class StreamUtils{
 	 * @param ex ScheduledExecutorService
 	 * @return Connectable HotStream of output from scheduled Stream
 	 */
-	public static <T> HotStream<T> scheduleFixedRate(Stream<T> stream,long rate,ScheduledExecutorService ex){
-		return new HotStreamImpl(stream).scheduleFixedRate(rate,ex);
+	public static <T> JavaslangHotStream<T> scheduleFixedRate(Stream<T> stream,long rate,ScheduledExecutorService ex){
+		return new HotStreamImpl<>(stream).scheduleFixedRate(rate,ex);
 	}
 	/**
 	 * Split at supplied location 
