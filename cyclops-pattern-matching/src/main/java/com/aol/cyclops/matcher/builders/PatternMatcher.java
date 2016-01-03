@@ -389,7 +389,6 @@ public class PatternMatcher implements Function{
 		
 		return caseOfThenExtract(it -> seq(it)
 							.zip(pred,(a1,b1)->Two.tuple(a1,b1))
-							.peek(System.out::println)
 							.map(t -> ((Predicate)t.v2).test(t.v1))
 								.allMatch(v->v==true), a, extractor);
 		
