@@ -3,7 +3,7 @@ package com.aol.cyclops.closures.mutable;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -108,7 +108,34 @@ public class MutableTest {
 		assertThat(Mutable.of(10).toAtomicReference().get(),equalTo(new AtomicReference(10).get()));
 	}
 	@Test
+	public void toOptionalAtomicReferenceNull(){
+		assertThat(Mutable.of(null).toOptionalAtomicReference(),equalTo(Optional.empty()));
+	}
+	@Test
+	public void toOptionalAtomicReference(){
+		assertThat(Mutable.of(10).toOptionalAtomicReference().get().get(),equalTo(10));
+	}
+	@Test
 	public void toAtomicReferenceNull(){
 		assertThat(Mutable.of(null).toAtomicReference().get(),equalTo(new AtomicReference(null).get()));
 	}
+	
+	@Test
+	public void orElse(){
+		assertThat(Mutable.of(10).orElse(11),equalTo(10));
+	}
+	@Test
+	public void orElseNull(){
+		assertThat(Mutable.of(null).orElse(11),equalTo(11));
+	}
+	@Test
+	public void orElseThrow(){
+		assertThat(Mutable.of(10).orElseThrow(()->new RuntimeException()),equalTo(10));
+	}
+	@Test(expected=RuntimeException.class)
+	public void orElseThrowNull(){
+		Mutable.of(null).orElseThrow(()->new RuntimeException());
+		fail("exception expected");
+	}
+	
 }

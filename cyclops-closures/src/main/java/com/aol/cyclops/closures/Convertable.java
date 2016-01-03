@@ -64,7 +64,7 @@ public interface Convertable<T> extends Iterable<T>{
 	 * @return
 	 * @throws X
 	 */
-	default <X extends Throwable> T getOrElseThrow(Supplier<? extends X> ex) throws X{
+	default <X extends Throwable> T orElseThrow(Supplier<? extends X> ex) throws X{
 		return toOptional().orElseThrow(ex);
 	}
 	
