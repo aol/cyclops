@@ -68,10 +68,10 @@ public class MutableChar implements Supplier<Character>, Consumer<Character>,Con
 	 * Use the supplied function to perform a lazy map operation when get is called 
 	 * <pre>
 	 * {@code 
-	 *  MutableBoolean mutable = MutableBoolean.fromExternal(()->!this.value,val->!this.value);
-	 *  Mutable<Boolean> withOverride = mutable.mapOutput(b->{ 
+	 *  MutableChar mutable = MutableChar.fromExternal(()->!this.value,val->!this.value);
+	 *  Mutable<Character> withOverride = mutable.mapOutput(b->{ 
 	 *                                                        if(override)
-	 *                                                             return true;
+	 *                                                             return 'a';
 	 *                                                         return b;
 	 *                                                         });
 	 *          
@@ -95,10 +95,10 @@ public class MutableChar implements Supplier<Character>, Consumer<Character>,Con
 	 * Use the supplied function to perform a lazy map operation when get is called 
 	 * <pre>
 	 * {@code 
-	 *  MutableBoolean mutable = MutableBoolean.fromExternal(()->!this.value,val->!this.value);
-	 *  Mutable<Boolean> withOverride = mutable.mapInput(b->{ 
+	 *  MutableChar mutable = MutableChar.fromExternal(()->!this.value,val->!this.value);
+	 *  Mutable<Character> withOverride = mutable.mapInput(b->{ 
 	 *                                                        if(override)
-	 *                                                             return true;
+	 *                                                             return 'v';
 	 *                                                         return b;
 	 *                                                         });
 	 *          

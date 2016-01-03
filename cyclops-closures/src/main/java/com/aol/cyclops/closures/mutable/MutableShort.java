@@ -67,10 +67,10 @@ public class MutableShort implements Supplier<Short>, Consumer<Short>, Convertab
 	 * Use the supplied function to perform a lazy map operation when get is called 
 	 * <pre>
 	 * {@code 
-	 *  MutableBoolean mutable = MutableBoolean.fromExternal(()->!this.value,val->!this.value);
-	 *  Mutable<Boolean> withOverride = mutable.mapOutput(b->{ 
+	 *  MutableShort mutable = MutableShort.fromExternal(()->!this.value,val->!this.value);
+	 *  Mutable<Short> withOverride = mutable.mapOutputToObj(b->{ 
 	 *                                                        if(override)
-	 *                                                             return true;
+	 *                                                             return 3s;
 	 *                                                         return b;
 	 *                                                         });
 	 *          
@@ -94,10 +94,10 @@ public class MutableShort implements Supplier<Short>, Consumer<Short>, Convertab
 	 * Use the supplied function to perform a lazy map operation when get is called 
 	 * <pre>
 	 * {@code 
-	 *  MutableBoolean mutable = MutableBoolean.fromExternal(()->!this.value,val->!this.value);
-	 *  Mutable<Boolean> withOverride = mutable.mapInput(b->{ 
+	 *  MutableShort mutable = MutableShort.fromExternal(()->!this.value,val->!this.value);
+	 *  Mutable<Short> withOverride = mutable.mapInputToObj(b->{ 
 	 *                                                        if(override)
-	 *                                                             return true;
+	 *                                                             return 1s;
 	 *                                                         return b;
 	 *                                                         });
 	 *          

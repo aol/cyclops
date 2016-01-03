@@ -17,18 +17,33 @@ import java.util.stream.Stream;
  */
 public interface Convertable<T> extends Iterable<T>{
 
+	/**
+	 * @return Contained value, maybe null
+	 */
 	public T get();
+	/**
+	 * @return Optional that wraps contained value, Optional.empty if value is null
+	 */
 	default Optional<T> toOptional(){
 		return Optional.ofNullable(get());
 	}
 	
+	/**
+	 * @return Stream containing value returned by get(), Empty Stream if null
+	 */
 	default Stream<T> toStream(){
 		return Stream.of(get()).filter(v->v!=null);
 	}
 	
+	/**
+	 * @return An AtomicReference containing value returned by get()
+	 */
 	default AtomicReference<T> toAtomicReference(){
 		return new AtomicReference<T>(get());
 	}
+	/**
+	 * @return An Optional AtomicReference containing value returned by get(), Optional.empty if get() returns null
+	 */
 	default Optional<AtomicReference<T>> toOptionalAtomicReference(){
 		return toOptional().map(u->new AtomicReference<T>(u));
 	}
@@ -53,10 +68,22 @@ public interface Convertable<T> extends Iterable<T>{
 		return toOptional().orElseThrow(ex);
 	}
 	
+	/**
+	 * @return A List containing value returned by get(), if get() returns null an Empty List is returned
+	 */
 	default List<T> toList(){
-		return Arrays.asList(get());
+		T obj = get();
+		if(obj!=null)
+			return Arrays.asList(get());
+		return Arrays.asList();
 	}
 	
+	
+	/* An Iterator over the list returned from toList()
+	 * 
+	 *  (non-Javadoc)
+	 * @see java.lang.Iterable#iterator()
+	 */
 	default Iterator<T> iterator(){
 		return toList().iterator();
 	}

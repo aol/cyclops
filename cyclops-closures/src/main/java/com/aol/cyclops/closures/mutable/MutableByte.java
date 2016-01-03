@@ -67,10 +67,10 @@ public class MutableByte implements Supplier<Byte>, Consumer<Byte>,Convertable<B
 	 * Use the supplied function to perform a lazy map operation when get is called 
 	 * <pre>
 	 * {@code 
-	 *  MutableBoolean mutable = MutableBoolean.fromExternal(()->!this.value,val->!this.value);
-	 *  Mutable<Boolean> withOverride = mutable.mapOutput(b->{ 
+	 *  MutableByte mutable = MutableByte.fromExternal(()->!this.value,val->!this.value);
+	 *  Mutable<Byte> withOverride = mutable.mapOutputToObj(b->{ 
 	 *                                                        if(override)
-	 *                                                             return true;
+	 *                                                             return 1b;
 	 *                                                         return b;
 	 *                                                         });
 	 *          
@@ -94,10 +94,10 @@ public class MutableByte implements Supplier<Byte>, Consumer<Byte>,Convertable<B
 	 * Use the supplied function to perform a lazy map operation when get is called 
 	 * <pre>
 	 * {@code 
-	 *  MutableBoolean mutable = MutableBoolean.fromExternal(()->!this.value,val->!this.value);
-	 *  Mutable<Boolean> withOverride = mutable.mapInput(b->{ 
+	 *  MutableByte mutable = MutablByte.fromExternal(()->!this.value,val->!this.value);
+	 *  Mutable<Byte> withOverride = mutable.mapInputToObj(b->{ 
 	 *                                                        if(override)
-	 *                                                             return true;
+	 *                                                             return 1b;
 	 *                                                         return b;
 	 *                                                         });
 	 *          

@@ -67,10 +67,10 @@ public class MutableFloat implements Supplier<Float>, Consumer<Float>,Convertabl
 	 * Use the supplied function to perform a lazy map operation when get is called 
 	 * <pre>
 	 * {@code 
-	 *  MutableBoolean mutable = MutableBoolean.fromExternal(()->!this.value,val->!this.value);
-	 *  Mutable<Boolean> withOverride = mutable.mapOutput(b->{ 
+	 *  MutableFloat mutable = MutableFlaot.fromExternal(()->!this.value,val->!this.value);
+	 *  Mutable<Float> withOverride = mutable.mapOutputToObj(b->{ 
 	 *                                                        if(override)
-	 *                                                             return true;
+	 *                                                             return 1f;
 	 *                                                         return b;
 	 *                                                         });
 	 *          
@@ -94,10 +94,10 @@ public class MutableFloat implements Supplier<Float>, Consumer<Float>,Convertabl
 	 * Use the supplied function to perform a lazy map operation when get is called 
 	 * <pre>
 	 * {@code 
-	 *  MutableBoolean mutable = MutableBoolean.fromExternal(()->!this.value,val->!this.value);
-	 *  Mutable<Boolean> withOverride = mutable.mapInput(b->{ 
+	 *  MutableFloat mutable = MutableBoolean.fromExternal(()->!this.value,val->!this.value);
+	 *  Mutable<Float> withOverride = mutable.mapInputToObj(b->{ 
 	 *                                                        if(override)
-	 *                                                             return true;
+	 *                                                             return 2f;
 	 *                                                         return b;
 	 *                                                         });
 	 *          
