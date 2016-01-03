@@ -44,7 +44,7 @@ public class StreamComprehender implements Comprehender<Stream> {
 	public Stream of(Object o) {
 		return Stream.of(o);
 	}
-	static <T> T unwrapOtherMonadTypes(Comprehender<T> comp,Object apply){
+	public static <T> T unwrapOtherMonadTypes(Comprehender<T> comp,Object apply){
 		
 		
 		

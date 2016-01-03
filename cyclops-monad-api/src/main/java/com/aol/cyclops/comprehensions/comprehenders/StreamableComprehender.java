@@ -26,7 +26,7 @@ public class StreamableComprehender implements Comprehender {
 		return ((Streamable)t).stream().map(fn);
 	}
 	public Object executeflatMap(Object t, Function fn){
-		return Streamable.fromStream((Stream)flatMap(t,input -> unwrapOtherMonadTypes(this,fn.apply(input))));
+		return Streamable.fromStream((Stream)flatMap(t,input -> StreamComprehender.unwrapOtherMonadTypes(this,fn.apply(input))));
 	}
 	@Override
 	public Object flatMap(Object t, Function fn) {
@@ -45,16 +45,7 @@ public class StreamableComprehender implements Comprehender {
 	public Stream of(Object o) {
 		return Stream.of(o);
 	}
-	static <T> T unwrapOtherMonadTypes(Comprehender<T> comp,Object apply){
-		if(apply instanceof Collection){
-			return (T)((Collection)apply).stream();
-		}
-		if(apply instanceof Stream){
-			return (T)((Stream)apply);
-		}
-		return Comprehender.unwrapOtherMonadTypes(comp,apply);
-		
-	}
+	
 	
 
 	
