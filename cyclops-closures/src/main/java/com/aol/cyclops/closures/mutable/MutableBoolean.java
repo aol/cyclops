@@ -109,7 +109,7 @@ public class MutableBoolean implements BooleanSupplier, Consumer<Boolean>, Conve
 	 * @param fn Map function to be applied to the result when get is called
 	 * @return Mutable that lazily applies the provided function when get is called to the return value
 	 */
-	public <R> Mutable<R> mapOutput(Function<Boolean,R> fn){
+	public <R> Mutable<R> mapOutputToObj(Function<Boolean,R> fn){
 		MutableBoolean host = this;
 		return new Mutable<R>(){
 			public R get(){
@@ -136,7 +136,7 @@ public class MutableBoolean implements BooleanSupplier, Consumer<Boolean>, Conve
 	 * @param fn Map function to be applied to the input when set is called
 	 * @return Mutable that lazily applies the provided function when set is called to the input value
 	 */
-	public <T1> Mutable<T1> mapInput(Function<T1,Boolean> fn){
+	public <T1> Mutable<T1> mapInputToObj(Function<T1,Boolean> fn){
 		MutableBoolean host = this;
 		return new Mutable<T1>(){
 			public Mutable<T1> set(T1 value){
@@ -166,8 +166,8 @@ public class MutableBoolean implements BooleanSupplier, Consumer<Boolean>, Conve
 	 * @return  this object with mutated value
 	 */
 	public MutableBoolean mutate(BooleanFunction varFn){
-		this.var = varFn.apply(this.var);
-		return this;
+		return set( varFn.apply(getAsBoolean()));
+		
 	}
 	public static interface BooleanFunction{
 		boolean apply(boolean var);
