@@ -2816,8 +2816,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	  *<pre>
 	 * {@code 
 	 * SequenceM.of(1,2)
-						.forEach2(a->IntStream.range(10,13),
-						.forEach2(a->b->Stream.of(""+(a+b),"hello world"),
+						.forEach3(a->IntStream.range(10,13),
+						        a->b->Stream.of(""+(a+b),"hello world"),
 									a->b->c->c+":"a+":"+b);
 									
 	 * 
@@ -2840,6 +2840,20 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	
 	/**
 	 * Perform a three level nested internal iteration over this Stream and the supplied streams
+	 * 
+	 *<pre>
+	 * {@code 
+	 * SequenceM.of(1,2,3)
+						.forEach3(a->IntStream.range(10,13),
+						      a->b->Stream.of(""+(a+b),"hello world"),
+						         a->b->c-> c!=3,
+									a->b->c->c+":"a+":"+b);
+									
+	 * 
+	 *  //SequenceM[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
+	 * }
+	 * </pre> 
+	 * 
 	 * 
 	 * @param stream1 Nested Stream to iterate over
 	 * @param stream2 Nested Stream to iterate over

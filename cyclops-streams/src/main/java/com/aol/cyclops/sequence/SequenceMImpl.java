@@ -86,9 +86,9 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 		
 	}
 	
-	
+	@Deprecated
 	public final <R> R unwrap(){
-		return (R)stream;
+		return (R)this;
 	}
 
 	/**
