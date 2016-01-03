@@ -535,7 +535,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	}
 	@Override
 	public <R1,R2,R> AnyM<R> forEach3(Function<T,? extends AnyM<R1>> monad1, 
-			BiFunction<T,R1,? extends AnyM<R2>> monad2,
+			Function<T,Function<R1,? extends AnyM<R2>>> monad2,
 			Function<T,Function<R1,Function<R2,R>>> yieldingFunction ){
 		if(AnyMForComprehensionFactory.instance==null){
 			System.err.println("ERROR : Unable to use AnyM for-comprehensions without cyclops-for-comprehensions on the classpath");
@@ -544,7 +544,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	}
 	@Override
 	public <R1,R2,R> AnyM<R> forEach3(Function<T,? extends AnyM<R1>> monad1, 
-			BiFunction<T,R1,? extends AnyM<R2>> monad2,
+			Function<T,Function<R1,? extends AnyM<R2>>> monad2,
 					Function<T,Function<R1,Function<R2,Boolean>>> filterFunction,
 			Function<T,Function<R1,Function<R2,R>>> yieldingFunction ){
 		if(AnyMForComprehensionFactory.instance==null){

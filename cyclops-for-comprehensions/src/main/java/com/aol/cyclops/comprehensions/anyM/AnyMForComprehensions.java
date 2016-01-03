@@ -14,7 +14,7 @@ public class AnyMForComprehensions<U> implements AnyMForComprehensionHandler<U> 
 	 */
 	@Override
 	public <R1, R> AnyM<R> forEach2(AnyM<U> anyM, Function<U, ? extends AnyM<R1>> monad, Function<U, Function<R1, R>> yieldingFunction) {
-		return Do.add(anyM).withAnyM(u -> monad.apply(u)).yield(yieldingFunction).unwrap();
+		return Do.add(anyM).withAnyM(u -> monad.apply(u)).yield(yieldingFunction);
 
 	}
 
@@ -29,7 +29,7 @@ public class AnyMForComprehensions<U> implements AnyMForComprehensionHandler<U> 
 		 return Do.add(anyM)
 				  .withAnyM(u->monad.apply(u))
 				  .filter(filterFunction)
-				  .yield(yieldingFunction).unwrap();
+				  .yield(yieldingFunction);
 			
 	}
 	
@@ -38,14 +38,14 @@ public class AnyMForComprehensions<U> implements AnyMForComprehensionHandler<U> 
 	 */
 	@Override
 	public <R1,R2,R> AnyM<R> forEach3(AnyM<U> anyM, Function<U,? extends AnyM<R1>> monad1, 
-			BiFunction<U,R1,? extends AnyM<R2>> monad2,
+				Function<U,Function<R1,? extends AnyM<R2>>> monad2,
 					Function<U,Function<R1,Function<R2,Boolean>>> filterFunction,
 			Function<U,Function<R1,Function<R2,R>>> yieldingFunction ){
 		return Do.add(anyM)
 				  .withAnyM(u->monad1.apply(u))
-				  .withAnyM(u1->u2->monad2.apply(u1,u2))
+				  .withAnyM(u1->u2->monad2.apply(u1).apply(u2))
 				  .filter(filterFunction)
-				  .yield(yieldingFunction).unwrap();
+				  .yield(yieldingFunction);
 		
 	}
 	
@@ -54,12 +54,12 @@ public class AnyMForComprehensions<U> implements AnyMForComprehensionHandler<U> 
 	 */
 	@Override
 	public <R1,R2,R> AnyM<R> forEach3(AnyM<U> anyM,Function<U,? extends AnyM<R1>> monad1, 
-			BiFunction<U,R1,? extends AnyM<R2>> monad2,
+			Function<U,Function<R1,? extends AnyM<R2>>> monad2,
 			Function<U,Function<R1,Function<R2,R>>> yieldingFunction ){
 		return Do.add(anyM)
 				  .withAnyM(u->monad1.apply(u))
-				  .withAnyM(u1->u2->monad2.apply(u1,u2))
-				  .yield(yieldingFunction).unwrap();
+				  .withAnyM(u1->u2->monad2.apply(u1).apply(u2))
+				  .yield(yieldingFunction);
 	}
 
 }

@@ -2122,8 +2122,8 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	  *<pre>
 	 * {@code 
 	 * SequenceM.of(1,2)
-						.forEach2(a->IntStream.range(10,13),
-						.forEach2(a->b->Stream.of(""+(a+b),"hello world"),
+						.forEach3(a->IntStream.range(10,13),
+						.a->b->Stream.of(""+(a+b),"hello world"),
 									a->b->c->c+":"a+":"+b);
 									
 	 * 
@@ -2135,12 +2135,12 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	public <R1,R2,R> SequenceM<R> forEach3(Function<T,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
-													BiFunction<T,R1,? extends BaseStream<R2,? extends BaseStream<? extends R2,?>>> stream2,
+	public <R1,R2,R> SequenceM<R> forEach3(Function<T, BaseStream<R1,?>> stream1, 
+											Function<T,Function<R1,BaseStream<R2,?>>> stream2,
 													Function<T,Function<R1,Function<R2,R>>> yieldingFunction ){
 		return Do.add(this)
 				  .withBaseStream(u->stream1.apply(u))
-				  .withBaseStream(u->r1->stream2.apply(u,r1))
+				  .withBaseStream(u->r1->stream2.apply(u).apply(r1))
 				  .yield(yieldingFunction).unwrap();
 			
 	}
@@ -2159,14 +2159,14 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	public <R1,R2,R> SequenceM<R> forEach3(Function<T,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
-													BiFunction<T,R1,? extends BaseStream<R2,? extends BaseStream<? extends R2,?>>> stream2,
+	public <R1,R2,R> SequenceM<R> forEach3(Function<T, BaseStream<R1,?>> stream1,  
+												Function<T,Function<R1,BaseStream<R2,?>>> stream2,
 															Function<T,Function<R1,Function<R2,Boolean>>> filterFunction,
 													Function<T,Function<R1,Function<R2,R>>> yieldingFunction ){
 		
 		 return Do.add(this)
 				  .withBaseStream(u->stream1.apply(u))
-				  .withBaseStream(u->r1->stream2.apply(u,r1))
+				  .withBaseStream(u->r1->stream2.apply(u).apply(r1))
 				  .filter(filterFunction)
 				  .yield(yieldingFunction).unwrap();
 			
@@ -2195,7 +2195,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	public <R1,R> SequenceM<R> forEach2(Function<T,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
+	public <R1,R> SequenceM<R> forEach2(Function<T, BaseStream<R1,?>> stream1, 
 													Function<T,Function<R1,R>> yieldingFunction ){
 		 return Do.add(this)
 				  .withBaseStream(u->stream1.apply(u))
@@ -2223,7 +2223,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	public <R1,R> SequenceM<R> forEach2(Function<T,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
+	public <R1,R> SequenceM<R> forEach2(Function<T, BaseStream<R1,?>> stream1, 
 												Function<T, Function<R1, Boolean>> filterFunction,
 													Function<T,Function<R1,R>> yieldingFunction ){
 		 return Do.add(this)

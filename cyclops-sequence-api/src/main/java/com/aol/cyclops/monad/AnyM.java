@@ -261,7 +261,7 @@ public interface AnyM<T> extends Unwrapable, ToStream<T>, ApplyM<T>,FlatMapM<T>,
 		 * @return AnyM with elements generated via nested iteration
 		 */
 		<R1,R2,R> AnyM<R> forEach3(Function<T,? extends AnyM<R1>> monad1, 
-														BiFunction<T,R1,? extends AnyM<R2>> monad2,
+														Function<T,Function<R1,? extends AnyM<R2>>> monad2,
 														Function<T,Function<R1,Function<R2,R>>> yieldingFunction );
 		
 		
@@ -291,7 +291,7 @@ public interface AnyM<T> extends Unwrapable, ToStream<T>, ApplyM<T>,FlatMapM<T>,
 		 * @return AnyM with elements generated via nested iteration
 		 */
 		<R1,R2,R> AnyM<R> forEach3(Function<T,? extends AnyM<R1>> monad1, 
-														BiFunction<T,R1,? extends AnyM<R2>> monad2,
+										Function<T,Function<R1,? extends AnyM<R2>>> monad2,
 																Function<T,Function<R1,Function<R2,Boolean>>> filterFunction,
 														Function<T,Function<R1,Function<R2,R>>> yieldingFunction );
 	/**

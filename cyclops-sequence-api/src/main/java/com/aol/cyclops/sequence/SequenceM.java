@@ -2829,8 +2829,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	<R1,R2,R> SequenceM<R> forEach3(Function<T,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
-													BiFunction<T,R1,? extends BaseStream<R2,? extends BaseStream<? extends R2,?>>> stream2,
+	<R1,R2,R> SequenceM<R> forEach3(Function<T, BaseStream<R1,?>> stream1, 
+													Function<T,Function<R1,BaseStream<R2,?>>> stream2,
 													Function<T,Function<R1,Function<R2,R>>> yieldingFunction );
 	
 	
@@ -2861,8 +2861,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	<R1,R2,R> SequenceM<R> forEach3(Function<T,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
-													BiFunction<T,R1,? extends BaseStream<R2,? extends BaseStream<? extends R2,?>>> stream2,
+	<R1,R2,R> SequenceM<R> forEach3(Function<T, BaseStream<R1,?>> stream1, 
+											Function<T,Function<R1,BaseStream<R2,?>>> stream2,
 															Function<T,Function<R1,Function<R2,Boolean>>> filterFunction,
 													Function<T,Function<R1,Function<R2,R>>> yieldingFunction );
 	
@@ -2891,7 +2891,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	<R1,R> SequenceM<R> forEach2(Function<T,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
+	<R1,R> SequenceM<R> forEach2(Function<T, BaseStream<R1,?>> stream1, 
 													Function<T,Function<R1,R>> yieldingFunction );
 
 	
@@ -2914,7 +2914,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	<R1,R> SequenceM<R> forEach2(Function<T,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
+	<R1,R> SequenceM<R> forEach2(Function<T, BaseStream<R1,?>> stream1, 
 												Function<T, Function<R1, Boolean>> filterFunction,
 													Function<T,Function<R1,R>> yieldingFunction );
 }

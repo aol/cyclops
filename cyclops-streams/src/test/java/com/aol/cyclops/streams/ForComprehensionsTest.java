@@ -23,7 +23,7 @@ public class ForComprehensionsTest {
 		
 		
 		
-//		System.out.println(s.collect(Collectors.toList()));
+
 		assertThat(SequenceM.of(1,2,3)
 		         .forEach2(a->IntStream.range(0,10), 
 		        		 a->b-> a+b)
@@ -76,5 +76,27 @@ public class ForComprehensionsTest {
 		        		 a->b->a>2 && b<8,
 		        		 a->b-> a+b)
 		         .toList(),equalTo(Arrays.asList(3,4,5,6,7,8,9,10)));
+	}
+	@Test
+	public void forEach3(){
+		
+
+		assertThat(SequenceM.of(2,3)
+		         .forEach3(a->IntStream.range(6,9),
+		        		   a->b->IntStream.range(100,105),
+		        		   a->b->c-> a+b+c)
+		         .toList(),equalTo(Arrays.asList(108, 109, 110, 111, 112, 109, 110, 111, 112, 113, 110, 111, 112, 
+		        		 113, 114, 109, 110, 111, 112, 113, 110, 111, 112, 113, 114, 111, 112, 113, 114, 115)));
+	}
+	@Test
+	public void forEach3Filter(){
+		
+
+		assertThat(SequenceM.of(2,3)
+		         .forEach3(a->IntStream.range(6,9),
+		        		   a->b->IntStream.range(100,105),
+		        		   a->b->c -> a==3,
+		        		   a->b->c-> a+b+c)
+		         .toList(),equalTo(Arrays.asList(109, 110, 111, 112, 113, 110, 111, 112, 113, 114, 111, 112, 113, 114, 115)));
 	}
 }
