@@ -138,4 +138,38 @@ public class MutableTest {
 		fail("exception expected");
 	}
 	
+	String value = "";
+	
+	@Test
+	public void externalSet(){
+		value = "";
+		Mutable<String> ext = Mutable.fromExternal(()->value,v->this.value=v);
+		ext.set("hello");
+		assertThat(value,equalTo("hello"));
+	}
+	
+	@Test
+	public void externalGet(){
+		value = "world";
+		Mutable<String> ext = Mutable.fromExternal(()->value,v->this.value=v);
+		
+		assertThat(ext.get(),equalTo("world"));
+	}
+	@Test
+	public void externalMapInput(){
+		value = "";
+		Mutable<String> ext = Mutable.fromExternal(()->value,v->this.value=v)
+									.mapInput(s->s+"!");
+		ext.set("hello");
+		assertThat(value,equalTo("hello!"));
+	}
+	
+	@Test
+	public void externalMapOutputs(){
+		value = "world";
+		Mutable<String> ext = Mutable.fromExternal(()->value,v->this.value=v)
+									.mapOutput(s->s+"?");
+		
+		assertThat(ext.get(),equalTo("world?"));
+	}
 }
