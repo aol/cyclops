@@ -88,7 +88,7 @@ public class MutableLong implements LongSupplier, LongConsumer,Convertable<Long>
 			public Long get(){
 				return getAsLong();
 			}
-			public MutableLong set(Long value){
+			public MutableLong set(long value){
 					c.accept(value);
 					return this;
 			}

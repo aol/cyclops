@@ -65,4 +65,55 @@ public class MutableDoubleTest {
 	public void testClosedVarHashCodeFalse() {
 		assertThat(new MutableDouble(10).hashCode(),not(equalTo(new MutableDouble(20).hashCode())));
 	}
+	double value = 0;
+	
+	@Test
+	public void externalSet(){
+		value = 0;
+		MutableDouble ext = MutableDouble.fromExternal(()->value,v->this.value=v);
+		ext.set(10l);
+		assertThat(value,equalTo(10d));
+	}
+	
+	@Test
+	public void externalGet(){
+		value = 100;
+		MutableDouble ext = MutableDouble.fromExternal(()->value,v->this.value=v);
+		
+		assertThat(ext.get(),equalTo(100d));
+	}
+	@Test
+	public void externalMapInputObj(){
+		value = 0;
+		Mutable<Double> ext = MutableDouble.fromExternal(()->value,v->this.value=v)
+									.mapInputToObj(s->s+10);
+		ext.set(50d);
+		assertThat(value,equalTo(60d));
+	}
+	
+	@Test
+	public void externalMapOutputToObj(){
+		value = 200;
+		Mutable<Double> ext = MutableDouble.fromExternal(()->value,v->this.value=v)
+									.mapOutputToObj(s->s*2);
+		
+		assertThat(ext.get(),equalTo(400d));
+	}
+	@Test
+	public void externalMapInput(){
+		value = 0;
+		MutableDouble ext = MutableDouble.fromExternal(()->value,v->this.value=v)
+									.mapInput(s->s+10);
+		ext.set(50d);
+		assertThat(value,equalTo(60d));
+	}
+	
+	@Test
+	public void externalMapOutput(){
+		value = 200;
+		MutableDouble ext = MutableDouble.fromExternal(()->value,v->this.value=v)
+									.mapOutput(s->s*2);
+		
+		assertThat(ext.get(),equalTo(400d));
+	}
 }
