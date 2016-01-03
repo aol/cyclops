@@ -5,7 +5,12 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
-import java.util.function.*;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Test;
@@ -64,5 +69,46 @@ public class MutableTest {
 	@Test
 	public void testClosedVarHashCodeFalse() {
 		assertThat(new Mutable(10).hashCode(),not(equalTo(new Mutable(20).hashCode())));
+	}
+	
+	@Test
+	public void toOptional(){
+		assertThat(Mutable.of(10).toOptional(),equalTo(Optional.of(10)));
+	}
+	@Test
+	public void toOptionalNull(){
+		assertThat(Mutable.of(null).toOptional(),equalTo(Optional.empty()));
+	}
+	@Test
+	public void toIterator(){
+		assertThat(Mutable.of(10).iterator().next(),equalTo(10));
+	}
+	@Test
+	public void toIteratorNull(){
+		assertThat(Mutable.of(null).iterator().hasNext(),equalTo(false));
+	}
+	@Test
+	public void toStream(){
+		assertThat(Mutable.of(10).toStream().collect(Collectors.toList()),equalTo(Arrays.asList(10)));
+	}
+	@Test
+	public void toStreamNull(){
+		assertThat(Mutable.of(null).toStream().collect(Collectors.toList()),equalTo(Arrays.asList()));
+	}
+	@Test
+	public void toList(){
+		assertThat(Mutable.of(10).toList(),equalTo(Arrays.asList(10)));
+	}
+	@Test
+	public void toListNull(){
+		assertThat(Mutable.of(null).toList(),equalTo(Arrays.asList()));
+	}
+	@Test
+	public void toAtomicReference(){
+		assertThat(Mutable.of(10).toAtomicReference().get(),equalTo(new AtomicReference(10).get()));
+	}
+	@Test
+	public void toAtomicReferenceNull(){
+		assertThat(Mutable.of(null).toAtomicReference().get(),equalTo(new AtomicReference(null).get()));
 	}
 }
