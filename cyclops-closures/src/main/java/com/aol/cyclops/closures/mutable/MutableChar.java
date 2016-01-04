@@ -63,6 +63,35 @@ public class MutableChar implements Supplier<Character>, Consumer<Character>,Con
 	}
 	
 	
+	/** 
+	 * Construct a MutableChar that gets and sets an external value using the provided Supplier and Consumer
+	 * 
+	 * e.g.
+	 * <pre>
+	 * {@code 
+	 *    MutableChar mutable = MutableChar.fromExternal(()->!this.value,val->!this.value);
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param s Supplier of an external value
+	 * @param c Consumer that sets an external value
+	 * @return MutableChar that gets / sets an external (mutable) value
+	 */
+	public static  MutableChar fromExternal(Supplier<Character> s, Consumer<Character> c){
+		return new MutableChar(){
+			public char getAsChar(){
+				return s.get();
+			}
+			public Character get(){
+				return getAsChar();
+			}
+			public MutableChar set(char value){
+					c.accept(value);
+					return this;
+			}
+		};
+	}
 	
 	/**
 	 * Use the supplied function to perform a lazy map operation when get is called 
