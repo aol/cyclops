@@ -12,6 +12,21 @@ import org.junit.Test;
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 public class SimpleReactTest {
+	@Test
+	public void doTestLazy(){
+		for(int i=0;i<100;i++){
+		LazyFutureStream<Integer> result = Do.add(LazyFutureStream.of(1,2,3))
+												.add(Optional.of(2))
+												.yield(a->b-> a+b)
+												.unwrap();
+												
+		List<Integer> blocked = result.block();
+		
+		assertThat(blocked,equalTo(Arrays.asList(3,4,5)));
+		}
+	}
+	
+	
 	
 	@Test
 	public void doTestLazyOptional(){

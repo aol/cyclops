@@ -1,11 +1,11 @@
 package com.aol.cyclops.comprehensions.converters;
 
-import java.util.function.Function;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import com.aol.cyclops.lambda.api.MonadicConverter;
 
-public class IntegerToRangeConverter implements MonadicConverter<IntStream> {
+public class IntegerToRangeConverter implements MonadicConverter<Stream<Integer>> {
 
 	public static int priority = 5;
 	public int priority(){
@@ -17,8 +17,8 @@ public class IntegerToRangeConverter implements MonadicConverter<IntStream> {
 	}
 
 	@Override
-	public IntStream convertToMonadicForm(Object f) {
-		return IntStream.range(0, (Integer)f);
+	public Stream<Integer> convertToMonadicForm(Object f) {
+		return IntStream.range(0, (Integer)f).boxed();
 	}
 	
 	
