@@ -30,6 +30,13 @@ public class ExceptionSoftenerTest {
 		assertThat(supplier.get(),equalTo("hello"));
 	}
 	
+	@Test
+	public void softenCallable(){
+		Supplier<String> supplier = ExceptionSoftener.softenCallable(this::get);
+		
+		assertThat(supplier.get(),equalTo("hello"));
+	}
+	
 
 
 }
