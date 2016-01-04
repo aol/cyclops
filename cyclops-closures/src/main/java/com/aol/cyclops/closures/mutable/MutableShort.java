@@ -3,6 +3,8 @@ package com.aol.cyclops.closures.mutable;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.IntConsumer;
+import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 import com.aol.cyclops.closures.Convertable;
@@ -60,6 +62,35 @@ public class MutableShort implements Supplier<Short>, Consumer<Short>, Convertab
 	 */
 	public static <T> MutableShort of(short var){
 		return new MutableShort(var);
+	}
+	/** 
+	 * Construct a MutableShort that gets and sets an external value using the provided Supplier and Consumer
+	 * 
+	 * e.g.
+	 * <pre>
+	 * {@code 
+	 *    MutableShort mutable = MutableShort.fromExternal(()->!this.value,val->!this.value);
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param s Supplier of an external value
+	 * @param c Consumer that sets an external value
+	 * @return MutableShort that gets / sets an external (mutable) value
+	 */
+	public static  MutableShort fromExternal(Supplier<Short> s, Consumer<Short> c){
+		return new MutableShort(){
+			public short getAsShort(){
+				return s.get();
+			}
+			public Short get(){
+				return getAsShort();
+			}
+			public MutableShort set(short value){
+					c.accept(value);
+					return this;
+			}
+		};
 	}
 	
 	
