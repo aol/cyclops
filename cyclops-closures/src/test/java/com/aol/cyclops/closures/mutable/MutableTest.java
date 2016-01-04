@@ -7,6 +7,7 @@ import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -132,11 +133,25 @@ public class MutableTest {
 	public void orElseThrow(){
 		assertThat(Mutable.of(10).orElseThrow(()->new RuntimeException()),equalTo(10));
 	}
+	@Test
+	public void toCompletableFuture(){
+		assertThat(Mutable.of(10).toCompletableFuture().join(),equalTo(10));
+	}
+	@Test
+	public void toCompletableFutureAsync(){
+		assertThat(Mutable.of(10).toCompletableFutureAsync().join(),equalTo(10));
+	}
+	@Test
+	public void toCompletableFutureAsyncEx(){
+		assertThat(Mutable.of(10).toCompletableFutureAsync(Executors.newSingleThreadExecutor()).join(),equalTo(10));
+	}
 	@Test(expected=RuntimeException.class)
 	public void orElseThrowNull(){
 		Mutable.of(null).orElseThrow(()->new RuntimeException());
 		fail("exception expected");
 	}
+	
+	
 	
 	String value = "";
 	
