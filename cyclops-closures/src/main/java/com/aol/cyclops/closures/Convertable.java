@@ -4,9 +4,16 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import lombok.Value;
+
+
 
 /**
  * Interface that represents a single value that can be converted into a List, Stream or Optional
@@ -15,8 +22,27 @@ import java.util.stream.Stream;
  *
  * @param <T>
  */
-public interface Convertable<T> extends Iterable<T>{
-
+public interface Convertable<T> extends Iterable<T>, Supplier<T>{
+	
+	/**
+	 * Construct a Convertable from a Supplier
+	 * 
+	 * @param supplier That returns the convertable value
+	 * @return Convertable
+	 */
+	public static <T>  Convertable<T> fromSupplier(Supplier<T> supplier){
+		return new SupplierToConvertable<>(supplier);
+	}
+	
+	
+	@Value
+	public static class SupplierToConvertable<T> implements Convertable<T>{
+		private final Supplier<T> delegate;
+		
+		public T get(){
+			return delegate.get();
+		}
+	}
 	/**
 	 * @return Contained value, maybe null
 	 */
@@ -86,5 +112,25 @@ public interface Convertable<T> extends Iterable<T>{
 	 */
 	default Iterator<T> iterator(){
 		return toList().iterator();
+	}
+	
+	/**
+	 * @return A CompletableFuture, populated immediately by a call to get
+	 */
+	default CompletableFuture<T> toCompletableFuture(){
+		return CompletableFuture.completedFuture(get());
+	}
+	/**
+	 * @return A CompletableFuture populated asynchronously on the Common ForkJoinPool by calling get
+	 */
+	default CompletableFuture<T> toCompletableFutureAsync(){
+		return CompletableFuture.supplyAsync(this);
+	}
+	/**
+	 * @param exec Executor to asyncrhonously populate the CompletableFuture
+	 * @return  A CompletableFuture populated asynchronously on the supplied Executor by calling get
+	 */
+	default CompletableFuture<T> toCompletableFutureAsync(Executor exec){
+		return CompletableFuture.supplyAsync(this,exec);
 	}
 }

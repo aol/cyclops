@@ -1,6 +1,7 @@
 package com.aol.cyclops.invokedynamic;
 
 
+import java.util.concurrent.Callable;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -142,6 +143,36 @@ public class ExceptionSoftener {
 		return () -> {
 			try {
 				return s.get();
+			} catch (Throwable e) {
+				throw throwSoftenedException(e);
+			}
+		};
+	}
+	/**
+	 * Soften a Callable that throws a ChecekdException into a Supplier
+	 * 
+	 * <pre>
+	 * {@code 
+	 * 
+	 * Supplier<String> supplier = ExceptionSoftener.softenCallable(this);
+	 * supplier.get(); //thows IOException but doesn't need to declare it
+	 * 
+	 * public String call() throws IOException{
+		return "hello";
+	   }
+	
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param s Callable with CheckedException
+	 * @return Supplier that throws the same exception, but doesn't need to declare it as a
+	 *  checked Exception
+	 */
+	public static <T> Supplier<T> softenCallable(Callable<T> s ){
+		return () -> {
+			try {
+				return s.call();
 			} catch (Throwable e) {
 				throw throwSoftenedException(e);
 			}
