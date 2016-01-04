@@ -62,6 +62,35 @@ public class MutableByte implements Supplier<Byte>, Consumer<Byte>,Convertable<B
 		return new MutableByte(var);
 	}
 	
+	/** 
+	 * Construct a MutableByte that gets and sets an external value using the provided Supplier and Consumer
+	 * 
+	 * e.g.
+	 * <pre>
+	 * {@code 
+	 *    MutableByte mutable = MutableByte.fromExternal(()->!this.value,val->!this.value);
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param s Supplier of an external value
+	 * @param c Consumer that sets an external value
+	 * @return MutableByte that gets / sets an external (mutable) value
+	 */
+	public static  MutableByte fromExternal(Supplier<Byte> s, Consumer<Byte> c){
+		return new MutableByte(){
+			public byte getAsByte(){
+				return s.get();
+			}
+			public Byte get(){
+				return getAsByte();
+			}
+			public MutableByte set(byte value){
+					c.accept(value);
+					return this;
+			}
+		};
+	}
 	
 	/**
 	 * Use the supplied function to perform a lazy map operation when get is called 
