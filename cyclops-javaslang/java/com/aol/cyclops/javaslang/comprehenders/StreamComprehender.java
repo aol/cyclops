@@ -2,9 +2,9 @@ package com.aol.cyclops.javaslang.comprehenders;
 
 import java.util.Collection;
 import java.util.function.Function;
+import java.util.stream.BaseStream;
 
 import javaslang.collection.Stream;
-import javaslang.collection.Tree;
 
 import com.aol.cyclops.lambda.api.Comprehender;
 import com.nurkiewicz.lazyseq.LazySeq;
@@ -48,6 +48,10 @@ public class StreamComprehender implements Comprehender<Stream> {
 		}
 		if(apply instanceof Collection){
 			return Stream.ofAll((Collection)apply);
+		}
+		if(apply instanceof BaseStream){
+			return Stream.ofAll( () -> ((BaseStream)apply).iterator());
+					
 		}
 		
 		return Comprehender.unwrapOtherMonadTypes(comp,apply);
