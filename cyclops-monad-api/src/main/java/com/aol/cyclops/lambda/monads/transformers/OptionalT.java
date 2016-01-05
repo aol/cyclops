@@ -1,14 +1,10 @@
 package com.aol.cyclops.lambda.monads.transformers;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.jooq.lambda.function.Function1;
 
@@ -177,7 +173,7 @@ public class OptionalT<T> {
 		AnyM<Integer> stream = AnyM.ofMonad(withNulls);
 		AnyM<Optional<Integer>> streamOpt = stream.map(Optional::ofNullable);
 		
-		CompletableFuture<Optional<Integer>> two = CompletableFuture.completedFuture(Optional.of(2));
+		CompletableFuture<Optional<Integer>> two = CompletableFuture.supplyAsync(()->Optional.of(2));
 		AnyM<Optional<Integer>> future=  AnyM.ofMonad(two);
 		List<Integer> results = optTAdd2.apply(OptionalT.of(streamOpt),OptionalT.of(future))
 										.unwrap()
