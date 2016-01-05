@@ -41,7 +41,7 @@ public class StreamableT<T> {
 	 * Peek at the current value of the Streamable
 	 * <pre>
 	 * {@code 
-	 *    StreamableT.of(AnyM.fromStream(Arrays.asStreamable(10))
+	 *    StreamableT.of(AnyM.fromStream(Streamable.of(10))
 	 *             .peek(System.out::println);
 	 *             
 	 *     //prints 10        
@@ -59,7 +59,7 @@ public class StreamableT<T> {
   	 * Filter the wrapped Streamable
   	 * <pre>
   	 * {@code 
-  	 *    StreamableT.of(AnyM.fromStream(Arrays.asStreamable(10,11))
+  	 *    StreamableT.of(AnyM.fromStream(Streamable.of(10,11))
   	 *             .filter(t->t!=10);
   	 *             
   	 *     //StreamableT<AnyM<Stream<Streamable[11]>>>
@@ -76,7 +76,7 @@ public class StreamableT<T> {
 	 * 
 	 * <pre>
 	 * {@code 
-	 *  StreamableT.of(AnyM.fromStream(Arrays.asStreamable(10))
+	 *  StreamableT.of(AnyM.fromStream(Streamable.of(10))
 	 *             .map(t->t=t+1);
 	 *  
 	 *  
@@ -95,10 +95,10 @@ public class StreamableT<T> {
 	  * <pre>
 	 * {@code 
 	 *  StreamableT.of(AnyM.fromStream(Arrays.asStreamable(10))
-	 *             .flatMap(t->Streamable.empty();
+	 *             .flatMap(t->Streamable.of(2));
 	 *  
 	 *  
-	 *  //StreamableT<AnyM<Stream<Streamable.empty>>>
+	 *  //StreamableT<AnyM<Stream<Streamable.[2]>>>
 	 * }
 	 * </pre>
 	 * @param f FlatMap function
