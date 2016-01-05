@@ -1,4 +1,4 @@
-package com.aol.cyclops.scheduling.embedded.org.quartz;
+package com.aol.cyclops.scheduling.util.cron;
 
 /*
  * All content copyright Terracotta, Inc., unless otherwise indicated. All rights reserved.
