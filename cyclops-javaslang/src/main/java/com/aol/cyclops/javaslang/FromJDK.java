@@ -6,6 +6,7 @@ import java.util.function.Function;
 
 import javaslang.Function1;
 import javaslang.Function2;
+import javaslang.collection.List;
 import javaslang.collection.Stream;
 import javaslang.control.Option;
 
@@ -28,6 +29,7 @@ public class FromJDK<T,R> {
 	}
 	
 	public static<T> Stream<T> stream(java.util.stream.Stream<T> stream, Continueable  sub){
+		
 		Iterator i = stream.iterator();
 		return Stream.ofAll(()-> {return new Iterator(){
 

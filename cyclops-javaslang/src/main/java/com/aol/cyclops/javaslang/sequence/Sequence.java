@@ -1,12 +1,18 @@
 package com.aol.cyclops.javaslang.sequence;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.BaseStream;
 import java.util.stream.Collector;
 
@@ -14,11 +20,16 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.javaslang.FromJDK;
+import com.aol.cyclops.javaslang.Javaslang;
 import com.aol.cyclops.javaslang.ToStream;
 import com.aol.cyclops.javaslang.streams.JavaslangHotStream;
 import com.aol.cyclops.javaslang.streams.StreamUtils;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.sequence.reactivestreams.CyclopsSubscriber;
+import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
+import com.aol.cyclops.sequence.streamable.AsStreamable;
+import com.aol.cyclops.sequence.streamable.Streamable;
 
 import javaslang.Function;
 import javaslang.BiFunction;
@@ -27,6 +38,7 @@ import javaslang.Tuple3;
 import javaslang.Tuple4;
 import javaslang.collection.List;
 import javaslang.collection.Map;
+import javaslang.collection.Set;
 import javaslang.collection.Stream;
 import javaslang.control.Option;
 
@@ -771,8 +783,9 @@ public interface Sequence<T> extends Stream<T>,Iterable<T>, Publisher<T>{
 	 * Extract the minimum as determined by supplied function
 	 * 
 	 */
-	default <C extends Comparable<C>> Option<T> minBy(Function<T,C> f){
-		return FromJDK.option(ToStream.toSequenceM(this).minBy(f));
+	default <C extends Comparable<? super C>> Option<T> minBy(Function<? super T,? extends C> f){
+		
+		return Stream.super.minBy(f);
 	}
 	/* (non-Javadoc)
 	 * @see java.util.stream.Stream#min(java.util.Comparator)
@@ -920,7 +933,8 @@ public interface Sequence<T> extends Stream<T>,Iterable<T>, Publisher<T>{
 	 * @return reduced values
 	 */
 	default T reduce(Monoid<T> reducer){
-	return ToStream.toSequenceM(this).reduce(reducer);
+		
+		return ToStream.toSequenceM(this).reduce(reducer);
 	}
 	/* 
 	 * <pre>
@@ -930,17 +944,23 @@ public interface Sequence<T> extends Stream<T>,Iterable<T>, Publisher<T>{
 	 * </pre>
 	 * 
 	 */
-	 Optional<T> reduce(BinaryOperator<T> accumulator);
+	 default Option<T> reduce(BinaryOperator<T> accumulator){
+		 return FromJDK.option(ToStream.toSequenceM(this).reduce(accumulator));
+	 }
 	 /* (non-Javadoc)
 	 * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BinaryOperator)
 	 */
-	T reduce(T identity, BinaryOperator<T> accumulator);
+	default T reduce(T identity, BinaryOperator<T> accumulator){
+		return ToStream.toSequenceM(this).reduce(identity,accumulator);
+	}
 	 /* (non-Javadoc)
 	 * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BiFunction, java.util.function.BinaryOperator)
 	 */
-	<U> U reduce(U identity,
+	default <U> U reduce(U identity,
              BiFunction<U, ? super T, U> accumulator,
-             BinaryOperator<U> combiner);
+             BinaryOperator<U> combiner){
+		return ToStream.toSequenceM(this).reduce(identity,accumulator,combiner);
+	}
 	/**
      * Reduce with multiple reducers in parallel
 	 * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was one value
@@ -963,7 +983,10 @@ public interface Sequence<T> extends Stream<T>,Iterable<T>, Publisher<T>{
 	 * @param reducers
 	 * @return
 	 */
-	 List<T> reduce(Stream<Monoid<T>> reducers);
+	default  List<T> reduce(Stream<Monoid<T>> reducers){
+		return StreamUtils.reduce(this, reducers);
+		
+	}
 	/**
      * Reduce with multiple reducers in parallel
 	 * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was one value
@@ -984,7 +1007,9 @@ public interface Sequence<T> extends Stream<T>,Iterable<T>, Publisher<T>{
 	 * @param reducers
 	 * @return
 	 */
-	 List<T> reduce(Iterable<Monoid<T>> reducers);
+	 default List<T> reduce(Iterable<Monoid<T>> reducers){
+		 return StreamUtils.reduce(this, reducers);
+	 }
 	
 	/**
 	 * 
@@ -999,7 +1024,9 @@ public interface Sequence<T> extends Stream<T>,Iterable<T>, Publisher<T>{
 	 * @param reducer Use supplied Monoid to reduce values starting via foldLeft
 	 * @return Reduced result
 	 */
-	 T foldLeft(Monoid<T> reducer);
+	default T foldLeft(Monoid<T> reducer){
+		return StreamUtils.foldLeft(this, reducer);
+	}
 	/**
 	 * foldLeft : immutable reduction from left to right
 	 * <pre>
@@ -1009,7 +1036,9 @@ public interface Sequence<T> extends Stream<T>,Iterable<T>, Publisher<T>{
 	 * }
 	 * </pre>
 	 */
-	T foldLeft(T identity,  BinaryOperator<T> accumulator);
+	default T foldLeft(T identity,  BinaryOperator<T> accumulator){
+		return StreamUtils.foldLeft(this, identity,accumulator);
+	}
 	/**
 	 *  Attempt to map this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
 	 * Then use Monoid to reduce values
@@ -1024,7 +1053,9 @@ public interface Sequence<T> extends Stream<T>,Iterable<T>, Publisher<T>{
 	 * @param reducer Monoid to reduce values
 	 * @return Reduce result
 	 */
-	<T> T foldLeftMapToType(Monoid<T> reducer);
+	default <T> T foldLeftMapToType(Monoid<T> reducer){
+		return StreamUtils.foldLeftMapToType(this, reducer);
+	}
 	/**
 	 * 
 	 * <pre>
@@ -1037,20 +1068,10 @@ public interface Sequence<T> extends Stream<T>,Iterable<T>, Publisher<T>{
 	 * @param reducer Use supplied Monoid to reduce values starting via foldRight
 	 * @return Reduced result
 	 */
-	 T foldRight(Monoid<T> reducer);
-	/**
-	 * Immutable reduction from right to left
-	 * <pre>
-	 * {@code 
-	 *  assertTrue(Sequence.of("a","b","c").foldRight("", String::concat).equals("cba"));
-	 * }
-	 * </pre>
-	 * 
-	 * @param identity
-	 * @param accumulator
-	 * @return
-	 */
-	public T foldRight(T identity,  BinaryOperator<T> accumulator);
+	default T foldRight(Monoid<T> reducer){
+		return StreamUtils.foldRight(this, reducer);
+	}
+	
 	/**
 	 *  Attempt to map this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
 	 * Then use Monoid to reduce values
@@ -1066,7 +1087,9 @@ public interface Sequence<T> extends Stream<T>,Iterable<T>, Publisher<T>{
 	 * @param reducer Monoid to reduce values
 	 * @return Reduce result
 	 */
-	public <T> T foldRightMapToType(Monoid<T> reducer);
+	default <T> T foldRightMapToType(Monoid<T> reducer){
+		return StreamUtils.foldRightMapToType(this, reducer);
+	}
 	/**
 	 * <pre>
 	 * {@code 
@@ -1082,29 +1105,29 @@ public interface Sequence<T> extends Stream<T>,Iterable<T>, Publisher<T>{
 	 * @return Lazily Convert to a repeatable Streamable
 	 * 
 	 */
-	public  Streamable<T> toStreamable();
+	default Streamable<T> toStreamable(){
+		return AsStreamable.fromIterable(this);
+	}
 	/**
 	 * @return This Stream converted to a set
 	 */
-	public Set<T> toSet();
+	default Set<T> toSet(){
+		return Stream.super.toSet();
+	}
 	/**
 	 * @return this Stream converted to a list
 	 */
-	public  List<T> toList();
+	default List<T> toList(){
+		return Stream.super.toList();
+	}
 	/* (non-Javadoc)
 	 * @see org.jooq.lambda.Seq#toCollection(java.util.function.Supplier)
 	 */
-	public  <C extends Collection<T>> C toCollection(Supplier<C> collectionFactory);
-	/**
-	 * Convert this Sequence into a Stream
-	 *  
-	 * @return  calls to stream() but more flexible on type for inferencing purposes.
-	 */
-	public  <T> Stream<T> toStream();
-	/**
-	 * Convert this Sequence into a Stream
-	 */
-	public Stream<T> stream();
+	default <C extends Collection<T>> C toCollection(Supplier<C> collectionFactory){
+		return ToStream.toSequenceM(this).toCollection(collectionFactory);
+	}
+	
+	
 	
 	
 	/**
@@ -1113,12 +1136,16 @@ public interface Sequence<T> extends Stream<T>,Iterable<T>, Publisher<T>{
 	 * @param iterator
 	 * @return True if Monad starts with Iterators sequence of data
 	 */
-	boolean startsWith(Iterator<T> iterator);
+	default boolean startsWith(Iterator<T> iterator){
+		return ToStream.toSequenceM(this).startsWith(iterator);
+	}
 	
 	/**
 	 * @return this Sequence converted to AnyM format
 	 */
-	public AnyM<T> anyM();
+	default AnyM<T> anyM(){
+		return Javaslang.anyM(this);
+	}
 	
 	default <R> Sequence<R> map(Function<? super T,? extends R> fn){
 		return fromStream(Stream.super.map(fn));
@@ -1178,7 +1205,9 @@ public interface Sequence<T> extends Stream<T>,Iterable<T>, Publisher<T>{
 	 * @param fn
 	 * @return
 	 */
-	<R> Sequence<R> flatMapCollection(Function<? super T,Collection<? extends R>> fn);
+	default <R> Sequence<R> flatMapCollection(Function<? super T,Collection<? extends R>> fn){
+		return flatMap(t->Stream.ofAll(fn.apply(t)));
+	}
 	/**
 	 * flatMap operation
 	 * 
@@ -1194,7 +1223,9 @@ public interface Sequence<T> extends Stream<T>,Iterable<T>, Publisher<T>{
 	 * @param fn to be applied
 	 * @return new stage in Sequence with flatMap operation to be lazily applied
 	*/
-	<R> Sequence<R> flatMapStream(Function<? super T,BaseStream<? extends R,?>> fn);
+	default <R> Sequence<R> flatMapStream(Function<? super T,BaseStream<? extends R,?>> fn){
+		return flatMap(t->Stream.ofAll(()->fn.apply(t).iterator()));
+	}
 	/**
 	 * flatMap to optional - will result in null values being removed
 	 * <pre>
@@ -1208,7 +1239,9 @@ public interface Sequence<T> extends Stream<T>,Iterable<T>, Publisher<T>{
 	 * @param fn
 	 * @return
 	 */
-	 <R> Sequence<R> flatMapOptional(Function<? super T,Optional<? extends R>> fn) ;
+	 default <R> Sequence<R> flatMapOption(Function<? super T,Option<? extends R>> fn){
+		 return flatMap(t->fn.apply(t).toStream());
+	 }
 	/**
 	 * flatMap to CompletableFuture - will block until Future complete, although (for non-blocking behaviour use AnyM 
 	 *       wrapping CompletableFuture and flatMap to Stream there)
@@ -1429,11 +1462,7 @@ public interface Sequence<T> extends Stream<T>,Iterable<T>, Publisher<T>{
 	 */
 	public Sequence<T> reverse();
 	
-	/* (non-Javadoc)
-	 * @see java.util.stream.BaseStream#onClose(java.lang.Runnable)
-	 */
-	@Override
-	public Sequence<T> onClose(Runnable closeHandler) ;
+	
 	
 	
 	/* (non-Javadoc)
@@ -1733,14 +1762,14 @@ public interface Sequence<T> extends Stream<T>,Iterable<T>, Publisher<T>{
 	 * 
 	 * @return An Optional with single value if this Stream has exactly one element, otherwise Optional Empty
 	 */
-	default Optional<T> singleOptional(){
+	default Option<T> singleOptional(){
 		Iterator<T> it = iterator();
 		if(it.hasNext()){
 			T result = it.next();
 			if(!it.hasNext())
-				return Optional.of(result);
+				return Option.of(result);
 		}
-		return Optional.empty();
+		return Option.none();
 		
 	}
 
@@ -1754,7 +1783,7 @@ public interface Sequence<T> extends Stream<T>,Iterable<T>, Publisher<T>{
 	 * @param index to extract element from
 	 * @return elementAt index
 	 */
-	default Optional<T> elementAt(long index){
+	default Option<T> elementAt(long index){
 		return this.zipWithIndex()
 				   .filter(t->t.v2==index)
 				   .findFirst()
