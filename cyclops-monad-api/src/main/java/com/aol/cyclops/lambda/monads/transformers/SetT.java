@@ -138,7 +138,7 @@ public class SetT<T> {
 										.<Optional<Set<Integer>>>unwrap().get();
 		
 		
-		//Arrays.asSet(3,4);
+		//asSet(3,4);
 	 * 
 	 * 
 	 * }</pre>
@@ -173,7 +173,7 @@ public class SetT<T> {
 										.<Stream<Set<Integer>>>unwrap()
 										.flatMap(i->i.stream())
 										.collect(Collectors.toSet());
-			//Arrays.asSet(3,4);							
+			//asSet(3,4);							
 	  }
 	  </pre>
 	 * @param fn BiFunction to enhance with functionality from Set and another monad type
