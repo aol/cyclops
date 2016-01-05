@@ -16,45 +16,101 @@ import com.aol.cyclops.monad.AnyM;
 /**
  * Monad transformer for JDK Optional
  * 
+ * OptionalT consists of an AnyM instance that in turns wraps anoter Monad type that contains an Optional
+ * 
+ * OptionalT<AnyM<*SOME_MONAD_TYPE*<Optional<T>>>>
+ * 
+ * OptionalT allows the deeply wrapped Optional to be manipulating within it's nested /contained context
+ * 
+ * 
  * @author johnmcclean
  *
- * @param <A>
+ * @param <T> The type contained on the Optional within
  */
-public class OptionalT<A> {
+public class OptionalT<T> {
    
-   private final AnyM<Optional<A>> run;
+   private final AnyM<Optional<T>> run;
    
    
-   private OptionalT(final AnyM<Optional<A>> run){
+   private OptionalT(final AnyM<Optional<T>> run){
        this.run = run;
    }
    
-   public AnyM<Optional<A>> unwrap(){
-	   return run;
-   }
+	/**
+	 * @return The wrapped AnyM
+	 */
+	public AnyM<Optional<T>> unwrap() {
+		return run;
+	}
 
    
-   public OptionalT<A> peek(Consumer<A> peek){
-       return of(run.peek(opt-> opt.map(a-> { peek.accept(a); return a;})));
-   }
+	/**
+	 * Peek at the current value of the Optional
+	 * <pre>
+	 * {@code 
+	 *    OptionalT.of(AnyM.fromStream(Optional.of(10))
+	 *             .peek(System.out::println);
+	 *             
+	 *     //prints 10        
+	 * }
+	 * </pre>
+	 * 
+	 * @param peek  Consumer to accept current value of Optional
+	 * @return OptionalT with peek call
+	 */
+	public OptionalT<T> peek(Consumer<T> peek) {
+		return of(run.peek(opt -> opt.map(a -> {
+			peek.accept(a);
+			return a;
+		})));
+	}
    
-   public OptionalT<A> filter(Predicate<A> test){
-       return of(run.map(opt-> opt.filter(test)));
-   }
+	/**
+	 * Filter the wrapped Optional
+	 * <pre>
+	 * {@code 
+	 *    OptionalT.of(AnyM.fromStream(Optional.of(10))
+	 *             .filter(t->t!=10);
+	 *             
+	 *     //OptionalT<AnyM<Stream<Optional.empty>>>
+	 * }
+	 * </pre>
+	 * @param test Predicate to filter the wrapped Optional
+	 * @return OptionalT that applies the provided filter
+	 */
+	public OptionalT<T> filter(Predicate<T> test) {
+		return of(run.map(opt -> opt.filter(test)));
+	}
 
-   public <B> OptionalT<B> map(Function<A,B> f){
-       return new OptionalT<B>(run.map(o-> o.map(f)));
-   }
-   public <B> OptionalT<B> flatMap(Function1<A,OptionalT<B>> f){
-	  
-	  return  of( run.flatMap(opt->{
-		   if(opt.isPresent())
-			   return f.apply(opt.get()).run;
-		   return run.unit(Optional.<B>empty());
-	   }));
-	   
-	   
-   }
+	/**
+	 * Map the wrapped Optional
+	 * 
+	 * <pre>
+	 * {@code 
+	 *  OptionalT.of(AnyM.fromStream(Optional.of(10))
+	 *             .map(t->t=t+1);
+	 *  
+	 *  
+	 *  //OptionalT<AnyM<Stream<Optional[11]>>>
+	 * }
+	 * </pre>
+	 * 
+	 * @param f Mapping function for the wrapped Optional
+	 * @return OptionalT that applies the map function to the wrapped Optional
+	 */
+	public <B> OptionalT<B> map(Function<T, B> f) {
+		return new OptionalT<B>(run.map(o -> o.map(f)));
+	}
+
+	public <B> OptionalT<B> flatMap(Function1<T, OptionalT<B>> f) {
+
+		return of(run.flatMap(opt -> {
+			if (opt.isPresent())
+				return f.apply(opt.get()).run;
+			return run.unit(Optional.<B> empty());
+		}));
+
+	}
 
 	public static <U, R> Function<OptionalT<U>, OptionalT<R>> lift(Function<U, R> fn) {
 		return optTu -> optTu.map(input -> fn.apply(input));

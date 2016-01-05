@@ -130,8 +130,9 @@ public class MutableTest {
 		assertThat(Mutable.of(null).orElse(11),equalTo(11));
 	}
 	@Test
-	public void orElseThrow(){
-		assertThat(Mutable.of(10).orElseThrow(()->new RuntimeException()),equalTo(10));
+	public void orElseThrow() throws RuntimeException{
+		//Hack for JDK issue : https://bugs.openjdk.java.net/browse/JDK-8066974
+		assertThat(Mutable.of(10).<RuntimeException>orElseThrow(()->new RuntimeException()),equalTo(10));
 	}
 	@Test
 	public void toCompletableFuture(){

@@ -17,7 +17,7 @@ import java.util.stream.StreamSupport;
 import uk.co.real_logic.agrona.concurrent.OneToOneConcurrentArrayQueue;
 
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
-import com.aol.cyclops.scheduling.embedded.org.quartz.CronExpression;
+import com.aol.cyclops.scheduling.util.cron.CronExpression;
 import com.aol.cyclops.sequence.HotStream;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.spliterators.ClosingSpliterator;

@@ -32,8 +32,6 @@ import com.aol.cyclops.matcher.TypedFunction;
 import com.aol.cyclops.objects.Decomposable;
 import com.aol.cyclops.sequence.SequenceM;
 
-import fj.data.vector.V;
-
 
 
 /**

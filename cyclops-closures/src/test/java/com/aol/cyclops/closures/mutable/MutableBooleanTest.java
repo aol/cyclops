@@ -24,7 +24,7 @@ public class MutableBooleanTest {
 	public void inClosure(){
 		MutableBoolean myInt = new MutableBoolean(zero);
 		
-	  Function<Integer,Function<Integer,MutableBoolean>> fn = ((Integer i)-> (Integer j)-> myInt.set(true)));
+	  Function<Integer,Function<Integer,MutableBoolean>> fn = ( (Integer i)-> (Integer j)-> myInt.set(true));
 	  fn.apply(10).apply(20);
 		
 		assertThat(myInt.getAsBoolean(),
