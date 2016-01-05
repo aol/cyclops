@@ -1,13 +1,9 @@
 package com.aol.cyclops.lambda.monads.transformers;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.function.Function1;
@@ -116,7 +112,7 @@ public class StreamableT<T> {
 	 * Lift a function into one that accepts and returns an StreamableT
 	 * This allows multiple monad types to add functionality to existing functions and methods
 	 * 
-	 * e.g. to add list handling (via Streamable) and iteration (via Stream) to an existing function
+	 * e.g. to add list handling  / iteration (via Streamable) and iteration (via Stream) to an existing function
 	 * <pre>
 	 * {@code 
 	 *Function<Integer,Integer> add2 = i -> i+2;
@@ -148,7 +144,7 @@ public class StreamableT<T> {
   	 * Lift a BiFunction into one that accepts and returns  StreamableTs
   	 * This allows multiple monad types to add functionality to existing functions and methods
   	 * 
-  	 * e.g. to add list handling (via Streamable), iteration (via Stream)  and asynchronous execution (CompletableFuture) 
+  	 * e.g. to add list handling / iteration (via Streamable), iteration (via Stream)  and asynchronous execution (CompletableFuture) 
   	 * to an existing function
   	 * 
   	 * <pre>
