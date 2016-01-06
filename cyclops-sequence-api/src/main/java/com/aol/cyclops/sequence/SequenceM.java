@@ -14,6 +14,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -32,6 +33,9 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+
+
 
 
 
@@ -1732,11 +1736,19 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	/**
 	 * <pre>
 	 * {@code 
-	 * assertThat(SequenceM.of(1).single(),equalTo(1));
+	 *    
+	 *    //1
+	 *    SequenceM.of(1).single(); 
+	 *    
+	 *    //UnsupportedOperationException
+	 *    SequenceM.of().single();
+	 *     
+	 *     //UnsupportedOperationException
+	 *    SequenceM.of(1,2,3).single();
 	 * }
 	 * </pre>
 	 * 
-	 * @return a single value or an exception if 0/1 values in this Stream
+	 * @return a single value or an UnsupportedOperationException if 0/1 values in this Stream
 	 */
 	default T single(){
 		Iterator<T> it = iterator();
@@ -1745,8 +1757,35 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 			if(!it.hasNext())
 				return result;
 		}
-			
 		throw new UnsupportedOperationException("single only works for Streams with a single value");
+		
+	}
+
+	/**
+	 * <pre>
+	 * {@code 
+	 *    
+	 *    //Optional[1]
+	 *    SequenceM.of(1).singleOptional(); 
+	 *    
+	 *    //Optional.empty
+	 *    SequenceM.of().singleOpional();
+	 *     
+	 *     //Optional.empty
+	 *    SequenceM.of(1,2,3).singleOptional();
+	 * }
+	 * </pre>
+	 * 
+	 * @return An Optional with single value if this Stream has exactly one element, otherwise Optional Empty
+	 */
+	default Optional<T> singleOptional(){
+		Iterator<T> it = iterator();
+		if(it.hasNext()){
+			T result = it.next();
+			if(!it.hasNext())
+				return Optional.of(result);
+		}
+		return Optional.empty();
 		
 	}
 
@@ -1968,6 +2007,15 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	public static <T> SequenceM<T> fromIterable(Iterable<T> iterable){
 		Objects.requireNonNull(iterable);
 		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(iterable.spliterator(),false),null);
+	}
+	/**
+	 * Construct a Sequence from an Iterator
+	 * @param iterator  to construct Sequence from
+	 * @return SequenceM
+	 */
+	public static <T> SequenceM<T> fromIterator(Iterator<T> iterator){
+		Objects.requireNonNull(iterator);
+		return fromIterable( ()-> iterator);
 	}
     /**
      * @see Stream#iterate(Object, UnaryOperator)
@@ -2660,8 +2708,100 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 		return streamable.map(s->s.sequenceM()).sequenceM();
 	}
 	
+	/**
+	 * Execute this Stream on a schedule
+	 * 
+	 * <pre>
+	 * {@code
+	 *  //run at 8PM every night
+	 *  SequenceeM.generate(()->"next job:"+formatDate(new Date()))
+	 *            .map(this::processJob)
+	 *            .schedule("0 20 * * *",Executors.newScheduledThreadPool(1));
+	 * }
+	 * </pre>
+	 * 
+	 * Connect to the Scheduled Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * HotStream<Data> dataStream = SequenceeM.generate(()->"next job:"+formatDate(new Date()))
+	 *            							  .map(this::processJob)
+	 *            							  .schedule("0 20 * * *",Executors.newScheduledThreadPool(1));
+	 * 
+	 * 
+	 * data.connect().forEach(this::logToDB);
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * 
+	 * @param cron Expression that determines when each job will run
+	 * @param ex ScheduledExecutorService
+	 * @return Connectable HotStream of output from scheduled Stream
+	 */
+	HotStream<T> schedule(String cron,ScheduledExecutorService ex);
 	
+	/**
+	 * Execute this Stream on a schedule
+	 * 
+	 * <pre>
+	 * {@code
+	 *  //run every 60 seconds after last job completes
+	 *  SequenceeM.generate(()->"next job:"+formatDate(new Date()))
+	 *            .map(this::processJob)
+	 *            .scheduleFixedDelay(60_000,Executors.newScheduledThreadPool(1));
+	 * }
+	 * </pre>
+	 * 
+	 * Connect to the Scheduled Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * HotStream<Data> dataStream = SequenceeM.generate(()->"next job:"+formatDate(new Date()))
+	 *            							  .map(this::processJob)
+	 *            							  .scheduleFixedDelay(60_000,Executors.newScheduledThreadPool(1));
+	 * 
+	 * 
+	 * data.connect().forEach(this::logToDB);
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param delay Between last element completes passing through the Stream until the next one starts
+	 * @param ex ScheduledExecutorService
+	 * @return Connectable HotStream of output from scheduled Stream
+	 */
+	HotStream<T> scheduleFixedDelay(long delay,ScheduledExecutorService ex);
 	
+	/**
+	 * Execute this Stream on a schedule
+	 * 
+	 * <pre>
+	 * {@code
+	 *  //run every 60 seconds
+	 *  SequenceeM.generate(()->"next job:"+formatDate(new Date()))
+	 *            .map(this::processJob)
+	 *            .scheduleFixedRate(60_000,Executors.newScheduledThreadPool(1));
+	 * }
+	 * </pre>
+	 * 
+	 * Connect to the Scheduled Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * HotStream<Data> dataStream = SequenceeM.generate(()->"next job:"+formatDate(new Date()))
+	 *            							  .map(this::processJob)
+	 *            							  .scheduleFixedRate(60_000,Executors.newScheduledThreadPool(1));
+	 * 
+	 * 
+	 * data.connect().forEach(this::logToDB);
+	 * }
+	 * </pre>
+	 * @param rate Time in millis between job runs
+	 * @param ex ScheduledExecutorService
+	 * @return Connectable HotStream of output from scheduled Stream
+	 */
+	HotStream<T> scheduleFixedRate(long rate,ScheduledExecutorService ex);
 	
 	/**
 	 * [equivalent to count]
@@ -2671,4 +2811,110 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	default int size(){
 		return this.toList().size();
 	}
+	/** 
+	 * Perform a three level nested internal iteration over this Stream and the supplied streams
+	  *<pre>
+	 * {@code 
+	 * SequenceM.of(1,2)
+						.forEach3(a->IntStream.range(10,13),
+						        a->b->Stream.of(""+(a+b),"hello world"),
+									a->b->c->c+":"a+":"+b);
+									
+	 * 
+	 *  //SequenceM[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
+	 * }
+	 * </pre> 
+	 * @param stream1 Nested Stream to iterate over
+	 * @param stream2 Nested Stream to iterate over
+	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
+	 * @return SequenceM with elements generated via nested iteration
+	 */
+	<R1,R2,R> SequenceM<R> forEach3(Function<T, BaseStream<R1,?>> stream1, 
+													Function<T,Function<R1,BaseStream<R2,?>>> stream2,
+													Function<T,Function<R1,Function<R2,R>>> yieldingFunction );
+	
+	
+
+
+	
+	
+	/**
+	 * Perform a three level nested internal iteration over this Stream and the supplied streams
+	 * 
+	 *<pre>
+	 * {@code 
+	 * SequenceM.of(1,2,3)
+						.forEach3(a->IntStream.range(10,13),
+						      a->b->Stream.of(""+(a+b),"hello world"),
+						         a->b->c-> c!=3,
+									a->b->c->c+":"a+":"+b);
+									
+	 * 
+	 *  //SequenceM[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
+	 * }
+	 * </pre> 
+	 * 
+	 * 
+	 * @param stream1 Nested Stream to iterate over
+	 * @param stream2 Nested Stream to iterate over
+	 * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
+	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
+	 * @return SequenceM with elements generated via nested iteration
+	 */
+	<R1,R2,R> SequenceM<R> forEach3(Function<T, BaseStream<R1,?>> stream1, 
+											Function<T,Function<R1,BaseStream<R2,?>>> stream2,
+															Function<T,Function<R1,Function<R2,Boolean>>> filterFunction,
+													Function<T,Function<R1,Function<R2,R>>> yieldingFunction );
+	
+	
+
+	
+	
+	
+	
+	/**
+	 * Perform a two level nested internal iteration over this Stream and the supplied stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * SequenceM.of(1,2,3)
+						.forEach2(a->IntStream.range(10,13),
+									a->b->a+b);
+									
+	 * 
+	 *  //SequenceM[11,14,12,15,13,16]
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param stream1 Nested Stream to iterate over
+	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
+	 * @return SequenceM with elements generated via nested iteration
+	 */
+	<R1,R> SequenceM<R> forEach2(Function<T, BaseStream<R1,?>> stream1, 
+													Function<T,Function<R1,R>> yieldingFunction );
+
+	
+	/**
+	 * Perform a two level nested internal iteration over this Stream and the supplied stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * SequenceM.of(1,2,3)
+						.forEach2(a->IntStream.range(10,13),
+						            a->b-> a<3 && b>10,
+									a->b->a+b);
+									
+	 * 
+	 *  //SequenceM[14,15]
+	 * }
+	 * </pre>
+	 * @param stream1 Nested Stream to iterate over
+	 * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
+	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
+	 * @return SequenceM with elements generated via nested iteration
+	 */
+	<R1,R> SequenceM<R> forEach2(Function<T, BaseStream<R1,?>> stream1, 
+												Function<T, Function<R1, Boolean>> filterFunction,
+													Function<T,Function<R1,R>> yieldingFunction );
 }

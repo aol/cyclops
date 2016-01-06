@@ -10,7 +10,7 @@ import org.hamcrest.Matcher;
 
 import com.aol.cyclops.matcher.Extractors;
 import com.aol.cyclops.matcher.Two;
-import com.nurkiewicz.lazyseq.LazySeq;
+import com.aol.cyclops.sequence.SequenceM;
 
 /**
  * Predicate Builder for Algebraic Data Types
@@ -48,7 +48,7 @@ public class ADTPredicateBuilder<T>{
 		 * @return A single Predicate encompassing supplied rules
 		 */
 		public<V> Predicate hasValues(V... values){
-			LazySeq<Predicate> predicates = LazySeq.of(values).map(nextValue->convertToPredicate(nextValue));
+			SequenceM<Predicate> predicates = SequenceM.of(values).map(nextValue->convertToPredicate(nextValue));
 			
 			return t -> toPredicate().test(t) 
 					  	&& SeqUtils.seq(Extractors.decompose().apply(t))
@@ -56,7 +56,7 @@ public class ADTPredicateBuilder<T>{
 							.allMatch(v->v==true);
 		}
 		public<V> Predicate hasValuesWhere(Predicate<V>... values){
-			LazySeq<Predicate> predicates = LazySeq.of(values).map(nextValue->convertToPredicate(nextValue));
+			SequenceM<Predicate> predicates = SequenceM.of(values).map(nextValue->convertToPredicate(nextValue));
 			
 			return t -> toPredicate().test(t) 
 					  	&& SeqUtils.seq(Extractors.decompose().apply(t))
@@ -64,7 +64,7 @@ public class ADTPredicateBuilder<T>{
 							.allMatch(v->v==true);
 		}
 		public<V> Predicate hasValuesMatching(Matcher<V>... values){
-			LazySeq<Predicate> predicates = LazySeq.of(values).map(nextValue->convertToPredicate(nextValue));
+			SequenceM<Predicate> predicates = SequenceM.of(values).map(nextValue->convertToPredicate(nextValue));
 			
 			return t -> toPredicate().test(t) 
 					  	&& SeqUtils.seq(Extractors.decompose().apply(t))

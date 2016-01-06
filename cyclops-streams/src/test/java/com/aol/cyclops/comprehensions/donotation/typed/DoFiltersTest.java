@@ -5,6 +5,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import lombok.val;
@@ -20,6 +22,21 @@ public class DoFiltersTest {
 	}
 	public Bean getCount(){
 		return null;
+	}
+	@Test
+	public void doIntStream(){
+		
+		
+			 
+		
+		Stream<Integer> s = Do.addStream(IntStream.range(0,10).boxed())
+							  .addBaseStream(()->LongStream.range(10l,20l))
+							  .yield(a->b->a*b)
+							  .unwrap();
+							
+		
+		System.out.println(s.collect(Collectors.toList()));
+
 	}
 	@Test
 	public void do2(){

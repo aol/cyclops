@@ -1,7 +1,14 @@
 package com.aol.cyclops.closures.mutable;
 
+import java.util.OptionalLong;
+import java.util.function.Function;
+import java.util.function.LongConsumer;
 import java.util.function.LongFunction;
 import java.util.function.LongSupplier;
+import java.util.function.LongUnaryOperator;
+import java.util.stream.LongStream;
+
+import com.aol.cyclops.closures.Convertable;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -34,7 +41,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString @EqualsAndHashCode
-public class MutableLong implements LongSupplier{
+public class MutableLong implements LongSupplier, LongConsumer,Convertable<Long>{
 
 	private long var;
 	
@@ -57,6 +64,148 @@ public class MutableLong implements LongSupplier{
 	public static  MutableLong of(long var){
 		return new MutableLong(var);
 	}
+	
+	/** 
+	 * Construct a MutableLong that gets and sets an external value using the provided Supplier and Consumer
+	 * 
+	 * e.g.
+	 * <pre>
+	 * {@code 
+	 *    MutableLong mutable = MutableLong.fromExternal(()->!this.value,val->!this.value);
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param s Supplier of an external value
+	 * @param c Consumer that sets an external value
+	 * @return MutableLong that gets / sets an external (mutable) value
+	 */
+	public static  MutableLong fromExternal(LongSupplier s, LongConsumer c){
+		return new MutableLong(){
+			public long getAsLong(){
+				return s.getAsLong();
+			}
+			public Long get(){
+				return getAsLong();
+			}
+			public MutableLong set(long value){
+					c.accept(value);
+					return this;
+			}
+		};
+	}
+	
+	/**
+	 * Use the supplied function to perform a lazy map operation when get is called 
+	 * <pre>
+	 * {@code 
+	 *  MutableLong mutable = MutableLong.fromExternal(()->!this.value,val->!this.value);
+	 *  Mutable<Long> withOverride = mutable.mapOutputToObj(b->{ 
+	 *                                                        if(override)
+	 *                                                             return 10.0;
+	 *                                                         return b;
+	 *                                                         });
+	 *          
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param fn Map function to be applied to the result when get is called
+	 * @return Mutable that lazily applies the provided function when get is called to the return value
+	 */
+	public <R> Mutable<R> mapOutputToObj(Function<Long,R> fn){
+		MutableLong host = this;
+		return new Mutable<R>(){
+			public R get(){
+				return fn.apply(host.get());
+			}
+			
+		};
+	}
+	/**
+	 * Use the supplied function to perform a lazy map operation when get is called 
+	 * <pre>
+	 * {@code 
+	 *  MutableLong mutable = MutableLong.fromExternal(()->!this.value,val->!this.value);
+	 *  Mutable<Long> withOverride = mutable.mapInputToObj(b->{ 
+	 *                                                        if(override)
+	 *                                                             return 10.0;
+	 *                                                         return b;
+	 *                                                         });
+	 *          
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param fn Map function to be applied to the input when set is called
+	 * @return Mutable that lazily applies the provided function when set is called to the input value
+	 */
+	public <T1> Mutable<T1> mapInputToObj(Function<T1,Long> fn){
+		MutableLong host = this;
+		return new Mutable<T1>(){
+			public Mutable<T1> set(T1 value){
+				host.set(fn.apply(value));
+				return this;
+		}
+			
+		};
+	}
+	/**
+	 * Use the supplied function to perform a lazy map operation when get is called 
+	 * <pre>
+	 * {@code 
+	 *  MutableLong mutable = MutableLong.fromExternal(()->!this.value,val->!this.value);
+	 *  MutableLong withOverride = mutable.mapOutput(b->{ 
+	 *                                                        if(override)
+	 *                                                             return 10.0;
+	 *                                                         return b;
+	 *                                                         });
+	 *          
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param fn Map function to be applied to the result when get is called
+	 * @return Mutable that lazily applies the provided function when get is called to the return value
+	 */
+	public  MutableLong mapOutput(LongUnaryOperator fn){
+		MutableLong host = this;
+		return new MutableLong(){
+			public long getAsLong(){
+				return fn.applyAsLong(host.getAsLong());
+			}
+			
+		};
+	}
+	/**
+	 * Use the supplied function to perform a lazy map operation when get is called 
+	 * <pre>
+	 * {@code 
+	 *  MutableLong mutable = MutableLong.fromExternal(()->!this.value,val->!this.value);
+	 *  MutableLong withOverride = mutable.mapInput(b->{ 
+	 *                                                        if(override)
+	 *                                                             return 10.0;
+	 *                                                         return b;
+	 *                                                         });
+	 *          
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param fn Map function to be applied to the input when set is called
+	 * @return Mutable that lazily applies the provided function when set is called to the input value
+	 */
+	public MutableLong mapInput(LongUnaryOperator fn){
+		MutableLong host = this;
+		return new MutableLong(){
+			public MutableLong set(long value){
+				host.set(fn.applyAsLong(value));
+				return this;
+		}
+			
+		};
+	}
+	
 	/**
 	 * @return Current value
 	 */
@@ -80,5 +229,20 @@ public class MutableLong implements LongSupplier{
 		this.var = varFn.apply(this.var);
 		return this;
 	}
+	public OptionalLong toOptionalLong(){
+		return OptionalLong.of(var);
+	}
 	
+	public LongStream toLongStream(){
+		return LongStream.of(var);
+	}
+	@Override
+	public Long get() {
+		return getAsLong();
+	}
+	@Override
+	public void accept(long value) {
+		set(value);
+		
+	}
 }

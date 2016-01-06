@@ -30,6 +30,11 @@ Utilities for working with Lambda expressions that capture values or variables i
 * MutableInt
 * MutableDouble
 * MutableLong
+* MutableBoolean
+* MutableByte
+* MutableShort
+* MutableChar
+* MutableFloat
 * LazyImmutable
 
 

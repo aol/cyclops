@@ -3,9 +3,15 @@ package com.aol.cyclops.closures.mutable;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
-import java.util.function.*;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Test;
@@ -64,5 +70,122 @@ public class MutableTest {
 	@Test
 	public void testClosedVarHashCodeFalse() {
 		assertThat(new Mutable(10).hashCode(),not(equalTo(new Mutable(20).hashCode())));
+	}
+	
+	@Test
+	public void toOptional(){
+		assertThat(Mutable.of(10).toOptional(),equalTo(Optional.of(10)));
+	}
+	@Test
+	public void toOptionalNull(){
+		assertThat(Mutable.of(null).toOptional(),equalTo(Optional.empty()));
+	}
+	@Test
+	public void toIterator(){
+		assertThat(Mutable.of(10).iterator().next(),equalTo(10));
+	}
+	@Test
+	public void toIteratorNull(){
+		assertThat(Mutable.of(null).iterator().hasNext(),equalTo(false));
+	}
+	@Test
+	public void toStream(){
+		assertThat(Mutable.of(10).toStream().collect(Collectors.toList()),equalTo(Arrays.asList(10)));
+	}
+	@Test
+	public void toStreamNull(){
+		assertThat(Mutable.of(null).toStream().collect(Collectors.toList()),equalTo(Arrays.asList()));
+	}
+	@Test
+	public void toList(){
+		assertThat(Mutable.of(10).toList(),equalTo(Arrays.asList(10)));
+	}
+	@Test
+	public void toListNull(){
+		assertThat(Mutable.of(null).toList(),equalTo(Arrays.asList()));
+	}
+	@Test
+	public void toAtomicReference(){
+		assertThat(Mutable.of(10).toAtomicReference().get(),equalTo(new AtomicReference(10).get()));
+	}
+	@Test
+	public void toOptionalAtomicReferenceNull(){
+		assertThat(Mutable.of(null).toOptionalAtomicReference(),equalTo(Optional.empty()));
+	}
+	@Test
+	public void toOptionalAtomicReference(){
+		assertThat(Mutable.of(10).toOptionalAtomicReference().get().get(),equalTo(10));
+	}
+	@Test
+	public void toAtomicReferenceNull(){
+		assertThat(Mutable.of(null).toAtomicReference().get(),equalTo(new AtomicReference(null).get()));
+	}
+	
+	@Test
+	public void orElse(){
+		assertThat(Mutable.of(10).orElse(11),equalTo(10));
+	}
+	@Test
+	public void orElseNull(){
+		assertThat(Mutable.of(null).orElse(11),equalTo(11));
+	}
+	@Test
+	public void orElseThrow() throws RuntimeException{
+		//Hack for JDK issue : https://bugs.openjdk.java.net/browse/JDK-8066974
+		assertThat(Mutable.of(10).<RuntimeException>orElseThrow(()->new RuntimeException()),equalTo(10));
+	}
+	@Test
+	public void toCompletableFuture(){
+		assertThat(Mutable.of(10).toCompletableFuture().join(),equalTo(10));
+	}
+	@Test
+	public void toCompletableFutureAsync(){
+		assertThat(Mutable.of(10).toCompletableFutureAsync().join(),equalTo(10));
+	}
+	@Test
+	public void toCompletableFutureAsyncEx(){
+		assertThat(Mutable.of(10).toCompletableFutureAsync(Executors.newSingleThreadExecutor()).join(),equalTo(10));
+	}
+	@Test(expected=RuntimeException.class)
+	public void orElseThrowNull(){
+		Mutable.of(null).orElseThrow(()->new RuntimeException());
+		fail("exception expected");
+	}
+	
+	
+	
+	String value = "";
+	
+	@Test
+	public void externalSet(){
+		value = "";
+		Mutable<String> ext = Mutable.fromExternal(()->value,v->this.value=v);
+		ext.set("hello");
+		assertThat(value,equalTo("hello"));
+	}
+	
+	@Test
+	public void externalGet(){
+		value = "world";
+		Mutable<String> ext = Mutable.fromExternal(()->value,v->this.value=v);
+		
+		assertThat(ext.get(),equalTo("world"));
+	}
+	@Test
+	public void externalMapInput(){
+		value = "";
+		Mutable<String> ext = Mutable.fromExternal(()->value,v->this.value=v)
+									.mapInput(s->s+"!");
+		ext.set("hello");
+		assertThat(value,equalTo("hello!"));
+	}
+	
+	@Test
+	public void externalMapOutputs(){
+		value = "world";
+		Mutable<String> ext = Mutable.fromExternal(()->value,v->this.value=v)
+									.mapOutput(s->s+"?");
+		
+		assertThat(ext.get(),equalTo("world?"));
 	}
 }

@@ -2,6 +2,7 @@ package com.aol.cyclops.javaslang.comprehenders;
 
 import java.util.Collection;
 import java.util.function.Function;
+import java.util.stream.BaseStream;
 
 import javaslang.collection.List;
 
@@ -48,7 +49,11 @@ public class ListComprehender implements Comprehender<List> {
 		if(apply instanceof Collection){
 			return List.ofAll((Collection)apply);
 		}
-		
+		final Object finalApply = apply;
+		if(apply instanceof BaseStream){
+			return List.ofAll( () -> ((BaseStream)finalApply).iterator());
+					
+		}
 		return Comprehender.unwrapOtherMonadTypes(comp,apply);
 		
 	}

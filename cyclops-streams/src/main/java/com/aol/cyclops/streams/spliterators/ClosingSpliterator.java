@@ -4,6 +4,7 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.Spliterator;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 
 public class ClosingSpliterator<T> implements Spliterator<T> {
@@ -38,16 +39,20 @@ public class ClosingSpliterator<T> implements Spliterator<T> {
 	public boolean tryAdvance(Consumer<? super T> action) {
 		 Objects.requireNonNull(action);
 		
-			if(!open.get() && queue.size()==0){
-				System.out.println(open.get() + " : " + queue.size());
-				return false;
-			}
+			while(open.get()){
+				long nanos=1l;
         
-        	T value;
-        	if((value=queue.poll())!=null)
-        		action.accept(nullSafe(value));
+				T value;
+				if((value=queue.poll())!=null){
+					action.accept(nullSafe(value));
         	
-        	return true;
+					return true;
+				}
+				LockSupport.parkNanos(nanos);
+				nanos= nanos*2;
+        	
+		}
+			return false;
         
 	}
 

@@ -1,11 +1,14 @@
 package com.aol.cyclops.closures.immutable;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
+
+import com.aol.cyclops.closures.Convertable;
 
 /**
  * A class that represents an 'immutable' value that is generated inside a lambda
@@ -30,10 +33,10 @@ import lombok.ToString;
  * @param <T>
  */
 @ToString
-public class LazyImmutable<T> implements Supplier<T>{
+public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Convertable<T>{
 	private final static Object UNSET = new Object();
 	private AtomicReference value = new AtomicReference<>(UNSET);
-	private volatile boolean set=false;
+	private final AtomicBoolean set= new AtomicBoolean(false);
 	
 	public LazyImmutable(){}
 
@@ -108,7 +111,7 @@ public class LazyImmutable<T> implements Supplier<T>{
 	 */
 	public LazyImmutable<T> setOnce(T val){
 		this.value.compareAndSet(UNSET, val);
-		set=true;
+		set.set(true);
 		return this;
 			
 	}
@@ -130,6 +133,12 @@ public class LazyImmutable<T> implements Supplier<T>{
 			return setOnceFromSupplier(lazy);
 		
 		return val;
+		
+	}
+
+	@Override
+	public void accept(T t) {
+		setOnce(t);
 		
 	}
 }

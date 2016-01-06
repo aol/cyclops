@@ -30,7 +30,8 @@ dependencies {
 	compile project(':cyclops-sequence-api')
 	compile project(':cyclops-monad-api')
 	compile project(':cyclops-closures')
-	compile 'uk.co.real-logic:Agrona:0.4.2'
+	compile project(':cyclops-for-comprehensions')
+	compile 'uk.co.real-logic:Agrona:0.4.7'
 	provided group: 'org.projectlombok', name: 'lombok', version:"${lombokVersion}"
 	testCompile ('com.aol.simplereact:simple-react:'+simpleReactVersion){
 		exclude group:'com.aol.cyclops'

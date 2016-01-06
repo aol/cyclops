@@ -89,24 +89,7 @@ public class Do {
 		return new DoComp0(ConsPStack.empty()).addStream(o);		
 	}
 	
-	/**
-	 * Add a BaseStream (e.g. IntStream, LongStream etc) as next nested level in the comprehension
-	 * 
-	 * 
-	 * 
-	 * <pre>{@code   Do.add(intStream)
-	 				   .filter( -> i1>5)
-				  	   .yield( -> );
-							
-		}</pre>
-	 * 
-	 * 
-	 * @param o Defines next level in comprehension
-	 * @return Next stage in for comprehension builder
-	 */
-	public  static  <T1> DoComp1<T1> addBaseStream(BaseStream<T1,?> o){
-		return new DoComp0(ConsPStack.empty()).addBaseStream(o);		
-	}
+	
 	
 
 

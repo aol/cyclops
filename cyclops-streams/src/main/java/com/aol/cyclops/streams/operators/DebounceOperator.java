@@ -26,17 +26,26 @@ public class DebounceOperator<T> {
 				while(elapsedNanos>0 && it.hasNext()){
 						
 						nextValue = it.next();
-						if(last==0)
+						if(last==0){
 							last= System.nanoTime();
+							return nextValue;
+						}
 						elapsedNanos= timeNanos - (System.nanoTime()-last);
 				}
 				
 				
 				
 				last= System.nanoTime();
-				return nextValue;
+				if(it.hasNext())
+					return nextValue;
+				else if(elapsedNanos <=0)
+					return nextValue;
+				else
+					return (T)DEBOUNCED;
 			}
 			
-		});
+		}).filter(i->i!=DEBOUNCED);
 	}
+	
+	private final static Object DEBOUNCED = new Object();
 }

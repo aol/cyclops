@@ -1,7 +1,14 @@
 package com.aol.cyclops.closures.mutable;
 
+import java.util.OptionalInt;
+import java.util.function.Function;
+import java.util.function.IntConsumer;
 import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
+import java.util.function.IntUnaryOperator;
+import java.util.stream.IntStream;
+
+import com.aol.cyclops.closures.Convertable;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -34,7 +41,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString @EqualsAndHashCode
-public class MutableInt implements IntSupplier{
+public class MutableInt implements IntSupplier, IntConsumer, Convertable<Integer>{
 
 	private int var;
 	
@@ -56,6 +63,147 @@ public class MutableInt implements IntSupplier{
 	 */
 	public static  MutableInt of(int var){
 		return new MutableInt(var);
+	}
+	
+	/** 
+	 * Construct a MutableInt that gets and sets an external value using the provided Supplier and Consumer
+	 * 
+	 * e.g.
+	 * <pre>
+	 * {@code 
+	 *    MutableInt mutable = MutableInt.fromExternal(()->!this.value,val->!this.value);
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param s Supplier of an external value
+	 * @param c Consumer that sets an external value
+	 * @return MutableInt that gets / sets an external (mutable) value
+	 */
+	public static  MutableInt fromExternal(IntSupplier s, IntConsumer c){
+		return new MutableInt(){
+			public int getAsInt(){
+				return s.getAsInt();
+			}
+			public Integer get(){
+				return getAsInt();
+			}
+			public MutableInt set(int value){
+					c.accept(value);
+					return this;
+			}
+		};
+	}
+	
+	/**
+	 * Use the supplied function to perform a lazy map operation when get is called 
+	 * <pre>
+	 * {@code 
+	 *  MutableInt mutable = MutableInt.fromExternal(()->!this.value,val->!this.value);
+	 *  Mutable<Int> withOverride = mutable.mapOutputToObj(b->{ 
+	 *                                                        if(override)
+	 *                                                             return 10.0;
+	 *                                                         return b;
+	 *                                                         });
+	 *          
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param fn Map function to be applied to the result when get is called
+	 * @return Mutable that lazily applies the provided function when get is called to the return value
+	 */
+	public <R> Mutable<R> mapOutputToObj(Function<Integer,R> fn){
+		MutableInt host = this;
+		return new Mutable<R>(){
+			public R get(){
+				return fn.apply(host.get());
+			}
+			
+		};
+	}
+	/**
+	 * Use the supplied function to perform a lazy map operation when get is called 
+	 * <pre>
+	 * {@code 
+	 *  MutableInt mutable = MutableInt.fromExternal(()->!this.value,val->!this.value);
+	 *  Mutable<Int> withOverride = mutable.mapInputToObj(b->{ 
+	 *                                                        if(override)
+	 *                                                             return 10;
+	 *                                                         return b;
+	 *                                                         });
+	 *          
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param fn Map function to be applied to the input when set is called
+	 * @return Mutable that lazily applies the provided function when set is called to the input value
+	 */
+	public <T1> Mutable<T1> mapInputToObj(Function<T1,Integer> fn){
+		MutableInt host = this;
+		return new Mutable<T1>(){
+			public Mutable<T1> set(T1 value){
+				host.set(fn.apply(value));
+				return this;
+		}
+			
+		};
+	}
+	/**
+	 * Use the supplied function to perform a lazy map operation when get is called 
+	 * <pre>
+	 * {@code 
+	 *  MutableInt mutable = MutableInt.fromExternal(()->!this.value,val->!this.value);
+	 *  MutableInt withOverride = mutable.mapOutput(b->{ 
+	 *                                                        if(override)
+	 *                                                             return 10;
+	 *                                                         return b;
+	 *                                                         });
+	 *          
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param fn Map function to be applied to the result when get is called
+	 * @return Mutable that lazily applies the provided function when get is called to the return value
+	 */
+	public  MutableInt mapOutput(IntUnaryOperator fn){
+		MutableInt host = this;
+		return new MutableInt(){
+			public int getAsInt(){
+				return fn.applyAsInt(host.getAsInt());
+			}
+			
+		};
+	}
+	/**
+	 * Use the supplied function to perform a lazy map operation when get is called 
+	 * <pre>
+	 * {@code 
+	 *  MutableInt mutable = MutableInt.fromExternal(()->!this.value,val->!this.value);
+	 *  MutableInt withOverride = mutable.mapInput(b->{ 
+	 *                                                        if(override)
+	 *                                                             return 10;
+	 *                                                         return b;
+	 *                                                         });
+	 *          
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param fn Map function to be applied to the input when set is called
+	 * @return Mutable that lazily applies the provided function when set is called to the input value
+	 */
+	public MutableInt mapInput(IntUnaryOperator fn){
+		MutableInt host = this;
+		return new MutableInt(){
+			public MutableInt set(int value){
+				host.set(fn.applyAsInt(value));
+				return this;
+		}
+			
+		};
 	}
 	/**
 	 * @return Current value
@@ -80,5 +228,20 @@ public class MutableInt implements IntSupplier{
 		this.var = varFn.apply(this.var);
 		return this;
 	}
+	public OptionalInt toOptionalInt(){
+		return OptionalInt.of(var);
+	}
 	
+	public IntStream toIntStream(){
+		return IntStream.of(var);
+	}
+	@Override
+	public Integer get() {
+		return getAsInt();
+	}
+	@Override
+	public void accept(int value) {
+		set(value);
+		
+	}
 }

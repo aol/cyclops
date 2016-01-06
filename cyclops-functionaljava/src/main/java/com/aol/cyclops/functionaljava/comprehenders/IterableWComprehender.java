@@ -4,11 +4,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Function;
+import java.util.stream.BaseStream;
 
 import com.aol.cyclops.lambda.api.Comprehender;
 import com.nurkiewicz.lazyseq.LazySeq;
 
 import fj.data.IterableW;
+import fj.data.Stream;
 
 
 public class IterableWComprehender implements Comprehender<IterableW> {
@@ -62,6 +64,11 @@ public class IterableWComprehender implements Comprehender<IterableW> {
 			return IterableW.wrap( ((Iterable)apply));
 		if(apply instanceof LazySeq){
 			return IterableW.wrap(()->((LazySeq)apply).iterator());
+		}
+		final Object finalApply = apply;
+		if(apply instanceof BaseStream){
+			return IterableW.wrap( () -> ((BaseStream)finalApply).iterator());
+					
 		}
 		
 		
