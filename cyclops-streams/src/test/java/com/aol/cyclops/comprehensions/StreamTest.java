@@ -80,7 +80,7 @@ public class StreamTest {
 	public void bufferedReaderStream() {
 		
 		SequenceM<String> res = Do.add(  new BufferedReader(new InputStreamReader(this.getClass().getClassLoader()
-                               	.getResourceAsStream("input.file")))) 
+                               	.getResourceAsStream("input2.file")))) 
                               .yield( v -> ""+ v + "*").unwrap();
 		List<String> expected = Arrays.asList("line 1*","line 2*","line 3*");
 		
@@ -90,7 +90,7 @@ public class StreamTest {
 	}
 	@Test
 	public void urlStream2() {
-		URL url =this.getClass().getClassLoader().getResource("input.file");
+		URL url =this.getClass().getClassLoader().getResource("input2.file");
 		SequenceM<String> res = Do.add (url) 
 							.yield( v-> ""+ v+ "*").unwrap();
 		List<String> expected = Arrays.asList("line 1*","line 2*","line 3*");
@@ -101,7 +101,7 @@ public class StreamTest {
 	}
 	@Test
 	public void fileStream2() {
-		URL url =this.getClass().getClassLoader().getResource("input.file");
+		URL url =this.getClass().getClassLoader().getResource("input2.file");
 		File file = new File(url.getFile());
 		SequenceM<String> res = Do.add(  file) 
 							 .yield( v-> ""+ v + "*").unwrap();

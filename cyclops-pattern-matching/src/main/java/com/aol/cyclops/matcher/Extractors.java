@@ -9,12 +9,16 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
+import lombok.val;
+
+import org.jooq.lambda.tuple.Tuple2;
+
 import com.aol.cyclops.closures.immutable.LazyImmutable;
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.invokedynamic.ReflectionCache;
 import com.aol.cyclops.objects.AsDecomposable;
 import com.aol.cyclops.objects.Decomposable;
-import com.nurkiewicz.lazyseq.LazySeq;
+import com.aol.cyclops.sequence.SequenceM;
 
 /**
  * Generic extractors for use s pre and post data extractors.
@@ -91,16 +95,17 @@ public class Extractors {
 	 * @return Tuple with 2 specified elements
 	 */
 	public final static <V1,V2> Extractor<Iterable,Two<V1,V2>> of(int v1,int v2){
-		
+		val l1 = new Long(v1);
+		val l2 = new Long(v2);
 		return  ( Iterable it)-> {
-		
-			List l  = (List)LazySeq.of(it).zip(LazySeq.numbers(0),(a,b)->Two.tuple(a, b))
-								.drop(Math.min(v1,v2))
-								.limit(Math.max(v1,v2)+1)
-								.filter(t -> ((Two<Object,Integer>)t).v2.equals(v1) || ((Two<Object,Integer>)t).v2.equals(v2))
-								.map(t->((Two)t).v1)
-								.toList();
+			
+			List l  = (List)SequenceM.fromIterable(it).zipWithIndex().skip(Math.min(v1,v2))
+					.limit(Math.max(v1,v2)+1)
+					.filter(t -> ((Tuple2<Object,Long>)t).v2.equals(l1) || ((Tuple2<Object,Long>)t).v2.equals(l2))
+					.map(t->((Tuple2)t).v1)
+					.toList();
 			return Two.tuple((V1)l.get(0),(V2)l.get(1));
+		
 			
 		};
 		

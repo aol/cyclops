@@ -107,25 +107,7 @@ import com.aol.cyclops.sequence.SequenceM;
 			return new DoComp1(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),o)),getOrgType());
 			
 		}
-		/**
-		 * Add a BaseStream  type (e.g. IntStream etc) as next nested level in the comprehension
-		 * 
-		 * 
-		 * 
-		 * <pre>{@code   Do.add(intStream)
-		 				   .filter( -> i1>5)
-					  	   .yield( -> );
-								
-			}</pre>
-		 * 
-		 * 
-		 * @param o Defines next level in comprehension
-		 * @return Next stage in for comprehension builder
-		 */
-		public  <T1> DoComp1<T1> addBaseStream(BaseStream<T1,?> o){
-			return new DoComp1(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),o)),getOrgType());
-			
-		}
+		
 		
 
 

@@ -7,6 +7,8 @@ import java.util.function.Function;
 
 
 
+import java.util.stream.BaseStream;
+
 import com.aol.cyclops.lambda.api.Comprehender;
 import com.nurkiewicz.lazyseq.LazySeq;
 
@@ -52,6 +54,11 @@ public class ListComprehender implements Comprehender<List> {
 		}
 		if(apply instanceof Collection){
 			return List.list((Collection)apply);
+		}
+		final Object finalApply = apply;
+		if(apply instanceof BaseStream){
+			return List.list( () -> ((BaseStream)finalApply).iterator());
+					
 		}
 		
 		return Comprehender.unwrapOtherMonadTypes(comp,apply);

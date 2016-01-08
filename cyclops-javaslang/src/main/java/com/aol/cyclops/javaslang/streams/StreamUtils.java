@@ -17,6 +17,7 @@ import java.util.Random;
 import java.util.Spliterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiFunction;
@@ -49,6 +50,7 @@ import com.aol.cyclops.javaslang.FromJDK;
 import com.aol.cyclops.javaslang.ToStream;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.HeadAndTail;
+import com.aol.cyclops.sequence.HotStream;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SeqUtils;
 import com.aol.cyclops.sequence.SequenceM;
@@ -80,6 +82,108 @@ public class StreamUtils{
 	public final static <T> Stream<T> completableFutureToStream(CompletableFuture<T> future){
 		return Stream.ofAll(future.join());
 			
+	}
+	/**
+	 * Execute this Stream on a schedule
+	 * 
+	 * <pre>
+	 * {@code
+	 *  //run at 8PM every night
+	 * StreamUtils.schedule(Stream.gen(()->"next job:"+formatDate(new Date()))
+	 *            .map(this::processJob)
+	 *            ,"0 20 * * *",Executors.newScheduledThreadPool(1)));
+	 * }
+	 * </pre>
+	 * 
+	 * Connect to the Scheduled Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * HotStream<Data> dataStream = StreamUtils.schedule(Stream.gen(()->"next job:"+formatDate(new Date()))
+	 *            							  .map(this::processJob)
+	 *            							  ,"0 20 * * *",Executors.newScheduledThreadPool(1)));
+	 * 
+	 * 
+	 * data.connect().forEach(this::logToDB);
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param stream the stream to schedule element processing on
+	 * @param cron Expression that determines when each job will run
+	 * @param ex ScheduledExecutorService
+	 * @return Connectable HotStream of output from scheduled Stream
+	 */
+	public static<T> JavaslangHotStream<T> schedule(Stream<T> stream,String cron,ScheduledExecutorService ex){
+		return new HotStreamImpl<>(stream).schedule(cron,ex);
+	}
+	
+	/**
+	 * Execute this Stream on a schedule
+	 * 
+	 * <pre>
+	 * {@code
+	 *  //run every 60 seconds after last job completes
+	 *  StreamUtils.scheduleFixedDelay(Stream.gen(()->"next job:"+formatDate(new Date()))
+	 *            .map(this::processJob)
+	 *            ,60_000,Executors.newScheduledThreadPool(1)));
+	 * }
+	 * </pre>
+	 * 
+	 * Connect to the Scheduled Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * HotStream<Data> dataStream = StreamUtils.scheduleFixedDelay(Stream.gen(()->"next job:"+formatDate(new Date()))
+	 *            							  .map(this::processJob)
+	 *            							  ,60_000,Executors.newScheduledThreadPool(1)));
+	 * 
+	 * 
+	 * data.connect().forEach(this::logToDB);
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param stream the stream to schedule element processing on
+	 * @param delay Between last element completes passing through the Stream until the next one starts
+	 * @param ex ScheduledExecutorService
+	 * @return Connectable HotStream of output from scheduled Stream
+	 */
+	public static <T> JavaslangHotStream<T> scheduleFixedDelay(Stream<T> stream,long delay,ScheduledExecutorService ex){
+		return new HotStreamImpl<>(stream).scheduleFixedDelay(delay,ex);
+	}
+	
+	/**
+	 * Execute this Stream on a schedule
+	 * 
+	 * <pre>
+	 * {@code
+	 *  //run every 60 seconds
+	 *  StreamUtils.scheduleFixedRate(Stream.gen(()->"next job:"+formatDate(new Date()))
+	 *            .map(this::processJob),
+	 *            60_000,Executors.newScheduledThreadPool(1)));
+	 * }
+	 * </pre>
+	 * 
+	 * Connect to the Scheduled Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * HotStream<Data> dataStream = StreamUtils.scheduleFixedRate(Stream.gen(()->"next job:"+formatDate(new Date()))
+	 *            							  .map(this::processJob)
+	 *            							  ,60_000,Executors.newScheduledThreadPool(1)));
+	 * 
+	 * 
+	 * data.connect().forEach(this::logToDB);
+	 * }
+	 * </pre>
+	 * @param stream the stream to schedule element processing on
+	 * @param rate Time in millis between job runs
+	 * @param ex ScheduledExecutorService
+	 * @return Connectable HotStream of output from scheduled Stream
+	 */
+	public static <T> JavaslangHotStream<T> scheduleFixedRate(Stream<T> stream,long rate,ScheduledExecutorService ex){
+		return new HotStreamImpl<>(stream).scheduleFixedRate(rate,ex);
 	}
 	/**
 	 * Split at supplied location 

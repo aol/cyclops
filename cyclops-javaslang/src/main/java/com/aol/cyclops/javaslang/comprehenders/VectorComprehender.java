@@ -2,7 +2,9 @@ package com.aol.cyclops.javaslang.comprehenders;
 
 import java.util.Collection;
 import java.util.function.Function;
+import java.util.stream.BaseStream;
 
+import javaslang.collection.List;
 import javaslang.collection.Vector;
 
 import com.aol.cyclops.lambda.api.Comprehender;
@@ -48,7 +50,11 @@ public class VectorComprehender implements Comprehender<Vector> {
 		if(apply instanceof Collection){
 			return Vector.ofAll((Collection)apply);
 		}
-		
+		final Object finalApply = apply;
+		if(apply instanceof BaseStream){
+			return Vector.ofAll( () -> ((BaseStream)finalApply).iterator());
+					
+		}
 		return Comprehender.unwrapOtherMonadTypes(comp,apply);
 		
 	}

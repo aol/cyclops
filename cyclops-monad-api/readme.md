@@ -1,6 +1,13 @@
 # cyclops-monad-api
 
-cyclops-monad-api is normally used by other cyclops modules, but library writers may like to make use of it. Instructions to import it in standalone format are at the bottom of this page.
+* AnyM : Abstraction over any Java monad
+* OptionalT : Optional Monad Transformer
+* StreamT : Stream Monad Transformer
+* StreamableT : Streamable Monad Transformer
+* ListT : List Monad Transformer
+* CompletableFutureT : CompletableFutute Monad Transformer
+
+cyclops-monad-api is normally imported via other cyclops modules, as full functioning depends on cyclops-streams. Instructions to import it in standalone format are at the bottom of this page.
 
 An alternative to higher-kinded types for providing a common interface over classes that define map / flatMap / filter (etc) methods or their equivalent.
 

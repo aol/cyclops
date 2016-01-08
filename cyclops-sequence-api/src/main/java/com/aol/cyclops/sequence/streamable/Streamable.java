@@ -3,8 +3,6 @@ package com.aol.cyclops.sequence.streamable;
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -33,62 +31,15 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
-import com.aol.cyclops.invokedynamic.ExceptionSoftener;
-import com.aol.cyclops.invokedynamic.InvokeDynamic;
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.objects.AsDecomposable;
 import com.aol.cyclops.sequence.HotStream;
 import com.aol.cyclops.sequence.Monoid;
-import com.aol.cyclops.sequence.ReversedIterator;
-import com.aol.cyclops.sequence.SeqUtils;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.future.FutureOperations;
 
@@ -2971,7 +2922,7 @@ public interface Streamable<T> extends ToStream<T>{
     	}
     	
     
- 
+    	
 
     
     

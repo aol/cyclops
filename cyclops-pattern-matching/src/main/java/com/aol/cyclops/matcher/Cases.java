@@ -18,7 +18,7 @@ import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
 import com.aol.cyclops.objects.Decomposable;
-import com.nurkiewicz.lazyseq.LazySeq;
+import com.aol.cyclops.sequence.SequenceM;
 
 /**
  * Represents an ordered list of pattern matching cases.
@@ -91,8 +91,8 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 */
 	public static <T,R,X extends Function<T,R>>  Cases<T,R,X> zip(Stream<Predicate<T>> predicates, Stream<X> functions){
 		
-		return ofPStack(LazySeq.of(predicates.iterator())
-			.zip(LazySeq.of(functions.iterator()),(a,b)->Two.tuple(a,b))
+		return ofPStack(SequenceM.fromIterator(predicates.iterator())
+			.zip(SequenceM.fromIterator(functions.iterator()),(a,b)->Two.tuple(a,b))
 			.map(Case::of)
 			.map(ConsPStack::singleton)
 			.reduce(ConsPStack.empty(),(acc, next)-> acc.plus(acc.size(),next.get(0))));

@@ -1,7 +1,7 @@
 OptionalT
 ========
 
-OptionalT class allow you to convert AnyM monad to its Optional (like in Java) analog.
+OptionalT class allow you to manipulate an Optional/s wrapped inside any other monad type (via AnyM).
 
 Creating OptionalT
 ------------------

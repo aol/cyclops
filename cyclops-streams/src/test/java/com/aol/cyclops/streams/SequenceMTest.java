@@ -152,6 +152,18 @@ public class SequenceMTest {
 		SequenceM.of(1,2).single();
 	}
 	@Test
+	public void singleOptionalTest(){
+		assertThat(SequenceM.of(1).singleOptional().get(),equalTo(1));
+	}
+	@Test
+	public void singleOptionalEmpty(){
+		assertFalse(SequenceM.of().singleOptional().isPresent());
+	}
+	@Test
+	public void singleOptonal2(){
+		assertFalse(SequenceM.of(1,2).singleOptional().isPresent());
+	}
+	@Test
 	public void limitTime(){
 		List<Integer> result = SequenceM.of(1,2,3,4,5,6)
 										.peek(i->sleep(i*100))

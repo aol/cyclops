@@ -1,6 +1,6 @@
-# Javaslang Integration
+# Functional Java Integration
 
-v5.0.0 of cyclops-functionaljava is built using v4.4 of FunctionalJava.
+v5.0.0 of cyclops-functionaljava and above is built using v4.4 of FunctionalJava.
 
 
 
