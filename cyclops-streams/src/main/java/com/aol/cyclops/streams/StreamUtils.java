@@ -308,8 +308,9 @@ public class StreamUtils{
 	 * Delete elements between given indexes in a Stream
 	 * <pre>
 	 * {@code 
-	 * List<String> result = 	of(1,2,3,4,5,6).deleteBetween(2,4)
-				.map(it ->it+"!!").collect(Collectors.toList());
+	 * List<String> result = 	StreamUtils.deleteBetween(Stream.of(1,2,3,4,5,6),2,4)
+											.map(it ->it+"!!")
+											.collect(Collectors.toList());
 
 			assertThat(result,equalTo(Arrays.asList("1!!","2!!","5!!","6!!")));
 	 * }
@@ -327,8 +328,9 @@ public class StreamUtils{
 	 * Insert a Stream into the middle of this stream at the specified position
 	 * <pre>
 	 * {@code 
-	 * List<String> result = 	of(1,2,3).insertStreamAt(1,of(100,200,300))
-				.map(it ->it+"!!").collect(Collectors.toList());
+	 * List<String> result = 	StreamUtils.insertStreamAt(Stream.of(1,2,3),1,of(100,200,300))
+											.map(it ->it+"!!")
+											.collect(Collectors.toList());
 
 			assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
 	 * }

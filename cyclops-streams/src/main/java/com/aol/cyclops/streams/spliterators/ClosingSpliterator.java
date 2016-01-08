@@ -39,7 +39,7 @@ public class ClosingSpliterator<T> implements Spliterator<T> {
 		 Objects.requireNonNull(action);
 		
 			if(!open.get() && queue.size()==0){
-				System.out.println(open.get() + " : " + queue.size());
+				
 				return false;
 			}
         

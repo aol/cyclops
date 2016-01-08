@@ -42,7 +42,7 @@ public class HotStreamImpl<T> implements HotStream<T>{
 				});
 				
 				open.set(false); 
-				System.out.println("finished!"); 
+				
 					
 		},exec);
 		return this;

@@ -1,0 +1,521 @@
+== Working with Streams
+
+Cyclops provides a lot of helpful classes and utilities to make working with streams of data a breeze. They are 
+
+* StreamUtils : a large collection of static methods for manipulating JDK 8 Streams
+* Streamable : an interface that represents a Stream that can replayed and has a large number of available Stream operations in it's own right
+* SequenceM : an advanced sequential stream interface that extends that extends
+java.util.stream.Stream<T>, org.jooq.lambda.Seq<T>, java.lang.Iterable<T>, org.reactivestreams.Publisher<T> and adds additional operators.
+
+StreamUtils, Streamable and SequenceM share many operators, in general though SequenceM has the larest range of operators.
+
+=== Introduction to StreamUtils
+
+StreamUtils provides a large range of additional operators for standard Java 8 Streams, these include operators for batching & windowing, error handling and retrying, scheduling, asyncrhonous execution, zipping, controlling emissions by time, appending, deleting and rearranging Streams and more!
+
+.Using StreamUtils with a standard Java Stream
+====
+In this example we will delete between element 2 and element 4
+[source,java]
+----
+List<String> result = StreamUtils.deleteBetween(Stream.of(1,2,3,4,5,6),2,4)
+                                .map(it ->it+"!!")
+                                .collect(Collectors.toList());
+                                
+//"1!!","2!!","5!!","6!!"
+----
+
+====
+[NOTE]
+====
+There is an equivalent StreamUtils class for Javaslang Streams.
+====
+
+
+=== Introduction to Streamable
+
+Streamable is a class that represents something that can be Streamed
+repeatedly, Streamable also has a large number of operators viewable via http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/7.1.0/com/aol/cyclops/sequence/streamable/Streamable.html[javadoc]. 
+
+
+
+Streamables can also be constructed lazily from Streams, or even in a
+similar manner to Streams. E.g.
+
+.Creating a Streamable
+====
+[source,java]
+----
+Streamable.fromStream(Stream.of(1,2,3));
+Streamable.of(1,2,3);
+Streamable.generate(()->"hello world"));
+SequenceM.of(1,2,3).toStreamable();
+----
+====
+
+And then converted to a Stream, SequenceM or even manipulated directly like a Stream
+
+.Using a Streamable
+====
+[source,java]
+----
+SequenceM<Integer> seq = streamable.sequenceM();
+Stream<Integer> stream = streable.stream();
+
+//or even treat the streamable like a stream
+Streamable<Integer> initial = Streamable.of(1,2,3);
+Streamable<String> nextStage = initial.map(i->"hello"+i);
+----
+====
+
+[IMPORTANT]
+====
+Streamable works by lazily constructing an intermediate collection that captures
+the values that pass through each phase of the Stream, and as such is
+not suitable for infinite or very large Streams. A Streamable can be
+converted to a standard non-caching Stream at any stage, however, and
+that should be the approach for any stages where you do not wish to
+cache the data traveleling through. Streamable#toSequenceM() converts to
+a non-caching Stream that also has a SequenceM#toStreamable() operator,
+so switching between caching and non-caching contexts is
+straightforward.
+====
+
+=== Introduction to SequenceM
+
+SequenceM is a sequential Stream, it can be created in the same manner as standard JDK streams, but offers a large number of powerful additional operators.
+
+.Creating a SequenceM
+====
+[source,java]
+----
+SequenceM.fromStream(Stream.of(1,2,3));
+SequenceM.fromList(Arrays.list(1,2,3));
+SequenceM.of(1,2,3);
+SequenceM.generate(()->"hello world"));
+----
+====
+[source,java]
+
+=== HotStreams
+
+[NOTE]
+====
+HotStreams are streams that are actively flowing. They can be created via the hotstream method on SequenceM or in StreamUtils. They execute on a single thread on a provided executor.
+====
+HotStreams are available for both SequenceM and standard JDK Streams via StreamUtils.
+
+.Creating a HotStream
+====
+
+```java
+Executor exec = Executors.newFixedThreadPool(1);
+SequenceM.of(1,2,3)
+	 .peek(v->v+1)
+	 .peek(System.out::println)
+	 .hotStream(exec);
+```
+
+In this example the Stream will start processing immediately on exec, and we will see 
+
+2
+
+3
+
+4
+
+printed out to the console.
+
+For a JDK Stream we could rewrite the code above to
+
+```java
+Executor exec = Executors.newFixedThreadPool(1);
+StreamUtils.hotStream(Stream.of(1,2,3)
+	 .peek(v->v+1)
+	 .peek(System.out::println)
+	 ,exec);
+```
+
+====
+==== Connecting to a HotStream
+
+Once a HotStream has been created, users can connect to it via the connect operator. This returns another Stream that recieves values from the HotSteam. By default the connected Stream will be a standard 'cold' Stream. That is, the values will begin to accumulate in the transfer queue for the new Stream until a terminal operation is invoked for that Stream.
+
+Multiple Streams can connect to a single HotStream.
+
+
+.Connecting to a HotStream
+====
+[source,java]
+----
+In the example below 5,000 entries will be written out on the HotStreams executing thread, and 100 of those will also be written out on the current thread.
+  
+SequenceM.range(0,Integer.MAX_VALUE)
+                    .limit(5000)
+                    .peek(System.out::println)
+                    .hotStream(exec)
+                    .connect()
+                    .limit(100)
+                    .forEach(next->System.out.println("Current thread : " + next);
+----
+====
+===== Data transfer between Streams
+
+HotStreams use a (configurable) transfer queue to transfer data to client Streams.
+
+image:https://cloud.githubusercontent.com/assets/9964792/12211387/7eee02ea-b658-11e5-8605-4e29116bc0f7.png[]
+
+When the connect method is called a new Queue is created (by default an Agrona OneToOneConcurrentArrayQueue if non is provided by the user).
+
+==== Back pressure
+When two Streams have been joined it is possible that the producting Stream may produce data at a rate faster than the consuming queue can handle. Future versions of cyclops will offer tighter integration with simple-react, which has a number of strategies for dealing with scenario - but for now it is possible for the consuming Stream to signal back pressure by making use of a blocking queue as the transfer queue between the HotStream and the connected Stream.
+
+[WARNING]
+====
+The default transfer queue used by the connect method on a HotStream is an Agrona wait-free, bounded OneToOneConcurrentArrayQueue. If this queue fills up due to a producer out performing the consumer then an illegal state exception will be thrown.
+====
+.Applying Back Pressure
+====
+----
+In the example below 5,000 entries will be written out on the HotStreams executing thread, the consuming thread will only emit one per second. This will cause the transfer queue to fill up, and the SequenceM generating the HotStream will crash.
+  
+SequenceM.range(0,Integer.MAX_VALUE)
+                    .limit(5000)
+                    .peek(System.out::println)
+                    .hotStream(exec)
+                    .connect()
+                    .onePer(1,TimeUnit.SECONDS)
+                    .forEach(next->System.out.println("Current thread : " + next);
+                    
+                    
+Instead we connect and use a BlockingStream as a transfer queue, the producing Stream will ultimately be slowed to the same rate as the consuming Stream. 
+
+SequenceM.range(0,Integer.MAX_VALUE)
+                    .limit(5000)
+                    .peek(System.out::println)
+                    .hotStream(exec)
+                    .connect(new BlockingQueue(400))
+                    .onePer(1,TimeUnit.SECONDS)
+                    .forEach(next->System.out.println("Current thread : " + next);
+----
+====
+=== reactive-streams
+reactive-streams is an api for advanced inter-stream operability. Cyclops, when simple-react is added to the class path can provide both a reactive-streams publisher and subscriber.
+==== Creating a Subscriber
+
+SequenceM has a static subscriber method that returns a Cyclops reactive-streams Subscriber. That is a class that can subscribe to any reactive-streams publisher (e.g. an RxJava Observable, Pivotal REACTOR Stream, akka-stream etc).
+
+CyclopsSubscriber has a single method sequenceM() that returns a SequenceM instance (remember that SequenceM extenads java.util.stream.Stream - so this also a standard, sequential Java 8 Stream).
+
+.Creating a reactive-streams Subscriber
+====
+[source,java]
+----
+CyclopsSubscriber sub = SequenceM.subscriber();
+sub.sequenceM().toList();
+
+//[]
+
+In this example our subscriber will be empty, as it has not attached to a publisher, so our generated List will also be empty.
+----
+====
+SequenceM implements reactive-streams Publisher interface, and as such has the reactive-streams api publish method.
+
+.Connecting a Subscriber to a Publisher
+====
+[source,java]
+----
+CyclopsSubscriber sub = SequenceM.subscriber();
+SequenceM.of(1,2,3,4).publish(sub);
+sub.sequenceM().toList();
+
+//[1,2,3,4]
+
+In this example our subscriber has connected to a publisher that will send the values 1,2,3,4 in sequence, on request.
+----
+====
+=== Batching & Windowing
+
+Cyclops provides a number of different batching and windowing operations, none of which terminate / fully consume the Stream (i.e. they are compatible with infinitely large Streams). The sliding operator creates a sliding view whereas both batch & window operators return batches of elements and differ only by return type (batch - returns a List, window - returns a Streamable).
+
+[NOTE]
+====
+jOOλ 0.9.9 provides a large range of windowing functions inspired by SQL windowing operations. The api and, crucially, behaviour is significantly different to the windowing functions in Cyclops (the jOOλ windowing functions consume the Stream) - as result the name of the cyclops windowing functions may change in future releases to disambiguate.
+====
+
+* Sliding
+
+Sliding produces a sliding view over a Stream, there are two sliding operators - one that takes just the window size and another that takes window size and the increment to be applied.
+
+* Batch / Window by size
+* Batch / Window by time
+[source,java]
+----
+SequenceM.of(1,2,3,4,5, 6)
+         .map(n-> n==6? sleep(1) : n)
+         .batchByTime(10,TimeUnit.MICROSECONDS)
+         .toList()
+//[1,2,3,4,5],[6]
+----
+* Batch / Window by size and time
+* Batch / Window by state
+* Batch / Window while a predicate holds
+[source,java]
+----
+SequenceM.of(1,2,3,4,5,6)
+                .batchWhile(i->i%3!=0)
+                .toList()
+
+//[1,2,3],[4,5,6]
+----
+* Batch / Window until a predicate holds
+[source,java]
+----
+SequenceM.of(1,2,3,4,5,6)
+                .batchUntil(i->i%3==0,()->new ArrayList<>())
+                .toList().size()
+//[1,2,3],[4,5,6]
+----
+=== Stream manipulation
+=== Error handling
+=== Scheduling
+
+[[scheduling-streams]]
+=== Scheduling Streams
+------------------
+
+Since cyclops 7.1.0 it is possible to schedule Stream events (whereby
+the next element will travel through the pipeline), using a cron
+expression, fixed rate delimiter or fixed delay delimiter.
+
+Supported Stream types are
+
+* JDK 8 Stream
+(https://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html[java.util.stream.Stream])
+via
+http://static.javadoc.io/com.aol.cyclops/cyclops-streams/7.1.0/com/aol/cyclops/streams/StreamUtils.html[StreamUtils]
+* Javaslang Stream (via cyclops-javaslang
+http://static.javadoc.io/com.aol.cyclops/cyclops-javaslang/7.1.0/com/aol/cyclops/javaslang/streams/StreamUtils.html[StreamUtils])
+* http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/7.1.0/com/aol/cyclops/sequence/SequenceM.html[SequenceM]
+(java.util.stream.Stream and https://github.com/jOOQ/jOOL[jOOλ]
+http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.7/org/jooq/lambda/Seq.html[Seq]
+extension).
+
+[[coming-soon]]
+Coming Soon
+~~~~~~~~~~~
+
+https://github.com/aol/cyclops/issues/95[SequenceM equivalent for
+Javaslang Streams]
+
+[[examples]]
+Examples
+~~~~~~~~
+
+[[cron]]
+Cron
+^^^^
+
+[[sequencem]]
+SequenceM
++++++++++
+
+Send one element of a Stream through every second.
+
+[source,java]
+----
+SequenceM.of(1,2,3,4)
+     .peek(System.out::println)
+    .schedule("* * * * * ?", ex)
+----
+
+This will print 1 2 3 4 With a new line per second.
+
+We can connect to the output of this stream
+
+[source,java]
+----
+HotStream connected = SequenceM.of(1,2,3,4)
+                .peek(System.out::println)
+                .schedule("* * * * * ?", ex)
+                .connect();
+
+----
+
+And further process the connected Stream, in this case only processing
+one element per day via the debounce operator
+
+[source,java]
+----
+SequenceM.of(1,2,3,4)
+     .peek(System.out::println)
+     .schedule("* * * * * ?", ex)
+     .connect()
+     .debounce(1,TimeUnit.DAYS)
+     .peek(this::writeToDB)
+     .toList()
+----
+
+[[jdk-8]]
+JDK 8
++++++
+
+The final example again with JDK 8 via the static methods in
+StreamUtils.
+
+[source,java]
+----
+StreamUtils.debounce(StreamUtils.schedule(Stream.of(1,2,3,4)
+                .peek(i->count.incrementAndGet())
+                .peek(System.out::println)
+                ,"* * * * * ?", ex)
+                .connect()
+                ,1,TimeUnit.DAYS)
+                .peek(this::writeToDB)
+                .toList()
+----
+
+[[javaslang]]
+Javaslang
++++++++++
+
+The final example again with Javaslang via the static methods in
+cyclops-javaslang StreamUtils.
+
+[source,java]
+----
+StreamUtils.debounce(StreamUtils.schedule(Stream.ofAll(1,2,3,4)
+                .peek(System.out::println)
+                ,"* * * * * ?", ex)
+                .connect()
+                ,1,TimeUnit.DAYS)
+                .peek(this::writeToDB)
+                .toList()
+----
+
+[[fixed-rate]]
+Fixed Rate
+^^^^^^^^^^
+
+[[sequencem-1]]
+SequenceM
++++++++++
+
+This time we will execute the Stream every second using a Fixed Rate
+delimiter
+
+[source,java]
+----
+SequenceM.of(1,2,3,4)
+     .peek(System.out::println)
+     .scheduleFixedRate(1000, ex)
+     .connect()
+     .debounce(1,TimeUnit.DAYS)
+     .peek(this::writeToDB)
+     .toList()
+----
+
+[[jdk-8-1]]
+JDK 8
++++++
+
+[source,java]
+----
+StreamUtils.debounce(StreamUtils.scheduleFixedRate(Stream.of(1,2,3,4)
+                .peek(i->count.incrementAndGet())
+                .peek(System.out::println)
+                ,1000, ex)
+                .connect()
+                ,1,TimeUnit.DAYS)
+                .peek(this::writeToDB)
+                .toList()
+----
+
+[[javaslang-1]]
+Javaslang
++++++++++
+
+
+=== Time based operators
+=== Zipping
+=== Efficient reversal
+=== for-comprehensions
+=== Async execution
+
+These methods are available via
+http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/6.2.2/com/aol/cyclops/sequence/SequenceM.html[SequenceM]
+or to plain JDK 8 Streams via
+http://static.javadoc.io/com.aol.cyclops/cyclops-streams/6.2.2/com/aol/cyclops/streams/StreamUtils.html[com.aol.cyclops.streams.StreamUtils],
+for Javaslang Streams use
+http://static.javadoc.io/com.aol.cyclops/cyclops-javaslang/6.2.2/com/aol/cyclops/javaslang/streams/StreamUtils.html[com.aol.cyclops.javaslang.streams.StreamUtils].
+
+[[futureoperations]]
+FutureOperations
+----------------
+
+Terminal operations can now all be called asynchronously e.g.
+
+[source,java]
+----
+        CompletableFuture size = SequenceM.of(1,2,3,4)
+                                                          .futureOperations(exec)
+                                                          .count();
+----
+
+Available operations
+
+* public CompletableFuture<List<T>> toList()
+
+Asynchronously perform a mutable reduction to a JDK List
+
+[source,java]
+----
+ CompletableFuture<List<Data>> myList = SequenceM.of(1,2,3,4)
+                                                    .map(this::loadFromDb)
+                                                       .futureOperations(getExecutor())
+
+                                                    .toList();
+----
+
+* public CompletableFuture<Set<T>> toSet()
+
+Asynchronously perform a mutable reduction to a JDK Set
+
+[source,java]
+----
+CompletableFuture<Set<Data>> myList = SequenceM.of(1,2,3,4)
+                                                            .map(this::loadFromDb)
+                                                            .futureOperations(getExecutor())
+                                                            .toSet();
+----
+
+* public <U extends Comparable<U>> CompletableFuture<Optional<T>>
+minBy(Function<T, U> function) Asynchronously capture the minimum value
+in this stream using the provided function
++
+[source,java]
+----
+CompletableFuture<Optional> min =  SequenceM.of(1, 2, 3, 4, 5, 6)
+                                                                  .futureOperations(exec)    
+                                                                  .minBy(t -> Math.abs(t - 5));
+//min CompletableFuture[Optional[5]]  //5-5 =0
+
+* public <U extends Comparable<U>> CompletableFuture<Optional<T>>
+maxBy(Function<T, U> function) Asynchronously capture the maximum value
+in this stream using the provided function
+
+CompletableFuture<Optional> max =  SequenceM.of(1, 2, 3, 4, 5, 6)
+                                                                  .futureOperations(exec)            
+                                                                  .maxBy(t -> Math.abs(t - 5));
+//min CompletableFuture[Optional[1]]  //Math.abs(1-5) =4
+
+* public <R, A> CompletableFuture<R> collect(Collector<? super T, A, R>
+collector) Asynchronously perform a Stream collection ```java
+CompletableFuture> list = SequenceM.of(1,2,3,4,5)
+.futureOperations(exec) .collect(Collectors.toList());
+
+//CompletableFuture[1,2,3,4,5] 
+----
+
+
+=== simple-react
