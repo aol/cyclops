@@ -878,6 +878,25 @@ video::v=cSYANZCllTI[youtube]
 The xPer operator works in a similar fashion but allows only a specified number of elements through per time period. The elements will be emitted as soon as they are available, which may cause the emissions to bunch at the start of the time period.
 ====
 
+==== debounce
+
+Debounce accepts only one value per time period specified, dropping all other elements that pass through during each alloted time bucket. It acts in contrast to onePer, which doesn't drop data but leaves it queued to travel onwards once the time deadline is reached.
+
+.debounce operator
+====
+[source,java]
+----
+SequenceM.of(1,2,3,4,5,6)
+	    .debounce(1000,TimeUnit.SECONDS).toList();
+	           
+// 1 
+====
+.debounce in simple-react
+====
+simple-react's LazyFutureStream is a parellel implementation of SequenceM
+
+video::v=QjyxXLnYnvw[youtube]
+====
 ==== Timestamp
 
 The timestamp operator maps the elements in the Stream into a http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.9/org/jooq/lambda/tuple/Tuple2.html[Tuple2] containing the element and the timestamp at which it past through the timestamp operator.
