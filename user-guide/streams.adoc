@@ -804,7 +804,7 @@ StreamUtils.debounce(StreamUtils.scheduleFixedDelay(Stream.of(1,2,3,4)
 
 Cyclops provides a number of time based operators including - onePer, xPer, jitter, debounce, timestamp & elapsed.
 
-=== Jitter
+==== Jitter
 
 Jitter introduces a jitter into the processing of each element, a random delay up to the max threshold specified by the user.
 .jitter operator
