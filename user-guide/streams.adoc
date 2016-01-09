@@ -1,10 +1,6 @@
 
 [index]
-== Working With Streams Index
-////////////////////////////////////////////////////////////////
-The index is normally left completely empty, it's contents being
-generated automatically by the DocBook toolchain.
-////////////////////////////////////////////////////////////////  
+  
 
 == Working With Streams
 
