@@ -952,8 +952,8 @@ A number of the cyclops zip operators allow a custom zipper to be supplied (typi
 [source,java]
 ----
 Stream<List<Integer>> zipped = StreamUtils.zipSequence(Stream.of(1,2,3)
-												,SequenceM.of(2,3,4), 
-													(a,b) -> Arrays.asList(a,b));
+						,SequenceM.of(2,3,4), 
+							(a,b) -> Arrays.asList(a,b));
 		
 		
 //Stream[List[1,2],List[2,3],List[3,4]]		
