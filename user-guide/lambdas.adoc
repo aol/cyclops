@@ -47,7 +47,7 @@ Mutable can be used to work around Java's effectively final rule, simply wrap an
 
 .MutableInt within a Stream
 ====
-In this example, we mutate a local primitive variable using MutableInt, inside a lambda expression passed into a Stream.
+In this example, we mutate a local primitive variable using MutableInt, inside a lambda expression passed into a Stream. The mutate method is similar to map in Optional or Stream, in that accepts a function that takes the current value and returns a new one. It is different in that it mutates the MutableInt rather than creating a new mutable instances.
                 
 [source,java]
 ----
