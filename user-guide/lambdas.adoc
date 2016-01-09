@@ -759,7 +759,7 @@ assertThat(value,equalTo(5));
 
 We can also create partially applied functions. These are functions were 
 the some of the input values to a function are provided up front, but 
-not all. It converts, for example, a function that takes 3 input 
+not all. The PartialApplicator class converts, for example, a function that takes 3 input 
 parameters, into a function that takes only 1. E.g.
 .partially applying values to a String concatonation function
 ====

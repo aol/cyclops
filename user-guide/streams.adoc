@@ -280,9 +280,6 @@ SequenceM.of(1,2,3,4,5,6)
 === Error handling
 === Scheduling
 
-[[scheduling-streams]]
-=== Scheduling Streams
-------------------
 
 Since cyclops 7.1.0 it is possible to schedule Stream events (whereby
 the next element will travel through the pipeline), using a cron
@@ -326,7 +323,7 @@ Send one element of a Stream through every second.
 ----
 SequenceM.of(1,2,3,4)
      .peek(System.out::println)
-    .schedule("* * * * * ?", ex)
+     .schedule("* * * * * ?", ex)
 ----
 
 This will print 1 2 3 4 With a new line per second.
@@ -335,10 +332,10 @@ We can connect to the output of this stream
 
 [source,java]
 ----
-HotStream connected = SequenceM.of(1,2,3,4)
+HotStream connectable = SequenceM.of(1,2,3,4)
                 .peek(System.out::println)
-                .schedule("* * * * * ?", ex)
-                .connect();
+                .schedule("* * * * * ?", ex);
+                
 
 ----
 
