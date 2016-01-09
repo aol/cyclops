@@ -1,4 +1,12 @@
-== Working with Streams
+
+[index]
+== Working With Streams Index
+////////////////////////////////////////////////////////////////
+The index is normally left completely empty, it's contents being
+generated automatically by the DocBook toolchain.
+////////////////////////////////////////////////////////////////  
+
+== Working With Streams
 
 Cyclops provides a lot of helpful classes and utilities to make working with streams of data a breeze. They are 
 
@@ -8,6 +16,12 @@ Cyclops provides a lot of helpful classes and utilities to make working with str
 java.util.stream.Stream<T>, org.jooq.lambda.Seq<T>, java.lang.Iterable<T>, org.reactivestreams.Publisher<T> and adds additional operators.
 
 StreamUtils, Streamable and SequenceM share many operators, in general though SequenceM has the larest range of operators.
+
+[IMPORTANT]
+====
+Some knowledge of the Java 8 Streams API is assumed here. SequenceM provides all of the Stream operations (by inheriting from Stream) and a lot more. The Oracle tutorial for Streams is a good place to start if you are brand new to this concept.
+====
+
 
 === Introduction to StreamUtils
 
@@ -247,7 +261,10 @@ The current Batching / Windowing operations in cyclops are inspired by Reactive 
 
 https://medium.com/@johnmcclean/reactive-programming-with-java-8-and-simple-react-batching-and-chunking-ecac62ce8bec#.ydm0n1jdc[Also see simple-react tutorial on batching]
 
-* Sliding
+image::https://cloud.githubusercontent.com/assets/9964792/6780846/80928004-d160-11e4-85b1-227f9c7652b6.png[]
+
+
+==== Sliding
 
 Sliding produces a sliding view over a Stream, there are two sliding operators - one that takes just the window size and another that takes window size and the increment to be applied.
 
@@ -274,7 +291,8 @@ List<List> list = sliding(Stream.of(1, 2, 3, 4, 5, 6),3, 2)
 //[[1, 2, 3], [3, 4, 5], [5, 6]]
 ----
 ====
-* Batch / Window by size
+
+==== Batch / Window by size
 
 Batch / Window by size allows elements to be grouped as they flow through the Stream into Lists or Streamables of the specified size.
 
@@ -295,7 +313,8 @@ The video shows batching by size on simple-react's LazyFutureStream which is a p
 
 video::OH89bHb5yzo[youtube]
 ====
-* Batch / Window by time
+
+==== Batch / Window by time
 
 Batch / Window by time group elements into either a List (Batch) or Streamable (Window) based on the time bucket they pass through the Stream.
 
@@ -322,7 +341,8 @@ video::yW7EpF4HVv4[youtube]
 ====
 The idea of batching elements into time buckets might seem absurd if you are used to creating Java 8 Streams from already populated collections. This is can be really useful if you use cyclops-streams in conjunction with simple-react, you can connect Streams to collections that are populated asynchronously, for example on recieving a web request an async Queue could be populated that has a processing SequenceM attached. 
 ====
-* Batch / Window by size and time
+
+==== Batch / Window by size and time
 
 Much like batchBySize groups elements into Lists based on the specified list size, and windowBySize organises streaming elements into Streamables by time bucket- batchBySizeAndTime / windowBySizeAndTime populates Lists (or Streamables) based on which ever criteria is met first. Should the max size be reached the List / Streamable is ready to move down stream, should the max time elaspe - ditto.
 
@@ -339,7 +359,7 @@ SequenceM.generate(this::loadData)
 ----
 ====
 
-* Batch / Window by state
+==== Batch / Window by state
 
 Stateful batching and windowing allows the user to define a BiPredicate that recieves both the current element moving through the Stream and the Streamable from the previous window / batch. Returning true keeps the window / batch open, returning false closes it.
 
@@ -353,7 +373,8 @@ SequenceM.of(1,2,3,4,5,6)
 //streamable[1], streamable[2], streamable[3],streamable[4], streamable[5, 6]
 ----
 ====
-* Batch / Window while a predicate holds
+
+==== Batch / Window while a predicate holds
 
 Batching or Windowing while allows users to keep the window / batch open as long as the predicate holds true.
 
@@ -368,7 +389,9 @@ SequenceM.of(1,2,3,4,5,6)
 //[1,2,3],[4,5,6]
 ----
 ====
-* Batch / Window until a predicate holds
+
+==== Batch / Window until a predicate holds
+
 Batching or Windowing while allows users to keep the window / batch open until the predicate holds true.
 .Batch until example
 ====
@@ -380,48 +403,276 @@ SequenceM.of(1,2,3,4,5,6)
 //[1,2,3],[4,5,6]
 ----
 ====
+
 === Stream manipulation
-=== Stream duplication
+Cyclops offers many functions for manipulating Streams such as deleteBetween, insertAt and more
+
+==== Prepending to a Stream
+
+.Prepending
+====
+[source,java]
+----
+import static com.aol.cyclops.streams.StreamUtils.prepend;
+
+List<String> result =   prepend(Stream.of(1,2,3),100,200,300)
+                                 .map(it ->it+"!!")
+                                 .collect(Collectors.toList());
+
+List<String> result =   SequenceM.of(1,2,3)
+                                 .prependStream(SequenceM.of(100,200,300))
+                                 .map(it ->it+"!!")
+                                 .toList();
+
+//["100!!","200!!","300!!","1!!","2!!","3!!"] 
+----
+====
+==== Appending to a Stream
+.Appending
+====
+[source,java]
+----
+List<String> result =   SequenceM.of(1,2,3)
+                                 .append(100,200,300)
+                                 .map(it ->it+"!!")
+                                 .toList();
+import static com.aol.cyclops.streams.StreamUtils.appendStream;
+
+List<String> result =   appendStream(Stream.of(1,2,3),SequenceM.of(100,200,300))
+                                        .map(it ->it+"!!")
+                                        .collect(Collectors.toList());
+
+//["1!!","2!!","3!!","100!!","200!!","300!!"] 
+----
+
+====
+==== Inserting at an index
+
+.Inserting at index
+====
+[source,java]
+----
+List<String> result =   SequenceM.of(1,2,3).insertAt(1,100,200,300)
+                .map(it ->it+"!!").collect(Collectors.toList());
+
+import static com.aol.cyclops.streams.StreamUtils.insertStreamAt;
+
+List<String> result =   insertStreamAt(Strean.of(1,2,3),1,Stream.of(100,200,300))
+                                     .map(it ->it+"!!")
+                                     .collect(Collectors.toList());
+                                     
+//["1!!","100!!","200!!","300!!","2!!","3!!"]
+----
+====
+
+==== Deleting between two indices
+
+.Deleting between two indices
+====
+[source,java]
+----
+List<String> result =   SequenceM.of(1,2,3,4,5,6)
+                                 .deleteBetween(2,4)
+                                 .map(it ->it+"!!")
+                                 .toList();
+
+import static com.aol.cyclops.streams.StreamUtils.deleteBetween;
+
+List<String> result =   deleteBetween(Stream.of(1,2,3,4,5,6),2,4)
+                                 .map(it ->it+"!!")
+                                 .collect(Collectors.toList());                                 
+
+//["1!!","2!!","5!!","6!!"]
+----
+====
+
+==== SplitBy
+
+.splitBy
+====
+[source,java]
+----
+SequenceM.of(1, 2, 3, 4, 5, 6).splitBy(i -> i % 2 != 0)
+//tuple[SequenceM[1,3,5],SequenceM[2,4,6]]
+----
+====
+==== Split At 
+.splitAt
+====
+[source,java]
+----
+SequenceM.of(1, 2, 3, 4, 5, 6).splitAt(2)
+//tuple[SequenceM[1,2,3],SequenceM[4,5,6]]
+----
+====
+==== Copy a Stream
+
+.Duplicate, triplicate and quadruplicate a Stream
+====
+[source,java]
+----
+ Tuple2<SequenceM, SequenceM> copies =  SequenceM.of(1,2,3,4,5,6).duplicateSequence();
+----
+
+
+[source,java]
+----
+ Tuple3<SequenceM, SequenceM, SequenceM> copies =SequenceM.of(1,2,3,4,5,6).triplicate();
+----
+
+[source,java]
+----
+ Tuple4<SequenceM, SequenceM, SequenceM,SequenceM> copies =SequenceM.of(1,2,3,4,5,6).quadruplicate();
+----
+====
+
+====  Extraction
+
+Cyclops provides many extraction operators, including many that return a Tuple containing a value and an operational Stream (such as splitAt, splitBy, headAndTail returns an object with 2 fields), and others that access a value directly (get, single) - and throw an exception if the element doesn't exist and some that return optional (elementAt, singleOptional).
+
+.Head and Tail, get, elementAt 
+====
+[source,java]
+----
+SequenceM<String> helloWorld = SequenceM.of("hello","world","last");
+HeadAndTail<String> headAndTail = helloWorld.headAndTail();
+String head = headAndTail.head();
+//hello
+
+SequenceM<String> tail =  headAndTail.tail();
+//[world,last]
+----
+
+
+Get at 0, this extracts the first value and returns a Stream of the remaining values (as a Tuple2)
+
+[source,java]
+----
+SequenceM.of(1,2,3,4).get(0)
+//[1],SequenceM[2,3,4]
+
+----
+
+Get at 1
+
+[source,java]
+----
+SequenceM.of(1,2,3,4).get(1)
+//[2],SequenceM[1,3,4]
+----
+
+
+
+ElementAt returns an optional containing the element at index (if exists) otherwise optional empty
+
+[source,java]
+----
+SequenceM.of(1).elementAt(0)
+//Optional[1]
+----
+
+[source,java]
+----
+SequenceM.of().elementAt(0).isPresent()
+//false
+----
+
+====
+  
+  
+.Head and Tail on a Stremable
+====
+[source,java]
+----
+int head = Streamable.of(1,2,3,4).head();
+//1
+
+Streamable<Integer> tail = Streamable.of(1,2,3,4).tail();
+//Streamable[2,3,4]
+----
+====
 === Error handling
+
+
+==== Recover
+
+It is possible to recover from an exception thrown earlier in the Stream using the recover operator. It is available on SequenceM, Streamable and StreamUtils. Users can choose to recover differently by Exception type, or globally. 
+
+[NOTE]
+====
+For those using simple-react, this differs from the simple-react only operator OnFail in that it does not provide the element data that failed.
+====
+
+.Global recover
+====
+In this example all exceptions types will be caught and recovered from.
+[source,java]
+----
+SequenceM.of(1,2,3,4)
+                    .map(u->{throw new RuntimeException();})
+                    .recover(e->"hello")
+                    .firstValue()
+//hello
+----
+====
+
+.Targeted recovery
+====
+
+In this example we only recover from IOExceptions.
+
+[source,java]
+----
+SequenceM.of(1,2,3,4)
+                    .map(i->i+2)
+                    .map(u->throw ExceptionSoftener.throwSoftenedException( new IOException()))
+                    .recover(IOException.class,e->"hello")
+                    .firstValue()
+//hello
+----
+
+Note the use of ExceptionSoftener
+
+====
+
+==== Retry
+
+Retry allows a function to be retried. By default retry occurs up to 5 times with an exponential backoff.
+
+[NOTE]
+====
+simple-react users should note that the implementation in LazyFutureStream is a significantly more advanced asynchronous retry (making use of Tomasz Nurkiewicz async retry library).
+====
+.Retry example
+====
+
+[source,java]
+----
+SequenceM.of( 1,  2, 3)
+         .retry(this::remoteCall)
+         .map(this::continueProcessing)
+
+//if remote call fails, it will be retried with a backoff
+----
+====
+
+LazyFutureStream in simple-react provides a parallel SequenceM implementation.
+
+image::https://cloud.githubusercontent.com/assets/9964792/6320754/4ea4061e-bade-11e4-8692-481e0dc0e3f9.png[Retry in simple-react]
+
+video::RaM_n6LAJVE[youtube]
+
+
 === Scheduling
 
+Scheduling is available for SequenceM streams and via StreamUtils.
 
-Since cyclops 7.1.0 it is possible to schedule Stream events (whereby
-the next element will travel through the pipeline), using a cron
-expression, fixed rate delimiter or fixed delay delimiter.
 
-Supported Stream types are
 
-* JDK 8 Stream
-(https://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html[java.util.stream.Stream])
-via
-http://static.javadoc.io/com.aol.cyclops/cyclops-streams/7.1.0/com/aol/cyclops/streams/StreamUtils.html[StreamUtils]
-* Javaslang Stream (via cyclops-javaslang
-http://static.javadoc.io/com.aol.cyclops/cyclops-javaslang/7.1.0/com/aol/cyclops/javaslang/streams/StreamUtils.html[StreamUtils])
-* http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/7.1.0/com/aol/cyclops/sequence/SequenceM.html[SequenceM]
-(java.util.stream.Stream and https://github.com/jOOQ/jOOL[jOOλ]
-http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.7/org/jooq/lambda/Seq.html[Seq]
-extension).
+==== Cron Based Scheduling 
 
-[[coming-soon]]
-Coming Soon
-~~~~~~~~~~~
-
-https://github.com/aol/cyclops/issues/95[SequenceM equivalent for
-Javaslang Streams]
-
-[[examples]]
-Examples
-~~~~~~~~
-
-[[cron]]
-Cron
-^^^^
-
-[[sequencem]]
-SequenceM
-+++++++++
-
+.SequenceM example
+====
 Send one element of a Stream through every second.
 
 [source,java]
@@ -458,9 +709,9 @@ SequenceM.of(1,2,3,4)
      .toList()
 ----
 
-[[jdk-8]]
-JDK 8
-+++++
+====
+.java.util.stream.Stream example
+====
 
 The final example again with JDK 8 via the static methods in
 StreamUtils.
@@ -477,31 +728,14 @@ StreamUtils.debounce(StreamUtils.schedule(Stream.of(1,2,3,4)
                 .toList()
 ----
 
-[[javaslang]]
-Javaslang
-+++++++++
+====
 
-The final example again with Javaslang via the static methods in
-cyclops-javaslang StreamUtils.
 
-[source,java]
-----
-StreamUtils.debounce(StreamUtils.schedule(Stream.ofAll(1,2,3,4)
-                .peek(System.out::println)
-                ,"* * * * * ?", ex)
-                .connect()
-                ,1,TimeUnit.DAYS)
-                .peek(this::writeToDB)
-                .toList()
-----
+==== Fixed Rate
 
-[[fixed-rate]]
-Fixed Rate
-^^^^^^^^^^
 
-[[sequencem-1]]
-SequenceM
-+++++++++
+.SequenceM example
+====
 
 This time we will execute the Stream every second using a Fixed Rate
 delimiter
@@ -516,10 +750,9 @@ SequenceM.of(1,2,3,4)
      .peek(this::writeToDB)
      .toList()
 ----
-
-[[jdk-8-1]]
-JDK 8
-+++++
+====
+.java.util.stream.Stream example
+====
 
 [source,java]
 ----
@@ -532,14 +765,260 @@ StreamUtils.debounce(StreamUtils.scheduleFixedRate(Stream.of(1,2,3,4)
                 .peek(this::writeToDB)
                 .toList()
 ----
+====
+==== Fixed Delay
 
-[[javaslang-1]]
-Javaslang
-+++++++++
+
+.SequenceM example
+====
+
+This time we will execute the Stream every second using a Fixed Delay
+delimiter
+
+[source,java]
+----
+SequenceM.of(1,2,3,4)
+     .peek(System.out::println)
+     .scheduleFixedDelay(2000, ex) //2 secs after previous element passes through
+     .connect()
+     .debounce(1,TimeUnit.DAYS)
+     .peek(this::writeToDB)
+     .toList()
+     
+     
+----
+====
+.java.util.stream.Stream example
+====
+
+[source,java]
+----
+StreamUtils.debounce(StreamUtils.scheduleFixedDelay(Stream.of(1,2,3,4)
+                .peek(System.out::println)
+                ,2000, ex)
+                .connect()
+                ,1,TimeUnit.DAYS)
+                .peek(this::writeToDB)
+                .toList()
+----
+====
 
 
 === Time based operators
+
+Cyclops provides a number of time based operators including - onePer, xPer, jitter, debounce, timestamp & elapsed.
+
+=== Jitter
+
+Jitter introduces a jitter into the processing of each element, a random delay up to the max threshold specified by the user.
+.jitter operator
+====
+[source,java]
+----
+SequenceM.fromIntStream(IntStream.range(0, 1000))
+                .map(it -> System.currentTimeMillis())
+                .jitter(10_000l)
+                .forEach(System.out::println);
+
+//random wait up to 10 seconds between each value being printed
+----
+====
+.jitter in simple-react
+====
+simple-react's LazyFutureStream is a parellel implementation of SequenceM
+
+video::v=iaKqVcEweYk[youtube]
+====
+
+==== Fixed Delay Operator
+
+Not to be confused with scheduling fixed delay, the fixed delay operator waits a specified amount of time before processing the next element, but does not require a ScheduledExecutorService and does not create a HotStream, the per element delay is implemented on the Stream's executing thread when a terminal operation is invoked.
+
+.fixed delay operator
+====
+[source,java]
+----
+SequenceM.fromIntStream(IntStream.range(0, 1000))
+                .fixedDelay(1l, TimeUnit.MICROSECONDS)
+                                .forEach(System.out::println)
+
+//wait 1 second between each value being printed
+----
+====
+
+.fixed delay in simple-react
+====
+simple-react's LazyFutureStream is a parellel implementation of SequenceM
+
+video::v=ulYoM8kGiQk[youtube]
+====
+
+==== onePer operator
+
+onePer ensures that only one element is emitted per time period, data is not lost, but rather queued and will be emitted when the next time gate opens. For an operator that drops data see debounce.
+
+.onePer operator
+====
+[source,java]
+----
+SequenceM.iterate(0, it -> it + 1)
+                .limit(100)
+                .onePer(1, TimeUnit.MICROSECONDS)
+                .map(seconds -> "hello!")
+                .peek(System.out::println)
+                .toList();
+
+//one value emitted per second
+----
+.onePer in simple-react
+====
+simple-react's LazyFutureStream is a parellel implementation of SequenceM
+
+video::v=cSYANZCllTI[youtube]
+====
+====
+[TIP]
+====
+The xPer operator works in a similar fashion but allows only a specified number of elements through per time period. The elements will be emitted as soon as they are available, which may cause the emissions to bunch at the start of the time period.
+====
+
+==== Timestamp
+
+The timestamp operator maps the elements in the Stream into a http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.9/org/jooq/lambda/tuple/Tuple2.html[Tuple2] containing the element and the timestamp at which it past through the timestamp operator.
+.timestamp operator
+====
+[source,java]
+----
+SequenceM.of(1,2,3,4,5)
+          .timestamp()
+
+//[1,timestampInMillis],[2,timestampInMillis],[3,timestampInMillis] etc
+----
+====
+
+==== Elapsed 
+The elasped operator maps the elements in the Stream into a http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.9/org/jooq/lambda/tuple/Tuple2.html[Tuple2] containing the element and the elapsed time between each emission
+
+.elapsed operator
+====
+[source,java]
+----
+SequenceM.of(1,2,3,4,5).elapsed().noneMatch(t->t.v2<0)
+----
+====
+
 === Zipping
+
+Zipping Streams involves merging elements from multiple Streams into a single Stream of the same number of elements as the smallest Stream to be zipped.
+[TIP]
+====
+If you are zipping Streams of unequal length and don't want to lose elements, use zip in conjunction with concat, cycle and limitUntil to cycle a series of end marker elements at the end of each Stream.
+====
+
+Zipping is available for SequenceM, Streamable and JDK Streams via StreamUtils.
+
+==== Zip two Streams
+
+The zip method zips two Streams and returns a SequenceM (or Stream) contain a Stream of Tuple2 elements where one element in the tuple comes from one Stream and the other from the other.
+.zipping two Streams
+====
+[source,java]
+----
+SequenceM.of(1,2,3,4,5,6)
+         .zip(SequenceMof(100,200,300,400))
+         .toList();
+
+//[(1, 100), (2, 200), (3, 300), (4, 400)]
+----
+====
+.zipping two Streams in simple-react
+====
+simple-react's LazyFutureStream is a parellel implementation of SequenceM
+
+video::v=Es1Y5bvml7g[youtube]
+====
+
+[NOTE]
+====
+The zip methods inherited from jOOλ that SequenceM overrides only accept Seq implementations (which SequenceM extends), if you want to use a JDK 8 Stream or BaseStream see the zipStream methods instead.
+====
+
+==== Zipping with a custom zipper
+
+A number of the cyclops zip operators allow a custom zipper to be supplied (typically a BiFunction that allows users to determine how the Streams should be merged).
+
+.zipping with a custom zipper
+====
+[source,java]
+----
+Stream<List<Integer>> zipped = StreamUtils.zipSequence(Stream.of(1,2,3)
+												,SequenceM.of(2,3,4), 
+													(a,b) -> Arrays.asList(a,b));
+		
+		
+//Stream[List[1,2],List[2,3],List[3,4]]		
+----
+====
+==== Zip three Streams
+
+.zipping three Streams
+====
+[source,java]
+----
+SequenceM.of(1,2,3,4,5,6)
+         .zip3(SequenceM.of(100,200,300,400),SequenceM.of('a','b','c'))
+         .toList();
+//[(1, 100, a), (2, 200, b), (3, 300, c)]
+----
+====
+
+==== Zip four Streams
+
+.zipping four Streams
+====
+[source,java]
+----
+SequenceM.of(1,2,3,4,5,6)
+         .zip4(SequenceM.of(100,200,300,400),SequenceM.of('a','b','c'),SequenceM.of("hello","world"))
+         .toList();
+//[(1, 100, a, hello), (2, 200, b, world)]
+----
+====
+
+==== Unzip
+
+The unzip methods take a Stream containing tuples and convert them into a Tuple containing Streams.
+
+.unzip
+====
+[source,java]
+----
+SequenceM.unzip(SequenceM.of(new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c")));
+
+//Tuple2[SequenceM[1,2,3],SequenceM[a,b,c]]
+----
+====
+==== zipWithIndex
+
+zipWithIndex creates a Stream of Tuple2 instances, each Tuple2 contains an element from the Stream and it's 0 bound index.
+
+.zipWithIndex
+====
+[source,java]
+----
+SequenceM.of('a','b','c')
+         .zipWithIndex()
+
+//SequenceM[Tuple['a',0],Tuple['b',1],Tuple['c',2]]
+====
+.zipWithIndex in simple-react
+====
+simple-react's LazyFutureStream is a parellel implementation of SequenceM
+
+video::v=aTFz4lhHE-M[youtube]
+====
+
+
 === Efficient reversal
 === for-comprehensions
 === Async terminal operations 
