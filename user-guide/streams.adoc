@@ -323,7 +323,7 @@ Send one element of a Stream through every second.
 ----
 SequenceM.of(1,2,3,4)
      .peek(System.out::println)
-    .schedule("* * * * * ?", ex)
+     .schedule("* * * * * ?", ex)
 ----
 
 This will print 1 2 3 4 With a new line per second.
@@ -332,10 +332,10 @@ We can connect to the output of this stream
 
 [source,java]
 ----
-HotStream connected = SequenceM.of(1,2,3,4)
+HotStream connectable = SequenceM.of(1,2,3,4)
                 .peek(System.out::println)
-                .schedule("* * * * * ?", ex)
-                .connect();
+                .schedule("* * * * * ?", ex);
+                
 
 ----
 
