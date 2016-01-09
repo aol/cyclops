@@ -234,32 +234,131 @@ sub.sequenceM().toList();
 In this example our subscriber has connected to a publisher that will send the values 1,2,3,4 in sequence, on request.
 ----
 ====
-=== Batching & Windowing
+=== Batching, Windowing and Sliding views
 
-Cyclops provides a number of different batching and windowing operations, none of which terminate / fully consume the Stream (i.e. they are compatible with infinitely large Streams). The sliding operator creates a sliding view whereas both batch & window operators return batches of elements and differ only by return type (batch - returns a List, window - returns a Streamable).
+Cyclops provides a number of different batching and windowing operations, none of which terminate / fully consume the Stream (i.e. they are compatible with infinitely large Streams). The *Sliding* operator creates a sliding view whereas both batch & window operators return batches of elements and differ only by return type (batch - returns a List, window - returns a Streamable).
 
 [NOTE]
 ====
 jOOλ 0.9.9 provides a large range of windowing functions inspired by SQL windowing operations. The api and, crucially, behaviour is significantly different to the windowing functions in Cyclops (the jOOλ windowing functions consume the Stream) - as result the name of the cyclops windowing functions may change in future releases to disambiguate.
 ====
 
+The current Batching / Windowing operations in cyclops are inspired by Reactive eXtensions rather than SQL. Like in Reactive eXtensions Batching (or Buffering) differs from Windowing only in terms of the supplied parameter type - a List for Batching and a Streamable for Windowing.
+
+https://medium.com/@johnmcclean/reactive-programming-with-java-8-and-simple-react-batching-and-chunking-ecac62ce8bec#.ydm0n1jdc[Also see simple-react tutorial on batching]
+
 * Sliding
 
 Sliding produces a sliding view over a Stream, there are two sliding operators - one that takes just the window size and another that takes window size and the increment to be applied.
 
+.Creating a sliding view over a Sequence
+====
+[source,java]
+----
+SequenceM.of(1, 2, 3, 4, 5, 6)
+         .sliding(2)
+         .toList();
+
+//List[[1,2],[2,3],[3,4],[4,5],[5,6]]
+----
+====
+.A sliding view with StreamUtils and an increment
+====
+[source,java]
+----
+import static com.aol.cyclops.streams.StreamUtils.sliding;
+
+List<List> list = sliding(Stream.of(1, 2, 3, 4, 5, 6),3, 2)
+                        .collect(Collectors.toList());
+
+//[[1, 2, 3], [3, 4, 5], [5, 6]]
+----
+====
 * Batch / Window by size
+
+Batch / Window by size allows elements to be grouped as they flow through the Stream into Lists or Streamables of the specified size.
+
+.Batch by size example
+====
+[source,java]
+----
+SequenceM.of(1,2,3,4,5, 6)
+                            .map(n-> n==6? sleep(1) : n)
+                            .batchBySize(4)
+                            .toList()
+//List[[1,2,3,4],[5,6]]
+----
+====
+.Batch by size video
+====
+The video shows batching by size on simple-react's LazyFutureStream which is a parellel implementation of SequenceM
+
+video::OH89bHb5yzo[youtube]
+====
 * Batch / Window by time
+
+Batch / Window by time group elements into either a List (Batch) or Streamable (Window) based on the time bucket they pass through the Stream.
+
+.Batch by time example
+====
 [source,java]
 ----
 SequenceM.of(1,2,3,4,5, 6)
          .map(n-> n==6? sleep(1) : n)
-         .batchByTime(10,TimeUnit.MICROSECONDS)
-         .toList()
-//[1,2,3,4,5],[6]
+         .windowByTime(10,TimeUnit.MICROSECONDS)
+         
+//Streamable[[1,2,3,4,5],[6]]
 ----
+====
+.Batch by time video
+====
+The video shows batching by time on simple-react's LazyFutureStream which is a parellel implementation of SequenceM
+
+video::yW7EpF4HVv4[youtube]
+====
+
+
+[TIP]
+====
+The idea of batching elements into time buckets might seem absurd if you are used to creating Java 8 Streams from already populated collections. This is can be really useful if you use cyclops-streams in conjunction with simple-react, you can connect Streams to collections that are populated asynchronously, for example on recieving a web request an async Queue could be populated that has a processing SequenceM attached. 
+====
 * Batch / Window by size and time
+
+Much like batchBySize groups elements into Lists based on the specified list size, and windowBySize organises streaming elements into Streamables by time bucket- batchBySizeAndTime / windowBySizeAndTime populates Lists (or Streamables) based on which ever criteria is met first. Should the max size be reached the List / Streamable is ready to move down stream, should the max time elaspe - ditto.
+
+.Window by size and time example
+====
+[source,java]
+----
+SequenceM.generate(this::loadData)
+         .map(this::process)
+         .windowByTSizeAndTime(3,1,TimeUnit.SECONDS)
+ 
+//4th item takes >1 second        
+//Streamable[[res1,res2,res3],[res4]]
+----
+====
+
 * Batch / Window by state
+
+Stateful batching and windowing allows the user to define a BiPredicate that recieves both the current element moving through the Stream and the Streamable from the previous window / batch. Returning true keeps the window / batch open, returning false closes it.
+
+.Window Statefully example
+====
+[source,java]
+----
+SequenceM.of(1,2,3,4,5,6)
+                .windowStatefullyWhile((s,i)->s.toList().contains(4) ? true : false)
+                .toList()
+//streamable[1], streamable[2], streamable[3],streamable[4], streamable[5, 6]
+----
+====
 * Batch / Window while a predicate holds
+
+Batching or Windowing while allows users to keep the window / batch open as long as the predicate holds true.
+
+.Batch while example
+====
 [source,java]
 ----
 SequenceM.of(1,2,3,4,5,6)
@@ -268,7 +367,11 @@ SequenceM.of(1,2,3,4,5,6)
 
 //[1,2,3],[4,5,6]
 ----
+====
 * Batch / Window until a predicate holds
+Batching or Windowing while allows users to keep the window / batch open until the predicate holds true.
+.Batch until example
+====
 [source,java]
 ----
 SequenceM.of(1,2,3,4,5,6)
@@ -276,7 +379,9 @@ SequenceM.of(1,2,3,4,5,6)
                 .toList().size()
 //[1,2,3],[4,5,6]
 ----
+====
 === Stream manipulation
+=== Stream duplication
 === Error handling
 === Scheduling
 
@@ -437,7 +542,9 @@ Javaslang
 === Zipping
 === Efficient reversal
 === for-comprehensions
-=== Async execution
+=== Async terminal operations 
+
+The futureOperations operator takes an Executor, and returns the set of available asynchronous terminal operations, each of which returns a CompletableFuture. The Stream will be executed on a single thread from the supplied executor.
 
 These methods are available via
 http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/6.2.2/com/aol/cyclops/sequence/SequenceM.html[SequenceM]
@@ -445,6 +552,8 @@ or to plain JDK 8 Streams via
 http://static.javadoc.io/com.aol.cyclops/cyclops-streams/6.2.2/com/aol/cyclops/streams/StreamUtils.html[com.aol.cyclops.streams.StreamUtils],
 for Javaslang Streams use
 http://static.javadoc.io/com.aol.cyclops/cyclops-javaslang/6.2.2/com/aol/cyclops/javaslang/streams/StreamUtils.html[com.aol.cyclops.javaslang.streams.StreamUtils].
+
+The available asynchronous terminal operations as of cylcops 7.1.0 are detailed http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/7.1.0/com/aol/cyclops/sequence/future/FutureOperations.html[in the FutureOperations javadoc]
 
 [[futureoperations]]
 FutureOperations

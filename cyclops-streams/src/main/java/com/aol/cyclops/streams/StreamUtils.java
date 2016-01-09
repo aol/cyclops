@@ -1028,7 +1028,7 @@ public class StreamUtils{
 	 * </pre>
 	 * @param windowSize
 	 *            Size of sliding window
-	 * @return Stream with sliding view over monad
+	 * @return Stream with sliding view 
 	 */
 	public final static <T> Stream<List<T>> sliding(Stream<T> stream,int windowSize,int increment) {
 		Iterator<T> it = stream.iterator();
