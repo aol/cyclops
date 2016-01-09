@@ -1020,6 +1020,13 @@ video::v=aTFz4lhHE-M[youtube]
 
 
 === Efficient reversal
+=== limit / skip (take / drop) / cycle
+=== Assertions
+=== flatMap operators
+=== scanLeft / scanRight
+=== foldLeft / foldRight
+=== conversions - toOptional, toCompletableFuture, toAnyM, toStreamable
+=== toList, toLazyCollection, toSet
 === for-comprehensions
 === Async terminal operations 
 
