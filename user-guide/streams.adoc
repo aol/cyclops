@@ -1118,6 +1118,210 @@ SequenceM.reversedListOf(list)
 ====
 
 === limit / skip (take / drop) / cycle
+
+The JDK Streams api has operators limit and skip as of Java 8. The naming of these operators is relatively unusual compared with other languages where take / drop is more common. JDK 9 looks set to introduce new operators such as takeWhile & dropWile (maintaining the old limit and skip operators also). Cyclops offers many of these operators already, although we currently extend (like jOOλ) the JDK 8 naming convention and use limitWhile and skipWhile.
+
+==== LimitTime 
+
+The limitTime operator takes values from the Stream while time elapsed is less than the time specified in the method parameter.
+
+.limit time
+====
+[source,java]
+----
+SequenceM.range(1,1_000_000)
+         .peek(i->sleep(i*100))
+         .limit(1000,TimeUnit.MILLISECONDS)
+         .toList()
+//takes values from the range for 1,000ms (1 sec)
+----
+====
+
+==== SkipTime
+
+The skipTime operator drops elements from the Stream until the specified time period has elapsed.
+
+.skip time
+====
+[source,java]
+----
+SequenceM.range(1,Integer.MAX_VALUE)
+                                        .peek(i->sleep(i*100))
+                                        .skip(1000,TimeUnit.MILLISECONDS)
+                                        .toList()
+//skips values from the range until 1 second has elapsed, then accept values
+----
+====
+
+==== SkipLast
+
+Skip (drop) the specified number of entries from the end of the stream
+
+.skipLast
+====
+[source,java]
+----
+SequenceM.of(1,2,3,4,5)
+                            .skipLast(2)
+                            .collect(Collectors.toList());
+//List[1,2,3]
+----
+====
+==== LimitLast
+
+Take (include) the last x elements.
+
+[NOTE]
+====
+The english name limitLast is much less informative than the equiavlent takeLast, this is likely why the naming convention is changing in JDK 9 even at the cost of inconistency.
+====
+
+.limitLast
+====
+[source,java]
+----
+SequenceM.of(1,2,3,4,5)
+                            .limitLast(2)
+                            .collect(Collectors.toList())
+//List[4,5]
+----
+====
+==== SkipWhile
+
+SkipWhile drops elements from the Stream while the predicate holds, once the predicte returns true all subsequent elements are included
+
+.skipWhile
+====
+[source,java]
+----
+SequenceM.of(1, 2, 3, 4, 5,1).skipWhile(i->i<5);
+
+//SequenceM[5,1]
+----
+
+====
+==== LimitWhile
+
+Take elements from the Stream while the predicate holds, once the predicate returns false all subsequent elements are excluded
+
+.limitWhile
+====
+[source,java]
+----
+SequenceM.of(1, 2, 3, 4, 5,6).limitWhile(i->i<5);
+
+//SequenceM[1,2,3,4]
+----
+====
+
+==== SkipUntil
+
+Drop elements from the Stream until the predicate returns true, after which all elements are included.
+
+.skipUntil
+====
+[source,java]
+----
+SequenceM.of(1, 2, 3, 4, 5).skipUntil(i->i==4);
+
+//SequenceM[4,5]
+----
+====
+==== LimitUntil
+
+Take elements from the Stream until the predicate returns true, after which all elements are excluded.
+
+.limitUntil
+====
+[source,java]
+----
+SequenceM.of(1, 2, 3, 4, 5).limitWhile(i->i==4);
+
+//SequenceM[1,2,3]
+----
+====
+
+==== Cycle
+
+Repeat the Stream infinitely
+.cycle
+====
+[source,java]
+----
+SequenceM.of(1).cycle().limit(6).toList());
+//List[1, 1, 1, 1, 1,1]
+----	 
+====
+==== Cycle Times
+
+The cycle operator repeats the Stream the specified number of times.
+
+.cycle (times)
+====
+[source,java]
+----
+SequenceM.of(1,2,2)
+		 .cycle(3)
+		 .collect(Collectors.toList());
+								
+//List[1,2,2,1,2,2,1,2,2]
+----
+====
+==== Cycle Until
+
+Cycle until repeats the Stream until the predicate holds
+
+.cycleUntil
+====
+[source,java]
+----
+MutableInt count =MutableInt.of(0);
+SequenceM.of(1,2,2)
+		 .cycleUntil(next -> count.get()>6)
+		 .peek(i-> count.mutate(i->i+1))
+		 .collect(Collectors.toList());
+
+//List[1,2,2,1,2,2,1]
+----
+==== 
+==== Cycle While
+
+Cycle while repeats the Stream wgile the predicate holds
+
+.cycleWhile
+====
+[source,java]
+----
+MutableInt count =MutableInt.of(0);
+SequenceM.of(1,2,2)
+		 .cycleWhile(next -> count++<6)
+		 .collect(Collectors.toList());
+				 
+//List(1,2,2,1,2,2)	
+----
+====
+
+==== Cycle Monoid
+
+Convert to a Stream with the result of a reduction operation repeated specified times.
+
+[NOTE]
+====
+Monoid is a term from category theory. In Java the signature of Stream reduce is a monoid. In cyclops the Monoid class is used to encapsulate the identity value and the accumulating function. There is a Reducers class which has some useful Monoid instances for Integer addition / multiplication, String concatonation etc.
+====
+
+.cycleMonoid
+====
+In this example we count the number of elements in the Stream and then repeat it 4 times
+[source,java]
+----
+List<Integer> list = SequenceM.of(1,2,2))
+	 						   .cycle(Reducers.toCountInt(),4)
+	  						   .collect(Collectors.toList());
+//List[3,3,3,3];
+----
+====
+
 === flatMap operators / flatten
 === map operators (map / cast)
 === for-comprehensions

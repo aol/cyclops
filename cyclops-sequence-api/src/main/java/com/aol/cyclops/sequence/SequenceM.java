@@ -125,11 +125,11 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * <pre>
 	 * {@code 
-	 * 		assertThat(SequenceM.of(1,2,2)
+	 * 		SequenceM.of(1,2,2)
 								.cycle(3)
-								.collect(Collectors.toList()),
-								equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
-
+								.collect(Collectors.toList());
+								
+		//List[1,2,2,1,2,2,1,2,2]
 	 * 
 	 * }
 	 * </pre>
@@ -143,7 +143,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * <pre>
 	 * {@code 
-	 *   assertEquals(asList(1, 1, 1, 1, 1,1),SequenceM.of(1).cycle().limit(6).toList());
+	 *      SequenceM.of(1).cycle().limit(6).toList());
+	 *      //List[1, 1, 1, 1, 1,1]
 	 *   }
 	 * </pre>
 	 * 
@@ -253,10 +254,10 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * <pre>
 	 * {@code 
-	 *   		List<Integer> list = AsGenericMonad,asMonad(Stream.of(1,2,2))
+	 *   List<Integer> list = SequenceM.of(1,2,2))
 	 * 										.cycle(Reducers.toCountInt(),3)
 	 * 										.collect(Collectors.toList());
-	 * 	//is asList(3,3,3);
+	 * 	//List[3,3,3];
 	 *   }
 	 * </pre>
 	 * 
@@ -292,16 +293,19 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param times
 	 * @return
 	 */
+	@Deprecated
 	<R> SequenceM<R> cycle(Class<R> monadC, int times);
 	/**
 	 * Repeat in a Stream while specified predicate holds
 	 * 
 	 * <pre>
 	 * {@code
-	 * count =0;
-		assertThat(SequenceM.of(1,2,2)
-							.cycleWhile(next -> count++<6)
-							.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2)));
+	 * 	MutableInt count =MutableInt.of(0);
+		SequenceM.of(1,2,2)
+				 .cycleWhile(next -> count++<6)
+				 .collect(Collectors.toList());
+				 
+		//List(1,2,2,1,2,2)		 
 	 * }
 	 * </pre>
 	 * 
@@ -315,12 +319,13 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * Repeat in a Stream until specified predicate holds
 	 * <pre>
 	 * {@code 
-	 * 	count =0;
-		assertThat(SequenceM.of(1,2,2)
-							.cycleUntil(next -> count++>6)
-							.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2,1)));
+	 * 	MutableInt count =MutableInt.of(0);
+		SequenceM.of(1,2,2)
+		 		.cycleUntil(next -> count.get()>6)
+		 		.peek(i-> count.mutate(i->i+1))
+		 		.collect(Collectors.toList());
 
-	 * 
+		//List[1,2,2,1,2,2,1]	
 	 * }
 	 * 
 	 * 
@@ -623,7 +628,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * </pre>
 	 * @param c
 	 *            Compartor to sort with
-	 * @return Sorted Monad
+	 * @return Sorted Stream
 	 */
 	SequenceM<T> sorted(Comparator<? super T> c);
 
@@ -636,13 +641,13 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * @param num
 	 *            Number of elemenets to skip
-	 * @return Monad converted to Stream with specified number of elements
+	 * @return Stream with specified number of elements
 	 *         skipped
 	 */
 	SequenceM<T> skip(long num);
 	/**
 	 * 
-	 * 
+	 * SkipWhile drops elements from the Stream while the predicate holds, once the predicte returns true all subsequent elements are included	 * 
 	 * <pre>
 	 * {@code
 	 * assertThat(SequenceM.of(4,3,6,7).sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
@@ -651,13 +656,12 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * @param p
 	 *            Predicate to skip while true
-	 * @return Monad converted to Stream with elements skipped while predicate
-	 *         holds
+	 * @return Stream with elements skipped while predicate holds
 	 */
 	 SequenceM<T> skipWhile(Predicate<? super T> p);
 
 	/**
-	 * 
+	 * Drop elements from the Stream until the predicate returns true, after which all elements are included
 	 * 
 	 * <pre>
 	 * {@code assertThat(SequenceM.of(4,3,6,7).skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));}
@@ -666,7 +670,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * @param p
 	 *            Predicate to skip until true
-	 * @return Monad converted to Stream with elements skipped until predicate
+	 * @return Stream with elements skipped until predicate
 	 *         holds
 	 */
 	SequenceM<T> skipUntil(Predicate<? super T> p);
@@ -685,7 +689,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	SequenceM<T> limit(long num);
 
 	/**
-	 *
+	 * Take elements from the Stream while the predicate holds, once the predicate returns false all subsequent elements are excluded
 	 * 
 	 * <pre>
 	 * {@code assertThat(SequenceM.of(4,3,6,7).sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));}
@@ -693,11 +697,11 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * @param p
 	 *            Limit while predicate is true
-	 * @return Monad converted to Stream with limited elements
+	 * @return Stream with limited elements
 	 */
 	SequenceM<T> limitWhile(Predicate<? super T> p);
 	/**
-	 * 
+	 * Take elements from the Stream until the predicate returns true, after which all elements are excluded.
 	 * 
 	 * <pre>
 	 * {@code assertThat(SequenceM.of(4,3,6,7).limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3))); }
@@ -705,7 +709,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * @param p
 	 *            Limit until predicate is true
-	 * @return Monad converted to Stream with limited elements
+	 * @return Stream with limited elements
 	 */
 	SequenceM<T> limitUntil(Predicate<? super T> p);
 	/**
