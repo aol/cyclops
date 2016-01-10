@@ -463,6 +463,8 @@ List<String> result =   insertStreamAt(Strean.of(1,2,3),1,Stream.of(100,200,300)
 
 ==== Deleting between two indices
 
+The deleteBetween operator allows you to exclude elements between two zero-indexed indices. For example deleteBetween(1,3) deletesBetween the second and fourth element.
+
 .Deleting between two indices
 ====
 [source,java]
@@ -481,6 +483,35 @@ List<String> result =   deleteBetween(Stream.of(1,2,3,4,5,6),2,4)
 //["1!!","2!!","5!!","6!!"]
 ----
 ====
+
+==== SubStream
+
+The subStream operator allows users to extract a smaller subset stream from a larger one. It works in the opposite manner to deleteBetween in that you select two zero-indexed indices between which you would like to keep data.
+
+.creating a subStream
+====
+[source,java]
+----
+SequenceM.of(1,2,3,4,5,6).subStream(1,3);
+	   
+  
+//SequenceM[2,3]
+----
+====
+==== intersperse
+
+The intersperse operator allows a new value to be inserted between every element.
+.intersperse example
+====
+[source,java]
+----
+
+//SequenceM.of(1, 2, 3, 4).intersperse(0);	   
+  
+// (1, 0, 2, 0, 3, 0, 4) 
+----
+====
+
 
 ==== SplitBy
 
@@ -522,7 +553,7 @@ SequenceM.of(1, 2, 3, 4, 5, 6).splitAt(2)
 ----
 ====
 
-====  Extraction
+====  Value Extraction
 
 Cyclops provides many extraction operators, including many that return a Tuple containing a value and an operational Stream (such as splitAt, splitBy, headAndTail returns an object with 2 fields), and others that access a value directly (get, single) - and throw an exception if the element doesn't exist and some that return optional (elementAt, singleOptional).
 
@@ -1087,13 +1118,20 @@ SequenceM.reversedListOf(list)
 ====
 
 === limit / skip (take / drop) / cycle
-=== Assertions
-=== flatMap operators
+=== flatMap operators / flatten
+=== map operators (map / cast)
+=== for-comprehensions
+=== Empty Stream handling
+=== Filtering (filter / remove// ofType)
 === scanLeft / scanRight
-=== foldLeft / foldRight
+=== Assertions
+=== foldLeft / foldRight /join / collect
 === conversions - toOptional, toCompletableFuture, toAnyM, toStreamable
 === toList, toLazyCollection, toSet
-=== for-comprehensions
+=== Other terminal operations
+==== Combinations
+==== Permutations
+
 === Async terminal operations 
 
 The futureOperations operator takes an Executor, and returns the set of available asynchronous terminal operations, each of which returns a CompletableFuture. The Stream will be executed on a single thread from the supplied executor.
@@ -1107,9 +1145,9 @@ http://static.javadoc.io/com.aol.cyclops/cyclops-javaslang/6.2.2/com/aol/cyclops
 
 The available asynchronous terminal operations as of cylcops 7.1.0 are detailed http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/7.1.0/com/aol/cyclops/sequence/future/FutureOperations.html[in the FutureOperations javadoc]
 
-[[futureoperations]]
-FutureOperations
-----------------
+
+==== FutureOperations
+
 
 Terminal operations can now all be called asynchronously e.g.
 
@@ -1176,4 +1214,4 @@ CompletableFuture> list = SequenceM.of(1,2,3,4,5)
 ----
 
 
-=== simple-react
+
