@@ -244,6 +244,12 @@ sub.sequenceM().toList();
 In this example our subscriber has connected to a publisher that will send the values 1,2,3,4 in sequence, on request.
 ----
 ====
+[IMPORTANT]
+====
+Using the reactive-streams functionality in cyclops requires that simple-react be included on the classpath.
+====
+
+
 === Batching, Windowing and Sliding views
 
 Cyclops provides a number of different batching and windowing operations, none of which terminate / fully consume the Stream (i.e. they are compatible with infinitely large Streams). The *Sliding* operator creates a sliding view whereas both batch & window operators return batches of elements and differ only by return type (batch - returns a List, window - returns a Streamable).
@@ -1324,7 +1330,7 @@ List<Integer> list = SequenceM.of(1,2,2))
 
 === flatMap operators / flatten
 
-In addition to inhertiting flatMap from Stream, cyclops offers a number of additional flatMap methods that accept a Function that returns a value that can be converted (implicitly)  to Stream.
+In addition to inhertiting flatMap from Stream, crossJoin, leftOuterJoin and innerJoin from jOOλ, cyclops offers a number of additional flatMap methods that accept a Function that returns a value that can be converted (implicitly)  to Stream.
 
 ==== FlatMapFile 
 
@@ -1488,6 +1494,20 @@ SequenceM.of(Optional.of(1)).flatten();
 ====
 
 === map operators (map / cast)
+
+In addition to the map method in the JDK cyclops also provides a cast method (inherited from jOOλ)
+
+==== Cast operator
+
+.cast
+====
+[source,java]
+----
+StreamUtils.cast(Stream.of(1, "a", 2, "b", 3),Integer.class)
+// throws ClassCastException
+----
+====	 
+	 
 === for-comprehensions
 
 http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/7.1.0/com/aol/cyclops/sequence/SequenceM.html[SequenceM]
@@ -1544,9 +1564,187 @@ monad api : AnyM for comprehension operators (forEach2, forEach3)]
 neophytes guide to Java 8 - welcome the the Future]
 
 === Empty Stream handling
+
+Cyclops provides a number of useful methods for dealing with the case of an empty Stream (3 of which are inherited from jOOλ - onEmpty, onEmptyThrow and onEmptyGet, and one new one onEmptySwitch).
+
+==== onEmptySwitch operator
+
+This operator allows users to switch to a different Stream lazily defined, if the current one is empty.
+
+.onEmptySwitch
+====
+[source,java]
+----
+SequenceM.of(4,5,6)
+		 .onEmptySwitch(()->SequenceM.of(1,2,3))
+		.toList()
+//[4,5,6]
+----
+[source,java]
+----
+SequenceM.of()
+		 .onEmptySwitch(()->SequenceM.of(1,2,3))
+		.toList()
+//[1,2,3]
+----
+====
+
+==== onEmpty operator
+
+This operator allows users to convert to a single valued Stream, if the current one is empty.
+
+.onEmptySwitch
+====
+[source,java]
+----
+SequenceM.of(4,5,6)
+		 .onEmpty(1)
+		.toList()
+//[4,5,6]
+----
+[source,java]
+----
+SequenceM.of()
+		 .onEmpty(1)
+		.toList()
+//[1]
+----
+====
+==== onEmptyGet operator
+
+This operator allows users to convert to a single valued Stream, with the value lazily supplied, if the current one is empty.
+
+.onEmptySwitch
+====
+[source,java]
+----
+SequenceM.of(4,5,6)
+		 .onEmptyGet(()->1)
+		.toList()
+//[4,5,6]
+----
+[source,java]
+----
+SequenceM.of()
+		 .onEmptyGet(()->1)
+		.toList()
+//[1]
+----
+====
+==== onEmptyThrow operator
+
+This operator allows users to convert to throw a lazily created exception if the current Stream is empty.
+
+.onEmptyThrow
+====
+[source,java]
+----
+SequenceM.of(4,5,6)
+		 .onEmptyThrow(()->new RuntimeException("error"))
+		.toList()
+//[4,5,6]
+----
+[source,java]
+----
+SequenceM.of()
+		 .onEmptyThrow(()->new RuntimeException("error"))
+		.toList()
+//RuntimeException("error");
+----
+====
 === Filtering (filter / remove// ofType)
+
+Cyclops offers a number of filtering syntax sugare methods including ofType (inherited from jOOλ and remove)
+
+==== OfType operator
+
+Of Type filters the Stream keeping only those elements of the target type.
+
+.ofType
+====
+[source,java]
+----
+SequenceM.of(1, "a", 2, "b",3).ofType(Integer.class)
+// (1, 2, 3)
+----
+====
+
+==== Remove operator
+
+The reove operator removes all instances of the provided object
+
+.remove
+====
+[source,java]
+----
+SequenceM.of(1, 2,3).remove(2);
+//(1,3)
+====
+
 === scanLeft / scanRight
 === Assertions
+
+In addition to operators on java.util.stream.Stream like anyMatch, allMatch and noneMatch, cyclops offers operators such as xMatch, endsWith and startsWith.
+
+==== EndsWith Operator
+
+The ends with operator returns true if the Stream ends with the specified iterable or Stream, otherwise it returns false.
+
+.endsWith
+====
+[source,java]
+----
+SequenceM.of(1,2,3,4,5,6)
+                .endsWith(Arrays.asList(5,6))
+//true
+----
+
+[source,java]
+----
+SequenceM.of(1,2,3,4,5,6)
+                .endsWith(Stream.of(5,6))
+
+//true
+----
+====
+
+==== StartsWith Operator
+
+The starts with operator returns true if the Stream starts with the specified iterable or Stream, otherwise it returns false.
+
+.startsWith
+====
+[source,java]
+----
+SequenceM.of(1,2,3,4,5,6)
+                .startsWith(Arrays.asList(5,6))
+//false
+----
+
+[source,java]
+----
+SequenceM.of(1,2,3,4,5,6)
+                .startsWith(Stream.of(1,2))
+
+//true
+----
+====
+
+==== xMatch operator
+
+The xMatch operator returns true if the supplied predicate matches the supplied number of times.
+
+.xMatch
+====
+[source,java]
+----
+SequenceM.of(1,2,3,5,6,7).xMatch(3, i-> i>4 )
+//true
+----
+
+====
+
+
 === foldLeft / foldRight /join / collect
 === conversions - toOptional, toCompletableFuture, toAnyM, toStreamable
 === toList, toLazyCollection, toSet
