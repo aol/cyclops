@@ -1035,6 +1035,57 @@ video::v=aTFz4lhHE-M[youtube]
 
 
 === Efficient reversal
+
+Cyclops provides methods to reverse a Stream and other functions that take advantage of reversed order (such as foldRight). For standard Streams this results in the Stream being materialized and reversed, however for SequenceM using the following creational methods - range, rangeLong, of(List), of(..values) all result in Sequences that can be efficiently reversed (and used in scanRight, foldRight etc).
+
+.creating a SequenceM for efficient reversal
+====
+```java
+SequenceM.range(0,Integer.MAX_VALUE);
+
+List list;
+SequenceM.fromList(list);
+
+SequenceM.of(1,2,3)
+        .reverse()
+        .forEach(System.out::println);
+```
+
+====
+.efficient reversal with a range
+====
+This also works with rangeLong
+
+[source,java]
+----
+SequenceM.range(0,10).skip(8).reverse()
+//SequenceM[10,9]
+----
+====
+.efficient reversal at creation
+====
+[source,java]
+----
+SequenceM.reversedOf(1,2)
+            .toList()
+            
+//List[2,1]
+----
+====
+.efficient reversal from a List
+====
+[source,java]
+----
+List list= Arrays.asList(1,2);
+
+SequenceM.reversedListOf(list)
+        .toList()
+
+//List[2,1]
+
+----
+====
+
 === limit / skip (take / drop) / cycle
 === Assertions
 === flatMap operators
