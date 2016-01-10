@@ -8,7 +8,7 @@ Cyclops provides a lot of helpful classes and utilities to make working with str
 
 * StreamUtils : a large collection of static methods for manipulating JDK 8 Streams
 * Streamable : an interface that represents a Stream that can replayed and has a large number of available Stream operations in it's own right
-* SequenceM : an advanced sequential stream interface that extends that extends
+* SequenceM : an advanced sequential stream interface that extends
 java.util.stream.Stream<T>, org.jooq.lambda.Seq<T>, java.lang.Iterable<T>, org.reactivestreams.Publisher<T> and adds additional operators.
 
 StreamUtils, Streamable and SequenceM share many operators, in general though SequenceM has the larest range of operators.
