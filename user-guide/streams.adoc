@@ -1323,6 +1323,170 @@ List<Integer> list = SequenceM.of(1,2,2))
 ====
 
 === flatMap operators / flatten
+
+In addition to inhertiting flatMap from Stream, cyclops offers a number of additional flatMap methods that accept a Function that returns a value that can be converted (implicitly)  to Stream.
+
+==== FlatMapFile 
+
+The flatMapFile operator Streams the content of the returned File as a String. It is syntax sugar for loading the File to a Stream of Strings inside the function provided to the standard Stream flatMap method.
+
+.flatMapFile
+====
+[source,java]
+----
+file://input.file ={
+hello
+world
+}
+SequenceM.of("input.file")
+     .map(getClass().getClassLoader()::getResource)
+     .peek(System.out::println)
+     .map(URL::getFile)
+     .flatMapFile(File::new)
+     .toList();
+//List["hello","world"]
+====
+
+==== FlatMapURL 
+
+The flatMapURL operator Streams the content of the returned URL as a String. It is syntax sugar for loading the URL to a Stream of Strings inside the function provided to the standard Stream flatMap method.
+
+.flatMapURL
+====
+[source,java]
+----
+SequenceM.of("input.file")
+     .flatMapURL(getClass().getClassLoader()::getResource)
+     .toList();
+//List["hello","world"]
+----
+====
+
+==== FlatMapCharSequence
+
+The flatMapCharSequence converts the returned CharSequence (such as a String) to a Stream<Characters> inside the flatMap function.
+
+.flatMapCharSequence
+====
+[source,java]
+----
+SequenceM.of("input.file")
+     .flatMapCharSequence(i->"hello world")
+     .toList()
+//List['h','e','l','l','o',' ','w','o','r','l','d']
+----
+====
+
+==== FlatMapBufferedReader
+
+The flatMapBufferedReader operator Streams the content of the returned BufferedReader as a String. It is syntax sugar for loading data from the BufferedReader to a Stream of Strings inside the function provided to the standard Stream flatMap method.
+
+.flatMapBufferedReader
+====
+[source,java]
+----
+SequenceM.of("input.file")
+     .map(getClass().getClassLoader()::getResourceAsStream)
+     .map(InputStreamReader::new)
+     .flatMapBufferedReader(BufferedReader::new)
+     .toList()
+//List["hello","world"]
+----
+====
+
+==== FlatMapOptional
+
+The flatMapOptional operator converts the returned Optional into a Stream. An empty Optional becomes and empty Stream, and an Optional with one value becomes a Stream with one value.
+
+.flatMapOptional
+====
+[source,java]
+----
+SequenceM.of(1,2,3,null)
+     .flatMapOptional(Optional::ofNullable)
+     .collect(Collectors.toList())
+//List[1,2,3]
+----
+====
+
+==== FlatMapCompletableFuture
+
+The flatMapCompletableFuture operator converts the returned CompletableFuture into a Stream, by calling the join method. A successfully completed CompletableFuture will become a Stream of one entry, and a failed CompletableFuture will become an empty Stream.
+
+[TIP]
+====
+Think about how you start your CompletableFutures, creating them inside the function supplied to flatMap will likely result in syncrhonous blocking behaviour. This is likely only to be truly useful if you can transform futures that have already been kicked off earlier, inside your Stream (perhaps by calling thenApply / thenConsumer inside your flatMap function).
+====
+
+.flatMapCompletableFuture
+====
+[source,java]
+----
+SequenceM.of(1,2,3)
+     .flatMapCompletableFuture(i->CompletableFuture.completedFuture(i+2))
+    .collect(Collectors.toList())
+//List[1,2,3]
+
+SequenceM.of(1,2,3,null)
+     .flatMapCollection(i->Arrays.asList(1,2,i))
+     .collect(Collectors.toList())
+//List[1,2,1,1,2,2,1,2,3]
+----
+====
+==== FlatMapCollection
+
+The flatMapCollection operator provides syntax sugger over calling collection.stream() inside your flatMap function.
+.flatMapCollection
+====
+[source,java]
+----
+SequenceM.of(1,2,3,null)
+     .flatMapCollection(i->Arrays.asList(1,2,i))
+     .collect(Collectors.toList())
+//List[1,2,1,1,2,2,1,2,3]
+----
+====
+==== 
+
+==== FlatMapAnyM
+
+Cyclops provides an AnyM class that can wrap any monad type (think Stream, Optional, CompletableFuture,List, Try, FeatureToggle and similar fluently flowing classes), and it can also convert any monad type to a Stream. This operator provides syntax sugar conversion inside flatMap from any monad type to a Stream.
+
+.flatMapAnyM
+====
+This example flatMaps a Javaslang Array into a SequenceM
+[source,java]
+----
+SequenceM.of(1,2,3)
+     .flatMapAnyM(i->Javaslang.fromArray(Array.ofAll(i+1,i+2,i+3))
+    .collect(Collectors.toList())
+//List[2,3,4,3,4,5,4,5,6]
+
+----
+====
+
+====
+==== flatten
+The flatten operator flattens a nested Stream one level, importantly it will flatten any supported monad type (Optional, CompletableFuture, List, Set, Stream, Streamable and more).
+
+[CAUTION]
+====
+flatten is not type safe, the same method is available whether the Stream is nested or not, and the client code determines the generic return parameter - which may or may not be accurate.  
+====
+.flatten
+====
+This example flatMaps a Javaslang Array into a SequenceM
+[source,java]
+----
+SequenceM.of(Arrays.asList(1,2)).flatten();
+//SequenceM(1,  2);	
+
+SequenceM.of(Optional.of(1)).flatten();
+//SequenceM(1)
+
+----
+====
+
 === map operators (map / cast)
 === for-comprehensions
 === Empty Stream handling

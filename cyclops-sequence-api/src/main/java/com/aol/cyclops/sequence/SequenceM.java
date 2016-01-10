@@ -79,12 +79,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 *  
 	 *  //stream of (1,  2);		
 	 *  
-	 *  // or more advanced example 
-	 *  
-	 *  AnyM<AnyM<Integer>> applied =anyM(Optional.of(2))
-			 							.simpleFilter(anyM(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3)));
-	
-	     assertThat(applied.toSequence().flatten().toList(),equalTo(Arrays.asList(2)));
+
 	 * 
 	 * }
 	 * 
