@@ -1489,6 +1489,60 @@ SequenceM.of(Optional.of(1)).flatten();
 
 === map operators (map / cast)
 === for-comprehensions
+
+http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/7.1.0/com/aol/cyclops/sequence/SequenceM.html[SequenceM]
+has a number of operators that make it easy to iterate simultanously
+over multiple Streams generating a new Stream in the process - these are
+the various overloading versions of forEach2 & forEach3.
+
+.forEach2
+====
+Loop over two Streams (one containing 3 values another 10 to create a
+new Stream of 30 values)
+
+[source,java]
+----
+SequenceM.of(1,2,3)
+                 .forEach2(a->IntStream.range(0,10), 
+                         a->b-> a+b)
+                 .toList()
+
+//List[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 2, 3, 4, 5, 6, 7, 8, 
+                         9, 10, 11, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)]
+----
+====
+
+.forEach2 with filter
+====
+
+We can also filter inside forEach2
+
+[source,java]
+----
+SequenceM.of(2,3)
+                 .forEach3(a->IntStream.range(6,9),
+                           a->b->IntStream.range(100,105),
+                           a->b->c -> a==3,
+                           a->b->c-> a+b+c)
+
+//List[109, 110, 111, 112, 113, 110, 111, 112, 113, 114, 111, 112, 113, 114, 115]
+----
+====
+
+
+==== See also
+
+* https://github.com/aol/cyclops/wiki/For-Comprehensions-Explained[for-comprehensions
+explained]
+* https://github.com/aol/cyclops/wiki/For-Comprehension-Examples[for-comprehensions
+examples]
+* https://github.com/aol/cyclops/wiki/Extensible-For-Comprehensions-for-Java-8[Extensible
+For Comprehensions for Java 8]
+* https://github.com/aol/cyclops/wiki/cyclops-monad-api-:---AnyM---for-comprehension-operators-(forEach2,-forEach3)[cyclops
+monad api : AnyM for comprehension operators (forEach2, forEach3)]
+* https://medium.com/@johnmcclean/neophytes-guide-to-java-8-welcome-to-the-future-83f432ce82a9#.82x0f8r4m[The
+neophytes guide to Java 8 - welcome the the Future]
+
 === Empty Stream handling
 === Filtering (filter / remove// ofType)
 === scanLeft / scanRight
