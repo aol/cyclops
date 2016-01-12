@@ -250,9 +250,9 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * <pre>
 	 * {@code 
 	 *   List<Integer> list = SequenceM.of(1,2,2))
-	 * 										.cycle(Reducers.toCountInt(),3)
-	 * 										.collect(Collectors.toList());
-	 * 	//List[3,3,3];
+	 *                                 .cycle(Reducers.toCountInt(),3)
+	 *                                 .collect(Collectors.toList());
+	 *   //List[3,3,3];
 	 *   }
 	 * </pre>
 	 * 
