@@ -195,7 +195,9 @@ public interface AnyM<T> extends Unwrapable, ToStream<T>, ApplyM<T>,FlatMapM<T>,
 	 * @return Aggregated Monad
 	 */
 	 AnyM<List<T>> aggregate(AnyM<T> next);
-	  
+	
+		
+		
 
 	 	/**
 		 * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
@@ -217,8 +219,10 @@ public interface AnyM<T> extends Unwrapable, ToStream<T>, ApplyM<T>,FlatMapM<T>,
 		 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
 		 * @return LazyFutureStream with elements generated via nested iteration
 		 */
-	 <R1,R> AnyM<R> forEach2(Function<T,? extends AnyM<R1>> monad, 
-				Function<T,Function<R1,R>> yieldingFunction );
+		 <R1, R> AnyM<R> forEach2(Function<? super T, ? extends AnyM<R1>> monad, Function<? super T, Function<? super R1, ? extends R>> yieldingFunction);
+			
+			
+	
 	 /**
 		 * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
 		 * etc to be injected, for example)
@@ -239,9 +243,9 @@ public interface AnyM<T> extends Unwrapable, ToStream<T>, ApplyM<T>,FlatMapM<T>,
 		 * @param yieldingFunction Function with pointers to the current element from both monads that generates the new elements
 		 * @return
 		 */
-	 <R1,R> AnyM<R> forEach2(Function<T,? extends AnyM<R1>> monad, 
-				Function<T, Function<R1, Boolean>> filterFunction,
-					Function<T,Function<R1,R>> yieldingFunction );
+		 <R1,R> AnyM<R> forEach2(Function<? super T,? extends AnyM<R1>> monad, 
+					Function<? super T, Function<? super R1, Boolean>> filterFunction,
+						Function<? super T,Function<? super R1,? extends R>> yieldingFunction );
 	 	/** 
 		 * Perform a three level nested internal iteration over this Stream and the supplied streams
 		  *<pre>
@@ -260,9 +264,10 @@ public interface AnyM<T> extends Unwrapable, ToStream<T>, ApplyM<T>,FlatMapM<T>,
 		 * @param yieldingFunction Function with pointers to the current element from both monads that generates the new elements
 		 * @return AnyM with elements generated via nested iteration
 		 */
-		<R1,R2,R> AnyM<R> forEach3(Function<T,? extends AnyM<R1>> monad1, 
-														Function<T,Function<R1,? extends AnyM<R2>>> monad2,
-														Function<T,Function<R1,Function<R2,R>>> yieldingFunction );
+		 <R1, R2, R> AnyM<R> forEach3(Function<? super T, ? extends AnyM<R1>> monad1, 	
+					Function<? super T,Function<? super R1,? extends AnyM<R2>>> monad2,
+			Function<? super T, Function<? super R1, Function<? super R2, Boolean>>> filterFunction, 
+				Function<? super T, Function<? super R1, Function<? super R2,? extends R>>> yieldingFunction);
 		
 		
 
@@ -290,10 +295,9 @@ public interface AnyM<T> extends Unwrapable, ToStream<T>, ApplyM<T>,FlatMapM<T>,
 		 * @param yieldingFunction Function with pointers to the current element from both Monads that generates the new elements
 		 * @return AnyM with elements generated via nested iteration
 		 */
-		<R1,R2,R> AnyM<R> forEach3(Function<T,? extends AnyM<R1>> monad1, 
-										Function<T,Function<R1,? extends AnyM<R2>>> monad2,
-																Function<T,Function<R1,Function<R2,Boolean>>> filterFunction,
-														Function<T,Function<R1,Function<R2,R>>> yieldingFunction );
+		<R1, R2, R> AnyM<R> forEach3( Function<? super T, ? extends AnyM<R1>> monad1, 	
+						Function<? super T,Function<? super R1,? extends AnyM<R2>>> monad2,
+						Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction);
 	/**
 	 * flatMap operation
 	  * 
