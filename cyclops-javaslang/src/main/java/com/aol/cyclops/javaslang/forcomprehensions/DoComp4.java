@@ -373,7 +373,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @param f Gives access to current pointers and defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T5> DoComp5<T1,T2,T3,T4,T5> withIterable(Function<T1,Function<T2,Function<T3,Function<T4,Iterable<T5>>>>> f){
+		public <T5> DoComp5<T1,T2,T3,T4,T5> withIterable(Function<? super T1,Function<? super T2,Function<? super T3,Function<? super T4,Iterable<T5>>>>> f){
 			return new DoComp5(addToAssigned(f),getOrgType());
 			
 		}
@@ -395,7 +395,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @param f Gives access to current pointers and defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T5> DoComp5<T1,T2,T3,T4,T5> withIterator(Function<T1,Function<T2,Function<T3,Function<T4,Iterator<T5>>>>> f){
+		public <T5> DoComp5<T1,T2,T3,T4,T5> withIterator(Function<? super T1,Function<? super T2,Function<? super T3,Function<? super T4,Iterator<T5>>>>> f){
 			return new DoComp5(addToAssigned(f),getOrgType());
 			
 		}
@@ -417,7 +417,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @param f Gives access to current pointers and defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T5> DoComp5<T1,T2,T3,T4,T5> withStream(Function<T1,Function<T2,Function<T3,Function<T4,Stream<T5>>>>> f){
+		public <T5> DoComp5<T1,T2,T3,T4,T5> withStream(Function<? super T1,Function<? super T2,Function<? super T3,Function<? super T4,Stream<T5>>>>> f){
 			return new DoComp5(addToAssigned(f),getOrgType());
 			
 		}
@@ -436,7 +436,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @param f Gives access to current pointers and defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T5> DoComp5<T1,T2,T3,T4,T5> withBaseStream(Function<T1,Function<T2,Function<T3,Function<T4,BaseStream<T5,?>>>>> f){
+		public <T5> DoComp5<T1,T2,T3,T4,T5> withBaseStream(Function<? super T1,Function<? super T2,Function<? super T3,Function<? super T4,BaseStream<T5,?>>>>> f){
 			return new DoComp5(addToAssigned(f),getOrgType());
 			
 		}
@@ -458,7 +458,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @param f Gives access to current pointers and defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T5> DoComp5<T1,T2,T3,T4,T5> withOptional(Function<T1,Function<T2,Function<T3,Function<T4,Optional<T5>>>>> f){
+		public <T5> DoComp5<T1,T2,T3,T4,T5> withOptional(Function<? super T1,Function<? super T2,Function<? super T3,Function<? super T4,Optional<T5>>>>> f){
 			return new DoComp5(addToAssigned(f),getOrgType());
 			
 		}
@@ -480,7 +480,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @param f Gives access to current pointers and defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T5> DoComp5<T1,T2,T3,T4,T5> withMonad(Function<T1,Function<T2,Function<T3,Function<T4,Monad<T5>>>>> f){
+		public <T5> DoComp5<T1,T2,T3,T4,T5> withMonad(Function<? super T1,Function<? super T2,Function<? super T3,Function<? super T4,Monad<T5>>>>> f){
 			return new DoComp5(addToAssigned(f),getOrgType());
 			
 		}
@@ -502,7 +502,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @param f Gives access to current pointers and defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T5> DoComp5<T1,T2,T3,T4,T5> withCompletableFuture(Function<T1,Function<T2,Function<T3,Function<T4,CompletableFuture<T5>>>>> f){
+		public <T5> DoComp5<T1,T2,T3,T4,T5> withCompletableFuture(Function<? super T1,Function<? super T2,Function<? super T3,Function<? super T4,CompletableFuture<T5>>>>> f){
 			return new DoComp5(addToAssigned(f),getOrgType());
 			
 		}
@@ -524,7 +524,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @param f Gives access to current pointers and defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T5> DoComp5<T1,T2,T3,T4,T5> withAnyM(Function<T1,Function<T2,Function<T3,Function<T4,AnyM<T5>>>>> f){
+		public <T5> DoComp5<T1,T2,T3,T4,T5> withAnyM(Function<? super T1,Function<? super T2,Function<? super T3,Function<? super T4,AnyM<T5>>>>> f){
 			return new DoComp5(addToAssigned(f),getOrgType());
 			
 		}
@@ -546,7 +546,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @param f Gives access to current pointers and defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T5> DoComp5<T1,T2,T3,T4,T5> withTraversableM(Function<T1,Function<T2,Function<T3,Function<T4,SequenceM<T5>>>>> f){
+		public <T5> DoComp5<T1,T2,T3,T4,T5> withTraversableM(Function<? super T1,Function<? super T2,Function<? super T3,Function<? super T4,SequenceM<T5>>>>> f){
 			return new DoComp5(addToAssigned(f),getOrgType());
 			
 		}
@@ -568,7 +568,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @param f Gives access to current pointers and defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T5> DoComp5<T1,T2,T3,T4,T5> withCallable(Function<T1,Function<T2,Function<T3,Function<T4,Callable<T5>>>>> f){
+		public <T5> DoComp5<T1,T2,T3,T4,T5> withCallable(Function<? super T1,Function<? super T2,Function<? super T3,Function<? super T4,Callable<T5>>>>> f){
 			return new DoComp5(addToAssigned(f),getOrgType());
 			
 		}
@@ -590,7 +590,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @param f Gives access to current pointers and defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T5> DoComp5<T1,T2,T3,T4,T5> withSupplier(Function<T1,Function<T2,Function<T3,Function<T4,Supplier<T5>>>>> f){
+		public <T5> DoComp5<T1,T2,T3,T4,T5> withSupplier(Function<? super T1,Function<? super T2,Function<? super T3,Function<? super T4,Supplier<T5>>>>> f){
 			return new DoComp5(addToAssigned(f),getOrgType());
 			
 		}
@@ -612,7 +612,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @param f Gives access to current pointers and defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T5> DoComp5<T1,T2,T3,T4,T5> withCollection(Function<T1,Function<T2,Function<T3,Function<T4,Collection<T5>>>>> f){
+		public <T5> DoComp5<T1,T2,T3,T4,T5> withCollection(Function<? super T1,Function<? super T2,Function<? super T3,Function<? super T4,Collection<T5>>>>> f){
 			return new DoComp5(addToAssigned(f),getOrgType());
 			
 		}
@@ -637,7 +637,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @param f Gives access to current pointers and defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T5 extends String> DoComp5<T1,T2,T3,T4,T5> withFile(Function<T1,Function<T2,Function<T3,Function<T4,File>>>> f){
+		public <T5 extends String> DoComp5<T1,T2,T3,T4,T5> withFile(Function<? super T1,Function<? super T2,Function<? super T3,Function<? super T4,File>>>> f){
 			return new DoComp5(addToAssigned(f),getOrgType());
 			
 		}
@@ -659,7 +659,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @param f Gives access to current pointers and defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T5 extends String> DoComp5<T1,T2,T3,T4,T5> withURL(Function<T1,Function<T2,Function<T3,Function<T4,URL>>>> f){
+		public <T5 extends String> DoComp5<T1,T2,T3,T4,T5> withURL(Function<? super T1,Function<? super T2,Function<? super T3,Function<? super T4,URL>>>> f){
 			return new DoComp5(addToAssigned(f),getOrgType());
 			
 		}
@@ -681,7 +681,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @param f Gives access to current pointers and defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T5 extends String> DoComp5<T1,T2,T3,T4,T5> withBufferedReader(Function<T1,Function<T2,Function<T3,Function<T4,BufferedReader>>>> f){
+		public <T5 extends String> DoComp5<T1,T2,T3,T4,T5> withBufferedReader(Function<? super T1,Function<? super T2,Function<? super T3,Function<? super T4,BufferedReader>>>> f){
 			return new DoComp5(addToAssigned(f),getOrgType());
 			
 		}
@@ -703,7 +703,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @param f To be applied to every element in the for comprehension
 		 * @return For comprehension result
 		 */
-		public <R> AnyM<R> yield(Function<T1,Function<T2,Function<T3,Function<T4,R>>>> f){
+		public <R> AnyM<R> yield(Function<? super T1,Function<? super T2,Function<? super T3,Function<? super T4,R>>>> f){
 			if(getOrgType()!=null)
 				return new MonadWrapper(this.yieldInternal(f),this.getOrgType()).anyM();
 			else
@@ -726,7 +726,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @param f To be applied to every element in the for comprehension
 		 * @return Current stage with guard / filter applied
 		 */
-		public  DoComp4<T1,T2,T3,T4> filter(Function<T1,Function<T2,Function<T3,Function<T4,Boolean>>>> f){
+		public  DoComp4<T1,T2,T3,T4> filter(Function<? super T1,Function<? super T2,Function<? super T3,Function<? super T4,Boolean>>>> f){
 			return new DoComp4(getAssigned().plus(getAssigned().size(),new Entry("$$internalGUARD"+getAssigned().size(),new Guard(f))),getOrgType());
 		}
 		

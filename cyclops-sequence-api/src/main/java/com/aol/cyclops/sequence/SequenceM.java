@@ -2293,7 +2293,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param factory Collection factory
 	 * @return SequenceM batched by size and time
 	 */
-	<C extends Collection<T>> SequenceM<C> batchBySizeAndTime(int size,long time, TimeUnit unit, Supplier<C> factory);
+	<C extends Collection<? super T>> SequenceM<C> batchBySizeAndTime(int size,long time, TimeUnit unit, Supplier<C> factory);
 	/**
 	 * Batch elements in a Stream by time period
 	 * 

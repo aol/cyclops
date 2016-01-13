@@ -2079,7 +2079,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 		return StreamUtils.sequenceM(StreamUtils.batchWhile(stream,predicate.negate(),factory), this.reversable);
 	}
 	@Override
-	public <C extends Collection<T>> SequenceM<C> batchBySizeAndTime(int size,
+	public <C extends Collection<? super T>> SequenceM<C> batchBySizeAndTime(int size,
 			long time, TimeUnit unit, Supplier<C> factory) {
 		return StreamUtils.sequenceM(StreamUtils.batchBySizeAndTime(stream, size,time, unit, factory),this.reversable);
 

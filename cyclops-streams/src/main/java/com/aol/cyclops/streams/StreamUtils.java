@@ -2026,7 +2026,7 @@ public class StreamUtils{
 	  public final static <T> Stream<List<T>> batchBySizeAndTime(Stream<T> stream,int size, long time, TimeUnit t){
 			return new BatchByTimeAndSizeOperator<T,List<T>>(stream).batchBySizeAndTime(size, time, t);
 	  }
-	  public final static <T, C extends Collection<T>> Stream<C>   batchBySizeAndTime(Stream<T> stream,int size, long time, TimeUnit t,Supplier<C> factory){
+	  public final static <T, C extends Collection<? super T>> Stream<C>   batchBySizeAndTime(Stream<T> stream,int size, long time, TimeUnit t,Supplier<C> factory){
 			return new BatchByTimeAndSizeOperator<T,C>(stream,factory).batchBySizeAndTime(size, time, t);
 	  }
 	  public final static <T> Stream<Streamable<T>> windowBySizeAndTime(Stream<T> stream,int size, long time, TimeUnit t){
