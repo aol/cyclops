@@ -5,7 +5,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -24,10 +23,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
-import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -39,6 +36,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import lombok.AllArgsConstructor;
+import lombok.val;
 import lombok.experimental.UtilityClass;
 
 import org.jooq.lambda.Seq;
@@ -47,7 +45,6 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
-import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.closures.mutable.Mutable;
@@ -137,7 +134,9 @@ public class StreamUtils{
 	 * @return Subscription so that further processing can be continued or cancelled.
 	 */
 	public static <T,X extends Throwable> Subscription forEachX(Stream<T> stream, long x, Consumer<? super T> consumerElement){
-		return FutureStreamUtils.forEachX(stream, x, consumerElement).join();
+		val t2 = FutureStreamUtils.forEachX(stream, x, consumerElement);
+		t2.v2.run();
+		return t2.v1.join();
 	}
 	/**
 	 * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
@@ -174,7 +173,9 @@ public class StreamUtils{
 	 */
 	public static <T,X extends Throwable> Subscription forEachXWithError(Stream<T> stream, long x, 
 			Consumer<? super T> consumerElement,Consumer<? super Throwable> consumerError){
-		return FutureStreamUtils.forEachXWithError(stream, x, consumerElement,consumerError).join();
+		val t2 =FutureStreamUtils.forEachXWithError(stream, x, consumerElement,consumerError);
+		t2.v2.run();
+		return t2.v1.join();
 	}
 	/**
 	 * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
@@ -215,7 +216,9 @@ public class StreamUtils{
 												Consumer<? super T> consumerElement,
 												Consumer<? super Throwable> consumerError,
 												Runnable onComplete){
-		return FutureStreamUtils.forEachXEvents(stream, x, consumerElement,consumerError,onComplete).join();
+		val t2 = FutureStreamUtils.forEachXEvents(stream, x, consumerElement,consumerError,onComplete);
+		t2.v2.run();
+		return t2.v1.join();
 	}
 	/**
 	 *  Perform a forEach operation over the Stream    capturing any elements and errors in the supplied consumers,  
@@ -244,7 +247,9 @@ public class StreamUtils{
 	public static <T,X extends Throwable>  void forEachWithError(Stream<T> stream, Consumer<? super T> consumerElement,
 			Consumer<? super Throwable> consumerError){
 		
-		FutureStreamUtils.forEachWithError(stream, consumerElement,consumerError);
+		val t2 =FutureStreamUtils.forEachWithError(stream, consumerElement,consumerError);
+		t2.v2.run();
+		
 		
 	}
 	/**
@@ -279,7 +284,9 @@ public class StreamUtils{
 			Consumer<? super Throwable> consumerError,
 			Runnable onComplete){
 		
-		FutureStreamUtils.forEachEvent(stream, consumerElement,consumerError,onComplete);
+		val t2 =FutureStreamUtils.forEachEvent(stream, consumerElement,consumerError,onComplete);
+		t2.v2.run();
+		
 	}
 	
 	/**

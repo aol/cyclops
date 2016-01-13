@@ -1,17 +1,6 @@
 package com.aol.cyclops.sequence.reactivestreams;
 
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.stream.Collector;
-import java.util.stream.Stream;
-
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
-
-import com.aol.cyclops.sequence.SequenceM;
 
 /**
  * Interface for reactive-streams based terminal operations, requires simple-react to be on the classpath.
@@ -53,7 +42,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
 	 * @param consumer To accept incoming events from the Stream
 	 * @return CompletableFuture<Subscription> so that further processing can be continued or cancelled.
 	 */
-	<X extends Throwable> CompletableFuture<Subscription> forEachX(long numberOfElements,Consumer<? super T> consumer);
+	<X extends Throwable> ReactiveTask forEachX(long numberOfElements,Consumer<? super T> consumer);
 	
 	/**
 	 * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
@@ -89,7 +78,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
 	 * @param onComplete To run after an onComplete event
 	 * @return CompletableFuture<Subscription> so that further processing can be continued or cancelled.
 	 */
-	<X extends Throwable> CompletableFuture<Subscription> forEachXWithError(long numberOfElements,Consumer<? super T> consumer,Consumer<? super Throwable> consumerError);
+	<X extends Throwable> ReactiveTask forEachXWithError(long numberOfElements,Consumer<? super T> consumer,Consumer<? super Throwable> consumerError);
 	/**
 	 * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
 	 * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription,
@@ -125,7 +114,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
 	 * @param onComplete To run after an onComplete event
 	 * @return CompletableFuture<Subscription> so that further processing can be continued or cancelled.
 	 */
-	<X extends Throwable> CompletableFuture<Subscription> forEachXEvents(long numberOfElements,Consumer<? super T> consumer,Consumer<? super Throwable> consumerError, Runnable onComplete);
+	<X extends Throwable> ReactiveTask forEachXEvents(long numberOfElements,Consumer<? super T> consumer,Consumer<? super Throwable> consumerError, Runnable onComplete);
 	
 	/**
 	 *  Perform a forEach operation over the Stream    capturing any elements and errors in the supplied consumers,  
@@ -152,7 +141,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
 	 * @param consumerError To accept incoming processing errors from the Stream
 	 * @return CompletableFuture<Subscription> so that further processing can be continued or cancelled.
 	 */
-	<X extends Throwable> CompletableFuture<Subscription> forEachWithError(Consumer<? super T> consumerElement,
+	<X extends Throwable> ReactiveTask forEachWithError(Consumer<? super T> consumerElement,
 			Consumer<? super Throwable> consumerError);
 	
 	/**
@@ -183,7 +172,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
 	 * @param onComplete To run after an onComplete event
 	 * @return CompletableFuture<Subscription> so that further processing can be continued or cancelled.
 	 */
-	<X extends Throwable> CompletableFuture<Subscription> forEachEvent(Consumer<? super T> consumerElement,
+	<X extends Throwable> ReactiveTask forEachEvent(Consumer<? super T> consumerElement,
 			Consumer<? super Throwable> consumerError,
 			Runnable onComplete);
 	

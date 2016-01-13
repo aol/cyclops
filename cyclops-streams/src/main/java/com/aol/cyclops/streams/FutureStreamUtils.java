@@ -1,10 +1,13 @@
 package com.aol.cyclops.streams;
 
+import static org.jooq.lambda.tuple.Tuple.tuple;
+
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.tuple.Tuple3;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
@@ -40,36 +43,38 @@ public class FutureStreamUtils {
 	 * @param consumer To accept incoming events from the Stream
 	 * @return Subscription so that further processing can be continued or cancelled.
 	 */
-	public static <T,X extends Throwable> CompletableFuture<Subscription> forEachX(Stream<T> stream, long x, Consumer<? super T> consumerElement){
+	public static <T,X extends Throwable> Tuple3<CompletableFuture<Subscription>,Runnable,CompletableFuture<Boolean>> forEachX(Stream<T> stream, long x, Consumer<? super T> consumerElement){
 		CompletableFuture<Subscription>subscription = new CompletableFuture<>();
-		SequenceM.fromStream(stream).subscribe(new Subscriber<T>(){
+		CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
+		return tuple(subscription,()->{
+			SequenceM.fromStream(stream).subscribe(new Subscriber<T>(){
 
-			@Override
-			public void onSubscribe(Subscription s) {
-				Objects.requireNonNull(s);
-				s.request(x);
-				subscription.complete(s);
-			}
+				@Override
+				public void onSubscribe(Subscription s) {
+					Objects.requireNonNull(s);
+					s.request(x);
+					subscription.complete(s);
+				}
 
-			@Override
-			public void onNext(T t) {
-				consumerElement.accept(t);
+				@Override
+				public void onNext(T t) {
+					consumerElement.accept(t);
+					
+				}
+
+				@Override
+				public void onError(Throwable t) {
+									
+				}
+
+				@Override
+				public void onComplete() {
+					streamCompleted.complete(true);
+					
+				}
 				
-			}
-
-			@Override
-			public void onError(Throwable t) {
-								
-			}
-
-			@Override
-			public void onComplete() {
-				
-				
-			}
-			
-		});
-		return subscription;
+			});
+		},streamCompleted);
 	}
 	/**
 	 * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
@@ -104,36 +109,38 @@ public class FutureStreamUtils {
 	 * @param onComplete To run after an onComplete event
 	 * @return Subscription so that further processing can be continued or cancelled.
 	 */
-	public static <T,X extends Throwable> CompletableFuture<Subscription> forEachXWithError(Stream<T> stream, long x, Consumer<? super T> consumerElement,Consumer<? super Throwable> consumerError){
+	public static <T,X extends Throwable> Tuple3<CompletableFuture<Subscription>,Runnable,CompletableFuture<Boolean>> forEachXWithError(Stream<T> stream, long x, Consumer<? super T> consumerElement,Consumer<? super Throwable> consumerError){
 		CompletableFuture<Subscription>subscription = new CompletableFuture<>();
-		SequenceM.fromStream(stream).subscribe(new Subscriber<T>(){
+		CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
+		return tuple(subscription,()->{
+			SequenceM.fromStream(stream).subscribe(new Subscriber<T>(){
 
-			@Override
-			public void onSubscribe(Subscription s) {
-				Objects.requireNonNull(s);
-				s.request(x);
-				subscription.complete(s);
-			}
+				@Override
+				public void onSubscribe(Subscription s) {
+					Objects.requireNonNull(s);
+					s.request(x);
+					subscription.complete(s);
+				}
 
-			@Override
-			public void onNext(T t) {
-				consumerElement.accept(t);
+				@Override
+				public void onNext(T t) {
+					consumerElement.accept(t);
+					
+				}
+
+				@Override
+				public void onError(Throwable t) {
+					consumerError.accept(t);			
+				}
+
+				@Override
+				public void onComplete() {
+					streamCompleted.complete(true);
+					
+				}
 				
-			}
-
-			@Override
-			public void onError(Throwable t) {
-				consumerError.accept(t);			
-			}
-
-			@Override
-			public void onComplete() {
-				
-				
-			}
-			
-		});
-		return subscription;
+			});
+		},streamCompleted);
 	}
 	/**
 	 * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
@@ -170,39 +177,41 @@ public class FutureStreamUtils {
 	 * @param onComplete To run after an onComplete event
 	 * @return Subscription so that further processing can be continued or cancelled.
 	 */
-	public static <T,X extends Throwable> CompletableFuture<Subscription> forEachXEvents(Stream<T> stream, long x, 
+	public static <T,X extends Throwable> Tuple3<CompletableFuture<Subscription>,Runnable,CompletableFuture<Boolean>> forEachXEvents(Stream<T> stream, long x, 
 												Consumer<? super T> consumerElement,
 												Consumer<? super Throwable> consumerError,
 												Runnable onComplete){
 		CompletableFuture<Subscription>subscription = new CompletableFuture<>();
-		SequenceM.fromStream(stream).subscribe(new Subscriber<T>(){
+		CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
+		return tuple(subscription,()->{
+			SequenceM.fromStream(stream).subscribe(new Subscriber<T>(){
 
-			@Override
-			public void onSubscribe(Subscription s) {
-				Objects.requireNonNull(s);
-				s.request(x);
-				subscription.complete( s);
-			}
+				@Override
+				public void onSubscribe(Subscription s) {
+					Objects.requireNonNull(s);
+					s.request(x);
+					subscription.complete( s);
+				}
 
-			@Override
-			public void onNext(T t) {
-				consumerElement.accept(t);
+				@Override
+				public void onNext(T t) {
+					consumerElement.accept(t);
+					
+				}
+
+				@Override
+				public void onError(Throwable t) {
+					consumerError.accept(t);	
+				}
+
+				@Override
+				public void onComplete() {
+					streamCompleted.complete(true);
+					onComplete.run();
+				}
 				
-			}
-
-			@Override
-			public void onError(Throwable t) {
-				consumerError.accept(t);	
-			}
-
-			@Override
-			public void onComplete() {
-				
-				onComplete.run();
-			}
-			
-		});
-		return subscription;
+			});
+		},streamCompleted);
 	}
 	/**
 	 *  Perform a forEach operation over the Stream    capturing any elements and errors in the supplied consumers,  
@@ -228,38 +237,41 @@ public class FutureStreamUtils {
 	 * @param consumer To accept incoming elements from the Stream
 	 * @param consumerError To accept incoming processing errors from the Stream
 	 */
-	public static <T,X extends Throwable>  CompletableFuture<Subscription> forEachWithError(Stream<T> stream, Consumer<? super T> consumerElement,
+	public static <T,X extends Throwable>  Tuple3<CompletableFuture<Subscription>,Runnable,CompletableFuture<Boolean>> forEachWithError(Stream<T> stream, Consumer<? super T> consumerElement,
 			Consumer<? super Throwable> consumerError){
 		CompletableFuture<Subscription>subscription = new CompletableFuture<>();
-		SequenceM.fromStream(stream).subscribe(new Subscriber<T>(){
+		CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
+		return tuple(subscription,()-> {
+			SequenceM.fromStream(stream).subscribe(new Subscriber<T>(){
 
-			@Override
-			public void onSubscribe(Subscription s) {
-				Objects.requireNonNull(s);
-				s.request(Long.MAX_VALUE);
-				subscription.complete(s);
-			}
+				@Override
+				public void onSubscribe(Subscription s) {
+					Objects.requireNonNull(s);
+					subscription.complete(s);
+					s.request(Long.MAX_VALUE);
+					
+				}
 
-			@Override
-			public void onNext(T t) {
-				consumerElement.accept(t);
-				
-			}
+				@Override
+				public void onNext(T t) {
+					consumerElement.accept(t);
+					
+				}
 
-			@Override
-			public void onError(Throwable t) {
-				consumerError.accept(t);
-				
-			}
+				@Override
+				public void onError(Throwable t) {
+					consumerError.accept(t);
+					
+				}
 
-			@Override
-			public void onComplete() {
+				@Override
+				public void onComplete() {
+					streamCompleted.complete(true);
+					
+				}
 				
-				
-			}
-			
-		});
-		return subscription;
+			});
+		},streamCompleted);
 		
 	}
 	/**
@@ -290,38 +302,42 @@ public class FutureStreamUtils {
 	 * @param onComplete To run after an onComplete event
 	 * @return Subscription so that further processing can be continued or cancelled.
 	 */
-	public static <T,X extends Throwable> CompletableFuture<Subscription> forEachEvent(Stream<T> stream,Consumer<? super T> consumerElement,
+	public static <T,X extends Throwable> Tuple3<CompletableFuture<Subscription>,Runnable,CompletableFuture<Boolean>> forEachEvent(Stream<T> stream,Consumer<? super T> consumerElement,
 			Consumer<? super Throwable> consumerError,
 			Runnable onComplete){
 		CompletableFuture<Subscription>subscription = new CompletableFuture<>();
-		SequenceM.fromStream(stream).subscribe(new Subscriber<T>(){
+		CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
+		return tuple(subscription,()->{
+			SequenceM.fromStream(stream).subscribe(new Subscriber<T>(){
 
-			@Override
-			public void onSubscribe(Subscription s) {
-				Objects.requireNonNull(s);
-				s.request(Long.MAX_VALUE);
-				subscription.complete(s);
-			}
+				@Override
+				public void onSubscribe(Subscription s) {
+					Objects.requireNonNull(s);
+					subscription.complete(s);
+					s.request(Long.MAX_VALUE);
+					
+				}
 
-			@Override
-			public void onNext(T t) {
-				consumerElement.accept(t);
+				@Override
+				public void onNext(T t) {
+					consumerElement.accept(t);
+					
+				}
+
+				@Override
+				public void onError(Throwable t) {
+					consumerError.accept(t);
+					
+				}
+
+				@Override
+				public void onComplete() {
+					streamCompleted.complete(true);
+					onComplete.run();
+					
+				}
 				
-			}
-
-			@Override
-			public void onError(Throwable t) {
-				consumerError.accept(t);
-				
-			}
-
-			@Override
-			public void onComplete() {
-				onComplete.run();
-				
-			}
-			
-		});
-		return subscription;
+			});
+		},streamCompleted);
 	}
 }

@@ -1,29 +1,23 @@
 package com.aol.cyclops.streams.reactivestreams;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsTerminalOperations;
+import com.aol.cyclops.streams.StreamUtils;
 
 public class ForEachSequenceMTest {
-	Executor exec = Executors.newFixedThreadPool(1);
-	volatile boolean complete =false;
+	boolean complete =false;
 	@Before
 	public void setup(){
 		error= null;
@@ -32,20 +26,24 @@ public class ForEachSequenceMTest {
 
 	@Test
 	public void forEachX(){
-		Subscription s = SequenceM.of(1,2,3)
-							.futureOperations(exec)
-							.forEachX( 2, System.out::println)
-							.join();
+		Subscription s = SequenceM.of(1,2,3).forEachX( 2, System.out::println);
 		System.out.println("first batch");
 		s.request(1);
 	}
 	@Test
 	public void forEachXTest(){
 		List<Integer> list = new ArrayList<>();
-		Subscription s = SequenceM.of(1,2,3)
-								  .futureOperations(exec)
-								   .forEachX( 2,  i->list.add(i))
-								   .join();
+		Subscription s = SequenceM.of(1,2,3).forEachX( 2,  i->list.add(i));
+		assertThat(list,hasItems(1,2));
+		assertThat(list.size(),equalTo(2));
+		s.request(1);
+		assertThat(list,hasItems(1,2,3));
+		assertThat(list.size(),equalTo(3));
+	}
+	@Test
+	public void forEachXTestIsComplete(){
+		List<Integer> list = new ArrayList<>();
+		Subscription s = SequenceM.of(1,2,3).forEachX( 2,  i->list.add(i));
 		assertThat(list,hasItems(1,2));
 		assertThat(list.size(),equalTo(2));
 		s.request(1);
@@ -60,10 +58,8 @@ public class ForEachSequenceMTest {
 		
 		Subscription s = SequenceM.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();})
 							.map(Supplier::get)
-							.futureOperations(exec)
 							.forEachXWithError( 2, i->list.add(i),
-								e->error=e)
-								.join();
+								e->error=e);
 		
 		assertThat(list,hasItems(1,2));
 		assertThat(list.size(),equalTo(2));
@@ -81,10 +77,8 @@ public class ForEachSequenceMTest {
 		List<Integer> list = new ArrayList<>();
 		
 		Subscription s = SequenceM.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get)
-						.futureOperations(exec)		
 						.forEachXEvents( 2, i->list.add(i),
-								e->error=e,()->complete=true).join()
-								;
+								e->error=e,()->complete=true);
 		
 		assertThat(list,hasItems(1,2));
 		assertThat(list.size(),equalTo(2));
@@ -101,15 +95,14 @@ public class ForEachSequenceMTest {
 	}
 	
 	
-	@Test 
+	@Test
 	public void forEachWithErrors(){
 	
 		List<Integer> list = new ArrayList<>();
 		assertThat(error,nullValue());
 		SequenceM.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get)
-							.futureOperations(exec)
 							.forEachWithError(  i->list.add(i),
-								e->error=e).join();
+								e->error=e);
 		
 		assertThat(list,hasItems(1,2,3));
 		assertThat(list.size(),equalTo(3));
@@ -128,9 +121,7 @@ public class ForEachSequenceMTest {
 		assertThat(error,nullValue());
 		SequenceM.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();})
 				.map(Supplier::get)
-				.futureOperations(exec) 
-				.forEachEvent( i->list.add(i),e->error=e,()->complete=true)
-				.join();
+				 .forEachEvent( i->list.add(i),e->error=e,()->complete=true);
 		
 		
 		
