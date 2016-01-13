@@ -27,11 +27,14 @@ import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collector;
 
+import org.reactivestreams.Subscription;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.future.FutureOperations;
+import com.aol.cyclops.streams.FutureStreamUtils;
 
 
 
@@ -318,6 +321,48 @@ public class FutureOperationsImpl<T> implements FutureOperations<T>, DoubleOpera
 	public void forEach(Consumer<T> c) {
 		 CompletableFuture.runAsync(()->stream.forEach(c),exec);
 		
+	}
+	
+	
+	@Override
+	public <X extends Throwable> CompletableFuture<Subscription> forEachX(long numberOfElements, Consumer<? super T> consumer) {
+		return CompletableFuture.supplyAsync(()->1,exec)
+				.thenComposeAsync(i ->FutureStreamUtils.forEachX(stream,numberOfElements, consumer));
+	}
+	@Override
+	public <X extends Throwable> CompletableFuture<Subscription> forEachXWithError(long numberOfElements, Consumer<? super T> consumer,
+			Consumer<? super Throwable> consumerError) {
+		return CompletableFuture.supplyAsync(()->1,exec)
+				.thenComposeAsync(i ->FutureStreamUtils.forEachXWithError(stream,numberOfElements, consumer, consumerError));
+
+		
+	}
+	@Override
+	public <X extends Throwable> CompletableFuture<Subscription> forEachXEvents(long numberOfElements, Consumer<? super T> consumer,
+			Consumer<? super Throwable> consumerError, Runnable onComplete) {
+		return CompletableFuture.supplyAsync(()->1,exec)
+								.thenCompose(i ->FutureStreamUtils.forEachXEvents(stream,numberOfElements, consumer, consumerError, onComplete));
+	}
+	@Override
+	public <X extends Throwable> CompletableFuture<Subscription> forEachWithError(Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError) {
+		
+		return CompletableFuture.supplyAsync(()->1,exec)
+						.thenComposeAsync(i -> FutureStreamUtils.forEachWithError(stream,consumerElement, consumerError));
+	}
+	@Override
+	public <X extends Throwable> CompletableFuture<Subscription> forEachEvent(Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError,
+			Runnable onComplete) {
+		return CompletableFuture.supplyAsync(()->1,exec)
+				.	thenComposeAsync(i -> FutureStreamUtils.forEachEvent(stream,consumerElement, consumerError,onComplete));
+	}
+	@Override
+	public CompletableFuture<T> single(Predicate<T> predicate) {
+		return CompletableFuture.supplyAsync(()-> stream.filter(predicate).single(),exec);
+				
+	}
+	@Override
+	public CompletableFuture<Optional<T>> singleOptional() {
+		return CompletableFuture.supplyAsync(()-> stream.singleOptional(),exec);
 	}
 	
 }

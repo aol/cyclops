@@ -17,7 +17,9 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
-public interface FutureOperations<T> extends IntOperators<T>,DoubleOperators<T>, LongOperators<T> {
+import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsTerminalFutureOperations;
+
+public interface FutureOperations<T> extends IntOperators<T>,DoubleOperators<T>, LongOperators<T>,ReactiveStreamsTerminalFutureOperations<T> {
 
 	
 	
@@ -46,6 +48,17 @@ public interface FutureOperations<T> extends IntOperators<T>,DoubleOperators<T>,
 	 *         otherwise throws an UnsupportedOperationException
 	 */
 	public CompletableFuture<T> single();
+	/**
+	 * @return the only entry in this Stream if it is a single entry Stream,
+	 *         otherwise throws an UnsupportedOperationException
+	 */
+	public CompletableFuture<T> single(Predicate<T> predicate);
+	
+	/**
+	 * @return the only entry in this Stream if it is a single entry Stream,
+	 *         otherwise throws an UnsupportedOperationException
+	 */
+	public CompletableFuture<Optional<T>> singleOptional();
 	
 	
 	/**

@@ -15,7 +15,7 @@ import com.aol.cyclops.streams.StreamUtils;
 public class WindowStatefullyWhileOperator<T> {
 	 private static final Object UNSET = new Object();
 	Stream<T> stream;
-	public Stream<Streamable<T>> windowStatefullyWhile(BiPredicate<Streamable<T>,T> predicate){
+	public Stream<Streamable<T>> windowStatefullyWhile(BiPredicate<Streamable<? super T>,? super T> predicate){
 		Iterator<T> it = stream.iterator();
 		return StreamUtils.stream(new Iterator<Streamable<T>>(){
 			Streamable<T> last= Streamable.empty();

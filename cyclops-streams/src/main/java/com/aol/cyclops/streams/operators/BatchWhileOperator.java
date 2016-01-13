@@ -12,7 +12,7 @@ import lombok.Value;
 
 import com.aol.cyclops.streams.StreamUtils;
 @Value
-public class BatchWhileOperator<T, C extends Collection<T>> {
+public class BatchWhileOperator<T, C extends Collection<? super T>> {
 	 private static final Object UNSET = new Object();
 	Stream<T> stream;
 	Supplier<C> factory;
@@ -27,7 +27,7 @@ public class BatchWhileOperator<T, C extends Collection<T>> {
 		this.factory = factory;
 	}
 	
-	public Stream<C> batchWhile(Predicate<T> predicate){
+	public Stream<C> batchWhile(Predicate<? super T> predicate){
 		Iterator<T> it = stream.iterator();
 		return StreamUtils.stream(new Iterator<C>(){
 			T value = (T)UNSET;

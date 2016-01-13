@@ -13,7 +13,7 @@ public class RecoverOperator<T> {
 	Stream<T> stream;
 	Class<Throwable> type;
 	private static final Object UNSET = new Object();
-	public Stream<T> recover(Function<Throwable,T> fn){
+	public Stream<T> recover(Function<Throwable,? extends T> fn){
 		Iterator<T> it = stream.iterator();
 		
 		return StreamUtils.stream(new Iterator<T>(){

@@ -1949,14 +1949,42 @@ SequenceM.of(1,2,3,5,6,7).xMatch(3, i-> i>4 )
 ====
 
 
-=== foldLeft / foldRight /join / collect
+=== foldLeft / foldRight / join / reduce
 
 ==== foldLeft
 
 foldLeft performs a terminal reduction operation, that starts with an identity value and the start of the Stream, applying the identiy value and first value to a user supplied accumulation function, the second value is then applied to the result and so on until the end of the Stream when the acummulated result is returned.
-
-.foldLeft
+.foldLeft  examples
 ====
+[source,java]
+----
+Streamable.of("hello","world").foldLeft("",(a,b)->a+":"+b);
+//"hello:world"
+
+SequenceM.of(1,2,3).foldLeft(0,(a,b)->a+b);
+//6
+
+StreamUtils.foldLeft(Stream.of(2,4,5),1,(a,b)->a*b));
+//40
+----
+====
+.foldLeft Monoid example
+====
+
+The Reducers class contains a number of cyclops Monoid instances, Monoid is a class that maps to the method signature of reduce / foldLeft / foldRight / scanLeft / scanRight. The Reducers class contains canned reduction operations for String concatonation, Immutable List concatonation, Numeric reduction etc.
+
+[source,java]
+----
+SequenceM.of("a","b","c").foldLeft(Reducers.toString(""))
+//"abc"
+
+----
+The map to type operator accepts a cyclops Monoid instance, and uses the mapToType function on that interface to enforce the type accepted by the Monoid.
+[source,java]
+----
+SequenceM.of(1,2,3).foldLeftMapToType(Reducers.toString(""));
+// "123"
+----
 ====
 
 ==== join
@@ -1987,6 +2015,50 @@ SequenceM.of(1, 2, 3).join("|", "^", "$")
 ----
 ====
 
+==== foldRight
+
+foldRight performs a terminal reduction operation, that starts with an identity value and the end of the Stream, applying the identiy value and the last value to a user supplied accumulation function, the second last value is then applied to the result and so on until the start of the Stream when the acummulated result is returned.
+
+.foldRight  examples
+====
+[source,java]
+----
+Streamable.of("hello","world").foldRight("",(a,b)->a+":"+b);
+//"world:hello"
+
+SequenceM.of(1,2,3).foldRight(0,(a,b)->a+b);
+//6
+
+StreamUtils.foldRight(Stream.of(2,4,5),1,(a,b)->a*b));
+//40
+----
+====
+
+.foldRight Monoid example
+====
+The Reducers class contains a number of cyclops Monoid instances, Monoid is a class that maps to the method signature of reduce / foldLeft / foldRight / scanLeft / scanRight. The Reducers class contains canned reduction operations for String concatonation, Immutable List concatonation, Numeric reduction etc.
+
+[source,java]
+----
+SequenceM.of("a","b","c").foldRight(Reducers.toString(""))
+//"cba"
+----
+
+The map to type operator accepts a cyclops Monoid instance, and uses the mapToType function on that interface to enforce the type accepted by the Monoid.
+[source,java]
+----
+SequenceM.of(1,2,3).foldRightMapToType(Reducers.toString(""));
+// "321"
+----
+====
+==== Reduce
+
+The reduce operator is a foldLeft like operator, with some functions inherited from java.util.stream.Stream.
+
+.mapReduce Monoid example
+====
+The mapReduce operator incorporates a mapToType operation with reduction.
+
 [source,java]
 ----
 SequenceM.of("hello","2","world","4").mapReduce(Reducers.toCountInt())
@@ -1994,42 +2066,148 @@ SequenceM.of("hello","2","world","4").mapReduce(Reducers.toCountInt())
 
 SequenceM.of("one","two","three","four").mapReduce(this::toInt,Reducers.toTotalInt())
 //10
+----
+====
 
+We can reduce a Stream using multiple monoids / reducers at once.
 
+.reduce an Iterable of Monoids
+====
 
-List result = SequenceM.of(1,2,3)
-    .collectStream(Stream.of(Collectors.toList(),Collectors.summingInt(Integer::intValue),Collectors.averagingInt(Integer::intValue)));
-
-//List[List(1,2,3),6.2.0]
-
-
-
+[source,java]
+----
 Monoid sum = Monoid.of(0,(a,b)->a+b);
 Monoid mult = Monoid.of(1,(a,b)->a*b);
-List result = SequenceM.of(1,2,3,4)).reduce(Arrays.asList(sum,mult) );
+List<Integer> result = SequenceM.of(1,2,3,4)).reduce(Arrays.asList(sum,mult) );
 //List[10,24]
+----
+====
 
+
+=== conversions
+
+=== toList / toSet / toMap
+
+The are are a number of convenience methods for creating collections.
+
+.toList / toSet / toMap 
+====
+[source,java]
+----
 SequenceM.of(1,2,3).toList()
 //List[1,2,3]
+
+SequenceM.of(1,2,3).toList(()-> new LinkedList())
+//LinkedList[1,2,3]
 
 SequenceM.of(1,2,3,1,2,3).toSet()
 //Set[1,2,3]
 
 SequenceM.of(1,2,3).toMap(v->"key:"+v,v->v)
 //Map["key:1":1,"key:2":2,"key:3":3]
-
-SequenceM.of("a","b","c").foldRight(Reducers.toString(""))
-//"cba"
-
-SequenceM.of("a","b","c").foldLeft(Reducers.toString(""))
-//"abc"
 ----
+====
+=== toLazyCollection / toConcurrentLazyCollection
 
-=== conversions - toOptional, toCompletableFuture, toAnyM, toStreamable
-=== toList, toLazyCollection, toSet
-=== Other terminal operations
-==== Combinations
-==== Permutations
+Cyclops provides operators to lazily create a collection from the Stream. The values are only pulled through the Stream as the lazy collection is used. toConcurrentLazyCollection synchronizes iteration through the underlying Stream.
+
+.toLazyCollection / toConcurrentLazyCollection
+====
+[source,java]
+----
+Collection<Integer> col = SequenceM.of(1,2,3,4,5)
+											.peek(System.out::println)
+											.toLazyCollection();
+		
+col.forEach(System.out::println);
+Collection<Integer> col = SequenceM.of(1,2,3,4,5)
+								   .peek(System.out::println)
+								   .toConcurrentLazyCollection();
+		
+col.forEach(System.out::println);	
+----
+====
+===  toCompletableFuture / toOptional
+
+.toCompletableFuture / toOptional 
+====
+[source,java]
+----
+Optional<List<String>> stream = SequenceM.of("hello","world")
+												.toOptional();
+												
+//Optional[List["hello","world"]]
+		
+ CompletableFuture<List<String>> cf = SequenceM.of("hello","world")
+											.toCompletableFuture();
+
+//CompletableFuture[List["hello","world"]]		
+----
+====
+===  anyM / toStreamable
+
+The anyM operator wraps the SequenceM in the cyclops anyM wrapper class that can provide a common api over any monad type.
+
+[NOTE]
+====
+A monad is a fluent, generic wrapper type (that obeys the monad laws) - like Stream, Optional, CompleteableFuture in Java as well as Try & FeatureToggle in cyclops.
+====
+
+AnyM keeps type information for the underlying data - so if we call anyM() on a SequenceM of integers the result is an AnyM<Integer>. AnyM facilates writing common code that can accept any monad type.
+
+The toStreamable operator converts the SequenceM to a caching Streamable.
+
+.toStreamable / anyM
+====
+[source,java]
+----
+Streamable<String> caching = SequenceM.of("hello","world")
+												.toStreamable();
+												
+caching.forEach(System.out::println);
+caching.forEach(System.out::println);
+
+//can print the contents of the Stream twice.
+		
+AnyM<String> anyM = SequenceM.of("hello","world")
+											.anyM();
+
+
+anyM.map(v->v+"!");
+//AnyM[SequenceM["hello!","world!"]]
+----
+====
+
+==== Combinations & Permutations
+
+Comintations  & permutations return all the cominations and permutations of values within a Stream respectively. 
+
+[WARNING]
+====
+These opertors make use of the caching streamable so is not suitable for infinte Streams.
+====
+
+
+.combinations
+====
+[source,java]
+----
+Streamable.of(1,2,3).combinations(2)
+	  
+//Streamable[Streamable[1,2],Streamable[1,3],Streamable[2,3]]
+----
+====
+
+.permutations
+====
+[source,java]
+----
+Streamable.of(1, 2, 3).permutations()
+
+//Streamable[Streamable[1, 2, 3],Streamable[1, 3, 2], Streamable[2, 1, 3], Streamable[2, 3, 1], Streamable[3, 1, 2], Streamable[3, 2, 1]
+----
+====
+
 
 === Async terminal operations 
 

@@ -15,7 +15,7 @@ import com.aol.cyclops.streams.StreamUtils;
 public class MultiReduceOperator<R> {
 
 	Stream<R> stream;
-	public List<R> reduce(Iterable<Monoid<R>> reducers){
+	public List<R> reduce(Iterable<? extends Monoid<R>> reducers){
 		Monoid<R> m = new Monoid(){
 			public List zero(){
 				return StreamUtils.stream(reducers).map(r->r.zero()).collect(Collectors.toList());
