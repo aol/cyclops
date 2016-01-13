@@ -20,13 +20,7 @@ import fj.data.Seq;
 public class HotStreamTest {
 	static final Executor exec = Executors.newFixedThreadPool(1);
 	volatile Object value;
-	@Test
-	public void backpressure(){
-		OneToOneConcurrentArrayQueue q = new OneToOneConcurrentArrayQueue<>(1);
-		q.add("hello");
-		q.add("world");
-		q.forEach(System.out::println);
-	}
+	
 	@Test
 	public void hotStream() throws InterruptedException{
 		value= null;
