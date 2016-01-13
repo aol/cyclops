@@ -20,6 +20,36 @@ public class ExceptionSoftenerTest {
 		throw ExceptionSoftener.throwSoftenedException(new RuntimeException("hello"));
 	}
 	
+	@Test(expected=IOException.class)
+	public void testThrowif(){
+		ExceptionSoftener.throwIf(new IOException("hello"), e-> e instanceof IOException);
+	}
+	@Test
+	public void testThrowifFalse(){
+		ExceptionSoftener.throwIf(new IOException("hello"), e-> e.getMessage()=="world");
+	}
+	boolean value = false;
+	@Test
+	public void testThrowOrHandle(){
+		value = false;
+		try{
+			ExceptionSoftener.throwOrHandle(new IOException("hello"), e-> e instanceof IOException,c->this.value=true);
+			fail("should not reach");
+		}catch(Exception e){
+			assertFalse(value);
+		}
+	}
+	@Test
+	public void testThrowifHandle(){
+		value = false;
+		try{
+			ExceptionSoftener.throwOrHandle(new IOException("hello"), e-> e.getMessage()=="world",c->this.value=true);
+			
+		}catch(Exception e){
+			assertTrue(value);
+		}
+		
+	}
 	private String get() throws IOException{
 		return "hello";
 	}

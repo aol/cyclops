@@ -827,6 +827,29 @@ public class ExceptionSoftener {
 	public static RuntimeException throwSoftenedException(final Throwable e) {
 		throw ExceptionSoftener.<RuntimeException>uncheck(e);
 	}
+	/**
+	 * Throw the exception as upwards if the predicate holds, otherwise do nothing
+	 * 
+	 * @param e Exception
+	 * @param p Predicate to check exception should be thrown or not
+	 */
+	public static <X extends Throwable> void throwIf(final X e,final Predicate<X> p) {
+		if(p.test(e))
+			throw ExceptionSoftener.<RuntimeException>uncheck(e);
+	}
+	/**
+	 * Throw the exception as upwards if the predicate holds, otherwise pass to the handler
+	 * 
+	 * @param e  Exception
+	 * @param p Predicate to check exception should be thrown or not
+	 * @param handler Handles exceptions that should not be thrown
+	 */
+	public static <X extends Throwable> void throwOrHandle(final X e,final Predicate<X> p, Consumer<X> handler)  {
+		if(p.test(e))
+			throw ExceptionSoftener.<RuntimeException>uncheck(e);
+		else
+			handler.accept(e);
+	}
 	
 	@SuppressWarnings("unchecked")
 	private static <T extends Throwable> T uncheck(Throwable throwable) throws T {
