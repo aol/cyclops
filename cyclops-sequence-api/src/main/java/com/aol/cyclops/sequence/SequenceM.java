@@ -520,6 +520,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @return Stream with elements grouped by size
 	 */
 	SequenceM<List<T>> grouped(int groupSize);
+	public default org.jooq.lambda.Seq org.jooq.lambda.Seq.grouped(java.util.function.Function,java.util.stream.Collector);
+	public default org.jooq.lambda.Seq org.jooq.lambda.Seq.grouped(java.util.function.Function);
 	/**
 	 * Use classifier function to group elements in this Sequence into a Map
 	 * <pre>
@@ -664,6 +666,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 *         holds
 	 */
 	SequenceM<T> skipUntil(Predicate<? super T> p);
+	public default org.jooq.lambda.Seq org.jooq.lambda.Seq.skipUntilClosed(java.util.function.Predicate);
 
 	/**
 	 * 
@@ -702,6 +705,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @return Stream with limited elements
 	 */
 	SequenceM<T> limitUntil(Predicate<? super T> p);
+	public default org.jooq.lambda.Seq org.jooq.lambda.Seq.limitUntilClosed(java.util.function.Predicate)
 	/**
 	 * @return Does nothing SequenceM is for Sequential Streams
 	 * 	 
