@@ -14,7 +14,7 @@ import com.aol.cyclops.streams.StreamUtils;
 public class WindowWhileOperator<T> {
 	 private static final Object UNSET = new Object();
 	Stream<T> stream;
-	public Stream<Streamable<T>> windowWhile(Predicate<T> predicate){
+	public Stream<Streamable<T>> windowWhile(Predicate<? super T> predicate){
 		Iterator<T> it = stream.iterator();
 		return StreamUtils.stream(new Iterator<Streamable<T>>(){
 			T value = (T)UNSET;

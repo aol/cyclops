@@ -5,7 +5,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -24,10 +23,9 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
-import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -38,6 +36,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import lombok.AllArgsConstructor;
+import lombok.val;
 import lombok.experimental.UtilityClass;
 
 import org.jooq.lambda.Seq;
@@ -46,6 +45,7 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
+import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.closures.mutable.Mutable;
 import com.aol.cyclops.internal.AsGenericMonad;
@@ -103,6 +103,190 @@ public class StreamUtils{
 	public final static <T> Stream<T> completableFutureToStream(CompletableFuture<T> future){
 		return Stream.of(future.join());
 			
+	}
+	/**
+	 * Perform a forEach operation over the Stream, without closing it, consuming only the specified number of elements from
+	 * the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription
+	 * 
+	 * <pre>
+	 * @{code
+	 *     Subscription next = StreamUtils.forEachX(Stream.of(1,2,3,4),2,System.out::println);
+	 *          
+	 *     System.out.println("First batch processed!");
+	 *     
+	 *     next.request(2);
+	 *     
+	 *      System.out.println("Second batch processed!");
+	 *      
+	 *     //prints
+	 *     1
+	 *     2
+	 *     First batch processed!
+	 *     3
+	 *     4 
+	 *     Second batch processed!
+	 * }
+	 * </pre>
+	 * 
+	 * @param Stream - the Stream to consume data from
+	 * @param numberOfElements To consume from the Stream at this time
+	 * @param consumer To accept incoming events from the Stream
+	 * @return Subscription so that further processing can be continued or cancelled.
+	 */
+	public static <T,X extends Throwable> Subscription forEachX(Stream<T> stream, long x, Consumer<? super T> consumerElement){
+		val t2 = FutureStreamUtils.forEachX(stream, x, consumerElement);
+		t2.v2.run();
+		return t2.v1.join();
+	}
+	/**
+	 * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
+	 * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription 
+	 * <pre>
+	 * @{code
+	 *     Subscription next = StreamUtils.forEachXWithError(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+	 *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace());
+	 *          
+	 *     System.out.println("First batch processed!");
+	 *     
+	 *     next.request(2);
+	 *     
+	 *      System.out.println("Second batch processed!");
+	 *      
+	 *     //prints
+	 *     1
+	 *     2
+	 *     First batch processed!
+	 *     
+	 *     RuntimeException Stack Trace on System.err
+	 *     
+	 *     4 
+	 *     Second batch processed!
+	 * }
+	 * </pre>	 
+	 * 
+	 * @param Stream - the Stream to consume data from
+	 * @param numberOfElements To consume from the Stream at this time
+	 * @param consumer To accept incoming elements from the Stream
+	 * @param consumerError To accept incoming processing errors from the Stream
+	 * @param onComplete To run after an onComplete event
+	 * @return Subscription so that further processing can be continued or cancelled.
+	 */
+	public static <T,X extends Throwable> Subscription forEachXWithError(Stream<T> stream, long x, 
+			Consumer<? super T> consumerElement,Consumer<? super Throwable> consumerError){
+		val t2 =FutureStreamUtils.forEachXWithError(stream, x, consumerElement,consumerError);
+		t2.v2.run();
+		return t2.v1.join();
+	}
+	/**
+	 * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
+	 * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription,
+	 * when the entire Stream has been processed an onComplete event will be recieved.
+	 * 
+	 * <pre>
+	 * @{code
+	 *     Subscription next = StreamUtils.forEachXEvents(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+	 *                                  .map(Supplier::get) ,System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
+	 *          
+	 *     System.out.println("First batch processed!");
+	 *     
+	 *     next.request(2);
+	 *     
+	 *      System.out.println("Second batch processed!");
+	 *      
+	 *     //prints
+	 *     1
+	 *     2
+	 *     First batch processed!
+	 *     
+	 *     RuntimeException Stack Trace on System.err
+	 *     
+	 *     4 
+	 *     Second batch processed!
+	 *     The end!
+	 * }
+	 * </pre>
+	 * @param Stream - the Stream to consume data from	 
+	 * @param numberOfElements To consume from the Stream at this time
+	 * @param consumer To accept incoming elements from the Stream
+	 * @param consumerError To accept incoming processing errors from the Stream
+	 * @param onComplete To run after an onComplete event
+	 * @return Subscription so that further processing can be continued or cancelled.
+	 */
+	public static <T,X extends Throwable> Subscription forEachXEvents(Stream<T> stream, long x, 
+												Consumer<? super T> consumerElement,
+												Consumer<? super Throwable> consumerError,
+												Runnable onComplete){
+		val t2 = FutureStreamUtils.forEachXEvents(stream, x, consumerElement,consumerError,onComplete);
+		t2.v2.run();
+		return t2.v1.join();
+	}
+	/**
+	 *  Perform a forEach operation over the Stream    capturing any elements and errors in the supplied consumers,  
+	 * <pre>
+	 * @{code
+	 *     Subscription next = StreanUtils.forEachWithError(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+	 *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace());
+	 *          
+	 *     System.out.println("processed!");
+	 *     
+	 *    
+	 *      
+	 *     //prints
+	 *     1
+	 *     2
+	 *     RuntimeException Stack Trace on System.err
+	 *     4
+	 *     processed!
+	 *     
+	 * }
+	 * </pre>
+	 * @param Stream - the Stream to consume data from	 
+	 * @param consumer To accept incoming elements from the Stream
+	 * @param consumerError To accept incoming processing errors from the Stream
+	 */
+	public static <T,X extends Throwable>  void forEachWithError(Stream<T> stream, Consumer<? super T> consumerElement,
+			Consumer<? super Throwable> consumerError){
+		
+		val t2 =FutureStreamUtils.forEachWithError(stream, consumerElement,consumerError);
+		t2.v2.run();
+		
+		
+	}
+	/**
+	 * Perform a forEach operation over the Stream  capturing any elements and errors in the supplied consumers
+	 * when the entire Stream has been processed an onComplete event will be recieved.
+	 * 
+	 * <pre>
+	 * @{code
+	 *     Subscription next = StreamUtils.forEachEvents(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+	 *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
+	 *          
+	 *     System.out.println("processed!");
+	 *     
+	 *      
+	 *     //prints
+	 *     1
+	 *     2
+	 *     RuntimeException Stack Trace on System.err
+	 *      4 
+	 *     processed!
+	 *     
+	 *     
+	 * }
+	 * </pre>
+	 * @param Stream - the Stream to consume data from	
+	 * @param consumer To accept incoming elements from the Stream
+	 * @param consumerError To accept incoming processing errors from the Stream
+	 * @param onComplete To run after an onComplete event
+	 * @return Subscription so that further processing can be continued or cancelled.
+	 */
+	public static <T,X extends Throwable>void forEachEvent(Stream<T> stream,Consumer<? super T> consumerElement,
+			Consumer<? super Throwable> consumerError,
+			Runnable onComplete){
+		
+		val t2 =FutureStreamUtils.forEachEvent(stream, consumerElement,consumerError,onComplete);
+		t2.v2.run();
+		
 	}
 	
 	/**
@@ -531,11 +715,11 @@ public class StreamUtils{
 	public static <U> Stream<U> limitLast(Stream<U> stream,int num){
 		return new LimitLastOperator<>(stream,num).limitLast();
 	}
-	public static <T> Stream<T> recover(Stream<T> stream,Function<Throwable, T> fn){
+	public static <T> Stream<T> recover(Stream<T> stream,Function<Throwable, ? extends T> fn){
 		return new RecoverOperator<>(stream,Throwable.class).recover(fn);
 	}
 	public static <T,EX extends Throwable> Stream<T> recover(Stream<T> stream,Class<EX> type,
-						Function<EX, T> fn){
+						Function<EX, ? extends T> fn){
 		return new RecoverOperator<T>(stream,(Class)type)
 								.recover((Function)fn);
 	}
@@ -776,7 +960,7 @@ public class StreamUtils{
 	 * @return Reduced Stream values as List entries
 	 */
 	@SuppressWarnings({"rawtypes","unchecked"})
-	public static <R> List<R> reduce(Stream<R> stream,Iterable<Monoid<R>> reducers){
+	public static <R> List<R> reduce(Stream<R> stream,Iterable<? extends Monoid<R>> reducers){
 		return new MultiReduceOperator<R>(stream).reduce(reducers);
 		
 	}
@@ -797,7 +981,7 @@ public class StreamUtils{
 	 * @return Reduced Stream values as List entries
 	 */
 	@SuppressWarnings({"rawtypes","unchecked"})
-	public static <R> List<R> reduce(Stream<R> stream,Stream<Monoid<R>> reducers){
+	public static <R> List<R> reduce(Stream<R> stream,Stream<? extends Monoid<R>> reducers){
 		return (List)reduce(stream, (List)reducers.collect(Collectors.toList()));
 		
 	}
@@ -1824,25 +2008,25 @@ public class StreamUtils{
 			return new BatchByTimeOperator<T,C>(stream,factory).batchByTime(time,t);
 	  }
 	  private static final Object UNSET = new Object();
-	  public final static <T> Stream<Streamable<T>> windowStatefullyWhile(Stream<T> stream,BiPredicate<Streamable<T>,T> predicate){
+	  public final static <T> Stream<Streamable<T>> windowStatefullyWhile(Stream<T> stream,BiPredicate<Streamable<? super T>,? super T> predicate){
 			return new WindowStatefullyWhileOperator<>(stream).windowStatefullyWhile(predicate);
 	  }
-	  public final static <T> Stream<Streamable<T>> windowWhile(Stream<T> stream,Predicate<T> predicate){
+	  public final static <T> Stream<Streamable<T>> windowWhile(Stream<T> stream,Predicate<? super T> predicate){
 			return new WindowWhileOperator<>(stream).windowWhile(predicate);
 	  }
-	  public final static <T> Stream<List<T>> batchWhile(Stream<T> stream,Predicate<T> predicate){
+	  public final static <T> Stream<List<T>> batchWhile(Stream<T> stream,Predicate<? super T> predicate){
 			return new BatchWhileOperator<T,List<T>>(stream).batchWhile(predicate);
 	  }
-	  public final static <T, C extends Collection<T>> Stream<C> batchWhile(Stream<T> stream,Predicate<T> predicate,Supplier<C> factory){
+	  public final static <T, C extends Collection<? super T>> Stream<C> batchWhile(Stream<T> stream,Predicate<? super T> predicate,Supplier<C> factory){
 			return new BatchWhileOperator<T,C>(stream,factory).batchWhile(predicate);
 	  }
-	  public final static <T> Stream<List<T>> batchUntil(Stream<T> stream,Predicate<T> predicate){
+	  public final static <T> Stream<List<T>> batchUntil(Stream<T> stream,Predicate<? super T> predicate){
 			return batchWhile(stream,predicate.negate());
 	  }
 	  public final static <T> Stream<List<T>> batchBySizeAndTime(Stream<T> stream,int size, long time, TimeUnit t){
 			return new BatchByTimeAndSizeOperator<T,List<T>>(stream).batchBySizeAndTime(size, time, t);
 	  }
-	  public final static <T, C extends Collection<T>> Stream<C>   batchBySizeAndTime(Stream<T> stream,int size, long time, TimeUnit t,Supplier<C> factory){
+	  public final static <T, C extends Collection<? super T>> Stream<C>   batchBySizeAndTime(Stream<T> stream,int size, long time, TimeUnit t,Supplier<C> factory){
 			return new BatchByTimeAndSizeOperator<T,C>(stream,factory).batchBySizeAndTime(size, time, t);
 	  }
 	  public final static <T> Stream<Streamable<T>> windowBySizeAndTime(Stream<T> stream,int size, long time, TimeUnit t){

@@ -361,7 +361,8 @@ public  class BaseStreamableTest {
 		}
 	    @Test
 		public void flattenOptional() throws Exception {
-				assertTrue(SequenceM.of(Optional.of(1)).flatten().toList().get(0)==new Integer(1));
+	    	
+				assertTrue(SequenceM.of(Optional.of(1)).flatten().toList().get(0).equals(new Integer(1)));
 		}
 
 		@Test

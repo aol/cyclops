@@ -31,12 +31,12 @@ import com.aol.cyclops.streams.StreamUtils;
 public class SequenceMTest {
 	
 	@Test
-    public void emptyAllCombinations() {
+    public void emptyAllPermutations() {
         assertThat(Streamable.of().permutations().map(s->s.toList()).toList(),equalTo(Arrays.asList()));
     }
 
     @Test
-    public void allCombinations3() {
+    public void allPermutations3() {
     	System.out.println(Streamable.of(1, 2, 3).permutations().map(s->s.toList()).toList());
         assertThat(Streamable.of(1, 2, 3).permutations().map(s->s.toList()).toList(),
         		equalTo(Streamable.of(Streamable.of(1, 2, 3),
