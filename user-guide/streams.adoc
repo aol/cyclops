@@ -210,7 +210,9 @@ SequenceM.range(0,Integer.MAX_VALUE)
 ----
 ====
 === reactive-streams
+
 reactive-streams is an api for advanced inter-stream operability. Cyclops, when simple-react is added to the class path can provide both a reactive-streams publisher and subscriber.
+
 ==== Creating a Subscriber
 
 SequenceM has a static subscriber method that returns a Cyclops reactive-streams Subscriber. That is a class that can subscribe to any reactive-streams publisher (e.g. an RxJava Observable, Pivotal REACTOR Stream, akka-stream etc).
@@ -229,6 +231,9 @@ sub.sequenceM().toList();
 In this example our subscriber will be empty, as it has not attached to a publisher, so our generated List will also be empty.
 ----
 ====
+
+==== Publishing
+
 SequenceM implements reactive-streams Publisher interface, and as such has the reactive-streams api publish method.
 
 .Connecting a Subscriber to a Publisher
@@ -2393,6 +2398,44 @@ List<Integer> result = SequenceM.of(1,2,3,4)).reduce(Arrays.asList(sum,mult) );
 ----
 ====
 
+=== Collection
+
+==== Collectable interface 
+
+SequenceM extends the jOOλ Collectable interface, this provides a range of useful additional terminal operations such as mean, mode, median & percentile and advanced Collection operators that enable you to in a type safe manner perform mutliple different types of mutable reductions simulatanouesly on a Stream.
+
+.mulitple mutable reduction (Collection)
+====
+
+[source,java]
+----
+ Tuple3<List<Integer>,Integer, Integer> aggregations = SequenceM.of(1,2,3,4)
+          .collect(Collectors.toList(),
+                 Collectors.averagingInt(i->i), Collectors.counting());
+
+//aggregations = Tuple3[List[1,2,3,4],2,4]
+----
+====
+
+==== FutureCollectable interface 
+
+cyclops additionally provides a FutureCollectable interface that it avaiable to SequenceM and StreamUtils via the futureOperations operator. The FutureCollectable interface provides asynchronous versions of the jOOλ Collectable termina operations.
+
+
+.async mulitple mutable reduction (Collection)
+====
+
+[source,java]
+----
+Executor exec = Executors.newFixedThreadPool(1);
+ CompletableFuture<Tuple3<List<Integer>,Integer, Integer>> aggregations = SequenceM.of(1,2,3,4)
+                         .futureOperations(exec)
+                         .collect(Collectors.toList(),
+                 Collectors.averagingInt(i->i), Collectors.counting());
+
+//aggregations = Tuple3[List[1,2,3,4],2,4]
+----
+====
 
 === conversions
 
@@ -2541,10 +2584,13 @@ Terminal operations can now all be called asynchronously e.g.
 
 [source,java]
 ----
+Executor exec = Executors.newFixedThreadPool(1);
         CompletableFuture size = SequenceM.of(1,2,3,4)
                                                           .futureOperations(exec)
                                                           .count();
 ----
+
+
 
 Available operations
 

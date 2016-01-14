@@ -56,15 +56,7 @@ public interface FutureCollectable<T>{
 	
 	public <U> CompletableFuture<Optional<U>> avg(Function<? super T, ? extends U> function) ;
 
-	/**
-	public CompletableFuture<Double> avgInt(ToIntFunction<? super T> function);
-
 	
-	public CompletableFuture<Double> avgLong(ToLongFunction<? super T> function);
-
-	
-	public CompletableFuture<Double> avgDouble(ToDoubleFunction<? super T> function);
-**/
 	
 	public CompletableFuture<Optional<T>> min() ;
 
