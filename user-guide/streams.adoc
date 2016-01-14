@@ -249,6 +249,220 @@ In this example our subscriber has connected to a publisher that will send the v
 Using the reactive-streams functionality in cyclops requires that simple-react be included on the classpath.
 ====
 
+==== forEachWithError
+
+since cyclops 7.2.0
+
+The forEachWithErrors operator allows users to iterate over a Stream providing a consumer for the elements for the Stream a lá Stream.forEach, and a consumer for the errors produced while processing the Stream.
+
+.forEachWithError with a SequenceM
+====
+[source,java]
+----
+List<Integer> list = new ArrayList<>();
+Throwable error = null;
+public String load(int i){
+   if(i==2)
+     throw new RuntimeException();
+
+}
+SequenceM.of(1,2,3,4)
+         .map(this::load)
+         .forEachWithError(  i->list.add(i), e->error=e);
+		
+
+//list =List[1,3,4]
+//error = RuntimeException
+
+----
+====
+==== forEachEvent
+
+since cyclops 7.2.0
+
+The forEachEvent operator is similar to forEachWithErrors but also accepts a Runnable that is run when the Stream has been completely consumed.
+
+.forEachEvent with a SequenceM
+====
+[source,java]
+----
+Closeable resource;
+List<Integer> list = new ArrayList<>();
+Throwable error = null;
+public String load(int i){
+   if(i==2)
+     throw new RuntimeException();
+
+}
+SequenceM.of(1,2,3,4)
+         .map(this::load)
+         .forEachEvent(  i->list.add(i), 
+                         logger::error,
+                         ()->resource.close());
+		
+
+//list =List[1,3,4]
+//runtime exception logged
+//resource is closed
+
+
+----
+====
+
+==== forEachX
+
+since cyclops 7.2.0
+
+forEachX allows users to consume only a specified amount of data from the Stream, returning a reactive-streams Subscription object that in turn allows more data to be consumed as needed.
+
+.forEachX with a JDK Stream
+====
+[source,java]
+----
+List<Integer> list = new ArrayList<>();
+Subscription s = StreamUtils.forEachX(Stream.of(1,2,3), 2,  i->list.add(i));
+assertThat(list,hasItems(1,2));
+assertThat(list.size(),equalTo(2));
+
+s.request(1); //request an additional iterm from the Stream be processed.
+
+assertThat(list,hasItems(1,2,3));
+assertThat(list.size(),equalTo(3));
+----
+====
+
+==== forEachXWithError
+
+since cyclops 7.2.0
+
+forEachXWithErrors allows users to consume only a specified amount of data from the Stream, returning a reactive-streams Subscription object that in turn allows more data to be consumed as needed. The forEachXWithErrors operator allows users to iterate over a Stream providing a consumer for the elements for the Stream a lá Stream.forEach, and a consumer for the errors produced while processing the Stream.
+
+.forEachWithError with a SequenceM
+====
+[source,java]
+----
+List<Integer> list = new ArrayList<>();
+Throwable error = null;
+public String load(int i){
+   if(i==2)
+     throw new RuntimeException();
+
+}
+Subscription s = SequenceM.of(1,2,3,4)
+                          .map(this::load)
+                          .forEachXWithError( 2, i->list.add(i), e->error=e);
+		
+
+//list =List[1]
+//error = RuntimeException
+
+s.request(1);
+
+//list =List[1,3]
+
+s.request(1);
+
+//list =List[1,3,4]
+----
+====
+
+==== forEachXEvents 
+
+since cyclops 7.2.0
+
+forEachXEvents allows users to consume only a specified amount of data from the Stream, returning a reactive-streams Subscription object that in turn allows more data to be consumed as needed. The forEachXEvents operator is similar to forEachXWithErrors but also accepts a Runnable that is run when the Stream has been completely consumed.
+
+.forEachXEvents with a SequenceM
+====
+[source,java]
+----
+List<Integer> list = new ArrayList<>();
+Throwable error = null;
+Closeable resource;
+public String load(int i){
+   if(i==2)
+     throw new RuntimeException();
+
+}
+Subscription s = SequenceM.of(1,2,3,4)
+                          .map(this::load)
+                          .forEachXEvents( 2, i->list.add(i),   logger::error,
+                           ()->resource.close());;
+		
+
+//list =List[1]
+//error = RuntimeException
+// resource open
+
+s.request(1);
+
+//list =List[1,3]
+
+s.request(1);
+
+//list =List[1,3,4]
+
+s.request(1); //no new elements end of Stream
+
+//list =List[1,3,4]
+// resource closed
+
+----
+====
+
+
+==== Reactive Future Operations & Reactive Tasks
+
+The reactive-streams based terminal operations can also be launched asynchronously, first by using the futureOperations operator to provide an Executor that will process the Stream.
+
+==== Using futureOperations
+
+
+The futureOperations operator opens up a world of asynchronously executed terminal operations. A large range of terminal operations are provided and for each one a CompletbableFuture is returned.
+
+.using FutureOperatons with a JDK Stream
+====
+[source,java]
+----
+Executor exec = Executors.newFixedThreadPool(1);
+FutureOperations<Integer> terminalOps  = StreamUtils.futureOperations(Stream.of(1,2,3), exec);
+
+
+//execute the collection & Stream evaluation  on the provided executor
+CompletableFuture<List<Integer>> futureList = terminalOps.collect(Collectors.toList());
+
+List<Integer> result  = list.join();
+
+
+----
+====
+
+==== ReactiveTask
+
+Each of the async Future Operations for reactive-streams (forEachX, forEachEvent etc), return a ReactiveTask object. This allows users to check the status of Stream processing, to cancel it, to request more elements to be processed from the Stream either synchronously or asynchronously.
+
+.using FutureOperatons with a JDK Stream
+====
+[source,java]
+----
+List<Integer> list = new ArrayList<>();
+ReactiveTask s = SequenceM.of(1,2,3)
+						  .futureOperations(exec)
+						  .forEachX( 2,  i->list.add(i));
+//wait until first 2 elements are processed
+s.block();
+		
+//list = List[1,2]
+
+//trigger the remainder of the Stream processing asynchronously
+ReactiveTask nextElements = s.requestAllAsync();
+
+
+//if we wait until it completes
+//nextElements.block();
+//list = List[1,2,3]
+----
+====
 
 === Batching, Windowing and Sliding views
 
@@ -395,6 +609,7 @@ SequenceM.of(1,2,3,4,5,6)
 ==== Batch / Window until a predicate holds
 
 Batching or Windowing while allows users to keep the window / batch open until the predicate holds true.
+
 .Batch until example
 ====
 [source,java]
@@ -403,6 +618,73 @@ SequenceM.of(1,2,3,4,5,6)
                 .batchUntil(i->i%3==0,()->new ArrayList<>())
                 .toList().size()
 //[1,2,3],[4,5,6]
+----
+====
+
+==== jOOλ based windowing
+
+Integrated as of cyclops 7.2.0
+
+jOOλ based windowing implements SQL windowing operations for Streams. There is a very good introductory blog article on the subject here http://blog.jooq.org/2016/01/06/2016-will-be-the-year-remembered-as-when-java-finally-had-window-functions/[2016 Will be the Year Remembered as When Java Finally Had Window Functions!]
+
+[TIP]
+====
+The jOOλ functions are exceptionally powerful and flexible, but also consume the Stream. This means they will not perform as well as the simpler (but less powerful) batchBy, windowBy and sliding functions in cyclops. They are also not suitable for use in infinitely large Streams.
+====
+
+.jOOλ windowing example
+====
+[source,java]
+----
+// group, order, take max
+
+SequenceM.of(1, 2, 4, 2, 3)
+         .window(i -> i % 2, naturalOrder())
+         .map(Window::max)
+// (1, 2, 4, 4, 3)
+
+----
+====
+
+.jOOλ windowing with pretty print
+====
+An example from jOOλ windowing blog entry.
+
+[source,java]
+----
+System.out.println(
+    SequenceM.of("a", "a", "a", "b", "c", "c", "d", "e")
+       //create a window
+       .window(naturalOrder())
+       //produce a table from the window
+       .map(w -> tuple(
+              w.value(),   // v0 
+              w.count(),   // v1
+              w.median(),  // v2
+              w.lead(),    // v3
+              w.lag(),     // v4
+              w.toString() // v5
+       ))
+            .format()
+);
+
+
+
+----
+
+----
++----+----+----+---------+---------+----------+
+| v0 | v1 | v2 | v3      | v4      | v5       |
++----+----+----+---------+---------+----------+
+| a  |  1 | a  | a       | {empty} | a        |
+| a  |  2 | a  | a       | a       | aa       |
+| a  |  3 | a  | b       | a       | aaa      |
+| b  |  4 | a  | c       | a       | aaab     |
+| c  |  5 | a  | c       | b       | aaabc    |
+| c  |  6 | a  | d       | c       | aaabcc   |
+| d  |  7 | b  | e       | c       | aaabccd  |
+| e  |  8 | b  | {empty} | d       | aaabccde |
++----+----+----+---------+---------+----------+
 ----
 ====
 
@@ -1833,6 +2115,34 @@ SequenceM.of(1, 2,3).remove(2);
 //(1,3)
 ====
 
+==== RemoveAll operator
+
+since cyclops 7.2.0
+
+The removeAll operator removes all supplied values from the Stream.
+
+.removeAll
+====
+[source,java]
+----
+SequenceM.of(1, 2,3).removeAll(2,3);
+//(1)
+====
+
+==== RetainAll operator
+
+since cyclops 7.2.0
+
+The retainAll operator retains only the supplied values in the Stream.
+
+.retainAll
+====
+[source,java]
+----
+SequenceM.of(1, 2,3).retainAll(2,3);
+//(2,3)
+====
+
 === scanLeft / scanRight
 
 ==== scanLeft
@@ -2086,7 +2396,7 @@ List<Integer> result = SequenceM.of(1,2,3,4)).reduce(Arrays.asList(sum,mult) );
 
 === conversions
 
-=== toList / toSet / toMap
+==== toList / toSet / toMap
 
 The are are a number of convenience methods for creating collections.
 
@@ -2107,7 +2417,8 @@ SequenceM.of(1,2,3).toMap(v->"key:"+v,v->v)
 //Map["key:1":1,"key:2":2,"key:3":3]
 ----
 ====
-=== toLazyCollection / toConcurrentLazyCollection
+
+==== toLazyCollection / toConcurrentLazyCollection
 
 Cyclops provides operators to lazily create a collection from the Stream. The values are only pulled through the Stream as the lazy collection is used. toConcurrentLazyCollection synchronizes iteration through the underlying Stream.
 
@@ -2127,7 +2438,7 @@ Collection<Integer> col = SequenceM.of(1,2,3,4,5)
 col.forEach(System.out::println);	
 ----
 ====
-===  toCompletableFuture / toOptional
+====  toCompletableFuture / toOptional
 
 .toCompletableFuture / toOptional 
 ====
@@ -2144,7 +2455,7 @@ Optional<List<String>> stream = SequenceM.of("hello","world")
 //CompletableFuture[List["hello","world"]]		
 ----
 ====
-===  anyM / toStreamable
+====  anyM / toStreamable
 
 The anyM operator wraps the SequenceM in the cyclops anyM wrapper class that can provide a common api over any monad type.
 
