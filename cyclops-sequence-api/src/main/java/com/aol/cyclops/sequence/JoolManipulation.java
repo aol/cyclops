@@ -1,12 +1,35 @@
 package com.aol.cyclops.sequence;
 
-public interface JoolManipulation {
-	public default org.jooq.lambda.Seq org.jooq.lambda.Seq.removeAll(java.util.stream.Stream)
-	public default org.jooq.lambda.Seq org.jooq.lambda.Seq.removeAll(java.lang.Iterable)
-	public default org.jooq.lambda.Seq org.jooq.lambda.Seq.removeAll(org.jooq.lambda.Seq)
-	public default org.jooq.lambda.Seq org.jooq.lambda.Seq.removeAll(java.lang.Object[])
-	public default org.jooq.lambda.Seq org.jooq.lambda.Seq.retainAll(java.lang.Iterable)
-	public default org.jooq.lambda.Seq org.jooq.lambda.Seq.retainAll(org.jooq.lambda.Seq)
-	public default org.jooq.lambda.Seq org.jooq.lambda.Seq.retainAll(java.util.stream.Stream)
-	public default org.jooq.lambda.Seq org.jooq.lambda.Seq.retainAll(java.lang.Object[])
+import java.util.stream.Stream;
+
+import org.jooq.lambda.Seq;
+
+public interface JoolManipulation<T> extends Seq<T>{
+	public SequenceM<T> fromStream(Stream<T> stream);
+	
+	default SequenceM<T> removeAll(Stream<T> stream){
+		return fromStream(Seq.super.removeAll(stream));
+	}
+	default  SequenceM<T> removeAll(Iterable<T> it){
+		return fromStream(Seq.super.removeAll(it));
+	}
+	default  SequenceM<T> removeAll(Seq<T> seq){
+		return fromStream(Seq.super.removeAll(seq));
+	}
+	default  SequenceM<T> removeAll(T... values){
+		return fromStream(Seq.super.removeAll(values));
+		
+	}
+	default  SequenceM<T> retainAll(Iterable<T> it){
+		return fromStream(Seq.super.retainAll(it));
+	}
+	default  SequenceM<T> retainAll(Seq<T> seq){
+		return fromStream(Seq.super.retainAll(seq));
+	}
+	default  SequenceM<T> retainAll(Stream<T> stream){
+		return fromStream(Seq.super.retainAll(stream));
+	}
+	default  SequenceM<T> retainAll(T... values){
+		return fromStream(Seq.super.retainAll(values));
+	}
 }

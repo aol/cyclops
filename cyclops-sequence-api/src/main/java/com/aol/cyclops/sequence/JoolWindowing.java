@@ -1,6 +1,8 @@
 package com.aol.cyclops.sequence;
 
-public interface JoolWindowing {
+import com.aol.cyclops.sequence.streamable.ConvertableToSequenceM;
+
+public interface JoolWindowing<T> extends ConvertableToSequenceM<T>{
 	public default org.jooq.lambda.Seq org.jooq.lambda.Seq.window(org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification)
 	public default org.jooq.lambda.Seq org.jooq.lambda.Seq.window(org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification)
 	public default org.jooq.lambda.Seq org.jooq.lambda.Seq.window(org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification,org.jooq.lambda.WindowSpecification)

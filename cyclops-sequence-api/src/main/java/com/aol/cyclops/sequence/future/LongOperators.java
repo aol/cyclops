@@ -15,29 +15,29 @@ public interface LongOperators<T> {
 	 * @see java.util.stream.Stream#mapToLong(ToLongFunction)
 	 * 	 @see java.util.stream.LongStream#sum()
 	 * */
-	CompletableFuture<Long> sumLong(ToLongFunction<T> fn);
+	CompletableFuture<Long> sumLong(ToLongFunction<? super T> fn);
 	/**
 	 * Perform an asynchronous max operation
 	 * @see java.util.stream.Stream#mapToLong(ToLongFunction)
 	 * 	 @see java.util.stream.LongStream#max()
 	 * */
-	 CompletableFuture<OptionalLong> maxLong(ToLongFunction<T> fn);
+	 CompletableFuture<OptionalLong> maxLong(ToLongFunction<? super T> fn);
 	/**
 	 * Perform an asynchronous min operation
 	 * @see java.util.stream.Stream#mapToLong(ToLongFunction)
 	 * 	 @see java.util.stream.LongStream#min()
 	 * */
-	CompletableFuture<OptionalLong> minLong(ToLongFunction<T> fn);
+	CompletableFuture<OptionalLong> minLong(ToLongFunction<? super T> fn);
 	/**
 	 * Perform an asynchronous average operation
 	 * @see java.util.stream.Stream#mapToLong(ToLongFunction)
 	 * 	 @see java.util.stream.LongStream#average()
 	 * */
-	CompletableFuture<OptionalDouble> averageLong(ToLongFunction<T> fn);
+	CompletableFuture<OptionalDouble> averageLong(ToLongFunction<? super T> fn);
 	/**
 	 * Perform an asynchronous summaryStatistics operation
 	 * @see java.util.stream.Stream#mapToLong(ToLongFunction)
 	 * 	 @see java.util.stream.LongStream#summaryStatistics()
 	 * */
-	CompletableFuture<LongSummaryStatistics> summaryStatisticsLong(ToLongFunction<T> fn);
+	CompletableFuture<LongSummaryStatistics> summaryStatisticsLong(ToLongFunction<? super T> fn);
 }

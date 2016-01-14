@@ -34,6 +34,7 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -60,7 +61,8 @@ import com.aol.cyclops.sequence.streamable.Streamable;
 
 
 
-public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>, Publisher<T>, ReactiveStreamsTerminalOperations<T>{
+public interface SequenceM<T> extends Unwrapable, Stream<T>,  Seq<T>,JoolManipulation<T>,Iterable<T>, Publisher<T>,
+							ReactiveStreamsTerminalOperations<T>, Collectable<T>{
 	
 	@Override
 	<R> R unwrap();
@@ -520,8 +522,13 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @return Stream with elements grouped by size
 	 */
 	SequenceM<List<T>> grouped(int groupSize);
-	public default org.jooq.lambda.Seq org.jooq.lambda.Seq.grouped(java.util.function.Function,java.util.stream.Collector);
-	public default org.jooq.lambda.Seq org.jooq.lambda.Seq.grouped(java.util.function.Function);
+	default <K,A,D> SequenceM<Tuple2<K,D>> grouped(Function<? super T,? extends K> classifier,
+																Collector<? super T,A,D> downstream){
+		return fromStream(Seq.super.grouped(classifier,downstream));
+	}
+	public default <K> SequenceM<Tuple2<K,Seq<T>>> grouped(Function<? super T,? extends K> classifier){
+		return fromStream(Seq.super.grouped(classifier));
+	}
 	/**
 	 * Use classifier function to group elements in this Sequence into a Map
 	 * <pre>
@@ -666,7 +673,10 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 *         holds
 	 */
 	SequenceM<T> skipUntil(Predicate<? super T> p);
-	public default org.jooq.lambda.Seq org.jooq.lambda.Seq.skipUntilClosed(java.util.function.Predicate);
+	
+	default SequenceM<T> skipUntilClosed(Predicate<? super T> p){
+		return fromStream(Seq.super.skipUntilClosed(p));
+	}
 
 	/**
 	 * 
@@ -705,7 +715,15 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @return Stream with limited elements
 	 */
 	SequenceM<T> limitUntil(Predicate<? super T> p);
-	public default org.jooq.lambda.Seq org.jooq.lambda.Seq.limitUntilClosed(java.util.function.Predicate)
+	
+	/**
+	 * @param p
+	 * @return
+	 */
+	@Override
+	default SequenceM<T>  limitUntilClosed(Predicate<? super T> p){
+		return fromStream(Seq.super.limitUntilClosed(p));
+	}
 	/**
 	 * @return Does nothing SequenceM is for Sequential Streams
 	 * 	 
@@ -786,7 +804,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * Extract the minimum as determined by supplied function
 	 * 
 	 */
-	<C extends Comparable<C>> Optional<T> minBy(Function<T,C> f);
+	<C extends Comparable<? super C>> Optional<T> minBy(Function<? super T,? extends C> f);
 	/* (non-Javadoc)
 	 * @see java.util.stream.Stream#min(java.util.Comparator)
 	 */
@@ -795,7 +813,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * Extract the maximum as determined by the supplied function
 	 * 
 	 */
-	<C extends Comparable<C>> Optional<T> maxBy(Function<T,C> f);
+	<C extends Comparable<? super C>> Optional<T> maxBy(Function<? super T,? extends C> f);
 	/* (non-Javadoc)
 	 * @see java.util.stream.Stream#max(java.util.Comparator)
 	 */
@@ -1804,7 +1822,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param index to extract element from
 	 * @return elementAt index
 	 */
-	default Optional<T> elementAt(long index){
+	default Optional<T> get(long index){
 		return this.zipWithIndex()
 				   .filter(t->t.v2==index)
 				   .findFirst()
@@ -1824,7 +1842,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param index to extract element from
 	 * @return Element and Sequence
 	 */
-	default Tuple2<T,SequenceM<T>> get(long index){
+	default Tuple2<T,SequenceM<T>> elementAt(long index){
 		 Tuple2<SequenceM<T>, SequenceM<T>> tuple = this.duplicateSequence();
 		 return tuple.map1(s->s.zipWithIndex()
 				   .filter(t->t.v2==index)
@@ -2087,40 +2105,84 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @see org.jooq.lambda.Seq#crossJoin(java.util.stream.Stream)
 	 */
 	<U> SequenceM<Tuple2<T, U>> crossJoin(Stream<U> other);
+	<U> SequenceM<Tuple2<T, U>> crossJoin(Seq<U> other);
+	<U> SequenceM<Tuple2<T, U>> crossJoin(Iterable<U> other);
+	<U> SequenceM<Tuple2<T, U>> crossJoin(Streamable<U> other);
 
 	/* (non-Javadoc)
 	 * @see org.jooq.lambda.Seq#innerJoin(java.util.stream.Stream, java.util.function.BiPredicate)
 	 */
-	default <U> SequenceM<Tuple2<T, U>> innerJoin(Stream<U> other,
-			BiPredicate<T, U> predicate){
-		 Streamable<U> s = Streamable.fromIterable(SequenceM.fromStream(other).toLazyCollection());
+	
+	default <U> SequenceM<Tuple2<T, U>> innerJoin(Stream<U> other, java.util.function.BiPredicate<? super T,? super U> predicate){
+		 Streamable<U> s = Streamable.fromStream(SequenceM.fromStream(other));
 
-	        return flatMap(t -> s.stream()
-	                           .filter(u -> predicate.test(t, u))
-	                           .map(u -> Tuple.tuple(t, u)));
+	        return innerJoin(s,predicate);
 	}
+	default <U> SequenceM<Tuple2<T, U>> innerJoin(Streamable<U> other, java.util.function.BiPredicate<? super T,? super U> predicate){
+		 return flatMap(t -> other.stream()
+                 .filter(u -> predicate.test(t, u))
+                 .map(u -> Tuple.tuple(t, u)));
+		
+	}
+	default <U> SequenceM<Tuple2<T, U>> innerJoin(Iterable<U> other, java.util.function.BiPredicate<? super T,? super U> predicate){
+		Streamable<U> s = Streamable.fromIterable(other);
+		 return innerJoin(s,predicate);
+	}
+		 
+	
 
+	default <U> SequenceM<Tuple2<T, U>> innerJoin(Seq<U> other, java.util.function.BiPredicate<? super T,? super U> predicate){
+		Streamable<U> s = Streamable.fromStream(SequenceM.fromStream(other));
+
+        return innerJoin(s,predicate);
+	}
+	default <U> SequenceM<Tuple2<T, U>> leftOuterJoin(Streamable<U> s, java.util.function.BiPredicate<? super T,? super U> predicate){
+		return flatMap(t -> Seq.seq(s.stream())
+                .filter(u -> predicate.test(t, u))
+                .onEmpty(null)
+                .map(u -> Tuple.tuple(t, u)));
+	}
+		
 	/* (non-Javadoc)
 	 * @see org.jooq.lambda.Seq#leftOuterJoin(java.util.stream.Stream, java.util.function.BiPredicate)
 	 */
-	default <U> SequenceM<Tuple2<T, U>> leftOuterJoin(Stream<U> other,
-			BiPredicate<T, U> predicate)
+	default <U> SequenceM<Tuple2<T, U>> leftOuterJoin(Stream<U> other, BiPredicate<? super T,? super U> predicate)
 		{
 
 		 Streamable<U> s =Streamable.fromIterable(SequenceM.fromStream(other).toLazyCollection());
 
-	        return flatMap(t -> Seq.seq(s.stream())
-	                           .filter(u -> predicate.test(t, u))
-	                           .onEmpty(null)
-	                           .map(u -> Tuple.tuple(t, u)));
+	      return leftOuterJoin(s,predicate);
 	    
+	}
+	default <U> SequenceM<Tuple2<T, U>> leftOuterJoin(Seq<U> other, BiPredicate<? super T,? super U> predicate)
+	{
+
+	 Streamable<U> s =Streamable.fromIterable(SequenceM.fromStream(other));
+
+      return leftOuterJoin(s,predicate);
+    
+	}
+	default <U> SequenceM<Tuple2<T, U>> leftOuterJoin(Iterable<U> other, BiPredicate<? super T,? super U> predicate)
+	{
+
+	 Streamable<U> s =Streamable.fromIterable(other);
+
+      return leftOuterJoin(s,predicate);
+    
 	}
 
 	/* (non-Javadoc)
 	 * @see org.jooq.lambda.Seq#rightOuterJoin(java.util.stream.Stream, java.util.function.BiPredicate)
 	 */
 	<U> SequenceM<Tuple2<T, U>> rightOuterJoin(Stream<U> other,
-			BiPredicate<T, U> predicate);
+			BiPredicate<? super T, ? super U> predicate);
+	<U> SequenceM<Tuple2<T, U>> rightOuterJoin(Iterable<U> other,
+			BiPredicate<? super T, ? super U> predicate);
+	<U> SequenceM<Tuple2<T, U>> rightOuterJoin(Seq<U> other,
+			BiPredicate<? super T, ? super U> predicate);
+	<U> SequenceM<Tuple2<T, U>> rightOuterJoin(Streamable<U> other,
+			BiPredicate<? super T, ? super U> predicate);
+	
 	/** If this SequenceM is empty replace it with a another Stream
 	 * 
 	 * <pre>
@@ -2187,7 +2249,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	/* (non-Javadoc)
 	 * @see org.jooq.lambda.Seq#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
 	 */
-	<U, R> SequenceM<R> zip(Seq<U> other, BiFunction<T, U, R> zipper);
+	<U, R> SequenceM<R> zip(Seq<U> other, BiFunction<? super T,? super U, ? extends R> zipper);
 
 	/* (non-Javadoc)
 	 * @see org.jooq.lambda.Seq#shuffle(java.util.Random)

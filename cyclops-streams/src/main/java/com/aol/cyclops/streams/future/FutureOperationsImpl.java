@@ -105,7 +105,7 @@ public class FutureOperationsImpl<T> implements FutureOperations<T>, DoubleOpera
 	 * 
 	 * @see org.jooq.lambda.Seq#minBy(Function)
 	 */
-	public  <U extends Comparable<U>> CompletableFuture<Optional<T>> minBy(Function<T, U> function){
+	public  <U extends Comparable<? super U>> CompletableFuture<Optional<T>> minBy(Function<? super T,? extends U> function){
 		return CompletableFuture.supplyAsync(()->stream.minBy(function));
 	}
 	/**
@@ -113,7 +113,7 @@ public class FutureOperationsImpl<T> implements FutureOperations<T>, DoubleOpera
 	 * 
 	 *  @see org.jooq.lambda.Seq#maxBy(Function)
 	 */
-	public  <U extends Comparable<U>> CompletableFuture<Optional<T>> maxBy(Function<T, U> function){
+	public  <U extends Comparable<? super U>> CompletableFuture<Optional<T>> maxBy(Function<? super T, ? extends U> function){
 		return CompletableFuture.supplyAsync(()->stream.maxBy(function));
 	}
 	
@@ -365,6 +365,116 @@ public class FutureOperationsImpl<T> implements FutureOperations<T>, DoubleOpera
 	@Override
 	public CompletableFuture<Optional<T>> singleOptional() {
 		return CompletableFuture.supplyAsync(()-> stream.singleOptional(),exec);
+	}
+	
+	
+	
+	@Override
+	public CompletableFuture<Long> countDistinct() {
+		return CompletableFuture.supplyAsync(()->stream.countDistinct(),exec);
+	}
+	@Override
+	public <U> CompletableFuture<Long> countDistinctBy(Function<? super T, ? extends U> function) {
+		return CompletableFuture.supplyAsync(()->stream.countDistinctBy(function),exec);
+	}
+	@Override
+	public CompletableFuture<Optional<T>> mode() {
+		return CompletableFuture.supplyAsync(()->stream.mode(),exec);
+	}
+	@Override
+	public CompletableFuture<Optional<T>> sum() {
+		return CompletableFuture.supplyAsync(()->stream.sum(),exec);
+	}
+	@Override
+	public <U> CompletableFuture<Optional<U>> sum(Function<? super T, ? extends U> function) {
+		return CompletableFuture.supplyAsync(()->stream.sum(function),exec);
+	}
+	@Override
+	public CompletableFuture<Optional<T>> avg() {
+		return CompletableFuture.supplyAsync(()->stream.avg(),exec);
+	}
+	@Override
+	public <U> CompletableFuture<Optional<U>> avg(Function<? super T, ? extends U> function) {
+		return CompletableFuture.supplyAsync(()->stream.avg(function),exec);
+	}
+	@Override
+	public CompletableFuture<Optional<T>> min() {
+		return CompletableFuture.supplyAsync(()->stream.min(),exec);
+	}
+	@Override
+	public <U extends Comparable<? super U>> CompletableFuture<Optional<U>> min(Function<? super T, ? extends U> function) {
+		return CompletableFuture.supplyAsync(()->stream.min(function),exec);
+	}
+	@Override
+	public <U> CompletableFuture<Optional<U>> min(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+		return CompletableFuture.supplyAsync(()->stream.min(function,comparator),exec);
+	}
+	@Override
+	public <U> CompletableFuture<Optional<T>> minBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+		return CompletableFuture.supplyAsync(()->stream.minBy(function,comparator),exec);
+	}
+	@Override
+	public CompletableFuture<Optional<T>> max() {
+		return CompletableFuture.supplyAsync(()->stream.max(),exec);
+	}
+	@Override
+	public <U extends Comparable<? super U>> CompletableFuture<Optional<U>> max(Function<? super T, ? extends U> function) {
+		return CompletableFuture.supplyAsync(()->stream.max(function),exec);
+	}
+	@Override
+	public <U> CompletableFuture<Optional<U>> max(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+		return CompletableFuture.supplyAsync(()->stream.max(function,comparator),exec);
+	}
+	@Override
+	public <U> CompletableFuture<Optional<T>> maxBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+		return CompletableFuture.supplyAsync(()->stream.maxBy(function,comparator),exec);
+	}
+	@Override
+	public CompletableFuture<Optional<T>> median() {
+		return CompletableFuture.supplyAsync(()->stream.median(),exec);
+	}
+	@Override
+	public CompletableFuture<Optional<T>> median(Comparator<? super T> comparator) {
+		return CompletableFuture.supplyAsync(()->stream.median(comparator),exec);
+	}
+	@Override
+	public <U extends Comparable<? super U>> CompletableFuture<Optional<T>> medianBy(Function<? super T, ? extends U> function) {
+		return CompletableFuture.supplyAsync(()->stream.medianBy(function),exec);
+	}
+	@Override
+	public <U> CompletableFuture<Optional<T>> medianBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+		return CompletableFuture.supplyAsync(()->stream.medianBy(function,comparator),exec);
+	}
+	@Override
+	public CompletableFuture<Optional<T>> percentile(double percentile) {
+		return CompletableFuture.supplyAsync(()->stream.percentile(percentile),exec);
+	}
+	@Override
+	public CompletableFuture<Optional<T>> percentile(double percentile, Comparator<? super T> comparator) {
+		return CompletableFuture.supplyAsync(()->stream.percentile(percentile,comparator),exec);
+	}
+	@Override
+	public <U extends Comparable<? super U>> CompletableFuture<Optional<T>> percentileBy(double percentile,
+			Function<? super T, ? extends U> function) {
+		return CompletableFuture.supplyAsync(()->stream.percentileBy(percentile,function),exec);
+	}
+	@Override
+	public <U> CompletableFuture<Optional<T>> percentileBy(double percentile, Function<? super T, ? extends U> function,
+			Comparator<? super U> comparator) {
+		return CompletableFuture.supplyAsync(()->stream.percentileBy(percentile,function,comparator),exec);
+	}
+	@Override
+	public <L extends List<T>> CompletableFuture<L> toList(Supplier<L> factory) {
+		return CompletableFuture.supplyAsync(()->stream.toList(factory),exec);
+	}
+	@Override
+	public <S extends Set<T>> CompletableFuture<S> toSet(Supplier<S> factory) {
+		return CompletableFuture.supplyAsync(()->stream.toSet(factory),exec);
+	}
+	@Override
+	public <K, V> CompletableFuture<Map<K, V>> toMap(Function<? super T, ? extends K> keyMapper,
+			Function<? super T, ? extends V> valueMapper) {
+		return CompletableFuture.supplyAsync(()->stream.toMap(keyMapper,valueMapper),exec);
 	}
 	
 }
