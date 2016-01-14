@@ -437,7 +437,8 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * </pre>
 	 * 
 	 */
-	public final <S> SequenceM<Tuple2<T,S>> zip(Stream<? extends S> second){
+	public final <S> SequenceM<Tuple2<T,S>> zip(Stream<S> second){
+
 		return zipStream(second,(a,b)->new Tuple2<>(a,b));
 	}
 	/**
@@ -881,7 +882,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * 
 	 */
 	public  boolean xMatch(int num, Predicate<? super T> c) {
-		return stream.filter(t -> c.test(t)) .collect(Collectors.counting()) == num;
+		return stream.filter(t -> c.test(t)).collect(Collectors.counting()) == num;
 	}
 	/* 
 	 * <pre>
@@ -1239,6 +1240,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 		return (List)stream.collect(Collectors.toList());
 	}
 	public final <C extends Collection<T>> C toCollection(Supplier<C> collectionFactory) {
+		
         return stream.collect(Collectors.toCollection(collectionFactory));
     }
 	/**

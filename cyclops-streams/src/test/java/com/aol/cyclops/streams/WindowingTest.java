@@ -158,14 +158,14 @@ public class WindowingTest {
 	@Test
 	public void groupedEqualSize() throws Exception {
 		final Streamable<Integer> fixed = Streamable.fromStream(of(5, 7, 9));
-		assertThat(fixed.sequenceM().grouped(3).elementAt(0).get(),equalTo(Arrays.asList(5,7,9)));
+		assertThat(fixed.sequenceM().grouped(3).get(0).get(),equalTo(Arrays.asList(5,7,9)));
 		assertThat(fixed.sequenceM().grouped(3).count(),equalTo(1l));
 	}
 
 	@Test
 	public void multipleGrouped() throws Exception {
 		final Streamable<Integer> fixed = Streamable.fromStream(of(5, 7, 9,10));
-		assertThat(fixed.sequenceM().grouped(3).elementAt(0).get(),equalTo(Arrays.asList(5,7,9)));
+		assertThat(fixed.sequenceM().grouped(3).get(0).get(),equalTo(Arrays.asList(5,7,9)));
 		assertThat(fixed.sequenceM().grouped(3).count(),equalTo(2l));
 		
 	}
@@ -174,7 +174,7 @@ public class WindowingTest {
 	@Test
 	public void return1() throws Exception {
 		final Streamable<Integer> fixed = Streamable.fromStream(of(5));
-		assertThat(fixed.sequenceM().grouped(3).elementAt(0).get(),equalTo(Arrays.asList(5)));
+		assertThat(fixed.sequenceM().grouped(3).get(0).get(),equalTo(Arrays.asList(5)));
 		assertThat(fixed.sequenceM().grouped(3).count(),equalTo(1l));
 	}
 

@@ -4,6 +4,7 @@ import static com.aol.cyclops.sequence.SequenceM.fromStream;
 
 import java.util.Comparator;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.annotation.Generated;
 
@@ -101,21 +102,11 @@ public interface JoolWindowing<T> extends Seq<T>{
      * SequenceM.of(1, 4, 2, 2, 3).window(i -> i % 2, -1, 1).map(Window::max)
      * </pre></code>
      */ 
-    default <U> SequenceM<Window<T>> window(Function<? super T, ? extends U> partitionBy, long lower, long upper) {
-        return window(Window.of(partitionBy, lower, upper)).map(t -> t.v1);
+    default <U> SequenceM<Window<T>> window(Function<? super T, ? extends U> partitionBy, long lower, long upper) {    	
+    	return window(Window.of(partitionBy, lower, upper)).map(t -> t.v1);
     }
     
-    /**
-     * Map this stream to a windowed stream using a specific partition and order.
-     * <p>
-     * <code><pre>
-     * // (1, 2, 4, 4, 3)
-     * SequenceM.of(1, 2, 4, 2, 3).window(i -> i % 2, naturalOrder()).map(Window::max)
-     * </pre></code>
-     */ 
-    default <U> SequenceM<Window<T>> window(Function<? super T, ? extends U> partitionBy, Comparator<? super T> orderBy) {
-        return window(Window.of(partitionBy, orderBy)).map(t -> t.v1);
-    }
+   
     
     /**
      * Map this stream to a windowed stream using a specific partition and order with frame.
