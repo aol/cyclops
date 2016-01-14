@@ -61,7 +61,7 @@ import com.aol.cyclops.sequence.streamable.Streamable;
 
 
 
-public interface SequenceM<T> extends Unwrapable, Stream<T>,  Seq<T>,JoolManipulation<T>,Iterable<T>, Publisher<T>,
+public interface SequenceM<T> extends Unwrapable, Stream<T>,  Seq<T>,JoolWindowing<T>,JoolManipulation<T>,Iterable<T>, Publisher<T>,
 							ReactiveStreamsTerminalOperations<T>, Collectable<T>{
 	
 	@Override
