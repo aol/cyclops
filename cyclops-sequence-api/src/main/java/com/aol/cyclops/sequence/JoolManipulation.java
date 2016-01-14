@@ -1,11 +1,13 @@
 package com.aol.cyclops.sequence;
 
+import static com.aol.cyclops.sequence.SequenceM.fromStream;
+
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
 
 public interface JoolManipulation<T> extends Seq<T>{
-	public SequenceM<T> fromStream(Stream<T> stream);
+	
 	
 	default SequenceM<T> removeAll(Stream<T> stream){
 		return fromStream(Seq.super.removeAll(stream));

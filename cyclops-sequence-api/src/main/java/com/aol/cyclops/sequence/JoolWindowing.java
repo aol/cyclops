@@ -1,10 +1,9 @@
-package com.aol.cyclops.SequenceMuence;
+package com.aol.cyclops.sequence;
+
+import static com.aol.cyclops.sequence.SequenceM.fromStream;
 
 import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 import javax.annotation.Generated;
 
@@ -31,7 +30,7 @@ import org.jooq.lambda.tuple.Tuple9;
 
 
 public interface JoolWindowing<T> extends Seq<T>{
-	public <T> SequenceM<T> fromStream(Stream<T> stream);
+	
 	
 	/**
      * Map this stream to a windowed stream using the default partition and order.
@@ -136,17 +135,8 @@ public interface JoolWindowing<T> extends Seq<T>{
      * Map this stream to a windowed stream with 1 distinct windows.
      */
     @Generated("This method was generated using jOOQ-tools")
-    default SequenceM<Tuple1<Window<T>>> window(
-        WindowSpecification<T> specification1
-    ) {
-        List<Tuple2<T, Long>> buffer = zipWithIndex().toList();
-
-        Map<?, Partition<T>> partitions1 = SequenceMUtils.partitions(specification1, buffer);
-
-        return SequenceM(buffer)
-              .map(t -> tuple(
-                   new WindowImpl<>(t, partitions1.get(specification1.partition().apply(t.v1)), specification1)
-              ));
+    default SequenceM<Tuple1<Window<T>>> window( WindowSpecification<T> specification1) {
+       return fromStream(Seq.super.window(specification1));
     }
 
     /**
@@ -157,16 +147,7 @@ public interface JoolWindowing<T> extends Seq<T>{
         WindowSpecification<T> specification1,
         WindowSpecification<T> specification2
     ) {
-        List<Tuple2<T, Long>> buffer = zipWithIndex().toList();
-
-        Map<?, Partition<T>> partitions1 = SequenceMUtils.partitions(specification1, buffer);
-        Map<?, Partition<T>> partitions2 = SequenceMUtils.partitions(specification2, buffer);
-
-        return SequenceM(buffer)
-              .map(t -> tuple(
-                   new WindowImpl<>(t, partitions1.get(specification1.partition().apply(t.v1)), specification1),
-                   new WindowImpl<>(t, partitions2.get(specification2.partition().apply(t.v1)), specification2)
-              ));
+    	 return fromStream(Seq.super.window(specification1,specification2));
     }
 
     /**
@@ -178,18 +159,7 @@ public interface JoolWindowing<T> extends Seq<T>{
         WindowSpecification<T> specification2,
         WindowSpecification<T> specification3
     ) {
-        List<Tuple2<T, Long>> buffer = zipWithIndex().toList();
-
-        Map<?, Partition<T>> partitions1 = SequenceMUtils.partitions(specification1, buffer);
-        Map<?, Partition<T>> partitions2 = SequenceMUtils.partitions(specification2, buffer);
-        Map<?, Partition<T>> partitions3 = SequenceMUtils.partitions(specification3, buffer);
-
-        return SequenceM(buffer)
-              .map(t -> tuple(
-                   new WindowImpl<>(t, partitions1.get(specification1.partition().apply(t.v1)), specification1),
-                   new WindowImpl<>(t, partitions2.get(specification2.partition().apply(t.v1)), specification2),
-                   new WindowImpl<>(t, partitions3.get(specification3.partition().apply(t.v1)), specification3)
-              ));
+    	return fromStream(Seq.super.window(specification1,specification2,specification3));
     }
 
     /**
@@ -202,20 +172,7 @@ public interface JoolWindowing<T> extends Seq<T>{
         WindowSpecification<T> specification3,
         WindowSpecification<T> specification4
     ) {
-        List<Tuple2<T, Long>> buffer = zipWithIndex().toList();
-
-        Map<?, Partition<T>> partitions1 = SequenceMUtils.partitions(specification1, buffer);
-        Map<?, Partition<T>> partitions2 = SequenceMUtils.partitions(specification2, buffer);
-        Map<?, Partition<T>> partitions3 = SequenceMUtils.partitions(specification3, buffer);
-        Map<?, Partition<T>> partitions4 = SequenceMUtils.partitions(specification4, buffer);
-
-        return SequenceM(buffer)
-              .map(t -> tuple(
-                   new WindowImpl<>(t, partitions1.get(specification1.partition().apply(t.v1)), specification1),
-                   new WindowImpl<>(t, partitions2.get(specification2.partition().apply(t.v1)), specification2),
-                   new WindowImpl<>(t, partitions3.get(specification3.partition().apply(t.v1)), specification3),
-                   new WindowImpl<>(t, partitions4.get(specification4.partition().apply(t.v1)), specification4)
-              ));
+    	return fromStream(Seq.super.window(specification1,specification2,specification3,specification4));
     }
 
     /**
@@ -229,22 +186,7 @@ public interface JoolWindowing<T> extends Seq<T>{
         WindowSpecification<T> specification4,
         WindowSpecification<T> specification5
     ) {
-        List<Tuple2<T, Long>> buffer = zipWithIndex().toList();
-
-        Map<?, Partition<T>> partitions1 = SequenceMUtils.partitions(specification1, buffer);
-        Map<?, Partition<T>> partitions2 = SequenceMUtils.partitions(specification2, buffer);
-        Map<?, Partition<T>> partitions3 = SequenceMUtils.partitions(specification3, buffer);
-        Map<?, Partition<T>> partitions4 = SequenceMUtils.partitions(specification4, buffer);
-        Map<?, Partition<T>> partitions5 = SequenceMUtils.partitions(specification5, buffer);
-
-        return SequenceM(buffer)
-              .map(t -> tuple(
-                   new WindowImpl<>(t, partitions1.get(specification1.partition().apply(t.v1)), specification1),
-                   new WindowImpl<>(t, partitions2.get(specification2.partition().apply(t.v1)), specification2),
-                   new WindowImpl<>(t, partitions3.get(specification3.partition().apply(t.v1)), specification3),
-                   new WindowImpl<>(t, partitions4.get(specification4.partition().apply(t.v1)), specification4),
-                   new WindowImpl<>(t, partitions5.get(specification5.partition().apply(t.v1)), specification5)
-              ));
+    	return fromStream(Seq.super.window(specification1,specification2,specification3,specification4,specification5));
     }
 
     /**
@@ -259,24 +201,8 @@ public interface JoolWindowing<T> extends Seq<T>{
         WindowSpecification<T> specification5,
         WindowSpecification<T> specification6
     ) {
-        List<Tuple2<T, Long>> buffer = zipWithIndex().toList();
-
-        Map<?, Partition<T>> partitions1 = SequenceMUtils.partitions(specification1, buffer);
-        Map<?, Partition<T>> partitions2 = SequenceMUtils.partitions(specification2, buffer);
-        Map<?, Partition<T>> partitions3 = SequenceMUtils.partitions(specification3, buffer);
-        Map<?, Partition<T>> partitions4 = SequenceMUtils.partitions(specification4, buffer);
-        Map<?, Partition<T>> partitions5 = SequenceMUtils.partitions(specification5, buffer);
-        Map<?, Partition<T>> partitions6 = SequenceMUtils.partitions(specification6, buffer);
-
-        return SequenceM(buffer)
-              .map(t -> tuple(
-                   new WindowImpl<>(t, partitions1.get(specification1.partition().apply(t.v1)), specification1),
-                   new WindowImpl<>(t, partitions2.get(specification2.partition().apply(t.v1)), specification2),
-                   new WindowImpl<>(t, partitions3.get(specification3.partition().apply(t.v1)), specification3),
-                   new WindowImpl<>(t, partitions4.get(specification4.partition().apply(t.v1)), specification4),
-                   new WindowImpl<>(t, partitions5.get(specification5.partition().apply(t.v1)), specification5),
-                   new WindowImpl<>(t, partitions6.get(specification6.partition().apply(t.v1)), specification6)
-              ));
+    	return fromStream(Seq.super.window(specification1,specification2,specification3,
+    			specification4,specification5,specification6));
     }
 
     /**
@@ -292,26 +218,8 @@ public interface JoolWindowing<T> extends Seq<T>{
         WindowSpecification<T> specification6,
         WindowSpecification<T> specification7
     ) {
-        List<Tuple2<T, Long>> buffer = zipWithIndex().toList();
-
-        Map<?, Partition<T>> partitions1 = SequenceMUtils.partitions(specification1, buffer);
-        Map<?, Partition<T>> partitions2 = SequenceMUtils.partitions(specification2, buffer);
-        Map<?, Partition<T>> partitions3 = SequenceMUtils.partitions(specification3, buffer);
-        Map<?, Partition<T>> partitions4 = SequenceMUtils.partitions(specification4, buffer);
-        Map<?, Partition<T>> partitions5 = SequenceMUtils.partitions(specification5, buffer);
-        Map<?, Partition<T>> partitions6 = SequenceMUtils.partitions(specification6, buffer);
-        Map<?, Partition<T>> partitions7 = SequenceMUtils.partitions(specification7, buffer);
-
-        return SequenceM(buffer)
-              .map(t -> tuple(
-                   new WindowImpl<>(t, partitions1.get(specification1.partition().apply(t.v1)), specification1),
-                   new WindowImpl<>(t, partitions2.get(specification2.partition().apply(t.v1)), specification2),
-                   new WindowImpl<>(t, partitions3.get(specification3.partition().apply(t.v1)), specification3),
-                   new WindowImpl<>(t, partitions4.get(specification4.partition().apply(t.v1)), specification4),
-                   new WindowImpl<>(t, partitions5.get(specification5.partition().apply(t.v1)), specification5),
-                   new WindowImpl<>(t, partitions6.get(specification6.partition().apply(t.v1)), specification6),
-                   new WindowImpl<>(t, partitions7.get(specification7.partition().apply(t.v1)), specification7)
-              ));
+    	return fromStream(Seq.super.window(specification1,specification2,specification3,
+    			specification4,specification5,specification6,specification7));
     }
 
     /**
@@ -328,28 +236,8 @@ public interface JoolWindowing<T> extends Seq<T>{
         WindowSpecification<T> specification7,
         WindowSpecification<T> specification8
     ) {
-        List<Tuple2<T, Long>> buffer = zipWithIndex().toList();
-
-        Map<?, Partition<T>> partitions1 = SequenceMUtils.partitions(specification1, buffer);
-        Map<?, Partition<T>> partitions2 = SequenceMUtils.partitions(specification2, buffer);
-        Map<?, Partition<T>> partitions3 = SequenceMUtils.partitions(specification3, buffer);
-        Map<?, Partition<T>> partitions4 = SequenceMUtils.partitions(specification4, buffer);
-        Map<?, Partition<T>> partitions5 = SequenceMUtils.partitions(specification5, buffer);
-        Map<?, Partition<T>> partitions6 = SequenceMUtils.partitions(specification6, buffer);
-        Map<?, Partition<T>> partitions7 = SequenceMUtils.partitions(specification7, buffer);
-        Map<?, Partition<T>> partitions8 = SequenceMUtils.partitions(specification8, buffer);
-
-        return SequenceM(buffer)
-              .map(t -> tuple(
-                   new WindowImpl<>(t, partitions1.get(specification1.partition().apply(t.v1)), specification1),
-                   new WindowImpl<>(t, partitions2.get(specification2.partition().apply(t.v1)), specification2),
-                   new WindowImpl<>(t, partitions3.get(specification3.partition().apply(t.v1)), specification3),
-                   new WindowImpl<>(t, partitions4.get(specification4.partition().apply(t.v1)), specification4),
-                   new WindowImpl<>(t, partitions5.get(specification5.partition().apply(t.v1)), specification5),
-                   new WindowImpl<>(t, partitions6.get(specification6.partition().apply(t.v1)), specification6),
-                   new WindowImpl<>(t, partitions7.get(specification7.partition().apply(t.v1)), specification7),
-                   new WindowImpl<>(t, partitions8.get(specification8.partition().apply(t.v1)), specification8)
-              ));
+    	return fromStream(Seq.super.window(specification1,specification2,specification3,
+    			specification4,specification5,specification6,specification7,specification8));
     }
 
     /**
@@ -367,30 +255,8 @@ public interface JoolWindowing<T> extends Seq<T>{
         WindowSpecification<T> specification8,
         WindowSpecification<T> specification9
     ) {
-        List<Tuple2<T, Long>> buffer = zipWithIndex().toList();
-
-        Map<?, Partition<T>> partitions1 = SequenceMUtils.partitions(specification1, buffer);
-        Map<?, Partition<T>> partitions2 = SequenceMUtils.partitions(specification2, buffer);
-        Map<?, Partition<T>> partitions3 = SequenceMUtils.partitions(specification3, buffer);
-        Map<?, Partition<T>> partitions4 = SequenceMUtils.partitions(specification4, buffer);
-        Map<?, Partition<T>> partitions5 = SequenceMUtils.partitions(specification5, buffer);
-        Map<?, Partition<T>> partitions6 = SequenceMUtils.partitions(specification6, buffer);
-        Map<?, Partition<T>> partitions7 = SequenceMUtils.partitions(specification7, buffer);
-        Map<?, Partition<T>> partitions8 = SequenceMUtils.partitions(specification8, buffer);
-        Map<?, Partition<T>> partitions9 = SequenceMUtils.partitions(specification9, buffer);
-
-        return SequenceM(buffer)
-              .map(t -> tuple(
-                   new WindowImpl<>(t, partitions1.get(specification1.partition().apply(t.v1)), specification1),
-                   new WindowImpl<>(t, partitions2.get(specification2.partition().apply(t.v1)), specification2),
-                   new WindowImpl<>(t, partitions3.get(specification3.partition().apply(t.v1)), specification3),
-                   new WindowImpl<>(t, partitions4.get(specification4.partition().apply(t.v1)), specification4),
-                   new WindowImpl<>(t, partitions5.get(specification5.partition().apply(t.v1)), specification5),
-                   new WindowImpl<>(t, partitions6.get(specification6.partition().apply(t.v1)), specification6),
-                   new WindowImpl<>(t, partitions7.get(specification7.partition().apply(t.v1)), specification7),
-                   new WindowImpl<>(t, partitions8.get(specification8.partition().apply(t.v1)), specification8),
-                   new WindowImpl<>(t, partitions9.get(specification9.partition().apply(t.v1)), specification9)
-              ));
+    	return fromStream(Seq.super.window(specification1,specification2,specification3,
+    			specification4,specification5,specification6,specification7,specification8,specification9));
     }
 
     /**
@@ -409,32 +275,9 @@ public interface JoolWindowing<T> extends Seq<T>{
         WindowSpecification<T> specification9,
         WindowSpecification<T> specification10
     ) {
-        List<Tuple2<T, Long>> buffer = zipWithIndex().toList();
-
-        Map<?, Partition<T>> partitions1 = SequenceMUtils.partitions(specification1, buffer);
-        Map<?, Partition<T>> partitions2 = SequenceMUtils.partitions(specification2, buffer);
-        Map<?, Partition<T>> partitions3 = SequenceMUtils.partitions(specification3, buffer);
-        Map<?, Partition<T>> partitions4 = SequenceMUtils.partitions(specification4, buffer);
-        Map<?, Partition<T>> partitions5 = SequenceMUtils.partitions(specification5, buffer);
-        Map<?, Partition<T>> partitions6 = SequenceMUtils.partitions(specification6, buffer);
-        Map<?, Partition<T>> partitions7 = SequenceMUtils.partitions(specification7, buffer);
-        Map<?, Partition<T>> partitions8 = SequenceMUtils.partitions(specification8, buffer);
-        Map<?, Partition<T>> partitions9 = SequenceMUtils.partitions(specification9, buffer);
-        Map<?, Partition<T>> partitions10 = SequenceMUtils.partitions(specification10, buffer);
-
-        return SequenceM(buffer)
-              .map(t -> tuple(
-                   new WindowImpl<>(t, partitions1.get(specification1.partition().apply(t.v1)), specification1),
-                   new WindowImpl<>(t, partitions2.get(specification2.partition().apply(t.v1)), specification2),
-                   new WindowImpl<>(t, partitions3.get(specification3.partition().apply(t.v1)), specification3),
-                   new WindowImpl<>(t, partitions4.get(specification4.partition().apply(t.v1)), specification4),
-                   new WindowImpl<>(t, partitions5.get(specification5.partition().apply(t.v1)), specification5),
-                   new WindowImpl<>(t, partitions6.get(specification6.partition().apply(t.v1)), specification6),
-                   new WindowImpl<>(t, partitions7.get(specification7.partition().apply(t.v1)), specification7),
-                   new WindowImpl<>(t, partitions8.get(specification8.partition().apply(t.v1)), specification8),
-                   new WindowImpl<>(t, partitions9.get(specification9.partition().apply(t.v1)), specification9),
-                   new WindowImpl<>(t, partitions10.get(specification10.partition().apply(t.v1)), specification10)
-              ));
+    	return fromStream(Seq.super.window(specification1,specification2,specification3,
+    			specification4,specification5,specification6,specification7,specification8,
+    			specification9,specification10));
     }
 
     /**
@@ -454,34 +297,9 @@ public interface JoolWindowing<T> extends Seq<T>{
         WindowSpecification<T> specification10,
         WindowSpecification<T> specification11
     ) {
-        List<Tuple2<T, Long>> buffer = zipWithIndex().toList();
-
-        Map<?, Partition<T>> partitions1 = SequenceMUtils.partitions(specification1, buffer);
-        Map<?, Partition<T>> partitions2 = SequenceMUtils.partitions(specification2, buffer);
-        Map<?, Partition<T>> partitions3 = SequenceMUtils.partitions(specification3, buffer);
-        Map<?, Partition<T>> partitions4 = SequenceMUtils.partitions(specification4, buffer);
-        Map<?, Partition<T>> partitions5 = SequenceMUtils.partitions(specification5, buffer);
-        Map<?, Partition<T>> partitions6 = SequenceMUtils.partitions(specification6, buffer);
-        Map<?, Partition<T>> partitions7 = SequenceMUtils.partitions(specification7, buffer);
-        Map<?, Partition<T>> partitions8 = SequenceMUtils.partitions(specification8, buffer);
-        Map<?, Partition<T>> partitions9 = SequenceMUtils.partitions(specification9, buffer);
-        Map<?, Partition<T>> partitions10 = SequenceMUtils.partitions(specification10, buffer);
-        Map<?, Partition<T>> partitions11 = SequenceMUtils.partitions(specification11, buffer);
-
-        return SequenceM(buffer)
-              .map(t -> tuple(
-                   new WindowImpl<>(t, partitions1.get(specification1.partition().apply(t.v1)), specification1),
-                   new WindowImpl<>(t, partitions2.get(specification2.partition().apply(t.v1)), specification2),
-                   new WindowImpl<>(t, partitions3.get(specification3.partition().apply(t.v1)), specification3),
-                   new WindowImpl<>(t, partitions4.get(specification4.partition().apply(t.v1)), specification4),
-                   new WindowImpl<>(t, partitions5.get(specification5.partition().apply(t.v1)), specification5),
-                   new WindowImpl<>(t, partitions6.get(specification6.partition().apply(t.v1)), specification6),
-                   new WindowImpl<>(t, partitions7.get(specification7.partition().apply(t.v1)), specification7),
-                   new WindowImpl<>(t, partitions8.get(specification8.partition().apply(t.v1)), specification8),
-                   new WindowImpl<>(t, partitions9.get(specification9.partition().apply(t.v1)), specification9),
-                   new WindowImpl<>(t, partitions10.get(specification10.partition().apply(t.v1)), specification10),
-                   new WindowImpl<>(t, partitions11.get(specification11.partition().apply(t.v1)), specification11)
-              ));
+    	return fromStream(Seq.super.window(specification1,specification2,specification3,
+    			specification4,specification5,specification6,specification7,specification8,
+    			specification9,specification10,specification11));
     }
 
     /**
@@ -502,36 +320,9 @@ public interface JoolWindowing<T> extends Seq<T>{
         WindowSpecification<T> specification11,
         WindowSpecification<T> specification12
     ) {
-        List<Tuple2<T, Long>> buffer = zipWithIndex().toList();
-
-        Map<?, Partition<T>> partitions1 = SequenceMUtils.partitions(specification1, buffer);
-        Map<?, Partition<T>> partitions2 = SequenceMUtils.partitions(specification2, buffer);
-        Map<?, Partition<T>> partitions3 = SequenceMUtils.partitions(specification3, buffer);
-        Map<?, Partition<T>> partitions4 = SequenceMUtils.partitions(specification4, buffer);
-        Map<?, Partition<T>> partitions5 = SequenceMUtils.partitions(specification5, buffer);
-        Map<?, Partition<T>> partitions6 = SequenceMUtils.partitions(specification6, buffer);
-        Map<?, Partition<T>> partitions7 = SequenceMUtils.partitions(specification7, buffer);
-        Map<?, Partition<T>> partitions8 = SequenceMUtils.partitions(specification8, buffer);
-        Map<?, Partition<T>> partitions9 = SequenceMUtils.partitions(specification9, buffer);
-        Map<?, Partition<T>> partitions10 = SequenceMUtils.partitions(specification10, buffer);
-        Map<?, Partition<T>> partitions11 = SequenceMUtils.partitions(specification11, buffer);
-        Map<?, Partition<T>> partitions12 = SequenceMUtils.partitions(specification12, buffer);
-
-        return SequenceM(buffer)
-              .map(t -> tuple(
-                   new WindowImpl<>(t, partitions1.get(specification1.partition().apply(t.v1)), specification1),
-                   new WindowImpl<>(t, partitions2.get(specification2.partition().apply(t.v1)), specification2),
-                   new WindowImpl<>(t, partitions3.get(specification3.partition().apply(t.v1)), specification3),
-                   new WindowImpl<>(t, partitions4.get(specification4.partition().apply(t.v1)), specification4),
-                   new WindowImpl<>(t, partitions5.get(specification5.partition().apply(t.v1)), specification5),
-                   new WindowImpl<>(t, partitions6.get(specification6.partition().apply(t.v1)), specification6),
-                   new WindowImpl<>(t, partitions7.get(specification7.partition().apply(t.v1)), specification7),
-                   new WindowImpl<>(t, partitions8.get(specification8.partition().apply(t.v1)), specification8),
-                   new WindowImpl<>(t, partitions9.get(specification9.partition().apply(t.v1)), specification9),
-                   new WindowImpl<>(t, partitions10.get(specification10.partition().apply(t.v1)), specification10),
-                   new WindowImpl<>(t, partitions11.get(specification11.partition().apply(t.v1)), specification11),
-                   new WindowImpl<>(t, partitions12.get(specification12.partition().apply(t.v1)), specification12)
-              ));
+    	return fromStream(Seq.super.window(specification1,specification2,specification3,
+    			specification4,specification5,specification6,specification7,specification8,
+    			specification9,specification10,specification11,specification12));
     }
 
     /**
@@ -553,38 +344,9 @@ public interface JoolWindowing<T> extends Seq<T>{
         WindowSpecification<T> specification12,
         WindowSpecification<T> specification13
     ) {
-        List<Tuple2<T, Long>> buffer = zipWithIndex().toList();
-
-        Map<?, Partition<T>> partitions1 = SequenceMUtils.partitions(specification1, buffer);
-        Map<?, Partition<T>> partitions2 = SequenceMUtils.partitions(specification2, buffer);
-        Map<?, Partition<T>> partitions3 = SequenceMUtils.partitions(specification3, buffer);
-        Map<?, Partition<T>> partitions4 = SequenceMUtils.partitions(specification4, buffer);
-        Map<?, Partition<T>> partitions5 = SequenceMUtils.partitions(specification5, buffer);
-        Map<?, Partition<T>> partitions6 = SequenceMUtils.partitions(specification6, buffer);
-        Map<?, Partition<T>> partitions7 = SequenceMUtils.partitions(specification7, buffer);
-        Map<?, Partition<T>> partitions8 = SequenceMUtils.partitions(specification8, buffer);
-        Map<?, Partition<T>> partitions9 = SequenceMUtils.partitions(specification9, buffer);
-        Map<?, Partition<T>> partitions10 = SequenceMUtils.partitions(specification10, buffer);
-        Map<?, Partition<T>> partitions11 = SequenceMUtils.partitions(specification11, buffer);
-        Map<?, Partition<T>> partitions12 = SequenceMUtils.partitions(specification12, buffer);
-        Map<?, Partition<T>> partitions13 = SequenceMUtils.partitions(specification13, buffer);
-
-        return SequenceM(buffer)
-              .map(t -> tuple(
-                   new WindowImpl<>(t, partitions1.get(specification1.partition().apply(t.v1)), specification1),
-                   new WindowImpl<>(t, partitions2.get(specification2.partition().apply(t.v1)), specification2),
-                   new WindowImpl<>(t, partitions3.get(specification3.partition().apply(t.v1)), specification3),
-                   new WindowImpl<>(t, partitions4.get(specification4.partition().apply(t.v1)), specification4),
-                   new WindowImpl<>(t, partitions5.get(specification5.partition().apply(t.v1)), specification5),
-                   new WindowImpl<>(t, partitions6.get(specification6.partition().apply(t.v1)), specification6),
-                   new WindowImpl<>(t, partitions7.get(specification7.partition().apply(t.v1)), specification7),
-                   new WindowImpl<>(t, partitions8.get(specification8.partition().apply(t.v1)), specification8),
-                   new WindowImpl<>(t, partitions9.get(specification9.partition().apply(t.v1)), specification9),
-                   new WindowImpl<>(t, partitions10.get(specification10.partition().apply(t.v1)), specification10),
-                   new WindowImpl<>(t, partitions11.get(specification11.partition().apply(t.v1)), specification11),
-                   new WindowImpl<>(t, partitions12.get(specification12.partition().apply(t.v1)), specification12),
-                   new WindowImpl<>(t, partitions13.get(specification13.partition().apply(t.v1)), specification13)
-              ));
+    	return fromStream(Seq.super.window(specification1,specification2,specification3,
+    			specification4,specification5,specification6,specification7,specification8,
+    			specification9,specification10,specification11,specification12,specification13));
     }
 
     /**
@@ -607,40 +369,10 @@ public interface JoolWindowing<T> extends Seq<T>{
         WindowSpecification<T> specification13,
         WindowSpecification<T> specification14
     ) {
-        List<Tuple2<T, Long>> buffer = zipWithIndex().toList();
-
-        Map<?, Partition<T>> partitions1 = SequenceMUtils.partitions(specification1, buffer);
-        Map<?, Partition<T>> partitions2 = SequenceMUtils.partitions(specification2, buffer);
-        Map<?, Partition<T>> partitions3 = SequenceMUtils.partitions(specification3, buffer);
-        Map<?, Partition<T>> partitions4 = SequenceMUtils.partitions(specification4, buffer);
-        Map<?, Partition<T>> partitions5 = SequenceMUtils.partitions(specification5, buffer);
-        Map<?, Partition<T>> partitions6 = SequenceMUtils.partitions(specification6, buffer);
-        Map<?, Partition<T>> partitions7 = SequenceMUtils.partitions(specification7, buffer);
-        Map<?, Partition<T>> partitions8 = SequenceMUtils.partitions(specification8, buffer);
-        Map<?, Partition<T>> partitions9 = SequenceMUtils.partitions(specification9, buffer);
-        Map<?, Partition<T>> partitions10 = SequenceMUtils.partitions(specification10, buffer);
-        Map<?, Partition<T>> partitions11 = SequenceMUtils.partitions(specification11, buffer);
-        Map<?, Partition<T>> partitions12 = SequenceMUtils.partitions(specification12, buffer);
-        Map<?, Partition<T>> partitions13 = SequenceMUtils.partitions(specification13, buffer);
-        Map<?, Partition<T>> partitions14 = SequenceMUtils.partitions(specification14, buffer);
-
-        return SequenceM(buffer)
-              .map(t -> tuple(
-                   new WindowImpl<>(t, partitions1.get(specification1.partition().apply(t.v1)), specification1),
-                   new WindowImpl<>(t, partitions2.get(specification2.partition().apply(t.v1)), specification2),
-                   new WindowImpl<>(t, partitions3.get(specification3.partition().apply(t.v1)), specification3),
-                   new WindowImpl<>(t, partitions4.get(specification4.partition().apply(t.v1)), specification4),
-                   new WindowImpl<>(t, partitions5.get(specification5.partition().apply(t.v1)), specification5),
-                   new WindowImpl<>(t, partitions6.get(specification6.partition().apply(t.v1)), specification6),
-                   new WindowImpl<>(t, partitions7.get(specification7.partition().apply(t.v1)), specification7),
-                   new WindowImpl<>(t, partitions8.get(specification8.partition().apply(t.v1)), specification8),
-                   new WindowImpl<>(t, partitions9.get(specification9.partition().apply(t.v1)), specification9),
-                   new WindowImpl<>(t, partitions10.get(specification10.partition().apply(t.v1)), specification10),
-                   new WindowImpl<>(t, partitions11.get(specification11.partition().apply(t.v1)), specification11),
-                   new WindowImpl<>(t, partitions12.get(specification12.partition().apply(t.v1)), specification12),
-                   new WindowImpl<>(t, partitions13.get(specification13.partition().apply(t.v1)), specification13),
-                   new WindowImpl<>(t, partitions14.get(specification14.partition().apply(t.v1)), specification14)
-              ));
+    	return fromStream(Seq.super.window(specification1,specification2,specification3,
+    			specification4,specification5,specification6,specification7,specification8,
+    			specification9,specification10,specification11,specification12,specification13,
+    			specification14));
     }
 
     /**
@@ -664,42 +396,10 @@ public interface JoolWindowing<T> extends Seq<T>{
         WindowSpecification<T> specification14,
         WindowSpecification<T> specification15
     ) {
-        List<Tuple2<T, Long>> buffer = zipWithIndex().toList();
-
-        Map<?, Partition<T>> partitions1 = SequenceMUtils.partitions(specification1, buffer);
-        Map<?, Partition<T>> partitions2 = SequenceMUtils.partitions(specification2, buffer);
-        Map<?, Partition<T>> partitions3 = SequenceMUtils.partitions(specification3, buffer);
-        Map<?, Partition<T>> partitions4 = SequenceMUtils.partitions(specification4, buffer);
-        Map<?, Partition<T>> partitions5 = SequenceMUtils.partitions(specification5, buffer);
-        Map<?, Partition<T>> partitions6 = SequenceMUtils.partitions(specification6, buffer);
-        Map<?, Partition<T>> partitions7 = SequenceMUtils.partitions(specification7, buffer);
-        Map<?, Partition<T>> partitions8 = SequenceMUtils.partitions(specification8, buffer);
-        Map<?, Partition<T>> partitions9 = SequenceMUtils.partitions(specification9, buffer);
-        Map<?, Partition<T>> partitions10 = SequenceMUtils.partitions(specification10, buffer);
-        Map<?, Partition<T>> partitions11 = SequenceMUtils.partitions(specification11, buffer);
-        Map<?, Partition<T>> partitions12 = SequenceMUtils.partitions(specification12, buffer);
-        Map<?, Partition<T>> partitions13 = SequenceMUtils.partitions(specification13, buffer);
-        Map<?, Partition<T>> partitions14 = SequenceMUtils.partitions(specification14, buffer);
-        Map<?, Partition<T>> partitions15 = SequenceMUtils.partitions(specification15, buffer);
-
-        return SequenceM(buffer)
-              .map(t -> tuple(
-                   new WindowImpl<>(t, partitions1.get(specification1.partition().apply(t.v1)), specification1),
-                   new WindowImpl<>(t, partitions2.get(specification2.partition().apply(t.v1)), specification2),
-                   new WindowImpl<>(t, partitions3.get(specification3.partition().apply(t.v1)), specification3),
-                   new WindowImpl<>(t, partitions4.get(specification4.partition().apply(t.v1)), specification4),
-                   new WindowImpl<>(t, partitions5.get(specification5.partition().apply(t.v1)), specification5),
-                   new WindowImpl<>(t, partitions6.get(specification6.partition().apply(t.v1)), specification6),
-                   new WindowImpl<>(t, partitions7.get(specification7.partition().apply(t.v1)), specification7),
-                   new WindowImpl<>(t, partitions8.get(specification8.partition().apply(t.v1)), specification8),
-                   new WindowImpl<>(t, partitions9.get(specification9.partition().apply(t.v1)), specification9),
-                   new WindowImpl<>(t, partitions10.get(specification10.partition().apply(t.v1)), specification10),
-                   new WindowImpl<>(t, partitions11.get(specification11.partition().apply(t.v1)), specification11),
-                   new WindowImpl<>(t, partitions12.get(specification12.partition().apply(t.v1)), specification12),
-                   new WindowImpl<>(t, partitions13.get(specification13.partition().apply(t.v1)), specification13),
-                   new WindowImpl<>(t, partitions14.get(specification14.partition().apply(t.v1)), specification14),
-                   new WindowImpl<>(t, partitions15.get(specification15.partition().apply(t.v1)), specification15)
-              ));
+    	return fromStream(Seq.super.window(specification1,specification2,specification3,
+    			specification4,specification5,specification6,specification7,specification8,
+    			specification9,specification10,specification11,specification12,specification13,
+    			specification14,specification15));
     }
 
     /**
@@ -724,44 +424,10 @@ public interface JoolWindowing<T> extends Seq<T>{
         WindowSpecification<T> specification15,
         WindowSpecification<T> specification16
     ) {
-        List<Tuple2<T, Long>> buffer = zipWithIndex().toList();
-
-        Map<?, Partition<T>> partitions1 = SequenceMUtils.partitions(specification1, buffer);
-        Map<?, Partition<T>> partitions2 = SequenceMUtils.partitions(specification2, buffer);
-        Map<?, Partition<T>> partitions3 = SequenceMUtils.partitions(specification3, buffer);
-        Map<?, Partition<T>> partitions4 = SequenceMUtils.partitions(specification4, buffer);
-        Map<?, Partition<T>> partitions5 = SequenceMUtils.partitions(specification5, buffer);
-        Map<?, Partition<T>> partitions6 = SequenceMUtils.partitions(specification6, buffer);
-        Map<?, Partition<T>> partitions7 = SequenceMUtils.partitions(specification7, buffer);
-        Map<?, Partition<T>> partitions8 = SequenceMUtils.partitions(specification8, buffer);
-        Map<?, Partition<T>> partitions9 = SequenceMUtils.partitions(specification9, buffer);
-        Map<?, Partition<T>> partitions10 = SequenceMUtils.partitions(specification10, buffer);
-        Map<?, Partition<T>> partitions11 = SequenceMUtils.partitions(specification11, buffer);
-        Map<?, Partition<T>> partitions12 = SequenceMUtils.partitions(specification12, buffer);
-        Map<?, Partition<T>> partitions13 = SequenceMUtils.partitions(specification13, buffer);
-        Map<?, Partition<T>> partitions14 = SequenceMUtils.partitions(specification14, buffer);
-        Map<?, Partition<T>> partitions15 = SequenceMUtils.partitions(specification15, buffer);
-        Map<?, Partition<T>> partitions16 = SequenceMUtils.partitions(specification16, buffer);
-
-        return SequenceM(buffer)
-              .map(t -> tuple(
-                   new WindowImpl<>(t, partitions1.get(specification1.partition().apply(t.v1)), specification1),
-                   new WindowImpl<>(t, partitions2.get(specification2.partition().apply(t.v1)), specification2),
-                   new WindowImpl<>(t, partitions3.get(specification3.partition().apply(t.v1)), specification3),
-                   new WindowImpl<>(t, partitions4.get(specification4.partition().apply(t.v1)), specification4),
-                   new WindowImpl<>(t, partitions5.get(specification5.partition().apply(t.v1)), specification5),
-                   new WindowImpl<>(t, partitions6.get(specification6.partition().apply(t.v1)), specification6),
-                   new WindowImpl<>(t, partitions7.get(specification7.partition().apply(t.v1)), specification7),
-                   new WindowImpl<>(t, partitions8.get(specification8.partition().apply(t.v1)), specification8),
-                   new WindowImpl<>(t, partitions9.get(specification9.partition().apply(t.v1)), specification9),
-                   new WindowImpl<>(t, partitions10.get(specification10.partition().apply(t.v1)), specification10),
-                   new WindowImpl<>(t, partitions11.get(specification11.partition().apply(t.v1)), specification11),
-                   new WindowImpl<>(t, partitions12.get(specification12.partition().apply(t.v1)), specification12),
-                   new WindowImpl<>(t, partitions13.get(specification13.partition().apply(t.v1)), specification13),
-                   new WindowImpl<>(t, partitions14.get(specification14.partition().apply(t.v1)), specification14),
-                   new WindowImpl<>(t, partitions15.get(specification15.partition().apply(t.v1)), specification15),
-                   new WindowImpl<>(t, partitions16.get(specification16.partition().apply(t.v1)), specification16)
-              ));
+    	return fromStream(Seq.super.window(specification1,specification2,specification3,
+    			specification4,specification5,specification6,specification7,specification8,
+    			specification9,specification10,specification11,specification12,specification13,
+    			specification14,specification15,specification16));
     }
 
 }

@@ -351,7 +351,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>,  Seq<T>,JoolWindowi
 	 */
 	@Override
 	default <U> SequenceM<Tuple2<T, U>> zip(Seq<U> other){
-		return fromStream(Seq.super.zip(other));
+		return fromStream(JoolManipulation.super.zip(other));
 	}
 	/**
 	 * zip 3 Streams into one
@@ -392,7 +392,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>,  Seq<T>,JoolWindowi
 	 */
 	 @Override
 	default SequenceM<Tuple2<T,Long>> zipWithIndex(){
-		return fromStream(Seq.super.zipWithIndex());
+		return fromStream(JoolManipulation.super.zipWithIndex());
 	}
 	/**
 	 * Generic zip function. E.g. Zipping a Stream and an Optional
@@ -524,10 +524,10 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>,  Seq<T>,JoolWindowi
 	SequenceM<List<T>> grouped(int groupSize);
 	default <K,A,D> SequenceM<Tuple2<K,D>> grouped(Function<? super T,? extends K> classifier,
 																Collector<? super T,A,D> downstream){
-		return fromStream(Seq.super.grouped(classifier,downstream));
+		return fromStream(JoolManipulation.super.grouped(classifier,downstream));
 	}
 	public default <K> SequenceM<Tuple2<K,Seq<T>>> grouped(Function<? super T,? extends K> classifier){
-		return fromStream(Seq.super.grouped(classifier));
+		return fromStream(JoolManipulation.super.grouped(classifier));
 	}
 	/**
 	 * Use classifier function to group elements in this Sequence into a Map
@@ -675,7 +675,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>,  Seq<T>,JoolWindowi
 	SequenceM<T> skipUntil(Predicate<? super T> p);
 	
 	default SequenceM<T> skipUntilClosed(Predicate<? super T> p){
-		return fromStream(Seq.super.skipUntilClosed(p));
+		return fromStream(JoolManipulation.super.skipUntilClosed(p));
 	}
 
 	/**
@@ -722,7 +722,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>,  Seq<T>,JoolWindowi
 	 */
 	@Override
 	default SequenceM<T>  limitUntilClosed(Predicate<? super T> p){
-		return fromStream(Seq.super.limitUntilClosed(p));
+		return fromStream(JoolManipulation.super.limitUntilClosed(p));
 	}
 	/**
 	 * @return Does nothing SequenceM is for Sequential Streams
@@ -2221,7 +2221,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>,  Seq<T>,JoolWindowi
 	 * @see org.jooq.lambda.Seq#onEmptyThrow(java.util.function.Supplier)
 	 */
 	default <X extends Throwable> SequenceM<T> onEmptyThrow(Supplier<X> supplier){
-		return SequenceM.fromStream(Seq.super.onEmptyThrow(supplier));
+		return SequenceM.fromStream(JoolManipulation.super.onEmptyThrow(supplier));
 	}
 
 	/* (non-Javadoc)
