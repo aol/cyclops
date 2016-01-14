@@ -544,7 +544,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>,  Seq<T>,JoolWindowi
 	 */
 	@Override
 	default <K> Map<K, List<T>> groupBy(Function<? super T, ? extends K> classifier){
-		return Seq.super.groupBy(classifier);
+		return JoolManipulation.super.groupBy(classifier);
 	}
 
 	/*
