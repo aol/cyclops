@@ -7,6 +7,8 @@ import org.reactivestreams.Subscription;
 /**
  * Interface for reactive-streams based terminal operations, requires simple-react to be on the classpath.
  * 
+ * Used by SequenceM & javaslang ReactiveStream
+ * 
  * @author johnmcclean
  *
  * @param <T> Element data in the Stream being processed.

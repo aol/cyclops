@@ -1,6 +1,7 @@
 package com.aol.cyclops.javaslang.sequence;
 
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
@@ -47,7 +48,6 @@ import com.aol.simple.react.stream.traits.SimpleReactStream;
 public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStreamsTerminalOperations<T> {
 
 	/** creational methods **/
-	
 	static <T> ReactiveStream<T> of(T... values) {
 					
 		return fromStream(Stream.ofAll(values));
@@ -59,7 +59,14 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	static <T> ReactiveStream<T> iterate(T seed, Function<? super T, ? extends T> gen) {
 		return fromStream(Stream.gen(seed, gen));
 	}
+	
+	static ReactiveStream<Integer> range(int start,int end){
+		return fromStream(Stream.range(start, end));
+	}
 
+	static ReactiveStream<Long> range(long start,long end){
+		return fromStream(Stream.range(start, end));
+	}
 	static <T> ReactiveStream<T> generate(Supplier<T> gen) {
 		return fromStream(Stream.gen(gen));
 	}
@@ -72,7 +79,7 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	static <T> ReactiveStream<T> fromStreamable(Streamable<T> stream) {
 		return fromIterable(stream);
 	}
-
+	
 	static <T> ReactiveStream<T> fromJDK(BaseStream<T, ? extends BaseStream<T, ?>> stream) {
 		return fromIterable(()->stream.iterator());
 	}
@@ -160,7 +167,7 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	}
 
 	default JavaslangHotStream<T> pausedHotStream(Executor ex) {
-		return StreamUtils.hotStream(this, ex);
+		return StreamUtils.pausedHotStream(this, ex);
 	}
 	default JavaslangHotStream<T> hotStream(Executor ex) {
 		return StreamUtils.hotStream(this, ex);
@@ -303,10 +310,11 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	
 	/** scanLeft & scanRight **/
 	default <U> Stream<U> scanRight(U identity,BiFunction<? super T, U, U>  combiner){
-		return fromJDK(sequenceM().scanRight(identity,combiner));
+		return reverse().scanLeft(identity, (u, t) -> combiner.apply(t, u));
 	}
 	default  ReactiveStream<T> scanRight(Monoid<T> monoid){
-		return fromJDK(sequenceM().scanRight(monoid));
+		return reverse().scanLeft(monoid.zero(), (u, t) -> monoid.combiner().apply(t, u));
+		
 	}
 	default <U> ReactiveStream<U> scanLeft(U identity, BiFunction<U, ? super T, U> combiner){
 		return fromJDK(sequenceM().scanLeft(identity,combiner));
@@ -555,6 +563,68 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	default <S, R> Stream<R> zipAnyM(AnyM<? extends S> second,
 			BiFunction<? super T, ? super S, ? extends R> zipper) {
 		return fromStream(StreamUtils.zipAnyM(this, second, zipper));
+	}
+
+	/**
+	 * <pre>
+	 * {@code 
+	 *    
+	 *    //1
+	 *    SequenceM.of(1).single(); 
+	 *    
+	 *    //UnsupportedOperationException
+	 *    SequenceM.of().single();
+	 *     
+	 *     //UnsupportedOperationException
+	 *    SequenceM.of(1,2,3).single();
+	 * }
+	 * </pre>
+	 * 
+	 * @return a single value or an UnsupportedOperationException if 0/1 values in this Stream
+	 */
+	default T single(){
+		Iterator<T> it = iterator();
+		if(it.hasNext()){
+			T result = it.next();
+			if(!it.hasNext())
+				return result;
+		}
+		throw new UnsupportedOperationException("single only works for Streams with a single value");
+		
+	}
+	default T single(Predicate<? super T> predicate){
+		return this.filter(predicate).single();
+		
+		
+	}
+
+	/**
+	 * <pre>
+	 * {@code 
+	 *    
+	 *    //Some[1]
+	 *    ReactiveStream.of(1).singleOption(); 
+	 *    
+	 *    //None
+	 *    ReactiveStream.of().singleOpion();
+	 *     
+	 *    //None
+	 *    ReactiveStream.of(1,2,3).singleOption();
+	 * }
+	 * </pre>
+	 * 
+	 * @return An Optional with single value if this Stream has exactly one
+	 *         element, otherwise Optional Empty
+	 */
+	default Option<T> singleOption() {
+		Iterator<T> it = iterator();
+		if (it.hasNext()) {
+			T result = it.next();
+			if (!it.hasNext())
+				return Option.of(result);
+		}
+		return Option.none();
+
 	}
 
 	@Override
