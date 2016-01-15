@@ -2253,4 +2253,30 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 			Runnable onComplete){
 		StreamUtils.forEachEvent(this, consumerElement, consumerError, onComplete);
 	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.sequence.SequenceM#primedHotStream(java.util.concurrent.Executor)
+	 */
+	@Override
+	public HotStream<T> primedHotStream(Executor e) {
+		return StreamUtils.primedHotStream(this, e);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.sequence.SequenceM#pausableHotStream(java.util.concurrent.Executor)
+	 */
+	@Override
+	public PausableHotStream<T> pausableHotStream(Executor e) {
+		return StreamUtils.pausableHotStream(this, e);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.sequence.SequenceM#pausablePrimedHotStream(java.util.concurrent.Executor)
+	 */
+	@Override
+	public PausableHotStream<T> primedPausableHotStream(Executor e) {
+		return StreamUtils.primedPausableHotStream(this, e);
+	}
+	
+	
 }

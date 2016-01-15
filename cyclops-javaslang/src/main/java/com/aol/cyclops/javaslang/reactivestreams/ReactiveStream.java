@@ -1,4 +1,4 @@
-package com.aol.cyclops.javaslang.sequence;
+package com.aol.cyclops.javaslang.reactivestreams;
 
 import java.util.Comparator;
 import java.util.Iterator;
@@ -29,8 +29,6 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.javaslang.Javaslang;
-import com.aol.cyclops.javaslang.reactivestreams.JavaslangReactiveStreamsPublisher;
-import com.aol.cyclops.javaslang.reactivestreams.JavaslangReactiveStreamsSubscriber;
 import com.aol.cyclops.javaslang.streams.JavaslangHotStream;
 import com.aol.cyclops.javaslang.streams.StreamUtils;
 import com.aol.cyclops.monad.AnyM;
@@ -948,6 +946,7 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	default ReactiveStream<T> tail() {
 		return fromStream(toStream().tail());
 	}
+	
 
 	/**
 	 * Execute this Stream on a schedule

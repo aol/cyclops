@@ -3,7 +3,7 @@ package com.aol.cyclops.javaslang.streams;
 import java.util.Queue;
 import java.util.function.Function;
 
-import com.aol.cyclops.javaslang.sequence.ReactiveStream;
+import com.aol.cyclops.javaslang.reactivestreams.ReactiveStream;
 
 
 public interface JavaslangHotStream<T> {

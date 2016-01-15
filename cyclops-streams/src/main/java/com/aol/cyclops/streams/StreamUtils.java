@@ -322,7 +322,7 @@ public class StreamUtils{
 	 * @return Connectable HotStream of output from scheduled Stream
 	 */
 	public static<T> HotStream<T> schedule(Stream<T> stream,String cron,ScheduledExecutorService ex){
-		return new BaseHotStreamImpl(stream).schedule(cron,ex);
+		return new NonPausableHotStream<>(stream).schedule(cron,ex);
 	}
 	
 	/**
@@ -357,7 +357,7 @@ public class StreamUtils{
 	 * @return Connectable HotStream of output from scheduled Stream
 	 */
 	public static <T> HotStream<T> scheduleFixedDelay(Stream<T> stream,long delay,ScheduledExecutorService ex){
-		return new BaseHotStreamImpl(stream).scheduleFixedDelay(delay,ex);
+		return new NonPausableHotStream<>(stream).scheduleFixedDelay(delay,ex);
 	}
 	
 	/**
@@ -390,7 +390,7 @@ public class StreamUtils{
 	 * @return Connectable HotStream of output from scheduled Stream
 	 */
 	public static <T> HotStream<T> scheduleFixedRate(Stream<T> stream,long rate,ScheduledExecutorService ex){
-		return new BaseHotStreamImpl(stream).scheduleFixedRate(rate,ex);
+		return new NonPausableHotStream<>(stream).scheduleFixedRate(rate,ex);
 	}
 	/**
 	 * Split at supplied location 

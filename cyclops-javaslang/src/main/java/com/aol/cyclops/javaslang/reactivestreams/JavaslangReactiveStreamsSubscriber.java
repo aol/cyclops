@@ -8,7 +8,6 @@ import lombok.Getter;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import com.aol.cyclops.javaslang.sequence.ReactiveStream;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.Queue.ClosedQueueException;
 import com.aol.simple.react.async.subscription.Continueable;

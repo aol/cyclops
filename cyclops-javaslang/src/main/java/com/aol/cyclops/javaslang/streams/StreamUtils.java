@@ -1,6 +1,8 @@
 package com.aol.cyclops.javaslang.streams;
 
 
+import static com.aol.cyclops.javaslang.ToStream.toSequenceM;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
@@ -302,7 +304,7 @@ public class StreamUtils{
 	 * @return Connectable HotStream of output from scheduled Stream
 	 */
 	public static<T> JavaslangHotStream<T> schedule(Stream<T> stream,String cron,ScheduledExecutorService ex){
-		return new HotStreamImpl<>(stream).schedule(cron,ex);
+		return new NonPausableHotStream<>(stream).schedule(cron,ex);
 	}
 	
 	/**
@@ -337,7 +339,7 @@ public class StreamUtils{
 	 * @return Connectable HotStream of output from scheduled Stream
 	 */
 	public static <T> JavaslangHotStream<T> scheduleFixedDelay(Stream<T> stream,long delay,ScheduledExecutorService ex){
-		return new HotStreamImpl<>(stream).scheduleFixedDelay(delay,ex);
+		return new NonPausableHotStream<>(stream).scheduleFixedDelay(delay,ex);
 	}
 	
 	/**
@@ -370,7 +372,7 @@ public class StreamUtils{
 	 * @return Connectable HotStream of output from scheduled Stream
 	 */
 	public static <T> JavaslangHotStream<T> scheduleFixedRate(Stream<T> stream,long rate,ScheduledExecutorService ex){
-		return new HotStreamImpl<>(stream).scheduleFixedRate(rate,ex);
+		return new NonPausableHotStream<>(stream).scheduleFixedRate(rate,ex);
 	}
 	/**
 	 * Split at supplied location 
@@ -2118,9 +2120,17 @@ public class StreamUtils{
 			});
 	  }
 	  public final static <T> JavaslangHotStream<T> hotStream(Stream<T> stream,Executor exec){
-		  return new HotStreamImpl<>(stream).init(exec);
+		  return new NonPausableHotStream<>(stream).init(exec);
 	  }
 	  public final static <T> JavaslangHotStream<T> pausedHotStream(Stream<T> stream,Executor exec){
-		  return new HotStreamImpl<>(stream).paused(exec);
+		  return new NonPausableHotStream<>(stream).paused(exec);
+	  }
+	  
+	  
+	  public final static <T> PausableJavaslangHotStream<T> pausableHotStream(Stream<T> stream,Executor exec){
+		  return new PausableHotStreamImpl<>(stream).init(exec);
+	  }
+	  public final static <T> PausableJavaslangHotStream<T> primedPausableHotStream(Stream<T> stream,Executor exec){
+		  return new PausableHotStreamImpl<>(stream).paused(exec);
 	  }
 }

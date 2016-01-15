@@ -1,18 +1,14 @@
-package com.aol.cyclops.javaslang.sequence;
+package com.aol.cyclops.javaslang.reactivestreams;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 import javaslang.collection.Stream;
-import lombok.AllArgsConstructor;
 
-import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
-import com.aol.cyclops.javaslang.reactivestreams.JavaslangReactiveStreamsPublisher;
 import com.aol.cyclops.javaslang.streams.StreamUtils;
-import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
 
 
 public class ReactiveStreamImpl<T> implements ReactiveStream<T> {
@@ -23,8 +19,10 @@ public class ReactiveStreamImpl<T> implements ReactiveStream<T> {
 		this.stream = stream;
 	}
 	
-
-
+	@Override
+	public Stream<T> toStream() {
+	       return (Stream)stream;
+	 }
 	
 	public <X extends Throwable> Subscription forEachX(long numberOfElements,Consumer<? super T> consumer){
 		return StreamUtils.forEachX(this, numberOfElements, consumer);

@@ -1715,6 +1715,9 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @return a Connectable HotStream
 	 */
 	HotStream<T> hotStream(Executor e);
+	HotStream<T> primedHotStream(Executor e);
+	PausableHotStream<T> pausableHotStream(Executor e);
+	PausableHotStream<T> primedPausableHotStream(Executor e);
 	
 	/**
 	 * <pre>
