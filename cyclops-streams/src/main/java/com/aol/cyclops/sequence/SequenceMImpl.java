@@ -55,7 +55,7 @@ import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
 import com.aol.cyclops.sequence.spliterators.ReversableSpliterator;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.sequence.streamable.Streamable;
-import com.aol.cyclops.streams.HotStreamImpl;
+import com.aol.cyclops.streams.BaseHotStreamImpl;
 import com.aol.cyclops.streams.StreamUtils;
 
 
