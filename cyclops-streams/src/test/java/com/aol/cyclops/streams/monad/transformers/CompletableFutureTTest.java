@@ -21,7 +21,7 @@ public class CompletableFutureTTest {
 	String result = null;
 	
 	@Test
-	public void optionAndStream(){
+	public void futureAndStream(){
 		Function<Integer,Integer> add2 = i -> i+2;
 		Function<CompletableFutureT<Integer>, CompletableFutureT<Integer>> optTAdd2 = CompletableFutureT.lift(add2);
 		
@@ -38,7 +38,7 @@ public class CompletableFutureTTest {
 		
 	}
 	@Test
-	public void optionAndStreamAndFuture(){
+	public void futureAndStreamAndFuture(){
 		BiFunction<Integer,Integer,Integer> add = (a,b) -> a+b;
 		BiFunction<CompletableFutureT<Integer>,CompletableFutureT<Integer>,CompletableFutureT<Integer>> optTAdd2 = CompletableFutureT.lift2(add);
 		

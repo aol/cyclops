@@ -65,4 +65,55 @@ public class MutableIntTest {
 	public void testClosedVarHashCodeFalse() {
 		assertThat(new MutableInt(10).hashCode(),not(equalTo(new MutableInt(20).hashCode())));
 	}
+	int value = 0;
+	
+	@Test
+	public void externalSet(){
+		value = 0;
+		MutableInt ext = MutableInt.fromExternal(()->value,v->this.value=v);
+		ext.set(10);
+		assertThat(value,equalTo(10));
+	}
+	
+	@Test
+	public void externalGet(){
+		value = 100;
+		MutableInt ext = MutableInt.fromExternal(()->value,v->this.value=v);
+		
+		assertThat(ext.get(),equalTo(100));
+	}
+	@Test
+	public void externalMapInputObj(){
+		value = 0;
+		Mutable<Integer> ext = MutableInt.fromExternal(()->value,v->this.value=v)
+									.mapInputToObj(s->s+10);
+		ext.set(50);
+		assertThat(value,equalTo(60));
+	}
+	
+	@Test
+	public void externalMapOutputToObj(){
+		value = 200;
+		Mutable<Integer> ext = MutableInt.fromExternal(()->value,v->this.value=v)
+									.mapOutputToObj(s->s*2);
+		
+		assertThat(ext.get(),equalTo(400));
+	}
+	@Test
+	public void externalMapInput(){
+		value = 0;
+		MutableInt ext = MutableInt.fromExternal(()->value,v->this.value=v)
+									.mapInput(s->s+10);
+		ext.set(50);
+		assertThat(value,equalTo(60));
+	}
+	
+	@Test
+	public void externalMapOutput(){
+		value = 200;
+		MutableInt ext = MutableInt.fromExternal(()->value,v->this.value=v)
+									.mapOutput(s->s*2);
+		
+		assertThat(ext.get(),equalTo(400));
+	}
 }

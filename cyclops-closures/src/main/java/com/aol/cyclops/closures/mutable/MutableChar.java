@@ -1,6 +1,8 @@
 package com.aol.cyclops.closures.mutable;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.aol.cyclops.closures.Convertable;
@@ -59,6 +61,93 @@ public class MutableChar implements Supplier<Character>, Consumer<Character>,Con
 	public static <T> MutableChar of(char var){
 		return new MutableChar(var);
 	}
+	
+	
+	/** 
+	 * Construct a MutableChar that gets and sets an external value using the provided Supplier and Consumer
+	 * 
+	 * e.g.
+	 * <pre>
+	 * {@code 
+	 *    MutableChar mutable = MutableChar.fromExternal(()->!this.value,val->!this.value);
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param s Supplier of an external value
+	 * @param c Consumer that sets an external value
+	 * @return MutableChar that gets / sets an external (mutable) value
+	 */
+	public static  MutableChar fromExternal(Supplier<Character> s, Consumer<Character> c){
+		return new MutableChar(){
+			public char getAsChar(){
+				return s.get();
+			}
+			public Character get(){
+				return getAsChar();
+			}
+			public MutableChar set(char value){
+					c.accept(value);
+					return this;
+			}
+		};
+	}
+	
+	/**
+	 * Use the supplied function to perform a lazy map operation when get is called 
+	 * <pre>
+	 * {@code 
+	 *  MutableChar mutable = MutableChar.fromExternal(()->!this.value,val->!this.value);
+	 *  Mutable<Character> withOverride = mutable.mapOutput(b->{ 
+	 *                                                        if(override)
+	 *                                                             return 'a';
+	 *                                                         return b;
+	 *                                                         });
+	 *          
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param fn Map function to be applied to the result when get is called
+	 * @return Mutable that lazily applies the provided function when get is called to the return value
+	 */
+	public <R> Mutable<R> mapOutputToObj(Function<Character,R> fn){
+		MutableChar host = this;
+		return new Mutable<R>(){
+			public R get(){
+				return fn.apply(host.get());
+			}
+			
+		};
+	}
+	/**
+	 * Use the supplied function to perform a lazy map operation when get is called 
+	 * <pre>
+	 * {@code 
+	 *  MutableChar mutable = MutableChar.fromExternal(()->!this.value,val->!this.value);
+	 *  Mutable<Character> withOverride = mutable.mapInput(b->{ 
+	 *                                                        if(override)
+	 *                                                             return 'v';
+	 *                                                         return b;
+	 *                                                         });
+	 *          
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param fn Map function to be applied to the input when set is called
+	 * @return Mutable that lazily applies the provided function when set is called to the input value
+	 */
+	public <T1> Mutable<T1> mapInputToObj(Function<T1,Character> fn){
+		MutableChar host = this;
+		return new Mutable<T1>(){
+			public Mutable<T1> set(T1 value){
+				host.set(fn.apply(value));
+				return this;
+		}
+			
+		};
+	}
 	/**
 	 * @return Current value
 	 */
@@ -79,8 +168,8 @@ public class MutableChar implements Supplier<Character>, Consumer<Character>,Con
 	 * @return  this object with mutated value
 	 */
 	public MutableChar mutate(CharFunction varFn){
-		this.var = varFn.apply(this.var);
-		return this;
+		return set( varFn.apply(get()));
+		
 	}
 	public static interface CharFunction{
 		char apply(char var);

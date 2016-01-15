@@ -34,12 +34,6 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-
-
-
-
-
-
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -52,6 +46,7 @@ import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.sequence.reactivestreams.CyclopsSubscriber;
 import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
+import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops.sequence.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.sequence.spliterators.ReversingListSpliterator;
 import com.aol.cyclops.sequence.spliterators.ReversingRangeIntSpliterator;
@@ -65,7 +60,7 @@ import com.aol.cyclops.sequence.streamable.Streamable;
 
 
 
-public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>, Publisher<T>{
+public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>, Publisher<T>, ReactiveStreamsTerminalOperations<T>{
 	
 	@Override
 	<R> R unwrap();
@@ -79,12 +74,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 *  
 	 *  //stream of (1,  2);		
 	 *  
-	 *  // or more advanced example 
-	 *  
-	 *  AnyM<AnyM<Integer>> applied =anyM(Optional.of(2))
-			 							.simpleFilter(anyM(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3)));
-	
-	     assertThat(applied.toSequence().flatten().toList(),equalTo(Arrays.asList(2)));
+
 	 * 
 	 * }
 	 * 
@@ -125,11 +115,11 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * <pre>
 	 * {@code 
-	 * 		assertThat(SequenceM.of(1,2,2)
+	 * 		SequenceM.of(1,2,2)
 								.cycle(3)
-								.collect(Collectors.toList()),
-								equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
-
+								.collect(Collectors.toList());
+								
+		//List[1,2,2,1,2,2,1,2,2]
 	 * 
 	 * }
 	 * </pre>
@@ -143,7 +133,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * <pre>
 	 * {@code 
-	 *   assertEquals(asList(1, 1, 1, 1, 1,1),SequenceM.of(1).cycle().limit(6).toList());
+	 *      SequenceM.of(1).cycle().limit(6).toList());
+	 *      //List[1, 1, 1, 1, 1,1]
 	 *   }
 	 * </pre>
 	 * 
@@ -253,10 +244,10 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * <pre>
 	 * {@code 
-	 *   		List<Integer> list = AsGenericMonad,asMonad(Stream.of(1,2,2))
-	 * 										.cycle(Reducers.toCountInt(),3)
-	 * 										.collect(Collectors.toList());
-	 * 	//is asList(3,3,3);
+	 *   List<Integer> list = SequenceM.of(1,2,2))
+	 *                                 .cycle(Reducers.toCountInt(),3)
+	 *                                 .collect(Collectors.toList());
+	 *   //List[3,3,3];
 	 *   }
 	 * </pre>
 	 * 
@@ -292,16 +283,19 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param times
 	 * @return
 	 */
+	@Deprecated
 	<R> SequenceM<R> cycle(Class<R> monadC, int times);
 	/**
 	 * Repeat in a Stream while specified predicate holds
 	 * 
 	 * <pre>
 	 * {@code
-	 * count =0;
-		assertThat(SequenceM.of(1,2,2)
-							.cycleWhile(next -> count++<6)
-							.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2)));
+	 * 	MutableInt count =MutableInt.of(0);
+		SequenceM.of(1,2,2)
+				 .cycleWhile(next -> count++<6)
+				 .collect(Collectors.toList());
+				 
+		//List(1,2,2,1,2,2)		 
 	 * }
 	 * </pre>
 	 * 
@@ -315,12 +309,13 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * Repeat in a Stream until specified predicate holds
 	 * <pre>
 	 * {@code 
-	 * 	count =0;
-		assertThat(SequenceM.of(1,2,2)
-							.cycleUntil(next -> count++>6)
-							.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2,1)));
+	 * 	MutableInt count =MutableInt.of(0);
+		SequenceM.of(1,2,2)
+		 		.cycleUntil(next -> count.get()>6)
+		 		.peek(i-> count.mutate(i->i+1))
+		 		.collect(Collectors.toList());
 
-	 * 
+		//List[1,2,2,1,2,2,1]	
 	 * }
 	 * 
 	 * 
@@ -570,7 +565,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param monoid
 	 * @return
 	 */
-	SequenceM<T> scanLeft(Monoid<T> monoid);
+	SequenceM<T> scanLeft(Monoid< T> monoid);
 	/**
 	 * Scan left
 	 * <pre>
@@ -623,7 +618,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * </pre>
 	 * @param c
 	 *            Compartor to sort with
-	 * @return Sorted Monad
+	 * @return Sorted Stream
 	 */
 	SequenceM<T> sorted(Comparator<? super T> c);
 
@@ -636,13 +631,13 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * @param num
 	 *            Number of elemenets to skip
-	 * @return Monad converted to Stream with specified number of elements
+	 * @return Stream with specified number of elements
 	 *         skipped
 	 */
 	SequenceM<T> skip(long num);
 	/**
 	 * 
-	 * 
+	 * SkipWhile drops elements from the Stream while the predicate holds, once the predicte returns true all subsequent elements are included	 * 
 	 * <pre>
 	 * {@code
 	 * assertThat(SequenceM.of(4,3,6,7).sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
@@ -651,13 +646,12 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * @param p
 	 *            Predicate to skip while true
-	 * @return Monad converted to Stream with elements skipped while predicate
-	 *         holds
+	 * @return Stream with elements skipped while predicate holds
 	 */
 	 SequenceM<T> skipWhile(Predicate<? super T> p);
 
 	/**
-	 * 
+	 * Drop elements from the Stream until the predicate returns true, after which all elements are included
 	 * 
 	 * <pre>
 	 * {@code assertThat(SequenceM.of(4,3,6,7).skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));}
@@ -666,7 +660,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * @param p
 	 *            Predicate to skip until true
-	 * @return Monad converted to Stream with elements skipped until predicate
+	 * @return Stream with elements skipped until predicate
 	 *         holds
 	 */
 	SequenceM<T> skipUntil(Predicate<? super T> p);
@@ -685,7 +679,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	SequenceM<T> limit(long num);
 
 	/**
-	 *
+	 * Take elements from the Stream while the predicate holds, once the predicate returns false all subsequent elements are excluded
 	 * 
 	 * <pre>
 	 * {@code assertThat(SequenceM.of(4,3,6,7).sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));}
@@ -693,11 +687,11 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * @param p
 	 *            Limit while predicate is true
-	 * @return Monad converted to Stream with limited elements
+	 * @return Stream with limited elements
 	 */
 	SequenceM<T> limitWhile(Predicate<? super T> p);
 	/**
-	 * 
+	 * Take elements from the Stream until the predicate returns true, after which all elements are excluded.
 	 * 
 	 * <pre>
 	 * {@code assertThat(SequenceM.of(4,3,6,7).limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3))); }
@@ -705,7 +699,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * 
 	 * @param p
 	 *            Limit until predicate is true
-	 * @return Monad converted to Stream with limited elements
+	 * @return Stream with limited elements
 	 */
 	SequenceM<T> limitUntil(Predicate<? super T> p);
 	/**
@@ -929,6 +923,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param collectors Stream of Collectors to apply
 	 * @return  List of results
 	 */
+	@Deprecated
 	 List collectStream(Stream<Collector> collectors);
 	/**
 	 *  Apply multiple Collectors, simultaneously to a Stream
@@ -949,6 +944,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @return Result as a list
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Deprecated
 	<R> List<R> collectIterable(Iterable<Collector> collectors);
 	
 	/**
@@ -1004,7 +1000,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param reducers
 	 * @return
 	 */
-	 List<T> reduce(Stream<Monoid<T>> reducers);
+	 List<T> reduce(Stream<? extends Monoid<T>> reducers);
 	/**
      * Reduce with multiple reducers in parallel
 	 * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was one value
@@ -1413,7 +1409,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * Collection<Integer> col = SequenceM.of(1,2,3,4,5)
 											.peek(System.out::println)
 											.toLazyCollection();
-		System.out.println("first!");
+		
 		col.forEach(System.out::println);
 	 * }
 	 * 
@@ -1430,7 +1426,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * Collection<Integer> col = SequenceM.of(1,2,3,4,5)
 											.peek(System.out::println)
 											.toConcurrentLazyCollection();
-		System.out.println("first!");
+		
 		col.forEach(System.out::println);
 	 * }
 	 * 
@@ -1758,6 +1754,11 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 				return result;
 		}
 		throw new UnsupportedOperationException("single only works for Streams with a single value");
+		
+	}
+	default T single(Predicate<? super T> predicate){
+		return this.filter(predicate).single();
+		
 		
 	}
 
@@ -2292,7 +2293,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param factory Collection factory
 	 * @return SequenceM batched by size and time
 	 */
-	<C extends Collection<T>> SequenceM<C> batchBySizeAndTime(int size,long time, TimeUnit unit, Supplier<C> factory);
+	<C extends Collection<? super T>> SequenceM<C> batchBySizeAndTime(int size,long time, TimeUnit unit, Supplier<C> factory);
 	/**
 	 * Batch elements in a Stream by time period
 	 * 
@@ -2427,7 +2428,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param predicate Window while true
 	 * @return SequenceM windowed while predicate holds
 	 */
-	SequenceM<Streamable<T>> windowWhile(Predicate<T> predicate);
+	SequenceM<Streamable<T>> windowWhile(Predicate<? super T> predicate);
 	/**
 	 * Create a Sequence of Streamables (replayable Streams / Sequences) where each Streamable is populated 
 	 * until the supplied predicate holds. When the predicate failsa new window/ Stremable opens
@@ -2444,7 +2445,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param predicate Window until true
 	 * @return SequenceM windowed until predicate holds
 	 */
-	SequenceM<Streamable<T>> windowUntil(Predicate<T> predicate);
+	SequenceM<Streamable<T>> windowUntil(Predicate<? super T> predicate);
 	/**
 	 * Create SequenceM of Streamables  (replayable Streams / Sequences) where each Streamable is populated 
 	 * while the supplied bipredicate holds. The bipredicate recieves the Streamable from the last window as
@@ -2461,7 +2462,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param predicate Window while true
 	 * @return SequenceM windowed while predicate holds
 	 */
-	SequenceM<Streamable<T>> windowStatefullyWhile(BiPredicate<Streamable<T>,T> predicate);
+	SequenceM<Streamable<T>> windowStatefullyWhile(BiPredicate<Streamable<? super T>,? super T> predicate);
 	/**
 	 * Create SequenceM of Streamables  (replayable Streams / Sequences) where each Streamable is populated
 	 * within a specified time window
@@ -2494,7 +2495,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param predicate Batch until predicate holds, then open next batch
 	 * @return SequenceM batched into lists determined by the predicate supplied
 	 */
-	SequenceM<List<T>> batchUntil(Predicate<T> predicate);
+	SequenceM<List<T>> batchUntil(Predicate<? super T> predicate);
 	/**
 	 * Create a SequenceM batched by List, where each batch is populated while the predicate holds
 	 * <pre>
@@ -2508,7 +2509,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param predicate Batch while predicate holds, then open next batch
 	 * @return SequenceM batched into lists determined by the predicate supplied
 	 */
-	SequenceM<List<T>> batchWhile(Predicate<T> predicate);
+	SequenceM<List<T>> batchWhile(Predicate<? super T> predicate);
 	/**
 	 * Create a SequenceM batched by a Collection, where each batch is populated while the predicate holds
 	 * 
@@ -2524,7 +2525,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param factory Collection factory
 	 * @return SequenceM batched into collections determined by the predicate supplied
 	 */
-	<C extends Collection<T>>  SequenceM<C> batchWhile(Predicate<T> predicate, Supplier<C> factory);
+	<C extends Collection<? super T>>  SequenceM<C> batchWhile(Predicate<? super T> predicate, Supplier<C> factory);
 	/**
 	 * Create a SequenceM batched by a Collection, where each batch is populated until the predicate holds
 	 * 
@@ -2542,7 +2543,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param factory Collection factory
 	 * @return SequenceM batched into collections determined by the predicate supplied
 	 */
-	<C extends Collection<T>>  SequenceM<C> batchUntil(Predicate<T> predicate, Supplier<C> factory);
+	<C extends Collection<? super T>>  SequenceM<C> batchUntil(Predicate<? super T> predicate, Supplier<C> factory);
 
 	/**
 	 * Recover from an exception with an alternative value
@@ -2558,7 +2559,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param fn Function that accepts a Throwable and returns an alternative value
 	 * @return SequenceM that can recover from an Exception
 	 */
-	SequenceM<T> recover(final Function<Throwable, T> fn);
+	SequenceM<T> recover(final Function<Throwable, ? extends T> fn);
 	/**
 	 * Recover from a particular exception type
 	 * 
@@ -2577,7 +2578,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param fn That accepts an error and returns an alternative value
 	 * @return Sequence that can recover from a particular exception
 	 */
-	<EX extends Throwable> SequenceM<T> recover(Class<EX> exceptionClass, final Function<EX, T> fn);
+	<EX extends Throwable> SequenceM<T> recover(Class<EX> exceptionClass, final Function<EX,? extends T> fn);
 	
 	
 	/**
@@ -2602,7 +2603,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param fn Function to retry if fails
 	 * 
 	 */
-	default <R> SequenceM<R> retry(Function<T,R> fn){
+	default <R> SequenceM<R> retry(Function<? super T,? extends R> fn){
 		Function<T,R> retry = t-> {
 			int count = 7;
 			int[] sleep ={2000};
@@ -2816,8 +2817,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	  *<pre>
 	 * {@code 
 	 * SequenceM.of(1,2)
-						.forEach2(a->IntStream.range(10,13),
-						.forEach2(a->b->Stream.of(""+(a+b),"hello world"),
+						.forEach3(a->IntStream.range(10,13),
+						        a->b->Stream.of(""+(a+b),"hello world"),
 									a->b->c->c+":"a+":"+b);
 									
 	 * 
@@ -2829,9 +2830,9 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	<R1,R2,R> SequenceM<R> forEach3(Function<T,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
-													BiFunction<T,R1,? extends BaseStream<R2,? extends BaseStream<? extends R2,?>>> stream2,
-													Function<T,Function<R1,Function<R2,R>>> yieldingFunction );
+	<R1,R2,R> SequenceM<R> forEach3(Function<? super T, ? extends BaseStream<R1,?>> stream1, 
+													Function<? super T,Function<? super R1,? extends BaseStream<R2,?>>> stream2,
+													Function<? super T,Function<? super R1,Function<? super R2,? extends R>>> yieldingFunction );
 	
 	
 
@@ -2841,16 +2842,30 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	/**
 	 * Perform a three level nested internal iteration over this Stream and the supplied streams
 	 * 
+	 *<pre>
+	 * {@code 
+	 * SequenceM.of(1,2,3)
+						.forEach3(a->IntStream.range(10,13),
+						      a->b->Stream.of(""+(a+b),"hello world"),
+						         a->b->c-> c!=3,
+									a->b->c->c+":"a+":"+b);
+									
+	 * 
+	 *  //SequenceM[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
+	 * }
+	 * </pre> 
+	 * 
+	 * 
 	 * @param stream1 Nested Stream to iterate over
 	 * @param stream2 Nested Stream to iterate over
 	 * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
 	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	<R1,R2,R> SequenceM<R> forEach3(Function<T,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
-													BiFunction<T,R1,? extends BaseStream<R2,? extends BaseStream<? extends R2,?>>> stream2,
-															Function<T,Function<R1,Function<R2,Boolean>>> filterFunction,
-													Function<T,Function<R1,Function<R2,R>>> yieldingFunction );
+	<R1,R2,R> SequenceM<R> forEach3(Function<? super T, ? extends BaseStream<R1,?>> stream1, 
+											Function<? super T,Function<? super R1,? extends BaseStream<R2,?>>> stream2,
+															Function<? super T,Function<? super R1,Function<? super R2,Boolean>>> filterFunction,
+													Function<? super T,Function<? super R1,Function<? super R2,? extends R>>> yieldingFunction );
 	
 	
 
@@ -2877,8 +2892,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	<R1,R> SequenceM<R> forEach2(Function<T,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
-													Function<T,Function<R1,R>> yieldingFunction );
+	<R1,R> SequenceM<R> forEach2(Function<? super T, ? extends BaseStream<R1,?>> stream1, 
+													Function<? super T,Function<? super R1,? extends R>> yieldingFunction );
 
 	
 	/**
@@ -2900,7 +2915,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	<R1,R> SequenceM<R> forEach2(Function<T,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
-												Function<T, Function<R1, Boolean>> filterFunction,
-													Function<T,Function<R1,R>> yieldingFunction );
+	<R1,R> SequenceM<R> forEach2(Function<? super T, ? extends BaseStream<R1,?>> stream1, 
+												Function<? super T, Function<? super R1, Boolean>> filterFunction,
+													Function<? super T,Function<? super R1,? extends R>> yieldingFunction );
 }

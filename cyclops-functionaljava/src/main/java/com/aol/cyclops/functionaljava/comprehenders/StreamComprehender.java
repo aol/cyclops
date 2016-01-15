@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.*;
 
 import com.aol.cyclops.lambda.api.Comprehender;
 import com.nurkiewicz.lazyseq.LazySeq;
@@ -51,7 +52,11 @@ public class StreamComprehender implements Comprehender<Stream> {
 		if(apply instanceof LazySeq){
 			return Stream.iteratorStream(((LazySeq)apply).iterator());
 		}
-		
+		final Object finalApply = apply;
+		if(apply instanceof BaseStream){
+			return Stream.iterableStream( () -> ((BaseStream)finalApply).iterator());
+					
+		}
 		
 		return Comprehender.unwrapOtherMonadTypes(comp,apply);
 		

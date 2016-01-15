@@ -359,6 +359,11 @@ public  class BaseStreamableTest {
 		public void flattenEmpty() throws Exception {
 				assertTrue(SequenceM.<Integer>of().flatten().toList().isEmpty());
 		}
+	    @Test
+		public void flattenOptional() throws Exception {
+	    	
+				assertTrue(SequenceM.of(Optional.of(1)).flatten().toList().get(0).equals(new Integer(1)));
+		}
 
 		@Test
 		public void flatten() throws Exception {

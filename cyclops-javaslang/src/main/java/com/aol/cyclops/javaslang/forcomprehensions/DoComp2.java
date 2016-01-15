@@ -391,7 +391,7 @@ public class DoComp2<T1, T2> extends DoComp {
 	 *            comprehension
 	 * @return Next stage in for comprehension builder
 	 */
-	public <T3> DoComp3<T1, T2, T3> withIterable(Function<T1, Function<T2, Iterable<T3>>> f) {
+	public <T3> DoComp3<T1, T2, T3> withIterable(Function<? super T1, Function<? super T2, Iterable<T3>>> f) {
 		return new DoComp3(addToAssigned(f),getOrgType());
 
 	}
@@ -415,7 +415,7 @@ public class DoComp2<T1, T2> extends DoComp {
 	 *            comprehension
 	 * @return Next stage in for comprehension builder
 	 */
-	public <T3> DoComp3<T1, T2, T3> withIterator(Function<T1, Function<T2, Iterator<T3>>> f) {
+	public <T3> DoComp3<T1, T2, T3> withIterator(Function<? super T1, Function<? super T2, Iterator<T3>>> f) {
 		return new DoComp3(addToAssigned(f),getOrgType());
 
 	}
@@ -439,7 +439,7 @@ public class DoComp2<T1, T2> extends DoComp {
 	 *            comprehension
 	 * @return Next stage in for comprehension builder
 	 */
-	public <T3> DoComp3<T1, T2, T3> withStream(Function<T1, Function<T2, Stream<T3>>> f) {
+	public <T3> DoComp3<T1, T2, T3> withStream(Function<? super T1, Function<? super T2, Stream<T3>>> f) {
 		return new DoComp3(addToAssigned(f),getOrgType());
 
 	}
@@ -463,7 +463,7 @@ public class DoComp2<T1, T2> extends DoComp {
 	 *            comprehension
 	 * @return Next stage in for comprehension builder
 	 */
-	public <T3> DoComp3<T1, T2, T3> withBaseStream(Function<T1, Function<T2, BaseStream<T3, ?>>> f) {
+	public <T3> DoComp3<T1, T2, T3> withBaseStream(Function<? super T1, Function<? super T2, BaseStream<T3, ?>>> f) {
 		return new DoComp3(addToAssigned(f),getOrgType());
 
 	}
@@ -487,7 +487,7 @@ public class DoComp2<T1, T2> extends DoComp {
 	 *            comprehension
 	 * @return Next stage in for comprehension builder
 	 */
-	public <T3> DoComp3<T1, T2, T3> withOptional(Function<T1, Function<T2, Optional<T3>>> f) {
+	public <T3> DoComp3<T1, T2, T3> withOptional(Function<? super T1, Function<? super T2, Optional<T3>>> f) {
 		return new DoComp3(addToAssigned(f),getOrgType());
 
 	}
@@ -511,7 +511,7 @@ public class DoComp2<T1, T2> extends DoComp {
 	 *            comprehension
 	 * @return Next stage in for comprehension builder
 	 */
-	public <T3> DoComp3<T1, T2, T3> withMonad(Function<T1, Function<T2, Monad<T3>>> f) {
+	public <T3> DoComp3<T1, T2, T3> withMonad(Function<? super T1, Function<? super T2, Monad<T3>>> f) {
 		return new DoComp3(addToAssigned(f),getOrgType());
 
 	}
@@ -535,7 +535,7 @@ public class DoComp2<T1, T2> extends DoComp {
 	 *            comprehension
 	 * @return Next stage in for comprehension builder
 	 */
-	public <T3> DoComp3<T1, T2, T3> withCompletableFuture(Function<T1, Function<T2, CompletableFuture<T3>>> f) {
+	public <T3> DoComp3<T1, T2, T3> withCompletableFuture(Function<? super T1, Function<? super T2, CompletableFuture<T3>>> f) {
 		return new DoComp3(addToAssigned(f),getOrgType());
 
 	}
@@ -559,7 +559,7 @@ public class DoComp2<T1, T2> extends DoComp {
 	 *            comprehension
 	 * @return Next stage in for comprehension builder
 	 */
-	public <T3> DoComp3<T1, T2, T3> withAnyM(Function<T1, Function<T2, AnyM<T3>>> f) {
+	public <T3> DoComp3<T1, T2, T3> withAnyM(Function<? super T1, Function<? super T2, AnyM<T3>>> f) {
 		return new DoComp3(addToAssigned(f),getOrgType());
 
 	}
@@ -583,7 +583,7 @@ public class DoComp2<T1, T2> extends DoComp {
 	 *            comprehension
 	 * @return Next stage in for comprehension builder
 	 */
-	public <T3> DoComp3<T1, T2, T3> withTraversableM(Function<T1, Function<T2, SequenceM<T3>>> f) {
+	public <T3> DoComp3<T1, T2, T3> withTraversableM(Function<? super T1, Function<? super T2, SequenceM<T3>>> f) {
 		return new DoComp3(addToAssigned(f),getOrgType());
 
 	}
@@ -607,7 +607,7 @@ public class DoComp2<T1, T2> extends DoComp {
 	 *            comprehension
 	 * @return Next stage in for comprehension builder
 	 */
-	public <T3> DoComp3<T1, T2, T3> withCallable(Function<T1, Function<T2, Callable<T3>>> f) {
+	public <T3> DoComp3<T1, T2, T3> withCallable(Function<? super T1, Function<? super T2, Callable<T3>>> f) {
 		return new DoComp3(addToAssigned(f),getOrgType());
 
 	}
@@ -631,7 +631,7 @@ public class DoComp2<T1, T2> extends DoComp {
 	 *            comprehension
 	 * @return Next stage in for comprehension builder
 	 */
-	public <T3> DoComp3<T1, T2, T3> withSupplier(Function<T1, Function<T2, Supplier<T3>>> f) {
+	public <T3> DoComp3<T1, T2, T3> withSupplier(Function<? super T1, Function<? super T2, Supplier<T3>>> f) {
 		return new DoComp3(addToAssigned(f),getOrgType());
 
 	}
@@ -655,7 +655,7 @@ public class DoComp2<T1, T2> extends DoComp {
 	 *            comprehension
 	 * @return Next stage in for comprehension builder
 	 */
-	public <T3> DoComp3<T1, T2, T3> withCollection(Function<T1, Function<T2, Collection<T3>>> f) {
+	public <T3> DoComp3<T1, T2, T3> withCollection(Function<? super T1, Function<? super T2, Collection<T3>>> f) {
 		return new DoComp3(addToAssigned(f),getOrgType());
 
 	}
@@ -679,7 +679,7 @@ public class DoComp2<T1, T2> extends DoComp {
 	 *            comprehension
 	 * @return Next stage in for comprehension builder
 	 */
-	public <T3 extends String> DoComp3<T1, T2, T3> withFile(Function<T1, Function<T2, File>> f) {
+	public <T3 extends String> DoComp3<T1, T2, T3> withFile(Function<? super T1, Function<? super T2, File>> f) {
 		return new DoComp3(addToAssigned(f),getOrgType());
 
 	}
@@ -703,7 +703,7 @@ public class DoComp2<T1, T2> extends DoComp {
 	 *            comprehension
 	 * @return Next stage in for comprehension builder
 	 */
-	public <T3 extends String> DoComp3<T1, T2, T3> withURL(Function<T1, Function<T2, URL>> f) {
+	public <T3 extends String> DoComp3<T1, T2, T3> withURL(Function<? super T1, Function<? super T2, URL>> f) {
 		return new DoComp3(addToAssigned(f),getOrgType());
 
 	}
@@ -727,7 +727,7 @@ public class DoComp2<T1, T2> extends DoComp {
 	 *            comprehension
 	 * @return Next stage in for comprehension builder
 	 */
-	public <T3 extends String> DoComp3<T1, T2, T3> withBufferedReader(Function<T1, Function<T2, BufferedReader>> f) {
+	public <T3 extends String> DoComp3<T1, T2, T3> withBufferedReader(Function<? super T1, Function<? super T2, BufferedReader>> f) {
 		return new DoComp3(addToAssigned(f),getOrgType());
 
 	}
@@ -750,7 +750,7 @@ public class DoComp2<T1, T2> extends DoComp {
 	 *            To be applied to every element in the for comprehension
 	 * @return For comprehension result
 	 */
-	public <R> AnyM<R> yield(Function<T1, Function<T2, R>> f) {
+	public <R> AnyM<R> yield(Function<? super T1, Function<? super T2, R>> f) {
 		if(getOrgType()!=null)
 			return new MonadWrapper(this.yieldInternal(f),this.getOrgType()).anyM();
 		else
@@ -775,7 +775,7 @@ public class DoComp2<T1, T2> extends DoComp {
 	 *            To be applied to every element in the for comprehension
 	 * @return Current stage with guard / filter applied
 	 */
-	public DoComp2<T1, T2> filter(Function<T1, Function<T2, Boolean>> f) {
+	public DoComp2<T1, T2> filter(Function<? super T1, Function<? super T2, Boolean>> f) {
 		return new DoComp2(getAssigned().plus(getAssigned().size(), new Entry("$$internalGUARD" + getAssigned().size(), new Guard(f))),getOrgType());
 	}
 

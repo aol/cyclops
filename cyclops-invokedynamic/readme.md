@@ -1,5 +1,7 @@
 # cyclops-invokedynamic
 
+[USER GUIDE](http://gist.asciidoctor.org/?github-aol/cyclops//user-guide/lambdas.adoc)
+
 Utility classes used within cyclops for fast dynamic method calls and variable lookup
 
 ## Getting cyclops-invokedynamic

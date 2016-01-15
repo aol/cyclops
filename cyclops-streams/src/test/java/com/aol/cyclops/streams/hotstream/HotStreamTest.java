@@ -11,6 +11,8 @@ import java.util.stream.IntStream;
 
 import org.junit.Test;
 
+import uk.co.real_logic.agrona.concurrent.OneToOneConcurrentArrayQueue;
+
 import com.aol.cyclops.sequence.SequenceM;
 
 import fj.data.Seq;
@@ -18,6 +20,7 @@ import fj.data.Seq;
 public class HotStreamTest {
 	static final Executor exec = Executors.newFixedThreadPool(1);
 	volatile Object value;
+	
 	@Test
 	public void hotStream() throws InterruptedException{
 		value= null;

@@ -55,17 +55,17 @@ public class AnyMTest {
 	@Test
 	public void fromStreamLong(){
 		AnyM<Long> stream = AnyM.fromLongStream(LongStream.of(1));
-		assertThat(stream.unwrap(),instanceOf(LongStream.class));
+		assertThat(stream.unwrap(),instanceOf(Stream.class));
 	}
 	@Test
 	public void fromStreamDouble(){
 		AnyM<Double> stream = AnyM.fromDoubleStream(DoubleStream.of(1));
-		assertThat(stream.unwrap(),instanceOf(DoubleStream.class));
+		assertThat(stream.unwrap(),instanceOf(Stream.class));
 	}
 	@Test
 	public void fromStreamInt(){
 		AnyM<Integer> stream = AnyM.fromIntStream(IntStream.of(1));
-		assertThat(stream.unwrap(),instanceOf(IntStream.class));
+		assertThat(stream.unwrap(),instanceOf(Stream.class));
 	}
 	@Test
 	public void fromStream(){

@@ -1,8 +1,11 @@
 package com.aol.cyclops.comprehensions.comprehenders;
 
 import java.util.Collection;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.BaseStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -41,7 +44,7 @@ public class StreamComprehender implements Comprehender<Stream> {
 	public Stream of(Object o) {
 		return Stream.of(o);
 	}
-	static <T> T unwrapOtherMonadTypes(Comprehender<T> comp,Object apply){
+	public static <T> T unwrapOtherMonadTypes(Comprehender<T> comp,Object apply){
 		
 		
 		
@@ -52,7 +55,10 @@ public class StreamComprehender implements Comprehender<Stream> {
 			 return (T)StreamSupport.stream(((Iterable)apply).spliterator(),
 						false);
 		}
-		
+		if(apply instanceof BaseStream){
+			return (T)StreamSupport.stream(Spliterators.spliteratorUnknownSize(((BaseStream)apply).iterator(), Spliterator.ORDERED),
+					false);
+		}
 		return Comprehender.unwrapOtherMonadTypes(comp,apply);
 		
 	}

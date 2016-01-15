@@ -39,8 +39,15 @@ public class ClosingSpliterator<T> implements Spliterator<T> {
 	public boolean tryAdvance(Consumer<? super T> action) {
 		 Objects.requireNonNull(action);
 		
+
+			if(!open.get() && queue.size()==0){
+				
+				return false;
+			}
+
 			while(open.get()){
 				long nanos=1l;
+
         
 				T value;
 				if((value=queue.poll())!=null){

@@ -27,11 +27,15 @@ import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collector;
 
+import org.reactivestreams.Subscription;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.future.FutureOperations;
+import com.aol.cyclops.sequence.reactivestreams.ReactiveTask;
+import com.aol.cyclops.streams.FutureStreamUtils;
 
 
 
@@ -318,6 +322,49 @@ public class FutureOperationsImpl<T> implements FutureOperations<T>, DoubleOpera
 	public void forEach(Consumer<T> c) {
 		 CompletableFuture.runAsync(()->stream.forEach(c),exec);
 		
+	}
+	
+	
+	@Override
+	public <X extends Throwable> ReactiveTask forEachX(long numberOfElements, Consumer<? super T> consumer) {
+		return new ReactiveTask( exec,FutureStreamUtils.forEachX(stream,numberOfElements, consumer)
+								.map2(r->CompletableFuture.runAsync(r,exec)));
+	}
+	@Override
+	public <X extends Throwable> ReactiveTask forEachXWithError(long numberOfElements, Consumer<? super T> consumer,
+			Consumer<? super Throwable> consumerError) {
+		return new ReactiveTask(exec,FutureStreamUtils.forEachXWithError(stream,numberOfElements, consumer, consumerError)
+								.map2(r->CompletableFuture.runAsync(r,exec)));
+
+		
+	}
+	@Override
+	public <X extends Throwable> ReactiveTask forEachXEvents(long numberOfElements, Consumer<? super T> consumer,
+			Consumer<? super Throwable> consumerError, Runnable onComplete) {
+		return new ReactiveTask(exec,FutureStreamUtils.forEachXEvents(stream,numberOfElements, consumer, consumerError, onComplete)
+								.map2(r->CompletableFuture.runAsync(r,exec)));
+		
+	}
+	@Override
+	public <X extends Throwable> ReactiveTask forEachWithError(Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError) {
+		
+		return new ReactiveTask( exec,FutureStreamUtils.forEachWithError(stream,consumerElement, consumerError)
+							.map2(r->CompletableFuture.runAsync(r,exec)));
+	}
+	@Override
+	public <X extends Throwable> ReactiveTask forEachEvent(Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError,
+			Runnable onComplete) {
+		return new ReactiveTask(exec,FutureStreamUtils.forEachEvent(stream,consumerElement, consumerError,onComplete)
+									.map2(r->CompletableFuture.runAsync(r,exec)));
+	}
+	@Override
+	public CompletableFuture<T> single(Predicate<T> predicate) {
+		return CompletableFuture.supplyAsync(()-> stream.filter(predicate).single(),exec);
+				
+	}
+	@Override
+	public CompletableFuture<Optional<T>> singleOptional() {
+		return CompletableFuture.supplyAsync(()-> stream.singleOptional(),exec);
 	}
 	
 }

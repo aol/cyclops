@@ -58,8 +58,7 @@ public class MixedTest {
 		List<String> results = Do.add(strs)
 								.add(opt)
 								.yield( v1->v2 -> v1+ v2)
-								.asSequence()
-								.toList();
+								.unwrap();
 								
 		
 		

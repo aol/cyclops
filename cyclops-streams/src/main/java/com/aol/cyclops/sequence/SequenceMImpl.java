@@ -44,6 +44,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
 import com.aol.cyclops.internal.AsGenericMonad;
@@ -86,9 +87,9 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 		
 	}
 	
-	
+	@Deprecated
 	public final <R> R unwrap(){
-		return (R)stream;
+		return (R)this;
 	}
 
 	/**
@@ -1138,7 +1139,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @param reducers
 	 * @return
 	 */
-	public final List<T> reduce(Stream<Monoid<T>> reducers){
+	public final List<T> reduce(Stream<? extends Monoid<T>> reducers){
 		return StreamUtils.reduce(stream, reducers);
 	}
 	/**
@@ -2036,18 +2037,18 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	}
 
 	@Override
-	public SequenceM<Streamable<T>> windowWhile(Predicate<T> predicate) {
+	public SequenceM<Streamable<T>> windowWhile(Predicate<? super T> predicate) {
 		return StreamUtils.sequenceM(StreamUtils.windowWhile(stream,predicate), this.reversable);
 	}
 
 	@Override
-	public SequenceM<Streamable<T>> windowUntil(Predicate<T> predicate) {
+	public SequenceM<Streamable<T>> windowUntil(Predicate<? super T> predicate) {
 		return StreamUtils.sequenceM(StreamUtils.windowWhile(stream,predicate.negate()), this.reversable);
 	}
 
 	@Override
 	public SequenceM<Streamable<T>> windowStatefullyWhile(
-			BiPredicate<Streamable<T>, T> predicate) {
+			BiPredicate<Streamable<? super T>, ? super T> predicate) {
 		return StreamUtils.sequenceM(StreamUtils.windowStatefullyWhile(stream, predicate), this.reversable);
 	}
 
@@ -2057,12 +2058,12 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	}
 
 	@Override
-	public SequenceM<List<T>> batchUntil(Predicate<T> predicate) {
+	public SequenceM<List<T>> batchUntil(Predicate<? super T> predicate) {
 		return StreamUtils.sequenceM(StreamUtils.batchUntil(stream,predicate), this.reversable);
 	}
 
 	@Override
-	public SequenceM<List<T>> batchWhile(Predicate<T> predicate) {
+	public SequenceM<List<T>> batchWhile(Predicate<? super T> predicate) {
 		return StreamUtils.sequenceM(StreamUtils.batchWhile(stream,predicate), this.reversable);
 	}
 	@Override
@@ -2070,15 +2071,15 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 		return StreamUtils.collect(stream,collectors);
 	}
 	@Override
-	public<C extends Collection<T>>  SequenceM<C> batchWhile(Predicate<T> predicate, Supplier<C> factory) {
+	public<C extends Collection<? super T>>  SequenceM<C> batchWhile(Predicate<? super T> predicate, Supplier<C> factory) {
 		return StreamUtils.sequenceM(StreamUtils.batchWhile(stream,predicate,factory), this.reversable);
 	}
 	@Override
-	public<C extends Collection<T>>  SequenceM<C> batchUntil(Predicate<T> predicate, Supplier<C> factory) {
+	public<C extends Collection<? super T>>  SequenceM<C> batchUntil(Predicate<? super T> predicate, Supplier<C> factory) {
 		return StreamUtils.sequenceM(StreamUtils.batchWhile(stream,predicate.negate(),factory), this.reversable);
 	}
 	@Override
-	public <C extends Collection<T>> SequenceM<C> batchBySizeAndTime(int size,
+	public <C extends Collection<? super T>> SequenceM<C> batchBySizeAndTime(int size,
 			long time, TimeUnit unit, Supplier<C> factory) {
 		return StreamUtils.sequenceM(StreamUtils.batchBySizeAndTime(stream, size,time, unit, factory),this.reversable);
 
@@ -2107,13 +2108,13 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	}
 
 	@Override
-	public SequenceM<T> recover(Function<Throwable, T> fn) {
+	public SequenceM<T> recover(Function<Throwable, ? extends T> fn) {
 		return StreamUtils.sequenceM(StreamUtils.recover(stream,fn),this.reversable);
 	}
 
 	@Override
 	public <EX extends Throwable> SequenceM<T> recover(Class<EX> exceptionClass,
-			Function<EX, T> fn) {
+			Function<EX, ? extends T> fn) {
 		return StreamUtils.sequenceM(StreamUtils.recover(stream,exceptionClass,fn),this.reversable);
 	}
 	
@@ -2122,8 +2123,8 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	  *<pre>
 	 * {@code 
 	 * SequenceM.of(1,2)
-						.forEach2(a->IntStream.range(10,13),
-						.forEach2(a->b->Stream.of(""+(a+b),"hello world"),
+						.forEach3(a->IntStream.range(10,13),
+						.a->b->Stream.of(""+(a+b),"hello world"),
 									a->b->c->c+":"a+":"+b);
 									
 	 * 
@@ -2135,12 +2136,12 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	public <R1,R2,R> SequenceM<R> forEach3(Function<T,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
-													BiFunction<T,R1,? extends BaseStream<R2,? extends BaseStream<? extends R2,?>>> stream2,
-													Function<T,Function<R1,Function<R2,R>>> yieldingFunction ){
+	public <R1,R2,R> SequenceM<R> forEach3(Function<? super T, ? extends BaseStream<R1,?>> stream1, 
+											Function<? super T,Function<? super R1,? extends BaseStream<R2,?>>> stream2,
+												Function<? super T,Function<? super R1,Function<? super R2,? extends R>>> yieldingFunction ){
 		return Do.add(this)
 				  .withBaseStream(u->stream1.apply(u))
-				  .withBaseStream(u->r1->stream2.apply(u,r1))
+				  .withBaseStream(u->r1->stream2.apply(u).apply(r1))
 				  .yield(yieldingFunction).unwrap();
 			
 	}
@@ -2159,14 +2160,14 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	public <R1,R2,R> SequenceM<R> forEach3(Function<T,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
-													BiFunction<T,R1,? extends BaseStream<R2,? extends BaseStream<? extends R2,?>>> stream2,
-															Function<T,Function<R1,Function<R2,Boolean>>> filterFunction,
-													Function<T,Function<R1,Function<R2,R>>> yieldingFunction ){
+	public <R1,R2,R> SequenceM<R> forEach3(Function<? super T, ? extends BaseStream<R1,?>> stream1, 
+			Function<? super T,Function<? super R1,? extends BaseStream<R2,?>>> stream2,
+					Function<? super T,Function<? super R1,Function<? super R2,Boolean>>> filterFunction,
+			Function<? super T,Function<? super R1,Function<? super R2,? extends R>>> yieldingFunction ){
 		
 		 return Do.add(this)
 				  .withBaseStream(u->stream1.apply(u))
-				  .withBaseStream(u->r1->stream2.apply(u,r1))
+				  .withBaseStream(u->r1->stream2.apply(u).apply(r1))
 				  .filter(filterFunction)
 				  .yield(yieldingFunction).unwrap();
 			
@@ -2195,8 +2196,8 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	public <R1,R> SequenceM<R> forEach2(Function<T,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
-													Function<T,Function<R1,R>> yieldingFunction ){
+	public <R1,R> SequenceM<R> forEach2(Function<? super T, ? extends BaseStream<R1,?>> stream1, 
+											Function<? super T,Function<? super R1,? extends R>> yieldingFunction ){
 		 return Do.add(this)
 				  .withBaseStream(u->stream1.apply(u))
 				  .yield(yieldingFunction).unwrap();
@@ -2223,13 +2224,33 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	public <R1,R> SequenceM<R> forEach2(Function<T,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
-												Function<T, Function<R1, Boolean>> filterFunction,
-													Function<T,Function<R1,R>> yieldingFunction ){
+	public <R1,R> SequenceM<R> forEach2(Function<? super T, ? extends BaseStream<R1,?>> stream1, 
+			Function<? super T, Function<? super R1, Boolean>> filterFunction,
+					Function<? super T,Function<? super R1,? extends R>> yieldingFunction ){
 		 return Do.add(this)
 				  .withBaseStream(u->stream1.apply(u))
 				  .filter(filterFunction)
 				  .yield(yieldingFunction).unwrap();
 			
+	}
+	
+	public <X extends Throwable> Subscription forEachX(long numberOfElements,Consumer<? super T> consumer){
+		return StreamUtils.forEachX(this, numberOfElements, consumer);
+	}
+	public <X extends Throwable> Subscription forEachXWithError(long numberOfElements,Consumer<? super T> consumer,Consumer<? super Throwable> consumerError){
+		return StreamUtils.forEachXWithError(this,numberOfElements,consumer,consumerError);
+	}
+	public <X extends Throwable> Subscription forEachXEvents(long numberOfElements,Consumer<? super T> consumer,Consumer<? super Throwable> consumerError, Runnable onComplete){
+		return StreamUtils.forEachXEvents(this, numberOfElements, consumer, consumerError, onComplete);
+	}
+	
+	public <X extends Throwable> void forEachWithError(Consumer<? super T> consumerElement,
+			Consumer<? super Throwable> consumerError){
+			StreamUtils.forEachWithError(this, consumerElement, consumerError);
+	}
+	public <X extends Throwable> void forEachEvent(Consumer<? super T> consumerElement,
+			Consumer<? super Throwable> consumerError,
+			Runnable onComplete){
+		StreamUtils.forEachEvent(this, consumerElement, consumerError, onComplete);
 	}
 }

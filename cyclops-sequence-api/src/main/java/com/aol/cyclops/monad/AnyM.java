@@ -18,7 +18,6 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.BaseStream;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
@@ -196,7 +195,9 @@ public interface AnyM<T> extends Unwrapable, ToStream<T>, ApplyM<T>,FlatMapM<T>,
 	 * @return Aggregated Monad
 	 */
 	 AnyM<List<T>> aggregate(AnyM<T> next);
-	  
+	
+		
+		
 
 	 	/**
 		 * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
@@ -218,8 +219,10 @@ public interface AnyM<T> extends Unwrapable, ToStream<T>, ApplyM<T>,FlatMapM<T>,
 		 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
 		 * @return LazyFutureStream with elements generated via nested iteration
 		 */
-	 <R1,R> AnyM<R> forEach2(Function<T,? extends AnyM<R1>> monad, 
-				Function<T,Function<R1,R>> yieldingFunction );
+		 <R1, R> AnyM<R> forEach2(Function<? super T, ? extends AnyM<R1>> monad, Function<? super T, Function<? super R1, ? extends R>> yieldingFunction);
+			
+			
+	
 	 /**
 		 * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
 		 * etc to be injected, for example)
@@ -240,16 +243,16 @@ public interface AnyM<T> extends Unwrapable, ToStream<T>, ApplyM<T>,FlatMapM<T>,
 		 * @param yieldingFunction Function with pointers to the current element from both monads that generates the new elements
 		 * @return
 		 */
-	 <R1,R> AnyM<R> forEach2(Function<T,? extends AnyM<R1>> monad, 
-				Function<T, Function<R1, Boolean>> filterFunction,
-					Function<T,Function<R1,R>> yieldingFunction );
+		 <R1,R> AnyM<R> forEach2(Function<? super T,? extends AnyM<R1>> monad, 
+					Function<? super T, Function<? super R1, Boolean>> filterFunction,
+						Function<? super T,Function<? super R1,? extends R>> yieldingFunction );
 	 	/** 
 		 * Perform a three level nested internal iteration over this Stream and the supplied streams
 		  *<pre>
 		 * {@code 
 		 * AnyM.fromArray(1,2)
 							.forEach2(a->AnyM.fromIntStream(IntStream.range(10,13)),
-							.forEach2(a->b->AnyM.fromArray(""+(a+b),"hello world"),
+							(a->b->AnyM.fromArray(""+(a+b),"hello world"),
 										a->b->c->c+":"a+":"+b);
 										
 		 * 
@@ -261,9 +264,10 @@ public interface AnyM<T> extends Unwrapable, ToStream<T>, ApplyM<T>,FlatMapM<T>,
 		 * @param yieldingFunction Function with pointers to the current element from both monads that generates the new elements
 		 * @return AnyM with elements generated via nested iteration
 		 */
-		<R1,R2,R> AnyM<R> forEach3(Function<T,? extends AnyM<R1>> monad1, 
-														BiFunction<T,R1,? extends AnyM<R2>> monad2,
-														Function<T,Function<R1,Function<R2,R>>> yieldingFunction );
+		 <R1, R2, R> AnyM<R> forEach3(Function<? super T, ? extends AnyM<R1>> monad1, 	
+					Function<? super T,Function<? super R1,? extends AnyM<R2>>> monad2,
+			Function<? super T, Function<? super R1, Function<? super R2, Boolean>>> filterFunction, 
+				Function<? super T, Function<? super R1, Function<? super R2,? extends R>>> yieldingFunction);
 		
 		
 
@@ -272,6 +276,18 @@ public interface AnyM<T> extends Unwrapable, ToStream<T>, ApplyM<T>,FlatMapM<T>,
 		
 		/**
 		 * Perform a three level nested internal iteration over this AnyM and the supplied monads
+		 *<pre>
+		 * {@code 
+		 * AnyM.fromArray(1,2,3)
+						.forEach3(a->AnyM.fromStream(IntStream.range(10,13)),
+							 a->b->AnyM.fromArray(""+(a+b),"hello world"),
+						         a->b->c-> c!=3,
+									a->b->c->c+":"a+":"+b);
+									
+		 * 
+		 *  //SequenceM[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
+		 * }
+	 * </pre> 
 		 * 
 		 * @param monad1 Nested Stream to iterate over
 		 * @param monad2 Nested Stream to iterate over
@@ -279,10 +295,9 @@ public interface AnyM<T> extends Unwrapable, ToStream<T>, ApplyM<T>,FlatMapM<T>,
 		 * @param yieldingFunction Function with pointers to the current element from both Monads that generates the new elements
 		 * @return AnyM with elements generated via nested iteration
 		 */
-		<R1,R2,R> AnyM<R> forEach3(Function<T,? extends AnyM<R1>> monad1, 
-														BiFunction<T,R1,? extends AnyM<R2>> monad2,
-																Function<T,Function<R1,Function<R2,Boolean>>> filterFunction,
-														Function<T,Function<R1,Function<R2,R>>> yieldingFunction );
+		<R1, R2, R> AnyM<R> forEach3( Function<? super T, ? extends AnyM<R1>> monad1, 	
+						Function<? super T,Function<? super R1,? extends AnyM<R2>>> monad2,
+						Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction);
 	/**
 	 * flatMap operation
 	  * 
@@ -628,7 +643,7 @@ public interface AnyM<T> extends Unwrapable, ToStream<T>, ApplyM<T>,FlatMapM<T>,
 	 */
 	public static AnyM<Integer> fromIntStream(IntStream stream){
 		Objects.requireNonNull(stream);
-		return AnyMFactory.instance.monad(stream);
+		return AnyMFactory.instance.monad(stream.boxed());
 	}
 	/**
 	 * Create an AnyM instance that wraps an DoubleStream
@@ -638,7 +653,7 @@ public interface AnyM<T> extends Unwrapable, ToStream<T>, ApplyM<T>,FlatMapM<T>,
 	 */
 	public static AnyM<Double> fromDoubleStream(DoubleStream stream){
 		Objects.requireNonNull(stream);
-		return AnyMFactory.instance.monad(stream);
+		return AnyMFactory.instance.monad(stream.boxed());
 	}
 	/**
 	 * Create an AnyM instance that wraps an LongStream
@@ -648,7 +663,7 @@ public interface AnyM<T> extends Unwrapable, ToStream<T>, ApplyM<T>,FlatMapM<T>,
 	 */
 	public static AnyM<Long> fromLongStream(LongStream stream){
 		Objects.requireNonNull(stream);
-		return AnyMFactory.instance.monad(stream);
+		return AnyMFactory.instance.monad(stream.boxed());
 	}
 	/**
 	 * Create an AnyM instance that wraps an Optional

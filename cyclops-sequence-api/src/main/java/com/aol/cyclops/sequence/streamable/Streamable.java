@@ -2758,7 +2758,7 @@ public interface Streamable<T> extends ToStream<T>{
     	 * @param predicate Window while true
     	 * @return Streamable windowed while predicate holds
     	 */
-    	default Streamable<Streamable<T>> windowStatefullyWhile(BiPredicate<Streamable<T>,T> predicate){
+    	default Streamable<Streamable<T>> windowStatefullyWhile(BiPredicate<Streamable<? super T>,? super T> predicate){
     		return fromStream(sequenceM().windowStatefullyWhile(predicate));
     	}
     	/**

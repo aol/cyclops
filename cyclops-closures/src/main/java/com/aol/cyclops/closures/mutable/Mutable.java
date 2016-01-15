@@ -92,6 +92,26 @@ public class Mutable<T> implements Supplier<T>,Consumer<T>, Convertable<T>{
 		};
 	}
 	
+	public <R> Mutable<R> mapOutput(Function<T,R> fn){
+		Mutable<T> host = this;
+		return new Mutable<R>(){
+			public R get(){
+				return fn.apply(host.get());
+			}
+			
+		};
+	}
+	public <T1> Mutable<T1> mapInput(Function<T1,T> fn){
+		Mutable<T> host = this;
+		return new Mutable<T1>(){
+			public Mutable<T1> set(T1 value){
+				host.set(fn.apply(value));
+				return this;
+		}
+			
+		};
+	}
+	
 	/**
 	 * @return Current value
 	 */
@@ -112,8 +132,7 @@ public class Mutable<T> implements Supplier<T>,Consumer<T>, Convertable<T>{
 	 * @return  this object with mutated value
 	 */
 	public Mutable<T> mutate(Function<T,T> varFn){
-		this.var = varFn.apply(this.var);
-		return this;
+		return set(varFn.apply(get()));
 	}
 	@Override
 	public void accept(T t) {

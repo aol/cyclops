@@ -1,6 +1,10 @@
 package com.aol.cyclops.closures.mutable;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.IntConsumer;
+import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 import com.aol.cyclops.closures.Convertable;
@@ -59,6 +63,92 @@ public class MutableShort implements Supplier<Short>, Consumer<Short>, Convertab
 	public static <T> MutableShort of(short var){
 		return new MutableShort(var);
 	}
+	/** 
+	 * Construct a MutableShort that gets and sets an external value using the provided Supplier and Consumer
+	 * 
+	 * e.g.
+	 * <pre>
+	 * {@code 
+	 *    MutableShort mutable = MutableShort.fromExternal(()->!this.value,val->!this.value);
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param s Supplier of an external value
+	 * @param c Consumer that sets an external value
+	 * @return MutableShort that gets / sets an external (mutable) value
+	 */
+	public static  MutableShort fromExternal(Supplier<Short> s, Consumer<Short> c){
+		return new MutableShort(){
+			public short getAsShort(){
+				return s.get();
+			}
+			public Short get(){
+				return getAsShort();
+			}
+			public MutableShort set(short value){
+					c.accept(value);
+					return this;
+			}
+		};
+	}
+	
+	
+	/**
+	 * Use the supplied function to perform a lazy map operation when get is called 
+	 * <pre>
+	 * {@code 
+	 *  MutableShort mutable = MutableShort.fromExternal(()->!this.value,val->!this.value);
+	 *  Mutable<Short> withOverride = mutable.mapOutputToObj(b->{ 
+	 *                                                        if(override)
+	 *                                                             return 3s;
+	 *                                                         return b;
+	 *                                                         });
+	 *          
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param fn Map function to be applied to the result when get is called
+	 * @return Mutable that lazily applies the provided function when get is called to the return value
+	 */
+	public <R> Mutable<R> mapOutputToObj(Function<Short,R> fn){
+		MutableShort host = this;
+		return new Mutable<R>(){
+			public R get(){
+				return fn.apply(host.get());
+			}
+			
+		};
+	}
+	/**
+	 * Use the supplied function to perform a lazy map operation when get is called 
+	 * <pre>
+	 * {@code 
+	 *  MutableShort mutable = MutableShort.fromExternal(()->!this.value,val->!this.value);
+	 *  Mutable<Short> withOverride = mutable.mapInputToObj(b->{ 
+	 *                                                        if(override)
+	 *                                                             return 1s;
+	 *                                                         return b;
+	 *                                                         });
+	 *          
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param fn Map function to be applied to the input when set is called
+	 * @return Mutable that lazily applies the provided function when set is called to the input value
+	 */
+	public <T1> Mutable<T1> mapInputToObj(Function<T1,Short> fn){
+		MutableShort host = this;
+		return new Mutable<T1>(){
+			public Mutable<T1> set(T1 value){
+				host.set(fn.apply(value));
+				return this;
+		}
+			
+		};
+	}
 	/**
 	 * @return Current value
 	 */
@@ -79,8 +169,8 @@ public class MutableShort implements Supplier<Short>, Consumer<Short>, Convertab
 	 * @return  this object with mutated value
 	 */
 	public MutableShort mutate(ShortFunction varFn){
-		this.var = varFn.apply(this.var);
-		return this;
+		return set(varFn.apply(get()));
+		
 	}
 	public static interface ShortFunction{
 		short apply(short var);

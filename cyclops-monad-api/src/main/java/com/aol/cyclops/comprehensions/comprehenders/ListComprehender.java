@@ -3,8 +3,11 @@ package com.aol.cyclops.comprehensions.comprehenders;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.BaseStream;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -76,7 +79,10 @@ public class ListComprehender implements Comprehender {
 			 return StreamSupport.stream(((Iterable)apply).spliterator(),
 						false);
 		}
-		
+		if(apply instanceof BaseStream){
+			return StreamSupport.stream(Spliterators.spliteratorUnknownSize(((BaseStream)apply).iterator(), Spliterator.ORDERED),
+					false);
+		}
 		Object o = Comprehender.unwrapOtherMonadTypes(comp,apply);
 		if(o instanceof Collection){
 			return ((Collection)o).stream();
@@ -84,6 +90,10 @@ public class ListComprehender implements Comprehender {
 		if(o instanceof Iterable){
 			 return StreamSupport.stream(((Iterable)o).spliterator(),
 						false);
+		}
+		if(apply instanceof BaseStream){
+			return StreamSupport.stream(Spliterators.spliteratorUnknownSize(((BaseStream)apply).iterator(), Spliterator.ORDERED),
+					false);
 		}
 		return (Stream)o;
 		

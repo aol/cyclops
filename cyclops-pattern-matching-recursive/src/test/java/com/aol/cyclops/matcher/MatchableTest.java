@@ -38,6 +38,8 @@ public class MatchableTest {
 	}
 	@Test
 	public void singleCase(){
+		
+		
 		int result = Matchable.of(Optional.of(1))
 								.matches(c->c.hasValues(1).then(i->2));
 		
@@ -216,6 +218,7 @@ public class MatchableTest {
 	
 	@Test
 	public void matchType(){
+		
 		int result = Matchable.of(new Child(10,20)).matches(
 									c-> c.isType( (Child child) -> child.val).hasValues(10,20)
 									);
@@ -232,4 +235,5 @@ public class MatchableTest {
 	static class Parent{
 		int val;
 	}
+	
 }

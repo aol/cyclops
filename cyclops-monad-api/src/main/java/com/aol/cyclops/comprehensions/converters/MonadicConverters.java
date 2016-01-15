@@ -17,7 +17,7 @@ import com.aol.cyclops.sequence.SequenceM;
 public class MonadicConverters {
 	
 
-	private final  StreamUpscaler upscaler =  stream ->SequenceM.fromStream(stream);
+	private final  StreamUpscaler upscaler =  stream -> SequenceM.fromStream(stream);
 	
 	@Getter
 	private final static PStack<MonadicConverter> converters;

@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.BaseStream;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
@@ -125,6 +126,7 @@ public interface Comprehender<T> {
 		if (apply instanceof Stream) {
 			return comp.of(((Stream) apply).collect(Collectors.toCollection(MaterializedList::new)));
 		}
+		
 		if (apply instanceof IntStream) {
 			return comp.of(((IntStream) apply).boxed().collect(Collectors.toCollection(MaterializedList::new)));
 		}
@@ -132,7 +134,7 @@ public interface Comprehender<T> {
 			return comp.of(((DoubleStream) apply).boxed().collect(Collectors.toCollection(MaterializedList::new)));
 		}
 		if (apply instanceof LongStream) {
-			return comp.of(((DoubleStream) apply).boxed().collect(Collectors.toCollection(MaterializedList::new)));
+			return comp.of(((LongStream) apply).boxed().collect(Collectors.toCollection(MaterializedList::new)));
 		}
 		if (apply instanceof CompletableFuture) {
 			return comp.of(((CompletableFuture) apply).join());

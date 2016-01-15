@@ -1,5 +1,6 @@
 # cyclops-closures
 
+[USER GUIDE](http://gist.asciidoctor.org/?github-aol/cyclops//user-guide/lambdas.adoc)
 
 ## Getting cyclops-closures
 

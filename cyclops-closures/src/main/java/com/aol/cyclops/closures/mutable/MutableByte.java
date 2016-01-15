@@ -1,6 +1,8 @@
 package com.aol.cyclops.closures.mutable;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.aol.cyclops.closures.Convertable;
@@ -59,6 +61,93 @@ public class MutableByte implements Supplier<Byte>, Consumer<Byte>,Convertable<B
 	public static <T> MutableByte of(byte var){
 		return new MutableByte(var);
 	}
+	
+	/** 
+	 * Construct a MutableByte that gets and sets an external value using the provided Supplier and Consumer
+	 * 
+	 * e.g.
+	 * <pre>
+	 * {@code 
+	 *    MutableByte mutable = MutableByte.fromExternal(()->!this.value,val->!this.value);
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param s Supplier of an external value
+	 * @param c Consumer that sets an external value
+	 * @return MutableByte that gets / sets an external (mutable) value
+	 */
+	public static  MutableByte fromExternal(Supplier<Byte> s, Consumer<Byte> c){
+		return new MutableByte(){
+			public byte getAsByte(){
+				return s.get();
+			}
+			public Byte get(){
+				return getAsByte();
+			}
+			public MutableByte set(byte value){
+					c.accept(value);
+					return this;
+			}
+		};
+	}
+	
+	/**
+	 * Use the supplied function to perform a lazy map operation when get is called 
+	 * <pre>
+	 * {@code 
+	 *  MutableByte mutable = MutableByte.fromExternal(()->!this.value,val->!this.value);
+	 *  Mutable<Byte> withOverride = mutable.mapOutputToObj(b->{ 
+	 *                                                        if(override)
+	 *                                                             return 1b;
+	 *                                                         return b;
+	 *                                                         });
+	 *          
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param fn Map function to be applied to the result when get is called
+	 * @return Mutable that lazily applies the provided function when get is called to the return value
+	 */
+	public <R> Mutable<R> mapOutputToObj(Function<Byte,R> fn){
+		MutableByte host = this;
+		return new Mutable<R>(){
+			public R get(){
+				return fn.apply(host.get());
+			}
+			
+		};
+	}
+	/**
+	 * Use the supplied function to perform a lazy map operation when get is called 
+	 * <pre>
+	 * {@code 
+	 *  MutableByte mutable = MutablByte.fromExternal(()->!this.value,val->!this.value);
+	 *  Mutable<Byte> withOverride = mutable.mapInputToObj(b->{ 
+	 *                                                        if(override)
+	 *                                                             return 1b;
+	 *                                                         return b;
+	 *                                                         });
+	 *          
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param fn Map function to be applied to the input when set is called
+	 * @return Mutable that lazily applies the provided function when set is called to the input value
+	 */
+	public <T1> Mutable<T1> mapInputToObj(Function<T1,Byte> fn){
+		MutableByte host = this;
+		return new Mutable<T1>(){
+			public Mutable<T1> set(T1 value){
+				host.set(fn.apply(value));
+				return this;
+		}
+			
+		};
+	}
+	
 	/**
 	 * @return Current value
 	 */
@@ -79,8 +168,8 @@ public class MutableByte implements Supplier<Byte>, Consumer<Byte>,Convertable<B
 	 * @return  this object with mutated value
 	 */
 	public MutableByte mutate(ByteFunction varFn){
-		this.var = varFn.apply(this.var);
-		return this;
+		return set( varFn.apply(this.getAsByte()));
+		
 	}
 	public static interface ByteFunction{
 		byte apply(byte var);

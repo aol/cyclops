@@ -1,5 +1,7 @@
 # cyclops-functions
 
+[USER GUIDE](http://gist.asciidoctor.org/?github-aol/cyclops//user-guide/lambdas.adoc)
+
 ## Getting cyclops-functions
 
 * [![Maven Central : cyclops-functions](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-functions/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-functions)
