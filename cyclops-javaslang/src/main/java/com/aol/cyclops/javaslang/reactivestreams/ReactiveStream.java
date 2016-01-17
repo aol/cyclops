@@ -1,5 +1,6 @@
 package com.aol.cyclops.javaslang.reactivestreams;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.concurrent.Executor;
@@ -43,8 +44,9 @@ import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 
-public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStreamsTerminalOperations<T> {
+public interface ReactiveStream<T> extends Stream<T>, java.util.stream.BaseStream<T,ReactiveStream<T>>, Publisher<T>, ReactiveStreamsTerminalOperations<T> {
 
+	
 	/** creational methods **/
 	static <T> ReactiveStream<T> of(T... values) {
 					
@@ -629,6 +631,10 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	default ReactiveStream<T> append(T element) {
 		return fromStream(toStream().append(element));
 	}
+	
+	default ReactiveStream<T> append(T... elements) {
+		return fromStream(toStream().appendAll(Arrays.asList(elements)));
+	}
 
 	@Override
 	default ReactiveStream<T> appendAll(Iterable<? extends T> elements) {
@@ -771,6 +777,9 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	@Override
 	default ReactiveStream<T> prepend(T element) {
 		return fromStream(toStream().prepend(element));
+	}
+	default ReactiveStream<T> prepend(T... elements) {
+		return fromStream(toStream().prependAll(Arrays.asList(elements)));
 	}
 
 	@Override

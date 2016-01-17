@@ -19,6 +19,62 @@ public class ReactiveStreamImpl<T> implements ReactiveStream<T> {
 		this.stream = stream;
 	}
 	
+	
+	/* (non-Javadoc)
+	 * @see java.util.stream.BaseStream#isParallel()
+	 */
+	@Override
+	public boolean isParallel() {
+		return false;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see java.util.stream.BaseStream#sequential()
+	 */
+	@Override
+	public ReactiveStream<T> sequential() {
+		return this;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see java.util.stream.BaseStream#parallel()
+	 */
+	@Override
+	public ReactiveStream<T> parallel() {
+		return this;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see java.util.stream.BaseStream#unordered()
+	 */
+	@Override
+	public ReactiveStream<T> unordered() {
+		return this;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see java.util.stream.BaseStream#onClose(java.lang.Runnable)
+	 */
+	@Override
+	public ReactiveStream<T> onClose(Runnable closeHandler) {
+		return this;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see java.util.stream.BaseStream#close()
+	 */
+	@Override
+	public void close() {
+		
+		
+	}
+
+
 	@Override
 	public Stream<T> toStream() {
 	       return (Stream)stream;
