@@ -252,6 +252,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, To
 			cf.run();
 			return Success.of(null);
 		}catch(Throwable t){
+			t.printStackTrace();
 			if(classes.length==0)
 				return Failure.of((X)t);
 			val error = Stream.of(classes).filter(c -> c.isAssignableFrom(t.getClass())).findFirst();
@@ -306,11 +307,11 @@ public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, To
 
 		@Override
 		public <T> AndFinally<T,V,X> tryThis(CheckedFunction<V, T, X> catchBlock) {
-			return new MyFinallyBlock(classes,inputSupplier,catchBlock);
+			return new MyFinallyBlock<>(classes,inputSupplier,catchBlock);
 		}
 		@Override
 		public <T> Try<T,X> tryWithResources(CheckedFunction<V, T, X> catchBlock) {
-			return new MyFinallyBlock(classes,inputSupplier,catchBlock).close();
+			return new MyFinallyBlock<>(classes,inputSupplier,catchBlock).close();
 		}
 		
 	}
@@ -321,15 +322,29 @@ public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, To
 		private final CheckedFunction<V, T, X> catchBlock;
 		
 		private void invokeClose(Object in) {
-			if(in instanceof Closeable || in instanceof AutoCloseable)
-				_invokeClose(in);
+			if(in instanceof Closeable)
+				invokeCloseableClose((Closeable)in);
+			else if( in instanceof AutoCloseable)
+				invokeAutocloseableClose((AutoCloseable)in);
 			else if(in instanceof Iterable)
 				invokeClose((Iterable)in);
+			else
+				_invokeClose(in);
 		}
 		private void invokeClose(Iterable in){
 			for(Object next : in)
 				invokeClose(next);
 			
+		
+	}
+		private void invokeCloseableClose(Closeable in){
+			
+			Try.runWithCatch(()->in.close());
+		
+	}
+		private void invokeAutocloseableClose(AutoCloseable in){
+			
+			Try.runWithCatch(()->in.close());
 		
 	}
 		private void _invokeClose(Object in){
@@ -341,21 +356,21 @@ public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, To
 		}
 		public Try<T,X> close(){
 			
-			return andFinally(in -> invokeClose(in) );
+			return andFinally(in -> {System.out.println("hello!!");invokeClose(in);} );
 		}
 		
 		@Override
-		public Try<T, X> andFinally(CheckedConsumer<V, X> finallyBlock) {
+		public Try<T, X> andFinally(final CheckedConsumer<V, X> finallyBlock) {
 			
 				
 							
-				val input =  Try.withCatch(() ->inputSupplier.get(),classes);
+				Try<V,X> input =  Try.withCatch(() ->inputSupplier.get(),classes);
 				Try<T,X> result = null;
 				try{
 					result  =input.flatMap(in -> withCatch(()->catchBlock.apply(in),classes) );
 				
 				}finally{
-					Try finalResult  = result.flatMap(i-> Try.runWithCatch(() ->finallyBlock.accept(input.get()),classes));
+					Try finalResult  = result.flatMap(i-> Try.runWithCatch(() ->finallyBlock.accept(inputSupplier.get()),classes));
 					if(finalResult instanceof Failure)
 						return finalResult;
 				
