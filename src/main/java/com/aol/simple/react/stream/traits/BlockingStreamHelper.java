@@ -7,16 +7,15 @@ import java.util.function.Consumer;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.simple.react.async.future.FastFuture;
-import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.FilteredExecutionPathException;
 import com.aol.simple.react.stream.EagerStreamWrapper;
 import com.aol.simple.react.stream.LazyStreamWrapper;
 import com.aol.simple.react.stream.MissingValue;
 
 public class BlockingStreamHelper {
-	final static ExceptionSoftener exceptionSoftener = ExceptionSoftener.singleton.factory
-			.getInstance();
+	
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	static <R> R block(BlockingStream blocking,final Collector collector, final EagerStreamWrapper lastActive) {
@@ -73,7 +72,7 @@ public class BlockingStreamHelper {
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			capture(e,errorHandler);
-			exceptionSoftener.throwSoftenedException(e);
+			throw ExceptionSoftener.throwSoftenedException(e);
 		} catch (RuntimeException e) {
 			capture(e,errorHandler);
 		} catch (Exception e) {

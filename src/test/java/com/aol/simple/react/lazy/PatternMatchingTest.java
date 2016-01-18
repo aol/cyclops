@@ -3,11 +3,11 @@ import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import lombok.AllArgsConstructor;
 import static org.hamcrest.Matchers.equalTo;
-
 
 import org.junit.Test;
 
@@ -24,14 +24,16 @@ public class PatternMatchingTest {
 													  	c->c.hasValuesWhere( (Integer i)->i%2==0 ).then(i->"even"),
 													  	c->c.hasValuesWhere( (Integer i)->i%2!=0).then(i->"odd")
 													  )
-													  .toList();
+											  .toList();
 		assertThat(result,equalTo(Arrays.asList("odd","even","odd","even")));
 	}
 	@Test
 	public void test2(){
 		List<String> result = LazyFutureStream.of(1,2,3,4)
 											  .capture(e->e.printStackTrace())
+											  
 											  .patternMatch("n/a",c->c.hasValues(1).then(i->"one"))
+											  
 											  .toList();
 		assertThat(result,equalTo(Arrays.asList("one","n/a","n/a","n/a")));
 	}

@@ -4,6 +4,7 @@ package com.aol.simple.react.async.future;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
@@ -14,7 +15,7 @@ import java.util.function.Supplier;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import com.aol.simple.react.exceptions.ExceptionSoftener;
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactCompletionException;
 /*
  * @author John McClean
@@ -30,12 +31,14 @@ import com.aol.simple.react.exceptions.SimpleReactCompletionException;
 @AllArgsConstructor
 public class FastFuture<T> {
 
-	@Getter
-	private volatile boolean done=false;
+	
+	private final AtomicBoolean done= new AtomicBoolean(false);
 	private volatile Consumer<OnComplete> forXOf;
 	private volatile Consumer<OnComplete> essential;
+	
 	@Getter
 	private volatile boolean completedExceptionally=false;
+	//private final AtomicBoolean completedExceptionally2= new AtomicBoolean(false);
 	private final AtomicReference result = new AtomicReference(UNSET);
 	private final AtomicReference exception = new AtomicReference(UNSET);
 	private final Consumer<FastFuture<T>> doFinally;
@@ -49,7 +52,12 @@ public class FastFuture<T> {
 	private final AtomicInteger count= new AtomicInteger(0);
 	private final AtomicInteger max= new AtomicInteger(0);
 	
-	
+	public boolean isDone(){
+		return done.get();
+	}
+	public boolean isCompletedExceptionally(){
+		return done.get();
+	}
 	
 	public FastFuture(){
 		max.set(0);
@@ -84,7 +92,7 @@ public class FastFuture<T> {
 	public void await(){
 		
 		long spin=1;
-		while(!done){
+		while(!isDone()){
 			LockSupport.parkNanos(spin++);
 		}
 		
@@ -98,11 +106,11 @@ public class FastFuture<T> {
 		
 		try{
 			long spin=1;
-			while(!done){
+			while(!isDone()){
 				LockSupport.parkNanos(spin++);
 			}
-			if(completedExceptionally)
-				ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(new SimpleReactCompletionException(exception()));
+			if(isCompletedExceptionally())
+				 throw ExceptionSoftener.throwSoftenedException(new SimpleReactCompletionException(exception()));
 			return result();
 		}finally{
 			 markComplete();
@@ -115,7 +123,7 @@ public class FastFuture<T> {
 	public static <T> FastFuture<T> completedFuture(T value){
 		FastFuture<T> f = new FastFuture();
 		f.result.lazySet(value);
-		f.done=true;
+		f.done.set(true);
 		return f;
 	}
 
@@ -162,11 +170,12 @@ public class FastFuture<T> {
 	}
 	private FastFuture<T> completeExceptionally(Throwable t) {
 		exception.lazySet(t);
-		completedExceptionally =true;
+		//completedExceptionally.set(true);
+		completedExceptionally= true;
 		handleOnComplete(true);
 		if(pipeline!=null && pipeline.onFail!=null)
 			pipeline.onFail.accept(t);
-		done=true;
+		done.set(true);
 		return this;
 	}
 	
@@ -303,8 +312,9 @@ public class FastFuture<T> {
 		
 	}
 	private boolean done(){
-		this.completedExceptionally=false;
-		this.done =true;
+		completedExceptionally= false;
+		//this.completedExceptionally.set(false);
+		this.done.set(true);
 		handleOnComplete(true);
 		
 		return true;
@@ -318,8 +328,9 @@ public class FastFuture<T> {
 		this.essential = null;
 		this.count.set(0);
 		this.max.set(0);
-		this.completedExceptionally=false;
-		this.done=false;	
+		completedExceptionally= false;
+	//	this.completedExceptionally.set(false);
+		this.done.set(false);	
 	}
 	
 	
@@ -334,7 +345,7 @@ public class FastFuture<T> {
 	 */
 	public void essential(Consumer<OnComplete> fn){
 		this.essential=fn; //set - could also be called on a separate thread
-		if(done){ //can be called again
+		if(isDone()){ //can be called again
 			fn.accept(buildOnComplete());
 		}
 	}
@@ -347,7 +358,7 @@ public class FastFuture<T> {
 		
 		this.forXOf = fn; //set - could also be called on a separate thread
 		
-		if(done){ //can be called again
+		if(isDone()){ //can be called again
 			fn.accept(buildOnComplete());
 		}
 	}
@@ -361,8 +372,9 @@ public class FastFuture<T> {
 	
 	}
 	private OnComplete buildOnComplete() {
-		OnComplete c = new OnComplete(!completedExceptionally && done ? result() : null,
-				completedExceptionally ? exception() : null,this.completedExceptionally);
+		System.out.println(isCompletedExceptionally());
+		OnComplete c = new OnComplete(!isCompletedExceptionally() && isDone() ? result() : null,
+				isCompletedExceptionally() ? exception() : null,this.isCompletedExceptionally());
 		return c;
 	}
 	@AllArgsConstructor

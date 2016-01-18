@@ -123,9 +123,11 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	
 	@Test
 	public void zipFastSlow() {
+		LazyFutureStream<Integer> s;
+		
 		Queue q = new Queue();
 		LazyReact.parallelBuilder().reactInfinitely(() -> sleep(100))
-				.then(it -> q.add("100")).runOn(new ForkJoinPool(1));
+				.then(it -> q.add("100")).runThread(new Thread());
 		parallel(1, 2, 3, 4, 5, 6).zip(q.stream())
 				.peek(it -> System.out.println(it))
 				.collect(Collectors.toList());

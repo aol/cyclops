@@ -19,6 +19,7 @@ import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiConsumer;
@@ -103,58 +104,112 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 										FutureStreamAsyncPublisher<U>,
 										FutureStreamSynchronousPublisher<U> {
 
-	
-	
-	/** 
-	 * Perform a two level nested internal iteration over this Stream and the supplied streams
-	  *<pre>
+	/**
+	 * <pre>
+	 * {@code 
+	 *  LazyFutureStream.of(1,2,3,4,5)
+	 * 				 		.elapsed()
+	 * 				 	.forEach(System.out::println);
+	 * }
+	 * </pre>
+	 * 
+	 * @return LazyFutureStream that adds the time between elements in millis to
+	 *         each element
+	 */
+	default LazyFutureStream<Tuple2<U,Long>> elapsed(){
+			return fromStream(SequenceM.fromStream(stream()).elapsed());
+	}
+
+	/**
+	 * If this SequenceM is empty replace it with a another Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat(LazyFutureStream.of(4,5,6)
+	 * 							.onEmptySwitch(()->SequenceM.of(1,2,3))
+	 * 							.toList(),
+	 * 							equalTo(Arrays.asList(4,5,6)));
+	 * }
+	 * </pre>
+	 * 
+	 * @param switchTo
+	 *            Supplier that will generate the alternative Stream
+	 * @return SequenceM that will switch to an alternative Stream if empty
+	 */
+	default LazyFutureStream<U> onEmptySwitch(Supplier<Stream<U>> switchTo){
+		return fromStream(SequenceM.fromStream(stream()).onEmptySwitch(switchTo));
+	}
+	/**
+	 * Perform a three level nested internal iteration over this Stream and the
+	 * supplied streams
+	 *
+	 * <pre>
 	 * {@code 
 	 * LazyFutureStream.of(1,2)
-						.forEach2(a->IntStream.range(10,13),
-						.forEach2(a->b->Stream.of(""+(a+b),"hello world"),
-									a->b->c->c+":"a+":"+b);
-									
+	 * 						.forEach2(a->IntStream.range(10,13),
+	 * 						.forEach2(a->b->Stream.of(""+(a+b),"hello world"),
+	 * 									a->b->c->c+":"a+":"+b);
+	 * 									
 	 * 
 	 *  //LFS[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
 	 * }
-	 * </pre> 
-	 * @param stream1 Nested Stream to iterate over
-	 * @param stream2 Nested Stream to iterate over
-	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
-	 * @return LazyFutureStream with elements generated via nested iteration
-	 */
-	default <R1,R2,R> LazyFutureStream<R> forEach3(Function<U,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
-													BiFunction<U,R1,? extends BaseStream<R2,? extends BaseStream<? extends R2,?>>> stream2,
-													Function<U,Function<R1,Function<R2,R>>> yieldingFunction ){
-		 return Do.add(this)
-				  .withBaseStream(u->stream1.apply(u))
-				  .withBaseStream(u->r1->stream2.apply(u,r1))
-				  .yield(yieldingFunction).unwrap();
-			
-	}
-	
-	
-
-
-	
-	
-	/**
+	 * </pre>
+	 * 
 	 * @param stream1
+	 *            Nested Stream to iterate over
 	 * @param stream2
-	 * @param filterFunction
+	 *            Nested Stream to iterate over
 	 * @param yieldingFunction
-	 * @return
+	 *            Function with pointers to the current element from both
+	 *            Streams that generates the new elements
+	 * @return LazyFutureStream with elements generated via nested iteration
 	 */
-	default <R1,R2,R> LazyFutureStream<R> forEach3(Function<U,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
-													BiFunction<U,R1,? extends BaseStream<R2,? extends BaseStream<? extends R2,?>>> stream2,
-															Function<U,Function<R1,Function<R2,Boolean>>> filterFunction,
-													Function<U,Function<R1,Function<R2,R>>> yieldingFunction ){
+	default <R1,R2,R> LazyFutureStream<R> forEach3(Function<? super U, ? extends BaseStream<R1,?>> stream1, 
+			Function<? super U,Function<? super R1,? extends BaseStream<R2,?>>> stream2,
+			Function<? super U,Function<? super R1,Function<? super R2,? extends R>>> yieldingFunction ){
+		return fromStream(SequenceM.fromStream(stream()).forEach3(stream1, stream2, yieldingFunction));
+			
+	}
+	
+	
+
+
+	
+	
+	/**
+	 * Perform a three level nested internal iteration over this Stream and the
+	 * supplied streams
+	 *<pre>
+	 * {@code 
+	 * LazyFutureStream.of(1,2,3)
+						.forEach3(a->IntStream.range(10,13),
+						      a->b->Stream.of(""+(a+b),"hello world"),
+						         a->b->c-> c!=3,
+									a->b->c->c+":"a+":"+b);
+									
+	 * 
+	 *  //LazyFutureStream[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
+	 * }
+	 * </pre> 
+	 * 
+	 * @param stream1
+	 *            Nested Stream to iterate over
+	 * @param stream2
+	 *            Nested Stream to iterate over
+	 * @param filterFunction
+	 *            Filter to apply over elements before passing non-filtered
+	 *            values to the yielding function
+	 * @param yieldingFunction
+	 *            Function with pointers to the current element from both
+	 *            Streams that generates the new elements
+	 * @return LazyFutureStream with elements generated via nested iteration
+	 */
+	default <R1,R2,R> LazyFutureStream<R> forEach3(Function<? super U, ? extends BaseStream<R1,?>> stream1, 
+			Function<? super U,Function<? super R1,? extends BaseStream<R2,?>>> stream2,
+					Function<? super U,Function<? super R1,Function<? super R2,Boolean>>> filterFunction,
+			Function<? super U,Function<? super R1,Function<? super R2,? extends R>>> yieldingFunction ){
 		
-		 return Do.add(this)
-				  .withBaseStream(u->stream1.apply(u))
-				  .withBaseStream(u->r1->stream2.apply(u,r1))
-				  .filter(filterFunction)
-				  .yield(yieldingFunction).unwrap();
+		return fromStream(SequenceM.fromStream(stream()).forEach3(stream1, stream2, filterFunction, yieldingFunction));
 			
 	}
 	
@@ -165,117 +220,65 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	
 	
 	/**
-	 * Perform a two level nested internal iteration over this Stream and the supplied stream
+	 * Perform a two level nested internal iteration over this Stream and the
+	 * supplied stream
 	 * 
 	 * <pre>
 	 * {@code 
 	 * LazyFutureStream.of(1,2,3)
-						.forEach2(a->IntStream.range(10,13),
-									a->b->a+b);
-									
+	 * 						.forEach2(a->IntStream.range(10,13),
+	 * 									a->b->a+b);
+	 * 									
 	 * 
 	 *  //LFS[11,14,12,15,13,16]
 	 * }
 	 * </pre>
 	 * 
 	 * 
-	 * @param stream1 Nested Stream to iterate over
-	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
+	 * @param stream1
+	 *            Nested Stream to iterate over
+	 * @param yieldingFunction
+	 *            Function with pointers to the current element from both
+	 *            Streams that generates the new elements
 	 * @return LazyFutureStream with elements generated via nested iteration
 	 */
-	default <R1,R> LazyFutureStream<R> forEach2(Function<U,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
-													Function<U,Function<R1,R>> yieldingFunction ){
-		 return Do.add(this)
-				  .withBaseStream(u->stream1.apply(u))
-				  .yield(yieldingFunction).unwrap();
+	default <R1,R> LazyFutureStream<R>  forEach2(Function<? super U, ? extends BaseStream<R1,?>> stream1, 
+													Function<? super U,Function<? super R1,? extends R>> yieldingFunction ){
+		return fromStream(SequenceM.fromStream(stream()).forEach2(stream1, yieldingFunction));
 			
 	}
 
 	
 	/**
-	 * Perform a two level nested internal iteration over this Stream and the supplied stream
+	 * Perform a two level nested internal iteration over this Stream and the
+	 * supplied stream
 	 * 
 	 * <pre>
 	 * {@code 
 	 * LazyFutureStream.of(1,2,3)
-						.forEach2(a->IntStream.range(10,13),
-						            a->b-> a<3 && b>10,
-									a->b->a+b);
-									
+	 * 						.forEach2(a->IntStream.range(10,13),
+	 * 						            a->b-> a<3 && b>10,
+	 * 									a->b->a+b);
+	 * 									
 	 * 
 	 *  //LFS[14,15]
 	 * }
 	 * </pre>
-	 * @param stream1 Nested Stream to iterate over
-	 * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
-	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
+	 * 
+	 * @param stream1
+	 *            Nested Stream to iterate over
+	 * @param filterFunction
+	 *            Filter to apply over elements before passing non-filtered
+	 *            values to the yielding function
+	 * @param yieldingFunction
+	 *            Function with pointers to the current element from both
+	 *            Streams that generates the new elements
 	 * @return
 	 */
-	default <R1,R> LazyFutureStream<R> forEach2(Function<U,? extends BaseStream<R1,? extends BaseStream<? extends R1,?>>> stream1, 
-												Function<U, Function<R1, Boolean>> filterFunction,
-													Function<U,Function<R1,R>> yieldingFunction ){
-		 return Do.add(this)
-				  .withBaseStream(u->stream1.apply(u))
-				  .filter(filterFunction)
-				  .yield(yieldingFunction).unwrap();
-			
-	}
-	/**
-	 * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
-	 * etc to be injected, for example)
-	 * 
-	 * <pre>
-	 * {@code 
-	 * LazyFutureStream.of(1,2,3)
-						.forEachAnyM2(a->AnyM.fromIntStream(IntStream.range(10,13)),
-									a->b->a+b);
-									
-	 * 
-	 *  //LFS[11,14,12,15,13,16]
-	 * }
-	 * </pre>
-	 * 
-	 * 
-	 * @param monad Nested Stream to iterate over
-	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
-	 * @return LazyFutureStream with elements generated via nested iteration
-	 */
-	default <R1,R> LazyFutureStream<R> forEachAnyM2(Function<U,? extends AnyM<R1>> monad, 
-													Function<U,Function<R1,R>> yieldingFunction ){
-		 return Do.add(this)
-				  .withAnyM(u->monad.apply(u))
-				  .yield(yieldingFunction).unwrap();
-			
-	}
-
-	
-	/**
-	 * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
-	 * etc to be injected, for example)
-	 * 
-	 * <pre>
-	 * {@code 
-	 * LazyFutureStream.of(1,2,3)
-						.forEach2(a->AnyM.fromIntStream(IntStream.range(10,13)),
-						            a->b-> a<3 && b>10,
-									a->b->a+b);
-									
-	 * 
-	 *  //LFS[14,15]
-	 * }
-	 * </pre>
-	 * @param monad Nested Stream to iterate over
-	 * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
-	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
-	 * @return
-	 */
-	default <R1,R> LazyFutureStream<R> forEachAnyM2(Function<U,? extends AnyM<R1>> monad, 
-												Function<U, Function<R1, Boolean>> filterFunction,
-													Function<U,Function<R1,R>> yieldingFunction ){
-		 return Do.add(this)
-				  .withAnyM(u->monad.apply(u))
-				  .filter(filterFunction)
-				  .yield(yieldingFunction).unwrap();
+	default <R1,R> LazyFutureStream<R> forEach2(Function<? super U, ? extends BaseStream<R1,?>> stream1, 
+			Function<? super U, Function<? super R1, Boolean>> filterFunction,
+					Function<? super U,Function<? super R1,? extends R>> yieldingFunction ){
+		return fromStream(SequenceM.fromStream(stream()).forEach2(stream1, filterFunction,yieldingFunction));
 			
 	}
 	
@@ -286,9 +289,10 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * <pre>
 	 * {@code 
 	 * List<String> result = LazyFutureStream.of(1,2,3,4)
-											  .patternMatch("odd",
+											  .patternMatch(
 													  	c->c.hasValuesWhere( (Integer i)->i%2==0 ).then(i->"even")
 													  )
+											  
 	 * }
 	 * // LazyFutureStream["odd","even","odd","even"]
 	 * </pre>
@@ -307,14 +311,18 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * 
 	 * <pre>
 	 * {@code 
+	 * 
 	 * List<String> result = LazyFutureStream.of(-2,01,2,3,4)
 	 *                                        .filter(i->i>0)
 											  .patternMatch("many",
 													  	c->c.hasValuesWhere( (Integer i)->i==1 ).then(i->"one"),
 													  	c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"two")
-													  )
+													  );
+											   	
+											   
+		 // LazyFutureStream["one","two","many","many"]
 	 * }
-	 * // LazyFutureStream["one","two","many","many"]
+	 * 
 	 * </pre>
 	 * 
 	 * @param defaultValue Value if supplied cases don't match
@@ -330,7 +338,8 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * Transform the elements of this Stream with a Pattern Matching case and default value
 	 * 
 	 * <pre>
-	 * {@code 
+	 * {@code
+	 *  
 	 * List<String> result = LazyFutureStream.of(-2,01,2,3,4)
 	 *                                        .filter(i->i>0)
 											  .patternMatch("many",
@@ -338,6 +347,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 													  	c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"two"),
 													  	c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"three")
 													  )
+												 .map(opt -> opt.orElse("many"));		
 	 * }
 	 * // LazyFutureStream["one","two","three","many"]
 	 * </pre>
@@ -366,6 +376,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 													  	c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"three"),
 													  	c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"four")
 													  )
+												 	
 	 * }
 	 * // LazyFutureStream["one","two","three","four","many"]
 	 * </pre>
@@ -378,7 +389,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 */
 	default <R> LazyFutureStream<R> patternMatch(R defaultValue,Function<CheckValues<U,R>,CheckValues<U,R>> fn1, Function<CheckValues<U,R>,CheckValues<U,R>> fn2, 
 							Function<CheckValues<U,R>,CheckValues<U,R>> fn3,Function<CheckValues<U,R>,CheckValues<U,R>> fn4){
-		Function<U,Matchable> matchable =Curry.curry2(MatchableCreator.<U>matchable()).apply(this);
+		
 		return map(u-> Matchable.of(u).mayMatch(fn1,fn2,fn3,fn4).orElse(defaultValue));
 	}
 	/**
@@ -395,6 +406,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 													  	c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"four"),
 													  	c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"five")
 													  )
+											 .map(opt -> opt.orElse("many"));		
 	 * }
 	 * // LazyFutureStream["one","two","three","four","five","many"]
 	 * </pre>
@@ -928,22 +940,25 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 	
 	/**
-	 * Convert between an Lazy and Eager SimpleReact Stream,
-	 * can be used to take advantages of each approach during a single Stream
+	 * Convert between an Lazy and Eager SimpleReact Stream, can be used to take
+	 * advantages of each approach during a single Stream
 	 * 
-	 * Allows callers to take advantage of functionality only available in SimpleReactStreams such as allOf
+	 * Allows callers to take advantage of functionality only available in
+	 * SimpleReactStreams such as allOf
+	 * 
 	 * <pre>
 	 * {@code
 	 * LazyReact.parallelCommonBuilder()
-						.react(()->slow(),()->1,()->2)
-						.peek(System.out::println)
-						.convertToSimpleReact()
-						.allOf(list->list)
-						.block()
+	 * 						.react(()->slow(),()->1,()->2)
+	 * 						.peek(System.out::println)
+	 * 						.convertToSimpleReact()
+	 * 						.allOf(list->list)
+	 * 						.block()
 	 * }
 	 * </pre>
 	 * 
-	 * @return An SimpleReactStream from this LazyFutureStream, will use the same executors
+	 * @return An SimpleReactStream from this LazyFutureStream, will use the
+	 *         same executors
 	 */
 	default SimpleReactStream<U> convertToSimpleReact(){
 		return new SimpleReact(getTaskExecutor()).withRetrier(getRetrier()).fromStream((Stream)getLastActive()
@@ -986,6 +1001,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * elements of the Stream
 	 * 
 	 * e.g.
+	 * 
 	 * <pre>
 	 * <code>
 	 * 
@@ -994,6 +1010,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * 
 	 * </code>
 	 * </pre>
+	 * 
 	 * results in 2 Streams "even": 10,20,30 "odd" : 25,41,43
 	 * 
 	 * @param shards
@@ -1025,7 +1042,8 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 *          .debounce(1000,TimeUnit.SECONDS).toList();
 	 *          
 	 * // [1] 
-	 * }</pre>
+	 * }
+	 * </pre>
 	 * 
 	 * @param time
 	 *            Time from which to accept only one element
@@ -1083,7 +1101,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * LazyFutureStream.of(1,2,3,4,5,6)
 	 * 					.batchBySize(3)
 	 * 					.toList();
-	 *
+	 * 
 	 *  // [[1,2,3],[4,5,6]]
 	 * }
 	 *
@@ -1146,6 +1164,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * }
 	 * 
 	 * </pre>
+	 * 
 	 * @param size
 	 *            Size of batch
 	 * @param supplier
@@ -1157,23 +1176,25 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 		return fromStream(SequenceM.fromStream(toQueue().stream(getSubscription())).batchBySize(size,supplier));
 
 	}
-	
+
 	/**
 	 * Introduce a random delay between events in a stream Can be used to
 	 * prevent behaviour synchronizing within a system
+	 * 
 	 * <pre>
 	 * {@code
 	 * 
 	 * LazyFutureStream.parallelCommonBuilder()
-						.of(IntStream.range(0, 100))
-						.map(it -> it*100)
-						.jitter(10l)
-						.peek(System.out::println)
-						.block();
+	 * 						.of(IntStream.range(0, 100))
+	 * 						.map(it -> it*100)
+	 * 						.jitter(10l)
+	 * 						.peek(System.out::println)
+	 * 						.block();
 	 * 
 	 * }
-	
+	 * 
 	 * </pre>
+	 * 
 	 * @param jitterInNanos
 	 *            Max number of nanos for jitter (random number less than this
 	 *            will be selected)/
@@ -1187,15 +1208,18 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * Apply a fixed delay before emitting elements to the next phase of the
 	 * Stream. Note this doesn't neccessarily imply a fixed delay between
 	 * element creation (although it may do). e.g.
+	 * 
 	 * <pre>
 	 * {@code 
 	 *    LazyFutureStream.of(1,2,3,4)
 	 *                    .fixedDelay(1,TimeUnit.hours);
 	 * }
 	 * </pre>
+	 * 
 	 * Will emit 1 on start, then 2 after an hour, 3 after 2 hours and so on.
 	 * 
 	 * However all 4 numbers will be populated in the Stream immediately.
+	 * 
 	 * <pre>
 	 * {@code 
 	 * LazyFutureStream.of(1,2,3,4)
@@ -1204,6 +1228,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * 
 	 * }
 	 * </pre>
+	 * 
 	 * Will populate each number in the Stream an hour apart.
 	 * 
 	 * @param time
@@ -1218,6 +1243,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
 	/**
 	 * Slow emissions down, emiting one element per specified time period
+	 * 
 	 * <pre>
 	 * {@code 
 	 * 		LazyFutureStream.of(1,2,3,4,5,6)
@@ -1227,6 +1253,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * }
 	 * 
 	 * </pre>
+	 * 
 	 * @param time
 	 *            Frequency period of element emission
 	 * @param unit
@@ -1241,7 +1268,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	/**
 	 * Allows x (specified number of) emissions with a time period before
 	 * stopping emmissions until specified time has elapsed since last emission
-	
+	 * 
 	 * <pre>
 	 * {@code 
 	 *    LazyFutureStream.of(1,2,3,4,5,6)
@@ -1251,6 +1278,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * }
 	 * 
 	 * </pre>
+	 * 
 	 * @param x
 	 *            Number of allowable emissions per time period
 	 * @param time
@@ -1596,7 +1624,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * .Function)
 	 */
 	@Override
-	default <R> LazyFutureStream<R> retry(Function<U, R> fn) {
+	default <R> LazyFutureStream<R> retry(Function<? super U, ? extends R> fn) {
 
 		return (LazyFutureStream) LazySimpleReactStream.super.retry(fn);
 	}
@@ -2957,7 +2985,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * @see com.aol.cyclops.sequence.SequenceM#reduce(java.util.stream.Stream)
 	 */
 	@Override
-	default List<U> reduce(Stream<Monoid<U>> reducers) {
+	default List<U> reduce(Stream<? extends Monoid<U>> reducers) {
 		return  SequenceM.fromStream(toQueue().stream(getSubscription()))
 				.reduce(reducers);
 	}
@@ -3344,7 +3372,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * @see com.aol.cyclops.sequence.SequenceM#batchBySizeAndTime(int, long, java.util.concurrent.TimeUnit, java.util.function.Supplier)
 	 */
 	@Override
-	default <C extends Collection<U>> LazyFutureStream<C> batchBySizeAndTime(int size,
+	default <C extends Collection<? super U>> LazyFutureStream<C> batchBySizeAndTime(int size,
 			long time, TimeUnit unit, Supplier<C> factory) {
 			Queue<U> queue = toQueue();
 		    Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTimeAndSize(size,time,unit,factory);
@@ -3370,7 +3398,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * @see com.aol.cyclops.sequence.SequenceM#windowWhile(java.util.function.Predicate)
 	 */
 	@Override
-	default LazyFutureStream<Streamable<U>> windowWhile(Predicate<U> predicate) {
+	default LazyFutureStream<Streamable<U>> windowWhile(Predicate<? super U> predicate) {
 		return fromStream(SequenceM.fromStream(toQueue().stream(getSubscription()))
 				.windowWhile(predicate));
 	}
@@ -3379,7 +3407,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * @see com.aol.cyclops.sequence.SequenceM#windowUntil(java.util.function.Predicate)
 	 */
 	@Override
-	default LazyFutureStream<Streamable<U>> windowUntil(Predicate<U> predicate) {
+	default LazyFutureStream<Streamable<U>> windowUntil(Predicate<? super U> predicate) {
 		return fromStream(SequenceM.fromStream(toQueue().stream(getSubscription()))
 				.windowUntil(predicate));
 	}
@@ -3389,7 +3417,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 */
 	@Override
 	default LazyFutureStream<Streamable<U>> windowStatefullyWhile(
-			BiPredicate<Streamable<U>, U> predicate) {
+			BiPredicate<Streamable<? super U>,? super U> predicate) {
 		return fromStream(SequenceM.fromStream(toQueue().stream(getSubscription()))
 				.windowStatefullyWhile(predicate));
 	}
@@ -3407,7 +3435,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * @see com.aol.cyclops.sequence.SequenceM#batchUntil(java.util.function.Predicate)
 	 */
 	@Override
-	default LazyFutureStream<List<U>> batchUntil(Predicate<U> predicate) {
+	default LazyFutureStream<List<U>> batchUntil(Predicate<? super U> predicate) {
 		return fromStream(SequenceM.fromStream(toQueue().stream(getSubscription()))
 				.batchUntil(predicate));
 	}
@@ -3416,7 +3444,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * @see com.aol.cyclops.sequence.SequenceM#batchWhile(java.util.function.Predicate)
 	 */
 	@Override
-	default LazyFutureStream<List<U>> batchWhile(Predicate<U> predicate) {
+	default LazyFutureStream<List<U>> batchWhile(Predicate<? super U> predicate) {
 		return fromStream(SequenceM.fromStream(toQueue().stream(getSubscription()))
 				.batchWhile(predicate));
 	}
@@ -3425,8 +3453,8 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * @see com.aol.cyclops.sequence.SequenceM#batchWhile(java.util.function.Predicate, java.util.function.Supplier)
 	 */
 	@Override
-	default <C extends Collection<U>> LazyFutureStream<C> batchWhile(
-			Predicate<U> predicate, Supplier<C> factory) {
+	default <C extends Collection<? super U>> LazyFutureStream<C> batchWhile(
+			Predicate<? super U> predicate, Supplier<C> factory) {
 		return fromStream(SequenceM.fromStream(toQueue().stream(getSubscription()))
 				.batchWhile(predicate,factory));
 	}
@@ -3445,8 +3473,8 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * @see com.aol.cyclops.sequence.SequenceM#batchUntil(java.util.function.Predicate, java.util.function.Supplier)
 	 */
 	@Override
-	default <C extends Collection<U>> LazyFutureStream<C> batchUntil(
-			Predicate<U> predicate, Supplier<C> factory) {
+	default <C extends Collection<? super U>> LazyFutureStream<C> batchUntil(
+			Predicate<? super U> predicate, Supplier<C> factory) {
 		
 		return fromStream(SequenceM.fromStream(toQueue().stream(getSubscription()))
 				.batchUntil(predicate,factory));
@@ -3456,7 +3484,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 * @see com.aol.cyclops.sequence.SequenceM#recover(java.util.function.Function)
 	 */
 	@Override
-	default LazyFutureStream<U> recover(Function<Throwable, U> fn) {
+	default LazyFutureStream<U> recover(Function<Throwable, ? extends U> fn) {
 		return this.onFail(e->fn.apply(e.getCause()));
 		
 	}
@@ -3466,7 +3494,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 	 */
 	@Override
 	default <EX extends Throwable> LazyFutureStream<U> recover(
-			Class<EX> exceptionClass, Function<EX, U> fn) {
+			Class<EX> exceptionClass, Function<EX, ? extends U> fn) {
 		return this.onFail(exceptionClass,e->fn.apply((EX)e.getCause()));
 	}
 

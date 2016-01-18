@@ -2,7 +2,8 @@ package com.aol.simple.react.stream.traits;
 
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
@@ -11,7 +12,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
-import com.aol.simple.react.async.Queue;
+import java.util.Iterator;
+
 import com.aol.simple.react.async.future.FastFuture;
 import com.aol.simple.react.collectors.lazy.EmptyCollector;
 import com.aol.simple.react.collectors.lazy.IncrementalReducer;
@@ -21,10 +23,10 @@ import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.stream.LazyStreamWrapper;
 import com.aol.simple.react.stream.MissingValue;
 import com.aol.simple.react.stream.Runner;
-import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.lazy.ParallelReductionConfig;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.threads.SequentialElasticPools;
+
 
 public interface LazyStream<U> extends BlockingStream<U>{
 	
@@ -36,21 +38,22 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	 ParallelReductionConfig getParallelReduction();
 	 MaxActive getMaxActive();
 	 
+	 public Iterator<U> iterator();
 	/**
 	 * Trigger a lazy stream as a task on the provided Executor
 	 * 
-	 * @param e
-	 *            Executor service to trigger lazy stream on (Stream
-	 *            CompletableFutures will use Executor associated with
-	 *            this Stage may not be the same one).
+	 *
 	 * 
 	 * 
 	 */
-	default void runOn(Executor e) {
+	default void run() {
 		SimpleReact reactor  = SequentialElasticPools.simpleReact.nextReactor();
-		reactor.react(() -> run(new NonCollector())).peek(n-> SequentialElasticPools.simpleReact.populate(reactor));
+		reactor.react(() -> run(new NonCollector()))
+								.peek(n-> SequentialElasticPools.simpleReact.populate(reactor))
+								.onFail(n-> { SequentialElasticPools.simpleReact.populate(reactor); return 1;});
 
 	}
+	
 
 	default void runThread(Runnable r) {
 		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
@@ -73,14 +76,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 
 	}
 	
-	/**
-	 * Trigger a lazy stream
-	 */
-	default void run() {
-		//FIXME this should use an elastic pool of executors try {  } finally { }
-		runOn(ThreadPools.getLazyExecutor());
-
-	}
+	
 
 	/**
 	 * Trigger a lazy stream and return the results in the Collection created by

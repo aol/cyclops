@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
@@ -99,10 +100,10 @@ public interface LazySimpleReactStream<U> extends
 	 * @return Next Stage in the Strea,
 	 */
 	@SuppressWarnings("unchecked")
-	default <R> LazySimpleReactStream<R> retry(final Function<U, R> fn) {
+	default <R> LazySimpleReactStream<R> retry(final Function<? super U, ? extends R> fn) {
 		Function<PipelineBuilder,PipelineBuilder> mapper =
 				(ft) -> ft.thenApplyAsync(res -> 
-				getRetrier().getWithRetry( ()->LazySimpleReactStream.<U,R>handleExceptions(fn)
+				getRetrier().getWithRetry( (Callable)()->LazySimpleReactStream.<U,R>handleExceptions(fn)
 						.apply((U)res)).join(),getTaskExecutor() );
 
 		return  this.withLastActive(getLastActive().operation(mapper));
@@ -226,7 +227,7 @@ public interface LazySimpleReactStream<U> extends
 		});
 	}
 
-	static <U,R> Function<U, R> handleExceptions(Function<U, R> fn) {
+	static <U,R> Function<U, R> handleExceptions(Function<? super U,? extends R> fn) {
 		return (input) -> {
 			try {
 				return fn.apply(input);

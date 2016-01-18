@@ -19,8 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
 
-import org.jooq.lambda.Seq;
-
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.async.factories.QueueToBlockingQueueWrapper;
@@ -28,7 +27,6 @@ import com.aol.simple.react.async.subscription.AlwaysContinue;
 import com.aol.simple.react.async.subscription.Continueable;
 import com.aol.simple.react.async.wait.DirectWaitStrategy;
 import com.aol.simple.react.async.wait.WaitStrategy;
-import com.aol.simple.react.exceptions.ExceptionSoftener;
 import com.aol.simple.react.exceptions.SimpleReactProcessingException;
 import com.aol.simple.react.stream.traits.Continuation;
 import com.aol.simple.react.util.SimpleTimer;
@@ -54,8 +52,7 @@ public class Queue<T> implements Adapter<T> {
 
 	private final static PoisonPill POISON_PILL = new PoisonPill();
 	private final static PoisonPill CLEAR_PILL = new PoisonPill();
-	private final ExceptionSoftener softener = ExceptionSoftener.singleton.factory
-			.getInstance();
+	
 	private volatile boolean open = true;
 	private final AtomicInteger listeningStreams = new AtomicInteger();
 	private final int timeout;
@@ -241,7 +238,7 @@ public class Queue<T> implements Adapter<T> {
 			}
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
-			softener.throwSoftenedException(e);
+			throw ExceptionSoftener.throwSoftenedException(e);
 		}
 			
 		ensureNotPoisonPill(data);
@@ -382,9 +379,9 @@ public class Queue<T> implements Adapter<T> {
 			return result;
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
-			this.softener.throwSoftenedException(e);
+			throw ExceptionSoftener.throwSoftenedException(e);
 		}
-		return false;
+		
 		
 	}
 

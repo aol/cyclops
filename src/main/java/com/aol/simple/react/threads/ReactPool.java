@@ -7,8 +7,7 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.aol.simple.react.exceptions.ExceptionSoftener;
-import com.aol.simple.react.stream.BaseSimpleReact;
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.simple.react.stream.ReactBuilder;
 
 /**
@@ -24,8 +23,7 @@ import com.aol.simple.react.stream.ReactBuilder;
 public class ReactPool<REACTOR extends ReactBuilder> {
 	
 	private final BlockingQueue<REACTOR> queue;
-	private final ExceptionSoftener softener = ExceptionSoftener.singleton.factory
-			.getInstance();
+	
 	private final Supplier<REACTOR> supplier;
 	
 	private ReactPool(int size){
@@ -98,7 +96,7 @@ public class ReactPool<REACTOR extends ReactBuilder> {
 			queue.put(next);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
-			softener.throwSoftenedException(e);
+			throw ExceptionSoftener.throwSoftenedException(e);
 		}
 		
 	}
@@ -140,8 +138,8 @@ public class ReactPool<REACTOR extends ReactBuilder> {
 		}
 		}catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
-			softener.throwSoftenedException(e);
-			return null;
+			throw ExceptionSoftener.throwSoftenedException(e);
+			
 		}
 		return reactor;
 	}

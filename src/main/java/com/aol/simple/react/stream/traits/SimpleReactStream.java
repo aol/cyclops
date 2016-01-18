@@ -424,7 +424,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
 	 * @return Next Stage in the Strea,
 	 */
 	@SuppressWarnings("unchecked")
-	default <R> SimpleReactStream<R> retry(final Function<U, R> fn) {
+	default <R> SimpleReactStream<R> retry(final Function<? super U,? extends R> fn) {
 		Function<Stream<CompletableFuture>,Stream<CompletableFuture>>  mapper = stream -> stream.map(
 				(ft) -> ft.thenApplyAsync(res -> 
 				getRetrier().getWithRetry( ()->SimpleReactStream.<U,R>handleExceptions(fn).apply((U)res)).join(),getTaskExecutor() ));
@@ -581,7 +581,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
 		});
 	}
 
-	static <U,R> Function<U, R> handleExceptions(Function<U, R> fn) {
+	static <U,R> Function<U, R> handleExceptions(Function<? super U,? extends R> fn) {
 		return (input) -> {
 			try {
 				return fn.apply(input);

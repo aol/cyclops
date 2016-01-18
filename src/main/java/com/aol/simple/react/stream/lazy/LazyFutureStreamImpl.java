@@ -16,6 +16,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -86,6 +87,10 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 
 
 
+	
+
+
+
 	private final Optional<Consumer<Throwable>> errorHandler;
 	private final LazyStreamWrapper<U> lastActive;
 	
@@ -100,9 +105,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	
 	private final Executor publisherExecutor;
 	private final MaxActive maxActive;
-	@Wither(AccessLevel.PRIVATE)
-	@Getter
-	private final boolean decomposePatternMatching;
+	
 	
 	@AllArgsConstructor
 	static class ConsumerHolder{
@@ -124,15 +127,10 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		this.parallelReduction = ParallelReductionConfig.defaultValue;
 		this.publisherExecutor = lazyReact.getPublisherExecutor();
 		this.maxActive = lazyReact.getMaxActive();
-		this.decomposePatternMatching=false;
+		
 		
 	}
-	public LazyFutureStream<U> decompositionOn(){
-		return this.withDecomposePatternMatching(true);
-	}
-	public LazyFutureStream<U> decompositionOff(){
-		return this.withDecomposePatternMatching(false);
-	}
+	
 	public void forwardErrors(Consumer<Throwable> c){
 		error.forward =c;
 	}
@@ -198,8 +196,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	@Override
 	public LazyFutureStream<U> withLastActive(LazyStreamWrapper w) {
 		return new LazyFutureStreamImpl<U>(errorHandler, (LazyStreamWrapper)w,  lazyCollector, 
-				queueFactory, simpleReact, subscription, parallelReduction, error,this.publisherExecutor,maxActive,
-				this.decomposePatternMatching);
+				queueFactory, simpleReact, subscription, parallelReduction, error,this.publisherExecutor,maxActive);
 		
 	}
 	@Override
@@ -219,5 +216,53 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	}
 
 
+	@Override
+	public HotStream<U> schedule(String cron, ScheduledExecutorService ex) {
+		return SequenceM.<U>fromStream(this.toStream()).schedule(cron, ex);
+	}
+	@Override
+	public HotStream<U> scheduleFixedDelay(long delay,
+			ScheduledExecutorService ex) {
+		return SequenceM.<U>fromStream(this.toStream()).scheduleFixedDelay(delay, ex);
+	}
+	@Override
+	public HotStream<U> scheduleFixedRate(long rate, ScheduledExecutorService ex) {
+		return SequenceM.<U>fromStream(this.toStream()).scheduleFixedRate(rate, ex);
+	}
+	@Override
+	public <X extends Throwable> org.reactivestreams.Subscription forEachX(
+			long numberOfElements, Consumer<? super U> consumer) {
+		return SequenceM.<U>fromStream(this.toStream()).forEachX(numberOfElements,consumer);
+	}
+	@Override
+	public <X extends Throwable> org.reactivestreams.Subscription forEachXWithError(
+			long numberOfElements, Consumer<? super U> consumer,
+			Consumer<? super Throwable> consumerError) {
+		return SequenceM.<U>fromStream(this.toStream()).forEachXWithError(numberOfElements,consumer,
+						consumerError);
+	}
+	@Override
+	public <X extends Throwable> org.reactivestreams.Subscription forEachXEvents(
+			long numberOfElements, Consumer<? super U> consumer,
+			Consumer<? super Throwable> consumerError, Runnable onComplete) {
+		return SequenceM.<U>fromStream(this.toStream()).forEachXEvents(numberOfElements,consumer,
+				consumerError,onComplete);
+	}
+	@Override
+	public <X extends Throwable> void forEachWithError(
+			Consumer<? super U> consumerElement,
+			Consumer<? super Throwable> consumerError) {
+		 SequenceM.<U>fromStream(this.toStream()).forEachWithError(consumerElement,
+				consumerError);
+		
+	}
+	@Override
+	public <X extends Throwable> void forEachEvent(
+			Consumer<? super U> consumerElement,
+			Consumer<? super Throwable> consumerError, Runnable onComplete) {
+		SequenceM.<U>fromStream(this.toStream()).forEachEvent(consumerElement,
+				consumerError,onComplete);
+		
+	}
 
 }
