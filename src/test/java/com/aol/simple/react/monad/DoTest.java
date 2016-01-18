@@ -1,7 +1,7 @@
 package com.aol.simple.react.monad;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -65,12 +65,13 @@ public class DoTest {
 	
 	@Test
 	public void doTestLazyOptionalEmptyStream(){
+		
 		Optional<List<Integer>> result = Do.add(lookup("1"))
 												.add(LazyFutureStream.<Integer>of())
 												.yield((Integer a) -> (Integer b) -> a+b)
 												.unwrap();
 		System.out.println(result);
-		assertThat(result.get().size(),equalTo(0));
+		assertTrue(!result.isPresent());
 	}
 	@Test
 	public void doTestSimpleOptionalEmptyStream(){
