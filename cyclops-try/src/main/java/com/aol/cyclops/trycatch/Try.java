@@ -321,17 +321,18 @@ public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, To
 		private final CheckedFunction<V, T, X> catchBlock;
 		
 		private void invokeClose(Object in) {
-			if(in instanceof Iterable)
+			if(in instanceof Closeable || in instanceof AutoCloseable)
+				_invokeClose(in);
+			else if(in instanceof Iterable)
 				invokeClose((Iterable)in);
-			invokeClose((Closeable)in);
 		}
-		private void invokeClose(Iterable<Closeable> in){
-			for(Closeable next : in)
+		private void invokeClose(Iterable in){
+			for(Object next : in)
 				invokeClose(next);
 			
 		
 	}
-		private void invokeClose(Closeable in){
+		private void _invokeClose(Object in){
 			
 				Try.withCatch(()->in.getClass().getMethod("close")).filter(m->m!=null)
 						.flatMap(m->Try.withCatch(()->m.invoke(in))
