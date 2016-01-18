@@ -78,7 +78,11 @@ public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
 						for(int i=0;i<n2;i++){
 							
 							if(it.hasNext()){
-								results.add(it.next().thenAccept( r-> s.onNext(r)).exceptionally(t->{ s.onError(t); return null;}));
+								results.add(it.next().thenAccept( r-> s.onNext(r)).exceptionally(t->{ 
+									
+											s.onError(t); return null;
+											
+								}));
 								List<CompletableFuture> newResults = results.stream().filter(cf->cf.isDone()).collect(Collectors.toList());
 								results.removeAll(newResults);
 								

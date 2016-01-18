@@ -57,6 +57,7 @@ import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.streams.StreamUtils;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.async.factories.QueueFactory;
@@ -232,35 +233,33 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	@Override
 	public <X extends Throwable> org.reactivestreams.Subscription forEachX(
 			long numberOfElements, Consumer<? super U> consumer) {
-		return SequenceM.<U>fromStream(this.toStream()).forEachX(numberOfElements,consumer);
+		return StreamUtils.forEachX(this, numberOfElements,consumer);
 	}
 	@Override
 	public <X extends Throwable> org.reactivestreams.Subscription forEachXWithError(
 			long numberOfElements, Consumer<? super U> consumer,
 			Consumer<? super Throwable> consumerError) {
-		return SequenceM.<U>fromStream(this.toStream()).forEachXWithError(numberOfElements,consumer,
-						consumerError);
+		return StreamUtils.forEachXWithError(this, numberOfElements,consumer, consumerError);
+		
 	}
 	@Override
 	public <X extends Throwable> org.reactivestreams.Subscription forEachXEvents(
 			long numberOfElements, Consumer<? super U> consumer,
 			Consumer<? super Throwable> consumerError, Runnable onComplete) {
-		return SequenceM.<U>fromStream(this.toStream()).forEachXEvents(numberOfElements,consumer,
-				consumerError,onComplete);
+		return StreamUtils.forEachXEvents(this, numberOfElements,consumer, consumerError,onComplete);
 	}
 	@Override
 	public <X extends Throwable> void forEachWithError(
 			Consumer<? super U> consumerElement,
 			Consumer<? super Throwable> consumerError) {
-		 SequenceM.<U>fromStream(this.toStream()).forEachWithError(consumerElement,
-				consumerError);
-		
+			StreamUtils.forEachWithError(this, consumerElement, consumerError);
 	}
 	@Override
 	public <X extends Throwable> void forEachEvent(
 			Consumer<? super U> consumerElement,
 			Consumer<? super Throwable> consumerError, Runnable onComplete) {
-		SequenceM.<U>fromStream(this.toStream()).forEachEvent(consumerElement,
+		
+		StreamUtils.forEachEvent(this,consumerElement,
 				consumerError,onComplete);
 		
 	}

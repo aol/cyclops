@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -16,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
 
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
@@ -96,6 +98,28 @@ public class ForEachTest {
 		StreamUtils.forEachWithError(stream,  i->list.add(i),
 								e->error=e);
 		
+		assertThat(list,hasItems(1,2,3));
+		assertThat(list.size(),equalTo(3));
+		
+		assertThat(list,hasItems(1,2,3));
+		assertThat(list.size(),equalTo(3));
+		
+	
+		assertThat(error,instanceOf(RuntimeException.class));
+	}
+	@Test
+	public void forEachWithErrorsAsync(){
+	
+		List<Integer> list = new ArrayList<>();
+		assertThat(error,nullValue());
+		Stream<Integer> stream = LazyFutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();})
+													.withPublisherExecutor(new ForkJoinPool(1))
+													.async()
+													.map(Supplier::get);
+		StreamUtils.forEachWithError(stream,  i->list.add(i),
+								e->error=e);
+		
+		ExceptionSoftener.softenRunnable(()->Thread.sleep(100)).run();
 		assertThat(list,hasItems(1,2,3));
 		assertThat(list.size(),equalTo(3));
 		

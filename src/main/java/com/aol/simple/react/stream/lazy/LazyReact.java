@@ -65,7 +65,7 @@ public class LazyReact implements ReactBuilder {
 	private final Boolean async;
 	@Getter
 	private final MaxActive maxActive;
-	@Getter
+	
 	private final Executor publisherExecutor;
 	@Getter
 	private final boolean streamOfFutures;
@@ -79,6 +79,9 @@ public class LazyReact implements ReactBuilder {
 	private final Cacheable memoizeCache;
 	
 	
+	public Executor getPublisherExecutor(){
+		return publisherExecutor!=null ? publisherExecutor : executor;
+	}
 	public LazyReact autoMemoizeOn( Cacheable memoizeCache){
 		return this.withAutoMemoize(true).withMemoizeCache(memoizeCache);
 	}

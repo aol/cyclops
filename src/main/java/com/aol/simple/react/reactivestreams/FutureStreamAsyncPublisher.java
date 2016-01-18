@@ -63,6 +63,7 @@ public interface FutureStreamAsyncPublisher<T> extends Publisher<T> {
 				volatile boolean cancelled = false;
 				final ConcurrentLinkedQueue<Long> requests = new ConcurrentLinkedQueue<Long>();
 				{
+					
 					CompletableFuture.runAsync( ()-> {
 						processRequests(s, it); 
 					}, getPublisherExecutor());

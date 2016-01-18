@@ -104,6 +104,8 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 										FutureStreamAsyncPublisher<U>,
 										FutureStreamSynchronousPublisher<U> {
 
+	 LazyFutureStream<U> withPublisherExecutor(Executor ex);
+		
 	/**
 	 * <pre>
 	 * {@code 

@@ -12,11 +12,13 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
 
+import com.aol.cyclops.streams.StreamUtils;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 
 public class ForEachLFSTest {
@@ -99,12 +101,31 @@ public class ForEachLFSTest {
 	
 	
 	@Test
-	public void forEachWithErrors(){
+	public void forEachWithErrors() throws InterruptedException{
 	
 		List<Integer> list = new ArrayList<>();
 		assertThat(error,nullValue());
 		LazyFutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get)
-							.forEachWithError(  i->list.add(i),
+											.forEachWithError(  i->list.add(i),
+															e->error=e);
+		
+		assertThat(list,hasItems(1,2,3));
+		assertThat(list.size(),equalTo(3));
+		
+		assertThat(list,hasItems(1,2,3));
+		assertThat(list.size(),equalTo(3));
+		
+		
+	
+		assertThat(error,instanceOf(RuntimeException.class));
+	}
+	@Test
+	public void forEachWithErrorsStream(){
+	
+		List<Integer> list = new ArrayList<>();
+		assertThat(error,nullValue());
+		Stream<Integer> stream = LazyFutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
+		StreamUtils.forEachWithError(stream,  i->list.add(i),
 								e->error=e);
 		
 		assertThat(list,hasItems(1,2,3));
