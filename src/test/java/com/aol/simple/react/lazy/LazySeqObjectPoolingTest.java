@@ -31,6 +31,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.simple.react.async.Queue;
+import com.aol.simple.react.async.Signal;
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.base.BaseSeqTest;
 import com.aol.simple.react.stream.ThreadPools;
@@ -218,7 +219,7 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 					});
 		}).start();
 		;
-
+		fast.setSizeSignal(Signal.queueBackedSignal());
 		int max = fast.getSizeSignal().getContinuous().stream()
 				.mapToInt(it -> (int) it).limit(50).max().getAsInt();
 		
