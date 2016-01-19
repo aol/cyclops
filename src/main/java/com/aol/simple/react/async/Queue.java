@@ -17,6 +17,7 @@ import java.util.stream.StreamSupport;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Wither;
 
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
@@ -66,8 +67,8 @@ public class Queue<T> implements Adapter<T> {
 	private final BlockingQueue<T> queue;
 	private final WaitStrategy<T> consumerWait;
 	private final WaitStrategy<T> producerWait;
-	@Getter
-	private final Signal<Integer> sizeSignal;
+	@Getter @Setter
+	private volatile Signal<Integer> sizeSignal;
 	
 	private volatile Continueable sub;
 	private ContinuationStrategy continuationStrategy;
@@ -81,14 +82,14 @@ public class Queue<T> implements Adapter<T> {
 		this(new LinkedBlockingQueue<>());
 	}
 	
-	Queue(BlockingQueue<T> queue,Signal<Integer> sizeSignal,WaitStrategy<T> consumer,WaitStrategy<T> producer) {
+	Queue(BlockingQueue<T> queue,WaitStrategy<T> consumer,WaitStrategy<T> producer) {
 		this.queue = queue;
 		timeout = -1;
 		timeUnit = TimeUnit.MILLISECONDS;
 		maxPoisonPills = 90000;
 		offerTimeout= Integer.MAX_VALUE;
 		offerTimeUnit = TimeUnit.DAYS;
-		this.sizeSignal = sizeSignal;
+		
 		this.consumerWait=consumer;
 		this.producerWait=producer;
 	}
@@ -100,14 +101,14 @@ public class Queue<T> implements Adapter<T> {
 	 *            BlockingQueue to back this Queue
 	 */
 	public Queue(BlockingQueue<T> queue) {
-		this(queue,Signal.queueBackedSignal(), new DirectWaitStrategy<T>(),new DirectWaitStrategy<T>());
+		this(queue, new DirectWaitStrategy<T>(),new DirectWaitStrategy<T>());
 	}
 	Queue(BlockingQueue<T> queue, Signal<Integer>  sizeSignal) {
-		this(queue,sizeSignal,  new DirectWaitStrategy<T>(),new DirectWaitStrategy<T>());
+		this(queue, new DirectWaitStrategy<T>(),new DirectWaitStrategy<T>());
 	}
 	
 	public Queue( java.util.Queue<T> q, WaitStrategy<T> consumer,WaitStrategy<T> producer){
-		this(new QueueToBlockingQueueWrapper(q),Signal.queueBackedSignal(),consumer,producer);
+		this(new QueueToBlockingQueueWrapper(q),consumer,producer);
 	}
 	
 
@@ -346,7 +347,7 @@ public class Queue<T> implements Adapter<T> {
 		
 		try{
 			boolean result = queue.add((T)nullSafe(data));
-			if(true){
+			if(result){
 				if(sizeSignal!=null)
 					this.sizeSignal.set(queue.size());
 			}
