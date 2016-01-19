@@ -25,7 +25,6 @@ import com.aol.simple.react.RetryBuilder;
 import com.aol.simple.react.stream.ReactBuilder;
 import com.aol.simple.react.stream.ThreadPools;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
-import com.aol.simple.react.stream.traits.BaseSimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -308,7 +307,7 @@ public class SimpleReact implements ReactBuilder{
 	 * @return Next stage in the reactive flow
 	 */
 	@SuppressWarnings("unchecked")
-	public <U> BaseSimpleReactStream<U> fromIterable(final Iterable<U> iter){
+	public <U> SimpleReactStream<U> fromIterable(final Iterable<U> iter){
 		return this.from(StreamSupport.stream(Spliterators.spliteratorUnknownSize(iter.iterator(), Spliterator.ORDERED),false));
 	
 	}
