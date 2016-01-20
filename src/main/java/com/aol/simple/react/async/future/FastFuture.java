@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import com.aol.simple.react.exceptions.ExceptionSoftener;
+
 import com.aol.simple.react.exceptions.SimpleReactCompletionException;
 /*
  * @author John McClean
@@ -102,7 +102,7 @@ public class FastFuture<T> {
 				LockSupport.parkNanos(spin++);
 			}
 			if(completedExceptionally)
-				ExceptionSoftener.singleton.factory.getInstance().throwSoftenedException(new SimpleReactCompletionException(exception()));
+				throw (new SimpleReactCompletionException(exception()));
 			return result();
 		}finally{
 			 markComplete();

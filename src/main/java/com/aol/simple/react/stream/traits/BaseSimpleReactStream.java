@@ -159,7 +159,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U>{
 	 * @return Next Stage in the Strea,
 	 */
 	@SuppressWarnings("unchecked")
-	<R> Object retry(final Function<U, R> fn);
+	<R> Object retry(final Function<? super U,? extends R> fn);
 	
 	
 	

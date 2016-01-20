@@ -10,13 +10,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import com.aol.simple.react.exceptions.ExceptionSoftener;
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.simple.react.stream.traits.ConfigurableStream;
 
 @AllArgsConstructor
 @Slf4j
 public class StageWithResults<RS,U> {
-	private final ExceptionSoftener exceptionSoftener = ExceptionSoftener.singleton.factory.getInstance();
+	
 	private final Executor taskExecutor;
 	
 	private final ConfigurableStream<U,Object> stage;
@@ -59,11 +59,11 @@ public class StageWithResults<RS,U> {
 				
 				return ((ForkJoinPool) taskExecutor).submit(callable).get();
 			} catch (ExecutionException e) {
-				exceptionSoftener.throwSoftenedException(e);
+				throw ExceptionSoftener.throwSoftenedException(e);
 				
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
-				exceptionSoftener.throwSoftenedException(e);
+				throw ExceptionSoftener.throwSoftenedException(e);
 				
 			}
 		}

@@ -43,7 +43,7 @@ public class Topic<T> implements Adapter<T> {
 	 */
 	public Topic() {
 		Queue<T> q = new Queue<T>();
-		//queues.add(q);
+		
 		distributor.addQueue(q);	
 	}
 	
@@ -52,7 +52,7 @@ public class Topic<T> implements Adapter<T> {
 	 * @param q Queue to back this Topic with
 	 */
 	public Topic(Queue<T> q) {
-		//queues.add(q);
+		
 		distributor.addQueue(q);		
 	}
 	
@@ -146,8 +146,11 @@ public class Topic<T> implements Adapter<T> {
 	/**
 	 * @return Track changes in size in the Topic's data
 	 */
-	public Signal<Integer> getSizeSignal(){
-		return this.distributor.getSubscribers().get(0).getSizeSignal();
+	public Signal<Integer> getSizeSignal(int index){
+		return this.distributor.getSubscribers().get(index).getSizeSignal();
+	}
+	public void setSizeSignal(int index,Signal<Integer> s){
+		this.distributor.getSubscribers().get(index).setSizeSignal(s);
 	}
 	
 	/**

@@ -1,7 +1,7 @@
 package com.aol.simple.react.monad;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -10,11 +10,10 @@ import java.util.Optional;
 import org.junit.Test;
 
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
-import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.monad.AnyM;
-import com.aol.simple.react.stream.traits.SimpleReactStream;
-import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.stream.traits.BaseSimpleReactStream;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
+import com.aol.simple.react.stream.traits.SimpleReactStream;
 
 public class DoTest {
 
@@ -33,7 +32,7 @@ public class DoTest {
 		}
 	}
 	public <T> AnyM<T> anyM(BaseSimpleReactStream<T> stream){
-		return AsAnyM.notTypeSafeAnyM(stream);
+		return AnyM.ofMonad(stream);
 	}
 	@Test
 	public void doTestSimple(){
@@ -66,12 +65,13 @@ public class DoTest {
 	
 	@Test
 	public void doTestLazyOptionalEmptyStream(){
+		
 		Optional<List<Integer>> result = Do.add(lookup("1"))
 												.add(LazyFutureStream.<Integer>of())
 												.yield((Integer a) -> (Integer b) -> a+b)
 												.unwrap();
 		System.out.println(result);
-		assertThat(result.get().size(),equalTo(0));
+		assertTrue(!result.isPresent());
 	}
 	@Test
 	public void doTestSimpleOptionalEmptyStream(){

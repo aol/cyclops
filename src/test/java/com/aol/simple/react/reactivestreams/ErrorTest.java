@@ -17,7 +17,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import com.aol.simple.react.stream.traits.LazyFutureStream;
-@Ignore
+
 public class ErrorTest {
 	@Test
 	public void testSubscribe(){
@@ -110,9 +110,15 @@ public class ErrorTest {
 		assertThat(sub.getStream().toList(),equalTo(Arrays.asList(1,2,3)));
 				
 	}
+	
+	boolean errored =false;
 	@Test
 	public void test(){
-		LazyFutureStream.<Long>generate(()-> 2l ).<Long>map(i-> {throw new RuntimeException();}).limit(1).subscribe(new Subscriber<Long>() {
+		
+		LazyFutureStream.<Long>generate(()-> 2l )
+						.limit(1)
+						.<Long>map(i-> {throw new RuntimeException();})
+						.subscribe(new Subscriber<Long>() {
 
 			@Override
 			public void onSubscribe(Subscription s) {
@@ -128,7 +134,7 @@ public class ErrorTest {
 
 			@Override
 			public void onError(Throwable t) {
-				t.printStackTrace();
+				errored=true;
 				
 			}
 
@@ -137,10 +143,12 @@ public class ErrorTest {
 				// TODO Auto-generated method stub
 				
 			}
-		});;
+		});
+		
+		assertTrue(errored);
 	}
 	
-	@Test
+	@Test @Ignore
 	public void processorFromReactor() throws InterruptedException{
 		
 			final int elements = 1000;

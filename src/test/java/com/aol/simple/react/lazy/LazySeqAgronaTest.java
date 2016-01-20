@@ -27,6 +27,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.simple.react.async.Queue;
+import com.aol.simple.react.async.Signal;
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.base.BaseSeqTest;
 import com.aol.simple.react.stream.ThreadPools;
@@ -123,37 +124,18 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	
 	@Test
 	public void zipFastSlow() {
+		LazyFutureStream<Integer> s;
+		
 		Queue q = new Queue();
 		LazyReact.parallelBuilder().reactInfinitely(() -> sleep(100))
-				.then(it -> q.add("100")).runOn(new ForkJoinPool(1));
+				.then(it -> q.add("100")).runThread(new Thread());
 		parallel(1, 2, 3, 4, 5, 6).zip(q.stream())
 				.peek(it -> System.out.println(it))
 				.collect(Collectors.toList());
 
 	}
 
-	@Test  @Ignore
-	public void testBackPressureWhenZippingUnevenStreams() throws InterruptedException {
-		
-		LazyFutureStream stream =  LazyReact.parallelBuilder().withExecutor(new ForkJoinPool(2))
-								.reactInfinitely(() -> "100").peek(System.out::println)
-				.withQueueFactory(QueueFactories.boundedQueue(2));
-		Queue fast = stream.toQueue();
-
-		Thread t = new Thread(() -> {
-			LazyReact.parallelBuilder().withExecutor(new ForkJoinPool(2)).range(0,10).peek(c -> sleep(10))
-					.zip(fast.stream()).forEach(it -> {
-					});
-		});
-		t.start();
-
-		int max = fast.getSizeSignal().getDiscrete().stream().limit(300, TimeUnit.MILLISECONDS)
-				.mapToInt(it -> (int) it).max().getAsInt();
-		assertThat(max, is(2));
-		t.join();
-		
 	
-	}
 
 	@Test 
 	public void testBackPressureWhenZippingUnevenStreams2() {
@@ -167,7 +149,7 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 					});
 		}).start();
 		;
-
+		fast.setSizeSignal(Signal.queueBackedSignal());
 		int max = fast.getSizeSignal().getContinuous().stream()
 				.mapToInt(it -> (int) it).limit(50).max().getAsInt();
 		

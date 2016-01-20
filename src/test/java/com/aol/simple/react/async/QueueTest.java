@@ -138,31 +138,7 @@ public class QueueTest {
 		return ret;
 	}
 
-	@Test
-	public void testSizeSignal() {
-		System.out.println("hello");
-		Queue<Integer> q = new Queue<Integer>();
-		Signal<Integer> s = q.getSizeSignal();
-
-		q.add(1);
-		q.add(1);
-		q.add(1);
-		q.stream().limit(3).forEach(it -> System.out.println(it)); // drain the
-																	// queue
-		q.add(1); // queue size is 1
-		sleep(50);
-		List<Integer> sizes = s.getDiscrete().stream().limit(7)
-				.collect(Collectors.toList());
-		assertThat(sizes.get(0), is(1));
-		assertThat(sizes.get(1), is(2));
-		assertThat(sizes.get(2), is(3));
-		assertThat(sizes.get(3), is(2));
-		assertThat(sizes.get(4), is(1));
-		assertThat(sizes.get(5), is(0));
-		assertThat(sizes.get(6), is(1));
-
-	}
-
+	
 	@Test
 	public void testAdd() {
 		for(int i=0;i<1000;i++){
@@ -238,9 +214,9 @@ public class QueueTest {
 
 		Queue<Integer> q = new Queue(new LinkedBlockingQueue());
 		LazyReact.parallelBuilder().reactInfinitely(() -> count++)
-				.then(it -> q.offer(it)).runOn(new ForkJoinPool(1));
+				.then(it -> q.offer(it)).runThread(new Thread());
 		LazyReact.parallelBuilder().reactInfinitely(() -> count1++)
-				.then(it -> q.offer(it)).runOn(new ForkJoinPool(1));
+				.then(it -> q.offer(it)).runThread(new Thread());
 
 		List<Integer> result = q.stream().limit(1000)
 				.peek(it -> System.out.println(it))

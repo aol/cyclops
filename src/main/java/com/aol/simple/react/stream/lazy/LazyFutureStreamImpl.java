@@ -16,6 +16,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -56,6 +57,7 @@ import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.streams.StreamUtils;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.async.factories.QueueFactory;
@@ -86,6 +88,10 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 
 
 
+	
+
+
+
 	private final Optional<Consumer<Throwable>> errorHandler;
 	private final LazyStreamWrapper<U> lastActive;
 	
@@ -101,10 +107,12 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	private final Executor publisherExecutor;
 	private final MaxActive maxActive;
 	
+	
 	@AllArgsConstructor
 	static class ConsumerHolder{
 		volatile Consumer<Throwable> forward;
 	}
+	
 	
 	
 	public LazyFutureStreamImpl(LazyReact lazyReact, final Stream<U> stream) {
@@ -120,6 +128,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		this.parallelReduction = ParallelReductionConfig.defaultValue;
 		this.publisherExecutor = lazyReact.getPublisherExecutor();
 		this.maxActive = lazyReact.getMaxActive();
+		
 		
 	}
 	
@@ -191,6 +200,10 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 				queueFactory, simpleReact, subscription, parallelReduction, error,this.publisherExecutor,maxActive);
 		
 	}
+	@Override
+	public LazyFutureStream<U> maxActive(int max){
+		return this.withMaxActive(new MaxActive(max,max));
+	}
 	
 	
 	
@@ -204,5 +217,51 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	}
 
 
+	@Override
+	public HotStream<U> schedule(String cron, ScheduledExecutorService ex) {
+		return SequenceM.<U>fromStream(this.toStream()).schedule(cron, ex);
+	}
+	@Override
+	public HotStream<U> scheduleFixedDelay(long delay,
+			ScheduledExecutorService ex) {
+		return SequenceM.<U>fromStream(this.toStream()).scheduleFixedDelay(delay, ex);
+	}
+	@Override
+	public HotStream<U> scheduleFixedRate(long rate, ScheduledExecutorService ex) {
+		return SequenceM.<U>fromStream(this.toStream()).scheduleFixedRate(rate, ex);
+	}
+	@Override
+	public <X extends Throwable> org.reactivestreams.Subscription forEachX(
+			long numberOfElements, Consumer<? super U> consumer) {
+		return StreamUtils.forEachX(this, numberOfElements,consumer);
+	}
+	@Override
+	public <X extends Throwable> org.reactivestreams.Subscription forEachXWithError(
+			long numberOfElements, Consumer<? super U> consumer,
+			Consumer<? super Throwable> consumerError) {
+		return StreamUtils.forEachXWithError(this, numberOfElements,consumer, consumerError);
+		
+	}
+	@Override
+	public <X extends Throwable> org.reactivestreams.Subscription forEachXEvents(
+			long numberOfElements, Consumer<? super U> consumer,
+			Consumer<? super Throwable> consumerError, Runnable onComplete) {
+		return StreamUtils.forEachXEvents(this, numberOfElements,consumer, consumerError,onComplete);
+	}
+	@Override
+	public <X extends Throwable> void forEachWithError(
+			Consumer<? super U> consumerElement,
+			Consumer<? super Throwable> consumerError) {
+			StreamUtils.forEachWithError(this, consumerElement, consumerError);
+	}
+	@Override
+	public <X extends Throwable> void forEachEvent(
+			Consumer<? super U> consumerElement,
+			Consumer<? super Throwable> consumerError, Runnable onComplete) {
+		
+		StreamUtils.forEachEvent(this,consumerElement,
+				consumerError,onComplete);
+		
+	}
 
 }
