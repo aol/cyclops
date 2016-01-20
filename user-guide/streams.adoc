@@ -210,7 +210,9 @@ SequenceM.range(0,Integer.MAX_VALUE)
 ----
 ====
 === reactive-streams
+
 reactive-streams is an api for advanced inter-stream operability. Cyclops, when simple-react is added to the class path can provide both a reactive-streams publisher and subscriber.
+
 ==== Creating a Subscriber
 
 SequenceM has a static subscriber method that returns a Cyclops reactive-streams Subscriber. That is a class that can subscribe to any reactive-streams publisher (e.g. an RxJava Observable, Pivotal REACTOR Stream, akka-stream etc).
@@ -229,6 +231,9 @@ sub.sequenceM().toList();
 In this example our subscriber will be empty, as it has not attached to a publisher, so our generated List will also be empty.
 ----
 ====
+
+==== Publishing
+
 SequenceM implements reactive-streams Publisher interface, and as such has the reactive-streams api publish method.
 
 .Connecting a Subscriber to a Publisher
@@ -247,6 +252,211 @@ In this example our subscriber has connected to a publisher that will send the v
 [IMPORTANT]
 ====
 Using the reactive-streams functionality in cyclops requires that simple-react be included on the classpath.
+====
+
+==== forEachWithError
+
+since cyclops 7.2.0
+
+The forEachWithErrors operator allows users to iterate over a Stream providing a consumer for the elements for the Stream a lá Stream.forEach, and a consumer for the errors produced while processing the Stream.
+
+.forEachWithError with a SequenceM
+====
+[source,java]
+----
+List list = new ArrayList<>();
+Throwable error = null;
+public String load(int i){
+   if(i==2)
+     throw new RuntimeException();
+
+}
+SequenceM.of(1,2,3,4)
+         .map(this::load)
+         .forEachWithError(  i->list.add(i), e->error=e);
+
+//list =List[1,3,4]
+//error = RuntimeException
+
+----
+====
+==== forEachEvent
+
+since cyclops 7.2.0
+
+The forEachEvent operator is similar to forEachWithErrors but also accepts a Runnable that is run when the Stream has been completely consumed.
+
+.forEachEvent with a SequenceM
+====
+[source,java]
+----
+Closeable resource;
+List list = new ArrayList<>();
+Throwable error = null;
+public String load(int i){
+   if(i==2)
+     throw new RuntimeException();
+
+}
+SequenceM.of(1,2,3,4)
+         .map(this::load)
+         .forEachEvent(  i->list.add(i), 
+                         logger::error,
+                         ()->resource.close());
+
+//list =List[1,3,4]
+//runtime exception logged
+//resource is closed
+
+----
+====
+
+==== forEachX
+
+since cyclops 7.2.0
+
+forEachX allows users to consume only a specified amount of data from the Stream, returning a reactive-streams Subscription object that in turn allows more data to be consumed as needed.
+
+.forEachX with a JDK Stream
+====
+[source,java]
+----
+List list = new ArrayList<>();
+Subscription s = StreamUtils.forEachX(Stream.of(1,2,3), 2,  i->list.add(i));
+assertThat(list,hasItems(1,2));
+assertThat(list.size(),equalTo(2));
+
+s.request(1); //request an additional iterm from the Stream be processed.
+
+assertThat(list,hasItems(1,2,3));
+assertThat(list.size(),equalTo(3));
+----
+====
+
+==== forEachXWithError
+
+since cyclops 7.2.0
+
+forEachXWithErrors allows users to consume only a specified amount of data from the Stream, returning a reactive-streams Subscription object that in turn allows more data to be consumed as needed. The forEachXWithErrors operator allows users to iterate over a Stream providing a consumer for the elements for the Stream a lá Stream.forEach, and a consumer for the errors produced while processing the Stream.
+
+.forEachWithError with a SequenceM
+====
+[source,java]
+----
+List list = new ArrayList<>();
+Throwable error = null;
+public String load(int i){
+   if(i==2)
+     throw new RuntimeException();
+
+}
+Subscription s = SequenceM.of(1,2,3,4)
+                          .map(this::load)
+                          .forEachXWithError( 2, i->list.add(i), e->error=e);
+
+//list =List[1]
+//error = RuntimeException
+
+s.request(1);
+
+//list =List[1,3]
+
+s.request(1);
+
+//list =List[1,3,4]
+----
+====
+
+==== forEachXEvents 
+
+since cyclops 7.2.0
+
+forEachXEvents allows users to consume only a specified amount of data from the Stream, returning a reactive-streams Subscription object that in turn allows more data to be consumed as needed. The forEachXEvents operator is similar to forEachXWithErrors but also accepts a Runnable that is run when the Stream has been completely consumed.
+
+.forEachXEvents with a SequenceM
+====
+[source,java]
+----
+List list = new ArrayList<>();
+Throwable error = null;
+Closeable resource;
+public String load(int i){
+   if(i==2)
+     throw new RuntimeException();
+
+}
+Subscription s = SequenceM.of(1,2,3,4)
+                          .map(this::load)
+                          .forEachXEvents( 2, i->list.add(i),   logger::error,
+                           ()->resource.close());;
+
+//list =List[1]
+//error = RuntimeException
+// resource open
+
+s.request(1);
+
+//list =List[1,3]
+
+s.request(1);
+
+//list =List[1,3,4]
+
+s.request(1); //no new elements end of Stream
+
+//list =List[1,3,4]
+// resource closed
+
+----
+====
+
+==== Reactive Future Operations & Reactive Tasks
+
+The reactive-streams based terminal operations can also be launched asynchronously, first by using the futureOperations operator to provide an Executor that will process the Stream.
+
+==== Using futureOperations
+
+The futureOperations operator opens up a world of asynchronously executed terminal operations. A large range of terminal operations are provided and for each one a CompletbableFuture is returned.
+
+.using FutureOperatons with a JDK Stream
+====
+[source,java]
+----
+Executor exec = Executors.newFixedThreadPool(1);
+FutureOperations terminalOps  = StreamUtils.futureOperations(Stream.of(1,2,3), exec);
+
+//execute the collection & Stream evaluation  on the provided executor
+CompletableFuture<List> futureList = terminalOps.collect(Collectors.toList());
+
+List result  = list.join();
+
+----
+====
+
+==== ReactiveTask
+
+Each of the async Future Operations for reactive-streams (forEachX, forEachEvent etc), return a ReactiveTask object. This allows users to check the status of Stream processing, to cancel it, to request more elements to be processed from the Stream either synchronously or asynchronously.
+
+.using FutureOperatons with a JDK Stream
+====
+[source,java]
+----
+List list = new ArrayList<>();
+ReactiveTask s = SequenceM.of(1,2,3)
+						  .futureOperations(exec)
+						  .forEachX( 2,  i->list.add(i));
+//wait until first 2 elements are processed
+s.block();
+
+//list = List[1,2]
+
+//trigger the remainder of the Stream processing asynchronously
+ReactiveTask nextElements = s.requestAllAsync();
+
+//if we wait until it completes
+//nextElements.block();
+//list = List[1,2,3]
+----
 ====
 
 
