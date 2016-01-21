@@ -21,35 +21,35 @@ public class StreamTest {
 
 	@Test
 	public void testAnyMatch(){
-		assertThat(of(1,2,3,4,5).anyMatch(it-> it.equals(3)),equalTo(true));
+		assertThat(of(1,2,3,4,5).seq().anyMatch(it-> it.equals(3)),equalTo(true));
 	}
 	@Test
 	public void testAllMatch(){
-		assertThat(of(1,2,3,4,5).allMatch(it-> it>0 && it <6),equalTo(true));
+		assertThat(of(1,2,3,4,5).seq().allMatch(it-> it>0 && it <6),equalTo(true));
 	}
 	@Test
 	public void testNoneMatch(){
-		assertThat(of(1,2,3,4,5).noneMatch(it-> it==5000),equalTo(true));
+		assertThat(of(1,2,3,4,5).seq().noneMatch(it-> it==5000),equalTo(true));
 	}
 	
 	
 	@Test
 	public void testAnyMatchFalse(){
-		assertThat(of(1,2,3,4,5).anyMatch(it-> it.equals(8)),equalTo(false));
+		assertThat(of(1,2,3,4,5).seq().anyMatch(it-> it.equals(8)),equalTo(false));
 	}
 	@Test
 	public void testAllMatchFalse(){
-		assertThat(of(1,2,3,4,5).allMatch(it-> it<0 && it >6),equalTo(false));
+		assertThat(of(1,2,3,4,5).seq().allMatch(it-> it<0 && it >6),equalTo(false));
 	}
 	@Test
 	public void testFlatMap(){
-		assertThat(of( asList("1","10"), asList("2"),asList("3"),asList("4")).flatMapStream( list -> list.stream() ).collect(Collectors.toList() 
+		assertThat(of( asList("1","10"), asList("2"),asList("3"),asList("4")).sequenceM().flatMapStream( list -> list.stream() ).collect(Collectors.toList() 
 						),hasItem("10"));
 	}
 	
 	@Test
 	public void testMapReduce(){
-		assertThat(of(1,2,3,4,5).map(it -> it*100).reduce( (acc,next) -> acc+next).get(),equalTo(1500));
+		assertThat(of(1,2,3,4,5).map(it -> it*100).reduce( (acc,next) -> acc+next),equalTo(1500));
 	}
 	
 	@Test
@@ -62,11 +62,11 @@ public class StreamTest {
 	
 	@Test
 	public void sorted() {
-		assertThat(of(1,5,3,4,2).sorted().collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3,4,5)));
+		assertThat(of(1,5,3,4,2).sort().collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3,4,5)));
 	}
 	@Test
 	public void sortedComparator() {
-		assertThat(of(1,5,3,4,2).sorted((t1,t2) -> t2-t1).collect(Collectors.toList()),equalTo(Arrays.asList(5,4,3,2,1)));
+		assertThat(of(1,5,3,4,2).sort((t1,t2) -> t2-t1).collect(Collectors.toList()),equalTo(Arrays.asList(5,4,3,2,1)));
 	}
 	@Test
 	public void forEach() {

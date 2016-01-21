@@ -32,12 +32,14 @@ public class SequenceMTest {
 	
 	@Test
 	public void subStream(){
-		List<Integer> list = ReactiveStream.of(1,2,3,4,5,6).subStream(1,3).toList();
+		List<Integer> list = ReactiveStream.of(1,2,3,4,5,6)
+											.subStream(1,3)
+											.toJavaList();
 		assertThat(list,equalTo(Arrays.asList(2,3)));
 	}
 	@Test
     public void emptyPermutations() {
-        assertThat(ReactiveStream.of().permutations().map(s->s.toList()).toList(),equalTo(Arrays.asList()));
+        assertThat(ReactiveStream.of().permutations().map(s->s.toJavaList()).toJavaList(),equalTo(Arrays.asList()));
     }
 
     @Test
@@ -50,12 +52,12 @@ public class SequenceMTest {
     
     @Test
     public void emptyAllCombinations() {
-        assertThat(ReactiveStream.of().combinations().map(s->s.toList()).toList(),equalTo(Arrays.asList(Arrays.asList())));
+        assertThat(ReactiveStream.of().combinations().map(s->s.toJavaList()).toJavaList(),equalTo(Arrays.asList(Arrays.asList())));
     }
 
     @Test
     public void allCombinations3() {
-        assertThat(ReactiveStream.of(1, 2, 3).combinations().map(s->s.toList()).toList(),equalTo(Arrays.asList(Arrays.asList(), Arrays.asList(1), Arrays.asList(2),
+        assertThat(ReactiveStream.of(1, 2, 3).combinations().map(s->s.toJavaList()).toJavaList(),equalTo(Arrays.asList(Arrays.asList(), Arrays.asList(1), Arrays.asList(2),
         		Arrays.asList(3), Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3), Arrays.asList(1, 2, 3))));
     }
 
@@ -63,19 +65,19 @@ public class SequenceMTest {
 
     @Test
     public void emptyCombinations() {
-        assertThat(ReactiveStream.of().combinations(2).toList(),equalTo(Arrays.asList()));
+        assertThat(ReactiveStream.of().combinations(2).toJavaList(),equalTo(Arrays.asList()));
     }
 
     @Test
     public void combinations2() {
-        assertThat(ReactiveStream.of(1, 2, 3).combinations(2).map(s->s.toList()).toList(),
+        assertThat(ReactiveStream.of(1, 2, 3).combinations(2).map(s->s.toJavaList()).toJavaList(),
                 equalTo(Arrays.asList(Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3))));
     }
 	@Test
 	public void onEmptySwitchEmpty(){
 		assertThat(ReactiveStream.of()
 							.onEmptySwitch(()->ReactiveStream.of(1,2,3))
-							.toList(),
+							.toJavaList(),
 							equalTo(Arrays.asList(1,2,3)));
 				
 	}
@@ -83,7 +85,7 @@ public class SequenceMTest {
 	public void onEmptySwitch(){
 		assertThat(ReactiveStream.of(4,5,6)
 							.onEmptySwitch(()->ReactiveStream.of(1,2,3))
-							.toList(),
+							.toJavaList(),
 							equalTo(Arrays.asList(4,5,6)));
 				
 	}
@@ -92,7 +94,7 @@ public class SequenceMTest {
 	public void elapsedIsPositive(){
 		
 		
-		assertTrue(ReactiveStream.of(1,2,3,4,5).elapsed().noneMatch(t->t.v2<0));
+		assertTrue(ReactiveStream.of(1,2,3,4,5).elapsed().seq().noneMatch(t->t._2<0));
 	}
 	@Test
 	public void timeStamp(){
@@ -100,46 +102,12 @@ public class SequenceMTest {
 		
 		assertTrue(ReactiveStream.of(1,2,3,4,5)
 							.timestamp()
-							.allMatch(t-> t.v2 <= System.currentTimeMillis()));
+							.seq().allMatch(t-> t._2 <= System.currentTimeMillis()));
 		
 
 	}
-	@Test
-	public void get0(){
-		assertThat(ReactiveStream.of(1).get(0).v1,equalTo(1));
-	}
-	@Test
-	public void getMultple(){
-		assertThat(ReactiveStream.of(1,2,3,4,5).get(2).v1,equalTo(3));
-	}
-	@Test
-	public void getMultpleStream(){
-		assertThat(ReactiveStream.of(1,2,3,4,5).get(2).v2.toList(),equalTo(Arrays.asList(1,2,3,4,5)));
-	}
-	@Test(expected=NoSuchElementException.class)
-	public void getMultiple1(){
-		ReactiveStream.of(1).get(1);
-	}
-	@Test(expected=NoSuchElementException.class)
-	public void getEmpty(){
-		ReactiveStream.of().get(0);
-	}
-	@Test
-	public void elementAt0(){
-		assertTrue(ReactiveStream.of(1).elementAt(0).isPresent());
-	}
-	@Test
-	public void elementAtMultple(){
-		assertThat(ReactiveStream.of(1,2,3,4,5).elementAt(2).get(),equalTo(3));
-	}
-	@Test
-	public void elementAt1(){
-		assertFalse(ReactiveStream.of(1).elementAt(1).isPresent());
-	}
-	@Test
-	public void elementAtEmpty(){
-		assertFalse(ReactiveStream.of().elementAt(0).isPresent());
-	}
+	
+
 	@Test
 	public void singleTest(){
 		assertThat(ReactiveStream.of(1).single(),equalTo(1));
@@ -154,22 +122,22 @@ public class SequenceMTest {
 	}
 	@Test
 	public void singleOptionalTest(){
-		assertThat(ReactiveStream.of(1).singleOptional().get(),equalTo(1));
+		assertThat(ReactiveStream.of(1).singleOption().get(),equalTo(1));
 	}
 	@Test
 	public void singleOptionalEmpty(){
-		assertFalse(ReactiveStream.of().singleOptional().isPresent());
+		assertFalse(ReactiveStream.of().singleOption().isDefined());
 	}
 	@Test
 	public void singleOptonal2(){
-		assertFalse(ReactiveStream.of(1,2).singleOptional().isPresent());
+		assertFalse(ReactiveStream.of(1,2).singleOption().isDefined());
 	}
 	@Test
 	public void limitTime(){
 		List<Integer> result = ReactiveStream.of(1,2,3,4,5,6)
 										.peek(i->sleep(i*100))
-										.limit(1000,TimeUnit.MILLISECONDS)
-										.toList();
+										.take(1000,TimeUnit.MILLISECONDS)
+										.toJavaList();
 		
 		
 		assertThat(result,equalTo(Arrays.asList(1,2,3,4)));
@@ -188,18 +156,18 @@ public class SequenceMTest {
 	public void skipTime(){
 		List<Integer> result = ReactiveStream.of(1,2,3,4,5,6)
 										.peek(i->sleep(i*100))
-										.skip(1000,TimeUnit.MILLISECONDS)
-										.toList();
+										.drop(1000,TimeUnit.MILLISECONDS)
+										.toJavaList();
 		
 		
 		assertThat(result,equalTo(Arrays.asList(4,5,6)));
 	}
 	@Test
 	public void skipTimeEmpty(){
-		List<Integer> result = SequenceM.<Integer>of()
+		List<Integer> result = ReactiveStream.<Integer>of()
 										.peek(i->sleep(i*100))
-										.skip(1000,TimeUnit.MILLISECONDS)
-										.toList();
+										.drop(1000,TimeUnit.MILLISECONDS)
+										.toJavaList();
 		
 		
 		assertThat(result,equalTo(Arrays.asList()));
@@ -215,86 +183,86 @@ public class SequenceMTest {
 	@Test
 	public void testSkipLast(){
 		assertThat(ReactiveStream.of(1,2,3,4,5)
-							.skipLast(2)
+							.dropRight(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void testSkipLastEmpty(){
 		assertThat(ReactiveStream.of()
-							.skipLast(2)
+							.dropRight(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
 	@Test
 	public void testLimitLast(){
 		assertThat(ReactiveStream.of(1,2,3,4,5)
-							.limitLast(2)
+							.takeRight(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList(4,5)));
 	}
 	@Test
 	public void testLimitLastEmpty(){
 		assertThat(ReactiveStream.of()
-							.limitLast(2)
+							.takeRight(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
 	@Test
 	public void endsWith(){
 		assertTrue(ReactiveStream.of(1,2,3,4,5,6)
-				.endsWith(Arrays.asList(5,6)));
+				.endsWith(ReactiveStream.of(5,6)));
 	}
 	@Test
 	public void endsWithFalse(){
 		assertFalse(ReactiveStream.of(1,2,3,4,5,6)
-				.endsWith(Arrays.asList(5,6,7)));
+				.endsWith(javaslang.collection.List.of(5,6,7)));
 	}
 	@Test
 	public void endsWithToLong(){
 		assertFalse(ReactiveStream.of(1,2,3,4,5,6)
-				.endsWith(Arrays.asList(0,1,2,3,4,5,6)));
+				.endsWith(ReactiveStream.of(0,1,2,3,4,5,6)));
 	}
 	@Test
 	public void endsWithEmpty(){
 		assertTrue(ReactiveStream.of(1,2,3,4,5,6)
-				.endsWith(Arrays.asList()));
+				.endsWith(ReactiveStream.empty()));
 	}
 	@Test
 	public void endsWithWhenEmpty(){
 		assertFalse(ReactiveStream.of()
-				.endsWith(Arrays.asList(1,2,3,4,5,6)));
+				.endsWith(ReactiveStream.of(1,2,3,4,5,6)));
 	}
 	@Test
 	public void endsWithBothEmpty(){
 		assertTrue(SequenceM.<Integer>of()
-				.endsWith(Arrays.asList()));
+				.endsWith(ReactiveStream.empty()));
 	}
 	@Test
 	public void endsWithStream(){
 		assertTrue(ReactiveStream.of(1,2,3,4,5,6)
-				.endsWith(Stream.of(5,6)));
+				.endsWith(ReactiveStream.of(5,6)));
 	}
 	@Test
 	public void endsWithFalseStream(){
 		assertFalse(ReactiveStream.of(1,2,3,4,5,6)
-				.endsWith(Stream.of(5,6,7)));
+				.endsWith(ReactiveStream.of(5,6,7)));
 	}
 	@Test
 	public void endsWithToLongStream(){
 		assertFalse(ReactiveStream.of(1,2,3,4,5,6)
-				.endsWith(Stream.of(0,1,2,3,4,5,6)));
+				.endsWith(ReactiveStream.of(0,1,2,3,4,5,6)));
 	}
 	@Test
 	public void endsWithEmptyStream(){
 		assertTrue(ReactiveStream.of(1,2,3,4,5,6)
-				.endsWith(Stream.of()));
+				.endsWith(ReactiveStream.of()));
 	}
 	@Test
 	public void endsWithWhenEmptyStream(){
 		assertFalse(ReactiveStream.of()
 				.endsWith(ReactiveStream.of(1,2,3,4,5,6)));
-	
+	}
 	@Test
 	public void endsWithBothEmptyStream(){
-		assertTrue(SequenceM.<Integer>of()
-				.endsWith(Stream.of()));
+		assertTrue(ReactiveStream.<Integer>of()
+				.endsWith(ReactiveStream.of()));
 	}
 	@Test
 	public void anyMTest(){
@@ -307,21 +275,12 @@ public class SequenceMTest {
 	public void streamable(){
 		Streamable<Integer> repeat = ReactiveStream.of(1,2,3,4,5,6)
 												.map(i->i*2)
-												.toStreamable();
+												.streamable();
 		
 		assertThat(repeat.sequenceM().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 		assertThat(repeat.sequenceM().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 	}
 	
-	@Test
-	public void concurrentLazyStreamable(){
-		Streamable<Integer> repeat = ReactiveStream.of(1,2,3,4,5,6)
-												.map(i->i*2)
-												.toConcurrentLazyStreamable();
-		
-		assertThat(repeat.sequenceM().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-		assertThat(repeat.sequenceM().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-	}
 	
 
 	
@@ -363,7 +322,7 @@ public class SequenceMTest {
 
 	}
 
-	@Test
+	@Test(expected =ClassCastException.class)
 	public void testCastPast() {
 		ReactiveStream.of(1, "a", 2, "b", 3, null).cast(Date.class).map(d -> d.getTime());
 	
@@ -376,7 +335,7 @@ public class SequenceMTest {
 	@Test
 	public void testIntersperse() {
 		
-		assertThat(ReactiveStream.of(1,2,3).intersperse(0).toList(),equalTo(Arrays.asList(1,0,2,0,3)));
+		assertThat(ReactiveStream.of(1,2,3).intersperse(0).toJavaList(),equalTo(Arrays.asList(1,0,2,0,3)));
 	
 
 
@@ -390,7 +349,7 @@ public class SequenceMTest {
 	public void xMatch(){
 		assertTrue(ReactiveStream.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
 	}
-	rtThat(result.get(2), equalTo(2.0));
-	}
+	
+	
 	
 }

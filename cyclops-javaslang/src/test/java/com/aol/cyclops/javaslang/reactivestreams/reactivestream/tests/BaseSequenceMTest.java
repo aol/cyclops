@@ -137,7 +137,7 @@ public  class BaseSequenceMTest {
     @Test
     public void testCycle() {
     	
-    	   assertEquals(asList(1, 1, 1, 1, 1,1),of(1).cycle().take(6).toList());
+    	   assertEquals(asList(1, 1, 1, 1, 1,1),of(1).cycle().take(6).toJavaList());
       
     }
     
@@ -199,7 +199,7 @@ public  class BaseSequenceMTest {
 
 	        assertTrue(s.get().dropWhile(i -> false).toList().containsAll(asList(1, 2, 3, 4, 5)));
 	      
-	        assertEquals(asList(), s.get().dropWhile(i -> true).toList());
+	        assertEquals(asList(), s.get().dropWhile(i -> true).toJavaList());
 	    }
 
 	    @Test

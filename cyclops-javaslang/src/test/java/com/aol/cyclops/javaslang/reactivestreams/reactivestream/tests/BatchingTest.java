@@ -1,6 +1,6 @@
 package com.aol.cyclops.javaslang.reactivestreams.reactivestream.tests;
 import static com.aol.cyclops.javaslang.reactivestreams.ReactiveStream.of;
-import static com.aol.cyclops.sequence.SequenceM.fromIntStream;
+
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
@@ -49,24 +49,8 @@ public class BatchingTest {
 				.windowWhile(i->i%3!=0)
 				.toList(),equalTo(Arrays.asList(Arrays.asList(1,2,3),Arrays.asList(4,5,6))));
 	}
-	@Test
-	public void batchUntilCollection(){
-		assertThat(ReactiveStream.of(1,2,3,4,5,6)
-				.windowUntil(i->i%3==0,()->new ArrayList<>())
-				.toList().size(),equalTo(2));
-		assertThat(ReactiveStream.of(1,2,3,4,5,6)
-				.windowUntil(i->i%3==0,()->new ArrayList<>())
-				.toList().get(0),equalTo(Arrays.asList(1,2,3)));
-	}
-	@Test
-	public void batchWhileCollection(){
-		assertThat(ReactiveStream.of(1,2,3,4,5,6)
-				.windowWhile(i->i%3!=0,()->new ArrayList<>())
-				.toList().size(),equalTo(2));
-		assertThat(ReactiveStream.of(1,2,3,4,5,6)
-				.windowWhile(i->i%3!=0,()->new ArrayList<>())
-				.toList(),equalTo(Arrays.asList(Arrays.asList(1,2,3),Arrays.asList(4,5,6))));
-	}
+	
+	
 	
 	private Integer sleep(int i) {
 		try {
@@ -92,7 +76,7 @@ public class BatchingTest {
 	@Test
 	public void jitter() {
 		
-				fromIntStream(IntStream.range(0, 1000))
+		ReactiveStream.range(0, 1000)
 				.map(it -> it * 100)
 				.jitter(100l)
 				.peek(System.out::println)
@@ -102,7 +86,7 @@ public class BatchingTest {
 	@Test
 	public void fixedDelay2() {
 
-		fromIntStream(IntStream.range(0, 1000))
+		ReactiveStream.range(0, 1000)
 				.fixedDelay(1l, TimeUnit.MICROSECONDS).peek(System.out::println)
 				.forEach(a->{});
 	}
@@ -110,8 +94,8 @@ public class BatchingTest {
 	public void onePerSecond() {
 
 		
-				iterate(0, it -> it + 1)
-				.limit(100)
+		ReactiveStream.iterate(0, it -> it + 1)
+				.take(100)
 				.onePer(1, TimeUnit.MICROSECONDS)
 				.map(seconds -> "hello!")
 				.peek(System.out::println)
@@ -130,20 +114,6 @@ public class BatchingTest {
 		return "Status saved:" + s.getId();
 	}
 	
-	@Test
-	public void batchBySize() {
-
-		iterate("", last -> "next")
-				.limit(100)
-				.batchBySize(10)
-				.onePer(1, TimeUnit.MICROSECONDS)
-				.peek(batch -> System.out.println("batched : " + batch))
-				.flatMap(Collection::stream)
-				.peek(individual -> System.out.println("Flattened : "
-						+ individual))
-				.forEach(a->{});
-
-	}
 	
 	private Object nextFile() {
 		return "hello";
@@ -152,35 +122,7 @@ public class BatchingTest {
 	int count3 =0;
 	volatile int otherCount;
 	volatile int peek =0;
-	@Test
-	public void batchByTimeFiltered() throws IOException {
-		for(int x=0;x<10;x++){
-			count2=new AtomicInteger(0);
-			List<Collection<Map>> result = new ArrayList<>();
-					
-					iterate("", last -> "hello")
-					.limit(1000)
-					
-					.peek(i->System.out.println(++otherCount))
-			
-					.batchByTime(1, TimeUnit.MICROSECONDS)
-					
-					.peek(batch -> System.out.println("batched : " + batch + ":" + (++peek)))
-				
-					.peek(batch->count3= count3+batch.size())
-					
-					.forEach(next -> { 
-					count2.getAndAdd(next.size());});
-		
-			
-			System.out.println("In flight count " + count3 + " :" + otherCount);
-			System.out.println(result.size());
-			System.out.println(result);
-			System.out.println("x" +x);
-			assertThat(count2.get(),equalTo(1000));
-
-		}
-	}
+	
 	@Test
 	public void windowByTimeFiltered() {
 
@@ -188,19 +130,14 @@ public class BatchingTest {
 			count2=new AtomicInteger(0);
 			List<Collection<Map>> result = new ArrayList<>();
 					
-					iterate("", last -> "hello")
-					.limit(1000)
-					
+			ReactiveStream.iterate("", last -> "hello")
+					.take(1000)
 					.peek(i->System.out.println(++otherCount))
-			
 					.windowByTime(1, TimeUnit.MICROSECONDS)
-					
 					.peek(batch -> System.out.println("batched : " + batch + ":" + (++peek)))
-				
-					.peek(batch->count3= count3+(int)batch.stream().count())
-					
+					.peek(batch->count3= count3+(int)batch.seq().count())
 					.forEach(next -> { 
-					count2.getAndAdd((int)next.stream().count());});
+					count2.getAndAdd((int)next.seq().count());});
 		
 			
 			System.out.println("In flight count " + count3 + " :" + otherCount);
@@ -211,24 +148,7 @@ public class BatchingTest {
 
 		}
 	}
-	@Test
-	public void batchByTimex() {
-
-		
-				iterate("", last -> "next")
-				.limit(100)
-				
-				
-				.peek(next->System.out.println("Counter " +count2.incrementAndGet()))
-				.batchByTime(10, TimeUnit.MICROSECONDS)
-				.peek(batch -> System.out.println("batched : " + batch))
-				.filter(c->!c.isEmpty())
-				
-				
-				.forEach(System.out::println);
-			
-
-	}
+	
 	@Test
 	public void windowByTimex() {
 
@@ -249,28 +169,13 @@ public class BatchingTest {
 		System.out.println(of(1,2,3,4,5,6).windowBySize(3).collect(Collectors.toList()));
 		assertThat(of(1,2,3,4,5,6).windowBySize(3).collect(Collectors.toList()).size(),is(2));
 	}
-	@Test
-	public void batchBySizeAndTimeSizeCollection(){
-		
-		assertThat(of(1,2,3,4,5,6)
-						.batchBySizeAndTime(3,10,TimeUnit.SECONDS,()->new ArrayList<>())
-						.toList().get(0)
-						.size(),is(3));
-	}
-	@Test
-	public void batchBySizeAndTimeSize(){
-		
-		assertThat(of(1,2,3,4,5,6)
-						.batchBySizeAndTime(3,10,TimeUnit.SECONDS)
-						.toList().get(0)
-						.size(),is(3));
-	}
+
 	@Test
 	public void windowBySizeAndTimeSize(){
 		
 		assertThat(of(1,2,3,4,5,6)
 						.windowBySizeAndTime(3,10,TimeUnit.SECONDS)
-						.toList().get(0).stream()
+						.toList().get(0).seq()
 						.count(),is(3l));
 	}
 	@Test
@@ -279,36 +184,9 @@ public class BatchingTest {
 		assertThat(of()
 						.windowBySizeAndTime(3,10,TimeUnit.SECONDS)
 						.toList()
-						.size(),is(0));
+						.length(),is(0));
 	}
-	@Test
-	public void batchBySizeAndTimeTime(){
-		
-		for(int i=0;i<10;i++){
-			System.out.println(i);
-			List<List<Integer>> list = of(1,2,3,4,5,6)
-					.batchBySizeAndTime(10,1,TimeUnit.MICROSECONDS)
-					.toList();
-			
-			assertThat(list
-							.get(0)
-							,not(hasItem(6)));
-		}
-	}
-	@Test
-	public void batchBySizeAndTimeTimeCollection(){
-		
-		for(int i=0;i<10;i++){
-			System.out.println(i);
-			List<ArrayList<Integer>> list = of(1,2,3,4,5,6)
-					.batchBySizeAndTime(10,1,TimeUnit.MICROSECONDS,()->new ArrayList<>())
-					.toList();
-			
-			assertThat(list
-							.get(0)
-							,not(hasItem(6)));
-		}
-	}
+	
 	@Test
 	public void windowBySizeAndTimeTime(){
 		
@@ -329,21 +207,7 @@ public class BatchingTest {
 	}
 	
 	
-	@Test
-	public void batchBySizeSet(){
-		
-		assertThat(of(1,1,1,1,1,1).batchBySize(3,()->new TreeSet<>()).toList().get(0).size(),is(1));
-		assertThat(of(1,1,1,1,1,1).batchBySize(3,()->new TreeSet<>()).toList().get(1).size(),is(1));
-	}
-	@Test
-	public void batchBySizeSetEmpty(){
-		
-		assertThat(of().batchBySize(3,()->new TreeSet<>()).toList().size(),is(0));
-	}
-	@Test
-	public void batchBySizeInternalSize(){
-		assertThat(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()).get(0).size(),is(3));
-	}
+	
 	@Test
 	public void fixedDelay(){
 		SimpleTimer timer = new SimpleTimer();
@@ -390,19 +254,12 @@ public class BatchingTest {
 	public void batchByTime(){
 		assertThat(of(1,2,3,4,5,6).windowByTime(1,TimeUnit.SECONDS).collect(Collectors.toList()).size(),is(1));
 	}
-	@Test
-	public void batchByTimeSet(){
-		
-		assertThat(of(1,1,1,1,1,1).windowByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>()).toList().get(0).size(),is(1));
-	}
+	
 	@Test
 	public void batchByTimeInternalSize(){
 		assertThat(of(1,2,3,4,5,6).windowByTime(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),greaterThan(5));
 	}
-	@Test
-	public void batchByTimeInternalSizeCollection(){
-		assertThat(of(1,2,3,4,5,6).windowByTime(1,TimeUnit.NANOSECONDS,()->new ArrayList<>()).collect(Collectors.toList()).size(),greaterThan(5));
-	}
+	
 	@Test
 	public void windowByTimeInternalSize(){
 		assertThat(of(1,2,3,4,5,6).windowByTime(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),greaterThan(5));

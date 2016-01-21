@@ -5,10 +5,14 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -146,16 +150,23 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	}
 
 	/** JDK Collect **/
+	default  <R> R collect(Supplier<R> supplier,
+            BiConsumer<R, ? super T> accumulator,
+            BiConsumer<R, R> combiner){
+		return this.toJavaStream().collect(supplier,accumulator,combiner);
+	}
 	default <R, A> R collect(Collector<? super T, A, R> collector) {
-		
 		return this.toJavaStream().collect(collector);
 	}
 	default <C extends Collection<T>> C toCollection(Supplier<C> collectionFactory){
-		
 		return sequenceM().toCollection(collectionFactory);
 	}
 	default <U> ReactiveStream<U> cast(Class<U> type){
-		return fromJDK(sequenceM().cast(type));
+		return fromStream(StreamUtils.cast(this, type));
+		
+	}
+	default <U> ReactiveStream<U> ofType(Class<U> type){
+		return fromStream(StreamUtils.ofType(this, type));
 	}
 	
 	/** conversions **/
@@ -240,6 +251,8 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 		return fromJDK(sequenceM().retry(fn));
 	}
 
+	
+	
 	/** time based operations **/
 	default ReactiveStream<T> debounce(long time, TimeUnit t) {
 		return fromStream(StreamUtils.debounce(this, time, t));
@@ -259,6 +272,44 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 
 	default ReactiveStream<T> xPer(int x, long time, TimeUnit t) {
 		return fromStream(StreamUtils.xPer(this, x, time, t));
+	}
+	/**
+	 * <pre>
+	 * {@code 
+	 * ReactiveStream.of(1,2,3,4,5)
+				 .elapsed()
+				 .forEach(System.out::println);
+	 * }
+	 * </pre>
+	 * 
+	 * @return Stream that adds the time between elements in millis to each element
+	 */
+	default ReactiveStream<Tuple2<T,Long>> elapsed(){
+		AtomicLong last = new AtomicLong(System.currentTimeMillis());
+		
+		return zip(ReactiveStream.generate( ()->{
+		long now =System.currentTimeMillis();
+		
+		long result =  now-last.get();
+		last.set(now);
+		return result;
+		} ));
+	}
+	/**
+	 * <pre>
+	 * {@code
+	 *    ReactiveStream.of(1,2,3,4,5)
+				   .timestamp()
+				   .forEach(System.out::println)
+	 * 
+	 * }
+	 * 
+	 * </pre>
+	 * 
+	 * @return Stream that adds a timestamp to each element
+	 */
+	default ReactiveStream<Tuple2<T,Long>> timestamp(){
+		return zip(ReactiveStream.generate( ()->System.currentTimeMillis()));
 	}
 
 	/** batching & windowing **/
@@ -291,6 +342,27 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	}
 	default ReactiveStream<ReactiveStream<T>> windowBySize(int size) {
 		return fromStream(StreamUtils.batchBySize(this, size).map(s -> fromIterable(s)));
+	}
+	
+	/**
+	 * Return a Stream with elements before the provided start index removed, and elements after the provided
+	 * end index removed
+	 * 
+	 * <pre>
+	 * {@code 
+	 *   ReactiveStream.of(1,2,3,4,5,6).subStream(1,3);
+	 *   
+	 *   
+	 *   //ReactiveStream[2,3]
+	 * }
+	 * </pre>
+	 * 
+	 * @param start index inclusive
+	 * @param end index exclusive
+	 * @return Sequence between supplied indexes of original Sequence
+	 */
+	default ReactiveStream<T> subStream(int start, int end){
+		return this.take(end).removeBetween(0, start);
 	}
 
 	/** cycle **/
@@ -389,17 +461,69 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	default ReactiveStream<T> scanLeft(Monoid<T> monoid) {
 		return fromStream(StreamUtils.scanLeft(this, monoid));
 	}
+	/**
+	 * Check that there are specified number of matches of predicate in the Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 *  assertTrue(SequenceM.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
+	 * }
+	 * </pre>
+	 * 
+	 */
+	default boolean xMatch(int num, Predicate<? super T> c){
+		return StreamUtils.xMatch(this, num, c);
+	}
 
 	/** take & drop **/
 
 	default ReactiveStream<T> take(long time, TimeUnit unit) {
-		return fromJDK(sequenceM().limit(time, unit));
+		return fromStream(StreamUtils.limit(this, time, unit));
 	}
 
 	default ReactiveStream<T> drop(long time, TimeUnit unit) {
-		return fromJDK(sequenceM().skip(time, unit));
+		return fromStream(StreamUtils.skip(this, time, unit));
+		
+	}
+	/** If this SequenceM is empty replace it with a another Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * assertThat(ReactiveStream.of(4,5,6)
+							.onEmptySwitch(()->SequenceM.of(1,2,3))
+							.toJavaList(),
+							equalTo(Arrays.asList(4,5,6)));
+	 * }
+	 * </pre>
+	 * @param switchTo Supplier that will generate the alternative Stream
+	 * @return ReactiveStream that will switch to an alternative Stream if empty
+	 */
+	default ReactiveStream<T> onEmptySwitch(Supplier<Stream<T>> switchTo){
+		AtomicBoolean called=  new AtomicBoolean(false);
+		return ReactiveStream.fromStream(onEmptyGet((Supplier)()->{
+				called.set(true); 
+				return switchTo.get();
+		}).flatMap(s->{
+			if(called.get())
+				return (Stream)s;
+			return Stream.of(s);
+		}));
 	}
 
+	default ReactiveStream<T> onEmpty(T value){
+		return fromJDK(sequenceM().onEmpty(value));
+	}
+
+	
+	default ReactiveStream<T> onEmptyGet(Supplier<T> supplier){
+		return fromJDK(sequenceM().onEmptyGet(supplier));
+	}
+
+	
+	default <X extends Throwable> ReactiveStream<T> onEmptyThrow(Supplier<X> supplier){
+		return fromJDK(sequenceM().onEmptyThrow(supplier));
+	}
+	
 	/** for-comprehensions **/
 	/**
 	 * Perform a three level nested internal iteration over this Stream and the
@@ -595,7 +719,7 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	 * @return Reduce result
 	 */
 	default <R> R mapReduce(Function<? super T, ? extends R> mapper, Monoid<R> reducer) {
-		return StreamUtils.mapReduce(this, reducer);
+		return StreamUtils.mapReduce(this, mapper,reducer);
 	}
 
 	/**

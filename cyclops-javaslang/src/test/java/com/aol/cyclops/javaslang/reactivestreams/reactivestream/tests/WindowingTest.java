@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javaslang.collection.Stream;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,7 +35,7 @@ public class WindowingTest {
 	public void windowWhile(){
 		assertThat(ReactiveStream.of(1,2,3,4,5,6)
 				.windowWhile(i->i%3!=0)
-				.toList().size(),equalTo(2));
+				.toList().length(),equalTo(2));
 		assertThat(ReactiveStream.of(1,2,3,4,5,6)
 				.windowWhile(i->i%3!=0)
 				.toList().get(0).sequenceM().toList(),equalTo(Arrays.asList(1,2,3)));
@@ -42,7 +44,7 @@ public class WindowingTest {
 	public void windowUntil(){
 		assertThat(ReactiveStream.of(1,2,3,4,5,6)
 				.windowUntil(i->i%3==0)
-				.toList().size(),equalTo(2));
+				.toJavaList().size(),equalTo(2));
 		assertThat(ReactiveStream.of(1,2,3,4,5,6)
 				.windowUntil(i->i%3==0)
 				.toList().get(0).sequenceM().toList(),equalTo(Arrays.asList(1,2,3)));
@@ -60,7 +62,7 @@ public class WindowingTest {
 				.toList());
 		assertThat(ReactiveStream.of(1,2,3,4,5,6)
 				.windowStatefullyWhile((s,i)->s.sequenceM().toList().contains(4) ? true : false)
-				.toList().size(),equalTo(5));
+				.toList().length(),equalTo(5));
 		
 	}
 	@Test
@@ -68,12 +70,12 @@ public class WindowingTest {
 		
 		assertThat(ReactiveStream.of()
 				.windowStatefullyWhile((s,i)->s.sequenceM().toList().contains(4) ? true : false)
-				.toList().size(),equalTo(0));
+				.toList().length(),equalTo(0));
 		
 	}
 	@Test
 	public void sliding() {
-		List<List<Integer>> list = ReactiveStream.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
+		List<Stream<Integer>> list = ReactiveStream.of(1, 2, 3, 4, 5, 6).slidingWindow(2).collect(Collectors.toList());
 
 		assertThat(list.get(0), hasItems(1, 2));
 		assertThat(list.get(1), hasItems(2, 3));
@@ -81,7 +83,7 @@ public class WindowingTest {
 
 	@Test
 	public void slidingIncrement() {
-		List<List<Integer>> list = ReactiveStream.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+		List<Stream<Integer>> list = ReactiveStream.of(1, 2, 3, 4, 5, 6).slidingWindow(3, 2).collect(Collectors.toList());
 
 		System.out.println(list);
 		assertThat(list.get(0), hasItems(1, 2, 3));
@@ -91,7 +93,7 @@ public class WindowingTest {
 	@Test
 	public void grouped() {
 
-		List<List<Integer>> list = ReactiveStream.of(1, 2, 3, 4, 5, 6).grouped(3).collect(Collectors.toList());
+		List<List<Integer>> list = ReactiveStream.of(1, 2, 3, 4, 5, 6).windowBySize(3).map(s->s.toJavaList()).collect(Collectors.toList());
 		System.out.println(list);
 		assertThat(list.get(0), hasItems(1, 2, 3));
 		assertThat(list.get(1), hasItems(4, 5, 6));
@@ -102,15 +104,15 @@ public class WindowingTest {
 	public void sliding2() {
 		
 
-		List<List<Integer>> sliding = ReactiveStream.of(1, 2, 3, 4, 5).sliding(2).toList();
+		List<ReactiveStream<Integer>> sliding = ReactiveStream.of(1, 2, 3, 4, 5).slidingWindow(2).toJavaList();
 
-		assertThat(sliding, contains(asList(1, 2), asList(2, 3), asList(3, 4), asList(4, 5)));
+		assertThat(sliding, contains(ReactiveStream.of(1, 2), ReactiveStream.of(2, 3), ReactiveStream.of(3, 4), ReactiveStream.of(4, 5)));
 	}
 
 	@Test
 	public void slidingOverlap() {
 		
-		List<List<Integer>> sliding = ReactiveStream.of(1, 2, 3, 4, 5).sliding(3,2).toList();
+		List<java.util.List<Integer>> sliding = ReactiveStream.of(1, 2, 3, 4, 5).slidingWindow(3,2).map(s->s.toJavaList()).toJavaList();
 
 		assertThat(sliding, contains(asList(1, 2, 3), asList(3, 4, 5)));
 	}
@@ -119,21 +121,21 @@ public class WindowingTest {
 	public void slidingEmpty() {
 		
 
-		assertThat(ReactiveStream.of().sliding(1).toList().size(),equalTo(0));
+		assertThat(ReactiveStream.of().sliding(1).toList().length(),equalTo(0));
 	}
 
 	@Test
 	public void slidingWithSmallWindowAtEnd() {
 		
 
-		List<List<Integer>> sliding = ReactiveStream.of(1, 2, 3, 4, 5).sliding(2,2).toList();
+		List<ReactiveStream<Integer>> sliding = ReactiveStream.of(1, 2, 3, 4, 5).slidingWindow(2,2).toJavaList();
 
-		assertThat(sliding, contains(asList(1, 2), asList(3, 4), asList(5)));
+		assertThat(sliding, contains(ReactiveStream.of(1, 2), ReactiveStream.of(3, 4), ReactiveStream.of(5)));
 	}
 
 	@Test
 	public void groupedOnEmpty() throws Exception {
-			assertThat( empty.grouped(10).count(),equalTo(0l));
+			assertThat( empty.windowBySize(10).length(),equalTo(0));
 	}
 
 	@Test(expected=IllegalArgumentException.class)
@@ -148,50 +150,20 @@ public class WindowingTest {
 	}
 
 
-	@Test
-	public void groupedShorter() throws Exception {
-		final Streamable<Integer> fixed = Streamable.fromStream(of(5, 7, 9));
-		assertThat(fixed.sequenceM().grouped(4).get(0).v1,equalTo(Arrays.asList(5,7,9)));
-		assertThat(fixed.sequenceM().grouped(4).count(),equalTo(1l));
-
-		
-	}
-
-	@Test
-	public void groupedEqualSize() throws Exception {
-		final Streamable<Integer> fixed = Streamable.fromStream(of(5, 7, 9));
-		assertThat(fixed.sequenceM().grouped(3).elementAt(0).get(),equalTo(Arrays.asList(5,7,9)));
-		assertThat(fixed.sequenceM().grouped(3).count(),equalTo(1l));
-	}
-
-	@Test
-	public void multipleGrouped() throws Exception {
-		final Streamable<Integer> fixed = Streamable.fromStream(of(5, 7, 9,10));
-		assertThat(fixed.sequenceM().grouped(3).elementAt(0).get(),equalTo(Arrays.asList(5,7,9)));
-		assertThat(fixed.sequenceM().grouped(3).count(),equalTo(2l));
-		
-	}
-
 	
-	@Test
-	public void return1() throws Exception {
-		final Streamable<Integer> fixed = Streamable.fromStream(of(5));
-		assertThat(fixed.sequenceM().grouped(3).elementAt(0).get(),equalTo(Arrays.asList(5)));
-		assertThat(fixed.sequenceM().grouped(3).count(),equalTo(1l));
-	}
 
 	@Test
 	public void groupedEmpty() throws Exception {
 		
-		assertThat(empty.grouped(1).count(),equalTo(0l));
+		assertThat(empty.grouped(1).length(),equalTo(0));
 	}
 
 	@Test
 	public void groupedInfinite() {
-		ReactiveStream<Integer> infinite = SequenceM.iterate(1, i->i+1);
+		ReactiveStream<Integer> infinite = ReactiveStream.iterate(1, i->i+1);
 		
-		final ReactiveStream<List<Integer>> grouped = infinite.grouped(3);
-		assertThat(grouped.elementAt(0).get(),equalTo(Arrays.asList(1,2,3)));
+		final ReactiveStream<ReactiveStream<Integer>> grouped = infinite.windowBySize(3);
+		assertThat(grouped.get(),equalTo(ReactiveStream.of(1,2,3)));
 	
 	}
 
