@@ -1,3 +1,4 @@
+
 package com.aol.cyclops.sequence;
 
 import java.io.BufferedReader;
