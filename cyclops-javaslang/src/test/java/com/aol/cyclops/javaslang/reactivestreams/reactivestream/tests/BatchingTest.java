@@ -1,7 +1,7 @@
 package com.aol.cyclops.javaslang.reactivestreams.reactivestream.tests;
+import static com.aol.cyclops.javaslang.reactivestreams.ReactiveStream.of;
 import static com.aol.cyclops.sequence.SequenceM.fromIntStream;
-import static com.aol.cyclops.sequence.SequenceM.iterate;
-import static com.aol.cyclops.sequence.SequenceM.of;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
@@ -11,8 +11,6 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,58 +26,48 @@ import lombok.Value;
 
 import org.junit.Test;
 
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.javaslang.reactivestreams.ReactiveStream;
 import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.streams.SimpleTimer;
 public class BatchingTest {
 	@Test
 	public void batchUntil(){
-		assertThat(SequenceM.of(1,2,3,4,5,6)
-				.batchUntil(i->i%3==0)
-				.toList().size(),equalTo(2));
-		assertThat(SequenceM.of(1,2,3,4,5,6)
-				.batchUntil(i->i%3==0)
+		assertThat(of(1,2,3,4,5,6)
+				.windowUntil(i->i%3==0)
+				.toList().length(),equalTo(2));
+		assertThat(ReactiveStream.of(1,2,3,4,5,6)
+				.windowUntil(i->i%3==0)
 				.toList().get(0),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void batchWhile(){
-		assertThat(SequenceM.of(1,2,3,4,5,6)
-				.batchWhile(i->i%3!=0)
+		assertThat(ReactiveStream.of(1,2,3,4,5,6)
+				.windowWhile(i->i%3!=0)
 				.toList()
-				.size(),equalTo(2));
-		assertThat(SequenceM.of(1,2,3,4,5,6)
-				.batchWhile(i->i%3!=0)
+				.length(),equalTo(2));
+		assertThat(ReactiveStream.of(1,2,3,4,5,6)
+				.windowWhile(i->i%3!=0)
 				.toList(),equalTo(Arrays.asList(Arrays.asList(1,2,3),Arrays.asList(4,5,6))));
 	}
 	@Test
 	public void batchUntilCollection(){
-		assertThat(SequenceM.of(1,2,3,4,5,6)
-				.batchUntil(i->i%3==0,()->new ArrayList<>())
+		assertThat(ReactiveStream.of(1,2,3,4,5,6)
+				.windowUntil(i->i%3==0,()->new ArrayList<>())
 				.toList().size(),equalTo(2));
-		assertThat(SequenceM.of(1,2,3,4,5,6)
-				.batchUntil(i->i%3==0,()->new ArrayList<>())
+		assertThat(ReactiveStream.of(1,2,3,4,5,6)
+				.windowUntil(i->i%3==0,()->new ArrayList<>())
 				.toList().get(0),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void batchWhileCollection(){
-		assertThat(SequenceM.of(1,2,3,4,5,6)
-				.batchWhile(i->i%3!=0,()->new ArrayList<>())
+		assertThat(ReactiveStream.of(1,2,3,4,5,6)
+				.windowWhile(i->i%3!=0,()->new ArrayList<>())
 				.toList().size(),equalTo(2));
-		assertThat(SequenceM.of(1,2,3,4,5,6)
-				.batchWhile(i->i%3!=0,()->new ArrayList<>())
+		assertThat(ReactiveStream.of(1,2,3,4,5,6)
+				.windowWhile(i->i%3!=0,()->new ArrayList<>())
 				.toList(),equalTo(Arrays.asList(Arrays.asList(1,2,3),Arrays.asList(4,5,6))));
 	}
-	@Test
-	public void batchByTime2(){
-		for(int i=0;i<5;i++){
-			System.out.println(i);
-			assertThat(of(1,2,3,4,5, 6)
-							.map(n-> n==6? sleep(1) : n)
-							.batchByTime(10,TimeUnit.MICROSECONDS)
-							.toList()
-							.get(0)
-							,not(hasItem(6)));
-		}
-	}
+	
 	private Integer sleep(int i) {
 		try {
 			Thread.sleep(i);
@@ -245,25 +233,21 @@ public class BatchingTest {
 	public void windowByTimex() {
 
 		
-				iterate("", last -> "next")
-				.limit(100)
-				
-				
-				.peek(next->System.out.println("Counter " +count2.incrementAndGet()))
-				.windowByTime(10, TimeUnit.MICROSECONDS)
-				.peek(batch -> System.out.println("batched : " + batch))
-				.filter(c->! (c.stream().count()==0))
-				
-				
-				.forEach(System.out::println);
+				ReactiveStream.iterate("", last -> "next")
+							  .take(100)
+							  .peek(next->System.out.println("Counter " +count2.incrementAndGet()))
+							  .windowByTime(10, TimeUnit.MICROSECONDS)
+							  .peek(batch -> System.out.println("batched : " + batch))
+							  .filter(c->! (c.length()==0))
+							  .forEach(System.out::println);
 			
 
 	}
 
 	@Test
 	public void batchBySize3(){
-		System.out.println(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()));
-		assertThat(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()).size(),is(2));
+		System.out.println(of(1,2,3,4,5,6).windowBySize(3).collect(Collectors.toList()));
+		assertThat(of(1,2,3,4,5,6).windowBySize(3).collect(Collectors.toList()).size(),is(2));
 	}
 	@Test
 	public void batchBySizeAndTimeSizeCollection(){
@@ -330,11 +314,11 @@ public class BatchingTest {
 		
 		for(int i=0;i<10;i++){
 			System.out.println(i);
-			List<Streamable<Integer>> list = of(1,2,3,4,5,6)
+			List<ReactiveStream<Integer>> list = of(1,2,3,4,5,6)
 					.map(n-> n==6? sleep(1) : n)
 					.windowBySizeAndTime(10,1,TimeUnit.MICROSECONDS)
 					
-					.toList();
+					.toJavaList();
 			
 			assertThat(list
 							.get(0)

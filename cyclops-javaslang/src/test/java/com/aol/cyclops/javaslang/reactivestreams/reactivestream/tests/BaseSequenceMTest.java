@@ -167,10 +167,11 @@ public  class BaseSequenceMTest {
 	    public void testGroupByEager() {
 	        Map<Integer, Stream<Integer>> map1 =of(1, 2, 3, 4).<Integer>groupBy(i -> i % 2);
 	       
-	        assertThat(map1.get(0),hasItem(2));
-	        assertThat(map1.get(0),hasItem(4));
-	        assertThat(map1.get(1),hasItem(1));
-	        assertThat(map1.get(1),hasItem(3));
+	        
+	        assertThat(map1.get(0).get().toJavaList(),hasItem(2));
+	        assertThat(map1.get(0).get().toJavaList(),hasItem(4));
+	        assertThat(map1.get(1).get().toJavaList(),hasItem(1));
+	        assertThat(map1.get(1).get().toJavaList(),hasItem(3));
 	        
 	        assertEquals(2, map1.size());
 
@@ -180,9 +181,9 @@ public  class BaseSequenceMTest {
 
 	    @Test
 	    public void testJoin() {
-	        assertEquals("123".length(),of(1, 2, 3).join().length());
-	        assertEquals("1, 2, 3".length(), of(1, 2, 3).join(", ").length());
-	        assertEquals("^1|2|3$".length(), of(1, 2, 3).join("|", "^", "$").length());
+	        assertEquals("123".length(),of(1, 2, 3).mkString().length());
+	        assertEquals("1, 2, 3".length(), of(1, 2, 3).mkString(", ").length());
+	        assertEquals("^1|2|3$".length(), of(1, 2, 3).mkString("|", "^", "$").length());
 	        
 	      
 	    }

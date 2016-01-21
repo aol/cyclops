@@ -12,13 +12,13 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javaslang.Tuple2;
+import javaslang.collection.Map;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -50,8 +50,8 @@ public class BaseSequentialTest {
 		
 		@Test
 		public void batchBySize(){
-			System.out.println(of(1,2,3,4,5,6).grouped(3).collect(Collectors.toList()));
-			assertThat(of(1,2,3,4,5,6).grouped(3).collect(Collectors.toList()).size(),is(2));
+			System.out.println(of(1,2,3,4,5,6).windowBySize(3).collect(Collectors.toList()));
+			assertThat(of(1,2,3,4,5,6).windowBySize(3).collect(Collectors.toList()).size(),is(2));
 		}
 		
 		
@@ -86,7 +86,7 @@ public class BaseSequentialTest {
 		}
 		@Test
 		public void insertAt(){
-		List<String> result = 	of(1,2,3).insertAt(1,100,200,300)
+		List<String> result = 	of(1,2,3).insertAll(1,Arrays.asList(100,200,300))
 				.map(it ->it+"!!").collect(Collectors.toList());
 
 			assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
@@ -100,131 +100,17 @@ public class BaseSequentialTest {
 		}
 		@Test
 		public void deleteBetween(){
-			List<String> result = 	of(1,2,3,4,5,6).deleteBetween(2,4)
+			List<String> result = 	of(1,2,3,4,5,6).removeBetween(2,4)
 				.map(it ->it+"!!").collect(Collectors.toList());
 
 			assertThat(result,equalTo(Arrays.asList("1!!","2!!","5!!","6!!")));
 		}
 		
-		@Test
-		public void zip(){
-			List<Tuple2<Integer,Integer>> list =
-					of(1,2,3,4,5,6).zip(of(100,200,300,400))
-													.peek(it -> System.out.println(it)).collect(Collectors.toList());
-			
-			List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
-			assertThat(right,hasItem(100));
-			assertThat(right,hasItem(200));
-			assertThat(right,hasItem(300));
-			assertThat(right,hasItem(400));
-			
-			List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
-			assertThat(asList(1,2,3,4),equalTo(left));
-			
-			
-		}
 		
-		@Test
-		public void zip2of(){
-			List<Tuple2<Integer,Integer>> list =of(1,2,3,4,5,6).zip(of(100,200,300,400)).peek(it -> System.out.println(it)).collect(Collectors.toList());
 		
-			List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
-			assertThat(right,hasItem(100));
-			assertThat(right,hasItem(200));
-			assertThat(right,hasItem(300));
-			assertThat(right,hasItem(400));
-			
-			List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
-			assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
-
-		}
-		@Test
-		public void zipInOrder(){
-			
-			//this is not 100% reliable for EagerReactiveStream use zipFutures instead
-				List<Tuple2<Integer,Integer>> list =  of(1,2,3,4,5,6).limit(6)
-															.zip( of(100,200,300,400).limit(4))
-															.collect(Collectors.toList());
-				
-				assertThat(list.get(0).v1,is(1));
-				assertThat(list.get(0).v2,is(100));
-				assertThat(list.get(1).v1,is(2));
-				assertThat(list.get(1).v2,is(200));
-				assertThat(list.get(2).v1,is(3));
-				assertThat(list.get(2).v2,is(300));
-				assertThat(list.get(3).v1,is(4));
-				assertThat(list.get(3).v2,is(400));
-			
-			
-			
-		}
-
-		@Test
-		public void zipEmpty() throws Exception {
-			
-			
-			final ReactiveStream<Integer> zipped = empty.zip(this.<Integer>of(), (a, b) -> a + b);
-			assertTrue(zipped.collect(Collectors.toList()).isEmpty());
-		}
-
-		@Test
-		public void shouldReturnEmptySeqWhenZipEmptyWithNonEmpty() throws Exception {
-			
-			
-			
-			final ReactiveStream<Integer> zipped = empty.zip(nonEmpty, (a, b) -> a + b);
-			assertTrue(zipped.collect(Collectors.toList()).isEmpty());
-		}
-
-		@Test
-		public void shouldReturnEmptySeqWhenZipNonEmptyWithEmpty() throws Exception {
-			
-			
-			final ReactiveStream<Integer> zipped = nonEmpty.zip(empty, (a, b) -> a + b);
-
-			
-			assertTrue(zipped.collect(Collectors.toList()).isEmpty());
-		}
-
-		@Test
-		public void shouldZipTwoFiniteSequencesOfSameSize() throws Exception {
-			
-			final ReactiveStream<String> first = of("A", "B", "C");
-			final ReactiveStream<Integer> second = of(1, 2, 3);
-
-			
-			final ReactiveStream<String> zipped = first.zip(second, (a, b) -> a + b);
-
-			
-			assertThat(zipped.collect(Collectors.toList()),equalTo(asList("A1", "B2", "C3")));
-		}
-
-		
-
-		@Test
-		public void shouldTrimSecondFixedSeqIfLonger() throws Exception {
-			final ReactiveStream<String> first = of("A", "B", "C");
-			final ReactiveStream<Integer> second = of(1, 2, 3, 4);
-
-			
-			final ReactiveStream<String> zipped = first.zip(second, (a, b) -> a + b);
-
-			assertThat(zipped.collect(Collectors.toList()),equalTo(asList("A1", "B2", "C3")));
-		}
-
-		@Test
-		public void shouldTrimFirstFixedSeqIfLonger() throws Exception {
-			final ReactiveStream<String> first = of("A", "B", "C","D");
-			final ReactiveStream<Integer> second = of(1, 2, 3);
-			final ReactiveStream<String> zipped = first.zip(second, (a, b) -> a + b);
-
-			
-			assertThat(zipped.collect(Collectors.toList()),equalTo(asList("A1", "B2", "C3")));
-		}
-
 		@Test
 		public void limitWhileTest(){
-			List<Integer> list = of(1,2,3,4,5,6).limitWhile(it -> it<4).peek(it -> System.out.println(it)).collect(Collectors.toList());
+			List<Integer> list = of(1,2,3,4,5,6).takeWhile(it -> it<4).peek(it -> System.out.println(it)).collect(Collectors.toList());
 		
 			assertThat(list,hasItem(1));
 			assertThat(list,hasItem(2));
@@ -243,20 +129,12 @@ public class BaseSequentialTest {
 	        assertThat( of(1, 2, 3).reverse().toList(), is(asList(3, 2, 1)));
 	    }
 
-	    @Test
-	    public void testShuffle() {
-	        Supplier<ReactiveStream<Integer>> s = () ->of(1, 2, 3);
-
-	        assertEquals(3, s.get().shuffle().toList().size());
-	        assertThat(s.get().shuffle().toList(), hasItems(1, 2, 3));
-
-	        
-	    }
+	   
 
 	    @Test
 	    public void testCycle() {
-	        assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle().limit(6).toList());
-	        assertEquals(asList(1, 2, 3, 1, 2, 3), of(1, 2, 3).cycle().limit(6).toList());
+	        assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle().take(6).toList());
+	        assertEquals(asList(1, 2, 3, 1, 2, 3), of(1, 2, 3).cycle().take(6).toList());
 	    }
 	    
 	    @Test
@@ -268,24 +146,13 @@ public class BaseSequentialTest {
 	        }
 	    }
 		
-		@Test
-		public void testDuplicate(){
-			 Tuple2<ReactiveStream<Integer>, ReactiveStream<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
-			 assertTrue(copies.v1.anyMatch(i->i==2));
-			 assertTrue(copies.v2.anyMatch(i->i==2));
-		}
 		
-		
-
-		
-		   
-
-			
 		    @Test
 		    public void testGroupByEager() {
-		        Map<Integer, List<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
-		        assertEquals(asList(2, 4), map1.get(0));
-		        assertEquals(asList(1, 3), map1.get(1));
+		        Map<Integer, javaslang.collection.Stream<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
+		       
+		        assertEquals(ReactiveStream.of(2, 4), map1.get(0).get());
+		        assertEquals(ReactiveStream.of(1, 3), map1.get(1).get());
 		        assertEquals(2, map1.size());
 
 		     
@@ -294,119 +161,75 @@ public class BaseSequentialTest {
 
 		    @Test
 		    public void testJoin() {
-		        assertEquals("123",of(1, 2, 3).join());
-		        assertEquals("1, 2, 3", of(1, 2, 3).join(", "));
-		        assertEquals("^1|2|3$", of(1, 2, 3).join("|", "^", "$"));
+		        assertEquals("123",of(1, 2, 3).mkString());
+		        assertEquals("1, 2, 3", of(1, 2, 3).mkString(", "));
+		        assertEquals("^1|2|3$", of(1, 2, 3).mkString("|", "^", "$"));
 		    }
 
 		    
-		    @Test @Ignore //failing!
-		    public void testOptional() {
-		        assertEquals(asList(1),of(Optional.of(1)).toList());
-		        assertEquals(asList(), of(Optional.empty()).toList());
-		    }
-		    @Test
-		    public void testZipDifferingLength() {
-		        List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
-
-		        assertEquals(2, list.size());
-		        assertTrue(asList(1,2).contains( list.get(0).v1));
-		        assertTrue(""+list.get(1).v2,asList(1,2).contains( list.get(1).v1)); 
-		        assertTrue(asList("a", "b", "c", "d").contains( list.get(0).v2));
-		        assertTrue(asList("a", "b", "c", "d").contains( list.get(1).v2));
-		       
-		        
-		    }
-
-		    @Test
-		    public void testZipWithIndex() {
-		    	//assertEquals(asList(), of().zipWithIndex().toList());
-		       // assertEquals(asList(tuple("a", 0L)), of("a").zip(of(0L)).toList());
-		        //assertEquals(asList(tuple("a", 0L)), of("a").zipWithIndex().toList());
-		    	assertEquals(asList(new Tuple2("a", 0L), new Tuple2("b", 1L)), of("a", "b").zipWithIndex().toList());
-		        assertEquals(asList(new Tuple2("a", 0L), new Tuple2("b", 1L), new Tuple2("c", 2L)), of("a", "b", "c").zipWithIndex().toList());
-		    }
-
 		   
+		  
 		    @Test
 		    public void testSkipWhile() {
 		    	 Supplier<ReactiveStream<Integer>> s = () -> ReactiveStream.of(1, 2, 3, 4, 5);
 
-		         assertEquals(asList(1, 2, 3, 4, 5), s.get().skipWhile(i -> false).toList());
-		         assertEquals(asList(3, 4, 5), s.get().skipWhile(i -> i % 3 != 0).toList());
-		         assertEquals(asList(3, 4, 5), s.get().skipWhile(i -> i < 3).toList());
-		         assertEquals(asList(4, 5), s.get().skipWhile(i -> i < 4).toList());
-		         assertEquals(asList(), s.get().skipWhile(i -> true).toList());
+		         assertEquals(asList(1, 2, 3, 4, 5), s.get().dropWhile(i -> false).toList());
+		         assertEquals(asList(3, 4, 5), s.get().dropWhile(i -> i % 3 != 0).toList());
+		         assertEquals(asList(3, 4, 5), s.get().dropWhile(i -> i < 3).toList());
+		         assertEquals(asList(4, 5), s.get().dropWhile(i -> i < 4).toList());
+		         assertEquals(asList(), s.get().dropWhile(i -> true).toList());
 		    }
 
 		    @Test
 		    public void testSkipUntil() {
 		    	Supplier<ReactiveStream<Integer>> s = () -> ReactiveStream.of(1, 2, 3, 4, 5);
 
-		        assertEquals(asList(), s.get().skipUntil(i -> false).toList());
-		        assertEquals(asList(3, 4, 5), s.get().skipUntil(i -> i % 3 == 0).toList());
-		        assertEquals(asList(3, 4, 5), s.get().skipUntil(i -> i == 3).toList());
-		        assertEquals(asList(4, 5), s.get().skipUntil(i -> i == 4).toList());
-		        assertEquals(asList(1, 2, 3, 4, 5), s.get().skipUntil(i -> true).toList());
+		        assertEquals(asList(), s.get().dropUntil(i -> false).toList());
+		        assertEquals(asList(3, 4, 5), s.get().dropUntil(i -> i % 3 == 0).toList());
+		        assertEquals(asList(3, 4, 5), s.get().dropUntil(i -> i == 3).toList());
+		        assertEquals(asList(4, 5), s.get().dropUntil(i -> i == 4).toList());
+		        assertEquals(asList(1, 2, 3, 4, 5), s.get().dropUntil(i -> true).toList());
 			  }
 
 		    @Test
 		    public void testSkipUntilWithNulls() {
 		    	 Supplier<ReactiveStream<Integer>> s = () -> ReactiveStream.of(1, 2, null, 3, 4, 5);
 
-		         assertEquals(asList(1, 2, null, 3, 4, 5), s.get().skipUntil(i -> true).toList());
+		         assertEquals(asList(1, 2, null, 3, 4, 5), s.get().dropUntil(i -> true).toList());
 		    }
 
 		    @Test
 		    public void testLimitWhile() {
 		    	 Supplier<ReactiveStream<Integer>> s = () -> ReactiveStream.of(1, 2, 3, 4, 5);
 
-		         assertEquals(asList(), s.get().limitWhile(i -> false).toList());
-		         assertEquals(asList(1, 2), s.get().limitWhile(i -> i % 3 != 0).toList());
-		         assertEquals(asList(1, 2), s.get().limitWhile(i -> i < 3).toList());
-		         assertEquals(asList(1, 2, 3), s.get().limitWhile(i -> i < 4).toList());
-		         assertEquals(asList(1, 2, 3, 4, 5), s.get().limitWhile(i -> true).toList());
+		         assertEquals(asList(), s.get().takeWhile(i -> false).toList());
+		         assertEquals(asList(1, 2), s.get().takeWhile(i -> i % 3 != 0).toList());
+		         assertEquals(asList(1, 2), s.get().takeWhile(i -> i < 3).toList());
+		         assertEquals(asList(1, 2, 3), s.get().takeWhile(i -> i < 4).toList());
+		         assertEquals(asList(1, 2, 3, 4, 5), s.get().takeWhile(i -> true).toList());
 		    }
 
 		    @Test
 		    public void testLimitUntil() {
-		    	 assertEquals(asList(1, 2, 3, 4, 5),of(1, 2, 3, 4, 5).limitUntil(i -> false).toList());
-		         assertEquals(asList(1, 2), of(1, 2, 3, 4, 5).limitUntil(i -> i % 3 == 0).toList());
-		         assertEquals(asList(1, 2), of(1, 2, 3, 4, 5).limitUntil(i -> i == 3).toList());
-		         assertEquals(asList(1, 2, 3), of(1, 2, 3, 4, 5).limitUntil(i -> i == 4).toList());
-		         assertEquals(asList(), of(1, 2, 3, 4, 5).limitUntil(i -> true).toList());
+		    	 assertEquals(asList(1, 2, 3, 4, 5),of(1, 2, 3, 4, 5).takeUntil(i -> false).toList());
+		         assertEquals(asList(1, 2), of(1, 2, 3, 4, 5).takeUntil(i -> i % 3 == 0).toList());
+		         assertEquals(asList(1, 2), of(1, 2, 3, 4, 5).takeUntil(i -> i == 3).toList());
+		         assertEquals(asList(1, 2, 3), of(1, 2, 3, 4, 5).takeUntil(i -> i == 4).toList());
+		         assertEquals(asList(), of(1, 2, 3, 4, 5).takeUntil(i -> true).toList());
 
 		        
 		        
-		        assertEquals(asList(), of(1, 2, 3, 4, 5).limitUntil(i -> true).toList());
+		        assertEquals(asList(), of(1, 2, 3, 4, 5).takeUntil(i -> true).toList());
 		    }
 
 		    @Test
 		    public void testLimitUntilWithNulls() {
 		       
 
-		        assertThat(of(1, 2, null, 3, 4, 5).limitUntil(i -> false).toList(),equalTo(asList(1, 2, null, 3, 4, 5)));
+		        assertThat(of(1, 2, null, 3, 4, 5).takeUntil(i -> false).toList(),equalTo(asList(1, 2, null, 3, 4, 5)));
 		    }
 
-		    @Test
-		    public void testPartition() {
-		        Supplier<ReactiveStream<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
-
-		        assertEquals(asList(1, 3, 5), s.get().partition(i -> i % 2 != 0).v1.toList());
-		        assertEquals(asList(2, 4, 6), s.get().partition(i -> i % 2 != 0).v2.toList());
-
-		        assertEquals(asList(2, 4, 6), s.get().partition(i -> i % 2 == 0).v1.toList());
-		        assertEquals(asList(1, 3, 5), s.get().partition(i -> i % 2 == 0).v2.toList());
-
-		        assertEquals(asList(1, 2, 3), s.get().partition(i -> i <= 3).v1.toList());
-		        assertEquals(asList(4, 5, 6), s.get().partition(i -> i <= 3).v2.toList());
-
-		        assertEquals(asList(1, 2, 3, 4, 5, 6), s.get().partition(i -> true).v1.toList());
-		        assertEquals(asList(), s.get().partition(i -> true).v2.toList());
-
-		        assertEquals(asList(), s.get().partition(i -> false).v1.toList());
-		        assertEquals(asList(1, 2, 3, 4, 5, 6), s.get().splitBy(i -> false).v2.toList());
-		    }
+		    
 
 		    @Test
 		    public void testSplitAt() {
@@ -414,7 +237,7 @@ public class BaseSequentialTest {
 			        Supplier<ReactiveStream<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 		
 			   
-			        assertEquals(asList(4, 5, 6), s.get().splitAt(3).v2.toList());
+			        assertEquals(asList(4, 5, 6), s.get().splitAt(3)._2().toList());
 		
 			  
 		    	}
@@ -422,42 +245,24 @@ public class BaseSequentialTest {
 			        Supplier<ReactiveStream<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 		
 			     
-			        assertEquals(asList(1, 2, 3), s.get().splitAt(3).v1.toList());
+			        assertEquals(asList(1, 2, 3), s.get().splitAt(3)._1.toList());
 			       
 		    	}
 		    	for(int i=0;i<20;i++){
 			        Supplier<ReactiveStream<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 		
 			   
-			       assertEquals(asList(1, 2, 3, 4, 5, 6), s.get().splitAt(6).v1.toList());
+			       assertEquals(asList(1, 2, 3, 4, 5, 6), s.get().splitAt(6)._1.toList());
 			      	}
 		    	for(int i=0;i<20;i++){
 			        Supplier<ReactiveStream<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 		
 			   
-			        assertEquals(asList(1, 2, 3, 4, 5, 6), s.get().splitAt(7).v1.toList());
+			        assertEquals(asList(1, 2, 3, 4, 5, 6), s.get().splitAt(7)._1.toList());
 			      	}
 		    }
 
-		    @Test
-		    public void testSplitAtHead() {
-		        assertEquals(Optional.empty(), of().splitAtHead().v1);
-		        assertEquals(asList(), of().splitAtHead().v2.toList());
-
-		        assertEquals(Optional.of(1), of(1).splitAtHead().v1);
-		        assertEquals(asList(), of(1).splitAtHead().v2.toList());
-
-		        assertEquals(Optional.of(1), of(1, 2).splitAtHead().v1);
-		        assertEquals(asList(2), of(1, 2).splitAtHead().v2.toList());
-
-		        assertEquals(Optional.of(1), of(1, 2, 3).splitAtHead().v1);
-		        assertEquals(Optional.of(2), of(1, 2, 3).splitAtHead().v2.splitAtHead().v1);
-		        assertEquals(Optional.of(3), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v1);
-		        assertEquals(asList(2, 3), of(1, 2, 3).splitAtHead().v2.toList());
-		        assertEquals(asList(3), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.toList());
-		        assertEquals(asList(), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v2.toList());
-		    }
-
+		   
 		    @Test
 		    public void testMinByMaxBy() {
 		        Supplier<ReactiveStream<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
@@ -469,17 +274,7 @@ public class BaseSequentialTest {
 		        assertEquals(1, (int) s.get().minBy(t -> "" + t).get());
 		    }
 
-		    @Test
-		    public void testUnzip() {
-		        Supplier<ReactiveStream<Tuple2<Integer, String>>> s = () -> of(new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c"));
-
-		        Tuple2<ReactiveStream<Integer>, ReactiveStream<String>> u1 = ReactiveStream.unzip(s.get());
-		        assertThat(u1.v1.toList(),equalTo(asList(1, 2, 3)));
-		        assertThat(u1.v2.toList(),equalTo(asList("a", "b", "c")));
-
-		        
-		    }
-		   
+		       
 
 		    @Test
 		    public void testFoldLeft() {
@@ -511,12 +306,12 @@ public class BaseSequentialTest {
 		  //tests converted from lazy-seq suite
 		    @Test
 			public void flattenEmpty() throws Exception {
-					assertTrue(this.<Integer>of().flatMap(i -> asList(i, -i).stream()).toList().isEmpty());
+					assertTrue(this.<Integer>of().flatMap(i -> ReactiveStream.of(i, -i)).toList().isEmpty());
 			}
 
 			@Test
 			public void flatten() throws Exception {
-				assertThat(this.<Integer>of(1,2).flatMap(i -> asList(i, -i).stream()).toList(),equalTo(asList(1, -1, 2, -2)));		
+				assertThat(this.<Integer>of(1,2).flatMap(i -> ReactiveStream.of(i, -i)).toList(),equalTo(asList(1, -1, 2, -2)));		
 			}
 
 			
@@ -524,23 +319,23 @@ public class BaseSequentialTest {
 			@Test
 			public void flattenEmptyStream() throws Exception {
 				
-				assertThat(this.<Integer>of(1,2,3,4,5,5,6,8,9,10).flatMap(this::flatMapFun).limit(10).collect(Collectors.toList()),
+				assertThat(this.<Integer>of(1,2,3,4,5,5,6,8,9,10).flatMap(this::flatMapFun).take(10).collect(Collectors.toList()),
 												equalTo(asList(2, 3, 4, 5, 6, 7, 0, 0, 0, 0)));
 			}
 
-			private  Stream<Integer> flatMapFun(int i) {
+			private  ReactiveStream<Integer> flatMapFun(int i) {
 				if (i <= 0) {
-					return Arrays.<Integer>asList().stream();
+					return ReactiveStream.empty();
 				}
 				switch (i) {
 					case 1:
-						return asList(2).stream();
+						return ReactiveStream.fromIterable(asList(2));
 					case 2:
-						return asList(3, 4).stream();
+						return ReactiveStream.fromIterable(asList(3, 4));
 					case 3:
-						return asList(5, 6, 7).stream();
+						return ReactiveStream.fromIterable(asList(5, 6, 7));
 					default:
-						return asList(0, 0).stream();
+						return ReactiveStream.fromIterable(asList(0, 0));
 				}
 			}
 
