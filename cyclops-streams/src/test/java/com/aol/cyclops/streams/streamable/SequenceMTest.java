@@ -94,7 +94,7 @@ public class SequenceMTest {
 	}
 	@Test
 	public void elementAt0(){
-		assertThat(Streamable.of(1).get(0),equalTo(1));
+		assertThat(Streamable.of(1).get(0).get(),equalTo(1));
 	}
 	@Test
 	public void elementAtMultple(){

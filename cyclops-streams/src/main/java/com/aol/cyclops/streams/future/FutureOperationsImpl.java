@@ -40,8 +40,8 @@ import com.aol.cyclops.streams.FutureStreamUtils;
 
 
 @AllArgsConstructor
-public class FutureOperationsImpl<T> implements FutureOperations<T>, DoubleOperatorsMixin<T>, 
-						IntOperatorsMixin<T>, LongOperatorsMixin<T> {
+public class FutureOperationsImpl<T> implements  DoubleOperatorsMixin<T>, 
+						IntOperatorsMixin<T>, LongOperatorsMixin<T>,FutureOperations<T>{
 
 	@Getter
 	private final Executor exec;
@@ -476,5 +476,127 @@ public class FutureOperationsImpl<T> implements FutureOperations<T>, DoubleOpera
 			Function<? super T, ? extends V> valueMapper) {
 		return CompletableFuture.supplyAsync(()->stream.toMap(keyMapper,valueMapper),exec);
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.DoubleOperatorsMixin#sumDouble(java.util.function.ToDoubleFunction)
+	 */
+	@Override
+	public CompletableFuture<Double> sumDouble(ToDoubleFunction<? super T> fn) {
+		return DoubleOperatorsMixin.super.sumDouble(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.LongOperatorsMixin#sumLong(java.util.function.ToLongFunction)
+	 */
+	@Override
+	public CompletableFuture<Long> sumLong(ToLongFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return LongOperatorsMixin.super.sumLong(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.LongOperatorsMixin#maxLong(java.util.function.ToLongFunction)
+	 */
+	@Override
+	public CompletableFuture<OptionalLong> maxLong(ToLongFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return LongOperatorsMixin.super.maxLong(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.LongOperatorsMixin#minLong(java.util.function.ToLongFunction)
+	 */
+	@Override
+	public CompletableFuture<OptionalLong> minLong(ToLongFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return LongOperatorsMixin.super.minLong(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.LongOperatorsMixin#averageLong(java.util.function.ToLongFunction)
+	 */
+	@Override
+	public CompletableFuture<OptionalDouble> averageLong(ToLongFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return LongOperatorsMixin.super.averageLong(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.LongOperatorsMixin#summaryStatisticsLong(java.util.function.ToLongFunction)
+	 */
+	@Override
+	public CompletableFuture<LongSummaryStatistics> summaryStatisticsLong(ToLongFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return LongOperatorsMixin.super.summaryStatisticsLong(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.IntOperatorsMixin#sumInt(java.util.function.ToIntFunction)
+	 */
+	@Override
+	public CompletableFuture<Integer> sumInt(ToIntFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return IntOperatorsMixin.super.sumInt(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.IntOperatorsMixin#maxInt(java.util.function.ToIntFunction)
+	 */
+	@Override
+	public CompletableFuture<OptionalInt> maxInt(ToIntFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return IntOperatorsMixin.super.maxInt(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.IntOperatorsMixin#minInt(java.util.function.ToIntFunction)
+	 */
+	@Override
+	public CompletableFuture<OptionalInt> minInt(ToIntFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return IntOperatorsMixin.super.minInt(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.IntOperatorsMixin#averageInt(java.util.function.ToIntFunction)
+	 */
+	@Override
+	public CompletableFuture<OptionalDouble> averageInt(ToIntFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return IntOperatorsMixin.super.averageInt(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.IntOperatorsMixin#summaryStatisticsInt(java.util.function.ToIntFunction)
+	 */
+	@Override
+	public CompletableFuture<IntSummaryStatistics> summaryStatisticsInt(ToIntFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return IntOperatorsMixin.super.summaryStatisticsInt(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.DoubleOperatorsMixin#maxDouble(java.util.function.ToDoubleFunction)
+	 */
+	@Override
+	public CompletableFuture<OptionalDouble> maxDouble(ToDoubleFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return DoubleOperatorsMixin.super.maxDouble(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.DoubleOperatorsMixin#minDouble(java.util.function.ToDoubleFunction)
+	 */
+	@Override
+	public CompletableFuture<OptionalDouble> minDouble(ToDoubleFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return DoubleOperatorsMixin.super.minDouble(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.DoubleOperatorsMixin#averageDouble(java.util.function.ToDoubleFunction)
+	 */
+	@Override
+	public CompletableFuture<OptionalDouble> averageDouble(ToDoubleFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return DoubleOperatorsMixin.super.averageDouble(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.DoubleOperatorsMixin#summaryStatisticsDouble(java.util.function.ToDoubleFunction)
+	 */
+	@Override
+	public CompletableFuture<DoubleSummaryStatistics> summaryStatisticsDouble(ToDoubleFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return DoubleOperatorsMixin.super.summaryStatisticsDouble(fn);
+	}
+	
+	
+	
 	
 }

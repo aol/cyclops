@@ -33,6 +33,7 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Collectable;
+import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -45,6 +46,7 @@ import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.SequenceMCollectable;
 import com.aol.cyclops.sequence.future.FutureOperations;
 
+
 /**
  * Represents something that can generate a Stream, repeatedly
  * 
@@ -53,7 +55,10 @@ import com.aol.cyclops.sequence.future.FutureOperations;
  * @param <T> Data type for Stream
  */
 public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>{
-
+	
+	default Collectable<T> collectable(){
+		return Seq.seq(stream());
+	}
 	
 	/**
 	 * (Lazily) Construct a Streamable from a Stream.
@@ -91,6 +96,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>{
 			public Object getStreamable(){
 				return values;
 			}
+			
 		};
 	}
 	public static <T> Streamable<T> empty(){

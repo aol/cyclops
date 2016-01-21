@@ -35,6 +35,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -2336,7 +2337,12 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, JoolWindowing<T>, J
 
 		return innerJoin(s, predicate);
 	}
-
+	default <U> SequenceM<Tuple2<T, U>> innerJoin(Streamable<U> other, java.util.function.BiPredicate<? super T,? super U> predicate){
+		return flatMap(t -> other.stream()
+                .filter(u -> predicate.test(t, u))
+                .map(u -> Tuple.tuple(t, u)));
+		
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -2367,7 +2373,12 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, JoolWindowing<T>, J
 		return leftOuterJoin(s, predicate);
 
 	}
-
+	default <U> SequenceM<Tuple2<T, U>> leftOuterJoin(Streamable<U> s, java.util.function.BiPredicate<? super T,? super U> predicate){
+		return flatMap(t -> Seq.seq(s.stream())
+                .filter(u -> predicate.test(t, u))
+                .onEmpty(null)
+                .map(u -> Tuple.tuple(t, u)));
+	}
 	/*
 	 * (non-Javadoc)
 	 * 

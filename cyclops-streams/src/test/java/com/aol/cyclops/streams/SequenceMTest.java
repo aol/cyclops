@@ -117,11 +117,11 @@ public class SequenceMTest {
 	}
 	@Test(expected=NoSuchElementException.class)
 	public void getMultiple1(){
-		SequenceM.of(1).get(1);
+		SequenceM.of(1).elementAt(1);
 	}
 	@Test(expected=NoSuchElementException.class)
 	public void getEmpty(){
-		SequenceM.of().get(0);
+		SequenceM.of().elementAt(0);
 	}
 	@Test
 	public void get0(){
@@ -129,7 +129,7 @@ public class SequenceMTest {
 	}
 	@Test
 	public void getAtMultple(){
-		assertThat(SequenceM.of(1,2,3,4,5).get(2),equalTo(3));
+		assertThat(SequenceM.of(1,2,3,4,5).get(2).get(),equalTo(3));
 	}
 	@Test
 	public void getAt1(){
