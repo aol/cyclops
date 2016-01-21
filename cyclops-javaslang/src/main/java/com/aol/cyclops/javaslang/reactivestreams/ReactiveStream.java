@@ -227,12 +227,12 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	}
 
 	/** recover & retry **/
-	default Stream<T> recover(Function<Throwable, ? extends T> fn) {
-		return StreamUtils.recover(this, fn);
+	default ReactiveStream<T> recover(Function<Throwable, ? extends T> fn) {
+		return fromStream(StreamUtils.recover(this, fn));
 	}
 
-	default <EX extends Throwable> Stream<T> recover(Class<EX> type, Function<EX, ? extends T> fn) {
-		return StreamUtils.recover(this, type, fn);
+	default <EX extends Throwable> ReactiveStream<T> recover(Class<EX> type, Function<EX, ? extends T> fn) {
+		return fromStream(StreamUtils.recover(this, type, fn));
 	}
 
 	default <R> ReactiveStream<R> retry(Function<? super T, ? extends R> fn) {
@@ -245,19 +245,19 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 		return fromStream(StreamUtils.debounce(this, time, t));
 	}
 
-	default ReactiveStream<T> onePer(Stream<T> stream, long time, TimeUnit t) {
+	default ReactiveStream<T> onePer(long time, TimeUnit t) {
 		return fromStream(StreamUtils.onePer(this, time, t));
 	}
 
-	default ReactiveStream<T> jitter(Stream<T> stream, long jitterInNanos) {
+	default ReactiveStream<T> jitter(long jitterInNanos) {
 		return fromStream(StreamUtils.jitter(this, jitterInNanos));
 	}
 
-	default ReactiveStream<T> fixedDelay(Stream<T> stream, long time, TimeUnit unit) {
+	default ReactiveStream<T> fixedDelay(long time, TimeUnit unit) {
 		return fromStream(StreamUtils.fixedDelay(this, time, unit));
 	}
 
-	default ReactiveStream<T> xPer(Stream<T> stream, int x, long time, TimeUnit t) {
+	default ReactiveStream<T> xPer(int x, long time, TimeUnit t) {
 		return fromStream(StreamUtils.xPer(this, x, time, t));
 	}
 

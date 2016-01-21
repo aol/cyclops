@@ -1,12 +1,14 @@
 package com.aol.cyclops.javaslang.reactivestreams.reactivestream.tests;
 
-import static com.aol.cyclops.sequence.SequenceM.of;
+
+import static com.aol.cyclops.javaslang.reactivestreams.ReactiveStream.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
+import com.aol.cyclops.javaslang.reactivestreams.ReactiveStream;
 import com.aol.cyclops.sequence.Reducers;
 import com.aol.cyclops.sequence.SequenceM;
 

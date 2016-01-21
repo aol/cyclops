@@ -388,20 +388,20 @@ public class BatchingTest {
 	}
 	@Test
 	public void batchByTime(){
-		assertThat(of(1,2,3,4,5,6).batchByTime(1,TimeUnit.SECONDS).collect(Collectors.toList()).size(),is(1));
+		assertThat(of(1,2,3,4,5,6).windowByTime(1,TimeUnit.SECONDS).collect(Collectors.toList()).size(),is(1));
 	}
 	@Test
 	public void batchByTimeSet(){
 		
-		assertThat(of(1,1,1,1,1,1).batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>()).toList().get(0).size(),is(1));
+		assertThat(of(1,1,1,1,1,1).windowByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>()).toList().get(0).size(),is(1));
 	}
 	@Test
 	public void batchByTimeInternalSize(){
-		assertThat(of(1,2,3,4,5,6).batchByTime(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),greaterThan(5));
+		assertThat(of(1,2,3,4,5,6).windowByTime(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),greaterThan(5));
 	}
 	@Test
 	public void batchByTimeInternalSizeCollection(){
-		assertThat(of(1,2,3,4,5,6).batchByTime(1,TimeUnit.NANOSECONDS,()->new ArrayList<>()).collect(Collectors.toList()).size(),greaterThan(5));
+		assertThat(of(1,2,3,4,5,6).windowByTime(1,TimeUnit.NANOSECONDS,()->new ArrayList<>()).collect(Collectors.toList()).size(),greaterThan(5));
 	}
 	@Test
 	public void windowByTimeInternalSize(){
