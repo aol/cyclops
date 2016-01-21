@@ -1,8 +1,10 @@
 package com.aol.cyclops.javaslang.reactivestreams;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
@@ -19,7 +21,6 @@ import java.util.stream.Collector;
 import javaslang.Tuple;
 import javaslang.Tuple2;
 import javaslang.Tuple3;
-import javaslang.collection.IndexedSeq;
 import javaslang.collection.List;
 import javaslang.collection.Map;
 import javaslang.collection.Stream;
@@ -44,45 +45,75 @@ import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 
-public interface ReactiveStream<T> extends Stream<T>, java.util.stream.BaseStream<T,ReactiveStream<T>>, Publisher<T>, ReactiveStreamsTerminalOperations<T> {
+public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStreamsTerminalOperations<T> {
 
-	
 	/** creational methods **/
-	static <T> ReactiveStream<T> of(T... values) {
-					
-		return fromStream(Stream.ofAll(values));
+	/**
+	 * Constructs a ReactiveStream of a head element and a tail supplier.
+	 *
+	 * @param head
+	 *            The head element of the Stream
+	 * @param tailSupplier
+	 *            A supplier of the tail values. To end the stream, return
+	 *            {@link Stream#empty}.
+	 * @param <T>
+	 *            value type
+	 * @return A new Stream
+	 */
+	@SuppressWarnings("unchecked")
+	static <T> ReactiveStream<T> cons(T head, Supplier<? extends Stream<? extends T>> tailSupplier) {
+		return fromStream(Stream.cons(head, tailSupplier));
 	}
+
+	static ReactiveStream<Integer> from(int value) {
+
+		return fromStream(Stream.from(value));
+	}
+
+	static ReactiveStream<Long> from(long value) {
+
+		return fromStream(Stream.from(value));
+	}
+
+	static <T> ReactiveStream<T> of(T... values) {
+
+		return fromStream(Stream.of(values));
+	}
+
 	static <T> ReactiveStream<T> empty() {
 		return fromStream(Stream.empty());
 	}
-	
+
 	static <T> ReactiveStream<T> iterate(T seed, Function<? super T, ? extends T> gen) {
 		return fromStream(Stream.gen(seed, gen));
 	}
-	
-	static ReactiveStream<Integer> range(int start,int end){
+
+	static ReactiveStream<Integer> range(int start, int end) {
 		return fromStream(Stream.range(start, end));
 	}
 
-	static ReactiveStream<Long> range(long start,long end){
+	static ReactiveStream<Long> range(long start, long end) {
 		return fromStream(Stream.range(start, end));
 	}
+
 	static <T> ReactiveStream<T> generate(Supplier<T> gen) {
 		return fromStream(Stream.gen(gen));
 	}
 
 	static <T> ReactiveStream<T> fromStream(Stream<T> stream) {
-		if(stream instanceof ReactiveStream)
-			return (ReactiveStream<T>)stream;
+		if (stream instanceof ReactiveStream)
+			return (ReactiveStream<T>) stream;
 		return new ReactiveStreamImpl<T>(stream);
 	}
+
 	static <T> ReactiveStream<T> fromStreamable(Streamable<T> stream) {
 		return fromIterable(stream);
 	}
-	
+
 	static <T> ReactiveStream<T> fromJDK(BaseStream<T, ? extends BaseStream<T, ?>> stream) {
-		return fromIterable(()->stream.iterator());
+		return fromIterable(() -> stream.iterator());
 	}
+
 	static <T> ReactiveStream<T> fromAnyM(AnyM<T> stream) {
 		return fromJDK(stream.stream());
 	}
@@ -92,31 +123,41 @@ public interface ReactiveStream<T> extends Stream<T>, java.util.stream.BaseStrea
 	}
 
 	static <T> ReactiveStream<T> fromAsyncQueue(com.aol.simple.react.async.Queue<T> q) {
-		
+
 		return fromJDK(q.stream(new com.aol.simple.react.async.subscription.Subscription()));
 
 	}
-	
-	static <T> JavaslangReactiveStreamsSubscriber<T> subscriber(){
+
+	static <T> JavaslangReactiveStreamsSubscriber<T> subscriber() {
 		return new JavaslangReactiveStreamsSubscriber<>();
 	}
+
 	/** To Transfer Queue **/
 	default com.aol.simple.react.async.Queue<T> toAsyncBlockingQueue(int boundSize) {
 		return new com.aol.simple.react.async.Queue<>(new LinkedBlockingQueue<T>(boundSize));
 	}
+
 	default com.aol.simple.react.async.Queue<T> toAsyncQueue() {
-		return QueueFactories.<T>unboundedNonBlockingQueue().build();
+		return QueueFactories.<T> unboundedNonBlockingQueue().build();
 	}
 
-	default com.aol.simple.react.async.Queue<T> toAsyncQueue(int boundSize){
-		return QueueFactories.<T>boundedNonBlockingQueue(boundSize).build();
+	default com.aol.simple.react.async.Queue<T> toAsyncQueue(int boundSize) {
+		return QueueFactories.<T> boundedNonBlockingQueue(boundSize).build();
 	}
-	
+
 	/** JDK Collect **/
-	default <R, A> R collect(Collector<? super T, A, R> collector){
+	default <R, A> R collect(Collector<? super T, A, R> collector) {
+		
 		return this.toJavaStream().collect(collector);
 	}
-
+	default <C extends Collection<T>> C toCollection(Supplier<C> collectionFactory){
+		
+		return sequenceM().toCollection(collectionFactory);
+	}
+	default <U> ReactiveStream<U> cast(Class<U> type){
+		return fromJDK(sequenceM().cast(type));
+	}
+	
 	/** conversions **/
 	default AnyM<T> anyM() {
 		return Javaslang.anyM(this);
@@ -126,9 +167,10 @@ public interface ReactiveStream<T> extends Stream<T>, java.util.stream.BaseStrea
 		return SequenceM.fromIterable(this);
 	}
 
-	default Seq<T> seq(){
+	default Seq<T> seq() {
 		return Seq.seq(this);
 	}
+
 	default Streamable<T> streamable() {
 		return Streamable.fromIterable(this);
 	}
@@ -148,18 +190,19 @@ public interface ReactiveStream<T> extends Stream<T>, java.util.stream.BaseStrea
 	default SimpleReactStream<T> futures(SimpleReact react) {
 		return (SimpleReactStream<T>) react.fromIterable(this);
 	}
+
 	/** subscribe **/
 	@Override
 	default void subscribe(Subscriber<? super T> s) {
-		 JavaslangReactiveStreamsPublisher.ofSync(this)
-		 									.subscribe(s);
-		
+		JavaslangReactiveStreamsPublisher.ofSync(this).subscribe(s);
+
 	}
-	default void subscribeAsync(Executor ex,Subscriber<? super T> s) {
-		 JavaslangReactiveStreamsPublisher.ofAsync(this,ex)
-		 									.subscribe(s);
-		
+
+	default void subscribeAsync(Executor ex, Subscriber<? super T> s) {
+		JavaslangReactiveStreamsPublisher.ofAsync(this, ex).subscribe(s);
+
 	}
+
 	/** async execution **/
 	default FutureOperations<T> futureOperations(Executor ex) {
 
@@ -169,6 +212,7 @@ public interface ReactiveStream<T> extends Stream<T>, java.util.stream.BaseStrea
 	default JavaslangHotStream<T> pausedHotStream(Executor ex) {
 		return StreamUtils.pausedHotStream(this, ex);
 	}
+
 	default JavaslangHotStream<T> hotStream(Executor ex) {
 		return StreamUtils.hotStream(this, ex);
 	}
@@ -197,46 +241,58 @@ public interface ReactiveStream<T> extends Stream<T>, java.util.stream.BaseStrea
 	}
 
 	/** time based operations **/
-	  default ReactiveStream<T> debounce(long time, TimeUnit t){
-		  return fromStream(StreamUtils.debounce(this, time, t));
-	  }
-	  default ReactiveStream<T> onePer(Stream<T> stream, long time, TimeUnit t){
-		  return fromStream(StreamUtils.onePer(this, time, t));
-	  }
-	  default ReactiveStream<T> jitter(Stream<T> stream,long jitterInNanos){
-		  return fromStream(StreamUtils.jitter(this,jitterInNanos));
-	  }
-	  default ReactiveStream<T> fixedDelay(Stream<T> stream,long time, TimeUnit unit){
-		  return fromStream(StreamUtils.fixedDelay(this, time, unit));
-	  }
-	  default ReactiveStream<T> xPer(Stream<T> stream,int x, long time, TimeUnit t){
-		  return fromStream(StreamUtils.xPer(this, x,time,t));
-	  }
-	  /** batching & windowing **/
-	  default ReactiveStream<ReactiveStream<T>> slidingWindow(int windowSize,int increment){
-		  return fromStream(StreamUtils.sliding(this, windowSize,increment)).map(s->fromIterable(s));
-	  }
-	  default ReactiveStream<ReactiveStream<T>> slidingWindow(int windowSize){
-		  return fromStream(StreamUtils.sliding(this, windowSize,1)).map(s->fromIterable(s));
-	  }
-	  default ReactiveStream<ReactiveStream<T>>  windowByTime(long time, TimeUnit t){
-			return fromStream(StreamUtils.windowByTime(this, time, t).map(s->fromStreamable(s)));
-	  }
-	  
-	  default ReactiveStream<ReactiveStream<T>>  windowStatefullyWhile(BiPredicate<Streamable<? super T>,? super T> predicate){
-		  return fromStream(StreamUtils.windowStatefullyWhile(this, predicate).map(s->fromStreamable(s)));
-	  }
-	  default ReactiveStream<ReactiveStream<T>>  windowWhile(Predicate<? super T> predicate){
-		  return fromStream(StreamUtils.windowWhile(this, predicate).map(s->fromStreamable(s)));
-	  }
-	  default ReactiveStream<ReactiveStream<T>>  windowUntil(Predicate<? super T> predicate){
-		  return fromStream(StreamUtils.windowWhile(this, predicate.negate()).map(s->fromStreamable(s)));
-	  }
-	 
-	  
-	  default ReactiveStream<ReactiveStream<T>>  windowBySizeAndTime(Stream<T> stream,int size, long time, TimeUnit t){
-		  return fromStream(StreamUtils.windowBySizeAndTime(this, size,time,t).map(s->fromStreamable(s)));
-	  }
+	default ReactiveStream<T> debounce(long time, TimeUnit t) {
+		return fromStream(StreamUtils.debounce(this, time, t));
+	}
+
+	default ReactiveStream<T> onePer(Stream<T> stream, long time, TimeUnit t) {
+		return fromStream(StreamUtils.onePer(this, time, t));
+	}
+
+	default ReactiveStream<T> jitter(Stream<T> stream, long jitterInNanos) {
+		return fromStream(StreamUtils.jitter(this, jitterInNanos));
+	}
+
+	default ReactiveStream<T> fixedDelay(Stream<T> stream, long time, TimeUnit unit) {
+		return fromStream(StreamUtils.fixedDelay(this, time, unit));
+	}
+
+	default ReactiveStream<T> xPer(Stream<T> stream, int x, long time, TimeUnit t) {
+		return fromStream(StreamUtils.xPer(this, x, time, t));
+	}
+
+	/** batching & windowing **/
+	default ReactiveStream<ReactiveStream<T>> slidingWindow(int windowSize, int increment) {
+		return fromStream(StreamUtils.sliding(this, windowSize, increment)).map(s -> fromIterable(s));
+	}
+
+	default ReactiveStream<ReactiveStream<T>> slidingWindow(int windowSize) {
+		return fromStream(StreamUtils.sliding(this, windowSize, 1)).map(s -> fromIterable(s));
+	}
+
+	default ReactiveStream<ReactiveStream<T>> windowByTime(long time, TimeUnit t) {
+		return fromStream(StreamUtils.windowByTime(this, time, t).map(s -> fromStreamable(s)));
+	}
+
+	default ReactiveStream<ReactiveStream<T>> windowStatefullyWhile(BiPredicate<Streamable<? super T>, ? super T> predicate) {
+		return fromStream(StreamUtils.windowStatefullyWhile(this, predicate).map(s -> fromStreamable(s)));
+	}
+
+	default ReactiveStream<ReactiveStream<T>> windowWhile(Predicate<? super T> predicate) {
+		return fromStream(StreamUtils.windowWhile(this, predicate).map(s -> fromStreamable(s)));
+	}
+
+	default ReactiveStream<ReactiveStream<T>> windowUntil(Predicate<? super T> predicate) {
+		return fromStream(StreamUtils.windowWhile(this, predicate.negate()).map(s -> fromStreamable(s)));
+	}
+
+	default ReactiveStream<ReactiveStream<T>> windowBySizeAndTime(int size, long time, TimeUnit t) {
+		return fromStream(StreamUtils.windowBySizeAndTime(this, size, time, t).map(s -> fromStreamable(s)));
+	}
+	default ReactiveStream<ReactiveStream<T>> windowBySize(int size) {
+		return fromStream(StreamUtils.batchBySize(this, size).map(s -> fromIterable(s)));
+	}
+
 	/** cycle **/
 	/**
 	 * Create a new Stream that infiniteable cycles the provided Stream
@@ -304,21 +360,25 @@ public interface ReactiveStream<T> extends Stream<T>, java.util.stream.BaseStrea
 	 * @return Repeating Stream
 	 */
 	default ReactiveStream<T> cycleUntil(Stream<T> stream, Predicate<? super T> predicate) {
-	
+
 		return fromStream(StreamUtils.cycleUntil(this, predicate));
 	}
-	
+
 	/** scanLeft & scanRight **/
-	default <U> Stream<U> scanRight(U identity,BiFunction<? super T, U, U>  combiner){
+	default <U> Stream<U> scanRight(U identity, BiFunction<? super T, ? super U, ? extends U> combiner) {
+
 		return reverse().scanLeft(identity, (u, t) -> combiner.apply(t, u));
 	}
-	default  ReactiveStream<T> scanRight(Monoid<T> monoid){
+
+	default ReactiveStream<T> scanRight(Monoid<T> monoid) {
 		return reverse().scanLeft(monoid.zero(), (u, t) -> monoid.combiner().apply(t, u));
-		
+
 	}
-	default <U> ReactiveStream<U> scanLeft(U identity, BiFunction<U, ? super T, U> combiner){
-		return fromJDK(sequenceM().scanLeft(identity,combiner));
+
+	default <U> ReactiveStream<U> scanLeft(U identity, BiFunction<? super U, ? super T, ? extends U> combiner) {
+		return fromStream(Stream.super.scanLeft(identity, combiner));
 	}
+
 	/**
 	 * Scan left using supplied Monoid
 	 * 
@@ -331,134 +391,154 @@ public interface ReactiveStream<T> extends Stream<T>, java.util.stream.BaseStrea
 	}
 
 	/** take & drop **/
-	
-	default ReactiveStream<T> take(long time, TimeUnit unit){
+
+	default ReactiveStream<T> take(long time, TimeUnit unit) {
 		return fromJDK(sequenceM().limit(time, unit));
 	}
-	default ReactiveStream<T> drop(long time, TimeUnit unit){
+
+	default ReactiveStream<T> drop(long time, TimeUnit unit) {
 		return fromJDK(sequenceM().skip(time, unit));
 	}
 
 	/** for-comprehensions **/
-	/** 
-	 * Perform a three level nested internal iteration over this Stream and the supplied streams
-	  *<pre>
+	/**
+	 * Perform a three level nested internal iteration over this Stream and the
+	 * supplied streams
+	 *
+	 * <pre>
 	 * {@code 
 	 * SequenceM.of(1,2)
-						.forEach3(a->IntStream.range(10,13),
-						        a->b->Stream.of(""+(a+b),"hello world"),
-									a->b->c->c+":"a+":"+b);
-									
+	 * 						.forEach3(a->IntStream.range(10,13),
+	 * 						        a->b->Stream.of(""+(a+b),"hello world"),
+	 * 									a->b->c->c+":"a+":"+b);
+	 * 									
 	 * 
 	 *  //SequenceM[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
 	 * }
-	 * </pre> 
-	 * @param stream1 Nested Stream to iterate over
-	 * @param stream2 Nested Stream to iterate over
-	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
+	 * </pre>
+	 * 
+	 * @param stream1
+	 *            Nested Stream to iterate over
+	 * @param stream2
+	 *            Nested Stream to iterate over
+	 * @param yieldingFunction
+	 *            Function with pointers to the current element from both
+	 *            Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	<R1,R2,R> ReactiveStream<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1, 
-													Function<? super T,Function<? super R1,? extends Iterable<R2>>> stream2,
-													Function<? super T,Function<? super R1,Function<? super R2,? extends R>>> yieldingFunction );
-	
+	<R1, R2, R> ReactiveStream<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
+			Function<? super T, Function<? super R1, ? extends Iterable<R2>>> stream2,
+			Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction);
 
 	/**
-	 * Perform a three level nested internal iteration over this Stream and the supplied streams
-	 * 
-	 *<pre>
-	 * {@code 
-	 * SequenceM.of(1,2,3)
-						.forEach3(a->IntStream.range(10,13),
-						      a->b->Stream.of(""+(a+b),"hello world"),
-						         a->b->c-> c!=3,
-									a->b->c->c+":"a+":"+b);
-									
-	 * 
-	 *  //SequenceM[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
-	 * }
-	 * </pre> 
-	 * 
-	 * 
-	 * @param stream1 Nested Stream to iterate over
-	 * @param stream2 Nested Stream to iterate over
-	 * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
-	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
-	 * @return SequenceM with elements generated via nested iteration
-	 */
-	<R1,R2,R> ReactiveStream<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1, 
-											Function<? super T,Function<? super R1,? extends Iterable<R2>>> stream2,
-															Function<? super T,Function<? super R1,Function<? super R2,Boolean>>> filterFunction,
-													Function<? super T,Function<? super R1,Function<? super R2,? extends R>>> yieldingFunction );
-	
-	
-
-	
-	
-	
-	
-	/**
-	 * Perform a two level nested internal iteration over this Stream and the supplied stream
+	 * Perform a three level nested internal iteration over this Stream and the
+	 * supplied streams
 	 * 
 	 * <pre>
 	 * {@code 
 	 * SequenceM.of(1,2,3)
-						.forEach2(a->IntStream.range(10,13),
-									a->b->a+b);
-									
+	 * 						.forEach3(a->IntStream.range(10,13),
+	 * 						      a->b->Stream.of(""+(a+b),"hello world"),
+	 * 						         a->b->c-> c!=3,
+	 * 									a->b->c->c+":"a+":"+b);
+	 * 									
+	 * 
+	 *  //SequenceM[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param stream1
+	 *            Nested Stream to iterate over
+	 * @param stream2
+	 *            Nested Stream to iterate over
+	 * @param filterFunction
+	 *            Filter to apply over elements before passing non-filtered
+	 *            values to the yielding function
+	 * @param yieldingFunction
+	 *            Function with pointers to the current element from both
+	 *            Streams that generates the new elements
+	 * @return SequenceM with elements generated via nested iteration
+	 */
+	<R1, R2, R> ReactiveStream<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
+			Function<? super T, Function<? super R1, ? extends Iterable<R2>>> stream2,
+			Function<? super T, Function<? super R1, Function<? super R2, Boolean>>> filterFunction,
+			Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction);
+
+	/**
+	 * Perform a two level nested internal iteration over this Stream and the
+	 * supplied stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * SequenceM.of(1,2,3)
+	 * 						.forEach2(a->IntStream.range(10,13),
+	 * 									a->b->a+b);
+	 * 									
 	 * 
 	 *  //SequenceM[11,14,12,15,13,16]
 	 * }
 	 * </pre>
 	 * 
 	 * 
-	 * @param stream1 Nested Stream to iterate over
-	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
+	 * @param stream1
+	 *            Nested Stream to iterate over
+	 * @param yieldingFunction
+	 *            Function with pointers to the current element from both
+	 *            Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	<R1,R> ReactiveStream<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1, 
-													Function<? super T,Function<? super R1,? extends R>> yieldingFunction );
+	<R1, R> ReactiveStream<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
+			Function<? super T, Function<? super R1, ? extends R>> yieldingFunction);
 
-	
 	/**
-	 * Perform a two level nested internal iteration over this Stream and the supplied stream
+	 * Perform a two level nested internal iteration over this Stream and the
+	 * supplied stream
 	 * 
 	 * <pre>
 	 * {@code 
 	 * SequenceM.of(1,2,3)
-						.forEach2(a->IntStream.range(10,13),
-						            a->b-> a<3 && b>10,
-									a->b->a+b);
-									
+	 * 						.forEach2(a->IntStream.range(10,13),
+	 * 						            a->b-> a<3 && b>10,
+	 * 									a->b->a+b);
+	 * 									
 	 * 
 	 *  //SequenceM[14,15]
 	 * }
 	 * </pre>
-	 * @param stream1 Nested Stream to iterate over
-	 * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
-	 * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
+	 * 
+	 * @param stream1
+	 *            Nested Stream to iterate over
+	 * @param filterFunction
+	 *            Filter to apply over elements before passing non-filtered
+	 *            values to the yielding function
+	 * @param yieldingFunction
+	 *            Function with pointers to the current element from both
+	 *            Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	<R1,R> ReactiveStream<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1, 
-												Function<? super T, Function<? super R1, Boolean>> filterFunction,
-													Function<? super T,Function<? super R1,? extends R>> yieldingFunction );
+	<R1, R> ReactiveStream<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1, Function<? super T, Function<? super R1, Boolean>> filterFunction,
+			Function<? super T, Function<? super R1, ? extends R>> yieldingFunction);
+
 	/** reduction **/
 	/**
 	 * Simultaneously reduce a stream with multiple reducers
 	 * 
 	 * <pre>
-	 * {@code
+	 * {
+	 * 	&#064;code
+	 * 	Monoid&lt;Integer&gt; sum = Monoid.of(0, (a, b) -&gt; a + b);
+	 * 	Monoid&lt;Integer&gt; mult = Monoid.of(1, (a, b) -&gt; a * b);
+	 * 	val result = StreamUtils.reduce(Stream.ofAll(1, 2, 3, 4), Arrays.asList(sum, mult));
 	 * 
-	 *  Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
-		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
-		val result = StreamUtils.reduce(Stream.ofAll(1,2,3,4),Arrays.asList(sum,mult));
-				
-		 
-		assertThat(result,equalTo(Arrays.asList(10,24)));
-		}</pre>
+	 * 	assertThat(result, equalTo(Arrays.asList(10, 24)));
+	 * }
+	 * </pre>
 	 * 
-	 * @param stream Stream to reduce
-	 * @param reducers Reducers to reduce Stream
+	 * @param stream
+	 *            Stream to reduce
+	 * @param reducers
+	 *            Reducers to reduce Stream
 	 * @return Reduced Stream values as List entries
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -471,97 +551,106 @@ public interface ReactiveStream<T> extends Stream<T>, java.util.stream.BaseStrea
 	 * Simultanously reduce a stream with multiple reducers
 	 * 
 	 * <pre>
-	 * {@code 
-	 *  Monoid<String> concat = Monoid.of("",(a,b)->a+b);
-		Monoid<String> join = Monoid.of("",(a,b)->a+","+b);
-		assertThat(StreamUtils.reduce(Stream.ofAll("hello", "world", "woo!"),Stream.ofAll(concat,join))
-		                 ,equalTo(Arrays.asList("helloworldwoo!",",hello,world,woo!")));
+	 * {
+	 * 	&#064;code
+	 * 	Monoid&lt;String&gt; concat = Monoid.of(&quot;&quot;, (a, b) -&gt; a + b);
+	 * 	Monoid&lt;String&gt; join = Monoid.of(&quot;&quot;, (a, b) -&gt; a + &quot;,&quot; + b);
+	 * 	assertThat(StreamUtils.reduce(Stream.ofAll(&quot;hello&quot;, &quot;world&quot;, &quot;woo!&quot;), Stream.ofAll(concat, join)),
+	 * 			equalTo(Arrays.asList(&quot;helloworldwoo!&quot;, &quot;,hello,world,woo!&quot;)));
 	 * }
 	 * </pre>
 	 * 
-	 *  @param stream Stream to reduce
-	 * @param reducers Reducers to reduce Stream
+	 * @param stream
+	 *            Stream to reduce
+	 * @param reducers
+	 *            Reducers to reduce Stream
 	 * @return Reduced Stream values as List entries
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default  List<T> reduce(Stream<Monoid<T>> reducers) {
+	default List<T> reduce(Stream<Monoid<T>> reducers) {
 		return StreamUtils.reduce(this, reducers);
 
 	}
+
 	/**
-	 * Attempt to map this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
-	 * Then use Monoid to reduce values
+	 * Attempt to map this Monad to the same type as the supplied Monoid (using
+	 * mapToType on the monoid interface) Then use Monoid to reduce values
 	 * 
-	 * @param reducer Monoid to reduce values
+	 * @param reducer
+	 *            Monoid to reduce values
 	 * @return Reduce result
 	 */
-	default <R> R mapReduce(Monoid<R> reducer){
-		return StreamUtils.mapReduce(this,reducer);
+	default <R> R mapReduce(Monoid<R> reducer) {
+		return StreamUtils.mapReduce(this, reducer);
 	}
+
 	/**
-	 *  Attempt to map this Monad to the same type as the supplied Monoid, using supplied function
-	 *  Then use Monoid to reduce values
-	 *  
-	 * @param mapper Function to map Monad type
-	 * @param reducer Monoid to reduce values
+	 * Attempt to map this Monad to the same type as the supplied Monoid, using
+	 * supplied function Then use Monoid to reduce values
+	 * 
+	 * @param mapper
+	 *            Function to map Monad type
+	 * @param reducer
+	 *            Monoid to reduce values
 	 * @return Reduce result
 	 */
-	default <R>  R mapReduce(Function<? super T,? extends R> mapper, Monoid<R> reducer){
-		return StreamUtils.mapReduce(this,reducer);
+	default <R> R mapReduce(Function<? super T, ? extends R> mapper, Monoid<R> reducer) {
+		return StreamUtils.mapReduce(this, reducer);
 	}
 
 	/**
 	 * 
 	 * 
-	 * @param reducer Use supplied Monoid to reduce values starting via foldLeft
+	 * @param reducer
+	 *            Use supplied Monoid to reduce values starting via foldLeft
 	 * @return Reduced result
 	 */
-	default  T reduce(Monoid<T> reducer){
-		return StreamUtils.foldLeft(this,reducer);
+	default T reduce(Monoid<T> reducer) {
+		return StreamUtils.foldLeft(this, reducer);
 	}
-	
+
 	/**
 	 * 
 	 * 
-	 * @param reducer Use supplied Monoid to reduce values starting via foldRight
+	 * @param reducer
+	 *            Use supplied Monoid to reduce values starting via foldRight
 	 * @return Reduced result
 	 */
-	default T foldRight(Monoid<T> reducer){
-		return StreamUtils.foldRight(this,reducer);
-		
+	default T foldRight(Monoid<T> reducer) {
+		return StreamUtils.foldRight(this, reducer);
+
 	}
+
 	/**
-	 *  Attempt to map this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
-	 * Then use Monoid to reduce values
+	 * Attempt to map this Monad to the same type as the supplied Monoid (using
+	 * mapToType on the monoid interface) Then use Monoid to reduce values
 	 * 
-	 * @param reducer Monoid to reduce values
+	 * @param reducer
+	 *            Monoid to reduce values
 	 * @return Reduce result
 	 */
-	default T foldRightMapToType(Monoid<T> reducer){
-		return StreamUtils.foldRightMapToType(this,reducer);
+	default T foldRightMapToType(Monoid<T> reducer) {
+		return StreamUtils.foldRightMapToType(this, reducer);
 	}
+
 	/** Zipping **/
-	
+
 	/**
-	 *  Generic zip function. E.g. Zipping a Stream and an Optional
+	 * Generic zip function. E.g. Zipping a Stream and an Optional
 	 * 
 	 * <pre>
-	 * {@code
-	 * Stream<List<Integer>> zipped = StreamUtils.zip(Stream.ofAll(1,2,3)
-										,anyM(Optional.of(2)), 
-											(a,b) -> Arrays.asList(a,b));
-		
-		
-		List<Integer> zip = zipped.collect(Collectors.toList()).get(0);
-		assertThat(zip.get(0),equalTo(1));
-		assertThat(zip.get(1),equalTo(2));
+	 * {
+	 * 	&#064;code
+	 * 	Stream&lt;List&lt;Integer&gt;&gt; zipped = StreamUtils.zip(Stream.ofAll(1, 2, 3), anyM(Optional.of(2)), (a, b) -&gt; Arrays.asList(a, b));
+	 * 
+	 * 	List&lt;Integer&gt; zip = zipped.collect(Collectors.toList()).get(0);
+	 * 	assertThat(zip.get(0), equalTo(1));
+	 * 	assertThat(zip.get(1), equalTo(2));
 	 * 
 	 * }
 	 * </pre>
-	 
 	 */
-	default <S, R> Stream<R> zipAnyM(AnyM<? extends S> second,
-			BiFunction<? super T, ? super S, ? extends R> zipper) {
+	default <S, R> Stream<R> zipAnyM(AnyM<? extends S> second, BiFunction<? super T, ? super S, ? extends R> zipper) {
 		return fromStream(StreamUtils.zipAnyM(this, second, zipper));
 	}
 
@@ -580,22 +669,23 @@ public interface ReactiveStream<T> extends Stream<T>, java.util.stream.BaseStrea
 	 * }
 	 * </pre>
 	 * 
-	 * @return a single value or an UnsupportedOperationException if 0/1 values in this Stream
+	 * @return a single value or an UnsupportedOperationException if 0/1 values
+	 *         in this Stream
 	 */
-	default T single(){
+	default T single() {
 		Iterator<T> it = iterator();
-		if(it.hasNext()){
+		if (it.hasNext()) {
 			T result = it.next();
-			if(!it.hasNext())
+			if (!it.hasNext())
 				return result;
 		}
 		throw new UnsupportedOperationException("single only works for Streams with a single value");
-		
+
 	}
-	default T single(Predicate<? super T> predicate){
+
+	default T single(Predicate<? super T> predicate) {
 		return this.filter(predicate).single();
-		
-		
+
 	}
 
 	/**
@@ -631,7 +721,7 @@ public interface ReactiveStream<T> extends Stream<T>, java.util.stream.BaseStrea
 	default ReactiveStream<T> append(T element) {
 		return fromStream(toStream().append(element));
 	}
-	
+
 	default ReactiveStream<T> append(T... elements) {
 		return fromStream(toStream().appendAll(Arrays.asList(elements)));
 	}
@@ -652,7 +742,7 @@ public interface ReactiveStream<T> extends Stream<T>, java.util.stream.BaseStrea
 	}
 
 	@Override
-	default ReactiveStream<IndexedSeq<T>> crossProduct(int power) {
+	default ReactiveStream<Stream<T>> crossProduct(int power) {
 		return fromStream(toStream().crossProduct(power));
 	}
 
@@ -711,9 +801,8 @@ public interface ReactiveStream<T> extends Stream<T>, java.util.stream.BaseStrea
 		return fromStream(toStream().flatMap(mapper));
 	}
 
-	@Override
 	default <U> ReactiveStream<U> flatten() {
-		return fromStream(toStream().flatten());
+		return fromJDK(sequenceM().flatten());
 	}
 
 	default <C> Map<C, ? extends ReactiveStream<T>> groupByReactive(Function<? super T, ? extends C> classifier) {
@@ -778,6 +867,7 @@ public interface ReactiveStream<T> extends Stream<T>, java.util.stream.BaseStrea
 	default ReactiveStream<T> prepend(T element) {
 		return fromStream(toStream().prepend(element));
 	}
+
 	default ReactiveStream<T> prepend(T... elements) {
 		return fromStream(toStream().prependAll(Arrays.asList(elements)));
 	}
@@ -806,8 +896,8 @@ public interface ReactiveStream<T> extends Stream<T>, java.util.stream.BaseStrea
 	default ReactiveStream<T> removeAt(int index) {
 		return fromStream(toStream().removeAt(index));
 	}
-	
-	default ReactiveStream<T> removeBetween(int start,int end) {
+
+	default ReactiveStream<T> removeBetween(int start, int end) {
 		return fromStream(StreamUtils.deleteBetween(this, start, end));
 	}
 
@@ -955,6 +1045,7 @@ public interface ReactiveStream<T> extends Stream<T>, java.util.stream.BaseStrea
 	default ReactiveStream<T> tail() {
 		return fromStream(toStream().tail());
 	}
+	
 	
 
 	/**

@@ -39,11 +39,11 @@ public class QueueComprehender implements Comprehender<Queue> {
 	}
 	static Queue unwrapOtherMonadTypes(Comprehender<Queue> comp,Object apply){
 		if(apply instanceof java.util.stream.Stream)
-			return Queue.ofAll( ((java.util.stream.Stream)apply).iterator());
+			return Queue.of( ((java.util.stream.Stream)apply).iterator());
 		if(apply instanceof Iterable)
-			return Queue.ofAll( ((Iterable)apply).iterator());
+			return Queue.of( ((Iterable)apply).iterator());
 		if(apply instanceof LazySeq){
-			apply = Queue.ofAll(((LazySeq)apply).iterator());
+			apply = Queue.of(((LazySeq)apply).iterator());
 		}
 		if(apply instanceof Collection){
 			return Queue.ofAll((Collection)apply);

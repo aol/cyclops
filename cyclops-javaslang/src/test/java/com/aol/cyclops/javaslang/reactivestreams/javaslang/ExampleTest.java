@@ -15,7 +15,7 @@ public class ExampleTest {
 	public void subscribe(){
 		CyclopsSubscriber<Integer> subscriber =SequenceM.subscriber();
 		
-		Stream<Integer> stream = Stream.ofAll(1,2,3);
+		Stream<Integer> stream = Stream.of(1,2,3);
 		
 		JavaslangReactiveStreamsPublisher.ofSync(stream)
 										.subscribe(subscriber);

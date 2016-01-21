@@ -1,10 +1,9 @@
-package com.aol.cyclops.javaslang.reactivestreams.reactivestream;
 /*     / \____  _    _  ____   ______  / \ ____  __    _ _____
  *    /  /    \/ \  / \/    \ /  /\__\/  //    \/  \  / /  _  \   Javaslang
  *  _/  /  /\  \  \/  /  /\  \\__\\  \  //  /\  \ /\\/  \__/  /   Copyright 2014-now Daniel Dietrich
  * /___/\_/  \_/\____/\_/  \_/\__\/__/___\_/  \_//  \__/_____/    Licensed under the Apache License, Version 2.0
  */
-
+package com.aol.cyclops.javaslang.reactivestreams.reactivestream;
 
 import java.util.ArrayList;
 import java.util.stream.Collector;
@@ -13,7 +12,6 @@ import javaslang.Tuple;
 import javaslang.Tuple2;
 import javaslang.collection.Iterator;
 import javaslang.collection.Seq;
-import javaslang.collection.Stream;
 import javaslang.collection.Traversable;
 
 import org.junit.Test;
@@ -39,7 +37,7 @@ public abstract class AbstractSeqTest extends AbstractTraversableRangeTest {
     abstract protected <T> Seq<T> of(T... elements);
 
     @Override
-    abstract protected <T> Seq<T> ofAll(Iterable<? extends T> elements);
+    abstract protected <T> Seq<T> ofAll(java.lang.Iterable<? extends T> elements);
 
     @Override
     abstract protected Seq<Boolean> ofAll(boolean[] array);
@@ -176,7 +174,7 @@ public abstract class AbstractSeqTest extends AbstractTraversableRangeTest {
 
     @Test
     public void shouldComputeCombinationsOfEmptyList() {
-        assertThat(empty().combinations()).isEqualTo(of(empty()));
+        assertThat(of(empty()).get(0)).isEqualTo(empty().combinations().get(0));
     }
 
     @SuppressWarnings("unchecked")
@@ -409,82 +407,14 @@ public abstract class AbstractSeqTest extends AbstractTraversableRangeTest {
         assertThat(of(1, 2, 3, 1, 2).lastIndexOfSlice(empty())).isEqualTo(5);
         assertThat(of(1, 2, 3, 1, 2).lastIndexOfSlice(of(2))).isEqualTo(4);
         assertThat(of(1, 2, 3, 1, 2, 3, 4).lastIndexOfSlice(of(2, 3))).isEqualTo(4);
-        assertThat(of(1, 2, 3, 1, 2, 3).lastIndexOfSlice(of(1, 2, 3))).isEqualTo(3);
     }
 
     @Test
     public void shouldFindLastIndexOfSliceWithEnd() {
-        assertThat(empty().lastIndexOfSlice(empty(), -1)).isEqualTo(-1);
-        assertThat(empty().lastIndexOfSlice(empty(), 0)).isEqualTo(0);
-        assertThat(of(1, 2, 3, 1, 2, 3).lastIndexOfSlice(empty(), -1)).isEqualTo(-1);
         assertThat(of(1, 2, 3, 1, 2, 3).lastIndexOfSlice(empty(), 2)).isEqualTo(2);
-        assertThat(of(1, 2, 3, 1, 2, 3).lastIndexOfSlice(of(2), -1)).isEqualTo(-1);
         assertThat(of(1, 2, 3, 1, 2, 3).lastIndexOfSlice(of(2), 2)).isEqualTo(1);
         assertThat(of(1, 2, 3, 1, 2, 3).lastIndexOfSlice(of(2, 3), 2)).isEqualTo(1);
         assertThat(of(1, 2, 3, 1, 2, 3, 4).lastIndexOfSlice(of(2, 3), 2)).isEqualTo(1);
-        assertThat(of(1, 2, 3, 1, 2, 3).lastIndexOfSlice(of(1, 2, 3), 2)).isEqualTo(0);
-    }
-
-    // -- indexWhere
-
-    @Test
-    public void shouldCalculateIndexWhere() {
-        assertThat(of(0, 1, 2, -1, 0, 1, 2).indexWhere(i -> i == 0)).isEqualTo(0);
-        assertThat(of(0, 1, 2, -1, 0, 1, 2).indexWhere(i -> i == 1)).isEqualTo(1);
-        assertThat(of(0, 1, 2, -1, 0, 1, 2).indexWhere(i -> i == 2)).isEqualTo(2);
-        assertThat(of(0, 1, 2, -1, 0, 1, 2).indexWhere(i -> i == 8)).isEqualTo(-1);
-        assertThat(of(0, 1, 2, -1, 0, 1, 2).indexWhere(i -> i == 0, 3)).isEqualTo(4);
-        assertThat(of(0, 1, 2, -1, 0, 1, 2).indexWhere(i -> i == 1, 3)).isEqualTo(5);
-        assertThat(of(0, 1, 2, -1, 0, 1, 2).indexWhere(i -> i == 2, 3)).isEqualTo(6);
-        assertThat(of(0, 1, 2, -1, 0, 1, 2).indexWhere(i -> i == 8, 3)).isEqualTo(-1);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void shouldFailIndexWhereNullPredicate() {
-        of(1).indexWhere(null);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void shouldFailIndexWhereNullPredicateFrom() {
-        of(1).indexWhere(null, 0);
-    }
-
-    // -- lastIndexWhere
-
-    @Test
-    public void shouldCalculateLastIndexWhere() {
-        assertThat(of(0, 1, 2, -1, 0, 1, 2).lastIndexWhere(i -> i == 0)).isEqualTo(4);
-        assertThat(of(0, 1, 2, -1, 0, 1, 2).lastIndexWhere(i -> i == 1)).isEqualTo(5);
-        assertThat(of(0, 1, 2, -1, 0, 1, 2).lastIndexWhere(i -> i == 2)).isEqualTo(6);
-        assertThat(of(0, 1, 2, -1, 0, 1, 2).lastIndexWhere(i -> i == 8)).isEqualTo(-1);
-        assertThat(of(0, 1, 2, -1, 0, 1, 2).lastIndexWhere(i -> i == 0, 3)).isEqualTo(0);
-        assertThat(of(0, 1, 2, -1, 0, 1, 2).lastIndexWhere(i -> i == 1, 3)).isEqualTo(1);
-        assertThat(of(0, 1, 2, -1, 0, 1, 2).lastIndexWhere(i -> i == 2, 3)).isEqualTo(2);
-        assertThat(of(0, 1, 2, -1, 0, 1, 2).lastIndexWhere(i -> i == 8, 3)).isEqualTo(-1);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void shouldFailLastIndexWhereNullPredicate() {
-        of(1).lastIndexWhere(null);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void shouldFailLastIndexWhereNullPredicateFrom() {
-        of(1).lastIndexWhere(null, 0);
-    }
-
-    // -- endsWith
-
-    @Test
-    public void shouldTestEndsWith() {
-        assertThat(empty().endsWith(empty())).isTrue();
-        assertThat(empty().endsWith(of(1))).isFalse();
-        assertThat(of(1, 2, 3, 4).endsWith(empty())).isTrue();
-        assertThat(of(1, 2, 3, 4).endsWith(of(4))).isTrue();
-        assertThat(of(1, 2, 3, 4).endsWith(of(3, 4))).isTrue();
-        assertThat(of(1, 2, 3, 4).endsWith(of(1, 2, 3, 4))).isTrue();
-        assertThat(of(1, 2, 3, 4).endsWith(of(0, 1, 2, 3, 4))).isFalse();
-        assertThat(of(1, 2, 3, 4).endsWith(of(2, 3, 5))).isFalse();
     }
 
     // -- insert
@@ -721,37 +651,6 @@ public abstract class AbstractSeqTest extends AbstractTraversableRangeTest {
     public void shouldComputePermutationsOfNonEmptyList() {
         assertThat(of(1, 2, 3).permutations())
                 .isEqualTo(ofAll(of(of(1, 2, 3), of(1, 3, 2), of(2, 1, 3), of(2, 3, 1), of(3, 1, 2), of(3, 2, 1))));
-    }
-
-    // -- prefixLength
-
-    @Test
-    public void shouldCalculatePrefixLength() {
-        assertThat(of(1, 3, 5, 6).prefixLength(i -> (i & 1) > 0)).isEqualTo(3);
-        assertThat(of(1, 3, 5).prefixLength(i -> (i & 1) > 0)).isEqualTo(3);
-        assertThat(of(2).prefixLength(i -> (i & 1) > 0)).isEqualTo(0);
-        assertThat(empty().prefixLength(i -> true)).isEqualTo(0);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void shouldThrowPrefixLengthNullPredicate() {
-        of(1).prefixLength(null);
-    }
-
-    // -- segmentLength
-
-    @Test
-    public void shouldCalculateSegmentLength() {
-        assertThat(of(1, 3, 5, 6).segmentLength(i -> (i & 1) > 0, 1)).isEqualTo(2);
-        assertThat(of(1, 3, 5).segmentLength(i -> (i & 1) > 0, 1)).isEqualTo(2);
-        assertThat(of(2, 2).segmentLength(i -> (i & 1) > 0, 1)).isEqualTo(0);
-        assertThat(of(2).segmentLength(i -> (i & 1) > 0, 1)).isEqualTo(0);
-        assertThat(empty().segmentLength(i -> true, 1)).isEqualTo(0);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void shouldThrowSegmentLengthNullPredicate() {
-        of(1).segmentLength(null, 0);
     }
 
     // -- prepend
@@ -1472,19 +1371,144 @@ public abstract class AbstractSeqTest extends AbstractTraversableRangeTest {
         of(1, 2, 3).subSequence(2, 1).mkString(); // force computation of last element, e.g. because Stream is lazy
     }
 
-    // -- IndexedSeq special cases
+    // -- unzip
 
     @Test
-    public void shouldTestIdexedSeqStartsWithNonIndexedSeq() {
-        assertThat(of(1, 3, 4).startsWith(Stream.of(1, 3))).isTrue();
-        assertThat(of(1, 2, 3, 4).startsWith(Stream.of(1, 2, 4))).isFalse();
-        assertThat(of(1, 2).startsWith(Stream.of(1, 2, 4))).isFalse();
+    public void shouldUnzipNil() {
+        assertThat(empty().unzip(x -> Tuple.of(x, x))).isEqualTo(Tuple.of(empty(), empty()));
     }
 
     @Test
-    public void shouldTestIdexedSeqEndsWithNonIndexedSeq() {
-        assertThat(of(1, 3, 4).endsWith(Stream.of(3, 4))).isTrue();
-        assertThat(of(1, 2, 3, 4).endsWith(Stream.of(2, 3, 5))).isFalse();
+    public void shouldUnzipNonNil() {
+        final Tuple actual = of(0, 1).unzip(i -> Tuple.of(i, (char) ((short) 'a' + i)));
+        final Tuple expected = Tuple.of(of(0, 1), this.<Character> of('a', 'b'));
+        assertThat(actual).isEqualTo(expected);
     }
 
+    @Test
+    public void shouldUnzip3Nil() {
+        assertThat(empty().unzip3(x -> Tuple.of(x, x, x))).isEqualTo(Tuple.of(empty(), empty(), empty()));
+    }
+
+    @Test
+    public void shouldUnzip3NonNil() {
+        final Tuple actual = of(0, 1).unzip3(i -> Tuple.of(i, (char) ((short) 'a' + i), (char) ((short) 'a' + i + 1)));
+        final Tuple expected = Tuple.of(of(0, 1), this.<Character> of('a', 'b'), this.<Character> of('b', 'c'));
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    // -- zip
+
+    @Test
+    public void shouldZipNils() {
+        final Seq<?> actual = empty().zip(empty());
+        assertThat(actual).isEmpty();
+    }
+
+    @Test
+    public void shouldZipEmptyAndNonNil() {
+        final Seq<?> actual = empty().zip(of(1));
+        assertThat(actual).isEmpty();
+    }
+
+    @Test
+    public void shouldZipNonEmptyAndNil() {
+        final Seq<?> actual = of(1).zip(empty());
+        assertThat(actual).isEmpty();
+    }
+
+    @Test
+    public void shouldZipNonNilsIfThisIsSmaller() {
+        final Seq<Tuple2<Integer, String>> actual = of(1, 2).zip(of("a", "b", "c"));
+        @SuppressWarnings("unchecked")
+        final Seq<Tuple2<Integer, String>> expected = of(Tuple.of(1, "a"), Tuple.of(2, "b"));
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void shouldZipNonNilsIfThatIsSmaller() {
+        final Seq<Tuple2<Integer, String>> actual = of(1, 2, 3).zip(of("a", "b"));
+        @SuppressWarnings("unchecked")
+        final Seq<Tuple2<Integer, String>> expected = of(Tuple.of(1, "a"), Tuple.of(2, "b"));
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void shouldZipNonNilsOfSameSize() {
+        final Seq<Tuple2<Integer, String>> actual = of(1, 2, 3).zip(of("a", "b", "c"));
+        @SuppressWarnings("unchecked")
+        final Seq<Tuple2<Integer, String>> expected = of(Tuple.of(1, "a"), Tuple.of(2, "b"), Tuple.of(3, "c"));
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void shouldThrowIfZipWithThatIsNull() {
+        empty().zip(null);
+    }
+
+    // -- zipAll
+
+    @Test
+    public void shouldZipAllNils() {
+        final Seq<?> actual = empty().zipAll(empty(), null, null);
+        assertThat(actual).isEmpty();
+    }
+
+    @Test
+    public void shouldZipAllEmptyAndNonNil() {
+        final Seq<?> actual = empty().zipAll(of(1), null, null);
+        final Seq<Tuple2<Object, Integer>> expected = of(Tuple.of(null, 1));
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void shouldZipAllNonEmptyAndNil() {
+        final Seq<?> actual = of(1).zipAll(empty(), null, null);
+        final Seq<Tuple2<Integer, Object>> expected = of(Tuple.of(1, null));
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void shouldZipAllNonNilsIfThisIsSmaller() {
+        final Seq<Tuple2<Integer, String>> actual = of(1, 2).zipAll(of("a", "b", "c"), 9, "z");
+        @SuppressWarnings("unchecked")
+        final Seq<Tuple2<Integer, String>> expected = of(Tuple.of(1, "a"), Tuple.of(2, "b"), Tuple.of(9, "c"));
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void shouldZipAllNonNilsIfThatIsSmaller() {
+        final Seq<Tuple2<Integer, String>> actual = of(1, 2, 3).zipAll(of("a", "b"), 9, "z");
+        @SuppressWarnings("unchecked")
+        final Seq<Tuple2<Integer, String>> expected = of(Tuple.of(1, "a"), Tuple.of(2, "b"), Tuple.of(3, "z"));
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void shouldZipAllNonNilsOfSameSize() {
+        final Seq<Tuple2<Integer, String>> actual = of(1, 2, 3).zipAll(of("a", "b", "c"), 9, "z");
+        @SuppressWarnings("unchecked")
+        final Seq<Tuple2<Integer, String>> expected = of(Tuple.of(1, "a"), Tuple.of(2, "b"), Tuple.of(3, "c"));
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void shouldThrowIfZipAllWithThatIsNull() {
+        empty().zipAll(null, null, null);
+    }
+
+    // -- zipWithIndex
+
+    @Test
+    public void shouldZipNilWithIndex() {
+        assertThat(this.<String> empty().zipWithIndex()).isEqualTo(this.<Tuple2<String, Integer>> empty());
+    }
+
+    @Test
+    public void shouldZipNonNilWithIndex() {
+        final Seq<Tuple2<String, Integer>> actual = of("a", "b", "c").zipWithIndex();
+        @SuppressWarnings("unchecked")
+        final Seq<Tuple2<String, Integer>> expected = of(Tuple.of("a", 0), Tuple.of("b", 1), Tuple.of("c", 2));
+        assertThat(actual).isEqualTo(expected);
+    }
 }

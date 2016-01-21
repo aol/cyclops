@@ -1,79 +1,67 @@
 package com.aol.cyclops.javaslang.reactivestreams;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import javaslang.collection.Stream;
 
 import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
+import com.aol.cyclops.javaslang.ToStream;
 import com.aol.cyclops.javaslang.streams.StreamUtils;
 
 
 public class ReactiveStreamImpl<T> implements ReactiveStream<T> {
 
-	private final Stream<? extends T> stream;
+	private final Stream<T> stream;
 	
-	ReactiveStreamImpl(Stream<? extends T> stream){
+	ReactiveStreamImpl(Stream<T> stream){
 		this.stream = stream;
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see java.util.stream.BaseStream#isParallel()
-	 */
-	@Override
-	public boolean isParallel() {
-		return false;
+	public String toString(){
+		return stream.toString();
 	}
 
 
 	/* (non-Javadoc)
-	 * @see java.util.stream.BaseStream#sequential()
+	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
-	public ReactiveStream<T> sequential() {
-		return this;
+	public int hashCode() {
+		return stream.hashCode();
 	}
 
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof ReactiveStreamImpl)
+			return stream.equals( ((ReactiveStreamImpl)obj).stream);
+		else
+			return stream.equals(obj);
+	}
+	@Override
+	public ReactiveStream<T> appendSelf(Function<? super Stream<T>, ? extends Stream<T>> mapper) {
+		Objects.requireNonNull(mapper, "mapper is null");
+		return ReactiveStream.fromStream(stream.appendSelf(mapper));
+	}
 
 	/* (non-Javadoc)
 	 * @see java.util.stream.BaseStream#parallel()
 	 */
-	@Override
-	public ReactiveStream<T> parallel() {
-		return this;
+	public java.util.stream.Stream<T> parallel() {
+		return ToStream.toStream(stream).parallel();
 	}
 
 
-	/* (non-Javadoc)
-	 * @see java.util.stream.BaseStream#unordered()
-	 */
-	@Override
-	public ReactiveStream<T> unordered() {
-		return this;
-	}
-
-
-	/* (non-Javadoc)
-	 * @see java.util.stream.BaseStream#onClose(java.lang.Runnable)
-	 */
-	@Override
-	public ReactiveStream<T> onClose(Runnable closeHandler) {
-		return this;
-	}
-
-
-	/* (non-Javadoc)
-	 * @see java.util.stream.BaseStream#close()
-	 */
-	@Override
-	public void close() {
-		
-		
-	}
-
+	
 
 	@Override
 	public Stream<T> toStream() {

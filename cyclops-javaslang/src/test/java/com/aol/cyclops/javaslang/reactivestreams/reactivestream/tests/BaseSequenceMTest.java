@@ -14,14 +14,13 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import javaslang.collection.List;
+import javaslang.collection.Map;
+import javaslang.collection.Stream;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -56,8 +55,8 @@ public  class BaseSequenceMTest {
 	
 	@Test
 	public void batchBySize(){
-		System.out.println(of(1,2,3,4,5,6).grouped(3).collect(Collectors.toList()));
-		assertThat(of(1,2,3,4,5,6).grouped(3).collect(Collectors.toList()).size(),is(2));
+		System.out.println(of(1,2,3,4,5,6).windowBySize(3).collect(Collectors.toList()));
+		assertThat(of(1,2,3,4,5,6).windowBySize(3).collect(Collectors.toList()).size(),is(2));
 	}
 	
 
@@ -67,7 +66,7 @@ public  class BaseSequenceMTest {
 	@Test
 	public void takeWhileTest(){
 		
-		List<Integer> list = new ArrayList<>();
+		java.util.List<Integer> list = new ArrayList<>();
 		while(list.size()==0){
 			list = of(1,2,3,4,5,6).takeWhile(it -> it<4)
 						.peek(it -> System.out.println(it)).collect(Collectors.toList());
@@ -82,27 +81,27 @@ public  class BaseSequenceMTest {
 
     @Test
     public void testScanLeftStringConcat() {
-        assertThat(of("a", "b", "c").scanLeft("", String::concat).toList().size(),
+        assertThat(of("a", "b", "c").scanLeft("", String::concat).toList().length(),
         		is(4));
     }
     @Test
     public void testScanLeftSum() {
-    	assertThat(of("a", "ab", "abc").map(str->str.length()).scanLeft(0, (u, t) -> u + t).toList().size(), 
+    	assertThat(of("a", "ab", "abc").map(str->str.length()).scanLeft(0, (u, t) -> u + t).toList().length(), 
     			is(asList(0, 1, 3, 6).size()));
     }
     @Test
     public void testScanRightStringConcatMonoid() {
-        assertThat(of("a", "b", "c").scanRight(Monoid.of("", String::concat)).toList().size(),
+        assertThat(of("a", "b", "c").scanRight(Monoid.of("", String::concat)).toList().length(),
             is(asList("", "c", "bc", "abc").size()));
     }
     @Test
     public void testScanRightStringConcat() {
-        assertThat(of("a", "b", "c").scanRight("", String::concat).toList().size(),
+        assertThat(of("a", "b", "c").scanRight("", String::concat).toList().length(),
             is(asList("", "c", "bc", "abc").size()));
     }
     @Test
     public void testScanRightSum() {
-    	assertThat(of("a", "ab", "abc").map(str->str.length()).scanRight(0, (t, u) -> u + t).toList().size(),
+    	assertThat(of("a", "ab", "abc").map(str->str.length()).scanRight(0, (t, u) -> u + t).toList().length(),
             is(asList(0, 3, 5, 6).size()));
 
         
@@ -144,78 +143,14 @@ public  class BaseSequenceMTest {
     
     @Test
     public void testIterable() {
-        List<Integer> list = of(1, 2, 3).toCollection(LinkedList::new);
+        java.util.List<Integer> list = of(1, 2, 3).toCollection(LinkedList::new);
 
         for (Integer i :of(1, 2, 3)) {
             assertThat(list,hasItem(i));
         }
     }
 	
-	@Test
-	public void testDuplicate(){
-		 Tuple2<ReactiveStream<Integer>, ReactiveStream<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
-		 assertTrue(copies.v1.anyMatch(i->i==2));
-		 assertTrue(copies.v2.anyMatch(i->i==2));
-	}
-	@Test
-	public void testTriplicate(){
-		 Tuple3<ReactiveStream<Integer>, ReactiveStream<Integer>, ReactiveStream<Integer>> copies =of(1,2,3,4,5,6).triplicate();
-		 assertTrue(copies.v1.anyMatch(i->i==2));
-		 assertTrue(copies.v2.anyMatch(i->i==2));
-		 assertTrue(copies.v3.anyMatch(i->i==2));
-	}
 	
-	@Test
-	public void testQuadriplicate(){
-		 Tuple4<ReactiveStream<Integer>, ReactiveStream<Integer>, ReactiveStream<Integer>,ReactiveStream<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
-		 assertTrue(copies.v1.anyMatch(i->i==2));
-		 assertTrue(copies.v2.anyMatch(i->i==2));
-		 assertTrue(copies.v3.anyMatch(i->i==2));
-		 assertTrue(copies.v4.anyMatch(i->i==2));
-	}
-
-	@Test
-	public void testDuplicateFilter(){
-		 Tuple2<ReactiveStream<Integer>, ReactiveStream<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
-		 assertTrue(copies.v1.filter(i->i%2==0).toList().size()==3);
-		 assertTrue(copies.v2.filter(i->i%2==0).toList().size()==3);
-	} 
-	@Test
-	public void testTriplicateFilter(){
-		Tuple3<ReactiveStream<Integer>, ReactiveStream<Integer>, ReactiveStream<Integer>> copies =of(1,2,3,4,5,6).triplicate();
-		 assertTrue(copies.v1.filter(i->i%2==0).toList().size()==3);
-		 assertTrue(copies.v2.filter(i->i%2==0).toList().size()==3);
-		 assertTrue(copies.v3.filter(i->i%2==0).toList().size()==3);
-	} 
-	@Test
-	public void testQuadriplicateFilter(){
-		 Tuple4<ReactiveStream<Integer>, ReactiveStream<Integer>, ReactiveStream<Integer>,ReactiveStream<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
-		 assertTrue(copies.v1.filter(i->i%2==0).toList().size()==3);
-		 assertTrue(copies.v2.filter(i->i%2==0).toList().size()==3);
-		 assertTrue(copies.v3.filter(i->i%2==0).toList().size()==3);
-		 assertTrue(copies.v4.filter(i->i%2==0).toList().size()==3);
-	}
-	@Test
-	public void testDuplicatetake(){
-		 Tuple2<ReactiveStream<Integer>, ReactiveStream<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
-		 assertTrue(copies.v1.take(3).toList().size()==3);
-		 assertTrue(copies.v2.take(3).toList().size()==3);
-	} 
-	@Test
-	public void testTriplicatetake(){
-		Tuple3<ReactiveStream<Integer>, ReactiveStream<Integer>, ReactiveStream<Integer>> copies =of(1,2,3,4,5,6).triplicate();
-		 assertTrue(copies.v1.take(3).toList().size()==3);
-		 assertTrue(copies.v2.take(3).toList().size()==3);
-		 assertTrue(copies.v3.take(3).toList().size()==3);
-	} 
-	@Test
-	public void testQuadriplicatetake(){
-		 Tuple4<ReactiveStream<Integer>, ReactiveStream<Integer>, ReactiveStream<Integer>,ReactiveStream<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
-		 assertTrue(copies.v1.take(3).toList().size()==3);
-		 assertTrue(copies.v2.take(3).toList().size()==3);
-		 assertTrue(copies.v3.take(3).toList().size()==3);
-		 assertTrue(copies.v4.take(3).toList().size()==3);
-	}
 	    @Test(expected=ClassCastException.class)
 	    public void testCastException() {
 	    	of(1, "a", 2, "b", 3, null)
@@ -230,7 +165,7 @@ public  class BaseSequenceMTest {
 		
 	    @Test
 	    public void testGroupByEager() {
-	        Map<Integer, List<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
+	        Map<Integer, Stream<Integer>> map1 =of(1, 2, 3, 4).<Integer>groupBy(i -> i % 2);
 	       
 	        assertThat(map1.get(0),hasItem(2));
 	        assertThat(map1.get(0),hasItem(4));
@@ -261,24 +196,24 @@ public  class BaseSequenceMTest {
 	    public void testSkipWhile() {
 	        Supplier<ReactiveStream<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
-	        assertTrue(s.get().skipWhile(i -> false).toList().containsAll(asList(1, 2, 3, 4, 5)));
+	        assertTrue(s.get().dropWhile(i -> false).toList().containsAll(asList(1, 2, 3, 4, 5)));
 	      
-	        assertEquals(asList(), s.get().skipWhile(i -> true).toList());
+	        assertEquals(asList(), s.get().dropWhile(i -> true).toList());
 	    }
 
 	    @Test
 	    public void testSkipUntil() {
 	        Supplier<ReactiveStream<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
-	        assertEquals(asList(), s.get().skipUntil(i -> false).toList());
-	        assertTrue(s.get().skipUntil(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
+	        assertEquals(asList(), s.get().dropUntil(i -> false).toList());
+	        assertTrue(s.get().dropUntil(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
 		  }
 
 	    @Test
 	    public void testSkipUntilWithNulls() {
 	        Supplier<ReactiveStream<Integer>> s = () -> of(1, 2, null, 3, 4, 5);
 	       
-	        assertTrue(s.get().skipUntil(i -> true).toList().containsAll(asList(1, 2, null, 3, 4, 5)));
+	        assertTrue(s.get().dropUntil(i -> true).toList().containsAll(asList(1, 2, null, 3, 4, 5)));
 	    }
 
 	    @Test
@@ -286,7 +221,7 @@ public  class BaseSequenceMTest {
 	        Supplier<ReactiveStream<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertEquals(asList(), s.get().takeWhile(i -> false).toList());
-	        assertTrue( s.get().takeWhile(i -> i < 3).toList().size()!=5);       
+	        assertTrue( s.get().takeWhile(i -> i < 3).toList().length()!=5);       
 	        assertTrue(s.get().takeWhile(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
 	    }
 
@@ -295,7 +230,7 @@ public  class BaseSequenceMTest {
 	        
 
 	        assertTrue(of(1, 2, 3, 4, 5).takeUntil(i -> false).toList().containsAll(asList(1, 2, 3, 4, 5)));
-	        assertFalse(of(1, 2, 3, 4, 5).takeUntil(i -> i % 3 == 0).toList().size()==5);
+	        assertFalse(of(1, 2, 3, 4, 5).takeUntil(i -> i % 3 == 0).toList().length()==5);
 	        
 	        assertEquals(asList(), of(1, 2, 3, 4, 5).takeUntil(i -> true).toList());
 	    }
@@ -328,9 +263,9 @@ public  class BaseSequenceMTest {
 	    	for(int i=0;i<100;i++){
 		        Supplier<ReactiveStream<String>> s = () -> of("a", "b", "c");
 	
-		        assertTrue(s.get().reduce("", String::concat).contains("a"));
-		        assertTrue(s.get().reduce("", String::concat).contains("b"));
-		        assertTrue(s.get().reduce("", String::concat).contains("c"));
+		        assertTrue(s.get().foldLeft("", String::concat).contains("a"));
+		        assertTrue(s.get().foldLeft("", String::concat).contains("b"));
+		        assertTrue(s.get().foldLeft("", String::concat).contains("c"));
 		       
 		        assertEquals(3, (int) s.get().map(str->str.length()).foldLeft(0, (u, t) -> u + t));
 	
@@ -359,7 +294,7 @@ public  class BaseSequenceMTest {
 
 		@Test
 		public void flatten() throws Exception {
-			assertThat(ReactiveStream.of(Arrays.asList(1,2)).flatten().toList().size(),equalTo(asList(1,  2).size()));		
+			assertThat(ReactiveStream.of(Arrays.asList(1,2)).flatten().toList().length(),equalTo(asList(1,  2).size()));		
 		}
 
 		

@@ -1,10 +1,9 @@
-package com.aol.cyclops.javaslang.reactivestreams.reactivestream;
 /*     / \____  _    _  ____   ______  / \ ____  __    _ _____
  *    /  /    \/ \  / \/    \ /  /\__\/  //    \/  \  / /  _  \   Javaslang
  *  _/  /  /\  \  \/  /  /\  \\__\\  \  //  /\  \ /\\/  \__/  /   Copyright 2014-now Daniel Dietrich
  * /___/\_/  \_/\____/\_/  \_/\__\/__/___\_/  \_//  \__/_____/    Licensed under the Apache License, Version 2.0
  */
-
+package com.aol.cyclops.javaslang.reactivestreams.reactivestream;
 
 import javaslang.collection.Traversable;
 
@@ -192,7 +191,7 @@ public abstract class AbstractTraversableRangeTest extends AbstractTraversableTe
         assertThat(rangeClosedBy(3.0, 1.0, -1.0)).isEqualTo(of(3.0, 2.0, 1.0));
         assertThat(rangeClosedBy(5.0, 1.0, -2.0)).isEqualTo(of(5.0, 3.0, 1.0));
         assertThat(rangeClosedBy(5.0, 0.0, -2.0)).isEqualTo(of(5.0, 3.0, 1.0));
-        assertThat(rangeClosedBy(-Double.MAX_VALUE + 2.0E307, -Double.MAX_VALUE, -3.0E307)).isEqualTo(of(-Double.MAX_VALUE + 2.0E307));
+        assertThat(rangeClosedBy(Double.MIN_VALUE + 2.0E307, Double.MIN_VALUE, -3.0E307)).isEqualTo(of(Double.MIN_VALUE + 2.0E307));
 
         // int
         assertThat(rangeClosedBy(1, 3, 1)).isEqualTo(of(1, 2, 3));
@@ -229,10 +228,10 @@ public abstract class AbstractTraversableRangeTest extends AbstractTraversableTe
         assertThat(rangeClosedBy(Character.MIN_VALUE, Character.MIN_VALUE, -3)).isEqualTo(of(Character.MIN_VALUE));
 
         // double
-        assertThat(rangeClosedBy(-Double.MAX_VALUE, -Double.MAX_VALUE, 1)).isEqualTo(of(-Double.MAX_VALUE));
-        assertThat(rangeClosedBy(-Double.MAX_VALUE, -Double.MAX_VALUE, 3)).isEqualTo(of(-Double.MAX_VALUE));
-        assertThat(rangeClosedBy(-Double.MAX_VALUE, -Double.MAX_VALUE, -1)).isEqualTo(of(-Double.MAX_VALUE));
-        assertThat(rangeClosedBy(-Double.MAX_VALUE, -Double.MAX_VALUE, -3)).isEqualTo(of(-Double.MAX_VALUE));
+        assertThat(rangeClosedBy(Double.MIN_VALUE, Double.MIN_VALUE, 1)).isEqualTo(of(Double.MIN_VALUE));
+        assertThat(rangeClosedBy(Double.MIN_VALUE, Double.MIN_VALUE, 3)).isEqualTo(of(Double.MIN_VALUE));
+        assertThat(rangeClosedBy(Double.MIN_VALUE, Double.MIN_VALUE, -1)).isEqualTo(of(Double.MIN_VALUE));
+        assertThat(rangeClosedBy(Double.MIN_VALUE, Double.MIN_VALUE, -3)).isEqualTo(of(Double.MIN_VALUE));
 
         // int
         assertThat(rangeClosedBy(Integer.MIN_VALUE, Integer.MIN_VALUE, 1)).isEqualTo(of(Integer.MIN_VALUE));
@@ -398,7 +397,7 @@ public abstract class AbstractTraversableRangeTest extends AbstractTraversableTe
         assertThat(rangeBy(3.0, 1.0, -1.0)).isEqualTo(of(3.0, 2.0));
         assertThat(rangeBy(4.0, 1.0, -2.0)).isEqualTo(of(4.0, 2.0));
         assertThat(rangeBy(Double.MAX_VALUE - 3.0E307, Double.MAX_VALUE, 3.0E307)).isEqualTo(of(Double.MAX_VALUE - 3.0E307));
-        assertThat(rangeBy(-Double.MAX_VALUE + 3.0E307, -Double.MAX_VALUE, -3.0E307)).isEqualTo(of(-Double.MAX_VALUE + 3.0E307));
+        assertThat(rangeBy(Double.MIN_VALUE + 3.0E307, Double.MIN_VALUE, -3.0E307)).isEqualTo(of(Double.MIN_VALUE + 3.0E307));
 
         // int
         assertThat(rangeBy(1, 3, 1)).isEqualTo(of(1, 2));
@@ -431,10 +430,10 @@ public abstract class AbstractTraversableRangeTest extends AbstractTraversableTe
         assertThat(rangeBy(Character.MIN_VALUE, Character.MIN_VALUE, -3)).isEmpty();
 
         // double
-        assertThat(rangeBy(-Double.MAX_VALUE, -Double.MAX_VALUE, 1.0)).isEmpty();
-        assertThat(rangeBy(-Double.MAX_VALUE, -Double.MAX_VALUE, 3.0)).isEmpty();
-        assertThat(rangeBy(-Double.MAX_VALUE, -Double.MAX_VALUE, -1.0)).isEmpty();
-        assertThat(rangeBy(-Double.MAX_VALUE, -Double.MAX_VALUE, -3.0)).isEmpty();
+        assertThat(rangeBy(Double.MIN_VALUE, Double.MIN_VALUE, 1.0)).isEmpty();
+        assertThat(rangeBy(Double.MIN_VALUE, Double.MIN_VALUE, 3.0)).isEmpty();
+        assertThat(rangeBy(Double.MIN_VALUE, Double.MIN_VALUE, -1.0)).isEmpty();
+        assertThat(rangeBy(Double.MIN_VALUE, Double.MIN_VALUE, -3.0)).isEmpty();
 
         // int
         assertThat(rangeBy(Integer.MIN_VALUE, Integer.MIN_VALUE, 1)).isEmpty();
@@ -522,57 +521,34 @@ public abstract class AbstractTraversableRangeTest extends AbstractTraversableTe
     // double special cases
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldProhibitDoubleRangeClosedByToEqualsNaN() {
-        rangeClosedBy(0.0, Double.NaN, 1.0);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldProhibitDoubleRangeClosedByFromEqualNaN() {
-        rangeClosedBy(Double.NaN, 0.0, 1.0);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldProhibitDoubleRangeClosedByStepEqualNaN() {
-        rangeClosedBy(0.0, 10.0, Double.NaN);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldProhibitDoubleRangeByToEqualsNaN() {
-        rangeBy(0.0, Double.NaN, 1.0);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldProhibitDoubleRangeByFromEqualNaN() {
+    public void shouldProhibitDoubleRangeByAndFromEqualsNaN() {
         rangeBy(Double.NaN, 0.0, 1.0);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldProhibitDoubleRangeByStepEqualNaN() {
-        rangeBy(0.0, 10.0, Double.NaN);
+    public void shouldProhibitDoubleRangeByAndToEqualsNaN() {
+        rangeBy(0.0, Double.NaN, 1.0);
     }
 
-    @Test
-    public void shouldCreateDoubleRangeByFromInfinity() {
-        assertThat(rangeBy(Double.NEGATIVE_INFINITY, 0.0, 1.0)).isEqualTo(of(Double.NEGATIVE_INFINITY));
-        assertThat(rangeBy(Double.POSITIVE_INFINITY, 0.0, -1.0)).isEqualTo(of(Double.POSITIVE_INFINITY));
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldProhibitDoubleRangeByFromAndToEqualNaN() {
+        rangeBy(Double.NaN, Double.NaN, 1.0);
     }
 
-    @Test
-    public void shouldCreateDoubleRangeClosedByFromInfinity() {
-        assertThat(rangeClosedBy(Double.NEGATIVE_INFINITY, 0.0, 1.0)).isEqualTo(of(Double.NEGATIVE_INFINITY));
-        assertThat(rangeClosedBy(Double.POSITIVE_INFINITY, 0.0, -1.0)).isEqualTo(of(Double.POSITIVE_INFINITY));
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldProhibitDoubleRangeClosedByAndFromEqualsNaN() {
+        rangeClosedBy(Double.NaN, 0.0, 1.0);
     }
 
-    @Test
-    public void shouldCreateDoubleRangeByFromMaxToInfinity() {
-        assertThat(rangeBy(Double.MAX_VALUE, Double.POSITIVE_INFINITY, 3E307)).isEqualTo(of(Double.MAX_VALUE));
-        assertThat(rangeBy(-Double.MAX_VALUE, Double.NEGATIVE_INFINITY, -3E307)).isEqualTo(of(-Double.MAX_VALUE));
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldProhibitDoubleRangeClosedByAndToEqualsNaN() {
+        rangeClosedBy(0.0, Double.NaN, 1.0);
     }
 
-    @Test
-    public void shouldCreateDoubleRangeClosedByFromMaxToInfinity() {
-        assertThat(rangeClosedBy(Double.MAX_VALUE, Double.POSITIVE_INFINITY, 3E307)).isEqualTo(of(Double.MAX_VALUE, Double.POSITIVE_INFINITY));
-        assertThat(rangeClosedBy(-Double.MAX_VALUE, Double.NEGATIVE_INFINITY, -3E307)).isEqualTo(of(-Double.MAX_VALUE, Double.NEGATIVE_INFINITY));
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldProhibitDoubleRangeClosedByFromAndToEqualNaN() {
+        rangeClosedBy(Double.NaN, Double.NaN, 1.0);
     }
 
+    // TODO: Double NaN, POSITIVE_INFINITY, NEGATIVE_INFINITY, ...
 }

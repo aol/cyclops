@@ -17,7 +17,7 @@ public class ComprehensionTest {
 		
 		CompletableFuture<String> future = CompletableFuture.supplyAsync(this::loadData);
 		CompletableFuture<List<String>> results1 = Do.add(future)
- 														.monad(List.ofAll("first","second"))
+ 														.monad(List.of("first","second"))
  														.yield( loadedData -> localData-> loadedData + ":" + localData )
  														.unwrap();
 		
