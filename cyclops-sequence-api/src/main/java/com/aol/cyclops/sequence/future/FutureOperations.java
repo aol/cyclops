@@ -196,6 +196,7 @@ public interface FutureOperations<T> extends
 	 * 
 	 */
 	public CompletableFuture<Long> count();
+	
 	public  CompletableFuture<String> join(CharSequence sep);
 	/**
 	 * Perform an asynchronous join operation

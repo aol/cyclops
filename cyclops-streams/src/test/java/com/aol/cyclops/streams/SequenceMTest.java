@@ -104,16 +104,16 @@ public class SequenceMTest {
 
 	}
 	@Test
-	public void get0(){
-		assertThat(SequenceM.of(1).get(0).v1,equalTo(1));
+	public void elementAt0(){
+		assertThat(SequenceM.of(1).elementAt(0).v1,equalTo(1));
 	}
 	@Test
 	public void getMultple(){
-		assertThat(SequenceM.of(1,2,3,4,5).get(2).v1,equalTo(3));
+		assertThat(SequenceM.of(1,2,3,4,5).elementAt(2).v1,equalTo(3));
 	}
 	@Test
 	public void getMultpleStream(){
-		assertThat(SequenceM.of(1,2,3,4,5).get(2).v2.toList(),equalTo(Arrays.asList(1,2,3,4,5)));
+		assertThat(SequenceM.of(1,2,3,4,5).elementAt(2).v2.toList(),equalTo(Arrays.asList(1,2,3,4,5)));
 	}
 	@Test(expected=NoSuchElementException.class)
 	public void getMultiple1(){
@@ -124,20 +124,20 @@ public class SequenceMTest {
 		SequenceM.of().get(0);
 	}
 	@Test
-	public void elementAt0(){
-		assertTrue(SequenceM.of(1).elementAt(0).isPresent());
+	public void get0(){
+		assertTrue(SequenceM.of(1).get(0).isPresent());
 	}
 	@Test
-	public void elementAtMultple(){
-		assertThat(SequenceM.of(1,2,3,4,5).elementAt(2).get(),equalTo(3));
+	public void getAtMultple(){
+		assertThat(SequenceM.of(1,2,3,4,5).get(2),equalTo(3));
 	}
 	@Test
-	public void elementAt1(){
-		assertFalse(SequenceM.of(1).elementAt(1).isPresent());
+	public void getAt1(){
+		assertFalse(SequenceM.of(1).get(1).isPresent());
 	}
 	@Test
 	public void elementAtEmpty(){
-		assertFalse(SequenceM.of().elementAt(0).isPresent());
+		assertFalse(SequenceM.of().get(0).isPresent());
 	}
 	@Test
 	public void singleTest(){

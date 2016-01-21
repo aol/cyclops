@@ -26,6 +26,7 @@ public class RecursiveMatcher {
 	 * 
 	 * @return Case Class style Pattern Matching Builder
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static final<USER_VALUE> CheckTypeAndValues<USER_VALUE> when(){
 		CheckTypeAndValues cse = new  CheckTypeAndValues(new PatternMatcher());
 		return cse;
@@ -46,11 +47,13 @@ public class RecursiveMatcher {
 	 * @param a Action from which the Predicate (by param type) and Function will be extracted to build a Pattern Matching case
 	 * @return Next step in Case builder
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static final <X,T, R> CheckTypeAndValues<X>.AndMembersMatchBuilder<T, R> whenIsType(TypedFunction<T, R> a) {
 
 		return  new  CheckTypeAndValues(new PatternMatcher()).isType(a);
 
 	}
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static final <X,T, R> CheckTypeAndValues<X>.AndMembersMatchBuilder<T, R> whenIsType(Class<T> t,Function<T, R> f) {
 
 		return  new  CheckTypeAndValues(new PatternMatcher()).isType(new TypedFunction<T,R>(){

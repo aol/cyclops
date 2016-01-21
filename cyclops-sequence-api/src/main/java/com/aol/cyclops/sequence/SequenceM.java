@@ -34,10 +34,7 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
-import org.jooq.lambda.Window;
-import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -57,7 +54,9 @@ import com.aol.cyclops.sequence.streamable.Streamable;
 
 public interface SequenceM<T> extends Unwrapable, Stream<T>, JoolWindowing<T>, JoolManipulation<T>,SequenceMCollectable<T>,Seq<T>,  Iterable<T>, Publisher<T>,
 		ReactiveStreamsTerminalOperations<T>  {
-	 /**
+	
+	
+	/**
      * Map this stream to a windowed stream using a specific partition and order.
      * <p>
      * <code><pre>
@@ -2292,13 +2291,25 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, JoolWindowing<T>, J
 	 * 
 	 * @see org.jooq.lambda.Seq#crossJoin(java.util.stream.Stream)
 	 */
-	<U> SequenceM<Tuple2<T, U>> crossJoin(Stream<U> other);
+	default <U> SequenceM<Tuple2<T, U>> crossJoin(Stream<U> other){
+		return fromStream(JoolManipulation.super.crossJoin(other));
+	}
 
-	<U> SequenceM<Tuple2<T, U>> crossJoin(Seq<U> other);
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#crossJoin(org.jooq.lambda.Seq)
+	 */
+	default <U> SequenceM<Tuple2<T, U>> crossJoin(Seq<U> other){
+		return fromStream(JoolManipulation.super.crossJoin(other));
+	}
 
-	<U> SequenceM<Tuple2<T, U>> crossJoin(Iterable<U> other);
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#crossJoin(java.lang.Iterable)
+	 */
+	default <U> SequenceM<Tuple2<T, U>> crossJoin(Iterable<U> other){
+		return fromStream(JoolManipulation.super.crossJoin(other));
+	}
 
-	<U> SequenceM<Tuple2<T, U>> crossJoin(Streamable<U> other);
+	
 
 	/*
 	 * (non-Javadoc)
@@ -2313,10 +2324,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, JoolWindowing<T>, J
 		return innerJoin(s, predicate);
 	}
 
-	default <U> SequenceM<Tuple2<T, U>> innerJoin(Streamable<U> other, java.util.function.BiPredicate<? super T, ? super U> predicate) {
-		return flatMap(t -> other.stream().filter(u -> predicate.test(t, u)).map(u -> Tuple.tuple(t, u)));
-
-	}
+	
 
 	default <U> SequenceM<Tuple2<T, U>> innerJoin(Iterable<U> other, java.util.function.BiPredicate<? super T, ? super U> predicate) {
 		Streamable<U> s = Streamable.fromIterable(other);
@@ -2329,10 +2337,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, JoolWindowing<T>, J
 		return innerJoin(s, predicate);
 	}
 
-	default <U> SequenceM<Tuple2<T, U>> leftOuterJoin(Streamable<U> s, java.util.function.BiPredicate<? super T, ? super U> predicate) {
-		return flatMap(t -> Seq.seq(s.stream()).filter(u -> predicate.test(t, u)).onEmpty(null).map(u -> Tuple.tuple(t, u)));
-	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -2369,13 +2374,20 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, JoolWindowing<T>, J
 	 * @see org.jooq.lambda.Seq#rightOuterJoin(java.util.stream.Stream,
 	 * java.util.function.BiPredicate)
 	 */
-	<U> SequenceM<Tuple2<T, U>> rightOuterJoin(Stream<U> other, BiPredicate<? super T, ? super U> predicate);
+	default <U> SequenceM<Tuple2<T, U>> rightOuterJoin(Stream<U> other, BiPredicate<? super T, ? super U> predicate){
+		return fromStream(JoolManipulation.super.rightOuterJoin(other,predicate));
+	}
 
-	<U> SequenceM<Tuple2<T, U>> rightOuterJoin(Iterable<U> other, BiPredicate<? super T, ? super U> predicate);
+	default <U> SequenceM<Tuple2<T, U>> rightOuterJoin(Iterable<U> other, BiPredicate<? super T, ? super U> predicate){
+		return fromStream(JoolManipulation.super.rightOuterJoin(other,predicate));
+	}
 
-	<U> SequenceM<Tuple2<T, U>> rightOuterJoin(Seq<U> other, BiPredicate<? super T, ? super U> predicate);
+	default <U> SequenceM<Tuple2<T, U>> rightOuterJoin(Seq<U> other, BiPredicate<? super T, ? super U> predicate){
+		return fromStream(JoolManipulation.super.rightOuterJoin(other,predicate));
+	}
+		
 
-	<U> SequenceM<Tuple2<T, U>> rightOuterJoin(Streamable<U> other, BiPredicate<? super T, ? super U> predicate);
+	
 
 	/**
 	 * If this SequenceM is empty replace it with a another Stream
@@ -3210,6 +3222,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, JoolWindowing<T>, J
 	<R1, R2, R> SequenceM<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
 			Function<? super T, Function<? super R1, ? extends BaseStream<R2, ?>>> stream2,
 			Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction);
+
 
 	/**
 	 * Perform a three level nested internal iteration over this Stream and the

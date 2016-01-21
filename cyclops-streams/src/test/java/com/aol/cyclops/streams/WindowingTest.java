@@ -149,7 +149,7 @@ public class WindowingTest {
 	@Test
 	public void groupedShorter() throws Exception {
 		final Streamable<Integer> fixed = Streamable.fromStream(of(5, 7, 9));
-		assertThat(fixed.sequenceM().grouped(4).get(0).v1,equalTo(Arrays.asList(5,7,9)));
+		assertThat(fixed.sequenceM().grouped(4).elementAt(0).v1,equalTo(Arrays.asList(5,7,9)));
 		assertThat(fixed.sequenceM().grouped(4).count(),equalTo(1l));
 
 		
@@ -189,7 +189,7 @@ public class WindowingTest {
 		SequenceM<Integer> infinite = SequenceM.iterate(1, i->i+1);
 		
 		final SequenceM<List<Integer>> grouped = infinite.grouped(3);
-		assertThat(grouped.elementAt(0).get(),equalTo(Arrays.asList(1,2,3)));
+		assertThat(grouped.get(0).get(),equalTo(Arrays.asList(1,2,3)));
 	
 	}
 

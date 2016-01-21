@@ -1431,14 +1431,14 @@ public class StreamUtils{
 	}
 	
 	
-	public final static  <T,C extends Comparable<C>>  Optional<T> minBy(Stream<T> stream,Function<T,C> f){
+	public final static  <T,C extends Comparable<? super C>>  Optional<T> minBy(Stream<T> stream,Function<? super T,? extends C> f){
 		Optional<Tuple2<C,T>> o = stream.map(in->new Tuple2<C,T>(f.apply(in),in)).min(Comparator.comparing(n->n.v1(),Comparator.naturalOrder()));
 		return	o.map(p->p.v2());
 	}
 	public final  static<T> Optional<T> min(Stream<T> stream,Comparator<? super T> comparator){
 		return stream.collect(Collectors.minBy(comparator));
 	}
-	public final static <T,C extends Comparable<? super C>> Optional<T> maxBy(Stream<T> stream,Function<T,C> f){
+	public final static <T,C extends Comparable<? super C>> Optional<T> maxBy(Stream<T> stream,Function<? super T,? extends C> f){
 		Optional<Tuple2<C,T>> o = stream.map(in->new Tuple2<C,T>(f.apply(in),in)).max(Comparator.comparing(n->n.v1(),Comparator.naturalOrder()));
 		return	o.map(p->p.v2());
 	}
@@ -1652,7 +1652,7 @@ public class StreamUtils{
 		return stream.flatMap(fn);
 	}
 	public final static <T,R> Stream<R> flatMapAnyM(Stream<T> stream,Function<? super T,AnyM<? extends R>> fn) {
-		return AsGenericMonad.<Stream<T>,T>asMonad(stream).bind(in -> fn.apply(in).unwrap()).sequence();
+		return AnyM.fromStream(stream).flatMap(fn).asSequence();
 		
 	}
 	
@@ -1684,7 +1684,7 @@ public class StreamUtils{
 	 * </pre>
 	 *
 	 */
-	public final static <T,R> Stream<R> flatMapStream(Stream<T> stream,Function<? super T,BaseStream<? extends R,?>> fn) {
+	public final static <T,R> Stream<R> flatMapStream(Stream<T> stream,Function<? super T,? extends BaseStream<? extends R,?>> fn) {
 		return stream.flatMap(fn.andThen(bs -> { 
 			
 			if(bs instanceof Stream) 

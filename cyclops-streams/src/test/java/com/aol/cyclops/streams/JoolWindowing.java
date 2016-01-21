@@ -42,7 +42,7 @@ import com.aol.cyclops.sequence.SequenceM;
  * @author Roman Tkalenko
  */
 public class JoolWindowing {
-	/**
+	
 	 @Test
 	    public void testCount() {
 		
@@ -187,18 +187,16 @@ public class JoolWindowing {
 	               .map(t -> t.v4)
 	               .toList()
 	        );
-	    }**/
+	    }
 	    Function<Number,Number> mod2 =i -> i;
 	    @Test
 	    public void testWindowFunctionRowNumber() {
-	    	SequenceM.of(1, 2, 4, 2, 3).window((Integer i)->i%2, java.util.Comparator.reverseOrder());
 	        assertEquals(asList(0L, 1L, 2L, 3L, 4L), SequenceM.of(1, 2, 4, 2, 3).window().map(Window::rowNumber).toList());
 	        assertEquals(asList(0L, 1L, 4L, 2L, 3L), SequenceM.of(1, 2, 4, 2, 3).window(naturalOrder()).map(Window::rowNumber).toList());
 	        assertEquals(asList(0L, 0L, 1L, 2L, 1L), SequenceM.of(1, 2, 4, 2, 3).window(i -> i % 2).map(Window::rowNumber).toList());
-	        SequenceM.of(1, 2, 4, 2, 3).window(mod2, naturalOrder());
-	        assertEquals(asList(0L, 0L, 2L, 1L, 1L), SequenceM.of(1, 2, 4, 2, 3).window(mod2, naturalOrder()).map(Window::rowNumber).toList());
-	    }
-	/**        
+	        assertEquals(asList(0L, 0L, 2L, 1L, 1L), SequenceM.of(1, 2, 4, 2, 3).window(i -> i % 2, naturalOrder()).map(Window::rowNumber).toList());
+	    }	    
+	    
 	    @Test
 	    public void testWindowFunctionRank() {
 	        assertEquals(asList(0L, 1L, 4L, 1L, 3L), SequenceM.of(1, 2, 4, 2, 3).window(naturalOrder()).map(Window::rank).toList());
@@ -611,6 +609,6 @@ public class JoolWindowing {
 	    private final <T> List<Optional<T>> optional(T... list) {
 	        return SequenceM.of(list).map(Optional::ofNullable).toList();
 	    }
-	    **/
+	    
 
 }

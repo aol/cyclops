@@ -20,233 +20,238 @@ import com.aol.cyclops.sequence.streamable.ToStream;
 
 
 
-public interface SequenceMCollectable<T> extends Collectable<T>,ConvertableToSequenceM<T> {
+public interface SequenceMCollectable<T> extends Collectable<T> {
 	
 	
 	
 
 	
 
-	
+	/**
+	 * Narrow this class to a Collectable
+	 * 
+	 * @return Collectable
+	 */
+	Collectable<T> collectable();
 
 	@Override
 	default long countDistinct() {
-		return sequenceM().countDistinct();
+		return collectable().countDistinct();
 	}
 
 	@Override
 	default <U> long countDistinctBy(Function<? super T, ? extends U> function) {
-		return sequenceM().countDistinctBy(function);
+		return collectable().countDistinctBy(function);
 	}
 
 	@Override
 	default Optional<T> mode() {
-		return sequenceM().mode();
+		return collectable().mode();
 	}
 
 	@Override
 	default Optional<T> sum() {
-		return sequenceM().sum();
+		return collectable().sum();
 	}
 
 	@Override
 	default <U> Optional<U> sum(Function<? super T, ? extends U> function) {
-		return sequenceM().sum(function);
+		return collectable().sum(function);
 	}
 
 	@Override
 	default int sumInt(ToIntFunction<? super T> function) {
-		return sequenceM().sumInt(function);
+		return collectable().sumInt(function);
 	}
 
 	@Override
 	default long sumLong(ToLongFunction<? super T> function) {
-		return sequenceM().sumLong(function);
+		return collectable().sumLong(function);
 	}
 
 	@Override
 	default double sumDouble(ToDoubleFunction<? super T> function) {
-		return sequenceM().sumDouble(function);
+		return collectable().sumDouble(function);
 	}
 
 	@Override
 	default Optional<T> avg() {
-		return sequenceM().avg();
+		return collectable().avg();
 	}
 
 	@Override
 	default <U> Optional<U> avg(Function<? super T, ? extends U> function) {
-		return sequenceM().avg(function);
+		return collectable().avg(function);
 	}
 
 	@Override
 	default double avgInt(ToIntFunction<? super T> function) {
-		return sequenceM().avgInt(function);
+		return collectable().avgInt(function);
 	}
 
 	@Override
 	default double avgLong(ToLongFunction<? super T> function) {
-		return sequenceM().avgLong(function);
+		return collectable().avgLong(function);
 	}
 
 	@Override
 	default double avgDouble(ToDoubleFunction<? super T> function) {
-		return sequenceM().avgDouble(function);
+		return collectable().avgDouble(function);
 	}
 
 	@Override
 	default Optional<T> min() {
-		return sequenceM().min();
+		return collectable().min();
 	}
 
 	@Override
 	default Optional<T> min(Comparator<? super T> comparator) {
-		return sequenceM().min(comparator);
+		return collectable().min(comparator);
 	}
 
 	@Override
 	default <U extends Comparable<? super U>> Optional<U> min(Function<? super T, ? extends U> function) {
-		return sequenceM().min(function);
+		return collectable().min(function);
 	}
 
 	@Override
 	default <U> Optional<U> min(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
-		return sequenceM().min(function,comparator);
+		return collectable().min(function,comparator);
 	}
 
 	@Override
 	default <U extends Comparable<? super U>> Optional<T> minBy(Function<? super T, ? extends U> function) {
-		return sequenceM().minBy(function);
+		return collectable().minBy(function);
 	}
 
 	@Override
 	default <U> Optional<T> minBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
-		return sequenceM().minBy(function,comparator);
+		return collectable().minBy(function,comparator);
 	}
 
 	@Override
 	default Optional<T> max() {
-		return sequenceM().max();
+		return collectable().max();
 	}
 
 	@Override
 	default Optional<T> max(Comparator<? super T> comparator) {
-		return sequenceM().max(comparator);
+		return collectable().max(comparator);
 	}
 
 	@Override
 	default <U extends Comparable<? super U>> Optional<U> max(Function<? super T, ? extends U> function) {
-		return sequenceM().max(function);
+		return collectable().max(function);
 	}
 
 	@Override
 	default <U> Optional<U> max(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
-		return sequenceM().max(function,comparator);
+		return collectable().max(function,comparator);
 	}
 
 	@Override
 	default <U extends Comparable<? super U>> Optional<T> maxBy(Function<? super T, ? extends U> function) {
-		return sequenceM().maxBy(function);
+		return collectable().maxBy(function);
 	}
 
 	@Override
 	default <U> Optional<T> maxBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
-		return sequenceM().maxBy(function,comparator);
+		return collectable().maxBy(function,comparator);
 	}
 
 	@Override
 	default Optional<T> median() {
-		return sequenceM().median();
+		return collectable().median();
 	}
 
 	@Override
 	default Optional<T> median(Comparator<? super T> comparator) {
-		return sequenceM().median(comparator);
+		return collectable().median(comparator);
 	}
 
 	@Override
 	default <U extends Comparable<? super U>> Optional<T> medianBy(Function<? super T, ? extends U> function) {
-		return sequenceM().medianBy(function);
+		return collectable().medianBy(function);
 	}
 
 	@Override
 	default <U> Optional<T> medianBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
-		return sequenceM().medianBy(function,comparator);
+		return collectable().medianBy(function,comparator);
 	}
 
 	@Override
 	default Optional<T> percentile(double percentile) {
-		return sequenceM().percentile(percentile);
+		return collectable().percentile(percentile);
 	}
 
 	@Override
 	default Optional<T> percentile(double percentile, Comparator<? super T> comparator) {
-		return sequenceM().percentile(percentile,comparator);
+		return collectable().percentile(percentile,comparator);
 	}
 
 	@Override
 	default <U extends Comparable<? super U>> Optional<T> percentileBy(double percentile, Function<? super T, ? extends U> function) {
-		return sequenceM().percentileBy(percentile, function);
+		return collectable().percentileBy(percentile, function);
 	}
 
 	@Override
 	default <U> Optional<T> percentileBy(double percentile, Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
-		return sequenceM().percentileBy(percentile, function, comparator);
+		return collectable().percentileBy(percentile, function, comparator);
 	}
 
 	@Override
 	default boolean allMatch(Predicate<? super T> predicate) {
-		return sequenceM().allMatch(predicate);
+		return collectable().allMatch(predicate);
 	}
 
 	@Override
 	default boolean anyMatch(Predicate<? super T> predicate) {
-		return sequenceM().anyMatch(predicate);
+		return collectable().anyMatch(predicate);
 	}
 
 	@Override
 	default boolean noneMatch(Predicate<? super T> predicate) {
-		return sequenceM().noneMatch(predicate);
+		return collectable().noneMatch(predicate);
 	}
 
 	@Override
 	default List<T> toList() {
-		return sequenceM().toList();
+		return collectable().toList();
 	}
 
 	@Override
 	default <L extends List<T>> L toList(Supplier<L> factory) {
-		return sequenceM().toList(factory);
+		return collectable().toList(factory);
 	}
 
 	@Override
 	default Set<T> toSet() {
-		return sequenceM().toSet();
+		return collectable().toSet();
 	}
 
 	@Override
 	default <S extends Set<T>> S toSet(Supplier<S> factory) {
-		return sequenceM().toSet(factory);
+		return collectable().toSet(factory);
 	}
 
 	@Override
 	default <C extends Collection<T>> C toCollection(Supplier<C> factory) {
-		return sequenceM().toCollection(factory);
+		return collectable().toCollection(factory);
 	}
 
 	@Override
 	default <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper) {
-		return sequenceM().toMap(keyMapper, valueMapper);
+		return collectable().toMap(keyMapper, valueMapper);
 	}
 
 	@Override
 	default String toString(CharSequence delimiter) {
-		return sequenceM().toString(delimiter);
+		return collectable().toString(delimiter);
 	}
 
 	@Override
 	default String toString(CharSequence delimiter, CharSequence prefix, CharSequence suffix) {
-		return sequenceM().toString(delimiter, prefix, suffix);
+		return collectable().toString(delimiter, prefix, suffix);
 	}
 
 }

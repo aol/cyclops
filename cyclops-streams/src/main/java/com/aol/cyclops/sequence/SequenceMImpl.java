@@ -3,9 +3,7 @@ package com.aol.cyclops.sequence;
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -38,6 +36,7 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -55,7 +54,6 @@ import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
 import com.aol.cyclops.sequence.spliterators.ReversableSpliterator;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.sequence.streamable.Streamable;
-import com.aol.cyclops.streams.HotStreamImpl;
 import com.aol.cyclops.streams.StreamUtils;
 
 
@@ -935,7 +933,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * Extract the minimum as determined by supplied function
 	 * 
 	 */
-	public final  <U extends Comparable<U>> Optional<T> minBy(Function<T, U> function){
+	public final  <U extends Comparable<? super U>> Optional<T> minBy(Function<? super T, ? extends U> function){
 		
 		return StreamUtils.minBy(stream,function);
 	}
@@ -949,7 +947,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * Extract the maximum as determined by the supplied function
 	 * 
 	 */
-	public final  <C extends Comparable<C>> Optional<T> maxBy(Function<T,C> f){
+	public final  <C extends Comparable<? super C>> Optional<T> maxBy(Function<? super T,? extends C> f){
 		return StreamUtils.maxBy(stream,f);
 	}
 	/* (non-Javadoc)
@@ -1873,21 +1871,22 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 
 	@Override
 	public <U> SequenceM<Tuple2<T, U>> innerJoin(Stream<U> other,
-			BiPredicate<T, U> predicate) {
+			BiPredicate<? super T, ? super U> predicate) {
+		
 		return StreamUtils.sequenceM(stream.innerJoin(other, predicate),reversable);
 	}
 
 
 	@Override
 	public <U> SequenceM<Tuple2<T, U>> leftOuterJoin(Stream<U> other,
-			BiPredicate<T, U> predicate) {
+			BiPredicate<? super T, ? super U> predicate) {
 		return StreamUtils.sequenceM(stream.leftOuterJoin(other, predicate),reversable);
 	}
 
 
 	@Override
 	public <U> SequenceM<Tuple2<T, U>> rightOuterJoin(Stream<U> other,
-			BiPredicate<T, U> predicate) {
+			BiPredicate<? super T, ? super U> predicate) {
 		return StreamUtils.sequenceM(stream.rightOuterJoin(other, predicate),reversable);
 	}
 
@@ -1936,7 +1935,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 
 
 	@Override
-	public <U, R> SequenceM<R> zip(Seq<U> other, BiFunction<T, U, R> zipper) {
+	public <U, R> SequenceM<R> zip(Seq<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
 		return StreamUtils.sequenceM(stream.zip(other, zipper),Optional.empty());
 	}
 
@@ -2255,4 +2254,19 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 			Runnable onComplete){
 		StreamUtils.forEachEvent(this, consumerElement, consumerError, onComplete);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#format()
+	 */
+	@Override
+	public String format() {
+
+		return this.stream.format();
+	}
+
+	@Override
+	public Collectable<T> collectable(){
+		return this.stream;
+	}
+	
 }
