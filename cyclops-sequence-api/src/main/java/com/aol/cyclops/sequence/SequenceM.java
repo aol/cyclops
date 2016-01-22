@@ -52,6 +52,7 @@ import com.aol.cyclops.sequence.spliterators.ReversingListSpliterator;
 import com.aol.cyclops.sequence.spliterators.ReversingRangeIntSpliterator;
 import com.aol.cyclops.sequence.spliterators.ReversingRangeLongSpliterator;
 import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.trampoline.Trampoline;
 
 
 
@@ -829,6 +830,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 * </pre>
 	 * @return
 	 */
+	@Deprecated
 	 Optional<HeadAndTail<T>> headAndTailOptional();
 	
 	/**
@@ -859,6 +861,42 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 */
 	 Optional<T>  findAny();
 	
+	 /**
+	  * Performs a map operation that can call a recursive method without running out of stack space
+	  * <pre>
+	  * {@code
+	  * SequenceM.of(10,20,30,40)
+				 .trampoline(i-> fibonacci(i))
+				 .forEach(System.out::println); 
+				 
+		Trampoline<Long> fibonacci(int i){
+			return fibonacci(i,1,0);
+		}
+		Trampoline<Long> fibonacci(int n, long a, long b) {
+	    	return n == 0 ? Trampoline.done(b) : Trampoline.more( ()->fibonacci(n-1, a+b, a));
+		}		 
+				 
+	  * 55
+		6765
+		832040
+		102334155
+	  * 
+	  * 
+	  * SequenceM.of(10_000,200_000,3_000_000,40_000_000)
+				 .trampoline(i-> fibonacci(i))
+				 .forEach(System.out::println);
+				 
+				 
+	  * completes successfully
+	  * }
+	  * 
+	 * @param mapper
+	 * @return
+	 */
+	default <R> SequenceM<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper){
+		
+		 return  map(in-> mapper.apply(in).result());
+	 }
 	/**
 	 * Attempt to map this Sequence to the same type as the supplied Monoid (Reducer)
 	 * Then use Monoid to reduce values
@@ -1892,6 +1930,9 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 		return ReactiveStreamsLoader.subscriber.get().subscribe();
 	}
 	
+	public static <T> SequenceM<T> empty(){
+		return fromStream(Stream.empty());
+	}
 	
 	/**
 	 * Create an efficiently reversable Sequence from the provided elements
