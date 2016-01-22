@@ -61,6 +61,7 @@ public abstract class BaseHotStreamImpl<T> extends IteratorHotStream<T> implemen
 	public SequenceM<T> connect(Queue<T> queue) {
 		connections.getAndSet(connected, queue);
 		connected++;
+		unpause();
 		return StreamUtils.sequenceM(StreamSupport.stream(
                 new ClosingSpliterator(Long.MAX_VALUE, queue,open), false),Optional.empty());
 	}
