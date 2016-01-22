@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Executor;
@@ -22,18 +23,24 @@ import java.util.function.Supplier;
 import java.util.stream.BaseStream;
 import java.util.stream.Collector;
 
+import javaslang.Lazy;
 import javaslang.Tuple;
 import javaslang.Tuple2;
 import javaslang.Tuple3;
 import javaslang.collection.List;
 import javaslang.collection.Map;
 import javaslang.collection.Stream;
+import javaslang.collection.Traversable;
+import javaslang.collection.Stream.Cons;
+import javaslang.collection.Stream.Empty;
 import javaslang.control.Option;
+import javaslang.control.Try;
 
 import org.jooq.lambda.Seq;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.javaslang.Javaslang;
 import com.aol.cyclops.javaslang.streams.JavaslangHotStream;
 import com.aol.cyclops.javaslang.streams.StreamUtils;
@@ -101,13 +108,14 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	}
 
 	static <T> ReactiveStream<T> generate(Supplier<T> gen) {
-		return fromStream(Stream.gen(gen));
+		return fromStream( (Stream<T>)Lazy.val(()->Stream.gen(gen),Stream.class));
 	}
 
 	static <T> ReactiveStream<T> fromStream(Stream<T> stream) {
+		
 		if (stream instanceof ReactiveStream)
 			return (ReactiveStream<T>) stream;
-		return new ReactiveStreamImpl<T>(stream);
+		return new ReactiveStreamImpl<T>((Stream<T>)stream);
 	}
 
 	static <T> ReactiveStream<T> fromStreamable(Streamable<T> stream) {
@@ -123,8 +131,12 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	}
 
 	static <T> ReactiveStream<T> fromIterable(Iterable<T> stream) {
-		return fromStream(Stream.ofAll(stream));
+		return fromStream(ofAll(stream));
 	}
+	static <T> ReactiveStream<T> fromIterator(Iterator<T> it) {
+		return fromStream(ofAll(()->it));
+	}
+
 
 	static <T> ReactiveStream<T> fromAsyncQueue(com.aol.simple.react.async.Queue<T> q) {
 
@@ -238,8 +250,85 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	}
 
 	/** recover & retry **/
+	/**
+     * An iterator by means of head() and tail(). Subclasses may want to override this method.
+     *
+     * @return A new Iterator of this Traversable elements.
+     */
+    @Override
+    default javaslang.collection.Iterator<T> iterator() {
+        final Traversable<T> that = this;
+        return new javaslang.collection.Iterator<T>() {
+
+            Traversable<T> traversable = that;
+
+            @Override
+            public boolean hasNext() {
+                return !traversable.isEmpty();
+            }
+
+            @Override
+            public T next() {
+            	
+                if (traversable.isEmpty()) {
+                    throw new NoSuchElementException();
+                } else {
+                	
+                	
+                	final T	result = traversable.head();
+                	
+                	try{
+                		traversable = traversable.tail();
+                	}catch(Throwable t){
+                		throw ExceptionSoftener.throwSoftenedException(t);
+                	}
+                    return result;
+                }
+            }
+        };
+    }  
+    final class StreamFactory {
+
+        static <T> Stream<T> create(java.util.Iterator<? extends T> iterator) {
+            return iterator.hasNext() ? new Cons<>(iterator.next(), () -> create(iterator)) : Empty.instance();
+        }
+    }
+    static <T> Stream<T> ofAll(java.lang.Iterable<? extends T> elements) {
+        Objects.requireNonNull(elements, "elements is null");
+        if (elements instanceof Stream) {
+            return (Stream<T>) elements;
+        } else {
+            return StreamFactory.create(elements.iterator());
+        }
+    }
 	default ReactiveStream<T> recover(Function<Throwable, ? extends T> fn) {
-		return fromStream(StreamUtils.recover(this, fn));
+		Iterator<T> it = iterator();
+		
+		Class type =Throwable.class;
+		return fromIterator(new Iterator<T>(){
+			
+			@Override
+			public boolean hasNext() {
+				return it.hasNext();
+				
+			}
+			@Override
+			public T next() {
+				try{
+					return it.next();
+				}catch(Throwable t){
+					if(type.isAssignableFrom(t.getClass())){
+						return fn.apply(t);
+						
+					}
+					throw ExceptionSoftener.throwSoftenedException(t);
+					
+				}
+				
+				
+			}
+			
+		});
 	}
 
 	default <EX extends Throwable> ReactiveStream<T> recover(Class<EX> type, Function<EX, ? extends T> fn) {
@@ -314,11 +403,12 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 
 	/** batching & windowing **/
 	default ReactiveStream<ReactiveStream<T>> slidingWindow(int windowSize, int increment) {
-		return fromStream(StreamUtils.sliding(this, windowSize, increment)).map(s -> fromIterable(s));
+		return fromStream(StreamUtils.sliding(this, windowSize, increment).map(s -> fromIterable(s)));
 	}
 
 	default ReactiveStream<ReactiveStream<T>> slidingWindow(int windowSize) {
-		return fromStream(StreamUtils.sliding(this, windowSize, 1)).map(s -> fromIterable(s));
+		
+		return fromStream(StreamUtils.sliding(this, windowSize, 1).map(s -> fromIterable(s)));
 	}
 
 	default ReactiveStream<ReactiveStream<T>> windowByTime(long time, TimeUnit t) {
@@ -956,11 +1046,17 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	default ReactiveStream<T> intersperse(T element) {
 		return fromStream(toStream().intersperse(element));
 	}
-
-	@Override
-	default <U> ReactiveStream<U> map(Function<? super T, ? extends U> mapper) {
-		return fromStream(toStream().map(mapper));
-	}
+	
+	
+	
+	 default <U> ReactiveStream<U> map(Function<? super T, ? extends U> mapper) {
+	        Objects.requireNonNull(mapper, "mapper is null");
+	        if (isEmpty()) {
+	            return fromStream(Empty.instance());
+	        } else {
+	            return fromStream(new Cons<>(mapper.apply(head()), () -> tail().map(mapper)));
+	        }
+	   }
 
 	@Override
 	default ReactiveStream<T> padTo(int length, T element) {

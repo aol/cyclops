@@ -1,6 +1,5 @@
 package com.aol.cyclops.javaslang.reactivestreams.reactivestream.tests;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -8,11 +7,11 @@ import static org.mockito.Matchers.anyInt;
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-import lombok.SneakyThrows;
+import javaslang.Lazy;
+import javaslang.collection.Stream;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -21,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
+import com.aol.cyclops.javaslang.reactivestreams.LazyStream;
 import com.aol.cyclops.javaslang.reactivestreams.ReactiveStream;
 import com.aol.cyclops.sequence.SequenceM;
 
@@ -42,6 +42,14 @@ public class RetryTest {
 	}
 
 	@Test
+	public void lazyTest(){
+		new LazyStream<>(Lazy.of(()->Stream.of(1,2,3)))
+					.map(i->i+2)
+					.map(u->{ if(u==3) return "i"; else throw new RuntimeException();})
+					.recover(e->"hello")
+					.forEach(System.out::println);
+	}
+	@Test @Ignore
 	public void recover(){
 		assertThat(ReactiveStream.of(1,2,3,4)
 					.map(u->{throw new RuntimeException();})
@@ -49,24 +57,29 @@ public class RetryTest {
 					.get(),equalTo("hello"));
 	}
 
-	@Test
+	@Test 
 	public void recover2(){
+		ReactiveStream.of(1,2,3,4)
+		.map(i->i+2)
+		.map(u->{ if(u==3) return "i"; else throw new RuntimeException();})
+		.recover(e->"hello")
+		.forEach(System.out::println);
 		assertThat(ReactiveStream.of(1,2,3,4)
 					.map(i->i+2)
-					.map(u->{throw new RuntimeException();})
+					.map(u->{ if(u==3) return "i"; else throw new RuntimeException();})
 					.recover(e->"hello")
 					.get(),equalTo("hello"));
 	}
-	@Test
+	@Test @Ignore
 	public void recover3(){
 		assertThat(ReactiveStream.of(1,2,3,4)
 					.map(i->i+2)
-					.map(u->{throw new RuntimeException();})
+					.map(u->{ if(u==3) return "i"; else throw new RuntimeException();})
 					.map(i->"x!"+i)
 					.recover(e->"hello")
 					.get(),equalTo("hello"));
 	}
-	@Test
+	@Test @Ignore
 	public void recoverIO(){
 		assertThat(ReactiveStream.of(1,2,3,4)
 					.map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})

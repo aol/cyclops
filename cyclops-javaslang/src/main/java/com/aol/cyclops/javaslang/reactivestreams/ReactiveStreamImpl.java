@@ -6,6 +6,9 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import javaslang.collection.Stream;
+import javaslang.collection.Stream.Cons;
+import javaslang.collection.Stream.Empty;
+import javaslang.control.Try;
 
 import org.reactivestreams.Subscription;
 
@@ -21,7 +24,20 @@ public class ReactiveStreamImpl<T> implements ReactiveStream<T> {
 	ReactiveStreamImpl(Stream<T> stream){
 		this.stream = stream;
 	}
-	
+	private <U> Stream<Try<U>> enforceTry(Stream<T> stream) {
+     
+		if (stream.isEmpty()) {
+			return Empty.instance();
+		}
+		return stream.map (t -> {
+		  if(t instanceof Try)
+			  return (Try<U>)t;
+		  else
+			  return (Try<U>)Try.success(t);
+	 	});
+    
+    	  
+   }
 	
 	public String toString(){
 		return stream.toString();
@@ -65,7 +81,7 @@ public class ReactiveStreamImpl<T> implements ReactiveStream<T> {
 
 	@Override
 	public Stream<T> toStream() {
-	       return (Stream)stream;
+	       return (Stream)stream;	
 	 }
 	
 	public <X extends Throwable> Subscription forEachX(long numberOfElements,Consumer<? super T> consumer){

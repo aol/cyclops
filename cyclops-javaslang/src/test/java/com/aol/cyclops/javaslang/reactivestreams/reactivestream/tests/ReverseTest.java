@@ -18,7 +18,7 @@ public class ReverseTest {
 		
 		assertThat(ReactiveStream.range(0,Integer.MAX_VALUE)
 				 .take(100)
-				 .length(),equalTo(100L));
+				 .length(),equalTo(100));
 	}
 	@Test
 	public void limitList() throws InterruptedException{
@@ -28,7 +28,7 @@ public class ReverseTest {
 			list.add(i);
 		assertThat(ReactiveStream.fromIterable(list)
 				 .take(100)
-				 .length(),equalTo(100L));
+				 .length(),equalTo(100));
 		
 	}
 	@Test
@@ -39,7 +39,7 @@ public class ReverseTest {
 			list.add(i);
 		assertThat(ReactiveStream.of(list.toArray())
 				 .take(100)
-				 .length(),equalTo(100L));
+				 .length(),equalTo(100));
 		
 	}
 	@Test
@@ -50,7 +50,7 @@ public class ReverseTest {
 			list.add(i);
 		assertThat(ReactiveStream.of(list.toArray())
 				 .drop(100)
-				 .length(),equalTo(900L));
+				 .length(),equalTo(900));
 		
 	}
 	@Test
@@ -58,14 +58,14 @@ public class ReverseTest {
 		
 		assertThat(ReactiveStream.range(0,1000)
 				 .drop(100)
-				 .length(),equalTo(900L));
+				 .length(),equalTo(900));
 	}
 	@Test
 	public void skipRangeReversed() throws InterruptedException{
 		
 		assertThat(ReactiveStream.range(0,1000)
 				 .drop(100).reverse()
-				 .length(),equalTo(900L));
+				 .length(),equalTo(900));
 	}
 	@Test
 	public void skipList() throws InterruptedException{
@@ -75,7 +75,7 @@ public class ReverseTest {
 			list.add(i);
 		assertThat(ReactiveStream.fromIterable(list)
 				 .drop(100)
-				 .length(),equalTo(900L));
+				 .length(),equalTo(900));
 		
 	}
 	
