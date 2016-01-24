@@ -38,12 +38,14 @@ public class HeadAndTail<T> {
 					return SequenceM.empty();
 				return SequenceM.fromIterator(it);
 		});
+		
 	}
 	@Deprecated
 	public HeadAndTail(T head,SequenceM<T> tailStream){
 		isHead = ()->true;
 		this.head = ()->head;
 		tail = ()-> tailStream;
+		
 	}
 	/**
 	 * @return true if the head is present

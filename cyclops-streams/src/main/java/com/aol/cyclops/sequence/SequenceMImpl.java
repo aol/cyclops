@@ -4,9 +4,8 @@ package com.aol.cyclops.sequence;
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +38,9 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+import lombok.AllArgsConstructor;
+import lombok.experimental.Wither;
+
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -48,6 +50,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
+import com.aol.cyclops.functions.caching.Memoize;
 import com.aol.cyclops.internal.AsGenericMonad;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.monad.AnyM;
@@ -56,26 +59,104 @@ import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
 import com.aol.cyclops.sequence.spliterators.ReversableSpliterator;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.sequence.streamable.Streamable;
-import com.aol.cyclops.streams.HotStreamImpl;
 import com.aol.cyclops.streams.StreamUtils;
 
 
-
+@AllArgsConstructor
 public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	private final Seq<T> stream;
 	private final Optional<ReversableSpliterator> reversable;
-	
+	@Wither
+	private final TailIterator<T> tailIt;
 	public SequenceMImpl(Stream<T> stream){
 		this.stream = Seq.seq(stream);
 		this.reversable = Optional.empty();
+		tailIt = null;
 		
 	}
 	
 	public SequenceMImpl(Stream<T> stream,ReversableSpliterator rev){
 		this.stream = Seq.seq(stream);
 		this.reversable = Optional.of(rev);
+		tailIt = null;
+	}
+	public SequenceMImpl(Stream<T> stream,TailIterator<T> tail){
+		this.stream = Seq.seq(stream);
+		this.reversable = Optional.empty();
+		this.tailIt =tail;
+	}
+
+	public SequenceM<T> rec(Function<HeadAndTail<T>,SequenceM<T>> mapper){
+		if(tailIt==null){
+			TailIterator<T> it  = new TailIterator<>(this.iterator(),mapper);
+			return new SequenceMImpl<>(Seq.seq(it),it);
+		}
+		return this;
+	}
+	
+	public SequenceM<T> prepend2(T values){
+		tailIt.prepend.add(values);
+		return this;
+	}
+	
+	static class TailIterator<T> implements Iterator<T> {
+
+		Supplier<Iterator<T>> parent;
+		Supplier<HeadAndTail<T>> headAndTail;
+		Function<HeadAndTail<T>,SequenceM<T>> mapper;
+		Iterator<T> current =null;
+		
+		List<T> prepend = new ArrayList<>();
+		public TailIterator(Iterator<T> parent,Function<HeadAndTail<T>,SequenceM<T>> mapper){
+			System.out.println("New iterator!!");
+			this.parent = Memoize.memoizeSupplier(()->parent);
+			this.headAndTail = Memoize.memoizeSupplier(()->new HeadAndTail<>(this.parent.get()));
+			this.mapper = mapper;
+		}
+		/* (non-Javadoc)
+		 * @see java.util.Iterator#hasNext()
+		 */
+		@Override
+		public boolean hasNext() {
+			if(prepend.size()>0)
+				return true;
+			if(current==null){
+				System.out.println("Current is null!");
+				System.out.println(headAndTail.get().isHeadPresent());
+				if(headAndTail.get().isHeadPresent())
+					current = mapper.apply(headAndTail.get()).iterator();
+				else
+					return false;
+			}
+			
+			return current.hasNext();
+		}
+
+		/* (non-Javadoc)
+		 * @see java.util.Iterator#next()
+		 */
+		@Override
+		public T next() {
+			if(prepend.size()>0){
+				T next = prepend.remove(0);
+				return next;
+			}
+			return current.next();
+		}
+
+		/* (non-Javadoc)
+		 * @see java.util.Iterator#forEachRemaining(java.util.function.Consumer)
+		 */
+		@Override
+		public void forEachRemaining(Consumer<? super T> action) {
+			
+			while(hasNext()){
+				action.accept(next());
+			}
+		}
 		
 	}
+	
 	public HotStream<T> schedule(String cron,ScheduledExecutorService ex){
 		return StreamUtils.schedule(this, cron, ex);
 		
@@ -2254,4 +2335,13 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 			Runnable onComplete){
 		StreamUtils.forEachEvent(this, consumerElement, consumerError, onComplete);
 	}
+
+	@Override
+	public SequenceM<T> withTail(Iterator<T> tail) {
+		if(tail instanceof TailIterator)
+			return withTailIt((TailIterator)tail);
+		return this;
+	}
+
+	
 }

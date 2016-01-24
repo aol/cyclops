@@ -62,7 +62,8 @@ import com.aol.cyclops.trampoline.Trampoline;
 
 
 public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>, Publisher<T>, ReactiveStreamsTerminalOperations<T>{
-	
+	SequenceM<T> rec(Function<HeadAndTail<T>,SequenceM<T>> mapper);
+	SequenceM<T> withTail(Iterator<T> tail);
 	@Override
 	<R> R unwrap();
 
@@ -1392,7 +1393,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Seq<T>,Iterable<T>,
 	 */
 	SequenceM<T>  filter(Predicate<? super T> fn);
 
-	
+	SequenceM<T> prepend2(T values);
 	
 
 	

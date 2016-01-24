@@ -1,6 +1,9 @@
 package com.aol.cyclops.functions.inference;
 
+import static org.jooq.lambda.tuple.Tuple.tuple;
+
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 
 /**
@@ -10,7 +13,25 @@ import java.util.function.Function;
  *
  */
 public class Lambda {
-	
+	/**
+	 * E.g. to use a supplier to embed additional code inisde a terenury operator
+	 * 
+	 * <pre>
+	 * {@code 
+	 * return pos >= values.length ? tuple(true, split) : Lambda.s(() -> {
+				action.accept(values[pos++]);
+				return tuple(true, this);
+			}).get();
+	 * 
+	 * }
+	 * </pre>
+	 * 
+	 * @param supplier Lambda / method to assign type of Supplier to  
+	 * @return Supplier
+	 */
+	public static <T> Supplier<T> s(Supplier<T> supplier){
+		return supplier;
+	}
 	/**
 	 * e.g. with Lombok val 
 	 * 
