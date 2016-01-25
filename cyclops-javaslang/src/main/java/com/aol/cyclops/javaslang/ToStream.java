@@ -17,30 +17,30 @@ import com.nurkiewicz.lazyseq.LazySeq;
  */
 public class ToStream {
 
-    public static <T> FluentIterable<T> toFluentIterable(javaslang.collection.Stream<T> s){
+    public static <T> FluentIterable<T> toFluentIterable(Iterable<T> s){
         return FluentIterable.from(s);
     }
-    public static <T> Stream<T> toStream(javaslang.collection.Stream<T> s){
+    public static <T> Stream<T> toStream(Iterable<T> s){
         return Seq.seq(()->s.iterator());
     }
-    public static <T> Seq<T> toJooqLambda(javaslang.collection.Stream<T> s){
+    public static <T> Seq<T> toJooqLambda(Iterable<T> s){
         return Seq.seq(()->s.iterator());
     }
-    public static <T> LazyFutureStream<T> toFutureStream(javaslang.collection.Stream<T> s){
+    public static <T> LazyFutureStream<T> toFutureStream(Iterable<T> s){
         return LazyFutureStream.lazyFutureStream(s.iterator());
     }
     public static <T> LazyFutureStream<T> toFutureStreamFromTraversable(Traversable<T> s){
         return LazyFutureStream.lazyFutureStream(s.iterator());
     }
-    public static <T> SequenceM<T> toSequenceM(javaslang.collection.Stream<T> s){
-        return SequenceM.fromIterable(()->s.iterator());
+    public static <T> SequenceM<T> toSequenceM(Iterable<T> s){
+        return SequenceM.fromIterable(s);
     }
 
-    public static <T> LazySeq<T> toLazySeq(javaslang.collection.Stream<T> s){
+    public static <T> LazySeq<T> toLazySeq(Iterable<T> s){
         return LazySeq.of((Iterator)s.iterator());
     }
 
-    public static <T> fj.data.Stream<T> toFunctionalJavaStream(javaslang.collection.Stream<T> s){
+    public static <T> fj.data.Stream<T> toFunctionalJavaStream(Iterable<T> s){
         return fj.data.Stream.iterableStream(s);
     }
 

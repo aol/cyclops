@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javaslang.collection.List;
+import javaslang.collection.LazyStream;
 import javaslang.collection.Stream;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -22,7 +23,7 @@ public class SchedulingTest {
 	
 	@Test
 	public void cronDebounceTest() throws InterruptedException{
-		assertThat(StreamUtils.debounce(StreamUtils.schedule(Stream.ofAll(1,2,3,4)
+		assertThat(StreamUtils.debounce(StreamUtils.schedule(Stream.of(1,2,3,4)
 				.peek(i->count.incrementAndGet())
 				.peek(System.out::println)
 				,"* * * * * ?", ex)
@@ -35,7 +36,7 @@ public class SchedulingTest {
 	}
 	@Test
 	public void fixedRateTest() throws InterruptedException{
-		assertThat(StreamUtils.debounce(StreamUtils.scheduleFixedRate(Stream.ofAll(1,2,3,4)
+		assertThat(StreamUtils.debounce(StreamUtils.scheduleFixedRate(LazyStream.of(1,2,3,4)
 				.peek(i->count.incrementAndGet())
 				.peek(System.out::println)
 				,1000, ex)
@@ -51,7 +52,7 @@ public class SchedulingTest {
 	public void fixedRateDelay() throws InterruptedException{
 		
 		
-		assertThat(StreamUtils.debounce(StreamUtils.scheduleFixedDelay(Stream.ofAll(1,2,3,4)
+		assertThat(StreamUtils.debounce(StreamUtils.scheduleFixedDelay(Stream.of(1,2,3,4)
 				.peek(i->count.incrementAndGet())
 				.peek(System.out::println)
 				,1000, ex)

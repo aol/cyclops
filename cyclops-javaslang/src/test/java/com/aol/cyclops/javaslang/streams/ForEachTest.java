@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import javaslang.collection.Stream;
+import javaslang.collection.LazyStream;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -26,14 +26,14 @@ public class ForEachTest {
 
 	@Test
 	public void forEachX(){
-		Subscription s = StreamUtils.forEachX(Stream.ofAll(1,2,3), 2, System.out::println);
+		Subscription s = StreamUtils.forEachX(LazyStream.of(1,2,3), 2, System.out::println);
 		System.out.println("first batch");
 		s.request(1);
 	}
 	@Test
 	public void forEachXTest(){
 		List<Integer> list = new ArrayList<>();
-		Subscription s = StreamUtils.forEachX(Stream.ofAll(1,2,3), 2,  i->list.add(i));
+		Subscription s = StreamUtils.forEachX(LazyStream.of(1,2,3), 2,  i->list.add(i));
 		assertThat(list,hasItems(1,2));
 		assertThat(list.size(),equalTo(2));
 		s.request(1);
@@ -46,7 +46,7 @@ public class ForEachTest {
 	
 		List<Integer> list = new ArrayList<>();
 		
-		Stream<Integer> stream = Stream.ofAll(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
+		LazyStream<Integer> stream = LazyStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
 		Subscription s = StreamUtils.forEachXWithError(stream, 2, i->list.add(i),
 								e->error=e);
 		
@@ -65,7 +65,7 @@ public class ForEachTest {
 	
 		List<Integer> list = new ArrayList<>();
 		
-		Stream<Integer> stream = Stream.ofAll(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
+		LazyStream<Integer> stream = LazyStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
 		Subscription s = StreamUtils.forEachXEvents(stream, 2, i->list.add(i),
 								e->error=e,()->complete=true);
 		
@@ -89,7 +89,7 @@ public class ForEachTest {
 	
 		List<Integer> list = new ArrayList<>();
 		assertThat(error,nullValue());
-		Stream<Integer> stream = Stream.ofAll(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
+		LazyStream<Integer> stream = LazyStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
 		StreamUtils.forEachWithError(stream,  i->list.add(i),
 								e->error=e);
 		
@@ -108,7 +108,7 @@ public class ForEachTest {
 		List<Integer> list = new ArrayList<>();
 		assertFalse(complete);
 		assertThat(error,nullValue());
-		Stream<Integer> stream = Stream.ofAll(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
+		LazyStream<Integer> stream = LazyStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
 		StreamUtils.forEachEvent(stream,  i->list.add(i),e->error=e,()->complete=true);
 		
 		

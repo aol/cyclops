@@ -2,7 +2,6 @@ package com.aol.cyclops.javaslang.streams;
 
 import java.util.Iterator;
 import java.util.Queue;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;

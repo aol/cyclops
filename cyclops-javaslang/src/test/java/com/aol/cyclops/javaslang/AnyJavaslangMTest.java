@@ -10,26 +10,19 @@ import javaslang.Lazy;
 import javaslang.collection.Array;
 import javaslang.collection.CharSeq;
 import javaslang.collection.HashSet;
+import javaslang.collection.LazyStream;
 import javaslang.collection.List;
 import javaslang.collection.Queue;
 import javaslang.collection.Stack;
-import javaslang.collection.Stream;
 import javaslang.collection.Vector;
 import javaslang.concurrent.Future;
-import javaslang.control.Failure;
-import javaslang.control.Left;
+import javaslang.control.Either;
 import javaslang.control.Option;
-import javaslang.control.Right;
-import javaslang.control.Success;
 import javaslang.control.Try;
-import javaslang.test.Arbitrary;
-import javaslang.test.Gen;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.monad.AnyMonads;
 
 public class AnyJavaslangMTest {
 
@@ -54,7 +47,7 @@ public class AnyJavaslangMTest {
 	@Test//(expected=javaslang.control.Failure.NonFatal.class)
 	public void tryTestFailure(){
 		
-		Javaslang.anyM(new Failure(new RuntimeException()))
+		Javaslang.anyM(Try.failure(new RuntimeException()))
 			.toSequence()
 			.forEach(System.out::println);
 		
@@ -63,7 +56,7 @@ public class AnyJavaslangMTest {
 	public void tryTestFailureProcess(){
 		
 		Exception e = new RuntimeException();
-		assertThat(Javaslang.anyMFailure(new Failure(e))
+		assertThat(Javaslang.anyMFailure(Try.failure(e))
 				.toSequence()
 				.toList(),equalTo(Arrays.asList(e)));
 		
@@ -71,7 +64,7 @@ public class AnyJavaslangMTest {
 	@Test
 	public void whenSuccessFailureProcessDoesNothing(){
 		
-		assertThat(Javaslang.anyMFailure(new Success("hello world"))
+		assertThat(Javaslang.anyMFailure(Try.success("hello world"))
 											.toSequence()
 											.toList(),equalTo(Arrays.asList()));
 			
@@ -96,21 +89,21 @@ public class AnyJavaslangMTest {
 	}
 	@Test
 	public void eitherTest(){
-		assertThat(Javaslang.anyM(new Right<Object,String>("hello world"))
+		assertThat(Javaslang.anyM(Either.right("hello world"))
 			.map(String::toUpperCase)
 			.toSequence()
 			.toList(),equalTo(Arrays.asList("HELLO WORLD")));
 	}
 	@Test
 	public void eitherLeftTest(){
-		assertThat(Javaslang.anyM(new Left<String,String>("hello world"))
+		assertThat(Javaslang.anyM(Either.<String,String>left("hello world"))
 			.map(String::toUpperCase)
 			.toSequence()
 			.toList(),equalTo(Arrays.asList()));
 	}
 	@Test
 	public void eitherFlatMapTest(){
-		assertThat(Javaslang.anyM(new Right<Object,String>("hello world"))
+		assertThat(Javaslang.anyM(Either.<Object,String>right("hello world"))
 			.map(String::toUpperCase)
 			.flatMapOptional(Optional::of)
 			.toSequence()
@@ -118,21 +111,21 @@ public class AnyJavaslangMTest {
 	}
 	@Test
 	public void rightProjectionTest(){
-		assertThat(Javaslang.anyM(new Right<Object,String>("hello world").right())
+		assertThat(Javaslang.anyM(Either.<Object,String>right("hello world").right())
 			.map(String::toUpperCase)
 			.toSequence()
 			.toList(),equalTo(Arrays.asList("HELLO WORLD")));
 	}
 	@Test
 	public void rightProjectionLeftTest(){
-		assertThat(Javaslang.anyM(new Left<String,String>("hello world").right())
+		assertThat(Javaslang.anyM(Either.<String,String>left("hello world").right())
 			.map(String::toUpperCase)
 			.toSequence()
 			.toList(),equalTo(Arrays.asList()));
 	}
 	@Test
 	public void rightProjectionFlatMapTest(){
-		assertThat(Javaslang.anyM(new Right<Object,String>("hello world").right())
+		assertThat(Javaslang.anyM(Either.<Object,String>right("hello world").right())
 			.map(String::toUpperCase)
 			.flatMapOptional(Optional::of)
 			.toSequence()
@@ -140,7 +133,7 @@ public class AnyJavaslangMTest {
 	}
 	@Test
 	public void leftProjectionTest(){
-		assertThat(Javaslang.anyM(new Left<String,String>("hello world").right())
+		assertThat(Javaslang.anyM(Either.<String,String>left("hello world").right())
 			.map(String::toUpperCase)
 			.toSequence()
 			.toList(),equalTo(Arrays.asList()));
@@ -148,7 +141,7 @@ public class AnyJavaslangMTest {
 	
 	@Test
 	public void leftProjectionLeftTest(){
-		assertThat(Javaslang.anyM(new Left<String,String>("hello world").left())
+		assertThat(Javaslang.anyM(Either.<String,String>left("hello world").left())
 			.map(String::toUpperCase)
 			.toSequence()
 			.toList(),equalTo(Arrays.asList("HELLO WORLD")));
@@ -156,7 +149,7 @@ public class AnyJavaslangMTest {
 	
 	@Test
 	public void leftProjectionLeftFlatMapTest(){
-		assertThat(Javaslang.anyM(new Left<String,String>("hello world").left())
+		assertThat(Javaslang.anyM(Either.<String,String>left("hello world").left())
 			.map(String::toUpperCase)
 			.flatMapOptional(Optional::of)
 			.toSequence()
@@ -218,18 +211,12 @@ public class AnyJavaslangMTest {
 	}
 	@Test
 	public void streamTest(){
-		assertThat(Javaslang.anyM(Stream.of("hello world"))
+		assertThat(Javaslang.anyM(LazyStream.of("hello world"))
 				.map(String::toUpperCase)
 				.toSequence()
 				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
 	}
-	@Test @Ignore
-	public void arbritrayTest(){
-		assertThat(Javaslang.anyM(Arbitrary.list(Gen.of("hello world").arbitrary()))
-			//	.map(String::toUpperCase)
-				.toSequence()
-				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
-	}
+	
 	@Test
 	public void listTest(){
 		assertThat(Javaslang.anyM(List.of("hello world"))
@@ -239,7 +226,7 @@ public class AnyJavaslangMTest {
 	}
 	@Test
 	public void streamFlatMapTest(){
-		assertThat(Javaslang.anyM(Stream.of("hello world"))
+		assertThat(Javaslang.anyM(LazyStream.of("hello world"))
 				.map(String::toUpperCase)
 				.flatMap(i->Javaslang.anyM(List.of(i)))
 				.toSequence()
@@ -247,7 +234,7 @@ public class AnyJavaslangMTest {
 	}
 	@Test
 	public void streamFlatMapTestJDK(){
-		assertThat(Javaslang.anyM(Stream.of("hello world"))
+		assertThat(Javaslang.anyM(LazyStream.of("hello world"))
 				.map(String::toUpperCase)
 				.flatMap(i->AnyM.fromStream(java.util.stream.Stream.of(i)))
 				.toSequence()

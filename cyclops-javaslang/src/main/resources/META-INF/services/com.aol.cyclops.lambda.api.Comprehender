@@ -5,8 +5,6 @@ com.aol.cyclops.javaslang.comprehenders.EitherComprehender
 com.aol.cyclops.javaslang.comprehenders.OptionComprehender
 com.aol.cyclops.javaslang.comprehenders.LeftProjectionComprehender
 com.aol.cyclops.javaslang.comprehenders.RightProjectionComprehender
-com.aol.cyclops.javaslang.comprehenders.ArbitraryComprehender
-com.aol.cyclops.javaslang.comprehenders.LazyComprehender
 com.aol.cyclops.javaslang.comprehenders.FutureComprehender
 com.aol.cyclops.javaslang.comprehenders.ArrayComprehender
 com.aol.cyclops.javaslang.comprehenders.CharSeqComprehender

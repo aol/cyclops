@@ -3,6 +3,7 @@ package com.aol.cyclops.javaslang.streams;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
+import javaslang.collection.LazyStream;
 import javaslang.collection.Stream;
 
 

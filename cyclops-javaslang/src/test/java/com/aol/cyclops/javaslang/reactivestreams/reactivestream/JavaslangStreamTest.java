@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.stream.Collector;
 
 import javaslang.collection.List;
-import javaslang.collection.Stream;
+import javaslang.collection.LazyStream;
 
 import javaslang.control.Try;
 
@@ -25,140 +25,140 @@ public class JavaslangStreamTest extends AbstractSeqTest {
 	  // -- construction
 
     @Override
-    protected <T> Collector<T, ArrayList<T>, Stream<T>> collector() {
-        return Stream.collector();
+    protected <T> Collector<T, ArrayList<T>, LazyStream<T>> collector() {
+        return LazyStream.collector();
     }
 
     @Override
-    protected <T> Stream<T> empty() {
+    protected <T> LazyStream<T> empty() {
         return ReactiveStream.empty();
     }
 
     @Override
-    protected <T> Stream<T> of(T element) {
+    protected <T> LazyStream<T> of(T element) {
         return ReactiveStream.of(element);
     }
 
     @SuppressWarnings("varargs")
     @SafeVarargs
     @Override
-    protected final <T> Stream<T> of(T... elements) {
-        return  ReactiveStream.fromStream(Stream.of(elements));
+    protected final <T> LazyStream<T> of(T... elements) {
+        return  ReactiveStream.fromStream(LazyStream.of(elements));
     }
 
     @Override
-    protected <T> Stream<T> ofAll(java.lang.Iterable<? extends T> elements) {
-        return  ReactiveStream.fromStream(Stream.ofAll(elements));
+    protected <T> LazyStream<T> ofAll(java.lang.Iterable<? extends T> elements) {
+        return  ReactiveStream.fromStream(LazyStream.ofAll(elements));
     }
 
     @Override
-    protected Stream<Boolean> ofAll(boolean[] array) {
-        return  ReactiveStream.fromStream(Stream.ofAll(array));
+    protected LazyStream<Boolean> ofAll(boolean[] array) {
+        return  ReactiveStream.fromStream(LazyStream.ofAll(array));
     }
 
     @Override
-    protected Stream<Byte> ofAll(byte[] array) {
-        return  ReactiveStream.fromStream(Stream.ofAll(array));
+    protected LazyStream<Byte> ofAll(byte[] array) {
+        return  ReactiveStream.fromStream(LazyStream.ofAll(array));
     }
 
     @Override
-    protected Stream<Character> ofAll(char[] array) {
-        return  ReactiveStream.fromStream(Stream.ofAll(array));
+    protected LazyStream<Character> ofAll(char[] array) {
+        return  ReactiveStream.fromStream(LazyStream.ofAll(array));
     }
 
     @Override
-    protected Stream<Double> ofAll(double[] array) {
-        return  ReactiveStream.fromStream(Stream.ofAll(array));
+    protected LazyStream<Double> ofAll(double[] array) {
+        return  ReactiveStream.fromStream(LazyStream.ofAll(array));
     }
 
     @Override
-    protected Stream<Float> ofAll(float[] array) {
-        return  ReactiveStream.fromStream(Stream.ofAll(array));
+    protected LazyStream<Float> ofAll(float[] array) {
+        return  ReactiveStream.fromStream(LazyStream.ofAll(array));
     }
 
     @Override
-    protected Stream<Integer> ofAll(int[] array) {
-        return  ReactiveStream.fromStream(Stream.ofAll(array));
+    protected LazyStream<Integer> ofAll(int[] array) {
+        return  ReactiveStream.fromStream(LazyStream.ofAll(array));
     }
 
     @Override
-    protected Stream<Long> ofAll(long[] array) {
-        return  ReactiveStream.fromStream(Stream.ofAll(array));
+    protected LazyStream<Long> ofAll(long[] array) {
+        return  ReactiveStream.fromStream(LazyStream.ofAll(array));
     }
 
     @Override
-    protected Stream<Short> ofAll(short[] array) {
-        return  ReactiveStream.fromStream(Stream.ofAll(array));
+    protected LazyStream<Short> ofAll(short[] array) {
+        return  ReactiveStream.fromStream(LazyStream.ofAll(array));
     }
 
     @Override
-    protected Stream<Character> range(char from, char toExclusive) {
-        return  ReactiveStream.fromStream(Stream.range(from, toExclusive));
+    protected LazyStream<Character> range(char from, char toExclusive) {
+        return  ReactiveStream.fromStream(LazyStream.range(from, toExclusive));
     }
 
     @Override
-    protected Stream<Character> rangeBy(char from, char toExclusive, int step) {
-        return  ReactiveStream.fromStream(Stream.rangeBy(from, toExclusive, step));
+    protected LazyStream<Character> rangeBy(char from, char toExclusive, int step) {
+        return  ReactiveStream.fromStream(LazyStream.rangeBy(from, toExclusive, step));
     }
 
     @Override
-    protected Stream<Double> rangeBy(double from, double toExclusive, double step) {
-        return  ReactiveStream.fromStream(Stream.rangeBy(from, toExclusive, step));
+    protected LazyStream<Double> rangeBy(double from, double toExclusive, double step) {
+        return  ReactiveStream.fromStream(LazyStream.rangeBy(from, toExclusive, step));
     }
 
     @Override
-    protected Stream<Integer> range(int from, int toExclusive) {
+    protected LazyStream<Integer> range(int from, int toExclusive) {
         return ReactiveStream.range(from, toExclusive);
     }
 
     @Override
-    protected Stream<Integer> rangeBy(int from, int toExclusive, int step) {
-        return  ReactiveStream.fromStream(Stream.rangeBy(from, toExclusive, step));
+    protected LazyStream<Integer> rangeBy(int from, int toExclusive, int step) {
+        return  ReactiveStream.fromStream(LazyStream.rangeBy(from, toExclusive, step));
     }
 
     @Override
-    protected Stream<Long> range(long from, long toExclusive) {
+    protected LazyStream<Long> range(long from, long toExclusive) {
         return ReactiveStream.range(from, toExclusive);
     }
 
     @Override
-    protected Stream<Long> rangeBy(long from, long toExclusive, long step) {
-        return  ReactiveStream.fromStream(Stream.rangeBy(from, toExclusive, step));
+    protected LazyStream<Long> rangeBy(long from, long toExclusive, long step) {
+        return  ReactiveStream.fromStream(LazyStream.rangeBy(from, toExclusive, step));
     }
 
     @Override
-    protected Stream<Character> rangeClosed(char from, char toInclusive) {
-        return  ReactiveStream.fromStream(Stream.rangeClosed(from, toInclusive));
+    protected LazyStream<Character> rangeClosed(char from, char toInclusive) {
+        return  ReactiveStream.fromStream(LazyStream.rangeClosed(from, toInclusive));
     }
 
     @Override
-    protected Stream<Character> rangeClosedBy(char from, char toInclusive, int step) {
-        return  ReactiveStream.fromStream(Stream.rangeClosedBy(from, toInclusive, step));
+    protected LazyStream<Character> rangeClosedBy(char from, char toInclusive, int step) {
+        return  ReactiveStream.fromStream(LazyStream.rangeClosedBy(from, toInclusive, step));
     }
 
     @Override
-    protected Stream<Double> rangeClosedBy(double from, double toInclusive, double step) {
-        return  ReactiveStream.fromStream(Stream.rangeClosedBy(from, toInclusive, step));
+    protected LazyStream<Double> rangeClosedBy(double from, double toInclusive, double step) {
+        return  ReactiveStream.fromStream(LazyStream.rangeClosedBy(from, toInclusive, step));
     }
 
     @Override
-    protected Stream<Integer> rangeClosed(int from, int toInclusive) {
-        return  ReactiveStream.fromStream(Stream.rangeClosed(from, toInclusive));
+    protected LazyStream<Integer> rangeClosed(int from, int toInclusive) {
+        return  ReactiveStream.fromStream(LazyStream.rangeClosed(from, toInclusive));
     }
 
     @Override
-    protected Stream<Integer> rangeClosedBy(int from, int toInclusive, int step) {
-        return  ReactiveStream.fromStream(Stream.rangeClosedBy(from, toInclusive, step));
+    protected LazyStream<Integer> rangeClosedBy(int from, int toInclusive, int step) {
+        return  ReactiveStream.fromStream(LazyStream.rangeClosedBy(from, toInclusive, step));
     }
 
     @Override
-    protected Stream<Long> rangeClosed(long from, long toInclusive) {
-        return  ReactiveStream.fromStream(Stream.rangeClosed(from, toInclusive));
+    protected LazyStream<Long> rangeClosed(long from, long toInclusive) {
+        return  ReactiveStream.fromStream(LazyStream.rangeClosed(from, toInclusive));
     }
 
     @Override
-    protected Stream<Long> rangeClosedBy(long from, long toInclusive, long step) {
-        return ReactiveStream.fromStream(Stream.rangeClosedBy(from, toInclusive, step));
+    protected LazyStream<Long> rangeClosedBy(long from, long toInclusive, long step) {
+        return ReactiveStream.fromStream(LazyStream.rangeClosedBy(from, toInclusive, step));
     }
 
     // -- static from(int)
@@ -206,7 +206,7 @@ public class JavaslangStreamTest extends AbstractSeqTest {
 
     @Test
     public void shouldBuildStreamBasedOnHeadAndTailSupplierWithAccessToHead() {
-        assertThat(ReactiveStream.cons(()->1, () -> ReactiveStream.cons(()->2, Stream::empty))).isEqualTo(ReactiveStream.of(1, 2));
+        assertThat(ReactiveStream.cons(()->1, () -> ReactiveStream.cons(()->2, LazyStream::empty))).isEqualTo(ReactiveStream.of(1, 2));
     }
 
     // -- combinations
@@ -273,9 +273,9 @@ public class JavaslangStreamTest extends AbstractSeqTest {
 
     @Test
     public void shouldRecurrentlyCalculatePrimes() {
-        assertThat(Stream
+        assertThat(LazyStream
                 .of(2)
-                .appendSelf(self -> Stream
+                .appendSelf(self -> LazyStream
                         .gen(3, i -> i + 2)
                         .filter(i -> self.takeWhile(j -> j * j <= i).forAll(k -> i % k > 0)))
                 .take(10)).isEqualTo(ReactiveStream.of(2, 3, 5, 7, 11, 13, 17, 19, 23, 29));
@@ -374,9 +374,9 @@ public class JavaslangStreamTest extends AbstractSeqTest {
     @Test
     public void shouldEvaluateTailAtMostOnce() {
         final int[] counter = { 0 };
-        final Stream<Integer> stream = ReactiveStream.generate(() -> counter[0]++);
+        final LazyStream<Integer> stream = ReactiveStream.generate(() -> counter[0]++);
         // this test ensures that the `tail.append(100)` does not modify the tail elements
-        final Stream<Integer> tail = stream.tail().append(100);
+        final LazyStream<Integer> tail = stream.tail().append(100);
         final String expected = stream.drop(1).take(3).mkString(",");
         final String actual = tail.take(3).mkString(",");
         assertThat(expected).isEqualTo("1,2,3");
@@ -400,7 +400,7 @@ public class JavaslangStreamTest extends AbstractSeqTest {
     }
 
     private Try<Void> flatTryWithJavaslangStream(Integer[] vals, Try.CheckedConsumer<Integer> func) {
-        return Stream.of(vals)
+        return LazyStream.of(vals)
                 .map(v -> Try.run(() -> func.accept(v)))
                 .find(Try::isFailure)
                 .getOrElse(() -> Try.success(null));

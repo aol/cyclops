@@ -21,7 +21,7 @@ import javaslang.collection.Map;
 import javaslang.collection.Queue;
 import javaslang.collection.Set;
 import javaslang.collection.Stack;
-import javaslang.collection.Stream;
+import javaslang.collection.LazyStream;
 import javaslang.collection.Vector;
 import javaslang.control.Either;
 import javaslang.control.Match;
@@ -305,11 +305,11 @@ public abstract class AbstractValueTest {
     @Test
     public void shouldConvertToStream() {
         final Value<Integer> value = of(1, 2, 3);
-        final Stream<Integer> stream = value.toStream();
+        final LazyStream<Integer> stream = LazyStream.ofAll(()->value.toStream().iterator());
         if (value.isSingleValued()) {
-            assertThat(stream).isEqualTo(Stream.of(1));
+            assertThat(stream).isEqualTo(LazyStream.of(1));
         } else {
-            assertThat(stream).isEqualTo(Stream.of(1, 2, 3));
+            assertThat(stream).isEqualTo(LazyStream.of(1, 2, 3));
         }
     }
 

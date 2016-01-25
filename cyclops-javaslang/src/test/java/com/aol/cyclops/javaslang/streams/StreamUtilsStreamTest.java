@@ -5,14 +5,14 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
-import javaslang.collection.Stream;
+import javaslang.collection.LazyStream;
 
 import org.junit.Test;
 
 
 public class StreamUtilsStreamTest {
-	 public static <U> Stream<U> of(U... array){
-		 return Stream.ofAll(array);
+	 public static <U> LazyStream<U> of(U... array){
+		 return LazyStream.of(array);
 	 }
 
 	
@@ -25,7 +25,7 @@ public class StreamUtilsStreamTest {
 	
 	@Test
 	public void testFlatMap(){
-		assertThat(StreamUtils.flatMapStream(Stream.ofAll( asList("1","10"), asList("2"),asList("3"),asList("4")), list -> list.stream() ).toJavaList(),hasItem("10"));
+		assertThat(StreamUtils.flatMapStream(LazyStream.of( asList("1","10"), asList("2"),asList("3"),asList("4")), list -> list.stream() ).toJavaList(),hasItem("10"));
 	}
 	
 	

@@ -1,9 +1,9 @@
 package javaslang.collection;
 
 import javaslang.*;
-import javaslang.collection.Stream.LazyCons;
-import javaslang.collection.Stream.Empty;
-import javaslang.collection.StreamModule.*;
+import javaslang.collection.LazyStream.LazyCons;
+import javaslang.collection.LazyStream.Empty;
+import javaslang.collection.LazyStreamModule.*;
 import javaslang.control.Match;
 import javaslang.control.Option;
 
@@ -93,26 +93,30 @@ import com.aol.cyclops.javaslang.streams.StreamUtils;
  * @author Daniel Dietrich, Jörgen Andersson, Ruslan Sennov
  * @since 1.1.0
  */
-public interface Stream<T> extends LinearSeq<T> {
+public interface LazyStream<T> extends Stream<T> {
 
     long serialVersionUID = 1L;
 
     /**
      * Returns a {@link java.util.stream.Collector} which may be used in conjunction with
-     * {@link java.util.stream.Stream#collect(java.util.stream.Collector)} to obtain a {@link javaslang.collection.Stream}.
+     * {@link java.util.stream.Stream#collect(java.util.stream.Collector)} to obtain a {@link javaslang.collection.LazyStream}.
      *
      * @param <T> Component type of the Stream.
      * @return A javaslang.collection.Stream Collector.
      */
-    static <T> Collector<T, ArrayList<T>, Stream<T>> collector() {
+    static <T> Collector<T, ArrayList<T>, LazyStream<T>> collector() {
         final Supplier<ArrayList<T>> supplier = ArrayList::new;
         final BiConsumer<ArrayList<T>, T> accumulator = ArrayList::add;
         final BinaryOperator<ArrayList<T>> combiner = (left, right) -> {
             left.addAll(right);
             return left;
         };
-        final Function<ArrayList<T>, Stream<T>> finisher = Stream::ofAll;
+        final Function<ArrayList<T>, LazyStream<T>> finisher = LazyStream::ofAll;
         return Collector.of(supplier, accumulator, combiner, finisher);
+    }
+    static <T> LazyStream<T> fromStream(Stream<T> stream){
+    	return (stream instanceof LazyStream) ? (LazyStream)stream :
+    										ofAll(()->stream.iterator());
     }
 
     /**
@@ -123,10 +127,11 @@ public interface Stream<T> extends LinearSeq<T> {
      * @param value a start int value
      * @return a new Stream of int values starting from {@code from}
      */
-    static Stream<Integer> from(int value) {
-        return Stream.ofAll(Iterator.from(value));
+    static LazyStream<Integer> from(int value) {
+        return LazyStream.ofAll(Iterator.from(value));
     }
 
+    
     /**
      * Returns an infinitely long Stream of long values starting from {@code from}.
      * <p>
@@ -135,8 +140,8 @@ public interface Stream<T> extends LinearSeq<T> {
      * @param value a start long value
      * @return a new Stream of long values starting from {@code from}
      */
-    static Stream<Long> from(long value) {
-        return Stream.ofAll(Iterator.from(value));
+    static LazyStream<Long> from(long value) {
+        return LazyStream.ofAll(Iterator.from(value));
     }
 
     /**
@@ -146,9 +151,9 @@ public interface Stream<T> extends LinearSeq<T> {
      * @param <T>      value type
      * @return A new Stream
      */
-    static <T> Stream<T> gen(Supplier<? extends T> supplier) {
+    static <T> LazyStream<T> gen(Supplier<? extends T> supplier) {
         Objects.requireNonNull(supplier, "supplier is null");
-        return Stream.ofAll(Iterator.gen(supplier));
+        return LazyStream.ofAll(Iterator.gen(supplier));
     }
 
     /**
@@ -160,23 +165,23 @@ public interface Stream<T> extends LinearSeq<T> {
      * @param <T>  value type
      * @return A new Stream
      */
-    static <T> Stream<T> gen(T seed, Function<? super T, ? extends T> f) {
+    static <T> LazyStream<T> gen(T seed, Function<? super T, ? extends T> f) {
         Objects.requireNonNull(f, "f is null");
-        return Stream.ofAll(Iterator.gen(seed, f));
+        return LazyStream.ofAll(Iterator.gen(seed, f));
     }
 
     /**
      * Constructs a Stream of a head element and a tail supplier.
      *
      * @param head         The head element of the Stream
-     * @param tailSupplier A supplier of the tail values. To end the stream, return {@link Stream#empty}.
+     * @param tailSupplier A supplier of the tail values. To end the stream, return {@link LazyStream#empty}.
      * @param <T>          value type
      * @return A new Stream
      */
     @SuppressWarnings("unchecked")
-    static <T> Stream<T> cons(Supplier<T> head, Supplier<? extends Stream<? extends T>> tailSupplier) {
+    static <T> LazyStream<T> cons(Supplier<T> head, Supplier<? extends LazyStream<? extends T>> tailSupplier) {
         Objects.requireNonNull(tailSupplier, "tailSupplier is null");
-        return new LazyCons<>(head, (Supplier<Stream<T>>) tailSupplier);
+        return new LazyCons<>(head, (Supplier<LazyStream<T>>) tailSupplier);
     }
 
     /**
@@ -188,7 +193,7 @@ public interface Stream<T> extends LinearSeq<T> {
      * @param <T> Component type of Nil, determined by type inference in the particular context.
      * @return The empty list.
      */
-    static <T> Stream<T> empty() {
+    static <T> LazyStream<T> empty() {
         return Empty.instance();
     }
 
@@ -199,7 +204,7 @@ public interface Stream<T> extends LinearSeq<T> {
      * @param <T>     The component type
      * @return A new Stream instance containing the given element
      */
-    static <T> Stream<T> of(T element) {
+    static <T> LazyStream<T> of(T element) {
         return new LazyCons<>(()->element, Empty::instance);
     }
 
@@ -215,9 +220,9 @@ public interface Stream<T> extends LinearSeq<T> {
      * @return A list containing the given elements in the same order.
      */
     @SafeVarargs
-    static <T> Stream<T> of(T... elements) {
+    static <T> LazyStream<T> of(T... elements) {
         Objects.requireNonNull(elements, "elements is null");
-        return Stream.ofAll(new Iterator<T>() {
+        return LazyStream.ofAll(new Iterator<T>() {
             int i = 0;
 
             @Override
@@ -286,9 +291,9 @@ public interface Stream<T> extends LinearSeq<T> {
      * @return A Stream consisting of elements {@code f(0),f(1), ..., f(n - 1)}
      * @throws NullPointerException if {@code f} is null
      */
-    static <T> Stream<T> tabulate(int n, Function<? super Integer, ? extends T> f) {
+    static <T> LazyStream<T> tabulate(int n, Function<? super Integer, ? extends T> f) {
         Objects.requireNonNull(f, "f is null");
-        return Stream.ofAll(Collections.tabulate(n, f));
+        return LazyStream.ofAll(Collections.tabulate(n, f));
     }
 
     /**
@@ -300,9 +305,9 @@ public interface Stream<T> extends LinearSeq<T> {
      * @return A Stream of size {@code n}, where each element contains the result supplied by {@code s}.
      * @throws NullPointerException if {@code s} is null
      */
-    static <T> Stream<T> fill(int n, Supplier<? extends T> s) {
+    static <T> LazyStream<T> fill(int n, Supplier<? extends T> s) {
         Objects.requireNonNull(s, "s is null");
-        return Stream.ofAll(Collections.fill(n, s));
+        return LazyStream.ofAll(Collections.fill(n, s));
     }
 
     /**
@@ -313,10 +318,10 @@ public interface Stream<T> extends LinearSeq<T> {
      * @return A list containing the given elements in the same order.
      */
     @SuppressWarnings("unchecked")
-    static <T> Stream<T> ofAll(Iterable<? extends T> elements) {
+    static <T> LazyStream<T> ofAll(Iterable<? extends T> elements) {
         Objects.requireNonNull(elements, "elements is null");
-        if (elements instanceof Stream) {
-            return (Stream<T>) elements;
+        if (elements instanceof LazyStream) {
+            return (LazyStream<T>) elements;
         } else {
             return StreamFactory.create(elements.iterator());
         }
@@ -328,9 +333,9 @@ public interface Stream<T> extends LinearSeq<T> {
      * @param array a boolean array
      * @return A new Stream of Boolean values
      */
-    static Stream<Boolean> ofAll(boolean[] array) {
+    static LazyStream<Boolean> ofAll(boolean[] array) {
         Objects.requireNonNull(array, "array is null");
-        return Stream.ofAll(Iterator.ofAll(array));
+        return LazyStream.ofAll(Iterator.ofAll(array));
     }
 
     /**
@@ -339,9 +344,9 @@ public interface Stream<T> extends LinearSeq<T> {
      * @param array a byte array
      * @return A new Stream of Byte values
      */
-    static Stream<Byte> ofAll(byte[] array) {
+    static LazyStream<Byte> ofAll(byte[] array) {
         Objects.requireNonNull(array, "array is null");
-        return Stream.ofAll(Iterator.ofAll(array));
+        return LazyStream.ofAll(Iterator.ofAll(array));
     }
 
     /**
@@ -350,9 +355,9 @@ public interface Stream<T> extends LinearSeq<T> {
      * @param array a char array
      * @return A new Stream of Character values
      */
-    static Stream<Character> ofAll(char[] array) {
+    static LazyStream<Character> ofAll(char[] array) {
         Objects.requireNonNull(array, "array is null");
-        return Stream.ofAll(Iterator.ofAll(array));
+        return LazyStream.ofAll(Iterator.ofAll(array));
     }
 
     /**
@@ -361,9 +366,9 @@ public interface Stream<T> extends LinearSeq<T> {
      * @param array a double array
      * @return A new Stream of Double values
      */
-    static Stream<Double> ofAll(double[] array) {
+    static LazyStream<Double> ofAll(double[] array) {
         Objects.requireNonNull(array, "array is null");
-        return Stream.ofAll(Iterator.ofAll(array));
+        return LazyStream.ofAll(Iterator.ofAll(array));
     }
 
     /**
@@ -372,9 +377,9 @@ public interface Stream<T> extends LinearSeq<T> {
      * @param array a float array
      * @return A new Stream of Float values
      */
-    static Stream<Float> ofAll(float[] array) {
+    static LazyStream<Float> ofAll(float[] array) {
         Objects.requireNonNull(array, "array is null");
-        return Stream.ofAll(Iterator.ofAll(array));
+        return LazyStream.ofAll(Iterator.ofAll(array));
     }
 
     /**
@@ -383,9 +388,9 @@ public interface Stream<T> extends LinearSeq<T> {
      * @param array an int array
      * @return A new Stream of Integer values
      */
-    static Stream<Integer> ofAll(int[] array) {
+    static LazyStream<Integer> ofAll(int[] array) {
         Objects.requireNonNull(array, "array is null");
-        return Stream.ofAll(Iterator.ofAll(array));
+        return LazyStream.ofAll(Iterator.ofAll(array));
     }
 
     /**
@@ -394,9 +399,9 @@ public interface Stream<T> extends LinearSeq<T> {
      * @param array a long array
      * @return A new Stream of Long values
      */
-    static Stream<Long> ofAll(long[] array) {
+    static LazyStream<Long> ofAll(long[] array) {
         Objects.requireNonNull(array, "array is null");
-        return Stream.ofAll(Iterator.ofAll(array));
+        return LazyStream.ofAll(Iterator.ofAll(array));
     }
 
     /**
@@ -405,21 +410,21 @@ public interface Stream<T> extends LinearSeq<T> {
      * @param array a short array
      * @return A new Stream of Short values
      */
-    static Stream<Short> ofAll(short[] array) {
+    static LazyStream<Short> ofAll(short[] array) {
         Objects.requireNonNull(array, "array is null");
-        return Stream.ofAll(Iterator.ofAll(array));
+        return LazyStream.ofAll(Iterator.ofAll(array));
     }
 
-    static Stream<Character> range(char from, char toExclusive) {
-        return Stream.ofAll(Iterator.range(from, toExclusive));
+    static LazyStream<Character> range(char from, char toExclusive) {
+        return LazyStream.ofAll(Iterator.range(from, toExclusive));
     }
 
-    static Stream<Character> rangeBy(char from, char toExclusive, int step) {
-        return Stream.ofAll(Iterator.rangeBy(from, toExclusive, step));
+    static LazyStream<Character> rangeBy(char from, char toExclusive, int step) {
+        return LazyStream.ofAll(Iterator.rangeBy(from, toExclusive, step));
     }
 
-    static Stream<Double> rangeBy(double from, double toExclusive, double step) {
-        return Stream.ofAll(Iterator.rangeBy(from, toExclusive, step));
+    static LazyStream<Double> rangeBy(double from, double toExclusive, double step) {
+        return LazyStream.ofAll(Iterator.rangeBy(from, toExclusive, step));
     }
 
     /**
@@ -438,8 +443,8 @@ public interface Stream<T> extends LinearSeq<T> {
      * @param toExclusive the last number + 1
      * @return a range of int values as specified or {@code Nil} if {@code from >= toExclusive}
      */
-    static Stream<Integer> range(int from, int toExclusive) {
-        return Stream.ofAll(Iterator.range(from, toExclusive));
+    static LazyStream<Integer> range(int from, int toExclusive) {
+        return LazyStream.ofAll(Iterator.range(from, toExclusive));
     }
 
     /**
@@ -464,8 +469,8 @@ public interface Stream<T> extends LinearSeq<T> {
      * {@code from <= toInclusive} and {@code step < 0}
      * @throws IllegalArgumentException if {@code step} is zero
      */
-    static Stream<Integer> rangeBy(int from, int toExclusive, int step) {
-        return Stream.ofAll(Iterator.rangeBy(from, toExclusive, step));
+    static LazyStream<Integer> rangeBy(int from, int toExclusive, int step) {
+        return LazyStream.ofAll(Iterator.rangeBy(from, toExclusive, step));
     }
 
     /**
@@ -484,8 +489,8 @@ public interface Stream<T> extends LinearSeq<T> {
      * @param toExclusive the last number + 1
      * @return a range of long values as specified or {@code Nil} if {@code from >= toExclusive}
      */
-    static Stream<Long> range(long from, long toExclusive) {
-        return Stream.ofAll(Iterator.range(from, toExclusive));
+    static LazyStream<Long> range(long from, long toExclusive) {
+        return LazyStream.ofAll(Iterator.range(from, toExclusive));
     }
 
     /**
@@ -510,20 +515,20 @@ public interface Stream<T> extends LinearSeq<T> {
      * {@code from <= toInclusive} and {@code step < 0}
      * @throws IllegalArgumentException if {@code step} is zero
      */
-    static Stream<Long> rangeBy(long from, long toExclusive, long step) {
-        return Stream.ofAll(Iterator.rangeBy(from, toExclusive, step));
+    static LazyStream<Long> rangeBy(long from, long toExclusive, long step) {
+        return LazyStream.ofAll(Iterator.rangeBy(from, toExclusive, step));
     }
 
-    static Stream<Character> rangeClosed(char from, char toInclusive) {
-        return Stream.ofAll(Iterator.rangeClosed(from, toInclusive));
+    static LazyStream<Character> rangeClosed(char from, char toInclusive) {
+        return LazyStream.ofAll(Iterator.rangeClosed(from, toInclusive));
     }
 
-    static Stream<Character> rangeClosedBy(char from, char toInclusive, int step) {
-        return Stream.ofAll(Iterator.rangeClosedBy(from, toInclusive, step));
+    static LazyStream<Character> rangeClosedBy(char from, char toInclusive, int step) {
+        return LazyStream.ofAll(Iterator.rangeClosedBy(from, toInclusive, step));
     }
 
-    static Stream<Double> rangeClosedBy(double from, double toInclusive, double step) {
-        return Stream.ofAll(Iterator.rangeClosedBy(from, toInclusive, step));
+    static LazyStream<Double> rangeClosedBy(double from, double toInclusive, double step) {
+        return LazyStream.ofAll(Iterator.rangeClosedBy(from, toInclusive, step));
     }
 
     /**
@@ -542,8 +547,8 @@ public interface Stream<T> extends LinearSeq<T> {
      * @param toInclusive the last number
      * @return a range of int values as specified or {@code Nil} if {@code from > toInclusive}
      */
-    static Stream<Integer> rangeClosed(int from, int toInclusive) {
-        return Stream.ofAll(Iterator.rangeClosed(from, toInclusive));
+    static LazyStream<Integer> rangeClosed(int from, int toInclusive) {
+        return LazyStream.ofAll(Iterator.rangeClosed(from, toInclusive));
     }
 
     /**
@@ -568,8 +573,8 @@ public interface Stream<T> extends LinearSeq<T> {
      * {@code from < toInclusive} and {@code step < 0}
      * @throws IllegalArgumentException if {@code step} is zero
      */
-    static Stream<Integer> rangeClosedBy(int from, int toInclusive, int step) {
-        return Stream.ofAll(Iterator.rangeClosedBy(from, toInclusive, step));
+    static LazyStream<Integer> rangeClosedBy(int from, int toInclusive, int step) {
+        return LazyStream.ofAll(Iterator.rangeClosedBy(from, toInclusive, step));
     }
 
     /**
@@ -588,8 +593,8 @@ public interface Stream<T> extends LinearSeq<T> {
      * @param toInclusive the last number
      * @return a range of long values as specified or {@code Nil} if {@code from > toInclusive}
      */
-    static Stream<Long> rangeClosed(long from, long toInclusive) {
-        return Stream.ofAll(Iterator.rangeClosed(from, toInclusive));
+    static LazyStream<Long> rangeClosed(long from, long toInclusive) {
+        return LazyStream.ofAll(Iterator.rangeClosed(from, toInclusive));
     }
 
     /**
@@ -614,8 +619,8 @@ public interface Stream<T> extends LinearSeq<T> {
      * {@code from < toInclusive} and {@code step < 0}
      * @throws IllegalArgumentException if {@code step} is zero
      */
-    static Stream<Long> rangeClosedBy(long from, long toInclusive, long step) {
-        return Stream.ofAll(Iterator.rangeClosedBy(from, toInclusive, step));
+    static LazyStream<Long> rangeClosedBy(long from, long toInclusive, long step) {
+        return LazyStream.ofAll(Iterator.rangeClosedBy(from, toInclusive, step));
     }
 
     /**
@@ -625,26 +630,38 @@ public interface Stream<T> extends LinearSeq<T> {
      * @param <T> Element type
      * @return A new Stream containing infinite {@code t}'s.
      */
-    static <T> Stream<T> repeat(T t) {
-        return Stream.ofAll(Iterator.repeat(t));
+    static <T> LazyStream<T> repeat(T t) {
+        return LazyStream.ofAll(Iterator.repeat(t));
+    }
+    default LazyStream<T> toStream() {
+        return toTraversable(this, LazyStream.empty(), LazyStream::of, LazyStream::ofAll);
     }
 
+	static <T extends Traversable<V>, V> T toTraversable(Value<V> value, T empty, Function<V, T> ofElement, Function<Iterable<V>, T> ofAll) {
+		if (value.isEmpty()) {
+			return empty;
+		} else if (value.isSingleValued()) {
+			return ofElement.apply(value.get());
+		} else {
+			return ofAll.apply(value);
+		}
+	}
    Supplier<T> lazyHead();
     @Override
-    default Stream<T> append(T element) {
+    default LazyStream<T> append(T element) {
         if (isEmpty()) {
-            return Stream.of(element);
+            return LazyStream.of(element);
         } else {
             // decoupling tail from `this`, see https://github.com/javaslang/javaslang/issues/824#issuecomment-158690009
-            final Lazy<Stream<T>> tail = ((LazyCons<T>) this).tail;
+            final Lazy<LazyStream<T>> tail = ((LazyCons<T>) this).tail;
             return new LazyCons<>(lazyHead(), () -> tail.get().append(element));
         }
     }
 
     @Override
-    default Stream<T> appendAll(Iterable<? extends T> elements) {
+    default LazyStream<T> appendAll(Iterable<? extends T> elements) {
         Objects.requireNonNull(elements, "elements is null");
-        return isEmpty() ? Stream.ofAll(elements) : new LazyCons<>(lazyHead(), () -> tail().appendAll(elements));
+        return isEmpty() ? LazyStream.ofAll(elements) : new LazyCons<>(lazyHead(), () -> tail().appendAll(elements));
     }
 
     /**
@@ -668,41 +685,41 @@ public interface Stream<T> extends LinearSeq<T> {
      * @param mapper an mapper
      * @return a new Stream
      */
-    default Stream<T> appendSelf(Function<? super Stream<T>, ? extends Stream<T>> mapper) {
+    default LazyStream<T> appendSelf(Function<? super Stream<T>, ? extends Stream<T>> mapper) {
         Objects.requireNonNull(mapper, "mapper is null");
-        return isEmpty() ? this : new AppendSelf<>((LazyCons<T>) this, mapper).stream();
+        return isEmpty() ? this : new AppendSelf<T>((LazyCons<T>) this, mapper).stream();
     }
 
     @Override
-    default Stream<T> clear() {
+    default LazyStream<T> clear() {
         return Empty.instance();
     }
 
     @Override
-    default Stream<Stream<T>> combinations() {
-        return Stream.rangeClosed(0, length()).map(this::combinations).flatMap(i->i);
+    default LazyStream<Stream<T>> combinations() {
+        return LazyStream.rangeClosed(0, length()).map(this::combinations).flatMap(i->i);
     }
 
     @Override
-    default Stream<Stream<T>> combinations(int k) {
-        return Combinations.apply(this, Math.max(k, 0));
+    default LazyStream<Stream<T>> combinations(int k) {
+        return (LazyStream)Combinations.apply(this, Math.max(k, 0));
     }
 
     @Override
-    default Stream<Tuple2<T, T>> crossProduct() {
+    default LazyStream<Tuple2<T, T>> crossProduct() {
         return crossProduct(this);
     }
 
     @Override
-    default Stream<Stream<T>> crossProduct(int power) {
-        return Collections.crossProduct(this, power).map(Stream::ofAll).toStream();
+    default LazyStream<Stream<T>> crossProduct(int power) {
+        return (LazyStream)LazyStream.ofAll(()->Collections.crossProduct(this, power).map(LazyStream::ofAll).toStream().iterator());
     }
    
 
     @Override
-    default <U> Stream<Tuple2<T, U>> crossProduct(Iterable<? extends U> that) {
+    default <U> LazyStream<Tuple2<T, U>> crossProduct(Iterable<? extends U> that) {
         Objects.requireNonNull(that, "that is null");
-        final Stream<U> other = Stream.ofAll(that);
+        final LazyStream<U> other = LazyStream.ofAll(that);
         return flatMap(a -> other.map((Function<U, Tuple2<T, U>>) b -> Tuple.of(a, b)));
     }
 
@@ -719,31 +736,31 @@ public interface Stream<T> extends LinearSeq<T> {
      *
      * @return A new Stream containing this elements cycled.
      */
-    default Stream<T> cycle() {
+    default LazyStream<T> cycle() {
         return appendSelf(Function.identity());
     }
 
     @Override
-    default Stream<T> distinct() {
+    default LazyStream<T> distinct() {
         return distinctBy(i->i);
     }
 
     @Override
-    default Stream<T> distinctBy(Comparator<? super T> comparator) {
+    default LazyStream<T> distinctBy(Comparator<? super T> comparator) {
         Objects.requireNonNull(comparator, "comparator is null");
         final java.util.Set<T> seen = new java.util.TreeSet<>(comparator);
         return filter(seen::add);
     }
 
     @Override
-    default <U> Stream<T> distinctBy(Function<? super T, ? extends U> keyExtractor) {
+    default <U> LazyStream<T> distinctBy(Function<? super T, ? extends U> keyExtractor) {
         final java.util.Set<U> seen = new java.util.HashSet<>();
         return filter(t -> seen.add(keyExtractor.apply(t)));
     }
 
     @Override
-    default Stream<T> drop(long n) {
-        Stream<T> stream = this;
+    default LazyStream<T> drop(long n) {
+        LazyStream<T> stream = this;
         while (n-- > 0 && !stream.isEmpty()) {
             stream = stream.tail();
         }
@@ -751,7 +768,7 @@ public interface Stream<T> extends LinearSeq<T> {
     }
 
     @Override
-    default Stream<T> dropRight(long n) {
+    default LazyStream<T> dropRight(long n) {
         if (n <= 0) {
             return this;
         } else {
@@ -760,15 +777,15 @@ public interface Stream<T> extends LinearSeq<T> {
     }
 
     @Override
-    default Stream<T> dropUntil(Predicate<? super T> predicate) {
+    default LazyStream<T> dropUntil(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate, "predicate is null");
         return dropWhile(predicate.negate());
     }
 
     @Override
-    default Stream<T> dropWhile(Predicate<? super T> predicate) {
+    default LazyStream<T> dropWhile(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate, "predicate is null");
-        Stream<T> stream = this;
+        LazyStream<T> stream = this;
         while (!stream.isEmpty() && predicate.test(stream.head())) {
             stream = stream.tail();
         }
@@ -776,22 +793,22 @@ public interface Stream<T> extends LinearSeq<T> {
     }
 
     @Override
-    default Stream<T> filter(Predicate<? super T> predicate) {
+    default LazyStream<T> filter(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate, "predicate is null");
-        Stream<T> stream = this;
+        LazyStream<T> stream = this;
         while (!stream.isEmpty() && !predicate.test(stream.head())) {
             stream = stream.tail();
         }
-        final Stream<T> finalStream = stream;
+        final LazyStream<T> finalStream = stream;
         return stream.isEmpty() ? stream : new LazyCons<>(()->finalStream.head(), () -> finalStream.tail().filter(predicate));
     }
 
     @Override
-    default <U> Stream<U> flatMap(Function<? super T, ? extends Iterable<? extends U>> mapper) {
+    default <U> LazyStream<U> flatMap(Function<? super T, ? extends Iterable<? extends U>> mapper) {
         Objects.requireNonNull(mapper, "mapper is null");
-        return isEmpty() ? Empty.instance() : Stream.ofAll(new Iterator<U>() {
+        return isEmpty() ? Empty.instance() : LazyStream.ofAll(new Iterator<U>() {
 
-            final Iterator<? extends T> inputs = Stream.this.iterator();
+            final Iterator<? extends T> inputs = LazyStream.this.iterator();
             java.util.Iterator<? extends U> current = java.util.Collections.emptyIterator();
 
             @Override
@@ -818,7 +835,7 @@ public interface Stream<T> extends LinearSeq<T> {
         if (index < 0) {
             throw new IndexOutOfBoundsException("get(" + index + ")");
         }
-        Stream<T> stream = this;
+        LazyStream<T> stream = this;
         for (int i = index - 1; i >= 0; i--) {
             stream = stream.tail();
             if (stream.isEmpty()) {
@@ -831,7 +848,7 @@ public interface Stream<T> extends LinearSeq<T> {
     @Override
     default <C> Map<C, Stream<T>> groupBy(Function<? super T, ? extends C> classifier) {
         Objects.requireNonNull(classifier, "classifier is null");
-        return (Map)iterator().groupBy(classifier).map((c, it) -> Tuple.<Object,Object>of(c, Stream.ofAll(it)));
+        return (Map)iterator().groupBy(classifier).map((c, it) -> Tuple.<Object,Object>of(c, LazyStream.ofAll(it)));
     }
 
     @Override
@@ -852,7 +869,7 @@ public interface Stream<T> extends LinearSeq<T> {
     @Override
     default int indexOf(T element, int from) {
         int index = 0;
-        for (Stream<T> stream = this; !stream.isEmpty(); stream = stream.tail(), index++) {
+        for (LazyStream<T> stream = this; !stream.isEmpty(); stream = stream.tail(), index++) {
             if (index >= from && Objects.equals(stream.head(), element)) {
                 return index;
             }
@@ -861,11 +878,11 @@ public interface Stream<T> extends LinearSeq<T> {
     }
 
     @Override
-    default Stream<T> init() {
+    default LazyStream<T> init() {
         if (isEmpty()) {
             throw new UnsupportedOperationException("init of empty stream");
         } else {
-            final Stream<T> tail = tail();
+            final LazyStream<T> tail = tail();
             if (tail.isEmpty()) {
                 return Empty.instance();
             } else {
@@ -880,7 +897,7 @@ public interface Stream<T> extends LinearSeq<T> {
     }
 
     @Override
-    default Stream<T> insert(int index, T element) {
+    default LazyStream<T> insert(int index, T element) {
         if (index < 0) {
             throw new IndexOutOfBoundsException("insert(" + index + ", e)");
         } else if (index == 0) {
@@ -894,12 +911,12 @@ public interface Stream<T> extends LinearSeq<T> {
 
     @SuppressWarnings("unchecked")
     @Override
-    default Stream<T> insertAll(int index, Iterable<? extends T> elements) {
+    default LazyStream<T> insertAll(int index, Iterable<? extends T> elements) {
         Objects.requireNonNull(elements, "elements is null");
         if (index < 0) {
             throw new IndexOutOfBoundsException("insertAll(" + index + ", elements)");
         } else if (index == 0) {
-            return isEmpty() ? Stream.ofAll(elements) : Stream.ofAll((Iterable<T>) elements).appendAll(this);
+            return isEmpty() ? LazyStream.ofAll(elements) : LazyStream.ofAll((Iterable<T>) elements).appendAll(this);
         } else if (isEmpty()) {
             throw new IndexOutOfBoundsException("insertAll(" + index + ", elements) on Nil");
         } else {
@@ -908,12 +925,12 @@ public interface Stream<T> extends LinearSeq<T> {
     }
 
     @Override
-    default Stream<T> intersperse(T element) {
+    default LazyStream<T> intersperse(T element) {
         if (isEmpty()) {
             return this;
         } else {
             return new LazyCons<>(lazyHead(), () -> {
-                final Stream<T> tail = tail();
+                final LazyStream<T> tail = tail();
                 return tail.isEmpty() ? tail : new LazyCons<>(()->element, () -> tail.intersperse(element));
             });
         }
@@ -927,7 +944,7 @@ public interface Stream<T> extends LinearSeq<T> {
     @Override
     default int lastIndexOf(T element, int end) {
         int result = -1, index = 0;
-        for (Stream<T> stream = this; index <= end && !stream.isEmpty(); stream = stream.tail(), index++) {
+        for (LazyStream<T> stream = this; index <= end && !stream.isEmpty(); stream = stream.tail(), index++) {
             if (Objects.equals(stream.head(), element)) {
                 result = index;
             }
@@ -941,7 +958,7 @@ public interface Stream<T> extends LinearSeq<T> {
     }
 
     @Override
-    default <U> Stream<U> map(Function<? super T, ? extends U> mapper) {
+    default <U> LazyStream<U> map(Function<? super T, ? extends U> mapper) {
         Objects.requireNonNull(mapper, "mapper is null");
         if (isEmpty()) {
             return Empty.instance();
@@ -956,21 +973,21 @@ public interface Stream<T> extends LinearSeq<T> {
     }
 
     @Override
-    default Stream<T> padTo(int length, T element) {
+    default LazyStream<T> padTo(int length, T element) {
         if (length <= 0) {
             return this;
         } else if (isEmpty()) {
-            return Stream.ofAll(Iterator.gen(() -> element).take(length));
+            return LazyStream.ofAll(Iterator.gen(() -> element).take(length));
         } else {
             return new LazyCons<>(lazyHead(), () -> tail().padTo(length - 1, element));
         }
     }
 
     @Override
-    default Stream<T> patch(int from, Iterable<? extends T> that, int replaced) {
+    default LazyStream<T> patch(int from, Iterable<? extends T> that, int replaced) {
         from = from < 0 ? 0 : from;
         replaced = replaced < 0 ? 0 : replaced;
-        Stream<T> result = take(from).appendAll(that);
+        LazyStream<T> result = take(from).appendAll(that);
         from += replaced;
         result = result.appendAll(drop(from));
         return result;
@@ -983,7 +1000,7 @@ public interface Stream<T> extends LinearSeq<T> {
     }
 
     @Override
-    default Stream<T> peek(Consumer<? super T> action) {
+    default LazyStream<T> peek(Consumer<? super T> action) {
         Objects.requireNonNull(action, "action is null");
         if (isEmpty()) {
             return this;
@@ -995,38 +1012,38 @@ public interface Stream<T> extends LinearSeq<T> {
     }
 
     @Override
-    default Stream<Stream<T>> permutations() {
+    default LazyStream<Stream<T>> permutations() {
 
         if (isEmpty()) {
             return Empty.instance();
         } else {
-            final Stream<T> tail = tail();
+            final LazyStream<T> tail = tail();
             if (tail.isEmpty()) {
-                return Stream.of(this);
+                return LazyStream.of(this);
             } else {
-                final Stream<Stream<T>> zero = Empty.instance();
-                return distinct().foldLeft(zero, (xs, x) -> {
-                    final Function<Stream<T>, Stream<T>> prepend = l -> l.prepend(x);
-                    return xs.appendAll(remove(x).permutations().map(prepend));
+                final LazyStream<LazyStream<T>> zero = Empty.instance();
+                return (LazyStream)distinct().foldLeft(zero, (xs, x) -> {
+                    final Function<LazyStream<T>, LazyStream<T>> prepend = l -> l.prepend(x);
+                    return xs.appendAll(remove(x).permutations().map((Function)prepend));
                 });
             }
         }
     }
 
     @Override
-    default Stream<T> prepend(T element) {
+    default LazyStream<T> prepend(T element) {
         return new LazyCons<>(()->element, () -> this);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    default Stream<T> prependAll(Iterable<? extends T> elements) {
+    default LazyStream<T> prependAll(Iterable<? extends T> elements) {
         Objects.requireNonNull(elements, "elements is null");
-        return Stream.ofAll((Iterable<T>) elements).appendAll(this);
+        return LazyStream.ofAll((Iterable<T>) elements).appendAll(this);
     }
 
     @Override
-    default Stream<T> remove(T element) {
+    default LazyStream<T> remove(T element) {
         if (isEmpty()) {
             return this;
         } else {
@@ -1036,7 +1053,7 @@ public interface Stream<T> extends LinearSeq<T> {
     }
 
     @Override
-    default Stream<T> removeFirst(Predicate<T> predicate) {
+    default LazyStream<T> removeFirst(Predicate<T> predicate) {
         Objects.requireNonNull(predicate, "predicate is null");
         if (isEmpty()) {
             return this;
@@ -1047,12 +1064,12 @@ public interface Stream<T> extends LinearSeq<T> {
     }
 
     @Override
-    default Stream<T> removeLast(Predicate<T> predicate) {
+    default LazyStream<T> removeLast(Predicate<T> predicate) {
         return isEmpty() ? this : reverse().removeFirst(predicate).reverse();
     }
 
     @Override
-    default Stream<T> removeAt(int index) {
+    default LazyStream<T> removeAt(int index) {
         if (index < 0) {
             throw new IndexOutOfBoundsException("removeAt(" + index + ")");
         } else if (index == 0) {
@@ -1065,20 +1082,20 @@ public interface Stream<T> extends LinearSeq<T> {
     }
 
     @Override
-    default Stream<T> removeAll(T removed) {
+    default LazyStream<T> removeAll(T removed) {
         return filter(e -> !Objects.equals(e, removed));
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    default Stream<T> removeAll(Iterable<? extends T> elements) {
+    default LazyStream<T> removeAll(Iterable<? extends T> elements) {
         Objects.requireNonNull(elements, "elements is null");
-        final Stream<T> distinct = Stream.ofAll((Iterable<T>) elements).distinct();
+        final LazyStream<T> distinct = LazyStream.ofAll((Iterable<T>) elements).distinct();
         return filter(e -> !distinct.contains(e));
     }
 
     @Override
-    default Stream<T> replace(T currentElement, T newElement) {
+    default LazyStream<T> replace(T currentElement, T newElement) {
         if (isEmpty()) {
             return this;
         } else {
@@ -1092,7 +1109,7 @@ public interface Stream<T> extends LinearSeq<T> {
     }
 
     @Override
-    default Stream<T> replaceAll(T currentElement, T newElement) {
+    default LazyStream<T> replaceAll(T currentElement, T newElement) {
         if (isEmpty()) {
             return this;
         } else {
@@ -1104,42 +1121,42 @@ public interface Stream<T> extends LinearSeq<T> {
 
     @SuppressWarnings("unchecked")
     @Override
-    default Stream<T> retainAll(Iterable<? extends T> elements) {
+    default LazyStream<T> retainAll(Iterable<? extends T> elements) {
         Objects.requireNonNull(elements, "elements is null");
         if (isEmpty()) {
             return this;
         } else {
-            final Stream<T> retained = Stream.ofAll((Iterable<T>) elements).distinct();
+            final LazyStream<T> retained = LazyStream.ofAll((Iterable<T>) elements).distinct();
             return filter(retained::contains);
         }
     }
 
     @Override
-    default Stream<T> reverse() {
-        return isEmpty() ? this : (Stream<T>) foldLeft(Stream.empty(), Stream::prepend);
+    default LazyStream<T> reverse() {
+        return isEmpty() ? this : (LazyStream<T>) foldLeft(LazyStream.empty(), LazyStream::prepend);
     }
 
     @Override
-    default Stream<T> scan(T zero, BiFunction<? super T, ? super T, ? extends T> operation) {
+    default LazyStream<T> scan(T zero, BiFunction<? super T, ? super T, ? extends T> operation) {
         return scanLeft(zero, operation);
     }
 
     @Override
-    default <U> Stream<U> scanLeft(U zero, BiFunction<? super U, ? super T, ? extends U> operation) {
+    default <U> LazyStream<U> scanLeft(U zero, BiFunction<? super U, ? super T, ? extends U> operation) {
         Objects.requireNonNull(operation, "operation is null");
         // lazily streams the elements of an iterator
-        return Stream.ofAll(iterator().scanLeft(zero, operation));
+        return LazyStream.ofAll(iterator().scanLeft(zero, operation));
     }
 
     // not lazy!
     @Override
-    default <U> Stream<U> scanRight(U zero, BiFunction<? super T, ? super U, ? extends U> operation) {
+    default <U> LazyStream<U> scanRight(U zero, BiFunction<? super T, ? super U, ? extends U> operation) {
         Objects.requireNonNull(operation, "operation is null");
-        return Collections.scanRight(this, zero, operation, Stream.empty(), Stream::prepend, Function.identity());
+        return Collections.scanRight(this, zero, operation, LazyStream.empty(), LazyStream::prepend, Function.identity());
     }
 
     @Override
-    default Stream<T> slice(long beginIndex, long endIndex) {
+    default LazyStream<T> slice(long beginIndex, long endIndex) {
         if (beginIndex >= endIndex || isEmpty()) {
             return empty();
         } else {
@@ -1159,27 +1176,27 @@ public interface Stream<T> extends LinearSeq<T> {
 
     @Override
     default Iterator<Stream<T>> sliding(long size, long step) {
-        return iterator().sliding(size, step).map(Stream::ofAll);
+        return iterator().sliding(size, step).map(LazyStream::ofAll);
     }
 
     @Override
-    default Stream<T> sort() {
-        return isEmpty() ? this : toJavaStream().sorted().collect(Stream.collector());
+    default LazyStream<T> sort() {
+        return isEmpty() ? this : toJavaStream().sorted().collect(LazyStream.collector());
     }
 
     @Override
-    default Stream<T> sort(Comparator<? super T> comparator) {
+    default LazyStream<T> sort(Comparator<? super T> comparator) {
         Objects.requireNonNull(comparator, "comparator is null");
-        return isEmpty() ? this : toJavaStream().sorted(comparator).collect(Stream.collector());
+        return isEmpty() ? this : toJavaStream().sorted(comparator).collect(LazyStream.collector());
     }
 
     @Override
-    default <U extends Comparable<? super U>> Stream<T> sortBy(Function<? super T, ? extends U> mapper) {
+    default <U extends Comparable<? super U>> LazyStream<T> sortBy(Function<? super T, ? extends U> mapper) {
         return sortBy(U::compareTo, mapper);
     }
 
     @Override
-    default <U> Stream<T> sortBy(Comparator<? super U> comparator, Function<? super T, ? extends U> mapper) {
+    default <U> LazyStream<T> sortBy(Comparator<? super U> comparator, Function<? super T, ? extends U> mapper) {
         final Function<? super T, ? extends U> domain = Function1.of(mapper::apply).memoized();
         return toJavaStream()
                 .sorted((e1, e2) -> comparator.compare(domain.apply(e1), domain.apply(e2)))
@@ -1225,11 +1242,11 @@ public interface Stream<T> extends LinearSeq<T> {
     }
 
     @Override
-    default Stream<T> subSequence(int beginIndex) {
+    default LazyStream<T> subSequence(int beginIndex) {
         if (beginIndex < 0) {
             throw new IndexOutOfBoundsException("subSequence(" + beginIndex + ")");
         }
-        Stream<T> result = this;
+        LazyStream<T> result = this;
         for (int i = 0; i < beginIndex; i++, result = result.tail()) {
             if (result.isEmpty()) {
                 throw new IndexOutOfBoundsException(
@@ -1240,7 +1257,7 @@ public interface Stream<T> extends LinearSeq<T> {
     }
 
     @Override
-    default Stream<T> subSequence(int beginIndex, int endIndex) {
+    default LazyStream<T> subSequence(int beginIndex, int endIndex) {
         if (beginIndex < 0 || beginIndex > endIndex) {
             throw new IndexOutOfBoundsException(String.format("subSequence(%s, %s)", beginIndex, endIndex));
         }
@@ -1256,7 +1273,7 @@ public interface Stream<T> extends LinearSeq<T> {
     }
 
     @Override
-    Stream<T> tail();
+    LazyStream<T> tail();
 
     @Override
     default Option<Stream<T>> tailOption() {
@@ -1264,7 +1281,7 @@ public interface Stream<T> extends LinearSeq<T> {
     }
 
     @Override
-    default Stream<T> take(long n) {
+    default LazyStream<T> take(long n) {
         if (n < 1 || isEmpty()) {
             return Empty.instance();
         } else {
@@ -1273,19 +1290,19 @@ public interface Stream<T> extends LinearSeq<T> {
     }
 
     @Override
-    default Stream<T> takeRight(long n) {
-    	return StreamUtils.limitLast(this,(int)n);
+    default LazyStream<T> takeRight(long n) {
+    	return LazyStream.fromStream(StreamUtils.limitLast(this,(int)n));
    
     }
 
     @Override
-    default Stream<T> takeUntil(Predicate<? super T> predicate) {
+    default LazyStream<T> takeUntil(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate, "predicate is null");
         return takeWhile(predicate.negate());
     }
 
     @Override
-    default Stream<T> takeWhile(Predicate<? super T> predicate) {
+    default LazyStream<T> takeWhile(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate, "predicate is null");
         if (isEmpty()) {
             return Empty.instance();
@@ -1300,17 +1317,17 @@ public interface Stream<T> extends LinearSeq<T> {
     }
 
     @Override
-    default <U> Stream<U> unit(Iterable<? extends U> iterable) {
-        return Stream.ofAll(iterable);
+    default <U> LazyStream<U> unit(Iterable<? extends U> iterable) {
+        return LazyStream.ofAll(iterable);
     }
 
     @Override
     default <T1, T2> Tuple2<Stream<T1>, Stream<T2>> unzip(
             Function<? super T, Tuple2<? extends T1, ? extends T2>> unzipper) {
         Objects.requireNonNull(unzipper, "unzipper is null");
-        final Stream<Tuple2<? extends T1, ? extends T2>> stream = map(unzipper);
-        final Stream<T1> stream1 = stream.map(t -> t._1);
-        final Stream<T2> stream2 = stream.map(t -> t._2);
+        final LazyStream<Tuple2<? extends T1, ? extends T2>> stream = map(unzipper);
+        final LazyStream<T1> stream1 = stream.map(t -> t._1);
+        final LazyStream<T2> stream2 = stream.map(t -> t._2);
         return Tuple.of(stream1, stream2);
     }
 
@@ -1318,23 +1335,23 @@ public interface Stream<T> extends LinearSeq<T> {
     default <T1, T2, T3> Tuple3<Stream<T1>, Stream<T2>, Stream<T3>> unzip3(
             Function<? super T, Tuple3<? extends T1, ? extends T2, ? extends T3>> unzipper) {
         Objects.requireNonNull(unzipper, "unzipper is null");
-        final Stream<Tuple3<? extends T1, ? extends T2, ? extends T3>> stream = map(unzipper);
-        final Stream<T1> stream1 = stream.map(t -> t._1);
-        final Stream<T2> stream2 = stream.map(t -> t._2);
-        final Stream<T3> stream3 = stream.map(t -> t._3);
+        final LazyStream<Tuple3<? extends T1, ? extends T2, ? extends T3>> stream = map(unzipper);
+        final LazyStream<T1> stream1 = stream.map(t -> t._1);
+        final LazyStream<T2> stream2 = stream.map(t -> t._2);
+        final LazyStream<T3> stream3 = stream.map(t -> t._3);
         return Tuple.of(stream1, stream2, stream3);
     }
 
     @Override
-    default Stream<T> update(int index, T element) {
+    default LazyStream<T> update(int index, T element) {
         if (isEmpty()) {
             throw new IndexOutOfBoundsException("update(" + index + ", e) on Nil");
         }
         if (index < 0) {
             throw new IndexOutOfBoundsException("update(" + index + ", e)");
         }
-        Stream<T> preceding = Empty.instance();
-        Stream<T> tail = this;
+        LazyStream<T> preceding = Empty.instance();
+        LazyStream<T> tail = this;
         for (int i = index; i > 0; i--, tail = tail.tail()) {
             if (tail.isEmpty()) {
                 throw new IndexOutOfBoundsException("update at " + index);
@@ -1349,20 +1366,20 @@ public interface Stream<T> extends LinearSeq<T> {
     }
 
     @Override
-    default <U> Stream<Tuple2<T, U>> zip(Iterable<U> iterable) {
+    default <U> LazyStream<Tuple2<T, U>> zip(Iterable<U> iterable) {
         Objects.requireNonNull(iterable, "iterable is null");
-        return Stream.ofAll(iterator().zip(iterable));
+        return LazyStream.ofAll(iterator().zip(iterable));
     }
 
     @Override
-    default <U> Stream<Tuple2<T, U>> zipAll(Iterable<U> iterable, T thisElem, U thatElem) {
+    default <U> LazyStream<Tuple2<T, U>> zipAll(Iterable<U> iterable, T thisElem, U thatElem) {
         Objects.requireNonNull(iterable, "iterable is null");
-        return Stream.ofAll(iterator().zipAll(iterable, thisElem, thatElem));
+        return LazyStream.ofAll(iterator().zipAll(iterable, thisElem, thatElem));
     }
 
     @Override
-    default Stream<Tuple2<T, Long>> zipWithIndex() {
-        return Stream.ofAll(iterator().zipWithIndex());
+    default LazyStream<Tuple2<T, Long>> zipWithIndex() {
+        return LazyStream.ofAll(iterator().zipWithIndex());
     }
 
     /**
@@ -1373,7 +1390,7 @@ public interface Stream<T> extends LinearSeq<T> {
      * @param <T> Component type of the Stream.
      * @since 1.1.0
      */
-    final class Empty<T> implements Stream<T>, Serializable {
+    final class Empty<T> implements LazyStream<T>, Serializable {
 
         private static final long serialVersionUID = 1L;
 
@@ -1413,7 +1430,7 @@ public interface Stream<T> extends LinearSeq<T> {
         }
 
         @Override
-        public Stream<T> tail() {
+        public LazyStream<T> tail() {
             throw new UnsupportedOperationException("tail of empty stream");
         }
 
@@ -1452,12 +1469,12 @@ public interface Stream<T> extends LinearSeq<T> {
      */
     // DEV NOTE: class declared final because of serialization proxy pattern.
     // (see Effective Java, 2nd ed., p. 315)
-    final class LazyCons<T> implements Stream<T>, Serializable {
+    final class LazyCons<T> implements LazyStream<T>, Serializable {
 
         private static final long serialVersionUID = 1L;
 
         private final Supplier<T> head;
-        private final Lazy<Stream<T>> tail;
+        private final Lazy<LazyStream<T>> tail;
 
         /**
          * Creates a new {@code Stream} consisting of a head element and a lazy trailing {@code Stream}.
@@ -1465,7 +1482,7 @@ public interface Stream<T> extends LinearSeq<T> {
          * @param head A head element
          * @param tail A tail {@code Stream} supplier, {@linkplain Empty} denotes the end of the {@code Stream}
          */
-       LazyCons(Supplier<T> head, Supplier<Stream<T>> tail) {
+       LazyCons(Supplier<T> head, Supplier<LazyStream<T>> tail) {
             Objects.requireNonNull(tail, "tail is null");
             this.head = head;
             this.tail = Lazy.of(tail);
@@ -1490,7 +1507,7 @@ public interface Stream<T> extends LinearSeq<T> {
         }
 
         @Override
-        public Stream<T> tail() {
+        public LazyStream<T> tail() {
             return tail.get();
         }
 
@@ -1498,9 +1515,9 @@ public interface Stream<T> extends LinearSeq<T> {
         public boolean equals(Object o) {
             if (o == this) {
                 return true;
-            } else if (o instanceof Stream) {
-                Stream<?> stream1 = this;
-                Stream<?> stream2 = (Stream<?>) o;
+            } else if (o instanceof LazyStream) {
+                LazyStream<?> stream1 = this;
+                LazyStream<?> stream2 = (LazyStream<?>) o;
                 while (!stream1.isEmpty() && !stream2.isEmpty()) {
                     final boolean isEqual = Objects.equals(stream1.head(), stream2.head());
                     if (!isEqual) {
@@ -1523,7 +1540,7 @@ public interface Stream<T> extends LinearSeq<T> {
         @Override
         public String toString() {
             final StringBuilder builder = new StringBuilder(stringPrefix()).append("(");
-            Stream<T> stream = this;
+            LazyStream<T> stream = this;
             while (stream != null && !stream.isEmpty()) {
                 final LazyCons<T> cons = (LazyCons<T>) stream;
                 builder.append(cons.head());
@@ -1600,7 +1617,7 @@ public interface Stream<T> extends LinearSeq<T> {
             private void writeObject(ObjectOutputStream s) throws IOException {
                 s.defaultWriteObject();
                 s.writeInt(stream.length());
-                for (Stream<T> l = stream; !l.isEmpty(); l = l.tail()) {
+                for (LazyStream<T> l = stream; !l.isEmpty(); l = l.tail()) {
                     s.writeObject(l.head());
                 }
             }
@@ -1619,7 +1636,7 @@ public interface Stream<T> extends LinearSeq<T> {
                 if (size <= 0) {
                     throw new InvalidObjectException("No elements");
                 }
-                Stream<T> temp = Empty.instance();
+                LazyStream<T> temp = Empty.instance();
                 for (int i = 0; i < size; i++) {
                     @SuppressWarnings("unchecked")
                     final T element = (T) s.readObject();
@@ -1645,7 +1662,7 @@ public interface Stream<T> extends LinearSeq<T> {
     }
 }
 
-interface StreamModule {
+interface LazyStreamModule {
 
     final class AppendSelf<T> {
 
@@ -1656,12 +1673,15 @@ interface StreamModule {
         }
 
         private LazyCons<T> appendAll(LazyCons<T> stream, Function<? super Stream<T>, ? extends Stream<T>> mapper) {
-            return (LazyCons<T>) Stream.cons(()->stream.head(), () -> {
-                final Stream<T> tail = stream.tail();
-                return tail.isEmpty() ? mapper.apply(self) : appendAll((LazyCons<T>) tail, mapper);
+            return (LazyCons<T>) LazyStream.cons(()->stream.head(), () -> {
+                final LazyStream<T> tail = stream.tail();
+                return tail.isEmpty() ? convertToLazyStream(mapper.apply(self)) : appendAll((LazyCons<T>) tail, mapper);
             });
         }
 
+        LazyStream<T> convertToLazyStream(Stream<T> stream){
+        	return (stream instanceof LazyStream) ? (LazyStream<T>)stream :   LazyStream.ofAll(()->stream.iterator());
+        }
         LazyCons<T> stream() {
             return self;
         }
@@ -1669,12 +1689,12 @@ interface StreamModule {
 
     interface Combinations {
 
-        static <T> Stream<Stream<T>> apply(Stream<T> elements, int k) {
+        static <T> LazyStream<LazyStream<T>> apply(LazyStream<T> elements, int k) {
             if (k == 0) {
-                return Stream.of(Stream.empty());
+                return LazyStream.of(LazyStream.empty());
             } else {
                 return elements.zipWithIndex().flatMap(
-                        t -> apply(elements.drop(t._2 + 1), (k - 1)).map((Stream<T> c) -> c.prepend(t._1))
+                        t -> apply(elements.drop(t._2 + 1), (k - 1)).map((LazyStream<T> c) -> c.prepend(t._1))
                 );
             }
         }
@@ -1683,13 +1703,13 @@ interface StreamModule {
     interface DropRight {
 
         // works with infinite streams by buffering elements
-        static <T> Stream<T> apply(List<T> front, List<T> rear, Stream<T> remaining) {
+        static <T> LazyStream<T> apply(List<T> front, List<T> rear, LazyStream<T> remaining) {
             if (remaining.isEmpty()) {
                 return remaining;
             } else if (front.isEmpty()) {
                 return apply(rear.reverse(), List.empty(), remaining);
             } else {
-                return Stream.cons(()->front.head(),
+                return LazyStream.cons(()->front.head(),
                         () -> apply(front.tail(), rear.prepend(remaining.head()), remaining.tail()));
             }
         }
@@ -1697,15 +1717,15 @@ interface StreamModule {
 
     interface StreamFactory {
 
-        static <T> Stream<T> create(java.util.Iterator<? extends T> iterator) {
+        static <T> LazyStream<T> create(java.util.Iterator<? extends T> iterator) {
         	Supplier<T> head = Memoize.memoizeSupplier(()->iterator.next());
-            return iterator.hasNext() ? Stream.cons(head, () -> { head.get(); return create(iterator);}) : Empty.instance();
+            return iterator.hasNext() ? LazyStream.cons(head, () -> { head.get(); return create(iterator);}) : Empty.instance();
         }
     }
 
     final class StreamIterator<T> extends AbstractIterator<T> {
 
-        private Supplier<Stream<T>> current;
+        private Supplier<LazyStream<T>> current;
 
         StreamIterator(LazyCons<T> stream) {
             this.current = () -> stream;
@@ -1718,7 +1738,7 @@ interface StreamModule {
 
         @Override
         public T getNext() {
-            final Stream<T> stream = current.get();
+            final LazyStream<T> stream = current.get();
             // DEV-NOTE: we make the stream even more lazy because the next head must not be evaluated on hasNext()
             current = stream::tail;
             return stream.head();

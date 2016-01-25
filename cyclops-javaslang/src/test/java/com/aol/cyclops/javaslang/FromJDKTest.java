@@ -29,7 +29,7 @@ public class FromJDKTest {
     }
     @Test
     public void testJDKOptionNull(){
-        assertThat(FromJDK.option(Optional.ofNullable(null)).orElse(100),is(100));
+        assertThat(FromJDK.option(Optional.ofNullable(null)).getOrElse(100),is(100));
     }
 
 }

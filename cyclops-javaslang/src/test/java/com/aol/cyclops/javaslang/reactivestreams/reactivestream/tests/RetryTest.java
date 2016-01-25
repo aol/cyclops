@@ -10,9 +10,6 @@ import java.net.SocketException;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-import javaslang.Lazy;
-import javaslang.collection.Stream;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -20,7 +17,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
-import com.aol.cyclops.javaslang.reactivestreams.LazyStream;
 import com.aol.cyclops.javaslang.reactivestreams.ReactiveStream;
 import com.aol.cyclops.sequence.SequenceM;
 
@@ -40,17 +36,9 @@ public class RetryTest {
 		
 		error = null;
 	}
-/**
-	@Test
-	public void lazyTest(){
-		new LazyStream<>(Lazy.of(()->Stream.of(1,2,3)))
-					.map(i->i+2)
-					.map(u->{ if(u==3) return "i"; else throw new RuntimeException();})
-					.recover(e->"hello")
-					.forEach(System.out::println);
-	}**/
+
 	
-	@Test @Ignore
+	@Test 
 	public void recover(){
 		assertThat(ReactiveStream.of(1,2,3,4)
 					.map(u->{throw new RuntimeException();})

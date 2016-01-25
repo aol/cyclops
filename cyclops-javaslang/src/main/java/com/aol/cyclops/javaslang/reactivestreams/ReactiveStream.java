@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
@@ -29,18 +28,18 @@ import javaslang.Tuple2;
 import javaslang.Tuple3;
 import javaslang.collection.List;
 import javaslang.collection.Map;
+import javaslang.collection.LazyStream;
 import javaslang.collection.Stream;
 import javaslang.collection.Traversable;
-import javaslang.collection.Stream.Cons;
-import javaslang.collection.Stream.Empty;
+
 import javaslang.control.Option;
-import javaslang.control.Try;
+
 
 import org.jooq.lambda.Seq;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
-import com.aol.cyclops.closures.mutable.Mutable;
+
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.javaslang.Javaslang;
 import com.aol.cyclops.javaslang.streams.JavaslangHotStream;
@@ -57,7 +56,7 @@ import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 
-public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStreamsTerminalOperations<T> {
+public interface ReactiveStream<T> extends LazyStream<T>, Publisher<T>, ReactiveStreamsTerminalOperations<T> {
 
 	/** creational methods **/
 	/**
@@ -67,56 +66,56 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	 *            The head element of the Stream
 	 * @param tailSupplier
 	 *            A supplier of the tail values. To end the stream, return
-	 *            {@link Stream#empty}.
+	 *            {@link LazyStream#empty}.
 	 * @param <T>
 	 *            value type
 	 * @return A new Stream
 	 */
 	@SuppressWarnings("unchecked")
-	static <T> ReactiveStream<T> cons(Supplier<T> head, Supplier<? extends Stream<? extends T>> tailSupplier) {
-		return fromStream(Stream.cons(head, tailSupplier));
+	static <T> ReactiveStream<T> cons(Supplier<T> head, Supplier<? extends LazyStream<? extends T>> tailSupplier) {
+		return fromStream(LazyStream.cons(head, tailSupplier));
 	}
 
 	static ReactiveStream<Integer> from(int value) {
 
-		return fromStream(Stream.from(value));
+		return fromStream(LazyStream.from(value));
 	}
 
 	static ReactiveStream<Long> from(long value) {
 
-		return fromStream(Stream.from(value));
+		return fromStream(LazyStream.from(value));
 	}
 
 	static <T> ReactiveStream<T> of(T... values) {
 
-		return fromStream(Stream.of(values));
+		return fromStream(LazyStream.of(values));
 	}
 
 	static <T> ReactiveStream<T> empty() {
-		return fromStream(Stream.empty());
+		return fromStream(LazyStream.empty());
 	}
 
 	static <T> ReactiveStream<T> iterate(T seed, Function<? super T, ? extends T> gen) {
-		return fromStream(Stream.gen(seed, gen));
+		return fromStream(LazyStream.gen(seed, gen));
 	}
 
 	static ReactiveStream<Integer> range(int start, int end) {
-		return fromStream(Stream.range(start, end));
+		return fromStream(LazyStream.range(start, end));
 	}
 
 	static ReactiveStream<Long> range(long start, long end) {
-		return fromStream(Stream.range(start, end));
+		return fromStream(LazyStream.range(start, end));
 	}
 
 	static <T> ReactiveStream<T> generate(Supplier<T> gen) {
-		return fromStream( (Stream<T>)Lazy.val(()->Stream.gen(gen),Stream.class));
+		return fromStream( (LazyStream<T>)Lazy.val(()->LazyStream.gen(gen),LazyStream.class));
 	}
 
 	static <T> ReactiveStream<T> fromStream(Stream<T> stream) {
 		
 		if (stream instanceof ReactiveStream)
 			return (ReactiveStream<T>) stream;
-		return new ReactiveStreamImpl<T>((Stream<T>)stream);
+		return new ReactiveStreamImpl<T>(LazyStream.fromStream(stream));
 	}
 
 	static <T> ReactiveStream<T> fromStreamable(Streamable<T> stream) {
@@ -132,10 +131,10 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	}
 
 	static <T> ReactiveStream<T> fromIterable(Iterable<T> stream) {
-		return fromStream(Stream.ofAll(stream));
+		return fromStream(LazyStream.ofAll(stream));
 	}
 	static <T> ReactiveStream<T> fromIterator(Iterator<T> it) {
-		return fromStream(Stream.ofAll(()->it));
+		return fromStream(LazyStream.ofAll(()->it));
 	}
 
 
@@ -533,13 +532,13 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	 *            repeat while true
 	 * @return Repeating Stream
 	 */
-	default ReactiveStream<T> cycleUntil(Stream<T> stream, Predicate<? super T> predicate) {
+	default ReactiveStream<T> cycleUntil(LazyStream<T> stream, Predicate<? super T> predicate) {
 
 		return fromStream(StreamUtils.cycleUntil(this, predicate));
 	}
 
 	/** scanLeft & scanRight **/
-	default <U> Stream<U> scanRight(U identity, BiFunction<? super T, ? super U, ? extends U> combiner) {
+	default <U> LazyStream<U> scanRight(U identity, BiFunction<? super T, ? super U, ? extends U> combiner) {
 
 		return reverse().scanLeft(identity, (u, t) -> combiner.apply(t, u));
 	}
@@ -550,7 +549,7 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	}
 
 	default <U> ReactiveStream<U> scanLeft(U identity, BiFunction<? super U, ? super T, ? extends U> combiner) {
-		return fromStream(Stream.super.scanLeft(identity, combiner));
+		return fromStream(LazyStream.super.scanLeft(identity, combiner));
 	}
 
 	/**
@@ -600,15 +599,15 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	 * @param switchTo Supplier that will generate the alternative Stream
 	 * @return ReactiveStream that will switch to an alternative Stream if empty
 	 */
-	default ReactiveStream<T> onEmptySwitch(Supplier<Stream<T>> switchTo){
+	default ReactiveStream<T> onEmptySwitch(Supplier<LazyStream<T>> switchTo){
 		AtomicBoolean called=  new AtomicBoolean(false);
 		return ReactiveStream.fromStream(onEmptyGet((Supplier)()->{
 				called.set(true); 
 				return switchTo.get();
 		}).flatMap(s->{
 			if(called.get())
-				return (Stream)s;
-			return Stream.of(s);
+				return (LazyStream)s;
+			return LazyStream.of(s);
 		}));
 	}
 
@@ -793,7 +792,7 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	 * @return Reduced Stream values as List entries
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default List<T> reduce(Stream<Monoid<T>> reducers) {
+	default List<T> reduce(LazyStream<Monoid<T>> reducers) {
 		return StreamUtils.reduce(this, reducers);
 
 	}
@@ -876,7 +875,7 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	 * }
 	 * </pre>
 	 */
-	default <S, R> Stream<R> zipAnyM(AnyM<? extends S> second, BiFunction<? super T, ? super S, ? extends R> zipper) {
+	default <S, R> LazyStream<R> zipAnyM(AnyM<? extends S> second, BiFunction<? super T, ? super S, ? extends R> zipper) {
 		return fromStream(StreamUtils.zipAnyM(this, second, zipper));
 	}
 
@@ -1066,7 +1065,7 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	        if (isEmpty()) {
 	            return fromStream(Empty.instance());
 	        } else {
-	        	 return fromStream(Stream.super.map(mapper));
+	        	 return fromStream(LazyStream.super.map(mapper));
 	        	
 	        }
 	   }

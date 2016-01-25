@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javaslang.collection.Stream;
+import javaslang.collection.LazyStream;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -75,7 +75,7 @@ public class WindowingTest {
 	}
 	@Test
 	public void sliding() {
-		List<Stream<Integer>> list = ReactiveStream.of(1, 2, 3, 4, 5, 6).slidingWindow(2).collect(Collectors.toList());
+		List<LazyStream<Integer>> list = ReactiveStream.of(1, 2, 3, 4, 5, 6).slidingWindow(2).collect(Collectors.toList());
 
 		assertThat(list.get(0), hasItems(1, 2));
 		assertThat(list.get(1), hasItems(2, 3));
@@ -83,7 +83,7 @@ public class WindowingTest {
 
 	@Test
 	public void slidingIncrement() {
-		List<Stream<Integer>> list = ReactiveStream.of(1, 2, 3, 4, 5, 6).slidingWindow(3, 2).collect(Collectors.toList());
+		List<LazyStream<Integer>> list = ReactiveStream.of(1, 2, 3, 4, 5, 6).slidingWindow(3, 2).collect(Collectors.toList());
 
 		System.out.println(list);
 		assertThat(list.get(0), hasItems(1, 2, 3));

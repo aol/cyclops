@@ -2,7 +2,7 @@ package com.aol.cyclops.javaslang.reactivestreams.javaslang;
 
 
 
-import javaslang.collection.Stream;
+import javaslang.collection.LazyStream;
 
 import org.reactivestreams.Publisher;
 import org.reactivestreams.tck.PublisherVerification;
@@ -20,7 +20,7 @@ public class TckSynchronousPublisherTest extends PublisherVerification<Long>{
 
 	@Override
 	public Publisher<Long> createPublisher(long elements) {
-		return JavaslangReactiveStreamsPublisher.ofSync(Stream.gen(0l, i->i+1l).take((int)elements));
+		return JavaslangReactiveStreamsPublisher.ofSync(LazyStream.gen(0l, i->i+1l).take((int)elements));
 		
 	}
 

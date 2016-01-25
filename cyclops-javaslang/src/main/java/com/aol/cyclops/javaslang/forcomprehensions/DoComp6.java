@@ -15,13 +15,14 @@ import java.util.function.Supplier;
 import java.util.stream.BaseStream;
 import java.util.stream.Stream;
 
-import javaslang.algebra.Monad;
+import javaslang.Value;
 
 import org.pcollections.PStack;
 
 import com.aol.cyclops.comprehensions.donotation.typed.DoComp;
 import com.aol.cyclops.comprehensions.donotation.typed.Entry;
 import com.aol.cyclops.comprehensions.donotation.typed.Guard;
+import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
@@ -31,7 +32,7 @@ import com.aol.cyclops.sequence.SequenceM;
 			
 		}
 		//${start}
-		public <T7> DoComp7<T1,T2,T3,T4,T5,T6,T7> monad(Monad<T7> monad){
+		public <T7> DoComp7<T1,T2,T3,T4,T5,T6,T7> monad(Value<T7> monad){
 			return new DoComp7(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),monad)),getOrgType());
 		}
 		public <T7> DoComp7<T1,T2,T3,T4,T5,T6,Character> add(CharSequence seq){
@@ -484,7 +485,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @param f Gives access to current pointers and defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T7> DoComp7<T1,T2,T3,T4,T5,T6,T7> withMonad(Function<? super T1,Function<? super T2,Function<? super T3,Function<T4,Function<T5,Function<? super T6,Monad<T7>>>>>>> f){
+		public <T7> DoComp7<T1,T2,T3,T4,T5,T6,T7> withMonad(Function<? super T1,Function<? super T2,Function<? super T3,Function<T4,Function<T5,Function<? super T6,Value<T7>>>>>>> f){
 			return new DoComp7(addToAssigned(f),getOrgType());
 			
 		}

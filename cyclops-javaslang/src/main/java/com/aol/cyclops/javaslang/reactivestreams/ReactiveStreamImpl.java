@@ -5,9 +5,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import javaslang.collection.LazyStream;
 import javaslang.collection.Stream;
-import javaslang.collection.Stream.Cons;
-import javaslang.collection.Stream.Empty;
 import javaslang.control.Try;
 
 import org.reactivestreams.Subscription;
@@ -24,12 +23,12 @@ import com.aol.cyclops.javaslang.streams.StreamUtils;
  */
 public class ReactiveStreamImpl<T> implements ReactiveStream<T> {
 
-	private final Stream<T> stream;
+	private final LazyStream<T> stream;
 	
-	ReactiveStreamImpl(Stream<T> stream){
+	ReactiveStreamImpl(LazyStream<T> stream){
 		this.stream = stream;
 	}
-	private <U> Stream<Try<U>> enforceTry(Stream<T> stream) {
+	private <U> LazyStream<Try<U>> enforceTry(LazyStream<T> stream) {
      
 		if (stream.isEmpty()) {
 			return Empty.instance();
@@ -85,8 +84,8 @@ public class ReactiveStreamImpl<T> implements ReactiveStream<T> {
 	
 
 	@Override
-	public Stream<T> toStream() {
-	       return (Stream)stream;	
+	public LazyStream<T> toStream() {
+	       return (LazyStream)stream;	
 	 }
 	
 	public <X extends Throwable> Subscription forEachX(long numberOfElements,Consumer<? super T> consumer){

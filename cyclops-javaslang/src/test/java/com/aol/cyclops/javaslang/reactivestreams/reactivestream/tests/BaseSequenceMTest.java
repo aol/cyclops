@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 import javaslang.collection.List;
 import javaslang.collection.Map;
+import javaslang.collection.LazyStream;
 import javaslang.collection.Stream;
 
 import org.junit.Before;

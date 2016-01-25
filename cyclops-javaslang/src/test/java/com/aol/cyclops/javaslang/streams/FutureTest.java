@@ -22,7 +22,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import javaslang.collection.Stream;
+import javaslang.collection.LazyStream;
 import lombok.experimental.ExtensionMethod;
 
 import org.jooq.lambda.tuple.Tuple2;

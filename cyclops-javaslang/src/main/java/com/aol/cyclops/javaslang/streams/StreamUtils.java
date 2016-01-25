@@ -36,9 +36,11 @@ import java.util.stream.StreamSupport;
 import javaslang.Tuple2;
 import javaslang.Tuple3;
 import javaslang.Tuple4;
+import javaslang.collection.LazyStream;
 import javaslang.collection.List;
 import javaslang.collection.Map;
 import javaslang.collection.Set;
+import javaslang.collection.Stream;
 import javaslang.collection.Stream;
 import lombok.AllArgsConstructor;
 import lombok.val;
@@ -64,6 +66,7 @@ import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.FutureStreamUtils;
 import com.aol.cyclops.streams.future.FutureOperationsImpl;
 import com.aol.cyclops.streams.operators.MultiCollectOperator;
+
 
 @UtilityClass 
 public class StreamUtils{
@@ -117,7 +120,8 @@ public class StreamUtils{
 	 * @param consumer To accept incoming events from the Stream
 	 * @return Subscription so that further processing can be continued or cancelled.
 	 */
-	public static <T,X extends Throwable> Subscription forEachX(Stream<T> stream, long x, Consumer<? super T> consumerElement){
+	public static <T,X extends Throwable> Subscription forEachX(LazyStream<T> stream, long x, Consumer<? super T> consumerElement){
+		
 		val t2 = FutureStreamUtils.forEachX(ToStream.toStream(stream), x, consumerElement);
 		t2.v2.run();
 		return t2.v1.join();
@@ -155,7 +159,7 @@ public class StreamUtils{
 	 * @param onComplete To run after an onComplete event
 	 * @return Subscription so that further processing can be continued or cancelled.
 	 */
-	public static <T,X extends Throwable> Subscription forEachXWithError(Stream<T> stream, long x, 
+	public static <T,X extends Throwable> Subscription forEachXWithError(LazyStream<T> stream, long x, 
 			Consumer<? super T> consumerElement,Consumer<? super Throwable> consumerError){
 		val t2 =FutureStreamUtils.forEachXWithError(ToStream.toStream(stream), x, consumerElement,consumerError);
 		t2.v2.run();
@@ -196,7 +200,7 @@ public class StreamUtils{
 	 * @param onComplete To run after an onComplete event
 	 * @return Subscription so that further processing can be continued or cancelled.
 	 */
-	public static <T,X extends Throwable> Subscription forEachXEvents(Stream<T> stream, long x, 
+	public static <T,X extends Throwable> Subscription forEachXEvents(LazyStream<T> stream, long x, 
 												Consumer<? super T> consumerElement,
 												Consumer<? super Throwable> consumerError,
 												Runnable onComplete){
@@ -228,7 +232,7 @@ public class StreamUtils{
 	 * @param consumer To accept incoming elements from the Stream
 	 * @param consumerError To accept incoming processing errors from the Stream
 	 */
-	public static <T,X extends Throwable>  void forEachWithError(Stream<T> stream, Consumer<? super T> consumerElement,
+	public static <T,X extends Throwable>  void forEachWithError(LazyStream<T> stream, Consumer<? super T> consumerElement,
 			Consumer<? super Throwable> consumerError){
 		
 		val t2 =FutureStreamUtils.forEachWithError(ToStream.toStream(stream), consumerElement,consumerError);
@@ -264,7 +268,7 @@ public class StreamUtils{
 	 * @param onComplete To run after an onComplete event
 	 * @return Subscription so that further processing can be continued or cancelled.
 	 */
-	public static <T,X extends Throwable>void forEachEvent(Stream<T> stream,Consumer<? super T> consumerElement,
+	public static <T,X extends Throwable>void forEachEvent(LazyStream<T> stream,Consumer<? super T> consumerElement,
 			Consumer<? super Throwable> consumerError,
 			Runnable onComplete){
 		
@@ -1342,10 +1346,10 @@ public class StreamUtils{
 		Collections.shuffle(list);
 		return Streamable.fromIterable(list);
 	}
-	public  final static <T> Streamable<T> toLazyStreamable(Stream<T> stream){
+	public  final static <T> Streamable<T> toStreamable(Stream<T> stream){
 		return  AsStreamable.fromStream(ToStream.toSequenceM(stream));
 	}
-	public final static <T> Streamable<T> toConcurrentLazyStreamable(Stream<T> stream){
+	public final static <T> Streamable<T> toConcurrentStreamable(Stream<T> stream){
 		return AsStreamable.synchronizedFromStream(ToStream.toSequenceM(stream));
 	}
 	public final static <U,T> Stream<U> scanRight(Stream<T> stream,U identity,BiFunction<? super T, U, U>  combiner){
@@ -1525,7 +1529,7 @@ public class StreamUtils{
 	/**
 	 * @return Underlying monad converted to a Streamable instance
 	 */
-	public final static <T> Streamable<T> toStreamable(Stream<T> stream){
+	public final static <T> Streamable<T> toStreamable(Iterable<T> stream){
 		return  AsStreamable.fromIterable(stream);
 	}
 	/**
