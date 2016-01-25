@@ -17,6 +17,11 @@ import com.aol.cyclops.javaslang.ToStream;
 import com.aol.cyclops.javaslang.streams.StreamUtils;
 
 
+/**
+ * @author johnmcclean
+ *
+ * @param <T>
+ */
 public class ReactiveStreamImpl<T> implements ReactiveStream<T> {
 
 	private final Stream<T> stream;
@@ -163,5 +168,13 @@ public class ReactiveStreamImpl<T> implements ReactiveStream<T> {
 	public boolean isEmpty() {
 		return stream.isEmpty();
 	}
+	/* (non-Javadoc)
+	 * @see javaslang.collection.Stream#lazyHead()
+	 */
+	@Override
+	public Supplier<T> lazyHead() {
+		return stream.lazyHead();
+	}
+	
 
 }

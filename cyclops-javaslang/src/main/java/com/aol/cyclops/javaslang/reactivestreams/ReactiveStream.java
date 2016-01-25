@@ -40,6 +40,7 @@ import org.jooq.lambda.Seq;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
+import com.aol.cyclops.closures.mutable.Mutable;
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.javaslang.Javaslang;
 import com.aol.cyclops.javaslang.streams.JavaslangHotStream;
@@ -72,7 +73,7 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	 * @return A new Stream
 	 */
 	@SuppressWarnings("unchecked")
-	static <T> ReactiveStream<T> cons(T head, Supplier<? extends Stream<? extends T>> tailSupplier) {
+	static <T> ReactiveStream<T> cons(Supplier<T> head, Supplier<? extends Stream<? extends T>> tailSupplier) {
 		return fromStream(Stream.cons(head, tailSupplier));
 	}
 
@@ -131,10 +132,10 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	}
 
 	static <T> ReactiveStream<T> fromIterable(Iterable<T> stream) {
-		return fromStream(ofAll(stream));
+		return fromStream(Stream.ofAll(stream));
 	}
 	static <T> ReactiveStream<T> fromIterator(Iterator<T> it) {
-		return fromStream(ofAll(()->it));
+		return fromStream(Stream.ofAll(()->it));
 	}
 
 
@@ -273,34 +274,44 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
                 if (traversable.isEmpty()) {
                     throw new NoSuchElementException();
                 } else {
-                	
-                	
-                	final T	result = traversable.head();
-                	
+                	T result = null;;
                 	try{
-                		traversable = traversable.tail();
+                		
+                	
+                	result = traversable.head();
+                	
+                	
+                		
                 	}catch(Throwable t){
+                		
                 		throw ExceptionSoftener.throwSoftenedException(t);
+                		
+                	}
+                	finally{
+                		traversable = traversable.tail();
                 	}
                     return result;
                 }
             }
         };
     }  
+    /**
     final class StreamFactory {
 
         static <T> Stream<T> create(java.util.Iterator<? extends T> iterator) {
             return iterator.hasNext() ? new Cons<>(iterator.next(), () -> create(iterator)) : Empty.instance();
         }
-    }
+    }**/
+    /**
     static <T> Stream<T> ofAll(java.lang.Iterable<? extends T> elements) {
+    	return 
         Objects.requireNonNull(elements, "elements is null");
         if (elements instanceof Stream) {
             return (Stream<T>) elements;
         } else {
             return StreamFactory.create(elements.iterator());
         }
-    }
+    }**/
 	default ReactiveStream<T> recover(Function<Throwable, ? extends T> fn) {
 		Iterator<T> it = iterator();
 		
@@ -317,6 +328,7 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 				try{
 					return it.next();
 				}catch(Throwable t){
+					t.printStackTrace();
 					if(type.isAssignableFrom(t.getClass())){
 						return fn.apply(t);
 						
@@ -991,12 +1003,12 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	}
 
 	@Override
-	default ReactiveStream<T> drop(int n) {
+	default ReactiveStream<T> drop(long n) {
 		return fromStream(toStream().drop(n));
 	}
 
 	@Override
-	default ReactiveStream<T> dropRight(int n) {
+	default ReactiveStream<T> dropRight(long n) {
 		return fromStream(toStream().dropRight(n));
 	}
 
@@ -1054,7 +1066,8 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	        if (isEmpty()) {
 	            return fromStream(Empty.instance());
 	        } else {
-	            return fromStream(new Cons<>(mapper.apply(head()), () -> tail().map(mapper)));
+	        	 return fromStream(Stream.super.map(mapper));
+	        	
 	        }
 	   }
 
@@ -1152,7 +1165,7 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	}
 
 	@Override
-	default ReactiveStream<T> slice(int beginIndex, int endIndex) {
+	default ReactiveStream<T> slice(long beginIndex,long endIndex) {
 		return fromStream(toStream().slice(beginIndex, endIndex));
 	}
 
@@ -1195,12 +1208,12 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	}
 
 	@Override
-	default ReactiveStream<T> take(int n) {
+	default ReactiveStream<T> take(long n) {
 		return fromStream(toStream().take(n));
 	}
 
 	@Override
-	default ReactiveStream<T> takeRight(int n) {
+	default ReactiveStream<T> takeRight(long n) {
 		return fromStream(toStream().takeRight(n));
 	}
 
@@ -1240,7 +1253,7 @@ public interface ReactiveStream<T> extends Stream<T>, Publisher<T>, ReactiveStre
 	}
 
 	@Override
-	default ReactiveStream<Tuple2<T, Integer>> zipWithIndex() {
+	default ReactiveStream<Tuple2<T, Long>> zipWithIndex() {
 		return fromStream(toStream().zipWithIndex());
 	}
 

@@ -13,7 +13,7 @@ import java.util.stream.Collector;
 
 import javaslang.collection.List;
 import javaslang.collection.Stream;
-import javaslang.control.Success;
+
 import javaslang.control.Try;
 
 import org.junit.Test;
@@ -206,7 +206,7 @@ public class JavaslangStreamTest extends AbstractSeqTest {
 
     @Test
     public void shouldBuildStreamBasedOnHeadAndTailSupplierWithAccessToHead() {
-        assertThat(ReactiveStream.cons(1, () -> ReactiveStream.cons(2, Stream::empty))).isEqualTo(ReactiveStream.of(1, 2));
+        assertThat(ReactiveStream.cons(()->1, () -> ReactiveStream.cons(()->2, Stream::empty))).isEqualTo(ReactiveStream.of(1, 2));
     }
 
     // -- combinations
@@ -400,10 +400,10 @@ public class JavaslangStreamTest extends AbstractSeqTest {
     }
 
     private Try<Void> flatTryWithJavaslangStream(Integer[] vals, Try.CheckedConsumer<Integer> func) {
-        return ReactiveStream.of(vals)
+        return Stream.of(vals)
                 .map(v -> Try.run(() -> func.accept(v)))
-                .findFirst(Try::isFailure)
-                .orElseGet(() -> new Success<>(null));
+                .find(Try::isFailure)
+                .getOrElse(() -> Try.success(null));
     }
 
     private Try<Void> flatTryWithJavaStream(Integer[] vals, Try.CheckedConsumer<Integer> func) {
@@ -411,8 +411,9 @@ public class JavaslangStreamTest extends AbstractSeqTest {
                 .map(v -> Try.run(() -> func.accept(v)))
                 .filter(Try::isFailure)
                 .findFirst()
-                .orElseGet(() -> new Success<>(null));
+                .orElseGet(() -> Try.success(null));
     }
+
 
     private String doStuff(int i, StringBuilder builder) throws Exception {
         builder.append(i);

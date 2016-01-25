@@ -40,7 +40,7 @@ public class RetryTest {
 		
 		error = null;
 	}
-
+/**
 	@Test
 	public void lazyTest(){
 		new LazyStream<>(Lazy.of(()->Stream.of(1,2,3)))
@@ -48,7 +48,8 @@ public class RetryTest {
 					.map(u->{ if(u==3) return "i"; else throw new RuntimeException();})
 					.recover(e->"hello")
 					.forEach(System.out::println);
-	}
+	}**/
+	
 	@Test @Ignore
 	public void recover(){
 		assertThat(ReactiveStream.of(1,2,3,4)
@@ -68,7 +69,7 @@ public class RetryTest {
 					.map(i->i+2)
 					.map(u->{ if(u==3) return "i"; else throw new RuntimeException();})
 					.recover(e->"hello")
-					.get(),equalTo("hello"));
+					.toList().get(1),equalTo("hello"));
 	}
 	@Test @Ignore
 	public void recover3(){

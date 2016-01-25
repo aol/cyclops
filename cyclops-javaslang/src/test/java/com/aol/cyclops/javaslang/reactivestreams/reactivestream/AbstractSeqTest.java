@@ -1506,7 +1506,7 @@ public abstract class AbstractSeqTest extends AbstractTraversableRangeTest {
 
     @Test
     public void shouldZipNonNilWithIndex() {
-        final Seq<Tuple2<String, Integer>> actual = of("a", "b", "c").zipWithIndex();
+        final Seq<Tuple2<String, Long>> actual = of("a", "b", "c").zipWithIndex();
         @SuppressWarnings("unchecked")
         final Seq<Tuple2<String, Integer>> expected = of(Tuple.of("a", 0), Tuple.of("b", 1), Tuple.of("c", 2));
         assertThat(actual).isEqualTo(expected);

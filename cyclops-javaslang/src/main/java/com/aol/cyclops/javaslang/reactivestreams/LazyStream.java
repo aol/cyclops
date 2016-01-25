@@ -15,9 +15,9 @@ import lombok.AllArgsConstructor;
 
 public class LazyStream <T>{
 
-	private final Lazy<Stream<T>> stream;
+	private final Lazy<LazyStream<T>> stream;
 	
-	public LazyStream(Lazy<Stream<T>> stream){
+	public LazyStream(Lazy<LazyStream<T>> stream){
 		this.stream=stream;
 	}
 	
@@ -36,7 +36,7 @@ public class LazyStream <T>{
 		Iterator<T> it = st.iterator();
 		
 		Class type =Throwable.class;
-		return Stream.ofAll(()->new Iterator<T>(){
+		return LazyStream.ofAll(()->new Iterator<T>(){
 			
 			@Override
 			public boolean hasNext() {
