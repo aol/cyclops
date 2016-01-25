@@ -1079,7 +1079,7 @@ public class StreamUtils{
 	 * @return Repeating Stream
 	 */
 	public final static <T> Stream<T> cycleWhile(Stream<T>  stream,Predicate<? super T> predicate) {
-		return StreamUtils.limitWhile(StreamUtils.cycle(stream),predicate);
+		return FromJDK.stream(ToStream.toSequenceM(stream).cycleWhile(predicate));
 	}
 
 	/**
@@ -1099,7 +1099,8 @@ public class StreamUtils{
 	 * @return Repeating Stream
 	 */
 	public final static <T> Stream<T> cycleUntil(Stream<T> stream,Predicate<? super T> predicate) {
-		return StreamUtils.limitUntil(StreamUtils.cycle(stream),predicate);
+		return FromJDK.stream(ToStream.toSequenceM(stream).cycleUntil(predicate));
+		
 	}
 
 	/**

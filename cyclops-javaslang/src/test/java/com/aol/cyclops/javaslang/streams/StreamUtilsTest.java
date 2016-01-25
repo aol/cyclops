@@ -233,7 +233,7 @@ public class StreamUtilsTest {
 	@Test
 	public void testCycleUntil(){
 		count =0;
-		assertThat(StreamUtils.cycleUntil(LazyStream.of(1,2,2,3)
+		assertThat(StreamUtils.cycleUntil(Stream.of(1,2,2,3)
 											,next -> count++>10 )
 											.toJavaList(),equalTo(Arrays.asList(1, 2, 2, 3, 1, 2, 2, 3, 1, 2, 2)));
 	}

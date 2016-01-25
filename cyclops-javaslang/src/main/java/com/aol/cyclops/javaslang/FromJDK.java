@@ -8,6 +8,7 @@ import javaslang.Function1;
 import javaslang.Function2;
 import javaslang.collection.List;
 import javaslang.collection.LazyStream;
+import javaslang.collection.Stream;
 import javaslang.control.Option;
 
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
@@ -24,14 +25,14 @@ public class FromJDK<T,R> {
 	public static<T> Option<T> option(java.util.Optional<T> o){
 		return Option.of(o.orElse(null));
 	}
-	public static<T> LazyStream<T> stream(java.util.stream.Stream<T> stream){
-		return LazyStream.ofAll(()->stream.iterator());
+	public static<T> Stream<T> stream(java.util.stream.Stream<T> stream){
+		return Stream.ofAll(()->stream.iterator());
 	}
 	
-	public static<T> LazyStream<T> stream(java.util.stream.Stream<T> stream, Continueable  sub){
+	public static<T> Stream<T> stream(java.util.stream.Stream<T> stream, Continueable  sub){
 		
 		Iterator i = stream.iterator();
-		return LazyStream.ofAll(()-> {return new Iterator(){
+		return Stream.ofAll(()-> {return new Iterator(){
 
 			@Override
 			public boolean hasNext() {
@@ -44,7 +45,7 @@ public class FromJDK<T,R> {
 				try{
 					return i.next();
 				}catch(Throwable t){
-					t.printStackTrace();
+				
 					throw ExceptionSoftener.throwSoftenedException(t);
 				}
 			}};});
