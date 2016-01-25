@@ -310,9 +310,7 @@ public class SequenceMTest {
 	@Test
 	public void testOfType() {
 
-		ReactiveStream.range(0, 100_000_000)
-					.ofType(Integer.class)
-					.forEach(System.out::println);
+		
 
 		assertThat(ReactiveStream.of(1, "a", 2, "b", 3, null).ofType(Integer.class).toList(),containsInAnyOrder(1, 2, 3));
 

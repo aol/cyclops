@@ -13,7 +13,7 @@ import java.util.stream.Collector;
 
 import javaslang.collection.List;
 import javaslang.collection.LazyStream;
-
+import javaslang.collection.Stream;
 import javaslang.control.Try;
 
 import org.junit.Test;
@@ -24,6 +24,7 @@ public class JavaslangStreamTest extends AbstractSeqTest {
 
 	  // -- construction
 
+	
     @Override
     protected <T> Collector<T, ArrayList<T>, LazyStream<T>> collector() {
         return LazyStream.collector();
@@ -218,8 +219,8 @@ public class JavaslangStreamTest extends AbstractSeqTest {
 
     @Test
     public void shouldComputeCombinationsOfNonEmptyStream() {
-        assertThat(ReactiveStream.of(1, 2, 3).combinations()).isEqualTo(ReactiveStream.of(ReactiveStream.empty(), ReactiveStream.of(1), ReactiveStream.of(2),
-                ReactiveStream.of(3), ReactiveStream.of(1, 2), ReactiveStream.of(1, 3), ReactiveStream.of(2, 3), ReactiveStream.of(1, 2, 3)));
+        assertThat(ReactiveStream.of(1, 2, 3).combinations().map(r->r.toList())).isEqualTo(ReactiveStream.of(List.empty(), List.of(1), List.of(2),
+                List.of(3), List.of(1, 2), List.of(1, 3), List.of(2, 3), List.of(1, 2, 3)));
     }
 
     // -- combinations(k)
@@ -259,8 +260,10 @@ public class JavaslangStreamTest extends AbstractSeqTest {
 
     @Test
     public void shouldComputePermutationsOfNonEmptyStream() {
-        assertThat(ReactiveStream.of(1, 2, 3).permutations()).isEqualTo(ReactiveStream.of(ReactiveStream.of(ReactiveStream.of(1, 2, 3),
-                ReactiveStream.of(1, 3, 2), ReactiveStream.of(2, 1, 3), ReactiveStream.of(2, 3, 1), ReactiveStream.of(3, 1, 2), ReactiveStream.of(3, 2, 1))));
+    	System.out.println(Stream.of(1, 2, 3).permutations());
+        assertThat(Stream.of(1, 2, 3).permutations().map(r->r.toList()))
+        				.isEqualTo(ReactiveStream.of(List.of(1, 2, 3),
+                List.of(1, 3, 2), List.of(2, 1, 3), List.of(2, 3, 1), List.of(3, 1, 2), List.of(3, 2, 1)));
     }
 
     // -- addSelf

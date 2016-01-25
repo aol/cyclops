@@ -5,13 +5,17 @@
  */
 package com.aol.cyclops.javaslang.reactivestreams.reactivestream;
 
+import static org.junit.Assert.*;
+
 import java.util.ArrayList;
 import java.util.stream.Collector;
 
 import javaslang.Tuple;
 import javaslang.Tuple2;
 import javaslang.collection.Iterator;
+import javaslang.collection.List;
 import javaslang.collection.Seq;
+import javaslang.collection.Stream;
 import javaslang.collection.Traversable;
 
 import org.junit.Test;
@@ -180,8 +184,9 @@ public abstract class AbstractSeqTest extends AbstractTraversableRangeTest {
     @SuppressWarnings("unchecked")
     @Test
     public void shouldComputeCombinationsOfNonEmptyList() {
-        assertThat(of(1, 2, 3).combinations())
-                .isEqualTo(of(empty(), of(1), of(2), of(3), of(1, 2), of(1, 3), of(2, 3), of(1, 2, 3)));
+        assertThat(of(1, 2, 3).combinations().map(r->r.toList()))
+                .isEqualTo(of(List.empty(), List.of(1), List.of(2), List.of(3), List.of(1, 2),
+                		List.of(1, 3), List.of(2, 3), List.of(1, 2, 3)));
     }
 
     // -- combinations(k)
@@ -199,7 +204,8 @@ public abstract class AbstractSeqTest extends AbstractTraversableRangeTest {
 
     @Test
     public void shouldComputeKCombinationsOfNegativeK() {
-        assertThat(of(1).combinations(-1)).isEqualTo(of(empty()));
+    	
+        assertTrue(of(1).combinations(-1).get().isEmpty());
     }
 
     // -- containsSlice
@@ -554,7 +560,7 @@ public abstract class AbstractSeqTest extends AbstractTraversableRangeTest {
 
     @Test
     public void shouldPadEmptyToEmpty() {
-        assertThat(empty().padTo(0, 1)).isSameAs(empty());
+        assertTrue(empty().padTo(0, 1).isEmpty());
     }
 
     @Test
@@ -565,7 +571,7 @@ public abstract class AbstractSeqTest extends AbstractTraversableRangeTest {
     @Test
     public void shouldPadNonEmptyZeroLen() {
         Seq<Integer> seq = of(1);
-        assertThat(seq.padTo(0, 2)).isSameAs(seq);
+        assertThat(seq.padTo(0, 2)).isEqualTo(seq);
     }
 
     @Test
@@ -1508,7 +1514,7 @@ public abstract class AbstractSeqTest extends AbstractTraversableRangeTest {
     public void shouldZipNonNilWithIndex() {
         final Seq<Tuple2<String, Long>> actual = of("a", "b", "c").zipWithIndex();
         @SuppressWarnings("unchecked")
-        final Seq<Tuple2<String, Integer>> expected = of(Tuple.of("a", 0), Tuple.of("b", 1), Tuple.of("c", 2));
+        final Seq<Tuple2<String, Long>> expected = of(Tuple.of("a", 0l), Tuple.of("b", 1l), Tuple.of("c", 2l));
         assertThat(actual).isEqualTo(expected);
     }
 }

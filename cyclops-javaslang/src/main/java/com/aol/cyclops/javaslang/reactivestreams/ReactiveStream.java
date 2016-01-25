@@ -31,14 +31,11 @@ import javaslang.collection.Map;
 import javaslang.collection.LazyStream;
 import javaslang.collection.Stream;
 import javaslang.collection.Traversable;
-
 import javaslang.control.Option;
-
 
 import org.jooq.lambda.Seq;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
-
 
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.javaslang.Javaslang;
@@ -56,8 +53,12 @@ import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.aol.simple.react.stream.traits.SimpleReactStream;
 
-public interface ReactiveStream<T> extends LazyStream<T>, Publisher<T>, ReactiveStreamsTerminalOperations<T> {
+public interface ReactiveStream<T> extends LazyStream<T>, Publisher<T>, ReactiveStreamsTerminalOperations<T>{
 
+	    default <U> U foldRight2(U zero, BiFunction<? super U,? super T, ? extends U> f) {
+	        Objects.requireNonNull(f, "f is null");
+	        return reverse().foldLeft(zero, (xs, x) -> f.apply(xs, x));
+	    }
 	/** creational methods **/
 	/**
 	 * Constructs a ReactiveStream of a head element and a tail supplier.
@@ -1191,7 +1192,7 @@ public interface ReactiveStream<T> extends LazyStream<T>, Publisher<T>, Reactive
 	default Tuple2<? extends ReactiveStream<T>, ? extends ReactiveStream<T>> spanReactive(Predicate<? super T> predicate) {
 		return toStream().span(predicate).map(s1 -> fromStream(s1), s2 -> fromStream(s2));
 	}
-
+	
 	@Override
 	default ReactiveStream<T> subSequence(int beginIndex) {
 		return fromStream(toStream().subSequence(beginIndex));

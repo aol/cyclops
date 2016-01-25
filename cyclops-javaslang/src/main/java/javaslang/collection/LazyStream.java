@@ -196,7 +196,7 @@ public interface LazyStream<T> extends Stream<T> {
      * @return The empty list.
      */
     static <T> LazyStream<T> empty() {
-        return Empty.instance();
+        return fromStream(Stream.empty());
     }
 
     /**
@@ -781,7 +781,8 @@ public interface LazyStream<T> extends Stream<T> {
     @Override
     default LazyStream<T> dropUntil(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate, "predicate is null");
-        return dropWhile(predicate.negate());
+        return fromStream(StreamUtils.skipUntil(this, predicate));
+       // return dropWhile(predicate.negate());
     }
 
     @Override
