@@ -10,7 +10,9 @@ import javaslang.control.Option;
 import java.io.*;
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.BaseStream;
 import java.util.stream.Collector;
+import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.functions.caching.Memoize;
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
@@ -169,7 +171,7 @@ public interface LazyStream<T> extends Stream<T> {
         Objects.requireNonNull(f, "f is null");
         return LazyStream.ofAll(Iterator.gen(seed, f));
     }
-
+   
     /**
      * Constructs a Stream of a head element and a tail supplier.
      *
@@ -1232,8 +1234,7 @@ public interface LazyStream<T> extends Stream<T> {
 
     @Override
     default Spliterator<T> spliterator() {
-        // the focus of the Stream API is on random-access collections of *known size*
-        return Spliterators.spliterator(iterator(), length(), Spliterator.ORDERED | Spliterator.IMMUTABLE);
+    	return Spliterators.spliteratorUnknownSize(iterator(), Spliterator.ORDERED);
     }
 
     @Override
@@ -1436,7 +1437,8 @@ public interface LazyStream<T> extends Stream<T> {
 
         @Override
         public boolean equals(Object o) {
-            return o == this;
+        	return (o instanceof Empty || o instanceof Stream.Empty);
+          
         }
 
         @Override
@@ -1515,9 +1517,9 @@ public interface LazyStream<T> extends Stream<T> {
         public boolean equals(Object o) {
             if (o == this) {
                 return true;
-            } else if (o instanceof LazyStream) {
-                LazyStream<?> stream1 = this;
-                LazyStream<?> stream2 = (LazyStream<?>) o;
+            } else if (o instanceof Stream) {
+                Stream<?> stream1 = this;
+                Stream<?> stream2 = (Stream<?>) o;
                 while (!stream1.isEmpty() && !stream2.isEmpty()) {
                     final boolean isEqual = Objects.equals(stream1.head(), stream2.head());
                     if (!isEqual) {
@@ -1718,8 +1720,18 @@ interface LazyStreamModule {
     interface StreamFactory {
 
         static <T> LazyStream<T> create(java.util.Iterator<? extends T> iterator) {
+        	
         	Supplier<T> head = Memoize.memoizeSupplier(()->iterator.next());
-            return iterator.hasNext() ? LazyStream.cons(head, () -> { head.get(); return create(iterator);}) : Empty.instance();
+        	  return iterator.hasNext() ? LazyStream.cons(head, 
+              		() -> { 
+              		if(iterator.hasNext()) { 
+              			head.get(); 
+              			return create(iterator); 
+              		} 
+              		else{
+              			return Empty.instance();
+              		}}) : Empty.instance();
+              	
         }
     }
 

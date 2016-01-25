@@ -1,7 +1,5 @@
 package com.aol.cyclops.javaslang.reactivestreams.reactivestream.tests;
 import static com.aol.cyclops.javaslang.reactivestreams.ReactiveStream.of;
-
-
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
@@ -14,7 +12,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
@@ -22,6 +19,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import javaslang.collection.List;
+import javaslang.collection.Stream;
 import lombok.Value;
 
 import org.junit.Test;
@@ -37,7 +36,7 @@ public class BatchingTest {
 				.toList().length(),equalTo(2));
 		assertThat(ReactiveStream.of(1,2,3,4,5,6)
 				.windowUntil(i->i%3==0)
-				.toList().get(0),equalTo(Arrays.asList(1,2,3)));
+				.toList().get(0),equalTo(Stream.of(1,2,3)));
 	}
 	@Test
 	public void batchWhile(){
@@ -45,9 +44,12 @@ public class BatchingTest {
 				.windowWhile(i->i%3!=0)
 				.toList()
 				.length(),equalTo(2));
+		ReactiveStream.of(1,2,3,4,5,6)
+		.windowWhile(i->i%3!=0)
+		.toList().forEach(a->System.out.println(a.getClass()));
 		assertThat(ReactiveStream.of(1,2,3,4,5,6)
 				.windowWhile(i->i%3!=0)
-				.toList(),equalTo(Arrays.asList(Arrays.asList(1,2,3),Arrays.asList(4,5,6))));
+				.toList(),equalTo(List.of(Stream.of(1,2,3),Stream.of(4,5,6))));
 	}
 	
 	
@@ -128,7 +130,7 @@ public class BatchingTest {
 
 		for(int x=0;x<10;x++){
 			count2=new AtomicInteger(0);
-			List<Collection<Map>> result = new ArrayList<>();
+			java.util.List<Collection<Map>> result = new ArrayList<>();
 					
 			ReactiveStream.iterate("", last -> "hello")
 					.take(1000)
@@ -192,7 +194,7 @@ public class BatchingTest {
 		
 		for(int i=0;i<10;i++){
 			System.out.println(i);
-			List<ReactiveStream<Integer>> list = of(1,2,3,4,5,6)
+			java.util.List<ReactiveStream<Integer>> list = of(1,2,3,4,5,6)
 					.map(n-> n==6? sleep(1) : n)
 					.windowBySizeAndTime(10,1,TimeUnit.MICROSECONDS)
 					
