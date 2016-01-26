@@ -40,11 +40,11 @@ public class StackComprehender implements Comprehender<Stack> {
 	}
 	static Stack unwrapOtherMonadTypes(Comprehender<Stack> comp,Object apply){
 		if(apply instanceof java.util.stream.Stream)
-			return Stack.ofAll( ((java.util.stream.Stream)apply).iterator());
+			return Stack.of( ((java.util.stream.Stream)apply).iterator());
 		if(apply instanceof Iterable)
-			return Stack.ofAll( ((Iterable)apply).iterator());
+			return Stack.of( ((Iterable)apply).iterator());
 		if(apply instanceof LazySeq){
-			apply = Stack.ofAll(((LazySeq)apply).iterator());
+			apply = Stack.of(((LazySeq)apply).iterator());
 		}
 		if(apply instanceof Collection){
 			return Stack.ofAll((Collection)apply);

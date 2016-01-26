@@ -7,6 +7,8 @@ import org.reactivestreams.Subscription;
 /**
  * Interface for reactive-streams based terminal operations, requires simple-react to be on the classpath.
  * 
+ * Used by SequenceM & javaslang ReactiveStream
+ * 
  * @author johnmcclean
  *
  * @param <T> Element data in the Stream being processed.
@@ -17,6 +19,7 @@ public interface ReactiveStreamsTerminalOperations<T> {
 	 * Perform a forEach operation over the Stream, without closing it, consuming only the specified number of elements from
 	 * the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription
 	 * 
+	 * e.g.
 	 * <pre>
 	 * @{code
 	 *     Subscription next = SequenceM.of(1,2,3,4)

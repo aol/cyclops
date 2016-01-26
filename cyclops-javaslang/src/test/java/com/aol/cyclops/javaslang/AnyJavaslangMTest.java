@@ -35,7 +35,7 @@ public class AnyJavaslangMTest {
 
 	@Test
 	public void testToList(){
-		assertThat(Javaslang.anyM(List.ofAll(1,2,3)).toList(), equalTo(Arrays.asList(1,2,3)));
+		assertThat(Javaslang.anyM(List.of(1,2,3)).toList(), equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void monadTest(){

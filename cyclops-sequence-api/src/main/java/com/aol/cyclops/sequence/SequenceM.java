@@ -1893,9 +1893,16 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, JoolWindowing<T>, J
 	SequenceM<T> limitLast(int num);
 
 	/**
+<<<<<<< HEAD
+	 * Turns this SequenceM into a HotStream, a connectable Stream, being executed on a thread on the 
+	 * supplied executor, that is producing data. Note this method creates a HotStream that starts emitting data
+	 * immediately. For a hotStream that waits until the first user streams connect @see {@link SequenceM#primedHotStream(Executor)}.
+	 * The generated HotStream is not pausable, for a pausable HotStream @see {@link SequenceM#pausableHotStream(Executor)}.
+=======
 	 * Turns this SequenceM into a HotStream, a connectable Stream, being
 	 * executed on a thread on the supplied executor, that is producing data
 	 * 
+>>>>>>> master
 	 * <pre>
 	 * {@code 
 	 *  HotStream<Integer> ints = SequenceM.range(0,Integer.MAX_VALUE)
@@ -1914,6 +1921,76 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, JoolWindowing<T>, J
 	 * @return a Connectable HotStream
 	 */
 	HotStream<T> hotStream(Executor e);
+
+	/**
+	 * Return a HotStream that will start emitting data when the first connecting Stream connects.
+	 * Note this method creates a HotStream that starts emitting data only when the first connecting Stream connects.
+	 *  For a hotStream that starts to output data immediately @see {@link SequenceM#hotStream(Executor)}.
+	 * The generated HotStream is not pausable, for a pausable HotStream @see {@link SequenceM#primedPausableHotStream(Executor)}.
+	 * <pre>
+	  * <pre>
+	 * {@code 
+	 *  HotStream<Integer> ints = SequenceM.range(0,Integer.MAX_VALUE)
+											.hotStream(exec)
+											
+		
+		ints.connect().forEach(System.out::println);									
+	 *  //print out all the ints - starting when connect is called.
+	 *  //multiple consumers are possible, so other Streams can connect on different Threads
+	 *  
+	 * }
+	 * </pre>
+	 * @param e
+	 * @return
+	 */
+	HotStream<T> primedHotStream(Executor e);
+	/**
+	 * Turns this SequenceM into a HotStream, a connectable & pausable Stream, being executed on a thread on the 
+	 * supplied executor, that is producing data. Note this method creates a HotStream that starts emitting data
+	 * immediately. For a hotStream that waits until the first user streams connect @see {@link SequenceM#primedPausableHotStream(Executor)}.
+	 * The generated HotStream is pausable, for a unpausable HotStream (slightly faster execution) @see {@link SequenceM#hotStream(Executor)}.
+	 * <pre>
+	 * {@code 
+	 *  HotStream<Integer> ints = SequenceM.range(0,Integer.MAX_VALUE)
+											.hotStream(exec)
+											
+		
+		ints.connect().forEach(System.out::println);
+		
+		ints.pause(); //on a separate thread pause the generating Stream
+											
+	 *  //print out all the ints
+	 *  //multiple consumers are possible, so other Streams can connect on different Threads
+	 *  
+	 * }
+	 * </pre>
+	 * @param e Executor to execute this SequenceM on
+	 * @return a Connectable HotStream
+	 */
+	PausableHotStream<T> pausableHotStream(Executor e);
+	/**
+	 * Return a pausable HotStream that will start emitting data when the first connecting Stream connects.
+	 * Note this method creates a HotStream that starts emitting data only when the first connecting Stream connects.
+	 *  For a hotStream that starts to output data immediately @see {@link SequenceM#pausableHotStream(Executor)}.
+	 * The generated HotStream is pausable, for a unpausable HotStream @see {@link SequenceM#primedHotStream(Executor)}.
+	 * <pre>
+	  * <pre>
+	 * {@code 
+	 *  HotStream<Integer> ints = SequenceM.range(0,Integer.MAX_VALUE)
+											.hotStream(exec)
+											
+		
+		ints.connect().forEach(System.out::println);									
+	 *  //print out all the ints - starting when connect is called.
+	 *  //multiple consumers are possible, so other Streams can connect on different Threads
+	 *  
+	 * }
+	 * </pre>
+	 * @param e
+	 * @return
+	 */
+	PausableHotStream<T> primedPausableHotStream(Executor e);
+	
 
 	/**
 	 * <pre>

@@ -29,7 +29,7 @@ public class LazyComprehender implements Comprehender<Lazy> {
 
 	@Override
 	public Lazy empty() {
-           return Lazy.empty();
+           return Lazy.undefined();
         }
 
 	@Override

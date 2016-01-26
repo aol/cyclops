@@ -41,11 +41,11 @@ public class VectorComprehender implements Comprehender<Vector> {
 	}
 	static Vector unwrapOtherMonadTypes(Comprehender<Vector> comp,Object apply){
 		if(apply instanceof java.util.stream.Stream)
-			return Vector.ofAll( ((java.util.stream.Stream)apply).iterator());
+			return Vector.of( ((java.util.stream.Stream)apply).iterator());
 		if(apply instanceof Iterable)
-			return Vector.ofAll( ((Iterable)apply).iterator());
+			return Vector.of( ((Iterable)apply).iterator());
 		if(apply instanceof LazySeq){
-			apply = Vector.ofAll(((LazySeq)apply).iterator());
+			apply = Vector.of(((LazySeq)apply).iterator());
 		}
 		if(apply instanceof Collection){
 			return Vector.ofAll((Collection)apply);
