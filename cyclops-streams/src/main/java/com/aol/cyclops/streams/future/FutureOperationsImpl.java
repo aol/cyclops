@@ -40,8 +40,8 @@ import com.aol.cyclops.streams.FutureStreamUtils;
 
 
 @AllArgsConstructor
-public class FutureOperationsImpl<T> implements FutureOperations<T>, DoubleOperatorsMixin<T>, 
-						IntOperatorsMixin<T>, LongOperatorsMixin<T> {
+public class FutureOperationsImpl<T> implements  DoubleOperatorsMixin<T>, 
+						IntOperatorsMixin<T>, LongOperatorsMixin<T>,FutureOperations<T>{
 
 	@Getter
 	private final Executor exec;
@@ -105,7 +105,7 @@ public class FutureOperationsImpl<T> implements FutureOperations<T>, DoubleOpera
 	 * 
 	 * @see org.jooq.lambda.Seq#minBy(Function)
 	 */
-	public  <U extends Comparable<U>> CompletableFuture<Optional<T>> minBy(Function<T, U> function){
+	public  <U extends Comparable<? super U>> CompletableFuture<Optional<T>> minBy(Function<? super T,? extends U> function){
 		return CompletableFuture.supplyAsync(()->stream.minBy(function));
 	}
 	/**
@@ -113,7 +113,7 @@ public class FutureOperationsImpl<T> implements FutureOperations<T>, DoubleOpera
 	 * 
 	 *  @see org.jooq.lambda.Seq#maxBy(Function)
 	 */
-	public  <U extends Comparable<U>> CompletableFuture<Optional<T>> maxBy(Function<T, U> function){
+	public  <U extends Comparable<? super U>> CompletableFuture<Optional<T>> maxBy(Function<? super T, ? extends U> function){
 		return CompletableFuture.supplyAsync(()->stream.maxBy(function));
 	}
 	
@@ -366,5 +366,237 @@ public class FutureOperationsImpl<T> implements FutureOperations<T>, DoubleOpera
 	public CompletableFuture<Optional<T>> singleOptional() {
 		return CompletableFuture.supplyAsync(()-> stream.singleOptional(),exec);
 	}
+	
+	
+	
+	@Override
+	public CompletableFuture<Long> countDistinct() {
+		return CompletableFuture.supplyAsync(()->stream.countDistinct(),exec);
+	}
+	@Override
+	public <U> CompletableFuture<Long> countDistinctBy(Function<? super T, ? extends U> function) {
+		return CompletableFuture.supplyAsync(()->stream.countDistinctBy(function),exec);
+	}
+	@Override
+	public CompletableFuture<Optional<T>> mode() {
+		return CompletableFuture.supplyAsync(()->stream.mode(),exec);
+	}
+	@Override
+	public CompletableFuture<Optional<T>> sum() {
+		return CompletableFuture.supplyAsync(()->stream.sum(),exec);
+	}
+	@Override
+	public <U> CompletableFuture<Optional<U>> sum(Function<? super T, ? extends U> function) {
+		return CompletableFuture.supplyAsync(()->stream.sum(function),exec);
+	}
+	@Override
+	public CompletableFuture<Optional<T>> avg() {
+		return CompletableFuture.supplyAsync(()->stream.avg(),exec);
+	}
+	@Override
+	public <U> CompletableFuture<Optional<U>> avg(Function<? super T, ? extends U> function) {
+		return CompletableFuture.supplyAsync(()->stream.avg(function),exec);
+	}
+	@Override
+	public CompletableFuture<Optional<T>> min() {
+		return CompletableFuture.supplyAsync(()->stream.min(),exec);
+	}
+	@Override
+	public <U extends Comparable<? super U>> CompletableFuture<Optional<U>> min(Function<? super T, ? extends U> function) {
+		return CompletableFuture.supplyAsync(()->stream.min(function),exec);
+	}
+	@Override
+	public <U> CompletableFuture<Optional<U>> min(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+		return CompletableFuture.supplyAsync(()->stream.min(function,comparator),exec);
+	}
+	@Override
+	public <U> CompletableFuture<Optional<T>> minBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+		return CompletableFuture.supplyAsync(()->stream.minBy(function,comparator),exec);
+	}
+	@Override
+	public CompletableFuture<Optional<T>> max() {
+		return CompletableFuture.supplyAsync(()->stream.max(),exec);
+	}
+	@Override
+	public <U extends Comparable<? super U>> CompletableFuture<Optional<U>> max(Function<? super T, ? extends U> function) {
+		return CompletableFuture.supplyAsync(()->stream.max(function),exec);
+	}
+	@Override
+	public <U> CompletableFuture<Optional<U>> max(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+		return CompletableFuture.supplyAsync(()->stream.max(function,comparator),exec);
+	}
+	@Override
+	public <U> CompletableFuture<Optional<T>> maxBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+		return CompletableFuture.supplyAsync(()->stream.maxBy(function,comparator),exec);
+	}
+	@Override
+	public CompletableFuture<Optional<T>> median() {
+		return CompletableFuture.supplyAsync(()->stream.median(),exec);
+	}
+	@Override
+	public CompletableFuture<Optional<T>> median(Comparator<? super T> comparator) {
+		return CompletableFuture.supplyAsync(()->stream.median(comparator),exec);
+	}
+	@Override
+	public <U extends Comparable<? super U>> CompletableFuture<Optional<T>> medianBy(Function<? super T, ? extends U> function) {
+		return CompletableFuture.supplyAsync(()->stream.medianBy(function),exec);
+	}
+	@Override
+	public <U> CompletableFuture<Optional<T>> medianBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+		return CompletableFuture.supplyAsync(()->stream.medianBy(function,comparator),exec);
+	}
+	@Override
+	public CompletableFuture<Optional<T>> percentile(double percentile) {
+		return CompletableFuture.supplyAsync(()->stream.percentile(percentile),exec);
+	}
+	@Override
+	public CompletableFuture<Optional<T>> percentile(double percentile, Comparator<? super T> comparator) {
+		return CompletableFuture.supplyAsync(()->stream.percentile(percentile,comparator),exec);
+	}
+	@Override
+	public <U extends Comparable<? super U>> CompletableFuture<Optional<T>> percentileBy(double percentile,
+			Function<? super T, ? extends U> function) {
+		return CompletableFuture.supplyAsync(()->stream.percentileBy(percentile,function),exec);
+	}
+	@Override
+	public <U> CompletableFuture<Optional<T>> percentileBy(double percentile, Function<? super T, ? extends U> function,
+			Comparator<? super U> comparator) {
+		return CompletableFuture.supplyAsync(()->stream.percentileBy(percentile,function,comparator),exec);
+	}
+	@Override
+	public <L extends List<T>> CompletableFuture<L> toList(Supplier<L> factory) {
+		return CompletableFuture.supplyAsync(()->stream.toList(factory),exec);
+	}
+	@Override
+	public <S extends Set<T>> CompletableFuture<S> toSet(Supplier<S> factory) {
+		return CompletableFuture.supplyAsync(()->stream.toSet(factory),exec);
+	}
+	@Override
+	public <K, V> CompletableFuture<Map<K, V>> toMap(Function<? super T, ? extends K> keyMapper,
+			Function<? super T, ? extends V> valueMapper) {
+		return CompletableFuture.supplyAsync(()->stream.toMap(keyMapper,valueMapper),exec);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.DoubleOperatorsMixin#sumDouble(java.util.function.ToDoubleFunction)
+	 */
+	@Override
+	public CompletableFuture<Double> sumDouble(ToDoubleFunction<? super T> fn) {
+		return DoubleOperatorsMixin.super.sumDouble(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.LongOperatorsMixin#sumLong(java.util.function.ToLongFunction)
+	 */
+	@Override
+	public CompletableFuture<Long> sumLong(ToLongFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return LongOperatorsMixin.super.sumLong(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.LongOperatorsMixin#maxLong(java.util.function.ToLongFunction)
+	 */
+	@Override
+	public CompletableFuture<OptionalLong> maxLong(ToLongFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return LongOperatorsMixin.super.maxLong(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.LongOperatorsMixin#minLong(java.util.function.ToLongFunction)
+	 */
+	@Override
+	public CompletableFuture<OptionalLong> minLong(ToLongFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return LongOperatorsMixin.super.minLong(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.LongOperatorsMixin#averageLong(java.util.function.ToLongFunction)
+	 */
+	@Override
+	public CompletableFuture<OptionalDouble> averageLong(ToLongFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return LongOperatorsMixin.super.averageLong(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.LongOperatorsMixin#summaryStatisticsLong(java.util.function.ToLongFunction)
+	 */
+	@Override
+	public CompletableFuture<LongSummaryStatistics> summaryStatisticsLong(ToLongFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return LongOperatorsMixin.super.summaryStatisticsLong(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.IntOperatorsMixin#sumInt(java.util.function.ToIntFunction)
+	 */
+	@Override
+	public CompletableFuture<Integer> sumInt(ToIntFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return IntOperatorsMixin.super.sumInt(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.IntOperatorsMixin#maxInt(java.util.function.ToIntFunction)
+	 */
+	@Override
+	public CompletableFuture<OptionalInt> maxInt(ToIntFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return IntOperatorsMixin.super.maxInt(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.IntOperatorsMixin#minInt(java.util.function.ToIntFunction)
+	 */
+	@Override
+	public CompletableFuture<OptionalInt> minInt(ToIntFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return IntOperatorsMixin.super.minInt(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.IntOperatorsMixin#averageInt(java.util.function.ToIntFunction)
+	 */
+	@Override
+	public CompletableFuture<OptionalDouble> averageInt(ToIntFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return IntOperatorsMixin.super.averageInt(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.IntOperatorsMixin#summaryStatisticsInt(java.util.function.ToIntFunction)
+	 */
+	@Override
+	public CompletableFuture<IntSummaryStatistics> summaryStatisticsInt(ToIntFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return IntOperatorsMixin.super.summaryStatisticsInt(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.DoubleOperatorsMixin#maxDouble(java.util.function.ToDoubleFunction)
+	 */
+	@Override
+	public CompletableFuture<OptionalDouble> maxDouble(ToDoubleFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return DoubleOperatorsMixin.super.maxDouble(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.DoubleOperatorsMixin#minDouble(java.util.function.ToDoubleFunction)
+	 */
+	@Override
+	public CompletableFuture<OptionalDouble> minDouble(ToDoubleFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return DoubleOperatorsMixin.super.minDouble(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.DoubleOperatorsMixin#averageDouble(java.util.function.ToDoubleFunction)
+	 */
+	@Override
+	public CompletableFuture<OptionalDouble> averageDouble(ToDoubleFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return DoubleOperatorsMixin.super.averageDouble(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.streams.future.DoubleOperatorsMixin#summaryStatisticsDouble(java.util.function.ToDoubleFunction)
+	 */
+	@Override
+	public CompletableFuture<DoubleSummaryStatistics> summaryStatisticsDouble(ToDoubleFunction<? super T> fn) {
+		// TODO Auto-generated method stub
+		return DoubleOperatorsMixin.super.summaryStatisticsDouble(fn);
+	}
+	
+	
+	
 	
 }

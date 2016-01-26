@@ -1,12 +1,9 @@
-
 package com.aol.cyclops.sequence;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +36,7 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -56,7 +54,6 @@ import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
 import com.aol.cyclops.sequence.spliterators.ReversableSpliterator;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.sequence.streamable.Streamable;
-import com.aol.cyclops.streams.HotStreamImpl;
 import com.aol.cyclops.streams.StreamUtils;
 
 
@@ -175,7 +172,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * 		assertThat(anyM(Stream.of(1,2,2)).asSequence()
 											.cycle(3).collect(Collectors.toList()),
 											equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
-
 	 * 
 	 * }
 	 * </pre>
@@ -251,7 +247,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * {@code
 	 * 
 	 * 		Tuple4<SequenceM<Tuple4<T1,T2,T3,T4>>,SequenceM<Tuple4<T1,T2,T3,T4>>,SequenceM<Tuple4<T1,T2,T3,T4>>,SequenceM<Tuple4<T1,T2,T3,T4>>> quad = sequence.quadruplicate();
-
 	 * }
 	 * </pre>
 	 * @return
@@ -415,7 +410,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 		assertThat(anyM(Stream.of(1,2,2)).asSequence()
 											.cycleUntil(next -> count++>6)
 											.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2,1)));
-
 	 * 
 	 * }
 	 * 
@@ -438,7 +432,8 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * </pre>
 	 * 
 	 */
-	public final <S> SequenceM<Tuple2<T,S>> zip(Stream<? extends S> second){
+	public final <S> SequenceM<Tuple2<T,S>> zip(Stream<S> second){
+
 		return zipStream(second,(a,b)->new Tuple2<>(a,b));
 	}
 	/**
@@ -882,7 +877,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * 
 	 */
 	public  boolean xMatch(int num, Predicate<? super T> c) {
-		return stream.filter(t -> c.test(t)) .collect(Collectors.counting()) == num;
+		return stream.filter(t -> c.test(t)).collect(Collectors.counting()) == num;
 	}
 	/* 
 	 * <pre>
@@ -935,7 +930,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * Extract the minimum as determined by supplied function
 	 * 
 	 */
-	public final  <U extends Comparable<U>> Optional<T> minBy(Function<T, U> function){
+	public final  <U extends Comparable<? super U>> Optional<T> minBy(Function<? super T, ? extends U> function){
 		
 		return StreamUtils.minBy(stream,function);
 	}
@@ -949,7 +944,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * Extract the maximum as determined by the supplied function
 	 * 
 	 */
-	public final  <C extends Comparable<C>> Optional<T> maxBy(Function<T,C> f){
+	public final  <C extends Comparable<? super C>> Optional<T> maxBy(Function<? super T,? extends C> f){
 		return StreamUtils.maxBy(stream,f);
 	}
 	/* (non-Javadoc)
@@ -1240,6 +1235,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 		return (List)stream.collect(Collectors.toList());
 	}
 	public final <C extends Collection<T>> C toCollection(Supplier<C> collectionFactory) {
+		
         return stream.collect(Collectors.toCollection(collectionFactory));
     }
 	/**
@@ -1274,7 +1270,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	}
 	/**
 	 * 	<pre>{@code assertTrue(StreamUtils.sequenceM(Stream.of(1,2,3,4)).startsWith(Arrays.asList(1,2,3).iterator())) }</pre>
-
 	 * @param iterator
 	 * @return True if Monad starts with Iterators sequence of data
 	 */
@@ -1320,7 +1315,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * <pre>
 	 * {@code 
 	 * 	assertThat(anyM(Seq.of(1,2,3)).asSequence().flatMapAnyM(i-> anyM(CompletableFuture.completedFuture(i+2))).toList(),equalTo(Arrays.asList(3,4,5)));
-
 	 * }</pre>
 	 * 
 	 * 
@@ -1364,7 +1358,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * <pre>
 	 * {@code 
 	 * 	assertThat(anyM(Stream.of(1,2,3)).asSequence().flatMapStream(i->Stream.of(i)).toList(),equalTo(Arrays.asList(1,2,3)));
-
 	 * }
 	 * </pre>
 	 * 
@@ -1698,7 +1691,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * List<String> result = 	of(1,2,3).appendStream(of(100,200,300))
 										.map(it ->it+"!!")
 										.collect(Collectors.toList());
-
 			assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
 	 * }
 	 * </pre>
@@ -1716,7 +1708,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * {@code 
 	 * List<String> result = of(1,2,3).prependStream(of(100,200,300))
 				.map(it ->it+"!!").collect(Collectors.toList());
-
 			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
 	 * 
 	 * }
@@ -1736,7 +1727,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * List<String> result = 	of(1,2,3).append(100,200,300)
 										.map(it ->it+"!!")
 										.collect(Collectors.toList());
-
 			assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
 	 * }
 	 * </pre>
@@ -1753,7 +1743,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * {@code 
 	 * List<String> result = 	of(1,2,3).prepend(100,200,300)
 				.map(it ->it+"!!").collect(Collectors.toList());
-
 			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
 	 * }
 	 * @param values to prepend
@@ -1768,7 +1757,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * {@code 
 	 * List<String> result = 	of(1,2,3).insertAt(1,100,200,300)
 				.map(it ->it+"!!").collect(Collectors.toList());
-
 			assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
 	 * 
 	 * }
@@ -1787,7 +1775,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * {@code 
 	 * List<String> result = 	of(1,2,3,4,5,6).deleteBetween(2,4)
 				.map(it ->it+"!!").collect(Collectors.toList());
-
 			assertThat(result,equalTo(Arrays.asList("1!!","2!!","5!!","6!!")));
 	 * }
 	 * </pre>
@@ -1804,7 +1791,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * {@code 
 	 * List<String> result = 	of(1,2,3).insertStreamAt(1,of(100,200,300))
 				.map(it ->it+"!!").collect(Collectors.toList());
-
 			assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
 	 * }
 	 * </pre>
@@ -1862,7 +1848,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 
 
 	
-
+/**
 
 	@Override
 	public <U> SequenceM<Tuple2<T, U>> crossJoin(Stream<U> other) {
@@ -1872,24 +1858,25 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 
 	@Override
 	public <U> SequenceM<Tuple2<T, U>> innerJoin(Stream<U> other,
-			BiPredicate<T, U> predicate) {
+			BiPredicate<? super T, ? super U> predicate) {
+		
 		return StreamUtils.sequenceM(stream.innerJoin(other, predicate),reversable);
 	}
 
 
 	@Override
 	public <U> SequenceM<Tuple2<T, U>> leftOuterJoin(Stream<U> other,
-			BiPredicate<T, U> predicate) {
+			BiPredicate<? super T, ? super U> predicate) {
 		return StreamUtils.sequenceM(stream.leftOuterJoin(other, predicate),reversable);
 	}
 
 
 	@Override
 	public <U> SequenceM<Tuple2<T, U>> rightOuterJoin(Stream<U> other,
-			BiPredicate<T, U> predicate) {
+			BiPredicate<? super T, ? super U> predicate) {
 		return StreamUtils.sequenceM(stream.rightOuterJoin(other, predicate),reversable);
 	}
-
+**/
 
 	@Override
 	public SequenceM<T> onEmpty(T value) {
@@ -1935,7 +1922,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 
 
 	@Override
-	public <U, R> SequenceM<R> zip(Seq<U> other, BiFunction<T, U, R> zipper) {
+	public <U, R> SequenceM<R> zip(Seq<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
 		return StreamUtils.sequenceM(stream.zip(other, zipper),Optional.empty());
 	}
 
@@ -2254,4 +2241,19 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 			Runnable onComplete){
 		StreamUtils.forEachEvent(this, consumerElement, consumerError, onComplete);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#format()
+	 */
+	@Override
+	public String format() {
+
+		return this.stream.format();
+	}
+
+	@Override
+	public Collectable<T> collectable(){
+		return this.stream;
+	}
+	
 }

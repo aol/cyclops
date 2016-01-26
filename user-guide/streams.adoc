@@ -121,9 +121,9 @@ HotStreams are available for both SequenceM and standard JDK Streams via StreamU
 ```java
 Executor exec = Executors.newFixedThreadPool(1);
 SequenceM.of(1,2,3)
-	 .peek(v->v+1)
-	 .peek(System.out::println)
-	 .hotStream(exec);
+     .peek(v->v+1)
+     .peek(System.out::println)
+     .hotStream(exec);
 ```
 
 In this example the Stream will start processing immediately on exec, and we will see 
@@ -141,9 +141,9 @@ For a JDK Stream we could rewrite the code above to
 ```java
 Executor exec = Executors.newFixedThreadPool(1);
 StreamUtils.hotStream(Stream.of(1,2,3)
-	 .peek(v->v+1)
-	 .peek(System.out::println)
-	 ,exec);
+     .peek(v->v+1)
+     .peek(System.out::println)
+     ,exec);
 ```
 
 ====
@@ -443,8 +443,8 @@ Each of the async Future Operations for reactive-streams (forEachX, forEachEvent
 ----
 List list = new ArrayList<>();
 ReactiveTask s = SequenceM.of(1,2,3)
-						  .futureOperations(exec)
-						  .forEachX( 2,  i->list.add(i));
+                          .futureOperations(exec)
+                          .forEachX( 2,  i->list.add(i));
 //wait until first 2 elements are processed
 s.block();
 
@@ -616,6 +616,74 @@ SequenceM.of(1,2,3,4,5,6)
 ----
 ====
 
+==== jOOλ based windowing
+
+Integrated as of cyclops 7.3.0
+
+jOOλ based windowing implements SQL windowing operations for Streams. There is a very good introductory blog article on the subject here http://blog.jooq.org/2016/01/06/2016-will-be-the-year-remembered-as-when-java-finally-had-window-functions/[2016 Will be the Year Remembered as When Java Finally Had Window Functions!]
+
+[TIP]
+====
+The jOOλ functions are exceptionally powerful and flexible, but also consume the Stream. This means they will not perform as well as the simpler (but less powerful) batchBy, windowBy and sliding functions in cyclops. They are also not suitable for use in infinitely large Streams.
+====
+
+.jOOλ windowing example
+====
+[source,java]
+----
+// group, order, take max
+
+SequenceM.of(1, 2, 4, 2, 3)
+         .window(i -> i % 2, naturalOrder())
+         .map(Window::max)
+// (1, 2, 4, 4, 3)
+
+----
+====
+
+.jOOλ windowing with pretty print
+====
+An example from jOOλ windowing blog entry.
+
+[source,java]
+----
+System.out.println(
+    SequenceM.of("a", "a", "a", "b", "c", "c", "d", "e")
+       //create a window
+       .window(naturalOrder())
+       //produce a table from the window
+       .map(w -> tuple(
+              w.value(),   // v0 
+              w.count(),   // v1
+              w.median(),  // v2
+              w.lead(),    // v3
+              w.lag(),     // v4
+              w.toString() // v5
+       ))
+            .format()
+);
+
+
+
+----
+
+----
++----+----+----+---------+---------+----------+
+| v0 | v1 | v2 | v3      | v4      | v5       |
++----+----+----+---------+---------+----------+
+| a  |  1 | a  | a       | {empty} | a        |
+| a  |  2 | a  | a       | a       | aa       |
+| a  |  3 | a  | b       | a       | aaa      |
+| b  |  4 | a  | c       | a       | aaab     |
+| c  |  5 | a  | c       | b       | aaabc    |
+| c  |  6 | a  | d       | c       | aaabcc   |
+| d  |  7 | b  | e       | c       | aaabccd  |
+| e  |  8 | b  | {empty} | d       | aaabccde |
++----+----+----+---------+---------+----------+
+----
+====
+
+
 === Stream manipulation
 Cyclops offers many functions for manipulating Streams such as deleteBetween, insertAt and more
 
@@ -709,7 +777,7 @@ The subStream operator allows users to extract a smaller subset stream from a la
 [source,java]
 ----
 SequenceM.of(1,2,3,4,5,6).subStream(1,3);
-	   
+       
   
 //SequenceM[2,3]
 ----
@@ -722,7 +790,7 @@ The intersperse operator allows a new value to be inserted between every element
 [source,java]
 ----
 
-//SequenceM.of(1, 2, 3, 4).intersperse(0);	   
+//SequenceM.of(1, 2, 3, 4).intersperse(0);     
   
 // (1, 0, 2, 0, 3, 0, 4) 
 ----
@@ -1199,8 +1267,8 @@ Debounce accepts only one value per time period specified, dropping all other el
 [source,java]
 ----
 SequenceM.of(1,2,3,4,5,6)
-	    .debounce(1000,TimeUnit.SECONDS).toList();
-	           
+        .debounce(1000,TimeUnit.SECONDS).toList();
+               
 // 1 
 ====
 .debounce in simple-react
@@ -1279,11 +1347,11 @@ A number of the cyclops zip operators allow a custom zipper to be supplied (typi
 [source,java]
 ----
 Stream<List<Integer>> zipped = StreamUtils.zipSequence(Stream.of(1,2,3)
-						,SequenceM.of(2,3,4), 
-							(a,b) -> Arrays.asList(a,b));
-		
-		
-//Stream[List[1,2],List[2,3],List[3,4]]		
+                        ,SequenceM.of(2,3,4), 
+                            (a,b) -> Arrays.asList(a,b));
+        
+        
+//Stream[List[1,2],List[2,3],List[3,4]]     
 ----
 ====
 ==== Zip three Streams
@@ -1531,7 +1599,7 @@ Repeat the Stream infinitely
 ----
 SequenceM.of(1).cycle().limit(6).toList());
 //List[1, 1, 1, 1, 1,1]
-----	 
+----     
 ====
 ==== Cycle Times
 
@@ -1542,9 +1610,9 @@ The cycle operator repeats the Stream the specified number of times.
 [source,java]
 ----
 SequenceM.of(1,2,2)
-		 .cycle(3)
-		 .collect(Collectors.toList());
-								
+         .cycle(3)
+         .collect(Collectors.toList());
+                                
 //List[1,2,2,1,2,2,1,2,2]
 ----
 ====
@@ -1558,9 +1626,9 @@ Cycle until repeats the Stream until the predicate holds
 ----
 MutableInt count =MutableInt.of(0);
 SequenceM.of(1,2,2)
-		 .cycleUntil(next -> count.get()>6)
-		 .peek(i-> count.mutate(i->i+1))
-		 .collect(Collectors.toList());
+         .cycleUntil(next -> count.get()>6)
+         .peek(i-> count.mutate(i->i+1))
+         .collect(Collectors.toList());
 
 //List[1,2,2,1,2,2,1]
 ----
@@ -1575,10 +1643,10 @@ Cycle while repeats the Stream wgile the predicate holds
 ----
 MutableInt count =MutableInt.of(0);
 SequenceM.of(1,2,2)
-		 .cycleWhile(next -> count++<6)
-		 .collect(Collectors.toList());
-				 
-//List(1,2,2,1,2,2)	
+         .cycleWhile(next -> count++<6)
+         .collect(Collectors.toList());
+                 
+//List(1,2,2,1,2,2) 
 ----
 ====
 
@@ -1597,8 +1665,8 @@ In this example we count the number of elements in the Stream and then repeat it
 [source,java]
 ----
 List<Integer> list = SequenceM.of(1,2,2))
-	 						   .cycle(Reducers.toCountInt(),4)
-	  						   .collect(Collectors.toList());
+                               .cycle(Reducers.toCountInt(),4)
+                               .collect(Collectors.toList());
 //List[3,3,3,3];
 ----
 ====
@@ -1760,7 +1828,7 @@ This example flatMaps a Javaslang Array into a SequenceM
 [source,java]
 ----
 SequenceM.of(Arrays.asList(1,2)).flatten();
-//SequenceM(1,  2);	
+//SequenceM(1,  2); 
 
 SequenceM.of(Optional.of(1)).flatten();
 //SequenceM(1)
@@ -1842,8 +1910,8 @@ In addition to the map method in the JDK cyclops also provides a cast method (in
 StreamUtils.cast(Stream.of(1, "a", 2, "b", 3),Integer.class)
 // throws ClassCastException
 ----
-====	 
-	 
+====     
+     
 === for-comprehensions
 
 http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/7.1.0/com/aol/cyclops/sequence/SequenceM.html[SequenceM]
@@ -1912,15 +1980,15 @@ This operator allows users to switch to a different Stream lazily defined, if th
 [source,java]
 ----
 SequenceM.of(4,5,6)
-		 .onEmptySwitch(()->SequenceM.of(1,2,3))
-		.toList()
+         .onEmptySwitch(()->SequenceM.of(1,2,3))
+        .toList()
 //[4,5,6]
 ----
 [source,java]
 ----
 SequenceM.of()
-		 .onEmptySwitch(()->SequenceM.of(1,2,3))
-		.toList()
+         .onEmptySwitch(()->SequenceM.of(1,2,3))
+        .toList()
 //[1,2,3]
 ----
 ====
@@ -1934,15 +2002,15 @@ This operator allows users to convert to a single valued Stream, if the current 
 [source,java]
 ----
 SequenceM.of(4,5,6)
-		 .onEmpty(1)
-		.toList()
+         .onEmpty(1)
+        .toList()
 //[4,5,6]
 ----
 [source,java]
 ----
 SequenceM.of()
-		 .onEmpty(1)
-		.toList()
+         .onEmpty(1)
+        .toList()
 //[1]
 ----
 ====
@@ -1955,15 +2023,15 @@ This operator allows users to convert to a single valued Stream, with the value 
 [source,java]
 ----
 SequenceM.of(4,5,6)
-		 .onEmptyGet(()->1)
-		.toList()
+         .onEmptyGet(()->1)
+        .toList()
 //[4,5,6]
 ----
 [source,java]
 ----
 SequenceM.of()
-		 .onEmptyGet(()->1)
-		.toList()
+         .onEmptyGet(()->1)
+        .toList()
 //[1]
 ----
 ====
@@ -1976,15 +2044,15 @@ This operator allows users to convert to throw a lazily created exception if the
 [source,java]
 ----
 SequenceM.of(4,5,6)
-		 .onEmptyThrow(()->new RuntimeException("error"))
-		.toList()
+         .onEmptyThrow(()->new RuntimeException("error"))
+        .toList()
 //[4,5,6]
 ----
 [source,java]
 ----
 SequenceM.of()
-		 .onEmptyThrow(()->new RuntimeException("error"))
-		.toList()
+         .onEmptyThrow(()->new RuntimeException("error"))
+        .toList()
 //RuntimeException("error");
 ----
 ====
@@ -2326,15 +2394,15 @@ Cyclops provides operators to lazily create a collection from the Stream. The va
 [source,java]
 ----
 Collection<Integer> col = SequenceM.of(1,2,3,4,5)
-											.peek(System.out::println)
-											.toLazyCollection();
-		
+                                            .peek(System.out::println)
+                                            .toLazyCollection();
+        
 col.forEach(System.out::println);
 Collection<Integer> col = SequenceM.of(1,2,3,4,5)
-								   .peek(System.out::println)
-								   .toConcurrentLazyCollection();
-		
-col.forEach(System.out::println);	
+                                   .peek(System.out::println)
+                                   .toConcurrentLazyCollection();
+        
+col.forEach(System.out::println);   
 ----
 ====
 ===  toCompletableFuture / toOptional
@@ -2344,14 +2412,14 @@ col.forEach(System.out::println);
 [source,java]
 ----
 Optional<List<String>> stream = SequenceM.of("hello","world")
-												.toOptional();
-												
+                                                .toOptional();
+                                                
 //Optional[List["hello","world"]]
-		
+        
  CompletableFuture<List<String>> cf = SequenceM.of("hello","world")
-											.toCompletableFuture();
+                                            .toCompletableFuture();
 
-//CompletableFuture[List["hello","world"]]		
+//CompletableFuture[List["hello","world"]]      
 ----
 ====
 ===  anyM / toStreamable
@@ -2372,15 +2440,15 @@ The toStreamable operator converts the SequenceM to a caching Streamable.
 [source,java]
 ----
 Streamable<String> caching = SequenceM.of("hello","world")
-												.toStreamable();
-												
+                                                .toStreamable();
+                                                
 caching.forEach(System.out::println);
 caching.forEach(System.out::println);
 
 //can print the contents of the Stream twice.
-		
+        
 AnyM<String> anyM = SequenceM.of("hello","world")
-											.anyM();
+                                            .anyM();
 
 
 anyM.map(v->v+"!");
@@ -2403,7 +2471,7 @@ These opertors make use of the caching streamable so is not suitable for infinte
 [source,java]
 ----
 Streamable.of(1,2,3).combinations(2)
-	  
+      
 //Streamable[Streamable[1,2],Streamable[1,3],Streamable[2,3]]
 ----
 ====
@@ -2499,6 +2567,5 @@ CompletableFuture> list = SequenceM.of(1,2,3,4,5)
 
 //CompletableFuture[1,2,3,4,5] 
 ----
-
 
 

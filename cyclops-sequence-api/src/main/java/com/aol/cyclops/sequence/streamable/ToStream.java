@@ -12,7 +12,7 @@ import com.aol.cyclops.sequence.ReversedIterator;
 import com.aol.cyclops.sequence.SeqUtils;
 import com.aol.cyclops.sequence.SequenceM;
 
-public interface ToStream<T> extends Iterable<T>{
+public interface ToStream<T> extends Iterable<T>,ConvertableToSequenceM<T>{
 	default Iterator<T> iterator(){
 		return stream().iterator();
 	}

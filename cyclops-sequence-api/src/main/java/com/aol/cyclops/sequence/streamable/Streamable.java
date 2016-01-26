@@ -32,6 +32,8 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.Collectable;
+import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -41,7 +43,9 @@ import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.HotStream;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.sequence.SequenceMCollectable;
 import com.aol.cyclops.sequence.future.FutureOperations;
+
 
 /**
  * Represents something that can generate a Stream, repeatedly
@@ -50,8 +54,11 @@ import com.aol.cyclops.sequence.future.FutureOperations;
  *
  * @param <T> Data type for Stream
  */
-public interface Streamable<T> extends ToStream<T>{
-
+public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>{
+	
+	default Collectable<T> collectable(){
+		return Seq.seq(stream());
+	}
 	
 	/**
 	 * (Lazily) Construct a Streamable from a Stream.
@@ -89,6 +96,7 @@ public interface Streamable<T> extends ToStream<T>{
 			public Object getStreamable(){
 				return values;
 			}
+			
 		};
 	}
 	public static <T> Streamable<T> empty(){
@@ -394,8 +402,8 @@ public interface Streamable<T> extends ToStream<T>{
 	 * @param index to extract element from
 	 * @return Element and Sequence
 	 */
-    default T get(int index){
-    	return this.sequenceM().get(index).v1;
+    default T elementAt(int index){
+    	return this.sequenceM().elementAt(index).v1;
     }
     /**
 	 * [equivalent to count]
@@ -423,7 +431,7 @@ public interface Streamable<T> extends ToStream<T>{
             return Streamable.of(Streamable.empty()); 
         } else {
             return Streamable.fromStream(IntStream.range(0, size()).boxed().
-                <Streamable<T>> flatMap(i -> subStream(i+1, size()).combinations( size - 1).map(t -> t.prepend(get(i))).sequenceM()));
+                <Streamable<T>> flatMap(i -> subStream(i+1, size()).combinations( size - 1).map(t -> t.prepend(elementAt(i))).sequenceM()));
         }
     }
     /**
@@ -1193,7 +1201,7 @@ public interface Streamable<T> extends ToStream<T>{
     	 * Extract the minimum as determined by supplied function
     	 * 
     	 */
-    	default <C extends Comparable<C>> Optional<T> minBy(Function<T,C> f){
+    	default <C extends Comparable<? super C>> Optional<T> minBy(Function<? super T,? extends C> f){
     		return sequenceM().minBy(f);
     	}
     	/* (non-Javadoc)
@@ -1206,7 +1214,7 @@ public interface Streamable<T> extends ToStream<T>{
     	 * Extract the maximum as determined by the supplied function
     	 * 
     	 */
-    	default <C extends Comparable<C>> Optional<T> maxBy(Function<T,C> f){
+    	default <C extends Comparable<? super C>> Optional<T> maxBy(Function<? super T,? extends C> f){
     		return sequenceM().maxBy(f);
     	}
     		
@@ -2160,8 +2168,8 @@ public interface Streamable<T> extends ToStream<T>{
     	 * @param index to extract element from
     	 * @return elementAt index
     	 */
-    	default Optional<T> elementAt(long index){
-    		return sequenceM().elementAt(index);
+    	default Optional<T> get(long index){
+    		return sequenceM().get(index);
     	}
     	/**
     	 * Gets the element at index, and returns a Tuple containing the element (it must be present)
@@ -2177,8 +2185,8 @@ public interface Streamable<T> extends ToStream<T>{
     	 * @param index to extract element from
     	 * @return Element and Sequence
     	 */
-    	default Tuple2<T,Streamable<T>> get(long index){
-    		return sequenceM().get(index).map2(s->fromStream(s));
+    	default Tuple2<T,Streamable<T>> elementAt(long index){
+    		return sequenceM().elementAt(index).map2(s->fromStream(s));
     	}
     	
     	/**
@@ -2922,6 +2930,7 @@ public interface Streamable<T> extends ToStream<T>{
     	}
     	
     
+
     	/**
     	 * True if a streamable contains element t
     	 * <pre>
@@ -2934,6 +2943,7 @@ public interface Streamable<T> extends ToStream<T>{
     	default boolean  contains(T t){
     		return stream().anyMatch(c -> t.equals((c)));
     	}
+
     
     	/**
     	 * True if a streamable contains element t

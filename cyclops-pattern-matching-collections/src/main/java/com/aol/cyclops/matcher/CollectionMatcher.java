@@ -4,6 +4,7 @@ import com.aol.cyclops.matcher.builders.IterableCase;
 import com.aol.cyclops.matcher.builders.PatternMatcher;
 import com.aol.cyclops.matcher.builders.StreamCase;
 
+@Deprecated
 public class CollectionMatcher {
 	/**
 	 * Create a builder for matching on the disaggregated elements of a collection.
