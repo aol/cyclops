@@ -23,6 +23,7 @@ import com.aol.cyclops.functions.TriFunction;
 import com.aol.cyclops.functions.fluent.FluentFunctions.FluentBiFunction;
 import com.aol.cyclops.functions.fluent.FluentFunctions.FluentFunction;
 import com.aol.cyclops.functions.fluent.FluentFunctions.FluentSupplier;
+import com.aol.cyclops.functions.fluent.FluentFunctions.FluentTriFunction;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.trycatch.Try;
 import com.google.common.cache.Cache;
@@ -51,7 +52,7 @@ public class FluentTriFunctionTest {
 	@Test
 	public void testCache() {
 		called=0;
-		TriFunction<Integer,Integer,Integer,Integer> fn = FluentFunctions.of(this::add)
+		FluentTriFunction<Integer,Integer,Integer,Integer> fn = FluentFunctions.of(this::add)
 													  .name("myFunction")
 													  .memoize();
 		
@@ -71,7 +72,7 @@ public class FluentTriFunctionTest {
 			       .build();
 
 		called=0;
-		TriFunction<Integer,Integer,Integer,Integer> fn = FluentFunctions.of(this::add)
+		FluentTriFunction<Integer,Integer,Integer,Integer> fn = FluentFunctions.of(this::add)
 													  .name("myFunction")
 													  .memoize((key,f)->cache.get(key,()->f.apply(key)));
 		
@@ -269,9 +270,9 @@ public class FluentTriFunctionTest {
 	@Test
 	public void testLift(){
 		Integer nullValue = null;
-		FluentFunctions.of(this::add)	
+		assertThat(FluentFunctions.of(this::add)	
 						.lift()
-						.apply(Optional.ofNullable(nullValue),Optional.of(1));
+						.apply(Optional.ofNullable(nullValue),Optional.of(1),Optional.of(3)),equalTo(Optional.empty()));
 	}
 	@Test
 	public void testLiftM(){

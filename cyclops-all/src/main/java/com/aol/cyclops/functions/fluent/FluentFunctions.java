@@ -155,41 +155,129 @@ public class FluentFunctions {
 	public static <T1,T2,R> FluentFunctions.FluentBiFunction<T1,T2,R> of(BiFunction<T1,T2,R> fn){
 		return new FluentBiFunction<>(fn);
 	}
+	/**
+	 * Convert a CheckedTriFunction to a FluentTriFunction
+	 * <pre>
+	 * {@code
+	   FluentFunctions.ofChecked(this::exceptionalFirstTime)
+					   .println()
+					   .retry(2,500)
+					   .apply("hello","woo!","h")
+					   
+	   } 
+	 * @param fn CheckedTriFunction to convert
+	 * @return FluentTriFunction
+	 */
 	public static <T1,T2,T3,R> FluentFunctions.FluentTriFunction<T1,T2,T3,R> ofChecked(CheckedTriFunction<T1,T2,T3,R> fn){
 		
 		return new FluentTriFunction<>(softenTriFunction(fn));
 	}
+	/**
+	 * Convert a CheckedTriFunction to a FluentTriFunction
+	 * <pre>
+	 * {@code
+	   FluentFunctions.of(this::add)	
+					  .matches(-1,c->c.hasValues(3).then(i->3))
+					  .apply(1,1,1)		   
+	   }  
+	 * @param fn TriFunction to convert
+	 * @return FluentTriFunction
+	 */
 	public static <T1,T2,T3,R> FluentFunctions.FluentTriFunction<T1,T2,T3,R> of(TriFunction<T1,T2,T3,R> fn){
 		return new FluentTriFunction<>(fn);
 	}
 	
-	public static <T> FluentFunctions.FluentFunction<T,T> expression(Consumer<T> fn){
+	/**
+	 * Convert a statement (e.g. a method or Consumer with no return value) to an Expression. The input is returned as output
+	 * <pre>
+	 * {@code 
+	 * FluentFunctions.expression(System.out::println)
+					   .apply("hello");
+		
+		//hello
+	 * }
+	 * </pre>
+	 * @param action Consumer
+	 * @return FluentFunction
+	 */
+	public static <T> FluentFunctions.FluentFunction<T,T> expression(Consumer<T> action){
 		return FluentFunctions.of(t->{
-			fn.accept(t);
+			action.accept(t);
 			return t;
 		});
 	}
-	public static <T> FluentFunctions.FluentFunction<T,T> checkedExpression(CheckedConsumer<T> fn){
-		final Consumer<T> toUse = ExceptionSoftener.softenConsumer(fn);
+	/**
+	 * Convert a checked statement (e.g. a method or Consumer with no return value that throws a Checked Exception) to a 
+	 * fluent expression (FluentFunction).  The input is returned as output
+	 * <pre>
+	 * {@code 
+	 * public void print(String input) throws IOException{
+		  System.out.println(input);
+	    }
+	    FluentFunctions.checkedExpression(this::print)
+				   .apply("hello")
+	 * }
+	 * </pre>
+	 * @param action
+	 * @return FluentFunction
+	 */
+	public static <T> FluentFunctions.FluentFunction<T,T> checkedExpression(CheckedConsumer<T> action){
+		final Consumer<T> toUse = ExceptionSoftener.softenConsumer(action);
 		return FluentFunctions.of(t->{
 			toUse.accept(t);
 			return t;
 		});
 	}
-	public static <T1,T2> FluentFunctions.FluentBiFunction<T1,T2,Tuple2<T1,T2>> expression(BiConsumer<T1,T2> fn){
+	/**
+	 * Convert a BiConsumer into a FluentBiFunction that returns it's input in a Tuple
+	 * <pre>
+	 * {@code 
+	 * public void withTwo(Integer a,Integer b){
+		 System.out.println(a+b);
+		}
+		FluentFunctions.expression(this::withTwo)
+					   .apply(1,2)
+					   
+		//returns Tuple2[1,2]
+	 * 
+	 * }
+	 * </pre>
+	 * @param action BiConsumer
+	 * @return FluentBiFunction
+	 */
+	public static <T1,T2> FluentFunctions.FluentBiFunction<T1,T2,Tuple2<T1,T2>> expression(BiConsumer<T1,T2> action){
 		return FluentFunctions.of((t1,t2)->{
-			fn.accept(t1,t2);
+			action.accept(t1,t2);
 			return Tuple.tuple(t1,t2);
 		});
 	}
-	public static <T1,T2> FluentFunctions.FluentBiFunction<T1,T2,Tuple2<T1,T2>> checkedExpression(CheckedBiConsumer<T1,T2> fn){
-		final BiConsumer<T1,T2> toUse = ExceptionSoftener.softenBiConsumer(fn);
+	/**
+	 * Convert a CheckedBiConsumer into a FluentBiConsumer that returns it's input in a tuple
+	 * 
+	 * <pre>
+	 * {@code 
+	 * public void printTwo(String input1,String input2) throws IOException{
+		System.out.println(input1);
+		System.out.println(input2);
+	   }
+	 * 
+	 * FluentFunctions.checkedExpression(this::printTwo)
+					   .apply("hello","world");
+					   
+		//returns Tuple2["hello","world"]		   
+	 * }
+	 * </pre>
+	 * @param action
+	 * @return
+	 */
+	public static <T1,T2> FluentFunctions.FluentBiFunction<T1,T2,Tuple2<T1,T2>> checkedExpression(CheckedBiConsumer<T1,T2> action){
+		final BiConsumer<T1,T2> toUse = ExceptionSoftener.softenBiConsumer(action);
 		return FluentFunctions.of((t1,t2)->{
 			toUse.accept(t1,t2);
 			return Tuple.tuple(t1,t2);
 		});
 	}
-	public static <T1, T2,T3, R> TriFunction<T1, T2, T3,R> softenTriFunction(CheckedTriFunction<T1, T2,T3, R> fn) {
+	private static <T1, T2,T3, R> TriFunction<T1, T2, T3,R> softenTriFunction(CheckedTriFunction<T1, T2,T3, R> fn) {
 		return (t1, t2,t3) -> {
 			try {
 				return fn.apply(t1, t2,t3);
@@ -721,7 +809,7 @@ public class FluentFunctions {
 	}
 	@Wither(AccessLevel.PRIVATE)
 	@AllArgsConstructor
-	public static class FluentTriFunction<T1,T2,T3,R> implements TriFunction<T1,T2,T3,R>{
+	public static class FluentTriFunction<T1,T2,T3,R>{
 		private  final TriFunction<T1,T2,T3,R> fn;
 		private final String name;
 		
@@ -730,7 +818,7 @@ public class FluentFunctions {
 			this.fn = fn;
 		}
 		
-		@Override
+		
 		public R apply(T1 t1,T2 t2,T3 t3) {
 			return fn.apply(t1,t2,t3);
 		}

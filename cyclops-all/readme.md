@@ -261,4 +261,11 @@ FluentSupplier<Integer> supplier = FluentFunctions.of(this::addOne)
                                                           .partiallyApply(3)
                                                           .println();
 supplier.get(); 
-(fluent-supplier-Result[4])                                                                              
+(fluent-supplier-Result[4])    
+
+## Convert statements to Expressions
+
+It can be handy to convert Java statements (code that does not return a value), into expressions that do return a value.
+
+FluentFunctions.expression(System.out::println)
+                       .apply("hello")                                                                          
