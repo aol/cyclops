@@ -24,6 +24,8 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 
 import com.aol.cyclops.closures.mutable.MutableInt;
+import com.aol.cyclops.functions.QuadConsumer;
+import com.aol.cyclops.functions.TriConsumer;
 import com.aol.cyclops.functions.TriFunction;
 import com.aol.cyclops.functions.caching.Cacheable;
 import com.aol.cyclops.functions.caching.Memoize;
@@ -464,6 +466,23 @@ public class FluentFunctions {
 		public R apply(T1 t1,T2 t2) {
 			return fn.apply(t1,t2);
 		}
+		public FluentBiFunction<T1,T2,R> before(BiConsumer<T1,T2> action){
+			return withFn((t1,t2)->{
+				action.accept(t1,t2);
+				return fn.apply(t1,t2);
+				}
+			  );
+		}
+
+		public FluentBiFunction<T1,T2,R> after(TriConsumer<T1,T2,R> action){
+			return withFn((t1,t2)->{
+				
+				final R result = fn.apply(t1,t2);
+				action.accept(t1,t2,result);
+				 return result;
+				}
+			  );
+		}
 		
 		public FluentBiFunction<T1,T2,R> around(Function<Advice2<T1,T2,R>,R> around){
 			return withFn((t1,t2)->around.apply(new Advice2<>(t1,t2,fn)));
@@ -576,9 +595,9 @@ public class FluentFunctions {
 			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).mayMatch(case1,case2,case3,case4,case5).orElse(defaultValue));
 		}
 		
-		public SequenceM<R> iterate(T1 seed1,T2 seed2,Function<R,Tuple2<T1,T2>> mapToType){
+		public SequenceM<R> iterate(T1 seed1,T2 seed2,Function<R,Tuple2<T1,T2>> mapToTypeAndSplit){
 			return SequenceM.iterate(fn.apply(seed1,seed2),t->{ 
-				Tuple2<T1,T2> tuple =mapToType.apply(t);
+				Tuple2<T1,T2> tuple =mapToTypeAndSplit.apply(t);
 				return fn.apply(tuple.v1,tuple.v2);
 			});
 		}
@@ -618,6 +637,23 @@ public class FluentFunctions {
 		@Override
 		public R apply(T1 t1,T2 t2,T3 t3) {
 			return fn.apply(t1,t2,t3);
+		}
+		public FluentTriFunction<T1,T2,T3,R> before(TriConsumer<T1,T2,T3> action){
+			return withFn((t1,t2,t3)->{
+				action.accept(t1,t2,t3);
+				return fn.apply(t1,t2,t3);
+				}
+			  );
+		}
+
+		public FluentTriFunction<T1,T2,T3,R> after(QuadConsumer<T1,T2,T3,R> action){
+			return withFn((t1,t2,t3)->{
+				
+				final R result = fn.apply(t1,t2,t3);
+				action.accept(t1,t2,t3,result);
+				 return result;
+				}
+			  );
 		}
 		
 		public FluentTriFunction<T1,T2,T3,R> around(Function<Advice3<T1,T2,T3,R>,R> around){

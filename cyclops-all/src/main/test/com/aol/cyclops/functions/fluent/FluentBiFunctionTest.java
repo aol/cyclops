@@ -12,48 +12,50 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
+import org.jooq.lambda.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.aol.cyclops.functions.fluent.FluentFunctions.FluentFunction;
 import com.aol.cyclops.functions.fluent.FluentFunctions.FluentSupplier;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.trycatch.Try;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
-public class FluentSupplierTest {
+public class FluentBiFunctionTest {
 
 	@Before
 	public void setup(){
 		this.times =0;
 	}
 	int called;
-	public int getOne(){
+	public int add(Integer a,Integer b ){
 		called++;
-		return 1;
+		return a+b;
 	}
 	@Test
-	public void testGet() {
+	public void testApply() {
 		
-		assertThat(FluentFunctions.of(this::getOne)
-						.name("mySupplier")
+		assertThat(FluentFunctions.of(this::add)
+						.name("myFunction")
 						.println()
-						.get(),equalTo(1));
+						.apply(10,1),equalTo(11));
 		
 	}
 	@Test
 	public void testCache() {
 		called=0;
-		Supplier<Integer> fn = FluentFunctions.of(this::getOne)
+		BiFunction<Integer,Integer,Integer> fn = FluentFunctions.of(this::add)
 													  .name("myFunction")
 													  .memoize();
 		
-		fn.get();
-		fn.get();
-		fn.get();
+		fn.apply(10,1);
+		fn.apply(10,1);
+		fn.apply(10,1);
 		
 		assertThat(called,equalTo(1));
 		
@@ -67,29 +69,29 @@ public class FluentSupplierTest {
 			       .build();
 
 		called=0;
-		Supplier<Integer> fn = FluentFunctions.of(this::getOne)
+		BiFunction<Integer,Integer,Integer> fn = FluentFunctions.of(this::add)
 													  .name("myFunction")
 													  .memoize((key,f)->cache.get(key,()->f.apply(key)));
-		fn.get();
-		fn.get();
-		fn.get();
+		
+		fn.apply(10,1);
+		fn.apply(10,1);
+		fn.apply(10,1);
 		
 		assertThat(called,equalTo(1));
 		
 		
 	}
 	int set;
-	public boolean events(){
-		return set == 10;
-		
+	public boolean events(Integer i,Integer a){
+		return set==i;
 	}
 	@Test
 	public void testBefore(){
 		set = 0;
 		assertTrue(FluentFunctions.of(this::events)
-					   .before(()->set=10)
+					   .before((a,b)->set=a)
 					   .println()
-					   .get());
+					   .apply(10,1));
 	}
 	
 	int in;
@@ -98,36 +100,36 @@ public class FluentSupplierTest {
 	public void testAfter(){
 		set = 0;
 		assertFalse(FluentFunctions.of(this::events)
-					   .after(out->out=true)
+					   .after((in1,in2,out)->set=in1)
 					   .println()
-					   .get());
+					   .apply(10,1));
 		
 		boolean result = FluentFunctions.of(this::events)
-										.after((out2)->{ out=out2; } )
+										.after((inA2,inB2,out2)->{ in=inA2; out=out2; } )
 										.println()
-										.get();
+										.apply(10,1);
 		
-		
+		assertThat(in,equalTo(10));
 		assertTrue(out==result);
 	}
 	@Test
 	public void testAround(){
 		set = 0;
-		assertThat(FluentFunctions.of(this::getOne)
-					   .around(advice->advice.proceed())
+		assertThat(FluentFunctions.of(this::add)
+					   .around(advice->advice.proceed1(advice.param1+1))
 					   .println()
-					   .get(),equalTo(1));
+					   .apply(10,1),equalTo(12));
 		
 		
 	}
 	
 	int times =0;
-	public String exceptionalFirstTime() throws IOException{
+	public String exceptionalFirstTime(String input,String input2) throws IOException{
 		if(times==0){
 			times++;
 			throw new IOException();
 		}
-		return   "hello world"; 
+		return input + " world" + input2; 
 	}
 	
 	@Test
@@ -135,22 +137,22 @@ public class FluentSupplierTest {
 		assertThat(FluentFunctions.ofChecked(this::exceptionalFirstTime)
 					   .println()
 					   .retry(2,500)
-					   .get(),equalTo("hello world"));
+					   .apply("hello","woo!"),equalTo("hello worldwoo!"));
 	}
 	
 	@Test
 	public void recover(){
 		assertThat(FluentFunctions.ofChecked(this::exceptionalFirstTime)
-						.recover(IOException.class, ()->"hello boo!")
+						.recover(IOException.class, (in1,in2)->in1+"boo!")
 						.println()
-						.get(),equalTo("hello boo!"));
+						.apply("hello ","woo!"),equalTo("hello boo!"));
 	}
 	@Test(expected=IOException.class)
 	public void recoverDont(){
 		assertThat(FluentFunctions.ofChecked(this::exceptionalFirstTime)
-						.recover(RuntimeException.class, ()->"hello boo!")
+						.recover(RuntimeException.class,(in1,in2)->in1+"boo!")
 						.println()
-						.get(),equalTo("hello boo!"));
+						.apply("hello ","woo!"),equalTo("hello boo!"));
 	}
 	
 	public String gen(String input){
@@ -166,117 +168,125 @@ public class FluentSupplierTest {
 						.toList().size(),equalTo(2));
 	}
 	
-	
+	@Test
+	public void iterate(){
+		
+		assertThat(FluentFunctions.of(this::add)	
+						.iterate(1,2,(i)->Tuple.tuple(i,i))
+						.limit(2)
+						.toList().size(),equalTo(2));
+	}
+
 	@Test
 	public void testMatches1(){
-		assertThat(FluentFunctions.of(this::getOne)	
-					   .matches(-1,c->c.hasValues(1).then(i->3))
-					   .get(),equalTo(3));
+		assertThat(FluentFunctions.of(this::add)	
+					   .matches(-1,c->c.hasValues(2).then(i->3))
+					   .apply(1,1),equalTo(3));
 	}
 
 	@Test
 	public void testMatches1Default(){
-		assertThat(FluentFunctions.of(this::getOne)	
+		assertThat(FluentFunctions.of(this::add)	
 					   .matches(-1,c->c.hasValues(4).then(i->3))
-					   .get(),equalTo(-1));
+					   .apply(1,1),equalTo(-1));
 	}
 	@Test
 	public void testMatches2(){
-		assertThat(FluentFunctions.of(this::getOne)	
+		assertThat(FluentFunctions.of(this::add)	
 					   .matches(-1,c->c.hasValues(4).then(i->30),
-							   			c->c.hasValues(1).then(i->3))
-					   .get(),equalTo(3));
+							   			c->c.hasValues(2).then(i->3))
+					   .apply(1,1),equalTo(3));
 	}
 
 	@Test
 	public void testMatches2Default(){
-		assertThat(FluentFunctions.of(this::getOne)	
+		assertThat(FluentFunctions.of(this::add)	
 					   .matches(-1,c->c.hasValues(4).then(i->3),
 							   		c->c.hasValues(103).then(i->8))
-					   .get(),equalTo(-1));
+					   .apply(1,1),equalTo(-1));
 	}
 	@Test
 	public void testMatches3(){
-		assertThat(FluentFunctions.of(this::getOne)	
+		assertThat(FluentFunctions.of(this::add)	
 				   .matches(-1,c->c.hasValues(4).then(i->30),
 						   			c->c.hasValues(8).then(i->32),
-						   			c->c.hasValues(1).then(i->3))
-				   .get(),equalTo(3));
+						   			c->c.hasValues(2).then(i->3))
+				   .apply(1,1),equalTo(3));
 	}
 
 	@Test
 	public void testMatches3Default(){
-		assertThat(FluentFunctions.of(this::getOne)	
+		assertThat(FluentFunctions.of(this::add)	
 					   .matches(-1,c->c.hasValues(4).then(i->3),
 							   		c->c.hasValues(8).then(i->32),
 							   		c->c.hasValues(103).then(i->8))
-					   .get(),equalTo(-1));
+					   .apply(1,1),equalTo(-1));
 	}
 	@Test
 	public void testMatches4(){
-		assertThat(FluentFunctions.of(this::getOne)	
+		assertThat(FluentFunctions.of(this::add)	
 				   .matches(-1,c->c.hasValues(4).then(i->30),
 						   		c->c.hasValues(40).then(i->38),
 						   			c->c.hasValues(8).then(i->32),
-						   			c->c.hasValues(1).then(i->3))
-				   .get(),equalTo(3));
+						   			c->c.hasValues(2).then(i->3))
+				   .apply(1,1),equalTo(3));
 	}
 
 	@Test
 	public void testMatches4Default(){
-		assertThat(FluentFunctions.of(this::getOne)	
-					   .matches(-1,c->c.hasValues(12).then(i->3),
+		assertThat(FluentFunctions.of(this::add)	
+					   .matches(-1,c->c.hasValues(4).then(i->3),
 							   		c->c.hasValues(40).then(i->38),
 							   		c->c.hasValues(8).then(i->32),
 							   		c->c.hasValues(103).then(i->8))
-					   .get(),equalTo(-1));
+					   .apply(1,1),equalTo(-1));
 	}
 	@Test
 	public void testMatches5(){
-		assertThat(FluentFunctions.of(this::getOne)	
+		assertThat(FluentFunctions.of(this::add)	
 				   .matches(-1,c->c.hasValues(4).then(i->30),
 						   		c->c.hasValues(5).then(i->50),
 						   		c->c.hasValues(40).then(i->38),
 						   			c->c.hasValues(8).then(i->32),
-						   			c->c.hasValues(1).then(i->3))
-				   .get(),equalTo(3));
+						   			c->c.hasValues(2).then(i->3))
+				   .apply(1,1),equalTo(3));
 	}
 
 	@Test
 	public void testMatches5Default(){
-		assertThat(FluentFunctions.of(this::getOne)	
+		assertThat(FluentFunctions.of(this::add)	
 					   .matches(-1,c->c.hasValues(4).then(i->3),
 							   		c->c.hasValues(5).then(i->50),
 							   		c->c.hasValues(40).then(i->38),
 							   		c->c.hasValues(8).then(i->32),
 							   		c->c.hasValues(103).then(i->8))
-					   .get(),equalTo(-1));
+					   .apply(1,1),equalTo(-1));
 	}
 	
 	
 	@Test
 	public void testLift(){
-		
-		FluentFunctions.of(this::getOne)	
+		Integer nullValue = null;
+		FluentFunctions.of(this::add)	
 						.lift()
-						.get();
+						.apply(Optional.ofNullable(nullValue),Optional.of(1));
 	}
 	@Test
 	public void testLiftM(){
 		
-		AnyM<Integer> result = FluentFunctions.of(this::getOne)	
+		AnyM<Integer> result = FluentFunctions.of(this::add)	
 											  .liftM()
-											  .get();
+											  .apply(AnyM.streamOf(1,2,3,4),AnyM.ofNullable(1));
 		
 		assertThat(result.asSequence().toList(),
-					equalTo(Arrays.asList(1)));
+					equalTo(Arrays.asList(2,3,4,5)));
 	}
 	@Test
 	public void testTry(){
 		
 		Try<String,IOException> tried = FluentFunctions.ofChecked(this::exceptionalFirstTime)	
 					   								   .liftTry(IOException.class)
-					   								   .get();				  
+					   								   .apply("hello","boo!");				  
 		
 		if(tried.isSuccess())
 			fail("expecting failure");
@@ -285,18 +295,37 @@ public class FluentSupplierTest {
 	Executor ex = Executors.newFixedThreadPool(1);
 	@Test
 	public void liftAsync(){
-		assertThat(FluentFunctions.of(this::getOne)
+		assertThat(FluentFunctions.of(this::add)
 						.liftAsync(ex)
-						.get()
-						.join(),equalTo(1));
+						.apply(1,1)
+						.join(),equalTo(2));
 	}
 	@Test
 	public void async(){
-		assertThat(FluentFunctions.of(this::getOne)
+		assertThat(FluentFunctions.of(this::add)
 						.async(ex)
-						.thenApply(f->f.get())
-						.join(),equalTo(1));
+						.thenApply(f->f.apply(4,1))
+						.join(),equalTo(5));
 	}
 	
+	@Test
+	public void testPartiallyApply2(){
+		FluentSupplier<Integer> supplier = FluentFunctions.of(this::add)
+														  .partiallyApply(3,1)
+														  .println();
+		assertThat(supplier.get(),equalTo(4));
+	}
+	@Test
+	public void testPartiallyApply1(){
+		FluentFunction<Integer,Integer> fn = FluentFunctions.of(this::add)
+														  .partiallyApply(3)
+														  .println();
+		assertThat(fn.apply(1),equalTo(4));
+	}
 	
+	@Test
+	public void curry(){
+		assertThat(FluentFunctions.of(this::add)
+		  .curry().apply(1).apply(2),equalTo(3));
+	}
 }
