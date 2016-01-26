@@ -1,7 +1,10 @@
 package com.aol.cyclops.functions.fluent;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -14,9 +17,11 @@ import java.util.function.Function;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.aol.cyclops.functions.fluent.FluentFunctions.FluentSupplier;
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.trycatch.Success;
 import com.aol.cyclops.trycatch.Try;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 public class FunctionsTest {
 
@@ -44,6 +49,26 @@ public class FunctionsTest {
 		Function<Integer,Integer> fn = FluentFunctions.of(this::addOne)
 													  .name("myFunction")
 													  .memoize();
+		
+		fn.apply(10);
+		fn.apply(10);
+		fn.apply(10);
+		
+		assertThat(called,equalTo(1));
+		
+		
+	}
+	@Test
+	public void testCacheGuava() {
+		Cache<Object, Integer> cache = CacheBuilder.newBuilder()
+			       .maximumSize(1000)
+			       .expireAfterWrite(10, TimeUnit.MINUTES)
+			       .build();
+
+		called=0;
+		Function<Integer,Integer> fn = FluentFunctions.of(this::addOne)
+													  .name("myFunction")
+													  .memoize((key,f)->cache.get(key,()->f.apply(key)));
 		
 		fn.apply(10);
 		fn.apply(10);
@@ -277,5 +302,13 @@ public class FunctionsTest {
 						.async(ex)
 						.thenApply(f->f.apply(4))
 						.join(),equalTo(5));
+	}
+	
+	@Test
+	public void testPartiallyApply(){
+		FluentSupplier<Integer> supplier = FluentFunctions.of(this::addOne)
+														  .partiallyApply(3)
+														  .println();
+		supplier.get();
 	}
 }

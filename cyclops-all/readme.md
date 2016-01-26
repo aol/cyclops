@@ -113,6 +113,24 @@ fn.apply(10);
 fn.apply(10);
 
 called is 1
+
+### Caching with a Guava cache
+
+Cache<Object, Integer> cache = CacheBuilder.newBuilder()
+                   .maximumSize(1000)
+                   .expireAfterWrite(10, TimeUnit.MINUTES)
+                   .build();
+
+        called=0;
+        Function<Integer,Integer> fn = FluentFunctions.of(this::addOne)
+                                                      .name("myFunction")
+                                                      .memoize((key,f)->cache.get(key,()->f.apply(key)));
+        
+        fn.apply(10);
+        fn.apply(10);
+        fn.apply(10);
+        
+        assertThat(called,equalTo(1));
         
 ## Printing function data
 
@@ -235,4 +253,12 @@ CompletableFuture<Integer> addOne = FluentFunctions.of(this::addOne)
                                                    
 FluentFunctions.of(this::addOne)
                         .async(ex)
-                        .thenApply(f->f.apply(4))                                                        
+                        .thenApply(f->f.apply(4)) 
+                        
+## Partial application
+
+FluentSupplier<Integer> supplier = FluentFunctions.of(this::addOne)
+                                                          .partiallyApply(3)
+                                                          .println();
+supplier.get(); 
+(fluent-supplier-Result[4])                                                                              
