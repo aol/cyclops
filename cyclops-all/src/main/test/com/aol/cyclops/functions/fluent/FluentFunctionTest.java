@@ -23,7 +23,7 @@ import com.aol.cyclops.trycatch.Try;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
-public class FunctionsTest {
+public class FluentFunctionTest {
 
 	@Before
 	public void setup(){
