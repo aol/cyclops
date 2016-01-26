@@ -2930,7 +2930,33 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>{
     	}
     	
     
+
+    	/**
+    	 * True if a streamable contains element t
+    	 * <pre>
+    	 * {@code 
+    	 * assertThat(Streamable.of(1,2,3,4,5).contains(3),equalTo(true));
+    	 * }
+    	 * </pre>
+    	 * @param t element to check for
+    	 */
+    	default boolean  contains(T t){
+    		return stream().anyMatch(c -> t.equals((c)));
+    	}
+
+    
+    	/**
+    	 * True if a streamable contains element t
+    	 * use paralleled stream underneath
+    	 * <pre>
+    	 * {@code 
+    	 * assertThat(Streamable.of(1,2,3,4,5).parallelContains(3),equalTo(true));
+    	 * }
+    	 * </pre>
+    	 * @param t element to check for
+    	 */
+    	default boolean  parallelContains(T t){
+    		return stream().parallel().anyMatch(c -> t.equals((c)));
+    	}
     	
-    
-    
 }

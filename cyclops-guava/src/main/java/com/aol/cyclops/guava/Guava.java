@@ -1,7 +1,6 @@
 
 package com.aol.cyclops.guava;
 
-import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.monad.AnyM;
 import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
@@ -22,7 +21,7 @@ public class Guava {
 	 * @return AnyM
 	 */
 	public static <T> AnyM<T> anyM(Optional<T> optionM){
-		return AsAnyM.notTypeSafeAnyM(optionM);
+		return  AnyM.ofMonad(optionM);
 	}
 	/**
 	 * <pre>
@@ -40,6 +39,6 @@ public class Guava {
 	 * @return AnyM
 	 */
 	public static <T> AnyM<T> anyM(FluentIterable<T> streamM){
-		return AsAnyM.notTypeSafeAnyM(streamM);
+		return  AnyM.ofMonad(streamM);
 	}
 }

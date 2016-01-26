@@ -54,10 +54,10 @@ public class WindowingTest {
 	@Test
 	public void windowStatefullyWhile(){
 		System.out.println(SequenceM.of(1,2,3,4,5,6)
-				.windowStatefullyWhile((s,i)->s.sequenceM().toList().contains(4) ? true : false)
+				.windowStatefullyWhile((s,i)->s.contains(4) ? true : false)
 				.toList());
 		assertThat(SequenceM.of(1,2,3,4,5,6)
-				.windowStatefullyWhile((s,i)->s.sequenceM().toList().contains(4) ? true : false)
+				.windowStatefullyWhile((s,i)->s.contains(4) ? true : false)
 				.toList().size(),equalTo(5));
 		
 	}

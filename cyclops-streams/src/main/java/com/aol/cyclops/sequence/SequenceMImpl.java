@@ -172,7 +172,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * 		assertThat(anyM(Stream.of(1,2,2)).asSequence()
 											.cycle(3).collect(Collectors.toList()),
 											equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
-
 	 * 
 	 * }
 	 * </pre>
@@ -248,7 +247,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * {@code
 	 * 
 	 * 		Tuple4<SequenceM<Tuple4<T1,T2,T3,T4>>,SequenceM<Tuple4<T1,T2,T3,T4>>,SequenceM<Tuple4<T1,T2,T3,T4>>,SequenceM<Tuple4<T1,T2,T3,T4>>> quad = sequence.quadruplicate();
-
 	 * }
 	 * </pre>
 	 * @return
@@ -412,7 +410,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 		assertThat(anyM(Stream.of(1,2,2)).asSequence()
 											.cycleUntil(next -> count++>6)
 											.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2,1)));
-
 	 * 
 	 * }
 	 * 
@@ -1273,7 +1270,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	}
 	/**
 	 * 	<pre>{@code assertTrue(StreamUtils.sequenceM(Stream.of(1,2,3,4)).startsWith(Arrays.asList(1,2,3).iterator())) }</pre>
-
 	 * @param iterator
 	 * @return True if Monad starts with Iterators sequence of data
 	 */
@@ -1319,7 +1315,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * <pre>
 	 * {@code 
 	 * 	assertThat(anyM(Seq.of(1,2,3)).asSequence().flatMapAnyM(i-> anyM(CompletableFuture.completedFuture(i+2))).toList(),equalTo(Arrays.asList(3,4,5)));
-
 	 * }</pre>
 	 * 
 	 * 
@@ -1363,7 +1358,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * <pre>
 	 * {@code 
 	 * 	assertThat(anyM(Stream.of(1,2,3)).asSequence().flatMapStream(i->Stream.of(i)).toList(),equalTo(Arrays.asList(1,2,3)));
-
 	 * }
 	 * </pre>
 	 * 
@@ -1697,7 +1691,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * List<String> result = 	of(1,2,3).appendStream(of(100,200,300))
 										.map(it ->it+"!!")
 										.collect(Collectors.toList());
-
 			assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
 	 * }
 	 * </pre>
@@ -1715,7 +1708,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * {@code 
 	 * List<String> result = of(1,2,3).prependStream(of(100,200,300))
 				.map(it ->it+"!!").collect(Collectors.toList());
-
 			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
 	 * 
 	 * }
@@ -1735,7 +1727,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * List<String> result = 	of(1,2,3).append(100,200,300)
 										.map(it ->it+"!!")
 										.collect(Collectors.toList());
-
 			assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
 	 * }
 	 * </pre>
@@ -1752,7 +1743,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * {@code 
 	 * List<String> result = 	of(1,2,3).prepend(100,200,300)
 				.map(it ->it+"!!").collect(Collectors.toList());
-
 			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
 	 * }
 	 * @param values to prepend
@@ -1767,7 +1757,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * {@code 
 	 * List<String> result = 	of(1,2,3).insertAt(1,100,200,300)
 				.map(it ->it+"!!").collect(Collectors.toList());
-
 			assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
 	 * 
 	 * }
@@ -1786,7 +1775,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * {@code 
 	 * List<String> result = 	of(1,2,3,4,5,6).deleteBetween(2,4)
 				.map(it ->it+"!!").collect(Collectors.toList());
-
 			assertThat(result,equalTo(Arrays.asList("1!!","2!!","5!!","6!!")));
 	 * }
 	 * </pre>
@@ -1803,7 +1791,6 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * {@code 
 	 * List<String> result = 	of(1,2,3).insertStreamAt(1,of(100,200,300))
 				.map(it ->it+"!!").collect(Collectors.toList());
-
 			assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
 	 * }
 	 * </pre>
@@ -1861,7 +1848,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 
 
 	
-
+/**
 
 	@Override
 	public <U> SequenceM<Tuple2<T, U>> crossJoin(Stream<U> other) {
@@ -1889,7 +1876,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 			BiPredicate<? super T, ? super U> predicate) {
 		return StreamUtils.sequenceM(stream.rightOuterJoin(other, predicate),reversable);
 	}
-
+**/
 
 	@Override
 	public SequenceM<T> onEmpty(T value) {

@@ -121,9 +121,9 @@ HotStreams are available for both SequenceM and standard JDK Streams via StreamU
 ```java
 Executor exec = Executors.newFixedThreadPool(1);
 SequenceM.of(1,2,3)
-	 .peek(v->v+1)
-	 .peek(System.out::println)
-	 .hotStream(exec);
+     .peek(v->v+1)
+     .peek(System.out::println)
+     .hotStream(exec);
 ```
 
 In this example the Stream will start processing immediately on exec, and we will see 
@@ -141,9 +141,9 @@ For a JDK Stream we could rewrite the code above to
 ```java
 Executor exec = Executors.newFixedThreadPool(1);
 StreamUtils.hotStream(Stream.of(1,2,3)
-	 .peek(v->v+1)
-	 .peek(System.out::println)
-	 ,exec);
+     .peek(v->v+1)
+     .peek(System.out::println)
+     ,exec);
 ```
 
 ====
@@ -264,7 +264,7 @@ The forEachWithErrors operator allows users to iterate over a Stream providing a
 ====
 [source,java]
 ----
-List<Integer> list = new ArrayList<>();
+List list = new ArrayList<>();
 Throwable error = null;
 public String load(int i){
    if(i==2)
@@ -274,7 +274,6 @@ public String load(int i){
 SequenceM.of(1,2,3,4)
          .map(this::load)
          .forEachWithError(  i->list.add(i), e->error=e);
-		
 
 //list =List[1,3,4]
 //error = RuntimeException
@@ -292,7 +291,7 @@ The forEachEvent operator is similar to forEachWithErrors but also accepts a Run
 [source,java]
 ----
 Closeable resource;
-List<Integer> list = new ArrayList<>();
+List list = new ArrayList<>();
 Throwable error = null;
 public String load(int i){
    if(i==2)
@@ -304,12 +303,10 @@ SequenceM.of(1,2,3,4)
          .forEachEvent(  i->list.add(i), 
                          logger::error,
                          ()->resource.close());
-		
 
 //list =List[1,3,4]
 //runtime exception logged
 //resource is closed
-
 
 ----
 ====
@@ -324,7 +321,7 @@ forEachX allows users to consume only a specified amount of data from the Stream
 ====
 [source,java]
 ----
-List<Integer> list = new ArrayList<>();
+List list = new ArrayList<>();
 Subscription s = StreamUtils.forEachX(Stream.of(1,2,3), 2,  i->list.add(i));
 assertThat(list,hasItems(1,2));
 assertThat(list.size(),equalTo(2));
@@ -346,7 +343,7 @@ forEachXWithErrors allows users to consume only a specified amount of data from 
 ====
 [source,java]
 ----
-List<Integer> list = new ArrayList<>();
+List list = new ArrayList<>();
 Throwable error = null;
 public String load(int i){
    if(i==2)
@@ -356,7 +353,6 @@ public String load(int i){
 Subscription s = SequenceM.of(1,2,3,4)
                           .map(this::load)
                           .forEachXWithError( 2, i->list.add(i), e->error=e);
-		
 
 //list =List[1]
 //error = RuntimeException
@@ -381,7 +377,7 @@ forEachXEvents allows users to consume only a specified amount of data from the 
 ====
 [source,java]
 ----
-List<Integer> list = new ArrayList<>();
+List list = new ArrayList<>();
 Throwable error = null;
 Closeable resource;
 public String load(int i){
@@ -393,7 +389,6 @@ Subscription s = SequenceM.of(1,2,3,4)
                           .map(this::load)
                           .forEachXEvents( 2, i->list.add(i),   logger::error,
                            ()->resource.close());;
-		
 
 //list =List[1]
 //error = RuntimeException
@@ -415,13 +410,11 @@ s.request(1); //no new elements end of Stream
 ----
 ====
 
-
 ==== Reactive Future Operations & Reactive Tasks
 
 The reactive-streams based terminal operations can also be launched asynchronously, first by using the futureOperations operator to provide an Executor that will process the Stream.
 
 ==== Using futureOperations
-
 
 The futureOperations operator opens up a world of asynchronously executed terminal operations. A large range of terminal operations are provided and for each one a CompletbableFuture is returned.
 
@@ -430,14 +423,12 @@ The futureOperations operator opens up a world of asynchronously executed termin
 [source,java]
 ----
 Executor exec = Executors.newFixedThreadPool(1);
-FutureOperations<Integer> terminalOps  = StreamUtils.futureOperations(Stream.of(1,2,3), exec);
-
+FutureOperations terminalOps  = StreamUtils.futureOperations(Stream.of(1,2,3), exec);
 
 //execute the collection & Stream evaluation  on the provided executor
-CompletableFuture<List<Integer>> futureList = terminalOps.collect(Collectors.toList());
+CompletableFuture<List> futureList = terminalOps.collect(Collectors.toList());
 
-List<Integer> result  = list.join();
-
+List result  = list.join();
 
 ----
 ====
@@ -450,24 +441,24 @@ Each of the async Future Operations for reactive-streams (forEachX, forEachEvent
 ====
 [source,java]
 ----
-List<Integer> list = new ArrayList<>();
+List list = new ArrayList<>();
 ReactiveTask s = SequenceM.of(1,2,3)
-						  .futureOperations(exec)
-						  .forEachX( 2,  i->list.add(i));
+                          .futureOperations(exec)
+                          .forEachX( 2,  i->list.add(i));
 //wait until first 2 elements are processed
 s.block();
-		
+
 //list = List[1,2]
 
 //trigger the remainder of the Stream processing asynchronously
 ReactiveTask nextElements = s.requestAllAsync();
-
 
 //if we wait until it completes
 //nextElements.block();
 //list = List[1,2,3]
 ----
 ====
+
 
 === Batching, Windowing and Sliding views
 
@@ -614,7 +605,6 @@ SequenceM.of(1,2,3,4,5,6)
 ==== Batch / Window until a predicate holds
 
 Batching or Windowing while allows users to keep the window / batch open until the predicate holds true.
-
 .Batch until example
 ====
 [source,java]
@@ -692,6 +682,7 @@ System.out.println(
 +----+----+----+---------+---------+----------+
 ----
 ====
+
 
 === Stream manipulation
 Cyclops offers many functions for manipulating Streams such as deleteBetween, insertAt and more
@@ -786,7 +777,7 @@ The subStream operator allows users to extract a smaller subset stream from a la
 [source,java]
 ----
 SequenceM.of(1,2,3,4,5,6).subStream(1,3);
-	   
+       
   
 //SequenceM[2,3]
 ----
@@ -799,7 +790,7 @@ The intersperse operator allows a new value to be inserted between every element
 [source,java]
 ----
 
-//SequenceM.of(1, 2, 3, 4).intersperse(0);	   
+//SequenceM.of(1, 2, 3, 4).intersperse(0);     
   
 // (1, 0, 2, 0, 3, 0, 4) 
 ----
@@ -1276,8 +1267,8 @@ Debounce accepts only one value per time period specified, dropping all other el
 [source,java]
 ----
 SequenceM.of(1,2,3,4,5,6)
-	    .debounce(1000,TimeUnit.SECONDS).toList();
-	           
+        .debounce(1000,TimeUnit.SECONDS).toList();
+               
 // 1 
 ====
 .debounce in simple-react
@@ -1356,11 +1347,11 @@ A number of the cyclops zip operators allow a custom zipper to be supplied (typi
 [source,java]
 ----
 Stream<List<Integer>> zipped = StreamUtils.zipSequence(Stream.of(1,2,3)
-						,SequenceM.of(2,3,4), 
-							(a,b) -> Arrays.asList(a,b));
-		
-		
-//Stream[List[1,2],List[2,3],List[3,4]]		
+                        ,SequenceM.of(2,3,4), 
+                            (a,b) -> Arrays.asList(a,b));
+        
+        
+//Stream[List[1,2],List[2,3],List[3,4]]     
 ----
 ====
 ==== Zip three Streams
@@ -1608,7 +1599,7 @@ Repeat the Stream infinitely
 ----
 SequenceM.of(1).cycle().limit(6).toList());
 //List[1, 1, 1, 1, 1,1]
-----	 
+----     
 ====
 ==== Cycle Times
 
@@ -1619,9 +1610,9 @@ The cycle operator repeats the Stream the specified number of times.
 [source,java]
 ----
 SequenceM.of(1,2,2)
-		 .cycle(3)
-		 .collect(Collectors.toList());
-								
+         .cycle(3)
+         .collect(Collectors.toList());
+                                
 //List[1,2,2,1,2,2,1,2,2]
 ----
 ====
@@ -1635,9 +1626,9 @@ Cycle until repeats the Stream until the predicate holds
 ----
 MutableInt count =MutableInt.of(0);
 SequenceM.of(1,2,2)
-		 .cycleUntil(next -> count.get()>6)
-		 .peek(i-> count.mutate(i->i+1))
-		 .collect(Collectors.toList());
+         .cycleUntil(next -> count.get()>6)
+         .peek(i-> count.mutate(i->i+1))
+         .collect(Collectors.toList());
 
 //List[1,2,2,1,2,2,1]
 ----
@@ -1652,10 +1643,10 @@ Cycle while repeats the Stream wgile the predicate holds
 ----
 MutableInt count =MutableInt.of(0);
 SequenceM.of(1,2,2)
-		 .cycleWhile(next -> count++<6)
-		 .collect(Collectors.toList());
-				 
-//List(1,2,2,1,2,2)	
+         .cycleWhile(next -> count++<6)
+         .collect(Collectors.toList());
+                 
+//List(1,2,2,1,2,2) 
 ----
 ====
 
@@ -1674,8 +1665,8 @@ In this example we count the number of elements in the Stream and then repeat it
 [source,java]
 ----
 List<Integer> list = SequenceM.of(1,2,2))
-	 						   .cycle(Reducers.toCountInt(),4)
-	  						   .collect(Collectors.toList());
+                               .cycle(Reducers.toCountInt(),4)
+                               .collect(Collectors.toList());
 //List[3,3,3,3];
 ----
 ====
@@ -1837,7 +1828,7 @@ This example flatMaps a Javaslang Array into a SequenceM
 [source,java]
 ----
 SequenceM.of(Arrays.asList(1,2)).flatten();
-//SequenceM(1,  2);	
+//SequenceM(1,  2); 
 
 SequenceM.of(Optional.of(1)).flatten();
 //SequenceM(1)
@@ -1919,8 +1910,8 @@ In addition to the map method in the JDK cyclops also provides a cast method (in
 StreamUtils.cast(Stream.of(1, "a", 2, "b", 3),Integer.class)
 // throws ClassCastException
 ----
-====	 
-	 
+====     
+     
 === for-comprehensions
 
 http://static.javadoc.io/com.aol.cyclops/cyclops-sequence-api/7.1.0/com/aol/cyclops/sequence/SequenceM.html[SequenceM]
@@ -1989,15 +1980,15 @@ This operator allows users to switch to a different Stream lazily defined, if th
 [source,java]
 ----
 SequenceM.of(4,5,6)
-		 .onEmptySwitch(()->SequenceM.of(1,2,3))
-		.toList()
+         .onEmptySwitch(()->SequenceM.of(1,2,3))
+        .toList()
 //[4,5,6]
 ----
 [source,java]
 ----
 SequenceM.of()
-		 .onEmptySwitch(()->SequenceM.of(1,2,3))
-		.toList()
+         .onEmptySwitch(()->SequenceM.of(1,2,3))
+        .toList()
 //[1,2,3]
 ----
 ====
@@ -2011,15 +2002,15 @@ This operator allows users to convert to a single valued Stream, if the current 
 [source,java]
 ----
 SequenceM.of(4,5,6)
-		 .onEmpty(1)
-		.toList()
+         .onEmpty(1)
+        .toList()
 //[4,5,6]
 ----
 [source,java]
 ----
 SequenceM.of()
-		 .onEmpty(1)
-		.toList()
+         .onEmpty(1)
+        .toList()
 //[1]
 ----
 ====
@@ -2032,15 +2023,15 @@ This operator allows users to convert to a single valued Stream, with the value 
 [source,java]
 ----
 SequenceM.of(4,5,6)
-		 .onEmptyGet(()->1)
-		.toList()
+         .onEmptyGet(()->1)
+        .toList()
 //[4,5,6]
 ----
 [source,java]
 ----
 SequenceM.of()
-		 .onEmptyGet(()->1)
-		.toList()
+         .onEmptyGet(()->1)
+        .toList()
 //[1]
 ----
 ====
@@ -2053,15 +2044,15 @@ This operator allows users to convert to throw a lazily created exception if the
 [source,java]
 ----
 SequenceM.of(4,5,6)
-		 .onEmptyThrow(()->new RuntimeException("error"))
-		.toList()
+         .onEmptyThrow(()->new RuntimeException("error"))
+        .toList()
 //[4,5,6]
 ----
 [source,java]
 ----
 SequenceM.of()
-		 .onEmptyThrow(()->new RuntimeException("error"))
-		.toList()
+         .onEmptyThrow(()->new RuntimeException("error"))
+        .toList()
 //RuntimeException("error");
 ----
 ====
@@ -2118,34 +2109,6 @@ The reove operator removes all instances of the provided object
 ----
 SequenceM.of(1, 2,3).remove(2);
 //(1,3)
-====
-
-==== RemoveAll operator
-
-since cyclops 7.2.0
-
-The removeAll operator removes all supplied values from the Stream.
-
-.removeAll
-====
-[source,java]
-----
-SequenceM.of(1, 2,3).removeAll(2,3);
-//(1)
-====
-
-==== RetainAll operator
-
-since cyclops 7.2.0
-
-The retainAll operator retains only the supplied values in the Stream.
-
-.retainAll
-====
-[source,java]
-----
-SequenceM.of(1, 2,3).retainAll(2,3);
-//(2,3)
 ====
 
 === scanLeft / scanRight
@@ -2398,48 +2361,10 @@ List<Integer> result = SequenceM.of(1,2,3,4)).reduce(Arrays.asList(sum,mult) );
 ----
 ====
 
-=== Collection
-
-==== Collectable interface 
-
-SequenceM extends the jOOλ Collectable interface, this provides a range of useful additional terminal operations such as mean, mode, median & percentile and advanced Collection operators that enable you to in a type safe manner perform mutliple different types of mutable reductions simulatanouesly on a Stream.
-
-.mulitple mutable reduction (Collection)
-====
-
-[source,java]
-----
- Tuple3<List<Integer>,Integer, Integer> aggregations = SequenceM.of(1,2,3,4)
-          .collect(Collectors.toList(),
-                 Collectors.averagingInt(i->i), Collectors.counting());
-
-//aggregations = Tuple3[List[1,2,3,4],2,4]
-----
-====
-
-==== FutureCollectable interface 
-
-cyclops additionally provides a FutureCollectable interface that it avaiable to SequenceM and StreamUtils via the futureOperations operator. The FutureCollectable interface provides asynchronous versions of the jOOλ Collectable termina operations.
-
-
-.async mulitple mutable reduction (Collection)
-====
-
-[source,java]
-----
-Executor exec = Executors.newFixedThreadPool(1);
- CompletableFuture<Tuple3<List<Integer>,Integer, Integer>> aggregations = SequenceM.of(1,2,3,4)
-                         .futureOperations(exec)
-                         .collect(Collectors.toList(),
-                 Collectors.averagingInt(i->i), Collectors.counting());
-
-//aggregations = Tuple3[List[1,2,3,4],2,4]
-----
-====
 
 === conversions
 
-==== toList / toSet / toMap
+=== toList / toSet / toMap
 
 The are are a number of convenience methods for creating collections.
 
@@ -2460,8 +2385,7 @@ SequenceM.of(1,2,3).toMap(v->"key:"+v,v->v)
 //Map["key:1":1,"key:2":2,"key:3":3]
 ----
 ====
-
-==== toLazyCollection / toConcurrentLazyCollection
+=== toLazyCollection / toConcurrentLazyCollection
 
 Cyclops provides operators to lazily create a collection from the Stream. The values are only pulled through the Stream as the lazy collection is used. toConcurrentLazyCollection synchronizes iteration through the underlying Stream.
 
@@ -2470,35 +2394,35 @@ Cyclops provides operators to lazily create a collection from the Stream. The va
 [source,java]
 ----
 Collection<Integer> col = SequenceM.of(1,2,3,4,5)
-											.peek(System.out::println)
-											.toLazyCollection();
-		
+                                            .peek(System.out::println)
+                                            .toLazyCollection();
+        
 col.forEach(System.out::println);
 Collection<Integer> col = SequenceM.of(1,2,3,4,5)
-								   .peek(System.out::println)
-								   .toConcurrentLazyCollection();
-		
-col.forEach(System.out::println);	
+                                   .peek(System.out::println)
+                                   .toConcurrentLazyCollection();
+        
+col.forEach(System.out::println);   
 ----
 ====
-====  toCompletableFuture / toOptional
+===  toCompletableFuture / toOptional
 
 .toCompletableFuture / toOptional 
 ====
 [source,java]
 ----
 Optional<List<String>> stream = SequenceM.of("hello","world")
-												.toOptional();
-												
+                                                .toOptional();
+                                                
 //Optional[List["hello","world"]]
-		
+        
  CompletableFuture<List<String>> cf = SequenceM.of("hello","world")
-											.toCompletableFuture();
+                                            .toCompletableFuture();
 
-//CompletableFuture[List["hello","world"]]		
+//CompletableFuture[List["hello","world"]]      
 ----
 ====
-====  anyM / toStreamable
+===  anyM / toStreamable
 
 The anyM operator wraps the SequenceM in the cyclops anyM wrapper class that can provide a common api over any monad type.
 
@@ -2516,15 +2440,15 @@ The toStreamable operator converts the SequenceM to a caching Streamable.
 [source,java]
 ----
 Streamable<String> caching = SequenceM.of("hello","world")
-												.toStreamable();
-												
+                                                .toStreamable();
+                                                
 caching.forEach(System.out::println);
 caching.forEach(System.out::println);
 
 //can print the contents of the Stream twice.
-		
+        
 AnyM<String> anyM = SequenceM.of("hello","world")
-											.anyM();
+                                            .anyM();
 
 
 anyM.map(v->v+"!");
@@ -2547,7 +2471,7 @@ These opertors make use of the caching streamable so is not suitable for infinte
 [source,java]
 ----
 Streamable.of(1,2,3).combinations(2)
-	  
+      
 //Streamable[Streamable[1,2],Streamable[1,3],Streamable[2,3]]
 ----
 ====
@@ -2584,13 +2508,10 @@ Terminal operations can now all be called asynchronously e.g.
 
 [source,java]
 ----
-Executor exec = Executors.newFixedThreadPool(1);
         CompletableFuture size = SequenceM.of(1,2,3,4)
                                                           .futureOperations(exec)
                                                           .count();
 ----
-
-
 
 Available operations
 
@@ -2646,6 +2567,5 @@ CompletableFuture> list = SequenceM.of(1,2,3,4,5)
 
 //CompletableFuture[1,2,3,4,5] 
 ----
-
 
 

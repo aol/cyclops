@@ -67,7 +67,7 @@ public class WindowingTest {
 	public void windowStatefullyWhileEmpty(){
 		
 		assertThat(Streamable.of()
-				.windowStatefullyWhile((s,i)->s.sequenceM().toList().contains(4) ? true : false)
+				.windowStatefullyWhile((s,i)->s.contains(4) ? true : false)
 				.toList().size(),equalTo(0));
 		
 	}

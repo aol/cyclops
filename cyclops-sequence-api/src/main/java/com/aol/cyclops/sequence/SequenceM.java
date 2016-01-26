@@ -52,22 +52,15 @@ import com.aol.cyclops.sequence.spliterators.ReversingListSpliterator;
 import com.aol.cyclops.sequence.spliterators.ReversingRangeIntSpliterator;
 import com.aol.cyclops.sequence.spliterators.ReversingRangeLongSpliterator;
 import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.trampoline.Trampoline;
+
 
 public interface SequenceM<T> extends Unwrapable, Stream<T>, JoolWindowing<T>, JoolManipulation<T>,SequenceMCollectable<T>,Seq<T>,  Iterable<T>, Publisher<T>,
 		ReactiveStreamsTerminalOperations<T>  {
 	
 	
-	/**
-     * Map this stream to a windowed stream using a specific partition and order.
-     * <p>
-     * <code><pre>
-     * // (1, 2, 4, 4, 3)
-     * SequenceM.of(1, 2, 4, 2, 3).window(i -> i % 2, naturalOrder()).map(Window::max)
-     * </pre></code>
-     
-    default <U> SequenceM<Window<T>> window(Function<? super T, ? extends U> partitionBy, Comparator<? super T> orderBy) {
-        return window(Window.of(partitionBy, orderBy)).map(t -> t.v1);
-    }*/ 
+		
+
 	@Override
 	<R> R unwrap();
 
@@ -273,9 +266,9 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, JoolWindowing<T>, J
 	 * <pre>
 	 * {@code 
 	 *   List<Integer> list = SequenceM.of(1,2,2))
-	 * 										.cycle(Reducers.toCountInt(),3)
-	 * 										.collect(Collectors.toList());
-	 * 	//List[3,3,3];
+	 *                                 .cycle(Reducers.toCountInt(),3)
+	 *                                 .collect(Collectors.toList());
+	 *   //List[3,3,3];
 	 *   }
 	 * </pre>
 	 * 
@@ -906,8 +899,10 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, JoolWindowing<T>, J
 	 * 
 	 * @return
 	 */
-	Optional<HeadAndTail<T>> headAndTailOptional();
 
+	@Deprecated
+	 Optional<HeadAndTail<T>> headAndTailOptional();
+	
 	/**
 	 * @return First matching element in sequential order
 	 * 
@@ -939,6 +934,45 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, JoolWindowing<T>, J
 	 *         (non-deterministic)
 	 */
 	Optional<T> findAny();
+
+
+	
+	 /**
+	  * Performs a map operation that can call a recursive method without running out of stack space
+	  * <pre>
+	  * {@code
+	  * SequenceM.of(10,20,30,40)
+				 .trampoline(i-> fibonacci(i))
+				 .forEach(System.out::println); 
+				 
+		Trampoline<Long> fibonacci(int i){
+			return fibonacci(i,1,0);
+		}
+		Trampoline<Long> fibonacci(int n, long a, long b) {
+	    	return n == 0 ? Trampoline.done(b) : Trampoline.more( ()->fibonacci(n-1, a+b, a));
+		}		 
+				 
+	  * 55
+		6765
+		832040
+		102334155
+	  * 
+	  * 
+	  * SequenceM.of(10_000,200_000,3_000_000,40_000_000)
+				 .trampoline(i-> fibonacci(i))
+				 .forEach(System.out::println);
+				 
+				 
+	  * completes successfully
+	  * }
+	  * 
+	 * @param mapper
+	 * @return
+	 */
+	default <R> SequenceM<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper){
+		
+		 return  map(in-> mapper.apply(in).result());
+	 }
 
 	/**
 	 * Attempt to map this Sequence to the same type as the supplied Monoid
@@ -1499,12 +1533,10 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, JoolWindowing<T>, J
 	 */
 	SequenceM<T> filter(Predicate<? super T> fn);
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see java.util.stream.BaseStream#sequential()
 	 */
-	SequenceM<T> sequential();
+	SequenceM<T> sequential() ;
 
 	/*
 	 * (non-Javadoc)
@@ -2060,6 +2092,11 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, JoolWindowing<T>, J
 	public static <T> CyclopsSubscriber<T> subscriber() {
 		return ReactiveStreamsLoader.subscriber.get().subscribe();
 	}
+
+	public static <T> SequenceM<T> empty(){
+		return fromStream(Stream.empty());
+	}
+	
 
 	/**
 	 * Create an efficiently reversable Sequence from the provided elements

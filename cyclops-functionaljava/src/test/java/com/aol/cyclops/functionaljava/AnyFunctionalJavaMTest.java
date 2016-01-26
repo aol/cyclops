@@ -1,7 +1,6 @@
 package com.aol.cyclops.functionaljava;
 
 import static com.aol.cyclops.functionaljava.FJ.anyM;
-import static com.aol.cyclops.lambda.api.AsAnyM.anyM;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -14,7 +13,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 
-import com.aol.cyclops.lambda.monads.AnyMonads;
+import com.aol.cyclops.monad.AnyM;
 
 import fj.Monoid;
 import fj.control.Trampoline;
@@ -177,13 +176,13 @@ public class AnyFunctionalJavaMTest {
 	public void streamFlatMapTestJDK(){
 		assertThat(FJ.anyM(Stream.stream("hello world"))
 				.map(String::toUpperCase)
-				.flatMap(i->AnyMonads.anyM(java.util.stream.Stream.of(i)))
+				.flatMap(i->AnyM.fromStream(java.util.stream.Stream.of(i)))
 				.toSequence()
 				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
 	}
 	@Test
 	public void JDKstreamFlatMapTest(){
-		assertThat(AnyMonads.anyM(java.util.stream.Stream.of("hello world"))
+		assertThat(AnyM.fromStream(java.util.stream.Stream.of("hello world"))
 				.map(String::toUpperCase)
 				.flatMap(i->FJ.anyM(Stream.stream(i)))
 				.toSequence()
@@ -191,7 +190,7 @@ public class AnyFunctionalJavaMTest {
 	}
 	@Test
 	public void JDKOptionFlatMapTest(){
-		assertThat(AnyMonads.anyM(java.util.stream.Stream.of("hello world"))
+		assertThat(AnyM.fromStream(java.util.stream.Stream.of("hello world"))
 				.map(String::toUpperCase)
 				.flatMap(i->FJ.anyM(Option.some(i)))
 				.toSequence()
@@ -199,7 +198,7 @@ public class AnyFunctionalJavaMTest {
 	}
 	@Test
 	public void JDKOptionEmptyFlatMapTest(){
-		assertThat(AnyMonads.anyM(java.util.stream.Stream.of("hello world"))
+		assertThat(AnyM.fromStream(java.util.stream.Stream.of("hello world"))
 				.map(String::toUpperCase)
 				.flatMap(i->FJ.anyM(Option.none()))
 				.toSequence()

@@ -28,6 +28,8 @@ configurations {
 }
 dependencies {
 	compile project(':cyclops-invokedynamic')
+	compile project(':cyclops-functions')
+	compile project(':cyclops-trampoline')
 	compile 'org.reactivestreams:reactive-streams:1.0.0'
 	compile "org.pcollections:pcollections:${pcollectionsVersion}"
 	compile "org.jooq:jool:${joolVersion}"
