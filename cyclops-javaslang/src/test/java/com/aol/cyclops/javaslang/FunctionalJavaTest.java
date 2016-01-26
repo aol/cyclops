@@ -9,7 +9,7 @@ import org.junit.Test;
 import com.aol.cyclops.javaslang.FromFunctionalJava;
 
 public class FunctionalJavaTest {
-
+/**
 	@Test
 	public void testFromFunctionalJavaf() {
 		assertThat(FromFunctionalJava.f1((Integer a)->a*100).apply(2),is(200));
@@ -69,7 +69,7 @@ public class FunctionalJavaTest {
 	@Test
 	public void testFromFunctionalJavaTuple8(){
 		assertThat(FromFunctionalJava.tuple(fj.P.p(1,2,3,4,5,6,7,8)),is(Tuple.of(1,2,3,4,5,6,7,8)));
-	}
+	} **/
 	/**
 	@Test
 	public void testFromFunctionalJavaTuple9(){

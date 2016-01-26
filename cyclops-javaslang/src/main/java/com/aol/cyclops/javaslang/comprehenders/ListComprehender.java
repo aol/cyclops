@@ -40,11 +40,11 @@ public class ListComprehender implements Comprehender<List> {
 	}
 	static List unwrapOtherMonadTypes(Comprehender<List> comp,Object apply){
 		if(apply instanceof java.util.stream.Stream)
-			return List.ofAll( ((java.util.stream.Stream)apply).iterator());
+			return List.of( ((java.util.stream.Stream)apply).iterator());
 		if(apply instanceof Iterable)
-			return List.ofAll( ((Iterable)apply).iterator());
+			return List.of( ((Iterable)apply).iterator());
 		if(apply instanceof LazySeq){
-			apply = List.ofAll(((LazySeq)apply).iterator());
+			apply = List.of(((LazySeq)apply).iterator());
 		}
 		if(apply instanceof Collection){
 			return List.ofAll((Collection)apply);

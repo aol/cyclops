@@ -46,7 +46,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
-import com.aol.cyclops.internal.AsGenericMonad;
+
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.future.FutureOperations;
@@ -54,6 +54,9 @@ import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
 import com.aol.cyclops.sequence.spliterators.ReversableSpliterator;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.sequence.streamable.Streamable;
+
+import com.aol.cyclops.streams.BaseHotStreamImpl;
+
 import com.aol.cyclops.streams.StreamUtils;
 
 
@@ -2243,6 +2246,32 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	}
 
 	/* (non-Javadoc)
+	 * @see com.aol.cyclops.sequence.SequenceM#primedHotStream(java.util.concurrent.Executor)
+	 */
+	@Override
+	public HotStream<T> primedHotStream(Executor e) {
+		return StreamUtils.primedHotStream(this, e);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.sequence.SequenceM#pausableHotStream(java.util.concurrent.Executor)
+	 */
+	@Override
+	public PausableHotStream<T> pausableHotStream(Executor e) {
+		return StreamUtils.pausableHotStream(this, e);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.sequence.SequenceM#pausablePrimedHotStream(java.util.concurrent.Executor)
+	 */
+	@Override
+	public PausableHotStream<T> primedPausableHotStream(Executor e) {
+		return StreamUtils.primedPausableHotStream(this, e);
+	}
+	
+	
+
+ 	/*
 	 * @see org.jooq.lambda.Seq#format()
 	 */
 	@Override
