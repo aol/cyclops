@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.matcher.recursive.Matchable;
 public class AsValueTest {
-
+/**
 	@Test
 	public void testAsValueUnapply() {
 		List list = new ArrayList();
@@ -58,4 +58,5 @@ public class AsValueTest {
 		int nextVal;
 		public Child(int val,int nextVal) { super(val); this.nextVal = nextVal;}
 	}
+	**/
 }

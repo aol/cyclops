@@ -9,11 +9,12 @@ Easy to use Reactive Streams support available if simple-react (v0.99.3 and abov
 
 Features include
 
+* Scheduling (cron, fixed rate, fixed delay)
 * Failure handling (recover / retry)
 * windowing / batching (by time, size, state, predicate)
 * zipping
 * HotStreams
-* reactive-streams
+* reactive-streams : subscriber / publisher/ forEachX, forEachWithErrors, forEachEvent and more
 * Asynchronous execution
 * Stream manipulation - insert/At, deleteAt
 * Frequency management (xPer, onePer, jitter, debounce)
