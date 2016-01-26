@@ -31,7 +31,7 @@ public class CasesTest {
 	
 	@Test
 	public void ofPStack() {
-		Cases cases = Cases.ofList((List)Arrays.asList(Case.of(input->true,input->"hello")));
+		Cases cases = Cases.ofList(Arrays.asList(Case.of(input->true,input->"hello")));
 		assertThat(cases.size(),is(1));
 	}
 
@@ -71,7 +71,7 @@ public class CasesTest {
 	@Test
 	public void testSequential() {
 		Set<Long> threads = new HashSet<>();
-		val case1 = Case.of(input->true,input->{ threads.add(Thread.currentThread().getId());return "hello";});
+		Case case1 = Case.of(input->true,input->{ threads.add(Thread.currentThread().getId());return "hello";});
 		Cases.of(case1,case1,case1,case1).sequential().match(10);
 		assertThat(threads.size(),is(1));
 	}
@@ -79,7 +79,7 @@ public class CasesTest {
 	@Test @Ignore
 	public void testParallel() {
 		Set<Long> threads = new HashSet<>();
-		val case1 = Case.of(input->true,input->{ threads.add(Thread.currentThread().getId());return "hello";});
+		Case case1 = Case.of(input->true,input->{ threads.add(Thread.currentThread().getId());return "hello";});
 		Cases.of(case1,case1,case1,case1).parallel().match(10);
 		assertThat(threads.size(),greaterThan(1));
 	}
@@ -136,9 +136,11 @@ public class CasesTest {
 
 	@Test
 	public void testMap() {
-		List<String> results = Cases.of(Case.of(input->true,input->"hello"),Case.of(input->false,input->"second"))
-				.map(cse->Case.of(t->true,input->"prefix_"+cse.getAction().apply(input))).<String>matchMany(10).collect(Collectors.toList());
-		
+		Cases cases  = Cases.of(Case.of(input->true,input->"hello"),Case.of(input->false,input->"second"))
+				.map(cse->Case.of(t->true,input->"prefix_"+cse.getAction().apply(input)));
+
+		Stream<String> stream = cases.<String>matchMany(10);
+		List<String> results = stream.collect(Collectors.toList());
 		assertThat(results.size(),is(2));
 		assertTrue(results.stream().allMatch(s->s.startsWith("prefix_")));
 		assertTrue(results.stream().anyMatch(s->s.startsWith("prefix_hello")));

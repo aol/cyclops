@@ -67,7 +67,7 @@ public class WindowingTest {
 	public void windowStatefullyWhileEmpty(){
 		
 		assertThat(Streamable.of()
-				.windowStatefullyWhile((s,i)->s.sequenceM().toList().contains(4) ? true : false)
+				.windowStatefullyWhile((s,i)->s.contains(4) ? true : false)
 				.toList().size(),equalTo(0));
 		
 	}
@@ -151,7 +151,7 @@ public class WindowingTest {
 	@Test
 	public void groupedShorter() throws Exception {
 		final Streamable<Integer> fixed = Streamable.fromStream(Stream.of(5, 7, 9));
-		assertThat(fixed.sequenceM().grouped(4).get(0).v1,equalTo(Arrays.asList(5,7,9)));
+		assertThat(fixed.sequenceM().grouped(4).elementAt(0).v1,equalTo(Arrays.asList(5,7,9)));
 		assertThat(fixed.sequenceM().grouped(4).count(),equalTo(1l));
 
 		
@@ -160,14 +160,14 @@ public class WindowingTest {
 	@Test
 	public void groupedEqualSize() throws Exception {
 		final Streamable<Integer> fixed = Streamable.fromStream(Stream.of(5, 7, 9));
-		assertThat(fixed.sequenceM().grouped(3).elementAt(0).get(),equalTo(Arrays.asList(5,7,9)));
+		assertThat(fixed.sequenceM().grouped(3).get(0).get(),equalTo(Arrays.asList(5,7,9)));
 		assertThat(fixed.sequenceM().grouped(3).count(),equalTo(1l));
 	}
 
 	@Test
 	public void multipleGrouped() throws Exception {
 		final Streamable<Integer> fixed = Streamable.fromStream(Stream.of(5, 7, 9,10));
-		assertThat(fixed.sequenceM().grouped(3).elementAt(0).get(),equalTo(Arrays.asList(5,7,9)));
+		assertThat(fixed.sequenceM().grouped(3).get(0).get(),equalTo(Arrays.asList(5,7,9)));
 		assertThat(fixed.sequenceM().grouped(3).count(),equalTo(2l));
 		
 	}
@@ -176,7 +176,7 @@ public class WindowingTest {
 	@Test
 	public void return1() throws Exception {
 		final Streamable<Integer> fixed = Streamable.fromStream(Stream.of(5));
-		assertThat(fixed.sequenceM().grouped(3).elementAt(0).get(),equalTo(Arrays.asList(5)));
+		assertThat(fixed.sequenceM().grouped(3).get(0).get(),equalTo(Arrays.asList(5)));
 		assertThat(fixed.sequenceM().grouped(3).count(),equalTo(1l));
 	}
 
@@ -191,7 +191,7 @@ public class WindowingTest {
 		SequenceM<Integer> infinite = SequenceM.iterate(1, i->i+1);
 		
 		final SequenceM<List<Integer>> grouped = infinite.grouped(3);
-		assertThat(grouped.elementAt(0).get(),equalTo(Arrays.asList(1,2,3)));
+		assertThat(grouped.get(0).get(),equalTo(Arrays.asList(1,2,3)));
 	
 	}
 

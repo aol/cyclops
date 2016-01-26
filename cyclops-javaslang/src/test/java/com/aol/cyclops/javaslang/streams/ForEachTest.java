@@ -121,4 +121,23 @@ public class ForEachTest {
 		
 		assertTrue(complete);
 	}
+	@Test
+	public void forEachWithEvents2(){
+	
+		List<Integer> list = new ArrayList<>();
+		assertFalse(complete);
+		assertThat(error,nullValue());
+		Stream<Integer> stream = Stream.ofAll(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();},()->5).map(Supplier::get);
+		StreamUtils.forEachEvent(stream,  i->list.add(i),e->error=e,()->complete=true);
+		
+		
+		
+		assertThat(list,hasItems(1,2,3,5));
+		assertThat(list.size(),equalTo(4));
+		
+		
+		assertThat(error,instanceOf(RuntimeException.class));
+		
+		assertTrue(complete);
+	}
 }

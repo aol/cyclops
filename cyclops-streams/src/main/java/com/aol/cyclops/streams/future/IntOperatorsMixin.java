@@ -18,7 +18,7 @@ public interface IntOperatorsMixin<T>  extends IntOperators<T>,HasStream<T>, Has
 	 * @see java.util.stream.Stream#mapToInt(ToIntFunction)
 	 * 	 @see java.util.stream.IntStream#sum()
 	 * */
-	default  CompletableFuture<Integer> sumInt(ToIntFunction<T> fn){
+	default  CompletableFuture<Integer> sumInt(ToIntFunction<? super T> fn){
 		
 		return CompletableFuture.supplyAsync(()->getStream()
 								.flatMapToInt(t-> IntStream.of(fn.applyAsInt(t)))
@@ -30,7 +30,7 @@ public interface IntOperatorsMixin<T>  extends IntOperators<T>,HasStream<T>, Has
 	 * @see java.util.stream.Stream#mapToInt(ToIntFunction)
 	 * 	 @see java.util.stream.IntStream#max()
 	 * */
-	default  CompletableFuture<OptionalInt> maxInt(ToIntFunction<T> fn){
+	default  CompletableFuture<OptionalInt> maxInt(ToIntFunction<? super T> fn){
 		
 		return CompletableFuture.supplyAsync(()->getStream()
 								.flatMapToInt(t-> IntStream.of(fn.applyAsInt(t)))
@@ -42,7 +42,7 @@ public interface IntOperatorsMixin<T>  extends IntOperators<T>,HasStream<T>, Has
 	 * @see java.util.stream.Stream#mapToInt(ToIntFunction)
 	 * 	 @see java.util.stream.IntStream#min()
 	 * */
-	default  CompletableFuture<OptionalInt> minInt(ToIntFunction<T> fn){
+	default  CompletableFuture<OptionalInt> minInt(ToIntFunction<? super T> fn){
 		
 		return CompletableFuture.supplyAsync(()->getStream()
 								.flatMapToInt(t-> IntStream.of(fn.applyAsInt(t)))
@@ -54,7 +54,7 @@ public interface IntOperatorsMixin<T>  extends IntOperators<T>,HasStream<T>, Has
 	 * @see java.util.stream.Stream#mapToInt(ToIntFunction)
 	 * 	 @see java.util.stream.IntStream#average()
 	 * */
-	default CompletableFuture<OptionalDouble> averageInt(ToIntFunction<T> fn){
+	default CompletableFuture<OptionalDouble> averageInt(ToIntFunction<? super T> fn){
 		
 		return CompletableFuture.supplyAsync(()->getStream()
 								.flatMapToInt(t-> IntStream.of(fn.applyAsInt(t)))
@@ -66,7 +66,7 @@ public interface IntOperatorsMixin<T>  extends IntOperators<T>,HasStream<T>, Has
 	 * @see java.util.stream.Stream#mapToInt(ToIntFunction)
 	 * 	 @see java.util.stream.IntStream#summaryStatistics()
 	 * */
-	default  CompletableFuture<IntSummaryStatistics> summaryStatisticsInt(ToIntFunction<T> fn){
+	default  CompletableFuture<IntSummaryStatistics> summaryStatisticsInt(ToIntFunction<? super T> fn){
 		
 		return CompletableFuture.supplyAsync(()->getStream()
 								.flatMapToInt(t-> IntStream.of(fn.applyAsInt(t)))
