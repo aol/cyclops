@@ -185,4 +185,54 @@ FluentFunctions.of(this::addOne)
                        .matches(-1,c->c.hasValues(2).then(i->3))
                        .apply(1)    
                        
-//returns 3                                                   
+//returns 3  
+
+## Handle nulls
+
+
+
+public int addOne(Integer i ){
+        return i+1;
+}
+Integer nullValue = null;
+
+Calling addOne directly with nullValue will result in a NullPointerException, but we can use lift.
+
+
+FluentFunctions.of(this::addOne)    
+               .lift()
+               .apply(Optional.ofNullable(nullValue)); 
+               
+## Lift a Function to Any Monad type
+
+Inject functionality into your methods via Java Monads (Stream, List, Optional, Try, CompletableFuture ect)
+
+AnyM<Integer> result = FluentFunctions.of(this::addOne) 
+                                              .liftM()
+                                              .apply(AnyM.streamOf(1,2,3,4));
+        
+result.forEach(System.out::println);
+
+2
+3
+4
+5
+
+## Handle exceptions
+
+Try<String,IOException> tried = FluentFunctions.ofChecked(this::exceptionalFirstTime)   
+                                                       .liftTry(IOException.class)
+                                                       .apply("hello");               
+        
+if(tried.isSuccess())
+     fail("expecting failure");
+     
+## Asynchronous execution
+
+CompletableFuture<Integer> addOne = FluentFunctions.of(this::addOne)
+                                                   .liftAsync(ex)
+                                                   .apply(1);
+                                                   
+FluentFunctions.of(this::addOne)
+                        .async(ex)
+                        .thenApply(f->f.apply(4))                                                        

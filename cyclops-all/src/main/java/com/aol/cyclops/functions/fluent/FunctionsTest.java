@@ -1,16 +1,22 @@
 package com.aol.cyclops.functions.fluent;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.trycatch.Success;
+import com.aol.cyclops.trycatch.Try;
 
 public class FunctionsTest {
 
@@ -19,7 +25,7 @@ public class FunctionsTest {
 		this.times =0;
 	}
 	int called;
-	public int addOne(int i ){
+	public int addOne(Integer i ){
 		called++;
 		return i+1;
 	}
@@ -226,5 +232,50 @@ public class FunctionsTest {
 							   		c->c.hasValues(8).then(i->32),
 							   		c->c.hasValues(103).then(i->8))
 					   .apply(1),equalTo(-1));
+	}
+	
+	
+	@Test
+	public void testLift(){
+		Integer nullValue = null;
+		FluentFunctions.of(this::addOne)	
+						.lift()
+						.apply(Optional.ofNullable(nullValue));
+	}
+	@Test
+	public void testLiftM(){
+		
+		AnyM<Integer> result = FluentFunctions.of(this::addOne)	
+											  .liftM()
+											  .apply(AnyM.streamOf(1,2,3,4));
+		
+		assertThat(result.asSequence().toList(),
+					equalTo(Arrays.asList(2,3,4,5)));
+	}
+	@Test
+	public void testTry(){
+		
+		Try<String,IOException> tried = FluentFunctions.ofChecked(this::exceptionalFirstTime)	
+					   								   .liftTry(IOException.class)
+					   								   .apply("hello");				  
+		
+		if(tried.isSuccess())
+			fail("expecting failure");
+		
+	}
+	Executor ex = Executors.newFixedThreadPool(1);
+	@Test
+	public void liftAsync(){
+		assertThat(FluentFunctions.of(this::addOne)
+						.liftAsync(ex)
+						.apply(1)
+						.join(),equalTo(2));
+	}
+	@Test
+	public void async(){
+		assertThat(FluentFunctions.of(this::addOne)
+						.async(ex)
+						.thenApply(f->f.apply(4))
+						.join(),equalTo(5));
 	}
 }
