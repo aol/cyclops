@@ -555,6 +555,8 @@ public class ExceptionSoftener {
 			}
 		};
 	}
+
+	
 	/**
 	 * Soften a CheckedPredicate that can throw Checked Exceptions to a standard Predicate that can also throw Checked Exceptions (without declaring them)
 	 * 

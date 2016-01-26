@@ -2,6 +2,7 @@ package com.aol.cyclops.monad.functions;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import com.aol.cyclops.functions.QuadFunction;
 import com.aol.cyclops.functions.QuintFunction;
@@ -22,9 +23,9 @@ import com.aol.cyclops.monad.AnyMonads;
  */
 public class LiftMFunctions {
 	
+	
 	/**
-	 * Lift a function so it accepts a Monad and returns a Monad (simplex view of a wrapped Monad)
-	 * Simplex view simplifies type related challenges. The actual native type is not specified here.
+	 * Lift a function so it accepts an AnyM (any monad) and returns an AnyM 
 	 * 
 	 * @param fn
 	 * @return
