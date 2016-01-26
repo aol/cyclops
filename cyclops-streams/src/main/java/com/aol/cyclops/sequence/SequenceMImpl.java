@@ -54,9 +54,13 @@ import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
 import com.aol.cyclops.sequence.spliterators.ReversableSpliterator;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.sequence.streamable.Streamable;
+<<<<<<< HEAD
 
 import com.aol.cyclops.streams.BaseHotStreamImpl;
 
+=======
+import com.aol.cyclops.streams.BaseHotStreamImpl;
+>>>>>>> dff5b4c73c818e8c7254214290a2bd90b86b12a8
 import com.aol.cyclops.streams.StreamUtils;
 
 
@@ -2270,13 +2274,12 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	}
 	
 	
-
  	/*
+    /*
 	 * @see org.jooq.lambda.Seq#format()
 	 */
 	@Override
 	public String format() {
-
 		return this.stream.format();
 	}
 
