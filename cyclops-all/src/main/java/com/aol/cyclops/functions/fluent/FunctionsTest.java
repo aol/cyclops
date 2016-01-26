@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import org.junit.Before;
@@ -75,7 +76,7 @@ public class FunctionsTest {
 										.apply(10);
 		
 		assertThat(in,equalTo(10));
-		assertFalse(out);
+		assertTrue(out==result);
 	}
 	@Test
 	public void testAround(){
@@ -107,10 +108,123 @@ public class FunctionsTest {
 	
 	@Test
 	public void recover(){
-		FluentFunctions.ofChecked(this::exceptionalFirstTime)
+		assertThat(FluentFunctions.ofChecked(this::exceptionalFirstTime)
 						.recover(IOException.class, in->in+"boo!")
 						.println()
-						.apply("hello ");
+						.apply("hello "),equalTo("hello boo!"));
+	}
+	@Test(expected=IOException.class)
+	public void recoverDont(){
+		assertThat(FluentFunctions.ofChecked(this::exceptionalFirstTime)
+						.recover(RuntimeException.class, in->in+"boo!")
+						.println()
+						.apply("hello "),equalTo("hello boo!"));
+	}
+	
+	public String gen(String input){
+		return input+System.currentTimeMillis();
+	}
+	@Test
+	public void generate(){
+		assertThat(FluentFunctions.of(this::gen)
+						.println()
+						.generate("next element")
+						.onePer(1, TimeUnit.SECONDS)
+						.limit(2)
+						.toList().size(),equalTo(2));
+	}
+	
+	@Test
+	public void iterate(){
+		assertThat(FluentFunctions.of(this::addOne)	
+						.iterate(1,i->i)
+						.limit(2)
+						.toList().size(),equalTo(2));
 	}
 
+	@Test
+	public void testMatches1(){
+		assertThat(FluentFunctions.of(this::addOne)	
+					   .matches(-1,c->c.hasValues(2).then(i->3))
+					   .apply(1),equalTo(3));
+	}
+
+	@Test
+	public void testMatches1Default(){
+		assertThat(FluentFunctions.of(this::addOne)	
+					   .matches(-1,c->c.hasValues(4).then(i->3))
+					   .apply(1),equalTo(-1));
+	}
+	@Test
+	public void testMatches2(){
+		assertThat(FluentFunctions.of(this::addOne)	
+					   .matches(-1,c->c.hasValues(4).then(i->30),
+							   			c->c.hasValues(2).then(i->3))
+					   .apply(1),equalTo(3));
+	}
+
+	@Test
+	public void testMatches2Default(){
+		assertThat(FluentFunctions.of(this::addOne)	
+					   .matches(-1,c->c.hasValues(4).then(i->3),
+							   		c->c.hasValues(103).then(i->8))
+					   .apply(1),equalTo(-1));
+	}
+	@Test
+	public void testMatches3(){
+		assertThat(FluentFunctions.of(this::addOne)	
+				   .matches(-1,c->c.hasValues(4).then(i->30),
+						   			c->c.hasValues(8).then(i->32),
+						   			c->c.hasValues(2).then(i->3))
+				   .apply(1),equalTo(3));
+	}
+
+	@Test
+	public void testMatches3Default(){
+		assertThat(FluentFunctions.of(this::addOne)	
+					   .matches(-1,c->c.hasValues(4).then(i->3),
+							   		c->c.hasValues(8).then(i->32),
+							   		c->c.hasValues(103).then(i->8))
+					   .apply(1),equalTo(-1));
+	}
+	@Test
+	public void testMatches4(){
+		assertThat(FluentFunctions.of(this::addOne)	
+				   .matches(-1,c->c.hasValues(4).then(i->30),
+						   		c->c.hasValues(40).then(i->38),
+						   			c->c.hasValues(8).then(i->32),
+						   			c->c.hasValues(2).then(i->3))
+				   .apply(1),equalTo(3));
+	}
+
+	@Test
+	public void testMatches4Default(){
+		assertThat(FluentFunctions.of(this::addOne)	
+					   .matches(-1,c->c.hasValues(4).then(i->3),
+							   		c->c.hasValues(40).then(i->38),
+							   		c->c.hasValues(8).then(i->32),
+							   		c->c.hasValues(103).then(i->8))
+					   .apply(1),equalTo(-1));
+	}
+	@Test
+	public void testMatches5(){
+		assertThat(FluentFunctions.of(this::addOne)	
+				   .matches(-1,c->c.hasValues(4).then(i->30),
+						   		c->c.hasValues(5).then(i->50),
+						   		c->c.hasValues(40).then(i->38),
+						   			c->c.hasValues(8).then(i->32),
+						   			c->c.hasValues(2).then(i->3))
+				   .apply(1),equalTo(3));
+	}
+
+	@Test
+	public void testMatches5Default(){
+		assertThat(FluentFunctions.of(this::addOne)	
+					   .matches(-1,c->c.hasValues(4).then(i->3),
+							   		c->c.hasValues(5).then(i->50),
+							   		c->c.hasValues(40).then(i->38),
+							   		c->c.hasValues(8).then(i->32),
+							   		c->c.hasValues(103).then(i->8))
+					   .apply(1),equalTo(-1));
+	}
 }

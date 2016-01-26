@@ -2105,10 +2105,10 @@ public class StreamUtils{
 				@Override
 				public T next() {
 					T nextValue = it.next();
-					if(count++<x)
+					if(++count<x)
 						return nextValue;
 					count=0;
-					LockSupport.parkNanos(next-System.nanoTime()-last);
+					LockSupport.parkNanos(next-(System.nanoTime()-last));
 					
 					last= System.nanoTime();
 					return nextValue;

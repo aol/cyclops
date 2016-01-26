@@ -127,4 +127,62 @@ FluentFunctions.of(this::addOne)
                
 (myFunction-Parameter[10])
 (myFunction-Result[11])
+
+## Generating a Stream
+
+Load data from a service every second
+
+FluentFunctions.of(this::load)
+               .generate("next element")
+               .onePer(1, TimeUnit.SECONDS)
+               .forEach(System.out::println);
                
+public String gen(String input){
+        return input+System.currentTimeMillis();
+    }
+FluentFunctions.of(this::gen)
+               .println()
+               .generate("next element")
+               .onePer(1, TimeUnit.SECONDS)
+               .forEach(System.out::println);
+(fluent-function-Parameter[next element])
+(fluent-function-Result[next element1453819221151])
+next element1453819221151
+(fluent-function-Parameter[next element])
+(fluent-function-Result[next element1453819221151])
+next element1453819221151
+(fluent-function-Parameter[next element])
+(fluent-function-Result[next element1453819222153])
+next element1453819222153
+(fluent-function-Parameter[next element])
+(fluent-function-Result[next element1453819223155])
+next element1453819223155
+(fluent-function-Parameter[next element])
+(fluent-function-Result[next element1453819224158])
+               
+## Iterating a Stream
+
+FluentFunctions.of(this::addOne)    
+                        .iterate(95281,i->i)
+                        .forEach(System.out::println);  
+95282
+95283
+95284
+95285
+95286
+95287
+95288
+95289
+95290
+95291
+95292
+95293
+95294     
+
+## Pattern Matching
+
+FluentFunctions.of(this::addOne)    
+                       .matches(-1,c->c.hasValues(2).then(i->3))
+                       .apply(1)    
+                       
+//returns 3                                                   

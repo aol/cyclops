@@ -22,8 +22,12 @@ public class OnePerOperator<T> {
 			}
 			@Override
 			public T next() {
+				
 				T nextValue = it.next();
-				LockSupport.parkNanos(next-System.nanoTime()-last);
+			
+				long sleepFor = next-(System.nanoTime()-last);
+				
+				LockSupport.parkNanos(sleepFor);
 				
 				last= System.nanoTime();
 				return nextValue;

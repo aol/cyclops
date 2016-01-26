@@ -208,33 +208,33 @@ public class FluentFunctions {
 			
 		}
 		
-		public <R1 >s<R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1){
-			return FluentFunctions.of(()->Matchable.of(fn.get()).matches(case1));
+		public <R1 >s<R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1){
+			return FluentFunctions.of(()->Matchable.of(fn.get()).mayMatch(case1).orElse(defaultValue));
 		}
-		public <R1 >s<R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
+		public <R1 >s<R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 									Function<CheckValues<R,R1>,CheckValues<R,R1>> case2){
 			
-			return FluentFunctions.of(()->Matchable.of(fn.get()).matches(case1,case2));
+			return FluentFunctions.of(()->Matchable.of(fn.get()).mayMatch(case1,case2).orElse(defaultValue));
 		}
-		public <R1 >s<R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
+		public <R1 >s<R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,Function<CheckValues<R,R1>,CheckValues<R,R1>> case3){
 
-			return FluentFunctions.of(()->Matchable.of(fn.get()).matches(case1,case2,case3));
+			return FluentFunctions.of(()->Matchable.of(fn.get()).mayMatch(case1,case2,case3).orElse(defaultValue));
 		}
-		public <R1 >s<R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
+		public <R1 >s<R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case3,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case4){
 
-			return FluentFunctions.of(()->Matchable.of(fn.get()).matches(case1,case2,case3,case4));
+			return FluentFunctions.of(()->Matchable.of(fn.get()).mayMatch(case1,case2,case3,case4).orElse(defaultValue));
 		}
-		public <R1 >s<R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
+		public <R1 >s<R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case3,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case4,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case5){
 
-			return FluentFunctions.of(()->Matchable.of(fn.get()).matches(case1,case2,case3,case4,case5));
+			return FluentFunctions.of(()->Matchable.of(fn.get()).mayMatch(case1,case2,case3,case4,case5).orElse(defaultValue));
 		}
 			
 		
@@ -372,34 +372,61 @@ public class FluentFunctions {
 			});
 			
 		}
-		public <R1> f1<T,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1){
-			return FluentFunctions.of(t->Matchable.of(fn.apply(t)).matches(case1));
+		public <R1> f1<T,R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1){
+		
+			return FluentFunctions.of(t->Matchable.of(fn.apply(t)).mayMatch(case1).orElse(defaultValue));
 		}
-		public <R1> f1<T,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
+		public <R1> f1<T,R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 									Function<CheckValues<R,R1>,CheckValues<R,R1>> case2){
 			
-			return FluentFunctions.of(t->Matchable.of(fn.apply(t)).matches(case1,case2));
+			return FluentFunctions.of(t->Matchable.of(fn.apply(t)).mayMatch(case1,case2).orElse(defaultValue));
 		}
-		public <R1> f1<T,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
+		public <R1> f1<T,R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,Function<CheckValues<R,R1>,CheckValues<R,R1>> case3){
 
-			return FluentFunctions.of(t->Matchable.of(fn.apply(t)).matches(case1,case2,case3));
+			return FluentFunctions.of(t->Matchable.of(fn.apply(t)).mayMatch(case1,case2,case3).orElse(defaultValue));
 		}
-		public <R1> f1<T,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
+		public <R1> f1<T,R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case3,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case4){
 
-			return FluentFunctions.of(t->Matchable.of(fn.apply(t)).matches(case1,case2,case3,case4));
+			return FluentFunctions.of(t->Matchable.of(fn.apply(t)).mayMatch(case1,case2,case3,case4).orElse(defaultValue));
 		}
-		public <R1> f1<T,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
+		public <R1> f1<T,R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case3,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case4,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case5){
 
-			return FluentFunctions.of(t->Matchable.of(fn.apply(t)).matches(case1,case2,case3,case4,case5));
+			return FluentFunctions.of(t->Matchable.of(fn.apply(t)).mayMatch(case1,case2,case3,case4,case5).orElse(defaultValue));
 		}
+		/**
+		 * Generate an infinite Stream that iterates from the specified seed using the currently wrapped function
+		 * 
+		 * e.g.
+		 * 
+		 * <pre>
+		 * {@code 
+		 * FluentFunctions.of(this::addOne)	
+						.iterate(95281,i->i)
+						.forEach(System.out::println);
+		 * 
+		 * 
+		 * //95282
+		   //95283
+		   //95284
+		   //95285
+		   //95286
+		 * //etc
+		 * }
+		 * </pre>
+		 * 
+		 * 
+		 * @param seed initial value
+		 * @param mapToType Convert from supplied functions return type to Stream input type
+		 * @return Infinite Stream
+		 */
 		public SequenceM<R> iterate(T seed,Function<R,T> mapToType){
 			return SequenceM.iterate(fn.apply(seed),t->fn.compose(mapToType).apply(t));
 		}
@@ -520,33 +547,33 @@ public class FluentFunctions {
 			});
 			
 		}
-		public <R1> f2<T1,T2,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1){
-			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).matches(case1));
+		public <R1> f2<T1,T2,R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1){
+			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).mayMatch(case1).orElse(defaultValue));
 		}
-		public <R1> f2<T1,T2,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
+		public <R1> f2<T1,T2,R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 									Function<CheckValues<R,R1>,CheckValues<R,R1>> case2){
 			
-			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).matches(case1,case2));
+			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).mayMatch(case1,case2).orElse(defaultValue));
 		}
-		public <R1> f2<T1,T2,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
+		public <R1> f2<T1,T2,R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,Function<CheckValues<R,R1>,CheckValues<R,R1>> case3){
 
-			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).matches(case1,case2,case3));
+			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).mayMatch(case1,case2,case3).orElse(defaultValue));
 		}
-		public <R1> f2<T1,T2,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
+		public <R1> f2<T1,T2,R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case3,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case4){
 
-			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).matches(case1,case2,case3,case4));
+			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).mayMatch(case1,case2,case3,case4).orElse(defaultValue));
 		}
-		public <R1> f2<T1,T2,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
+		public <R1> f2<T1,T2,R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case3,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case4,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case5){
 
-			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).matches(case1,case2,case3,case4,case5));
+			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).mayMatch(case1,case2,case3,case4,case5).orElse(defaultValue));
 		}
 		
 		public SequenceM<R> iterate(T1 seed1,T2 seed2,Function<R,Tuple2<T1,T2>> mapToType){
@@ -677,33 +704,33 @@ public class FluentFunctions {
 			});
 			
 		}
-		public <R1> f3<T1,T2,T3,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1){
-			return FluentFunctions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).matches(case1));
+		public <R1> f3<T1,T2,T3,R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1){
+			return FluentFunctions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).mayMatch(case1).orElse(defaultValue));
 		}
-		public <R1> f2<T1,T2,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
+		public <R1> f2<T1,T2,R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 									Function<CheckValues<R,R1>,CheckValues<R,R1>> case2){
 			
-			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).matches(case1,case2));
+			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).mayMatch(case1,case2).orElse(defaultValue));
 		}
-		public <R1> f3<T1,T2,T3,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
+		public <R1> f3<T1,T2,T3,R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,Function<CheckValues<R,R1>,CheckValues<R,R1>> case3){
 
-			return FluentFunctions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).matches(case1,case2,case3));
+			return FluentFunctions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).mayMatch(case1,case2,case3).orElse(defaultValue));
 		}
-		public <R1> f3<T1,T2,T3,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
+		public <R1> f3<T1,T2,T3,R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case3,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case4){
 
-			return FluentFunctions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).matches(case1,case2,case3,case4));
+			return FluentFunctions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).mayMatch(case1,case2,case3,case4).orElse(defaultValue));
 		}
-		public <R1> f3<T1,T2,T3,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
+		public <R1> f3<T1,T2,T3,R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case3,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case4,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case5){
 
-			return FluentFunctions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).matches(case1,case2,case3,case4,case5));
+			return FluentFunctions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).mayMatch(case1,case2,case3,case4,case5).orElse(defaultValue));
 		}
 		
 		public SequenceM<R> iterate(T1 seed1,T2 seed2,T3 seed3,Function<R,Tuple3<T1,T2,T3>> mapToType){
