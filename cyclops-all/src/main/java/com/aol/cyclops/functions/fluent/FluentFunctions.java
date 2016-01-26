@@ -41,21 +41,117 @@ import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.trycatch.Try;
 public class FluentFunctions {
 
-	public static <R> FluentFunctions.FluentSupplier<R> ofChecked(CheckedSupplier<R> fn){
-		return FluentFunctions.of(ExceptionSoftener.softenSupplier(fn));
+	/**
+	 * Construct a FluentSupplier from a checked Supplier
+	 * <pre>
+	 * {@code
+	 * FluentFunctions.ofChecked(this::exceptionalFirstTime)
+						.recover(IOException.class, ()->"hello boo!")
+						.println()
+						.get()
+	 * 
+	 * }
+	 * </pre>
+	 * @param supplier that throws CheckedExcpetion
+	 * @return FluentSupplier
+	 */
+	public static <R> FluentFunctions.FluentSupplier<R> ofChecked(CheckedSupplier<R> supplier){
+		return FluentFunctions.of(ExceptionSoftener.softenSupplier(supplier));
 	}
-	public static <R> FluentFunctions.FluentSupplier<R> of(Supplier<R> fn){
-		return new FluentSupplier<>(fn);
+	/**
+	 * Construct a FluentSupplier from a Supplier
+	 * 
+	 * <pre>
+	 * {@code 
+	 * Cache<Object, Integer> cache = CacheBuilder.newBuilder()
+			       .maximumSize(1000)
+			       .expireAfterWrite(10, TimeUnit.MINUTES)
+			       .build();
+
+		called=0;
+		Supplier<Integer> fn = FluentFunctions.of(this::getOne)
+													  .name("myFunction")
+													  .memoize((key,f)->cache.get(key,()->f.apply(key)));
+		fn.get();
+		fn.get();
+		fn.get();
+		
+		//called == 1
+	 * 
+	 * }
+	 * </pre>
+	 * @param supplier to make Fluent
+	 * @return FluentSupplier
+	 */
+	public static <R> FluentFunctions.FluentSupplier<R> of(Supplier<R> supplier){
+		return new FluentSupplier<>(supplier);
 	}
+	/**
+	 * Construct a FluentFunction from a CheckedFunction
+	 * 
+	 * <pre>
+	 * {@code 
+	 * FluentFunctions.ofChecked(this::exceptionalFirstTime)
+						.recover(IOException.class, in->in+"boo!")
+						.println()
+						.apply("hello ")
+	 * 
+	 * 
+	 * }
+	 * </pre>
+	 * @param fn CheckedFunction
+	 * @return FluentFunction
+	 */
 	public static <T,R> FluentFunctions.FluentFunction<T,R> ofChecked(CheckedFunction<T,R> fn){
 		return FluentFunctions.of(ExceptionSoftener.softenFunction(fn));
 	}
+	/**
+	 * Construct a FluentFunction from a Function
+	 * 
+	 * <pre>
+	 * {@code 
+	 * FluentFunctions.of(this::addOne)
+					   .around(advice->advice.proceed(advice.param+1))
+					   .println()
+					   .apply(10)
+	 * }
+	 * </pre>
+	 * @param fn Function
+	 * @return FluentFunction
+	 */
 	public static <T,R> FluentFunctions.FluentFunction<T,R> of(Function<T,R> fn){
 		return new FluentFunction<>(fn);
 	}
+	/**
+	 * Construct a FluentBiFunction from a CheckedBiFunction
+	 * 
+	 * <pre>
+	 * {@code 
+	 * FluentFunctions.ofChecked(this::exceptionalFirstTime)
+					   .println()
+					   .retry(2,500)
+					   .apply("hello","woo!")
+	 * }
+	 * </pre>
+	 * @param fn CheckedBiFunction
+	 * @return FluentBiFunction
+	 */
 	public static <T1,T2,R> FluentFunctions.FluentBiFunction<T1,T2,R> ofChecked(CheckedBiFunction<T1,T2,R> fn){
 		return FluentFunctions.of(ExceptionSoftener.softenBiFunction(fn));
 	}
+	/**
+	 * Convert a BiFunction to a FluentBiFunction
+	 * <pre>
+	 * {@code 
+	 * CompletableFuture<Integer> cf = FluentFunctions.of(this::add)
+													  .liftAsync(ex)
+													  .apply(1,1)
+	 * 
+	 * }
+	 * </pre>
+	 * @param fn BiFunction to convert
+	 * @return FluentBiFuntion
+	 */
 	public static <T1,T2,R> FluentFunctions.FluentBiFunction<T1,T2,R> of(BiFunction<T1,T2,R> fn){
 		return new FluentBiFunction<>(fn);
 	}
@@ -743,10 +839,10 @@ public class FluentFunctions {
 		public <R1> FluentTriFunction<T1,T2,T3,R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1){
 			return FluentFunctions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).mayMatch(case1).orElse(defaultValue));
 		}
-		public <R1> FluentBiFunction<T1,T2,R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
+		public <R1> FluentTriFunction<T1,T2,T3,R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 									Function<CheckValues<R,R1>,CheckValues<R,R1>> case2){
 			
-			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).mayMatch(case1,case2).orElse(defaultValue));
+			return FluentFunctions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).mayMatch(case1,case2).orElse(defaultValue));
 		}
 		public <R1> FluentTriFunction<T1,T2,T3,R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,Function<CheckValues<R,R1>,CheckValues<R,R1>> case3){
