@@ -37,56 +37,56 @@ import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.monad.functions.LiftMFunctions;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.trycatch.Try;
-public class Functions {
+public class FluentFunctions {
 
-	public static <R> Functions.s<R> ofChecked(CheckedSupplier<R> fn){
-		return Functions.of(ExceptionSoftener.softenSupplier(fn));
+	public static <R> FluentFunctions.s<R> ofChecked(CheckedSupplier<R> fn){
+		return FluentFunctions.of(ExceptionSoftener.softenSupplier(fn));
 	}
-	public static <R> Functions.s<R> of(Supplier<R> fn){
+	public static <R> FluentFunctions.s<R> of(Supplier<R> fn){
 		return new s<>(fn);
 	}
-	public static <T,R> Functions.f1<T,R> ofChecked(CheckedFunction<T,R> fn){
-		return Functions.of(ExceptionSoftener.softenFunction(fn));
+	public static <T,R> FluentFunctions.f1<T,R> ofChecked(CheckedFunction<T,R> fn){
+		return FluentFunctions.of(ExceptionSoftener.softenFunction(fn));
 	}
-	public static <T,R> Functions.f1<T,R> of(Function<T,R> fn){
+	public static <T,R> FluentFunctions.f1<T,R> of(Function<T,R> fn){
 		return new f1<>(fn);
 	}
-	public static <T1,T2,R> Functions.f2<T1,T2,R> ofChecked(CheckedBiFunction<T1,T2,R> fn){
-		return Functions.of(ExceptionSoftener.softenBiFunction(fn));
+	public static <T1,T2,R> FluentFunctions.f2<T1,T2,R> ofChecked(CheckedBiFunction<T1,T2,R> fn){
+		return FluentFunctions.of(ExceptionSoftener.softenBiFunction(fn));
 	}
-	public static <T1,T2,R> Functions.f2<T1,T2,R> of(BiFunction<T1,T2,R> fn){
+	public static <T1,T2,R> FluentFunctions.f2<T1,T2,R> of(BiFunction<T1,T2,R> fn){
 		return new f2<>(fn);
 	}
-	public static <T1,T2,T3,R> Functions.f3<T1,T2,T3,R> ofChecked(CheckedTriFunction<T1,T2,T3,R> fn){
+	public static <T1,T2,T3,R> FluentFunctions.f3<T1,T2,T3,R> ofChecked(CheckedTriFunction<T1,T2,T3,R> fn){
 		
 		return new f3<>(softenTriFunction(fn));
 	}
-	public static <T1,T2,T3,R> Functions.f3<T1,T2,T3,R> of(TriFunction<T1,T2,T3,R> fn){
+	public static <T1,T2,T3,R> FluentFunctions.f3<T1,T2,T3,R> of(TriFunction<T1,T2,T3,R> fn){
 		return new f3<>(fn);
 	}
 	
-	public static <T> Functions.f1<T,T> expression(Consumer<T> fn){
-		return Functions.of(t->{
+	public static <T> FluentFunctions.f1<T,T> expression(Consumer<T> fn){
+		return FluentFunctions.of(t->{
 			fn.accept(t);
 			return t;
 		});
 	}
-	public static <T> Functions.f1<T,T> checkedExpression(CheckedConsumer<T> fn){
+	public static <T> FluentFunctions.f1<T,T> checkedExpression(CheckedConsumer<T> fn){
 		final Consumer<T> toUse = ExceptionSoftener.softenConsumer(fn);
-		return Functions.of(t->{
+		return FluentFunctions.of(t->{
 			toUse.accept(t);
 			return t;
 		});
 	}
-	public static <T1,T2> Functions.f2<T1,T2,Tuple2<T1,T2>> expression(BiConsumer<T1,T2> fn){
-		return Functions.of((t1,t2)->{
+	public static <T1,T2> FluentFunctions.f2<T1,T2,Tuple2<T1,T2>> expression(BiConsumer<T1,T2> fn){
+		return FluentFunctions.of((t1,t2)->{
 			fn.accept(t1,t2);
 			return Tuple.tuple(t1,t2);
 		});
 	}
-	public static <T1,T2> Functions.f2<T1,T2,Tuple2<T1,T2>> checkedExpression(CheckedBiConsumer<T1,T2> fn){
+	public static <T1,T2> FluentFunctions.f2<T1,T2,Tuple2<T1,T2>> checkedExpression(CheckedBiConsumer<T1,T2> fn){
 		final BiConsumer<T1,T2> toUse = ExceptionSoftener.softenBiConsumer(fn);
-		return Functions.of((t1,t2)->{
+		return FluentFunctions.of((t1,t2)->{
 			toUse.accept(t1,t2);
 			return Tuple.tuple(t1,t2);
 		});
@@ -105,11 +105,18 @@ public class Functions {
 	@AllArgsConstructor
 	public static class s<R> implements Supplier<R>{
 		private final Supplier<R> fn;
+		private final String name;
+		
+		public s(Supplier<R> fn){
+			this.name = null;
+			this.fn = fn;
+		}
 		
 		@Override
 		public R get(){
 			return fn.get();
 		}
+		
 		
 		public s<R> before(Runnable r){
 			return withFn(()->{
@@ -138,25 +145,36 @@ public class Functions {
 			return withFn(Memoize.memoizeSupplier(fn,cache));
 		}
 		
-		
+		public s<R> name(String name){
+			return this.withName(name);
+		}
+		private String handleNameStart(){
+			return name==null ? "(fluent-supplier-" : "("+name+"-";
+				
+		}
+		private String handleNameEnd(){
+			return ")";
+				
+		}
 		public s<R> println(){
-			return Functions.of(()->{
+			return log(s->System.out.println(s),t->t.printStackTrace());
+			
+		}	
+		public s<R> log(Consumer<String> logger,Consumer<Throwable> error){
+			return FluentFunctions.of(()->{
 				try{
 					R result = fn.get();
-					System.out.println("Result["+result+"]");
+					logger.accept(handleNameStart()+"Result["+result+"]"+handleNameEnd());
 					return result;
 				}catch(Throwable t){
-					t.printStackTrace();
+					error.accept(t);
 					throw ExceptionSoftener.throwSoftenedException(t);
 				}
 			});
 		}	
-		public s<R> log(Consumer<String> logger,Consumer<Throwable> error){
-			return log(s->System.out.println(s),t->t.printStackTrace());
-		}	
 
 		public <X extends Throwable> s<R> recover(Class<X> type,Supplier<R> onError){
-			return Functions.of(()->{
+			return FluentFunctions.of(()->{
 				try{
 					return fn.get();
 				}catch(Throwable t){
@@ -170,7 +188,7 @@ public class Functions {
 			
 		}
 		public s<R> retry(int times,int backoffStartTime){
-			return Functions.of(() -> {
+			return FluentFunctions.of(() -> {
 				int count = times;
 				MutableInt sleep =MutableInt.of(backoffStartTime);
 				Throwable exception=null;
@@ -191,24 +209,24 @@ public class Functions {
 		}
 		
 		public <R1 >s<R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1){
-			return Functions.of(()->Matchable.of(fn.get()).matches(case1));
+			return FluentFunctions.of(()->Matchable.of(fn.get()).matches(case1));
 		}
 		public <R1 >s<R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 									Function<CheckValues<R,R1>,CheckValues<R,R1>> case2){
 			
-			return Functions.of(()->Matchable.of(fn.get()).matches(case1,case2));
+			return FluentFunctions.of(()->Matchable.of(fn.get()).matches(case1,case2));
 		}
 		public <R1 >s<R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,Function<CheckValues<R,R1>,CheckValues<R,R1>> case3){
 
-			return Functions.of(()->Matchable.of(fn.get()).matches(case1,case2,case3));
+			return FluentFunctions.of(()->Matchable.of(fn.get()).matches(case1,case2,case3));
 		}
 		public <R1 >s<R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case3,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case4){
 
-			return Functions.of(()->Matchable.of(fn.get()).matches(case1,case2,case3,case4));
+			return FluentFunctions.of(()->Matchable.of(fn.get()).matches(case1,case2,case3,case4));
 		}
 		public <R1 >s<R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,
@@ -216,7 +234,7 @@ public class Functions {
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case4,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case5){
 
-			return Functions.of(()->Matchable.of(fn.get()).matches(case1,case2,case3,case4,case5));
+			return FluentFunctions.of(()->Matchable.of(fn.get()).matches(case1,case2,case3,case4,case5));
 		}
 			
 		
@@ -228,7 +246,7 @@ public class Functions {
 			return new s<>(() -> Optional.ofNullable(fn.get()));
 		}
 		public <X extends Throwable> s<Try<R,X>> liftTry(Class<X>... classes){
-			return Functions.of(() -> Try.withCatch(()->fn.get(),classes));
+			return FluentFunctions.of(() -> Try.withCatch(()->fn.get(),classes));
 		}
 		
 		public s<AnyM<R>> liftM(){
@@ -236,10 +254,10 @@ public class Functions {
 		}
 		
 		public s<CompletableFuture<R>> liftAsync(Executor ex){
-			return Functions.of(()->CompletableFuture.supplyAsync(fn,ex));
+			return FluentFunctions.of(()->CompletableFuture.supplyAsync(fn,ex));
 		}
 		public CompletableFuture<s<R>> async(Executor ex){
-			return CompletableFuture.supplyAsync(()->Functions.of(fn),ex);
+			return CompletableFuture.supplyAsync(()->FluentFunctions.of(fn),ex);
 		}
 		
 		
@@ -248,7 +266,13 @@ public class Functions {
 	@Wither(AccessLevel.PRIVATE)
 	@AllArgsConstructor
 	public static class f1<T,R> implements Function<T,R>{
-		Function<T,R> fn;
+		private final Function<T,R> fn;
+		private final String name;
+		
+		public f1(Function<T,R> fn){
+			this.name = null;
+			this.fn = fn;
+		}
 		@Override
 		public R apply(T t) {
 			return fn.apply(t);
@@ -285,24 +309,37 @@ public class Functions {
 		public f1<T,R> memoize(Cacheable<R> cache){
 			return withFn(Memoize.memoizeFunction(fn));
 		}
+		public f1<T,R> name(String name){
+			return this.withName(name);
+		}
+		private String handleNameStart(){
+			return name==null ? "(fluent-function-" : "("+name+"-";
+				
+		}
+		private String handleNameEnd(){
+			return ")";
+				
+		}
 		public f1<T,R> log(Consumer<String> logger,Consumer<Throwable> error){
-			return Functions.of(t1->{
+			return FluentFunctions.of(t1->{
+				
 				try{
-					logger.accept("Parameter["+t1+"]");
+					logger.accept(handleNameStart()+"Parameter["+t1+"]"+handleNameEnd());
 					R result = fn.apply(t1);
-					logger.accept("Result["+result+"]");
+					logger.accept(handleNameStart()+"Result["+result+"]"+handleNameEnd());
 					return result;
 				}catch(Throwable t){
 					error.accept(t);
 					throw ExceptionSoftener.throwSoftenedException(t);
 				}
+				
 			});
 		}	
 		public f1<T,R> println(){
 			return log(s->System.out.println(s),t->t.printStackTrace());
 		}	
 		public <X extends Throwable> f1<T,R> recover(Class<X> type,Function<T,R> onError){
-			return Functions.of(t1->{
+			return FluentFunctions.of(t1->{
 				try{
 					return fn.apply(t1);
 				}catch(Throwable t){
@@ -316,7 +353,7 @@ public class Functions {
 			});
 		}
 		public f1<T,R> retry(int times,int backoffStartTime){
-			return Functions.of(t -> {
+			return FluentFunctions.of(t -> {
 				int count = times;
 				MutableInt sleep =MutableInt.of(backoffStartTime);
 				Throwable exception=null;
@@ -336,24 +373,24 @@ public class Functions {
 			
 		}
 		public <R1> f1<T,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1){
-			return Functions.of(t->Matchable.of(fn.apply(t)).matches(case1));
+			return FluentFunctions.of(t->Matchable.of(fn.apply(t)).matches(case1));
 		}
 		public <R1> f1<T,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 									Function<CheckValues<R,R1>,CheckValues<R,R1>> case2){
 			
-			return Functions.of(t->Matchable.of(fn.apply(t)).matches(case1,case2));
+			return FluentFunctions.of(t->Matchable.of(fn.apply(t)).matches(case1,case2));
 		}
 		public <R1> f1<T,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,Function<CheckValues<R,R1>,CheckValues<R,R1>> case3){
 
-			return Functions.of(t->Matchable.of(fn.apply(t)).matches(case1,case2,case3));
+			return FluentFunctions.of(t->Matchable.of(fn.apply(t)).matches(case1,case2,case3));
 		}
 		public <R1> f1<T,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case3,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case4){
 
-			return Functions.of(t->Matchable.of(fn.apply(t)).matches(case1,case2,case3,case4));
+			return FluentFunctions.of(t->Matchable.of(fn.apply(t)).matches(case1,case2,case3,case4));
 		}
 		public <R1> f1<T,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,
@@ -361,7 +398,7 @@ public class Functions {
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case4,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case5){
 
-			return Functions.of(t->Matchable.of(fn.apply(t)).matches(case1,case2,case3,case4,case5));
+			return FluentFunctions.of(t->Matchable.of(fn.apply(t)).matches(case1,case2,case3,case4,case5));
 		}
 		public SequenceM<R> iterate(T seed,Function<R,T> mapToType){
 			return SequenceM.iterate(fn.apply(seed),t->fn.compose(mapToType).apply(t));
@@ -373,16 +410,16 @@ public class Functions {
 			return new f1<>(opt -> opt.map(t->fn.apply(t)));
 		}
 		public <X extends Throwable> f1<T,Try<R,X>> liftTry(Class<X>... classes){
-			return Functions.of((t1) -> Try.withCatch(()->fn.apply(t1),classes));
+			return FluentFunctions.of((t1) -> Try.withCatch(()->fn.apply(t1),classes));
 		}
 		public f1<AnyM<T>,AnyM<R>> liftM(){
-			return Functions.of(LiftMFunctions.liftM(fn));
+			return FluentFunctions.of(LiftMFunctions.liftM(fn));
 		}
 		public f1<T,CompletableFuture<R>> liftAsync(Executor ex){
-			return Functions.of(t->CompletableFuture.supplyAsync(()->fn.apply(t),ex));
+			return FluentFunctions.of(t->CompletableFuture.supplyAsync(()->fn.apply(t),ex));
 		}
 		public CompletableFuture<f1<T,R>> async(Executor ex){
-			return CompletableFuture.supplyAsync(()->Functions.of(fn),ex);
+			return CompletableFuture.supplyAsync(()->FluentFunctions.of(fn),ex);
 		}
 		
 	}
@@ -390,6 +427,12 @@ public class Functions {
 	@AllArgsConstructor
 	public static class f2<T1,T2,R> implements BiFunction<T1,T2,R>{
 		BiFunction<T1,T2,R> fn;
+		private final String name;
+		
+		public f2(BiFunction<T1,T2,R> fn){
+			this.name = null;
+			this.fn = fn;
+		}
 		@Override
 		public R apply(T1 t1,T2 t2) {
 			return fn.apply(t1,t2);
@@ -414,12 +457,23 @@ public class Functions {
 		public f2<T1,T2,R> memoize(Cacheable<R> cache){
 			return withFn(Memoize.memoizeBiFunction(fn));
 		}
+		public f2<T1,T2,R> name(String name){
+			return this.withName(name);
+		}
+		private String handleNameStart(){
+			return name==null ? "(fluent-function-" : "("+name+"-";
+				
+		}
+		private String handleNameEnd(){
+			return ")";
+				
+		}
 		public f2<T1,T2,R> log(Consumer<String> logger,Consumer<Throwable> error){
-			return Functions.of((t1,t2)->{
+			return FluentFunctions.of((t1,t2)->{
 				try{
-					logger.accept("Parameters["+t1+","+t2+"]");
+					logger.accept(handleNameStart()+"Parameters["+t1+","+t2+"]"+handleNameEnd());
 					R result = fn.apply(t1,t2);
-					logger.accept("Result["+result+"]");
+					logger.accept(handleNameStart()+"Result["+result+"]"+handleNameEnd());
 					return result;
 				}catch(Throwable t){
 					error.accept(t);
@@ -432,7 +486,7 @@ public class Functions {
 		}	
 		
 		public <X extends Throwable> f2<T1,T2,R> recover(Class<X> type,BiFunction<T1,T2,R> onError){
-			return Functions.of((t1,t2)->{
+			return FluentFunctions.of((t1,t2)->{
 				try{
 					return fn.apply(t1,t2);
 				}catch(Throwable t){
@@ -447,7 +501,7 @@ public class Functions {
 			
 		}
 		public f2<T1,T2,R> retry(int times,int backoffStartTime){
-			return Functions.of((t1,t2) -> {
+			return FluentFunctions.of((t1,t2) -> {
 				int count = times;
 				MutableInt sleep =MutableInt.of(backoffStartTime);
 				Throwable exception=null;
@@ -467,24 +521,24 @@ public class Functions {
 			
 		}
 		public <R1> f2<T1,T2,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1){
-			return Functions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).matches(case1));
+			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).matches(case1));
 		}
 		public <R1> f2<T1,T2,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 									Function<CheckValues<R,R1>,CheckValues<R,R1>> case2){
 			
-			return Functions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).matches(case1,case2));
+			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).matches(case1,case2));
 		}
 		public <R1> f2<T1,T2,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,Function<CheckValues<R,R1>,CheckValues<R,R1>> case3){
 
-			return Functions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).matches(case1,case2,case3));
+			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).matches(case1,case2,case3));
 		}
 		public <R1> f2<T1,T2,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case3,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case4){
 
-			return Functions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).matches(case1,case2,case3,case4));
+			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).matches(case1,case2,case3,case4));
 		}
 		public <R1> f2<T1,T2,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,
@@ -492,7 +546,7 @@ public class Functions {
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case4,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case5){
 
-			return Functions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).matches(case1,case2,case3,case4,case5));
+			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).matches(case1,case2,case3,case4,case5));
 		}
 		
 		public SequenceM<R> iterate(T1 seed1,T2 seed2,Function<R,Tuple2<T1,T2>> mapToType){
@@ -509,24 +563,31 @@ public class Functions {
 			return new f2<>((opt1,opt2) -> opt1.flatMap(t1-> opt2.map(t2->fn.apply(t1,t2))));
 		}
 		public <X extends Throwable> f2<T1,T2,Try<R,X>> liftTry(Class<X>... classes){
-			return Functions.of((t1,t2) -> Try.withCatch(()->fn.apply(t1,t2),classes));
+			return FluentFunctions.of((t1,t2) -> Try.withCatch(()->fn.apply(t1,t2),classes));
 		}
 		
 		public f2<AnyM<T1>,AnyM<T2>,AnyM<R>> liftM(){
-			return Functions.of(LiftMFunctions.liftM2(fn));
+			return FluentFunctions.of(LiftMFunctions.liftM2(fn));
 		}
 		public f2<T1,T2,CompletableFuture<R>> liftAsync(Executor ex){
-			return Functions.of((t1,t2)->CompletableFuture.supplyAsync(()->fn.apply(t1,t2),ex));
+			return FluentFunctions.of((t1,t2)->CompletableFuture.supplyAsync(()->fn.apply(t1,t2),ex));
 		}
 		public CompletableFuture<f2<T1,T2,R>> async(Executor ex){
-			return CompletableFuture.supplyAsync(()->Functions.of(fn),ex);
+			return CompletableFuture.supplyAsync(()->FluentFunctions.of(fn),ex);
 		}
 		
 	}
 	@Wither(AccessLevel.PRIVATE)
 	@AllArgsConstructor
 	public static class f3<T1,T2,T3,R> implements TriFunction<T1,T2,T3,R>{
-		TriFunction<T1,T2,T3,R> fn;
+		private  final TriFunction<T1,T2,T3,R> fn;
+		private final String name;
+		
+		public f3(TriFunction<T1,T2,T3,R> fn){
+			this.name = null;
+			this.fn = fn;
+		}
+		
 		@Override
 		public R apply(T1 t1,T2 t2,T3 t3) {
 			return fn.apply(t1,t2,t3);
@@ -553,12 +614,23 @@ public class Functions {
 		public f3<T1,T2,T3,R> memoize(Cacheable<R> cache){
 			return withFn(Memoize.memoizeTriFunction(fn));
 		}
+		public f3<T1,T2,T3,R> name(String name){
+			return this.withName(name);
+		}
+		private String handleNameStart(){
+			return name==null ? "(fluent-function-" : "("+name+"-";
+				
+		}
+		private String handleNameEnd(){
+			return ")";
+				
+		}
 		public f3<T1,T2,T3,R> log(Consumer<String> logger,Consumer<Throwable> error){
-			return Functions.of((t1,t2,t3)->{
+			return FluentFunctions.of((t1,t2,t3)->{
 				try{
-					logger.accept("Parameters["+t1+","+t2+","+t3+"]");
+					logger.accept(handleNameStart()+"Parameters["+t1+","+t2+","+t3+"]"+handleNameEnd());
 					R result = fn.apply(t1,t2,t3);
-					logger.accept("Result["+result+"]");
+					logger.accept(handleNameStart()+"Result["+result+"]"+handleNameEnd());
 					return result;
 				}catch(Throwable t){
 					error.accept(t);
@@ -571,7 +643,7 @@ public class Functions {
 		}	
 		
 		public <X extends Throwable> f3<T1,T2,T3,R> recover(Class<X> type,TriFunction<T1,T2,T3,R> onError){
-			return Functions.of((t1,t2,t3)->{
+			return FluentFunctions.of((t1,t2,t3)->{
 				try{
 					return fn.apply(t1,t2,t3);
 				}catch(Throwable t){
@@ -586,7 +658,7 @@ public class Functions {
 			
 		}
 		public f3<T1,T2,T3,R> retry(int times,int backoffStartTime){
-			return Functions.of((t1,t2,t3) -> {
+			return FluentFunctions.of((t1,t2,t3) -> {
 				int count = times;
 				MutableInt sleep =MutableInt.of(backoffStartTime);
 				Throwable exception=null;
@@ -606,24 +678,24 @@ public class Functions {
 			
 		}
 		public <R1> f3<T1,T2,T3,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1){
-			return Functions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).matches(case1));
+			return FluentFunctions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).matches(case1));
 		}
 		public <R1> f2<T1,T2,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 									Function<CheckValues<R,R1>,CheckValues<R,R1>> case2){
 			
-			return Functions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).matches(case1,case2));
+			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).matches(case1,case2));
 		}
 		public <R1> f3<T1,T2,T3,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,Function<CheckValues<R,R1>,CheckValues<R,R1>> case3){
 
-			return Functions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).matches(case1,case2,case3));
+			return FluentFunctions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).matches(case1,case2,case3));
 		}
 		public <R1> f3<T1,T2,T3,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case3,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case4){
 
-			return Functions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).matches(case1,case2,case3,case4));
+			return FluentFunctions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).matches(case1,case2,case3,case4));
 		}
 		public <R1> f3<T1,T2,T3,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case2,
@@ -631,7 +703,7 @@ public class Functions {
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case4,
 				Function<CheckValues<R,R1>,CheckValues<R,R1>> case5){
 
-			return Functions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).matches(case1,case2,case3,case4,case5));
+			return FluentFunctions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).matches(case1,case2,case3,case4,case5));
 		}
 		
 		public SequenceM<R> iterate(T1 seed1,T2 seed2,T3 seed3,Function<R,Tuple3<T1,T2,T3>> mapToType){
@@ -648,17 +720,17 @@ public class Functions {
 			return new f3<>((opt1,opt2,opt3) -> opt1.flatMap(t1-> opt2.flatMap(t2-> opt3.map(t3->fn.apply(t1,t2,t3)))));
 		}
 		public <X extends Throwable> f3<T1,T2,T3,Try<R,X>> liftTry(Class<X>... classes){
-			return Functions.of((t1,t2,t3) -> Try.withCatch(()->fn.apply(t1,t2,t3),classes));
+			return FluentFunctions.of((t1,t2,t3) -> Try.withCatch(()->fn.apply(t1,t2,t3),classes));
 		}
 		
 		public f3<AnyM<T1>,AnyM<T2>,AnyM<T3>,AnyM<R>> liftM(){
-			return Functions.of(LiftMFunctions.liftM3(fn));
+			return FluentFunctions.of(LiftMFunctions.liftM3(fn));
 		}
 		public f3<T1,T2,T3,CompletableFuture<R>> liftAsync(Executor ex){
-			return Functions.of((t1,t2,t3)->CompletableFuture.supplyAsync(()->fn.apply(t1,t2,t3),ex));
+			return FluentFunctions.of((t1,t2,t3)->CompletableFuture.supplyAsync(()->fn.apply(t1,t2,t3),ex));
 		}
 		public CompletableFuture<f3<T1,T2,T3,R>> async(Executor ex){
-			return CompletableFuture.supplyAsync(()->Functions.of(fn),ex);
+			return CompletableFuture.supplyAsync(()->FluentFunctions.of(fn),ex);
 		}
 		
 	}
@@ -682,7 +754,7 @@ public class Functions {
 		public R proceed(){
 			return fn.apply(param);
 		}
-		public R proceed1(T param){
+		public R proceed(T param){
 			return fn.apply(param);
 		}
 	}

@@ -1,6 +1,6 @@
 package com.aol.cyclops.functions.inference;
 
-import static org.jooq.lambda.tuple.Tuple.tuple;
+
 
 import java.util.function.Function;
 import java.util.function.Supplier;
