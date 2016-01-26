@@ -628,7 +628,7 @@ SequenceM.of(1,2,3,4,5,6)
 
 ==== jOOλ based windowing
 
-Integrated as of cyclops 7.2.0
+Integrated as of cyclops 7.3.0
 
 jOOλ based windowing implements SQL windowing operations for Streams. There is a very good introductory blog article on the subject here http://blog.jooq.org/2016/01/06/2016-will-be-the-year-remembered-as-when-java-finally-had-window-functions/[2016 Will be the Year Remembered as When Java Finally Had Window Functions!]
 
