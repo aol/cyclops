@@ -3,7 +3,6 @@ package com.aol.cyclops.functionaljava;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.lambda.api.AsAnyM;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.monad.AnyM;
 
@@ -161,7 +160,7 @@ public class FJ {
 	 * @return AnyM
 	 */
 	public static <T> AnyM<T> anyM(IO<T> ioM){
-		return AsAnyM.notTypeSafeAnyM(ioM);
+		return AnyM.ofMonad(ioM);
 	}
 	/**
 	 * <pre>
@@ -174,7 +173,7 @@ public class FJ {
 	 * @return AnyM
 	 */
 	public static <T> AnyM<T> anyM(State<?,T> stateM){
-		return AsAnyM.notTypeSafeAnyM(stateM);
+		return  AnyM.ofMonad(stateM);
 	}
 	/**
 	 * <pre>
@@ -189,7 +188,7 @@ public class FJ {
 	 * @return AnyM
 	 */
 	public static <T> AnyM<T> anyM(Validation<?,T> validationM){
-		return AsAnyM.notTypeSafeAnyM(validationM);
+		return  AnyM.ofMonad(validationM);
 	}
 	
 	
@@ -206,7 +205,7 @@ public class FJ {
 	 * @return AnyM
 	 */
 	public static <T> AnyM<T> anyM(Writer<T,T> writerM){
-		return AsAnyM.notTypeSafeAnyM(writerM);
+		return  AnyM.ofMonad(writerM);
 	}
 	/**
 	 * <pre>
@@ -219,7 +218,7 @@ public class FJ {
 	 * @return AnyM
 	 */
 	public static <T> AnyM<T> anyMValue(Writer<T,?> writerM){
-			return AsAnyM.notTypeSafeAnyM(writerM);
+			return  AnyM.ofMonad(writerM);
 	}
 	/**
 	 * <pre>
@@ -235,7 +234,7 @@ public class FJ {
 	 * @return AnyM
 	 */
 	public static <T> AnyM<T> anyM(Reader<?,T> readerM){
-		return AsAnyM.notTypeSafeAnyM(readerM);
+		return  AnyM.ofMonad(readerM);
 	}
 	/**
 	 * <pre>
@@ -248,7 +247,7 @@ public class FJ {
 	 * @return AnyM
 	 */
 	public static <T> AnyM<T> anyM(fj.control.Trampoline<T> trampolineM){
-		return AsAnyM.notTypeSafeAnyM(trampolineM);
+		return  AnyM.ofMonad(trampolineM);
 	}
 	/**
 	 * <pre>
@@ -264,7 +263,7 @@ public class FJ {
 	 * @return AnyM
 	 */
 	public static <T> AnyM<T> anyM(IterableW<T> iterableWM){
-		return AsAnyM.notTypeSafeAnyM(iterableWM);
+		return  AnyM.ofMonad(iterableWM);
 	}
 	/**
 	 * (Right biased)
@@ -282,7 +281,7 @@ public class FJ {
 	 * @return AnyM
 	 */
 	public static <T> AnyM<T> anyM(Either<?,T> eitherM){
-		return AsAnyM.notTypeSafeAnyM(eitherM);
+		return  AnyM.ofMonad(eitherM);
 	}
 	/**
 	 * <pre>
@@ -301,9 +300,9 @@ public class FJ {
 	 */
 	public static <T> AnyM<T> anyM(Either<?,T>.RightProjection<?,T> rM){
 		if(rM.toOption().isSome())
-			return AsAnyM.notTypeSafeAnyM(Either.right(rM.value()).right());
+			return  AnyM.ofMonad(Either.right(rM.value()).right());
 		else
-			return AsAnyM.notTypeSafeAnyM(Optional.empty());
+			return  AnyM.ofMonad(Optional.empty());
 	}
 	/**
 	 * <pre>
@@ -322,9 +321,9 @@ public class FJ {
 	 */
 	public static <T> AnyM<T> anyM(Either<T,?>.LeftProjection<T,?> lM){
 		if(lM.toOption().isSome()) //works in the opposite way to javaslang
-			return AsAnyM.notTypeSafeAnyM(Either.right(lM.value()).right());
+			return  AnyM.ofMonad(Either.right(lM.value()).right());
 		else
-			return AsAnyM.notTypeSafeAnyM(Optional.empty());
+			return  AnyM.ofMonad(Optional.empty());
 	}
 	/**
 	 * <pre>
@@ -341,7 +340,7 @@ public class FJ {
 	 * @return AnyM
 	 */
 	public static <T> AnyM<T> anyM(Option<T> optionM){
-		return AsAnyM.notTypeSafeAnyM(optionM);
+		return  AnyM.ofMonad(optionM);
 	}
 	/**
 	 * <pre>
@@ -359,7 +358,7 @@ public class FJ {
 	 * @return AnyM
 	 */
 	public static <T> AnyM<T> anyM(Stream<T> streamM){
-		return AsAnyM.notTypeSafeAnyM(streamM);
+		return  AnyM.ofMonad(streamM);
 	}
 	/**
 	 * <pre>
@@ -374,6 +373,6 @@ public class FJ {
 	 * @return AnyM
 	 */
 	public static <T> AnyM<T> anyM(List<T> listM){
-		return AsAnyM.notTypeSafeAnyM(listM);
+		return  AnyM.ofMonad(listM);
 	}
 }

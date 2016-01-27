@@ -16,7 +16,7 @@ public interface DoubleOperatorsMixin<T>  extends  DoubleOperators<T>,HasStream<
 	 * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
 	 * 	 @see java.util.stream.DoubleStream#sum()
 	 * */
-	default  CompletableFuture<Double> sumDouble(ToDoubleFunction<T> fn){
+	default  CompletableFuture<Double> sumDouble(ToDoubleFunction<? super T> fn){
 		
 		return CompletableFuture.supplyAsync(()->getStream()
 								.flatMapToDouble(t-> DoubleStream.of(fn.applyAsDouble(t)))
@@ -28,7 +28,7 @@ public interface DoubleOperatorsMixin<T>  extends  DoubleOperators<T>,HasStream<
 	 * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
 	 * 	 @see java.util.stream.DoubleStream#max()
 	 * */
-	default  CompletableFuture<OptionalDouble> maxDouble(ToDoubleFunction<T> fn){
+	default  CompletableFuture<OptionalDouble> maxDouble(ToDoubleFunction<? super T> fn){
 		
 		return CompletableFuture.supplyAsync(()->getStream()
 								.flatMapToDouble(t-> DoubleStream.of(fn.applyAsDouble(t)))
@@ -40,7 +40,7 @@ public interface DoubleOperatorsMixin<T>  extends  DoubleOperators<T>,HasStream<
 	 * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
 	 * 	 @see java.util.stream.DoubleStream#min()
 	 * */
-	default  CompletableFuture<OptionalDouble> minDouble(ToDoubleFunction<T> fn){
+	default  CompletableFuture<OptionalDouble> minDouble(ToDoubleFunction<? super T> fn){
 		
 		return CompletableFuture.supplyAsync(()->getStream()
 								.flatMapToDouble(t-> DoubleStream.of(fn.applyAsDouble(t)))
@@ -52,7 +52,7 @@ public interface DoubleOperatorsMixin<T>  extends  DoubleOperators<T>,HasStream<
 	 * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
 	 * 	 @see java.util.stream.DoubleStream#average()
 	 * */
-	default CompletableFuture<OptionalDouble> averageDouble(ToDoubleFunction<T> fn){
+	default CompletableFuture<OptionalDouble> averageDouble(ToDoubleFunction<? super T> fn){
 		
 		return CompletableFuture.supplyAsync(()->getStream()
 								.flatMapToDouble(t-> DoubleStream.of(fn.applyAsDouble(t)))
@@ -64,7 +64,7 @@ public interface DoubleOperatorsMixin<T>  extends  DoubleOperators<T>,HasStream<
 	 * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
 	 * 	 @see java.util.stream.DoubleStream#summaryStatistics()
 	 * */
-	default  CompletableFuture<DoubleSummaryStatistics> summaryStatisticsDouble(ToDoubleFunction<T> fn){
+	default  CompletableFuture<DoubleSummaryStatistics> summaryStatisticsDouble(ToDoubleFunction<? super T> fn){
 		
 		return CompletableFuture.supplyAsync(()->getStream()
 								.flatMapToDouble(t-> DoubleStream.of(fn.applyAsDouble(t)))

@@ -24,9 +24,28 @@ import org.junit.Test;
 import com.aol.cyclops.comprehensions.donotation.UntypedDo;
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.trampoline.Trampoline;
 
 public class StreamTest {
-	
+	@Test
+	public void trampoline2Test(){
+		SequenceM.of(10,20,30,40)
+				 .trampoline(i-> fibonacci(i))
+				 .forEach(System.out::println);
+	}
+	@Test
+	public void trampolineTest(){
+		SequenceM.of(10_000,200_000,3_000_000,40_000_000)
+				 .trampoline(i-> fibonacci(i))
+				 .forEach(System.out::println);
+	}
+	Trampoline<Long> fibonacci(int i){
+		return fibonacci(i,1,0);
+	}
+	Trampoline<Long> fibonacci(int n, long a, long b) {
+	    return n == 0 ? Trampoline.done(b) : Trampoline.more( ()->fibonacci(n-1, a+b, a));
+	}
+
 	@Test
 	public void arrayStream() {
 		

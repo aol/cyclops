@@ -12,29 +12,29 @@ public interface DoubleOperators<T>{
 	 * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
 	 * 	 @see java.util.stream.DoubleStream#sum()
 	 * */
-	CompletableFuture<Double> sumDouble(ToDoubleFunction<T> fn);
+	CompletableFuture<Double> sumDouble(ToDoubleFunction<? super T> fn);
 	/**
 	 * Perform an asynchronous max operation
 	 * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
 	 * 	 @see java.util.stream.DoubleStream#max()
 	 * */
-	CompletableFuture<OptionalDouble> maxDouble(ToDoubleFunction<T> fn);
+	CompletableFuture<OptionalDouble> maxDouble(ToDoubleFunction<? super T> fn);
 	/**
 	 * Perform an asynchronous min operation
 	 * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
 	 * 	 @see java.util.stream.DoubleStream#min()
 	 * */
-	CompletableFuture<OptionalDouble> minDouble(ToDoubleFunction<T> fn);
+	CompletableFuture<OptionalDouble> minDouble(ToDoubleFunction<? super T> fn);
 	/**
 	 * Perform an asynchronous average operation
 	 * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
 	 * 	 @see java.util.stream.DoubleStream#average()
 	 * */
-	CompletableFuture<OptionalDouble> averageDouble(ToDoubleFunction<T> fn);
+	CompletableFuture<OptionalDouble> averageDouble(ToDoubleFunction<? super T> fn);
 	/**
 	 * Perform an asynchronous summaryStatistics operation
 	 * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
 	 * 	 @see java.util.stream.DoubleStream#summaryStatistics()
 	 * */
-	 CompletableFuture<DoubleSummaryStatistics> summaryStatisticsDouble(ToDoubleFunction<T> fn);
+	 CompletableFuture<DoubleSummaryStatistics> summaryStatisticsDouble(ToDoubleFunction<? super T> fn);
 }

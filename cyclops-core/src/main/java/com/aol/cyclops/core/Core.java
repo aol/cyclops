@@ -31,7 +31,6 @@ import com.aol.cyclops.matcher.builders.StreamCase;
 import com.aol.cyclops.matcher.recursive.Matchable;
 import com.aol.cyclops.matcher.recursive.RecursiveMatcher;
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.monad.AnyMonads;
 import com.aol.cyclops.objects.Decomposable;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.Reducers;
@@ -41,6 +40,7 @@ import com.aol.cyclops.trampoline.Trampoline;
 import com.aol.cyclops.value.StreamableValue;
 import com.aol.cyclops.value.ValueObject;
 
+@Deprecated
 public class Core extends Functions {
 	/**
 	 * Construct an instance of Case from supplied predicate and action

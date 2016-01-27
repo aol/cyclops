@@ -657,7 +657,7 @@ public class StreamUtils{
 	 */
 	public final  static <T> HeadAndTail<T> headAndTail(Stream<T> stream){
 		Iterator<T> it = stream.iterator();
-		return new HeadAndTail(it.next(),SequenceM.fromIterable(()->it));
+		return new HeadAndTail(it);
 	}
 	/**
 	 * <pre>

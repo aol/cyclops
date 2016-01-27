@@ -7,11 +7,13 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.locks.LockSupport;
 
 import javaslang.collection.LazyStream;
 import javaslang.collection.Stream;
 
 import org.junit.Test;
+
 
 public class HotStreamTest {
 	static final Executor exec = Executors.newFixedThreadPool(1);
@@ -67,6 +69,56 @@ public class HotStreamTest {
 				,ForkJoinPool.commonPool())
 				.forEach(System.out::println);
 		
+		latch.await();
+		assertTrue(value!=null);
+	}
+	@Test
+	public void hotStreamConnectPausable() throws InterruptedException{
+		value= null;
+		CountDownLatch latch = new CountDownLatch(1);
+		PausableJavaslangHotStream s = StreamUtils.pausableHotStream(Stream.range(0,Integer.MAX_VALUE)
+				.take(1000)
+				.peek(v->value=v)
+				.peek(v->latch.countDown())
+				,exec);
+		StreamUtils.futureOperations(s.connect(new LinkedBlockingQueue<>())
+				.take(100)
+				,ForkJoinPool.commonPool())
+				.forEach(System.out::println);
+		
+		Object oldValue = value;
+		s.pause();
+		s.unpause();
+		LockSupport.parkNanos(1000l);
+		s.pause();
+		System.out.println(value);
+		assertTrue(value!=oldValue);
+		s.unpause();
+		latch.await();
+		assertTrue(value!=null);
+	}
+	@Test
+	public void hotStreamConnectPausableConnect() throws InterruptedException{
+		value= null;
+		CountDownLatch latch = new CountDownLatch(1);
+		PausableJavaslangHotStream s = StreamUtils.pausableHotStream(Stream.range(0,Integer.MAX_VALUE)
+				.take(10000)
+				.peek(v->value=v)
+				.peek(v->latch.countDown())
+				,exec);
+		StreamUtils.futureOperations(s.connect()
+				.take(100)
+				,ForkJoinPool.commonPool())
+				.forEach(System.out::println);
+		
+		Object oldValue = value;
+		s.pause();
+		s.unpause();
+		LockSupport.parkNanos(1000l);
+		s.pause();
+		System.out.println(value);
+		assertTrue(value!=oldValue);
+		s.unpause();
 		latch.await();
 		assertTrue(value!=null);
 	}

@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.javaslang.reactivestreams.JavaslangReactiveStreamsPublisher;
 import com.aol.cyclops.javaslang.reactivestreams.JavaslangReactiveStreamsSubscriber;
+import com.aol.cyclops.javaslang.reactivestreams.ReactiveStream;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.reactivestreams.CyclopsSubscriber;
 
@@ -31,7 +32,7 @@ public class ExampleTest {
 		JavaslangReactiveStreamsSubscriber<Integer> subscriber = new JavaslangReactiveStreamsSubscriber<>();
 		publisher.subscribe(subscriber);
 		
-		LazyStream<Integer> stream = subscriber.getStream();
+		ReactiveStream<Integer> stream = subscriber.getStream();
 		
 		
 		

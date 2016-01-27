@@ -19,7 +19,7 @@ public interface LongOperatorsMixin<T>  extends LongOperators<T>,HasStream<T>, H
 	 * @see java.util.stream.Stream#mapToLong(ToLongFunction)
 	 * 	 @see java.util.stream.LongStream#sum()
 	 * */
-	default  CompletableFuture<Long> sumLong(ToLongFunction<T> fn){
+	default  CompletableFuture<Long> sumLong(ToLongFunction<? super T> fn){
 		
 		return CompletableFuture.supplyAsync(()->getStream()
 								.flatMapToLong(t-> LongStream.of(fn.applyAsLong(t)))
@@ -31,7 +31,7 @@ public interface LongOperatorsMixin<T>  extends LongOperators<T>,HasStream<T>, H
 	 * @see java.util.stream.Stream#mapToLong(ToLongFunction)
 	 * 	 @see java.util.stream.LongStream#max()
 	 * */
-	default  CompletableFuture<OptionalLong> maxLong(ToLongFunction<T> fn){
+	default  CompletableFuture<OptionalLong> maxLong(ToLongFunction<? super T> fn){
 		
 		return CompletableFuture.supplyAsync(()->getStream()
 								.flatMapToLong(t-> LongStream.of(fn.applyAsLong(t)))
@@ -43,7 +43,7 @@ public interface LongOperatorsMixin<T>  extends LongOperators<T>,HasStream<T>, H
 	 * @see java.util.stream.Stream#mapToLong(ToLongFunction)
 	 * 	 @see java.util.stream.LongStream#min()
 	 * */
-	default  CompletableFuture<OptionalLong> minLong(ToLongFunction<T> fn){
+	default  CompletableFuture<OptionalLong> minLong(ToLongFunction<? super T> fn){
 		
 		return CompletableFuture.supplyAsync(()->getStream()
 								.flatMapToLong(t-> LongStream.of(fn.applyAsLong(t)))
@@ -55,7 +55,7 @@ public interface LongOperatorsMixin<T>  extends LongOperators<T>,HasStream<T>, H
 	 * @see java.util.stream.Stream#mapToLong(ToLongFunction)
 	 * 	 @see java.util.stream.LongStream#average()
 	 * */
-	default CompletableFuture<OptionalDouble> averageLong(ToLongFunction<T> fn){
+	default CompletableFuture<OptionalDouble> averageLong(ToLongFunction<? super T> fn){
 		
 		return CompletableFuture.supplyAsync(()->getStream()
 								.flatMapToLong(t-> LongStream.of(fn.applyAsLong(t)))
@@ -67,7 +67,7 @@ public interface LongOperatorsMixin<T>  extends LongOperators<T>,HasStream<T>, H
 	 * @see java.util.stream.Stream#mapToLong(ToLongFunction)
 	 * 	 @see java.util.stream.LongStream#summaryStatistics()
 	 * */
-	default  CompletableFuture<LongSummaryStatistics> summaryStatisticsLong(ToLongFunction<T> fn){
+	default  CompletableFuture<LongSummaryStatistics> summaryStatisticsLong(ToLongFunction<? super T> fn){
 		
 		return CompletableFuture.supplyAsync(()->getStream()
 								.flatMapToLong(t-> LongStream.of(fn.applyAsLong(t)))

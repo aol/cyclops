@@ -7,14 +7,11 @@ import javaslang.collection.LazyStream;
 import javaslang.collection.List;
 import javaslang.control.Either;
 import javaslang.control.Either.LeftProjection;
-import javaslang.control.Either.Right;
 import javaslang.control.Either.RightProjection;
 import javaslang.control.Option;
 import javaslang.control.Try;
 
 import com.aol.cyclops.monad.AnyM;
-
-import fj.test.Arbitrary;
 
 public class Javaslang {
 	public static <T> AnyM<T> anyMonad(Value<T> monadM){

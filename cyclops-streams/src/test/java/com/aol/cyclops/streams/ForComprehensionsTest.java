@@ -80,7 +80,6 @@ public class ForComprehensionsTest {
 	@Test
 	public void forEach3(){
 		
-
 		assertThat(SequenceM.of(2,3)
 		         .forEach3(a->IntStream.range(6,9),
 		        		   a->b->IntStream.range(100,105),

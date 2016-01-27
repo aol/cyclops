@@ -8,16 +8,12 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
-import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import javaslang.collection.List;
 import javaslang.collection.Stream;
@@ -26,8 +22,7 @@ import lombok.Value;
 import org.junit.Test;
 
 import com.aol.cyclops.javaslang.reactivestreams.ReactiveStream;
-import com.aol.cyclops.sequence.streamable.Streamable;
-import com.aol.cyclops.streams.SimpleTimer;
+
 public class BatchingTest {
 	@Test
 	public void batchUntil(){

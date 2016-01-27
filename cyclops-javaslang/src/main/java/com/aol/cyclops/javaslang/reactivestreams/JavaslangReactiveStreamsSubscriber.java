@@ -3,6 +3,7 @@ package com.aol.cyclops.javaslang.reactivestreams;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import javaslang.collection.Stream;
 import lombok.Getter;
 
 import org.reactivestreams.Subscriber;
@@ -26,7 +27,7 @@ public class JavaslangReactiveStreamsSubscriber<T> implements Subscriber<T> {
 	private volatile java.util.stream.Stream<T> jdkStream;
 	
 	public ReactiveStream<T> getStream(){
-		return ReactiveStream.fromJDK(jdkStream);
+		return ReactiveStream.fromIterator(jdkStream.iterator());
 	}
 	volatile Consumer errorHandler = e -> { };
 	
