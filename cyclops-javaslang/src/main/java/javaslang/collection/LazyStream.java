@@ -1,22 +1,64 @@
+/*     / \____  _    _  ____   ______  / \ ____  __    _ _____
+ *    /  /    \/ \  / \/    \ /  /\__\/  //    \/  \  / /  _  \   Javaslang
+ *  _/  /  /\  \  \/  /  /\  \\__\\  \  //  /\  \ /\\/  \__/  /   Copyright 2014-now Daniel Dietrich
+ * /___/\_/  \_/\____/\_/  \_/\__\/__/___\_/  \_//  \__/_____/    Licensed under the Apache License, Version 2.0
+ */
 package javaslang.collection;
 
-import javaslang.*;
-import javaslang.collection.LazyStream.LazyCons;
-import javaslang.collection.LazyStream.Empty;
-import javaslang.collection.LazyStreamModule.*;
-import javaslang.control.Match;
-import javaslang.control.Option;
-
-import java.io.*;
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.BaseStream;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collector;
-import java.util.stream.StreamSupport;
+
+import org.jooq.lambda.Collectable;
+import org.jooq.lambda.Seq;
 
 import com.aol.cyclops.functions.caching.Memoize;
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
+import com.aol.cyclops.javaslang.Javaslang;
 import com.aol.cyclops.javaslang.streams.StreamUtils;
+import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.sequence.future.FutureCollectable;
+import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.simple.react.async.factories.QueueFactories;
+import com.aol.simple.react.stream.lazy.LazyReact;
+import com.aol.simple.react.stream.simple.SimpleReact;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
+import com.aol.simple.react.stream.traits.SimpleReactStream;
+
+import javaslang.Function1;
+import javaslang.Lazy;
+import javaslang.Tuple;
+import javaslang.Tuple2;
+import javaslang.Tuple3;
+import javaslang.Value;
+import javaslang.collection.LazyStream.Empty;
+import javaslang.collection.LazyStream.LazyCons;
+import javaslang.collection.LazyStreamModule.AppendSelf;
+import javaslang.collection.LazyStreamModule.Combinations;
+import javaslang.collection.LazyStreamModule.DropRight;
+import javaslang.collection.LazyStreamModule.StreamFactory;
+import javaslang.collection.LazyStreamModule.StreamIterator;
+import javaslang.control.Match;
+import javaslang.control.Option;
 
 /**
  * An immutable {@code Stream} is lazy sequence of elements which may be infinitely long.
@@ -692,6 +734,69 @@ public interface LazyStream<T> extends Stream<T> {
         return isEmpty() ? this : new AppendSelf<T>((LazyCons<T>) this, mapper).stream();
     }
 
+    
+    /** To Transfer Queue **/
+	default com.aol.simple.react.async.Queue<T> toAsyncBlockingQueue(int boundSize) {
+		return new com.aol.simple.react.async.Queue<>(new LinkedBlockingQueue<T>(boundSize));
+	}
+
+	default com.aol.simple.react.async.Queue<T> toAsyncQueue() {
+		return QueueFactories.<T> unboundedNonBlockingQueue().build();
+	}
+
+	default com.aol.simple.react.async.Queue<T> toAsyncQueue(int boundSize) {
+		return QueueFactories.<T> boundedNonBlockingQueue(boundSize).build();
+	}
+
+	/** JDK Collect **/
+	default Collectable<T> collectable(){
+    	return SequenceM.fromIterable(this);
+    }
+	default  <R> R collect(Supplier<R> supplier,
+            BiConsumer<R, ? super T> accumulator,
+            BiConsumer<R, R> combiner){
+		return this.toJavaStream().collect(supplier,accumulator,combiner);
+	}
+	default <R, A> R collect(Collector<? super T, A, R> collector) {
+		return this.toJavaStream().collect(collector);
+	}
+	default <C extends Collection<T>> C toCollection(Supplier<C> collectionFactory){
+		return sequenceM().toCollection(collectionFactory);
+	}
+	/** conversions **/
+	default AnyM<T> anyM() {
+		return Javaslang.anyM(this);
+	}
+
+	default SequenceM<T> sequenceM() {
+		return SequenceM.fromIterable(this);
+	}
+
+	default Seq<T> seq() {
+		return Seq.seq(this);
+	}
+
+	default Streamable<T> streamable() {
+		return Streamable.fromIterable(this);
+	}
+
+	default LazyFutureStream<T> futureStream() {
+		return LazyFutureStream.lazyFutureStreamFromIterable(this);
+	}
+
+	default LazyFutureStream<T> futureStream(LazyReact react) {
+		return react.fromIterable(this);
+	}
+
+	default SimpleReactStream<T> futures() {
+		return (SimpleReactStream<T>) new SimpleReact().fromIterable(this);
+	}
+
+	default SimpleReactStream<T> futures(SimpleReact react) {
+		return (SimpleReactStream<T>) react.fromIterable(this);
+	}
+
+	
     @Override
     default LazyStream<T> clear() {
         return Empty.instance();
@@ -1136,7 +1241,7 @@ public interface LazyStream<T> extends Stream<T> {
 
     @Override
     default LazyStream<T> reverse() {
-        return isEmpty() ? this : (LazyStream<T>) foldLeft(LazyStream.empty(), LazyStream::prepend);
+        return isEmpty() ? this :  foldLeft(LazyStream.<T>empty(), LazyStream::prepend);
     }
 
     @Override

@@ -88,7 +88,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>{
 	 * @return Streamable
 	 */
 	public static<T> Streamable<T> of(T... values){
-		
+		Exception e;
 		return new Streamable<T>(){
 			public Stream<T> stream(){
 				return Stream.of(values);

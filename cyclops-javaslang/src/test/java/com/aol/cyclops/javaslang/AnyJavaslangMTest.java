@@ -201,14 +201,7 @@ public class AnyJavaslangMTest {
 				.toSequence()
 				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
 	}
-	@Test
-	public void lazyFlatMapTest(){
-		assertThat(Javaslang.anyMonad(Lazy.of(()->"hello world"))
-				.map(String::toUpperCase)
-				.flatMapOptional(Optional::of)
-				.toSequence()
-				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
-	}
+	
 	@Test
 	public void streamTest(){
 		assertThat(Javaslang.anyM(LazyStream.of("hello world"))

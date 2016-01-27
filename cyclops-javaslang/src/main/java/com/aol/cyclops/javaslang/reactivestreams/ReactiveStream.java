@@ -149,31 +149,7 @@ public interface ReactiveStream<T> extends LazyStream<T>, Publisher<T>, Reactive
 		return new JavaslangReactiveStreamsSubscriber<>();
 	}
 
-	/** To Transfer Queue **/
-	default com.aol.simple.react.async.Queue<T> toAsyncBlockingQueue(int boundSize) {
-		return new com.aol.simple.react.async.Queue<>(new LinkedBlockingQueue<T>(boundSize));
-	}
-
-	default com.aol.simple.react.async.Queue<T> toAsyncQueue() {
-		return QueueFactories.<T> unboundedNonBlockingQueue().build();
-	}
-
-	default com.aol.simple.react.async.Queue<T> toAsyncQueue(int boundSize) {
-		return QueueFactories.<T> boundedNonBlockingQueue(boundSize).build();
-	}
-
-	/** JDK Collect **/
-	default  <R> R collect(Supplier<R> supplier,
-            BiConsumer<R, ? super T> accumulator,
-            BiConsumer<R, R> combiner){
-		return this.toJavaStream().collect(supplier,accumulator,combiner);
-	}
-	default <R, A> R collect(Collector<? super T, A, R> collector) {
-		return this.toJavaStream().collect(collector);
-	}
-	default <C extends Collection<T>> C toCollection(Supplier<C> collectionFactory){
-		return sequenceM().toCollection(collectionFactory);
-	}
+	
 	default <U> ReactiveStream<U> cast(Class<U> type){
 		return fromStream(StreamUtils.cast(this, type));
 		
@@ -182,39 +158,7 @@ public interface ReactiveStream<T> extends LazyStream<T>, Publisher<T>, Reactive
 		return fromStream(StreamUtils.ofType(this, type));
 	}
 	
-	/** conversions **/
-	default AnyM<T> anyM() {
-		return Javaslang.anyM(this);
-	}
-
-	default SequenceM<T> sequenceM() {
-		return SequenceM.fromIterable(this);
-	}
-
-	default Seq<T> seq() {
-		return Seq.seq(this);
-	}
-
-	default Streamable<T> streamable() {
-		return Streamable.fromIterable(this);
-	}
-
-	default LazyFutureStream<T> futureStream() {
-		return LazyFutureStream.lazyFutureStreamFromIterable(this);
-	}
-
-	default LazyFutureStream<T> futureStream(LazyReact react) {
-		return react.fromIterable(this);
-	}
-
-	default SimpleReactStream<T> futures() {
-		return (SimpleReactStream<T>) new SimpleReact().fromIterable(this);
-	}
-
-	default SimpleReactStream<T> futures(SimpleReact react) {
-		return (SimpleReactStream<T>) react.fromIterable(this);
-	}
-
+	
 	/** subscribe **/
 	@Override
 	default void subscribe(Subscriber<? super T> s) {
@@ -295,23 +239,7 @@ public interface ReactiveStream<T> extends LazyStream<T>, Publisher<T>, Reactive
             }
         };
     }  
-    /**
-    final class StreamFactory {
-
-        static <T> Stream<T> create(java.util.Iterator<? extends T> iterator) {
-            return iterator.hasNext() ? new Cons<>(iterator.next(), () -> create(iterator)) : Empty.instance();
-        }
-    }**/
-    /**
-    static <T> Stream<T> ofAll(java.lang.Iterable<? extends T> elements) {
-    	return 
-        Objects.requireNonNull(elements, "elements is null");
-        if (elements instanceof Stream) {
-            return (Stream<T>) elements;
-        } else {
-            return StreamFactory.create(elements.iterator());
-        }
-    }**/
+   
 	default ReactiveStream<T> recover(Function<Throwable, ? extends T> fn) {
 		Iterator<T> it = iterator();
 		

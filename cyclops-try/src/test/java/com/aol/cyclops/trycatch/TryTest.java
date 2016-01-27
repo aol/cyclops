@@ -18,6 +18,8 @@ public class TryTest {
  
 	@Test(expected=IOException.class)
 	public void test(){
+		Try<Integer,RuntimeException> tryM;
+		
 		Try.runWithCatch(this::exceptional,IOException.class)
 					.onFail(System.out::println).get();
 	}
