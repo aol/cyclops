@@ -54,6 +54,7 @@ import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.HotStream;
 import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.sequence.PausableHotStream;
 import com.aol.cyclops.sequence.ReversedIterator;
 import com.aol.cyclops.sequence.SeqUtils;
 import com.aol.cyclops.sequence.SequenceM;
@@ -321,7 +322,7 @@ public class StreamUtils{
 	 * @return Connectable HotStream of output from scheduled Stream
 	 */
 	public static<T> HotStream<T> schedule(Stream<T> stream,String cron,ScheduledExecutorService ex){
-		return new HotStreamImpl(stream).schedule(cron,ex);
+		return new NonPausableHotStream<>(stream).schedule(cron,ex);
 	}
 	
 	/**
@@ -356,7 +357,7 @@ public class StreamUtils{
 	 * @return Connectable HotStream of output from scheduled Stream
 	 */
 	public static <T> HotStream<T> scheduleFixedDelay(Stream<T> stream,long delay,ScheduledExecutorService ex){
-		return new HotStreamImpl(stream).scheduleFixedDelay(delay,ex);
+		return new NonPausableHotStream<>(stream).scheduleFixedDelay(delay,ex);
 	}
 	
 	/**
@@ -389,7 +390,7 @@ public class StreamUtils{
 	 * @return Connectable HotStream of output from scheduled Stream
 	 */
 	public static <T> HotStream<T> scheduleFixedRate(Stream<T> stream,long rate,ScheduledExecutorService ex){
-		return new HotStreamImpl(stream).scheduleFixedRate(rate,ex);
+		return new NonPausableHotStream<>(stream).scheduleFixedRate(rate,ex);
 	}
 	/**
 	 * Split at supplied location 
@@ -1362,6 +1363,7 @@ public class StreamUtils{
 	 * @return
 	 */
 	public final static <T> Stream<T> scanLeft(Stream<T> stream,Monoid<T> monoid) {
+		
 		Iterator<T> it = stream.iterator();
 		return StreamUtils.stream(new Iterator<T>() {
 				boolean init = false;
@@ -1431,14 +1433,14 @@ public class StreamUtils{
 	}
 	
 	
-	public final static  <T,C extends Comparable<C>>  Optional<T> minBy(Stream<T> stream,Function<T,C> f){
+	public final static  <T,C extends Comparable<? super C>>  Optional<T> minBy(Stream<T> stream,Function<? super T,? extends C> f){
 		Optional<Tuple2<C,T>> o = stream.map(in->new Tuple2<C,T>(f.apply(in),in)).min(Comparator.comparing(n->n.v1(),Comparator.naturalOrder()));
 		return	o.map(p->p.v2());
 	}
 	public final  static<T> Optional<T> min(Stream<T> stream,Comparator<? super T> comparator){
 		return stream.collect(Collectors.minBy(comparator));
 	}
-	public final static <T,C extends Comparable<? super C>> Optional<T> maxBy(Stream<T> stream,Function<T,C> f){
+	public final static <T,C extends Comparable<? super C>> Optional<T> maxBy(Stream<T> stream,Function<? super T,? extends C> f){
 		Optional<Tuple2<C,T>> o = stream.map(in->new Tuple2<C,T>(f.apply(in),in)).max(Comparator.comparing(n->n.v1(),Comparator.naturalOrder()));
 		return	o.map(p->p.v2());
 	}
@@ -1591,8 +1593,8 @@ public class StreamUtils{
 		if(stream instanceof SequenceM)
 			return (SequenceM)stream;
 		if(rev.isPresent())
-			return new SequenceMImpl(stream,rev.get());
-		return new SequenceMImpl(stream);
+			return new SequenceMImpl<T>(stream,rev.get());
+		return new SequenceMImpl<T>(stream);
 	}
 	
 	
@@ -1652,7 +1654,7 @@ public class StreamUtils{
 		return stream.flatMap(fn);
 	}
 	public final static <T,R> Stream<R> flatMapAnyM(Stream<T> stream,Function<? super T,AnyM<? extends R>> fn) {
-		return AsGenericMonad.<Stream<T>,T>asMonad(stream).bind(in -> fn.apply(in).unwrap()).sequence();
+		return AnyM.fromStream(stream).flatMap(fn).asSequence();
 		
 	}
 	
@@ -1684,7 +1686,7 @@ public class StreamUtils{
 	 * </pre>
 	 *
 	 */
-	public final static <T,R> Stream<R> flatMapStream(Stream<T> stream,Function<? super T,BaseStream<? extends R,?>> fn) {
+	public final static <T,R> Stream<R> flatMapStream(Stream<T> stream,Function<? super T,? extends BaseStream<? extends R,?>> fn) {
 		return stream.flatMap(fn.andThen(bs -> { 
 			
 			if(bs instanceof Stream) 
@@ -2117,6 +2119,15 @@ public class StreamUtils{
 			});
 	  }
 	  public final static <T> HotStream<T> hotStream(Stream<T> stream,Executor exec){
-		  return new HotStreamImpl<>(stream).init(exec);
+		  return new NonPausableHotStream<>(stream).init(exec);
+	  }
+	  public final static <T> HotStream<T> primedHotStream(Stream<T> stream,Executor exec){
+		  return new NonPausableHotStream<>(stream).paused(exec);
+	  }
+	  public final static <T> PausableHotStream<T> pausableHotStream(Stream<T> stream,Executor exec){
+		  return new PausableHotStreamImpl<>(stream).init(exec);
+	  }
+	  public final static <T> PausableHotStream<T> primedPausableHotStream(Stream<T> stream,Executor exec){
+		  return new PausableHotStreamImpl<>(stream).paused(exec);
 	  }
 }

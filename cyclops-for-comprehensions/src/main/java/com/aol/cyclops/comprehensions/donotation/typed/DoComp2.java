@@ -383,7 +383,7 @@ public class DoComp2<T1, T2> extends DoComp {
 	 *            comprehension
 	 * @return Next stage in for comprehension builder
 	 */
-	public <T3> DoComp3<T1, T2, T3> withIterable(Function<? super T1, Function<? super T2, Iterable<? super T3>>> f) {
+	public <T3> DoComp3<T1, T2, T3> withIterable(Function<? super T1, Function<? super T2, Iterable<T3>>> f) {
 		return new DoComp3(addToAssigned(f),getOrgType());
 
 	}

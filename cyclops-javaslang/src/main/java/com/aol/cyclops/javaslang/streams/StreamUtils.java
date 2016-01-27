@@ -1,6 +1,8 @@
 package com.aol.cyclops.javaslang.streams;
 
 
+import static com.aol.cyclops.javaslang.ToStream.toSequenceM;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
@@ -75,7 +77,7 @@ public class StreamUtils{
 	}
 	public final static <T> Stream<T> optionalToStream(Optional<T> optional){
 		if(optional.isPresent())
-			return Stream.ofAll(optional.get());
+			return Stream.of(optional.get());
 		return Stream.empty();
 	}
 	public final static <T> CompletableFuture<List<T>> streamToCompletableFuture(Stream<T> stream){
@@ -83,7 +85,7 @@ public class StreamUtils{
 			
 	}
 	public final static <T> Stream<T> completableFutureToStream(CompletableFuture<T> future){
-		return Stream.ofAll(future.join());
+		return Stream.of(future.join());
 			
 	}
 	/**
@@ -153,7 +155,7 @@ public class StreamUtils{
 	 * @return Connectable HotStream of output from scheduled Stream
 	 */
 	public static<T> JavaslangHotStream<T> schedule(Stream<T> stream,String cron,ScheduledExecutorService ex){
-		return new HotStreamImpl<>(stream).schedule(cron,ex);
+		return new NonPausableHotStream<>(stream).schedule(cron,ex);
 	}
 	
 	/**
@@ -188,7 +190,7 @@ public class StreamUtils{
 	 * @return Connectable HotStream of output from scheduled Stream
 	 */
 	public static <T> JavaslangHotStream<T> scheduleFixedDelay(Stream<T> stream,long delay,ScheduledExecutorService ex){
-		return new HotStreamImpl<>(stream).scheduleFixedDelay(delay,ex);
+		return new NonPausableHotStream<>(stream).scheduleFixedDelay(delay,ex);
 	}
 	
 	/**
@@ -221,7 +223,7 @@ public class StreamUtils{
 	 * @return Connectable HotStream of output from scheduled Stream
 	 */
 	public static <T> JavaslangHotStream<T> scheduleFixedRate(Stream<T> stream,long rate,ScheduledExecutorService ex){
-		return new HotStreamImpl<>(stream).scheduleFixedRate(rate,ex);
+		return new NonPausableHotStream<>(stream).scheduleFixedRate(rate,ex);
 	}
 	/**
 	 * Split at supplied location 
@@ -286,7 +288,7 @@ public class StreamUtils{
 		Tuple2<Iterator<T>,Iterator<T>> Tuple2 = StreamUtils.toBufferingDuplicator(stream.iterator());	
 		return new Tuple2(StreamUtils.stream(Tuple2._1()),StreamUtils.stream(Tuple2._2()));
 	}
-	private final static <T> Tuple2<Stream<T>,Stream<T>> duplicatePos(Stream<T> stream,int pos){
+	private final static <T> Tuple2<Stream<T>,Stream<T>> duplicatePos(Stream<T> stream,long pos){
 		
 		Tuple2<Iterator<T>,Iterator<T>> Tuple2 = StreamUtils.toBufferingDuplicator(stream.iterator(),pos);	
 		return new Tuple2(StreamUtils.stream(Tuple2._1()),StreamUtils.stream(Tuple2._2()));
@@ -386,7 +388,7 @@ public class StreamUtils{
 	 * @return SequenceM with appended values
 	 */
 	public static final <T> Stream<T> append(Stream<T> stream,T... values) {
-		return appendStream(stream,Stream.ofAll(values));
+		return appendStream(stream,Stream.of(values));
 	}
 	/**
 	 * Prepend given values to the start of the Stream
@@ -401,7 +403,7 @@ public class StreamUtils{
 	 * @return SequenceM with values prepended
 	 */
 	public static final <T> Stream<T> prepend(Stream<T> stream,T... values) {
-		return appendStream(Stream.ofAll(values),stream);
+		return appendStream(Stream.of(values),stream);
 	}
 	/**
 	 * Insert data into a stream at given position
@@ -663,7 +665,7 @@ public class StreamUtils{
 	 */
 	public static <U> Stream<U> cycle(Streamable<U> s){
 	
-		return Stream.gen(FromJDK.stream(s.stream()),s1-> FromJDK.stream(s.stream())).flatten();
+		return Stream.gen(FromJDK.stream(s.stream()),s1-> FromJDK.stream(s.stream())).flatMap(i->i);
 	}
 	
 	/**
@@ -682,7 +684,7 @@ public class StreamUtils{
 	public static <U> Stream<U> cycle(int times,Streamable<U> s){
 		return Stream.gen(FromJDK.stream(s.stream()),s1-> FromJDK.stream(s.stream()))
 					.take(times)
-					.flatten();
+					.flatMap(i->i);
 		
 	}
 	
@@ -745,7 +747,7 @@ public class StreamUtils{
 			first = FromJDK.stream(((Streamable)o).stream());
 		}
 		else{
-			first = Stream.ofAll((U)o);
+			first = Stream.of((U)o);
 		}
 		return first.appendAll(stream);
 		
@@ -793,7 +795,8 @@ public class StreamUtils{
 	/**
 	 * Simultaneously reduce a stream with multiple reducers
 	 * 
-	 * <pre>{@code
+	 * <pre>{
+	 * @code
 	 * 
 	 *  Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
 		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
@@ -1197,6 +1200,7 @@ public class StreamUtils{
 		return AsStreamable.synchronizedFromStream(ToStream.toSequenceM(stream));
 	}
 	public final static <U,T> Stream<U> scanRight(Stream<T> stream,U identity,BiFunction<? super T, U, U>  combiner){
+		
 		return FromJDK.stream(ToStream.toSequenceM(stream).scanRight(identity,combiner));
 	}
 	/**
@@ -1457,7 +1461,7 @@ public class StreamUtils{
 	 * </pre>
 	 */
 	public static <T> Stream<T> intersperse(Stream<T> stream, T value) {
-		return stream.flatMap(t -> Stream.ofAll(value, t)).drop(1);
+		return stream.flatMap(t -> Stream.of(value, t)).drop(1);
 	}
 	/**
 	 * Keep only those elements in a stream that are of a given type.
@@ -1518,7 +1522,7 @@ public class StreamUtils{
 	 *
 	 */
 	public final static <T,R> Stream<R> flatMapCollection(Stream<T> stream,Function<? super T,Collection<? extends R>> fn) {
-		return stream.map(fn).map(c->Stream.ofAll(c)).flatten();
+		return stream.map(fn).map(c->Stream.ofAll(c)).flatMap(i->i);
 		
 	}
 	/**
@@ -1540,7 +1544,7 @@ public class StreamUtils{
 			if(bs instanceof java.util.stream.Stream) 
 				return FromJDK.stream((java.util.stream.Stream<R>)bs);
 			else
-				return Stream.ofAll(bs.iterator());
+				return Stream.of(bs.iterator());
 			
 		}).apply(i));
 	}
@@ -1562,7 +1566,7 @@ public class StreamUtils{
 	}
 	
 	public final static <T,R> Stream<R> flatten(Stream<T> stream) {
-		return stream.flatten();
+		return FromJDK.stream(ToStream.toSequenceM(stream).flatten());
 	}
 	/**
 	 *<pre>
@@ -1908,8 +1912,7 @@ public class StreamUtils{
 						Thread.sleep(Math.max(0,millis),Math.max(0,nanos));
 						
 					} catch (InterruptedException e) {
-						ExceptionSoftener.throwSoftenedException(e);
-						return null;
+						throw ExceptionSoftener.throwSoftenedException(e);
 					}
 					return nextValue;
 				}
@@ -1968,6 +1971,17 @@ public class StreamUtils{
 			});
 	  }
 	  public final static <T> JavaslangHotStream<T> hotStream(Stream<T> stream,Executor exec){
-		  return new HotStreamImpl<>(stream).init(exec);
+		  return new NonPausableHotStream<>(stream).init(exec);
+	  }
+	  public final static <T> JavaslangHotStream<T> pausedHotStream(Stream<T> stream,Executor exec){
+		  return new NonPausableHotStream<>(stream).paused(exec);
+	  }
+	  
+	  
+	  public final static <T> PausableJavaslangHotStream<T> pausableHotStream(Stream<T> stream,Executor exec){
+		  return new PausableHotStreamImpl<>(stream).init(exec);
+	  }
+	  public final static <T> PausableJavaslangHotStream<T> primedPausableHotStream(Stream<T> stream,Executor exec){
+		  return new PausableHotStreamImpl<>(stream).paused(exec);
 	  }
 }

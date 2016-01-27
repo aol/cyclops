@@ -19,7 +19,7 @@ public class CheckValues<T,R> {
 	protected final _Simpler_Case<R> simplerCase;
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public<T1 extends T> FinalCheck<T,T1,R> isType(TypedFunction<T1,R> type){
+	public<T1 extends T> FinalCheck<T,T1,R> isType(TypedFunction<? super T1,? extends R> type){
 		
 		return new FinalCheck(type.getType().parameterType(type.getType().parameterCount()-1),simplerCase,type);
 	}

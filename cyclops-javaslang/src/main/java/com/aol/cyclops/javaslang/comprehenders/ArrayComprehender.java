@@ -40,11 +40,11 @@ public class ArrayComprehender implements Comprehender<Array> {
 	}
 	static Array unwrapOtherMonadTypes(Comprehender<Array> comp,Object apply){
 		if(apply instanceof java.util.stream.Stream)
-			return Array.ofAll( ((java.util.stream.Stream)apply).iterator());
+			return Array.of( ((java.util.stream.Stream)apply).iterator());
 		if(apply instanceof Iterable)
-			return Array.ofAll( ((Iterable)apply).iterator());
+			return Array.of( ((Iterable)apply).iterator());
 		if(apply instanceof LazySeq){
-			apply = Array.ofAll(((LazySeq)apply).iterator());
+			apply = Array.of(((LazySeq)apply).iterator());
 		}
 		if(apply instanceof Collection){
 			return Array.ofAll((Collection)apply);

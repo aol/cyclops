@@ -58,5 +58,9 @@ public class AsValueTest {
 		int nextVal;
 		public Child(int val,int nextVal) { super(val); this.nextVal = nextVal;}
 	}
+<<<<<<< HEAD
 **/
+=======
+	**/
+>>>>>>> master
 }

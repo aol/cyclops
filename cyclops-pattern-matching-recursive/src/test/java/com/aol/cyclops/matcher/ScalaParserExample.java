@@ -3,20 +3,17 @@ package com.aol.cyclops.matcher;
 
 import static com.aol.cyclops.matcher.Predicates.ANY;
 import static com.aol.cyclops.matcher.Predicates.__;
-import static com.aol.cyclops.matcher.Predicates.type;
 import static com.aol.cyclops.matcher.Predicates.hasValues;
+import static com.aol.cyclops.matcher.Predicates.type;
 
-import java.util.function.Function;
+import com.aol.cyclops.matcher.builders.Matching;
+import com.aol.cyclops.matcher.recursive.Matchable;
+import com.aol.cyclops.matcher.recursive.RecursiveMatcher;
+import com.aol.cyclops.objects.Decomposable;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Value;
-import lombok.val;
-
-import com.aol.cyclops.matcher.ScalaParserExample.Mult;
-import com.aol.cyclops.matcher.builders.Matching;
-import com.aol.cyclops.matcher.recursive.RecursiveMatcher;
-import com.aol.cyclops.objects.Decomposable;
 
 public class ScalaParserExample {
 
@@ -25,6 +22,8 @@ public class ScalaParserExample {
 	//paper : http://lampwww.epfl.ch/~emir/written/MatchingObjectsWithPatterns-TR.pdf
 	
 	public Integer eval(Expression expression, int xValue){
+		
+		
 		
 		return Matching.whenIsType( (X x)-> xValue)
 				.whenIsType((Const c) -> c.getValue())
@@ -36,6 +35,7 @@ public class ScalaParserExample {
 		
 		
 	}
+	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	

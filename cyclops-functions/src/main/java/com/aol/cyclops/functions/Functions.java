@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 import com.aol.cyclops.functions.caching.Memoize;
 import com.aol.cyclops.functions.currying.Uncurry;
 
-@Deprecated //name collision with com.aol.cyclops.functions.fluent.Functions in cyclops-all
+@Deprecated 
 public class Functions extends Uncurry {
 	/**
 	 * Convert a Supplier into one that caches it's result

@@ -9,11 +9,9 @@ import lombok.Getter;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import com.aol.cyclops.javaslang.FromJDK;
 import com.aol.simple.react.async.Queue;
 import com.aol.simple.react.async.Queue.ClosedQueueException;
 import com.aol.simple.react.async.subscription.Continueable;
-import com.aol.simple.react.reactivestreams.JDKReactiveStreamsSubscriber;
 import com.aol.simple.react.stream.traits.Continuation;
 
 public class JavaslangReactiveStreamsSubscriber<T> implements Subscriber<T> {
@@ -26,10 +24,10 @@ public class JavaslangReactiveStreamsSubscriber<T> implements Subscriber<T> {
 	protected volatile Queue<T> queue;
 	@Getter
 	volatile Subscription subscription;
-	private volatile java.util.stream.Stream jdkStream;
+	private volatile java.util.stream.Stream<T> jdkStream;
 	
 	public Stream<T> getStream(){
-		return FromJDK.stream(jdkStream);
+		return Stream.ofAll(()->jdkStream.iterator());
 	}
 	volatile Consumer errorHandler = e -> { };
 	

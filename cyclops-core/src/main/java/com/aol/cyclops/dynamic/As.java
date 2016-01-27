@@ -22,6 +22,7 @@ import com.aol.cyclops.value.AsValue;
 import com.aol.cyclops.value.StreamableValue;
 import com.aol.cyclops.value.ValueObject;
 
+@Deprecated
 public interface As {
 	
 	

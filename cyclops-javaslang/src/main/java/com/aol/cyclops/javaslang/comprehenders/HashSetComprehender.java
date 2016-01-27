@@ -40,11 +40,11 @@ public class HashSetComprehender implements Comprehender<HashSet> {
 	}
 	static HashSet unwrapOtherMonadTypes(Comprehender<HashSet> comp,Object apply){
 		if(apply instanceof java.util.stream.Stream)
-			return HashSet.ofAll( ((java.util.stream.Stream)apply).iterator());
+			return HashSet.of( ((java.util.stream.Stream)apply).iterator());
 		if(apply instanceof Iterable)
-			return HashSet.ofAll( ((Iterable)apply).iterator());
+			return HashSet.of( ((Iterable)apply).iterator());
 		if(apply instanceof LazySeq){
-			apply = HashSet.ofAll(((LazySeq)apply).iterator());
+			apply = HashSet.of(((LazySeq)apply).iterator());
 		}
 		if(apply instanceof Collection){
 			return HashSet.ofAll((Collection)apply);

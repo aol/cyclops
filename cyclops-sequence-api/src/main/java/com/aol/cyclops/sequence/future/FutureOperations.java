@@ -19,7 +19,11 @@ import java.util.stream.Collector;
 
 import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsTerminalFutureOperations;
 
-public interface FutureOperations<T> extends IntOperators<T>,DoubleOperators<T>, LongOperators<T>,ReactiveStreamsTerminalFutureOperations<T> {
+public interface FutureOperations<T> extends
+					IntOperators<T>,DoubleOperators<T>, LongOperators<T>,
+						ReactiveStreamsTerminalFutureOperations<T>,
+						FutureCollectable<T>
+					{
 
 	
 	
@@ -82,13 +86,13 @@ public interface FutureOperations<T> extends IntOperators<T>,DoubleOperators<T>,
 	 * 
 	 * @see org.jooq.lambda.Seq#minBy(Function)
 	 */
-	public  <U extends Comparable<U>> CompletableFuture<Optional<T>> minBy(Function<T, U> function);
+	public  <U extends Comparable<? super U>> CompletableFuture<Optional<T>> minBy(Function<? super T, ? extends U> function);
 	/**
 	 * Asynchronously capture the maximum value in this stream using the provided function
 	 * 
 	 *  @see org.jooq.lambda.Seq#maxBy(Function)
 	 */
-	public  <U extends Comparable<U>> CompletableFuture<Optional<T>> maxBy(Function<T, U> function);
+	public  <U extends Comparable<? super U>> CompletableFuture<Optional<T>> maxBy(Function<? super T, ? extends U> function);
 	
 	/**
 	 * Asynchronously perform a Stream collection
@@ -192,6 +196,7 @@ public interface FutureOperations<T> extends IntOperators<T>,DoubleOperators<T>,
 	 * 
 	 */
 	public CompletableFuture<Long> count();
+	
 	public  CompletableFuture<String> join(CharSequence sep);
 	/**
 	 * Perform an asynchronous join operation

@@ -18,7 +18,7 @@ public class ComprehensionTest {
 		
 		CompletableFuture<String> future = CompletableFuture.supplyAsync(this::loadData);
 		CompletableFuture<List<String>> results1 = Do.add(future)
- 														.add(Javaslang.anyM(List.ofAll("first","second")))
+ 														.add(Javaslang.anyM(List.of("first","second")))
  														.yield( loadedData -> localData-> loadedData + ":" + localData )
  														.unwrap();
 		
