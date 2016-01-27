@@ -5,6 +5,9 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
+
+import java.util.List;
+
 import javaslang.collection.Stream;
 
 import org.junit.Test;
@@ -25,7 +28,7 @@ public class StreamUtilsStreamTest {
 	
 	@Test
 	public void testFlatMap(){
-		assertThat(StreamUtils.flatMapStream(Stream.ofAll( asList("1","10"), asList("2"),asList("3"),asList("4")), list -> list.stream() ).toJavaList(),hasItem("10"));
+		assertThat(StreamUtils.flatMapStream(Stream.<List<String>>ofAll( asList("1","10"), asList("2"),asList("3"),asList("4")), list -> list.stream() ).toJavaList(),hasItem("10"));
 	}
 	
 	

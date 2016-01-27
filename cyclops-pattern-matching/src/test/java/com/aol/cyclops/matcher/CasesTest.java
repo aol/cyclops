@@ -31,7 +31,7 @@ public class CasesTest {
 	
 	@Test
 	public void ofPStack() {
-		Cases cases = Cases.ofList((List)Arrays.asList(Case.of(input->true,input->"hello")));
+		Cases cases = Cases.ofList(Arrays.asList(Case.of(input->true,input->"hello")));
 		assertThat(cases.size(),is(1));
 	}
 
