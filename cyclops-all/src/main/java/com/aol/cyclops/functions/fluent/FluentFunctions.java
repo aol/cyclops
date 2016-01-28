@@ -10,10 +10,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.experimental.Wither;
-
 import org.jooq.lambda.fi.util.function.CheckedBiConsumer;
 import org.jooq.lambda.fi.util.function.CheckedBiFunction;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
@@ -39,6 +35,10 @@ import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.monad.functions.LiftMFunctions;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.trycatch.Try;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.Wither;
 public class FluentFunctions {
 
 	/**

@@ -20,7 +20,7 @@ import com.aol.cyclops.sequence.SequenceM;
 import fj.data.Seq;
 
 public class HotStreamTest {
-	static final Executor exec = Executors.newFixedThreadPool(1);
+	static final Executor exec = Executors.newFixedThreadPool(4);
 	volatile Object value;
 	
 	@Test
@@ -111,12 +111,13 @@ public class HotStreamTest {
 				.peek(v->value=v)
 				.peek(v->latch.countDown())
 				.pausableHotStream(exec);
+		Object oldValue = value;
 		s.connect()
-				.limit(100)
+				.limit(1000)
 				.futureOperations(ForkJoinPool.commonPool())
 				.forEach(System.out::println);
 		
-		Object oldValue = value;
+		
 		s.pause();
 		s.unpause();
 		LockSupport.parkNanos(1000l);
