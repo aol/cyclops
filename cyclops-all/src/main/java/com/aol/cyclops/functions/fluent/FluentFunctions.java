@@ -1,6 +1,7 @@
 package com.aol.cyclops.functions.fluent;
 
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -980,6 +981,10 @@ public class FluentFunctions {
 			return CompletableFuture.supplyAsync(()->FluentFunctions.of(fn),ex);
 		}
 		
+	   public <R2> FluentTriFunction<T1,T2,T3,R2> andThen(Function<? super R, ? extends R2> after) {
+	        Objects.requireNonNull(after);
+	        return FluentFunctions.of((T1 t1,T2 t2, T3 t3) -> after.apply(apply(t1,t2,t3)));
+	    }
 	}
 	
 	@AllArgsConstructor

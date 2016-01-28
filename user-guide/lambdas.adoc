@@ -5,6 +5,7 @@ Cyclops provides a number of classes that makes working with Java 8 lambda expre
 
 .Lambda Helper Classes
 ****
+1. FluentFunctions : a fluent api for manipulating Supplier, Functions, BiFunctions, TriFunctions and equivalent method reference. Easy AOP, caching, async execution and more.
 1. Mutable : a wrapper class for a mutable local (or external value)
 1. LazyImmutable : a value that can be set just once, and computed lazily
 1. ExceptionSoftener : because JDK 8 functional interfaces don't support checked exceptions, ExceptionSoftener allows CheckedExceptions to be Softened to Unchecked Exceptions without impacting their type (equiavlent to Lombok's Sneaky Throws) - and provides a number of static methods for Softening the jOOλ Checked Functional Interfaces.
@@ -15,7 +16,383 @@ Cyclops provides a number of classes that makes working with Java 8 lambda expre
 1. PartialApplicator : Lazily set some of the parameters on a multi-parameter function, returning a function with the remaining parameters.
 ****
 
+=== FluentFunctions
 
+Since cyclops 7.3.0
+
+==== Overview
+
+Cyclops provides a wide array of static utilities for manipulating functions & method references and FluentFunctions brings it together in a nice easy to use API. 
+
+==== Features include
+
+1. AOP : before, after and around advice
+1. Caching : memoization, including with external caches (e.g. Guava)
+1. Error handling and recovery, Configurable retry : recover and retry operators
+1. Exception softening : soften checked exceptions to runtimeexcetions without changing the type
+1. Logging & println : log inputs, outputs and exceptions. Print to the console inputs, outputs and exceptions (delegates a call to log)
+1. Pattern matching : conditional behaviour based on function outputs
+1. Currying & Partial Application : convert a Multi-parameter function into a chain of single parameter functions. Convert a Multi-parameter function into a lesser parametered function
+1. Generate a Stream from the output of the function (via iterate and generate)
+1. Lifting : lift a partial function to a complete one, handle nulls, exceptions, liftM to any Monad type
+1. Async execution
+1. Convert statements (void methods & consumers) to expressions (functions with return types).
+
+==== Feature examples
+
+
+We can illustrate FluentFunctions funcationality with a number of examples.
+
+====== Error and recovery
+
+.Handling exceptions with FluentFunctions
+====
+Given a method that throws an Exception (in this case a contrived example where the first call always fails, but subsequent calls succeed).
+
+[source,java]
+----
+int times =0;
+public String exceptionalFirstTime(String input) throws IOException{
+        if(times==0){
+            times++;
+            throw new IOException();
+        }
+        return input + " world"; 
+}
+----
+We can make use of FluentFunctions to retry the method twice 500ms apart.
+[source,java]
+----
+FluentFunctions.ofChecked(this::exceptionalFirstTime)
+               .println()
+               .retry(2,500)
+               .apply("hello");   
+----
+
+And the output will look something like this (thanks to the println operator).
+
+[source,java]
+----
+(fluent-function-Parameter[hello])
+java.io.IOException
+    at com.aol.cyclops.functions.fluent.FunctionsTest.exceptionalFirstTime(FunctionsTest.java:95)
+   ...
+(fluent-function-Parameter[hello])
+(fluent-function-Result[hello world])
+----
+
+Alternatively we could decide to recover from the thrown exception.
+
+[source,java]
+----
+FluentFunctions.ofChecked(this::exceptionalFirstTime)
+               .recover(IOException.class, in->in+"boo!")
+               .println()
+               .apply("hello ");   
+
+        
+----
+
+And the output would look like this (notice the missing StackTrace as the Exception has now been handled!.
+
+[source,java]
+----
+(fluent-function-Parameter[hello ])
+(fluent-function-Result[hello boo!]) 
+----
+====
+
+.Caching method calls with FluentFunctions
+====
+
+With a method that does simple addition, we can keep track of the number of times it is called.
+
+[source,java]
+----
+int called;
+public int addOne(int i ){
+        called++;
+       return i+1;
+}
+----
+
+If we use the memoize (cache) method on FluentFunctions, all calls to our method will be cached.
+
+[source,java]
+----
+Function fn = FluentFunctions.of(this::addOne)
+                             .name("myFunction")
+                             .memoize();
+----
+
+Calling apply multiple times will result in called being incremented only once.
+
+[source,java]
+----
+fn.apply(10);
+fn.apply(10);
+fn.apply(10);
+
+called is 1
+----
+
+But, c'mere, there's more..
+
+We can plugin any cache implementation we like, so let's set up a Guava cache (Caffiene has a similar API).
+
+[source,java]
+----
+Cache<Object, Integer> cache = CacheBuilder.newBuilder()
+                   .maximumSize(1000)
+                   .expireAfterWrite(10, TimeUnit.MINUTES)
+                   .build();
+
+---- 
+
+Now we can use our cache by passing a lambda expression in the format below to memoize. Our lambda must take two parameters, the first of which is the cache key, and the second is the function used to generate the value (in this example f is our method reference to addOne).
+
+[source,java]
+----
+Function fn = FluentFunctions.of(this::addOne)
+                             .name("myFunction")
+                             .memoize((key,f)->cache.get(key,()->f.apply(key)));
+
+fn.apply(10);
+fn.apply(10);
+fn.apply(10);
+
+called is 1
+----
+
+====
+====== Aspect Oriented Programming
+FluentFunctions makes it very easy to apply AOP-style advice.
+
+.Before Adivce
+====
+
+First let's create a method that returns true if a variable has already been set to the input value the method takes.
+
+[source,java]
+----
+int set;
+public boolean events(Integer i){
+        return set==i;
+}
+----
+
+Events will return true, if set has already been set to i. Let's use this method to illustrate the application of before advice.
+
+*Before advice*
+
+We can use before advice, to capture the input to our method, *before* that method is called.
+
+[source,java]
+----
+set = 0;
+FluentFunctions.of(this::events)
+               .before(i->set=i)
+               .println()
+               .apply(10);
+----
+Using the println() operator our output looks like this
+
+[source,java]
+----
+(fluent-function-Parameter[10])
+(fluent-function-Result[true])
+----
+As you can see events returns true, because the input 10 has been captured and the variable set has been set to 10 in our before advice.
+
+====
+.After Advice
+====
+
+With After Advice we can capture the input to our method, and the output from our method *after* it has been called. So, let's capture both in two variables setIn and setOut.
+
+[source,java]
+----
+setIn= 0;
+setOut = true
+
+FluentFunctions.of(this::events)
+               .after((in,out)->{setIn=in;setOut=out;} )
+               .println()
+               .apply(10);
+----
+
+At the end out our run setIn will be 10 (the input) and setOut will be false (our result - because we are no longer setting the value of set to the input parameter before events is called).
+
+[source,java]
+----
+(fluent-function-Parameter[10])
+(fluent-function-Result[false])
+
+setIn =10
+setOut = false               
+----
+
+====
+
+.Around advice
+====
+
+With *Around Advice* we can control whether or not or methods are executed, and with what parameters they are executed, as well as having the facility to change the return value.
+
+Given a method that simply adds 1 to a parameter.
+
+[source,java]
+----
+public int addOne(int i ){
+        return i+1;
+}
+----
+
+We can construct Around advice that modifies the input parameter to our method, in this case by incrementing it by 1 before the method is called.
+
+[source,java]
+----
+FluentFunctions.of(this::addOne)
+               .around(advice->advice.proceed(advice.param+1))
+               .println()
+               .apply(10)
+----
+
+And our output looks like this (we add two to the input of ten).
+
+[source,java]
+----
+(fluent-function-Parameter[10])
+(fluent-function-Result[12])
+
+//12 because addOne adds one and so does the around advice
+----
+
+====
+
+====== Pattern Matching
+
+We can also use cyclops Pattern Matching to implement conditional logic after function execution.
+
+.Pattern Matching example
+====
+
+In this example we will call a method that simply adds 1 to its input. If the result is 2, our pattern matcher will return 3 instead, otherise -1 will be returned.
+
+[source,java]
+----
+FluentFunctions.of(this::addOne)    
+               .matches(-1,c->c.hasValues(2).then(i->3))
+               .apply(1)    
+
+//returns 3  
+----
+====
+
+===== Stream Generation & Iteration
+
+We can use FluentFunctions to turn any method (3 parameter or less) into a Stream generator. Let's find out how with some examples.
+
+.Stream generation
+====
+
+Given a method that takes a value adds a timestamp and returns it.
+
+[source,java]
+----
+public String gen(String input){
+        return input+System.currentTimeMillis();
+}
+----
+
+We can generate a Stream from this method using FluentFunctions as follows 
+
+
+[source,java]
+----
+FluentFunctions.of(this::gen)
+               .println()
+               .generate("next element")
+               .onePer(1, TimeUnit.SECONDS)
+               .forEach(System.out::println);
+----
+
+In the example above the call to generate results in a SequenceM, a powerful JDK 8 Stream extension that forms part of cyclops. We use the onePer operator to limit the number of emissions by this Stream to one per second.
+
+The output from our Stream will look something like this.
+[source,java]
+----
+(fluent-function-Parameter[next element])
+(fluent-function-Result[next element1453819221151])
+next element1453819221151
+(fluent-function-Parameter[next element])
+(fluent-function-Result[next element1453819221151])
+next element1453819221151
+(fluent-function-Parameter[next element])
+(fluent-function-Result[next element1453819222153])
+next element1453819222153
+(fluent-function-Parameter[next element])
+(fluent-function-Result[next element1453819223155])
+next element1453819223155
+(fluent-function-Parameter[next element])
+(fluent-function-Result[next element1453819224158])
+----
+
+====
+.Stream iteration
+====
+We can also use a method or function to iterate infinitely over it's own input / output data cycle.
+
+In the example below we use the method addOne that adds 1 to it's input to generate an infinite sequence of numbers starting from 95281. 
+
+[source,java]
+----
+FluentFunctions.of(this::addOne)    
+                        .iterate(95281,i->i)
+                        .forEach(System.out::println);  
+95282
+95283
+95284
+95285
+95286
+95287
+95288
+95289
+95290
+95291
+95292
+95293
+95294     
+----
+
+Note in orde to cycle infinitely over a methods input/output data output must be mapped back to input type on each cycle. Iterate takes a seed value and a function that maps from output types to input types.
+====
+
+====== Lifting functions
+
+Lifting functions refers to the ability to lift a function to a higher context, for example to lift a partial function (one that does not apply to all possible input values) to a complete one. The lift methods in FluentFunctions allow methods to be lifted to accept and return Optionals (for null-handling at either end), Try (for exception handling), or to any other monad type via AnyM.
+
+.Lifting example
+====
+Let's start with a function that add's one to a number that accepts a nullable Integer, and a variable of type Integer that just happens to be null.
+
+[source,java]
+----
+public Integer addOne(Integer i ){
+        return i+1;
+}
+Integer nullValue = null;
+----
+
+Calling addOne directly with nullValue will result in a null pointer exception. Using the lift method however, we can wrap addOne so that it accepts and returns Optional, thus completely avoiding the possibilty of an NPE.
+[source,java]
+----
+FluentFunctions.of(this::addOne)    
+               .lift()
+               .apply(Optional.ofNullable(nullValue)); 
+----
+
+====
 === Mutable
 
 ==== Overview
