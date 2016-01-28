@@ -1,13 +1,12 @@
 package com.aol.cyclops.functions.fluent;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.io.IOException;
 
 import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
-
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 public class ExpressionTest {
 
 	@Test

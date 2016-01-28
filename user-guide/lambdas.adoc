@@ -43,7 +43,7 @@ Cyclops provides a wide array of static utilities for manipulating functions & m
 ==== Feature examples
 
 
-We can illustrate FluentFunctions funcationality with a number of examples.
+We can illustrate FluentFunctions funcationality with a number of examples. The nature of many of these operations will be described in more detail, later on in this document, in individually dedicated sections.
 
 ====== Error and recovery
 
