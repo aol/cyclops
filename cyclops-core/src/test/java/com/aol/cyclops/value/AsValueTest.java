@@ -60,7 +60,5 @@ public class AsValueTest {
 	}
 <<<<<<< HEAD
 **/
-=======
-	**/
->>>>>>> master
+
 }

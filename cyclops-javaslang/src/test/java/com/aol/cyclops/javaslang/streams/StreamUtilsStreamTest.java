@@ -28,11 +28,8 @@ public class StreamUtilsStreamTest {
 	
 	@Test
 	public void testFlatMap(){
-<<<<<<< HEAD
-		assertThat(StreamUtils.flatMapStream(Stream.<List<String>>ofAll( asList("1","10"), asList("2"),asList("3"),asList("4")), list -> list.stream() ).toJavaList(),hasItem("10"));
-=======
-		assertThat(StreamUtils.flatMapStream(Stream.of( asList("1","10"), asList("2"),asList("3"),asList("4")), list -> list.stream() ).toJavaList(),hasItem("10"));
->>>>>>> master
+
+		assertThat(StreamUtils.flatMapStream(Stream.<List<String>>of( asList("1","10"), asList("2"),asList("3"),asList("4")), list -> list.stream() ).toJavaList(),hasItem("10"));
 	}
 	
 	
