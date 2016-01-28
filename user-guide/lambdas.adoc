@@ -1,3 +1,5 @@
+[index]
+
 == Working with Lambdas
 
 Cyclops provides a number of classes that makes working with Java 8 lambda expressions a little easier, they are listed below.
