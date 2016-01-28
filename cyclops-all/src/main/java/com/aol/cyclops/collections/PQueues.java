@@ -13,6 +13,7 @@ import com.aol.cyclops.sequence.Reducers;
 
 public class PQueues {
 	public static <T> PQueue<T> of(T...values){
+		
 		PQueue<T> result = empty();
 		for(T value : values){
 			result = result.plus(value);
