@@ -8,7 +8,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -121,13 +121,29 @@ public class BatchingTest {
 	@Test
 	public void onePerSecond() {
 
-		
+		long start = System.currentTimeMillis();
 				iterate(0, it -> it + 1)
-				.limit(100)
-				.onePer(1, TimeUnit.MICROSECONDS)
+				.limit(3)
+				.onePer(1, TimeUnit.SECONDS)
 				.map(seconds -> "hello!")
 				.peek(System.out::println)
 				.toList();
+				
+	 assertTrue(System.currentTimeMillis()-start>1900);
+
+	}
+	@Test
+	public void xPerSecond() {
+
+		long start = System.currentTimeMillis();
+				iterate(1, it -> it + 1)
+				.limit(3)
+				.xPer(1,1, TimeUnit.SECONDS)
+				.map(seconds -> "hello!")
+				.peek(System.out::println)
+				.toList();
+				
+	 assertTrue(System.currentTimeMillis()-start>1900);
 
 	}
 

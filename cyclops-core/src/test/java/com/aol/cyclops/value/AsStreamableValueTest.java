@@ -45,6 +45,6 @@ public class AsStreamableValueTest {
 		double bonus;
 		
 	}
-	**/
+**/
 
 }

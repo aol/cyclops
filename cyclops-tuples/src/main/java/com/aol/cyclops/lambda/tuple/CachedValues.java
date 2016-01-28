@@ -77,7 +77,7 @@ public interface CachedValues extends Iterable, ValueObject, ToStream, Doable, M
 	/**
 	 * Wrap multiple reducers or monoids into a single reducer instance,
 	 * that can be used to reduce a given steam to multiple different values simultanously
-	 * 
+	 * <pre>
 	 * {@code
 	 * 
 	 * Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
@@ -88,9 +88,11 @@ public interface CachedValues extends Iterable, ValueObject, ToStream, Doable, M
 		assertThat(result,equalTo(tuple(10,24)));
 	 * 
 	 * }
+	 * </pre>
 	 * 
 	 * Or alternatively 
 	 * 
+	 * <pre>
 	 * {@code
 	 * 
 	 * Monoid<String> concat = Monoid.of("",(a,b)->a+b);
@@ -102,8 +104,10 @@ public interface CachedValues extends Iterable, ValueObject, ToStream, Doable, M
 		                  .reduce(reducer.zero(),reducer.reducer())
 		                  ,equalTo(tuple("helloworldwoo!",",hello,world,woo!")));
 	 * }
+	 * </pre>
 	 * @return
 	 */
+	@Deprecated
 	default <T extends CachedValues> Monoid<T> asReducer(){
 		List<Monoid> reducers = (List)getCachedValues().stream().filter(c-> c instanceof Monoid).collect(Collectors.toList());
 		return new Monoid(){
@@ -142,6 +146,7 @@ public interface CachedValues extends Iterable, ValueObject, ToStream, Doable, M
 	 * 
 	 * @return Collector
 	 */
+	@Deprecated
 	default <T,A,R> Collector<T,A,R> asCollector(){
 
 		List<Collector> collectors = (List)getCachedValues().stream().filter(c-> c instanceof Collector).collect(Collectors.toList());
