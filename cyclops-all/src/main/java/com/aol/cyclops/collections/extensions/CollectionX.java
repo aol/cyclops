@@ -4,24 +4,53 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.BaseStream;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.Collectable;
+
+import com.aol.cyclops.comprehensions.donotation.typed.Do;
+import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.SequenceMCollectable;
 import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.trampoline.Trampoline;
-//foldLeft, foldRight, reverse
+
 //pattern match, for comprehensions
 public interface CollectionX<T> extends Iterable<T>, Collection<T>,SequenceMCollectable<T>{
 	
-	SequenceM<T> stream();
-	<T> Monoid<Collection<T>> monoid();
+	@Override
+	default SequenceM<T> stream(){
+		
+		return SequenceM.fromIterable(this);
+	}
+	@Override
+	default Collectable<T> collectable(){
+		return stream();
+	}
+	
+	default Optional<T> getAtIndex(int index){
+		return stream().get(index);
+	}
+	
+	default HeadAndTail<T> headAndTail(){
+		return new HeadAndTail<>(iterator());
+	}
+	
+	default T head(){
+		return iterator().next();
+	}
 	<T1> CollectionX<T1> from(Collection<T1> c);
+	CollectionX<T> reverse();
 	/**
 	 * <pre>
 	 * {@code 
@@ -41,6 +70,7 @@ public interface CollectionX<T> extends Iterable<T>, Collection<T>,SequenceMColl
 	 *         in this Stream
 	 */
 	default T single() {
+		
 		Iterator<T> it = iterator();
 		if (it.hasNext()) {
 			T result = it.next();
@@ -119,33 +149,15 @@ public interface CollectionX<T> extends Iterable<T>, Collection<T>,SequenceMColl
 	default Optional<T> findAny(){
 		return stream().findAny();
 	}
-	default CollectionX<T> filter(Predicate<? super T> pred){
-		return from(this.<T>monoid().mapReduce(stream().filter(pred)));
-	}
-	default <R> CollectionX<R> map(Function<? super T, ? extends R> mapper){
-		return from(this.<R>monoid().mapReduce(stream().map(mapper)));
-	}
-	default <R> CollectionX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper){
-		return from(this.<R>monoid().mapReduce(stream().flatMap(mapper)));
-	}
-	default CollectionX<T> limit(long num){
-		return from(this.<T>monoid().mapReduce(stream().limit(num)));
-	}
-	default CollectionX<T> skip(long num){
-		return from(this.<T>monoid().mapReduce(stream().skip(num)));
-	}
-	default CollectionX<T> takeWhile(Predicate<? super T> p){
-		return from(this.<T>monoid().mapReduce(stream().limitWhile(p)));
-	}
-	default CollectionX<T> dropWhile(Predicate<? super T> p){
-		return from(this.<T>monoid().mapReduce(stream().skipWhile(p)));
-	}
-	default CollectionX<T> takeUntil(Predicate<? super T> p){
-		return from(this.<T>monoid().mapReduce(stream().limitUntil(p)));
-	}
-	default CollectionX<T> dropUntil(Predicate<? super T> p){
-		return from(this.<T>monoid().mapReduce(stream().skipUntil(p)));
-	}
+	CollectionX<T> filter(Predicate<? super T> pred);
+	<R> CollectionX<R> map(Function<? super T, ? extends R> mapper);
+	<R> CollectionX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper);
+	CollectionX<T> limit(long num);
+	CollectionX<T> skip(long num);
+	CollectionX<T> takeWhile(Predicate<? super T> p);
+	CollectionX<T> dropWhile(Predicate<? super T> p);
+	CollectionX<T> takeUntil(Predicate<? super T> p);
+	CollectionX<T> dropUntil(Predicate<? super T> p);
 	/**
 	 * <pre>
 	 * {@code
@@ -241,10 +253,7 @@ public interface CollectionX<T> extends Iterable<T>, Collection<T>,SequenceMColl
 	 * @param mapper
 	 * @return
 	 */
-	default <R> CollectionX<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper){
-		
-		 return  from(this.<R>monoid().mapReduce(stream().trampoline(mapper)));	 
-	}
+	<R> CollectionX<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper);
 
 	/**
 	 * Attempt to map this Sequence to the same type as the supplied Monoid
@@ -300,4 +309,437 @@ public interface CollectionX<T> extends Iterable<T>, Collection<T>,SequenceMColl
 	default <R> R mapReduce(Function<? super T, ? extends R> mapper, Monoid<R> reducer){
 		return stream().mapReduce(mapper,reducer);
 	}
+	/**
+	 * <pre>
+	 * {@code 
+	 * SequenceM.of("hello","2","world","4").reduce(Reducers.toString(","));
+	 * 
+	 * //hello,2,world,4
+	 * }
+	 * </pre>
+	 * 
+	 * @param reducer
+	 *            Use supplied Monoid to reduce values
+	 * @return reduced values
+	 */
+	default T reduce(Monoid<T> reducer){
+		return stream().reduce(reducer);
+	}
+
+	/*
+	 * <pre> {@code assertThat(SequenceM.of(1,2,3,4,5).map(it -> it*100).reduce(
+	 * (acc,next) -> acc+next).get(),equalTo(1500)); } </pre>
+	 */
+	default Optional<T> reduce(BinaryOperator<T> accumulator){
+		return stream().reduce(accumulator);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.stream.Stream#reduce(java.lang.Object,
+	 * java.util.function.BinaryOperator)
+	 */
+	default T reduce(T identity, BinaryOperator<T> accumulator){
+		return stream().reduce(identity, accumulator);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.stream.Stream#reduce(java.lang.Object,
+	 * java.util.function.BiFunction, java.util.function.BinaryOperator)
+	 */
+	default <U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner){
+		return stream().reduce(identity,accumulator,combiner);
+	}
+
+	/**
+	 * Reduce with multiple reducers in parallel NB if this Monad is an Optional
+	 * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
+	 * was one value To reduce over the values on the list, called
+	 * streamedMonad() first. I.e. streamedMonad().reduce(reducer)
+	 * 
+	 * <pre>
+	 * {
+	 * 	&#064;code
+	 * 	Monoid&lt;Integer&gt; sum = Monoid.of(0, (a, b) -&gt; a + b);
+	 * 	Monoid&lt;Integer&gt; mult = Monoid.of(1, (a, b) -&gt; a * b);
+	 * 	List&lt;Integer&gt; result = SequenceM.of(1, 2, 3, 4).reduce(Arrays.asList(sum, mult).stream());
+	 * 
+	 * 	assertThat(result, equalTo(Arrays.asList(10, 24)));
+	 * 
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param reducers
+	 * @return
+	 */
+	default List<T> reduce(Stream<? extends Monoid<T>> reducers){
+		return stream().reduce(reducers);
+	}
+
+	/**
+	 * Reduce with multiple reducers in parallel NB if this Monad is an Optional
+	 * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
+	 * was one value To reduce over the values on the list, called
+	 * streamedMonad() first. I.e. streamedMonad().reduce(reducer)
+	 * 
+	 * <pre>
+	 * {@code 
+	 * Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
+	 * 		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
+	 * 		List<Integer> result = SequenceM.of(1,2,3,4))
+	 * 										.reduce(Arrays.asList(sum,mult) );
+	 * 				
+	 * 		 
+	 * 		assertThat(result,equalTo(Arrays.asList(10,24)));
+	 * 
+	 * }
+	 * 
+	 * @param reducers
+	 * @return
+	 */
+	default List<T> reduce(Iterable<Monoid<T>> reducers){
+		return stream().reduce(reducers);
+	}
+
+	/**
+	 * 
+	 * 
+	 <pre>
+	 * 		{@code
+	 * 		SequenceM.of("a","b","c").foldLeft(Reducers.toString(""));
+	 *        
+	 *         // "abc"
+	 *         }
+	 * </pre>
+	 * 
+	 * @param reducer
+	 *            Use supplied Monoid to reduce values starting via foldLeft
+	 * @return Reduced result
+	 */
+	default T foldLeft(Monoid<T> reducer){
+		return stream().foldLeft(reducer);
+	}
+
+	/**
+	 * foldLeft : immutable reduction from left to right
+	 * 
+	 * <pre>
+	 * {@code 
+	 * 
+	 * assertTrue(SequenceM.of("a", "b", "c").foldLeft("", String::concat).equals("abc"));
+	 * }
+	 * </pre>
+	 */
+	default T foldLeft(T identity, BinaryOperator<T> accumulator){
+		return stream().foldLeft(identity,accumulator);
+	}
+
+	/**
+	 * Attempt to map this Monad to the same type as the supplied Monoid (using
+	 * mapToType on the monoid interface) Then use Monoid to reduce values
+	 * 
+	 * <pre>
+	 * 		{@code
+	 * 		SequenceM.of(1,2,3).foldLeftMapToType(Reducers.toString(""));
+	 *        
+	 *         // "123"
+	 *         }
+	 * </pre>
+	 * 
+	 * @param reducer
+	 *            Monoid to reduce values
+	 * @return Reduce result
+	 */
+	default <T> T foldLeftMapToType(Monoid<T> reducer){
+		return stream().foldLeftMapToType(reducer);
+	}
+
+	/**
+	 * 
+	 * <pre>
+	 * 		{@code
+	 * 		SequenceM.of("a","b","c").foldRight(Reducers.toString(""));
+	 *        
+	 *         // "cab"
+	 *         }
+	 * </pre>
+	 * 
+	 * @param reducer
+	 *            Use supplied Monoid to reduce values starting via foldRight
+	 * @return Reduced result
+	 */
+	default T foldRight(Monoid<T> reducer){
+		return stream().foldRight(reducer);
+	}
+
+	/**
+	 * Immutable reduction from right to left
+	 * 
+	 * <pre>
+	 * {@code 
+	 *  assertTrue(SequenceM.of("a","b","c").foldRight("", String::concat).equals("cba"));
+	 * }
+	 * </pre>
+	 * 
+	 * @param identity
+	 * @param accumulator
+	 * @return
+	 */
+	default T foldRight(T identity, BinaryOperator<T> accumulator){
+		return stream().foldRight(identity,accumulator);
+	}
+
+	/**
+	 * Attempt to map this Monad to the same type as the supplied Monoid (using
+	 * mapToType on the monoid interface) Then use Monoid to reduce values
+	 * 
+	 * <pre>
+	 * 		{@code
+	 * 		SequenceM.of(1,2,3).foldRightMapToType(Reducers.toString(""));
+	 *        
+	 *         // "321"
+	 *         }
+	 * </pre>
+	 * 
+	 * 
+	 * @param reducer
+	 *            Monoid to reduce values
+	 * @return Reduce result
+	 */
+	default <T> T foldRightMapToType(Monoid<T> reducer){
+		return stream().foldRightMapToType(reducer);
+	}
+	/**
+	 * Perform a three level nested internal iteration over this Stream and the
+	 * supplied streams
+	 *
+	 * <pre>
+	 * {@code 
+	 * SequenceM.of(1,2)
+	 * 						.forEach3(a->IntStream.range(10,13),
+	 * 						        a->b->Stream.of(""+(a+b),"hello world"),
+	 * 									a->b->c->c+":"a+":"+b);
+	 * 									
+	 * 
+	 *  //SequenceM[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
+	 * }
+	 * </pre>
+	 * 
+	 * @param stream1
+	 *            Nested Stream to iterate over
+	 * @param stream2
+	 *            Nested Stream to iterate over
+	 * @param yieldingFunction
+	 *            Function with pointers to the current element from both
+	 *            Streams that generates the new elements
+	 * @return SequenceM with elements generated via nested iteration
+	 */
+	default <R1, R2, R> CollectionX<R> forEach3(Function<? super T, Iterable<R1>> stream1,
+			Function<? super T, Function<? super R1, Iterable<R2>>> stream2,
+			Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction){
+		return Do.add(stream())
+				.withIterable(stream1)
+				.withIterable(stream2)
+				.yield(yieldingFunction)
+				.unwrap();
+		
+	}
+
+
+	/**
+	 * Perform a three level nested internal iteration over this Stream and the
+	 * supplied streams
+	 * 
+	 * <pre>
+	 * {@code 
+	 * SequenceM.of(1,2,3)
+	 * 						.forEach3(a->IntStream.range(10,13),
+	 * 						      a->b->Stream.of(""+(a+b),"hello world"),
+	 * 						         a->b->c-> c!=3,
+	 * 									a->b->c->c+":"a+":"+b);
+	 * 									
+	 * 
+	 *  //SequenceM[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param stream1
+	 *            Nested Stream to iterate over
+	 * @param stream2
+	 *            Nested Stream to iterate over
+	 * @param filterFunction
+	 *            Filter to apply over elements before passing non-filtered
+	 *            values to the yielding function
+	 * @param yieldingFunction
+	 *            Function with pointers to the current element from both
+	 *            Streams that generates the new elements
+	 * @return SequenceM with elements generated via nested iteration
+	 */
+	default <R1, R2, R> SequenceM<R> forEach3(Function<? super T, Iterable<R1>> stream1,
+			Function<? super T, Function<? super R1, Iterable<R2>>> stream2,
+			Function<? super T, Function<? super R1, Function<? super R2, Boolean>>> filterFunction,
+			Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction){
+		return Do.add(stream())
+				.withIterable(stream1)
+				.withIterable(stream2)
+				.filter(filterFunction)
+				.yield(yieldingFunction)
+				.unwrap();
+	}
+
+	/**
+	 * Perform a two level nested internal iteration over this Stream and the
+	 * supplied stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * SequenceM.of(1,2,3)
+	 * 						.forEach2(a->IntStream.range(10,13),
+	 * 									a->b->a+b);
+	 * 									
+	 * 
+	 *  //SequenceM[11,14,12,15,13,16]
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param stream1
+	 *            Nested Stream to iterate over
+	 * @param yieldingFunction
+	 *            Function with pointers to the current element from both
+	 *            Streams that generates the new elements
+	 * @return SequenceM with elements generated via nested iteration
+	 */
+	default <R1, R> SequenceM<R> forEach2(Function<? super T, Iterable<R1>> stream1,
+			Function<? super T, Function<? super R1, ? extends R>> yieldingFunction){
+		
+		return Do.add(stream())
+				.withIterable(stream1)
+				.yield(yieldingFunction).unwrap();
+	}
+
+	/**
+	 * Perform a two level nested internal iteration over this Stream and the
+	 * supplied stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 * SequenceM.of(1,2,3)
+	 * 						.forEach2(a->IntStream.range(10,13),
+	 * 						            a->b-> a<3 && b>10,
+	 * 									a->b->a+b);
+	 * 									
+	 * 
+	 *  //SequenceM[14,15]
+	 * }
+	 * </pre>
+	 * 
+	 * @param stream1
+	 *            Nested Stream to iterate over
+	 * @param filterFunction
+	 *            Filter to apply over elements before passing non-filtered
+	 *            values to the yielding function
+	 * @param yieldingFunction
+	 *            Function with pointers to the current element from both
+	 *            Streams that generates the new elements
+	 * @return SequenceM with elements generated via nested iteration
+	 */
+	default <R1, R> SequenceM<R> forEach2(Function<? super T, Iterable<R1>> stream1, 
+			Function<? super T, Function<? super R1, Boolean>> filterFunction,
+			Function<? super T, Function<? super R1, ? extends R>> yieldingFunction){
+		return Do.add(stream())
+				.withIterable(stream1)
+				.filter(filterFunction)
+				.yield(yieldingFunction).unwrap();
+		
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.jooq.lambda.Seq#slice(long, long)
+	 */
+	Collection<T> slice(long from, long to);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.jooq.lambda.Seq#sorted(java.util.function.Function)
+	 */
+	<U extends Comparable<? super U>> Collection<T> sorted(Function<? super T, ? extends U> function);
+
+	/**
+	 * emit x elements per time period
+	 * 
+	 * <pre>
+	 * {
+	 * 	&#064;code
+	 * 	SimpleTimer timer = new SimpleTimer();
+	 * 	assertThat(SequenceM.of(1, 2, 3, 4, 5, 6).xPer(6, 100000000, TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(), is(6));
+	 * 
+	 * }
+	 * </pre>
+	 * 
+	 * @param x
+	 *            number of elements to emit
+	 * @param time
+	 *            period
+	 * @param t
+	 *            Time unit
+	 * @return SequenceM that emits x elements per time period
+	 */
+	default SequenceM<T> xPer(int x, long time, TimeUnit t){
+		return stream().xPer(x, time, t);
+	}
+
+	/**
+	 * emit one element per time period
+	 * 
+	 * <pre>
+	 * {@code 
+	 * SequenceM.iterate("", last -> "next")
+	 * 				.limit(100)
+	 * 				.batchBySize(10)
+	 * 				.onePer(1, TimeUnit.MICROSECONDS)
+	 * 				.peek(batch -> System.out.println("batched : " + batch))
+	 * 				.flatMap(Collection::stream)
+	 * 				.peek(individual -> System.out.println("Flattened : "
+	 * 						+ individual))
+	 * 				.forEach(a->{});
+	 * }
+	 * @param time period
+	 * @param t Time unit
+	 * @return SequenceM that emits 1 element per time period
+	 */
+	default SequenceM<T> onePer(long time, TimeUnit t){
+		return stream().onePer(time, t);
+	}
+
+
+	/**
+	 * emit elements after a fixed delay
+	 * 
+	 * <pre>
+	 * {
+	 * 	&#064;code
+	 * 	SimpleTimer timer = new SimpleTimer();
+	 * 	assertThat(SequenceM.of(1, 2, 3, 4, 5, 6).fixedDelay(10000, TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(), is(6));
+	 * 	assertThat(timer.getElapsedNanoseconds(), greaterThan(60000l));
+	 * }
+	 * </pre>
+	 * 
+	 * @param l
+	 *            time length in nanos of the delay
+	 * @param unit
+	 *            for the delay
+	 * @return SequenceM that emits each element after a fixed delay
+	 */
+	default SequenceM<T> fixedDelay(long l, TimeUnit unit){
+		return stream().fixedDelay(l, unit);
+	}
+
 }

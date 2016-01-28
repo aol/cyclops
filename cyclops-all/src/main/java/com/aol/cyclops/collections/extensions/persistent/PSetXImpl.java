@@ -1,4 +1,4 @@
-package com.aol.cyclops.collections.extensions;
+package com.aol.cyclops.collections.extensions.persistent;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 
 
 @AllArgsConstructor
-public class MapPSetX<T> implements SetX<T> {
+public class PSetXImpl<T> implements PSetX<T> {
 	
 	private final PSet<T> set;
 
@@ -62,8 +62,8 @@ public class MapPSetX<T> implements SetX<T> {
 	 * @return
 	 * @see org.pcollections.MapPSet#plus(java.lang.Object)
 	 */
-	public SetX<T> plus(T e) {
-		return new MapPSetX<>(set.plus(e));
+	public PSetX<T> plus(T e) {
+		return new PSetXImpl<>(set.plus(e));
 	}
 
 	/**
@@ -71,8 +71,8 @@ public class MapPSetX<T> implements SetX<T> {
 	 * @return
 	 * @see org.pcollections.MapPSet#minus(java.lang.Object)
 	 */
-	public  SetX<T> minus(Object e) {
-		return new MapPSetX<>(set.minus(e));
+	public  PSetX<T> minus(Object e) {
+		return new PSetXImpl<>(set.minus(e));
 	}
 
 	/**
@@ -80,8 +80,8 @@ public class MapPSetX<T> implements SetX<T> {
 	 * @return
 	 * @see org.pcollections.MapPSet#plusAll(java.util.Collection)
 	 */
-	public  SetX<T> plusAll(Collection<? extends T> list) {
-		return  new MapPSetX<>(set.plusAll(list));
+	public  PSetX<T> plusAll(Collection<? extends T> list) {
+		return  new PSetXImpl<>(set.plusAll(list));
 	}
 
 	/**
@@ -89,8 +89,8 @@ public class MapPSetX<T> implements SetX<T> {
 	 * @return
 	 * @see org.pcollections.MapPSet#minusAll(java.util.Collection)
 	 */
-	public SetX<T> minusAll(Collection<?> list) {
-		return  new MapPSetX<>(set.minusAll(list));
+	public PSetX<T> minusAll(Collection<?> list) {
+		return  new PSetXImpl<>(set.minusAll(list));
 	}
 
 	/**

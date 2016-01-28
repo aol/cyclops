@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import javaslang.algebra.Monad;
 import javaslang.collection.List;
+import javaslang.collection.Set;
 import javaslang.collection.Stream;
 import javaslang.control.Either;
 import javaslang.control.Either.LeftProjection;
