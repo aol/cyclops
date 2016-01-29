@@ -2,6 +2,7 @@ package com.aol.cyclops.collections.extensions.standard;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -22,7 +23,7 @@ import com.aol.cyclops.trampoline.Trampoline;
 
 public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T> {
 	static <T> Collector<T,?,SortedSet<T>> defaultCollector(){
-		return Collectors.toCollection(()-> new TreeSet<>());
+		return Collectors.toCollection(()-> new TreeSet<T>((Comparator)Comparator.<Comparable>naturalOrder()));
 	}
 	static <T> Collector<T,?,SortedSet<T>> immutableCollector(){
 		return Collectors.collectingAndThen(defaultCollector(), (SortedSet<T> d)->Collections.unmodifiableSortedSet(d));

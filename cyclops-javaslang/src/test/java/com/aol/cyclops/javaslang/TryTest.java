@@ -1,14 +1,11 @@
 package com.aol.cyclops.javaslang;
 
 
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
-
-import javaslang.control.Try;
-
 import org.junit.Test;
 
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
+
+import javaslang.control.Try;
 
 public class TryTest {
 

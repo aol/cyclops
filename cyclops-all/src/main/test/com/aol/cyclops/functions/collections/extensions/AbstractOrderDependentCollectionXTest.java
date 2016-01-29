@@ -2,11 +2,13 @@ package com.aol.cyclops.functions.collections.extensions;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
@@ -26,8 +28,17 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 		SequenceM<String> tail = headAndTail.tail();
 		assertThat(tail.headAndTail().head(), equalTo("world"));
 
+	} 
+	@Test
+    public void testScanLeftStringConcat() {
+        assertThat(of("a", "b", "c").scanLeft("", String::concat).toList().size(),
+        		is(4));
+    }
+	@Test
+	public void batchBySize(){
+		System.out.println(of(1,2,3,4,5,6).grouped(3).collect(Collectors.toList()));
+		assertThat(of(1,2,3,4,5,6).grouped(3).collect(Collectors.toList()).size(),is(2));
 	}
-
 	@Test
 	public void testReverse() {
 

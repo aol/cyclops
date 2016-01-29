@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
+import java.util.stream.Collector;
 
 import org.jooq.lambda.Collectable;
 
@@ -26,6 +27,46 @@ public interface SequenceMCollectable<T> extends Collectable<T> {
 	
 
 	
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#collect(java.util.stream.Collector)
+	 */
+	@Override
+	default <R, A> R collect(Collector<? super T, A, R> collector) {
+		return collectable().collect(collector);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#count()
+	 */
+	@Override
+	default long count() {
+		return collectable().count();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#count(java.util.function.Predicate)
+	 */
+	@Override
+	default long count(Predicate<? super T> predicate) {
+		return collectable().count(predicate);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#countDistinct(java.util.function.Predicate)
+	 */
+	@Override
+	default long countDistinct(Predicate<? super T> predicate) {
+		return collectable().countDistinct(predicate);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#countDistinctBy(java.util.function.Function, java.util.function.Predicate)
+	 */
+	@Override
+	default <U> long countDistinctBy(Function<? super T, ? extends U> function, Predicate<? super U> predicate) {
+		return collectable().countDistinctBy(function, predicate);
+	}
 
 	/**
 	 * Narrow this class to a Collectable
