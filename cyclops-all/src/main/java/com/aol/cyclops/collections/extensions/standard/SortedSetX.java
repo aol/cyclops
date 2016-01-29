@@ -1,6 +1,7 @@
 package com.aol.cyclops.collections.extensions.standard;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -17,7 +18,11 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T> {
 	static <T> Collector<T,?,SortedSet<T>> defaultCollector(){
 		return Collectors.toCollection(()-> new TreeSet<>());
 	}
-	static <T> Collector<T,?,SortedSetX<T>> toDequeX(){
+	static <T> Collector<T,?,SortedSet<T>> immutableCollector(){
+		return Collectors.collectingAndThen(defaultCollector(), (SortedSet<T> d)->Collections.unmodifiableSortedSet(d));
+
+	}
+	static <T> Collector<T,?,SortedSetX<T>> toSortedSetX(){
 		return Collectors.collectingAndThen(defaultCollector(), (SortedSet<T> d)->new SortedSetXImpl<>(d,defaultCollector()));
 		
 	}

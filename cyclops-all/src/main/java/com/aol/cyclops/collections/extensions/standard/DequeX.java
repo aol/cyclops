@@ -1,17 +1,14 @@
 package com.aol.cyclops.collections.extensions.standard;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
-import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.trampoline.Trampoline;
@@ -21,6 +18,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	static <T> Collector<T,?,Deque<T>> defaultCollector(){
 		return Collectors.toCollection(()-> new ArrayDeque<>());
 	}
+	
 	static <T> Collector<T,?,DequeX<T>> toDequeX(){
 		return Collectors.collectingAndThen(defaultCollector(), (Deque<T> d)->new DequeXImpl<>(d,defaultCollector()));
 		

@@ -2,8 +2,10 @@ package com.aol.cyclops.collections.extensions.standard;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -18,7 +20,11 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	static <T> Collector<T,?,Set<T>> defaultCollector(){
 		return Collectors.toCollection(()-> new HashSet<>());
 	}
-	static <T> Collector<T,?,SetX<T>> toDequeX(){
+	static <T> Collector<T,?,Set<T>> immutableCollector(){
+		return Collectors.collectingAndThen(defaultCollector(), (Set<T> d)->Collections.unmodifiableSet(d));
+
+	}
+	static <T> Collector<T,?,SetX<T>> toSetX(){
 		return Collectors.collectingAndThen(defaultCollector(), (Set<T> d)->new SetXImpl<>(d,defaultCollector()));
 		
 	}

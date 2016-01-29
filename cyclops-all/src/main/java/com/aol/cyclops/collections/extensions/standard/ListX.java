@@ -3,6 +3,7 @@ package com.aol.cyclops.collections.extensions.standard;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 import java.util.function.Function;
@@ -19,7 +20,11 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	static <T> Collector<T,?,List<T>> defaultCollector(){
 		return Collectors.toCollection(()-> new ArrayList<>());
 	}
-	static <T> Collector<T,?,ListX<T>> toDequeX(){
+	static <T> Collector<T,?,List<T>> immutableCollector(){
+		return Collectors.collectingAndThen(defaultCollector(), (List<T> d)->Collections.unmodifiableList(d));
+
+	}
+	static <T> Collector<T,?,ListX<T>> toListX(){
 		return Collectors.collectingAndThen(defaultCollector(), (List<T> d)->new ListXImpl<>(d,defaultCollector()));
 		
 	}

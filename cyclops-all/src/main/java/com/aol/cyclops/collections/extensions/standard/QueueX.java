@@ -18,7 +18,7 @@ public interface QueueX<T> extends Queue<T>, MutableCollectionX<T> {
 	static <T> Collector<T,?,Queue<T>> defaultCollector(){
 		return Collectors.toCollection(()-> new LinkedList<>());
 	}
-	static <T> Collector<T,?,QueueX<T>> toDequeX(){
+	static <T> Collector<T,?,QueueX<T>> toQueueX(){
 		return Collectors.collectingAndThen(defaultCollector(), (Queue<T> d)->new QueueXImpl<>(d,defaultCollector()));
 		
 	}
