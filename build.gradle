@@ -28,7 +28,7 @@ apply plugin: 'jacoco'
 apply from: custom('jacoco-version')
 
 sourceCompatibility = 1.8
-version = '0.99.7'
+version = '0.99.7.1'
 jar {
     manifest {
         attributes 'Implementation-Title': 'simple-react', 'Implementation-Version': version

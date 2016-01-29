@@ -51,7 +51,7 @@ public class ForEachTest {
 	
 		List<Integer> list = new ArrayList<>();
 		
-		Stream<Integer> stream = LazyFutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
+		Stream<Integer> stream = LazyFutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();},()->4).map(Supplier::get);
 		Subscription s = StreamUtils.forEachXWithError(stream, 2, i->list.add(i),
 								e->error=e);
 		
@@ -112,7 +112,7 @@ public class ForEachTest {
 	
 		List<Integer> list = new ArrayList<>();
 		assertThat(error,nullValue());
-		Stream<Integer> stream = LazyFutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();})
+		Stream<Integer> stream = LazyFutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();},()->4,()->5)
 													.withPublisherExecutor(new ForkJoinPool(1))
 													.async()
 													.map(Supplier::get);
@@ -120,11 +120,11 @@ public class ForEachTest {
 								e->error=e);
 		
 		ExceptionSoftener.softenRunnable(()->Thread.sleep(100)).run();
-		assertThat(list,hasItems(1,2,3));
-		assertThat(list.size(),equalTo(3));
+		assertThat(list,hasItems(1,2,3,4,5));
+		assertThat(list.size(),equalTo(5));
 		
-		assertThat(list,hasItems(1,2,3));
-		assertThat(list.size(),equalTo(3));
+		assertThat(list,hasItems(1,2,3,4,5));
+		assertThat(list.size(),equalTo(5));
 		
 	
 		assertThat(error,instanceOf(RuntimeException.class));
