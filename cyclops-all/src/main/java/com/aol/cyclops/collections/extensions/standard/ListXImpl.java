@@ -299,8 +299,8 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @return
 	 * @see java.util.List#subList(int, int)
 	 */
-	public List<T> subList(int fromIndex, int toIndex) {
-		return list.subList(fromIndex, toIndex);
+	public ListX<T> subList(int fromIndex, int toIndex) {
+		return new ListXImpl<>(list.subList(fromIndex, toIndex),getCollector());
 	}
 	/**
 	 * @return
