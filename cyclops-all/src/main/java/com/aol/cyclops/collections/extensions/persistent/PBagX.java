@@ -16,6 +16,12 @@ import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
+	//after module merge, move to reducers
+	public static <T> Monoid<PBagX<T>> toPQueueX() { 
+				return	Monoid.<PBagX<T>>of(PBagX.empty(), 
+										(PBagX<T> a) -> b -> a.plusAll(b),
+										(T x) -> PBagX.singleton(x));
+	}
 
 	public static<T> PBagX<T> of(T...values){
 		return new PBagXImpl<>(HashTreePBag.from(Arrays.asList(values)));

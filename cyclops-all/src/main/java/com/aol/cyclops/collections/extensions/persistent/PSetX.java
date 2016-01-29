@@ -14,7 +14,12 @@ import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
-
+	//after module merge, move to reducers
+	public static <T> Monoid<PSetX<T>> toPSetX() { 
+				return	Monoid.<PSetX<T>>of(PSetX.empty(), 
+										(PSetX<T> a) -> b -> a.plusAll(b),
+										(T x) -> PSetX.singleton(x));
+	}
 	public static <T> PSetX<T> of(T...values){
 		
 		return new PSetXImpl<>(HashTreePSet.from(Arrays.asList(values)));

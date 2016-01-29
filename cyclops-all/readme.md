@@ -72,6 +72,17 @@ Creating a SetX from an existing Set
      .collect(ListX.toListX());
  ```
  
+ Converting a ListX to a SetX and printing out the contents 
+ ```java
+  SetX<String> set = ListX.of(1,2,3)
+                                .flatMap(i->Arrays.asList(i+2,10))
+                                 .plus(5)
+                                 .map(i->"hello" + i)
+                                 .collect(SetX.toSetX());
+        
+ set.printOut();
+ ```
+  
 # FluentFunctions
 
 ## AOP

@@ -16,7 +16,12 @@ import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
-
+	//after module merge, move to reducers
+	public static <T> Monoid<PVectorX<T>> toPVectorX() { 
+			return	Monoid.<PVectorX<T>>of(PVectorX.empty(), 
+									(PVectorX<T> a) -> b -> a.plusAll(b),
+									(T x) -> PVectorX.singleton(x));
+	}
 	/**
 	 * Construct a PVector from the provided values 
 	 * 

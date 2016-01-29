@@ -17,14 +17,19 @@ import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T>{
-
+	//after module merge, move to reducers
+	public static <T> Monoid<POrderedSetX<T>> toPOrderedSetX() { 
+					return	Monoid.<POrderedSetX<T>>of(POrderedSetX.<T>empty(), 
+											(POrderedSetX<T> a) -> b -> a.plusAll(b),
+											(T x) -> POrderedSetX.singleton(x));
+	}
 	public static <T> POrderedSetX<T> of(T...values){
 		return new POrderedSetXImpl<>(OrderedPSet.from(Arrays.asList(values)));
 	}
-	public static <T> POrderedSet<T> empty(){
+	public static <T> POrderedSetX<T> empty(){
 		return new POrderedSetXImpl<>(OrderedPSet.empty());
 	}
-	public static <T> POrderedSet<T> singleton(T value){
+	public static <T> POrderedSetX<T> singleton(T value){
 		return new POrderedSetXImpl<>(OrderedPSet.singleton(value));
 	}
 	public static<T> POrderedSetX<T> fromCollection(Collection<T> stream){

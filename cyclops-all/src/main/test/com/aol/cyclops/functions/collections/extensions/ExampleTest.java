@@ -22,6 +22,17 @@ public class ExampleTest {
 			
 	}
 	@Test
+	public void listToSetX(){
+		SetX<String> set = ListX.of(1,2,3)
+								.flatMap(i->Arrays.asList(i+2,10))
+								 .plus(5)
+								 .map(i->"hello" + i)
+								 .collect(SetX.toSetX());
+		
+		set.printOut();
+					
+	}
+	@Test
 	public void listFlatMap(){
 		ListX.of(1,2,3)
 			.flatMap(i->Arrays.asList(i+2,10))
