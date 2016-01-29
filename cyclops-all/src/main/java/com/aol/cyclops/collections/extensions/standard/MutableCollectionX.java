@@ -1,11 +1,17 @@
 package com.aol.cyclops.collections.extensions.standard;
 
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple2;
+
 import com.aol.cyclops.collections.extensions.CollectionX;
+import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.trampoline.Trampoline;
 
@@ -93,6 +99,40 @@ public interface MutableCollectionX<T> extends CollectionX<T> {
 	default CollectionX<T> slice(long from, long to){
 		return fromStream(stream().slice(from,to));	 
 	}
+	
+	
+
+	default CollectionX<ListX<T>> grouped(int groupSize){
+		return fromStream(stream().grouped(groupSize).map(ListX::fromIterable));	 
+	}
+	default <K, A, D> CollectionX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream){
+		return fromStream(stream().grouped(classifier,downstream));	 
+	}
+	default <K> CollectionX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
+		return fromStream(stream().grouped(classifier));	 
+	}
+	default <U> CollectionX<Tuple2<T, U>> zip(Iterable<U> other){
+		return fromStream(stream().zip(other));
+	}
+	default CollectionX<ListX<T>> sliding(int windowSize){
+		return fromStream(stream().sliding(windowSize).map(ListX::fromIterable));	
+	}
+	default CollectionX<ListX<T>> sliding(int windowSize, int increment){
+		return fromStream(stream().sliding(windowSize,increment).map(ListX::fromIterable));	
+	}
+	default CollectionX<T> scanLeft(Monoid<T> monoid){
+		return fromStream(stream().scanLeft(monoid));	
+	}
+	default <U> CollectionX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
+		return fromStream(stream().scanLeft(seed,function));	
+	}
+	default CollectionX<T> scanRight(Monoid<T> monoid){
+		return fromStream(stream().scanRight(monoid));	
+	}
+	default <U> CollectionX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
+		return fromStream(stream().scanRight(identity,combiner));
+	}
+	
 
 	/*
 	 * (non-Javadoc)

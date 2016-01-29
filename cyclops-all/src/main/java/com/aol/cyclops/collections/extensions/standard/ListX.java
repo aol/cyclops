@@ -1,17 +1,20 @@
 package com.aol.cyclops.collections.extensions.standard;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple2;
+
+import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.trampoline.Trampoline;
@@ -184,6 +187,37 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	default <U extends Comparable<? super U>> ListX<T> sorted(Function<? super T, ? extends U> function) {
 		
 		return (ListX)MutableCollectionX.super.sorted(function);
+	}
+	
+	default ListX<ListX<T>> grouped(int groupSize){
+		return (ListX<ListX<T>>)MutableCollectionX.super.grouped(groupSize); 
+	}
+	default <K, A, D> ListX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream){
+		return (ListX)MutableCollectionX.super.grouped(classifier,downstream);
+	}
+	default <K> ListX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
+		return (ListX)MutableCollectionX.super.grouped(classifier);	 
+	}
+	default <U> ListX<Tuple2<T, U>> zip(Iterable<U> other){
+		return (ListX<Tuple2<T, U>>)MutableCollectionX.super.zip(other);
+	}
+	default ListX<ListX<T>> sliding(int windowSize){
+		return (ListX<ListX<T>>)MutableCollectionX.super.sliding(windowSize); 
+	}
+	default ListX<ListX<T>> sliding(int windowSize, int increment){
+		return (ListX<ListX<T>>)MutableCollectionX.super.sliding(windowSize,increment); 
+	}
+	default ListX<T> scanLeft(Monoid<T> monoid){
+		return (ListX<T>)MutableCollectionX.super.scanLeft(monoid); 
+	}
+	default <U> ListX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
+		return (ListX<U>)MutableCollectionX.super.scanLeft(seed,function); 	
+	}
+	default ListX<T> scanRight(Monoid<T> monoid){
+		return (ListX<T>)MutableCollectionX.super.scanRight(monoid); 
+	}
+	default <U> ListX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
+		return (ListX<U>)MutableCollectionX.super.scanRight(identity,combiner); 
 	}
 	
 	/* Makes a defensive copy of this ListX replacing the value at i with the specified element

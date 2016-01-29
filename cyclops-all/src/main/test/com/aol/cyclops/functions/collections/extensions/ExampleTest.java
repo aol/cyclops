@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
+import com.aol.cyclops.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.collections.extensions.standard.DequeX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.collections.extensions.standard.QueueX;
@@ -14,12 +15,11 @@ public class ExampleTest {
 
 	@Test
 	public void list(){
-		ListX.of(1,2,3)
+	   ListX.of(1,2,3)
 			.map(i->i+2)
 			.plus(5)
 			.map(i->"hello" + i)
-			.forEach(System.out::println);
-			
+			.forEach(System.out::println);			
 	}
 	@Test
 	public void listToSetX(){

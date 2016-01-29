@@ -4,12 +4,18 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple2;
+
+import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.trampoline.Trampoline;
 
@@ -55,6 +61,12 @@ public interface QueueX<T> extends Queue<T>, MutableCollectionX<T> {
 		return new QueueXImpl<>(stream.collect(getCollector()),getCollector());
 	}
 	
+
+	@Override
+	default SequenceM<T> stream(){
+		
+		return SequenceM.fromIterable(this);
+	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#reverse()
@@ -177,6 +189,38 @@ public interface QueueX<T> extends Queue<T>, MutableCollectionX<T> {
 		
 		return (QueueX)MutableCollectionX.super.sorted(function);
 	}
+	
+	default QueueX<ListX<T>> grouped(int groupSize){
+		return (QueueX<ListX<T>>)MutableCollectionX.super.grouped(groupSize); 
+	}
+	default <K, A, D> QueueX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream){
+		return (QueueX)MutableCollectionX.super.grouped(classifier,downstream);
+	}
+	default <K> QueueX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
+		return (QueueX)MutableCollectionX.super.grouped(classifier);	 
+	}
+	default <U> QueueX<Tuple2<T, U>> zip(Iterable<U> other){
+		return (QueueX<Tuple2<T, U>>)MutableCollectionX.super.zip(other);
+	}
+	default QueueX<ListX<T>> sliding(int windowSize){
+		return (QueueX<ListX<T>>)MutableCollectionX.super.sliding(windowSize); 
+	}
+	default QueueX<ListX<T>> sliding(int windowSize, int increment){
+		return (QueueX<ListX<T>>)MutableCollectionX.super.sliding(windowSize,increment); 
+	}
+	default QueueX<T> scanLeft(Monoid<T> monoid){
+		return (QueueX<T>)MutableCollectionX.super.scanLeft(monoid); 
+	}
+	default <U> QueueX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
+		return (QueueX<U>)MutableCollectionX.super.scanLeft(seed,function); 	
+	}
+	default QueueX<T> scanRight(Monoid<T> monoid){
+		return (QueueX<T>)MutableCollectionX.super.scanRight(monoid); 
+	}
+	default <U> QueueX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
+		return (QueueX<U>)MutableCollectionX.super.scanRight(identity,combiner); 
+	}
+	
 	default QueueX<T> plus(T e){
 		add(e);
 		return this;

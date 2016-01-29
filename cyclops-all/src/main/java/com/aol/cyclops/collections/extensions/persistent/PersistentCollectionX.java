@@ -1,18 +1,28 @@
 package com.aol.cyclops.collections.extensions.persistent;
 
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
+import java.util.stream.Collector;
+
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.FluentCollectionX;
+import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
-
+	@Override
+	default SequenceM<T> stream(){
+		
+		return SequenceM.fromIterable(this);
+	}
 	<T> Monoid<? extends Collection<T>> monoid();
 	
 	default CollectionX<T> reverse(){
@@ -104,5 +114,38 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	 */
 	default <U extends Comparable<? super U>> CollectionX<T> sorted(Function<? super T, ? extends U> function){
 		return from(this.<T>monoid().mapReduce(stream().sorted(function)));
+	}
+	
+	
+	
+	default CollectionX<ListX<T>> grouped(int groupSize){
+		return from(this.<ListX<T>>monoid().mapReduce(stream().grouped(groupSize).map(ListX::fromIterable)));
+	}
+	default <K, A, D> CollectionX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream){
+		return from(this.<Tuple2<K, D>>monoid().mapReduce(stream().grouped(classifier)));
+	}
+	default <K> CollectionX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
+		return from(this.<Tuple2<K, Seq<T>>>monoid().mapReduce(stream().grouped(classifier)));
+	}
+	default <U> CollectionX<Tuple2<T, U>> zip(Iterable<U> other){
+		return from(this.<Tuple2<T, U>>monoid().mapReduce(stream().zip(other)));
+	}
+	default CollectionX<ListX<T>> sliding(int windowSize){
+		return from(this.<ListX<T>>monoid().mapReduce(stream().sliding(windowSize).map(ListX::of)));
+	}
+	default CollectionX<ListX<T>> sliding(int windowSize, int increment){
+		return from(this.<ListX<T>>monoid().mapReduce(stream().sliding(windowSize,increment).map(ListX::of)));
+	}
+	default CollectionX<T> scanLeft(Monoid<T> monoid){
+		return from(this.<T>monoid().mapReduce(stream().scanLeft(monoid)));
+	}
+	default <U> CollectionX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
+		return from(this.<U>monoid().mapReduce(stream().scanLeft(seed,function)));
+	}
+	default CollectionX<T> scanRight(Monoid<T> monoid){
+		return from(this.<T>monoid().mapReduce(stream().scanRight(monoid)));
+	}
+	default <U> CollectionX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
+		return from(this.<U>monoid().mapReduce(stream().scanRight(identity,combiner)));
 	}
 }

@@ -1,18 +1,21 @@
 package com.aol.cyclops.collections.extensions.persistent;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import org.pcollections.HashTreePSet;
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.PQueue;
-import org.pcollections.PSet;
 
 import com.aol.cyclops.collections.PQueues;
 import com.aol.cyclops.collections.PSets;
+import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
@@ -40,7 +43,11 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
 	public static<T> PQueueX<T> fromStream(Stream<T> stream){
 		return new PQueueXImpl<>((PQueue<T>)PSets.toPSet().mapReduce(stream));
 	}
-	
+	@Override
+	default SequenceM<T> stream(){
+		
+		return SequenceM.fromIterable(this);
+	}
 	default PQueue<T> toPSet(){
 		return this;
 	}
@@ -183,6 +190,35 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
 	default <U extends Comparable<? super U>> PQueueX<T> sorted(Function<? super T, ? extends U> function) {
 		return (PQueueX<T>)PersistentCollectionX.super.sorted(function);
 	}
-	
+	default PQueueX<ListX<T>> grouped(int groupSize){
+		return  (PQueueX<ListX<T>>)PersistentCollectionX.super.grouped(groupSize);
+	}
+	default <K, A, D> PQueueX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream){
+		return  (PQueueX)PersistentCollectionX.super.grouped(classifier,downstream);
+	}
+	default <K> PQueueX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
+		return  (PQueueX)PersistentCollectionX.super.grouped(classifier);
+	}
+	default <U> PQueueX<Tuple2<T, U>> zip(Iterable<U> other){
+		return  (PQueueX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
+	}
+	default PQueueX<ListX<T>> sliding(int windowSize){
+		return  (PQueueX<ListX<T>>)PersistentCollectionX.super.sliding(windowSize);
+	}
+	default PQueueX<ListX<T>> sliding(int windowSize, int increment){
+		return  (PQueueX<ListX<T>>)PersistentCollectionX.super.sliding(windowSize,increment);
+	}
+	default PQueueX<T> scanLeft(Monoid<T> monoid){
+		return  (PQueueX<T>)PersistentCollectionX.super.scanLeft(monoid);
+	}
+	default <U> PQueueX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
+		return  (PQueueX<U>)PersistentCollectionX.super.scanLeft(seed,function);
+	}
+	default PQueueX<T> scanRight(Monoid<T> monoid){
+		return  (PQueueX<T>)PersistentCollectionX.super.scanRight(monoid);
+	}
+	default <U> PQueueX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
+		return  (PQueueX<U>)PersistentCollectionX.super.scanRight(identity,combiner);
+	}
 
 }

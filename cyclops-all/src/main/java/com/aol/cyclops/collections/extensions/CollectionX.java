@@ -5,18 +5,25 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Collectable;
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.PCollection;
 
+import com.aol.cyclops.collections.extensions.persistent.PStackX;
+import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.matcher.recursive.Matchable;
@@ -151,6 +158,9 @@ public interface CollectionX<T> extends Iterable<T>, Collection<T>,SequenceMColl
 	default Optional<T> findAny(){
 		return stream().findAny();
 	}
+	default <K> Map<K, List<T>> groupBy(Function<? super T, ? extends K> classifier) {
+		return stream().groupBy(classifier);
+	}
 	CollectionX<T> filter(Predicate<? super T> pred);
 	<R> CollectionX<R> map(Function<? super T, ? extends R> mapper);
 	<R> CollectionX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper);
@@ -162,6 +172,21 @@ public interface CollectionX<T> extends Iterable<T>, Collection<T>,SequenceMColl
 	CollectionX<T> dropUntil(Predicate<? super T> p);
 	CollectionX<T> dropRight(int num);
 	CollectionX<T> takeRight(int num);
+	default CollectionX<T> peek(Consumer<? super T> c){
+		forEach(c);
+		return this;
+	}
+	CollectionX<ListX<T>> grouped(int groupSize);
+	<K, A, D> CollectionX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream);
+	<K> CollectionX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier);
+	<U> CollectionX<Tuple2<T, U>> zip(Iterable<U> other);
+	CollectionX<ListX<T>> sliding(int windowSize);
+	CollectionX<ListX<T>> sliding(int windowSize, int increment);
+	CollectionX<T> scanLeft(Monoid<T> monoid);
+	<U> CollectionX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function);
+	CollectionX<T> scanRight(Monoid<T> monoid);
+	<U> CollectionX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner);
+
 	/**
 	 * <pre>
 	 * {@code

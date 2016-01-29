@@ -2,16 +2,19 @@ package com.aol.cyclops.collections.extensions.persistent;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import org.pcollections.PSet;
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
-import com.aol.cyclops.collections.PSets;
 import com.aol.cyclops.collections.PVectors;
+import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.trampoline.Trampoline;
 
@@ -259,4 +262,35 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 
 	
 	public PVectorX<T> subList(int start, int end);
+	
+	default PVectorX<ListX<T>> grouped(int groupSize){
+		return  (PVectorX<ListX<T>>)PersistentCollectionX.super.grouped(groupSize);
+	}
+	default <K, A, D> PVectorX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream){
+		return  (PVectorX)PersistentCollectionX.super.grouped(classifier,downstream);
+	}
+	default <K> PVectorX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
+		return  (PVectorX)PersistentCollectionX.super.grouped(classifier);
+	}
+	default <U> PVectorX<Tuple2<T, U>> zip(Iterable<U> other){
+		return  (PVectorX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
+	}
+	default PVectorX<ListX<T>> sliding(int windowSize){
+		return  (PVectorX<ListX<T>>)PersistentCollectionX.super.sliding(windowSize);
+	}
+	default PVectorX<ListX<T>> sliding(int windowSize, int increment){
+		return  (PVectorX<ListX<T>>)PersistentCollectionX.super.sliding(windowSize,increment);
+	}
+	default PVectorX<T> scanLeft(Monoid<T> monoid){
+		return  (PVectorX<T>)PersistentCollectionX.super.scanLeft(monoid);
+	}
+	default <U> PVectorX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
+		return  (PVectorX<U>)PersistentCollectionX.super.scanLeft(seed,function);
+	}
+	default PVectorX<T> scanRight(Monoid<T> monoid){
+		return  (PVectorX<T>)PersistentCollectionX.super.scanRight(monoid);
+	}
+	default <U> PVectorX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
+		return  (PVectorX<U>)PersistentCollectionX.super.scanRight(identity,combiner);
+	}
 }

@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
 
 import javaslang.Lazy;
@@ -35,6 +36,7 @@ public class AnyJavaslangMTest {
 
 	@Test
 	public void testToList(){
+		
 		assertThat(Javaslang.anyM(List.of(1,2,3)).toList(), equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test

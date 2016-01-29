@@ -3435,4 +3435,12 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, JoolWindowing<T>, J
 	 */
 	<R1, R> SequenceM<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1, Function<? super T, Function<? super R1, Boolean>> filterFunction,
 			Function<? super T, Function<? super R1, ? extends R>> yieldingFunction);
+
+	@Override
+	default long count() {
+		return SequenceMCollectable.super.count();
+	}
+	default <R, A> R collect(Collector<? super T, A, R> collector) {
+		return SequenceMCollectable.super.collect(collector);
+	}
 }

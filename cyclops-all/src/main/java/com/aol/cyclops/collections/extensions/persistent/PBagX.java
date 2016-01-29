@@ -2,20 +2,29 @@ package com.aol.cyclops.collections.extensions.persistent;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.HashTreePBag;
 import org.pcollections.PBag;
-import org.pcollections.PSet;
 
 import com.aol.cyclops.collections.PBags;
-import com.aol.cyclops.collections.extensions.CollectionX;
+import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
+	@Override
+	default SequenceM<T> stream(){
+		
+		return SequenceM.fromIterable(this);
+	}
 	//after module merge, move to reducers
 	public static <T> Monoid<PBagX<T>> toPQueueX() { 
 				return	Monoid.<PBagX<T>>of(PBagX.empty(), 
@@ -185,6 +194,36 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	@Override
 	default <U extends Comparable<? super U>> PBagX<T> sorted(Function<? super T, ? extends U> function) {
 		return (PBagX<T>)PersistentCollectionX.super.sorted(function);
+	}
+	default PBagX<ListX<T>> grouped(int groupSize){
+		return  (PBagX<ListX<T>>)PersistentCollectionX.super.grouped(groupSize);
+	}
+	default <K, A, D> PBagX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream){
+		return  (PBagX)PersistentCollectionX.super.grouped(classifier,downstream);
+	}
+	default <K> PBagX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
+		return  (PBagX)PersistentCollectionX.super.grouped(classifier);
+	}
+	default <U> PBagX<Tuple2<T, U>> zip(Iterable<U> other){
+		return  (PBagX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
+	}
+	default PBagX<ListX<T>> sliding(int windowSize){
+		return  (PBagX<ListX<T>>)PersistentCollectionX.super.sliding(windowSize);
+	}
+	default PBagX<ListX<T>> sliding(int windowSize, int increment){
+		return  (PBagX<ListX<T>>)PersistentCollectionX.super.sliding(windowSize,increment);
+	}
+	default PBagX<T> scanLeft(Monoid<T> monoid){
+		return  (PBagX<T>)PersistentCollectionX.super.scanLeft(monoid);
+	}
+	default <U> PBagX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
+		return  (PBagX<U>)PersistentCollectionX.super.scanLeft(seed,function);
+	}
+	default PBagX<T> scanRight(Monoid<T> monoid){
+		return  (PBagX<T>)PersistentCollectionX.super.scanRight(monoid);
+	}
+	default <U> PBagX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
+		return  (PBagX<U>)PersistentCollectionX.super.scanRight(identity,combiner);
 	}
 	
 
