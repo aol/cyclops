@@ -2,7 +2,11 @@
 
 == Working with Collections
 
-Cyclops doesn't provide any collection types itself, but does leverage two libraries with a number of very useful collection types to make modern functional-style and asynchronous programming easier.
+(Work in progress)
+
+While Cyclops doesn't implement any collection types directly itself, it does provide a very poweful series of extension methods over existing JDK collection interfaces (with plugable implementations). As we shall see cyclops provides a very powerful stream-like interface into mutable, immutable and persistent collections - all while extending the existing JDK interfaces.
+
+Cyclops also does leverage two libraries with a number of very useful collection types to make modern functional-style and asynchronous programming easier.
 
 Those libs are
 

@@ -4,14 +4,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Stream;
 
-import org.pcollections.ConsPStack;
-import org.pcollections.PStack;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.Reducers;
-import com.aol.cyclops.sequence.SequenceM;
 
 /**
  * Class for working with Persistent Vectors from PCollections
@@ -75,7 +72,7 @@ public class PVectors {
 	 * @return PVector with a single value
 	 */
 	public static <T> PVector<T> singleton(T value){
-		return TreePVector.singleton(value);
+		return  TreePVector.singleton(value);
 	}
 	/**
 	 * Create a PVector from the supplied Colleciton

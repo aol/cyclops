@@ -67,6 +67,7 @@ public class Reducers {
 								(T x) -> ConsPStack.singleton(x));
 	}
 	
+	
 	public static <K,V> Monoid<PMap<K,V>> toPMap() { 
 		return	Monoid.<PMap<K,V>>of(HashTreePMap.empty(), 
 								(PMap<K,V> a) -> b -> a.plusAll(b),

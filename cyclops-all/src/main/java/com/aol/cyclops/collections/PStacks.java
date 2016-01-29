@@ -7,6 +7,8 @@ import java.util.stream.Stream;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
+import com.aol.cyclops.collections.extensions.persistent.PStackX;
+import com.aol.cyclops.collections.extensions.persistent.PStackXImpl;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.Reducers;
 /**
@@ -69,7 +71,7 @@ public class PStacks {
 	 * @return an empty PStack
 	 */
 	public static <T> PStack<T> empty(){
-		return ConsPStack.empty();
+		return  ConsPStack.empty();
 	}
 	/**
 	 * Construct a PStack containing a single value
@@ -88,7 +90,7 @@ public class PStacks {
 	 * @return PVector with a single value
 	 */
 	public static <T> PStack<T> singleton(T value){
-		return ConsPStack.singleton(value);
+		return new PStackXImpl<>(ConsPStack.singleton(value));
 	}
 	/**
 	 * Reduce (immutable Collection) a Stream to a PStack, note for efficiency reasons,
@@ -107,7 +109,7 @@ public class PStacks {
 	 * @return
 	 */
 	public static<T> PStack<T> fromStream(Stream<T> stream){
-		return (PStack<T>)toPStack().mapReduce(stream);
+		return new PStackXImpl<>((PStack<T>)toPStack().mapReduce(stream));
 	}
 	/**
 	 * Return a reducer that can produce a PStack from a Stream, note for efficiency reasons,
