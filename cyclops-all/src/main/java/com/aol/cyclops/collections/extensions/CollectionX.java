@@ -160,6 +160,8 @@ public interface CollectionX<T> extends Iterable<T>, Collection<T>,SequenceMColl
 	CollectionX<T> dropWhile(Predicate<? super T> p);
 	CollectionX<T> takeUntil(Predicate<? super T> p);
 	CollectionX<T> dropUntil(Predicate<? super T> p);
+	CollectionX<T> dropRight(int num);
+	CollectionX<T> takeRight(int num);
 	/**
 	 * <pre>
 	 * {@code
@@ -170,6 +172,7 @@ public interface CollectionX<T> extends Iterable<T>, Collection<T>,SequenceMColl
 	 * @return Stream as concatenated String
 	 */
 	default String join(){
+		
 		return stream().join();
 	}
 

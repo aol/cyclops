@@ -32,6 +32,12 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	default CollectionX<T> skip(long num){
 		return from(this.<T>monoid().mapReduce(stream().skip(num)));
 	}
+	default CollectionX<T> dropRight(int num){
+		return from(this.<T>monoid().mapReduce(stream().skipLast(num)));
+	}
+	default CollectionX<T> takeRight(int num){
+		return from(this.<T>monoid().mapReduce(stream().limitLast(num)));
+	}
 	default CollectionX<T> takeWhile(Predicate<? super T> p){
 		return from(this.<T>monoid().mapReduce(stream().limitWhile(p)));
 	}

@@ -85,6 +85,12 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 		
 		return (DequeX)MutableCollectionX.super.takeWhile(p);
 	}
+	default  DequeX<T> takeRight(int num){
+		return (DequeX)MutableCollectionX.super.takeRight(num);
+	}
+	default  DequeX<T> dropRight(int num){
+		return  (DequeX)MutableCollectionX.super.dropRight(num);
+	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#dropWhile(java.util.function.Predicate)

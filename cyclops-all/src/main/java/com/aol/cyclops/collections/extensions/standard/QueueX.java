@@ -94,7 +94,12 @@ public interface QueueX<T> extends Queue<T>, MutableCollectionX<T> {
 		
 		return (QueueX)MutableCollectionX.super.dropWhile(p);
 	}
-
+	default  QueueX<T> takeRight(int num){
+		return (QueueX)MutableCollectionX.super.takeRight(num);
+	}
+	default  QueueX<T> dropRight(int num){
+		return  (QueueX)MutableCollectionX.super.dropRight(num);
+	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#takeUntil(java.util.function.Predicate)
 	 */

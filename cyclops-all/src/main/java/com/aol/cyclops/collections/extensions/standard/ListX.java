@@ -81,7 +81,12 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 		
 		return (ListX)MutableCollectionX.super.skip(num);
 	}
-
+	default  ListX<T> takeRight(int num){
+		return (ListX)MutableCollectionX.super.takeRight(num);
+	}
+	default  ListX<T> dropRight(int num){
+		return  (ListX)MutableCollectionX.super.dropRight(num);
+	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#takeWhile(java.util.function.Predicate)
 	 */

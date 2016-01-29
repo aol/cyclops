@@ -74,6 +74,12 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 		
 		return (SetX)MutableCollectionX.super.skip(num);
 	}
+	default  SetX<T> takeRight(int num){
+		return (SetX)MutableCollectionX.super.takeRight(num);
+	}
+	default  SetX<T> dropRight(int num){
+		return  (SetX)MutableCollectionX.super.dropRight(num);
+	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#takeWhile(java.util.function.Predicate)

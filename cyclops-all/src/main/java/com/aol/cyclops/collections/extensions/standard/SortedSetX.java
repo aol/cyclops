@@ -112,6 +112,12 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T> {
 		
 		return (SortedSetX)MutableCollectionX.super.dropUntil(p);
 	}
+	default  SortedSetX<T> takeRight(int num){
+		return (SortedSetX)MutableCollectionX.super.takeRight(num);
+	}
+	default  SortedSetX<T> dropRight(int num){
+		return  (SortedSetX)MutableCollectionX.super.dropRight(num);
+	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#trampoline(java.util.function.Function)

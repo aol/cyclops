@@ -30,6 +30,12 @@ public interface MutableCollectionX<T> extends CollectionX<T> {
 	default CollectionX<T> skip(long num){
 		return fromStream(stream().skip(num));
 	}
+	default CollectionX<T> takeRight(int num){
+		return fromStream(stream().limitLast(num));
+	}
+	default CollectionX<T> dropRight(int num){
+		return fromStream(stream().skipLast(num));
+	}
 	default CollectionX<T> takeWhile(Predicate<? super T> p){
 		return fromStream(stream().limitWhile(p));
 	}
