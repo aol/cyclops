@@ -11,6 +11,7 @@ import org.pcollections.PBag;
 import org.pcollections.PSet;
 
 import com.aol.cyclops.collections.PBags;
+import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.trampoline.Trampoline;
 
@@ -117,7 +118,13 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	default PBagX<T> skip(long num) {
 		return (PBagX<T>)PersistentCollectionX.super.skip(num);
 	}
-
+	default PBagX<T> takeRight(int num){
+		return (PBagX<T>)PersistentCollectionX.super.takeRight(num);
+	}
+	default PBagX<T> dropRight(int num){
+		return (PBagX<T>)PersistentCollectionX.super.dropRight(num);
+	}
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#takeWhile(java.util.function.Predicate)
 	 */

@@ -173,7 +173,12 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 		
 		return (PStackX)PersistentCollectionX.super.skip(num);
 	}
-
+	default PStackX<T> takeRight(int num){
+		return (PStackX<T>)PersistentCollectionX.super.takeRight(num);
+	}
+	default PStackX<T> dropRight(int num){
+		return (PStackX<T>)PersistentCollectionX.super.dropRight(num);
+	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#takeWhile(java.util.function.Predicate)
 	 */

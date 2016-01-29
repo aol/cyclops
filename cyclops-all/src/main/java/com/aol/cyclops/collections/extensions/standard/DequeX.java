@@ -1,21 +1,57 @@
 package com.aol.cyclops.collections.extensions.standard;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.collections.extensions.CollectionX;
+
+import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	
+	static <T> Collector<T,?,Deque<T>> defaultCollector(){
+		return Collectors.toCollection(()-> new ArrayDeque<>());
+	}
+	static <T> Collector<T,?,DequeX<T>> toDequeX(){
+		return Collectors.collectingAndThen(defaultCollector(), (Deque<T> d)->new DequeXImpl<>(d,defaultCollector()));
+		
+	}
+	public static <T> DequeX<T> empty(){
+		return fromIterable((Deque<T>) defaultCollector().supplier().get());
+	}
+	public static <T> DequeX<T> of(T...values){
+		Deque<T> res = (Deque<T>) defaultCollector().supplier().get();
+		for(T v: values)
+			res.add(v);
+		return  fromIterable(res);
+	}
+	public static <T> DequeX<T> singleton(T value){
+		return of(value);
+	}
+	public static <T> DequeX<T> fromIterable(Iterable<T> it){
+		return fromIterable(defaultCollector(),it);
+	}
+	public static <T> DequeX<T> fromIterable(Collector<T,?,Deque<T>>  collector,Iterable<T> it){
+		if(it instanceof DequeX)
+			return (DequeX)it;
+		if(it instanceof Deque)
+			return new DequeXImpl<T>( (Deque)it, collector);
+		return new DequeXImpl<T>(StreamUtils.stream(it).collect(collector),collector);
+	}
+	
 	public <T> Collector<T,?,Deque<T>> getCollector();
 	
 	default <T1> DequeX<T1> from(Collection<T1> c){
-		return new DequeXImpl<T1>(c.stream().collect(getCollector()),getCollector());
+		return DequeX.<T1>fromIterable(getCollector(),c);
 	}
 	
 	default <X> DequeX<X> fromStream(Stream<X> stream){

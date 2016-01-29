@@ -29,7 +29,7 @@ public class QueueXImpl<T> implements QueueX<T> {
 	public QueueXImpl(Queue<T> list){
 		this.list = list;
 		
-		this.collector = Collectors.toCollection(()-> new LinkedList<T>());
+		this.collector = QueueX.defaultCollector();
 	}
 	/**
 	 * @param action

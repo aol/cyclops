@@ -1,21 +1,54 @@
 package com.aol.cyclops.collections.extensions.standard;
 
 import java.util.Collection;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Queue;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface QueueX<T> extends Queue<T>, MutableCollectionX<T> {
 	
+	static <T> Collector<T,?,Queue<T>> defaultCollector(){
+		return Collectors.toCollection(()-> new LinkedList<>());
+	}
+	static <T> Collector<T,?,QueueX<T>> toDequeX(){
+		return Collectors.collectingAndThen(defaultCollector(), (Queue<T> d)->new QueueXImpl<>(d,defaultCollector()));
+		
+	}
+	public static <T> QueueX<T> empty(){
+		return fromIterable((Queue<T>) defaultCollector().supplier().get());
+	}
+	public static <T> QueueX<T> of(T...values){
+		Queue<T> res = (Queue<T>) defaultCollector().supplier().get();
+		for(T v: values)
+			res.add(v);
+		return  fromIterable(res);
+	}
+	public static <T> QueueX<T> singleton(T value){
+		return of(value);
+	}
+	public static <T> QueueX<T> fromIterable(Iterable<T> it){
+		return fromIterable(defaultCollector(),it);
+	}
+	public static <T> QueueX<T> fromIterable(Collector<T,?,Queue<T>>  collector,Iterable<T> it){
+		if(it instanceof QueueX)
+			return (QueueX)it;
+		if(it instanceof Deque)
+			return new QueueXImpl<T>( (Queue)it, collector);
+		return new QueueXImpl<T>(StreamUtils.stream(it).collect(collector),collector);
+	}
+	
 	public <T> Collector<T,?,Queue<T>> getCollector();
 	
 	default <T1> QueueX<T1> from(Collection<T1> c){
-		
-		return new QueueXImpl<T1>(c.stream().collect(getCollector()),getCollector());
+		return QueueX.<T1>fromIterable(getCollector(),c);
 	}
 	
 	default <X> QueueX<X> fromStream(Stream<X> stream){

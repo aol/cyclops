@@ -117,7 +117,12 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
 	default PQueueX<T> skip(long num) {
 		return (PQueueX<T>)PersistentCollectionX.super.skip(num);
 	}
-
+	default PQueueX<T> takeRight(int num){
+		return (PQueueX<T>)PersistentCollectionX.super.takeRight(num);
+	}
+	default PQueueX<T> dropRight(int num){
+		return (PQueueX<T>)PersistentCollectionX.super.dropRight(num);
+	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#takeWhile(java.util.function.Predicate)
 	 */

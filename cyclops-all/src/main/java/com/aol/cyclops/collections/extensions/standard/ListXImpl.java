@@ -27,7 +27,7 @@ public class ListXImpl<T> implements ListX<T> {
 	
 	public ListXImpl(List<T> list){
 		this.list = list;
-		this.collector = Collectors.toCollection(()->new ArrayList<>());
+		this.collector = ListX.defaultCollector();
 	}
 	/**
 	 * @param action

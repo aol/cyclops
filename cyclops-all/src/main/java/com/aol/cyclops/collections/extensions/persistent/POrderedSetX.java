@@ -100,7 +100,12 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	default <R> POrderedSetX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
 		return (POrderedSetX<R>)PersistentCollectionX.super.flatMap(mapper);
 	}
-
+	default POrderedSetX<T> takeRight(int num){
+		return (POrderedSetX<T>)PersistentCollectionX.super.takeRight(num);
+	}
+	default POrderedSetX<T> dropRight(int num){
+		return (POrderedSetX<T>)PersistentCollectionX.super.dropRight(num);
+	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#limit(long)
 	 */

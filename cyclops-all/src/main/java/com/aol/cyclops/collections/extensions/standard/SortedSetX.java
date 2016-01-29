@@ -1,23 +1,59 @@
 package com.aol.cyclops.collections.extensions.standard;
 
 import java.util.Collection;
+import java.util.Deque;
 import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T> {
+	static <T> Collector<T,?,SortedSet<T>> defaultCollector(){
+		return Collectors.toCollection(()-> new TreeSet<>());
+	}
+	static <T> Collector<T,?,SortedSetX<T>> toDequeX(){
+		return Collectors.collectingAndThen(defaultCollector(), (SortedSet<T> d)->new SortedSetXImpl<>(d,defaultCollector()));
+		
+	}
+	public static <T> SortedSetX<T> empty(){
+		return fromIterable((Deque<T>) defaultCollector().supplier().get());
+	}
+	public static <T> SortedSetX<T> of(T...values){
+		SortedSet<T> res = (SortedSet<T>) defaultCollector().supplier().get();
+		for(T v: values)
+			res.add(v);
+		return  fromIterable(res);
+	}
+	public static <T> SortedSetX<T> singleton(T value){
+		return of(value);
+	}
+	public static <T> SortedSetX<T> fromIterable(Iterable<T> it){
+		return fromIterable(defaultCollector(),it);
+	}
+	public static <T> SortedSetX<T> fromIterable(Collector<T,?,SortedSet<T>>  collector,Iterable<T> it){
+		if(it instanceof DequeX)
+			return (SortedSetX)it;
+		if(it instanceof Deque)
+			return new SortedSetXImpl<T>( (SortedSet)it, collector);
+		return new SortedSetXImpl<T>(StreamUtils.stream(it).collect(collector),collector);
+	}
 	
+	
+	
+	default <T1> SortedSetX<T1> from(Collection<T1> c){
+		return SortedSetX.<T1>fromIterable(getCollector(),c);
+	}
 	
 	
 	public <T>Collector<T,?,SortedSet<T>> getCollector();
 	
-	default <T1> SortedSetX<T1> from(Collection<T1> c){
-		return new SortedSetXImpl<T1>(c.stream().collect(getCollector()),getCollector());
-	}
+	
 	
 	default <X> SortedSetX<X> fromStream(Stream<X> stream){
 		return new SortedSetXImpl<>(stream.collect(getCollector()),getCollector());

@@ -1,21 +1,58 @@
 package com.aol.cyclops.collections.extensions.standard;
 
+import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.Deque;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
+	static <T> Collector<T,?,Set<T>> defaultCollector(){
+		return Collectors.toCollection(()-> new HashSet<>());
+	}
+	static <T> Collector<T,?,SetX<T>> toDequeX(){
+		return Collectors.collectingAndThen(defaultCollector(), (Set<T> d)->new SetXImpl<>(d,defaultCollector()));
+		
+	}
+	public static <T> SetX<T> empty(){
+		return fromIterable((Deque<T>) defaultCollector().supplier().get());
+	}
+	public static <T> SetX<T> of(T...values){
+		Set<T> res = (Set<T>) defaultCollector().supplier().get();
+		for(T v: values)
+			res.add(v);
+		return  fromIterable(res);
+	}
+	public static <T> SetX<T> singleton(T value){
+		return of(value);
+	}
+	public static <T> SetX<T> fromIterable(Iterable<T> it){
+		return fromIterable(defaultCollector(),it);
+	}
+	public static <T> SetX<T> fromIterable(Collector<T,?,Set<T>>  collector,Iterable<T> it){
+		if(it instanceof SetX)
+			return (SetX)it;
+		if(it instanceof Set)
+			return new SetXImpl<T>( (Set)it, collector);
+		return new SetXImpl<T>(StreamUtils.stream(it).collect(collector),collector);
+	}
 	
-	public <T>Collector<T,?,Set<T>> getCollector();
+	
 	
 	default <T1> SetX<T1> from(Collection<T1> c){
-		return new SetXImpl<T1>(c.stream().collect(getCollector()),getCollector());
+		return SetX.<T1>fromIterable(getCollector(),c);
 	}
+	public <T>Collector<T,?,Set<T>> getCollector();
+	
+	
 	
 	default <X> SetX<X> fromStream(Stream<X> stream){
 		return new SetXImpl<>(stream.collect(getCollector()),getCollector());

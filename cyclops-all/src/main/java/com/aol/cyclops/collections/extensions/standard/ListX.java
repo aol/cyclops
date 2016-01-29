@@ -1,17 +1,51 @@
 package com.aol.cyclops.collections.extensions.standard;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.collections.extensions.FluentSequenceX;
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenceX<T> {
+	static <T> Collector<T,?,List<T>> defaultCollector(){
+		return Collectors.toCollection(()-> new ArrayList<>());
+	}
+	static <T> Collector<T,?,ListX<T>> toDequeX(){
+		return Collectors.collectingAndThen(defaultCollector(), (List<T> d)->new ListXImpl<>(d,defaultCollector()));
+		
+	}
+	public static <T> ListX<T> empty(){
+		return fromIterable((List<T>) defaultCollector().supplier().get());
+	}
+	public static <T> ListX<T> of(T...values){
+		List<T> res = (List<T>) defaultCollector().supplier().get();
+		for(T v: values)
+			res.add(v);
+		return  fromIterable(res);
+	}
+	public static <T> ListX<T> singleton(T value){
+		return of(value);
+	}
+	public static <T> ListX<T> fromIterable(Iterable<T> it){
+		return fromIterable(defaultCollector(),it);
+	}
+	public static <T> ListX<T> fromIterable(Collector<T,?,List<T>>  collector,Iterable<T> it){
+		if(it instanceof DequeX)
+			return (ListX)it;
+		if(it instanceof List)
+			return new ListXImpl<T>( (List)it, collector);
+		return new ListXImpl<T>(StreamUtils.stream(it).collect(collector),collector);
+	}
+	
 	@Override
 	default SequenceM<T> stream(){
 		
@@ -20,7 +54,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	public <T> Collector<T,?,List<T>> getCollector();
 	
 	default <T1> ListX<T1> from(Collection<T1> c){
-		return new ListXImpl<T1>(c.stream().collect(getCollector()),getCollector());
+		return ListX.<T1>fromIterable(getCollector(),c);
 	}
 	
 	default <X> ListX<X> fromStream(Stream<X> stream){

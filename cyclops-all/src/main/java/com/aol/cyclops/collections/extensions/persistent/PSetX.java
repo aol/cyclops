@@ -115,6 +115,12 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	default PSetX<T> skip(long num) {
 		return (PSetX<T>)PersistentCollectionX.super.skip(num);
 	}
+	default PSetX<T> takeRight(int num){
+		return (PSetX<T>)PersistentCollectionX.super.takeRight(num);
+	}
+	default PSetX<T> dropRight(int num){
+		return (PSetX<T>)PersistentCollectionX.super.dropRight(num);
+	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#takeWhile(java.util.function.Predicate)

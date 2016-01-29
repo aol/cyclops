@@ -1,13 +1,10 @@
 package com.aol.cyclops.collections.extensions.standard;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,7 +19,7 @@ public class SetXImpl<T> implements SetX<T> {
 	
 	public SetXImpl(Set<T> set){
 		this.set = set;
-		this.collector = Collectors.toCollection(()->new HashSet<>());
+		this.collector = SetX.defaultCollector();
 	}
 	/**
 	 * @param action

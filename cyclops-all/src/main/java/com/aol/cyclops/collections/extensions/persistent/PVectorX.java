@@ -167,6 +167,12 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	default PVectorX<T> skip(long num) {
 		return (PVectorX<T>)PersistentCollectionX.super.skip(num);
 	}
+	default PVectorX<T> takeRight(int num){
+		return (PVectorX<T>)PersistentCollectionX.super.takeRight(num);
+	}
+	default PVectorX<T> dropRight(int num){
+		return (PVectorX<T>)PersistentCollectionX.super.dropRight(num);
+	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#takeWhile(java.util.function.Predicate)

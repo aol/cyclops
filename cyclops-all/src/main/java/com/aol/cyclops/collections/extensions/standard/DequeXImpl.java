@@ -22,13 +22,14 @@ import lombok.Getter;
 @AllArgsConstructor
 public class DequeXImpl<T> implements DequeX<T> {
 	
+	
 	private final Deque<T> deque;
 	@Getter
 	private final Collector<T,?,Deque<T>> collector;
 	
 	public DequeXImpl(Deque<T> list){
 		this.deque = list;
-		this.collector = Collectors.toCollection(()-> new ArrayDeque<>());
+		this.collector = DequeX.defaultCollector();
 	}
 	/**
 	 * @param action
