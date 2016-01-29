@@ -14,6 +14,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
 
+import com.aol.cyclops.javaslang.reactivestreams.ReactiveStream;
+
 
 
 
@@ -137,7 +139,12 @@ public class ForEachTest {
 		List<Integer> list = new ArrayList<>();
 		assertFalse(complete);
 		assertThat(error,nullValue());
-		LazyStream<Integer> stream = LazyStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();},()->5).map(Supplier::get);
+		ReactiveStream<Integer> stream = ReactiveStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();},()->5).map(Supplier::get);
+		
+		//StreamUtils.forEachWithError(Stream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();},()->5),
+			//	System.out::println,Throwable::printStackTrace);
+		stream.forEachWithError(System.out::println,Throwable::printStackTrace);
+		
 		StreamUtils.forEachEvent(stream,  i->list.add(i),e->error=e,()->complete=true);
 		
 		

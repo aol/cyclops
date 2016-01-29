@@ -1,8 +1,6 @@
 package com.aol.cyclops.javaslang.streams;
 
 
-import static com.aol.cyclops.javaslang.ToStream.toSequenceM;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
@@ -33,19 +31,6 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import javaslang.Tuple2;
-import javaslang.Tuple3;
-import javaslang.Tuple4;
-import javaslang.collection.LazyStream;
-import javaslang.collection.List;
-import javaslang.collection.Map;
-import javaslang.collection.Set;
-import javaslang.collection.Stream;
-import javaslang.collection.Stream;
-import lombok.AllArgsConstructor;
-import lombok.val;
-import lombok.experimental.UtilityClass;
-
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 import org.reactivestreams.Subscription;
@@ -66,6 +51,19 @@ import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.FutureStreamUtils;
 import com.aol.cyclops.streams.future.FutureOperationsImpl;
 import com.aol.cyclops.streams.operators.MultiCollectOperator;
+
+import javaslang.Tuple2;
+import javaslang.Tuple3;
+import javaslang.Tuple4;
+import javaslang.collection.LazyStream;
+import javaslang.collection.List;
+import javaslang.collection.Map;
+import javaslang.collection.Set;
+import javaslang.collection.Stream;
+import javaslang.collection.Stream;
+import lombok.AllArgsConstructor;
+import lombok.val;
+import lombok.experimental.UtilityClass;
 
 
 @UtilityClass 
@@ -232,7 +230,7 @@ public class StreamUtils{
 	 * @param consumer To accept incoming elements from the Stream
 	 * @param consumerError To accept incoming processing errors from the Stream
 	 */
-	public static <T,X extends Throwable>  void forEachWithError(LazyStream<T> stream, Consumer<? super T> consumerElement,
+	public static <T,X extends Throwable>  void forEachWithError(Stream<T> stream, Consumer<? super T> consumerElement,
 			Consumer<? super Throwable> consumerError){
 		
 		val t2 =FutureStreamUtils.forEachWithError(ToStream.toStream(stream), consumerElement,consumerError);
@@ -272,7 +270,7 @@ public class StreamUtils{
 			Consumer<? super Throwable> consumerError,
 			Runnable onComplete){
 		
-		val t2 =FutureStreamUtils.forEachEvent(ToStream.toStream(stream), consumerElement,consumerError,onComplete);
+		val t2 = FutureStreamUtils.forEachEvent(ToStream.toStream(stream), consumerElement,consumerError,onComplete);
 		t2.v2.run();
 		
 	}

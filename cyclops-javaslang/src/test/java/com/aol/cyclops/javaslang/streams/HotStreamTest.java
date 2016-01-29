@@ -86,8 +86,9 @@ public class HotStreamTest {
 				,ForkJoinPool.commonPool())
 				.forEach(System.out::println);
 		
-		Object oldValue = value;
 		s.pause();
+		Object oldValue = value;
+		
 		s.unpause();
 		LockSupport.parkNanos(1000l);
 		s.pause();

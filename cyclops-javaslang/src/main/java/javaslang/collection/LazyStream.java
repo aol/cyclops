@@ -1851,15 +1851,38 @@ interface LazyStreamModule {
 
         @Override
         public boolean hasNext() {
-            return !current.get().isEmpty();
+        	try{
+        		return !current.get().isEmpty();
+        	}catch(Exception e){
+        		e.printStackTrace();
+        		return false;
+        	}
         }
 
         @Override
         public T getNext() {
-            final LazyStream<T> stream = current.get();
+        	final LazyStream<T> stream = current.get();
+        	T result = null;
+        	try{
+        		
+        	
+        		result = stream.head();
+        	
+        	
+        		
+        	}catch(Throwable t){
+        		t.printStackTrace();
+        		throw ExceptionSoftener.throwSoftenedException(t);
+        		
+        	}
+        	finally{
+        		 current = stream::tail;
+        	}
+            return result;
+           
             // DEV-NOTE: we make the stream even more lazy because the next head must not be evaluated on hasNext()
-            current = stream::tail;
-            return stream.head();
+          //  current = stream::tail;
+           // return stream.head();
         }
     }
 }

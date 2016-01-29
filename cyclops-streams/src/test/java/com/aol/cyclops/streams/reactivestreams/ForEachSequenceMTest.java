@@ -1,20 +1,24 @@
 package com.aol.cyclops.streams.reactivestreams;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsTerminalOperations;
-import com.aol.cyclops.streams.StreamUtils;
 
 public class ForEachSequenceMTest {
 	boolean complete =false;
@@ -27,7 +31,6 @@ public class ForEachSequenceMTest {
 	@Test
 	public void forEachX(){
 		Subscription s = SequenceM.of(1,2,3).forEachX( 2, System.out::println);
-		System.out.println("first batch");
 		s.request(1);
 	}
 	@Test
@@ -51,6 +54,37 @@ public class ForEachSequenceMTest {
 		assertThat(list.size(),equalTo(3));
 	}
 	Throwable error;
+	@Test
+	public void forEachWithErrors2(){
+		error = null;
+		List<Integer> result = new ArrayList<>();
+		SequenceM.of(1,2,3,4,5,6)
+				.map(this::errors)
+				.forEachWithError(e->result.add(e),e->error=e);
+		
+		assertNotNull(error);
+		assertThat(result,hasItems(1,3,4,5,6));
+		assertThat(result,not(hasItems(2)));
+	}
+	
+	@Test
+	public void forEachWithEvents2(){
+		error = null;
+		 complete = false;
+		List<Integer> result = new ArrayList<>();
+		SequenceM.of(1,2,3,4,5,6)
+				.map(this::errors)
+				.forEachEvent(e->result.add(e),e->error=e,()->complete=true);
+		
+		assertNotNull(error);
+		assertThat(result,hasItems(1,3,4,5,6));
+		assertThat(result,not(hasItems(2)));
+	}
+	public Integer errors(Integer ints){
+		if(ints ==2)
+			throw new RuntimeException();
+		return ints;
+	}
 	@Test
 	public void forEachXWithErrors(){
 	
