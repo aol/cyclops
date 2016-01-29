@@ -23,9 +23,17 @@ repositories {
     mavenCentral()
 	
 }
-
+configurations {
+	provided
+}
+sourceSets {
+	main.compileClasspath += [configurations.provided]
+	test.compileClasspath += [configurations.provided]
+	test.runtimeClasspath += [configurations.provided]
+}
 dependencies {
 
+	provided group: 'org.projectlombok', name: 'lombok', version:"${lombokVersion}"
 	compile project(':cyclops-try')
 	compile project(':cyclops-feature-toggle')
 	compile project(':cyclops-tuples')

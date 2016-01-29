@@ -23,7 +23,8 @@ import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.sequence.Monoid;
 
 public class AsTest {
-	/**
+
+/**
 	@Test
 	public void testAsMonoidFj() {
 		
@@ -201,3 +202,4 @@ public class AsTest {
 	}
 	**/
 }
+

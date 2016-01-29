@@ -1,9 +1,8 @@
 package com.aol.cyclops.functions.caching;
 
-import static com.aol.cyclops.functions.caching.Memoize.memoizeBiFunction;
-
-import java.util.function.BiFunction;
 import java.util.function.Function;
+
+import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 
 /**
  * Interface that represents a pluggable cache
@@ -27,11 +26,20 @@ import java.util.function.Function;
  */
 public interface Cacheable<OUT> {
 
+	default SoftenedCacheable<OUT> soften(){
+		return (key,fn) -> {
+			try{
+				return computeIfAbsent(key,fn);
+			}catch(Throwable t){
+				throw ExceptionSoftener.throwSoftenedException(t);
+			}
+		};
+	}
 	/**
 	 * Implementation should call the underlying cache
 	 * @param key To lookup cached value
 	 * @param fn Function to compute value, if it is not in the cache
 	 * @return Cached (or computed) result
 	 */
-	public OUT computeIfAbsent(Object key, Function<Object,OUT> fn);
+	public OUT computeIfAbsent(Object key, Function<Object,OUT> fn) throws Throwable;
 }

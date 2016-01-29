@@ -8,12 +8,20 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.LockSupport;
+<<<<<<< HEAD
 
 import javaslang.collection.LazyStream;
 import javaslang.collection.Stream;
+=======
+>>>>>>> master
 
+import org.junit.Ignore;
 import org.junit.Test;
 
+<<<<<<< HEAD
+=======
+import javaslang.collection.Stream;
+>>>>>>> master
 
 public class HotStreamTest {
 	static final Executor exec = Executors.newFixedThreadPool(1);
@@ -72,7 +80,7 @@ public class HotStreamTest {
 		latch.await();
 		assertTrue(value!=null);
 	}
-	@Test
+	@Test @Ignore
 	public void hotStreamConnectPausable() throws InterruptedException{
 		value= null;
 		CountDownLatch latch = new CountDownLatch(1);
@@ -90,7 +98,7 @@ public class HotStreamTest {
 		Object oldValue = value;
 		
 		s.unpause();
-		LockSupport.parkNanos(1000l);
+		LockSupport.parkNanos(2000l);
 		s.pause();
 		System.out.println(value);
 		assertTrue(value!=oldValue);

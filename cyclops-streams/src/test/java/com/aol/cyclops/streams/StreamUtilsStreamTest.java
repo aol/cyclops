@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
 
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -27,7 +28,7 @@ public class StreamUtilsStreamTest {
 	
 	@Test
 	public void testFlatMap(){
-		assertThat(StreamUtils.flatMapStream(Stream.of( asList("1","10"), asList("2"),asList("3"),asList("4")), list -> list.stream() ).collect(Collectors.toList() 
+		assertThat(StreamUtils.flatMapStream(Stream.<List<String>>of( asList("1","10"), asList("2"),asList("3"),asList("4")), list -> list.stream() ).collect(Collectors.toList() 
 						),hasItem("10"));
 	}
 	

@@ -2,6 +2,8 @@ package com.aol.cyclops.javaslang;
 
 import java.util.Optional;
 
+import com.aol.cyclops.monad.AnyM;
+
 import javaslang.Value;
 import javaslang.collection.LazyStream;
 import javaslang.collection.List;
@@ -10,8 +12,6 @@ import javaslang.control.Either.LeftProjection;
 import javaslang.control.Either.RightProjection;
 import javaslang.control.Option;
 import javaslang.control.Try;
-
-import com.aol.cyclops.monad.AnyM;
 
 public class Javaslang {
 	public static <T> AnyM<T> anyMonad(Value<T> monadM){

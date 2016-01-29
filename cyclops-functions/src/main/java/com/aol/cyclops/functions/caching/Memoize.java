@@ -35,7 +35,7 @@ public class Memoize {
 	 */
 	public static <T> Supplier<T> memoizeSupplier(Supplier<T> s,Cacheable<T> cache){
 		
-		return () -> cache.computeIfAbsent("k",a->s.get());
+		return () -> cache.soften().computeIfAbsent("k",a->s.get());
 	}
 	
 	/**
@@ -46,8 +46,8 @@ public class Memoize {
 	 * @return Memoised Callable
 	 */
 	public static <T> Callable<T> memoizeCallable(Callable<T> s,Cacheable<T> cache){
-	
-		return () -> cache.computeIfAbsent("k",a -> { 
+		
+		return () -> cache.soften().computeIfAbsent("k",a -> { 
 			try { 
 				return s.call();
 			}catch(Exception e){
@@ -94,7 +94,7 @@ public class Memoize {
 	 * @return Memoised Function
 	 */
 	public static <T,R> Function<T,R> memoizeFunction(Function<T,R> fn,Cacheable<R> cache){
-		return t -> (R)cache.computeIfAbsent(t,(Function)fn);
+		return t -> (R)cache.soften().computeIfAbsent(t,(Function)fn);
 	}
 	
 	/**

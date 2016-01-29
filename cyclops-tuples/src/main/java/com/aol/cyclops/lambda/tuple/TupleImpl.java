@@ -78,6 +78,7 @@ public class TupleImpl<T1,T2,T3,T4,T5,T6,T7,T8> implements PTuple8<T1,T2,T3,T4,T
 		else
 			cachedValues = ((TupleWrapper) ()-> tuple).values();
 				
+		
 		this.arity = arity.orElse(cachedValues.size());
 	}
 	

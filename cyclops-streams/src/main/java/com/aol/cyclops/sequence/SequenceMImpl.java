@@ -46,7 +46,6 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
-
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.future.FutureOperations;
@@ -54,13 +53,7 @@ import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
 import com.aol.cyclops.sequence.spliterators.ReversableSpliterator;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.sequence.streamable.Streamable;
-
-import com.aol.cyclops.streams.BaseHotStreamImpl;
-
-
 import com.aol.cyclops.streams.StreamUtils;
-
-
 
 public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	private final Seq<T> stream;
@@ -1286,7 +1279,8 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @return this SequenceM converted to AnyM format
 	 */
 	public AnyM<T> anyM(){
-		return AnyM.fromStream(stream)	;
+		return AnyM.fromStream(stream);
+
 	}
 	/* (non-Javadoc)
 	 * @see java.util.stream.Stream#map(java.util.function.Function)

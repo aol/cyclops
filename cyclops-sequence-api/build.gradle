@@ -28,6 +28,7 @@ configurations {
 }
 dependencies {
 	compile project(':cyclops-invokedynamic')
+	compile project(':cyclops-mixins')
 	compile project(':cyclops-functions')
 	compile project(':cyclops-trampoline')
 	compile 'org.reactivestreams:reactive-streams:1.0.0'

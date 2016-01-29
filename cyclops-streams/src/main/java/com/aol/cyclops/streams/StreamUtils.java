@@ -1593,8 +1593,8 @@ public class StreamUtils{
 		if(stream instanceof SequenceM)
 			return (SequenceM)stream;
 		if(rev.isPresent())
-			return new SequenceMImpl(stream,rev.get());
-		return new SequenceMImpl(stream);
+			return new SequenceMImpl<T>(stream,rev.get());
+		return new SequenceMImpl<T>(stream);
 	}
 	
 	
@@ -2107,10 +2107,10 @@ public class StreamUtils{
 				@Override
 				public T next() {
 					T nextValue = it.next();
-					if(count++<x)
+					if(++count<x)
 						return nextValue;
 					count=0;
-					LockSupport.parkNanos(next-System.nanoTime()-last);
+					LockSupport.parkNanos(next-(System.nanoTime()-last));
 					
 					last= System.nanoTime();
 					return nextValue;

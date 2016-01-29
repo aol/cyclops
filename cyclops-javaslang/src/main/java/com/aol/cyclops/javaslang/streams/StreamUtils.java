@@ -124,6 +124,7 @@ public class StreamUtils{
 		t2.v2.run();
 		return t2.v1.join();
 	}
+
 	/**
 	 * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
 	 * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription 
@@ -274,6 +275,7 @@ public class StreamUtils{
 		t2.v2.run();
 		
 	}
+
 	/**
 	 * Execute this Stream on a schedule
 	 * 
