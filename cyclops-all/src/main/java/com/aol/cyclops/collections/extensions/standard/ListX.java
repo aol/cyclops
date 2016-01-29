@@ -14,11 +14,11 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T> {
 	public <T> Collector<T,?,List<T>> getCollector();
 	
 	default <T1> ListX<T1> from(Collection<T1> c){
-		return new ListXImpl<T1>(c.stream().collect(getCollector()));
+		return new ListXImpl<T1>(c.stream().collect(getCollector()),getCollector());
 	}
 	
 	default <X> ListX<X> fromStream(Stream<X> stream){
-		return new ListXImpl<>(stream.collect(getCollector()));
+		return new ListXImpl<>(stream.collect(getCollector()),getCollector());
 	}
 	
 

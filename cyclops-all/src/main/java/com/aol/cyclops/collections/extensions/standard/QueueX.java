@@ -15,11 +15,11 @@ public interface QueueX<T> extends Queue<T>, MutableCollectionX<T> {
 	
 	default <T1> QueueX<T1> from(Collection<T1> c){
 		
-		return new QueueXImpl<T1>(c.stream().collect(getCollector()));
+		return new QueueXImpl<T1>(c.stream().collect(getCollector()),getCollector());
 	}
 	
 	default <X> QueueX<X> fromStream(Stream<X> stream){
-		return new QueueXImpl<>(stream.collect(getCollector()));
+		return new QueueXImpl<>(stream.collect(getCollector()),getCollector());
 	}
 	
 
