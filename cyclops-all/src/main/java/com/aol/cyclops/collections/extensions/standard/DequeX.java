@@ -2,14 +2,19 @@ package com.aol.cyclops.collections.extensions.standard;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Deque;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple2;
+
+import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.trampoline.Trampoline;
 
@@ -55,7 +60,11 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	default <X> DequeX<X> fromStream(Stream<X> stream){
 		return new DequeXImpl<>(stream.collect(getCollector()),getCollector());
 	}
-	
+	@Override
+	default SequenceM<T> stream(){
+		
+		return SequenceM.fromIterable(this);
+	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#reverse()
@@ -168,6 +177,39 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 		return (DequeX)MutableCollectionX.super.slice(from, to);
 	}
 
+
+	default DequeX<ListX<T>> grouped(int groupSize){
+		return (DequeX<ListX<T>>)MutableCollectionX.super.grouped(groupSize); 
+	}
+	default <K, A, D> DequeX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream){
+		return (DequeX)MutableCollectionX.super.grouped(classifier,downstream);
+	}
+	default <K> DequeX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
+		return (DequeX)MutableCollectionX.super.grouped(classifier);	 
+	}
+	default <U> DequeX<Tuple2<T, U>> zip(Iterable<U> other){
+		return (DequeX<Tuple2<T, U>>)MutableCollectionX.super.zip(other);
+	}
+	default DequeX<ListX<T>> sliding(int windowSize){
+		return (DequeX<ListX<T>>)MutableCollectionX.super.sliding(windowSize); 
+	}
+	default DequeX<ListX<T>> sliding(int windowSize, int increment){
+		return (DequeX<ListX<T>>)MutableCollectionX.super.sliding(windowSize,increment); 
+	}
+	default DequeX<T> scanLeft(Monoid<T> monoid){
+		return (DequeX<T>)MutableCollectionX.super.scanLeft(monoid); 
+	}
+	default <U> DequeX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
+		return (DequeX<U>)MutableCollectionX.super.scanLeft(seed,function); 	
+	}
+	default DequeX<T> scanRight(Monoid<T> monoid){
+		return (DequeX<T>)MutableCollectionX.super.scanRight(monoid); 
+	}
+	default <U> DequeX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
+		return (DequeX<U>)MutableCollectionX.super.scanRight(identity,combiner); 
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#sorted(java.util.function.Function)
 	 */

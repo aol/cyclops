@@ -2,18 +2,23 @@ package com.aol.cyclops.collections.extensions.persistent;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.OrderedPSet;
 import org.pcollections.PBag;
 import org.pcollections.POrderedSet;
-import org.pcollections.PSet;
 
-import com.aol.cyclops.collections.POrderedSets;
 import com.aol.cyclops.collections.PBags;
+import com.aol.cyclops.collections.POrderedSets;
+import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T>{
@@ -39,6 +44,11 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	}
 	public static<T> POrderedSetX<T> toPOrderedSet(Stream<T> stream){
 		return new POrderedSetXImpl<>((POrderedSet<T>)POrderedSets.toPOrderedSet().mapReduce(stream));
+	}
+	@Override
+	default SequenceM<T> stream(){
+		
+		return SequenceM.fromIterable(this);
 	}
 	default POrderedSet<T> toPOrderedSet(){
 		return this;
@@ -182,6 +192,35 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	default <U extends Comparable<? super U>> POrderedSetX<T> sorted(Function<? super T, ? extends U> function) {
 		return (POrderedSetX<T>)PersistentCollectionX.super.sorted(function);
 	}
-	
+	default POrderedSetX<ListX<T>> grouped(int groupSize){
+		return  (POrderedSetX<ListX<T>>)PersistentCollectionX.super.grouped(groupSize);
+	}
+	default <K, A, D> POrderedSetX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream){
+		return  (POrderedSetX)PersistentCollectionX.super.grouped(classifier,downstream);
+	}
+	default <K> POrderedSetX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
+		return  (POrderedSetX)PersistentCollectionX.super.grouped(classifier);
+	}
+	default <U> POrderedSetX<Tuple2<T, U>> zip(Iterable<U> other){
+		return  (POrderedSetX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
+	}
+	default POrderedSetX<ListX<T>> sliding(int windowSize){
+		return  (POrderedSetX<ListX<T>>)PersistentCollectionX.super.sliding(windowSize);
+	}
+	default POrderedSetX<ListX<T>> sliding(int windowSize, int increment){
+		return  (POrderedSetX<ListX<T>>)PersistentCollectionX.super.sliding(windowSize,increment);
+	}
+	default POrderedSetX<T> scanLeft(Monoid<T> monoid){
+		return  (POrderedSetX<T>)PersistentCollectionX.super.scanLeft(monoid);
+	}
+	default <U> POrderedSetX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
+		return  (POrderedSetX<U>)PersistentCollectionX.super.scanLeft(seed,function);
+	}
+	default POrderedSetX<T> scanRight(Monoid<T> monoid){
+		return  (POrderedSetX<T>)PersistentCollectionX.super.scanRight(monoid);
+	}
+	default <U> POrderedSetX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
+		return  (POrderedSetX<U>)PersistentCollectionX.super.scanRight(identity,combiner);
+	}
 
 }

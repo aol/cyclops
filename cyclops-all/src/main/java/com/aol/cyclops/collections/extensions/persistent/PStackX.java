@@ -2,17 +2,22 @@ package com.aol.cyclops.collections.extensions.persistent;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
 import com.aol.cyclops.collections.PStacks;
 import com.aol.cyclops.collections.extensions.FluentSequenceX;
+import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.sequence.Monoid;
-
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentSequenceX<T>{
@@ -118,7 +123,11 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	default PStack<T> toPStack(){
 		return this;
 	}
-	
+	@Override
+	default SequenceM<T> stream(){
+		
+		return SequenceM.fromIterable(this);
+	}
 	default <X> PStackX<X> from(Collection<X> col){
 		return fromCollection(col);
 	}
@@ -281,4 +290,35 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	public PStackX<T> minus(int i);
 	
 	public PStackX<T> subList(int start, int end);
+	
+	default PStackX<ListX<T>> grouped(int groupSize){
+		return  (PStackX<ListX<T>>)PersistentCollectionX.super.grouped(groupSize);
+	}
+	default <K, A, D> PStackX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream){
+		return  (PStackX)PersistentCollectionX.super.grouped(classifier,downstream);
+	}
+	default <K> PStackX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
+		return  (PStackX)PersistentCollectionX.super.grouped(classifier);
+	}
+	default <U> PStackX<Tuple2<T, U>> zip(Iterable<U> other){
+		return  (PStackX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
+	}
+	default PStackX<ListX<T>> sliding(int windowSize){
+		return  (PStackX<ListX<T>>)PersistentCollectionX.super.sliding(windowSize);
+	}
+	default PStackX<ListX<T>> sliding(int windowSize, int increment){
+		return  (PStackX<ListX<T>>)PersistentCollectionX.super.sliding(windowSize,increment);
+	}
+	default PStackX<T> scanLeft(Monoid<T> monoid){
+		return  (PStackX<T>)PersistentCollectionX.super.scanLeft(monoid);
+	}
+	default <U> PStackX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
+		return  (PStackX<U>)PersistentCollectionX.super.scanLeft(seed,function);
+	}
+	default PStackX<T> scanRight(Monoid<T> monoid){
+		return  (PStackX<T>)PersistentCollectionX.super.scanRight(monoid);
+	}
+	default <U> PStackX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
+		return  (PStackX<U>)PersistentCollectionX.super.scanRight(identity,combiner);
+	}
 }

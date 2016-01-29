@@ -2,15 +2,21 @@ package com.aol.cyclops.collections.extensions.persistent;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.HashTreePSet;
 import org.pcollections.PSet;
 
 import com.aol.cyclops.collections.PSets;
+import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
@@ -38,7 +44,11 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	public static<T> PSetX<T> fromStream(Stream<T> stream){
 		return new PSetXImpl<>((PSet<T>)PSets.toPSet().mapReduce(stream));
 	}
-	
+	@Override
+	default SequenceM<T> stream(){
+		
+		return SequenceM.fromIterable(this);
+	}
 	default PSet<T> toPSet(){
 		return this;
 	}
@@ -181,6 +191,36 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	@Override
 	default <U extends Comparable<? super U>> PSetX<T> sorted(Function<? super T, ? extends U> function) {
 		return (PSetX<T>)PersistentCollectionX.super.sorted(function);
+	}
+	default PSetX<ListX<T>> grouped(int groupSize){
+		return  (PSetX<ListX<T>>)PersistentCollectionX.super.grouped(groupSize);
+	}
+	default <K, A, D> PSetX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream){
+		return  (PSetX)PersistentCollectionX.super.grouped(classifier,downstream);
+	}
+	default <K> PSetX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
+		return  (PSetX)PersistentCollectionX.super.grouped(classifier);
+	}
+	default <U> PSetX<Tuple2<T, U>> zip(Iterable<U> other){
+		return  (PSetX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
+	}
+	default PSetX<ListX<T>> sliding(int windowSize){
+		return  (PSetX<ListX<T>>)PersistentCollectionX.super.sliding(windowSize);
+	}
+	default PSetX<ListX<T>> sliding(int windowSize, int increment){
+		return  (PSetX<ListX<T>>)PersistentCollectionX.super.sliding(windowSize,increment);
+	}
+	default PSetX<T> scanLeft(Monoid<T> monoid){
+		return  (PSetX<T>)PersistentCollectionX.super.scanLeft(monoid);
+	}
+	default <U> PSetX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
+		return  (PSetX<U>)PersistentCollectionX.super.scanLeft(seed,function);
+	}
+	default PSetX<T> scanRight(Monoid<T> monoid){
+		return  (PSetX<T>)PersistentCollectionX.super.scanRight(monoid);
+	}
+	default <U> PSetX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
+		return  (PSetX<U>)PersistentCollectionX.super.scanRight(identity,combiner);
 	}
 	
 
