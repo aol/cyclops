@@ -76,24 +76,17 @@ public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
 					while(!cancelled  && requests.size()>0){
 						long n2 = requests.peek();
 						for(int i=0;i<n2;i++){
-							
-							if(it.hasNext()){
-								results.add(it.next().thenAccept( r-> s.onNext(r)).exceptionally(t->{ 
+							try{
+								if(it.hasNext()){
+									handleNext(s, it, results);
 									
-											s.onError(t); return null;
-											
-								}));
-								List<CompletableFuture> newResults = results.stream().filter(cf->cf.isDone()).collect(Collectors.toList());
-								results.removeAll(newResults);
-								
-							}
-							else{
-								
-								if(!complete && !cancelled){
-									complete=true;
-									s.onComplete();
 								}
-								break;
+								else{
+									handleComplete(s);
+									break;
+								}
+							}catch(Throwable t){
+								s.onError(t);
 							}
 							
 							
@@ -102,6 +95,23 @@ public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
 					}
 				
 					
+				}
+				private void handleComplete(Subscriber<? super T> s) {
+					if(!complete && !cancelled){
+						complete=true;
+						s.onComplete();
+					}
+				}
+				private void handleNext(Subscriber<? super T> s,
+						Iterator<CompletableFuture<T>> it,
+						List<CompletableFuture> results) {
+					results.add(it.next().thenAccept( r-> s.onNext(r)).exceptionally(t->{ 
+						
+								s.onError(t); return null;
+								
+					}));
+					List<CompletableFuture> newResults = results.stream().filter(cf->cf.isDone()).collect(Collectors.toList());
+					results.removeAll(newResults);
 				}
 
 				@Override

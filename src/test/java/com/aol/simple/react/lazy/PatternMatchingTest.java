@@ -1,3 +1,4 @@
+
 package com.aol.simple.react.lazy;
 import static org.junit.Assert.*;
 
