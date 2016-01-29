@@ -151,7 +151,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#flatMap(java.util.function.Function)
 	 */
 	@Override
-	default <R> PStackX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
+	default <R> PStackX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
 		
 		return (PStackX)PersistentCollectionX.super.flatMap(mapper);
 	}

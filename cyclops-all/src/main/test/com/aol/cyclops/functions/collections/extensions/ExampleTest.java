@@ -1,5 +1,7 @@
 package com.aol.cyclops.functions.collections.extensions;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 
 import com.aol.cyclops.collections.extensions.standard.DequeX;
@@ -14,6 +16,15 @@ public class ExampleTest {
 	public void list(){
 		ListX.of(1,2,3)
 			.map(i->i+2)
+			.plus(5)
+			.map(i->"hello" + i)
+			.forEach(System.out::println);
+			
+	}
+	@Test
+	public void listFlatMap(){
+		ListX.of(1,2,3)
+			.flatMap(i->Arrays.asList(i+2,10))
 			.plus(5)
 			.map(i->"hello" + i)
 			.forEach(System.out::println);

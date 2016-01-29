@@ -88,7 +88,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#flatMap(java.util.function.Function)
 	 */
 	@Override
-	default <R> DequeX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
+	default <R> DequeX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
 	
 		return (DequeX)MutableCollectionX.super.flatMap(mapper);
 	}

@@ -96,7 +96,7 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#flatMap(java.util.function.Function)
 	 */
 	@Override
-	default <R> SetX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
+	default <R> SetX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
 		
 		return (SetX)MutableCollectionX.super.flatMap(mapper);
 	}

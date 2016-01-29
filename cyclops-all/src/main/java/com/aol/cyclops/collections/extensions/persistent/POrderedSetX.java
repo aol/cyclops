@@ -97,7 +97,7 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#flatMap(java.util.function.Function)
 	 */
 	@Override
-	default <R> POrderedSetX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
+	default <R> POrderedSetX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
 		return (POrderedSetX<R>)PersistentCollectionX.super.flatMap(mapper);
 	}
 	default POrderedSetX<T> takeRight(int num){

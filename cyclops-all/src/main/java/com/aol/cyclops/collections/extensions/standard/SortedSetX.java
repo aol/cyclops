@@ -96,7 +96,7 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#flatMap(java.util.function.Function)
 	 */
 	@Override
-	default <R> SortedSetX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
+	default <R> SortedSetX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
 		
 		return (SortedSetX)MutableCollectionX.super.flatMap(mapper);
 	}

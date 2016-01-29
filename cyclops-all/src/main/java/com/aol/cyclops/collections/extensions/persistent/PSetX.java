@@ -96,7 +96,7 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#flatMap(java.util.function.Function)
 	 */
 	@Override
-	default <R> PSetX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
+	default <R> PSetX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
 		return (PSetX<R>)PersistentCollectionX.super.flatMap(mapper);
 	}
 

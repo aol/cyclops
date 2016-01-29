@@ -98,7 +98,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#flatMap(java.util.function.Function)
 	 */
 	@Override
-	default <R> ListX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
+	default <R> ListX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
 	
 		return (ListX)MutableCollectionX.super.flatMap(mapper);
 	}

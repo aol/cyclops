@@ -6,6 +6,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.collections.extensions.CollectionX;
+import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface MutableCollectionX<T> extends CollectionX<T> {
@@ -21,8 +22,8 @@ public interface MutableCollectionX<T> extends CollectionX<T> {
 	default <R> CollectionX<R> map(Function<? super T, ? extends R> mapper){
 		return fromStream(stream().map(mapper));
 	}
-	default <R> CollectionX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper){
-		return fromStream(stream().flatMap(mapper));
+	default <R> CollectionX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper){
+		return fromStream(stream().flatMap(mapper.andThen(StreamUtils::stream)));
 	}
 	default CollectionX<T> limit(long num){
 		return fromStream(stream().limit(num));

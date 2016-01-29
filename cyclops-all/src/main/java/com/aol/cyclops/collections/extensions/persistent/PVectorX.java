@@ -148,7 +148,7 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#flatMap(java.util.function.Function)
 	 */
 	@Override
-	default <R> PVectorX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
+	default <R> PVectorX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
 		return (PVectorX<R>)PersistentCollectionX.super.flatMap(mapper);
 	}
 

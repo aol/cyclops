@@ -1,4 +1,77 @@
+Cyclops all contains 2 extremely powerful sets of features
 
+1. CollectionX : a series of fluent & powerful Collection eXtensions
+1. FluentFunctions  : a fluent API for working with functions and methods (AOP, caching, logging, exception handling and more).
+
+# Collection eXtensions
+
+Cyclops Collection eXtensions provide a fluent interface with advanced 'stream'-like functionality over standard JDK collections and PCollections persistent collections. Supported extensions are
+
+Standard with mutable and immutable views 
+
+* ListX : JDK List extension
+* SetX : JDK Set extension
+* SortedSetX : JDK SortedSet extension
+* QueueX : JDK Queue extension
+* DequeX : JDK Deque extension
+
+Persistent collection eXtensions
+
+* PStackX : persistent analogue to LinkedList
+* PVectorX : persistent analogue to ArrayList
+* PQueueX : persistent analougue to JDK Queues
+* PSetX : persistent analouge to JDK sets
+* POrderedSetX : persistent analogue to JDK SortedSets
+* PBagX : persisent ordered collection that allows duplicates
+
+== Examples 
+
+With ListX
+
+ ```java
+ListX.of(1,2,3)
+      .map(i->i+2)
+      .plus(5)
+      .map(i->"hello" + i)
+      .forEach(System.out::println);
+
+//prints 
+
+hello2
+hello4
+hello5
+hello5
+
+```
+
+With PStackX
+
+ ```java
+PStackX.of(1,2,3,4,10)
+            .map(i->i+2)
+            .dropRight(2)
+            .plus(5)
+            .map(i->"hello" + i)
+            .forEach(System.out::println);
+
+//prints 
+
+hello2
+hello4
+hello5
+hello5
+```
+
+Creating a SetX from an existing Set
+
+ ```java
+ SetX.fromIterable(mySet)
+     .limit(10)
+     .filter(i->i>100)
+     .map(this::load)
+     .collect(ListX.toListX());
+ ```
+ 
 # FluentFunctions
 
 ## AOP

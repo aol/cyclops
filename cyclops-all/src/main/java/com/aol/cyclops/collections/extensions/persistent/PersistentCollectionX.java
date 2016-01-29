@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
@@ -23,8 +24,8 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	default <R> CollectionX<R> map(Function<? super T, ? extends R> mapper){
 		return from(this.<R>monoid().mapReduce(stream().map(mapper)));
 	}
-	default <R> CollectionX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper){
-		return from(this.<R>monoid().mapReduce(stream().flatMap(mapper)));
+	default <R> CollectionX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper){
+		return from(this.<R>monoid().mapReduce(stream().flatMap(mapper.andThen(StreamUtils::stream))));
 	}
 	default CollectionX<T> limit(long num){
 		return from(this.<T>monoid().mapReduce(stream().limit(num)));

@@ -98,7 +98,7 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#flatMap(java.util.function.Function)
 	 */
 	@Override
-	default <R> PQueueX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
+	default <R> PQueueX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
 		return (PQueueX<R>)PersistentCollectionX.super.flatMap(mapper);
 	}
 

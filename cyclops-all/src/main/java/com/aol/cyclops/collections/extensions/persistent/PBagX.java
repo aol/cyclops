@@ -99,7 +99,7 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#flatMap(java.util.function.Function)
 	 */
 	@Override
-	default <R> PBagX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
+	default <R> PBagX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
 		return (PBagX<R>)PersistentCollectionX.super.flatMap(mapper);
 	}
 

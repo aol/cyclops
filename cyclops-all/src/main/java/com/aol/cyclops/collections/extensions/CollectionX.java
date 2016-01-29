@@ -153,7 +153,7 @@ public interface CollectionX<T> extends Iterable<T>, Collection<T>,SequenceMColl
 	}
 	CollectionX<T> filter(Predicate<? super T> pred);
 	<R> CollectionX<R> map(Function<? super T, ? extends R> mapper);
-	<R> CollectionX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper);
+	<R> CollectionX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper);
 	CollectionX<T> limit(long num);
 	CollectionX<T> skip(long num);
 	CollectionX<T> takeWhile(Predicate<? super T> p);
