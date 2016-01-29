@@ -139,4 +139,23 @@ public interface QueueX<T> extends Queue<T>, MutableCollectionX<T> {
 		
 		return (QueueX)MutableCollectionX.super.sorted(function);
 	}
+	default QueueX<T> plus(T e){
+		add(e);
+		return this;
+	}
+	
+	default QueueX<T> plusAll(Collection<? extends T> list){
+		addAll(list);
+		return this;
+	}
+	
+	default QueueX<T> minus(Object e){
+		remove(e);
+		return this;
+	}
+	
+	default QueueX<T> minusAll(Collection<?> list){
+		removeAll(list);
+		return this;
+	}
 }

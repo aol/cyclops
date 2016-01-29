@@ -4,16 +4,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Stream;
 
-import org.pcollections.ConsPStack;
-import org.pcollections.PStack;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
-import com.aol.cyclops.collections.extensions.persistent.PVectorX;
-import com.aol.cyclops.collections.extensions.persistent.PVectorXImpl;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.Reducers;
-import com.aol.cyclops.sequence.SequenceM;
 
 /**
  * Class for working with Persistent Vectors from PCollections
@@ -43,8 +38,8 @@ public class PVectors {
 	 * @param values To add to PVector
 	 * @return new PVector
 	 */
-	public static <T> PVectorX<T> of(T...values){
-		return new PVectorXImpl<>(TreePVector.from(Arrays.asList(values)));
+	public static <T> PVector<T> of(T...values){
+		return TreePVector.from(Arrays.asList(values));
 	}
 	/**
 	 * <pre>
@@ -57,8 +52,8 @@ public class PVectors {
 	 * </pre>
 	 * @return an empty PVector
 	 */
-	public static<T> PVectorX<T> empty(){
-		return new PVectorXImpl<>(TreePVector .empty());
+	public static<T> PVector<T> empty(){
+		return TreePVector .empty();
 	}
 	/**
 	 * Construct a PVector containing a single value
@@ -76,8 +71,8 @@ public class PVectors {
 	 * @param value Single value for PVector
 	 * @return PVector with a single value
 	 */
-	public static <T> PVectorX<T> singleton(T value){
-		return new PVectorXImpl<>(TreePVector.singleton(value));
+	public static <T> PVector<T> singleton(T value){
+		return  TreePVector.singleton(value);
 	}
 	/**
 	 * Create a PVector from the supplied Colleciton
@@ -91,8 +86,8 @@ public class PVectors {
 	 * @param values to add to new PVector
 	 * @return PVector containing values
 	 */
-	public static <T> PVectorX<T> fromCollection(Collection<T> values){
-		return new PVectorXImpl<>(TreePVector.from(values));
+	public static <T> PVector<T> fromCollection(Collection<T> values){
+		return TreePVector.from(values);
 	}
 	/**
 	 * Reduce (immutable Collection) a Stream to a PVector
@@ -108,8 +103,8 @@ public class PVectors {
 	 * @param stream to convert to a PVector
 	 * @return
 	 */
-	public static<T> PVectorX<T> fromStream(Stream<T> stream){
-		return new PVectorXImpl<>((PVector<T>)toPVector().mapReduce(stream));
+	public static<T> PVector<T> fromStream(Stream<T> stream){
+		return (PVector<T>)toPVector().mapReduce(stream);
 	}
 	/**
 	 * 

@@ -7,64 +7,66 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.pcollections.HashTreePSet;
+import org.pcollections.PQueue;
 import org.pcollections.PSet;
 
+import com.aol.cyclops.collections.PQueues;
 import com.aol.cyclops.collections.PSets;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.trampoline.Trampoline;
 
-public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
+public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
 
-	public static <T> PSetX<T> of(T...values){
+	public static <T> PQueueX<T> of(T...values){
 		
-		return new PSetXImpl<>(HashTreePSet.from(Arrays.asList(values)));
+		return new PQueueXImpl<>(PQueues.of(values));
 	}
-	public static <T> PSetX<T> empty(){
-		return new PSetXImpl<>(HashTreePSet .empty());
+	public static <T> PQueueX<T> empty(){
+		return new PQueueXImpl<>(PQueues .empty());
 	}
-	public static <T> PSetX<T> singleton(T value){
-		return new PSetXImpl<>(HashTreePSet.singleton(value));
+	public static <T> PQueueX<T> singleton(T value){
+		return new PQueueXImpl<>(PQueues.singleton(value));
 	}
-	public static<T> PSetX<T> fromCollection(Collection<T> stream){
-		if(stream instanceof PSet)
-			return new PSetXImpl<>((PSet)(stream));
-		return new PSetXImpl<>(HashTreePSet.from(stream));
+	public static<T> PQueueX<T> fromCollection(Collection<T> stream){
+		if(stream instanceof PQueue)
+			return new PQueueXImpl<>((PQueue)(stream));
+		return new PQueueXImpl<>(PQueues.fromCollection(stream));
 	}
-	public static<T> PSetX<T> fromStream(Stream<T> stream){
-		return new PSetXImpl<>((PSet<T>)PSets.toPSet().mapReduce(stream));
+	public static<T> PQueueX<T> fromStream(Stream<T> stream){
+		return new PQueueXImpl<>((PQueue<T>)PSets.toPSet().mapReduce(stream));
 	}
 	
-	default PSet<T> toPSet(){
+	default PQueue<T> toPSet(){
 		return this;
 	}
 	
-	default <X> PSetX<X> from(Collection<X> col){
-		return fromCollection(col);
+	default <X> PQueueX<X> from(Collection<X> col){
+		return new PQueueXImpl<>(PQueues.fromCollection(col));
 	}
-	default <T> Monoid<PSet<T>> monoid(){
-		return PSets.toPSet();
+	default <T> Monoid<PQueue<T>> monoid(){
+		return PQueues.toPQueue();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.pcollections.PSet#plus(java.lang.Object)
 	 */
 	@Override
-	public PSetX<T> plus(T e);
+	public PQueueX<T> plus(T e);
 	/* (non-Javadoc)
 	 * @see org.pcollections.PSet#plusAll(java.util.Collection)
 	 */
 	@Override
-	public PSetX<T> plusAll(Collection<? extends T> list) ;
+	public PQueueX<T> plusAll(Collection<? extends T> list) ;
 	/* (non-Javadoc)
 	 * @see org.pcollections.PSet#minus(java.lang.Object)
 	 */
 	@Override
-	public PSetX<T> minus(Object e);
+	public PQueueX<T> minus(Object e);
 	/* (non-Javadoc)
 	 * @see org.pcollections.PSet#minusAll(java.util.Collection)
 	 */
 	@Override
-	public PSetX<T> minusAll(Collection<?> list);
+	public PQueueX<T> minusAll(Collection<?> list);
 
 	
 
@@ -72,104 +74,104 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#reverse()
 	 */
 	@Override
-	default PSetX<T> reverse() {
-		return (PSetX<T>)PersistentCollectionX.super.reverse();
+	default PQueueX<T> reverse() {
+		return (PQueueX<T>)PersistentCollectionX.super.reverse();
 	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#filter(java.util.function.Predicate)
 	 */
 	@Override
-	default PSetX<T> filter(Predicate<? super T> pred) {
-		return (PSetX<T>)PersistentCollectionX.super.filter(pred);
+	default PQueueX<T> filter(Predicate<? super T> pred) {
+		return (PQueueX<T>)PersistentCollectionX.super.filter(pred);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#map(java.util.function.Function)
 	 */
 	@Override
-	default <R> PSetX<R> map(Function<? super T, ? extends R> mapper) {
-		return (PSetX<R>)PersistentCollectionX.super.map(mapper);
+	default <R> PQueueX<R> map(Function<? super T, ? extends R> mapper) {
+		return (PQueueX<R>)PersistentCollectionX.super.map(mapper);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#flatMap(java.util.function.Function)
 	 */
 	@Override
-	default <R> PSetX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
-		return (PSetX<R>)PersistentCollectionX.super.flatMap(mapper);
+	default <R> PQueueX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
+		return (PQueueX<R>)PersistentCollectionX.super.flatMap(mapper);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#limit(long)
 	 */
 	@Override
-	default PSetX<T> limit(long num) {
-		return (PSetX<T>)PersistentCollectionX.super.limit(num);
+	default PQueueX<T> limit(long num) {
+		return (PQueueX<T>)PersistentCollectionX.super.limit(num);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#skip(long)
 	 */
 	@Override
-	default PSetX<T> skip(long num) {
-		return (PSetX<T>)PersistentCollectionX.super.skip(num);
+	default PQueueX<T> skip(long num) {
+		return (PQueueX<T>)PersistentCollectionX.super.skip(num);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#takeWhile(java.util.function.Predicate)
 	 */
 	@Override
-	default PSetX<T> takeWhile(Predicate<? super T> p) {
-		return (PSetX<T>)PersistentCollectionX.super.takeWhile(p);
+	default PQueueX<T> takeWhile(Predicate<? super T> p) {
+		return (PQueueX<T>)PersistentCollectionX.super.takeWhile(p);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#dropWhile(java.util.function.Predicate)
 	 */
 	@Override
-	default PSetX<T> dropWhile(Predicate<? super T> p) {
-		return (PSetX<T>)PersistentCollectionX.super.dropWhile(p);
+	default PQueueX<T> dropWhile(Predicate<? super T> p) {
+		return (PQueueX<T>)PersistentCollectionX.super.dropWhile(p);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#takeUntil(java.util.function.Predicate)
 	 */
 	@Override
-	default PSetX<T> takeUntil(Predicate<? super T> p) {
-		return (PSetX<T>)PersistentCollectionX.super.takeUntil(p);
+	default PQueueX<T> takeUntil(Predicate<? super T> p) {
+		return (PQueueX<T>)PersistentCollectionX.super.takeUntil(p);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#dropUntil(java.util.function.Predicate)
 	 */
 	@Override
-	default PSetX<T> dropUntil(Predicate<? super T> p) {
-		return (PSetX<T>)PersistentCollectionX.super.dropUntil(p);
+	default PQueueX<T> dropUntil(Predicate<? super T> p) {
+		return (PQueueX<T>)PersistentCollectionX.super.dropUntil(p);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#trampoline(java.util.function.Function)
 	 */
 	@Override
-	default <R> PSetX<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-		return (PSetX<R>)PersistentCollectionX.super.trampoline(mapper);
+	default <R> PQueueX<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+		return (PQueueX<R>)PersistentCollectionX.super.trampoline(mapper);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#slice(long, long)
 	 */
 	@Override
-	default PSetX<T> slice(long from, long to) {
-		return (PSetX<T>)PersistentCollectionX.super.slice(from, to);
+	default PQueueX<T> slice(long from, long to) {
+		return (PQueueX<T>)PersistentCollectionX.super.slice(from, to);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#sorted(java.util.function.Function)
 	 */
 	@Override
-	default <U extends Comparable<? super U>> PSetX<T> sorted(Function<? super T, ? extends U> function) {
-		return (PSetX<T>)PersistentCollectionX.super.sorted(function);
+	default <U extends Comparable<? super U>> PQueueX<T> sorted(Function<? super T, ? extends U> function) {
+		return (PQueueX<T>)PersistentCollectionX.super.sorted(function);
 	}
 	
 

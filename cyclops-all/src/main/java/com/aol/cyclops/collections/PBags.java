@@ -14,25 +14,25 @@ import com.aol.cyclops.sequence.Reducers;
 
 public class PBags {
 	
-	public static<T> PBagX<T> of(T...values){
+	public static<T> PBag<T> of(T...values){
 		
 		
-		return new PBagXImpl<>(HashTreePBag.from(Arrays.asList(values)));
+		return HashTreePBag.from(Arrays.asList(values));
 	}
 	
-	public static<T> PBagX<T> empty(){
-		return new PBagXImpl<>(HashTreePBag .empty());
+	public static<T> PBag<T> empty(){
+		return HashTreePBag .empty();
 	}
-	public static<T> PBagX<T> singleton(T value){
-		return new PBagXImpl<>(HashTreePBag.singleton(value));
+	public static<T> PBag<T> singleton(T value){
+		return HashTreePBag.singleton(value);
 	}
-	public static<T> PBagX<T> fromCollection(Collection<T> stream){
+	public static<T> PBag<T> fromCollection(Collection<T> stream){
 		if(stream instanceof PBag)
-			return new PBagXImpl<>((PBag)(stream));
-		return new PBagXImpl<>(HashTreePBag.from(stream));
+			return (PBag)(stream);
+		return HashTreePBag.from(stream);
 	}
-	public static<T> PBagX<T> fromStream(Stream<T> stream){
-		return new PBagXImpl<>((PBag<T>)toPBag().mapReduce(stream));
+	public static<T> PBag<T> fromStream(Stream<T> stream){
+		return (PBag<T>)toPBag().mapReduce(stream);
 	}
 	public static <T> Monoid<PBag<T>> toPBag() { 
 		return	Reducers.toPBag();

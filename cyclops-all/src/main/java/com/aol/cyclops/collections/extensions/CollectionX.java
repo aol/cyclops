@@ -12,10 +12,10 @@ import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.BaseStream;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Collectable;
+import org.pcollections.PCollection;
 
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
 import com.aol.cyclops.matcher.builders.CheckValues;
@@ -882,4 +882,6 @@ public interface CollectionX<T> extends Iterable<T>, Collection<T>,SequenceMColl
         return map(u-> Matchable.of(u).mayMatch(fn1,fn2,fn3,fn4,fn5).orElse(defaultValue));
     }
 
+   
+	
 }

@@ -7,10 +7,16 @@ import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.collections.extensions.FluentSequenceX;
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.trampoline.Trampoline;
 
-public interface ListX<T> extends List<T>, MutableCollectionX<T> {
-	
+public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenceX<T> {
+	@Override
+	default SequenceM<T> stream(){
+		
+		return SequenceM.fromIterable(this);
+	}
 	public <T> Collector<T,?,List<T>> getCollector();
 	
 	default <T1> ListX<T1> from(Collection<T1> c){
@@ -134,5 +140,47 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T> {
 	default <U extends Comparable<? super U>> ListX<T> sorted(Function<? super T, ? extends U> function) {
 		
 		return (ListX)MutableCollectionX.super.sorted(function);
+	}
+	
+	/* Makes a defensive copy of this ListX replacing the value at i with the specified element
+	 *  (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableSequenceX#with(int, java.lang.Object)
+	 */
+	default ListX<T> with(int i,T element){
+		return from(stream().deleteBetween(i, i+1).insertAt(i,element).collect(getCollector()));
+	}
+	public ListX<T> subList(int start, int end);
+	default ListX<T> plus(T e){
+		add(e);
+		return this;
+	}
+	
+	default ListX<T> plusAll(Collection<? extends T> list){
+		addAll(list);
+		return this;
+	}
+	default ListX<T> minus(int pos){
+		remove(pos);
+		return this;
+	}
+	
+	default ListX<T> minus(Object e){
+		remove(e);
+		return this;
+	}
+	
+	default ListX<T> minusAll(Collection<?> list){
+		removeAll(list);
+		return this;
+	}
+	default ListX<T> plus(int i, T e){
+		add(i,e);
+		return this;
+	}
+	
+	
+	default ListX<T> plusAll(int i, Collection<? extends T> list){
+		addAll(i,list);
+		return this;
 	}
 }

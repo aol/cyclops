@@ -139,6 +139,24 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T> {
 		
 		return (SortedSetX)MutableCollectionX.super.sorted(function);
 	}
-
+	default SortedSetX<T> plus(T e){
+		add(e);
+		return this;
+	}
+	
+	default SortedSetX<T> plusAll(Collection<? extends T> list){
+		addAll(list);
+		return this;
+	}
+	
+	default SortedSetX<T> minus(Object e){
+		remove(e);
+		return this;
+	}
+	
+	default SortedSetX<T> minusAll(Collection<?> list){
+		removeAll(list);
+		return this;
+	}
 	
 }

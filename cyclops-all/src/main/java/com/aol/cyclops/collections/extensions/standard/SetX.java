@@ -138,5 +138,23 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 		return (SetX)MutableCollectionX.super.sorted(function);
 	}
 
+	default SetX<T> plus(T e){
+		add(e);
+		return this;
+	}
 	
+	default SetX<T> plusAll(Collection<? extends T> list){
+		addAll(list);
+		return this;
+	}
+	
+	default SetX<T> minus(Object e){
+		remove(e);
+		return this;
+	}
+	
+	default SetX<T> minusAll(Collection<?> list){
+		removeAll(list);
+		return this;
+	}
 }

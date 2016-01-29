@@ -1,11 +1,14 @@
 package com.aol.cyclops.collections.extensions.persistent;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import org.pcollections.OrderedPSet;
 import org.pcollections.PBag;
+import org.pcollections.POrderedSet;
 import org.pcollections.PSet;
 
 import com.aol.cyclops.collections.POrderedSets;
@@ -13,14 +16,31 @@ import com.aol.cyclops.collections.PBags;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.trampoline.Trampoline;
 
-public interface POrderedSetX<T> extends PBag<T>, PersistentCollectionX<T>{
+public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T>{
 
-	default PBag<T> toPBag(){
+	public static <T> POrderedSetX<T> of(T...values){
+		return new POrderedSetXImpl<>(OrderedPSet.from(Arrays.asList(values)));
+	}
+	public static <T> POrderedSet<T> empty(){
+		return new POrderedSetXImpl<>(OrderedPSet.empty());
+	}
+	public static <T> POrderedSet<T> singleton(T value){
+		return new POrderedSetXImpl<>(OrderedPSet.singleton(value));
+	}
+	public static<T> POrderedSetX<T> fromCollection(Collection<T> stream){
+		if(stream instanceof POrderedSet)
+			return new  POrderedSetXImpl<>((POrderedSet)(stream));
+		return new  POrderedSetXImpl<>(OrderedPSet.from(stream));
+	}
+	public static<T> POrderedSetX<T> toPOrderedSet(Stream<T> stream){
+		return new POrderedSetXImpl<>((POrderedSet<T>)POrderedSets.toPOrderedSet().mapReduce(stream));
+	}
+	default POrderedSet<T> toPOrderedSet(){
 		return this;
 	}
 	
 	default <X> POrderedSetX<X> from(Collection<X> col){
-		return POrderedSets.fromCollection(col);
+		return fromCollection(col);
 	}
 	default <T> Monoid<PBag<T>> monoid(){
 		return PBags.toPBag();

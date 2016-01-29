@@ -23,10 +23,10 @@ public class POrderedSets {
 	public static <T> POrderedSet<T> singleton(T value){
 		return OrderedPSet.singleton(value);
 	}
-	public static<T> POrderedSetX<T> fromCollection(Collection<T> stream){
+	public static<T> POrderedSet<T> fromCollection(Collection<T> stream){
 		if(stream instanceof POrderedSet)
-			return new  POrderedSetXImpl<>((POrderedSet)(stream));
-		return new  POrderedSetXImpl<>(OrderedPSet.from(stream));
+			return (POrderedSet)(stream);
+		return OrderedPSet.from(stream);
 	}
 	public static<T> POrderedSet<T> toPOrderedSet(Stream<T> stream){
 		return (POrderedSet<T>)toPOrderedSet().mapReduce(stream);

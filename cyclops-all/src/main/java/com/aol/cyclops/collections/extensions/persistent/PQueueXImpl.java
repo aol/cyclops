@@ -1,29 +1,25 @@
-package com.aol.cyclops.collections.extensions.standard;
+package com.aol.cyclops.collections.extensions.persistent;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.Spliterator;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.pcollections.PCollection;
+import org.pcollections.PQueue;
+import org.pcollections.PSet;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 
 @AllArgsConstructor
-public class SetXImpl<T> implements SetX<T> {
+public class PQueueXImpl<T> implements PQueueX<T> {
 	
-	private final Set<T> set;
-	@Getter
-	private final Collector<T,?,Set<T>> collector;
-	
-	public SetXImpl(Set<T> set){
-		this.set = set;
-		this.collector = Collectors.toCollection(()->new HashSet<>());
-	}
+	private final PQueue<T> set;
+
 	/**
 	 * @param action
 	 * @see java.lang.Iterable#forEach(java.util.function.Consumer)
@@ -66,7 +62,49 @@ public class SetXImpl<T> implements SetX<T> {
 		return set.equals(o);
 	}
 
+	/**
+	 * @param e
+	 * @return
+	 * @see org.pcollections.MapPSet#plus(java.lang.Object)
+	 */
+	public PQueueX<T> plus(T e) {
+		return new PQueueXImpl<>(set.plus(e));
+	}
 
+	/**
+	 * @param e
+	 * @return
+	 * @see org.pcollections.MapPSet#minus(java.lang.Object)
+	 */
+	public  PQueueX<T> minus(Object e) {
+		PCollection<T> res = set.minus(e);
+		if(res instanceof PQueue)
+			return  new PQueueXImpl<>((PQueue<T>)res);
+		else
+			return PQueueX.fromCollection(res);
+	}
+
+	/**
+	 * @param list
+	 * @return
+	 * @see org.pcollections.MapPSet#plusAll(java.util.Collection)
+	 */
+	public  PQueueX<T> plusAll(Collection<? extends T> list) {
+		return  new PQueueXImpl<>(set.plusAll(list));
+	}
+
+	/**
+	 * @param list
+	 * @return
+	 * @see org.pcollections.MapPSet#minusAll(java.util.Collection)
+	 */
+	public PQueueX<T> minusAll(Collection<?> list) {
+		PCollection<T> res = set.minusAll(list);
+		if(res instanceof PQueue)
+			return  new PQueueXImpl<>((PQueue<T>)res);
+		else
+			return PQueueX.fromCollection(res);
+	}
 
 	/**
 	 * @return
@@ -142,6 +180,7 @@ public class SetXImpl<T> implements SetX<T> {
 	 * @return
 	 * @see java.util.AbstractCollection#addAll(java.util.Collection)
 	 */
+	@Deprecated
 	public boolean addAll(Collection<? extends T> c) {
 		return set.addAll(c);
 	}
@@ -151,6 +190,7 @@ public class SetXImpl<T> implements SetX<T> {
 	 * @return
 	 * @see java.util.AbstractCollection#retainAll(java.util.Collection)
 	 */
+	@Deprecated
 	public boolean retainAll(Collection<?> c) {
 		return set.retainAll(c);
 	}
@@ -159,6 +199,7 @@ public class SetXImpl<T> implements SetX<T> {
 	 * 
 	 * @see java.util.AbstractCollection#clear()
 	 */
+	@Deprecated
 	public void clear() {
 		set.clear();
 	}
@@ -185,6 +226,84 @@ public class SetXImpl<T> implements SetX<T> {
 	@Override
 	public long count() {
 		return this.size();
+	}
+
+	/**
+	 * @return
+	 * @see org.pcollections.PQueue#minus()
+	 */
+	public PQueue<T> minus() {
+		return set.minus();
+	}
+
+	/**
+	 * @param o
+	 * @return
+	 * @deprecated
+	 * @see org.pcollections.PQueue#offer(java.lang.Object)
+	 */
+	public boolean offer(T o) {
+		return set.offer(o);
+	}
+
+	/**
+	 * @return
+	 * @deprecated
+	 * @see org.pcollections.PQueue#poll()
+	 */
+	public T poll() {
+		return set.poll();
+	}
+
+	/**
+	 * @return
+	 * @deprecated
+	 * @see org.pcollections.PQueue#remove()
+	 */
+	public T remove() {
+		return set.remove();
+	}
+
+	/**
+	 * @return
+	 * @see java.util.Queue#element()
+	 */
+	public T element() {
+		return set.element();
+	}
+
+	/**
+	 * @return
+	 * @see java.util.Queue#peek()
+	 */
+	public T peek() {
+		return set.peek();
+	}
+
+	/**
+	 * @param filter
+	 * @return
+	 * @see java.util.Collection#removeIf(java.util.function.Predicate)
+	 */
+	public boolean removeIf(Predicate<? super T> filter) {
+		return set.removeIf(filter);
+	}
+
+	/**
+	 * @return
+	 * @see java.util.Collection#spliterator()
+	 */
+	public Spliterator<T> spliterator() {
+		return set.spliterator();
+	}
+
+
+	/**
+	 * @return
+	 * @see java.util.Collection#parallelStream()
+	 */
+	public Stream<T> parallelStream() {
+		return set.parallelStream();
 	}
 
 	

@@ -2,12 +2,12 @@ package com.aol.cyclops.collections.extensions.standard;
 
 import java.util.Collection;
 import java.util.Deque;
-import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
@@ -135,5 +135,24 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	default <U extends Comparable<? super U>> DequeX<T> sorted(Function<? super T, ? extends U> function) {
 		
 		return (DequeX)MutableCollectionX.super.sorted(function);
+	}
+	default DequeX<T> plus(T e){
+		add(e);
+		return this;
+	}
+	
+	default DequeX<T> plusAll(Collection<? extends T> list){
+		addAll(list);
+		return this;
+	}
+	
+	default DequeX<T> minus(Object e){
+		remove(e);
+		return this;
+	}
+	
+	default DequeX<T> minusAll(Collection<?> list){
+		removeAll(list);
+		return this;
 	}
 }

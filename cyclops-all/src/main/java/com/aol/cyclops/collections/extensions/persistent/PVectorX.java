@@ -1,5 +1,6 @@
 package com.aol.cyclops.collections.extensions.persistent;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -7,6 +8,7 @@ import java.util.stream.Stream;
 
 import org.pcollections.PSet;
 import org.pcollections.PVector;
+import org.pcollections.TreePVector;
 
 import com.aol.cyclops.collections.PSets;
 import com.aol.cyclops.collections.PVectors;
@@ -15,37 +17,106 @@ import com.aol.cyclops.trampoline.Trampoline;
 
 public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 
+	/**
+	 * Construct a PVector from the provided values 
+	 * 
+	 * <pre>
+	 * {@code 
+	 *  List<String> list = PVectors.of("a","b","c");
+	 *  
+	 *  // or
+	 *  
+	 *  PVector<String> list = PVectors.of("a","b","c");
+	 *  
+	 *  
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param values To add to PVector
+	 * @return new PVector
+	 */
+	public static <T> PVectorX<T> of(T...values){
+		return new PVectorXImpl<>(TreePVector.from(Arrays.asList(values)));
+	}
+	/**
+	 * <pre>
+	 * {@code 
+	 *     List<String> empty = PVectors.empty();
+	 *    //or
+	 *    
+	 *     PVector<String> empty = PVectors.empty();
+	 * }
+	 * </pre>
+	 * @return an empty PVector
+	 */
+	public static<T> PVectorX<T> empty(){
+		return new PVectorXImpl<>(TreePVector .empty());
+	}
+	/**
+	 * Construct a PVector containing a single value
+	 * </pre>
+	 * {@code 
+	 *    List<String> single = PVectors.singleton("1");
+	 *    
+	 *    //or
+	 *    
+	 *    PVector<String> single = PVectors.singleton("1");
+	 * 
+	 * }
+	 * </pre>
+	 * 
+	 * @param value Single value for PVector
+	 * @return PVector with a single value
+	 */
+	public static <T> PVectorX<T> singleton(T value){
+		return new PVectorXImpl<>(TreePVector.singleton(value));
+	}
+	/**
+	 * Create a PVector from the supplied Colleciton
+	 * <pre>
+	 * {@code 
+	 *   PVector<Integer> list = PVectors.fromCollection(Arrays.asList(1,2,3));
+	 *   
+	 * }
+	 * </pre>
+	 * 
+	 * @param values to add to new PVector
+	 * @return PVector containing values
+	 */
+	public static <T> PVectorX<T> fromCollection(Collection<T> values){
+		return new PVectorXImpl<>(TreePVector.from(values));
+	}
+	/**
+	 * Reduce (immutable Collection) a Stream to a PVector
+	 * 
+	 * <pre>
+	 * {@code 
+	 *    PVector<Integer> list = PVectors.fromStream(Stream.of(1,2,3));
+	 * 
+	 *  //list = [1,2,3]
+	 * }</pre>
+	 * 
+	 * 
+	 * @param stream to convert to a PVector
+	 * @return
+	 */
+	public static<T> PVectorX<T> fromStream(Stream<T> stream){
+		return new PVectorXImpl<>((PVector<T>)PVectors.toPVector().mapReduce(stream));
+	}
+	
 	default PVector<T> toPVector(){
 		return this;
 	}
 	
 	default <X> PVectorX<X> from(Collection<X> col){
-		return PVectors.fromCollection(col);
+		return fromCollection(col);
 	}
 	default <T> Monoid<PVector<T>> monoid(){
 		return PVectors.toPVector();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.pcollections.PSet#plus(java.lang.Object)
-	 */
-	@Override
-	public PVectorX<T> plus(T e);
-	/* (non-Javadoc)
-	 * @see org.pcollections.PSet#plusAll(java.util.Collection)
-	 */
-	@Override
-	public PVectorX<T> plusAll(Collection<? extends T> list) ;
-	/* (non-Javadoc)
-	 * @see org.pcollections.PSet#minus(java.lang.Object)
-	 */
-	@Override
-	public PVectorX<T> minus(Object e);
-	/* (non-Javadoc)
-	 * @see org.pcollections.PSet#minusAll(java.util.Collection)
-	 */
-	@Override
-	public PVectorX<T> minusAll(Collection<?> list);
+	
 
 	
 
@@ -153,5 +224,28 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 		return (PVectorX<T>)PersistentCollectionX.super.sorted(function);
 	}
 	
+	public PVectorX<T> plus(T e);
+	
+	
+	public PVectorX<T> plusAll(Collection<? extends T> list);
+	
+	public PVectorX<T> with(int i, T e);
+	
+	
+	public PVectorX<T> plus(int i, T e);
+	
+	
+	public PVectorX<T> plusAll(int i, Collection<? extends T> list);
+	
+	
+	public PVectorX<T> minus(Object e);
+	
+	
+	public PVectorX<T> minusAll(Collection<?> list);
+	
+	
+	public PVectorX<T> minus(int i);
 
+	
+	public PVectorX<T> subList(int start, int end);
 }

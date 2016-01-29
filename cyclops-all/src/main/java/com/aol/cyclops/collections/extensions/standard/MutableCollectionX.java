@@ -95,4 +95,23 @@ public interface MutableCollectionX<T> extends CollectionX<T> {
 	default <U extends Comparable<? super U>> CollectionX<T> sorted(Function<? super T, ? extends U> function){
 		return fromStream(stream().sorted(function));
 	}
+	default CollectionX<T> plus(T e){
+		add(e);
+		return this;
+	}
+	
+	default CollectionX<T> plusAll(Collection<? extends T> list){
+		addAll(list);
+		return this;
+	}
+	
+	default CollectionX<T> minus(Object e){
+		remove(e);
+		return this;
+	}
+	
+	default CollectionX<T> minusAll(Collection<?> list){
+		removeAll(list);
+		return this;
+	}
 }

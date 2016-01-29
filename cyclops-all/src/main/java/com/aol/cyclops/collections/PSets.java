@@ -19,23 +19,23 @@ import com.aol.cyclops.sequence.Reducers;
  *
  */
 public class PSets {
-	public static <T> PSetX<T> of(T...values){
+	public static <T> PSet<T> of(T...values){
 		
-		return new PSetXImpl<>(HashTreePSet.from(Arrays.asList(values)));
+		return HashTreePSet.from(Arrays.asList(values));
 	}
-	public static <T> PSetX<T> empty(){
+	public static <T> PSet<T> empty(){
 		return new PSetXImpl<>(HashTreePSet .empty());
 	}
-	public static <T> PSetX<T> singleton(T value){
+	public static <T> PSet<T> singleton(T value){
 		return new PSetXImpl<>(HashTreePSet.singleton(value));
 	}
-	public static<T> PSetX<T> fromCollection(Collection<T> stream){
+	public static<T> PSet<T> fromCollection(Collection<T> stream){
 		if(stream instanceof PSet)
-			return new PSetXImpl<>((PSet)(stream));
-		return new PSetXImpl<>(HashTreePSet.from(stream));
+			return (PSet)(stream);
+		return HashTreePSet.from(stream);
 	}
-	public static<T> PSetX<T> fromStream(Stream<T> stream){
-		return new PSetXImpl<>((PSet<T>)toPSet().mapReduce(stream));
+	public static<T> PSet<T> fromStream(Stream<T> stream){
+		return (PSet<T>)toPSet().mapReduce(stream);
 	}
 	public static <T> Monoid<PSet<T>> toPSet() { 
 		return	Reducers.toPSet();

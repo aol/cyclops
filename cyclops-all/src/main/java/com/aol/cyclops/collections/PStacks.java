@@ -38,8 +38,8 @@ public class PStacks {
 	 * @param values To add to PStack
 	 * @return new PStack
 	 */
-	public static <T> PStackX<T> of(T...values){
-		return new PStackXImpl<>(ConsPStack.from(Arrays.asList(values)));
+	public static <T> PStack<T> of(T...values){
+		return ConsPStack.from(Arrays.asList(values));
 	}
 	/**
 	 * <pre>
@@ -56,8 +56,8 @@ public class PStacks {
 	 * @param values To add to PStack
 	 * @return
 	 */
-	public static <T> PStackX<T> fromCollection(Collection<T> values){
-		return new PStackXImpl<>(ConsPStack.from(values));
+	public static <T> PStack<T> fromCollection(Collection<T> values){
+		return ConsPStack.from(values);
 	}
 	/**
 	 * <pre>
@@ -71,7 +71,7 @@ public class PStacks {
 	 * @return an empty PStack
 	 */
 	public static <T> PStack<T> empty(){
-		return new PStackXImpl<>(ConsPStack.empty());
+		return  ConsPStack.empty();
 	}
 	/**
 	 * Construct a PStack containing a single value

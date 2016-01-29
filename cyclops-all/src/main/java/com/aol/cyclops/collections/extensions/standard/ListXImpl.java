@@ -1,5 +1,6 @@
 package com.aol.cyclops.collections.extensions.standard;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -26,7 +27,7 @@ public class ListXImpl<T> implements ListX<T> {
 	
 	public ListXImpl(List<T> list){
 		this.list = list;
-		this.collector = Collectors.toList();
+		this.collector = Collectors.toCollection(()->new ArrayList<>());
 	}
 	/**
 	 * @param action

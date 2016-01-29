@@ -2,8 +2,11 @@ package com.aol.cyclops.collections.extensions.persistent;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Spliterator;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collector;
+import java.util.stream.Stream;
 
 import org.pcollections.PBag;
 import org.pcollections.POrderedSet;
@@ -215,6 +218,51 @@ public class POrderedSetXImpl<T> implements POrderedSetX<T> {
 	@Override
 	public long count() {
 		return this.size();
+	}
+
+	/**
+	 * @param index
+	 * @return
+	 * @see org.pcollections.POrderedSet#get(int)
+	 */
+	public T get(int index) {
+		return set.get(index);
+	}
+
+	/**
+	 * @param o
+	 * @return
+	 * @see org.pcollections.POrderedSet#indexOf(java.lang.Object)
+	 */
+	public int indexOf(Object o) {
+		return set.indexOf(o);
+	}
+
+	/**
+	 * @param filter
+	 * @return
+	 * @see java.util.Collection#removeIf(java.util.function.Predicate)
+	 */
+	public  boolean removeIf(Predicate<? super T> filter) {
+		return set.removeIf(filter);
+	}
+
+	/**
+	 * @return
+	 * @see java.util.Collection#spliterator()
+	 */
+	public Spliterator<T> spliterator() {
+		return set.spliterator();
+	}
+
+	
+
+	/**
+	 * @return
+	 * @see java.util.Collection#parallelStream()
+	 */
+	public Stream<T> parallelStream() {
+		return set.parallelStream();
 	}
 
 	

@@ -6,10 +6,11 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.collections.extensions.CollectionX;
+import com.aol.cyclops.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.trampoline.Trampoline;
 
-public interface PersistentCollectionX<T> extends CollectionX<T>{
+public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 
 	<T> Monoid<? extends Collection<T>> monoid();
 	
