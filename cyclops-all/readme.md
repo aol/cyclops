@@ -1,10 +1,10 @@
 # cyclops-all
 
-cyclops-all adds all non-integration modules to your classpath and additional provides Collection eXtension and FluentFunctions functionality.
+cyclops-all adds all non-integration modules to your classpath and additional provides Collection eXtension and FluentFunctions functionality (since 7.3.0).
 
-[USER GUIDE : lambdas](http://gist.asciidoctor.org/?github-aol/cyclops//user-guide/lambdas.adoc)
-[USER GUIDE : collections ](http://gist.asciidoctor.org/?github-aol/cyclops//user-guide/Collections.adoc)
-[USER GUIDE : streams ](http://gist.asciidoctor.org/?github-aol/cyclops//user-guide/streams.adoc)
+* [USER GUIDE : lambdas](http://gist.asciidoctor.org/?github-aol/cyclops//user-guide/lambdas.adoc)
+* [USER GUIDE : collections ](http://gist.asciidoctor.org/?github-aol/cyclops//user-guide/Collections.adoc)
+* [USER GUIDE : streams ](http://gist.asciidoctor.org/?github-aol/cyclops//user-guide/streams.adoc)
 
 ## Getting cyclops-all
 
