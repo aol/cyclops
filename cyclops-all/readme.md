@@ -1,3 +1,34 @@
+# cyclops-all
+
+cyclops-all adds all non-integration modules to your classpath and additional provides Collection eXtension and FluentFunctions functionality.
+
+[USER GUIDE : lambdas](http://gist.asciidoctor.org/?github-aol/cyclops//user-guide/lambdas.adoc)
+[USER GUIDE : collections ](http://gist.asciidoctor.org/?github-aol/cyclops//user-guide/Collections.adoc)
+[USER GUIDE : streams ](http://gist.asciidoctor.org/?github-aol/cyclops//user-guide/streams.adoc)
+
+## Getting cyclops-all
+
+* [![Maven Central : cyclops-all](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-all/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.cyclops/cyclops-all)
+
+
+## Gradle
+
+where x.y.z represents the latest version
+
+compile 'com.aol.cyclops:cyclops-all:x.y.z'
+
+## Maven
+
+```xml
+<dependency>
+    <groupId>com.aol.cyclops</groupId>
+    <artifactId>cyclops-all</artifactId>
+    <version>x.y.z</version>
+</dependency>
+```
+
+# Overview
+
 Cyclops all contains 2 extremely powerful sets of features
 
 1. CollectionX : a series of fluent & powerful Collection eXtensions
