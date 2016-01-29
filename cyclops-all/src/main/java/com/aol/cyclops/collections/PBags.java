@@ -14,15 +14,17 @@ import com.aol.cyclops.sequence.Reducers;
 
 public class PBags {
 	
-	public static<T> PBag<T> of(T...values){
-		return HashTreePBag.from(Arrays.asList(values));
+	public static<T> PBagX<T> of(T...values){
+		
+		
+		return new PBagXImpl<>(HashTreePBag.from(Arrays.asList(values)));
 	}
 	
-	public static<T> PBag<T> empty(){
-		return HashTreePBag .empty();
+	public static<T> PBagX<T> empty(){
+		return new PBagXImpl<>(HashTreePBag .empty());
 	}
-	public static<T> PBag<T> singleton(T value){
-		return HashTreePBag.singleton(value);
+	public static<T> PBagX<T> singleton(T value){
+		return new PBagXImpl<>(HashTreePBag.singleton(value));
 	}
 	public static<T> PBagX<T> fromCollection(Collection<T> stream){
 		if(stream instanceof PBag)
