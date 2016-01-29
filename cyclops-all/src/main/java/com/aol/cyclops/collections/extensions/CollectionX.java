@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
@@ -28,6 +29,7 @@ import com.aol.cyclops.comprehensions.donotation.typed.Do;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.matcher.recursive.Matchable;
 import com.aol.cyclops.sequence.HeadAndTail;
+import com.aol.cyclops.sequence.HotStream;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.SequenceMCollectable;
@@ -770,6 +772,111 @@ public interface CollectionX<T> extends Iterable<T>, Collection<T>,SequenceMColl
 	 */
 	default SequenceM<T> fixedDelay(long l, TimeUnit unit){
 		return stream().fixedDelay(l, unit);
+	}
+	/**
+	 * Emit data from this Collection on a schedule
+	 * 
+	 * <pre>
+	 * {@code
+	 *  //run at 8PM every night
+	 *  SequenceM.generate(()->"next job:"+formatDate(new Date()))
+	 *            .map(this::processJob)
+	 *            .schedule("0 20 * * *",Executors.newScheduledThreadPool(1));
+	 * }
+	 * </pre>
+	 * 
+	 * Connect to the Scheduled Stream
+	 * 
+	 * <pre>
+	 * {
+	 * 	&#064;code
+	 * 	HotStream&lt;Data&gt; dataStream = SequenceeM.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
+	 * 			.schedule(&quot;0 20 * * *&quot;, Executors.newScheduledThreadPool(1));
+	 * 
+	 * 	data.connect().forEach(this::logToDB);
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * 
+	 * @param cron
+	 *            Expression that determines when each job will run
+	 * @param ex
+	 *            ScheduledExecutorService
+	 * @return Connectable HotStream of output from scheduled Stream
+	 */
+	default HotStream<T> schedule(String cron, ScheduledExecutorService ex){
+		return stream().schedule(cron, ex);
+	}
+
+	/**
+	 * Emit data from this Collection on a schedule a schedule
+	 * 
+	 * <pre>
+	 * {@code
+	 *  //run every 60 seconds after last job completes
+	 *  SequenceeM.generate(()->"next job:"+formatDate(new Date()))
+	 *            .map(this::processJob)
+	 *            .scheduleFixedDelay(60_000,Executors.newScheduledThreadPool(1));
+	 * }
+	 * </pre>
+	 * 
+	 * Connect to the Scheduled Stream
+	 * 
+	 * <pre>
+	 * {
+	 * 	&#064;code
+	 * 	HotStream&lt;Data&gt; dataStream = SequenceeM.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
+	 * 			.scheduleFixedDelay(60_000, Executors.newScheduledThreadPool(1));
+	 * 
+	 * 	data.connect().forEach(this::logToDB);
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param delay
+	 *            Between last element completes passing through the Stream
+	 *            until the next one starts
+	 * @param ex
+	 *            ScheduledExecutorService
+	 * @return Connectable HotStream of output from scheduled Stream
+	 */
+	default HotStream<T> scheduleFixedDelay(long delay, ScheduledExecutorService ex){
+		return stream().scheduleFixedDelay(delay,ex);
+	}
+
+	/**
+	 * Emit data from this Collection on a schedule
+	 * 
+	 * <pre>
+	 * {@code
+	 *  //run every 60 seconds
+	 *  SequenceeM.generate(()->"next job:"+formatDate(new Date()))
+	 *            .map(this::processJob)
+	 *            .scheduleFixedRate(60_000,Executors.newScheduledThreadPool(1));
+	 * }
+	 * </pre>
+	 * 
+	 * Connect to the Scheduled Stream
+	 * 
+	 * <pre>
+	 * {
+	 * 	&#064;code
+	 * 	HotStream&lt;Data&gt; dataStream = SequenceeM.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
+	 * 			.scheduleFixedRate(60_000, Executors.newScheduledThreadPool(1));
+	 * 
+	 * 	data.connect().forEach(this::logToDB);
+	 * }
+	 * </pre>
+	 * 
+	 * @param rate
+	 *            Time in millis between job runs
+	 * @param ex
+	 *            ScheduledExecutorService
+	 * @return Connectable HotStream of output from scheduled Stream
+	 */
+	default HotStream<T> scheduleFixedRate(long rate, ScheduledExecutorService ex){
+		return stream().scheduleFixedRate(rate,ex);
 	}
 	
 	 /**

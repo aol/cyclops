@@ -33,6 +33,7 @@ import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.matcher.recursive.Matchable;
 import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.monad.Reader;
 import com.aol.cyclops.monad.functions.LiftMFunctions;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.trycatch.Try;
@@ -452,7 +453,7 @@ public class FluentFunctions {
 	
 	@Wither(AccessLevel.PRIVATE)
 	@AllArgsConstructor
-	public static class FluentFunction<T,R> implements Function<T,R>{
+	public static class FluentFunction<T,R> implements Function<T,R>, Reader<T,R>{
 		private final Function<T,R> fn;
 		private final String name;
 		
@@ -465,6 +466,13 @@ public class FluentFunctions {
 			return fn.apply(t);
 		}
 		
+		public <R1> FluentFunction<T, R1> map(Function<? super R, ? extends R1> f2) {
+			return FluentFunctions.of(fn.andThen( f2));
+		}
+
+		public <R1> FluentFunction<T, R1> flatMap(Function<? super R, ? extends Reader<T, R1>> f) {
+			return FluentFunctions.of(a -> f.apply(fn.apply(a)).apply(a));
+		}
 		public FluentFunction<T,R> before(Consumer<T> action){
 			return withFn(t->{
 				action.accept(t);
