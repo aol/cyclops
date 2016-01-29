@@ -4,8 +4,9 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import javaslang.control.Either;
 import javaslang.control.Either.RightProjection;
-import javaslang.control.Right;
+
 
 import com.aol.cyclops.lambda.api.Comprehender;
 
@@ -28,12 +29,12 @@ public class RightProjectionComprehender implements Comprehender<RightProjection
 
 	@Override
 	public RightProjection of(Object o) {
-		return new Right(o).right();
+		return Either.right(o).right();
 	}
 
 	@Override
 	public RightProjection empty() {
-		return new Right(Option.none()).right();
+		return Either.right(Option.none()).right();
 	}
 
 	@Override

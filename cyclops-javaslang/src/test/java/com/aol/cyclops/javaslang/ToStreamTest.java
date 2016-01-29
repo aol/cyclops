@@ -1,6 +1,6 @@
 package com.aol.cyclops.javaslang;
 
-import javaslang.collection.Stream;
+import javaslang.collection.LazyStream;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -20,39 +20,39 @@ public class ToStreamTest {
 
     @Test
     public void testToFluentIterable() throws Exception {
-        assertThat(ToStream.toFluentIterable(Stream.of(1, 2, 3, 4)).toList().size(), is(4));
+        assertThat(ToStream.toFluentIterable(LazyStream.of(1, 2, 3, 4)).toList().size(), is(4));
 
     }
 
     @Test
     public void testToStream() throws Exception {
-        assertThat(ToStream.toStream(Stream.of(1, 2, 3, 4)).collect(Collectors.toList()).size(), is(4));
+        assertThat(ToStream.toStream(LazyStream.of(1, 2, 3, 4)).collect(Collectors.toList()).size(), is(4));
 
     }
     @Test
     public void testToSequenceM() throws Exception {
-        assertThat(ToStream.toSequenceM(Stream.of(1, 2, 3, 4)).collect(Collectors.toList()).size(), is(4));
+        assertThat(ToStream.toSequenceM(LazyStream.of(1, 2, 3, 4)).collect(Collectors.toList()).size(), is(4));
     }
 
     @Test
     public void testToJooqLambda() throws Exception {
-        assertThat(ToStream.toJooqLambda(Stream.of(1, 2, 3, 4)).collect(Collectors.toList()).size(), is(4));
+        assertThat(ToStream.toJooqLambda(LazyStream.of(1, 2, 3, 4)).collect(Collectors.toList()).size(), is(4));
     }
 
     @Test    @Ignore
     public void testToFutureStream() throws Exception {
-        assertThat(ToStream.toFutureStream(Stream.of(1, 2, 3, 4)).collect(Collectors.toList()).size(), is(4));
+        assertThat(ToStream.toFutureStream(LazyStream.of(1, 2, 3, 4)).collect(Collectors.toList()).size(), is(4));
     }
 
 
 
     @Test
     public void testToLazySeq() throws Exception {
-        assertThat(ToStream.toLazySeq(Stream.of(1, 2, 3, 4)).toList().size(), is(4));
+        assertThat(ToStream.toLazySeq(LazyStream.of(1, 2, 3, 4)).toList().size(), is(4));
     }
 
     @Test
     public void testToFunctionalJavaStream() throws Exception {
-        assertThat(ToStream.toFunctionalJavaStream(Stream.of(1, 2, 3, 4)).toList().length(), is(4));
+        assertThat(ToStream.toFunctionalJavaStream(LazyStream.of(1, 2, 3, 4)).toList().length(), is(4));
     }
 }

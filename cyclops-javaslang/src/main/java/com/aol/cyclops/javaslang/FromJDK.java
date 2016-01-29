@@ -7,6 +7,7 @@ import java.util.function.Function;
 import javaslang.Function1;
 import javaslang.Function2;
 import javaslang.collection.List;
+import javaslang.collection.LazyStream;
 import javaslang.collection.Stream;
 import javaslang.control.Option;
 
@@ -44,7 +45,7 @@ public class FromJDK<T,R> {
 				try{
 					return i.next();
 				}catch(Throwable t){
-					t.printStackTrace();
+				
 					throw ExceptionSoftener.throwSoftenedException(t);
 				}
 			}};});

@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 import java.util.stream.BaseStream;
 import java.util.stream.Stream;
 
-import javaslang.algebra.Monad;
+import javaslang.Value;
 
 import org.pcollections.PStack;
 
@@ -32,7 +32,7 @@ public class DoComp2<T1, T2> extends DoComp {
 	}
 
 	//${start}
-	public <T3> DoComp3<T1,T2,T3> monad(Monad<T3> monad){
+	public <T3> DoComp3<T1,T2,T3> monad(Value<T3> monad){
 		return new DoComp3(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),monad)),getOrgType());
 	}
 	public DoComp3<T1, T2, Character> add(CharSequence seq) {
@@ -511,7 +511,7 @@ public class DoComp2<T1, T2> extends DoComp {
 	 *            comprehension
 	 * @return Next stage in for comprehension builder
 	 */
-	public <T3> DoComp3<T1, T2, T3> withMonad(Function<? super T1, Function<? super T2, Monad<T3>>> f) {
+	public <T3> DoComp3<T1, T2, T3> withMonad(Function<? super T1, Function<? super T2, Value<T3>>> f) {
 		return new DoComp3(addToAssigned(f),getOrgType());
 
 	}

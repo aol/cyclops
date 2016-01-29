@@ -17,9 +17,8 @@ import javaslang.Tuple6;
 import javaslang.Tuple7;
 import javaslang.Tuple8;
 import javaslang.control.Either;
-import javaslang.control.Left;
+
 import javaslang.control.Option;
-import javaslang.control.Right;
 import fj.F;
 import fj.F2;
 import fj.F3;
@@ -70,9 +69,9 @@ public class FromFunctionalJava {
 	}
 	public static<L,R> Either<L,R> either(fj.data.Either<L,R> e){
 		if(e.isLeft())
-			return new Left(e.left().value()); 
+			return Either.left(e.left().value()); 
 		else
-			return new Right(e.right().value());
+			return Either.right(e.right().value());
 	}
 	
 	public static <T1> Tuple1<T1> tuple(P1<T1> t){

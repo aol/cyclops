@@ -4,10 +4,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import javaslang.control.Either;
-import javaslang.control.Left;
-import javaslang.control.None;
-import javaslang.control.Right;
-import javaslang.control.Either.LeftProjection;
+import javaslang.control.Option;
 
 import com.aol.cyclops.lambda.api.Comprehender;
 
@@ -28,12 +25,12 @@ public class EitherComprehender implements Comprehender<Either> {
 
 	@Override
 	public Either of(Object o) {
-		return new Right(o);
+		return Either.right(o);
 	}
 
 	@Override
 	public Either empty() {
-		return new Right(None.instance());
+		return Either.right(Option.none());
 	}
 
 	@Override

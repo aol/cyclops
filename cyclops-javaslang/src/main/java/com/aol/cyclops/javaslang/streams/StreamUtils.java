@@ -1,8 +1,6 @@
 package com.aol.cyclops.javaslang.streams;
 
 
-import static com.aol.cyclops.javaslang.ToStream.toSequenceM;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
@@ -33,17 +31,6 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import javaslang.Tuple2;
-import javaslang.Tuple3;
-import javaslang.Tuple4;
-import javaslang.collection.List;
-import javaslang.collection.Map;
-import javaslang.collection.Set;
-import javaslang.collection.Stream;
-import lombok.AllArgsConstructor;
-import lombok.val;
-import lombok.experimental.UtilityClass;
-
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 import org.reactivestreams.Subscription;
@@ -64,6 +51,20 @@ import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.FutureStreamUtils;
 import com.aol.cyclops.streams.future.FutureOperationsImpl;
 import com.aol.cyclops.streams.operators.MultiCollectOperator;
+
+import javaslang.Tuple2;
+import javaslang.Tuple3;
+import javaslang.Tuple4;
+import javaslang.collection.LazyStream;
+import javaslang.collection.List;
+import javaslang.collection.Map;
+import javaslang.collection.Set;
+import javaslang.collection.Stream;
+import javaslang.collection.Stream;
+import lombok.AllArgsConstructor;
+import lombok.val;
+import lombok.experimental.UtilityClass;
+
 
 @UtilityClass 
 public class StreamUtils{
@@ -117,12 +118,164 @@ public class StreamUtils{
 	 * @param consumer To accept incoming events from the Stream
 	 * @return Subscription so that further processing can be continued or cancelled.
 	 */
-	public static <T,X extends Throwable> Subscription forEachX(Stream<T> stream, long x, Consumer<? super T> consumerElement){
+	public static <T,X extends Throwable> Subscription forEachX(LazyStream<T> stream, long x, Consumer<? super T> consumerElement){
+		
 		val t2 = FutureStreamUtils.forEachX(ToStream.toStream(stream), x, consumerElement);
 		t2.v2.run();
 		return t2.v1.join();
 	}
-	
+
+	/**
+	 * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
+	 * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription 
+	 * <pre>
+	 * @{code
+	 *     Subscription next = StreamUtils.forEachXWithError(Stream.ofAll(()->1,()->2,()->{throw new RuntimeException()},()->4)
+	 *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace());
+	 *          
+	 *     System.out.println("First batch processed!");
+	 *     
+	 *     next.request(2);
+	 *     
+	 *      System.out.println("Second batch processed!");
+	 *      
+	 *     //prints
+	 *     1
+	 *     2
+	 *     First batch processed!
+	 *     
+	 *     RuntimeException Stack Trace on System.err
+	 *     
+	 *     4 
+	 *     Second batch processed!
+	 * }
+	 * </pre>	 
+	 * 
+	 * @param Stream - the Stream to consume data from
+	 * @param numberOfElements To consume from the Stream at this time
+	 * @param consumer To accept incoming elements from the Stream
+	 * @param consumerError To accept incoming processing errors from the Stream
+	 * @param onComplete To run after an onComplete event
+	 * @return Subscription so that further processing can be continued or cancelled.
+	 */
+	public static <T,X extends Throwable> Subscription forEachXWithError(LazyStream<T> stream, long x, 
+			Consumer<? super T> consumerElement,Consumer<? super Throwable> consumerError){
+		val t2 =FutureStreamUtils.forEachXWithError(ToStream.toStream(stream), x, consumerElement,consumerError);
+		t2.v2.run();
+		return t2.v1.join();
+	}
+	/**
+	 * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
+	 * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription,
+	 * when the entire Stream has been processed an onComplete event will be recieved.
+	 * 
+	 * <pre>
+	 * @{code
+	 *     Subscription next = StreamUtils.forEachXEvents(Stream.ofAll(()->1,()->2,()->{throw new RuntimeException()},()->4)
+	 *                                  .map(Supplier::get) ,System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
+	 *          
+	 *     System.out.println("First batch processed!");
+	 *     
+	 *     next.request(2);
+	 *     
+	 *      System.out.println("Second batch processed!");
+	 *      
+	 *     //prints
+	 *     1
+	 *     2
+	 *     First batch processed!
+	 *     
+	 *     RuntimeException Stack Trace on System.err
+	 *     
+	 *     4 
+	 *     Second batch processed!
+	 *     The end!
+	 * }
+	 * </pre>
+	 * @param Stream - the Stream to consume data from	 
+	 * @param numberOfElements To consume from the Stream at this time
+	 * @param consumer To accept incoming elements from the Stream
+	 * @param consumerError To accept incoming processing errors from the Stream
+	 * @param onComplete To run after an onComplete event
+	 * @return Subscription so that further processing can be continued or cancelled.
+	 */
+	public static <T,X extends Throwable> Subscription forEachXEvents(LazyStream<T> stream, long x, 
+												Consumer<? super T> consumerElement,
+												Consumer<? super Throwable> consumerError,
+												Runnable onComplete){
+		val t2 = FutureStreamUtils.forEachXEvents(ToStream.toStream(stream), x, consumerElement,consumerError,onComplete);
+		t2.v2.run();
+		return t2.v1.join();
+	}
+	/**
+	 *  Perform a forEach operation over the Stream    capturing any elements and errors in the supplied consumers,  
+	 * <pre>
+	 * @{code
+	 *     Subscription next = StreanUtils.forEachWithError(Stream.ofAll(()->1,()->2,()->{throw new RuntimeException()},()->4)
+	 *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace());
+	 *          
+	 *     System.out.println("processed!");
+	 *     
+	 *    
+	 *      
+	 *     //prints
+	 *     1
+	 *     2
+	 *     RuntimeException Stack Trace on System.err
+	 *     4
+	 *     processed!
+	 *     
+	 * }
+	 * </pre>
+	 * @param Stream - the Stream to consume data from	 
+	 * @param consumer To accept incoming elements from the Stream
+	 * @param consumerError To accept incoming processing errors from the Stream
+	 */
+	public static <T,X extends Throwable>  void forEachWithError(Stream<T> stream, Consumer<? super T> consumerElement,
+			Consumer<? super Throwable> consumerError){
+		
+		val t2 =FutureStreamUtils.forEachWithError(ToStream.toStream(stream), consumerElement,consumerError);
+		t2.v2.run();
+		
+		
+	}
+	/**
+	 * Perform a forEach operation over the Stream  capturing any elements and errors in the supplied consumers
+	 * when the entire Stream has been processed an onComplete event will be recieved.
+	 * 
+	 * <pre>
+	 * @{code
+	 *     Subscription next = StreamUtils.forEachEvents(Stream.ofAll(()->1,()->2,()->{throw new RuntimeException()},()->4)
+	 *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
+	 *          
+	 *     System.out.println("processed!");
+	 *     
+	 *      
+	 *     //prints
+	 *     1
+	 *     2
+	 *     RuntimeException Stack Trace on System.err
+	 *      4 
+	 *     processed!
+	 *     
+	 *     
+	 * }
+	 * </pre>
+	 * @param Stream - the Stream to consume data from	
+	 * @param consumer To accept incoming elements from the Stream
+	 * @param consumerError To accept incoming processing errors from the Stream
+	 * @param onComplete To run after an onComplete event
+	 * @return Subscription so that further processing can be continued or cancelled.
+	 */
+	public static <T,X extends Throwable>void forEachEvent(LazyStream<T> stream,Consumer<? super T> consumerElement,
+			Consumer<? super Throwable> consumerError,
+			Runnable onComplete){
+		
+		val t2 = FutureStreamUtils.forEachEvent(ToStream.toStream(stream), consumerElement,consumerError,onComplete);
+		t2.v2.run();
+		
+	}
+
 	/**
 	 * Execute this Stream on a schedule
 	 * 
@@ -926,7 +1079,7 @@ public class StreamUtils{
 	 * @return Repeating Stream
 	 */
 	public final static <T> Stream<T> cycleWhile(Stream<T>  stream,Predicate<? super T> predicate) {
-		return StreamUtils.limitWhile(StreamUtils.cycle(stream),predicate);
+		return FromJDK.stream(ToStream.toSequenceM(stream).cycleWhile(predicate));
 	}
 
 	/**
@@ -946,7 +1099,8 @@ public class StreamUtils{
 	 * @return Repeating Stream
 	 */
 	public final static <T> Stream<T> cycleUntil(Stream<T> stream,Predicate<? super T> predicate) {
-		return StreamUtils.limitUntil(StreamUtils.cycle(stream),predicate);
+		return FromJDK.stream(ToStream.toSequenceM(stream).cycleUntil(predicate));
+		
 	}
 
 	/**
@@ -1193,10 +1347,10 @@ public class StreamUtils{
 		Collections.shuffle(list);
 		return Streamable.fromIterable(list);
 	}
-	public  final static <T> Streamable<T> toLazyStreamable(Stream<T> stream){
+	public  final static <T> Streamable<T> toStreamable(Stream<T> stream){
 		return  AsStreamable.fromStream(ToStream.toSequenceM(stream));
 	}
-	public final static <T> Streamable<T> toConcurrentLazyStreamable(Stream<T> stream){
+	public final static <T> Streamable<T> toConcurrentStreamable(Stream<T> stream){
 		return AsStreamable.synchronizedFromStream(ToStream.toSequenceM(stream));
 	}
 	public final static <U,T> Stream<U> scanRight(Stream<T> stream,U identity,BiFunction<? super T, U, U>  combiner){
@@ -1376,7 +1530,7 @@ public class StreamUtils{
 	/**
 	 * @return Underlying monad converted to a Streamable instance
 	 */
-	public final static <T> Streamable<T> toStreamable(Stream<T> stream){
+	public final static <T> Streamable<T> toStreamable(Iterable<T> stream){
 		return  AsStreamable.fromIterable(stream);
 	}
 	/**

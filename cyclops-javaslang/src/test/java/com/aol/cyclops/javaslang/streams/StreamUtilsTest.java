@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import javaslang.collection.LazyStream;
 import javaslang.collection.Stream;
 import lombok.val;
 
@@ -37,6 +38,7 @@ public class StreamUtilsTest {
 	@Test
 	public void headTailReplay(){
 	
+
 		Stream<String> helloWorld = Stream.of("hello","world","last");
 		HeadAndTail<String> headAndTail = StreamUtils.headAndTail(helloWorld);
 		 String head = headAndTail.head();
@@ -49,6 +51,7 @@ public class StreamUtilsTest {
 	@Test
 	public void headTailReplayOptional(){
 	
+
 		Stream<String> helloWorld = Stream.of("hello","world","last");
 		HeadAndTail<String> headAndTail = StreamUtils.headAndTailOptional(helloWorld).get();
 		 String head = headAndTail.head();
@@ -61,6 +64,7 @@ public class StreamUtilsTest {
 	@Test
 	public void headTailReplayOptionalEmpty(){
 	
+
 		Stream<String> helloWorld = Stream.of();
 		Optional<HeadAndTail<String>> headAndTail = StreamUtils.headAndTailOptional(helloWorld);
 		
@@ -68,12 +72,11 @@ public class StreamUtilsTest {
 	}
 	@Test
 	public void testToLazyCollection(){
+
 		System.out.println(StreamUtils.toLazyCollection(Stream.of(1,2,3,4)).size());
 	}
 	@Test
 	public void testOfType() {
-
-		
 
 		assertThat(StreamUtils.ofType(Stream.of(1, "a", 2, "b", 3, null),Integer.class).toJavaList(),containsInAnyOrder(1, 2, 3));
 
@@ -104,7 +107,7 @@ public class StreamUtilsTest {
 	}
 	@Test
 	public void testReverse() {
-		
+
 		assertThat(StreamUtils.reverse(Stream.of(1,2,3)).toJavaList()
 				,equalTo(Arrays.asList(3,2,1)));
 	}
@@ -127,11 +130,13 @@ public class StreamUtilsTest {
 
 	@Test
 	public void testCycleStreamOfU() {
+
 		assertThat(StreamUtils.cycle(Stream.of(1,2,3)).take(6).toJavaList(),equalTo(Arrays.asList(1,2,3,1,2,3)));
 	}
 
 	@Test
 	public void testCycleStreamableOfU() {
+
 		assertThat(StreamUtils.cycle(AsStreamable.fromStream(ToStream.toSequenceM(Stream.of(1,2,3)))).take(6).toJavaList(),equalTo(Arrays.asList(1,2,3,1,2,3)));
 	}
 
@@ -160,6 +165,7 @@ public class StreamUtilsTest {
 	}
 	@Test
     public void testCollectorsStreamable() {
+
 		List result = StreamUtils.collect(Stream.of(1,2,3),
 								Streamable.<Collector>of(Collectors.toList(),
 								Collectors.summingInt(Integer::intValue),
@@ -172,6 +178,7 @@ public class StreamUtilsTest {
 
 	@Test
     public void testCollectors2() {
+
 		List result = StreamUtils.collect(Stream.of(1,2,3),
 								(Stream)Stream.of(Collectors.toList(),
 								Collectors.summingInt(Integer::intValue),
@@ -183,7 +190,9 @@ public class StreamUtilsTest {
     }
 	@Test
     public void testCollectorsIterables() {
+
 		List result = StreamUtils.collect(Stream.of(1,2,3),
+
 								Arrays.asList(Collectors.toList(),
 								Collectors.summingInt(Integer::intValue),
 								Collectors.averagingInt(Integer::intValue))).toJavaList();
@@ -198,6 +207,7 @@ public class StreamUtilsTest {
 		Monoid<String> join = Monoid.of("",(a,b)->a+","+b);
 		
 		
+
 		 assertThat(StreamUtils.reduce(Stream.of("hello", "world", "woo!"),Stream.of(concat,join))
 		                 
 		                  ,equalTo(javaslang.collection.List.of("helloworldwoo!",",hello,world,woo!")));
@@ -213,7 +223,9 @@ public class StreamUtilsTest {
 	}
 	@Test
     public void testCollectors() {
+
 		List result = StreamUtils.collect(Stream.of(1,2,3),
+
 				Arrays.asList(Collectors.toList(),Collectors.summingInt(Integer::intValue),
 						Collectors.averagingInt(Integer::intValue))).toJavaList();
 		
@@ -225,6 +237,7 @@ public class StreamUtilsTest {
 	@Test
 	public void testCycleWhile(){
 		count =0;
+
 		assertThat(StreamUtils.cycleWhile(Stream.of(1,2,2)
 											,next -> count++<6 )
 											.toJavaList(),equalTo(Arrays.asList(1,2,2,1,2,2)));
@@ -243,6 +256,7 @@ public class StreamUtilsTest {
 	}
 	@Test
 	public void testCycleReduce(){
+
 		assertThat(StreamUtils.cycle(Stream.of(1,2,2)
 											,Reducers.toCountInt(),3)
 											.toJavaList(),
@@ -252,6 +266,7 @@ public class StreamUtilsTest {
 	@Test
 	public void testSkipUntil(){
 		
+
 		assertThat(StreamUtils.skipUntil(Stream.of(4,3,6,7),i->i==6).toJavaList(),
 				equalTo(Arrays.asList(6,7)));
 		
@@ -259,23 +274,27 @@ public class StreamUtilsTest {
 	}
 	@Test
 	public void testSkipWhile(){
+
 		assertThat(StreamUtils.skipWhile(Stream.of(4,3,6,7).sort(),i->i<6).toJavaList(),
 				equalTo(Arrays.asList(6,7)));
 	}
 	
 	@Test
 	public void testLimitWhile(){
+
 		assertThat(StreamUtils.limitWhile(Stream.of(4,3,6,7).sort(),i->i<6).toJavaList(),
 				equalTo(Arrays.asList(3,4)));
 	}
 	@Test
 	public void testLimitUntil(){
+
 		assertThat(StreamUtils.limitUntil(Stream.of(4,3,6,7),i->i==6).toJavaList(),
 				equalTo(Arrays.asList(4,3)));
 	}
 	
 	@Test
 	public void zipOptional(){
+
 		Stream<List<Integer>> zipped = StreamUtils.zipAnyM(Stream.of(1,2,3)
 										,AnyM.fromOptional(Optional.of(2)), 
 											(a,b) -> Arrays.asList(a,b));
@@ -288,6 +307,7 @@ public class StreamUtilsTest {
 	}
 	@Test
 	public void zipOptionalSequence(){
+
 		Stream<List<Integer>> zipped = StreamUtils.zipAnyM(Stream.of(1,2,3)
 										,AnyM.fromOptional(Optional.of(2)), 
 											(a,b) -> Arrays.asList(a,b));
@@ -300,6 +320,7 @@ public class StreamUtilsTest {
 	}
 	@Test
 	public void zipStream(){
+
 		Stream<List<Integer>> zipped = StreamUtils.zipStream(Stream.of(1,2,3)
 												,java.util.stream.Stream.of(2,3,4), 
 													(a,b) -> Arrays.asList(a,b));
@@ -312,6 +333,7 @@ public class StreamUtilsTest {
 	}
 	@Test
 	public void zipSequence(){
+
 		Stream<List<Integer>> zipped = StreamUtils.zipSequence(Stream.of(1,2,3)
 												,Stream.of(2,3,4), 
 													(a,b) -> Arrays.asList(a,b));
@@ -324,6 +346,7 @@ public class StreamUtilsTest {
 	}
 	@Test
 	public void sliding(){
+
 		List<List<Integer>> list = StreamUtils.sliding(Stream.of(1,2,3,4,5,6)
 												,2)
 												.map(l->l.toJavaList())
@@ -336,6 +359,7 @@ public class StreamUtilsTest {
 	@Test
 	public void grouped(){
 		
+
 		List<List<Integer>> list = StreamUtils.batchBySize(Stream.of(1,2,3,4,5,6)
 														,3)
 														.map(l->l.toJavaList())
@@ -350,6 +374,7 @@ public class StreamUtilsTest {
 	
 	@Test
 	public void startsWith(){
+
 		assertTrue(StreamUtils.startsWith(Stream.of(1,2,3,4)
 									,Arrays.asList(1,2,3)));
 	}
@@ -361,6 +386,7 @@ public class StreamUtilsTest {
     public void scanLeft() {
         assertEquals(
             asList("", "a", "ab", "abc"),
+
             StreamUtils.scanLeft(Stream.of("a", "b", "c")
             		,Reducers.toString(""))
             		.toJavaList());
@@ -371,11 +397,13 @@ public class StreamUtilsTest {
 	
 	@Test
 	public void xMatch(){
+
 		assertTrue(StreamUtils.xMatch(Stream.of(1,2,3,5,6,7),3, i->i>4));
 	}
 	@Test
 	public void testIntersperse2() {
 		
+
 		assertThat(StreamUtils.intersperse(Stream.of(1,2,3),0).toJavaList(),
 				equalTo(Arrays.asList(1,0,2,0,3)));
 	
@@ -383,6 +411,7 @@ public class StreamUtilsTest {
 	}
 	@Test(expected=ClassCastException.class)
 	public void cast(){
+
 		StreamUtils.cast(Stream.of(1,2,3),String.class).toJavaList();
 	}
 }

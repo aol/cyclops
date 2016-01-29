@@ -15,9 +15,8 @@ import java.util.function.Supplier;
 import java.util.stream.BaseStream;
 import java.util.stream.Stream;
 
-import javaslang.algebra.Monad;
+import javaslang.Value;
 
-import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
 import com.aol.cyclops.comprehensions.donotation.typed.DoComp;
@@ -33,7 +32,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		}
 		
 		//${start}
-		public <T2> DoComp2<T1,T2> monad(Monad<T2> monad){
+		public <T2> DoComp2<T1,T2> monad(Value<T2> monad){
 			return new DoComp2(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),monad)),getOrgType());
 		}
 		
@@ -684,7 +683,7 @@ import com.aol.cyclops.sequence.SequenceM;
 		 * @param f Gives access to current pointers and defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T2> DoComp2<T1,T2> withMonad(Function<? super T1,Monad<T2>> f){
+		public <T2> DoComp2<T1,T2> withMonad(Function<? super T1,Value<T2>> f){
 			return new DoComp2(addToAssigned(f),getOrgType());
 			
 		}

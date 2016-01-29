@@ -9,10 +9,9 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
-import java.util.stream.BaseStream;
 import java.util.stream.Stream;
 
-import javaslang.algebra.Monad;
+import javaslang.Value;
 
 import org.pcollections.ConsPStack;
 
@@ -24,7 +23,7 @@ public class Do {
 	
 	
 	//${start}
-	public static <T1> DoComp1<T1> monad(Monad<T1> monad){
+	public static <T1> DoComp1<T1> monad(Value<T1> monad){
 		return new DoComp0(ConsPStack.empty()).monad(monad);
 	}
 	

@@ -1280,6 +1280,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 */
 	public AnyM<T> anyM(){
 		return AnyM.fromStream(stream);
+
 	}
 	/* (non-Javadoc)
 	 * @see java.util.stream.Stream#map(java.util.function.Function)

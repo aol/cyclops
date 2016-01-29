@@ -1,11 +1,12 @@
 package com.aol.cyclops.javaslang.reactivestreams.javaslang;
 
-import javaslang.collection.Stream;
+import javaslang.collection.LazyStream;
 
 import org.junit.Test;
 
 import com.aol.cyclops.javaslang.reactivestreams.JavaslangReactiveStreamsPublisher;
 import com.aol.cyclops.javaslang.reactivestreams.JavaslangReactiveStreamsSubscriber;
+import com.aol.cyclops.javaslang.reactivestreams.ReactiveStream;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.reactivestreams.CyclopsSubscriber;
 
@@ -15,7 +16,7 @@ public class ExampleTest {
 	public void subscribe(){
 		CyclopsSubscriber<Integer> subscriber =SequenceM.subscriber();
 		
-		Stream<Integer> stream = Stream.of(1,2,3);
+		LazyStream<Integer> stream = LazyStream.of(1,2,3);
 		
 		JavaslangReactiveStreamsPublisher.ofSync(stream)
 										.subscribe(subscriber);
@@ -31,7 +32,7 @@ public class ExampleTest {
 		JavaslangReactiveStreamsSubscriber<Integer> subscriber = new JavaslangReactiveStreamsSubscriber<>();
 		publisher.subscribe(subscriber);
 		
-		Stream<Integer> stream = subscriber.getStream();
+		ReactiveStream<Integer> stream = subscriber.getStream();
 		
 		
 		

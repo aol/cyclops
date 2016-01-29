@@ -26,8 +26,8 @@ public class JavaslangReactiveStreamsSubscriber<T> implements Subscriber<T> {
 	volatile Subscription subscription;
 	private volatile java.util.stream.Stream<T> jdkStream;
 	
-	public Stream<T> getStream(){
-		return Stream.ofAll(()->jdkStream.iterator());
+	public ReactiveStream<T> getStream(){
+		return ReactiveStream.fromIterator(jdkStream.iterator());
 	}
 	volatile Consumer errorHandler = e -> { };
 	
