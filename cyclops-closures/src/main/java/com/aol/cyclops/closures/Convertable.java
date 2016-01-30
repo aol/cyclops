@@ -47,6 +47,10 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>{
 	 * @return Contained value, maybe null
 	 */
 	public T get();
+	default T orElseGet(Supplier<? extends T> value){
+		return toOptional().orElseGet(value);
+		
+	}
 	/**
 	 * @return Optional that wraps contained value, Optional.empty if value is null
 	 */

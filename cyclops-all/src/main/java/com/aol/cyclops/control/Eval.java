@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import com.aol.cyclops.functions.caching.Memoize;
 
+
 /**
  * Represents a computation that can be defered, cached or immediate
  * 
@@ -11,12 +12,13 @@ import com.aol.cyclops.functions.caching.Memoize;
  *
  * @param <T>
  */
-public interface Eval<T> extends Supplier<T>{
+public interface Eval<T> extends Supplier<T>, Value<T>{
 
 	public static<T> Eval<T> now(T value){
 		return new Now<T>(value);
 	}
 	public static<T> Eval<T> later(Supplier<T> value){
+		
 		return new Later<T>(in->value.get());
 	}
 	public static<T> Eval<T> always(Supplier<T> value){
