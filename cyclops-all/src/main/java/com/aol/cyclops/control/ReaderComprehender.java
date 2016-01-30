@@ -1,8 +1,9 @@
-package com.aol.cyclops.functions.fluent;
+package com.aol.cyclops.control;
 
 import java.util.Optional;
 import java.util.function.Function;
 
+import com.aol.cyclops.functions.fluent.FluentFunctions;
 import com.aol.cyclops.lambda.api.Comprehender;
 import com.aol.cyclops.monad.Reader;
 

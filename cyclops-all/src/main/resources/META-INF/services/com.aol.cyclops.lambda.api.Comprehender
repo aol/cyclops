@@ -1,1 +1,2 @@
-com.aol.cyclops.functions.fluent.ReaderComprehender
+com.aol.cyclops.functions.control.ReaderComprehender
+com.aol.cyclops.functions.control.EvalComprehender
