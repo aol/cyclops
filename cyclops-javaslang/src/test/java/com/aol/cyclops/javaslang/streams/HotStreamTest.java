@@ -8,20 +8,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.LockSupport;
-<<<<<<< HEAD
-
-import javaslang.collection.LazyStream;
-import javaslang.collection.Stream;
-=======
->>>>>>> master
 
 import org.junit.Ignore;
 import org.junit.Test;
 
-<<<<<<< HEAD
-=======
+import javaslang.collection.LazyStream;
 import javaslang.collection.Stream;
->>>>>>> master
+import javaslang.collection.Stream;
+
 
 public class HotStreamTest {
 	static final Executor exec = Executors.newFixedThreadPool(1);

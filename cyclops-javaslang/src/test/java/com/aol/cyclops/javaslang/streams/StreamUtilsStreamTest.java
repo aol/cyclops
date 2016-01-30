@@ -8,13 +8,10 @@ import static org.junit.Assert.assertThat;
 
 import java.util.List;
 
-<<<<<<< HEAD
-import javaslang.collection.LazyStream;
-=======
-import javaslang.collection.Stream;
->>>>>>> master
-
 import org.junit.Test;
+
+import javaslang.collection.LazyStream;
+import javaslang.collection.Stream;
 
 
 public class StreamUtilsStreamTest {
@@ -34,12 +31,8 @@ public class StreamUtilsStreamTest {
 	@Test
 	public void testFlatMap(){
 
-<<<<<<< HEAD
-		assertThat(StreamUtils.flatMapStream(LazyStream.<List<String>>of( asList("1","10"), asList("2"),asList("3"),asList("4")), list -> list.stream() ).toJavaList(),hasItem("10"));
-
-=======
 		assertThat(StreamUtils.flatMapStream(Stream.<List<String>>of( asList("1","10"), asList("2"),asList("3"),asList("4")), list -> list.stream() ).toJavaList(),hasItem("10"));
->>>>>>> master
+
 	}
 	
 	

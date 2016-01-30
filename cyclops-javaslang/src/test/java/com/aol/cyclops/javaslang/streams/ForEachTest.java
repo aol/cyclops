@@ -48,7 +48,6 @@ public class ForEachTest {
 		assertThat(list.size(),equalTo(3));
 	}
 	Throwable error;
-<<<<<<< HEAD
 	@Test
 	public void forEachXWithErrors(){
 	
@@ -158,8 +157,5 @@ public class ForEachTest {
 		
 		assertTrue(complete);
 	}
-=======
 
-	
->>>>>>> master
 }
