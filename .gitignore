@@ -1,6 +1,7 @@
 /build/
 /bin/
 # Created by https://www.gitignore.io
+.DS_Store
 
 ### Eclipse ###
 *.pydevproject
