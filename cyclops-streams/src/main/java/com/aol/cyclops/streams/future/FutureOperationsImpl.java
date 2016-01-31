@@ -33,7 +33,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.sequence.reactivestreams.ReactiveTask;
 import com.aol.cyclops.streams.FutureStreamUtils;
 

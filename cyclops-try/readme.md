@@ -25,7 +25,7 @@ compile 'com.aol.cyclops:cyclops-try:x.y.z'
 ```
 
 
-#Goals
+# Goals
 
 * 	Offer similar functionality as Scala's Try, but with behaviour more in line with current Java development practices
 *	Replace throw / catch / finally exception handling with Try wrapper / Monad

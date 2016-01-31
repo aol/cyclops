@@ -59,10 +59,9 @@ import com.aol.cyclops.sequence.ReversedIterator;
 import com.aol.cyclops.sequence.SeqUtils;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.SequenceMImpl;
-import com.aol.cyclops.sequence.future.FutureOperations;
-import com.aol.cyclops.sequence.spliterators.ReversableSpliterator;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.streams.future.FutureOperations;
 import com.aol.cyclops.streams.future.FutureOperationsImpl;
 import com.aol.cyclops.streams.operators.BatchBySizeOperator;
 import com.aol.cyclops.streams.operators.BatchByTimeAndSizeOperator;
@@ -82,6 +81,7 @@ import com.aol.cyclops.streams.operators.SkipWhileTimeOperator;
 import com.aol.cyclops.streams.operators.WindowByTimeAndSizeOperator;
 import com.aol.cyclops.streams.operators.WindowStatefullyWhileOperator;
 import com.aol.cyclops.streams.operators.WindowWhileOperator;
+import com.aol.cyclops.streams.spliterators.ReversableSpliterator;
 
 @UtilityClass 
 public class StreamUtils{

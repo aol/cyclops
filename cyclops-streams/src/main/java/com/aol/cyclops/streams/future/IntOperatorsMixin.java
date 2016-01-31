@@ -7,7 +7,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.ToIntFunction;
 import java.util.stream.IntStream;
 
-import com.aol.cyclops.sequence.future.IntOperators;
 import com.aol.cyclops.streams.HasExec;
 import com.aol.cyclops.streams.HasStream;
 

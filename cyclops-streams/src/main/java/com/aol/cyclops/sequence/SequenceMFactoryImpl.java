@@ -3,8 +3,8 @@ package com.aol.cyclops.sequence;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.sequence.spliterators.ReversableSpliterator;
 import com.aol.cyclops.streams.StreamUtils;
+import com.aol.cyclops.streams.spliterators.ReversableSpliterator;
 
 
 public class SequenceMFactoryImpl implements SequenceMFactory {
