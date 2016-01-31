@@ -9,6 +9,7 @@ v6.2.0 of cyclops-javaslang requires v2.0.0 of Javaslang.
 * conversion between Javaslang and other types
 * Memoize javaslang functions with a configurable Cache (support LRU, or TTL)
 * Javaslang Stream extensions (future operations, hot streams, stream manipulation)
+* Cyclops 7.3.0 and above javaslang based ReactiveStream and LazyStream implementations (fluently call the extensions available via StreamUtils on a single interface).
 
 # Details & Examples
 
