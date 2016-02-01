@@ -19,7 +19,7 @@ import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.trampoline.Trampoline;
 
-public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenceX<T> {
+public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenceX<T>, Comparable<T> {
 	static <T> Collector<T,?,List<T>> defaultCollector(){
 		return Collectors.toCollection(()-> new ArrayList<>());
 	}
@@ -47,7 +47,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 		return fromIterable(defaultCollector(),it);
 	}
 	public static <T> ListX<T> fromIterable(Collector<T,?,List<T>>  collector,Iterable<T> it){
-		if(it instanceof DequeX)
+		if(it instanceof ListX)
 			return (ListX)it;
 		if(it instanceof List)
 			return new ListXImpl<T>( (List)it, collector);

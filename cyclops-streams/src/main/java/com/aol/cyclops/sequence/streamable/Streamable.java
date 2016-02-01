@@ -44,7 +44,7 @@ import com.aol.cyclops.sequence.HotStream;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.SequenceMCollectable;
-import com.aol.cyclops.streams.future.FutureOperations;
+import com.aol.cyclops.sequence.future.FutureOperations;
 
 
 /**

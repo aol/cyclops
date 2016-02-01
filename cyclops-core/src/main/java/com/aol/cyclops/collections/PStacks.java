@@ -94,7 +94,7 @@ public class PStacks {
 	}
 	/**
 	 * Reduce (immutable Collection) a Stream to a PStack, note for efficiency reasons,
-	 * the produced PStack is reversed.
+	 * the produced PStack is reversed (this is more efficient than the non-reversing equivalents)
 	 * 
 	 * 
 	 * <pre>
@@ -108,12 +108,15 @@ public class PStacks {
 	 * @param stream to convert to a PVector
 	 * @return
 	 */
+	public static<T> PStack<T> fromStreamReversed(Stream<T> stream){
+		return new PStackXImpl<>((PStack<T>)toPStackReverse().mapReduce(stream));
+	}
 	public static<T> PStack<T> fromStream(Stream<T> stream){
 		return new PStackXImpl<>((PStack<T>)toPStack().mapReduce(stream));
 	}
 	/**
-	 * Return a reducer that can produce a PStack from a Stream, note for efficiency reasons,
-	 * the produced PStack will be reversed.
+	 * Return a reducer that can produce a PStack from a Stream, note this is more efficient than
+	 * the unreversed equivalent
 	 * 
 	 * <pre>
 	 * {@code 
@@ -126,6 +129,9 @@ public class PStacks {
 	 * 
 	 * @return a Monoid / Reducer that can be used to convert a Stream to a PVector
 	 */
+	public static <T> Monoid<PStack<T>> toPStackReverse() { 
+		return	Reducers.toPStackReversed();
+	}
 	public static <T> Monoid<PStack<T>> toPStack() { 
 		return	Reducers.toPStack();
 	}

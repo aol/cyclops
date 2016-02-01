@@ -32,15 +32,26 @@ public class PStacksTest {
 		assertThat(PStacks.fromCollection(Arrays.asList("a","b","c")),equalTo(Arrays.asList("a","b","c")));
 	}
 	@Test
-	public void testToPStackstreamOfT() {
-		assertThat(PStacks.fromStream(Stream.of("a","b","c")),
+	public void testToPStackstreamOfTReveresed() {
+		assertThat(PStacks.fromStreamReversed(Stream.of("a","b","c")),
 						equalTo(Arrays.asList("c","b","a")));
+	}
+
+	@Test
+	public void testToPStackReversed() {
+		assertThat(SequenceM.of("a","b","c").mapReduce(PStacks.toPStackReverse()),
+				equalTo(Arrays.asList("c","b","a")));
+	}
+	@Test
+	public void testToPStackstreamOf() {
+		assertThat(PStacks.fromStream(Stream.of("a","b","c")),
+						equalTo(Arrays.asList("a","b","c")));
 	}
 
 	@Test
 	public void testToPStack() {
 		assertThat(SequenceM.of("a","b","c").mapReduce(PStacks.toPStack()),
-				equalTo(Arrays.asList("c","b","a")));
+				equalTo(Arrays.asList("a","b","c")));
 	}
 	
 

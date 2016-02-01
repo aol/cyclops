@@ -1,18 +1,16 @@
 package com.aol.cyclops.collections.extensions.standard;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Objects;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
@@ -315,7 +313,39 @@ public class ListXImpl<T> implements ListX<T> {
 	public Spliterator<T> spliterator() {
 		return list.spliterator();
 	}
-
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(T o) {
+		if(o instanceof List){
+			List l = (List)o;
+			if(this.size()==l.size()){
+				Iterator i1 = iterator();
+				Iterator i2 = l.iterator();
+				if(i1.hasNext()){
+					if(i2.hasNext()){
+						int comp = Comparator.<Comparable>naturalOrder().compare((Comparable)i1.next(), (Comparable)i2.next());
+						if(comp!=0)
+							return comp;
+					}
+					return 1;
+				}
+				else{
+					if(i2.hasNext())
+						return -1;
+					else
+						return 0;
+				}
+			}
+			return this.size() - ((List)o).size();
+		}
+		else
+			return 1;
+			
+			
+	}
+	
 	
 
 }

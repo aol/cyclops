@@ -138,7 +138,7 @@ import javaslang.control.Option;
  * @author Daniel Dietrich, Jörgen Andersson, Ruslan Sennov
  * @since 1.1.0
  */
-public interface LazyStream<T> extends Stream<T>, Functor<T>, com.aol.cyclops.lambda.monads.Foldable<T> {
+public interface LazyStream<T> extends Stream<T>, Functor<T>{
 
     long serialVersionUID = 1L;
 

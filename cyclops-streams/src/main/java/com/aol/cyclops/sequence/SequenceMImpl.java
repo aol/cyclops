@@ -48,11 +48,11 @@ import org.reactivestreams.Subscription;
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.StreamUtils;
-import com.aol.cyclops.streams.future.FutureOperations;
 import com.aol.cyclops.streams.spliterators.ReversableSpliterator;
 
 public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{

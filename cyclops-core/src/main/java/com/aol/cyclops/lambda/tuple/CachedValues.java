@@ -20,19 +20,16 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import lombok.AllArgsConstructor;
+import org.jooq.lambda.Seq;
 
 import com.aol.cyclops.closures.mutable.Mutable;
 import com.aol.cyclops.comprehensions.donotation.Doable;
-import com.aol.cyclops.matcher.builders.CheckValues;
-import com.aol.cyclops.matcher.builders.MatchingInstance;
-import com.aol.cyclops.matcher.builders.PatternMatcher;
-import com.aol.cyclops.matcher.builders._Simpler_Case;
 import com.aol.cyclops.matcher.recursive.Matchable;
 import com.aol.cyclops.sequence.Monoid;
-import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.ToStream;
 import com.aol.cyclops.value.ValueObject;
+
+import lombok.AllArgsConstructor;
 
 
 
@@ -150,7 +147,7 @@ public interface CachedValues extends Iterable, ValueObject, ToStream, Doable, M
 		
 		List<Collector> collectors = (List)getCachedValues().stream().filter(c-> c instanceof Collector).collect(Collectors.toList());
 		final Supplier supplier =  ()-> collectors.stream().map(c->c.supplier().get()).collect(Collectors.toList());
-		final BiConsumer accumulator = (acc,next) -> {  SequenceM.fromIterator(collectors.stream().iterator()).<Object,PTuple2<Collector,Object>>zip(SequenceM.of((List)acc),(a,b)->PowerTuples.<Collector,Object>tuple(a,b))
+		final BiConsumer accumulator = (acc,next) -> {  Seq.seq(collectors.stream().iterator()).<Object,PTuple2<Collector,Object>>zip(Seq.seq((List)acc),(a,b)->PowerTuples.<Collector,Object>tuple(a,b))
 													
 													.forEach( t -> t.v1().accumulator().accept(t.v2(),next));
 		};
@@ -159,7 +156,7 @@ public interface CachedValues extends Iterable, ValueObject, ToStream, Doable, M
 		return (Collector) Collector.of( supplier,
                 accumulator ,
 		 combiner,
-		values-> new TupleImpl(SequenceM.fromIterator(collectors.stream().iterator()).<Object,PTuple2<Collector,Object>>zip(SequenceM.of((List)values),(a,b)->PowerTuples.<Collector,Object>tuple(a,b)).map(t->t.v1().finisher().apply(t.v2())).toList(),arity()));
+		values-> new TupleImpl(Seq.seq(collectors.stream().iterator()).<Object,PTuple2<Collector,Object>>zip(Seq.seq((List)values),(a,b)->PowerTuples.<Collector,Object>tuple(a,b)).map(t->t.v1().finisher().apply(t.v2())).toList(),arity()));
 	}
 
 

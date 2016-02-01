@@ -34,7 +34,7 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T> {
 		
 	}
 	public static <T> SortedSetX<T> empty(){
-		return fromIterable((Deque<T>) defaultCollector().supplier().get());
+		return fromIterable((SortedSet<T>) defaultCollector().supplier().get());
 	}
 	public static <T> SortedSetX<T> of(T...values){
 		SortedSet<T> res = (SortedSet<T>) defaultCollector().supplier().get();
@@ -49,9 +49,9 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T> {
 		return fromIterable(defaultCollector(),it);
 	}
 	public static <T> SortedSetX<T> fromIterable(Collector<T,?,SortedSet<T>>  collector,Iterable<T> it){
-		if(it instanceof DequeX)
+		if(it instanceof SortedSetX)
 			return (SortedSetX)it;
-		if(it instanceof Deque)
+		if(it instanceof SortedSet)
 			return new SortedSetXImpl<T>( (SortedSet)it, collector);
 		return new SortedSetXImpl<T>(StreamUtils.stream(it).collect(collector),collector);
 	}

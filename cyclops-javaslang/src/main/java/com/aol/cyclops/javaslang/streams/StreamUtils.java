@@ -45,10 +45,10 @@ import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SeqUtils;
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.FutureStreamUtils;
-import com.aol.cyclops.streams.future.FutureOperations;
 import com.aol.cyclops.streams.future.FutureOperationsImpl;
 import com.aol.cyclops.streams.operators.MultiCollectOperator;
 
