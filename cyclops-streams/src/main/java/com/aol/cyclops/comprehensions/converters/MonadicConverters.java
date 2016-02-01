@@ -25,14 +25,16 @@ public class MonadicConverters {
 	
 	static {
 		val loader  = ServiceLoader.load(MonadicConverter.class);
-		converters = Reducers.<MonadicConverter>toPStack().mapReduce(StreamSupport.stream(Spliterators.spliteratorUnknownSize(loader.iterator(), Spliterator.ORDERED),
+		converters = Reducers.<MonadicConverter>toPStackReversed().mapReduce(StreamSupport.stream(Spliterators.spliteratorUnknownSize(loader.iterator(), Spliterator.ORDERED),
 				false).sorted((a,b) ->  b.priority()-a.priority()));
 		
 	}
 	
 	
 	public Object convertToMonadicForm(Object o){
-		return upscaler.upscaleIfStream(converters.stream().filter(t-> t.accept(o)).map(m -> m.convertToMonadicForm(o)).findFirst().orElse(o));
+		return upscaler.upscaleIfStream(converters.stream()
+												  .filter(t-> t.accept(o))
+												  .map(m -> m.convertToMonadicForm(o)).findFirst().orElse(o));
 	}
 	
 }

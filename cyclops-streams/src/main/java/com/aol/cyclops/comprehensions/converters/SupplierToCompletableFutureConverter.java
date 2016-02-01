@@ -1,6 +1,5 @@
 package com.aol.cyclops.comprehensions.converters;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
