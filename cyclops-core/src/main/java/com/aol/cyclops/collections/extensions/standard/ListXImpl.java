@@ -3,6 +3,7 @@ package com.aol.cyclops.collections.extensions.standard;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -28,6 +29,10 @@ public class ListXImpl<T> implements ListX<T> {
 	public ListXImpl(List<T> list){
 		this.list = list;
 		this.collector = ListX.defaultCollector();
+	}
+	public ListXImpl(){
+		this.collector = ListX.defaultCollector();
+		this.list = (List)this.collector.supplier().get();
 	}
 	/**
 	 * @param action

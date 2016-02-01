@@ -31,6 +31,10 @@ public class DequeXImpl<T> implements DequeX<T> {
 		this.deque = list;
 		this.collector = DequeX.defaultCollector();
 	}
+	public DequeXImpl(){
+		this.collector = DequeX.defaultCollector();
+		this.deque = (Deque)this.collector.supplier().get();
+	}
 	/**
 	 * @param action
 	 * @see java.lang.Iterable#forEach(java.util.function.Consumer)

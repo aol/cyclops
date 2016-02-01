@@ -2,6 +2,7 @@ package com.aol.cyclops.collections.extensions.standard;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
@@ -20,6 +21,10 @@ public class SetXImpl<T> implements SetX<T> {
 	public SetXImpl(Set<T> set){
 		this.set = set;
 		this.collector = SetX.defaultCollector();
+	}
+	public SetXImpl(){
+		this.collector = SetX.defaultCollector();
+		this.set = (Set)this.collector.supplier().get();
 	}
 	/**
 	 * @param action

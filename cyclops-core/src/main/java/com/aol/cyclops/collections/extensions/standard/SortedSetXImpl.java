@@ -3,6 +3,7 @@ package com.aol.cyclops.collections.extensions.standard;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.Spliterator;
@@ -27,6 +28,10 @@ public class SortedSetXImpl<T> implements SortedSetX<T> {
 	public SortedSetXImpl(SortedSet<T> set){
 		this.set = set;
 		this.collector = Collectors.toCollection(()->new TreeSet<>());
+	}
+	public SortedSetXImpl(){
+		this.collector = SortedSetX.defaultCollector();
+		this.set= (SortedSet)this.collector.supplier().get();
 	}
 	/**
 	 * @param action

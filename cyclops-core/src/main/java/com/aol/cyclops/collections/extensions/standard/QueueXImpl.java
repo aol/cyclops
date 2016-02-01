@@ -31,6 +31,10 @@ public class QueueXImpl<T> implements QueueX<T> {
 		
 		this.collector = QueueX.defaultCollector();
 	}
+	public QueueXImpl(){
+		this.collector = QueueX.defaultCollector();
+		this.list = (Queue)this.collector.supplier().get();
+	}
 	/**
 	 * @param action
 	 * @see java.lang.Iterable#forEach(java.util.function.Consumer)
