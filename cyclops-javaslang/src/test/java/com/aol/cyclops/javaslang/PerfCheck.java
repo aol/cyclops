@@ -1,5 +1,6 @@
 package com.aol.cyclops.javaslang;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
@@ -10,7 +11,7 @@ import javaslang.collection.Array;
 import javaslang.collection.List;
 
 
-
+@Ignore
 public class PerfCheck {
 
 	@Test

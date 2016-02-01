@@ -16,7 +16,6 @@ import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
-import com.aol.cyclops.streams.streamable.SQLTest.X;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
@@ -40,7 +39,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 				mapped = mapped.plusInOrder(value);
 		}
 		return unit(mapped);
-	//	return from(this.<T>monoid().mapReduce(stream().filter(pred)));
+	
 	}
 	default <R> CollectionX<R> map(Function<? super T, ? extends R> mapper){
 		FluentCollectionX<R> mapped = emptyUnit();
@@ -60,7 +59,6 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 		}
 		return mapped;
 		
-		//return from(this.<T>monoid().mapReduce(stream().limit(num)));
 	}
 	default CollectionX<T> skip(long num){
 		FluentCollectionX<T> mapped = emptyUnit();

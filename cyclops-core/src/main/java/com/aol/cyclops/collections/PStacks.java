@@ -90,7 +90,7 @@ public class PStacks {
 	 * @return PVector with a single value
 	 */
 	public static <T> PStack<T> singleton(T value){
-		return new PStackXImpl<>(ConsPStack.singleton(value));
+		return ConsPStack.singleton(value);
 	}
 	/**
 	 * Reduce (immutable Collection) a Stream to a PStack, note for efficiency reasons,
@@ -109,10 +109,10 @@ public class PStacks {
 	 * @return
 	 */
 	public static<T> PStack<T> fromStreamReversed(Stream<T> stream){
-		return new PStackXImpl<>((PStack<T>)toPStackReverse().mapReduce(stream));
+		return (PStack<T>)toPStackReverse().mapReduce(stream);
 	}
 	public static<T> PStack<T> fromStream(Stream<T> stream){
-		return new PStackXImpl<>((PStack<T>)toPStack().mapReduce(stream));
+		return (PStack<T>)toPStack().mapReduce(stream);
 	}
 	/**
 	 * Return a reducer that can produce a PStack from a Stream, note this is more efficient than
