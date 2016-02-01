@@ -61,6 +61,43 @@ public class ConvertableTest {
 		assertThat(Convertable.fromSupplier(()->null).toOptionalAtomicReference(),equalTo(Optional.empty()));
 	}
 	@Test
+	public void testWhenNull(){
+		assertThat(Convertable.fromSupplier(()->null).when(t->t!=null).isPresent(),equalTo(false));
+	}
+	@Test
+	public void testWhenDoesNotHold(){
+		assertThat(Convertable.fromSupplier(()->10).when(t->t==20).isPresent(),equalTo(false));
+	}
+	@Test
+	public void testWhenHolds(){
+		assertThat(Convertable.fromSupplier(()->10).when(t->t==10).isPresent(),equalTo(true));
+	}
+	@Test
+	public void testWhenNullMap(){
+		assertThat(Convertable.fromSupplier(()->null).when(t->t!=null,t->"hello").isPresent(),equalTo(false));
+	}
+	@Test
+	public void testWhenDoesNotHoldMap(){
+		assertThat(Convertable.fromSupplier(()->10).when(t->t==20,t->"hello").isPresent(),equalTo(false));
+	}
+	@Test
+	public void testWhenHoldsMap(){
+		assertThat(Convertable.fromSupplier(()->10).when(t->t==10,t->"hello").get(),equalTo("hello"));
+	}
+	@Test
+	public void testWhenHoldsMapDefault(){
+		assertThat(Convertable.fromSupplier(()->10).whenOrElse("world",t->t==10,t->"hello"),equalTo("hello"));
+	}
+	@Test
+	public void testWhenNullMapDefault(){
+		assertThat(Convertable.fromSupplier(()->null).whenOrElse("world",t->t!=null,t->"hello"),equalTo("world"));
+	}
+	@Test
+	public void testWhenDoesNotHoldMapDefault(){
+		assertThat(Convertable.fromSupplier(()->10).whenOrElse("world",t->t==20,t->"hello"),equalTo("world"));
+	}
+	
+	@Test
 	public void toOptionalAtomicReference(){
 		assertThat(Convertable.fromSupplier(()->10).toOptionalAtomicReference().get().get(),equalTo(10));
 	}

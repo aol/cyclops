@@ -63,7 +63,7 @@ public class Reducers {
 	}
 	public static <T> Monoid<PStack<T>> toPStack() { 
 		return	Monoid.<PStack<T>>of(ConsPStack.empty(), 
-								(PStack<T> a) -> b -> a.plusAll(b),
+								(PStack<T> a) -> b -> a.plusAll(a.size(),b),
 								(T x) -> ConsPStack.singleton(x));
 	}
 	

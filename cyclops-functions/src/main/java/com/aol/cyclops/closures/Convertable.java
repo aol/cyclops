@@ -5,10 +5,11 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -48,6 +49,43 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>{
 	 * @return Contained value, maybe null
 	 */
 	public T get();
+	
+	/**
+	 * @param predicate - to filter optional value with
+	 * @return  Return an Optional that contains the current value (if not null) when the supplied predicate holds.
+	 *         Otherwise return Optional empty
+	 */
+	default Optional<T> when(Predicate<? super T> predicate){
+		return toOptional().filter(predicate);
+	}
+	
+	/**
+	 * Apply the predicate to this convertable value, followed by the supplied mapper.
+	 * Return Optional.empty if the value is null or predicate doesn't hold
+	 * 
+	 * @param predicate - to filter optional value with
+	 * @param mapper  to convert value with if the predicate holds
+	 * @return Return an Optional that contains the current value (if not null) when the supplied predicate holds.
+	 *         Otherwise return Optional empty
+	 */
+	default <R> Optional<R> when(Predicate<? super T> predicate, Function<? super T,? extends R> mapper){
+		return toOptional().filter(predicate).map(mapper);
+	}
+	/**
+	 * Apply the predicate to this convertable value, followed by the supplied mapper.
+	 * Return the supplied defaultValue if the value is null or predicate doesn't hold
+	 * 
+	 * @param defaultValue - return value if null or predicate fails
+	 * @param predicate  to filter optional value with
+	 * @param mapper to convert value with if the predicate holds
+	 * @return Return an Optional that contains the current value (if not null) when the supplied predicate holds.
+	 *        Otherwise return the supplied default value.
+	 */
+	default <R,R1 extends R> R1 whenOrElse(R1 defaultValue,Predicate<? super T> predicate, Function<? super T,R1> mapper){
+		return toOptional().filter(predicate)
+							.map(mapper)
+							.orElse(defaultValue);
+	}
 	default T orElseGet(Supplier<? extends T> value){
 		return toOptional().orElseGet(value);
 		

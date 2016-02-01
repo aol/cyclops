@@ -2,6 +2,8 @@ package com.aol.cyclops.collections.extensions.persistent;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -66,6 +68,8 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 * @return
 	 */
 	public static <T> PStackX<T> fromCollection(Collection<T> values){
+		if(values instanceof PStack)
+			return new PStackXImpl<>((PStack)values);
 		return new PStackXImpl<>(ConsPStack.from(values));
 	}
 	/**
@@ -141,8 +145,11 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 */
 	@Override
 	default PStackX<T> reverse() {
-		
-		return (PStackX)PersistentCollectionX.super.reverse();
+		PStack<T> reversed = ConsPStack.empty();
+		Iterator<T> it = iterator();
+		while(it.hasNext())
+			reversed = reversed.plus(0, it.next());
+		return fromCollection(reversed);
 	}
 
 	/* (non-Javadoc)

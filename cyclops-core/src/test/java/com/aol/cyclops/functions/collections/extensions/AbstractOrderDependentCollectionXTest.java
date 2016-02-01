@@ -41,7 +41,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 	}
 	@Test
 	public void testReverse() {
-
+		
 		assertThat(of(1, 2, 3).reverse().toList(), equalTo(asList(3, 2, 1)));
 	}
 
