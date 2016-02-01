@@ -120,7 +120,7 @@ public class HotStreamTest {
 		
 		s.pause();
 		s.unpause();
-		LockSupport.parkNanos(10000l);
+		LockSupport.parkNanos(100000l);
 		s.pause();
 		System.out.println(value);
 		assertTrue(value!=oldValue);
