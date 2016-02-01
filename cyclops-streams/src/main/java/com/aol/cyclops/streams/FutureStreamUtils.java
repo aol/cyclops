@@ -123,17 +123,28 @@ public class FutureStreamUtils {
 												Consumer<? super T> consumerElement,
 												Consumer<? super Throwable> consumerError,
 												Runnable onComplete){
+		CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
 		Subscription s = new Subscription(){
 		Iterator<T> it = stream.iterator();
+			volatile boolean running = true;
 			@Override
 			public void request(long n) {
-				for(int i=0;i<n;i++){
+				
+				for(int i=0;i<n && running;i++){
 					try{
+						
 						if(it.hasNext()){
+							
 							consumerElement.accept(it.next());
 						}
-						else
-							onComplete.run();
+						else{
+							try{
+								onComplete.run();
+							}finally{
+								streamCompleted.complete(true);
+								break;
+							}
+						}
 					}catch(Throwable t){
 						consumerError.accept(t);
 					}
@@ -141,49 +152,18 @@ public class FutureStreamUtils {
 			}
 			@Override
 			public void cancel() {
-				
+				running = false;
 				
 			}
 			
 		};
 		CompletableFuture<Subscription>subscription = CompletableFuture.completedFuture(s);
-		CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
+		
 		return tuple(subscription,()-> {
 			s.request(x);
 			
 		},streamCompleted);
-	/**
-		CompletableFuture<Subscription>subscription = new CompletableFuture<>();
-		CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
-		return tuple(subscription,()->{
-			SequenceM.fromStream(stream).subscribe(new Subscriber<T>(){
-
-				@Override
-				public void onSubscribe(Subscription s) {
-					Objects.requireNonNull(s);
-					s.request(x);
-					subscription.complete( s);
-				}
-
-				@Override
-				public void onNext(T t) {
-					consumerElement.accept(t);
-					
-				}
-
-				@Override
-				public void onError(Throwable t) {
-					consumerError.accept(t);	
-				}
-
-				@Override
-				public void onComplete() {
-					streamCompleted.complete(true);
-					onComplete.run();
-				}
-				
-			});
-		},streamCompleted);**/
+	
 	}
 	/**
 	 *  Perform a forEach operation over the Stream    capturing any elements and errors in the supplied consumers,  
@@ -263,13 +243,17 @@ public class FutureStreamUtils {
 					}catch(Throwable t){
 						
 						consumerError.accept(t);
+						
 						errored=true;
 						return true;
 					}
 					finally{
 						if(!result){
-							onComplete.run();
-							streamCompleted.complete(true);
+							try{
+								onComplete.run();
+							}finally{
+								streamCompleted.complete(true);
+							}
 						}
 					}
 				}

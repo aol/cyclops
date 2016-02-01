@@ -30,9 +30,7 @@ configurations {
 	provided
 }
 dependencies {
-	compile project(':cyclops-monad-api')
 	compile project(':cyclops-functions')
-	compile project(':cyclops-for-comprehensions')
 	compile project(':cyclops-streams')
 	compile 'org.reactivestreams:reactive-streams:1.0.0'
 	
@@ -41,7 +39,7 @@ dependencies {
 	}
 	provided group: 'org.projectlombok', name: 'lombok', version:"$lombokVersion"
 	provided  'com.google.guava:guava:19.0-rc2'
-	provided 'com.javaslang:javaslang:'+javaslangVersion
+	compile 'com.javaslang:javaslang:'+javaslangVersion
 	provided 'com.nurkiewicz.lazyseq:lazyseq:0.0.1'
 	
 	provided "org.functionaljava:functionaljava:4.4"

@@ -50,10 +50,10 @@ import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
-import com.aol.cyclops.sequence.spliterators.ReversableSpliterator;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.StreamUtils;
+import com.aol.cyclops.streams.spliterators.ReversableSpliterator;
 
 public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	private final Seq<T> stream;
@@ -1246,8 +1246,8 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * If the underlying monad is a Stream it is returned
 	 * Otherwise we flatMap the underlying monad to a Stream type
 	 */
-	public final Stream<T> stream(){
-		 return stream;
+	public final SequenceM<T> stream(){
+		 return this;
 			
 	}
 	

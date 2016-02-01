@@ -293,7 +293,6 @@ public class BaseSequentialTest {
 		    	 	Supplier<ReactiveStream<String>> s = () -> of("a", "b", "c");
 		    	 	
 		    	 	
-		    	 	
 			        assertTrue(s.get().foldRight("", (a,b)->b+a).equals("cba"));
 			        assertTrue(s.get().foldRight("", (a,b)->b+a).contains("b"));
 			        assertTrue(s.get().foldRight("", (a,b)->b+a).contains("c"));

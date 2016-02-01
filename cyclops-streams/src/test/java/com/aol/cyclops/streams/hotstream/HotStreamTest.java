@@ -94,7 +94,7 @@ public class HotStreamTest {
 		Object oldValue = value;
 		s.pause();
 		s.unpause();
-		LockSupport.parkNanos(1000l);
+		LockSupport.parkNanos(10000l);
 		s.pause();
 		System.out.println(value);
 		assertTrue(value!=oldValue);
@@ -107,20 +107,20 @@ public class HotStreamTest {
 		value= null;
 		CountDownLatch latch = new CountDownLatch(1);
 		PausableHotStream s = SequenceM.range(0,Integer.MAX_VALUE)
-				.limit(10000)
+				.limit(100000)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())
 				.pausableHotStream(exec);
 		Object oldValue = value;
 		s.connect()
-				.limit(1000)
+				.limit(10000)
 				.futureOperations(ForkJoinPool.commonPool())
 				.forEach(System.out::println);
 		
 		
 		s.pause();
 		s.unpause();
-		LockSupport.parkNanos(1000l);
+		LockSupport.parkNanos(100000l);
 		s.pause();
 		System.out.println(value);
 		assertTrue(value!=oldValue);

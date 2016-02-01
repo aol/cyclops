@@ -6,19 +6,17 @@ package com.aol.cyclops.javaslang.reactivestreams.reactivestream;
  */
 
 
-//import javaslang.Serializables;
-import java.io.InvalidObjectException;
 import java.util.ArrayList;
 import java.util.stream.Collector;
-
-import javaslang.collection.List;
-import javaslang.collection.LazyStream;
-import javaslang.collection.Stream;
-import javaslang.control.Try;
 
 import org.junit.Test;
 
 import com.aol.cyclops.javaslang.reactivestreams.ReactiveStream;
+
+import javaslang.collection.LazyStream;
+import javaslang.collection.List;
+import javaslang.collection.Stream;
+import javaslang.control.Try;
 
 public class JavaslangStreamTest extends AbstractSeqTest {
 

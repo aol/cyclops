@@ -34,10 +34,11 @@ import com.aol.cyclops.functions.caching.Memoize;
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.javaslang.Javaslang;
 import com.aol.cyclops.javaslang.streams.StreamUtils;
+import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.future.FutureCollectable;
 import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.streams.future.FutureCollectable;
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
@@ -137,10 +138,13 @@ import javaslang.control.Option;
  * @author Daniel Dietrich, Jörgen Andersson, Ruslan Sennov
  * @since 1.1.0
  */
-public interface LazyStream<T> extends Stream<T> {
+public interface LazyStream<T> extends Stream<T>, Functor<T>{
 
     long serialVersionUID = 1L;
 
+    default SequenceM<T> stream(){
+    	return SequenceM.fromIterator(this.iterator());
+    }
     /**
      * Returns a {@link java.util.stream.Collector} which may be used in conjunction with
      * {@link java.util.stream.Stream#collect(java.util.stream.Collector)} to obtain a {@link javaslang.collection.LazyStream}.

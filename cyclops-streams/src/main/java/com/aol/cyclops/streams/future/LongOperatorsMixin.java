@@ -8,7 +8,6 @@ import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 import java.util.stream.LongStream;
 
-import com.aol.cyclops.sequence.future.LongOperators;
 import com.aol.cyclops.streams.HasExec;
 import com.aol.cyclops.streams.HasStream;
 

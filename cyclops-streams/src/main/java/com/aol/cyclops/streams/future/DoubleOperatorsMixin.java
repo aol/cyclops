@@ -6,7 +6,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.DoubleStream;
 
-import com.aol.cyclops.sequence.future.DoubleOperators;
 import com.aol.cyclops.streams.HasExec;
 import com.aol.cyclops.streams.HasStream;
 

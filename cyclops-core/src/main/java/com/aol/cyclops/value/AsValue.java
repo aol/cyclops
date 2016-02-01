@@ -27,6 +27,7 @@ public class AsValue {
 	public static ValueObject asValue(Object toCoerce){
 		return new CoercedValue(toCoerce);
 	}
+	
 	@lombok.Value
 	public static class CoercedValue implements ValueObject{
 		private final Object value;
