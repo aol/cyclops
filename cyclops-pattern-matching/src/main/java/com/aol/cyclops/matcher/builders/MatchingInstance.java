@@ -38,7 +38,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	
 	
 	
-	public final Cases<T,X,TypedFunction<T,X>> cases(){
+	public  Cases<T,X,TypedFunction<T,X>> cases(){
 		return this.cse.getPatternMatcher().getCases();
 	}
 	

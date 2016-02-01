@@ -12,6 +12,7 @@ import com.aol.cyclops.matcher.Extractor;
 import com.aol.cyclops.matcher.Predicates;
 import com.aol.cyclops.matcher.Two;
 import com.aol.cyclops.matcher.TypedFunction;
+import com.aol.cyclops.sequence.SequenceM;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -74,9 +75,9 @@ public class IterableCase<X> extends CaseBeingBuilt{
 			 * @see com.aol.cyclops.matcher.builders.ExtractionStep#thenExtract(com.aol.cyclops.matcher.Extractor)
 			 */
 			@Override
-			public <T, R> CollectionStep<R, X> thenExtract(Extractor<T, R> extractor) {
+			public <T, R> TempCollectionStepExtension<R, X> thenExtract(Extractor<T, R> extractor) {
 				
-				return new CollectionStep<R,X>(){
+				return new TempCollectionStepExtension<R,X>(){
 					
 					@Override
 					public <X> CollectionMatchingInstance<R, X> thenApply(TypedFunction<R, X> t) {
@@ -126,9 +127,9 @@ public class IterableCase<X> extends CaseBeingBuilt{
 			 * @see com.aol.cyclops.matcher.builders.ExtractionStep#thenExtract(com.aol.cyclops.matcher.Extractor)
 			 */
 			@Override
-			public <T, R> CollectionStep<R, X> thenExtract(Extractor<T, R> extractor) {
+			public <T, R> TempCollectionStepExtension<R, X> thenExtract(Extractor<T, R> extractor) {
 				
-				return new CollectionStep<R,X>(){
+				return new TempCollectionStepExtension<R,X>(){
 					
 					/* 
 					 * @see com.aol.cyclops.matcher.builders.Step#thenApply(com.aol.cyclops.matcher.ActionWithReturn)
@@ -194,9 +195,9 @@ public class IterableCase<X> extends CaseBeingBuilt{
 			 * @see com.aol.cyclops.matcher.builders.ExtractionStep#thenExtract(com.aol.cyclops.matcher.Extractor)
 			 */
 			@Override
-			public <T, R> CollectionStep<R, X> thenExtract(Extractor<T, R> extractor) {
+			public <T, R> TempCollectionStepExtension<R, X> thenExtract(Extractor<T, R> extractor) {
 				
-				return new CollectionStep<R,X>(){
+				return new TempCollectionStepExtension<R,X>(){
 					
 					/* 
 					 * @see com.aol.cyclops.matcher.builders.Step#thenApply(com.aol.cyclops.matcher.ActionWithReturn)
@@ -229,8 +230,8 @@ public class IterableCase<X> extends CaseBeingBuilt{
 			 * @see com.aol.cyclops.matcher.builders.ExtractionStep#thenExtract(com.aol.cyclops.matcher.Extractor)
 			 */
 			@Override
-			public <T, R> CollectionStep<R, X> thenExtract(Extractor<T, R> extractor) {
-				return  new CollectionStep<R,X>(){
+			public <T, R> TempCollectionStepExtension<R, X> thenExtract(Extractor<T, R> extractor) {
+				return  new TempCollectionStepExtension<R,X>(){
 
 					/* 
 					 * @see com.aol.cyclops.matcher.builders.Step#thenApply(com.aol.cyclops.matcher.ActionWithReturn)
@@ -257,10 +258,10 @@ public class IterableCase<X> extends CaseBeingBuilt{
 	 * @return Next stage in the Case Step builder
 	 */
 	@SafeVarargs
-	public  final <V,T,X> CollectionStep<List<V>,X> allValues(V... values){
+	public  final <V,T,X> TempCollectionStepExtension<List<V>,X> allValues(V... values){
 		//add wildcard support
-		Predicate<V>[] predicates = LazySeq.of(values).map(nextValue->buildPredicate(nextValue)).toList().toArray(new Predicate[0]);
-		return new  CollectionStep<List<V>,X>(){
+		Predicate<V>[] predicates = SequenceM.of(values).map(nextValue->buildPredicate(nextValue)).toList().toArray(new Predicate[0]);
+		return new  TempCollectionStepExtension<List<V>,X>(){
 
 			/* 
 			 * @see com.aol.cyclops.matcher.builders.Step#thenApply(com.aol.cyclops.matcher.ActionWithReturn)

@@ -1246,8 +1246,8 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * If the underlying monad is a Stream it is returned
 	 * Otherwise we flatMap the underlying monad to a Stream type
 	 */
-	public final Stream<T> stream(){
-		 return stream;
+	public final SequenceM<T> stream(){
+		 return this;
 			
 	}
 	

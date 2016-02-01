@@ -2,6 +2,7 @@ package com.aol.cyclops.lambda.api;
 
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.FunctorWrapper;
+import com.aol.cyclops.lambda.monads.WrappingFunctor;
 
 public class AsFunctor {
 	
@@ -16,7 +17,7 @@ public class AsFunctor {
 	 * @param o functor to wrap
 	 * @return Duck typed functor
 	 */
-	public static <T> Functor<T> asFunctor(Object o){
+	public static <T> WrappingFunctor<T> asFunctor(Object o){
 		return new FunctorWrapper<>(o);
 	}
 	

@@ -356,7 +356,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, To
 		}
 		public Try<T,X> close(){
 			
-			return andFinally(in -> {System.out.println("hello!!");invokeClose(in);} );
+			return andFinally(in -> {invokeClose(in);} );
 		}
 		
 		@Override

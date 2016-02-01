@@ -62,9 +62,11 @@ public class TryTest {
 	}
 	
 	public void testMultipleResources(){
+		
 		Try t2 = Try.catchExceptions(FileNotFoundException.class,IOException.class)
 				   .init(()->PowerTuples.tuple(new BufferedReader(new FileReader("file.txt")),new FileReader("hello")))
 				   .tryWithResources(this::read2);
+		
 	}
 	
 	private String read2(PTuple2<BufferedReader,FileReader> res) throws IOException{

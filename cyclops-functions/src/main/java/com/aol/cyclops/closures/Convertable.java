@@ -1,3 +1,4 @@
+
 package com.aol.cyclops.closures;
 
 import java.util.Arrays;
@@ -64,6 +65,7 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>{
 	default Stream<T> toStream(){
 		return Stream.of(get()).filter(v->v!=null);
 	}
+	
 	
 	/**
 	 * @return An AtomicReference containing value returned by get()

@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import com.aol.cyclops.lambda.api.Comprehender;
-import com.aol.cyclops.monad.Reader;
 
 
 
@@ -37,7 +36,7 @@ public class EvalComprehender implements Comprehender<Eval>{
 
 	@Override
 	public Class getTargetClass() {
-		return Reader.class;
+		return Eval.class;
 	}
 
 }

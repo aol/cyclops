@@ -47,6 +47,7 @@ import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.future.FutureOperations;
+import com.aol.cyclops.trampoline.Trampoline;
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
@@ -158,6 +159,10 @@ public interface ReactiveStream<T> extends LazyStream<T>, Publisher<T>, Reactive
 		return fromStream(StreamUtils.ofType(this, type));
 	}
 	
+	default <R> ReactiveStream<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper){
+		
+		 return  map(in-> mapper.apply(in).result());
+	 }
 	
 	/** subscribe **/
 	@Override
@@ -694,12 +699,12 @@ public interface ReactiveStream<T> extends LazyStream<T>, Publisher<T>, Reactive
 	 * @param reducers
 	 *            Reducers to reduce Stream
 	 * @return Reduced Stream values as List entries
-	 */
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	default List<T> reduce(Iterable<Monoid<T>> reducers) {
 		return StreamUtils.reduce(this, reducers);
 
-	}
+	} */
 
 	/**
 	 * Simultanously reduce a stream with multiple reducers
@@ -782,11 +787,11 @@ public interface ReactiveStream<T> extends LazyStream<T>, Publisher<T>, Reactive
 	 * @param reducer
 	 *            Monoid to reduce values
 	 * @return Reduce result
-	 */
+	 
 	default T foldRightMapToType(Monoid<T> reducer) {
 		return StreamUtils.foldRightMapToType(this, reducer);
 	}
-
+*/
 	/** Zipping **/
 
 	/**

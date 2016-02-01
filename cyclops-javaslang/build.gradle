@@ -30,9 +30,7 @@ configurations {
 	provided
 }
 dependencies {
-	compile project(':cyclops-monad-api')
 	compile project(':cyclops-functions')
-	compile project(':cyclops-for-comprehensions')
 	compile project(':cyclops-streams')
 	compile 'org.reactivestreams:reactive-streams:1.0.0'
 	

@@ -1,8 +1,12 @@
 package com.aol.cyclops.control;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.aol.cyclops.functions.caching.Memoize;
+import com.aol.cyclops.lambda.monads.Functor;
+import com.aol.cyclops.value.Value;
 
 
 /**
@@ -12,7 +16,7 @@ import com.aol.cyclops.functions.caching.Memoize;
  *
  * @param <T>
  */
-public interface Eval<T> extends Supplier<T>, Value<T>{
+public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>{
 
 	public static<T> Eval<T> now(T value){
 		return new Now<T>(value);
@@ -29,7 +33,24 @@ public interface Eval<T> extends Supplier<T>, Value<T>{
 	public <R> Eval<R> flatMap(Function<? super T, ? extends Eval<R>> mapper);
 	
 	public T get();
-	
+	default Eval<CompletableFuture<T>> asyncNow(Executor ex){
+		return Eval.now(this.toCompletableFutureAsync(ex));
+	}
+	default Eval<CompletableFuture<T>> asyncNow(){
+		return Eval.now(this.toCompletableFuture());
+	}
+	default Eval<CompletableFuture<T>> asyncLater(Executor ex){
+		return Eval.later(()->this.toCompletableFutureAsync(ex));
+	}
+	default Eval<CompletableFuture<T>> asyncLater(){
+		return Eval.later(()->this.toCompletableFutureAsync());
+	}
+	default Eval<CompletableFuture<T>> asyncAlways(Executor ex){
+		return Eval.always(()->this.toCompletableFutureAsync(ex));
+	}
+	default Eval<CompletableFuture<T>> asyncAlways(){
+		return Eval.always(()->this.toCompletableFutureAsync());
+	}
 	
 	static class Now<T> implements Eval<T>{
 		private final T value;
@@ -56,7 +77,8 @@ public interface Eval<T> extends Supplier<T>, Value<T>{
 			this.s = Memoize.memoizeFunction(s);
 		}
 		public <R> Eval<R> map(Function<? super T, ? extends R> mapper){
-			return new Later<R>(mapper.compose(s));
+			//unncessary cast
+			return new Later<R>(mapper.compose((Function)s));
 		}
 		public <R>  Eval<R> flatMap(Function<? super T, ? extends Eval<R>> mapper){
 			return  Eval.later(()->((Eval<R>)((Function)mapper).compose(s).apply("")).get());
@@ -66,6 +88,7 @@ public interface Eval<T> extends Supplier<T>, Value<T>{
 			return (T)((Function)s).apply("");
 		}
 		
+		
 	}
 	static class Always<T> implements Eval<T>{
 		private final Function<?,? extends T> s;
@@ -73,7 +96,8 @@ public interface Eval<T> extends Supplier<T>, Value<T>{
 			this.s = s;
 		}
 		public <R> Eval<R> map(Function<? super T, ? extends R> mapper){
-			return new Later<R>(mapper.compose(s));
+			//unncessary cast
+			return new Later<R>(mapper.compose((Function)s));
 			
 		}
 		public <R>  Eval<R> flatMap(Function<? super T, ? extends Eval<R>> mapper){

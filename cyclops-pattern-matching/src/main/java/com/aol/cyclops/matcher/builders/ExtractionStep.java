@@ -10,7 +10,7 @@ public interface ExtractionStep<T,R,X> {
 	 * @param extractor Extractor to extract elements / transform a collection
 	 * @return Next step in the Case Builder process
 	 */
-	public <T,R> CollectionStep<R,X> thenExtract(Extractor<T,R> extractor);
+	public <T,R> TempCollectionStepExtension<R,X> thenExtract(Extractor<T,R> extractor);
 	
 	
 }

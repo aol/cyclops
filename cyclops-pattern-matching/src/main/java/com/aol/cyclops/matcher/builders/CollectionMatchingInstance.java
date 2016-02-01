@@ -10,15 +10,18 @@ import com.aol.cyclops.objects.Decomposable;
 
 import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
+
 @Deprecated
-public class CollectionMatchingInstance  <T, X> implements Function<T, Optional<X>> {
+public class CollectionMatchingInstance  <T, X> extends MatchingInstance<T,X> implements Function<T, Optional<X>> {
 	
 	
 	private final CaseBeingBuilt cse;
 	
 	
-	
+	public CollectionMatchingInstance(CaseBeingBuilt cse ){
+		super(cse);
+		this.cse = cse;
+	}	
 	public final Cases<T,X,TypedFunction<T,X>> cases(){
 		return this.cse.getPatternMatcher().getCases();
 	}

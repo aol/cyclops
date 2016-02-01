@@ -42,6 +42,8 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
+import com.aol.cyclops.lambda.monads.Foldable;
+import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.reactivestreams.CyclopsSubscriber;
 import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
@@ -55,7 +57,7 @@ import com.aol.cyclops.streams.spliterators.ReversingRangeLongSpliterator;
 import com.aol.cyclops.trampoline.Trampoline;
 
 
-public interface SequenceM<T> extends Unwrapable, Stream<T>, JoolWindowing<T>, JoolManipulation<T>,SequenceMCollectable<T>,Seq<T>,  Iterable<T>, Publisher<T>,
+public interface SequenceM<T> extends Unwrapable, Stream<T>, Functor<T>, Foldable<T>,JoolWindowing<T>, JoolManipulation<T>,SequenceMCollectable<T>,Seq<T>,  Iterable<T>, Publisher<T>,
 		ReactiveStreamsTerminalOperations<T>  {
 	
 	
@@ -1299,7 +1301,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, JoolWindowing<T>, J
 	/**
 	 * Convert this SequenceM into a Stream
 	 */
-	public Stream<T> stream();
+	public SequenceM<T> stream();
 
 	/**
 	 * 

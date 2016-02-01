@@ -17,6 +17,7 @@ public class FunctorTest {
 
 	@Test
 	public void testFunctor() {
+		
 		val list = FunctorImpl.<Integer>of(Stream.of(1))
 					.map(i->i*2)
 					.peek(System.out::println).<Stream>unwrap().collect(Collectors.toList());
@@ -25,11 +26,11 @@ public class FunctorTest {
 	}
 
 	@AllArgsConstructor
-	static class FunctorImpl<T> implements Functor<T>{
+	static class FunctorImpl<T> implements WrappingFunctor<T>{
 		@Wither
 		@Getter
 		private final Object functor;
-		public static <T> Functor<T> of(Object of) {
+		public static <T> WrappingFunctor<T> of(Object of) {
 			return new FunctorImpl(of);
 		}
 	}

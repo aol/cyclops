@@ -16,6 +16,7 @@ import java.util.stream.StreamSupport;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.lambda.monads.Filterable;
 import com.aol.cyclops.lambda.monads.Functor;
+import com.aol.cyclops.lambda.monads.WrappingFunctor;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SeqUtils;
 import com.aol.cyclops.sequence.SequenceM;
@@ -38,7 +39,7 @@ import com.aol.cyclops.sequence.streamable.Streamable;
  * @param <MONAD>
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,Functor<T>, Filterable<T>{
+public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,WrappingFunctor<T>, Filterable<T>{
 	
 	
 	public <MONAD,T> Monad<MONAD,T> withMonad(Object invoke);
@@ -119,13 +120,13 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,Functor<T>, Filt
 	 * @see com.aol.cyclops.lambda.monads.Functor#map(java.util.function.Function)
 	 */
 	default  <R> Monad<MONAD,R> map(Function<? super T,? extends R> fn){
-		return (Monad)Functor.super.map(fn);
+		return (Monad)WrappingFunctor.super.map(fn);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
 	 */
 	default   Monad<MONAD,T>  peek(Consumer<? super T> c) {
-		return (Monad)Functor.super.peek(c);
+		return (Monad)WrappingFunctor.super.peek(c);
 	}
 
 	/**
