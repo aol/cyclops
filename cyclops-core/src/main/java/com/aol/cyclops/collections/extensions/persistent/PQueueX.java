@@ -36,12 +36,22 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
 		return new PQueueXImpl<>(PQueues.singleton(value));
 	}
 	public static<T> PQueueX<T> fromCollection(Collection<T> stream){
+		if(stream instanceof PQueueX)
+			return (PQueueX)(stream);
 		if(stream instanceof PQueue)
 			return new PQueueXImpl<>((PQueue)(stream));
 		return new PQueueXImpl<>(PQueues.fromCollection(stream));
 	}
 	public static<T> PQueueX<T> fromStream(Stream<T> stream){
 		return new PQueueXImpl<>((PQueue<T>)PSets.toPSet().mapReduce(stream));
+	}
+	@Override
+	default<R> PQueueX<R> unit(Collection<R> col){
+		return fromCollection(col);
+	}
+	@Override
+	default<R> PQueueX<R> emptyUnit(){
+		return empty();
 	}
 	@Override
 	default SequenceM<T> stream(){

@@ -44,12 +44,23 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	}
 	
 	public static<T> PBagX<T> fromCollection(Collection<T> stream){
+		if(stream instanceof PBagX)
+			return (PBagX)stream;
 		if(stream instanceof PBag)
 			return new PBagXImpl<>((PBag)(stream));
+		
 		return new PBagXImpl<>(HashTreePBag.from(stream));
 	}
 	public static<T> PBagX<T> fromStream(Stream<T> stream){
 		return new PBagXImpl<>((PBag<T>)PBags.toPBag().mapReduce(stream));
+	}
+	@Override
+	default<R> PBagX<R> unit(Collection<R> col){
+		return fromCollection(col);
+	}
+	@Override
+	default<R> PBagX<R> emptyUnit(){
+		return empty();
 	}
 	
 	default PBag<T> toPBag(){

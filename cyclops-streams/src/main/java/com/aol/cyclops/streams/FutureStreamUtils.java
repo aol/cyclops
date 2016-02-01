@@ -123,6 +123,7 @@ public class FutureStreamUtils {
 												Consumer<? super T> consumerElement,
 												Consumer<? super Throwable> consumerError,
 												Runnable onComplete){
+		CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
 		Subscription s = new Subscription(){
 		Iterator<T> it = stream.iterator();
 			@Override
@@ -132,8 +133,10 @@ public class FutureStreamUtils {
 						if(it.hasNext()){
 							consumerElement.accept(it.next());
 						}
-						else
+						else{
 							onComplete.run();
+							streamCompleted.complete(true);
+						}
 					}catch(Throwable t){
 						consumerError.accept(t);
 					}
@@ -147,7 +150,7 @@ public class FutureStreamUtils {
 			
 		};
 		CompletableFuture<Subscription>subscription = CompletableFuture.completedFuture(s);
-		CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
+		
 		return tuple(subscription,()-> {
 			s.request(x);
 			

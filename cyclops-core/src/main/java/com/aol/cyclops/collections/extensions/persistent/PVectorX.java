@@ -2,6 +2,7 @@ package com.aol.cyclops.collections.extensions.persistent;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -10,6 +11,8 @@ import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
+import org.pcollections.ConsPStack;
+import org.pcollections.PStack;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
@@ -93,6 +96,10 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	 * @return PVector containing values
 	 */
 	public static <T> PVectorX<T> fromCollection(Collection<T> values){
+		if(values instanceof PVectorX)
+			return (PVectorX)values;
+		if(values instanceof PVector)
+			return new PVectorXImpl<>((PVector)values);
 		return new PVectorXImpl<>(TreePVector.from(values));
 	}
 	/**
@@ -149,14 +156,23 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	 */
 	@Override
 	default <R> PVectorX<R> map(Function<? super T, ? extends R> mapper) {
+		
 		return (PVectorX<R>)PersistentCollectionX.super.map(mapper);
 	}
-
+	@Override
+	default<R> PVectorX<R> unit(Collection<R> col){
+		return fromCollection(col);
+	}
+	@Override
+	default<R> PVectorX<R> emptyUnit(){
+		return empty();
+	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#flatMap(java.util.function.Function)
 	 */
 	@Override
 	default <R> PVectorX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+		
 		return (PVectorX<R>)PersistentCollectionX.super.flatMap(mapper);
 	}
 

@@ -8,8 +8,13 @@ public class PStackXTest extends CollectionXTestsWithNulls{
 
 	@Override
 	public <T> CollectionX<T> of(T... values) {
-	
-		return PStackX.of(values);
+		PStackX<T> list = PStackX.empty();
+		for(T next : values){
+			list = list.plus(list.size(),next);
+		}
+		System.out.println("List " + list);
+		return list.efficientOpsOff();
+		
 	}
 
 }

@@ -307,14 +307,19 @@ public abstract class AbstractCollectionXTest {
 
 		@Test
 		public void testScanLeftSumMonoid() {
-			assertThat(of("a", "ab", "abc").map(str -> str.length()).scanLeft(Reducers.toTotalInt()).toList(), is(asList(0, 1, 3, 6)));
+			
+			assertThat(of("a", "ab", "abc").map(str -> str.length()).
+								peek(System.out::println).scanLeft(Reducers.toTotalInt()).toList(), is(asList(0, 1, 3, 6)));
 		}
 
 		
 
 		@Test
 		public void testScanRightSumMonoid() {
-			assertThat(of("a", "ab", "abc").map(str -> str.length()).scanRight(Reducers.toTotalInt()).toList(), is(asList(0, 3, 5, 6)));
+			assertThat(of("a", "ab", "abc").peek(System.out::println)
+										.map(str -> str.length())
+										.peek(System.out::println)
+										.scanRight(Reducers.toTotalInt()).toList(), is(asList(0, 3, 5, 6)));
 
 		}	
 

@@ -186,6 +186,7 @@ public class ForEachSequenceMFutureTest {
 		assertFalse(s.isStreamComplete());
 		
 		s.request(2);
+		s.block();
 		
 		
 		assertTrue(s.isStreamComplete());

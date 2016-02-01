@@ -1,6 +1,7 @@
 package com.aol.cyclops.collections.extensions.persistent;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -15,6 +16,7 @@ import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
+import com.aol.cyclops.streams.streamable.SQLTest.X;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
@@ -23,25 +25,53 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 		
 		return SequenceM.fromIterable(this);
 	}
+	<R> PersistentCollectionX<R> emptyUnit();
 	<T> Monoid<? extends Collection<T>> monoid();
 	
 	default CollectionX<T> reverse(){
 		return from(this.<T>monoid().mapReduce(stream().reverse())); 
 	}
 	default CollectionX<T> filter(Predicate<? super T> pred){
-		return from(this.<T>monoid().mapReduce(stream().filter(pred)));
+		FluentCollectionX<T> mapped = emptyUnit();
+		Iterator<T> it = iterator();
+		while(it.hasNext()){
+			T value  = it.next();
+			if(pred.test(value))
+				mapped = mapped.plusInOrder(value);
+		}
+		return unit(mapped);
+	//	return from(this.<T>monoid().mapReduce(stream().filter(pred)));
 	}
 	default <R> CollectionX<R> map(Function<? super T, ? extends R> mapper){
-		return from(this.<R>monoid().mapReduce(stream().map(mapper)));
+		FluentCollectionX<R> mapped = emptyUnit();
+		Iterator<T> it = iterator();
+		while(it.hasNext())
+			mapped = mapped.plusInOrder(mapper.apply(it.next()));
+		return unit(mapped);
 	}
 	default <R> CollectionX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper){
 		return from(this.<R>monoid().mapReduce(stream().flatMap(mapper.andThen(StreamUtils::stream))));
 	}
 	default CollectionX<T> limit(long num){
-		return from(this.<T>monoid().mapReduce(stream().limit(num)));
+		FluentCollectionX<T> mapped = emptyUnit();
+		Iterator<T> it = iterator();
+		for(long i=0;i<num && it.hasNext();i++){
+			mapped = mapped.plusInOrder(it.next());
+		}
+		return mapped;
+		
+		//return from(this.<T>monoid().mapReduce(stream().limit(num)));
 	}
 	default CollectionX<T> skip(long num){
-		return from(this.<T>monoid().mapReduce(stream().skip(num)));
+		FluentCollectionX<T> mapped = emptyUnit();
+		Iterator<T> it = iterator();
+		for(long i=0;i<num && it.hasNext();i++){
+			it.next();
+		}
+		while(it.hasNext())
+			mapped = mapped.plusInOrder(it.next());
+		return mapped;
+	//	return from(this.<T>monoid().mapReduce(stream().skip(num)));
 	}
 	default CollectionX<T> dropRight(int num){
 		return from(this.<T>monoid().mapReduce(stream().skipLast(num)));
@@ -94,8 +124,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	 * @return
 	 */
 	default <R> CollectionX<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper){
-		
-		 return  from(this.<R>monoid().mapReduce(stream().trampoline(mapper)));	 
+		return map(in-> mapper.apply(in).result()); 
 	}
 	
 	/*
@@ -137,14 +166,16 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 		return from(this.<ListX<T>>monoid().mapReduce(stream().sliding(windowSize,increment).map(ListX::of)));
 	}
 	default CollectionX<T> scanLeft(Monoid<T> monoid){
+		
 		return from(this.<T>monoid().mapReduce(stream().scanLeft(monoid)));
-	}
-	default <U> CollectionX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
-		return from(this.<U>monoid().mapReduce(stream().scanLeft(seed,function)));
 	}
 	default CollectionX<T> scanRight(Monoid<T> monoid){
 		return from(this.<T>monoid().mapReduce(stream().scanRight(monoid)));
 	}
+	default <U> CollectionX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
+		return from(this.<U>monoid().mapReduce(stream().scanLeft(seed,function)));
+	}
+	
 	default <U> CollectionX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
 		return from(this.<U>monoid().mapReduce(stream().scanRight(identity,combiner)));
 	}

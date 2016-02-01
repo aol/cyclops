@@ -38,12 +38,22 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 		return new POrderedSetXImpl<>(OrderedPSet.singleton(value));
 	}
 	public static<T> POrderedSetX<T> fromCollection(Collection<T> stream){
+		if(stream instanceof POrderedSetX)
+			return (POrderedSetX)(stream);
 		if(stream instanceof POrderedSet)
 			return new  POrderedSetXImpl<>((POrderedSet)(stream));
 		return new  POrderedSetXImpl<>(OrderedPSet.from(stream));
 	}
 	public static<T> POrderedSetX<T> toPOrderedSet(Stream<T> stream){
 		return new POrderedSetXImpl<>((POrderedSet<T>)POrderedSets.toPOrderedSet().mapReduce(stream));
+	}
+	@Override
+	default<R> POrderedSetX<R> unit(Collection<R> col){
+		return fromCollection(col);
+	}
+	@Override
+	default<R> POrderedSetX<R> emptyUnit(){
+		return empty();
 	}
 	@Override
 	default SequenceM<T> stream(){

@@ -3,7 +3,6 @@ package com.aol.cyclops.collections.extensions.persistent;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.ListIterator;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -50,7 +49,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 * @return new PStack
 	 */
 	public static <T> PStackX<T> of(T...values){
-		return new PStackXImpl<>(ConsPStack.from(Arrays.asList(values)));
+		return new PStackXImpl<>(ConsPStack.from(Arrays.asList(values)),true);
 	}
 	/**
 	 * <pre>
@@ -68,9 +67,11 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 * @return
 	 */
 	public static <T> PStackX<T> fromCollection(Collection<T> values){
+		if(values instanceof PStackX)
+			return (PStackX)values;
 		if(values instanceof PStack)
-			return new PStackXImpl<>((PStack)values);
-		return new PStackXImpl<>(ConsPStack.from(values));
+			return new PStackXImpl<>((PStack)values,true);
+		return new PStackXImpl<>(ConsPStack.from(values),true);
 	}
 	/**
 	 * <pre>
@@ -84,7 +85,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 * @return an empty PStack
 	 */
 	public static <T> PStackX<T> empty(){
-		return new PStackXImpl<>(ConsPStack.empty());
+		return new PStackXImpl<>(ConsPStack.empty(),true);
 	}
 	/**
 	 * Construct a PStack containing a single value
@@ -103,7 +104,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 * @return PVector with a single value
 	 */
 	public static <T> PStackX<T> singleton(T value){
-		return new PStackXImpl<>(ConsPStack.singleton(value));
+		return new PStackXImpl<>(ConsPStack.singleton(value),true);
 	}
 	/**
 	 * Reduce (immutable Collection) a Stream to a PStack, note for efficiency reasons,
@@ -122,10 +123,29 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 * @return
 	 */
 	public static<T> PStackX<T> fromStream(Stream<T> stream){
-		return new PStackXImpl<>((PStack<T>)PStacks.toPStack().mapReduce(stream));
+		return new PStackXImpl<>((PStack<T>)PStacks.toPStack().mapReduce(stream),false);
+	}
+	
+	@Override
+	default<R> PStackX<R> unit(Collection<R> col){
+		if(isEfficientOps())
+			return fromCollection(col);
+		return fromCollection(col).efficientOpsOff();
+	}
+	@Override
+	default<R> PStackX<R> emptyUnit(){
+		if(isEfficientOps())
+			return empty();
+		return PStackX.<R>empty().efficientOpsOff();
 	}
 	default PStack<T> toPStack(){
 		return this;
+	}
+	@Override
+	default PStackX<T> plusInOrder(T e){
+		if(isEfficientOps())
+			return plus(e);
+		return plus(size(),e);
 	}
 	@Override
 	default SequenceM<T> stream(){
@@ -136,8 +156,12 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 		return fromCollection(col);
 	}
 	default <T> Monoid<PStack<T>> monoid(){
+		if(isEfficientOps())
+			return PStacks.toPStackReverse();
 		return PStacks.toPStack();
+		
 	}
+	
 
 
 	/* (non-Javadoc)
@@ -151,14 +175,19 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 			reversed = reversed.plus(0, it.next());
 		return fromCollection(reversed);
 	}
+	
 
+	
+	PStackX<T> efficientOpsOn();
+	PStackX<T> efficientOpsOff();
+	boolean isEfficientOps();
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#filter(java.util.function.Predicate)
 	 */
 	@Override
 	default PStackX<T> filter(Predicate<? super T> pred) {
-		
-		return (PStackX)PersistentCollectionX.super.filter(pred);
+		return (PStackX<T>)PersistentCollectionX.super.filter(pred);
 	}
 
 	/* (non-Javadoc)
@@ -166,10 +195,8 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 */
 	@Override
 	default <R> PStackX<R> map(Function<? super T, ? extends R> mapper) {
-		
-		return (PStackX)PersistentCollectionX.super.map(mapper);
+		return (PStackX<R>)PersistentCollectionX.super.map(mapper);
 	}
-
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#flatMap(java.util.function.Function)
 	 */
@@ -316,16 +343,22 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	default PStackX<ListX<T>> sliding(int windowSize, int increment){
 		return  (PStackX<ListX<T>>)PersistentCollectionX.super.sliding(windowSize,increment);
 	}
-	default PStackX<T> scanLeft(Monoid<T> monoid){
-		return  (PStackX<T>)PersistentCollectionX.super.scanLeft(monoid);
-	}
+	
 	default <U> PStackX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
 		return  (PStackX<U>)PersistentCollectionX.super.scanLeft(seed,function);
 	}
-	default PStackX<T> scanRight(Monoid<T> monoid){
-		return  (PStackX<T>)PersistentCollectionX.super.scanRight(monoid);
-	}
+	
 	default <U> PStackX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
 		return  (PStackX<U>)PersistentCollectionX.super.scanRight(identity,combiner);
+	}
+	default PStackX<T> scanLeft(Monoid<T> monoid){
+		
+
+		return  (PStackX<T>)PersistentCollectionX.super.scanLeft(monoid);
+	
+	}
+	default PStackX<T> scanRight(Monoid<T> monoid){
+		return  (PStackX<T>)PersistentCollectionX.super.scanRight(monoid);
+	
 	}
 }

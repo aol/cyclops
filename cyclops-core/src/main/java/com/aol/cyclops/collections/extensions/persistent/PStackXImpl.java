@@ -14,13 +14,23 @@ import java.util.stream.Stream;
 import org.pcollections.PStack;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.Wither;
 
 
 @AllArgsConstructor
 public class PStackXImpl<T> implements PStackX<T> {
-	
+	@Wither
 	private final PStack<T> stack;
+	@Wither @Getter
+	private final boolean efficientOps;
 
+	public PStackX<T> efficientOpsOn(){
+		return this.withEfficientOps(true);
+	}
+	public PStackX<T> efficientOpsOff(){
+		return this.withEfficientOps(false);
+	}
 	/**
 	 * @param action
 	 * @see java.lang.Iterable#forEach(java.util.function.Consumer)
@@ -69,7 +79,7 @@ public class PStackXImpl<T> implements PStackX<T> {
 	 * @see org.pcollections.MapPSet#plus(java.lang.Object)
 	 */
 	public PStackX<T> plus(T e) {
-		return new PStackXImpl<>(stack.plus(e));
+		return this.withStack(stack.plus(e));
 	}
 
 	/**
@@ -78,7 +88,7 @@ public class PStackXImpl<T> implements PStackX<T> {
 	 * @see org.pcollections.MapPSet#minus(java.lang.Object)
 	 */
 	public  PStackX<T> minus(Object e) {
-		return new PStackXImpl<>(stack.minus(e));
+		return  this.withStack(stack.minus(e));
 	}
 
 	/**
@@ -87,7 +97,7 @@ public class PStackXImpl<T> implements PStackX<T> {
 	 * @see org.pcollections.MapPSet#plusAll(java.util.Collection)
 	 */
 	public  PStackX<T> plusAll(Collection<? extends T> list) {
-		return  new PStackXImpl<>(stack.plusAll(list));
+		return   this.withStack(stack.plusAll(list));
 	}
 
 	/**
@@ -96,7 +106,7 @@ public class PStackXImpl<T> implements PStackX<T> {
 	 * @see org.pcollections.MapPSet#minusAll(java.util.Collection)
 	 */
 	public PStackX<T> minusAll(Collection<?> list) {
-		return  new PStackXImpl<>(stack.minusAll(list));
+		return   this.withStack(stack.minusAll(list));
 	}
 
 	/**
@@ -228,7 +238,7 @@ public class PStackXImpl<T> implements PStackX<T> {
 	 * @see org.pcollections.PStack#with(int, java.lang.Object)
 	 */
 	public PStackX<T> with(int i, T e) {
-		return new PStackXImpl<>(stack.with(i, e));
+		return  this.withStack(stack.with(i, e));
 	}
 
 	/**
@@ -238,7 +248,7 @@ public class PStackXImpl<T> implements PStackX<T> {
 	 * @see org.pcollections.PStack#plus(int, java.lang.Object)
 	 */
 	public PStackX<T> plus(int i, T e) {
-		return new PStackXImpl<>(stack.plus(i, e));
+		return this.withStack(stack.plus(i, e));
 	}
 
 	/**
@@ -248,7 +258,7 @@ public class PStackXImpl<T> implements PStackX<T> {
 	 * @see org.pcollections.PStack#plusAll(int, java.util.Collection)
 	 */
 	public PStackX<T> plusAll(int i, Collection<? extends T> list) {
-		return new PStackXImpl<>(stack.plusAll(i, list));
+		return  this.withStack(stack.plusAll(i, list));
 	}
 
 	/**
@@ -257,7 +267,7 @@ public class PStackXImpl<T> implements PStackX<T> {
 	 * @see org.pcollections.PStack#minus(int)
 	 */
 	public PStackX<T> minus(int i) {
-		return new PStackXImpl<>(stack.minus(i));
+		return  this.withStack(stack.minus(i));
 	}
 
 	/**
@@ -267,7 +277,7 @@ public class PStackXImpl<T> implements PStackX<T> {
 	 * @see org.pcollections.PStack#subList(int, int)
 	 */
 	public PStackX<T> subList(int start, int end) {
-		return new PStackXImpl<>(stack.subList(start, end));
+		return  this.withStack(stack.subList(start, end));
 	}
 
 	/**
@@ -276,7 +286,7 @@ public class PStackXImpl<T> implements PStackX<T> {
 	 * @see org.pcollections.PStack#subList(int)
 	 */
 	public PStackX<T> subList(int start) {
-		return new PStackXImpl<>(stack.subList(start));
+		return  this.withStack(stack.subList(start));
 	}
 
 	/**

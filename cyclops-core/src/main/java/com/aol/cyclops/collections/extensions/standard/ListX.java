@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 
+import com.aol.cyclops.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
@@ -53,7 +54,10 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 			return new ListXImpl<T>( (List)it, collector);
 		return new ListXImpl<T>(StreamUtils.stream(it).collect(collector),collector);
 	}
-	
+	@Override
+	default<R> ListX<R> unit(Collection<R> col){
+		return fromIterable(col);
+	}
 	@Override
 	default SequenceM<T> stream(){
 		

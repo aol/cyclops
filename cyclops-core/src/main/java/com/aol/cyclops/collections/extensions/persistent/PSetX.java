@@ -37,12 +37,22 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 		return new PSetXImpl<>(HashTreePSet.singleton(value));
 	}
 	public static<T> PSetX<T> fromCollection(Collection<T> stream){
+		if(stream instanceof PSetX)
+			return (PSetX)(stream);
 		if(stream instanceof PSet)
 			return new PSetXImpl<>((PSet)(stream));
 		return new PSetXImpl<>(HashTreePSet.from(stream));
 	}
 	public static<T> PSetX<T> fromStream(Stream<T> stream){
 		return new PSetXImpl<>((PSet<T>)PSets.toPSet().mapReduce(stream));
+	}
+	@Override
+	default<R> PSetX<R> unit(Collection<R> col){
+		return fromCollection(col);
+	}
+	@Override
+	default<R> PSetX<R> emptyUnit(){
+		return empty();
 	}
 	@Override
 	default SequenceM<T> stream(){
