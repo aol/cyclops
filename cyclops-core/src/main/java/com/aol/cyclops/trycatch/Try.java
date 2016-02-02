@@ -2,6 +2,7 @@
 package com.aol.cyclops.trycatch;
 
 import java.io.Closeable;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -15,7 +16,9 @@ import lombok.val;
 
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.ToStream;
+import com.aol.cyclops.value.Value;
 import com.aol.cyclops.value.ValueObject;
 
 /**
@@ -42,7 +45,7 @@ import com.aol.cyclops.value.ValueObject;
  * @param <T> Return type (success)
  * @param <X> Base Error type
  */
-public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, ToStream<T> {
+public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ValueObject, ToStream<T> {
 
 	/**
 	 * @return This monad, wrapped as AnyM of Success
@@ -75,7 +78,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, To
 	 * @param value from supplied Supplier if Failure otherwise return Success value
 	 * @return Success value
 	 */
-	public T orElseGet(Supplier<T> value);
+	public T orElseGet(Supplier<? extends T> value);
 	
 	/**
 	 * @param fn Map success value from T to R. Do nothing if Failure (return this)
@@ -153,7 +156,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, To
 	/**
 	 * @return Stream with value if Sucess, Empty Stream if failure
 	 */
-	public Stream<T> stream();
+	public SequenceM<T> stream();
 	/**
 	 * @return Optional present if Failure (with Exception), Optional empty if Success
 	 */
@@ -199,6 +202,11 @@ public interface Try<T,X extends Throwable> extends Supplier<T>, ValueObject, To
 		return this;
 	}
 	
+	@Override
+	default Iterator<T> iterator() {
+		
+		return Value.super.iterator();
+	}
 	/**
 	 * Return a Try that will catch specified exceptions when map / flatMap called
 	 * For use with liftM / liftM2 and For Comprehensions (when Try is at the top level)

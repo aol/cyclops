@@ -179,7 +179,7 @@ public class Failure<T,X extends Throwable> implements Try<T,X> {
 	 * @see com.aol.cyclops.trycatch.Try#orElseGet(java.util.function.Supplier)
 	 */
 	@Override
-	public T orElseGet(Supplier<T> value) {
+	public T orElseGet(Supplier<? extends T> value) {
 		return value.get();
 	}
 	/* 

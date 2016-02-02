@@ -52,6 +52,10 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 		return fromCollection(col);
 	}
 	@Override
+	default <R> POrderedSetX<R> unit(R value){
+		return singleton(value);
+	}
+	@Override
 	default<R> POrderedSetX<R> emptyUnit(){
 		return empty();
 	}

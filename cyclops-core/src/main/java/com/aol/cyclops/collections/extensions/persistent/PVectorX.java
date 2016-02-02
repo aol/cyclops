@@ -164,6 +164,10 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 		return fromCollection(col);
 	}
 	@Override
+	default <R> PVectorX<R> unit(R value){
+		return singleton(value);
+	}
+	@Override
 	default<R> PVectorX<R> emptyUnit(){
 		return empty();
 	}

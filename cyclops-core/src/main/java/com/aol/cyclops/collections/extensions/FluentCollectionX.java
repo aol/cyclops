@@ -2,6 +2,8 @@ package com.aol.cyclops.collections.extensions;
 
 import java.util.Collection;
 
+import com.aol.cyclops.lambda.monads.Unit;
+
 public interface FluentCollectionX<T> extends CollectionX<T> {
 
 	default FluentCollectionX<T> plusInOrder(T e){

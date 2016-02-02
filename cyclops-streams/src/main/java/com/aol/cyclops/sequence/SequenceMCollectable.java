@@ -2,6 +2,7 @@ package com.aol.cyclops.sequence;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -13,20 +14,19 @@ import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collector;
+import java.util.stream.Stream;
 
 import org.jooq.lambda.Collectable;
 
 import com.aol.cyclops.sequence.streamable.ConvertableToSequenceM;
+import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.sequence.streamable.ToStream;
 
 
 
 public interface SequenceMCollectable<T> extends Collectable<T> {
 	
-	
-	
 
-	
 
 	/* (non-Javadoc)
 	 * @see org.jooq.lambda.Collectable#collect(java.util.stream.Collector)

@@ -52,7 +52,7 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>{
 		return Eval.always(()->this.toCompletableFutureAsync());
 	}
 	
-	static class Now<T> implements Eval<T>{
+	public static class Now<T> implements Eval<T>{
 		private final T value;
 		Now(T value){
 			this.value = value;
@@ -71,7 +71,7 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>{
 	}
 	
 	
-	static class Later<T> implements Eval<T>{
+	public static class Later<T> implements Eval<T>{
 		private final Function<?,? extends T> s;
 		Later(Function <?,? extends T> s){
 			this.s = Memoize.memoizeFunction(s);
@@ -90,7 +90,7 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>{
 		
 		
 	}
-	static class Always<T> implements Eval<T>{
+	public static class Always<T> implements Eval<T>{
 		private final Function<?,? extends T> s;
 		Always(Function <?,? extends T> s){
 			this.s = s;

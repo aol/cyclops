@@ -51,6 +51,10 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 		return fromCollection(col);
 	}
 	@Override
+	default <R> PSetX<R> unit(R value){
+		return singleton(value);
+	}
+	@Override
 	default<R> PSetX<R> emptyUnit(){
 		return empty();
 	}

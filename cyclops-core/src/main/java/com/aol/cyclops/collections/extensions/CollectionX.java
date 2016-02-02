@@ -28,6 +28,7 @@ import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
 import com.aol.cyclops.lambda.monads.Foldable;
 import com.aol.cyclops.lambda.monads.Functor;
+import com.aol.cyclops.lambda.monads.Unit;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.matcher.recursive.Matchable;
 import com.aol.cyclops.sequence.HeadAndTail;
@@ -39,7 +40,7 @@ import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.trampoline.Trampoline;
 
 //pattern match, for comprehensions
-public interface CollectionX<T> extends Iterable<T>,Functor<T>, Foldable<T>,Collection<T>,SequenceMCollectable<T>{
+public interface CollectionX<T> extends Iterable<T>,Functor<T>, Foldable<T>,Unit<T>,Collection<T>,SequenceMCollectable<T>{
 	
 	@Override
 	default SequenceM<T> stream(){

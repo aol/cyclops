@@ -1,15 +1,16 @@
 package com.aol.cyclops.featuretoggle;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.ToStream;
-import com.aol.cyclops.value.ValueObject;
+import com.aol.cyclops.value.Value;
 
 
 
@@ -20,7 +21,7 @@ import com.aol.cyclops.value.ValueObject;
  *
  * @param <F>
  */
-public interface FeatureToggle<F> extends Supplier<F>, ValueObject, ToStream<F> {
+public interface FeatureToggle<F> extends Supplier<F>, Value<F>, ToStream<F> {
 
 	boolean isEnabled();
 	boolean isDisabled();
@@ -190,11 +191,16 @@ public interface FeatureToggle<F> extends Supplier<F>, ValueObject, ToStream<F> 
 	 * @return emty Stream if disabled, Stream with current value if enabled.
 	 */
 	@Override
-	default Stream<F> stream(){
+	default SequenceM<F> stream(){
 		if(isEnabled())
-			return Stream.of(get());
+			return SequenceM.of(get());
 		else
-			return Stream.of();
+			return SequenceM.of();
+	}
+	@Override
+	default Iterator<F> iterator() {
+		// TODO Auto-generated method stub
+		return Value.super.iterator();
 	}
 	
 	

@@ -55,6 +55,10 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 		return new PBagXImpl<>((PBag<T>)PBags.toPBag().mapReduce(stream));
 	}
 	@Override
+	default <R> PBagX<R> unit(R value){
+		return singleton(value);
+	}
+	@Override
 	default<R> PBagX<R> unit(Collection<R> col){
 		return fromCollection(col);
 	}

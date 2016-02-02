@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 
+import com.aol.cyclops.collections.extensions.persistent.PBagX;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
@@ -59,6 +60,15 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	
 	default <X> DequeX<X> fromStream(Stream<X> stream){
 		return new DequeXImpl<>(stream.collect(getCollector()),getCollector());
+	}
+	@Override
+	default <R> DequeX<R> unit(R value){
+		return singleton(value);
+	}
+	
+	@Override
+	default<R> DequeX<R> emptyUnit(){
+		return empty();
 	}
 	@Override
 	default SequenceM<T> stream(){

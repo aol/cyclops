@@ -272,4 +272,6 @@ public interface Foldable<T> {
 	default <T> T foldRightMapToType(Monoid<T> reducer){
 		return stream().foldRightMapToType(reducer);
 	}
+	
+
 }

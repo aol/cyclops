@@ -61,7 +61,15 @@ public interface QueueX<T> extends Queue<T>, MutableCollectionX<T> {
 		return new QueueXImpl<>(stream.collect(getCollector()),getCollector());
 	}
 	
-
+	@Override
+	default <R> QueueX<R> unit(R value){
+		return singleton(value);
+	}
+	
+	@Override
+	default<R> QueueX<R> emptyUnit(){
+		return empty();
+	}
 	@Override
 	default SequenceM<T> stream(){
 		

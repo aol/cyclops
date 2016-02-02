@@ -59,6 +59,15 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 		return fromIterable(col);
 	}
 	@Override
+	default <R> ListX<R> unit(R value){
+		return singleton(value);
+	}
+	
+	@Override
+	default<R> ListX<R> emptyUnit(){
+		return empty();
+	}
+	@Override
 	default SequenceM<T> stream(){
 		
 		return SequenceM.fromIterable(this);

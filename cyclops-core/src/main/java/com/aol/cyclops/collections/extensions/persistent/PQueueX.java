@@ -50,6 +50,10 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
 		return fromCollection(col);
 	}
 	@Override
+	default <R> PQueueX<R> unit(R value){
+		return singleton(value);
+	}
+	@Override
 	default<R> PQueueX<R> emptyUnit(){
 		return empty();
 	}

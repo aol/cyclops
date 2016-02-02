@@ -30,6 +30,10 @@ import org.jooq.lambda.function.Function3;
 import org.jooq.lambda.function.Function4;
 import org.jooq.lambda.function.Function5;
 
+import com.aol.cyclops.lambda.monads.FlatMap;
+import com.aol.cyclops.lambda.monads.Foldable;
+import com.aol.cyclops.lambda.monads.Functor;
+import com.aol.cyclops.lambda.monads.Unit;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.Unwrapable;
@@ -46,7 +50,7 @@ import com.aol.cyclops.sequence.streamable.ToStream;
  * @param <T> type data wrapped by the underlying monad
  */
 
-public interface AnyM<T> extends Unwrapable, ToStream<T>, ApplyM<T>,FlatMapM<T>,ReduceM<T>{
+public interface AnyM<T> extends Unwrapable, Unit<T>,Foldable<T>,Functor<T>,FlatMap<T>,ToStream<T>, ApplyM<T>,FlatMapM<T>,ReduceM<T>{
 	
 	/* Convert this AnyM to a Stream (SequenceM)
 	 * Chooses the most appropriate of asSequence() and toSequence()

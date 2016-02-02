@@ -133,6 +133,10 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 		return fromCollection(col).efficientOpsOff();
 	}
 	@Override
+	default <R> PStackX<R> unit(R value){
+		return singleton(value);
+	}
+	@Override
 	default<R> PStackX<R> emptyUnit(){
 		if(isEfficientOps())
 			return empty();

@@ -61,7 +61,15 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	}
 
 	
+	@Override
+	default <R> SetX<R> unit(R value){
+		return singleton(value);
+	}
 	
+	@Override
+	default<R> SetX<R> emptyUnit(){
+		return empty();
+	}
 	default <T1> SetX<T1> from(Collection<T1> c){
 		return SetX.<T1>fromIterable(getCollector(),c);
 	}

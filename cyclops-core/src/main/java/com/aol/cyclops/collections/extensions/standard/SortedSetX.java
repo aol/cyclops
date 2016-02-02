@@ -55,7 +55,15 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T> {
 			return new SortedSetXImpl<T>( (SortedSet)it, collector);
 		return new SortedSetXImpl<T>(StreamUtils.stream(it).collect(collector),collector);
 	}
+	@Override
+	default <R> SortedSetX<R> unit(R value){
+		return singleton(value);
+	}
 	
+	@Override
+	default<R> SortedSetX<R> emptyUnit(){
+		return empty();
+	}
 	@Override
 	default SequenceM<T> stream(){
 		
