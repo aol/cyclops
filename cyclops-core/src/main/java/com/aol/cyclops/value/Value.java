@@ -2,6 +2,8 @@ package com.aol.cyclops.value;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -19,9 +21,17 @@ import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.collections.extensions.standard.QueueX;
 import com.aol.cyclops.collections.extensions.standard.SetX;
 import com.aol.cyclops.collections.extensions.standard.SortedSetX;
+import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.control.Ior;
+import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.lambda.monads.Foldable;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.trycatch.Failure;
+import com.aol.cyclops.trycatch.Success;
+import com.aol.cyclops.trycatch.Try;
+
 
 import lombok.AllArgsConstructor;
 
@@ -74,6 +84,39 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, ValueObject, Convert
 		return accumulator.apply(identity, get());
 	 }
 	 
+	 default <ST>  Xor<ST,T> toXor(){
+		 return Xor.primary(get());
+	 }
+	 default <PT>  Xor<T,PT> toXorSecondary(){
+		 return Xor.secondary(get());
+	 }
+	 default Try<T,NoSuchElementException> toTry(){
+		 Optional<T> opt = toOptional();
+		 if(opt.isPresent())
+			 return Success.of(opt.get());
+		 return Failure.of(new NoSuchElementException());
+	 }
+	 default <X extends Throwable> Try<T,X> toTry(Class<X>... classes){
+		 return Try.withCatch( ()->get(),classes);
+	 }
+	 default <ST>  Ior<ST,T> toIor(){
+		 return Ior.primary(get());
+	 }
+	 default <PT>  Ior<T,PT> toIorSecondary(){
+		 return Ior.secondary(get());
+	 }
+	 default Eval<T> toEvalNow(){
+		 return Eval.now(get());
+	 }
+	 default Eval<T> toEvalLater(){
+		 return Eval.later(this);
+	 }
+	 default Eval<T> toEvalAlways(){
+		 return Eval.always(this);
+	 }
+	 default Maybe<T> toMaybe(){
+		 return Maybe.fromOptional(toOptional());
+	 }
 	 default ListX<T> toListX(){
 		 return ListX.fromIterable(toList());
 	 }

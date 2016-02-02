@@ -62,8 +62,8 @@ public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>{
 	Optional<Tuple2<ST,PT>> both();
 	
 	default <R1,R2> Ior<R1,R2>  bimap(Function<? super ST,? extends R1> fn1,Function<? super PT,? extends R2> fn2){
-		Eval<Ior<ST,R2>> ptMap = Eval.later(()->this.map(fn2));
-		Eval<Ior<R1,PT>> stMap = Eval.later(()->this.secondaryMap(fn1));
+		Eval<Ior<R1,R2>> ptMap = (Eval)Eval.later(()->this.map(fn2)); //force unused secondary to required
+		Eval<Ior<R1,R2>> stMap = (Eval)Eval.later(()->this.secondaryMap(fn1)); //force unused primary to required
 		if(isPrimary())
 			return Ior.<R1,R2>primary(ptMap.get().get());
 		if(isSecondary())
@@ -92,7 +92,12 @@ public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>{
 	@AllArgsConstructor(access=AccessLevel.PRIVATE)
 	public static class Primary<ST,PT> implements Ior<ST,PT>{
 		private final PT value;
-
+		public Xor<ST,PT> toXor(){
+			return Xor.primary(value);
+		}
+		public Xor<ST,PT> toXorDropPrimary(){
+			return Xor.primary(value);
+		}
 		@Override
 		public Ior<ST, PT> secondaryToPrimayMap(Function<? super ST, ? extends PT> fn) {
 			return this;
@@ -117,6 +122,10 @@ public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>{
 		public Ior<ST, PT> peek(Consumer<? super PT> action) {
 			action.accept(value);
 			return this;
+		}
+		@Override
+		public<R1,R2> Ior<R1,R2>  bimap(Function<? super ST,? extends R1> fn1,Function<? super PT,? extends R2> fn2){
+			return Ior.<R1,R2>primary(fn2.apply(value));	
 		}
 
 		@Override
@@ -165,6 +174,10 @@ public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>{
 			ptAction.accept(value);
 			return this;
 		}
+		@Override
+		public Optional<Tuple2<ST,PT>> both(){
+			return Optional.empty();
+		}
 
 		@Override
 		public boolean isPrimary() {
@@ -193,7 +206,12 @@ public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>{
 		public boolean isPrimary(){
 			return false;
 		}
-		
+		public Xor<ST,PT> toXor(){
+			return Xor.secondary(value);
+		}
+		public Xor<ST,PT> toXorDropPrimary(){
+			return Xor.secondary(value);
+		}
 		
 		@Override
 		public Ior<ST, PT> secondaryToPrimayMap(Function<? super ST, ? extends PT> fn) {
@@ -212,8 +230,16 @@ public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>{
 			return secondaryMap((Function)FluentFunctions.expression(action));
 		}
 		@Override
+		public Optional<Tuple2<ST,PT>> both(){
+			return Optional.empty();
+		}
+		@Override
 		public Ior<ST, PT> peek(Consumer<? super PT> action) {
 			return this;
+		}
+		@Override
+		public <R1,R2> Ior<R1,R2>  bimap(Function<? super ST,? extends R1> fn1,Function<? super PT,? extends R2> fn2){
+			return Ior.<R1,R2>secondary(fn1.apply(value));		
 		}
 		@Override
 		public Ior<PT, ST> swap() {
@@ -266,6 +292,8 @@ public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>{
 	public static class Both<ST,PT> implements Ior<ST,PT>{
 		private final Ior<ST,PT> secondary;
 		private final Ior<ST,PT> primary;
+		
+		
 		@Override
 		public SequenceM<PT> stream() {
 			return primary.stream();
@@ -351,6 +379,10 @@ public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>{
 			secondary.secondaryPeek(stAction);
 			primary.peek(ptAction);
 			return this;
+		}
+		@Override
+		public <R1,R2> Ior<R1,R2>  bimap(Function<? super ST,? extends R1> fn1,Function<? super PT,? extends R2> fn2){
+			return Ior.both((Ior)secondary.secondaryMap(fn1),(Ior)primary.map(fn2));
 		}
 		@Override
 		public boolean isPrimary() {

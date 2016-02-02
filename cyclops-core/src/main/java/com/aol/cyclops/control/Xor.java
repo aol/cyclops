@@ -29,12 +29,18 @@ import lombok.AllArgsConstructor;
  */
 public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>{
 
+	public static <ST,PT> Xor<ST,PT> secondary(ST value){
+		return new Secondary<>(value);
+	}
+	public static <ST,PT> Xor<ST,PT> primary(PT value){
+		return new Primary<>(value);
+	}
 	default AnyM<PT> anyM(){
 		return AnyM.ofMonad(this);
 	}
 	
-	Ior<ST,PT> merge(Or<ST,PT> xor);
-	Ior<ListX<ST>,ListX<PT>> append(Or<ListX<ST>,ListX<PT>> xor);
+	//Ior<ST,PT> merge(Or<ST,PT> xor);
+	//Ior<ListX<ST>,ListX<PT>> append(Or<ListX<ST>,ListX<PT>> xor);
 	
 	Xor<ST,PT> secondaryToPrimayMap(Function<? super ST, ? extends PT> fn);
 	<R> Xor<R,PT> secondaryMap(Function<? super ST, ? extends R> fn);

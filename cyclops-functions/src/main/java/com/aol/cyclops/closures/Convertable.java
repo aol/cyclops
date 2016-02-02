@@ -101,7 +101,7 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>{
 	 * @return Stream containing value returned by get(), Empty Stream if null
 	 */
 	default Stream<T> toStream(){
-		return Stream.of(get()).filter(v->v!=null);
+		return Stream.of(toOptional()).filter(Optional::isPresent).map(Optional::get);
 	}
 	
 	
@@ -142,8 +142,8 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>{
 	 * @return A List containing value returned by get(), if get() returns null an Empty List is returned
 	 */
 	default List<T> toList(){
-		T obj = get();
-		if(obj!=null)
+		Optional<T> opt = toOptional();
+		if(!opt.isPresent())
 			return Arrays.asList(get());
 		return Arrays.asList();
 	}
@@ -162,7 +162,13 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>{
 	 * @return A CompletableFuture, populated immediately by a call to get
 	 */
 	default CompletableFuture<T> toCompletableFuture(){
-		return CompletableFuture.completedFuture(get());
+		try{
+			return CompletableFuture.completedFuture(get());
+		}catch(Throwable t){
+			CompletableFuture<T> res = new CompletableFuture<>();
+			res.completeExceptionally(t);
+			return res;
+		}
 	}
 	/**
 	 * @return A CompletableFuture populated asynchronously on the Common ForkJoinPool by calling get

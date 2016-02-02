@@ -28,7 +28,9 @@ public interface Filterable<T> {
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	<U> Filterable<U> ofType(Class<U> type);
+	default <U> Filterable<U> ofType(Class<U> type){
+		return (Filterable<U>)filter(type::isInstance);
+	}
 	
 	default Filterable<T>  filterNot(Predicate<? super T> fn){
 		return filter(fn.negate());

@@ -14,6 +14,7 @@ import lombok.ToString;
 
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.sequence.SequenceM;
 
 /**
  * Class that represents a Successful Try
@@ -208,7 +209,7 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 	 * @see com.aol.cyclops.trycatch.Try#orElseGet(java.util.function.Supplier)
 	 */
 	@Override
-	public T orElseGet(Supplier<T> value) {
+	public T orElseGet(Supplier<? extends T> value) {
 		return get();
 	}
 
@@ -226,8 +227,8 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 	 * @see com.aol.cyclops.trycatch.Try#toStream()
 	 */
 	@Override
-	public Stream<T> stream() {
-		return Stream.of(value);
+	public SequenceM<T> stream() {
+		return SequenceM.<T>of();
 	}
 
 	/* 

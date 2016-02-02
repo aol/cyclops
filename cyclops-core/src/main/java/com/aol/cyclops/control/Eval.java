@@ -9,6 +9,9 @@ import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.value.Value;
 
 
+
+
+
 /**
  * Represents a computation that can be defered, cached or immediate
  * 
@@ -30,7 +33,7 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>{
 	}
 	
 	public <R> Eval<R> map(Function<? super T, ? extends R> mapper);
-	public <R> Eval<R> flatMap(Function<? super T, ? extends Eval<R>> mapper);
+	public <R> Eval<R> flatMap(Function<? super T, ? extends Eval<? extends R>> mapper);
 	
 	public T get();
 	default Eval<CompletableFuture<T>> asyncNow(Executor ex){
@@ -51,7 +54,9 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>{
 	default Eval<CompletableFuture<T>> asyncAlways(){
 		return Eval.always(()->this.toCompletableFutureAsync());
 	}
-	
+	static <R> Eval<R> narrow(Eval<? extends R> broad){
+		return (Eval<R>)broad;
+	}
 	public static class Now<T> implements Eval<T>{
 		private final T value;
 		Now(T value){
@@ -60,13 +65,14 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>{
 		public <R> Eval<R> map(Function<? super T, ? extends R> mapper){
 			return new Now<>(mapper.apply(value));
 		}
-		public <R> Eval<R> flatMap(Function<? super T, ? extends Eval<R>> mapper){
-			return mapper.apply(value);
+		public <R> Eval<R> flatMap(Function<? super T, ? extends Eval<? extends R>> mapper){
+			return narrow(mapper.apply(value));
 		}
 		@Override
 		public T get() {
 			return value;
 		}
+		
 		
 	}
 	
@@ -77,15 +83,15 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>{
 			this.s = Memoize.memoizeFunction(s);
 		}
 		public <R> Eval<R> map(Function<? super T, ? extends R> mapper){
-			//unncessary cast
-			return new Later<R>(mapper.compose((Function)s));
+			return new Later<R>(mapper.compose(s));
 		}
-		public <R>  Eval<R> flatMap(Function<? super T, ? extends Eval<R>> mapper){
-			return  Eval.later(()->((Eval<R>)((Function)mapper).compose(s).apply("")).get());
+		public <R>  Eval<R> flatMap(Function<? super T, ? extends Eval<? extends R>> mapper){
+			
+			return  Eval.later(()->mapper.compose(s).apply(null).get());
 		}
 		@Override
 		public T get() {
-			return (T)((Function)s).apply("");
+			return s.apply(null);
 		}
 		
 		
@@ -96,12 +102,12 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>{
 			this.s = s;
 		}
 		public <R> Eval<R> map(Function<? super T, ? extends R> mapper){
-			//unncessary cast
-			return new Later<R>(mapper.compose((Function)s));
+			
+			return new Later<R>(mapper.compose(s));
 			
 		}
-		public <R>  Eval<R> flatMap(Function<? super T, ? extends Eval<R>> mapper){
-			return  Eval.always(()->((Eval<R>)((Function)mapper).compose(s).apply("")).get());
+		public <R>  Eval<R> flatMap(Function<? super T, ? extends Eval<? extends R>> mapper){
+			return  Eval.always(()->mapper.compose(s).apply(null).get());
 		}
 		@Override
 		public T get() {

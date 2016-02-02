@@ -14,6 +14,7 @@ import lombok.ToString;
 
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.sequence.SequenceM;
 
 /**
  * Class that represents the Failure of a Try
@@ -195,8 +196,8 @@ public class Failure<T,X extends Throwable> implements Try<T,X> {
 	 * @see com.aol.cyclops.trycatch.Try#toStream()
 	 */
 	@Override
-	public Stream<T> stream() {
-		return Stream.of();
+	public SequenceM<T> stream() {
+		return SequenceM.<T>of();
 	}
 	/* 
 	 *	@return false
