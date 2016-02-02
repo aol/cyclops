@@ -12,14 +12,11 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.val;
-import lombok.experimental.Wither;
-
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.matcher.Action;
 import com.aol.cyclops.matcher.Case;
@@ -27,10 +24,14 @@ import com.aol.cyclops.matcher.Cases;
 import com.aol.cyclops.matcher.ChainOfResponsibility;
 import com.aol.cyclops.matcher.Extractor;
 import com.aol.cyclops.matcher.Extractors;
-import com.aol.cyclops.matcher.Two;
 import com.aol.cyclops.matcher.TypedFunction;
 import com.aol.cyclops.objects.Decomposable;
 import com.aol.cyclops.sequence.SequenceM;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.val;
+import lombok.experimental.Wither;
 
 
 
@@ -278,7 +279,7 @@ public class PatternMatcher implements Function{
 		SequenceM<Predicate<V>> pred = SequenceM.of(predicates);
 		
 		
-		return caseOfThenExtract(it -> seq(it).zip(pred,(a1,b1)->Two.tuple(a1,b1))
+		return caseOfThenExtract(it -> seq(it).zip(pred,(a1,b1)->Tuple.tuple(a1,b1))
 				.map(t -> t.v2.test((V)t.v1)).allMatch(v-> v), a, this::wrapInList);
 		
 	}
@@ -310,7 +311,7 @@ public class PatternMatcher implements Function{
 
 			@Override
 			public boolean matches(Object item) {
-				return seq(item).zip(pred,(a1,b1)->Two.tuple(a1,b1))
+				return seq(item).zip(pred,(a1,b1)->Tuple.tuple(a1,b1))
 						.map(t -> t.v2.matches((V)t.v1)).allMatch(v->v==true);
 			}
 
@@ -324,7 +325,7 @@ public class PatternMatcher implements Function{
 		
 	}
 	/**
-	 * Run both matchers in the supplied tuple against the first two elements of a supplied iterable for matching
+	 * Run both matchers in the supplied tuple against the first Tuple2 elements of a supplied iterable for matching
 	 * <pre>
 	 * new PatternMatcher()
 	 *		.matchOfMatchers(tuple( equalTo(&quot;-l&quot;),
@@ -341,7 +342,7 @@ public class PatternMatcher implements Function{
 	 * @param extractor Extractor to extract data out of incoming iterable after matchers have matched
 	 * @return New Pattern Matcher
 	 */
-	public <T,R,V,V1>  PatternMatcher matchOfMatchers(Two<Matcher<V>,Matcher<V1>> predicates,
+	public <T,R,V,V1>  PatternMatcher matchOfMatchers(Tuple2<Matcher<V>,Matcher<V1>> predicates,
 				Action<R> a,Extractor<T,R> extractor){
 			
 			SequenceM<Object> pred = SequenceM.fromIterable(predicates);
@@ -350,7 +351,7 @@ public class PatternMatcher implements Function{
 
 				@Override
 				public boolean matches(Object item) {
-					return seq(item).zip(pred,(a1,b1)->Two.tuple(a1,b1)).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
+					return seq(item).zip(pred,(a1,b1)->Tuple.tuple(a1,b1)).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
 				}
 
 				@Override
@@ -363,7 +364,7 @@ public class PatternMatcher implements Function{
 			
 	}
 	/**
-	 * Run both predicates in the supplied tuple against the first two elements of a supplied iterable for matching
+	 * Run both predicates in the supplied tuple against the first Tuple2 elements of a supplied iterable for matching
 	 * <pre>
 	 * new PatternMatcher()
 	 *		.caseOfPredicates(tuple( v -&gt;  v.equals(&quot;-l&quot;) ||  v.equals(&quot;---lang&quot;),
@@ -380,13 +381,13 @@ public class PatternMatcher implements Function{
 	 * @param extractor Extractor to extract data out of incoming iterable after predicates have matched
 	 * @return New Pattern Matcher
 	 */
-	public <T,R,V,V1> PatternMatcher caseOfPredicates(Two<Predicate<V>,Predicate<V1>> predicates,
+	public <T,R,V,V1> PatternMatcher caseOfPredicates(Tuple2<Predicate<V>,Predicate<V1>> predicates,
 							Action<R> a,Extractor<T,R> extractor){
 		
 		SequenceM<Object> pred = SequenceM.fromIterable(predicates);
 		
 		return caseOfThenExtract(it -> seq(it)
-							.zip(pred,(a1,b1)->Two.tuple(a1,b1))
+							.zip(pred,(a1,b1)->Tuple.tuple(a1,b1))
 							.map(t -> ((Predicate)t.v2).test(t.v1))
 								.allMatch(v->v==true), a, extractor);
 		
@@ -411,7 +412,7 @@ public class PatternMatcher implements Function{
 	public <T,R> PatternMatcher caseOfTuple(Iterable predicates, Action<R> a,Extractor<T,R> extractor){
 
 		SequenceM<Object> pred = SequenceM.fromIterable(predicates);
-				return caseOfThenExtract(it -> seq(it).zip(pred,(a1,b1)->Two.tuple(a1,b1)).map(t -> (convertToPredicate(t.v2)).test(t.v1)).allMatch(v->v==true), a, extractor);
+				return caseOfThenExtract(it -> seq(it).zip(pred,(a1,b1)->Tuple.tuple(a1,b1)).map(t -> (convertToPredicate(t.v2)).test(t.v1)).allMatch(v->v==true), a, extractor);
 				
 	}
 	private Predicate convertToPredicate(Object o){
@@ -430,7 +431,7 @@ public class PatternMatcher implements Function{
 
 			@Override
 			public boolean matches(Object item) {
-				return seq(item).zip(pred,(a1,b1)->Two.tuple(a1,b1)).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
+				return seq(item).zip(pred,(a1,b1)->Tuple.tuple(a1,b1)).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
 			}
 
 			@Override
@@ -446,10 +447,10 @@ public class PatternMatcher implements Function{
 	
 	
 	public <V,X> PatternMatcher selectFromChain(Stream<? extends ChainOfResponsibility<V,X>> stream){
-		return selectFrom(stream.map(n->new Two(n,n)));
+		return selectFrom(stream.map(n->new Tuple2(n,n)));
 		
 	}
-	public <V,X> PatternMatcher selectFrom(Stream<Two<Predicate<V>,Function<V,X>>> stream){
+	public <V,X> PatternMatcher selectFrom(Stream<Tuple2<Predicate<V>,Function<V,X>>> stream){
 		PatternMatcher[] matcher = {this};
 		stream.forEach(t -> matcher[0] = matcher[0].inCaseOf(t.v1,a->t.v2.apply(a)));
 		return matcher[0];
@@ -462,7 +463,7 @@ public class PatternMatcher implements Function{
 		
 		
 		return inCaseOf(it -> master.test(it) && seq(Extractors.decompose().apply(it))
-				.zip(pred,(a1,b1)->Two.tuple(a1,b1))
+				.zip(pred,(a1,b1)->Tuple.tuple(a1,b1))
 				.map(t -> t.v2.test((V)t.v1)).allMatch(v->v==true), a);
 		
 	}
@@ -474,7 +475,7 @@ public class PatternMatcher implements Function{
     	 SequenceM<Predicate<V>> pred = SequenceM.of(predicates);
 		
 		
-		return inCaseOfThenExtract(it -> seq(it).zip(pred,(a1,b1)->Two.tuple(a1,b1))
+		return inCaseOfThenExtract(it -> seq(it).zip(pred,(a1,b1)->Tuple.tuple(a1,b1))
 				.map(t -> t.v2.test((V)t.v1)).allMatch(v->v==true), a, e-> wrapInList(e));
 		
 	}
@@ -495,7 +496,7 @@ public class PatternMatcher implements Function{
 
 			@Override
 			public boolean matches(Object item) {
-				return seq(item).zip(pred,(a1,b1)->Two.tuple(a1,b1))
+				return seq(item).zip(pred,(a1,b1)->Tuple.tuple(a1,b1))
 						.map(t -> t.v2.matches((V)t.v1)).allMatch(v->v==true);
 			}
 
@@ -508,7 +509,7 @@ public class PatternMatcher implements Function{
 		}, a, this::wrapInList);
 		
 	}
-	public <T,R,V,V1,X>  PatternMatcher inMatchOfMatchers(Two<Matcher<V>,Matcher<V1>> predicates,
+	public <T,R,V,V1,X>  PatternMatcher inMatchOfMatchers(Tuple2<Matcher<V>,Matcher<V1>> predicates,
 				TypedFunction<R,X> a,Extractor<T,R> extractor){
 			
 			SequenceM<Object> pred = SequenceM.fromIterable(predicates);
@@ -517,7 +518,7 @@ public class PatternMatcher implements Function{
 
 				@Override
 				public boolean matches(Object item) {
-					return seq(item).zip(pred,(a1,b1)->Two.tuple(a1,b1)).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
+					return seq(item).zip(pred,(a1,b1)->Tuple.tuple(a1,b1)).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
 				}
 
 				@Override
@@ -529,12 +530,12 @@ public class PatternMatcher implements Function{
 			}, a, extractor);
 			
 	}
-	public <T,R,V,V1,X> PatternMatcher inCaseOfPredicates(Two<Predicate<V>,Predicate<V1>> predicates,
+	public <T,R,V,V1,X> PatternMatcher inCaseOfPredicates(Tuple2<Predicate<V>,Predicate<V1>> predicates,
 							TypedFunction<R,X> a,Extractor<T,R> extractor){
 		
 		SequenceM<Object> pred = SequenceM.fromIterable(predicates);
 		
-		return inCaseOfThenExtract(it -> seq(it).zip(pred,(a1,b1)->Two.tuple(a1,b1)).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
+		return inCaseOfThenExtract(it -> seq(it).zip(pred,(a1,b1)->Tuple.tuple(a1,b1)).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
 		
 	}
 	
@@ -542,7 +543,7 @@ public class PatternMatcher implements Function{
 	public <T,R,X> PatternMatcher inCaseOfStream(Stream<Predicate> predicates, TypedFunction<R,X> a,Extractor<T,R> extractor){
 
 		SequenceM<Object> pred = SequenceM.<Object>fromIterator((Iterator)predicates.iterator());
-		return inCaseOfThenExtract(it -> seq(it).zip(pred,(a1,b1)->Two.tuple(a1,b1)).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
+		return inCaseOfThenExtract(it -> seq(it).zip(pred,(a1,b1)->Tuple.tuple(a1,b1)).map(t -> ((Predicate)t.v2).test(t.v1)).allMatch(v->v==true), a, extractor);
 		
 	}
 	
@@ -553,7 +554,7 @@ public class PatternMatcher implements Function{
 
 			@Override
 			public boolean matches(Object item) {
-				return SequenceM.of(item).zip(pred,(a1,b1)->Two.tuple(a1,b1)).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
+				return SequenceM.of(item).zip(pred,(a1,b1)->Tuple.tuple(a1,b1)).map(t -> ((Matcher)t.v2).matches(t.v1)).allMatch(v->v==true);
 			}
 
 			@Override

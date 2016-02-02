@@ -14,6 +14,8 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
 
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
@@ -53,7 +55,7 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 * @return  New Cases instance (sequential)
 	*/
 	public static <T,R,X extends Function<T,R>>  Cases<T,R,X> ofPStack(PStack<Case<T,R,X>> cases){
-		 return new Cases(cases,true);
+		 return new Cases<>(cases,true);
 	}
 	 
 		 /**
@@ -64,7 +66,7 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 		 * @return  New Cases instance (sequential)
 		*/
 	public static <T,R,X extends Function<T,R>>  Cases<T,R,X> ofList(List<Case<T,R,X>> cases){
-		 return new Cases(cases.stream().map(ConsPStack::singleton)
+		 return new Cases<>(cases.stream().map(ConsPStack::singleton)
 					.reduce(ConsPStack.empty(),(acc,next)-> acc.plus(acc.size(),next.get(0))),true);
 	 }
 
@@ -92,7 +94,7 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	public static <T,R,X extends Function<T,R>>  Cases<T,R,X> zip(Stream<Predicate<T>> predicates, Stream<X> functions){
 		
 		return ofPStack(SequenceM.fromIterator(predicates.iterator())
-			.zip(SequenceM.fromIterator(functions.iterator()),(a,b)->Two.tuple(a,b))
+			.zip(SequenceM.fromIterator(functions.iterator()),(a,b)->Tuple.tuple(a,b))
 			.map(Case::of)
 			.map(ConsPStack::singleton)
 			.reduce(ConsPStack.empty(),(acc, next)-> acc.plus(acc.size(),next.get(0))));
@@ -110,8 +112,8 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 * 
 	 * @return unzipped Cases, with Predicates in one Stream and Functions in the other.
 	 */
-	public Two<Stream<Predicate<T>>,Stream<X>> unzip(){
-		return Two.<Stream<Predicate<T>>,Stream<X>>tuple(cases.stream().map(c-> c.getPredicate()),cases.stream().map(c->c.getAction()));
+	public Tuple2<Stream<Predicate<T>>,Stream<X>> unzip(){
+		return Tuple.<Stream<Predicate<T>>,Stream<X>>tuple(cases.stream().map(c-> c.getPredicate()),cases.stream().map(c->c.getAction()));
 	}
 	
 	

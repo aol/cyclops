@@ -10,6 +10,7 @@ import org.hamcrest.Matcher;
 
 import com.aol.cyclops.matcher.Extractors;
 import com.aol.cyclops.matcher.Two;
+import com.aol.cyclops.matcher.builders.SeqUtils;
 import com.aol.cyclops.sequence.SequenceM;
 
 /**

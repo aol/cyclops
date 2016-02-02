@@ -11,6 +11,7 @@ import java.util.stream.StreamSupport;
 
 import lombok.val;
 
+import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.closures.immutable.LazyImmutable;
@@ -94,7 +95,7 @@ public class Extractors {
 	 * @param v2 position of the second element to extract
 	 * @return Tuple with 2 specified elements
 	 */
-	public final static <V1,V2> Extractor<Iterable,Two<V1,V2>> of(int v1,int v2){
+	public final static <V1,V2> Extractor<Iterable,Tuple2<V1,V2>> of(int v1,int v2){
 		val l1 = new Long(v1);
 		val l2 = new Long(v2);
 		return  ( Iterable it)-> {
@@ -104,7 +105,7 @@ public class Extractors {
 					.filter(t -> ((Tuple2<Object,Long>)t).v2.equals(l1) || ((Tuple2<Object,Long>)t).v2.equals(l2))
 					.map(t->((Tuple2)t).v1)
 					.toList();
-			return Two.tuple((V1)l.get(0),(V2)l.get(1));
+			return Tuple.tuple((V1)l.get(0),(V2)l.get(1));
 		
 			
 		};

@@ -6,6 +6,8 @@ import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.jooq.lambda.tuple.Tuple2;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,11 +29,11 @@ import lombok.Getter;
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
 public final class ActiveCase<T,R,X extends Function<T,R>> implements Case<T,R,X>{
 	
-	private final Two<Predicate<T>,X> pattern;
+	private final Tuple2<Predicate<T>,X> pattern;
 	@Getter
 	private final boolean empty=false;
 	
-	public Two<Predicate<T>,X> get(){
+	public Tuple2<Predicate<T>,X> get(){
 		return pattern;
 	}
 	

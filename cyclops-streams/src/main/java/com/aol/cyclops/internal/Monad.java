@@ -16,6 +16,7 @@ import java.util.stream.StreamSupport;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.lambda.monads.Filterable;
 import com.aol.cyclops.lambda.monads.Functor;
+import com.aol.cyclops.lambda.monads.WrappingFilterable;
 import com.aol.cyclops.lambda.monads.WrappingFunctor;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SeqUtils;
@@ -39,7 +40,7 @@ import com.aol.cyclops.sequence.streamable.Streamable;
  * @param <MONAD>
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,WrappingFunctor<T>, Filterable<T>{
+public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,WrappingFunctor<T>, WrappingFilterable<T>{
 	
 	
 	public <MONAD,T> Monad<MONAD,T> withMonad(Object invoke);
@@ -104,7 +105,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,WrappingFunctor<
 		
 	}
 	@Override
-	default Filterable<T> withFilterable(T filter){
+	default WrappingFilterable<T> withFilterable(T filter){
 		return withMonad(filter);
 	}
 	default Object getFilterable(){
@@ -114,7 +115,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,WrappingFunctor<
 	 * @see com.aol.cyclops.lambda.monads.Filterable#filter(java.util.function.Predicate)
 	 */
 	default   Monad<MONAD,T>  filter(Predicate<? super T> fn){
-		return (Monad)Filterable.super.filter(fn);
+		return (Monad)WrappingFilterable.super.filter(fn);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#map(java.util.function.Function)

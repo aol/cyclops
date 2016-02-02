@@ -17,6 +17,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import org.hamcrest.Matcher;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -29,6 +30,8 @@ import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.StreamUtils;
+
+
 
 public interface Traversable<T> extends Foldable<T>, Iterable<T> {
 	default SequenceM<T> stream(){
@@ -495,6 +498,15 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T> {
 		return stream().limitUntil(p);
 	}
 	
+	default boolean allMatch(Matcher<? super T> m){
+		return stream().allMatch(t->m.matches(t));
+	}
+	default boolean noneMatch(Matcher<? super T> m){
+		return stream().noneMatch(t->m.matches(t));
+	}
+	default boolean xMatch(int x,Matcher<? super T> m){
+		return stream().xMatch(x,t->m.matches(t));
+	}
 	/**
 	 * True if predicate matches all elements when Monad converted to a Stream
 	 * 
@@ -892,15 +904,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T> {
 		return stream().intersperse(value);
 	}
 
-	/**
-	 * Keep only those elements in a stream that are of a given type.
-	 * 
-	 * 
-	 * // (1, 2, 3) SequenceM.of(1, "a", 2, "b",3).ofType(Integer.class)
-	 * 
-	 */
-	@SuppressWarnings("unchecked")
-	<U> Traversable<U> ofType(Class<U> type);
+	
 
 	
 

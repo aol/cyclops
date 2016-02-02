@@ -4,7 +4,6 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import com.aol.cyclops.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.collections.extensions.standard.DequeX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.collections.extensions.standard.QueueX;
@@ -13,8 +12,15 @@ import com.aol.cyclops.collections.extensions.standard.SortedSetX;
 
 public class ExampleTest {
 
+	@Test(expected=UnsupportedOperationException.class)
+	public void immutable(){
+		ListX.fromIterable(ListX.immutableCollector(), Arrays.asList(1,2,3,4))
+		.plus(5);
+	}
 	@Test
 	public void list(){
+		
+			 
 	   ListX.of(1,2,3)
 			.map(i->i+2)
 			.plus(5)

@@ -7,10 +7,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.hamcrest.Matcher;
+import org.jooq.lambda.tuple.Tuple;
 
 import com.aol.cyclops.matcher.Extractor;
 import com.aol.cyclops.matcher.Predicates;
-import com.aol.cyclops.matcher.Two;
 import com.aol.cyclops.matcher.TypedFunction;
 import com.aol.cyclops.sequence.SequenceM;
 
@@ -82,7 +82,7 @@ public class IterableCase<X> extends CaseBeingBuilt{
 					@Override
 					public <X> CollectionMatchingInstance<R, X> thenApply(TypedFunction<R, X> t) {
 						
-						return addCase(patternMatcher.inCaseOfPredicates(Two.tuple(pred1,pred2), t, extractor));
+						return addCase(patternMatcher.inCaseOfPredicates(Tuple.tuple(pred1,pred2), t, extractor));
 					}
 				};
 			}
@@ -205,7 +205,7 @@ public class IterableCase<X> extends CaseBeingBuilt{
 					@Override
 					public <X> CollectionMatchingInstance<R, X> thenApply(TypedFunction<R, X> t) {
 						
-						return addCase(patternMatcher.inMatchOfMatchers(Two.tuple(pred1,pred2), t, extractor));
+						return addCase(patternMatcher.inMatchOfMatchers(Tuple.tuple(pred1,pred2), t, extractor));
 					}
 				};
 			}
