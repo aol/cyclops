@@ -2,20 +2,26 @@ package com.aol.cyclops.control;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import com.aol.cyclops.closures.Convertable;
+import com.aol.cyclops.functions.currying.CurryVariance;
+import com.aol.cyclops.lambda.monads.ConvertableFunctor;
 import com.aol.cyclops.lambda.monads.EagerApplicative;
 import com.aol.cyclops.lambda.monads.Filterable;
 import com.aol.cyclops.lambda.monads.Functor;
+import com.aol.cyclops.lambda.monads.applicative.Applicative;
+import com.aol.cyclops.lambda.monads.applicative.Applicative2;
 import com.aol.cyclops.value.Value;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
 
-public interface Maybe<T> extends Value<T>, Supplier<T>, Functor<T>, Filterable<T>{
+public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, Filterable<T>{
 
 	@AllArgsConstructor(access=AccessLevel.PRIVATE)
 	public static class MaybeApplicative<T,R> implements EagerApplicative<T,R>{
@@ -50,7 +56,7 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, Functor<T>, Filterable<
 		return i+1;
 	}
 	static <T> Maybe<T> ofNullable(T value){
-		
+	
 		if(value!=null)
 			return of(value);
 		return none();	
@@ -60,22 +66,46 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, Functor<T>, Filterable<
 		return (Maybe<T>)broad;
 	}
 	
+	
+	static <T,R> Applicative<T,R,Maybe<R>> applicative(Maybe<Function<? super T,? extends R>> fn){
+		
+		return ()->fn;
+	}
 	/**
 	 * Apply a function within the maybe context e.g. 
 	 * 
 	 * <pre>
 	 * {@code 
 	    
-		applicative((Integer i)->i+2).ap(Maybe.of(3));
+		Maybe<Integer> m = applicative((Integer i)->i+2).ap(Maybe.of(3));
 	 * }
 	 * </pre>
 	 * @param fn
 	 * @return
 	 */
-	static <T,R> EagerApplicative<T,R> applicative(Function<? super T,? extends R> fn){
-		return EagerApplicative.of(fromEvalSome(Eval.now(fn)));
+	static <T,R> Applicative<T,R,Maybe<R>> applicative(Function<? super T,? extends R> fn){
+		
+		return ()->Maybe.of(fn);
 	}
-	
+	/**
+	 * 
+	 * <pre>
+	 * {@code 
+	 * 	Maybe<Integer> m = applicative2((Integer i)->(Integer b)->i+b).ap(Maybe.of(3)).ap(Maybe.of(4));
+	 * 
+	 * }
+	 * </pre>
+	 * @param fn
+	 * @return
+	 */
+	static <T,T2,R> Applicative2<T,T2,R,Maybe<R>> applicative2(Function<? super T,Function<? super T2,? extends R>> fn){
+		
+		return ()->Maybe.of(fn);
+	}
+	static <T,T2,R> Applicative2<T,T2,R,Maybe<R>> applicative2(BiFunction<? super T,? super T2,? extends R> fn){
+		
+		return applicative2(CurryVariance.curry2(fn));
+	}
 	
 	Maybe<T> recover(Supplier<T> value);
 	Maybe<T> recover(T value);
