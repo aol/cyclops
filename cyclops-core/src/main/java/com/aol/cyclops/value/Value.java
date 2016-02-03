@@ -10,6 +10,8 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.closures.Convertable;
+import com.aol.cyclops.closures.immutable.LazyImmutable;
+import com.aol.cyclops.closures.mutable.Mutable;
 import com.aol.cyclops.collections.extensions.persistent.PBagX;
 import com.aol.cyclops.collections.extensions.persistent.POrderedSetX;
 import com.aol.cyclops.collections.extensions.persistent.PQueueX;
@@ -83,7 +85,12 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, ValueObject, Convert
 	 default  T fold(T identity,BinaryOperator<T> accumulator){
 		return accumulator.apply(identity, get());
 	 }
-	 
+	 default LazyImmutable<T> toLazyImmutable(){
+		 return LazyImmutable.of(get());
+	 }
+	 default Mutable<T> toMutable(){
+		 return Mutable.of(get());
+	 }
 	 default <ST>  Xor<ST,T> toXor(){
 		 return Xor.primary(get());
 	 }
@@ -150,6 +157,11 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, ValueObject, Convert
 	 default PBagX<T> toPBagX(){
 		 return PBagX.fromCollection(toList());
 	 }
-	 
+	 default String mkString(){
+		 Optional<T> opt = this.toOptional();
+		 if(opt.isPresent())
+			 return this.getClass().getSimpleName()+"[" + opt.get() + "]";
+		 return this.getClass().getSimpleName()+"[]";
+	 }
 	 
 }

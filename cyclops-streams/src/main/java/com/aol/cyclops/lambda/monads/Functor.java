@@ -3,13 +3,9 @@ package com.aol.cyclops.lambda.monads;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
-
-import org.hamcrest.Matcher;
 
 import com.aol.cyclops.matcher.Case;
 import com.aol.cyclops.matcher.Cases;
-import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.trampoline.Trampoline;
 
 
@@ -81,6 +77,8 @@ public interface Functor<T> {
 	default <R> Functor<Optional<R>> when(Case<T,R,Function<T,R>>... cases){
 		return map(t->Cases.of(cases).<R>match(t));
 	}
+	
+	
 	
 	
 }

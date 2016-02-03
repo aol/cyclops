@@ -2,10 +2,14 @@ package com.aol.cyclops.collections.extensions.standard;
 
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.tuple.Tuple;
@@ -22,11 +26,15 @@ import com.aol.cyclops.sequence.SequenceMCollectable;
 public interface MapX<K,V> extends Map<K, V>, BiFunctor<K, V>, Functor<V>, Traversable<Tuple2<K, V>>, Foldable<Tuple2<K,V>>,
 												SequenceMCollectable<Tuple2<K,V>>{
 
+	
 	default SequenceM<Tuple2<K, V>> stream(){
 		return SequenceM.fromIterable(this.entrySet())
 					    .map(e->Tuple.tuple(e.getKey(),e.getValue()));
 	}
 	
+	default MapX<K,V> fromStream(SequenceM<Tuple2<K,V>> stream){
+		stream.toMap(t->t.v1, t->t.v2);
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Iterable#iterator()
@@ -51,7 +59,9 @@ public interface MapX<K,V> extends Map<K, V>, BiFunctor<K, V>, Functor<V>, Trave
 	 */
 	@Override
 	default <R> MapX<K,R> map(Function<? super V, ? extends R> fn) {
-		return fromStream(stream().map(t->t.map1(fn)));
+		
+		return stream().map(t->t.map2(v->fn.apply(v)))
+				.toMap(t->t.v1, t->t.v2);
 	}
 
 
