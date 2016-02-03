@@ -13,6 +13,8 @@ import org.jooq.lambda.tuple.Tuple2;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.functions.fluent.FluentFunctions;
 import com.aol.cyclops.lambda.monads.BiFunctor;
+import com.aol.cyclops.lambda.monads.applicative.Applicativable;
+import com.aol.cyclops.lambda.monads.applicative.Applicative;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
@@ -31,7 +33,7 @@ import lombok.AllArgsConstructor;
  * @param <ST> Secondary type
  * @param <PT> Primary type
  */
-public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>{
+public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>, Applicativable<PT>{
 
 	public static <ST,PT> Ior<ST,PT> primary(PT primary){
 		return new Primary<>(primary);
@@ -44,6 +46,9 @@ public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>{
 	}
 	default AnyM<PT> anyM(){
 		return AnyM.ofMonad(this);
+	}
+	default <R> Ior<ST,R> ap1( Applicative<PT,R, ?> ap){
+		return (Ior<ST,R>)Applicativable.super.ap1(ap);
 	}
 //	Ior<ST,PT> merge(Or<ST,PT> xor);
 //	Ior<ListX<ST>,ListX<PT>> append(Or<ListX<ST>,ListX<PT>> xor);

@@ -11,16 +11,18 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import lombok.AllArgsConstructor;
-import lombok.val;
-
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
+import com.aol.cyclops.lambda.monads.applicative.Applicativable;
+import com.aol.cyclops.lambda.monads.applicative.Applicative;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.ToStream;
 import com.aol.cyclops.value.Value;
 import com.aol.cyclops.value.ValueObject;
+
+import lombok.AllArgsConstructor;
+import lombok.val;
 
 /**
  * Light weight Try Monad
@@ -46,13 +48,16 @@ import com.aol.cyclops.value.ValueObject;
  * @param <T> Return type (success)
  * @param <X> Base Error type
  */
-public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ValueObject, ToStream<T> {
+public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ValueObject, ToStream<T>,Applicativable<T> {
 
 	default Xor<X,T> toXor(){
 		if(isSuccess())
 			return Xor.primary(get());
 		else
 			return Xor.<X,T>secondary(this.toFailedOptional().get());
+	}
+	default <R> Try<R,X> ap1( Applicative<T,R, ?> ap){
+		return (Try<R,X>)Applicativable.super.ap1(ap);
 	}
 	/**
 	 * @return This monad, wrapped as AnyM of Success
@@ -92,13 +97,13 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ValueO
 	 * @return New Try with mapped value (Success) or this (Failure)
 	 */
 	
-	public <R> Try<R,X> map(Function<T,R> fn);
+	public <R> Try<R,X> map(Function<? super T,? extends R> fn);
 	
 	/**
 	 * @param fn FlatMap success value or Do nothing if Failure (return this)
 	 * @return Try returned from FlatMap fn
 	 */
-	public <R> Try<R,X> flatMap(Function<T,Try<R,X>> fn);
+	public <R> Try<R,X> flatMap(Function<? super T,? extends Try<R,X>> fn);
 	
 	
 	/**
@@ -186,17 +191,17 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ValueO
 	/**
 	 * @param consumer Accept value if Success / not called on Failure
 	 */
-	public void foreach(Consumer<T> consumer);
+	public void foreach(Consumer<? super T> consumer);
 	/**
 	 * @param consumer Accept value if Failure / not called on Failure
 	 */
-	public void foreachFailed(Consumer<X> consumer);
+	public void foreachFailed(Consumer<? super X> consumer);
 	
 	/**
 	 * @param consumer Accept value if Success
 	 * @return this
 	 */
-	default Try<T,X> peek(Consumer<T> consumer){
+	default Try<T,X> peek(Consumer<? super T> consumer){
 		foreach(consumer);
 		return this;
 	}

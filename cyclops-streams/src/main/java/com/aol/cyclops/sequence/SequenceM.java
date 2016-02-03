@@ -63,7 +63,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>,Unit<T>, Functor<T>,
 												Foldable<T>,JoolWindowing<T>, 
 												JoolManipulation<T>,SequenceMCollectable<T>,
 												Seq<T>,  Iterable<T>, Publisher<T>,
-												ReactiveStreamsTerminalOperations<T> {
+												ReactiveStreamsTerminalOperations<T>{
 	
 	
 		

@@ -7,6 +7,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.lambda.monads.applicative.Applicativable;
+import com.aol.cyclops.lambda.monads.applicative.Applicative;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.ToStream;
@@ -21,11 +24,13 @@ import com.aol.cyclops.value.Value;
  *
  * @param <F>
  */
-public interface FeatureToggle<F> extends Supplier<F>, Value<F>, ToStream<F> {
+public interface FeatureToggle<F> extends Supplier<F>, Value<F>, ToStream<F>,Applicativable<F> {
 
 	boolean isEnabled();
 	boolean isDisabled();
-	
+	default <R> FeatureToggle<R> ap1( Applicative<F,R, ?> ap){
+		return (FeatureToggle<R>)Applicativable.super.ap1(ap);
+	}
 	/**
 	 * @return This monad, wrapped as AnyM
 	 */
@@ -105,7 +110,7 @@ public interface FeatureToggle<F> extends Supplier<F>, Value<F>, ToStream<F> {
 	 * @param consumer Consumer to provide current value to
 	 * @return This Switch
 	 */
-	default FeatureToggle<F> peek(Consumer<F> consumer){
+	default FeatureToggle<F> peek(Consumer<? super F> consumer){
 		consumer.accept(get());
 		return this;
 	}
@@ -114,7 +119,7 @@ public interface FeatureToggle<F> extends Supplier<F>, Value<F>, ToStream<F> {
 	 * @param map Create a new Switch with provided function
 	 * @return switch from function
 	 */
-	default <X> FeatureToggle<X> flatMap(Function<F,FeatureToggle<X>> map){
+	default <X> FeatureToggle<X> flatMap(Function<? super F,? extends FeatureToggle<X>> map){
 		if(isDisabled())
 			return (FeatureToggle<X>)this;
 		return map.apply(get());
@@ -126,7 +131,7 @@ public interface FeatureToggle<F> extends Supplier<F>, Value<F>, ToStream<F> {
 	 * @param map transform the value inside this Switch into new Switch object
 	 * @return new Switch with transformed value
 	 */
-	default <X> FeatureToggle<X> map(Function<F,X> map){
+	default <X> FeatureToggle<X> map(Function<? super F,? extends X> map){
 		if(isDisabled())
 			return (FeatureToggle<X>)this;
 		return enable(map.apply(get()));
