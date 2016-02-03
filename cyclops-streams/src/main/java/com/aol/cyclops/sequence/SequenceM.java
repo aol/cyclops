@@ -41,11 +41,15 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
+import com.aol.cyclops.functions.currying.CurryVariance;
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.lambda.monads.Foldable;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.Traversable;
 import com.aol.cyclops.lambda.monads.Unit;
+import com.aol.cyclops.lambda.monads.applicative.zipping.ZippingApplicativable;
+import com.aol.cyclops.lambda.monads.applicative.zipping.ZippingApplicative;
+import com.aol.cyclops.lambda.monads.applicative.zipping.ZippingApplicative2;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.sequence.reactivestreams.CyclopsSubscriber;
@@ -63,10 +67,39 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>,Unit<T>, Functor<T>,
 												Foldable<T>,JoolWindowing<T>, 
 												JoolManipulation<T>,SequenceMCollectable<T>,
 												Seq<T>,  Iterable<T>, Publisher<T>,
-												ReactiveStreamsTerminalOperations<T>{
+												ReactiveStreamsTerminalOperations<T>,
+												ZippingApplicativable<T>{
 	
-	
+	static <T,R> ZippingApplicative<T,R,SequenceM<R>> applicative(SequenceM<Function<? super T,? extends R>> fn){
 		
+		return ()->fn;
+	}
+	static <T,R> ZippingApplicative<T,R,SequenceM<R>> applicative(Function<? super T,? extends R> fn){
+		
+		return applicative(SequenceM.of(fn));
+	}
+	static <T,T2,R> ZippingApplicative2<T,T2,R,SequenceM<R>> applicative2(SequenceM<Function<? super T,Function<? super T2,? extends R>>> fn){
+		
+		return ()->fn;
+	}
+	static <T,T2,R> ZippingApplicative2<T,T2,R,SequenceM<R>> applicative2(Function<? super T,Function<? super T2,? extends R>> fn){
+		
+		return applicative2(SequenceM.of(fn));
+	}
+	static <T,T2,R> ZippingApplicative2<T,T2,R,SequenceM<R>> applicative2(BiFunction<? super T,? super T2,? extends R> fn){
+		
+		return applicative2(SequenceM.of(CurryVariance.curry2(fn)));
+	}
+	
+	default <R> SequenceM<R> ap1( ZippingApplicative<T,R, ?> ap){
+		
+		return (SequenceM<R>)ZippingApplicativable.super.ap1(ap);
+	}
+	default <R> SequenceM<R> ap2( ZippingApplicative<T,R, ?> ap){
+		//type issue!
+		of(1,2,3).ap2(applicative2((Integer a)->(Integer b)->a+b)).ap(of(3,4,5));
+		return (SequenceM<R>)ZippingApplicativable.super.ap1(ap);
+	}
 
 	@Override
 	<R> R unwrap();
