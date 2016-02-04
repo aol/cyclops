@@ -330,4 +330,9 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,WrappingFunctor<
 		return AsGenericMonad.asMonad(o);
 	}
 
+	default Monad<MONAD,T> empty(){
+		return (Monad)new ComprehenderSelector().selectComprehender(
+				unwrap()).empty();
+	}
+
 }

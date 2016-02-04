@@ -3,13 +3,13 @@ package com.aol.cyclops.matcher;
 import static com.aol.cyclops.matcher.Extractors.at;
 
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Optional;
 
 import org.junit.Test;
 
 import com.aol.cyclops.matcher.builders.Matching;
 import com.aol.cyclops.matcher.builders.PatternMatcher;
-import com.google.common.collect.ImmutableList;
 
 
 
@@ -47,7 +47,7 @@ public class PresentationTest {
 	        		.inCaseOfType(at(1),(FileNotFoundException e) -> "file not found")
 	        		.inCaseOf(at(2),(Integer value)->value>1000,value -> "larger than 1000")
 	        		.caseOf(at(2),(Integer value)->value>1000,System.out::println)
-	                .<String>match(ImmutableList.of(10,Optional.empty(),999))
+	                .<String>match(Arrays.asList(10,Optional.empty(),999))
 	                .orElse("ok");
 
 

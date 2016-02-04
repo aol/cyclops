@@ -6,12 +6,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.matcher.builders.CheckType;
-import com.aol.cyclops.matcher.builders.CheckTypeAndValues;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.matcher.builders.MatchingInstance;
 import com.aol.cyclops.matcher.builders.PatternMatcher;
-import com.aol.cyclops.matcher.builders.RecursiveMatcherInstance;
 import com.aol.cyclops.matcher.builders._Simpler_Case;
 import com.aol.cyclops.objects.Decomposable;
 
@@ -24,14 +21,15 @@ import com.aol.cyclops.objects.Decomposable;
  * @author johnmcclean
  *
  */
-public interface Matchable{
+public interface Matchable<TYPE>{
 	
 	
 	/**
 	 * @return matchable
 	 */
-	default Object getMatchable(){
-		return this;
+	default TYPE getMatchable(){
+		
+		return (TYPE)this;
 	}
 	/**
 	 * Match against the values inside the matchable with a single case
@@ -50,7 +48,7 @@ public interface Matchable{
 	 * @return Result - this method requires a match or an NoSuchElement exception is thrown
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <T,R> R  matches(Function<CheckValues<? super T,R>,CheckValues<? super T, R>> fn1){
+	default <R> R  matches(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE, R>> fn1){
 		return (R) new MatchingInstance(new _Simpler_Case( fn1.apply( (CheckValues)
 				new _Simpler_Case(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
 					.match(getMatchable()).get();
@@ -76,79 +74,79 @@ public interface Matchable{
 	 * @return Result - this method requires a match or an NoSuchElement exception is thrown
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <T,R> R matches(Function<CheckValues<? super T,R>,CheckValues<? super T, R>> fn1,
-								Function<CheckValues<? super T,R>,CheckValues<? super T, R>> fn2){
+	default <R> R matches(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE, R>> fn1,
+								Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE, R>> fn2){
 		
 		return  (R) new MatchingInstance(new _Simpler_Case( fn1.compose(fn2).apply( (CheckValues)
 					new _Simpler_Case(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
 						.match(getMatchable()).get();
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <T,R> R  matches(Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn1,Function<CheckValues<? super T,R>,
-							CheckValues<? super T,R>> fn2,Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn3){
+	default <R> R  matches(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn1,Function<CheckValues<? super TYPE,R>,
+							CheckValues<? super TYPE,R>> fn2,Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn3){
 		
 		return  (R)new MatchingInstance(new _Simpler_Case( fn1.compose(fn2.compose(fn3)).apply( (CheckValues)
 					new _Simpler_Case(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
 						.match(getMatchable()).get();
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <T,R> R  matches(Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn1,Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn2,
-											Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn3,
-											Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn4){
+	default <R> R  matches(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn1,Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn2,
+											Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn3,
+											Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn4){
 		
 		return (R) new MatchingInstance(new _Simpler_Case( fn1.compose(fn2.compose(fn3).compose(fn4)).apply( (CheckValues)
 					new _Simpler_Case(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
 						.match(getMatchable()).get();
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <T,R> R  matches(Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn1,
-									Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn2,
-									Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn3,
-									Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn4,
-									Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn5){
+	default <R> R  matches(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn1,
+									Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn2,
+									Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn3,
+									Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn4,
+									Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn5){
 
 			return (R)new MatchingInstance(new _Simpler_Case( fn1.compose(fn2.compose(fn3).compose(fn4).compose(fn5)).apply( (CheckValues)
 			new _Simpler_Case(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
 			.match(getMatchable()).get();
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <T,R> Optional<R>  mayMatch(Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn1){
+	default <R> Optional<R>  mayMatch(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn1){
 		return  new MatchingInstance(new _Simpler_Case( fn1.apply( (CheckValues)
 				new _Simpler_Case(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
 					.match(getMatchable());
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <T,R> Optional<R> mayMatch(Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn1,
-											Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn2){
+	default <R> Optional<R> mayMatch(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn1,
+											Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn2){
 		
 		return  new MatchingInstance(new _Simpler_Case( fn1.compose(fn2).apply( (CheckValues)
 					new _Simpler_Case(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
 						.match(getMatchable());
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <T,R> Optional<R>  mayMatch(Function<CheckValues<? super T,R>,CheckValues<? super T, R>> fn1,Function<CheckValues<? super T,R>,
-							CheckValues<? super T,R>> fn2,Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn3){
+	default <R> Optional<R>  mayMatch(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE, R>> fn1,Function<CheckValues<? super TYPE,R>,
+							CheckValues<? super TYPE,R>> fn2,Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn3){
 		
 		return  new MatchingInstance(new _Simpler_Case( fn1.compose(fn2.compose(fn3)).apply( (CheckValues)
 					new _Simpler_Case(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
 						.match(getMatchable());
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <T,R> Optional<R>  mayMatch(Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn1,
-											Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn2,
-											Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn3,
-											Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn4){
+	default <R> Optional<R>  mayMatch(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn1,
+											Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn2,
+											Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn3,
+											Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn4){
 		
 		return  new MatchingInstance(new _Simpler_Case( fn1.compose(fn2.compose(fn3).compose(fn4)).apply( (CheckValues)
 					new _Simpler_Case(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
 						.match(getMatchable());
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <T,R> Optional<R>  mayMatch(Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn1,
-										Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn2,
-										Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn3,
-										Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn4,
-										Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn5){
+	default <R> Optional<R>  mayMatch(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn1,
+										Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn2,
+										Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn3,
+										Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn4,
+										Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn5){
 
 			return new MatchingInstance(new _Simpler_Case( fn1.compose(fn2.compose(fn3).compose(fn4).compose(fn5)).apply( (CheckValues)
 			new _Simpler_Case(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
@@ -165,7 +163,7 @@ public interface Matchable{
 	 * @param o Object to match on it's fields
 	 * @return new Matchable
 	 */
-	public static Matchable of(Object o){
+	public static<T> Matchable<T> of(T o){
 		if(o instanceof Stream)
 			return ofStream((Stream)o);
 		return AsMatchable.asMatchable(o);
@@ -176,7 +174,7 @@ public interface Matchable{
 	 * @param o Object to match on it's fields
 	 * @return new Matchable
 	 */
-	public static <T> Matchable ofStream(Stream<T> o){
+	public static <T> Matchable<T> ofStream(Stream<T> o){
 		return AsMatchable.asMatchable(o.collect(Collectors.toList()));
 	}
 	/**
@@ -185,7 +183,7 @@ public interface Matchable{
 	 * @param o Decomposable to match on it's fields
 	 * @return new Matchable
 	 */
-	public static  Matchable ofDecomposable(Decomposable o){
+	public static <T extends Decomposable> Matchable<T> ofDecomposable(Decomposable o){
 		return AsMatchable.asMatchable(o);
 	}
 	
@@ -195,7 +193,7 @@ public interface Matchable{
 	 * @param o Objects to match on
 	 * @return new Matchable
 	 */
-	public static  Matchable listOfValues(Object... o){
+	public static <T>  Matchable<T> listOfValues(T... o){
 		return AsMatchable.asMatchable(Arrays.asList(o));
 	}
 }

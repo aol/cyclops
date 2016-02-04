@@ -1,26 +1,27 @@
 package com.aol.cyclops.matcher.collections;
 
-import static com.aol.cyclops.matcher.Two.tuple;
 import static org.hamcrest.Matchers.is;
+import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertThat;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import lombok.AllArgsConstructor;
-
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import com.aol.cyclops.matcher.ChainOfResponsibility;
 import com.aol.cyclops.matcher.CollectionMatcher;
-import com.aol.cyclops.matcher.Two;
+
+import lombok.AllArgsConstructor;
 
 public class SelectFromTest {
 
 	@Test
 	public void selectFrom(){
-		Stream<Two<Predicate<Integer>,Function<Integer,Integer>>> chain = Stream.of(tuple(it->it>10,it->it*100),
+		Stream<Tuple2<Predicate<Integer>,Function<Integer,Integer>>> chain = Stream.of(tuple(it->it>10,it->it*100),
 				tuple(it->it<10,it->it*100));
 		int result = CollectionMatcher.whenFromStream().streamOfResponsibilityFromTuple(chain).match(5).get();
 		

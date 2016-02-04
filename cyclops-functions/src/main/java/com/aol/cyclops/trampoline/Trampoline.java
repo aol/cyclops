@@ -1,6 +1,11 @@
 package com.aol.cyclops.trampoline;
 
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import com.aol.cyclops.closures.Convertable;
 
 /**
  * simple Trampoline implementation : inspired by excellent TotallyLazy Java 8 impl 
@@ -10,7 +15,8 @@ import java.util.stream.Stream;
  *
  * @param <T> Return type
  */
-public interface Trampoline<T> {
+@FunctionalInterface
+public interface Trampoline<T> extends Supplier<T>, Convertable<T>{
 
 	/**
 	 * @return next stage in Trampolining
@@ -22,7 +28,15 @@ public interface Trampoline<T> {
 	/**
 	 * @return The result of Trampoline execution
 	 */
-	T result();
+	default T result(){
+		return get();
+	}
+	@Override
+	T get();
+	@Override
+	default Iterator<T> iterator(){
+		return Arrays.asList(result()).iterator();
+	}
 	
 	/**
 	 * @return true if complete
@@ -62,7 +76,7 @@ public interface Trampoline<T> {
 				return trampoline.result();
 			}
 
-			public T result() {
+			public T get() {
 				return trampoline(this);
 			}
 

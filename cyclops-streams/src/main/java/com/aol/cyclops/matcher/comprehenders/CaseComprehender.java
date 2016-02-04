@@ -3,9 +3,10 @@ package com.aol.cyclops.matcher.comprehenders;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.jooq.lambda.tuple.Tuple2;
+
 import com.aol.cyclops.lambda.api.Comprehender;
 import com.aol.cyclops.matcher.Case;
-import com.aol.cyclops.matcher.Two;
 
 public class CaseComprehender implements Comprehender<Case>{
 
@@ -31,7 +32,7 @@ public class CaseComprehender implements Comprehender<Case>{
 
 	@Override
 	public Case of(Object o) {
-		return Case.of((Two) o);
+		return Case.of((Tuple2) o);
 	}
 
 	@Override

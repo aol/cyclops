@@ -15,6 +15,8 @@ import java.util.function.Predicate;
 import lombok.Value;
 import lombok.val;
 
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -129,12 +131,12 @@ public class CaseTest {
 	
 	@Test
 	public void map(){
-		Two<Predicate<Integer>,Function<Integer,Integer>> tuple = Two.tuple( t->false,(Integer input)->input+20);
+		Tuple2<Predicate<Integer>,Function<Integer,Integer>> tuple = Tuple.tuple( t->false,(Integer input)->input+20);
 		assertThat(case1.map(tuple2 -> tuple).match(100).isPresent(),is(false));
 	}
 	@Test
 	public void mapTrue(){
-		Two<Predicate<Integer>,Function<Integer,Integer>> tuple = Two.tuple( t->true,(Integer input)->input+20);
+		Tuple2<Predicate<Integer>,Function<Integer,Integer>> tuple = Tuple.tuple( t->true,(Integer input)->input+20);
 		assertThat(case1.map(tuple2 -> tuple).match(100).get(),is(120));
 	}
 	

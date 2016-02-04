@@ -47,6 +47,7 @@ import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
+import com.aol.cyclops.lambda.monads.IterableFunctor;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
@@ -2277,6 +2278,10 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	@Override
 	public Collectable<T> collectable(){
 		return this.stream;
+	}
+	@Override
+	public <T> SequenceM<T> unitIterator(Iterator<T> it){
+		return SequenceM.fromIterator(it);
 	}
 	
 }

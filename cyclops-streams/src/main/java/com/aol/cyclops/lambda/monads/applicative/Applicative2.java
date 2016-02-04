@@ -8,7 +8,7 @@ import com.aol.cyclops.lambda.monads.Functor;
 import fj.data.Stream;
 
 @FunctionalInterface
-public interface Applicative2<T,T2,R, D extends Functor<R>> extends Functor<Function<? super T,Function<? super T2,? extends R>>> {
+public interface Applicative2<T,T2,R, D extends ConvertableFunctor<R>> extends Functor<Function<? super T,Function<? super T2,? extends R>>> {
 
 	
 

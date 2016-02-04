@@ -10,7 +10,7 @@ import com.aol.cyclops.monad.AnyM;
 
 import lombok.Value;
 
-public interface FlatMap<T> extends Unit<T>,Functor<T> {
+public interface FlatMap<T> extends Functor<T> {
 
 	default AnyM<T> anyM(){
 		return AnyM.ofMonad(this);

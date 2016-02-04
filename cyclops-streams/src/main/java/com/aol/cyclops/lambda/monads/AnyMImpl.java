@@ -48,6 +48,8 @@ public class AnyMImpl<T> implements AnyM<T>{
 	public final <R> R unwrap(){
 		return (R)new ComprehenderSelector().selectComprehender(initialType).unwrap(monad.unwrap());
 	}
+	
+	
 	/**
 	 * Collect the contents of the monad wrapped by this AnyM into supplied collector
 	 */
@@ -553,6 +555,15 @@ public class AnyMImpl<T> implements AnyM<T>{
 		}
 		return AnyMForComprehensionFactory.instance.forEach3(this, monad1,monad2,filterFunction,yieldingFunction);
 		
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Unit#emptyUnit()
+	 */
+	@Override
+	public <T> AnyM<T> emptyUnit() {
+		return new AnyMImpl(monad.empty(),initialType);
 	}
 	
 }

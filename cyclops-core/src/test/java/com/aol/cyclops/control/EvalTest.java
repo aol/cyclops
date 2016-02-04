@@ -56,4 +56,13 @@ public class EvalTest {
 		assertThat(Eval.always(()->1).map(i->i+2)
 						.flatMap(i->Eval.now(i*3)).get(),equalTo(9));
 	}
+	
+	public int addOne(Integer i, Integer b){
+		return i+1;
+	}
+	@Test
+	public void ap(){
+		
+		Eval.now(10).ap2(Maybe.applicative2((this::addOne))).ap(Eval.now(20));
+	}
 }

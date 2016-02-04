@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import org.hamcrest.Matchers;
+import org.jooq.lambda.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -101,7 +102,7 @@ public class MatchingDataStructuresTest {
 				CollectionMatcher.whenIterable().bothMatch(samePropertyValuesAs(new Person("bob")),anything())
 											.thenExtract(Extractors.<Person>first())
 											.thenApply(bob->bob.getName())
-											.apply(Two.tuple(new Person("bob"),"boo hoo!")).get(),is("bob"));
+											.apply(Tuple.tuple(new Person("bob"),"boo hoo!")).get(),is("bob"));
 	}
 	@Test
 	public void  inMatchOfMatchersSingle() {
@@ -260,7 +261,7 @@ public class MatchingDataStructuresTest {
 									.whenIterable().bothMatch(Matchers.<Person> samePropertyValuesAs(new Person("bob2")),anything())
 																.thenExtract(Extractors.<Person>first())
 																.thenApply(bob-> value =bob.getName())
-											.apply(Two.tuple(new Person("bob"),"boo hoo!"));
+											.apply(Tuple.tuple(new Person("bob"),"boo hoo!"));
 				assertThat(value, is("bob"));
 		
 	}

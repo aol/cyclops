@@ -11,6 +11,7 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.closures.immutable.LazyImmutable;
+import com.aol.cyclops.matcher.builders.ADTPredicateBuilder;
 //import com.aol.cyclops.matcher.builders.ADTPredicateBuilder;
 /**
  * An interface / trait for building functionally compositional pattern matching cases

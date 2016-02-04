@@ -6,7 +6,7 @@ import com.aol.cyclops.lambda.monads.ConvertableFunctor;
 import com.aol.cyclops.lambda.monads.Functor;
 
 @FunctionalInterface
-public interface Applicative5<T,T2,T3,T4,T5,R, D extends Functor<R>> extends 
+public interface Applicative5<T,T2,T3,T4,T5,R, D extends ConvertableFunctor<R>> extends 
 				Functor<Function<? super T,Function<? super T2, Function<? super T3,Function<? super T4,Function<? super T5,? extends R>>>>>> {
 
 	

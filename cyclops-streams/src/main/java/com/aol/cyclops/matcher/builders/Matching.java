@@ -15,6 +15,7 @@ import com.aol.cyclops.matcher.Cases;
 import com.aol.cyclops.matcher.TypedFunction;
 import com.aol.cyclops.matcher.builders.CaseBuilder.InCaseOfBuilder;
 import com.aol.cyclops.matcher.builders.CaseBuilder.InMatchOfBuilder;
+import com.aol.cyclops.matcher.recursive.Matchable;
 
 /**
  * Pattern Matching builder
@@ -22,6 +23,7 @@ import com.aol.cyclops.matcher.builders.CaseBuilder.InMatchOfBuilder;
  * @author johnmcclean
  *
  */
+@Deprecated // use Matchable instead
 public class Matching {
 	
 	
@@ -33,6 +35,7 @@ public class Matching {
 	 * @return Pattern Mather Builder
 	 */
 	public static final <T,X> MatchingInstance<T,X> of(Cases<T,X,? extends Function<T,X>> cases){
+		
 		return new MatchingInstance(new ElementCase(new PatternMatcher().withCases(cases)));
 	}
 	

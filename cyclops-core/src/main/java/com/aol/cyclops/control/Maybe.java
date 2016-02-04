@@ -56,10 +56,7 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, 
 	}
 	
 	
-	static <T,R> Applicative<T,R,Maybe<R>> applicative(Maybe<Function<? super T,? extends R>> fn){
-		
-		return ()->fn;
-	}
+	
 	/**
 	 * <pre>
 	 * {@code 
@@ -75,40 +72,44 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, 
 		return (Maybe<R>)Applicativable.super.ap1(ap);
 	}
 	
-	/**
-	 * Apply a function within the maybe context e.g. 
-	 * 
-	 * <pre>
-	 * {@code 
-	    
-		Maybe<Integer> m = applicative((Integer i)->i+2).ap(Maybe.of(3));
-	 * }
-	 * </pre>
-	 * @param fn
-	 * @return
-	 */
-	static <T,R> Applicative<T,R,Maybe<R>> applicative(Function<? super T,? extends R> fn){
-		
-		return ()->Maybe.of(fn);
+	public static class Applicatives {
+		/**
+		 * Apply a function within the maybe context e.g. 
+		 * 
+		 * <pre>
+		 * {@code 
+		    
+			Maybe<Integer> m = applicative((Integer i)->i+2).ap(Maybe.of(3));
+		 * }
+		 * </pre>
+		 * @param fn
+		 * @return
+		 */
+		static <T,R> Applicative<T,R,Maybe<R>> applicative(Function<? super T,? extends R> fn){
+			
+			return ()->Maybe.of(fn);
+		}
+		static <T,R> Applicative<T,R,Maybe<R>> applicative(Maybe<Function<? super T,? extends R>> fn){
+			return ()->fn;
+		}
+		/**
+		 * 
+		 * <pre>
+		 * {@code 
+		 * 	Maybe<Integer> m = applicative2((Integer i)->(Integer b)->i+b).ap(Maybe.of(3)).ap(Maybe.of(4));
+		 * 
+		 * }
+		 * </pre>
+		 * @param fn
+		 * @return
+		 */
+		static <T,T2,R> Applicative2<T,T2,R,Maybe<R>> applicative2(Function<? super T,Function<? super T2,? extends R>> fn){
+			return ()->Maybe.of(fn);
+		}
+		static <T,T2,R> Applicative2<T,T2,R,Maybe<R>> applicative2(BiFunction<? super T,? super T2,? extends R> fn){
+			return applicative2(CurryVariance.curry2(fn));
+		}
 	}
-	/**
-	 * 
-	 * <pre>
-	 * {@code 
-	 * 	Maybe<Integer> m = applicative2((Integer i)->(Integer b)->i+b).ap(Maybe.of(3)).ap(Maybe.of(4));
-	 * 
-	 * }
-	 * </pre>
-	 * @param fn
-	 * @return
-	 */
-	static <T,T2,R> Applicative2<T,T2,R,Maybe<R>> applicative2(Function<? super T,Function<? super T2,? extends R>> fn){
-		return ()->Maybe.of(fn);
-	}
-	static <T,T2,R> Applicative2<T,T2,R,Maybe<R>> applicative2(BiFunction<? super T,? super T2,? extends R> fn){
-		return applicative2(CurryVariance.curry2(fn));
-	}
-	
 	Maybe<T> recover(Supplier<T> value);
 	Maybe<T> recover(T value);
 	

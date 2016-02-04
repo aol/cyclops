@@ -28,7 +28,6 @@ configurations {
 }
 dependencies {
 	
-	compile project(':cyclops-streams')
 	compile "org.pcollections:pcollections:${pcollectionsVersion}"
 	compile group: 'org.slf4j', name: 'jcl-over-slf4j', version:'1.6.1'
 	provided group: 'org.hamcrest', name: 'hamcrest-all', version:hamcrestVersion

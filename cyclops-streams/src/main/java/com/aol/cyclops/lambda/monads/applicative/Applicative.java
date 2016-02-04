@@ -6,7 +6,7 @@ import com.aol.cyclops.lambda.monads.ConvertableFunctor;
 import com.aol.cyclops.lambda.monads.Functor;
 
 @FunctionalInterface
-public interface Applicative<T,R, D extends Functor<R>> extends Functor<Function<? super T,? extends R>> {
+public interface Applicative<T,R, D extends ConvertableFunctor<R>> extends Functor<Function<? super T,? extends R>> {
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#map(java.util.function.Function)

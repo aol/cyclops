@@ -23,15 +23,15 @@ public class MatchableTest {
 	@Test
 	public void testMatch(){
 		
-		assertThat(new MyCase(4,5,6).matches(c ->
-								c.isType((MyCase ce) -> "hello").anyValues()
+		assertThat(new MyCase<Integer>(4,5,6).matches(c ->
+								c.isType((MyCase<Integer> ce) -> "hello").anyValues()
 							) ,
 				  equalTo("hello"));
 		
 		
 	}
 	@Value
-	static class MyCase<R>  implements Matchable{
+	static class MyCase<R>  implements Matchable<MyCase<R>>{
 		int a;
 		int b;
 		int c;

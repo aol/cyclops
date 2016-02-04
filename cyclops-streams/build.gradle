@@ -28,8 +28,10 @@ configurations {
 }
 dependencies {
 	compile project(':cyclops-functions')
+	compile project(':cyclops-pattern-matching')
 	compile 'uk.co.real-logic:Agrona:'+agronaVersion
 	compile 'org.reactivestreams:reactive-streams:'+reactiveStreamsVersion
+	provided group: 'org.hamcrest', name: 'hamcrest-all', version:hamcrestVersion
 	provided group: 'org.projectlombok', name: 'lombok', version:"${lombokVersion}"
 	testCompile ('com.aol.simplereact:simple-react:'+simpleReactVersion){
 		exclude group:'com.aol.cyclops'

@@ -6,8 +6,8 @@ import java.util.function.Function;
 import com.aol.cyclops.matcher.TypedFunction;
 import com.aol.cyclops.matcher.builders.CheckTypeAndValues;
 import com.aol.cyclops.matcher.builders.PatternMatcher;
-import com.aol.cyclops.matcher.builders.CheckTypeAndValues.AndMembersMatchBuilder;
 
+@Deprecated//use Matchable instead
 public class RecursiveMatcher {
 	/**
 	 * Create a builder for Matching on Case classes. This is the closest builder
