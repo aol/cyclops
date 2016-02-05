@@ -824,7 +824,9 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T> {
 	 * 
 	 * @return first value in this Stream
 	 */
-	T firstValue();
+	default T firstValue(){
+		return stream().firstValue();
+	}
 
 	/**
 	 * <pre>
@@ -849,7 +851,9 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T> {
 
 	}
 
-	T single(Predicate<? super T> predicate);
+	default T single(Predicate<? super T> predicate){
+		return stream().single(predicate);
+	}
 
 	/**
 	 * <pre>
