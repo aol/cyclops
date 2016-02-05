@@ -48,7 +48,7 @@ import lombok.val;
  * @param <T> Return type (success)
  * @param <X> Base Error type
  */
-public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ValueObject, ToStream<T>,Applicativable<T> {
+public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStream<T>,Applicativable<T> {
 
 	default Xor<X,T> toXor(){
 		if(isSuccess())

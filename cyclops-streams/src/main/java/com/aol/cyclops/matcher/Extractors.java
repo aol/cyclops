@@ -79,9 +79,9 @@ public class Extractors {
 				try {
 				return u.apply(t);
 			}catch (Throwable e) {
-				ExceptionSoftener.throwSoftenedException(e);
+				throw ExceptionSoftener.throwSoftenedException(e);
 			}
-			return null;
+			
 		};
 	}
 	private static interface Unchecked<T,R>{

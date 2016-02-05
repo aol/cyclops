@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
-import java.util.stream.Stream;
 
 import com.aol.cyclops.closures.Convertable;
 import com.aol.cyclops.closures.immutable.LazyImmutable;
@@ -34,13 +33,12 @@ import com.aol.cyclops.trycatch.Failure;
 import com.aol.cyclops.trycatch.Success;
 import com.aol.cyclops.trycatch.Try;
 
-
 import lombok.AllArgsConstructor;
 
-public interface Value<T> extends Supplier<T>, Foldable<T>, ValueObject, Convertable<T> {
+public interface Value<T> extends Supplier<T>, Foldable<T>, ValueObject<T>, Convertable<T> {
 
 	 public static <T> Value<T> of(Supplier<T> supplier){
-		 return new ValueImpl<>(supplier);
+		 return new ValueImpl<T>(supplier);
 	 }
 	 @AllArgsConstructor
 	 public static class ValueImpl<T> implements Value<T>{
@@ -64,7 +62,7 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, ValueObject, Convert
 	 /**
 	  * @return matchable
 	  */
-	 default Object getMatchable(){
+	 default T getMatchable(){
 		return get();
 	 }
 	 default <I extends Iterable<?>> I unapply(){

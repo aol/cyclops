@@ -10,7 +10,7 @@ import com.aol.cyclops.lambda.api.Comprehender;
  *
  *  Behaviour in cross-type flatMap is to create an empty instance for Disabled Switches, but always pass Enabled values on
  */
-public class FeatureToggleComprehender implements Comprehender<FeatureToggle>{
+public class FeatureToggleComprehender implements Comprehender<FeatureToggle<Object>>{
 
 	@Override
 	public Object filter(FeatureToggle t, Predicate p) {
@@ -49,11 +49,9 @@ public class FeatureToggleComprehender implements Comprehender<FeatureToggle>{
 		return FeatureToggle.class;
 	}
 	@Override
-	public Object resolveForCrossTypeFlatMap(Comprehender comp,FeatureToggle apply){
-		return apply.matches(
-						c -> c.isType((Enabled e)-> comp.of(e.get())).anyValues(),
-						c->	c.isType( (Disabled d) -> comp.empty()).anyValues()
-					);
+	public Object resolveForCrossTypeFlatMap(Comprehender comp,FeatureToggle<Object> apply){
+		return apply instanceof Enabled ? comp.of(apply.get()) : comp.empty();
+		
 	}
 
 }
