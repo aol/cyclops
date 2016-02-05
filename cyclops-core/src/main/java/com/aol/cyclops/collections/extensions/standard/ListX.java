@@ -19,7 +19,6 @@ import com.aol.cyclops.functions.QuintFunction;
 import com.aol.cyclops.functions.TriFunction;
 import com.aol.cyclops.functions.currying.CurryVariance;
 import com.aol.cyclops.lambda.monads.IterableFunctor;
-import com.aol.cyclops.lambda.monads.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.lambda.monads.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.lambda.monads.applicative.zipping.ZippingApplicative2;
 import com.aol.cyclops.lambda.monads.applicative.zipping.ZippingApplicative3;

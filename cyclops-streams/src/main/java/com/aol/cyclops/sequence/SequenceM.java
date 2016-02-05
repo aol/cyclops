@@ -57,6 +57,7 @@ import com.aol.cyclops.lambda.monads.applicative.zipping.ZippingApplicative2;
 import com.aol.cyclops.lambda.monads.applicative.zipping.ZippingApplicative3;
 import com.aol.cyclops.lambda.monads.applicative.zipping.ZippingApplicative4;
 import com.aol.cyclops.lambda.monads.applicative.zipping.ZippingApplicative5;
+import com.aol.cyclops.lambda.monads.applicative.zipping.ZippingApplicativeBuilder;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.sequence.reactivestreams.CyclopsSubscriber;
@@ -75,67 +76,19 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Functor<T>, Travers
 												JoolManipulation<T>,SequenceMCollectable<T>,
 												Seq<T>,  Iterable<T>, Publisher<T>,
 												ReactiveStreamsTerminalOperations<T>,
-												ZippingApplicativable<T>{
+												ZippingApplicativable<T>, Unit<T>{
 	@Override
 	public <T> SequenceM<T> unitIterator(Iterator<T> it);
-	public static class Applicatives {
-		static <T,R> ZippingApplicative<T,R,SequenceM<R>> applicative(SequenceM<Function<? super T,? extends R>> fn){
-			
-			return ()->fn;
-		}
-		static <T,R> ZippingApplicative<T,R,SequenceM<R>> applicative(Function<? super T,? extends R> fn){
-			
-			return applicative(SequenceM.of(fn));
-		}
-		static <T,T2,R> ZippingApplicative2<T,T2,R,SequenceM<R>> applicative2(SequenceM<Function<? super T,Function<? super T2,? extends R>>> fn){
-			
-			return ()->fn;
-		}
-		static <T,T2,R> ZippingApplicative2<T,T2,R,SequenceM<R>> applicative2(Function<? super T,Function<? super T2,? extends R>> fn){
-			
-			return applicative2(SequenceM.of(fn));
-		}
-		static <T,T2,R> ZippingApplicative2<T,T2,R,SequenceM<R>> applicative2(BiFunction<? super T,? super T2,? extends R> fn){
-			
-			return applicative2(SequenceM.of(CurryVariance.curry2(fn)));
-		}
-		static <T,T2,T3,R> ZippingApplicative3<T,T2,T3,R,SequenceM<R>> applicative3(SequenceM<Function<? super T,Function<? super T2,Function<? super T3,? extends R>>>> fn){
-			
-			return ()->fn;
-		}
-		static <T,T2,T3,R> ZippingApplicative3<T,T2,T3,R,SequenceM<R>> applicative3(Function<? super T,Function<? super T2,Function<? super T3,? extends R>>> fn){
-			
-			return applicative3(SequenceM.of(fn));
-		}
-		static <T,T2,T3,R> ZippingApplicative3<T,T2,T3,R,SequenceM<R>> applicative3(TriFunction<? super T,? super T2,? super T3,? extends R> fn){
-			
-			return applicative3(SequenceM.of(CurryVariance.curry3(fn)));
-		}
-		static <T,T2,T3,T4,R> ZippingApplicative4<T,T2,T3,T4,R,SequenceM<R>> applicative4(SequenceM<Function<? super T,Function<? super T2,Function<? super T3,Function<? super T4,? extends R>>>>> fn){
-			
-			return ()->fn;
-		}
-		static <T,T2,T3,T4,R> ZippingApplicative4<T,T2,T3,T4,R,SequenceM<R>> applicative4(Function<? super T,Function<? super T2,Function<? super T3,Function<? super T4,? extends R>>>> fn){
-			
-			return applicative4(SequenceM.of(fn));
-		}
-		static <T,T2,T3,T4,R> ZippingApplicative4<T,T2,T3,T4,R,SequenceM<R>> applicative4(QuadFunction<? super T,? super T2,? super T3,? super T4,? extends R> fn){
-			
-			return applicative4(SequenceM.of(CurryVariance.curry4(fn)));
-		}
-		static <T,T2,T3,T4,T5,R> ZippingApplicative5<T,T2,T3,T4,T5,R,SequenceM<R>> applicative5(SequenceM<Function<? super T,Function<? super T2,Function<? super T3,Function<? super T4,Function<? super T5,? extends R>>>>>> fn){
-			
-			return ()->fn;
-		}
-		static <T,T2,T3,T4,T5,R> ZippingApplicative5<T,T2,T3,T4,T5,R,SequenceM<R>> applicative5(Function<? super T,Function<? super T2,Function<? super T3,Function<? super T4,Function<? super T5,? extends R>>>>> fn){
-			
-			return applicative5(SequenceM.of(fn));
-		}
-		static <T,T2,T3,T4,T5,R> ZippingApplicative5<T,T2,T3,T4,T5,R,SequenceM<R>> applicative5(QuintFunction<? super T,? super T2,? super T3,? super T4,? super T5,? extends R> fn){
-			
-			return applicative5(SequenceM.of(CurryVariance.curry5(fn)));
-		}
-	}
+	
+	@Override
+	public <T> SequenceM<T> unit(T unit);
+
+	
+	
+	/**
+	default <R> ZippingApplicativeBuilder<T,R,SequenceM<R>> applicatives(){
+		return new ZippingApplicativeBuilder<T,R,SequenceM<R>> (this);
+	}**/
 	
 	default <R> SequenceM<R> ap1( ZippingApplicative<T,R, ?> ap){
 		

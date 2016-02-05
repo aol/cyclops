@@ -48,6 +48,8 @@ import org.reactivestreams.Subscription;
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.lambda.monads.IterableFunctor;
+import com.aol.cyclops.lambda.monads.Unit;
+import com.aol.cyclops.lambda.monads.applicative.zipping.ZippingApplicativeBuilder;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
@@ -61,8 +63,10 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	private final Optional<ReversableSpliterator> reversable;
 	
 	public SequenceMImpl(Stream<T> stream){
+		
 		this.stream = Seq.seq(stream);
 		this.reversable = Optional.empty();
+		
 		
 	}
 	
@@ -71,6 +75,19 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 		this.reversable = Optional.of(rev);
 		
 	}
+	
+	
+	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Unit#unit(java.lang.Object)
+	 */
+	@Override
+	public <T> SequenceM<T> unit(T unit) {
+		return SequenceM.of(unit);
+	}
+
+	
+
 	public HotStream<T> schedule(String cron,ScheduledExecutorService ex){
 		return StreamUtils.schedule(this, cron, ex);
 		

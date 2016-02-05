@@ -1,9 +1,13 @@
 package com.aol.cyclops.lambda.monads.applicative.zipping;
 
 import com.aol.cyclops.lambda.monads.IterableFunctor;
+import com.aol.cyclops.lambda.monads.Unit;
 
-public interface ZippingApplicativable<T> extends IterableFunctor<T>{
-
+public interface ZippingApplicativable<T> extends IterableFunctor<T>,Unit<T>{
+	
+	default <R,B> ZippingApplicativeBuilder<T,R,ZippingApplicativable<R>> applicatives(){
+		return new ZippingApplicativeBuilder<T,R,ZippingApplicativable<R>> (this);
+	}
 	default <R> IterableFunctor<R> ap1( ZippingApplicative<T,R, ?> ap){
 		return ap.ap(this);
 	}

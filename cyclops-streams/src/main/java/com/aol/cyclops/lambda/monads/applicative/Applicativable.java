@@ -1,9 +1,15 @@
 package com.aol.cyclops.lambda.monads.applicative;
 
+import com.aol.cyclops.lambda.monads.ConvertableFunctor;
 import com.aol.cyclops.lambda.monads.Functor;
+import com.aol.cyclops.lambda.monads.Unit;
+import com.aol.cyclops.lambda.monads.applicative.zipping.ZippingApplicativeBuilder;
 
-public interface Applicativable<T> extends Functor<T>{
+public interface Applicativable<T> extends ConvertableFunctor<T>, Unit<T>{
 
+	default <R> ApplicativeBuilder<T,R,Applicativable<R>> applicatives(){
+		return new ApplicativeBuilder<T,R,Applicativable<R>> (this);
+	}
 	default <R> Functor<R> ap1( Applicative<T,R, ?> ap){
 		return ap.ap(this);
 	}

@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 
 import com.aol.cyclops.functions.caching.Memoize;
 import com.aol.cyclops.lambda.monads.Functor;
+import com.aol.cyclops.lambda.monads.Unit;
 import com.aol.cyclops.lambda.monads.applicative.Applicativable;
 import com.aol.cyclops.lambda.monads.applicative.Applicative;
 import com.aol.cyclops.value.Value;
@@ -34,6 +35,7 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>,  Applicativa
 		return new Always<T>(in->value.get());
 	}
 	
+	public <T> Eval<T> unit(T unit);
 	public <R> Eval<R> map(Function<? super T, ? extends R> mapper);
 	public <R> Eval<R> flatMap(Function<? super T, ? extends Eval<? extends R>> mapper);
 	
@@ -77,7 +79,10 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>,  Applicativa
 		public T get() {
 			return value;
 		}
-		
+		@Override
+		public <T> Eval<T> unit(T unit) {
+			return Eval.now(unit);
+		}
 		
 	}
 	
@@ -98,6 +103,14 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>,  Applicativa
 		public T get() {
 			return s.apply(null);
 		}
+		/* (non-Javadoc)
+		 * @see com.aol.cyclops.lambda.monads.Unit#unit(java.lang.Object)
+		 */
+		@Override
+		public <T> Eval<T> unit(T unit) {
+			return Eval.later(()->unit);
+		}
+		
 		
 		
 	}
@@ -117,6 +130,10 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>,  Applicativa
 		@Override
 		public T get() {
 			return s.apply(null);
+		}
+		@Override
+		public <T> Eval<T> unit(T unit) {
+			return Eval.always(()->unit);
 		}
 	}
 }

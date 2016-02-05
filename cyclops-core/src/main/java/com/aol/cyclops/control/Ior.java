@@ -50,8 +50,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>, App
 	default <R> Ior<ST,R> ap1( Applicative<PT,R, ?> ap){
 		return (Ior<ST,R>)Applicativable.super.ap1(ap);
 	}
-//	Ior<ST,PT> merge(Or<ST,PT> xor);
-//	Ior<ListX<ST>,ListX<PT>> append(Or<ListX<ST>,ListX<PT>> xor);
+
 	Xor<ST,PT> toXor(); //drop ST
 	Xor<ST,PT> toXorDropPrimary(); //drop ST
 	

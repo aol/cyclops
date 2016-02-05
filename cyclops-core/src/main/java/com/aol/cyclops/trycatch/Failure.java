@@ -220,7 +220,7 @@ public class Failure<T,X extends Throwable> implements Try<T,X> {
 	 * @see com.aol.cyclops.trycatch.Try#foreach(java.util.function.Consumer)
 	 */
 	@Override
-	public void foreach(Consumer<T> consumer) {
+	public void foreach(Consumer<? super T> consumer) {
 		
 		
 	}
@@ -277,7 +277,7 @@ public class Failure<T,X extends Throwable> implements Try<T,X> {
 	 * @see com.aol.cyclops.trycatch.Try#foreachFailed(java.util.function.Consumer)
 	 */
 	@Override
-	public void foreachFailed(Consumer<X> consumer) {
+	public void foreachFailed(Consumer<? super X> consumer) {
 		consumer.accept(error);
 		
 	}
