@@ -3,6 +3,7 @@ package com.aol.cyclops.collections.extensions.standard;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -66,9 +67,8 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 		return singleton(value);
 	}
 	
-	@Override
-	default<R> DequeX<R> emptyUnit(){
-		return empty();
+	default <R> DequeX<R> unitIterator(Iterator<R> it){
+		return fromIterable(()->it);
 	}
 	@Override
 	default SequenceM<T> stream(){

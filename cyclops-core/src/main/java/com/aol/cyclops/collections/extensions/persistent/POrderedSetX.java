@@ -2,6 +2,7 @@ package com.aol.cyclops.collections.extensions.persistent;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -13,6 +14,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.OrderedPSet;
 import org.pcollections.PBag;
 import org.pcollections.POrderedSet;
+import org.pcollections.PSet;
 
 import com.aol.cyclops.collections.PBags;
 import com.aol.cyclops.collections.POrderedSets;
@@ -44,6 +46,18 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 			return new  POrderedSetXImpl<>((POrderedSet)(stream));
 		return new  POrderedSetXImpl<>(OrderedPSet.from(stream));
 	}
+	public static<T> POrderedSetX<T> fromIterable(Iterable<T> iterable){
+		if(iterable instanceof POrderedSetX)
+			return (POrderedSetX)iterable;
+		if(iterable instanceof POrderedSet)
+			return new POrderedSetXImpl<>((POrderedSet)(iterable));
+		POrderedSet<T> res = OrderedPSet.<T>empty();
+		Iterator<T> it = iterable.iterator();
+		while(it.hasNext())
+			res = res.plus(it.next());
+		
+		return new POrderedSetXImpl<>(res);
+	}
 	public static<T> POrderedSetX<T> toPOrderedSet(Stream<T> stream){
 		return new POrderedSetXImpl<>((POrderedSet<T>)POrderedSets.toPOrderedSet().mapReduce(stream));
 	}
@@ -54,6 +68,10 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	@Override
 	default <R> POrderedSetX<R> unit(R value){
 		return singleton(value);
+	}
+	@Override
+	default <R> POrderedSetX<R> unitIterator(Iterator<R> it){
+		return fromIterable(()->it);
 	}
 	@Override
 	default<R> POrderedSetX<R> emptyUnit(){

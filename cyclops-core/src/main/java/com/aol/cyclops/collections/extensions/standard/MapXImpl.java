@@ -17,8 +17,8 @@ import lombok.Getter;
 public class MapXImpl<K,V> implements MapX<K,V>{
 	private final Map<K,V> map;
 	@Getter
-	private final Collector<Tuple2<K,V>,?,Map<K,V>> collector;
-	public MapXImpl(Map<K,V> map){
+	private final Collector<Tuple2<? extends K,? extends V>,?,Map<K,V>> collector;
+	public MapXImpl(Map< K,V> map){
 		this.map = map;
 		this.collector = MapX.defaultCollector();
 	}

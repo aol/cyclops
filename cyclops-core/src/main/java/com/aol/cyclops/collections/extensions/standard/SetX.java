@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -67,8 +68,8 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	}
 	
 	@Override
-	default<R> SetX<R> emptyUnit(){
-		return empty();
+	default <R> SetX<R> unitIterator(Iterator<R> it){
+		return fromIterable(()->it);
 	}
 	default <T1> SetX<T1> from(Collection<T1> c){
 		return SetX.<T1>fromIterable(getCollector(),c);

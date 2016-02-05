@@ -2,6 +2,7 @@ package com.aol.cyclops.collections.extensions.persistent;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -11,6 +12,8 @@ import java.util.stream.Stream;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.HashTreePSet;
+import org.pcollections.OrderedPSet;
+import org.pcollections.POrderedSet;
 import org.pcollections.PSet;
 
 import com.aol.cyclops.collections.PSets;
@@ -36,6 +39,18 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	public static <T> PSetX<T> singleton(T value){
 		return new PSetXImpl<>(HashTreePSet.singleton(value));
 	}
+	public static<T> PSetX<T> fromIterable(Iterable<T> iterable){
+		if(iterable instanceof PSetX)
+			return (PSetX)iterable;
+		if(iterable instanceof PSet)
+			return new PSetXImpl<>((PSet)(iterable));
+		PSet<T> res = HashTreePSet.<T>empty();
+		Iterator<T> it = iterable.iterator();
+		while(it.hasNext())
+			res = res.plus(it.next());
+		
+		return new PSetXImpl<>(res);
+	}
 	public static<T> PSetX<T> fromCollection(Collection<T> stream){
 		if(stream instanceof PSetX)
 			return (PSetX)(stream);
@@ -53,6 +68,10 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	@Override
 	default <R> PSetX<R> unit(R value){
 		return singleton(value);
+	}
+	@Override
+	default <R> PSetX<R> unitIterator(Iterator<R> it){
+		return fromIterable(()->it);
 	}
 	@Override
 	default<R> PSetX<R> emptyUnit(){

@@ -78,7 +78,7 @@ public class Enabled<F> implements FeatureToggle<F>{
      *
      * @param enabled The value of this Enabled Switch
      */
-    public Enabled(F enabled) {
+     Enabled(F enabled) {
        this.enabled = enabled;
     }
     

@@ -4,24 +4,26 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.aol.cyclops.collections.extensions.standard.MapX;
+
 
 
 public class HashMaps {
 
-	public static <K, V> Map<K, V> of() {
-		return Collections.unmodifiableMap(new HashMap<>());
+	public static <K, V> MapX<K, V> of() {
+		return MapX.fromMap(MapX.immutableCollector(), new HashMap<>());
 	}
-	public static <K, V> Map<K, V> of(K key, V value) {
-		return Collections.unmodifiableMap(new Builder<K, V>(key, value).build());
+	public static <K, V> MapX<K, V> of(K key, V value) {
+		return MapX.fromMap(MapX.immutableCollector(), new Builder<K, V>(key, value).build());
 	}
-	public static <K, V> Map<K, V> of(K key, V value,K key1, V value1) {
-		return Collections.unmodifiableMap(new Builder<K, V>(key, value).put(key1, value1).build());
+	public static <K, V> MapX<K, V> of(K key, V value,K key1, V value1) {
+		return MapX.fromMap(MapX.immutableCollector(), new Builder<K, V>(key, value).put(key1, value1).build());
 	}
-	public static <K, V> Map<K, V> of(K key, V value,K key1, V value1,K key2, V value2) {
-		return Collections.unmodifiableMap(new Builder<K, V>(key, value).put(key, value, key1, value1, key2, value2).build());
+	public static <K, V> MapX<K, V> of(K key, V value,K key1, V value1,K key2, V value2) {
+		return MapX.fromMap(MapX.immutableCollector(), new Builder<K, V>(key, value).put(key, value, key1, value1, key2, value2).build());
 	}
-	public static <K, V> Map<K, V> of(K key, V value,K key1, V value1,K key2, V value2,K key3, V value3) {
-		return Collections.unmodifiableMap(new Builder<K, V>(key, value).put(key, value, key1, value1, key2, value2,key3, value3).build());
+	public static <K, V> MapX<K, V> of(K key, V value,K key1, V value1,K key2, V value2,K key3, V value3) {
+		return MapX.fromMap(MapX.immutableCollector(), new Builder<K, V>(key, value).put(key, value, key1, value1, key2, value2,key3, value3).build());
 	}
 
 	
@@ -82,9 +84,10 @@ public class HashMaps {
 			return this;
 		}
 
-		public Map<K, V> build() {
-			return build;
+		public MapX<K, V> build() {
+			return MapX.fromMap(MapX.immutableCollector(),build);
 		}
+		
 	}
 
 }

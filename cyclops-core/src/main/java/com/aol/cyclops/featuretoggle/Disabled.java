@@ -34,7 +34,7 @@ public class Disabled<F> implements FeatureToggle<F>{
      *
      * @param disabled The value of this Left
      */
-    public Disabled(F disabled) {
+    Disabled(F disabled) {
         this.disabled = disabled;
     }
     

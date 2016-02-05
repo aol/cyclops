@@ -2,6 +2,7 @@ package com.aol.cyclops.collections.extensions.persistent;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -11,6 +12,7 @@ import java.util.stream.Stream;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.HashTreePBag;
+import org.pcollections.MapPBag;
 import org.pcollections.PBag;
 
 import com.aol.cyclops.collections.PBags;
@@ -42,7 +44,18 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	public static<T> PBagX<T> singleton(T value){
 		return new PBagXImpl<>(HashTreePBag.singleton(value));
 	}
-	
+	public static<T> PBagX<T> fromIterable(Iterable<T> iterable){
+		if(iterable instanceof PBagX)
+			return (PBagX)iterable;
+		if(iterable instanceof PBag)
+			return new PBagXImpl<>((PBag)(iterable));
+		MapPBag<T> res = HashTreePBag.<T>empty();
+		Iterator<T> it = iterable.iterator();
+		while(it.hasNext())
+			res = res.plus(it.next());
+		
+		return new PBagXImpl<>(res);
+	}
 	public static<T> PBagX<T> fromCollection(Collection<T> stream){
 		if(stream instanceof PBagX)
 			return (PBagX)stream;
@@ -57,6 +70,10 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	@Override
 	default <R> PBagX<R> unit(R value){
 		return singleton(value);
+	}
+	@Override
+	default <R> PBagX<R> unitIterator(Iterator<R> it){
+		return fromIterable(()->it);
 	}
 	@Override
 	default<R> PBagX<R> unit(Collection<R> col){

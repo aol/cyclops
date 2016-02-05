@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
+import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.BiFunction;
@@ -61,8 +62,8 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T> {
 	}
 	
 	@Override
-	default<R> SortedSetX<R> emptyUnit(){
-		return empty();
+	default <R> SortedSetX<R> unitIterator(Iterator<R> it){
+		return fromIterable(()->it);
 	}
 	@Override
 	default SequenceM<T> stream(){

@@ -56,7 +56,9 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, 
 	}
 	
 	
-	
+	default <T> Maybe<T> unit(T unit){
+		return  Maybe.of(unit);
+	}
 	/**
 	 * <pre>
 	 * {@code 

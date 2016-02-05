@@ -1,6 +1,7 @@
 package com.aol.cyclops.collections.extensions.persistent;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -9,7 +10,10 @@ import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
+import org.pcollections.HashTreePSet;
+import org.pcollections.POrderedSet;
 import org.pcollections.PQueue;
+import org.pcollections.PSet;
 
 import com.aol.cyclops.collections.PQueues;
 import com.aol.cyclops.collections.PSets;
@@ -35,6 +39,18 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
 	public static <T> PQueueX<T> singleton(T value){
 		return new PQueueXImpl<>(PQueues.singleton(value));
 	}
+	public static<T> PQueueX<T> fromIterable(Iterable<T> iterable){
+		if(iterable instanceof PQueueX)
+			return (PQueueX)iterable;
+		if(iterable instanceof PQueue)
+			return new PQueueXImpl<>((PQueue)(iterable));
+		PQueue<T> res = PQueues.<T>empty();
+		Iterator<T> it = iterable.iterator();
+		while(it.hasNext())
+			res = res.plus(it.next());
+		
+		return new PQueueXImpl<>(res);
+	}
 	public static<T> PQueueX<T> fromCollection(Collection<T> stream){
 		if(stream instanceof PQueueX)
 			return (PQueueX)(stream);
@@ -52,6 +68,10 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
 	@Override
 	default <R> PQueueX<R> unit(R value){
 		return singleton(value);
+	}
+	@Override
+	default <R> PQueueX<R> unitIterator(Iterator<R> it){
+		return fromIterable(()->it);
 	}
 	@Override
 	default<R> PQueueX<R> emptyUnit(){

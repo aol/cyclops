@@ -50,6 +50,23 @@ import lombok.val;
  */
 public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStream<T>,Applicativable<T> {
 
+	/**
+	 * Construct a Failure instance from a throwable
+	 * 
+	 * @param error for Failure
+	 * @return new Failure with error
+	 */
+	public static <T,X extends Throwable> Failure<T,X> failure(X error){
+		return new Failure<>(error);
+	}
+	/**
+	 * @param value Successful value
+	 * @return new Success with value
+	 */
+	@Deprecated //use Try.success instead
+	public static <T,X extends Throwable> Success<T,X> success(T value){
+		return new Success<>(value,new Class[0]);
+	}
 	default Xor<X,T> toXor(){
 		if(isSuccess())
 			return Xor.primary(get());
@@ -58,6 +75,9 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 	}
 	default <R> Try<R,X> ap1( Applicative<T,R, ?> ap){
 		return (Try<R,X>)Applicativable.super.ap1(ap);
+	}
+	default <T> Try<T,?> unit(T value){
+		return success(value);
 	}
 	/**
 	 * @return This monad, wrapped as AnyM of Success
@@ -111,13 +131,13 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 	 *          Do nothing to a Failure
 	 * @return this if Success and Predicate holds, or if Failure. New Failure if Success and Predicate fails
 	 */
-	public Optional<T> filter(Predicate<T> p);
+	public Optional<T> filter(Predicate<? super T> p);
 	
 	/**
 	 * @param consumer Accept Exception if present (Failure)
 	 * @return this
 	 */
-	public Try<T,X> onFail(Consumer<X> consumer);
+	public Try<T,X> onFail(Consumer<? super X> consumer);
 	/**
 	 * @param t Class type of match Exception against
 	 * @param consumer Accept Exception if present (Failure) and if class types match
@@ -129,14 +149,14 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 	 * @param fn Recovery function - map from a failure to a Success.
 	 * @return new Success
 	 */
-	public Success<T,X> recover(Function<X,T> fn);
+	public Success<T,X> recover(Function<? super X,? extends T> fn);
 	/**
 	 * flatMap recovery
 	 * 
 	 * @param fn Recovery FlatMap function. Map from a failure to a Success
 	 * @return Success from recovery function
 	 */
-	public Success<T,X> recoverWith(Function<X,Success<T,X>> fn);
+	public Success<T,X> recoverWith(Function<? super X,? extends Success<T,X>> fn);
 	
 	/**
 	 * Recover if exception is of specified type
@@ -144,7 +164,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 	 * @param fn Recovery function
 	 * @return New Success if failure and types match / otherwise this
 	 */
-	public Try<T,X> recoverFor(Class<? extends X> t,Function<X, T> fn);
+	public Try<T,X> recoverFor(Class<? extends X> t,Function<? super X, ? extends T> fn);
 	
 	/**
 	 * 
@@ -154,7 +174,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 	 * @param fn Recovery FlatMap function. Map from a failure to a Success
 	 * @return Success from recovery function or this  and types match or if already Success
 	 */
-	public Try<T,X> recoverWithFor(Class<? extends X> t,Function<X, Success<T,X>> fn);
+	public Try<T,X> recoverWithFor(Class<? extends X> t,Function<? super X, ? extends Success<T,X>> fn);
 	/**
 	 * Flatten a nested Try Structure
 	 * @return Lowest nested Try
@@ -209,7 +229,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 	 * @param consumer Accept Exception if Failure
 	 * @return this
 	 */
-	default Try<T,X> peekFailed(Consumer<X> consumer){
+	default Try<T,X> peekFailed(Consumer<? super X> consumer){
 		foreachFailed(consumer);
 		return this;
 	}
@@ -266,7 +286,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 	 * @return New Try
 	 */
 	@SafeVarargs
-	public static <X extends Throwable>  Try<Void,X> runWithCatch(CheckedRunnable cf,Class<? extends X>...classes){
+	public static <X extends Throwable>  Try<Void,X> runWithCatch(CheckedRunnable<X> cf,Class<? extends X>...classes){
 		Objects.requireNonNull(cf);
 		try{
 			cf.run();

@@ -12,10 +12,12 @@ import java.util.stream.Stream;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.ConsPStack;
+import org.pcollections.PQueue;
 import org.pcollections.PStack;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
+import com.aol.cyclops.collections.PQueues;
 import com.aol.cyclops.collections.PVectors;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.sequence.Monoid;
@@ -82,6 +84,18 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	 */
 	public static <T> PVectorX<T> singleton(T value){
 		return new PVectorXImpl<>(TreePVector.singleton(value));
+	}
+	public static<T> PVectorX<T> fromIterable(Iterable<T> iterable){
+		if(iterable instanceof PVectorX)
+			return (PVectorX)iterable;
+		if(iterable instanceof PVector)
+			return new PVectorXImpl<>((PVector)(iterable));
+		PVector<T> res = PVectors.<T>empty();
+		Iterator<T> it = iterable.iterator();
+		while(it.hasNext())
+			res = res.plus(it.next());
+		
+		return new PVectorXImpl<>(res);
 	}
 	/**
 	 * Create a PVector from the supplied Colleciton
@@ -170,6 +184,10 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	@Override
 	default<R> PVectorX<R> emptyUnit(){
 		return empty();
+	}
+	@Override
+	default <R> PVectorX<R> unitIterator(Iterator<R> it){
+		return fromIterable(()->it);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#flatMap(java.util.function.Function)

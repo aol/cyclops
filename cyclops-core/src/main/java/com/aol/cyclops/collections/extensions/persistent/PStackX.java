@@ -12,8 +12,10 @@ import java.util.stream.Stream;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.ConsPStack;
+import org.pcollections.PQueue;
 import org.pcollections.PStack;
 
+import com.aol.cyclops.collections.PQueues;
 import com.aol.cyclops.collections.PStacks;
 import com.aol.cyclops.collections.extensions.FluentSequenceX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
@@ -50,6 +52,18 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 */
 	public static <T> PStackX<T> of(T...values){
 		return new PStackXImpl<>(ConsPStack.from(Arrays.asList(values)),true);
+	}
+	public static<T> PStackX<T> fromIterable(Iterable<T> iterable){
+		if(iterable instanceof PStackX)
+			return (PStackX)iterable;
+		if(iterable instanceof PStack)
+			return new PStackXImpl<>((PStack)(iterable),true);
+		PStack<T> res = PStacks.<T>empty();
+		Iterator<T> it = iterable.iterator();
+		while(it.hasNext())
+			res = res.plus(it.next());
+		
+		return new PStackXImpl<>(res,true);
 	}
 	/**
 	 * <pre>
@@ -135,6 +149,10 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	@Override
 	default <R> PStackX<R> unit(R value){
 		return singleton(value);
+	}
+	@Override
+	default <R> PStackX<R> unitIterator(Iterator<R> it){
+		return fromIterable(()->it);
 	}
 	@Override
 	default<R> PStackX<R> emptyUnit(){

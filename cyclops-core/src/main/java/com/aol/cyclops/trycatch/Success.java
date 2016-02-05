@@ -66,6 +66,7 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 	 * @param value Successful value
 	 * @return new Success with value
 	 */
+	@Deprecated //use Try.success instead
 	public static <T,X extends Throwable> Success<T,X> of(T value){
 		return new Success<>(value,new Class[0]);
 	}
@@ -97,7 +98,7 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 	 * @see com.aol.cyclops.trycatch.Try#map(java.util.function.Function)
 	 */
 	@Override
-	public <R> Try<R,X> map(Function<T, R> fn) {
+	public <R> Try<R,X> map(Function<? super T,? extends R> fn) {
 		return safeApply( ()->of(fn.apply(get())));
 	}
 	
@@ -125,7 +126,7 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 	 * @see com.aol.cyclops.trycatch.Try#flatMap(java.util.function.Function)
 	 */
 	@Override
-	public <R> Try<R,X> flatMap(Function<T, Try<R,X>> fn) {
+	public <R> Try<R,X> flatMap(Function<? super T,? extends Try<R,X>> fn) {
 		return safeApply(()-> fn.apply(get()));
 		
 	}
@@ -137,7 +138,7 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 	 * @see com.aol.cyclops.trycatch.Try#filter(java.util.function.Predicate)
 	 */
 	@Override
-	public Optional<T> filter(Predicate<T> p) {
+	public Optional<T> filter(Predicate<? super T> p) {
 		if(p.test(value))
 			return Optional.of(get());
 		else
@@ -149,7 +150,7 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 	 * @see com.aol.cyclops.trycatch.Try#recover(java.util.function.Function)
 	 */
 	@Override
-	public Success<T,X> recover(Function<X, T> fn) {
+	public Success<T,X> recover(Function<? super X,? extends T> fn) {
 		return this;
 	}
 
@@ -158,7 +159,7 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 	 * @see com.aol.cyclops.trycatch.Try#recoverWith(java.util.function.Function)
 	 */
 	@Override
-	public Success<T,X> recoverWith(Function<X, Success<T,X>> fn) {
+	public Success<T,X> recoverWith(Function<? super X,? extends Success<T,X>> fn) {
 		return this;
 	}
 
@@ -167,7 +168,7 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 	 * @see com.aol.cyclops.trycatch.Try#recoverFor(java.lang.Class, java.util.function.Function)
 	 */
 	@Override
-	public Success<T,X> recoverFor(Class<? extends X> t, Function<X, T> fn) {
+	public Success<T,X> recoverFor(Class<? extends X> t, Function<? super X, ? extends T> fn) {
 		return this;
 	}
 
@@ -177,7 +178,7 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 	 */
 	@Override
 	public Success<T,X> recoverWithFor(Class<? extends X> t,
-			Function<X, Success<T,X>> fn) {
+			Function<? super X,? extends Success<T,X>> fn) {
 		return this;
 	}
 
@@ -254,7 +255,7 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 	 * @see com.aol.cyclops.trycatch.Try#foreach(java.util.function.Consumer)
 	 */
 	@Override
-	public void foreach(Consumer<T> consumer) {
+	public void foreach(Consumer<? super T> consumer) {
 		consumer.accept(value);
 		
 	}
@@ -264,7 +265,7 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 	 * @see com.aol.cyclops.trycatch.Try#onFail(java.util.function.Consumer)
 	 */
 	@Override
-	public Try<T,X> onFail(Consumer<X> consumer) {
+	public Try<T,X> onFail(Consumer<? super X> consumer) {
 		return this;
 	}
 
@@ -310,7 +311,7 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 	 * @see com.aol.cyclops.trycatch.Try#foreachFailed(java.util.function.Consumer)
 	 */
 	@Override
-	public void foreachFailed(Consumer<X> consumer) {
+	public void foreachFailed(Consumer<? super X> consumer) {
 		
 		
 	}

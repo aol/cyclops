@@ -44,8 +44,9 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Applicat
 		return (Xor<ST,R>)Applicativable.super.ap1(ap);
 	}
 	
-	//Ior<ST,PT> merge(Or<ST,PT> xor);
-	//Ior<ListX<ST>,ListX<PT>> append(Or<ListX<ST>,ListX<PT>> xor);
+	default <T> Xor<?,T> unit(T unit){
+		return Xor.primary(unit);
+	}
 	
 	Xor<ST,PT> secondaryToPrimayMap(Function<? super ST, ? extends PT> fn);
 	<R> Xor<R,PT> secondaryMap(Function<? super ST, ? extends R> fn);

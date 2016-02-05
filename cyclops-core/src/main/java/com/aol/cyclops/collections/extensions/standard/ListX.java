@@ -3,6 +3,7 @@ package com.aol.cyclops.collections.extensions.standard;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -18,7 +19,9 @@ import com.aol.cyclops.functions.QuadFunction;
 import com.aol.cyclops.functions.QuintFunction;
 import com.aol.cyclops.functions.TriFunction;
 import com.aol.cyclops.functions.currying.CurryVariance;
+import com.aol.cyclops.lambda.monads.IterableCollectable;
 import com.aol.cyclops.lambda.monads.IterableFunctor;
+import com.aol.cyclops.lambda.monads.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.lambda.monads.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.lambda.monads.applicative.zipping.ZippingApplicative2;
 import com.aol.cyclops.lambda.monads.applicative.zipping.ZippingApplicative3;
@@ -31,65 +34,7 @@ import com.aol.cyclops.trampoline.Trampoline;
 
 public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenceX<T>, Comparable<T>,IterableFunctor<T>,ZippingApplicativable<T> {
 	
-	public static class Applicatives {
-		static <T,R> ZippingApplicative<T,R,ListX<R>> applicative(ListX<Function<? super T,? extends R>> fn){
-			
-			return ()->fn;
-		}
-		static <T,R> ZippingApplicative<T,R,ListX<R>> applicative(Function<? super T,? extends R> fn){
-			
-			return applicative(ListX.of(fn));
-		}
-		static <T,T2,R> ZippingApplicative2<T,T2,R,ListX<R>> applicative2(ListX<Function<? super T,Function<? super T2,? extends R>>> fn){
-			
-			return ()->fn;
-		}
-		static <T,T2,R> ZippingApplicative2<T,T2,R,ListX<R>> applicative2(Function<? super T,Function<? super T2,? extends R>> fn){
-			
-			return applicative2(ListX.of(fn));
-		}
-		static <T,T2,R> ZippingApplicative2<T,T2,R,ListX<R>> applicative2(BiFunction<? super T,? super T2,? extends R> fn){
-			
-			return applicative2(ListX.of(CurryVariance.curry2(fn)));
-		}
-		static <T,T2,T3,R> ZippingApplicative3<T,T2,T3,R,ListX<R>> applicative3(ListX<Function<? super T,Function<? super T2,Function<? super T3,? extends R>>>> fn){
-			
-			return ()->fn;
-		}
-		static <T,T2,T3,R> ZippingApplicative3<T,T2,T3,R,ListX<R>> applicative3(Function<? super T,Function<? super T2,Function<? super T3,? extends R>>> fn){
-			
-			return applicative3(ListX.of(fn));
-		}
-		static <T,T2,T3,R> ZippingApplicative3<T,T2,T3,R,ListX<R>> applicative3(TriFunction<? super T,? super T2,? super T3,? extends R> fn){
-			
-			return applicative3(ListX.of(CurryVariance.curry3(fn)));
-		}
-		static <T,T2,T3,T4,R> ZippingApplicative4<T,T2,T3,T4,R,ListX<R>> applicative4(ListX<Function<? super T,Function<? super T2,Function<? super T3,Function<? super T4,? extends R>>>>> fn){
-			
-			return ()->fn;
-		}
-		static <T,T2,T3,T4,R> ZippingApplicative4<T,T2,T3,T4,R,ListX<R>> applicative4(Function<? super T,Function<? super T2,Function<? super T3,Function<? super T4,? extends R>>>> fn){
-			
-			return applicative4(ListX.of(fn));
-		}
-		static <T,T2,T3,T4,R> ZippingApplicative4<T,T2,T3,T4,R,ListX<R>> applicative4(QuadFunction<? super T,? super T2,? super T3,? super T4,? extends R> fn){
-			
-			return applicative4(ListX.of(CurryVariance.curry4(fn)));
-		}
-		static <T,T2,T3,T4,T5,R> ZippingApplicative5<T,T2,T3,T4,T5,R,ListX<R>> applicative5(ListX<Function<? super T,Function<? super T2,Function<? super T3,Function<? super T4,Function<? super T5,? extends R>>>>>> fn){
-			
-			return ()->fn;
-		}
-		static <T,T2,T3,T4,T5,R> ZippingApplicative5<T,T2,T3,T4,T5,R,ListX<R>> applicative5(Function<? super T,Function<? super T2,Function<? super T3,Function<? super T4,Function<? super T5,? extends R>>>>> fn){
-			
-			return applicative5(ListX.of(fn));
-		}
-		static <T,T2,T3,T4,T5,R> ZippingApplicative5<T,T2,T3,T4,T5,R,ListX<R>> applicative5(QuintFunction<? super T,? super T2,? super T3,? super T4,? super T5,? extends R> fn){
-			
-			return applicative5(ListX.of(CurryVariance.curry5(fn)));
-		}
-	}
-	
+	@Override
 	default <R> ListX<R> ap1( ZippingApplicative<T,R, ?> ap){
 		
 		return (ListX<R>)ZippingApplicativable.super.ap1(ap);
@@ -136,11 +81,12 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	default <R> ListX<R> unit(R value){
 		return singleton(value);
 	}
-	
 	@Override
-	default<R> ListX<R> emptyUnit(){
-		return empty();
+	default <R> ListX<R> unitIterator(Iterator<R> it){
+		return fromIterable(()->it);
 	}
+	
+	
 	@Override
 	default SequenceM<T> stream(){
 		
@@ -348,4 +294,9 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 		addAll(i,list);
 		return this;
 	}
+
+	@Override
+	int size();
+
+	
 }

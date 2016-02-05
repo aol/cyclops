@@ -2,6 +2,7 @@ package com.aol.cyclops.collections.extensions.standard;
 
 import java.util.Collection;
 import java.util.Deque;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.function.BiFunction;
@@ -65,11 +66,11 @@ public interface QueueX<T> extends Queue<T>, MutableCollectionX<T> {
 	default <R> QueueX<R> unit(R value){
 		return singleton(value);
 	}
-	
 	@Override
-	default<R> QueueX<R> emptyUnit(){
-		return empty();
+	default <R> QueueX<R> unitIterator(Iterator<R> it){
+		return fromIterable(()->it);
 	}
+	
 	@Override
 	default SequenceM<T> stream(){
 		

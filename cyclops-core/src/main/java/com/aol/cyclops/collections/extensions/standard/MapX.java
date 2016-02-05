@@ -19,36 +19,38 @@ import org.jooq.lambda.tuple.Tuple2;
 import com.aol.cyclops.lambda.monads.BiFunctor;
 import com.aol.cyclops.lambda.monads.Foldable;
 import com.aol.cyclops.lambda.monads.Functor;
+import com.aol.cyclops.lambda.monads.IterableCollectable;
 import com.aol.cyclops.lambda.monads.Traversable;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.SequenceMCollectable;
+import com.aol.cyclops.sequence.traits.SequenceMCollectable;
 import com.aol.cyclops.streams.StreamUtils;
 
 
 public interface MapX<K,V> extends Map<K, V>, BiFunctor<K, V>, Functor<V>, Traversable<Tuple2<K, V>>, Foldable<Tuple2<K,V>>,
-												SequenceMCollectable<Tuple2<K,V>>{
+												SequenceMCollectable<Tuple2<K,V>>,
+												IterableCollectable<Tuple2<K,V>>{
 
-	static <K,V> Collector<Tuple2<K,V>,?,Map<K,V>> defaultCollector(){
+	static <K,V> Collector<Tuple2<? extends K,? extends V>,?,Map<K,V>> defaultCollector(){
 		return Collectors.toMap(t->t.v1, t->t.v2);
 	}
-	static <K,V> Collector<Tuple2<K,V>,?,Map<K,V>> immutableCollector(){
+	static <K,V> Collector<Tuple2<? extends K,? extends V>,?,Map<K,V>> immutableCollector(){
 		return Collectors.collectingAndThen(defaultCollector(), Collections::unmodifiableMap);
 
 	}
-	static <K,V> Collector<Tuple2<K,V>,?,Map<K,V>> toMapX(){
-		return Collectors.collectingAndThen(defaultCollector(), (Map<K,V> d)->new MapXImpl<>(d,defaultCollector()));
+	static <K,V> Collector<Tuple2<? extends K,? extends V>,?,Map<K,V>> toMapX(){
+		return Collectors.collectingAndThen(defaultCollector(), (Map<K,V> d)->new MapXImpl<K,V>(d,defaultCollector()));
 		
 	}
-	public <K,V> Collector<Tuple2<K,V>,?,Map<K,V>> getCollector();
+	public <K,V> Collector<Tuple2<? extends K,? extends V>,?,Map<K,V>> getCollector();
 	default SequenceM<Tuple2<K, V>> stream(){
 		return SequenceM.fromIterable(this.entrySet())
 					    .map(e->Tuple.tuple(e.getKey(),e.getValue()));
 	}
 	
-	public static <K,V> MapX<K,V> fromMap(Map<K,V> it){
+	public static <K,V> MapX<K,V> fromMap(Map<? extends K,? extends V> it){
 		return fromMap(defaultCollector(),it);
 	}
-	public static <K,V> MapX<K,V> fromMap(Collector<Tuple2<K,V>,?,Map<K,V>>  collector,Map<K,V> it){
+	public static <K,V> MapX<K,V> fromMap(Collector<Tuple2<? extends K,? extends V>,?,Map<K,V>>  collector,Map<? extends K,? extends V> it){
 		if(it instanceof MapX)
 			return (MapX)it;
 		if(it instanceof Map)
@@ -111,33 +113,31 @@ public interface MapX<K,V> extends Map<K, V>, BiFunctor<K, V>, Functor<V>, Trave
 	
 
 	@Override
-	default int size() {
-		return Traversable.super.size();
-	}
+	int size();
 
 	@Override
 	default boolean allMatch(Predicate<? super Tuple2<K, V>> c) {
-		return Traversable.super.allMatch(c);
+		return SequenceMCollectable.super.allMatch(c);
 	}
 
 	@Override
 	default boolean anyMatch(Predicate<? super Tuple2<K, V>> c) {
-		return Traversable.super.anyMatch(c);
+		return SequenceMCollectable.super.anyMatch(c);
 	}
 
 	@Override
 	default boolean noneMatch(Predicate<? super Tuple2<K, V>> c) {
-		return Traversable.super.noneMatch(c);
+		return SequenceMCollectable.super.noneMatch(c);
 	}
 
 	@Override
 	default Optional<Tuple2<K, V>> max(Comparator<? super Tuple2<K, V>> comparator) {
-		return Traversable.super.max(comparator);
+		return SequenceMCollectable.super.max(comparator);
 	}
 
 	@Override
 	default Optional<Tuple2<K, V>> min(Comparator<? super Tuple2<K, V>> comparator) {
-		return Traversable.super.min(comparator);
+		return SequenceMCollectable.super.min(comparator);
 	}
 	
 

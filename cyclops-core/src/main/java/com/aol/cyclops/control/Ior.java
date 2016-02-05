@@ -51,6 +51,9 @@ public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>, App
 		return (Ior<ST,R>)Applicativable.super.ap1(ap);
 	}
 
+	default <T> Ior<?,T> unit(T unit){
+		return Ior.primary(unit);
+	}
 	Xor<ST,PT> toXor(); //drop ST
 	Xor<ST,PT> toXorDropPrimary(); //drop ST
 	
@@ -64,7 +67,9 @@ public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>, App
 	
 	Ior<PT,ST> swap();
 	Optional<Tuple2<ST,PT>> both();
-	
+	default Value<Optional<Tuple2<ST,PT>>> bothValue(){
+		return ()->both();
+	}
 	default <R1,R2> Ior<R1,R2>  bimap(Function<? super ST,? extends R1> fn1,Function<? super PT,? extends R2> fn2){
 		Eval<Ior<R1,R2>> ptMap = (Eval)Eval.later(()->this.map(fn2)); //force unused secondary to required
 		Eval<Ior<R1,R2>> stMap = (Eval)Eval.later(()->this.secondaryMap(fn1)); //force unused primary to required
@@ -199,6 +204,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>, App
 		public Value<ST> secondaryValue(){
 			return Value.of(()->null);
 		}
+		
 		
 	}
 	@AllArgsConstructor(access=AccessLevel.PRIVATE)

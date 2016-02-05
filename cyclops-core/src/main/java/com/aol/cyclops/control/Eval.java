@@ -35,6 +35,7 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>,  Applicativa
 		return new Always<T>(in->value.get());
 	}
 	
+	
 	public <T> Eval<T> unit(T unit);
 	public <R> Eval<R> map(Function<? super T, ? extends R> mapper);
 	public <R> Eval<R> flatMap(Function<? super T, ? extends Eval<? extends R>> mapper);

@@ -25,9 +25,12 @@ import org.pcollections.PCollection;
 
 import com.aol.cyclops.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.collections.extensions.standard.MapX;
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
 import com.aol.cyclops.lambda.monads.Foldable;
 import com.aol.cyclops.lambda.monads.Functor;
+import com.aol.cyclops.lambda.monads.IterableCollectable;
+import com.aol.cyclops.lambda.monads.IterableFunctor;
 import com.aol.cyclops.lambda.monads.Traversable;
 import com.aol.cyclops.lambda.monads.Unit;
 import com.aol.cyclops.matcher.builders.CheckValues;
@@ -36,13 +39,19 @@ import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.HotStream;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.SequenceMCollectable;
 import com.aol.cyclops.sequence.future.FutureOperations;
+import com.aol.cyclops.sequence.traits.SequenceMCollectable;
 import com.aol.cyclops.trampoline.Trampoline;
 
 //pattern match, for comprehensions
-public interface CollectionX<T> extends Traversable<T>,Iterable<T>,Functor<T>, Foldable<T>,Unit<T>,Collection<T>,SequenceMCollectable<T>{
+public interface CollectionX<T> extends Traversable<T>,
+										IterableCollectable<T>,
+										Iterable<T>,
+										IterableFunctor<T>, Foldable<T>,Unit<T>,Collection<T>,SequenceMCollectable<T>{
 	
+	static <T> CollectionX<T> fromCollection(Collection<T> col){
+		return new CollectionXImpl(col);
+	}
 	@Override
 	default SequenceM<T> stream(){
 		
@@ -164,7 +173,7 @@ public interface CollectionX<T> extends Traversable<T>,Iterable<T>,Functor<T>, F
 	default Optional<T> findAny(){
 		return stream().findAny();
 	}
-	default <K> Map<K, List<T>> groupBy(Function<? super T, ? extends K> classifier) {
+	default <K> MapX<K, List<T>> groupBy(Function<? super T, ? extends K> classifier) {
 		return stream().groupBy(classifier);
 	}
 	CollectionX<T> filter(Predicate<? super T> pred);
@@ -764,6 +773,8 @@ public interface CollectionX<T> extends Traversable<T>,Iterable<T>,Functor<T>, F
         return map(u-> Matchable.of(u).mayMatch(fn1,fn2,fn3,fn4,fn5).orElse(defaultValue));
     }
 
+    
+    
    
 	
 }

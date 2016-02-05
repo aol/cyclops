@@ -7,6 +7,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.lambda.monads.applicative.Applicativable;
 import com.aol.cyclops.lambda.monads.applicative.Applicative;
@@ -30,6 +31,9 @@ public interface FeatureToggle<F> extends Supplier<F>, Value<F>, ToStream<F>,App
 	boolean isDisabled();
 	default <R> FeatureToggle<R> ap1( Applicative<F,R, ?> ap){
 		return (FeatureToggle<R>)Applicativable.super.ap1(ap);
+	}
+	default <T> FeatureToggle<T> unit(T unit){
+		return FeatureToggle.enable(unit);
 	}
 	/**
 	 * @return This monad, wrapped as AnyM
