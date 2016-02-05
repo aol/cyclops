@@ -28,6 +28,7 @@ import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
 import com.aol.cyclops.lambda.monads.Foldable;
 import com.aol.cyclops.lambda.monads.Functor;
+import com.aol.cyclops.lambda.monads.Traversable;
 import com.aol.cyclops.lambda.monads.Unit;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.matcher.recursive.Matchable;
@@ -40,7 +41,7 @@ import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.trampoline.Trampoline;
 
 //pattern match, for comprehensions
-public interface CollectionX<T> extends Iterable<T>,Functor<T>, Foldable<T>,Unit<T>,Collection<T>,SequenceMCollectable<T>{
+public interface CollectionX<T> extends Traversable<T>,Iterable<T>,Functor<T>, Foldable<T>,Unit<T>,Collection<T>,SequenceMCollectable<T>{
 	
 	@Override
 	default SequenceM<T> stream(){
@@ -441,14 +442,14 @@ public interface CollectionX<T> extends Iterable<T>,Functor<T>, Foldable<T>,Unit
 	 * 
 	 * @see org.jooq.lambda.Seq#slice(long, long)
 	 */
-	Collection<T> slice(long from, long to);
+	CollectionX<T> slice(long from, long to);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.jooq.lambda.Seq#sorted(java.util.function.Function)
 	 */
-	<U extends Comparable<? super U>> Collection<T> sorted(Function<? super T, ? extends U> function);
+	<U extends Comparable<? super U>> CollectionX<T> sorted(Function<? super T, ? extends U> function);
 
 	/**
 	 * emit x elements per time period
