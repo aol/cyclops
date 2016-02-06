@@ -15,24 +15,60 @@ import java.util.stream.Stream;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.functions.QuadFunction;
 import com.aol.cyclops.functions.QuintFunction;
 import com.aol.cyclops.functions.TriFunction;
 import com.aol.cyclops.functions.currying.CurryVariance;
-import com.aol.cyclops.lambda.monads.IterableCollectable;
+import com.aol.cyclops.lambda.applicative.Applicative;
+import com.aol.cyclops.lambda.applicative.Applicative2;
+import com.aol.cyclops.lambda.applicative.Applicative3;
+import com.aol.cyclops.lambda.applicative.Applicative4;
+import com.aol.cyclops.lambda.applicative.Applicative5;
+import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicativable;
+import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
+import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative2;
+import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative3;
+import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative4;
+import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative5;
 import com.aol.cyclops.lambda.monads.IterableFunctor;
-import com.aol.cyclops.lambda.monads.applicative.zipping.ZippingApplicativable;
-import com.aol.cyclops.lambda.monads.applicative.zipping.ZippingApplicative;
-import com.aol.cyclops.lambda.monads.applicative.zipping.ZippingApplicative2;
-import com.aol.cyclops.lambda.monads.applicative.zipping.ZippingApplicative3;
-import com.aol.cyclops.lambda.monads.applicative.zipping.ZippingApplicative4;
-import com.aol.cyclops.lambda.monads.applicative.zipping.ZippingApplicative5;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenceX<T>, Comparable<T>,IterableFunctor<T>,ZippingApplicativable<T> {
+	
+	public static class ZippingApplicatives {
+		/**
+		 * Apply a function within the maybe context e.g. 
+		 * 
+		 * <pre>
+		 * {@code 
+		    
+			Maybe<Integer> m = applicative((Integer i)->i+2).ap(Maybe.of(3));
+		 * }
+		 * </pre>
+		 * @param fn
+		 * @return
+		 */
+		public static <T,R> ZippingApplicative<T,R,ListX<R>> applicative(Function<? super T,? extends R> fn){
+			
+			return ()->ListX.of(fn);
+		}
+		public static <T,T2,R> ZippingApplicative2<T,T2,R,ListX<R>> applicative(BiFunction<? super T,? super T2,? extends R> fn){
+			return ()->ListX.of(CurryVariance.curry2(fn));
+		}
+		public static <T,T2,T3,R> ZippingApplicative3<T,T2,T3,R,ListX<R>> applicative(TriFunction<? super T,? super T2,? super T3,? extends R> fn){
+			return ()->ListX.of(CurryVariance.curry3(fn));
+		}
+		public static <T,T2,T3,T4,R> ZippingApplicative4<T,T2,T3,T4,R,ListX<R>> applicative(QuadFunction<? super T,? super T2,? super T3,? super T4,? extends R> fn){
+			return ()->ListX.of(CurryVariance.curry4(fn));
+		}
+		public static <T,T2,T3,T4,T5,R> ZippingApplicative5<T,T2,T3,T4,T5,R,ListX<R>> applicative(QuintFunction<? super T,? super T2,? super T3,? super T4,? super T5,? extends R> fn){
+			return ()->ListX.of(CurryVariance.curry5(fn));
+		}
+	}
 	
 	@Override
 	default <R> ListX<R> ap1( ZippingApplicative<T,R, ?> ap){

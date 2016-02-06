@@ -32,6 +32,10 @@ import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.trycatch.Failure;
 import com.aol.cyclops.trycatch.Success;
 import com.aol.cyclops.trycatch.Try;
+import com.aol.simple.react.stream.lazy.LazyReact;
+import com.aol.simple.react.stream.simple.SimpleReact;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
+import com.aol.simple.react.stream.traits.SimpleReactStream;
 
 import lombok.AllArgsConstructor;
 
@@ -161,5 +165,20 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, ValueObject<T>, Conv
 			 return this.getClass().getSimpleName()+"[" + opt.get() + "]";
 		 return this.getClass().getSimpleName()+"[]";
 	 }
-	 
+
+	default LazyFutureStream<T> toFutureStream(LazyReact reactor) {
+		return reactor.react(this);
+	}
+
+	default LazyFutureStream<T> toFutureStream() {
+		return new LazyReact().react(this);
+	}
+
+	default SimpleReactStream<T> toSimpleReact(SimpleReact reactor) {
+		return reactor.react(this);
+	}
+
+	default SimpleReactStream<T> toSimpleReact() {
+		return new SimpleReact().react(this);
+	}
 }

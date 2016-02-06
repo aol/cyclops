@@ -5,10 +5,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.aol.cyclops.functions.caching.Memoize;
+import com.aol.cyclops.lambda.applicative.Applicativable;
+import com.aol.cyclops.lambda.applicative.Applicative;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.Unit;
-import com.aol.cyclops.lambda.monads.applicative.Applicativable;
-import com.aol.cyclops.lambda.monads.applicative.Applicative;
 import com.aol.cyclops.value.Value;
 
 
@@ -89,8 +89,9 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>,  Applicativa
 	
 	
 	public static class Later<T> implements Eval<T>{
-		private final Function<?,? extends T> s;
-		Later(Function <?,? extends T> s){
+		private final Function<Object,? extends T> s;
+		private final Object VOID = new Object();
+		Later(Function <Object,? extends T> s){
 			this.s = Memoize.memoizeFunction(s);
 		}
 		public <R> Eval<R> map(Function<? super T, ? extends R> mapper){
@@ -102,7 +103,7 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>,  Applicativa
 		}
 		@Override
 		public T get() {
-			return s.apply(null);
+			return s.apply(VOID);
 		}
 		/* (non-Javadoc)
 		 * @see com.aol.cyclops.lambda.monads.Unit#unit(java.lang.Object)
@@ -122,7 +123,7 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>,  Applicativa
 		}
 		public <R> Eval<R> map(Function<? super T, ? extends R> mapper){
 			
-			return new Later<R>(mapper.compose(s));
+			return new Always<R>(mapper.compose(s));
 			
 		}
 		public <R>  Eval<R> flatMap(Function<? super T, ? extends Eval<? extends R>> mapper){

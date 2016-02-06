@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
+import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.monad.AnyM;
 
 public class UnwrapTest {
@@ -24,14 +25,14 @@ public class UnwrapTest {
 	
 	@Test
 	public void unwrapOptional(){
-		Optional<List<String>> stream = AnyM.streamOf("hello","world")
+		Optional<ListX<String>> stream = AnyM.streamOf("hello","world")
 											.asSequence()
 											.toOptional();
 		assertThat(stream.get(),equalTo(Arrays.asList("hello","world")));
 	}
 	@Test
 	public void unwrapOptionalEmpty(){
-		Optional<List<String>> opt = AnyM.streamOf(Optional.empty())
+		Optional<ListX<String>> opt = AnyM.streamOf(Optional.empty())
 											.<String>toSequence()
 											.toOptional();
 		System.out.println(opt);
@@ -39,21 +40,21 @@ public class UnwrapTest {
 	}
 	@Test
 	public void unwrapOptionalList(){
-		Optional<List<String>> stream =AnyM.fromOptional(Optional.of(Arrays.asList("hello","world")))
+		Optional<ListX<String>> stream =AnyM.fromOptional(Optional.of(Arrays.asList("hello","world")))
 												.<String>toSequence()
 												.toOptional();
 		assertThat(stream.get(),equalTo(Arrays.asList("hello","world")));
 	}
 	@Test
 	public void unwrapCompletableFuture(){
-		CompletableFuture<List<String>> cf = AnyM.streamOf("hello","world")
+		CompletableFuture<ListX<String>> cf = AnyM.streamOf("hello","world")
 											.asSequence()
 											.toCompletableFuture();
 		assertThat(cf.join(),equalTo(Arrays.asList("hello","world")));
 	}
 	@Test
 	public void unwrapCompletableFutureList(){
-		CompletableFuture<List<String>> cf = AnyM.fromCompletableFuture(CompletableFuture.completedFuture(Arrays.asList("hello","world")))
+		CompletableFuture<ListX<String>> cf = AnyM.fromCompletableFuture(CompletableFuture.completedFuture(Arrays.asList("hello","world")))
 												.<String>toSequence()
 												.toCompletableFuture();
 		assertThat(cf.join(),equalTo(Arrays.asList("hello","world")));

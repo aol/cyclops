@@ -1,8 +1,11 @@
 package com.aol.cyclops.control;
 
-import org.junit.Test;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+
+import java.util.Optional;
+
+import org.junit.Test;
 public class EvalTest {
 
 	@Test
@@ -58,11 +61,18 @@ public class EvalTest {
 	}
 	
 	public int addOne(Integer i, Integer b){
-		return i+1;
+		return i+b;
 	}
 	@Test
 	public void ap(){
 		
-		Eval.now(10).ap2(Maybe.applicative2((this::addOne))).ap(Eval.now(20));
+	//	System.out.println(Maybe.Applicatives.applicative(this::addOne).ap(Eval.now(10)).ap(Eval.now(30)).get());
+	//	ListX.ZippingApplicatives.applicative(this::addOne);
+		//ApplicativeBuilder.<Integer>of(t->Eval.now(t)).applicative2(this::addOne);
+		System.out.println(Maybe.of(10).applicatives().applicative2(this::addOne).ap(Eval.now(20)).ap(Eval.now(30)).get());
+		System.out.println(Maybe.of(10).applicatives().applicative2(this::addOne).ap(Optional.of(20)).ap(Eval.now(30)).get());
+		System.out.println(Eval.now(10).applicatives().applicative2(this::addOne).ap(Eval.now(20)).ap(Maybe.of(30)).get());
+		
+	//	Eval.now(10).ap2(Maybe.applicativeBuilder().applicative2B(this::addOne).ap(Eval.now(20));
 	}
 }

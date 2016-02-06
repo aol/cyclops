@@ -1,7 +1,11 @@
-package com.aol.cyclops.lambda.monads.applicative;
+package com.aol.cyclops.lambda.applicative;
 
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
+import com.aol.cyclops.control.FutureFunctor;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.lambda.monads.ConvertableFunctor;
 import com.aol.cyclops.lambda.monads.Functor;
 
@@ -26,6 +30,20 @@ public interface Applicative3<T,T2,T3,R, D extends ConvertableFunctor<R>> extend
 		Function<? super T,Function<? super T2, Function<? super T3,? extends R>>> fn = delegate().get();
 		
 		return ()->(ConvertableFunctor)f.map(t->fn.apply(t));
+		
+	}
+	default Applicative2<T2,T3,R,D> ap(Optional<T> f){
+		
+		Function<? super T,Function<? super T2, Function<? super T3,? extends R>>> fn = delegate().get();
+		
+		return ()->(ConvertableFunctor)Maybe.fromOptional(f).map(t->fn.apply(t));
+		
+	}
+	default Applicative2<T2,T3,R,D> ap(CompletableFuture<T> f){
+		
+		Function<? super T,Function<? super T2, Function<? super T3,? extends R>>> fn = delegate().get();
+		
+		return ()->(ConvertableFunctor)new FutureFunctor<>(f).map(t->fn.apply(t));
 		
 	}
 }

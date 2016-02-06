@@ -13,8 +13,6 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,13 +24,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import lombok.Value;
-
 import org.junit.Test;
 
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.SimpleTimer;
+
+import lombok.Value;
 public class BatchingTest {
 	@Test
 	public void batchUntil(){
@@ -305,7 +303,7 @@ public class BatchingTest {
 		
 		for(int i=0;i<10;i++){
 			System.out.println(i);
-			List<List<Integer>> list = of(1,2,3,4,5,6)
+			List<ListX<Integer>> list = of(1,2,3,4,5,6)
 					.batchBySizeAndTime(10,1,TimeUnit.MICROSECONDS)
 					.toList();
 			

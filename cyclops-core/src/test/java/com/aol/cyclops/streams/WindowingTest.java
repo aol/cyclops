@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
 
@@ -100,7 +101,7 @@ public class WindowingTest {
 	public void sliding2() {
 		
 
-		List<List<Integer>> sliding = SequenceM.of(1, 2, 3, 4, 5).sliding(2).toList();
+		List<ListX<Integer>> sliding = SequenceM.of(1, 2, 3, 4, 5).sliding(2).toList();
 
 		assertThat(sliding, contains(asList(1, 2), asList(2, 3), asList(3, 4), asList(4, 5)));
 	}
@@ -108,7 +109,7 @@ public class WindowingTest {
 	@Test
 	public void slidingOverlap() {
 		
-		List<List<Integer>> sliding = SequenceM.of(1, 2, 3, 4, 5).sliding(3,2).toList();
+		List<ListX<Integer>> sliding = SequenceM.of(1, 2, 3, 4, 5).sliding(3,2).toList();
 
 		assertThat(sliding, contains(asList(1, 2, 3), asList(3, 4, 5)));
 	}
@@ -124,7 +125,7 @@ public class WindowingTest {
 	public void slidingWithSmallWindowAtEnd() {
 		
 
-		List<List<Integer>> sliding = SequenceM.of(1, 2, 3, 4, 5).sliding(2,2).toList();
+		List<ListX<Integer>> sliding = SequenceM.of(1, 2, 3, 4, 5).sliding(2,2).toList();
 
 		assertThat(sliding, contains(asList(1, 2), asList(3, 4), asList(5)));
 	}
@@ -188,7 +189,7 @@ public class WindowingTest {
 	public void groupedInfinite() {
 		SequenceM<Integer> infinite = SequenceM.iterate(1, i->i+1);
 		
-		final SequenceM<List<Integer>> grouped = infinite.grouped(3);
+		final SequenceM<ListX<Integer>> grouped = infinite.grouped(3);
 		assertThat(grouped.get(0).get(),equalTo(Arrays.asList(1,2,3)));
 	
 	}

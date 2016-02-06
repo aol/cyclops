@@ -15,8 +15,25 @@ import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.trycatch.Try;
 import com.aol.cyclops.value.Value;
+import com.aol.simple.react.stream.lazy.LazyReact;
+import com.aol.simple.react.stream.simple.SimpleReact;
+import com.aol.simple.react.stream.traits.LazyFutureStream;
+import com.aol.simple.react.stream.traits.SimpleReactStream;
 
 public interface ConvertableSequence<T> extends Iterable<T>{
+	
+	default LazyFutureStream<T> toFutureStream(LazyReact reactor){
+		return reactor.fromIterable(this);
+	}
+	default LazyFutureStream<T> toFutureStream(){
+		return new LazyReact().fromIterable(this);
+	}
+	default SimpleReactStream<T> toSimpleReact(SimpleReact reactor){
+		return reactor.fromIterable(this);
+	}
+	default SimpleReactStream<T> toSimpleReact(){
+		return new SimpleReact().fromIterable(this);
+	}
 	/**
 	 *  
 	 * <pre>

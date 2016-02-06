@@ -2,6 +2,8 @@ package com.aol.cyclops.monad;
 
 
 
+import static com.aol.cyclops.monad.Utils.firstOrNull;
+
 import java.io.File;
 import java.net.URL;
 import java.util.Collection;
@@ -30,7 +32,10 @@ import org.jooq.lambda.function.Function3;
 import org.jooq.lambda.function.Function4;
 import org.jooq.lambda.function.Function5;
 
+import com.aol.cyclops.closures.Convertable;
 import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.lambda.applicative.Applicativable;
+import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.lambda.monads.EmptyUnit;
 import com.aol.cyclops.lambda.monads.FlatMap;
 import com.aol.cyclops.lambda.monads.Foldable;
@@ -42,6 +47,7 @@ import com.aol.cyclops.sequence.Unwrapable;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.sequence.streamable.ToStream;
 import com.aol.cyclops.sequence.traits.ConvertableSequence;
+import com.aol.cyclops.value.Value;
 
 /**
  * 
@@ -55,7 +61,7 @@ import com.aol.cyclops.sequence.traits.ConvertableSequence;
 
 public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Functor<T>,
 									FlatMap<T>,ToStream<T>, ApplyM<T>,FlatMapM<T>,ReduceM<T>,
-									ConvertableSequence<T>{
+									ConvertableSequence<T>, ZippingApplicativable<T>{
 	
 	/* Convert this AnyM to a Stream (SequenceM)
 	 * Chooses the most appropriate of asSequence() and toSequence()
@@ -68,7 +74,9 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	public SequenceM<T> stream();
 	
 	
-	
+	default Value<T> toFirstValue(){
+		return ()-> firstOrNull(toList());
+	}
 	
 	 /* 
 	  * Unwraps the wrapped monad, in it's current state.
@@ -547,6 +555,11 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	public <R, A> R collect(Collector<? super T, A, R> collector);
 	
 	
+	
+
+
+
+
 	/**
 	 * Construct an AnyM instance that wraps a range from start (inclusive) to end (exclusive) provided
 	 * 
@@ -927,8 +940,8 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @param fn Function to apply 
 	 * @return Monad with a list
 	 */
-	public static <T,R> AnyM<List<R>> traverse(Collection<AnyM<T>> seq, Function<T,R> fn){
-		return AnyMFactory.instance.anyMonads().traverse(seq,fn);
+	public static <T,R> AnyM<ListX<R>> traverse(Collection<AnyM<T>> seq, Function<T,R> fn){
+		return new AnyMonads().traverse(seq,fn);
 	}
 	/**
 	 * Convert a Stream of Monads to a Monad with a List applying the supplied function in the process
@@ -943,9 +956,9 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @param fn Function to apply 
 	 * @return Monad with a list
 	 */
-	public static <T,R> AnyM<List<R>> traverse(Stream<AnyM<T>> seq, Function<T,R> fn){
+	public static <T,R> AnyM<ListX<R>> traverse(Stream<AnyM<T>> seq, Function<T,R> fn){
 		
-		return AnyMFactory.instance.anyMonads().traverse(seq,fn);
+		return new AnyMonads().traverse(seq,fn);
 	}
 
 	
@@ -964,8 +977,8 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @param seq Collection of monads to convert
 	 * @return Monad with a List
 	 */ 
-	public static <T1>  AnyM<Stream<T1>> sequence(Collection<AnyM<T1>> seq){
-		return AnyMFactory.instance.anyMonads().sequence(seq);
+	public static <T1>  AnyM<SequenceM<T1>> sequence(Collection<AnyM<T1>> seq){
+		return new AnyMonads().sequence(seq);
 	}
 	/**
 	 * Convert a Stream of Monads to a Monad with a List
@@ -981,8 +994,8 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @param seq Stream of monads to convert
 	 * @return Monad with a List
 	 */
-	public static <T1>  AnyM<Stream<T1>> sequence(Stream<AnyM<T1>> seq){
-		return AnyMFactory.instance.anyMonads().sequence(seq);
+	public static <T1>  AnyM<SequenceM<T1>> sequence(Stream<AnyM<T1>> seq){
+		return new AnyMonads().sequence(seq);
 	}
 	/**
 	 * Lift a function so it accepts an AnyM and returns an AnyM (any monad)

@@ -1,4 +1,4 @@
-package com.aol.cyclops.lambda.monads.applicative;
+package com.aol.cyclops.lambda.applicative;
 
 import java.util.function.Function;
 
@@ -24,4 +24,5 @@ public interface Applicative<T,R, D extends ConvertableFunctor<R>> extends Funct
 		return (D)f.map(t->fn.apply(t));
 		
 	}
+	
 }

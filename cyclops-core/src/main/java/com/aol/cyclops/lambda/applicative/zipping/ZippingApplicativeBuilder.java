@@ -1,4 +1,4 @@
-package com.aol.cyclops.lambda.monads.applicative.zipping;
+package com.aol.cyclops.lambda.applicative.zipping;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;

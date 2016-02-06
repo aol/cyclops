@@ -50,6 +50,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	}
 	
 	
+	
 	/**
 	 * Collect the contents of the monad wrapped by this AnyM into supplied collector
 	 */
@@ -564,6 +565,16 @@ public class AnyMImpl<T> implements AnyM<T>{
 	@Override
 	public <T> AnyM<T> emptyUnit() {
 		return new AnyMImpl(monad.empty(),initialType);
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.IterableFunctor#unitIterator(java.util.Iterator)
+	 */
+	@Override
+	public <U> AnyM<U> unitIterator(Iterator<U> it) {
+		return AnyM.fromIterable(()->it);
 	}
 	
 }

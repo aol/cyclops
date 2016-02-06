@@ -9,9 +9,11 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.AsGenericMonad;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.sequence.SequenceM;
 
 
 public class AnyMonads implements AnyMFunctions{
@@ -34,11 +36,11 @@ public class AnyMonads implements AnyMFunctions{
 	 * @param fn Function to apply 
 	 * @return Monad with a list
 	 */
-	public  <T,R> AnyM<List<R>> traverse(Collection<AnyM<T>> seq, Function<T,R> fn){
+	public  <T,R> AnyM<ListX<R>> traverse(Collection<AnyM<T>> seq, Function<? super T,? extends R> fn){
 		if(seq.size()==0)
 			return AnyM.ofMonad(Optional.empty());
 		return asMonad(new ComprehenderSelector().selectComprehender(seq.iterator().next().unwrap().getClass()).of(1))
-								.flatMap(in-> asMonad(seq.stream().map(it->it.unwrap())).flatten().flatMap((Function)fn).unwrap()
+								.flatMap(in-> asMonad(seq.stream().map(it->it.unwrap())).flatten().flatMap((Function)fn).map(ListX::of).unwrap()
 									).anyM();
 	}
 	/**
@@ -54,10 +56,10 @@ public class AnyMonads implements AnyMFunctions{
 	 * @param fn Function to apply 
 	 * @return Monad with a list
 	 */
-	public  <T,R> AnyM<List<R>> traverse(Stream<AnyM<T>> seq, Function<T,R> fn){
+	public  <T,R> AnyM<ListX<R>> traverse(Stream<AnyM<T>> seq, Function<? super T,? extends R> fn){
 		
 		return asMonad(Stream.of(1))
-								.flatMap(in-> asMonad(seq).flatten().flatMap((Function)fn).unwrap()
+								.flatMap(in-> asMonad(seq).flatten().flatMap((Function)fn).map(ListX::of).unwrap()
 									).anyM();
 	}
 
@@ -77,7 +79,7 @@ public class AnyMonads implements AnyMFunctions{
 	 * @param seq Collection of monads to convert
 	 * @return Monad with a List
 	 */ 
-	public  <T1>  AnyM<Stream<T1>> sequence(Collection<AnyM<T1>> seq){
+	public  <T1>  AnyM<SequenceM<T1>> sequence(Collection<AnyM<T1>> seq){
 		if(seq.size()==0)
 			return AnyM.ofMonad(Optional.empty());
 		else
@@ -98,7 +100,7 @@ public class AnyMonads implements AnyMFunctions{
 	 * @param seq Stream of monads to convert
 	 * @return Monad with a List
 	 */
-	public  <T1>  AnyM<Stream<T1>> sequence(Stream<AnyM<T1>> seq){
+	public  <T1>  AnyM<SequenceM<T1>> sequence(Stream<AnyM<T1>> seq){
 			return AsGenericMonad.asMonad(Stream.of(1))
 										.flatMap(in-> AsGenericMonad.asMonad(seq.map(it->it.unwrap()))
 												.flatten().unwrap())

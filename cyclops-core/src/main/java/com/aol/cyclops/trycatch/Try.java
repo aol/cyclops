@@ -13,8 +13,8 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
-import com.aol.cyclops.lambda.monads.applicative.Applicativable;
-import com.aol.cyclops.lambda.monads.applicative.Applicative;
+import com.aol.cyclops.lambda.applicative.Applicativable;
+import com.aol.cyclops.lambda.applicative.Applicative;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.ToStream;

@@ -10,11 +10,9 @@ import com.aol.cyclops.monad.AnyM;
 
 import lombok.Value;
 
-public interface FlatMap<T> extends Functor<T> {
+public interface FlatMap<T> extends Functor<T>, ToAnyM<T> {
 
-	default AnyM<T> anyM(){
-		return AnyM.ofMonad(this);
-	}
+	
 	public <R> FlatMap<R> flatten();
 	
 	default<T2> Apply2<T,T2> zipWith(Functor<T2> functor){

@@ -8,9 +8,9 @@ import java.util.function.Supplier;
 
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.functions.fluent.FluentFunctions;
+import com.aol.cyclops.lambda.applicative.Applicativable;
+import com.aol.cyclops.lambda.applicative.Applicative;
 import com.aol.cyclops.lambda.monads.Functor;
-import com.aol.cyclops.lambda.monads.applicative.Applicativable;
-import com.aol.cyclops.lambda.monads.applicative.Applicative;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;

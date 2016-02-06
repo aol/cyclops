@@ -1,4 +1,4 @@
-package com.aol.cyclops.lambda.monads.applicative.zipping;
+package com.aol.cyclops.lambda.applicative.zipping;
 
 import com.aol.cyclops.lambda.monads.IterableFunctor;
 import com.aol.cyclops.lambda.monads.Unit;
