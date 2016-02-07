@@ -1,22 +1,46 @@
 package com.aol.cyclops.collections.extensions.standard;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
+import org.jooq.lambda.tuple.Tuple4;
 
+import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.persistent.PBagX;
+import com.aol.cyclops.lambda.monads.Functor;
+import com.aol.cyclops.lambda.monads.Traversable;
+import com.aol.cyclops.matcher.Case;
+import com.aol.cyclops.matcher.builders.CheckValues;
+import com.aol.cyclops.sequence.HeadAndTail;
+import com.aol.cyclops.sequence.HotStream;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.sequence.future.FutureOperations;
+import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.sequence.traits.lazy.LazyCollectable;
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.trampoline.Trampoline;
 
@@ -247,4 +271,343 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 		removeAll(list);
 		return this;
 	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.CollectionX#peek(java.util.function.Consumer)
+	 */
+	@Override
+	default DequeX<T> peek(Consumer<? super T> c) {
+		return (DequeX<T>)MutableCollectionX.super.peek(c);
+	}
+
+
+
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function)
+	 */
+	@Override
+	default <R> DequeX<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
+		return (DequeX<R>)MutableCollectionX.super.patternMatch(defaultValue, case1);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <R> DequeX<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case2) {
+		
+		return (DequeX<R>)MutableCollectionX.super.patternMatch(defaultValue, case1, case2);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <R> DequeX<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3) {
+		
+		return (DequeX<R>)MutableCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <R> DequeX<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4) {
+		
+		return (DequeX<R>)MutableCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <R> DequeX<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn5) {
+		
+		return (DequeX<R>)MutableCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4, fn5);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#cycle(int)
+	 */
+	@Override
+	default DequeX<T> cycle(int times) {
+	
+		return (DequeX<T>)MutableCollectionX.super.cycle(times);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#cycle(com.aol.cyclops.sequence.Monoid, int)
+	 */
+	@Override
+	default DequeX<T> cycle(Monoid<T> m, int times) {
+		
+		return (DequeX<T>)MutableCollectionX.super.cycle(m, times);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#cycleWhile(java.util.function.Predicate)
+	 */
+	@Override
+	default DequeX<T> cycleWhile(Predicate<? super T> predicate) {
+		
+		return (DequeX<T>)MutableCollectionX.super.cycleWhile(predicate);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#cycleUntil(java.util.function.Predicate)
+	 */
+	@Override
+	default DequeX<T> cycleUntil(Predicate<? super T> predicate) {
+		
+		return (DequeX<T>)MutableCollectionX.super.cycleUntil(predicate);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#zipStream(java.util.stream.Stream)
+	 */
+	@Override
+	default <U> DequeX<Tuple2<T, U>> zipStream(Stream<U> other) {
+		
+		return (DequeX<Tuple2<T, U>>)MutableCollectionX.super.zipStream(other);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#zip(org.jooq.lambda.Seq)
+	 */
+	@Override
+	default <U> DequeX<Tuple2<T, U>> zip(Seq<U> other) {
+		
+		return (DequeX<Tuple2<T, U>>)MutableCollectionX.super.zip(other);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
+	 */
+	@Override
+	default <S, U> DequeX<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third) {
+		
+		return (DequeX)MutableCollectionX.super.zip3(second, third);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+	 */
+	@Override
+	default <T2, T3, T4> DequeX<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
+			Stream<T4> fourth) {
+		
+		return (DequeX<Tuple4<T, T2, T3, T4>>)MutableCollectionX.super.zip4(second, third, fourth);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#zipWithIndex()
+	 */
+	@Override
+	default DequeX<Tuple2<T, Long>> zipWithIndex() {
+		//
+		return (DequeX<Tuple2<T, Long>>)MutableCollectionX.super.zipWithIndex();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#distinct()
+	 */
+	@Override
+	default DequeX<T> distinct() {
+		
+		return (DequeX<T>)MutableCollectionX.super.distinct();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#sorted()
+	 */
+	@Override
+	default DequeX<T> sorted() {
+		
+		return (DequeX<T>)MutableCollectionX.super.sorted();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#sorted(java.util.Comparator)
+	 */
+	@Override
+	default DequeX<T> sorted(Comparator<? super T> c) {
+		
+		return (DequeX<T>)MutableCollectionX.super.sorted(c);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#skipWhile(java.util.function.Predicate)
+	 */
+	@Override
+	default DequeX<T> skipWhile(Predicate<? super T> p) {
+		
+		return (DequeX<T>)MutableCollectionX.super.skipWhile(p);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#skipUntil(java.util.function.Predicate)
+	 */
+	@Override
+	default DequeX<T> skipUntil(Predicate<? super T> p) {
+		
+		return (DequeX<T>)MutableCollectionX.super.skipUntil(p);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#limitWhile(java.util.function.Predicate)
+	 */
+	@Override
+	default DequeX<T> limitWhile(Predicate<? super T> p) {
+		
+		return (DequeX<T>)MutableCollectionX.super.limitWhile(p);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#limitUntil(java.util.function.Predicate)
+	 */
+	@Override
+	default DequeX<T> limitUntil(Predicate<? super T> p) {
+		
+		return (DequeX<T>)MutableCollectionX.super.limitUntil(p);
+	}
+
+	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#intersperse(java.lang.Object)
+	 */
+	@Override
+	default DequeX<T> intersperse(T value) {
+		
+		return (DequeX<T>)MutableCollectionX.super.intersperse(value);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#shuffle()
+	 */
+	@Override
+	default DequeX<T> shuffle() {
+		
+		return (DequeX<T>)MutableCollectionX.super.shuffle();
+	}
+
+	
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#skipLast(int)
+	 */
+	@Override
+	default DequeX<T> skipLast(int num) {
+		
+		return (DequeX<T>)MutableCollectionX.super.skipLast(num);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#limitLast(int)
+	 */
+	@Override
+	default DequeX<T> limitLast(int num) {
+		
+		return (DequeX<T>)MutableCollectionX.super.limitLast(num);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#onEmpty(java.lang.Object)
+	 */
+	@Override
+	default DequeX<T> onEmpty(T value) {
+		
+		return (DequeX<T>)MutableCollectionX.super.onEmpty(value);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#onEmptyGet(java.util.function.Supplier)
+	 */
+	@Override
+	default DequeX<T> onEmptyGet(Supplier<T> supplier) {
+		
+		return (DequeX<T>)MutableCollectionX.super.onEmptyGet(supplier);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#onEmptyThrow(java.util.function.Supplier)
+	 */
+	@Override
+	default <X extends Throwable> DequeX<T> onEmptyThrow(Supplier<X> supplier) {
+		
+		return (DequeX<T>)MutableCollectionX.super.onEmptyThrow(supplier);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#shuffle(java.util.Random)
+	 */
+	@Override
+	default DequeX<T> shuffle(Random random) {
+		
+		return (DequeX<T>)MutableCollectionX.super.shuffle(random);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#permutations()
+	 */
+	@Override
+	default DequeX<SequenceM<T>> permutations() {
+		
+		return (DequeX<SequenceM<T>>)MutableCollectionX.super.permutations();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#combinations(int)
+	 */
+	@Override
+	default DequeX<SequenceM<T>> combinations(int size) {
+		
+		return (DequeX<SequenceM<T>>)MutableCollectionX.super.combinations(size);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#combinations()
+	 */
+	@Override
+	default DequeX<SequenceM<T>> combinations() {
+		
+		return (DequeX<SequenceM<T>>)MutableCollectionX.super.combinations();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
+	 */
+	@Override
+	default <U> DequeX<U> cast(Class<U> type) {
+	
+		return (DequeX<U>)MutableCollectionX.super.cast(type);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#when(com.aol.cyclops.matcher.Case[])
+	 */
+	@Override
+	default <R> DequeX<Optional<R>> when(Case<T, R, Function<T, R>>... cases) {
+		
+		return (DequeX<Optional<R>>)MutableCollectionX.super.when(cases);
+	}
+	
+	
 }

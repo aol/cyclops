@@ -326,7 +326,7 @@ public interface CollectionX<T> extends Traversable<T>,
 	 *            Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	default <R1, R2, R> CollectionX<R> forEach3(Function<? super T, Iterable<R1>> stream1,
+	default <R1, R2, R> SequenceM<R> forEach3(Function<? super T, Iterable<R1>> stream1,
 			Function<? super T, Function<? super R1, Iterable<R2>>> stream2,
 			Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction){
 		return Do.add(stream())
