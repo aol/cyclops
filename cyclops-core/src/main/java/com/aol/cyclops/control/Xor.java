@@ -62,6 +62,12 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 	
 	Xor<PT,ST> swap();
 	
+	default <R1,R2> Xor<R1,R2> when(Function<? super ST,? extends R1> secondary, 
+			Function<? super PT,? extends R2> primary){
+		if(isSecondary())
+			return (Xor<R1,R2>)swap().map(secondary);
+		return (Xor<R1,R2>)map(primary);
+	}
 	
 	
 	PT get();

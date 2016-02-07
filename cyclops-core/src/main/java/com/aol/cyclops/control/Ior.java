@@ -83,6 +83,14 @@ public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>,Filt
 		
 		return Ior.both(stMap.get(),ptMap.get());
 	}
+	default <R1,R2> Ior<R1,R2> when(Function<? super ST,? extends R1> secondary, 
+			Function<? super PT,? extends R2> primary){
+		if(isSecondary())
+			return (Ior<R1,R2>)swap().map(secondary);
+		if(isPrimary())
+			return (Ior<R1,R2>)map(primary);
+		return bimap(secondary,primary);
+	}
 	PT get();
 
 	Value<ST> secondaryValue();
