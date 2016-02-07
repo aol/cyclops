@@ -3,9 +3,13 @@ package com.aol.cyclops.collections.extensions.standard;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
@@ -14,7 +18,11 @@ import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
+import org.jooq.lambda.tuple.Tuple4;
 
+import com.aol.cyclops.collections.extensions.CollectionX;
+import com.aol.cyclops.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.functions.QuadFunction;
 import com.aol.cyclops.functions.QuintFunction;
@@ -31,7 +39,11 @@ import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative2;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative3;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative4;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative5;
+import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.IterableFunctor;
+import com.aol.cyclops.lambda.monads.Traversable;
+import com.aol.cyclops.matcher.Case;
+import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
@@ -334,5 +346,276 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	int size();
 
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.FluentCollectionX#plusInOrder(java.lang.Object)
+	 */
+	@Override
+	default ListX<T> plusInOrder(T e) {
+		
+		return (ListX<T>)MutableSequenceX.super.plusInOrder(e);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.CollectionX#peek(java.util.function.Consumer)
+	 */
+	@Override
+	default ListX<T> peek(Consumer<? super T> c) {
+		
+		return (ListX<T>)MutableCollectionX.super.peek(c);
+	}
+
+	
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function)
+	 */
+	@Override
+	default <R> ListX<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
+		
+		return (ListX<R>)MutableCollectionX.super.patternMatch(defaultValue, case1);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <R> ListX<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case2) {
+		
+		return (ListX<R>)MutableCollectionX.super.patternMatch(defaultValue, case1, case2);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <R> ListX<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3) {
+		
+		return (ListX<R>)MutableCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <R> ListX<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4) {
+		
+		return (ListX<R>)MutableCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <R> ListX<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn5) {
+		
+		return (ListX<R>)MutableCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4, fn5);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#cycle(int)
+	 */
+	@Override
+	default ListX<T> cycle(int times) {
+		
+		return (ListX<T>)MutableCollectionX.super.cycle(times);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#cycle(com.aol.cyclops.sequence.Monoid, int)
+	 */
+	@Override
+	default ListX<T> cycle(Monoid<T> m, int times) {
+		
+		return (ListX<T>)MutableCollectionX.super.cycle(m, times);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#cycleWhile(java.util.function.Predicate)
+	 */
+	@Override
+	default ListX<T> cycleWhile(Predicate<? super T> predicate) {
+		
+		return (ListX<T>)MutableCollectionX.super.cycleWhile(predicate);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#cycleUntil(java.util.function.Predicate)
+	 */
+	@Override
+	default ListX<T> cycleUntil(Predicate<? super T> predicate) {
+		
+		return (ListX<T>)MutableCollectionX.super.cycleUntil(predicate);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#zipStream(java.util.stream.Stream)
+	 */
+	@Override
+	default <U> ListX<Tuple2<T, U>> zipStream(Stream<U> other) {
+
+		return (ListX<Tuple2<T, U>>)MutableCollectionX.super.zipStream(other);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#zip(org.jooq.lambda.Seq)
+	 */
+	@Override
+	default <U> ListX<Tuple2<T, U>> zip(Seq<U> other) {
+		
+		return (ListX<Tuple2<T, U>>)MutableCollectionX.super.zip(other);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
+	 */
+	@Override
+	default <S, U> ListX<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third) {
+		
+		return (ListX)MutableCollectionX.super.zip3(second, third);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+	 */
+	@Override
+	default <T2, T3, T4> ListX<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
+			Stream<T4> fourth) {
+		
+		return (ListX)MutableCollectionX.super.zip4(second, third, fourth);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#zipWithIndex()
+	 */
+	@Override
+	default ListX<Tuple2<T, Long>> zipWithIndex() {
+		
+		return (ListX)MutableCollectionX.super.zipWithIndex();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#sorted()
+	 */
+	@Override
+	default ListX<T> sorted() {
+		
+		return (ListX<T>)MutableCollectionX.super.sorted();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#sorted(java.util.Comparator)
+	 */
+	@Override
+	default ListX<T> sorted(Comparator<? super T> c) {
+		
+		return (ListX<T>)MutableCollectionX.super.sorted(c);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#skipWhile(java.util.function.Predicate)
+	 */
+	@Override
+	default ListX<T> skipWhile(Predicate<? super T> p) {
+		
+		return (ListX<T>)MutableCollectionX.super.skipWhile(p);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#skipUntil(java.util.function.Predicate)
+	 */
+	@Override
+	default ListX<T> skipUntil(Predicate<? super T> p) {
+		
+		return (ListX<T>)MutableCollectionX.super.skipUntil(p);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#shuffle()
+	 */
+	@Override
+	default ListX<T> shuffle() {
+		
+		return (ListX<T>)MutableCollectionX.super.shuffle();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#skipLast(int)
+	 */
+	@Override
+	default ListX<T> skipLast(int num) {
+		
+		return (ListX<T>)MutableCollectionX.super.skipLast(num);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#shuffle(java.util.Random)
+	 */
+	@Override
+	default ListX<T> shuffle(Random random) {
+		
+		return (ListX<T>)MutableCollectionX.super.shuffle(random);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#permutations()
+	 */
+	@Override
+	default ListX<SequenceM<T>> permutations() {
+		
+		return (ListX<SequenceM<T>>)MutableCollectionX.super.permutations();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#combinations(int)
+	 */
+	@Override
+	default ListX<SequenceM<T>> combinations(int size) {
+		
+		return (ListX<SequenceM<T>>)MutableCollectionX.super.combinations(size);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#combinations()
+	 */
+	@Override
+	default ListX<SequenceM<T>> combinations() {
+		
+		return (ListX<SequenceM<T>>)MutableCollectionX.super.combinations();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
+	 */
+	@Override
+	default <U> ListX<U> cast(Class<U> type) {
+		
+		return (ListX<U>)MutableCollectionX.super.cast(type);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#when(com.aol.cyclops.matcher.Case[])
+	 */
+	@Override
+	default <R> ListX<Optional<R>> when(Case<T, R, Function<T, R>>... cases) {
+		
+		return (ListX<Optional<R>>)MutableCollectionX.super.when(cases);
+	}
+
+	
 	
 }

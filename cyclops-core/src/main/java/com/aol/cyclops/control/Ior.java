@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import org.jooq.lambda.tuple.Tuple;
@@ -15,6 +16,7 @@ import com.aol.cyclops.functions.fluent.FluentFunctions;
 import com.aol.cyclops.lambda.applicative.Applicativable;
 import com.aol.cyclops.lambda.applicative.Applicative;
 import com.aol.cyclops.lambda.monads.BiFunctor;
+import com.aol.cyclops.lambda.monads.Filterable;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
@@ -33,7 +35,7 @@ import lombok.AllArgsConstructor;
  * @param <ST> Secondary type
  * @param <PT> Primary type
  */
-public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>, Applicativable<PT>{
+public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>,Filterable<PT>,Applicativable<PT>{
 
 	public static <ST,PT> Ior<ST,PT> primary(PT primary){
 		return new Primary<>(primary);
@@ -54,6 +56,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>, App
 	default <T> Ior<?,T> unit(T unit){
 		return Ior.primary(unit);
 	}
+	Ior<ST,PT> filter(Predicate<? super PT> test);
 	Xor<ST,PT> toXor(); //drop ST
 	Xor<ST,PT> toXorDropPrimary(); //drop ST
 	
@@ -131,6 +134,11 @@ public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>, App
 		public Ior<ST, PT> peek(Consumer<? super PT> action) {
 			action.accept(value);
 			return this;
+		}
+		public Ior<ST,PT> filter(Predicate<? super PT> test){
+			if(test.test(value))
+				return this;
+			return Ior.secondary(null);
 		}
 		@Override
 		public<R1,R2> Ior<R1,R2>  bimap(Function<? super ST,? extends R1> fn1,Function<? super PT,? extends R2> fn2){
@@ -247,6 +255,9 @@ public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>, App
 		public Ior<ST, PT> peek(Consumer<? super PT> action) {
 			return this;
 		}
+		public Ior<ST,PT> filter(Predicate<? super PT> test){
+			return this;
+		}
 		@Override
 		public <R1,R2> Ior<R1,R2>  bimap(Function<? super ST,? extends R1> fn1,Function<? super PT,? extends R2> fn2){
 			return Ior.<R1,R2>secondary(fn1.apply(value));		
@@ -342,6 +353,9 @@ public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>, App
 		public Ior<ST, PT> peek(Consumer<? super PT> action) {
 			primary.peek(action);
 			return this;
+		}
+		public Ior<ST,PT> filter(Predicate<? super PT> test){
+			return primary.filter(test);
 		}
 		@Override
 		public Ior<PT, ST> swap() {

@@ -1,6 +1,7 @@
 package com.aol.cyclops.matcher;
 
-import static org.hamcrest.Matchers.equalTo;
+import static com.aol.cyclops.matcher.Predicates.__;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -13,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import com.aol.cyclops.matcher.recursive.Matchable;
@@ -23,6 +25,19 @@ public class MatchableTest {
 	@Test
 	public void testMatch(){
 		
+		Matchable.of(new NestedCase(1,2,new NestedCase(3,4,null)))
+		 			.matches(c->c.hasValues(1,__,Predicates.hasValues(3,4,__))
+				 	.then(i->"2"));
+		Matchable.of(Arrays.asList(1,2,3))
+		 		 .matches(c->c.hasValues(1,__,3)
+		 				 	.then(i->"2"));
+		Matchable.of(Arrays.asList(1,2,3))
+		 .matches(c->c.hasValuesWhere(t->t.equals(1),Predicates.__,t->t.equals(3))
+				 	.then(i->"2"));
+		
+		Matchable.of(Arrays.asList(1,2,3))
+					.matches(c->c.hasValuesMatching(equalTo(1),any(Integer.class),equalTo(4))
+							.then(i->"2"));
 		assertThat(new MyCase<Integer>(4,5,6).matches(c ->
 								c.isType((MyCase<Integer> ce) -> "hello").anyValues()
 							) ,
@@ -35,6 +50,12 @@ public class MatchableTest {
 		int a;
 		int b;
 		int c;
+	}
+	@Value
+	static class NestedCase  implements Matchable<MyCase<R>>{
+		int a;
+		int b;
+		NestedCase c;
 	}
 	@Test
 	public void singleCase(){

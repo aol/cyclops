@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-import com.aol.cyclops.control.FutureFunctor;
+import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.lambda.monads.ConvertableFunctor;
 import com.aol.cyclops.lambda.monads.Functor;
@@ -46,7 +46,7 @@ public interface Applicative2<T,T2,R, D extends ConvertableFunctor<R>> extends F
 		
 		Function<? super T,Function<? super T2,? extends R>> fn = delegate().get();
 		
-		return ()->(ConvertableFunctor)new FutureFunctor<>(f).map(t->fn.apply(t));
+		return ()->(ConvertableFunctor)new FutureW<>(f).map(t->fn.apply(t));
 		
 	}
 }

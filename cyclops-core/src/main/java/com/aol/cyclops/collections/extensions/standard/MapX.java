@@ -1,5 +1,6 @@
 package com.aol.cyclops.collections.extensions.standard;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -16,6 +17,7 @@ import org.jooq.lambda.Collectable;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
+import com.aol.cyclops.collections.extensions.FluentMapX;
 import com.aol.cyclops.lambda.monads.BiFunctor;
 import com.aol.cyclops.lambda.monads.Foldable;
 import com.aol.cyclops.lambda.monads.Functor;
@@ -26,7 +28,7 @@ import com.aol.cyclops.sequence.traits.SequenceMCollectable;
 import com.aol.cyclops.streams.StreamUtils;
 
 
-public interface MapX<K,V> extends Map<K, V>, BiFunctor<K, V>, Functor<V>, Traversable<Tuple2<K, V>>, Foldable<Tuple2<K,V>>,
+public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,BiFunctor<K, V>, Functor<V>, Traversable<Tuple2<K, V>>, Foldable<Tuple2<K,V>>,
 												SequenceMCollectable<Tuple2<K,V>>,
 												IterableCollectable<Tuple2<K,V>>{
 
@@ -139,6 +141,22 @@ public interface MapX<K,V> extends Map<K, V>, BiFunctor<K, V>, Functor<V>, Trave
 	default Optional<Tuple2<K, V>> min(Comparator<? super Tuple2<K, V>> comparator) {
 		return SequenceMCollectable.super.min(comparator);
 	}
+	@Override
+	default MapX<K,V> plus(K key, V value){
+		return (MapX<K,V>)FluentMapX.super.plus(key,value);
+	}
 	
+	@Override
+	default MapX<K,V> plusAll(Map<? extends K, ? extends V> map){
+		return (MapX<K,V>)FluentMapX.super.plusAll(map);
+	}
+	
+	default MapX<K,V> minus(Object key){
+		return (MapX<K,V>)FluentMapX.super.minus(key);
+	}
+	
+	default MapX<K,V> minusAll(Collection<?> keys){
+		return (MapX<K,V>)FluentMapX.super.minusAll(keys);
+	}
 
 }

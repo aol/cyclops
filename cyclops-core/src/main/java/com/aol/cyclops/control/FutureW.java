@@ -16,14 +16,14 @@ import com.aol.cyclops.value.Value;
 
 import lombok.AllArgsConstructor;
 @AllArgsConstructor
-public class FutureFunctor<T> implements ConvertableFunctor<T>,
+public class FutureW<T> implements ConvertableFunctor<T>,
 											Applicativable<T>, 
 											Value<T>, 
 											FlatMap<T>,
 											ToAnyM<T>{
 
-	public static <T> FutureFunctor<T> of(CompletableFuture<T> f){
-		return new FutureFunctor<>(f);
+	public static <T> FutureW<T> of(CompletableFuture<T> f){
+		return new FutureW<>(f);
 	}
 
 	//public static 
@@ -31,7 +31,7 @@ public class FutureFunctor<T> implements ConvertableFunctor<T>,
 
 	@Override
 	public <R> Functor<R> map(Function<? super T, ? extends R> fn) {
-		return new FutureFunctor<R>(future.thenApply(fn));
+		return new FutureW<R>(future.thenApply(fn));
 	}
 
 	@Override
@@ -47,8 +47,8 @@ public class FutureFunctor<T> implements ConvertableFunctor<T>,
 	 * @see com.aol.cyclops.lambda.monads.Unit#unit(java.lang.Object)
 	 */
 	@Override
-	public <T> FutureFunctor<T> unit(T unit) {
-		return new FutureFunctor<T>(CompletableFuture.completedFuture(unit));
+	public <T> FutureW<T> unit(T unit) {
+		return new FutureW<T>(CompletableFuture.completedFuture(unit));
 	}
 
 	@Override
@@ -57,11 +57,11 @@ public class FutureFunctor<T> implements ConvertableFunctor<T>,
 	}
 
 	@Override
-	public <R> FutureFunctor<R> flatten() {
-		return FutureFunctor.of(AnyM.fromCompletableFuture(future).flatten().unwrap());
+	public <R> FutureW<R> flatten() {
+		return FutureW.of(AnyM.fromCompletableFuture(future).flatten().unwrap());
 	}
-	public <R> FutureFunctor<R> flatMap(Function<? super T, ? extends CompletionStage<? extends R>> mapper){
-		return FutureFunctor.<R>of(future.<R>thenCompose(t->(CompletionStage)mapper.apply(t)));
+	public <R> FutureW<R> flatMap(Function<? super T, ? extends CompletionStage<? extends R>> mapper){
+		return FutureW.<R>of(future.<R>thenCompose(t->(CompletionStage)mapper.apply(t)));
 		
 	}
 }

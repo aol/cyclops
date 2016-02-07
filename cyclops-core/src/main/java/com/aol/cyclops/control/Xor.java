@@ -4,12 +4,14 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.functions.fluent.FluentFunctions;
 import com.aol.cyclops.lambda.applicative.Applicativable;
 import com.aol.cyclops.lambda.applicative.Applicative;
+import com.aol.cyclops.lambda.monads.Filterable;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
@@ -29,7 +31,7 @@ import lombok.AllArgsConstructor;
  * @param <ST> Secondary type
  * @param <PT> Primary type
  */
-public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Applicativable<PT>{
+public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterable<PT>,Applicativable<PT>{
 
 	public static <ST,PT> Xor<ST,PT> secondary(ST value){
 		return new Secondary<>(value);
@@ -47,6 +49,8 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Applicat
 	default <T> Xor<?,T> unit(T unit){
 		return Xor.primary(unit);
 	}
+	
+	Xor<ST,PT> filter(Predicate<? super PT> test);
 	
 	Xor<ST,PT> secondaryToPrimayMap(Function<? super ST, ? extends PT> fn);
 	<R> Xor<R,PT> secondaryMap(Function<? super ST, ? extends R> fn);
@@ -106,6 +110,11 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Applicat
 			return this;
 		}
 
+		public Xor<ST,PT> filter(Predicate<? super PT> test){
+			if(test.test(value))
+				return this;
+			return Xor.secondary(null);
+		}
 		@Override
 		public Xor<PT, ST> swap() {
 			return new Secondary<PT,ST>(value);
@@ -195,6 +204,9 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Applicat
 		}
 		@Override
 		public Xor<ST, PT> peek(Consumer<? super PT> action) {
+			return this;
+		}
+		public Xor<ST,PT> filter(Predicate<? super PT> test){
 			return this;
 		}
 		@Override
