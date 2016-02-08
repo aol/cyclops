@@ -42,6 +42,21 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * Destructures this Traversable into it's head and tail. If the traversable instance is not a SequenceM or Stream type,
 	 * whenStream may be more efficient (as it is guaranteed to be lazy).
 	 * 
+	 * <pre>
+	 * {@code 
+	 * ListX.of(1,2,3,4,5,6,7,8,9)
+			 .dropRight(5)
+			 .plus(10)
+			 .when((x,xs) ->
+				 xs.join(x.when(some->some>2?"hello":"world",()->"NIL"))
+			 );
+	 * 
+	 * }
+	 * //2world3world4
+	 * 
+	 * </pre>
+	 * 
+	 * 
 	 * @param match
 	 * @return
 	 */
