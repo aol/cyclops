@@ -16,6 +16,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.hamcrest.Matcher;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -594,6 +595,116 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	default <R> DequeX<Optional<R>> matchesCases(Case<T, R, Function<T, R>>... cases) {
 		
 		return (DequeX<Optional<R>>)MutableCollectionX.super.matchesCases(cases);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#ofType(java.lang.Class)
+	 */
+	@Override
+	default <U> DequeX<U> ofType(Class<U> type) {
+		
+		return (DequeX)MutableCollectionX.super.ofType(type);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#filterNot(java.util.function.Predicate)
+	 */
+	@Override
+	default DequeX<T> filterNot(Predicate<? super T> fn) {
+		
+		return  (DequeX)MutableCollectionX.super.filterNot(fn);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#notNull()
+	 */
+	@Override
+	default DequeX<T> notNull() {
+		
+		return  (DequeX)MutableCollectionX.super.notNull();
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.util.stream.Stream)
+	 */
+	@Override
+	default DequeX<T> removeAll(Stream<T> stream) {
+		
+		return  (DequeX)MutableCollectionX.super.removeAll(stream);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.lang.Iterable)
+	 */
+	@Override
+	default DequeX<T> removeAll(Iterable<T> it) {
+		
+		return  (DequeX)MutableCollectionX.super.removeAll(it);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.lang.Object[])
+	 */
+	@Override
+	default DequeX<T> removeAll(T... values) {
+		
+		return  (DequeX)MutableCollectionX.super.removeAll(values);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.lang.Iterable)
+	 */
+	@Override
+	default DequeX<T> retainAll(Iterable<T> it) {
+		
+		return  (DequeX)MutableCollectionX.super.retainAll(it);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.util.stream.Stream)
+	 */
+	@Override
+	default DequeX<T> retainAll(Stream<T> stream) {
+		
+		return  (DequeX)MutableCollectionX.super.retainAll(stream);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.lang.Object[])
+	 */
+	@Override
+	default DequeX<T> retainAll(T... values) {
+		
+		return  (DequeX)MutableCollectionX.super.retainAll(values);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainMatches(org.hamcrest.Matcher)
+	 */
+	@Override
+	default DequeX<T> retainMatches(Matcher<T> m) {
+	
+		return  (DequeX)MutableCollectionX.super.retainMatches(m);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeMatches(org.hamcrest.Matcher)
+	 */
+	@Override
+	default DequeX<T> removeMatches(Matcher<T> m) {
+		
+		return  (DequeX)MutableCollectionX.super.removeMatches(m);
 	}
 	
 	

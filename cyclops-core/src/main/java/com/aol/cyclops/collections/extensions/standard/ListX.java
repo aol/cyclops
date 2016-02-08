@@ -12,10 +12,12 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.hamcrest.Matcher;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -582,6 +584,177 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	default <R> ListX<Optional<R>> matchesCases(Case<T, R, Function<T, R>>... cases) {
 		
 		return (ListX<Optional<R>>)MutableCollectionX.super.matchesCases(cases);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#distinct()
+	 */
+	@Override
+	default ListX<T> distinct() {
+		
+		return (ListX)MutableCollectionX.super.distinct();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#limitWhile(java.util.function.Predicate)
+	 */
+	@Override
+	default ListX<T> limitWhile(Predicate<? super T> p) {
+		
+		return (ListX)MutableCollectionX.super.limitWhile(p);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#limitUntil(java.util.function.Predicate)
+	 */
+	@Override
+	default ListX<T> limitUntil(Predicate<? super T> p) {
+		
+		return (ListX)MutableCollectionX.super.limitUntil(p);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#intersperse(java.lang.Object)
+	 */
+	@Override
+	default ListX<T> intersperse(T value) {
+		
+		return (ListX)MutableCollectionX.super.intersperse(value);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#limitLast(int)
+	 */
+	@Override
+	default ListX<T> limitLast(int num) {
+		
+		return (ListX)MutableCollectionX.super.limitLast(num);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#onEmpty(java.lang.Object)
+	 */
+	@Override
+	default ListX<T> onEmpty(T value) {
+		
+		return (ListX)MutableCollectionX.super.onEmpty(value);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#onEmptyGet(java.util.function.Supplier)
+	 */
+	@Override
+	default ListX<T> onEmptyGet(Supplier<T> supplier) {
+		
+		return (ListX)MutableCollectionX.super.onEmptyGet(supplier);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#onEmptyThrow(java.util.function.Supplier)
+	 */
+	@Override
+	default <X extends Throwable> ListX<T> onEmptyThrow(Supplier<X> supplier) {
+		
+		return (ListX)MutableCollectionX.super.onEmptyThrow(supplier);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#ofType(java.lang.Class)
+	 */
+	@Override
+	default <U> ListX<U> ofType(Class<U> type) {
+		
+		return (ListX)MutableCollectionX.super.ofType(type);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#filterNot(java.util.function.Predicate)
+	 */
+	@Override
+	default ListX<T> filterNot(Predicate<? super T> fn) {
+		
+		return (ListX)MutableCollectionX.super.filterNot(fn);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#notNull()
+	 */
+	@Override
+	default ListX<T> notNull() {
+		
+		return (ListX)MutableCollectionX.super.notNull();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.util.stream.Stream)
+	 */
+	@Override
+	default ListX<T> removeAll(Stream<T> stream) {
+		
+		return (ListX)MutableCollectionX.super.removeAll(stream);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.lang.Iterable)
+	 */
+	@Override
+	default ListX<T> removeAll(Iterable<T> it) {
+		
+		return (ListX)MutableCollectionX.super.removeAll(it);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.lang.Object[])
+	 */
+	@Override
+	default ListX<T> removeAll(T... values) {
+		
+		return (ListX)MutableCollectionX.super.removeAll(values);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.lang.Iterable)
+	 */
+	@Override
+	default ListX<T> retainAll(Iterable<T> it) {
+		
+		return (ListX)MutableCollectionX.super.retainAll(it);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.util.stream.Stream)
+	 */
+	@Override
+	default ListX<T> retainAll(Stream<T> stream) {
+		
+		return (ListX)MutableCollectionX.super.retainAll(stream);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.lang.Object[])
+	 */
+	@Override
+	default ListX<T> retainAll(T... values) {
+		
+		return (ListX)MutableCollectionX.super.retainAll(values);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainMatches(org.hamcrest.Matcher)
+	 */
+	@Override
+	default ListX<T> retainMatches(Matcher<T> m) {
+		
+		return (ListX)MutableCollectionX.super.retainMatches(m);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeMatches(org.hamcrest.Matcher)
+	 */
+	@Override
+	default ListX<T> removeMatches(Matcher<T> m) {
+		
+		return (ListX)MutableCollectionX.super.removeMatches(m);
 	}
 
 	
