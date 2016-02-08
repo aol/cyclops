@@ -33,6 +33,7 @@ import com.aol.cyclops.lambda.monads.IterableCollectable;
 import com.aol.cyclops.lambda.monads.IterableFunctor;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.lambda.monads.ExtendedTraversable;
+import com.aol.cyclops.lambda.monads.Filterable;
 import com.aol.cyclops.lambda.monads.Unit;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.matcher.recursive.Matchable;
@@ -50,6 +51,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 										Iterable<T>,
 										IterableFunctor<T>, 
 										Foldable<T>,
+										Filterable<T>,
 										ZippingApplicativable<T>,
 										Unit<T>,
 										Collection<T>,

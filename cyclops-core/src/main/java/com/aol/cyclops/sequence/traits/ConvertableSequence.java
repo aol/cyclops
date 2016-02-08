@@ -6,7 +6,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
+
 import com.aol.cyclops.collections.extensions.persistent.PBagX;
+import com.aol.cyclops.collections.extensions.persistent.PMapX;
 import com.aol.cyclops.collections.extensions.persistent.POrderedSetX;
 import com.aol.cyclops.collections.extensions.persistent.PSetX;
 import com.aol.cyclops.collections.extensions.persistent.PStackX;
@@ -64,6 +68,11 @@ public interface ConvertableSequence<T> extends Iterable<T>{
 	}
 	default ListX<T> toListX(){
 		return stream().collect(CyclopsCollectors.toListX());
+	}
+	default <K,V> PMapX<K,V> toPMapX(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper){
+		
+		SequenceM<Tuple2<K,V>> stream = stream().map(t-> Tuple.tuple(keyMapper.apply(t),valueMapper.apply(t)));
+		return stream.mapReduce(Reducers.toPMapX());		
 	}
 	default <K, V> MapX<K, V> toMapX(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper){
 		return stream().toMap(keyMapper,valueMapper);

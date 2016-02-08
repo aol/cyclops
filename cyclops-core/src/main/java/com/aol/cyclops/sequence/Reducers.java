@@ -18,13 +18,14 @@ import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
 import com.aol.cyclops.collections.extensions.persistent.PBagX;
+import com.aol.cyclops.collections.extensions.persistent.PMapX;
 import com.aol.cyclops.collections.extensions.persistent.POrderedSetX;
 import com.aol.cyclops.collections.extensions.persistent.PSetX;
 import com.aol.cyclops.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.collections.extensions.persistent.PVectorX;
 import com.aol.cyclops.lambda.api.TupleWrapper;
 
-import lombok.experimental.UtilityClass;
+import fj.data.vector.V;
 
 //@UtilityClass
 public class Reducers {
@@ -112,6 +113,14 @@ public class Reducers {
 								(in)-> {
 									List w = ((TupleWrapper) ()-> in).values();
 									return HashTreePMap.singleton((K)w.get(0), (V)w.get(1));
+								});
+	}
+	public static <K,V> Monoid<PMapX<K,V>> toPMapX() { 
+		return	Monoid.<PMapX<K,V>>of(PMapX.empty(), 
+								(PMapX<K,V> a) -> b -> a.plusAll(b),
+								(in)-> {
+									List w = ((TupleWrapper) ()-> in).values();
+									return PMapX.singleton((K)w.get(0), (V)w.get(1));
 								});
 	}
 	

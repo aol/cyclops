@@ -8,28 +8,41 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.hamcrest.Matcher;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.collections.extensions.FluentMapX;
+import com.aol.cyclops.collections.extensions.persistent.PMapX;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.lambda.monads.BiFunctor;
 import com.aol.cyclops.lambda.monads.Foldable;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.IterableCollectable;
+import com.aol.cyclops.matcher.Case;
+import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.lambda.monads.ExtendedTraversable;
+import com.aol.cyclops.lambda.monads.Filterable;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.traits.SequenceMCollectable;
 import com.aol.cyclops.streams.StreamUtils;
+import com.aol.cyclops.trampoline.Trampoline;
 
 
-public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,BiFunctor<K, V>, Functor<V>, ExtendedTraversable<Tuple2<K, V>>, Foldable<Tuple2<K,V>>,
+public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
+												BiFunctor<K, V>, 
+												Functor<V>, 
+												Filterable<Tuple2<K, V>>,
+												ExtendedTraversable<Tuple2<K, V>>, 
+												Foldable<Tuple2<K,V>>,
 												SequenceMCollectable<Tuple2<K,V>>,
 												IterableCollectable<Tuple2<K,V>>{
 
@@ -168,5 +181,182 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,BiFunctor<K, V>, F
 		return SequenceM.fromIterator(it)
 						.toMap(k->k.v1,v->v.v2);
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
+	 */
+	@Override
+	default <U> MapX<K,U> cast(Class<U> type) {
+		
+		return (MapX<K,U>)Functor.super.cast(type);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
+	 */
+	@Override
+	default MapX<K,V> peek(Consumer<? super V> c) {
+		
+		return (MapX<K,V>)Functor.super.peek(c);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#trampoline(java.util.function.Function)
+	 */
+	@Override
+	default <R> MapX<K,R> trampoline(Function<? super V, ? extends Trampoline<? extends R>> mapper) {
+		
+		return (MapX<K,R>)Functor.super.trampoline(mapper);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#matchesCases(com.aol.cyclops.matcher.Case[])
+	 */
+	@Override
+	default <R> MapX<K,Optional<R>> matchesCases(Case<V, R, Function<V, R>>... cases) {
+		// TODO Auto-generated method stub
+		return (MapX<K,Optional<R>>)Functor.super.matchesCases(cases);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function)
+	 */
+	@Override
+	default <R> MapX<K,R> patternMatch(R defaultValue,
+			Function<CheckValues<? super V, R>, CheckValues<? super V, R>> case1) {
+	
+		return (MapX<K,R>)Functor.super.patternMatch(defaultValue, case1);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <R> MapX<K,R> patternMatch(R defaultValue,
+			Function<CheckValues<? super V, R>, CheckValues<? super V, R>> case1,
+			Function<CheckValues<? super V, R>, CheckValues<? super V, R>> case2) {
+		
+		return (MapX<K,R>)Functor.super.patternMatch(defaultValue, case1, case2);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <R> MapX<K,R> patternMatch(R defaultValue,
+			Function<CheckValues<? super V, R>, CheckValues<? super V, R>> fn1,
+			Function<CheckValues<? super V, R>, CheckValues<? super V, R>> fn2,
+			Function<CheckValues<? super V, R>, CheckValues<? super V, R>> fn3) {
+		
+		return (MapX<K,R>)Functor.super.patternMatch(defaultValue, fn1, fn2, fn3);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <R> MapX<K,R> patternMatch(R defaultValue,
+			Function<CheckValues<? super V, R>, CheckValues<? super V, R>> fn1,
+			Function<CheckValues<? super V, R>, CheckValues<? super V, R>> fn2,
+			Function<CheckValues<? super V, R>, CheckValues<? super V, R>> fn3,
+			Function<CheckValues<? super V, R>, CheckValues<? super V, R>> fn4) {
+		
+		return (MapX<K,R>)Functor.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <R> MapX<K,R> patternMatch(R defaultValue,
+			Function<CheckValues<? super V, R>, CheckValues<? super V, R>> fn1,
+			Function<CheckValues<? super V, R>, CheckValues<? super V, R>> fn2,
+			Function<CheckValues<? super V, R>, CheckValues<? super V, R>> fn3,
+			Function<CheckValues<? super V, R>, CheckValues<? super V, R>> fn4,
+			Function<CheckValues<? super V, R>, CheckValues<? super V, R>> fn5) {
+		
+		return (MapX<K,R>)Functor.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4, fn5);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#filter(java.util.function.Predicate)
+	 */
+	@Override
+	default MapX<K, V> filter(Predicate<? super Tuple2<K, V>> fn) {
+		return stream().filter(fn).toMapX(t->t.v1,t->t.v2);
+	}
+	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#filterNot(java.util.function.Predicate)
+	 */
+	@Override
+	default MapX<K, V> filterNot(Predicate<? super Tuple2<K, V>> fn) {
+	
+		return (MapX<K, V>)Filterable.super.filterNot(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#notNull()
+	 */
+	@Override
+	default MapX<K, V> notNull() {
+		
+		return (MapX<K, V>)Filterable.super.notNull();
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.util.stream.Stream)
+	 */
+	@Override
+	default MapX<K, V> removeAll(Stream<Tuple2<K, V>> stream) {
+		
+		return (MapX<K, V>)Filterable.super.removeAll(stream);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.lang.Iterable)
+	 */
+	@Override
+	default MapX<K, V> removeAll(Iterable<Tuple2<K, V>> it) {
+		
+		return (MapX<K, V>)Filterable.super.removeAll(it);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.lang.Object[])
+	 */
+	@Override
+	default MapX<K, V> removeAll(Tuple2<K, V>... values) {
+		
+		return (MapX<K, V>)Filterable.super.removeAll(values);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.lang.Iterable)
+	 */
+	@Override
+	default MapX<K, V> retainAll(Iterable<Tuple2<K, V>> it) {
+		
+		return (MapX<K, V>)Filterable.super.retainAll(it);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.util.stream.Stream)
+	 */
+	@Override
+	default MapX<K, V> retainAll(Stream<Tuple2<K, V>> stream) {
+		
+		return (MapX<K, V>)Filterable.super.retainAll(stream);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.lang.Object[])
+	 */
+	@Override
+	default MapX<K, V> retainAll(Tuple2<K, V>... values) {
+		
+		return (MapX<K, V>)Filterable.super.retainAll(values);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#retainMatches(org.hamcrest.Matcher)
+	 */
+	@Override
+	default MapX<K, V> retainMatches(Matcher<Tuple2<K, V>> m) {
+		
+		return (MapX<K, V>)Filterable.super.retainMatches(m);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#removeMatches(org.hamcrest.Matcher)
+	 */
+	@Override
+	default MapX<K, V> removeMatches(Matcher<Tuple2<K, V>> m) {
+	
+		return (MapX<K, V>)Filterable.super.removeMatches(m);
+	}
+	
 
 }
