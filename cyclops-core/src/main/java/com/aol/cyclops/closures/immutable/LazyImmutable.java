@@ -7,13 +7,12 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import lombok.ToString;
-
-import com.aol.cyclops.closures.Convertable;
 import com.aol.cyclops.lambda.applicative.Applicativable;
 import com.aol.cyclops.lambda.monads.Unit;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.value.Value;
+
+import lombok.ToString;
 
 /**
  * A class that represents an 'immutable' value that is generated inside a lambda
@@ -100,6 +99,7 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Value<T>, App
 	 * @return new ImmutableClosedValue with new mapped value 
 	 */
 	public <R> LazyImmutable<? extends R> flatMap(Function<? super T,? extends LazyImmutable<? extends R>> fn){
+		
 		T val = get();
 		if(val==UNSET)
 			return (LazyImmutable)this;

@@ -153,7 +153,7 @@ public class ImmutableClosedValueTest {
 		
 		val m = new LazyImmutable<Integer>();
 		
-		assertThat(m.flatMap(LazyImmutable::of), equalTo( m));
+		assertThat(m.<Integer>flatMap(LazyImmutable::of), equalTo( m));
 		
 	}
 	@Test
@@ -162,6 +162,6 @@ public class ImmutableClosedValueTest {
 		val m = new LazyImmutable<Integer>();
 		Function<Integer,LazyImmutable<Integer> >f = i->LazyImmutable.of(i+10);
 		Function<Integer,LazyImmutable<Integer> >g = i->LazyImmutable.of(i*10);
-		assertThat(m.flatMap(f).flatMap(g), equalTo( m.flatMap(x -> f.apply(x).flatMap(g))));
+		assertThat(m.<Integer>flatMap(f).<Integer>flatMap(g), equalTo( m.flatMap(x -> f.apply(x).flatMap(g))));
 	}
 }

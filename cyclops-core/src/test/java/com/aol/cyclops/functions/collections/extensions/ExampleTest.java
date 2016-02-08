@@ -9,6 +9,7 @@ import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.collections.extensions.standard.QueueX;
 import com.aol.cyclops.collections.extensions.standard.SetX;
 import com.aol.cyclops.collections.extensions.standard.SortedSetX;
+import com.aol.cyclops.sequence.CyclopsCollectors;
 
 public class ExampleTest {
 
@@ -32,8 +33,8 @@ public class ExampleTest {
 		SetX<String> set = ListX.of(1,2,3)
 								.flatMap(i->Arrays.asList(i+2,10))
 								 .plus(5)
-								 .map(i->"hello" + i)
-								 .collect(SetX.toSetX());
+								 .map(i->"hello" + i).toSetX()
+								 .collect(CyclopsCollectors.toSetX());
 		
 		set.printOut();
 					

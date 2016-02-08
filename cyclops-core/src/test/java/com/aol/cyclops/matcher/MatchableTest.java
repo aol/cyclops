@@ -52,10 +52,10 @@ public class MatchableTest {
 		int c;
 	}
 	@Value
-	static class NestedCase  implements Matchable<MyCase<R>>{
+	static class NestedCase <R> implements Matchable<MyCase<R>>{
 		int a;
 		int b;
-		NestedCase c;
+		NestedCase<R> c;
 	}
 	@Test
 	public void singleCase(){

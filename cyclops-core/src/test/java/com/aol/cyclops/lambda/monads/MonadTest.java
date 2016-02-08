@@ -17,9 +17,11 @@ import lombok.val;
 
 import org.junit.Test;
 
+import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.monad.AnyMonads;
+import com.aol.cyclops.sequence.SequenceM;
 
 
 public class MonadTest {
@@ -91,7 +93,7 @@ public class MonadTest {
                 .collect(Collectors.toList());
        
         
-        AnyM<Stream<Integer>> futureList = AnyM.sequence(AnyM.listFromCompletableFuture(futures));
+        AnyM<SequenceM<Integer>> futureList = AnyM.sequence(AnyM.listFromCompletableFuture(futures));
         
  
         List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>unwrap().join();
@@ -114,7 +116,7 @@ public class MonadTest {
                 .collect(Collectors.toList());
 
        
-        AnyM<List<String>> futureList = AnyM.traverse(AnyM.listFromCompletableFuture(futures), (Integer i) -> "hello" +i);
+        AnyM<ListX<String>> futureList = AnyM.traverse(AnyM.listFromCompletableFuture(futures), (Integer i) -> "hello" +i);
    
         List<String> collected = futureList.<CompletableFuture<List<String>>>unwrap().join();
         assertThat(collected.size(),equalTo( list.size()));

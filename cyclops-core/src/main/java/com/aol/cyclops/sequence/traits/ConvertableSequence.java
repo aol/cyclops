@@ -55,19 +55,20 @@ public interface ConvertableSequence<T> extends Iterable<T>{
 		return new SimpleReact().fromIterable(this);
 	}
 	default DequeX<T> toDequeX(){
-		return stream().collect(CyclopsCollectors.toDequeX());
+		return DequeX.fromIterable(this);
 	}
 	default QueueX<T> toQueueX(){
-		return stream().collect(CyclopsCollectors.toQueueX());
+		return QueueX.fromIterable(this);
 	}
 	default SetX<T> toSetX(){
-		return stream().collect(CyclopsCollectors.toSetX());
+		return SetX.fromIterable(this);
+		
 	}
 	default SortedSetX<T> toSortedSetX(){
-		return stream().collect(CyclopsCollectors.toSortedSetX());
+		return SortedSetX.fromIterable(this);
 	}
 	default ListX<T> toListX(){
-		return stream().collect(CyclopsCollectors.toListX());
+		return ListX.fromIterable(this);
 	}
 	default <K,V> PMapX<K,V> toPMapX(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper){
 		
@@ -78,19 +79,19 @@ public interface ConvertableSequence<T> extends Iterable<T>{
 		return stream().toMap(keyMapper,valueMapper);
 	}
 	default PStackX<T> toPStackX(){
-		return stream().mapReduce(Reducers.toPStackX());
+		return PStackX.fromIterable(this);
 	}
 	default PVectorX<T> toPVectorX(){
-		return stream().mapReduce(Reducers.toPVectorX());
+		return PVectorX.fromIterable(this);
 	}
 	default PBagX<T> toPBagX(){
-		return stream().mapReduce(Reducers.toPBagX());
+		return PBagX.fromIterable(this);
 	}
 	default PSetX<T> toPSetX(){
-		return stream().mapReduce(Reducers.toPSetX());
+		return PSetX.fromIterable(this);
 	}
 	default POrderedSetX<T> toPOrderedSetX(){
-		return stream().mapReduce(Reducers.toPOrderedSetX());
+		return POrderedSetX.fromIterable(this);
 	}
 	/**
 	 *  
