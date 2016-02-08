@@ -18,17 +18,13 @@ import org.pcollections.PSet;
 
 import com.aol.cyclops.collections.PSets;
 import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
-	//after module merge, move to reducers
-	public static <T> Monoid<PSetX<T>> toPSetX() { 
-				return	Monoid.<PSetX<T>>of(PSetX.empty(), 
-										(PSetX<T> a) -> b -> a.plusAll(b),
-										(T x) -> PSetX.singleton(x));
-	}
+	
 	public static <T> PSetX<T> of(T...values){
 		
 		return new PSetXImpl<>(HashTreePSet.from(Arrays.asList(values)));
@@ -60,6 +56,11 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	}
 	public static<T> PSetX<T> fromStream(Stream<T> stream){
 		return new PSetXImpl<>((PSet<T>)PSets.toPSet().mapReduce(stream));
+	}
+	@Override
+	default <R> PSetX<R> ap1( ZippingApplicative<T,R, ?> ap){
+		
+		return (PSetX<R>)PersistentCollectionX.super.ap1(ap);
 	}
 	@Override
 	default<R> PSetX<R> unit(Collection<R> col){

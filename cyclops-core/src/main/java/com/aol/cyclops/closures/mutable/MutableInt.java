@@ -8,7 +8,7 @@ import java.util.function.IntSupplier;
 import java.util.function.IntUnaryOperator;
 import java.util.stream.IntStream;
 
-import com.aol.cyclops.closures.Convertable;
+import com.aol.cyclops.value.Value;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -41,7 +41,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString @EqualsAndHashCode
-public class MutableInt implements IntSupplier, IntConsumer, Convertable<Integer>{
+public class MutableInt implements IntSupplier, IntConsumer,Value<Integer>{
 
 	private int var;
 	

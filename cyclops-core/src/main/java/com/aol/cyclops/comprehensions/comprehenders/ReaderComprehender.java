@@ -1,11 +1,11 @@
-package com.aol.cyclops.control;
+package com.aol.cyclops.comprehensions.comprehenders;
 
 import java.util.Optional;
 import java.util.function.Function;
 
+import com.aol.cyclops.control.Reader;
 import com.aol.cyclops.functions.fluent.FluentFunctions;
 import com.aol.cyclops.lambda.api.Comprehender;
-import com.aol.cyclops.monad.Reader;
 
 
 

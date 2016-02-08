@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
-import com.aol.cyclops.monad.Reader;
+import com.aol.cyclops.control.Reader;
 
 
 

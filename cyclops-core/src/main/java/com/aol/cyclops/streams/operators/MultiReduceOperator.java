@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.sequence.CyclopsCollectors;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.streams.StreamUtils;
 
@@ -19,7 +20,7 @@ public class MultiReduceOperator<R> {
 	public ListX<R> reduce(Iterable<? extends Monoid<R>> reducers){
 		Monoid<R> m = new Monoid(){
 			public List zero(){
-				return StreamUtils.stream(reducers).map(r->r.zero()).collect(ListX.toListX());
+				return StreamUtils.stream(reducers).map(r->r.zero()).collect(CyclopsCollectors.toListX());
 			}
 			public BiFunction<List,List,List> combiner(){
 				return (c1,c2) -> { 

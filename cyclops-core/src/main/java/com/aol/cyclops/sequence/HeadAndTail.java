@@ -4,11 +4,12 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
+
+import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.functions.caching.Memoize;
 
 import lombok.AllArgsConstructor;
-
-import com.aol.cyclops.functions.caching.Memoize;
 
 /**
  * A class that represents a lazily constructed Head and Tail from a Stream
@@ -60,14 +61,18 @@ public class HeadAndTail<T> {
 	 * @return Optional.empty if the head is not present, otherwise an Optional containing the head
 	 */
 	public Optional<T> headOptional(){
-		return isHeadPresent()? Optional.empty() : Optional.of(head());
+		return isHeadPresent()?   Optional.of(head()) : Optional.empty();
+
+	}
+	public Maybe<T> headMaybe(){
+		return isHeadPresent()? Maybe.fromEvalSome(Eval.later(head)) : Maybe.none() ;
 
 	}
 	/**
 	 * @return A Stream containing the Head if present
 	 */
 	public SequenceM<T> headStream(){
-		return isHeadPresent()?  SequenceM.empty() : SequenceM.of(head).map(Supplier::get);
+		return isHeadPresent()?    SequenceM.of(head).map(Supplier::get) : SequenceM.empty();
 	}
 
 	/**
@@ -76,6 +81,7 @@ public class HeadAndTail<T> {
 	public SequenceM<T> tail() {
 		return tail.get();
 	}
+	
 	
 	
 }

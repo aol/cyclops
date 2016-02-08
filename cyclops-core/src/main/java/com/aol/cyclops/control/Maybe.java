@@ -42,6 +42,7 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, 
 			return Maybe.of(opt.get());
 		return none();
 	}
+	
 	static <T> Maybe<T> fromEvalSome(Eval<T> eval){
 		return new Something<T>(eval);
 	}
@@ -82,12 +83,13 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, 
 		return (Maybe<R>)Applicativable.super.ap1(ap);
 	}
 
+	boolean isPresent();
 	
 	Maybe<T> recover(Supplier<T> value);
 	Maybe<T> recover(T value);
 	<R> Maybe<R> map(Function<? super T, ? extends R> mapper);
 	<R>  Maybe<R> flatMap(Function<? super T, ? extends Maybe<? extends R>> mapper);
-	<R> Maybe<R> when(Function<? super T,? extends R> some, 
+	<R> R when(Function<? super T,? extends R> some, 
 						Supplier<? extends R> none);
 	
 	@AllArgsConstructor(access=AccessLevel.PRIVATE)
@@ -108,9 +110,9 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, 
 				return this;
 			return EMPTY;
 		}
-		public <R> Maybe<R> when(Function<? super T,? extends R> some, 
+		public <R> R when(Function<? super T,? extends R> some, 
 				Supplier<? extends R> none){
-			return map(some);
+			return map(some).get();
 		}
 		public Maybe<T> recover(T value){
 			return this;
@@ -123,6 +125,9 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, 
 		}
 		public T  get(){
 			return lazy.get();
+		}
+		public boolean isPresent(){
+			return true;
 		}
 	}
 	
@@ -147,15 +152,18 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, 
 		public Maybe<T> recover(Supplier<T> value){
 			return new Something<>(Eval.later(value));
 		}
-		public <R> Maybe<R> when(Function<? super T,? extends R> some, 
+		public <R> R when(Function<? super T,? extends R> some, 
 				Supplier<? extends R> none){
-			return narrow(Value.of(none).toMaybe());
+			return none.get();
 		}
 		public Optional<T> toOptional(){
 			return Optional.ofNullable(null);
 		}
 		public String toString(){
 			return mkString();
+		}
+		public boolean isPresent(){
+			return false;
 		}
 	}
 	

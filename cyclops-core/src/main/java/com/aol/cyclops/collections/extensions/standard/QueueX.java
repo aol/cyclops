@@ -4,8 +4,10 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
@@ -15,6 +17,9 @@ import java.util.stream.Stream;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 
+import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
+import com.aol.cyclops.matcher.Case;
+import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
@@ -25,10 +30,7 @@ public interface QueueX<T> extends Queue<T>, MutableCollectionX<T> {
 	static <T> Collector<T,?,Queue<T>> defaultCollector(){
 		return Collectors.toCollection(()-> new LinkedList<>());
 	}
-	static <T> Collector<T,?,QueueX<T>> toQueueX(){
-		return Collectors.collectingAndThen(defaultCollector(), (Queue<T> d)->new QueueXImpl<>(d,defaultCollector()));
-		
-	}
+	
 	public static <T> QueueX<T> empty(){
 		return fromIterable((Queue<T>) defaultCollector().supplier().get());
 	}
@@ -60,6 +62,11 @@ public interface QueueX<T> extends Queue<T>, MutableCollectionX<T> {
 	
 	default <X> QueueX<X> fromStream(Stream<X> stream){
 		return new QueueXImpl<>(stream.collect(getCollector()),getCollector());
+	}
+	@Override
+	default <R> QueueX<R> ap1( ZippingApplicative<T,R, ?> ap){
+		
+		return (QueueX<R>)MutableCollectionX.super.ap1(ap);
 	}
 	
 	@Override
@@ -249,4 +256,83 @@ public interface QueueX<T> extends Queue<T>, MutableCollectionX<T> {
 		removeAll(list);
 		return this;
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.CollectionX#peek(java.util.function.Consumer)
+	 */
+	@Override
+	default QueueX<T> peek(Consumer<? super T> c) {
+		
+		return (QueueX)MutableCollectionX.super.peek(c);
+	}
+	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function)
+	 */
+	@Override
+	default <R> QueueX<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
+		return (QueueX)MutableCollectionX.super.patternMatch(defaultValue, case1);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <R> QueueX<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case2) {	
+		return (QueueX)MutableCollectionX.super.patternMatch(defaultValue, case1, case2);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <R> QueueX<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3) {
+			return (QueueX)MutableCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <R> QueueX<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4) {
+		return (QueueX)MutableCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <R> QueueX<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn5) {	
+		return (QueueX)MutableCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4, fn5);
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
+	 */
+	@Override
+	default <U> QueueX<U> cast(Class<U> type) {
+		
+		return (QueueX)MutableCollectionX.super.cast(type);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#matchesCases(com.aol.cyclops.matcher.Case[])
+	 */
+	@Override
+	default <R> QueueX<Optional<R>> matchesCases(Case<T, R, Function<T, R>>... cases) {
+		
+		return (QueueX)MutableCollectionX.super.matchesCases(cases);
+	}
+	
+	
 }

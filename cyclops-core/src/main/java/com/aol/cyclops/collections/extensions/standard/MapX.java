@@ -18,17 +18,18 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.collections.extensions.FluentMapX;
+import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.lambda.monads.BiFunctor;
 import com.aol.cyclops.lambda.monads.Foldable;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.IterableCollectable;
-import com.aol.cyclops.lambda.monads.Traversable;
+import com.aol.cyclops.lambda.monads.ExtendedTraversable;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.traits.SequenceMCollectable;
 import com.aol.cyclops.streams.StreamUtils;
 
 
-public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,BiFunctor<K, V>, Functor<V>, Traversable<Tuple2<K, V>>, Foldable<Tuple2<K,V>>,
+public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,BiFunctor<K, V>, Functor<V>, ExtendedTraversable<Tuple2<K, V>>, Foldable<Tuple2<K,V>>,
 												SequenceMCollectable<Tuple2<K,V>>,
 												IterableCollectable<Tuple2<K,V>>{
 
@@ -64,6 +65,7 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,BiFunctor<K, V>, F
 		return new MapXImpl<>(stream.toMap(t->t.v1, t->t.v2),getCollector());
 	}
 
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Iterable#iterator()
 	 */
@@ -157,6 +159,14 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,BiFunctor<K, V>, F
 	
 	default MapX<K,V> minusAll(Collection<?> keys){
 		return (MapX<K,V>)FluentMapX.super.minusAll(keys);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.UnitIterator#unitIteratorTyped(java.util.Iterator)
+	 */
+	@Override
+	default MapX<K, V> unitIteratorTyped(Iterator<Tuple2<K, V>> it) {
+		return SequenceM.fromIterator(it)
+						.toMap(k->k.v1,v->v.v2);
 	}
 
 }

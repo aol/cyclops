@@ -18,6 +18,7 @@ import org.pcollections.PSet;
 import com.aol.cyclops.collections.PQueues;
 import com.aol.cyclops.collections.PSets;
 import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.trampoline.Trampoline;
@@ -60,6 +61,11 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
 	}
 	public static<T> PQueueX<T> fromStream(Stream<T> stream){
 		return new PQueueXImpl<>((PQueue<T>)PSets.toPSet().mapReduce(stream));
+	}
+	@Override
+	default <R> PQueueX<R> ap1( ZippingApplicative<T,R, ?> ap){
+		
+		return (PQueueX<R>)PersistentCollectionX.super.ap1(ap);
 	}
 	@Override
 	default<R> PQueueX<R> unit(Collection<R> col){

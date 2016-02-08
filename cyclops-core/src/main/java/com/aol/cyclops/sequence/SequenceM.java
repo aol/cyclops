@@ -60,8 +60,9 @@ import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative5;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicativeBuilder;
 import com.aol.cyclops.lambda.monads.Foldable;
 import com.aol.cyclops.lambda.monads.Functor;
-import com.aol.cyclops.lambda.monads.Traversable;
+import com.aol.cyclops.lambda.monads.ExtendedTraversable;
 import com.aol.cyclops.lambda.monads.Unit;
+import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.sequence.reactivestreams.CyclopsSubscriber;
@@ -77,7 +78,7 @@ import com.aol.cyclops.streams.spliterators.ReversingRangeLongSpliterator;
 import com.aol.cyclops.trampoline.Trampoline;
 
 
-public interface SequenceM<T> extends Unwrapable, Stream<T>, Functor<T>, Traversable<T>,
+public interface SequenceM<T> extends Unwrapable, Stream<T>, Functor<T>, ExtendedTraversable<T>,
 												Foldable<T>,JoolWindowing<T>, 
 												JoolManipulation<T>,SequenceMCollectable<T>,
 												Seq<T>,  Iterable<T>, Publisher<T>,
@@ -3460,6 +3461,63 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Functor<T>, Travers
 	@Override
 	default Collectable<T> collectable() {
 		return (Collectable<T>)this;
+	}
+	
+	@Override
+	default <R> SequenceM<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
+		
+		return (SequenceM<R>)ZippingApplicativable.super.patternMatch(defaultValue, case1);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <R> SequenceM<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case2) {
+		
+		return (SequenceM<R>)ZippingApplicativable.super.patternMatch(defaultValue, case1, case2);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <R> SequenceM<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3) {
+		
+		return (SequenceM<R>)ZippingApplicativable.super.patternMatch(defaultValue, fn1, fn2, fn3);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <R> SequenceM<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4) {
+		
+		return (SequenceM<R>)ZippingApplicativable.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <R> SequenceM<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn5) {
+		
+		return (SequenceM<R>)ZippingApplicativable.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4, fn5);
 	}
 	
 }

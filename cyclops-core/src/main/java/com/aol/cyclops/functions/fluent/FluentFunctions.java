@@ -21,6 +21,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 
 import com.aol.cyclops.closures.mutable.MutableInt;
+import com.aol.cyclops.control.Reader;
 import com.aol.cyclops.functions.QuadConsumer;
 import com.aol.cyclops.functions.TriConsumer;
 import com.aol.cyclops.functions.TriFunction;
@@ -33,7 +34,6 @@ import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.matcher.recursive.Matchable;
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.monad.Reader;
 import com.aol.cyclops.monad.functions.LiftMFunctions;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.trycatch.Try;

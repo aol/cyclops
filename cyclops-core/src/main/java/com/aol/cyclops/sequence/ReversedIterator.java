@@ -21,10 +21,8 @@ public class ReversedIterator<U> implements Streamable<U>{
 		return  list;
 	}
 	
-	public Stream<U> stream(){
-		return StreamSupport.stream(
-		          Spliterators.spliteratorUnknownSize(reversedIterator(), Spliterator.ORDERED),
-		          false);
+	public SequenceM<U> stream(){
+		return SequenceM.fromIterator(reversedIterator());
 	}
 	public Iterator<U> reversedIterator(){
 		

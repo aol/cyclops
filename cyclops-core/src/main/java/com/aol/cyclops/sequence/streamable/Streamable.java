@@ -7,11 +7,9 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
@@ -39,7 +37,14 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
+import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.collections.extensions.standard.MapX;
+import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicativable;
+import com.aol.cyclops.lambda.monads.Filterable;
+import com.aol.cyclops.lambda.monads.Functor;
+import com.aol.cyclops.lambda.monads.Traversable;
+import com.aol.cyclops.lambda.monads.Unit;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.HotStream;
 import com.aol.cyclops.sequence.Monoid;
@@ -56,7 +61,13 @@ import com.aol.cyclops.sequence.traits.SequenceMCollectable;
  *
  * @param <T> Data type for Stream
  */
-public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>, ConvertableSequence<T>{
+public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>, 
+											ConvertableSequence<T>, 
+											Functor<T>,
+											Filterable<T>,
+											Traversable<T>,
+											Unit<T>,
+											ZippingApplicativable<T>{
 	
 	default Collectable<T> collectable(){
 		return Seq.seq(stream());
@@ -80,7 +91,21 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>, Con
 	public static <T> Streamable<T> fromIterable(Iterable<T> iterable){
 		return AsStreamable.fromIterable(iterable);
 	}
+	public static <T> Streamable<T> fromIterator(Iterator<T> it){
+		
+		return AsStreamable.fromIterable(()->it);
+	}
 
+	default <T> Streamable<T> unit(T t){
+		return of(t);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.IterableFunctor#unitIterator(java.util.Iterator)
+	 */
+	@Override
+	default  <T> Streamable<T> unitIterator(Iterator<T> it) {
+		return Streamable.fromIterator(it);
+	}
 	
 	
 	/**
@@ -92,12 +117,13 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>, Con
 	public static<T> Streamable<T> of(T... values){
 		Exception e;
 		return new Streamable<T>(){
-			public Stream<T> stream(){
-				return Stream.of(values);
+			public SequenceM<T> stream(){
+				return SequenceM.of(values);
 			}
 			public Object getStreamable(){
 				return values;
 			}
+			
 			
 		};
 	}
@@ -931,7 +957,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>, Con
     	 * 
     	 * </pre>
     	 */
-    	default <K> Map<K, List<T>> groupBy(Function<? super T, ? extends K> classifier){
+    	default <K> MapX<K, List<T>> groupBy(Function<? super T, ? extends K> classifier){
     		return sequenceM().groupBy(classifier);
     	}
 
@@ -1418,7 +1444,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>, Con
     	 * @param reducers
     	 * @return
     	 */
-    	 default List<T> reduce(Stream<Monoid<T>> reducers){
+    	 default ListX<T> reduce(Stream<? extends Monoid<T>> reducers){
     		 return sequenceM().reduce(reducers);
     	 }
     	/**
@@ -1806,7 +1832,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>, Con
     	 * </pre>
     	 * @return
     	 */
-    	default Collection<T> toLazyCollection(){
+    	default CollectionX<T> toLazyCollection(){
     		return sequenceM().toLazyCollection();
     	}
     	/**
@@ -1825,7 +1851,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>, Con
     	 * </pre>
     	 * @return
     	 */
-    	 default Collection<T> toConcurrentLazyCollection(){
+    	 default CollectionX<T> toConcurrentLazyCollection(){
     		 return sequenceM().toConcurrentLazyCollection();
     	 }
     	
@@ -2953,5 +2979,15 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>, Con
     	default boolean  parallelContains(T t){
     		return stream().parallel().anyMatch(c -> t.equals((c)));
     	}
+
+		@Override
+		default SequenceM<T> stream() {
+			return ToStream.super.sequenceM();
+		}
+
+		@Override
+		default Iterator<T> iterator() {
+			return stream().iterator();
+		}
     	
 }

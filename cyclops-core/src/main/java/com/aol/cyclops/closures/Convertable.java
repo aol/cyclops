@@ -13,6 +13,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.control.Maybe;
+
 import lombok.Value;
 
 
@@ -55,7 +57,7 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>{
 	 * @return  Return an Optional that contains the current value (if not null) when the supplied predicate holds.
 	 *         Otherwise return Optional empty
 	 */
-	default Optional<T> when(Predicate<? super T> predicate){
+	default Optional<T> filterWhen(Predicate<? super T> predicate){
 		return toOptional().filter(predicate);
 	}
 	
@@ -68,8 +70,11 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>{
 	 * @return Return an Optional that contains the current value (if not null) when the supplied predicate holds.
 	 *         Otherwise return Optional empty
 	 */
-	default <R> Optional<R> when(Predicate<? super T> predicate, Function<? super T,? extends R> mapper){
+	default <R> Optional<R> filterWhen(Predicate<? super T> predicate, Function<? super T,? extends R> mapper){
 		return toOptional().filter(predicate).map(mapper);
+	}
+	default <R> R when(Function<? super Maybe<T>,? extends R> mapper){
+		return mapper.apply(Maybe.ofNullable(get()));
 	}
 	/**
 	 * Apply the predicate to this convertable value, followed by the supplied mapper.
@@ -81,7 +86,7 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>{
 	 * @return Return an Optional that contains the current value (if not null) when the supplied predicate holds.
 	 *        Otherwise return the supplied default value.
 	 */
-	default <R,R1 extends R> R1 whenOrElse(R1 defaultValue,Predicate<? super T> predicate, Function<? super T,R1> mapper){
+	default <R,R1 extends R> R1 filterWhenOrElse(R1 defaultValue,Predicate<? super T> predicate, Function<? super T,R1> mapper){
 		return toOptional().filter(predicate)
 							.map(mapper)
 							.orElse(defaultValue);

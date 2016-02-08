@@ -31,7 +31,8 @@ import com.aol.cyclops.lambda.monads.Foldable;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.IterableCollectable;
 import com.aol.cyclops.lambda.monads.IterableFunctor;
-import com.aol.cyclops.lambda.monads.Traversable;
+import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicativable;
+import com.aol.cyclops.lambda.monads.ExtendedTraversable;
 import com.aol.cyclops.lambda.monads.Unit;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.matcher.recursive.Matchable;
@@ -44,10 +45,15 @@ import com.aol.cyclops.sequence.traits.SequenceMCollectable;
 import com.aol.cyclops.trampoline.Trampoline;
 
 //pattern match, for comprehensions
-public interface CollectionX<T> extends Traversable<T>,
+public interface CollectionX<T> extends ExtendedTraversable<T>,
 										IterableCollectable<T>,
 										Iterable<T>,
-										IterableFunctor<T>, Foldable<T>,Unit<T>,Collection<T>,SequenceMCollectable<T>{
+										IterableFunctor<T>, 
+										Foldable<T>,
+										ZippingApplicativable<T>,
+										Unit<T>,
+										Collection<T>,
+										SequenceMCollectable<T>{
 	
 	static <T> CollectionX<T> fromCollection(Collection<T> col){
 		return new CollectionXImpl(col);
@@ -529,250 +535,9 @@ public interface CollectionX<T> extends Traversable<T>,
 	default SequenceM<T> fixedDelay(long l, TimeUnit unit){
 		return stream().fixedDelay(l, unit);
 	}
-	/**
-	 * Emit data from this Collection on a schedule
-	 * 
-	 * <pre>
-	 * {@code
-	 *  //run at 8PM every night
-	 *  SequenceM.generate(()->"next job:"+formatDate(new Date()))
-	 *            .map(this::processJob)
-	 *            .schedule("0 20 * * *",Executors.newScheduledThreadPool(1));
-	 * }
-	 * </pre>
-	 * 
-	 * Connect to the Scheduled Stream
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	HotStream&lt;Data&gt; dataStream = SequenceeM.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
-	 * 			.schedule(&quot;0 20 * * *&quot;, Executors.newScheduledThreadPool(1));
-	 * 
-	 * 	data.connect().forEach(this::logToDB);
-	 * }
-	 * </pre>
-	 * 
-	 * 
-	 * 
-	 * @param cron
-	 *            Expression that determines when each job will run
-	 * @param ex
-	 *            ScheduledExecutorService
-	 * @return Connectable HotStream of output from scheduled Stream
-	 */
-	default HotStream<T> schedule(String cron, ScheduledExecutorService ex){
-		return stream().schedule(cron, ex);
-	}
 
-	/**
-	 * Emit data from this Collection on a schedule a schedule
-	 * 
-	 * <pre>
-	 * {@code
-	 *  //run every 60 seconds after last job completes
-	 *  SequenceeM.generate(()->"next job:"+formatDate(new Date()))
-	 *            .map(this::processJob)
-	 *            .scheduleFixedDelay(60_000,Executors.newScheduledThreadPool(1));
-	 * }
-	 * </pre>
-	 * 
-	 * Connect to the Scheduled Stream
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	HotStream&lt;Data&gt; dataStream = SequenceeM.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
-	 * 			.scheduleFixedDelay(60_000, Executors.newScheduledThreadPool(1));
-	 * 
-	 * 	data.connect().forEach(this::logToDB);
-	 * }
-	 * </pre>
-	 * 
-	 * 
-	 * @param delay
-	 *            Between last element completes passing through the Stream
-	 *            until the next one starts
-	 * @param ex
-	 *            ScheduledExecutorService
-	 * @return Connectable HotStream of output from scheduled Stream
-	 */
-	default HotStream<T> scheduleFixedDelay(long delay, ScheduledExecutorService ex){
-		return stream().scheduleFixedDelay(delay,ex);
-	}
-
-	/**
-	 * Emit data from this Collection on a schedule
-	 * 
-	 * <pre>
-	 * {@code
-	 *  //run every 60 seconds
-	 *  SequenceeM.generate(()->"next job:"+formatDate(new Date()))
-	 *            .map(this::processJob)
-	 *            .scheduleFixedRate(60_000,Executors.newScheduledThreadPool(1));
-	 * }
-	 * </pre>
-	 * 
-	 * Connect to the Scheduled Stream
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	HotStream&lt;Data&gt; dataStream = SequenceeM.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
-	 * 			.scheduleFixedRate(60_000, Executors.newScheduledThreadPool(1));
-	 * 
-	 * 	data.connect().forEach(this::logToDB);
-	 * }
-	 * </pre>
-	 * 
-	 * @param rate
-	 *            Time in millis between job runs
-	 * @param ex
-	 *            ScheduledExecutorService
-	 * @return Connectable HotStream of output from scheduled Stream
-	 */
-	default HotStream<T> scheduleFixedRate(long rate, ScheduledExecutorService ex){
-		return stream().scheduleFixedRate(rate,ex);
-	}
 	
-	 /**
-     * Transform the elements of this Stream with a Pattern Matching case and default value
-     *
-     * <pre>
-     * {@code
-     * List<String> result = CollectionX.of(1,2,3,4)
-                                              .patternMatch(
-                                                        c->c.hasValuesWhere( (Integer i)->i%2==0 ).then(i->"even")
-                                                      )
-     * }
-     * // CollectionX["odd","even","odd","even"]
-     * </pre>
-     *
-     *
-     * @param defaultValue Value if supplied case doesn't match
-     * @param case1 Function to generate a case (or chain of cases as a single case)
-     * @return CollectionX where elements are transformed by pattern matching
-     */
-    default <R> CollectionX<R> patternMatch(R defaultValue,Function<CheckValues<? super T,R>,CheckValues<? super T,R>> case1){
-
-        return  map(u-> Matchable.of(u).mayMatch(case1).orElse(defaultValue));
-    }
-    /**
-     * Transform the elements of this Stream with a Pattern Matching case and default value
-     *
-     * <pre>
-     * {@code
-     *
-     * List<String> result = CollectionX.of(-2,01,2,3,4)
-     *                                        .filter(i->i>0)
-                                              .patternMatch("many",
-                                                        c->c.hasValuesWhere( (Integer i)->i==1 ).then(i->"one"),
-                                                        c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"two")
-                                                      );
-         // CollectionX["one","two","many","many"]
-     * }
-     *
-     * </pre>
-     *
-     * @param defaultValue Value if supplied cases don't match
-     * @param case1 Function to generate a case (or chain of cases as a single case)
-     * @param case2 Function to generate a case (or chain of cases as a single case)
-     * @return  CollectionX where elements are transformed by pattern matching
-     */
-    default <R> CollectionX<R> patternMatch(R defaultValue,Function<CheckValues<? super T,R>,CheckValues<? super T,R>> case1
-                            ,Function<CheckValues<? super T,R>,CheckValues<? super T,R>> case2){
-        return map(u-> Matchable.of(u).mayMatch(case1,case2).orElse(defaultValue));
-    }
-    /**
-     * Transform the elements of this Stream with a Pattern Matching case and default value
-     *
-     * <pre>
-     * {@code
-     *
-     * List<String> result = CollectionX.of(-2,01,2,3,4)
-     *                                        .filter(i->i>0)
-                                              .patternMatch("many",
-                                                        c->c.hasValuesWhere( (Integer i)->i==1 ).then(i->"one"),
-                                                        c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"two"),
-                                                        c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"three")
-                                                      )
-                                                 .map(opt -> opt.orElse("many"));
-     * }
-     * // CollectionX["one","two","three","many"]
-     * </pre>
-     * @param defaultValue Value if supplied cases don't match
-     * @param fn1 Function to generate a case (or chain of cases as a single case)
-     * @param fn2 Function to generate a case (or chain of cases as a single case)
-     * @param fn3 Function to generate a case (or chain of cases as a single case)
-     * @return CollectionX where elements are transformed by pattern matching
-     */
-    default <R> CollectionX<R> patternMatch(R defaultValue,Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn1,
-                                                    Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn2,
-                                                    Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn3){
-
-        return map(u-> Matchable.of(u).mayMatch(fn1,fn2,fn3).orElse(defaultValue));
-    }
-    /**
-     * Transform the elements of this Stream with a Pattern Matching case and default value
-     *
-     * <pre>
-     * {@code
-     * List<String> result = CollectionX.of(-2,01,2,3,4,5)
-     *                                        .filter(i->i>0)
-                                              .patternMatch("many",
-                                                        c->c.hasValuesWhere( (Integer i)->i==1 ).then(i->"one"),
-                                                        c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"two"),
-                                                        c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"three"),
-                                                        c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"four")
-                                                      )
-     * }
-     * // CollectionX["one","two","three","four","many"]
-     * </pre>
-     * @param defaultValue Value if supplied cases don't match
-     * @param fn1  Function to generate a case (or chain of cases as a single case)
-     * @param fn2  Function to generate a case (or chain of cases as a single case)
-     * @param fn3  Function to generate a case (or chain of cases as a single case)
-     * @param fn4  Function to generate a case (or chain of cases as a single case)
-     * @return  CollectionX where elements are transformed by pattern matching
-     */
-    default <R> CollectionX<R> patternMatch(R defaultValue,Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn1, Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn2,
-                            Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn3,Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn4){
-
-        return map(u-> Matchable.of(u).mayMatch(fn1,fn2,fn3,fn4).orElse(defaultValue));
-    }
-    /**
-     * Transform the elements of this Stream with a Pattern Matching case and default value
-     *
-     * <pre>
-     * {@code
-     * List<String> result = CollectionX.of(-2,01,2,3,4,5,6)
-     *                                        .filter(i->i>0)
-                                              .patternMatch("many",
-                                                        c->c.hasValuesWhere( (Integer i)->i==1 ).then(i->"one"),
-                                                        c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"two"),
-                                                        c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"three"),
-                                                        c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"four"),
-                                                        c->c.hasValuesWhere( (Integer i)->i==2 ).then(i->"five")
-                                                      )
-                                             .map(opt -> opt.orElse("many"));
-     * }
-     * // CollectionX["one","two","three","four","five","many"]
-     * </pre>
-     * @param defaultValue Value if supplied cases don't match
-     * @param fn1 Function to generate a case (or chain of cases as a single case)
-     * @param fn2 Function to generate a case (or chain of cases as a single case)
-     * @param fn3 Function to generate a case (or chain of cases as a single case)
-     * @param fn4 Function to generate a case (or chain of cases as a single case)
-     * @param fn5 Function to generate a case (or chain of cases as a single case)
-     * @return CollectionX where elements are transformed by pattern matching
-     */
-    default <R> CollectionX<R> patternMatch(R defaultValue,Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn1, Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn2,
-            Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn3,Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn4,
-                            Function<CheckValues<? super T,R>,CheckValues<? super T,R>> fn5){
-
-        return map(u-> Matchable.of(u).mayMatch(fn1,fn2,fn3,fn4,fn5).orElse(defaultValue));
-    }
-
+	
     
     
    

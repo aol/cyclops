@@ -5,6 +5,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.aol.cyclops.closures.Convertable;
+import com.aol.cyclops.lambda.applicative.Applicativable;
+import com.aol.cyclops.value.Value;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -37,7 +39,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString @EqualsAndHashCode
-public class Mutable<T> implements Supplier<T>,Consumer<T>, Convertable<T>{
+public class Mutable<T> implements Supplier<T>,Consumer<T>, Value<T>{
 
 	private T var;
 	

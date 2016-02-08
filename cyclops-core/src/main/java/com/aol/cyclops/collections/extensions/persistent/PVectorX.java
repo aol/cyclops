@@ -20,16 +20,12 @@ import org.pcollections.TreePVector;
 import com.aol.cyclops.collections.PQueues;
 import com.aol.cyclops.collections.PVectors;
 import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
-	//after module merge, move to reducers
-	public static <T> Monoid<PVectorX<T>> toPVectorX() { 
-			return	Monoid.<PVectorX<T>>of(PVectorX.empty(), 
-									(PVectorX<T> a) -> b -> a.plusAll(b),
-									(T x) -> PVectorX.singleton(x));
-	}
+	
 	/**
 	 * Construct a PVector from the provided values 
 	 * 
@@ -133,7 +129,11 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	public static<T> PVectorX<T> fromStream(Stream<T> stream){
 		return new PVectorXImpl<>((PVector<T>)PVectors.toPVector().mapReduce(stream));
 	}
-	
+	@Override
+	default <R> PVectorX<R> ap1( ZippingApplicative<T,R, ?> ap){
+		
+		return (PVectorX<R>)PersistentCollectionX.super.ap1(ap);
+	}
 	default PVector<T> toPVector(){
 		return this;
 	}

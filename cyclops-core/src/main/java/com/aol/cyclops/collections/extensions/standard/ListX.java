@@ -41,7 +41,7 @@ import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative4;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative5;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.IterableFunctor;
-import com.aol.cyclops.lambda.monads.Traversable;
+import com.aol.cyclops.lambda.monads.ExtendedTraversable;
 import com.aol.cyclops.matcher.Case;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.sequence.Monoid;
@@ -51,41 +51,12 @@ import com.aol.cyclops.trampoline.Trampoline;
 
 public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenceX<T>, Comparable<T>,IterableFunctor<T>,ZippingApplicativable<T> {
 	
-	public static class ZippingApplicatives {
-		/**
-		 * Apply a function within the maybe context e.g. 
-		 * 
-		 * <pre>
-		 * {@code 
-		    
-			Maybe<Integer> m = applicative((Integer i)->i+2).ap(Maybe.of(3));
-		 * }
-		 * </pre>
-		 * @param fn
-		 * @return
-		 */
-		public static <T,R> ZippingApplicative<T,R,ListX<R>> applicative(Function<? super T,? extends R> fn){
-			
-			return ()->ListX.of(fn);
-		}
-		public static <T,T2,R> ZippingApplicative2<T,T2,R,ListX<R>> applicative(BiFunction<? super T,? super T2,? extends R> fn){
-			return ()->ListX.of(CurryVariance.curry2(fn));
-		}
-		public static <T,T2,T3,R> ZippingApplicative3<T,T2,T3,R,ListX<R>> applicative(TriFunction<? super T,? super T2,? super T3,? extends R> fn){
-			return ()->ListX.of(CurryVariance.curry3(fn));
-		}
-		public static <T,T2,T3,T4,R> ZippingApplicative4<T,T2,T3,T4,R,ListX<R>> applicative(QuadFunction<? super T,? super T2,? super T3,? super T4,? extends R> fn){
-			return ()->ListX.of(CurryVariance.curry4(fn));
-		}
-		public static <T,T2,T3,T4,T5,R> ZippingApplicative5<T,T2,T3,T4,T5,R,ListX<R>> applicative(QuintFunction<? super T,? super T2,? super T3,? super T4,? super T5,? extends R> fn){
-			return ()->ListX.of(CurryVariance.curry5(fn));
-		}
-	}
+
 	
 	@Override
 	default <R> ListX<R> ap1( ZippingApplicative<T,R, ?> ap){
 		
-		return (ListX<R>)ZippingApplicativable.super.ap1(ap);
+		return (ListX<R>)MutableCollectionX.super.ap1(ap);
 	}
 	
 	static <T> Collector<T,?,List<T>> defaultCollector(){
@@ -95,10 +66,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 		return Collectors.collectingAndThen(defaultCollector(), (List<T> d)->Collections.unmodifiableList(d));
 
 	}
-	static <T> Collector<T,?,ListX<T>> toListX(){
-		return Collectors.collectingAndThen(defaultCollector(), (List<T> d)->new ListXImpl<>(d,defaultCollector()));
-		
-	}
+	
 	public static <T> ListX<T> empty(){
 		return fromIterable((List<T>) defaultCollector().supplier().get());
 	}
@@ -611,9 +579,9 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	 * @see com.aol.cyclops.lambda.monads.Functor#when(com.aol.cyclops.matcher.Case[])
 	 */
 	@Override
-	default <R> ListX<Optional<R>> when(Case<T, R, Function<T, R>>... cases) {
+	default <R> ListX<Optional<R>> matchesCases(Case<T, R, Function<T, R>>... cases) {
 		
-		return (ListX<Optional<R>>)MutableCollectionX.super.when(cases);
+		return (ListX<Optional<R>>)MutableCollectionX.super.matchesCases(cases);
 	}
 
 	

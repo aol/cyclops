@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 
+import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
@@ -29,10 +30,7 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 		return Collectors.collectingAndThen(defaultCollector(), (Set<T> d)->Collections.unmodifiableSet(d));
 
 	}
-	static <T> Collector<T,?,SetX<T>> toSetX(){
-		return Collectors.collectingAndThen(defaultCollector(), (Set<T> d)->new SetXImpl<>(d,defaultCollector()));
-		
-	}
+	
 	public static <T> SetX<T> empty(){
 		return fromIterable((Deque<T>) defaultCollector().supplier().get());
 	}
@@ -54,6 +52,11 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 		if(it instanceof Set)
 			return new SetXImpl<T>( (Set)it, collector);
 		return new SetXImpl<T>(StreamUtils.stream(it).collect(collector),collector);
+	}
+	@Override
+	default <R> SetX<R> ap1( ZippingApplicative<T,R, ?> ap){
+		
+		return (SetX<R>)MutableCollectionX.super.ap1(ap);
 	}
 	@Override
 	default SequenceM<T> stream(){

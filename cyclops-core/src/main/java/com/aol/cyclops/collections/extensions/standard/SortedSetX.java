@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 
+import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
@@ -30,10 +31,7 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T> {
 		return Collectors.collectingAndThen(defaultCollector(), (SortedSet<T> d)->Collections.unmodifiableSortedSet(d));
 
 	}
-	static <T> Collector<T,?,SortedSetX<T>> toSortedSetX(){
-		return Collectors.collectingAndThen(defaultCollector(), (SortedSet<T> d)->new SortedSetXImpl<>(d,defaultCollector()));
-		
-	}
+	
 	public static <T> SortedSetX<T> empty(){
 		return fromIterable((SortedSet<T>) defaultCollector().supplier().get());
 	}
@@ -55,6 +53,12 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T> {
 		if(it instanceof SortedSet)
 			return new SortedSetXImpl<T>( (SortedSet)it, collector);
 		return new SortedSetXImpl<T>(StreamUtils.stream(it).collect(collector),collector);
+	}
+	
+	@Override
+	default <R> SortedSetX<R> ap1( ZippingApplicative<T,R, ?> ap){
+		
+		return (SortedSetX<R>)MutableCollectionX.super.ap1(ap);
 	}
 	@Override
 	default <R> SortedSetX<R> unit(R value){

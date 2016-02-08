@@ -1,6 +1,7 @@
 package com.aol.cyclops.collections.extensions.standard;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,6 +11,9 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 
 import org.jooq.lambda.tuple.Tuple2;
+
+import com.aol.cyclops.lambda.monads.IterableFunctor;
+import com.aol.cyclops.sequence.SequenceM;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -228,5 +232,6 @@ public class MapXImpl<K,V> implements MapX<K,V>{
 	public  V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
 		return map.merge(key, value, remappingFunction);
 	}
+	
 	
 }

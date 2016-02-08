@@ -49,6 +49,7 @@ import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.AsGenericMonad;
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.sequence.CyclopsCollectors;
 import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.HotStream;
 import com.aol.cyclops.sequence.Monoid;
@@ -100,7 +101,7 @@ public class StreamUtils{
 		return Stream.of();
 	}
 	public final static <T> CompletableFuture<List<T>> streamToCompletableFuture(Stream<T> stream){
-		return CompletableFuture.completedFuture(stream.collect(ListX.toListX()));
+		return CompletableFuture.completedFuture(stream.collect(CyclopsCollectors.toListX()));
 			
 	}
 	public final static <T> Stream<T> completableFutureToStream(CompletableFuture<T> future){

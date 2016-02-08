@@ -19,18 +19,14 @@ import com.aol.cyclops.collections.PQueues;
 import com.aol.cyclops.collections.PStacks;
 import com.aol.cyclops.collections.extensions.FluentSequenceX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentSequenceX<T>{
 	
-	//after module merge, move to reducers
-	public static <T> Monoid<PStackX<T>> toPStackX() { 
-		return	Monoid.<PStackX<T>>of(PStackX.empty(), 
-								(PStackX<T> a) -> b -> a.plusAll(b),
-								(T x) -> PStackX.singleton(x));
-	}
+	
 	/**
 	 * Construct a PStack from the provided values 
 	 * 
@@ -138,6 +134,11 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 */
 	public static<T> PStackX<T> fromStream(Stream<T> stream){
 		return new PStackXImpl<>((PStack<T>)PStacks.toPStack().mapReduce(stream),false);
+	}
+	@Override
+	default <R> PStackX<R> ap1( ZippingApplicative<T,R, ?> ap){
+		
+		return (PStackX<R>)PersistentCollectionX.super.ap1(ap);
 	}
 	
 	@Override

@@ -1,18 +1,12 @@
 package com.aol.cyclops.collections.extensions.standard;
 
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -22,25 +16,16 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
-import com.aol.cyclops.collections.extensions.CollectionX;
-import com.aol.cyclops.collections.extensions.persistent.PBagX;
-import com.aol.cyclops.lambda.monads.Functor;
-import com.aol.cyclops.lambda.monads.Traversable;
+import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.matcher.Case;
 import com.aol.cyclops.matcher.builders.CheckValues;
-import com.aol.cyclops.sequence.HeadAndTail;
-import com.aol.cyclops.sequence.HotStream;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.future.FutureOperations;
-import com.aol.cyclops.sequence.streamable.Streamable;
-import com.aol.cyclops.sequence.traits.lazy.LazyCollectable;
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.trampoline.Trampoline;
 
@@ -50,10 +35,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 		return Collectors.toCollection(()-> new ArrayDeque<>());
 	}
 	
-	static <T> Collector<T,?,DequeX<T>> toDequeX(){
-		return Collectors.collectingAndThen(defaultCollector(), (Deque<T> d)->new DequeXImpl<>(d,defaultCollector()));
-		
-	}
+	
 	public static <T> DequeX<T> empty(){
 		return fromIterable((Deque<T>) defaultCollector().supplier().get());
 	}
@@ -85,6 +67,11 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	
 	default <X> DequeX<X> fromStream(Stream<X> stream){
 		return new DequeXImpl<>(stream.collect(getCollector()),getCollector());
+	}
+	@Override
+	default <R> DequeX<R> ap1( ZippingApplicative<T,R, ?> ap){
+		
+		return (DequeX<R>)MutableCollectionX.super.ap1(ap);
 	}
 	@Override
 	default <R> DequeX<R> unit(R value){
@@ -604,9 +591,9 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.lambda.monads.Functor#when(com.aol.cyclops.matcher.Case[])
 	 */
 	@Override
-	default <R> DequeX<Optional<R>> when(Case<T, R, Function<T, R>>... cases) {
+	default <R> DequeX<Optional<R>> matchesCases(Case<T, R, Function<T, R>>... cases) {
 		
-		return (DequeX<Optional<R>>)MutableCollectionX.super.when(cases);
+		return (DequeX<Optional<R>>)MutableCollectionX.super.matchesCases(cases);
 	}
 	
 	

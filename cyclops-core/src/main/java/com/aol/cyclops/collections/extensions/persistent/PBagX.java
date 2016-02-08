@@ -17,6 +17,7 @@ import org.pcollections.PBag;
 
 import com.aol.cyclops.collections.PBags;
 import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.trampoline.Trampoline;
@@ -27,12 +28,7 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 		
 		return SequenceM.fromIterable(this);
 	}
-	//after module merge, move to reducers
-	public static <T> Monoid<PBagX<T>> toPQueueX() { 
-				return	Monoid.<PBagX<T>>of(PBagX.empty(), 
-										(PBagX<T> a) -> b -> a.plusAll(b),
-										(T x) -> PBagX.singleton(x));
-	}
+	
 
 	public static<T> PBagX<T> of(T...values){
 		return new PBagXImpl<>(HashTreePBag.from(Arrays.asList(values)));
@@ -66,6 +62,11 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	}
 	public static<T> PBagX<T> fromStream(Stream<T> stream){
 		return new PBagXImpl<>((PBag<T>)PBags.toPBag().mapReduce(stream));
+	}
+	@Override
+	default <R> PBagX<R> ap1( ZippingApplicative<T,R, ?> ap){
+		
+		return (PBagX<R>)PersistentCollectionX.super.ap1(ap);
 	}
 	@Override
 	default <R> PBagX<R> unit(R value){

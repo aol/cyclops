@@ -1,11 +1,10 @@
 package com.aol.cyclops.closures.mutable;
 
-import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.closures.Convertable;
+import com.aol.cyclops.value.Value;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -18,7 +17,7 @@ import lombok.ToString;
  * variables can't be changed.
  * e.g.
  *<pre>{@code 
- * char var = true;
+ * short var = true;
  * Runnable r = () -> var =false;
  * }</pre>
  * 
@@ -27,7 +26,7 @@ import lombok.ToString;
  * 
  * e.g.
  * <pre>{@code
- * MutableChar var =  MutableChar.of(true);
+ * MutableShort var =  MutableShort.of(true);
  * Runnable r = () -> var.set(false);
  * }</pre>
  * 
@@ -38,69 +37,68 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString @EqualsAndHashCode
-public class MutableChar implements Supplier<Character>, Consumer<Character>,Convertable<Character>{
+public class MutableShort implements Supplier<Short>, Consumer<Short>, Value<Short>{
 
-	private char var;
+	private short var;
 	
 	/**
 	 * Create a Mutable variable, which can be mutated inside a Closure 
 	 * 
 	 * e.g.
 	 * <pre>{@code
-	 *   MutableChar char = MutableChar.of('c');
+	 *   MutableShort num = MutableShort.of(true);
 	 *   
-	 *    char.mutate(n->'d'))
+	 *    num.mutate(n->!n))
 	 *   
-	 *   System.out.println(num.getAsChar());
-	 *   //prints d
+	 *   System.out.println(num.getAsShort());
+	 *   //prints false
 	 * } </pre>
 	 * 
 	 * @param var Initial value of Mutable
 	 * @return New Mutable instance
 	 */
-	public static <T> MutableChar of(char var){
-		return new MutableChar(var);
+	public static <T> MutableShort of(short var){
+		return new MutableShort(var);
 	}
-	
-	
 	/** 
-	 * Construct a MutableChar that gets and sets an external value using the provided Supplier and Consumer
+	 * Construct a MutableShort that gets and sets an external value using the provided Supplier and Consumer
 	 * 
 	 * e.g.
 	 * <pre>
 	 * {@code 
-	 *    MutableChar mutable = MutableChar.fromExternal(()->!this.value,val->!this.value);
+	 *    MutableShort mutable = MutableShort.fromExternal(()->!this.value,val->!this.value);
 	 * }
 	 * </pre>
 	 * 
 	 * 
 	 * @param s Supplier of an external value
 	 * @param c Consumer that sets an external value
-	 * @return MutableChar that gets / sets an external (mutable) value
+	 * @return MutableShort that gets / sets an external (mutable) value
 	 */
-	public static  MutableChar fromExternal(Supplier<Character> s, Consumer<Character> c){
-		return new MutableChar(){
-			public char getAsChar(){
+	public static  MutableShort fromExternal(Supplier<Short> s, Consumer<Short> c){
+		return new MutableShort(){
+			public short getAsShort(){
 				return s.get();
 			}
-			public Character get(){
-				return getAsChar();
+			public Short get(){
+				return getAsShort();
 			}
-			public MutableChar set(char value){
+			public MutableShort set(short value){
 					c.accept(value);
 					return this;
 			}
 		};
 	}
 	
+	
 	/**
 	 * Use the supplied function to perform a lazy map operation when get is called 
 	 * <pre>
 	 * {@code 
-	 *  MutableChar mutable = MutableChar.fromExternal(()->!this.value,val->!this.value);
-	 *  Mutable<Character> withOverride = mutable.mapOutput(b->{ 
+	 *  MutableShort mutable = MutableShort.fromExternal(()->!this.value,val->!this.value);
+	 *  Mutable<Short> withOverride = mutable.mapOutputToObj(b->{ 
 	 *                                                        if(override)
-	 *                                                             return 'a';
+	 *                                                             return 3s;
 	 *                                                         return b;
 	 *                                                         });
 	 *          
@@ -111,8 +109,8 @@ public class MutableChar implements Supplier<Character>, Consumer<Character>,Con
 	 * @param fn Map function to be applied to the result when get is called
 	 * @return Mutable that lazily applies the provided function when get is called to the return value
 	 */
-	public <R> Mutable<R> mapOutputToObj(Function<Character,R> fn){
-		MutableChar host = this;
+	public <R> Mutable<R> mapOutputToObj(Function<Short,R> fn){
+		MutableShort host = this;
 		return new Mutable<R>(){
 			public R get(){
 				return fn.apply(host.get());
@@ -124,10 +122,10 @@ public class MutableChar implements Supplier<Character>, Consumer<Character>,Con
 	 * Use the supplied function to perform a lazy map operation when get is called 
 	 * <pre>
 	 * {@code 
-	 *  MutableChar mutable = MutableChar.fromExternal(()->!this.value,val->!this.value);
-	 *  Mutable<Character> withOverride = mutable.mapInput(b->{ 
+	 *  MutableShort mutable = MutableShort.fromExternal(()->!this.value,val->!this.value);
+	 *  Mutable<Short> withOverride = mutable.mapInputToObj(b->{ 
 	 *                                                        if(override)
-	 *                                                             return 'v';
+	 *                                                             return 1s;
 	 *                                                         return b;
 	 *                                                         });
 	 *          
@@ -138,8 +136,8 @@ public class MutableChar implements Supplier<Character>, Consumer<Character>,Con
 	 * @param fn Map function to be applied to the input when set is called
 	 * @return Mutable that lazily applies the provided function when set is called to the input value
 	 */
-	public <T1> Mutable<T1> mapInputToObj(Function<T1,Character> fn){
-		MutableChar host = this;
+	public <T1> Mutable<T1> mapInputToObj(Function<T1,Short> fn){
+		MutableShort host = this;
 		return new Mutable<T1>(){
 			public Mutable<T1> set(T1 value){
 				host.set(fn.apply(value));
@@ -151,7 +149,7 @@ public class MutableChar implements Supplier<Character>, Consumer<Character>,Con
 	/**
 	 * @return Current value
 	 */
-	public char getAsChar(){
+	public short getAsShort(){
 		return var;
 	}
 	
@@ -159,7 +157,7 @@ public class MutableChar implements Supplier<Character>, Consumer<Character>,Con
 	 * @param var New value
 	 * @return  this object with mutated value
 	 */
-	public MutableChar set(char var){
+	public MutableShort set(short var){
 		this.var = var;
 		return this;
 	}
@@ -167,21 +165,21 @@ public class MutableChar implements Supplier<Character>, Consumer<Character>,Con
 	 * @param varFn New value
 	 * @return  this object with mutated value
 	 */
-	public MutableChar mutate(CharFunction varFn){
-		return set( varFn.apply(get()));
+	public MutableShort mutate(ShortFunction varFn){
+		return set(varFn.apply(get()));
 		
 	}
-	public static interface CharFunction{
-		char apply(char var);
+	public static interface ShortFunction{
+		short apply(short var);
 	}
 	@Override
-	public void accept(Character t) {
+	public Short get() {
+		return getAsShort();
+	}
+	@Override
+	public void accept(Short t) {
 		set(t);
 		
-	}
-	@Override
-	public Character get() {
-		return getAsChar();
 	}
 	
 }

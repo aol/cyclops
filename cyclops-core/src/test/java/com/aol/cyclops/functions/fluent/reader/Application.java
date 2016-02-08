@@ -2,7 +2,7 @@ package com.aol.cyclops.functions.fluent.reader;
 
 import java.util.Map;
 
-import com.aol.cyclops.monad.Reader;
+import com.aol.cyclops.control.Reader;
 
 
 

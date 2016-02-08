@@ -1,11 +1,10 @@
 package com.aol.cyclops.closures.mutable;
 
-import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.closures.Convertable;
+import com.aol.cyclops.value.Value;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -38,7 +37,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString @EqualsAndHashCode
-public class MutableFloat implements Supplier<Float>, Consumer<Float>,Convertable<Float>{
+public class MutableFloat implements Supplier<Float>, Consumer<Float>,Value<Float>{
 
 	private float var;
 	

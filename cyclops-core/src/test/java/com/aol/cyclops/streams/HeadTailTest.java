@@ -1,12 +1,12 @@
 package com.aol.cyclops.streams;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.Optional;
 
 import org.junit.Test;
 
+import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.SequenceM;
@@ -31,6 +31,15 @@ public class HeadTailTest {
 		SequenceM<String> helloWorld = SequenceM.of();
 		Optional<HeadAndTail<String>> headAndTail = helloWorld.headAndTailOptional();
 		assertTrue(!headAndTail.isPresent());
+		
+	}
+	@Test
+	public void empty(){
+	
+		assertFalse(ListX.empty().headAndTail().headMaybe().isPresent());
+		assertFalse(ListX.empty().headAndTail().headOptional().isPresent());
+		assertTrue(ListX.empty().headAndTail().headStream().size()==0);
+		
 		
 	}
 }

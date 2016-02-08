@@ -1,11 +1,10 @@
 package com.aol.cyclops.closures.mutable;
 
-import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.closures.Convertable;
+import com.aol.cyclops.value.Value;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -18,7 +17,7 @@ import lombok.ToString;
  * variables can't be changed.
  * e.g.
  *<pre>{@code 
- * boolean var = true;
+ * byte var = true;
  * Runnable r = () -> var =false;
  * }</pre>
  * 
@@ -27,7 +26,7 @@ import lombok.ToString;
  * 
  * e.g.
  * <pre>{@code
- * MutableBoolean var =  MutableBoolean.of(true);
+ * MutableByte var =  MutableByte.of(true);
  * Runnable r = () -> var.set(false);
  * }</pre>
  * 
@@ -38,53 +37,54 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString @EqualsAndHashCode
-public class MutableBoolean implements BooleanSupplier, Consumer<Boolean>, Convertable<Boolean>{
+public class MutableByte implements Supplier<Byte>, Consumer<Byte>,Value<Byte>{
 
-	private boolean var;
+	private byte var;
 	
 	/**
 	 * Create a Mutable variable, which can be mutated inside a Closure 
 	 * 
 	 * e.g.
 	 * <pre>{@code
-	 *   MutableBoolean num = MutableBoolean.of(true);
+	 *   MutableByte num = MutableByte.of(true);
 	 *   
 	 *    num.mutate(n->!n))
 	 *   
-	 *   System.out.println(num.getAsBoolean());
+	 *   System.out.println(num.getAsByte());
 	 *   //prints false
 	 * } </pre>
 	 * 
 	 * @param var Initial value of Mutable
 	 * @return New Mutable instance
 	 */
-	public static <T> MutableBoolean of(boolean var){
-		return new MutableBoolean(var);
+	public static <T> MutableByte of(byte var){
+		return new MutableByte(var);
 	}
+	
 	/** 
-	 * Construct a MutableBoolean that gets and sets an external value using the provided Supplier and Consumer
+	 * Construct a MutableByte that gets and sets an external value using the provided Supplier and Consumer
 	 * 
 	 * e.g.
 	 * <pre>
 	 * {@code 
-	 *    MutableBoolean mutable = MutableBoolean.fromExternal(()->!this.value,val->!this.value);
+	 *    MutableByte mutable = MutableByte.fromExternal(()->!this.value,val->!this.value);
 	 * }
 	 * </pre>
 	 * 
 	 * 
 	 * @param s Supplier of an external value
 	 * @param c Consumer that sets an external value
-	 * @return MutableBoolean that gets / sets an external (mutable) value
+	 * @return MutableByte that gets / sets an external (mutable) value
 	 */
-	public static  MutableBoolean fromExternal(BooleanSupplier s, Consumer<Boolean> c){
-		return new MutableBoolean(){
-			public boolean getAsBoolean(){
-				return s.getAsBoolean();
+	public static  MutableByte fromExternal(Supplier<Byte> s, Consumer<Byte> c){
+		return new MutableByte(){
+			public byte getAsByte(){
+				return s.get();
 			}
-			public Boolean get(){
-				return getAsBoolean();
+			public Byte get(){
+				return getAsByte();
 			}
-			public MutableBoolean set(boolean value){
+			public MutableByte set(byte value){
 					c.accept(value);
 					return this;
 			}
@@ -95,10 +95,10 @@ public class MutableBoolean implements BooleanSupplier, Consumer<Boolean>, Conve
 	 * Use the supplied function to perform a lazy map operation when get is called 
 	 * <pre>
 	 * {@code 
-	 *  MutableBoolean mutable = MutableBoolean.fromExternal(()->!this.value,val->!this.value);
-	 *  Mutable<Boolean> withOverride = mutable.mapOutput(b->{ 
+	 *  MutableByte mutable = MutableByte.fromExternal(()->!this.value,val->!this.value);
+	 *  Mutable<Byte> withOverride = mutable.mapOutputToObj(b->{ 
 	 *                                                        if(override)
-	 *                                                             return true;
+	 *                                                             return 1b;
 	 *                                                         return b;
 	 *                                                         });
 	 *          
@@ -109,8 +109,8 @@ public class MutableBoolean implements BooleanSupplier, Consumer<Boolean>, Conve
 	 * @param fn Map function to be applied to the result when get is called
 	 * @return Mutable that lazily applies the provided function when get is called to the return value
 	 */
-	public <R> Mutable<R> mapOutputToObj(Function<Boolean,R> fn){
-		MutableBoolean host = this;
+	public <R> Mutable<R> mapOutputToObj(Function<Byte,R> fn){
+		MutableByte host = this;
 		return new Mutable<R>(){
 			public R get(){
 				return fn.apply(host.get());
@@ -122,10 +122,10 @@ public class MutableBoolean implements BooleanSupplier, Consumer<Boolean>, Conve
 	 * Use the supplied function to perform a lazy map operation when get is called 
 	 * <pre>
 	 * {@code 
-	 *  MutableBoolean mutable = MutableBoolean.fromExternal(()->!this.value,val->!this.value);
-	 *  Mutable<Boolean> withOverride = mutable.mapInput(b->{ 
+	 *  MutableByte mutable = MutablByte.fromExternal(()->!this.value,val->!this.value);
+	 *  Mutable<Byte> withOverride = mutable.mapInputToObj(b->{ 
 	 *                                                        if(override)
-	 *                                                             return true;
+	 *                                                             return 1b;
 	 *                                                         return b;
 	 *                                                         });
 	 *          
@@ -136,8 +136,8 @@ public class MutableBoolean implements BooleanSupplier, Consumer<Boolean>, Conve
 	 * @param fn Map function to be applied to the input when set is called
 	 * @return Mutable that lazily applies the provided function when set is called to the input value
 	 */
-	public <T1> Mutable<T1> mapInputToObj(Function<T1,Boolean> fn){
-		MutableBoolean host = this;
+	public <T1> Mutable<T1> mapInputToObj(Function<T1,Byte> fn){
+		MutableByte host = this;
 		return new Mutable<T1>(){
 			public Mutable<T1> set(T1 value){
 				host.set(fn.apply(value));
@@ -146,10 +146,11 @@ public class MutableBoolean implements BooleanSupplier, Consumer<Boolean>, Conve
 			
 		};
 	}
+	
 	/**
 	 * @return Current value
 	 */
-	public boolean getAsBoolean(){
+	public byte getAsByte(){
 		return var;
 	}
 	
@@ -157,7 +158,7 @@ public class MutableBoolean implements BooleanSupplier, Consumer<Boolean>, Conve
 	 * @param var New value
 	 * @return  this object with mutated value
 	 */
-	public MutableBoolean set(boolean var){
+	public MutableByte set(byte var){
 		this.var = var;
 		return this;
 	}
@@ -165,21 +166,21 @@ public class MutableBoolean implements BooleanSupplier, Consumer<Boolean>, Conve
 	 * @param varFn New value
 	 * @return  this object with mutated value
 	 */
-	public MutableBoolean mutate(BooleanFunction varFn){
-		return set( varFn.apply(getAsBoolean()));
+	public MutableByte mutate(ByteFunction varFn){
+		return set( varFn.apply(this.getAsByte()));
 		
 	}
-	public static interface BooleanFunction{
-		boolean apply(boolean var);
+	public static interface ByteFunction{
+		byte apply(byte var);
 	}
 	@Override
-	public void accept(Boolean t) {
+	public void accept(Byte t) {
 		set(t);
 		
 	}
 	@Override
-	public Boolean get() {
-		return getAsBoolean();
+	public Byte get() {
+		return getAsByte();
 	}
 	
 }

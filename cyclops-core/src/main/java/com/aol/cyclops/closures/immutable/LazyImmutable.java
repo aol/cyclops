@@ -1,5 +1,6 @@
 package com.aol.cyclops.closures.immutable;
 
+import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -9,6 +10,10 @@ import java.util.function.Supplier;
 import lombok.ToString;
 
 import com.aol.cyclops.closures.Convertable;
+import com.aol.cyclops.lambda.applicative.Applicativable;
+import com.aol.cyclops.lambda.monads.Unit;
+import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.value.Value;
 
 /**
  * A class that represents an 'immutable' value that is generated inside a lambda
@@ -33,7 +38,7 @@ import com.aol.cyclops.closures.Convertable;
  * @param <T>
  */
 @ToString
-public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Convertable<T>{
+public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Value<T>, Applicativable<T>{
 	private final static Object UNSET = new Object();
 	private AtomicReference value = new AtomicReference<>(UNSET);
 	private final AtomicBoolean set= new AtomicBoolean(false);
@@ -79,7 +84,7 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Convertable<T
 	 * @param fn Mapper function
 	 * @return new ImmutableClosedValue with new mapped value 
 	 */
-	public <R> LazyImmutable<R> map(Function<T,R> fn){
+	public <R> LazyImmutable<R> map(Function<? super T,? extends R> fn){
 		T val = get();
 		if(val==UNSET)
 			return (LazyImmutable)this;
@@ -94,7 +99,7 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Convertable<T
 	 * @param fn  Flat Mapper function
 	 * @return new ImmutableClosedValue with new mapped value 
 	 */
-	public <R> LazyImmutable<R> flatMap(Function<T,LazyImmutable<R>> fn){
+	public <R> LazyImmutable<? extends R> flatMap(Function<? super T,? extends LazyImmutable<? extends R>> fn){
 		T val = get();
 		if(val==UNSET)
 			return (LazyImmutable)this;
@@ -140,5 +145,20 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Convertable<T
 	public void accept(T t) {
 		setOnce(t);
 		
+	}
+
+	@Override
+	public SequenceM<T> stream() {
+		return SequenceM.generate(this).limit(1);
+	}
+
+	@Override
+	public Iterator<T> iterator() {
+		return stream().iterator();
+	}
+
+	@Override
+	public <T> Unit<T> unit(T unit) {
+		return LazyImmutable.of(unit);
 	}
 }

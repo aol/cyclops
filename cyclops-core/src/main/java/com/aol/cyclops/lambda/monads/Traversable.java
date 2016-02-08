@@ -22,21 +22,55 @@ import org.jooq.lambda.tuple.Tuple4;
 import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.collections.extensions.standard.MapX;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.HotStream;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.sequence.traits.ConvertableSequence;
 import com.aol.cyclops.sequence.traits.lazy.LazyCollectable;
 import com.aol.cyclops.sequence.traits.lazy.LazyOperationsImpl;
 
 
-
-public interface Traversable<T> extends Foldable<T>, Iterable<T> {
-	default SequenceM<T> stream(){
-		return SequenceM.fromIterable(this);
+public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSequence<T>,UnitIterator<T> {
+	
+	Traversable<T> unitIteratorTyped(Iterator<T> it);
+	
+	/**
+	 * Destructures this Traversable into it's head and tail. If the traversable instance is not a SequenceM or Stream type,
+	 * whenStream may be more efficient (as it is guaranteed to be lazy).
+	 * 
+	 * @param match
+	 * @return
+	 */
+	default <R> R when(BiFunction<? super Maybe<T>,? super Traversable<T>,? extends R> match ){
+		
+		HeadAndTail<T> ht = this.headAndTail();
+		return match.apply(ht.headMaybe(),unitIteratorTyped(ht.tail().iterator()));
 	}
+	/**
+	 * Destructures this Traversable lazily & efficiently into it's head and tail, where the tail is a SequenceM
+	 * 
+	 * @param match
+	 * @return
+	 */
+	default <R> R whenStream(BiFunction<? super Maybe<T>,? super SequenceM<T>,? extends R> match ){
+		HeadAndTail<T> ht = this.headAndTail();
+		return match.apply(ht.headMaybe(),ht.tail());
+	}
+	/**
+	 *  Destructures this Traversable lazily & efficiently into it's head and tail, where the tail is a Streamable amenable to multiple operations
+	 * 
+	 * @param match
+	 * @return
+	 */
+	default <R> R whenStreamable(BiFunction<? super Maybe<T>,? super Streamable<T>,? extends R> match ){
+		HeadAndTail<T> ht = this.headAndTail();
+		return match.apply(ht.headMaybe(),ht.tail().toStreamable());
+	}
+	
 	/**
 	 * Convert to a Stream with the values repeated specified times
 	 * 
@@ -943,53 +977,8 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T> {
 		return stream().sorted(function);
 	}
 	
-	/**
-	 * Generate the permutations based on values in the SequenceM Makes use of
-	 * Streamable to store intermediate stages in a collection
-	 * 
-	 * 
-	 * @return Permutations from this SequenceM
-	 */
-	 default Traversable<SequenceM<T>> permutations(){
-		 return stream().permutations();
-	 }
-
-
-	/**
-	 * <pre>
-	 * {@code
-	 *   SequenceM.of(1,2,3).combinations(2)
-	 *   
-	 *   //SequenceM[SequenceM[1,2],SequenceM[1,3],SequenceM[2,3]]
-	 * }
-	 * </pre>
-	 * 
-	 * 
-	 * @param size
-	 *            of combinations
-	 * @return All combinations of the elements in this stream of the specified
-	 *         size
-	 */
-	 default Traversable<SequenceM<T>> combinations(int size){
-		 return stream().combinations();
-	 }
-
-	/**
-	 * <pre>
-	 * {@code
-	 *   SequenceM.of(1,2,3).combinations()
-	 *   
-	 *   //SequenceM[SequenceM[],SequenceM[1],SequenceM[2],SequenceM[3].SequenceM[1,2],SequenceM[1,3],SequenceM[2,3]
-	 *   			,SequenceM[1,2,3]]
-	 * }
-	 * </pre>
-	 * 
-	 * 
-	 * @return All combinations of the elements in this stream
-	 */
-	 default Traversable<SequenceM<T>> combinations(){
-		 return stream().combinations();
-	 }
+	
+	
 
 	/**
 	 * Execute this Stream on a schedule
@@ -1095,6 +1084,11 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T> {
 	 */
 	default HotStream<T> scheduleFixedRate(long rate, ScheduledExecutorService ex){
 		return stream().scheduleFixedRate(rate, ex);
+	}
+
+	@Override
+	default SequenceM<T> stream() {
+		return ConvertableSequence.super.stream();
 	}
 
 

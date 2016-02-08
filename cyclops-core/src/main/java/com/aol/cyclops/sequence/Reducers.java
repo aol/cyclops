@@ -17,9 +17,16 @@ import org.pcollections.PStack;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
+import com.aol.cyclops.collections.extensions.persistent.PBagX;
+import com.aol.cyclops.collections.extensions.persistent.POrderedSetX;
+import com.aol.cyclops.collections.extensions.persistent.PSetX;
+import com.aol.cyclops.collections.extensions.persistent.PStackX;
+import com.aol.cyclops.collections.extensions.persistent.PVectorX;
 import com.aol.cyclops.lambda.api.TupleWrapper;
 
+import lombok.experimental.UtilityClass;
 
+//@UtilityClass
 public class Reducers {
 	private static <T> PQueue<T> queueOf(T...values){
 		PQueue<T> result = AmortizedPQueue.empty();
@@ -28,6 +35,32 @@ public class Reducers {
 		}
 		return result;
 		
+	}
+	//after module merge, move to reducers
+		public static <T> Monoid<POrderedSetX<T>> toPOrderedSetX() { 
+						return	Monoid.<POrderedSetX<T>>of(POrderedSetX.<T>empty(), 
+												(POrderedSetX<T> a) -> b -> a.plusAll(b),
+												(T x) -> POrderedSetX.singleton(x));
+		}
+
+		public static <T> Monoid<PSetX<T>> toPSetX() { 
+					return	Monoid.<PSetX<T>>of(PSetX.empty(), 
+											(PSetX<T> a) -> b -> a.plusAll(b),
+											(T x) -> PSetX.singleton(x));
+		}
+		public static <T> Monoid<PStackX<T>> toPStackX() { 
+			return	Monoid.<PStackX<T>>of(PStackX.empty(), 
+									(PStackX<T> a) -> b -> a.plusAll(b),
+									(T x) -> PStackX.singleton(x));
+		}
+		public static <T> Monoid<PVectorX<T>> toPVectorX() { 
+				return	Monoid.<PVectorX<T>>of(PVectorX.empty(), 
+										(PVectorX<T> a) -> b -> a.plusAll(b),
+										(T x) -> PVectorX.singleton(x));
+		}
+	
+	public static <T> Monoid<PBagX<T>> toPBagX() {
+		return Monoid.<PBagX<T>> of(PBagX.empty(), (PBagX<T> a) -> b -> a.plusAll(b), (T x) -> PBagX.singleton(x));
 	}
 	
 	

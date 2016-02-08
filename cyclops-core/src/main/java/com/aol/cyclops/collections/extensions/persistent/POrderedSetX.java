@@ -19,17 +19,13 @@ import org.pcollections.PSet;
 import com.aol.cyclops.collections.PBags;
 import com.aol.cyclops.collections.POrderedSets;
 import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T>{
-	//after module merge, move to reducers
-	public static <T> Monoid<POrderedSetX<T>> toPOrderedSetX() { 
-					return	Monoid.<POrderedSetX<T>>of(POrderedSetX.<T>empty(), 
-											(POrderedSetX<T> a) -> b -> a.plusAll(b),
-											(T x) -> POrderedSetX.singleton(x));
-	}
+	
 	public static <T> POrderedSetX<T> of(T...values){
 		return new POrderedSetXImpl<>(OrderedPSet.from(Arrays.asList(values)));
 	}
@@ -60,6 +56,11 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	}
 	public static<T> POrderedSetX<T> toPOrderedSet(Stream<T> stream){
 		return new POrderedSetXImpl<>((POrderedSet<T>)POrderedSets.toPOrderedSet().mapReduce(stream));
+	}
+	@Override
+	default <R> POrderedSetX<R> ap1( ZippingApplicative<T,R, ?> ap){
+		
+		return (POrderedSetX<R>)PersistentCollectionX.super.ap1(ap);
 	}
 	@Override
 	default<R> POrderedSetX<R> unit(Collection<R> col){

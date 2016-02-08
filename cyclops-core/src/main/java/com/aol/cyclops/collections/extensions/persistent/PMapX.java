@@ -13,13 +13,13 @@ import com.aol.cyclops.lambda.monads.BiFunctor;
 import com.aol.cyclops.lambda.monads.Foldable;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.IterableCollectable;
-import com.aol.cyclops.lambda.monads.Traversable;
+import com.aol.cyclops.lambda.monads.ExtendedTraversable;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.traits.SequenceMCollectable;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface PMapX<K, V> extends PMap<K, V>, FluentMapX<K,V>,BiFunctor<K, V>, Functor<V>, 
-													Traversable<Tuple2<K, V>>, Foldable<Tuple2<K,V>>,
+													ExtendedTraversable<Tuple2<K, V>>, Foldable<Tuple2<K,V>>,
 													SequenceMCollectable<Tuple2<K,V>>,
 													IterableCollectable<Tuple2<K,V>>{
 
@@ -50,7 +50,7 @@ public interface PMapX<K, V> extends PMap<K, V>, FluentMapX<K,V>,BiFunctor<K, V>
 	@Override
 	default SequenceM<Tuple2<K, V>> stream() {
 		// TODO Auto-generated method stub
-		return Traversable.super.stream();
+		return ExtendedTraversable.super.stream();
 	}
 
 

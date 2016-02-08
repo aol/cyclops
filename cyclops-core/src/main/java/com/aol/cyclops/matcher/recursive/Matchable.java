@@ -1,17 +1,20 @@
 package com.aol.cyclops.matcher.recursive;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.matcher.Case;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.matcher.builders.MatchingInstance;
 import com.aol.cyclops.matcher.builders.PatternMatcher;
 import com.aol.cyclops.matcher.builders._Simpler_Case;
 import com.aol.cyclops.objects.Decomposable;
-
+import org.hamcrest.Matcher;
 
 /**
  * Matchable
@@ -31,6 +34,8 @@ public interface Matchable<TYPE>{
 		
 		return (TYPE)this;
 	}
+	
+	
 	/**
 	 * Match against the values inside the matchable with a single case
 	 * 

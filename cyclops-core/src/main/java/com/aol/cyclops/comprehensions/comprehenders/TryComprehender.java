@@ -1,10 +1,13 @@
-package com.aol.cyclops.trycatch;
+package com.aol.cyclops.comprehensions.comprehenders;
 
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.trycatch.Failure;
+import com.aol.cyclops.trycatch.Success;
+import com.aol.cyclops.trycatch.Try;
 
 /**
  * Comprehender for performant for-comprehensions for Try 
