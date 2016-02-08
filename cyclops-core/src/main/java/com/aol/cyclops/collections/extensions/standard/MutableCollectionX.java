@@ -18,16 +18,19 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
 import com.aol.cyclops.collections.extensions.CollectionX;
+import com.aol.cyclops.collections.extensions.FluentCollectionX;
+import com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX;
 import com.aol.cyclops.lambda.monads.Filterable;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.Traversable;
 import com.aol.cyclops.matcher.Case;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.trampoline.Trampoline;
 
-public interface MutableCollectionX<T> extends CollectionX<T> {
+public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	
 	<X> MutableCollectionX<X> fromStream(Stream<X> stream);
 	
@@ -403,7 +406,7 @@ public interface MutableCollectionX<T> extends CollectionX<T> {
 	@Override
 	default <U> MutableCollectionX<U> ofType(Class<U> type) {
 		
-		return (MutableCollectionX)CollectionX.super.ofType(type);
+		return (MutableCollectionX)FluentCollectionX.super.ofType(type);
 	}
 
 	/* (non-Javadoc)
@@ -412,7 +415,7 @@ public interface MutableCollectionX<T> extends CollectionX<T> {
 	@Override
 	default MutableCollectionX<T> filterNot(Predicate<? super T> fn) {
 		
-		return (MutableCollectionX)CollectionX.super.filterNot(fn);
+		return (MutableCollectionX)FluentCollectionX.super.filterNot(fn);
 	}
 
 	/* (non-Javadoc)
@@ -421,7 +424,7 @@ public interface MutableCollectionX<T> extends CollectionX<T> {
 	@Override
 	default MutableCollectionX<T> notNull() {
 		
-		return (MutableCollectionX)CollectionX.super.notNull();
+		return (MutableCollectionX)FluentCollectionX.super.notNull();
 	}
 
 	/* (non-Javadoc)
@@ -430,7 +433,7 @@ public interface MutableCollectionX<T> extends CollectionX<T> {
 	@Override
 	default MutableCollectionX<T> removeAll(Stream<T> stream) {
 		
-		return (MutableCollectionX)CollectionX.super.removeAll(stream);
+		return (MutableCollectionX)FluentCollectionX.super.removeAll(stream);
 	}
 
 	/* (non-Javadoc)
@@ -439,7 +442,7 @@ public interface MutableCollectionX<T> extends CollectionX<T> {
 	@Override
 	default MutableCollectionX<T> removeAll(Iterable<T> it) {
 		
-		return (MutableCollectionX)CollectionX.super.removeAll(it);
+		return (MutableCollectionX)FluentCollectionX.super.removeAll(it);
 	}
 
 	/* (non-Javadoc)
@@ -448,7 +451,7 @@ public interface MutableCollectionX<T> extends CollectionX<T> {
 	@Override
 	default MutableCollectionX<T> removeAll(T... values) {
 		
-		return (MutableCollectionX)CollectionX.super.removeAll(values);
+		return (MutableCollectionX)FluentCollectionX.super.removeAll(values);
 	}
 
 	/* (non-Javadoc)
@@ -457,7 +460,7 @@ public interface MutableCollectionX<T> extends CollectionX<T> {
 	@Override
 	default MutableCollectionX<T> retainAll(Iterable<T> it) {
 		
-		return (MutableCollectionX)CollectionX.super.retainAll(it);
+		return (MutableCollectionX)FluentCollectionX.super.retainAll(it);
 	}
 
 	/* (non-Javadoc)
@@ -466,7 +469,7 @@ public interface MutableCollectionX<T> extends CollectionX<T> {
 	@Override
 	default MutableCollectionX<T> retainAll(Stream<T> stream) {
 		
-		return (MutableCollectionX)CollectionX.super.retainAll(stream);
+		return (MutableCollectionX)FluentCollectionX.super.retainAll(stream);
 	}
 
 	/* (non-Javadoc)
@@ -475,7 +478,7 @@ public interface MutableCollectionX<T> extends CollectionX<T> {
 	@Override
 	default MutableCollectionX<T> retainAll(T... values) {
 		
-		return (MutableCollectionX)CollectionX.super.retainAll(values);
+		return (MutableCollectionX)FluentCollectionX.super.retainAll(values);
 	}
 
 	/* (non-Javadoc)
@@ -484,7 +487,7 @@ public interface MutableCollectionX<T> extends CollectionX<T> {
 	@Override
 	default MutableCollectionX<T> retainMatches(Matcher<T> m) {
 		
-		return (MutableCollectionX)CollectionX.super.retainMatches(m);
+		return (MutableCollectionX)FluentCollectionX.super.retainMatches(m);
 	}
 
 	/* (non-Javadoc)
@@ -493,7 +496,7 @@ public interface MutableCollectionX<T> extends CollectionX<T> {
 	@Override
 	default MutableCollectionX<T> removeMatches(Matcher<T> m) {
 		
-		return (MutableCollectionX)CollectionX.super.removeMatches(m);
+		return (MutableCollectionX)FluentCollectionX.super.removeMatches(m);
 	}
 
 	/* (non-Javadoc)
@@ -502,7 +505,7 @@ public interface MutableCollectionX<T> extends CollectionX<T> {
 	@Override
 	default <U> MutableCollectionX<U> cast(Class<U> type) {
 		
-		return (MutableCollectionX)CollectionX.super.cast(type);
+		return (MutableCollectionX)FluentCollectionX.super.cast(type);
 	}
 
 	/* (non-Javadoc)
@@ -511,7 +514,7 @@ public interface MutableCollectionX<T> extends CollectionX<T> {
 	@Override
 	default <R> MutableCollectionX<Optional<R>> matchesCases(Case<T, R, Function<T, R>>... cases) {
 		
-		return (MutableCollectionX)CollectionX.super.matchesCases(cases);
+		return (MutableCollectionX)FluentCollectionX.super.matchesCases(cases);
 	}
 
 	/* (non-Javadoc)
@@ -521,7 +524,7 @@ public interface MutableCollectionX<T> extends CollectionX<T> {
 	default <R> MutableCollectionX<R> patternMatch(R defaultValue,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
 		
-		return (MutableCollectionX)CollectionX.super.patternMatch(defaultValue, case1);
+		return (MutableCollectionX)FluentCollectionX.super.patternMatch(defaultValue, case1);
 	}
 
 	/* (non-Javadoc)
@@ -532,7 +535,7 @@ public interface MutableCollectionX<T> extends CollectionX<T> {
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case2) {
 		
-		return (MutableCollectionX)CollectionX.super.patternMatch(defaultValue, case1, case2);
+		return (MutableCollectionX)FluentCollectionX.super.patternMatch(defaultValue, case1, case2);
 	}
 
 	/* (non-Javadoc)
@@ -544,7 +547,7 @@ public interface MutableCollectionX<T> extends CollectionX<T> {
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3) {
 		
-		return (MutableCollectionX)CollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3);
+		return (MutableCollectionX)FluentCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3);
 	}
 
 	/* (non-Javadoc)
@@ -557,7 +560,7 @@ public interface MutableCollectionX<T> extends CollectionX<T> {
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4) {
 		
-		return (MutableCollectionX)CollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4);
+		return (MutableCollectionX)FluentCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4);
 	}
 
 	/* (non-Javadoc)
@@ -571,10 +574,31 @@ public interface MutableCollectionX<T> extends CollectionX<T> {
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn5) {
 		
-		return (MutableCollectionX)CollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4, fn5);
+		return (MutableCollectionX)FluentCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4, fn5);
 	}
 
-
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#permutations()
+	 */
+	@Override
+	default MutableCollectionX<SequenceM<T>> permutations() {
+		return fromStream(stream().permutations());
+		
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations(int)
+	 */
+	@Override
+	default MutableCollectionX<SequenceM<T>> combinations(int size) {
+		return fromStream(stream().combinations());
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations()
+	 */
+	@Override
+	default MutableCollectionX<SequenceM<T>> combinations() {
+		return fromStream(stream().combinations());
+	}
 	
 	
 }

@@ -23,6 +23,10 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
 	public <R> CollectionX<R> unit(R value){
 		return ListX.singleton(value);
 	}
+	@Override
+	public<R> FluentCollectionX<R> unit(Collection<R> col){
+		return ListX.fromIterable(col);
+	}
 	/**
 	 * @param action
 	 * @see java.lang.Iterable#forEach(java.util.function.Consumer)

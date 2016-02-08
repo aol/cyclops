@@ -66,7 +66,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 		return SequenceM.fromIterable(this);
 	}
 	@Override
-	default Collectable<T> collectable(){
+	default SequenceMCollectable<T> collectable(){
 		return stream();
 	}
 	
@@ -537,6 +537,21 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	default SequenceM<T> fixedDelay(long l, TimeUnit unit){
 		return stream().fixedDelay(l, unit);
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#permutations()
+	 */
+	@Override
+	CollectionX<SequenceM<T>> permutations();
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations(int)
+	 */
+	@Override
+	CollectionX<SequenceM<T>> combinations(int size);
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations()
+	 */
+	@Override
+	CollectionX<SequenceM<T>> combinations();
 
 	
 	

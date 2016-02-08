@@ -303,6 +303,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 		removeAll(list);
 		return this;
 	}
+	@Override
 	default ListX<T> plus(int i, T e){
 		add(i,e);
 		return this;

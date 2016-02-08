@@ -844,7 +844,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * @return elementAt index
 	 */
 	default Optional<T> get(long index){
-		return get(index);
+		return stream().get(index);
 	}
 	
 	
@@ -1105,6 +1105,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	default SequenceM<T> stream() {
 		return ConvertableSequence.super.stream();
 	}
+	
 
 
 

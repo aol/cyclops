@@ -75,6 +75,10 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 		return (DequeX<R>)MutableCollectionX.super.ap1(ap);
 	}
 	@Override
+	default<R> DequeX<R> unit(Collection<R> col){
+		return fromIterable(col);
+	}
+	@Override
 	default <R> DequeX<R> unit(R value){
 		return singleton(value);
 	}

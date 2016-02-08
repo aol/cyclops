@@ -21,14 +21,14 @@ public class ListXTest extends CollectionXTestsWithNulls{
 		String res=	ListX.of(1,2,3).when((x,xs)->
 								xs.join(x.when(some-> (int)some>2? "hello" : "world",()->"boo!"))
 					);
-		assertThat(res,equalTo("2hello3"));
+		assertThat(res,equalTo("2world3"));
 	}
 	@Test
 	public void whenGreaterThan2(){
 		String res=	ListX.of(5,2,3).when((x,xs)->
 								xs.join(x.when(some-> (int)some>2? "hello" : "world",()->"boo!"))
 					);
-		assertThat(res,equalTo("2world3"));
+		assertThat(res,equalTo("2hello3"));
 	}
 	@Test
 	public void when2(){
@@ -50,7 +50,7 @@ public class ListXTest extends CollectionXTestsWithNulls{
 		
 		
 		String res=	ListX.of(1,2,3).when((x,xs)-> x.when(some-> xs.join((int)some>2? "hello" : "world"),()->"EMPTY"));
-		assertThat(res,equalTo("2hello3"));
+		assertThat(res,equalTo("2world3"));
 	}
 	
 	/**

@@ -28,6 +28,7 @@ import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.sequence.CyclopsCollectors;
 import com.aol.cyclops.sequence.Reducers;
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.trycatch.Try;
 import com.aol.cyclops.value.Value;
@@ -54,6 +55,9 @@ public interface ConvertableSequence<T> extends Iterable<T>{
 	default SimpleReactStream<T> toSimpleReact(){
 		return new SimpleReact().fromIterable(this);
 	}
+	default Streamable<T> toStreamable(){
+		return stream().toStreamable();
+	}
 	default DequeX<T> toDequeX(){
 		return DequeX.fromIterable(this);
 	}
@@ -76,7 +80,7 @@ public interface ConvertableSequence<T> extends Iterable<T>{
 		return stream.mapReduce(Reducers.toPMapX());		
 	}
 	default <K, V> MapX<K, V> toMapX(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper){
-		return stream().toMap(keyMapper,valueMapper);
+		return MapX.fromMap(stream().toMap(keyMapper,valueMapper));
 	}
 	default PStackX<T> toPStackX(){
 		return PStackX.fromIterable(this);

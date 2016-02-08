@@ -26,7 +26,7 @@ public interface ToStream<T> extends Iterable<T>,ConvertableToSequenceM<T>{
 	 * @return SequenceM from this Streamable
 	 */
 	default SequenceM<T> sequenceM(){
-		return SequenceM.fromStream(stream());
+		return SequenceM.fromStream(new FromStreamable<T>().stream(getStreamable()));
 	}
 	default Stream<T> reveresedStream(){
 		Object streamable = getStreamable();
@@ -37,14 +37,11 @@ public interface ToStream<T> extends Iterable<T>,ConvertableToSequenceM<T>{
 			List arrayList = Arrays.asList((Object[])streamable);
 			return StreamSupport.stream(new ReversedIterator(arrayList).spliterator(),false);
 		}
-		return SeqUtils.reverse(stream());
+		return SeqUtils.reverse(new FromStreamable<T>().stream(getStreamable()));
 	}
 	default boolean isEmpty(){
 		return this.sequenceM().isEmpty();
 	}
-	/**
-	 * @return New Stream
-	 */
 	default Stream<T> stream(){
 		Object streamable = getStreamable();
 		if(streamable instanceof Stream)
@@ -56,6 +53,23 @@ public interface ToStream<T> extends Iterable<T>,ConvertableToSequenceM<T>{
 												.unapply()
 												.spliterator(),
 													false));
+	}
+	static class FromStreamable<T>{
+	/**
+	 * @return New Stream
+	 */
+		public Stream<T> stream(Object streamable){
+			
+		if(streamable instanceof Stream)
+			return (Stream)streamable;
+		if(streamable instanceof Iterable)
+			return StreamSupport.stream(((Iterable)streamable).spliterator(), false);
+		return  new InvokeDynamic().stream(streamable).orElseGet( ()->
+								(Stream)StreamSupport.stream(AsDecomposable.asDecomposable(streamable)
+												.unapply()
+												.spliterator(),
+													false));
+		}
 	}
 	
 }

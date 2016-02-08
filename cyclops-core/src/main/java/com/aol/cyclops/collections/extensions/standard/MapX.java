@@ -179,7 +179,7 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 	@Override
 	default MapX<K, V> unitIteratorTyped(Iterator<Tuple2<K, V>> it) {
 		return SequenceM.fromIterator(it)
-						.toMap(k->k.v1,v->v.v2);
+						.toMapX(k->k.v1,v->v.v2);
 	}
 	
 	/* (non-Javadoc)

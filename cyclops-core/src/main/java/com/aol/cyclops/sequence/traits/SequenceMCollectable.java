@@ -289,8 +289,8 @@ public interface SequenceMCollectable<T> extends Collectable<T> {
 	
 
 	@Override
-	default ListX<T> toList() {
-		return ListX.fromIterable(collectable().toList());
+	default List<T> toList() {
+		return collectable().toList();
 	}
 
 	@Override
@@ -299,8 +299,8 @@ public interface SequenceMCollectable<T> extends Collectable<T> {
 	}
 
 	@Override
-	default SetX<T> toSet() {
-		return SetX.fromIterable(collectable().toSet());
+	default Set<T> toSet() {
+		return collectable().toSet();
 	}
 
 	@Override
@@ -314,8 +314,8 @@ public interface SequenceMCollectable<T> extends Collectable<T> {
 	}
 
 	@Override
-	default <K, V> MapX<K, V> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper) {
-		return MapX.fromMap(collectable().toMap(keyMapper, valueMapper));
+	default <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper) {
+		return collectable().toMap(keyMapper, valueMapper);
 	}
 
 	@Override

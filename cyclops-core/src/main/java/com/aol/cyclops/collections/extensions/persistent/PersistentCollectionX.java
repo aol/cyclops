@@ -553,6 +553,30 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 		return (PersistentCollectionX)FluentCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4, fn5);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#permutations()
+	 */
+	@Override
+	default PersistentCollectionX<SequenceM<T>> permutations() {
+		
+		return from(this.<SequenceM<T>>monoid().mapReduce(stream().permutations()));
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations(int)
+	 */
+	@Override
+	default PersistentCollectionX<SequenceM<T>> combinations(int size) {
+		return from(this.<SequenceM<T>>monoid().mapReduce(stream().combinations(size)));
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations()
+	 */
+	@Override
+	default PersistentCollectionX<SequenceM<T>> combinations() {
+		return from(this.<SequenceM<T>>monoid().mapReduce(stream().combinations()));
+	}
+
+	
 	
 	
 	

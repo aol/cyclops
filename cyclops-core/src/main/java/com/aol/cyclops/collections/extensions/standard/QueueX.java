@@ -75,7 +75,10 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 		
 		return (QueueX<R>)MutableCollectionX.super.ap1(ap);
 	}
-	
+	@Override
+	default<R> QueueX<R> unit(Collection<R> col){
+		return fromIterable(col);
+	}
 	@Override
 	default <R> QueueX<R> unit(R value){
 		return singleton(value);
