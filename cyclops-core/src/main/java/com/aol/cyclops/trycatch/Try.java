@@ -79,6 +79,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 	default <T> Try<T,?> unit(T value){
 		return success(value);
 	}
+	public <R> R when(Function<? super T, ? extends R> success, Function<? super X, ? extends R> failure);
 	/**
 	 * @return This monad, wrapped as AnyM of Success
 	 */

@@ -2,6 +2,8 @@ package com.aol.cyclops.featuretoggle;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import lombok.Value;
 
@@ -129,4 +131,13 @@ public class Enabled<F> implements FeatureToggle<F>{
 		
 		return false;
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.featuretoggle.FeatureToggle#when(java.util.function.Function, java.util.function.Supplier)
+	 */
+	@Override
+	public <R> R when(Function<? super F, ? extends R> enabled, Function<? super F, ? extends R> disabled) {
+		return enabled.apply(get());
+	}
+	
+	
 }

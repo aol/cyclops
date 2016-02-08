@@ -40,6 +40,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	public static <T> QueueX<T> empty(){
 		return fromIterable((Queue<T>) defaultCollector().supplier().get());
 	}
+	@SafeVarargs
 	public static <T> QueueX<T> of(T...values){
 		Queue<T> res = (Queue<T>) defaultCollector().supplier().get();
 		for(T v: values)
@@ -47,7 +48,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 		return  fromIterable(res);
 	}
 	public static <T> QueueX<T> singleton(T value){
-		return of(value);
+		return QueueX.<T>of(value);
 	}
 	public static <T> QueueX<T> fromIterable(Iterable<T> it){
 		return fromIterable(defaultCollector(),it);
@@ -72,7 +73,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default <R> QueueX<R> ap1( ZippingApplicative<T,R, ?> ap){
 		
-		return (QueueX<R>)(QueueX)MutableCollectionX.super.ap1(ap);
+		return (QueueX<R>)MutableCollectionX.super.ap1(ap);
 	}
 	
 	@Override
@@ -96,7 +97,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default QueueX<T> reverse() {
 		
-		return (QueueX)(QueueX)MutableCollectionX.super.reverse();
+		return (QueueX<T>)MutableCollectionX.super.reverse();
 	}
 
 	/* (non-Javadoc)
@@ -105,7 +106,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default QueueX<T> filter(Predicate<? super T> pred) {
 		
-		return (QueueX)(QueueX)MutableCollectionX.super.filter(pred);
+		return (QueueX<T>)MutableCollectionX.super.filter(pred);
 	}
 
 	/* (non-Javadoc)
@@ -114,7 +115,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default <R> QueueX<R> map(Function<? super T, ? extends R> mapper) {
 		
-		return (QueueX)(QueueX)MutableCollectionX.super.map(mapper);
+		return (QueueX<R>)MutableCollectionX.super.<R>map(mapper);
 	}
 
 	/* (non-Javadoc)
@@ -123,7 +124,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default <R> QueueX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
 		
-		return (QueueX)(QueueX)MutableCollectionX.super.flatMap(mapper);
+		return (QueueX<R>)MutableCollectionX.super.<R>flatMap(mapper);
 	}
 
 	/* (non-Javadoc)
@@ -132,7 +133,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default QueueX<T> limit(long num) {
 	
-		return (QueueX)(QueueX)MutableCollectionX.super.limit(num);
+		return (QueueX<T>)MutableCollectionX.super.limit(num);
 	}
 
 	/* (non-Javadoc)
@@ -141,7 +142,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default QueueX<T> skip(long num) {
 		
-		return (QueueX)(QueueX)MutableCollectionX.super.skip(num);
+		return (QueueX<T>)MutableCollectionX.super.skip(num);
 	}
 
 	/* (non-Javadoc)
@@ -150,7 +151,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default QueueX<T> takeWhile(Predicate<? super T> p) {
 		
-		return (QueueX)(QueueX)MutableCollectionX.super.takeWhile(p);
+		return (QueueX<T>)MutableCollectionX.super.takeWhile(p);
 	}
 
 	/* (non-Javadoc)
@@ -159,13 +160,13 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default QueueX<T> dropWhile(Predicate<? super T> p) {
 		
-		return (QueueX)(QueueX)MutableCollectionX.super.dropWhile(p);
+		return (QueueX<T>)MutableCollectionX.super.dropWhile(p);
 	}
 	default  QueueX<T> takeRight(int num){
-		return (QueueX)(QueueX)MutableCollectionX.super.takeRight(num);
+		return (QueueX<T>)MutableCollectionX.super.takeRight(num);
 	}
 	default  QueueX<T> dropRight(int num){
-		return  (QueueX)(QueueX)MutableCollectionX.super.dropRight(num);
+		return  (QueueX<T>)MutableCollectionX.super.dropRight(num);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#takeUntil(java.util.function.Predicate)
@@ -173,7 +174,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default QueueX<T> takeUntil(Predicate<? super T> p) {
 		
-		return (QueueX)(QueueX)MutableCollectionX.super.takeUntil(p);
+		return (QueueX<T>)MutableCollectionX.super.takeUntil(p);
 	}
 
 	/* (non-Javadoc)
@@ -182,7 +183,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default QueueX<T> dropUntil(Predicate<? super T> p) {
 		
-		return (QueueX)(QueueX)MutableCollectionX.super.dropUntil(p);
+		return (QueueX<T>)MutableCollectionX.super.dropUntil(p);
 	}
 
 	/* (non-Javadoc)
@@ -191,7 +192,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default <R> QueueX<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 		
-		return (QueueX)(QueueX)MutableCollectionX.super.trampoline(mapper);
+		return (QueueX<R>)MutableCollectionX.super.<R>trampoline(mapper);
 	}
 
 	/* (non-Javadoc)
@@ -200,7 +201,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default QueueX<T> slice(long from, long to) {
 		
-		return (QueueX)(QueueX)MutableCollectionX.super.slice(from, to);
+		return (QueueX<T>)MutableCollectionX.super.slice(from, to);
 	}
 
 	/* (non-Javadoc)
@@ -209,38 +210,38 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default <U extends Comparable<? super U>> QueueX<T> sorted(Function<? super T, ? extends U> function) {
 		
-		return (QueueX)(QueueX)MutableCollectionX.super.sorted(function);
+		return (QueueX<T>)MutableCollectionX.super.sorted(function);
 	}
 	
 	default QueueX<ListX<T>> grouped(int groupSize){
-		return (QueueX<ListX<T>>)(QueueX)MutableCollectionX.super.grouped(groupSize); 
+		return (QueueX<ListX<T>>)MutableCollectionX.super.grouped(groupSize); 
 	}
 	default <K, A, D> QueueX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream){
-		return (QueueX)(QueueX)MutableCollectionX.super.grouped(classifier,downstream);
+		return (QueueX)MutableCollectionX.super.grouped(classifier,downstream);
 	}
 	default <K> QueueX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
-		return (QueueX)(QueueX)MutableCollectionX.super.grouped(classifier);	 
+		return (QueueX)MutableCollectionX.super.grouped(classifier);	 
 	}
 	default <U> QueueX<Tuple2<T, U>> zip(Iterable<U> other){
-		return (QueueX<Tuple2<T, U>>)(QueueX)MutableCollectionX.super.zip(other);
+		return (QueueX<Tuple2<T, U>>)MutableCollectionX.super.zip(other);
 	}
 	default QueueX<ListX<T>> sliding(int windowSize){
-		return (QueueX<ListX<T>>)(QueueX)MutableCollectionX.super.sliding(windowSize); 
+		return (QueueX<ListX<T>>)MutableCollectionX.super.sliding(windowSize); 
 	}
 	default QueueX<ListX<T>> sliding(int windowSize, int increment){
-		return (QueueX<ListX<T>>)(QueueX)MutableCollectionX.super.sliding(windowSize,increment); 
+		return (QueueX<ListX<T>>)MutableCollectionX.super.sliding(windowSize,increment); 
 	}
 	default QueueX<T> scanLeft(Monoid<T> monoid){
-		return (QueueX<T>)(QueueX)MutableCollectionX.super.scanLeft(monoid); 
+		return (QueueX<T>)MutableCollectionX.super.scanLeft(monoid); 
 	}
 	default <U> QueueX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
-		return (QueueX<U>)(QueueX)MutableCollectionX.super.scanLeft(seed,function); 	
+		return (QueueX<U>)MutableCollectionX.super.scanLeft(seed,function); 	
 	}
 	default QueueX<T> scanRight(Monoid<T> monoid){
-		return (QueueX<T>)(QueueX)MutableCollectionX.super.scanRight(monoid); 
+		return (QueueX<T>)MutableCollectionX.super.scanRight(monoid); 
 	}
 	default <U> QueueX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
-		return (QueueX<U>)(QueueX)MutableCollectionX.super.scanRight(identity,combiner); 
+		return (QueueX<U>)MutableCollectionX.super.scanRight(identity,combiner); 
 	}
 	
 	default QueueX<T> plus(T e){
@@ -268,7 +269,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default QueueX<T> peek(Consumer<? super T> c) {
 		
-		return (QueueX)(QueueX)MutableCollectionX.super.peek(c);
+		return (QueueX<T>)MutableCollectionX.super.peek(c);
 	}
 	
 	/* (non-Javadoc)
@@ -277,7 +278,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default <R> QueueX<R> patternMatch(R defaultValue,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
-		return (QueueX)(QueueX)MutableCollectionX.super.patternMatch(defaultValue, case1);
+		return (QueueX<R>)MutableCollectionX.super.patternMatch(defaultValue, case1);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function)
@@ -286,7 +287,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	default <R> QueueX<R> patternMatch(R defaultValue,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case2) {	
-		return (QueueX)(QueueX)MutableCollectionX.super.patternMatch(defaultValue, case1, case2);
+		return (QueueX<R>)MutableCollectionX.super.patternMatch(defaultValue, case1, case2);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function)
@@ -296,7 +297,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3) {
-			return (QueueX)(QueueX)MutableCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3);
+			return (QueueX<R>)MutableCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
@@ -307,7 +308,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4) {
-		return (QueueX)(QueueX)MutableCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4);
+		return (QueueX<R>)MutableCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
@@ -319,7 +320,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn5) {	
-		return (QueueX)(QueueX)MutableCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4, fn5);
+		return (QueueX<R>)MutableCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4, fn5);
 	}
 	
 	
@@ -329,7 +330,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default <U> QueueX<U> cast(Class<U> type) {
 		
-		return (QueueX)(QueueX)MutableCollectionX.super.cast(type);
+		return (QueueX<U>)MutableCollectionX.super.cast(type);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#matchesCases(com.aol.cyclops.matcher.Case[])
@@ -337,7 +338,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default <R> QueueX<Optional<R>> matchesCases(Case<T, R, Function<T, R>>... cases) {
 		
-		return (QueueX)(QueueX)MutableCollectionX.super.matchesCases(cases);
+		return (QueueX<Optional<R>>)MutableCollectionX.super.matchesCases(cases);
 	}
 
 	/* (non-Javadoc)
@@ -346,7 +347,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> cycle(int times) {
 		
-		return (QueueX)MutableCollectionX.super.cycle(times);
+		return (QueueX<T>)MutableCollectionX.super.cycle(times);
 	}
 
 	/* (non-Javadoc)
@@ -355,7 +356,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> cycle(Monoid<T> m, int times) {
 		
-		return (QueueX)MutableCollectionX.super.cycle(m, times);
+		return (QueueX<T>)MutableCollectionX.super.cycle(m, times);
 	}
 
 	/* (non-Javadoc)
@@ -364,7 +365,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> cycleWhile(Predicate<? super T> predicate) {
 		
-		return (QueueX)MutableCollectionX.super.cycleWhile(predicate);
+		return (QueueX<T>)MutableCollectionX.super.cycleWhile(predicate);
 	}
 
 	/* (non-Javadoc)
@@ -373,7 +374,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> cycleUntil(Predicate<? super T> predicate) {
 		
-		return (QueueX)MutableCollectionX.super.cycleUntil(predicate);
+		return (QueueX<T>)MutableCollectionX.super.cycleUntil(predicate);
 	}
 
 	/* (non-Javadoc)
@@ -382,7 +383,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default <U>  QueueX<Tuple2<T, U>> zipStream(Stream<U> other) {
 		
-		return (QueueX)MutableCollectionX.super.zipStream(other);
+		return (QueueX<Tuple2<T, U>>)MutableCollectionX.super.zipStream(other);
 	}
 
 	/* (non-Javadoc)
@@ -391,7 +392,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default <U>  QueueX<Tuple2<T, U>> zip(Seq<U> other) {
 		
-		return (QueueX)MutableCollectionX.super.zip(other);
+		return (QueueX<Tuple2<T, U>>)MutableCollectionX.super.zip(other);
 	}
 
 	/* (non-Javadoc)
@@ -410,7 +411,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	default <T2, T3, T4>  QueueX<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
 			Stream<T4> fourth) {
 		
-		return (QueueX)MutableCollectionX.super.zip4(second, third, fourth);
+		return (QueueX<Tuple4<T, T2, T3, T4>>)MutableCollectionX.super.zip4(second, third, fourth);
 	}
 
 	/* (non-Javadoc)
@@ -419,7 +420,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<Tuple2<T, Long>> zipWithIndex() {
 		
-		return (QueueX)MutableCollectionX.super.zipWithIndex();
+		return (QueueX<Tuple2<T, Long>>)MutableCollectionX.super.zipWithIndex();
 	}
 
 	/* (non-Javadoc)
@@ -428,7 +429,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> distinct() {
 		
-		return (QueueX)MutableCollectionX.super.distinct();
+		return (QueueX<T>)MutableCollectionX.super.distinct();
 	}
 
 	/* (non-Javadoc)
@@ -437,7 +438,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> sorted() {
 		
-		return (QueueX)MutableCollectionX.super.sorted();
+		return (QueueX<T>)MutableCollectionX.super.sorted();
 	}
 
 	/* (non-Javadoc)
@@ -446,7 +447,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> sorted(Comparator<? super T> c) {
 		
-		return (QueueX)MutableCollectionX.super.sorted(c);
+		return (QueueX<T>)MutableCollectionX.super.sorted(c);
 	}
 
 	/* (non-Javadoc)
@@ -455,7 +456,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> skipWhile(Predicate<? super T> p) {
 		
-		return (QueueX)MutableCollectionX.super.skipWhile(p);
+		return (QueueX<T>)MutableCollectionX.super.skipWhile(p);
 	}
 
 	/* (non-Javadoc)
@@ -464,7 +465,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> skipUntil(Predicate<? super T> p) {
 		
-		return (QueueX)MutableCollectionX.super.skipUntil(p);
+		return (QueueX<T>)MutableCollectionX.super.skipUntil(p);
 	}
 
 	/* (non-Javadoc)
@@ -473,7 +474,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> limitWhile(Predicate<? super T> p) {
 		
-		return (QueueX)MutableCollectionX.super.limitWhile(p);
+		return (QueueX<T>)MutableCollectionX.super.limitWhile(p);
 	}
 
 	/* (non-Javadoc)
@@ -482,7 +483,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> limitUntil(Predicate<? super T> p) {
 		
-		return (QueueX)MutableCollectionX.super.limitUntil(p);
+		return (QueueX<T>)MutableCollectionX.super.limitUntil(p);
 	}
 
 	/* (non-Javadoc)
@@ -491,7 +492,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> intersperse(T value) {
 		
-		return (QueueX)MutableCollectionX.super.intersperse(value);
+		return (QueueX<T>)MutableCollectionX.super.intersperse(value);
 	}
 
 	/* (non-Javadoc)
@@ -500,7 +501,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> shuffle() {
 		
-		return (QueueX)MutableCollectionX.super.shuffle();
+		return (QueueX<T>)MutableCollectionX.super.shuffle();
 	}
 
 	/* (non-Javadoc)
@@ -509,7 +510,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> skipLast(int num) {
 		
-		return (QueueX)MutableCollectionX.super.skipLast(num);
+		return (QueueX<T>)MutableCollectionX.super.skipLast(num);
 	}
 
 	/* (non-Javadoc)
@@ -518,7 +519,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> limitLast(int num) {
 		
-		return (QueueX)MutableCollectionX.super.limitLast(num);
+		return (QueueX<T>)MutableCollectionX.super.limitLast(num);
 	}
 
 	/* (non-Javadoc)
@@ -527,7 +528,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> onEmpty(T value) {
 		
-		return (QueueX)MutableCollectionX.super.onEmpty(value);
+		return (QueueX<T>)MutableCollectionX.super.onEmpty(value);
 	}
 
 	/* (non-Javadoc)
@@ -536,7 +537,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> onEmptyGet(Supplier<T> supplier) {
 		
-		return (QueueX)MutableCollectionX.super.onEmptyGet(supplier);
+		return (QueueX<T>)MutableCollectionX.super.onEmptyGet(supplier);
 	}
 
 	/* (non-Javadoc)
@@ -545,7 +546,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default <X extends Throwable>  QueueX<T> onEmptyThrow(Supplier<X> supplier) {
 		
-		return (QueueX)MutableCollectionX.super.onEmptyThrow(supplier);
+		return (QueueX<T>)MutableCollectionX.super.onEmptyThrow(supplier);
 	}
 
 	/* (non-Javadoc)
@@ -554,7 +555,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> shuffle(Random random) {
 		
-		return (QueueX)MutableCollectionX.super.shuffle(random);
+		return (QueueX<T>)MutableCollectionX.super.shuffle(random);
 	}
 
 	/* (non-Javadoc)
@@ -563,7 +564,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default <U>  QueueX<U> ofType(Class<U> type) {
 		
-		return (QueueX)MutableCollectionX.super.ofType(type);
+		return (QueueX<U>)MutableCollectionX.super.ofType(type);
 	}
 
 	/* (non-Javadoc)
@@ -572,7 +573,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> filterNot(Predicate<? super T> fn) {
 		
-		return (QueueX)MutableCollectionX.super.filterNot(fn);
+		return (QueueX<T>)MutableCollectionX.super.filterNot(fn);
 	}
 
 	/* (non-Javadoc)
@@ -581,7 +582,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> notNull() {
 		
-		return (QueueX)MutableCollectionX.super.notNull();
+		return (QueueX<T>)MutableCollectionX.super.notNull();
 	}
 
 	/* (non-Javadoc)
@@ -590,7 +591,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> removeAll(Stream<T> stream) {
 		
-		return (QueueX)MutableCollectionX.super.removeAll(stream);
+		return (QueueX<T>)MutableCollectionX.super.removeAll(stream);
 	}
 
 	/* (non-Javadoc)
@@ -599,7 +600,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> removeAll(Iterable<T> it) {
 		
-		return (QueueX)MutableCollectionX.super.removeAll(it);
+		return (QueueX<T>)MutableCollectionX.super.removeAll(it);
 	}
 
 	/* (non-Javadoc)
@@ -608,7 +609,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> removeAll(T... values) {
 		
-		return (QueueX)MutableCollectionX.super.removeAll(values);
+		return (QueueX<T>)MutableCollectionX.super.removeAll(values);
 	}
 
 	/* (non-Javadoc)
@@ -617,7 +618,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> retainAll(Iterable<T> it) {
 		
-		return (QueueX)MutableCollectionX.super.retainAll(it);
+		return (QueueX<T>)MutableCollectionX.super.retainAll(it);
 	}
 
 	/* (non-Javadoc)
@@ -626,7 +627,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> retainAll(Stream<T> stream) {
 		
-		return (QueueX)MutableCollectionX.super.retainAll(stream);
+		return (QueueX<T>)MutableCollectionX.super.retainAll(stream);
 	}
 
 	/* (non-Javadoc)
@@ -635,7 +636,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> retainAll(T... values) {
 		
-		return (QueueX)MutableCollectionX.super.retainAll(values);
+		return (QueueX<T>)MutableCollectionX.super.retainAll(values);
 	}
 
 	/* (non-Javadoc)
@@ -644,7 +645,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default  QueueX<T> retainMatches(Matcher<T> m) {
 		
-		return (QueueX)MutableCollectionX.super.retainMatches(m);
+		return (QueueX<T>)MutableCollectionX.super.retainMatches(m);
 	}
 
 	/* (non-Javadoc)
@@ -653,7 +654,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	@Override
 	default QueueX<T> removeMatches(Matcher<T> m) {
 		
-		return (QueueX)MutableCollectionX.super.removeMatches(m);
+		return (QueueX<T>)MutableCollectionX.super.removeMatches(m);
 	}
 	
 	

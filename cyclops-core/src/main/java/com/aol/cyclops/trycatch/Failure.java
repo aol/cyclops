@@ -282,4 +282,11 @@ public class Failure<T,X extends Throwable> implements Try<T,X> {
 		consumer.accept(error);
 		
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.trycatch.Try#when(java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	public <R> R when(Function<? super T, ? extends R> success, Function<? super X, ? extends R> failure) {
+		return failure.apply(error);
+	}
 }
