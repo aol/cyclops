@@ -175,6 +175,9 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 		return stream().cycleUntil(predicate);
 	}
 
+	default <U, R> Traversable<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return stream().zip(other,zipper);
+    }
 	/**
 	 * Zip 2 streams into one
 	 * 

@@ -31,10 +31,12 @@ import com.aol.cyclops.lambda.monads.Foldable;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.IterableCollectable;
 import com.aol.cyclops.lambda.monads.IterableFunctor;
+import com.aol.cyclops.lambda.monads.Traversable;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.lambda.monads.ExtendedTraversable;
 import com.aol.cyclops.lambda.monads.Filterable;
 import com.aol.cyclops.lambda.monads.Unit;
+import com.aol.cyclops.matcher.Case;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.matcher.recursive.Matchable;
 import com.aol.cyclops.sequence.HeadAndTail;
@@ -552,6 +554,57 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 */
 	@Override
 	CollectionX<SequenceM<T>> combinations();
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
+	 */
+	@Override
+	<U> CollectionX<U> cast(Class<U> type);
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#matchesCases(com.aol.cyclops.matcher.Case[])
+	 */
+	@Override
+	<R> CollectionX<Optional<R>> matchesCases(Case<T, R, Function<T, R>>... cases);
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function)
+	 */
+	@Override
+	<R> CollectionX<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1);
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	<R> CollectionX<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case2) ;
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	<R> CollectionX<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3) ;
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	 <R> CollectionX<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4);
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	<R> CollectionX<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn5) ;
+	
 
 	
 	

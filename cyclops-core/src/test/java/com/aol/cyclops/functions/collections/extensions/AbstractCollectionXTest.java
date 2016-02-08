@@ -1,13 +1,9 @@
 package com.aol.cyclops.functions.collections.extensions;
 
 
+import static com.aol.cyclops.sequence.SequenceM.of;
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -31,21 +27,25 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
+import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.lambda.monads.Traversable;
 import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.objects.Decomposable;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.Reducers;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.StreamUtils;
-import static org.hamcrest.Matchers.containsInAnyOrder;
+
+import lombok.AllArgsConstructor;
 
 public abstract class AbstractCollectionXTest {
-
+	public abstract <T> CollectionX<T> empty();
 	public abstract <T> CollectionX<T> of(T... values);
 	@Test
 	public void testCollectable(){
@@ -734,6 +734,346 @@ public abstract class AbstractCollectionXTest {
 		assertTrue(of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
 	}
 	
-	
+	@Test
+	public void zip3(){
+		List<Tuple3<Integer,Integer,Character>> list =
+				of(1,2,3,4,5,6).zip3(of(100,200,300,400).stream(),of('a','b','c').stream())
+												.toListX();
 		
+		System.out.println(list);
+		List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+		assertThat(right,hasItem(100));
+		assertThat(right,hasItem(200));
+		assertThat(right,hasItem(300));
+		assertThat(right,not(hasItem(400)));
+		
+		List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
+		
+		List<Character> three = list.stream().map(t -> t.v3).collect(Collectors.toList());
+		assertThat(Arrays.asList('a','b','c'),hasItem(three.get(0)));
+		
+		
+	}
+	@Test
+	public void zip4(){
+		List<Tuple4<Integer,Integer,Character,String>> list =
+				of(1,2,3,4,5,6).zip4(of(100,200,300,400).stream(),of('a','b','c').stream(),of("hello","world").stream())
+												.toListX();
+		System.out.println(list);
+		List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+		assertThat(right,hasItem(100));
+		assertThat(right,hasItem(200));
+		assertThat(right,not(hasItem(300)));
+		assertThat(right,not(hasItem(400)));
+		
+		List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
+		
+		List<Character> three = list.stream().map(t -> t.v3).collect(Collectors.toList());
+		assertThat(Arrays.asList('a','b','c'),hasItem(three.get(0)));
+	
+		List<String> four = list.stream().map(t -> t.v4).collect(Collectors.toList());
+		assertThat(Arrays.asList("hello","world"),hasItem(four.get(0)));
+		
+		
+	}
+	
+	@Test
+	public void zip2of(){
+		
+		List<Tuple2<Integer,Integer>> list =of(1,2,3,4,5,6)
+											.zip(of(100,200,300,400).stream())
+											.toListX();
+				
+	
+		List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+		assertThat(right,hasItem(100));
+		assertThat(right,hasItem(200));
+		assertThat(right,hasItem(300));
+		assertThat(right,hasItem(400));
+		
+		List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
+
+	}
+	@Test
+	public void zipInOrder(){
+		
+		List<Tuple2<Integer,Integer>> list =  of(1,2,3,4,5,6)
+													.zip( of(100,200,300,400).stream())
+													.toListX();
+		
+		assertThat(asList(1,2,3,4,5,6),hasItem(list.get(0).v1));
+		assertThat(asList(100,200,300,400),hasItem(list.get(0).v2));
+		
+		
+		
+	}
+
+	@Test
+	public void zipEmpty() throws Exception {
+		
+		
+		final CollectionX<Integer> zipped = empty().zip(SequenceM.<Integer>of(), (a, b) -> a + b);
+		assertTrue(zipped.collect(Collectors.toList()).isEmpty());
+	}
+
+	@Test
+	public void shouldReturnEmptySeqWhenZipEmptyWithNonEmpty() throws Exception {
+		
+		
+		
+		final CollectionX<Integer> zipped = empty().zip(of(1,2), (a, b) -> a + b);
+		assertTrue(zipped.collect(Collectors.toList()).isEmpty());
+	}
+
+	@Test
+	public void shouldReturnEmptySeqWhenZipNonEmptyWithEmpty() throws Exception {
+		
+		
+		final SequenceM<Integer> zipped = of(1,2,3).zip(empty(), (a, b) -> a + b);
+
+		
+		assertTrue(zipped.collect(Collectors.toList()).isEmpty());
+	}
+
+	@Test
+	public void shouldZipTwoFiniteSequencesOfSameSize() throws Exception {
+		
+		final CollectionX<String> first = of("A", "B", "C");
+		final CollectionX<Integer> second = of(1, 2, 3);
+
+		
+		final CollectionX<String> zipped = first.zip(second, (a, b) -> a + b);
+
+		
+		assertThat(zipped.collect(Collectors.toList()).size(),is(3));
+	}
+
+	
+
+	@Test
+	public void shouldTrimSecondFixedSeqIfLonger() throws Exception {
+		final CollectionX<String> first = of("A", "B", "C");
+		final CollectionX<Integer> second = of(1, 2, 3, 4);
+
+		
+		final CollectionX<String> zipped = first.zip(second, (a, b) -> a + b);
+
+		assertThat(zipped.collect(Collectors.toList()).size(),is(3));
+	}
+
+	@Test
+	public void shouldTrimFirstFixedSeqIfLonger() throws Exception {
+		final CollectionX<String> first = of("A", "B", "C","D");
+		final CollectionX<Integer> second = of(1, 2, 3);
+		final CollectionX<String> zipped = first.zip(second, (a, b) -> a + b);
+
+		
+		assertThat(zipped.collect(Collectors.toList()).size(),equalTo(3));
+	}
+
+	@Test
+	public void testZipDifferingLength() {
+		List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
+
+		assertEquals(2, list.size());
+		assertTrue(asList(1, 2).contains(list.get(0).v1));
+		assertTrue("" + list.get(1).v2, asList(1, 2).contains(list.get(1).v1));
+		assertTrue(asList("a", "b", "c", "d").contains(list.get(0).v2));
+		assertTrue(asList("a", "b", "c", "d").contains(list.get(1).v2));
+
+	}
+
+	
+	@Test
+	public void shouldTrimSecondFixedSeqIfLongerStream() throws Exception {
+		final CollectionX<String> first = of("A", "B", "C");
+		final CollectionX<Integer> second = of(1, 2, 3, 4);
+
+		
+		final CollectionX<String> zipped = first.zipStream(second, (a, b) -> a + b);
+
+		assertThat(zipped.collect(Collectors.toList()).size(),is(3));
+	}
+
+	@Test
+	public void shouldTrimFirstFixedSeqIfLongerStream() throws Exception {
+		final CollectionX<String> first = of("A", "B", "C","D");
+		final CollectionX<Integer> second = of(1, 2, 3);
+		final CollectionX<String> zipped = first.zipStream(second, (a, b) -> a + b);
+
+		
+		assertThat(zipped.collect(Collectors.toList()).size(),equalTo(3));
+	}
+
+	@Test
+	public void testZipDifferingLengthStream() {
+		List<Tuple2<Integer, String>> list = of(1, 2).zipStream(of("a", "b", "c", "d")).toList();
+
+		assertEquals(2, list.size());
+		assertTrue(asList(1, 2).contains(list.get(0).v1));
+		assertTrue("" + list.get(1).v2, asList(1, 2).contains(list.get(1).v1));
+		assertTrue(asList("a", "b", "c", "d").contains(list.get(0).v2));
+		assertTrue(asList("a", "b", "c", "d").contains(list.get(1).v2));
+
+	}
+
+	@Test
+	public void shouldTrimSecondFixedSeqIfLongerSequence() throws Exception {
+		final CollectionX<String> first = of("A", "B", "C");
+		final CollectionX<Integer> second = of(1, 2, 3, 4);
+
+		
+		final CollectionX<String> zipped = first.zipSequence(second, (a, b) -> a + b);
+
+		assertThat(zipped.collect(Collectors.toList()).size(),is(3));
+	}
+
+	@Test
+	public void shouldTrimFirstFixedSeqIfLongerSequence() throws Exception {
+		final CollectionX<String> first = of("A", "B", "C","D");
+		final CollectionX<Integer> second = of(1, 2, 3);
+		final CollectionX<String> zipped = first.zip(second, (a, b) -> a + b);
+
+		
+		assertThat(zipped.collect(Collectors.toList()).size(),equalTo(3));
+	}
+
+	
+	@Test
+	public void testZipWithIndex() {
+		assertEquals(asList(), of().zipWithIndex().toListX());
+
+		assertThat(of("a").zipWithIndex().map(t -> t.v2).findFirst().get(), is(0l));
+		assertEquals(asList(new Tuple2("a", 0L)), of("a").zipWithIndex().toListX());
+
+	}
+	
+	@Test
+	public void patternTest1(){
+		List<String> result = of(1,2,3,4)
+								         .patternMatch("",
+													  	c->c.hasValuesWhere( (Integer i)->i%2==0 ).then(i->"even"),
+													  	c->c.hasValuesWhere( (Integer i)->i%2!=0).then(i->"odd")
+													  )
+											  .toListX();
+		assertThat(result,equalTo(Arrays.asList("odd","even","odd","even")));
+	}
+	@Test
+	public void patternTest2(){
+		List<String> result = of(1,2,3,4)
+										.patternMatch("n/a",c->c.hasValues(1).then(i->"one"))
+											 .toListX();
+		assertThat(result,equalTo(Arrays.asList("one","n/a","n/a","n/a")));
+	}
+	@Test
+	public void patternTestDecomposable(){
+		List<String> result = of(new MyCase(1,2),new MyCase(3,4))
+											
+											  .patternMatch("n/a",
+													  c->c.hasValues(1,2).then(i->"one"),
+													  c->c.hasValues(3,4).then(i->"two"),
+													  c->c.hasValues(1,4).then(i->"three"),
+													  c->c.hasValues(2,3).then(i->"four")
+													  
+													  
+													  )
+											  .toListX();
+		assertThat(result,equalTo(Arrays.asList("one","two")));
+	}
+	@Test
+	public void patternTestPojo(){
+		
+		List<String> result = of(new MyCase2(1,2),new MyCase2(3,4))
+											  .patternMatch("n/a",
+													  c->c.hasValues(1,2).then(i->"one"),
+													  c->c.hasValues(3,4).then(i->"two"),
+													  c->c.hasValues(5,6).then(i->"three")
+													  )
+											  .toListX();
+		assertThat(result,equalTo(Arrays.asList("one","two")));
+	}
+	@AllArgsConstructor
+	static class MyCase implements Decomposable{
+		int first;
+		int second;
+	}
+	@AllArgsConstructor
+	static class MyCase2 {
+		int first;
+		int second;
+	}
+	
+	@Test
+	public void emptyConvert(){
+		assertFalse(empty().toMaybe().isPresent());
+		assertFalse(empty().toOptional().isPresent());
+		assertFalse(empty().toListX().size()>0);
+		assertFalse(empty().toDequeX().size()>0);
+		assertFalse(empty().toPStackX().size()>0);
+		assertFalse(empty().toQueueX().size()>0);
+		assertFalse(empty().toPVectorX().size()>0);
+		assertFalse(empty().toPQueueX().size()>0);
+		assertFalse(empty().toSetX().size()>0);
+		assertFalse(empty().toSortedSetX().size()>0);
+		assertFalse(empty().toPOrderedSetX().size()>0);
+		assertFalse(empty().toPBagX().size()>0);
+		assertFalse(empty().toPMapX(t->t,t->t).size()>0);
+		assertFalse(empty().toMapX(t->t,t->t).size()>0);
+		assertFalse(empty().toXor().get().size()>0);
+		assertFalse(empty().toIor().get().size()>0);
+		assertTrue(empty().toXor().isPrimary());
+		assertTrue(empty().toIor().isPrimary());
+
+		assertFalse(empty().toXorSecondary().isPrimary());
+		assertFalse(empty().toIorSecondary().isPrimary());
+		assertFalse(empty().toTry().isSuccess());
+		assertFalse(empty().toEvalNow().get().size()>0);
+		assertFalse(empty().toEvalLater().get().size()>0);
+		assertFalse(empty().toEvalAlways().get().size()>0);
+		assertFalse(empty().toCompletableFuture().join().size()>0);
+		assertFalse(empty().toSet().size()>0);
+		assertFalse(empty().toList().size()>0);
+		assertFalse(empty().toStreamable().size()>0);
+		
+		
+	}
+	@Test
+	public void presentConvert(){
+		assertTrue(of(1).toMaybe().isPresent());
+		assertTrue(of(1).toOptional().isPresent());
+		assertTrue(of(1).toListX().size()>0);
+		assertTrue(of(1).toDequeX().size()>0);
+		assertTrue(of(1).toPStackX().size()>0);
+		assertTrue(of(1).toQueueX().size()>0);
+		assertTrue(of(1).toPVectorX().size()>0);
+		assertTrue(of(1).toPQueueX().size()>0);
+		assertTrue(of(1).toSetX().size()>0);
+		assertTrue(of(1).toSortedSetX().size()>0);
+		assertTrue(of(1).toPOrderedSetX().size()>0);
+		assertTrue(of(1).toPBagX().size()>0);
+		assertTrue(of(1).toPMapX(t->t,t->t).size()>0);
+		assertTrue(of(1).toMapX(t->t,t->t).size()>0);
+		assertTrue(of(1).toXor().get().size()>0);
+		assertTrue(of(1).toIor().get().size()>0);
+		assertTrue(of(1).toXor().isPrimary());
+		assertTrue(of(1).toIor().isPrimary());
+		assertFalse(of(1).toXorSecondary().isPrimary());
+		assertFalse(of(1).toIorSecondary().isPrimary());
+		assertTrue(of(1).toTry().isSuccess());
+		assertTrue(of(1).toEvalNow().get().size()>0);
+		assertTrue(of(1).toEvalLater().get().size()>0);
+		assertTrue(of(1).toEvalAlways().get().size()>0);
+		assertTrue(of(1).toCompletableFuture().join().size()>0);
+		assertTrue(of(1).toSet().size()>0);
+		assertTrue(of(1).toList().size()>0);
+		assertTrue(of(1).toStreamable().size()>0);
+		
+		
+	}
+
+
+			
 }

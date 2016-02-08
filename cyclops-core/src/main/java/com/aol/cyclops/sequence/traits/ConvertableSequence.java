@@ -12,6 +12,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import com.aol.cyclops.collections.extensions.persistent.PBagX;
 import com.aol.cyclops.collections.extensions.persistent.PMapX;
 import com.aol.cyclops.collections.extensions.persistent.POrderedSetX;
+import com.aol.cyclops.collections.extensions.persistent.PQueueX;
 import com.aol.cyclops.collections.extensions.persistent.PSetX;
 import com.aol.cyclops.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.collections.extensions.persistent.PVectorX;
@@ -88,6 +89,9 @@ public interface ConvertableSequence<T> extends Iterable<T>{
 	default PVectorX<T> toPVectorX(){
 		return PVectorX.fromIterable(this);
 	}
+	default PQueueX<T> toPQueueX(){
+		return PQueueX.fromIterable(this);
+	}
 	default PBagX<T> toPBagX(){
 		return PBagX.fromIterable(this);
 	}
@@ -116,8 +120,8 @@ public interface ConvertableSequence<T> extends Iterable<T>{
 	default Value<ListX<T>> toValue(){
 		return ()-> ListX.fromIterable(StreamUtils.stream(this).collect(Collectors.toList()));
 	}
-	default Value<ListX<T>> toValueSet(){
-		return ()-> ListX.fromIterable(StreamUtils.stream(this).collect(Collectors.toSet()));
+	default Value<SetX<T>> toValueSet(){
+		return ()-> SetX.fromIterable(StreamUtils.stream(this).collect(Collectors.toSet()));
 	}
 	default <K,V> Value<MapX<K,V>> toValueMap(Function<? super T, ? extends K> keyMapper,
 								Function<? super T, ? extends V> valueMapper){
