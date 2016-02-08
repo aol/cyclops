@@ -72,6 +72,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	public static <T> ListX<T> empty(){
 		return fromIterable((List<T>) defaultCollector().supplier().get());
 	}
+	@SafeVarargs
 	public static <T> ListX<T> of(T...values){
 		List<T> res = (List<T>) defaultCollector().supplier().get();
 		for(T v: values)
@@ -79,16 +80,16 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 		return  fromIterable(res);
 	}
 	public static <T> ListX<T> singleton(T value){
-		return of(value);
+		return ListX.<T>of(value);
 	}
 	public static <T> ListX<T> fromIterable(Iterable<T> it){
 		return fromIterable(defaultCollector(),it);
 	}
 	public static <T> ListX<T> fromIterable(Collector<T,?,List<T>>  collector,Iterable<T> it){
 		if(it instanceof ListX)
-			return (ListX)it;
+			return (ListX<T>)it;
 		if(it instanceof List)
-			return new ListXImpl<T>( (List)it, collector);
+			return new ListXImpl<T>( (List<T>)it, collector);
 		return new ListXImpl<T>(StreamUtils.stream(it).collect(collector),collector);
 	}
 	@Override
@@ -127,7 +128,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<T> reverse() {
 		
-		return (ListX)MutableCollectionX.super.reverse();
+		return (ListX<T>)MutableCollectionX.super.reverse();
 	}
 
 	/* (non-Javadoc)
@@ -136,7 +137,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<T> filter(Predicate<? super T> pred) {
 		
-		return (ListX)MutableCollectionX.super.filter(pred);
+		return (ListX<T>)MutableCollectionX.super.filter(pred);
 	}
 
 	/* (non-Javadoc)
@@ -145,7 +146,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default <R> ListX<R> map(Function<? super T, ? extends R> mapper) {
 		
-		return (ListX)MutableCollectionX.super.map(mapper);
+		return (ListX<R>)MutableCollectionX.super.<R>map(mapper);
 	}
 
 	/* (non-Javadoc)
@@ -154,7 +155,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default <R> ListX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
 	
-		return (ListX)MutableCollectionX.super.flatMap(mapper);
+		return (ListX<R>)MutableCollectionX.super.<R>flatMap(mapper);
 	}
 
 	/* (non-Javadoc)
@@ -163,7 +164,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<T> limit(long num) {
 		
-		return (ListX)MutableCollectionX.super.limit(num);
+		return (ListX<T>)MutableCollectionX.super.limit(num);
 	}
 
 	/* (non-Javadoc)
@@ -172,13 +173,13 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<T> skip(long num) {
 		
-		return (ListX)MutableCollectionX.super.skip(num);
+		return (ListX<T>)MutableCollectionX.super.skip(num);
 	}
 	default  ListX<T> takeRight(int num){
-		return (ListX)MutableCollectionX.super.takeRight(num);
+		return (ListX<T>)MutableCollectionX.super.takeRight(num);
 	}
 	default  ListX<T> dropRight(int num){
-		return  (ListX)MutableCollectionX.super.dropRight(num);
+		return  (ListX<T>)MutableCollectionX.super.dropRight(num);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#takeWhile(java.util.function.Predicate)
@@ -186,7 +187,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<T> takeWhile(Predicate<? super T> p) {
 		
-		return (ListX)MutableCollectionX.super.takeWhile(p);
+		return (ListX<T>)MutableCollectionX.super.takeWhile(p);
 	}
 
 	/* (non-Javadoc)
@@ -195,7 +196,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<T> dropWhile(Predicate<? super T> p) {
 		
-		return (ListX)MutableCollectionX.super.dropWhile(p);
+		return (ListX<T>)MutableCollectionX.super.dropWhile(p);
 	}
 
 	/* (non-Javadoc)
@@ -204,7 +205,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<T> takeUntil(Predicate<? super T> p) {
 		
-		return (ListX)MutableCollectionX.super.takeUntil(p);
+		return (ListX<T>)MutableCollectionX.super.takeUntil(p);
 	}
 
 	/* (non-Javadoc)
@@ -212,7 +213,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	 */
 	@Override
 	default ListX<T> dropUntil(Predicate<? super T> p) {
-		return (ListX)MutableCollectionX.super.dropUntil(p);
+		return (ListX<T>)MutableCollectionX.super.dropUntil(p);
 	}
 
 	/* (non-Javadoc)
@@ -220,7 +221,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	 */
 	@Override
 	default <R> ListX<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-		return (ListX)MutableCollectionX.super.trampoline(mapper);
+		return (ListX<R>)MutableCollectionX.super.<R>trampoline(mapper);
 	}
 
 	/* (non-Javadoc)
@@ -228,7 +229,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	 */
 	@Override
 	default ListX<T> slice(long from, long to) {
-		return (ListX)MutableCollectionX.super.slice(from, to);
+		return (ListX<T>)MutableCollectionX.super.slice(from, to);
 	}
 
 	/* (non-Javadoc)
@@ -237,7 +238,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default <U extends Comparable<? super U>> ListX<T> sorted(Function<? super T, ? extends U> function) {
 		
-		return (ListX)MutableCollectionX.super.sorted(function);
+		return (ListX<T>)MutableCollectionX.super.sorted(function);
 	}
 	
 	default ListX<ListX<T>> grouped(int groupSize){
@@ -466,7 +467,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	default <T2, T3, T4> ListX<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
 			Stream<T4> fourth) {
 		
-		return (ListX)MutableCollectionX.super.zip4(second, third, fourth);
+		return ( ListX<Tuple4<T, T2, T3, T4>>)MutableCollectionX.super.zip4(second, third, fourth);
 	}
 
 	/* (non-Javadoc)
@@ -475,7 +476,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<Tuple2<T, Long>> zipWithIndex() {
 		
-		return (ListX)MutableCollectionX.super.zipWithIndex();
+		return (ListX<Tuple2<T, Long>>)MutableCollectionX.super.zipWithIndex();
 	}
 
 	/* (non-Javadoc)
@@ -592,7 +593,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<T> distinct() {
 		
-		return (ListX)MutableCollectionX.super.distinct();
+		return (ListX<T>)MutableCollectionX.super.distinct();
 	}
 
 	/* (non-Javadoc)
@@ -601,7 +602,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<T> limitWhile(Predicate<? super T> p) {
 		
-		return (ListX)MutableCollectionX.super.limitWhile(p);
+		return (ListX<T>)MutableCollectionX.super.limitWhile(p);
 	}
 
 	/* (non-Javadoc)
@@ -610,7 +611,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<T> limitUntil(Predicate<? super T> p) {
 		
-		return (ListX)MutableCollectionX.super.limitUntil(p);
+		return (ListX<T>)MutableCollectionX.super.limitUntil(p);
 	}
 
 	/* (non-Javadoc)
@@ -619,7 +620,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<T> intersperse(T value) {
 		
-		return (ListX)MutableCollectionX.super.intersperse(value);
+		return (ListX<T>)MutableCollectionX.super.intersperse(value);
 	}
 
 	/* (non-Javadoc)
@@ -628,7 +629,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<T> limitLast(int num) {
 		
-		return (ListX)MutableCollectionX.super.limitLast(num);
+		return (ListX<T>)MutableCollectionX.super.limitLast(num);
 	}
 
 	/* (non-Javadoc)
@@ -637,7 +638,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<T> onEmpty(T value) {
 		
-		return (ListX)MutableCollectionX.super.onEmpty(value);
+		return (ListX<T>)MutableCollectionX.super.onEmpty(value);
 	}
 
 	/* (non-Javadoc)
@@ -646,7 +647,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<T> onEmptyGet(Supplier<T> supplier) {
 		
-		return (ListX)MutableCollectionX.super.onEmptyGet(supplier);
+		return (ListX<T>)MutableCollectionX.super.onEmptyGet(supplier);
 	}
 
 	/* (non-Javadoc)
@@ -655,7 +656,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default <X extends Throwable> ListX<T> onEmptyThrow(Supplier<X> supplier) {
 		
-		return (ListX)MutableCollectionX.super.onEmptyThrow(supplier);
+		return (ListX<T>)MutableCollectionX.super.onEmptyThrow(supplier);
 	}
 
 	/* (non-Javadoc)
@@ -664,7 +665,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default <U> ListX<U> ofType(Class<U> type) {
 		
-		return (ListX)MutableCollectionX.super.ofType(type);
+		return (ListX<U>)MutableCollectionX.super.ofType(type);
 	}
 
 	/* (non-Javadoc)
@@ -673,7 +674,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<T> filterNot(Predicate<? super T> fn) {
 		
-		return (ListX)MutableCollectionX.super.filterNot(fn);
+		return (ListX<T>)MutableCollectionX.super.filterNot(fn);
 	}
 
 	/* (non-Javadoc)
@@ -682,7 +683,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<T> notNull() {
 		
-		return (ListX)MutableCollectionX.super.notNull();
+		return (ListX<T>)MutableCollectionX.super.notNull();
 	}
 
 	/* (non-Javadoc)
@@ -691,7 +692,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<T> removeAll(Stream<T> stream) {
 		
-		return (ListX)MutableCollectionX.super.removeAll(stream);
+		return (ListX<T>)MutableCollectionX.super.removeAll(stream);
 	}
 
 	/* (non-Javadoc)
@@ -700,7 +701,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<T> removeAll(Iterable<T> it) {
 		
-		return (ListX)MutableCollectionX.super.removeAll(it);
+		return (ListX<T>)MutableCollectionX.super.removeAll(it);
 	}
 
 	/* (non-Javadoc)
@@ -709,7 +710,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<T> removeAll(T... values) {
 		
-		return (ListX)MutableCollectionX.super.removeAll(values);
+		return (ListX<T>)MutableCollectionX.super.removeAll(values);
 	}
 
 	/* (non-Javadoc)
@@ -718,7 +719,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<T> retainAll(Iterable<T> it) {
 		
-		return (ListX)MutableCollectionX.super.retainAll(it);
+		return (ListX<T>)MutableCollectionX.super.retainAll(it);
 	}
 
 	/* (non-Javadoc)
@@ -727,7 +728,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<T> retainAll(Stream<T> stream) {
 		
-		return (ListX)MutableCollectionX.super.retainAll(stream);
+		return (ListX<T>)MutableCollectionX.super.retainAll(stream);
 	}
 
 	/* (non-Javadoc)
@@ -736,7 +737,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<T> retainAll(T... values) {
 		
-		return (ListX)MutableCollectionX.super.retainAll(values);
+		return (ListX<T>)MutableCollectionX.super.retainAll(values);
 	}
 
 	/* (non-Javadoc)
@@ -745,7 +746,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<T> retainMatches(Matcher<T> m) {
 		
-		return (ListX)MutableCollectionX.super.retainMatches(m);
+		return (ListX<T>)MutableCollectionX.super.retainMatches(m);
 	}
 
 	/* (non-Javadoc)
@@ -754,7 +755,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	@Override
 	default ListX<T> removeMatches(Matcher<T> m) {
 		
-		return (ListX)MutableCollectionX.super.removeMatches(m);
+		return (ListX<T>)MutableCollectionX.super.removeMatches(m);
 	}
 
 	

@@ -94,7 +94,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	@Override
 	default DequeX<T> reverse() {
 		
-		return (DequeX)MutableCollectionX.super.reverse();
+		return ( DequeX<T>)MutableCollectionX.super.reverse();
 	}
 
 	/* (non-Javadoc)
@@ -103,7 +103,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	@Override
 	default DequeX<T> filter(Predicate<? super T> pred) {
 		
-		return (DequeX)MutableCollectionX.super.filter(pred);
+		return (DequeX<T>)MutableCollectionX.super.filter(pred);
 	}
 
 	/* (non-Javadoc)
@@ -112,7 +112,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	@Override
 	default <R> DequeX<R> map(Function<? super T, ? extends R> mapper) {
 		
-		return (DequeX)MutableCollectionX.super.map(mapper);
+		return (DequeX<R>)MutableCollectionX.super.map(mapper);
 	}
 
 	/* (non-Javadoc)
@@ -121,7 +121,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	@Override
 	default <R> DequeX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
 	
-		return (DequeX)MutableCollectionX.super.flatMap(mapper);
+		return (DequeX<R>)MutableCollectionX.super.flatMap(mapper);
 	}
 
 	/* (non-Javadoc)
@@ -130,7 +130,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	@Override
 	default DequeX<T> limit(long num) {
 		
-		return (DequeX)MutableCollectionX.super.limit(num);
+		return (DequeX<T>)MutableCollectionX.super.limit(num);
 	}
 
 	/* (non-Javadoc)
@@ -139,7 +139,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	@Override
 	default DequeX<T> skip(long num) {
 		
-		return (DequeX)MutableCollectionX.super.skip(num);
+		return (DequeX<T>)MutableCollectionX.super.skip(num);
 	}
 
 	/* (non-Javadoc)
@@ -148,13 +148,13 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	@Override
 	default DequeX<T> takeWhile(Predicate<? super T> p) {
 		
-		return (DequeX)MutableCollectionX.super.takeWhile(p);
+		return (DequeX<T>)MutableCollectionX.super.takeWhile(p);
 	}
 	default  DequeX<T> takeRight(int num){
-		return (DequeX)MutableCollectionX.super.takeRight(num);
+		return (DequeX<T>)MutableCollectionX.super.takeRight(num);
 	}
 	default  DequeX<T> dropRight(int num){
-		return  (DequeX)MutableCollectionX.super.dropRight(num);
+		return  (DequeX<T>)MutableCollectionX.super.dropRight(num);
 	}
 
 	/* (non-Javadoc)
@@ -163,7 +163,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	@Override
 	default DequeX<T> dropWhile(Predicate<? super T> p) {
 		
-		return (DequeX)MutableCollectionX.super.dropWhile(p);
+		return (DequeX<T>)MutableCollectionX.super.dropWhile(p);
 	}
 
 	/* (non-Javadoc)
@@ -172,7 +172,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	@Override
 	default DequeX<T> takeUntil(Predicate<? super T> p) {
 		
-		return (DequeX)MutableCollectionX.super.takeUntil(p);
+		return (DequeX<T>)MutableCollectionX.super.takeUntil(p);
 	}
 
 	/* (non-Javadoc)
@@ -180,15 +180,16 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	 */
 	@Override
 	default DequeX<T> dropUntil(Predicate<? super T> p) {
-		return (DequeX)MutableCollectionX.super.dropUntil(p);
+		return (DequeX<T>)MutableCollectionX.super.dropUntil(p);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#trampoline(java.util.function.Function)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	default <R> DequeX<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-		return (DequeX)MutableCollectionX.super.trampoline(mapper);
+		return (DequeX<R>)MutableCollectionX.super.trampoline(mapper);
 	}
 
 	/* (non-Javadoc)
@@ -196,7 +197,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	 */
 	@Override
 	default DequeX<T> slice(long from, long to) {
-		return (DequeX)MutableCollectionX.super.slice(from, to);
+		return (DequeX<T>)MutableCollectionX.super.slice(from, to);
 	}
 
 
@@ -238,7 +239,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	@Override
 	default <U extends Comparable<? super U>> DequeX<T> sorted(Function<? super T, ? extends U> function) {
 		
-		return (DequeX)MutableCollectionX.super.sorted(function);
+		return (DequeX<T>)MutableCollectionX.super.sorted(function);
 	}
 	default DequeX<T> plus(T e){
 		add(e);
@@ -604,7 +605,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	@Override
 	default <U> DequeX<U> ofType(Class<U> type) {
 		
-		return (DequeX)MutableCollectionX.super.ofType(type);
+		return (DequeX<U>)MutableCollectionX.super.ofType(type);
 	}
 
 
@@ -614,7 +615,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	@Override
 	default DequeX<T> filterNot(Predicate<? super T> fn) {
 		
-		return  (DequeX)MutableCollectionX.super.filterNot(fn);
+		return  (DequeX<T>)MutableCollectionX.super.filterNot(fn);
 	}
 
 
@@ -624,7 +625,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	@Override
 	default DequeX<T> notNull() {
 		
-		return  (DequeX)MutableCollectionX.super.notNull();
+		return  (DequeX<T>)MutableCollectionX.super.notNull();
 	}
 
 
@@ -634,7 +635,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	@Override
 	default DequeX<T> removeAll(Stream<T> stream) {
 		
-		return  (DequeX)MutableCollectionX.super.removeAll(stream);
+		return  (DequeX<T>)MutableCollectionX.super.removeAll(stream);
 	}
 
 
@@ -644,7 +645,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	@Override
 	default DequeX<T> removeAll(Iterable<T> it) {
 		
-		return  (DequeX)MutableCollectionX.super.removeAll(it);
+		return  (DequeX<T>)MutableCollectionX.super.removeAll(it);
 	}
 
 
@@ -654,7 +655,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	@Override
 	default DequeX<T> removeAll(T... values) {
 		
-		return  (DequeX)MutableCollectionX.super.removeAll(values);
+		return  (DequeX<T>)MutableCollectionX.super.removeAll(values);
 	}
 
 
@@ -664,7 +665,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	@Override
 	default DequeX<T> retainAll(Iterable<T> it) {
 		
-		return  (DequeX)MutableCollectionX.super.retainAll(it);
+		return  (DequeX<T>)MutableCollectionX.super.retainAll(it);
 	}
 
 
@@ -674,7 +675,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	@Override
 	default DequeX<T> retainAll(Stream<T> stream) {
 		
-		return  (DequeX)MutableCollectionX.super.retainAll(stream);
+		return  (DequeX<T>)MutableCollectionX.super.retainAll(stream);
 	}
 
 
@@ -684,7 +685,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	@Override
 	default DequeX<T> retainAll(T... values) {
 		
-		return  (DequeX)MutableCollectionX.super.retainAll(values);
+		return  (DequeX<T>)MutableCollectionX.super.retainAll(values);
 	}
 
 
@@ -694,7 +695,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	@Override
 	default DequeX<T> retainMatches(Matcher<T> m) {
 	
-		return  (DequeX)MutableCollectionX.super.retainMatches(m);
+		return  (DequeX<T>)MutableCollectionX.super.retainMatches(m);
 	}
 
 
@@ -704,7 +705,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	@Override
 	default DequeX<T> removeMatches(Matcher<T> m) {
 		
-		return  (DequeX)MutableCollectionX.super.removeMatches(m);
+		return  (DequeX<T>)MutableCollectionX.super.removeMatches(m);
 	}
 	
 	
