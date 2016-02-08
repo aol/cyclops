@@ -20,6 +20,7 @@ import org.pcollections.TreePVector;
 import com.aol.cyclops.collections.extensions.persistent.PBagX;
 import com.aol.cyclops.collections.extensions.persistent.PMapX;
 import com.aol.cyclops.collections.extensions.persistent.POrderedSetX;
+import com.aol.cyclops.collections.extensions.persistent.PQueueX;
 import com.aol.cyclops.collections.extensions.persistent.PSetX;
 import com.aol.cyclops.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.collections.extensions.persistent.PVectorX;
@@ -37,7 +38,14 @@ public class Reducers {
 		return result;
 		
 	}
-	//after module merge, move to reducers
+	
+	
+		public static <T> Monoid<PQueueX<T>> toPQueueX() { 
+				return	Monoid.<PQueueX<T>>of(PQueueX.empty(), 
+										(PQueueX<T> a) -> b -> a.plusAll(b),
+										(T x) -> PQueueX.singleton(x));
+		}
+	
 		public static <T> Monoid<POrderedSetX<T>> toPOrderedSetX() { 
 						return	Monoid.<POrderedSetX<T>>of(POrderedSetX.<T>empty(), 
 												(POrderedSetX<T> a) -> b -> a.plusAll(b),

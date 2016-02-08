@@ -558,52 +558,74 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
 	 */
 	@Override
-	<U> CollectionX<U> cast(Class<U> type);
+	default <U> CollectionX<U> cast(Class<U> type) {
+		
+		return (CollectionX<U>)ZippingApplicativable.super.cast(type);
+	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#matchesCases(com.aol.cyclops.matcher.Case[])
 	 */
 	@Override
-	<R> CollectionX<Optional<R>> matchesCases(Case<T, R, Function<T, R>>... cases);
+	default <R> CollectionX<Optional<R>> matchesCases(Case<T, R, Function<T, R>>... cases) {
+		
+		return (CollectionX<Optional<R>>)ZippingApplicativable.super.matchesCases(cases);
+	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function)
 	 */
 	@Override
-	<R> CollectionX<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1);
+	default <R> CollectionX<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
+		
+		return (CollectionX<R>)ZippingApplicativable.super.patternMatch(defaultValue, case1);
+	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function)
 	 */
 	@Override
-	<R> CollectionX<R> patternMatch(R defaultValue,
+	default <R> CollectionX<R> patternMatch(R defaultValue,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case2) ;
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case2) {
+		
+		return (CollectionX<R>)ZippingApplicativable.super.patternMatch(defaultValue, case1, case2);
+	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function)
 	 */
 	@Override
-	<R> CollectionX<R> patternMatch(R defaultValue,
+	default <R> CollectionX<R> patternMatch(R defaultValue,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3) ;
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3) {
+		
+		return (CollectionX<R>)ZippingApplicativable.super.patternMatch(defaultValue, fn1, fn2, fn3);
+	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
 	 */
 	@Override
-	 <R> CollectionX<R> patternMatch(R defaultValue,
+	default <R> CollectionX<R> patternMatch(R defaultValue,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4);
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4){
+
+		return (CollectionX<R>)ZippingApplicativable.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4);
+	
+	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
 	 */
 	@Override
-	<R> CollectionX<R> patternMatch(R defaultValue,
+	default <R> CollectionX<R> patternMatch(R defaultValue,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn5) ;
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn5) {
+		
+		return (CollectionX<R>)ZippingApplicativable.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4, fn5);
+	}
 	
 
 	

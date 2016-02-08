@@ -30,12 +30,7 @@ import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
-	//after module merge, move to reducers
-	public static <T> Monoid<PQueueX<T>> toPQueueX() { 
-			return	Monoid.<PQueueX<T>>of(PQueueX.empty(), 
-									(PQueueX<T> a) -> b -> a.plusAll(b),
-									(T x) -> PQueueX.singleton(x));
-	}
+	
 	public static <T> PQueueX<T> of(T...values){
 		
 		return new PQueueXImpl<>(PQueues.of(values));

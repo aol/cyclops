@@ -447,7 +447,7 @@ public class LazyOperationsImpl<T> implements  DoubleOperatorsMixin<T>,
 	@Override
 	public <K, V> Eval<MapX<K, V>> toMap(Function<? super T, ? extends K> keyMapper,
 			Function<? super T, ? extends V> valueMapper) {
-		return Eval.later(()->stream.toMap(keyMapper,valueMapper));
+		return Eval.later(()->stream.toMapX(keyMapper,valueMapper));
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.streams.future.DoubleOperatorsMixin#sumDouble(java.util.function.ToDoubleFunction)

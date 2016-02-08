@@ -475,7 +475,7 @@ public class FutureOperationsImpl<T> implements  DoubleOperatorsMixin<T>,
 	@Override
 	public <K, V> CompletableFuture<MapX<K, V>> toMap(Function<? super T, ? extends K> keyMapper,
 			Function<? super T, ? extends V> valueMapper) {
-		return CompletableFuture.supplyAsync(()->stream.toMap(keyMapper,valueMapper),exec);
+		return CompletableFuture.supplyAsync(()->stream.toMapX(keyMapper,valueMapper),exec);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.streams.future.DoubleOperatorsMixin#sumDouble(java.util.function.ToDoubleFunction)
