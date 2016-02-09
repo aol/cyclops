@@ -7,9 +7,7 @@ import java.util.stream.Stream;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
-import com.aol.cyclops.collections.extensions.persistent.PStackX;
-import com.aol.cyclops.collections.extensions.persistent.PStackXImpl;
-import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.sequence.Reducers;
 /**
  * Class for working with Persistent Stacks from PCollections
@@ -129,10 +127,10 @@ public class PStacks {
 	 * 
 	 * @return a Monoid / Reducer that can be used to convert a Stream to a PVector
 	 */
-	public static <T> Monoid<PStack<T>> toPStackReverse() { 
+	public static <T> Reducer<PStack<T>> toPStackReverse() { 
 		return	Reducers.toPStackReversed();
 	}
-	public static <T> Monoid<PStack<T>> toPStack() { 
+	public static <T> Reducer<PStack<T>> toPStack() { 
 		return	Reducers.toPStack();
 	}
 	

@@ -7,9 +7,8 @@ import java.util.stream.Stream;
 import org.pcollections.HashTreePSet;
 import org.pcollections.PSet;
 
-import com.aol.cyclops.collections.extensions.persistent.PSetX;
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.collections.extensions.persistent.PSetXImpl;
-import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.Reducers;
 
 /**
@@ -37,7 +36,7 @@ public class PSets {
 	public static<T> PSet<T> fromStream(Stream<T> stream){
 		return (PSet<T>)toPSet().mapReduce(stream);
 	}
-	public static <T> Monoid<PSet<T>> toPSet() { 
+	public static <T> Reducer<PSet<T>> toPSet() { 
 		return	Reducers.toPSet();
 	}
 }

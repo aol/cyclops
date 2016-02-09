@@ -25,6 +25,7 @@ import lombok.val;
 
 import org.junit.Test;
 
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.Monoid;
@@ -196,8 +197,8 @@ public class StreamUtilsTest {
 	}
 	@Test
 	public void reducer2(){
-		Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
-		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
+		Reducer<Integer> sum = Reducer.of(0,a->b->a+b,i->(int)i);
+		Reducer<Integer> mult = Reducer.of(1,a->b->a*b,i->(int)i);
 		val result = StreamUtils.reduce(Stream.of(1,2,3,4),Arrays.asList(sum,mult));
 				
 		 

@@ -22,6 +22,7 @@ import org.pcollections.HashTreePBag;
 import org.pcollections.MapPBag;
 import org.pcollections.PBag;
 
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.collections.PBags;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
@@ -108,7 +109,7 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	default <X> PBagX<X> from(Collection<X> col){
 		return fromCollection(col);
 	}
-	default <T> Monoid<PBag<T>> monoid(){
+	default <T> Reducer<PBag<T>> monoid(){
 		return PBags.toPBag();
 	}
 	

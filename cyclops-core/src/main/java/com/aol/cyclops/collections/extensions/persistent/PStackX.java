@@ -21,6 +21,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.collections.PStacks;
 import com.aol.cyclops.collections.extensions.FluentSequenceX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
@@ -189,7 +190,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	default <X> PStackX<X> from(Collection<X> col){
 		return fromCollection(col);
 	}
-	default <T> Monoid<PStack<T>> monoid(){
+	default <T> Reducer<PStack<T>> monoid(){
 		if(isEfficientOps())
 			return PStacks.toPStackReverse();
 		return PStacks.toPStack();

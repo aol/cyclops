@@ -44,6 +44,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.collections.extensions.standard.MapX;
@@ -1000,7 +1001,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @param reducer Monoid to reduce values
 	 * @return Reduce result
 	 */
-	public final  <R> R mapReduce(Monoid<R> reducer){
+	public final  <R> R mapReduce(Reducer<R> reducer){
 		return reducer.mapReduce(stream);
 	}
 	/**
@@ -1129,7 +1130,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @param reducers
 	 * @return
 	 */
-	public final ListX<T> reduce(Iterable<Monoid<T>> reducers){
+	public final ListX<T> reduce(Iterable<Reducer<T>> reducers){
 		return StreamUtils.reduce(stream, reducers);
 	}
 	
@@ -1161,7 +1162,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @param reducer Monoid to reduce values
 	 * @return Reduce result
 	 */
-	public final <T> T foldLeftMapToType(Monoid<T> reducer){
+	public final <T> T foldLeftMapToType(Reducer<T> reducer){
 		return reducer.mapReduce(stream);
 	}
 	/**
@@ -1195,7 +1196,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @param reducer Monoid to reduce values
 	 * @return Reduce result
 	 */
-	public final <T> T foldRightMapToType(Monoid<T> reducer){
+	public final <T> T foldRightMapToType(Reducer<T> reducer){
 		return reducer.mapReduce(reverse());
 	}
 	/**

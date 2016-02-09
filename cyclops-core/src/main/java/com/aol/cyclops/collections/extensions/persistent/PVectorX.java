@@ -21,6 +21,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.collections.PVectors;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
@@ -147,7 +148,7 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	default <X> PVectorX<X> from(Collection<X> col){
 		return fromCollection(col);
 	}
-	default <T> Monoid<PVector<T>> monoid(){
+	default <T> Reducer<PVector<T>> monoid(){
 		return PVectors.toPVector();
 	}
 	@Override

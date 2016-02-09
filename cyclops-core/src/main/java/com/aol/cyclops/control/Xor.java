@@ -1,12 +1,18 @@
 package com.aol.cyclops.control;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
+import com.aol.cyclops.Reducer;
+import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.functions.fluent.FluentFunctions;
 import com.aol.cyclops.lambda.applicative.Applicativable;
@@ -14,6 +20,7 @@ import com.aol.cyclops.lambda.applicative.Applicative;
 import com.aol.cyclops.lambda.monads.Filterable;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.value.Value;
@@ -61,6 +68,19 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 	Xor<ST,PT> peek(Consumer<? super PT> action);
 	
 	Xor<PT,ST> swap();
+	
+	public static <ST,PT> Xor<SequenceM<PT>,SequenceM<ST>> sequenceSecondary(CollectionX<Xor<ST,PT>> xors){
+		return AnyM.sequence(AnyM.listFromXor(xors.map(x->x.swap()))).unwrap();
+	}
+	public static <ST,PT,R> Xor<?,R> accumulateSecondary(CollectionX<Xor<ST,PT>> xors,Reducer<R> reducer){
+		return sequenceSecondary(xors).map(s->s.foldLeftMapToType(reducer));
+	}
+	public static <ST,PT,R> Xor<?,R> accumulateSecondary(CollectionX<Xor<ST,PT>> xors,Function<? super ST, R> mapper,Semigroup<R> reducer){
+		return sequenceSecondary(xors).map(s->s.map(mapper).reduce(reducer.reducer()).get());
+	}
+	public static <ST,PT> Xor<?,ST> accumulateSecondary(CollectionX<Xor<ST,PT>> xors,Semigroup<ST> reducer){
+		return sequenceSecondary(xors).map(s->s.reduce(reducer.reducer()).get());
+	}
 	
 	default <R1,R2> Xor<R1,R2> when(Function<? super ST,? extends R1> secondary, 
 			Function<? super PT,? extends R2> primary){
@@ -179,6 +199,9 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 		public Value<ST> secondaryValue(){
 			return Value.of(()->null);
 		}
+		public String toString(){
+			return "Xor.primary["+value+"]";
+		}
 		
 	}
 	@AllArgsConstructor(access=AccessLevel.PRIVATE)
@@ -253,8 +276,13 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 			stAction.accept(value);
 			
 		}
+		
 		public Value<ST> secondaryValue(){
 			return Value.of(()->value);
+		}
+		
+		public String toString(){
+			return "Xor.secondary["+value+"]";
 		}
 		
 	}

@@ -7,11 +7,9 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
@@ -42,26 +40,17 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.collections.extensions.standard.MapX;
 import com.aol.cyclops.collections.extensions.standard.SetX;
-import com.aol.cyclops.functions.QuadFunction;
-import com.aol.cyclops.functions.QuintFunction;
-import com.aol.cyclops.functions.TriFunction;
-import com.aol.cyclops.functions.currying.CurryVariance;
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
-import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative2;
-import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative3;
-import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative4;
-import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative5;
-import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicativeBuilder;
+import com.aol.cyclops.lambda.monads.ExtendedTraversable;
 import com.aol.cyclops.lambda.monads.Foldable;
 import com.aol.cyclops.lambda.monads.Functor;
-import com.aol.cyclops.lambda.monads.Traversable;
-import com.aol.cyclops.lambda.monads.ExtendedTraversable;
 import com.aol.cyclops.lambda.monads.Unit;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.monad.AnyM;
@@ -1015,7 +1004,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Functor<T>, Extende
 	 *            Monoid to reduce values
 	 * @return Reduce result
 	 */
-	<R> R mapReduce(Monoid<R> reducer);
+	<R> R mapReduce(Reducer<R> reducer);
 
 	/**
 	 * Attempt to map this Monad to the same type as the supplied Monoid, using
@@ -1180,7 +1169,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Functor<T>, Extende
 	 * @param reducers
 	 * @return
 	 */
-	ListX<T> reduce(Iterable<Monoid<T>> reducers);
+	ListX<T> reduce(Iterable<Reducer<T>> reducers);
 
 	/**
 	 * 
@@ -1227,7 +1216,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Functor<T>, Extende
 	 *            Monoid to reduce values
 	 * @return Reduce result
 	 */
-	<T> T foldLeftMapToType(Monoid<T> reducer);
+	<T> T foldLeftMapToType(Reducer<T> reducer);
 
 	/**
 	 * 
@@ -1277,7 +1266,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Functor<T>, Extende
 	 *            Monoid to reduce values
 	 * @return Reduce result
 	 */
-	public <T> T foldRightMapToType(Monoid<T> reducer);
+	public <T> T foldRightMapToType(Reducer<T> reducer);
 
 	/**
 	 * <pre>

@@ -37,6 +37,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.collections.extensions.standard.MapX;
@@ -1303,7 +1304,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @param reducer Monoid to reduce values
     	 * @return Reduce result
     	 */
-    	default <R> R mapReduce(Monoid<R> reducer){
+    	default <R> R mapReduce(Reducer<R> reducer){
     		return sequenceM().mapReduce(reducer);
     	}
     	/**
@@ -1467,7 +1468,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @param reducers
     	 * @return
     	 */
-    	 default List<T> reduce(Iterable<Monoid<T>> reducers){
+    	 default List<T> reduce(Iterable<Reducer<T>> reducers){
     		 return sequenceM().reduce(reducers);
     	 }
     	
@@ -1513,7 +1514,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @param reducer Monoid to reduce values
     	 * @return Reduce result
     	 */
-    	default <T> T foldLeftMapToType(Monoid<T> reducer){
+    	default <T> T foldLeftMapToType(Reducer<T> reducer){
     		 return sequenceM().foldLeftMapToType(reducer);
     	}
     	/**
@@ -1561,7 +1562,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @param reducer Monoid to reduce values
     	 * @return Reduce result
     	 */
-    	default <T> T foldRightMapToType(Monoid<T> reducer){
+    	default <T> T foldRightMapToType(Reducer<T> reducer){
     		 return sequenceM().foldRightMapToType(reducer);
     	}
     	

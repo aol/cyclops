@@ -43,6 +43,7 @@ import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 import org.reactivestreams.Subscription;
 
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.closures.mutable.Mutable;
 import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
@@ -964,7 +965,7 @@ public class StreamUtils{
 	 * @return Reduced Stream values as List entries
 	 */
 	@SuppressWarnings({"rawtypes","unchecked"})
-	public static <R> ListX<R> reduce(Stream<R> stream,Iterable<? extends Monoid<R>> reducers){
+	public static <R> ListX<R> reduce(Stream<R> stream,Iterable<? extends Reducer<R>> reducers){
 		return new MultiReduceOperator<R>(stream).reduce(reducers);
 		
 	}
@@ -1465,7 +1466,7 @@ public class StreamUtils{
 	 * @param reducer Monoid to reduce values
 	 * @return Reduce result
 	 */
-	public final static<T,R> R mapReduce(Stream<T> stream,Monoid<R> reducer){
+	public final static<T,R> R mapReduce(Stream<T> stream,Reducer<R> reducer){
 		return reducer.mapReduce(stream);
 	}
 	/**
@@ -1499,7 +1500,7 @@ public class StreamUtils{
 	 * @param reducer Monoid to reduce values
 	 * @return Reduce result
 	 */
-	public final static <T> T foldLeftMapToType(Stream<T> stream,Monoid<T> reducer){
+	public final static <T> T foldLeftMapToType(Stream<T> stream,Reducer<T> reducer){
 		return reducer.mapReduce(stream);
 	}
 	/**
@@ -1518,7 +1519,7 @@ public class StreamUtils{
 	 * @param reducer Monoid to reduce values
 	 * @return Reduce result
 	 */
-	public final static <T> T foldRightMapToType(Stream<T> stream,Monoid<T> reducer){
+	public final static <T> T foldRightMapToType(Stream<T> stream,Reducer<T> reducer){
 		return reducer.mapReduce(StreamUtils.reverse(stream));
 	}
 	/**

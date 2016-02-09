@@ -10,6 +10,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.closures.Convertable;
 import com.aol.cyclops.closures.immutable.LazyImmutable;
 import com.aol.cyclops.closures.mutable.Mutable;
@@ -89,7 +90,7 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, ValueObject<T>, Conv
 	 default SequenceM<T> generate(){
 		return SequenceM.generate(this);
 	 }
-	 default <E> E mapReduce(Monoid<E> monoid){
+	 default <E> E mapReduce(Reducer<E> monoid){
 		 return monoid.mapReduce(toStream());
 	 }
 	 default T fold(Monoid<T> monoid){

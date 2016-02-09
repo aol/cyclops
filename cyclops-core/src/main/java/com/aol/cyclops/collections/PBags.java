@@ -7,9 +7,7 @@ import java.util.stream.Stream;
 import org.pcollections.HashTreePBag;
 import org.pcollections.PBag;
 
-import com.aol.cyclops.collections.extensions.persistent.PBagX;
-import com.aol.cyclops.collections.extensions.persistent.PBagXImpl;
-import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.sequence.Reducers;
 
 public class PBags {
@@ -34,7 +32,7 @@ public class PBags {
 	public static<T> PBag<T> fromStream(Stream<T> stream){
 		return (PBag<T>)toPBag().mapReduce(stream);
 	}
-	public static <T> Monoid<PBag<T>> toPBag() { 
+	public static <T> Reducer<PBag<T>> toPBag() { 
 		return	Reducers.toPBag();
 	}
 }

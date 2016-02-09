@@ -18,6 +18,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
@@ -43,7 +44,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	}
 	public <R> PersistentCollectionX<R> unit(Collection<R> col);
 	<R> PersistentCollectionX<R> emptyUnit();
-	<T> Monoid<? extends Collection<T>> monoid();
+	<T> Reducer<? extends Collection<T>> monoid();
 	
 	<T1> PersistentCollectionX<T1> from(Collection<T1> c);
 	default CollectionX<T> reverse(){

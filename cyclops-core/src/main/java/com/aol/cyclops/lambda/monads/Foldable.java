@@ -7,6 +7,7 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 
@@ -30,7 +31,7 @@ public interface Foldable<T> {
 	 *            Monoid to reduce values
 	 * @return Reduce result
 	 */
-	default <R> R mapReduce(Monoid<R> reducer){
+	default <R> R mapReduce(Reducer<R> reducer){
 		return stream().mapReduce(reducer);
 	}
 
@@ -160,7 +161,7 @@ public interface Foldable<T> {
 	 * @param reducers
 	 * @return
 	 */
-	default List<T> reduce(Iterable<Monoid<T>> reducers){
+	default List<T> reduce(Iterable<Reducer<T>> reducers){
 		return stream().reduce(reducers);
 	}
 
@@ -213,7 +214,7 @@ public interface Foldable<T> {
 	 *            Monoid to reduce values
 	 * @return Reduce result
 	 */
-	default <T> T foldLeftMapToType(Monoid<T> reducer){
+	default <T> T foldLeftMapToType(Reducer<T> reducer){
 		return stream().foldLeftMapToType(reducer);
 	}
 
@@ -269,7 +270,7 @@ public interface Foldable<T> {
 	 *            Monoid to reduce values
 	 * @return Reduce result
 	 */
-	default <T> T foldRightMapToType(Monoid<T> reducer){
+	default <T> T foldRightMapToType(Reducer<T> reducer){
 		return stream().foldRightMapToType(reducer);
 	}
 	

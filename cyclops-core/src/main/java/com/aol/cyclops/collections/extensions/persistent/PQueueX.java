@@ -19,6 +19,7 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.PQueue;
 
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.collections.PQueues;
 import com.aol.cyclops.collections.PSets;
 import com.aol.cyclops.collections.extensions.standard.ListX;
@@ -100,7 +101,7 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
 	default <X> PQueueX<X> from(Collection<X> col){
 		return new PQueueXImpl<>(PQueues.fromCollection(col));
 	}
-	default <T> Monoid<PQueue<T>> monoid(){
+	default <T> Reducer<PQueue<T>> monoid(){
 		return PQueues.toPQueue();
 	}
 	

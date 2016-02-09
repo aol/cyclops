@@ -21,6 +21,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.HashTreePSet;
 import org.pcollections.PSet;
 
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.collections.PSets;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
@@ -101,7 +102,7 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	default <X> PSetX<X> from(Collection<X> col){
 		return fromCollection(col);
 	}
-	default <T> Monoid<PSet<T>> monoid(){
+	default <T> Reducer<PSet<T>> monoid(){
 		return PSets.toPSet();
 	}
 	

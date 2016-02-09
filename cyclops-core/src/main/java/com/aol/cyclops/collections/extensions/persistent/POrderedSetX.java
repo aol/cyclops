@@ -22,6 +22,7 @@ import org.pcollections.OrderedPSet;
 import org.pcollections.PBag;
 import org.pcollections.POrderedSet;
 
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.collections.PBags;
 import com.aol.cyclops.collections.POrderedSets;
 import com.aol.cyclops.collections.extensions.standard.ListX;
@@ -102,7 +103,7 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	default <X> POrderedSetX<X> from(Collection<X> col){
 		return fromCollection(col);
 	}
-	default <T> Monoid<PBag<T>> monoid(){
+	default <T> Reducer<PBag<T>> monoid(){
 		return PBags.toPBag();
 	}
 	

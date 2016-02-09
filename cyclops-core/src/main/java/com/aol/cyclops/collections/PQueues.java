@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 import org.pcollections.AmortizedPQueue;
 import org.pcollections.PQueue;
 
-import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.sequence.Reducers;
 
 public class PQueues {
@@ -128,7 +128,7 @@ public class PQueues {
 	 * 
 	 * @return a Monoid / Reducer that can be used to convert a Stream to a PVector
 	 */
-	public static <T> Monoid<PQueue<T>> toPQueue() { 
+	public static <T> Reducer<PQueue<T>> toPQueue() { 
 		return	Reducers.toPQueue();
 	}
 }

@@ -30,6 +30,7 @@ import lombok.val;
 
 import org.junit.Test;
 
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.Monoid;
@@ -515,8 +516,8 @@ public class AnyMTest {
 	}
 	@Test
 	public void reducer2(){
-		Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
-		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
+		Reducer<Integer> sum = Reducer.of(0,a->b->a+b,i->(int)i);
+		Reducer<Integer> mult = Reducer.of(1,a->b->a*b,i->(int)i);
 		val result = ofMonad(Optional.of(Stream.of(1,2,3,4)))
 						.<Integer>toSequence()
 						.reduce(Arrays.asList(sum,mult) );
@@ -526,8 +527,8 @@ public class AnyMTest {
 	}
 	@Test
 	public void reducer3(){
-		Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
-		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
+		Reducer<Integer> sum = Reducer.of(0,a->b->a+b,i->(int)i);
+		Reducer<Integer> mult = Reducer.of(1,a->b->a*b,i->(int)i);
 		val result = ofMonad(Optional.of(Stream.of()))
 						.<Integer>toSequence()
 						.reduce(Arrays.asList(sum,mult) );
@@ -537,8 +538,8 @@ public class AnyMTest {
 	}
 	@Test
 	public void reducer4(){
-		Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
-		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
+		Reducer<Integer> sum = Reducer.of(0,a->b->a+b,i->(int)i);
+		Reducer<Integer> mult = Reducer.of(1,a->b->a*b,i->(int)i);
 		val result = ofMonad(Optional.empty())
 						.<Integer>toSequence()
 						.reduce(Arrays.asList(sum,mult) );

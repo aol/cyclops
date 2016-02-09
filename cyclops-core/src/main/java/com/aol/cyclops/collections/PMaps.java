@@ -10,6 +10,7 @@ import org.pcollections.HashTreePMap;
 import org.pcollections.PBag;
 import org.pcollections.PMap;
 
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.Reducers;
 
@@ -36,7 +37,7 @@ public class PMaps {
 	public static<K,V> PMap<K,V> toPMap(Stream<Tuple2<K,V>> stream){
 		return (PMap<K,V>)toPMap().mapReduce(stream);
 	}
-	public static <K,V> Monoid<PMap<K,V>> toPMap() { 
+	public static <K,V> Reducer<PMap<K,V>> toPMap() { 
 		return	Reducers.toPMap();
 	}
 	

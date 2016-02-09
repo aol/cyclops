@@ -34,6 +34,7 @@ import org.jooq.lambda.function.Function5;
 
 import com.aol.cyclops.closures.Convertable;
 import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.lambda.applicative.Applicativable;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.lambda.monads.EmptyUnit;
@@ -737,6 +738,10 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 		Objects.requireNonNull(future);
 		return AnyMFactory.instance.monad(future);
 	}
+	public static <T> AnyM<T> fromXor(Xor<?,T> future){
+		Objects.requireNonNull(future);
+		return AnyMFactory.instance.monad(future);
+	}
 	/**
 	 * Create an AnyM instance that wraps a Collection
 	 * 
@@ -910,6 +915,9 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	public static <T> List<AnyM<T>> listFromCollection(Iterable<Collection<T>> anyM){
 		return StreamSupport.stream(anyM.spliterator(),false).map(i-> AnyM.fromCollection(i)).collect(Collectors.toList());
 	}
+	public static <T> List<AnyM<T>> listFromXor(Iterable<Xor<?,T>> anyM){
+		return StreamSupport.stream(anyM.spliterator(),false).map(i-> AnyM.fromXor(i)).collect(Collectors.toList());
+	}
 	/**
 	 * Take an iterable containing Streamables and convert them into a List of AnyMs
 	 * e.g.
@@ -940,7 +948,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @param fn Function to apply 
 	 * @return Monad with a list
 	 */
-	public static <T,R> AnyM<ListX<R>> traverse(Collection<AnyM<T>> seq, Function<T,R> fn){
+	public static <T,R> AnyM<ListX<R>> traverse(Collection<AnyM<T>> seq, Function<? super T,? extends R> fn){
 		return new AnyMonads().traverse(seq,fn);
 	}
 	/**
@@ -956,7 +964,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @param fn Function to apply 
 	 * @return Monad with a list
 	 */
-	public static <T,R> AnyM<ListX<R>> traverse(Stream<AnyM<T>> seq, Function<T,R> fn){
+	public static <T,R> AnyM<ListX<R>> traverse(Stream<AnyM<T>> seq, Function<? super T,? extends R> fn){
 		
 		return new AnyMonads().traverse(seq,fn);
 	}
@@ -1030,7 +1038,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @param fn BiFunction to lift
 	 * @return Lifted BiFunction
 	 */
-	public static <U1,U2,R> BiFunction<AnyM<U1>,AnyM<U2>,AnyM<R>> liftM2(BiFunction<U1,U2,R> fn){
+	public static <U1,U2,R> BiFunction<AnyM<U1>,AnyM<U2>,AnyM<R>> liftM2(BiFunction<? super U1,? super U2,? extends R> fn){
 		
 		return (u1,u2) -> u1.bind( input1 -> u2.map(input2 -> fn.apply(input1,input2)  ).unwrap());
 	}
@@ -1049,7 +1057,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @param fn Function to lift
 	 * @return Lifted function
 	 */
-	public static <U1,U2,U3,R> Function3<AnyM<U1>,AnyM<U2>,AnyM<U3>,AnyM<R>> liftM3(Function3<U1,U2,U3,R> fn){
+	public static <U1,U2,U3,R> Function3<AnyM<U1>,AnyM<U2>,AnyM<U3>,AnyM<R>> liftM3(Function3<? super U1,? super U2,? super U3,? extends R> fn){
 		return (u1,u2,u3) -> u1.bind( input1 -> 
 									u2.bind(input2 -> 
 										u3.map(input3->fn.apply(input1,input2,input3)  )).unwrap());
@@ -1061,7 +1069,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @param fn Quad funciton to lift
 	 * @return Lifted Quad function
 	 */
-	public static <U1,U2,U3,U4,R> Function4<AnyM<U1>,AnyM<U2>,AnyM<U3>,AnyM<U4>,AnyM<R>> liftM4(Function4<U1,U2,U3,U4,R> fn){
+	public static <U1,U2,U3,U4,R> Function4<AnyM<U1>,AnyM<U2>,AnyM<U3>,AnyM<U4>,AnyM<R>> liftM4(Function4<? super U1,? super U2,? super U3,? super U4,? extends R> fn){
 		
 		return (u1,u2,u3,u4) -> u1.bind( input1 -> 
 										u2.bind(input2 -> 

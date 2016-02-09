@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.sequence.CyclopsCollectors;
 import com.aol.cyclops.sequence.Monoid;
@@ -17,8 +17,8 @@ import lombok.Value;
 public class MultiReduceOperator<R> {
 
 	Stream<R> stream;
-	public ListX<R> reduce(Iterable<? extends Monoid<R>> reducers){
-		Monoid<R> m = new Monoid(){
+	public ListX<R> reduce(Iterable<? extends Reducer<R>> reducers){
+		Reducer<R> m = new Reducer(){
 			public List zero(){
 				return StreamUtils.stream(reducers).map(r->r.zero()).collect(CyclopsCollectors.toListX());
 			}
