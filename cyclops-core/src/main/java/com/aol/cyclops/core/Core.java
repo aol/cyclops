@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.closures.immutable.LazyImmutable;
 import com.aol.cyclops.closures.mutable.Mutable;
 import com.aol.cyclops.dynamic.As;
@@ -389,7 +390,7 @@ public class Core extends Functions {
 	 * @return Reduced Stream values as List entries
 	 */
 	@SuppressWarnings({"rawtypes","unchecked"})
-	public static <R> List<R> reduce(Stream<R> stream,Iterable<Monoid<R>> reducers){
+	public static <R> List<R> reduce(Stream<R> stream,Iterable<Reducer<R>> reducers){
 	
 		return StreamUtils.reduce(stream, reducers);
 	}
