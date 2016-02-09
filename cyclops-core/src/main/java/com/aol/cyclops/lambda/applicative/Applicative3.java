@@ -27,23 +27,12 @@ public interface Applicative3<T,T2,T3,R, D extends ConvertableFunctor<R>> extend
 	ConvertableFunctor<Function<? super T,Function<? super T2, Function<? super T3,? extends R>>>>  delegate();
 	
 	default Applicative2<T2,T3,R,D> ap(Functor<T> f){
-		Function<? super T,Function<? super T2, Function<? super T3,? extends R>>> fn = delegate().get();
-		
-		return ()->(ConvertableFunctor)f.map(t->fn.apply(t));
-		
+		return ()->(ConvertableFunctor)delegate().toOptional().map (myFn-> f.map(t->myFn.apply(t))).orElse(Maybe.none());
 	}
-	default Applicative2<T2,T3,R,D> ap(Optional<T> f){
-		
-		Function<? super T,Function<? super T2, Function<? super T3,? extends R>>> fn = delegate().get();
-		
-		return ()->(ConvertableFunctor)Maybe.fromOptional(f).map(t->fn.apply(t));
-		
+	default Applicative2<T2,T3,R,D> ap(Optional<T> f){	
+		return ap(Maybe.fromOptional(f));
 	}
 	default Applicative2<T2,T3,R,D> ap(CompletableFuture<T> f){
-		
-		Function<? super T,Function<? super T2, Function<? super T3,? extends R>>> fn = delegate().get();
-		
-		return ()->(ConvertableFunctor)new FutureW<>(f).map(t->fn.apply(t));
-		
+		return ap(FutureW.of(f));
 	}
 }

@@ -44,11 +44,11 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, 
 	}
 	
 	static <T> Maybe<T> fromEvalSome(Eval<T> eval){
-		return new Something<T>(eval);
+		return new Just<T>(eval);
 	}
 	static <T> Maybe<T> of(T value){
 		Objects.requireNonNull(value);
-		return new Something<T>(Eval.later(()->value));
+		return new Just<T>(Eval.later(()->value));
 	}
 	static Integer add(Integer i){
 		return i+1;
@@ -68,6 +68,16 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, 
 	default <T> Maybe<T> unit(T unit){
 		return  Maybe.of(unit);
 	}
+	
+	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.value.Value#toMaybe()
+	 */
+	@Override
+	default Maybe<T> toMaybe() {
+		return this;
+	}
+
 	/**
 	 * <pre>
 	 * {@code 
@@ -93,13 +103,13 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, 
 						Supplier<? extends R> none);
 	
 	@AllArgsConstructor(access=AccessLevel.PRIVATE)
-	public static final class Something<T> implements Maybe<T>{
+	public static final class Just<T> implements Maybe<T>{
 		
 		private final Eval<T> lazy;
 		
 		
 		public <R> Maybe<R> map(Function<? super T, ? extends R> mapper){
-			return new Something<>(lazy.map(t->mapper.apply(t)));
+			return new Just<>(lazy.map(t->mapper.apply(t)));
 		}
 		public <R>  Maybe<R> flatMap(Function<? super T, ? extends Maybe<? extends R>> mapper){
 			return narrow(mapper.apply(lazy.get()));
@@ -150,7 +160,7 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, 
 			return Maybe.of(value);
 		}
 		public Maybe<T> recover(Supplier<T> value){
-			return new Something<>(Eval.later(value));
+			return new Just<>(Eval.later(value));
 		}
 		public <R> R when(Function<? super T,? extends R> some, 
 				Supplier<? extends R> none){

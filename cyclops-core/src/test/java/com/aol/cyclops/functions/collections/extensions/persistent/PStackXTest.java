@@ -2,6 +2,7 @@ package com.aol.cyclops.functions.collections.extensions.persistent;
 
 import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.persistent.PStackX;
+import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.functions.collections.extensions.CollectionXTestsWithNulls;
 
 public class PStackXTest extends CollectionXTestsWithNulls{
@@ -17,4 +18,11 @@ public class PStackXTest extends CollectionXTestsWithNulls{
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#empty()
+	 */
+	@Override
+	public <T> CollectionX<T> empty() {
+		return PStackX.empty();
+	}
 }

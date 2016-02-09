@@ -63,6 +63,14 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 			return new SetXImpl<T>( (Set)it, collector);
 		return new SetXImpl<T>(StreamUtils.stream(it).collect(collector),collector);
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.sequence.traits.ConvertableSequence#toListX()
+	 */
+	@Override
+	default SetX<T> toSetX() {
+		return this;
+	}
 	@Override
 	default <R> SetX<R> ap1( ZippingApplicative<T,R, ?> ap){
 		
@@ -233,6 +241,15 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	default <U> SetX<Tuple2<T, U>> zip(Iterable<U> other){
 		return (SetX<Tuple2<T, U>>)MutableCollectionX.super.zip(other);
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
+	 */
+	@Override
+	default <U, R> SetX<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+		
+		return (SetX<R>)MutableCollectionX.super.zip(other, zipper);
+	}
+
 	default SetX<ListX<T>> sliding(int windowSize){
 		return (SetX<ListX<T>>)MutableCollectionX.super.sliding(windowSize); 
 	}

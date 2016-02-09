@@ -1,11 +1,14 @@
 package com.aol.cyclops.control;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import org.junit.Test;
+
+import com.aol.cyclops.lambda.monads.ConvertableFunctor;
 public class EvalTest {
 
 	@Test
@@ -59,20 +62,113 @@ public class EvalTest {
 		assertThat(Eval.always(()->1).map(i->i+2)
 						.flatMap(i->Eval.now(i*3)).get(),equalTo(9));
 	}
-	
-	public int addOne(Integer i, Integer b){
+	public int addOne(Integer i){
+		return i+1;
+	}
+	public int add(Integer i, Integer b){
 		return i+b;
 	}
+	public String concat(String a, String b, String c){
+		return a+b+c;
+	}
+	public String concat4(String a, String b, String c,String d){
+		return a+b+c+d;
+	}
+	public String concat5(String a, String b, String c,String d,String e){
+		return a+b+c+d+e;
+	}
 	@Test
-	public void ap(){
+	public void apExample(){
 		
 	//	System.out.println(Maybe.Applicatives.applicative(this::addOne).ap(Eval.now(10)).ap(Eval.now(30)).get());
 	//	ListX.ZippingApplicatives.applicative(this::addOne);
 		//ApplicativeBuilder.<Integer>of(t->Eval.now(t)).applicative2(this::addOne);
-		System.out.println(Maybe.of(10).applicatives().applicative2(this::addOne).ap(Eval.now(20)).ap(Eval.now(30)).get());
-		System.out.println(Maybe.of(10).applicatives().applicative2(this::addOne).ap(Optional.of(20)).ap(Eval.now(30)).get());
-		System.out.println(Eval.now(10).applicatives().applicative2(this::addOne).ap(Eval.now(20)).ap(Maybe.of(30)).get());
+		System.out.println(Maybe.of(10).ap2(this::add).ap(Eval.now(20)).get());
+		System.out.println(Maybe.of(10).ap2(this::add).ap(Optional.of(20)).get());
+		System.out.println(Eval.now(10).ap2(this::add).ap(Eval.now(20)).get());
 		
 	//	Eval.now(10).ap2(Maybe.applicativeBuilder().applicative2B(this::addOne).ap(Eval.now(20));
 	}
+	
+	@Test
+	public void apSelf(){
+		assertThat(Maybe.of(10).applicatives().applicative2(this::add).ap(Eval.now(20)).get(),equalTo(30));
+
+	}
+	@Test
+	public void ap1Function(){
+		assertThat(Maybe.of(10).ap1(this::addOne).get(),equalTo(11));
+
+	}
+	@Test
+	public void ap1NoneFunction(){
+		assertFalse(Maybe.<Integer>none().ap1(this::addOne).toOptional().isPresent());
+
+	}
+	@Test
+	public void ap2Function(){
+		assertThat(Maybe.of(10).ap2(this::add).ap(Maybe.of(20)).get(),equalTo(30));
+		assertThat(Maybe.of(10).ap2(this::add).ap(Optional.of(20)).get(),equalTo(30));
+		
+		ConvertableFunctor<Integer> maybe = Maybe.of(10).ap2(this::add).ap(Maybe.of(20));
+		maybe.toMaybe();
+
+	}
+	@Test
+	public void ap2OptionalEmptyFunction(){
+		assertFalse(Maybe.of(1).ap2(this::add).ap(Optional.empty()).toOptional().isPresent());
+
+	}
+	@Test
+	public void ap3Function(){
+		assertThat(Maybe.of("hello").ap3(this::concat).ap(Optional.of("world")).ap(CompletableFuture.supplyAsync(()->"boo!")).get(),equalTo("helloworldboo!"));
+
+	}
+	@Test
+	public void ap3OptionalEmptyFunction(){
+		assertFalse(Maybe.of("hello").ap3(this::concat).ap(Optional.empty()).ap(CompletableFuture.supplyAsync(()->"boo!")).toOptional().isPresent());
+
+	}
+	@Test
+	public void ap4Function(){
+		
+		assertThat(Maybe.of("hello")
+						.ap4(this::concat4)
+						.ap(Optional.of("world"))
+						.ap(CompletableFuture.supplyAsync(()->"boo!"))
+						.ap(Eval.now("done?")).get(),equalTo("helloworldboo!done?"));
+
+	}
+	@Test
+	public void ap4OptionalEmptyFunction(){
+		assertFalse(Maybe.of("hello")
+				.ap4(this::concat4)
+				.ap(Optional.of("world"))
+				.ap(Maybe.none())
+				.ap(Eval.now("done?")).toOptional().isPresent());
+
+	}
+	
+	@Test
+	public void ap5Function(){
+		
+		assertThat(Maybe.of("hello")
+						.ap5(this::concat5)
+						.ap(Optional.of("world"))
+						.ap(CompletableFuture.supplyAsync(()->"boo!"))
+						.ap(Maybe.of("hello"))
+						.ap(Eval.now("done?")).get(),equalTo("helloworldboo!hellodone?"));
+
+	}
+	@Test
+	public void ap5OptionalEmptyFunction(){
+		assertFalse(Maybe.of("hello")
+				.ap5(this::concat5)
+				.ap(Optional.of("world"))
+				.ap(CompletableFuture.supplyAsync(()->"boo!"))
+				.ap(Maybe.of("hello"))
+				.ap(Maybe.none()).toOptional().isPresent());
+
+	}
+	
 }

@@ -77,7 +77,7 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 	default MapX<K,V> fromStream(SequenceM<Tuple2<K,V>> stream){
 		return new MapXImpl<>(stream.toMap(t->t.v1, t->t.v2),getCollector());
 	}
-
+	
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Iterable#iterator()
@@ -173,14 +173,7 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 	default MapX<K,V> minusAll(Collection<?> keys){
 		return (MapX<K,V>)FluentMapX.super.minusAll(keys);
 	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.UnitIterator#unitIteratorTyped(java.util.Iterator)
-	 */
-	@Override
-	default MapX<K, V> unitIteratorTyped(Iterator<Tuple2<K, V>> it) {
-		return SequenceM.fromIterator(it)
-						.toMapX(k->k.v1,v->v.v2);
-	}
+	
 	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)

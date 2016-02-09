@@ -139,6 +139,15 @@ public class Mutable<T> implements Supplier<T>,Consumer<T>, Value<T>{
 		
 	}
 
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.value.Value#toMutable()
+	 */
+	@Override
+	public Mutable<T> toMutable() {
+		return this;
+	}
+
 	
 	
 }

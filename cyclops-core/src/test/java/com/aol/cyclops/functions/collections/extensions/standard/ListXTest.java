@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.persistent.PStackX;
+import com.aol.cyclops.collections.extensions.standard.DequeX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.functions.collections.extensions.CollectionXTestsWithNulls;
@@ -15,9 +16,16 @@ public class ListXTest extends CollectionXTestsWithNulls{
 	public <T> CollectionX<T> of(T... values) {
 		return ListX.of(values);
 	}
-
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#empty()
+	 */
+	@Override
+	public <T> CollectionX<T> empty() {
+		return ListX.empty();
+	}
 	@Test
 	public void when(){
+		
 		String res=	ListX.of(1,2,3).when((x,xs)->
 								xs.join(x.when(some-> (int)some>2? "hello" : "world",()->"boo!"))
 					);

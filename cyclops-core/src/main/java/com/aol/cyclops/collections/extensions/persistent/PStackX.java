@@ -143,6 +143,10 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 		return new PStackXImpl<>((PStack<T>)PStacks.toPStack().mapReduce(stream),false);
 	}
 	@Override
+	default PStackX<T> toPStackX() {
+		return this;
+	}
+	@Override
 	default <R> PStackX<R> ap1( ZippingApplicative<T,R, ?> ap){
 		
 		return (PStackX<R>)PersistentCollectionX.super.ap1(ap);
@@ -367,6 +371,46 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	default <U> PStackX<Tuple2<T, U>> zip(Iterable<U> other){
 		return  (PStackX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
+	 */
+	@Override
+	default <U, R> PStackX<R> zip(Iterable<U> other,
+			BiFunction<? super T, ? super U, ? extends R> zipper) {
+		
+		return (PStackX<R>)PersistentCollectionX.super.zip(other, zipper);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#permutations()
+	 */
+	@Override
+	default PStackX<SequenceM<T>> permutations() {
+		
+		return ( PStackX<SequenceM<T>>)PersistentCollectionX.super.permutations();
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations(int)
+	 */
+	@Override
+	default PStackX<SequenceM<T>> combinations(int size) {
+		
+		return (PStackX<SequenceM<T>>)PersistentCollectionX.super.combinations(size);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations()
+	 */
+	@Override
+	default PStackX<SequenceM<T>> combinations() {
+		
+		return (PStackX<SequenceM<T>>)PersistentCollectionX.super.combinations();
+	}
+
 	default PStackX<ListX<T>> sliding(int windowSize){
 		return  (PStackX<ListX<T>>)PersistentCollectionX.super.sliding(windowSize);
 	}

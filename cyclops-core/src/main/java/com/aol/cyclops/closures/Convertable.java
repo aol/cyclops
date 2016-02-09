@@ -13,6 +13,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Maybe;
 
 import lombok.Value;
@@ -162,7 +163,9 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>{
 	default Iterator<T> iterator(){
 		return toList().iterator();
 	}
-	
+	default FutureW<T> toFutureW(){
+		return FutureW.of(toCompletableFuture());
+	}
 	/**
 	 * @return A CompletableFuture, populated immediately by a call to get
 	 */

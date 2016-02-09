@@ -18,19 +18,16 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
-import org.pcollections.ConsPStack;
-import org.pcollections.PQueue;
-import org.pcollections.PStack;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
-import com.aol.cyclops.collections.PQueues;
 import com.aol.cyclops.collections.PVectors;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.matcher.Case;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.trampoline.Trampoline;
 
 public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
@@ -152,6 +149,10 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	}
 	default <T> Monoid<PVector<T>> monoid(){
 		return PVectors.toPVector();
+	}
+	@Override
+	default PVectorX<T> toPVectorX() {
+		return this;
 	}
 	
 	
@@ -322,6 +323,46 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	default <U> PVectorX<Tuple2<T, U>> zip(Iterable<U> other){
 		return  (PVectorX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
+	 */
+	@Override
+	default <U, R> PVectorX<R> zip(Iterable<U> other,
+			BiFunction<? super T, ? super U, ? extends R> zipper) {
+		
+		return (PVectorX<R>)PersistentCollectionX.super.zip(other, zipper);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#permutations()
+	 */
+	@Override
+	default PVectorX<SequenceM<T>> permutations() {
+		
+		return ( PVectorX<SequenceM<T>>)PersistentCollectionX.super.permutations();
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations(int)
+	 */
+	@Override
+	default PVectorX<SequenceM<T>> combinations(int size) {
+		
+		return (PVectorX<SequenceM<T>>)PersistentCollectionX.super.combinations(size);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations()
+	 */
+	@Override
+	default PVectorX<SequenceM<T>> combinations() {
+		
+		return (PVectorX<SequenceM<T>>)PersistentCollectionX.super.combinations();
+	}
+
 	default PVectorX<ListX<T>> sliding(int windowSize){
 		return  (PVectorX<ListX<T>>)PersistentCollectionX.super.sliding(windowSize);
 	}

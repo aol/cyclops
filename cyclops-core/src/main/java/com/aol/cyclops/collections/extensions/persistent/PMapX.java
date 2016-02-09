@@ -48,13 +48,7 @@ public interface PMapX<K, V> extends PMap<K, V>,
 	public static<K,V> PMapX<K,V> fromMap(Map<? extends K,? extends V> map){
 		return new PMapXImpl<K,V>(HashTreePMap.from(map));
 	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#unitIteratorTyped(java.util.Iterator)
-	 */
-	@Override
-	default PMapX<K, V> unitIteratorTyped(Iterator<Tuple2<K, V>> it) {
-		return stream().toPMapX(t->t.v1,t->t.v2);
-	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Iterable#iterator()
 	 */

@@ -34,9 +34,9 @@ import com.aol.cyclops.sequence.traits.lazy.LazyCollectable;
 import com.aol.cyclops.sequence.traits.lazy.LazyOperationsImpl;
 
 
-public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSequence<T>,UnitIterator<T> {
+public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSequence<T> {
 	
-	Traversable<T> unitIteratorTyped(Iterator<T> it);
+	
 	
 	/**
 	 * Destructures this Traversable into it's head and tail. If the traversable instance is not a SequenceM or Stream type,
@@ -60,31 +60,12 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * @param match
 	 * @return
 	 */
-	default <R> R when(BiFunction<? super Maybe<T>,? super Traversable<T>,? extends R> match ){
+	default <R> R when(BiFunction<? super Maybe<T>,? super SequenceM<T>,? extends R> match ){
 		
-		HeadAndTail<T> ht = this.headAndTail();
-		return match.apply(ht.headMaybe(),unitIteratorTyped(ht.tail().iterator()));
-	}
-	/**
-	 * Destructures this Traversable lazily & efficiently into it's head and tail, where the tail is a SequenceM
-	 * 
-	 * @param match
-	 * @return
-	 */
-	default <R> R whenStream(BiFunction<? super Maybe<T>,? super SequenceM<T>,? extends R> match ){
 		HeadAndTail<T> ht = this.headAndTail();
 		return match.apply(ht.headMaybe(),ht.tail());
 	}
-	/**
-	 *  Destructures this Traversable lazily & efficiently into it's head and tail, where the tail is a Streamable amenable to multiple operations
-	 * 
-	 * @param match
-	 * @return
-	 */
-	default <R> R whenStreamable(BiFunction<? super Maybe<T>,? super Streamable<T>,? extends R> match ){
-		HeadAndTail<T> ht = this.headAndTail();
-		return match.apply(ht.headMaybe(),ht.tail().toStreamable());
-	}
+	
 	
 	/**
 	 * Convert to a Stream with the values repeated specified times

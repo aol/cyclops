@@ -1,7 +1,7 @@
 package com.aol.cyclops.lambda.monads;
 
-import com.aol.cyclops.closures.Convertable;
+import com.aol.cyclops.value.Value;
 
-public interface ConvertableFunctor<T> extends Convertable<T>, Functor<T> {
+public interface ConvertableFunctor<T> extends Value<T>, Functor<T> {
 
 }

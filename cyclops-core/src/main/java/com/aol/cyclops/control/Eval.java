@@ -84,13 +84,20 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>,  Applicativa
 		public <T> Eval<T> unit(T unit) {
 			return Eval.now(unit);
 		}
+		/* (non-Javadoc)
+		 * @see com.aol.cyclops.value.Value#toEvalNow()
+		 */
+		@Override
+		public Eval<T> toEvalNow() {
+			return this;
+		}
 		
 	}
 	
 	
 	public static class Later<T> implements Eval<T>{
 		private final Function<Object,? extends T> s;
-		private final Object VOID = new Object();
+		private final static Object VOID = new Object();
 		Later(Function <Object,? extends T> s){
 			this.s = Memoize.memoizeFunction(s);
 		}
@@ -99,7 +106,7 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>,  Applicativa
 		}
 		public <R>  Eval<R> flatMap(Function<? super T, ? extends Eval<? extends R>> mapper){
 			
-			return  Eval.later(()->mapper.compose(s).apply(null).get());
+			return  Eval.later(()->mapper.compose(s).apply(VOID).get());
 		}
 		@Override
 		public T get() {
@@ -111,6 +118,13 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>,  Applicativa
 		@Override
 		public <T> Eval<T> unit(T unit) {
 			return Eval.later(()->unit);
+		}
+		/* (non-Javadoc)
+		 * @see com.aol.cyclops.value.Value#toEvalLater()
+		 */
+		@Override
+		public Eval<T> toEvalLater() {
+			return this;
 		}
 		
 		
@@ -137,5 +151,13 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>,  Applicativa
 		public <T> Eval<T> unit(T unit) {
 			return Eval.always(()->unit);
 		}
+		/* (non-Javadoc)
+		 * @see com.aol.cyclops.value.Value#toEvalAlways()
+		 */
+		@Override
+		public Eval<T> toEvalAlways() {
+			return this;
+		}
+		
 	}
 }

@@ -64,6 +64,10 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
 		return new PQueueXImpl<>((PQueue<T>)PSets.toPSet().mapReduce(stream));
 	}
 	@Override
+	default PQueueX<T> toPQueueX() {
+		return this;
+	}
+	@Override
 	default <R> PQueueX<R> ap1( ZippingApplicative<T,R, ?> ap){
 		
 		return (PQueueX<R>)PersistentCollectionX.super.ap1(ap);
@@ -243,6 +247,46 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
 	default <U> PQueueX<Tuple2<T, U>> zip(Iterable<U> other){
 		return  (PQueueX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
+	 */
+	@Override
+	default <U, R> PQueueX<R> zip(Iterable<U> other,
+			BiFunction<? super T, ? super U, ? extends R> zipper) {
+		
+		return (PQueueX<R>)PersistentCollectionX.super.zip(other, zipper);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#permutations()
+	 */
+	@Override
+	default PQueueX<SequenceM<T>> permutations() {
+		
+		return ( PQueueX<SequenceM<T>>)PersistentCollectionX.super.permutations();
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations(int)
+	 */
+	@Override
+	default PQueueX<SequenceM<T>> combinations(int size) {
+		
+		return (PQueueX<SequenceM<T>>)PersistentCollectionX.super.combinations(size);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations()
+	 */
+	@Override
+	default PQueueX<SequenceM<T>> combinations() {
+		
+		return (PQueueX<SequenceM<T>>)PersistentCollectionX.super.combinations();
+	}
+
 	default PQueueX<ListX<T>> sliding(int windowSize){
 		return  (PQueueX<ListX<T>>)PersistentCollectionX.super.sliding(windowSize);
 	}

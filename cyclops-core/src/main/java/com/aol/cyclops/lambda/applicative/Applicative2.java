@@ -6,6 +6,7 @@ import java.util.function.Function;
 
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.functions.inference.Lambda;
 import com.aol.cyclops.lambda.monads.ConvertableFunctor;
 import com.aol.cyclops.lambda.monads.Functor;
 
@@ -29,24 +30,17 @@ public interface Applicative2<T,T2,R, D extends ConvertableFunctor<R>> extends F
 	ConvertableFunctor<Function<? super T,Function<? super T2,? extends R>>>  delegate();
 	
 	default Applicative<T2,R,D> ap(Functor<T> f){
-	
-		Function<? super T,Function<? super T2,? extends R>> fn = delegate().get();
-		
-		return ()->(ConvertableFunctor)f.map(t->fn.apply(t));
+		return ()->(ConvertableFunctor)delegate().toOptional().map (myFn-> f.map(t->myFn.apply(t))).orElse(Maybe.none());
 		
 	}
 	default Applicative<T2,R,D> ap(Optional<T> f){
 		
-		Function<? super T,Function<? super T2,? extends R>> fn = delegate().get();
+		return ap(Maybe.fromOptional(f));
 		
-		return ()->(ConvertableFunctor)Maybe.fromOptional(f).map(t->fn.apply(t));
 		
 	}
 	default Applicative<T2,R,D> ap(CompletableFuture<T> f){
-		
-		Function<? super T,Function<? super T2,? extends R>> fn = delegate().get();
-		
-		return ()->(ConvertableFunctor)new FutureW<>(f).map(t->fn.apply(t));
+		return ap(FutureW.of(f));
 		
 	}
 }

@@ -33,6 +33,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.collections.extensions.CollectionX;
+import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.lambda.monads.Traversable;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.objects.Decomposable;
@@ -47,6 +48,100 @@ import lombok.AllArgsConstructor;
 public abstract class AbstractCollectionXTest {
 	public abstract <T> CollectionX<T> empty();
 	public abstract <T> CollectionX<T> of(T... values);
+	
+	private int addOne(Integer i){
+		return i+1;
+	}
+	private int add(Integer a, Integer b){
+		return a+b;
+	}
+	private String concat(String a, String b, String c){
+		return a+b+c;
+	}
+	private String concat4(String a, String b, String c,String d){
+		return a+b+c+d;
+	}
+	private String concat5(String a, String b, String c,String d,String e){
+		return a+b+c+d+e;
+	}
+	@Test
+	public void zap1(){
+		assertThat(of(1,2,3).ap1(this::addOne)
+				  .toListX(),equalTo(Arrays.asList(2,3,4)));
+		
+	}
+	@Test
+	public void zap2(){
+		assertThat(of(1,2,3).ap2(this::add)
+				  .ap(of(3,4,5))
+				  .toListX(),equalTo(Arrays.asList(4,6,8)));
+		
+	}
+	@Test
+	public void zap3(){
+		assertThat(of("a","b","c")
+				  .ap3(this::concat)
+				  .ap(of("1","2","3"))
+				  .ap(of(".","?","!"))
+				  .toListX(),equalTo(Arrays.asList("a1.","b2?","c3!")));
+	}
+	@Test
+	public void zap4(){
+		assertThat(of("a","b","c")
+				  .ap4(this::concat4)
+				  .ap(of("1","2","3"))
+				  .ap(of(".","?","!"))
+				  .ap(of("R","R","R"))
+				  .toListX(),equalTo(Arrays.asList("a1.R","b2?R","c3!R")));
+	}
+	@Test
+	public void zap5(){
+		assertThat(of("a","b","c")
+				  .ap5(this::concat5)
+				  .ap(of("1","2","3"))
+				  .ap(of(".","?","!"))
+				  .ap(of("R","R","R"))
+				  .ap(of("Z","Z","Z"))
+				  .toListX(),equalTo(Arrays.asList("a1.RZ","b2?RZ","c3!RZ")));
+	}
+	@Test
+	public void when(){
+		
+		String res=	of(1,2,3).when((x,xs)->
+								xs.join(x.when(some-> (int)some>2? "hello" : "world",()->"boo!"))
+					);
+		assertThat(res,equalTo("2world3"));
+	}
+	@Test
+	public void whenGreaterThan2(){
+		String res=	of(5,2,3).when((x,xs)->
+								xs.join(x.when(some-> (int)some>2? "hello" : "world",()->"boo!"))
+					);
+		assertThat(res,equalTo("2hello3"));
+	}
+	@Test
+	public void when2(){
+		
+		Integer res =	of(1,2,3).when((x,xs)->{
+						
+								System.out.println(x.isPresent());
+								System.out.println(x.get());
+								return x.get();
+								});
+		System.out.println(res);
+	}
+	@Test
+	public void whenNilOrNot(){
+		String res1=	ListX.of(1,2,3).when((x,xs)-> x.when(some-> (int)some>2? "hello" : "world",()->"EMPTY"));
+	}
+	@Test
+	public void whenNilOrNotJoinWithFirstElement(){
+		
+		
+		String res=	ListX.of(1,2,3).when((x,xs)-> x.when(some-> xs.join((int)some>2? "hello" : "world"),()->"EMPTY"));
+		assertThat(res,equalTo("2world3"));
+	}
+	
 	@Test
 	public void testCollectable(){
 		assertThat(of(1,2,3).collectable().anyMatch(i->i==2),equalTo(true));
@@ -727,7 +822,7 @@ public abstract class AbstractCollectionXTest {
 	}
 	@Test(expected=ClassCastException.class)
 	public void cast(){
-		((Traversable<Integer>)of(1,2,3).cast(String.class)).toListX();
+		of(1,2,3).cast(String.class).toListX();
 	}
 	@Test
 	public void xMatch(){
@@ -815,7 +910,7 @@ public abstract class AbstractCollectionXTest {
 	public void zipEmpty() throws Exception {
 		
 		
-		final CollectionX<Integer> zipped = empty().zip(SequenceM.<Integer>of(), (a, b) -> a + b);
+		final CollectionX<Integer> zipped = this.<Integer>empty().zip(SequenceM.<Integer>of(), (a, b) -> a + b);
 		assertTrue(zipped.collect(Collectors.toList()).isEmpty());
 	}
 
@@ -824,7 +919,7 @@ public abstract class AbstractCollectionXTest {
 		
 		
 		
-		final CollectionX<Integer> zipped = empty().zip(of(1,2), (a, b) -> a + b);
+		final CollectionX<Integer> zipped = this.<Integer>empty().zip(of(1,2), (a, b) -> a + b);
 		assertTrue(zipped.collect(Collectors.toList()).isEmpty());
 	}
 
@@ -832,7 +927,7 @@ public abstract class AbstractCollectionXTest {
 	public void shouldReturnEmptySeqWhenZipNonEmptyWithEmpty() throws Exception {
 		
 		
-		final SequenceM<Integer> zipped = of(1,2,3).zip(empty(), (a, b) -> a + b);
+		final CollectionX<Integer> zipped = of(1,2,3).zip(this.<Integer>empty(), (a, b) -> a + b);
 
 		
 		assertTrue(zipped.collect(Collectors.toList()).isEmpty());
@@ -893,7 +988,7 @@ public abstract class AbstractCollectionXTest {
 		final CollectionX<Integer> second = of(1, 2, 3, 4);
 
 		
-		final CollectionX<String> zipped = first.zipStream(second, (a, b) -> a + b);
+		final CollectionX<String> zipped = first.zip(second, (a, b) -> a + b);
 
 		assertThat(zipped.collect(Collectors.toList()).size(),is(3));
 	}
@@ -902,7 +997,8 @@ public abstract class AbstractCollectionXTest {
 	public void shouldTrimFirstFixedSeqIfLongerStream() throws Exception {
 		final CollectionX<String> first = of("A", "B", "C","D");
 		final CollectionX<Integer> second = of(1, 2, 3);
-		final CollectionX<String> zipped = first.zipStream(second, (a, b) -> a + b);
+		
+		final CollectionX<String> zipped = first.zip(second, (a, b) -> a + b);
 
 		
 		assertThat(zipped.collect(Collectors.toList()).size(),equalTo(3));
@@ -910,7 +1006,7 @@ public abstract class AbstractCollectionXTest {
 
 	@Test
 	public void testZipDifferingLengthStream() {
-		List<Tuple2<Integer, String>> list = of(1, 2).zipStream(of("a", "b", "c", "d")).toList();
+		List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
 
 		assertEquals(2, list.size());
 		assertTrue(asList(1, 2).contains(list.get(0).v1));
@@ -926,7 +1022,7 @@ public abstract class AbstractCollectionXTest {
 		final CollectionX<Integer> second = of(1, 2, 3, 4);
 
 		
-		final CollectionX<String> zipped = first.zipSequence(second, (a, b) -> a + b);
+		final CollectionX<String> zipped = first.zip(second, (a, b) -> a + b);
 
 		assertThat(zipped.collect(Collectors.toList()).size(),is(3));
 	}

@@ -65,6 +65,10 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 		return new PSetXImpl<>((PSet<T>)PSets.toPSet().mapReduce(stream));
 	}
 	@Override
+	default PSetX<T> toPSetX() {
+		return this;
+	}
+	@Override
 	default <R> PSetX<R> ap1( ZippingApplicative<T,R, ?> ap){
 		
 		return (PSetX<R>)PersistentCollectionX.super.ap1(ap);
@@ -245,6 +249,46 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	default <U> PSetX<Tuple2<T, U>> zip(Iterable<U> other){
 		return  (PSetX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
+	 */
+	@Override
+	default <U, R> PSetX<R> zip(Iterable<U> other,
+			BiFunction<? super T, ? super U, ? extends R> zipper) {
+		
+		return (PSetX<R>)PersistentCollectionX.super.zip(other, zipper);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#permutations()
+	 */
+	@Override
+	default PSetX<SequenceM<T>> permutations() {
+		
+		return ( PSetX<SequenceM<T>>)PersistentCollectionX.super.permutations();
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations(int)
+	 */
+	@Override
+	default PSetX<SequenceM<T>> combinations(int size) {
+		
+		return (PSetX<SequenceM<T>>)PersistentCollectionX.super.combinations(size);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations()
+	 */
+	@Override
+	default PSetX<SequenceM<T>> combinations() {
+		
+		return (PSetX<SequenceM<T>>)PersistentCollectionX.super.combinations();
+	}
+
 	default PSetX<ListX<T>> sliding(int windowSize){
 		return  (PSetX<ListX<T>>)PersistentCollectionX.super.sliding(windowSize);
 	}

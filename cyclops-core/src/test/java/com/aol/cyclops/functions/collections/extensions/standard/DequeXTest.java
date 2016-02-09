@@ -11,4 +11,13 @@ public class DequeXTest extends AbstractCollectionXTest{
 		return DequeX.of(values);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#empty()
+	 */
+	@Override
+	public <T> CollectionX<T> empty() {
+		return DequeX.empty();
+	}
+	
+
 }

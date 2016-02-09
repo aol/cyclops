@@ -24,9 +24,11 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.PCollection;
 
 import com.aol.cyclops.collections.extensions.persistent.PStackX;
+import com.aol.cyclops.collections.extensions.standard.DequeX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.collections.extensions.standard.MapX;
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.lambda.monads.Foldable;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.IterableCollectable;
@@ -62,6 +64,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	static <T> CollectionX<T> fromCollection(Collection<T> col){
 		return new CollectionXImpl(col);
 	}
+	
 	@Override
 	default SequenceM<T> stream(){
 		
@@ -205,6 +208,9 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	<K, A, D> CollectionX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream);
 	<K> CollectionX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier);
 	<U> CollectionX<Tuple2<T, U>> zip(Iterable<U> other);
+	<U, R> CollectionX<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
+	<U> CollectionX<Tuple2<T, U>> zipStream(Stream<U> other);
+	CollectionX<Tuple2<T, Long>> zipWithIndex();
 	CollectionX<ListX<T>> sliding(int windowSize);
 	CollectionX<ListX<T>> sliding(int windowSize, int increment);
 	CollectionX<T> scanLeft(Monoid<T> monoid);

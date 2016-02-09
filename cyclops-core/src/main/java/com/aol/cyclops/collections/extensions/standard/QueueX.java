@@ -63,6 +63,14 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	
 	public <T> Collector<T,?,Queue<T>> getCollector();
 	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.sequence.traits.ConvertableSequence#toListX()
+	 */
+	@Override
+	default QueueX<T> toQueueX() {
+		return this;
+	}
+	
 	default <T1> QueueX<T1> from(Collection<T1> c){
 		return QueueX.<T1>fromIterable(getCollector(),c);
 	}
@@ -228,6 +236,15 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	default <U> QueueX<Tuple2<T, U>> zip(Iterable<U> other){
 		return (QueueX<Tuple2<T, U>>)MutableCollectionX.super.zip(other);
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
+	 */
+	@Override
+	default <U, R> QueueX<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+		
+		return (QueueX<R>)MutableCollectionX.super.zip(other, zipper);
+	}
+
 	default QueueX<ListX<T>> sliding(int windowSize){
 		return (QueueX<ListX<T>>)MutableCollectionX.super.sliding(windowSize); 
 	}

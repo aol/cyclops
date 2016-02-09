@@ -60,6 +60,7 @@ import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative5;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicativeBuilder;
 import com.aol.cyclops.lambda.monads.Foldable;
 import com.aol.cyclops.lambda.monads.Functor;
+import com.aol.cyclops.lambda.monads.Traversable;
 import com.aol.cyclops.lambda.monads.ExtendedTraversable;
 import com.aol.cyclops.lambda.monads.Unit;
 import com.aol.cyclops.matcher.builders.CheckValues;
@@ -93,6 +94,15 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Functor<T>, Extende
 
 	
 	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
+	 */
+	@Override
+	default <U, R> SequenceM<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+		
+		return (SequenceM<R>) ExtendedTraversable.super.zip(other, zipper);
+	}
+
 	/**
 	default <R> ZippingApplicativeBuilder<T,R,SequenceM<R>> applicatives(){
 		return new ZippingApplicativeBuilder<T,R,SequenceM<R>> (this);

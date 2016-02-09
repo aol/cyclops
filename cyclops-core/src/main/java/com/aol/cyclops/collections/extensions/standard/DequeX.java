@@ -22,9 +22,12 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
+import com.aol.cyclops.lambda.monads.Traversable;
 import com.aol.cyclops.matcher.Case;
 import com.aol.cyclops.matcher.builders.CheckValues;
+import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
@@ -60,6 +63,13 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 		return new DequeXImpl<T>(StreamUtils.stream(it).collect(collector),collector);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.sequence.traits.ConvertableSequence#toListX()
+	 */
+	@Override
+	default DequeX<T> toDequeX() {
+		return this;
+	}
 	public <T> Collector<T,?,Deque<T>> getCollector();
 	
 	default <T1> DequeX<T1> from(Collection<T1> c){
@@ -69,11 +79,8 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	default <X> DequeX<X> fromStream(Stream<X> stream){
 		return new DequeXImpl<>(stream.collect(getCollector()),getCollector());
 	}
-	@Override
-	default <R> DequeX<R> ap1( ZippingApplicative<T,R, ?> ap){
-		
-		return (DequeX<R>)MutableCollectionX.super.ap1(ap);
-	}
+	
+	
 	@Override
 	default<R> DequeX<R> unit(Collection<R> col){
 		return fromIterable(col);
@@ -217,6 +224,17 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	default <U> DequeX<Tuple2<T, U>> zip(Iterable<U> other){
 		return (DequeX<Tuple2<T, U>>)MutableCollectionX.super.zip(other);
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
+	 */
+	@Override
+	default <U, R> DequeX<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+		
+		return (DequeX<R>)MutableCollectionX.super.zip(other, zipper);
+	}
+
+
 	default DequeX<ListX<T>> sliding(int windowSize){
 		return (DequeX<ListX<T>>)MutableCollectionX.super.sliding(windowSize); 
 	}

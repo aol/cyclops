@@ -62,6 +62,13 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 			return new SortedSetXImpl<T>( (SortedSet)it, collector);
 		return new SortedSetXImpl<T>(StreamUtils.stream(it).collect(collector),collector);
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.sequence.traits.ConvertableSequence#toListX()
+	 */
+	@Override
+	default SortedSetX<T> toSortedSetX() {
+		return this;
+	}
 	
 	@Override
 	default <R> SortedSetX<R> ap1( ZippingApplicative<T,R, ?> ap){
@@ -235,6 +242,14 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	default <U> SortedSetX<Tuple2<T, U>> zip(Iterable<U> other){
 		return (SortedSetX<Tuple2<T, U>>)(SortedSetX<T>)MutableCollectionX.super.zip(other);
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
+	 */
+	@Override
+	default <U, R> SortedSetX<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+		return (SortedSetX<R>)MutableCollectionX.super.zip(other, zipper);
+	}
+
 	default SortedSetX<ListX<T>> sliding(int windowSize){
 		return (SortedSetX<ListX<T>>)(SortedSetX<T>)MutableCollectionX.super.sliding(windowSize); 
 	}

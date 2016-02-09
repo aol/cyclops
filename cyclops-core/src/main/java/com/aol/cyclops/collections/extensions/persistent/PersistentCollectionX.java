@@ -21,6 +21,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.collections.extensions.standard.MutableCollectionX;
 import com.aol.cyclops.lambda.monads.Filterable;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.Traversable;
@@ -174,6 +175,9 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	}
 	default <U> PersistentCollectionX<Tuple2<T, U>> zip(Iterable<U> other){
 		return from(this.<Tuple2<T, U>>monoid().mapReduce(stream().zip(other)));
+	}
+	default <U, R> PersistentCollectionX<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper){
+		return from(this.<R>monoid().mapReduce(stream().zip(other,zipper)));
 	}
 	default PersistentCollectionX<ListX<T>> sliding(int windowSize){
 		return from(this.<ListX<T>>monoid().mapReduce(stream().sliding(windowSize).map(ListX::of)));

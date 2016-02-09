@@ -4,7 +4,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
@@ -23,6 +25,7 @@ import com.aol.cyclops.collections.extensions.standard.QueueX;
 import com.aol.cyclops.collections.extensions.standard.SetX;
 import com.aol.cyclops.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Xor;
@@ -58,6 +61,14 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, ValueObject<T>, Conv
 		public Iterator<T> iterator() {
 			return stream().iterator();
 		}
+	 }
+	 
+	 default<R> R convertTo(Function<? super Maybe<? super T>,? extends R> convertTo){
+		 return convertTo.apply(this.toMaybe());
+	 }
+	 default<R> FutureW<R> convertToAsync(Function<? super CompletableFuture<? super T>,? extends R> convertTo){
+		 CompletableFuture<T> future =  this.toCompletableFuture();
+		 return FutureW.of(future.thenApply(t->convertTo.apply(future)));
 	 }
 	 
 	default SequenceM<T> stream() {

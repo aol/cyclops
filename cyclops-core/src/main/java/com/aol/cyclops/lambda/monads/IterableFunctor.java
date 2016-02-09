@@ -11,9 +11,7 @@ import com.aol.cyclops.sequence.traits.ConvertableSequence;
 public interface IterableFunctor<T> extends Iterable<T>,Functor<T>, Foldable<T>, Traversable<T>,
 											ConvertableSequence<T>{
 
-	default IterableFunctor<T> unitIteratorTyped(Iterator<T> it){
-		return unitIterator(it);
-	}
+	
 	<U> IterableFunctor<U> unitIterator(Iterator<U> U);
 	<R> IterableFunctor<R>  map(Function<? super T,? extends R> fn);
 	

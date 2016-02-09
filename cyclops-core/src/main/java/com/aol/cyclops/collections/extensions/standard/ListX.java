@@ -55,6 +55,14 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	
 
 	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.sequence.traits.ConvertableSequence#toListX()
+	 */
+	@Override
+	default ListX<T> toListX() {
+		return this;
+	}
+
 	@Override
 	default <R> ListX<R> ap1( ZippingApplicative<T,R, ?> ap){
 		
@@ -253,6 +261,15 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	default <U> ListX<Tuple2<T, U>> zip(Iterable<U> other){
 		return (ListX<Tuple2<T, U>>)MutableCollectionX.super.zip(other);
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
+	 */
+	@Override
+	default <U, R> ListX<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+		
+		return (ListX<R>)MutableCollectionX.super.zip(other, zipper);
+	}
+
 	default ListX<ListX<T>> sliding(int windowSize){
 		return (ListX<ListX<T>>)MutableCollectionX.super.sliding(windowSize); 
 	}

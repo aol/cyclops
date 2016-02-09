@@ -66,6 +66,10 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 		return new POrderedSetXImpl<>((POrderedSet<T>)POrderedSets.toPOrderedSet().mapReduce(stream));
 	}
 	@Override
+	default POrderedSetX<T> toPOrderedSetX() {
+		return this;
+	}
+	@Override
 	default <R> POrderedSetX<R> ap1( ZippingApplicative<T,R, ?> ap){
 		
 		return (POrderedSetX<R>)PersistentCollectionX.super.ap1(ap);
@@ -245,6 +249,46 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	default <U> POrderedSetX<Tuple2<T, U>> zip(Iterable<U> other){
 		return  (POrderedSetX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
+	 */
+	@Override
+	default <U, R> POrderedSetX<R> zip(Iterable<U> other,
+			BiFunction<? super T, ? super U, ? extends R> zipper) {
+		
+		return (POrderedSetX<R>)PersistentCollectionX.super.zip(other, zipper);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#permutations()
+	 */
+	@Override
+	default POrderedSetX<SequenceM<T>> permutations() {
+		
+		return ( POrderedSetX<SequenceM<T>>)PersistentCollectionX.super.permutations();
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations(int)
+	 */
+	@Override
+	default POrderedSetX<SequenceM<T>> combinations(int size) {
+		
+		return (POrderedSetX<SequenceM<T>>)PersistentCollectionX.super.combinations(size);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations()
+	 */
+	@Override
+	default POrderedSetX<SequenceM<T>> combinations() {
+		
+		return (POrderedSetX<SequenceM<T>>)PersistentCollectionX.super.combinations();
+	}
+
 	default POrderedSetX<ListX<T>> sliding(int windowSize){
 		return  (POrderedSetX<ListX<T>>)PersistentCollectionX.super.sliding(windowSize);
 	}

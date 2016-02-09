@@ -3,6 +3,7 @@ package com.aol.cyclops.control;
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.Executor;
 import java.util.function.Function;
 
 import com.aol.cyclops.lambda.applicative.Applicativable;
@@ -38,6 +39,7 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 	public T get() {
 		return future.join();
 	}
+	
 
 	@Override
 	public Iterator<T> iterator() {
@@ -63,5 +65,37 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 	public <R> FutureW<R> flatMap(Function<? super T, ? extends CompletionStage<? extends R>> mapper){
 		return FutureW.<R>of(future.<R>thenCompose(t->(CompletionStage)mapper.apply(t)));
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.closures.Convertable#toFutureW()
+	 */
+	@Override
+	public FutureW<T> toFutureW() {
+		return this;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.closures.Convertable#toCompletableFuture()
+	 */
+	@Override
+	public CompletableFuture<T> toCompletableFuture() {
+		return this.future;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.closures.Convertable#toCompletableFutureAsync()
+	 */
+	@Override
+	public CompletableFuture<T> toCompletableFutureAsync() {
+		return this.future;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.closures.Convertable#toCompletableFutureAsync(java.util.concurrent.Executor)
+	 */
+	@Override
+	public CompletableFuture<T> toCompletableFutureAsync(Executor exec) {
+		return this.future;
 	}
 }

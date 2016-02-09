@@ -129,6 +129,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	default <U> MutableCollectionX<Tuple2<T, U>> zip(Iterable<U> other){
 		return fromStream(stream().zip(other));
 	}
+	default <U, R> MutableCollectionX<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper){
+		return fromStream(stream().zip(other,zipper));
+	}
 	default MutableCollectionX<ListX<T>> sliding(int windowSize){
 		return fromStream(stream().sliding(windowSize).map(ListX::fromIterable));	
 	}

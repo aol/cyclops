@@ -28,23 +28,16 @@ public interface Applicative5<T,T2,T3,T4,T5,R, D extends ConvertableFunctor<R>> 
 	ConvertableFunctor<Function<? super T,Function<? super T2, Function<? super T3,Function<? super T4,Function<? super T5,? extends R>>>>>>  delegate();
 	
 	default Applicative4<T2,T3,T4,T5,R,D> ap(Functor<T> f){
-		Function<? super T,Function<? super T2, Function<? super T3,Function<? super T4,Function<? super T5,? extends R>>>>> fn = delegate().get();
-		
-		return ()->(ConvertableFunctor)f.map(t->fn.apply(t));
+		return ()->(ConvertableFunctor)delegate().toOptional().map (myFn-> f.map(t->myFn.apply(t))).orElse(Maybe.none());
 		
 	}
 	default Applicative4<T2,T3,T4,T5,R,D> ap(Optional<T> f){
 		
-		Function<? super T,Function<? super T2, Function<? super T3,Function<? super T4,Function<? super T5,? extends R>>>>> fn = delegate().get();
-		
-		return ()->(ConvertableFunctor)Maybe.fromOptional(f).map(t->fn.apply(t));
+		return ap(Maybe.fromOptional(f));
 		
 	}
 	default Applicative4<T2,T3,T4,T5,R,D> ap(CompletableFuture<T> f){
-		
-		Function<? super T,Function<? super T2, Function<? super T3,Function<? super T4,Function<? super T5,? extends R>>>>> fn = delegate().get();
-		
-		return ()->(ConvertableFunctor)new FutureW<>(f).map(t->fn.apply(t));
+		return ap(FutureW.of(f));
 		
 	}
 }

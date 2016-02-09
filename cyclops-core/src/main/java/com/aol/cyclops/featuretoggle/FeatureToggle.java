@@ -210,8 +210,8 @@ public interface FeatureToggle<F> extends Supplier<F>, Value<F>, ToStream<F>,App
 	}
 	@Override
 	default Iterator<F> iterator() {
-		// TODO Auto-generated method stub
-		return Value.super.iterator();
+	
+		return Applicativable.super.iterator();
 	}
 	
 	

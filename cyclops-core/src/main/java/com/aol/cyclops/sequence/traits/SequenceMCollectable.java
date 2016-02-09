@@ -290,6 +290,8 @@ public interface SequenceMCollectable<T> extends Collectable<T> {
 
 	@Override
 	default List<T> toList() {
+		if(this instanceof List)
+			return (List)this;
 		return collectable().toList();
 	}
 
@@ -300,6 +302,8 @@ public interface SequenceMCollectable<T> extends Collectable<T> {
 
 	@Override
 	default Set<T> toSet() {
+		if(this instanceof Set)
+			return (Set)this;
 		return collectable().toSet();
 	}
 

@@ -161,4 +161,14 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Value<T>, App
 	public <T> Unit<T> unit(T unit) {
 		return LazyImmutable.of(unit);
 	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.value.Value#toLazyImmutable()
+	 */
+	@Override
+	public LazyImmutable<T> toLazyImmutable() {
+		return this;
+	}
+	
+	
 }

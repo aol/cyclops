@@ -238,7 +238,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 	@Override
 	default Iterator<T> iterator() {
 		
-		return Value.super.iterator();
+		return Applicativable.super.iterator();
 	}
 	/**
 	 * Return a Try that will catch specified exceptions when map / flatMap called

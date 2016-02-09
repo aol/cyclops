@@ -77,6 +77,13 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 		
 		return (PBagX<R>)(PBagX<T>)PersistentCollectionX.super.ap1(ap);
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.sequence.traits.ConvertableSequence#toListX()
+	 */
+	@Override
+	default PBagX<T> toPBagX() {
+		return this;
+	}
 	@Override
 	default <R> PBagX<R> unit(R value){
 		return singleton(value);
@@ -249,6 +256,48 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	default <U> PBagX<Tuple2<T, U>> zip(Iterable<U> other){
 		return  (PBagX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
+	 */
+	@Override
+	default <U, R> PBagX<R> zip(Iterable<U> other,
+			BiFunction<? super T, ? super U, ? extends R> zipper) {
+		
+		return (PBagX<R>)PersistentCollectionX.super.zip(other, zipper);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#permutations()
+	 */
+	@Override
+	default PBagX<SequenceM<T>> permutations() {
+		
+		return ( PBagX<SequenceM<T>>)PersistentCollectionX.super.permutations();
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations(int)
+	 */
+	@Override
+	default PBagX<SequenceM<T>> combinations(int size) {
+		
+		return (PBagX<SequenceM<T>>)PersistentCollectionX.super.combinations(size);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations()
+	 */
+	@Override
+	default PBagX<SequenceM<T>> combinations() {
+		
+		return (PBagX<SequenceM<T>>)PersistentCollectionX.super.combinations();
+	}
+
+
 	default PBagX<ListX<T>> sliding(int windowSize){
 		return  (PBagX<ListX<T>>)PersistentCollectionX.super.sliding(windowSize);
 	}
