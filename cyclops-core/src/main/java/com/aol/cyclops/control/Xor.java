@@ -11,6 +11,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.hamcrest.Matcher;
+
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.Semigroups;
@@ -21,10 +23,13 @@ import com.aol.cyclops.lambda.applicative.Applicativable;
 import com.aol.cyclops.lambda.applicative.Applicative;
 import com.aol.cyclops.lambda.monads.Filterable;
 import com.aol.cyclops.lambda.monads.Functor;
+import com.aol.cyclops.matcher.Case;
+import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
+import com.aol.cyclops.trampoline.Trampoline;
 import com.aol.cyclops.value.Value;
 
 import lombok.AccessLevel;
@@ -60,6 +65,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 		return Xor.primary(unit);
 	}
 	
+	
 	Xor<ST,PT> filter(Predicate<? super PT> test);
 	
 	Xor<ST,PT> secondaryToPrimayMap(Function<? super ST, ? extends PT> fn);
@@ -71,6 +77,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 	Xor<ST,PT> peek(Consumer<? super PT> action);
 	
 	Xor<PT,ST> swap();
+	
 	
 	public static <ST,PT> Xor<ListX<PT>,ListX<ST>> sequenceSecondary(CollectionX<Xor<ST,PT>> xors){
 		return AnyM.sequence(AnyM.listFromXor(xors.map(Xor::swap))).unwrap();
@@ -140,6 +147,183 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 	
 	public boolean isPrimary();
 	public boolean isSecondary();
+	
+	
+	
+	
+	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#ofType(java.lang.Class)
+	 */
+	@Override
+	default <U> Xor<ST,U> ofType(Class<U> type) {
+		
+		return (Xor<ST,U>)Filterable.super.ofType(type);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#filterNot(java.util.function.Predicate)
+	 */
+	@Override
+	default Xor<ST,PT> filterNot(Predicate<? super PT> fn) {
+		
+		return (Xor<ST,PT>)Filterable.super.filterNot(fn);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#notNull()
+	 */
+	@Override
+	default Xor<ST,PT> notNull() {
+		
+		return (Xor<ST,PT>)Filterable.super.notNull();
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.util.stream.Stream)
+	 */
+	@Override
+	default Xor<ST,PT> removeAll(Stream<PT> stream) {
+		
+		return (Xor<ST,PT>)Filterable.super.removeAll(stream);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.lang.Iterable)
+	 */
+	@Override
+	default Xor<ST,PT> removeAll(Iterable<PT> it) {
+		
+		return (Xor<ST,PT>)Filterable.super.removeAll(it);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.lang.Object[])
+	 */
+	@Override
+	default Xor<ST,PT> removeAll(PT... values) {
+		
+		return (Xor<ST,PT>)Filterable.super.removeAll(values);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.lang.Iterable)
+	 */
+	@Override
+	default Xor<ST,PT> retainAll(Iterable<PT> it) {
+		
+		return (Xor<ST,PT>)Filterable.super.retainAll(it);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.util.stream.Stream)
+	 */
+	@Override
+	default Xor<ST,PT> retainAll(Stream<PT> stream) {
+		
+		return (Xor<ST,PT>)Filterable.super.retainAll(stream);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.lang.Object[])
+	 */
+	@Override
+	default Xor<ST,PT> retainAll(PT... values) {
+		
+		return (Xor<ST,PT>)Filterable.super.retainAll(values);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#retainMatches(org.hamcrest.Matcher)
+	 */
+	@Override
+	default Xor<ST,PT> retainMatches(Matcher<PT> m) {
+		
+		return (Xor<ST,PT>)Filterable.super.retainMatches(m);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#removeMatches(org.hamcrest.Matcher)
+	 */
+	@Override
+	default Xor<ST,PT> removeMatches(Matcher<PT> m) {
+		
+		return (Xor<ST,PT>)Filterable.super.removeMatches(m);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
+	 */
+	@Override
+	default <U> Xor<ST,U> cast(Class<U> type) {
+		
+		return (Xor<ST,U>)Applicativable.super.cast(type);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#trampoline(java.util.function.Function)
+	 */
+	@Override
+	default <R> Xor<ST,R> trampoline(Function<? super PT, ? extends Trampoline<? extends R>> mapper) {
+		
+		return (Xor<ST,R>)Applicativable.super.trampoline(mapper);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#matchesCases(com.aol.cyclops.matcher.Case[])
+	 */
+	@Override
+	default <R> Xor<ST,Optional<R>> matchesCases(Case<PT, R, Function<PT, R>>... cases) {
+		
+		return (Xor<ST,Optional<R>>)Applicativable.super.matchesCases(cases);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function)
+	 */
+	@Override
+	default <R> Xor<ST,R> patternMatch(R defaultValue,
+			Function<CheckValues<? super PT, R>, CheckValues<? super PT, R>> case1) {
+		
+		return (Xor<ST,R>)Applicativable.super.patternMatch(defaultValue, case1);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <R> Xor<ST,R> patternMatch(R defaultValue,
+			Function<CheckValues<? super PT, R>, CheckValues<? super PT, R>> case1,
+			Function<CheckValues<? super PT, R>, CheckValues<? super PT, R>> case2) {
+		
+		return (Xor<ST,R>)Applicativable.super.patternMatch(defaultValue, case1, case2);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <R> Xor<ST,R> patternMatch(R defaultValue,
+			Function<CheckValues<? super PT, R>, CheckValues<? super PT, R>> fn1,
+			Function<CheckValues<? super PT, R>, CheckValues<? super PT, R>> fn2,
+			Function<CheckValues<? super PT, R>, CheckValues<? super PT, R>> fn3) {
+		
+		return (Xor<ST,R>)Applicativable.super.patternMatch(defaultValue, fn1, fn2, fn3);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <R> Xor<ST,R> patternMatch(R defaultValue,
+			Function<CheckValues<? super PT, R>, CheckValues<? super PT, R>> fn1,
+			Function<CheckValues<? super PT, R>, CheckValues<? super PT, R>> fn2,
+			Function<CheckValues<? super PT, R>, CheckValues<? super PT, R>> fn3,
+			Function<CheckValues<? super PT, R>, CheckValues<? super PT, R>> fn4) {
+		
+		return (Xor<ST,R>)Applicativable.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <R> Xor<ST,R> patternMatch(R defaultValue,
+			Function<CheckValues<? super PT, R>, CheckValues<? super PT, R>> fn1,
+			Function<CheckValues<? super PT, R>, CheckValues<? super PT, R>> fn2,
+			Function<CheckValues<? super PT, R>, CheckValues<? super PT, R>> fn3,
+			Function<CheckValues<? super PT, R>, CheckValues<? super PT, R>> fn4,
+			Function<CheckValues<? super PT, R>, CheckValues<? super PT, R>> fn5) {
+		
+		return (Xor<ST,R>)Applicativable.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4, fn5);
+	}
+
+
+
+
+
 	@AllArgsConstructor(access=AccessLevel.PRIVATE)
 	@EqualsAndHashCode(of={"value"})
 	static class Primary<ST,PT> implements Xor<ST,PT>{
