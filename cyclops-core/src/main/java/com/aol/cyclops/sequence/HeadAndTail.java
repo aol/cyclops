@@ -65,7 +65,7 @@ public class HeadAndTail<T> {
 
 	}
 	public Maybe<T> headMaybe(){
-		return isHeadPresent()? Maybe.fromEvalSome(Eval.later(head)) : Maybe.none() ;
+		return isHeadPresent()? Maybe.fromEvalOf(Eval.later(head)) : Maybe.none() ;
 
 	}
 	/**

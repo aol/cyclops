@@ -270,7 +270,7 @@ public class MonadTest {
        
         AnyM<ListX<String>> futureList = AnyM.traverse(listFromCompletableFuture(futures), (Integer i) -> "hello" +i);
    
-        List<String> collected = futureList.<CompletableFuture<List<String>>>unwrap().join();
+        List<String> collected = futureList.<CompletableFuture<ListX<String>>>unwrap().join();
         assertThat(collected.size(),equalTo( list.size()));
         
         for(Integer next : list){

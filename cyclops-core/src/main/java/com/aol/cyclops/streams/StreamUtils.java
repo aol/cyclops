@@ -966,7 +966,7 @@ public class StreamUtils{
 	 */
 	@SuppressWarnings({"rawtypes","unchecked"})
 	public static <R> ListX<R> reduce(Stream<R> stream,Iterable<? extends Reducer<R>> reducers){
-		return new MultiReduceOperator<R>(stream).reduce(reducers);
+		return ListX.fromIterable(new MultiReduceOperator<R>(stream).reduce(reducers));
 		
 	}
 	/**
@@ -987,7 +987,7 @@ public class StreamUtils{
 	 */
 	@SuppressWarnings({"rawtypes","unchecked"})
 	public static <R> ListX<R> reduce(Stream<R> stream,Stream<? extends Monoid<R>> reducers){
-		return (ListX)reduce(stream, (ListX)reducers.collect(Collectors.toList()));
+		return (ListX)reduce(stream, ListX.fromIterable((List)reducers.collect(Collectors.toList())));
 		
 	}
 	

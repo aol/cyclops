@@ -1,18 +1,14 @@
 package com.aol.cyclops.monad;
 
-import static com.aol.cyclops.internal.AsGenericMonad.asMonad;
-
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.collections.extensions.standard.ListX;
-import com.aol.cyclops.internal.AsGenericMonad;
+import com.aol.cyclops.lambda.api.Comprehender;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
-import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.lambda.monads.MonadWrapper;
 import com.aol.cyclops.sequence.SequenceM;
 
 
@@ -39,9 +35,12 @@ public class AnyMonads implements AnyMFunctions{
 	public  <T,R> AnyM<ListX<R>> traverse(Collection<AnyM<T>> seq, Function<? super T,? extends R> fn){
 		if(seq.size()==0)
 			return AnyM.ofMonad(Optional.empty());
-		return asMonad(new ComprehenderSelector().selectComprehender(seq.iterator().next().unwrap().getClass()).of(1))
-								.flatMap(in-> asMonad(seq.stream().map(it->it.unwrap())).flatten().flatMap((Function)fn).map(ListX::of).unwrap()
+		return new MonadWrapper<>(comprehender2(seq).of(1))
+								.flatMap(in-> new MonadWrapper<>(seq.stream().map(it->it.unwrap())).flatten().flatMap((Function)fn).unwrap()
 									).anyM();
+	}
+	private <T> Comprehender<T> comprehender2(Collection<AnyM<T>> seq) {
+		return new ComprehenderSelector().selectComprehender(seq.iterator().next().unwrap().getClass());
 	}
 	/**
 	 * Convert a Stream of Monads to a Monad with a List applying the supplied function in the process
@@ -58,8 +57,8 @@ public class AnyMonads implements AnyMFunctions{
 	 */
 	public  <T,R> AnyM<ListX<R>> traverse(Stream<AnyM<T>> seq, Function<? super T,? extends R> fn){
 		
-		return asMonad(Stream.of(1))
-								.flatMap(in-> asMonad(seq).flatten().flatMap((Function)fn).map(ListX::of).unwrap()
+		return new MonadWrapper<>(Stream.of(1))
+								.flatMap(in-> new MonadWrapper<>(seq).flatten().flatMap((Function)fn).unwrap()
 									).anyM();
 	}
 
@@ -83,8 +82,11 @@ public class AnyMonads implements AnyMFunctions{
 		if(seq.size()==0)
 			return AnyM.ofMonad(Optional.empty());
 		else
-			return asMonad(new ComprehenderSelector().selectComprehender(seq.iterator().next().unwrap().getClass()).of(1))
-				.flatMap(in-> AsGenericMonad.asMonad(seq.stream().map(it->it.unwrap())).flatten().unwrap()).anyM();
+			return new MonadWrapper<>(comprehender(seq).of(1))
+				.flatMap(in-> new MonadWrapper<>(seq.stream().map(it->it.unwrap())).flatten().unwrap()).anyM();
+	}
+	private <T1> Comprehender comprehender(Collection<AnyM<T1>> seq) {
+		return new ComprehenderSelector().selectComprehender(seq.iterator().next().unwrap().getClass());
 	}
 	/**
 	 * Convert a Stream of Monads to a Monad with a List
@@ -101,8 +103,8 @@ public class AnyMonads implements AnyMFunctions{
 	 * @return Monad with a List
 	 */
 	public  <T1>  AnyM<SequenceM<T1>> sequence(Stream<AnyM<T1>> seq){
-			return AsGenericMonad.asMonad(Stream.of(1))
-										.flatMap(in-> AsGenericMonad.asMonad(seq.map(it->it.unwrap()))
+			return new MonadWrapper<>(Stream.of(1))
+										.flatMap(in-> new MonadWrapper<>(seq.map(it->it.unwrap()))
 												.flatten().unwrap())
 												.anyM();
 	}

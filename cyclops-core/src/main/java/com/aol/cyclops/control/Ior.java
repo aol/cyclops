@@ -355,8 +355,8 @@ public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>,Filt
 		 * @see com.aol.cyclops.value.Value#unapply()
 		 */
 		@Override
-		public <I extends Iterable<?>> I unapply() {
-			return (I)Arrays.asList(value);
+		public ListX<ST> unapply() {
+			return ListX.of(value);
 		}
 		/* (non-Javadoc)
 		 * @see com.aol.cyclops.objects.Decomposable#unwrap()

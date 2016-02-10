@@ -63,7 +63,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 	 * @param value Successful value
 	 * @return new Success with value
 	 */
-	@Deprecated //use Try.success instead
+	
 	public static <T,X extends Throwable> Success<T,X> success(T value){
 		return new Success<>(value,new Class[0]);
 	}

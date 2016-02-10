@@ -1,6 +1,5 @@
 package com.aol.cyclops.trycatch;
 
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -8,13 +7,14 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
-
+import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
+
+import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 /**
  * Class that represents a Successful Try
@@ -31,8 +31,8 @@ public class Success<T, X extends Throwable> implements Try<T,X>{
 	private final Class<? extends Throwable>[] classes;
 	
 	@Override
-	public <R extends Iterable<?>> R unapply() {
-		return (R)Arrays.asList(value);
+	public ListX<T> unapply() {
+		return ListX.of(value);
 	}
 
 	

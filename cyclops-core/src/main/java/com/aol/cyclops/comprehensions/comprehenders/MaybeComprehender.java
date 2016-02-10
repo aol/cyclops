@@ -39,5 +39,11 @@ public class MaybeComprehender implements Comprehender<Maybe> {
 	public Maybe empty() {
 		return Maybe.none();
 	}
+	public Object resolveForCrossTypeFlatMap(Comprehender comp,Maybe apply){
+		if(apply.isPresent())
+			return comp.of(apply.get());
+		else
+			return comp.empty();
+	}
 
 }

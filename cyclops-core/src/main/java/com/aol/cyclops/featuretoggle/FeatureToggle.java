@@ -7,6 +7,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.lambda.applicative.Applicativable;
@@ -51,8 +52,8 @@ public interface FeatureToggle<F> extends Supplier<F>, Value<F>, ToStream<F>,App
 	public AnyM<F> anyMEnabled();
 	F get();
 	
-	default <T extends Iterable<?>> T unapply(){
-		return (T)Arrays.asList(get());
+	default ListX<F> unapply(){
+		return ListX.of(get());
 	}
 	/**
 	 * Create a new enabled switch

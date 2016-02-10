@@ -52,6 +52,20 @@ public class LiftMFunctionsTest {
 		AnyM<String> responses = LiftMFunctions.liftM2(this::response).apply(AnyM.fromStreamable(stream1), 
 				AnyM.fromStreamable(stream2));
 		
+		
+		assertThat(responses.toSequence().toList(),equalTo(Arrays.asList("all upper::MIXEDCASE", 
+				"all upper::ALL LOWER", "mixed case::MIXEDCASE", "mixed case::ALL LOWER")));
+		
+	}
+	@Test
+	public void liftM2AnyM(){
+		Streamable<String> stream1 = Streamable.of("ALL UPPER","MiXed Case");
+		Streamable<String> stream2 = Streamable.of("MixedCase","all lower");
+		
+		
+	
+		AnyM<String> responses = AnyM.liftM2(this::response).apply(AnyM.fromStreamable(stream1), AnyM.fromStreamable(stream2));
+		
 		assertThat(responses.toSequence().toList(),equalTo(Arrays.asList("all upper::MIXEDCASE", 
 				"all upper::ALL LOWER", "mixed case::MIXEDCASE", "mixed case::ALL LOWER")));
 		

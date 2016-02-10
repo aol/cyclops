@@ -116,7 +116,10 @@ public interface ConvertableSequence<T> extends Iterable<T>{
 	 * @return
 	 */
 	default Optional<ListX<T>> toOptional(){
-		return toValue().toOptional();
+		ListX<T> list = toListX();
+		if(list.size()==0)
+			return Optional.empty();
+		return Optional.of(list);
 	}
 	default Value<ListX<T>> toValue(){
 		return ()-> ListX.fromIterable(StreamUtils.stream(this).collect(Collectors.toList()));
@@ -129,7 +132,7 @@ public interface ConvertableSequence<T> extends Iterable<T>{
 		return ()-> MapX.fromMap(StreamUtils.stream(this).collect(Collectors.toMap(keyMapper,valueMapper)));
 	}
 	default Maybe<ListX<T>> toMaybe(){
-		return toValue().toMaybe();
+		return Maybe.fromOptional(toOptional());
 	}
 	default <ST> Xor<ST,ListX<T>> toXor(){
 		return toValue().toXor();

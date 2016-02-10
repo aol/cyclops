@@ -11,6 +11,7 @@ import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.lambda.api.Comprehender;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
+import com.aol.cyclops.sequence.streamable.ToStream;
 
 public class StreamComprehender implements Comprehender<Stream> {
 	public Class getTargetClass(){
@@ -54,9 +55,10 @@ public class StreamComprehender implements Comprehender<Stream> {
 		}
 		if(apply instanceof Iterable){
 			if((new ComprehenderSelector().selectComprehender(apply) instanceof InvokeDynamicComprehender)){
-				System.out.println(apply);
 				 return (T)StreamSupport.stream(((Iterable)apply).spliterator(),
 							false);
+			}else if(apply instanceof ToStream){
+				return (T)((ToStream)apply).sequenceM();
 			}
 		}
 		if(apply instanceof BaseStream){

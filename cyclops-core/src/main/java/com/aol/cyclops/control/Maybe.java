@@ -6,6 +6,9 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
+
+import org.hamcrest.Matcher;
 
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
@@ -50,16 +53,14 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, 
 		return none();
 	}
 	
-	static <T> Maybe<T> fromEvalSome(Eval<T> eval){
+	static <T> Maybe<T> fromEvalOf(Eval<T> eval){
 		return new Just<T>(eval);
 	}
 	static <T> Maybe<T> of(T value){
 		Objects.requireNonNull(value);
 		return new Just<T>(Eval.later(()->value));
 	}
-	static Integer add(Integer i){
-		return i+1;
-	}
+	
 	static <T> Maybe<T> ofNullable(T value){
 	
 		if(value!=null)
@@ -80,6 +81,9 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, 
 	}
 	public static <T,R> Maybe<R> accumulateJust(CollectionX<Maybe<T>> maybes,Function<? super T, R> mapper,Semigroup<R> reducer){
 		return sequence(maybes).map(s->s.map(mapper).reduce(reducer.reducer()).get());
+	}
+	public static <T> Maybe<T> accumulateJust(CollectionX<Maybe<T>> maybes,Semigroup<T> reducer){
+		return sequence(maybes).map(s->s.reduce(reducer.reducer()).get());
 	}
 	default <T> Maybe<T> unit(T unit){
 		return  Maybe.of(unit);
@@ -118,6 +122,115 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, 
 	<R> R when(Function<? super T,? extends R> some, 
 						Supplier<? extends R> none);
 	
+	
+	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#filter(java.util.function.Predicate)
+	 */
+	@Override
+	Maybe<T> filter(Predicate<? super T> fn);
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#ofType(java.lang.Class)
+	 */
+	@Override
+	default <U> Maybe<U> ofType(Class<U> type) {
+		
+		return (Maybe<U>)Filterable.super.ofType(type);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#filterNot(java.util.function.Predicate)
+	 */
+	@Override
+	default Maybe<T> filterNot(Predicate<? super T> fn) {
+		
+		return (Maybe<T>)Filterable.super.filterNot(fn);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#notNull()
+	 */
+	@Override
+	default Maybe<T> notNull() {
+		
+		return (Maybe<T>)Filterable.super.notNull();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.util.stream.Stream)
+	 */
+	@Override
+	default Maybe<T> removeAll(Stream<T> stream) {
+		
+		return (Maybe<T>)Filterable.super.removeAll(stream);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.lang.Iterable)
+	 */
+	@Override
+	default Maybe<T> removeAll(Iterable<T> it) {
+		
+		return (Maybe<T>)Filterable.super.removeAll(it);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.lang.Object[])
+	 */
+	@Override
+	default Maybe<T> removeAll(T... values) {
+		
+		return (Maybe<T>)Filterable.super.removeAll(values);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.lang.Iterable)
+	 */
+	@Override
+	default Maybe<T> retainAll(Iterable<T> it) {
+		
+		return (Maybe<T>)Filterable.super.retainAll(it);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.util.stream.Stream)
+	 */
+	@Override
+	default Maybe<T> retainAll(Stream<T> stream) {
+		
+		return (Maybe<T>)Filterable.super.retainAll(stream);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.lang.Object[])
+	 */
+	@Override
+	default Maybe<T> retainAll(T... values) {
+		
+		return (Maybe<T>)Filterable.super.retainAll(values);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#retainMatches(org.hamcrest.Matcher)
+	 */
+	@Override
+	default Maybe<T> retainMatches(Matcher<T> m) {
+		
+		return (Maybe<T>)Filterable.super.retainMatches(m);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Filterable#removeMatches(org.hamcrest.Matcher)
+	 */
+	@Override
+	default Maybe<T> removeMatches(Matcher<T> m) {
+		
+		return (Maybe<T>)Filterable.super.removeMatches(m);
+	}
+
+
+
 	@AllArgsConstructor(access=AccessLevel.PRIVATE)
 	public static final class Just<T> implements Maybe<T>{
 		
@@ -155,6 +268,23 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, 
 		public boolean isPresent(){
 			return true;
 		}
+		/* (non-Javadoc)
+		 * @see java.lang.Object#hashCode()
+		 */
+		@Override
+		public int hashCode() {
+			return Objects.hashCode(lazy.get());
+		}
+		/* (non-Javadoc)
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		@Override
+		public boolean equals(Object obj) {
+			if(obj instanceof Just)
+				return Objects.equals(lazy.get(),((Just)obj).get());
+			return false;
+		}
+		
 	}
 	
 	public static class Nothing<T> implements Maybe<T>{

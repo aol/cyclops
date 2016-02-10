@@ -330,8 +330,8 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 		 * @see com.aol.cyclops.value.Value#unapply()
 		 */
 		@Override
-		public <I extends Iterable<?>> I unapply() {
-			return (I)Arrays.asList(value);
+		public ListX<ST> unapply() {
+			return	ListX.of(value);
 		}
 		/* (non-Javadoc)
 		 * @see com.aol.cyclops.objects.Decomposable#unwrap()

@@ -140,6 +140,10 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Value<T>, App
 		return val;
 		
 	}
+	
+	public boolean isSet(){
+		return this.set.get();
+	}
 
 	@Override
 	public void accept(T t) {

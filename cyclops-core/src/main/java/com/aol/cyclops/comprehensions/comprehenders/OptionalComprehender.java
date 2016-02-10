@@ -5,6 +5,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.DoubleStream;
 
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.lambda.api.Comprehender;
 
 public class OptionalComprehender implements Comprehender<Optional> {
@@ -40,5 +41,12 @@ public class OptionalComprehender implements Comprehender<Optional> {
 	public Optional empty() {
 		return Optional.empty();
 	}
+	public Object resolveForCrossTypeFlatMap(Comprehender comp,Optional apply){
+		if(apply.isPresent())
+			return comp.of(apply.get());
+		else
+			return comp.empty();
+	}
+
 
 }

@@ -64,12 +64,12 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, ValueObject<T>, Conv
 		}
 	 }
 	 
-	 default<R> R convertTo(Function<? super Maybe<? super T>,? extends R> convertTo){
+	 default <R> R convertTo(Function<? super Maybe<? super T>,? extends R> convertTo){
 		 return convertTo.apply(this.toMaybe());
 	 }
-	 default<R> FutureW<R> convertToAsync(Function<? super CompletableFuture<? super T>,? extends R> convertTo){
+	 default<R> FutureW<R> convertToAsync(Function<? super CompletableFuture<? super T>,? extends CompletableFuture<R>> convertTo){
 		 CompletableFuture<T> future =  this.toCompletableFuture();
-		 return FutureW.of(future.thenApply(t->convertTo.apply(future)));
+		 return FutureW.of(future.<R>thenCompose(t->convertTo.apply(future)));
 	 }
 	 
 	default SequenceM<T> stream() {
@@ -81,8 +81,8 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, ValueObject<T>, Conv
 	 default T getMatchable(){
 		return get();
 	 }
-	 default <I extends Iterable<?>> I unapply(){
-		 return (I)toList();
+	 default ListX<?> unapply(){
+		 return toListX();
 	 }
 	 default SequenceM<T> iterate(UnaryOperator<T> fn){
 			return SequenceM.iterate(get(),fn);
