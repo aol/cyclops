@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 
 public class StreamComprehender implements Comprehender<Stream> {
 	public Class getTargetClass(){
@@ -52,8 +53,11 @@ public class StreamComprehender implements Comprehender<Stream> {
 			return (T)((Collection)apply).stream();
 		}
 		if(apply instanceof Iterable){
-			 return (T)StreamSupport.stream(((Iterable)apply).spliterator(),
-						false);
+			if((new ComprehenderSelector().selectComprehender(apply) instanceof InvokeDynamicComprehender)){
+				System.out.println(apply);
+				 return (T)StreamSupport.stream(((Iterable)apply).spliterator(),
+							false);
+			}
 		}
 		if(apply instanceof BaseStream){
 			return (T)StreamSupport.stream(Spliterators.spliteratorUnknownSize(((BaseStream)apply).iterator(), Spliterator.ORDERED),

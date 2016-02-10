@@ -10,6 +10,6 @@ import com.aol.cyclops.sequence.SequenceM;
 public interface AnyMFunctions {
 	<T,R> AnyM<ListX<R>> traverse(Collection<AnyM<T>> seq, Function<? super T,? extends R> fn);
 	<T,R> AnyM<ListX<R>> traverse(Stream<AnyM<T>> seq, Function<? super T,? extends R> fn);
-	<T1>  AnyM<SequenceM<T1>> sequence(Collection<AnyM<T1>> seq);
+	<T1>  AnyM<ListX<T1>> sequence(Collection<AnyM<T1>> seq);
 	<T1>  AnyM<SequenceM<T1>> sequence(Stream<AnyM<T1>> seq);
 }

@@ -985,7 +985,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @param seq Collection of monads to convert
 	 * @return Monad with a List
 	 */ 
-	public static <T1>  AnyM<SequenceM<T1>> sequence(Collection<AnyM<T1>> seq){
+	public static <T1>  AnyM<ListX<T1>> sequence(Collection<AnyM<T1>> seq){
 		return new AnyMonads().sequence(seq);
 	}
 	/**

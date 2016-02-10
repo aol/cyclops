@@ -79,7 +79,7 @@ public class AnyMonads implements AnyMFunctions{
 	 * @param seq Collection of monads to convert
 	 * @return Monad with a List
 	 */ 
-	public  <T1>  AnyM<SequenceM<T1>> sequence(Collection<AnyM<T1>> seq){
+	public  <T1>  AnyM<ListX<T1>> sequence(Collection<AnyM<T1>> seq){
 		if(seq.size()==0)
 			return AnyM.ofMonad(Optional.empty());
 		else

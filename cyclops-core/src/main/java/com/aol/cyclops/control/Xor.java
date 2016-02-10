@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.functions.fluent.FluentFunctions;
@@ -69,17 +70,39 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 	
 	Xor<PT,ST> swap();
 	
-	public static <ST,PT> Xor<SequenceM<PT>,SequenceM<ST>> sequenceSecondary(CollectionX<Xor<ST,PT>> xors){
+	public static <ST,PT> Xor<ListX<PT>,ListX<ST>> sequenceSecondary(CollectionX<Xor<ST,PT>> xors){
+		
 		return AnyM.sequence(AnyM.listFromXor(xors.map(x->x.swap()))).unwrap();
 	}
+	
 	public static <ST,PT,R> Xor<?,R> accumulateSecondary(CollectionX<Xor<ST,PT>> xors,Reducer<R> reducer){
-		return sequenceSecondary(xors).map(s->s.foldLeftMapToType(reducer));
+		return sequenceSecondary(xors).map(s->s.mapReduce(reducer));
 	}
 	public static <ST,PT,R> Xor<?,R> accumulateSecondary(CollectionX<Xor<ST,PT>> xors,Function<? super ST, R> mapper,Semigroup<R> reducer){
 		return sequenceSecondary(xors).map(s->s.map(mapper).reduce(reducer.reducer()).get());
 	}
+	
+	/**
+	 * 
+	 * <pre>
+	 * {@code 
+	 * Xor.accumulateSecondary(ListX.of(Xor.secondary("failed1"),
+													Xor.secondary("failed2"),
+													Xor.primary("success")),
+													Semigroups.stringConcat)
+													
+													
+	 * //Xors.Primary[failed1failed2]
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param xors
+	 * @param reducer
+	 * @return
+	 */
 	public static <ST,PT> Xor<?,ST> accumulateSecondary(CollectionX<Xor<ST,PT>> xors,Semigroup<ST> reducer){
-		return sequenceSecondary(xors).map(s->s.reduce(reducer.reducer()).get());
+			return sequenceSecondary(xors).map(s->s.reduce(reducer.reducer()).get());
 	}
 	
 	default <R1,R2> Xor<R1,R2> when(Function<? super ST,? extends R1> secondary, 

@@ -1,9 +1,10 @@
 package com.aol.cyclops.comprehensions.comprehenders;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class MaterializedList<E> extends ArrayList<E> implements List<E> {
+import com.aol.cyclops.collections.extensions.standard.ListXImpl;
+
+public class MaterializedList<E> extends ListXImpl<E> implements List<E> {
 
 	/**
 	 * 
