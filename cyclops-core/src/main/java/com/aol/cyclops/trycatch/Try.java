@@ -68,6 +68,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 		return new Success<>(value,new Class[0]);
 	}
 	default Xor<X,T> toXor(){
+		
 		if(isSuccess())
 			return Xor.primary(get());
 		else
@@ -212,18 +213,18 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 	/**
 	 * @param consumer Accept value if Success / not called on Failure
 	 */
-	public void foreach(Consumer<? super T> consumer);
+	public void forEach(Consumer<? super T> consumer);
 	/**
 	 * @param consumer Accept value if Failure / not called on Failure
 	 */
-	public void foreachFailed(Consumer<? super X> consumer);
+	public void forEachFailed(Consumer<? super X> consumer);
 	
 	/**
 	 * @param consumer Accept value if Success
 	 * @return this
 	 */
 	default Try<T,X> peek(Consumer<? super T> consumer){
-		foreach(consumer);
+		forEach(consumer);
 		return this;
 	}
 	/**
@@ -231,7 +232,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 	 * @return this
 	 */
 	default Try<T,X> peekFailed(Consumer<? super X> consumer){
-		foreachFailed(consumer);
+		forEachFailed(consumer);
 		return this;
 	}
 	

@@ -4,12 +4,20 @@ import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import com.aol.cyclops.Reducer;
+import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.collections.extensions.CollectionX;
+import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.control.Xor.Primary;
 import com.aol.cyclops.functions.caching.Memoize;
 import com.aol.cyclops.lambda.applicative.Applicativable;
 import com.aol.cyclops.lambda.applicative.Applicative;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.Unit;
+import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.value.Value;
+
+import lombok.EqualsAndHashCode;
 
 
 
@@ -35,7 +43,16 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>,  Applicativa
 		return new Always<T>(in->value.get());
 	}
 	
+	public static <T> Eval<ListX<T>> sequence(CollectionX<Eval<T>> evals){
+		return AnyM.sequence(AnyM.<T>listFromEval(evals)).unwrap();
+	}
 	
+	public static <T,R> Eval<R> accumulate(CollectionX<Eval<T>> evals,Reducer<R> reducer){
+		return sequence(evals).map(s->s.mapReduce(reducer));
+	}
+	public static <T,R> Eval<R> accumulate(CollectionX<Eval<T>> maybes,Function<? super T, R> mapper,Semigroup<R> reducer){
+		return sequence(maybes).map(s->s.map(mapper).reduce(reducer.reducer()).get());
+	}
 	public <T> Eval<T> unit(T unit);
 	public <R> Eval<R> map(Function<? super T, ? extends R> mapper);
 	public <R> Eval<R> flatMap(Function<? super T, ? extends Eval<? extends R>> mapper);
@@ -93,7 +110,6 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>,  Applicativa
 		}
 		
 	}
-	
 	
 	public static class Later<T> implements Eval<T>{
 		private final Function<Object,? extends T> s;

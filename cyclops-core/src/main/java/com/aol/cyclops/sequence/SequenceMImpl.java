@@ -1208,15 +1208,15 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	/**
 	 * @return This monad converted to a set
 	 */
-	public final SetX<T> toSet(){
-		return SetX.fromIterable(stream.collect(Collectors.toSet()));
+	public final Set<T> toSet(){
+		return stream.collect(Collectors.toSet());
 	}
 	/**
 	 * @return this monad converted to a list
 	 */
-	public final ListX<T> toList(){
+	public final List<T> toList(){
 	
-		return ListX.fromIterable(stream.collect(Collectors.toList()));
+		return stream.collect(Collectors.toList());
 	}
 	public final <C extends Collection<T>> C toCollection(Supplier<C> collectionFactory) {
 		

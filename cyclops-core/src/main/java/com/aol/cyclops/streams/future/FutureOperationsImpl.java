@@ -63,7 +63,7 @@ public class FutureOperationsImpl<T> implements  DoubleOperatorsMixin<T>,
 	 * 
 	 * @return Future List
 	 */
-	public CompletableFuture<ListX<T>> toList(){
+	public CompletableFuture<List<T>> toList(){
 		return CompletableFuture.supplyAsync(()->stream.toList(),exec);
 	}
 	/**
@@ -97,7 +97,7 @@ public class FutureOperationsImpl<T> implements  DoubleOperatorsMixin<T>,
 	 * 
 	 * @return Future Set
 	 */
-	public CompletableFuture<SetX<T>> toSet(){
+	public CompletableFuture<Set<T>> toSet(){
 		return CompletableFuture.supplyAsync(()->stream.toSet(),exec);
 	}
 	

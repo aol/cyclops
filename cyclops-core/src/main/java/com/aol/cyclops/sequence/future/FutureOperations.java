@@ -47,7 +47,7 @@ public interface FutureOperations<T> extends
 	 * 
 	 * @return Future List
 	 */
-	public CompletableFuture<ListX<T>> toList();
+	public CompletableFuture<List<T>> toList();
 	/**
 	 * @return Last value in this Stream (must be non-empty)
 	 */
@@ -85,7 +85,7 @@ public interface FutureOperations<T> extends
 	 * 
 	 * @return Future Set
 	 */
-	public CompletableFuture<SetX<T>> toSet();
+	public CompletableFuture<Set<T>> toSet();
 	
 	/**
 	 * Asynchronously capture the minimum value in this stream using the provided function

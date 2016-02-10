@@ -143,7 +143,7 @@ public class SuccessTest {
 	Integer valueCaptured = null;
 	@Test
 	public void testForeach() {
-		success.foreach(v -> valueCaptured = v);
+		success.forEach(v -> valueCaptured = v);
 		assertThat(valueCaptured,is(10));
 	}
 	Exception errorCaptured;
@@ -181,7 +181,7 @@ public class SuccessTest {
 	@Test
 	public void testForeachFailed() {
 		errorCaptured = null;
-		success.foreachFailed(e -> errorCaptured =e);
+		success.forEachFailed(e -> errorCaptured =e);
 		assertThat(errorCaptured,is(nullValue()));
 	}
 

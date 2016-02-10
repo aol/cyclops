@@ -1,5 +1,6 @@
 package com.aol.cyclops.control;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -11,7 +12,11 @@ import java.util.function.Supplier;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
+import com.aol.cyclops.Reducer;
+import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.control.Xor.Primary;
 import com.aol.cyclops.functions.fluent.FluentFunctions;
 import com.aol.cyclops.lambda.applicative.Applicativable;
 import com.aol.cyclops.lambda.applicative.Applicative;
@@ -24,6 +29,7 @@ import com.aol.cyclops.value.Value;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 /**
  * 'Right' (or primary type) biased disjunct union.
@@ -109,7 +115,29 @@ public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>,Filt
 	public boolean isSecondary();
 	public boolean isBoth();
 	
+	public static <ST,PT> Ior<ListX<PT>,ListX<ST>> sequenceSecondary(CollectionX<Ior<ST,PT>> iors){
+		return AnyM.sequence(AnyM.listFromIor(iors.map(Ior::swap))).unwrap();
+	}
+	
+	public static <ST,PT,R> Ior<?,R> accumulateSecondary(CollectionX<Ior<ST,PT>> iors,Reducer<R> reducer){
+		return sequenceSecondary(iors).map(s->s.mapReduce(reducer));
+	}
+	public static <ST,PT,R> Ior<?,R> accumulateSecondary(CollectionX<Ior<ST,PT>> iors,Function<? super ST, R> mapper,Semigroup<R> reducer){
+		return sequenceSecondary(iors).map(s->s.map(mapper).reduce(reducer.reducer()).get());
+	}
+	public static <ST,PT> Ior<ListX<ST>,ListX<PT>> sequencePrimary(CollectionX<Ior<ST,PT>> iors){
+		return AnyM.sequence(AnyM.<ST,PT>listFromIor(iors)).unwrap();
+	}
+	
+	public static <ST,PT,R> Ior<?,R> accumulatePrimary(CollectionX<Ior<ST,PT>> iors,Reducer<R> reducer){
+		return sequencePrimary(iors).map(s->s.mapReduce(reducer));
+	}
+	public static <ST,PT,R> Ior<?,R> accumulatePrimary(CollectionX<Ior<ST,PT>> iors,Function<? super PT, R> mapper,Semigroup<R> reducer){
+		return sequencePrimary(iors).map(s->s.map(mapper).reduce(reducer.reducer()).get());
+	}
+	
 	@AllArgsConstructor(access=AccessLevel.PRIVATE)
+	@EqualsAndHashCode(of={"value"})
 	public static class Primary<ST,PT> implements Ior<ST,PT>{
 		private final PT value;
 		public Xor<ST,PT> toXor(){
@@ -224,6 +252,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>,Filt
 		
 	}
 	@AllArgsConstructor(access=AccessLevel.PRIVATE)
+	@EqualsAndHashCode(of={"value"})
 	public static class Secondary<ST,PT> implements Ior<ST,PT>{
 		private final ST value;
 		public boolean isSecondary(){
@@ -316,8 +345,29 @@ public interface Ior<ST,PT> extends Supplier<PT>,Value<PT>,BiFunctor<ST,PT>,Filt
 		public boolean isBoth() {
 			return false;
 		}
+		public Maybe<PT> toMaybe(){
+			return Maybe.none();
+		}
+		public Optional<PT> toOptional(){
+			return Optional.empty();
+		}
+		/* (non-Javadoc)
+		 * @see com.aol.cyclops.value.Value#unapply()
+		 */
+		@Override
+		public <I extends Iterable<?>> I unapply() {
+			return (I)Arrays.asList(value);
+		}
+		/* (non-Javadoc)
+		 * @see com.aol.cyclops.objects.Decomposable#unwrap()
+		 */
+		@Override
+		public Object unwrap() {
+			return value;
+		}
 	}
 	@AllArgsConstructor(access=AccessLevel.PACKAGE)
+	@EqualsAndHashCode(of={"secondary","primary"})
 	public static class Both<ST,PT> implements Ior<ST,PT>{
 		private final Ior<ST,PT> secondary;
 		private final Ior<ST,PT> primary;

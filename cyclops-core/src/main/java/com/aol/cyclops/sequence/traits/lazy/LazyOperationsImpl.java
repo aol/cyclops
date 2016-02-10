@@ -62,7 +62,7 @@ public class LazyOperationsImpl<T> implements  DoubleOperatorsMixin<T>,
 	 * 
 	 * @return Future List
 	 */
-	public Eval<ListX<T>> toList(){
+	public Eval<List<T>> toList(){
 		return Eval.later(()->stream.toList());
 	}
 	/**
@@ -96,7 +96,7 @@ public class LazyOperationsImpl<T> implements  DoubleOperatorsMixin<T>,
 	 * 
 	 * @return Future Set
 	 */
-	public Eval<SetX<T>> toSet(){
+	public Eval<Set<T>> toSet(){
 		return Eval.later(()->stream.toSet());
 	}
 	

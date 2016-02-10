@@ -137,7 +137,7 @@ public class FailureTest {
 	@Test
 	public void testForeach() {
 		
-		failure.foreach(v -> value = v);
+		failure.forEach(v -> value = v);
 		assertThat(value,is(nullValue()));
 	}
 
@@ -188,7 +188,7 @@ public class FailureTest {
 	@Test
 	public void testForeachFailed() {
 		errorCaptured = null;
-		failure.foreachFailed(e -> errorCaptured =e);
+		failure.forEachFailed(e -> errorCaptured =e);
 		assertThat(error,equalTo(errorCaptured));
 	}
 

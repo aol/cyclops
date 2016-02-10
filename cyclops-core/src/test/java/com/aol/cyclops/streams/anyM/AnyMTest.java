@@ -246,7 +246,7 @@ public class AnyMTest {
                 .collect(Collectors.toList());
        
         
-        AnyM<SequenceM<Integer>> futureList = AnyM.sequence(listFromCompletableFuture(futures));
+        AnyM<ListX<Integer>> futureList = AnyM.sequence(listFromCompletableFuture(futures));
         
  
         List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>unwrap().join();
@@ -263,10 +263,10 @@ public class AnyMTest {
         
        
         
-		AnyM<SequenceM<Integer>> futureList = AnyM.sequence(AnyM.listFromCollection(asList(asList(1,2),asList(3,4) ) ) );
+		AnyM<ListX<Integer>> futureList = AnyM.sequence(AnyM.listFromCollection(asList(asList(1,2),asList(3,4) ) ) );
         
       
-        assertThat(futureList.toSequence(c->  c)
+        assertThat(futureList.toSequence()
         						.toList(),equalTo(Arrays.asList(1,2,3,4)));
         
 	}
@@ -276,7 +276,7 @@ public class AnyMTest {
         
        
         
-        AnyM<SequenceM<Integer>> result = AnyM.sequence(listFromStream(asList(Stream.of(1,2),Stream.of(3,4))));
+        AnyM<ListX<Integer>> result = AnyM.sequence(listFromStream(asList(Stream.of(1,2),Stream.of(3,4))));
         
  
        
@@ -291,7 +291,7 @@ public class AnyMTest {
         
        
         
-        AnyM<SequenceM<Integer>> futureList = AnyM.sequence(listFromOptional(asList(Optional.of(7),Optional.of(8),Optional.of(9))));
+        AnyM<ListX<Integer>> futureList = AnyM.sequence(listFromOptional(asList(Optional.of(7),Optional.of(8),Optional.of(9))));
         
  
         assertThat(futureList.toSequence().toList(),equalTo(Arrays.asList(7,8,9)));

@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.comprehensions.comprehenders.MaterializedList;
 import com.aol.cyclops.internal.AsGenericMonad;
 import com.aol.cyclops.internal.Monad;
@@ -285,7 +286,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * @param fn
 	 * @return 
 	 */
-	public final <R> AnyM<R> flatMap(Function<? super T,AnyM<? extends R>> fn) {
+	public final <R> AnyM<R> flatMap(Function<? super T,? extends AnyM<? extends R>> fn) {
 		try{
 			return monad.flatMap(in -> fn.apply(in).unwrap()).anyM().map(this::takeFirst);
 		}catch(GotoAsEmpty e){
@@ -386,7 +387,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 * 
 	 * @return A Sequence that wraps a Stream
 	 */
-	public final <NT> SequenceM<NT> toSequence(Function<T,Stream<NT>> fn){
+	public final <NT> SequenceM<NT> toSequence(Function<? super T,? extends Stream<? extends NT>> fn){
 		return monad.flatMapToStream((Function)fn)
 					.sequence();
 	}

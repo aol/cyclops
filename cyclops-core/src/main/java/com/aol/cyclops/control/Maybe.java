@@ -7,6 +7,11 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import com.aol.cyclops.Reducer;
+import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.collections.extensions.CollectionX;
+import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.control.Xor.Primary;
 import com.aol.cyclops.functions.QuadFunction;
 import com.aol.cyclops.functions.QuintFunction;
 import com.aol.cyclops.functions.TriFunction;
@@ -20,10 +25,12 @@ import com.aol.cyclops.lambda.applicative.Applicative5;
 import com.aol.cyclops.lambda.applicative.ApplicativeBuilder;
 import com.aol.cyclops.lambda.monads.ConvertableFunctor;
 import com.aol.cyclops.lambda.monads.Filterable;
+import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.value.Value;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 
 public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, Filterable<T>,Applicativable<T>{
@@ -64,7 +71,16 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, 
 		return (Maybe<T>)broad;
 	}
 	
+	public static <T> Maybe<ListX<T>> sequence(CollectionX<Maybe<T>> maybes){
+		return AnyM.sequence(AnyM.<T>listFromMaybe(maybes)).unwrap();
+	}
 	
+	public static <T,R> Maybe<R> accumulateJust(CollectionX<Maybe<T>> maybes,Reducer<R> reducer){
+		return sequence(maybes).map(s->s.mapReduce(reducer));
+	}
+	public static <T,R> Maybe<R> accumulateJust(CollectionX<Maybe<T>> maybes,Function<? super T, R> mapper,Semigroup<R> reducer){
+		return sequence(maybes).map(s->s.map(mapper).reduce(reducer.reducer()).get());
+	}
 	default <T> Maybe<T> unit(T unit){
 		return  Maybe.of(unit);
 	}

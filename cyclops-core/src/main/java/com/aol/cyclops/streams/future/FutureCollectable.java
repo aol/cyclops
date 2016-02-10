@@ -230,13 +230,13 @@ public interface FutureCollectable<T>{
 	public CompletableFuture<Boolean> noneMatch(Predicate<? super T> predicate);
 
 	
-	public CompletableFuture<ListX<T>> toList() ;
+	public CompletableFuture<List<T>> toList() ;
 
 	
 	public <L extends List<T>> CompletableFuture<L> toList(Supplier<L> factory) ;
 
 	
-	public CompletableFuture<SetX<T>> toSet() ;
+	public CompletableFuture<Set<T>> toSet() ;
 
 	
 	public <S extends Set<T>> CompletableFuture<S> toSet(Supplier<S> factory) ;

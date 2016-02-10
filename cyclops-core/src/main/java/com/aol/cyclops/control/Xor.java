@@ -1,5 +1,6 @@
 package com.aol.cyclops.control;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -28,6 +29,7 @@ import com.aol.cyclops.value.Value;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 /**
  * 'Right' (or primary type) biased disjunct union.
@@ -71,8 +73,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 	Xor<PT,ST> swap();
 	
 	public static <ST,PT> Xor<ListX<PT>,ListX<ST>> sequenceSecondary(CollectionX<Xor<ST,PT>> xors){
-		
-		return AnyM.sequence(AnyM.listFromXor(xors.map(x->x.swap()))).unwrap();
+		return AnyM.sequence(AnyM.listFromXor(xors.map(Xor::swap))).unwrap();
 	}
 	
 	public static <ST,PT,R> Xor<?,R> accumulateSecondary(CollectionX<Xor<ST,PT>> xors,Reducer<R> reducer){
@@ -80,6 +81,16 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 	}
 	public static <ST,PT,R> Xor<?,R> accumulateSecondary(CollectionX<Xor<ST,PT>> xors,Function<? super ST, R> mapper,Semigroup<R> reducer){
 		return sequenceSecondary(xors).map(s->s.map(mapper).reduce(reducer.reducer()).get());
+	}
+	public static <ST,PT> Xor<ListX<ST>,ListX<PT>> sequencePrimary(CollectionX<Xor<ST,PT>> xors){
+		return AnyM.sequence(AnyM.<ST,PT>listFromXor(xors)).unwrap();
+	}
+	
+	public static <ST,PT,R> Xor<?,R> accumulatePrimary(CollectionX<Xor<ST,PT>> xors,Reducer<R> reducer){
+		return sequencePrimary(xors).map(s->s.mapReduce(reducer));
+	}
+	public static <ST,PT,R> Xor<?,R> accumulatePrimary(CollectionX<Xor<ST,PT>> xors,Function<? super PT, R> mapper,Semigroup<R> reducer){
+		return sequencePrimary(xors).map(s->s.map(mapper).reduce(reducer.reducer()).get());
 	}
 	
 	/**
@@ -130,6 +141,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 	public boolean isPrimary();
 	public boolean isSecondary();
 	@AllArgsConstructor(access=AccessLevel.PRIVATE)
+	@EqualsAndHashCode(of={"value"})
 	static class Primary<ST,PT> implements Xor<ST,PT>{
 		private final PT value;
 
@@ -228,6 +240,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 		
 	}
 	@AllArgsConstructor(access=AccessLevel.PRIVATE)
+	@EqualsAndHashCode(of={"value"})
 	static class Secondary<ST,PT> implements Xor<ST,PT>{
 		private final ST value;
 		public boolean isSecondary(){
@@ -300,6 +313,12 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 			
 		}
 		
+		public Maybe<PT> toMaybe(){
+			return Maybe.none();
+		}
+		public Optional<PT> toOptional(){
+			return Optional.empty();
+		}
 		public Value<ST> secondaryValue(){
 			return Value.of(()->value);
 		}
@@ -307,6 +326,21 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 		public String toString(){
 			return "Xor.secondary["+value+"]";
 		}
+		/* (non-Javadoc)
+		 * @see com.aol.cyclops.value.Value#unapply()
+		 */
+		@Override
+		public <I extends Iterable<?>> I unapply() {
+			return (I)Arrays.asList(value);
+		}
+		/* (non-Javadoc)
+		 * @see com.aol.cyclops.objects.Decomposable#unwrap()
+		 */
+		@Override
+		public Object unwrap() {
+			return value;
+		}
+		
 		
 	}
 }

@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import com.aol.cyclops.collections.extensions.standard.ListX;
+
+import fj.data.Validation;
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
-import fj.data.Validation;
 
 /**
  * A Cumulative Validator, that processes all validation steps and accumulates all results & errors
@@ -83,7 +85,7 @@ public class CumulativeValidator<T,R,E> {
 	 * @return Validation Results
 	 */
 	public ValidationResults<R,E> accumulate(T input){
-		List<ValidationResult<R,E>> results = new ArrayList<>();
+		ListX<ValidationResult<R,E>> results = ListX.empty();
 		final ValidationResult<R,E> result;
 		if(validation.isValid(input))
 			result = SuccessfulResult.success(validation.result);
@@ -112,7 +114,7 @@ public class CumulativeValidator<T,R,E> {
 	 * @return Validation Results
 	 */
 	public ValidationResults<R,E> accumulateUntilFail(T input){
-		List<ValidationResult<R,E>> results = new ArrayList<>();
+		ListX<ValidationResult<R,E>> results = ListX.empty();
 		final ValidationResult<R,E> result;
 		if(validation.isValid(input))
 			result = SuccessfulResult.success(validation.result);

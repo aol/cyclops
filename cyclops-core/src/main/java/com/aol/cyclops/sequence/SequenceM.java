@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
@@ -44,7 +45,6 @@ import com.aol.cyclops.Reducer;
 import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.collections.extensions.standard.MapX;
-import com.aol.cyclops.collections.extensions.standard.SetX;
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
@@ -1288,12 +1288,12 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Functor<T>, Extende
 	/**
 	 * @return This Stream converted to a set
 	 */
-	public SetX<T> toSet();
+	public Set<T> toSet();
 
 	/**
 	 * @return this Stream converted to a list
 	 */
-	public ListX<T> toList();
+	public List<T> toList();
 
 	/*
 	 * (non-Javadoc)

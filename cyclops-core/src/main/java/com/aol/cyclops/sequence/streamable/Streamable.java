@@ -124,6 +124,9 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
 			public Object getStreamable(){
 				return values;
 			}
+			public SequenceM<T> sequenceM(){
+				return SequenceM.of(values);
+			}
 			
 			
 		};
@@ -342,7 +345,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
 	 * 
 	 * @return Streamable converted to a List
 	 */
-	default ListX<T> toList(){
+	default List<T> toList(){
 	
 		if(getStreamable() instanceof List)
 			return ListX.fromIterable((List)getStreamable());

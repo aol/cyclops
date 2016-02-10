@@ -149,7 +149,7 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>{
 	 */
 	default List<T> toList(){
 		Optional<T> opt = toOptional();
-		if(!opt.isPresent())
+		if(opt.isPresent())
 			return Arrays.asList(get());
 		return Arrays.asList();
 	}

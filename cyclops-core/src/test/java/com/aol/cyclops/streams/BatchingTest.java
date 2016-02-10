@@ -291,6 +291,11 @@ public class BatchingTest {
 	}
 	@Test
 	public void batchBySizeAndTimeSize(){
+		of(1,2,3,4,5,6)
+		.batchBySizeAndTime(3,10,TimeUnit.SECONDS).collect(Collectors.toList());
+		List l = of(1,2,3,4,5,6)
+				.batchBySizeAndTime(3,10,TimeUnit.SECONDS)
+				.toList();
 		
 		assertThat(of(1,2,3,4,5,6)
 						.batchBySizeAndTime(3,10,TimeUnit.SECONDS)

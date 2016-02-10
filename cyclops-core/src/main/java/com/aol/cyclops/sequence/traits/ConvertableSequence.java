@@ -23,6 +23,7 @@ import com.aol.cyclops.collections.extensions.standard.QueueX;
 import com.aol.cyclops.collections.extensions.standard.SetX;
 import com.aol.cyclops.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Xor;
@@ -167,5 +168,8 @@ public interface ConvertableSequence<T> extends Iterable<T>{
 	 */
 	default CompletableFuture<ListX<T>> toCompletableFuture(){
 		return toValue().toCompletableFuture();
+	}
+	default FutureW<ListX<T>> toFutureW(){
+		return FutureW.of(toCompletableFuture());
 	}
 }

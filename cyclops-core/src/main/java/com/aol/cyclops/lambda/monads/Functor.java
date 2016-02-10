@@ -21,7 +21,6 @@ import com.aol.cyclops.trampoline.Trampoline;
 public interface Functor<T> {
 
 	
-	
 	/**
 	 * Cast all elements in a stream to a given type, possibly throwing a
 	 * {@link ClassCastException}.

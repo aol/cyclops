@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 
 import lombok.Value;
 
+import com.aol.cyclops.collections.extensions.standard.ListXImpl;
 import com.aol.cyclops.streams.StreamUtils;
 
 @Value
@@ -18,7 +19,7 @@ public class BatchByTimeAndSizeOperator<T, C extends Collection<? super T>> {
 	Supplier<C> factory;
 	public BatchByTimeAndSizeOperator(Stream<T> stream){
 		this.stream = stream;
-		factory = ()-> (C)new ArrayList<>();
+		factory = ()-> (C)new ListXImpl<>();
 	}
 	public BatchByTimeAndSizeOperator(Stream<T> stream2, Supplier<C> factory2) {
 		this.stream=stream2;

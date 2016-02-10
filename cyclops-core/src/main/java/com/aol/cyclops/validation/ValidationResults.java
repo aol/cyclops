@@ -1,6 +1,9 @@
 package com.aol.cyclops.validation;
 
-import java.util.List;
+import com.aol.cyclops.Reducer;
+import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.control.Xor;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,13 +19,35 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ValidationResults<T,E> {
-	private final List<ValidationResult<T,E>> results;
+	private final ListX<ValidationResult<T,E>> results;
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString(){
 		return results.toString();
+	}
+	
+	public ListX<Xor<E,T>> toXors(){
+		return results.map(v->v.toXor());
+	}
+	public Xor<ListX<T>,ListX<E>> toErrorSequence(){
+		return Xor.sequenceSecondary(toXors());
+	}
+	public<R> Xor<?,R> accumulateErrors(Reducer<R> reducer){
+		return Xor.accumulateSecondary(toXors(), reducer);
+	}
+	public<R> Xor<?,E> accumulateErrors(Semigroup<E> combiner){
+		return Xor.accumulateSecondary(toXors(), combiner);
+	}
+	public Xor<ListX<E>,ListX<T>> toSuccessSequence(){
+		return Xor.sequencePrimary(toXors());
+	}
+	public<R> Xor<?,R> accumulateSuccess(Reducer<R> reducer){
+		return Xor.accumulateSecondary(toXors(), reducer);
+	}
+	public<R> Xor<?,E> accumulateSuccess(Semigroup<E> combiner){
+		return Xor.accumulateSecondary(toXors(), combiner);
 	}
 	
 }

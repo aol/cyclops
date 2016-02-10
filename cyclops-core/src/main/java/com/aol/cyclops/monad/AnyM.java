@@ -32,10 +32,12 @@ import org.jooq.lambda.function.Function3;
 import org.jooq.lambda.function.Function4;
 import org.jooq.lambda.function.Function5;
 
-import com.aol.cyclops.closures.Convertable;
 import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.control.FutureW;
+import com.aol.cyclops.control.Ior;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Xor;
-import com.aol.cyclops.lambda.applicative.Applicativable;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.lambda.monads.EmptyUnit;
 import com.aol.cyclops.lambda.monads.FlatMap;
@@ -241,7 +243,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 			
 			
 	
-	 /**
+	    /**
 		 * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
 		 * etc to be injected, for example)
 		 * 
@@ -344,7 +346,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @param fn flatMap function
 	 * @return  flatMapped AnyM
 	 */
-	 <R> AnyM<R> flatMap(Function<? super T,AnyM<? extends R>> fn) ;
+	 <R> AnyM<R> flatMap(Function<? super T,? extends AnyM<? extends R>> fn) ;
 	
 	
 	
@@ -369,7 +371,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * 
 	 * @return A Sequence that wraps a Stream
 	 */
-	 <NT> SequenceM<NT> toSequence(Function<T,Stream<NT>> fn);
+	 <NT> SequenceM<NT> toSequence(Function<? super T,? extends Stream<? extends NT>> fn);
 	/**
 	 *  <pre>
 	 *  {@code Optional<List<Integer>>  into Stream<Integer> }
@@ -512,12 +514,53 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 
 		return this.<T> toSequence().toOptional();
 	}
+	/**
+	 * @return Convert this AnyM to a Maybe
+	 */
+	default Maybe<ListX<T>> toMaybe() {
+
+		return this.<T> toSequence().toMaybe();
+	}
+	/**
+	 * @return Convert this AnyM to an Ior
+	 */
+	default Xor<?,ListX<T>> toXor() {
+
+		return this.<T> toSequence().toXor();
+	}
+	/**
+	 * @return Convert this AnyM to an Eval
+	 */
+	default Eval<ListX<T>> toEvalAlways() {
+
+		return Eval.always( ()->this.<T> toSequence().toEvalAlways()).flatMap(i->i);
+	}
+	/**
+	 * @return Convert this AnyM to an Eval
+	 */
+	default Eval<ListX<T>> toEvalLater() {
+
+		return Eval.always( ()->this.<T> toSequence().toEvalLater()).flatMap(i->i);
+	}
+	/**
+	 * @return Convert this AnyM to an Eval
+	 */
+	default Eval<ListX<T>> toEvalNow() {
+
+		return this.<T> toSequence().toEvalNow();
+	}
 
 	/**
 	 * @return Convert this AnyM to a CompletableFuture
 	 */
 	default CompletableFuture<ListX<T>> toCompletableFuture() {
 		return this.<T> toSequence().toCompletableFuture();
+	}
+	/**
+	 * @return Convert this AnyM to a CompletableFuture
+	 */
+	default FutureW<ListX<T>> toFutureW() {
+		return this.<T> toSequence().toFutureW();
 	}
 
 	/**
@@ -742,6 +785,22 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 		Objects.requireNonNull(future);
 		return AnyMFactory.instance.monad(future);
 	}
+	public static <T> AnyM<T> fromIor(Ior<?,T> future){
+		Objects.requireNonNull(future);
+		return AnyMFactory.instance.monad(future);
+	}
+	public static <T> AnyM<T> fromEval(Eval<T> future){
+		Objects.requireNonNull(future);
+		return AnyMFactory.instance.monad(future);
+	}
+	public static <T> AnyM<T> fromFutureW(FutureW<T> future){
+		Objects.requireNonNull(future);
+		return AnyMFactory.instance.monad(future);
+	}
+	public static <T> AnyM<T> fromMaybe(Maybe<T> future){
+		Objects.requireNonNull(future);
+		return AnyMFactory.instance.monad(future);
+	}
 	/**
 	 * Create an AnyM instance that wraps a Collection
 	 * 
@@ -915,8 +974,21 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	public static <T> List<AnyM<T>> listFromCollection(Iterable<Collection<T>> anyM){
 		return StreamSupport.stream(anyM.spliterator(),false).map(i-> AnyM.fromCollection(i)).collect(Collectors.toList());
 	}
-	public static <T> List<AnyM<T>> listFromXor(Iterable<Xor<?,T>> anyM){
+	
+	public static  <ST,T> List<AnyM<T>> listFromXor(Iterable<Xor<ST,T>> anyM){
 		return StreamSupport.stream(anyM.spliterator(),false).map(i-> AnyM.fromXor(i)).collect(Collectors.toList());
+	}
+	public static  <ST,T> List<AnyM<T>> listFromIor(Iterable<Ior<ST,T>> anyM){
+		return StreamSupport.stream(anyM.spliterator(),false).map(i-> AnyM.fromIor(i)).collect(Collectors.toList());
+	}
+	public static  <T> List<AnyM<T>> listFromMaybe(Iterable<Maybe<T>> anyM){
+		return StreamSupport.stream(anyM.spliterator(),false).map(i-> AnyM.fromMaybe(i)).collect(Collectors.toList());
+	}
+	public static  <T> List<AnyM<T>> listFromEval(Iterable<Eval<T>> anyM){
+		return StreamSupport.stream(anyM.spliterator(),false).map(i-> AnyM.fromEval(i)).collect(Collectors.toList());
+	}
+	public static  <T> List<AnyM<T>> listFromFutureW(Iterable<FutureW<T>> anyM){
+		return StreamSupport.stream(anyM.spliterator(),false).map(i-> AnyM.fromFutureW(i)).collect(Collectors.toList());
 	}
 	/**
 	 * Take an iterable containing Streamables and convert them into a List of AnyMs
@@ -1012,7 +1084,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @param fn
 	 * @return
 	 */
-	public static <U,R> Function<AnyM<U>,AnyM<R>> liftM(Function<U,R> fn){
+	public static <U,R> Function<AnyM<U>,AnyM<R>> liftM(Function<? super U,? extends R> fn){
 		return u -> u.map( input -> fn.apply(input)  );
 	}
 	
@@ -1083,7 +1155,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @param fn Function to lift
 	 * @return Lifted Function
 	 */
-	public static <U1,U2,U3,U4,U5,R> Function5<AnyM<U1>,AnyM<U2>,AnyM<U3>,AnyM<U4>,AnyM<U5>,AnyM<R>> liftM5(Function5<U1,U2,U3,U4,U5,R> fn){
+	public static <U1,U2,U3,U4,U5,R> Function5<AnyM<U1>,AnyM<U2>,AnyM<U3>,AnyM<U4>,AnyM<U5>,AnyM<R>> liftM5(Function5<? super U1,? super U2,? super U3,? super U4,? super U5,? extends R> fn){
 		
 		return (u1,u2,u3,u4,u5) -> u1.bind( input1 -> 
 										u2.bind(input2 -> 
@@ -1108,7 +1180,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @param fn Function to lift
 	 * @return Lifted function 
 	 */
-	public static <U1,U2,U3,R> Function<AnyM<U1>,Function<AnyM<U2>,Function<AnyM<U3>,AnyM<R>>>> liftM3(Function<U1,Function<U2,Function<U3,R>>> fn){
+	public static <U1,U2,U3,R> Function<AnyM<U1>,Function<AnyM<U2>,Function<AnyM<U3>,AnyM<R>>>> liftM3(Function<? super U1,Function<? super U2,Function<? super U3,? extends R>>> fn){
 		return u1 -> u2 ->u3 -> u1.bind( input1 -> 
 									u2.bind(input2 -> 
 										u3.map(input3->fn.apply(input1).apply(input2).apply(input3)  )).unwrap());
@@ -1120,7 +1192,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @param fn Function to lift
 	 * @return Lifted function 
 	 */
-	public static <U1,U2,U3,U4,R> Function<AnyM<U1>,Function<AnyM<U2>,Function<AnyM<U3>,Function<AnyM<U4>,AnyM<R>>>>> liftM4(Function<U1,Function<U2,Function<U3,Function<U4,R>>>> fn){
+	public static <U1,U2,U3,U4,R> Function<AnyM<U1>,Function<AnyM<U2>,Function<AnyM<U3>,Function<AnyM<U4>,AnyM<R>>>>> liftM4(Function<? super U1,Function<? super U2,Function<? super U3,Function<? super U4,? extends R>>>> fn){
 		
 		return u1->u2->u3->u4 -> u1.bind( input1 -> 
 										u2.bind(input2 -> 
@@ -1133,7 +1205,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @param fn Function to lift
 	 * @return Lifted function 
 	 */
-	public static <U1,U2,U3,U4,U5,R> Function<AnyM<U1>,Function<AnyM<U2>,Function<AnyM<U3>,Function<AnyM<U4>,Function<AnyM<U5>,AnyM<R>>>>>> liftM5(Function<U1,Function<U2,Function<U3,Function<U4,Function<U5,R>>>>> fn){
+	public static <U1,U2,U3,U4,U5,R> Function<AnyM<U1>,Function<AnyM<U2>,Function<AnyM<U3>,Function<AnyM<U4>,Function<AnyM<U5>,AnyM<R>>>>>> liftM5(Function<? super U1,Function<? super U2,Function<? super U3,Function<? super U4,Function<? super U5,? extends R>>>>> fn){
 		
 		return u1 ->u2 ->u3 ->u4 ->u5  -> u1.bind( input1 -> 
 										   u2.bind(input2 -> 

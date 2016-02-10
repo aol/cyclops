@@ -73,7 +73,7 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, ValueObject<T>, Conv
 	 }
 	 
 	default SequenceM<T> stream() {
-			return SequenceM.of(get()).filter(v -> v != null);
+			return SequenceM.of(Try.withCatch(()->get(),NoSuchElementException.class)).filter(Try::isSuccess).map(Try::get);
 	}
 	 /**
 	  * @return matchable
@@ -82,7 +82,7 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, ValueObject<T>, Conv
 		return get();
 	 }
 	 default <I extends Iterable<?>> I unapply(){
-		 return (I)Arrays.asList(get());
+		 return (I)toList();
 	 }
 	 default SequenceM<T> iterate(UnaryOperator<T> fn){
 			return SequenceM.iterate(get(),fn);
