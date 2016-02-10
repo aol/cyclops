@@ -29,6 +29,7 @@ import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.collections.extensions.standard.QueueX;
 import com.aol.cyclops.collections.extensions.standard.SetX;
 import com.aol.cyclops.collections.extensions.standard.SortedSetX;
+import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.Reducers;
 import com.aol.cyclops.trycatch.Try;
 import com.aol.simple.react.stream.lazy.LazyReact;
@@ -523,74 +524,84 @@ public class MaybeTest {
 		assertTrue(just.removeMatches(equalTo(11)).isPresent());
 	}
 
-	@Test
-	public void testApplicatives() {
-		fail("Not yet implemented");
-	}
 
 	@Test
-	public void testAp1FunctionOfQsuperTQextendsR() {
-		fail("Not yet implemented");
+	public void testAp1() {
+		assertThat(Maybe.of(1).ap1(this::add1).toMaybe(),equalTo(Maybe.of(2)));
+	}
+	
+	private int add(int a, int b){
+		return a+b;
 	}
 
 	@Test
 	public void testAp2() {
-		fail("Not yet implemented");
+		assertThat(Maybe.of(1).ap2(this::add).ap(Optional.of(3)).toMaybe(),equalTo(Maybe.of(4)));
 	}
-
+	private int add3(int a, int b, int c){
+		return a+b+c;
+	}
 	@Test
 	public void testAp3() {
-		fail("Not yet implemented");
+		assertThat(Maybe.of(1).ap3(this::add3).ap(Optional.of(3)).ap(Maybe.of(4)).toMaybe(),equalTo(Maybe.of(8)));
 	}
-
+	private int add4(int a, int b, int c,int d){
+		return a+b+c+d;
+	}
 	@Test
 	public void testAp4() {
-		fail("Not yet implemented");
+		assertThat(Maybe.of(1).ap4(this::add4)
+						.ap(Optional.of(3))
+						.ap(Maybe.of(4))
+						.ap(Maybe.of(6)).toMaybe(),equalTo(Maybe.of(14)));
 	}
-
+	private int add5(int a, int b, int c,int d,int e){
+		return a+b+c+d+e;
+	}
 	@Test
 	public void testAp5() {
-		fail("Not yet implemented");
+		assertThat(Maybe.of(1).ap5(this::add5)
+				.ap(Optional.of(3))
+				.ap(Maybe.of(4))
+				.ap(Maybe.of(6))
+				.ap(Maybe.of(10)).toMaybe(),equalTo(Maybe.of(24)));
 	}
 
-	@Test
-	public void testAp1ApplicativeOfTRQ1() {
-		fail("Not yet implemented");
-	}
+	
 
 	@Test
 	public void testMapReduceReducerOfR() {
-		fail("Not yet implemented");
+		assertThat(just.mapReduce(Reducers.toPStackX()),equalTo(just.toPStackX()));
 	}
 
 	@Test
 	public void testMapReduceFunctionOfQsuperTQextendsRMonoidOfR() {
-		fail("Not yet implemented");
+		assertThat(just.mapReduce(s->s.toString(), Monoid.of("",Semigroups.stringJoin(","))),equalTo("10"));
 	}
 
 	@Test
 	public void testReduceMonoidOfT() {
-		fail("Not yet implemented");
+		assertThat(just.reduce(Monoid.of(1,Semigroups.intMult)),equalTo(10));
 	}
 
 	@Test
 	public void testReduceBinaryOperatorOfT() {
-		fail("Not yet implemented");
+		assertThat(just.reduce((a,b)->a+b),equalTo(10));
 	}
 
 	@Test
 	public void testReduceTBinaryOperatorOfT() {
-		fail("Not yet implemented");
+		assertThat(just.reduce(10,(a,b)->a+b),equalTo(20));
 	}
 
 	@Test
 	public void testReduceUBiFunctionOfUQsuperTUBinaryOperatorOfU() {
-		fail("Not yet implemented");
+		assertThat(just.reduce(11,(a,b)->a+b,(a,b)->a*b),equalTo(11));
 	}
 
 	@Test
 	public void testReduceStreamOfQextendsMonoidOfT() {
-		fail("Not yet implemented");
+		
 	}
 
 	@Test
@@ -840,37 +851,47 @@ public class MaybeTest {
 
 	@Test
 	public void testMatchesCases() {
-		fail("Not yet implemented");
+		
 	}
 
 	@Test
-	public void testPatternMatchRFunctionOfCheckValuesOfQsuperTRCheckValuesOfQsuperTR() {
-		fail("Not yet implemented");
+	public void testPatternMatch5() {
+		assertThat(just.patternMatch("hello", c->c.hasValuesWhere(i->(int)i==20).then(i->"world"),
+				c->c.hasValuesWhere(i->(int)i==30).then(i->"world"),
+				c->c.hasValuesWhere(i->(int)i==10).then(i->"boo!"),
+				c->c.hasValuesWhere(i->(int)i==30).then(i->"boo2!"),
+				c->c.hasValuesWhere(i->(int)i==40).then(i->"boo3!")),equalTo(Maybe.of("boo!")));
 	}
 
 	@Test
-	public void testPatternMatchRFunctionOfCheckValuesOfQsuperTRCheckValuesOfQsuperTRFunctionOfCheckValuesOfQsuperTRCheckValuesOfQsuperTR() {
-		fail("Not yet implemented");
+	public void testPatternMatch4() {
+		assertThat(just.patternMatch("hello", c->c.hasValuesWhere(i->(int)i==20).then(i->"world"),
+				c->c.hasValuesWhere(i->(int)i==30).then(i->"world"),
+				c->c.hasValuesWhere(i->(int)i==10).then(i->"boo!"),
+				c->c.hasValuesWhere(i->(int)i==30).then(i->"boo2!")),equalTo(Maybe.of("boo!")));
 	}
 
 	@Test
-	public void testPatternMatchRFunctionOfCheckValuesOfQsuperTRCheckValuesOfQsuperTRFunctionOfCheckValuesOfQsuperTRCheckValuesOfQsuperTRFunctionOfCheckValuesOfQsuperTRCheckValuesOfQsuperTR() {
-		fail("Not yet implemented");
+	public void testPatternMatch3(){
+		assertThat(just.patternMatch("hello", c->c.hasValuesWhere(i->(int)i==20).then(i->"world"),
+												c->c.hasValuesWhere(i->(int)i==30).then(i->"world"),
+												c->c.hasValuesWhere(i->(int)i==10).then(i->"boo!")),equalTo(Maybe.of("boo!")));
 	}
 
 	@Test
-	public void testPatternMatchRFunctionOfCheckValuesOfQsuperTRCheckValuesOfQsuperTRFunctionOfCheckValuesOfQsuperTRCheckValuesOfQsuperTRFunctionOfCheckValuesOfQsuperTRCheckValuesOfQsuperTRFunctionOfCheckValuesOfQsuperTRCheckValuesOfQsuperTR() {
-		fail("Not yet implemented");
+	public void testPatternMatch2(){
+		assertThat(just.patternMatch("hello", c->c.hasValuesWhere(i->(int)i==20).then(i->"world"),
+											c->c.hasValuesWhere(i->(int)i==30).then(i->"world")),equalTo(Maybe.of("hello")));
 	}
 
 	@Test
-	public void testPatternMatchRFunctionOfCheckValuesOfQsuperTRCheckValuesOfQsuperTRFunctionOfCheckValuesOfQsuperTRCheckValuesOfQsuperTRFunctionOfCheckValuesOfQsuperTRCheckValuesOfQsuperTRFunctionOfCheckValuesOfQsuperTRCheckValuesOfQsuperTRFunctionOfCheckValuesOfQsuperTRCheckValuesOfQsuperTR() {
-		fail("Not yet implemented");
+	public void testPatternMatch1(){
+		assertThat(just.patternMatch("hello", c->c.hasValuesWhere(i->(int)i==10).then(i->"world")),equalTo(Maybe.of("world")));
 	}
 
 	@Test
 	public void testUnitT1() {
-		fail("Not yet implemented");
+		assertThat(none.unit(10),equalTo(just));
 	}
 
 }

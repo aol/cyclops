@@ -19,16 +19,13 @@ public interface ZippingApplicative<T,R, D extends IterableFunctor<R>> extends F
 		return delegate().map(fn);
 	}
 
-	//<U extends Functor<Function<? super T,? extends R>> & Convertable<Function<? super T,? extends R>>> U delegate();
+	
 	IterableFunctor<Function<? super T,? extends R>>  delegate();
 	
 	default<T2> D ap(IterableFunctor<T> f){
 		Iterator<Function<? super T,? extends R>> fn = delegate().iterator();
 		Iterator<T> it = f.iterator();
-		//return (D) delegate().unitIterator(SequenceM.fromIterator(fn).cycle().zip(SequenceM.fromIterator(it))
-			//					 .map(t->t.v1.apply(t.v2)).iterator());
-		return (D) SequenceM.fromIterator(it).map(fn.next());
-		
-		
+		return (D) delegate().unitIterator(SequenceM.fromIterator(fn).zip(SequenceM.fromIterator(it))
+								 .map(t->t.v1.apply(t.v2)).iterator());		
 	}
 }

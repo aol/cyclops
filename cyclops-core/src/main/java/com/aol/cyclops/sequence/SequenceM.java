@@ -89,7 +89,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Functor<T>, Extende
 	@Override
 	default <U, R> SequenceM<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
 		
-		return (SequenceM<R>) ExtendedTraversable.super.zip(other, zipper);
+		return SequenceM.fromStream(Seq.zip(this,other,zipper));
 	}
 
 	/**

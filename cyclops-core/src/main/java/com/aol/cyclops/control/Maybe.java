@@ -38,13 +38,11 @@ import lombok.EqualsAndHashCode;
 
 public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, Filterable<T>,Applicativable<T>{
 
-	static <T,R> ApplicativeBuilder<T,R,Maybe<R>> applicativeBuilder(){
-		return new ApplicativeBuilder<T,R,Maybe<R>> (Maybe.of(1));
-	}
-	final static Maybe EMPTY = new Nothing();
+	
+	final static Maybe<?> EMPTY = new Nothing<>();
 	
 	static <T> Maybe<T> none(){
-		return EMPTY;
+		return (Maybe<T>) EMPTY;
 	}
 	
 	static <T> Maybe<T> fromOptional(Optional<T> opt){
@@ -98,21 +96,7 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, 
 		return this;
 	}
 
-	/**
-	 * <pre>
-	 * {@code 
-	 *  Maybe.of(1).ap1(applicative( (Integer i)->i+1));
-	 * 
-	 * }
-	 * </pre>
-	 * 
-	 * @param ap
-	 * @return
-	 */
-	default <R> Maybe<R> ap1( Applicative<T,R, ?> ap){
-		return (Maybe<R>)Applicativable.super.ap1(ap);
-	}
-
+	
 	boolean isPresent();
 	
 	Maybe<T> recover(Supplier<T> value);

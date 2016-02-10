@@ -22,14 +22,14 @@ public class ApplyingZippingApplicativeBuilder<T,R, A extends ZippingApplicativa
 		}
 		public ZippingApplicative<T,R,A> applicative(ZippingApplicativable<Function<? super T,? extends R>> fn){
 			
-			return ()->fn;
+			return ()->fn.stream().cycle();
 		}
 		public  ZippingApplicative<T,R,A> applicative(Function<? super T,? extends R> fn){
 			
 			return applicative(unit(fn));
 		}
 		public <T2> ZippingApplicative<T2,R,A> applicative2(ZippingApplicativable<Function<? super T,Function<? super T2,? extends R>>> fn){
-			return ((ZippingApplicative2<T,T2,R,A>) ()->fn).ap(functor);
+			return ((ZippingApplicative2<T,T2,R,A>) ()->fn.stream().cycle()).ap(functor);
 			
 		}
 		public <T2> ZippingApplicative<T2,R,A> applicative2(Function<? super T,Function<? super T2,? extends R>> fn){
@@ -41,7 +41,7 @@ public class ApplyingZippingApplicativeBuilder<T,R, A extends ZippingApplicativa
 			return applicative2(unit(CurryVariance.curry2(fn)));
 		}
 		public <T2,T3> ZippingApplicative2<T2,T3,R,A> applicative3(ZippingApplicativable<Function<? super T,Function<? super T2,Function<? super T3,? extends R>>>> fn){
-			return ((ZippingApplicative3<T,T2,T3,R,A>) ()->fn).ap(functor);
+			return ((ZippingApplicative3<T,T2,T3,R,A>) ()->fn.stream().cycle()).ap(functor);
 		}
 		public <T2,T3> ZippingApplicative2<T2,T3,R,A> applicative3(Function<? super T,Function<? super T2,Function<? super T3,? extends R>>> fn){
 
@@ -53,7 +53,7 @@ public class ApplyingZippingApplicativeBuilder<T,R, A extends ZippingApplicativa
 		}
 		public <T2,T3,T4> ZippingApplicative3<T2,T3,T4,R,A> applicative4(ZippingApplicativable<Function<? super T,Function<? super T2,Function<? super T3,Function<? super T4,? extends R>>>>> fn){
 			
-			return ((ZippingApplicative4<T,T2,T3,T4,R,A>)()->fn).ap(functor);
+			return ((ZippingApplicative4<T,T2,T3,T4,R,A>)()->fn.stream().cycle()).ap(functor);
 			
 		}
 		public <T2,T3,T4> ZippingApplicative3<T2,T3,T4,R,A> applicative4(Function<? super T,Function<? super T2,Function<? super T3,Function<? super T4,? extends R>>>> fn){
@@ -66,7 +66,7 @@ public class ApplyingZippingApplicativeBuilder<T,R, A extends ZippingApplicativa
 		}
 		public <T2,T3,T4,T5> ZippingApplicative4<T2,T3,T4,T5,R,A> applicative5(ZippingApplicativable<Function<? super T,Function<? super T2,Function<? super T3,Function<? super T4,Function<? super T5,? extends R>>>>>> fn){
 			
-			return ((ZippingApplicative5<T,T2,T3,T4,T5,R,A>)()->fn).ap(functor);
+			return ((ZippingApplicative5<T,T2,T3,T4,T5,R,A>)()->fn.stream().cycle()).ap(functor);
 		}
 		public <T2,T3,T4,T5>  ZippingApplicative4<T2,T3,T4,T5,R,A> applicative5(Function<? super T,Function<? super T2,Function<? super T3,Function<? super T4,Function<? super T5,? extends R>>>>> fn){
 			

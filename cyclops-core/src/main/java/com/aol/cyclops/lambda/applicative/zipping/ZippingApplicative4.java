@@ -32,7 +32,7 @@ public interface ZippingApplicative4<T,T2,T3,T4,R, D extends IterableFunctor<R>>
 	
 		Iterator<Function<? super T,Function<? super T2,Function<? super T3,Function<? super T4,? extends R>>>>> fn = delegate().iterator();
 		Iterator<T> it = f.iterator();
-		return ()-> (IterableFunctor)delegate().unitIterator(SequenceM.fromIterator(fn).cycle().zip(SequenceM.fromIterator(it))
+		return ()-> (IterableFunctor)delegate().unitIterator(SequenceM.fromIterator(fn).zip(SequenceM.fromIterator(it))
 								 .map(t->t.v1.apply(t.v2)).iterator());
 		
 	}

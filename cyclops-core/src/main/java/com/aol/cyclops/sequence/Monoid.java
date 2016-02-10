@@ -55,6 +55,16 @@ public interface Monoid<T> extends Semigroup<T> {
 	}
 	
 	
+	public static <T> Monoid<T> of(T zero, Semigroup<T> group){
+		return new Monoid<T>(){
+			public T zero(){
+				return zero;
+			}
+			public BiFunction<T,T,T> combiner(){
+				return group.combiner();
+			}
+		};
+	}
 	public static <T> Monoid<T> of(T zero, Function<T,Function<T,T>> combiner){
 		return new Monoid<T>(){
 			public T zero(){

@@ -12,16 +12,15 @@ import com.aol.cyclops.lambda.monads.Unit;
 
 public interface Applicativable<T> extends ConvertableFunctor<T>, Unit<T>{
 
-	/**
-	default <R> ApplicativeBuilder<T,R,Applicativable<R>> applicatives(){
-		return new ApplicativeBuilder<T,R,Applicativable<R>> (this);
+	
+	static class Applicatives{
+		public static <T,R> ApplyingApplicativeBuilder<T,R,Applicativable<R>> applicatives(Unit unit,Functor functor){
+			return new ApplyingApplicativeBuilder<T,R,Applicativable<R>> (unit,functor);
+		}
 	}
-	**/
-	default <R> ApplyingApplicativeBuilder<T,R,Applicativable<R>> applicatives(){
-		return new ApplyingApplicativeBuilder<T,R,Applicativable<R>> (this,this);
-	}
+	
 	default <R> Applicativable<R> ap1(Function<? super T,? extends R> fn){
-		return this.<R>applicatives().applicative(fn).ap(this);
+		return Applicatives.<T,R>applicatives(this,this).applicative(fn).ap(this);
 		
 	}
 	/**
@@ -48,20 +47,22 @@ public interface Applicativable<T> extends ConvertableFunctor<T>, Unit<T>{
 	 * @return
 	 */
 	default <T2,R> Applicative<T2,R, ?> ap2( BiFunction<? super T,? super T2,? extends R> fn){
-		return this.<R>applicatives().applicative2(fn);
+		return  Applicatives.<T,R>applicatives(this,this).applicative2(fn);
 	}
 	default <T2,T3,R> Applicative2<T2,T3,R, ?> ap3( TriFunction<? super T,? super T2,? super T3,? extends R> fn){
-		return this.<R>applicatives().applicative3(fn);
+		return  Applicatives.<T,R>applicatives(this,this).applicative3(fn);
 	}
 	default <T2,T3,T4,R> Applicative3<T2,T3,T4,R, ?> ap4( QuadFunction<? super T,? super T2,? super T3,? super T4,? extends R> fn){
-		return this.<R>applicatives().applicative4(fn);
+		return  Applicatives.<T,R>applicatives(this,this).applicative4(fn);
 	}
 	default <T2,T3,T4,T5,R> Applicative4<T2,T3,T4,T5,R, ?> ap5( QuintFunction<? super T,? super T2,? super T3,? super T4,? super T5,? extends R> fn){
-		return this.<R>applicatives().applicative5(fn);
+		return  Applicatives.<T,R>applicatives(this,this).applicative5(fn);
 	}
+	/**
 	default <R> Functor<R> ap1( Applicative<T,R, ?> ap){
 		return ap.ap(this);
 	}
+	**/
 	
 	/**
 	default <T2,R> Applicative<T2,R, ?> ap2( Applicative2<T,T2,R, ?> ap2){
