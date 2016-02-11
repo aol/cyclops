@@ -23,8 +23,8 @@ import com.aol.cyclops.lambda.applicative.Applicativable;
 import com.aol.cyclops.lambda.applicative.Applicative;
 import com.aol.cyclops.lambda.monads.Filterable;
 import com.aol.cyclops.lambda.monads.Functor;
-import com.aol.cyclops.matcher.Case;
 import com.aol.cyclops.matcher.builders.CheckValues;
+import com.aol.cyclops.matcher2.Case;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
@@ -125,6 +125,12 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 		if(isSecondary())
 			return (Xor<R1,R2>)swap().map(secondary);
 		return (Xor<R1,R2>)map(primary);
+	}
+	@Override
+	default <R> Xor<ST,R> patternMatch(R defaultValue,
+			Function<CheckValues<? super PT, R>, CheckValues<? super PT, R>> case1) {
+		
+		return (Xor<ST,R>)Applicativable.super.patternMatch(defaultValue, case1);
 	}
 	
 	

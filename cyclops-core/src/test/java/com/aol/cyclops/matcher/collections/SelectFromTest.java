@@ -12,8 +12,8 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
-import com.aol.cyclops.matcher.ChainOfResponsibility;
-import com.aol.cyclops.matcher.CollectionMatcher;
+import com.aol.cyclops.matcher2.ChainOfResponsibility;
+import com.aol.cyclops.matcher2.CollectionMatcher;
 
 import lombok.AllArgsConstructor;
 

@@ -1,7 +1,7 @@
 package com.aol.cyclops.matcher.builders;
 
-import com.aol.cyclops.matcher.Action;
-import com.aol.cyclops.matcher.TypedFunction;
+import com.aol.cyclops.matcher2.Action;
+import com.aol.cyclops.matcher2.TypedFunction;
 
 @Deprecated
 public interface TempCollectionStepExtension<T,X> extends CollectionStep<T,X>{

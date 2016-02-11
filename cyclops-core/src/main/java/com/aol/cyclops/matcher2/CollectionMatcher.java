@@ -1,4 +1,4 @@
-package com.aol.cyclops.matcher;
+package com.aol.cyclops.matcher2;
 
 import com.aol.cyclops.matcher.builders.IterableCase;
 import com.aol.cyclops.matcher.builders.PatternMatcher;

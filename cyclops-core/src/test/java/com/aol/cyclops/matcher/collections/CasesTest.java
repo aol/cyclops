@@ -1,6 +1,7 @@
 package com.aol.cyclops.matcher.collections;
 
-import static com.aol.cyclops.matcher.Predicates.__;
+import static com.aol.cyclops.matcher2.Predicates.__;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -9,10 +10,10 @@ import lombok.val;
 
 import org.junit.Test;
 
-import com.aol.cyclops.matcher.Case;
-import com.aol.cyclops.matcher.Cases;
-import com.aol.cyclops.matcher.CollectionMatcher;
-import com.aol.cyclops.matcher.Extractors;
+import com.aol.cyclops.matcher2.Case;
+import com.aol.cyclops.matcher2.Cases;
+import com.aol.cyclops.matcher2.CollectionMatcher;
+import com.aol.cyclops.matcher2.Extractors;
 
 public class CasesTest {
 	/**

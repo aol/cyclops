@@ -3,10 +3,10 @@ package com.aol.cyclops.matcher.builders;
 import java.util.List;
 import java.util.function.Predicate;
 
-import lombok.AllArgsConstructor;
+import com.aol.cyclops.matcher2.Action;
+import com.aol.cyclops.matcher2.TypedFunction;
 
-import com.aol.cyclops.matcher.Action;
-import com.aol.cyclops.matcher.TypedFunction;
+import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Deprecated

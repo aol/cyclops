@@ -1,6 +1,6 @@
 package com.aol.cyclops.matcher;
 
-import static com.aol.cyclops.matcher.Extractors.at;
+import static com.aol.cyclops.matcher2.Extractors.at;
 
 import java.io.FileNotFoundException;
 import java.util.Arrays;

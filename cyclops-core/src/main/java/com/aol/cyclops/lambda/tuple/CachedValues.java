@@ -24,7 +24,7 @@ import org.jooq.lambda.Seq;
 
 import com.aol.cyclops.closures.mutable.Mutable;
 import com.aol.cyclops.comprehensions.donotation.Doable;
-import com.aol.cyclops.matcher.recursive.Matchable;
+import com.aol.cyclops.matcher2.Matchable;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.streamable.ToStream;
 import com.aol.cyclops.value.ValueObject;

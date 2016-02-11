@@ -6,9 +6,9 @@ import lombok.AllArgsConstructor;
 
 import org.hamcrest.Matcher;
 
-import com.aol.cyclops.matcher.Action;
-import com.aol.cyclops.matcher.Extractor;
-import com.aol.cyclops.matcher.TypedFunction;
+import com.aol.cyclops.matcher2.Action;
+import com.aol.cyclops.matcher2.Extractor;
+import com.aol.cyclops.matcher2.TypedFunction;
 
 public class CaseBuilder {
 	
@@ -57,7 +57,7 @@ public class CaseBuilder {
 		 * Post-process input supplied to matching, so input to Action will be different from input to Predicate
 		 * The supplied Extractor will transform input into new value which will be supplied to the Action.
 		 * 
-		 * @see com.aol.cyclops.matcher.Extractors
+		 * @see com.aol.cyclops.matcher2.Extractors
 		 * @param extractor to transform input data
 		 * @return Next step in the Case Builder
 		 */

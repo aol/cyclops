@@ -15,6 +15,7 @@ import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.lambda.applicative.Applicativable;
 import com.aol.cyclops.lambda.applicative.Applicative;
+import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.ToStream;
@@ -77,6 +78,13 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 	default <T> Try<T,?> unit(T value){
 		return success(value);
 	}
+	@Override
+	default <R> Try<R,X> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
+		
+		return (Try<R,X>)Applicativable.super.patternMatch(defaultValue, case1);
+	}
+	
 	public <R> R when(Function<? super T, ? extends R> success, Function<? super X, ? extends R> failure);
 	/**
 	 * @return This monad, wrapped as AnyM of Success

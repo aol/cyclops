@@ -8,10 +8,12 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.lambda.applicative.Applicativable;
 import com.aol.cyclops.lambda.applicative.Applicative;
+import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.ToStream;
@@ -36,6 +38,13 @@ public interface FeatureToggle<F> extends Supplier<F>, Value<F>, ToStream<F>,App
 	}
 	<R> R when(Function<? super F,? extends R> enabled, 
 			Function<? super F, ? extends R> disabled);
+	
+	@Override
+	default <R> FeatureToggle<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super F, R>, CheckValues<? super F, R>> case1) {
+		
+		return (FeatureToggle<R>)Applicativable.super.patternMatch(defaultValue, case1);
+	}
 	/**
 	 * @return This monad, wrapped as AnyM
 	 */

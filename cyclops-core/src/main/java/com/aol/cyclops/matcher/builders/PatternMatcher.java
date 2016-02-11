@@ -18,13 +18,13 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.matcher.Action;
-import com.aol.cyclops.matcher.Case;
-import com.aol.cyclops.matcher.Cases;
-import com.aol.cyclops.matcher.ChainOfResponsibility;
-import com.aol.cyclops.matcher.Extractor;
-import com.aol.cyclops.matcher.Extractors;
-import com.aol.cyclops.matcher.TypedFunction;
+import com.aol.cyclops.matcher2.Action;
+import com.aol.cyclops.matcher2.Case;
+import com.aol.cyclops.matcher2.Cases;
+import com.aol.cyclops.matcher2.ChainOfResponsibility;
+import com.aol.cyclops.matcher2.Extractor;
+import com.aol.cyclops.matcher2.Extractors;
+import com.aol.cyclops.matcher2.TypedFunction;
 import com.aol.cyclops.objects.Decomposable;
 import com.aol.cyclops.sequence.SequenceM;
 
@@ -212,7 +212,7 @@ public class PatternMatcher implements Function{
 			
 		return t -> p.test(extractIfType(t,extractor));
 	}
-	TypedFunction extractorAction(Extractor extractor, TypedFunction action){
+	Function extractorAction(Extractor extractor, Function action){
 		if(extractor==null)
 			return action;
 		return input -> action.apply(extractor.apply(input));
@@ -456,14 +456,14 @@ public class PatternMatcher implements Function{
 		return matcher[0];
 	}
 	
-	 public <T,V,X> PatternMatcher inCaseOfManyType(Predicate master,TypedFunction<T,X> a,
+	 public <T,V,X> PatternMatcher inCaseOfManyType(Predicate master,Function<? super T,? extends X> a,
     		 Predicate<V>... predicates){
 		
 		 SequenceM<Predicate<V>> pred = SequenceM.of(predicates);
 		
 		
 		return inCaseOf(it -> master.test(it) && seq(Extractors.decompose().apply(it))
-				.zip(pred,(a1,b1)->Tuple.tuple(a1,b1))
+				.zip(pred,(a1,b1)->Tuple.tuple(a1,b1)).peek(System.out::println)
 				.map(t -> t.v2.test((V)t.v1)).allMatch(v->v==true), a);
 		
 	}
@@ -613,11 +613,11 @@ public class PatternMatcher implements Function{
 		return inCaseOfThenExtract(it -> it.getClass().isAssignableFrom(clazz), a, null);
 		
 	}
-	public <V,X> PatternMatcher inCaseOf(Predicate<V> match,TypedFunction<V,X> a){
+	public <V,X> PatternMatcher inCaseOf(Predicate<V> match,Function<? super V,? extends X> a){
 		return inCaseOfThenExtract(match, a, null);
 		
 	}
-	public <R,T,X> PatternMatcher inCaseOfThenExtract(Predicate<T> match,TypedFunction<R,X> a, Extractor<T,R> extractor){
+	public <R,T,X> PatternMatcher inCaseOfThenExtract(Predicate<T> match,Function<? super R,? extends X> a, Extractor<T,R> extractor){
 		
 		return withCases(cases.append(index(),Case.of(match,extractorAction(extractor,a))));
 		

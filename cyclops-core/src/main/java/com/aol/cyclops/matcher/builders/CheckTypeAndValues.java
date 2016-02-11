@@ -9,8 +9,8 @@ import lombok.Getter;
 import lombok.val;
 import lombok.experimental.Wither;
 
-import com.aol.cyclops.matcher.Predicates;
-import com.aol.cyclops.matcher.TypedFunction;
+import com.aol.cyclops.matcher2.Predicates;
+import com.aol.cyclops.matcher2.TypedFunction;
 import com.aol.cyclops.sequence.SequenceM;
 
 
@@ -40,8 +40,8 @@ public class CheckTypeAndValues<X> extends CaseBeingBuilt {
 	 * unapply method will be used. Otherwise in Extractors it is possible to register Decomposition Funcitons that will unapply Case classes from other sources (e.g.
 	 * javaslang, jADT or even Scala). If no Decomposition Function has been registered, reflection will be used to call an unapply method on the Case class if it exists.
 	 * 
-	 * @see com.aol.cyclops.matcher.Extractors#decompose
-	 * @see com.aol.cyclops.matcher.Extractors#registerDecompositionFunction
+	 * @see com.aol.cyclops.matcher2.Extractors#decompose
+	 * @see com.aol.cyclops.matcher2.Extractors#registerDecompositionFunction
 	 * 
 	 * @param a Action from which the Predicate (by param type) and Function will be extracted to build a Pattern Matching case
 	 * @return Next step in Case builder

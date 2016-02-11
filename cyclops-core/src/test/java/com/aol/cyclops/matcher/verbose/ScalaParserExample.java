@@ -1,11 +1,12 @@
 package com.aol.cyclops.matcher.verbose;
-import static com.aol.cyclops.matcher.Predicates.ANY;
-import static com.aol.cyclops.matcher.Predicates.__;
-import static com.aol.cyclops.matcher.Predicates.type;
-import static com.aol.cyclops.matcher.Predicates.hasValues;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Value;
+
+import static com.aol.cyclops.matcher2.Predicates.ANY;
+import static com.aol.cyclops.matcher2.Predicates.__;
+import static com.aol.cyclops.matcher2.Predicates.hasValues;
+import static com.aol.cyclops.matcher2.Predicates.type;
 
 import com.aol.cyclops.matcher.builders.Matching;
 import com.aol.cyclops.matcher.recursive.RecursiveMatcher;

@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 import org.hamcrest.Matcher;
 import org.jooq.lambda.tuple.Tuple;
 
-import com.aol.cyclops.matcher.Extractors;
+import com.aol.cyclops.matcher2.Extractors;
 import com.aol.cyclops.sequence.SequenceM;
 
 import fj.data.fingertrees.Two;
@@ -42,8 +42,8 @@ public class ADTPredicateBuilder<T>{
 		 * unapply method will be used. Otherwise in Extractors it is possible to register Decomposition Funcitons that will unapply Case classes from other sources (e.g.
 		 * javaslang, jADT or even Scala). If no Decomposition Function has been registered, reflection will be used to call an unapply method on the Case class if it exists.
 		 * 
-		 * @see com.aol.cyclops.matcher.Extractors#decompose
-		 * @see com.aol.cyclops.matcher.Extractors#registerDecompositionFunction
+		 * @see com.aol.cyclops.matcher2.Extractors#decompose
+		 * @see com.aol.cyclops.matcher2.Extractors#registerDecompositionFunction
 		 * 
 		 * @param values Matching rules for each element in the decomposed / unapplied user input
 		 * @return A single Predicate encompassing supplied rules

@@ -17,7 +17,6 @@ com.aol.cyclops.comprehensions.converters.StreamableToStreamConverter
 com.aol.cyclops.comprehensions.converters.StringToStreamConverter
 com.aol.cyclops.comprehensions.converters.SupplierToCompletableFutureConverter
 com.aol.cyclops.comprehensions.converters.URLToStreamConverter
-com.aol.cyclops.comprehensions.converters.ObjectToStreamConverter
 com.aol.cyclops.comprehensions.converters.IntStreamToStreamConverter
 com.aol.cyclops.comprehensions.converters.DoubleStreamToStreamConverter
 com.aol.cyclops.comprehensions.converters.LongStreamToStreamConverter

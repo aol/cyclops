@@ -2,7 +2,7 @@ package com.aol.cyclops.lambda.tuple;
 
 import java.util.Iterator;
 
-import com.aol.cyclops.matcher.Extractor;
+import com.aol.cyclops.matcher2.Extractor;
 
 public class Extractors {
 	/**

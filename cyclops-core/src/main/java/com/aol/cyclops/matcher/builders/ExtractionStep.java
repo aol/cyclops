@@ -1,6 +1,6 @@
 package com.aol.cyclops.matcher.builders;
 
-import com.aol.cyclops.matcher.Extractor;
+import com.aol.cyclops.matcher2.Extractor;
 @Deprecated
 public interface ExtractionStep<T,R,X> {
 

@@ -1,4 +1,4 @@
-package com.aol.cyclops.matcher;
+package com.aol.cyclops.matcher2;
 
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
@@ -29,20 +29,9 @@ import com.aol.cyclops.sequence.SequenceM;
  */
 public class Extractors {
 	
-	private static final Object NOT_SET = new Object();
 	
-	private static final Map<Class,Function> decomposers= new HashMap<>();
 	
-	/**
-	 * Register decomposition function in standard hashmap
-	 * Global mutable state - use with care
-	 * 
-	 * @param c Class to decompose
-	 * @param f Function to do decomposition
-	 */
-	public static final <T,R> void registerDecompositionFunction(Class<T> c, Function<T,R> f){
-		decomposers.put(c, f);
-	}
+	
 	/**
 	 * An extractor that caches the extraction result
 	 * 
@@ -64,12 +53,9 @@ public class Extractors {
 		return input -> {
 			if(input instanceof  Decomposable)
 				return (R)((Decomposable)input).unapply();
-			else if(decomposers.get(input.getClass())!=null)
-				return (R)decomposers.get(input.getClass()).apply(input);
 			else if(input instanceof Iterable)
 				return (R)input;
-			
-			return (R)ReflectionCache.getUnapplyMethod(input.getClass()).map(unchecked(m->m.invoke(input))).orElse(AsDecomposable.asDecomposable(input).unapply());
+			return (R)input;
 			
 		};
 	}

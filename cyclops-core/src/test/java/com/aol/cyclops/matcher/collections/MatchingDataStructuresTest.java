@@ -1,5 +1,5 @@
 package com.aol.cyclops.matcher.collections;
-import static com.aol.cyclops.matcher.Predicates.ANY;
+import static com.aol.cyclops.matcher2.Predicates.ANY;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.anything;
@@ -18,9 +18,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.matcher.CollectionMatcher;
-import com.aol.cyclops.matcher.Extractors;
 import com.aol.cyclops.matcher.builders.Matching;
+import com.aol.cyclops.matcher2.CollectionMatcher;
+import com.aol.cyclops.matcher2.Extractors;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

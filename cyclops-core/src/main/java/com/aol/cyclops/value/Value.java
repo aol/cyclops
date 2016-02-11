@@ -31,6 +31,7 @@ import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.lambda.monads.Foldable;
+import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.trycatch.Failure;
@@ -193,4 +194,5 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, ValueObject<T>, Conv
 	default SimpleReactStream<T> toSimpleReact() {
 		return new SimpleReact().react(this);
 	}
+	
 }

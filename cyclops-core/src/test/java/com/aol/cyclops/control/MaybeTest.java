@@ -688,21 +688,12 @@ public class MaybeTest {
 
 	@Test
 	public void testMatches() {
-		assertThat(just.mayMatch(c->c.hasValues(10).then(i->"hello")),equalTo(Maybe.of("hello")));
-		assertThat(just.mayMatch(c->c.hasValues(1).then(i->"hello"),
-								c->c.hasValues(2).then(i->"hello")),equalTo(Maybe.of("hello")));
-		assertThat(just.mayMatch(c->c.hasValues(1).then(i->"hello"),
-								 c->c.hasValues(2).then(i->"hello"),
-								 c->c.hasValues(3).then(i->"hello")),equalTo(Maybe.none()));
-		assertThat(just.mayMatch(c->c.hasValues(1).then(i->"hello1"),
-				 				 c->c.hasValues(2).then(i->"hello2"),
-				 				 c->c.hasValues(10).then(i->"hello3"),
-				 				  c->c.hasValues(3).then(i->"hello4")),equalTo(Maybe.of("hello3")));
-		assertThat(just.mayMatch(c->c.hasValues(1).then(i->"hello1"),
-								 c->c.hasValues(2).then(i->"hello2"),
-								 c->c.hasValues(12).then(i->"hello3"),
-								 c->c.hasValues(3).then(i->"hello4"),
-								 c->c.hasValues(10).then(i->"hello5")),equalTo(Maybe.of("hello5")));
+		assertThat(just.mayMatch(c->c.values(i->"hello",10)),equalTo(Maybe.of("hello")));
+		assertThat(just.mayMatch(c->c.values(i->"hello",1).values(i->"hello",2)),equalTo(Maybe.of("hello")));
+		assertThat(just.mayMatch(c->c.just(i->"hello",1)
+									 .values(i->"hello",2)
+									 .values(i->"hello",3)),equalTo(Maybe.none()));
+		
 	}
 
 	

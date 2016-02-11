@@ -15,11 +15,11 @@ import lombok.experimental.Wither;
 
 import org.hamcrest.Matcher;
 
-import com.aol.cyclops.matcher.TypedFunction;
-import com.aol.cyclops.matcher.Extractor;
 import com.aol.cyclops.matcher.builders.CaseBuilder.InCaseOfBuilder;
 import com.aol.cyclops.matcher.builders.CaseBuilder.InCaseOfBuilderExtractor;
 import com.aol.cyclops.matcher.builders.CaseBuilder.InMatchOfBuilder;
+import com.aol.cyclops.matcher2.Extractor;
+import com.aol.cyclops.matcher2.TypedFunction;
 
 /**
  * Pattern Matcher Case Builder for matching against a single element

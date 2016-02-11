@@ -6,8 +6,8 @@ import lombok.AllArgsConstructor;
 
 import org.hamcrest.Matcher;
 
-import com.aol.cyclops.matcher.Action;
-import com.aol.cyclops.matcher.TypedFunction;
+import com.aol.cyclops.matcher2.Action;
+import com.aol.cyclops.matcher2.TypedFunction;
 @AllArgsConstructor
 @Deprecated
 public class InMatchOfManyStep2 <R,V,T,X>{

@@ -39,9 +39,9 @@ import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.lambda.monads.ExtendedTraversable;
 import com.aol.cyclops.lambda.monads.Filterable;
 import com.aol.cyclops.lambda.monads.Unit;
-import com.aol.cyclops.matcher.Case;
 import com.aol.cyclops.matcher.builders.CheckValues;
-import com.aol.cyclops.matcher.recursive.Matchable;
+import com.aol.cyclops.matcher2.Case;
+import com.aol.cyclops.matcher2.Matchable;
 import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.HotStream;
 import com.aol.cyclops.sequence.Monoid;
@@ -579,55 +579,6 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 		
 		return (CollectionX<R>)ZippingApplicativable.super.patternMatch(defaultValue, case1);
 	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function)
-	 */
-	@Override
-	default <R> CollectionX<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case2) {
-		
-		return (CollectionX<R>)ZippingApplicativable.super.patternMatch(defaultValue, case1, case2);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function)
-	 */
-	@Override
-	default <R> CollectionX<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3) {
-		
-		return (CollectionX<R>)ZippingApplicativable.super.patternMatch(defaultValue, fn1, fn2, fn3);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
-	 */
-	@Override
-	default <R> CollectionX<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4){
-
-		return (CollectionX<R>)ZippingApplicativable.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4);
-	
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
-	 */
-	@Override
-	default <R> CollectionX<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn5) {
-		
-		return (CollectionX<R>)ZippingApplicativable.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4, fn5);
-	}
-	
-
 	
 	
     

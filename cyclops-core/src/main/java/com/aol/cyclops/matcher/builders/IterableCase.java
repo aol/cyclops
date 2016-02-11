@@ -9,9 +9,9 @@ import java.util.stream.Stream;
 import org.hamcrest.Matcher;
 import org.jooq.lambda.tuple.Tuple;
 
-import com.aol.cyclops.matcher.Extractor;
-import com.aol.cyclops.matcher.Predicates;
-import com.aol.cyclops.matcher.TypedFunction;
+import com.aol.cyclops.matcher2.Extractor;
+import com.aol.cyclops.matcher2.Predicates;
+import com.aol.cyclops.matcher2.TypedFunction;
 import com.aol.cyclops.sequence.SequenceM;
 
 import lombok.AccessLevel;

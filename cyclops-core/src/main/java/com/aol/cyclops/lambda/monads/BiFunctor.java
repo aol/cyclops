@@ -8,8 +8,8 @@ import java.util.function.Predicate;
 
 import org.hamcrest.Matcher;
 
-import com.aol.cyclops.matcher.Case;
-import com.aol.cyclops.matcher.Cases;
+import com.aol.cyclops.matcher2.Case;
+import com.aol.cyclops.matcher2.Cases;
 import com.aol.cyclops.trampoline.Trampoline;
 
 

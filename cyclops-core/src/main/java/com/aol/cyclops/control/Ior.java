@@ -23,8 +23,8 @@ import com.aol.cyclops.lambda.applicative.Applicative;
 import com.aol.cyclops.lambda.monads.BiFunctor;
 import com.aol.cyclops.lambda.monads.Filterable;
 import com.aol.cyclops.lambda.monads.Functor;
-import com.aol.cyclops.matcher.Case;
 import com.aol.cyclops.matcher.builders.CheckValues;
+import com.aol.cyclops.matcher2.Case;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
@@ -85,6 +85,12 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 	Optional<Tuple2<ST,PT>> both();
 	default Value<Optional<Tuple2<ST,PT>>> bothValue(){
 		return ()->both();
+	}
+	@Override
+	default <R> Xor<ST,R> patternMatch(R defaultValue,
+			Function<CheckValues<? super PT, R>, CheckValues<? super PT, R>> case1) {
+		
+		return (Xor<ST,R>)Applicativable.super.patternMatch(defaultValue, case1);
 	}
 	default <R1,R2> Ior<R1,R2>  bimap(Function<? super ST,? extends R1> fn1,Function<? super PT,? extends R2> fn2){
 		Eval<Ior<R1,R2>> ptMap = (Eval)Eval.later(()->this.map(fn2)); //force unused secondary to required

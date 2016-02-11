@@ -5,10 +5,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.aol.cyclops.collections.extensions.CollectionX;
-import com.aol.cyclops.matcher.Case;
-import com.aol.cyclops.matcher.Cases;
 import com.aol.cyclops.matcher.builders.CheckValues;
-import com.aol.cyclops.matcher.recursive.Matchable;
+import com.aol.cyclops.matcher2.Case;
+import com.aol.cyclops.matcher2.Cases;
+import com.aol.cyclops.matcher2.Matchable;
 import com.aol.cyclops.trampoline.Trampoline;
 
 
@@ -77,7 +77,28 @@ public interface Functor<T> {
 	 }
 	
 	
-	
+	 /**
+     * Transform the elements of this Stream with a Pattern Matching case and default value
+     *
+     * <pre>
+     * {@code
+     * List<String> result = CollectionX.of(1,2,3,4)
+                                              .patternMatch(
+                                                        c->c.valuesWhere(i->"even", (Integer i)->i%2==0 )
+                                                      )
+     * }
+     * // CollectionX["odd","even","odd","even"]
+     * </pre>
+     *
+     *
+     * @param defaultValue Value if supplied case doesn't match
+     * @param case1 Function to generate a case (or chain of cases as a single case)
+     * @return CollectionX where elements are transformed by pattern matching
+     */
+    default <R> Functor<R> patternMatch(R defaultValue,Function<CheckValues<? super T,R>,CheckValues<? super T,R>> case1){
+
+        return  map(u-> Matchable.of(u).mayMatch(case1).orElse(defaultValue));
+    }
 
 	
 	

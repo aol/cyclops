@@ -1,7 +1,7 @@
 package com.aol.cyclops.matcher.builders;
 
-import com.aol.cyclops.matcher.Action;
-import com.aol.cyclops.matcher.TypedFunction;
+import com.aol.cyclops.matcher2.Action;
+import com.aol.cyclops.matcher2.TypedFunction;
 
 public interface Step<T,X> {
 

@@ -6,8 +6,8 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.matcher.Cases;
-import com.aol.cyclops.matcher.TypedFunction;
+import com.aol.cyclops.matcher2.Cases;
+import com.aol.cyclops.matcher2.TypedFunction;
 import com.aol.cyclops.objects.Decomposable;
 
 import lombok.AllArgsConstructor;
@@ -62,8 +62,8 @@ public class RecursiveMatcherInstance <T, X> implements Function<T, Maybe<X>> {
 	 * unapply method will be used. Otherwise in Extractors it is possible to register Decomposition Funcitons that will unapply Case classes from other sources (e.g.
 	 * javaslang, jADT or even Scala). If no Decomposition Function has been registered, reflection will be used to call an unapply method on the Case class if it exists.
 	 * 
-	 * @see com.aol.cyclops.matcher.Extractors#decompose
-	 * @see com.aol.cyclops.matcher.Extractors#registerDecompositionFunction
+	 * @see com.aol.cyclops.matcher2.Extractors#decompose
+	 * @see com.aol.cyclops.matcher2.Extractors#registerDecompositionFunction
 	 * 
 	 * @param a Action from which the Predicate (by param type) and Function will be extracted to build a Pattern Matching case
 	 * @return Next step in Case builder

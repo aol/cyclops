@@ -7,9 +7,13 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import com.aol.cyclops.featuretoggle.FeatureToggle;
 import com.aol.cyclops.lambda.applicative.Applicativable;
+import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.Unit;
+import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.trampoline.Trampoline;
 import com.aol.cyclops.value.Value;
 
 import lombok.ToString;
@@ -37,7 +41,7 @@ import lombok.ToString;
  * @param <T>
  */
 @ToString
-public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Value<T>, Applicativable<T>{
+public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Value<T>, Functor<T>, Applicativable<T>{
 	private final static Object UNSET = new Object();
 	private AtomicReference value = new AtomicReference<>(UNSET);
 	private final AtomicBoolean set= new AtomicBoolean(false);
@@ -89,6 +93,12 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Value<T>, App
 			return (LazyImmutable)this;
 		else
 			return LazyImmutable.of(fn.apply(val));
+	}
+	@Override
+	public <R> LazyImmutable<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
+		
+		return ( LazyImmutable<R>)Applicativable.super.patternMatch(defaultValue, case1);
 	}
 	
 	/**
@@ -172,6 +182,33 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Value<T>, App
 	@Override
 	public LazyImmutable<T> toLazyImmutable() {
 		return this;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
+	 */
+	@Override
+	public <U> LazyImmutable<U> cast(Class<U> type) {
+		
+		return (LazyImmutable<U>)Applicativable.super.cast(type);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
+	 */
+	@Override
+	public LazyImmutable<T> peek(Consumer<? super T> c) {
+		
+		return (LazyImmutable<T>)Applicativable.super.peek(c);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#trampoline(java.util.function.Function)
+	 */
+	@Override
+	public <R> LazyImmutable<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+		
+		return (LazyImmutable<R>)Applicativable.super.trampoline(mapper);
 	}
 	
 	

@@ -32,7 +32,7 @@ import com.aol.cyclops.functions.currying.PartialApplicator;
 import com.aol.cyclops.invokedynamic.CheckedTriFunction;
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.matcher.builders.CheckValues;
-import com.aol.cyclops.matcher.recursive.Matchable;
+import com.aol.cyclops.matcher2.Matchable;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.monad.functions.LiftMFunctions;
 import com.aol.cyclops.sequence.SequenceM;
@@ -399,32 +399,7 @@ public class FluentFunctions {
 		public <R1 >FluentSupplier<R1> matches(R1 defaultValue,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case1){
 			return FluentFunctions.of(()->Matchable.of(fn.get()).mayMatch(case1).orElse(defaultValue));
 		}
-		public <R1 >FluentSupplier<R1> matches(R1 defaultValue,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case1,
-									Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case2){
-			
-			return FluentFunctions.of(()->Matchable.of(fn.get()).mayMatch(case1,case2).orElse(defaultValue));
-		}
-		public <R1 >FluentSupplier<R1> matches(R1 defaultValue,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case1,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case2,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case3){
-
-			return FluentFunctions.of(()->Matchable.of(fn.get()).mayMatch(case1,case2,case3).orElse(defaultValue));
-		}
-		public <R1 >FluentSupplier<R1> matches(R1 defaultValue,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case1,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case2,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case3,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case4){
-
-			return FluentFunctions.of(()->Matchable.of(fn.get()).mayMatch(case1,case2,case3,case4).orElse(defaultValue));
-		}
-		public <R1 >FluentSupplier<R1> matches(R1 defaultValue,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case1,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case2,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case3,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case4,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case5){
-
-			return FluentFunctions.of(()->Matchable.of(fn.get()).mayMatch(case1,case2,case3,case4,case5).orElse(defaultValue));
-		}
-			
+		
 		
 		public SequenceM<R> generate(){
 			return SequenceM.generate(fn);
@@ -571,31 +546,7 @@ public class FluentFunctions {
 		
 			return FluentFunctions.of(t->Matchable.of(fn.apply(t)).mayMatch(case1).orElse(defaultValue));
 		}
-		public <R1> FluentFunction<T,R1> matches(R1 defaultValue,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case1,
-									Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case2){
-			
-			return FluentFunctions.of(t->Matchable.of(fn.apply(t)).mayMatch(case1,case2).orElse(defaultValue));
-		}
-		public <R1> FluentFunction<T,R1> matches(R1 defaultValue,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case1,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case2,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case3){
-
-			return FluentFunctions.of(t->Matchable.of(fn.apply(t)).mayMatch(case1,case2,case3).orElse(defaultValue));
-		}
-		public <R1> FluentFunction<T,R1> matches(R1 defaultValue,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case1,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case2,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case3,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case4){
-
-			return FluentFunctions.of(t->Matchable.of(fn.apply(t)).mayMatch(case1,case2,case3,case4).orElse(defaultValue));
-		}
-		public <R1> FluentFunction<T,R1> matches(R1 defaultValue,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case1,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case2,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case3,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case4,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case5){
-
-			return FluentFunctions.of(t->Matchable.of(fn.apply(t)).mayMatch(case1,case2,case3,case4,case5).orElse(defaultValue));
-		}
+		
 		/**
 		 * Generate an infinite Stream that iterates from the specified seed using the currently wrapped function
 		 * 
@@ -762,31 +713,7 @@ public class FluentFunctions {
 		public <R1> FluentBiFunction<T1,T2,R1> matches(R1 defaultValue,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case1){
 			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).mayMatch(case1).orElse(defaultValue));
 		}
-		public <R1> FluentBiFunction<T1,T2,R1> matches(R1 defaultValue,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case1,
-									Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case2){
-			
-			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).mayMatch(case1,case2).orElse(defaultValue));
-		}
-		public <R1> FluentBiFunction<T1,T2,R1> matches(R1 defaultValue,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case1,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case2,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case3){
-
-			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).mayMatch(case1,case2,case3).orElse(defaultValue));
-		}
-		public <R1> FluentBiFunction<T1,T2,R1> matches(R1 defaultValue,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case1,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case2,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case3,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case4){
-
-			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).mayMatch(case1,case2,case3,case4).orElse(defaultValue));
-		}
-		public <R1> FluentBiFunction<T1,T2,R1> matches(R1 defaultValue,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case1,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case2,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case3,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case4,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case5){
-
-			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).mayMatch(case1,case2,case3,case4,case5).orElse(defaultValue));
-		}
+		
 		
 		public SequenceM<R> iterate(T1 seed1,T2 seed2,Function<R,Tuple2<T1,T2>> mapToTypeAndSplit){
 			return SequenceM.iterate(fn.apply(seed1,seed2),t->{ 
@@ -936,31 +863,7 @@ public class FluentFunctions {
 		public <R1> FluentTriFunction<T1,T2,T3,R1> matches(R1 defaultValue,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case1){
 			return FluentFunctions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).mayMatch(case1).orElse(defaultValue));
 		}
-		public <R1> FluentTriFunction<T1,T2,T3,R1> matches(R1 defaultValue,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case1,
-									Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case2){
-			
-			return FluentFunctions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).mayMatch(case1,case2).orElse(defaultValue));
-		}
-		public <R1> FluentTriFunction<T1,T2,T3,R1> matches(R1 defaultValue,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case1,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case2,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case3){
-
-			return FluentFunctions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).mayMatch(case1,case2,case3).orElse(defaultValue));
-		}
-		public <R1> FluentTriFunction<T1,T2,T3,R1> matches(R1 defaultValue,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case1,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case2,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case3,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case4){
-
-			return FluentFunctions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).mayMatch(case1,case2,case3,case4).orElse(defaultValue));
-		}
-		public <R1> FluentTriFunction<T1,T2,T3,R1> matches(R1 defaultValue,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case1,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case2,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case3,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case4,
-				Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case5){
-
-			return FluentFunctions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).mayMatch(case1,case2,case3,case4,case5).orElse(defaultValue));
-		}
+		
 		
 		public SequenceM<R> iterate(T1 seed1,T2 seed2,T3 seed3,Function<R,Tuple3<T1,T2,T3>> mapToType){
 			return SequenceM.iterate(fn.apply(seed1,seed2,seed3),t->{ 

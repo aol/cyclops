@@ -170,86 +170,68 @@ public class FluentSupplierTest {
 	@Test
 	public void testMatches1(){
 		assertThat(FluentFunctions.of(this::getOne)	
-					   .matches(-1,c->c.hasValues(1).then(i->3))
+					   .matches(-1,c->c.just(i->4,1))
 					   .get(),equalTo(3));
 	}
 
 	@Test
 	public void testMatches1Default(){
 		assertThat(FluentFunctions.of(this::getOne)	
-					   .matches(-1,c->c.hasValues(4).then(i->3))
+					   .matches(-1,c->c.just(i->4,4))
 					   .get(),equalTo(-1));
 	}
 	@Test
 	public void testMatches2(){
 		assertThat(FluentFunctions.of(this::getOne)	
-					   .matches(-1,c->c.hasValues(4).then(i->30),
-							   			c->c.hasValues(1).then(i->3))
+					   .matches(-1,c->c.just(i->4,4)
+							   		   .just(i->4,1))
 					   .get(),equalTo(3));
 	}
 
 	@Test
 	public void testMatches2Default(){
 		assertThat(FluentFunctions.of(this::getOne)	
-					   .matches(-1,c->c.hasValues(4).then(i->3),
-							   		c->c.hasValues(103).then(i->8))
+					   .matches(-1,c->c.just(i->4,4).just(i->4,103))
 					   .get(),equalTo(-1));
 	}
 	@Test
 	public void testMatches3(){
 		assertThat(FluentFunctions.of(this::getOne)	
-				   .matches(-1,c->c.hasValues(4).then(i->30),
-						   			c->c.hasValues(8).then(i->32),
-						   			c->c.hasValues(1).then(i->3))
+				   .matches(-1,c->c.just(i->4,4).just(i->4,8)
+						   			.just(i->4,1))
 				   .get(),equalTo(3));
 	}
 
 	@Test
 	public void testMatches3Default(){
 		assertThat(FluentFunctions.of(this::getOne)	
-					   .matches(-1,c->c.hasValues(4).then(i->3),
-							   		c->c.hasValues(8).then(i->32),
-							   		c->c.hasValues(103).then(i->8))
+					   .matches(-1,c->c.just(i->4,4).just(i->4,8).just(i->4,103))
 					   .get(),equalTo(-1));
 	}
 	@Test
 	public void testMatches4(){
 		assertThat(FluentFunctions.of(this::getOne)	
-				   .matches(-1,c->c.hasValues(4).then(i->30),
-						   		c->c.hasValues(40).then(i->38),
-						   			c->c.hasValues(8).then(i->32),
-						   			c->c.hasValues(1).then(i->3))
+				   .matches(-1,c->c.just(i->4,4).just(i->4,40).just(i->4,8).just(i->4,1))
 				   .get(),equalTo(3));
 	}
 
 	@Test
 	public void testMatches4Default(){
 		assertThat(FluentFunctions.of(this::getOne)	
-					   .matches(-1,c->c.hasValues(12).then(i->3),
-							   		c->c.hasValues(40).then(i->38),
-							   		c->c.hasValues(8).then(i->32),
-							   		c->c.hasValues(103).then(i->8))
+					   .matches(-1,c->c.just(i->4,12).just(i->4,40).just(i->4,8).just(i->4,103))
 					   .get(),equalTo(-1));
 	}
 	@Test
 	public void testMatches5(){
 		assertThat(FluentFunctions.of(this::getOne)	
-				   .matches(-1,c->c.hasValues(4).then(i->30),
-						   		c->c.hasValues(5).then(i->50),
-						   		c->c.hasValues(40).then(i->38),
-						   			c->c.hasValues(8).then(i->32),
-						   			c->c.hasValues(1).then(i->3))
+				   .matches(-1,c->c.just(i->4,4).just(i->4,5).just(i->4,40).just(i->4,8).just(i->4,1))
 				   .get(),equalTo(3));
 	}
 
 	@Test
 	public void testMatches5Default(){
 		assertThat(FluentFunctions.of(this::getOne)	
-					   .matches(-1,c->c.hasValues(4).then(i->3),
-							   		c->c.hasValues(5).then(i->50),
-							   		c->c.hasValues(40).then(i->38),
-							   		c->c.hasValues(8).then(i->32),
-							   		c->c.hasValues(103).then(i->8))
+					   .matches(-1,c->c.just(i->4,4).just(i->4,5).just(i->4,40).just(i->4,8).just(i->4,103))
 					   .get(),equalTo(-1));
 	}
 	

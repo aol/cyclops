@@ -1,6 +1,6 @@
 package com.aol.cyclops.matcher;
 
-import static com.aol.cyclops.matcher.Extractors.get;
+import static com.aol.cyclops.matcher2.Extractors.get;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.matcher.builders.Matching;
 import com.aol.cyclops.matcher.builders.PatternMatcher;
+import com.aol.cyclops.matcher2.Extractors;
 
 public class HamcrestTest {
 

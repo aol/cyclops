@@ -1,7 +1,7 @@
 package com.aol.cyclops.matcher;
 
-import static com.aol.cyclops.matcher.Predicates.__;
-import static com.aol.cyclops.matcher.Predicates.hasValues;
+import static com.aol.cyclops.matcher2.Predicates.__;
+import static com.aol.cyclops.matcher2.Predicates.hasValues;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -21,6 +21,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.matcher.builders.Matching;
+import com.aol.cyclops.matcher2.Case;
+import com.aol.cyclops.matcher2.EmptyCase;
+import com.aol.cyclops.matcher2.Predicates;
+import com.aol.cyclops.matcher2.TypedFunction;
 import com.aol.cyclops.objects.Decomposable;
 
 public class CaseTest {

@@ -11,11 +11,11 @@ import java.util.stream.Stream;
 
 import org.hamcrest.Matcher;
 
-import com.aol.cyclops.matcher.Cases;
-import com.aol.cyclops.matcher.TypedFunction;
 import com.aol.cyclops.matcher.builders.CaseBuilder.InCaseOfBuilder;
 import com.aol.cyclops.matcher.builders.CaseBuilder.InMatchOfBuilder;
-import com.aol.cyclops.matcher.recursive.Matchable;
+import com.aol.cyclops.matcher2.Cases;
+import com.aol.cyclops.matcher2.Matchable;
+import com.aol.cyclops.matcher2.TypedFunction;
 
 /**
  * Pattern Matching builder

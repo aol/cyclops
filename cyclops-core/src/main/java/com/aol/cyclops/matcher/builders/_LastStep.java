@@ -2,9 +2,9 @@ package com.aol.cyclops.matcher.builders;
 
 import java.util.function.Predicate;
 
-import lombok.AllArgsConstructor;
+import com.aol.cyclops.matcher2.TypedFunction;
 
-import com.aol.cyclops.matcher.TypedFunction;
+import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public  class _LastStep<R,V,T> {

@@ -1,10 +1,11 @@
 package com.aol.cyclops.matcher;
 
 import lombok.val;
-import static com.aol.cyclops.matcher.Predicates.__;
-import static com.aol.cyclops.matcher.Predicates.type;
-import static com.aol.cyclops.matcher.Predicates.hasValues;
+
 import static org.junit.Assert.*;
+import static com.aol.cyclops.matcher2.Predicates.__;
+import static com.aol.cyclops.matcher2.Predicates.hasValues;
+import static com.aol.cyclops.matcher2.Predicates.type;
 import static org.hamcrest.Matchers.is;
 
 import org.junit.Before;

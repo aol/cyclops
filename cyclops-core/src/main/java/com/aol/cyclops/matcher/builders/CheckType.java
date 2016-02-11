@@ -2,14 +2,14 @@ package com.aol.cyclops.matcher.builders;
 
 import java.util.function.Function;
 
+import com.aol.cyclops.matcher2.Case;
+import com.aol.cyclops.matcher2.Cases;
+import com.aol.cyclops.matcher2.TypedFunction;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
-
-import com.aol.cyclops.matcher.TypedFunction;
-import com.aol.cyclops.matcher.Case;
-import com.aol.cyclops.matcher.Cases;
 @AllArgsConstructor
 public class CheckType<R> extends CaseBeingBuilt{
 	@Getter(AccessLevel.PACKAGE)

@@ -13,7 +13,7 @@ import lombok.Value;
 
 import org.junit.Test;
 
-import com.aol.cyclops.matcher.recursive.Matchable;
+import com.aol.cyclops.matcher2.Matchable;
 public class AsValueTest {
 /**
 	@Test

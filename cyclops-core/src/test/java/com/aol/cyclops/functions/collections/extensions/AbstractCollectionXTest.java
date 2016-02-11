@@ -1057,8 +1057,8 @@ public abstract class AbstractCollectionXTest {
 	public void patternTest1(){
 		List<String> result = of(1,2,3,4)
 								         .patternMatch("",
-													  	c->c.hasValuesWhere( (Integer i)->i%2==0 ).then(i->"even"),
-													  	c->c.hasValuesWhere( (Integer i)->i%2!=0).then(i->"odd")
+													  	c->c.where(i->"even", (Integer i)->i%2==0 )
+													  	    .where( i->"odd",(Integer i)->i%2!=0)
 													  )
 											  .toListX();
 		assertThat(result,equalTo(Arrays.asList("odd","even","odd","even")));
@@ -1066,7 +1066,7 @@ public abstract class AbstractCollectionXTest {
 	@Test
 	public void patternTest2(){
 		List<String> result = of(1,2,3,4)
-										.patternMatch("n/a",c->c.hasValues(1).then(i->"one"))
+										.patternMatch("n/a",c->c.just(i->"one",1))
 											 .toListX();
 		assertThat(result,equalTo(Arrays.asList("one","n/a","n/a","n/a")));
 	}
@@ -1075,10 +1075,10 @@ public abstract class AbstractCollectionXTest {
 		List<String> result = of(new MyCase(1,2),new MyCase(3,4))
 											
 											  .patternMatch("n/a",
-													  c->c.hasValues(1,2).then(i->"one"),
-													  c->c.hasValues(3,4).then(i->"two"),
-													  c->c.hasValues(1,4).then(i->"three"),
-													  c->c.hasValues(2,3).then(i->"four")
+													  c->c.values(i->"one",1,2)
+													      .values(i->"two",3,4)
+													      .values(i->"three",1,4)
+													      .values(i->"four",2,3)
 													  
 													  
 													  )
@@ -1090,9 +1090,9 @@ public abstract class AbstractCollectionXTest {
 		
 		List<String> result = of(new MyCase2(1,2),new MyCase2(3,4))
 											  .patternMatch("n/a",
-													  c->c.hasValues(1,2).then(i->"one"),
-													  c->c.hasValues(3,4).then(i->"two"),
-													  c->c.hasValues(5,6).then(i->"three")
+													  c->c.values(i->"one",1,2)
+													      .values(i->"two",3,4)
+													      .values(i->"three",5,6)
 													  )
 											  .toListX();
 		assertThat(result,equalTo(Arrays.asList("one","two")));

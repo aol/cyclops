@@ -1,6 +1,6 @@
 package com.aol.cyclops.matcher;
 
-import static com.aol.cyclops.matcher.Predicates.ANY;
+import static com.aol.cyclops.matcher2.Predicates.ANY;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 

@@ -17,6 +17,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.lambda.api.Printable;
 import com.aol.cyclops.matcher.builders.PatternMatcher;
+import com.aol.cyclops.matcher2.Extractors;
 public class ListMatchingTest implements Printable{
 
 	

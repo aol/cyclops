@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 import org.jooq.lambda.tuple.Tuple2;
 
-import com.aol.cyclops.matcher.ChainOfResponsibility;
+import com.aol.cyclops.matcher2.ChainOfResponsibility;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

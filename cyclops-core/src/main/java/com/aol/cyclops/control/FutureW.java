@@ -16,8 +16,8 @@ import com.aol.cyclops.lambda.applicative.Applicativable;
 import com.aol.cyclops.lambda.monads.ConvertableFunctor;
 import com.aol.cyclops.lambda.monads.FlatMap;
 import com.aol.cyclops.lambda.monads.ToAnyM;
-import com.aol.cyclops.matcher.Case;
 import com.aol.cyclops.matcher.builders.CheckValues;
+import com.aol.cyclops.matcher2.Case;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.trampoline.Trampoline;
@@ -51,6 +51,12 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 	@Override
 	public <R> FutureW<R> map(Function<? super T, ? extends R> fn) {
 		return new FutureW<R>(future.thenApply(fn));
+	}
+	@Override
+	public <R> FutureW<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
+		
+		return (FutureW<R>)Applicativable.super.patternMatch(defaultValue, case1);
 	}
 
 	@Override

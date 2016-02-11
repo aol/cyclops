@@ -26,8 +26,8 @@ import com.aol.cyclops.collections.extensions.standard.MutableCollectionX;
 import com.aol.cyclops.lambda.monads.Filterable;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.Traversable;
-import com.aol.cyclops.matcher.Case;
 import com.aol.cyclops.matcher.builders.CheckValues;
+import com.aol.cyclops.matcher2.Case;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
@@ -504,52 +504,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 		
 		return (PersistentCollectionX)FluentCollectionX.super.patternMatch(defaultValue, case1);
 	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function)
-	 */
-	@Override
-	default <R> PersistentCollectionX<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case2) {
-		
-		return (PersistentCollectionX)FluentCollectionX.super.patternMatch(defaultValue, case1, case2);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function)
-	 */
-	@Override
-	default <R> PersistentCollectionX<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3) {
-		
-		return (PersistentCollectionX)FluentCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
-	 */
-	@Override
-	default <R> PersistentCollectionX<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4) {
-		
-		return (PersistentCollectionX)FluentCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
-	 */
-	@Override
-	default <R> PersistentCollectionX<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn5) {
-		
-		return (PersistentCollectionX)FluentCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4, fn5);
-	}
+	
 	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#permutations()

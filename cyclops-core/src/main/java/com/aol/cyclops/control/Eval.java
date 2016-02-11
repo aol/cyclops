@@ -1,4 +1,5 @@
 package com.aol.cyclops.control;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
@@ -135,6 +136,22 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>,  Applicativa
 		public Eval<T> toEvalNow() {
 			return this;
 		}
+		/* (non-Javadoc)
+		 * @see java.lang.Object#hashCode()
+		 */
+		@Override
+		public int hashCode() {
+			return get().hashCode();
+		}
+		/* (non-Javadoc)
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		@Override
+		public boolean equals(Object obj) {
+			if(!(obj instanceof Eval))
+				return false;
+			return Objects.equals(get(), ((Eval)obj).get());
+		}
 		
 	}
 	
@@ -169,6 +186,23 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>,  Applicativa
 		public Eval<T> toEvalLater() {
 			return this;
 		}
+		/* (non-Javadoc)
+		 * @see java.lang.Object#hashCode()
+		 */
+		@Override
+		public int hashCode() {
+			return get().hashCode();
+		}
+		/* (non-Javadoc)
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		@Override
+		public boolean equals(Object obj) {
+			if(!(obj instanceof Eval))
+				return false;
+			return Objects.equals(get(), ((Eval)obj).get());
+		}
+		
 		
 		
 		
@@ -200,6 +234,22 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>,  Applicativa
 		@Override
 		public Eval<T> toEvalAlways() {
 			return this;
+		}
+		/* (non-Javadoc)
+		 * @see java.lang.Object#hashCode()
+		 */
+		@Override
+		public int hashCode() {
+			return get().hashCode();
+		}
+		/* (non-Javadoc)
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		@Override
+		public boolean equals(Object obj) {
+			if(!(obj instanceof Eval))
+				return false;
+			return Objects.equals(get(), ((Eval)obj).get());
 		}
 		
 	}

@@ -1,4 +1,4 @@
-package com.aol.cyclops.matcher;
+package com.aol.cyclops.matcher2;
 
 import java.io.Serializable;
 import java.lang.invoke.MethodType;

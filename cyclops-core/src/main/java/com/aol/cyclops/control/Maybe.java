@@ -30,6 +30,7 @@ import com.aol.cyclops.lambda.applicative.ApplicativeBuilder;
 import com.aol.cyclops.lambda.monads.ConvertableFunctor;
 import com.aol.cyclops.lambda.monads.Filterable;
 import com.aol.cyclops.lambda.monads.Functor;
+import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.trampoline.Trampoline;
 import com.aol.cyclops.value.Value;
@@ -172,6 +173,12 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, 
 	default <R> Maybe<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 		
 		return (Maybe<R>)Applicativable.super.trampoline(mapper);
+	}
+	@Override
+	default <R> Maybe<R> patternMatch(R defaultValue,
+			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
+		
+		return (Maybe<R>)Applicativable.super.patternMatch(defaultValue, case1);
 	}
 
 

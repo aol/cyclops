@@ -1,4 +1,4 @@
-package com.aol.cyclops.matcher.comprehenders;
+package com.aol.cyclops.comprehensions.comprehenders;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.lambda.api.Comprehender;
-import com.aol.cyclops.matcher.Case;
+import com.aol.cyclops.matcher2.Case;
 
 public class CaseComprehender implements Comprehender<Case>{
 

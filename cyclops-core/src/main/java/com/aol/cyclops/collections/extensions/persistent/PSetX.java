@@ -25,8 +25,8 @@ import com.aol.cyclops.Reducer;
 import com.aol.cyclops.collections.PSets;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
-import com.aol.cyclops.matcher.Case;
 import com.aol.cyclops.matcher.builders.CheckValues;
+import com.aol.cyclops.matcher2.Case;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.trampoline.Trampoline;
@@ -615,53 +615,5 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 		
 		return (PSetX<R>)PersistentCollectionX.super.patternMatch(defaultValue, case1);
 	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function)
-	 */
-	@Override
-	default <R> PSetX<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case2) {
-		
-		return (PSetX<R>)PersistentCollectionX.super.patternMatch(defaultValue, case1, case2);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function)
-	 */
-	@Override
-	default <R> PSetX<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3) {
-		
-		return (PSetX<R>)PersistentCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
-	 */
-	@Override
-	default <R> PSetX<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4) {
-		
-		return (PSetX<R>)PersistentCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
-	 */
-	@Override
-	default <R> PSetX<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn5) {
-		
-		return (PSetX<R>)PersistentCollectionX.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4, fn5);
-	}
 	
-	
-
 }

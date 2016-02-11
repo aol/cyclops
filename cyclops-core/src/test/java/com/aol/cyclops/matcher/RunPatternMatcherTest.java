@@ -2,8 +2,8 @@ package com.aol.cyclops.matcher;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
-import static com.aol.cyclops.matcher.Extractors.at;
 import static com.aol.cyclops.matcher.TestPredicates.rangeChecker;
+import static com.aol.cyclops.matcher2.Extractors.at;
 import static org.hamcrest.Matchers.*;
 
 import java.util.List;
@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.aol.cyclops.matcher.builders.PatternMatcher;
+import com.aol.cyclops.matcher2.Extractors;
 import com.google.common.collect.ImmutableList;
 
 public class RunPatternMatcherTest {

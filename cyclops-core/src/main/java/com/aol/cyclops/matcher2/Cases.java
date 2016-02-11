@@ -1,4 +1,4 @@
-package com.aol.cyclops.matcher;
+package com.aol.cyclops.matcher2;
 
 import java.util.Arrays;
 import java.util.List;

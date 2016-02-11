@@ -5,8 +5,8 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.matcher.Cases;
-import com.aol.cyclops.matcher.TypedFunction;
+import com.aol.cyclops.matcher2.Cases;
+import com.aol.cyclops.matcher2.TypedFunction;
 import com.aol.cyclops.objects.Decomposable;
 
 import lombok.AllArgsConstructor;

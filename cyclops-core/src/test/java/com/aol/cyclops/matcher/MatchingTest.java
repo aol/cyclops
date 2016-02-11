@@ -1,7 +1,7 @@
 package com.aol.cyclops.matcher;
 
-import static com.aol.cyclops.matcher.Extractors.at;
-import static com.aol.cyclops.matcher.Extractors.get;
+import static com.aol.cyclops.matcher2.Extractors.at;
+import static com.aol.cyclops.matcher2.Extractors.get;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
