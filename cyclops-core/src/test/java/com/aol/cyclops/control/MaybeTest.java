@@ -39,8 +39,6 @@ import com.aol.cyclops.lambda.applicative.Applicativable.Applicatives;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.Reducers;
 import com.aol.cyclops.streams.StreamUtils;
-import com.aol.cyclops.trampoline.Trampoline;
-import com.aol.cyclops.trycatch.Try;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 
@@ -164,8 +162,8 @@ public class MaybeTest {
 
 	@Test
 	public void testWhenFunctionOfQsuperTQextendsRSupplierOfQextendsR() {
-		assertThat(just.when(i->i+1,()->20),equalTo(11));
-		assertThat(none.when(i->i+1,()->20),equalTo(20));
+		assertThat(just.visit(i->i+1,()->20),equalTo(11));
+		assertThat(none.visit(i->i+1,()->20),equalTo(20));
 	}
 
 	@Test
@@ -593,8 +591,8 @@ public class MaybeTest {
 	
 	@Test
 	public void testWhenFunctionOfQsuperMaybeOfTQextendsR() {
-		assertThat(just.when(s->"hello", ()->"world"),equalTo("hello"));
-		assertThat(none.when(s->"hello", ()->"world"),equalTo("world"));
+		assertThat(just.visit(s->"hello", ()->"world"),equalTo("hello"));
+		assertThat(none.visit(s->"hello", ()->"world"),equalTo("world"));
 	}
 
 	

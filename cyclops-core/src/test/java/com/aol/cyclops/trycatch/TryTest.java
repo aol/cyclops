@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 
 import org.junit.Test;
 
+import com.aol.cyclops.control.Try;
 import com.aol.cyclops.lambda.tuple.PTuple2;
 import com.aol.cyclops.lambda.tuple.PowerTuples;
 public class TryTest {

@@ -13,19 +13,14 @@ import java.util.stream.Stream;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.closures.immutable.LazyImmutable;
 import com.aol.cyclops.closures.mutable.Mutable;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.dynamic.As;
 import com.aol.cyclops.functions.Functions;
 import com.aol.cyclops.lambda.api.Mappable;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.matcher.builders.ADTPredicateBuilder;
-import com.aol.cyclops.matcher.builders.ElementCase;
-import com.aol.cyclops.matcher.builders.IterableCase;
-import com.aol.cyclops.matcher.builders.Matching;
-import com.aol.cyclops.matcher.builders.MatchingInstance;
-import com.aol.cyclops.matcher.builders.StreamCase;
 import com.aol.cyclops.matcher2.Case;
 import com.aol.cyclops.matcher2.Cases;
-import com.aol.cyclops.matcher2.CollectionMatcher;
 import com.aol.cyclops.matcher2.Extractors;
 import com.aol.cyclops.matcher2.Matchable;
 import com.aol.cyclops.matcher2.Predicates;
@@ -35,7 +30,6 @@ import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.Reducers;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.StreamUtils;
-import com.aol.cyclops.trampoline.Trampoline;
 import com.aol.cyclops.value.StreamableValue;
 import com.aol.cyclops.value.ValueObject;
 
@@ -48,7 +42,7 @@ public class Core extends Functions {
 	 * @param action Function that is executed on succesful match
 	 * @return New Case instance
 	 */
-	public static <T,R,X extends Function<T,R>> Case<T,R,X> caseOf(Predicate<T> predicate,X action){
+	public static <T,R> Case<T,R> caseOf(Predicate<T> predicate,Function<? super T,? extends R> action){
 		return Case.of(predicate,action);
 	}
 	/**
@@ -58,7 +52,7 @@ public class Core extends Functions {
 	 * @param cases Array of cases to build Cases instance from 
 	 * @return New Cases instance (sequential)
 	 */
-	public static <T,R,X extends Function<T,R>>  Cases<T,R,X> casesOf(Case<T,R,X>... cases){
+	public static <T,R>  Cases<T,R> casesOf(Case<T,R>... cases){
 		return Cases.of(cases);
 	}
 	
@@ -438,56 +432,7 @@ public class Core extends Functions {
 		return StreamUtils.collect(stream, collectors);
 	}
 	
-
-	/**
-	 *
-	 *Create a Pattern Matcher Builder from supplied Cases
-	 * 
-	 * @param cases to match on
-	 * @return Pattern Mather Builder
-	 */
-	public static final <T,X> MatchingInstance<T,X> matchOf(Cases<T,X,? extends Function<T,X>> cases){
-		return Matching.of(cases);
-	}
 	
-	
-	/**
-	 * Create a builder for Matching against a provided Object as is (i.e. the Steps this builder provide assume you don't wish to disaggregate it and
-	 * match on it's decomposed parts separately).
-	 * 
-	 * Allows matching by type, value, JDK 8 Predicate, or Hamcrest Matcher
-	 * 
-	 * @return Simplex Element based Pattern Matching Builder
-	 */
-	public static final<X> ElementCase<X> matchWhen(){
-		return Matching.when();
-	}
-	
-	/**
-	 * Create a builder for matching on the disaggregated elements of a collection.
-	 * 
-	 * Allows matching by type, value, JDK 8 Predicate, or Hamcrest Matcher per element
-	 * 
-	 * @return Iterable / Collection based Pattern Matching Builder
-	 */
-	public static final<USER_VALUE> IterableCase<USER_VALUE> matchWhenIterable(){
-		return CollectionMatcher.whenIterable();
-	}
-	
-	/**
-	 * Create a builder that builds Pattern Matching Cases from Streams of data.
-	 * 
-	 * 
-	 * @return Stream based Pattern Matching Builder
-	 */
-	public static final  StreamCase matchWhenFromStream(){
-		return CollectionMatcher.whenFromStream();
-	}
-	
-	
-	
-	
-
 	
 	/**
 	 * Lift a function so it accepts a Monad and returns a Monad (simplex view of a wrapped Monad)

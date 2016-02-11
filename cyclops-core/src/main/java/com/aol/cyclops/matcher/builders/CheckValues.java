@@ -45,6 +45,7 @@ public class CheckValues<T,R> {
 		return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,result,
 				predicates)).withType(clazz);
 	}
+	@SafeVarargs @SuppressWarnings({ "rawtypes", "unchecked" })
 	public final <V> CheckValues<T,R> just(Function<? super T,? extends R> result,V... values) {	
 		Predicate predicate = it -> Optional.of(it)
 				.map(v -> v.getClass().isAssignableFrom(clazz))
@@ -59,6 +60,7 @@ public class CheckValues<T,R> {
 		return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate, result,
 				predicates)).withType(clazz);
 	}
+	@SafeVarargs @SuppressWarnings({ "rawtypes", "unchecked" })
 	public final <V> CheckValues<T,R> justWhere(Function<? super T,? extends R> result,Predicate<V>... values){
 		Predicate predicate = it -> Optional.of(it)
 				.map(v -> v.getClass().isAssignableFrom(clazz))
@@ -88,6 +90,7 @@ public class CheckValues<T,R> {
 		return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate, result,
 				predicates)).withType(clazz);
 	}
+	@SafeVarargs @SuppressWarnings({ "rawtypes", "unchecked" })
 	public final <V> CheckValues<T,R> justMatch( Function<? super T,? extends R> result,Matcher<V>... values){
 		Predicate predicate = it -> Optional.of(it)
 				.map(v -> v.getClass().isAssignableFrom(clazz))

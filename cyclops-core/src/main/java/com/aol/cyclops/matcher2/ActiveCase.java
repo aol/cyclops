@@ -27,13 +27,13 @@ import lombok.Getter;
  * @param <X> Type of Function - cyclops pattern matching builders use ActionWithReturn which is serialisable and retains type info
  */
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
-public final class ActiveCase<T,R,X extends Function<T,R>> implements Case<T,R,X>{
+public final class ActiveCase<T,R> implements Case<T,R>{
 	
-	private final Tuple2<Predicate<T>,X> pattern;
+	private final Tuple2<Predicate<? super T>,Function<? super T, ? extends R>> pattern;
 	@Getter
 	private final boolean empty=false;
 	
-	public Tuple2<Predicate<T>,X> get(){
+	public Tuple2<Predicate<? super T>,Function<? super T, ? extends R>> get(){
 		return pattern;
 	}
 	

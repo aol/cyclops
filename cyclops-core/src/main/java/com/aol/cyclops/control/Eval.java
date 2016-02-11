@@ -17,7 +17,6 @@ import com.aol.cyclops.lambda.applicative.Applicative;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.Unit;
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.trampoline.Trampoline;
 import com.aol.cyclops.value.Value;
 
 import lombok.EqualsAndHashCode;

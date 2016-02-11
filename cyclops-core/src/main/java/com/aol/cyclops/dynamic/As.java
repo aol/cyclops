@@ -3,6 +3,7 @@ package com.aol.cyclops.dynamic;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.lambda.api.AsFunctor;
 import com.aol.cyclops.lambda.api.AsGenericMonoid;
 import com.aol.cyclops.lambda.api.AsMappable;
@@ -16,7 +17,6 @@ import com.aol.cyclops.objects.Decomposable;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.sequence.streamable.Streamable;
-import com.aol.cyclops.trampoline.Trampoline;
 import com.aol.cyclops.value.AsStreamableValue;
 import com.aol.cyclops.value.AsValue;
 import com.aol.cyclops.value.StreamableValue;

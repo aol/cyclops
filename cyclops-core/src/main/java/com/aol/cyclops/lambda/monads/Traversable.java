@@ -47,7 +47,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * ListX.of(1,2,3,4,5,6,7,8,9)
 			 .dropRight(5)
 			 .plus(10)
-			 .when((x,xs) ->
+			 .visit((x,xs) ->
 				 xs.join(x.when(some->some>2?"hello":"world",()->"NIL"))
 			 );
 	 * 
@@ -60,7 +60,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * @param match
 	 * @return
 	 */
-	default <R> R when(BiFunction<? super Maybe<T>,? super SequenceM<T>,? extends R> match ){
+	default <R> R visit(BiFunction<? super Maybe<T>,? super SequenceM<T>,? extends R> match ){
 		
 		HeadAndTail<T> ht = this.headAndTail();
 		return match.apply(ht.headMaybe(),ht.tail());

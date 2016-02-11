@@ -7,13 +7,13 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.featuretoggle.FeatureToggle;
 import com.aol.cyclops.lambda.applicative.Applicativable;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.Unit;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.trampoline.Trampoline;
 import com.aol.cyclops.value.Value;
 
 import lombok.ToString;

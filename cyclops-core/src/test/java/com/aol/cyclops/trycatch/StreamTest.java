@@ -14,6 +14,8 @@ import java.nio.file.Paths;
 
 import org.junit.Test;
 
+import com.aol.cyclops.control.Try;
+
 public class StreamTest {
 
 	@Test

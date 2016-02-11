@@ -22,6 +22,7 @@ import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.collections.extensions.FluentMapX;
 import com.aol.cyclops.collections.extensions.persistent.PMapX;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.lambda.monads.BiFunctor;
 import com.aol.cyclops.lambda.monads.Foldable;
@@ -35,7 +36,6 @@ import com.aol.cyclops.lambda.monads.Filterable;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.traits.SequenceMCollectable;
 import com.aol.cyclops.streams.StreamUtils;
-import com.aol.cyclops.trampoline.Trampoline;
 
 
 public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,

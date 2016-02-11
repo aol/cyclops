@@ -131,7 +131,7 @@ public class Disabled<F> implements FeatureToggle<F>{
 	 * @see com.aol.cyclops.featuretoggle.FeatureToggle#when(java.util.function.Function, java.util.function.Supplier)
 	 */
 	@Override
-	public <R> R when(Function<? super F, ? extends R> enabled, Function<? super F, ? extends R> disabled) {
+	public <R> R visit(Function<? super F, ? extends R> enabled, Function<? super F, ? extends R> disabled) {
 		return disabled.apply(get());
 	}
 }

@@ -28,7 +28,6 @@ import com.aol.cyclops.matcher2.Case;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
-import com.aol.cyclops.trampoline.Trampoline;
 import com.aol.cyclops.value.Value;
 
 import lombok.AccessLevel;
@@ -102,7 +101,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 		
 		return Ior.both(stMap.get(),ptMap.get());
 	}
-	default <R1,R2> Ior<R1,R2> when(Function<? super ST,? extends R1> secondary, 
+	default <R1,R2> Ior<R1,R2> visit(Function<? super ST,? extends R1> secondary, 
 			Function<? super PT,? extends R2> primary){
 		if(isSecondary())
 			return (Ior<R1,R2>)swap().map(secondary);

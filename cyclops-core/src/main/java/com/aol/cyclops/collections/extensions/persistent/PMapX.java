@@ -15,6 +15,7 @@ import org.pcollections.HashTreePMap;
 import org.pcollections.PMap;
 
 import com.aol.cyclops.collections.extensions.FluentMapX;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.lambda.monads.BiFunctor;
 import com.aol.cyclops.lambda.monads.ExtendedTraversable;
 import com.aol.cyclops.lambda.monads.Foldable;
@@ -23,7 +24,6 @@ import com.aol.cyclops.lambda.monads.IterableCollectable;
 import com.aol.cyclops.lambda.monads.IterableFilterable;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.traits.SequenceMCollectable;
-import com.aol.cyclops.trampoline.Trampoline;
 
 public interface PMapX<K, V> extends PMap<K, V>, 
 									 FluentMapX<K,V>,

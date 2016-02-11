@@ -1,6 +1,7 @@
 package com.aol.cyclops.matcher2;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -167,25 +168,154 @@ public interface Matchable<TYPE>{
 	
 	public static interface MatchableIterable<TYPE> extends Matchable<TYPE>{
 		
-		default <R> Eval<R> when(BiFunction<? super Maybe<TYPE>,? super SequenceM<TYPE>,? extends R> match ){
+		default <R> Eval<R> visit(BiFunction<? super Maybe<TYPE>,? super SequenceM<TYPE>,? extends R> match ){
 			@SuppressWarnings("unchecked")
 			Iterable<TYPE> it = (Iterable<TYPE>)getMatchable();
-			return Eval.later(()->SequenceM.fromIterable(it).when(match));	
+			return Eval.later(()->SequenceM.fromIterable(it).visit(match));	
 		}	
+		default Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> toTuple5(Object o){
+			Iterator it = ((Iterable)o).iterator();
+			return Tuple.tuple((TYPE)(it.hasNext() ?it.next():null),
+					(TYPE)(it.hasNext() ?it.next():null),
+					(TYPE)(it.hasNext() ?it.next():null),
+					(TYPE)(it.hasNext() ?it.next():null),
+					(TYPE)(it.hasNext() ?it.next():null));
+		}
+		default MatchableTuple1<TYPE> on$1____(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple1<TYPE>(it.v1);
+		}
+		default MatchableTuple1<TYPE> on$_2___(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple1<TYPE>(it.v2);
+		}
+		default MatchableTuple1<TYPE> on$__3__(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple1<TYPE>(it.v3);
+		}
+		default MatchableTuple1<TYPE> on$___4_(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple1<TYPE>(it.v4);
+		}
+		default MatchableTuple1<TYPE> on$____5(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple1<TYPE>(it.v5);
+		}
+		default MatchableTuple2<TYPE,TYPE> on$12___(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple2<TYPE,TYPE>(it.v1,it.v2);
+		}
+		default MatchableTuple2<TYPE,TYPE> on$1_3__(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple2<TYPE,TYPE>(it.v1,it.v3);
+		}
+		default MatchableTuple2<TYPE,TYPE> on$1__4_(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple2<TYPE,TYPE>(it.v1,it.v4);
+		}
+		default MatchableTuple2<TYPE,TYPE> on$1___5(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple2<TYPE,TYPE>(it.v1,it.v5);
+		}
+		default MatchableTuple2<TYPE,TYPE> on$_23__(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple2<TYPE,TYPE>(it.v2,it.v3);
+		}
+		default MatchableTuple2<TYPE,TYPE> on$_2_4_(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple2<TYPE,TYPE>(it.v2,it.v4);
+		}
+		default MatchableTuple2<TYPE,TYPE> on$_2__5(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple2<TYPE,TYPE>(it.v2,it.v5);
+		}
+		default MatchableTuple2<TYPE,TYPE> on$__34_(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple2<TYPE,TYPE>(it.v3,it.v4);
+		}
+		default MatchableTuple2<TYPE,TYPE> on$__3_5(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple2<TYPE,TYPE>(it.v3,it.v5);
+		}
+		default MatchableTuple2<TYPE,TYPE> on$___45(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple2<TYPE,TYPE>(it.v4,it.v5);
+		}
+		
+		default MatchableTuple3<TYPE,TYPE,TYPE> on$123__(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple3<TYPE,TYPE,TYPE>(it.v1,it.v2,it.v3);
+		}
+		default MatchableTuple3<TYPE,TYPE,TYPE> on$12_4_(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple3<TYPE,TYPE,TYPE>(it.v1,it.v2,it.v4);
+		}
+		default MatchableTuple3<TYPE,TYPE,TYPE> on$12__5(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple3<TYPE,TYPE,TYPE>(it.v1,it.v2,it.v5);
+		}
+		default MatchableTuple3<TYPE,TYPE,TYPE> on$1_34_(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple3<TYPE,TYPE,TYPE>(it.v1,it.v3,it.v4);
+		}
+		default MatchableTuple3<TYPE,TYPE,TYPE> on$1_3_5(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple3<TYPE,TYPE,TYPE>(it.v1,it.v3,it.v5);
+		}
+		default MatchableTuple3<TYPE,TYPE,TYPE> on$1__45(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple3<TYPE,TYPE,TYPE>(it.v1,it.v4,it.v5);
+		}
+	
+		default MatchableTuple3<TYPE,TYPE,TYPE> on$_234_(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple3<TYPE,TYPE,TYPE>(it.v2,it.v3,it.v4);
+		}
+		default MatchableTuple3<TYPE,TYPE,TYPE> on$_23_5(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple3<TYPE,TYPE,TYPE>(it.v2,it.v3,it.v5);
+		}
+		default MatchableTuple3<TYPE,TYPE,TYPE> on$__345(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple3<TYPE,TYPE,TYPE>(it.v3,it.v4,it.v5);
+		}
+		default MatchableTuple4<TYPE,TYPE,TYPE,TYPE> on$1234_(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple4<TYPE,TYPE,TYPE,TYPE>(it.v1,it.v2,it.v3,it.v4);
+		}
+		default MatchableTuple4<TYPE,TYPE,TYPE,TYPE> on$123_5(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple4<TYPE,TYPE,TYPE,TYPE>(it.v1,it.v2,it.v3,it.v5);
+		}
+		default MatchableTuple4<TYPE,TYPE,TYPE,TYPE> on$12_45(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple4<TYPE,TYPE,TYPE,TYPE>(it.v1,it.v2,it.v4,it.v5);
+		}
+		default MatchableTuple4<TYPE,TYPE,TYPE,TYPE> on$1_345(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple4<TYPE,TYPE,TYPE,TYPE>(it.v1,it.v3,it.v4,it.v5);
+		}
+		default MatchableTuple4<TYPE,TYPE,TYPE,TYPE> on$_2345(){
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			return ()->new Tuple4<TYPE,TYPE,TYPE,TYPE>(it.v2,it.v3,it.v4,it.v5);
+		}
+		
 	}
 	public static interface MatchableTuple1<T1> extends Matchable<Object>{
 		Tuple1<T1> getMatchable();
-		default <R> R when(Function<? super T1,? extends R> some,Supplier<? extends R> none ){
+		default <R> R visit(Function<? super T1,? extends R> some,Supplier<? extends R> none ){
 			@SuppressWarnings("unchecked")
 			Tuple1<T1> it = (Tuple1<T1>)getMatchable();
 			
-			return  Maybe.ofNullable(it.v1).when(some, none);
+			return  Maybe.ofNullable(it.v1).visit(some, none);
 		}	
+		
+		
 	}
 	
 	public static interface MatchableTuple2<T1,T2> extends Matchable<Object>{
 		Tuple2<T1,T2> getMatchable();
-		default <R> R when(BiFunction<? super Maybe<T1>,? super Maybe<T2>,? extends R> match ){
+		default <R> R visit(BiFunction<? super Maybe<T1>,? super Maybe<T2>,? extends R> match ){
 			@SuppressWarnings("unchecked")
 			Tuple2<T1,T2> it = (Tuple2<T1,T2>)getMatchable();
 			return  match.apply(Maybe.ofNullable(it.v1), Maybe.ofNullable(it.v2));
@@ -203,7 +333,7 @@ public interface Matchable<TYPE>{
 	
 	public static interface MatchableTuple3<T1,T2,T3> extends Matchable<Object>{
 		Tuple3<T1,T2,T3> getMatchable();
-		default <R> Eval<R> when(TriFunction<? super Maybe<T1>,? super Maybe<T2>,? super Maybe<T3>,? extends R> match ){
+		default <R> Eval<R> visit(TriFunction<? super Maybe<T1>,? super Maybe<T2>,? super Maybe<T3>,? extends R> match ){
 			@SuppressWarnings("unchecked")
 			Tuple3<T1,T2,T3> it = (Tuple3<T1,T2,T3>)getMatchable();
 			return  Eval.later(()->match.apply(Maybe.ofNullable(it.v1), Maybe.ofNullable(it.v2),Maybe.ofNullable(it.v3)));
@@ -236,7 +366,7 @@ public interface Matchable<TYPE>{
 	}
 	public static interface MatchableTuple4<T1,T2,T3,T4> extends Matchable<Object>{
 		Tuple4<T1,T2,T3,T4> getMatchable();
-		default <R> Eval<R> when(QuadFunction<? super Maybe<T1>,? super Maybe<T2>,? super Maybe<T3>,? super Maybe<T4>,? extends R> match ){
+		default <R> Eval<R> visit(QuadFunction<? super Maybe<T1>,? super Maybe<T2>,? super Maybe<T3>,? super Maybe<T4>,? extends R> match ){
 			@SuppressWarnings("unchecked")
 			Tuple4<T1,T2,T3,T4> it = (Tuple4<T1,T2,T3,T4>)getMatchable();
 			return  Eval.later(()->match.apply(Maybe.ofNullable(it.v1), Maybe.ofNullable(it.v2),Maybe.ofNullable(it.v3),Maybe.ofNullable(it.v4)));
@@ -305,7 +435,7 @@ public interface Matchable<TYPE>{
 	}
 	public static interface MatchableTuple5<T1,T2,T3,T4,T5> extends Matchable<Object>{
 		Tuple5<T1,T2,T3,T4,T5> getMatchable();
-		default <R> Eval<R> when(QuintFunction<? super Maybe<T1>,? super Maybe<T2>,? super Maybe<T3>,? super Maybe<T4>,? super Maybe<T5>,? extends R> match ){
+		default <R> Eval<R> visit(QuintFunction<? super Maybe<T1>,? super Maybe<T2>,? super Maybe<T3>,? super Maybe<T4>,? super Maybe<T5>,? extends R> match ){
 			@SuppressWarnings("unchecked")
 			Tuple5<T1,T2,T3,T4,T5> it = (Tuple5<T1,T2,T3,T4,T5>)getMatchable();
 			return  Eval.later(()->match.apply(Maybe.ofNullable(it.v1), Maybe.ofNullable(it.v2),Maybe.ofNullable(it.v3),Maybe.ofNullable(it.v4),Maybe.ofNullable(it.v5)));

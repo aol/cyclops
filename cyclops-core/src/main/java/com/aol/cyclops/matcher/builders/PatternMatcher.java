@@ -73,14 +73,6 @@ public class PatternMatcher implements Function{
 	public <T,X> Function<T,X> asUnwrappedFunction(){
 		return cases.asUnwrappedFunction();
 	}
-	/**
-	 * @return Pattern Matcher as a function that will return a Stream of results
-	 */
-	public <T,X> Function<T,Stream<X>> asStreamFunction(){
-		
-		return	cases.asStreamFunction();
-	}
-	
 	
 	
 	
@@ -93,36 +85,7 @@ public class PatternMatcher implements Function{
 		return match(t);
 	}
 	
-	/**
-	 * Each input element can generated multiple matched values
-	 * 
-	 * @param s  Stream of data to match against (input to matcher)
-	 * @return Stream of values from matched cases
-	 */
-	public<R> Stream<R> matchManyFromStream(Stream s){
-		return s.flatMap(this::matchMany);
-	}
 	
-	/**
-	 * 
-	 * @param t input to match against - can generate multiple values
-	 * @return Stream of values from matched cases for the input
-	 */
-	public<R> Stream<R> matchMany(Object t) {
-		return cases.matchMany(t);
-		
-	}
-	
-	/**
-	 * Each input element can generated a single matched value
-	 * 
-	 * @param s Stream of data to match against (input to matcher)
-	 * @return Stream of matched values, one case per input value can match
-	 */
-	public <R> Stream<R> matchFromStream(Stream s){
-		
-		return cases.matchFromStream(s);
-	}
 	/**
 	 * Aggregates supplied objects into a List for matching against
 	 * 
@@ -156,68 +119,54 @@ public class PatternMatcher implements Function{
 
 	
 	
-	private Object extractIfType(Object t,Extractor extractor){
-		try{
+	private Object extractIfType(Object t, Extractor extractor) {
+		try {
 			MethodType type = extractor.getType();
-			if(type.parameterCount()==0)
-				return t; //can't get parameter types for MethodReferences
-			return type.parameterType(type.parameterCount() - 1).isAssignableFrom(t.getClass()) ? extractor.apply(t) : t;
-	
-		}catch(ClassCastException e){ // MethodReferences will result in ClassCastExceptions
+			if (type.parameterCount() == 0)
+				return t; // can't get parameter types for MethodReferences
+			return type.parameterType(type.parameterCount() - 1).isAssignableFrom(t.getClass()) ? extractor.apply(t)
+					: t;
+
+		} catch (ClassCastException e) { // MethodReferences will result in
+											// ClassCastExceptions
 
 		}
 		return t;
 	}
-		
-	private Predicate extractorPredicate(Extractor extractor, Predicate p){
-		if(extractor ==null)
+
+	private Predicate extractorPredicate(Extractor extractor, Predicate p) {
+		if (extractor == null)
 			return p;
-		
-			
-		return t -> p.test(extractIfType(t,extractor));
+
+		return t -> p.test(extractIfType(t, extractor));
 	}
-	private Function extractorAction(Extractor extractor, Function action){
-		if(extractor==null)
+
+	private Function extractorAction(Extractor extractor, Function action) {
+		if (extractor == null)
 			return action;
 		return input -> action.apply(extractor.apply(input));
 	}
 
+	public <T, V, X> PatternMatcher inCaseOfManyType(Predicate master, Function<? super T, ? extends X> a,
+			Predicate<V>... predicates) {
 
-	
-	
-	
-	
-	
-	
-	 public <T,V,X> PatternMatcher inCaseOfManyType(Predicate master,Function<? super T,? extends X> a,
-    		 Predicate<V>... predicates){
-		
-		 SequenceM<Predicate<V>> pred = SequenceM.of(predicates);
-		
-		
-		return inCaseOf(it -> master.test(it) && seq(Extractors.decompose().apply(it))
-				.zip(pred,(a1,b1)->Tuple.tuple(a1,b1)).peek(System.out::println)
-				.map(t -> t.v2.test((V)t.v1)).allMatch(v->v==true), a);
-		
+		SequenceM<Predicate<V>> pred = SequenceM.of(predicates);
+
+		return inCaseOf(it -> master.test(it)
+				&& seq(Extractors.decompose().apply(it)).zip(pred, (a1, b1) -> Tuple.tuple(a1, b1))
+						.map(t -> t.v2.test((V) t.v1)).allMatch(v -> v == true),
+				a);
+
 	}
-	 
-	
-    
+
 	private List wrapInList(Object a) {
-		if(a instanceof List)
-			return (List)a;
+		if (a instanceof List)
+			return (List) a;
 		else
 			return Arrays.asList(a);
 	}
-
 	
-	
-
-	
-	
-	
-	
-	
+		
 	public <V,X> PatternMatcher inCaseOf(Predicate<V> match,Function<? super V,? extends X> a){
 		return inCaseOfThenExtract(match, a, null);
 		
@@ -227,18 +176,6 @@ public class PatternMatcher implements Function{
 		return withCases(cases.append(index(),Case.of(match,extractorAction(extractor,a))));
 		
 	}
-	
-	
-	
-	
-	
-	
-	/**hamcrest **/
-	
-	
-	
-	
-
 	
 	private int index() {
 		return cases.size();

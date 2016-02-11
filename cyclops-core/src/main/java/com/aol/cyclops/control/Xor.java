@@ -29,7 +29,6 @@ import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
-import com.aol.cyclops.trampoline.Trampoline;
 import com.aol.cyclops.value.Value;
 
 import lombok.AccessLevel;
@@ -120,7 +119,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 			return sequenceSecondary(xors).map(s->s.reduce(reducer.reducer()).get());
 	}
 	
-	default <R1,R2> Xor<R1,R2> when(Function<? super ST,? extends R1> secondary, 
+	default <R1,R2> Xor<R1,R2> visit(Function<? super ST,? extends R1> secondary, 
 			Function<? super PT,? extends R2> primary){
 		if(isSecondary())
 			return (Xor<R1,R2>)swap().map(secondary);

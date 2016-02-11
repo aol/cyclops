@@ -24,12 +24,12 @@ import org.pcollections.TreePVector;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.collections.PVectors;
 import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.matcher2.Case;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.trampoline.Trampoline;
 
 public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	

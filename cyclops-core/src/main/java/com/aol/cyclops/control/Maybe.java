@@ -32,7 +32,6 @@ import com.aol.cyclops.lambda.monads.Filterable;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.trampoline.Trampoline;
 import com.aol.cyclops.value.Value;
 
 import lombok.AccessLevel;
@@ -107,7 +106,7 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, 
 	Maybe<T> recover(T value);
 	<R> Maybe<R> map(Function<? super T, ? extends R> mapper);
 	<R>  Maybe<R> flatMap(Function<? super T, ? extends Maybe<? extends R>> mapper);
-	<R> R when(Function<? super T,? extends R> some, 
+	<R> R visit(Function<? super T,? extends R> some, 
 						Supplier<? extends R> none);
 	
 	
@@ -202,7 +201,7 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, 
 				return this;
 			return EMPTY;
 		}
-		public <R> R when(Function<? super T,? extends R> some, 
+		public <R> R visit(Function<? super T,? extends R> some, 
 				Supplier<? extends R> none){
 			return map(some).get();
 		}
@@ -261,7 +260,7 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, 
 		public Maybe<T> recover(Supplier<T> value){
 			return new Just<>(Eval.later(value));
 		}
-		public <R> R when(Function<? super T,? extends R> some, 
+		public <R> R visit(Function<? super T,? extends R> some, 
 				Supplier<? extends R> none){
 			return none.get();
 		}

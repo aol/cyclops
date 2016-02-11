@@ -54,8 +54,8 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>{
 	public T get();
 	
 	
-	default <R> R when(Function<? super T,? extends R> present,Supplier<? extends R> absent){
-		return Maybe.ofNullable(get()).when(present, absent);
+	default <R> R visit(Function<? super T,? extends R> present,Supplier<? extends R> absent){
+		return Maybe.ofNullable(get()).visit(present, absent);
 	}
 	default T orElseGet(Supplier<? extends T> value){
 		return toOptional().orElseGet(value);

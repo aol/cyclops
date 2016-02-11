@@ -1,18 +1,15 @@
-package com.aol.cyclops.trycatch;
+package com.aol.cyclops.lambda.monads.transformers;
 
 
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.jooq.lambda.function.Function1;
 
-import com.aol.cyclops.lambda.monads.transformers.OptionalT;
+import com.aol.cyclops.control.Try;
+import com.aol.cyclops.control.Try.Success;
 import com.aol.cyclops.monad.AnyM;
 
 

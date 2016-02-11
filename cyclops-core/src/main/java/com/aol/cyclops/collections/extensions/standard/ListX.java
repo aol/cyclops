@@ -26,6 +26,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.functions.QuadFunction;
 import com.aol.cyclops.functions.QuintFunction;
 import com.aol.cyclops.functions.TriFunction;
@@ -49,7 +50,6 @@ import com.aol.cyclops.matcher2.Case;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
-import com.aol.cyclops.trampoline.Trampoline;
 
 public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenceX<T>, Comparable<T>,IterableFunctor<T>,ZippingApplicativable<T> {
 	

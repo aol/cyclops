@@ -29,6 +29,7 @@ import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.collections.extensions.standard.MapX;
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.lambda.monads.Foldable;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.IterableCollectable;
@@ -48,7 +49,6 @@ import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.sequence.traits.SequenceMCollectable;
-import com.aol.cyclops.trampoline.Trampoline;
 
 //pattern match, for comprehensions
 public interface CollectionX<T> extends ExtendedTraversable<T>,

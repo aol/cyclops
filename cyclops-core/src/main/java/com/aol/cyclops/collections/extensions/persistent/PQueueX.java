@@ -23,12 +23,12 @@ import com.aol.cyclops.Reducer;
 import com.aol.cyclops.collections.PQueues;
 import com.aol.cyclops.collections.PSets;
 import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.matcher2.Case;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.trampoline.Trampoline;
 
 public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
 	

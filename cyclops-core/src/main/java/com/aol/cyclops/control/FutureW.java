@@ -20,7 +20,6 @@ import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.matcher2.Case;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.trampoline.Trampoline;
 import com.aol.cyclops.value.Value;
 
 import lombok.AllArgsConstructor;
@@ -139,7 +138,7 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 		return this.future;
 	}
 	
-	public <R> FutureW<R> when(Function<? super T, R> success, Function<Throwable, R> failure){
+	public <R> FutureW<R> visit(Function<? super T, R> success, Function<Throwable, R> failure){
 		return FutureW.of(future.thenApply(success).exceptionally(failure));
 	}
 	/* (non-Javadoc)

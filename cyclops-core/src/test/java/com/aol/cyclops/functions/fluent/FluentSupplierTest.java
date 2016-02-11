@@ -18,9 +18,9 @@ import java.util.function.Supplier;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.aol.cyclops.control.Try;
 import com.aol.cyclops.functions.fluent.FluentFunctions.FluentSupplier;
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.trycatch.Try;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 

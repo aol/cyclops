@@ -5,11 +5,11 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.aol.cyclops.collections.extensions.CollectionX;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.matcher2.Case;
 import com.aol.cyclops.matcher2.Cases;
 import com.aol.cyclops.matcher2.Matchable;
-import com.aol.cyclops.trampoline.Trampoline;
 
 
 /* 

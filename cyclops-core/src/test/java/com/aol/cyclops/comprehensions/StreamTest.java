@@ -23,8 +23,8 @@ import org.junit.Test;
 
 import com.aol.cyclops.comprehensions.donotation.UntypedDo;
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.trampoline.Trampoline;
 
 public class StreamTest {
 	@Test

@@ -23,9 +23,9 @@ import lombok.Getter;
  * @param <R> Return type
  */
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
-public final class EmptyCase<T,R> implements Case<T,R,Function<T,R>>{
+public final class EmptyCase<T,R> implements Case<T,R>{
 	
-	private final Tuple2<Predicate<T>,Function<T,R>> pattern = Tuple.<Predicate<T>,Function<T,R>>tuple(t->false,input->null);
+	private final Tuple2<Predicate<? super T>,Function<? super T,? extends R>> pattern = Tuple.<Predicate<? super T>,Function<? super T,? extends R>>tuple(t->false,input->null);
 	@Getter
 	private final boolean empty =true;
 	
@@ -33,7 +33,7 @@ public final class EmptyCase<T,R> implements Case<T,R,Function<T,R>>{
 	public  Optional<R> match(T value){
 		return Optional.empty();
 	}
-	public Tuple2<Predicate<T>,Function<T,R>> get(){
+	public Tuple2<Predicate<? super T>,Function<? super T,? extends R>> get(){
 		return pattern;
 	}
 

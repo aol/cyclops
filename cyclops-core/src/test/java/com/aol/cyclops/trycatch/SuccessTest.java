@@ -19,6 +19,8 @@ import java.util.stream.Stream;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.aol.cyclops.control.Try;
+
 public class SuccessTest {
 
 	Success<Integer,FileNotFoundException> success;

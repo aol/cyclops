@@ -23,6 +23,7 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.lambda.monads.Traversable;
 import com.aol.cyclops.matcher.builders.CheckValues;
@@ -31,7 +32,6 @@ import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
-import com.aol.cyclops.trampoline.Trampoline;
 
 public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	

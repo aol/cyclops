@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
+import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.matcher2.Matchable;
@@ -42,10 +43,14 @@ public class MatchableTest {
 	}
 	@Test
 	public void matchTestStructuralAndGuards(){
-	
+		
+	 Matchable.from(()->"hello",()->ListX.of(1,2,3))
+	 			.visit((num,list)-> list.orElse(ListX.empty())
+	 											.visit((x,xs)-> xs.toList()));
+	 			     
 		String v  =new Address(10,"hello","my city").match()
 							   			 .on$12_()
-							   			 .when((house,street)-> 
+							   			 .visit((house,street)-> 
 							   			 	house.<String>mayMatch(c->c.justWhere(in->"valid house",this::isValidHouse))
 							   		            	 .recover("incorrectly configured house")
 							   		            	 .ap2(this::concat)
@@ -66,7 +71,7 @@ public class MatchableTest {
 		String v =new Address(10,"hello","my city")
 										 .match()
 							   			 .on$12_()
-							   			 .when((house,street)-> 
+							   			 .visit((house,street)-> 
 							   					house.filter(this::isValidHouse)
 							   						 .map(i->"valid house")
 							   						 .recover("incorrectly configured house")
@@ -86,9 +91,9 @@ public class MatchableTest {
 		String v = new Customer("test",new Address(10,"hello","my city"))
 										 .match()
 							   			 .on$_2()
-							   			 .when(address ->
+							   			 .visit(address ->
 							   			   		 address.on$12_()
-							   					   		.when((house,street)-> 
+							   					   		.visit((house,street)-> 
 							   									house.filter(this::isValidHouse)
 							   										 .map(i->"valid house")
 							   										 .recover("incorrectly configured house")

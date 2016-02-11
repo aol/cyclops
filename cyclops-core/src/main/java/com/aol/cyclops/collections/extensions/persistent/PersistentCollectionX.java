@@ -23,6 +23,7 @@ import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.collections.extensions.standard.MutableCollectionX;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.lambda.monads.Filterable;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.Traversable;
@@ -31,7 +32,6 @@ import com.aol.cyclops.matcher2.Case;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
-import com.aol.cyclops.trampoline.Trampoline;
 
 public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	@Override

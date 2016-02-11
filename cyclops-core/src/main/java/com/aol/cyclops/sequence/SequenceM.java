@@ -46,6 +46,7 @@ import com.aol.cyclops.Reducer;
 import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.collections.extensions.standard.MapX;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
@@ -70,7 +71,6 @@ import com.aol.cyclops.streams.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.streams.spliterators.ReversingListSpliterator;
 import com.aol.cyclops.streams.spliterators.ReversingRangeIntSpliterator;
 import com.aol.cyclops.streams.spliterators.ReversingRangeLongSpliterator;
-import com.aol.cyclops.trampoline.Trampoline;
 
 
 public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<T>,Functor<T>, ExtendedTraversable<T>,

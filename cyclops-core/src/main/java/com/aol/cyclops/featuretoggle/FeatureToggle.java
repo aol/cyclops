@@ -36,7 +36,7 @@ public interface FeatureToggle<F> extends Supplier<F>, Value<F>, ToStream<F>,App
 	default <T> FeatureToggle<T> unit(T unit){
 		return FeatureToggle.enable(unit);
 	}
-	<R> R when(Function<? super F,? extends R> enabled, 
+	<R> R visit(Function<? super F,? extends R> enabled, 
 			Function<? super F, ? extends R> disabled);
 	
 	@Override

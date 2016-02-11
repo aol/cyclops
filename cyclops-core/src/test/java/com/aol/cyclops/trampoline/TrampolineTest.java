@@ -13,6 +13,8 @@ import lombok.val;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.aol.cyclops.control.Trampoline;
+
 
 public class TrampolineTest {
 
