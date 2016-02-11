@@ -12,10 +12,10 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.collections.extensions.standard.ListX;
-import com.aol.cyclops.control.Try.Failure;
+
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
-import com.aol.cyclops.lambda.applicative.Applicativable;
-import com.aol.cyclops.matcher.builders.CheckValues;
+import com.aol.cyclops.lambda.types.applicative.Applicativable;
+import com.aol.cyclops.matcher2.CheckValues;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.ToStream;

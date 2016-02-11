@@ -8,8 +8,8 @@ import org.pcollections.HashTreePSet;
 import org.pcollections.PSet;
 
 import com.aol.cyclops.Reducer;
+import com.aol.cyclops.Reducers;
 import com.aol.cyclops.collections.extensions.persistent.PSetXImpl;
-import com.aol.cyclops.sequence.Reducers;
 
 /**
  * Convenient companion class for working with Persistent Sets

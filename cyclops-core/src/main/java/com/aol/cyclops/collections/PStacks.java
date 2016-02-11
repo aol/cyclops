@@ -8,7 +8,7 @@ import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.sequence.Reducers;
+import com.aol.cyclops.Reducers;
 /**
  * Class for working with Persistent Stacks from PCollections
  * Roughly Analogous to mutable LinkedLists

@@ -10,6 +10,9 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
+import com.aol.cyclops.data.Mutable;
+import com.aol.cyclops.data.MutableBoolean;
+
 public class MutableBooleanTest {
 
 	@Test

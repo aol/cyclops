@@ -10,8 +10,8 @@ import java.util.stream.Stream;
 
 import org.jooq.lambda.tuple.Tuple2;
 
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
-import com.aol.cyclops.sequence.Monoid;
 
 public interface MonadFunctions<MONAD,T>{
 	<R> Monad<MONAD,T> bind(Function<? super T,? extends R> fn);

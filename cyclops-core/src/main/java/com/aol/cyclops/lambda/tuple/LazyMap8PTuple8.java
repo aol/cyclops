@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 
-import com.aol.cyclops.closures.immutable.LazyImmutable;
+import com.aol.cyclops.data.LazyImmutable;
 
 /**
  * Created by johnmcclean on 5/21/15.

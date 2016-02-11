@@ -8,7 +8,7 @@ import org.pcollections.HashTreePBag;
 import org.pcollections.PBag;
 
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.sequence.Reducers;
+import com.aol.cyclops.Reducers;
 
 public class PBags {
 	

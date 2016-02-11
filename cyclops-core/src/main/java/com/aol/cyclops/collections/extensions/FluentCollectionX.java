@@ -2,7 +2,7 @@ package com.aol.cyclops.collections.extensions;
 
 import java.util.Collection;
 
-import com.aol.cyclops.lambda.monads.Unit;
+import com.aol.cyclops.lambda.types.Unit;
 
 public interface FluentCollectionX<T> extends CollectionX<T> {
 

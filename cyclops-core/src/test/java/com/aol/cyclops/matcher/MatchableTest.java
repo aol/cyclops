@@ -18,12 +18,12 @@ import org.junit.Test;
 
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.matcher2.Matchable;
+import com.aol.cyclops.control.Matchable.MatchSelf;
+import com.aol.cyclops.control.Matchable.MatchableTuple2;
+import com.aol.cyclops.control.Matchable.MatchableTuple3;
 import com.aol.cyclops.matcher2.Predicates;
-import com.aol.cyclops.matcher2.Matchable.MatchSelf;
-import com.aol.cyclops.matcher2.Matchable.MatchableTuple2;
-import com.aol.cyclops.matcher2.Matchable.MatchableTuple3;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

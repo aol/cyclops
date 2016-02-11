@@ -7,7 +7,7 @@ import org.pcollections.AmortizedPQueue;
 import org.pcollections.PQueue;
 
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.sequence.Reducers;
+import com.aol.cyclops.Reducers;
 
 public class PQueues {
 	/**

@@ -10,9 +10,9 @@ import org.pcollections.HashTreePMap;
 import org.pcollections.PBag;
 import org.pcollections.PMap;
 
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.sequence.Monoid;
-import com.aol.cyclops.sequence.Reducers;
+import com.aol.cyclops.Reducers;
 
 
 

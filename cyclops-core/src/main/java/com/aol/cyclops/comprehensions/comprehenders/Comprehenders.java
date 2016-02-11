@@ -8,8 +8,8 @@ import java.util.stream.Stream;
 import org.jooq.lambda.Seq;
 import org.pcollections.PStack;
 
+import com.aol.cyclops.Reducers;
 import com.aol.cyclops.lambda.api.Comprehender;
-import com.aol.cyclops.sequence.Reducers;
 
 /**
  * Registered Comprehenders

@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
+import com.aol.cyclops.Reducers;
 import com.aol.cyclops.collections.extensions.persistent.PBagX;
 import com.aol.cyclops.collections.extensions.persistent.PMapX;
 import com.aol.cyclops.collections.extensions.persistent.POrderedSetX;
@@ -29,7 +30,6 @@ import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.sequence.CyclopsCollectors;
-import com.aol.cyclops.sequence.Reducers;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.StreamUtils;

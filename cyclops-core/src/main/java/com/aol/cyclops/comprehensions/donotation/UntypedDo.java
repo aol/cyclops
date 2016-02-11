@@ -11,9 +11,9 @@ import lombok.Value;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
-import com.aol.cyclops.closures.mutable.Mutable;
 import com.aol.cyclops.comprehensions.ComprehensionData;
 import com.aol.cyclops.comprehensions.ForComprehensions;
+import com.aol.cyclops.data.Mutable;
 
 /**
  * Do notation for comprehensions

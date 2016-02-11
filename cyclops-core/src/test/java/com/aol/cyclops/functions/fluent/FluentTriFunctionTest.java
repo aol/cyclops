@@ -19,12 +19,13 @@ import org.jooq.lambda.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.aol.cyclops.control.FluentFunctions;
 import com.aol.cyclops.control.Try;
+import com.aol.cyclops.control.FluentFunctions.FluentBiFunction;
+import com.aol.cyclops.control.FluentFunctions.FluentFunction;
+import com.aol.cyclops.control.FluentFunctions.FluentSupplier;
+import com.aol.cyclops.control.FluentFunctions.FluentTriFunction;
 import com.aol.cyclops.functions.TriFunction;
-import com.aol.cyclops.functions.fluent.FluentFunctions.FluentBiFunction;
-import com.aol.cyclops.functions.fluent.FluentFunctions.FluentFunction;
-import com.aol.cyclops.functions.fluent.FluentFunctions.FluentSupplier;
-import com.aol.cyclops.functions.fluent.FluentFunctions.FluentTriFunction;
 import com.aol.cyclops.monad.AnyM;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;

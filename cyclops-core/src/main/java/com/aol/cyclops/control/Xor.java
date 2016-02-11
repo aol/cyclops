@@ -13,20 +13,19 @@ import java.util.stream.Stream;
 
 import org.hamcrest.Matcher;
 
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
-import com.aol.cyclops.functions.fluent.FluentFunctions;
-import com.aol.cyclops.lambda.applicative.Applicativable;
-import com.aol.cyclops.lambda.applicative.Applicative;
-import com.aol.cyclops.lambda.monads.Filterable;
-import com.aol.cyclops.lambda.monads.Functor;
-import com.aol.cyclops.matcher.builders.CheckValues;
+import com.aol.cyclops.lambda.types.Filterable;
+import com.aol.cyclops.lambda.types.Functor;
+import com.aol.cyclops.lambda.types.applicative.Applicativable;
+import com.aol.cyclops.lambda.types.applicative.Applicative;
 import com.aol.cyclops.matcher2.Case;
+import com.aol.cyclops.matcher2.CheckValues;
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.value.Value;

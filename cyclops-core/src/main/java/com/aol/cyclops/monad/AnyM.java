@@ -32,26 +32,22 @@ import org.jooq.lambda.function.Function3;
 import org.jooq.lambda.function.Function4;
 import org.jooq.lambda.function.Function5;
 
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.collections.extensions.standard.ListX;
-import com.aol.cyclops.comprehensions.donotation.typed.Do;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.functions.QuadFunction;
+import com.aol.cyclops.functions.QuintFunction;
 import com.aol.cyclops.functions.TriFunction;
-import com.aol.cyclops.functions.currying.CurryVariance;
-import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicativable;
-import com.aol.cyclops.lambda.monads.EmptyUnit;
-import com.aol.cyclops.lambda.monads.FlatMap;
-import com.aol.cyclops.lambda.monads.Foldable;
-import com.aol.cyclops.lambda.monads.Functor;
-import com.aol.cyclops.lambda.monads.Unit;
-import com.aol.cyclops.lambda.monads.FlatMap.Apply2;
-import com.aol.cyclops.lambda.monads.FlatMap.Apply2Impl;
-import com.aol.cyclops.lambda.monads.FlatMap.Apply3;
-import com.aol.cyclops.lambda.monads.FlatMap.Apply3Impl;
-import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.lambda.types.EmptyUnit;
+import com.aol.cyclops.lambda.types.FlatMap;
+import com.aol.cyclops.lambda.types.Foldable;
+import com.aol.cyclops.lambda.types.Functor;
+import com.aol.cyclops.lambda.types.Unit;
+import com.aol.cyclops.lambda.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.Unwrapable;
 import com.aol.cyclops.sequence.streamable.Streamable;
@@ -1142,7 +1138,26 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 									u2.bind(input2 -> 
 										u3.map(input3->fn.apply(input1,input2,input3)  )).unwrap());
 	}
-	
+	/**
+	 * Lift a TriFunction into Monadic form. A good use case it to take an existing method and lift it so it can accept and return monads
+	 * 
+	 * <pre>
+	 * {@code
+	 * TriFunction<AnyM<Double>,AnyM<Entity>,AnyM<String>,AnyM<Integer>> fn = liftM3(this::myMethod);
+	 *    
+	 * }
+	 * </pre>
+	 * 
+	 * Now we can execute the Method with Streams, Optional, Futures, Try's etc to transparently inject iteration, null handling, async execution and / or error handling
+	 * 
+	 * @param fn Function to lift
+	 * @return Lifted function
+	 */
+	public static <U1,U2,U3,R> TriFunction<AnyM<U1>,AnyM<U2>,AnyM<U3>,AnyM<R>> liftM3Cyclops(TriFunction<? super U1,? super U2,? super U3,? extends R> fn){
+		return (u1,u2,u3) -> u1.bind( input1 -> 
+									u2.bind(input2 -> 
+										u3.map(input3->fn.apply(input1,input2,input3)  ).unwrap()).unwrap());
+	}
 	/**
 	 * Lift a  jOOλ Function4 into Monadic form.
 	 * 
@@ -1156,7 +1171,19 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 												u3.bind(input3->
 														u4.map(input4->fn.apply(input1,input2,input3,input4)  ))).unwrap());
 	}
-	
+	/**
+	 * Lift a QuadFunction into Monadic form.
+	 * 
+	 * @param fn Quad funciton to lift
+	 * @return Lifted Quad function
+	 */
+	public static <U1,U2,U3,U4,R> QuadFunction<AnyM<U1>,AnyM<U2>,AnyM<U3>,AnyM<U4>,AnyM<R>> liftM4Cyclops(QuadFunction<? super U1,? super U2,? super U3,? super U4,? extends R> fn){
+		
+		return (u1,u2,u3,u4) -> u1.bind( input1 -> 
+										u2.bind(input2 -> 
+												u3.bind(input3->
+														u4.map(input4->fn.apply(input1,input2,input3,input4)  ).unwrap()).unwrap()).unwrap());
+	}
 	/**
 	 * Lift a  jOOλ Function5 (5 parameters) into Monadic form
 	 * 
@@ -1171,7 +1198,20 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 														u4.bind(input4->
 															u5.map(input5->fn.apply(input1,input2,input3,input4,input5)  )))).unwrap());
 	}
-	
+	/**
+	 * Lift a QuintFunction (5 parameters) into Monadic form
+	 * 
+	 * @param fn Function to lift
+	 * @return Lifted Function
+	 */
+	public static <U1,U2,U3,U4,U5,R> QuintFunction<AnyM<U1>,AnyM<U2>,AnyM<U3>,AnyM<U4>,AnyM<U5>,AnyM<R>> liftM5Cyclops(QuintFunction<? super U1,? super U2,? super U3,? super U4,? super U5,? extends R> fn){
+		
+		return (u1,u2,u3,u4,u5) -> u1.bind( input1 -> 
+										u2.bind(input2 -> 
+												u3.bind(input3->
+														u4.bind(input4->
+															u5.map(input5->fn.apply(input1,input2,input3,input4,input5)  ).unwrap()).unwrap()).unwrap()).unwrap());
+	}
 	/**
 	 * Lift a Curried Function {@code(2 levels a->b->fn.apply(a,b) )} into Monadic form
 	 * 

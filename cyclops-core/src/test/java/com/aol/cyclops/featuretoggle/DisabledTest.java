@@ -1,13 +1,16 @@
 package com.aol.cyclops.featuretoggle;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.featuretoggle.Disabled;
-import com.aol.cyclops.featuretoggle.FeatureToggle;
+import com.aol.cyclops.control.FeatureToggle;
+import com.aol.cyclops.control.FeatureToggle.Disabled;
 
 public class DisabledTest {
 

@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.invokedynamic.InvokeDynamic;
-import com.aol.cyclops.objects.AsDecomposable;
+import com.aol.cyclops.matcher2.AsDecomposable;
 import com.aol.cyclops.sequence.ReversedIterator;
 import com.aol.cyclops.sequence.SeqUtils;
 import com.aol.cyclops.sequence.SequenceM;

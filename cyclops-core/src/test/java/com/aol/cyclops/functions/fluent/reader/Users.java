@@ -1,7 +1,7 @@
 package com.aol.cyclops.functions.fluent.reader;
 
+import com.aol.cyclops.control.FluentFunctions;
 import com.aol.cyclops.control.Reader;
-import com.aol.cyclops.functions.fluent.FluentFunctions;
 
 public interface Users {
 

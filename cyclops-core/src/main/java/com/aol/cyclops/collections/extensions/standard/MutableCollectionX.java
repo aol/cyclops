@@ -17,16 +17,16 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.lambda.monads.Filterable;
-import com.aol.cyclops.lambda.monads.Functor;
-import com.aol.cyclops.lambda.monads.Traversable;
-import com.aol.cyclops.matcher.builders.CheckValues;
+import com.aol.cyclops.lambda.types.Filterable;
+import com.aol.cyclops.lambda.types.Functor;
+import com.aol.cyclops.lambda.types.Traversable;
 import com.aol.cyclops.matcher2.Case;
-import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.matcher2.CheckValues;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
 

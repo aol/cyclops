@@ -5,8 +5,8 @@ import lombok.Value;
 import lombok.experimental.Wither;
 
 import com.aol.cyclops.internal.Monad;
+import com.aol.cyclops.lambda.types.Decomposable;
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.objects.Decomposable;
 import com.aol.cyclops.sequence.SequenceM;
 
 @Value

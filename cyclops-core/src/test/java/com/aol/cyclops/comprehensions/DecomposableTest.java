@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.comprehensions.donotation.UntypedDo;
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
-import com.aol.cyclops.objects.Decomposable;
+import com.aol.cyclops.lambda.types.Decomposable;
 
 public class DecomposableTest {
 

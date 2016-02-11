@@ -3,8 +3,6 @@ package com.aol.cyclops.functions;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.aol.cyclops.functions.currying.CurryConsumer;
-
 /**
  * Functional Interface for currying operations
  * @author johnmcclean

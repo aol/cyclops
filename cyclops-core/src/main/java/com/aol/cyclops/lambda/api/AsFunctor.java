@@ -1,8 +1,8 @@
 package com.aol.cyclops.lambda.api;
 
-import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.FunctorWrapper;
 import com.aol.cyclops.lambda.monads.WrappingFunctor;
+import com.aol.cyclops.lambda.types.Functor;
 
 public class AsFunctor {
 	

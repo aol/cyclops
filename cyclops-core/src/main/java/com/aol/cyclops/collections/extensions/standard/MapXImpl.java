@@ -12,7 +12,7 @@ import java.util.stream.Collector;
 
 import org.jooq.lambda.tuple.Tuple2;
 
-import com.aol.cyclops.lambda.monads.IterableFunctor;
+import com.aol.cyclops.lambda.types.IterableFunctor;
 import com.aol.cyclops.sequence.SequenceM;
 
 import lombok.AllArgsConstructor;

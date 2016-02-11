@@ -9,6 +9,9 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 import org.junit.Test;
+
+import com.aol.cyclops.data.Mutable;
+import com.aol.cyclops.data.MutableChar;
 public class MutableCharTest {
 
 	@Test

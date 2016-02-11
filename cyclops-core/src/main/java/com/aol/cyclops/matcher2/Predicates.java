@@ -4,8 +4,6 @@ import java.util.function.Predicate;
 
 import org.hamcrest.Matcher;
 
-import com.aol.cyclops.matcher.builders.ADTPredicateBuilder;
-
 
 /**
  * 

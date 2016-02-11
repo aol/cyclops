@@ -1,10 +1,9 @@
 package com.aol.cyclops.comprehensions.comprehenders;
 import java.util.function.Function;
-
 import java.util.function.Predicate;
 
-import com.aol.cyclops.featuretoggle.Enabled;
-import com.aol.cyclops.featuretoggle.FeatureToggle;
+import com.aol.cyclops.control.FeatureToggle;
+import com.aol.cyclops.control.FeatureToggle.Enabled;
 import com.aol.cyclops.lambda.api.Comprehender;
 
 /**

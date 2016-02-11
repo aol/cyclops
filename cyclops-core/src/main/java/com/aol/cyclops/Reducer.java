@@ -4,8 +4,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.sequence.Monoid;
-
 public interface Reducer<T>  extends Monoid<T>{
 	default Stream<T> mapToType(Stream stream){
 		return (Stream)stream;

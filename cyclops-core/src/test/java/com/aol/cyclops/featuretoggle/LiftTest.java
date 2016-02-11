@@ -6,6 +6,7 @@ import lombok.val;
 
 import org.junit.Test;
 
+import com.aol.cyclops.control.FeatureToggle;
 import com.aol.cyclops.monad.AnyM;
 
 public class LiftTest {

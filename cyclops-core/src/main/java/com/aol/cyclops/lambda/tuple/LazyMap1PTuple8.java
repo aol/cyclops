@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 
-import com.aol.cyclops.closures.immutable.LazyImmutable;
+import com.aol.cyclops.data.LazyImmutable;
 
 public class LazyMap1PTuple8<T,T1,T2,T3,T4,T5,T6,T7,T8> extends TupleImpl<T,T2,T3,T4,T5,T6,T7,T8> {
 

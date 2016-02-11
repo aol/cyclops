@@ -2,6 +2,8 @@ package com.aol.cyclops.matcher2;
 
 import java.util.Optional;
 
+import com.aol.cyclops.control.Matchable;
+
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
 

@@ -13,6 +13,8 @@ import java.util.function.Supplier;
 import lombok.val;
 
 import org.junit.Test;
+
+import com.aol.cyclops.data.LazyImmutable;
 public class ImmutableClosedValueTest {
 
 	@Test

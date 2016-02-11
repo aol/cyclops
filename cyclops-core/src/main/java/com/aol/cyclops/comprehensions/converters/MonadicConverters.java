@@ -10,8 +10,8 @@ import lombok.val;
 
 import org.pcollections.PStack;
 
+import com.aol.cyclops.Reducers;
 import com.aol.cyclops.lambda.api.MonadicConverter;
-import com.aol.cyclops.sequence.Reducers;
 import com.aol.cyclops.sequence.SequenceM;
 
 public class MonadicConverters {

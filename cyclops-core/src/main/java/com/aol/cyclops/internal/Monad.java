@@ -14,10 +14,10 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
-import com.aol.cyclops.lambda.monads.Filterable;
-import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.WrappingFilterable;
 import com.aol.cyclops.lambda.monads.WrappingFunctor;
+import com.aol.cyclops.lambda.types.Filterable;
+import com.aol.cyclops.lambda.types.Functor;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SeqUtils;
 import com.aol.cyclops.sequence.SequenceM;

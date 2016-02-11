@@ -20,7 +20,7 @@ import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.objects.Decomposable;
+import com.aol.cyclops.lambda.types.Decomposable;
 import com.aol.cyclops.sequence.SequenceM;
 
 /**

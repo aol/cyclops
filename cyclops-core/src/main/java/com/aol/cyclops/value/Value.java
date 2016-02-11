@@ -1,6 +1,5 @@
 package com.aol.cyclops.value;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -10,10 +9,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.closures.Convertable;
-import com.aol.cyclops.closures.immutable.LazyImmutable;
-import com.aol.cyclops.closures.mutable.Mutable;
 import com.aol.cyclops.collections.extensions.persistent.PBagX;
 import com.aol.cyclops.collections.extensions.persistent.POrderedSetX;
 import com.aol.cyclops.collections.extensions.persistent.PQueueX;
@@ -31,12 +28,11 @@ import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
-import com.aol.cyclops.lambda.monads.Foldable;
-import com.aol.cyclops.matcher.builders.CheckValues;
-import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.data.Convertable;
+import com.aol.cyclops.data.LazyImmutable;
+import com.aol.cyclops.data.Mutable;
+import com.aol.cyclops.lambda.types.Foldable;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.trycatch.Failure;
-import com.aol.cyclops.trycatch.Success;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
@@ -115,8 +111,8 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, ValueObject<T>, Conv
 	 default Try<T,NoSuchElementException> toTry(){
 		 Optional<T> opt = toOptional();
 		 if(opt.isPresent())
-			 return Success.of(opt.get());
-		 return Failure.of(new NoSuchElementException());
+			 return Try.success(opt.get());
+		 return Try.failure(new NoSuchElementException());
 	 }
 	 default <X extends Throwable> Try<T,X> toTry(Class<X>... classes){
 		 return Try.withCatch( ()->get(),classes);

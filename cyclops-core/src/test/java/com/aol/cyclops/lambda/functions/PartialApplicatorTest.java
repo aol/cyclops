@@ -7,7 +7,7 @@ import org.junit.Test;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static com.aol.cyclops.functions.currying.PartialApplicator.*;
+import static com.aol.cyclops.functions.PartialApplicator.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 

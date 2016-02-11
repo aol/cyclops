@@ -3,8 +3,6 @@ package com.aol.cyclops.functions;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.aol.cyclops.functions.currying.CurryConsumer;
-
 public interface QuintConsumer<T1, T2, T3, T4, T5> {
 
 	public void accept(T1 a,T2 b, T3 c,T4 d,T5 e);

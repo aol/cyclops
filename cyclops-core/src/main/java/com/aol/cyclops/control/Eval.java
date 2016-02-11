@@ -11,11 +11,11 @@ import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.control.Xor.Primary;
-import com.aol.cyclops.functions.caching.Memoize;
-import com.aol.cyclops.lambda.applicative.Applicativable;
-import com.aol.cyclops.lambda.applicative.Applicative;
-import com.aol.cyclops.lambda.monads.Functor;
-import com.aol.cyclops.lambda.monads.Unit;
+import com.aol.cyclops.functions.Memoize;
+import com.aol.cyclops.lambda.types.Functor;
+import com.aol.cyclops.lambda.types.Unit;
+import com.aol.cyclops.lambda.types.applicative.Applicativable;
+import com.aol.cyclops.lambda.types.applicative.Applicative;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.value.Value;
 

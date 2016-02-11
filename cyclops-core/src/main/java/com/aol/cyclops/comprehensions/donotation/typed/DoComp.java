@@ -10,9 +10,9 @@ import org.pcollections.PStack;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
-import com.aol.cyclops.closures.mutable.Mutable;
 import com.aol.cyclops.comprehensions.ComprehensionData;
 import com.aol.cyclops.comprehensions.ForComprehensions;
+import com.aol.cyclops.data.Mutable;
 import com.aol.cyclops.sequence.Unwrapable;
 
 @AllArgsConstructor

@@ -31,7 +31,7 @@ import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.collections.extensions.standard.MapX;
 import com.aol.cyclops.collections.extensions.standard.SetX;
 import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.functions.fluent.FluentFunctions;
+import com.aol.cyclops.control.FluentFunctions;
 import com.aol.cyclops.sequence.SequenceM;
 
 

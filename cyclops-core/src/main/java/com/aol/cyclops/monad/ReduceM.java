@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.sequence.streamable.Streamable;
 @Deprecated
 public interface ReduceM<T> {

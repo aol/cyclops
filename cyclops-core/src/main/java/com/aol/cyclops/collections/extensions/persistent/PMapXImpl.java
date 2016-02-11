@@ -15,7 +15,7 @@ import org.pcollections.PMap;
 
 import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.standard.SetX;
-import com.aol.cyclops.lambda.monads.Traversable;
+import com.aol.cyclops.lambda.types.Traversable;
 
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;

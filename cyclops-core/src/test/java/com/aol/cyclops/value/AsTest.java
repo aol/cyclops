@@ -18,9 +18,9 @@ import lombok.val;
 
 import org.junit.Test;
 
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.dynamic.As;
-import com.aol.cyclops.matcher.builders.CheckValues;
-import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.matcher2.CheckValues;
 
 public class AsTest {
 

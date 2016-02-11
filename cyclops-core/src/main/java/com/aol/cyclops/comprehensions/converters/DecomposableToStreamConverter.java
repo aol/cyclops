@@ -4,7 +4,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.lambda.api.MonadicConverter;
-import com.aol.cyclops.objects.Decomposable;
+import com.aol.cyclops.lambda.types.Decomposable;
 
 
 

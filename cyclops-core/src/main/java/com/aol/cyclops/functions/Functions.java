@@ -6,9 +6,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.functions.caching.Memoize;
-import com.aol.cyclops.functions.currying.Uncurry;
-
 @Deprecated 
 public class Functions extends Uncurry {
 	/**

@@ -12,7 +12,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 import org.junit.Test;
 
-import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.Monoid;
 
 public class AsGenericMonoidTest {
 

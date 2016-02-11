@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.closures.Convertable;
+import com.aol.cyclops.data.Convertable;
 
 /**
  * simple Trampoline implementation : inspired by excellent TotallyLazy Java 8 impl 

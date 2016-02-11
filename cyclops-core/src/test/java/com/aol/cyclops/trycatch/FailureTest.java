@@ -1,6 +1,8 @@
 package com.aol.cyclops.trycatch;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
@@ -14,6 +16,9 @@ import java.util.stream.Stream;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import com.aol.cyclops.control.Try.Failure;
+import com.aol.cyclops.control.Try.Success;
 
 public class FailureTest {
 

@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Test;
+
+import com.aol.cyclops.data.Mutable;
 public class MutableTest {
 
 	@Test

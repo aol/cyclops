@@ -7,8 +7,8 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.streams.StreamUtils;
 
 import lombok.Value;

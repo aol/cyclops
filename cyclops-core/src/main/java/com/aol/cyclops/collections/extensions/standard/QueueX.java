@@ -23,11 +23,11 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
-import com.aol.cyclops.matcher.builders.CheckValues;
+import com.aol.cyclops.lambda.types.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.matcher2.Case;
-import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.matcher2.CheckValues;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
 

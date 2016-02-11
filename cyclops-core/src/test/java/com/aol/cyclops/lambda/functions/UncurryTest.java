@@ -5,7 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import com.aol.cyclops.functions.currying.Uncurry;
+import com.aol.cyclops.functions.Uncurry;
 
 public class UncurryTest {
 

@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
+import com.aol.cyclops.lambda.types.Functor;
 
 
 /**

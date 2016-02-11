@@ -14,11 +14,10 @@ import lombok.val;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
-import com.aol.cyclops.closures.immutable.LazyImmutable;
+import com.aol.cyclops.data.LazyImmutable;
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.invokedynamic.ReflectionCache;
-import com.aol.cyclops.objects.AsDecomposable;
-import com.aol.cyclops.objects.Decomposable;
+import com.aol.cyclops.lambda.types.Decomposable;
 import com.aol.cyclops.sequence.SequenceM;
 
 /**

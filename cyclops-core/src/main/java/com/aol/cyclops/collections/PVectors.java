@@ -8,7 +8,7 @@ import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.sequence.Reducers;
+import com.aol.cyclops.Reducers;
 
 /**
  * Class for working with Persistent Vectors from PCollections

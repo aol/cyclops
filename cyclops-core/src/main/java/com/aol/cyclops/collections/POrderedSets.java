@@ -8,7 +8,7 @@ import org.pcollections.OrderedPSet;
 import org.pcollections.POrderedSet;
 
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.sequence.Reducers;
+import com.aol.cyclops.Reducers;
 
 public class POrderedSets {
 	public static <T> POrderedSet<T> of(T...values){

@@ -15,6 +15,8 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.control.Try;
+import com.aol.cyclops.control.Try.Failure;
+import com.aol.cyclops.control.Try.Success;
 import com.aol.cyclops.lambda.monads.transformers.TryT;
 import com.aol.cyclops.monad.AnyM;
 public class TryTTest {

@@ -21,15 +21,15 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.collections.PStacks;
 import com.aol.cyclops.collections.extensions.FluentSequenceX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
-import com.aol.cyclops.matcher.builders.CheckValues;
+import com.aol.cyclops.lambda.types.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.matcher2.Case;
-import com.aol.cyclops.sequence.Monoid;
+import com.aol.cyclops.matcher2.CheckValues;
 import com.aol.cyclops.sequence.SequenceM;
 
 public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentSequenceX<T>{
