@@ -7,23 +7,30 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.Spliterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntFunction;
+import java.util.function.ToLongFunction;
 import java.util.function.UnaryOperator;
 import java.util.stream.BaseStream;
 import java.util.stream.Collector;
@@ -33,6 +40,7 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.hamcrest.Matcher;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
@@ -40,6 +48,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.collections.extensions.CollectionX;
@@ -49,8 +58,10 @@ import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.lambda.monads.ExtendedTraversable;
+import com.aol.cyclops.lambda.monads.Filterable;
 import com.aol.cyclops.lambda.monads.Foldable;
 import com.aol.cyclops.lambda.monads.Functor;
+import com.aol.cyclops.lambda.monads.IterableFilterable;
 import com.aol.cyclops.lambda.monads.Unit;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.monad.AnyM;
@@ -73,6 +84,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Functor<T>, Extende
 												JoolManipulation<T>,SequenceMCollectable<T>,
 												Seq<T>,  Iterable<T>, Publisher<T>,
 												ReactiveStreamsTerminalOperations<T>,
+												IterableFilterable<T>,
 												ZippingApplicativable<T>, Unit<T>,
 												ConvertableSequence<T>{
 	@Override
@@ -83,6 +95,504 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Functor<T>, Extende
 
 	
 	
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#count(java.util.function.Predicate)
+	 */
+	@Override
+	default long count(Predicate<? super T> predicate) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#countDistinct()
+	 */
+	@Override
+	default long countDistinct() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#countDistinct(java.util.function.Predicate)
+	 */
+	@Override
+	default long countDistinct(Predicate<? super T> predicate) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#countDistinctBy(java.util.function.Function)
+	 */
+	@Override
+	default <U> long countDistinctBy(Function<? super T, ? extends U> function) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#countDistinctBy(java.util.function.Function, java.util.function.Predicate)
+	 */
+	@Override
+	default <U> long countDistinctBy(Function<? super T, ? extends U> function, Predicate<? super U> predicate) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#mode()
+	 */
+	@Override
+	default Optional<T> mode() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#sum()
+	 */
+	@Override
+	default Optional<T> sum() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#sum(java.util.function.Function)
+	 */
+	@Override
+	default <U> Optional<U> sum(Function<? super T, ? extends U> function) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#sumInt(java.util.function.ToIntFunction)
+	 */
+	@Override
+	default int sumInt(ToIntFunction<? super T> function) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#sumLong(java.util.function.ToLongFunction)
+	 */
+	@Override
+	default long sumLong(ToLongFunction<? super T> function) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#sumDouble(java.util.function.ToDoubleFunction)
+	 */
+	@Override
+	default double sumDouble(ToDoubleFunction<? super T> function) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#avg()
+	 */
+	@Override
+	default Optional<T> avg() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#avg(java.util.function.Function)
+	 */
+	@Override
+	default <U> Optional<U> avg(Function<? super T, ? extends U> function) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#avgInt(java.util.function.ToIntFunction)
+	 */
+	@Override
+	default double avgInt(ToIntFunction<? super T> function) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#avgLong(java.util.function.ToLongFunction)
+	 */
+	@Override
+	default double avgLong(ToLongFunction<? super T> function) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#avgDouble(java.util.function.ToDoubleFunction)
+	 */
+	@Override
+	default double avgDouble(ToDoubleFunction<? super T> function) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#min()
+	 */
+	@Override
+	default Optional<T> min() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#min(java.util.function.Function)
+	 */
+	@Override
+	default <U extends Comparable<? super U>> Optional<U> min(Function<? super T, ? extends U> function) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#min(java.util.function.Function, java.util.Comparator)
+	 */
+	@Override
+	default <U> Optional<U> min(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#minBy(java.util.function.Function, java.util.Comparator)
+	 */
+	@Override
+	default <U> Optional<T> minBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#max()
+	 */
+	@Override
+	default Optional<T> max() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#max(java.util.function.Function)
+	 */
+	@Override
+	default <U extends Comparable<? super U>> Optional<U> max(Function<? super T, ? extends U> function) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#max(java.util.function.Function, java.util.Comparator)
+	 */
+	@Override
+	default <U> Optional<U> max(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#maxBy(java.util.function.Function, java.util.Comparator)
+	 */
+	@Override
+	default <U> Optional<T> maxBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#median()
+	 */
+	@Override
+	default Optional<T> median() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#median(java.util.Comparator)
+	 */
+	@Override
+	default Optional<T> median(Comparator<? super T> comparator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#medianBy(java.util.function.Function)
+	 */
+	@Override
+	default <U extends Comparable<? super U>> Optional<T> medianBy(Function<? super T, ? extends U> function) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#medianBy(java.util.function.Function, java.util.Comparator)
+	 */
+	@Override
+	default <U> Optional<T> medianBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#percentile(double)
+	 */
+	@Override
+	default Optional<T> percentile(double percentile) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#percentile(double, java.util.Comparator)
+	 */
+	@Override
+	default Optional<T> percentile(double percentile, Comparator<? super T> comparator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#percentileBy(double, java.util.function.Function)
+	 */
+	@Override
+	default <U extends Comparable<? super U>> Optional<T> percentileBy(double percentile,
+			Function<? super T, ? extends U> function) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#percentileBy(double, java.util.function.Function, java.util.Comparator)
+	 */
+	@Override
+	default <U> Optional<T> percentileBy(double percentile, Function<? super T, ? extends U> function,
+			Comparator<? super U> comparator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#toList(java.util.function.Supplier)
+	 */
+	@Override
+	default <L extends List<T>> L toList(Supplier<L> factory) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#toSet(java.util.function.Supplier)
+	 */
+	@Override
+	default <S extends Set<T>> S toSet(Supplier<S> factory) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#toMap(java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapper,
+			Function<? super T, ? extends V> valueMapper) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#toString(java.lang.CharSequence)
+	 */
+	@Override
+	default String toString(CharSequence delimiter) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Collectable#toString(java.lang.CharSequence, java.lang.CharSequence, java.lang.CharSequence)
+	 */
+	@Override
+	default String toString(CharSequence delimiter, CharSequence prefix, CharSequence suffix) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.stream.BaseStream#iterator()
+	 */
+	@Override
+	default Iterator<T> iterator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.stream.BaseStream#spliterator()
+	 */
+	@Override
+	default Spliterator<T> spliterator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.stream.BaseStream#isParallel()
+	 */
+	@Override
+	default boolean isParallel() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.stream.BaseStream#close()
+	 */
+	@Override
+	default void close() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.IterableFilterable#retainMatches(org.hamcrest.Matcher)
+	 */
+	@Override
+	default Filterable<T> retainMatches(Matcher<T> m) {
+		// TODO Auto-generated method stub
+		return IterableFilterable.super.retainMatches(m);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.IterableFilterable#removeMatches(org.hamcrest.Matcher)
+	 */
+	@Override
+	default Filterable<T> removeMatches(Matcher<T> m) {
+		// TODO Auto-generated method stub
+		return IterableFilterable.super.removeMatches(m);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.reactivestreams.Publisher#subscribe(org.reactivestreams.Subscriber)
+	 */
+	@Override
+	default void subscribe(Subscriber<? super T> s) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.stream.Stream#mapToInt(java.util.function.ToIntFunction)
+	 */
+	@Override
+	default IntStream mapToInt(ToIntFunction<? super T> mapper) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.stream.Stream#mapToLong(java.util.function.ToLongFunction)
+	 */
+	@Override
+	default LongStream mapToLong(ToLongFunction<? super T> mapper) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.stream.Stream#mapToDouble(java.util.function.ToDoubleFunction)
+	 */
+	@Override
+	default DoubleStream mapToDouble(ToDoubleFunction<? super T> mapper) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.stream.Stream#flatMapToInt(java.util.function.Function)
+	 */
+	@Override
+	default IntStream flatMapToInt(Function<? super T, ? extends IntStream> mapper) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.stream.Stream#flatMapToLong(java.util.function.Function)
+	 */
+	@Override
+	default LongStream flatMapToLong(Function<? super T, ? extends LongStream> mapper) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.stream.Stream#flatMapToDouble(java.util.function.Function)
+	 */
+	@Override
+	default DoubleStream flatMapToDouble(Function<? super T, ? extends DoubleStream> mapper) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.stream.Stream#forEach(java.util.function.Consumer)
+	 */
+	@Override
+	default void forEach(Consumer<? super T> action) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.stream.Stream#forEachOrdered(java.util.function.Consumer)
+	 */
+	@Override
+	default void forEachOrdered(Consumer<? super T> action) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.stream.Stream#toArray()
+	 */
+	@Override
+	default Object[] toArray() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.stream.Stream#toArray(java.util.function.IntFunction)
+	 */
+	@Override
+	default <A> A[] toArray(IntFunction<A[]> generator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.stream.Stream#collect(java.util.function.Supplier, java.util.function.BiConsumer, java.util.function.BiConsumer)
+	 */
+	@Override
+	default <R> R collect(Supplier<R> supplier, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
 	 */
@@ -1169,7 +1679,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, Functor<T>, Extende
 	 * @param reducers
 	 * @return
 	 */
-	ListX<T> reduce(Iterable<Reducer<T>> reducers);
+	ListX<T> reduce(Iterable<? extends Monoid<T>> reducers);
 
 	/**
 	 * 

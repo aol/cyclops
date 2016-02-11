@@ -1,4 +1,4 @@
-package com.aol.cyclops.lambda.tuple.lazymap;
+package com.aol.cyclops.lambda.tuple;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.function.Function;
 
 import com.aol.cyclops.closures.immutable.LazyImmutable;
-import com.aol.cyclops.lambda.tuple.PTuple8;
-import com.aol.cyclops.lambda.tuple.TupleImpl;
 
 /**
  * Created by johnmcclean on 5/21/15.

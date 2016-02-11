@@ -12,10 +12,6 @@ import java.util.stream.LongStream;
 
 import lombok.AllArgsConstructor;
 
-import com.aol.cyclops.lambda.tuple.lazymap.LazyMap1PTuple8;
-import com.aol.cyclops.lambda.tuple.lazymap.LazyMap2PTuple8;
-import com.aol.cyclops.lambda.tuple.memo.Memo2;
-
 public interface PTuple2<T1,T2> extends PTuple1<T1>{
 	
 	default T2 v2(){

@@ -10,14 +10,6 @@ import java.util.concurrent.Executor;
 import java.util.function.Function;
 
 import com.aol.cyclops.functions.OctFunction;
-import com.aol.cyclops.lambda.tuple.lazymap.LazyMap1PTuple8;
-import com.aol.cyclops.lambda.tuple.lazymap.LazyMap2PTuple8;
-import com.aol.cyclops.lambda.tuple.lazymap.LazyMap3PTuple8;
-import com.aol.cyclops.lambda.tuple.lazymap.LazyMap4PTuple8;
-import com.aol.cyclops.lambda.tuple.lazymap.LazyMap5PTuple8;
-import com.aol.cyclops.lambda.tuple.lazymap.LazyMap6PTuple8;
-import com.aol.cyclops.lambda.tuple.lazymap.LazyMap7PTuple8;
-import com.aol.cyclops.lambda.tuple.lazymap.LazyMap8PTuple8;
 
 public interface PTuple8<T1,T2,T3,T4,T5,T6,T7,T8> extends PTuple7<T1,T2,T3,T4,T5,T6,T7> {
 	

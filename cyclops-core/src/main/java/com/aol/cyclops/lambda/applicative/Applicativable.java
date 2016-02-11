@@ -13,7 +13,7 @@ import com.aol.cyclops.lambda.monads.Unit;
 public interface Applicativable<T> extends ConvertableFunctor<T>, Unit<T>{
 
 	
-	static class Applicatives{
+	public static class Applicatives{
 		public static <T,R> ApplyingApplicativeBuilder<T,R,Applicativable<R>> applicatives(Unit unit,Functor functor){
 			return new ApplyingApplicativeBuilder<T,R,Applicativable<R>> (unit,functor);
 		}

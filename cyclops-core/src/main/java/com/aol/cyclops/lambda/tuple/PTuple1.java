@@ -5,10 +5,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-import com.aol.cyclops.lambda.tuple.lazymap.LazyMap1PTuple8;
-import com.aol.cyclops.lambda.tuple.memo.Memo1;
-import com.aol.cyclops.lambda.tuple.reorder.ReorderP1;
-
 public interface PTuple1<T1> extends CachedValues{
 	
 	default T1 v1(){

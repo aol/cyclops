@@ -1,7 +1,4 @@
-package com.aol.cyclops.lambda.tuple.memo;
-
-import com.aol.cyclops.lambda.tuple.PTuple1;
-import com.aol.cyclops.lambda.tuple.TupleImpl;
+package com.aol.cyclops.lambda.tuple;
 
 import java.util.Arrays;
 import java.util.Iterator;

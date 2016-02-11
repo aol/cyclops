@@ -53,44 +53,9 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>{
 	 */
 	public T get();
 	
-	/**
-	 * @param predicate - to filter optional value with
-	 * @return  Return an Optional that contains the current value (if not null) when the supplied predicate holds.
-	 *         Otherwise return Optional empty
-	 */
-	default Optional<T> filterWhen(Predicate<? super T> predicate){
-		return toOptional().filter(predicate);
-	}
 	
-	/**
-	 * Apply the predicate to this convertable value, followed by the supplied mapper.
-	 * Return Optional.empty if the value is null or predicate doesn't hold
-	 * 
-	 * @param predicate - to filter optional value with
-	 * @param mapper  to convert value with if the predicate holds
-	 * @return Return an Optional that contains the current value (if not null) when the supplied predicate holds.
-	 *         Otherwise return Optional empty
-	 */
-	default <R> Optional<R> filterWhen(Predicate<? super T> predicate, Function<? super T,? extends R> mapper){
-		return toOptional().filter(predicate).map(mapper);
-	}
-	default <R> R when(Function<? super Maybe<T>,? extends R> mapper){
-		return mapper.apply(Maybe.ofNullable(get()));
-	}
-	/**
-	 * Apply the predicate to this convertable value, followed by the supplied mapper.
-	 * Return the supplied defaultValue if the value is null or predicate doesn't hold
-	 * 
-	 * @param defaultValue - return value if null or predicate fails
-	 * @param predicate  to filter optional value with
-	 * @param mapper to convert value with if the predicate holds
-	 * @return Return an Optional that contains the current value (if not null) when the supplied predicate holds.
-	 *        Otherwise return the supplied default value.
-	 */
-	default <R,R1 extends R> R1 filterWhenOrElse(R1 defaultValue,Predicate<? super T> predicate, Function<? super T,R1> mapper){
-		return toOptional().filter(predicate)
-							.map(mapper)
-							.orElse(defaultValue);
+	default <R> R when(Function<? super T,? extends R> present,Supplier<? extends R> absent){
+		return Maybe.ofNullable(get()).when(present, absent);
 	}
 	default T orElseGet(Supplier<? extends T> value){
 		return toOptional().orElseGet(value);

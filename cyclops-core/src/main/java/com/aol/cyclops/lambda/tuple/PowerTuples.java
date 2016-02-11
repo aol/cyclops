@@ -23,6 +23,7 @@ import lombok.AllArgsConstructor;
  *  }
  *
  */
+@Deprecated // use joo tuples instead.
 public class PowerTuples implements Concatenate, LazySwap {
 	
 	@AllArgsConstructor

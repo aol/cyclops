@@ -18,6 +18,7 @@ import org.hamcrest.Matcher;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.matcher.Action;
 import com.aol.cyclops.matcher.Case;
 import com.aol.cyclops.matcher.Cases;
@@ -140,7 +141,7 @@ public class PatternMatcher implements Function{
 	 * @param t Array to match on
 	 * @return Matched value wrapped in Optional
 	 */
-	public <R> Optional<R> match(Object... t){
+	public <R> Maybe<R> match(Object... t){
 		return cases.match(t);
 	}
 	/**
@@ -150,14 +151,14 @@ public class PatternMatcher implements Function{
 	 * @param t Object to decompose and match on
 	 * @return Matched result wrapped in an Optional
 	 */
-	public <R> Optional<R> unapply(Decomposable t){
+	public <R> Maybe<R> unapply(Decomposable t){
 		return cases.unapply(t);
 	}
 	/**
 	 * @param t Object to match against supplied cases
 	 * @return Value returned from matched case (if present) otherwise Optional.empty()
 	 */
-	public <R> Optional<R> match(Object t){
+	public <R> Maybe<R> match(Object t){
 			
 		return cases.match(t);
 		

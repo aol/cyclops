@@ -30,8 +30,7 @@ configurations {
 	provided
 }
 dependencies {
-	compile project(':cyclops-functions')
-	compile project(':cyclops-streams')
+	compile project(':cyclops-core')
 	compile 'org.reactivestreams:reactive-streams:1.0.0'
 	
 	compile ('com.aol.simplereact:simple-react:'+simpleReactVersion){

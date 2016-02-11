@@ -1,26 +1,20 @@
 package com.aol.cyclops.matcher.builders;
 
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.core.AllOf.allOf;
-import static org.hamcrest.core.AnyOf.anyOf;
-
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.hamcrest.Matcher;
 
-import lombok.AllArgsConstructor;
-
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.matcher.Cases;
-import com.aol.cyclops.matcher.Extractor;
 import com.aol.cyclops.matcher.TypedFunction;
 import com.aol.cyclops.matcher.builders.CaseBuilder.InCaseOfBuilder;
-import com.aol.cyclops.matcher.builders.CaseBuilder.InCaseOfBuilderExtractor;
 import com.aol.cyclops.matcher.builders.CaseBuilder.InMatchOfBuilder;
 import com.aol.cyclops.objects.Decomposable;
+
+import lombok.AllArgsConstructor;
 /**
  * 
  * Pattern Matching builder instance
@@ -221,7 +215,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 * @param t Object to match against supplied cases
 	 * @return Value returned from matched case (if present) otherwise Optional.empty()
 	 */
-	public  Optional<X> match(Object t){
+	public  Maybe<X> match(Object t){
 		return cse.getPatternMatcher().match(t);
 	}
 	

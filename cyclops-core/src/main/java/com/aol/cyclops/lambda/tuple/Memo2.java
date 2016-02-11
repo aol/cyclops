@@ -1,13 +1,10 @@
-package com.aol.cyclops.lambda.tuple.memo;
+package com.aol.cyclops.lambda.tuple;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import com.aol.cyclops.lambda.tuple.PTuple2;
-import com.aol.cyclops.lambda.tuple.TupleImpl;
 
 public class Memo2 <T1,T2> extends TupleImpl{
 	 private final Map<Integer,Object> values = new ConcurrentHashMap<>();

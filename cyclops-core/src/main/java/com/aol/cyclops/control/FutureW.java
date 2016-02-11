@@ -160,68 +160,6 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 		
 		return(FutureW<R>)Applicativable.super.trampoline(mapper);
 	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Functor#matchesCases(com.aol.cyclops.matcher.Case[])
-	 */
-	@Override
-	public <R> FutureW<Optional<R>> matchesCases(Case<T, R, Function<T, R>>... cases) {
-		
-		return (FutureW<Optional<R>>)Applicativable.super.matchesCases(cases);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function)
-	 */
-	@Override
-	public <R> FutureW<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
-		
-		return (FutureW<R>)Applicativable.super.patternMatch(defaultValue, case1);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function)
-	 */
-	@Override
-	public <R> FutureW<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case2) {
-		
-		return (FutureW<R>)Applicativable.super.patternMatch(defaultValue, case1, case2);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function)
-	 */
-	@Override
-	public <R> FutureW<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3) {
-		
-		return (FutureW<R>)Applicativable.super.patternMatch(defaultValue, fn1, fn2, fn3);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
-	 */
-	@Override
-	public <R> FutureW<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4) {
-		
-		return (FutureW<R>)Applicativable.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
-	 */
-	@Override
-	public <R> FutureW<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn1,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn2,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn3,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn4,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> fn5) {
-		
-		return (FutureW<R>)Applicativable.super.patternMatch(defaultValue, fn1, fn2, fn3, fn4, fn5);
-	}
+	
 	
 }

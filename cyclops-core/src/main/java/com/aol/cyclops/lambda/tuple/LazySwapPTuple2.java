@@ -1,7 +1,4 @@
-package com.aol.cyclops.lambda.tuple.lazyswap;
-
-import com.aol.cyclops.lambda.tuple.PTuple2;
-import com.aol.cyclops.lambda.tuple.TupleImpl;
+package com.aol.cyclops.lambda.tuple;
 
 import java.util.Arrays;
 import java.util.Iterator;

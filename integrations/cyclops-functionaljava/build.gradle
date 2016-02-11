@@ -30,7 +30,7 @@ configurations {
 	provided
 }
 dependencies {
-	compile project(':cyclops-streams')
+	compile project(':cyclops-core')
    provided  'com.google.guava:guava:19.0-rc2'
 	provided group: 'com.aol.simplereact', name:'simple-react', version:"${simpleReactVersion}"
 	provided 'com.nurkiewicz.lazyseq:lazyseq:0.0.1'

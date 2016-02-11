@@ -19,6 +19,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.objects.Decomposable;
 import com.aol.cyclops.sequence.SequenceM;
 
@@ -32,7 +33,7 @@ import com.aol.cyclops.sequence.SequenceM;
  * @param <X> Type of Function - cyclops pattern matching builders use ActionWithReturn which is serialisable and retains type info
  */
 @AllArgsConstructor
-public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R>>{
+public class Cases<T,R,X extends Function<T,R>> implements Function<T,Maybe<R>>{
 	@Wither
 	private final PStack<Case<T,R,X>> cases;
 	@Wither(AccessLevel.PRIVATE)
@@ -399,7 +400,7 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 * @see java.util.function.Function#apply(java.lang.Object)
 	 * 
 	 */
-	public Optional<R> apply(T t) {
+	public Maybe<R> apply(T t) {
 		return match(t);
 	}
 
@@ -523,8 +524,8 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 */
 	public <R> Stream<R> matchFromStream(Stream<T> s) {
 
-		Stream<Optional<R>> results = s.<Optional<R>> map(this::match);
-		return results.filter(Optional::isPresent).map(Optional::get);
+		Stream<Maybe<R>> results = s.<Maybe<R>> map(this::match);
+		return results.filter(Maybe::isPresent).map(Maybe::get);
 	}
 	/**
 	 * Execute matchFromStream asynchronously
@@ -563,7 +564,7 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 * @param t Array to match on
 	 * @return Matched value wrapped in Optional
 	 */
-	public <R> Optional<R> match(Object... t) {
+	public <R> Maybe<R> match(Object... t) {
 		return match((T)Arrays.asList(t));
 	}
 	/**
@@ -580,7 +581,7 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 * @param t Array to match on
 	 * @return Matched value wrapped in CompletableFuture &amp; Optional
 	 */
-	public <R> CompletableFuture<Optional<R>> matchAsync(Executor executor, Object... t){
+	public <R> CompletableFuture<Maybe<R>> matchAsync(Executor executor, Object... t){
 		return CompletableFuture.supplyAsync(()->match(t), executor);
 	}
 	/**
@@ -598,7 +599,7 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 * @param t Object to decompose and match on
 	 * @return Matched result wrapped in an Optional
 	 */
-	public <R> Optional<R> unapply(Decomposable t) {
+	public <R> Maybe<R> unapply(Decomposable t) {
 		return match((T)t.unapply());
 	}
 
@@ -608,10 +609,10 @@ public class Cases<T,R,X extends Function<T,R>> implements Function<T,Optional<R
 	 * @return Value returned from matched case (if present) otherwise
 	 *         Optional.empty()
 	 */
-	public <R> Optional<R> match(T t) {
+	public <R> Maybe<R> match(T t) {
 
-		return (Optional) stream().map(pattern -> pattern.match(t))
-				.filter(Optional::isPresent).map(Optional::get).findFirst();
+		return Maybe.fromOptional((Optional)stream().map(pattern -> pattern.match(t))
+				.filter(Optional::isPresent).map(Optional::get).findFirst());
 
 	}
 	private Stream<Case<T,R,X>> sequentialStream(){

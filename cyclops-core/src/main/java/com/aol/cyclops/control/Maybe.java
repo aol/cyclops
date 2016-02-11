@@ -3,6 +3,7 @@ package com.aol.cyclops.control;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -28,7 +29,9 @@ import com.aol.cyclops.lambda.applicative.Applicative5;
 import com.aol.cyclops.lambda.applicative.ApplicativeBuilder;
 import com.aol.cyclops.lambda.monads.ConvertableFunctor;
 import com.aol.cyclops.lambda.monads.Filterable;
+import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.trampoline.Trampoline;
 import com.aol.cyclops.value.Value;
 
 import lombok.AccessLevel;
@@ -39,10 +42,10 @@ import lombok.EqualsAndHashCode;
 public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, Filterable<T>,Applicativable<T>{
 
 	
-	final static Maybe<?> EMPTY = new Nothing<>();
+	final static Maybe EMPTY = new Nothing<>();
 	
 	static <T> Maybe<T> none(){
-		return (Maybe<T>) EMPTY;
+		return  EMPTY;
 	}
 	
 	static <T> Maybe<T> fromOptional(Optional<T> opt){
@@ -141,77 +144,36 @@ public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, 
 		return (Maybe<T>)Filterable.super.notNull();
 	}
 
+	
+
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.util.stream.Stream)
+	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
 	 */
 	@Override
-	default Maybe<T> removeAll(Stream<T> stream) {
+	default <U> Maybe<U> cast(Class<U> type) {
 		
-		return (Maybe<T>)Filterable.super.removeAll(stream);
+		return (Maybe<U>)Applicativable.super.cast(type);
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.lang.Iterable)
+	 * @see com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
 	 */
 	@Override
-	default Maybe<T> removeAll(Iterable<T> it) {
+	default Maybe<T> peek(Consumer<? super T> c) {
 		
-		return (Maybe<T>)Filterable.super.removeAll(it);
+		return (Maybe<T>)Applicativable.super.peek(c);
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.lang.Object[])
+	 * @see com.aol.cyclops.lambda.monads.Functor#trampoline(java.util.function.Function)
 	 */
 	@Override
-	default Maybe<T> removeAll(T... values) {
+	default <R> Maybe<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 		
-		return (Maybe<T>)Filterable.super.removeAll(values);
+		return (Maybe<R>)Applicativable.super.trampoline(mapper);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.lang.Iterable)
-	 */
-	@Override
-	default Maybe<T> retainAll(Iterable<T> it) {
-		
-		return (Maybe<T>)Filterable.super.retainAll(it);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.util.stream.Stream)
-	 */
-	@Override
-	default Maybe<T> retainAll(Stream<T> stream) {
-		
-		return (Maybe<T>)Filterable.super.retainAll(stream);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.lang.Object[])
-	 */
-	@Override
-	default Maybe<T> retainAll(T... values) {
-		
-		return (Maybe<T>)Filterable.super.retainAll(values);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Filterable#retainMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default Maybe<T> retainMatches(Matcher<T> m) {
-		
-		return (Maybe<T>)Filterable.super.retainMatches(m);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Filterable#removeMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default Maybe<T> removeMatches(Matcher<T> m) {
-		
-		return (Maybe<T>)Filterable.super.removeMatches(m);
-	}
 
 
 

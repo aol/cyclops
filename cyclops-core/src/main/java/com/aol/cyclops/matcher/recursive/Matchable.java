@@ -8,7 +8,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.matcher.Case;
+import com.aol.cyclops.matcher.Predicates;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.matcher.builders.MatchingInstance;
 import com.aol.cyclops.matcher.builders.PatternMatcher;
@@ -53,6 +55,7 @@ public interface Matchable<TYPE>{
 	 * @return Result - this method requires a match or an NoSuchElement exception is thrown
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Deprecated //use mayMatch
 	default <R> R  matches(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE, R>> fn1){
 		return (R) new MatchingInstance(new _Simpler_Case( fn1.apply( (CheckValues)
 				new _Simpler_Case(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
@@ -79,6 +82,7 @@ public interface Matchable<TYPE>{
 	 * @return Result - this method requires a match or an NoSuchElement exception is thrown
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Deprecated //use mayMatch
 	default <R> R matches(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE, R>> fn1,
 								Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE, R>> fn2){
 		
@@ -87,6 +91,7 @@ public interface Matchable<TYPE>{
 						.match(getMatchable()).get();
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Deprecated //use mayMatch
 	default <R> R  matches(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn1,Function<CheckValues<? super TYPE,R>,
 							CheckValues<? super TYPE,R>> fn2,Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn3){
 		
@@ -95,6 +100,7 @@ public interface Matchable<TYPE>{
 						.match(getMatchable()).get();
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Deprecated //use mayMatch
 	default <R> R  matches(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn1,Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn2,
 											Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn3,
 											Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn4){
@@ -104,6 +110,7 @@ public interface Matchable<TYPE>{
 						.match(getMatchable()).get();
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Deprecated //use mayMatch
 	default <R> R  matches(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn1,
 									Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn2,
 									Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn3,
@@ -115,13 +122,13 @@ public interface Matchable<TYPE>{
 			.match(getMatchable()).get();
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <R> Optional<R>  mayMatch(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn1){
+	default <R> Maybe<R>  mayMatch(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn1){
 		return  new MatchingInstance(new _Simpler_Case( fn1.apply( (CheckValues)
 				new _Simpler_Case(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
 					.match(getMatchable());
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <R> Optional<R> mayMatch(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn1,
+	default <R> Maybe<R> mayMatch(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn1,
 											Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn2){
 		
 		return  new MatchingInstance(new _Simpler_Case( fn1.compose(fn2).apply( (CheckValues)
@@ -129,7 +136,7 @@ public interface Matchable<TYPE>{
 						.match(getMatchable());
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <R> Optional<R>  mayMatch(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE, R>> fn1,Function<CheckValues<? super TYPE,R>,
+	default <R> Maybe<R>  mayMatch(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE, R>> fn1,Function<CheckValues<? super TYPE,R>,
 							CheckValues<? super TYPE,R>> fn2,Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn3){
 		
 		return  new MatchingInstance(new _Simpler_Case( fn1.compose(fn2.compose(fn3)).apply( (CheckValues)
@@ -137,7 +144,7 @@ public interface Matchable<TYPE>{
 						.match(getMatchable());
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <R> Optional<R>  mayMatch(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn1,
+	default <R> Maybe<R>  mayMatch(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn1,
 											Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn2,
 											Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn3,
 											Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn4){
@@ -147,7 +154,7 @@ public interface Matchable<TYPE>{
 						.match(getMatchable());
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	default <R> Optional<R>  mayMatch(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn1,
+	default <R> Maybe<R>  mayMatch(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn1,
 										Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn2,
 										Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn3,
 										Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn4,

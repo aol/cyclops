@@ -1,8 +1,5 @@
 package com.aol.cyclops.lambda.tuple;
 
-import com.aol.cyclops.lambda.tuple.lazyswap.LazySwapPTuple2;
-import com.aol.cyclops.lambda.tuple.lazyswap.LazySwapPTuple3;
-
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;

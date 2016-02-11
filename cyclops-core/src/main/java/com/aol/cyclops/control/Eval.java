@@ -1,6 +1,7 @@
 package com.aol.cyclops.control;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -15,6 +16,7 @@ import com.aol.cyclops.lambda.applicative.Applicative;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.Unit;
 import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.trampoline.Trampoline;
 import com.aol.cyclops.value.Value;
 
 import lombok.EqualsAndHashCode;
@@ -57,10 +59,35 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>,  Applicativa
 	public <R> Eval<R> map(Function<? super T, ? extends R> mapper);
 	public <R> Eval<R> flatMap(Function<? super T, ? extends Eval<? extends R>> mapper);
 	
-	default <R> Eval<R> ap1( Applicative<T,R, ?> ap){
-		return (Eval<R>)Applicativable.super.ap1(ap);
-	}
+	
+	
+	
 	public T get();
+	
+	
+	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
+	 */
+	@Override
+	default <U> Eval<U> cast(Class<U> type) {
+		return (Eval<U>)Applicativable.super.cast(type);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
+	 */
+	@Override
+	default Functor<T> peek(Consumer<? super T> c) {
+		return (Eval<T>)Applicativable.super.peek(c);
+	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.lambda.monads.Functor#trampoline(java.util.function.Function)
+	 */
+	@Override
+	default <R> Eval<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+		
+		return (Eval<R>)Applicativable.super.trampoline(mapper);
+	}
 	default Eval<CompletableFuture<T>> asyncNow(Executor ex){
 		return Eval.now(this.toCompletableFutureAsync(ex));
 	}

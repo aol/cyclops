@@ -8,6 +8,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.Reducer;
+import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 
@@ -136,7 +137,7 @@ public interface Foldable<T> {
 	 * @param reducers
 	 * @return
 	 */
-	default List<T> reduce(Stream<? extends Monoid<T>> reducers){
+	default ListX<T> reduce(Stream<? extends Monoid<T>> reducers){
 		return stream().reduce(reducers);
 	}
 
@@ -161,62 +162,10 @@ public interface Foldable<T> {
 	 * @param reducers
 	 * @return
 	 */
-	default List<T> reduce(Iterable<Reducer<T>> reducers){
+	default ListX<T> reduce(Iterable<? extends Monoid<T>> reducers){
 		return stream().reduce(reducers);
 	}
 
-	/**
-	 * 
-	 * 
-	 <pre>
-	 * 		{@code
-	 * 		SequenceM.of("a","b","c").foldLeft(Reducers.toString(""));
-	 *        
-	 *         // "abc"
-	 *         }
-	 * </pre>
-	 * 
-	 * @param reducer
-	 *            Use supplied Monoid to reduce values starting via foldLeft
-	 * @return Reduced result
-	 */
-	default T foldLeft(Monoid<T> reducer){
-		return stream().foldLeft(reducer);
-	}
-
-	/**
-	 * foldLeft : immutable reduction from left to right
-	 * 
-	 * <pre>
-	 * {@code 
-	 * 
-	 * assertTrue(SequenceM.of("a", "b", "c").foldLeft("", String::concat).equals("abc"));
-	 * }
-	 * </pre>
-	 */
-	default T foldLeft(T identity, BinaryOperator<T> accumulator){
-		return stream().foldLeft(identity,accumulator);
-	}
-
-	/**
-	 * Attempt to map this Monad to the same type as the supplied Monoid (using
-	 * mapToType on the monoid interface) Then use Monoid to reduce values
-	 * 
-	 * <pre>
-	 * 		{@code
-	 * 		SequenceM.of(1,2,3).foldLeftMapToType(Reducers.toString(""));
-	 *        
-	 *         // "123"
-	 *         }
-	 * </pre>
-	 * 
-	 * @param reducer
-	 *            Monoid to reduce values
-	 * @return Reduce result
-	 */
-	default <T> T foldLeftMapToType(Reducer<T> reducer){
-		return stream().foldLeftMapToType(reducer);
-	}
 
 	/**
 	 * 

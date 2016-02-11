@@ -68,7 +68,6 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 		return new Success<>(value,new Class[0]);
 	}
 	default Xor<X,T> toXor(){
-		
 		if(isSuccess())
 			return Xor.primary(get());
 		else

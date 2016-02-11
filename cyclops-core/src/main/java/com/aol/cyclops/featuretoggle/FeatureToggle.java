@@ -99,7 +99,6 @@ public interface FeatureToggle<F> extends Supplier<F>, Value<F>, ToStream<F>,App
 	 * @return flattened switch
 	 */
 	default <X> FeatureToggle<X> flatten(){
-		
 		Optional s = Optional.of(get()).flatMap(x->{
 			if(x instanceof FeatureToggle)
 				return Optional.of(((FeatureToggle)x).flatten());

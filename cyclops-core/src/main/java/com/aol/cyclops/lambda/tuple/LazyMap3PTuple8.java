@@ -1,4 +1,4 @@
-package com.aol.cyclops.lambda.tuple.lazymap;
+package com.aol.cyclops.lambda.tuple;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.function.Function;
 
 import com.aol.cyclops.closures.immutable.LazyImmutable;
-import com.aol.cyclops.lambda.tuple.PTuple8;
-import com.aol.cyclops.lambda.tuple.TupleImpl;
 
 public class LazyMap3PTuple8<T,T1,T2,T3,T4,T5,T6,T7,T8> extends TupleImpl<T1,T2,T,T4,T5,T6,T7,T8> {
 	 private final LazyImmutable<T> value = LazyImmutable.def();

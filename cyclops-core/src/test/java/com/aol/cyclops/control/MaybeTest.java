@@ -1,16 +1,22 @@
 package com.aol.cyclops.control;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,8 +35,11 @@ import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.collections.extensions.standard.QueueX;
 import com.aol.cyclops.collections.extensions.standard.SetX;
 import com.aol.cyclops.collections.extensions.standard.SortedSetX;
+import com.aol.cyclops.lambda.applicative.Applicativable.Applicatives;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.Reducers;
+import com.aol.cyclops.streams.StreamUtils;
+import com.aol.cyclops.trampoline.Trampoline;
 import com.aol.cyclops.trycatch.Try;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
@@ -58,7 +67,8 @@ public class MaybeTest {
 	}
 	@Test
 	public void testApplicativeBuilder() {
-		assertThat(just.applicatives().applicative(this::add1).ap(Optional.of(20)).get(),equalTo(21));
+		assertThat(Applicatives.<Integer,Integer>applicatives(just, just)
+					.applicative(this::add1).ap(Optional.of(20)).get(),equalTo(21));
 	}
 
 	
@@ -120,10 +130,7 @@ public class MaybeTest {
 		assertThat(just.unit(20),equalTo(Maybe.of(20)));
 	}
 
-	@Test
-	public void testAp1ApplicativeOfTRQ() {
-		assertThat(just.ap1(just.applicatives().applicative(this::add1)),equalTo(Maybe.of(11)));
-	}
+	
 
 	@Test
 	public void testIsPresent() {
@@ -476,53 +483,7 @@ public class MaybeTest {
 		
 	}
 
-	@Test
-	public void testRemoveAllStreamOfT() {
-		assertFalse(just.removeAll(Stream.of(10,11,12)).isPresent());
-		assertTrue(just.removeAll(Stream.of(11,12)).isPresent());
-	}
-
-	@Test
-	public void testRemoveAllIterableOfT() {
-		assertFalse(just.removeAll(ListX.of(10,11,12)).isPresent());
-		assertTrue(just.removeAll(ListX.of(11,12)).isPresent());
-	}
-
-	@Test
-	public void testRemoveAllTArray() {
-		assertFalse(just.removeAll(10,11,12).isPresent());
-		assertTrue(just.removeAll(11,12).isPresent());
-	}
-
-	@Test
-	public void testRetainAllIterableOfT() {
-		assertTrue(just.retainAll(ListX.of(10,11,12)).isPresent());
-		assertFalse(just.retainAll(ListX.of(11,12)).isPresent());
-	}
-
-	@Test
-	public void testRetainAllStreamOfT() {
-		assertTrue(just.retainAll(Stream.of(10,11,12)).isPresent());
-		assertFalse(just.retainAll(Stream.of(11,12)).isPresent());
-	}
-
-	@Test
-	public void testRetainAllTArray() {
-		assertTrue(just.retainAll(10,11,12).isPresent());
-		assertFalse(just.retainAll(11,12).isPresent());
-	}
-
-	@Test
-	public void testRetainMatches() {
-		assertTrue(just.retainMatches(equalTo(10)).isPresent());
-		assertFalse(just.retainMatches(equalTo(11)).isPresent());
-	}
-
-	@Test
-	public void testRemoveMatches() {
-		assertFalse(just.removeMatches(equalTo(10)).isPresent());
-		assertTrue(just.removeMatches(equalTo(11)).isPresent());
-	}
+	
 
 
 	@Test
@@ -601,293 +562,207 @@ public class MaybeTest {
 
 	@Test
 	public void testReduceStreamOfQextendsMonoidOfT() {
-		
+		ListX<Integer> countAndTotal = just.reduce(Stream.of(Reducers.toCountInt(),Reducers.toTotalInt()));
+		assertThat(countAndTotal,equalTo(ListX.of(1,10)));
 	}
 
 	@Test
 	public void testReduceIterableOfReducerOfT() {
-		fail("Not yet implemented");
+		ListX<Integer> countAndTotal = just.reduce(Arrays.asList(Reducers.toCountInt(),Reducers.toTotalInt()));
+		assertThat(countAndTotal,equalTo(ListX.of(1,10)));
 	}
 
-	@Test
-	public void testFoldLeftMonoidOfT() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testFoldLeftTBinaryOperatorOfT() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testFoldLeftMapToType() {
-		fail("Not yet implemented");
-	}
+	
 
 	@Test
 	public void testFoldRightMonoidOfT() {
-		fail("Not yet implemented");
+		assertThat(just.foldRight(Monoid.of(1,Semigroups.intMult)),equalTo(10));
 	}
 
 	@Test
 	public void testFoldRightTBinaryOperatorOfT() {
-		fail("Not yet implemented");
+		assertThat(just.foldRight(10,(a,b)->a+b),equalTo(20));
 	}
 
 	@Test
 	public void testFoldRightMapToType() {
-		fail("Not yet implemented");
+		assertThat(just.foldRightMapToType(Reducers.toPStackX()),equalTo(just.toPStackX()));
 	}
 
-	@Test
-	public void testFromSupplier() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGet1() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testFilterWhenPredicateOfQsuperT() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testFilterWhenPredicateOfQsuperTFunctionOfQsuperTQextendsR() {
-		fail("Not yet implemented");
-	}
-
+	
+	
 	@Test
 	public void testWhenFunctionOfQsuperMaybeOfTQextendsR() {
-		fail("Not yet implemented");
+		assertThat(just.when(s->"hello", ()->"world"),equalTo("hello"));
+		assertThat(none.when(s->"hello", ()->"world"),equalTo("world"));
 	}
 
-	@Test
-	public void testFilterWhenOrElse() {
-		fail("Not yet implemented");
-	}
-
+	
 	@Test
 	public void testOrElseGet() {
-		fail("Not yet implemented");
+		assertThat(none.orElseGet(()->2),equalTo(2));
+		assertThat(just.orElseGet(()->2),equalTo(10));
 	}
 
 	@Test
 	public void testToOptional() {
-		fail("Not yet implemented");
+		assertFalse(none.toOptional().isPresent());
+		assertTrue(just.toOptional().isPresent());
+		assertThat(just.toOptional(),equalTo(Optional.of(10)));
 	}
 
 	@Test
 	public void testToStream() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testToAtomicReference() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testToOptionalAtomicReference() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testOrElse() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testOrElseThrow() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testToList() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testIterator() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testToFutureW() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testToCompletableFuture() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testToCompletableFutureAsync() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testToCompletableFutureAsyncExecutor() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetMatchable1() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testMatchesFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPER() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testMatchesFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPERFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPER() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testMatchesFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPERFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPERFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPER() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testMatchesFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPERFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPERFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPERFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPER() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testMatchesFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPERFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPERFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPERFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPERFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPER() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testMayMatchFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPER() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testMayMatchFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPERFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPER() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testMayMatchFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPERFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPERFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPER() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testMayMatchFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPERFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPERFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPERFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPER() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testMayMatchFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPERFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPERFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPERFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPERFunctionOfCheckValuesOfQsuperTYPERCheckValuesOfQsuperTYPER() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testOfT1() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testOfStream() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testOfDecomposable() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testListOfValues() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testUnwrap() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testIterator1() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testForEach() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testSpliterator() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testCast() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testMapFunctionOfQsuperTQextendsR1() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testPeek() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testTrampoline() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testMatchesCases() {
+		assertThat(none.toStream().collect(Collectors.toList()).size(),equalTo(0));
+		assertThat(just.toStream().collect(Collectors.toList()).size(),equalTo(1));
 		
 	}
 
 	@Test
-	public void testPatternMatch5() {
-		assertThat(just.patternMatch("hello", c->c.hasValuesWhere(i->(int)i==20).then(i->"world"),
-				c->c.hasValuesWhere(i->(int)i==30).then(i->"world"),
-				c->c.hasValuesWhere(i->(int)i==10).then(i->"boo!"),
-				c->c.hasValuesWhere(i->(int)i==30).then(i->"boo2!"),
-				c->c.hasValuesWhere(i->(int)i==40).then(i->"boo3!")),equalTo(Maybe.of("boo!")));
+	public void testToAtomicReference() {
+		assertThat(just.toAtomicReference().get(),equalTo(10));
+	}
+	@Test(expected=NoSuchElementException.class)
+	public void testToAtomicReferenceNone() {
+		none.toAtomicReference().get();
 	}
 
 	@Test
-	public void testPatternMatch4() {
-		assertThat(just.patternMatch("hello", c->c.hasValuesWhere(i->(int)i==20).then(i->"world"),
-				c->c.hasValuesWhere(i->(int)i==30).then(i->"world"),
-				c->c.hasValuesWhere(i->(int)i==10).then(i->"boo!"),
-				c->c.hasValuesWhere(i->(int)i==30).then(i->"boo2!")),equalTo(Maybe.of("boo!")));
+	public void testToOptionalAtomicReference() {
+		assertFalse(none.toOptionalAtomicReference().isPresent());
+		assertTrue(just.toOptionalAtomicReference().isPresent());
 	}
 
 	@Test
-	public void testPatternMatch3(){
-		assertThat(just.patternMatch("hello", c->c.hasValuesWhere(i->(int)i==20).then(i->"world"),
-												c->c.hasValuesWhere(i->(int)i==30).then(i->"world"),
-												c->c.hasValuesWhere(i->(int)i==10).then(i->"boo!")),equalTo(Maybe.of("boo!")));
+	public void testOrElse() {
+		assertThat(none.orElse(20),equalTo(20));
+		assertThat(just.orElse(20),equalTo(10));
+	}
+
+	@Test(expected=RuntimeException.class)
+	public void testOrElseThrow() {
+		none.orElseThrow(()->new RuntimeException());
+	}
+	@Test
+	public void testOrElseThrowSome() {
+		
+		assertThat(just.orElseThrow(()->new RuntimeException()),equalTo(10));
 	}
 
 	@Test
-	public void testPatternMatch2(){
-		assertThat(just.patternMatch("hello", c->c.hasValuesWhere(i->(int)i==20).then(i->"world"),
-											c->c.hasValuesWhere(i->(int)i==30).then(i->"world")),equalTo(Maybe.of("hello")));
+	public void testToList() {
+		assertThat(just.toList(),equalTo(Arrays.asList(10)));
+		assertThat(none.toListX(),equalTo(new ArrayList<>()));
+	}
+
+	
+	@Test
+	public void testToFutureW() {
+		FutureW<Integer> cf = just.toFutureW();
+		assertThat(cf.get(),equalTo(10));
 	}
 
 	@Test
-	public void testPatternMatch1(){
-		assertThat(just.patternMatch("hello", c->c.hasValuesWhere(i->(int)i==10).then(i->"world")),equalTo(Maybe.of("world")));
+	public void testToCompletableFuture() {
+		CompletableFuture<Integer> cf = just.toCompletableFuture();
+		assertThat(cf.join(),equalTo(10));
 	}
+
+	@Test
+	public void testToCompletableFutureAsync() {
+		CompletableFuture<Integer> cf = just.toCompletableFutureAsync();
+		assertThat(cf.join(),equalTo(10));
+	}
+	Executor exec = Executors.newFixedThreadPool(1);
+
+	@Test
+	public void testToCompletableFutureAsyncExecutor() {
+		CompletableFuture<Integer> cf = just.toCompletableFutureAsync(exec);
+		assertThat(cf.join(),equalTo(10));
+	}
+
+	@Test
+	public void testGetMatchable1() {
+		assertThat(just.getMatchable(),equalTo(10));
+	}
+
+	@Test
+	public void testMatches() {
+		assertThat(just.mayMatch(c->c.hasValues(10).then(i->"hello")),equalTo(Maybe.of("hello")));
+		assertThat(just.mayMatch(c->c.hasValues(1).then(i->"hello"),
+								c->c.hasValues(2).then(i->"hello")),equalTo(Maybe.of("hello")));
+		assertThat(just.mayMatch(c->c.hasValues(1).then(i->"hello"),
+								 c->c.hasValues(2).then(i->"hello"),
+								 c->c.hasValues(3).then(i->"hello")),equalTo(Maybe.none()));
+		assertThat(just.mayMatch(c->c.hasValues(1).then(i->"hello1"),
+				 				 c->c.hasValues(2).then(i->"hello2"),
+				 				 c->c.hasValues(10).then(i->"hello3"),
+				 				  c->c.hasValues(3).then(i->"hello4")),equalTo(Maybe.of("hello3")));
+		assertThat(just.mayMatch(c->c.hasValues(1).then(i->"hello1"),
+								 c->c.hasValues(2).then(i->"hello2"),
+								 c->c.hasValues(12).then(i->"hello3"),
+								 c->c.hasValues(3).then(i->"hello4"),
+								 c->c.hasValues(10).then(i->"hello5")),equalTo(Maybe.of("hello5")));
+	}
+
+	
+	
+
+	@Test
+	public void testUnwrap() {
+		assertThat(just.unwrap(),equalTo(Maybe.of(10)));
+		assertThat(none.unwrap(),equalTo(Maybe.none()));
+	}
+
+	@Test
+	public void testIterator1() {
+		assertThat(StreamUtils.stream(just.iterator()).collect(Collectors.toList()),
+				equalTo(Arrays.asList(10)));
+	}
+
+	@Test
+	public void testForEach() {
+		Mutable<Integer> capture = Mutable.of(null);
+		none.forEach(c->capture.set(c));
+		assertThat(capture.get(),equalTo(nullValue()));
+		just.forEach(c->capture.set(c));
+		assertThat(capture.get(),equalTo(10));
+	}
+
+	@Test
+	public void testSpliterator() {
+		assertThat(StreamSupport.stream(just.spliterator(),false).collect(Collectors.toList()),
+				equalTo(Arrays.asList(10)));
+	}
+
+	@Test
+	public void testCast() {
+		Maybe<Number> num = just.cast(Number.class);
+	}
+
+	@Test
+	public void testMapFunctionOfQsuperTQextendsR1() {
+		assertThat(just.map(i->i+5),equalTo(Maybe.of(15)));
+	}
+	
+	@Test
+	public void testPeek() {
+		Mutable<Integer> capture = Mutable.of(null);
+		just.peek(c->capture.set(c));
+		assertThat(capture.get(),equalTo(nullValue()));
+		just.get();
+		assertThat(capture.get(),equalTo(10));
+	}
+
+	private Trampoline<Integer> sum(int times){
+		return times ==0 ?  Trampoline.done(times) : Trampoline.more(()->sum(times-1));
+	}
+	@Test
+	public void testTrampoline() {
+		assertThat(just.trampoline(this::sum),equalTo(40));
+	}
+
+	
 
 	@Test
 	public void testUnitT1() {
