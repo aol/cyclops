@@ -64,7 +64,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 			assertTrue(s.get().reduce("", String::concat).contains("b"));
 			assertTrue(s.get().reduce("", String::concat).contains("c"));
 
-			assertEquals(3, (int) s.get().map(str -> str.length()).foldLeft(0, (u, t) -> u + t));
+			assertEquals(3, (int) s.get().map(str -> str.length()).reduce(0, (u, t) -> u + t));
 
 			assertEquals(3, (int) s.get().map(str -> str.length()).foldRight(0, (t, u) -> u + t));
 		}

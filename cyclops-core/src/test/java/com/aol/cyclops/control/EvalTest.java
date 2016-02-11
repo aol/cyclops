@@ -90,11 +90,7 @@ public class EvalTest {
 	//	Eval.now(10).ap2(Maybe.applicativeBuilder().applicative2B(this::addOne).ap(Eval.now(20));
 	}
 	
-	@Test
-	public void apSelf(){
-		assertThat(Maybe.of(10).applicatives().applicative2(this::add).ap(Eval.now(20)).get(),equalTo(30));
-
-	}
+	
 	@Test
 	public void ap1Function(){
 		assertThat(Maybe.of(10).ap1(this::addOne).get(),equalTo(11));

@@ -1,7 +1,8 @@
 package com.aol.cyclops.matcher;
 
 import static com.aol.cyclops.matcher.Predicates.__;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.any;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -10,14 +11,14 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.junit.Test;
+
+import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.matcher.recursive.Matchable;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Value;
-
-import org.hamcrest.Matchers;
-import org.junit.Test;
-
-import com.aol.cyclops.matcher.recursive.Matchable;
 
 
 public class MatchableTest {
@@ -83,7 +84,7 @@ public class MatchableTest {
 	}
 	@Test 
 	public void matchable(){
-		Optional<Integer> result = Matchable.of(Optional.of(1))
+		Maybe<Integer> result = Matchable.of(Optional.of(1))
 											.mayMatch(c->c.hasValues(2).then(i->2));
 		assertThat(Matchable.of(result)
 				 .matches(c->c.isEmpty().then(i->"hello")),equalTo("hello"));

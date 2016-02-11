@@ -8,7 +8,6 @@ import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -18,6 +17,7 @@ import org.jooq.lambda.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.matcher.CollectionMatcher;
 import com.aol.cyclops.matcher.Extractors;
 import com.aol.cyclops.matcher.builders.Matching;
@@ -269,7 +269,7 @@ public class MatchingDataStructuresTest {
 	public void  caseOfPredicates(){
 		Stream.of(1,2,3,4).map(Matching.when().isValue(1).thenApply(v->"found 1")
 									 .when().isTrue((Integer i)-> i%2==0).thenApply(v->"found even"))
-									.filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
+									.filter(Maybe::isPresent).map(Maybe::get).collect(Collectors.toList());
 		
 		
 		

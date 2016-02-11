@@ -6,12 +6,12 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Test;
 
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.matcher.builders.Matching;
 import com.aol.cyclops.matcher.builders.PatternMatcher;
 
@@ -53,7 +53,7 @@ public class MatchManyTest {
 	}
 	@Test
 	public void optionalFlatMap(){
-		System.out.println(Optional.of(100).flatMap(Matching.when().isValue(100)
+		System.out.println(Maybe.of(100).flatMap(Matching.when().isValue(100)
 																	.thenApply(i->i+10)).get());
 	}
 	@Test
