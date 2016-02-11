@@ -1,7 +1,5 @@
 package com.aol.cyclops.matcher;
 
-import static com.aol.cyclops.matcher.Predicates.__;
-import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -11,10 +9,16 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
+import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.matcher.MatchableTest.Child;
 import com.aol.cyclops.matcher.recursive.Matchable;
+import com.aol.cyclops.matcher.recursive.Matchable.MatchableTuple2;
+import com.aol.cyclops.matcher.recursive.Matchable.MatchableTuple3;
+import com.aol.cyclops.matcher.recursive.Matchable.MyCase;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -23,9 +27,76 @@ import lombok.Value;
 
 public class MatchableTest {
 
+	private String concat(String a,String b){
+		return a+","+b;
+	}
+	private boolean isValidStreet(String street1){
+		return true;
+	}
+	private boolean isValidHouse(int house){
+		return true;
+	}
+	@Test
+	public void matchTestStructuralAndGuards(){
+		String v  =new Address(10,"hello","my city").match()
+							   			 .on$12_()
+							   			 .when((house,street)-> 
+							   			 	house.<String>mayMatch(c->c.hasValuesWhere(this::isValidHouse).then(i->"valid house"))
+							   		            	 .recover("incorrectly configured house")
+							   		            	 .ap2(this::concat)
+							   		            	 .ap(
+							   		      				street.<String>mayMatch(c->c.hasValuesWhere(this::isValidStreet).then(s->"valid street"))
+							   		      				.recover("incorrectly configured steet")
+							   		            	 )
+							   		).get();
+							   		
+	}
+	@Test
+	public void matchTestStructuralOnly(){
+		String v =new Address(10,"hello","my city").match()
+							   			 .on$12_()
+							   			 .when((house,street)-> 
+							   					house.filter(this::isValidHouse).map(i->"valid house").recover("incorrectly configured house")
+							   		                 .<String,String>ap2(this::concat)
+							   		            	 .ap(street.filter(this::isValidStreet).map(s->"valid street").recover("incorrectly configured steet")).get());
+							   		
+	}
+	@Test
+	public void matchTestNestedStructural(){
+		String v = new Customer("test",new Address(10,"hello","my city"))
+										 .match()
+							   			 .on$_2()
+							   			 .when(address ->
+							   			   		 address.on$12_()
+							   					   		.when((house,street)-> 
+							   									house.filter(this::isValidHouse).map(i->"valid house").recover("incorrectly configured house")
+							   									 	 .ap2(this::concat)
+							   									 	 .ap(street.filter(this::isValidStreet).map(s->"valid street").recover("incorrectly configured steet"))
+							   									 	 .get())
+							   			 , ()->"no address configured");
+							   	
+	}
+	@AllArgsConstructor
+	static class Address{
+		int house;
+		String street;
+		String city;
+		
+		public MatchableTuple3<Integer,String,String> match(){
+			return Matchable.from(()->house,()->street,()->city);
+		}
+	}
+	@AllArgsConstructor
+	static class Customer{
+		String name;
+		Address address;
+		public MatchableTuple2<String,MatchableTuple3<Integer,String,String>> match(){
+			return Matchable.from(()->name,()->Maybe.ofNullable(address).map(a->a.match()).orElseGet(()->null));
+		}
+	}
 	@Test
 	public void testMatch(){
-		
+		Matchable example with Predicates.type(type)
 		Matchable.of(new NestedCase(1,2,new NestedCase(3,4,null)))
 		 			.matches(c->c.hasValues(1,__,Predicates.hasValues(3,4,__))
 				 	.then(i->"2"));
