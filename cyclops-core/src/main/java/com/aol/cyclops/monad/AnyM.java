@@ -33,17 +33,24 @@ import org.jooq.lambda.function.Function4;
 import org.jooq.lambda.function.Function5;
 
 import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.comprehensions.donotation.typed.Do;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.functions.TriFunction;
+import com.aol.cyclops.functions.currying.CurryVariance;
 import com.aol.cyclops.lambda.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.lambda.monads.EmptyUnit;
 import com.aol.cyclops.lambda.monads.FlatMap;
 import com.aol.cyclops.lambda.monads.Foldable;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.lambda.monads.Unit;
+import com.aol.cyclops.lambda.monads.FlatMap.Apply2;
+import com.aol.cyclops.lambda.monads.FlatMap.Apply2Impl;
+import com.aol.cyclops.lambda.monads.FlatMap.Apply3;
+import com.aol.cyclops.lambda.monads.FlatMap.Apply3Impl;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.Unwrapable;
@@ -76,6 +83,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public SequenceM<T> stream();
 	
+
 	
 	default Value<T> toFirstValue(){
 		return ()-> firstOrNull(toList());

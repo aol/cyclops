@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.streamable.Streamable;
-
+@Deprecated
 public interface ReduceM<T> {
 	/**
 	 * Perform a reduction where NT is a (native) Monad type

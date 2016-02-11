@@ -12,6 +12,7 @@ import java.util.stream.BaseStream;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
 
+@Deprecated
 public interface FlatMapM<T> {
 	/**
 	 * Convenience method to allow method reference support, when flatMap return type is a Stream.
