@@ -13,7 +13,7 @@ public class CyclopsMatchers {
 	public static final Matcher __ = Matchers.any(Object.class);
 	
 	public	static<V> Matcher hasValues(V... values){
-		Predicate p = Predicates.hasValues(values);
+		Predicate p = Predicates.values(values);
 		return new Matcher(){
 
 			@Override
@@ -43,7 +43,7 @@ public class CyclopsMatchers {
 		
 	}
 	public	static<V> Matcher hasValuesWhere(Predicate<V>... values){
-		Predicate p = Predicates.hasValuesWhere(values);
+		Predicate p = Predicates.where(values);
 		return new Matcher(){
 
 			@Override
@@ -72,7 +72,7 @@ public class CyclopsMatchers {
 		};
 	}
 	public	static<V> Matcher hasValuesMatch(Matcher<V>... values){
-		Predicate p = Predicates.hasValuesMatch(values);
+		Predicate p = Predicates.match(values);
 		return new Matcher(){
 
 			@Override

@@ -393,7 +393,7 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	 */
 	default Case<T,R,Function<T,R>> andWithValues(Object... with){
 		
-		return compose((Case)Case.of(new ADTPredicateBuilder(Object.class).hasValues(with),Function.identity()));
+		return compose((Case)Case.of(new ADTPredicateBuilder(Object.class).values(with),Function.identity()));
 	}
 	/**
 	 * Compose a new Case which executes the Predicate and function supplied before the current predicate

@@ -84,14 +84,14 @@ public class Predicates {
 	 * @param values To match against
 	 * @return Predicate builder that can decompose Case class and match against specified values
 	 */
-	public	static<V> Predicate hasValues(V... values){
-		return new ADTPredicateBuilder<Object>(Object.class).<V>hasValues(values);
+	public	static<V> Predicate values(V... values){
+		return new ADTPredicateBuilder<Object>(Object.class).<V>values(values);
 	}
-	public	static<V> Predicate hasValuesWhere(Predicate<V>... values){
-		return new ADTPredicateBuilder<Object>(Object.class).<V>hasValuesWhere(values);
+	public	static<V> Predicate where(Predicate<V>... values){
+		return new ADTPredicateBuilder<Object>(Object.class).<V>where(values);
 	}
-	public	static<V> Predicate hasValuesMatch(Matcher<V>... values){
-		return new ADTPredicateBuilder<Object>(Object.class).<V>hasValuesMatching(values);
+	public	static<V> Predicate match(Matcher<V>... values){
+		return new ADTPredicateBuilder<Object>(Object.class).<V>match(values);
 	}
 	
 }

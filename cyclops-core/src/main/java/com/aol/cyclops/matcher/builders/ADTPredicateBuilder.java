@@ -48,7 +48,7 @@ public class ADTPredicateBuilder<T>{
 		 * @param values Matching rules for each element in the decomposed / unapplied user input
 		 * @return A single Predicate encompassing supplied rules
 		 */
-		public<V> Predicate hasValues(V... values){
+		public<V> Predicate values(V... values){
 			SequenceM<Predicate> predicates = SequenceM.of(values).map(nextValue->convertToPredicate(nextValue));
 			
 			return t -> toPredicate().test(t) 
@@ -56,7 +56,7 @@ public class ADTPredicateBuilder<T>{
 							.zip(predicates,(a,b)->Tuple.tuple(a, b)).map(tuple -> tuple.v2.test(tuple.v1))
 							.allMatch(v->v==true);
 		}
-		public<V> Predicate hasValuesWhere(Predicate<V>... values){
+		public<V> Predicate where(Predicate<V>... values){
 			SequenceM<Predicate> predicates = SequenceM.of(values).map(nextValue->convertToPredicate(nextValue));
 			
 			return t -> toPredicate().test(t) 
@@ -64,7 +64,7 @@ public class ADTPredicateBuilder<T>{
 							.zip(predicates,(a,b)->Tuple.tuple(a, b)).map(tuple -> tuple.v2.test(tuple.v1))
 							.allMatch(v->v==true);
 		}
-		public<V> Predicate hasValuesMatching(Matcher<V>... values){
+		public<V> Predicate match(Matcher<V>... values){
 			SequenceM<Predicate> predicates = SequenceM.of(values).map(nextValue->convertToPredicate(nextValue));
 			
 			return t -> toPredicate().test(t) 

@@ -22,7 +22,7 @@ import com.aol.cyclops.functions.TriFunction;
 import com.aol.cyclops.matcher.builders.CheckValues;
 import com.aol.cyclops.matcher.builders.MatchingInstance;
 import com.aol.cyclops.matcher.builders.PatternMatcher;
-import com.aol.cyclops.matcher.builders._Simpler_Case;
+import com.aol.cyclops.matcher.builders.MatchableCase;
 import com.aol.cyclops.objects.Decomposable;
 import com.aol.cyclops.sequence.SequenceM;
 
@@ -68,15 +68,15 @@ public interface Matchable<TYPE>{
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	default <R> Eval<R>  matches(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE, R>> fn1){
-		return Eval.later(()->(R) new MatchingInstance(new _Simpler_Case( fn1.apply( (CheckValues)
-				new _Simpler_Case(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
+		return Eval.later(()->(R) new MatchingInstance(new MatchableCase( fn1.apply( (CheckValues)
+				new MatchableCase(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
 					.match(getMatchable()).get());
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	default <R> Maybe<R>  mayMatch(Function<CheckValues<? super TYPE,R>,CheckValues<? super TYPE,R>> fn1){
-		return  new MatchingInstance(new _Simpler_Case( fn1.apply( (CheckValues)
-				new _Simpler_Case(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
+		return  new MatchingInstance(new MatchableCase( fn1.apply( (CheckValues)
+				new MatchableCase(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
 					.match(getMatchable());
 	}
 	

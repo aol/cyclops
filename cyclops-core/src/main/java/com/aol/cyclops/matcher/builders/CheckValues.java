@@ -17,7 +17,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor(access=AccessLevel.PACKAGE)
 public class CheckValues<T,R> {
 	private final Class<T> clazz;
-	protected final _Simpler_Case<R> simplerCase;
+	protected final MatchableCase<R> simplerCase;
 
 	/**
 	 * 
@@ -42,7 +42,7 @@ public class CheckValues<T,R> {
 				.toArray(new Predicate[0]);
 
 		//return new _LastStep<R,V,T>(clazz,predicate,predicates,this.getPatternMatcher());
-		return new _Simpler_Case(this.getPatternMatcher().inCaseOfManyType(predicate,result,
+		return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,result,
 				predicates)).withType(clazz);
 	}
 	public final <V> CheckValues<T,R> just(Function<? super T,? extends R> result,V... values) {	
@@ -56,7 +56,7 @@ public class CheckValues<T,R> {
 				.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toListX().plus(i->SeqUtils.EMPTY==i)
 				.toArray(new Predicate[0]);
 
-		return new _Simpler_Case(this.getPatternMatcher().inCaseOfManyType(predicate, result,
+		return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate, result,
 				predicates)).withType(clazz);
 	}
 	public final <V> CheckValues<T,R> justWhere(Function<? super T,? extends R> result,Predicate<V>... values){
@@ -70,7 +70,7 @@ public class CheckValues<T,R> {
 				.toArray(new Predicate[0]);
 
 	
-		return new _Simpler_Case(this.getPatternMatcher().inCaseOfManyType(predicate, result,
+		return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate, result,
 				predicates)).withType(clazz);
 	}
 	@SafeVarargs @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -85,7 +85,7 @@ public class CheckValues<T,R> {
 				.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toList()
 				.toArray(new Predicate[0]);
 
-		return new _Simpler_Case(this.getPatternMatcher().inCaseOfManyType(predicate, result,
+		return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate, result,
 				predicates)).withType(clazz);
 	}
 	public final <V> CheckValues<T,R> justMatch( Function<? super T,? extends R> result,Matcher<V>... values){
@@ -98,7 +98,7 @@ public class CheckValues<T,R> {
 				.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toListX().plus(i->SeqUtils.EMPTY==i)
 				.toArray(new Predicate[0]);
 
-		return new _Simpler_Case(this.getPatternMatcher().inCaseOfManyType(predicate, result,
+		return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate, result,
 				predicates)).withType(clazz);
 	}
 	@SafeVarargs @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -113,7 +113,7 @@ public class CheckValues<T,R> {
 											.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toList()
 											.toArray(new Predicate[0]);
 
-		return new _Simpler_Case(this.getPatternMatcher().inCaseOfManyType(predicate, result,
+		return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate, result,
 				predicates)).withType(clazz);
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -126,7 +126,7 @@ public class CheckValues<T,R> {
 		
 		Predicate<V>[] predicates = new Predicate[]{i->i==SeqUtils.EMPTY};
 
-		return new _Simpler_Case(this.getPatternMatcher().inCaseOfManyType(predicate, result,
+		return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate, result,
 				predicates)).withType(clazz);
 	}
 

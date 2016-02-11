@@ -1,31 +1,26 @@
 package com.aol.cyclops.matcher;
 
 import static com.aol.cyclops.matcher2.Predicates.__;
-import static com.aol.cyclops.matcher2.Predicates.hasValues;
+import static com.aol.cyclops.matcher2.Predicates.values;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
-import lombok.Value;
-import lombok.val;
 
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.matcher.builders.Matching;
 import com.aol.cyclops.matcher2.Case;
 import com.aol.cyclops.matcher2.EmptyCase;
 import com.aol.cyclops.matcher2.Predicates;
-import com.aol.cyclops.matcher2.TypedFunction;
 import com.aol.cyclops.objects.Decomposable;
+
+import lombok.Value;
 
 public class CaseTest {
 	Case<Integer,Integer,Function<Integer,Integer>> case1;
@@ -46,23 +41,6 @@ public class CaseTest {
 	public void testNegateAction(){
 		
 		assertThat(case1.negate().negate(input->input*100).match(100).get(),is(10000));
-	}
-	
-	@Test
-	public void testChaining(){
-		TypedFunction<String,Integer> act = hello ->10;
-		 Case<String, Integer, TypedFunction<String, Integer>> caze = Case.of(t->true, act)
-				 														.filter(t -> t.v2.getType()!=null);
-		Case<String, Object, Function<String, Object>> x = caze.mapFunction(fn -> input ->20);
-		assertThat(x.match("hello").get(),is(20));
-	}
-	@Test
-	public void testChainingFilterFails(){
-		TypedFunction<String,Integer> act = hello ->10;
-		 Case<String, Integer, TypedFunction<String, Integer>> caze = Case.of(t->true, act)
-				 															.filter(t -> t.v2.getType()==null);
-		 Case<String, Object, Function<String, Object>> x = caze.mapFunction(fn -> input ->20);
-		assertThat(x.match("hello").isPresent(),is(false));
 	}
 	
 	
@@ -102,12 +80,12 @@ public class CaseTest {
 		System.out.println(Object.class.isAssignableFrom(Person.class));
 		
 		Case<Person, Object, Function<Person, Object>> case2 = Case.of((Person p)->p.age>18,p->p.name + " can vote");
-		assertThat(case2.andWithValues(__,__,Predicates.hasValues(__,__,"Ireland")).match(new Person("bob",19,new Address(10,"dublin","Ireland"))).isPresent(),is(true));
+		assertThat(case2.andWithValues(__,__,Predicates.values(__,__,"Ireland")).match(new Person("bob",19,new Address(10,"dublin","Ireland"))).isPresent(),is(true));
 	}
 	@Test
 	public void testAndWithValuesNegative(){
 		 Case<Person, Object, Function<Person, Object>> case2 = Case.of((Person p)->p.age>18,p->p.name + " can vote");
-		assertThat(case2.andWithValues(__,__,hasValues(__,__,"Ireland")).match(new Person("bob",17,new Address(10,"dublin","Ireland"))).isPresent(),is(false));
+		assertThat(case2.andWithValues(__,__,values(__,__,"Ireland")).match(new Person("bob",17,new Address(10,"dublin","Ireland"))).isPresent(),is(false));
 	}
 	@Test
 	public void testAndTrue(){

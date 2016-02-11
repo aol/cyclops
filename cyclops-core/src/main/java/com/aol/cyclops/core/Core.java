@@ -18,13 +18,11 @@ import com.aol.cyclops.functions.Functions;
 import com.aol.cyclops.lambda.api.Mappable;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.matcher.builders.ADTPredicateBuilder;
-import com.aol.cyclops.matcher.builders.CheckTypeAndValues;
 import com.aol.cyclops.matcher.builders.ElementCase;
 import com.aol.cyclops.matcher.builders.IterableCase;
 import com.aol.cyclops.matcher.builders.Matching;
 import com.aol.cyclops.matcher.builders.MatchingInstance;
 import com.aol.cyclops.matcher.builders.StreamCase;
-import com.aol.cyclops.matcher.recursive.RecursiveMatcher;
 import com.aol.cyclops.matcher2.Case;
 import com.aol.cyclops.matcher2.Cases;
 import com.aol.cyclops.matcher2.CollectionMatcher;
@@ -452,26 +450,7 @@ public class Core extends Functions {
 		return Matching.of(cases);
 	}
 	
-	/**
-	 * Create a builder for Matching on Case classes. This is the closest builder
-	 * for Scala / ML style pattern matching.
-	 * 
-	 * Case classes can be constructed succintly in Java with Lombok or jADT
-	 * e.g.
-	 * <pre>{@code
-	 * \@Value final class CaseClass implements Decomposable { int field1; String field2;}
-	 * }</pre>
-	 * 
-	 * Use with static imports from the Predicates class to get wildcards via '__' or ANY()
-	 * And to apply nested / recursive matching via Predicates.type(  ).with (   )
-	 * 
-	 * Match disaggregated elements by type, value, JDK 8 Predicate or Hamcrest Matcher
-	 * 
-	 * @return Case Class style Pattern Matching Builder
-	 */
-	public static final<USER_VALUE> CheckTypeAndValues<USER_VALUE> matchWhenValues(){
-		return RecursiveMatcher.when();
-	}
+	
 	/**
 	 * Create a builder for Matching against a provided Object as is (i.e. the Steps this builder provide assume you don't wish to disaggregate it and
 	 * match on it's decomposed parts separately).
@@ -636,7 +615,7 @@ public class Core extends Functions {
 	 * @return Predicate builder that can decompose Case class and match against specified values
 	 */
 	public	static<V> Predicate with(V... values){
-		return Predicates.hasValues(values);
+		return Predicates.values(values);
 	}
 	
 	

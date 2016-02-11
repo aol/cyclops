@@ -124,10 +124,10 @@ public class MatchableTest {
 	public void testMatch(){
 		
 		Matchable.of(new NestedCase(1,2,new NestedCase(3,4,null)))
-		 			.matches(c->c.values(in->"2",1,__,Predicates.hasValues(3,4,__)))
+		 			.matches(c->c.values(in->"2",1,__,Predicates.values(3,4,__)))
 		 			.get();
 		Matchable.of(new NestedCase(1,2,new NestedCase(3,4,null)))
-			.matches(c->c.values(in->"2",1,__,type(NestedCase.class).hasValues(3,4,__)))
+			.matches(c->c.values(in->"2",1,__,type(NestedCase.class).values(3,4,__)))
 			.get();
 		Matchable.of(Arrays.asList(1,2,3))
 					.matches(c->c.values(in->"2",1,__,3));
@@ -345,7 +345,7 @@ public class MatchableTest {
 	@Test
 	public void recursive(){
 		Eval<String> result = Matchable.listOfValues(1,new MyCase(4,5,6))
-				 				.matches(c->c.values(i->"rec",Predicates.__,Predicates.hasValues(4,5,6)));
+				 				.matches(c->c.values(i->"rec",Predicates.__,Predicates.values(4,5,6)));
 		
 		assertThat(result.get(),equalTo("rec"));
 	}
@@ -354,7 +354,7 @@ public class MatchableTest {
 	public void matchType(){
 		
 		Eval<Integer> result = Matchable.of(new Child(10,20)).matches(
-									c-> c.justWhere(in->10, Predicates.type(Child.class).hasValues(10,20)));
+									c-> c.justWhere(in->10, Predicates.type(Child.class).values(10,20)));
 		
 		assertThat(result,equalTo(10));
 	}
