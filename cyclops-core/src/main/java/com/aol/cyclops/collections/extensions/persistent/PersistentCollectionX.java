@@ -494,14 +494,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 		
 		return (PersistentCollectionX)FluentCollectionX.super.cast(type);
 	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Functor#matchesCases(com.aol.cyclops.matcher.Case[])
-	 */
-	@Override
-	default <R> PersistentCollectionX<Optional<R>> matchesCases(Case<T, R, Function<T, R>>... cases) {
-		
-		return (PersistentCollectionX)FluentCollectionX.super.matchesCases(cases);
-	}
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function)
 	 */

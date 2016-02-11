@@ -690,14 +690,7 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	}
 
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#matchesCases(com.aol.cyclops.matcher.Case[])
-	 */
-	@Override
-	default <R> PBagX<Optional<R>> matchesCases(Case<T, R, Function<T, R>>... cases) {
-		
-		return (PBagX<Optional<R>>)PersistentCollectionX.super.matchesCases(cases);
-	}
+	
 
 
 	/* (non-Javadoc)

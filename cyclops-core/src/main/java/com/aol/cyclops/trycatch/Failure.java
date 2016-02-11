@@ -12,6 +12,7 @@ import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
@@ -28,8 +29,8 @@ import com.aol.cyclops.sequence.SequenceM;
 public class Failure<T,X extends Throwable> implements Try<T,X> {
 
 	@Override
-	public <T extends Iterable<?>> T unapply() {
-		return (T)Arrays.asList(error);
+	public ListX<X> unapply() {
+		return ListX.of(error);
 	}
 	private final X error;
 	

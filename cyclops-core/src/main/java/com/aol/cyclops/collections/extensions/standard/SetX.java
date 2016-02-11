@@ -578,14 +578,7 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 		
 		return (SetX<U>)MutableCollectionX.super.cast(type);
 	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#matchesCases(com.aol.cyclops.matcher.Case[])
-	 */
-	@Override
-	default <R> SetX<Optional<R>> matchesCases(Case<T, R, Function<T, R>>... cases) {
-		
-		return (SetX<Optional<R>>)MutableCollectionX.super.matchesCases(cases);
-	}
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#patternMatch(java.lang.Object, java.util.function.Function)
 	 */

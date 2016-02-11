@@ -579,14 +579,7 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 		
 		return (SortedSetX<U>)MutableCollectionX.super.cast(type);
 	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#matchesCases(com.aol.cyclops.matcher.Case[])
-	 */
-	@Override
-	default <R> SortedSetX<Optional<R>> matchesCases(Case<T, R, Function<T, R>>... cases) {
 		
-		return (SortedSetX<Optional<R>>)MutableCollectionX.super.matchesCases(cases);
-	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#patternMatch(java.lang.Object, java.util.function.Function)
 	 */

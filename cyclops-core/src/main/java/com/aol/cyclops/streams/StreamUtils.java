@@ -965,7 +965,7 @@ public class StreamUtils{
 	 * @return Reduced Stream values as List entries
 	 */
 	@SuppressWarnings({"rawtypes","unchecked"})
-	public static <R> ListX<R> reduce(Stream<R> stream,Iterable<? extends Reducer<R>> reducers){
+	public static <R> ListX<R> reduce(Stream<R> stream,Iterable<? extends Monoid<R>> reducers){
 		return ListX.fromIterable(new MultiReduceOperator<R>(stream).reduce(reducers));
 		
 	}

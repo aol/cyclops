@@ -11,6 +11,7 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.closures.immutable.LazyImmutable;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.matcher.builders.ADTPredicateBuilder;
 //import com.aol.cyclops.matcher.builders.ADTPredicateBuilder;
 /**
@@ -192,7 +193,7 @@ public interface Case<T,R,X extends Function<T,R>>  {
 	 * @return New Case which chains current case and the supplied cases
 	 */
 	default <T1>  Case<T,T1,Function<T,T1>> andThen(Cases<R,T1,? extends Function<R,T1>> after){
-		final LazyImmutable<Optional<T1>> var = new LazyImmutable<>();
+		final LazyImmutable<Maybe<T1>> var = new LazyImmutable<>();
 		return andThen(Case.of(t-> var.setOnce(after.match(t)).get().isPresent(),  t-> var.get().get()));
 	}
 	

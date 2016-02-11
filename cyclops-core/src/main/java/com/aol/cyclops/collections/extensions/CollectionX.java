@@ -569,14 +569,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 		
 		return (CollectionX<U>)ZippingApplicativable.super.cast(type);
 	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Functor#matchesCases(com.aol.cyclops.matcher.Case[])
-	 */
-	@Override
-	default <R> CollectionX<Optional<R>> matchesCases(Case<T, R, Function<T, R>>... cases) {
-		
-		return (CollectionX<Optional<R>>)ZippingApplicativable.super.matchesCases(cases);
-	}
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function)
 	 */

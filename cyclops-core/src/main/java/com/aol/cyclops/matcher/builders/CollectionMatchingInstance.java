@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.matcher.Cases;
 import com.aol.cyclops.matcher.TypedFunction;
 import com.aol.cyclops.objects.Decomposable;
@@ -12,7 +13,7 @@ import lombok.AllArgsConstructor;
 
 
 @Deprecated
-public class CollectionMatchingInstance  <T, X> extends MatchingInstance<T,X> implements Function<T, Optional<X>> {
+public class CollectionMatchingInstance  <T, X> extends MatchingInstance<T,X> implements Function<T, Maybe<X>> {
 	
 	
 	private final CaseBeingBuilt cse;
@@ -70,8 +71,8 @@ public class CollectionMatchingInstance  <T, X> extends MatchingInstance<T,X> im
 	 *	@return Value from matched case if present
 	 * @see java.util.function.Function#apply(java.lang.Object)
 	 */
-	public Optional<X> apply(Object t){
-		return (Optional<X>)cse.getPatternMatcher().apply(t);
+	public Maybe<X> apply(Object t){
+		return (Maybe)cse.getPatternMatcher().apply(t);
 	}
 	
 	/**
@@ -116,14 +117,14 @@ public class CollectionMatchingInstance  <T, X> extends MatchingInstance<T,X> im
 	 * @param t Array to match on
 	 * @return Matched value wrapped in Optional
 	 */
-	public  Optional<X> match(Object... t){
+	public  Maybe<X> match(Object... t){
 		return cse.getPatternMatcher().match(t);
 	}
 	/**
 	 * @param t Object to match against supplied cases
 	 * @return Value returned from matched case (if present) otherwise Optional.empty()
 	 */
-	public  Optional<X> match(Object t){
+	public  Maybe<X> match(Object t){
 		return cse.getPatternMatcher().match(t);
 	}
 	/**
@@ -132,7 +133,7 @@ public class CollectionMatchingInstance  <T, X> extends MatchingInstance<T,X> im
 	 * @param decomposableObject Object to match on after decomposed via unapply method
 	 * @return Matching result
 	 */
-	public Optional<X> unapply(Decomposable decomposableObject) {
+	public Maybe<X> unapply(Decomposable decomposableObject) {
 		return cse.getPatternMatcher().unapply(decomposableObject);
 	}
 }

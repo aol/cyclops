@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -100,7 +99,7 @@ public class PatternMatcher implements Function{
 	 *	@return Value from matched case if present
 	 * @see java.util.function.Function#apply(java.lang.Object)
 	 */
-	public Optional<Object> apply(Object t){
+	public Maybe<Object> apply(Object t){
 		return match(t);
 	}
 	

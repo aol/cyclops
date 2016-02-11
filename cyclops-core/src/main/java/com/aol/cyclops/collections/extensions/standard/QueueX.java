@@ -352,14 +352,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 		
 		return (QueueX<U>)MutableCollectionX.super.cast(type);
 	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Functor#matchesCases(com.aol.cyclops.matcher.Case[])
-	 */
-	@Override
-	default <R> QueueX<Optional<R>> matchesCases(Case<T, R, Function<T, R>>... cases) {
-		
-		return (QueueX<Optional<R>>)MutableCollectionX.super.matchesCases(cases);
-	}
+	
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycle(int)

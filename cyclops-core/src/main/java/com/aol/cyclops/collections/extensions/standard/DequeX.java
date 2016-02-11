@@ -611,14 +611,6 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 		return (DequeX<U>)MutableCollectionX.super.cast(type);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Functor#when(com.aol.cyclops.matcher.Case[])
-	 */
-	@Override
-	default <R> DequeX<Optional<R>> matchesCases(Case<T, R, Function<T, R>>... cases) {
-		
-		return (DequeX<Optional<R>>)MutableCollectionX.super.matchesCases(cases);
-	}
 
 
 	/* (non-Javadoc)

@@ -25,7 +25,7 @@ import lombok.AllArgsConstructor;
  * @param <X>
  */
 @AllArgsConstructor
-public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
+public class MatchingInstance <T, X> implements Function<T, Maybe<X>> {
 	
 	
 	private final CaseBeingBuilt cse;
@@ -162,8 +162,8 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 *	@return Value from matched case if present
 	 * @see java.util.function.Function#apply(java.lang.Object)
 	 */
-	public Optional<X> apply(Object t){
-		return (Optional<X>)cse.getPatternMatcher().apply(t);
+	public  Maybe<X> apply(Object t){
+		return (Maybe)cse.getPatternMatcher().apply(t);
 	}
 	
 	/**
@@ -208,7 +208,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 * @param t Array to match on
 	 * @return Matched value wrapped in Optional
 	 */
-	public  Optional<X> match(Object... t){
+	public  Maybe<X> match(Object... t){
 		return cse.getPatternMatcher().match(t);
 	}
 	/**
@@ -226,7 +226,7 @@ public class MatchingInstance <T, X> implements Function<T, Optional<X>> {
 	 * @param decomposableObject Object to match on after decomposed via unapply method
 	 * @return Matching result
 	 */
-	public Optional<X> unapply(Decomposable decomposableObject) {
+	public Maybe<X> unapply(Decomposable decomposableObject) {
 		return cse.getPatternMatcher().unapply(decomposableObject);
 	}
 }

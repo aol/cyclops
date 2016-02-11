@@ -1,11 +1,11 @@
 package com.aol.cyclops.lambda.monads;
 
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.function.Function;
 
 import org.jooq.lambda.Collectable;
 
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.matcher.Case;
 import com.aol.cyclops.matcher.Cases;
 import com.aol.cyclops.matcher.builders.CheckValues;
@@ -27,9 +27,7 @@ public interface IterableFunctor<T> extends Iterable<T>,Functor<T>, Foldable<T>,
 		return stream().collectable();
 	}
 	
-	default <R> IterableFunctor<Optional<R>> matchesCases(Case<T,R,Function<T,R>>... cases){
-		return map(t->Cases.of(cases).<R>match(t));
-	}
+	
 	
 	 /**
      * Transform the elements of this Stream with a Pattern Matching case and default value

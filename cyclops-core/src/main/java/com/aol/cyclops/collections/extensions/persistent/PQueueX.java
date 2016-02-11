@@ -604,14 +604,7 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
 		
 		return (PQueueX<U>)PersistentCollectionX.super.cast(type);
 	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#matchesCases(com.aol.cyclops.matcher.Case[])
-	 */
-	@Override
-	default <R> PQueueX<Optional<R>> matchesCases(Case<T, R, Function<T, R>>... cases) {
-		
-		return (PQueueX<Optional<R>>)PersistentCollectionX.super.matchesCases(cases);
-	}
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#patternMatch(java.lang.Object, java.util.function.Function)
 	 */

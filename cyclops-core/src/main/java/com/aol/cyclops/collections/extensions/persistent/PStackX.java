@@ -727,14 +727,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 		
 		return (PStackX<U>)PersistentCollectionX.super.cast(type);
 	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#matchesCases(com.aol.cyclops.matcher.Case[])
-	 */
-	@Override
-	default <R> PStackX<Optional<R>> matchesCases(Case<T, R, Function<T, R>>... cases) {
-		
-		return (PStackX<Optional<R>>)PersistentCollectionX.super.matchesCases(cases);
-	}
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#patternMatch(java.lang.Object, java.util.function.Function)
 	 */

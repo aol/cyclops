@@ -48,7 +48,6 @@ import com.aol.cyclops.Reducer;
 import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.collections.extensions.standard.MapX;
-import com.aol.cyclops.collections.extensions.standard.SetX;
 import com.aol.cyclops.comprehensions.donotation.typed.Do;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.monad.AnyM;
@@ -1130,7 +1129,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	 * @param reducers
 	 * @return
 	 */
-	public final ListX<T> reduce(Iterable<Reducer<T>> reducers){
+	public final ListX<T> reduce(Iterable<? extends Monoid<T>> reducers){
 		return StreamUtils.reduce(stream, reducers);
 	}
 	

@@ -57,9 +57,6 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 	default AnyM<PT> anyM(){
 		return AnyM.ofMonad(this);
 	}
-	default <R> Xor<ST,R> ap1( Applicative<PT,R, ?> ap){
-		return (Xor<ST,R>)Applicativable.super.ap1(ap);
-	}
 	
 	default <T> Xor<?,T> unit(T unit){
 		return Xor.primary(unit);

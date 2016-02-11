@@ -596,14 +596,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 		return (ListX<U>)MutableCollectionX.super.cast(type);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Functor#when(com.aol.cyclops.matcher.Case[])
-	 */
-	@Override
-	default <R> ListX<Optional<R>> matchesCases(Case<T, R, Function<T, R>>... cases) {
-		
-		return (ListX<Optional<R>>)MutableCollectionX.super.matchesCases(cases);
-	}
+	
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#distinct()

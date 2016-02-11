@@ -30,9 +30,7 @@ public interface FeatureToggle<F> extends Supplier<F>, Value<F>, ToStream<F>,App
 
 	boolean isEnabled();
 	boolean isDisabled();
-	default <R> FeatureToggle<R> ap1( Applicative<F,R, ?> ap){
-		return (FeatureToggle<R>)Applicativable.super.ap1(ap);
-	}
+	
 	default <T> FeatureToggle<T> unit(T unit){
 		return FeatureToggle.enable(unit);
 	}

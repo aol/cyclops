@@ -1471,7 +1471,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @param reducers
     	 * @return
     	 */
-    	 default List<T> reduce(Iterable<Reducer<T>> reducers){
+    	 default ListX<T> reduce(Iterable<? extends Monoid<T>> reducers){
     		 return sequenceM().reduce(reducers);
     	 }
     	

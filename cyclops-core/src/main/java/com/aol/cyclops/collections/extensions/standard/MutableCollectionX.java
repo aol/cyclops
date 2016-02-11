@@ -511,15 +511,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 		return (MutableCollectionX)FluentCollectionX.super.cast(type);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Functor#matchesCases(com.aol.cyclops.matcher.Case[])
-	 */
-	@Override
-	default <R> MutableCollectionX<Optional<R>> matchesCases(Case<T, R, Function<T, R>>... cases) {
-		
-		return (MutableCollectionX)FluentCollectionX.super.matchesCases(cases);
-	}
-
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function)
 	 */

@@ -679,14 +679,7 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 		
 		return (PVectorX<U>)PersistentCollectionX.super.cast(type);
 	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#matchesCases(com.aol.cyclops.matcher.Case[])
-	 */
-	@Override
-	default <R> PVectorX<Optional<R>> matchesCases(Case<T, R, Function<T, R>>... cases) {
-		
-		return (PVectorX<Optional<R>>)PersistentCollectionX.super.matchesCases(cases);
-	}
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#patternMatch(java.lang.Object, java.util.function.Function)
 	 */

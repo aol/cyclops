@@ -64,9 +64,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 	default AnyM<PT> anyM(){
 		return AnyM.ofMonad(this);
 	}
-	default <R> Ior<ST,R> ap1( Applicative<PT,R, ?> ap){
-		return (Ior<ST,R>)Applicativable.super.ap1(ap);
-	}
+	
 
 	default <T> Ior<?,T> unit(T unit){
 		return Ior.primary(unit);

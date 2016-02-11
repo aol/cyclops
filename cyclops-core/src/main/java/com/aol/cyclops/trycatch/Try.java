@@ -73,9 +73,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 		else
 			return Xor.<X,T>secondary(this.toFailedOptional().get());
 	}
-	default <R> Try<R,X> ap1( Applicative<T,R, ?> ap){
-		return (Try<R,X>)Applicativable.super.ap1(ap);
-	}
+	
 	default <T> Try<T,?> unit(T value){
 		return success(value);
 	}
