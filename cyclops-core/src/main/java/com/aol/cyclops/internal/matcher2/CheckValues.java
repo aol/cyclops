@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 
 import org.hamcrest.Matcher;
 
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.util.function.Predicates;
 
 import lombok.AccessLevel;

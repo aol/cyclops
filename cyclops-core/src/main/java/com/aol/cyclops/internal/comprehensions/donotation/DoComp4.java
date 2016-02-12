@@ -21,7 +21,7 @@ import org.pcollections.PStack;
 
 import com.aol.cyclops.internal.monads.MonadWrapper;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 	public class DoComp4<T1,T2,T3,T4> extends DoComp{
 		public DoComp4(PStack<Entry> assigned, Class orgType) {
 			super(assigned,orgType);

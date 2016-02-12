@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.matcher2.CheckValues;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.types.stream.ToStream;

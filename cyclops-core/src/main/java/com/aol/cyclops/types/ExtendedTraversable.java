@@ -1,6 +1,6 @@
 package com.aol.cyclops.types;
 
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 
 

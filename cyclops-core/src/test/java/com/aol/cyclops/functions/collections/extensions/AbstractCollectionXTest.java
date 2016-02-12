@@ -43,7 +43,7 @@ import com.aol.cyclops.Reducers;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.types.Decomposable;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.util.stream.StreamUtils;

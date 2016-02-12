@@ -19,7 +19,7 @@ import com.aol.cyclops.internal.matcher2.CheckValues;
 import com.aol.cyclops.internal.matcher2.MatchableCase;
 import com.aol.cyclops.internal.matcher2.MatchingInstance;
 import com.aol.cyclops.internal.matcher2.PatternMatcher;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.types.Decomposable;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;

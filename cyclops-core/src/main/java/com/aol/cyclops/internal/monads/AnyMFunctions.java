@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 
 public interface AnyMFunctions {
 	<T,R> AnyM<ListX<R>> traverse(Collection<? extends AnyM<T>> seq, Function<? super T,? extends R> fn);

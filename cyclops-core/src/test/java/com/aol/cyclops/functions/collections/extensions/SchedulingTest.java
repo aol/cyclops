@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.equalTo;
 import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 
 public class SchedulingTest {
 

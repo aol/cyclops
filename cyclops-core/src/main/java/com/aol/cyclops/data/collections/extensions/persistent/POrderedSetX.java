@@ -30,7 +30,7 @@ import com.aol.cyclops.data.collections.POrderedSets;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 
 public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T>{

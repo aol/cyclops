@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.CollectionX;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.types.stream.HeadAndTail;
 
 public abstract class AbstractOrderDependentCollectionXTest extends AbstractCollectionXTest {

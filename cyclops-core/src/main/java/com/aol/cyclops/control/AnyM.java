@@ -45,7 +45,7 @@ import com.aol.cyclops.internal.monads.AnyMValueImpl;
 import com.aol.cyclops.internal.monads.AnyMonads;
 import com.aol.cyclops.internal.monads.ComprehenderSelector;
 import com.aol.cyclops.internal.monads.MonadWrapper;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.types.EmptyUnit;
 import com.aol.cyclops.types.FlatMap;
 import com.aol.cyclops.types.Foldable;

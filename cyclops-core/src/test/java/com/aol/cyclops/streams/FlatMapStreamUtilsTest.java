@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 import org.jooq.lambda.Seq;
 import org.junit.Test;
 
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.util.stream.StreamUtils;
 public class FlatMapStreamUtilsTest {
 

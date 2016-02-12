@@ -21,7 +21,7 @@ import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Assign
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Entry;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Guard;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 
 public class DoComp0 extends DoComp{
 		public DoComp0(PStack<Entry> assigned) {

@@ -18,7 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.javaslang.reactivestreams.ReactiveStream;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
 
 public class WindowingTest {

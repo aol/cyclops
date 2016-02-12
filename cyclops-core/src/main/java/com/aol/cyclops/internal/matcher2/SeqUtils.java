@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 class SeqUtils {

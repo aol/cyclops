@@ -4,7 +4,7 @@ import java.util.function.Predicate;
 
 import org.hamcrest.Matcher;
 
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 
 public interface IterableCollectable<T> extends Iterable<T>{
 	default SequenceM<T> stream(){

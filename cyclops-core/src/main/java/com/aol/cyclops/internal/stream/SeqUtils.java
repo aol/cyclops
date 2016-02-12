@@ -1,4 +1,4 @@
-package com.aol.cyclops.sequence;
+package com.aol.cyclops.internal.stream;
 
 import java.util.AbstractCollection;
 import java.util.ArrayList;

@@ -23,7 +23,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 public class BaseSequentialTest {
 
 	<U> SequenceM<U> of(U... array){

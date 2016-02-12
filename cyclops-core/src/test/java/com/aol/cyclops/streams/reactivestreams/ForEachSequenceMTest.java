@@ -18,7 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
 
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 
 public class ForEachSequenceMTest {
 	boolean complete =false;

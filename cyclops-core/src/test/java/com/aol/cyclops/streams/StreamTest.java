@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 public class StreamTest {
 	 public static <U> SequenceM<U> of(U... array){
 		 return AnyM.streamOf(array).asSequence();

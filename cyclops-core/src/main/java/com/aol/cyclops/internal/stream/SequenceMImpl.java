@@ -52,7 +52,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.internal.monads.ComprehenderSelector;
 import com.aol.cyclops.internal.stream.spliterators.ReversableSpliterator;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.stream.HeadAndTail;

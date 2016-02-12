@@ -12,7 +12,7 @@ import java.util.stream.StreamSupport;
 import uk.co.real_logic.agrona.concurrent.OneToOneConcurrentArrayQueue;
 
 import com.aol.cyclops.internal.stream.spliterators.ClosingSpliterator;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.util.stream.StreamUtils;
 

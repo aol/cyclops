@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 
 public class ReverseTest {
 	@Test

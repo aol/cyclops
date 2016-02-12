@@ -22,7 +22,7 @@ import org.pcollections.PStack;
 import com.aol.cyclops.comprehensions.donotation.typed.DoComp;
 import com.aol.cyclops.comprehensions.donotation.typed.Entry;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 	public class DoComp0 extends DoComp{
 		public DoComp0(PStack<Entry> assigned) {
 			super(assigned,null);

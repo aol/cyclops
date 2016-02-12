@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 import org.hamcrest.Matcher;
 import org.jooq.lambda.tuple.Tuple;
 
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 
 import fj.data.fingertrees.Two;
 import lombok.AllArgsConstructor;

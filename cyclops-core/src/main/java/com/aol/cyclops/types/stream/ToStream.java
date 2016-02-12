@@ -9,8 +9,8 @@ import java.util.stream.StreamSupport;
 import com.aol.cyclops.internal.invokedynamic.InvokeDynamic;
 import com.aol.cyclops.internal.matcher2.AsDecomposable;
 import com.aol.cyclops.internal.stream.ReversedIterator;
-import com.aol.cyclops.sequence.SeqUtils;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.internal.stream.SeqUtils;
+import com.aol.cyclops.control.SequenceM;
 
 public interface ToStream<T> extends Iterable<T>,ConvertableToSequenceM<T>{
 	default Iterator<T> iterator(){

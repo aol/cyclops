@@ -16,7 +16,7 @@ import org.pcollections.PMap;
 
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.FluentMapX;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.types.BiFunctor;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Foldable;

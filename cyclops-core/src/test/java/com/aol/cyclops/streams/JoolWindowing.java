@@ -36,7 +36,7 @@ import org.jooq.lambda.Window;
 import org.jooq.lambda.tuple.Tuple3;
 import org.junit.Test;
 
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 /**
  * @author Lukas Eder
  * @author Roman Tkalenko

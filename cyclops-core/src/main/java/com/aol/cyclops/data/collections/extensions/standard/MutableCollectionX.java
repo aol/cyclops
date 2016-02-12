@@ -24,7 +24,7 @@ import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.persistent.PersistentCollectionX;
 import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Traversable;

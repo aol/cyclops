@@ -19,7 +19,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
 
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.types.stream.reactive.ReactiveTask;
 
 public class ForEachSequenceMFutureTest {

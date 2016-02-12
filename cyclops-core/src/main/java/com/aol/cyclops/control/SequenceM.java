@@ -1,4 +1,4 @@
-package com.aol.cyclops.sequence;
+package com.aol.cyclops.control;
 
 import java.io.BufferedReader;
 import java.io.File;

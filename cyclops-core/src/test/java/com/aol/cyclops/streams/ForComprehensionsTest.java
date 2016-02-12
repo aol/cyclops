@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.control.Do;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 
 public class ForComprehensionsTest {
 

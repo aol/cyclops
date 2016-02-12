@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 
 import org.junit.Test;
 
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.util.stream.Streamable;
 
 public class PartitionAndSplittingTest {

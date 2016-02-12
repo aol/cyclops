@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.types.IterableFunctor;
 
 import lombok.AllArgsConstructor;

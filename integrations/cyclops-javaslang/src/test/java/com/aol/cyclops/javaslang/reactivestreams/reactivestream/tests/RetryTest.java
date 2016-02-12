@@ -18,7 +18,7 @@ import org.mockito.MockitoAnnotations;
 
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.javaslang.reactivestreams.ReactiveStream;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 
 
 public class RetryTest {

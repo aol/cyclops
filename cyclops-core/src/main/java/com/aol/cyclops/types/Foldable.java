@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 
 public interface Foldable<T> {
 

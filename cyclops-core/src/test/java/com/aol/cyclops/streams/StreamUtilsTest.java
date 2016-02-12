@@ -29,7 +29,7 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Reducers;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.util.stream.AsStreamable;
 import com.aol.cyclops.util.stream.StreamUtils;

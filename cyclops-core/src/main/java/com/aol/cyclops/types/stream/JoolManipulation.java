@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
 
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.IterableFilterable;
 

@@ -10,7 +10,7 @@ import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.Cases;
 import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 
 public interface IterableFunctor<T> extends Iterable<T>,Functor<T>, Foldable<T>, Traversable<T>,

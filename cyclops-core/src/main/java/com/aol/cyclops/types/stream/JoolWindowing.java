@@ -1,10 +1,9 @@
 package com.aol.cyclops.types.stream;
 
-import static com.aol.cyclops.sequence.SequenceM.fromStream;
+import static com.aol.cyclops.control.SequenceM.fromStream;
 
 import java.util.Comparator;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javax.annotation.Generated;
 
@@ -28,7 +27,7 @@ import org.jooq.lambda.tuple.Tuple7;
 import org.jooq.lambda.tuple.Tuple8;
 import org.jooq.lambda.tuple.Tuple9;
 
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 
 
 

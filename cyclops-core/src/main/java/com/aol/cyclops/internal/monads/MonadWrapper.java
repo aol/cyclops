@@ -2,7 +2,7 @@ package com.aol.cyclops.internal.monads;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.internal.Monad;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.types.Decomposable;
 
 import lombok.AllArgsConstructor;

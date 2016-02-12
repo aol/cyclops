@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 
 public interface Semigroups {
 

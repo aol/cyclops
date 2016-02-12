@@ -7,7 +7,7 @@ import javaslang.collection.Traversable;
 
 import org.jooq.lambda.Seq;
 
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.google.common.collect.FluentIterable;
 import com.nurkiewicz.lazyseq.LazySeq;

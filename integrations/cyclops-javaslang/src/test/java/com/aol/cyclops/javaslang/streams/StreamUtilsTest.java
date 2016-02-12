@@ -30,7 +30,7 @@ import com.aol.cyclops.javaslang.ToStream;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.Reducers;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.types.stream.HeadAndTail;

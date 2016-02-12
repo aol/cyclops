@@ -12,7 +12,7 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 public class FutureStreamUtils {

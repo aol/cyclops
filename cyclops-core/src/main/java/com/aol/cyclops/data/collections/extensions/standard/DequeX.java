@@ -27,7 +27,7 @@ import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.types.stream.HeadAndTail;

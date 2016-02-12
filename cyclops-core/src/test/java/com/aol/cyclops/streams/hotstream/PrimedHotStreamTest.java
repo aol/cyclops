@@ -17,7 +17,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertThat;
 
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 import com.aol.cyclops.types.stream.PausableHotStream;
 
 public class PrimedHotStreamTest {

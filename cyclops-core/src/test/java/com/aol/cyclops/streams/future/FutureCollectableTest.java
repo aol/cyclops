@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 
 import org.junit.Test;
 
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.SequenceM;
 
 public class FutureCollectableTest {
 		Executor exec = Executors.newFixedThreadPool(1);
