@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 import lombok.Value;
 
-import com.aol.cyclops.collections.extensions.standard.ListXImpl;
+import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
 import com.aol.cyclops.streams.StreamUtils;
 
 @Value

@@ -18,16 +18,14 @@ import org.jooq.lambda.tuple.Tuple5;
 import com.aol.cyclops.functions.QuadFunction;
 import com.aol.cyclops.functions.QuintFunction;
 import com.aol.cyclops.functions.TriFunction;
-import com.aol.cyclops.lambda.types.Decomposable;
-import com.aol.cyclops.matcher2.AsMatchable;
 import com.aol.cyclops.matcher2.CheckValues;
 import com.aol.cyclops.matcher2.MatchableCase;
 import com.aol.cyclops.matcher2.MatchingInstance;
 import com.aol.cyclops.matcher2.PatternMatcher;
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.types.Decomposable;
 
 import lombok.AllArgsConstructor;
-import lombok.val;
 
 /**
  * Matchable
@@ -556,6 +554,31 @@ public interface Matchable<TYPE>{
 		default MatchableTuple4<T2,T3,T4,T5> on$_2345(){
 			Tuple5<T1,T2,T3,T4,T5> it = (Tuple5<T1,T2,T3,T4,T5>)getMatchable();
 			return ()->new Tuple4<T2,T3,T4,T5>(it.v2,it.v3,it.v4,it.v5);
+		}
+	}
+	public class AsMatchable {
+		
+		
+		/**
+		 * Coerce / wrap an Object as a Matchable instance
+		 * This adds match / _match methods for pattern matching against the object
+		 * 
+		 * @param toCoerce Object to convert into a Matchable
+		 * @return Matchable that adds functionality to the supplied object
+		 */
+		public static  Matchable asMatchable(Object toCoerce){
+			return new CoercedMatchable(toCoerce);
+		}
+		
+		@AllArgsConstructor
+		public static class CoercedMatchable<T> implements Matchable{
+			private final Object matchable;
+
+			@Override
+			public Object getMatchable(){
+				return matchable;
+			}
+			
 		}
 	}
 }

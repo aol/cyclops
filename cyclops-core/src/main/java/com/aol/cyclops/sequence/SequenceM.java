@@ -44,20 +44,11 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.collections.extensions.CollectionX;
-import com.aol.cyclops.collections.extensions.standard.ListX;
-import com.aol.cyclops.collections.extensions.standard.MapX;
+import com.aol.cyclops.control.ExceptionSoftener;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.invokedynamic.ExceptionSoftener;
-import com.aol.cyclops.lambda.types.ExtendedTraversable;
-import com.aol.cyclops.lambda.types.Filterable;
-import com.aol.cyclops.lambda.types.Foldable;
-import com.aol.cyclops.lambda.types.Functor;
-import com.aol.cyclops.lambda.types.IterableFilterable;
-import com.aol.cyclops.lambda.types.IterableFunctor;
-import com.aol.cyclops.lambda.types.Unit;
-import com.aol.cyclops.lambda.types.applicative.zipping.ZippingApplicativable;
-import com.aol.cyclops.lambda.types.applicative.zipping.ZippingApplicative;
+import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.matcher2.Case;
 import com.aol.cyclops.matcher2.CheckValues;
 import com.aol.cyclops.monad.AnyM;
@@ -68,10 +59,20 @@ import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsTerminalOperation
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.sequence.traits.ConvertableSequence;
 import com.aol.cyclops.sequence.traits.SequenceMCollectable;
+import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.streams.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.streams.spliterators.ReversingListSpliterator;
 import com.aol.cyclops.streams.spliterators.ReversingRangeIntSpliterator;
 import com.aol.cyclops.streams.spliterators.ReversingRangeLongSpliterator;
+import com.aol.cyclops.types.ExtendedTraversable;
+import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.Foldable;
+import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.IterableFilterable;
+import com.aol.cyclops.types.IterableFunctor;
+import com.aol.cyclops.types.Unit;
+import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
+import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 
 
 public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<T>,Functor<T>, ExtendedTraversable<T>,
@@ -301,30 +302,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 */
 	SequenceM<T> cycle(Monoid<T> m, int times);
 
-	/**
-	 * 
-	 * Convert to a Stream, repeating the resulting structure specified times
-	 * and lifting all values to the specified Monad type
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 *  List&lt;Optional&lt;Integer&gt;&gt; list = monad(Stream.of(1, 2)).cycle(Optional.class, 2).toList();
-	 * 
-	 * 	// is asList(Optional.of(1),Optional.of(2),Optional.of(1),Optional.of(2) ));
-	 * 
-	 * }
-	 * </pre>
-	 * 
-	 * 
-	 * 
-	 * @param monadC
-	 *            class type
-	 * @param times
-	 * @return
-	 */
-	@Deprecated
-	<R> SequenceM<R> cycle(Class<R> monadC, int times);
+	
 
 	/**
 	 * Repeat in a Stream while specified predicate holds
@@ -905,24 +883,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 */
 	HeadAndTail<T> headAndTail();
 
-	/**
-	 * extract head and tail together, where no head or tail may be present
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	SequenceM&lt;String&gt; helloWorld = SequenceM.of();
-	 * 	Optional&lt;HeadAndTail&lt;String&gt;&gt; headAndTail = helloWorld.headAndTailOptional();
-	 * 	assertTrue(!headAndTail.isPresent());
-	 * 
-	 * }
-	 * </pre>
-	 * 
-	 * @return
-	 */
 
-	@Deprecated
-	 Optional<HeadAndTail<T>> headAndTailOptional();
 	
 	/**
 	 * @return First matching element in sequential order
@@ -1046,53 +1007,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 */
 	<R> R mapReduce(Function<? super T, ? extends R> mapper, Monoid<R> reducer);
 
-	/**
-	 * Apply multiple collectors Simulataneously to this Monad
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	List result = SequenceM.of(1, 2, 3).collect(
-	 * 			Stream.of(Collectors.toList(), Collectors.summingInt(Integer::intValue), Collectors.averagingInt(Integer::intValue)));
-	 * 
-	 * 	assertThat(result.get(0), equalTo(Arrays.asList(1, 2, 3)));
-	 * 	assertThat(result.get(1), equalTo(6));
-	 * 	assertThat(result.get(2), equalTo(2.0));
-	 * }
-	 * </pre>
-	 * 
-	 * 
-	 * @param collectors
-	 *            Stream of Collectors to apply
-	 * @return List of results
-	 */
-	@Deprecated
-	ListX collectStream(Stream<Collector> collectors);
 
-	/**
-	 * Apply multiple Collectors, simultaneously to a Stream
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	List result = SequenceM.of(1, 2, 3).collect(
-	 * 			Arrays.asList(Collectors.toList(), Collectors.summingInt(Integer::intValue), Collectors.averagingInt(Integer::intValue)));
-	 * 
-	 * 	assertThat(result.get(0), equalTo(Arrays.asList(1, 2, 3)));
-	 * 	assertThat(result.get(1), equalTo(6));
-	 * 	assertThat(result.get(2), equalTo(2.0));
-	 * }
-	 * </pre>
-	 * 
-	 * @param stream
-	 *            Stream to collect
-	 * @param collectors
-	 *            Collectors to apply
-	 * @return Result as a list
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Deprecated
-	<R> ListX<R> collectIterable(Iterable<Collector> collectors);
+
 
 	/**
 	 * <pre>
@@ -2203,7 +2119,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	@SafeVarargs
 	public static <T> SequenceM<T> of(T... elements) {
 		ReversingArraySpliterator array = new ReversingArraySpliterator<T>(elements, false, 0);
-		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(array, false), array);
+		return StreamUtils.sequenceM(StreamSupport.stream(array, false),Optional.ofNullable(array));
 
 	}
 
@@ -2218,7 +2134,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	@SafeVarargs
 	public static <T> SequenceM<T> reversedOf(T... elements) {
 		ReversingArraySpliterator array = new ReversingArraySpliterator<T>(elements, false, 0).invert();
-		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(array, false), array);
+		return StreamUtils.sequenceM(StreamSupport.stream(array, false),Optional.ofNullable(array));
+		
 
 	}
 
@@ -2233,7 +2150,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	public static <T> SequenceM<T> reversedListOf(List<T> elements) {
 		Objects.requireNonNull(elements);
 		ReversingListSpliterator list = new ReversingListSpliterator<T>(elements, false).invert();
-		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(list, false), list);
+		return StreamUtils.sequenceM(StreamSupport.stream(list, false),Optional.ofNullable(list));
+		
 
 	}
 
@@ -2249,7 +2167,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 */
 	public static SequenceM<Integer> range(int start, int end) {
 		ReversingRangeIntSpliterator range = new ReversingRangeIntSpliterator(start, end, false);
-		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(range, false), range);
+		return StreamUtils.sequenceM(StreamSupport.stream(range, false),Optional.ofNullable(range));
 
 	}
 
@@ -2265,7 +2183,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 */
 	public static SequenceM<Long> rangeLong(long start, long end) {
 		ReversingRangeLongSpliterator range = new ReversingRangeLongSpliterator(start, end, false);
-		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(range, false), range);
+		return StreamUtils.sequenceM(StreamSupport.stream(range, false),Optional.ofNullable(range));
 
 	}
 
@@ -2280,7 +2198,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 		Objects.requireNonNull(stream);
 		if (stream instanceof SequenceM)
 			return (SequenceM) stream;
-		return SequenceMFactory.instance.sequenceM(stream, null);
+		return StreamUtils.sequenceM(stream,Optional.empty());
 	}
 
 	/**
@@ -2292,7 +2210,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 */
 	public static SequenceM<Integer> fromIntStream(IntStream stream) {
 		Objects.requireNonNull(stream);
-		return SequenceMFactory.instance.sequenceM(Seq.seq(stream), null);
+		return StreamUtils.sequenceM(stream.boxed(),Optional.empty());
+		
 	}
 
 	/**
@@ -2304,7 +2223,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 */
 	public static SequenceM<Long> fromLongStream(LongStream stream) {
 		Objects.requireNonNull(stream);
-		return SequenceMFactory.instance.sequenceM(Seq.seq(stream), null);
+		return StreamUtils.sequenceM(stream.boxed(),Optional.empty());
 	}
 
 	/**
@@ -2316,7 +2235,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 */
 	public static SequenceM<Double> fromDoubleStream(DoubleStream stream) {
 		Objects.requireNonNull(stream);
-		return SequenceMFactory.instance.sequenceM(Seq.seq(stream), null);
+		return StreamUtils.sequenceM(stream.boxed(),Optional.empty());
 	}
 
 	/**
@@ -2330,7 +2249,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	public static <T> SequenceM<T> fromList(List<T> list) {
 		Objects.requireNonNull(list);
 		ReversingListSpliterator array = new ReversingListSpliterator<T>(list, false);
-		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(array, false), array);
+		return StreamUtils.sequenceM(StreamSupport.stream(array,false),Optional.ofNullable(array));
 	}
 
 	/**
@@ -2342,7 +2261,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 */
 	public static <T> SequenceM<T> fromIterable(Iterable<T> iterable) {
 		Objects.requireNonNull(iterable);
-		return SequenceMFactory.instance.sequenceM(StreamSupport.stream(iterable.spliterator(), false), null);
+		return StreamUtils.sequenceM(StreamSupport.stream(iterable.spliterator(), false),Optional.empty());
 	}
 
 	/**
@@ -2361,14 +2280,16 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @see Stream#iterate(Object, UnaryOperator)
 	 */
 	static <T> SequenceM<T> iterate(final T seed, final UnaryOperator<T> f) {
-		return SequenceMFactory.instance.sequenceM(Stream.iterate(seed, f), null);
+		return StreamUtils.sequenceM(Stream.iterate(seed, f),Optional.empty());
+		
 	}
 
 	/**
 	 * @see Stream#generate(Supplier)
 	 */
 	static <T> SequenceM<T> generate(Supplier<T> s) {
-		return SequenceMFactory.instance.sequenceM(Stream.generate(s), null);
+		return StreamUtils.sequenceM(Stream.generate(s),Optional.empty());
+	
 	}
 
 	/**

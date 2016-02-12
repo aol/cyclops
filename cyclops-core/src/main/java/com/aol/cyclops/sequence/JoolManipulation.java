@@ -15,8 +15,8 @@ import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
 
-import com.aol.cyclops.lambda.types.Filterable;
-import com.aol.cyclops.lambda.types.IterableFilterable;
+import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.IterableFilterable;
 
 public interface JoolManipulation<T> extends IterableFilterable<T>, Seq<T>{
 	

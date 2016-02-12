@@ -17,13 +17,13 @@ import org.pcollections.PStack;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
-import com.aol.cyclops.collections.extensions.persistent.PBagX;
-import com.aol.cyclops.collections.extensions.persistent.PMapX;
-import com.aol.cyclops.collections.extensions.persistent.POrderedSetX;
-import com.aol.cyclops.collections.extensions.persistent.PQueueX;
-import com.aol.cyclops.collections.extensions.persistent.PSetX;
-import com.aol.cyclops.collections.extensions.persistent.PStackX;
-import com.aol.cyclops.collections.extensions.persistent.PVectorX;
+import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
+import com.aol.cyclops.data.collections.extensions.persistent.PMapX;
+import com.aol.cyclops.data.collections.extensions.persistent.POrderedSetX;
+import com.aol.cyclops.data.collections.extensions.persistent.PQueueX;
+import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
+import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
+import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
 import com.aol.cyclops.lambda.api.TupleWrapper;
 
 import fj.data.vector.V;

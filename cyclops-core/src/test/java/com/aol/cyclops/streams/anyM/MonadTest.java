@@ -27,7 +27,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducers;
-import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.AsGenericMonad;
 import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.lambda.monads.MonadWrapper;

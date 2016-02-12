@@ -13,18 +13,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
-import lombok.val;
-
-import org.jooq.lambda.Seq;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.donotation.UntypedDo;
-import com.aol.cyclops.comprehensions.donotation.typed.Do;
+import com.aol.cyclops.control.Do;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.sequence.SequenceM;
+
+import lombok.val;
 
 public class StreamTest {
 	@Test
@@ -130,17 +127,7 @@ public class StreamTest {
 		
 		assertThat(expected, equalTo( res.toList()));
 	}
-	@Test
-	public void enumStream() {
-		
-		SequenceM<String> res = UntypedDo.add ( MyEnum.class) 
-									 .yield( v -> ""+ v + "*");
-		List<String> expected = Arrays.asList("FIRST*","SECOND*","THIRD*");
-		
-		
-		
-		assertThat(expected, equalTo( res.toList()));
-	}
+	
 	@Test
 	public void iterableStream() {
 		

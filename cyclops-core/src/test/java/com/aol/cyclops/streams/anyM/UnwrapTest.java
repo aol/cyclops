@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.monad.AnyM;
 
 public class UnwrapTest {

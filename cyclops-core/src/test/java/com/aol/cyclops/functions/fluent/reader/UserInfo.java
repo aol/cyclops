@@ -4,7 +4,7 @@ package com.aol.cyclops.functions.fluent.reader;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.aol.cyclops.comprehensions.donotation.typed.Do;
+import com.aol.cyclops.control.Do;
 import com.aol.cyclops.control.Reader;
 
 

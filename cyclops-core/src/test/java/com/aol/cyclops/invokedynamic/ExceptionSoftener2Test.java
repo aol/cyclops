@@ -7,6 +7,8 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 
 import org.junit.Test;
+
+import com.aol.cyclops.control.ExceptionSoftener;
 public class ExceptionSoftener2Test {
 
 	@Test

@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.collections.PStacks;
+import com.aol.cyclops.data.collections.PStacks;
 import com.aol.cyclops.sequence.SequenceM;
 
 public class PStacksTest {

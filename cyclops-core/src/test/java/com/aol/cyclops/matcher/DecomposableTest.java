@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.types.Decomposable;
+import com.aol.cyclops.types.Decomposable;
 
 import lombok.AllArgsConstructor;
 import lombok.Value;

@@ -40,14 +40,14 @@ import org.junit.Test;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducers;
-import com.aol.cyclops.collections.extensions.CollectionX;
-import com.aol.cyclops.collections.extensions.standard.ListX;
-import com.aol.cyclops.lambda.types.Decomposable;
-import com.aol.cyclops.lambda.types.Traversable;
+import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.StreamUtils;
+import com.aol.cyclops.types.Decomposable;
+import com.aol.cyclops.types.Traversable;
 
 import lombok.AllArgsConstructor;
 
@@ -471,7 +471,7 @@ public abstract class AbstractCollectionXTest {
     	System.out.println(of(1, 2, 3).permutations().map(s->s.toList()).toList());
         assertThat(of(1, 2, 3).permutations().map(s->s.toList()).toList(),
         		equalTo(of(of(1, 2, 3),
-        		of(1, 3, 2), of(2, 1, 3), of(2, 3, 1), of(3, 1, 2), of(3, 2, 1)).map(s->s.toList()).toList()));
+        		of(1, 3, 2), of(2, 1, 3), of(2, 3, 1), of(3, 1, 2), of(3, 2, 1)).peek(i->System.out.println("peek - " + i)).map(s->s.toList()).toList()));
     }
     
     @Test

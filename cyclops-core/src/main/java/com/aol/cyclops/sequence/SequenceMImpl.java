@@ -46,10 +46,10 @@ import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.collections.extensions.CollectionX;
-import com.aol.cyclops.collections.extensions.standard.ListX;
-import com.aol.cyclops.collections.extensions.standard.MapX;
-import com.aol.cyclops.comprehensions.donotation.typed.Do;
+import com.aol.cyclops.control.Do;
+import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.future.FutureOperations;

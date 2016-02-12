@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 
 import org.junit.Test;
 
-import com.aol.cyclops.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.CollectionX;
 
 public abstract class CollectionXTestsWithNulls extends AbstractOrderDependentCollectionXTest {
 	public abstract <T> CollectionX<T> of(T... values);

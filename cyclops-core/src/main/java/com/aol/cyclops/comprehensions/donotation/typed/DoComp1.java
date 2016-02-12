@@ -1,6 +1,8 @@
 
 package com.aol.cyclops.comprehensions.donotation.typed;
-
+import com.aol.cyclops.comprehensions.donotation.typed.DoBuilderModule.Assignment;
+import com.aol.cyclops.comprehensions.donotation.typed.DoBuilderModule.Entry;
+import com.aol.cyclops.comprehensions.donotation.typed.DoBuilderModule.Guard;
 
 import java.io.BufferedReader;
 import java.io.File;

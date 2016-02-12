@@ -33,7 +33,7 @@ import org.junit.Test;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Reducers;
-import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;

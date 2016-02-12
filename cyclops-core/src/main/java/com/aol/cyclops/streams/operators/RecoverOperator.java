@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 import lombok.Value;
 
-import com.aol.cyclops.invokedynamic.ExceptionSoftener;
+import com.aol.cyclops.control.ExceptionSoftener;
 import com.aol.cyclops.streams.StreamUtils;
 @Value
 public class RecoverOperator<T> {

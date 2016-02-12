@@ -9,9 +9,11 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-import lombok.val;
-
 import org.junit.Test;
+
+import com.aol.cyclops.control.Do;
+
+import lombok.val;
 
 
 public class DoFiltersTest {

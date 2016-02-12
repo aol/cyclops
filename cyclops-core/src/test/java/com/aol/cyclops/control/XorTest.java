@@ -3,7 +3,8 @@ package com.aol.cyclops.control;
 import org.junit.Test;
 import static org.hamcrest.Matchers.equalTo;
 import com.aol.cyclops.Semigroups;
-import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+
 import static org.junit.Assert.assertThat;
 public class XorTest {
 

@@ -14,11 +14,11 @@ import lombok.val;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
+import com.aol.cyclops.control.ExceptionSoftener;
 import com.aol.cyclops.data.LazyImmutable;
-import com.aol.cyclops.invokedynamic.ExceptionSoftener;
-import com.aol.cyclops.invokedynamic.ReflectionCache;
-import com.aol.cyclops.lambda.types.Decomposable;
+import com.aol.cyclops.internal.invokedynamic.ReflectionCache;
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.types.Decomposable;
 
 /**
  * Generic extractors for use s pre and post data extractors.

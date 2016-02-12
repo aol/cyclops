@@ -12,15 +12,13 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-import lombok.SneakyThrows;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.aol.cyclops.invokedynamic.ExceptionSoftener;
+import com.aol.cyclops.control.ExceptionSoftener;
 import com.aol.cyclops.sequence.SequenceM;
 
 

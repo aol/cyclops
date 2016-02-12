@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.function.BiFunction;
 
 import com.aol.cyclops.Monoid;
-import com.aol.cyclops.invokedynamic.InvokeDynamic;
+import com.aol.cyclops.internal.invokedynamic.InvokeDynamic;
 
 import lombok.AllArgsConstructor;
 

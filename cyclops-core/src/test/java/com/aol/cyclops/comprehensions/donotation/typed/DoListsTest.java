@@ -5,16 +5,16 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import lombok.val;
-
 import org.junit.Test;
 
+import com.aol.cyclops.control.Do;
 import com.aol.cyclops.monad.AnyM;
+
+import lombok.val;
 public class DoListsTest {
 	
 	@Test

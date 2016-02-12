@@ -25,7 +25,7 @@ import lombok.val;
 
 import org.junit.Test;
 
-import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 

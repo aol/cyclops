@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Test;
+
+import com.aol.cyclops.control.Do;
 public class MixedDoTest {
 
 	@Test

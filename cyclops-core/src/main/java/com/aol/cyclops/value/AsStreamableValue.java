@@ -1,5 +1,6 @@
 package com.aol.cyclops.value;
 
+import com.aol.cyclops.types.StreamableValue;
 
 /**
  * Corerce an Object to implement the StreamableValue interface

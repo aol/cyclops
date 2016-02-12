@@ -19,9 +19,9 @@ import java.util.stream.Stream;
 import org.hamcrest.Matcher;
 import org.jooq.lambda.Collectable;
 
-import com.aol.cyclops.collections.extensions.standard.ListX;
-import com.aol.cyclops.collections.extensions.standard.MapX;
-import com.aol.cyclops.collections.extensions.standard.SetX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.MapX;
+import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.sequence.streamable.ConvertableToSequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.sequence.streamable.ToStream;

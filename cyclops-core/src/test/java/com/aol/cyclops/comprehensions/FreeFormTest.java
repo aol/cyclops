@@ -11,7 +11,9 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.donotation.UntypedDo;
+import com.aol.cyclops.comprehensions.ComprehensionsModule.CustomForComprehension;
+import com.aol.cyclops.comprehensions.ComprehensionsModule.MyComprehension;
+import com.aol.cyclops.control.Do;
 public class FreeFormTest {
 
 	MyComprehension<Custom2,Custom2> comp = ForComprehensions.custom(Custom2.class);
@@ -29,8 +31,8 @@ public class FreeFormTest {
 	@Test
 	public void freeFormDo(){
 		List<Integer> list= Arrays.asList(1,2,3);
-		Stream<Integer> stream = UntypedDo.add(()->list)
-								.yield((Integer a)-> a +2);
+		Stream<Integer> stream = Do.add(list)
+								.yield((Integer a)-> a +2).unwrap();
 				
 										
 		
@@ -40,9 +42,9 @@ public class FreeFormTest {
 	@Test
 	public void freeFormDoWithFilter(){
 		List<Integer> list= Arrays.asList(1,2,3);
-		Stream<Integer> stream = UntypedDo.add(list)
+		Stream<Integer> stream = Do.add(list)
 								.filter((Integer a) -> a>2)
-								.yield((Integer a)-> a +2);
+								.yield((Integer a)-> a +2).unwrap();
 				
 										
 		
@@ -51,18 +53,18 @@ public class FreeFormTest {
 	}
 	@Test
 	public void freeFormDo2(){
-		Stream<Integer> stream = UntypedDo.add(asList(20,30))
-								   .with((Integer i)->asList(1,2,3))
-								   .yield((Integer a)-> (Integer b) -> a + b+2);
+		Stream<Integer> stream = Do.add(asList(20,30))
+								   .withIterable((Integer i)->asList(1,2,3))
+								   .yield((Integer a)-> (Integer b) -> a + b+2).unwrap();
 		
 		assertThat(stream.collect(Collectors.toList()),equalTo(Arrays.asList(23,24,25,33,34,35)));
 			
 	}
 	@Test
 	public void freeFormDo3(){
-		Stream<Integer> stream = UntypedDo.add(asList(20,30))
+		Stream<Integer> stream = Do.add(asList(20,30))
 								   .add(asList(1,2,3))
-								   .yield((Integer a)-> (Integer b) -> a + b+2);
+								   .yield((Integer a)-> (Integer b) -> a + b+2).unwrap();
 		
 		assertThat(stream.collect(Collectors.toList()),equalTo(Arrays.asList(23,24,25,33,34,35)));
 			

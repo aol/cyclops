@@ -1,8 +1,7 @@
 package com.aol.cyclops.internal;
 
 
-import static com.aol.cyclops.internal.AsGenericMonad.asMonad;
-import static com.aol.cyclops.internal.AsGenericMonad.fromStream;
+
 
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -12,6 +11,7 @@ import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
+import com.aol.cyclops.lambda.monads.MonadWrapper;
 
 public interface MonadFunctions<MONAD,T>{
 	<R> Monad<MONAD,T> bind(Function<? super T,? extends R> fn);
@@ -52,34 +52,7 @@ public interface MonadFunctions<MONAD,T>{
 							.unwrap());
 		
 	}
-	/**
-	 * Filter current monad by each element in supplied Monad
-	 * 
-	 * e.g.
-	 * 
-	 * <pre>{@code
-	 *  AnyM<Integer> applied = AsAnyM.anyM(Stream.of(1,2,3))
-	 *    									.filterM(AsAnyM.anyM(Streamable.of( (Integer a)->a>5 ,(Integer a) -> a<3)));
-	 *    									
-	 * 
-	 * //results in Stream.of(Stream.of(1),Stream.of(2),Stream.of(())
-	 * }</pre>
-	 * 
-	 * @param fn
-	 * @return
-	 */
-	default <NT,R> Monad<NT,R> simpleFilter(Monad<?,Predicate<? super T>> fn){
-		return  (Monad)this.bind(v-> fn.map(innerFn -> new Tuple2(v,innerFn.test(v)))
-													.filter(p->(boolean)p.v2())
-													.map(Tuple2::v1))
-													.map(m -> ((Monad) m).unwrap());
-		
-		
 	
-	//	filterM((a: Int) => List(a > 2, a % 2 == 0), List(1, 2, 3), ListMonad),
-	//List(List(3), Nil, List(2, 3), List(2), List(3),
-	//	  Nil, List(2, 3), List(2))												
-	}
 	/**
 	 * 
 	 * Replicate given Monad
@@ -99,7 +72,7 @@ public interface MonadFunctions<MONAD,T>{
 	 */
 	default <NT,R> Monad<NT,R> replicateM(int times){
 		
-		return (Monad)asMonad (unit(1))
+		return (Monad)new MonadWrapper<> (unit(1))
 						.flatten()
 						.bind(v-> cycle(times).unwrap());		
 	}

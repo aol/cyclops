@@ -1,10 +1,10 @@
 package com.aol.cyclops.validation;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Predicate;
 
-import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.validation.ValidationResult.FailedResult;
+import com.aol.cyclops.validation.ValidationResult.SuccessfulResult;
 
 import fj.data.Validation;
 import lombok.AllArgsConstructor;

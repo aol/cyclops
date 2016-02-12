@@ -8,7 +8,7 @@ import java.util.function.LongSupplier;
 import java.util.function.LongUnaryOperator;
 import java.util.stream.LongStream;
 
-import com.aol.cyclops.value.Value;
+import com.aol.cyclops.types.Value;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

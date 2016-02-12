@@ -33,27 +33,31 @@ import org.jooq.lambda.function.Function4;
 import org.jooq.lambda.function.Function5;
 
 import com.aol.cyclops.Monoid;
-import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.comprehensions.comprehenders.InvokeDynamicComprehender;
+import com.aol.cyclops.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.functions.QuadFunction;
 import com.aol.cyclops.functions.QuintFunction;
 import com.aol.cyclops.functions.TriFunction;
-import com.aol.cyclops.lambda.types.EmptyUnit;
-import com.aol.cyclops.lambda.types.FlatMap;
-import com.aol.cyclops.lambda.types.Foldable;
-import com.aol.cyclops.lambda.types.Functor;
-import com.aol.cyclops.lambda.types.Unit;
-import com.aol.cyclops.lambda.types.applicative.zipping.ZippingApplicativable;
+import com.aol.cyclops.lambda.monads.ComprehenderSelector;
+import com.aol.cyclops.lambda.monads.MonadWrapper;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.Unwrapable;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.sequence.streamable.ToStream;
 import com.aol.cyclops.sequence.traits.ConvertableSequence;
-import com.aol.cyclops.value.Value;
+import com.aol.cyclops.types.EmptyUnit;
+import com.aol.cyclops.types.FlatMap;
+import com.aol.cyclops.types.Foldable;
+import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.Unit;
+import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 
 /**
  * 
@@ -1263,6 +1267,32 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	}
 	
 	
-	
+
+static class AnyMFactory {
+static AnyMFactory instance = new AnyMFactory();
+	/* 
+	 * This will convert the supplied Object if possible into a supported Monad type (or more efficient type)
+	 * (non-Javadoc)
+	 * @see com.aol.cyclops.monad.AnyMFactory#of(java.lang.Object)
+	 */
+	public <T> AnyM<T> of(Object o) {
+		
+		if(new ComprehenderSelector().selectComprehender(
+				o) instanceof InvokeDynamicComprehender)
+			return new MonadWrapper<>(new MonadicConverters().convertToMonadicForm(o)).anyM();
+		return new MonadWrapper<>(o).anyM();
+	}
+	/* This will accept the supplied monad as is
+	 * 
+	 * (non-Javadoc)
+	 * @see com.aol.cyclops.monad.AnyMFactory#monad(java.lang.Object)
+	 */
+	public <T> AnyM<T> monad(Object o) {
+		return new MonadWrapper<>(o).anyM();
+	}
+	public AnyMFunctions anyMonads() {
+		return new AnyMonads();
+	}
+}
 	
 }

@@ -1,6 +1,6 @@
 package com.aol.cyclops.matcher2;
 
-import com.aol.cyclops.lambda.types.Decomposable;
+import com.aol.cyclops.types.Decomposable;
 
 import lombok.Value;
 

@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.collections.PVectors;
+import com.aol.cyclops.data.collections.PVectors;
 import com.aol.cyclops.sequence.SequenceM;
 
 public class PVectorsTest {

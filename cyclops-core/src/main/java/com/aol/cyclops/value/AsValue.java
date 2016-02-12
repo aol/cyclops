@@ -1,6 +1,6 @@
 package com.aol.cyclops.value;
 
-
+import com.aol.cyclops.types.ValueObject;
 
 public class AsValue {
 	

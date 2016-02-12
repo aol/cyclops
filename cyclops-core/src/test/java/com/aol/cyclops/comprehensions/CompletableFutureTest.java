@@ -7,11 +7,11 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-import lombok.val;
-
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.donotation.typed.Do;
+import com.aol.cyclops.control.Do;
+
+import lombok.val;
 
 public class CompletableFutureTest {
 

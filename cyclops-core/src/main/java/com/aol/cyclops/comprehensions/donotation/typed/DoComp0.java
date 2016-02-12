@@ -17,10 +17,13 @@ import java.util.stream.BaseStream;
 import java.util.stream.Stream;
 
 import org.pcollections.PStack;
-
+import com.aol.cyclops.comprehensions.donotation.typed.DoBuilderModule.Assignment;
+import com.aol.cyclops.comprehensions.donotation.typed.DoBuilderModule.Entry;
+import com.aol.cyclops.comprehensions.donotation.typed.DoBuilderModule.Guard;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
-	public class DoComp0 extends DoComp{
+
+public class DoComp0 extends DoComp{
 		public DoComp0(PStack<Entry> assigned) {
 			super(assigned,null);
 			

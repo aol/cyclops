@@ -45,11 +45,11 @@ import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.collections.extensions.CollectionX;
-import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.control.ExceptionSoftener;
 import com.aol.cyclops.data.Mutable;
+import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.AsGenericMonad;
-import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.CyclopsCollectors;
 import com.aol.cyclops.sequence.HeadAndTail;
@@ -682,24 +682,7 @@ public class StreamUtils{
 		Iterator<T> it = stream.iterator();
 		return new HeadAndTail<>(it);
 	}
-	/**
-	 * <pre>
-	 * {@code 
-	 *  Stream<String> helloWorld = Stream.of();
-		Optional<HeadAndTail<String>> headAndTail = StreamUtils.headAndTailOptional(helloWorld);
-		assertTrue(!headAndTail.isPresent());
-	 * }
-	 * </pre>
-	 * @param stream to extract head and tail from
-	 * @return
-	 */
-	public final  static <T> Optional<HeadAndTail<T>> headAndTailOptional(Stream<T> stream){
-		Iterator<T> it = stream.iterator();
-		if(!it.hasNext())
-			return Optional.empty();
-		return Optional.of(new HeadAndTail(it.next(),sequenceM(stream(it),Optional.empty())));
-	}
-	
+
 	/**
 	 * skip elements in Stream until Predicate holds true
 	 * 	<pre>
@@ -991,74 +974,7 @@ public class StreamUtils{
 		
 	}
 	
-	/**
-	 *  Apply multiple Collectors, simultaneously to a Stream
-	 * <pre>
-	 * {@code 
-	 * List result = StreamUtils.collect(Stream.of(1,2,3),
-								Stream.of(Collectors.toList(),
-								Collectors.summingInt(Integer::intValue),
-								Collectors.averagingInt(Integer::intValue)));
-		
-		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));
-		assertThat(result.get(1),equalTo(6));
-		assertThat(result.get(2),equalTo(2.0));
-	 * }
-	 * </pre>
-	 * @param stream Stream to collect
-	 * @param collectors Collectors to apply
-	 * @return Result as a list
-	 */
-	public static <T,A,R> List<R> collect(Stream<T> stream, Stream<Collector> collectors){
-		return collect(stream, AsStreamable.<Collector>fromStream(collectors));
-	}
-	/**
-	 *  Apply multiple Collectors, simultaneously to a Stream
-	 * <pre>
-	 * {@code 
-	 * List result = StreamUtils.collect(Stream.of(1,2,3),
-								Arrays.asList(Collectors.toList(),
-								Collectors.summingInt(Integer::intValue),
-								Collectors.averagingInt(Integer::intValue)));
-		
-		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));
-		assertThat(result.get(1),equalTo(6));
-		assertThat(result.get(2),equalTo(2.0));
-	 * }
-	 * </pre>
-	 * @param stream Stream to collect
-	 * @param collectors Collectors to apply
-	 * @return Result as a list
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Deprecated
-	public static <T,A,R> List<R> collect(Stream<T> stream, Iterable<Collector> collectors){
-		return collect(stream, AsStreamable.<Collector>fromIterable(collectors));
-	}
-	/**
-	 * Apply multiple Collectors, simultaneously to a Stream
-	 * <pre>
-	 * {@code
-	 * List result = StreamUtils.collect(Stream.of(1,2,3),
-								Streamable.<Collector>of(Collectors.toList(),
-								Collectors.summingInt(Integer::intValue),
-								Collectors.averagingInt(Integer::intValue)));
-		
-		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));
-		assertThat(result.get(1),equalTo(6));
-		assertThat(result.get(2),equalTo(2.0));
-	 * 
-	 * }
-	 * </pre>
-	 * @param stream Stream to collect
-	 * @param collectors  Collectors to apply
-	 * @return Result as a list
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Deprecated
-	public static <T> List collect(Stream<T> stream, Streamable<Collector> collectors){
-		return new MultiCollectOperator<T>(stream).collect(collectors);
-	}
+
 	
 	/**
 	 * Repeat in a Stream while specified predicate holds

@@ -39,20 +39,20 @@ import org.jooq.lambda.tuple.Tuple4;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.collections.extensions.CollectionX;
-import com.aol.cyclops.collections.extensions.standard.ListX;
-import com.aol.cyclops.collections.extensions.standard.MapX;
-import com.aol.cyclops.lambda.types.Filterable;
-import com.aol.cyclops.lambda.types.Functor;
-import com.aol.cyclops.lambda.types.Traversable;
-import com.aol.cyclops.lambda.types.Unit;
-import com.aol.cyclops.lambda.types.applicative.zipping.ZippingApplicativable;
+import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.HotStream;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.sequence.traits.ConvertableSequence;
 import com.aol.cyclops.sequence.traits.SequenceMCollectable;
+import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.Traversable;
+import com.aol.cyclops.types.Unit;
+import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 
 
 /**

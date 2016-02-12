@@ -25,9 +25,9 @@ import org.jooq.lambda.tuple.Tuple6;
 import org.jooq.lambda.tuple.Tuple7;
 import org.jooq.lambda.tuple.Tuple8;
 
-import com.aol.cyclops.collections.extensions.standard.ListX;
-import com.aol.cyclops.collections.extensions.standard.MapX;
-import com.aol.cyclops.collections.extensions.standard.SetX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.MapX;
+import com.aol.cyclops.data.collections.extensions.standard.SetX;
 
 
 public interface FutureCollectable<T>{

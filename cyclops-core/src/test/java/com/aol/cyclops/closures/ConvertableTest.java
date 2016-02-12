@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import com.aol.cyclops.data.Convertable;
 import com.aol.cyclops.data.Mutable;
+import com.aol.cyclops.types.Convertable;
 
 import static org.hamcrest.Matchers.equalTo;
 public class ConvertableTest {

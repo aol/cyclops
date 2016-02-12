@@ -3,8 +3,8 @@ package com.aol.cyclops;
 import java.math.BigInteger;
 import java.util.Optional;
 
-import com.aol.cyclops.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.sequence.SequenceM;
 
 public interface Semigroups {

@@ -7,9 +7,9 @@ import org.junit.Test;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
-import com.aol.cyclops.collections.extensions.persistent.PStackX;
-import com.aol.cyclops.collections.extensions.persistent.PVectorX;
-import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
+import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 
 
 //simple sanity check to make sure performance is in the ballpark not a proper benchmark!

@@ -16,13 +16,12 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-import lombok.val;
-
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.donotation.typed.Do;
+import com.aol.cyclops.control.Do;
 
 import fj.data.Option;
+import lombok.val;
 
 
 	

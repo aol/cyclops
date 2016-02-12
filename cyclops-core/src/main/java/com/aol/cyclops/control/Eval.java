@@ -8,16 +8,16 @@ import java.util.function.Supplier;
 
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
-import com.aol.cyclops.collections.extensions.CollectionX;
-import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.control.Xor.Primary;
+import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.functions.Memoize;
-import com.aol.cyclops.lambda.types.Functor;
-import com.aol.cyclops.lambda.types.Unit;
-import com.aol.cyclops.lambda.types.applicative.Applicativable;
-import com.aol.cyclops.lambda.types.applicative.Applicative;
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.value.Value;
+import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.Unit;
+import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.applicative.Applicative;
 
 import lombok.EqualsAndHashCode;
 

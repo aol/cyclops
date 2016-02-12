@@ -178,7 +178,7 @@ public class FluentFunctionTest {
 	public void testMatches1(){
 		assertThat(FluentFunctions.of(this::addOne)	
 					   .matches(-1,c->c.values(i->3,2))
-					   .apply(1),equalTo(4));
+					   .apply(1),equalTo(3));
 	}
 
 	@Test

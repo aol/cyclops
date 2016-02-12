@@ -16,13 +16,13 @@ import java.util.stream.Stream;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
-import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Matchable.MatchSelf;
 import com.aol.cyclops.control.Matchable.MatchableTuple2;
 import com.aol.cyclops.control.Matchable.MatchableTuple3;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.matcher2.Predicates;
 
 import lombok.AccessLevel;

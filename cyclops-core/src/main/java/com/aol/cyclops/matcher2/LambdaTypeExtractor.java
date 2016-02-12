@@ -8,7 +8,7 @@ import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import com.aol.cyclops.invokedynamic.ExceptionSoftener;
+import com.aol.cyclops.control.ExceptionSoftener;
 
 /**
  * Extract generic type info from Lambda expressions

@@ -5,13 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import lombok.AllArgsConstructor;
-import lombok.val;
-
 import org.pcollections.HashTreePMap;
 import org.pcollections.HashTreePSet;
 import org.pcollections.PMap;
 import org.pcollections.PSet;
+
+import com.aol.cyclops.comprehensions.ComprehensionsModule.ComprehensionData;
+
+import lombok.AllArgsConstructor;
+import lombok.val;
 
 
 class Proxier {

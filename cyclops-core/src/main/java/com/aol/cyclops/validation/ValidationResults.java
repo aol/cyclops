@@ -2,8 +2,8 @@ package com.aol.cyclops.validation;
 
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
-import com.aol.cyclops.collections.extensions.standard.ListX;
 import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

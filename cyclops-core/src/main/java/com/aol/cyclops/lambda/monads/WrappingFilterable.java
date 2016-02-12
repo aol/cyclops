@@ -2,7 +2,7 @@ package com.aol.cyclops.lambda.monads;
 
 import java.util.function.Predicate;
 
-import com.aol.cyclops.lambda.types.Filterable;
+import com.aol.cyclops.types.Filterable;
 
 public interface WrappingFilterable<T> extends Filterable<T> {
 	default   Filterable<T>  filter(Predicate<? super T> fn) {

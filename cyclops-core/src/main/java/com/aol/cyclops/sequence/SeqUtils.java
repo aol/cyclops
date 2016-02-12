@@ -11,7 +11,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.sequence.streamable.Streamable;
 
 public class SeqUtils {

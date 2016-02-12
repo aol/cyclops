@@ -2,12 +2,13 @@ package com.aol.cyclops.comprehensions;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import com.aol.cyclops.comprehensions.ComprehensionsModule.ComprehensionData;
 
 import lombok.Setter;
 

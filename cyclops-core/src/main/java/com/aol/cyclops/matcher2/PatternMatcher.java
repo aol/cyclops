@@ -12,8 +12,8 @@ import java.util.stream.Stream;
 import org.jooq.lambda.tuple.Tuple;
 
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.lambda.types.Decomposable;
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.types.Decomposable;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

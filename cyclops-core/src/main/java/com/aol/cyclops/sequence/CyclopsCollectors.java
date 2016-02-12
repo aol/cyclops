@@ -8,16 +8,16 @@ import java.util.SortedSet;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import com.aol.cyclops.collections.extensions.standard.DequeX;
-import com.aol.cyclops.collections.extensions.standard.DequeXImpl;
-import com.aol.cyclops.collections.extensions.standard.ListX;
-import com.aol.cyclops.collections.extensions.standard.ListXImpl;
-import com.aol.cyclops.collections.extensions.standard.QueueX;
-import com.aol.cyclops.collections.extensions.standard.QueueXImpl;
-import com.aol.cyclops.collections.extensions.standard.SetX;
-import com.aol.cyclops.collections.extensions.standard.SetXImpl;
-import com.aol.cyclops.collections.extensions.standard.SortedSetX;
-import com.aol.cyclops.collections.extensions.standard.SortedSetXImpl;
+import com.aol.cyclops.data.collections.extensions.standard.DequeX;
+import com.aol.cyclops.data.collections.extensions.standard.DequeXImpl;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
+import com.aol.cyclops.data.collections.extensions.standard.QueueX;
+import com.aol.cyclops.data.collections.extensions.standard.QueueXImpl;
+import com.aol.cyclops.data.collections.extensions.standard.SetX;
+import com.aol.cyclops.data.collections.extensions.standard.SetXImpl;
+import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
+import com.aol.cyclops.data.collections.extensions.standard.SortedSetXImpl;
 
 public interface CyclopsCollectors {
 	static <T> Collector<T,?,QueueX<T>> toQueueX(){

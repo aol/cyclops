@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.function.Supplier;
 import static org.hamcrest.Matchers.*;
 import org.junit.Test;
+
+import com.aol.cyclops.control.ExceptionSoftener;
+
 import static org.junit.Assert.*;
 public class ExceptionSoftenerTest {
 

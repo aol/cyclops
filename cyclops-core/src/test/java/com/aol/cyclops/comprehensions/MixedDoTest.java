@@ -5,17 +5,13 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.donotation.UntypedDo;
-
-import fj.data.Either;
-import fj.data.Validation;
+import com.aol.cyclops.control.Do;
 public class MixedDoTest {
 
 	@Test
@@ -26,9 +22,10 @@ public class MixedDoTest {
 		
 		
 		
-		CompletableFuture<String> results1 = UntypedDo.add(future)
-									 				.add(()->Stream.of("first","second"))
-									 				.yield((String loadedData) -> (String local)-> loadedData + ":" + local );
+		CompletableFuture<String> results1 = Do.add(future)
+									 				.addStream(()->Stream.of("first","second"))
+									 				.yield((String loadedData) -> (String local)-> loadedData + ":" + local )
+									 				.unwrap();
 		
 	
 		
@@ -54,9 +51,10 @@ public class MixedDoTest {
 		
 		
 		
-		Stream<String> results1 = UntypedDo.add(Stream.of("first","second"))
+		Stream<String> results1 = Do.addStream(Stream.of("first","second"))
 									 				.add(CompletableFuture.supplyAsync(this::loadData))
-									 				.yield((String local) -> (String loadedData)-> loadedData + ":" + local );
+									 				.yield((String local) -> (String loadedData)-> loadedData + ":" + local )
+									 				.unwrap();
 		
 	
 		

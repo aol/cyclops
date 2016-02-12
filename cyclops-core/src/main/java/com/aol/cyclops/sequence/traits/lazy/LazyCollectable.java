@@ -29,8 +29,8 @@ import org.jooq.lambda.tuple.Tuple6;
 import org.jooq.lambda.tuple.Tuple7;
 import org.jooq.lambda.tuple.Tuple8;
 
-import com.aol.cyclops.collections.extensions.standard.MapX;
 import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.data.collections.extensions.standard.MapX;
 
 
 public interface LazyCollectable<T>{

@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import com.aol.cyclops.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.SequenceM;
 

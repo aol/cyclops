@@ -4,8 +4,8 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.aol.cyclops.invokedynamic.ExceptionSoftener;
-import com.aol.cyclops.invokedynamic.ReflectionCache;
+import com.aol.cyclops.control.ExceptionSoftener;
+import com.aol.cyclops.internal.invokedynamic.ReflectionCache;
 
 /**
  * Interface that represents an Object that can be converted to a map

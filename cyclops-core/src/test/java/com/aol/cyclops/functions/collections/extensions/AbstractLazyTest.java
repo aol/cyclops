@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
-import com.aol.cyclops.collections.extensions.CollectionX;
 import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.sequence.SequenceM;
 
 public abstract class AbstractLazyTest {

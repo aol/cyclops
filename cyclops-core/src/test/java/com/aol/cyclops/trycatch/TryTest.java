@@ -10,11 +10,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.function.Consumer;
 
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import com.aol.cyclops.control.Try;
-import com.aol.cyclops.lambda.tuple.PTuple2;
-import com.aol.cyclops.lambda.tuple.PowerTuples;
 public class TryTest {
  
 	@Test(expected=IOException.class)
@@ -65,12 +65,12 @@ public class TryTest {
 	public void testMultipleResources(){
 		
 		Try t2 = Try.catchExceptions(FileNotFoundException.class,IOException.class)
-				   .init(()->PowerTuples.tuple(new BufferedReader(new FileReader("file.txt")),new FileReader("hello")))
+				   .init(()->Tuple.tuple(new BufferedReader(new FileReader("file.txt")),new FileReader("hello")))
 				   .tryWithResources(this::read2);
 		
 	}
 	
-	private String read2(PTuple2<BufferedReader,FileReader> res) throws IOException{
+	private String read2(Tuple2<BufferedReader,FileReader> res) throws IOException{
 		String line = res.v1().readLine();
 		return null;
 	}

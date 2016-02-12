@@ -1,11 +1,16 @@
 package com.aol.cyclops.comprehensions;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+
+import com.aol.cyclops.comprehensions.ComprehensionsModule.ComprehensionData;
+import com.aol.cyclops.comprehensions.ComprehensionsModule.ContextualExecutor;
+import com.aol.cyclops.comprehensions.ComprehensionsModule.ExecutionState;
+import com.aol.cyclops.comprehensions.ComprehensionsModule.Foreach;
+import com.aol.cyclops.comprehensions.ComprehensionsModule.Initialisable;
 
 import lombok.val;
 

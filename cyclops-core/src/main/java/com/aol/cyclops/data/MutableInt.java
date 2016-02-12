@@ -8,7 +8,7 @@ import java.util.function.IntSupplier;
 import java.util.function.IntUnaryOperator;
 import java.util.stream.IntStream;
 
-import com.aol.cyclops.value.Value;
+import com.aol.cyclops.types.Value;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

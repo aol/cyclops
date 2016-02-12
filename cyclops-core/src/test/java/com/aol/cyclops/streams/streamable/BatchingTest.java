@@ -26,7 +26,7 @@ import java.util.stream.IntStream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.SimpleTimer;
 

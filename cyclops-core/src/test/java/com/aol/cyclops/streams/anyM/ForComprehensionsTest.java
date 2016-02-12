@@ -4,18 +4,11 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.donotation.typed.Do;
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.sequence.SequenceM;
 
 public class ForComprehensionsTest {
 

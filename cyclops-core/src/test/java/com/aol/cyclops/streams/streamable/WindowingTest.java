@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
 

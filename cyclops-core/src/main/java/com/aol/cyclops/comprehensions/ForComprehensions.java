@@ -2,6 +2,10 @@ package com.aol.cyclops.comprehensions;
 
 import java.util.function.Function;
 
+import com.aol.cyclops.comprehensions.ComprehensionsModule.ComprehensionData;
+import com.aol.cyclops.comprehensions.ComprehensionsModule.Initialisable;
+import com.aol.cyclops.comprehensions.ComprehensionsModule.MyComprehension;
+
 /**
  * Static helper methods for for comprehensions
  * This class aims to make using for comprehenions as succint as possible

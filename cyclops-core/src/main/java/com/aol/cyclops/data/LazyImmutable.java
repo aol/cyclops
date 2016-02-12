@@ -9,12 +9,12 @@ import java.util.function.Supplier;
 
 import com.aol.cyclops.control.FeatureToggle;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.lambda.types.Functor;
-import com.aol.cyclops.lambda.types.Unit;
-import com.aol.cyclops.lambda.types.applicative.Applicativable;
 import com.aol.cyclops.matcher2.CheckValues;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.value.Value;
+import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.Unit;
+import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.applicative.Applicativable;
 
 import lombok.ToString;
 

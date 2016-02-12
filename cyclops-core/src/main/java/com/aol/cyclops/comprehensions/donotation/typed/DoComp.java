@@ -1,19 +1,21 @@
 package com.aol.cyclops.comprehensions.donotation.typed;
 
 
-import java.util.List;
 import java.util.function.Function;
-
-import lombok.AllArgsConstructor;
 
 import org.pcollections.PStack;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
-import com.aol.cyclops.comprehensions.ComprehensionData;
+import com.aol.cyclops.comprehensions.ComprehensionsModule.ComprehensionData;
 import com.aol.cyclops.comprehensions.ForComprehensions;
+import com.aol.cyclops.comprehensions.donotation.typed.DoBuilderModule.Assignment;
+import com.aol.cyclops.comprehensions.donotation.typed.DoBuilderModule.Entry;
+import com.aol.cyclops.comprehensions.donotation.typed.DoBuilderModule.Guard;
 import com.aol.cyclops.data.Mutable;
 import com.aol.cyclops.sequence.Unwrapable;
+
+import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public abstract class DoComp {

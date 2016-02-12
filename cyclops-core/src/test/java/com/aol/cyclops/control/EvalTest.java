@@ -8,7 +8,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.types.ConvertableFunctor;
+import com.aol.cyclops.types.ConvertableFunctor;
 public class EvalTest {
 
 	@Test

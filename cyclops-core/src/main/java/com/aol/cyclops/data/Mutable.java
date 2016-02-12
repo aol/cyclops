@@ -4,8 +4,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.lambda.types.applicative.Applicativable;
-import com.aol.cyclops.value.Value;
+import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.applicative.Applicativable;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

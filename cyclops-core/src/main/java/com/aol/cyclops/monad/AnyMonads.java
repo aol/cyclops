@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.lambda.api.Comprehender;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.lambda.monads.MonadWrapper;

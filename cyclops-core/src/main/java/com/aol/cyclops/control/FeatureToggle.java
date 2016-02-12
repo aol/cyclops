@@ -7,13 +7,13 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.collections.extensions.standard.ListX;
-import com.aol.cyclops.lambda.types.applicative.Applicativable;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.matcher2.CheckValues;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.ToStream;
-import com.aol.cyclops.value.Value;
+import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.applicative.Applicativable;
 
 
 

@@ -7,7 +7,7 @@ import java.util.function.BiFunction;
 
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.donotation.typed.Do;
+import com.aol.cyclops.control.Do;
 
 public class OptionalTest {
 

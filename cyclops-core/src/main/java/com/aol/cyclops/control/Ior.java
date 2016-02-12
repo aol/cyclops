@@ -15,19 +15,19 @@ import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
-import com.aol.cyclops.collections.extensions.CollectionX;
-import com.aol.cyclops.collections.extensions.standard.ListX;
-import com.aol.cyclops.lambda.types.BiFunctor;
-import com.aol.cyclops.lambda.types.Filterable;
-import com.aol.cyclops.lambda.types.Functor;
-import com.aol.cyclops.lambda.types.applicative.Applicativable;
-import com.aol.cyclops.lambda.types.applicative.Applicative;
+import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.matcher2.Case;
 import com.aol.cyclops.matcher2.CheckValues;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.StreamUtils;
-import com.aol.cyclops.value.Value;
+import com.aol.cyclops.types.BiFunctor;
+import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.applicative.Applicative;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

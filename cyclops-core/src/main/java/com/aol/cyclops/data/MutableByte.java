@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.value.Value;
+import com.aol.cyclops.types.Value;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

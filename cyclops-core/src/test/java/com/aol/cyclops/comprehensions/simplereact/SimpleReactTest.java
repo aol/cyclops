@@ -9,7 +9,7 @@ import java.util.Optional;
 
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.donotation.typed.Do;
+import com.aol.cyclops.control.Do;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 public class SimpleReactTest {
 	@Test

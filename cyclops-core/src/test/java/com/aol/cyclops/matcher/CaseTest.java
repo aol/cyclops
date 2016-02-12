@@ -15,10 +15,10 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.types.Decomposable;
 import com.aol.cyclops.matcher2.Case;
 import com.aol.cyclops.matcher2.EmptyCase;
 import com.aol.cyclops.matcher2.Predicates;
+import com.aol.cyclops.types.Decomposable;
 
 import lombok.Value;
 
