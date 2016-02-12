@@ -18,7 +18,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.internal.monads.MonadWrapper;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 
 import lombok.val;
 
@@ -114,7 +114,7 @@ public class MonadTest {
                 .collect(Collectors.toList());
        
         
-        AnyM<SequenceM<Integer>> futureList = AnyM.sequence(AnyM.listFromCompletableFuture(futures).stream());
+        AnyM<ReactiveSeq<Integer>> futureList = AnyM.sequence(AnyM.listFromCompletableFuture(futures).stream());
         
  
         List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>unwrap().join();

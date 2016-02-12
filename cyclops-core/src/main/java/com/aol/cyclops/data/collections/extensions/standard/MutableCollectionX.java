@@ -24,7 +24,7 @@ import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.persistent.PersistentCollectionX;
 import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Traversable;
@@ -528,7 +528,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#permutations()
 	 */
 	@Override
-	default MutableCollectionX<SequenceM<T>> permutations() {
+	default MutableCollectionX<ReactiveSeq<T>> permutations() {
 		return fromStream(stream().permutations());
 		
 	}
@@ -536,14 +536,14 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations(int)
 	 */
 	@Override
-	default MutableCollectionX<SequenceM<T>> combinations(int size) {
+	default MutableCollectionX<ReactiveSeq<T>> combinations(int size) {
 		return fromStream(stream().combinations());
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations()
 	 */
 	@Override
-	default MutableCollectionX<SequenceM<T>> combinations() {
+	default MutableCollectionX<ReactiveSeq<T>> combinations() {
 		return fromStream(stream().combinations());
 	}
 	

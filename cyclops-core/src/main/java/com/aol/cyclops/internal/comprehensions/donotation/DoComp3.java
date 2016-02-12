@@ -21,7 +21,7 @@ import org.pcollections.PStack;
 
 import com.aol.cyclops.internal.monads.MonadWrapper;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 	public class DoComp3<T1,T2,T3> extends DoComp{
 		public DoComp3(PStack<Entry> assigned, Class orgType) {
 			super(assigned,orgType);
@@ -214,7 +214,7 @@ import com.aol.cyclops.control.SequenceM;
 		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T4> DoComp4<T1,T2,T3,T4> add(SequenceM<T4> o){
+		public <T4> DoComp4<T1,T2,T3,T4> add(ReactiveSeq<T4> o){
 			return new DoComp4(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(), o)),getOrgType());
 			
 		}
@@ -529,7 +529,7 @@ import com.aol.cyclops.control.SequenceM;
 		 * @param f Gives access to current pointers and defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T4> DoComp4<T1,T2,T3,T4> withTraversableM(Function<? super T1,Function<? super T2,Function<? super T3,SequenceM<T4>>>> f){
+		public <T4> DoComp4<T1,T2,T3,T4> withTraversableM(Function<? super T1,Function<? super T2,Function<? super T3,ReactiveSeq<T4>>>> f){
 			return new DoComp4(addToAssigned(f),getOrgType());
 			
 		}

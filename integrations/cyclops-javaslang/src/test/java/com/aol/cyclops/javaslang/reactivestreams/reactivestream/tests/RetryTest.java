@@ -18,7 +18,7 @@ import org.mockito.MockitoAnnotations;
 
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.javaslang.reactivestreams.ReactiveStream;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 
 
 public class RetryTest {
@@ -104,7 +104,7 @@ public class RetryTest {
 				"42");
 
 	
-		String result = SequenceM.of( 1,  2, 3)
+		String result = ReactiveSeq.of( 1,  2, 3)
 				.retry(serviceMock)
 				.firstValue();
 

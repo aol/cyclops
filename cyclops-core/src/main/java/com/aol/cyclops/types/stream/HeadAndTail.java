@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.util.function.Memoize;
 
 import lombok.AllArgsConstructor;
@@ -22,7 +22,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class HeadAndTail<T> {
 	private final Supplier<T> head;
-	private final Supplier<SequenceM<T>> tail;
+	private final Supplier<ReactiveSeq<T>> tail;
 	private final Supplier<Boolean> isHead;
 	
 	
@@ -37,8 +37,8 @@ public class HeadAndTail<T> {
 				if(isHead.get())
 					head.get();
 				else
-					return SequenceM.empty();
-				return SequenceM.fromIterator(it);
+					return ReactiveSeq.empty();
+				return ReactiveSeq.fromIterator(it);
 		});
 		
 	}
@@ -66,14 +66,14 @@ public class HeadAndTail<T> {
 	/**
 	 * @return A Stream containing the Head if present
 	 */
-	public SequenceM<T> headStream(){
-		return isHeadPresent()?    SequenceM.of(head).map(Supplier::get) : SequenceM.empty();
+	public ReactiveSeq<T> headStream(){
+		return isHeadPresent()?    ReactiveSeq.of(head).map(Supplier::get) : ReactiveSeq.empty();
 	}
 
 	/**
 	 * @return The tail
 	 */
-	public SequenceM<T> tail() {
+	public ReactiveSeq<T> tail() {
 		return tail.get();
 	}
 	

@@ -45,7 +45,7 @@ import com.aol.cyclops.internal.monads.AnyMValueImpl;
 import com.aol.cyclops.internal.monads.AnyMonads;
 import com.aol.cyclops.internal.monads.ComprehenderSelector;
 import com.aol.cyclops.internal.monads.MonadWrapper;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.EmptyUnit;
 import com.aol.cyclops.types.FlatMap;
 import com.aol.cyclops.types.Foldable;
@@ -84,7 +84,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @see com.aol.cyclops.monad.asSequence()
 	 * @see com.aol.cyclops.monad.toSequence()
 	 */
-	public SequenceM<T> stream();
+	public ReactiveSeq<T> stream();
 	
 
 	<R, A> R collect(Collector<? super T, A, R> collector);
@@ -254,7 +254,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * 
 	 * @return A Sequence that wraps a Stream
 	 */
-	 <NT> SequenceM<NT> toSequence(Function<? super T,? extends Stream<? extends NT>> fn);
+	 <NT> ReactiveSeq<NT> toSequence(Function<? super T,? extends Stream<? extends NT>> fn);
 	/**
 	 *  <pre>
 	 *  {@code Optional<List<Integer>>  into Stream<Integer> }
@@ -277,7 +277,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	
 	 * @return A Sequence that wraps a Stream
 	 */
-	 <T> SequenceM<T> toSequence();
+	 <T> ReactiveSeq<T> toSequence();
 	
 	
 	/**
@@ -286,7 +286,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * If the underlying monad is a Stream it is returned
 	 * Otherwise we flatMap the underlying monad to a Stream type
 	 */
-	 SequenceM<T> asSequence();
+	 ReactiveSeq<T> asSequence();
 	
 	
 		
@@ -387,7 +387,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public static AnyMSeq<Integer> fromRange(int start, int end){
 		
-		return AnyM.fromStream(SequenceM.range(start, end));
+		return AnyM.fromStream(ReactiveSeq.range(start, end));
 	}
 	/**
 	 * Construct an AnyM instance that wraps a range from start (inclusive) to end (exclusive) provided
@@ -400,7 +400,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public static AnyMSeq<Long> fromRangeLong(long start, long end){
 		
-		return AnyM.fromStream(SequenceM.rangeLong(start, end));
+		return AnyM.fromStream(ReactiveSeq.rangeLong(start, end));
 	}
 	/**
 	 * Wrap a Streamable inside an AnyM
@@ -846,7 +846,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @param seq Stream of monads to convert
 	 * @return Monad with a List
 	 */
-	public static <T1>  AnyM<SequenceM<T1>> sequence(Stream<? extends AnyM<T1>> seq){
+	public static <T1>  AnyM<ReactiveSeq<T1>> sequence(Stream<? extends AnyM<T1>> seq){
 		return new AnyMonads().sequence(seq);
 	}
 	/**

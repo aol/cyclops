@@ -19,7 +19,7 @@ import com.aol.cyclops.internal.matcher2.CheckValues;
 import com.aol.cyclops.internal.matcher2.MatchableCase;
 import com.aol.cyclops.internal.matcher2.MatchingInstance;
 import com.aol.cyclops.internal.matcher2.PatternMatcher;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.Decomposable;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
@@ -165,10 +165,10 @@ public interface Matchable<TYPE>{
 	
 	public static interface MatchableIterable<TYPE> extends Matchable<TYPE>{
 		
-		default <R> Eval<R> visit(BiFunction<? super Maybe<TYPE>,? super SequenceM<TYPE>,? extends R> match ){
+		default <R> Eval<R> visit(BiFunction<? super Maybe<TYPE>,? super ReactiveSeq<TYPE>,? extends R> match ){
 			@SuppressWarnings("unchecked")
 			Iterable<TYPE> it = (Iterable<TYPE>)getMatchable();
-			return Eval.later(()->SequenceM.fromIterable(it).visit(match));	
+			return Eval.later(()->ReactiveSeq.fromIterable(it).visit(match));	
 		}	
 		default Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> toTuple5(Object o){
 			Iterator it = ((Iterable)o).iterator();

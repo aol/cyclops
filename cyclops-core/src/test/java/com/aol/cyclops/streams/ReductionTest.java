@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.Reducers;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 
 
 public class ReductionTest {
@@ -20,12 +20,12 @@ public class ReductionTest {
 	@Test
 	public void reduceWithMonoid(){
 		
-		assertThat(SequenceM.of("hello","2","world","4").mapReduce(Reducers.toCountInt()),equalTo(4));
+		assertThat(ReactiveSeq.of("hello","2","world","4").mapReduce(Reducers.toCountInt()),equalTo(4));
 	}
 	@Test
 	public void reduceWithMonoid2(){
 		
-		assertThat(SequenceM.of("one","two","three","four").mapReduce(this::toInt,Reducers.toTotalInt()),
+		assertThat(ReactiveSeq.of("one","two","three","four").mapReduce(this::toInt,Reducers.toTotalInt()),
 						equalTo(10));
 	}
 	
@@ -42,8 +42,8 @@ public class ReductionTest {
 	}
 	@Test
 	public void reduceWithMonoidJoin(){
-		SequenceM.of("hello","2","world","4").join(",");
-		assertThat(SequenceM.of("hello","2","world","4").reduce(Reducers.toString(",")),
+		ReactiveSeq.of("hello","2","world","4").join(",");
+		assertThat(ReactiveSeq.of("hello","2","world","4").reduce(Reducers.toString(",")),
 				equalTo(",hello,2,world,4"));
 	}
 	

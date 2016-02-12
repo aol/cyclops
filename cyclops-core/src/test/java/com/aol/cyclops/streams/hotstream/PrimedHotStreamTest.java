@@ -17,7 +17,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertThat;
 
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.PausableHotStream;
 
 public class PrimedHotStreamTest {
@@ -28,7 +28,7 @@ public class PrimedHotStreamTest {
 	public void hotStream() throws InterruptedException{
 		value= null;
 		CountDownLatch latch = new CountDownLatch(1);
-		SequenceM.of(1,2,3)
+		ReactiveSeq.of(1,2,3)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())
 				.primedHotStream(exec)
@@ -46,7 +46,7 @@ public class PrimedHotStreamTest {
 			System.out.println(i);
 			value= null;
 			CountDownLatch latch = new CountDownLatch(1);
-			SequenceM.range(0,Integer.MAX_VALUE)
+			ReactiveSeq.range(0,Integer.MAX_VALUE)
 					.limit(100)
 					.peek(v->value=v)
 					.peek(v->latch.countDown())
@@ -66,7 +66,7 @@ public class PrimedHotStreamTest {
 	public void hotStreamConnectBlockingQueue() throws InterruptedException{
 		value= null;
 		CountDownLatch latch = new CountDownLatch(1);
-		SequenceM.range(0,Integer.MAX_VALUE)
+		ReactiveSeq.range(0,Integer.MAX_VALUE)
 				.limit(1000)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())
@@ -83,7 +83,7 @@ public class PrimedHotStreamTest {
 	public void hotStreamCapture() throws InterruptedException{
 		
 		
-		List<Integer> list = SequenceM.range(0,Integer.MAX_VALUE)
+		List<Integer> list = ReactiveSeq.range(0,Integer.MAX_VALUE)
 									 .limit(1000)
 									 .primedHotStream(exec)
 									 .connect()
@@ -96,7 +96,7 @@ public class PrimedHotStreamTest {
 	public void hotStreamConnectPausable() throws InterruptedException{
 		value= null;
 		CountDownLatch latch = new CountDownLatch(1);
-		PausableHotStream s = SequenceM.range(0,Integer.MAX_VALUE)
+		PausableHotStream s = ReactiveSeq.range(0,Integer.MAX_VALUE)
 				.limit(1000)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())
@@ -124,7 +124,7 @@ public class PrimedHotStreamTest {
 	public void hotStreamConnectPausableConnect() throws InterruptedException{
 		value= null;
 		CountDownLatch latch = new CountDownLatch(1);
-		PausableHotStream s = SequenceM.range(0,Integer.MAX_VALUE)
+		PausableHotStream s = ReactiveSeq.range(0,Integer.MAX_VALUE)
 				.limit(50000)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())

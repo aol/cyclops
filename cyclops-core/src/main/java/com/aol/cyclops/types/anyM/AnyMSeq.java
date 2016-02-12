@@ -28,7 +28,7 @@ import com.aol.cyclops.internal.matcher2.CheckValues;
 import com.aol.cyclops.internal.monads.AnyMSeqImpl;
 import com.aol.cyclops.internal.monads.AnyMonads;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
@@ -336,7 +336,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	 * @see com.aol.cyclops.monad.AnyM#stream()
 	 */
 	@Override
-	SequenceM<T> stream();
+	ReactiveSeq<T> stream();
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.monad.AnyM#unwrap()
@@ -556,19 +556,19 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	 * @see com.aol.cyclops.monad.AnyM#toSequence(java.util.function.Function)
 	 */
 	@Override
-	 <NT> SequenceM<NT> toSequence(Function<? super T, ? extends Stream<? extends NT>> fn) ;
+	 <NT> ReactiveSeq<NT> toSequence(Function<? super T, ? extends Stream<? extends NT>> fn) ;
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.monad.AnyM#toSequence()
 	 */
 	@Override
-	<T> SequenceM<T> toSequence() ;
+	<T> ReactiveSeq<T> toSequence() ;
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.monad.AnyM#asSequence()
 	 */
 	@Override
-	SequenceM<T> asSequence() ;
+	ReactiveSeq<T> asSequence() ;
 	
 	
 
@@ -648,7 +648,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	 * @param seq Stream of monads to convert
 	 * @return Monad with a List
 	 */
-	public static <T1>  AnyMSeq<SequenceM<T1>> sequence(Stream<? extends AnyMSeq<T1>> seq){
+	public static <T1>  AnyMSeq<ReactiveSeq<T1>> sequence(Stream<? extends AnyMSeq<T1>> seq){
 		return AnyMSeqImpl.from(new AnyMonads().sequence(seq));
 	}
 	/**

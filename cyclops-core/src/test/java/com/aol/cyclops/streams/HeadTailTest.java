@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.HeadAndTail;
 
 public class HeadTailTest {
@@ -16,12 +16,12 @@ public class HeadTailTest {
 	@Test
 	public void headTailReplay(){
 	
-		SequenceM<String> helloWorld = AnyM.streamOf("hello","world","last").toSequence();
+		ReactiveSeq<String> helloWorld = AnyM.streamOf("hello","world","last").toSequence();
 		HeadAndTail<String> headAndTail = helloWorld.headAndTail();
 		 String head = headAndTail.head();
 		 assertThat(head,equalTo("hello"));
 		
-		SequenceM<String> tail =  headAndTail.tail();
+		ReactiveSeq<String> tail =  headAndTail.tail();
 		assertThat(tail.headAndTail().head(),equalTo("world"));
 		
 	}

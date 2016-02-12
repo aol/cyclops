@@ -29,7 +29,7 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Reducers;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.util.stream.AsStreamable;
 import com.aol.cyclops.util.stream.StreamUtils;
@@ -43,7 +43,7 @@ public class StreamUtilsTest {
 		 String head = headAndTail.head();
 		 assertThat(head,equalTo("hello"));
 		
-		SequenceM<String> tail =  headAndTail.tail();
+		ReactiveSeq<String> tail =  headAndTail.tail();
 		assertThat(tail.headAndTail().head(),equalTo("world"));
 		
 	}
@@ -59,9 +59,9 @@ public class StreamUtilsTest {
 
 		assertThat(StreamUtils.ofType(Stream.of(1, "a", 2, "b", 3, null),Integer.class).collect(Collectors.toList()),containsInAnyOrder(1, 2, 3));
 
-		assertThat(SequenceM.of(1, "a", 2, "b", 3, null).ofType(Integer.class).collect(Collectors.toList()),not(containsInAnyOrder("a", "b",null)));
+		assertThat(ReactiveSeq.of(1, "a", 2, "b", 3, null).ofType(Integer.class).collect(Collectors.toList()),not(containsInAnyOrder("a", "b",null)));
 
-		assertThat(SequenceM.of(1, "a", 2, "b", 3, null)
+		assertThat(ReactiveSeq.of(1, "a", 2, "b", 3, null)
 
 				.ofType(Serializable.class).toList(),containsInAnyOrder(1, "a", 2, "b", 3));
 
@@ -69,7 +69,7 @@ public class StreamUtilsTest {
 
 	@Test
 	public void testCastPast() {
-		SequenceM.of(1, "a", 2, "b", 3, null).cast(Date.class).map(d -> d.getTime());
+		ReactiveSeq.of(1, "a", 2, "b", 3, null).cast(Date.class).map(d -> d.getTime());
 	
 
 
@@ -78,7 +78,7 @@ public class StreamUtilsTest {
 	@Test
 	public void testIntersperse() {
 		
-		assertThat(SequenceM.of(1,2,3).intersperse(0).toList(),equalTo(Arrays.asList(1,0,2,0,3)));
+		assertThat(ReactiveSeq.of(1,2,3).intersperse(0).toList(),equalTo(Arrays.asList(1,0,2,0,3)));
 	
 
 
@@ -246,7 +246,7 @@ public class StreamUtilsTest {
 	@Test
 	public void zipSequence(){
 		Stream<List<Integer>> zipped = StreamUtils.zipSequence(Stream.of(1,2,3)
-												,SequenceM.of(2,3,4), 
+												,ReactiveSeq.of(2,3,4), 
 													(a,b) -> Arrays.asList(a,b));
 		
 		

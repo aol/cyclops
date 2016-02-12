@@ -19,7 +19,7 @@ import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.BiFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
@@ -112,7 +112,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 	Value<ST> secondaryValue();
 	ST secondaryGet();
 	Optional<ST> secondaryToOptional();
-	SequenceM<ST> secondaryToStream();
+	ReactiveSeq<ST> secondaryToStream();
 	
 	
 	<LT1,RT1> Ior<LT1,RT1> flatMap(Function<? super PT,? extends Ior<LT1,RT1>> mapper);
@@ -286,8 +286,8 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 		}
 
 		@Override
-		public SequenceM<ST> secondaryToStream() {
-			return SequenceM.empty();
+		public ReactiveSeq<ST> secondaryToStream() {
+			return ReactiveSeq.empty();
 		}
 
 		@Override
@@ -400,8 +400,8 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 			return Optional.ofNullable(value);
 		}
 		@Override
-		public SequenceM<ST> secondaryToStream() {
-			return SequenceM.fromStream(StreamUtils.optionalToStream(secondaryToOptional()));
+		public ReactiveSeq<ST> secondaryToStream() {
+			return ReactiveSeq.fromStream(StreamUtils.optionalToStream(secondaryToOptional()));
 		}
 		@Override
 		public <LT1, RT1> Ior<LT1, RT1> flatMap(Function<? super PT, ? extends Ior<LT1, RT1>> mapper) {
@@ -457,7 +457,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 		
 		
 		@Override
-		public SequenceM<PT> stream() {
+		public ReactiveSeq<PT> stream() {
 			return primary.stream();
 		}
 		@Override
@@ -524,7 +524,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 			return secondary.secondaryToOptional();
 		}
 		@Override
-		public SequenceM<ST> secondaryToStream() {
+		public ReactiveSeq<ST> secondaryToStream() {
 			return secondary.secondaryToStream();
 		}
 		@Override

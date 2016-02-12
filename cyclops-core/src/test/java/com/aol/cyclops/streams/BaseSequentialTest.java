@@ -23,16 +23,16 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 public class BaseSequentialTest {
 
-	<U> SequenceM<U> of(U... array){
-			  return SequenceM.of(array);
+	<U> ReactiveSeq<U> of(U... array){
+			  return ReactiveSeq.of(array);
 	}
 	
 		
-		SequenceM<Integer> empty;
-		SequenceM<Integer> nonEmpty;
+		ReactiveSeq<Integer> empty;
+		ReactiveSeq<Integer> nonEmpty;
 
 		@Before
 		public void setup(){
@@ -160,7 +160,7 @@ public class BaseSequentialTest {
 		public void zipEmpty() throws Exception {
 			
 			
-			final SequenceM<Integer> zipped = empty.zip(this.<Integer>of(), (a, b) -> a + b);
+			final ReactiveSeq<Integer> zipped = empty.zip(this.<Integer>of(), (a, b) -> a + b);
 			assertTrue(zipped.collect(Collectors.toList()).isEmpty());
 		}
 
@@ -169,7 +169,7 @@ public class BaseSequentialTest {
 			
 			
 			
-			final SequenceM<Integer> zipped = empty.zip(nonEmpty, (a, b) -> a + b);
+			final ReactiveSeq<Integer> zipped = empty.zip(nonEmpty, (a, b) -> a + b);
 			assertTrue(zipped.collect(Collectors.toList()).isEmpty());
 		}
 
@@ -177,7 +177,7 @@ public class BaseSequentialTest {
 		public void shouldReturnEmptySeqWhenZipNonEmptyWithEmpty() throws Exception {
 			
 			
-			final SequenceM<Integer> zipped = nonEmpty.zip(empty, (a, b) -> a + b);
+			final ReactiveSeq<Integer> zipped = nonEmpty.zip(empty, (a, b) -> a + b);
 
 			
 			assertTrue(zipped.collect(Collectors.toList()).isEmpty());
@@ -186,11 +186,11 @@ public class BaseSequentialTest {
 		@Test
 		public void shouldZipTwoFiniteSequencesOfSameSize() throws Exception {
 			
-			final SequenceM<String> first = of("A", "B", "C");
-			final SequenceM<Integer> second = of(1, 2, 3);
+			final ReactiveSeq<String> first = of("A", "B", "C");
+			final ReactiveSeq<Integer> second = of(1, 2, 3);
 
 			
-			final SequenceM<String> zipped = first.zip(second, (a, b) -> a + b);
+			final ReactiveSeq<String> zipped = first.zip(second, (a, b) -> a + b);
 
 			
 			assertThat(zipped.collect(Collectors.toList()),equalTo(asList("A1", "B2", "C3")));
@@ -200,20 +200,20 @@ public class BaseSequentialTest {
 
 		@Test
 		public void shouldTrimSecondFixedSeqIfLonger() throws Exception {
-			final SequenceM<String> first = of("A", "B", "C");
-			final SequenceM<Integer> second = of(1, 2, 3, 4);
+			final ReactiveSeq<String> first = of("A", "B", "C");
+			final ReactiveSeq<Integer> second = of(1, 2, 3, 4);
 
 			
-			final SequenceM<String> zipped = first.zip(second, (a, b) -> a + b);
+			final ReactiveSeq<String> zipped = first.zip(second, (a, b) -> a + b);
 
 			assertThat(zipped.collect(Collectors.toList()),equalTo(asList("A1", "B2", "C3")));
 		}
 
 		@Test
 		public void shouldTrimFirstFixedSeqIfLonger() throws Exception {
-			final SequenceM<String> first = of("A", "B", "C","D");
-			final SequenceM<Integer> second = of(1, 2, 3);
-			final SequenceM<String> zipped = first.zip(second, (a, b) -> a + b);
+			final ReactiveSeq<String> first = of("A", "B", "C","D");
+			final ReactiveSeq<Integer> second = of(1, 2, 3);
+			final ReactiveSeq<String> zipped = first.zip(second, (a, b) -> a + b);
 
 			
 			assertThat(zipped.collect(Collectors.toList()),equalTo(asList("A1", "B2", "C3")));
@@ -242,7 +242,7 @@ public class BaseSequentialTest {
 
 	    @Test
 	    public void testShuffle() {
-	        Supplier<SequenceM<Integer>> s = () ->of(1, 2, 3);
+	        Supplier<ReactiveSeq<Integer>> s = () ->of(1, 2, 3);
 
 	        assertEquals(3, s.get().shuffle().toList().size());
 	        assertThat(s.get().shuffle().toList(), hasItems(1, 2, 3));
@@ -267,7 +267,7 @@ public class BaseSequentialTest {
 		
 		@Test
 		public void testDuplicate(){
-			 Tuple2<SequenceM<Integer>, SequenceM<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
+			 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
 			 assertTrue(copies.v1.anyMatch(i->i==2));
 			 assertTrue(copies.v2.anyMatch(i->i==2));
 		}
@@ -327,7 +327,7 @@ public class BaseSequentialTest {
 		   
 		    @Test
 		    public void testSkipWhile() {
-		    	 Supplier<SequenceM<Integer>> s = () -> SequenceM.of(1, 2, 3, 4, 5);
+		    	 Supplier<ReactiveSeq<Integer>> s = () -> ReactiveSeq.of(1, 2, 3, 4, 5);
 
 		         assertEquals(asList(1, 2, 3, 4, 5), s.get().skipWhile(i -> false).toList());
 		         assertEquals(asList(3, 4, 5), s.get().skipWhile(i -> i % 3 != 0).toList());
@@ -338,7 +338,7 @@ public class BaseSequentialTest {
 
 		    @Test
 		    public void testSkipUntil() {
-		    	Supplier<SequenceM<Integer>> s = () -> SequenceM.of(1, 2, 3, 4, 5);
+		    	Supplier<ReactiveSeq<Integer>> s = () -> ReactiveSeq.of(1, 2, 3, 4, 5);
 
 		        assertEquals(asList(), s.get().skipUntil(i -> false).toList());
 		        assertEquals(asList(3, 4, 5), s.get().skipUntil(i -> i % 3 == 0).toList());
@@ -349,14 +349,14 @@ public class BaseSequentialTest {
 
 		    @Test
 		    public void testSkipUntilWithNulls() {
-		    	 Supplier<SequenceM<Integer>> s = () -> SequenceM.of(1, 2, null, 3, 4, 5);
+		    	 Supplier<ReactiveSeq<Integer>> s = () -> ReactiveSeq.of(1, 2, null, 3, 4, 5);
 
 		         assertEquals(asList(1, 2, null, 3, 4, 5), s.get().skipUntil(i -> true).toList());
 		    }
 
 		    @Test
 		    public void testLimitWhile() {
-		    	 Supplier<SequenceM<Integer>> s = () -> SequenceM.of(1, 2, 3, 4, 5);
+		    	 Supplier<ReactiveSeq<Integer>> s = () -> ReactiveSeq.of(1, 2, 3, 4, 5);
 
 		         assertEquals(asList(), s.get().limitWhile(i -> false).toList());
 		         assertEquals(asList(1, 2), s.get().limitWhile(i -> i % 3 != 0).toList());
@@ -387,7 +387,7 @@ public class BaseSequentialTest {
 
 		    @Test
 		    public void testPartition() {
-		        Supplier<SequenceM<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+		        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
 		        assertEquals(asList(1, 3, 5), s.get().partition(i -> i % 2 != 0).v1.toList());
 		        assertEquals(asList(2, 4, 6), s.get().partition(i -> i % 2 != 0).v2.toList());
@@ -408,7 +408,7 @@ public class BaseSequentialTest {
 		    @Test
 		    public void testSplitAt() {
 		    	for(int i=0;i<20;i++){
-			        Supplier<SequenceM<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+			        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 		
 			   
 			        assertEquals(asList(4, 5, 6), s.get().splitAt(3).v2.toList());
@@ -416,20 +416,20 @@ public class BaseSequentialTest {
 			  
 		    	}
 		    	for(int i=0;i<20;i++){
-			        Supplier<SequenceM<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+			        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 		
 			     
 			        assertEquals(asList(1, 2, 3), s.get().splitAt(3).v1.toList());
 			       
 		    	}
 		    	for(int i=0;i<20;i++){
-			        Supplier<SequenceM<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+			        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 		
 			   
 			       assertEquals(asList(1, 2, 3, 4, 5, 6), s.get().splitAt(6).v1.toList());
 			      	}
 		    	for(int i=0;i<20;i++){
-			        Supplier<SequenceM<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+			        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 		
 			   
 			        assertEquals(asList(1, 2, 3, 4, 5, 6), s.get().splitAt(7).v1.toList());
@@ -457,7 +457,7 @@ public class BaseSequentialTest {
 
 		    @Test
 		    public void testMinByMaxBy() {
-		        Supplier<SequenceM<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+		        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
 		        assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).get());
 		        assertEquals(5, (int) s.get().minBy(t -> Math.abs(t - 5)).get());
@@ -468,9 +468,9 @@ public class BaseSequentialTest {
 
 		    @Test
 		    public void testUnzip() {
-		        Supplier<SequenceM<Tuple2<Integer, String>>> s = () -> of(new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c"));
+		        Supplier<ReactiveSeq<Tuple2<Integer, String>>> s = () -> of(new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c"));
 
-		        Tuple2<SequenceM<Integer>, SequenceM<String>> u1 = SequenceM.unzip(s.get());
+		        Tuple2<ReactiveSeq<Integer>, ReactiveSeq<String>> u1 = ReactiveSeq.unzip(s.get());
 		        assertThat(u1.v1.toList(),equalTo(asList(1, 2, 3)));
 		        assertThat(u1.v2.toList(),equalTo(asList("a", "b", "c")));
 
@@ -480,7 +480,7 @@ public class BaseSequentialTest {
 
 		    @Test
 		    public void testFoldLeft() {
-		        Supplier<SequenceM<String>> s = () -> of("a", "b", "c");
+		        Supplier<ReactiveSeq<String>> s = () -> of("a", "b", "c");
 
 		        assertTrue(s.get().foldLeft("", String::concat).contains("a"));
 		        assertTrue(s.get().foldLeft("", String::concat).contains("b"));
@@ -495,7 +495,7 @@ public class BaseSequentialTest {
 		    
 		    @Test
 		    public void testFoldRight(){
-		    	 	Supplier<SequenceM<String>> s = () -> of("a", "b", "c");
+		    	 	Supplier<ReactiveSeq<String>> s = () -> of("a", "b", "c");
 
 			        assertTrue(s.get().foldRight("", String::concat).equals("cba"));
 			        assertTrue(s.get().foldRight("", String::concat).contains("b"));

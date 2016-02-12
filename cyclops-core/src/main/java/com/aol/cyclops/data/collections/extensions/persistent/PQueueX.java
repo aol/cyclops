@@ -27,7 +27,7 @@ import com.aol.cyclops.data.collections.PSets;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 
 public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
@@ -90,9 +90,9 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
 		return empty();
 	}
 	@Override
-	default SequenceM<T> stream(){
+	default ReactiveSeq<T> stream(){
 		
-		return SequenceM.fromIterable(this);
+		return ReactiveSeq.fromIterable(this);
 	}
 	default PQueue<T> toPSet(){
 		return this;
@@ -263,9 +263,9 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#permutations()
 	 */
 	@Override
-	default PQueueX<SequenceM<T>> permutations() {
+	default PQueueX<ReactiveSeq<T>> permutations() {
 		
-		return ( PQueueX<SequenceM<T>>)PersistentCollectionX.super.permutations();
+		return ( PQueueX<ReactiveSeq<T>>)PersistentCollectionX.super.permutations();
 	}
 
 
@@ -273,9 +273,9 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations(int)
 	 */
 	@Override
-	default PQueueX<SequenceM<T>> combinations(int size) {
+	default PQueueX<ReactiveSeq<T>> combinations(int size) {
 		
-		return (PQueueX<SequenceM<T>>)PersistentCollectionX.super.combinations(size);
+		return (PQueueX<ReactiveSeq<T>>)PersistentCollectionX.super.combinations(size);
 	}
 
 
@@ -283,9 +283,9 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations()
 	 */
 	@Override
-	default PQueueX<SequenceM<T>> combinations() {
+	default PQueueX<ReactiveSeq<T>> combinations() {
 		
-		return (PQueueX<SequenceM<T>>)PersistentCollectionX.super.combinations();
+		return (PQueueX<ReactiveSeq<T>>)PersistentCollectionX.super.combinations();
 	}
 
 	default PQueueX<ListX<T>> sliding(int windowSize){

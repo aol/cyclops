@@ -30,7 +30,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
@@ -67,8 +67,8 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, ValueObject<T>, Conv
 		 return FutureW.of(future.<R>thenCompose(t->convertTo.apply(future)));
 	 }
 	 
-	default SequenceM<T> stream() {
-			return SequenceM.of(Try.withCatch(()->get(),NoSuchElementException.class)).filter(Try::isSuccess).map(Try::get);
+	default ReactiveSeq<T> stream() {
+			return ReactiveSeq.of(Try.withCatch(()->get(),NoSuchElementException.class)).filter(Try::isSuccess).map(Try::get);
 	}
 	 /**
 	  * @return matchable
@@ -79,11 +79,11 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, ValueObject<T>, Conv
 	 default ListX<?> unapply(){
 		 return toListX();
 	 }
-	 default SequenceM<T> iterate(UnaryOperator<T> fn){
-			return SequenceM.iterate(get(),fn);
+	 default ReactiveSeq<T> iterate(UnaryOperator<T> fn){
+			return ReactiveSeq.iterate(get(),fn);
 	 }
-	 default SequenceM<T> generate(){
-		return SequenceM.generate(this);
+	 default ReactiveSeq<T> generate(){
+		return ReactiveSeq.generate(this);
 	 }
 	 default <E> E mapReduce(Reducer<E> monoid){
 		 return monoid.mapReduce(toStream());

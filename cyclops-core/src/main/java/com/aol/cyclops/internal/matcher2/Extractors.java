@@ -16,7 +16,7 @@ import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.data.LazyImmutable;
 import com.aol.cyclops.internal.invokedynamic.ReflectionCache;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.Decomposable;
 import com.aol.cyclops.util.ExceptionSoftener;
 
@@ -85,7 +85,7 @@ public class Extractors {
 		val l2 = new Long(v2);
 		return  ( Iterable it)-> {
 			
-			List l  = (List)SequenceM.fromIterable(it).zipWithIndex().skip(Math.min(v1,v2))
+			List l  = (List)ReactiveSeq.fromIterable(it).zipWithIndex().skip(Math.min(v1,v2))
 					.limit(Math.max(v1,v2)+1)
 					.filter(t -> ((Tuple2<Object,Long>)t).v2.equals(l1) || ((Tuple2<Object,Long>)t).v2.equals(l2))
 					.map(t->((Tuple2)t).v1)

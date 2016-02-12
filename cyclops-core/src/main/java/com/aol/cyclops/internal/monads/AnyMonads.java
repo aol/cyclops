@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.extensability.Comprehender;
 
 
@@ -101,7 +101,7 @@ public class AnyMonads implements AnyMFunctions{
 	 * @param seq Stream of monads to convert
 	 * @return Monad with a List
 	 */
-	public  <T1>  AnyM<SequenceM<T1>> sequence(Stream<? extends AnyM<T1>> seq){
+	public  <T1>  AnyM<ReactiveSeq<T1>> sequence(Stream<? extends AnyM<T1>> seq){
 			return new MonadWrapper<>(Stream.of(1))
 										.flatMap(in-> new MonadWrapper<>(seq.map(it->it.unwrap()))
 												.flatten().unwrap())

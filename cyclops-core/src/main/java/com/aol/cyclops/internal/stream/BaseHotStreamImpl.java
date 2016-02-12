@@ -12,7 +12,7 @@ import java.util.stream.StreamSupport;
 import uk.co.real_logic.agrona.concurrent.OneToOneConcurrentArrayQueue;
 
 import com.aol.cyclops.internal.stream.spliterators.ClosingSpliterator;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.util.stream.StreamUtils;
 
@@ -54,12 +54,12 @@ public abstract class BaseHotStreamImpl<T> extends IteratorHotStream<T> implemen
 	}
 	
 	@Override
-	public SequenceM<T> connect(){
+	public ReactiveSeq<T> connect(){
 		return connect(new OneToOneConcurrentArrayQueue<T>(256));
 	}
 	
 	@Override
-	public SequenceM<T> connect(Queue<T> queue) {
+	public ReactiveSeq<T> connect(Queue<T> queue) {
 		connections.getAndSet(connected, queue);
 		connected++;
 		unpause();
@@ -68,7 +68,7 @@ public abstract class BaseHotStreamImpl<T> extends IteratorHotStream<T> implemen
 	}
 
 	@Override
-	public <R extends Stream<T>> R connectTo(Queue<T> queue,Function<SequenceM<T>,R> to) {
+	public <R extends Stream<T>> R connectTo(Queue<T> queue,Function<ReactiveSeq<T>,R> to) {
 		return to.apply(connect(queue));
 	}
 	

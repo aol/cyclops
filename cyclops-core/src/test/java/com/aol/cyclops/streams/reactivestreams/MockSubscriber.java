@@ -2,7 +2,7 @@ package com.aol.cyclops.streams.reactivestreams;
 
 import org.reactivestreams.Subscription;
 
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.reactive.CyclopsSubscriber;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsSubscriber;
 import com.aol.simple.react.reactivestreams.JDKReactiveStreamsSubscriber;
@@ -39,8 +39,8 @@ public class MockSubscriber<T> implements ReactiveStreamsSubscriber<T> {
 			}
 
 			@Override
-			public SequenceM<T> sequenceM() {
-				return SequenceM.fromStream(sub.getStream());
+			public ReactiveSeq<T> sequenceM() {
+				return ReactiveSeq.fromStream(sub.getStream());
 			}
 		};
 		

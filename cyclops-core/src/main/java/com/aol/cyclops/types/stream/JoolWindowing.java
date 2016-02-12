@@ -1,6 +1,6 @@
 package com.aol.cyclops.types.stream;
 
-import static com.aol.cyclops.control.SequenceM.fromStream;
+import static com.aol.cyclops.control.ReactiveSeq.fromStream;
 
 import java.util.Comparator;
 import java.util.function.Function;
@@ -27,7 +27,7 @@ import org.jooq.lambda.tuple.Tuple7;
 import org.jooq.lambda.tuple.Tuple8;
 import org.jooq.lambda.tuple.Tuple9;
 
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 
 
 
@@ -42,7 +42,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * SequenceM.of(1, 2, 4, 2, 3).window().map(Window::rowNumber)
      * </pre></code>
      */ 
-    default SequenceM<Window<T>> window() {
+    default ReactiveSeq<Window<T>> window() {
         return fromStream(Seq.super.window());
     }
    
@@ -54,7 +54,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * SequenceM.of(1, 2, 4, 2, 3).window(-1, 1).map(Window::max)
      * </pre></code>
      */ 
-    default SequenceM<Window<T>> window(long lower, long upper) {
+    default ReactiveSeq<Window<T>> window(long lower, long upper) {
     	 return fromStream(Seq.super.window(lower,upper));
        
     }
@@ -67,7 +67,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * SequenceM.of(1, 2, 4, 2, 3).window(naturalOrder()).map(Window::rowNumber)
      * </pre></code>
      */ 
-    default SequenceM<Window<T>> window(Comparator<? super T> orderBy) {
+    default ReactiveSeq<Window<T>> window(Comparator<? super T> orderBy) {
     	return fromStream(Seq.super.window(orderBy));
     }
     
@@ -79,7 +79,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * SequenceM.of(1, 2, 4, 2, 3).window(naturalOrder(), -1, 1).map(Window::min)
      * </pre></code>
      */ 
-    default SequenceM<Window<T>> window(Comparator<? super T> orderBy, long lower, long upper) {
+    default ReactiveSeq<Window<T>> window(Comparator<? super T> orderBy, long lower, long upper) {
         return window(Window.of(orderBy, lower, upper)).map(t -> t.v1);
     }
     
@@ -91,7 +91,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * SequenceM.of(1, 2, 4, 2, 3).window(i -> i % 2).map(Window::min)
      * </pre></code>
      */ 
-    default <U> SequenceM<Window<T>> window(Function<? super T, ? extends U> partitionBy) {
+    default <U> ReactiveSeq<Window<T>> window(Function<? super T, ? extends U> partitionBy) {
         return window(Window.of(partitionBy)).map(t -> t.v1);
     }
     
@@ -103,7 +103,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * SequenceM.of(1, 4, 2, 2, 3).window(i -> i % 2, -1, 1).map(Window::max)
      * </pre></code>
      */ 
-    default <U> SequenceM<Window<T>> window(Function<? super T, ? extends U> partitionBy, long lower, long upper) {    	
+    default <U> ReactiveSeq<Window<T>> window(Function<? super T, ? extends U> partitionBy, long lower, long upper) {    	
     	return window(Window.of(partitionBy, lower, upper)).map(t -> t.v1);
     }
     
@@ -117,7 +117,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * SequenceM.of(1, 2, 4, 2, 3).window(i -> i % 2, naturalOrder(), -1, 1).map(Window::max)
      * </pre></code>
      */ 
-    default <U> SequenceM<Window<T>> window(Function<? super T, ? extends U> partitionBy, Comparator<? super T> orderBy, long lower, long upper) {
+    default <U> ReactiveSeq<Window<T>> window(Function<? super T, ? extends U> partitionBy, Comparator<? super T> orderBy, long lower, long upper) {
         return window(Window.of(partitionBy, orderBy, lower, upper)).map(t -> t.v1);
     }
 
@@ -127,7 +127,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * Map this stream to a windowed stream with 1 distinct windows.
      */
     @Generated("This method was generated using jOOQ-tools")
-    default SequenceM<Tuple1<Window<T>>> window( WindowSpecification<T> specification1) {
+    default ReactiveSeq<Tuple1<Window<T>>> window( WindowSpecification<T> specification1) {
        return fromStream(Seq.super.window(specification1));
     }
 
@@ -135,7 +135,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * Map this stream to a windowed stream with 2 distinct windows.
      */
     @Generated("This method was generated using jOOQ-tools")
-    default SequenceM<Tuple2<Window<T>, Window<T>>> window(
+    default ReactiveSeq<Tuple2<Window<T>, Window<T>>> window(
         WindowSpecification<T> specification1,
         WindowSpecification<T> specification2
     ) {
@@ -146,7 +146,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * Map this stream to a windowed stream with 3 distinct windows.
      */
     @Generated("This method was generated using jOOQ-tools")
-    default SequenceM<Tuple3<Window<T>, Window<T>, Window<T>>> window(
+    default ReactiveSeq<Tuple3<Window<T>, Window<T>, Window<T>>> window(
         WindowSpecification<T> specification1,
         WindowSpecification<T> specification2,
         WindowSpecification<T> specification3
@@ -158,7 +158,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * Map this stream to a windowed stream with 4 distinct windows.
      */
     @Generated("This method was generated using jOOQ-tools")
-    default SequenceM<Tuple4<Window<T>, Window<T>, Window<T>, Window<T>>> window(
+    default ReactiveSeq<Tuple4<Window<T>, Window<T>, Window<T>, Window<T>>> window(
         WindowSpecification<T> specification1,
         WindowSpecification<T> specification2,
         WindowSpecification<T> specification3,
@@ -171,7 +171,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * Map this stream to a windowed stream with 5 distinct windows.
      */
     @Generated("This method was generated using jOOQ-tools")
-    default SequenceM<Tuple5<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(
+    default ReactiveSeq<Tuple5<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(
         WindowSpecification<T> specification1,
         WindowSpecification<T> specification2,
         WindowSpecification<T> specification3,
@@ -185,7 +185,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * Map this stream to a windowed stream with 6 distinct windows.
      */
     @Generated("This method was generated using jOOQ-tools")
-    default SequenceM<Tuple6<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(
+    default ReactiveSeq<Tuple6<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(
         WindowSpecification<T> specification1,
         WindowSpecification<T> specification2,
         WindowSpecification<T> specification3,
@@ -201,7 +201,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * Map this stream to a windowed stream with 7 distinct windows.
      */
     @Generated("This method was generated using jOOQ-tools")
-    default SequenceM<Tuple7<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(
+    default ReactiveSeq<Tuple7<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(
         WindowSpecification<T> specification1,
         WindowSpecification<T> specification2,
         WindowSpecification<T> specification3,
@@ -218,7 +218,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * Map this stream to a windowed stream with 8 distinct windows.
      */
     @Generated("This method was generated using jOOQ-tools")
-    default SequenceM<Tuple8<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(
+    default ReactiveSeq<Tuple8<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(
         WindowSpecification<T> specification1,
         WindowSpecification<T> specification2,
         WindowSpecification<T> specification3,
@@ -236,7 +236,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * Map this stream to a windowed stream with 9 distinct windows.
      */
     @Generated("This method was generated using jOOQ-tools")
-    default SequenceM<Tuple9<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(
+    default ReactiveSeq<Tuple9<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(
         WindowSpecification<T> specification1,
         WindowSpecification<T> specification2,
         WindowSpecification<T> specification3,
@@ -255,7 +255,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * Map this stream to a windowed stream with 10 distinct windows.
      */
     @Generated("This method was generated using jOOQ-tools")
-    default SequenceM<Tuple10<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(
+    default ReactiveSeq<Tuple10<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(
         WindowSpecification<T> specification1,
         WindowSpecification<T> specification2,
         WindowSpecification<T> specification3,
@@ -276,7 +276,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * Map this stream to a windowed stream with 11 distinct windows.
      */
     @Generated("This method was generated using jOOQ-tools")
-    default SequenceM<Tuple11<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(
+    default ReactiveSeq<Tuple11<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(
         WindowSpecification<T> specification1,
         WindowSpecification<T> specification2,
         WindowSpecification<T> specification3,
@@ -298,7 +298,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * Map this stream to a windowed stream with 12 distinct windows.
      */
     @Generated("This method was generated using jOOQ-tools")
-    default SequenceM<Tuple12<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(
+    default ReactiveSeq<Tuple12<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(
         WindowSpecification<T> specification1,
         WindowSpecification<T> specification2,
         WindowSpecification<T> specification3,
@@ -321,7 +321,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * Map this stream to a windowed stream with 13 distinct windows.
      */
     @Generated("This method was generated using jOOQ-tools")
-    default SequenceM<Tuple13<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(
+    default ReactiveSeq<Tuple13<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(
         WindowSpecification<T> specification1,
         WindowSpecification<T> specification2,
         WindowSpecification<T> specification3,
@@ -345,7 +345,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * Map this stream to a windowed stream with 14 distinct windows.
      */
     @Generated("This method was generated using jOOQ-tools")
-    default SequenceM<Tuple14<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(
+    default ReactiveSeq<Tuple14<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(
         WindowSpecification<T> specification1,
         WindowSpecification<T> specification2,
         WindowSpecification<T> specification3,
@@ -371,7 +371,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * Map this stream to a windowed stream with 15 distinct windows.
      */
     @Generated("This method was generated using jOOQ-tools")
-    default SequenceM<Tuple15<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(
+    default ReactiveSeq<Tuple15<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(
         WindowSpecification<T> specification1,
         WindowSpecification<T> specification2,
         WindowSpecification<T> specification3,
@@ -398,7 +398,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * Map this stream to a windowed stream with 16 distinct windows.
      */
     @Generated("This method was generated using jOOQ-tools")
-    default SequenceM<Tuple16<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(
+    default ReactiveSeq<Tuple16<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(
         WindowSpecification<T> specification1,
         WindowSpecification<T> specification2,
         WindowSpecification<T> specification3,

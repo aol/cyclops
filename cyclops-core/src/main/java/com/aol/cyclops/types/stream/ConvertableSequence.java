@@ -30,7 +30,7 @@ import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
@@ -41,8 +41,8 @@ import com.aol.simple.react.stream.traits.SimpleReactStream;
 
 public interface ConvertableSequence<T> extends Iterable<T>{
 	
-	default SequenceM<T> stream(){
-		return SequenceM.fromIterable(this);
+	default ReactiveSeq<T> stream(){
+		return ReactiveSeq.fromIterable(this);
 	}
 	
 	default LazyFutureStream<T> toFutureStream(LazyReact reactor){
@@ -78,7 +78,7 @@ public interface ConvertableSequence<T> extends Iterable<T>{
 	}
 	default <K,V> PMapX<K,V> toPMapX(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper){
 		
-		SequenceM<Tuple2<K,V>> stream = stream().map(t-> Tuple.tuple(keyMapper.apply(t),valueMapper.apply(t)));
+		ReactiveSeq<Tuple2<K,V>> stream = stream().map(t-> Tuple.tuple(keyMapper.apply(t),valueMapper.apply(t)));
 		return stream.mapReduce(Reducers.toPMapX());		
 	}
 	default <K, V> MapX<K, V> toMapX(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper){

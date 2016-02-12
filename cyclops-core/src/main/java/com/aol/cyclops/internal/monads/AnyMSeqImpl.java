@@ -14,7 +14,7 @@ import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
@@ -128,7 +128,7 @@ public class AnyMSeqImpl<T> implements AnyMSeq<T> {
 	 * @see com.aol.cyclops.types.anyM.AnyMSeq#stream()
 	 */
 	@Override
-	public SequenceM<T> stream() {
+	public ReactiveSeq<T> stream() {
 		return anyM.stream();
 	}
 
@@ -258,7 +258,7 @@ public class AnyMSeqImpl<T> implements AnyMSeq<T> {
 	 * @see com.aol.cyclops.types.anyM.AnyMSeq#toSequence(java.util.function.Function)
 	 */
 	@Override
-	public <NT> SequenceM<NT> toSequence(Function<? super T, ? extends Stream<? extends NT>> fn) {
+	public <NT> ReactiveSeq<NT> toSequence(Function<? super T, ? extends Stream<? extends NT>> fn) {
 		return anyM.toSequence(fn);
 	}
 
@@ -266,7 +266,7 @@ public class AnyMSeqImpl<T> implements AnyMSeq<T> {
 	 * @see com.aol.cyclops.types.anyM.AnyMSeq#toSequence()
 	 */
 	@Override
-	public <T> SequenceM<T> toSequence() {
+	public <T> ReactiveSeq<T> toSequence() {
 		return anyM.toSequence();
 	}
 
@@ -274,7 +274,7 @@ public class AnyMSeqImpl<T> implements AnyMSeq<T> {
 	 * @see com.aol.cyclops.types.anyM.AnyMSeq#asSequence()
 	 */
 	@Override
-	public SequenceM<T> asSequence() {
+	public ReactiveSeq<T> asSequence() {
 		return anyM.asSequence();
 	}
 

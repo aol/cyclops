@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 
 public interface Semigroups {
 
@@ -13,7 +13,7 @@ public interface Semigroups {
 		return () -> (a, b) -> (C) a.plusAll(b);
 	}
 
-	static <T> Semigroup<SequenceM<T>> combineSequenceM() {
+	static <T> Semigroup<ReactiveSeq<T>> combineSequenceM() {
 		return () -> (a, b) -> a.appendStream(b);
 	}
 

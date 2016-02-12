@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 import org.hamcrest.Matcher;
 import org.jooq.lambda.tuple.Tuple;
 
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 
 import fj.data.fingertrees.Two;
 import lombok.AllArgsConstructor;
@@ -48,7 +48,7 @@ public class ADTPredicateBuilder<T>{
 		 * @return A single Predicate encompassing supplied rules
 		 */
 		public<V> Predicate values(V... values){
-			SequenceM<Predicate> predicates = SequenceM.of(values).map(nextValue->convertToPredicate(nextValue));
+			ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values).map(nextValue->convertToPredicate(nextValue));
 			
 			return t -> toPredicate().test(t) 
 					  	&& SeqUtils.seq(Extractors.decompose().apply(t))
@@ -56,7 +56,7 @@ public class ADTPredicateBuilder<T>{
 							.allMatch(v->v==true);
 		}
 		public<V> Predicate where(Predicate<V>... values){
-			SequenceM<Predicate> predicates = SequenceM.of(values).map(nextValue->convertToPredicate(nextValue));
+			ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values).map(nextValue->convertToPredicate(nextValue));
 			
 			return t -> toPredicate().test(t) 
 					  	&& SeqUtils.seq(Extractors.decompose().apply(t))
@@ -64,7 +64,7 @@ public class ADTPredicateBuilder<T>{
 							.allMatch(v->v==true);
 		}
 		public<V> Predicate match(Matcher<V>... values){
-			SequenceM<Predicate> predicates = SequenceM.of(values).map(nextValue->convertToPredicate(nextValue));
+			ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values).map(nextValue->convertToPredicate(nextValue));
 			
 			return t -> toPredicate().test(t) 
 					  	&& SeqUtils.seq(Extractors.decompose().apply(t))

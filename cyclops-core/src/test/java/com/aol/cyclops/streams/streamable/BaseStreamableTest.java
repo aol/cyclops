@@ -28,7 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.Monoid;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.util.stream.Streamable;
 
 
@@ -121,19 +121,19 @@ public  class BaseStreamableTest {
     @Test
     public void testReverseList() {
     	
-        assertThat( SequenceM.fromList(Arrays.asList(10,400,2,-1))
+        assertThat( ReactiveSeq.fromList(Arrays.asList(10,400,2,-1))
         				.reverse().toList(), equalTo(asList(-1, 2, 400,10)));
     }
     @Test
     public void testReverseListLimit() {
     	
-        assertThat( SequenceM.fromList(Arrays.asList(10,400,2,-1)).limit(2)
+        assertThat( ReactiveSeq.fromList(Arrays.asList(10,400,2,-1)).limit(2)
         				.reverse().toList(), equalTo(asList(-1, 2)));
     }
     @Test
     public void testReverseRange() {
     	
-        assertThat( SequenceM.range(0,10)
+        assertThat( ReactiveSeq.range(0,10)
         				.reverse().toList(), equalTo(asList(9,8,7,6,5,4,3,2,1,0)));
     }
 
@@ -357,17 +357,17 @@ public  class BaseStreamableTest {
 	    //tests converted from lazy-seq suite
 	    @Test
 		public void flattenEmpty() throws Exception {
-				assertTrue(SequenceM.<Integer>of().flatten().toList().isEmpty());
+				assertTrue(ReactiveSeq.<Integer>of().flatten().toList().isEmpty());
 		}
 	    @Test
 		public void flattenOptional() throws Exception {
 	    	
-				assertTrue(SequenceM.of(Optional.of(1)).flatten().toList().get(0).equals(new Integer(1)));
+				assertTrue(ReactiveSeq.of(Optional.of(1)).flatten().toList().get(0).equals(new Integer(1)));
 		}
 
 		@Test
 		public void flatten() throws Exception {
-			assertThat(SequenceM.of(Arrays.asList(1,2)).flatten().toList().size(),equalTo(asList(1,  2).size()));		
+			assertThat(ReactiveSeq.of(Arrays.asList(1,2)).flatten().toList().size(),equalTo(asList(1,  2).size()));		
 		}
 
 		
@@ -375,7 +375,7 @@ public  class BaseStreamableTest {
 		@Test
 		public void flattenEmptyStream() throws Exception {
 			
-			assertThat(SequenceM.<Integer>of(1,2,3,4,5,5,6,8,9,10).flatten().limit(10).collect(Collectors.toList()).size(),
+			assertThat(ReactiveSeq.<Integer>of(1,2,3,4,5,5,6,8,9,10).flatten().limit(10).collect(Collectors.toList()).size(),
 											equalTo(asList(2, 3, 4, 5, 6, 7, 0, 0, 0, 0).size()));
 		}
 		

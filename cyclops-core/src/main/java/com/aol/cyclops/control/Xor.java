@@ -22,7 +22,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.CheckValues;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Value;
@@ -137,7 +137,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 	Value<ST> secondaryValue();
 	ST secondaryGet();
 	Optional<ST> secondaryToOptional();
-	SequenceM<ST> secondaryToStream();
+	ReactiveSeq<ST> secondaryToStream();
 	
 	
 	<LT1,RT1> Xor<LT1,RT1> flatMap(Function<? super PT,? extends Xor<LT1,RT1>> mapper);
@@ -254,8 +254,8 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 		}
 
 		@Override
-		public SequenceM<ST> secondaryToStream() {
-			return SequenceM.empty();
+		public ReactiveSeq<ST> secondaryToStream() {
+			return ReactiveSeq.empty();
 		}
 
 		@Override
@@ -348,8 +348,8 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 			return Optional.ofNullable(value);
 		}
 		@Override
-		public SequenceM<ST> secondaryToStream() {
-			return SequenceM.fromStream(StreamUtils.optionalToStream(secondaryToOptional()));
+		public ReactiveSeq<ST> secondaryToStream() {
+			return ReactiveSeq.fromStream(StreamUtils.optionalToStream(secondaryToOptional()));
 		}
 		@Override
 		public <LT1, RT1> Xor<LT1, RT1> flatMap(Function<? super PT, ? extends Xor<LT1, RT1>> mapper) {

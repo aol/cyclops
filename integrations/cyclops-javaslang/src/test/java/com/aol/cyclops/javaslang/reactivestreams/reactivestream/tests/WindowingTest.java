@@ -18,7 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.javaslang.reactivestreams.ReactiveStream;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.sequence.streamable.Streamable;
 
 public class WindowingTest {
@@ -51,7 +51,7 @@ public class WindowingTest {
 	}
 	@Test
 	public void windowUntilEmpty(){
-		assertThat(SequenceM.<Integer>of()
+		assertThat(ReactiveSeq.<Integer>of()
 				.windowUntil(i->i%3==0)
 				.toList().size(),equalTo(0));
 	}

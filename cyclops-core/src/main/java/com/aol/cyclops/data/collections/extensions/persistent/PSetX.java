@@ -28,7 +28,7 @@ import com.aol.cyclops.data.collections.PSets;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 
 public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
@@ -91,9 +91,9 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 		return empty();
 	}
 	@Override
-	default SequenceM<T> stream(){
+	default ReactiveSeq<T> stream(){
 		
-		return SequenceM.fromIterable(this);
+		return ReactiveSeq.fromIterable(this);
 	}
 	default PSet<T> toPSet(){
 		return this;
@@ -265,9 +265,9 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#permutations()
 	 */
 	@Override
-	default PSetX<SequenceM<T>> permutations() {
+	default PSetX<ReactiveSeq<T>> permutations() {
 		
-		return ( PSetX<SequenceM<T>>)PersistentCollectionX.super.permutations();
+		return ( PSetX<ReactiveSeq<T>>)PersistentCollectionX.super.permutations();
 	}
 
 
@@ -275,9 +275,9 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations(int)
 	 */
 	@Override
-	default PSetX<SequenceM<T>> combinations(int size) {
+	default PSetX<ReactiveSeq<T>> combinations(int size) {
 		
-		return (PSetX<SequenceM<T>>)PersistentCollectionX.super.combinations(size);
+		return (PSetX<ReactiveSeq<T>>)PersistentCollectionX.super.combinations(size);
 	}
 
 
@@ -285,9 +285,9 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations()
 	 */
 	@Override
-	default PSetX<SequenceM<T>> combinations() {
+	default PSetX<ReactiveSeq<T>> combinations() {
 		
-		return (PSetX<SequenceM<T>>)PersistentCollectionX.super.combinations();
+		return (PSetX<ReactiveSeq<T>>)PersistentCollectionX.super.combinations();
 	}
 
 	default PSetX<ListX<T>> sliding(int windowSize){

@@ -29,7 +29,7 @@ import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 
 public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentSequenceX<T>{
@@ -183,9 +183,9 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 		return plus(size(),e);
 	}
 	@Override
-	default SequenceM<T> stream(){
+	default ReactiveSeq<T> stream(){
 		
-		return SequenceM.fromIterable(this);
+		return ReactiveSeq.fromIterable(this);
 	}
 	default <X> PStackX<X> from(Collection<X> col){
 		return fromCollection(col);
@@ -387,9 +387,9 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#permutations()
 	 */
 	@Override
-	default PStackX<SequenceM<T>> permutations() {
+	default PStackX<ReactiveSeq<T>> permutations() {
 		
-		return ( PStackX<SequenceM<T>>)PersistentCollectionX.super.permutations();
+		return ( PStackX<ReactiveSeq<T>>)PersistentCollectionX.super.permutations();
 	}
 
 
@@ -397,9 +397,9 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations(int)
 	 */
 	@Override
-	default PStackX<SequenceM<T>> combinations(int size) {
+	default PStackX<ReactiveSeq<T>> combinations(int size) {
 		
-		return (PStackX<SequenceM<T>>)PersistentCollectionX.super.combinations(size);
+		return (PStackX<ReactiveSeq<T>>)PersistentCollectionX.super.combinations(size);
 	}
 
 
@@ -407,9 +407,9 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations()
 	 */
 	@Override
-	default PStackX<SequenceM<T>> combinations() {
+	default PStackX<ReactiveSeq<T>> combinations() {
 		
-		return (PStackX<SequenceM<T>>)PersistentCollectionX.super.combinations();
+		return (PStackX<ReactiveSeq<T>>)PersistentCollectionX.super.combinations();
 	}
 
 	default PStackX<ListX<T>> sliding(int windowSize){

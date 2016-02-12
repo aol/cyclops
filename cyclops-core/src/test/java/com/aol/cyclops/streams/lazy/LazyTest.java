@@ -26,15 +26,15 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 
 
 
 //see BaseSequentialSeqTest for in order tests
 public  class LazyTest {
 	
-	SequenceM<Integer> empty;
-	SequenceM<Integer> nonEmpty;
+	ReactiveSeq<Integer> empty;
+	ReactiveSeq<Integer> nonEmpty;
 	
 	@Before
 	public void setup(){
@@ -222,7 +222,7 @@ public  class LazyTest {
 	  
 	    @Test
 	    public void testMinByMaxBy() {
-	        Supplier<SequenceM<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
 	        assertEquals(1, (int) s.get().lazyOperations().maxBy(t -> Math.abs(t - 5)).get().get());
 	        assertEquals(5, (int) s.get().lazyOperations().minBy(t -> Math.abs(t - 5)).get().get());
@@ -237,7 +237,7 @@ public  class LazyTest {
 	    @Test
 	    public void testFoldLeft() {
 	    	for(int i=0;i<100;i++){
-		        Supplier<SequenceM<String>> s = () -> of("a", "b", "c");
+		        Supplier<ReactiveSeq<String>> s = () -> of("a", "b", "c");
 	
 		        assertTrue(s.get().lazyOperations().foldLeft("", String::concat).get().contains("a"));
 		        assertTrue(s.get().lazyOperations().foldLeft("", String::concat).get().contains("b"));
@@ -252,7 +252,7 @@ public  class LazyTest {
 	    
 	    @Test
 	    public void testFoldRight(){
-	    	 	Supplier<SequenceM<String>> s = () -> of("a", "b", "c");
+	    	 	Supplier<ReactiveSeq<String>> s = () -> of("a", "b", "c");
 
 		        assertTrue(s.get().lazyOperations().foldRight("", String::concat).get().contains("a"));
 		        assertTrue(s.get().lazyOperations().foldRight("", String::concat).get().contains("b"));
@@ -262,7 +262,7 @@ public  class LazyTest {
 	    
 	    @Test
 	    public void testFoldLeftStringBuilder() {
-	        Supplier<SequenceM<String>> s = () -> of("a", "b", "c");
+	        Supplier<ReactiveSeq<String>> s = () -> of("a", "b", "c");
 
 	        
 	        assertTrue(s.get().lazyOperations().foldLeft(new StringBuilder(), (u, t) -> u.append("-").append(t)).get().toString().contains("a"));
@@ -278,7 +278,7 @@ public  class LazyTest {
 
 	    @Test
 	    public void testFoldRighttringBuilder() {
-	        Supplier<SequenceM<String>> s = () -> of("a", "b", "c");
+	        Supplier<ReactiveSeq<String>> s = () -> of("a", "b", "c");
 
 	        
 	        assertTrue(s.get().lazyOperations().foldRight(new StringBuilder(), (t, u) -> u.append("-").append(t)).get().toString().contains("a"));

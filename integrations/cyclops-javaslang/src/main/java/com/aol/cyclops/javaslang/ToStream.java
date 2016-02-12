@@ -7,7 +7,7 @@ import javaslang.collection.Traversable;
 
 import org.jooq.lambda.Seq;
 
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.google.common.collect.FluentIterable;
 import com.nurkiewicz.lazyseq.LazySeq;
@@ -32,8 +32,8 @@ public class ToStream {
     public static <T> LazyFutureStream<T> toFutureStreamFromTraversable(Traversable<T> s){
         return LazyFutureStream.lazyFutureStream(s.iterator());
     }
-    public static <T> SequenceM<T> toSequenceM(Iterable<T> s){
-        return SequenceM.fromIterable(s);
+    public static <T> ReactiveSeq<T> toSequenceM(Iterable<T> s){
+        return ReactiveSeq.fromIterable(s);
     }
 
     public static <T> LazySeq<T> toLazySeq(Iterable<T> s){

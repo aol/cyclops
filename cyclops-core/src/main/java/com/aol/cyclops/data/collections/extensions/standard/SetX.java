@@ -27,7 +27,7 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.util.stream.StreamUtils;
 
@@ -77,9 +77,9 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 		return (SetX<R>)MutableCollectionX.super.ap1(ap);
 	}
 	@Override
-	default SequenceM<T> stream(){
+	default ReactiveSeq<T> stream(){
 		
-		return SequenceM.fromIterable(this);
+		return ReactiveSeq.fromIterable(this);
 	}
 
 	@Override

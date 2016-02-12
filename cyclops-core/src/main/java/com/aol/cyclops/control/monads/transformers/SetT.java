@@ -18,7 +18,7 @@ import lombok.Getter;
 import org.jooq.lambda.function.Function1;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.util.stream.Streamable;
 
 
@@ -80,7 +80,7 @@ public class SetT<T> {
 	 * @return SetT that applies the provided filter
 	 */
    public SetT<T> filter(Predicate<T> test){
-       return of(run.map(stream-> SequenceM.fromIterable(stream).filter(test).toSet()));
+       return of(run.map(stream-> ReactiveSeq.fromIterable(stream).filter(test).toSet()));
    }
    /**
 	 * Map the wrapped Set
@@ -99,7 +99,7 @@ public class SetT<T> {
 	 * @return SetT that applies the map function to the wrapped Set
 	 */
    public <B> SetT<B> map(Function<T,B> f){
-       return of(run.map(o-> SequenceM.fromIterable(o).map(f).toSet()));
+       return of(run.map(o-> ReactiveSeq.fromIterable(o).map(f).toSet()));
    }
    /**
 	 * Flat Map the wrapped Set
@@ -117,7 +117,7 @@ public class SetT<T> {
 	 */
    public <B> SetT<B> flatMap(Function1<T,SetT<B>> f){
 	  
-	   return of( run.map(stream-> SequenceM.fromIterable(stream).flatMap(a-> f.apply(a).run.asSequence()).flatMap(a->a.stream())
+	   return of( run.map(stream-> ReactiveSeq.fromIterable(stream).flatMap(a-> f.apply(a).run.asSequence()).flatMap(a->a.stream())
 			   .toSet()));
    }
    /**

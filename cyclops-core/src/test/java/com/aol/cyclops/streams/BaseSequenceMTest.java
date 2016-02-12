@@ -1,6 +1,6 @@
 package com.aol.cyclops.streams;
 
-import static com.aol.cyclops.control.SequenceM.of;
+import static com.aol.cyclops.control.ReactiveSeq.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -27,7 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.Monoid;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 
 
 
@@ -35,8 +35,8 @@ import com.aol.cyclops.control.SequenceM;
 public  class BaseSequenceMTest {
 	
 	
-	SequenceM<Integer> empty;
-	SequenceM<Integer> nonEmpty;
+	ReactiveSeq<Integer> empty;
+	ReactiveSeq<Integer> nonEmpty;
 
 	@Before
 	public void setup(){
@@ -119,19 +119,19 @@ public  class BaseSequenceMTest {
     @Test
     public void testReverseList() {
     	
-        assertThat( SequenceM.fromList(Arrays.asList(10,400,2,-1))
+        assertThat( ReactiveSeq.fromList(Arrays.asList(10,400,2,-1))
         				.reverse().toList(), equalTo(asList(-1, 2, 400,10)));
     }
     @Test
     public void testReverseListLimit() {
     	
-        assertThat( SequenceM.fromList(Arrays.asList(10,400,2,-1)).limit(2)
+        assertThat( ReactiveSeq.fromList(Arrays.asList(10,400,2,-1)).limit(2)
         				.reverse().toList(), equalTo(asList(-1, 2)));
     }
     @Test
     public void testReverseRange() {
     	
-        assertThat( SequenceM.range(0,10)
+        assertThat( ReactiveSeq.range(0,10)
         				.reverse().toList(), equalTo(asList(9,8,7,6,5,4,3,2,1,0)));
     }
 
@@ -154,13 +154,13 @@ public  class BaseSequenceMTest {
 	
 	@Test
 	public void testDuplicate(){
-		 Tuple2<SequenceM<Integer>, SequenceM<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
+		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
 		 assertTrue(copies.v1.anyMatch(i->i==2));
 		 assertTrue(copies.v2.anyMatch(i->i==2));
 	}
 	@Test
 	public void testTriplicate(){
-		 Tuple3<SequenceM<Integer>, SequenceM<Integer>, SequenceM<Integer>> copies =of(1,2,3,4,5,6).triplicate();
+		 Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).triplicate();
 		 assertTrue(copies.v1.anyMatch(i->i==2));
 		 assertTrue(copies.v2.anyMatch(i->i==2));
 		 assertTrue(copies.v3.anyMatch(i->i==2));
@@ -168,7 +168,7 @@ public  class BaseSequenceMTest {
 	
 	@Test
 	public void testQuadriplicate(){
-		 Tuple4<SequenceM<Integer>, SequenceM<Integer>, SequenceM<Integer>,SequenceM<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
+		 Tuple4<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
 		 assertTrue(copies.v1.anyMatch(i->i==2));
 		 assertTrue(copies.v2.anyMatch(i->i==2));
 		 assertTrue(copies.v3.anyMatch(i->i==2));
@@ -177,20 +177,20 @@ public  class BaseSequenceMTest {
 
 	@Test
 	public void testDuplicateFilter(){
-		 Tuple2<SequenceM<Integer>, SequenceM<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
+		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
 		 assertTrue(copies.v1.filter(i->i%2==0).toList().size()==3);
 		 assertTrue(copies.v2.filter(i->i%2==0).toList().size()==3);
 	} 
 	@Test
 	public void testTriplicateFilter(){
-		Tuple3<SequenceM<Integer>, SequenceM<Integer>, SequenceM<Integer>> copies =of(1,2,3,4,5,6).triplicate();
+		Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).triplicate();
 		 assertTrue(copies.v1.filter(i->i%2==0).toList().size()==3);
 		 assertTrue(copies.v2.filter(i->i%2==0).toList().size()==3);
 		 assertTrue(copies.v3.filter(i->i%2==0).toList().size()==3);
 	} 
 	@Test
 	public void testQuadriplicateFilter(){
-		 Tuple4<SequenceM<Integer>, SequenceM<Integer>, SequenceM<Integer>,SequenceM<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
+		 Tuple4<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
 		 assertTrue(copies.v1.filter(i->i%2==0).toList().size()==3);
 		 assertTrue(copies.v2.filter(i->i%2==0).toList().size()==3);
 		 assertTrue(copies.v3.filter(i->i%2==0).toList().size()==3);
@@ -198,20 +198,20 @@ public  class BaseSequenceMTest {
 	}
 	@Test
 	public void testDuplicateLimit(){
-		 Tuple2<SequenceM<Integer>, SequenceM<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
+		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
 		 assertTrue(copies.v1.limit(3).toList().size()==3);
 		 assertTrue(copies.v2.limit(3).toList().size()==3);
 	} 
 	@Test
 	public void testTriplicateLimit(){
-		Tuple3<SequenceM<Integer>, SequenceM<Integer>, SequenceM<Integer>> copies =of(1,2,3,4,5,6).triplicate();
+		Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).triplicate();
 		 assertTrue(copies.v1.limit(3).toList().size()==3);
 		 assertTrue(copies.v2.limit(3).toList().size()==3);
 		 assertTrue(copies.v3.limit(3).toList().size()==3);
 	} 
 	@Test
 	public void testQuadriplicateLimit(){
-		 Tuple4<SequenceM<Integer>, SequenceM<Integer>, SequenceM<Integer>,SequenceM<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
+		 Tuple4<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
 		 assertTrue(copies.v1.limit(3).toList().size()==3);
 		 assertTrue(copies.v2.limit(3).toList().size()==3);
 		 assertTrue(copies.v3.limit(3).toList().size()==3);
@@ -260,7 +260,7 @@ public  class BaseSequenceMTest {
 	   
 	    @Test
 	    public void testSkipWhile() {
-	        Supplier<SequenceM<Integer>> s = () -> of(1, 2, 3, 4, 5);
+	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertTrue(s.get().skipWhile(i -> false).toList().containsAll(asList(1, 2, 3, 4, 5)));
 	      
@@ -269,7 +269,7 @@ public  class BaseSequenceMTest {
 
 	    @Test
 	    public void testSkipUntil() {
-	        Supplier<SequenceM<Integer>> s = () -> of(1, 2, 3, 4, 5);
+	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertEquals(asList(), s.get().skipUntil(i -> false).toList());
 	        assertTrue(s.get().skipUntil(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
@@ -277,14 +277,14 @@ public  class BaseSequenceMTest {
 
 	    @Test
 	    public void testSkipUntilWithNulls() {
-	        Supplier<SequenceM<Integer>> s = () -> of(1, 2, null, 3, 4, 5);
+	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, null, 3, 4, 5);
 	       
 	        assertTrue(s.get().skipUntil(i -> true).toList().containsAll(asList(1, 2, null, 3, 4, 5)));
 	    }
 
 	    @Test
 	    public void testLimitWhile() {
-	        Supplier<SequenceM<Integer>> s = () -> of(1, 2, 3, 4, 5);
+	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertEquals(asList(), s.get().limitWhile(i -> false).toList());
 	        assertTrue( s.get().limitWhile(i -> i < 3).toList().size()!=5);       
@@ -312,7 +312,7 @@ public  class BaseSequenceMTest {
 
 	    @Test
 	    public void testMinByMaxBy() {
-	        Supplier<SequenceM<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
 	        assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).get());
 	        assertEquals(5, (int) s.get().minBy(t -> Math.abs(t - 5)).get());
@@ -327,7 +327,7 @@ public  class BaseSequenceMTest {
 	    @Test
 	    public void testFoldLeft() {
 	    	for(int i=0;i<100;i++){
-		        Supplier<SequenceM<String>> s = () -> of("a", "b", "c");
+		        Supplier<ReactiveSeq<String>> s = () -> of("a", "b", "c");
 	
 		        assertTrue(s.get().reduce("", String::concat).contains("a"));
 		        assertTrue(s.get().reduce("", String::concat).contains("b"));
@@ -342,7 +342,7 @@ public  class BaseSequenceMTest {
 	    
 	    @Test
 	    public void testFoldRight(){
-	    	 	Supplier<SequenceM<String>> s = () -> of("a", "b", "c");
+	    	 	Supplier<ReactiveSeq<String>> s = () -> of("a", "b", "c");
 
 		        assertTrue(s.get().foldRight("", String::concat).contains("a"));
 		        assertTrue(s.get().foldRight("", String::concat).contains("b"));
@@ -355,12 +355,12 @@ public  class BaseSequenceMTest {
 	    //tests converted from lazy-seq suite
 	    @Test
 		public void flattenEmpty() throws Exception {
-				assertTrue(SequenceM.<Integer>of().flatten().toList().isEmpty());
+				assertTrue(ReactiveSeq.<Integer>of().flatten().toList().isEmpty());
 		}
 
 		@Test
 		public void flatten() throws Exception {
-			assertThat(SequenceM.of(Arrays.asList(1,2)).flatten().toList().size(),equalTo(asList(1,  2).size()));		
+			assertThat(ReactiveSeq.of(Arrays.asList(1,2)).flatten().toList().size(),equalTo(asList(1,  2).size()));		
 		}
 
 		
@@ -368,7 +368,7 @@ public  class BaseSequenceMTest {
 		@Test
 		public void flattenEmptyStream() throws Exception {
 			
-			assertThat(SequenceM.<Integer>of(1,2,3,4,5,5,6,8,9,10).flatten().limit(10).collect(Collectors.toList()).size(),
+			assertThat(ReactiveSeq.<Integer>of(1,2,3,4,5,5,6,8,9,10).flatten().limit(10).collect(Collectors.toList()).size(),
 											equalTo(asList(2, 3, 4, 5, 6, 7, 0, 0, 0, 0).size()));
 		}
 		

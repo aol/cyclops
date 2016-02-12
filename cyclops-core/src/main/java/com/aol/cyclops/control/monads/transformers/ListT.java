@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 import org.jooq.lambda.function.Function1;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 
 
 
@@ -73,7 +73,7 @@ public class ListT<T> {
 	 * @return ListT that applies the provided filter
 	 */
    public ListT<T> filter(Predicate<T> test){
-       return of(run.map(stream-> SequenceM.fromList(stream).filter(test).toList()));
+       return of(run.map(stream-> ReactiveSeq.fromList(stream).filter(test).toList()));
    }
    /**
 	 * Map the wrapped List
@@ -92,7 +92,7 @@ public class ListT<T> {
 	 * @return ListT that applies the map function to the wrapped List
 	 */
    public <B> ListT<B> map(Function<T,B> f){
-       return of(run.map(o-> SequenceM.fromList(o).map(f).toList()));
+       return of(run.map(o-> ReactiveSeq.fromList(o).map(f).toList()));
    }
    /**
 	 * Flat Map the wrapped List
@@ -110,7 +110,7 @@ public class ListT<T> {
 	 */
    public <B> ListT<B> flatMap(Function1<T,ListT<B>> f){
 	  
-	   return of( run.map(stream-> SequenceM.fromList(stream).flatMap(a-> f.apply(a).run.asSequence()).flatMap(a->a.stream())
+	   return of( run.map(stream-> ReactiveSeq.fromList(stream).flatMap(a-> f.apply(a).run.asSequence()).flatMap(a->a.stream())
 			   .toList()));
    }
    /**

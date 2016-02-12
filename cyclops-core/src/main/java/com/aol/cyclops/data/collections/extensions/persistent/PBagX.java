@@ -29,14 +29,14 @@ import com.aol.cyclops.data.collections.PBags;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 
 public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	@Override
-	default SequenceM<T> stream(){
+	default ReactiveSeq<T> stream(){
 		
-		return SequenceM.fromIterable(this);
+		return ReactiveSeq.fromIterable(this);
 	}
 	
 
@@ -273,9 +273,9 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#permutations()
 	 */
 	@Override
-	default PBagX<SequenceM<T>> permutations() {
+	default PBagX<ReactiveSeq<T>> permutations() {
 		
-		return ( PBagX<SequenceM<T>>)PersistentCollectionX.super.permutations();
+		return ( PBagX<ReactiveSeq<T>>)PersistentCollectionX.super.permutations();
 	}
 
 
@@ -283,9 +283,9 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations(int)
 	 */
 	@Override
-	default PBagX<SequenceM<T>> combinations(int size) {
+	default PBagX<ReactiveSeq<T>> combinations(int size) {
 		
-		return (PBagX<SequenceM<T>>)PersistentCollectionX.super.combinations(size);
+		return (PBagX<ReactiveSeq<T>>)PersistentCollectionX.super.combinations(size);
 	}
 
 
@@ -293,9 +293,9 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations()
 	 */
 	@Override
-	default PBagX<SequenceM<T>> combinations() {
+	default PBagX<ReactiveSeq<T>> combinations() {
 		
-		return (PBagX<SequenceM<T>>)PersistentCollectionX.super.combinations();
+		return (PBagX<ReactiveSeq<T>>)PersistentCollectionX.super.combinations();
 	}
 
 

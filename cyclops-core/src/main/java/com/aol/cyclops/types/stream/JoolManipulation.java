@@ -15,65 +15,65 @@ import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
 
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.IterableFilterable;
 
 public interface JoolManipulation<T> extends IterableFilterable<T>, Seq<T>{
 	
-	default SequenceM<T> removeAll(Stream<T> stream){
-		return (SequenceM<T>)(IterableFilterable.super.removeAll(stream));
+	default ReactiveSeq<T> removeAll(Stream<T> stream){
+		return (ReactiveSeq<T>)(IterableFilterable.super.removeAll(stream));
 	}
-	default  SequenceM<T> removeAll(Iterable<T> it){
-		return (SequenceM<T>)(IterableFilterable.super.removeAll(it));
+	default  ReactiveSeq<T> removeAll(Iterable<T> it){
+		return (ReactiveSeq<T>)(IterableFilterable.super.removeAll(it));
 	}
-	default  SequenceM<T> removeAll(Seq<T> seq){
-		return (SequenceM<T>)(IterableFilterable.super.removeAll((Stream)seq));
+	default  ReactiveSeq<T> removeAll(Seq<T> seq){
+		return (ReactiveSeq<T>)(IterableFilterable.super.removeAll((Stream)seq));
 	}
-	default  SequenceM<T> removeAll(T... values){
-		return (SequenceM<T>)(IterableFilterable.super.removeAll(values));
+	default  ReactiveSeq<T> removeAll(T... values){
+		return (ReactiveSeq<T>)(IterableFilterable.super.removeAll(values));
 		
 	}
-	default  SequenceM<T> retainAll(Iterable<T> it){
-		return (SequenceM<T>)(IterableFilterable.super.retainAll(it));
+	default  ReactiveSeq<T> retainAll(Iterable<T> it){
+		return (ReactiveSeq<T>)(IterableFilterable.super.retainAll(it));
 	}
-	default  SequenceM<T> retainAll(Seq<T> seq){
-		return (SequenceM<T>)(IterableFilterable.super.retainAll((Stream)seq));
+	default  ReactiveSeq<T> retainAll(Seq<T> seq){
+		return (ReactiveSeq<T>)(IterableFilterable.super.retainAll((Stream)seq));
 	}
-	default  SequenceM<T> retainAll(Stream<T> stream){
-		return (SequenceM<T>)(IterableFilterable.super.retainAll(stream));
+	default  ReactiveSeq<T> retainAll(Stream<T> stream){
+		return (ReactiveSeq<T>)(IterableFilterable.super.retainAll(stream));
 	}
-	default  SequenceM<T> retainAll(T... values){
-		return (SequenceM<T>)(IterableFilterable.super.retainAll(values));
+	default  ReactiveSeq<T> retainAll(T... values){
+		return (ReactiveSeq<T>)(IterableFilterable.super.retainAll(values));
 	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Filterable#filterNot(java.util.function.Predicate)
 	 */
 	@Override
-	default SequenceM<T> filterNot(Predicate<? super T> fn) {
+	default ReactiveSeq<T> filterNot(Predicate<? super T> fn) {
 		
-		return (SequenceM<T>)IterableFilterable.super.filterNot(fn);
+		return (ReactiveSeq<T>)IterableFilterable.super.filterNot(fn);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Filterable#notNull()
 	 */
 	@Override
-	default SequenceM<T> notNull() {
+	default ReactiveSeq<T> notNull() {
 		
-		return (SequenceM<T>)IterableFilterable.super.notNull();
+		return (ReactiveSeq<T>)IterableFilterable.super.notNull();
 	}
 	@Override
-	default <U> SequenceM<U> ofType(Class<U> type) {
+	default <U> ReactiveSeq<U> ofType(Class<U> type) {
 		
-		return (SequenceM<U>)IterableFilterable.super.ofType(type);
+		return (ReactiveSeq<U>)IterableFilterable.super.ofType(type);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Filterable#filter(java.util.function.Predicate)
 	 */
 	@Override
-	SequenceM<T> filter(Predicate<? super T> fn) ;
+	ReactiveSeq<T> filter(Predicate<? super T> fn) ;
 	/* (non-Javadoc)
 	 * @see java.util.stream.Stream#forEachOrdered(java.util.function.Consumer)
 	 */

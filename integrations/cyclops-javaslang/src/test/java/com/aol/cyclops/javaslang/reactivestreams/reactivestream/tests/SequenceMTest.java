@@ -25,7 +25,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.javaslang.reactivestreams.ReactiveStream;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.sequence.streamable.Streamable;
 
 public class SequenceMTest {
@@ -144,7 +144,7 @@ public class SequenceMTest {
 	}
 	@Test
 	public void limitTimeEmpty(){
-		List<Integer> result = SequenceM.<Integer>of()
+		List<Integer> result = ReactiveSeq.<Integer>of()
 										.peek(i->sleep(i*100))
 										.limit(1000,TimeUnit.MILLISECONDS)
 										.toList();
@@ -231,7 +231,7 @@ public class SequenceMTest {
 	}
 	@Test
 	public void endsWithBothEmpty(){
-		assertTrue(SequenceM.<Integer>of()
+		assertTrue(ReactiveSeq.<Integer>of()
 				.endsWith(ReactiveStream.empty()));
 	}
 	@Test

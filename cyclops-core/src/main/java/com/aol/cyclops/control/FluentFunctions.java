@@ -24,7 +24,7 @@ import com.aol.cyclops.data.MutableInt;
 import com.aol.cyclops.internal.invokedynamic.CheckedTriFunction;
 import com.aol.cyclops.internal.matcher2.CheckValues;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.util.ExceptionSoftener;
 import com.aol.cyclops.util.function.Cacheable;
 import com.aol.cyclops.util.function.Curry;
@@ -397,8 +397,8 @@ public class FluentFunctions {
 		}
 		
 		
-		public SequenceM<R> generate(){
-			return SequenceM.generate(fn);
+		public ReactiveSeq<R> generate(){
+			return ReactiveSeq.generate(fn);
 		}
 		
 		public FluentSupplier<Optional<R>> lift(){
@@ -569,11 +569,11 @@ public class FluentFunctions {
 		 * @param mapToType Convert from supplied functions return type to Stream input type
 		 * @return Infinite Stream
 		 */
-		public SequenceM<R> iterate(T seed,Function<R,T> mapToType){
-			return SequenceM.iterate(fn.apply(seed),t->fn.compose(mapToType).apply(t));
+		public ReactiveSeq<R> iterate(T seed,Function<R,T> mapToType){
+			return ReactiveSeq.iterate(fn.apply(seed),t->fn.compose(mapToType).apply(t));
 		}
-		public SequenceM<R> generate(T input){
-			return SequenceM.generate(()->fn.apply(input));
+		public ReactiveSeq<R> generate(T input){
+			return ReactiveSeq.generate(()->fn.apply(input));
 		}
 		public FluentFunction<Optional<T>,Optional<R>> lift(){
 			return new FluentFunction<>(opt -> opt.map(t->fn.apply(t)));
@@ -711,14 +711,14 @@ public class FluentFunctions {
 		}
 		
 		
-		public SequenceM<R> iterate(T1 seed1,T2 seed2,Function<R,Tuple2<T1,T2>> mapToTypeAndSplit){
-			return SequenceM.iterate(fn.apply(seed1,seed2),t->{ 
+		public ReactiveSeq<R> iterate(T1 seed1,T2 seed2,Function<R,Tuple2<T1,T2>> mapToTypeAndSplit){
+			return ReactiveSeq.iterate(fn.apply(seed1,seed2),t->{ 
 				Tuple2<T1,T2> tuple =mapToTypeAndSplit.apply(t);
 				return fn.apply(tuple.v1,tuple.v2);
 			});
 		}
-		public SequenceM<R> generate(T1 input1,T2 input2){
-			return SequenceM.generate(()->fn.apply(input1,input2));
+		public ReactiveSeq<R> generate(T1 input1,T2 input2){
+			return ReactiveSeq.generate(()->fn.apply(input1,input2));
 		}
 		
 		public FluentBiFunction<Optional<T1>,Optional<T2>,Optional<R>> lift(){
@@ -861,14 +861,14 @@ public class FluentFunctions {
 		}
 		
 		
-		public SequenceM<R> iterate(T1 seed1,T2 seed2,T3 seed3,Function<R,Tuple3<T1,T2,T3>> mapToType){
-			return SequenceM.iterate(fn.apply(seed1,seed2,seed3),t->{ 
+		public ReactiveSeq<R> iterate(T1 seed1,T2 seed2,T3 seed3,Function<R,Tuple3<T1,T2,T3>> mapToType){
+			return ReactiveSeq.iterate(fn.apply(seed1,seed2,seed3),t->{ 
 				Tuple3<T1,T2,T3> tuple =mapToType.apply(t);
 				return fn.apply(tuple.v1,tuple.v2,tuple.v3);
 			});
 		}
-		public SequenceM<R> generate(T1 input1,T2 input2,T3 input3){
-			return SequenceM.generate(()->fn.apply(input1,input2,input3));
+		public ReactiveSeq<R> generate(T1 input1,T2 input2,T3 input3){
+			return ReactiveSeq.generate(()->fn.apply(input1,input2,input3));
 		}
 		
 		public FluentTriFunction<Optional<T1>,Optional<T2>,Optional<T3>,Optional<R>> lift(){

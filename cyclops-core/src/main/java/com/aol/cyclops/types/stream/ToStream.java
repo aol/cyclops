@@ -10,7 +10,7 @@ import com.aol.cyclops.internal.invokedynamic.InvokeDynamic;
 import com.aol.cyclops.internal.matcher2.AsDecomposable;
 import com.aol.cyclops.internal.stream.ReversedIterator;
 import com.aol.cyclops.internal.stream.SeqUtils;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 
 public interface ToStream<T> extends Iterable<T>,ConvertableToSequenceM<T>{
 	default Iterator<T> iterator(){
@@ -19,14 +19,14 @@ public interface ToStream<T> extends Iterable<T>,ConvertableToSequenceM<T>{
 	default  Object getStreamable(){
 		return this;
 	}
-	default SequenceM<T> reveresedSequenceM(){
-		return SequenceM.fromStream(reveresedStream());
+	default ReactiveSeq<T> reveresedSequenceM(){
+		return ReactiveSeq.fromStream(reveresedStream());
 	}
 	/**
 	 * @return SequenceM from this Streamable
 	 */
-	default SequenceM<T> sequenceM(){
-		return SequenceM.fromStream(new FromStreamable<T>().stream(getStreamable()));
+	default ReactiveSeq<T> sequenceM(){
+		return ReactiveSeq.fromStream(new FromStreamable<T>().stream(getStreamable()));
 	}
 	default Stream<T> reveresedStream(){
 		Object streamable = getStreamable();

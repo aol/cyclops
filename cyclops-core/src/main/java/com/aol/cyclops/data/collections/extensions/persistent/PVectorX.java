@@ -28,7 +28,7 @@ import com.aol.cyclops.data.collections.PVectors;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 
 public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
@@ -339,9 +339,9 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#permutations()
 	 */
 	@Override
-	default PVectorX<SequenceM<T>> permutations() {
+	default PVectorX<ReactiveSeq<T>> permutations() {
 		
-		return ( PVectorX<SequenceM<T>>)PersistentCollectionX.super.permutations();
+		return ( PVectorX<ReactiveSeq<T>>)PersistentCollectionX.super.permutations();
 	}
 
 
@@ -349,9 +349,9 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations(int)
 	 */
 	@Override
-	default PVectorX<SequenceM<T>> combinations(int size) {
+	default PVectorX<ReactiveSeq<T>> combinations(int size) {
 		
-		return (PVectorX<SequenceM<T>>)PersistentCollectionX.super.combinations(size);
+		return (PVectorX<ReactiveSeq<T>>)PersistentCollectionX.super.combinations(size);
 	}
 
 
@@ -359,9 +359,9 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations()
 	 */
 	@Override
-	default PVectorX<SequenceM<T>> combinations() {
+	default PVectorX<ReactiveSeq<T>> combinations() {
 		
-		return (PVectorX<SequenceM<T>>)PersistentCollectionX.super.combinations();
+		return (PVectorX<ReactiveSeq<T>>)PersistentCollectionX.super.combinations();
 	}
 
 	default PVectorX<ListX<T>> sliding(int windowSize){

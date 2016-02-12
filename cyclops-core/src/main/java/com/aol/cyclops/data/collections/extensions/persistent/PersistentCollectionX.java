@@ -27,7 +27,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX;
 import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Traversable;
@@ -35,9 +35,9 @@ import com.aol.cyclops.util.stream.StreamUtils;
 
 public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	@Override
-	default SequenceM<T> stream(){
+	default ReactiveSeq<T> stream(){
 		
-		return SequenceM.fromIterable(this);
+		return ReactiveSeq.fromIterable(this);
 	}
 	default PersistentCollectionX<T> plusInOrder(T e){
 		return (PersistentCollectionX<T>)FluentCollectionX.super.plusInOrder(e);
@@ -513,23 +513,23 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#permutations()
 	 */
 	@Override
-	default PersistentCollectionX<SequenceM<T>> permutations() {
+	default PersistentCollectionX<ReactiveSeq<T>> permutations() {
 		
-		return from(this.<SequenceM<T>>monoid().mapReduce(stream().permutations()));
+		return from(this.<ReactiveSeq<T>>monoid().mapReduce(stream().permutations()));
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations(int)
 	 */
 	@Override
-	default PersistentCollectionX<SequenceM<T>> combinations(int size) {
-		return from(this.<SequenceM<T>>monoid().mapReduce(stream().combinations(size)));
+	default PersistentCollectionX<ReactiveSeq<T>> combinations(int size) {
+		return from(this.<ReactiveSeq<T>>monoid().mapReduce(stream().combinations(size)));
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations()
 	 */
 	@Override
-	default PersistentCollectionX<SequenceM<T>> combinations() {
-		return from(this.<SequenceM<T>>monoid().mapReduce(stream().combinations()));
+	default PersistentCollectionX<ReactiveSeq<T>> combinations() {
+		return from(this.<ReactiveSeq<T>>monoid().mapReduce(stream().combinations()));
 	}
 
 	

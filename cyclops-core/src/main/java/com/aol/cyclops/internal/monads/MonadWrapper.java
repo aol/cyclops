@@ -2,7 +2,7 @@ package com.aol.cyclops.internal.monads;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.internal.Monad;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.Decomposable;
 
 import lombok.AllArgsConstructor;
@@ -33,9 +33,9 @@ public class MonadWrapper<MONAD,T> implements Monad<MONAD,T>, Decomposable{
 		return new BaseAnyMImpl<X>((Monad)this,orgType);	
 	}
 	@Override
-	public SequenceM<T>  sequence(){
-		if(monad instanceof SequenceM)
-			return ((SequenceM)monad);
-		return SequenceM.fromStream(this.stream());
+	public ReactiveSeq<T>  sequence(){
+		if(monad instanceof ReactiveSeq)
+			return ((ReactiveSeq)monad);
+		return ReactiveSeq.fromStream(this.stream());
 	}
 }

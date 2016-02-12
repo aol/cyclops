@@ -27,7 +27,7 @@ import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.types.stream.HeadAndTail;
@@ -94,9 +94,9 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 		return fromIterable(()->it);
 	}
 	@Override
-	default SequenceM<T> stream(){
+	default ReactiveSeq<T> stream(){
 		
-		return SequenceM.fromIterable(this);
+		return ReactiveSeq.fromIterable(this);
 	}
 
 	/* (non-Javadoc)
@@ -530,27 +530,27 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.lambda.monads.Traversable#permutations()
 	 */
 	@Override
-	default DequeX<SequenceM<T>> permutations() {
+	default DequeX<ReactiveSeq<T>> permutations() {
 		
-		return (DequeX<SequenceM<T>>)MutableCollectionX.super.permutations();
+		return (DequeX<ReactiveSeq<T>>)MutableCollectionX.super.permutations();
 	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Traversable#combinations(int)
 	 */
 	@Override
-	default DequeX<SequenceM<T>> combinations(int size) {
+	default DequeX<ReactiveSeq<T>> combinations(int size) {
 		
-		return (DequeX<SequenceM<T>>)MutableCollectionX.super.combinations(size);
+		return (DequeX<ReactiveSeq<T>>)MutableCollectionX.super.combinations(size);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Traversable#combinations()
 	 */
 	@Override
-	default DequeX<SequenceM<T>> combinations() {
+	default DequeX<ReactiveSeq<T>> combinations() {
 		
-		return (DequeX<SequenceM<T>>)MutableCollectionX.super.combinations();
+		return (DequeX<ReactiveSeq<T>>)MutableCollectionX.super.combinations();
 	}
 
 	/* (non-Javadoc)

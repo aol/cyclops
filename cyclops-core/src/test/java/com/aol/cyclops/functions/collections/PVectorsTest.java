@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.data.collections.PVectors;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 
 public class PVectorsTest {
 
@@ -39,7 +39,7 @@ public class PVectorsTest {
 
 	@Test
 	public void testToPVector() {
-		assertThat(SequenceM.of("a","b","c").mapReduce(PVectors.toPVector()),
+		assertThat(ReactiveSeq.of("a","b","c").mapReduce(PVectors.toPVector()),
 				equalTo(Arrays.asList("a","b","c")));
 	}
 

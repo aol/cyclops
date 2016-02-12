@@ -43,7 +43,7 @@ import com.aol.cyclops.javaslang.streams.JavaslangHotStream;
 import com.aol.cyclops.javaslang.streams.StreamUtils;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.sequence.Monoid;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops.sequence.streamable.Streamable;

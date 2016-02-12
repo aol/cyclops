@@ -13,7 +13,7 @@ import uk.co.real_logic.agrona.concurrent.OneToOneConcurrentArrayQueue;
 import com.aol.cyclops.internal.stream.IteratorHotStream;
 import com.aol.cyclops.internal.stream.spliterators.ClosingSpliterator;
 import com.aol.cyclops.javaslang.FromJDK;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 
 public abstract class BaseHotStreamImpl<T> extends IteratorHotStream<T> implements JavaslangHotStream<T>{
 	
@@ -61,7 +61,7 @@ public abstract class BaseHotStreamImpl<T> extends IteratorHotStream<T> implemen
 		unpause();
 		connections.getAndSet(connected, queue);
 		connected++;
-		return FromJDK.stream(SequenceM.fromStream(StreamSupport.stream(
+		return FromJDK.stream(ReactiveSeq.fromStream(StreamSupport.stream(
                 new ClosingSpliterator(Long.MAX_VALUE, queue,open), false)));
 	}
 

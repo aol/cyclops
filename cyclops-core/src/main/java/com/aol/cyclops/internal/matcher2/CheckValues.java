@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 
 import org.hamcrest.Matcher;
 
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.util.function.Predicates;
 
 import lombok.AccessLevel;
@@ -37,7 +37,7 @@ public class CheckValues<T,R> {
 				.orElse(false);
 		// add wildcard support
 		
-		Predicate<V>[] predicates = SequenceM.of(values)
+		Predicate<V>[] predicates = ReactiveSeq.of(values)
 				.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toList()
 				.toArray(new Predicate[0]);
 
@@ -53,7 +53,7 @@ public class CheckValues<T,R> {
 		// add wildcard support
 		
 		@SuppressWarnings("unchecked")
-		Predicate<V>[] predicates = SequenceM.of(values)
+		Predicate<V>[] predicates = ReactiveSeq.of(values)
 				.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toListX().plus(i->SeqUtils.EMPTY==i)
 				.toArray(new Predicate[0]);
 
@@ -67,7 +67,7 @@ public class CheckValues<T,R> {
 				.orElse(false);
 		// add wildcard support
 		
-		Predicate<V>[] predicates = SequenceM.of(values)
+		Predicate<V>[] predicates = ReactiveSeq.of(values)
 				.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toListX().plus(i->SeqUtils.EMPTY==i)
 				.toArray(new Predicate[0]);
 
@@ -83,7 +83,7 @@ public class CheckValues<T,R> {
 				.orElse(false);
 		// add wildcard support
 		
-		Predicate<V>[] predicates = SequenceM.of(values)
+		Predicate<V>[] predicates = ReactiveSeq.of(values)
 				.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toList()
 				.toArray(new Predicate[0]);
 
@@ -97,7 +97,7 @@ public class CheckValues<T,R> {
 				.orElse(false);
 		// add wildcard support
 		
-		Predicate<V>[] predicates = SequenceM.of(values)
+		Predicate<V>[] predicates = ReactiveSeq.of(values)
 				.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toListX().plus(i->SeqUtils.EMPTY==i)
 				.toArray(new Predicate[0]);
 
@@ -112,7 +112,7 @@ public class CheckValues<T,R> {
 											.orElse(false);
 		// add wildcard support
 		
-		Predicate<V>[] predicates = SequenceM.of(values)
+		Predicate<V>[] predicates = ReactiveSeq.of(values)
 											.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toList()
 											.toArray(new Predicate[0]);
 

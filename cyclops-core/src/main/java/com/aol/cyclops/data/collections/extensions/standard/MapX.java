@@ -25,7 +25,7 @@ import com.aol.cyclops.data.collections.extensions.FluentMapX;
 import com.aol.cyclops.data.collections.extensions.persistent.PMapX;
 import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.BiFunctor;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Filterable;
@@ -59,8 +59,8 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 		
 	}
 	public <K,V> Collector<Tuple2<? extends K,? extends V>,?,Map<K,V>> getCollector();
-	default SequenceM<Tuple2<K, V>> stream(){
-		return SequenceM.fromIterable(this.entrySet())
+	default ReactiveSeq<Tuple2<K, V>> stream(){
+		return ReactiveSeq.fromIterable(this.entrySet())
 					    .map(e->Tuple.tuple(e.getKey(),e.getValue()));
 	}
 	
@@ -75,7 +75,7 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 		return new MapXImpl<K,V>(StreamUtils.stream(it).map(e->Tuple.tuple(e.getKey(),e.getValue()))
 				.collect(collector),collector);
 	}
-	default MapX<K,V> fromStream(SequenceM<Tuple2<K,V>> stream){
+	default MapX<K,V> fromStream(ReactiveSeq<Tuple2<K,V>> stream){
 		return new MapXImpl<>(stream.toMap(t->t.v1, t->t.v2),getCollector());
 	}
 	
@@ -102,7 +102,7 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 	 */
 	default <KR,VR> MapX<KR,VR> flatMap(BiFunction<? super K,? super V, ? extends MapX<KR,VR>> fn) {
 		
-		SequenceM<Tuple2<KR,VR>> s = stream().flatMap(t -> fn.apply(t.v1,t.v2).stream());
+		ReactiveSeq<Tuple2<KR,VR>> s = stream().flatMap(t -> fn.apply(t.v1,t.v2).stream());
 		return new MapXImpl<>(s.<KR,VR>toMap(t->t.v1, t->t.v2),getCollector());
 	}
 
@@ -112,7 +112,7 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 	@Override
 	default <R> MapX<K,R> map(Function<? super V, ? extends R> fn) {
 		
-		SequenceM<Tuple2<K,R>> s = stream().map(t->t.map2(v->fn.apply(v)));
+		ReactiveSeq<Tuple2<K,R>> s = stream().map(t->t.map2(v->fn.apply(v)));
 		return new MapXImpl<>(s.<K,R>toMap(t->t.v1, t->t.v2),getCollector());
 	}
 
@@ -123,8 +123,8 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 	@Override
 	default <R1, R2> BiFunctor<R1, R2> bimap(Function<? super K, ? extends R1> fn1,
 			Function<? super V, ? extends R2> fn2) {
-		SequenceM<Tuple2<R1,V>> s1 = stream().map(t->t.map1(v->fn1.apply(v)));
-		SequenceM<Tuple2<R1,R2>> s2 =	s1.map(t->t.map2(v->fn2.apply(v)));
+		ReactiveSeq<Tuple2<R1,V>> s1 = stream().map(t->t.map1(v->fn1.apply(v)));
+		ReactiveSeq<Tuple2<R1,R2>> s2 =	s1.map(t->t.map2(v->fn2.apply(v)));
 		return new MapXImpl<>(s2.<R1,R2>toMap(t->t.v1, t->t.v2),getCollector());
 	}
 

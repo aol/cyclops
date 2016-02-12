@@ -77,7 +77,7 @@ import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
 
 
-public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<T>,Functor<T>, ExtendedTraversable<T>,
+public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterable<T>,Functor<T>, ExtendedTraversable<T>,
 												Foldable<T>,JoolWindowing<T>, 
 												JoolManipulation<T>,SequenceMCollectable<T>,
 												Seq<T>,  Iterable<T>, Publisher<T>,
@@ -86,10 +86,10 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 												ZippingApplicativable<T>, Unit<T>,
 												ConvertableSequence<T>{
 	@Override
-	public <T> SequenceM<T> unitIterator(Iterator<T> it);
+	public <T> ReactiveSeq<T> unitIterator(Iterator<T> it);
 	
 	@Override
-	public <T> SequenceM<T> unit(T unit);
+	public <T> ReactiveSeq<T> unit(T unit);
 
 	
 	
@@ -97,9 +97,9 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @see com.aol.cyclops.lambda.monads.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
 	 */
 	@Override
-	default <U, R> SequenceM<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+	default <U, R> ReactiveSeq<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
 		
-		return SequenceM.fromStream(Seq.zip(this,other,zipper));
+		return ReactiveSeq.fromStream(Seq.zip(this,other,zipper));
 	}
 
 	/**
@@ -107,9 +107,9 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 		return new ZippingApplicativeBuilder<T,R,SequenceM<R>> (this);
 	}**/
 	
-	default <R> SequenceM<R> ap1( ZippingApplicative<T,R, ?> ap){
+	default <R> ReactiveSeq<R> ap1( ZippingApplicative<T,R, ?> ap){
 		
-		return (SequenceM<R>)ZippingApplicativable.super.ap1(ap);
+		return (ReactiveSeq<R>)ZippingApplicativable.super.ap1(ap);
 	}
 	
 
@@ -133,7 +133,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * 
 	 * @return Flattened / joined one level
 	 */
-	<T1> SequenceM<T1> flatten();
+	<T1> ReactiveSeq<T1> flatten();
 
 	
 
@@ -155,7 +155,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Times values should be repeated within a Stream
 	 * @return Stream with values repeated
 	 */
-	SequenceM<T> cycle(int times);
+	ReactiveSeq<T> cycle(int times);
 
 	/**
 	 * Convert to a Stream with the values infinitely cycled
@@ -169,7 +169,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * 
 	 * @return Stream with values repeated
 	 */
-	SequenceM<T> cycle();
+	ReactiveSeq<T> cycle();
 
 	/**
 	 * Duplicate a Stream, buffers intermediate values, leaders may change
@@ -188,7 +188,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * 
 	 * @return duplicated stream
 	 */
-	Tuple2<SequenceM<T>, SequenceM<T>> duplicateSequence();
+	Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicateSequence();
 
 	/**
 	 * Triplicates a Stream Buffers intermediate values, leaders may change
@@ -204,7 +204,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * </pre>
 	 */
 	@SuppressWarnings("unchecked")
-	Tuple3<SequenceM<T>, SequenceM<T>, SequenceM<T>> triplicate();
+	Tuple3<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> triplicate();
 
 	/**
 	 * Makes four copies of a Stream Buffers intermediate values, leaders may
@@ -223,7 +223,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	Tuple4<SequenceM<T>, SequenceM<T>, SequenceM<T>, SequenceM<T>> quadruplicate();
+	Tuple4<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> quadruplicate();
 
 	/**
 	 * Split a Stream at it's head (similar to headAndTail)
@@ -239,7 +239,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * 
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	Tuple2<Optional<T>, SequenceM<T>> splitSequenceAtHead();
+	Tuple2<Optional<T>, ReactiveSeq<T>> splitSequenceAtHead();
 
 	/**
 	 * Split at supplied location
@@ -253,7 +253,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * 
 	 * </pre>
 	 */
-	Tuple2<SequenceM<T>, SequenceM<T>> splitAt(int where);
+	Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> splitAt(int where);
 
 	/**
 	 * Split stream at point where predicate no longer holds
@@ -266,7 +266,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * }
 	 * </pre>
 	 */
-	Tuple2<SequenceM<T>, SequenceM<T>> splitBy(Predicate<T> splitter);
+	Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> splitBy(Predicate<T> splitter);
 
 	/**
 	 * Partition a Stream into two one a per element basis, based on predicate's
@@ -281,7 +281,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *
 	 * </pre>
 	 */
-	Tuple2<SequenceM<T>, SequenceM<T>> partitionSequence(Predicate<T> splitter);
+	Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> partitionSequence(Predicate<T> splitter);
 
 	/**
 	 * Convert to a Stream with the result of a reduction operation repeated
@@ -302,7 +302,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Number of times value should be repeated
 	 * @return Stream with reduced values repeated
 	 */
-	SequenceM<T> cycle(Monoid<T> m, int times);
+	ReactiveSeq<T> cycle(Monoid<T> m, int times);
 
 	
 
@@ -323,7 +323,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            repeat while true
 	 * @return Repeating Stream
 	 */
-	SequenceM<T> cycleWhile(Predicate<? super T> predicate);
+	ReactiveSeq<T> cycleWhile(Predicate<? super T> predicate);
 
 	/**
 	 * Repeat in a Stream until specified predicate holds
@@ -344,7 +344,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            repeat while true
 	 * @return Repeating Stream
 	 */
-	SequenceM<T> cycleUntil(Predicate<? super T> predicate);
+	ReactiveSeq<T> cycleUntil(Predicate<? super T> predicate);
 
 	/**
 	 * Zip 2 streams into one
@@ -358,7 +358,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * </pre>
 	 * 
 	 */
-	<U> SequenceM<Tuple2<T, U>> zipStream(Stream<U> other);
+	<U> ReactiveSeq<Tuple2<T, U>> zipStream(Stream<U> other);
 
 	/**
 	 * Zip 2 streams into one
@@ -373,7 +373,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * 
 	 */
 	@Override
-	default <U> SequenceM<Tuple2<T, U>> zip(Seq<U> other) {
+	default <U> ReactiveSeq<Tuple2<T, U>> zip(Seq<U> other) {
 		return fromStream(JoolManipulation.super.zip(other));
 	}
 
@@ -390,7 +390,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * 
 	 * </pre>
 	 */
-	<S, U> SequenceM<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third);
+	<S, U> ReactiveSeq<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third);
 
 	/**
 	 * zip 4 Streams into 1
@@ -405,7 +405,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * // [[1,100,'a',&quot;hello&quot;],[2,200,'b',&quot;world&quot;]]
 	 * </pre>
 	 */
-	<T2, T3, T4> SequenceM<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third, Stream<T4> fourth);
+	<T2, T3, T4> ReactiveSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third, Stream<T4> fourth);
 
 	/**
 	 * Add an index to the current Stream
@@ -417,7 +417,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * </pre>
 	 */
 	@Override
-	default SequenceM<Tuple2<T, Long>> zipWithIndex() {
+	default ReactiveSeq<Tuple2<T, Long>> zipWithIndex() {
 		return fromStream(JoolManipulation.super.zipWithIndex());
 	}
 
@@ -438,7 +438,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Zipping function
 	 * @return Stream zipping two Monads
 	 */
-	<S, R> SequenceM<R> zipSequence(SequenceM<? extends S> second, BiFunction<? super T, ? super S, ? extends R> zipper);
+	<S, R> ReactiveSeq<R> zipSequence(ReactiveSeq<? extends S> second, BiFunction<? super T, ? super S, ? extends R> zipper);
 
 	/**
 	 * Zip this SequenceM against any monad type.
@@ -455,7 +455,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * </pre>
 	 * 
 	 */
-	<S, R> SequenceM<R> zipAnyM(AnyM<? extends S> second, BiFunction<? super T, ? super S, ? extends R> zipper);
+	<S, R> ReactiveSeq<R> zipAnyM(AnyM<? extends S> second, BiFunction<? super T, ? super S, ? extends R> zipper);
 
 	/**
 	 * Zip this Monad with a Stream
@@ -475,7 +475,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Zip funciton
 	 * @return This monad zipped with a Stream
 	 */
-	<S, R> SequenceM<R> zipStream(BaseStream<? extends S, ? extends BaseStream<? extends S, ?>> second, BiFunction<? super T, ? super S, ? extends R> zipper);
+	<S, R> ReactiveSeq<R> zipStream(BaseStream<? extends S, ? extends BaseStream<? extends S, ?>> second, BiFunction<? super T, ? super S, ? extends R> zipper);
 
 	/**
 	 * Create a sliding view over this Sequence
@@ -496,7 +496,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Size of sliding window
 	 * @return SequenceM with sliding view
 	 */
-	SequenceM<ListX<T>> sliding(int windowSize);
+	ReactiveSeq<ListX<T>> sliding(int windowSize);
 
 	/**
 	 * Create a sliding view over this Sequence
@@ -519,7 +519,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            for each window
 	 * @return SequenceM with sliding view
 	 */
-	SequenceM<ListX<T>> sliding(int windowSize, int increment);
+	ReactiveSeq<ListX<T>> sliding(int windowSize, int increment);
 
 	/**
 	 * Group elements in a Stream
@@ -539,13 +539,13 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Size of each Group
 	 * @return Stream with elements grouped by size
 	 */
-	SequenceM<ListX<T>> grouped(int groupSize);
+	ReactiveSeq<ListX<T>> grouped(int groupSize);
 
-	default <K, A, D> SequenceM<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream) {
+	default <K, A, D> ReactiveSeq<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream) {
 		return fromStream(JoolManipulation.super.grouped(classifier, downstream));
 	}
 
-	public default <K> SequenceM<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier) {
+	public default <K> ReactiveSeq<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier) {
 		return fromStream(JoolManipulation.super.grouped(classifier));
 	}
 
@@ -575,7 +575,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * <pre> {@code List<Integer> list = SequenceM.of(1,2,2,2,5,6) .distinct()
 	 * .collect(Collectors.toList()); }</pre>
 	 */
-	SequenceM<T> distinct();
+	ReactiveSeq<T> distinct();
 
 	/**
 	 * Scan left using supplied Monoid
@@ -592,7 +592,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @param monoid
 	 * @return
 	 */
-	SequenceM<T> scanLeft(Monoid<T> monoid);
+	ReactiveSeq<T> scanLeft(Monoid<T> monoid);
 
 	/**
 	 * Scan left
@@ -604,7 +604,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * }
 	 * </pre>
 	 */
-	<U> SequenceM<U> scanLeft(U seed, BiFunction<U, ? super T, U> function);
+	<U> ReactiveSeq<U> scanLeft(U seed, BiFunction<U, ? super T, U> function);
 
 	/**
 	 * Scan right
@@ -616,7 +616,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * }
 	 * </pre>
 	 */
-	SequenceM<T> scanRight(Monoid<T> monoid);
+	ReactiveSeq<T> scanRight(Monoid<T> monoid);
 
 	/**
 	 * Scan right
@@ -629,7 +629,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * }
 	 * </pre>
 	 */
-	<U> SequenceM<U> scanRight(U identity, BiFunction<? super T, U, U> combiner);
+	<U> ReactiveSeq<U> scanRight(U identity, BiFunction<? super T, U, U> combiner);
 
 	/**
 	 * <pre>
@@ -637,7 +637,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * </pre>
 	 * 
 	 */
-	SequenceM<T> sorted();
+	ReactiveSeq<T> sorted();
 
 	/**
 	 * <pre>
@@ -650,7 +650,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Compartor to sort with
 	 * @return Sorted Stream
 	 */
-	SequenceM<T> sorted(Comparator<? super T> c);
+	ReactiveSeq<T> sorted(Comparator<? super T> c);
 
 	/**
 	 * <pre>
@@ -663,7 +663,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Number of elemenets to skip
 	 * @return Stream with specified number of elements skipped
 	 */
-	SequenceM<T> skip(long num);
+	ReactiveSeq<T> skip(long num);
 
 	/**
 	 * 
@@ -680,7 +680,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Predicate to skip while true
 	 * @return Stream with elements skipped while predicate holds
 	 */
-	SequenceM<T> skipWhile(Predicate<? super T> p);
+	ReactiveSeq<T> skipWhile(Predicate<? super T> p);
 
 	/**
 	 * Drop elements from the Stream until the predicate returns true, after
@@ -695,9 +695,9 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Predicate to skip until true
 	 * @return Stream with elements skipped until predicate holds
 	 */
-	SequenceM<T> skipUntil(Predicate<? super T> p);
+	ReactiveSeq<T> skipUntil(Predicate<? super T> p);
 
-	default SequenceM<T> skipUntilClosed(Predicate<? super T> p) {
+	default ReactiveSeq<T> skipUntilClosed(Predicate<? super T> p) {
 		return fromStream(JoolManipulation.super.skipUntilClosed(p));
 	}
 
@@ -712,7 +712,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Limit element size to num
 	 * @return Monad converted to Stream with elements up to num
 	 */
-	SequenceM<T> limit(long num);
+	ReactiveSeq<T> limit(long num);
 
 	/**
 	 * Take elements from the Stream while the predicate holds, once the
@@ -726,7 +726,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Limit while predicate is true
 	 * @return Stream with limited elements
 	 */
-	SequenceM<T> limitWhile(Predicate<? super T> p);
+	ReactiveSeq<T> limitWhile(Predicate<? super T> p);
 
 	/**
 	 * Take elements from the Stream until the predicate returns true, after
@@ -740,14 +740,14 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Limit until predicate is true
 	 * @return Stream with limited elements
 	 */
-	SequenceM<T> limitUntil(Predicate<? super T> p);
+	ReactiveSeq<T> limitUntil(Predicate<? super T> p);
 
 	/**
 	 * @param p
 	 * @return
 	 */
 	@Override
-	default SequenceM<T> limitUntilClosed(Predicate<? super T> p) {
+	default ReactiveSeq<T> limitUntilClosed(Predicate<? super T> p) {
 		return fromStream(JoolManipulation.super.limitUntilClosed(p));
 	}
 
@@ -755,7 +755,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @return Does nothing SequenceM is for Sequential Streams
 	 * 
 	 */
-	SequenceM<T> parallel();
+	ReactiveSeq<T> parallel();
 
 	/**
 	 * True if predicate matches all elements when Monad converted to a Stream
@@ -953,7 +953,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @param mapper
 	 * @return
 	 */
-	default <R> SequenceM<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper){
+	default <R> ReactiveSeq<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper){
 		
 		 return  map(in-> mapper.apply(in).result());
 	 }
@@ -1238,7 +1238,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	/**
 	 * Convert this SequenceM into a Stream
 	 */
-	public SequenceM<T> stream();
+	public ReactiveSeq<T> stream();
 
 	/**
 	 * 
@@ -1273,14 +1273,14 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * 
 	 * @see java.util.stream.Stream#map(java.util.function.Function)
 	 */
-	<R> SequenceM<R> map(Function<? super T, ? extends R> fn);
+	<R> ReactiveSeq<R> map(Function<? super T, ? extends R> fn);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see java.util.stream.Stream#peek(java.util.function.Consumer)
 	 */
-	SequenceM<T> peek(Consumer<? super T> c);
+	ReactiveSeq<T> peek(Consumer<? super T> c);
 
 	/**
 	 * flatMap operation
@@ -1298,7 +1298,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            to be applied
 	 * @return new stage in Sequence with flatMap operation to be lazily applied
 	 */
-	<R> SequenceM<R> flatMap(Function<? super T, ? extends Stream<? extends R>> fn);
+	<R> ReactiveSeq<R> flatMap(Function<? super T, ? extends Stream<? extends R>> fn);
 
 	/**
 	 * Allows flatMap return type to be any Monad type
@@ -1315,7 +1315,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            to be applied
 	 * @return new stage in Sequence with flatMap operation to be lazily applied
 	 */
-	<R> SequenceM<R> flatMapAnyM(Function<? super T, AnyM<? extends R>> fn);
+	<R> ReactiveSeq<R> flatMapAnyM(Function<? super T, AnyM<? extends R>> fn);
 
 	/**
 	 * FlatMap where the result is a Collection, flattens the resultant
@@ -1334,7 +1334,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @param fn
 	 * @return
 	 */
-	<R> SequenceM<R> flatMapCollection(Function<? super T, Collection<? extends R>> fn);
+	<R> ReactiveSeq<R> flatMapCollection(Function<? super T, Collection<? extends R>> fn);
 
 	/**
 	 * flatMap operation
@@ -1352,7 +1352,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            to be applied
 	 * @return new stage in Sequence with flatMap operation to be lazily applied
 	 */
-	<R> SequenceM<R> flatMapStream(Function<? super T, BaseStream<? extends R, ?>> fn);
+	<R> ReactiveSeq<R> flatMapStream(Function<? super T, BaseStream<? extends R, ?>> fn);
 
 	/**
 	 * flatMap to optional - will result in null values being removed
@@ -1369,7 +1369,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @param fn
 	 * @return
 	 */
-	<R> SequenceM<R> flatMapOptional(Function<? super T, Optional<? extends R>> fn);
+	<R> ReactiveSeq<R> flatMapOptional(Function<? super T, Optional<? extends R>> fn);
 
 	/**
 	 * flatMap to CompletableFuture - will block until Future complete, although
@@ -1387,7 +1387,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @param fn
 	 * @return
 	 */
-	<R> SequenceM<R> flatMapCompletableFuture(Function<? super T, CompletableFuture<? extends R>> fn);
+	<R> ReactiveSeq<R> flatMapCompletableFuture(Function<? super T, CompletableFuture<? extends R>> fn);
 
 	/**
 	 * Perform a flatMap operation where the result will be a flattened stream
@@ -1405,7 +1405,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @param fn
 	 * @return
 	 */
-	SequenceM<Character> flatMapCharSequence(Function<? super T, CharSequence> fn);
+	ReactiveSeq<Character> flatMapCharSequence(Function<? super T, CharSequence> fn);
 
 	/**
 	 * Perform a flatMap operation where the result will be a flattened stream
@@ -1426,7 +1426,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @param fn
 	 * @return
 	 */
-	SequenceM<String> flatMapFile(Function<? super T, File> fn);
+	ReactiveSeq<String> flatMapFile(Function<? super T, File> fn);
 
 	/**
 	 * Perform a flatMap operation where the result will be a flattened stream
@@ -1445,7 +1445,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @param fn
 	 * @return
 	 */
-	SequenceM<String> flatMapURL(Function<? super T, URL> fn);
+	ReactiveSeq<String> flatMapURL(Function<? super T, URL> fn);
 
 	/**
 	 * Perform a flatMap operation where the result will be a flattened stream
@@ -1463,26 +1463,26 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @param fn
 	 * @return
 	 */
-	SequenceM<String> flatMapBufferedReader(Function<? super T, BufferedReader> fn);
+	ReactiveSeq<String> flatMapBufferedReader(Function<? super T, BufferedReader> fn);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see java.util.stream.Stream#filter(java.util.function.Predicate)
 	 */
-	SequenceM<T> filter(Predicate<? super T> fn);
+	ReactiveSeq<T> filter(Predicate<? super T> fn);
 
 	/* (non-Javadoc)
 	 * @see java.util.stream.BaseStream#sequential()
 	 */
-	SequenceM<T> sequential() ;
+	ReactiveSeq<T> sequential() ;
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see java.util.stream.BaseStream#unordered()
 	 */
-	SequenceM<T> unordered();
+	ReactiveSeq<T> unordered();
 
 	/**
 	 * Returns a stream with a given value interspersed between any two values
@@ -1492,7 +1492,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * // (1, 0, 2, 0, 3, 0, 4) SequenceM.of(1, 2, 3, 4).intersperse(0)
 	 * 
 	 */
-	SequenceM<T> intersperse(T value);
+	ReactiveSeq<T> intersperse(T value);
 
 	/**
 	 * Keep only those elements in a stream that are of a given type.
@@ -1502,7 +1502,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	<U> SequenceM<U> ofType(Class<U> type);
+	<U> ReactiveSeq<U> ofType(Class<U> type);
 
 	/**
 	 * Cast all elements in a stream to a given type, possibly throwing a
@@ -1512,7 +1512,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * // ClassCastException SequenceM.of(1, "a", 2, "b", 3).cast(Integer.class)
 	 * 
 	 */
-	<U> SequenceM<U> cast(Class<U> type);
+	<U> ReactiveSeq<U> cast(Class<U> type);
 
 	/**
 	 * Lazily converts this SequenceM into a Collection. This does not trigger
@@ -1579,7 +1579,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * <pre> {@code assertThat( of(1, 2, 3).reverse().toList(),
 	 * equalTo(asList(3, 2, 1))); } </pre>
 	 */
-	public SequenceM<T> reverse();
+	public ReactiveSeq<T> reverse();
 
 	/*
 	 * (non-Javadoc)
@@ -1587,14 +1587,14 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @see java.util.stream.BaseStream#onClose(java.lang.Runnable)
 	 */
 	@Override
-	public SequenceM<T> onClose(Runnable closeHandler);
+	public ReactiveSeq<T> onClose(Runnable closeHandler);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.jooq.lambda.Seq#shuffle()
 	 */
-	public SequenceM<T> shuffle();
+	public ReactiveSeq<T> shuffle();
 
 	/**
 	 * Append Stream to this SequenceM
@@ -1612,7 +1612,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            to append
 	 * @return SequenceM with Stream appended
 	 */
-	public SequenceM<T> appendStream(Stream<T> stream);
+	public ReactiveSeq<T> appendStream(Stream<T> stream);
 
 	/**
 	 * Prepend Stream to this SequenceM
@@ -1631,7 +1631,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            to Prepend
 	 * @return SequenceM with Stream prepended
 	 */
-	SequenceM<T> prependStream(Stream<T> stream);
+	ReactiveSeq<T> prependStream(Stream<T> stream);
 
 	/**
 	 * Append values to the end of this SequenceM
@@ -1649,7 +1649,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            to append
 	 * @return SequenceM with appended values
 	 */
-	SequenceM<T> append(T... values);
+	ReactiveSeq<T> append(T... values);
 
 	/**
 	 * Prepend given values to the start of the Stream
@@ -1666,7 +1666,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @param values to prepend
 	 * @return SequenceM with values prepended
 	 */
-	SequenceM<T> prepend(T... values);
+	ReactiveSeq<T> prepend(T... values);
 
 	/**
 	 * Insert data into a stream at given position
@@ -1687,7 +1687,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            to insert
 	 * @return Stream with new data inserted
 	 */
-	SequenceM<T> insertAt(int pos, T... values);
+	ReactiveSeq<T> insertAt(int pos, T... values);
 
 	/**
 	 * Delete elements between given indexes in a Stream
@@ -1707,7 +1707,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            index
 	 * @return Stream with elements removed
 	 */
-	SequenceM<T> deleteBetween(int start, int end);
+	ReactiveSeq<T> deleteBetween(int start, int end);
 
 	/**
 	 * Insert a Stream into the middle of this stream at the specified position
@@ -1727,7 +1727,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            to insert
 	 * @return newly conjoined SequenceM
 	 */
-	SequenceM<T> insertStreamAt(int pos, Stream<T> stream);
+	ReactiveSeq<T> insertStreamAt(int pos, Stream<T> stream);
 
 	/**
 	 * Access asynchronous terminal operations (each returns a Future)
@@ -1784,7 +1784,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Time unit
 	 * @return SequenceM that skips all elements until time period has elapsed
 	 */
-	SequenceM<T> skip(long time, final TimeUnit unit);
+	ReactiveSeq<T> skip(long time, final TimeUnit unit);
 
 	/**
 	 * Return all elements until specified time period has elapsed
@@ -1804,7 +1804,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Time unit
 	 * @return SequenceM that returns all elements until time period has elapsed
 	 */
-	SequenceM<T> limit(long time, final TimeUnit unit);
+	ReactiveSeq<T> limit(long time, final TimeUnit unit);
 
 	/**
 	 * assertThat(SequenceM.of(1,2,3,4,5) .skipLast(2)
@@ -1813,7 +1813,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @param num
 	 * @return
 	 */
-	SequenceM<T> skipLast(int num);
+	ReactiveSeq<T> skipLast(int num);
 
 	/**
 	 * Limit results to the last x elements in a SequenceM
@@ -1829,13 +1829,13 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @param num of elements to return (last elements)
 	 * @return SequenceM limited to last num elements
 	 */
-	SequenceM<T> limitLast(int num);
+	ReactiveSeq<T> limitLast(int num);
 
 	/**
 	 * Turns this SequenceM into a HotStream, a connectable Stream, being executed on a thread on the 
 	 * supplied executor, that is producing data. Note this method creates a HotStream that starts emitting data
-	 * immediately. For a hotStream that waits until the first user streams connect @see {@link SequenceM#primedHotStream(Executor)}.
-	 * The generated HotStream is not pausable, for a pausable HotStream @see {@link SequenceM#pausableHotStream(Executor)}.
+	 * immediately. For a hotStream that waits until the first user streams connect @see {@link ReactiveSeq#primedHotStream(Executor)}.
+	 * The generated HotStream is not pausable, for a pausable HotStream @see {@link ReactiveSeq#pausableHotStream(Executor)}.
 	 * Turns this SequenceM into a HotStream, a connectable Stream, being
 	 * executed on a thread on the supplied executor, that is producing data
 	 * 
@@ -1861,8 +1861,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	/**
 	 * Return a HotStream that will start emitting data when the first connecting Stream connects.
 	 * Note this method creates a HotStream that starts emitting data only when the first connecting Stream connects.
-	 *  For a hotStream that starts to output data immediately @see {@link SequenceM#hotStream(Executor)}.
-	 * The generated HotStream is not pausable, for a pausable HotStream @see {@link SequenceM#primedPausableHotStream(Executor)}.
+	 *  For a hotStream that starts to output data immediately @see {@link ReactiveSeq#hotStream(Executor)}.
+	 * The generated HotStream is not pausable, for a pausable HotStream @see {@link ReactiveSeq#primedPausableHotStream(Executor)}.
 	 * <pre>
 	  * <pre>
 	 * {@code 
@@ -1883,8 +1883,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	/**
 	 * Turns this SequenceM into a HotStream, a connectable & pausable Stream, being executed on a thread on the 
 	 * supplied executor, that is producing data. Note this method creates a HotStream that starts emitting data
-	 * immediately. For a hotStream that waits until the first user streams connect @see {@link SequenceM#primedPausableHotStream(Executor)}.
-	 * The generated HotStream is pausable, for a unpausable HotStream (slightly faster execution) @see {@link SequenceM#hotStream(Executor)}.
+	 * immediately. For a hotStream that waits until the first user streams connect @see {@link ReactiveSeq#primedPausableHotStream(Executor)}.
+	 * The generated HotStream is pausable, for a unpausable HotStream (slightly faster execution) @see {@link ReactiveSeq#hotStream(Executor)}.
 	 * <pre>
 	 * {@code 
 	 *  HotStream<Integer> ints = SequenceM.range(0,Integer.MAX_VALUE)
@@ -1907,8 +1907,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	/**
 	 * Return a pausable HotStream that will start emitting data when the first connecting Stream connects.
 	 * Note this method creates a HotStream that starts emitting data only when the first connecting Stream connects.
-	 *  For a hotStream that starts to output data immediately @see {@link SequenceM#pausableHotStream(Executor)}.
-	 * The generated HotStream is pausable, for a unpausable HotStream @see {@link SequenceM#primedHotStream(Executor)}.
+	 *  For a hotStream that starts to output data immediately @see {@link ReactiveSeq#pausableHotStream(Executor)}.
+	 * The generated HotStream is pausable, for a unpausable HotStream @see {@link ReactiveSeq#primedHotStream(Executor)}.
 	 * <pre>
 	  * <pre>
 	 * {@code 
@@ -2037,8 +2037,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            to extract element from
 	 * @return Element and Sequence
 	 */
-	default Tuple2<T, SequenceM<T>> elementAt(long index) {
-		Tuple2<SequenceM<T>, SequenceM<T>> tuple = this.duplicateSequence();
+	default Tuple2<T, ReactiveSeq<T>> elementAt(long index) {
+		Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> tuple = this.duplicateSequence();
 		return tuple.map1(s -> s.zipWithIndex().filter(t -> t.v2 == index).findFirst().map(t -> t.v1()).get());
 	}
 
@@ -2054,10 +2054,10 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @return Sequence that adds the time between elements in millis to each
 	 *         element
 	 */
-	default SequenceM<Tuple2<T, Long>> elapsed() {
+	default ReactiveSeq<Tuple2<T, Long>> elapsed() {
 		AtomicLong last = new AtomicLong(System.currentTimeMillis());
 
-		return zip(SequenceM.generate(() -> {
+		return zip(ReactiveSeq.generate(() -> {
 			long now = System.currentTimeMillis();
 
 			long result = now - last.get();
@@ -2079,8 +2079,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * 
 	 * @return Sequence that adds a timestamp to each element
 	 */
-	default SequenceM<Tuple2<T, Long>> timestamp() {
-		return zip(SequenceM.generate(() -> System.currentTimeMillis()));
+	default ReactiveSeq<Tuple2<T, Long>> timestamp() {
+		return zip(ReactiveSeq.generate(() -> System.currentTimeMillis()));
 	}
 
 	/**
@@ -2106,7 +2106,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 		return ReactiveStreamsLoader.subscriber.get().subscribe();
 	}
 
-	public static <T> SequenceM<T> empty(){
+	public static <T> ReactiveSeq<T> empty(){
 		return fromStream(Stream.empty());
 	}
 	
@@ -2119,7 +2119,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @return
 	 */
 	@SafeVarargs
-	public static <T> SequenceM<T> of(T... elements) {
+	public static <T> ReactiveSeq<T> of(T... elements) {
 		ReversingArraySpliterator array = new ReversingArraySpliterator<T>(elements, false, 0);
 		return StreamUtils.sequenceM(StreamSupport.stream(array, false),Optional.ofNullable(array));
 
@@ -2134,7 +2134,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @return
 	 */
 	@SafeVarargs
-	public static <T> SequenceM<T> reversedOf(T... elements) {
+	public static <T> ReactiveSeq<T> reversedOf(T... elements) {
 		ReversingArraySpliterator array = new ReversingArraySpliterator<T>(elements, false, 0).invert();
 		return StreamUtils.sequenceM(StreamSupport.stream(array, false),Optional.ofNullable(array));
 		
@@ -2149,7 +2149,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            To Construct sequence from
 	 * @return
 	 */
-	public static <T> SequenceM<T> reversedListOf(List<T> elements) {
+	public static <T> ReactiveSeq<T> reversedListOf(List<T> elements) {
 		Objects.requireNonNull(elements);
 		ReversingListSpliterator list = new ReversingListSpliterator<T>(elements, false).invert();
 		return StreamUtils.sequenceM(StreamSupport.stream(list, false),Optional.ofNullable(list));
@@ -2167,7 +2167,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Number for range to end at
 	 * @return Range SequenceM
 	 */
-	public static SequenceM<Integer> range(int start, int end) {
+	public static ReactiveSeq<Integer> range(int start, int end) {
 		ReversingRangeIntSpliterator range = new ReversingRangeIntSpliterator(start, end, false);
 		return StreamUtils.sequenceM(StreamSupport.stream(range, false),Optional.ofNullable(range));
 
@@ -2183,7 +2183,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Number for range to end at
 	 * @return Range SequenceM
 	 */
-	public static SequenceM<Long> rangeLong(long start, long end) {
+	public static ReactiveSeq<Long> rangeLong(long start, long end) {
 		ReversingRangeLongSpliterator range = new ReversingRangeLongSpliterator(start, end, false);
 		return StreamUtils.sequenceM(StreamSupport.stream(range, false),Optional.ofNullable(range));
 
@@ -2196,10 +2196,10 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Stream to construct Sequence from
 	 * @return
 	 */
-	public static <T> SequenceM<T> fromStream(Stream<T> stream) {
+	public static <T> ReactiveSeq<T> fromStream(Stream<T> stream) {
 		Objects.requireNonNull(stream);
-		if (stream instanceof SequenceM)
-			return (SequenceM) stream;
+		if (stream instanceof ReactiveSeq)
+			return (ReactiveSeq) stream;
 		return StreamUtils.sequenceM(stream,Optional.empty());
 	}
 
@@ -2210,7 +2210,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Stream to construct Sequence from
 	 * @return
 	 */
-	public static SequenceM<Integer> fromIntStream(IntStream stream) {
+	public static ReactiveSeq<Integer> fromIntStream(IntStream stream) {
 		Objects.requireNonNull(stream);
 		return StreamUtils.sequenceM(stream.boxed(),Optional.empty());
 		
@@ -2223,7 +2223,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Stream to construct Sequence from
 	 * @return
 	 */
-	public static SequenceM<Long> fromLongStream(LongStream stream) {
+	public static ReactiveSeq<Long> fromLongStream(LongStream stream) {
 		Objects.requireNonNull(stream);
 		return StreamUtils.sequenceM(stream.boxed(),Optional.empty());
 	}
@@ -2235,7 +2235,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Stream to construct Sequence from
 	 * @return
 	 */
-	public static SequenceM<Double> fromDoubleStream(DoubleStream stream) {
+	public static ReactiveSeq<Double> fromDoubleStream(DoubleStream stream) {
 		Objects.requireNonNull(stream);
 		return StreamUtils.sequenceM(stream.boxed(),Optional.empty());
 	}
@@ -2248,7 +2248,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            to construct Sequence from
 	 * @return SequenceM
 	 */
-	public static <T> SequenceM<T> fromList(List<T> list) {
+	public static <T> ReactiveSeq<T> fromList(List<T> list) {
 		Objects.requireNonNull(list);
 		ReversingListSpliterator array = new ReversingListSpliterator<T>(list, false);
 		return StreamUtils.sequenceM(StreamSupport.stream(array,false),Optional.ofNullable(array));
@@ -2261,7 +2261,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            to construct Sequence from
 	 * @return SequenceM
 	 */
-	public static <T> SequenceM<T> fromIterable(Iterable<T> iterable) {
+	public static <T> ReactiveSeq<T> fromIterable(Iterable<T> iterable) {
 		Objects.requireNonNull(iterable);
 		return StreamUtils.sequenceM(StreamSupport.stream(iterable.spliterator(), false),Optional.empty());
 	}
@@ -2273,7 +2273,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            to construct Sequence from
 	 * @return SequenceM
 	 */
-	public static <T> SequenceM<T> fromIterator(Iterator<T> iterator) {
+	public static <T> ReactiveSeq<T> fromIterator(Iterator<T> iterator) {
 		Objects.requireNonNull(iterator);
 		return fromIterable(() -> iterator);
 	}
@@ -2281,7 +2281,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	/**
 	 * @see Stream#iterate(Object, UnaryOperator)
 	 */
-	static <T> SequenceM<T> iterate(final T seed, final UnaryOperator<T> f) {
+	static <T> ReactiveSeq<T> iterate(final T seed, final UnaryOperator<T> f) {
 		return StreamUtils.sequenceM(Stream.iterate(seed, f),Optional.empty());
 		
 	}
@@ -2289,7 +2289,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	/**
 	 * @see Stream#generate(Supplier)
 	 */
-	static <T> SequenceM<T> generate(Supplier<T> s) {
+	static <T> ReactiveSeq<T> generate(Supplier<T> s) {
 		return StreamUtils.sequenceM(Stream.generate(s),Optional.empty());
 	
 	}
@@ -2307,8 +2307,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * </pre>
 	 * 
 	 */
-	public static <T, U> Tuple2<SequenceM<T>, SequenceM<U>> unzip(SequenceM<Tuple2<T, U>> sequence) {
-		Tuple2<SequenceM<Tuple2<T, U>>, SequenceM<Tuple2<T, U>>> tuple2 = sequence.duplicateSequence();
+	public static <T, U> Tuple2<ReactiveSeq<T>, ReactiveSeq<U>> unzip(ReactiveSeq<Tuple2<T, U>> sequence) {
+		Tuple2<ReactiveSeq<Tuple2<T, U>>, ReactiveSeq<Tuple2<T, U>>> tuple2 = sequence.duplicateSequence();
 		return new Tuple2(tuple2.v1.map(Tuple2::v1), tuple2.v2.map(Tuple2::v2));
 	}
 
@@ -2322,8 +2322,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * // SequenceM[1,2,3], SequenceM[a,b,c], SequenceM[2l,3l,4l]
 	 * </pre>
 	 */
-	public static <T1, T2, T3> Tuple3<SequenceM<T1>, SequenceM<T2>, SequenceM<T3>> unzip3(SequenceM<Tuple3<T1, T2, T3>> sequence) {
-		Tuple3<SequenceM<Tuple3<T1, T2, T3>>, SequenceM<Tuple3<T1, T2, T3>>, SequenceM<Tuple3<T1, T2, T3>>> tuple3 = sequence.triplicate();
+	public static <T1, T2, T3> Tuple3<ReactiveSeq<T1>, ReactiveSeq<T2>, ReactiveSeq<T3>> unzip3(ReactiveSeq<Tuple3<T1, T2, T3>> sequence) {
+		Tuple3<ReactiveSeq<Tuple3<T1, T2, T3>>, ReactiveSeq<Tuple3<T1, T2, T3>>, ReactiveSeq<Tuple3<T1, T2, T3>>> tuple3 = sequence.triplicate();
 		return new Tuple3(tuple3.v1.map(Tuple3::v1), tuple3.v2.map(Tuple3::v2), tuple3.v3.map(Tuple3::v3));
 	}
 
@@ -2338,8 +2338,8 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * 		// SequenceM[1,2,3], SequenceM[a,b,c], SequenceM[2l,3l,4l], SequenceM[z,y,x]
 	 * </pre>
 	 */
-	public static <T1, T2, T3, T4> Tuple4<SequenceM<T1>, SequenceM<T2>, SequenceM<T3>, SequenceM<T4>> unzip4(SequenceM<Tuple4<T1, T2, T3, T4>> sequence) {
-		Tuple4<SequenceM<Tuple4<T1, T2, T3, T4>>, SequenceM<Tuple4<T1, T2, T3, T4>>, SequenceM<Tuple4<T1, T2, T3, T4>>, SequenceM<Tuple4<T1, T2, T3, T4>>> quad = sequence
+	public static <T1, T2, T3, T4> Tuple4<ReactiveSeq<T1>, ReactiveSeq<T2>, ReactiveSeq<T3>, ReactiveSeq<T4>> unzip4(ReactiveSeq<Tuple4<T1, T2, T3, T4>> sequence) {
+		Tuple4<ReactiveSeq<Tuple4<T1, T2, T3, T4>>, ReactiveSeq<Tuple4<T1, T2, T3, T4>>, ReactiveSeq<Tuple4<T1, T2, T3, T4>>, ReactiveSeq<Tuple4<T1, T2, T3, T4>>> quad = sequence
 				.quadruplicate();
 		return new Tuple4(quad.v1.map(Tuple4::v1), quad.v2.map(Tuple4::v2), quad.v3.map(Tuple4::v3), quad.v4.map(Tuple4::v4));
 	}
@@ -2349,21 +2349,21 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * 
 	 * @see org.jooq.lambda.Seq#crossJoin(java.util.stream.Stream)
 	 */
-	default <U> SequenceM<Tuple2<T, U>> crossJoin(Stream<U> other){
+	default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(Stream<U> other){
 		return fromStream(JoolManipulation.super.crossJoin(other));
 	}
 
 	/* (non-Javadoc)
 	 * @see org.jooq.lambda.Seq#crossJoin(org.jooq.lambda.Seq)
 	 */
-	default <U> SequenceM<Tuple2<T, U>> crossJoin(Seq<U> other){
+	default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(Seq<U> other){
 		return fromStream(JoolManipulation.super.crossJoin(other));
 	}
 
 	/* (non-Javadoc)
 	 * @see org.jooq.lambda.Seq#crossJoin(java.lang.Iterable)
 	 */
-	default <U> SequenceM<Tuple2<T, U>> crossJoin(Iterable<U> other){
+	default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(Iterable<U> other){
 		return fromStream(JoolManipulation.super.crossJoin(other));
 	}
 
@@ -2376,25 +2376,25 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * java.util.function.BiPredicate)
 	 */
 
-	default <U> SequenceM<Tuple2<T, U>> innerJoin(Stream<U> other, java.util.function.BiPredicate<? super T, ? super U> predicate) {
-		Streamable<U> s = Streamable.fromStream(SequenceM.fromStream(other));
+	default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(Stream<U> other, java.util.function.BiPredicate<? super T, ? super U> predicate) {
+		Streamable<U> s = Streamable.fromStream(ReactiveSeq.fromStream(other));
 
 		return innerJoin(s, predicate);
 	}
 
 	
 
-	default <U> SequenceM<Tuple2<T, U>> innerJoin(Iterable<U> other, java.util.function.BiPredicate<? super T, ? super U> predicate) {
+	default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(Iterable<U> other, java.util.function.BiPredicate<? super T, ? super U> predicate) {
 		Streamable<U> s = Streamable.fromIterable(other);
 		return innerJoin(s, predicate);
 	}
 
-	default <U> SequenceM<Tuple2<T, U>> innerJoin(Seq<U> other, java.util.function.BiPredicate<? super T, ? super U> predicate) {
-		Streamable<U> s = Streamable.fromStream(SequenceM.fromStream(other));
+	default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(Seq<U> other, java.util.function.BiPredicate<? super T, ? super U> predicate) {
+		Streamable<U> s = Streamable.fromStream(ReactiveSeq.fromStream(other));
 
 		return innerJoin(s, predicate);
 	}
-	default <U> SequenceM<Tuple2<T, U>> innerJoin(Streamable<U> other, java.util.function.BiPredicate<? super T,? super U> predicate){
+	default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(Streamable<U> other, java.util.function.BiPredicate<? super T,? super U> predicate){
 		return flatMap(t -> other.stream()
                 .filter(u -> predicate.test(t, u))
                 .map(u -> Tuple.tuple(t, u)));
@@ -2407,30 +2407,30 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @see org.jooq.lambda.Seq#leftOuterJoin(java.util.stream.Stream,
 	 * java.util.function.BiPredicate)
 	 */
-	default <U> SequenceM<Tuple2<T, U>> leftOuterJoin(Stream<U> other, BiPredicate<? super T, ? super U> predicate) {
+	default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(Stream<U> other, BiPredicate<? super T, ? super U> predicate) {
 
-		Streamable<U> s = Streamable.fromIterable(SequenceM.fromStream(other).toLazyCollection());
-
-		return leftOuterJoin(s, predicate);
-
-	}
-
-	default <U> SequenceM<Tuple2<T, U>> leftOuterJoin(Seq<U> other, BiPredicate<? super T, ? super U> predicate) {
-
-		Streamable<U> s = Streamable.fromIterable(SequenceM.fromStream(other));
+		Streamable<U> s = Streamable.fromIterable(ReactiveSeq.fromStream(other).toLazyCollection());
 
 		return leftOuterJoin(s, predicate);
 
 	}
 
-	default <U> SequenceM<Tuple2<T, U>> leftOuterJoin(Iterable<U> other, BiPredicate<? super T, ? super U> predicate) {
+	default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(Seq<U> other, BiPredicate<? super T, ? super U> predicate) {
+
+		Streamable<U> s = Streamable.fromIterable(ReactiveSeq.fromStream(other));
+
+		return leftOuterJoin(s, predicate);
+
+	}
+
+	default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(Iterable<U> other, BiPredicate<? super T, ? super U> predicate) {
 
 		Streamable<U> s = Streamable.fromIterable(other);
 
 		return leftOuterJoin(s, predicate);
 
 	}
-	default <U> SequenceM<Tuple2<T, U>> leftOuterJoin(Streamable<U> s, java.util.function.BiPredicate<? super T,? super U> predicate){
+	default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(Streamable<U> s, java.util.function.BiPredicate<? super T,? super U> predicate){
 		return flatMap(t -> Seq.seq(s.stream())
                 .filter(u -> predicate.test(t, u))
                 .onEmpty(null)
@@ -2442,15 +2442,15 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @see org.jooq.lambda.Seq#rightOuterJoin(java.util.stream.Stream,
 	 * java.util.function.BiPredicate)
 	 */
-	default <U> SequenceM<Tuple2<T, U>> rightOuterJoin(Stream<U> other, BiPredicate<? super T, ? super U> predicate){
+	default <U> ReactiveSeq<Tuple2<T, U>> rightOuterJoin(Stream<U> other, BiPredicate<? super T, ? super U> predicate){
 		return fromStream(JoolManipulation.super.rightOuterJoin(other,predicate));
 	}
 
-	default <U> SequenceM<Tuple2<T, U>> rightOuterJoin(Iterable<U> other, BiPredicate<? super T, ? super U> predicate){
+	default <U> ReactiveSeq<Tuple2<T, U>> rightOuterJoin(Iterable<U> other, BiPredicate<? super T, ? super U> predicate){
 		return fromStream(JoolManipulation.super.rightOuterJoin(other,predicate));
 	}
 
-	default <U> SequenceM<Tuple2<T, U>> rightOuterJoin(Seq<U> other, BiPredicate<? super T, ? super U> predicate){
+	default <U> ReactiveSeq<Tuple2<T, U>> rightOuterJoin(Seq<U> other, BiPredicate<? super T, ? super U> predicate){
 		return fromStream(JoolManipulation.super.rightOuterJoin(other,predicate));
 	}
 		
@@ -2473,9 +2473,9 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Supplier that will generate the alternative Stream
 	 * @return SequenceM that will switch to an alternative Stream if empty
 	 */
-	default SequenceM<T> onEmptySwitch(Supplier<Stream<T>> switchTo) {
+	default ReactiveSeq<T> onEmptySwitch(Supplier<Stream<T>> switchTo) {
 		AtomicBoolean called = new AtomicBoolean(false);
-		return SequenceM.fromStream(onEmptyGet((Supplier) () -> {
+		return ReactiveSeq.fromStream(onEmptyGet((Supplier) () -> {
 			called.set(true);
 			return switchTo.get();
 		}).flatMap(s -> {
@@ -2490,22 +2490,22 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * 
 	 * @see org.jooq.lambda.Seq#onEmpty(java.lang.Object)
 	 */
-	SequenceM<T> onEmpty(T value);
+	ReactiveSeq<T> onEmpty(T value);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.jooq.lambda.Seq#onEmptyGet(java.util.function.Supplier)
 	 */
-	SequenceM<T> onEmptyGet(Supplier<T> supplier);
+	ReactiveSeq<T> onEmptyGet(Supplier<T> supplier);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.jooq.lambda.Seq#onEmptyThrow(java.util.function.Supplier)
 	 */
-	default <X extends Throwable> SequenceM<T> onEmptyThrow(Supplier<X> supplier) {
-		return SequenceM.fromStream(JoolManipulation.super.onEmptyThrow(supplier));
+	default <X extends Throwable> ReactiveSeq<T> onEmptyThrow(Supplier<X> supplier) {
+		return ReactiveSeq.fromStream(JoolManipulation.super.onEmptyThrow(supplier));
 	}
 
 	/*
@@ -2513,28 +2513,28 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * 
 	 * @see org.jooq.lambda.Seq#concat(java.util.stream.Stream)
 	 */
-	SequenceM<T> concat(Stream<T> other);
+	ReactiveSeq<T> concat(Stream<T> other);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.jooq.lambda.Seq#concat(java.lang.Object)
 	 */
-	SequenceM<T> concat(T other);
+	ReactiveSeq<T> concat(T other);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.jooq.lambda.Seq#concat(java.lang.Object[])
 	 */
-	SequenceM<T> concat(T... other);
+	ReactiveSeq<T> concat(T... other);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.jooq.lambda.Seq#distinct(java.util.function.Function)
 	 */
-	<U> SequenceM<T> distinct(Function<? super T, ? extends U> keyExtractor);
+	<U> ReactiveSeq<T> distinct(Function<? super T, ? extends U> keyExtractor);
 
 	/*
 	 * (non-Javadoc)
@@ -2542,28 +2542,28 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @see org.jooq.lambda.Seq#zip(org.jooq.lambda.Seq,
 	 * java.util.function.BiFunction)
 	 */
-	<U, R> SequenceM<R> zip(Seq<U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
+	<U, R> ReactiveSeq<R> zip(Seq<U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.jooq.lambda.Seq#shuffle(java.util.Random)
 	 */
-	SequenceM<T> shuffle(Random random);
+	ReactiveSeq<T> shuffle(Random random);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.jooq.lambda.Seq#slice(long, long)
 	 */
-	SequenceM<T> slice(long from, long to);
+	ReactiveSeq<T> slice(long from, long to);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.jooq.lambda.Seq#sorted(java.util.function.Function)
 	 */
-	<U extends Comparable<? super U>> SequenceM<T> sorted(Function<? super T, ? extends U> function);
+	<U extends Comparable<? super U>> ReactiveSeq<T> sorted(Function<? super T, ? extends U> function);
 
 	/**
 	 * emit x elements per time period
@@ -2585,7 +2585,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Time unit
 	 * @return SequenceM that emits x elements per time period
 	 */
-	SequenceM<T> xPer(int x, long time, TimeUnit t);
+	ReactiveSeq<T> xPer(int x, long time, TimeUnit t);
 
 	/**
 	 * emit one element per time period
@@ -2606,7 +2606,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @param t Time unit
 	 * @return SequenceM that emits 1 element per time period
 	 */
-	SequenceM<T> onePer(long time, TimeUnit t);
+	ReactiveSeq<T> onePer(long time, TimeUnit t);
 
 	/**
 	 * Allow one element through per time period, drop all other elements in
@@ -2625,7 +2625,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @param t
 	 * @return
 	 */
-	SequenceM<T> debounce(long time, TimeUnit t);
+	ReactiveSeq<T> debounce(long time, TimeUnit t);
 
 	/**
 	 * Batch elements by size into a List
@@ -2644,7 +2644,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @param t time unit for batch
 	 * @return SequenceM batched by size and time
 	 */
-	SequenceM<ListX<T>> batchBySizeAndTime(int size, long time, TimeUnit t);
+	ReactiveSeq<ListX<T>> batchBySizeAndTime(int size, long time, TimeUnit t);
 
 	/**
 	 * Batch elements by size into a collection created by the supplied factory
@@ -2666,7 +2666,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Collection factory
 	 * @return SequenceM batched by size and time
 	 */
-	<C extends Collection<? super T>> SequenceM<C> batchBySizeAndTime(int size, long time, TimeUnit unit, Supplier<C> factory);
+	<C extends Collection<? super T>> ReactiveSeq<C> batchBySizeAndTime(int size, long time, TimeUnit unit, Supplier<C> factory);
 
 	/**
 	 * Batch elements in a Stream by time period
@@ -2684,7 +2684,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            time unit for batch
 	 * @return SequenceM batched into lists by time period
 	 */
-	SequenceM<ListX<T>> batchByTime(long time, TimeUnit t);
+	ReactiveSeq<ListX<T>> batchByTime(long time, TimeUnit t);
 
 	/**
 	 * Batch elements by time into a collection created by the supplied factory
@@ -2707,7 +2707,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Collection factory
 	 * @return SequenceM batched into collection types by time period
 	 */
-	<C extends Collection<T>> SequenceM<C> batchByTime(long time, TimeUnit unit, Supplier<C> factory);
+	<C extends Collection<T>> ReactiveSeq<C> batchByTime(long time, TimeUnit unit, Supplier<C> factory);
 
 	/**
 	 * Batch elements in a Stream by size into Lists
@@ -2722,7 +2722,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @param size of batch
 	 * @return SequenceM batched by size into Lists
 	 */
-	SequenceM<ListX<T>> batchBySize(int size);
+	ReactiveSeq<ListX<T>> batchBySize(int size);
 
 	/**
 	 * Batch elements in a Stream by size into a collection created by the
@@ -2741,7 +2741,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @param supplier Collection factory
 	 * @return SequenceM batched into collection types by size
 	 */
-	<C extends Collection<T>> SequenceM<C> batchBySize(int size, Supplier<C> supplier);
+	<C extends Collection<T>> ReactiveSeq<C> batchBySize(int size, Supplier<C> supplier);
 
 	/**
 	 * emit elements after a fixed delay
@@ -2761,7 +2761,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            for the delay
 	 * @return SequenceM that emits each element after a fixed delay
 	 */
-	SequenceM<T> fixedDelay(long l, TimeUnit unit);
+	ReactiveSeq<T> fixedDelay(long l, TimeUnit unit);
 
 	/**
 	 * Introduce a random jitter / time delay between the emission of elements
@@ -2779,7 +2779,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            - random number less than this is used for each jitter
 	 * @return Sequence with a random jitter between element emission
 	 */
-	SequenceM<T> jitter(long maxJitterPeriodInNanos);
+	ReactiveSeq<T> jitter(long maxJitterPeriodInNanos);
 
 	/**
 	 * Create a Sequence of Streamables (replayable Streams / Sequences) where
@@ -2800,7 +2800,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @param maxTimeUnit of window
 	 * @return Windowed SequenceM
 	 */
-	SequenceM<Streamable<T>> windowBySizeAndTime(int maxSize, long maxTime, TimeUnit maxTimeUnit);
+	ReactiveSeq<Streamable<T>> windowBySizeAndTime(int maxSize, long maxTime, TimeUnit maxTimeUnit);
 
 	/**
 	 * Create a Sequence of Streamables (replayable Streams / Sequences) where
@@ -2822,7 +2822,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Window while true
 	 * @return SequenceM windowed while predicate holds
 	 */
-	SequenceM<Streamable<T>> windowWhile(Predicate<? super T> predicate);
+	ReactiveSeq<Streamable<T>> windowWhile(Predicate<? super T> predicate);
 
 	/**
 	 * Create a Sequence of Streamables (replayable Streams / Sequences) where
@@ -2844,7 +2844,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Window until true
 	 * @return SequenceM windowed until predicate holds
 	 */
-	SequenceM<Streamable<T>> windowUntil(Predicate<? super T> predicate);
+	ReactiveSeq<Streamable<T>> windowUntil(Predicate<? super T> predicate);
 
 	/**
 	 * Create SequenceM of Streamables (replayable Streams / Sequences) where
@@ -2865,7 +2865,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Window while true
 	 * @return SequenceM windowed while predicate holds
 	 */
-	SequenceM<Streamable<T>> windowStatefullyWhile(BiPredicate<Streamable<? super T>, ? super T> predicate);
+	ReactiveSeq<Streamable<T>> windowStatefullyWhile(BiPredicate<Streamable<? super T>, ? super T> predicate);
 
 	/**
 	 * Create SequenceM of Streamables (replayable Streams / Sequences) where
@@ -2888,7 +2888,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            time unit per window
 	 * @return SequenceM windowed by time
 	 */
-	SequenceM<Streamable<T>> windowByTime(long time, TimeUnit t);
+	ReactiveSeq<Streamable<T>> windowByTime(long time, TimeUnit t);
 
 	/**
 	 * Create a SequenceM batched by List, where each batch is populated until
@@ -2907,7 +2907,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Batch until predicate holds, then open next batch
 	 * @return SequenceM batched into lists determined by the predicate supplied
 	 */
-	SequenceM<ListX<T>> batchUntil(Predicate<? super T> predicate);
+	ReactiveSeq<ListX<T>> batchUntil(Predicate<? super T> predicate);
 
 	/**
 	 * Create a SequenceM batched by List, where each batch is populated while
@@ -2926,7 +2926,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Batch while predicate holds, then open next batch
 	 * @return SequenceM batched into lists determined by the predicate supplied
 	 */
-	SequenceM<ListX<T>> batchWhile(Predicate<? super T> predicate);
+	ReactiveSeq<ListX<T>> batchWhile(Predicate<? super T> predicate);
 
 	/**
 	 * Create a SequenceM batched by a Collection, where each batch is populated
@@ -2948,7 +2948,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @return SequenceM batched into collections determined by the predicate
 	 *         supplied
 	 */
-	<C extends Collection<? super T>> SequenceM<C> batchWhile(Predicate<? super T> predicate, Supplier<C> factory);
+	<C extends Collection<? super T>> ReactiveSeq<C> batchWhile(Predicate<? super T> predicate, Supplier<C> factory);
 
 	/**
 	 * Create a SequenceM batched by a Collection, where each batch is populated
@@ -2971,7 +2971,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @return SequenceM batched into collections determined by the predicate
 	 *         supplied
 	 */
-	<C extends Collection<? super T>> SequenceM<C> batchUntil(Predicate<? super T> predicate, Supplier<C> factory);
+	<C extends Collection<? super T>> ReactiveSeq<C> batchUntil(Predicate<? super T> predicate, Supplier<C> factory);
 
 	/**
 	 * Recover from an exception with an alternative value
@@ -2991,7 +2991,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            value
 	 * @return SequenceM that can recover from an Exception
 	 */
-	SequenceM<T> recover(final Function<Throwable, ? extends T> fn);
+	ReactiveSeq<T> recover(final Function<Throwable, ? extends T> fn);
 
 	/**
 	 * Recover from a particular exception type
@@ -3013,7 +3013,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            That accepts an error and returns an alternative value
 	 * @return Sequence that can recover from a particular exception
 	 */
-	<EX extends Throwable> SequenceM<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn);
+	<EX extends Throwable> ReactiveSeq<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn);
 
 	/**
 	 * Retry a transformation if it fails. Default settings are to retry up to 7
@@ -3040,7 +3040,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Function to retry if fails
 	 * 
 	 */
-	default <R> SequenceM<R> retry(Function<? super T, ? extends R> fn) {
+	default <R> ReactiveSeq<R> retry(Function<? super T, ? extends R> fn) {
 		Function<T, R> retry = t -> {
 			int count = 7;
 			int[] sleep = { 2000 };
@@ -3076,7 +3076,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            element to remove
 	 * @return Filtered Stream / SequenceM
 	 */
-	default SequenceM<T> remove(T t) {
+	default ReactiveSeq<T> remove(T t) {
 		return this.filter(v -> v != t);
 	}
 
@@ -3087,7 +3087,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * 
 	 * @return Permutations from this SequenceM
 	 */
-	default SequenceM<SequenceM<T>> permutations() {
+	default ReactiveSeq<ReactiveSeq<T>> permutations() {
 		Streamable<Streamable<T>> streamable = Streamable.fromStream(this).permutations();
 		return streamable.map(s -> s.sequenceM()).sequenceM();
 	}
@@ -3111,7 +3111,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            index exclusive
 	 * @return Sequence between supplied indexes of original Sequence
 	 */
-	default SequenceM<T> subStream(int start, int end) {
+	default ReactiveSeq<T> subStream(int start, int end) {
 		return this.limit(end).deleteBetween(0, start);
 	}
 
@@ -3130,7 +3130,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * @return All combinations of the elements in this stream of the specified
 	 *         size
 	 */
-	default SequenceM<SequenceM<T>> combinations(int size) {
+	default ReactiveSeq<ReactiveSeq<T>> combinations(int size) {
 		Streamable<Streamable<T>> streamable = Streamable.fromStream(this).combinations(size);
 		return streamable.map(s -> s.sequenceM()).sequenceM();
 	}
@@ -3148,7 +3148,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 * 
 	 * @return All combinations of the elements in this stream
 	 */
-	default SequenceM<SequenceM<T>> combinations() {
+	default ReactiveSeq<ReactiveSeq<T>> combinations() {
 		Streamable<Streamable<T>> streamable = Streamable.fromStream(this).combinations();
 		return streamable.map(s -> s.sequenceM()).sequenceM();
 	}
@@ -3287,7 +3287,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	<R1, R2, R> SequenceM<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
+	<R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
 			Function<? super T, Function<? super R1, ? extends BaseStream<R2, ?>>> stream2,
 			Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction);
 
@@ -3322,7 +3322,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	<R1, R2, R> SequenceM<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
+	<R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
 			Function<? super T, Function<? super R1, ? extends BaseStream<R2, ?>>> stream2,
 			Function<? super T, Function<? super R1, Function<? super R2, Boolean>>> filterFunction,
 			Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction);
@@ -3350,7 +3350,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	<R1, R> SequenceM<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
+	<R1, R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
 			Function<? super T, Function<? super R1, ? extends R>> yieldingFunction);
 
 	/**
@@ -3379,7 +3379,7 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	 *            Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	<R1, R> SequenceM<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1, Function<? super T, Function<? super R1, Boolean>> filterFunction,
+	<R1, R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1, Function<? super T, Function<? super R1, Boolean>> filterFunction,
 			Function<? super T, Function<? super R1, ? extends R>> yieldingFunction);
 
 	@Override
@@ -3395,10 +3395,10 @@ public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<
 	}
 	
 	@Override
-	default <R> SequenceM<R> patternMatch(R defaultValue,
+	default <R> ReactiveSeq<R> patternMatch(R defaultValue,
 			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
 		
-		return (SequenceM<R>)ZippingApplicativable.super.patternMatch(defaultValue, case1);
+		return (ReactiveSeq<R>)ZippingApplicativable.super.patternMatch(defaultValue, case1);
 	}
 
 	

@@ -74,7 +74,7 @@ import com.aol.cyclops.internal.stream.operators.WindowWhileOperator;
 import com.aol.cyclops.internal.stream.spliterators.ReversableSpliterator;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.internal.stream.SeqUtils;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.NonPausableHotStream;
@@ -1510,9 +1510,9 @@ public class StreamUtils{
 	}
 	
 	
-	public final static<T> SequenceM<T> sequenceM(Stream<T> stream,Optional<ReversableSpliterator> rev){
-		if(stream instanceof SequenceM)
-			return (SequenceM)stream;
+	public final static<T> ReactiveSeq<T> sequenceM(Stream<T> stream,Optional<ReversableSpliterator> rev){
+		if(stream instanceof ReactiveSeq)
+			return (ReactiveSeq)stream;
 		if(rev.isPresent())
 			return new SequenceMImpl<T>(stream,rev.get());
 		return new SequenceMImpl<T>(stream);
@@ -1571,7 +1571,7 @@ public class StreamUtils{
 	 * @param fn
 	 * @return
 	 */
-	public final static <T,R> Stream<R> flatMapSequenceM(Stream<T> stream,Function<? super T,SequenceM<? extends R>> fn) {
+	public final static <T,R> Stream<R> flatMapSequenceM(Stream<T> stream,Function<? super T,ReactiveSeq<? extends R>> fn) {
 		return stream.flatMap(fn);
 	}
 	public final static <T,R> Stream<R> flatMapAnyM(Stream<T> stream,Function<? super T,AnyM<? extends R>> fn) {
@@ -1634,7 +1634,7 @@ public class StreamUtils{
 		
 	}
 	
-	public final static <T,R> SequenceM<R> flatten(Stream<T> stream) {
+	public final static <T,R> ReactiveSeq<R> flatten(Stream<T> stream) {
 		return new MonadWrapper<>(stream).flatten().sequence();
 	}
 	/**

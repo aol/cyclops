@@ -22,7 +22,7 @@ import org.pcollections.PStack;
 import com.aol.cyclops.comprehensions.donotation.typed.DoComp;
 import com.aol.cyclops.comprehensions.donotation.typed.Entry;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 	public class DoComp0 extends DoComp{
 		public DoComp0(PStack<Entry> assigned) {
 			super(assigned,null);
@@ -201,7 +201,7 @@ import com.aol.cyclops.control.SequenceM;
 		 * @param o Defines next level in comprehension
 		 * @return Next stage in for comprehension builder
 		 */
-		public <T1> DoComp1<T1> add(SequenceM<T1> o){
+		public <T1> DoComp1<T1> add(ReactiveSeq<T1> o){
 			return new DoComp1(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),o)),getOrgType());
 			
 		}

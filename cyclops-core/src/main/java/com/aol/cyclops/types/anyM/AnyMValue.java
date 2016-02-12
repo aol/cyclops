@@ -25,7 +25,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.AnyMValueImpl;
 import com.aol.cyclops.internal.monads.AnyMonads;
 
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.util.function.QuadFunction;
@@ -74,7 +74,7 @@ public interface AnyMValue<T> extends AnyM<T>,
 	 * @see com.aol.cyclops.monad.AnyM#stream()
 	 */
 	@Override
-	SequenceM<T> stream() ;
+	ReactiveSeq<T> stream() ;
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.monad.AnyM#monad()
@@ -276,7 +276,7 @@ public interface AnyMValue<T> extends AnyM<T>,
 	 * @see com.aol.cyclops.monad.AnyM#asSequence()
 	 */
 	@Override
-	SequenceM<T> asSequence() ;
+	ReactiveSeq<T> asSequence() ;
 
 
 	/* (non-Javadoc)
@@ -367,7 +367,7 @@ public interface AnyMValue<T> extends AnyM<T>,
 	 * @param seq Stream of monads to convert
 	 * @return Monad with a List
 	 */
-	public static <T1>  AnyMValue<SequenceM<T1>> sequence(Stream<? extends AnyMValue<T1>> seq){
+	public static <T1>  AnyMValue<ReactiveSeq<T1>> sequence(Stream<? extends AnyMValue<T1>> seq){
 		return AnyMValueImpl.from(new AnyMonads().sequence(seq));
 	}
 	/**

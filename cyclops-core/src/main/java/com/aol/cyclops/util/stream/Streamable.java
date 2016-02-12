@@ -43,7 +43,7 @@ import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Traversable;
@@ -119,14 +119,14 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
 	public static<T> Streamable<T> of(T... values){
 		Exception e;
 		return new Streamable<T>(){
-			public SequenceM<T> stream(){
-				return SequenceM.of(values);
+			public ReactiveSeq<T> stream(){
+				return ReactiveSeq.of(values);
 			}
 			public Object getStreamable(){
 				return values;
 			}
-			public SequenceM<T> sequenceM(){
-				return SequenceM.of(values);
+			public ReactiveSeq<T> sequenceM(){
+				return ReactiveSeq.of(values);
 			}
 			
 			
@@ -2192,7 +2192,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return
     	 */
     	public static <T> Streamable<T> reversedOf(T... elements){
-    		return fromStream(SequenceM.reversedOf(elements));
+    		return fromStream(ReactiveSeq.reversedOf(elements));
     		
     	}
     	/**
@@ -2203,7 +2203,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 */
     	public static <T> Streamable<T> reversedListOf(List<T> elements){
     		Objects.requireNonNull(elements);
-    		return fromStream(SequenceM.reversedListOf(elements));
+    		return fromStream(ReactiveSeq.reversedListOf(elements));
 
     	}
     	/**
@@ -2214,7 +2214,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Range Streamable
     	 */
     	public static Streamable<Integer> range(int start, int end){
-    		return fromStream(SequenceM.range(start, end));
+    		return fromStream(ReactiveSeq.range(start, end));
     		
 
     	}
@@ -2226,7 +2226,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Range Streamable
     	 */
     	public static Streamable<Long> rangeLong(long start, long end){
-    		return fromStream(SequenceM.rangeLong(start, end));
+    		return fromStream(ReactiveSeq.rangeLong(start, end));
     		
 
     	}
@@ -2238,7 +2238,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 */
     	public static Streamable<Integer> fromIntStream(IntStream stream){
     		Objects.requireNonNull(stream);
-    		return fromStream(SequenceM.fromIntStream(stream));
+    		return fromStream(ReactiveSeq.fromIntStream(stream));
     	}
     	/**
     	 * Construct a Sequence from a Stream
@@ -2247,7 +2247,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 */
     	public static Streamable<Long> fromLongStream(LongStream stream){
     		Objects.requireNonNull(stream);
-    		return fromStream(SequenceM.fromLongStream(stream));
+    		return fromStream(ReactiveSeq.fromLongStream(stream));
     	}
     	/**
     	 * Construct a Sequence from a Stream
@@ -2256,7 +2256,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 */
     	public static Streamable<Double> fromDoubleStream(DoubleStream stream){
     		Objects.requireNonNull(stream);
-    		return fromStream(SequenceM.fromDoubleStream(stream));
+    		return fromStream(ReactiveSeq.fromDoubleStream(stream));
     	}
     	
     	public static <T> Streamable<T> fromList(List<T> list){
@@ -2270,7 +2270,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
          */
         static <T> Streamable<T> iterate(final T seed, final UnaryOperator<T> f) {
         	Objects.requireNonNull(f);
-            return fromStream(SequenceM.iterate(seed, f));
+            return fromStream(ReactiveSeq.iterate(seed, f));
         }
 
        
@@ -2279,7 +2279,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
          */
         static <T> Streamable<T> generate(Supplier<T> s) {
         	Objects.requireNonNull(s);
-            return fromStream(SequenceM.generate(s));
+            return fromStream(ReactiveSeq.generate(s));
         }
     	/**
     	 * Unzip a zipped Stream 
@@ -2295,7 +2295,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * 
     	 */
     	public static <T,U> Tuple2<Streamable<T>,Streamable<U>> unzip(Streamable<Tuple2<T,U>> sequence){
-    		return SequenceM.unzip(sequence.sequenceM()).map1(s->fromStream(s)).map2(s->fromStream(s));
+    		return ReactiveSeq.unzip(sequence.sequenceM()).map1(s->fromStream(s)).map2(s->fromStream(s));
     	}
     	/**
     	 * Unzip a zipped Stream into 3
@@ -2307,7 +2307,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * </pre>
     	 */
     	public static <T1,T2,T3> Tuple3<Streamable<T1>,Streamable<T2>,Streamable<T3>> unzip3(Streamable<Tuple3<T1,T2,T3>> sequence){
-    		return SequenceM.unzip3(sequence.sequenceM()).map1(s->fromStream(s)).map2(s->fromStream(s)).map3(s->fromStream(s));
+    		return ReactiveSeq.unzip3(sequence.sequenceM()).map1(s->fromStream(s)).map2(s->fromStream(s)).map3(s->fromStream(s));
     	}
     	/**
     	 * Unzip a zipped Stream into 4
@@ -2321,7 +2321,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * </pre>
     	 */
     	public static <T1,T2,T3,T4> Tuple4<Streamable<T1>,Streamable<T2>,Streamable<T3>,Streamable<T4>> unzip4(Streamable<Tuple4<T1,T2,T3,T4>> sequence){
-    		return SequenceM.unzip4(sequence.sequenceM()).map1(s->fromStream(s)).map2(s->fromStream(s)).map3(s->fromStream(s)).map4(s->fromStream(s));
+    		return ReactiveSeq.unzip4(sequence.sequenceM()).map1(s->fromStream(s)).map2(s->fromStream(s)).map3(s->fromStream(s)).map4(s->fromStream(s));
     	}
     	
     	
@@ -2919,7 +2919,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	}
 
 		@Override
-		default SequenceM<T> stream() {
+		default ReactiveSeq<T> stream() {
 			return ToStream.super.sequenceM();
 		}
 

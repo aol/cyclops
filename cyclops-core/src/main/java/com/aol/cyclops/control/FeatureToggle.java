@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.types.stream.ToStream;
@@ -205,11 +205,11 @@ public interface FeatureToggle<F> extends Supplier<F>, Value<F>, ToStream<F>,App
 	 * @return emty Stream if disabled, Stream with current value if enabled.
 	 */
 	@Override
-	default SequenceM<F> stream(){
+	default ReactiveSeq<F> stream(){
 		if(isEnabled())
-			return SequenceM.of(get());
+			return ReactiveSeq.of(get());
 		else
-			return SequenceM.of();
+			return ReactiveSeq.of();
 	}
 	@Override
 	default Iterator<F> iterator() {

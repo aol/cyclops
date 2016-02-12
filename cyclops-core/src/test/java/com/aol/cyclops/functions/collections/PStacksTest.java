@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.data.collections.PStacks;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 
 public class PStacksTest {
 
@@ -39,7 +39,7 @@ public class PStacksTest {
 
 	@Test
 	public void testToPStackReversed() {
-		assertThat(SequenceM.of("a","b","c").mapReduce(PStacks.toPStackReverse()),
+		assertThat(ReactiveSeq.of("a","b","c").mapReduce(PStacks.toPStackReverse()),
 				equalTo(Arrays.asList("c","b","a")));
 	}
 	@Test
@@ -50,7 +50,7 @@ public class PStacksTest {
 
 	@Test
 	public void testToPStack() {
-		assertThat(SequenceM.of("a","b","c").mapReduce(PStacks.toPStack()),
+		assertThat(ReactiveSeq.of("a","b","c").mapReduce(PStacks.toPStack()),
 				equalTo(Arrays.asList("a","b","c")));
 	}
 	

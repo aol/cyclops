@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import uk.co.real_logic.agrona.concurrent.OneToOneConcurrentArrayQueue;
 
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.PausableHotStream;
 
 import fj.data.Seq;
@@ -27,7 +27,7 @@ public class HotStreamTest {
 	public void hotStream() throws InterruptedException{
 		value= null;
 		CountDownLatch latch = new CountDownLatch(1);
-		SequenceM.of(1,2,3)
+		ReactiveSeq.of(1,2,3)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())
 				.hotStream(exec);
@@ -44,7 +44,7 @@ public class HotStreamTest {
 			System.out.println(i);
 			value= null;
 			CountDownLatch latch = new CountDownLatch(1);
-			SequenceM.range(0,Integer.MAX_VALUE)
+			ReactiveSeq.range(0,Integer.MAX_VALUE)
 					.limit(100)
 					.peek(v->value=v)
 					.peek(v->latch.countDown())
@@ -64,7 +64,7 @@ public class HotStreamTest {
 	public void hotStreamConnectBlockingQueue() throws InterruptedException{
 		value= null;
 		CountDownLatch latch = new CountDownLatch(1);
-		SequenceM.range(0,Integer.MAX_VALUE)
+		ReactiveSeq.range(0,Integer.MAX_VALUE)
 				.limit(1000)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())
@@ -81,7 +81,7 @@ public class HotStreamTest {
 	public void hotStreamConnectPausable() throws InterruptedException{
 		value= null;
 		CountDownLatch latch = new CountDownLatch(1);
-		PausableHotStream s = SequenceM.range(0,Integer.MAX_VALUE)
+		PausableHotStream s = ReactiveSeq.range(0,Integer.MAX_VALUE)
 				.limit(1000)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())
@@ -106,7 +106,7 @@ public class HotStreamTest {
 	public void hotStreamConnectPausableConnect() throws InterruptedException{
 		value= null;
 		CountDownLatch latch = new CountDownLatch(1);
-		PausableHotStream s = SequenceM.range(0,Integer.MAX_VALUE)
+		PausableHotStream s = ReactiveSeq.range(0,Integer.MAX_VALUE)
 				.limit(100000)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())

@@ -25,15 +25,15 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 
 
 
 //see BaseSequentialSeqTest for in order tests
 public  class FutureTest {
 	
-	SequenceM<Integer> empty;
-	SequenceM<Integer> nonEmpty;
+	ReactiveSeq<Integer> empty;
+	ReactiveSeq<Integer> nonEmpty;
 	static final Executor exec = Executors.newFixedThreadPool(1);
 	@Before
 	public void setup(){
@@ -221,7 +221,7 @@ public  class FutureTest {
 	  
 	    @Test
 	    public void testMinByMaxBy() {
-	        Supplier<SequenceM<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
 	        assertEquals(1, (int) s.get().futureOperations(exec).maxBy(t -> Math.abs(t - 5)).join().get());
 	        assertEquals(5, (int) s.get().futureOperations(exec).minBy(t -> Math.abs(t - 5)).join().get());
@@ -236,7 +236,7 @@ public  class FutureTest {
 	    @Test
 	    public void testFoldLeft() {
 	    	for(int i=0;i<100;i++){
-		        Supplier<SequenceM<String>> s = () -> of("a", "b", "c");
+		        Supplier<ReactiveSeq<String>> s = () -> of("a", "b", "c");
 	
 		        assertTrue(s.get().futureOperations(exec).foldLeft("", String::concat).join().contains("a"));
 		        assertTrue(s.get().futureOperations(exec).foldLeft("", String::concat).join().contains("b"));
@@ -251,7 +251,7 @@ public  class FutureTest {
 	    
 	    @Test
 	    public void testFoldRight(){
-	    	 	Supplier<SequenceM<String>> s = () -> of("a", "b", "c");
+	    	 	Supplier<ReactiveSeq<String>> s = () -> of("a", "b", "c");
 
 		        assertTrue(s.get().futureOperations(exec).foldRight("", String::concat).join().contains("a"));
 		        assertTrue(s.get().futureOperations(exec).foldRight("", String::concat).join().contains("b"));
@@ -261,7 +261,7 @@ public  class FutureTest {
 	    
 	    @Test
 	    public void testFoldLeftStringBuilder() {
-	        Supplier<SequenceM<String>> s = () -> of("a", "b", "c");
+	        Supplier<ReactiveSeq<String>> s = () -> of("a", "b", "c");
 
 	        
 	        assertTrue(s.get().futureOperations(exec).foldLeft(new StringBuilder(), (u, t) -> u.append("-").append(t)).join().toString().contains("a"));
@@ -277,7 +277,7 @@ public  class FutureTest {
 
 	    @Test
 	    public void testFoldRighttringBuilder() {
-	        Supplier<SequenceM<String>> s = () -> of("a", "b", "c");
+	        Supplier<ReactiveSeq<String>> s = () -> of("a", "b", "c");
 
 	        
 	        assertTrue(s.get().futureOperations(exec).foldRight(new StringBuilder(), (t, u) -> u.append("-").append(t)).join().toString().contains("a"));

@@ -30,7 +30,7 @@ import java.util.stream.Collector;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.future.DoubleOperatorsMixin;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.future.IntOperatorsMixin;
@@ -49,7 +49,7 @@ public class FutureOperationsImpl<T> implements  DoubleOperatorsMixin<T>,
 	@Getter
 	private final Executor exec;
 	@Getter
-	private final SequenceM<T> stream;
+	private final ReactiveSeq<T> stream;
 	
 	/**
 	 * Asynchronously convert  this Stream into a List

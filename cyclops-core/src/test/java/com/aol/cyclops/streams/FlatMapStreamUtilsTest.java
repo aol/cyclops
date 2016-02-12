@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 import org.jooq.lambda.Seq;
 import org.junit.Test;
 
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.util.stream.StreamUtils;
 public class FlatMapStreamUtilsTest {
 
@@ -48,7 +48,7 @@ public class FlatMapStreamUtilsTest {
 		}
 	@Test
 	public void flatMapSeqToSequenceM(){
-		assertThat(StreamUtils.flatMapSequenceM(Seq.of(1,2,3),i-> SequenceM.<Integer>of(i+2)).collect(Collectors.toList()),equalTo(Arrays.asList(3,4,5)));
+		assertThat(StreamUtils.flatMapSequenceM(Seq.of(1,2,3),i-> ReactiveSeq.<Integer>of(i+2)).collect(Collectors.toList()),equalTo(Arrays.asList(3,4,5)));
 	}
 	
 	

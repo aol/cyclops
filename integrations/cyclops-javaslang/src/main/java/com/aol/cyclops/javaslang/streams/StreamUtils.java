@@ -45,7 +45,7 @@ import com.aol.cyclops.javaslang.ToStream;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.internal.stream.SeqUtils;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.types.stream.HeadAndTail;
@@ -674,7 +674,7 @@ public class StreamUtils{
 		Iterator<T> it = stream.iterator();
 		if(!it.hasNext())
 			return Optional.empty();
-		return Optional.of(new HeadAndTail(it.next(),SequenceM.fromIterable(()->it)));
+		return Optional.of(new HeadAndTail(it.next(),ReactiveSeq.fromIterable(()->it)));
 	}
 	
 	/**
@@ -1655,7 +1655,7 @@ public class StreamUtils{
 	 * @param fn
 	 * @return
 	 */
-	public final static <T,R> Stream<R> flatMapSequenceM(Stream<T> stream,Function<? super T,SequenceM<? extends R>> fn) {
+	public final static <T,R> Stream<R> flatMapSequenceM(Stream<T> stream,Function<? super T,ReactiveSeq<? extends R>> fn) {
 		return stream.flatMap(fn);
 	}
 	public final static <T,R> Stream<R> flatMapAnyM(Stream<T> stream,Function<? super T,AnyM<? extends R>> fn) {

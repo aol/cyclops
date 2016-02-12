@@ -36,7 +36,7 @@ import com.aol.cyclops.javaslang.Javaslang;
 import com.aol.cyclops.javaslang.streams.StreamUtils;
 import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.types.stream.future.FutureCollectable;
 import com.aol.simple.react.async.factories.QueueFactories;
@@ -142,8 +142,8 @@ public interface LazyStream<T> extends Stream<T>, Functor<T>{
 
     long serialVersionUID = 1L;
 
-    default SequenceM<T> stream(){
-    	return SequenceM.fromIterator(this.iterator());
+    default ReactiveSeq<T> stream(){
+    	return ReactiveSeq.fromIterator(this.iterator());
     }
     /**
      * Returns a {@link java.util.stream.Collector} which may be used in conjunction with
@@ -754,7 +754,7 @@ public interface LazyStream<T> extends Stream<T>, Functor<T>{
 
 	/** JDK Collect **/
 	default Collectable<T> collectable(){
-    	return SequenceM.fromIterable(this);
+    	return ReactiveSeq.fromIterable(this);
     }
 	default  <R> R collect(Supplier<R> supplier,
             BiConsumer<R, ? super T> accumulator,
@@ -772,8 +772,8 @@ public interface LazyStream<T> extends Stream<T>, Functor<T>{
 		return Javaslang.anyM(this);
 	}
 
-	default SequenceM<T> sequenceM() {
-		return SequenceM.fromIterable(this);
+	default ReactiveSeq<T> sequenceM() {
+		return ReactiveSeq.fromIterable(this);
 	}
 
 	default Seq<T> seq() {

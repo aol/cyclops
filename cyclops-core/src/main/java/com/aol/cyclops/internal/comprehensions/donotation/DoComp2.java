@@ -21,7 +21,7 @@ import org.pcollections.PStack;
 
 import com.aol.cyclops.internal.monads.MonadWrapper;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Reader;
 public class DoComp2<T1, T2> extends DoComp {
 	
@@ -228,7 +228,7 @@ public class DoComp2<T1, T2> extends DoComp {
 	 *            Defines next level in comprehension
 	 * @return Next stage in for comprehension builder
 	 */
-	public <T3> DoComp3<T1, T2, T3> add(SequenceM<T3> o) {
+	public <T3> DoComp3<T1, T2, T3> add(ReactiveSeq<T3> o) {
 		return new DoComp3(getAssigned().plus(getAssigned().size(), new Entry("$$monad" + getAssigned().size(), o)),getOrgType());
 
 	}
@@ -562,7 +562,7 @@ public class DoComp2<T1, T2> extends DoComp {
 	 *            comprehension
 	 * @return Next stage in for comprehension builder
 	 */
-	public <T3> DoComp3<T1, T2, T3> withTraversableM(Function<? super T1, Function<? super T2, SequenceM<T3>>> f) {
+	public <T3> DoComp3<T1, T2, T3> withTraversableM(Function<? super T1, Function<? super T2, ReactiveSeq<T3>>> f) {
 		return new DoComp3(addToAssigned(f),getOrgType());
 
 	}

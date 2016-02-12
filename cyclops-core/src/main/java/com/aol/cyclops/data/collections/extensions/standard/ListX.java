@@ -30,7 +30,7 @@ import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableFunctor;
@@ -115,9 +115,9 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	
 	
 	@Override
-	default SequenceM<T> stream(){
+	default ReactiveSeq<T> stream(){
 		
-		return SequenceM.fromIterable(this);
+		return ReactiveSeq.fromIterable(this);
 	}
 	public <T> Collector<T,?,List<T>> getCollector();
 	
@@ -506,27 +506,27 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	 * @see com.aol.cyclops.lambda.monads.Traversable#permutations()
 	 */
 	@Override
-	default ListX<SequenceM<T>> permutations() {
+	default ListX<ReactiveSeq<T>> permutations() {
 		
-		return (ListX<SequenceM<T>>)MutableCollectionX.super.permutations();
+		return (ListX<ReactiveSeq<T>>)MutableCollectionX.super.permutations();
 	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Traversable#combinations(int)
 	 */
 	@Override
-	default ListX<SequenceM<T>> combinations(int size) {
+	default ListX<ReactiveSeq<T>> combinations(int size) {
 		
-		return (ListX<SequenceM<T>>)MutableCollectionX.super.combinations(size);
+		return (ListX<ReactiveSeq<T>>)MutableCollectionX.super.combinations(size);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Traversable#combinations()
 	 */
 	@Override
-	default ListX<SequenceM<T>> combinations() {
+	default ListX<ReactiveSeq<T>> combinations() {
 		
-		return (ListX<SequenceM<T>>)MutableCollectionX.super.combinations();
+		return (ListX<ReactiveSeq<T>>)MutableCollectionX.super.combinations();
 	}
 
 	/* (non-Javadoc)

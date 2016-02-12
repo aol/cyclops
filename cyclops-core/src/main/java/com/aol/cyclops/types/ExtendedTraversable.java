@@ -1,6 +1,6 @@
 package com.aol.cyclops.types;
 
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 
 
@@ -15,7 +15,7 @@ public interface ExtendedTraversable<T> extends Traversable<T>,Foldable<T>, Iter
 	 * 
 	 * @return Permutations from this SequenceM
 	 */
-	 default ExtendedTraversable<SequenceM<T>> permutations(){
+	 default ExtendedTraversable<ReactiveSeq<T>> permutations(){
 		 return stream().permutations();
 	 }
 
@@ -35,7 +35,7 @@ public interface ExtendedTraversable<T> extends Traversable<T>,Foldable<T>, Iter
 	 * @return All combinations of the elements in this stream of the specified
 	 *         size
 	 */
-	 default ExtendedTraversable<SequenceM<T>> combinations(int size){
+	 default ExtendedTraversable<ReactiveSeq<T>> combinations(int size){
 		 return stream().combinations();
 	 }
 
@@ -52,7 +52,7 @@ public interface ExtendedTraversable<T> extends Traversable<T>,Foldable<T>, Iter
 	 * 
 	 * @return All combinations of the elements in this stream
 	 */
-	 default ExtendedTraversable<SequenceM<T>> combinations(){
+	 default ExtendedTraversable<ReactiveSeq<T>> combinations(){
 		 return stream().combinations();
 	 }
 

@@ -19,20 +19,20 @@ import org.junit.Test;
 
 import com.aol.cyclops.control.Do;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 
 import lombok.val;
 
 public class StreamTest {
 	@Test
 	public void trampoline2Test(){
-		SequenceM.of(10,20,30,40)
+		ReactiveSeq.of(10,20,30,40)
 				 .trampoline(i-> fibonacci(i))
 				 .forEach(System.out::println);
 	}
 	@Test
 	public void trampolineTest(){
-		SequenceM.of(10_000,200_000,3_000_000,40_000_000)
+		ReactiveSeq.of(10_000,200_000,3_000_000,40_000_000)
 				 .trampoline(i-> fibonacci(i))
 				 .forEach(System.out::println);
 	}
@@ -70,7 +70,7 @@ public class StreamTest {
 	@Test
 	public void stringStreamWithNull() {
 		
-		SequenceM<String> res =  Do.add(  "hello world") 
+		ReactiveSeq<String> res =  Do.add(  "hello world") 
 							.add((Iterable<String>)null)
 							.yield( v1-> v2-> ""+ v1 + v2)
 							.unwrap();
@@ -83,7 +83,7 @@ public class StreamTest {
 	@Test @Ignore
 	public void urlStream() throws MalformedURLException {
 		val url = new URL("http://www.aol.com");
-		SequenceM<String> res = Do.add (url) 
+		ReactiveSeq<String> res = Do.add (url) 
 									 .yield( v1->  v1 + "New line!").unwrap();
 		List<String> expected = Arrays.asList("h1", "e1", "l1", "l1", "o1",  " 1", "w1", "o1", "r1", 
 				"l1", "d1");
@@ -95,7 +95,7 @@ public class StreamTest {
 	@Test
 	public void bufferedReaderStream() {
 		
-		SequenceM<String> res = Do.add(  new BufferedReader(new InputStreamReader(this.getClass().getClassLoader()
+		ReactiveSeq<String> res = Do.add(  new BufferedReader(new InputStreamReader(this.getClass().getClassLoader()
                                	.getResourceAsStream("input2.file")))) 
                               .yield( v -> ""+ v + "*").unwrap();
 		List<String> expected = Arrays.asList("line 1*","line 2*","line 3*");
@@ -107,7 +107,7 @@ public class StreamTest {
 	@Test
 	public void urlStream2() {
 		URL url =this.getClass().getClassLoader().getResource("input2.file");
-		SequenceM<String> res = Do.add (url) 
+		ReactiveSeq<String> res = Do.add (url) 
 							.yield( v-> ""+ v+ "*").unwrap();
 		List<String> expected = Arrays.asList("line 1*","line 2*","line 3*");
 		
@@ -119,7 +119,7 @@ public class StreamTest {
 	public void fileStream2() {
 		URL url =this.getClass().getClassLoader().getResource("input2.file");
 		File file = new File(url.getFile());
-		SequenceM<String> res = Do.add(  file) 
+		ReactiveSeq<String> res = Do.add(  file) 
 							 .yield( v-> ""+ v + "*").unwrap();
 		List<String> expected = Arrays.asList("line 1*","line 2*","line 3*");
 		
@@ -131,7 +131,7 @@ public class StreamTest {
 	@Test
 	public void iterableStream() {
 		
-		SequenceM<String> res = Do.add(  new MyIterable()) 
+		ReactiveSeq<String> res = Do.add(  new MyIterable()) 
 							.yield( v->  v + "*").unwrap();
 		List<String> expected = Arrays.asList("hello*","world*");
 		

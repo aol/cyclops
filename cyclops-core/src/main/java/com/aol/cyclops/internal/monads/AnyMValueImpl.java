@@ -15,7 +15,7 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Xor;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.util.stream.Streamable;
@@ -45,7 +45,7 @@ public class AnyMValueImpl<T> implements AnyMValue<T> {
 	}
 
 	@Override
-	public SequenceM<T> sequenceM() {
+	public ReactiveSeq<T> sequenceM() {
 		return stream();
 	}
 
@@ -136,12 +136,12 @@ public class AnyMValueImpl<T> implements AnyMValue<T> {
 	}
 
 	@Override
-	public <NT> SequenceM<NT> toSequence(Function<? super T, ? extends Stream<? extends NT>> fn) {
+	public <NT> ReactiveSeq<NT> toSequence(Function<? super T, ? extends Stream<? extends NT>> fn) {
 		return anyM.toSequence(fn);
 	}
 
 	@Override
-	public <T> SequenceM<T> toSequence() {
+	public <T> ReactiveSeq<T> toSequence() {
 		return anyM.toSequence();
 	}
 
@@ -156,7 +156,7 @@ public class AnyMValueImpl<T> implements AnyMValue<T> {
 	}
 
 	@Override
-	public SequenceM<T> stream() {
+	public ReactiveSeq<T> stream() {
 		return anyM.stream();
 	}
 
@@ -219,7 +219,7 @@ public class AnyMValueImpl<T> implements AnyMValue<T> {
 	}
 
 	@Override
-	public SequenceM<T> asSequence() {
+	public ReactiveSeq<T> asSequence() {
 		return anyM.asSequence();
 	}
 

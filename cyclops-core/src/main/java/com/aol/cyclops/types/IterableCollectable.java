@@ -4,11 +4,11 @@ import java.util.function.Predicate;
 
 import org.hamcrest.Matcher;
 
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 
 public interface IterableCollectable<T> extends Iterable<T>{
-	default SequenceM<T> stream(){
-		return SequenceM.fromIterable(this);
+	default ReactiveSeq<T> stream(){
+		return ReactiveSeq.fromIterable(this);
 	}
 	/**
 	 * [equivalent to count]

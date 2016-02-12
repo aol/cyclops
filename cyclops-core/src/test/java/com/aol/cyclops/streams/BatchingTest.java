@@ -1,7 +1,8 @@
 package com.aol.cyclops.streams;
-import static com.aol.cyclops.sequence.SequenceM.fromIntStream;
-import static com.aol.cyclops.sequence.SequenceM.iterate;
-import static com.aol.cyclops.sequence.SequenceM.of;
+
+import static com.aol.cyclops.control.ReactiveSeq.fromIntStream;
+import static com.aol.cyclops.control.ReactiveSeq.iterate;
+import static com.aol.cyclops.control.ReactiveSeq.of;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
@@ -26,45 +27,45 @@ import java.util.stream.IntStream;
 import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.util.stream.Streamable;
 
 import lombok.Value;
 public class BatchingTest {
 	@Test
 	public void batchUntil(){
-		assertThat(SequenceM.of(1,2,3,4,5,6)
+		assertThat(ReactiveSeq.of(1,2,3,4,5,6)
 				.batchUntil(i->i%3==0)
 				.toList().size(),equalTo(2));
-		assertThat(SequenceM.of(1,2,3,4,5,6)
+		assertThat(ReactiveSeq.of(1,2,3,4,5,6)
 				.batchUntil(i->i%3==0)
 				.toList().get(0),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void batchWhile(){
-		assertThat(SequenceM.of(1,2,3,4,5,6)
+		assertThat(ReactiveSeq.of(1,2,3,4,5,6)
 				.batchWhile(i->i%3!=0)
 				.toList()
 				.size(),equalTo(2));
-		assertThat(SequenceM.of(1,2,3,4,5,6)
+		assertThat(ReactiveSeq.of(1,2,3,4,5,6)
 				.batchWhile(i->i%3!=0)
 				.toList(),equalTo(Arrays.asList(Arrays.asList(1,2,3),Arrays.asList(4,5,6))));
 	}
 	@Test
 	public void batchUntilCollection(){
-		assertThat(SequenceM.of(1,2,3,4,5,6)
+		assertThat(ReactiveSeq.of(1,2,3,4,5,6)
 				.batchUntil(i->i%3==0,()->new ArrayList<>())
 				.toList().size(),equalTo(2));
-		assertThat(SequenceM.of(1,2,3,4,5,6)
+		assertThat(ReactiveSeq.of(1,2,3,4,5,6)
 				.batchUntil(i->i%3==0,()->new ArrayList<>())
 				.toList().get(0),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void batchWhileCollection(){
-		assertThat(SequenceM.of(1,2,3,4,5,6)
+		assertThat(ReactiveSeq.of(1,2,3,4,5,6)
 				.batchWhile(i->i%3!=0,()->new ArrayList<>())
 				.toList().size(),equalTo(2));
-		assertThat(SequenceM.of(1,2,3,4,5,6)
+		assertThat(ReactiveSeq.of(1,2,3,4,5,6)
 				.batchWhile(i->i%3!=0,()->new ArrayList<>())
 				.toList(),equalTo(Arrays.asList(Arrays.asList(1,2,3),Arrays.asList(4,5,6))));
 	}

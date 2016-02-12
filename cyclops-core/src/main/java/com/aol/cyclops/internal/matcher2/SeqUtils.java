@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 class SeqUtils {
@@ -39,8 +39,8 @@ class SeqUtils {
 		
 		public final static class EMPTY { }
 		public static final EMPTY EMPTY = new EMPTY();
-		public static SequenceM<Object> seq(Object t){
-			return SequenceM.fromStream(stream(t));
+		public static ReactiveSeq<Object> seq(Object t){
+			return ReactiveSeq.fromStream(stream(t));
 		}
 			public static Stream<Object> stream(Object t){
 			

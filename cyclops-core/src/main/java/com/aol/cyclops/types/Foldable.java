@@ -10,11 +10,11 @@ import java.util.stream.Stream;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 
 public interface Foldable<T> {
 
-	public SequenceM<T> stream();
+	public ReactiveSeq<T> stream();
 	
 	/**
 	 * Attempt to map this Sequence to the same type as the supplied Monoid

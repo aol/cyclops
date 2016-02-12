@@ -15,12 +15,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.util.stream.Streamable;
 
 public class WindowingTest {
-	SequenceM<Integer> empty;
-	SequenceM<Integer> nonEmpty;
+	ReactiveSeq<Integer> empty;
+	ReactiveSeq<Integer> nonEmpty;
 
 	@Before
 	public void setup(){
@@ -30,34 +30,34 @@ public class WindowingTest {
 	
 	@Test
 	public void windowWhile(){
-		assertThat(SequenceM.of(1,2,3,4,5,6)
+		assertThat(ReactiveSeq.of(1,2,3,4,5,6)
 				.windowWhile(i->i%3!=0)
 				.toList().size(),equalTo(2));
-		assertThat(SequenceM.of(1,2,3,4,5,6)
+		assertThat(ReactiveSeq.of(1,2,3,4,5,6)
 				.windowWhile(i->i%3!=0)
 				.toList().get(0).sequenceM().toList(),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void windowUntil(){
-		assertThat(SequenceM.of(1,2,3,4,5,6)
+		assertThat(ReactiveSeq.of(1,2,3,4,5,6)
 				.windowUntil(i->i%3==0)
 				.toList().size(),equalTo(2));
-		assertThat(SequenceM.of(1,2,3,4,5,6)
+		assertThat(ReactiveSeq.of(1,2,3,4,5,6)
 				.windowUntil(i->i%3==0)
 				.toList().get(0).sequenceM().toList(),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void windowUntilEmpty(){
-		assertThat(SequenceM.<Integer>of()
+		assertThat(ReactiveSeq.<Integer>of()
 				.windowUntil(i->i%3==0)
 				.toList().size(),equalTo(0));
 	}
 	@Test
 	public void windowStatefullyWhile(){
-		System.out.println(SequenceM.of(1,2,3,4,5,6)
+		System.out.println(ReactiveSeq.of(1,2,3,4,5,6)
 				.windowStatefullyWhile((s,i)->s.contains(4) ? true : false)
 				.toList());
-		assertThat(SequenceM.of(1,2,3,4,5,6)
+		assertThat(ReactiveSeq.of(1,2,3,4,5,6)
 				.windowStatefullyWhile((s,i)->s.contains(4) ? true : false)
 				.toList().size(),equalTo(5));
 		
@@ -65,14 +65,14 @@ public class WindowingTest {
 	@Test
 	public void windowStatefullyWhileEmpty(){
 		
-		assertThat(SequenceM.of()
+		assertThat(ReactiveSeq.of()
 				.windowStatefullyWhile((s,i)->s.sequenceM().toList().contains(4) ? true : false)
 				.toList().size(),equalTo(0));
 		
 	}
 	@Test
 	public void sliding() {
-		List<List<Integer>> list = SequenceM.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
+		List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
 
 		assertThat(list.get(0), hasItems(1, 2));
 		assertThat(list.get(1), hasItems(2, 3));
@@ -80,7 +80,7 @@ public class WindowingTest {
 
 	@Test
 	public void slidingIncrement() {
-		List<List<Integer>> list = SequenceM.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+		List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
 
 		System.out.println(list);
 		assertThat(list.get(0), hasItems(1, 2, 3));
@@ -90,7 +90,7 @@ public class WindowingTest {
 	@Test
 	public void grouped() {
 
-		List<List<Integer>> list = SequenceM.of(1, 2, 3, 4, 5, 6).grouped(3).collect(Collectors.toList());
+		List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).grouped(3).collect(Collectors.toList());
 		System.out.println(list);
 		assertThat(list.get(0), hasItems(1, 2, 3));
 		assertThat(list.get(1), hasItems(4, 5, 6));
@@ -101,7 +101,7 @@ public class WindowingTest {
 	public void sliding2() {
 		
 
-		List<ListX<Integer>> sliding = SequenceM.of(1, 2, 3, 4, 5).sliding(2).toList();
+		List<ListX<Integer>> sliding = ReactiveSeq.of(1, 2, 3, 4, 5).sliding(2).toList();
 
 		assertThat(sliding, contains(asList(1, 2), asList(2, 3), asList(3, 4), asList(4, 5)));
 	}
@@ -109,7 +109,7 @@ public class WindowingTest {
 	@Test
 	public void slidingOverlap() {
 		
-		List<ListX<Integer>> sliding = SequenceM.of(1, 2, 3, 4, 5).sliding(3,2).toList();
+		List<ListX<Integer>> sliding = ReactiveSeq.of(1, 2, 3, 4, 5).sliding(3,2).toList();
 
 		assertThat(sliding, contains(asList(1, 2, 3), asList(3, 4, 5)));
 	}
@@ -118,14 +118,14 @@ public class WindowingTest {
 	public void slidingEmpty() {
 		
 
-		assertThat(SequenceM.of().sliding(1).toList().size(),equalTo(0));
+		assertThat(ReactiveSeq.of().sliding(1).toList().size(),equalTo(0));
 	}
 
 	@Test
 	public void slidingWithSmallWindowAtEnd() {
 		
 
-		List<ListX<Integer>> sliding = SequenceM.of(1, 2, 3, 4, 5).sliding(2,2).toList();
+		List<ListX<Integer>> sliding = ReactiveSeq.of(1, 2, 3, 4, 5).sliding(2,2).toList();
 
 		assertThat(sliding, contains(asList(1, 2), asList(3, 4), asList(5)));
 	}
@@ -187,9 +187,9 @@ public class WindowingTest {
 
 	@Test
 	public void groupedInfinite() {
-		SequenceM<Integer> infinite = SequenceM.iterate(1, i->i+1);
+		ReactiveSeq<Integer> infinite = ReactiveSeq.iterate(1, i->i+1);
 		
-		final SequenceM<ListX<Integer>> grouped = infinite.grouped(3);
+		final ReactiveSeq<ListX<Integer>> grouped = infinite.grouped(3);
 		assertThat(grouped.get(0).get(),equalTo(Arrays.asList(1,2,3)));
 	
 	}

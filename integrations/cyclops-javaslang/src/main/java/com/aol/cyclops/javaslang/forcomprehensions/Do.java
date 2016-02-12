@@ -16,7 +16,7 @@ import javaslang.Value;
 import org.pcollections.ConsPStack;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 
 public class Do {
 
@@ -180,7 +180,7 @@ public class Do {
 	 * @param o Defines next level in comprehension
 	 * @return Next stage in for comprehension builder
 	 */
-	public static <T1> DoComp1<T1> add(SequenceM<T1> o){
+	public static <T1> DoComp1<T1> add(ReactiveSeq<T1> o){
 		return new DoComp0(ConsPStack.empty()).add(o);	
 	}
 	

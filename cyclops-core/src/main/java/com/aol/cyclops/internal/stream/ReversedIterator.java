@@ -8,7 +8,7 @@ import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.util.stream.Streamable;
 
 import lombok.AllArgsConstructor;
@@ -22,8 +22,8 @@ public class ReversedIterator<U> implements Streamable<U>{
 		return  list;
 	}
 	
-	public SequenceM<U> stream(){
-		return SequenceM.fromIterator(reversedIterator());
+	public ReactiveSeq<U> stream(){
+		return ReactiveSeq.fromIterator(reversedIterator());
 	}
 	public Iterator<U> reversedIterator(){
 		

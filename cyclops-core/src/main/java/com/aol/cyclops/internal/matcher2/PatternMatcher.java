@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 import org.jooq.lambda.tuple.Tuple;
 
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.Decomposable;
 
 import lombok.AllArgsConstructor;
@@ -146,7 +146,7 @@ public class PatternMatcher implements Function{
 	public <T, V, X> PatternMatcher inCaseOfManyType(Predicate master, Function<? super T, ? extends X> a,
 			Predicate<V>... predicates) {
 
-		SequenceM<Predicate<V>> pred = SequenceM.of(predicates);
+		ReactiveSeq<Predicate<V>> pred = ReactiveSeq.of(predicates);
 
 		return inCaseOf(it -> master.test(it)
 				&& seq(Extractors.decompose().apply(it)).zip(pred, (a1, b1) -> Tuple.tuple(a1, b1))

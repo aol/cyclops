@@ -30,7 +30,7 @@ import com.aol.cyclops.data.collections.POrderedSets;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 
 public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T>{
@@ -92,9 +92,9 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 		return empty();
 	}
 	@Override
-	default SequenceM<T> stream(){
+	default ReactiveSeq<T> stream(){
 		
-		return SequenceM.fromIterable(this);
+		return ReactiveSeq.fromIterable(this);
 	}
 	default POrderedSet<T> toPOrderedSet(){
 		return this;
@@ -265,9 +265,9 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#permutations()
 	 */
 	@Override
-	default POrderedSetX<SequenceM<T>> permutations() {
+	default POrderedSetX<ReactiveSeq<T>> permutations() {
 		
-		return ( POrderedSetX<SequenceM<T>>)PersistentCollectionX.super.permutations();
+		return ( POrderedSetX<ReactiveSeq<T>>)PersistentCollectionX.super.permutations();
 	}
 
 
@@ -275,9 +275,9 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations(int)
 	 */
 	@Override
-	default POrderedSetX<SequenceM<T>> combinations(int size) {
+	default POrderedSetX<ReactiveSeq<T>> combinations(int size) {
 		
-		return (POrderedSetX<SequenceM<T>>)PersistentCollectionX.super.combinations(size);
+		return (POrderedSetX<ReactiveSeq<T>>)PersistentCollectionX.super.combinations(size);
 	}
 
 
@@ -285,9 +285,9 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations()
 	 */
 	@Override
-	default POrderedSetX<SequenceM<T>> combinations() {
+	default POrderedSetX<ReactiveSeq<T>> combinations() {
 		
-		return (POrderedSetX<SequenceM<T>>)PersistentCollectionX.super.combinations();
+		return (POrderedSetX<ReactiveSeq<T>>)PersistentCollectionX.super.combinations();
 	}
 
 	default POrderedSetX<ListX<T>> sliding(int windowSize){

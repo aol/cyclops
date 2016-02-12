@@ -19,7 +19,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
 
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.reactive.ReactiveTask;
 
 public class ForEachSequenceMFutureTest {
@@ -33,7 +33,7 @@ public class ForEachSequenceMFutureTest {
 
 	@Test
 	public void forEachX(){
-		ReactiveTask s = SequenceM.of(1,2,3)
+		ReactiveTask s = ReactiveSeq.of(1,2,3)
 							.futureOperations(exec)
 							.forEachX( 2, System.out::println);
 		
@@ -44,7 +44,7 @@ public class ForEachSequenceMFutureTest {
 	@Test
 	public void forEachXTest(){
 		List<Integer> list = new ArrayList<>();
-		ReactiveTask s = SequenceM.of(1,2,3)
+		ReactiveTask s = ReactiveSeq.of(1,2,3)
 								  .futureOperations(exec)
 								   .forEachX( 2,  i->list.add(i));
 		s.block();
@@ -62,7 +62,7 @@ public class ForEachSequenceMFutureTest {
 	
 		List<Integer> list = new ArrayList<>();
 		
-		ReactiveTask s = SequenceM.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();})
+		ReactiveTask s = ReactiveSeq.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();})
 							.map(Supplier::get)
 							.futureOperations(exec)
 							.forEachXWithError( 2, i->list.add(i),
@@ -84,7 +84,7 @@ public class ForEachSequenceMFutureTest {
 	
 		List<Integer> list = new ArrayList<>();
 		
-		ReactiveTask s = SequenceM.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get)
+		ReactiveTask s = ReactiveSeq.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get)
 						.futureOperations(exec)		
 						.forEachXEvents( 2, i->list.add(i),
 								e->error=e,()->complete=true);
@@ -109,7 +109,7 @@ public class ForEachSequenceMFutureTest {
 	
 		List<Integer> list = new ArrayList<>();
 		assertThat(error,nullValue());
-		SequenceM.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get)
+		ReactiveSeq.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get)
 							.futureOperations(exec)
 							.forEachWithError(  i->list.add(i),
 								e->error=e).block();
@@ -129,7 +129,7 @@ public class ForEachSequenceMFutureTest {
 		List<Integer> list = new ArrayList<>();
 		assertFalse(complete);
 		assertThat(error,nullValue());
-		SequenceM.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();})
+		ReactiveSeq.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();})
 				.map(Supplier::get)
 				.futureOperations(exec) 
 				.forEachEvent( i->list.add(i),e->error=e,()->complete=true)
@@ -149,7 +149,7 @@ public class ForEachSequenceMFutureTest {
 	@Test
 	public void streamCompleteForEachXTest(){
 		List<Integer> list = new ArrayList<>();
-		ReactiveTask s = SequenceM.of(1,2,3)
+		ReactiveTask s = ReactiveSeq.of(1,2,3)
 								  .futureOperations(exec)
 								   .forEachX( 2,  i->list.add(i));
 		s.block();
@@ -163,7 +163,7 @@ public class ForEachSequenceMFutureTest {
 	@Test
 	public void streamCompleteForEachXWithErrorsTest(){
 		List<Integer> list = new ArrayList<>();
-		ReactiveTask s = SequenceM.of(1,2,3)
+		ReactiveTask s = ReactiveSeq.of(1,2,3)
 								  .futureOperations(exec)
 								   .forEachXWithError( 2, i->list.add(i),
 											e->error=e);
@@ -178,7 +178,7 @@ public class ForEachSequenceMFutureTest {
 	@Test
 	public void streamCompleteForEachXEventsTest(){
 		List<Integer> list = new ArrayList<>();
-		ReactiveTask s = SequenceM.of(1,2,3)
+		ReactiveTask s = ReactiveSeq.of(1,2,3)
 								  .futureOperations(exec)
 								  .forEachXEvents( 2, i->list.add(i),
 										   	e->error=e,()->complete=true);
@@ -194,7 +194,7 @@ public class ForEachSequenceMFutureTest {
 	@Test
 	public void streamCompleteForEachWithErrorsTest(){
 		List<Integer> list = new ArrayList<>();
-		ReactiveTask s = SequenceM.of(1,2,3)
+		ReactiveTask s = ReactiveSeq.of(1,2,3)
 								  .futureOperations(exec)
 								   .forEachWithError( i->list.add(i),
 											e->error=e);
@@ -209,7 +209,7 @@ public class ForEachSequenceMFutureTest {
 	@Test
 	public void streamCompleteForEachEventsTest(){
 		List<Integer> list = new ArrayList<>();
-		ReactiveTask s = SequenceM.of(1,2,3)
+		ReactiveTask s = ReactiveSeq.of(1,2,3)
 								  .futureOperations(exec)
 								  .forEachEvent(  i->list.add(i),
 										   	e->error=e,()->complete=true);
@@ -223,7 +223,7 @@ public class ForEachSequenceMFutureTest {
 	}
 	@Test
 	public void forEachXAsync(){
-		ReactiveTask s = SequenceM.of(1,2,3)
+		ReactiveTask s = ReactiveSeq.of(1,2,3)
 							.futureOperations(exec)
 							.forEachX( 2, System.out::println);
 		
@@ -234,7 +234,7 @@ public class ForEachSequenceMFutureTest {
 	@Test
 	public void forEachXRequestAllTest(){
 		List<Integer> list = new ArrayList<>();
-		ReactiveTask s = SequenceM.of(1,2,3)
+		ReactiveTask s = ReactiveSeq.of(1,2,3)
 								  .futureOperations(exec)
 								   .forEachX( 2,  i->list.add(i));
 		s.block();
@@ -248,7 +248,7 @@ public class ForEachSequenceMFutureTest {
 	@Test
 	public void forEachXRequestAllAsyncTest(){
 		List<Integer> list = new ArrayList<>();
-		ReactiveTask s = SequenceM.of(1,2,3)
+		ReactiveTask s = ReactiveSeq.of(1,2,3)
 								  .futureOperations(exec)
 								   .forEachX( 2,  i->list.add(i));
 		s.block();

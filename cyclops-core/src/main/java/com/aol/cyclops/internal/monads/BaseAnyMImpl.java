@@ -22,7 +22,7 @@ import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.internal.comprehensions.comprehenders.MaterializedList;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.util.stream.Streamable;
@@ -314,7 +314,7 @@ public class BaseAnyMImpl<T> implements AnyM<T>{
 	 * 
 	 * @return A Sequence that wraps a Stream
 	 */
-	public final <NT> SequenceM<NT> toSequence(Function<? super T,? extends Stream<? extends NT>> fn){
+	public final <NT> ReactiveSeq<NT> toSequence(Function<? super T,? extends Stream<? extends NT>> fn){
 		return monad.flatMapToStream((Function)fn)
 					.sequence();
 	}
@@ -338,7 +338,7 @@ public class BaseAnyMImpl<T> implements AnyM<T>{
 	
 	 * @return A Sequence that wraps a Stream
 	 */
-	public final <T> SequenceM<T> toSequence(){
+	public final <T> ReactiveSeq<T> toSequence(){
 		return monad.streamedMonad().sequence();
 	}
 	
@@ -349,7 +349,7 @@ public class BaseAnyMImpl<T> implements AnyM<T>{
 	 * If the underlying monad is a Stream it is returned
 	 * Otherwise we flatMap the underlying monad to a Stream type
 	 */
-	public final SequenceM<T> asSequence(){
+	public final ReactiveSeq<T> asSequence(){
 		return monad.sequence();
 		
 	}
@@ -426,7 +426,7 @@ public class BaseAnyMImpl<T> implements AnyM<T>{
 				AnyM.ofMonad(b)))).anyM();		
 	}
 	
-	public SequenceM<T> stream(){
+	public ReactiveSeq<T> stream(){
 		if(this.monad.unwrap() instanceof Stream){
 			return asSequence();
 		}

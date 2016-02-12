@@ -32,7 +32,7 @@ import com.aol.cyclops.control.FluentFunctions;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 
 
 import lombok.AllArgsConstructor;
@@ -46,7 +46,7 @@ public class LazyOperationsImpl<T> implements  DoubleOperatorsMixin<T>,
 
 	
 	@Getter
-	private final SequenceM<T> stream;
+	private final ReactiveSeq<T> stream;
 	
 	/**
 	 * Asynchronously convert  this Stream into a List

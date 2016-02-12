@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.control.Do;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 
 public class ForComprehensionsTest {
 
@@ -24,7 +24,7 @@ public class ForComprehensionsTest {
 		
 		
 
-		assertThat(SequenceM.of(1,2,3)
+		assertThat(ReactiveSeq.of(1,2,3)
 		         .forEach2(a->IntStream.range(0,10), 
 		        		 a->b-> a+b)
 		         .toList(),equalTo(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 2, 3, 4, 5, 6, 7, 8, 
@@ -71,7 +71,7 @@ public class ForComprehensionsTest {
 
 		
 		
-		assertThat(SequenceM.of(1,2,3)
+		assertThat(ReactiveSeq.of(1,2,3)
 		         .forEach2(a->IntStream.range(0,10), 
 		        		 a->b->a>2 && b<8,
 		        		 a->b-> a+b)

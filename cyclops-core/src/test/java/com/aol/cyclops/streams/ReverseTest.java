@@ -9,13 +9,13 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 
 public class ReverseTest {
 	@Test
 	public void limitRange() throws InterruptedException{
 		
-		assertThat(SequenceM.range(0,Integer.MAX_VALUE)
+		assertThat(ReactiveSeq.range(0,Integer.MAX_VALUE)
 				 .limit(100)
 				 .count(),equalTo(100L));
 	}
@@ -25,7 +25,7 @@ public class ReverseTest {
 		List<Integer> list= new ArrayList<>();
 		for(int i=0;i<1000;i++)
 			list.add(i);
-		assertThat(SequenceM.fromList(list)
+		assertThat(ReactiveSeq.fromList(list)
 				 .limit(100)
 				 .count(),equalTo(100L));
 		
@@ -36,7 +36,7 @@ public class ReverseTest {
 		List<Integer> list= new ArrayList<>();
 		for(int i=0;i<1000;i++)
 			list.add(i);
-		assertThat(SequenceM.of(list.toArray())
+		assertThat(ReactiveSeq.of(list.toArray())
 				 .limit(100)
 				 .count(),equalTo(100L));
 		
@@ -47,7 +47,7 @@ public class ReverseTest {
 		List<Integer> list= new ArrayList<>();
 		for(int i=0;i<1000;i++)
 			list.add(i);
-		assertThat(SequenceM.of(list.toArray())
+		assertThat(ReactiveSeq.of(list.toArray())
 				 .skip(100)
 				 .count(),equalTo(900L));
 		
@@ -55,14 +55,14 @@ public class ReverseTest {
 	@Test
 	public void skipRange() throws InterruptedException{
 		
-		assertThat(SequenceM.range(0,1000)
+		assertThat(ReactiveSeq.range(0,1000)
 				 .skip(100)
 				 .count(),equalTo(900L));
 	}
 	@Test
 	public void skipRangeReversed() throws InterruptedException{
 		
-		assertThat(SequenceM.range(0,1000)
+		assertThat(ReactiveSeq.range(0,1000)
 				 .skip(100).reverse()
 				 .count(),equalTo(900L));
 	}
@@ -72,7 +72,7 @@ public class ReverseTest {
 		List<Integer> list= new ArrayList<>();
 		for(int i=0;i<1000;i++)
 			list.add(i);
-		assertThat(SequenceM.fromList(list)
+		assertThat(ReactiveSeq.fromList(list)
 				 .skip(100)
 				 .count(),equalTo(900L));
 		
@@ -83,7 +83,7 @@ public class ReverseTest {
 		list.add(1);
 		list.add(2);
 		
-		assertThat(SequenceM.reversedOf(1,2)
+		assertThat(ReactiveSeq.reversedOf(1,2)
 							.toList(),
 							equalTo(Arrays.asList(2,1)));
 		
@@ -94,7 +94,7 @@ public class ReverseTest {
 		list.add(1);
 		list.add(2);
 		
-		assertThat(SequenceM.reversedListOf(list)
+		assertThat(ReactiveSeq.reversedListOf(list)
 							.toList(),
 							equalTo(Arrays.asList(2,1)));
 		

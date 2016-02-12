@@ -24,7 +24,7 @@ import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.IterableCollectable;
@@ -53,9 +53,9 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	}
 	
 	@Override
-	default SequenceM<T> stream(){
+	default ReactiveSeq<T> stream(){
 		
-		return SequenceM.fromIterable(this);
+		return ReactiveSeq.fromIterable(this);
 	}
 	@Override
 	default SequenceMCollectable<T> collectable(){
@@ -328,7 +328,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 *            Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	default <R1, R2, R> SequenceM<R> forEach3(Function<? super T, Iterable<R1>> stream1,
+	default <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, Iterable<R1>> stream1,
 			Function<? super T, Function<? super R1, Iterable<R2>>> stream2,
 			Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction){
 		return Do.add(stream())
@@ -370,7 +370,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 *            Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	default <R1, R2, R> SequenceM<R> forEach3(Function<? super T, Iterable<R1>> stream1,
+	default <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, Iterable<R1>> stream1,
 			Function<? super T, Function<? super R1, Iterable<R2>>> stream2,
 			Function<? super T, Function<? super R1, Function<? super R2, Boolean>>> filterFunction,
 			Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction){
@@ -405,7 +405,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 *            Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	default <R1, R> SequenceM<R> forEach2(Function<? super T, Iterable<R1>> stream1,
+	default <R1, R> ReactiveSeq<R> forEach2(Function<? super T, Iterable<R1>> stream1,
 			Function<? super T, Function<? super R1, ? extends R>> yieldingFunction){
 		
 		return Do.add(stream())
@@ -439,7 +439,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 *            Streams that generates the new elements
 	 * @return SequenceM with elements generated via nested iteration
 	 */
-	default <R1, R> SequenceM<R> forEach2(Function<? super T, Iterable<R1>> stream1, 
+	default <R1, R> ReactiveSeq<R> forEach2(Function<? super T, Iterable<R1>> stream1, 
 			Function<? super T, Function<? super R1, Boolean>> filterFunction,
 			Function<? super T, Function<? super R1, ? extends R>> yieldingFunction){
 		return Do.add(stream())
@@ -482,7 +482,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 *            Time unit
 	 * @return SequenceM that emits x elements per time period
 	 */
-	default SequenceM<T> xPer(int x, long time, TimeUnit t){
+	default ReactiveSeq<T> xPer(int x, long time, TimeUnit t){
 		return stream().xPer(x, time, t);
 	}
 
@@ -505,7 +505,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 * @param t Time unit
 	 * @return SequenceM that emits 1 element per time period
 	 */
-	default SequenceM<T> onePer(long time, TimeUnit t){
+	default ReactiveSeq<T> onePer(long time, TimeUnit t){
 		return stream().onePer(time, t);
 	}
 
@@ -528,24 +528,24 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 *            for the delay
 	 * @return SequenceM that emits each element after a fixed delay
 	 */
-	default SequenceM<T> fixedDelay(long l, TimeUnit unit){
+	default ReactiveSeq<T> fixedDelay(long l, TimeUnit unit){
 		return stream().fixedDelay(l, unit);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#permutations()
 	 */
 	@Override
-	CollectionX<SequenceM<T>> permutations();
+	CollectionX<ReactiveSeq<T>> permutations();
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations(int)
 	 */
 	@Override
-	CollectionX<SequenceM<T>> combinations(int size);
+	CollectionX<ReactiveSeq<T>> combinations(int size);
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations()
 	 */
 	@Override
-	CollectionX<SequenceM<T>> combinations();
+	CollectionX<ReactiveSeq<T>> combinations();
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
 	 */

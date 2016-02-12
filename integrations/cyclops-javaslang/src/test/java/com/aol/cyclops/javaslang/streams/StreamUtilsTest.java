@@ -30,7 +30,7 @@ import com.aol.cyclops.javaslang.ToStream;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.Reducers;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.types.stream.HeadAndTail;
@@ -44,7 +44,7 @@ public class StreamUtilsTest {
 		 String head = headAndTail.head();
 		 assertThat(head,equalTo("hello"));
 		
-		SequenceM<String> tail =  headAndTail.tail();
+		ReactiveSeq<String> tail =  headAndTail.tail();
 		assertThat(tail.headAndTail().head(),equalTo("world"));
 		
 	}
@@ -57,7 +57,7 @@ public class StreamUtilsTest {
 		 String head = headAndTail.head();
 		 assertThat(head,equalTo("hello"));
 		
-		SequenceM<String> tail =  headAndTail.tail();
+		ReactiveSeq<String> tail =  headAndTail.tail();
 		assertThat(tail.headAndTail().head(),equalTo("world"));
 		
 	}
@@ -80,9 +80,9 @@ public class StreamUtilsTest {
 
 		assertThat(StreamUtils.ofType(Stream.of(1, "a", 2, "b", 3, null),Integer.class).toJavaList(),containsInAnyOrder(1, 2, 3));
 
-		assertThat(SequenceM.of(1, "a", 2, "b", 3, null).ofType(Integer.class).toList(),not(containsInAnyOrder("a", "b",null)));
+		assertThat(ReactiveSeq.of(1, "a", 2, "b", 3, null).ofType(Integer.class).toList(),not(containsInAnyOrder("a", "b",null)));
 
-		assertThat(SequenceM.of(1, "a", 2, "b", 3, null)
+		assertThat(ReactiveSeq.of(1, "a", 2, "b", 3, null)
 
 				.ofType(Serializable.class).toList(),containsInAnyOrder(1, "a", 2, "b", 3));
 
@@ -90,7 +90,7 @@ public class StreamUtilsTest {
 
 	@Test
 	public void testCastPast() {
-		SequenceM.of(1, "a", 2, "b", 3, null).cast(Date.class).map(d -> d.getTime());
+		ReactiveSeq.of(1, "a", 2, "b", 3, null).cast(Date.class).map(d -> d.getTime());
 	
 
 
@@ -99,7 +99,7 @@ public class StreamUtilsTest {
 	@Test
 	public void testIntersperse() {
 		
-		assertThat(SequenceM.of(1,2,3).intersperse(0).toList(),equalTo(Arrays.asList(1,0,2,0,3)));
+		assertThat(ReactiveSeq.of(1,2,3).intersperse(0).toList(),equalTo(Arrays.asList(1,0,2,0,3)));
 	
 
 

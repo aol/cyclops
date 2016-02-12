@@ -3,7 +3,7 @@ package com.aol.cyclops.types.applicative.zipping;
 import java.util.Iterator;
 import java.util.function.Function;
 
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableFunctor;
@@ -32,7 +32,7 @@ public interface ZippingApplicative5<T,T2,T3,T4,T5,R, D extends IterableFunctor<
 	
 		Iterator<Function<? super T,Function<? super T2,Function<? super T3,Function<? super T4,Function<? super T5,? extends R>>>>>> fn = delegate().iterator();
 		Iterator<T> it = f.iterator();
-		return ()-> (IterableFunctor)delegate().unitIterator(SequenceM.fromIterator(fn).zip(SequenceM.fromIterator(it))
+		return ()-> (IterableFunctor)delegate().unitIterator(ReactiveSeq.fromIterator(fn).zip(ReactiveSeq.fromIterator(it))
 								 .map(t->t.v1.apply(t.v2)).iterator());
 		
 	}

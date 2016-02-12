@@ -1,7 +1,7 @@
 package com.aol.cyclops.types.stream;
 
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 
 public interface ConvertableToSequenceM<T> {
-	SequenceM<T> sequenceM();
+	ReactiveSeq<T> sequenceM();
 }

@@ -11,13 +11,13 @@ import lombok.val;
 import org.pcollections.PStack;
 
 import com.aol.cyclops.Reducers;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.extensability.MonadicConverter;
 
 public class MonadicConverters {
 	
 
-	private final  StreamUpscaler upscaler =  stream -> SequenceM.fromStream(stream);
+	private final  StreamUpscaler upscaler =  stream -> ReactiveSeq.fromStream(stream);
 	
 	@Getter
 	private final static PStack<MonadicConverter> converters;

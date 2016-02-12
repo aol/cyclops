@@ -16,7 +16,7 @@ import org.pcollections.PMap;
 
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.FluentMapX;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.BiFunctor;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Foldable;
@@ -86,7 +86,7 @@ public interface PMapX<K, V> extends PMap<K, V>,
 	PMapX<K, V> minusAll(Collection<?> keys);
 
 	@Override
-	default SequenceM<Tuple2<K, V>> stream() {
+	default ReactiveSeq<Tuple2<K, V>> stream() {
 		// TODO Auto-generated method stub
 		return ExtendedTraversable.super.stream();
 	}

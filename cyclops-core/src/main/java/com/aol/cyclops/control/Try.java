@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.matcher2.CheckValues;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.types.stream.ToStream;
@@ -196,7 +196,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 	/**
 	 * @return Stream with value if Sucess, Empty Stream if failure
 	 */
-	public SequenceM<T> stream();
+	public ReactiveSeq<T> stream();
 	/**
 	 * @return Optional present if Failure (with Exception), Optional empty if Success
 	 */
@@ -745,8 +745,8 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 		 * @see com.aol.cyclops.trycatch.Try#toStream()
 		 */
 		@Override
-		public SequenceM<T> stream() {
-			return SequenceM.<T>of();
+		public ReactiveSeq<T> stream() {
+			return ReactiveSeq.<T>of();
 		}
 
 		/* 
@@ -1025,8 +1025,8 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 		 * @see com.aol.cyclops.trycatch.Try#toStream()
 		 */
 		@Override
-		public SequenceM<T> stream() {
-			return SequenceM.<T>of();
+		public ReactiveSeq<T> stream() {
+			return ReactiveSeq.<T>of();
 		}
 		/* 
 		 *	@return false

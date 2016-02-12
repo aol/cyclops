@@ -43,7 +43,7 @@ import com.aol.cyclops.Reducers;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.Decomposable;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.util.stream.StreamUtils;
@@ -594,7 +594,7 @@ public abstract class AbstractCollectionXTest {
 	
 	@Test
 	public void limitTimeEmpty(){
-		List<Integer> result = SequenceM.<Integer>of()
+		List<Integer> result = ReactiveSeq.<Integer>of()
 										.peek(i->sleep(i*100))
 										.limit(1000,TimeUnit.MILLISECONDS)
 										.toList();
@@ -605,7 +605,7 @@ public abstract class AbstractCollectionXTest {
 	
 	@Test
 	public void skipTimeEmpty(){
-		List<Integer> result = SequenceM.<Integer>of()
+		List<Integer> result = ReactiveSeq.<Integer>of()
 										.peek(i->sleep(i*100))
 										.skip(1000,TimeUnit.MILLISECONDS)
 										.toList();
@@ -672,7 +672,7 @@ public abstract class AbstractCollectionXTest {
 	}
 	@Test
 	public void endsWithBothEmpty(){
-		assertTrue(SequenceM.<Integer>of()
+		assertTrue(ReactiveSeq.<Integer>of()
 				.endsWith(Arrays.asList()));
 	}
 	@Test
@@ -702,7 +702,7 @@ public abstract class AbstractCollectionXTest {
 	}
 	@Test
 	public void endsWithBothEmptyStream(){
-		assertTrue(SequenceM.<Integer>of()
+		assertTrue(ReactiveSeq.<Integer>of()
 				.endsWith(Stream.of()));
 	}
 	
@@ -916,7 +916,7 @@ public abstract class AbstractCollectionXTest {
 	public void zipEmpty() throws Exception {
 		
 		
-		final CollectionX<Integer> zipped = this.<Integer>empty().zip(SequenceM.<Integer>of(), (a, b) -> a + b);
+		final CollectionX<Integer> zipped = this.<Integer>empty().zip(ReactiveSeq.<Integer>of(), (a, b) -> a + b);
 		assertTrue(zipped.collect(Collectors.toList()).isEmpty());
 	}
 

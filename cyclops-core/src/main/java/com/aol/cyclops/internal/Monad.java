@@ -14,7 +14,7 @@ import com.aol.cyclops.internal.monads.ComprehenderSelector;
 import com.aol.cyclops.internal.monads.MonadWrapper;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.internal.stream.SeqUtils;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.mixins.WrappingFilterable;
 import com.aol.cyclops.types.mixins.WrappingFunctor;
@@ -321,7 +321,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,WrappingFunctor<
 	 * 
 	 */
 	public <T> AnyM<T> anyM();
-	public <T> SequenceM<T>  sequence();
+	public <T> ReactiveSeq<T>  sequence();
 	/**
 	 * Create a duck typed Monad wrapper. Using AnyM we focus only on the underlying type
 	 * e.g. instead of 

@@ -17,7 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.util.stream.Streamable;
 
 public class WindowingTest {
@@ -50,7 +50,7 @@ public class WindowingTest {
 	}
 	@Test
 	public void windowUntilEmpty(){
-		assertThat(SequenceM.<Integer>of()
+		assertThat(ReactiveSeq.<Integer>of()
 				.windowUntil(i->i%3==0)
 				.toList().size(),equalTo(0));
 	}
@@ -189,9 +189,9 @@ public class WindowingTest {
 
 	@Test
 	public void groupedInfinite() {
-		SequenceM<Integer> infinite = SequenceM.iterate(1, i->i+1);
+		ReactiveSeq<Integer> infinite = ReactiveSeq.iterate(1, i->i+1);
 		
-		final SequenceM<ListX<Integer>> grouped = infinite.grouped(3);
+		final ReactiveSeq<ListX<Integer>> grouped = infinite.grouped(3);
 		assertThat(grouped.get(0).get(),equalTo(Arrays.asList(1,2,3)));
 	
 	}

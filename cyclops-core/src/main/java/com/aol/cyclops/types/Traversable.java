@@ -24,7 +24,7 @@ import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
@@ -60,7 +60,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * @param match
 	 * @return
 	 */
-	default <R> R visit(BiFunction<? super Maybe<T>,? super SequenceM<T>,? extends R> match ){
+	default <R> R visit(BiFunction<? super Maybe<T>,? super ReactiveSeq<T>,? extends R> match ){
 		
 		HeadAndTail<T> ht = this.headAndTail();
 		return match.apply(ht.headMaybe(),ht.tail());
@@ -1086,7 +1086,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	}
 
 	@Override
-	default SequenceM<T> stream() {
+	default ReactiveSeq<T> stream() {
 		return ConvertableSequence.super.stream();
 	}
 	

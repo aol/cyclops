@@ -10,7 +10,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 
 public class SchedulingTest {
 
@@ -18,7 +18,7 @@ public class SchedulingTest {
 	AtomicInteger count = new AtomicInteger(0);
 	@Test
 	public void cronTest() throws InterruptedException{
-		SequenceM.of(1,2,3,4)
+		ReactiveSeq.of(1,2,3,4)
 				.peek(i->count.incrementAndGet())
 				.peek(System.out::println)
 				.schedule("* * * * * ?", ex);
@@ -28,7 +28,7 @@ public class SchedulingTest {
 	}
 	@Test
 	public void cronDebounceTest() throws InterruptedException{
-		assertThat(SequenceM.of(1,2,3,4)
+		assertThat(ReactiveSeq.of(1,2,3,4)
 				.peek(i->count.incrementAndGet())
 				.peek(System.out::println)
 				.schedule("* * * * * ?", ex)
@@ -41,7 +41,7 @@ public class SchedulingTest {
 	}
 	@Test
 	public void fixedRateTest() throws InterruptedException{
-		assertThat(SequenceM.of(1,2,3,4)
+		assertThat(ReactiveSeq.of(1,2,3,4)
 				.peek(i->count.incrementAndGet())
 				.peek(System.out::println)
 				.scheduleFixedRate(1000, ex)
@@ -54,7 +54,7 @@ public class SchedulingTest {
 	}
 	@Test
 	public void fixedRateDelay() throws InterruptedException{
-		assertThat(SequenceM.of(1,2,3,4)
+		assertThat(ReactiveSeq.of(1,2,3,4)
 				.peek(i->count.incrementAndGet())
 				.peek(System.out::println)
 				.scheduleFixedDelay(1000, ex)
