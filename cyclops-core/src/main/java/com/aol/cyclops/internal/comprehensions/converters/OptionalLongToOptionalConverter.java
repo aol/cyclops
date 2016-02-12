@@ -3,7 +3,7 @@ package com.aol.cyclops.internal.comprehensions.converters;
 import java.util.Optional;
 import java.util.OptionalDouble;
 
-import com.aol.cyclops.lambda.api.MonadicConverter;
+import com.aol.cyclops.types.extensability.MonadicConverter;
 
 import lombok.val;
 

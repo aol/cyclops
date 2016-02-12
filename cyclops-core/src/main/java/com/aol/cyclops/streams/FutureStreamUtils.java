@@ -13,6 +13,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.util.StreamUtils;
 
 public class FutureStreamUtils {
 	/**

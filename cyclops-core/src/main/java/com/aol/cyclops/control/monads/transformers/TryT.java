@@ -118,7 +118,7 @@ public class TryT<T,X extends Throwable> {
 	 */
 	public <B> TryT<B,X> flatMap(Function1<T, TryT<B,X>> f) {
 
-		return of(run.flatMap(opt -> {
+		return of(run.bind(opt -> {
 			if (opt.isSuccess())
 				return f.apply(opt.get()).run;
 			Try<B,X> ret = (Try)opt;

@@ -3,7 +3,7 @@ package com.aol.cyclops.internal.comprehensions.comprehenders;
 import java.util.Collection;
 import java.util.Iterator;
 
-import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.types.extensability.Comprehender;
 
 public class Helper {
 

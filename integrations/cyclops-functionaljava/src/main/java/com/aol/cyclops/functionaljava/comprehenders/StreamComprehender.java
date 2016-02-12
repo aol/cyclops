@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.*;
 
-import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.types.extensability.Comprehender;
 import com.nurkiewicz.lazyseq.LazySeq;
 
 import fj.data.Stream;

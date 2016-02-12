@@ -2,7 +2,7 @@ package com.aol.cyclops.functionaljava.comprehenders;
 
 import java.util.function.Function;
 
-import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.types.extensability.Comprehender;
 
 import fj.data.Option;
 

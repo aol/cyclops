@@ -5,6 +5,9 @@ import static org.junit.Assert.fail;
 import java.util.Optional;
 
 import org.junit.Test;
+
+import com.aol.cyclops.types.mixins.AsSupplier;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 public class AsSupplierTest {

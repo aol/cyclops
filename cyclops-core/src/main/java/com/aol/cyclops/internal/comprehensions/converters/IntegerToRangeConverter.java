@@ -3,7 +3,7 @@ package com.aol.cyclops.internal.comprehensions.converters;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.lambda.api.MonadicConverter;
+import com.aol.cyclops.types.extensability.MonadicConverter;
 
 public class IntegerToRangeConverter implements MonadicConverter<Stream<Integer>> {
 

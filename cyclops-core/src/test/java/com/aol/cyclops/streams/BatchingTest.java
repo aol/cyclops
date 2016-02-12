@@ -27,7 +27,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.util.Streamable;
 
 import lombok.Value;
 public class BatchingTest {

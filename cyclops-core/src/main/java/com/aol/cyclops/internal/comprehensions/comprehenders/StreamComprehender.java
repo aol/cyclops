@@ -9,9 +9,9 @@ import java.util.stream.BaseStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.aol.cyclops.lambda.api.Comprehender;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
-import com.aol.cyclops.sequence.streamable.ToStream;
+import com.aol.cyclops.types.extensability.Comprehender;
+import com.aol.cyclops.types.sequence.ToStream;
 
 public class StreamComprehender implements Comprehender<Stream> {
 	public Class getTargetClass(){

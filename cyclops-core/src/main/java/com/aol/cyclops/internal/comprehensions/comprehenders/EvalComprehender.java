@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.types.extensability.Comprehender;
 
 
 

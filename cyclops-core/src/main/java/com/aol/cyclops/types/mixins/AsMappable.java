@@ -1,4 +1,4 @@
-package com.aol.cyclops.lambda.api;
+package com.aol.cyclops.types.mixins;
 
 import lombok.Value;
 

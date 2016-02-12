@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Xor;
-import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.types.extensability.Comprehender;
 
 public class XorComprehender implements Comprehender<Xor> {
 

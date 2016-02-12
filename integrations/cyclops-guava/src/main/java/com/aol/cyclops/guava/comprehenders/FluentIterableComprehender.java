@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Function;
 
-import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.types.extensability.Comprehender;
 import com.google.common.collect.FluentIterable;
 import com.nurkiewicz.lazyseq.LazySeq;
 

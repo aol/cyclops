@@ -4,7 +4,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 import com.aol.cyclops.control.FutureW;
-import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.types.extensability.Comprehender;
 
 public class FutureFunctorComprehender implements Comprehender<FutureW>{
 	public Class getTargetClass(){

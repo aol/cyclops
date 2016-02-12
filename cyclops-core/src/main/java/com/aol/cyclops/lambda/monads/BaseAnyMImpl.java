@@ -24,9 +24,9 @@ import com.aol.cyclops.internal.comprehensions.comprehenders.MaterializedList;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.monad.AnyMonads;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.util.Streamable;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

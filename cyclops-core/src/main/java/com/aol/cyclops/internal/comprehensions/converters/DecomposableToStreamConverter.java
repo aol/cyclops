@@ -3,8 +3,8 @@ package com.aol.cyclops.internal.comprehensions.converters;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.aol.cyclops.lambda.api.MonadicConverter;
 import com.aol.cyclops.types.Decomposable;
+import com.aol.cyclops.types.extensability.MonadicConverter;
 
 
 

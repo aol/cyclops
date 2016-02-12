@@ -8,7 +8,7 @@ import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.util.Streamable;
 
 import lombok.AllArgsConstructor;
 

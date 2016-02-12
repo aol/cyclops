@@ -15,7 +15,7 @@ import lombok.Value;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 
-import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.util.Streamable;
 
 @Value
 public class MultiCollectOperator<T> {

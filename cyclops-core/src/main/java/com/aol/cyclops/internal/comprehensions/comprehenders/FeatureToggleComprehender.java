@@ -4,7 +4,7 @@ import java.util.function.Predicate;
 
 import com.aol.cyclops.control.FeatureToggle;
 import com.aol.cyclops.control.FeatureToggle.Enabled;
-import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.types.extensability.Comprehender;
 
 /**
  * @author johnmcclean

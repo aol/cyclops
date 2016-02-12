@@ -2,7 +2,7 @@ package com.aol.cyclops.internal.comprehensions.converters;
 
 import java.util.Optional;
 
-import com.aol.cyclops.lambda.api.MonadicConverter;
+import com.aol.cyclops.types.extensability.MonadicConverter;
 
 public class NullToOptionalConverter implements MonadicConverter<Optional> {
 

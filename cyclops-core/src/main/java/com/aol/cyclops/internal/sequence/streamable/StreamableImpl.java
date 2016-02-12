@@ -1,4 +1,4 @@
-package com.aol.cyclops.sequence.streamable;
+package com.aol.cyclops.internal.sequence.streamable;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -14,6 +14,8 @@ import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collector;
+
+import com.aol.cyclops.util.Streamable;
 
 import lombok.Getter;
 import lombok.Value;

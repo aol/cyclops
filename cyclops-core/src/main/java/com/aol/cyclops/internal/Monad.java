@@ -10,15 +10,15 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.data.Mutable;
-import com.aol.cyclops.lambda.api.Comprehender;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
-import com.aol.cyclops.lambda.monads.WrappingFilterable;
-import com.aol.cyclops.lambda.monads.WrappingFunctor;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SeqUtils;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.types.extensability.Comprehender;
+import com.aol.cyclops.types.mixins.WrappingFilterable;
+import com.aol.cyclops.types.mixins.WrappingFunctor;
+import com.aol.cyclops.util.Streamable;
 
 
 

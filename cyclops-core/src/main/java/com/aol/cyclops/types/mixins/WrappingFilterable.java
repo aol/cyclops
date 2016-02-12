@@ -1,7 +1,8 @@
-package com.aol.cyclops.lambda.monads;
+package com.aol.cyclops.types.mixins;
 
 import java.util.function.Predicate;
 
+import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.types.Filterable;
 
 public interface WrappingFilterable<T> extends Filterable<T> {

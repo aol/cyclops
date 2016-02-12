@@ -2,7 +2,7 @@ package com.aol.cyclops.guava.comprehenders;
 
 import java.util.function.Function;
 
-import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.types.extensability.Comprehender;
 import com.google.common.base.Optional;
 
 public class OptionalComprehender implements Comprehender<Optional>{

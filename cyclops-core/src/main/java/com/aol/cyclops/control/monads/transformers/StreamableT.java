@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 import org.jooq.lambda.function.Function1;
 
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.util.Streamable;
 
 
 /**

@@ -1,4 +1,4 @@
-package com.aol.cyclops.lambda.api;
+package com.aol.cyclops.types.mixins;
 
 /**
  * Mixin a print method with a return value (can be used as a method reference to

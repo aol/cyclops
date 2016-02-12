@@ -13,6 +13,7 @@ import static org.hamcrest.Matchers.equalTo;
 import org.junit.Test;
 
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.types.mixins.AsGenericMonoid;
 
 public class AsGenericMonoidTest {
 

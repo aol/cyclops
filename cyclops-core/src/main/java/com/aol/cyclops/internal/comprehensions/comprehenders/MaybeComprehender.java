@@ -4,7 +4,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.types.extensability.Comprehender;
 
 public class MaybeComprehender implements Comprehender<Maybe> {
 	public Class getTargetClass(){

@@ -6,7 +6,7 @@ import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.aol.cyclops.lambda.api.MonadicConverter;
+import com.aol.cyclops.types.extensability.MonadicConverter;
 
 public class IteratorToStreamConverter implements MonadicConverter<Stream> {
 

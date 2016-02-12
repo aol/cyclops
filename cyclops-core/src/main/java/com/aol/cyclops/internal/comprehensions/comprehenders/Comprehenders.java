@@ -9,7 +9,7 @@ import org.jooq.lambda.Seq;
 import org.pcollections.PStack;
 
 import com.aol.cyclops.Reducers;
-import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.types.extensability.Comprehender;
 
 /**
  * Registered Comprehenders

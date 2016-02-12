@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import com.aol.cyclops.internal.comprehensions.comprehenders.Comprehenders;
 import com.aol.cyclops.internal.comprehensions.comprehenders.InvokeDynamicComprehender;
-import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.types.extensability.Comprehender;
 
 public class ComprehenderSelector {
 

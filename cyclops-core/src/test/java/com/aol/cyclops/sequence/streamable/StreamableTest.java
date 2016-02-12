@@ -5,6 +5,8 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
+import com.aol.cyclops.util.Streamable;
+
 public class StreamableTest {
 	@Test
 	public void testContains() {

@@ -24,7 +24,7 @@ import org.pcollections.PSet;
 
 import com.aol.cyclops.control.ExceptionSoftener;
 import com.aol.cyclops.internal.invokedynamic.InvokeDynamic;
-import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.types.extensability.Comprehender;
 
 
 @AllArgsConstructor

@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Try.Failure;
 import com.aol.cyclops.control.Try.Success;
-import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.types.extensability.Comprehender;
 
 /**
  * Comprehender for performant for-comprehensions for Try 

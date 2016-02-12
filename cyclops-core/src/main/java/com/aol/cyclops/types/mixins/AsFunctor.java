@@ -1,7 +1,5 @@
-package com.aol.cyclops.lambda.api;
+package com.aol.cyclops.types.mixins;
 
-import com.aol.cyclops.lambda.monads.FunctorWrapper;
-import com.aol.cyclops.lambda.monads.WrappingFunctor;
 import com.aol.cyclops.types.Functor;
 
 public class AsFunctor {

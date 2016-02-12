@@ -1,4 +1,4 @@
-package com.aol.cyclops.sequence.streamable;
+package com.aol.cyclops.types.sequence;
 
 import com.aol.cyclops.sequence.SequenceM;
 

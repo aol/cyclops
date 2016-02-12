@@ -1,4 +1,4 @@
-package com.aol.cyclops.lambda.monads;
+package com.aol.cyclops.types;
 
 import java.util.function.Predicate;
 

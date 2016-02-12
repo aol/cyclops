@@ -23,12 +23,12 @@ import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.CheckValues;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.types.applicative.Applicative;
+import com.aol.cyclops.util.StreamUtils;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

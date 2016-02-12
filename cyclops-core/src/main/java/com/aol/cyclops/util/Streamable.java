@@ -1,4 +1,4 @@
-package com.aol.cyclops.sequence.streamable;
+package com.aol.cyclops.util;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -53,6 +53,7 @@ import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.sequence.ConvertableSequence;
 import com.aol.cyclops.types.sequence.SequenceMCollectable;
+import com.aol.cyclops.types.sequence.ToStream;
 
 
 /**

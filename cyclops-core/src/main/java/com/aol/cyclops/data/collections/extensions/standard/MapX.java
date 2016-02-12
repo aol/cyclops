@@ -25,17 +25,17 @@ import com.aol.cyclops.data.collections.extensions.FluentMapX;
 import com.aol.cyclops.data.collections.extensions.persistent.PMapX;
 import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.lambda.monads.IterableCollectable;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.types.BiFunctor;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.IterableFilterable;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.types.sequence.SequenceMCollectable;
+import com.aol.cyclops.util.StreamUtils;
 
 
 public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,

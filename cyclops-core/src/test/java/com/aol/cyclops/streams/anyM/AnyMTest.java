@@ -35,9 +35,9 @@ import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.util.Streamable;
 
 import lombok.val;
 

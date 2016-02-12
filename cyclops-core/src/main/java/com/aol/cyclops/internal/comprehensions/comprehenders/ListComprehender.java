@@ -14,7 +14,7 @@ import java.util.stream.StreamSupport;
 
 import org.pcollections.PVector;
 
-import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.types.extensability.Comprehender;
 
 public class ListComprehender implements Comprehender {
 	public Class getTargetClass(){

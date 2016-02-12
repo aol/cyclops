@@ -1,4 +1,4 @@
-package com.aol.cyclops.value;
+package com.aol.cyclops.types.mixins;
 
 import com.aol.cyclops.types.ValueObject;
 

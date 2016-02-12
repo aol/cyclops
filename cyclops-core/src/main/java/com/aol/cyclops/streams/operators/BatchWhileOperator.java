@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 import lombok.Value;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
-import com.aol.cyclops.streams.StreamUtils;
+import com.aol.cyclops.util.StreamUtils;
 @Value
 public class BatchWhileOperator<T, C extends Collection<? super T>> {
 	 private static final Object UNSET = new Object();

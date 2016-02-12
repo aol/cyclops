@@ -4,7 +4,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.lambda.api.MonadicConverter;
+import com.aol.cyclops.types.extensability.MonadicConverter;
 
 public class CallableToCompletableFutureConverter implements MonadicConverter<CompletableFuture> {
 

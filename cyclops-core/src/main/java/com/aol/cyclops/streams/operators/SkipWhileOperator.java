@@ -4,9 +4,9 @@ import java.util.Iterator;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import lombok.Value;
+import com.aol.cyclops.util.StreamUtils;
 
-import com.aol.cyclops.streams.StreamUtils;
+import lombok.Value;
 @Value
 public class SkipWhileOperator<U> {
 

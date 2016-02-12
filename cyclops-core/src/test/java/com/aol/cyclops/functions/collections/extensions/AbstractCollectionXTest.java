@@ -44,10 +44,10 @@ import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.streamable.Streamable;
-import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.types.Decomposable;
 import com.aol.cyclops.types.Traversable;
+import com.aol.cyclops.util.StreamUtils;
+import com.aol.cyclops.util.Streamable;
 
 import lombok.AllArgsConstructor;
 

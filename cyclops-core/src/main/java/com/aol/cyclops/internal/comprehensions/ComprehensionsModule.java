@@ -15,7 +15,7 @@ import com.aol.cyclops.internal.comprehensions.comprehenders.Comprehenders;
 import com.aol.cyclops.internal.comprehensions.comprehenders.InvokeDynamicComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.MaterializedList;
 import com.aol.cyclops.internal.comprehensions.converters.MonadicConverters;
-import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.types.extensability.Comprehender;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -28,10 +28,12 @@ public class FlatMapSequenceMTest {
 	public void flatMapCollection(){
 	assertThat(	AnyM.fromOptional(Optional.of(20)).asSequence().flatMapCollection(i->Arrays.asList(1,2,i) ).toList(),equalTo(Arrays.asList(1,2,20)));
 	}
+	/**
 	@Test
 	public void flatMapCollectionAnyM(){
 	assertThat(	AnyM.fromOptional(Optional.of(20)).flatMap(i->AnyM.fromIterable(Arrays.asList(1,2,i)) ).toSequence().toList(),equalTo(Arrays.asList(1,2,20)));
 	}
+	**/
 	@Test
 	public void flatMapToSeq(){
 		

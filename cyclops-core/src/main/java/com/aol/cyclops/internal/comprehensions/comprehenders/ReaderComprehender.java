@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 import com.aol.cyclops.control.FluentFunctions;
 import com.aol.cyclops.control.Reader;
-import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.types.extensability.Comprehender;
 
 
 

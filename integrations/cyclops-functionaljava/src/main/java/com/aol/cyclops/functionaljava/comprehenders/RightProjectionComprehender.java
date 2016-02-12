@@ -4,14 +4,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-
-
-
-
-
-
-
-import com.aol.cyclops.lambda.api.Comprehender;
+import com.aol.cyclops.types.extensability.Comprehender;
 
 import fj.data.Either;
 import fj.data.Option;

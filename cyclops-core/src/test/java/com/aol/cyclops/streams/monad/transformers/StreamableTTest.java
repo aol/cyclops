@@ -17,7 +17,7 @@ import org.junit.Test;
 import com.aol.cyclops.control.monads.transformers.OptionalT;
 import com.aol.cyclops.control.monads.transformers.StreamableT;
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.util.Streamable;
 
 
 public class StreamableTTest {

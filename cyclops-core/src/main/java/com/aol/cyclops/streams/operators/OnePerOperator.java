@@ -5,9 +5,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Stream;
 
-import lombok.Value;
+import com.aol.cyclops.util.StreamUtils;
 
-import com.aol.cyclops.streams.StreamUtils;
+import lombok.Value;
 @Value
 public class OnePerOperator<T> {
 	Stream<T> stream;

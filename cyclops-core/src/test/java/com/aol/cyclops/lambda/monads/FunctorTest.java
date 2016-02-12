@@ -13,6 +13,8 @@ import lombok.val;
 import lombok.experimental.Wither;
 
 import org.junit.Test;
+
+import com.aol.cyclops.types.mixins.WrappingFunctor;
 public class FunctorTest {
 
 	@Test

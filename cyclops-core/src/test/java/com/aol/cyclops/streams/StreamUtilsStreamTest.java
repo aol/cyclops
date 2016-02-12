@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.streams.StreamUtils;
+import com.aol.cyclops.util.StreamUtils;
 public class StreamUtilsStreamTest {
 	 public static <U> Stream<U> of(U... array){
 		 return Stream.of(array);

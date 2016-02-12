@@ -116,7 +116,7 @@ public class OptionalT<T> {
 	 */
 	public <B> OptionalT<B> flatMap(Function1<T, OptionalT<B>> f) {
 
-		return of(run.flatMap(opt -> {
+		return of(run.bind(opt -> {
 			if (opt.isPresent())
 				return f.apply(opt.get()).run;
 			return run.unit(Optional.<B> empty());

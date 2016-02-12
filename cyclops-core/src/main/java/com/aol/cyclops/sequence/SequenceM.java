@@ -56,8 +56,6 @@ import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.sequence.reactivestreams.CyclopsSubscriber;
 import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
 import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsTerminalOperations;
-import com.aol.cyclops.sequence.streamable.Streamable;
-import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.streams.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.streams.spliterators.ReversingListSpliterator;
 import com.aol.cyclops.streams.spliterators.ReversingRangeIntSpliterator;
@@ -74,6 +72,8 @@ import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.types.sequence.ConvertableSequence;
 import com.aol.cyclops.types.sequence.SequenceMCollectable;
+import com.aol.cyclops.util.StreamUtils;
+import com.aol.cyclops.util.Streamable;
 
 
 public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<T>,Functor<T>, ExtendedTraversable<T>,

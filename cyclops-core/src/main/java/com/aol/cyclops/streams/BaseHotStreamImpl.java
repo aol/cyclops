@@ -14,6 +14,7 @@ import uk.co.real_logic.agrona.concurrent.OneToOneConcurrentArrayQueue;
 import com.aol.cyclops.sequence.HotStream;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.streams.spliterators.ClosingSpliterator;
+import com.aol.cyclops.util.StreamUtils;
 
 public abstract class BaseHotStreamImpl<T> extends IteratorHotStream<T> implements HotStream<T>{
 

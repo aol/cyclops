@@ -35,7 +35,6 @@ import com.aol.cyclops.functions.TriFunction;
 import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.CheckValues;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableFunctor;
@@ -50,6 +49,7 @@ import com.aol.cyclops.types.applicative.zipping.ZippingApplicative2;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative3;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative4;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative5;
+import com.aol.cyclops.util.StreamUtils;
 
 public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenceX<T>, Comparable<T>,IterableFunctor<T>,ZippingApplicativable<T> {
 	

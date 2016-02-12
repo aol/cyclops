@@ -5,8 +5,10 @@ import java.util.Map;
 import lombok.Value;
 
 import org.junit.Test;
+
+import com.aol.cyclops.types.mixins.AsMappable;
+
 import static org.hamcrest.Matchers.*;
-import com.aol.cyclops.lambda.api.AsMappable;
 import static org.junit.Assert.assertThat;
 
 public class CoerceToMapTest {

@@ -1,4 +1,4 @@
-package com.aol.cyclops.sequence.streamable;
+package com.aol.cyclops.types.sequence;
 
 import java.util.Arrays;
 import java.util.Iterator;

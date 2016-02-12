@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 
 import org.hamcrest.Matcher;
 
-import com.aol.cyclops.streams.StreamUtils;
+import com.aol.cyclops.util.StreamUtils;
 
 /**
  * Trait that represents any class with a single argument Filter method

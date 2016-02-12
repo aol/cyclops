@@ -3,9 +3,9 @@ package com.aol.cyclops.internal.comprehensions.converters;
 import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
-import lombok.val;
+import com.aol.cyclops.types.extensability.MonadicConverter;
 
-import com.aol.cyclops.lambda.api.MonadicConverter;
+import lombok.val;
 
 public class DoubleStreamToStreamConverter implements MonadicConverter<Stream>{
 

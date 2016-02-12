@@ -24,7 +24,7 @@ import com.aol.cyclops.data.collections.extensions.persistent.PQueueX;
 import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
 import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
-import com.aol.cyclops.lambda.api.TupleWrapper;
+import com.aol.cyclops.types.mixins.TupleWrapper;
 
 import fj.data.vector.V;
 

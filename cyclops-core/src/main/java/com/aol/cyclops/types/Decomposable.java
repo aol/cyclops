@@ -16,8 +16,8 @@ import com.aol.cyclops.internal.invokedynamic.ReflectionCache;
 public interface Decomposable{
 	
 	
-	default  Object unwrap(){
-		return this;
+	default  <T> T unwrap(){
+		return (T)this;
 	}
 	/**
 	 * @return Values of the fields of this Decomposable instance

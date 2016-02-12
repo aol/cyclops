@@ -13,8 +13,8 @@ import lombok.val;
 
 import org.junit.Test;
 
-import com.aol.cyclops.sequence.streamable.AsStreamable;
-import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.util.AsStreamable;
+import com.aol.cyclops.util.Streamable;
 public class AsStreamableTest {
 
 	@Test

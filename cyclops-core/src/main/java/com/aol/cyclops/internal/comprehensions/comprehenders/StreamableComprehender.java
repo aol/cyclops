@@ -5,8 +5,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.lambda.api.Comprehender;
-import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.types.extensability.Comprehender;
+import com.aol.cyclops.util.Streamable;
 
 public class StreamableComprehender implements Comprehender {
 	public Class getTargetClass(){

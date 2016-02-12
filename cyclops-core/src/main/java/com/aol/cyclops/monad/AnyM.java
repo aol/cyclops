@@ -47,8 +47,6 @@ import com.aol.cyclops.lambda.monads.AnyMValueImpl;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.streamable.Streamable;
-import com.aol.cyclops.sequence.streamable.ToStream;
 import com.aol.cyclops.types.EmptyUnit;
 import com.aol.cyclops.types.FlatMap;
 import com.aol.cyclops.types.Foldable;
@@ -57,6 +55,8 @@ import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.sequence.ToStream;
+import com.aol.cyclops.util.Streamable;
 
 /**
  * 

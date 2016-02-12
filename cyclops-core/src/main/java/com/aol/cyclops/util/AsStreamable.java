@@ -1,4 +1,4 @@
-package com.aol.cyclops.sequence.streamable;
+package com.aol.cyclops.util;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.Value;
 
+import com.aol.cyclops.internal.sequence.streamable.StreamableImpl;
 import com.aol.cyclops.sequence.SeqUtils;
 
 

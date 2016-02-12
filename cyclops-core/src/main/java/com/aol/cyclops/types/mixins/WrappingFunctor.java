@@ -1,4 +1,4 @@
-package com.aol.cyclops.lambda.monads;
+package com.aol.cyclops.types.mixins;
 
 
 import java.lang.reflect.Constructor;
@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.aol.cyclops.control.ExceptionSoftener;
+import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.types.Functor;
 
 
