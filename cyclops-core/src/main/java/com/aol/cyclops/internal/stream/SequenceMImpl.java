@@ -2257,5 +2257,21 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	public <T> ReactiveSeq<T> unitIterator(Iterator<T> it){
 		return ReactiveSeq.fromIterator(it);
 	}
+
+	@Override
+	public ReactiveSeq<T> append(T value) {
+		if(value instanceof Stream){
+			return appendStream((Stream<T>)value);
+		}
+		return append((T[])new Object[]{value});
+	}
+	@Override
+	public ReactiveSeq<T> prepend(T value) {
+		if(value instanceof Stream){
+			return prependStream((Stream<T>)value);
+		}
+		return prepend((T[])new Object[]{value});
+	}
+	
 	
 }

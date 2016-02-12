@@ -637,11 +637,11 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	}
 	public static <T> AnyMValue<T> ofValue(Object monad){
 		Objects.requireNonNull(monad);
-		return new AnyMValueImpl<T>(AnyMFactory.instance.value(monad));
+		return AnyMFactory.instance.value(monad);
 	}
 	public static <T> AnyMSeq<T> ofSeq(Object monad){
 		Objects.requireNonNull(monad);
-		return new AnyMSeqImpl<T>(AnyMFactory.instance.value(monad));
+		return AnyMFactory.instance.seq(monad);
 	}
 	/**
 	 * Generate an AnyM that wraps an Optional from the provided nullable object
@@ -650,7 +650,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @return AnyM wrapping an Optional created with the supplied nullable
 	 */
 	public static <T> AnyMValue<T> ofNullable(Object nullable){
-		return new AnyMValueImpl<T>(AnyMFactory.instance.value(Optional.ofNullable(nullable)));
+		return AnyMFactory.instance.value(Optional.ofNullable(nullable));
 	}
 	
 	/**

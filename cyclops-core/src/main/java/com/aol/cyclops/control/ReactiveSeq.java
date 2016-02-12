@@ -1650,6 +1650,10 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * @return SequenceM with appended values
 	 */
 	ReactiveSeq<T> append(T... values);
+	@Override
+	ReactiveSeq<T> append(T value);
+	@Override
+	ReactiveSeq<T> prepend(T value);
 
 	/**
 	 * Prepend given values to the start of the Stream

@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 
 import org.hamcrest.Matcher;
 
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.util.function.Predicates;
 
@@ -122,7 +123,7 @@ public class CheckValues<T,R> {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public final <V> CheckValues<T,R> isEmpty(Function<? super T,? extends R> result) {
 
-		Predicate predicate = it -> Optional.of(it)
+		Predicate predicate = it -> Maybe.of(it)
 				.map(v -> v.getClass().isAssignableFrom(clazz))
 				.orElse(false);
 		// add wildcard support

@@ -185,7 +185,7 @@ public class FluentTriFunctionTest {
 	public void testMatches1(){
 		assertThat(FluentFunctions.of(this::add)	
 					   .matches(-1,c->c.just(i->4,3))
-					   .apply(1,1,1),equalTo(3));
+					   .apply(1,1,1),equalTo(4));
 	}
 
 	@Test
@@ -198,7 +198,7 @@ public class FluentTriFunctionTest {
 	public void testMatches2(){
 		assertThat(FluentFunctions.of(this::add)	
 					   .matches(-1,c->c.just(i->4,4).just(i->4,3))
-					   .apply(1,1,1),equalTo(3));
+					   .apply(1,1,1),equalTo(4));
 	}
 
 	@Test
@@ -212,7 +212,7 @@ public class FluentTriFunctionTest {
 		assertThat(FluentFunctions.of(this::add)	
 				   .matches(-1,c->c.just(i->4,4).just(i->4,8)
 						   			.just(i->4,3))
-				   .apply(1,1,1),equalTo(3));
+				   .apply(1,1,1),equalTo(4));
 	}
 
 	@Test
@@ -225,7 +225,7 @@ public class FluentTriFunctionTest {
 	public void testMatches4(){
 		assertThat(FluentFunctions.of(this::add)	
 				   .matches(-1,c->c.just(i->4,4).just(i->4,40).just(i->4,8).just(i->4,3))
-				   .apply(1,1,1),equalTo(3));
+				   .apply(1,1,1),equalTo(4));
 	}
 
 	@Test
@@ -238,7 +238,7 @@ public class FluentTriFunctionTest {
 	public void testMatches5(){
 		assertThat(FluentFunctions.of(this::add)	
 				   .matches(-1,c->c.just(i->4,4).just(i->4,5).just(i->4,40).just(i->4,8).just(i->4,3))
-				   .apply(1,1,1),equalTo(3));
+				   .apply(1,1,1),equalTo(4));
 	}
 
 	@Test

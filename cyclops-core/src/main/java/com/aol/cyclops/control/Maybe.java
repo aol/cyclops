@@ -279,6 +279,11 @@ public interface Maybe<T> extends Value<T>,
 		public boolean isPresent(){
 			return false;
 		}
+		@Override
+		public T getMatchable() {
+			return (T)this;
+		}
+		
 	}
 	
 }

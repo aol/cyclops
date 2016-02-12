@@ -40,16 +40,17 @@ import org.junit.Test;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducers;
-import com.aol.cyclops.data.collections.extensions.CollectionX;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Decomposable;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 public abstract class AbstractCollectionXTest {
 	public abstract <T> CollectionX<T> empty();
@@ -1098,11 +1099,13 @@ public abstract class AbstractCollectionXTest {
 		assertThat(result,equalTo(Arrays.asList("one","two")));
 	}
 	@AllArgsConstructor
+	@EqualsAndHashCode
 	static class MyCase implements Decomposable{
 		int first;
 		int second;
 	}
 	@AllArgsConstructor
+	@EqualsAndHashCode
 	static class MyCase2 {
 		int first;
 		int second;

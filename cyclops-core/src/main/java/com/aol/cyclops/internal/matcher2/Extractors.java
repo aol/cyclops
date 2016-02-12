@@ -6,6 +6,7 @@ import static java.util.Spliterators.spliteratorUnknownSize;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
@@ -16,6 +17,7 @@ import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.data.LazyImmutable;
 import com.aol.cyclops.internal.invokedynamic.ReflectionCache;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.Decomposable;
 import com.aol.cyclops.util.ExceptionSoftener;
@@ -54,8 +56,28 @@ public class Extractors {
 				return (R)((Decomposable)input).unapply();
 			else if(input instanceof Iterable)
 				return (R)input;
+			if(input instanceof Optional){
+				return (R)Maybe.fromOptional((Optional)(input));
+			}
 			return (R)input;
-			
+			//return (R)ReflectionCache.getUnapplyMethod(input.getClass()).map(unchecked(m->m.invoke(input))).orElse(AsDecomposable.asDecomposable(input).unapply());
+
+		};
+	}
+	/**
+	 * @return Extractor that decomposes Case classes into iterables 
+	 */
+	public static final <T,R> Extractor<T,R> decomposeCoerced() {
+		return input -> {
+			if(input instanceof  Decomposable)
+				return (R)((Decomposable)input).unapply();
+			else if(input instanceof Iterable)
+				return (R)input;
+			if(input instanceof Optional){
+				return (R)Maybe.fromOptional((Optional)(input));
+			}
+			return (R)ReflectionCache.getUnapplyMethod(input.getClass()).map(unchecked(m->m.invoke(input))).orElse(AsDecomposable.asDecomposable(input).unapply());
+
 		};
 	}
 	private static <T,R> Function<T,R> unchecked(Unchecked<T,R> u){

@@ -28,14 +28,21 @@ public class AnyMValueImpl<T> implements AnyMValue<T> {
 	@Wither
 	AnyM anyM;
 	
+	private static<T> AnyM<T> toUse(AnyM<T> anyM){
+		if(anyM instanceof AnyMValueImpl){
+			AnyMValueImpl<T> impl = (AnyMValueImpl<T>)anyM;
+			return impl.anyM;
+		}
+		return anyM;
+	}
 	public static <T> AnyMValue<T> from(AnyM<T> anyM){
-		if(anyM instanceof AnyMSeq)
-			return (AnyMValue)anyM;
+		AnyM<T> toUse= toUse(anyM);
 		return new AnyMValueImpl(anyM);
 			
 	}
 	
 	static <T> AnyMValueImpl<T> with(AnyM<T> anyM){
+		AnyM<T> toUse= toUse(anyM);
 		return new  AnyMValueImpl<T>(anyM);
 	}
 	

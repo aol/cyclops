@@ -23,6 +23,7 @@ import com.aol.cyclops.control.Matchable.MatchSelf;
 import com.aol.cyclops.control.Matchable.MatchableTuple2;
 import com.aol.cyclops.control.Matchable.MatchableTuple3;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Decomposable;
 import com.aol.cyclops.util.function.Predicates;
 
 import lombok.AccessLevel;
@@ -104,7 +105,7 @@ public class MatchableTest {
 							   									 	 .get())
 							   			 , ()->"no address configured");
 		
-		assertThat(v,equalTo("valid house, valid street"));
+		assertThat(v,equalTo("valid house,valid street"));
 							   	
 	}
 	@AllArgsConstructor
@@ -147,13 +148,13 @@ public class MatchableTest {
 		
 	}
 	@Value
-	static class MyCase<R>  implements MatchSelf<MyCase<R>>{
+	static class MyCase<R>  implements MatchSelf<MyCase<R>>, Decomposable{
 		int a;
 		int b;
 		int c;
 	}
 	@Value
-	static class NestedCase <R> implements MatchSelf<MyCase<R>>{
+	static class NestedCase <R> implements MatchSelf<MyCase<R>>, Decomposable{
 		int a;
 		int b;
 		NestedCase<R> c;
@@ -170,7 +171,7 @@ public class MatchableTest {
 	@Test(expected=NoSuchElementException.class)
 	public void singleCaseFail(){
 		 Matchable.of(Optional.of(2))
-				   .matches(c->c.values(in->2,1));
+				   .matches(c->c.values(in->2,1)).get();
 		
 		fail("exception expected");
 	}
@@ -189,7 +190,7 @@ public class MatchableTest {
 											.mayMatch(c->c.values(in->2,2));
 	
 		assertThat(result
-						 .matches(c->c.isEmpty( in -> "hello")).get(),equalTo("hello"));
+						 .matches(c->c.isEmpty( in -> "hello")),equalTo(Eval.now("hello")));
 		
 	}
 	@Test 
@@ -198,7 +199,7 @@ public class MatchableTest {
 									
 									.matches(c->c.values(in->2,1));
 		
-		assertThat(result2,equalTo(2));
+		assertThat(result2,equalTo(Eval.now(2)));
 	}
 	@Test 
 	public void emptyList(){
@@ -222,7 +223,7 @@ public class MatchableTest {
 				            			o-> o.isEmpty(in->"hello")
 				            			     .values(in->"2",1)
 				            		)
-				            		,equalTo("hello"));
+				            		,equalTo(Eval.now("hello")));
 		
 		
 	}
@@ -247,7 +248,7 @@ public class MatchableTest {
 				            			      .values(in->"2",1)
 				            			      .values(in->"3",2)
 				            		)
-				            		,equalTo("hello"));
+				            		,equalTo(Eval.now("hello")));
 		
 		
 	}
@@ -261,7 +262,7 @@ public class MatchableTest {
 				            			     .values(i->""+3,2)
 				            			     .values(i->""+4,3)
 				            		)
-				            		,equalTo("4"));
+				            		,equalTo(Eval.now("4")));
 		
 		
 	}
@@ -276,7 +277,7 @@ public class MatchableTest {
 				            			.values(i->""+4,3)
 				            			.values(i->""+5,4)
 				            		)
-				            		,equalTo("5"));
+				            		,equalTo(Eval.now("5")));
 		
 		
 	}
@@ -359,9 +360,41 @@ public class MatchableTest {
 	public void matchType(){
 		
 		Eval<Integer> result = Matchable.of(new Child(10,20)).matches(
+									c-> c.justWhere(in->10, Predicates.type(Child.class).values()));
+		
+		assertThat(result.get(),equalTo(10));
+	}
+	@Test
+	public void matchTypeBreakdown(){
+		
+		Eval<Integer> result = Matchable.of(new Child(10,20)).matches(
 									c-> c.justWhere(in->10, Predicates.type(Child.class).values(10,20)));
 		
-		assertThat(result,equalTo(10));
+		assertThat(result.get(),equalTo(10));
+	}
+	@Test
+	public void matchTypeBreakdownJust(){
+		
+		Maybe<Integer> result = Matchable.of(new Child(10,20)).mayMatch(
+									c-> c.justWhere(in->10, Predicates.type(Child.class).just(10)));
+		
+		assertThat(result,equalTo(Maybe.none()));
+	}
+	@Test
+	public void matchTypeBreakdownJust2(){
+		
+		Maybe<Integer> result = Matchable.of(new Child(10,20)).mayMatch(
+									c-> c.justWhere(in->10, Predicates.type(Child.class).just(10,20)));
+		
+		assertThat(result,equalTo(Maybe.of(10)));
+	}
+	@Test
+	public void matchTypeBreakdownJustWhere(){
+		
+		Maybe<Integer> result = Matchable.of(new Child(10,20)).mayMatch(
+									c-> c.justWhere(in->10, Predicates.type(Child.class).justWhere(i->(int)i==10,i->(int)i==20)));
+		
+		assertThat(result,equalTo(Maybe.of(10)));
 	}
 	
 	@Value
