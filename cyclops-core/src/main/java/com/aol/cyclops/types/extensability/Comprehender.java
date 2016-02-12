@@ -1,10 +1,8 @@
 package com.aol.cyclops.types.extensability;
 
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.BaseStream;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
@@ -14,7 +12,7 @@ import java.util.stream.Stream;
 import com.aol.cyclops.control.monads.transformers.StreamT;
 import com.aol.cyclops.internal.comprehensions.comprehenders.MaterializedList;
 import com.aol.cyclops.internal.comprehensions.converters.MonadicConverters;
-import com.aol.cyclops.lambda.monads.ComprehenderSelector;
+import com.aol.cyclops.internal.monads.ComprehenderSelector;
 
 /**
  * Interface for defining how Comprehensions should work for a type

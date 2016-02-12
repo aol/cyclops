@@ -1,4 +1,4 @@
-package com.aol.cyclops.functions;
+package com.aol.cyclops.util.function;
 
 import java.util.Map;
 import java.util.concurrent.Callable;

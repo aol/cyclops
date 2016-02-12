@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import com.aol.cyclops.functions.CurryConsumer;
+import com.aol.cyclops.util.function.CurryConsumer;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;

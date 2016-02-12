@@ -37,15 +37,12 @@ import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.functions.QuadFunction;
-import com.aol.cyclops.functions.QuintFunction;
-import com.aol.cyclops.functions.TriFunction;
 import com.aol.cyclops.internal.comprehensions.comprehenders.InvokeDynamicComprehender;
 import com.aol.cyclops.internal.comprehensions.converters.MonadicConverters;
-import com.aol.cyclops.lambda.monads.AnyMSeqImpl;
-import com.aol.cyclops.lambda.monads.AnyMValueImpl;
-import com.aol.cyclops.lambda.monads.ComprehenderSelector;
-import com.aol.cyclops.lambda.monads.MonadWrapper;
+import com.aol.cyclops.internal.monads.AnyMSeqImpl;
+import com.aol.cyclops.internal.monads.AnyMValueImpl;
+import com.aol.cyclops.internal.monads.ComprehenderSelector;
+import com.aol.cyclops.internal.monads.MonadWrapper;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.types.EmptyUnit;
 import com.aol.cyclops.types.FlatMap;
@@ -57,6 +54,9 @@ import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.sequence.ToStream;
 import com.aol.cyclops.util.Streamable;
+import com.aol.cyclops.util.function.QuadFunction;
+import com.aol.cyclops.util.function.QuintFunction;
+import com.aol.cyclops.util.function.TriFunction;
 
 /**
  * 

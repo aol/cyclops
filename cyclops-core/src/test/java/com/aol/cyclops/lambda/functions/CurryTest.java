@@ -7,7 +7,7 @@ import java.util.function.BiFunction;
 
 import org.junit.Test;
 
-import com.aol.cyclops.functions.Curry;
+import com.aol.cyclops.util.function.Curry;
 public class CurryTest {
 
 	@Test

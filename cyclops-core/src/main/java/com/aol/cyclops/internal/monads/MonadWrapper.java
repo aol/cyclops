@@ -1,4 +1,4 @@
-package com.aol.cyclops.lambda.monads;
+package com.aol.cyclops.internal.monads;
 
 import lombok.AllArgsConstructor;
 import lombok.Value;

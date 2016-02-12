@@ -21,15 +21,15 @@ import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.functions.QuadFunction;
-import com.aol.cyclops.functions.QuintFunction;
-import com.aol.cyclops.functions.TriFunction;
-import com.aol.cyclops.lambda.monads.AnyMValueImpl;
+import com.aol.cyclops.internal.monads.AnyMValueImpl;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.monad.AnyMonads;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.util.function.QuadFunction;
+import com.aol.cyclops.util.function.QuintFunction;
+import com.aol.cyclops.util.function.TriFunction;
 
 public interface AnyMValue<T> extends AnyM<T>,
 									  Value<T>,

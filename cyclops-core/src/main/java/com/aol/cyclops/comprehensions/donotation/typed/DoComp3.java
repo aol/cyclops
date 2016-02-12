@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 
 import org.pcollections.PStack;
 
-import com.aol.cyclops.lambda.monads.MonadWrapper;
+import com.aol.cyclops.internal.monads.MonadWrapper;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 	public class DoComp3<T1,T2,T3> extends DoComp{

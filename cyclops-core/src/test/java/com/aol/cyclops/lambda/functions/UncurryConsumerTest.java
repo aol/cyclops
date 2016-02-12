@@ -6,7 +6,7 @@ import static org.hamcrest.Matchers.equalTo;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.functions.UncurryConsumer;
+import com.aol.cyclops.util.function.UncurryConsumer;
 
 public class UncurryConsumerTest {
 	Integer value;

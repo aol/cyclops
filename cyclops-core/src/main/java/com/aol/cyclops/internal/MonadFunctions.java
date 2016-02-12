@@ -4,14 +4,11 @@ package com.aol.cyclops.internal;
 
 
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.tuple.Tuple2;
-
 import com.aol.cyclops.Monoid;
-import com.aol.cyclops.lambda.monads.ComprehenderSelector;
-import com.aol.cyclops.lambda.monads.MonadWrapper;
+import com.aol.cyclops.internal.monads.ComprehenderSelector;
+import com.aol.cyclops.internal.monads.MonadWrapper;
 
 public interface MonadFunctions<MONAD,T>{
 	<R> Monad<MONAD,T> bind(Function<? super T,? extends R> fn);

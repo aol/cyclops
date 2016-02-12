@@ -6,7 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.aol.cyclops.lambda.monads.ComprehenderSelector;
+import com.aol.cyclops.internal.monads.ComprehenderSelector;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.util.ExceptionSoftener;
 

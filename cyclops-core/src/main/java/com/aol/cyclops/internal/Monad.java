@@ -10,8 +10,8 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.data.Mutable;
-import com.aol.cyclops.lambda.monads.ComprehenderSelector;
-import com.aol.cyclops.lambda.monads.MonadWrapper;
+import com.aol.cyclops.internal.monads.ComprehenderSelector;
+import com.aol.cyclops.internal.monads.MonadWrapper;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SeqUtils;
 import com.aol.cyclops.sequence.SequenceM;

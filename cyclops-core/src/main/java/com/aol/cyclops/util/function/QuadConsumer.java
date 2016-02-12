@@ -1,4 +1,4 @@
-package com.aol.cyclops.functions;
+package com.aol.cyclops.util.function;
 
 import java.util.function.Consumer;
 import java.util.function.Function;

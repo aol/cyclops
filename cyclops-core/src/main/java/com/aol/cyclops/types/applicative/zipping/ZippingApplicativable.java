@@ -3,11 +3,11 @@ package com.aol.cyclops.types.applicative.zipping;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import com.aol.cyclops.functions.QuadFunction;
-import com.aol.cyclops.functions.QuintFunction;
-import com.aol.cyclops.functions.TriFunction;
 import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.Unit;
+import com.aol.cyclops.util.function.QuadFunction;
+import com.aol.cyclops.util.function.QuintFunction;
+import com.aol.cyclops.util.function.TriFunction;
 
 public interface ZippingApplicativable<T> extends IterableFunctor<T>,Unit<T>{
 	

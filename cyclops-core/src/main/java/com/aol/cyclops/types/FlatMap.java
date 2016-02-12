@@ -4,9 +4,9 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import com.aol.cyclops.control.Do;
-import com.aol.cyclops.functions.CurryVariance;
-import com.aol.cyclops.functions.TriFunction;
 import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.util.function.CurryVariance;
+import com.aol.cyclops.util.function.TriFunction;
 
 import lombok.Value;
 

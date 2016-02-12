@@ -15,15 +15,15 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.jooq.lambda.tuple.Tuple5;
 
-import com.aol.cyclops.functions.QuadFunction;
-import com.aol.cyclops.functions.QuintFunction;
-import com.aol.cyclops.functions.TriFunction;
 import com.aol.cyclops.internal.matcher2.CheckValues;
 import com.aol.cyclops.internal.matcher2.MatchableCase;
 import com.aol.cyclops.internal.matcher2.MatchingInstance;
 import com.aol.cyclops.internal.matcher2.PatternMatcher;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.types.Decomposable;
+import com.aol.cyclops.util.function.QuadFunction;
+import com.aol.cyclops.util.function.QuintFunction;
+import com.aol.cyclops.util.function.TriFunction;
 
 import lombok.AllArgsConstructor;
 

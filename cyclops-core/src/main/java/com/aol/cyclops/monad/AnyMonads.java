@@ -6,8 +6,8 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.lambda.monads.ComprehenderSelector;
-import com.aol.cyclops.lambda.monads.MonadWrapper;
+import com.aol.cyclops.internal.monads.ComprehenderSelector;
+import com.aol.cyclops.internal.monads.MonadWrapper;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.types.extensability.Comprehender;
 

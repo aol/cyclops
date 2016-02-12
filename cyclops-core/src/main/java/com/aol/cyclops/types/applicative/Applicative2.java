@@ -6,9 +6,9 @@ import java.util.function.Function;
 
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.functions.Lambda;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.util.function.Lambda;
 
 import fj.data.Stream;
 

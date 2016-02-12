@@ -1,11 +1,11 @@
 package com.aol.cyclops.lambda.functions;
 
-import static com.aol.cyclops.functions.Memoize.memoizeBiFunction;
-import static com.aol.cyclops.functions.Memoize.memoizeCallable;
-import static com.aol.cyclops.functions.Memoize.memoizeFunction;
-import static com.aol.cyclops.functions.Memoize.memoizePredicate;
-import static com.aol.cyclops.functions.Memoize.memoizeQuadFunction;
-import static com.aol.cyclops.functions.Memoize.memoizeSupplier;
+import static com.aol.cyclops.util.function.Memoize.memoizeBiFunction;
+import static com.aol.cyclops.util.function.Memoize.memoizeCallable;
+import static com.aol.cyclops.util.function.Memoize.memoizeFunction;
+import static com.aol.cyclops.util.function.Memoize.memoizePredicate;
+import static com.aol.cyclops.util.function.Memoize.memoizeQuadFunction;
+import static com.aol.cyclops.util.function.Memoize.memoizeSupplier;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -20,7 +20,7 @@ import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.functions.Memoize;
+import com.aol.cyclops.util.function.Memoize;
 public class MemoiseTest {
 
 	int called= 0;

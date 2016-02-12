@@ -1,4 +1,4 @@
-package com.aol.cyclops.functions;
+package com.aol.cyclops.util.function;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;

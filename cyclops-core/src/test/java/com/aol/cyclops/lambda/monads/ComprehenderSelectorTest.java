@@ -1,7 +1,7 @@
 package com.aol.cyclops.lambda.monads;
 
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -29,8 +29,7 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.internal.comprehensions.comprehenders.StreamComprehender;
-
-import static org.hamcrest.Matchers.*;
+import com.aol.cyclops.internal.monads.ComprehenderSelector;
 public class ComprehenderSelectorTest {
 
 	@Test

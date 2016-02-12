@@ -24,11 +24,8 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.functions.QuadFunction;
-import com.aol.cyclops.functions.QuintFunction;
-import com.aol.cyclops.functions.TriFunction;
 import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.lambda.monads.AnyMSeqImpl;
+import com.aol.cyclops.internal.monads.AnyMSeqImpl;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.monad.AnyMonads;
 import com.aol.cyclops.sequence.SequenceM;
@@ -37,6 +34,9 @@ import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.sequence.ConvertableSequence;
 import com.aol.cyclops.types.sequence.SequenceMCollectable;
+import com.aol.cyclops.util.function.QuadFunction;
+import com.aol.cyclops.util.function.QuintFunction;
+import com.aol.cyclops.util.function.TriFunction;
 
 public interface AnyMSeq<T> extends AnyM<T>,
 									ConvertableSequence<T>,
