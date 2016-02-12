@@ -1,4 +1,4 @@
-package com.aol.cyclops.streams.operators;
+package com.aol.cyclops.internal.stream.operators;
 
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;

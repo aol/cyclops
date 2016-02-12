@@ -11,9 +11,9 @@ import javaslang.collection.Stream;
 import uk.co.real_logic.agrona.concurrent.OneToOneConcurrentArrayQueue;
 
 import com.aol.cyclops.internal.stream.IteratorHotStream;
+import com.aol.cyclops.internal.stream.spliterators.ClosingSpliterator;
 import com.aol.cyclops.javaslang.FromJDK;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.streams.spliterators.ClosingSpliterator;
 
 public abstract class BaseHotStreamImpl<T> extends IteratorHotStream<T> implements JavaslangHotStream<T>{
 	

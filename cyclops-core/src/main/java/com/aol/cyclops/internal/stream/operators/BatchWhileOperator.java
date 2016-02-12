@@ -1,35 +1,49 @@
-package com.aol.cyclops.streams.operators;
+package com.aol.cyclops.internal.stream.operators;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import lombok.Value;
 
+import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
 import com.aol.cyclops.util.StreamUtils;
-import com.aol.cyclops.util.Streamable;
 @Value
-public class WindowWhileOperator<T> {
+public class BatchWhileOperator<T, C extends Collection<? super T>> {
 	 private static final Object UNSET = new Object();
 	Stream<T> stream;
-	public Stream<Streamable<T>> windowWhile(Predicate<? super T> predicate){
+	Supplier<C> factory;
+	
+	public BatchWhileOperator(Stream<T> stream){
+		this.stream = stream;
+		factory = ()-> (C)new ListXImpl();
+	}
+	public BatchWhileOperator(Stream<T> stream, Supplier<C> factory) {
+		super();
+		this.stream = stream;
+		this.factory = factory;
+	}
+	
+	public Stream<C> batchWhile(Predicate<? super T> predicate){
 		Iterator<T> it = stream.iterator();
-		return StreamUtils.stream(new Iterator<Streamable<T>>(){
+		return StreamUtils.stream(new Iterator<C>(){
 			T value = (T)UNSET;
 			@Override
 			public boolean hasNext() {
 				return value!=UNSET || it.hasNext();
 			}
 			@Override
-			public Streamable<T> next() {
+			public C next() {
 				
-				List<T> list = new ArrayList<>();
+				C list = factory.get();
 				if(value!=UNSET)
 					list.add(value);
 				T value;
-				while(list.size()==0 && it.hasNext()){
+				
 label:					while(it.hasNext()) {
 							value=it.next();
 							list.add(value);
@@ -41,12 +55,12 @@ label:					while(it.hasNext()) {
 							value=(T)UNSET;
 						
 					}
-					
-						
-				}
-				return Streamable.fromIterable(list);
+				return list;
 			}
 			
-		});
+		}).filter(l->l.size()>0);
 	}
+
+
+	
 }

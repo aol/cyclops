@@ -1,4 +1,4 @@
-package com.aol.cyclops.streams.spliterators;
+package com.aol.cyclops.internal.stream.spliterators;
 
 import java.util.Objects;
 import java.util.Spliterator;
