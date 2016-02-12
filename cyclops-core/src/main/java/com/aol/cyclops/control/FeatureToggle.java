@@ -9,11 +9,10 @@ import java.util.function.Supplier;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
-import com.aol.cyclops.types.sequence.ToStream;
+import com.aol.cyclops.types.stream.ToStream;
 
 
 

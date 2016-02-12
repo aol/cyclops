@@ -27,13 +27,13 @@ import lombok.val;
 import org.junit.Test;
 
 import com.aol.cyclops.javaslang.ToStream;
-import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.sequence.HeadAndTail;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.Reducers;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.types.stream.HeadAndTail;
 public class StreamUtilsTest {
 	@Test
 	public void headTailReplay(){

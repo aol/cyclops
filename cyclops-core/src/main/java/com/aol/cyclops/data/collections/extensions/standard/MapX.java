@@ -34,7 +34,7 @@ import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.IterableFilterable;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
-import com.aol.cyclops.types.sequence.SequenceMCollectable;
+import com.aol.cyclops.types.stream.SequenceMCollectable;
 import com.aol.cyclops.util.StreamUtils;
 
 

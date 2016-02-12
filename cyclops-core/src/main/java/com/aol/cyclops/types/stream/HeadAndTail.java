@@ -1,4 +1,4 @@
-package com.aol.cyclops.sequence;
+package com.aol.cyclops.types.stream;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.util.function.Memoize;
 
 import lombok.AllArgsConstructor;

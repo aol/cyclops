@@ -17,7 +17,7 @@ import com.aol.cyclops.control.Xor.Primary;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;

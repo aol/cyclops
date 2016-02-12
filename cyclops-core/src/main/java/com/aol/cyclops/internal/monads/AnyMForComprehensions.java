@@ -2,8 +2,8 @@ package com.aol.cyclops.internal.monads;
 
 import java.util.function.Function;
 
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Do;
-import com.aol.cyclops.monad.AnyM;
 
 public class AnyMForComprehensions<U> implements AnyMForComprehensionHandler<U> {
 

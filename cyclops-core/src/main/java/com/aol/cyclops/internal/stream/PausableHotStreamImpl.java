@@ -1,11 +1,11 @@
-package com.aol.cyclops.streams;
+package com.aol.cyclops.internal.stream;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.sequence.HotStream;
-import com.aol.cyclops.sequence.PausableHotStream;
+import com.aol.cyclops.types.stream.HotStream;
+import com.aol.cyclops.types.stream.PausableHotStream;
 
 public class PausableHotStreamImpl<T> extends BaseHotStreamImpl<T> implements PausableHotStream<T>  {
 	public PausableHotStreamImpl(Stream<T> stream) {

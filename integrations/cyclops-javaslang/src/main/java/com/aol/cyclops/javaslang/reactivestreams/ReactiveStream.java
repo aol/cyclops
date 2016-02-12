@@ -41,7 +41,7 @@ import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.javaslang.Javaslang;
 import com.aol.cyclops.javaslang.streams.JavaslangHotStream;
 import com.aol.cyclops.javaslang.streams.StreamUtils;
-import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.sequence.Monoid;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.future.FutureOperations;

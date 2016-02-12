@@ -1,4 +1,4 @@
-package com.aol.cyclops.sequence;
+package com.aol.cyclops.types.stream;
 
 import static com.aol.cyclops.sequence.SequenceM.fromStream;
 
@@ -27,6 +27,8 @@ import org.jooq.lambda.tuple.Tuple6;
 import org.jooq.lambda.tuple.Tuple7;
 import org.jooq.lambda.tuple.Tuple8;
 import org.jooq.lambda.tuple.Tuple9;
+
+import com.aol.cyclops.sequence.SequenceM;
 
 
 

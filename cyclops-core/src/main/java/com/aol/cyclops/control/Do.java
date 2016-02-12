@@ -1,6 +1,6 @@
 package com.aol.cyclops.control;
 
-import com.aol.cyclops.comprehensions.donotation.typed.*;
+import com.aol.cyclops.internal.comprehensions.donotation.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 import org.pcollections.ConsPStack;
 
-import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 
 public class Do {

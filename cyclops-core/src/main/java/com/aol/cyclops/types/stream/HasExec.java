@@ -1,4 +1,4 @@
-package com.aol.cyclops.streams;
+package com.aol.cyclops.types.stream;
 
 import java.util.concurrent.Executor;
 

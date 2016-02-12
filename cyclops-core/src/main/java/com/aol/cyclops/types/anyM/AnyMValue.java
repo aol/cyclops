@@ -17,13 +17,14 @@ import org.jooq.lambda.function.Function4;
 import org.jooq.lambda.function.Function5;
 
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.AnyMValueImpl;
 import com.aol.cyclops.internal.monads.AnyMonads;
-import com.aol.cyclops.monad.AnyM;
+
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;

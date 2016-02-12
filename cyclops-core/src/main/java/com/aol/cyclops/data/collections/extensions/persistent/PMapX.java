@@ -23,7 +23,7 @@ import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.IterableFilterable;
-import com.aol.cyclops.types.sequence.SequenceMCollectable;
+import com.aol.cyclops.types.stream.SequenceMCollectable;
 
 public interface PMapX<K, V> extends PMap<K, V>, 
 									 FluentMapX<K,V>,

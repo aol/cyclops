@@ -1,4 +1,4 @@
-package com.aol.cyclops.comprehensions.donotation.typed;
+package com.aol.cyclops.internal.comprehensions.donotation;
 
 
 import java.util.function.Function;
@@ -7,9 +7,9 @@ import org.pcollections.PStack;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
-import com.aol.cyclops.comprehensions.donotation.typed.DoBuilderModule.Assignment;
-import com.aol.cyclops.comprehensions.donotation.typed.DoBuilderModule.Entry;
-import com.aol.cyclops.comprehensions.donotation.typed.DoBuilderModule.Guard;
+import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Assignment;
+import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Entry;
+import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Guard;
 import com.aol.cyclops.data.Mutable;
 import com.aol.cyclops.internal.comprehensions.ForComprehensions;
 import com.aol.cyclops.internal.comprehensions.ComprehensionsModule.ComprehensionData;

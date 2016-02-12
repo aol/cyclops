@@ -11,7 +11,7 @@ import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.internal.monads.ComprehenderSelector;
 import com.aol.cyclops.types.extensability.Comprehender;
-import com.aol.cyclops.types.sequence.ToStream;
+import com.aol.cyclops.types.stream.ToStream;
 
 public class StreamComprehender implements Comprehender<Stream> {
 	public Class getTargetClass(){

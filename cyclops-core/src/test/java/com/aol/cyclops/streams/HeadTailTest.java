@@ -7,9 +7,9 @@ import java.util.Optional;
 import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.sequence.HeadAndTail;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.types.stream.HeadAndTail;
 
 public class HeadTailTest {
 

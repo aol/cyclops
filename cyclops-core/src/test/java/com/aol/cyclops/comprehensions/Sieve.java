@@ -2,8 +2,8 @@ package com.aol.cyclops.comprehensions;
 
 import org.junit.Test;
 
-import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.util.Streamable;
 
 public class Sieve {

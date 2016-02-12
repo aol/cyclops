@@ -1,10 +1,10 @@
-package com.aol.cyclops.streams;
+package com.aol.cyclops.types.stream;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.sequence.HotStream;
+import com.aol.cyclops.internal.stream.BaseHotStreamImpl;
 
 public class NonPausableHotStream<T>  extends BaseHotStreamImpl<T> {
 	public NonPausableHotStream(Stream<T> stream) {

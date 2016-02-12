@@ -2,7 +2,7 @@ package com.aol.cyclops.internal.monads;
 
 import java.util.function.Function;
 
-import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.control.AnyM;
 
 public interface AnyMForComprehensionHandler<U> {
 	<R1, R> AnyM<R> forEach2(AnyM<U> anyM, Function<? super U, ? extends AnyM<R1>> monad, Function<? super U, Function<? super R1, ? extends R>> yieldingFunction);

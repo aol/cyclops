@@ -1,4 +1,4 @@
-package com.aol.cyclops.comprehensions.donotation.typed;
+package com.aol.cyclops.internal.comprehensions.donotation;
 
 import java.util.function.Function;
 

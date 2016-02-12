@@ -9,7 +9,7 @@ import java.util.function.BiFunction;
 import org.junit.Test;
 
 import com.aol.cyclops.control.Do;
-import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.control.AnyM;
 
 import fj.data.Option;
 

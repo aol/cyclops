@@ -1,4 +1,4 @@
-package com.aol.cyclops.types.sequence;
+package com.aol.cyclops.types.stream;
 
 import java.util.Collection;
 import java.util.Comparator;

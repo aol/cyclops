@@ -1,4 +1,4 @@
-package com.aol.cyclops.types.sequence;
+package com.aol.cyclops.types.stream;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -8,7 +8,7 @@ import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.internal.invokedynamic.InvokeDynamic;
 import com.aol.cyclops.internal.matcher2.AsDecomposable;
-import com.aol.cyclops.sequence.ReversedIterator;
+import com.aol.cyclops.internal.stream.ReversedIterator;
 import com.aol.cyclops.sequence.SeqUtils;
 import com.aol.cyclops.sequence.SequenceM;
 

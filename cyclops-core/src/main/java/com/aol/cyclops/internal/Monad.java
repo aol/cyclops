@@ -12,7 +12,7 @@ import java.util.stream.StreamSupport;
 import com.aol.cyclops.data.Mutable;
 import com.aol.cyclops.internal.monads.ComprehenderSelector;
 import com.aol.cyclops.internal.monads.MonadWrapper;
-import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.sequence.SeqUtils;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.types.extensability.Comprehender;

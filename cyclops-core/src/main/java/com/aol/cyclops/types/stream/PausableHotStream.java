@@ -1,4 +1,4 @@
-package com.aol.cyclops.sequence;
+package com.aol.cyclops.types.stream;
 
 
 public interface PausableHotStream<T> extends HotStream<T>{

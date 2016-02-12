@@ -7,8 +7,8 @@ import java.util.function.ToDoubleFunction;
 import java.util.stream.DoubleStream;
 
 import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.streams.HasExec;
-import com.aol.cyclops.streams.HasStream;
+import com.aol.cyclops.types.stream.HasExec;
+import com.aol.cyclops.types.stream.HasStream;
 
 public interface DoubleOperatorsMixin<T>  extends  DoubleOperators<T>,HasStream<T>{
 	/**

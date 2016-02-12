@@ -21,7 +21,7 @@ import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.internal.comprehensions.comprehenders.MaterializedList;
-import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;

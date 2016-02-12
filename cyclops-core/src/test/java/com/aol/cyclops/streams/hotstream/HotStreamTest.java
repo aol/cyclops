@@ -14,8 +14,8 @@ import org.junit.Test;
 
 import uk.co.real_logic.agrona.concurrent.OneToOneConcurrentArrayQueue;
 
-import com.aol.cyclops.sequence.PausableHotStream;
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.types.stream.PausableHotStream;
 
 import fj.data.Seq;
 

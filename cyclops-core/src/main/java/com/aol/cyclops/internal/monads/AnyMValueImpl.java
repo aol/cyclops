@@ -11,10 +11,10 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Xor;
-import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;

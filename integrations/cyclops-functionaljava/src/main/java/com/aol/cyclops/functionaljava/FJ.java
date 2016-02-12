@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
-import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.control.AnyM;
 
 import fj.P1;
 import fj.data.Either;

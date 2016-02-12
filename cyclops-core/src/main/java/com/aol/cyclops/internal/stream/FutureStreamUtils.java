@@ -1,4 +1,4 @@
-package com.aol.cyclops.streams;
+package com.aol.cyclops.internal.stream;
 
 import static org.jooq.lambda.tuple.Tuple.tuple;
 

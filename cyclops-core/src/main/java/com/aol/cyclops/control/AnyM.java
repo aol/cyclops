@@ -55,7 +55,7 @@ import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.anyM.ReduceM;
-import com.aol.cyclops.types.sequence.ToStream;
+import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.util.Streamable;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;

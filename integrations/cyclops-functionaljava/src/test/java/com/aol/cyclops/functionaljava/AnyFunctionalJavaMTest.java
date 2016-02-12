@@ -13,7 +13,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 
-import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.control.AnyM;
 
 import fj.Monoid;
 import fj.control.Trampoline;

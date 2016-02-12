@@ -1,14 +1,14 @@
-package com.aol.cyclops.comprehensions.donotation.typed;
+package com.aol.cyclops.internal.comprehensions.donotation;
 
 import java.util.function.Function;
 
 import org.pcollections.PStack;
 
 import com.aol.cyclops.internal.monads.MonadWrapper;
-import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.comprehensions.donotation.typed.DoBuilderModule.Assignment;
-import com.aol.cyclops.comprehensions.donotation.typed.DoBuilderModule.Entry;
-import com.aol.cyclops.comprehensions.donotation.typed.DoBuilderModule.Guard;
+import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Assignment;
+import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Entry;
+import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Guard;
 
 public class DoComp8<T,T1,T2,T3,T4,T5,T6,T7> extends DoComp{
 	public DoComp8(PStack<Entry> assigned, Class orgType) {

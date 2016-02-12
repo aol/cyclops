@@ -7,8 +7,8 @@ import java.util.function.ToLongFunction;
 import java.util.stream.LongStream;
 
 import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.streams.HasExec;
-import com.aol.cyclops.streams.HasStream;
+import com.aol.cyclops.types.stream.HasExec;
+import com.aol.cyclops.types.stream.HasStream;
 
 public interface LongOperatorsMixin<T>  extends LongOperators<T>,HasStream<T>{
 	

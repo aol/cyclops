@@ -42,17 +42,17 @@ import com.aol.cyclops.Reducer;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
-import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.sequence.HotStream;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
-import com.aol.cyclops.types.sequence.ConvertableSequence;
-import com.aol.cyclops.types.sequence.SequenceMCollectable;
-import com.aol.cyclops.types.sequence.ToStream;
+import com.aol.cyclops.types.stream.ConvertableSequence;
+import com.aol.cyclops.types.stream.HotStream;
+import com.aol.cyclops.types.stream.SequenceMCollectable;
+import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 
 

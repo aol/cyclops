@@ -15,7 +15,7 @@ import javaslang.Value;
 
 import org.pcollections.ConsPStack;
 
-import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 
 public class Do {

@@ -10,7 +10,7 @@ import org.jooq.lambda.function.Function1;
 
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Try.Success;
-import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.control.AnyM;
 
 
 /**

@@ -18,7 +18,7 @@ import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Try.Failure;
 import com.aol.cyclops.control.Try.Success;
 import com.aol.cyclops.control.monads.transformers.TryT;
-import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.control.AnyM;
 public class TryTTest {
 
 	String result = null;

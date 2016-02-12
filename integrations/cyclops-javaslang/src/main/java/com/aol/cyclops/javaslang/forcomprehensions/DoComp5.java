@@ -24,7 +24,7 @@ import com.aol.cyclops.comprehensions.donotation.typed.Entry;
 import com.aol.cyclops.comprehensions.donotation.typed.Guard;
 import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
-import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 	public class DoComp5<T1,T2,T3,T4,T5> extends DoComp{
 		public DoComp5(PStack<Entry> assigned, Class orgType) {

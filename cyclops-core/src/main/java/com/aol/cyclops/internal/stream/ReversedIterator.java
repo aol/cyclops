@@ -1,4 +1,4 @@
-package com.aol.cyclops.sequence;
+package com.aol.cyclops.internal.stream;
 
 import java.util.Iterator;
 import java.util.List;
@@ -8,6 +8,7 @@ import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.util.Streamable;
 
 import lombok.AllArgsConstructor;

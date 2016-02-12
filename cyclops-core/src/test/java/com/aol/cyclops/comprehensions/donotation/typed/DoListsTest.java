@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.control.Do;
-import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.control.AnyM;
 
 import lombok.val;
 public class DoListsTest {

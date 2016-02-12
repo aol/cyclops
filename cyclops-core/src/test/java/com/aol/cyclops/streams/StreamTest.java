@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 public class StreamTest {
 	 public static <U> SequenceM<U> of(U... array){

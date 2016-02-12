@@ -1,8 +1,8 @@
 
-package com.aol.cyclops.comprehensions.donotation.typed;
-import com.aol.cyclops.comprehensions.donotation.typed.DoBuilderModule.Assignment;
-import com.aol.cyclops.comprehensions.donotation.typed.DoBuilderModule.Entry;
-import com.aol.cyclops.comprehensions.donotation.typed.DoBuilderModule.Guard;
+package com.aol.cyclops.internal.comprehensions.donotation;
+import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Assignment;
+import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Entry;
+import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Guard;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 import org.pcollections.PStack;
 
 import com.aol.cyclops.internal.monads.MonadWrapper;
-import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 	public class DoComp1<T1> extends DoComp{
 		public DoComp1(PStack<Entry> assigned, Class orgType) {

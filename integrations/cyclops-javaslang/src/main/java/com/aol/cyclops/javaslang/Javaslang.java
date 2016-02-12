@@ -2,7 +2,7 @@ package com.aol.cyclops.javaslang;
 
 import java.util.Optional;
 
-import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.control.AnyM;
 
 import javaslang.Value;
 import javaslang.collection.LazyStream;

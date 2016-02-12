@@ -23,7 +23,7 @@ import org.jooq.lambda.tuple.Tuple3;
 import com.aol.cyclops.data.MutableInt;
 import com.aol.cyclops.internal.invokedynamic.CheckedTriFunction;
 import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.util.ExceptionSoftener;
 import com.aol.cyclops.util.function.Cacheable;

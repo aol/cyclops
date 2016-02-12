@@ -7,8 +7,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.ToIntFunction;
 import java.util.stream.IntStream;
 
-import com.aol.cyclops.streams.HasExec;
-import com.aol.cyclops.streams.HasStream;
+import com.aol.cyclops.types.stream.HasExec;
+import com.aol.cyclops.types.stream.HasStream;
 
 public interface IntOperatorsMixin<T>  extends IntOperators<T>,HasStream<T>, HasExec{
 	

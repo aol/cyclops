@@ -1,10 +1,7 @@
 package com.aol.cyclops.streams.anyM;
 
 
-import static com.aol.cyclops.monad.AnyM.listFromCompletableFuture;
-import static com.aol.cyclops.monad.AnyM.listFromOptional;
-import static com.aol.cyclops.monad.AnyM.listFromStream;
-import static com.aol.cyclops.monad.AnyM.ofMonad;
+import static com.aol.cyclops.control.AnyM.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
@@ -31,10 +28,9 @@ import org.junit.Test;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Reducers;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.util.Streamable;

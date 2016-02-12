@@ -1,5 +1,6 @@
 package com.aol.cyclops.internal.monads;
 
+import com.aol.cyclops.control.AnyM;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +13,7 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Xor;
-import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.anyM.AnyMSeq;
@@ -188,7 +189,7 @@ public class AnyMSeqImpl<T> implements AnyMSeq<T> {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#aggregate(com.aol.cyclops.monad.AnyM)
+	 * @see com.aol.cyclops.types.anyM.AnyMSeq#aggregate(com.aol.cyclops.control.AnyM)
 	 */
 	@Override
 	public AnyMSeq<List<T>> aggregate(AnyM<T> next) {
@@ -246,7 +247,7 @@ public class AnyMSeqImpl<T> implements AnyMSeq<T> {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#applyM(com.aol.cyclops.monad.AnyM)
+	 * @see com.aol.cyclops.types.anyM.AnyMSeq#applyM(com.aol.cyclops.control.AnyM)
 	 */
 	@Override
 	public <R> AnyMSeq<R> applyM(AnyM<Function<? super T, ? extends R>> fn) {

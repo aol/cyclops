@@ -1,4 +1,4 @@
-package com.aol.cyclops.sequence;
+package com.aol.cyclops.types.stream;
 
 import java.util.Comparator;
 import java.util.Iterator;
@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
 
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.IterableFilterable;
 
