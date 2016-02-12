@@ -58,6 +58,7 @@ import com.aol.cyclops.sequence.streamable.AsStreamable;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.streams.spliterators.ReversableSpliterator;
+import com.aol.cyclops.types.Unwrapable;
 
 public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	private final Seq<T> stream;
@@ -959,23 +960,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	public final  HeadAndTail<T> headAndTail(){
 		return StreamUtils.headAndTail(stream);
 	}
-	/**
-	 * extract head and tail together, where no head or tail may be present
-	 * 
-	 * <pre>
-	 * {@code 
-	 * SequenceM<String> helloWorld = SequenceM.of();
-		Optional<HeadAndTail<String>> headAndTail = helloWorld.headAndTailOptional();
-		assertTrue(!headAndTail.isPresent());
-	 * 
-	 * }
-	 * </pre>
-	 * @return
-	 */
-	public final  Optional<HeadAndTail<T>> headAndTailOptional(){
-		return StreamUtils.headAndTailOptional(stream);
-	}
-	
+
 	/**
 	 * @return First matching element in sequential order
 	 * 
@@ -1033,48 +1018,8 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
             BiConsumer<R, R> combiner){
 		return stream.collect(supplier, accumulator, combiner);
 	}
-	/**
-	 * Apply multiple collectors Simulataneously to this Monad
-	 * 
-	 * <pre>{@code
-	  	List result =SequenceM.of(1,2,3).collect(Stream.of(Collectors.toList(),
-	  															Collectors.summingInt(Integer::intValue),
-	  															Collectors.averagingInt(Integer::intValue)));
-		
-		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));
-		assertThat(result.get(1),equalTo(6));
-		assertThat(result.get(2),equalTo(2.0));
-		}</pre>
-		
-	 * 
-	 * @param collectors Stream of Collectors to apply
-	 * @return  List of results
-	 */
-	public final  List collect(Stream<Collector> collectors){
-		return StreamUtils.collect(stream,collectors);
-	}
-	/**
-	 *  Apply multiple Collectors, simultaneously to a Stream
-	 * <pre>
-	 * {@code 
-	 * List result = SequenceM.of(1,2,3).collect(
-								Arrays.asList(Collectors.toList(),
-								Collectors.summingInt(Integer::intValue),
-								Collectors.averagingInt(Integer::intValue)));
-		
-		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));
-		assertThat(result.get(1),equalTo(6));
-		assertThat(result.get(2),equalTo(2.0));
-	 * }
-	 * </pre>
-	 * @param stream Stream to collect
-	 * @param collectors Collectors to apply
-	 * @return Result as a list
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public <R> ListX<R> collectIterable(Iterable<Collector> collectors){
-		return ListX.fromIterable(StreamUtils.collect(stream, collectors));
-	}
+
+
 	
 	/**
 	 * 
@@ -2039,10 +1984,7 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	public SequenceM<ListX<T>> batchWhile(Predicate<? super T> predicate) {
 		return StreamUtils.sequenceM(StreamUtils.batchWhile(stream,predicate), this.reversable);
 	}
-	@Override
-	public ListX collectStream(Stream<Collector> collectors) {
-		return ListX.fromIterable(StreamUtils.collect(stream,collectors));
-	}
+
 	@Override
 	public<C extends Collection<? super T>>  SequenceM<C> batchWhile(Predicate<? super T> predicate, Supplier<C> factory) {
 		return StreamUtils.sequenceM(StreamUtils.batchWhile(stream,predicate,factory), this.reversable);

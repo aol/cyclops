@@ -49,16 +49,14 @@ import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
-import com.aol.cyclops.matcher2.Case;
-import com.aol.cyclops.matcher2.CheckValues;
+import com.aol.cyclops.internal.matcher2.Case;
+import com.aol.cyclops.internal.matcher2.CheckValues;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.sequence.reactivestreams.CyclopsSubscriber;
 import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
 import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops.sequence.streamable.Streamable;
-import com.aol.cyclops.sequence.traits.ConvertableSequence;
-import com.aol.cyclops.sequence.traits.SequenceMCollectable;
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.streams.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.streams.spliterators.ReversingListSpliterator;
@@ -71,8 +69,11 @@ import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableFilterable;
 import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.Unit;
+import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
+import com.aol.cyclops.types.sequence.ConvertableSequence;
+import com.aol.cyclops.types.sequence.SequenceMCollectable;
 
 
 public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<T>,Functor<T>, ExtendedTraversable<T>,

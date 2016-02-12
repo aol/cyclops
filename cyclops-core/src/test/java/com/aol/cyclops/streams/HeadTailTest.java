@@ -25,14 +25,7 @@ public class HeadTailTest {
 		assertThat(tail.headAndTail().head(),equalTo("world"));
 		
 	}
-	@Test
-	public void headTailOptional(){
 	
-		SequenceM<String> helloWorld = SequenceM.of();
-		Optional<HeadAndTail<String>> headAndTail = helloWorld.headAndTailOptional();
-		assertTrue(!headAndTail.isPresent());
-		
-	}
 	@Test
 	public void empty(){
 	

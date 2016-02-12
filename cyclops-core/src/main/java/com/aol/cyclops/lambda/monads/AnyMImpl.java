@@ -23,9 +23,11 @@ import lombok.AllArgsConstructor;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.comprehensions.comprehenders.MaterializedList;
-import com.aol.cyclops.internal.AsGenericMonad;
+import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.internal.Monad;
+import com.aol.cyclops.internal.comprehensions.comprehenders.MaterializedList;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.monad.AnyMonads;
 import com.aol.cyclops.sequence.SequenceM;
@@ -294,79 +296,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 		}
 	}
 	
-	/**
-	 * Convenience method to allow method reference support, when flatMap return type is a Stream
-	 * 
-	 * @param fn
-	 * @return
-	 */
-	public final <R> AnyM<R> flatMapStream(Function<? super T,BaseStream<? extends R,?>> fn) {
-		try{
-			return monad.flatMap(in -> fn.apply(in)).anyM().map(this::takeFirst);
-		}catch(GotoAsEmpty e){
-			return empty();
-		}
-	}
-	/**
-	 * Convenience method to allow method reference support, when flatMap return type is a Streamable
-	 * 
-	 * @param fn
-	 * @return
-	 */
-	public final <R> AnyM<R> flatMapStreamable(Function<? super T,Streamable<R>> fn) {
-		try{
-			return monad.flatMap(in -> fn.apply(in)).anyM().map(this::takeFirst);
-		}catch(GotoAsEmpty e){
-			return empty();
-		}
-	}
-	/**
-	 * flatMapping to a Stream will result in the Stream being converted to a List, if the host Monad
-	 * type is not a Stream (or Stream like type). (i.e.
-	 *  <pre>
-	 *  {@code  
-	 *   AnyM<Integer> opt = anyM(Optional.of(20));
-	 *   Optional<List<Integer>> optionalList = opt.flatMap( i -> anyM(Stream.of(1,2,i))).unwrap();  
-	 *   
-	 *   //Optional [1,2,20]
-	 *  }</pre>
-	 *  
-	 *  In such cases using Arrays.asList would be more performant
-	 *  <pre>
-	 *  {@code  
-	 *   AnyM<Integer> opt = anyM(Optional.of(20));
-	 *   Optional<List<Integer>> optionalList = opt.flatMapCollection( i -> asList(1,2,i))).unwrap();  
-	 *   
-	 *   //Optional [1,2,20]
-	 *  }</pre>
-	 * @param fn
-	 * @return
-	 */
-	public final <R> AnyM<R> flatMapCollection(Function<? super T,Collection<? extends R>> fn) {
-		try{
-			return monad.flatMap(in -> fn.apply(in)).anyM().map(this::takeFirst);
-		}catch(GotoAsEmpty e){
-			return empty();
-		}
-	}
-	/**
-	 * Convenience method to allow method reference support, when flatMap return type is a Optional
-	 * 
-	 * @param fn
-	 * @return
-	 */
-	public final <R> AnyM<R> flatMapOptional(Function<? super T,Optional<? extends R>> fn) {
-		return monad.flatMap(in -> fn.apply(in)).anyM();
-	}
-	public final <R> AnyM<R> flatMapCompletableFuture(Function<? super T,CompletableFuture<? extends R>> fn) {
-		return monad.flatMap(in -> fn.apply(in)).anyM();
-	}
-	
-	public final <R> AnyM<R> flatMapSequenceM(Function<? super T,SequenceM<? extends R>> fn) {
-		return monad.flatMap(in -> fn.apply(in).unwrap()).anyM();
-	}
-	
-	
+
 	
 	
 	/**
@@ -453,19 +383,38 @@ public class AnyMImpl<T> implements AnyM<T>{
 		
 		return monad.replicateM(times).anyM();		
 	}
-	
+	@Override
 	public final   AnyM<T> reduceMOptional(Monoid<Optional<T>> reducer){
 		return monad.reduceM(reducer).anyM();
 	}
+	@Override
+	public final AnyM<T> reduceMMaybe(Monoid<Maybe<T>> reducer){
+		return monad.reduceM(reducer).anyM();
+	}
+	@Override
+	public final   AnyM<T> reduceMXor(Monoid<Xor<?,T>> reducer){
+		return monad.reduceM(reducer).anyM();
+	}
+	
+	@Override 
+	public final AnyM<T> reduceMEval(Monoid<Eval<T>> reducer){
+	
+		return monad.reduceM(reducer).anyM();
+	}
+	
+	@Override
 	public final   AnyM<T> reduceMStream(Monoid<Stream<T>> reducer){
 		return monad.reduceM(reducer).anyM();
 	}
+	@Override
 	public final   AnyM<T> reduceMStreamable(Monoid<Streamable<T>> reducer){
 		return monad.reduceM(reducer).anyM();
 	}
+	@Override
 	public final   AnyM<T> reduceMIterable(Monoid<Iterable<T>> reducer){
 		return monad.reduceM(reducer).anyM();
 	}
+	@Override
 	public final   AnyM<T> reduceMCompletableFuture(Monoid<CompletableFuture<T>> reducer){
 		return monad.reduceM(reducer).anyM();
 	}
@@ -510,18 +459,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	public Iterator<T> iterator() {
 		return null;
 	}
-	@Override
-	public <R> AnyM<R> applyMStream(Stream<Function<? super T, ? extends R>> fn) {
-		return applyM(AnyM.fromStream(fn));
-	}
-	@Override
-	public <R> AnyM<R> applyMOptional(Optional<Function<? super T, ? extends R>> fn) {
-		return applyM(AnyM.fromOptional(fn));
-	}
-	@Override
-	public <R> AnyM<R> applyMCompletableFuture(CompletableFuture<Function<? super T, ? extends R>> fn) {
-		return applyM(AnyM.fromCompletableFuture(fn));
-	}
+	
 	@Override
 	public <R1, R> AnyM<R> forEach2(Function<? super T, ? extends AnyM<R1>> monad, Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {
 		if(AnyMForComprehensionFactory.instance==null){
@@ -577,5 +515,9 @@ public class AnyMImpl<T> implements AnyM<T>{
 	public <U> AnyM<U> unitIterator(Iterator<U> it) {
 		return AnyM.fromIterable(()->it);
 	}
+
+
+
+	
 	
 }

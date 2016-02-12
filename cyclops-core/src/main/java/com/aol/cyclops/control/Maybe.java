@@ -20,11 +20,12 @@ import com.aol.cyclops.functions.CurryVariance;
 import com.aol.cyclops.functions.QuadFunction;
 import com.aol.cyclops.functions.QuintFunction;
 import com.aol.cyclops.functions.TriFunction;
-import com.aol.cyclops.matcher2.CheckValues;
+import com.aol.cyclops.internal.matcher2.CheckValues;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.ToAnyM;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.types.applicative.Applicative;
@@ -39,7 +40,12 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
 
-public interface Maybe<T> extends Value<T>, Supplier<T>, ConvertableFunctor<T>, Filterable<T>,Applicativable<T>{
+public interface Maybe<T> extends Value<T>, 
+								Supplier<T>, 
+								ConvertableFunctor<T>, 
+								Filterable<T>,
+								Applicativable<T>,
+								ToAnyM<T>{
 
 	
 	final static Maybe EMPTY = new Nothing<>();

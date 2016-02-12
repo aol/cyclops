@@ -7,9 +7,9 @@ import java.util.function.Function;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
-import com.aol.cyclops.matcher2.Case;
-import com.aol.cyclops.matcher2.Cases;
-import com.aol.cyclops.matcher2.CheckValues;
+import com.aol.cyclops.internal.matcher2.Case;
+import com.aol.cyclops.internal.matcher2.Cases;
+import com.aol.cyclops.internal.matcher2.CheckValues;
 
 
 /* 

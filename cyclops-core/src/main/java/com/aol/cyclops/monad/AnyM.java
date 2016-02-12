@@ -33,8 +33,6 @@ import org.jooq.lambda.function.Function4;
 import org.jooq.lambda.function.Function5;
 
 import com.aol.cyclops.Monoid;
-import com.aol.cyclops.comprehensions.comprehenders.InvokeDynamicComprehender;
-import com.aol.cyclops.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Ior;
@@ -44,20 +42,22 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.functions.QuadFunction;
 import com.aol.cyclops.functions.QuintFunction;
 import com.aol.cyclops.functions.TriFunction;
+import com.aol.cyclops.internal.comprehensions.comprehenders.InvokeDynamicComprehender;
+import com.aol.cyclops.internal.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.Unwrapable;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.sequence.streamable.ToStream;
-import com.aol.cyclops.sequence.traits.ConvertableSequence;
 import com.aol.cyclops.types.EmptyUnit;
 import com.aol.cyclops.types.FlatMap;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Unit;
+import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
+import com.aol.cyclops.types.sequence.ConvertableSequence;
 
 /**
  * 
@@ -70,8 +70,10 @@ import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
  */
 
 public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Functor<T>,
-									FlatMap<T>,ToStream<T>, ApplyM<T>,FlatMapM<T>,ReduceM<T>,
-									ConvertableSequence<T>, ZippingApplicativable<T>{
+									FlatMap<T>,ToStream<T>,
+									ConvertableSequence<T>, 
+									ReduceM<T>,
+									ZippingApplicativable<T>{
 	
 	/* Convert this AnyM to a Stream (SequenceM)
 	 * Chooses the most appropriate of asSequence() and toSequence()

@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 
 import com.aol.cyclops.control.FeatureToggle;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.matcher2.CheckValues;
+import com.aol.cyclops.internal.matcher2.CheckValues;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Unit;

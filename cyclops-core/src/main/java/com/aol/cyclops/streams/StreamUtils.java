@@ -30,7 +30,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.BaseStream;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -47,11 +46,11 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.control.ExceptionSoftener;
 import com.aol.cyclops.data.Mutable;
+import com.aol.cyclops.data.collections.CyclopsCollectors;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.internal.AsGenericMonad;
+import com.aol.cyclops.lambda.monads.MonadWrapper;
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.sequence.CyclopsCollectors;
 import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.HotStream;
 import com.aol.cyclops.sequence.PausableHotStream;
@@ -71,7 +70,6 @@ import com.aol.cyclops.streams.operators.DebounceOperator;
 import com.aol.cyclops.streams.operators.LimitLastOperator;
 import com.aol.cyclops.streams.operators.LimitWhileOperator;
 import com.aol.cyclops.streams.operators.LimitWhileTimeOperator;
-import com.aol.cyclops.streams.operators.MultiCollectOperator;
 import com.aol.cyclops.streams.operators.MultiReduceOperator;
 import com.aol.cyclops.streams.operators.OnePerOperator;
 import com.aol.cyclops.streams.operators.RecoverOperator;
@@ -1636,7 +1634,7 @@ public class StreamUtils{
 	}
 	
 	public final static <T,R> SequenceM<R> flatten(Stream<T> stream) {
-		return AsGenericMonad.asMonad(stream).flatten().sequence();
+		return new MonadWrapper<>(stream).flatten().sequence();
 	}
 	/**
 	 *<pre>
@@ -1673,7 +1671,7 @@ public class StreamUtils{
 	 * @return
 	 *///rename -flatMapCharSequence
 	public final static <T> Stream<Character> flatMapCharSequence(Stream<T> stream,Function<? super T,CharSequence> fn) {
-		return AsGenericMonad.<Stream<T>,T>asMonad(stream).liftAndBind(fn).sequence();
+		return new MonadWrapper<Stream<T>,T>(stream).liftAndBind(fn).sequence();
 	}
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -1699,7 +1697,7 @@ public class StreamUtils{
 	 * @return
 	 */
 	public final static <T> Stream<String> flatMapFile(Stream<T> stream,Function<? super T,File> fn) {
-		return AsGenericMonad.<Stream<T>,T>asMonad(stream).liftAndBind(fn).sequence();	
+		return new MonadWrapper<Stream<T>,T>(stream).liftAndBind(fn).sequence();	
 	}
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -1720,7 +1718,7 @@ public class StreamUtils{
 	 * @return
 	 */
 	public final  static <T> Stream<String> flatMapURL(Stream<T> stream,Function<? super T, URL> fn) {
-		return AsGenericMonad.<Stream<T>,T>asMonad(stream).liftAndBind(fn).sequence();			
+		return new MonadWrapper<Stream<T>,T>(stream).liftAndBind(fn).sequence();			
 	}
 	/**
 	  *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -1742,7 +1740,7 @@ public class StreamUtils{
 	 * @return
 	 */
 	public final static <T> Stream<String> flatMapBufferedReader(Stream<T> stream,Function<? super T,BufferedReader> fn) {
-		return AsGenericMonad.<Stream<T>,T>asMonad(stream).liftAndBind(fn).sequence();
+		return new MonadWrapper<Stream<T>,T>(stream).liftAndBind(fn).sequence();
 	}
 
 	

@@ -9,7 +9,7 @@ import lombok.Value;
 
 import org.junit.Test;
 
-import com.aol.cyclops.matcher2.AsDecomposable;
+import com.aol.cyclops.internal.matcher2.AsDecomposable;
 public class CoerceToDecomposableTest {
 
 	@Test

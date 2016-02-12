@@ -93,7 +93,7 @@ public interface MonadFunctions<MONAD,T>{
 	//	List(2, 8, 3, 1).foldLeftM(0) {binSmalls} -> Optional(14)
 	//	convert to list Optionals
 		
-		return asMonad(fromStream(stream()).map(value ->new ComprehenderSelector()
+		return new MonadWrapper<>(Monad.fromStream(stream()).map(value ->new ComprehenderSelector()
 							.selectComprehender(reducer.zero().getClass()).of(value))
 							.sequence().reduce((Monoid)reducer));		
 	}

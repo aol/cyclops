@@ -23,18 +23,18 @@ import com.aol.cyclops.control.Do;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
+import com.aol.cyclops.internal.matcher2.CheckValues;
 import com.aol.cyclops.lambda.monads.IterableCollectable;
-import com.aol.cyclops.matcher2.CheckValues;
 import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.future.FutureOperations;
-import com.aol.cyclops.sequence.traits.SequenceMCollectable;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.IterableFilterable;
 import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
+import com.aol.cyclops.types.sequence.SequenceMCollectable;
 
 //pattern match, for comprehensions
 public interface CollectionX<T> extends ExtendedTraversable<T>,

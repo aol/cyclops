@@ -46,13 +46,13 @@ import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.HotStream;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.future.FutureOperations;
-import com.aol.cyclops.sequence.traits.ConvertableSequence;
-import com.aol.cyclops.sequence.traits.SequenceMCollectable;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
+import com.aol.cyclops.types.sequence.ConvertableSequence;
+import com.aol.cyclops.types.sequence.SequenceMCollectable;
 
 
 /**
@@ -680,32 +680,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	}
 
     	
-    	/**
-    	 * 
-    	 * Convert to a Stream, repeating the resulting structure specified times
-    	 * and lifting all values to the specified Monad type
-    	 * 
-    	 * <pre>
-    	 * {
-    	 * 	&#064;code
-    	 * 	List&lt;Optional&lt;Integer&gt;&gt; list = monad(Stream.of(1, 2)).cycle(Optional.class,
-    	 * 			2).toList();
-    	 * 
-    	 * 	// is asList(Optional.of(1),Optional.of(2),Optional.of(1),Optional.of(2) ));
-    	 * 
-    	 * }
-    	 * </pre>
-    	 * 
-    	 * 
-    	 * 
-    	 * @param monadC
-    	 *            class type
-    	 * @param times
-    	 * @return
-    	 */
-    	default <R> Streamable<R> cycle(Class<R> monadC, int times){
-    		return Streamable.fromStream(sequenceM().cycle(monadC,times));
-    	}
+   
     	/**
     	 * Repeat in a Stream while specified predicate holds
     	 * 
@@ -1344,48 +1319,6 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	}
     	
 
-    	/**
-    	 * Apply multiple collectors Simulataneously to this Monad
-    	 * 
-    	 * <pre>{@code
-    	  	List result =Streamable.of(1,2,3).collect(Stream.of(Collectors.toList(),
-    	  															Collectors.summingInt(Integer::intValue),
-    	  															Collectors.averagingInt(Integer::intValue)));
-    		
-    		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));
-    		assertThat(result.get(1),equalTo(6));
-    		assertThat(result.get(2),equalTo(2.0));
-    		}</pre>
-    		
-    	 * 
-    	 * @param collectors Stream of Collectors to apply
-    	 * @return  List of results
-    	 */
-    	 default List collectStream(Stream<Collector> collectors){
-    		 return sequenceM().collectStream(collectors);
-    	 }
-    	/**
-    	 *  Apply multiple Collectors, simultaneously to a Stream
-    	 * <pre>
-    	 * {@code 
-    	 * List result = Streamable.of(1,2,3).collect(
-    								Arrays.asList(Collectors.toList(),
-    								Collectors.summingInt(Integer::intValue),
-    								Collectors.averagingInt(Integer::intValue)));
-    		
-    		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));
-    		assertThat(result.get(1),equalTo(6));
-    		assertThat(result.get(2),equalTo(2.0));
-    	 * }
-    	 * </pre>
-    	 * @param stream Stream to collect
-    	 * @param collectors Collectors to apply
-    	 * @return Result as a list
-    	 */
-    	@SuppressWarnings({ "rawtypes", "unchecked" })
-    	default <R> List<R> collectIterable(Iterable<Collector> collectors){
-    		 return sequenceM().collectIterable(collectors);
-    	}
     	
     	/**
     	 * <pre>

@@ -18,12 +18,12 @@ import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.FluentMapX;
 import com.aol.cyclops.lambda.monads.IterableCollectable;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.traits.SequenceMCollectable;
 import com.aol.cyclops.types.BiFunctor;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableFilterable;
+import com.aol.cyclops.types.sequence.SequenceMCollectable;
 
 public interface PMapX<K, V> extends PMap<K, V>, 
 									 FluentMapX<K,V>,

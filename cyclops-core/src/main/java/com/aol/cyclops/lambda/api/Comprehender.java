@@ -11,10 +11,10 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.comprehensions.comprehenders.MaterializedList;
-import com.aol.cyclops.comprehensions.converters.MonadicConverters;
+import com.aol.cyclops.control.monads.transformers.StreamT;
+import com.aol.cyclops.internal.comprehensions.comprehenders.MaterializedList;
+import com.aol.cyclops.internal.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
-import com.aol.cyclops.lambda.monads.transformers.StreamT;
 
 /**
  * Interface for defining how Comprehensions should work for a type

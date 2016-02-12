@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.comprehenders.StreamComprehender;
+import com.aol.cyclops.internal.comprehensions.comprehenders.StreamComprehender;
 
 import static org.hamcrest.Matchers.*;
 public class ComprehenderSelectorTest {

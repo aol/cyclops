@@ -1,9 +1,4 @@
 package com.aol.cyclops.internal;
-import static com.aol.cyclops.internal.AsGenericMonad.asMonad;
-import static com.aol.cyclops.internal.AsGenericMonad.monad;
-
-import static com.aol.cyclops.internal.AsGenericMonad.fromStream;
-
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -14,14 +9,13 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
+import com.aol.cyclops.lambda.monads.MonadWrapper;
 import com.aol.cyclops.lambda.monads.WrappingFilterable;
 import com.aol.cyclops.lambda.monads.WrappingFunctor;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SeqUtils;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
-import com.aol.cyclops.types.Filterable;
-import com.aol.cyclops.types.Functor;
 
 
 
@@ -181,7 +175,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,WrappingFunctor<
 	
 	default <R> Monad<Optional<R>,R> flatMapToOptional(Function<? super MONAD,Optional<? extends R>> fn){
 		Optional opt = Optional.of(1);
-		return monad(opt.flatMap(i->fn.apply(unwrap())));
+		return new MonadWrapper(opt.flatMap(i->fn.apply(unwrap())));
 	}
 	
 	default <R> Monad<Stream<R>,R> flatMapToStream(Function<? super MONAD,Stream<? extends R>> fn){
@@ -196,7 +190,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,WrappingFunctor<
 	
 	default <R> Monad<CompletableFuture<R>,R> flatMapToCompletableFuture(Function<? super MONAD,CompletableFuture<? extends R>> fn){
 		CompletableFuture future = CompletableFuture.completedFuture(1);
-		return monad(future.thenCompose(i->fn.apply(unwrap())));
+		return new MonadWrapper<>(future.thenCompose(i->fn.apply(unwrap())));
 	}
 	
 
@@ -238,7 +232,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,WrappingFunctor<
 						.bind(Function.identity() );
 	}
 	default <MONAD2,NT>  Monad<MONAD2,NT> monadMap(Function<? super MONAD,? extends NT> fn) {
-		return asMonad(fn.apply(unwrap()));
+		return new MonadWrapper<>(fn.apply(unwrap()));
 	}
 	default Optional<MONAD> monadFilter(Predicate<? super MONAD> p) {
 		return p.test(unwrap()) ? Optional.of(unwrap()) : Optional.empty();
@@ -327,12 +321,15 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,WrappingFunctor<
 	 * @return Duck typed Monad
 	 */
 	public static <MONAD,T> Monad<MONAD,T> of(Object o){
-		return AsGenericMonad.asMonad(o);
+		return new MonadWrapper(o);
 	}
 
 	default Monad<MONAD,T> empty(){
 		return (Monad)new ComprehenderSelector().selectComprehender(
 				unwrap()).empty();
+	}
+	static <T> Monad<Stream<T>,T> fromStream(Stream<T> monad){
+		return new MonadWrapper<>(monad);
 	}
 
 }

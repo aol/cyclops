@@ -1,5 +1,5 @@
 package com.aol.cyclops.comprehensions;
-import static com.aol.cyclops.comprehensions.ForComprehensions.foreachX;
+import static com.aol.cyclops.internal.comprehensions.ForComprehensions.foreachX;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -11,9 +11,10 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.ComprehensionsModule.CustomForComprehension;
-import com.aol.cyclops.comprehensions.ComprehensionsModule.MyComprehension;
 import com.aol.cyclops.control.Do;
+import com.aol.cyclops.internal.comprehensions.ForComprehensions;
+import com.aol.cyclops.internal.comprehensions.ComprehensionsModule.CustomForComprehension;
+import com.aol.cyclops.internal.comprehensions.ComprehensionsModule.MyComprehension;
 public class FreeFormTest {
 
 	MyComprehension<Custom2,Custom2> comp = ForComprehensions.custom(Custom2.class);

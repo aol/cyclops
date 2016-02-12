@@ -14,9 +14,9 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.lambda.monads.transformers.ListT;
-import com.aol.cyclops.lambda.monads.transformers.OptionalT;
-import com.aol.cyclops.lambda.monads.transformers.StreamableT;
+import com.aol.cyclops.control.monads.transformers.ListT;
+import com.aol.cyclops.control.monads.transformers.OptionalT;
+import com.aol.cyclops.control.monads.transformers.StreamableT;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.streamable.Streamable;
 

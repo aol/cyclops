@@ -7,13 +7,13 @@ import org.pcollections.PStack;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
-import com.aol.cyclops.comprehensions.ComprehensionsModule.ComprehensionData;
-import com.aol.cyclops.comprehensions.ForComprehensions;
 import com.aol.cyclops.comprehensions.donotation.typed.DoBuilderModule.Assignment;
 import com.aol.cyclops.comprehensions.donotation.typed.DoBuilderModule.Entry;
 import com.aol.cyclops.comprehensions.donotation.typed.DoBuilderModule.Guard;
 import com.aol.cyclops.data.Mutable;
-import com.aol.cyclops.sequence.Unwrapable;
+import com.aol.cyclops.internal.comprehensions.ForComprehensions;
+import com.aol.cyclops.internal.comprehensions.ComprehensionsModule.ComprehensionData;
+import com.aol.cyclops.types.Unwrapable;
 
 import lombok.AllArgsConstructor;
 

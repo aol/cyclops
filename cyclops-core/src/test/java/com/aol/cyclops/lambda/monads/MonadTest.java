@@ -1,5 +1,4 @@
 package com.aol.cyclops.lambda.monads;
-import static com.aol.cyclops.internal.AsGenericMonad.monad;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -13,24 +12,23 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import lombok.val;
-
 import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.monad.AnyMonads;
 import com.aol.cyclops.sequence.SequenceM;
+
+import lombok.val;
 
 
 public class MonadTest {
 
 	 Optional<Integer> value = Optional.of(42);
-	 Monad<Optional<Integer>,Integer> monadicValue = monad(value);
-	 Function<Optional<Integer>,Monad<Optional<Integer>,Integer>> monadOf = input ->monad(input);
-	 Function<Optional<Integer>,Monad<Optional<Integer>,Integer>> f = input -> monad(Optional.of(input.get()*5));
-	 Function<Optional<Integer>,Monad<Optional<Integer>,Integer>> g = input -> monad(Optional.of(input.get()*50));
+	 Monad<Optional<Integer>,Integer> monadicValue = new MonadWrapper<>(value);
+	 Function<Optional<Integer>,Monad<Optional<Integer>,Integer>> monadOf = input ->new MonadWrapper<>(input);
+	 Function<Optional<Integer>,Monad<Optional<Integer>,Integer>> f = input -> new MonadWrapper<>(Optional.of(input.get()*5));
+	 Function<Optional<Integer>,Monad<Optional<Integer>,Integer>> g = input -> new MonadWrapper<>(Optional.of(input.get()*50));
 	  /**
      * Monad law 1, Left Identity
      *
@@ -41,9 +39,10 @@ public class MonadTest {
      */
 	 @Test
     public void satisfiesLaw1LeftIdentity() {
-        assertThat( monad(value).monadFlatMap(f),
+        assertThat( monadicValue.monadFlatMap(f),
             equalTo(f.apply(value) ));
     }
+	
  
     /**
      * Monad law 2, Right Identity
@@ -152,7 +151,7 @@ public class MonadTest {
 	
 	@Test
 	public void testReplicateM(){
-		 AnyM<List<Integer>> applied =monad(Optional.of(2)).replicateM(5).anyM();
+		 AnyM<List<Integer>> applied =new MonadWrapper<>(Optional.of(2)).replicateM(5).anyM();
 		 assertThat(applied.unwrap(),equalTo(Optional.of(Arrays.asList(2,2,2,2,2))));
 	}
 

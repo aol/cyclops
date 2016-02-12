@@ -428,16 +428,6 @@ public class SequenceMTest {
 	public void xMatch(){
 		assertTrue(SequenceM.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
 	}
-	@Test
-	public void collectIterables(){
-		List result = SequenceM.of(1, 2, 3).collectIterable(
-				Arrays.asList(Collectors.toList(),
-						Collectors.summingInt(Integer::intValue),
-						Collectors.averagingInt(Integer::intValue)));
-
-		assertThat(result.get(0), equalTo(Arrays.asList(1, 2, 3)));
-		assertThat(result.get(1), equalTo(6));
-		assertThat(result.get(2), equalTo(2.0));
-	}
+	
 	
 }

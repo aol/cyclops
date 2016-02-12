@@ -4,8 +4,8 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import com.aol.cyclops.comprehensions.comprehenders.Comprehenders;
-import com.aol.cyclops.comprehensions.comprehenders.InvokeDynamicComprehender;
+import com.aol.cyclops.internal.comprehensions.comprehenders.Comprehenders;
+import com.aol.cyclops.internal.comprehensions.comprehenders.InvokeDynamicComprehender;
 import com.aol.cyclops.lambda.api.Comprehender;
 
 public class ComprehenderSelector {

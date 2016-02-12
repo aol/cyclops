@@ -46,26 +46,7 @@ public class StreamUtilsTest {
 		assertThat(tail.headAndTail().head(),equalTo("world"));
 		
 	}
-	@Test
-	public void headTailReplayOptional(){
 	
-		Stream<String> helloWorld = Stream.of("hello","world","last");
-		HeadAndTail<String> headAndTail = StreamUtils.headAndTailOptional(helloWorld).get();
-		 String head = headAndTail.head();
-		 assertThat(head,equalTo("hello"));
-		
-		SequenceM<String> tail =  headAndTail.tail();
-		assertThat(tail.headAndTail().head(),equalTo("world"));
-		
-	}
-	@Test
-	public void headTailReplayOptionalEmpty(){
-	
-		Stream<String> helloWorld = Stream.of();
-		Optional<HeadAndTail<String>> headAndTail = StreamUtils.headAndTailOptional(helloWorld);
-		
-		 assertTrue(!headAndTail.isPresent());
-	}
 	@Test
 	public void testToLazyCollection(){
 		System.out.println(StreamUtils.toLazyCollection(Stream.of(1,2,3,4)).size());
@@ -151,40 +132,7 @@ public class StreamUtilsTest {
 		map.put("hello","world");
 		assertThat(StreamUtils.stream(map).collect(Collectors.toList()),equalTo(Arrays.asList(new AbstractMap.SimpleEntry("hello","world"))));
 	}
-	@Test
-    public void testCollectorsStreamable() {
-		List result = StreamUtils.collect(Stream.of(1,2,3),
-								Streamable.<Collector>of(Collectors.toList(),
-								Collectors.summingInt(Integer::intValue),
-								Collectors.averagingInt(Integer::intValue)));
-		
-		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));
-		assertThat(result.get(1),equalTo(6));
-		assertThat(result.get(2),equalTo(2.0));
-    }
-
-	@Test
-    public void testCollectors2() {
-		List result = StreamUtils.collect(Stream.of(1,2,3),
-								Stream.of(Collectors.toList(),
-								Collectors.summingInt(Integer::intValue),
-								Collectors.averagingInt(Integer::intValue)));
-		
-		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));
-		assertThat(result.get(1),equalTo(6));
-		assertThat(result.get(2),equalTo(2.0));
-    }
-	@Test
-    public void testCollectorsIterables() {
-		List result = StreamUtils.collect(Stream.of(1,2,3),
-								Arrays.asList(Collectors.toList(),
-								Collectors.summingInt(Integer::intValue),
-								Collectors.averagingInt(Integer::intValue)));
-		
-		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));
-		assertThat(result.get(1),equalTo(6));
-		assertThat(result.get(2),equalTo(2.0));
-    }
+	
 	@Test
 	public void reducer(){
 		Monoid<String> concat = Monoid.of("",(a,b)->a+b);
@@ -204,14 +152,7 @@ public class StreamUtilsTest {
 		 
 		assertThat(result,equalTo(Arrays.asList(10,24)));
 	}
-	@Test
-    public void testCollectors() {
-		List result = StreamUtils.collect(Stream.of(1,2,3),Arrays.asList(Collectors.toList(),Collectors.summingInt(Integer::intValue),Collectors.averagingInt(Integer::intValue)));
-		
-		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));
-		assertThat(result.get(1),equalTo(6));
-		assertThat(result.get(2),equalTo(2.0));
-    }
+	
 	int count;
 	@Test
 	public void testCycleWhile(){

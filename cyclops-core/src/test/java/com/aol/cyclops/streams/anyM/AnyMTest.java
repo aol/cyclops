@@ -33,6 +33,7 @@ import org.junit.Test;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Reducers;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
@@ -44,7 +45,7 @@ public class AnyMTest {
 	@Test
 	public void multiReturn(){
 		AnyM<Integer> stream = AnyM.fromOptional(Optional.of(1))
-									.flatMapStream(i->Stream.of(1,2,i));
+									.flatMap(i->SequenceM.of(1,2,i).anyM());
 		
 		stream.map(i->i+2);
 	}
@@ -146,15 +147,7 @@ public class AnyMTest {
 											.collect(Collectors.toList()),
 											equalTo(Arrays.asList(3,3,3)));
 	}
-	@Test
-	public void testCycleMonad(){
-		
-		assertThat(ofMonad(Stream.of(1,2)).asSequence()
-											.cycle(Optional.class,2)
-											.collect(Collectors.toList()),
-											equalTo(asList(Optional.of(1),Optional.of(2)
-												,Optional.of(1),Optional.of(2)	)));
-	}
+	
 	@Test
 	public void testJoin(){
 		assertThat(ofMonad(Stream.of(1,2,2))
@@ -194,7 +187,8 @@ public class AnyMTest {
 		
 	
 		assertThat(ofMonad(Stream.of(1,2,3,null))
-					.flatMapOptional(Optional::ofNullable)
+					.map(Maybe::ofNullable)
+					.flatMap(Maybe::anyM)
 					.asSequence()
 					.toList(),equalTo(Arrays.asList(1,2,3)));
 	
@@ -492,16 +486,7 @@ public class AnyMTest {
 
         
     }
-	@Test
-    public void testCollectors() {
-		List result = ofMonad(Stream.of(1,2,3))
-							.asSequence()
-							.collectStream(Stream.of(Collectors.toList(),Collectors.summingInt(Integer::intValue),Collectors.averagingInt(Integer::intValue)));
-		
-		assertThat(result.get(0),equalTo(Arrays.asList(1,2,3)));
-		assertThat(result.get(1),equalTo(6));
-		assertThat(result.get(2),equalTo(2.0));
-    }
+	
 	
 	@Test
 	public void reducer1(){
@@ -593,14 +578,14 @@ public class AnyMTest {
 	@Test
 	public void testApplyMOptional(){
 	 AnyM<Integer> applied =AnyM.fromOptional(Optional.of(2))
-			 						.applyMOptional(Optional.of( (Integer a)->a+1) );
+			 						.applyM(AnyM.fromOptional(Optional.of( (Integer a)->a+1) ));
 	
 	 assertThat(applied.toSequence().toList(),equalTo(Arrays.asList(3)));
 	 
 	}
 	@Test
 	public void testApplyMOptionalEmpty(){
-	 AnyM<Integer> applied =ofMonad(Optional.of(2)).applyMOptional(Optional.empty());
+	 AnyM<Integer> applied =ofMonad(Optional.of(2)).applyM(AnyM.fromOptional(Optional.empty()));
 	
 	 assertThat(applied.toSequence().toList(),equalTo(Arrays.asList()));
 	 
@@ -679,6 +664,7 @@ public class AnyMTest {
 	@Test
 	public void testReduceM(){
 		Monoid<Optional<Integer>> optionalAdd = Monoid.of(Optional.of(0), (a,b)-> Optional.of(a.get()+b.get()));
+		
 		
 		assertThat(AnyM.fromStream(Stream.of(2,8,3,1)).reduceMOptional(optionalAdd).unwrap(),equalTo(Optional.of(14)));
 	}

@@ -1,9 +1,5 @@
 package com.aol.cyclops.comprehensions;
 
-import java.util.Optional;
-
-import lombok.val;
-
 import org.junit.Test;
 
 import com.aol.cyclops.sequence.HeadAndTail;
@@ -20,11 +16,10 @@ public class Sieve {
 	    return SequenceM.iterate(n, m -> m + 1);
 	}
 	SequenceM<Integer> sieve(SequenceM<Integer> s){
-		Optional<HeadAndTail<Integer>> headAndTail = s.headAndTailOptional();
+		HeadAndTail<Integer> headAndTail = s.headAndTail();
 		
-		return headAndTail.map(ht ->SequenceM.of(ht.head())
-	    						.appendStream(sieve(ht.tail().filter(n -> n % ht.head() != 0))))
-	    				.orElse(SequenceM.of());
+		return headAndTail.headStream().appendStream(sieve(headAndTail.tail().filter(n -> n % headAndTail.head() != 0)));
+		
 	}
 	@Test
 	public void sieveTest2(){

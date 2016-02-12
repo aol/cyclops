@@ -18,10 +18,10 @@ import org.jooq.lambda.tuple.Tuple5;
 import com.aol.cyclops.functions.QuadFunction;
 import com.aol.cyclops.functions.QuintFunction;
 import com.aol.cyclops.functions.TriFunction;
-import com.aol.cyclops.matcher2.CheckValues;
-import com.aol.cyclops.matcher2.MatchableCase;
-import com.aol.cyclops.matcher2.MatchingInstance;
-import com.aol.cyclops.matcher2.PatternMatcher;
+import com.aol.cyclops.internal.matcher2.CheckValues;
+import com.aol.cyclops.internal.matcher2.MatchableCase;
+import com.aol.cyclops.internal.matcher2.MatchingInstance;
+import com.aol.cyclops.internal.matcher2.PatternMatcher;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.types.Decomposable;
 

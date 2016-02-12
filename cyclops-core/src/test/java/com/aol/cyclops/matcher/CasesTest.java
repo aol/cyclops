@@ -23,8 +23,8 @@ import lombok.val;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.cyclops.matcher2.Case;
-import com.aol.cyclops.matcher2.Cases;
+import com.aol.cyclops.internal.matcher2.Case;
+import com.aol.cyclops.internal.matcher2.Cases;
 import com.aol.cyclops.types.Decomposable;
 
 

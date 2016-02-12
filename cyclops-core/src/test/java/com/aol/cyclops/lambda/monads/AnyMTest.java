@@ -21,13 +21,13 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-import lombok.val;
-
 import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
+
+import lombok.val;
 
 
 
@@ -137,11 +137,7 @@ public class AnyMTest {
 		assertThat(list.map(i->i+2).unwrap(),equalTo(Arrays.asList(3,4,5)));
 	}
 	
-	@Test
-	public void testListFlatMap(){
-		AnyM<Integer> list = AnyM.fromIterable(Arrays.asList(1,2,3));
-		assertThat(list.flatMapCollection(i->Arrays.asList(i+2,i-2)).unwrap(),equalTo(Arrays.asList(3,-1,4,0,5,1)));
-	}
+	
 	@Test
 	public void testListFilter(){
 		AnyM<Integer> list = AnyM.fromIterable(Arrays.asList(1,2,3));
@@ -159,12 +155,7 @@ public class AnyMTest {
 		
 	}
 	
-	@Test
-	public void testSetFlatMap(){
-		AnyM<Integer> set = AnyM.fromIterable(new HashSet<>(Arrays.asList(1,2,3)));
-		assertThat(set.flatMapCollection(i->Arrays.asList(i+2,i-2)).unwrap(),equalTo(new HashSet<>(Arrays.asList(3,-1,4,0,5,1))));
-		
-	}
+	
 	@Test
 	public void testSetFilter(){
 		AnyM<Integer> set = AnyM.fromIterable(new HashSet<>(Arrays.asList(1,2,3)));
