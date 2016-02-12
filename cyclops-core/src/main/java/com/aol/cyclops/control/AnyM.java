@@ -56,10 +56,10 @@ import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.anyM.ReduceM;
 import com.aol.cyclops.types.stream.ToStream;
-import com.aol.cyclops.util.Streamable;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
 import com.aol.cyclops.util.function.TriFunction;
+import com.aol.cyclops.util.stream.Streamable;
 
 /**
  * 

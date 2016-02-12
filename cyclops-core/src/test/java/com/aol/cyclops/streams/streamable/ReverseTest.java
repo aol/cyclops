@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.aol.cyclops.util.Streamable;
+import com.aol.cyclops.util.stream.Streamable;
 
 public class ReverseTest {
 	@Test

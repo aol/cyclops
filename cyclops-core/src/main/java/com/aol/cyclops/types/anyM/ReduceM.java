@@ -8,7 +8,7 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Xor;
-import com.aol.cyclops.util.Streamable;
+import com.aol.cyclops.util.stream.Streamable;
 
 public interface ReduceM<T> {
 	/**

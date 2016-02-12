@@ -31,7 +31,7 @@ import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.types.stream.HeadAndTail;
-import com.aol.cyclops.util.StreamUtils;
+import com.aol.cyclops.util.stream.StreamUtils;
 
 public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	

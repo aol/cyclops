@@ -31,7 +31,7 @@ import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Traversable;
-import com.aol.cyclops.util.StreamUtils;
+import com.aol.cyclops.util.stream.StreamUtils;
 
 public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	@Override

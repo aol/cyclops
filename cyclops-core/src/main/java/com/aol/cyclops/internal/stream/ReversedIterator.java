@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.util.Streamable;
+import com.aol.cyclops.util.stream.Streamable;
 
 import lombok.AllArgsConstructor;
 

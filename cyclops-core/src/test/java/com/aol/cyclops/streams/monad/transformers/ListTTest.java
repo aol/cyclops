@@ -17,8 +17,8 @@ import org.junit.Test;
 import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.control.monads.transformers.OptionalT;
 import com.aol.cyclops.control.monads.transformers.StreamableT;
+import com.aol.cyclops.util.stream.Streamable;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.util.Streamable;
 
 
 public class ListTTest {

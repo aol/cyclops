@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 import org.hamcrest.Matcher;
 
-import com.aol.cyclops.util.StreamUtils;
+import com.aol.cyclops.util.stream.StreamUtils;
 
 public interface IterableFilterable<T> extends Filterable<T> {
 	default Filterable<T> removeAll(Stream<T> stream){

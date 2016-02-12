@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.util.StreamUtils;
+import com.aol.cyclops.util.stream.StreamUtils;
 
 import lombok.Value;
 @Value

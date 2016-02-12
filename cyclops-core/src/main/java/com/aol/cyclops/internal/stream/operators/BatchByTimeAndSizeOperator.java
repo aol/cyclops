@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 import lombok.Value;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
-import com.aol.cyclops.util.StreamUtils;
+import com.aol.cyclops.util.stream.StreamUtils;
 
 @Value
 public class BatchByTimeAndSizeOperator<T, C extends Collection<? super T>> {

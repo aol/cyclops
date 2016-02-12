@@ -19,7 +19,7 @@ import org.jooq.lambda.function.Function1;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.util.Streamable;
+import com.aol.cyclops.util.stream.Streamable;
 
 
 

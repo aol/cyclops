@@ -25,8 +25,8 @@ import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.util.StreamUtils;
-import com.aol.cyclops.util.Streamable;
+import com.aol.cyclops.util.stream.StreamUtils;
+import com.aol.cyclops.util.stream.Streamable;
 
 public class SequenceMTest {
 	

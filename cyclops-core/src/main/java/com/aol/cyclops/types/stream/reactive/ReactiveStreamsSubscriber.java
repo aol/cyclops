@@ -1,5 +1,4 @@
-package com.aol.cyclops.sequence.reactivestreams;
-
+package com.aol.cyclops.types.stream.reactive;
 
 public interface ReactiveStreamsSubscriber<T> {
 

@@ -31,11 +31,11 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.reactivestreams.ReactiveTask;
 import com.aol.cyclops.types.stream.future.DoubleOperatorsMixin;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.future.IntOperatorsMixin;
 import com.aol.cyclops.types.stream.future.LongOperatorsMixin;
+import com.aol.cyclops.types.stream.reactive.ReactiveTask;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

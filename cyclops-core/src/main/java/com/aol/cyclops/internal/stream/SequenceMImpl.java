@@ -1,4 +1,4 @@
-package com.aol.cyclops.sequence;
+package com.aol.cyclops.internal.stream;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -52,16 +52,16 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.internal.monads.ComprehenderSelector;
 import com.aol.cyclops.internal.stream.spliterators.ReversableSpliterator;
+import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
 import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.PausableHotStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
-import com.aol.cyclops.util.AsStreamable;
-import com.aol.cyclops.util.StreamUtils;
-import com.aol.cyclops.util.Streamable;
+import com.aol.cyclops.util.stream.AsStreamable;
+import com.aol.cyclops.util.stream.StreamUtils;
+import com.aol.cyclops.util.stream.Streamable;
 
 public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 	private final Seq<T> stream;
@@ -1762,8 +1762,51 @@ public class SequenceMImpl<T> implements Unwrapable, SequenceM<T>, Iterable<T>{
 
 
 	@Override
-	public void subscribe(Subscriber<? super T> s) {
-		 ReactiveStreamsLoader.publisher.get().subscribe(stream,s);	
+	public void subscribe(Subscriber<? super T> sub) {
+		Iterator<T> it = stream.iterator();
+		sub.onSubscribe(new Subscription(){
+			
+				volatile boolean running = true;
+				
+				@Override
+				public void request(long n) {
+					
+					for(int i=0;i<n && running;i++){
+						boolean progressing = false;
+						boolean progressed = false;
+						try{
+							
+							if(it.hasNext()){
+								progressing= true;
+								sub.onNext(it.next());
+								progressed=true;
+							}
+							else{
+								try{
+									sub.onComplete();
+									
+								}finally{
+									running=false;
+									break;
+								}
+							}
+						}catch(Throwable t){
+							sub.onError(t);
+							if(progressing && !progressed)
+								break;
+							
+						}
+						
+					}
+				}
+				@Override
+				public void cancel() {
+					running = false;
+					
+				}
+				
+			});
+		
 	}
 
 

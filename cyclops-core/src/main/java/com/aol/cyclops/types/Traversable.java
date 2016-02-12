@@ -31,7 +31,7 @@ import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.lazy.LazyCollectable;
 import com.aol.cyclops.types.stream.lazy.LazyOperationsImpl;
-import com.aol.cyclops.util.Streamable;
+import com.aol.cyclops.util.stream.Streamable;
 
 
 public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSequence<T> {

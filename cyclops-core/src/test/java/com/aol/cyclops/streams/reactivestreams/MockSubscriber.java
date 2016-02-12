@@ -3,8 +3,8 @@ package com.aol.cyclops.streams.reactivestreams;
 import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.reactivestreams.CyclopsSubscriber;
-import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsSubscriber;
+import com.aol.cyclops.types.stream.reactive.CyclopsSubscriber;
+import com.aol.cyclops.types.stream.reactive.ReactiveStreamsSubscriber;
 import com.aol.simple.react.reactivestreams.JDKReactiveStreamsSubscriber;
 
 public class MockSubscriber<T> implements ReactiveStreamsSubscriber<T> {

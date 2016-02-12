@@ -45,11 +45,11 @@ import com.aol.cyclops.types.applicative.zipping.ZippingApplicative2;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative3;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative4;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative5;
-import com.aol.cyclops.util.StreamUtils;
 import com.aol.cyclops.util.function.CurryVariance;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
 import com.aol.cyclops.util.function.TriFunction;
+import com.aol.cyclops.util.stream.StreamUtils;
 
 public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenceX<T>, Comparable<T>,IterableFunctor<T>,ZippingApplicativable<T> {
 	

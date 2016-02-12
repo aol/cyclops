@@ -33,7 +33,6 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.hamcrest.Matcher;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
@@ -44,26 +43,21 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
-import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.CheckValues;
+import com.aol.cyclops.internal.stream.ReactiveStreamsLoader;
 import com.aol.cyclops.internal.stream.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingListSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeIntSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeLongSpliterator;
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.sequence.reactivestreams.CyclopsSubscriber;
-import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsLoader;
-import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops.types.ExtendedTraversable;
-import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableFilterable;
-import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
@@ -76,9 +70,11 @@ import com.aol.cyclops.types.stream.JoolWindowing;
 import com.aol.cyclops.types.stream.PausableHotStream;
 import com.aol.cyclops.types.stream.SequenceMCollectable;
 import com.aol.cyclops.types.stream.future.FutureOperations;
+import com.aol.cyclops.types.stream.reactive.CyclopsSubscriber;
+import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops.util.ExceptionSoftener;
-import com.aol.cyclops.util.StreamUtils;
-import com.aol.cyclops.util.Streamable;
+import com.aol.cyclops.util.stream.StreamUtils;
+import com.aol.cyclops.util.stream.Streamable;
 
 
 public interface SequenceM<T> extends Unwrapable, Stream<T>, IterableFilterable<T>,Functor<T>, ExtendedTraversable<T>,

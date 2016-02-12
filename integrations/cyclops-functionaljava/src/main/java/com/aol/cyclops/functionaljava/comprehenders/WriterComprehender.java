@@ -5,7 +5,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.aol.cyclops.types.extensability.Comprehender;
-import com.aol.cyclops.util.StreamUtils;
+import com.aol.cyclops.util.stream.StreamUtils;
 
 import fj.Monoid;
 import fj.Semigroup;

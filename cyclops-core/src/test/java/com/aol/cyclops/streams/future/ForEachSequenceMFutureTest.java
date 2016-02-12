@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.reactivestreams.ReactiveTask;
+import com.aol.cyclops.types.stream.reactive.ReactiveTask;
 
 public class ForEachSequenceMFutureTest {
 	Executor exec = Executors.newFixedThreadPool(1);

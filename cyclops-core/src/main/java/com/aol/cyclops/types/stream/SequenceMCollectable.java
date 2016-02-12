@@ -22,7 +22,7 @@ import org.jooq.lambda.Collectable;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
-import com.aol.cyclops.util.Streamable;
+import com.aol.cyclops.util.stream.Streamable;
 
 
 

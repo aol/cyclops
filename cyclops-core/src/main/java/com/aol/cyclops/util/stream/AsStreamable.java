@@ -1,4 +1,4 @@
-package com.aol.cyclops.util;
+package com.aol.cyclops.util.stream;
 
 import java.util.Collection;
 import java.util.Iterator;

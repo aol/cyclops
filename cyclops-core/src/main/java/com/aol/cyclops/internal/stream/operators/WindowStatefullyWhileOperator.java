@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
-import lombok.Value;
+import com.aol.cyclops.util.stream.StreamUtils;
+import com.aol.cyclops.util.stream.Streamable;
 
-import com.aol.cyclops.util.StreamUtils;
-import com.aol.cyclops.util.Streamable;
+import lombok.Value;
 
 @Value
 public class WindowStatefullyWhileOperator<T> {

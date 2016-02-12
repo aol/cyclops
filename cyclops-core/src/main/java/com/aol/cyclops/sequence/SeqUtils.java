@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.internal.stream.ReversedIterator;
-import com.aol.cyclops.util.Streamable;
+import com.aol.cyclops.util.stream.Streamable;
 
 public class SeqUtils {
 	/**

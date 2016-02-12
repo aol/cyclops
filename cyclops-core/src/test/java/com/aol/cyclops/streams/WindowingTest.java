@@ -16,7 +16,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.util.Streamable;
+import com.aol.cyclops.util.stream.Streamable;
 
 public class WindowingTest {
 	SequenceM<Integer> empty;

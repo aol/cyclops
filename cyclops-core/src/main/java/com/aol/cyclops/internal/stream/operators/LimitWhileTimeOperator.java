@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 import lombok.Value;
 
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.util.StreamUtils;
+import com.aol.cyclops.util.stream.StreamUtils;
 @Value
 public class LimitWhileTimeOperator<U> {
 	Stream<U> stream;

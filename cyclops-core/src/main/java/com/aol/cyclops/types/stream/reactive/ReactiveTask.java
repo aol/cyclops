@@ -1,4 +1,4 @@
-package com.aol.cyclops.sequence.reactivestreams;
+package com.aol.cyclops.types.stream.reactive;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;

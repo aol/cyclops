@@ -29,7 +29,7 @@ import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.CheckValues;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
-import com.aol.cyclops.util.StreamUtils;
+import com.aol.cyclops.util.stream.StreamUtils;
 
 public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	static <T> Collector<T,?,SortedSet<T>> defaultCollector(){

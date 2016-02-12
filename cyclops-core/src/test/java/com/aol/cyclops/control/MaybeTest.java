@@ -38,7 +38,7 @@ import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.types.applicative.Applicativable.Applicatives;
-import com.aol.cyclops.util.StreamUtils;
+import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;
 

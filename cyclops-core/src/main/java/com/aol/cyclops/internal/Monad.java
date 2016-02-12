@@ -18,7 +18,7 @@ import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.mixins.WrappingFilterable;
 import com.aol.cyclops.types.mixins.WrappingFunctor;
-import com.aol.cyclops.util.Streamable;
+import com.aol.cyclops.util.stream.Streamable;
 
 
 

@@ -1,13 +1,14 @@
-package com.aol.cyclops.sequence.reactivestreams;
+package com.aol.cyclops.internal.stream;
 
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.ServiceLoader;
 
+import com.aol.cyclops.types.stream.reactive.ReactiveStreamsSubscriber;
+
 public class ReactiveStreamsLoader {
 	
 	public final static Optional<ReactiveStreamsSubscriber> subscriber = loadSubscriber();
-	public static final Optional<ReactiveStreamsPublisher> publisher = loadPublisher();
 	
 	public static Optional<ReactiveStreamsSubscriber> loadSubscriber(){
 		ServiceLoader<ReactiveStreamsSubscriber>  sub = ServiceLoader.load(ReactiveStreamsSubscriber.class);
@@ -17,11 +18,5 @@ public class ReactiveStreamsLoader {
 		return Optional.empty();
 	}
 
-	private static Optional<ReactiveStreamsPublisher> loadPublisher() {
-		ServiceLoader<ReactiveStreamsPublisher>  sub = ServiceLoader.load(ReactiveStreamsPublisher.class);
-		Iterator<ReactiveStreamsPublisher> it = sub.iterator();
-		if(it.hasNext())
-			return Optional.of(it.next());
-		return Optional.empty();
-	}
+	
 }

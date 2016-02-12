@@ -1,4 +1,4 @@
-package com.aol.cyclops.util;
+package com.aol.cyclops.util.stream;
 
 
 import java.io.BufferedReader;
@@ -53,6 +53,7 @@ import com.aol.cyclops.internal.stream.FutureOperationsImpl;
 import com.aol.cyclops.internal.stream.FutureStreamUtils;
 import com.aol.cyclops.internal.stream.PausableHotStreamImpl;
 import com.aol.cyclops.internal.stream.ReversedIterator;
+import com.aol.cyclops.internal.stream.SequenceMImpl;
 import com.aol.cyclops.internal.stream.operators.BatchBySizeOperator;
 import com.aol.cyclops.internal.stream.operators.BatchByTimeAndSizeOperator;
 import com.aol.cyclops.internal.stream.operators.BatchByTimeOperator;
@@ -74,12 +75,12 @@ import com.aol.cyclops.internal.stream.spliterators.ReversableSpliterator;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.sequence.SeqUtils;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.SequenceMImpl;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.NonPausableHotStream;
 import com.aol.cyclops.types.stream.PausableHotStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
+import com.aol.cyclops.util.ExceptionSoftener;
 
 import lombok.AllArgsConstructor;
 import lombok.val;

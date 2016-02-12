@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.Reducers;
-import com.aol.cyclops.util.Streamable;
+import com.aol.cyclops.util.stream.Streamable;
 
 
 public class ReductionTest {

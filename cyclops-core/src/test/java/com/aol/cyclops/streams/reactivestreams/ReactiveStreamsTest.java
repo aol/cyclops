@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.junit.Test;
 
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.reactivestreams.CyclopsSubscriber;
+import com.aol.cyclops.types.stream.reactive.CyclopsSubscriber;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;

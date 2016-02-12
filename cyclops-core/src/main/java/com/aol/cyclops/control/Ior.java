@@ -26,7 +26,7 @@ import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.types.applicative.Applicative;
-import com.aol.cyclops.util.StreamUtils;
+import com.aol.cyclops.util.stream.StreamUtils;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

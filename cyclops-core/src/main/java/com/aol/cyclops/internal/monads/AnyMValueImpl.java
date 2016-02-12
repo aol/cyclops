@@ -18,7 +18,7 @@ import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.util.Streamable;
+import com.aol.cyclops.util.stream.Streamable;
 
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;

@@ -19,7 +19,7 @@ import java.util.stream.Collector;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
-import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsTerminalFutureOperations;
+import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
 
 public interface FutureOperations<T> extends
 					IntOperators<T>,DoubleOperators<T>, LongOperators<T>,

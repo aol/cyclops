@@ -8,7 +8,7 @@ import com.aol.cyclops.javaslang.reactivestreams.JavaslangReactiveStreamsPublish
 import com.aol.cyclops.javaslang.reactivestreams.JavaslangReactiveStreamsSubscriber;
 import com.aol.cyclops.javaslang.reactivestreams.ReactiveStream;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.reactivestreams.CyclopsSubscriber;
+import com.aol.cyclops.types.stream.reactive.CyclopsSubscriber;
 
 public class ExampleTest {
 

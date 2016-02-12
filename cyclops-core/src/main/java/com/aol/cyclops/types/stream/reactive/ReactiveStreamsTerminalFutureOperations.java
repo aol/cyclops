@@ -1,29 +1,26 @@
-package com.aol.cyclops.sequence.reactivestreams;
+package com.aol.cyclops.types.stream.reactive;
 
 import java.util.function.Consumer;
 
-import org.reactivestreams.Subscription;
-
 /**
  * Interface for reactive-streams based terminal operations, requires simple-react to be on the classpath.
- * 
- * Used by SequenceM & javaslang ReactiveStream
  * 
  * @author johnmcclean
  *
  * @param <T> Element data in the Stream being processed.
  */
-public interface ReactiveStreamsTerminalOperations<T> {
+public interface ReactiveStreamsTerminalFutureOperations<T> {
 
 	/**
 	 * Perform a forEach operation over the Stream, without closing it, consuming only the specified number of elements from
 	 * the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription
 	 * 
-	 * e.g.
 	 * <pre>
 	 * @{code
-	 *     Subscription next = SequenceM.of(1,2,3,4)
-	 *          					    .forEachX(2,System.out::println);
+	 *     ReactiveTask next = SequenceM.of(1,2,3,4)
+	 *                                  .futureOperations(exec)
+	 *          					    .forEachX(2,System.out::println)
+	 *          						.join();
 	 *          
 	 *     System.out.println("First batch processed!");
 	 *     
@@ -44,16 +41,17 @@ public interface ReactiveStreamsTerminalOperations<T> {
 	 * 
 	 * @param numberOfElements To consume from the Stream at this time
 	 * @param consumer To accept incoming events from the Stream
-	 * @return Subscription so that further processing can be continued or cancelled.
+	 * @return ReactiveTask so that further processing can be continued or cancelled.
 	 */
-	<X extends Throwable> Subscription forEachX(long numberOfElements,Consumer<? super T> consumer);
+	<X extends Throwable> ReactiveTask forEachX(long numberOfElements,Consumer<? super T> consumer);
 	
 	/**
 	 * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
 	 * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription 
 	 * <pre>
 	 * @{code
-	 *     Subscription next = SequenceM.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+	 *     ReactiveTask next = SequenceM.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+	 *                                  .futureOperations(exec)
 	 *                                  .map(Supplier::get)
 	 *          					    .forEachXWithError(2,System.out::println, e->e.printStackTrace());
 	 *          
@@ -80,9 +78,9 @@ public interface ReactiveStreamsTerminalOperations<T> {
 	 * @param consumer To accept incoming elements from the Stream
 	 * @param consumerError To accept incoming processing errors from the Stream
 	 * @param onComplete To run after an onComplete event
-	 * @return Subscription so that further processing can be continued or cancelled.
+	 * @return ReactiveTask so that further processing can be continued or cancelled.
 	 */
-	<X extends Throwable> Subscription forEachXWithError(long numberOfElements,Consumer<? super T> consumer,Consumer<? super Throwable> consumerError);
+	<X extends Throwable> ReactiveTask forEachXWithError(long numberOfElements,Consumer<? super T> consumer,Consumer<? super Throwable> consumerError);
 	/**
 	 * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
 	 * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription,
@@ -90,7 +88,8 @@ public interface ReactiveStreamsTerminalOperations<T> {
 	 * 
 	 * <pre>
 	 * @{code
-	 *     Subscription next = SequenceM.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+	 *     ReactiveTask next = SequenceM.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+	 *                                  .futureOperations(exec)
 	 *                                  .map(Supplier::get)
 	 *          					    .forEachXEvents(2,System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
 	 *          
@@ -116,15 +115,16 @@ public interface ReactiveStreamsTerminalOperations<T> {
 	 * @param consumer To accept incoming elements from the Stream
 	 * @param consumerError To accept incoming processing errors from the Stream
 	 * @param onComplete To run after an onComplete event
-	 * @return Subscription so that further processing can be continued or cancelled.
+	 * @return ReactiveTask so that further processing can be continued or cancelled.
 	 */
-	<X extends Throwable> Subscription forEachXEvents(long numberOfElements,Consumer<? super T> consumer,Consumer<? super Throwable> consumerError, Runnable onComplete);
+	<X extends Throwable> ReactiveTask forEachXEvents(long numberOfElements,Consumer<? super T> consumer,Consumer<? super Throwable> consumerError, Runnable onComplete);
 	
 	/**
 	 *  Perform a forEach operation over the Stream    capturing any elements and errors in the supplied consumers,  
 	 * <pre>
 	 * @{code
-	 *     Subscription next = SequenceM.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+	 *     ReactiveTask next = SequenceM.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+	 *                                  .futureOperations(exec)
 	 *                                  .map(Supplier::get)
 	 *          					    .forEachWithError(System.out::println, e->e.printStackTrace());
 	 *          
@@ -143,9 +143,9 @@ public interface ReactiveStreamsTerminalOperations<T> {
 	 * </pre>	 
 	 * @param consumer To accept incoming elements from the Stream
 	 * @param consumerError To accept incoming processing errors from the Stream
-	 * @return Subscription so that further processing can be continued or cancelled.
+	 * @return ReactiveTask so that further processing can be continued or cancelled.
 	 */
-	<X extends Throwable> void forEachWithError(Consumer<? super T> consumerElement,
+	<X extends Throwable> ReactiveTask forEachWithError(Consumer<? super T> consumerElement,
 			Consumer<? super Throwable> consumerError);
 	
 	/**
@@ -154,7 +154,8 @@ public interface ReactiveStreamsTerminalOperations<T> {
 	 * 
 	 * <pre>
 	 * @{code
-	 *     Subscription next = SequenceM.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+	 *     ReactiveTask next = SequenceM.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+	 *                                  .futureOperations(exec)
 	 *                                  .map(Supplier::get)
 	 *          					    .forEachEvents(System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
 	 *          
@@ -174,12 +175,11 @@ public interface ReactiveStreamsTerminalOperations<T> {
 	 * @param consumer To accept incoming elements from the Stream
 	 * @param consumerError To accept incoming processing errors from the Stream
 	 * @param onComplete To run after an onComplete event
-	 * @return Subscription so that further processing can be continued or cancelled.
+	 * @return ReactiveTask so that further processing can be continued or cancelled.
 	 */
-	<X extends Throwable> void forEachEvent(Consumer<? super T> consumerElement,
+	<X extends Throwable> ReactiveTask forEachEvent(Consumer<? super T> consumerElement,
 			Consumer<? super Throwable> consumerError,
 			Runnable onComplete);
 	
 	
-
 }

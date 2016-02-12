@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.types.stream.HeadAndTail;
-import com.aol.cyclops.util.Streamable;
+import com.aol.cyclops.util.stream.Streamable;
 
 public class Sieve {
 
