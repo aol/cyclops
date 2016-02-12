@@ -1,5 +1,6 @@
 package com.aol.cyclops.internal.comprehensions.donotation;
 
+import com.aol.cyclops.types.anyM.*;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Assignment;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Entry;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Guard;
@@ -729,11 +730,11 @@ public class DoComp2<T1, T2> extends DoComp {
 	 *            To be applied to every element in the for comprehension
 	 * @return For comprehension result
 	 */
-	public <R> AnyM<R> yield(Function<? super T1, Function<? super T2, ? extends R>> f) {
+	public <R> AnyMSeq<R> yield(Function<? super T1, Function<? super T2, ? extends R>> f) {
 		if(getOrgType()!=null)
-			return new MonadWrapper(this.yieldInternal(f),this.getOrgType()).anyM();
+			return new MonadWrapper(this.yieldInternal(f),this.getOrgType()).anyMSeq();
 		else
-			return AnyM.ofMonad(this.yieldInternal(f));
+			return AnyM.ofSeq(this.yieldInternal(f));
 	}
 
 	/**

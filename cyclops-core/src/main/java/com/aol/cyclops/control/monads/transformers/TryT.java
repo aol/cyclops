@@ -120,9 +120,9 @@ public class TryT<T,X extends Throwable> {
 
 		return of(run.bind(opt -> {
 			if (opt.isSuccess())
-				return f.apply(opt.get()).run;
+				return f.apply(opt.get()).run.unwrap();
 			Try<B,X> ret = (Try)opt;
-			return run.unit(ret);
+			return run.unit(ret).unwrap();
 		}));
 
 	}

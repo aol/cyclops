@@ -23,6 +23,7 @@ import org.pcollections.PStack;
 
 import com.aol.cyclops.internal.monads.MonadWrapper;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.types.anyM.*;
 import com.aol.cyclops.control.ReactiveSeq;
 	public class DoComp1<T1> extends DoComp{
 		public DoComp1(PStack<Entry> assigned, Class orgType) {
@@ -709,11 +710,11 @@ import com.aol.cyclops.control.ReactiveSeq;
 		 * @param f To be applied to every element in the for comprehension
 		 * @return For comprehension result
 		 */
-		public <R> AnyM<R> yield(Function<? super T1,R> f){
+		public <R> AnyMSeq<R> yield(Function<? super T1,R> f){
 			if(getOrgType()!=null)
-				return new MonadWrapper(this.yieldInternal(f),this.getOrgType()).anyM();
+				return new MonadWrapper(this.yieldInternal(f),this.getOrgType()).anyMSeq();
 			else
-				return AnyM.ofMonad(this.yieldInternal(f));
+				return AnyM.ofSeq(this.yieldInternal(f));
 		}
 		
 		

@@ -118,8 +118,8 @@ public class OptionalT<T> {
 
 		return of(run.bind(opt -> {
 			if (opt.isPresent())
-				return f.apply(opt.get()).run;
-			return run.unit(Optional.<B> empty());
+				return f.apply(opt.get()).run.unwrap();
+			return run.unit(Optional.<B> empty()).unwrap();
 		}));
 
 	}

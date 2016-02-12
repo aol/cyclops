@@ -172,7 +172,7 @@ public class FluentSupplierTest {
 	public void testMatches1(){
 		assertThat(FluentFunctions.of(this::getOne)	
 					   .matches(-1,c->c.just(i->4,1))
-					   .get(),equalTo(3));
+					   .get(),equalTo(4));
 	}
 
 	@Test
@@ -186,7 +186,7 @@ public class FluentSupplierTest {
 		assertThat(FluentFunctions.of(this::getOne)	
 					   .matches(-1,c->c.just(i->4,4)
 							   		   .just(i->4,1))
-					   .get(),equalTo(3));
+					   .get(),equalTo(4));
 	}
 
 	@Test
@@ -200,7 +200,7 @@ public class FluentSupplierTest {
 		assertThat(FluentFunctions.of(this::getOne)	
 				   .matches(-1,c->c.just(i->4,4).just(i->4,8)
 						   			.just(i->4,1))
-				   .get(),equalTo(3));
+				   .get(),equalTo(4));
 	}
 
 	@Test
@@ -213,7 +213,7 @@ public class FluentSupplierTest {
 	public void testMatches4(){
 		assertThat(FluentFunctions.of(this::getOne)	
 				   .matches(-1,c->c.just(i->4,4).just(i->4,40).just(i->4,8).just(i->4,1))
-				   .get(),equalTo(3));
+				   .get(),equalTo(4));
 	}
 
 	@Test
@@ -226,7 +226,7 @@ public class FluentSupplierTest {
 	public void testMatches5(){
 		assertThat(FluentFunctions.of(this::getOne)	
 				   .matches(-1,c->c.just(i->4,4).just(i->4,5).just(i->4,40).just(i->4,8).just(i->4,1))
-				   .get(),equalTo(3));
+				   .get(),equalTo(4));
 	}
 
 	@Test
