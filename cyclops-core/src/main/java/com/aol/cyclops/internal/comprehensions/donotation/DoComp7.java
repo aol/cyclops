@@ -1,6 +1,7 @@
 
 package com.aol.cyclops.internal.comprehensions.donotation;
 
+import com.aol.cyclops.control.Reader;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Assignment;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Entry;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Guard;
@@ -28,6 +29,10 @@ import com.aol.cyclops.control.SequenceM;
 			
 		}
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,Character> add(CharSequence seq){
+			return new DoComp8(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),seq)),getOrgType());
+			
+		}
+		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(Reader<?,? extends T8> reader){
 			return new DoComp8(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),seq)),getOrgType());
 			
 		}
@@ -348,7 +353,11 @@ import com.aol.cyclops.control.SequenceM;
 		}
 		
 
-
+		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> withReader(Function<? super T1,Function<? super T2,Function<? super T3,Function<T4,Function<? super T5,Function<? super T6,Function<? super T7,Reader<?,? extends T8>>>>>>>> f){
+			return new DoComp8(addToAssigned(f),getOrgType());
+			
+		}
+		
 		
 
 

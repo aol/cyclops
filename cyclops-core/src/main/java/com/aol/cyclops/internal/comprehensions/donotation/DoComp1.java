@@ -1,5 +1,7 @@
 
 package com.aol.cyclops.internal.comprehensions.donotation;
+import com.aol.cyclops.control.Reader;
+
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Assignment;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Entry;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Guard;
@@ -28,6 +30,10 @@ import com.aol.cyclops.control.SequenceM;
 			
 		}
 		public  DoComp2<T1,Character> add(CharSequence seq){
+			return new DoComp2(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),seq)),getOrgType());
+			
+		}
+		public  DoComp2<T1,T2> add(Reader<?,T2> seq){
 			return new DoComp2(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),seq)),getOrgType());
 			
 		}
@@ -349,18 +355,45 @@ import com.aol.cyclops.control.SequenceM;
 
 
 		
-
+		/**
+		 * Add a Reader as next nested level in the comprehension
+		 * 
+		 * 
+		 * 
+		 * <pre>
+		 * {@code   
+		 * 
+		 *    Do.add(stream)
+		 *      .withReader(i-> createReader(i))
+		 				   .filter((Integer i1) -> i1>5)
+					  	   .yield((Integer i1) -> i1);
+								
+			}
+			</pre>
+		 * 
+		 * 
+		 * @param f Gives access to current pointers and defines next level in comprehension
+		 * @return Next stage in for comprehension builder
+		 */
+		public <T2> DoComp2<T1,T2> withReader(Function<? super T1,Reader<?,? extends T2>> f){
+			return new DoComp2(addToAssigned(f),getOrgType());
+			
+		}
 
 		/**
 		 * Add a Iterable as next nested level in the comprehension
 		 * 
 		 * 
 		 * 
-		 * <pre>{@code   Do.with((Integer i1) -> iterable1)
+		 * <pre>
+		 * {@code   
+		 * 
+		 *    Do.with((Integer i1) -> iterable1)
 		 				   .filter((Integer i1) -> i1>5)
 					  	   .yield((Integer i1) -> i1);
 								
-			}</pre>
+			}
+			</pre>
 		 * 
 		 * 
 		 * @param f Gives access to current pointers and defines next level in comprehension

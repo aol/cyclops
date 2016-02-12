@@ -19,15 +19,21 @@ import java.util.stream.Stream;
 
 import org.pcollections.PStack;
 
+import com.aol.cyclops.control.Reader;
 import com.aol.cyclops.internal.monads.MonadWrapper;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.SequenceM;
+
 	public class DoComp6<T1,T2,T3,T4,T5,T6> extends DoComp{
 		public DoComp6(PStack<Entry> assigned, Class orgType) {
 			super(assigned,orgType);
 			
 		}
 		public <T7> DoComp7<T1,T2,T3,T4,T5,T6,Character> add(CharSequence seq){
+			return new DoComp7(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),seq)),getOrgType());
+			
+		}
+		public <T7> DoComp7<T1,T2,T3,T4,T5,T6,Reader> add(CReader<?,T7> seq){
 			return new DoComp7(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),seq)),getOrgType());
 			
 		}
@@ -349,7 +355,10 @@ import com.aol.cyclops.control.SequenceM;
 
 
 		
-
+		public <T7> DoComp7<T1,T2,T3,T4,T5,T6,T7> withReader(Function<? super T1,Function<? super T2,Function<? super T3,Function<T4,Function<? super T5,Function<? super T6,Reader<?,? extends T7>>>>>>> f){
+			return new DoComp7(addToAssigned(f),getOrgType());
+			
+		}
 
 		/**
 		 * Add a Iterable as next nested level in the comprehension

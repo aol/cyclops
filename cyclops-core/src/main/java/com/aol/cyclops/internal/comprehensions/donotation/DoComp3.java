@@ -32,6 +32,11 @@ import com.aol.cyclops.control.SequenceM;
 			return new DoComp4(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),seq)),getOrgType());
 			
 		}
+		public  DoComp4<T1,T2,T3,T4> add(Reader<?,T4> seq){
+			return new DoComp4(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),seq)),getOrgType());
+			
+		}
+		
 		public <T4> DoComp4<T1,T2,T3,T4> addValues(T4... values){
 			return new DoComp4(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),Stream.of(values))),getOrgType());
 			
@@ -352,7 +357,11 @@ import com.aol.cyclops.control.SequenceM;
 
 
 		
-
+		public <T4> DoComp4<T1,T2,T3,T4> withReader(Function<? super T1,Function<? super T2,Function<? super T3,Reader<?,? extends T4>>>> f){
+			return new DoComp4(addToAssigned(f),getOrgType());
+			
+		}
+		
 
 		/**
 		 * Add a Iterable as next nested level in the comprehension

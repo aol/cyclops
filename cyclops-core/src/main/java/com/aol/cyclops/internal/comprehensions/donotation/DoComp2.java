@@ -22,7 +22,7 @@ import org.pcollections.PStack;
 import com.aol.cyclops.internal.monads.MonadWrapper;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.SequenceM;
-
+import com.aol.cyclops.control.Reader;
 public class DoComp2<T1, T2> extends DoComp {
 	
 	public DoComp2(PStack<Entry> assigned, Class orgType) {
@@ -31,6 +31,10 @@ public class DoComp2<T1, T2> extends DoComp {
 	}
 
 	public DoComp3<T1, T2, Character> add(CharSequence seq) {
+		return new DoComp3(getAssigned().plus(getAssigned().size(), new Entry("$$monad" + getAssigned().size(), seq)),getOrgType());
+
+	}
+	public DoComp3<T1, T2, T3> add(Reader<?,T3> seq) {
 		return new DoComp3(getAssigned().plus(getAssigned().size(), new Entry("$$monad" + getAssigned().size(), seq)),getOrgType());
 
 	}
@@ -367,6 +371,10 @@ public class DoComp2<T1, T2> extends DoComp {
 
 	}
 
+	public <T3> DoComp3<T1, T2, T3> withReader(Function<? super T1, Function<? super T2, Reader<?, ? extends T3>>> f) {
+		return new DoComp3(addToAssigned(f),getOrgType());
+
+	}
 	/**
 	 * Add a Iterable as next nested level in the comprehension
 	 * 

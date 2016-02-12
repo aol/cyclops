@@ -1,6 +1,6 @@
 
 package com.aol.cyclops.internal.comprehensions.donotation;
-
+import com.aol.cyclops.control.Reader;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Assignment;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Entry;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Guard;
@@ -22,12 +22,16 @@ import org.pcollections.PStack;
 import com.aol.cyclops.internal.monads.MonadWrapper;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.SequenceM;
-	public class DoComp4<T1,T2,T3,T4> extends DoComp{
+public class DoComp4<T1,T2,T3,T4> extends DoComp{
 		public DoComp4(PStack<Entry> assigned, Class orgType) {
 			super(assigned,orgType);
 			
 		}
 		public <T5> DoComp5<T1,T2,T3,T4,Character> add(CharSequence seq){
+			return new DoComp5(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),seq)),getOrgType());
+			
+		}
+		public <T5> DoComp5<T1,T2,T3,T4,T5> add(Reader<?,T5>){
 			return new DoComp5(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),seq)),getOrgType());
 			
 		}
@@ -349,7 +353,10 @@ import com.aol.cyclops.control.SequenceM;
 
 
 		
-
+		public <T5> DoComp5<T1,T2,T3,T4,T5> withReader(Function<? super T1,Function<? super T2,Function<? super T3,Function<? super T4,Reader<?,? extends T5>>>>> f){
+			return new DoComp5(addToAssigned(f),getOrgType());
+			
+		}
 
 		/**
 		 * Add a Iterable as next nested level in the comprehension
