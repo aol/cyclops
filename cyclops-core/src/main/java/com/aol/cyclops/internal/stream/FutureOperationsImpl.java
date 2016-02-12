@@ -1,4 +1,4 @@
-package com.aol.cyclops.streams.future;
+package com.aol.cyclops.internal.stream;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -31,9 +31,12 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.sequence.reactivestreams.ReactiveTask;
 import com.aol.cyclops.streams.FutureStreamUtils;
+import com.aol.cyclops.types.stream.future.DoubleOperatorsMixin;
+import com.aol.cyclops.types.stream.future.FutureOperations;
+import com.aol.cyclops.types.stream.future.IntOperatorsMixin;
+import com.aol.cyclops.types.stream.future.LongOperatorsMixin;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.aol.cyclops.scheduling.util.cron;
+package com.aol.cyclops.util.stream.scheduling.cron;
 
 /*
  * All content copyright Terracotta, Inc., unless otherwise indicated. All rights reserved.

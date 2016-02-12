@@ -1,11 +1,11 @@
-package com.aol.cyclops.streams.future;
+package com.aol.cyclops.types.stream.lazy;
 
 import java.util.IntSummaryStatistics;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.ToIntFunction;
-import java.util.stream.IntStream;
+
+import com.aol.cyclops.control.Eval;
 
 public interface IntOperators<T> {
 	
@@ -14,29 +14,29 @@ public interface IntOperators<T> {
 	 * @see java.util.stream.Stream#mapToInt(ToIntFunction)
 	 * 	 @see java.util.stream.IntStream#sum()
 	 * */
-	CompletableFuture<Integer> sumInt(ToIntFunction<? super T> fn);
+	Eval<Integer> sumInt(ToIntFunction<? super T> fn);
 	/**
 	 * Perform an asynchronous max operation
 	 * @see java.util.stream.Stream#mapToInt(ToIntFunction)
 	 * 	 @see java.util.stream.IntStream#max()
 	 * */
-	CompletableFuture<OptionalInt> maxInt(ToIntFunction<? super T> fn);
+	Eval<OptionalInt> maxInt(ToIntFunction<? super T> fn);
 	/**
 	 * Perform an asynchronous min operation
 	 * @see java.util.stream.Stream#mapToInt(ToIntFunction)
 	 * 	 @see java.util.stream.IntStream#min()
 	 * */
-	CompletableFuture<OptionalInt> minInt(ToIntFunction<? super T> fn);
+	Eval<OptionalInt> minInt(ToIntFunction<? super T> fn);
 	/**
 	 * Perform an asynchronous average operation
 	 * @see java.util.stream.Stream#mapToInt(ToIntFunction)
 	 * 	 @see java.util.stream.IntStream#average()
 	 * */
-	CompletableFuture<OptionalDouble> averageInt(ToIntFunction<? super T> fn);
+	Eval<OptionalDouble> averageInt(ToIntFunction<? super T> fn);
 	/**
 	 * Perform an asynchronous summaryStatistics operation
 	 * @see java.util.stream.Stream#mapToInt(ToIntFunction)
 	 * 	 @see java.util.stream.IntStream#summaryStatistics()
 	 * */
-	CompletableFuture<IntSummaryStatistics> summaryStatisticsInt(ToIntFunction<? super T> fn);
+	Eval<IntSummaryStatistics> summaryStatisticsInt(ToIntFunction<? super T> fn);
 }

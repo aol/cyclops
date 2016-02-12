@@ -45,7 +45,6 @@ import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.HotStream;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Traversable;
@@ -54,6 +53,7 @@ import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.sequence.ConvertableSequence;
 import com.aol.cyclops.types.sequence.SequenceMCollectable;
 import com.aol.cyclops.types.sequence.ToStream;
+import com.aol.cyclops.types.stream.future.FutureOperations;
 
 
 /**

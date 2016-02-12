@@ -1,4 +1,4 @@
-package com.aol.cyclops.streams.future;
+package com.aol.cyclops.types.stream.lazy;
 
 import java.util.DoubleSummaryStatistics;
 import java.util.OptionalDouble;
@@ -6,20 +6,21 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.DoubleStream;
 
+import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.streams.HasExec;
 import com.aol.cyclops.streams.HasStream;
 
-public interface DoubleOperatorsMixin<T>  extends  DoubleOperators<T>,HasStream<T>, HasExec{
+public interface DoubleOperatorsMixin<T>  extends  DoubleOperators<T>,HasStream<T>{
 	/**
 	 * Perform an asynchronous sum operation
 	 * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
 	 * 	 @see java.util.stream.DoubleStream#sum()
 	 * */
-	default  CompletableFuture<Double> sumDouble(ToDoubleFunction<? super T> fn){
+	default  Eval<Double> sumDouble(ToDoubleFunction<? super T> fn){
 		
-		return CompletableFuture.supplyAsync(()->getStream()
+		return Eval.later(()->getStream()
 								.flatMapToDouble(t-> DoubleStream.of(fn.applyAsDouble(t)))
-								.sum(),getExec());
+								.sum());
 				
 	}
 	/**
@@ -27,11 +28,11 @@ public interface DoubleOperatorsMixin<T>  extends  DoubleOperators<T>,HasStream<
 	 * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
 	 * 	 @see java.util.stream.DoubleStream#max()
 	 * */
-	default  CompletableFuture<OptionalDouble> maxDouble(ToDoubleFunction<? super T> fn){
+	default  Eval<OptionalDouble> maxDouble(ToDoubleFunction<? super T> fn){
 		
-		return CompletableFuture.supplyAsync(()->getStream()
+		return Eval.later(()->getStream()
 								.flatMapToDouble(t-> DoubleStream.of(fn.applyAsDouble(t)))
-								.max(),getExec());
+								.max());
 				
 	}
 	/**
@@ -39,11 +40,11 @@ public interface DoubleOperatorsMixin<T>  extends  DoubleOperators<T>,HasStream<
 	 * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
 	 * 	 @see java.util.stream.DoubleStream#min()
 	 * */
-	default  CompletableFuture<OptionalDouble> minDouble(ToDoubleFunction<? super T> fn){
+	default  Eval<OptionalDouble> minDouble(ToDoubleFunction<? super T> fn){
 		
-		return CompletableFuture.supplyAsync(()->getStream()
+		return Eval.later(()->getStream()
 								.flatMapToDouble(t-> DoubleStream.of(fn.applyAsDouble(t)))
-								.min(),getExec());
+								.min());
 				
 	}
 	/**
@@ -51,11 +52,11 @@ public interface DoubleOperatorsMixin<T>  extends  DoubleOperators<T>,HasStream<
 	 * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
 	 * 	 @see java.util.stream.DoubleStream#average()
 	 * */
-	default CompletableFuture<OptionalDouble> averageDouble(ToDoubleFunction<? super T> fn){
+	default Eval<OptionalDouble> averageDouble(ToDoubleFunction<? super T> fn){
 		
-		return CompletableFuture.supplyAsync(()->getStream()
+		return Eval.later(()->getStream()
 								.flatMapToDouble(t-> DoubleStream.of(fn.applyAsDouble(t)))
-								.average(),getExec());
+								.average());
 				
 	}
 	/**
@@ -63,11 +64,11 @@ public interface DoubleOperatorsMixin<T>  extends  DoubleOperators<T>,HasStream<
 	 * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
 	 * 	 @see java.util.stream.DoubleStream#summaryStatistics()
 	 * */
-	default  CompletableFuture<DoubleSummaryStatistics> summaryStatisticsDouble(ToDoubleFunction<? super T> fn){
+	default  Eval<DoubleSummaryStatistics> summaryStatisticsDouble(ToDoubleFunction<? super T> fn){
 		
-		return CompletableFuture.supplyAsync(()->getStream()
+		return Eval.later(()->getStream()
 								.flatMapToDouble(t-> DoubleStream.of(fn.applyAsDouble(t)))
-								.summaryStatistics(),getExec());
+								.summaryStatistics());
 			
 	}
 }

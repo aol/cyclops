@@ -1,27 +1,27 @@
-package com.aol.cyclops.streams.future;
+package com.aol.cyclops.types.stream.lazy;
 
 import java.util.IntSummaryStatistics;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.ToIntFunction;
 import java.util.stream.IntStream;
 
+import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.streams.HasExec;
 import com.aol.cyclops.streams.HasStream;
 
-public interface IntOperatorsMixin<T>  extends IntOperators<T>,HasStream<T>, HasExec{
+public interface IntOperatorsMixin<T>  extends IntOperators<T>,HasStream<T>{
 	
 	/**
 	 * Perform an asynchronous sum operation
 	 * @see java.util.stream.Stream#mapToInt(ToIntFunction)
 	 * 	 @see java.util.stream.IntStream#sum()
 	 * */
-	default  CompletableFuture<Integer> sumInt(ToIntFunction<? super T> fn){
+	default  Eval<Integer> sumInt(ToIntFunction<? super T> fn){
 		
-		return CompletableFuture.supplyAsync(()->getStream()
+		return Eval.later(()->getStream()
 								.flatMapToInt(t-> IntStream.of(fn.applyAsInt(t)))
-								.sum(),getExec());
+								.sum());
 				
 	}
 	/**
@@ -29,11 +29,11 @@ public interface IntOperatorsMixin<T>  extends IntOperators<T>,HasStream<T>, Has
 	 * @see java.util.stream.Stream#mapToInt(ToIntFunction)
 	 * 	 @see java.util.stream.IntStream#max()
 	 * */
-	default  CompletableFuture<OptionalInt> maxInt(ToIntFunction<? super T> fn){
+	default  Eval<OptionalInt> maxInt(ToIntFunction<? super T> fn){
 		
-		return CompletableFuture.supplyAsync(()->getStream()
+		return Eval.later(()->getStream()
 								.flatMapToInt(t-> IntStream.of(fn.applyAsInt(t)))
-								.max(),getExec());
+								.max());
 				
 	}
 	/**
@@ -41,11 +41,11 @@ public interface IntOperatorsMixin<T>  extends IntOperators<T>,HasStream<T>, Has
 	 * @see java.util.stream.Stream#mapToInt(ToIntFunction)
 	 * 	 @see java.util.stream.IntStream#min()
 	 * */
-	default  CompletableFuture<OptionalInt> minInt(ToIntFunction<? super T> fn){
+	default  Eval<OptionalInt> minInt(ToIntFunction<? super T> fn){
 		
-		return CompletableFuture.supplyAsync(()->getStream()
+		return Eval.later(()->getStream()
 								.flatMapToInt(t-> IntStream.of(fn.applyAsInt(t)))
-								.min(),getExec());
+								.min());
 				
 	}
 	/**
@@ -53,11 +53,11 @@ public interface IntOperatorsMixin<T>  extends IntOperators<T>,HasStream<T>, Has
 	 * @see java.util.stream.Stream#mapToInt(ToIntFunction)
 	 * 	 @see java.util.stream.IntStream#average()
 	 * */
-	default CompletableFuture<OptionalDouble> averageInt(ToIntFunction<? super T> fn){
+	default Eval<OptionalDouble> averageInt(ToIntFunction<? super T> fn){
 		
-		return CompletableFuture.supplyAsync(()->getStream()
+		return Eval.later(()->getStream()
 								.flatMapToInt(t-> IntStream.of(fn.applyAsInt(t)))
-								.average(),getExec());
+								.average());
 				
 	}
 	/**
@@ -65,11 +65,11 @@ public interface IntOperatorsMixin<T>  extends IntOperators<T>,HasStream<T>, Has
 	 * @see java.util.stream.Stream#mapToInt(ToIntFunction)
 	 * 	 @see java.util.stream.IntStream#summaryStatistics()
 	 * */
-	default  CompletableFuture<IntSummaryStatistics> summaryStatisticsInt(ToIntFunction<? super T> fn){
+	default  Eval<IntSummaryStatistics> summaryStatisticsInt(ToIntFunction<? super T> fn){
 		
-		return CompletableFuture.supplyAsync(()->getStream()
+		return Eval.later(()->getStream()
 								.flatMapToInt(t-> IntStream.of(fn.applyAsInt(t)))
-								.summaryStatistics(),getExec());
+								.summaryStatistics());
 			
 	}
 }

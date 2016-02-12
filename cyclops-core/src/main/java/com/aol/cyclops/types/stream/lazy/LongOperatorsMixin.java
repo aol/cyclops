@@ -1,4 +1,4 @@
-package com.aol.cyclops.sequence.traits.lazy;
+package com.aol.cyclops.types.stream.lazy;
 
 import java.util.LongSummaryStatistics;
 import java.util.OptionalDouble;

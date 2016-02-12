@@ -1,10 +1,10 @@
-package com.aol.cyclops.sequence.traits.lazy;
+package com.aol.cyclops.types.stream.future;
 
 import java.util.DoubleSummaryStatistics;
 import java.util.OptionalDouble;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.ToDoubleFunction;
-
-import com.aol.cyclops.control.Eval;
+import java.util.stream.DoubleStream;
 
 public interface DoubleOperators<T>{
 	/**
@@ -12,29 +12,29 @@ public interface DoubleOperators<T>{
 	 * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
 	 * 	 @see java.util.stream.DoubleStream#sum()
 	 * */
-	Eval<Double> sumDouble(ToDoubleFunction<? super T> fn);
+	CompletableFuture<Double> sumDouble(ToDoubleFunction<? super T> fn);
 	/**
 	 * Perform an asynchronous max operation
 	 * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
 	 * 	 @see java.util.stream.DoubleStream#max()
 	 * */
-	Eval<OptionalDouble> maxDouble(ToDoubleFunction<? super T> fn);
+	CompletableFuture<OptionalDouble> maxDouble(ToDoubleFunction<? super T> fn);
 	/**
 	 * Perform an asynchronous min operation
 	 * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
 	 * 	 @see java.util.stream.DoubleStream#min()
 	 * */
-	Eval<OptionalDouble> minDouble(ToDoubleFunction<? super T> fn);
+	CompletableFuture<OptionalDouble> minDouble(ToDoubleFunction<? super T> fn);
 	/**
 	 * Perform an asynchronous average operation
 	 * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
 	 * 	 @see java.util.stream.DoubleStream#average()
 	 * */
-	Eval<OptionalDouble> averageDouble(ToDoubleFunction<? super T> fn);
+	CompletableFuture<OptionalDouble> averageDouble(ToDoubleFunction<? super T> fn);
 	/**
 	 * Perform an asynchronous summaryStatistics operation
 	 * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
 	 * 	 @see java.util.stream.DoubleStream#summaryStatistics()
 	 * */
-	 Eval<DoubleSummaryStatistics> summaryStatisticsDouble(ToDoubleFunction<? super T> fn);
+	 CompletableFuture<DoubleSummaryStatistics> summaryStatisticsDouble(ToDoubleFunction<? super T> fn);
 }

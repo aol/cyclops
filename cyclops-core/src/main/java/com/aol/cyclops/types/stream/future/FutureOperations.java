@@ -1,4 +1,4 @@
-package com.aol.cyclops.sequence.future;
+package com.aol.cyclops.types.stream.future;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -20,10 +20,6 @@ import java.util.stream.Collector;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsTerminalFutureOperations;
-import com.aol.cyclops.streams.future.DoubleOperators;
-import com.aol.cyclops.streams.future.FutureCollectable;
-import com.aol.cyclops.streams.future.IntOperators;
-import com.aol.cyclops.streams.future.LongOperators;
 
 public interface FutureOperations<T> extends
 					IntOperators<T>,DoubleOperators<T>, LongOperators<T>,

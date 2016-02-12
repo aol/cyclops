@@ -38,7 +38,7 @@ import com.aol.cyclops.lambda.monads.Functor;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
-import com.aol.cyclops.streams.future.FutureCollectable;
+import com.aol.cyclops.types.stream.future.FutureCollectable;
 import com.aol.simple.react.async.factories.QueueFactories;
 import com.aol.simple.react.stream.lazy.LazyReact;
 import com.aol.simple.react.stream.simple.SimpleReact;

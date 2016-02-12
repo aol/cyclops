@@ -26,7 +26,6 @@ import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.internal.matcher2.CheckValues;
 import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.IterableCollectable;
@@ -35,6 +34,7 @@ import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.sequence.SequenceMCollectable;
+import com.aol.cyclops.types.stream.future.FutureOperations;
 
 //pattern match, for comprehensions
 public interface CollectionX<T> extends ExtendedTraversable<T>,

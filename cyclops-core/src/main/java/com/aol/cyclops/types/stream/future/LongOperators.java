@@ -1,11 +1,12 @@
-package com.aol.cyclops.sequence.traits.lazy;
+package com.aol.cyclops.types.stream.future;
 
 import java.util.LongSummaryStatistics;
 import java.util.OptionalDouble;
 import java.util.OptionalLong;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
-
-import com.aol.cyclops.control.Eval;
+import java.util.stream.LongStream;
 
 public interface LongOperators<T> {
 	
@@ -14,29 +15,29 @@ public interface LongOperators<T> {
 	 * @see java.util.stream.Stream#mapToLong(ToLongFunction)
 	 * 	 @see java.util.stream.LongStream#sum()
 	 * */
-	Eval<Long> sumLong(ToLongFunction<? super T> fn);
+	CompletableFuture<Long> sumLong(ToLongFunction<? super T> fn);
 	/**
 	 * Perform an asynchronous max operation
 	 * @see java.util.stream.Stream#mapToLong(ToLongFunction)
 	 * 	 @see java.util.stream.LongStream#max()
 	 * */
-	 Eval<OptionalLong> maxLong(ToLongFunction<? super T> fn);
+	 CompletableFuture<OptionalLong> maxLong(ToLongFunction<? super T> fn);
 	/**
 	 * Perform an asynchronous min operation
 	 * @see java.util.stream.Stream#mapToLong(ToLongFunction)
 	 * 	 @see java.util.stream.LongStream#min()
 	 * */
-	Eval<OptionalLong> minLong(ToLongFunction<? super T> fn);
+	CompletableFuture<OptionalLong> minLong(ToLongFunction<? super T> fn);
 	/**
 	 * Perform an asynchronous average operation
 	 * @see java.util.stream.Stream#mapToLong(ToLongFunction)
 	 * 	 @see java.util.stream.LongStream#average()
 	 * */
-	Eval<OptionalDouble> averageLong(ToLongFunction<? super T> fn);
+	CompletableFuture<OptionalDouble> averageLong(ToLongFunction<? super T> fn);
 	/**
 	 * Perform an asynchronous summaryStatistics operation
 	 * @see java.util.stream.Stream#mapToLong(ToLongFunction)
 	 * 	 @see java.util.stream.LongStream#summaryStatistics()
 	 * */
-	Eval<LongSummaryStatistics> summaryStatisticsLong(ToLongFunction<? super T> fn);
+	CompletableFuture<LongSummaryStatistics> summaryStatisticsLong(ToLongFunction<? super T> fn);
 }

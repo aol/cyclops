@@ -27,10 +27,10 @@ import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.sequence.HotStream;
 import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.future.FutureOperations;
-import com.aol.cyclops.sequence.traits.lazy.LazyCollectable;
-import com.aol.cyclops.sequence.traits.lazy.LazyOperationsImpl;
 import com.aol.cyclops.types.sequence.ConvertableSequence;
+import com.aol.cyclops.types.stream.future.FutureOperations;
+import com.aol.cyclops.types.stream.lazy.LazyCollectable;
+import com.aol.cyclops.types.stream.lazy.LazyOperationsImpl;
 import com.aol.cyclops.util.Streamable;
 
 

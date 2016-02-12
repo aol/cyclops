@@ -1,4 +1,4 @@
-package com.aol.cyclops.streams.future;
+package com.aol.cyclops.types.stream.future;
 
 import java.util.LongSummaryStatistics;
 import java.util.OptionalDouble;
