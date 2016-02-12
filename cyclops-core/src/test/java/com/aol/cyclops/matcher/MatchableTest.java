@@ -1,7 +1,7 @@
 package com.aol.cyclops.matcher;
 
-import static com.aol.cyclops.internal.matcher2.Predicates.__;
-import static com.aol.cyclops.internal.matcher2.Predicates.type;
+import static com.aol.cyclops.util.function.Predicates.__;
+import static com.aol.cyclops.util.function.Predicates.type;
 import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
@@ -23,7 +23,7 @@ import com.aol.cyclops.control.Matchable.MatchSelf;
 import com.aol.cyclops.control.Matchable.MatchableTuple2;
 import com.aol.cyclops.control.Matchable.MatchableTuple3;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.internal.matcher2.Predicates;
+import com.aol.cyclops.util.function.Predicates;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

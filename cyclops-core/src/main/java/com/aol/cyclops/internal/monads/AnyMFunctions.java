@@ -1,10 +1,11 @@
-package com.aol.cyclops.monad;
+package com.aol.cyclops.internal.monads;
 
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 
 public interface AnyMFunctions {

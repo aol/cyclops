@@ -1,4 +1,4 @@
-package com.aol.cyclops.monad;
+package com.aol.cyclops.types.anyM;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -8,8 +8,6 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Xor;
-import com.aol.cyclops.types.anyM.AnyMSeq;
-import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.util.Streamable;
 
 public interface ReduceM<T> {

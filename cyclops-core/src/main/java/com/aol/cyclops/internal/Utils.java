@@ -1,4 +1,4 @@
-package com.aol.cyclops.monad;
+package com.aol.cyclops.internal;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.aol.cyclops.monad;
+package com.aol.cyclops.control;
 
 
 
@@ -39,8 +39,10 @@ import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.comprehensions.comprehenders.InvokeDynamicComprehender;
 import com.aol.cyclops.internal.comprehensions.converters.MonadicConverters;
+import com.aol.cyclops.internal.monads.AnyMFunctions;
 import com.aol.cyclops.internal.monads.AnyMSeqImpl;
 import com.aol.cyclops.internal.monads.AnyMValueImpl;
+import com.aol.cyclops.internal.monads.AnyMonads;
 import com.aol.cyclops.internal.monads.ComprehenderSelector;
 import com.aol.cyclops.internal.monads.MonadWrapper;
 import com.aol.cyclops.sequence.SequenceM;
@@ -52,6 +54,7 @@ import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.anyM.ReduceM;
 import com.aol.cyclops.types.sequence.ToStream;
 import com.aol.cyclops.util.Streamable;
 import com.aol.cyclops.util.function.QuadFunction;
@@ -468,7 +471,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public static <T> AnyMSeq<T> fromStream(Stream<T> stream){
 		Objects.requireNonNull(stream);
-		return new AnyMSeqImpl<>(AnyMFactory.instance.monad(stream));
+		return new AnyMSeqImpl<T>(AnyMFactory.instance.monad(stream));
 	}
 	/**
 	 * Create an AnyM instance that wraps an IntStream

@@ -1,8 +1,10 @@
-package com.aol.cyclops.internal.matcher2;
+package com.aol.cyclops.util.function;
 
 import java.util.function.Predicate;
 
 import org.hamcrest.Matcher;
+
+import com.aol.cyclops.internal.matcher2.ADTPredicateBuilder;
 
 
 /**

@@ -1,6 +1,6 @@
 package com.aol.cyclops.types.anyM;
 
-import static com.aol.cyclops.monad.Utils.firstOrNull;
+import static com.aol.cyclops.internal.Utils.firstOrNull;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -22,8 +22,8 @@ import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.AnyMValueImpl;
+import com.aol.cyclops.internal.monads.AnyMonads;
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.monad.AnyMonads;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;

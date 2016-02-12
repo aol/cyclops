@@ -1,7 +1,7 @@
 package com.aol.cyclops.matcher;
 
-import static com.aol.cyclops.internal.matcher2.Predicates.__;
-import static com.aol.cyclops.internal.matcher2.Predicates.values;
+import static com.aol.cyclops.util.function.Predicates.__;
+import static com.aol.cyclops.util.function.Predicates.values;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -17,8 +17,8 @@ import org.junit.Test;
 
 import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.EmptyCase;
-import com.aol.cyclops.internal.matcher2.Predicates;
 import com.aol.cyclops.types.Decomposable;
+import com.aol.cyclops.util.function.Predicates;
 
 import lombok.Value;
 

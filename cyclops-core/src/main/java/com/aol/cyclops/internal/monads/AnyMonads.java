@@ -1,4 +1,4 @@
-package com.aol.cyclops.monad;
+package com.aol.cyclops.internal.monads;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -6,8 +6,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.internal.monads.ComprehenderSelector;
-import com.aol.cyclops.internal.monads.MonadWrapper;
+import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.types.extensability.Comprehender;
 

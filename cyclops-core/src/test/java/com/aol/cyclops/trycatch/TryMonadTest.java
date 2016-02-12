@@ -10,8 +10,8 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.control.Try;
+import com.aol.cyclops.internal.monads.AnyMonads;
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.monad.AnyMonads;
 
 
 
