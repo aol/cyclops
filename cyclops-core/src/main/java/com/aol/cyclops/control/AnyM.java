@@ -635,6 +635,14 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 		Objects.requireNonNull(monad);
 		return AnyMFactory.instance.monad(monad);
 	}
+	public static <T> AnyMValue<T> ofValue(Object monad){
+		Objects.requireNonNull(monad);
+		return new AnyMValueImpl<T>(AnyMFactory.instance.monad(monad));
+	}
+	public static <T> AnyMSeq<T> ofSeq(Object monad){
+		Objects.requireNonNull(monad);
+		return new AnyMSeqImpl<T>(AnyMFactory.instance.monad(monad));
+	}
 	/**
 	 * Generate an AnyM that wraps an Optional from the provided nullable object
 	 * 

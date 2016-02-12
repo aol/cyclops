@@ -2,6 +2,8 @@
 package com.aol.cyclops.guava;
 
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.AnyMValue;
 import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
 
@@ -20,8 +22,8 @@ public class Guava {
 	 * @param optionM to construct AnyM from
 	 * @return AnyM
 	 */
-	public static <T> AnyM<T> anyM(Optional<T> optionM){
-		return  AnyM.ofMonad(optionM);
+	public static <T> AnyMValue<T> anyM(Optional<T> optionM){
+		return  AnyM.ofValue(optionM);
 	}
 	/**
 	 * <pre>
@@ -38,7 +40,7 @@ public class Guava {
 	 * @param streamM to construct AnyM from
 	 * @return AnyM
 	 */
-	public static <T> AnyM<T> anyM(FluentIterable<T> streamM){
-		return  AnyM.ofMonad(streamM);
+	public static <T> AnyMSeq<T> anyM(FluentIterable<T> streamM){
+		return  AnyM.ofSeq(streamM);
 	}
 }

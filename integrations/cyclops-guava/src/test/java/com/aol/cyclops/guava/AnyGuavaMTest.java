@@ -36,8 +36,8 @@ public class AnyGuavaMTest {
 	public void optionFlatMapTest(){
 		assertThat(Guava.anyM(Optional.of("hello world"))
 				.map(String::toUpperCase)
-				.flatMapOptional(java.util.Optional::of)
 				.toSequence()
+				.flatMapOptional(java.util.Optional::of)
 				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
 	}
 	@Test

@@ -32,7 +32,10 @@ configurations {
 dependencies {
 	compile project(':cyclops-core')
     provided  'com.google.guava:guava:19.0-rc2'
-	provided group: 'com.aol.simplereact', name:'simple-react', version:"${simpleReactVersion}"
+	provided ('com.aol.simplereact:simple-react:'+simpleReactVersion){
+		exclude group:'com.aol.cyclops'
+		exclude group:'org.jooq:jool'
+	}
 	provided 'com.nurkiewicz.lazyseq:lazyseq:0.0.1'
 	provided 'com.javaslang:javaslang:2.0.0-beta'
 	provided group: 'org.projectlombok', name: 'lombok', version:'1.14.2'

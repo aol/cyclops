@@ -38,6 +38,10 @@ public class DoComp0 extends DoComp{
 			return new DoComp1(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),seq)),getOrgType());
 
 		}
+		public <T1> DoComp1<T1> add(Reader<?,T1> seq){
+			return new DoComp1(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),seq)),getOrgType());
+
+		}
 		public  DoComp1<Integer> times(int times){
 			return new DoComp1(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),times)),getOrgType());
 			

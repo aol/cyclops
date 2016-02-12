@@ -26,12 +26,15 @@ public class ToStream {
     public static <T> Seq<T> toJooqLambda(Iterable<T> s){
         return Seq.seq(()->s.iterator());
     }
+    /**
     public static <T> LazyFutureStream<T> toFutureStream(Iterable<T> s){
         return LazyFutureStream.lazyFutureStream(s.iterator());
     }
+    
     public static <T> LazyFutureStream<T> toFutureStreamFromTraversable(Traversable<T> s){
         return LazyFutureStream.lazyFutureStream(s.iterator());
     }
+    **/
     public static <T> ReactiveSeq<T> toSequenceM(Iterable<T> s){
         return ReactiveSeq.fromIterable(s);
     }

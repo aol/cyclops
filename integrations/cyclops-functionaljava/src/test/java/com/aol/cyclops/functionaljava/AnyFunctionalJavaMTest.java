@@ -131,8 +131,9 @@ public class AnyFunctionalJavaMTest {
 	public void optionFlatMapTest(){
 		assertThat(FJ.anyM(Option.some("hello world"))
 				.map(String::toUpperCase)
-				.flatMapOptional(Optional::of)
 				.toSequence()
+				.flatMapOptional(Optional::of)
+			
 				.toList(),equalTo(Arrays.asList("HELLO WORLD")));
 	}
 	@Test

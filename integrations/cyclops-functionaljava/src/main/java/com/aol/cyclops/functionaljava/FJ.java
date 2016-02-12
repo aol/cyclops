@@ -3,8 +3,10 @@ package com.aol.cyclops.functionaljava;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.lambda.monads.ComprehenderSelector;
+import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.AnyMValue;
 
 import fj.P1;
 import fj.data.Either;
@@ -159,8 +161,8 @@ public class FJ {
 	 * @param ioM Construct an AnyM from the supplied IO Monad
 	 * @return AnyM
 	 */
-	public static <T> AnyM<T> anyM(IO<T> ioM){
-		return AnyM.ofMonad(ioM);
+	public static <T> AnyMValue<T> anyM(IO<T> ioM){
+		return AnyM.ofValue(ioM);
 	}
 	/**
 	 * <pre>
@@ -172,8 +174,8 @@ public class FJ {
 	 * @param stateM Construct an AnyM from the supplied State Monad
 	 * @return AnyM
 	 */
-	public static <T> AnyM<T> anyM(State<?,T> stateM){
-		return  AnyM.ofMonad(stateM);
+	public static <T> AnyMValue<T> anyM(State<?,T> stateM){
+		return  AnyM.ofValue(stateM);
 	}
 	/**
 	 * <pre>
@@ -187,8 +189,8 @@ public class FJ {
 	 * @param validationM to  construct an AnyM from
 	 * @return AnyM
 	 */
-	public static <T> AnyM<T> anyM(Validation<?,T> validationM){
-		return  AnyM.ofMonad(validationM);
+	public static <T> AnyMValue<T> anyM(Validation<?,T> validationM){
+		return  AnyM.ofValue(validationM);
 	}
 	
 	
@@ -204,8 +206,8 @@ public class FJ {
 	 * @param writerM to construct an AnyM from
 	 * @return AnyM
 	 */
-	public static <T> AnyM<T> anyM(Writer<T,T> writerM){
-		return  AnyM.ofMonad(writerM);
+	public static <T> AnyMValue<T> anyM(Writer<T,T> writerM){
+		return  AnyM.ofValue(writerM);
 	}
 	/**
 	 * <pre>
@@ -217,8 +219,8 @@ public class FJ {
 	 * @param writerM to construct an AnyM from
 	 * @return AnyM
 	 */
-	public static <T> AnyM<T> anyMValue(Writer<T,?> writerM){
-			return  AnyM.ofMonad(writerM);
+	public static <T> AnyMValue<T> anyMValue(Writer<T,?> writerM){
+			return  AnyM.ofValue(writerM);
 	}
 	/**
 	 * <pre>
@@ -233,8 +235,8 @@ public class FJ {
 	 * @param readerM to create AnyM from 
 	 * @return AnyM
 	 */
-	public static <T> AnyM<T> anyM(Reader<?,T> readerM){
-		return  AnyM.ofMonad(readerM);
+	public static <T> AnyMValue<T> anyM(Reader<?,T> readerM){
+		return  AnyM.ofValue(readerM);
 	}
 	/**
 	 * <pre>
@@ -246,8 +248,8 @@ public class FJ {
 	 * @param trampolineM to create AnyM from
 	 * @return AnyM
 	 */
-	public static <T> AnyM<T> anyM(fj.control.Trampoline<T> trampolineM){
-		return  AnyM.ofMonad(trampolineM);
+	public static <T> AnyMValue<T> anyM(fj.control.Trampoline<T> trampolineM){
+		return  AnyM.ofValue(trampolineM);
 	}
 	/**
 	 * <pre>
@@ -262,8 +264,8 @@ public class FJ {
 	 * @param iterableWM to create AnyM from
 	 * @return AnyM
 	 */
-	public static <T> AnyM<T> anyM(IterableW<T> iterableWM){
-		return  AnyM.ofMonad(iterableWM);
+	public static <T> AnyMSeq<T> anyM(IterableW<T> iterableWM){
+		return  AnyM.ofSeq(iterableWM);
 	}
 	/**
 	 * (Right biased)
@@ -280,8 +282,8 @@ public class FJ {
 	 * @param eitherM to construct AnyM from
 	 * @return AnyM
 	 */
-	public static <T> AnyM<T> anyM(Either<?,T> eitherM){
-		return  AnyM.ofMonad(eitherM);
+	public static <T> AnyMValue<T> anyM(Either<?,T> eitherM){
+		return  AnyM.ofValue(eitherM);
 	}
 	/**
 	 * <pre>
@@ -298,11 +300,11 @@ public class FJ {
 	 * @param rM Right projection to construct AnyM from
 	 * @return AnyM
 	 */
-	public static <T> AnyM<T> anyM(Either<?,T>.RightProjection<?,T> rM){
+	public static <T> AnyMValue<T> anyM(Either<?,T>.RightProjection<?,T> rM){
 		if(rM.toOption().isSome())
-			return  AnyM.ofMonad(Either.right(rM.value()).right());
+			return  AnyM.ofValue(Either.right(rM.value()).right());
 		else
-			return  AnyM.ofMonad(Optional.empty());
+			return  AnyM.ofValue(Optional.empty());
 	}
 	/**
 	 * <pre>
@@ -319,11 +321,11 @@ public class FJ {
 	 * @param lM Left Projection to construct AnyM from
 	 * @return AnyM
 	 */
-	public static <T> AnyM<T> anyM(Either<T,?>.LeftProjection<T,?> lM){
+	public static <T> AnyMValue<T> anyM(Either<T,?>.LeftProjection<T,?> lM){
 		if(lM.toOption().isSome()) //works in the opposite way to javaslang
-			return  AnyM.ofMonad(Either.right(lM.value()).right());
+			return  AnyM.ofValue(Either.right(lM.value()).right());
 		else
-			return  AnyM.ofMonad(Optional.empty());
+			return  AnyM.ofValue(Optional.empty());
 	}
 	/**
 	 * <pre>
@@ -339,8 +341,8 @@ public class FJ {
 	 * @param optionM to construct AnyM from
 	 * @return AnyM
 	 */
-	public static <T> AnyM<T> anyM(Option<T> optionM){
-		return  AnyM.ofMonad(optionM);
+	public static <T> AnyMValue<T> anyM(Option<T> optionM){
+		return  AnyM.ofValue(optionM);
 	}
 	/**
 	 * <pre>
@@ -357,8 +359,8 @@ public class FJ {
 	 * @param streamM to construct AnyM from
 	 * @return AnyM
 	 */
-	public static <T> AnyM<T> anyM(Stream<T> streamM){
-		return  AnyM.ofMonad(streamM);
+	public static <T> AnyMSeq<T> anyM(Stream<T> streamM){
+		return  AnyM.ofSeq(streamM);
 	}
 	/**
 	 * <pre>
@@ -372,7 +374,7 @@ public class FJ {
 	 * @param listM to Construct AnyM from
 	 * @return AnyM
 	 */
-	public static <T> AnyM<T> anyM(List<T> listM){
-		return  AnyM.ofMonad(listM);
+	public static <T> AnyMSeq<T> anyM(List<T> listM){
+		return  AnyM.ofSeq(listM);
 	}
 }
