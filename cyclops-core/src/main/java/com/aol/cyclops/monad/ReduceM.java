@@ -9,6 +9,8 @@ import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.AnyMValue;
 
 public interface ReduceM<T> {
 	/**
@@ -26,10 +28,10 @@ public interface ReduceM<T> {
 	 * @param reducer An identity value (approx. a seed) and BiFunction with a single type to reduce this anyM
 	 * @return Reduced AnyM
 	 */
-	 AnyM<T> reduceMOptional(Monoid<Optional<T>> reducer);
-	 AnyM<T> reduceMEval(Monoid<Eval<T>> reducer);
-	 AnyM<T> reduceMMaybe(Monoid<Maybe<T>> reducer);
-	 AnyM<T> reduceMXor(Monoid<Xor<?,T>> reducer);
+	 AnyMValue<T> reduceMOptional(Monoid<Optional<T>> reducer);
+	 AnyMValue<T> reduceMEval(Monoid<Eval<T>> reducer);
+	 AnyMValue<T> reduceMMaybe(Monoid<Maybe<T>> reducer);
+	 AnyMValue<T> reduceMXor(Monoid<Xor<?,T>> reducer);
 	
 	 /**
 		 * Perform a reduction where NT is a (native) Monad type
@@ -46,7 +48,7 @@ public interface ReduceM<T> {
 		 * @param reducer An identity value (approx. a seed) and BiFunction with a single type to reduce this anyM
 		 * @return Reduced AnyM
 		 */
-	AnyM<T> reduceMStream(Monoid<Stream<T>> reducer);
+	AnyMSeq<T> reduceMStream(Monoid<Stream<T>> reducer);
 	/**
 	 * Perform a reduction where NT is a (native) Monad type
 	 * e.g. 
@@ -62,7 +64,7 @@ public interface ReduceM<T> {
 	 * @param reducer An identity value (approx. a seed) and BiFunction with a single type to reduce this anyM
 	 * @return Reduced AnyM
 	 */
-	 AnyM<T> reduceMStreamable(Monoid<Streamable<T>> reducer);
+	 AnyMSeq<T> reduceMStreamable(Monoid<Streamable<T>> reducer);
 	 /**
 		 * Perform a reduction where NT is a (native) Monad type
 		 * e.g. 
@@ -78,7 +80,7 @@ public interface ReduceM<T> {
 		 * @param reducer An identity value (approx. a seed) and BiFunction with a single type to reduce this anyM
 		 * @return Reduced AnyM
 		 */
-		 AnyM<T> reduceMIterable(Monoid<Iterable<T>> reducer);
+		 AnyMSeq<T> reduceMIterable(Monoid<Iterable<T>> reducer);
     /**
 			 * Perform a reduction where NT is a (native) Monad type
 			 * e.g. 
@@ -94,5 +96,5 @@ public interface ReduceM<T> {
 			 * @param reducer An identity value (approx. a seed) and BiFunction with a single type to reduce this anyM
 			 * @return Reduced AnyM
 			 */
-	 AnyM<T> reduceMCompletableFuture(Monoid<CompletableFuture<T>> reducer);
+	 AnyMValue<T> reduceMCompletableFuture(Monoid<CompletableFuture<T>> reducer);
 }

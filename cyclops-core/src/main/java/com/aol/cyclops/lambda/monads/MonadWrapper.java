@@ -30,7 +30,7 @@ public class MonadWrapper<MONAD,T> implements Monad<MONAD,T>, Decomposable{
 	}
 	@Override
 	public <X> AnyM<X> anyM(){
-		return new AnyMImpl<X>((Monad)this,orgType);	
+		return new BaseAnyMImpl<X>((Monad)this,orgType);	
 	}
 	@Override
 	public SequenceM<T>  sequence(){

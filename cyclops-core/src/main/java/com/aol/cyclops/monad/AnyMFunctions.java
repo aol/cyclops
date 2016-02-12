@@ -8,8 +8,8 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.sequence.SequenceM;
 
 public interface AnyMFunctions {
-	<T,R> AnyM<ListX<R>> traverse(Collection<AnyM<T>> seq, Function<? super T,? extends R> fn);
-	<T,R> AnyM<ListX<R>> traverse(Stream<AnyM<T>> seq, Function<? super T,? extends R> fn);
-	<T1>  AnyM<ListX<T1>> sequence(Collection<AnyM<T1>> seq);
-	<T1>  AnyM<SequenceM<T1>> sequence(Stream<AnyM<T1>> seq);
+	<T,R> AnyM<ListX<R>> traverse(Collection<? extends AnyM<T>> seq, Function<? super T,? extends R> fn);
+	<T,R> AnyM<ListX<R>> traverse(Stream<? extends AnyM<T>> seq, Function<? super T,? extends R> fn);
+	<T1>  AnyM<ListX<T1>> sequence(Collection<? extends AnyM<T1>> seq);
+	<T1>  AnyM<SequenceM<T1>> sequence(Stream<? extends AnyM<T1>> seq);
 }

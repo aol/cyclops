@@ -19,6 +19,7 @@ public class FlatMapTest {
 	public void flatMap(){
 		assertThat(AnyM.fromStream(Stream.of(1,2,3)).flatMap(i->AnyM.fromStream(Stream.of(i))).asSequence().toList(),equalTo(Arrays.asList(1,2,3)));
 	}
+	/** should no longer compile!
 	@Test
 	public void flatMapCrossType(){
 		assertThat(AnyM.fromOptional(Optional.of(Arrays.asList(1,2,3))).flatMap(i->AnyM.fromStream(Stream.of(i.size()))).toSequence().toList(),equalTo(Arrays.asList(3)));
@@ -37,7 +38,7 @@ public class FlatMapTest {
 		
 	assertThat(	AnyM.fromOptional(Optional.of(20)).flatMap(i->AnyM.fromIterable(Arrays.asList(1,2,i)) ).toSequence().toList(),equalTo(Arrays.asList(1,2,20)));
 	}
-	
+	**/
 	@Test
 	public void flatMapToSeq(){
 		

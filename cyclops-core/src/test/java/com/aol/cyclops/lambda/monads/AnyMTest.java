@@ -26,6 +26,7 @@ import org.junit.Test;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.types.anyM.AnyMSeq;
 
 import lombok.val;
 
@@ -49,7 +50,7 @@ public class AnyMTest {
 	@Test
 	public void flatMapWithListComprehender() {
 	    List<Integer> list = Arrays.asList(1,2,3);
-	    AnyM<Integer> any = AnyM.fromList(list); 
+	    AnyMSeq<Integer> any = AnyM.fromList(list); 
 	    AnyM<Integer> mapped = any.flatMap(e -> any.unit(e));
 	    List<Integer> unwrapped = mapped.unwrap();
 	    assertEquals(list, unwrapped);

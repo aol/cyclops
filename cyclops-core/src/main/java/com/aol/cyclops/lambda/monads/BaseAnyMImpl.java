@@ -3,26 +3,19 @@ package com.aol.cyclops.lambda.monads;
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.BaseStream;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-
 import com.aol.cyclops.Monoid;
-import com.aol.cyclops.Reducer;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Xor;
@@ -32,6 +25,11 @@ import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.monad.AnyMonads;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.AnyMValue;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 
 /**
  * 
@@ -43,7 +41,7 @@ import com.aol.cyclops.sequence.streamable.Streamable;
  * @param <T>
  */
 @AllArgsConstructor(access=AccessLevel.PROTECTED)
-public class AnyMImpl<T> implements AnyM<T>{
+public class BaseAnyMImpl<T> implements AnyM<T>{
 	
 	private final Monad<Object,T> monad;
 	private final Class initialType;
@@ -376,7 +374,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 		return AnyM.ofMonad(monad.unit(value));
 	}
 	public <T> AnyM<T> empty(){
-		return (AnyMImpl)unit(null).filter(t->false);
+		return (BaseAnyMImpl)unit(null).filter(t->false);
 	}
 	
 	public final AnyM<List<T>> replicateM(int times){
@@ -384,39 +382,39 @@ public class AnyMImpl<T> implements AnyM<T>{
 		return monad.replicateM(times).anyM();		
 	}
 	@Override
-	public final   AnyM<T> reduceMOptional(Monoid<Optional<T>> reducer){
-		return monad.reduceM(reducer).anyM();
+	public final   AnyMValue<T> reduceMOptional(Monoid<Optional<T>> reducer){
+		return new AnyMValueImpl<>(monad.reduceM(reducer).anyM());
 	}
 	@Override
-	public final AnyM<T> reduceMMaybe(Monoid<Maybe<T>> reducer){
-		return monad.reduceM(reducer).anyM();
+	public final AnyMValue<T> reduceMMaybe(Monoid<Maybe<T>> reducer){
+		return new AnyMValueImpl<>(monad.reduceM(reducer).anyM());
 	}
 	@Override
-	public final   AnyM<T> reduceMXor(Monoid<Xor<?,T>> reducer){
-		return monad.reduceM(reducer).anyM();
+	public final   AnyMValue<T> reduceMXor(Monoid<Xor<?,T>> reducer){
+		return new AnyMValueImpl<>(monad.reduceM(reducer).anyM());
 	}
 	
 	@Override 
-	public final AnyM<T> reduceMEval(Monoid<Eval<T>> reducer){
+	public final AnyMValue<T> reduceMEval(Monoid<Eval<T>> reducer){
 	
-		return monad.reduceM(reducer).anyM();
+		return new AnyMValueImpl<>(monad.reduceM(reducer).anyM());
 	}
 	
 	@Override
-	public final   AnyM<T> reduceMStream(Monoid<Stream<T>> reducer){
-		return monad.reduceM(reducer).anyM();
+	public final   AnyMSeq<T> reduceMStream(Monoid<Stream<T>> reducer){
+		return new AnyMSeqImpl<>(monad.reduceM(reducer).anyM());
 	}
 	@Override
-	public final   AnyM<T> reduceMStreamable(Monoid<Streamable<T>> reducer){
-		return monad.reduceM(reducer).anyM();
+	public final   AnyMSeq<T> reduceMStreamable(Monoid<Streamable<T>> reducer){
+		return new AnyMSeqImpl<>(monad.reduceM(reducer).anyM());
 	}
 	@Override
-	public final   AnyM<T> reduceMIterable(Monoid<Iterable<T>> reducer){
-		return monad.reduceM(reducer).anyM();
+	public final   AnyMSeq<T> reduceMIterable(Monoid<Iterable<T>> reducer){
+		return new AnyMSeqImpl<>(monad.reduceM(reducer).anyM());
 	}
 	@Override
-	public final   AnyM<T> reduceMCompletableFuture(Monoid<CompletableFuture<T>> reducer){
-		return monad.reduceM(reducer).anyM();
+	public final   AnyMValue<T> reduceMCompletableFuture(Monoid<CompletableFuture<T>> reducer){
+		return new AnyMValueImpl<>(monad.reduceM(reducer).anyM());
 	}
 	
 	public final   AnyM<T> reduceM(Monoid<AnyM<T>> reducer){
@@ -441,14 +439,14 @@ public class AnyMImpl<T> implements AnyM<T>{
     public String toString() {
         return String.format("AnyM(%s)", monad );
     }
-	@Override
+	
 	public List<T> toList() {
 		if(this.monad.unwrap() instanceof Stream){
 			return asSequence().toList();
 		}
 		return this.<T>toSequence().toList();
 	}
-	@Override
+	
 	public Set<T> toSet() {
 		if(this.monad.unwrap() instanceof Stream){
 			return asSequence().toSet();
@@ -460,14 +458,14 @@ public class AnyMImpl<T> implements AnyM<T>{
 		return null;
 	}
 	
-	@Override
+	
 	public <R1, R> AnyM<R> forEach2(Function<? super T, ? extends AnyM<R1>> monad, Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {
 		if(AnyMForComprehensionFactory.instance==null){
 			System.err.println("ERROR : Unable to use AnyM for-comprehensions without cyclops-for-comprehensions on the classpath");
 		}
 		return AnyMForComprehensionFactory.instance.forEach2(this, monad, yieldingFunction);
 	}
-	@Override
+	
 	public <R1,R> AnyM<R> forEach2(Function<? super T,? extends AnyM<R1>> monad, 
 			Function<? super T, Function<? super R1, Boolean>> filterFunction,
 					Function<? super T,Function<? super R1,? extends R>> yieldingFunction ) {
@@ -476,7 +474,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 		}
 		return AnyMForComprehensionFactory.instance.forEach2(this, monad, filterFunction,yieldingFunction);
 	}
-	@Override
+	
 	public <R1, R2, R> AnyM<R> forEach3( Function<? super T, ? extends AnyM<R1>> monad1, 	
 			Function<? super T,Function<? super R1,? extends AnyM<R2>>> monad2,
 			Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction){
@@ -485,7 +483,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 		}
 		return AnyMForComprehensionFactory.instance.forEach3(this, monad1,monad2,yieldingFunction);
 	}
-	@Override
+	
 	public  <R1, R2, R> AnyM<R> forEach3(Function<? super T, ? extends AnyM<R1>> monad1, 	
 			Function<? super T,Function<? super R1,? extends AnyM<R2>>> monad2,
 	Function<? super T, Function<? super R1, Function<? super R2, Boolean>>> filterFunction, 
@@ -503,7 +501,7 @@ public class AnyMImpl<T> implements AnyM<T>{
 	 */
 	@Override
 	public <T> AnyM<T> emptyUnit() {
-		return new AnyMImpl(monad.empty(),initialType);
+		return new BaseAnyMImpl(monad.empty(),initialType);
 	}
 
 
@@ -511,9 +509,15 @@ public class AnyMImpl<T> implements AnyM<T>{
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.IterableFunctor#unitIterator(java.util.Iterator)
 	 */
-	@Override
+	
 	public <U> AnyM<U> unitIterator(Iterator<U> it) {
 		return AnyM.fromIterable(()->it);
+	}
+
+
+
+	public T get() {
+		return monad.get();
 	}
 
 

@@ -1,4 +1,5 @@
 package com.aol.cyclops.internal;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -8,6 +9,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.aol.cyclops.data.Mutable;
+import com.aol.cyclops.lambda.api.Comprehender;
 import com.aol.cyclops.lambda.monads.ComprehenderSelector;
 import com.aol.cyclops.lambda.monads.MonadWrapper;
 import com.aol.cyclops.lambda.monads.WrappingFilterable;
@@ -206,7 +209,47 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,WrappingFunctor<
 		return (MONAD)new ComprehenderSelector().selectComprehender(unwrap()).of(value);
 	}
 	
+	default  T get(){
+		Mutable<T> captured = Mutable.of(null);
+		new ComprehenderSelector().selectComprehender(unwrap()).resolveForCrossTypeFlatMap(new Comprehender(){
 
+			/* (non-Javadoc)
+			 * @see com.aol.cyclops.lambda.api.Comprehender#of(java.lang.Object)
+			 */
+			@Override
+			public Object of(Object o) {
+				return captured.set((T)o);
+			}
+
+			/* (non-Javadoc)
+			 * @see com.aol.cyclops.lambda.api.Comprehender#empty()
+			 */
+			@Override
+			public Object empty() {
+				throw new NoSuchElementException();
+			}
+
+			@Override
+			public Object map(Object t, Function fn) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public Object flatMap(Object t, Function fn) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public Class getTargetClass() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+		}, unwrap());
+		return captured.get();
+	}
 	
 	
 	/**
@@ -331,5 +374,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,WrappingFunctor<
 	static <T> Monad<Stream<T>,T> fromStream(Stream<T> monad){
 		return new MonadWrapper<>(monad);
 	}
+
+	
 
 }

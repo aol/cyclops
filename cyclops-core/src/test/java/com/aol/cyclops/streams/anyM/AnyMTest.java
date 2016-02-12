@@ -26,8 +26,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import lombok.val;
-
 import org.junit.Test;
 
 import com.aol.cyclops.Monoid;
@@ -38,17 +36,22 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.AnyMValue;
+
+import lombok.val;
 
 
 public class AnyMTest {
-	
+	/** no longer compiles!
 	@Test
 	public void multiReturn(){
-		AnyM<Integer> stream = AnyM.fromOptional(Optional.of(1))
+		AnyMValue<Integer> stream = AnyM.fromOptional(Optional.of(1))
 									.flatMap(i->SequenceM.of(1,2,i).anyM());
 		
 		stream.map(i->i+2);
 	}
+	**/
 	@Test
 	public void multiReturnBind(){
 		AnyM<List<Integer>> stream = AnyM.fromOptional(Optional.of(1))
@@ -63,7 +66,7 @@ public class AnyMTest {
 	@Test
 	public void flatMapWithListComprehender() {
 	    List<Integer> list = Arrays.asList(1,2,3);
-	    AnyM<Integer> any = AnyM.fromList(list); 
+	    AnyMSeq<Integer> any = AnyM.fromList(list); 
 	    AnyM<Integer> mapped = any.flatMap(e -> any.unit(e));
 	    List<Integer> unwrapped = mapped.unwrap();
 	    assertEquals(list, unwrapped);
@@ -88,6 +91,7 @@ public class AnyMTest {
 				  				.forEach(System.out::println);
 				  				
 	}
+	/** should no longer compile!
 	@Test
 	public void testForEachCfFlatMapToStream() {
 		   AnyM.fromCompletableFuture(CompletableFuture.completedFuture(asList(1,3)))
@@ -96,7 +100,8 @@ public class AnyMTest {
 				  				.forEach(System.out::println);
 				  				
 	}
-	 
+	 **/
+	
 	
 	@Test
 	public void test() {
@@ -186,7 +191,7 @@ public class AnyMTest {
 	public void testToListFlatten(){
 		
 	
-		assertThat(ofMonad(Stream.of(1,2,3,null))
+		assertThat(AnyM.fromStream(Stream.of(1,2,3,null))
 					.map(Maybe::ofNullable)
 					.flatMap(Maybe::anyM)
 					.asSequence()
@@ -350,7 +355,7 @@ public class AnyMTest {
 	
 	@Test
 	public void testFlatMap(){
-		AnyM<List<Integer>> m  = ofMonad(Stream.of(Arrays.asList(1,2,3),Arrays.asList(1,2,3)));
+		AnyMSeq<List<Integer>> m  = AnyM.fromStream(Stream.of(Arrays.asList(1,2,3),Arrays.asList(1,2,3)));
 		AnyM<Integer> intM = m.flatMap( c -> ofMonad(c.stream()));
 		List<Integer> list = intM.asSequence().toList();
 		assertThat(list,equalTo(Arrays.asList(1, 2, 3, 1, 2, 3)));
@@ -585,14 +590,14 @@ public class AnyMTest {
 	}
 	@Test
 	public void testApplyMOptionalEmpty(){
-	 AnyM<Integer> applied =ofMonad(Optional.of(2)).applyM(AnyM.fromOptional(Optional.empty()));
+	 AnyM<Integer> applied =AnyM.fromOptional(Optional.of(2)).applyM(AnyM.fromOptional(Optional.empty()));
 	
 	 assertThat(applied.toSequence().toList(),equalTo(Arrays.asList()));
 	 
 	}
 	@Test
 	public void testApplyMEmptyOptional(){
-		AnyM<Integer> empty= 	ofMonad(Optional.empty());
+		AnyMValue<Integer> empty= 	AnyM.fromOptional(Optional.empty());
 		AnyM<Integer> applied =	empty.applyM(AnyM.fromOptional(Optional.of((Integer a)->a+1)) );
 	
 		assertThat(applied.toSequence().toList(),equalTo(Arrays.asList()));

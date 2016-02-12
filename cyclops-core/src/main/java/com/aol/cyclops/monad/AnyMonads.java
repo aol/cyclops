@@ -32,14 +32,14 @@ public class AnyMonads implements AnyMFunctions{
 	 * @param fn Function to apply 
 	 * @return Monad with a list
 	 */
-	public  <T,R> AnyM<ListX<R>> traverse(Collection<AnyM<T>> seq, Function<? super T,? extends R> fn){
+	public  <T,R> AnyM<ListX<R>> traverse(Collection<? extends AnyM<T>> seq, Function<? super T,? extends R> fn){
 		if(seq.size()==0)
 			return AnyM.ofMonad(Optional.empty());
 		return new MonadWrapper<>(comprehender2(seq).of(1))
 								.flatMap(in-> new MonadWrapper<>(seq.stream().map(it->it.unwrap())).flatten().flatMap((Function)fn).unwrap()
 									).anyM();
 	}
-	private <T> Comprehender<T> comprehender2(Collection<AnyM<T>> seq) {
+	private <T> Comprehender<T> comprehender2(Collection<? extends AnyM<T>> seq) {
 		return new ComprehenderSelector().selectComprehender(seq.iterator().next().unwrap().getClass());
 	}
 	/**
@@ -55,7 +55,7 @@ public class AnyMonads implements AnyMFunctions{
 	 * @param fn Function to apply 
 	 * @return Monad with a list
 	 */
-	public  <T,R> AnyM<ListX<R>> traverse(Stream<AnyM<T>> seq, Function<? super T,? extends R> fn){
+	public  <T,R> AnyM<ListX<R>> traverse(Stream<? extends AnyM<T>> seq, Function<? super T,? extends R> fn){
 		
 		return new MonadWrapper<>(Stream.of(1))
 								.flatMap(in-> new MonadWrapper<>(seq).flatten().flatMap((Function)fn).unwrap()
@@ -78,14 +78,14 @@ public class AnyMonads implements AnyMFunctions{
 	 * @param seq Collection of monads to convert
 	 * @return Monad with a List
 	 */ 
-	public  <T1>  AnyM<ListX<T1>> sequence(Collection<AnyM<T1>> seq){
+	public  <T1>  AnyM<ListX<T1>> sequence(Collection<? extends AnyM<T1>> seq){
 		if(seq.size()==0)
 			return AnyM.ofMonad(Optional.empty());
 		else
 			return new MonadWrapper<>(comprehender(seq).of(1))
 				.flatMap(in-> new MonadWrapper<>(seq.stream().map(it->it.unwrap())).flatten().unwrap()).anyM();
 	}
-	private <T1> Comprehender comprehender(Collection<AnyM<T1>> seq) {
+	private <T1> Comprehender comprehender(Collection<? extends AnyM<T1>> seq) {
 		return new ComprehenderSelector().selectComprehender(seq.iterator().next().unwrap().getClass());
 	}
 	/**
@@ -102,7 +102,7 @@ public class AnyMonads implements AnyMFunctions{
 	 * @param seq Stream of monads to convert
 	 * @return Monad with a List
 	 */
-	public  <T1>  AnyM<SequenceM<T1>> sequence(Stream<AnyM<T1>> seq){
+	public  <T1>  AnyM<SequenceM<T1>> sequence(Stream<? extends AnyM<T1>> seq){
 			return new MonadWrapper<>(Stream.of(1))
 										.flatMap(in-> new MonadWrapper<>(seq.map(it->it.unwrap()))
 												.flatten().unwrap())
