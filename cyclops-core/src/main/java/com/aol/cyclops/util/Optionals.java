@@ -1,4 +1,4 @@
-package com.aol.cyclops.control;
+package com.aol.cyclops.util;
 
 import java.util.Optional;
 import java.util.function.Function;

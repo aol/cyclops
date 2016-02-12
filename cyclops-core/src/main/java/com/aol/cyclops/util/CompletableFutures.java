@@ -1,10 +1,11 @@
-package com.aol.cyclops.control;
+package com.aol.cyclops.util;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 
