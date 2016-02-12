@@ -41,7 +41,7 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	}
 	
 	public static <T> SetX<T> empty(){
-		return fromIterable((Deque<T>) defaultCollector().supplier().get());
+		return fromIterable((Set<T>) defaultCollector().supplier().get());
 	}
 	@SafeVarargs
 	public static <T> SetX<T> of(T...values){

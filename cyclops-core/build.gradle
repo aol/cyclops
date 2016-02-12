@@ -29,7 +29,7 @@ dependencies {
 	provided group: 'org.hamcrest', name: 'hamcrest-all', version:hamcrestVersion
 	provided group: 'org.projectlombok', name: 'lombok', version:"${lombokVersion}"
 	provided ('com.aol.simplereact:simple-react:'+simpleReactVersion){
-		exclude group:'com.aol.cyclops'
+	//	exclude group:'com.aol.cyclops'
 		exclude group:'org.jooq:jool'
 	}
 	testCompile 'com.javaslang:javaslang:'+javaslangVersion

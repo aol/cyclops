@@ -331,6 +331,9 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 		public Value<ST> secondaryValue(){
 			return Value.of(()->null);
 		}
+		public String toString(){
+			return "Ior.primary["+value+"]";
+		}
 		
 		
 	}
@@ -448,6 +451,9 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 		public Object unwrap() {
 			return value;
 		}
+		public String toString(){
+			return "Ior.secondary["+value+"]";
+		}
 	}
 	@AllArgsConstructor(access=AccessLevel.PACKAGE)
 	@EqualsAndHashCode(of={"secondary","primary"})
@@ -562,6 +568,9 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 		@Override
 		public boolean isBoth() {
 			return true;
+		}
+		public String toString(){
+			return "Ior.both["+primary.toString() + ":" + secondary.toString()+"]";
 		}
 	}
 }

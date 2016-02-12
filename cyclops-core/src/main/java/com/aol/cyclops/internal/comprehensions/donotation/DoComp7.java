@@ -33,7 +33,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 			
 		}
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> add(Reader<?,? extends T8> reader){
-			return new DoComp8(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),seq)),getOrgType());
+			return new DoComp8(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),reader)),getOrgType());
 			
 		}
 		public <T8> DoComp8<T1,T2,T3,T4,T5,T6,T7,T8> addValues(T8... values){

@@ -1,5 +1,5 @@
 package com.aol.cyclops.streams.lazy;
-import static com.aol.cyclops.sequence.SequenceM.of;
+import static com.aol.cyclops.control.ReactiveSeq.of;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.mapping;

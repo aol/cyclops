@@ -10,7 +10,7 @@ import com.aol.simple.react.stream.traits.LazyFutureStream;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 
 public class LFSTest {
-
+/**
 	@Test @Ignore
 	public void lfs() throws InterruptedException{
 		AsyncRetryExecutor retry =new AsyncRetryExecutor(Executors.newScheduledThreadPool(
@@ -36,4 +36,5 @@ public class LFSTest {
 		
 		Thread.sleep(60_000);
 	}
+	**/
 }

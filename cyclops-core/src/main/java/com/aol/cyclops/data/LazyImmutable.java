@@ -1,6 +1,7 @@
 package com.aol.cyclops.data;
 
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -16,6 +17,7 @@ import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
@@ -41,6 +43,7 @@ import lombok.ToString;
  * @param <T>
  */
 @ToString
+
 public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Value<T>, Functor<T>, Applicativable<T>{
 	private final static Object UNSET = new Object();
 	private AtomicReference value = new AtomicReference<>(UNSET);
@@ -48,6 +51,7 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Value<T>, Fun
 	
 	public LazyImmutable(){}
 
+	
 	/**
 	 * @return Current value
 	 */
@@ -209,6 +213,20 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Value<T>, Fun
 	public <R> LazyImmutable<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 		
 		return (LazyImmutable<R>)Applicativable.super.trampoline(mapper);
+	}
+
+
+	@Override
+	public int hashCode() {
+		return value.get().hashCode();
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof LazyImmutable))
+			return false;
+		return Objects.equals(this.value.get(), ((LazyImmutable)obj).value.get());
 	}
 	
 	

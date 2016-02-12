@@ -10,10 +10,12 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 
 @AllArgsConstructor
+@EqualsAndHashCode(of={"deque"})
 public class DequeXImpl<T> implements DequeX<T> {
 	
 	
@@ -71,6 +73,9 @@ public class DequeXImpl<T> implements DequeX<T> {
 	 * @see java.util.AbstractSet#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o) {
+		if(o instanceof DequeXImpl)
+			return deque.equals( ((DequeXImpl)o).deque);
+			
 		return deque.equals(o);
 	}
 

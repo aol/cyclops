@@ -410,7 +410,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public static <T> AnyMSeq<T> fromStreamable(ToStream<T> streamable){
 		 Objects.requireNonNull(streamable);
-		return new AnyMSeqImpl<>(AnyMFactory.instance.monad(streamable));
+		return new AnyMSeqImpl<>(AnyMFactory.instance.convertSeq(streamable));
 	}
 	/**
 	 * Create an AnyM from a List
@@ -424,7 +424,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public static <T> AnyMSeq<T> fromList(List<T> list){
 		 Objects.requireNonNull(list);
-		return new AnyMSeqImpl<>(AnyMFactory.instance.monad(list));
+		return AnyMFactory.instance.seq(list);
 	}
 	/**
 	 * Create an AnyM from a Set
@@ -438,7 +438,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public static <T> AnyMSeq<T> fromSet(Set<T> set){
 		 Objects.requireNonNull(set);
-		return new AnyMSeqImpl<>(AnyMFactory.instance.monad(set));
+		return AnyMFactory.instance.seq(set);
 	}
 	
 	
@@ -449,7 +449,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @return
 	 */
 	public static <T> AnyMSeq<T> fromArray(T... streamData){
-		return new AnyMSeqImpl<>(AnyMFactory.instance.monad(Stream.of(streamData)));
+		return AnyMFactory.instance.seq(Stream.of(streamData));
 	}
 	/**
 	 * Create an AnyM wrapping a Stream of the supplied data
@@ -460,7 +460,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @return
 	 */
 	public static <T> AnyMSeq<T> streamOf(T... streamData){
-		return new AnyMSeqImpl<>(AnyMFactory.instance.monad(Stream.of(streamData)));
+		return AnyMFactory.instance.seq(Stream.of(streamData));
 	}
 	
 	/**
@@ -471,7 +471,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public static <T> AnyMSeq<T> fromStream(Stream<T> stream){
 		Objects.requireNonNull(stream);
-		return new AnyMSeqImpl<T>(AnyMFactory.instance.monad(stream));
+		return AnyMFactory.instance.seq(stream);
 	}
 	/**
 	 * Create an AnyM instance that wraps an IntStream
@@ -481,7 +481,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public static AnyMSeq<Integer> fromIntStream(IntStream stream){
 		Objects.requireNonNull(stream);
-		return new AnyMSeqImpl<>(AnyMFactory.instance.monad(stream.boxed()));
+		return AnyMFactory.instance.seq(stream.boxed());
 	}
 	/**
 	 * Create an AnyM instance that wraps an DoubleStream
@@ -491,7 +491,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public static AnyMSeq<Double> fromDoubleStream(DoubleStream stream){
 		Objects.requireNonNull(stream);
-		return new AnyMSeqImpl<>(AnyMFactory.instance.monad(stream.boxed()));
+		return AnyMFactory.instance.seq(stream.boxed());
 	}
 	/**
 	 * Create an AnyM instance that wraps an LongStream
@@ -501,7 +501,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public static AnyMSeq<Long> fromLongStream(LongStream stream){
 		Objects.requireNonNull(stream);
-		return new AnyMSeqImpl<>(AnyMFactory.instance.monad(stream.boxed()));
+		return AnyMFactory.instance.seq(stream.boxed());
 	}
 	/**
 	 * Create an AnyM instance that wraps an Optional
@@ -511,7 +511,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public static <T> AnyMValue<T> fromOptional(Optional<T> optional){
 		 Objects.requireNonNull(optional);
-		return new AnyMValueImpl<>(AnyMFactory.instance.monad(optional));
+		return AnyMFactory.instance.value(optional);
 	}
 	/**
 	 * Create an AnyM instance that wraps an OptionalDouble
@@ -521,7 +521,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public static  AnyMValue<Double> fromOptionalDouble(OptionalDouble optional){
 		Objects.requireNonNull(optional);
-		return new AnyMValueImpl<>(AnyMFactory.instance.of(optional));
+		return AnyMFactory.instance.convertValue(optional);
 	}
 	/**
 	 * Create an AnyM instance that wraps an OptionalLong
@@ -531,7 +531,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public static  AnyMValue<Long> fromOptionalLong(OptionalLong optional){
 		Objects.requireNonNull(optional);
-		return new AnyMValueImpl<>(AnyMFactory.instance.of(optional));
+		return AnyMFactory.instance.convertValue(optional);
 	}
 	/**
 	 * Create an AnyM instance that wraps an OptionalInt
@@ -541,7 +541,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public static  AnyMValue<Integer> fromOptionalInt(OptionalInt optional){
 		Objects.requireNonNull(optional);
-		return new AnyMValueImpl<>(AnyMFactory.instance.of(optional));
+		return AnyMFactory.instance.convertValue(optional);
 	}
 	/**
 	 * Create an AnyM instance that wraps a CompletableFuture
@@ -551,27 +551,27 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public static <T> AnyMValue<T> fromCompletableFuture(CompletableFuture<T> future){
 		Objects.requireNonNull(future);
-		return new AnyMValueImpl<>(AnyMFactory.instance.monad(future));
+		return AnyMFactory.instance.value(future);
 	}
 	public static <T> AnyMValue<T> fromXor(Xor<?,T> future){
 		Objects.requireNonNull(future);
-		return new AnyMValueImpl<>(AnyMFactory.instance.monad(future));
+		return AnyMFactory.instance.value(future);
 	}
 	public static <T> AnyMValue<T> fromIor(Ior<?,T> future){
 		Objects.requireNonNull(future);
-		return new AnyMValueImpl<>(AnyMFactory.instance.monad(future));
+		return AnyMFactory.instance.value(future);
 	}
 	public static <T> AnyMValue<T> fromEval(Eval<T> future){
 		Objects.requireNonNull(future);
-		return new AnyMValueImpl<>(AnyMFactory.instance.monad(future));
+		return AnyMFactory.instance.value(future);
 	}
 	public static <T> AnyMValue<T> fromFutureW(FutureW<T> future){
 		Objects.requireNonNull(future);
-		return new AnyMValueImpl<>(AnyMFactory.instance.monad(future));
+		return AnyMFactory.instance.value(future);
 	}
 	public static <T> AnyMValue<T> fromMaybe(Maybe<T> future){
 		Objects.requireNonNull(future);
-		return new AnyMValueImpl<>(AnyMFactory.instance.monad(future));
+		return AnyMFactory.instance.value(future);
 	}
 	/**
 	 * Create an AnyM instance that wraps a Collection
@@ -581,7 +581,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public static <T> AnyMSeq<T> fromCollection(Collection<T> collection){
 		Objects.requireNonNull(collection);
-		return new AnyMSeqImpl<>(AnyMFactory.instance.of(collection));
+		return AnyMFactory.instance.convertSeq(collection);
 	}
 	/**
 	 * Create an AnyM instance that wraps an Iterable
@@ -592,7 +592,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	public static <T> AnyMSeq<T> fromIterable(Iterable<T> iterable){
 		Objects.requireNonNull(iterable);
 		
-		return new AnyMSeqImpl<>(AnyMFactory.instance.of(iterable));
+		return AnyMFactory.instance.convertSeq(iterable);
 	}
 	/**
 	 * Create an AnyM instance that wraps an textual Stream from a file
@@ -602,7 +602,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public static AnyMSeq<String> fromFile(File file){
 		Objects.requireNonNull(file);
-		return new AnyMSeqImpl<>(AnyMFactory.instance.of(file));
+		return AnyMFactory.instance.convertSeq(file);
 	}
 	/**
 	 * Create an AnyM instance that wraps an textual Stream from a URL
@@ -612,7 +612,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public static AnyMSeq<String> fromURL(URL url){
 		Objects.requireNonNull(url);
-		return new AnyMSeqImpl<>(AnyMFactory.instance.of(url));
+		return AnyMFactory.instance.convertSeq(url);
 	}
 	
 	/**
@@ -623,7 +623,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public static <T> AnyM<T> ofConvertable(Object monad){
 		Objects.requireNonNull(monad);
-		return AnyMFactory.instance.of(monad);
+		return AnyMFactory.instance.convert(monad);
 	}
 	/**
 	 * Take the supplied object and wrap it inside an AnyM - must be a supported monad type already
@@ -637,11 +637,11 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	}
 	public static <T> AnyMValue<T> ofValue(Object monad){
 		Objects.requireNonNull(monad);
-		return new AnyMValueImpl<T>(AnyMFactory.instance.monad(monad));
+		return new AnyMValueImpl<T>(AnyMFactory.instance.value(monad));
 	}
 	public static <T> AnyMSeq<T> ofSeq(Object monad){
 		Objects.requireNonNull(monad);
-		return new AnyMSeqImpl<T>(AnyMFactory.instance.monad(monad));
+		return new AnyMSeqImpl<T>(AnyMFactory.instance.value(monad));
 	}
 	/**
 	 * Generate an AnyM that wraps an Optional from the provided nullable object
@@ -650,7 +650,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @return AnyM wrapping an Optional created with the supplied nullable
 	 */
 	public static <T> AnyMValue<T> ofNullable(Object nullable){
-		return new AnyMValueImpl<T>(AnyMFactory.instance.monad(Optional.ofNullable(nullable)));
+		return new AnyMValueImpl<T>(AnyMFactory.instance.value(Optional.ofNullable(nullable)));
 	}
 	
 	/**
@@ -1047,7 +1047,28 @@ static AnyMFactory instance = new AnyMFactory();
 	 * (non-Javadoc)
 	 * @see com.aol.cyclops.monad.AnyMFactory#of(java.lang.Object)
 	 */
-	public <T> AnyM<T> of(Object o) {
+	public <T> AnyMValue<T> convertValue(Object o) {
+		
+		if(new ComprehenderSelector().selectComprehender(
+				o) instanceof InvokeDynamicComprehender)
+			return new MonadWrapper<>(new MonadicConverters().convertToMonadicForm(o)).anyMValue();
+		return new MonadWrapper<>(o).anyMValue();
+	}
+	public <T> AnyMSeq<T> convertSeq(Object o) {
+		
+		if(new ComprehenderSelector().selectComprehender(
+				o) instanceof InvokeDynamicComprehender)
+			return new MonadWrapper<>(new MonadicConverters().convertToMonadicForm(o)).anyMSeq();
+		return new MonadWrapper<>(o).anyMSeq();
+	}
+	public <T> AnyM<T> convert(Object o) {
+		
+		if(new ComprehenderSelector().selectComprehender(
+				o) instanceof InvokeDynamicComprehender)
+			return new MonadWrapper<>(new MonadicConverters().convertToMonadicForm(o)).anyM();
+		return new MonadWrapper<>(o).anyM();
+	}
+	public <T> AnyM<T> monad(Object o) {
 		
 		if(new ComprehenderSelector().selectComprehender(
 				o) instanceof InvokeDynamicComprehender)
@@ -1059,8 +1080,11 @@ static AnyMFactory instance = new AnyMFactory();
 	 * (non-Javadoc)
 	 * @see com.aol.cyclops.monad.AnyMFactory#monad(java.lang.Object)
 	 */
-	public <T> AnyM<T> monad(Object o) {
-		return new MonadWrapper<>(o).anyM();
+	public <T> AnyMValue<T> value(Object o) {
+		return new MonadWrapper<>(o).anyMValue();
+	}
+	public <T> AnyMSeq<T> seq(Object o) {
+		return new MonadWrapper<>(o).anyMSeq();
 	}
 	public AnyMFunctions anyMonads() {
 		return new AnyMonads();

@@ -34,7 +34,7 @@ public class DoComp2<T1, T2> extends DoComp {
 		return new DoComp3(getAssigned().plus(getAssigned().size(), new Entry("$$monad" + getAssigned().size(), seq)),getOrgType());
 
 	}
-	public DoComp3<T1, T2, T3> add(Reader<?,T3> seq) {
+	public <T3> DoComp3<T1, T2, T3> add(Reader<?,T3> seq) {
 		return new DoComp3(getAssigned().plus(getAssigned().size(), new Entry("$$monad" + getAssigned().size(), seq)),getOrgType());
 
 	}

@@ -236,4 +236,9 @@ public class AnyMValueImpl<T> implements AnyMValue<T> {
 		return baseImpl().collect(collector);
 	}
 
+	@Override
+	public <T> T unwrap() {
+		return this.baseImpl().unwrap();
+	}
+
 }

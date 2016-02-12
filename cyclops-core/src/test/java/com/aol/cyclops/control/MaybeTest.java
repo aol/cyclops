@@ -2,10 +2,7 @@ package com.aol.cyclops.control;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -203,12 +200,12 @@ public class MaybeTest {
 
 	@Test
 	public void testIterate() {
-		assertThat(just.iterate(i->i+1).limit(10).sum(),equalTo(50));
+		assertThat(just.iterate(i->i+1).limit(10).sum(),equalTo(Optional.of(145)));
 	}
 
 	@Test
 	public void testGenerate() {
-		assertThat(just.generate().limit(10).sum(),equalTo(50));
+		assertThat(just.generate().limit(10).sum(),equalTo(Optional.of(100)));
 	}
 
 	@Test
@@ -230,7 +227,7 @@ public class MaybeTest {
 	public void testToLazyImmutable() {
 		assertThat(just.toLazyImmutable(),equalTo(LazyImmutable.of(10)));
 	}
-	@Test
+	@Test(expected=NoSuchElementException.class)
 	public void testToLazyImmutableNone(){
 		none.toLazyImmutable();
 		fail("exception expected");
@@ -243,7 +240,7 @@ public class MaybeTest {
 		
 		
 	}
-	@Test
+	@Test(expected=NoSuchElementException.class)
 	public void testToMutableNone(){
 		none.toMutable();
 		fail("exception expected");
@@ -255,7 +252,7 @@ public class MaybeTest {
 		assertThat(just.toXor(),equalTo(Xor.primary(10)));
 		
 	}
-	@Test
+	@Test(expected=NoSuchElementException.class)
 	public void testToXorNone(){
 		none.toXor();
 		fail("exception expected");
@@ -268,7 +265,7 @@ public class MaybeTest {
 		assertThat(just.toXorSecondary(),equalTo(Xor.secondary(10)));
 	}
 
-	@Test
+	@Test(expected=NoSuchElementException.class)
 	public void testToXorSecondaryNone(){
 		none.toXorSecondary();
 		fail("exception expected");
@@ -287,7 +284,7 @@ public class MaybeTest {
 
 	@Test
 	public void testToIor() {
-		assertThat(just.toIor(),equalTo(Xor.primary(10)));
+		assertThat(just.toIor(),equalTo(Ior.primary(10)));
 		
 	}
 	@Test(expected=NoSuchElementException.class)
@@ -300,7 +297,7 @@ public class MaybeTest {
 
 	@Test
 	public void testToIorSecondary() {
-		assertThat(just.toIorSecondary(),equalTo(Xor.secondary(10)));
+		assertThat(just.toIorSecondary(),equalTo(Ior.secondary(10)));
 	}
 
 	@Test(expected=NoSuchElementException.class)
@@ -326,7 +323,7 @@ public class MaybeTest {
 	}
 	@Test(expected=NoSuchElementException.class)
 	public void testToEvalLaterNone() {
-		none.toEvalLater();
+		none.toEvalLater().get();
 		fail("exception expected");
 		
 	}
@@ -337,7 +334,7 @@ public class MaybeTest {
 	}
 	@Test(expected=NoSuchElementException.class)
 	public void testToEvalAlwaysNone() {
-		none.toEvalAlways();
+		none.toEvalAlways().get();
 		fail("exception expected");
 		
 	}
@@ -363,14 +360,14 @@ public class MaybeTest {
 
 	@Test
 	public void testToQueueX() {
-		assertThat(just.toQueueX(),equalTo(QueueX.singleton(10)));
-		assertThat(none.toQueueX(),equalTo(QueueX.empty()));
+		assertThat(just.toQueueX().toList(),equalTo(QueueX.singleton(10).toList()));
+		assertThat(none.toQueueX().toList(),equalTo(QueueX.empty().toList()));
 	}
 
 	@Test
 	public void testToDequeX() {
-		assertThat(just.toDequeX(),equalTo(DequeX.singleton(10)));
-		assertThat(none.toDequeX(),equalTo(DequeX.empty()));
+		assertThat(just.toDequeX().toList(),equalTo(Arrays.asList(10)));
+		assertThat(none.toDequeX().toList(),equalTo(DequeX.empty().toList()));
 	}
 
 	@Test
@@ -387,8 +384,8 @@ public class MaybeTest {
 
 	@Test
 	public void testToPQueueX() {
-		assertThat(just.toPQueueX(),equalTo(PQueueX.singleton(10)));
-		assertThat(none.toPQueueX(),equalTo(PQueueX.empty()));
+		assertThat(just.toPQueueX().toList(),equalTo(PQueueX.singleton(10).toList()));
+		assertThat(none.toPQueueX().toList(),equalTo(PQueueX.empty().toList()));
 	}
 
 	@Test
@@ -411,8 +408,8 @@ public class MaybeTest {
 
 	@Test
 	public void testMkString() {
-		assertThat(just.mkString(),equalTo("10"));
-		assertThat(none.mkString(),equalTo(""));
+		assertThat(just.mkString(),equalTo("Just[10]"));
+		assertThat(none.mkString(),equalTo("Nothing[]"));
 	}
 	LazyReact react = new LazyReact();
 	@Test
@@ -535,7 +532,7 @@ public class MaybeTest {
 
 	@Test
 	public void testMapReduceFunctionOfQsuperTQextendsRMonoidOfR() {
-		assertThat(just.mapReduce(s->s.toString(), Monoid.of("",Semigroups.stringJoin(","))),equalTo("10"));
+		assertThat(just.mapReduce(s->s.toString(), Monoid.of("",Semigroups.stringJoin(","))),equalTo(",10"));
 	}
 
 	@Test
@@ -545,7 +542,7 @@ public class MaybeTest {
 
 	@Test
 	public void testReduceBinaryOperatorOfT() {
-		assertThat(just.reduce((a,b)->a+b),equalTo(10));
+		assertThat(just.reduce((a,b)->a+b),equalTo(Optional.of(10)));
 	}
 
 	@Test
@@ -555,7 +552,7 @@ public class MaybeTest {
 
 	@Test
 	public void testReduceUBiFunctionOfUQsuperTUBinaryOperatorOfU() {
-		assertThat(just.reduce(11,(a,b)->a+b,(a,b)->a*b),equalTo(11));
+		assertThat(just.reduce(11,(a,b)->a+b,(a,b)->a*b),equalTo(21));
 	}
 
 	@Test
@@ -687,7 +684,7 @@ public class MaybeTest {
 	@Test
 	public void testMatches() {
 		assertThat(just.mayMatch(c->c.values(i->"hello",10)),equalTo(Maybe.of("hello")));
-		assertThat(just.mayMatch(c->c.values(i->"hello",1).values(i->"hello",2)),equalTo(Maybe.of("hello")));
+		assertThat(just.mayMatch(c->c.values(i->"hello",10).values(i->"hello",2)),equalTo(Maybe.of("hello")));
 		assertThat(just.mayMatch(c->c.just(i->"hello",1)
 									 .values(i->"hello",2)
 									 .values(i->"hello",3)),equalTo(Maybe.none()));
@@ -712,8 +709,8 @@ public class MaybeTest {
 	@Test
 	public void testForEach() {
 		Mutable<Integer> capture = Mutable.of(null);
-		none.forEach(c->capture.set(c));
-		assertThat(capture.get(),equalTo(nullValue()));
+		 none.forEach(c->capture.set(c));
+		assertNull(capture.get());
 		just.forEach(c->capture.set(c));
 		assertThat(capture.get(),equalTo(10));
 	}
@@ -737,18 +734,19 @@ public class MaybeTest {
 	@Test
 	public void testPeek() {
 		Mutable<Integer> capture = Mutable.of(null);
-		just.peek(c->capture.set(c));
-		assertThat(capture.get(),equalTo(nullValue()));
+		just = just.peek(c->capture.set(c));
+		assertNull(capture.get());
+		
 		just.get();
 		assertThat(capture.get(),equalTo(10));
 	}
 
-	private Trampoline<Integer> sum(int times){
-		return times ==0 ?  Trampoline.done(times) : Trampoline.more(()->sum(times-1));
+	private Trampoline<Integer> sum(int times,int sum){
+		return times ==0 ?  Trampoline.done(sum) : Trampoline.more(()->sum(times-1,sum+times));
 	}
 	@Test
 	public void testTrampoline() {
-		assertThat(just.trampoline(this::sum),equalTo(40));
+		assertThat(just.trampoline(n ->sum(10,n)),equalTo(Maybe.of(65)));
 	}
 
 	

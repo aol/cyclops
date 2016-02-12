@@ -1,5 +1,5 @@
 package com.aol.cyclops.streams.future;
-import static com.aol.cyclops.sequence.SequenceM.of;
+import static com.aol.cyclops.control.ReactiveSeq.of;
 import static java.util.stream.Collectors.*;
 import static org.jooq.lambda.tuple.Tuple.collectors;
 import static org.jooq.lambda.tuple.Tuple.tuple;

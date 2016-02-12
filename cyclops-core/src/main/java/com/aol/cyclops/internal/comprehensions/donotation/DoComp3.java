@@ -22,7 +22,8 @@ import org.pcollections.PStack;
 import com.aol.cyclops.internal.monads.MonadWrapper;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
-	public class DoComp3<T1,T2,T3> extends DoComp{
+import com.aol.cyclops.control.Reader;
+public class DoComp3<T1,T2,T3> extends DoComp{
 		public DoComp3(PStack<Entry> assigned, Class orgType) {
 			super(assigned,orgType);
 			
@@ -32,7 +33,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 			return new DoComp4(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),seq)),getOrgType());
 			
 		}
-		public  DoComp4<T1,T2,T3,T4> add(Reader<?,T4> seq){
+		public  <T4> DoComp4<T1,T2,T3,T4> add(Reader<?,T4> seq){
 			return new DoComp4(getAssigned().plus(getAssigned().size(),new Entry("$$monad"+getAssigned().size(),seq)),getOrgType());
 			
 		}

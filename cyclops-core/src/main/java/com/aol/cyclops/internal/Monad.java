@@ -9,12 +9,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.Mutable;
 import com.aol.cyclops.internal.monads.ComprehenderSelector;
 import com.aol.cyclops.internal.monads.MonadWrapper;
-import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.internal.stream.SeqUtils;
-import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.mixins.WrappingFilterable;
 import com.aol.cyclops.types.mixins.WrappingFunctor;
@@ -321,6 +323,8 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,WrappingFunctor<
 	 * 
 	 */
 	public <T> AnyM<T> anyM();
+	public <T> AnyMValue<T> anyMValue();
+	public <T> AnyMSeq<T> anyMSeq();
 	public <T> ReactiveSeq<T>  sequence();
 	/**
 	 * Create a duck typed Monad wrapper. Using AnyM we focus only on the underlying type

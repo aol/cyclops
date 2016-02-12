@@ -21,6 +21,7 @@ import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Assign
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Entry;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Guard;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Reader;
 import com.aol.cyclops.control.ReactiveSeq;
 
 public class DoComp0 extends DoComp{

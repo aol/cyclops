@@ -85,6 +85,7 @@ public class AnyMonads implements AnyMFunctions{
 				.flatMap(in-> new MonadWrapper<>(seq.stream().map(it->it.unwrap())).flatten().unwrap()).anyM();
 	}
 	private <T1> Comprehender comprehender(Collection<? extends AnyM<T1>> seq) {
+		Object o = seq.iterator().next();
 		return new ComprehenderSelector().selectComprehender(seq.iterator().next().unwrap().getClass());
 	}
 	/**
