@@ -3,8 +3,8 @@ package com.aol.cyclops.types.mixins;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.aol.cyclops.control.ExceptionSoftener;
 import com.aol.cyclops.internal.invokedynamic.ReflectionCache;
+import com.aol.cyclops.util.ExceptionSoftener;
 
 public interface TupleWrapper {
 

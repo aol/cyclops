@@ -1,12 +1,16 @@
-package com.aol.cyclops.validation;
+package com.aol.cyclops.control;
 
 import java.util.function.Predicate;
 
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.validation.ValidationResult.FailedResult;
-import com.aol.cyclops.validation.ValidationResult.SuccessfulResult;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple3;
 
-import fj.data.Validation;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.util.validation.ValidationResult;
+import com.aol.cyclops.util.validation.ValidationResults;
+import com.aol.cyclops.util.validation.ValidationResult.FailedResult;
+import com.aol.cyclops.util.validation.ValidationResult.SuccessfulResult;
+
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
 
@@ -24,10 +28,10 @@ import lombok.experimental.Wither;
  */
 @AllArgsConstructor
 @Wither
-public class CumulativeValidator<T,R,E> {
+public class Validator<T,R,E> {
 
-	private final Validator<T,R,E> validation;
-	private final CumulativeValidator<T,R,E> next;
+	private final Tuple3<Predicate<? super T>,R,E> validation;
+	private final Validator<T,R,E> next;
 	/**
 	 * Add another validation to this cumulative validator
 	 * <pre>
@@ -47,8 +51,8 @@ public class CumulativeValidator<T,R,E> {
 	 * @param result Result to return if validation predicate succeeds
 	 * @return
 	 */
-	public  CumulativeValidator<T,R,E> isValid(Predicate<T> valid, E error, R result){
-		return add(Validator.of(valid, error, result));
+	public  Validator<T,R,E> isValid(Predicate<? super T> valid, E error, R result){
+		return add(Tuple.tuple(valid,result,error));
 	}
 	
 	/**
@@ -87,16 +91,23 @@ public class CumulativeValidator<T,R,E> {
 	public ValidationResults<R,E> accumulate(T input){
 		ListX<ValidationResult<R,E>> results = ListX.empty();
 		final ValidationResult<R,E> result;
-		if(validation.isValid(input))
-			result = SuccessfulResult.success(validation.result);
+		if(isValid(input))
+			result = SuccessfulResult.success(this.validation.v2);
 		else
-			result = FailedResult.fail(validation.error);
+			result = FailedResult.fail(validation.v3);
 		
 		results.add(result);
 		if(next!=null)
 			results.addAll(next.accumulate(input).getResults());
 		return new ValidationResults<R,E>(results);
 		
+	}
+	/**
+	 * @param input to test validation against
+	 * @return true if valid
+	 */
+	private boolean isValid(T input){
+		return validation.v1.test(input);
 	}
 	/**
 	 * Run the accumulation until first fail
@@ -116,10 +127,10 @@ public class CumulativeValidator<T,R,E> {
 	public ValidationResults<R,E> accumulateUntilFail(T input){
 		ListX<ValidationResult<R,E>> results = ListX.empty();
 		final ValidationResult<R,E> result;
-		if(validation.isValid(input))
-			result = SuccessfulResult.success(validation.result);
+		if(isValid(input))
+			result = SuccessfulResult.success(validation.v2);
 		else{
-			result = FailedResult.fail(validation.error);
+			result = FailedResult.fail(validation.v3);
 			results.add(result);
 			return  new ValidationResults<R,E>(results);
 		}
@@ -145,11 +156,11 @@ public class CumulativeValidator<T,R,E> {
 	 * @param validation FunctionalJava Validation to add
 	 * @return CumulativeValidator that includes the new validation (or set of validations)
 	 */
-	public CumulativeValidator<T,R,E> add(Validation<E,R> validation){
+	public Validator<T,R,E> add(Xor<E,R> validation){
 		if(next==null)
-           		return this.withNext(new CumulativeValidator<T,R,E>(Validator.convert(validation),null));
+           		return this.withNext(new Validator<T,R,E>(convert(validation),null));
 		else
-			return next.add(Validator.convert(validation));
+			return next.add(convert(validation));
 	}
 	
 	/**
@@ -169,9 +180,9 @@ public class CumulativeValidator<T,R,E> {
 	 * @param validation Validator instance
 	 * @return CumulativeValidator that includes the new validation (or set of validations)
 	 */
-	public CumulativeValidator<T,R,E> add(Validator<T,R,E> validation){
+	public Validator<T,R,E> add(Tuple3<Predicate<? super T>,R,E> validation){
 		if(next==null)
-           		return this.withNext(new CumulativeValidator<T,R,E>(validation,null));
+           		return this.withNext(new Validator<T,R,E>(validation,null));
 		else
 			return next.add(validation);
 	}
@@ -197,8 +208,8 @@ public class CumulativeValidator<T,R,E> {
 	 * @param result Result to return if validation predicate succeeds
 	 * @return
 	 */
-	public static <T,R,E> CumulativeValidator<T,R,E> of(Predicate<T> valid, E error, R result){
-		return new CumulativeValidator<>(Validator.of(valid, error, result),null);
+	public static <T,R,E> Validator<T,R,E> of(Predicate<? super T> valid, E error, R result){
+		return new Validator<>(Tuple.tuple(valid,  result, error),null);
 	}
 	
 	/**
@@ -231,9 +242,23 @@ public class CumulativeValidator<T,R,E> {
 	 * @param validation FuncitonalJava validation
 	 * @return
 	 */
-	public static <T,R,E> CumulativeValidator<T,R,E> of(Validation<E,R> validation){
-		return new CumulativeValidator<>(Validator.convert(validation),null);
+	public static <T,R,E> Validator<T,R,E> of(Xor<E,R> validation){
+		return new Validator<>(convert(validation),null);
 	}
+	/*
+	 * Convert a Xor Validation result to a Cyclops Validator instance
+	 * 
+	 * @param validation FunctionalJava Validation result to convert
+	 * @return Cyclops Validator
+	 */
+	private static <T,R,E> Tuple3<Predicate<? super T>,R,E>  convert(Xor<E,R> validation){
+		if(validation.isPrimary())
+			return Tuple.tuple( t-> true,validation.<R>get(),null);
+		
+		return Tuple.tuple( t-> false,null,validation.swap().get());
+	}
+	
+	
 
 }
 

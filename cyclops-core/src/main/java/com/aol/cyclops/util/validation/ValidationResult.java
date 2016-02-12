@@ -1,4 +1,4 @@
-package com.aol.cyclops.validation;
+package com.aol.cyclops.util.validation;
 
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Xor;

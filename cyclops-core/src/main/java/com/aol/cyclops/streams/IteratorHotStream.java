@@ -10,8 +10,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
-import com.aol.cyclops.control.ExceptionSoftener;
 import com.aol.cyclops.scheduling.util.cron.CronExpression;
+import com.aol.cyclops.util.ExceptionSoftener;
 
 
 public class IteratorHotStream<T> {

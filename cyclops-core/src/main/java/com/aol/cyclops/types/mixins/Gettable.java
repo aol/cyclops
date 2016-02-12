@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.control.ExceptionSoftener;
 import com.aol.cyclops.internal.invokedynamic.InvokeDynamic;
+import com.aol.cyclops.util.ExceptionSoftener;
 
 public interface Gettable<T> extends Supplier<T> {
 	default Object unwrap(){

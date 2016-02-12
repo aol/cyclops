@@ -6,8 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.control.ExceptionSoftener;
 import com.aol.cyclops.types.extensability.MonadicConverter;
+import com.aol.cyclops.util.ExceptionSoftener;
 
 public class FileToStreamConverter implements MonadicConverter<Stream> {
 

@@ -1,15 +1,17 @@
 package com.aol.cyclops.validation;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-import lombok.Value;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import fj.data.Validation;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
-import static com.aol.cyclops.validation.Validator.of;
+import com.aol.cyclops.control.Validator;
+import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.util.validation.ValidationResults;
+
+import lombok.Value;
 public class ValidationTest {
 
 	@Value
@@ -19,7 +21,7 @@ public class ValidationTest {
 	}
 	@Test
 	public void testAccumulate() {
-		ValidationResults<String,String> results  = CumulativeValidator.of((User user)->user.age>18, "too young", "age ok")
+		ValidationResults<String,String> results  = Validator.of((User user)->user.age>18, "too young", "age ok")
 												.isValid(user->user.email!=null, "user email null","email ok")
 												.accumulate(new User(10,"email@email.com"));
 	
@@ -29,7 +31,7 @@ public class ValidationTest {
 	@Test
 	public void testAccumulateFJ() {
 		User user = new User(10,"email@email.com");
-		ValidationResults<String,String> results  = CumulativeValidator.of(emailOk(user))
+		ValidationResults<String,String> results  = Validator.of(emailOk(user))
 														.add(ageOk(user))
 														.accumulate();
 	
@@ -37,15 +39,15 @@ public class ValidationTest {
 	}
 	
 
-	public Validation<String,String> emailOk(User u){
+	public Xor<String,String> emailOk(User u){
 	    if(u.email!=null)
-	       return Validation.success("email ok");
-	     return Validation.fail("no email");
+	       return Xor.primary("email ok");
+	     return Xor.secondary("no email");
 	 }
-	public Validation<String,String> ageOk(User u){
+	public Xor<String,String> ageOk(User u){
 	    if(u.age>18)
-	        return Validation.success("age ok");
-	    return Validation.fail("too young");
+	        return Xor.primary("age ok");
+	    return Xor.secondary("too young");
 	 }
 
 }

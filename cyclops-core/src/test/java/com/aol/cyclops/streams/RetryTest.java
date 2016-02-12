@@ -18,8 +18,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.aol.cyclops.control.ExceptionSoftener;
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.util.ExceptionSoftener;
 
 
 public class RetryTest {

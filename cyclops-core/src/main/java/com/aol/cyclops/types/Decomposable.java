@@ -2,8 +2,8 @@ package com.aol.cyclops.types;
 
 import java.util.stream.Collectors;
 
-import com.aol.cyclops.control.ExceptionSoftener;
 import com.aol.cyclops.internal.invokedynamic.ReflectionCache;
+import com.aol.cyclops.util.ExceptionSoftener;
 
 /**
  * trait / interface for Value Objects / Case Classes / Algebraic Data Types

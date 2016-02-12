@@ -1,4 +1,4 @@
-package com.aol.cyclops.validation;
+package com.aol.cyclops.util.validation;
 
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;

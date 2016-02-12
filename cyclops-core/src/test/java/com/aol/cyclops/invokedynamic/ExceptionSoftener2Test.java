@@ -8,7 +8,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.ExceptionSoftener;
+import com.aol.cyclops.util.ExceptionSoftener;
 public class ExceptionSoftener2Test {
 
 	@Test

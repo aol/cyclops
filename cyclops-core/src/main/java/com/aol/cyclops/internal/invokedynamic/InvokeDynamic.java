@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.control.ExceptionSoftener;
+import com.aol.cyclops.util.ExceptionSoftener;
 
 
 public class InvokeDynamic {

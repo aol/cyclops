@@ -44,7 +44,6 @@ import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.control.ExceptionSoftener;
 import com.aol.cyclops.data.Mutable;
 import com.aol.cyclops.data.collections.CyclopsCollectors;
 import com.aol.cyclops.data.collections.extensions.CollectionX;

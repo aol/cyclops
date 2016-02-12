@@ -44,7 +44,6 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.control.ExceptionSoftener;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -72,6 +71,7 @@ import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.types.sequence.ConvertableSequence;
 import com.aol.cyclops.types.sequence.SequenceMCollectable;
+import com.aol.cyclops.util.ExceptionSoftener;
 import com.aol.cyclops.util.StreamUtils;
 import com.aol.cyclops.util.Streamable;
 

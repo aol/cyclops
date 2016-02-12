@@ -18,6 +18,7 @@ import com.aol.cyclops.sequence.SequenceM;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.types.sequence.ToStream;
+import com.aol.cyclops.util.ExceptionSoftener;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

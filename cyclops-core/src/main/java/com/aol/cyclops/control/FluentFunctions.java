@@ -32,6 +32,7 @@ import com.aol.cyclops.internal.invokedynamic.CheckedTriFunction;
 import com.aol.cyclops.internal.matcher2.CheckValues;
 import com.aol.cyclops.monad.AnyM;
 import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.util.ExceptionSoftener;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
