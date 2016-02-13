@@ -52,6 +52,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 		return new CollectionXImpl(col);
 	}
 	
+	
 	@Override
 	default ReactiveSeq<T> stream(){
 		

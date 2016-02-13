@@ -537,7 +537,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 */
 	@Override
 	default MutableCollectionX<ReactiveSeq<T>> combinations(int size) {
-		return fromStream(stream().combinations());
+		return fromStream(stream().combinations(size));
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations()

@@ -188,7 +188,9 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 		return ReactiveSeq.fromIterable(this);
 	}
 	default <X> PStackX<X> from(Collection<X> col){
-		return fromCollection(col);
+		if(isEfficientOps())
+			return fromCollection(col);
+		return fromCollection(col).efficientOpsOff();
 	}
 	default <T> Reducer<PStack<T>> monoid(){
 		if(isEfficientOps())

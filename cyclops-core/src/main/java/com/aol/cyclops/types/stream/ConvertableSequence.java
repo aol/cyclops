@@ -141,6 +141,7 @@ public interface ConvertableSequence<T> extends Iterable<T>{
 		return toValue().toXorSecondary();
 	}
 	default  Try<ListX<T>,NoSuchElementException> toTry(){
+		
 		return toValue().toTry();
 	}
 	default <ST> Ior<ST,ListX<T>> toIor(){
