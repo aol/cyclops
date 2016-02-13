@@ -1,9 +1,8 @@
 package com.aol.cyclops.react.stream.traits;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Optional;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
@@ -12,8 +11,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
-import java.util.Iterator;
-
+import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.react.async.future.FastFuture;
 import com.aol.cyclops.react.collectors.lazy.EmptyCollector;
 import com.aol.cyclops.react.collectors.lazy.IncrementalReducer;
@@ -24,7 +22,6 @@ import com.aol.cyclops.react.stream.LazyStreamWrapper;
 import com.aol.cyclops.react.stream.MissingValue;
 import com.aol.cyclops.react.stream.Runner;
 import com.aol.cyclops.react.stream.lazy.ParallelReductionConfig;
-import com.aol.cyclops.react.stream.simple.SimpleReact;
 import com.aol.cyclops.react.threads.SequentialElasticPools;
 
 
@@ -48,7 +45,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	 */
 	default void run() {
 		SimpleReact reactor  = SequentialElasticPools.simpleReact.nextReactor();
-		reactor.react(() -> run(new NonCollector()))
+		reactor.react(() -> run(new NonCollector<>()))
 								.peek(n-> SequentialElasticPools.simpleReact.populate(reactor))
 								.onFail(n-> { SequentialElasticPools.simpleReact.populate(reactor); return 1;});
 

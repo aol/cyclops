@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.experimental.Wither;
 
-import com.aol.cyclops.react.stream.simple.SimpleReact;
+import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.react.stream.traits.SimpleReactStream;
 
 @Wither

@@ -9,8 +9,8 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.react.stream.lazy.LazyReact;
+import com.aol.cyclops.control.LazyReact;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 
 public class ReverseTest {

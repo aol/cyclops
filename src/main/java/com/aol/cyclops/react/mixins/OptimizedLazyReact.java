@@ -7,7 +7,7 @@ import java.util.stream.StreamSupport;
 
 import lombok.AllArgsConstructor;
 
-import com.aol.cyclops.react.stream.lazy.LazyReact;
+import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 
 /**

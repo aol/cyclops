@@ -6,7 +6,7 @@ import org.reactivestreams.tck.PublisherVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
 
-import com.aol.cyclops.react.stream.lazy.LazyReact;
+import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 @Test
 public class TckAsynchronousPublisherTest extends PublisherVerification<Long>{

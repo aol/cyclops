@@ -5,11 +5,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import lombok.AllArgsConstructor;
-
-import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.react.async.Queue.ClosedQueueException;
 import com.aol.cyclops.react.util.SimpleTimer;
+import com.aol.cyclops.util.ExceptionSoftener;
+
+import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class OnePer<U> implements Function<Supplier<U>, Supplier<U>> {

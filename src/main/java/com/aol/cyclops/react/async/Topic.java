@@ -17,7 +17,7 @@ import org.pcollections.PMap;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.react.async.subscription.Continueable;
 
 /**
@@ -75,9 +75,9 @@ public class Topic<T> implements Adapter<T> {
 	}
 	
 	@Synchronized("lock")
-	private<R> SequenceM<R> connect(Function<Queue<T>,SequenceM<R>> streamCreator){
+	private<R> ReactiveSeq<R> connect(Function<Queue<T>,ReactiveSeq<R>> streamCreator){
 		Queue<T> queue = this.getNextQueue();
-		SequenceM<R> stream = streamCreator.apply(queue);
+		ReactiveSeq<R> stream = streamCreator.apply(queue);
 
 		this.streamToQueue = streamToQueue.plus(stream,queue);
 		return stream;
@@ -98,7 +98,7 @@ public class Topic<T> implements Adapter<T> {
 	 * 
 	 * @return Stream of CompletableFutures that can be used as input into a SimpleReact concurrent dataflow
 	 */
-	public SequenceM<CompletableFuture<T>> streamCompletableFutures(){
+	public ReactiveSeq<CompletableFuture<T>> streamCompletableFutures(){
 		return connect(q -> q.streamCompletableFutures());
 	}
 	
@@ -107,13 +107,13 @@ public class Topic<T> implements Adapter<T> {
 	 * It will be provided with an internal Queue as a mailbox. @see Topic.disconnect to disconnect from the topic
 	 * @return Stream of data
 	 */
-	public SequenceM<T> stream(){
+	public ReactiveSeq<T> stream(){
 		
 		
 		return connect(q -> q.stream());
 		
 	}
-	public SequenceM<T> stream(Continueable s){
+	public ReactiveSeq<T> stream(Continueable s){
 		
 		
 		return connect(q -> q.stream(s));

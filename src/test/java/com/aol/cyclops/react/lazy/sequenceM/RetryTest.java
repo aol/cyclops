@@ -22,7 +22,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 
 

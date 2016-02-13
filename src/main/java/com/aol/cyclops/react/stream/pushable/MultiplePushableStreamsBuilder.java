@@ -4,9 +4,9 @@ import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
 
+import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.react.async.Queue;
 import com.aol.cyclops.react.async.Topic;
-import com.aol.cyclops.react.stream.lazy.LazyReact;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 import com.aol.cyclops.react.threads.ReactPool;
 

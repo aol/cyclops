@@ -5,17 +5,17 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.react.async.Queue;
 import com.aol.cyclops.react.async.Queue.ClosedQueueException;
 import com.aol.cyclops.react.async.future.CompletedException;
-import com.aol.cyclops.react.stream.lazy.LazyReact;
 
 public interface LazyToQueue<U> extends ToQueue<U> {
 
-	<R> LazyFutureStream<R> then(final Function<U, R> fn,
+	<R> LazyFutureStream<R> then(final Function<? super U,? extends R> fn,
 			Executor exec);
 
-	<R> LazyFutureStream<R> thenSync(final Function<U, R> fn);
+	<R> LazyFutureStream<R> thenSync(final Function<? super U,? extends R> fn);
 	LazyReact getPopulator();
 	
 	LazyFutureStream<U> peekSync(final Consumer<? super U> consumer);
@@ -77,7 +77,7 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 	 *	@param sharder Sharding function, element to key converter
 	 * @see com.aol.cyclops.react.stream.traits.ToQueue#toQueue(java.util.Map, java.util.function.Function)
 	 */
-	default <K> void toQueue(Map<K, Queue<U>> shards, Function<U, K> sharder) {
+	default <K> void toQueue(Map<K, Queue<U>> shards, Function<? super U,? extends K> sharder) {
 
 		//in this case all the items have to be pushed to the shards, 
 		//we can't rely on the client pulling them all to get them in to the right shards

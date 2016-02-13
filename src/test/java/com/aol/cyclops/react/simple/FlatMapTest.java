@@ -6,7 +6,7 @@ import java.util.concurrent.CompletableFuture;
 import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
-import com.aol.cyclops.react.stream.simple.SimpleReact;
+import com.aol.cyclops.control.SimpleReact;
 
 public class FlatMapTest {
 

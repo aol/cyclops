@@ -12,7 +12,7 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.react.async.Queue;
 import com.aol.cyclops.react.async.Queue.QueueReader;
 
@@ -162,7 +162,7 @@ public class EagerFutureStreamFunctions {
 	}
 	
 	
-	static <T1, T2> SequenceM<T1> skipUntil(SimpleReactStream<T1> left,
+	static <T1, T2> ReactiveSeq<T1> skipUntil(SimpleReactStream<T1> left,
 			SimpleReactStream<T2> right) {
 		
 		Queue q = left.then(it->new Val(Val.Pos.left,it)).merge(right.then(it->new Val(Val.Pos.right,it))).toQueue();
@@ -199,9 +199,9 @@ public class EagerFutureStreamFunctions {
 			}
 		}
 		
-		return SequenceM.fromIterable(()->new Zip()).filter(next->!(next instanceof Optional));
+		return ReactiveSeq.fromIterable(()->new Zip()).filter(next->!(next instanceof Optional));
 	}
-	static <T1, T2> SequenceM<T1> takeUntil(SimpleReactStream<T1> left,
+	static <T1, T2> ReactiveSeq<T1> takeUntil(SimpleReactStream<T1> left,
 			SimpleReactStream<T2> right) {
 		
 		Queue q = left.then(it->new Val(Val.Pos.left,it)).merge(right.then(it->new Val(Val.Pos.right,it))).toQueue();
@@ -238,7 +238,7 @@ public class EagerFutureStreamFunctions {
 			}
 		}
 
-		return SequenceM.fromIterable(()->new Zip()).filter(next->!(next instanceof Optional));
+		return ReactiveSeq.fromIterable(()->new Zip()).filter(next->!(next instanceof Optional));
 	}
 
 }

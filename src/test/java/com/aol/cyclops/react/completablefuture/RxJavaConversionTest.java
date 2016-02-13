@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.react.stream.lazy.LazyReact;
+import com.aol.cyclops.control.LazyReact;
 
 
 public class RxJavaConversionTest {

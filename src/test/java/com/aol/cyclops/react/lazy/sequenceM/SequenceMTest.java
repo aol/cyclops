@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;

@@ -1,47 +1,29 @@
 package com.aol.cyclops.react.stream.lazy;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.net.URL;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
-import java.util.Spliterator;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
-import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.IntFunction;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.function.ToDoubleFunction;
-import java.util.function.ToIntFunction;
-import java.util.function.ToLongFunction;
-import java.util.stream.BaseStream;
 import java.util.stream.Collector;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
-import org.reactivestreams.Subscriber;
+import com.aol.cyclops.control.LazyReact;
+import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.react.async.factories.QueueFactories;
+import com.aol.cyclops.react.async.factories.QueueFactory;
+import com.aol.cyclops.react.async.subscription.Continueable;
+import com.aol.cyclops.react.async.subscription.Subscription;
+import com.aol.cyclops.react.collectors.lazy.BatchingCollector;
+import com.aol.cyclops.react.collectors.lazy.LazyResultConsumer;
+import com.aol.cyclops.react.config.MaxActive;
+import com.aol.cyclops.react.stream.LazyStreamWrapper;
+import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.react.threads.ReactPool;
+import com.aol.cyclops.types.stream.HotStream;
+import com.aol.cyclops.util.stream.StreamUtils;
+import com.nurkiewicz.asyncretry.RetryExecutor;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -49,31 +31,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
-
-import com.aol.cyclops.monad.AnyM;
-import com.aol.cyclops.sequence.HeadAndTail;
-import com.aol.cyclops.sequence.HotStream;
-import com.aol.cyclops.sequence.Monoid;
-import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.sequence.future.FutureOperations;
-import com.aol.cyclops.sequence.streamable.Streamable;
-import com.aol.cyclops.streams.StreamUtils;
-import com.aol.cyclops.react.async.Queue;
-import com.aol.cyclops.react.async.factories.QueueFactories;
-import com.aol.cyclops.react.async.factories.QueueFactory;
-import com.aol.cyclops.react.async.future.FastFuture;
-import com.aol.cyclops.react.async.subscription.Continueable;
-import com.aol.cyclops.react.async.subscription.Subscription;
-import com.aol.cyclops.react.collectors.lazy.BatchingCollector;
-import com.aol.cyclops.react.collectors.lazy.LazyResultConsumer;
-import com.aol.cyclops.react.config.MaxActive;
-import com.aol.cyclops.react.exceptions.SimpleReactFailedStageException;
-import com.aol.cyclops.react.stream.LazyStreamWrapper;
-import com.aol.cyclops.react.stream.ReactBuilder;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
-import com.aol.cyclops.react.stream.traits.BaseSimpleReactStream;
-import com.aol.cyclops.react.threads.ReactPool;
-import com.nurkiewicz.asyncretry.RetryExecutor;
 
 @Wither
 @Builder
@@ -219,16 +176,16 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 
 	@Override
 	public HotStream<U> schedule(String cron, ScheduledExecutorService ex) {
-		return SequenceM.<U>fromStream(this.toStream()).schedule(cron, ex);
+		return ReactiveSeq.<U>fromStream(this.toStream()).schedule(cron, ex);
 	}
 	@Override
 	public HotStream<U> scheduleFixedDelay(long delay,
 			ScheduledExecutorService ex) {
-		return SequenceM.<U>fromStream(this.toStream()).scheduleFixedDelay(delay, ex);
+		return ReactiveSeq.<U>fromStream(this.toStream()).scheduleFixedDelay(delay, ex);
 	}
 	@Override
 	public HotStream<U> scheduleFixedRate(long rate, ScheduledExecutorService ex) {
-		return SequenceM.<U>fromStream(this.toStream()).scheduleFixedRate(rate, ex);
+		return ReactiveSeq.<U>fromStream(this.toStream()).scheduleFixedRate(rate, ex);
 	}
 	@Override
 	public <X extends Throwable> org.reactivestreams.Subscription forEachX(

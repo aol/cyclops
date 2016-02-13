@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 
@@ -188,9 +188,9 @@ public class WindowingTest {
 
 	@Test
 	public void groupedInfinite() {
-		SequenceM<Integer> infinite = SequenceM.iterate(1, i->i+1);
+		ReactiveSeq<Integer> infinite = SequenceM.iterate(1, i->i+1);
 		
-		final SequenceM<List<Integer>> grouped = infinite.grouped(3);
+		final ReactiveSeq<List<Integer>> grouped = infinite.grouped(3);
 		assertThat(grouped.elementAt(0).get(),equalTo(Arrays.asList(1,2,3)));
 	
 	}

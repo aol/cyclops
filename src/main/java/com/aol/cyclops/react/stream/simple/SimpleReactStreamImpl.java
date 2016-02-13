@@ -16,6 +16,8 @@ import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
 
+import com.aol.cyclops.control.LazyReact;
+import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.react.async.Queue;
 import com.aol.cyclops.react.async.factories.QueueFactories;
 import com.aol.cyclops.react.async.factories.QueueFactory;
@@ -24,7 +26,6 @@ import com.aol.cyclops.react.async.subscription.Continueable;
 import com.aol.cyclops.react.stream.BaseSimpleReact;
 import com.aol.cyclops.react.stream.EagerStreamWrapper;
 import com.aol.cyclops.react.stream.ReactBuilder;
-import com.aol.cyclops.react.stream.lazy.LazyReact;
 import com.aol.cyclops.react.stream.traits.SimpleReactStream;
 import com.aol.cyclops.react.stream.traits.EagerToQueue;
 import com.aol.cyclops.react.threads.ReactPool;
@@ -63,7 +64,7 @@ public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>,EagerToQue
 		return this.withSimpleReact(this.simpleReact.withAsync(b));
 	}
 	@Override
-	public <R> SimpleReactStream<R> thenSync(final Function<U, R> fn){
+	public <R> SimpleReactStream<R> thenSync(final Function<? super U,? extends R> fn){
 		return SimpleReactStream.super.thenSync(fn);
 	}
 

@@ -7,12 +7,12 @@ import java.util.function.Consumer;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.invokedynamic.ExceptionSoftener;
 import com.aol.cyclops.react.async.future.FastFuture;
 import com.aol.cyclops.react.exceptions.FilteredExecutionPathException;
 import com.aol.cyclops.react.stream.EagerStreamWrapper;
 import com.aol.cyclops.react.stream.LazyStreamWrapper;
 import com.aol.cyclops.react.stream.MissingValue;
+import com.aol.cyclops.util.ExceptionSoftener;
 
 public class BlockingStreamHelper {
 	

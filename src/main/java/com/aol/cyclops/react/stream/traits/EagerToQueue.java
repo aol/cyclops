@@ -17,7 +17,7 @@ public interface EagerToQueue<U> extends ToQueue<U> {
 			final Function<T, R> fn);
 	
 
-	abstract <R> SimpleReactStream<R> thenSync(final Function<U, R> fn);
+	abstract <R> SimpleReactStream<R> thenSync(final Function<? super U,? extends R> fn);
 	
 	
 
@@ -60,7 +60,7 @@ public interface EagerToQueue<U> extends ToQueue<U> {
 	 *	@param sharder Sharding function, element to key converter
 	 * @see com.aol.cyclops.react.stream.traits.ToQueue#toQueue(java.util.Map, java.util.function.Function)
 	 */
-	default <K> void toQueue(Map<K, Queue<U>> shards, Function<U, K> sharder) {
+	default <K> void toQueue(Map<K, Queue<U>> shards, Function<? super U, ? extends K> sharder) {
 
 		thenSync(
 				it -> shards.get(sharder.apply(it)).offer(it)).allOf(

@@ -4,16 +4,16 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import lombok.AllArgsConstructor;
-import lombok.experimental.Wither;
-import uk.co.real_logic.agrona.concurrent.ManyToOneConcurrentArrayQueue;
-
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.LazyReact;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.react.async.future.FastFuture;
 import com.aol.cyclops.react.async.future.FinalPipeline;
 import com.aol.cyclops.react.async.future.PipelineBuilder;
 import com.aol.cyclops.react.async.future.pool.FuturePool;
-import com.aol.cyclops.react.stream.lazy.LazyReact;
+
+import lombok.AllArgsConstructor;
+import lombok.experimental.Wither;
+import uk.co.real_logic.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 
 @AllArgsConstructor
 public class LazyStreamWrapper<U> implements StreamWrapper<U> {
@@ -41,8 +41,8 @@ public class LazyStreamWrapper<U> implements StreamWrapper<U> {
 	
 	
 	
-	public SequenceM<FastFuture<U>> injectFuturesSeq(){
-		return (SequenceM)SequenceM.fromStream(injectFutures());
+	public ReactiveSeq<FastFuture<U>> injectFuturesSeq(){
+		return (ReactiveSeq)ReactiveSeq.fromStream(injectFutures());
 	}
 	public Stream<FastFuture> injectFutures(){
 		FastFuture f= pipeline.build();

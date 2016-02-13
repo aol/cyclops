@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
-import com.aol.cyclops.react.stream.lazy.LazyReact;
+import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 
 public class LazySeqAutoOptimizeTest extends LazySeqTest {

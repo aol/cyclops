@@ -8,6 +8,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import com.aol.cyclops.data.collections.CyclopsCollectors;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.react.exceptions.ThrowsSoftened;
 import com.aol.cyclops.react.extractors.Extractor;
 import com.aol.cyclops.react.extractors.Extractors;
@@ -42,14 +44,14 @@ public interface BlockingStream<U> {
 	 *         InterruptedException,ExecutionException
 	 */
 	@ThrowsSoftened({ InterruptedException.class, ExecutionException.class })
-	default List<U> block() {
+	default ListX<U> block() {
 		Object lastActive = getLastActive();
 		if(lastActive instanceof EagerStreamWrapper){
 			EagerStreamWrapper last = (EagerStreamWrapper)lastActive;
-			return BlockingStreamHelper.block(this,Collectors.toList(), last);
+			return BlockingStreamHelper.block(this,CyclopsCollectors.toListX(), last);
 		}else{
 			LazyStreamWrapper last = (LazyStreamWrapper)lastActive;
-			return BlockingStreamHelper.block(this,Collectors.toList(), last);
+			return BlockingStreamHelper.block(this,CyclopsCollectors.toListX(), last);
 		}
 	}
 

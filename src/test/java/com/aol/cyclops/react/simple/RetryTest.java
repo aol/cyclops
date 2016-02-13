@@ -25,8 +25,8 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.react.exceptions.SimpleReactFailedStageException;
-import com.aol.cyclops.react.stream.simple.SimpleReact;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.nurkiewicz.asyncretry.policy.AbortRetryException;

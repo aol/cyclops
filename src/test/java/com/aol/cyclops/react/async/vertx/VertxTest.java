@@ -4,7 +4,7 @@ import io.vertx.core.Vertx;
 
 import org.junit.Test;
 
-import com.aol.cyclops.react.stream.lazy.LazyReact;
+import com.aol.cyclops.control.LazyReact;
 
 public class VertxTest {
 	@Test

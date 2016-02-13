@@ -11,8 +11,8 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
+import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.react.base.BaseJDKStreamTest;
-import com.aol.cyclops.react.stream.lazy.LazyReact;
 import com.aol.cyclops.react.stream.lazy.ParallelReductionConfig;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 

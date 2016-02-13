@@ -6,11 +6,11 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import com.aol.cyclops.util.function.Cacheable;
+import com.aol.cyclops.util.function.Memoize;
+
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
-
-import com.aol.cyclops.functions.caching.Cacheable;
-import com.aol.cyclops.functions.caching.Memoize;
 
 @AllArgsConstructor
 @Wither

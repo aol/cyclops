@@ -8,7 +8,7 @@ import java.util.Optional;
 import org.junit.Test;
 
 import com.aol.cyclops.sequence.HeadAndTail;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 
 public class HeadTailFuturesTest {
@@ -23,7 +23,7 @@ public class HeadTailFuturesTest {
 		String head = headAndTail.head();
 		assertThat(head, equalTo("hello"));
 
-		SequenceM<String> tail = headAndTail.tail();
+		ReactiveSeq<String> tail = headAndTail.tail();
 		assertThat(tail.headAndTail().head(), equalTo("world"));
 
 	}

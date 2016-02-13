@@ -18,12 +18,12 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
-import com.aol.cyclops.sequence.HeadAndTail;
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.react.async.future.FastFuture;
 import com.aol.cyclops.react.async.subscription.Continueable;
 import com.aol.cyclops.react.stream.LazyStreamWrapper;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.stream.HeadAndTail;
 
 public interface OperationsOnFutures<T> {
 	// Handle case where input is a LazyFutureStream (zip, append, concat,
@@ -120,7 +120,7 @@ public interface OperationsOnFutures<T> {
 	 * @return duplicated stream
 	 */
 	default Tuple2<LazyFutureStream<T>, LazyFutureStream<T>> duplicate() {
-		return SequenceM
+		return ReactiveSeq
 				.fromStream(
 						(Stream<FastFuture<T>>) (Stream) this.getLastActive()
 								.injectFutures()).duplicateSequence()
@@ -147,7 +147,7 @@ public interface OperationsOnFutures<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	default Tuple3<LazyFutureStream<T>, LazyFutureStream<T>, LazyFutureStream<T>> triplicate() {
-		return SequenceM
+		return ReactiveSeq
 				.fromStream(
 						(Stream<FastFuture<T>>) (Stream) this.getLastActive()
 								.injectFutures()).triplicate()
@@ -174,7 +174,7 @@ public interface OperationsOnFutures<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	default Tuple4<LazyFutureStream<T>, LazyFutureStream<T>, LazyFutureStream<T>, LazyFutureStream<T>> quadruplicate() {
-		return SequenceM
+		return ReactiveSeq
 				.fromStream(
 						(Stream<FastFuture<T>>) (Stream) this.getLastActive()
 								.injectFutures()).quadruplicate()
@@ -199,7 +199,7 @@ public interface OperationsOnFutures<T> {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	default Tuple2<Optional<T>, LazyFutureStream<T>> splitAtHead() {
-		return SequenceM
+		return ReactiveSeq
 				.<FastFuture<T>> fromStream(
 						(Stream<FastFuture<T>>) (Stream) this.getLastActive()
 								.injectFutures()).splitSequenceAtHead()
@@ -220,7 +220,7 @@ public interface OperationsOnFutures<T> {
 	 * </pre>
 	 */
 	default Tuple2<LazyFutureStream<T>, LazyFutureStream<T>> splitAt(int where) {
-		return SequenceM
+		return ReactiveSeq
 				.<FastFuture<T>> fromStream(
 						(Stream<FastFuture<T>>) (Stream) this.getLastActive()
 								.injectFutures()).splitAt(where)
@@ -602,7 +602,7 @@ public interface OperationsOnFutures<T> {
 		String head = headAndTail.head();
 		assertThat(head, equalTo("hello"));
 
-		SequenceM<String> tail = headAndTail.tail();
+		ReactiveSeq<String> tail = headAndTail.tail();
 		assertThat(tail.headAndTail().head(), equalTo("world"));
 	 * 
 	 * }
@@ -611,36 +611,16 @@ public interface OperationsOnFutures<T> {
 	 * @return
 	 */
 	default HeadAndTail<T> headAndTail() {
-		return this
+		HeadAndTail hat= this
 				.getLastActive()
 				.injectFuturesSeq()
-				.headAndTailOptional()
-				.map(hat -> new HeadAndTail(safeJoin(hat.head()),
-						fromStreamOfFutures(hat.tail()))).get();
-	}
-
-	/**
-	 * extract head and tail together, where no head or tail may be present
-	 * 
-	 * <pre>
-	 * {@code
-	 * LazyFutureStream<String> helloWorld = LazyFutureStream.of();
-		Optional<HeadAndTail<String>> headAndTail = helloWorld.actOnFutures()
-				.headAndTailOptional();
-		assertTrue(!headAndTail.isPresent());
-	 * }
-	 * </pre>
-	 * 
-	 * @return
-	 */
-	default Optional<HeadAndTail<T>> headAndTailOptional() {
-		return this
-				.getLastActive()
-				.injectFuturesSeq()
-				.headAndTailOptional()
-				.map(hat -> new HeadAndTail(safeJoin(hat.head()),
+				.headAndTail();
+		
+			return new HeadAndTail(safeJoin(hat.head()),
 						fromStreamOfFutures(hat.tail())));
 	}
+
+
 
 	/**
 	 * Returns a stream with a given value interspersed between any two values
@@ -1068,7 +1048,7 @@ public interface OperationsOnFutures<T> {
 	 * @return Element and Sequence
 	 */
 	default Tuple2<T, LazyFutureStream<T>> get(long index) {
-		Tuple2<SequenceM<FastFuture<T>>, SequenceM<FastFuture<T>>> tuple = this
+		Tuple2<ReactiveSeq<FastFuture<T>>, ReactiveSeq<FastFuture<T>>> tuple = this
 				.getLastActive().injectFuturesSeq().duplicateSequence();
 		return tuple.map1(
 				s -> s.zipWithIndex().filter(t -> t.v2 == index)
@@ -1199,7 +1179,7 @@ public interface OperationsOnFutures<T> {
 	 * 
 	 * @return Stream of CompletableFutures
 	 */
-	default SequenceM<CompletableFuture<T>> toStream(){
+	default ReactiveSeq<CompletableFuture<T>> toStream(){
 		return this.getLastActive().injectFuturesSeq().map(f->f.toCompletableFuture());
 	}
 	/**

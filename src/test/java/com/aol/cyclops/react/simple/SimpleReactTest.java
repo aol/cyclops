@@ -32,9 +32,9 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
+import com.aol.cyclops.control.LazyReact;
+import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.react.extractors.Extractors;
-import com.aol.cyclops.react.stream.lazy.LazyReact;
-import com.aol.cyclops.react.stream.simple.SimpleReact;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 import com.aol.cyclops.react.stream.traits.BaseSimpleReactStream;
 

@@ -1,6 +1,6 @@
 package com.aol.cyclops.react.async.pipes;
 
-import com.aol.cyclops.react.stream.simple.SimpleReact;
+import com.aol.cyclops.control.SimpleReact;
 
 public class EagerReactors {
 	private static volatile int IOThreadPoolSize=100;

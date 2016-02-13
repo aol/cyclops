@@ -1,9 +1,9 @@
 package com.aol.cyclops.react.async.vertx;
 
+import com.aol.cyclops.control.LazyReact;
+
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
-
-import com.aol.cyclops.react.stream.lazy.LazyReact;
 
 public class Starter extends AbstractVerticle {
 	  @Override

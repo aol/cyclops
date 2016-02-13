@@ -10,8 +10,8 @@ import lombok.Value;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
+import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.react.stream.ThreadPools;
-import com.aol.cyclops.react.stream.lazy.LazyReact;
 
 /**
  * 

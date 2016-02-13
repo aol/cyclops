@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import com.aol.cyclops.react.stream.simple.SimpleReact;
+import com.aol.cyclops.control.SimpleReact;
 
 
 

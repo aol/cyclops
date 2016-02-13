@@ -3,10 +3,10 @@ package com.aol.cyclops.react.mixins;
 import java.util.Optional;
 import java.util.function.Function;
 
+import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.react.async.Adapter;
 import com.aol.cyclops.react.async.pipes.Pipes;
 import com.aol.cyclops.react.async.pipes.LazyReactors;
-import com.aol.cyclops.react.stream.lazy.LazyReact;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 import com.aol.cyclops.react.threads.ParallelElasticPools;
 import com.aol.cyclops.react.threads.SequentialElasticPools;

@@ -26,12 +26,12 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.react.async.Queue;
 import com.aol.cyclops.react.async.Signal;
 import com.aol.cyclops.react.async.factories.QueueFactories;
 import com.aol.cyclops.react.base.BaseSeqTest;
 import com.aol.cyclops.react.stream.ThreadPools;
-import com.aol.cyclops.react.stream.lazy.LazyReact;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 
 public class LazySeqAgronaTest extends BaseSeqTest {

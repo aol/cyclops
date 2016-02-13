@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
+import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.react.async.Queue;
-import com.aol.cyclops.react.stream.lazy.LazyReact;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 
 public class AutoclosingTest {

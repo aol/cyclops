@@ -18,8 +18,8 @@ import lombok.experimental.Wither;
 
 import org.junit.Test;
 
+import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.react.extractors.Extractors;
-import com.aol.cyclops.react.stream.simple.SimpleReact;
 import com.aol.cyclops.react.util.SimpleTimer;
 
 

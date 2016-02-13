@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutionException;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.cyclops.react.stream.simple.SimpleReact;
+import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 
 public class IterationTest {

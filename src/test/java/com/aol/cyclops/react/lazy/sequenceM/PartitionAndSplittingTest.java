@@ -11,13 +11,13 @@ import java.util.function.Supplier;
 
 import org.junit.Test;
 
-import com.aol.cyclops.sequence.SequenceM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 
 public class PartitionAndSplittingTest {
 	@Test
 	public void testSplitBy() {
-		Supplier<SequenceM<Integer>> s = () -> LazyFutureStream.of(1, 2, 3, 4, 5, 6);
+		Supplier<ReactiveSeq<Integer>> s = () -> LazyFutureStream.of(1, 2, 3, 4, 5, 6);
 
 		assertEquals(6, s.get().splitBy(i -> i % 2 != 0).v1.toList().size() + s.get().splitBy(i -> i % 2 != 0).v2.toList().size());
 
@@ -30,7 +30,7 @@ public class PartitionAndSplittingTest {
 
 	@Test
 	public void testPartition() {
-		Supplier<SequenceM<Integer>> s = () -> LazyFutureStream.of(1, 2, 3, 4, 5, 6);
+		Supplier<ReactiveSeq<Integer>> s = () -> LazyFutureStream.of(1, 2, 3, 4, 5, 6);
 
 		assertEquals(asList(1, 3, 5), s.get().partition(i -> i % 2 != 0).v1.toList());
 		assertEquals(asList(2, 4, 6), s.get().partition(i -> i % 2 != 0).v2.toList());
@@ -49,7 +49,7 @@ public class PartitionAndSplittingTest {
 	}
 	@Test
 	public void testPartitionSequence() {
-		Supplier<SequenceM<Integer>> s = () -> LazyFutureStream.of(1, 2, 3, 4, 5, 6);
+		Supplier<ReactiveSeq<Integer>> s = () -> LazyFutureStream.of(1, 2, 3, 4, 5, 6);
 
 		assertEquals(asList(1, 3, 5), s.get().partitionSequence(i -> i % 2 != 0).v1.toList());
 		assertEquals(asList(2, 4, 6), s.get().partitionSequence(i -> i % 2 != 0).v2.toList());
@@ -70,7 +70,7 @@ public class PartitionAndSplittingTest {
 	@Test
 	public void testSplitAt() {
 		for (int i = 0; i < 1000; i++) {
-			Supplier<SequenceM<Integer>> s = () -> LazyFutureStream.of(1, 2, 3, 4, 5, 6);
+			Supplier<ReactiveSeq<Integer>> s = () -> LazyFutureStream.of(1, 2, 3, 4, 5, 6);
 
 			assertEquals(asList(), s.get().splitAt(0).v1.toList());
 			assertTrue(s.get().splitAt(0).v2.toList().containsAll(asList(1, 2, 3, 4, 5, 6)));

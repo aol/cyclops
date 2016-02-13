@@ -22,6 +22,7 @@ import java.util.stream.StreamSupport;
 
 import org.jooq.lambda.Seq;
 
+import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.react.RetryBuilder;
 import com.aol.cyclops.react.async.Queue;
 import com.aol.cyclops.react.async.factories.QueueFactory;
@@ -35,7 +36,6 @@ import com.aol.cyclops.react.stream.ReactBuilder;
 import com.aol.cyclops.react.stream.Status;
 import com.aol.cyclops.react.stream.StreamWrapper;
 import com.aol.cyclops.react.stream.ThreadPools;
-import com.aol.cyclops.react.stream.simple.SimpleReact;
 import com.aol.cyclops.react.stream.simple.SimpleReactStreamImpl;
 import com.aol.cyclops.react.stream.traits.operators.StreamCopier;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
@@ -127,7 +127,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U>{
 	 *	@return next stage in the Stream
 	 */
 
-	<R> BaseSimpleReactStream<R> then(final Function<U, R> fn, Executor service);
+	<R> BaseSimpleReactStream<R> then(final Function<? super U,? extends R> fn, Executor service);
 	/* 
 	 * React to new events with the supplied function on the supplied Executor
 	 * 
@@ -135,7 +135,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U>{
 	 *	@param service Service to execute function on 
 	 *	@return next stage in the Stream
 	 */
-	<R> BaseSimpleReactStream<R> thenSync(final Function<U, R> fn);
+	<R> BaseSimpleReactStream<R> thenSync(final Function<? super U,? extends R> fn);
 	
 	
 

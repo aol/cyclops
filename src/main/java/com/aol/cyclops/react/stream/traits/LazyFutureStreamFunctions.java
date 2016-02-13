@@ -38,7 +38,7 @@ public class LazyFutureStreamFunctions {
 	 * </code>
 	 */
 	static <T1, T2, R> Seq<R> zip(Stream<T1> left, Stream<T2> right,
-			BiFunction<T1, T2, R> zipper) {
+			BiFunction<? super T1,? super T2,? extends R> zipper) {
 		final Iterator<T1> it1 = left.iterator();
 		final Iterator<T2> it2 = right.iterator();
 
@@ -60,7 +60,7 @@ public class LazyFutureStreamFunctions {
 			}
 		}
 
-		return Seq.seq(new Zip());
+		return Seq.seq(new Zip()).onClose(()->{left.close(); right.close();});
 	}
 
 	static void close(Iterator it) {
@@ -134,7 +134,7 @@ public class LazyFutureStreamFunctions {
 			}
 		}
 
-		return Seq.seq(new LimitUntil());
+		return Seq.seq(new LimitUntil()).onClose(()->{stream.close();});
 	}
 	
 }

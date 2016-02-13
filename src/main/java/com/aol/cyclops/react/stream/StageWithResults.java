@@ -6,12 +6,12 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
 
+import com.aol.cyclops.react.stream.traits.ConfigurableStream;
+import com.aol.cyclops.util.ExceptionSoftener;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-
-import com.aol.cyclops.invokedynamic.ExceptionSoftener;
-import com.aol.cyclops.react.stream.traits.ConfigurableStream;
 
 @AllArgsConstructor
 @Slf4j

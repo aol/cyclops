@@ -28,8 +28,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.sequence.Monoid;
-import com.aol.cyclops.sequence.SequenceM;
-import com.aol.cyclops.react.stream.lazy.LazyReact;
+import com.aol.cyclops.control.LazyReact;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 
 
@@ -162,13 +162,13 @@ public  class BaseSequenceMTest {
 	
 	@Test
 	public void testDuplicate(){
-		 Tuple2<SequenceM<Integer>, SequenceM<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
+		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
 		 assertTrue(copies.v1.anyMatch(i->i==2));
 		 assertTrue(copies.v2.anyMatch(i->i==2));
 	}
 	@Test
 	public void testTriplicate(){
-		 Tuple3<SequenceM<Integer>, SequenceM<Integer>, SequenceM<Integer>> copies =of(1,2,3,4,5,6).triplicate();
+		 Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).triplicate();
 		 assertTrue(copies.v1.anyMatch(i->i==2));
 		 assertTrue(copies.v2.anyMatch(i->i==2));
 		 assertTrue(copies.v3.anyMatch(i->i==2));
@@ -176,7 +176,7 @@ public  class BaseSequenceMTest {
 	
 	@Test
 	public void testQuadriplicate(){
-		 Tuple4<SequenceM<Integer>, SequenceM<Integer>, SequenceM<Integer>,SequenceM<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
+		 Tuple4<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
 		 assertTrue(copies.v1.anyMatch(i->i==2));
 		 assertTrue(copies.v2.anyMatch(i->i==2));
 		 assertTrue(copies.v3.anyMatch(i->i==2));
@@ -185,20 +185,20 @@ public  class BaseSequenceMTest {
 
 	@Test
 	public void testDuplicateFilter(){
-		 Tuple2<SequenceM<Integer>, SequenceM<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
+		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
 		 assertTrue(copies.v1.filter(i->i%2==0).toList().size()==3);
 		 assertTrue(copies.v2.filter(i->i%2==0).toList().size()==3);
 	} 
 	@Test
 	public void testTriplicateFilter(){
-		Tuple3<SequenceM<Integer>, SequenceM<Integer>, SequenceM<Integer>> copies =of(1,2,3,4,5,6).triplicate();
+		Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).triplicate();
 		 assertTrue(copies.v1.filter(i->i%2==0).toList().size()==3);
 		 assertTrue(copies.v2.filter(i->i%2==0).toList().size()==3);
 		 assertTrue(copies.v3.filter(i->i%2==0).toList().size()==3);
 	} 
 	@Test
 	public void testQuadriplicateFilter(){
-		 Tuple4<SequenceM<Integer>, SequenceM<Integer>, SequenceM<Integer>,SequenceM<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
+		 Tuple4<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
 		 assertTrue(copies.v1.filter(i->i%2==0).toList().size()==3);
 		 assertTrue(copies.v2.filter(i->i%2==0).toList().size()==3);
 		 assertTrue(copies.v3.filter(i->i%2==0).toList().size()==3);
@@ -206,20 +206,20 @@ public  class BaseSequenceMTest {
 	}
 	@Test
 	public void testDuplicateLimit(){
-		 Tuple2<SequenceM<Integer>, SequenceM<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
+		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
 		 assertTrue(copies.v1.limit(3).toList().size()==3);
 		 assertTrue(copies.v2.limit(3).toList().size()==3);
 	} 
 	@Test
 	public void testTriplicateLimit(){
-		Tuple3<SequenceM<Integer>, SequenceM<Integer>, SequenceM<Integer>> copies =of(1,2,3,4,5,6).triplicate();
+		Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).triplicate();
 		 assertTrue(copies.v1.limit(3).toList().size()==3);
 		 assertTrue(copies.v2.limit(3).toList().size()==3);
 		 assertTrue(copies.v3.limit(3).toList().size()==3);
 	} 
 	@Test
 	public void testQuadriplicateLimit(){
-		 Tuple4<SequenceM<Integer>, SequenceM<Integer>, SequenceM<Integer>,SequenceM<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
+		 Tuple4<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
 		 assertTrue(copies.v1.limit(3).toList().size()==3);
 		 assertTrue(copies.v2.limit(3).toList().size()==3);
 		 assertTrue(copies.v3.limit(3).toList().size()==3);

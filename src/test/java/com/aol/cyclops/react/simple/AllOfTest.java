@@ -17,8 +17,8 @@ import org.junit.Test;
 import org.pcollections.HashPMap;
 import org.pcollections.HashTreePMap;
 
+import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.react.extractors.Extractors;
-import com.aol.cyclops.react.stream.simple.SimpleReact;
 
 
 public class AllOfTest {

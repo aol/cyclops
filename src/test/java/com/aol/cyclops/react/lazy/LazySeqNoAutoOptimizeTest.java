@@ -4,7 +4,7 @@ import static com.aol.cyclops.react.stream.traits.LazyFutureStream.parallel;
 
 import java.util.function.Supplier;
 
-import com.aol.cyclops.react.stream.lazy.LazyReact;
+import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 
 public class LazySeqNoAutoOptimizeTest extends LazySeqTest {

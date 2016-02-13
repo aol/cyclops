@@ -26,7 +26,7 @@ public interface ToQueue <U>{
 	 * @param shards Map of Queues sharded by key K
 	 * @param sharder Sharder function
 	 */
-	abstract<K> void toQueue(Map<K,Queue<U>> shards, Function<U,K> sharder);
+	abstract<K> void toQueue(Map<K,Queue<U>> shards, Function<? super U,? extends K> sharder);
 	/**
 	 * @return Factory for creating Queues to be populated
 	 */

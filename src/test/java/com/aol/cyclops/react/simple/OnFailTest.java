@@ -8,8 +8,8 @@ import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.react.async.Queue.ClosedQueueException;
-import com.aol.cyclops.react.stream.simple.SimpleReact;
 
 public class OnFailTest {
 

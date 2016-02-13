@@ -1,6 +1,6 @@
 package com.aol.cyclops.react.async.pipes;
 
-import com.aol.cyclops.react.stream.lazy.LazyReact;
+import com.aol.cyclops.control.LazyReact;
 
 public class LazyReactors {
 	private static volatile int IOThreadPoolSize=100;

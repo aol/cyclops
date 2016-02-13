@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.react.async.factories.QueueFactory;
 import com.aol.cyclops.react.async.future.FastFuture;
 import com.aol.cyclops.react.async.future.PipelineBuilder;
@@ -23,7 +24,6 @@ import com.aol.cyclops.react.async.subscription.Continueable;
 import com.aol.cyclops.react.exceptions.FilteredExecutionPathException;
 import com.aol.cyclops.react.exceptions.SimpleReactFailedStageException;
 import com.aol.cyclops.react.stream.LazyStreamWrapper;
-import com.aol.cyclops.react.stream.lazy.LazyReact;
 import com.aol.cyclops.react.stream.traits.operators.StreamCopier;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.nurkiewicz.asyncretry.policy.AbortRetryException;
@@ -60,7 +60,7 @@ public interface LazySimpleReactStream<U> extends
 	 *	@param service Service to execute function on 
 	 *	@return next stage in the Stream
 	 */
-	default <R> LazySimpleReactStream<R> then(final Function<U, R> fn, Executor service) {
+	default <R> LazySimpleReactStream<R> then(final Function<? super U, ? extends R> fn, Executor service) {
 		
 
 		
@@ -76,7 +76,7 @@ public interface LazySimpleReactStream<U> extends
 	 *	@return next stage in the Stream
 	 */
 	@SuppressWarnings("unchecked")
-	default <R> LazySimpleReactStream<R> thenSync(final Function<U, R> fn) {
+	default <R> LazySimpleReactStream<R> thenSync(final Function<? super U,? extends R> fn) {
 		
 		
 		return  this.withLastActive(

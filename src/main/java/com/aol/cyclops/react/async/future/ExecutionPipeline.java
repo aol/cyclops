@@ -1,22 +1,16 @@
 package com.aol.cyclops.react.async.future;
-import lombok.experimental.Wither;
-
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import lombok.AllArgsConstructor;
-import lombok.ToString;
 
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
-import com.aol.cyclops.functions.caching.Memoize;
+import lombok.AllArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.Wither;
 @ToString
 @AllArgsConstructor
 @Wither
