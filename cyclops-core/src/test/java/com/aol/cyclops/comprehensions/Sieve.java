@@ -18,8 +18,10 @@ public class Sieve {
 	ReactiveSeq<Integer> sieve(ReactiveSeq<Integer> s){
 		HeadAndTail<Integer> headAndTail = s.headAndTail();
 		
-		return headAndTail.headStream().appendStream(sieve(headAndTail.tail().filter(n -> n % headAndTail.head() != 0)));
-		
+		return headAndTail.isHeadPresent() ? ReactiveSeq.of() : 
+							ReactiveSeq.of(headAndTail.head())
+				.appendStream(sieve(headAndTail.tail().filter(n -> n % headAndTail.head() != 0)));
+
 	}
 	@Test
 	public void sieveTest2(){

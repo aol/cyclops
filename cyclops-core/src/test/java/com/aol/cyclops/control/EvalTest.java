@@ -122,6 +122,10 @@ public class EvalTest {
 	}
 	@Test
 	public void ap3OptionalEmptyFunction(){
+		System.out.println("r="+Maybe.of("hello").ap3(this::concat)
+									.ap(Optional.empty())
+									.ap(CompletableFuture.supplyAsync(()->"boo!")));
+		
 		assertFalse(Maybe.of("hello").ap3(this::concat).ap(Optional.empty()).ap(CompletableFuture.supplyAsync(()->"boo!")).toOptional().isPresent());
 
 	}

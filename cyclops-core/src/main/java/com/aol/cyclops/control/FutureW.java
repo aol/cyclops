@@ -165,6 +165,10 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 		
 		return(FutureW<R>)Applicativable.super.trampoline(mapper);
 	}
+	@Override
+	public String toString() {
+		return mkString();
+	}
 	
 	
 }

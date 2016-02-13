@@ -24,9 +24,8 @@ public interface Applicative<T,R, D extends ConvertableFunctor<R>> extends Funct
 	ConvertableFunctor<Function<? super T,? extends R>>  delegate();
 	
 	default D ap(ConvertableFunctor<T> f){
-		Functor f2 = f;
-		System.out.println("F = "+f);
-		return (D)delegate().toOptional().map (myFn-> f.map(t->myFn.apply(t))).orElse(f2);
+		
+		return (D)delegate().toOptional().map (myFn-> f.map(t->myFn.apply(t))).orElse(Maybe.none());
 	}
 	default D ap(Optional<T> f){
 		return ap(Maybe.fromOptional(f));

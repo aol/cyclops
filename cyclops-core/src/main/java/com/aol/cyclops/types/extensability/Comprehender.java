@@ -112,15 +112,8 @@ public interface Comprehender<T> {
 		
 		if (comp.instanceOfT(apply))
 			return (T) apply;
-/**
-		if (apply instanceof Optional) {
-			if (((Optional) apply).isPresent())
-				return comp.of(((Optional) apply).get());
-			return comp.empty();
-		}
-	**/	
-		
-		
+
+				
 		if (apply instanceof Stream) {
 			return comp.of(((Stream) apply).collect(Collectors.toCollection(MaterializedList::new)));
 		}

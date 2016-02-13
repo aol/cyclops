@@ -24,7 +24,7 @@ import com.aol.cyclops.types.stream.ToStream;
  *
  * @param <F>
  */
-public interface FeatureToggle<F> extends Supplier<F>, Value<F>, ToStream<F>,Applicativable<F> {
+public interface FeatureToggle<F> extends Supplier<F>, Value<F>, Applicativable<F> {
 
 	boolean isEnabled();
 	boolean isDisabled();
@@ -243,7 +243,7 @@ public interface FeatureToggle<F> extends Supplier<F>, Value<F>, ToStream<F>,App
 		 * @return This monad, wrapped as AnyM
 		 */
 		public AnyM<F> anyM(){
-			return AnyM.fromStreamable(this);
+			return AnyM.ofValue(this);
 		}
 		/**
 		 * @return This monad, wrapped as AnyM of Disabled
@@ -388,7 +388,7 @@ public interface FeatureToggle<F> extends Supplier<F>, Value<F>, ToStream<F>,App
 			 * @return This monad, wrapped as AnyM of Disabled
 			 */
 			public AnyM<F> anyMDisabled(){
-				return  AnyM.fromStreamable(this);
+				return AnyM.ofValue(this);
 			}
 			/**
 			 * @return This monad, wrapped as AnyM of Enabled

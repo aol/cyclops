@@ -746,7 +746,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 		 */
 		@Override
 		public ReactiveSeq<T> stream() {
-			return ReactiveSeq.<T>of();
+			return ReactiveSeq.<T>of(value);
 		}
 
 		/* 
