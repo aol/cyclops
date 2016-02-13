@@ -10,8 +10,8 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.javaslang.ToStream;
-import com.aol.simple.react.stream.ThreadPools;
-import com.aol.simple.react.stream.lazy.LazyReact;
+import com.aol.cyclops.react.stream.ThreadPools;
+import com.aol.cyclops.react.stream.lazy.LazyReact;
 
 @Value
 public class JavaslangReactiveStreamsPublisher<T> implements Publisher<T>{

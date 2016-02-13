@@ -5,7 +5,7 @@ import org.reactivestreams.Subscription;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.reactive.CyclopsSubscriber;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsSubscriber;
-import com.aol.simple.react.reactivestreams.JDKReactiveStreamsSubscriber;
+import com.aol.cyclops.react.reactivestreams.JDKReactiveStreamsSubscriber;
 
 public class MockSubscriber<T> implements ReactiveStreamsSubscriber<T> {
 

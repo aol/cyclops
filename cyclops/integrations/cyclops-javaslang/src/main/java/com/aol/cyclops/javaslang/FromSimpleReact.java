@@ -1,6 +1,6 @@
 package com.aol.cyclops.javaslang;
 
-import com.aol.simple.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 
 public class FromSimpleReact {
 	public static <T> javaslang.collection.LazyStream<T> fromSimpleReact(

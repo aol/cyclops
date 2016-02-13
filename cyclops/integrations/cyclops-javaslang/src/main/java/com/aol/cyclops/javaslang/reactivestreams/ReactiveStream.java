@@ -48,11 +48,11 @@ import com.aol.cyclops.sequence.future.FutureOperations;
 import com.aol.cyclops.sequence.reactivestreams.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops.sequence.streamable.Streamable;
 import com.aol.cyclops.trampoline.Trampoline;
-import com.aol.simple.react.async.factories.QueueFactories;
-import com.aol.simple.react.stream.lazy.LazyReact;
-import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.traits.LazyFutureStream;
-import com.aol.simple.react.stream.traits.SimpleReactStream;
+import com.aol.cyclops.react.async.factories.QueueFactories;
+import com.aol.cyclops.react.stream.lazy.LazyReact;
+import com.aol.cyclops.react.stream.simple.SimpleReact;
+import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.react.stream.traits.SimpleReactStream;
 
 public interface ReactiveStream<T> extends LazyStream<T>, Publisher<T>, ReactiveStreamsTerminalOperations<T>{
 

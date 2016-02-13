@@ -12,7 +12,7 @@ import javaslang.collection.Stream;
 import javaslang.control.Option;
 
 import com.aol.cyclops.invokedynamic.ExceptionSoftener;
-import com.aol.simple.react.async.subscription.Continueable;
+import com.aol.cyclops.react.async.subscription.Continueable;
 
 public class FromJDK<T,R> {
 	

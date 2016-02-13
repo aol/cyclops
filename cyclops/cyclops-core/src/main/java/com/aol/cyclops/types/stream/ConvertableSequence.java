@@ -34,10 +34,10 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
-import com.aol.simple.react.stream.lazy.LazyReact;
-import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.traits.LazyFutureStream;
-import com.aol.simple.react.stream.traits.SimpleReactStream;
+import com.aol.cyclops.react.stream.lazy.LazyReact;
+import com.aol.cyclops.react.stream.simple.SimpleReact;
+import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.react.stream.traits.SimpleReactStream;
 
 public interface ConvertableSequence<T> extends Iterable<T>{
 	

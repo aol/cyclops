@@ -9,10 +9,10 @@ import lombok.Getter;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import com.aol.simple.react.async.Queue;
-import com.aol.simple.react.async.Queue.ClosedQueueException;
-import com.aol.simple.react.async.subscription.Continueable;
-import com.aol.simple.react.stream.traits.Continuation;
+import com.aol.cyclops.react.async.Queue;
+import com.aol.cyclops.react.async.Queue.ClosedQueueException;
+import com.aol.cyclops.react.async.subscription.Continueable;
+import com.aol.cyclops.react.stream.traits.Continuation;
 
 public class JavaslangReactiveStreamsSubscriber<T> implements Subscriber<T> {
 

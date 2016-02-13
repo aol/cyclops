@@ -1,6 +1,6 @@
 package com.aol.cyclops.guava;
 
-import com.aol.simple.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 import com.google.common.collect.FluentIterable;
 
 public class FromSimpleReact {

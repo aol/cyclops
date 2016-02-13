@@ -31,10 +31,10 @@ import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.simple.react.stream.lazy.LazyReact;
-import com.aol.simple.react.stream.simple.SimpleReact;
-import com.aol.simple.react.stream.traits.LazyFutureStream;
-import com.aol.simple.react.stream.traits.SimpleReactStream;
+import com.aol.cyclops.react.stream.lazy.LazyReact;
+import com.aol.cyclops.react.stream.simple.SimpleReact;
+import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.react.stream.traits.SimpleReactStream;
 
 import lombok.AllArgsConstructor;
 
