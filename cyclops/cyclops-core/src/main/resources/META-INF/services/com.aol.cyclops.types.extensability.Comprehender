@@ -1,0 +1,13 @@
+com.aol.cyclops.internal.comprehensions.comprehenders.TryComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.FeatureToggleComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.ReaderComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.EvalComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.StreamComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.OptionalComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.CompletableFutureComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.StreamableComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.ListComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.SetComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.MaybeComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.XorComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.IorComprehender

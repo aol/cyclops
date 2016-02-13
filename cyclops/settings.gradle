@@ -1,0 +1,5 @@
+rootProject.name = 'com.aol.cyclops'
+include ':integrations:cyclops-javaslang'
+include ':integrations:cyclops-functionaljava'
+include ':integrations:cyclops-guava'
+include ':cyclops-core'

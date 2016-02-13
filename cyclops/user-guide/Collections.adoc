@@ -1,0 +1,105 @@
+[index]
+
+== Working with Collections
+
+(Work in progress)
+
+While Cyclops doesn't implement any collection types directly itself, it does provide a very poweful series of extension methods over existing JDK collection interfaces (with plugable implementations). As we shall see cyclops provides a very powerful stream-like interface into mutable, immutable and persistent collections - all while extending the existing JDK interfaces.
+
+Cyclops also does leverage two libraries with a number of very useful collection types to make modern functional-style and asynchronous programming easier.
+
+Those libs are
+
+1. PCollections : PCollections provides persistent collections that implement the standard JDK Collection interfaces. add / remove / put based methods are deprecated and alternatives - plus and minus are used instead.
+1. Agrona : Agrona provide a number of advanced concurrent collections, such as various wait-free queues and ring-buffers.
+
+== PCollections
+
+http://pcollections.org[From PCollections.org]
+[NOTE]
+====
+PCollections serves as a persistent and immutable analogue of the Java Collections Framework. This includes *efficient*, *thread-safe*, *generic*, *immutable*, and *persistent* stacks, maps, vectors, sets, and bags, *compatible* with their Java Collections counterparts.
+
+Persistent and immutable datatypes are increasingly appreciated as a simple, design-friendly, concurrency-friendly, and sometimes more time- and space-efficient alternative to mutable datatypes.
+====
+
+==== Collections
+
+Cyclops provides a package (com.aol.cyclops.collections) filled with companion classes for creating instances of PCollections. Each companion class offers handy methods for collection creation and conversion (reduction) from a Stream.
+
+===== PMaps
+
+PMaps are persistent equivalents of JDK HashMaps.
+
+===== PStacks
+
+PStacks are persistent equivalents of JDK LinkedLists.
+
+[IMPORTANT]
+====
+For efficiency reasons, PStack prepends values to the PStack when plusAll is called, this results in reversed order PStacks when created from Streams.
+====
+
+.create PStacks
+[source,java]
+----
+PStack<String> list = PStacks.of("a","b","c");
+PStack<String> list = PStacks.fromCollection(Arrays.asList("a","b","c"));
+List<String> empty = PStacks.empty();
+PStack<String> single = PStacks.singleton("1");
+----
+
+.convert a Stream to a PStack
+[source,java]
+----
+PStack<Integer> list = PStacks.fromStream(Stream.of(1,2,3));
+ //list = [3,2,1]
+ 
+PStack<String> list = SequenceM.of("a","b","c").mapReduce(PStacks.toPStack()
+//list = ["c","b","a"]
+
+PStack<String> list = PStacks.toPStack().reduce(Stream.of("a","b","c")));
+//list = ["c","b","a"]
+----
+===== PVectors
+
+[IMPORTANT]
+====
+Unlike PStacks, PVector append new data to the persistent List when plusAll is called.
+====
+
+.create PVectors
+[source,java]
+----
+PVector<String> list = PVectors.of("a","b","c");
+List<String> empty = PVectors.empty();
+PVector<String> single = PVectors.singleton("1");
+PVector<String> list = PVector.fromCollection(Arrays.asList("a","b","c"));
+----
+
+.convert a Stream to a PVector
+[source,java]
+----
+PVector<Integer> list = PVectors.fromStream(Stream.of(1,2,3));
+ //list = [1,2,3]
+ 
+PVector<String> list = SequenceM.of("a","b","c").mapReduce(PVectors.toPVector()
+//list = ["a","b","c"]
+
+PVector<String> list = PVectors.toPVector().reduce(Stream.of("a","b","c")));
+//list = ["a","b","c"]
+----	 
+===== PSets
+===== PBags
+===== PQueues
+===== OrderedPSets
+
+==== Reducers
+
+== Agrona
+
+https://github.com/real-logic/Agrona[From https://github.com/real-logic/Agrona]
+[NOTE]
+====
+Agrona provides a library of data structures and utility methods that are a common need when building high-performance applications in Java. Many of these utilities are used in the https://github.com/real-logic/Aeron[Aeron] efficient reliable UDP unicast, multicast, and IPC message transport.
+====

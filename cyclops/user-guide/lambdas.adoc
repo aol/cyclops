@@ -1,0 +1,1195 @@
+[index]
+
+== Working with Lambdas
+
+Cyclops provides a number of classes that makes working with Java 8 lambda expressions a little easier, they are listed below.
+
+
+.Lambda Helper Classes
+****
+1. FluentFunctions : a fluent api for manipulating Supplier, Functions, BiFunctions, TriFunctions and equivalent method reference. Easy AOP, caching, async execution and more.
+1. Mutable : a wrapper class for a mutable local (or external value)
+1. LazyImmutable : a value that can be set just once, and computed lazily
+1. ExceptionSoftener : because JDK 8 functional interfaces don't support checked exceptions, ExceptionSoftener allows CheckedExceptions to be Softened to Unchecked Exceptions without impacting their type (equiavlent to Lombok's Sneaky Throws) - and provides a number of static methods for Softening the jOOλ Checked Functional Interfaces.
+1. Memoize : A class that allows functional interfaces & method references to cache their return values, supporting pluggable cache implementations (such as Caffeine and Guava)
+1. Curry : Convert a single mutli-parameter function (or method reference) into a chain of single parameter functions
+1. Uncurry : Convert a chain of single-parameter functions into a single multi-parameter function
+1. Lambda : A class with static to help with type inferencing when using Lambda's
+1. PartialApplicator : Lazily set some of the parameters on a multi-parameter function, returning a function with the remaining parameters.
+****
+
+=== FluentFunctions
+
+Since cyclops 7.3.0
+
+==== Overview
+
+Cyclops provides a wide array of static utilities for manipulating functions & method references and FluentFunctions brings it together in a nice easy to use API. 
+
+==== Features include
+
+1. AOP : before, after and around advice
+1. Caching : memoization, including with external caches (e.g. Guava)
+1. Error handling and recovery, Configurable retry : recover and retry operators
+1. Exception softening : soften checked exceptions to runtimeexcetions without changing the type
+1. Logging & println : log inputs, outputs and exceptions. Print to the console inputs, outputs and exceptions (delegates a call to log)
+1. Pattern matching : conditional behaviour based on function outputs
+1. Currying & Partial Application : convert a Multi-parameter function into a chain of single parameter functions. Convert a Multi-parameter function into a lesser parametered function
+1. Generate a Stream from the output of the function (via iterate and generate)
+1. Lifting : lift a partial function to a complete one, handle nulls, exceptions, liftM to any Monad type
+1. Async execution
+1. Convert statements (void methods & consumers) to expressions (functions with return types).
+
+==== Feature examples
+
+
+We can illustrate FluentFunctions funcationality with a number of examples. The nature of many of these operations will be described in more detail, later on in this document, in individually dedicated sections.
+
+====== Error and recovery
+
+.Handling exceptions with FluentFunctions
+====
+Given a method that throws an Exception (in this case a contrived example where the first call always fails, but subsequent calls succeed).
+
+[source,java]
+----
+int times =0;
+public String exceptionalFirstTime(String input) throws IOException{
+        if(times==0){
+            times++;
+            throw new IOException();
+        }
+        return input + " world"; 
+}
+----
+We can make use of FluentFunctions to retry the method twice 500ms apart.
+[source,java]
+----
+FluentFunctions.ofChecked(this::exceptionalFirstTime)
+               .println()
+               .retry(2,500)
+               .apply("hello");   
+----
+
+And the output will look something like this (thanks to the println operator).
+
+[source,java]
+----
+(fluent-function-Parameter[hello])
+java.io.IOException
+    at com.aol.cyclops.functions.fluent.FunctionsTest.exceptionalFirstTime(FunctionsTest.java:95)
+   ...
+(fluent-function-Parameter[hello])
+(fluent-function-Result[hello world])
+----
+
+Alternatively we could decide to recover from the thrown exception.
+
+[source,java]
+----
+FluentFunctions.ofChecked(this::exceptionalFirstTime)
+               .recover(IOException.class, in->in+"boo!")
+               .println()
+               .apply("hello ");   
+
+        
+----
+
+And the output would look like this (notice the missing StackTrace as the Exception has now been handled!.
+
+[source,java]
+----
+(fluent-function-Parameter[hello ])
+(fluent-function-Result[hello boo!]) 
+----
+====
+
+.Caching method calls with FluentFunctions
+====
+
+With a method that does simple addition, we can keep track of the number of times it is called.
+
+[source,java]
+----
+int called;
+public int addOne(int i ){
+        called++;
+       return i+1;
+}
+----
+
+If we use the memoize (cache) method on FluentFunctions, all calls to our method will be cached.
+
+[source,java]
+----
+Function fn = FluentFunctions.of(this::addOne)
+                             .name("myFunction")
+                             .memoize();
+----
+
+Calling apply multiple times will result in called being incremented only once.
+
+[source,java]
+----
+fn.apply(10);
+fn.apply(10);
+fn.apply(10);
+
+called is 1
+----
+
+But, c'mere, there's more..
+
+We can plugin any cache implementation we like, so let's set up a Guava cache (Caffiene has a similar API).
+
+[source,java]
+----
+Cache<Object, Integer> cache = CacheBuilder.newBuilder()
+                   .maximumSize(1000)
+                   .expireAfterWrite(10, TimeUnit.MINUTES)
+                   .build();
+
+---- 
+
+Now we can use our cache by passing a lambda expression in the format below to memoize. Our lambda must take two parameters, the first of which is the cache key, and the second is the function used to generate the value (in this example f is our method reference to addOne).
+
+[source,java]
+----
+Function fn = FluentFunctions.of(this::addOne)
+                             .name("myFunction")
+                             .memoize((key,f)->cache.get(key,()->f.apply(key)));
+
+fn.apply(10);
+fn.apply(10);
+fn.apply(10);
+
+called is 1
+----
+
+====
+====== Aspect Oriented Programming
+FluentFunctions makes it very easy to apply AOP-style advice.
+
+.Before Adivce
+====
+
+First let's create a method that returns true if a variable has already been set to the input value the method takes.
+
+[source,java]
+----
+int set;
+public boolean events(Integer i){
+        return set==i;
+}
+----
+
+Events will return true, if set has already been set to i. Let's use this method to illustrate the application of before advice.
+
+*Before advice*
+
+We can use before advice, to capture the input to our method, *before* that method is called.
+
+[source,java]
+----
+set = 0;
+FluentFunctions.of(this::events)
+               .before(i->set=i)
+               .println()
+               .apply(10);
+----
+Using the println() operator our output looks like this
+
+[source,java]
+----
+(fluent-function-Parameter[10])
+(fluent-function-Result[true])
+----
+As you can see events returns true, because the input 10 has been captured and the variable set has been set to 10 in our before advice.
+
+====
+.After Advice
+====
+
+With After Advice we can capture the input to our method, and the output from our method *after* it has been called. So, let's capture both in two variables setIn and setOut.
+
+[source,java]
+----
+setIn= 0;
+setOut = true
+
+FluentFunctions.of(this::events)
+               .after((in,out)->{setIn=in;setOut=out;} )
+               .println()
+               .apply(10);
+----
+
+At the end out our run setIn will be 10 (the input) and setOut will be false (our result - because we are no longer setting the value of set to the input parameter before events is called).
+
+[source,java]
+----
+(fluent-function-Parameter[10])
+(fluent-function-Result[false])
+
+setIn =10
+setOut = false               
+----
+
+====
+
+.Around advice
+====
+
+With *Around Advice* we can control whether or not or methods are executed, and with what parameters they are executed, as well as having the facility to change the return value.
+
+Given a method that simply adds 1 to a parameter.
+
+[source,java]
+----
+public int addOne(int i ){
+        return i+1;
+}
+----
+
+We can construct Around advice that modifies the input parameter to our method, in this case by incrementing it by 1 before the method is called.
+
+[source,java]
+----
+FluentFunctions.of(this::addOne)
+               .around(advice->advice.proceed(advice.param+1))
+               .println()
+               .apply(10)
+----
+
+And our output looks like this (we add two to the input of ten).
+
+[source,java]
+----
+(fluent-function-Parameter[10])
+(fluent-function-Result[12])
+
+//12 because addOne adds one and so does the around advice
+----
+
+====
+
+====== Pattern Matching
+
+We can also use cyclops Pattern Matching to implement conditional logic after function execution.
+
+.Pattern Matching example
+====
+
+In this example we will call a method that simply adds 1 to its input. If the result is 2, our pattern matcher will return 3 instead, otherise -1 will be returned.
+
+[source,java]
+----
+FluentFunctions.of(this::addOne)    
+               .matches(-1,c->c.hasValues(2).then(i->3))
+               .apply(1)    
+
+//returns 3  
+----
+====
+
+===== Stream Generation & Iteration
+
+We can use FluentFunctions to turn any method (3 parameter or less) into a Stream generator. Let's find out how with some examples.
+
+.Stream generation
+====
+
+Given a method that takes a value adds a timestamp and returns it.
+
+[source,java]
+----
+public String gen(String input){
+        return input+System.currentTimeMillis();
+}
+----
+
+We can generate a Stream from this method using FluentFunctions as follows 
+
+
+[source,java]
+----
+FluentFunctions.of(this::gen)
+               .println()
+               .generate("next element")
+               .onePer(1, TimeUnit.SECONDS)
+               .forEach(System.out::println);
+----
+
+In the example above the call to generate results in a SequenceM, a powerful JDK 8 Stream extension that forms part of cyclops. We use the onePer operator to limit the number of emissions by this Stream to one per second.
+
+The output from our Stream will look something like this.
+[source,java]
+----
+(fluent-function-Parameter[next element])
+(fluent-function-Result[next element1453819221151])
+next element1453819221151
+(fluent-function-Parameter[next element])
+(fluent-function-Result[next element1453819221151])
+next element1453819221151
+(fluent-function-Parameter[next element])
+(fluent-function-Result[next element1453819222153])
+next element1453819222153
+(fluent-function-Parameter[next element])
+(fluent-function-Result[next element1453819223155])
+next element1453819223155
+(fluent-function-Parameter[next element])
+(fluent-function-Result[next element1453819224158])
+----
+
+====
+.Stream iteration
+====
+We can also use a method or function to iterate infinitely over it's own input / output data cycle.
+
+In the example below we use the method addOne that adds 1 to it's input to generate an infinite sequence of numbers starting from 95281. 
+
+[source,java]
+----
+FluentFunctions.of(this::addOne)    
+                        .iterate(95281,i->i)
+                        .forEach(System.out::println);  
+95282
+95283
+95284
+95285
+95286
+95287
+95288
+95289
+95290
+95291
+95292
+95293
+95294     
+----
+
+Note in orde to cycle infinitely over a methods input/output data output must be mapped back to input type on each cycle. Iterate takes a seed value and a function that maps from output types to input types.
+====
+
+====== Lifting functions
+
+Lifting functions refers to the ability to lift a function to a higher context, for example to lift a partial function (one that does not apply to all possible input values) to a complete one. The lift methods in FluentFunctions allow methods to be lifted to accept and return Optionals (for null-handling at either end), Try (for exception handling), or to any other monad type via AnyM.
+
+.Lifting example
+====
+Let's start with a function that add's one to a number that accepts a nullable Integer, and a variable of type Integer that just happens to be null.
+
+[source,java]
+----
+public Integer addOne(Integer i ){
+        return i+1;
+}
+Integer nullValue = null;
+----
+
+Calling addOne directly with nullValue will result in a null pointer exception. Using the lift method however, we can wrap addOne so that it accepts and returns Optional, thus completely avoiding the possibilty of an NPE.
+[source,java]
+----
+FluentFunctions.of(this::addOne)    
+               .lift()
+               .apply(Optional.ofNullable(nullValue)); 
+----
+
+====
+=== Mutable
+
+==== Overview
+
+Java lambda expressions can access local variables, but the Java
+compiler will enforce an *effectively final* rule. cyclops-closures
+makes capturing variables in a mutable form a little simpler. http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/mutable/Mutable.html[Mutable]
+provides a wrapper over a mutable variable, it implements
+http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/Convertable.html[Convertable]
+which allows the value to be converted into various forms (such as a
+thread-safe AtomicReference, Optional, Stream, CompletableFuture etc).
+
+
+==== Available Mutable classes 
+
+* http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/mutable/Mutable.html[Mutable]
+* http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/mutable/MutableInt.html[MutableInt]
+* http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/mutable/MutableDouble.html[MutableDouble]
+* http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/mutable/MutableLong.html[MutableLong]
+* http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/mutable/MutableFloat.html[MutableFloat]
+* http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/mutable/MutableShort.html[MutableShort]
+* http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/mutable/MutableByte.html[MutableByte]
+* http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/mutable/MutableChar.html[MutableChar]
+* http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/mutable/MutableBoolean.html[MutableBoolean]
+
+==== Mutable local variables
+
+Mutable can be used to work around Java's effectively final rule, simply wrap any Mutable variable you would like to mutate inside an (effectively) final Mutable instance.
+
+.MutableInt within a Stream
+====
+In this example, we mutate a local primitive variable using MutableInt, inside a lambda expression passed into a Stream. The mutate method is similar to map in Optional or Stream, in that accepts a function that takes the current value and returns a new one. It is different in that it mutates the MutableInt rather than creating a new mutable instances.
+                
+[source,java]
+----
+
+MutableInt num = MutableInt.of(20);
+
+Stream.of(1,2,3,4)
+      .map(i->i*10)
+      .peek(i-> num.mutate(n->n+i))
+      .forEach(System.out::println);
+
+assertThat(num.get(),is(120));
+----
+====
+  
+
+
+[CAUTION]
+====
+The Mutable classes are not suitable for multi-threaded use, for example within parallel Streams, however they do implement the Converable interface which allows values to be easily converted into many different types including AtomicReference.
+====
+
+.Set inside a lambda
+====
+
+In this simple example we will create a Mutable that manipulates Objects - in this case with the generic type parameter of <String>, and we will set the value of the mutable inside a Runable. 
+
+[source,java]
+----
+Mutable<String> var =  Mutable.of("hello");
+Runnable r = () -> var.set("world");
+----
+
+====
+[NOTE]
+====
+In the above example, the value stored inside of var will not be set until the run method on r is called.
+====
+==== Mutable external variables
+
+Mutable can also be used to mutate non-local variables such as fields, or even fields in other objects.
+
+.Create a Mutable from a Supplier and Consumer combination
+====
+
+
+Mutables can be used to wrap access to an external field/s via the fromExternal method with a Supplier and Consumer.
+
+In the example below, the call to ext.set( ) updates the field var - via the consumer passed as the second parameter to fromExternal.
+[source,java]
+----
+String var = "world";
+
+Mutable<String> ext = Mutable.fromExternal(()->var,v->this.var=v);
+ext.set("hello");
+----
+In addition we can apply functions to transofrm both our inputs and outputs. For example if we want to create different mutable instances to handle setting the same source, in different ways.
+[source,java]
+----
+String var = "world";
+
+Mutable<String> ext = Mutable.fromExternal(()->var,v->this.var=v);
+ext.set("hello");
+
+Mutable<String> userInputHandler = ext.mapInputs(in-> validate(in));
+userInputHandler.set("hello"); // will be validated before setting var
+----
+
+To use an external Mutable to update a local value, that local var itself would have to be stored in a Mutable.
+
+[source,java]
+----
+Mutable<String> var = Mutable.of("world");
+
+Mutable<String> ext = Mutable.fromExternal(()->var.get(),v->this.var.set(v));
+ext.set("hello");
+----
+
+====
+==== Usages of mutable in Cyclops
+
+Mutable is used inside Cyclops for-comprehensions simplify the handling of an immutable (persisent) datastructure that needs to be mutated.
+
+.Mutable is used to store the current variables in a for-comprehension
+====
+[source,java]
+----
+build(ComprehensionData c, Function f) {
+			
+	Mutable<PVector<String>> vars = new Mutable<>(TreePVector.empty());
+	getAssigned().stream().forEach(e-> addToVar(e,vars,handleNext(e,c,vars.get())));
+	Mutable<Object> var = new Mutable<>(f);
+		
+	return c.yield(()-> unwrapNestedFunction(c, f, vars.get());
+}
+----
+====
+=== LazyImmutable
+
+
+A set-once wrapper over an AtomicReference. Unlike the MutableXXX classes LazyImmutable is designed for sharing across threads where the first thread to attempt can write to the reference, and subsequent threads can read only. http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/immutable/LazyImmutable.html[LazyMutable]
+provides a thread-safe wrapper over a variable that can be set once, it
+implements
+http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/Convertable.html[Convertable]
+which allows the value to be converted into various forms (such as a
+thread-safe AtomicReference, Optional, Stream, CompletableFuture etc).
+
+[IMPORTANT]
+====
+Only the first attempt at setting a value is accepted, subsequent
+attempts are ignored.
+====
+
+==== Usage
+
+We use LazyImmutable inside of cyclops itself to implement Memoization (lambda caching) support. We do this by taking advantage of lazy evaluation support inside LazyImutable. The example below shows how it is used.
+
+
+.Create a memoizing (caching) Supplier that can be shared across threads.
+====
+
+Inside our memoizeSupplier method we use a local LazyImmutable to lazily cache the result of calling s.get();
+
+```java
+public static <T> Supplier<T> memoizeSupplier(Supplier<T> s){
+		LazyImmutable<T> lazy = LazyImmutable.def();
+		return () -> lazy.computeIfAbsent(s);
+}
+
+Supplier<String> cached = memoizeSupplier(()->"Hello world:"+System.currentTimeMillis());
+```
+
+When cached.get() is called for the first time, it delegates to lazy.computeIfAbsent(s);. Our LazyImmutable will not be set at this point and it will execute and cache the result of s.get();
+
+Subsequent calls to cached.get() will all show the same timestamp as the cached value will be used.
+====
+[NOTE]
+====
+By using computeIfAbsent we can have LazyImmutable lazily determine whether or not the value to set should be computed.
+====
+
+===== Strict / non-lazy usage
+
+The setOnce method provides a non-lazy (strict) alternative to computeIfAbsent. In this case the value to be passed is always evaluated, but the setOnce (simulated Immutability) semantics are maintained. In other words if setOnce is called multiple times with different values, the LazyImmutable will continue to hold only the first.
+
+.A non-lazy LazyImmutable by using setOnce.
+====
+
+
+setOnce - sets a value directly, but only the first time it is called
+```java
+
+LazyImmutable<Integer> value = new LazyImmutable<>();
+Supplier s= () -> value.setOnce(10).get();
+
+assertThat(s.get(),is(10));
+assertThat(value.get(),is(10));
+```
+computeIfAbsent lazily compute a value if the lazyimmutable is unset
+
+```java
+LazyImmutable<Integer> value = new LazyImmutable<>();
+Supplier s= () -> value.computeIfAbsent(()->10);
+assertThat(s.get(),is(10));
+assertThat(value.computeIfAbsent(()->20),is(10));
+
+```
+set twice, second time has no effect
+```java
+LazyImmutable<Integer> value = new LazyImmutable<>();
+Supplier s= () -> value.setOnce(10);
+value.setOnce(20); //first time set
+		
+s.get();
+		
+		
+assertThat(value.get(),is(20));
+```
+====
+
+===== Monad-like functionality
+
+LazyImmutable also has monadic functional operators such as map & flatMap, these will be familar to Java developers who have experience using Optional or Stream. They can be used to create a new LazyImmutable with a transformed value inside.
+
+.flatMapping a LazyImmutable.
+====
+```java
+//flatMap
+LazyImmutable<Integer> value = new LazyImmutable<Integer>();
+value.setOnce(10);
+LazyImmutable<Integer> value2 = value.flatMap(i->LazyImmutable.of(i+10));
+assertThat(value2.get(),equalTo(20));
+
+```
+====
+=== ExceptionSoftener
+
+==== The 'problem' with functional interfaces
+
+JDK Functional interfaces do not support CheckedExceptions.
+
+[source,java]
+----
+public Data load(Task t) throws IOException(){
+   ..
+}
+
+Stream.generate(()->nextTask())
+      .map(this::load)  // DOES NOT COMPILE
+      
+----
+
+==== Overview
+
+With Cyclops ExceptionSoftener, there is no need to declare CheckedExceptions, or even to wrap them inside RuntimeException. The ExceptionSoftener converts CheckedExceptions into UncheckedExceptions _without_ changing the Exception type. That is, your
+function or method can still throw IOException, it just no longer needs
+to declare it.
+
+
+The example below shows a number of usages of ExceptionSoftener.
+
+.Throwing a softened exception
+==== 
+```java
+throw ExceptionSoftener.throwSoftenedException(new IOException("hello"));
+
+throw ExceptionSoftener.throwSoftenedException(new Exception("hello"));
+
+//doesn't need softened, but will still work
+throw ExceptionSoftener.throwSoftenedException(new RuntimeException("hello"));
+```
+==== 
+TIP: Always use *throw* ExceptionSoftener.throwSoftenedException, where you would throw an actual Exception directly, rather than just passing the exception directly into the softener. This lets the compiler know an Exception is being thrown at this point, and means you won't get compile time errors about missing return values at an unreachable point in the code.
+
+
+The JDK functional interfaces don’t support CheckedExceptions, so the
+ExceptionSoftener can prove very useful when working with those.
+
+ExceptionSoftener provides softenXXX methods for all
+http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.7/org/jooq/lambda/fi/util/function/package-frame.html[Checked
+Functional interfaces in jOOλ]
+
+.soften an IOException
+====
+Example, softening an IOException. This method will continue to throw an IOException, but no longer needs to declare it.
+[source,java]
+----
+public Data load(String input) {
+        try{
+          //do something
+        }catch(IOException e) {
+            throw ExceptionSoftener.throwSoftenedException(e);
+        }
+}
+----
+====
+
+In the above example IOException can be thrown by load, but it doesn't need to declare it.
+
+==== Wrapping calls to methods
+
+===== With functional interfaces and lambda's
+
+Where we have existing methods that throw softened Exceptions we can capture a standard Java 8 Functional Interface that makes the call and throws a a softened exception
+
+.Soften a method that throws a CheckedException to a plain function
+====
+[source,java]
+----
+
+Function<String,Data> loader = ExceptionSoftener.softenFunction(file->load(file));
+
+public Data load(String file) throws IOException{
+     ///load data
+}  
+
+----
+====
+.Soften inside a stream
+==== 
+
+[source,java]
+----
+Stream.of("file1","file2","file3")
+      .map(ExceptionSoftener.softenFunction(file->load(file)))
+      .forEach(this::save)
+
+----
+
+
+We can simplify further with method references.
+
+```java
+
+Data loaded = ExceptionSoftener.softenFunction(this::load).apply(fileName);
+
+Stream.of("file1","file2","file3")
+      .map(ExceptionSoftener.softenFunction(this::load))
+      .forEach(this::save)  	
+
+public String load(String file) throws IOException{
+        throw new IOException();
+}
+```  
+==== 
+
+.Soften a Supplier
+==== 
+
+```java
+Supplier<String> supplier = ExceptionSoftener.softenSupplier(this::get);
+		
+assertThat(supplier.get(),equalTo("hello"));
+
+private String get() throws IOException{
+		return "hello";
+}
+```
+==== 
+
+ExceptionSoftener is used extensively within Cyclops and simple-react. 
+
+.Soften in a retry Function from Cyclops
+==== 
+
+This example comes from cycops-streams, by using SoftenRunnable we can use Thread.sleep without having to declare a throws / try & catch block for InteruptedException. Any exception caught from catching the users supplied function can also be thrown upwards.
+
+```java
+Function<T,R> retry = t-> {
+		int count = 7;
+		int[] sleep ={2000};
+		Throwable exception=null;
+		while(count-->0){
+			try{
+				return fn.apply(t);
+			}catch(Throwable e){
+				exception = e;
+			}
+			ExceptionSoftener.softenRunnable(()->Thread.sleep(sleep[0]));
+				
+			sleep[0]=sleep[0]*2;
+		}
+		throw ExceptionSoftener.throwSoftenedException(exception);
+			
+};
+
+```
+==== 
+=== Memoization
+
+Memoisation allows us to transparently cache the result of function calls. With https://github.com/aol/cyclops[Cyclops] we can memoise any JDK 8 Function via http://www.javadoc.io/doc/com.aol.cyclops/cyclops-functions/5.0.0[Memoise.memoiseFunction] (and by extension -- via method references, we can also memoise most Java methods too!). For example
+
+.Memoize a simple addition function
+==== 
+[source,java]
+----
+int called =0; //instance variable
+----
+[source,java]
+----
+Function add = a->a + ++called;
+----
+
+We can memoize our add function as follows
+[source,java]
+----
+Function memoized = Memoise.memoizeFunction(add);
+----
+
+Repeatedly calling memoised with a single value, will not result in called being incremented.
+
+[source,java]
+----
+assertThat(memoized.apply(0),equalTo(1));
+assertThat(memoized.apply(0),equalTo(1));
+assertThat(memoized.apply(0),equalTo(1));
+----
+
+But, of course the memoisation is specific to the input parameter. Recalling memoised with a new value (say 1) will result in call being incremented, the first time we make that new call.
+
+
+[source,java]
+----
+assertThat(s.apply(1),equalTo(3));
+assertThat(s.apply(1),equalTo(3));
+----
+==== 
+
+
+#### Memoizing method calls
+
+
+com.aol.cyclops.functions.Memoize contains a number of methods for memoising JDK 8 Functional interfaces. Supplier, Callable, Function, BiFunction and Predicates. Cyclops Memoize class makes it simple to cache the result of method
+calls.
+
+See also
+https://github.com/aol/cyclops/wiki/Memoisation,-Currying,-Uncurrying-and-Type-Inferencing[Memoisation,-Currying,-Uncurrying-and-Type-Inferencing]
+
+.Memoize a method with four parameters
+==== 
+
+
+[source,java]
+----
+int called = 0; // instance variable
+
+QuadFunction cached = Memoize.memoizeQuadFunction(this::addAll);
+
+assertThat(cached.apply(1,2,3,4),equalTo(10));
+assertThat(cached.apply(1,2,3,4),equalTo(10));
+assertThat(cached.apply(1,2,3,4),equalTo(10));
+assertThat(called,equalTo(1));
+
+private int addAll(int a,int b,int c, int d){
+    called++;
+    return a+b+c+d;
+}
+----
+==== 
+#### Cleaner type inference
+
+Via https://projectlombok.org/features/val.html[Lombok val] (entirely
+optional)
+
+.Scala-like type inference with Lombok
+==== 
+```java
+int called = 0; // instance variable
+	
+val cached = memoizeQuadFunction(this::addAll);
+		
+assertThat(cached.apply(1,2,3,4),equalTo(10));
+assertThat(cached.apply(1,2,3,4),equalTo(10));
+assertThat(cached.apply(1,2,3,4),equalTo(10));
+assertThat(called,equalTo(1));
+	
+	
+private int addAll(int a,int b,int c, int d){
+	called++;
+	return a+b+c+d;
+}
+```
+====
+[TIP]
+====
+Always check IDE Compatibility with any Lombok operators you use. Lombok is an annotation preprocessor, it doesn't introduce a runtime dependency for your project. However, while all annotations / keywords work with Eclipse - the same is not true for other IDEs. Delombok can remove Lombok annotations replacing them in your source with equivalent code.
+====
+.Memoize a supplier
+==== 
+Cyclops supports Memoization for a large range of Java Functional Interfaces, in this example we memoize a supplier.
+```java
+Supplier<Integer> s = memoiseSupplier(()->++called);
+assertThat(s.get(),equalTo(1));
+assertThat(s.get(),equalTo(1));
+```
+==== 
+#### Memoization in Microserver
+
+https://github.com/aol/micro-server[Microserver] uses Cyclops memoization to ensure that plugins are only ever loaded once.
+
+.Ensure plugins are loaded once in Microserver
+==== 
+[source,java]
+----
+public class PluginLoader {
+
+	public final static PluginLoader INSTANCE = new PluginLoader();
+
+	public final Supplier<List<Plugin>> plugins = 
+	                                    Memoize.memoizeSupplier(this::load);
+
+	private List<Plugin> load(){
+		 return  SequenceM.fromIterable(ServiceLoader.load(Plugin.class)).toList();
+	}
+}
+----
+==== 
+
+#### Referential Transparency & Cyclops Memoization
+
+[NOTE]
+====
+Referential Transparency is an academic term that means that for any given input a function will always return the same output - in any context, and will not affect state outside of the function. In other words a call to the function can be replaced with the value it returns.
+====
+
+Cyclops offers two forms of Memoization, one of which is suitable for referentially transparent (or pure) functions, and the other which may be appropriate with impure functions (those for which a given input may not always map to the same output).
+
+To support that later, impure type of function, cyclops supports Memoization with pluggable caches. Java is not a functionally pure language and we feel supporting this type of caching is useful for Java developers.
+ 
+
+
+#### Memoization with plugabble caches
+
+By default a Memoized lambda or method reference will cache the return value inside the instance until it is cleared by the garbage collector. 
+
+https://github.com/aol/simple-react[simple-react] supports auto-memoization of functions within a Stream, and this is implemented via cyclops-memoization.
+
+.Configure auto-memoization in simple-react with a ConurrentHashMap
+==== 
+[source,java]
+----
+Map cache = new ConcurrentHashMap<>();
+LazyReact react = new LazyReact().autoMemoizeOn((key,fn)-> cache.computeIfAbsent(key,fn));
+List result = react.of("data1","data1","data2","data2")
+               .map(i->calc(i))
+               .toList();
+----
+====
+It is also possible to use advanced modern caching libraries such as Caffeine or Guava.
+
+.Configure auto-memoization in simple-react with a Guava cache
+==== 
+[source,java]
+----
+
+//configure LRU cache with max time to live
+Cache<Object, String> cache = CacheBuilder.newBuilder()
+       .maximumSize(1000)
+       .expireAfterWrite(10, TimeUnit.MINUTES)
+       .build();
+
+LazyReact react = new LazyReact().autoMemoizeOn((key,fn)-> cache.get(key,()->fn.apply(key));
+List result = react.of("data1","data1","data2","data2")
+               .map(i->calc(i))
+               .toList();
+----
+====
+
+### Currying & Uncurrying
+
+#### Currying
+
+Currying involves creating a ‘chain’ of functions, were arguments are evaluated 
+one-by-one, where each apply call results in either another single 
+argument function or the final result. This contrasts with partial 
+application (above) which may produce a single function that accepts 
+multiple parameters. Curried functions always only accept one parameter 
+at a time.
+
+.Currying a String concatanation function
+==== 
+
+Given a method or function that performs String concatanation over 3 Strings 
+
+[source,java]
+----
+TriFunction<String, String, String, String> concat = (a, b, c) -> 
+                                                        a + b + c;
+----
+or
+[source,java]
+----
+TriFunction<String, String, String, String> concat = this::concatMethod;
+
+public String concatMethod(String a, String b, String c){
+    return a+b+c;
+}
+----
+
+Using Curried Functions our String concatanation example would like
+
+[source,java]
+----
+Function<String,Function<String,Function<String,String>>> curried =  Curry.curry3( concat);
+----
+
+Which is very verbose. We can simplify this using Lombok's type inferencing val keyword
+
+[source,java]
+----
+val curried =  Curry.curry3( concat);
+----
+
+==== 
+In practice, if you are not making use of Lombok, it is cleaner to using Currying in a point free style, that is to Curry a function and pass it is a parameter to another function (that can defined the function chain in a cleaner way with Generics).
+[NOTE]
+====
+**point-free style** Is a programming style where the program flows in a fluent style from one function call to the next without individually defining return values or arguments.
+====
+In addition at the point of currying one or more parameters may be applied.
+
+.Partially applying parameters
+==== 
+[source,java]
+----
+
+Function<String,Function<String,String>> oneApplied =  Curry.curry3( concat).apply("hello");
+
+Function<String,String> twoApplied =  Curry.curry3( concat).apply("hello").apply("world");
+----
+==== 
+
+The syntax for a Curried function looks something like this
+[source,java]
+----
+(String a) -> (String b) -> (String c) -> b + a + c;
+----
+Or without types 
+[source,java]
+----
+a -> b -> c -> b + a + c;
+----
+
+Where the arrow syntax is simply the lambda expression arrow. Here we are defining a lambda, that accepts an Integer and returns another lambda (that in turn accepts and returns a String).
+
+The Cyclops Lambda class can help with creating curried functions (although types still have to be specified).
+
+===== Using Currying to show nesting
+
+Another place in Cyclops where Currying shows up, is inside For Comprehensions -- where the Curried syntax is chosen specifically to show nesting levels. E.g.
+
+.Currying to show nesting
+==== 
+image::https://cdn-images-1.medium.com/max/1600/0*7Q3Q4Y_6ZDbkWi8m.[]
+
+
+In this example we can show the levels of nesting via currying
+
+----
+person -> car -> insurance -> { }
+----
+
+TIP: Currying can be very useful in conjunction with Cyclops for-comprehensions and existing methods, use the appropriate Curry method to create a curried reference to fit the yield or filter opertors!
+
+==== 
+
+Cyclops can convert any function (with up to 8 inputs) or method reference into a chain of one method functions (Currying). This technique is a useful (and more safe) alternative to Closures. The Curried function can be created and values explicitly passed in rather than captured by the compiler (where-upon they may change).
+
+.Currying method references
+==== 
+```java
+import static com.aol.cyclops.functions.Curry.*;
+
+curry2(this::mult).apply(3).apply(2);
+//6
+
+public Integer mult(Integer a,Integer b){
+	return a*b;
+}
+```	 
+==== 
+.Currying a BiFunction
+==== 
+```java
+Curry.curry2((Integer i, Integer j) -> "" + (i+j) + "hello").apply(1).apply(2);
+
+//"3hello"
+```
+==== 
+
+#### Curry Consumer
+
+The CurryConsumer class allows Consumers to also be Curried.
+
+.Currying a consumer
+==== 
+```java
+CurryConsumer.curry4( (Integer a, Integer b, Integer c,Integer d) -> value = a+b+c+d).apply(2).apply(1).apply(2).accept(3);
+
+//8
+```	
+
+==== 
+
+
+### Uncurrying
+
+
+Uncurrying is the process of converting a chain of single-parameter functions into a single multi-parameter function (i.e. it is the reverse of Currying).
+
+com.aol.cyclops.functions.Uncurry has methods to uncurry nested curried Functions of up to 8 levels deep.
+com.aol.cyclops.functions.UncurryConsumer does the same thing for curried Consumers up to 5 levels deep. 
+
+
+
+
+.Uncurrying in place example
+====
+```java
+Uncurry.uncurry3((Integer a)->(Integer b)->(Integer c)->a+b+c).apply(1,2,3)
+//6
+```	
+====
+.Example Uncurrying a function to a function that takes 4 parameters
+====
+
+```java
+Uncurry.uncurry4((Integer a)->(Integer b)->(Integer c)->(Integer d)->a+b+c+d)
+				.apply(1,2,3,4)
+//10
+```
+====
+#### Uncurry Consumer 
+
+
+
+com.aol.cyclops.functions.CurryConsumer provides methods to curry Consumers of up to 8 parameters.
+
+.Example Uncurrying a consumer to a consumer that takes 4 parameters
+====
+```java
+UncurryConsumer.uncurry2((Integer a)->(Integer b) -> value = a+b ).accept(2,3);
+assertThat(value,equalTo(5));
+```
+====
+
+=== Partial Application
+
+
+We can also create partially applied functions. These are functions were 
+the some of the input values to a function are provided up front, but 
+not all. The PartialApplicator class converts, for example, a function that takes 3 input 
+parameters, into a function that takes only 1. E.g.
+.partially applying values to a String concatonation function
+====
+Given the following function that concatonates three Strings 
+[source,java]
+----
+TriFunction<String, String, String, String> concat = (a, b, c) -> 
+                                                        a + b + c;
+----
+
+We can create a partially applied concatanator that will concat a supplied parameter to “hello” and “world” e.g.
+
+[source,java]
+----
+Function<String, String> pa = PartialApplicator.partial3(“Hello”
+                                     ,“World”, concat);
+----
+
+Using our new concatonator function (pa) with “!!!” should give use “Hello World!!!”
+
+----
+assertThat(concatStrings.apply(“!!!”), equalTo(“Hello World!!!”));
+----
+====
+
+=== Type inferencing
+The class com.aol.cyclops.lambda.utils.Lambda provides static helper methods for defining curried Lambda expressions of up to 8 nested Functions. 
+
+[TIP]
+====
+This is useful for creating anonymous functions where Java's type inferencing won't normally be able to infer types & for use in conjunction with Lombok's val keyword which infers types from the right hand side of an expression.
+====
+
+.Anonymous function example
+====
+```java
+import static com.aol.cyclops.functions.Lambda.*;
+
+Mutable myInt = Mutable.of(0);
+
+Lambda.l2((Integer i)-> (Integer j)-> myInt.set(i*j)).apply(10).apply(20);
+
+//myInt.get() : 200
+```
+====
+
+.Lombok val example
+====
+```java
+val fn  = l3((Integer a)-> (Integer b)->(Integer c) -> a+b+c)
+```
+====
+
+
