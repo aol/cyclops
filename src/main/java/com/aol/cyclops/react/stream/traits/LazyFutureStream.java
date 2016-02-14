@@ -101,9 +101,10 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 
 public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStream<U>,
 											Foldable<U>,
-                                            ReactiveSeq<U>,Seq<U>, LazyToQueue<U>,
-                                           
-                                        ConfigurableStream<U,FastFuture<U>>,
+                                            ReactiveSeq<U>,
+                                            Seq<U>, 
+                                            LazyToQueue<U>,
+                                            ConfigurableStream<U,FastFuture<U>>,
                                         FutureStreamAsyncPublisher<U>,
                                         FutureStreamSynchronousPublisher<U> {
 

@@ -311,11 +311,6 @@ public interface AnyMValue<T> extends AnyM<T>,
 	}
 
 	
-	@Override
-	default <T> T unwrap() {
-		
-		return Applicativable.super.unwrap();
-	}
 	
 	/**
 	 * Convert a Stream of Monads to a Monad with a List applying the supplied function in the process

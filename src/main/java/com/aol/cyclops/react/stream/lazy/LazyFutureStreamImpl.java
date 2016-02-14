@@ -246,22 +246,22 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 
 	@Override
 	public HotStream<U> hotStream(Executor e) {
-		return stream().hotStream(e);
+		return StreamUtils.hotStream(this, e);
 	}
 
 	@Override
 	public HotStream<U> primedHotStream(Executor e) {
-		return stream().primedHotStream(e);
+		return StreamUtils.primedHotStream(this, e);
 	}
 
 	@Override
 	public PausableHotStream<U> pausableHotStream(Executor e) {
-		return stream().pausableHotStream(e);
+		return StreamUtils.pausableHotStream(this, e);
 	}
 
 	@Override
 	public PausableHotStream<U> primedPausableHotStream(Executor e) {
-		return stream().primedPausableHotStream(e);
+		return StreamUtils.primedPausableHotStream(this, e);
 	}
 
 	

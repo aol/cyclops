@@ -9,7 +9,8 @@ import com.aol.cyclops.react.stream.traits.BaseSimpleReactStream;
 import com.aol.cyclops.react.stream.traits.SimpleReactStream;
 import com.aol.cyclops.types.extensability.Comprehender;
 
-public class SimpleReactStreamComprehender implements Comprehender<SimpleReactStream> {
+public class SimpleReactStreamComprehender {//implements Comprehender<SimpleReactStream> {
+/**
 	public static int priority = 4;
 	@Override
 	public int priority(){
@@ -62,5 +63,5 @@ public class SimpleReactStreamComprehender implements Comprehender<SimpleReactSt
 		return Comprehender.unwrapOtherMonadTypes(comp,apply);
 		
 	}
-
+**/
 }
