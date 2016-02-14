@@ -29,6 +29,7 @@ import com.aol.cyclops.util.stream.Streamable;
 public interface SequenceMCollectable<T> extends Collectable<T> {
 	
 
+	
 
 	/* (non-Javadoc)
 	 * @see org.jooq.lambda.Collectable#collect(java.util.stream.Collector)

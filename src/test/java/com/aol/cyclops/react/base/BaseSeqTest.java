@@ -38,6 +38,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.pcollections.HashTreePMap;
 
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.react.async.Queue;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 import com.aol.cyclops.react.util.SimpleTimer;
@@ -117,7 +118,7 @@ public abstract class BaseSeqTest {
 		
 		for(int i=0;i<5;i++){
 			
-			List<List<Integer>> list = react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
+			List<ListX<Integer>> list = react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
 					.batchBySizeAndTime(30,1,TimeUnit.MICROSECONDS)
 					.toList();
 			
@@ -674,32 +675,7 @@ public abstract class BaseSeqTest {
 	        assertEquals(1, (int) s.get().minBy(t -> "" + t).get());
 	    }
 
-	    @Test
-	    public void testUnzip() {
-	    	//order is not guaranteed as populated asynchronously
-	        Supplier<Seq<Tuple2<Integer, String>>> s = () -> of(tuple(1, "a"), tuple(2, "b"), tuple(3, "c"));
-
-	        for(int i=0;i<1000;i++){
-	        Tuple2<Seq<Integer>, Seq<String>> u1 = Seq.unzip(s.get());
-	      
-	        assertTrue(u1.v1.toList().containsAll(Arrays.asList(1, 2, 3)));
-	       
-	       
-	        assertTrue(u1.v2.toList().containsAll(asList("a", "b", "c")));
-
-	        Tuple2<Seq<Integer>, Seq<String>> u2 = Seq.unzip(s.get(), v1 -> -v1, v2 -> v2 + "!");
-	        assertTrue(u2.v1.toList().containsAll(asList(-1, -2, -3)));
-	        assertTrue(u2.v2.toList().containsAll(asList("a!", "b!", "c!")));
-
-	        Tuple2<Seq<Integer>, Seq<String>> u3 = Seq.unzip(s.get(), t -> tuple(-t.v1, t.v2 + "!"));
-	        assertTrue(u3.v1.toList().containsAll(asList(-1, -2, -3)));
-	        assertTrue(u3.v2.toList().containsAll(asList("a!", "b!", "c!")));
-
-	        Tuple2<Seq<Integer>, Seq<String>> u4 = Seq.unzip(s.get(), (t1, t2) -> tuple(-t1, t2 + "!"));
-	        assertTrue(u4.v1.toList().containsAll(asList(-1, -2, -3)));
-	        assertTrue(u4.v2.toList().containsAll(asList("a!", "b!", "c!")));
-	        }
-	    }
+	   
 	   
 
 	    @Test

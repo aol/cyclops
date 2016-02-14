@@ -30,6 +30,22 @@ public interface Reducer<T>  extends Monoid<T>{
 		return reduce(mapToType(toReduce));
 	}
 	
+	public static <T> Reducer<T> fromMonoid(Monoid<T> monoid,Function<?, ? extends T> mapper){
+		return of(monoid.zero(),monoid.combiner(),mapper);
+	}
+	public static <T> Reducer<T> of(T zero, BiFunction<T,T,T> combiner,Function<?,? extends T> mapToType){
+		return new Reducer<T>(){
+			public T zero(){
+				return zero;
+			}
+			public BiFunction<T,T,T> combiner(){
+				return combiner;
+			}
+			public Stream<T> mapToType(Stream stream){
+				return (Stream)stream.map(mapToType);
+			}
+		};
+	}
 	public static <T> Reducer<T> of(T zero, Function<T,Function<T,T>> combiner,Function<?,T> mapToType){
 		return new Reducer<T>(){
 			public T zero(){

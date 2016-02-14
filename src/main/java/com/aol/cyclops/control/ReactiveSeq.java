@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
@@ -24,6 +25,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntFunction;
+import java.util.function.ToLongFunction;
 import java.util.function.UnaryOperator;
 import java.util.stream.BaseStream;
 import java.util.stream.Collector;
@@ -33,6 +37,7 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.hamcrest.Matcher;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
@@ -78,8 +83,9 @@ import com.aol.cyclops.util.stream.Streamable;
 
 
 public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterable<T>,Functor<T>, ExtendedTraversable<T>,
-												Foldable<T>,JoolWindowing<T>, 
-												JoolManipulation<T>,SequenceMCollectable<T>,
+												Foldable<T>,SequenceMCollectable<T>,
+												JoolWindowing<T>, 
+												JoolManipulation<T>,
 												Seq<T>,  Iterable<T>, Publisher<T>,
 												ReactiveStreamsTerminalOperations<T>,
 												
@@ -839,31 +845,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 */
 	String join(String sep, String start, String end);
 
-	/**
-	 * Extract the minimum as determined by supplied function
-	 * 
-	 */
-	<C extends Comparable<? super C>> Optional<T> minBy(Function<? super T, ? extends C> f);
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.stream.Stream#min(java.util.Comparator)
-	 */
-	Optional<T> min(Comparator<? super T> comparator);
-
-	/**
-	 * Extract the maximum as determined by the supplied function
-	 * 
-	 */
-	<C extends Comparable<? super C>> Optional<T> maxBy(Function<? super T, ? extends C> f);
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.stream.Stream#max(java.util.Comparator)
-	 */
-	Optional<T> max(Comparator<? super T> comparator);
+	
 
 	/**
 	 * extract head and tail together, where head is expected to be present
@@ -1096,52 +1078,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 */
 	ListX<T> reduce(Iterable<? extends Monoid<T>> reducers);
 
-	/**
-	 * 
-	 * 
-	 <pre>
-	 * 		{@code
-	 * 		SequenceM.of("a","b","c").foldLeft(Reducers.toString(""));
-	 *        
-	 *         // "abc"
-	 *         }
-	 * </pre>
-	 * 
-	 * @param reducer
-	 *            Use supplied Monoid to reduce values starting via foldLeft
-	 * @return Reduced result
-	 */
-	T foldLeft(Monoid<T> reducer);
-
-	/**
-	 * foldLeft : immutable reduction from left to right
-	 * 
-	 * <pre>
-	 * {@code 
-	 * 
-	 * assertTrue(SequenceM.of("a", "b", "c").foldLeft("", String::concat).equals("abc"));
-	 * }
-	 * </pre>
-	 */
-	T foldLeft(T identity, BinaryOperator<T> accumulator);
-
-	/**
-	 * Attempt to map this Monad to the same type as the supplied Monoid (using
-	 * mapToType on the monoid interface) Then use Monoid to reduce values
-	 * 
-	 * <pre>
-	 * 		{@code
-	 * 		SequenceM.of(1,2,3).foldLeftMapToType(Reducers.toString(""));
-	 *        
-	 *         // "123"
-	 *         }
-	 * </pre>
-	 * 
-	 * @param reducer
-	 *            Monoid to reduce values
-	 * @return Reduce result
-	 */
-	<T> T foldLeftMapToType(Reducer<T> reducer);
+	
 
 	/**
 	 * 
@@ -1190,9 +1127,9 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * @param reducer
 	 *            Monoid to reduce values
 	 * @return Reduce result
-	
+	 **/
 	public <T> T foldRightMapToType(Reducer<T> reducer);
-	 */
+	
 
 	/**
 	 * <pre>
@@ -3406,6 +3343,392 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 		return (ReactiveSeq<R>)ZippingApplicativable.super.patternMatch(defaultValue, case1);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#count(java.util.function.Predicate)
+	 */
+	@Override
+	default long count(Predicate<? super T> predicate) {
+		
+		return SequenceMCollectable.super.count(predicate);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#countDistinct(java.util.function.Predicate)
+	 */
+	@Override
+	default long countDistinct(Predicate<? super T> predicate) {
+		
+		return SequenceMCollectable.super.countDistinct(predicate);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#countDistinctBy(java.util.function.Function, java.util.function.Predicate)
+	 */
+	@Override
+	default <U> long countDistinctBy(Function<? super T, ? extends U> function, Predicate<? super U> predicate) {
+		
+		return SequenceMCollectable.super.countDistinctBy(function, predicate);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#countDistinct()
+	 */
+	@Override
+	default long countDistinct() {
+		
+		return SequenceMCollectable.super.countDistinct();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#countDistinctBy(java.util.function.Function)
+	 */
+	@Override
+	default <U> long countDistinctBy(Function<? super T, ? extends U> function) {
+		
+		return SequenceMCollectable.super.countDistinctBy(function);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#mode()
+	 */
+	@Override
+	default Optional<T> mode() {
+		
+		return SequenceMCollectable.super.mode();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#sum()
+	 */
+	@Override
+	default Optional<T> sum() {
+		
+		return SequenceMCollectable.super.sum();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#sum(java.util.function.Function)
+	 */
+	@Override
+	default <U> Optional<U> sum(Function<? super T, ? extends U> function) {
+		
+		return SequenceMCollectable.super.sum(function);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#sumInt(java.util.function.ToIntFunction)
+	 */
+	@Override
+	default int sumInt(ToIntFunction<? super T> function) {
+		
+		return SequenceMCollectable.super.sumInt(function);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#sumLong(java.util.function.ToLongFunction)
+	 */
+	@Override
+	default long sumLong(ToLongFunction<? super T> function) {
+		
+		return SequenceMCollectable.super.sumLong(function);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#sumDouble(java.util.function.ToDoubleFunction)
+	 */
+	@Override
+	default double sumDouble(ToDoubleFunction<? super T> function) {
+		
+		return SequenceMCollectable.super.sumDouble(function);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#avg()
+	 */
+	@Override
+	default Optional<T> avg() {
+		
+		return SequenceMCollectable.super.avg();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#avg(java.util.function.Function)
+	 */
+	@Override
+	default <U> Optional<U> avg(Function<? super T, ? extends U> function) {
+		
+		return SequenceMCollectable.super.avg(function);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#avgInt(java.util.function.ToIntFunction)
+	 */
+	@Override
+	default double avgInt(ToIntFunction<? super T> function) {
+		
+		return SequenceMCollectable.super.avgInt(function);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#avgLong(java.util.function.ToLongFunction)
+	 */
+	@Override
+	default double avgLong(ToLongFunction<? super T> function) {
+		
+		return SequenceMCollectable.super.avgLong(function);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#avgDouble(java.util.function.ToDoubleFunction)
+	 */
+	@Override
+	default double avgDouble(ToDoubleFunction<? super T> function) {
+		
+		return SequenceMCollectable.super.avgDouble(function);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#min()
+	 */
+	@Override
+	default Optional<T> min() {
+		
+		return SequenceMCollectable.super.min();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#min(java.util.function.Function)
+	 */
+	@Override
+	default <U extends Comparable<? super U>> Optional<U> min(Function<? super T, ? extends U> function) {
+		
+		return SequenceMCollectable.super.min(function);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#min(java.util.function.Function, java.util.Comparator)
+	 */
+	@Override
+	default <U> Optional<U> min(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+		
+		return SequenceMCollectable.super.min(function, comparator);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#minBy(java.util.function.Function)
+	 */
+	@Override
+	default <U extends Comparable<? super U>> Optional<T> minBy(Function<? super T, ? extends U> function) {
+		
+		return SequenceMCollectable.super.minBy(function);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#minBy(java.util.function.Function, java.util.Comparator)
+	 */
+	@Override
+	default <U> Optional<T> minBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+		
+		return SequenceMCollectable.super.minBy(function, comparator);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#max()
+	 */
+	@Override
+	default Optional<T> max() {
+		
+		return SequenceMCollectable.super.max();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#max(java.util.function.Function)
+	 */
+	@Override
+	default <U extends Comparable<? super U>> Optional<U> max(Function<? super T, ? extends U> function) {
+		
+		return SequenceMCollectable.super.max(function);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#max(java.util.function.Function, java.util.Comparator)
+	 */
+	@Override
+	default <U> Optional<U> max(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+		
+		return SequenceMCollectable.super.max(function, comparator);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#maxBy(java.util.function.Function)
+	 */
+	@Override
+	default <U extends Comparable<? super U>> Optional<T> maxBy(Function<? super T, ? extends U> function) {
+		
+		return SequenceMCollectable.super.maxBy(function);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#maxBy(java.util.function.Function, java.util.Comparator)
+	 */
+	@Override
+	default <U> Optional<T> maxBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+		
+		return SequenceMCollectable.super.maxBy(function, comparator);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#median()
+	 */
+	@Override
+	default Optional<T> median() {
+		
+		return SequenceMCollectable.super.median();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#median(java.util.Comparator)
+	 */
+	@Override
+	default Optional<T> median(Comparator<? super T> comparator) {
+		
+		return SequenceMCollectable.super.median(comparator);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#medianBy(java.util.function.Function)
+	 */
+	@Override
+	default <U extends Comparable<? super U>> Optional<T> medianBy(Function<? super T, ? extends U> function) {
+		
+		return SequenceMCollectable.super.medianBy(function);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#medianBy(java.util.function.Function, java.util.Comparator)
+	 */
+	@Override
+	default <U> Optional<T> medianBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+		
+		return SequenceMCollectable.super.medianBy(function, comparator);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#percentile(double)
+	 */
+	@Override
+	default Optional<T> percentile(double percentile) {
+		
+		return SequenceMCollectable.super.percentile(percentile);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#percentile(double, java.util.Comparator)
+	 */
+	@Override
+	default Optional<T> percentile(double percentile, Comparator<? super T> comparator) {
+		
+		return SequenceMCollectable.super.percentile(percentile, comparator);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#percentileBy(double, java.util.function.Function)
+	 */
+	@Override
+	default <U extends Comparable<? super U>> Optional<T> percentileBy(double percentile,
+			Function<? super T, ? extends U> function) {
+		
+		return SequenceMCollectable.super.percentileBy(percentile, function);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#percentileBy(double, java.util.function.Function, java.util.Comparator)
+	 */
+	@Override
+	default <U> Optional<T> percentileBy(double percentile, Function<? super T, ? extends U> function,
+			Comparator<? super U> comparator) {
+		
+		return SequenceMCollectable.super.percentileBy(percentile, function, comparator);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#allMatch(org.hamcrest.Matcher)
+	 */
+	@Override
+	default boolean allMatch(Matcher<? super T> m) {
+		
+		return SequenceMCollectable.super.allMatch(m);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#noneMatch(org.hamcrest.Matcher)
+	 */
+	@Override
+	default boolean noneMatch(Matcher<? super T> m) {
+		
+		return SequenceMCollectable.super.noneMatch(m);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#toList(java.util.function.Supplier)
+	 */
+	@Override
+	default <L extends List<T>> L toList(Supplier<L> factory) {
+		
+		return SequenceMCollectable.super.toList(factory);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#toSet(java.util.function.Supplier)
+	 */
+	@Override
+	default <S extends Set<T>> S toSet(Supplier<S> factory) {
+		
+		return SequenceMCollectable.super.toSet(factory);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#toMap(java.util.function.Function, java.util.function.Function)
+	 */
+	@Override
+	default <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapper,
+			Function<? super T, ? extends V> valueMapper) {
+		
+		return SequenceMCollectable.super.toMap(keyMapper, valueMapper);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#toString(java.lang.CharSequence)
+	 */
+	@Override
+	default String toString(CharSequence delimiter) {
+		
+		return SequenceMCollectable.super.toString(delimiter);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#toString(java.lang.CharSequence, java.lang.CharSequence, java.lang.CharSequence)
+	 */
+	@Override
+	default String toString(CharSequence delimiter, CharSequence prefix, CharSequence suffix) {
+		
+		return SequenceMCollectable.super.toString(delimiter, prefix, suffix);
+	}
+
+	@Override
+	default Optional<T> max(Comparator<? super T> comparator) {
+		
+		return SequenceMCollectable.super.max(comparator);
+	}
+
+	@Override
+	default Optional<T> min(Comparator<? super T> comparator) {
+		// TODO Auto-generated method stub
+		return SequenceMCollectable.super.min(comparator);
+	}
+
+	
+	
 	
 
 	

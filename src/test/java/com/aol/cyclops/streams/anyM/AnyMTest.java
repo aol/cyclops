@@ -208,9 +208,9 @@ public class AnyMTest {
        Supplier<AnyM<String>> s = () -> ofMonad(Stream.of("a","b","c"));
 
         assertThat("cba",equalTo( s.get().asSequence().foldRight(Reducers.toString(""))));
-        assertThat("abc",equalTo( s.get().asSequence().foldLeft(Reducers.toString(""))));
+        assertThat("abc",equalTo( s.get().asSequence().reduce(Reducers.toString(""))));
         assertThat( 3,equalTo( s.get().map(i->""+i.length()).asSequence().foldRightMapToType(Reducers.toCountInt())));
-        assertThat( 3,equalTo( s.get().map(i->""+i.length()).asSequence().foldLeftMapToType(Reducers.toCountInt())));
+        assertThat( 3,equalTo( s.get().map(i->""+i.length()).asSequence().mapReduce(Reducers.toCountInt())));
       
     }
 	

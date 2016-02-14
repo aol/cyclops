@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -17,10 +18,17 @@ import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.Collectable;
+import org.jooq.lambda.Seq;
+
+import com.aol.cyclops.Monoid;
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.react.async.Queue;
 import com.aol.cyclops.react.async.factories.QueueFactories;
 import com.aol.cyclops.react.async.factories.QueueFactory;
@@ -32,6 +40,7 @@ import com.aol.cyclops.react.config.MaxActive;
 import com.aol.cyclops.react.stream.LazyStreamWrapper;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 import com.aol.cyclops.react.threads.ReactPool;
+import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.PausableHotStream;
 import com.aol.cyclops.util.stream.StreamUtils;
@@ -91,6 +100,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		
 		
 	}
+	
 	
 	public void forwardErrors(Consumer<Throwable> c){
 		error.forward =c;
@@ -263,6 +273,112 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	public PausableHotStream<U> primedPausableHotStream(Executor e) {
 		return StreamUtils.primedPausableHotStream(this, e);
 	}
+
+
+	@Override
+	public String format() {
+		return Seq.seq(this).format();
+	}
+
+
+
+	@Override
+	public Collectable<U> collectable() {
+		
+		return Seq.seq(this);
+	}
+
+
+	@Override
+	public U foldRight(Monoid<U> reducer) {
+		return reducer.reduce(this);
+	}
+
+
+	@Override
+	public <T> T foldRightMapToType(Reducer<T> reducer) {
+		return reducer.mapReduce(this.reverse());
+		
+	}
+
+
+	@Override
+	public <R> R mapReduce(Reducer<R> reducer) {
+		return reducer.mapReduce(this);
+	}
+
+
+	@Override
+	public <R> R mapReduce(Function<? super U, ? extends R> mapper, Monoid<R> reducer) {
+		return Reducer.fromMonoid(reducer,mapper).mapReduce(this);
+	}
+
+
+	@Override
+	public U reduce(Monoid<U> reducer) {
+		return reducer.reduce(this);
+	}
+
+
+	@Override
+	public ListX<U> reduce(Stream<? extends Monoid<U>> reducers) {
+		return StreamUtils.reduce(this, reducers);
+	}
+
+
+	@Override
+	public ListX<U> reduce(Iterable<? extends Monoid<U>> reducers) {
+		return StreamUtils.reduce(this, reducers);
+	}
+
+
+	@Override
+	public U foldRight(U identity, BinaryOperator<U> accumulator) {
+		return Seq.seq(this).foldRight(identity,accumulator);
+	}
+	@Override
+	public  boolean allMatch(Predicate<? super U> c) {
+		
+		return filterNot(c).count()>0;
+	}
+	@Override
+	public  boolean anyMatch(Predicate<? super U> c) {
+		
+		return filterNot(c).findAny().isPresent();
+	}
+	@Override
+	public  boolean xMatch(int num, Predicate<? super U> c) {
+		
+		return StreamUtils.xMatch(this,num,c);
+	}
+	@Override
+	public  boolean noneMatch(Predicate<? super U> c) {
+		return StreamUtils.noneMatch(this,c);
+	}
+	@Override
+	public final   String join(){
+		return StreamUtils.join(this);
+	}
+	@Override
+	public final  String join(String sep){
+		return StreamUtils.join(this,sep);
+	}
+	@Override
+	public String join(String sep,String start,String end){
+		return StreamUtils.join(this,sep,start,end);
+	}
+
+
+
+
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.control.ReactiveSeq#headAndTail()
+	 */
+	@Override
+	public HeadAndTail<U> headAndTail() {
+		return StreamUtils.headAndTail(this);
+	}
+	
 
 	
 }

@@ -1409,51 +1409,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     		 return sequenceM().reduce(reducers);
     	 }
     	
-    	/**
-    	 * 
-    	 *  
-    		<pre>
-    		{@code
-    		Streamable.of("a","b","c").foldLeft(Reducers.toString(""));
-           
-            // "abc"
-            }
-            </pre>
-    	 * @param reducer Use supplied Monoid to reduce values starting via foldLeft
-    	 * @return Reduced result
-    	 */
-    	 default T foldLeft(Monoid<T> reducer){
-    		 return sequenceM().foldLeft(reducer);
-    	 }
-    	/**
-    	 * foldLeft : immutable reduction from left to right
-    	 * <pre>
-    	 * {@code 
-    	 * 
-    	 * assertTrue(Streamable.of("a", "b", "c").foldLeft("", String::concat).equals("abc"));
-    	 * }
-    	 * </pre>
-    	 */
-    	default T foldLeft(T identity,  BinaryOperator<T> accumulator){
-    		 return sequenceM().foldLeft(identity,accumulator);
-    	}
-    	/**
-    	 *  Attempt to map this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
-    	 * Then use Monoid to reduce values
-    	 * 
-    	 * <pre>
-    		{@code
-    		Streamable.of(1,2,3).foldLeftMapToType(Reducers.toString(""));
-           
-            // "123"
-            }
-            </pre>
-    	 * @param reducer Monoid to reduce values
-    	 * @return Reduce result
-    	 */
-    	default <T> T foldLeftMapToType(Reducer<T> reducer){
-    		 return sequenceM().foldLeftMapToType(reducer);
-    	}
+    	
     	/**
     	 * 
     	 * <pre>

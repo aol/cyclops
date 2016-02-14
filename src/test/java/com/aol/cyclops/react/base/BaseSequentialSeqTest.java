@@ -38,6 +38,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.pcollections.HashTreePMap;
 
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.react.async.Queue;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 import com.aol.cyclops.react.util.SimpleTimer;
@@ -149,7 +150,7 @@ public abstract class BaseSequentialSeqTest {
 		
 		for(int i=0;i<10;i++){
 			System.out.println(i);
-			List<List<Integer>> list = react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
+			List<ListX<Integer>> list = react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
 					.batchBySizeAndTime(10,1,TimeUnit.MICROSECONDS)
 					.toList();
 			
@@ -669,26 +670,7 @@ public abstract class BaseSequentialSeqTest {
 	        assertEquals(1, (int) s.get().minBy(t -> "" + t).get());
 	    }
 
-	    @Test
-	    public void testUnzip() {
-	        Supplier<Seq<Tuple2<Integer, String>>> s = () -> of(tuple(1, "a"), tuple(2, "b"), tuple(3, "c"));
-
-	        Tuple2<Seq<Integer>, Seq<String>> u1 = Seq.unzip(s.get());
-	        assertThat(u1.v1.toList(),equalTo(asList(1, 2, 3)));
-	        assertThat(u1.v2.toList(),equalTo(asList("a", "b", "c")));
-
-	        Tuple2<Seq<Integer>, Seq<String>> u2 = Seq.unzip(s.get(), v1 -> -v1, v2 -> v2 + "!");
-	        assertThat(u2.v1.toList(),equalTo(asList(-1, -2, -3)));
-	        assertThat(u2.v2.toList(),equalTo(asList("a!", "b!", "c!")));
-
-	        Tuple2<Seq<Integer>, Seq<String>> u3 = Seq.unzip(s.get(), t -> tuple(-t.v1, t.v2 + "!"));
-	        assertThat(u3.v1.toList(),equalTo(asList(-1, -2, -3)));
-	        assertThat(u3.v2.toList(),equalTo(asList("a!", "b!", "c!")));
-
-	        Tuple2<Seq<Integer>, Seq<String>> u4 = Seq.unzip(s.get(), (t1, t2) -> tuple(-t1, t2 + "!"));
-	        assertThat(u4.v1.toList(),equalTo(asList(-1, -2, -3)));
-	        assertThat(u4.v2.toList(),equalTo(asList("a!", "b!", "c!")));
-	    }
+	  
 	   
 
 	    @Test

@@ -1,19 +1,17 @@
 
 package com.aol.cyclops.react.lazy;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
-
-import lombok.AllArgsConstructor;
-import static org.hamcrest.Matchers.equalTo;
 
 import org.junit.Test;
 
-import com.aol.cyclops.objects.Decomposable;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.Decomposable;
+
+import lombok.AllArgsConstructor;
 
 public class PatternMatchingTest {
 
@@ -22,8 +20,8 @@ public class PatternMatchingTest {
 		List<String> result = LazyFutureStream.of(1,2,3,4)
 											  .capture(e->e.printStackTrace())
 											  .patternMatch("",
-													  	c->c.hasValuesWhere( (Integer i)->i%2==0 ).then(i->"even"),
-													  	c->c.hasValuesWhere( (Integer i)->i%2!=0).then(i->"odd")
+													  	c->c.where(i->"even", (Integer i)->i%2==0 )
+													  		.where(i->"odd", (Integer i)->i%2!=0)
 													  )
 											  .toList();
 		assertThat(result,equalTo(Arrays.asList("odd","even","odd","even")));
@@ -33,7 +31,7 @@ public class PatternMatchingTest {
 		List<String> result = LazyFutureStream.of(1,2,3,4)
 											  .capture(e->e.printStackTrace())
 											  
-											  .patternMatch("n/a",c->c.hasValues(1).then(i->"one"))
+											  .patternMatch("n/a",c->c.values(i->"one",1))
 											  
 											  .toList();
 		assertThat(result,equalTo(Arrays.asList("one","n/a","n/a","n/a")));
@@ -43,10 +41,10 @@ public class PatternMatchingTest {
 		List<String> result = LazyFutureStream.of(new MyCase(1,2),new MyCase(3,4))
 											  .capture(e->e.printStackTrace())
 											  .patternMatch("n/a",
-													  c->c.hasValues(1,2).then(i->"one"),
-													  c->c.hasValues(3,4).then(i->"two"),
-													  c->c.hasValues(1,4).then(i->"three"),
-													  c->c.hasValues(2,3).then(i->"four")
+													  c->c.values(i->"one",1,2)
+													  	  .values(i->"two",3,4)
+													  	  .values(i->"three",1,4)
+													  	   .values(i->"four",2,3)
 													  
 													  
 													  )
@@ -59,9 +57,9 @@ public class PatternMatchingTest {
 		List<String> result = LazyFutureStream.of(new MyCase2(1,2),new MyCase2(3,4))
 											  .capture(e->e.printStackTrace())
 											  .patternMatch("n/a",
-													  c->c.hasValues(1,2).then(i->"one"),
-													  c->c.hasValues(3,4).then(i->"two"),
-													  c->c.hasValues(5,6).then(i->"three")
+													  c->c.values(i->"one",1,2)
+													  .values(i->"two",3,4)
+													  .values(i->"three",5,6)
 													  )
 											  .toList();
 		assertThat(result,equalTo(Arrays.asList("one","two")));

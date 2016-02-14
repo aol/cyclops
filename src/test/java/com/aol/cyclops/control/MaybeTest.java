@@ -692,11 +692,7 @@ public class MaybeTest {
 	
 	
 
-	@Test
-	public void testUnwrap() {
-		assertThat(just.unwrap(),equalTo(Maybe.of(10)));
-		assertThat(none.unwrap(),equalTo(Maybe.none()));
-	}
+	
 
 	@Test
 	public void testIterator1() {
