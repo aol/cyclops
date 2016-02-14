@@ -38,7 +38,7 @@ public class IteratorHotStream<T> {
 	
 	protected void scheduleInternal(Iterator<T> it, String cron,ScheduledExecutorService ex){
 		Date now = new Date();
-		Date d = ExceptionSoftener.softenSupplier(()->new CronExpression(cron)).get().getNextInvalidTimeAfter(now);
+		Date d = ExceptionSoftener.softenSupplier(()->new CronExpression(cron)).get().getNextValidTimeAfter(now);
 		
 		long delay = d.getTime() - now.getTime(); 
 		

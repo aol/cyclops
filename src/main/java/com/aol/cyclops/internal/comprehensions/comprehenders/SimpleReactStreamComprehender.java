@@ -5,7 +5,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
-
+import com.aol.cyclops.react.stream.traits.BaseSimpleReactStream;
 import com.aol.cyclops.react.stream.traits.SimpleReactStream;
 import com.aol.cyclops.types.extensability.Comprehender;
 

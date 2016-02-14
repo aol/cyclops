@@ -1,5 +1,6 @@
 package com.aol.cyclops.react.lazy;
 
+
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -16,6 +17,20 @@ import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 
 public class LazyTest {
+	@Test
+	public void onePerSecond() {
+
+		long start = System.currentTimeMillis();
+				LazyFutureStream.iterate(0, it -> it + 1)
+				.limit(3)
+				.onePer(1, TimeUnit.SECONDS)
+				.map(seconds -> "hello!")
+				.peek(System.out::println)
+				.toList();
+				
+	 assertTrue(System.currentTimeMillis()-start>1900);
+
+	}
 	@Test
 	public void subStream(){
 		List<Integer> list = LazyFutureStream.of(1,2,3,4,5,6).subStream(1,3).toList();

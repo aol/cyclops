@@ -1,16 +1,27 @@
 package com.aol.cyclops.react.stream.lazy;
 
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntFunction;
+import java.util.function.ToLongFunction;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.react.async.Queue;
 import com.aol.cyclops.react.async.factories.QueueFactories;
 import com.aol.cyclops.react.async.factories.QueueFactory;
 import com.aol.cyclops.react.async.subscription.Continueable;
@@ -22,6 +33,7 @@ import com.aol.cyclops.react.stream.LazyStreamWrapper;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 import com.aol.cyclops.react.threads.ReactPool;
 import com.aol.cyclops.types.stream.HotStream;
+import com.aol.cyclops.types.stream.PausableHotStream;
 import com.aol.cyclops.util.stream.StreamUtils;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -39,15 +51,6 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor(access=AccessLevel.PRIVATE)
 public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	
-	
-
-
-
-
-
-	
-
-
 
 	private final Optional<Consumer<Throwable>> errorHandler;
 	private final LazyStreamWrapper<U> lastActive;
@@ -220,5 +223,46 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 				consumerError,onComplete);
 		
 	}
+	@Override
+	public <T> LazyFutureStream<T> unitIterator(Iterator<T> it){
+		return simpleReact.from(it);
+	}
 
+	@Override
+	public LazyFutureStream<U> append(U value) {
+		return fromStream(stream().append(value));
+	}
+	@Override
+	public LazyFutureStream<U> prepend(U value) {
+		
+		return fromStream(stream().prepend(value));
+	}
+	
+
+	@Override
+	public <T> LazyFutureStream<T> unit(T unit) {
+		return fromStream(stream().unit(unit));
+	}
+
+	@Override
+	public HotStream<U> hotStream(Executor e) {
+		return stream().hotStream(e);
+	}
+
+	@Override
+	public HotStream<U> primedHotStream(Executor e) {
+		return stream().primedHotStream(e);
+	}
+
+	@Override
+	public PausableHotStream<U> pausableHotStream(Executor e) {
+		return stream().pausableHotStream(e);
+	}
+
+	@Override
+	public PausableHotStream<U> primedPausableHotStream(Executor e) {
+		return stream().primedPausableHotStream(e);
+	}
+
+	
 }

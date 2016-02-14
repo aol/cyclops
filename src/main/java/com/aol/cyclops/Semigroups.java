@@ -51,7 +51,7 @@ public interface Semigroups {
 		return ()->(a,b) ->a.compareTo((T)b) > 0 ? a:b;
 	}
 
-	static Semigroup<BigInteger> bigIntCount = () -> (a, b) -> a.add(BigInteger.ONE));
+	static Semigroup<BigInteger> bigIntCount = () -> (a, b) -> a.add(BigInteger.ONE);
 	static Semigroup<Integer> intCount = () -> (a, b) -> a + 1;
 	static Semigroup<Long> longCount = () -> (a, b) -> a + 1;
 	static Semigroup<Double> doubleCount = () -> (a, b) -> a + 1;

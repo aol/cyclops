@@ -611,13 +611,13 @@ public interface OperationsOnFutures<T> {
 	 * @return
 	 */
 	default HeadAndTail<T> headAndTail() {
-		HeadAndTail hat= this
+		return  this
 				.getLastActive()
 				.injectFuturesSeq()
+				.map(f->safeJoin(f))
 				.headAndTail();
 		
-			return new HeadAndTail(safeJoin(hat.head()),
-						fromStreamOfFutures(hat.tail())));
+		
 	}
 
 
