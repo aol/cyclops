@@ -444,13 +444,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 		public ListX<ST> unapply() {
 			return ListX.of(value);
 		}
-		/* (non-Javadoc)
-		 * @see com.aol.cyclops.objects.Decomposable#unwrap()
-		 */
-		@Override
-		public Object unwrap() {
-			return value;
-		}
+		
 		public String toString(){
 			return "Ior.secondary["+value+"]";
 		}

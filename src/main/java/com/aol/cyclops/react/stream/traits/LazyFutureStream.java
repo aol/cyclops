@@ -83,6 +83,7 @@ import com.aol.cyclops.react.stream.traits.future.operators.OperationsOnFutures;
 import com.aol.cyclops.react.stream.traits.future.operators.OperationsOnFuturesImpl;
 import com.aol.cyclops.react.stream.traits.operators.BatchByTime;
 import com.aol.cyclops.react.stream.traits.operators.BatchByTimeAndSize;
+import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
@@ -99,7 +100,9 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
  */
 
 public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStream<U>,
+											Foldable<U>,
                                             ReactiveSeq<U>,Seq<U>, LazyToQueue<U>,
+                                           
                                         ConfigurableStream<U,FastFuture<U>>,
                                         FutureStreamAsyncPublisher<U>,
                                         FutureStreamSynchronousPublisher<U> {

@@ -1190,8 +1190,9 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * @param reducer
 	 *            Monoid to reduce values
 	 * @return Reduce result
-	 */
+	
 	public <T> T foldRightMapToType(Reducer<T> reducer);
+	 */
 
 	/**
 	 * <pre>

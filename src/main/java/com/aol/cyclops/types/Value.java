@@ -15,7 +15,10 @@ import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.LazyReact;
+import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.LazyImmutable;
@@ -31,14 +34,12 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 import com.aol.cyclops.react.stream.traits.SimpleReactStream;
 
 import lombok.AllArgsConstructor;
 
-public interface Value<T> extends Supplier<T>, Foldable<T>, ValueObject<T>, Convertable<T> {
+public interface Value<T> extends Supplier<T>, Foldable<T>, Matchable<T>, Convertable<T> {
 
 	 public static <T> Value<T> of(Supplier<T> supplier){
 		 return new ValueImpl<T>(supplier);

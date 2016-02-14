@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.Monoid;
@@ -43,6 +44,7 @@ public class AnyMSeqImpl<T> implements AnyMSeq<T> {
 		return (BaseAnyMImpl)anyM;
 		
 	}
+	
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
@@ -308,6 +310,10 @@ public class AnyMSeqImpl<T> implements AnyMSeq<T> {
 	@Override
 	public AnyM<T> reduceM(Monoid<AnyM<T>> reducer) {
 		return  anyM.reduceM(reducer);
+	}
+	@Override
+	public <R, A> R collect(Collector<? super T, A, R> collector) {
+		return (R)anyM.collect(collector);
 	}
 	
 }

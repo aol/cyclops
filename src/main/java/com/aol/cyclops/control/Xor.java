@@ -389,13 +389,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 		public ListX<ST> unapply() {
 			return	ListX.of(value);
 		}
-		/* (non-Javadoc)
-		 * @see com.aol.cyclops.objects.Decomposable#unwrap()
-		 */
-		@Override
-		public Object unwrap() {
-			return value;
-		}
+		
 		
 		
 	}

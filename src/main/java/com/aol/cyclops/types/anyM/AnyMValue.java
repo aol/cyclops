@@ -36,6 +36,7 @@ public interface AnyMValue<T> extends AnyM<T>,
 									  Value<T>,
 									  Applicativable<T>{
 	
+	
 	default Value<T> toFirstValue(){
 		return ()-> firstOrNull(toListX());
 	}

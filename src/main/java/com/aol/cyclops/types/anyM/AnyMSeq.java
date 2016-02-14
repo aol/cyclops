@@ -9,6 +9,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Collectable;
@@ -44,6 +45,9 @@ public interface AnyMSeq<T> extends AnyM<T>,
 									SequenceMCollectable<T>,
 									ZippingApplicativable<T> {
 
+	
+	@Override
+	<R, A> R collect(Collector<? super T, A, R> collector);
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.types.sequence.SequenceMCollectable#collectable()
 	 */
