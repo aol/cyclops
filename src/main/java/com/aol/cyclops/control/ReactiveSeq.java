@@ -3336,7 +3336,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	
 	@Override
 	default <R> ReactiveSeq<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
+			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
 		
 		return (ReactiveSeq<R>)ZippingApplicativable.super.patternMatch(defaultValue, case1);
 	}

@@ -301,7 +301,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      * @param case1 Function to generate a case (or chain of cases as a single case)
      * @return LazyFutureStream where elements are transformed by pattern matching
      */
-    default <R> LazyFutureStream<R> patternMatch(R defaultValue,Function<CheckValues<? super U,R>,CheckValues<? super U,R>> case1){
+    default <R> LazyFutureStream<R> patternMatch(R defaultValue,Function<CheckValues<U,R>,CheckValues< U,R>> case1){
 
         return  map(u-> Matchable.of(u).mayMatch(case1).orElse(defaultValue));
     }

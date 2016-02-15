@@ -88,7 +88,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	 */
 	@Override
 	default <R> AnyMSeq<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
+			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
 		
 		return (AnyMSeq<R>)ZippingApplicativable.super.patternMatch(defaultValue, case1);
 	}

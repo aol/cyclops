@@ -1,5 +1,7 @@
 package com.aol.cyclops.control;
 
+import static com.aol.cyclops.control.Matchable.then;
+import static com.aol.cyclops.control.Matchable.when;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.*;
@@ -681,11 +683,11 @@ public class MaybeTest {
 
 	@Test
 	public void testMatches() {
-		assertThat(just.mayMatch(c->c.values(i->"hello",10)),equalTo(Maybe.of("hello")));
-		assertThat(just.mayMatch(c->c.values(i->"hello",10).has(i->"hello",2)),equalTo(Maybe.of("hello")));
-		assertThat(just.mayMatch(c->c.just(i->"hello",1)
-									 .has(i->"hello",2)
-									 .has(i->"hello",3)),equalTo(Maybe.none()));
+		assertThat(just.mayMatch(c->c.is(when(10),then("hello"))),equalTo(Maybe.of("hello")));
+		assertThat(just.mayMatch(c->c.is(when(10),then("hello")).is(when(2),i->"hello")),equalTo(Maybe.of("hello")));
+		assertThat(just.mayMatch(c->c.is(when(1),then("hello"))
+									 .is(when(2),then(()->"hello"))
+									 .is(when(3),then(()->"hello"))),equalTo(Maybe.none()));
 		
 	}
 

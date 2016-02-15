@@ -55,7 +55,7 @@ public abstract class AbstractCollectionXTest {
 	
 
 	@Test
-	public void when(){
+	public void visit(){
 		
 		String res=	of(1,2,3).visit((x,xs)->
 								xs.join(x.visit(some-> (int)some>2? "hello" : "world",()->"boo!"))

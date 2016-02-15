@@ -13,6 +13,7 @@ public class CyclopsMatchers {
 	public static final Matcher __ = Matchers.any(Object.class);
 	
 	public	static<V> Matcher<V> hasValues(V... values){
+		
 		Predicate p = Predicates.has(values);
 		return new Matcher(){
 

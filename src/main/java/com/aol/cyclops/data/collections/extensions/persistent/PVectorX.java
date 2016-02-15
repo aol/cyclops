@@ -683,7 +683,7 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	 */
 	@Override
 	default <R> PVectorX<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
+			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
 		
 		return (PVectorX<R>)PersistentCollectionX.super.patternMatch(defaultValue, case1);
 	}

@@ -88,15 +88,15 @@ public class Predicates {
 	 */
 	@SafeVarargs
 	public	static<V> Predicate<V> has(V... values){
-		return new ADTPredicateBuilder<Object>(Object.class).<V>has(values);
+		return new ADTPredicateBuilder<Object>(Object.class).has(values);
 	}
 	@SafeVarargs
 	public	static<V> Predicate<V> hasWhere(Predicate<V>... values){
-		return new ADTPredicateBuilder<Object>(Object.class).<V>hasWhere(values);
+		return (Predicate<V>) new ADTPredicateBuilder.InternalADTPredicateBuilder<Object>(Object.class).hasWhere(values);
 	}
 	@SafeVarargs
 	public	static<V> Predicate<V> hasMatch(Matcher<V>... values){
-		return new ADTPredicateBuilder<Object>(Object.class).<V>hasMatch(values);
+		return (Predicate<V>)new ADTPredicateBuilder.InternalADTPredicateBuilder<Object>(Object.class).hasMatch(values);
 	}
 	@SafeVarargs
 	public	static<V> Predicate<V> is(V... values){
@@ -104,11 +104,11 @@ public class Predicates {
 	}
 	@SafeVarargs
 	public	static<V> Predicate<V> isWhere(Predicate<V>... values){
-		return new ADTPredicateBuilder<Object>(Object.class).<V>isWhere(values);
+		return (Predicate<V>)new ADTPredicateBuilder.InternalADTPredicateBuilder<Object>(Object.class).isWhere(values);
 	}
 	@SafeVarargs
 	public	static<V> Predicate<V> isMatch(Matcher<V>... values){
-		return new ADTPredicateBuilder<Object>(Object.class).<V>isMatch(values);
+		return (Predicate<V>)new ADTPredicateBuilder.InternalADTPredicateBuilder<Object>(Object.class).isMatch(values);
 	}
 	
 	public	static<V> Predicate<V> eq(V value){
@@ -119,7 +119,7 @@ public class Predicates {
 		return p.negate();
 	}
 	@SafeVarargs
-	public static <T1,V extends T1> Predicate<? super T1> in(V... values){
+	public static <T1> Predicate<? super T1> in(T1... values){
 		return test ->Arrays.asList(values).contains(test);
 	}
 	public static <T1 extends Comparable<T1>> Predicate<? super T1> greaterThan(T1 v){

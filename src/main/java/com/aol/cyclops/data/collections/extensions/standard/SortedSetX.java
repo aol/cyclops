@@ -582,7 +582,7 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	 */
 	@Override
 	default <R> SortedSetX<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
+			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
 		
 		return (SortedSetX<R>)MutableCollectionX.super.patternMatch(defaultValue, case1);
 	}

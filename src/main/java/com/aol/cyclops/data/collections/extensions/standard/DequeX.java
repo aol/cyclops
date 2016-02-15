@@ -295,7 +295,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	 */
 	@Override
 	default <R> DequeX<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
+			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
 		return (DequeX<R>)MutableCollectionX.super.patternMatch(defaultValue, case1);
 	}
 

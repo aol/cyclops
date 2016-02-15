@@ -511,7 +511,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 */
 	@Override
 	default <R> MutableCollectionX<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
+			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
 		
 		return (MutableCollectionX)FluentCollectionX.super.patternMatch(defaultValue, case1);
 	}

@@ -29,7 +29,6 @@ import com.aol.cyclops.internal.matcher2.SeqUtils;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.Decomposable;
 import com.aol.cyclops.types.Value;
-import com.aol.cyclops.util.function.Predicates;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
 import com.aol.cyclops.util.function.TriFunction;
@@ -59,7 +58,7 @@ public interface Matchable<TYPE>{
 	public static <R> Supplier<? extends R> otherwise(Supplier<? extends R> s){
 		return  s;
 	}
-	
+	@SafeVarargs
 	public static <T,V>  Iterable<Predicate<? super T>> whenGuard(V... values){
 		return (Iterable)()->ReactiveSeq.of(values)
 						  			.map(v->ADTPredicateBuilder.convertToPredicateTyped(v))
@@ -71,11 +70,11 @@ public interface Matchable<TYPE>{
 		
 		return ()->Tuple.tuple(test -> Objects.equals(test,t1));
 	}
-	public static <T1,T2,T3> MTuple1<Predicate<? super T1>> when(Predicate<? super T1> t1){
+	public static <T1> MatchableTuple1<Predicate<? super T1>> when(Predicate<? super T1> t1){
 		
 		return ()->Tuple.tuple(t1);
 	}
-	public static <T1,T2,T3> MTuple1<Predicate<? super T1>> when(Matcher<? super T1> t1){
+	public static <T1> MatchableTuple1<Predicate<? super T1>> when(Matcher<? super T1> t1){
 		return ()->Tuple.tuple(test -> t1.matches(test));
 	}
 	//when arity 2
@@ -206,6 +205,9 @@ public interface Matchable<TYPE>{
 	public static<T> Matchable<T> of(Iterable<T> o){
 		return AsMatchable.asMatchable(o);
 	}
+	public static<T> MatchableIterable<T> ofIterable(Iterable<T> o){
+		return ()->o.iterator();
+	}
 	public static<T> Matchable<T> of(Optional<T> o){
 		return AsMatchable.asMatchable(o);
 	}
@@ -299,6 +301,18 @@ public interface Matchable<TYPE>{
 			Iterable<TYPE> it = (Iterable<TYPE>)getMatchable();
 			return Eval.later(()->ReactiveSeq.fromIterable(it).visit(match));	
 		}	
+		default <R> Eval<R> headTail(BiFunction<? super Maybe<TYPE>,? super MatchableIterable<TYPE>,? extends R> match ){
+			@SuppressWarnings("unchecked")
+			Iterable<TYPE> it = (Iterable<TYPE>)getMatchable();
+			
+			return 	Eval.later(()->{ 
+				Iterator<TYPE> iter = it.iterator();
+				Maybe<TYPE> head = Maybe.ofNullable( (iter.hasNext() ? iter.next() : null));
+				
+				MatchableIterable<TYPE> matchable = ()->iter;
+				return match.apply(head,matchable);
+			});
+		}
 		default Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> toTuple5(Object o){
 			Iterator it = ((Iterable)o).iterator();
 			return Tuple.tuple((TYPE)(it.hasNext() ?it.next():null),
@@ -1181,19 +1195,38 @@ public interface Matchable<TYPE>{
 		public final CheckValues<T,R> is(Iterable<Predicate<? super T>> values,Function<? super T,? extends R> result) {		
 			return isWhere(result,values);
 		}
+		public final CheckValues<T,R> is(MTuple1<Predicate<? super T>> values,Function<? super T,? extends R> result) {		
+			return isWhere(result,(Iterable)values);
+		}
 		public final CheckValues<T,R> is(MTuple2<Predicate<? super T>,Predicate<? super T>> values,Function<? super T,? extends R> result) {		
 			return isWhere(result,(Iterable)values);
 		}
 		public final CheckValues<T,R> is(MTuple3<Predicate<? super T>,Predicate<? super T>,Predicate<? super T>> values,Function<? super T,? extends R> result) {		
 			return isWhere(result,(Iterable)values);
 		}
+		public final CheckValues<T,R> is(MTuple4<Predicate<? super T>,Predicate<? super T>,Predicate<? super T>,Predicate<? super T>> values,Function<? super T,? extends R> result) {		
+			return isWhere(result,(Iterable)values);
+		}
+		public final CheckValues<T,R> is(MTuple5<Predicate<? super T>,Predicate<? super T>,Predicate<? super T>,Predicate<? super T>,Predicate<? super T>> values,Function<? super T,? extends R> result) {		
+			return isWhere(result,(Iterable)values);
+		}
+		
 		public final CheckValues<T,R> has(Iterable<Predicate<? super T>> values,Function<? super T,? extends R> result) {		
 			return hasWhere(result,values);
+		}
+		public final CheckValues<T,R> has(MTuple1<Predicate<? super T>> values,Function<? super T,? extends R> result) {		
+			return hasWhere(result,(Iterable)values);
 		}
 		public final CheckValues<T,R> has(MTuple2<Predicate<? super T>,Predicate<? super T>> values,Function<? super T,? extends R> result) {		
 			return hasWhere(result,(Iterable)values);
 		}
 		public final CheckValues<T,R> has(MTuple3<Predicate<? super T>,Predicate<? super T>,Predicate<? super T>> values,Function<? super T,? extends R> result) {		
+			return hasWhere(result,(Iterable)values);
+		}
+		public final CheckValues<T,R> has(MTuple4<Predicate<? super T>,Predicate<? super T>,Predicate<? super T>,Predicate<? super T>> values,Function<? super T,? extends R> result) {		
+			return hasWhere(result,(Iterable)values);
+		}
+		public final CheckValues<T,R> has(MTuple5<Predicate<? super T>,Predicate<? super T>,Predicate<? super T>,Predicate<? super T>,Predicate<? super T>> values,Function<? super T,? extends R> result) {		
 			return hasWhere(result,(Iterable)values);
 		}
 		

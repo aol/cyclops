@@ -162,7 +162,7 @@ public interface Maybe<T> extends Value<T>,
 	}
 	@Override
 	default <R> Maybe<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
+			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
 		
 		return (Maybe<R>)Applicativable.super.patternMatch(defaultValue, case1);
 	}

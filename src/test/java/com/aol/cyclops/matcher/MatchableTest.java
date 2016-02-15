@@ -1,9 +1,9 @@
 package com.aol.cyclops.matcher;
 
-import static com.aol.cyclops.control.Matchable.whenGuard;
 import static com.aol.cyclops.control.Matchable.otherwise;
 import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
+import static com.aol.cyclops.control.Matchable.whenGuard;
 import static com.aol.cyclops.util.function.Predicates.__;
 import static com.aol.cyclops.util.function.Predicates.eq;
 import static com.aol.cyclops.util.function.Predicates.has;
@@ -26,10 +26,7 @@ import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.MTuple2;
 import com.aol.cyclops.control.Matchable.MTuple3;
 import com.aol.cyclops.control.Matchable.MatchSelf;
-import com.aol.cyclops.control.Matchable.MatchableTuple2;
-import com.aol.cyclops.control.Matchable.MatchableTuple3;
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Decomposable;
 import com.aol.cyclops.util.function.Predicates;
@@ -55,6 +52,7 @@ public class MatchableTest {
 	}
 	@Test
 	public void pojoTypeSafe(){
+		
 		/**
 		new Customer("test",new Address(10,"hello","my city")).match().mayMatch( 
 				
@@ -241,31 +239,31 @@ public class MatchableTest {
 	}
 	@Test 
 	public void optionalMatch(){
-		Eval<Integer> result2 = Matchable.of(Optional.of(1)).matches(c->c.is(when(not(in(2,3,4),in(4,5,6))),in->2),otherwise(1));
+		Eval<Integer> result2 = Matchable.of(Optional.of(1)).matches(c->c.is(when(Predicates.not(Predicates.in(2,3,4)),Predicates.in(4,5,6)),in->3),otherwise(2));
 		
 		assertThat(result2,equalTo(Eval.now(2)));
 	}
 	@Test 
 	public void emptyList(){
 		
-		assertThat(Matchable.of(Arrays.asList()).matches(c->c.isEmpty(in->"hello")),equalTo(Eval.now("hello")));
+		assertThat(Matchable.of(Arrays.asList()).matches(c->c.isEmpty(in->"hello"),otherwise("world")),equalTo(Eval.now("hello")));
 	}
 	@Test 
 	public void emptyStream(){
 		
-		assertThat(Matchable.of(Stream.of()).matches(c->c.isEmpty(in->"hello")),equalTo(Eval.now("hello")));
+		assertThat(Matchable.of(Stream.of()).matches(c->c.isEmpty(in->"hello"),otherwise("boo")),equalTo(Eval.now("hello")));
 	}
 	@Test 
 	public void emptyOptional(){
 		
-		assertThat(Matchable.of(Optional.empty()).matches(c->c.isEmpty(in->"hello")),equalTo(Eval.now("hello")));
+		assertThat(Matchable.of(Optional.empty()).matches(c->c.isEmpty(in->"hello"),otherwise("n/a")),equalTo(Eval.now("hello")));
 	}
 	@Test
 	public void emptyOptionalMultiple2(){
 		assertThat(Matchable.of(Optional.empty())
 				            .matches(
 				            			o-> o.isEmpty(in->"hello")
-				            			     .values(in->"2",1)
+				            			     .is(when(1),in->"2"),otherwise("world")
 				            		)
 				            		,equalTo(Eval.now("hello")));
 		
@@ -277,8 +275,9 @@ public class MatchableTest {
 							
 				            .matches(
 				            			o-> o.isEmpty(in->"hello")
-				            			     .values(i->""+2,1)
-				            			     .has(i->""+3,2)
+				            			     .has(when(1),i->""+2)
+				            			     .has(when(2),i->""+3)
+				            			     ,otherwise("world")
 				            		).get()
 				            		,equalTo("hello"));
 		
@@ -289,8 +288,8 @@ public class MatchableTest {
 		assertThat(Maybe.none()
 						.matches(
 				            			o-> o.isEmpty(in->"hello")
-				            			      .values(in->"2",1)
-				            			      .has(in->"3",2)
+				            			      .is(when(1),in->"2")
+				            			      .has(when(2),in->"3"),otherwise("boo!")
 				            		)
 				            		,equalTo(Eval.now("hello")));
 		
@@ -299,32 +298,17 @@ public class MatchableTest {
 	@Test
 	public void emptyOptionalMultiple4(){
 		assertThat(Matchable.of(Optional.of(3))
-							
-				            .matches(
-				            			o-> o.isEmpty(i->"hello")
-				            			     .values(i->""+2,1)
-				            			     .has(i->""+3,2)
-				            			     .has(i->""+4,3)
+							 .matches(
+				            		o-> o.isEmpty(in->"hello")
+		            			      	 .is(when(1),then("2"))
+		            			      	 .is(when(2),then("3"))
+		            			      	 .is(when(3), then(4)),otherwise("boo!")
 				            		)
 				            		,equalTo(Eval.now("4")));
 		
 		
 	}
-	@Test
-	public void emptyOptionalMultiple5(){
-		assertThat(Matchable.of(Optional.of(4))
-								
-								.matches(
-				            			o-> o.isEmpty(i->"hello")
-				            			.values(i->""+2,1)
-				            			.has(i->""+3,2)
-				            			.has(i->""+4,3)
-				            			.has(i->""+5,4)
-				            		)
-				            		,equalTo(Eval.now("5")));
-		
-		
-	}
+	
 	@Test 
 	public void emptyOptionalMaybe(){
 		
@@ -335,7 +319,7 @@ public class MatchableTest {
 		assertThat(Matchable.of(Optional.empty())
 				            .mayMatch(
 				            			o-> o.isEmpty(i->"hello")
-				            			     .has(i->""+2)
+				            				 .is(when(2),then("3"))
 				            		).get()
 				            		,equalTo("hello"));
 		
@@ -346,8 +330,8 @@ public class MatchableTest {
 		assertThat(Matchable.of(Optional.empty())
 				            .mayMatch(
 				            			o-> o.isEmpty(i->"hello")
-				            			     .has(i->""+2)
-				            			     .has(i->""+3)
+				            			      .is(when(1),then("2"))
+				            			      .is(when(2),then("3"))
 				            		).get()
 				            		,equalTo("hello"));
 		
@@ -358,44 +342,32 @@ public class MatchableTest {
 		assertThat(Matchable.of(Optional.of(3))
 				            .mayMatch(
 				            			o-> o.isEmpty(i->"hello")
-				            			     .values(i->""+2,1)
-				            			     .has(i->""+3,2)
-				            			     .has(i->""+4,3)
+				            			     .is(when(1),then("2"))
+				            			     .is(when(2),then("3"))
+				            			     .is(when(3),then("4"))
+				            			    
 				            		).get()
 				            		,equalTo("4"));
 		
 		
 	}
-	@Test
-	public void emptyOptionalMultiple5Maybe(){
-		assertThat(Matchable.of(Optional.of(4))
-				            .mayMatch(
-				            			o-> o.isEmpty(i->"hello")
-				            			     .values(i->""+2,1)
-				            			     .has(i->""+3,2)
-				            			     .has(i->""+4,3)
-				            			     .has(i->""+5,4)
-				            		).get()
-				            		,equalTo("5"));
-		
-		
-	}
+	
 	public void matchByType(){
 		
 		assertThat(Matchable.of(1)
-				                    .matches(c->c.justMatch(in->"hello",instanceOf(Integer.class))),
+				                    .matches(c->c.is(when(instanceOf(Integer.class)),then("hello")),otherwise("world")),
 				                    equalTo("hello"));
 	}
 	public void matchListOfValues(){
 		assertThat(Matchable.listOfValues(1,2,3)
-							        .matches(c->c.where(i->2,(Object i)->(i instanceof Integer))),
+							        .matches(c->c.is(when((Object i)->(i instanceof Integer)),i->2),otherwise(-1)),
 							        equalTo(2));
 		
 	}
 	@Test
 	public void recursive(){
 		Eval<String> result = Matchable.listOfValues(1,new MyCase(4,5,6))
-				 				.matches(c->c.values(i->"rec",Predicates.__,Predicates.has(4,5,6)));
+				 				.matches(c->c.is(when(__,Predicates.has(4,5,6)),then("rec")),otherwise("n/a"));
 		
 		assertThat(result.get(),equalTo("rec"));
 	}
@@ -404,7 +376,7 @@ public class MatchableTest {
 	public void matchType(){
 		
 		Eval<Integer> result = Matchable.of(new Child(10,20)).matches(
-									c-> c.justWhere(in->10, Predicates.type(Child.class).has()));
+									c-> c.is(when(Predicates.type(Child.class).has()),then(()->10)),otherwise(-1));
 		
 		assertThat(result.get(),equalTo(10));
 	}
@@ -412,7 +384,7 @@ public class MatchableTest {
 	public void matchTypeBreakdown(){
 		
 		Eval<Integer> result = Matchable.of(new Child(10,20)).matches(
-									c-> c.justWhere(in->10, Predicates.type(Child.class).has(10,20)));
+									c-> c.is(when(Predicates.type(Child.class).has(10,20)),in->10),otherwise(50));
 		
 		assertThat(result.get(),equalTo(10));
 	}
@@ -420,7 +392,7 @@ public class MatchableTest {
 	public void matchTypeBreakdownJust(){
 		
 		Maybe<Integer> result = Matchable.of(new Child(10,20)).mayMatch(
-									c-> c.justWhere(in->10, Predicates.type(Child.class).is(10)));
+									c-> c.is(when(Predicates.type(Child.class).is(10)),in->10));
 		
 		assertThat(result,equalTo(Maybe.none()));
 	}
@@ -428,7 +400,7 @@ public class MatchableTest {
 	public void matchTypeBreakdownJust2(){
 		
 		Maybe<Integer> result = Matchable.of(new Child(10,20)).mayMatch(
-									c-> c.justWhere(in->10, Predicates.type(Child.class).is(10,20)));
+									c-> c.is(when(Predicates.type(Child.class).is(10,20)),then(10)));
 		
 		assertThat(result,equalTo(Maybe.of(10)));
 	}
@@ -436,7 +408,7 @@ public class MatchableTest {
 	public void matchTypeBreakdownJustWhere(){
 		
 		Maybe<Integer> result = Matchable.of(new Child(10,20)).mayMatch(
-									c-> c.justWhere(in->10, Predicates.type(Child.class).isWhere(i->(int)i==10,i->(int)i==20)));
+									c-> c.is(when(Predicates.type(Child.class).is(eq(10),eq(20))),in->10));
 		
 		assertThat(result,equalTo(Maybe.of(10)));
 	}

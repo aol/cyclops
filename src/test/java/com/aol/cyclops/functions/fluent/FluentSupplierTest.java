@@ -1,5 +1,7 @@
 package com.aol.cyclops.functions.fluent;
 
+import static com.aol.cyclops.control.Matchable.then;
+import static com.aol.cyclops.control.Matchable.when;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -8,20 +10,18 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.control.FluentFunctions;
-import com.aol.cyclops.control.Try;
-import com.aol.cyclops.control.FluentFunctions.FluentSupplier;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.FluentFunctions;
+import com.aol.cyclops.control.Matchable;
+import com.aol.cyclops.control.Try;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
@@ -171,68 +171,29 @@ public class FluentSupplierTest {
 	@Test
 	public void testMatches1(){
 		assertThat(FluentFunctions.of(this::getOne)	
-					   .matches(-1,c->c.just(i->4,1))
+					   .matches(-1,c->c.is(when(1),then(()->4)))
 					   .get(),equalTo(4));
 	}
 
 	@Test
 	public void testMatches1Default(){
 		assertThat(FluentFunctions.of(this::getOne)	
-					   .matches(-1,c->c.just(i->4,4))
+					   .matches(-1,c->c.is(when(4),then(()->4)))
 					   .get(),equalTo(-1));
 	}
 	@Test
 	public void testMatches2(){
 		assertThat(FluentFunctions.of(this::getOne)	
-					   .matches(-1,c->c.just(i->4,4)
-							   		   .is(i->4,1))
+					   .matches(-1,c->c.is(when(1),then(()->5))
+							   			.is(when(2),then(()->4)))
 					   .get(),equalTo(4));
 	}
 
 	@Test
 	public void testMatches2Default(){
 		assertThat(FluentFunctions.of(this::getOne)	
-					   .matches(-1,c->c.just(i->4,4).is(i->4,103))
-					   .get(),equalTo(-1));
-	}
-	@Test
-	public void testMatches3(){
-		assertThat(FluentFunctions.of(this::getOne)	
-				   .matches(-1,c->c.just(i->4,4).is(i->4,8)
-						   			.is(i->4,1))
-				   .get(),equalTo(4));
-	}
-
-	@Test
-	public void testMatches3Default(){
-		assertThat(FluentFunctions.of(this::getOne)	
-					   .matches(-1,c->c.just(i->4,4).is(i->4,8).is(i->4,103))
-					   .get(),equalTo(-1));
-	}
-	@Test
-	public void testMatches4(){
-		assertThat(FluentFunctions.of(this::getOne)	
-				   .matches(-1,c->c.just(i->4,4).is(i->4,40).is(i->4,8).is(i->4,1))
-				   .get(),equalTo(4));
-	}
-
-	@Test
-	public void testMatches4Default(){
-		assertThat(FluentFunctions.of(this::getOne)	
-					   .matches(-1,c->c.just(i->4,12).is(i->4,40).is(i->4,8).is(i->4,103))
-					   .get(),equalTo(-1));
-	}
-	@Test
-	public void testMatches5(){
-		assertThat(FluentFunctions.of(this::getOne)	
-				   .matches(-1,c->c.just(i->4,4).is(i->4,5).is(i->4,40).is(i->4,8).is(i->4,1))
-				   .get(),equalTo(4));
-	}
-
-	@Test
-	public void testMatches5Default(){
-		assertThat(FluentFunctions.of(this::getOne)	
-					   .matches(-1,c->c.just(i->4,4).is(i->4,5).is(i->4,40).is(i->4,8).is(i->4,103))
+					   .matches(-1,c->c.is(when(100),then(()->5))
+					   				.is(when(200),then(()->4)))
 					   .get(),equalTo(-1));
 	}
 	

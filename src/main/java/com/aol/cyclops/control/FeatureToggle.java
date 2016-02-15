@@ -34,7 +34,7 @@ public interface FeatureToggle<F> extends Supplier<F>, Value<F>, Applicativable<
 	
 	@Override
 	default <R> FeatureToggle<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super F, R>, CheckValues<? super F, R>> case1) {
+			Function<CheckValues<F, R>, CheckValues<F, R>> case1) {
 		
 		return (FeatureToggle<R>)Applicativable.super.patternMatch(defaultValue, case1);
 	}

@@ -1,5 +1,7 @@
 package com.aol.cyclops.functions.fluent;
 
+import static com.aol.cyclops.control.Matchable.then;
+import static com.aol.cyclops.control.Matchable.when;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -17,10 +19,11 @@ import java.util.function.Function;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.control.FluentFunctions;
-import com.aol.cyclops.control.Try;
-import com.aol.cyclops.control.FluentFunctions.FluentSupplier;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.FluentFunctions;
+import com.aol.cyclops.control.FluentFunctions.FluentSupplier;
+import com.aol.cyclops.control.Matchable;
+import com.aol.cyclops.control.Try;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
@@ -177,67 +180,28 @@ public class FluentFunctionTest {
 	@Test
 	public void testMatches1(){
 		assertThat(FluentFunctions.of(this::addOne)	
-					   .matches(-1,c->c.values(i->3,2))
+					   .matches(-1,c->c.is(when(2),then(3)))
 					   .apply(1),equalTo(3));
 	}
 
 	@Test
 	public void testMatches1Default(){
 		assertThat(FluentFunctions.of(this::addOne)	
-					   .matches(-1,c->c.values(i->3,4))
+					   .matches(-1,c->c.is(when(4),then(3)))
 					   .apply(1),equalTo(-1));
 	}
 	@Test
 	public void testMatches2(){
 		assertThat(FluentFunctions.of(this::addOne)	
-					   .matches(-1,c->c.values(i->3,4).has(i->3,2))
+					   .matches(-1,c->c.is(when(4),then(5)).is(when(2),then(3)))
 					   .apply(1),equalTo(3));
 	}
 
 	@Test
 	public void testMatches2Default(){
 		assertThat(FluentFunctions.of(this::addOne)	
-					   .matches(-1,c->c.values(i->3,4).has(i->3,103))
-					   .apply(1),equalTo(-1));
-	}
-	@Test
-	public void testMatches3(){
-		assertThat(FluentFunctions.of(this::addOne)	
-				   .matches(-1,c->c.values(i->3,4).has(i->3,8).has(i->3,2))
-				   .apply(1),equalTo(3));
-	}
-
-	@Test
-	public void testMatches3Default(){
-		assertThat(FluentFunctions.of(this::addOne)	
-					   .matches(-1,c->c.values(i->3,4).has(i->3,8).has(i->3,103))
-					   .apply(1),equalTo(-1));
-	}
-	@Test
-	public void testMatches4(){
-		assertThat(FluentFunctions.of(this::addOne)	
-				   .matches(-1,c->c.values(i->3,4).has(i->3,40).has(i->3,8).has(i->4,2))
-				   .apply(1),equalTo(4));
-	}
-
-	@Test
-	public void testMatches4Default(){
-		assertThat(FluentFunctions.of(this::addOne)	
-					   .matches(-1,c->c.values(i->3,4).has(i->3,40).has(i->3,8).has(i->3,103))
-					   .apply(1),equalTo(-1));
-	}
-	@Test
-	public void testMatches5(){
-		assertThat(FluentFunctions.of(this::addOne)	
-				   .matches(-1,c->c.values(i->3,4).has(i->3,5).has(i->3,40).has(i->3,8).has(i->4,2))
-				   .apply(1),equalTo(4));
-	}
-
-	@Test
-	public void testMatches5Default(){
-		assertThat(FluentFunctions.of(this::addOne)	
-					   .matches(-1,c->c.values(i->3,4).has(i->3,5).has(i->3,40).has(i->3,8).has(i->3,103))
-					   .apply(1),equalTo(-1));
+				 				  .matches(-1,c->c.is(when(4),then(15)).is(when(2),then(13)))
+				 				  .apply(1),equalTo(-1));
 	}
 	
 	

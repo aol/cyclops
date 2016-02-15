@@ -733,7 +733,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 */
 	@Override
 	default <R> PStackX<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
+			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
 		
 		return (PStackX<R>)PersistentCollectionX.super.patternMatch(defaultValue, case1);
 	}

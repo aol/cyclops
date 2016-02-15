@@ -610,7 +610,7 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	 */
 	@Override
 	default <R> POrderedSetX<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
+			Function<CheckValues< T, R>, CheckValues<T, R>> case1) {
 		
 		return (POrderedSetX<R>)PersistentCollectionX.super.patternMatch(defaultValue, case1);
 	}

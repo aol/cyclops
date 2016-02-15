@@ -48,7 +48,7 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 	}
 	@Override
 	public <R> FutureW<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
+			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
 		
 		return (FutureW<R>)Applicativable.super.patternMatch(defaultValue, case1);
 	}

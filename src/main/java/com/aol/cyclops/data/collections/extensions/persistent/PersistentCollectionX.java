@@ -497,7 +497,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	 */
 	@Override
 	default <R> PersistentCollectionX<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
+			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
 		
 		return (PersistentCollectionX)FluentCollectionX.super.patternMatch(defaultValue, case1);
 	}

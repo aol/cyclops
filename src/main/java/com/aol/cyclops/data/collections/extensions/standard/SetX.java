@@ -581,7 +581,7 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	 */
 	@Override
 	default <R> SetX<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
+			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
 		
 		return (SetX<R>)MutableCollectionX.super.patternMatch(defaultValue, case1);
 	}
