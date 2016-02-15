@@ -85,41 +85,35 @@ public class Predicates {
 	 * @return Predicate builder that can decompose Case class and match against specified values
 	 */
 	@SafeVarargs
-	public	static<V> Predicate<V> values(V... values){
-		return new ADTPredicateBuilder<Object>(Object.class).<V>values(values);
+	public	static<V> Predicate<V> has(V... values){
+		return new ADTPredicateBuilder<Object>(Object.class).<V>has(values);
 	}
 	@SafeVarargs
-	public	static<V> Predicate<V> where(Predicate<V>... values){
-		return new ADTPredicateBuilder<Object>(Object.class).<V>where(values);
+	public	static<V> Predicate<V> hasWhere(Predicate<V>... values){
+		return new ADTPredicateBuilder<Object>(Object.class).<V>hasWhere(values);
 	}
 	@SafeVarargs
-	public	static<V> Predicate<V> match(Matcher<V>... values){
-		return new ADTPredicateBuilder<Object>(Object.class).<V>match(values);
+	public	static<V> Predicate<V> hasMatch(Matcher<V>... values){
+		return new ADTPredicateBuilder<Object>(Object.class).<V>hasMatch(values);
 	}
 	@SafeVarargs
-	public	static<V> Predicate<V> just(V... values){
-		return new ADTPredicateBuilder<Object>(Object.class).<V>just(values);
+	public	static<V> Predicate<V> is(V... values){
+		return new ADTPredicateBuilder<Object>(Object.class).<V>is(values);
 	}
 	@SafeVarargs
-	public	static<V> Predicate<V> justWhere(Predicate<V>... values){
-		return new ADTPredicateBuilder<Object>(Object.class).<V>justWhere(values);
+	public	static<V> Predicate<V> isWhere(Predicate<V>... values){
+		return new ADTPredicateBuilder<Object>(Object.class).<V>isWhere(values);
 	}
 	@SafeVarargs
-	public	static<V> Predicate<V> justMatch(Matcher<V>... values){
-		return new ADTPredicateBuilder<Object>(Object.class).<V>match(values);
+	public	static<V> Predicate<V> isMatch(Matcher<V>... values){
+		return new ADTPredicateBuilder<Object>(Object.class).<V>isMatch(values);
 	}
 	
-	public	static<V> Predicate<V> is(V value){
-		return new ADTPredicateBuilder<Object>(Object.class).is(value);
+	public	static<V> Predicate<V> eq(V value){
+		return new ADTPredicateBuilder<Object>(Object.class).eq(value);
 	}
 
-	public	static<V> Predicate<V> isWhere(Predicate<V> value){
-		return new ADTPredicateBuilder<Object>(Object.class).isWhere(value);
-	}
 	
-	public	static<V> Predicate<V> isMatch(Matcher<V> value){
-		return new ADTPredicateBuilder<Object>(Object.class).isMatch(value);
-	}
 	
 	
 }

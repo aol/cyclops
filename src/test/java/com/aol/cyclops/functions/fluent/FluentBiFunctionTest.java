@@ -195,7 +195,7 @@ public class FluentBiFunctionTest {
 	public void testMatches2(){
 		assertThat(FluentFunctions.of(this::add)	
 					   .matches(-1,c->c.values(i->30,4)
-							   			.values(i->3,2))
+							   			.has(i->3,2))
 					   .apply(1,1),equalTo(3));
 	}
 
@@ -203,45 +203,45 @@ public class FluentBiFunctionTest {
 	public void testMatches2Default(){
 		assertThat(FluentFunctions.of(this::add)	
 					   .matches(-1,c->c.values(i->3,4)
-							   		   .values(i->8,103))
+							   		   .has(i->8,103))
 					   .apply(1,1),equalTo(-1));
 	}
 	@Test
 	public void testMatches3(){
 		assertThat(FluentFunctions.of(this::add)	
 				   .matches(-1,c->c.values(i->30,4)
-						           .values(i->32,8)
-						           .values(i->3,2))
+						           .has(i->32,8)
+						           .has(i->3,2))
 				   .apply(1,1),equalTo(3));
 	}
 
 	@Test
 	public void testMatches3Default(){
 		assertThat(FluentFunctions.of(this::add)	
-					   .matches(-1,c->c.values(i->3,4).values(i->3,8).values(i->3,103))
+					   .matches(-1,c->c.values(i->3,4).has(i->3,8).has(i->3,103))
 					   .apply(1,1),equalTo(-1));
 	}
 	@Test
 	public void testMatches4(){
 		assertThat(FluentFunctions.of(this::add)	
-				   .matches(-1,c->c.values(i->30,4).values(i->30,40).values(i->30,8).values(i->3,2))
+				   .matches(-1,c->c.values(i->30,4).has(i->30,40).has(i->30,8).has(i->3,2))
 				   .apply(1,1),equalTo(3));
 	}
 
 	@Test
 	public void testMatches4Default(){
 		assertThat(FluentFunctions.of(this::add)	
-					   .matches(-1,c->c.values(i->3,4).values(i->3,40).values(i->3,8).values(i->3,103))
+					   .matches(-1,c->c.values(i->3,4).has(i->3,40).has(i->3,8).has(i->3,103))
 					   .apply(1,1),equalTo(-1));
 	}
 	@Test
 	public void testMatches5(){
 		assertThat(FluentFunctions.of(this::add)	
 				   .matches(-1,c->c.values(i->30,4)
-						   		   .values(i->30,5)
-						   		   .values(i->30,40)
-						   		   .values(i->30,8)
-						   		   .values(i->3,2))
+						   		   .has(i->30,5)
+						   		   .has(i->30,40)
+						   		   .has(i->30,8)
+						   		   .has(i->3,2))
 				   .apply(1,1),equalTo(3));
 	}
 
@@ -249,10 +249,10 @@ public class FluentBiFunctionTest {
 	public void testMatches5Default(){
 		assertThat(FluentFunctions.of(this::add)	
 					   .matches(-1,c->c.values(i->3,4)
-							           .values(i->50,5)
-							   		   .values(i->38,40)
-							   		   .values(i->32,8)
-							   		   .values(i->8,103))
+							           .has(i->50,5)
+							   		   .has(i->38,40)
+							   		   .has(i->32,8)
+							   		   .has(i->8,103))
 					   .apply(1,1),equalTo(-1));
 	}
 	

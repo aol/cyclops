@@ -682,10 +682,10 @@ public class MaybeTest {
 	@Test
 	public void testMatches() {
 		assertThat(just.mayMatch(c->c.values(i->"hello",10)),equalTo(Maybe.of("hello")));
-		assertThat(just.mayMatch(c->c.values(i->"hello",10).values(i->"hello",2)),equalTo(Maybe.of("hello")));
+		assertThat(just.mayMatch(c->c.values(i->"hello",10).has(i->"hello",2)),equalTo(Maybe.of("hello")));
 		assertThat(just.mayMatch(c->c.just(i->"hello",1)
-									 .values(i->"hello",2)
-									 .values(i->"hello",3)),equalTo(Maybe.none()));
+									 .has(i->"hello",2)
+									 .has(i->"hello",3)),equalTo(Maybe.none()));
 		
 	}
 

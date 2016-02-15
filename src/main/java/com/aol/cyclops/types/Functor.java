@@ -91,7 +91,7 @@ public interface Functor<T> {
      * @param case1 Function to generate a case (or chain of cases as a single case)
      * @return CollectionX where elements are transformed by pattern matching
      */
-    default <R> Functor<R> patternMatch(R defaultValue,Function<CheckValues<? super T,R>,CheckValues<? super T,R>> case1){
+    default <R> Functor<R> patternMatch(R defaultValue,Function<CheckValues<T,R>,CheckValues<T,R>> case1){
 
         return  map(u-> Matchable.of(u).mayMatch(case1).orElse(defaultValue));
     }

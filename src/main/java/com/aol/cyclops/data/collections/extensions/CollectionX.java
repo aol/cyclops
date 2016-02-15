@@ -561,7 +561,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 */
 	@Override
 	default <R> CollectionX<R> patternMatch(R defaultValue,
-			Function<CheckValues<? super T, R>, CheckValues<? super T, R>> case1) {
+			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
 		
 		return (CollectionX<R>)ZippingApplicativable.super.patternMatch(defaultValue, case1);
 	}

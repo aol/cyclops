@@ -21,7 +21,7 @@ public class PatternMatchingTest {
 											  .capture(e->e.printStackTrace())
 											  .patternMatch("",
 													  	c->c.where(i->"even", (Integer i)->i%2==0 )
-													  		.where(i->"odd", (Integer i)->i%2!=0)
+													  		.hasWhere(i->"odd", (Integer i)->i%2!=0)
 													  )
 											  .toList();
 		assertThat(result,equalTo(Arrays.asList("odd","even","odd","even")));
@@ -42,9 +42,9 @@ public class PatternMatchingTest {
 											  .capture(e->e.printStackTrace())
 											  .patternMatch("n/a",
 													  c->c.values(i->"one",1,2)
-													  	  .values(i->"two",3,4)
-													  	  .values(i->"three",1,4)
-													  	   .values(i->"four",2,3)
+													  	  .has(i->"two",3,4)
+													  	  .has(i->"three",1,4)
+													  	   .has(i->"four",2,3)
 													  
 													  
 													  )
@@ -58,8 +58,8 @@ public class PatternMatchingTest {
 											  .capture(e->e.printStackTrace())
 											  .patternMatch("n/a",
 													  c->c.values(i->"one",1,2)
-													  .values(i->"two",3,4)
-													  .values(i->"three",5,6)
+													  .has(i->"two",3,4)
+													  .has(i->"three",5,6)
 													  )
 											  .toList();
 		assertThat(result,equalTo(Arrays.asList("one","two")));

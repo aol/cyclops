@@ -390,7 +390,7 @@ public class FluentFunctions {
 			
 		}
 		
-		public <R1 >FluentSupplier<R1> matches(R1 defaultValue,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case1){
+		public <R1 >FluentSupplier<R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1){
 			return FluentFunctions.of(()->Matchable.of(fn.get()).mayMatch(case1).orElse(defaultValue));
 		}
 		
@@ -536,7 +536,7 @@ public class FluentFunctions {
 			});
 			
 		}
-		public <R1> FluentFunction<T,R1> matches(R1 defaultValue,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case1){
+		public <R1> FluentFunction<T,R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1){
 		
 			return FluentFunctions.of(t->Matchable.of(fn.apply(t)).mayMatch(case1).orElse(defaultValue));
 		}
@@ -704,7 +704,7 @@ public class FluentFunctions {
 			});
 			
 		}
-		public <R1> FluentBiFunction<T1,T2,R1> matches(R1 defaultValue,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case1){
+		public <R1> FluentBiFunction<T1,T2,R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1){
 			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).mayMatch(case1).orElse(defaultValue));
 		}
 		
@@ -854,7 +854,7 @@ public class FluentFunctions {
 			});
 			
 		}
-		public <R1> FluentTriFunction<T1,T2,T3,R1> matches(R1 defaultValue,Function<CheckValues<? super R,R1>,CheckValues<? super R,R1>> case1){
+		public <R1> FluentTriFunction<T1,T2,T3,R1> matches(R1 defaultValue,Function<CheckValues<R,R1>,CheckValues<R,R1>> case1){
 			return FluentFunctions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).mayMatch(case1).orElse(defaultValue));
 		}
 		

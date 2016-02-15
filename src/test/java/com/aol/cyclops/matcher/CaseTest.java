@@ -1,7 +1,7 @@
 package com.aol.cyclops.matcher;
 
 import static com.aol.cyclops.util.function.Predicates.__;
-import static com.aol.cyclops.util.function.Predicates.values;
+import static com.aol.cyclops.util.function.Predicates.has;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;

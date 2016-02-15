@@ -32,7 +32,7 @@ public class ADTPredicateBuilder<T>{
 		}
 		
 		final public<V> Predicate<V> anyValues(){
-			return values();
+			return has();
 		}
 		/**
 		 * Generate a predicate that determines the provided values hold.
@@ -51,7 +51,7 @@ public class ADTPredicateBuilder<T>{
 		 * @return A single Predicate encompassing supplied rules
 		 */
 		@SafeVarargs
-		final public<V> Predicate<V> values(V... values){
+		final public<V> Predicate<V> has(V... values){
 			ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values).map(nextValue->convertToPredicate(nextValue));
 			
 			return t -> toPredicate().test(t) 
@@ -60,7 +60,7 @@ public class ADTPredicateBuilder<T>{
 							.allMatch(v->v==true);
 		}
 		@SafeVarargs
-		final public<V> Predicate<V> where(Predicate<V>... values){
+		final public<V> Predicate<V> hasWhere(Predicate<V>... values){
 			ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values).map(nextValue->convertToPredicate(nextValue));
 			
 			return t -> toPredicate().test(t) 
@@ -69,7 +69,7 @@ public class ADTPredicateBuilder<T>{
 							.allMatch(v->v==true);
 		}
 		@SafeVarargs
-		final public<V> Predicate<V> match(Matcher<V>... values){
+		final public<V> Predicate<V> hasMatch(Matcher<V>... values){
 			ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values)
 															.map(nextValue->convertToPredicate(nextValue));
 			
@@ -79,7 +79,7 @@ public class ADTPredicateBuilder<T>{
 							.allMatch(v->v==true);
 		}
 		@SafeVarargs
-		final  public<V> Predicate<V> just(V... values){
+		final  public<V> Predicate<V> is(V... values){
 			Predicate p = test->SeqUtils.EMPTY==test;
 			ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values)
 														   .map(nextValue->convertToPredicate(nextValue))
@@ -94,7 +94,7 @@ public class ADTPredicateBuilder<T>{
 							.allMatch(v->v==true);
 		}
 		@SafeVarargs
-		final public<V> Predicate<V> justWhere(Predicate<V>... values){
+		final public<V> Predicate<V> isWhere(Predicate<V>... values){
 			Predicate p = test->SeqUtils.EMPTY==test;
 			ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values)
 															.map(nextValue->convertToPredicate(nextValue))
@@ -107,7 +107,7 @@ public class ADTPredicateBuilder<T>{
 							.allMatch(v->v==true);
 		}
 		@SafeVarargs
-		final public<V> Predicate<V> justMatch(Matcher<V>... values){
+		final public<V> Predicate<V> isMatch(Matcher<V>... values){
 			Predicate p = test->SeqUtils.EMPTY==test;
 			ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values)
 													.map(nextValue->convertToPredicate(nextValue))
@@ -119,7 +119,7 @@ public class ADTPredicateBuilder<T>{
 							.allMatch(v->v==true);
 		}
 		
-		final  public<V> Predicate<V> is(V value){
+		final  public<V> Predicate<V> eq(V value){
 			Predicate p = test->SeqUtils.EMPTY==test;
 			ReactiveSeq<Predicate> predicates = ReactiveSeq.of(value)
 														   .map(nextValue->convertToPredicate(nextValue))
@@ -134,30 +134,7 @@ public class ADTPredicateBuilder<T>{
 							.allMatch(v->v==true);
 		}
 		
-		final public<V> Predicate<V> isWhere(Predicate<V> value){
-			Predicate p = test->SeqUtils.EMPTY==test;
-			ReactiveSeq<Predicate> predicates = ReactiveSeq.of(value)
-															.map(nextValue->convertToPredicate(nextValue))
-															.concat(p);;
-			
-			return t -> toPredicate().test(t) 
-					
-					  	&& SeqUtils.seq(Extractors.decomposeCoerced().apply(t))
-							.zip(predicates,(a,b)->Tuple.tuple(a, b)).map(tuple -> tuple.v2.test(tuple.v1))
-							.allMatch(v->v==true);
-		}
 		
-		final public<V> Predicate<V> isMatch(Matcher<V> value){
-			Predicate p = test->SeqUtils.EMPTY==test;
-			ReactiveSeq<Predicate> predicates = ReactiveSeq.of(value)
-													.map(nextValue->convertToPredicate(nextValue))
-													.concat(p);;
-			
-			return t -> toPredicate().test(t) 
-					  	&& SeqUtils.seq(Extractors.decomposeCoerced().apply(t))
-							.zip(predicates,(a,b)->Tuple.tuple(a, b)).map(tuple -> tuple.v2.test(tuple.v1))
-							.allMatch(v->v==true);
-		}
 		public static <T>  Predicate<T> convertToPredicateTyped(Object o){
 			return convertToPredicate(o);
 		}
