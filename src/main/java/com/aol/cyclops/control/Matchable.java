@@ -2,12 +2,16 @@ package com.aol.cyclops.control;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.hamcrest.Matcher;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple1;
 import org.jooq.lambda.tuple.Tuple2;
@@ -15,16 +19,19 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.jooq.lambda.tuple.Tuple5;
 
-import com.aol.cyclops.internal.matcher2.CheckValues;
+import com.aol.cyclops.internal.matcher2.ADTPredicateBuilder;
 import com.aol.cyclops.internal.matcher2.MatchableCase;
 import com.aol.cyclops.internal.matcher2.MatchingInstance;
 import com.aol.cyclops.internal.matcher2.PatternMatcher;
+import com.aol.cyclops.internal.matcher2.SeqUtils;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.Decomposable;
+import com.aol.cyclops.util.function.Predicates;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
 import com.aol.cyclops.util.function.TriFunction;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
 /**
@@ -36,6 +43,84 @@ import lombok.AllArgsConstructor;
  *
  */
 public interface Matchable<TYPE>{
+	
+	public static <T,R> Function<? super T,? extends R> Then(Function<? super T,? extends R> fn){
+		return fn;
+	}
+	//when arity 1
+	public static <T1> Tuple1<Predicate<? super T1>> When(T1 t1){
+		
+		return Tuple.tuple(test -> Objects.equals(test,t1));
+	}
+	public static <T1,T2,T3> Tuple1<Predicate<? super T1>> When(Predicate<? super T1> t1){
+		
+		return Tuple.tuple(t1);
+	}
+	public static <T1,T2,T3> Tuple1<Predicate<? super T1>> When(Matcher<? super T1> t1){
+		return Tuple.tuple(test -> t1.matches(test));
+	}
+	//when arity 2
+	public static <T1,T2> Tuple2<Predicate<? super T1>,Predicate<? super T2>> When(T1 t1,T2 t2){
+		
+		return Tuple.tuple(test -> Objects.equals(test,t1),test -> Objects.equals(test,t2));
+	}
+	public static <T1,T2,T3> Tuple2<Predicate<? super T1>,Predicate<? super T2>> When(Predicate<? super T1> t1,Predicate<? super T2> t2){
+		
+		return Tuple.tuple(t1,t2);
+	}
+	public static <T1,T2,T3> Tuple2<Predicate<? super T1>,Predicate<? super T2>> When(Matcher<? super T1> t1,Matcher<? super T2> t2){
+		
+		return Tuple.tuple(test -> t1.matches(test),test -> t2.matches(test));
+	}
+	//when arity 3
+	public static <T1,T2,T3> Tuple3<Predicate<? super T1>,Predicate<? super T2>,Predicate<? super T3>> When(T1 t1,T2 t2,T3 t3){
+		
+		return Tuple.tuple(test -> Objects.equals(test,t1),test -> Objects.equals(test,t2),test -> Objects.equals(test,t3));
+	}
+	public static <T1,T2,T3> Tuple3<Predicate<? super T1>,Predicate<? super T2>,Predicate<? super T3>> When(Predicate<? super T1> t1,Predicate<? super T2> t2,Predicate<? super T3> t3){
+		
+		return Tuple.tuple(t1,t2,t3);
+	}
+	public static <T1,T2,T3> Tuple3<Predicate<? super T1>,Predicate<? super T2>,Predicate<? super T3>> When(Matcher<? super T1> t1,Matcher<? super T2> t2,Matcher<? super T3> t3){
+		
+		return Tuple.tuple(test -> t1.matches(test),test -> t2.matches(test),test -> t3.matches(test));
+	}
+	//when arity 4
+	public static <T1,T2,T3,T4> Tuple4<Predicate<? super T1>,Predicate<? super T2>,Predicate<? super T3>,Predicate<? super T4>> When(T1 t1,T2 t2,T3 t3,T4 t4){
+		
+		return Tuple.tuple(test -> Objects.equals(test,t1),test -> Objects.equals(test,t2),test -> Objects.equals(test,t3),test -> Objects.equals(test,t4));
+	}
+	public static  <T1,T2,T3,T4> Tuple4<Predicate<? super T1>,Predicate<? super T2>,Predicate<? super T3>,Predicate<? super T4>> When(Predicate<? super T1> t1,Predicate<? super T2> t2,Predicate<? super T3> t3,Predicate<? super T4> t4){
+		
+		return Tuple.tuple(t1,t2,t3,t4);
+	}
+	public static  <T1,T2,T3,T4> Tuple4<Predicate<? super T1>,Predicate<? super T2>,Predicate<? super T3>,Predicate<? super T4>> When(Matcher<? super T1> t1,
+																						Matcher<? super T2> t2,
+																						Matcher<? super T3> t3,
+																						Matcher<? super T4> t4){
+		
+		return Tuple.tuple(test -> t1.matches(test),test -> t2.matches(test),test -> t3.matches(test),test -> t4.matches(test));
+	}
+	//when arity 5
+	public static <T1,T2,T3,T4,T5> Tuple5<Predicate<? super T1>,Predicate<? super T2>,Predicate<? super T3>,Predicate<? super T4>,Predicate<? super T5>> When(T1 t1,T2 t2,T3 t3,T4 t4, T5 t5){
+		
+		return Tuple.tuple(test -> Objects.equals(test,t1),test -> Objects.equals(test,t2),test -> Objects.equals(test,t3),test -> Objects.equals(test,t4),test -> Objects.equals(test,t5));
+	}
+	public static  <T1,T2,T3,T4,T5> Tuple5<Predicate<? super T1>,Predicate<? super T2>,Predicate<? super T3>,Predicate<? super T4>,Predicate<? super T5>> When(Predicate<? super T1> t1,Predicate<? super T2> t2,
+																							Predicate<? super T3> t3,
+																							Predicate<? super T4> t4,
+																							Predicate<? super T5> t5){
+		
+		return Tuple.tuple(t1,t2,t3,t4,t5);
+	}
+	public static  <T1,T2,T3,T4,T5> Tuple5<Predicate<? super T1>,Predicate<? super T2>,Predicate<? super T3>,Predicate<? super T4>,Predicate<? super T5>> When(Matcher<? super T1> t1,
+																						Matcher<? super T2> t2,
+																						Matcher<? super T3> t3,
+																						Matcher<? super T4> t4,
+																						Matcher<? super T5> t5){
+		
+		return Tuple.tuple(test -> t1.matches(test),test -> t2.matches(test),test -> t3.matches(test),test -> t4.matches(test),test -> t5.matches(test));
+	}	
 	
 	public static interface MatchSelf<TYPE> extends Matchable<TYPE>{
 		default Object getMatchable(){
@@ -121,9 +206,7 @@ public interface Matchable<TYPE>{
 	public static <T> MatchableIterable<T> fromIterable(Iterable<T> it){
 		return ()->it;
 	}
-	static String concat(String a, String b){
-		return a+b;
-	}
+	
 	public static <TYPE, T1 extends TYPE> MatchableTuple1<T1> from(Supplier<T1> s1){
 		
 		return ()-> Tuple.tuple(s1.get());
@@ -298,25 +381,51 @@ public interface Matchable<TYPE>{
 		}
 		
 	}
-	public static interface MatchableTuple1<T1> extends Matchable<Object>{
+	public static interface MatchableTuple1<T1>{
 		Tuple1<T1> getMatchable();
+		default T1 v1(){
+			return getMatchable().v1;
+		}
+		
 		default <R> R visit(Function<? super T1,? extends R> some,Supplier<? extends R> none ){
 			@SuppressWarnings("unchecked")
 			Tuple1<T1> it = (Tuple1<T1>)getMatchable();
 			
 			return  Maybe.ofNullable(it.v1).visit(some, none);
 		}	
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		default <R> Maybe<R>  mayMatch(Function<CheckValue1<? super T1,R>,CheckValue1<? super T1,R>> fn1){
+			return  new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue1)
+					new MatchableCase(new PatternMatcher()).withType1(getMatchable().getClass())).getPatternMatcher()))
+						.match(getMatchable());
+		}
+		
 		
 		
 	}
 	
-	public static interface MatchableTuple2<T1,T2> extends Matchable<Object>{
+	public static interface MatchableTuple2<T1,T2> {
 		Tuple2<T1,T2> getMatchable();
+		
+		default T1 v1(){
+			return getMatchable().v1;
+		}
+		default T2 v2(){
+			return getMatchable().v2;
+		}
+		
 		default <R> R visit(BiFunction<? super Maybe<T1>,? super Maybe<T2>,? extends R> match ){
 			@SuppressWarnings("unchecked")
 			Tuple2<T1,T2> it = (Tuple2<T1,T2>)getMatchable();
 			return  match.apply(Maybe.ofNullable(it.v1), Maybe.ofNullable(it.v2));
 		}	
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		default <R> Maybe<R>  mayMatch(Function<CheckValue2<? super T1,? super T2,R>,CheckValue2<? super T1,? super T2,R>> fn1){
+			return  new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue2)
+					new MatchableCase(new PatternMatcher()).withType2(getMatchable().getClass())).getPatternMatcher()))
+						.match(getMatchable());
+		}
+		
 		default MatchableTuple1<T1> on$1_(){
 			Tuple2<T1,T2> it = (Tuple2<T1,T2>)getMatchable();
 			return ()->new Tuple1<T1>(it.v1);
@@ -328,13 +437,31 @@ public interface Matchable<TYPE>{
 		
 	}
 	
-	public static interface MatchableTuple3<T1,T2,T3> extends Matchable<Object>{
+	public static interface MatchableTuple3<T1,T2,T3> {
 		Tuple3<T1,T2,T3> getMatchable();
+		default T1 v1(){
+			return getMatchable().v1;
+		}
+		default T2 v2(){
+			return getMatchable().v2;
+		}
+		default T3 v3(){
+			return getMatchable().v3;
+		}
+		
 		default <R> Eval<R> visit(TriFunction<? super Maybe<T1>,? super Maybe<T2>,? super Maybe<T3>,? extends R> match ){
 			@SuppressWarnings("unchecked")
 			Tuple3<T1,T2,T3> it = (Tuple3<T1,T2,T3>)getMatchable();
 			return  Eval.later(()->match.apply(Maybe.ofNullable(it.v1), Maybe.ofNullable(it.v2),Maybe.ofNullable(it.v3)));
 		}	
+		
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		default <R> Maybe<R>  mayMatch(Function<CheckValue3<T1,T2,T3,R>,CheckValue3<T1, T2,T3,R>> fn1){
+			return  new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue3)
+					new MatchableCase(new PatternMatcher()).withType3(getMatchable().getClass())).getPatternMatcher()))
+						.match(getMatchable());
+		}
+		
 		
 		default MatchableTuple1<T1> on$1__(){
 			Tuple3<T1,T2,T3> it = (Tuple3<T1,T2,T3>)getMatchable();
@@ -361,13 +488,31 @@ public interface Matchable<TYPE>{
 			return ()->new Tuple2<T2,T3>(it.v2,it.v3);
 		}
 	}
-	public static interface MatchableTuple4<T1,T2,T3,T4> extends Matchable<Object>{
+	public static interface MatchableTuple4<T1,T2,T3,T4> {
 		Tuple4<T1,T2,T3,T4> getMatchable();
+		default T1 v1(){
+			return getMatchable().v1;
+		}
+		default T2 v2(){
+			return getMatchable().v2;
+		}
+		default T3 v3(){
+			return getMatchable().v3;
+		}
+		default T4 v4(){
+			return getMatchable().v4;
+		}
 		default <R> Eval<R> visit(QuadFunction<? super Maybe<T1>,? super Maybe<T2>,? super Maybe<T3>,? super Maybe<T4>,? extends R> match ){
 			@SuppressWarnings("unchecked")
 			Tuple4<T1,T2,T3,T4> it = (Tuple4<T1,T2,T3,T4>)getMatchable();
 			return  Eval.later(()->match.apply(Maybe.ofNullable(it.v1), Maybe.ofNullable(it.v2),Maybe.ofNullable(it.v3),Maybe.ofNullable(it.v4)));
-		}	
+		}
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		default <R> Maybe<R>  mayMatch(Function<CheckValue4<? super T1,? super T2,? super T3,? super T4,R>,CheckValue4<? super T1,? super T2,? super T3,? super T4,R>> fn1){
+			return  new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue4)
+					new MatchableCase(new PatternMatcher()).withType4(getMatchable().getClass())).getPatternMatcher()))
+						.match(getMatchable());
+		}
 		default MatchableTuple1<T1> on$1___(){
 			Tuple4<T1,T2,T3,T4> it = (Tuple4<T1,T2,T3,T4>)getMatchable();
 			return ()->new Tuple1<T1>(it.v1);
@@ -430,13 +575,34 @@ public interface Matchable<TYPE>{
 		
 		
 	}
-	public static interface MatchableTuple5<T1,T2,T3,T4,T5> extends Matchable<Object>{
+	public static interface MatchableTuple5<T1,T2,T3,T4,T5> {
 		Tuple5<T1,T2,T3,T4,T5> getMatchable();
+		default T1 v1(){
+			return getMatchable().v1;
+		}
+		default T2 v2(){
+			return getMatchable().v2;
+		}
+		default T3 v3(){
+			return getMatchable().v3;
+		}
+		default T4 v4(){
+			return getMatchable().v4;
+		}
+		default T5 v5(){
+			return getMatchable().v5;
+		}
 		default <R> Eval<R> visit(QuintFunction<? super Maybe<T1>,? super Maybe<T2>,? super Maybe<T3>,? super Maybe<T4>,? super Maybe<T5>,? extends R> match ){
 			@SuppressWarnings("unchecked")
 			Tuple5<T1,T2,T3,T4,T5> it = (Tuple5<T1,T2,T3,T4,T5>)getMatchable();
 			return  Eval.later(()->match.apply(Maybe.ofNullable(it.v1), Maybe.ofNullable(it.v2),Maybe.ofNullable(it.v3),Maybe.ofNullable(it.v4),Maybe.ofNullable(it.v5)));
 		}	
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		default <R> Maybe<R>  mayMatch(Function<CheckValue5<? super T1,? super T2,? super T3,? super T4,? super T5,R>,CheckValue5<? super T1,? super T2,? super T3,? super T4,? super T5,R>> fn1){
+			return  new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue5)
+					new MatchableCase(new PatternMatcher()).withType5(getMatchable().getClass())).getPatternMatcher()))
+						.match(getMatchable());
+		}
 		default MatchableTuple1<T1> on$1____(){
 			Tuple5<T1,T2,T3,T4,T5> it = (Tuple5<T1,T2,T3,T4,T5>)getMatchable();
 			return ()->new Tuple1<T1>(it.v1);
@@ -581,4 +747,416 @@ public interface Matchable<TYPE>{
 			
 		}
 	}
+	@AllArgsConstructor(access=AccessLevel.PUBLIC)
+	public static class CheckValue1<T,R> {
+		private final Class<T> clazz;
+		protected final MatchableCase<R> simplerCase;
+
+		
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		public final CheckValue1<T,R> is(Tuple1<Predicate<? super T>> values,Function<? super Tuple1<T>,? extends R> result) {		
+			return isWhere(result,values.v1);
+		}
+		
+		 @SuppressWarnings({ "rawtypes", "unchecked" })
+		private final  CheckValue1<T,R> isWhere(Function<? super Tuple1<T>,? extends R> result,Predicate<? super T> value){
+			Predicate predicate = it -> Optional.of(it)
+					.map(v -> v.getClass().isAssignableFrom(clazz))
+					.orElse(false);
+			// add wildcard support
+			
+			Predicate<T>[] predicates = ReactiveSeq.of(value)
+					.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toListX().plus(i->SeqUtils.EMPTY==i)
+					.toArray(new Predicate[0]);
+
+		
+			return new CheckValue1(clazz,new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,result,
+					predicates)));
+		}
+		
+		
+		
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		public final <V> CheckValue1<T,R> isEmpty(Function<? super T,? extends R> result) {
+
+			Predicate predicate = it -> Maybe.ofNullable(it)
+					.map(v -> v.getClass().isAssignableFrom(clazz))
+					.orElse(false);
+			// add wildcard support
+			
+			Predicate<V>[] predicates = new Predicate[]{i->i==SeqUtils.EMPTY};
+
+			return new CheckValue1(clazz,new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,result,
+					predicates)));
+		}
+
+
+		PatternMatcher getPatternMatcher() {
+			return simplerCase.getPatternMatcher();
+		}
+	}
+	@AllArgsConstructor(access=AccessLevel.PUBLIC)
+	public static class CheckValue2<T1,T2,R> {
+		private final Class<Tuple2<T1,T2>> clazz;
+		protected final MatchableCase<R> simplerCase;
+
+		
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		public final CheckValue2<T1,T2,R> is(Tuple2<Predicate<? super T1>,Predicate<? super T2>> values,Function<? super Tuple2<T1,T2>,? extends R> result) {		
+			return isWhere(result,values.v1,values.v2);
+		}
+		
+		 @SuppressWarnings({ "rawtypes", "unchecked" })
+		private final  CheckValue2<T1,T2,R> isWhere(Function<? super Tuple2<T1,T2>,? extends R> result,Predicate<? super T1> value1,Predicate<? super T2> value2){
+			Predicate predicate = it -> Optional.of(it)
+					.map(v -> v.getClass().isAssignableFrom(clazz))
+					.orElse(false);
+			// add wildcard support
+			
+			Predicate[] predicates = ReactiveSeq.of(value1,value2)
+					.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toListX().plus(i->SeqUtils.EMPTY==i)
+					.toArray(new Predicate[0]);
+
+		
+			return new CheckValue2(clazz,new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,result,
+					predicates)));
+		}
+		
+		
+		
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		public final CheckValue2<T1,T2,R> isEmpty(Function<? super Tuple2<T1,T2>,? extends R> result) {
+
+			Predicate predicate = it -> Maybe.ofNullable(it)
+					.map(v -> v.getClass().isAssignableFrom(clazz))
+					.orElse(false);
+			// add wildcard support
+			
+			Predicate[] predicates = new Predicate[]{i->i==SeqUtils.EMPTY};
+
+			return new CheckValue2(clazz,new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,result,
+					predicates)));
+		}
+
+
+		PatternMatcher getPatternMatcher() {
+			return simplerCase.getPatternMatcher();
+		}
+	}
+	@AllArgsConstructor(access=AccessLevel.PUBLIC)
+	public static class CheckValue3<T1,T2,T3,R> {
+		private final Class<Tuple3<T1,T2,T3>> clazz;
+		protected final MatchableCase<R> simplerCase;
+
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		public final CheckValue3<T1,T2,T3,R> is(Tuple3<Predicate<? super T1>,Predicate<? super T2>,Predicate<? super T3>> values,Function<? super Tuple3<T1,T2,T3>,? extends R> result) {		
+			return isWhere(result,values.v1,values.v2,values.v3);
+		}
+		
+		 @SuppressWarnings({ "rawtypes", "unchecked" })
+		private final  CheckValue3<T1,T2,T3,R> isWhere(Function<? super Tuple3<T1,T2,T3>,? extends R> result,Predicate<? super T1> value1,Predicate<? super T2> value2,Predicate<? super T3> value3){
+			Predicate predicate = it -> Optional.of(it)
+					.map(v -> v.getClass().isAssignableFrom(clazz))
+					.orElse(false);
+			// add wildcard support
+			
+			Predicate[] predicates = ReactiveSeq.of(value1,value2,value3)
+					.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toListX().plus(i->SeqUtils.EMPTY==i)
+					.toArray(new Predicate[0]);
+
+		
+			return new CheckValue3(clazz,new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,result,
+					predicates)));
+		}
+		
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		public final CheckValue3<T1,T2,T3,R> isEmpty(Function<? super Tuple3<T1,T2,T3>,? extends R> result) {
+
+			Predicate predicate = it -> Maybe.ofNullable(it)
+					.map(v -> v.getClass().isAssignableFrom(clazz))
+					.orElse(false);
+			// add wildcard support
+			
+			Predicate[] predicates = new Predicate[]{i->i==SeqUtils.EMPTY};
+
+			return new CheckValue3(clazz,new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,result,
+					predicates)));
+		}
+
+
+		PatternMatcher getPatternMatcher() {
+			return simplerCase.getPatternMatcher();
+		}
+	}
+	@AllArgsConstructor(access=AccessLevel.PUBLIC)
+	public static class CheckValue4<T1,T2,T3,T4,R> {
+		private final Class<Tuple4<T1,T2,T3,T4>> clazz;
+		protected final MatchableCase<R> simplerCase;
+
+		
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		public final CheckValue4<T1,T2,T3,T4,R> is(Tuple4<Predicate<? super T1>,Predicate<? super T2>,Predicate<? super T3>,Predicate<? super T4>> values,Function<? super Tuple4<T1,T2,T3,T4>,? extends R> result) {		
+			return isWhere(result,values.v1,values.v2,values.v3,values.v4);
+		}
+		 @SuppressWarnings({ "rawtypes", "unchecked" })
+		private final  CheckValue4<T1,T2,T3,T4,R> isWhere(Function<? super Tuple4<T1,T2,T3,T4>,? extends R> result,Predicate<? super T1> value1,
+																								Predicate<? super T2> value2,
+																								Predicate<? super T3> value3,
+																								Predicate<? super T4> value4){
+			Predicate predicate = it -> Optional.of(it)
+					.map(v -> v.getClass().isAssignableFrom(clazz))
+					.orElse(false);
+			// add wildcard support
+			
+			Predicate[] predicates = ReactiveSeq.of(value1,value2,value3,value4)
+					.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toListX().plus(i->SeqUtils.EMPTY==i)
+					.toArray(new Predicate[0]);
+
+		
+			return new CheckValue4(clazz,new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,result,
+					predicates)));
+		}
+		
+		
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		public final CheckValue4<T1,T2,T3,T4,R> isEmpty(Function<? super Tuple4<T1,T2,T3,T4>,? extends R> result) {
+
+			Predicate predicate = it -> Maybe.ofNullable(it)
+					.map(v -> v.getClass().isAssignableFrom(clazz))
+					.orElse(false);
+			// add wildcard support
+			
+			Predicate[] predicates = new Predicate[]{i->i==SeqUtils.EMPTY};
+
+			return new CheckValue4(clazz,new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,result,
+					predicates)));
+		}
+
+
+		PatternMatcher getPatternMatcher() {
+			return simplerCase.getPatternMatcher();
+		}
+	}
+	@AllArgsConstructor(access=AccessLevel.PUBLIC)
+	public static class CheckValue5<T1,T2,T3,T4,T5,R> {
+		private final Class<Tuple5<T1,T2,T3,T4,T5>> clazz;
+		protected final MatchableCase<R> simplerCase;
+
+		
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		public final CheckValue5<T1,T2,T3,T4,T5,R> is(Tuple5<Predicate<? super T1>,Predicate<? super T2>,
+																Predicate<? super T3>,Predicate<? super T4>,
+																Predicate<? super T5>> values,Function<? super Tuple5<T1,T2,T3,T4,T5>,? extends R> result) {		
+			return isWhere(result,values.v1,values.v2,values.v3,values.v4,values.v5);
+		}
+		 @SuppressWarnings({ "rawtypes", "unchecked" })
+		private final  CheckValue5<T1,T2,T3,T4,T5,R> isWhere(Function<? super Tuple5<T1,T2,T3,T4,T5>,? extends R> result,Predicate<? super T1> value1,
+																								Predicate<? super T2> value2,
+																								Predicate<? super T3> value3,
+																								Predicate<? super T4> value4,
+																								Predicate<? super T5> value5){
+			Predicate predicate = it -> Optional.of(it)
+					.map(v -> v.getClass().isAssignableFrom(clazz))
+					.orElse(false);
+			// add wildcard support
+			
+			Predicate[] predicates = ReactiveSeq.of(value1,value2,value3,value4)
+					.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toListX().plus(i->SeqUtils.EMPTY==i)
+					.toArray(new Predicate[0]);
+
+		
+			return new CheckValue5(clazz,new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,result,
+					predicates)));
+		}
+		
+		
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		public final CheckValue4<T1,T2,T3,T4,R> isEmpty(Function<? super Tuple4<T1,T2,T3,T4>,? extends R> result) {
+
+			Predicate predicate = it -> Maybe.ofNullable(it)
+					.map(v -> v.getClass().isAssignableFrom(clazz))
+					.orElse(false);
+			// add wildcard support
+			
+			Predicate[] predicates = new Predicate[]{i->i==SeqUtils.EMPTY};
+
+			return new CheckValue4(clazz,new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,result,
+					predicates)));
+		}
+
+
+		PatternMatcher getPatternMatcher() {
+			return simplerCase.getPatternMatcher();
+		}
+	}
+	 @AllArgsConstructor(access=AccessLevel.PUBLIC)
+	public static class CheckValues<T,R> {
+		private final Class<T> clazz;
+		protected final MatchableCase<R> simplerCase;
+
+		/**
+		 * 
+		 * Provide a comparison value, JDK 8 Predicate, or Hamcrest Matcher  for each Element to match on.
+		 * 
+		 * Further &amp; recursively unwrap any element by Predicates.type(ELEMENT_TYPE.class).with(V... values)
+		 * 
+		 * @see Predicates#type
+		 * 
+		 * @param values Matching rules for each element in the decomposed / unapplied user input
+		 * @return Pattern Matcher builder with completed Case added to it
+		 */
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		public final <V>CheckValues<T,R> values(Function<? super T,? extends R> result,V... values) {		
+			Predicate predicate = it -> Optional.of(it)
+					.map(v -> v.getClass().isAssignableFrom(clazz))
+					.orElse(false);
+			// add wildcard support
+			
+			Predicate<V>[] predicates = ReactiveSeq.of(values)
+					.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toList()
+					.toArray(new Predicate[0]);
+
+			//return new _LastStep<R,V,T>(clazz,predicate,predicates,this.getPatternMatcher());
+			return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,result,
+					predicates)).withType(clazz);
+		}
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		public final CheckValues<T,R> is(Function<? super T,? extends R> result,T value) {		
+			Predicate predicate = it -> Optional.of(it)
+					.map(v -> v.getClass().isAssignableFrom(clazz))
+					.orElse(false);
+			// add wildcard support
+			
+			Predicate<T>[] predicates = ReactiveSeq.of(value)
+					.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toListX().plus(i->SeqUtils.EMPTY==i)
+					.toArray(new Predicate[0]);
+
+			//return new _LastStep<R,V,T>(clazz,predicate,predicates,this.getPatternMatcher());
+			return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,result,
+					predicates)).withType(clazz);
+		}
+		@SafeVarargs @SuppressWarnings({ "rawtypes", "unchecked" })
+		public final <V> CheckValues<T,R> just(Function<? super T,? extends R> result,V... values) {	
+			Predicate predicate = it -> Optional.of(it)
+					.map(v -> v.getClass().isAssignableFrom(clazz))
+					.orElse(false);
+			// add wildcard support
+			
+			@SuppressWarnings("unchecked")
+			Predicate<V>[] predicates = ReactiveSeq.of(values)
+					.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toListX().plus(i->SeqUtils.EMPTY==i)
+					.toArray(new Predicate[0]);
+
+			return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate, result,
+					predicates)).withType(clazz);
+		}
+		@SafeVarargs @SuppressWarnings({ "rawtypes", "unchecked" })
+		public final <V> CheckValues<T,R> justWhere(Function<? super T,? extends R> result,Predicate<V>... values){
+			Predicate predicate = it -> Optional.of(it)
+					.map(v -> v.getClass().isAssignableFrom(clazz))
+					.orElse(false);
+			// add wildcard support
+			
+			Predicate<V>[] predicates = ReactiveSeq.of(values)
+					.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toListX().plus(i->SeqUtils.EMPTY==i)
+					.toArray(new Predicate[0]);
+
+		
+			return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate, result,
+					predicates)).withType(clazz);
+		}
+		 @SuppressWarnings({ "rawtypes", "unchecked" })
+		public final  CheckValues<T,R> isWhere(Function<? super T,? extends R> result,Predicate<T> value){
+			Predicate predicate = it -> Optional.of(it)
+					.map(v -> v.getClass().isAssignableFrom(clazz))
+					.orElse(false);
+			// add wildcard support
+			
+			Predicate<T>[] predicates = ReactiveSeq.of(value)
+					.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toListX().plus(i->SeqUtils.EMPTY==i)
+					.toArray(new Predicate[0]);
+
+		
+			return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate, result,
+					predicates)).withType(clazz);
+		}
+		@SafeVarargs @SuppressWarnings({ "rawtypes", "unchecked" })
+		public final <V> CheckValues<T,R> where(Function<? super T,? extends R> result,Predicate<V>... values) {
+		
+			Predicate predicate = it -> Optional.of(it)
+					.map(v -> v.getClass().isAssignableFrom(clazz))
+					.orElse(false);
+			// add wildcard support
+			
+			Predicate<V>[] predicates = ReactiveSeq.of(values)
+					.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toList()
+					.toArray(new Predicate[0]);
+
+			return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate, result,
+					predicates)).withType(clazz);
+		}
+		@SafeVarargs @SuppressWarnings({ "rawtypes", "unchecked" })
+		public final <V> CheckValues<T,R> justMatch( Function<? super T,? extends R> result,Matcher<V>... values){
+			Predicate predicate = it -> Optional.of(it)
+					.map(v -> v.getClass().isAssignableFrom(clazz))
+					.orElse(false);
+			// add wildcard support
+			
+			Predicate<V>[] predicates = ReactiveSeq.of(values)
+					.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toListX().plus(i->SeqUtils.EMPTY==i)
+					.toArray(new Predicate[0]);
+
+			return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate, result,
+					predicates)).withType(clazz);
+		}
+		 @SuppressWarnings({ "rawtypes", "unchecked" })
+		public final <V> CheckValues<T,R> isMatch( Function<? super T,? extends R> result,Matcher<V> value){
+			Predicate predicate = it -> Optional.of(it)
+					.map(v -> v.getClass().isAssignableFrom(clazz))
+					.orElse(false);
+			// add wildcard support
+			
+			Predicate<V>[] predicates = ReactiveSeq.of(value)
+					.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toListX().plus(i->SeqUtils.EMPTY==i)
+					.toArray(new Predicate[0]);
+
+			return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate, result,
+					predicates)).withType(clazz);
+		}
+		@SafeVarargs @SuppressWarnings({ "rawtypes", "unchecked" })
+		public final <V> CheckValues<T,R> match(Function<? super T,? extends R> result,Matcher<V>... values) {
+			
+			Predicate predicate = it -> Optional.of(it)
+												.map(v -> v.getClass().isAssignableFrom(clazz))
+												.orElse(false);
+			// add wildcard support
+			
+			Predicate<V>[] predicates = ReactiveSeq.of(values)
+												.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toList()
+												.toArray(new Predicate[0]);
+
+			return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate, result,
+					predicates)).withType(clazz);
+		}
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		public final <V> CheckValues<T,R> isEmpty(Function<? super T,? extends R> result) {
+
+			Predicate predicate = it -> Maybe.ofNullable(it)
+					.map(v -> v.getClass().isAssignableFrom(clazz))
+					.orElse(false);
+			// add wildcard support
+			
+			Predicate<V>[] predicates = new Predicate[]{i->i==SeqUtils.EMPTY};
+
+			return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate, result,
+					predicates)).withType(clazz);
+		}
+
+
+		PatternMatcher getPatternMatcher() {
+			return simplerCase.getPatternMatcher();
+		}
+	}
+
+
 }

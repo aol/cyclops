@@ -63,7 +63,7 @@ public class Predicates {
 	 * @return Predicate builder that can decompose classes of specified type
 	 */
 	public	static<T> ADTPredicateBuilder<T> type(Class<T> type){
-			return new ADTPredicateBuilder(type);
+			return new ADTPredicateBuilder<>(type);
 	}
 	/**
 	 * Recursively compose an Object without specifying a type
@@ -84,14 +84,42 @@ public class Predicates {
 	 * @param values To match against
 	 * @return Predicate builder that can decompose Case class and match against specified values
 	 */
+	@SafeVarargs
 	public	static<V> Predicate<V> values(V... values){
 		return new ADTPredicateBuilder<Object>(Object.class).<V>values(values);
 	}
+	@SafeVarargs
 	public	static<V> Predicate<V> where(Predicate<V>... values){
 		return new ADTPredicateBuilder<Object>(Object.class).<V>where(values);
 	}
+	@SafeVarargs
 	public	static<V> Predicate<V> match(Matcher<V>... values){
 		return new ADTPredicateBuilder<Object>(Object.class).<V>match(values);
 	}
+	@SafeVarargs
+	public	static<V> Predicate<V> just(V... values){
+		return new ADTPredicateBuilder<Object>(Object.class).<V>just(values);
+	}
+	@SafeVarargs
+	public	static<V> Predicate<V> justWhere(Predicate<V>... values){
+		return new ADTPredicateBuilder<Object>(Object.class).<V>justWhere(values);
+	}
+	@SafeVarargs
+	public	static<V> Predicate<V> justMatch(Matcher<V>... values){
+		return new ADTPredicateBuilder<Object>(Object.class).<V>match(values);
+	}
+	
+	public	static<V> Predicate<V> is(V value){
+		return new ADTPredicateBuilder<Object>(Object.class).is(value);
+	}
+
+	public	static<V> Predicate<V> isWhere(Predicate<V> value){
+		return new ADTPredicateBuilder<Object>(Object.class).isWhere(value);
+	}
+	
+	public	static<V> Predicate<V> isMatch(Matcher<V> value){
+		return new ADTPredicateBuilder<Object>(Object.class).isMatch(value);
+	}
+	
 	
 }

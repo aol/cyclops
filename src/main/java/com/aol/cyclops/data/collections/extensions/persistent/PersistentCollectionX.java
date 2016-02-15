@@ -3,7 +3,6 @@ package com.aol.cyclops.data.collections.extensions.persistent;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -20,17 +19,12 @@ import org.jooq.lambda.tuple.Tuple4;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
+import com.aol.cyclops.control.Matchable.CheckValues;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX;
-import com.aol.cyclops.internal.matcher2.Case;
-import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.types.Filterable;
-import com.aol.cyclops.types.Functor;
-import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 public interface PersistentCollectionX<T> extends FluentCollectionX<T>{

@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Optional;
 import java.util.Queue;
 import java.util.Random;
 import java.util.function.BiFunction;
@@ -24,10 +23,9 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
 import com.aol.cyclops.Monoid;
-import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.internal.matcher2.Case;
-import com.aol.cyclops.internal.matcher2.CheckValues;
+import com.aol.cyclops.control.Matchable.CheckValues;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.util.stream.StreamUtils;
 

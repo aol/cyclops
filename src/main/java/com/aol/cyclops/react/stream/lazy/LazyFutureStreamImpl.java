@@ -6,12 +6,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Spliterator;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.ToDoubleFunction;
@@ -19,6 +23,9 @@ import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Collectable;
@@ -284,8 +291,10 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 
 	@Override
 	public Collectable<U> collectable() {
-		
-		return Seq.seq(this);
+		//in order for tasks to be executed concurrently we need to make sure that collect is
+		//ultimately called via LazyStream#collect. Passing 'this' directly into Seq results in 'this' being returned
+		//Seq implements the collection extensions on SeqImpl, so we need to construct a SeqImpl with this as the Stream.
+		return Seq.seq(new DelegateStream<U>(this));		
 	}
 
 

@@ -20,11 +20,11 @@ import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Do;
+import com.aol.cyclops.control.Matchable.CheckValues;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
-import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.IterableCollectable;

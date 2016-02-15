@@ -2,42 +2,23 @@ package com.aol.cyclops.control;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
-
-import org.hamcrest.Matcher;
 
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
-import com.aol.cyclops.control.Xor.Primary;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
-import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.ToAnyM;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
-import com.aol.cyclops.types.applicative.Applicative;
-import com.aol.cyclops.types.applicative.Applicative2;
-import com.aol.cyclops.types.applicative.Applicative3;
-import com.aol.cyclops.types.applicative.Applicative4;
-import com.aol.cyclops.types.applicative.Applicative5;
-import com.aol.cyclops.types.applicative.ApplicativeBuilder;
-import com.aol.cyclops.util.function.CurryVariance;
-import com.aol.cyclops.util.function.QuadFunction;
-import com.aol.cyclops.util.function.QuintFunction;
-import com.aol.cyclops.util.function.TriFunction;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 
 
 public interface Maybe<T> extends Value<T>, 

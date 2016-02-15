@@ -1,21 +1,17 @@
 package com.aol.cyclops.validation;
 
-import static com.aol.cyclops.control.Validator.of;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertThat;
 
 import org.jooq.lambda.tuple.Tuple;
-
-import lombok.Value;
-
 import org.junit.Test;
 
 import com.aol.cyclops.control.Validator;
 import com.aol.cyclops.util.validation.ValidationResults;
 
-import fj.data.Validation;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import lombok.Value;
 public class ValidationViaAddTest {
 
 	@Value

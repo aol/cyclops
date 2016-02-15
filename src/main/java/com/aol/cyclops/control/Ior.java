@@ -7,9 +7,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
-import org.hamcrest.Matcher;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
@@ -17,15 +15,11 @@ import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.internal.matcher2.Case;
-import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.BiFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
-import com.aol.cyclops.types.applicative.Applicative;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 import lombok.AccessLevel;

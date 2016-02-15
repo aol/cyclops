@@ -8,8 +8,8 @@ import org.hamcrest.Matcher;
 public abstract class CaseBeingBuilt {
 
 	abstract CaseBeingBuilt withPatternMatcher(PatternMatcher matcher);
-	abstract PatternMatcher getPatternMatcher();
-	Predicate convertToPredicate(Object o){
+	abstract public PatternMatcher getPatternMatcher();
+	public Predicate convertToPredicate(Object o){
 		if(o instanceof Predicate)
 			return (Predicate)o;
 		if(o instanceof Matcher)

@@ -7,30 +7,8 @@ import java.util.stream.Stream;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.util.stream.StreamUtils;
 
-class SeqUtils {
-/**
-	public final static class EMPTY { }
-	public static final EMPTY EMPTY = new EMPTY();
-	public static LazySeq<Object> seq(Object t){
-		return LazySeq.of(stream(t).iterator());
-	}
-		public static Stream<Object> stream(Object t){
-		
-			if(t instanceof Iterable){
-				return Stream.concat(StreamUtils.stream((Iterable)t).map(SeqUtils::nonNull),(StreamUtils.cycle(Stream.of(EMPTY))));
-			}
-			if(t instanceof Stream){
-				return Stream.concat( ((Stream)t).map(SeqUtils::nonNull),(StreamUtils.cycle(Stream.of(EMPTY))));
-			}
-			if(t instanceof Iterator){
-				return Stream.concat( StreamUtils.stream((Iterator)t).map(SeqUtils::nonNull),(StreamUtils.cycle(Stream.of(EMPTY))));
-			}
-			if(t instanceof Map){
-				return Stream.concat(StreamUtils.stream((Map)t).map(SeqUtils::nonNull),(StreamUtils.cycle(Stream.of(EMPTY))));
-			}
-			return Stream.concat(Stream.of(t).map(SeqUtils::nonNull),(StreamUtils.cycle(Stream.of(EMPTY))));
-		}
-		**/
+public class SeqUtils {
+
 		private static Object nonNull(Object in){
 			if(in==null)
 				return EMPTY;

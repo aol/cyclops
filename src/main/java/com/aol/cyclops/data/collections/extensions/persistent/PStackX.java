@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -23,13 +22,12 @@ import org.pcollections.PStack;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
+import com.aol.cyclops.control.Matchable.CheckValues;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.PStacks;
 import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.internal.matcher2.Case;
-import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 
 public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentSequenceX<T>{

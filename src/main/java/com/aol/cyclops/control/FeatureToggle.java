@@ -8,11 +8,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
-import com.aol.cyclops.types.stream.ToStream;
 
 
 

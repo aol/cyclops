@@ -1,7 +1,6 @@
 package com.aol.cyclops.control;
 
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
@@ -12,10 +11,6 @@ import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.internal.matcher2.Case;
-import com.aol.cyclops.internal.matcher2.CheckValues;
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.FlatMap;
 import com.aol.cyclops.types.ToAnyM;

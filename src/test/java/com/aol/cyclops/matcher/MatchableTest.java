@@ -1,5 +1,7 @@
 package com.aol.cyclops.matcher;
 
+import static com.aol.cyclops.control.Matchable.Then;
+import static com.aol.cyclops.control.Matchable.When;
 import static com.aol.cyclops.util.function.Predicates.__;
 import static com.aol.cyclops.util.function.Predicates.type;
 import static org.hamcrest.Matchers.any;
@@ -13,15 +15,14 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Matchable;
-import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Matchable.MatchSelf;
 import com.aol.cyclops.control.Matchable.MatchableTuple2;
 import com.aol.cyclops.control.Matchable.MatchableTuple3;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Decomposable;
 import com.aol.cyclops.util.function.Predicates;
@@ -43,7 +44,42 @@ public class MatchableTest {
 		return true;
 	}
 	@Test
+	public void pojoTypeSafe(){
+		/**
+		new Customer("test",new Address(10,"hello","my city")).match().mayMatch( 
+				
+				c->c.isWhere(t3->"ok",(String s)->s=="test",(MatchableTuple3<Integer,String,String> a)->a==null)
+				);
+		//Matchable.of(10).mayMatch(c->c.)
+		**/
+		new Address(10,"hello","world").match().mayMatch(c->c.is(When(this::isValidHouse,
+																	  this::isValidStreet,
+																	  s->s=="world"),Then(t3 ->"ok")))
+																	 .orElse("hello");
+			
+		new Address(10,"hello","world").match().mayMatch(c->c.is(When(10,"hello","world"),Then(t3 ->"ok"))
+															 .is(When(6,"something","oops!"),Then(t3->"res"))
+															 .isEmpty(Then(t3->"empty")));
+	
+				
+	}
+	@Test
+	public void tuple2(){
+		Matchable.from(()->"hello",()->2)
+			.mayMatch(c->c.is(When("hello",5), (t2)-> "hello"));
+	}
+	@Test
+	public void tuple2Predicates(){
+		 Matchable.from(()->"hello",()->2)
+ 			.mayMatch(c->c.is(When(s->s=="hello",t->(int)t>5),Then((t2)->"hello")));
+	}
+	@Test
 	public void matchTestStructuralAndGuards(){
+	
+		
+	    
+	   
+	    
 		Matchable.of("hello").<String>mayMatch(c->c.is(i->"world", "hello"));
 		//assertThat(Matchable.of("hello").<String>mayMatch(c->c.is(i->"world", "hello"))),equalTo(Maybe.of("world"));
 	//	assertThat(Matchable.of("hello").mayMatch(c->c.is(in -> "world", "hello"))),equalTo(Maybe.of("world")));
@@ -60,7 +96,7 @@ public class MatchableTest {
 							   		            	 .ap2(this::concat)
 							   		            	 .ap(
 							   		      				street
-							   		      						.<String>mayMatch(c->c.where(in->"valid street",this::isValidStreet))
+							   		      						.<String>mayMatch(c->c.where(Then(in->"valid street"),this::isValidStreet))
 							   		      						
 							   		      				.recover("incorrectly configured steet")
 							   		            	 )

@@ -48,12 +48,10 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.control.Matchable.CheckValues;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
-import com.aol.cyclops.internal.matcher2.CheckValues;
 import com.aol.cyclops.internal.stream.ReactiveStreamsLoader;
 import com.aol.cyclops.internal.stream.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingListSpliterator;

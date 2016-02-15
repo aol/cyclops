@@ -8,16 +8,13 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.control.FeatureToggle;
-import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.internal.matcher2.CheckValues;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**

@@ -1,17 +1,11 @@
 package com.aol.cyclops.types;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.jooq.lambda.Seq;
-
 import com.aol.cyclops.control.Matchable;
+import com.aol.cyclops.control.Matchable.CheckValues;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.data.collections.extensions.CollectionX;
-import com.aol.cyclops.internal.matcher2.Case;
-import com.aol.cyclops.internal.matcher2.Cases;
-import com.aol.cyclops.internal.matcher2.CheckValues;
 
 
 /* 

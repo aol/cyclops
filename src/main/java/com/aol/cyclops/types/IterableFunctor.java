@@ -5,11 +5,6 @@ import java.util.function.Function;
 
 import org.jooq.lambda.Collectable;
 
-import com.aol.cyclops.control.Matchable;
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.internal.matcher2.Case;
-import com.aol.cyclops.internal.matcher2.Cases;
-import com.aol.cyclops.internal.matcher2.CheckValues;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 
