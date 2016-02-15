@@ -17,7 +17,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
 	 * 
 	 * <pre>
 	 * @{code
-	 *     ReactiveTask next = SequenceM.of(1,2,3,4)
+	 *     ReactiveTask next = ReactiveSeq.of(1,2,3,4)
 	 *                                  .futureOperations(exec)
 	 *          					    .forEachX(2,System.out::println)
 	 *          						.join();
@@ -50,7 +50,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
 	 * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription 
 	 * <pre>
 	 * @{code
-	 *     ReactiveTask next = SequenceM.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+	 *     ReactiveTask next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
 	 *                                  .futureOperations(exec)
 	 *                                  .map(Supplier::get)
 	 *          					    .forEachXWithError(2,System.out::println, e->e.printStackTrace());
@@ -88,7 +88,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
 	 * 
 	 * <pre>
 	 * @{code
-	 *     ReactiveTask next = SequenceM.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+	 *     ReactiveTask next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
 	 *                                  .futureOperations(exec)
 	 *                                  .map(Supplier::get)
 	 *          					    .forEachXEvents(2,System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
@@ -123,7 +123,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
 	 *  Perform a forEach operation over the Stream    capturing any elements and errors in the supplied consumers,  
 	 * <pre>
 	 * @{code
-	 *     ReactiveTask next = SequenceM.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+	 *     ReactiveTask next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
 	 *                                  .futureOperations(exec)
 	 *                                  .map(Supplier::get)
 	 *          					    .forEachWithError(System.out::println, e->e.printStackTrace());
@@ -154,7 +154,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
 	 * 
 	 * <pre>
 	 * @{code
-	 *     ReactiveTask next = SequenceM.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+	 *     ReactiveTask next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
 	 *                                  .futureOperations(exec)
 	 *                                  .map(Supplier::get)
 	 *          					    .forEachEvents(System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));

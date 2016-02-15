@@ -1109,7 +1109,7 @@ public class StreamUtils{
 	 * <pre>
 	 * {@code 
 	 * Stream<List<Integer>> zipped = StreamUtils.zip(Stream.ofAll(1,2,3)
-												,SequenceM.of(2,3,4), 
+												,ReactiveSeq.of(2,3,4), 
 													(a,b) -> Arrays.asList(a,b));
 		
 		
@@ -1648,7 +1648,7 @@ public class StreamUtils{
 	 * <pre>
 	 * {@code 
 	 * 		assertThat(StreamUtils.flatMapSequenceM(Stream.ofAll(1,2,3),
-	 * 							i->SequenceM.of(i+2)).collect(Collectors.toList()),
+	 * 							i->ReactiveSeq.of(i+2)).collect(Collectors.toList()),
 	 * 								equalTo(Arrays.asList(3,4,5)));
 	 * }
 	 * </pre>

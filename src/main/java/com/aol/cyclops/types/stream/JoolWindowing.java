@@ -39,7 +39,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * <p>
      * <code><pre>
      * // (0, 1, 2, 3, 4)
-     * SequenceM.of(1, 2, 4, 2, 3).window().map(Window::rowNumber)
+     * ReactiveSeq.of(1, 2, 4, 2, 3).window().map(Window::rowNumber)
      * </pre></code>
      */ 
     default ReactiveSeq<Window<T>> window() {
@@ -51,7 +51,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * <p>
      * <code><pre>
      * // (2, 4, 4, 4, 3)
-     * SequenceM.of(1, 2, 4, 2, 3).window(-1, 1).map(Window::max)
+     * ReactiveSeq.of(1, 2, 4, 2, 3).window(-1, 1).map(Window::max)
      * </pre></code>
      */ 
     default ReactiveSeq<Window<T>> window(long lower, long upper) {
@@ -64,7 +64,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * <p>
      * <code><pre>
      * // (0, 1, 4, 2, 3)
-     * SequenceM.of(1, 2, 4, 2, 3).window(naturalOrder()).map(Window::rowNumber)
+     * ReactiveSeq.of(1, 2, 4, 2, 3).window(naturalOrder()).map(Window::rowNumber)
      * </pre></code>
      */ 
     default ReactiveSeq<Window<T>> window(Comparator<? super T> orderBy) {
@@ -76,7 +76,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * <p>
      * <code><pre>
      * // (1, 1, 3, 2, 2)
-     * SequenceM.of(1, 2, 4, 2, 3).window(naturalOrder(), -1, 1).map(Window::min)
+     * ReactiveSeq.of(1, 2, 4, 2, 3).window(naturalOrder(), -1, 1).map(Window::min)
      * </pre></code>
      */ 
     default ReactiveSeq<Window<T>> window(Comparator<? super T> orderBy, long lower, long upper) {
@@ -88,7 +88,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * <p>
      * <code><pre>
      * // (1, 2, 2, 2, 1)
-     * SequenceM.of(1, 2, 4, 2, 3).window(i -> i % 2).map(Window::min)
+     * ReactiveSeq.of(1, 2, 4, 2, 3).window(i -> i % 2).map(Window::min)
      * </pre></code>
      */ 
     default <U> ReactiveSeq<Window<T>> window(Function<? super T, ? extends U> partitionBy) {
@@ -100,7 +100,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * <p>
      * <code><pre>
      * // (3, 4, 4, 2, 3)
-     * SequenceM.of(1, 4, 2, 2, 3).window(i -> i % 2, -1, 1).map(Window::max)
+     * ReactiveSeq.of(1, 4, 2, 2, 3).window(i -> i % 2, -1, 1).map(Window::max)
      * </pre></code>
      */ 
     default <U> ReactiveSeq<Window<T>> window(Function<? super T, ? extends U> partitionBy, long lower, long upper) {    	
@@ -114,7 +114,7 @@ public interface JoolWindowing<T> extends Seq<T>{
      * <p>
      * <code><pre>
      * // (3, 2, 4, 4, 3)
-     * SequenceM.of(1, 2, 4, 2, 3).window(i -> i % 2, naturalOrder(), -1, 1).map(Window::max)
+     * ReactiveSeq.of(1, 2, 4, 2, 3).window(i -> i % 2, naturalOrder(), -1, 1).map(Window::max)
      * </pre></code>
      */ 
     default <U> ReactiveSeq<Window<T>> window(Function<? super T, ? extends U> partitionBy, Comparator<? super T> orderBy, long lower, long upper) {

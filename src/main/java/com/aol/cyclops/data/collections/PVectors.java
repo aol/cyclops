@@ -110,7 +110,7 @@ public class PVectors {
 	 * 
 	 * <pre>
 	 * {@code 
-	 *   PVector<String> list = SequenceM.of("a","b","c").mapReduce(PVectors.toPVector()
+	 *   PVector<String> list = ReactiveSeq.of("a","b","c").mapReduce(PVectors.toPVector()
 	 *   //list = ["a","b","c"]
 	 *   PVector<String> list = PVectors.toPVector().reduce(Stream.of("a","b","c")));
 	 *    //list = ["a","b","c"]

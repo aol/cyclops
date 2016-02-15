@@ -328,7 +328,7 @@ public class BaseSequentialTest {
 		   
 		    @Test
 		    public void testSkipWhile() {
-		    	 Supplier<ReactiveSeq<Integer>> s = () -> SequenceM.of(1, 2, 3, 4, 5);
+		    	 Supplier<ReactiveSeq<Integer>> s = () -> ReactiveSeq.of(1, 2, 3, 4, 5);
 
 		         assertEquals(asList(1, 2, 3, 4, 5), s.get().skipWhile(i -> false).toList());
 		         assertEquals(asList(3, 4, 5), s.get().skipWhile(i -> i % 3 != 0).toList());
@@ -339,7 +339,7 @@ public class BaseSequentialTest {
 
 		    @Test
 		    public void testSkipUntil() {
-		    	Supplier<ReactiveSeq<Integer>> s = () -> SequenceM.of(1, 2, 3, 4, 5);
+		    	Supplier<ReactiveSeq<Integer>> s = () -> ReactiveSeq.of(1, 2, 3, 4, 5);
 
 		        assertEquals(asList(), s.get().skipUntil(i -> false).toList());
 		        assertEquals(asList(3, 4, 5), s.get().skipUntil(i -> i % 3 == 0).toList());
@@ -350,14 +350,14 @@ public class BaseSequentialTest {
 
 		    @Test
 		    public void testSkipUntilWithNulls() {
-		    	 Supplier<ReactiveSeq<Integer>> s = () -> SequenceM.of(1, 2, null, 3, 4, 5);
+		    	 Supplier<ReactiveSeq<Integer>> s = () -> ReactiveSeq.of(1, 2, null, 3, 4, 5);
 
 		         assertEquals(asList(1, 2, null, 3, 4, 5), s.get().skipUntil(i -> true).toList());
 		    }
 
 		    @Test
 		    public void testLimitWhile() {
-		    	 Supplier<ReactiveSeq<Integer>> s = () -> SequenceM.of(1, 2, 3, 4, 5);
+		    	 Supplier<ReactiveSeq<Integer>> s = () -> ReactiveSeq.of(1, 2, 3, 4, 5);
 
 		         assertEquals(asList(), s.get().limitWhile(i -> false).toList());
 		         assertEquals(asList(1, 2), s.get().limitWhile(i -> i % 3 != 0).toList());
@@ -471,7 +471,7 @@ public class BaseSequentialTest {
 		    public void testUnzip() {
 		        Supplier<ReactiveSeq<Tuple2<Integer, String>>> s = () -> of(new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c"));
 
-		        Tuple2<ReactiveSeq<Integer>, ReactiveSeq<String>> u1 = SequenceM.unzip(s.get());
+		        Tuple2<ReactiveSeq<Integer>, ReactiveSeq<String>> u1 = ReactiveSeq.unzip(s.get());
 		        assertThat(u1.v1.toList(),equalTo(asList(1, 2, 3)));
 		        assertThat(u1.v2.toList(),equalTo(asList("a", "b", "c")));
 

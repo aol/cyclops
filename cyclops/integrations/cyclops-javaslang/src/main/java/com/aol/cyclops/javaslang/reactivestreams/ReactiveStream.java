@@ -501,7 +501,7 @@ public interface ReactiveStream<T> extends LazyStream<T>, Publisher<T>, Reactive
 	 * 
 	 * <pre>
 	 * {@code 
-	 *  assertTrue(SequenceM.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
+	 *  assertTrue(ReactiveSeq.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
 	 * }
 	 * </pre>
 	 * 
@@ -525,7 +525,7 @@ public interface ReactiveStream<T> extends LazyStream<T>, Publisher<T>, Reactive
 	 * <pre>
 	 * {@code 
 	 * assertThat(ReactiveStream.of(4,5,6)
-							.onEmptySwitch(()->SequenceM.of(1,2,3))
+							.onEmptySwitch(()->ReactiveSeq.of(1,2,3))
 							.toJavaList(),
 							equalTo(Arrays.asList(4,5,6)));
 	 * }
@@ -566,7 +566,7 @@ public interface ReactiveStream<T> extends LazyStream<T>, Publisher<T>, Reactive
 	 *
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2)
+	 * ReactiveSeq.of(1,2)
 	 * 						.forEach3(a->IntStream.range(10,13),
 	 * 						        a->b->Stream.of(""+(a+b),"hello world"),
 	 * 									a->b->c->c+":"a+":"+b);
@@ -595,7 +595,7 @@ public interface ReactiveStream<T> extends LazyStream<T>, Publisher<T>, Reactive
 	 * 
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2,3)
+	 * ReactiveSeq.of(1,2,3)
 	 * 						.forEach3(a->IntStream.range(10,13),
 	 * 						      a->b->Stream.of(""+(a+b),"hello world"),
 	 * 						         a->b->c-> c!=3,
@@ -630,7 +630,7 @@ public interface ReactiveStream<T> extends LazyStream<T>, Publisher<T>, Reactive
 	 * 
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2,3)
+	 * ReactiveSeq.of(1,2,3)
 	 * 						.forEach2(a->IntStream.range(10,13),
 	 * 									a->b->a+b);
 	 * 									
@@ -656,7 +656,7 @@ public interface ReactiveStream<T> extends LazyStream<T>, Publisher<T>, Reactive
 	 * 
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2,3)
+	 * ReactiveSeq.of(1,2,3)
 	 * 						.forEach2(a->IntStream.range(10,13),
 	 * 						            a->b-> a<3 && b>10,
 	 * 									a->b->a+b);
@@ -818,13 +818,13 @@ public interface ReactiveStream<T> extends LazyStream<T>, Publisher<T>, Reactive
 	 * {@code 
 	 *    
 	 *    //1
-	 *    SequenceM.of(1).single(); 
+	 *    ReactiveSeq.of(1).single(); 
 	 *    
 	 *    //UnsupportedOperationException
-	 *    SequenceM.of().single();
+	 *    ReactiveSeq.of().single();
 	 *     
 	 *     //UnsupportedOperationException
-	 *    SequenceM.of(1,2,3).single();
+	 *    ReactiveSeq.of(1,2,3).single();
 	 * }
 	 * </pre>
 	 * 

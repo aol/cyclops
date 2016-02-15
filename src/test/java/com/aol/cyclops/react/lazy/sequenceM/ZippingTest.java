@@ -141,7 +141,7 @@ public class ZippingTest {
 	public void zipEmpty() throws Exception {
 		
 		
-		final ReactiveSeq<Integer> zipped = empty.zip(SequenceM.<Integer>of(), (a, b) -> a + b);
+		final ReactiveSeq<Integer> zipped = empty.zip(ReactiveSeq.<Integer>of(), (a, b) -> a + b);
 		assertTrue(zipped.collect(Collectors.toList()).isEmpty());
 	}
 
@@ -282,7 +282,7 @@ public class ZippingTest {
 
 		Supplier<ReactiveSeq<Tuple2<Integer, String>>> s = () -> of(new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c"));
 
-		Tuple2<ReactiveSeq<Integer>, ReactiveSeq<String>> u1 = SequenceM.unzip(s.get());
+		Tuple2<ReactiveSeq<Integer>, ReactiveSeq<String>> u1 = ReactiveSeq.unzip(s.get());
 
 		assertTrue(u1.v1.toList().containsAll(Arrays.asList(1, 2, 3)));
 
@@ -295,7 +295,7 @@ public class ZippingTest {
 
 		Supplier<ReactiveSeq<Tuple2<Integer, String>>> s = () -> of(new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c"));
 
-		Tuple2<ReactiveSeq<Integer>, ReactiveSeq<String>> u1 = SequenceM.unzip(s.get());
+		Tuple2<ReactiveSeq<Integer>, ReactiveSeq<String>> u1 = ReactiveSeq.unzip(s.get());
 
 		assertTrue(u1.v1.limit(2).toList().containsAll(Arrays.asList(1, 2)));
 
@@ -308,7 +308,7 @@ public class ZippingTest {
 
 		Supplier<ReactiveSeq<Tuple3<Integer, String, Long>>> s = () -> of(new Tuple3(1, "a", 2l), new Tuple3(2, "b", 3l), new Tuple3(3, "c", 4l));
 
-		Tuple3<ReactiveSeq<Integer>, ReactiveSeq<String>, ReactiveSeq<Long>> u1 = SequenceM.unzip3(s.get());
+		Tuple3<ReactiveSeq<Integer>, ReactiveSeq<String>, ReactiveSeq<Long>> u1 = ReactiveSeq.unzip3(s.get());
 
 		assertTrue(u1.v1.limit(1).toList().containsAll(Arrays.asList(1)));
 
@@ -322,7 +322,7 @@ public class ZippingTest {
 
 		Supplier<ReactiveSeq<Tuple3<Integer, String, Long>>> s = () -> of(new Tuple3(1, "a", 2l), new Tuple3(2, "b", 3l), new Tuple3(3, "c", 4l));
 
-		Tuple3<ReactiveSeq<Integer>, ReactiveSeq<String>, ReactiveSeq<Long>> u1 = SequenceM.unzip3(s.get());
+		Tuple3<ReactiveSeq<Integer>, ReactiveSeq<String>, ReactiveSeq<Long>> u1 = ReactiveSeq.unzip3(s.get());
 
 		assertTrue(u1.v1.toList().containsAll(Arrays.asList(1, 2, 3)));
 
@@ -337,7 +337,7 @@ public class ZippingTest {
 		Supplier<ReactiveSeq<Tuple4<Integer, String, Long, Character>>> s = () -> of(new Tuple4(1, "a", 2l, 'z'), new Tuple4(2, "b", 3l, 'y'), new Tuple4(3, "c",
 				4l, 'x'));
 
-		Tuple4<ReactiveSeq<Integer>, ReactiveSeq<String>, ReactiveSeq<Long>, ReactiveSeq<Character>> u1 = SequenceM.unzip4(s.get());
+		Tuple4<ReactiveSeq<Integer>, ReactiveSeq<String>, ReactiveSeq<Long>, ReactiveSeq<Character>> u1 = ReactiveSeq.unzip4(s.get());
 
 		assertTrue(u1.v1.toList().containsAll(Arrays.asList(1, 2, 3)));
 
@@ -354,7 +354,7 @@ public class ZippingTest {
 		Supplier<ReactiveSeq<Tuple4<Integer, String, Long, Character>>> s = () -> of(new Tuple4(1, "a", 2l, 'z'), new Tuple4(2, "b", 3l, 'y'), new Tuple4(3, "c",
 				4l, 'x'));
 
-		Tuple4<ReactiveSeq<Integer>, ReactiveSeq<String>, ReactiveSeq<Long>, ReactiveSeq<Character>> u1 = SequenceM.unzip4(s.get());
+		Tuple4<ReactiveSeq<Integer>, ReactiveSeq<String>, ReactiveSeq<Long>, ReactiveSeq<Character>> u1 = ReactiveSeq.unzip4(s.get());
 
 		assertTrue(u1.v1.limit(1).toList().containsAll(Arrays.asList(1)));
 

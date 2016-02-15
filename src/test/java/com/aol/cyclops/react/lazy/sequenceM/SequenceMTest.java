@@ -23,11 +23,11 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.sequence.streamable.Streamable;
-import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.util.stream.StreamUtils;
+import com.aol.cyclops.util.stream.Streamable;
 
 public class SequenceMTest {
 	@Test
@@ -74,15 +74,15 @@ public class SequenceMTest {
 	}
 	@Test
 	public void get0(){
-		assertThat(LazyFutureStream.of(1).get(0).v1,equalTo(1));
+		assertThat(LazyFutureStream.of(1).elementAt(0).v1,equalTo(1));
 	}
 	@Test
 	public void getMultple(){
-		assertThat(LazyFutureStream.of(1,2,3,4,5).get(2).v1,equalTo(3));
+		assertThat(LazyFutureStream.of(1,2,3,4,5).elementAt(2).v1,equalTo(3));
 	}
 	@Test
 	public void getMultpleStream(){
-		assertThat(LazyFutureStream.of(1,2,3,4,5).get(2).v2.toList(),equalTo(Arrays.asList(1,2,3,4,5)));
+		assertThat(LazyFutureStream.of(1,2,3,4,5).elementAt(2).v2.toList(),equalTo(Arrays.asList(1,2,3,4,5)));
 	}
 	@Test(expected=NoSuchElementException.class)
 	public void getMultiple1(){
@@ -94,19 +94,19 @@ public class SequenceMTest {
 	}
 	@Test
 	public void elementAt0(){
-		assertTrue(LazyFutureStream.of(1).elementAt(0).isPresent());
+		assertTrue(LazyFutureStream.of(1).get(0).isPresent());
 	}
 	@Test
 	public void elementAtMultple(){
-		assertThat(LazyFutureStream.of(1,2,3,4,5).elementAt(2).get(),equalTo(3));
+		assertThat(LazyFutureStream.of(1,2,3,4,5).get(2).get(),equalTo(3));
 	}
 	@Test
 	public void elementAt1(){
-		assertFalse(LazyFutureStream.of(1).elementAt(1).isPresent());
+		assertFalse(LazyFutureStream.of(1).get(1).isPresent());
 	}
 	@Test
 	public void elementAtEmpty(){
-		assertFalse(LazyFutureStream.of().elementAt(0).isPresent());
+		assertFalse(LazyFutureStream.of().get(0).isPresent());
 	}
 	@Test
 	public void singleTest(){
@@ -132,7 +132,7 @@ public class SequenceMTest {
 	}
 	@Test
 	public void limitTimeEmpty(){
-		List<Integer> result = SequenceM.<Integer>of()
+		List<Integer> result = ReactiveSeq.<Integer>of()
 										.peek(i->sleep(i*100))
 										.limit(1000,TimeUnit.MILLISECONDS)
 										.toList();
@@ -152,7 +152,7 @@ public class SequenceMTest {
 	}
 	@Test
 	public void skipTimeEmpty(){
-		List<Integer> result = SequenceM.<Integer>of()
+		List<Integer> result = ReactiveSeq.<Integer>of()
 										.peek(i->sleep(i*100))
 										.skip(1000,TimeUnit.MILLISECONDS)
 										.toList();
@@ -219,7 +219,7 @@ public class SequenceMTest {
 	}
 	@Test
 	public void endsWithBothEmpty(){
-		assertTrue(SequenceM.<Integer>of()
+		assertTrue(ReactiveSeq.<Integer>of()
 				.endsWith(Arrays.asList()));
 	}
 	@Test
@@ -249,7 +249,7 @@ public class SequenceMTest {
 	}
 	@Test
 	public void endsWithBothEmptyStream(){
-		assertTrue(SequenceM.<Integer>of()
+		assertTrue(ReactiveSeq.<Integer>of()
 				.endsWith(Stream.of()));
 	}
 	@Test
@@ -388,18 +388,6 @@ public class SequenceMTest {
 	@Test
 	public void xMatch(){
 		assertTrue(LazyFutureStream.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
-	}
-	@Test
-	public void collectIterables(){
-		
-		List result = LazyFutureStream.of(1, 2, 3).collectIterable((List)
-				Arrays.asList(Collectors.toList(),
-						Collectors.summingInt(Integer::intValue),
-						Collectors.averagingInt(Integer::intValue)));
-
-		assertThat(result.get(0), equalTo(Arrays.asList(1, 2, 3)));
-		assertThat(result.get(1), equalTo(6));
-		assertThat(result.get(2), equalTo(2.0));
 	}
 	
 }

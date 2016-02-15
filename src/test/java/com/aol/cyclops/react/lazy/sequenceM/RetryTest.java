@@ -13,17 +13,14 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-import lombok.SneakyThrows;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.aol.cyclops.invokedynamic.ExceptionSoftener;
-import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.util.ExceptionSoftener;
 
 
 public class RetryTest {

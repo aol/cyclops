@@ -16,7 +16,7 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.types.mixins.AsGenericMonoid;
 
 public class AsGenericMonoidTest {
-
+/**
 	@Test
 	public void testAsMonoidFj() {
 		fj.Monoid m = fj.Monoid.monoid((Integer a) -> (Integer b) -> a+b,0);
@@ -24,5 +24,6 @@ public class AsGenericMonoidTest {
 		
 		assertThat(sum.reduce(Stream.of(1,2,3)),equalTo(6));
 	}
+	**/
 
 }

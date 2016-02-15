@@ -118,7 +118,7 @@ public class PStacks {
 	 * 
 	 * <pre>
 	 * {@code 
-	 *   PStack<String> list = SequenceM.of("a","b","c").mapReduce(PStacks.toPStack()
+	 *   PStack<String> list = ReactiveSeq.of("a","b","c").mapReduce(PStacks.toPStack()
 	 *   //list = ["a","b","c"]
 	 *   PStack<String> list = PStacks.toPStack().reduce(Stream.of("a","b","c")));
 	 *    //list = ["a","b","c"]

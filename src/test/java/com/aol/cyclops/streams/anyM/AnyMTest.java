@@ -43,7 +43,7 @@ public class AnyMTest {
 	@Test
 	public void multiReturn(){
 		AnyMValue<Integer> stream = AnyM.fromOptional(Optional.of(1))
-									.flatMap(i->SequenceM.of(1,2,i).anyM());
+									.flatMap(i->ReactiveSeq.of(1,2,i).anyM());
 		
 		stream.map(i->i+2);
 	}

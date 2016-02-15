@@ -17,23 +17,24 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.pcollections.HashTreePMap;
 
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.SimpleReact;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.react.async.Queue;
 import com.aol.cyclops.react.async.factories.QueueFactories;
 import com.aol.cyclops.react.exceptions.SimpleReactFailedStageException;
-import com.aol.cyclops.react.stream.traits.SimpleReactStream;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.react.stream.traits.SimpleReactStream;
 import com.aol.cyclops.react.threads.SequentialElasticPools;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 
 
 public class Tutorial {
@@ -449,7 +450,7 @@ public class Tutorial {
 	@Test
 	@Ignore
 	public void onePerSecondAndBatch() {
-		List<List<String>> collected = LazyReact
+		List<ListX<String>> collected = LazyReact
 				.sequentialCommonBuilder().reactInfinitely(() -> status)
 				.withQueueFactory(QueueFactories.boundedQueue(1))
 				.onePer(1, TimeUnit.SECONDS).batchByTime(10, TimeUnit.SECONDS)
@@ -462,7 +463,7 @@ public class Tutorial {
 	 */
 	@Test @Ignore
 	public void secondsTimeInterval() {
-		List<List<Integer>> collected = LazyReact
+		List<ListX<Integer>> collected = LazyReact
 				.sequentialCommonBuilder().iterateInfinitely(0, it -> it + 1)
 				//.limit(100)
 				.withQueueFactory(QueueFactories.boundedQueue(1))
@@ -475,7 +476,7 @@ public class Tutorial {
 	@Test
 	@Ignore
 	public void range() {
-		List<List<Integer>> collected = LazyReact
+		List<ListX<Integer>> collected = LazyReact
 				.sequentialCommonBuilder()
 				.from(IntStream.range(0, 10)).batchBySize(5)
 				.block();

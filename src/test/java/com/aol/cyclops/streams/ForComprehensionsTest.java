@@ -80,7 +80,7 @@ public class ForComprehensionsTest {
 	@Test
 	public void forEach3(){
 		/** Eclipse Mars compiler struggles with this
-		assertThat(SequenceM.of(2,3)
+		assertThat(ReactiveSeq.of(2,3)
 					.forEach3(a->IntStream.range(6,9),
 		        		   a->b->IntStream.range(100,105),
 		        		   a->b->c-> a+b+c)
@@ -92,7 +92,7 @@ public class ForComprehensionsTest {
 	public void forEach3Filter(){
 		
 		/** Eclipse Mars compiler struggles with this
-		assertThat(SequenceM.of(2,3)
+		assertThat(ReactiveSeq.of(2,3)
 		         .forEach3(a->IntStream.range(6,9),
 		        		   a->b->IntStream.range(100,105),
 		        		   a->b->c -> a==3,

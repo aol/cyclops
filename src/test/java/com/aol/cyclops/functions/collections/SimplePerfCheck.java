@@ -76,6 +76,7 @@ public class SimplePerfCheck {
 		
 		
 	}
+	/**
 	@Test
 	public void pStackXMap(){
 		
@@ -159,5 +160,5 @@ public class SimplePerfCheck {
 		
 		
 	}
-	
+	**/
 }

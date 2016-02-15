@@ -29,7 +29,7 @@ public interface IterableCollectable<T> extends Iterable<T>{
 	 * 
 	 * <pre>
 	 * {@code 
-	 *  assertTrue(SequenceM.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
+	 *  assertTrue(ReactiveSeq.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
 	 * }
 	 * </pre>
 	 * 

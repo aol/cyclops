@@ -8,16 +8,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.LockSupport;
-import java.util.stream.IntStream;
 
 import org.junit.Test;
 
-import uk.co.real_logic.agrona.concurrent.OneToOneConcurrentArrayQueue;
-
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.PausableHotStream;
-
-import fj.data.Seq;
 
 public class HotStreamTest {
 	static final Executor exec = Executors.newFixedThreadPool(4);

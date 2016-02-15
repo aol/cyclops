@@ -5,7 +5,6 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -16,7 +15,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -27,8 +25,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.sequence.Monoid;
-import com.aol.cyclops.control.LazyReact;
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 

@@ -19,13 +19,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import lombok.Value;
-
 import org.junit.Test;
 
-import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 import com.aol.cyclops.react.util.SimpleTimer;
+import com.aol.cyclops.util.stream.Streamable;
+
+import lombok.Value;
 public class BatchingTest {
 	@Test
 	public void batchUntil(){
@@ -225,7 +226,7 @@ public class BatchingTest {
 		
 		for(int i=0;i<10;i++){
 			System.out.println(i);
-			List<List<Integer>> list = of(1,2,3,4,5,6)
+			List<ListX<Integer>> list = of(1,2,3,4,5,6)
 					.batchBySizeAndTime(10,1,TimeUnit.MICROSECONDS)
 					.toList();
 			

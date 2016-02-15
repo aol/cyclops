@@ -1,7 +1,8 @@
 package com.aol.cyclops.react.monad;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,8 +10,8 @@ import java.util.Optional;
 
 import org.junit.Test;
 
-import com.aol.cyclops.comprehensions.donotation.typed.Do;
-import com.aol.cyclops.monad.AnyM;
+import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Do;
 import com.aol.cyclops.react.stream.traits.BaseSimpleReactStream;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 import com.aol.cyclops.react.stream.traits.SimpleReactStream;

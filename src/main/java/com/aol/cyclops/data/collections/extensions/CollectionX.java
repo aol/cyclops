@@ -81,13 +81,13 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 * {@code 
 	 *    
 	 *    //1
-	 *    SequenceM.of(1).single(); 
+	 *    ReactiveSeq.of(1).single(); 
 	 *    
 	 *    //UnsupportedOperationException
-	 *    SequenceM.of().single();
+	 *    ReactiveSeq.of().single();
 	 *     
 	 *     //UnsupportedOperationException
-	 *    SequenceM.of(1,2,3).single();
+	 *    ReactiveSeq.of(1,2,3).single();
 	 * }
 	 * </pre>
 	 * 
@@ -116,13 +116,13 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 * {@code 
 	 *    
 	 *    //Optional[1]
-	 *    SequenceM.of(1).singleOptional(); 
+	 *    ReactiveSeq.of(1).singleOptional(); 
 	 *    
 	 *    //Optional.empty
-	 *    SequenceM.of().singleOpional();
+	 *    ReactiveSeq.of().singleOpional();
 	 *     
 	 *     //Optional.empty
-	 *    SequenceM.of(1,2,3).singleOptional();
+	 *    ReactiveSeq.of(1,2,3).singleOptional();
 	 * }
 	 * </pre>
 	 * 
@@ -144,7 +144,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 * 
 	 *         <pre>
 	 * {@code
-	 * SequenceM.of(1,2,3,4,5).filter(it -> it <3).findFirst().get();
+	 * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findFirst().get();
 	 * 
 	 * //3
 	 * }
@@ -162,7 +162,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 * 
 	 *         <pre>
 	 * {@code
-	 * SequenceM.of(1,2,3,4,5).filter(it -> it <3).findAny().get();
+	 * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findAny().get();
 	 * 
 	 * //3
 	 * }
@@ -208,7 +208,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	/**
 	 * <pre>
 	 * {@code
-	 *  assertEquals("123".length(),SequenceM.of(1, 2, 3).join().length());
+	 *  assertEquals("123".length(),ReactiveSeq.of(1, 2, 3).join().length());
 	 * }
 	 * </pre>
 	 * 
@@ -222,7 +222,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	/**
 	 * <pre>
 	 * {@code
-	 * assertEquals("1, 2, 3".length(), SequenceM.of(1, 2, 3).join(", ").length());
+	 * assertEquals("1, 2, 3".length(), ReactiveSeq.of(1, 2, 3).join(", ").length());
 	 * }
 	 * </pre>
 	 * 
@@ -273,7 +273,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	  * Performs a map operation that can call a recursive method without running out of stack space
 	  * <pre>
 	  * {@code
-	  * SequenceM.of(10,20,30,40)
+	  * ReactiveSeq.of(10,20,30,40)
 				 .trampoline(i-> fibonacci(i))
 				 .forEach(System.out::println); 
 				 
@@ -290,7 +290,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 		102334155
 	  * 
 	  * 
-	  * SequenceM.of(10_000,200_000,3_000_000,40_000_000)
+	  * ReactiveSeq.of(10_000,200_000,3_000_000,40_000_000)
 				 .trampoline(i-> fibonacci(i))
 				 .forEach(System.out::println);
 				 
@@ -310,7 +310,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 *
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2)
+	 * ReactiveSeq.of(1,2)
 	 * 						.forEach3(a->IntStream.range(10,13),
 	 * 						        a->b->Stream.of(""+(a+b),"hello world"),
 	 * 									a->b->c->c+":"a+":"+b);
@@ -347,7 +347,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 * 
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2,3)
+	 * ReactiveSeq.of(1,2,3)
 	 * 						.forEach3(a->IntStream.range(10,13),
 	 * 						      a->b->Stream.of(""+(a+b),"hello world"),
 	 * 						         a->b->c-> c!=3,
@@ -389,7 +389,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 * 
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2,3)
+	 * ReactiveSeq.of(1,2,3)
 	 * 						.forEach2(a->IntStream.range(10,13),
 	 * 									a->b->a+b);
 	 * 									
@@ -420,7 +420,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 * 
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2,3)
+	 * ReactiveSeq.of(1,2,3)
 	 * 						.forEach2(a->IntStream.range(10,13),
 	 * 						            a->b-> a<3 && b>10,
 	 * 									a->b->a+b);
@@ -470,7 +470,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 * {
 	 * 	&#064;code
 	 * 	SimpleTimer timer = new SimpleTimer();
-	 * 	assertThat(SequenceM.of(1, 2, 3, 4, 5, 6).xPer(6, 100000000, TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(), is(6));
+	 * 	assertThat(ReactiveSeq.of(1, 2, 3, 4, 5, 6).xPer(6, 100000000, TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(), is(6));
 	 * 
 	 * }
 	 * </pre>
@@ -518,7 +518,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 * {
 	 * 	&#064;code
 	 * 	SimpleTimer timer = new SimpleTimer();
-	 * 	assertThat(SequenceM.of(1, 2, 3, 4, 5, 6).fixedDelay(10000, TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(), is(6));
+	 * 	assertThat(ReactiveSeq.of(1, 2, 3, 4, 5, 6).fixedDelay(10000, TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(), is(6));
 	 * 	assertThat(timer.getElapsedNanoseconds(), greaterThan(60000l));
 	 * }
 	 * </pre>

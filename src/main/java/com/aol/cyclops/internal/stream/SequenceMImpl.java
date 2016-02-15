@@ -251,7 +251,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * Split a Stream at it's head (similar to headAndTail)
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2,3).splitAtHead()
+	 * ReactiveSeq.of(1,2,3).splitAtHead()
 	 * 
 	 *  //Optional[1], SequenceM[2,3]
 	 * }
@@ -270,7 +270,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * Split at supplied location 
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2,3).splitAt(1)
+	 * ReactiveSeq.of(1,2,3).splitAt(1)
 	 * 
 	 *  //SequenceM[1], SequenceM[2,3]
 	 * }
@@ -287,7 +287,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * Split stream at point where predicate no longer holds
 	 * <pre>
 	 * {@code
-	 *   SequenceM.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)
+	 *   ReactiveSeq.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)
 	 *   
 	 *   //SequenceM[1,2,3] SequenceM[4,5,6]
 	 * }
@@ -302,7 +302,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * Partition a Stream into two one a per element basis, based on predicate's boolean value
 	 * <pre>
 	 * {@code 
-	 *  SequenceM.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0) 
+	 *  ReactiveSeq.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0) 
 	 *  
 	 *  //SequenceM[1,3,5], SequenceM[2,4,6]
 	 * }
@@ -706,7 +706,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	
 	/**
 	 * <pre>
-	 * {@code assertThat(SequenceM.of(4,3,6,7)).sorted().toList(),equalTo(Arrays.asList(3,4,6,7))); }
+	 * {@code assertThat(ReactiveSeq.of(4,3,6,7)).sorted().toList(),equalTo(Arrays.asList(3,4,6,7))); }
 	 * </pre>
 	 * 
 	 */
@@ -860,7 +860,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * 
 	 * <pre>
 	 * {@code 
-	 *  assertTrue(SequenceM.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
+	 *  assertTrue(ReactiveSeq.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
 	 * }
 	 * </pre>
 	 * 
@@ -950,7 +950,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * 
 	 * <pre>
 	 * {@code
-	 *  ReactiveSeq<String> helloWorld = SequenceM.of("hello","world","last");
+	 *  ReactiveSeq<String> helloWorld = ReactiveSeq.of("hello","world","last");
 		HeadAndTail<String> headAndTail = helloWorld.headAndTail();
 		 String head = headAndTail.head();
 		 assertThat(head,equalTo("hello"));
@@ -1038,7 +1038,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	/* 
 	 * <pre>
 	 * {@code 
-	 * assertThat(SequenceM.of(1,2,3,4,5).map(it -> it*100).reduce( (acc,next) -> acc+next).get(),equalTo(1500));
+	 * assertThat(ReactiveSeq.of(1,2,3,4,5).map(it -> it*100).reduce( (acc,next) -> acc+next).get(),equalTo(1500));
 	 * }
 	 * </pre>
 	 * 
@@ -1097,7 +1097,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * <pre>
 	 * {@code 
 	 * 
-	 * assertTrue(SequenceM.of("a", "b", "c").foldLeft("", String::concat).equals("abc"));
+	 * assertTrue(ReactiveSeq.of("a", "b", "c").foldLeft("", String::concat).equals("abc"));
 	 * }
 	 * </pre>
 	 */
@@ -1127,7 +1127,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * Immutable reduction from right to left
 	 * <pre>
 	 * {@code 
-	 *  assertTrue(SequenceM.of("a","b","c").foldRight("", String::concat).equals("cba"));
+	 *  assertTrue(ReactiveSeq.of("a","b","c").foldRight("", String::concat).equals("cba"));
 	 * }
 	 * </pre>
 	 * 
@@ -1306,7 +1306,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * flatMap to optional - will result in null values being removed
 	 * <pre>
 	 * {@code 
-	 * 	assertThat(SequenceM.of(1,2,3,null).flatMapOptional(Optional::ofNullable)
+	 * 	assertThat(ReactiveSeq.of(1,2,3,null).flatMapOptional(Optional::ofNullable)
 			      										.collect(Collectors.toList()),
 			      										equalTo(Arrays.asList(1,2,3)));
 	 * }
@@ -1324,7 +1324,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 *       
 	 *  <pre>
 	 *  {@code
-	 *  	assertThat(SequenceM.of(1,2,3).flatMapCompletableFuture(i->CompletableFuture.completedFuture(i+2))
+	 *  	assertThat(ReactiveSeq.of(1,2,3).flatMapCompletableFuture(i->CompletableFuture.completedFuture(i+2))
 				  								.collect(Collectors.toList()),
 				  								equalTo(Arrays.asList(3,4,5)));
 	 *  }
@@ -1512,7 +1512,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * of this stream.
 	 * 
 	 * 
-	 * // (1, 0, 2, 0, 3, 0, 4) SequenceM.of(1, 2, 3, 4).intersperse(0)
+	 * // (1, 0, 2, 0, 3, 0, 4) ReactiveSeq.of(1, 2, 3, 4).intersperse(0)
 	 * 
 	 */
 	public  ReactiveSeq<T> intersperse(T value) {
@@ -1523,7 +1523,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * Keep only those elements in a stream that are of a given type.
 	 * 
 	 * 
-	 * // (1, 2, 3) SequenceM.of(1, "a", 2, "b",3).ofType(Integer.class)
+	 * // (1, 2, 3) ReactiveSeq.of(1, "a", 2, "b",3).ofType(Integer.class)
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
@@ -1535,7 +1535,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * {@link ClassCastException}.
 	 * 
 	 * 
-	 * // ClassCastException SequenceM.of(1, "a", 2, "b", 3).cast(Integer.class)
+	 * // ClassCastException ReactiveSeq.of(1, "a", 2, "b", 3).cast(Integer.class)
 	 * 
 	 */
 	public <U> ReactiveSeq<U> cast(Class<U> type) {
@@ -1546,7 +1546,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * Collection is not thread safe on the first iteration.
 	 * <pre>
 	 * {@code 
-	 * Collection<Integer> col = SequenceM.of(1,2,3,4,5)
+	 * Collection<Integer> col = ReactiveSeq.of(1,2,3,4,5)
 											.peek(System.out::println)
 											.toLazyCollection();
 		System.out.println("first!");
@@ -1565,7 +1565,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * 
 	 * <pre>
 	 * {@code 
-	 * Collection<Integer> col = SequenceM.of(1,2,3,4,5)
+	 * Collection<Integer> col = ReactiveSeq.of(1,2,3,4,5)
 											.peek(System.out::println)
 											.toConcurrentLazyCollection();
 		System.out.println("first!");
@@ -2084,7 +2084,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * Perform a three level nested internal iteration over this Stream and the supplied streams
 	  *<pre>
 	 * {@code 
-	 * SequenceM.of(1,2)
+	 * ReactiveSeq.of(1,2)
 						.forEach3(a->IntStream.range(10,13),
 						.a->b->Stream.of(""+(a+b),"hello world"),
 									a->b->c->c+":"a+":"+b);
@@ -2144,7 +2144,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * 
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2,3)
+	 * ReactiveSeq.of(1,2,3)
 						.forEach2(a->IntStream.range(10,13),
 									a->b->a+b);
 									
@@ -2172,7 +2172,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * 
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2,3)
+	 * ReactiveSeq.of(1,2,3)
 						.forEach2(a->IntStream.range(10,13),
 						            a->b-> a<3 && b>10,
 									a->b->a+b);

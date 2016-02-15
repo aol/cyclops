@@ -399,7 +399,7 @@ public class StreamUtils{
 	 * Split at supplied location 
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2,3).splitAt(1)
+	 * ReactiveSeq.of(1,2,3).splitAt(1)
 	 * 
 	 *  //SequenceM[1], SequenceM[2,3]
 	 * }
@@ -414,7 +414,7 @@ public class StreamUtils{
 	 * Split stream at point where predicate no longer holds
 	 * <pre>
 	 * {@code
-	 *   SequenceM.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)
+	 *   ReactiveSeq.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)
 	 *   
 	 *   //SequenceM[1,2,3] SequenceM[4,5,6]
 	 * }
@@ -428,7 +428,7 @@ public class StreamUtils{
 	 * Partition a Stream into two one a per element basis, based on predicate's boolean value
 	 * <pre>
 	 * {@code 
-	 *  SequenceM.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0) 
+	 *  ReactiveSeq.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0) 
 	 *  
 	 *  //SequenceM[1,3,5], SequenceM[2,4,6]
 	 * }
@@ -1020,7 +1020,7 @@ public class StreamUtils{
 	 * <pre>
 	 * {@code 
 	 * Stream<List<Integer>> zipped = StreamUtils.zip(Stream.of(1,2,3)
-												,SequenceM.of(2,3,4), 
+												,ReactiveSeq.of(2,3,4), 
 													(a,b) -> Arrays.asList(a,b));
 		
 		
@@ -1563,7 +1563,7 @@ public class StreamUtils{
 	 * <pre>
 	 * {@code 
 	 * 		assertThat(StreamUtils.flatMapSequenceM(Stream.of(1,2,3),
-	 * 							i->SequenceM.of(i+2)).collect(Collectors.toList()),
+	 * 							i->ReactiveSeq.of(i+2)).collect(Collectors.toList()),
 	 * 								equalTo(Arrays.asList(3,4,5)));
 	 * }
 	 * </pre>

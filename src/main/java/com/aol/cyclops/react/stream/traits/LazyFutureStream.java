@@ -35,7 +35,6 @@ import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 import java.util.function.UnaryOperator;
 import java.util.stream.BaseStream;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
@@ -43,8 +42,6 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.hamcrest.Matcher;
-import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -52,7 +49,6 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.Monoid;
-import com.aol.cyclops.Reducer;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.Matchable;
@@ -60,7 +56,6 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.internal.matcher2.CheckValues;
 import com.aol.cyclops.internal.stream.FutureOperationsImpl;
 import com.aol.cyclops.react.RetryBuilder;
@@ -85,10 +80,7 @@ import com.aol.cyclops.react.stream.traits.future.operators.OperationsOnFutures;
 import com.aol.cyclops.react.stream.traits.future.operators.OperationsOnFuturesImpl;
 import com.aol.cyclops.react.stream.traits.operators.BatchByTime;
 import com.aol.cyclops.react.stream.traits.operators.BatchByTimeAndSize;
-import com.aol.cyclops.types.Foldable;
-import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
-import com.aol.cyclops.types.stream.SequenceMCollectable;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
@@ -819,7 +811,25 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     default void closeAll(){
         getSubscription().closeAll();
     }
-
+    /**
+     * Turns this LazyFutureStream into a HotStream, a connectable Stream, being executed on a thread on the
+     * in it's current task executor, that is producing data
+     * <pre>
+     * {@code
+     *  HotStream<Integer> ints = new LazyReact().range(0,Integer.MAX_VALUE)
+                                                .hotStream()
+        ints.connect().forEach(System.out::println);
+     *  //print out all the ints
+     *  //multiple consumers are possible, so other Streams can connect on different Threads
+     *
+     * }
+     * </pre>
+     * @return a Connectable HotStream
+     */
+    default HotStream<U> hotStream() {
+    	return StreamUtils.hotStream(this, this.getTaskExecutor());
+      
+    }
     /* 
      * @see com.aol.cyclops.sequence.SequenceM#findFirst()
      */

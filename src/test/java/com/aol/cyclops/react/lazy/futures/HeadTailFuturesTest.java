@@ -7,9 +7,9 @@ import java.util.Optional;
 
 import org.junit.Test;
 
-import com.aol.cyclops.sequence.HeadAndTail;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.stream.HeadAndTail;
 
 public class HeadTailFuturesTest {
 
@@ -28,13 +28,5 @@ public class HeadTailFuturesTest {
 
 	}
 
-	@Test
-	public void headTailOptional() {
-
-		LazyFutureStream<String> helloWorld = LazyFutureStream.of();
-		Optional<HeadAndTail<String>> headAndTail = helloWorld.actOnFutures()
-				.headAndTailOptional();
-		assertTrue(!headAndTail.isPresent());
-
-	}
+	
 }

@@ -16,8 +16,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.sequence.streamable.Streamable;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.util.stream.Streamable;
 
 public class WindowingTest {
 	LazyFutureStream<Integer> empty;
@@ -102,7 +103,7 @@ public class WindowingTest {
 	public void sliding2() {
 		
 
-		List<List<Integer>> sliding = LazyFutureStream.of(1, 2, 3, 4, 5).sliding(2).toList();
+		List<ListX<Integer>> sliding = LazyFutureStream.of(1, 2, 3, 4, 5).sliding(2).toList();
 
 		assertThat(sliding, contains(asList(1, 2), asList(2, 3), asList(3, 4), asList(4, 5)));
 	}
@@ -110,7 +111,7 @@ public class WindowingTest {
 	@Test
 	public void slidingOverlap() {
 		
-		List<List<Integer>> sliding = LazyFutureStream.of(1, 2, 3, 4, 5).sliding(3,2).toList();
+		List<ListX<Integer>> sliding = LazyFutureStream.of(1, 2, 3, 4, 5).sliding(3,2).toList();
 
 		assertThat(sliding, contains(asList(1, 2, 3), asList(3, 4, 5)));
 	}
@@ -126,7 +127,7 @@ public class WindowingTest {
 	public void slidingWithSmallWindowAtEnd() {
 		
 
-		List<List<Integer>> sliding = LazyFutureStream.of(1, 2, 3, 4, 5).sliding(2,2).toList();
+		List<ListX<Integer>> sliding = LazyFutureStream.of(1, 2, 3, 4, 5).sliding(2,2).toList();
 
 		assertThat(sliding, contains(asList(1, 2), asList(3, 4), asList(5)));
 	}
@@ -151,7 +152,7 @@ public class WindowingTest {
 	@Test
 	public void groupedShorter() throws Exception {
 		
-		assertThat(of(5, 7, 9).grouped(4).get(0).v1,equalTo(Arrays.asList(5,7,9)));
+		assertThat(of(5, 7, 9).grouped(4).elementAt(0).v1,equalTo(Arrays.asList(5,7,9)));
 		assertThat(of(5, 7, 9).grouped(4).count(),equalTo(1l));
 
 		
@@ -160,14 +161,14 @@ public class WindowingTest {
 	@Test
 	public void groupedEqualSize() throws Exception {
 		
-		assertThat(of(5, 7, 9).grouped(3).elementAt(0).get(),equalTo(Arrays.asList(5,7,9)));
+		assertThat(of(5, 7, 9).grouped(3).elementAt(0).v1,equalTo(Arrays.asList(5,7,9)));
 		assertThat(of(5, 7, 9).grouped(3).count(),equalTo(1l));
 	}
 
 	@Test
 	public void multipleGrouped() throws Exception {
 		final Streamable<Integer> fixed = Streamable.fromStream(of(5, 7, 9,10));
-		assertThat(of(5, 7, 9,10).grouped(3).elementAt(0).get(),equalTo(Arrays.asList(5,7,9)));
+		assertThat(of(5, 7, 9,10).grouped(3).elementAt(0).v1,equalTo(Arrays.asList(5,7,9)));
 		assertThat(of(5, 7, 9,10).grouped(3).count(),equalTo(2l));
 		
 	}
@@ -176,7 +177,7 @@ public class WindowingTest {
 	@Test
 	public void return1() throws Exception {
 		final Streamable<Integer> fixed = Streamable.fromStream(of(5));
-		assertThat(fixed.sequenceM().grouped(3).elementAt(0).get(),equalTo(Arrays.asList(5)));
+		assertThat(fixed.sequenceM().grouped(3).get(0).get(),equalTo(Arrays.asList(5)));
 		assertThat(fixed.sequenceM().grouped(3).count(),equalTo(1l));
 	}
 
@@ -188,10 +189,10 @@ public class WindowingTest {
 
 	@Test
 	public void groupedInfinite() {
-		ReactiveSeq<Integer> infinite = SequenceM.iterate(1, i->i+1);
+		ReactiveSeq<Integer> infinite = ReactiveSeq.iterate(1, i->i+1);
 		
-		final ReactiveSeq<List<Integer>> grouped = infinite.grouped(3);
-		assertThat(grouped.elementAt(0).get(),equalTo(Arrays.asList(1,2,3)));
+		final ReactiveSeq<ListX<Integer>> grouped = infinite.grouped(3);
+		assertThat(grouped.get(0).get(),equalTo(Arrays.asList(1,2,3)));
 	
 	}
 

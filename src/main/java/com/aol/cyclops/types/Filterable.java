@@ -24,7 +24,7 @@ public interface Filterable<T> {
 	 * Keep only those elements in a stream that are of a given type.
 	 * 
 	 * 
-	 * // (1, 2, 3) SequenceM.of(1, "a", 2, "b",3).ofType(Integer.class)
+	 * // (1, 2, 3) ReactiveSeq.of(1, "a", 2, "b",3).ofType(Integer.class)
 	 * 
 	 */
 	@SuppressWarnings("unchecked")

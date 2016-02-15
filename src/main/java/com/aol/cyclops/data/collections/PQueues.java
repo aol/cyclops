@@ -119,7 +119,7 @@ public class PQueues {
 	 * 
 	 * <pre>
 	 * {@code 
-	 *   PQueue<String> q = SequenceM.of("a","b","c").mapReduce(PQueues.toPStack()
+	 *   PQueue<String> q = ReactiveSeq.of("a","b","c").mapReduce(PQueues.toPStack()
 	 *   //queue = ["a","b","c"]
 	 *   PQueues<String> q = PQueues.toPStack().reduce(Stream.of("a","b","c")));
 	 *    //queue = ["a","b","c"]

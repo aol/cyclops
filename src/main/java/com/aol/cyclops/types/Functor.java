@@ -28,7 +28,7 @@ public interface Functor<T> {
 	 * {@link ClassCastException}.
 	 * 
 	 * 
-	 * // ClassCastException SequenceM.of(1, "a", 2, "b", 3).cast(Integer.class)
+	 * // ClassCastException ReactiveSeq.of(1, "a", 2, "b", 3).cast(Integer.class)
 	 * 
 	 */
 	default <U> Functor<U> cast(Class<U> type){
@@ -46,7 +46,7 @@ public interface Functor<T> {
 	  * Performs a map operation that can call a recursive method without running out of stack space
 	  * <pre>
 	  * {@code
-	  * SequenceM.of(10,20,30,40)
+	  * ReactiveSeq.of(10,20,30,40)
 				 .trampoline(i-> fibonacci(i))
 				 .forEach(System.out::println); 
 				 
@@ -63,7 +63,7 @@ public interface Functor<T> {
 		102334155
 	  * 
 	  * 
-	  * SequenceM.of(10_000,200_000,3_000_000,40_000_000)
+	  * ReactiveSeq.of(10_000,200_000,3_000_000,40_000_000)
 				 .trampoline(i-> fibonacci(i))
 				 .forEach(System.out::println);
 				 

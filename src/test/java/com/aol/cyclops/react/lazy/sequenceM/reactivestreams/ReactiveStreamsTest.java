@@ -1,23 +1,23 @@
 package com.aol.cyclops.react.lazy.sequenceM.reactivestreams;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.Arrays;
 
 import org.junit.Test;
 
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.sequence.reactivestreams.CyclopsSubscriber;
-
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import com.aol.cyclops.types.stream.reactive.CyclopsSubscriber;
 
 public class ReactiveStreamsTest {
 
 	@Test
 	public void publishAndSubscribe(){
 		
-		CyclopsSubscriber<Integer> sub = SequenceM.subscriber();
+		CyclopsSubscriber<Integer> sub = ReactiveSeq.subscriber();
 	
-		SequenceM.of(1,2,3).subscribe(sub);
+		ReactiveSeq.of(1,2,3).subscribe(sub);
 		
 		assertThat(sub.sequenceM().toList(),equalTo(
 				Arrays.asList(1,2,3)));
@@ -25,8 +25,8 @@ public class ReactiveStreamsTest {
 	}
 	@Test
 	public void publishAndSubscribeEmpty(){
-		CyclopsSubscriber<Integer> sub = SequenceM.subscriber();
-		SequenceM.<Integer>of().subscribe(sub);
+		CyclopsSubscriber<Integer> sub = ReactiveSeq.subscriber();
+		ReactiveSeq.<Integer>of().subscribe(sub);
 		assertThat(sub.sequenceM().toList(),equalTo(
 				Arrays.asList()));
 	}

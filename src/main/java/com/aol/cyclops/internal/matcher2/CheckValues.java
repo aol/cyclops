@@ -46,6 +46,21 @@ public class CheckValues<T,R> {
 		return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,result,
 				predicates)).withType(clazz);
 	}
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public final CheckValues<T,R> is(Function<? super T,? extends R> result,T value) {		
+		Predicate predicate = it -> Optional.of(it)
+				.map(v -> v.getClass().isAssignableFrom(clazz))
+				.orElse(false);
+		// add wildcard support
+		
+		Predicate<T>[] predicates = ReactiveSeq.of(value)
+				.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toListX().plus(i->SeqUtils.EMPTY==i)
+				.toArray(new Predicate[0]);
+
+		//return new _LastStep<R,V,T>(clazz,predicate,predicates,this.getPatternMatcher());
+		return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,result,
+				predicates)).withType(clazz);
+	}
 	@SafeVarargs @SuppressWarnings({ "rawtypes", "unchecked" })
 	public final <V> CheckValues<T,R> just(Function<? super T,? extends R> result,V... values) {	
 		Predicate predicate = it -> Optional.of(it)
@@ -76,6 +91,21 @@ public class CheckValues<T,R> {
 		return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate, result,
 				predicates)).withType(clazz);
 	}
+	 @SuppressWarnings({ "rawtypes", "unchecked" })
+	public final  CheckValues<T,R> isWhere(Function<? super T,? extends R> result,Predicate<T> value){
+		Predicate predicate = it -> Optional.of(it)
+				.map(v -> v.getClass().isAssignableFrom(clazz))
+				.orElse(false);
+		// add wildcard support
+		
+		Predicate<T>[] predicates = ReactiveSeq.of(value)
+				.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toListX().plus(i->SeqUtils.EMPTY==i)
+				.toArray(new Predicate[0]);
+
+	
+		return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate, result,
+				predicates)).withType(clazz);
+	}
 	@SafeVarargs @SuppressWarnings({ "rawtypes", "unchecked" })
 	public final <V> CheckValues<T,R> where(Function<? super T,? extends R> result,Predicate<V>... values) {
 	
@@ -99,6 +129,20 @@ public class CheckValues<T,R> {
 		// add wildcard support
 		
 		Predicate<V>[] predicates = ReactiveSeq.of(values)
+				.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toListX().plus(i->SeqUtils.EMPTY==i)
+				.toArray(new Predicate[0]);
+
+		return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate, result,
+				predicates)).withType(clazz);
+	}
+	 @SuppressWarnings({ "rawtypes", "unchecked" })
+	public final <V> CheckValues<T,R> isMatch( Function<? super T,? extends R> result,Matcher<V> value){
+		Predicate predicate = it -> Optional.of(it)
+				.map(v -> v.getClass().isAssignableFrom(clazz))
+				.orElse(false);
+		// add wildcard support
+		
+		Predicate<V>[] predicates = ReactiveSeq.of(value)
 				.map(nextValue -> simplerCase.convertToPredicate(nextValue)).toListX().plus(i->SeqUtils.EMPTY==i)
 				.toArray(new Predicate[0]);
 

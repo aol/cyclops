@@ -254,7 +254,7 @@ public interface SequenceMCollectable<T> extends Collectable<T> {
 	 * 
 	 * <pre>
 	 * {@code 
-	 * assertThat(SequenceM.of(1,2,3,4,5).allMatch(it-> it>0 && it <6),equalTo(true));
+	 * assertThat(ReactiveSeq.of(1,2,3,4,5).allMatch(it-> it>0 && it <6),equalTo(true));
 	 * }
 	 * </pre>
 	 * 
@@ -270,7 +270,7 @@ public interface SequenceMCollectable<T> extends Collectable<T> {
 	 * 
 	 * <pre>
 	 * {@code 
-	 * assertThat(SequenceM.of(1,2,3,4,5).anyMatch(it-> it.equals(3)),equalTo(true));
+	 * assertThat(ReactiveSeq.of(1,2,3,4,5).anyMatch(it-> it.equals(3)),equalTo(true));
 	 * }
 	 * </pre>
 	 * 

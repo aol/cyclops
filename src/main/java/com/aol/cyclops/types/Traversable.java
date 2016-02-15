@@ -72,7 +72,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * 
 	 * <pre>
 	 * {@code 
-	 * 		SequenceM.of(1,2,2)
+	 * 		ReactiveSeq.of(1,2,2)
 	 * 								.cycle(3)
 	 * 								.collect(Collectors.toList());
 	 * 								
@@ -95,7 +95,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * 
 	 * <pre>
 	 * {@code 
-	 *   List<Integer> list = SequenceM.of(1,2,2))
+	 *   List<Integer> list = ReactiveSeq.of(1,2,2))
 	 *                                 .cycle(Reducers.toCountInt(),3)
 	 *                                 .collect(Collectors.toList());
 	 *   //List[3,3,3];
@@ -119,7 +119,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * {
 	 * 	&#064;code
 	 * 	MutableInt count = MutableInt.of(0);
-	 * 	SequenceM.of(1, 2, 2).cycleWhile(next -&gt; count++ &lt; 6).collect(Collectors.toList());
+	 * 	ReactiveSeq.of(1, 2, 2).cycleWhile(next -&gt; count++ &lt; 6).collect(Collectors.toList());
 	 * 
 	 * 	// List(1,2,2,1,2,2)
 	 * }
@@ -139,7 +139,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * <pre>
 	 * {@code 
 	 * 	MutableInt count =MutableInt.of(0);
-	 * 		SequenceM.of(1,2,2)
+	 * 		ReactiveSeq.of(1,2,2)
 	 * 		 		.cycleUntil(next -> count.get()>6)
 	 * 		 		.peek(i-> count.mutate(i->i+1))
 	 * 		 		.collect(Collectors.toList());
@@ -244,7 +244,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	List&lt;List&lt;Integer&gt;&gt; list = SequenceM.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
+	 * 	List&lt;List&lt;Integer&gt;&gt; list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
 	 * 
 	 * 	assertThat(list.get(0), hasItems(1, 2));
 	 * 	assertThat(list.get(1), hasItems(2, 3));
@@ -267,7 +267,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	List&lt;List&lt;Integer&gt;&gt; list = SequenceM.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+	 * 	List&lt;List&lt;Integer&gt;&gt; list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
 	 * 
 	 * 	assertThat(list.get(0), hasItems(1, 2, 3));
 	 * 	assertThat(list.get(1), hasItems(3, 4, 5));
@@ -292,7 +292,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	List&lt;List&lt;Integer&gt;&gt; list = SequenceM.of(1, 2, 3, 4, 5, 6).grouped(3).collect(Collectors.toList());
+	 * 	List&lt;List&lt;Integer&gt;&gt; list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).grouped(3).collect(Collectors.toList());
 	 * 
 	 * 	assertThat(list.get(0), hasItems(1, 2, 3));
 	 * 	assertThat(list.get(1), hasItems(4, 5, 6));
@@ -339,7 +339,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	/*
 	 * Return the distinct Stream of elements
 	 * 
-	 * <pre> {@code List<Integer> list = SequenceM.of(1,2,2,2,5,6) .distinct()
+	 * <pre> {@code List<Integer> list = ReactiveSeq.of(1,2,2,2,5,6) .distinct()
 	 * .collect(Collectors.toList()); }</pre>
 	 */
 	default Traversable<T> distinct(){
@@ -352,7 +352,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * <pre>
 	 * {@code  
 	 * 
-	 * 	assertEquals(asList("", "a", "ab", "abc"),SequenceM.of("a", "b", "c")
+	 * 	assertEquals(asList("", "a", "ab", "abc"),ReactiveSeq.of("a", "b", "c")
 	 * 													.scanLeft(Reducers.toString("")).toList());
 	 *         
 	 *         }
@@ -410,7 +410,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 
 	/**
 	 * <pre>
-	 * {@code assertThat(SequenceM.of(4,3,6,7)).sorted().toList(),equalTo(Arrays.asList(3,4,6,7))); }
+	 * {@code assertThat(ReactiveSeq.of(4,3,6,7)).sorted().toList(),equalTo(Arrays.asList(3,4,6,7))); }
 	 * </pre>
 	 * 
 	 */
@@ -421,7 +421,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	/**
 	 * <pre>
 	 * {@code 
-	 * 	assertThat(SequenceM.of(4,3,6,7).sorted((a,b) -> b-a).toList(),equalTo(Arrays.asList(7,6,4,3)));
+	 * 	assertThat(ReactiveSeq.of(4,3,6,7).sorted((a,b) -> b-a).toList(),equalTo(Arrays.asList(7,6,4,3)));
 	 * }
 	 * </pre>
 	 * 
@@ -435,7 +435,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 
 	/**
 	 * <pre>
-	 * {@code assertThat(SequenceM.of(4,3,6,7).skip(2).toList(),equalTo(Arrays.asList(6,7))); }
+	 * {@code assertThat(ReactiveSeq.of(4,3,6,7).skip(2).toList(),equalTo(Arrays.asList(6,7))); }
 	 * </pre>
 	 * 
 	 * 
@@ -455,7 +455,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * 
 	 * <pre>
 	 * {@code
-	 * assertThat(SequenceM.of(4,3,6,7).sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
+	 * assertThat(ReactiveSeq.of(4,3,6,7).sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
 	 * }
 	 * </pre>
 	 * 
@@ -472,7 +472,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * which all elements are included
 	 * 
 	 * <pre>
-	 * {@code assertThat(SequenceM.of(4,3,6,7).skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));}
+	 * {@code assertThat(ReactiveSeq.of(4,3,6,7).skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));}
 	 * </pre>
 	 * 
 	 * 
@@ -488,7 +488,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * 
 	 * 
 	 * <pre>
-	 * {@code assertThat(SequenceM.of(4,3,6,7).limit(2).toList(),equalTo(Arrays.asList(4,3));}
+	 * {@code assertThat(ReactiveSeq.of(4,3,6,7).limit(2).toList(),equalTo(Arrays.asList(4,3));}
 	 * </pre>
 	 * 
 	 * @param num
@@ -504,7 +504,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * predicate returns false all subsequent elements are excluded
 	 * 
 	 * <pre>
-	 * {@code assertThat(SequenceM.of(4,3,6,7).sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));}
+	 * {@code assertThat(ReactiveSeq.of(4,3,6,7).sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));}
 	 * </pre>
 	 * 
 	 * @param p
@@ -520,7 +520,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * which all elements are excluded.
 	 * 
 	 * <pre>
-	 * {@code assertThat(SequenceM.of(4,3,6,7).limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3))); }
+	 * {@code assertThat(ReactiveSeq.of(4,3,6,7).limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3))); }
 	 * </pre>
 	 * 
 	 * @param p
@@ -535,7 +535,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	/**
 	 * <pre>
 	 * {@code
-	 *  assertEquals("123".length(),SequenceM.of(1, 2, 3).join().length());
+	 *  assertEquals("123".length(),ReactiveSeq.of(1, 2, 3).join().length());
 	 * }
 	 * </pre>
 	 * 
@@ -548,7 +548,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	/**
 	 * <pre>
 	 * {@code
-	 * assertEquals("1, 2, 3".length(), SequenceM.of(1, 2, 3).join(", ").length());
+	 * assertEquals("1, 2, 3".length(), ReactiveSeq.of(1, 2, 3).join(", ").length());
 	 * }
 	 * </pre>
 	 * 
@@ -579,7 +579,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	SequenceM&lt;String&gt; helloWorld = SequenceM.of(&quot;hello&quot;, &quot;world&quot;, &quot;last&quot;);
+	 * 	SequenceM&lt;String&gt; helloWorld = ReactiveSeq.of(&quot;hello&quot;, &quot;world&quot;, &quot;last&quot;);
 	 * 	HeadAndTail&lt;String&gt; headAndTail = helloWorld.headAndTail();
 	 * 	String head = headAndTail.head();
 	 * 	assertThat(head, equalTo(&quot;hello&quot;));
@@ -600,7 +600,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * 
 	 *         <pre>
 	 * {@code
-	 * SequenceM.of(1,2,3,4,5).filter(it -> it <3).findFirst().get();
+	 * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findFirst().get();
 	 * 
 	 * //3
 	 * }
@@ -618,7 +618,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * 
 	 *         <pre>
 	 * {@code
-	 * SequenceM.of(1,2,3,4,5).filter(it -> it <3).findAny().get();
+	 * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findAny().get();
 	 * 
 	 * //3
 	 * }
@@ -635,7 +635,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * 
 	 * <pre>
 	 * {@code 
-	 *  assertTrue(SequenceM.of(1,2,3,4).startsWith(Arrays.asList(1,2,3)));
+	 *  assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Arrays.asList(1,2,3)));
 	 * }
 	 * </pre>
 	 * 
@@ -648,7 +648,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 
 	/**
 	 * <pre>
-	 * {@code assertTrue(SequenceM.of(1,2,3,4).startsWith(Arrays.asList(1,2,3).iterator())) }
+	 * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Arrays.asList(1,2,3).iterator())) }
 	 * </pre>
 	 * 
 	 * @param iterator
@@ -660,7 +660,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	/**
 	 * <pre>
 	 * {@code
-	 *  assertTrue(SequenceM.of(1,2,3,4,5,6)
+	 *  assertTrue(ReactiveSeq.of(1,2,3,4,5,6)
 	 * 				.endsWith(Arrays.asList(5,6)));
 	 * 
 	 * }
@@ -675,7 +675,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	/**
 	 * <pre>
 	 * {@code
-	 * assertTrue(SequenceM.of(1,2,3,4,5,6)
+	 * assertTrue(ReactiveSeq.of(1,2,3,4,5,6)
 	 * 				.endsWith(Stream.of(5,6))); 
 	 * }
 	 * </pre>
@@ -695,7 +695,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	Collection&lt;Integer&gt; col = SequenceM.of(1, 2, 3, 4, 5).peek(System.out::println).toLazyCollection();
+	 * 	Collection&lt;Integer&gt; col = ReactiveSeq.of(1, 2, 3, 4, 5).peek(System.out::println).toLazyCollection();
 	 * 
 	 * 	col.forEach(System.out::println);
 	 * }
@@ -716,7 +716,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	Collection&lt;Integer&gt; col = SequenceM.of(1, 2, 3, 4, 5).peek(System.out::println).toConcurrentLazyCollection();
+	 * 	Collection&lt;Integer&gt; col = ReactiveSeq.of(1, 2, 3, 4, 5).peek(System.out::println).toConcurrentLazyCollection();
 	 * 
 	 * 	col.forEach(System.out::println);
 	 * }
@@ -734,7 +734,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	Streamable&lt;Integer&gt; repeat = SequenceM.of(1, 2, 3, 4, 5, 6).map(i -&gt; i + 2).toConcurrentLazyStreamable();
+	 * 	Streamable&lt;Integer&gt; repeat = ReactiveSeq.of(1, 2, 3, 4, 5, 6).map(i -&gt; i + 2).toConcurrentLazyStreamable();
 	 * 
 	 * 	assertThat(repeat.sequenceM().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
 	 * 	assertThat(repeat.sequenceM().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
@@ -751,7 +751,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	/**
 	 * <pre>
 	 * {@code 
-	 * 	assertThat(SequenceM.of(1,2,3,4)
+	 * 	assertThat(ReactiveSeq.of(1,2,3,4)
 	 * 					.map(u->{throw new RuntimeException();})
 	 * 					.recover(e->"hello")
 	 * 					.firstValue(),equalTo("hello"));
@@ -769,13 +769,13 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * {@code 
 	 *    
 	 *    //1
-	 *    SequenceM.of(1).single(); 
+	 *    ReactiveSeq.of(1).single(); 
 	 *    
 	 *    //UnsupportedOperationException
-	 *    SequenceM.of().single();
+	 *    ReactiveSeq.of().single();
 	 *     
 	 *     //UnsupportedOperationException
-	 *    SequenceM.of(1,2,3).single();
+	 *    ReactiveSeq.of(1,2,3).single();
 	 * }
 	 * </pre>
 	 * 
@@ -796,13 +796,13 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * {@code 
 	 *    
 	 *    //Optional[1]
-	 *    SequenceM.of(1).singleOptional(); 
+	 *    ReactiveSeq.of(1).singleOptional(); 
 	 *    
 	 *    //Optional.empty
-	 *    SequenceM.of().singleOpional();
+	 *    ReactiveSeq.of().singleOpional();
 	 *     
 	 *     //Optional.empty
-	 *    SequenceM.of(1,2,3).singleOptional();
+	 *    ReactiveSeq.of(1,2,3).singleOptional();
 	 * }
 	 * </pre>
 	 * 
@@ -819,7 +819,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * 
 	 * <pre>
 	 * {@code
-	 * 	assertThat(SequenceM.of(1,2,3,4,5).elementAt(2).get(),equalTo(3));
+	 * 	assertThat(ReactiveSeq.of(1,2,3,4,5).elementAt(2).get(),equalTo(3));
 	 * }
 	 * </pre>
 	 * 
@@ -837,7 +837,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * of this stream.
 	 * 
 	 * 
-	 * // (1, 0, 2, 0, 3, 0, 4) SequenceM.of(1, 2, 3, 4).intersperse(0)
+	 * // (1, 0, 2, 0, 3, 0, 4) ReactiveSeq.of(1, 2, 3, 4).intersperse(0)
 	 * 
 	 */
 	default Traversable<T> intersperse(T value){
@@ -893,7 +893,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	}
 	
 	/**
-	 * assertThat(SequenceM.of(1,2,3,4,5) .skipLast(2)
+	 * assertThat(ReactiveSeq.of(1,2,3,4,5) .skipLast(2)
 	 * .collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
 	 * 
 	 * @param num
@@ -908,7 +908,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * 
 	 * <pre>
 	 * {@code 
-	 * 	assertThat(SequenceM.of(1,2,3,4,5)
+	 * 	assertThat(ReactiveSeq.of(1,2,3,4,5)
 	 * 							.limitLast(2)
 	 * 							.collect(Collectors.toList()),equalTo(Arrays.asList(4,5)));
 	 * 

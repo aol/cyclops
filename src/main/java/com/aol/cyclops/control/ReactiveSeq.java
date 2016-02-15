@@ -127,7 +127,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 *  SequenceM.of(Arrays.asList(1,2)).flatten();
+	 *  ReactiveSeq.of(Arrays.asList(1,2)).flatten();
 	 *  
 	 *  //stream of (1,  2);		
 	 *  
@@ -148,7 +148,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * 		SequenceM.of(1,2,2)
+	 * 		ReactiveSeq.of(1,2,2)
 	 * 								.cycle(3)
 	 * 								.collect(Collectors.toList());
 	 * 								
@@ -168,7 +168,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 *      SequenceM.of(1).cycle().limit(6).toList());
+	 *      ReactiveSeq.of(1).cycle().limit(6).toList());
 	 *      //List[1, 1, 1, 1, 1,1]
 	 *   }
 	 * </pre>
@@ -236,7 +236,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2,3).splitAtHead()
+	 * ReactiveSeq.of(1,2,3).splitAtHead()
 	 * 
 	 *  //Optional[1], SequenceM[2,3]
 	 * }
@@ -252,7 +252,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2,3).splitAt(1)
+	 * ReactiveSeq.of(1,2,3).splitAt(1)
 	 * 
 	 *  //SequenceM[1], SequenceM[2,3]
 	 * }
@@ -266,7 +266,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code
-	 *   SequenceM.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)
+	 *   ReactiveSeq.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)
 	 *   
 	 *   //SequenceM[1,2,3] SequenceM[4,5,6]
 	 * }
@@ -280,7 +280,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 *  SequenceM.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0) 
+	 *  ReactiveSeq.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0) 
 	 *  
 	 *  //SequenceM[1,3,5], SequenceM[2,4,6]
 	 * }
@@ -295,7 +295,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 *   List<Integer> list = SequenceM.of(1,2,2))
+	 *   List<Integer> list = ReactiveSeq.of(1,2,2))
 	 *                                 .cycle(Reducers.toCountInt(),3)
 	 *                                 .collect(Collectors.toList());
 	 *   //List[3,3,3];
@@ -319,7 +319,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * {
 	 * 	&#064;code
 	 * 	MutableInt count = MutableInt.of(0);
-	 * 	SequenceM.of(1, 2, 2).cycleWhile(next -&gt; count++ &lt; 6).collect(Collectors.toList());
+	 * 	ReactiveSeq.of(1, 2, 2).cycleWhile(next -&gt; count++ &lt; 6).collect(Collectors.toList());
 	 * 
 	 * 	// List(1,2,2,1,2,2)
 	 * }
@@ -337,7 +337,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * <pre>
 	 * {@code 
 	 * 	MutableInt count =MutableInt.of(0);
-	 * 		SequenceM.of(1,2,2)
+	 * 		ReactiveSeq.of(1,2,2)
 	 * 		 		.cycleUntil(next -> count.get()>6)
 	 * 		 		.peek(i-> count.mutate(i->i+1))
 	 * 		 		.collect(Collectors.toList());
@@ -489,7 +489,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	List&lt;List&lt;Integer&gt;&gt; list = SequenceM.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
+	 * 	List&lt;List&lt;Integer&gt;&gt; list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
 	 * 
 	 * 	assertThat(list.get(0), hasItems(1, 2));
 	 * 	assertThat(list.get(1), hasItems(2, 3));
@@ -510,7 +510,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	List&lt;List&lt;Integer&gt;&gt; list = SequenceM.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+	 * 	List&lt;List&lt;Integer&gt;&gt; list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
 	 * 
 	 * 	assertThat(list.get(0), hasItems(1, 2, 3));
 	 * 	assertThat(list.get(1), hasItems(3, 4, 5));
@@ -533,7 +533,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	List&lt;List&lt;Integer&gt;&gt; list = SequenceM.of(1, 2, 3, 4, 5, 6).grouped(3).collect(Collectors.toList());
+	 * 	List&lt;List&lt;Integer&gt;&gt; list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).grouped(3).collect(Collectors.toList());
 	 * 
 	 * 	assertThat(list.get(0), hasItems(1, 2, 3));
 	 * 	assertThat(list.get(1), hasItems(4, 5, 6));
@@ -578,7 +578,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	/*
 	 * Return the distinct Stream of elements
 	 * 
-	 * <pre> {@code List<Integer> list = SequenceM.of(1,2,2,2,5,6) .distinct()
+	 * <pre> {@code List<Integer> list = ReactiveSeq.of(1,2,2,2,5,6) .distinct()
 	 * .collect(Collectors.toList()); }</pre>
 	 */
 	ReactiveSeq<T> distinct();
@@ -589,7 +589,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * <pre>
 	 * {@code  
 	 * 
-	 * 	assertEquals(asList("", "a", "ab", "abc"),SequenceM.of("a", "b", "c")
+	 * 	assertEquals(asList("", "a", "ab", "abc"),ReactiveSeq.of("a", "b", "c")
 	 * 													.scanLeft(Reducers.toString("")).toList());
 	 *         
 	 *         }
@@ -639,7 +639,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 
 	/**
 	 * <pre>
-	 * {@code assertThat(SequenceM.of(4,3,6,7)).sorted().toList(),equalTo(Arrays.asList(3,4,6,7))); }
+	 * {@code assertThat(ReactiveSeq.of(4,3,6,7)).sorted().toList(),equalTo(Arrays.asList(3,4,6,7))); }
 	 * </pre>
 	 * 
 	 */
@@ -648,7 +648,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	/**
 	 * <pre>
 	 * {@code 
-	 * 	assertThat(SequenceM.of(4,3,6,7).sorted((a,b) -> b-a).toList(),equalTo(Arrays.asList(7,6,4,3)));
+	 * 	assertThat(ReactiveSeq.of(4,3,6,7).sorted((a,b) -> b-a).toList(),equalTo(Arrays.asList(7,6,4,3)));
 	 * }
 	 * </pre>
 	 * 
@@ -660,7 +660,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 
 	/**
 	 * <pre>
-	 * {@code assertThat(SequenceM.of(4,3,6,7).skip(2).toList(),equalTo(Arrays.asList(6,7))); }
+	 * {@code assertThat(ReactiveSeq.of(4,3,6,7).skip(2).toList(),equalTo(Arrays.asList(6,7))); }
 	 * </pre>
 	 * 
 	 * 
@@ -678,7 +678,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code
-	 * assertThat(SequenceM.of(4,3,6,7).sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
+	 * assertThat(ReactiveSeq.of(4,3,6,7).sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
 	 * }
 	 * </pre>
 	 * 
@@ -693,7 +693,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * which all elements are included
 	 * 
 	 * <pre>
-	 * {@code assertThat(SequenceM.of(4,3,6,7).skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));}
+	 * {@code assertThat(ReactiveSeq.of(4,3,6,7).skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));}
 	 * </pre>
 	 * 
 	 * 
@@ -711,7 +711,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * 
 	 * <pre>
-	 * {@code assertThat(SequenceM.of(4,3,6,7).limit(2).toList(),equalTo(Arrays.asList(4,3));}
+	 * {@code assertThat(ReactiveSeq.of(4,3,6,7).limit(2).toList(),equalTo(Arrays.asList(4,3));}
 	 * </pre>
 	 * 
 	 * @param num
@@ -725,7 +725,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * predicate returns false all subsequent elements are excluded
 	 * 
 	 * <pre>
-	 * {@code assertThat(SequenceM.of(4,3,6,7).sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));}
+	 * {@code assertThat(ReactiveSeq.of(4,3,6,7).sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));}
 	 * </pre>
 	 * 
 	 * @param p
@@ -739,7 +739,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * which all elements are excluded.
 	 * 
 	 * <pre>
-	 * {@code assertThat(SequenceM.of(4,3,6,7).limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3))); }
+	 * {@code assertThat(ReactiveSeq.of(4,3,6,7).limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3))); }
 	 * </pre>
 	 * 
 	 * @param p
@@ -768,7 +768,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * assertThat(SequenceM.of(1,2,3,4,5).allMatch(it-> it>0 && it <6),equalTo(true));
+	 * assertThat(ReactiveSeq.of(1,2,3,4,5).allMatch(it-> it>0 && it <6),equalTo(true));
 	 * }
 	 * </pre>
 	 * 
@@ -782,7 +782,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * assertThat(SequenceM.of(1,2,3,4,5).anyMatch(it-> it.equals(3)),equalTo(true));
+	 * assertThat(ReactiveSeq.of(1,2,3,4,5).anyMatch(it-> it.equals(3)),equalTo(true));
 	 * }
 	 * </pre>
 	 * 
@@ -797,7 +797,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 *  assertTrue(SequenceM.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
+	 *  assertTrue(ReactiveSeq.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
 	 * }
 	 * </pre>
 	 * 
@@ -815,7 +815,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	/**
 	 * <pre>
 	 * {@code
-	 *  assertEquals("123".length(),SequenceM.of(1, 2, 3).join().length());
+	 *  assertEquals("123".length(),ReactiveSeq.of(1, 2, 3).join().length());
 	 * }
 	 * </pre>
 	 * 
@@ -826,7 +826,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	/**
 	 * <pre>
 	 * {@code
-	 * assertEquals("1, 2, 3".length(), SequenceM.of(1, 2, 3).join(", ").length());
+	 * assertEquals("1, 2, 3".length(), ReactiveSeq.of(1, 2, 3).join(", ").length());
 	 * }
 	 * </pre>
 	 * 
@@ -853,7 +853,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	SequenceM&lt;String&gt; helloWorld = SequenceM.of(&quot;hello&quot;, &quot;world&quot;, &quot;last&quot;);
+	 * 	SequenceM&lt;String&gt; helloWorld = ReactiveSeq.of(&quot;hello&quot;, &quot;world&quot;, &quot;last&quot;);
 	 * 	HeadAndTail&lt;String&gt; headAndTail = helloWorld.headAndTail();
 	 * 	String head = headAndTail.head();
 	 * 	assertThat(head, equalTo(&quot;hello&quot;));
@@ -874,7 +874,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 *         <pre>
 	 * {@code
-	 * SequenceM.of(1,2,3,4,5).filter(it -> it <3).findFirst().get();
+	 * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findFirst().get();
 	 * 
 	 * //3
 	 * }
@@ -890,7 +890,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 *         <pre>
 	 * {@code
-	 * SequenceM.of(1,2,3,4,5).filter(it -> it <3).findAny().get();
+	 * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findAny().get();
 	 * 
 	 * //3
 	 * }
@@ -907,7 +907,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	  * Performs a map operation that can call a recursive method without running out of stack space
 	  * <pre>
 	  * {@code
-	  * SequenceM.of(10,20,30,40)
+	  * ReactiveSeq.of(10,20,30,40)
 				 .trampoline(i-> fibonacci(i))
 				 .forEach(System.out::println); 
 				 
@@ -924,7 +924,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 		102334155
 	  * 
 	  * 
-	  * SequenceM.of(10_000,200_000,3_000_000,40_000_000)
+	  * ReactiveSeq.of(10_000,200_000,3_000_000,40_000_000)
 				 .trampoline(i-> fibonacci(i))
 				 .forEach(System.out::println);
 				 
@@ -946,7 +946,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of("hello","2","world","4").mapReduce(Reducers.toCountInt());
+	 * ReactiveSeq.of("hello","2","world","4").mapReduce(Reducers.toCountInt());
 	 * 
 	 * //4
 	 * }
@@ -964,7 +964,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 *  {@code
-	 *  SequenceM.of("one","two","three","four")
+	 *  ReactiveSeq.of("one","two","three","four")
 	 *           .mapReduce(this::toInt,Reducers.toTotalInt());
 	 *  
 	 *  //10
@@ -997,7 +997,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	/**
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of("hello","2","world","4").reduce(Reducers.toString(","));
+	 * ReactiveSeq.of("hello","2","world","4").reduce(Reducers.toString(","));
 	 * 
 	 * //hello,2,world,4
 	 * }
@@ -1010,7 +1010,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	T reduce(Monoid<T> reducer);
 
 	/*
-	 * <pre> {@code assertThat(SequenceM.of(1,2,3,4,5).map(it -> it*100).reduce(
+	 * <pre> {@code assertThat(ReactiveSeq.of(1,2,3,4,5).map(it -> it*100).reduce(
 	 * (acc,next) -> acc+next).get(),equalTo(1500)); } </pre>
 	 */
 	Optional<T> reduce(BinaryOperator<T> accumulator);
@@ -1042,7 +1042,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 	&#064;code
 	 * 	Monoid&lt;Integer&gt; sum = Monoid.of(0, (a, b) -&gt; a + b);
 	 * 	Monoid&lt;Integer&gt; mult = Monoid.of(1, (a, b) -&gt; a * b);
-	 * 	List&lt;Integer&gt; result = SequenceM.of(1, 2, 3, 4).reduce(Arrays.asList(sum, mult).stream());
+	 * 	List&lt;Integer&gt; result = ReactiveSeq.of(1, 2, 3, 4).reduce(Arrays.asList(sum, mult).stream());
 	 * 
 	 * 	assertThat(result, equalTo(Arrays.asList(10, 24)));
 	 * 
@@ -1065,7 +1065,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * {@code 
 	 * Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
 	 * 		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
-	 * 		List<Integer> result = SequenceM.of(1,2,3,4))
+	 * 		List<Integer> result = ReactiveSeq.of(1,2,3,4))
 	 * 										.reduce(Arrays.asList(sum,mult) );
 	 * 				
 	 * 		 
@@ -1084,7 +1084,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * 		{@code
-	 * 		SequenceM.of("a","b","c").foldRight(Reducers.toString(""));
+	 * 		ReactiveSeq.of("a","b","c").foldRight(Reducers.toString(""));
 	 *        
 	 *         // "cab"
 	 *         }
@@ -1101,7 +1101,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 *  assertTrue(SequenceM.of("a","b","c").foldRight("", String::concat).equals("cba"));
+	 *  assertTrue(ReactiveSeq.of("a","b","c").foldRight("", String::concat).equals("cba"));
 	 * }
 	 * </pre>
 	 * 
@@ -1117,7 +1117,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * 		{@code
-	 * 		SequenceM.of(1,2,3).foldRightMapToType(Reducers.toString(""));
+	 * 		ReactiveSeq.of(1,2,3).foldRightMapToType(Reducers.toString(""));
 	 *        
 	 *         // "321"
 	 *         }
@@ -1134,7 +1134,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	/**
 	 * <pre>
 	 * {@code 
-	 * 	Streamable<Integer> repeat = SequenceM.of(1,2,3,4,5,6)
+	 * 	Streamable<Integer> repeat = ReactiveSeq.of(1,2,3,4,5,6)
 	 * 												.map(i->i*2)
 	 * 												.toStreamable();
 	 * 		
@@ -1182,7 +1182,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 *  assertTrue(SequenceM.of(1,2,3,4).startsWith(Arrays.asList(1,2,3)));
+	 *  assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Arrays.asList(1,2,3)));
 	 * }
 	 * </pre>
 	 * 
@@ -1193,7 +1193,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 
 	/**
 	 * <pre>
-	 * {@code assertTrue(SequenceM.of(1,2,3,4).startsWith(Arrays.asList(1,2,3).iterator())) }
+	 * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Arrays.asList(1,2,3).iterator())) }
 	 * </pre>
 	 * 
 	 * @param iterator
@@ -1225,7 +1225,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code
-	 * 	assertThat(SequenceM.of(1,2)
+	 * 	assertThat(ReactiveSeq.of(1,2)
 	 * 						.flatMap(i -> asList(i, -i).stream())
 	 * 						.toList(),equalTo(asList(1, -1, 2, -2)));		
 	 *  
@@ -1243,7 +1243,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * 	assertThat(SequenceM.of(1,2,3)).flatMapAnyM(i-> anyM(CompletableFuture.completedFuture(i+2))).toList(),equalTo(Arrays.asList(3,4,5)));
+	 * 	assertThat(ReactiveSeq.of(1,2,3)).flatMapAnyM(i-> anyM(CompletableFuture.completedFuture(i+2))).toList(),equalTo(Arrays.asList(3,4,5)));
 	 * 
 	 * }
 	 * </pre>
@@ -1261,7 +1261,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * 	SequenceM.of(1,2)
+	 * 	ReactiveSeq.of(1,2)
 	 * 			.flatMap(i -> asList(i, -i))
 	 *          .toList();
 	 *          
@@ -1279,7 +1279,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * 	assertThat(SequenceM.of(1,2,3)
+	 * 	assertThat(ReactiveSeq.of(1,2,3)
 	 *                      .flatMapStream(i->IntStream.of(i))
 	 *                      .toList(),equalTo(Arrays.asList(1,2,3)));
 	 * 
@@ -1297,7 +1297,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * 	assertThat(SequenceM.of(1,2,3,null)
+	 * 	assertThat(ReactiveSeq.of(1,2,3,null)
 	 *                      .flatMapOptional(Optional::ofNullable)
 	 * 			      			.collect(Collectors.toList()),
 	 * 			      			equalTo(Arrays.asList(1,2,3)));
@@ -1316,7 +1316,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 *  {@code
-	 *  	assertThat(SequenceM.of(1,2,3).flatMapCompletableFuture(i->CompletableFuture.completedFuture(i+2))
+	 *  	assertThat(ReactiveSeq.of(1,2,3).flatMapCompletableFuture(i->CompletableFuture.completedFuture(i+2))
 	 * 				  								.collect(Collectors.toList()),
 	 * 				  								equalTo(Arrays.asList(3,4,5)));
 	 *  }
@@ -1334,7 +1334,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	List&lt;Character&gt; result = SequenceM.of(&quot;input.file&quot;).flatMapCharSequence(i -&gt; &quot;hello world&quot;).toList();
+	 * 	List&lt;Character&gt; result = ReactiveSeq.of(&quot;input.file&quot;).flatMapCharSequence(i -&gt; &quot;hello world&quot;).toList();
 	 * 
 	 * 	assertThat(result, equalTo(Arrays.asList('h', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd')));
 	 * }
@@ -1352,7 +1352,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	List&lt;String&gt; result = SequenceM.of(&quot;input.file&quot;).map(getClass().getClassLoader()::getResource).peek(System.out::println).map(URL::getFile)
+	 * 	List&lt;String&gt; result = ReactiveSeq.of(&quot;input.file&quot;).map(getClass().getClassLoader()::getResource).peek(System.out::println).map(URL::getFile)
 	 * 			.flatMapFile(File::new).toList();
 	 * 
 	 * 	assertThat(result, equalTo(Arrays.asList(&quot;hello&quot;, &quot;world&quot;)));
@@ -1373,7 +1373,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	List&lt;String&gt; result = SequenceM.of(&quot;input.file&quot;).flatMapURL(getClass().getClassLoader()::getResource).toList();
+	 * 	List&lt;String&gt; result = ReactiveSeq.of(&quot;input.file&quot;).flatMapURL(getClass().getClassLoader()::getResource).toList();
 	 * 
 	 * 	assertThat(result, equalTo(Arrays.asList(&quot;hello&quot;, &quot;world&quot;)));
 	 * 
@@ -1390,7 +1390,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * of Strings from the text loaded from the supplied BufferedReaders
 	 * 
 	 * <pre>
-	 * List&lt;String&gt; result = SequenceM.of(&quot;input.file&quot;).map(getClass().getClassLoader()::getResourceAsStream).map(InputStreamReader::new)
+	 * List&lt;String&gt; result = ReactiveSeq.of(&quot;input.file&quot;).map(getClass().getClassLoader()::getResourceAsStream).map(InputStreamReader::new)
 	 * 		.liftAndBindBufferedReader(BufferedReader::new).toList();
 	 * 
 	 * assertThat(result, equalTo(Arrays.asList(&quot;hello&quot;, &quot;world&quot;)));
@@ -1427,7 +1427,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * of this stream.
 	 * 
 	 * 
-	 * // (1, 0, 2, 0, 3, 0, 4) SequenceM.of(1, 2, 3, 4).intersperse(0)
+	 * // (1, 0, 2, 0, 3, 0, 4) ReactiveSeq.of(1, 2, 3, 4).intersperse(0)
 	 * 
 	 */
 	ReactiveSeq<T> intersperse(T value);
@@ -1436,7 +1436,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * Keep only those elements in a stream that are of a given type.
 	 * 
 	 * 
-	 * // (1, 2, 3) SequenceM.of(1, "a", 2, "b",3).ofType(Integer.class)
+	 * // (1, 2, 3) ReactiveSeq.of(1, "a", 2, "b",3).ofType(Integer.class)
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
@@ -1447,7 +1447,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * {@link ClassCastException}.
 	 * 
 	 * 
-	 * // ClassCastException SequenceM.of(1, "a", 2, "b", 3).cast(Integer.class)
+	 * // ClassCastException ReactiveSeq.of(1, "a", 2, "b", 3).cast(Integer.class)
 	 * 
 	 */
 	<U> ReactiveSeq<U> cast(Class<U> type);
@@ -1459,7 +1459,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	Collection&lt;Integer&gt; col = SequenceM.of(1, 2, 3, 4, 5).peek(System.out::println).toLazyCollection();
+	 * 	Collection&lt;Integer&gt; col = ReactiveSeq.of(1, 2, 3, 4, 5).peek(System.out::println).toLazyCollection();
 	 * 
 	 * 	col.forEach(System.out::println);
 	 * }
@@ -1478,7 +1478,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	Collection&lt;Integer&gt; col = SequenceM.of(1, 2, 3, 4, 5).peek(System.out::println).toConcurrentLazyCollection();
+	 * 	Collection&lt;Integer&gt; col = ReactiveSeq.of(1, 2, 3, 4, 5).peek(System.out::println).toConcurrentLazyCollection();
 	 * 
 	 * 	col.forEach(System.out::println);
 	 * }
@@ -1494,7 +1494,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	Streamable&lt;Integer&gt; repeat = SequenceM.of(1, 2, 3, 4, 5, 6).map(i -&gt; i + 2).toConcurrentLazyStreamable();
+	 * 	Streamable&lt;Integer&gt; repeat = ReactiveSeq.of(1, 2, 3, 4, 5, 6).map(i -&gt; i + 2).toConcurrentLazyStreamable();
 	 * 
 	 * 	assertThat(repeat.sequenceM().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
 	 * 	assertThat(repeat.sequenceM().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
@@ -1540,7 +1540,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	List&lt;String&gt; result = SequenceM.of(1, 2, 3).appendStream(SequenceM.of(100, 200, 300)).map(it -&gt; it + &quot;!!&quot;).collect(Collectors.toList());
+	 * 	List&lt;String&gt; result = ReactiveSeq.of(1, 2, 3).appendStream(ReactiveSeq.of(100, 200, 300)).map(it -&gt; it + &quot;!!&quot;).collect(Collectors.toList());
 	 * 
 	 * 	assertThat(result, equalTo(Arrays.asList(&quot;1!!&quot;, &quot;2!!&quot;, &quot;3!!&quot;, &quot;100!!&quot;, &quot;200!!&quot;, &quot;300!!&quot;)));
 	 * }
@@ -1558,7 +1558,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	List&lt;String&gt; result = SequenceM.of(1, 2, 3).prependStream(of(100, 200, 300)).map(it -&gt; it + &quot;!!&quot;).collect(Collectors.toList());
+	 * 	List&lt;String&gt; result = ReactiveSeq.of(1, 2, 3).prependStream(of(100, 200, 300)).map(it -&gt; it + &quot;!!&quot;).collect(Collectors.toList());
 	 * 
 	 * 	assertThat(result, equalTo(Arrays.asList(&quot;100!!&quot;, &quot;200!!&quot;, &quot;300!!&quot;, &quot;1!!&quot;, &quot;2!!&quot;, &quot;3!!&quot;)));
 	 * 
@@ -1577,7 +1577,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	List&lt;String&gt; result = SequenceM.of(1, 2, 3).append(100, 200, 300).map(it -&gt; it + &quot;!!&quot;).collect(Collectors.toList());
+	 * 	List&lt;String&gt; result = ReactiveSeq.of(1, 2, 3).append(100, 200, 300).map(it -&gt; it + &quot;!!&quot;).collect(Collectors.toList());
 	 * 
 	 * 	assertThat(result, equalTo(Arrays.asList(&quot;1!!&quot;, &quot;2!!&quot;, &quot;3!!&quot;, &quot;100!!&quot;, &quot;200!!&quot;, &quot;300!!&quot;)));
 	 * }
@@ -1598,7 +1598,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * List<String> result = 	SequenceM.of(1,2,3)
+	 * List<String> result = 	ReactiveSeq.of(1,2,3)
 	 * 									 .prepend(100,200,300)
 	 * 										 .map(it ->it+"!!")
 	 * 										 .collect(Collectors.toList());
@@ -1616,7 +1616,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	List&lt;String&gt; result = SequenceM.of(1, 2, 3).insertAt(1, 100, 200, 300).map(it -&gt; it + &quot;!!&quot;).collect(Collectors.toList());
+	 * 	List&lt;String&gt; result = ReactiveSeq.of(1, 2, 3).insertAt(1, 100, 200, 300).map(it -&gt; it + &quot;!!&quot;).collect(Collectors.toList());
 	 * 
 	 * 	assertThat(result, equalTo(Arrays.asList(&quot;1!!&quot;, &quot;100!!&quot;, &quot;200!!&quot;, &quot;300!!&quot;, &quot;2!!&quot;, &quot;3!!&quot;)));
 	 * 
@@ -1637,7 +1637,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	List&lt;String&gt; result = SequenceM.of(1, 2, 3, 4, 5, 6).deleteBetween(2, 4).map(it -&gt; it + &quot;!!&quot;).collect(Collectors.toList());
+	 * 	List&lt;String&gt; result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).deleteBetween(2, 4).map(it -&gt; it + &quot;!!&quot;).collect(Collectors.toList());
 	 * 
 	 * 	assertThat(result, equalTo(Arrays.asList(&quot;1!!&quot;, &quot;2!!&quot;, &quot;5!!&quot;, &quot;6!!&quot;)));
 	 * }
@@ -1657,7 +1657,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	List&lt;String&gt; result = SequenceM.of(1, 2, 3).insertStreamAt(1, of(100, 200, 300)).map(it -&gt; it + &quot;!!&quot;).collect(Collectors.toList());
+	 * 	List&lt;String&gt; result = ReactiveSeq.of(1, 2, 3).insertStreamAt(1, of(100, 200, 300)).map(it -&gt; it + &quot;!!&quot;).collect(Collectors.toList());
 	 * 
 	 * 	assertThat(result, equalTo(Arrays.asList(&quot;1!!&quot;, &quot;100!!&quot;, &quot;200!!&quot;, &quot;300!!&quot;, &quot;2!!&quot;, &quot;3!!&quot;)));
 	 * }
@@ -1683,7 +1683,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	/**
 	 * <pre>
 	 * {@code
-	 *  assertTrue(SequenceM.of(1,2,3,4,5,6)
+	 *  assertTrue(ReactiveSeq.of(1,2,3,4,5,6)
 	 * 				.endsWith(Arrays.asList(5,6)));
 	 * 
 	 * }
@@ -1696,7 +1696,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	/**
 	 * <pre>
 	 * {@code
-	 * assertTrue(SequenceM.of(1,2,3,4,5,6)
+	 * assertTrue(ReactiveSeq.of(1,2,3,4,5,6)
 	 * 				.endsWith(Stream.of(5,6))); 
 	 * }
 	 * </pre>
@@ -1713,7 +1713,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	List&lt;Integer&gt; result = SequenceM.of(1, 2, 3, 4, 5, 6).peek(i -&gt; sleep(i * 100)).skip(1000, TimeUnit.MILLISECONDS).toList();
+	 * 	List&lt;Integer&gt; result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).peek(i -&gt; sleep(i * 100)).skip(1000, TimeUnit.MILLISECONDS).toList();
 	 * 
 	 * 	// [4,5,6]
 	 * 
@@ -1734,7 +1734,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	List&lt;Integer&gt; result = SequenceM.of(1, 2, 3, 4, 5, 6).peek(i -&gt; sleep(i * 100)).limit(1000, TimeUnit.MILLISECONDS).toList();
+	 * 	List&lt;Integer&gt; result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).peek(i -&gt; sleep(i * 100)).limit(1000, TimeUnit.MILLISECONDS).toList();
 	 * 
 	 * 	// [1,2,3,4]
 	 * }
@@ -1749,7 +1749,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	ReactiveSeq<T> limit(long time, final TimeUnit unit);
 
 	/**
-	 * assertThat(SequenceM.of(1,2,3,4,5) .skipLast(2)
+	 * assertThat(ReactiveSeq.of(1,2,3,4,5) .skipLast(2)
 	 * .collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
 	 * 
 	 * @param num
@@ -1762,7 +1762,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * 	assertThat(SequenceM.of(1,2,3,4,5)
+	 * 	assertThat(ReactiveSeq.of(1,2,3,4,5)
 	 * 							.limitLast(2)
 	 * 							.collect(Collectors.toList()),equalTo(Arrays.asList(4,5)));
 	 * 
@@ -1873,7 +1873,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	/**
 	 * <pre>
 	 * {@code 
-	 * 	assertThat(SequenceM.of(1,2,3,4)
+	 * 	assertThat(ReactiveSeq.of(1,2,3,4)
 	 * 					.map(u->{throw new RuntimeException();})
 	 * 					.recover(e->"hello")
 	 * 					.firstValue(),equalTo("hello"));
@@ -1889,13 +1889,13 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * {@code 
 	 *    
 	 *    //1
-	 *    SequenceM.of(1).single(); 
+	 *    ReactiveSeq.of(1).single(); 
 	 *    
 	 *    //UnsupportedOperationException
-	 *    SequenceM.of().single();
+	 *    ReactiveSeq.of().single();
 	 *     
 	 *     //UnsupportedOperationException
-	 *    SequenceM.of(1,2,3).single();
+	 *    ReactiveSeq.of(1,2,3).single();
 	 * }
 	 * </pre>
 	 * 
@@ -1923,13 +1923,13 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * {@code 
 	 *    
 	 *    //Optional[1]
-	 *    SequenceM.of(1).singleOptional(); 
+	 *    ReactiveSeq.of(1).singleOptional(); 
 	 *    
 	 *    //Optional.empty
-	 *    SequenceM.of().singleOpional();
+	 *    ReactiveSeq.of().singleOpional();
 	 *     
 	 *     //Optional.empty
-	 *    SequenceM.of(1,2,3).singleOptional();
+	 *    ReactiveSeq.of(1,2,3).singleOptional();
 	 * }
 	 * </pre>
 	 * 
@@ -1952,7 +1952,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code
-	 * 	assertThat(SequenceM.of(1,2,3,4,5).elementAt(2).get(),equalTo(3));
+	 * 	assertThat(ReactiveSeq.of(1,2,3,4,5).elementAt(2).get(),equalTo(3));
 	 * }
 	 * </pre>
 	 * 
@@ -1970,7 +1970,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2,3,4,5).get(2).v1
+	 * ReactiveSeq.of(1,2,3,4,5).get(2).v1
 	 * //3
 	 * }
 	 * </pre>
@@ -1987,7 +1987,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	/**
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2,3,4,5)
+	 * ReactiveSeq.of(1,2,3,4,5)
 	 * 				 .elapsed()
 	 * 				 .forEach(System.out::println);
 	 * }
@@ -2011,7 +2011,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	/**
 	 * <pre>
 	 * {@code
-	 *    SequenceM.of(1,2,3,4,5)
+	 *    ReactiveSeq.of(1,2,3,4,5)
 	 * 				   .timestamp()
 	 * 				   .forEach(System.out::println)
 	 * 
@@ -2032,7 +2032,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * <pre>
 	 * {@code
 	 * CyclopsSubscriber<Integer> sub = SequenceM.subscriber();
-	 * 		SequenceM.of(1,2,3).subscribe(sub);
+	 * 		ReactiveSeq.of(1,2,3).subscribe(sub);
 	 * 		sub.sequenceM().forEach(System.out::println);
 	 * 		
 	 * 		  1 
@@ -2241,7 +2241,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 *  unzip(SequenceM.of(new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c")))
+	 *  unzip(ReactiveSeq.of(new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c")))
 	 *  
 	 *  // SequenceM[1,2,3], SequenceM[a,b,c]
 	 * }
@@ -2259,7 +2259,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 *    unzip3(SequenceM.of(new Tuple3(1, "a", 2l), new Tuple3(2, "b", 3l), new Tuple3(3,"c", 4l)))
+	 *    unzip3(ReactiveSeq.of(new Tuple3(1, "a", 2l), new Tuple3(2, "b", 3l), new Tuple3(3,"c", 4l)))
 	 * }
 	 * // SequenceM[1,2,3], SequenceM[a,b,c], SequenceM[2l,3l,4l]
 	 * </pre>
@@ -2274,7 +2274,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * unzip4(SequenceM.of(new Tuple4(1, "a", 2l,'z'), new Tuple4(2, "b", 3l,'y'), new Tuple4(3,
+	 * unzip4(ReactiveSeq.of(new Tuple4(1, "a", 2l,'z'), new Tuple4(2, "b", 3l,'y'), new Tuple4(3,
 	 * 						"c", 4l,'x')));
 	 * 		}
 	 * 		// SequenceM[1,2,3], SequenceM[a,b,c], SequenceM[2l,3l,4l], SequenceM[z,y,x]
@@ -2404,8 +2404,8 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * assertThat(SequenceM.of(4,5,6)
-	 * 							.onEmptySwitch(()->SequenceM.of(1,2,3))
+	 * assertThat(ReactiveSeq.of(4,5,6)
+	 * 							.onEmptySwitch(()->ReactiveSeq.of(1,2,3))
 	 * 							.toList(),
 	 * 							equalTo(Arrays.asList(4,5,6)));
 	 * }
@@ -2514,7 +2514,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * {
 	 * 	&#064;code
 	 * 	SimpleTimer timer = new SimpleTimer();
-	 * 	assertThat(SequenceM.of(1, 2, 3, 4, 5, 6).xPer(6, 100000000, TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(), is(6));
+	 * 	assertThat(ReactiveSeq.of(1, 2, 3, 4, 5, 6).xPer(6, 100000000, TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(), is(6));
 	 * 
 	 * }
 	 * </pre>
@@ -2556,7 +2556,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2,3,4,5,6)
+	 * ReactiveSeq.of(1,2,3,4,5,6)
 	 *          .debounce(1000,TimeUnit.SECONDS).toList();
 	 *          
 	 * // 1 
@@ -2574,7 +2574,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code
-	 * SequenceM.of(1,2,3,4,5,6)
+	 * ReactiveSeq.of(1,2,3,4,5,6)
 	 * 				.batchBySizeAndTime(3,10,TimeUnit.SECONDS)
 	 * 				.toList();
 	 * 			
@@ -2615,8 +2615,8 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * assertThat(SequenceM.of(1,2,3,4,5,6).batchByTime(1,TimeUnit.SECONDS).collect(Collectors.toList()).size(),is(1));
-	 * assertThat(SequenceM.of(1,2,3,4,5,6).batchByTime(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),greaterThan(5));
+	 * assertThat(ReactiveSeq.of(1,2,3,4,5,6).batchByTime(1,TimeUnit.SECONDS).collect(Collectors.toList()).size(),is(1));
+	 * assertThat(ReactiveSeq.of(1,2,3,4,5,6).batchByTime(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),greaterThan(5));
 	 * }
 	 * </pre>
 	 * 
@@ -2633,7 +2633,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 *   assertThat(SequenceM.of(1,1,1,1,1,1)
+	 *   assertThat(ReactiveSeq.of(1,1,1,1,1,1)
 	 *                       .batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>())
 	 *                       .toList()
 	 *                       .get(0)
@@ -2656,7 +2656,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 *  assertThat(SequenceM.of(1,2,3,4,5,6)
+	 *  assertThat(ReactiveSeq.of(1,2,3,4,5,6)
 	 *                      .batchBySize(3)
 	 *                      .collect(Collectors.toList())
 	 *                      .size(),is(2));
@@ -2672,7 +2672,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code
-	 * assertThat(SequenceM.of(1,1,1,1,1,1)
+	 * assertThat(ReactiveSeq.of(1,1,1,1,1,1)
 	 * 						.batchBySize(3,()->new TreeSet<>())
 	 * 						.toList()
 	 * 						.get(0)
@@ -2692,7 +2692,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * {
 	 * 	&#064;code
 	 * 	SimpleTimer timer = new SimpleTimer();
-	 * 	assertThat(SequenceM.of(1, 2, 3, 4, 5, 6).fixedDelay(10000, TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(), is(6));
+	 * 	assertThat(ReactiveSeq.of(1, 2, 3, 4, 5, 6).fixedDelay(10000, TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(), is(6));
 	 * 	assertThat(timer.getElapsedNanoseconds(), greaterThan(60000l));
 	 * }
 	 * </pre>
@@ -2712,7 +2712,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * {
 	 * 	&#064;code
 	 * 	SimpleTimer timer = new SimpleTimer();
-	 * 	assertThat(SequenceM.of(1, 2, 3, 4, 5, 6).jitter(10000).collect(Collectors.toList()).size(), is(6));
+	 * 	assertThat(ReactiveSeq.of(1, 2, 3, 4, 5, 6).jitter(10000).collect(Collectors.toList()).size(), is(6));
 	 * 	assertThat(timer.getElapsedNanoseconds(), greaterThan(20000l));
 	 * }
 	 * </pre>
@@ -2729,7 +2729,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * assertThat(SequenceM.of(1,2,3,4,5,6)
+	 * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
 	 * 						.windowBySizeAndTime(3,10,TimeUnit.SECONDS)
 	 * 						.toList()
 	 * 						.get(0)
@@ -2751,7 +2751,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2,3,4,5,6)
+	 * ReactiveSeq.of(1,2,3,4,5,6)
 	 * 				.windowWhile(i->i%3!=0)
 	 * 				.forEach(System.out::println);
 	 *   
@@ -2773,7 +2773,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2,3,4,5,6)
+	 * ReactiveSeq.of(1,2,3,4,5,6)
 	 * 				.windowUntil(i->i%3==0)
 	 * 				.forEach(System.out::println);
 	 *   
@@ -2797,7 +2797,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * assertThat(SequenceM.of(1,2,3,4,5,6)
+	 * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
 	 * 				.windowStatefullyWhile((s,i)->s.sequenceM().toList().contains(4) ? true : false)
 	 * 				.toList().size(),equalTo(5));
 	 * }
@@ -2815,7 +2815,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * assertThat(SequenceM.of(1,2,3,4,5, 6)
+	 * assertThat(ReactiveSeq.of(1,2,3,4,5, 6)
 	 * 							.map(n-> n==6? sleep(1) : n)
 	 * 							.windowByTime(10,TimeUnit.MICROSECONDS)
 	 * 							.toList()
@@ -2838,7 +2838,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 *  assertThat(SequenceM.of(1,2,3,4,5,6)
+	 *  assertThat(ReactiveSeq.of(1,2,3,4,5,6)
 	 * 				.batchUntil(i->i%3==0)
 	 * 				.toList()
 	 * 				.size(),equalTo(2));
@@ -2857,7 +2857,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * assertThat(SequenceM.of(1,2,3,4,5,6)
+	 * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
 	 * 				.batchWhile(i->i%3!=0)
 	 * 				.toList().size(),equalTo(2));
 	 * 	
@@ -2876,7 +2876,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * assertThat(SequenceM.of(1,2,3,4,5,6)
+	 * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
 	 * 				.batchWhile(i->i%3!=0)
 	 * 				.toList()
 	 * 				.size(),equalTo(2));
@@ -2898,7 +2898,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * assertThat(SequenceM.of(1,2,3,4,5,6)
+	 * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
 	 * 				.batchUntil(i->i%3!=0)
 	 * 				.toList()
 	 * 				.size(),equalTo(2));
@@ -2920,7 +2920,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * assertThat(SequenceM.of(1,2,3,4)
+	 * assertThat(ReactiveSeq.of(1,2,3,4)
 	 * 						   .map(i->i+2)
 	 * 						   .map(u->{throw new RuntimeException();})
 	 * 						   .recover(e->"hello")
@@ -2940,7 +2940,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * assertThat(SequenceM.of(1,2,3,4)
+	 * assertThat(ReactiveSeq.of(1,2,3,4)
 	 * 					.map(i->i+2)
 	 * 					.map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
 	 * 					.recover(IOException.class,e->"hello")
@@ -2970,7 +2970,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 				"42");
 	 * 
 	 * 	
-	 * 		String result = SequenceM.of( 1,  2, 3)
+	 * 		String result = ReactiveSeq.of( 1,  2, 3)
 	 * 				.retry(serviceMock)
 	 * 				.firstValue();
 	 * 
@@ -3008,7 +3008,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code
-	 * 	SequenceM.of(1,2,3,4,5,1,2,3).remove(1)
+	 * 	ReactiveSeq.of(1,2,3,4,5,1,2,3).remove(1)
 	 * 
 	 *  //Streamable[2,3,4,5,2,3]
 	 * }
@@ -3040,7 +3040,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 *   SequenceM.of(1,2,3,4,5,6).subStream(1,3);
+	 *   ReactiveSeq.of(1,2,3,4,5,6).subStream(1,3);
 	 *   
 	 *   
 	 *   //SequenceM[2,3]
@@ -3060,7 +3060,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	/**
 	 * <pre>
 	 * {@code
-	 *   SequenceM.of(1,2,3).combinations(2)
+	 *   ReactiveSeq.of(1,2,3).combinations(2)
 	 *   
 	 *   //SequenceM[SequenceM[1,2],SequenceM[1,3],SequenceM[2,3]]
 	 * }
@@ -3080,7 +3080,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	/**
 	 * <pre>
 	 * {@code
-	 *   SequenceM.of(1,2,3).combinations()
+	 *   ReactiveSeq.of(1,2,3).combinations()
 	 *   
 	 *   //SequenceM[SequenceM[],SequenceM[1],SequenceM[2],SequenceM[3].SequenceM[1,2],SequenceM[1,3],SequenceM[2,3]
 	 *   			,SequenceM[1,2,3]]
@@ -3210,7 +3210,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 *
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2)
+	 * ReactiveSeq.of(1,2)
 	 * 						.forEach3(a->IntStream.range(10,13),
 	 * 						        a->b->Stream.of(""+(a+b),"hello world"),
 	 * 									a->b->c->c+":"a+":"+b);
@@ -3240,7 +3240,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2,3)
+	 * ReactiveSeq.of(1,2,3)
 	 * 						.forEach3(a->IntStream.range(10,13),
 	 * 						      a->b->Stream.of(""+(a+b),"hello world"),
 	 * 						         a->b->c-> c!=3,
@@ -3275,7 +3275,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2,3)
+	 * ReactiveSeq.of(1,2,3)
 	 * 						.forEach2(a->IntStream.range(10,13),
 	 * 									a->b->a+b);
 	 * 									
@@ -3301,7 +3301,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of(1,2,3)
+	 * ReactiveSeq.of(1,2,3)
 	 * 						.forEach2(a->IntStream.range(10,13),
 	 * 						            a->b-> a<3 && b>10,
 	 * 									a->b->a+b);

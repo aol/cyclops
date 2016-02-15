@@ -21,7 +21,7 @@ public interface Foldable<T> {
 	 * 
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of("hello","2","world","4").mapReduce(Reducers.toCountInt());
+	 * ReactiveSeq.of("hello","2","world","4").mapReduce(Reducers.toCountInt());
 	 * 
 	 * //4
 	 * }
@@ -41,7 +41,7 @@ public interface Foldable<T> {
 	 * 
 	 * <pre>
 	 *  {@code
-	 *  SequenceM.of("one","two","three","four")
+	 *  ReactiveSeq.of("one","two","three","four")
 	 *           .mapReduce(this::toInt,Reducers.toTotalInt());
 	 *  
 	 *  //10
@@ -72,7 +72,7 @@ public interface Foldable<T> {
 	/**
 	 * <pre>
 	 * {@code 
-	 * SequenceM.of("hello","2","world","4").reduce(Reducers.toString(","));
+	 * ReactiveSeq.of("hello","2","world","4").reduce(Reducers.toString(","));
 	 * 
 	 * //hello,2,world,4
 	 * }
@@ -87,7 +87,7 @@ public interface Foldable<T> {
 	}
 
 	/*
-	 * <pre> {@code assertThat(SequenceM.of(1,2,3,4,5).map(it -> it*100).reduce(
+	 * <pre> {@code assertThat(ReactiveSeq.of(1,2,3,4,5).map(it -> it*100).reduce(
 	 * (acc,next) -> acc+next).get(),equalTo(1500)); } </pre>
 	 */
 	default Optional<T> reduce(BinaryOperator<T> accumulator){
@@ -125,7 +125,7 @@ public interface Foldable<T> {
 	 * 	&#064;code
 	 * 	Monoid&lt;Integer&gt; sum = Monoid.of(0, (a, b) -&gt; a + b);
 	 * 	Monoid&lt;Integer&gt; mult = Monoid.of(1, (a, b) -&gt; a * b);
-	 * 	List&lt;Integer&gt; result = SequenceM.of(1, 2, 3, 4).reduce(Arrays.asList(sum, mult).stream());
+	 * 	List&lt;Integer&gt; result = ReactiveSeq.of(1, 2, 3, 4).reduce(Arrays.asList(sum, mult).stream());
 	 * 
 	 * 	assertThat(result, equalTo(Arrays.asList(10, 24)));
 	 * 
@@ -150,7 +150,7 @@ public interface Foldable<T> {
 	 * {@code 
 	 * Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
 	 * 		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
-	 * 		List<Integer> result = SequenceM.of(1,2,3,4))
+	 * 		List<Integer> result = ReactiveSeq.of(1,2,3,4))
 	 * 										.reduce(Arrays.asList(sum,mult) );
 	 * 				
 	 * 		 
@@ -170,7 +170,7 @@ public interface Foldable<T> {
 	 * 
 	 * <pre>
 	 * 		{@code
-	 * 		SequenceM.of("a","b","c").foldRight(Reducers.toString(""));
+	 * 		ReactiveSeq.of("a","b","c").foldRight(Reducers.toString(""));
 	 *        
 	 *         // "cab"
 	 *         }
@@ -189,7 +189,7 @@ public interface Foldable<T> {
 	 * 
 	 * <pre>
 	 * {@code 
-	 *  assertTrue(SequenceM.of("a","b","c").foldRight("", String::concat).equals("cba"));
+	 *  assertTrue(ReactiveSeq.of("a","b","c").foldRight("", String::concat).equals("cba"));
 	 * }
 	 * </pre>
 	 * 
@@ -207,7 +207,7 @@ public interface Foldable<T> {
 	 * 
 	 * <pre>
 	 * 		{@code
-	 * 		SequenceM.of(1,2,3).foldRightMapToType(Reducers.toString(""));
+	 * 		ReactiveSeq.of(1,2,3).foldRightMapToType(Reducers.toString(""));
 	 *        
 	 *         // "321"
 	 *         }

@@ -65,7 +65,7 @@ public class LazyListXTest extends AbstractLazyTest{
 	/**
 	 *
 		Eval e;
-		//int cost = SequenceM.of(1,2).when((head,tail)-> head.when(h-> (int)h>5, h-> 0 )
+		//int cost = ReactiveSeq.of(1,2).when((head,tail)-> head.when(h-> (int)h>5, h-> 0 )
 		//		.flatMap(h-> head.when());
 		
 		ht.headMaybe().when(some-> Matchable.of(some).matches(

@@ -18,8 +18,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
 
-import com.aol.cyclops.streams.StreamUtils;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.util.stream.StreamUtils;
 
 public class ForEachLFSTest {
 	boolean complete =false;

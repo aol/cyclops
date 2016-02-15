@@ -23,7 +23,7 @@ public interface ExtendedTraversable<T> extends Traversable<T>,Foldable<T>, Iter
 	/**
 	 * <pre>
 	 * {@code
-	 *   SequenceM.of(1,2,3).combinations(2)
+	 *   ReactiveSeq.of(1,2,3).combinations(2)
 	 *   
 	 *   //SequenceM[SequenceM[1,2],SequenceM[1,3],SequenceM[2,3]]
 	 * }
@@ -42,7 +42,7 @@ public interface ExtendedTraversable<T> extends Traversable<T>,Foldable<T>, Iter
 	/**
 	 * <pre>
 	 * {@code
-	 *   SequenceM.of(1,2,3).combinations()
+	 *   ReactiveSeq.of(1,2,3).combinations()
 	 *   
 	 *   //SequenceM[SequenceM[],SequenceM[1],SequenceM[2],SequenceM[3].SequenceM[1,2],SequenceM[1,3],SequenceM[2,3]
 	 *   			,SequenceM[1,2,3]]
