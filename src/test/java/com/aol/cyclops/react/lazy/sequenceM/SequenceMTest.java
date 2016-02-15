@@ -86,11 +86,11 @@ public class SequenceMTest {
 	}
 	@Test(expected=NoSuchElementException.class)
 	public void getMultiple1(){
-		LazyFutureStream.of(1).get(1);
+		LazyFutureStream.of(1).elementAt(1);
 	}
 	@Test(expected=NoSuchElementException.class)
 	public void getEmpty(){
-		LazyFutureStream.of().get(0);
+		LazyFutureStream.of().elementAt(0);
 	}
 	@Test
 	public void elementAt0(){

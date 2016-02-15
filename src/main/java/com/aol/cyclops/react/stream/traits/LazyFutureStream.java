@@ -57,6 +57,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
 import com.aol.cyclops.internal.stream.FutureOperationsImpl;
 import com.aol.cyclops.react.RetryBuilder;
 import com.aol.cyclops.react.async.Queue;
@@ -103,6 +104,11 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
      LazyFutureStream<U> withPublisherExecutor(Executor ex);
 
+     @Override
+ 	default <R>  LazyFutureStream<R> filterMap(Function<CheckValues<U, R>, CheckValues<U, R>> case1) {
+ 		
+ 		return (LazyFutureStream<R>)ReactiveSeq.super.filterMap(case1);
+ 	}
     /**
      * <pre>
      * {@code
@@ -1048,7 +1054,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      */
     default LazyFutureStream<ListX<U>> batchBySizeAndTime(int size,long time, TimeUnit unit) {
         Queue<U> queue = toQueue();
-        Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTimeAndSize<>(size,time,unit,()->new ArrayList<>());
+        Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTimeAndSize<>(size,time,unit,()->new ListXImpl<>());
         return (LazyFutureStream)fromStream(queue.streamBatch(getSubscription(), (Function)fn)).filter(c->!((Collection)c).isEmpty());
     }
 
@@ -1215,7 +1221,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     default LazyFutureStream<ListX<U>> batchByTime(long time, TimeUnit unit) {
         Queue queue = toQueue();
         Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTime<U>(time,unit,
-                this.getSubscription(),queue,()->new ArrayList<>());
+                this.getSubscription(),queue,()->new ListXImpl<>());
 
         return fromStream(queue.streamBatch(getSubscription(), fn)).filter(c->!((Collection)c).isEmpty());	}
 

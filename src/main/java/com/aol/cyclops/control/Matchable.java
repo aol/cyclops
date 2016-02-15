@@ -1281,6 +1281,5 @@ public interface Matchable<TYPE>{
 			return simplerCase.getPatternMatcher();
 		}
 	}
-
-
+	
 }

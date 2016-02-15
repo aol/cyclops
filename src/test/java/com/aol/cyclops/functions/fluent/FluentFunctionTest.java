@@ -200,7 +200,7 @@ public class FluentFunctionTest {
 	@Test
 	public void testMatches2Default(){
 		assertThat(FluentFunctions.of(this::addOne)	
-				 				  .matches(-1,c->c.is(when(4),then(15)).is(when(2),then(13)))
+				 				  .matches(-1,c->c.is(when(4),then(15)).is(when(3),then(13)))
 				 				  .apply(1),equalTo(-1));
 	}
 	

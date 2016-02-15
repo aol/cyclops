@@ -186,7 +186,7 @@ public class FluentSupplierTest {
 		assertThat(FluentFunctions.of(this::getOne)	
 					   .matches(-1,c->c.is(when(1),then(()->5))
 							   			.is(when(2),then(()->4)))
-					   .get(),equalTo(4));
+					   .get(),equalTo(5));
 	}
 
 	@Test

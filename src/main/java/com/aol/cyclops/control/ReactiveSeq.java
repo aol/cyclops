@@ -58,6 +58,7 @@ import com.aol.cyclops.internal.stream.spliterators.ReversingListSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeIntSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeLongSpliterator;
 import com.aol.cyclops.types.ExtendedTraversable;
+import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableFilterable;
@@ -80,7 +81,7 @@ import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
 
 
-public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterable<T>,Functor<T>, ExtendedTraversable<T>,
+public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterable<T>,FilterableFunctor<T>, ExtendedTraversable<T>,
 												Foldable<T>,SequenceMCollectable<T>,
 												JoolWindowing<T>, 
 												JoolManipulation<T>,
@@ -97,6 +98,12 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 
 	
 	
+	@Override
+	default <R>  ReactiveSeq<R> filterMap(Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
+		
+		return (ReactiveSeq<R>)FilterableFunctor.super.filterMap(case1);
+	}
+
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
 	 */
