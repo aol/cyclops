@@ -1171,7 +1171,7 @@ public interface Matchable<TYPE>{
 			return simplerCase.getPatternMatcher();
 		}
 	}
-	 @AllArgsConstructor(access=AccessLevel.PUBLIC)
+	@AllArgsConstructor(access=AccessLevel.PUBLIC)
 	public static class CheckValues<T,R> {
 		private final Class<T> clazz;
 		protected final MatchableCase<R> simplerCase;

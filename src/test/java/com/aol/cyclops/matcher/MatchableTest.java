@@ -178,7 +178,7 @@ public class MatchableTest {
 	@Test
 	public void testMatch(){
 		
-		Matchable.of(new NestedCase(1,2,new NestedCase(3,4,null))) //relaxed type operators on CheckValues again (is)
+		Matchable.of(new NestedCase(1,2,new NestedCase(3,4,null))) 
 		 			.matches(c->c.is(whenGuard(1,__,has(3,4,__)),in->"2"),otherwise(4))
 		 			.get();
 		Matchable.of(new NestedCase(1,2,new NestedCase(3,4,null)))
@@ -197,16 +197,16 @@ public class MatchableTest {
 		
 	}
 	@Value
-	static class MyCase<R>  implements MatchSelf<MyCase<R>>, Decomposable{
+	static class MyCase  implements MatchSelf<MyCase>, Decomposable{
 		int a;
 		int b;
 		int c;
 	}
 	@Value
-	static class NestedCase <R> implements MatchSelf<MyCase<R>>, Decomposable{
+	static class NestedCase implements MatchSelf<MyCase>, Decomposable{
 		int a;
 		int b;
-		NestedCase<R> c;
+		NestedCase c;
 	}
 	@Test
 	public void singleCase(){
@@ -241,9 +241,7 @@ public class MatchableTest {
 	}
 	@Test 
 	public void optionalMatch(){
-		Eval<Integer> result2 = Matchable.of(Optional.of(1))
-									
-									.matches(c->c.values(in->2,1));
+		Eval<Integer> result2 = Matchable.of(Optional.of(1)).matches(c->c.is(when(not(in(2,3,4),in(4,5,6))),in->2),otherwise(1));
 		
 		assertThat(result2,equalTo(Eval.now(2)));
 	}

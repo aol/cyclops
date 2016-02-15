@@ -1,9 +1,11 @@
 package com.aol.cyclops.util.function;
 
+import java.util.Arrays;
 import java.util.function.Predicate;
 
 import org.hamcrest.Matcher;
 
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.internal.matcher2.ADTPredicateBuilder;
 
 
@@ -113,7 +115,50 @@ public class Predicates {
 		return new ADTPredicateBuilder<Object>(Object.class).eq(value);
 	}
 
-	
+	public static <T1> Predicate<? super T1> not(Predicate<? super T1> p){
+		return p.negate();
+	}
+	@SafeVarargs
+	public static <T1,V extends T1> Predicate<? super T1> in(V... values){
+		return test ->Arrays.asList(values).contains(test);
+	}
+	public static <T1 extends Comparable<T1>> Predicate<? super T1> greaterThan(T1 v){
+		return test -> test.compareTo(v)>0;
+	}
+	public static <T1 extends Comparable<T1>> Predicate<? super T1> greaterThanOrEquals(T1 v){
+		return test -> test.compareTo(v)>=0;
+	}
+	public static <T1 extends Comparable<T1>> Predicate<? super T1> lessThan(T1 v){
+		return test -> test.compareTo(v)<0;
+	}
+	public static <T1 extends Comparable<T1>> Predicate<? super T1> lessThanOrEquals(T1 v){
+		return test -> test.compareTo(v)<=0;
+	}
+	public static <T1 extends Comparable<T1>> Predicate<? super T1> equals(T1 v){
+		return test -> test.compareTo(v)==0;
+	}
+	public static <T1> Predicate<? super T1> nullValue(){
+		return test -> test==null;
+	}
+	public static <T1> Predicate<? super T1> instanceOf(Class<T1> clazz){
+		return test -> clazz.isAssignableFrom(test.getClass());
+	}
+	@SafeVarargs
+	public static <T1> Predicate<? super T1> allOf(Predicate<? super T1>...preds){
+		return test -> ReactiveSeq.of(preds).map(t->t.test(test)).allMatch(r->r);
+	}
+	@SafeVarargs
+	public static <T1> Predicate<? super T1> anyOf(Predicate<? super T1>...preds){
+		return test -> ReactiveSeq.of(preds).map(t->t.test(test)).anyMatch(r->r);
+	}
+	@SafeVarargs
+	public static <T1> Predicate<? super T1> noneOf(Predicate<? super T1>...preds){
+		return test -> ReactiveSeq.of(preds).map(t->t.test(test)).noneMatch(r->r);
+	}
+	@SafeVarargs
+	public static <T1> Predicate<? super T1> xOf(int x,Predicate<? super T1>...preds){
+		return test -> ReactiveSeq.of(preds).map(t->t.test(test)).xMatch(x,r->r);
+	}
 	
 	
 }
