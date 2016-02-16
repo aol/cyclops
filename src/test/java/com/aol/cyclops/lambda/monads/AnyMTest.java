@@ -195,7 +195,7 @@ public class AnyMTest {
 	                .collect(Collectors.toList());
        
         
-        AnyM<ReactiveSeq<Integer>> futureList = AnyM.sequence(AnyM.listFromCompletableFuture(futures).stream());
+        AnyM<ListX<Integer>> futureList = AnyM.sequence(AnyM.listFromCompletableFuture(futures).stream());
         
  
         List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>unwrap().join();

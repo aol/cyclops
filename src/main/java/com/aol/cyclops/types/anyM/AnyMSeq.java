@@ -653,7 +653,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	 * @param seq Stream of monads to convert
 	 * @return Monad with a List
 	 */
-	public static <T1>  AnyMSeq<ReactiveSeq<T1>> sequence(Stream<? extends AnyMSeq<T1>> seq){
+	public static <T1>  AnyMSeq<ListX<T1>> sequence(Stream<? extends AnyMSeq<T1>> seq){
 		return AnyMSeqImpl.from(new AnyMonads().sequence(seq));
 	}
 	/**

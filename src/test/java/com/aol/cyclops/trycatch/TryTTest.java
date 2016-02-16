@@ -5,7 +5,6 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -14,11 +13,12 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
+import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Try.Failure;
 import com.aol.cyclops.control.Try.Success;
 import com.aol.cyclops.control.monads.transformers.TryT;
-import com.aol.cyclops.control.AnyM;
 public class TryTTest {
 
 	String result = null;
@@ -70,14 +70,14 @@ public class TryTTest {
 	@Test
 	public void filterFail(){
 		TryT<Integer,RuntimeException> optionT = TryT.of(AnyM.ofMonad(Stream.of(Try.of(10))));
-		assertThat(optionT.filter(num->num<10).unwrap().<Stream<Optional<String>>>unwrap()
-						.collect(Collectors.toList()).get(0),  equalTo(Optional.empty()));
+		assertThat(optionT.filter(num->num<10).unwrap().<Stream<Maybe<String>>>unwrap()
+						.collect(Collectors.toList()).get(0),  equalTo(Maybe.none()));
 	}
 	@Test
 	public void filterSuccess(){
 		TryT<Integer,RuntimeException> optionT = TryT.of(AnyM.fromStream(Stream.of(Try.of(10))));
-		assertThat(optionT.filter(num->num==10).unwrap().<Stream<Optional<String>>>unwrap()
-						.collect(Collectors.toList()).get(0),  equalTo(Optional.of(10)));
+		assertThat(optionT.filter(num->num==10).unwrap().<Stream<Maybe<String>>>unwrap()
+						.collect(Collectors.toList()).get(0),  equalTo(Maybe.of(10)));
 	}
 	@Test
 	public void peek() {

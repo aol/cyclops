@@ -3,6 +3,7 @@ package com.aol.cyclops.internal.monads;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.control.AnyM;
@@ -56,9 +57,7 @@ public class AnyMonads implements AnyMFunctions{
 	 */
 	public  <T,R> AnyM<ListX<R>> traverse(Stream<? extends AnyM<T>> seq, Function<? super T,? extends R> fn){
 		
-		return new MonadWrapper<>(Stream.of(1))
-								.flatMap(in-> new MonadWrapper<>(seq).flatten().flatMap((Function)fn).unwrap()
-									).anyM();
+		return traverse(seq.collect(Collectors.toList()),fn);
 	}
 
 	
@@ -79,7 +78,7 @@ public class AnyMonads implements AnyMFunctions{
 	 */ 
 	public  <T1>  AnyM<ListX<T1>> sequence(Collection<? extends AnyM<T1>> seq){
 		if(seq.size()==0)
-			return AnyM.ofMonad(Optional.empty());
+			return AnyM.ofMonad(ListX.empty());
 		else
 			return new MonadWrapper<>(comprehender(seq).of(1))
 				.flatMap(in-> new MonadWrapper<>(seq.stream().map(it->it.unwrap())).flatten().unwrap()).anyM();
@@ -102,11 +101,9 @@ public class AnyMonads implements AnyMFunctions{
 	 * @param seq Stream of monads to convert
 	 * @return Monad with a List
 	 */
-	public  <T1>  AnyM<ReactiveSeq<T1>> sequence(Stream<? extends AnyM<T1>> seq){
-			return new MonadWrapper<>(Stream.of(1))
-										.flatMap(in-> new MonadWrapper<>(seq.map(it->it.unwrap()))
-												.flatten().unwrap())
-												.anyM();
+	public  <T1>  AnyM<ListX<T1>> sequence(Stream<? extends AnyM<T1>> seq){
+	   
+			return  sequence(seq.collect(Collectors.toList()));
 	}
 	
 	

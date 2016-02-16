@@ -854,7 +854,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @param seq Stream of monads to convert
 	 * @return Monad with a List
 	 */
-	public static <T1>  AnyM<ReactiveSeq<T1>> sequence(Stream<? extends AnyM<T1>> seq){
+	public static <T1>  AnyM<ListX<T1>> sequence(Stream<? extends AnyM<T1>> seq){
 		return new AnyMonads().sequence(seq);
 	}
 	/**

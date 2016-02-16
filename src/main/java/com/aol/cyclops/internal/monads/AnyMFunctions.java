@@ -12,5 +12,5 @@ public interface AnyMFunctions {
 	<T,R> AnyM<ListX<R>> traverse(Collection<? extends AnyM<T>> seq, Function<? super T,? extends R> fn);
 	<T,R> AnyM<ListX<R>> traverse(Stream<? extends AnyM<T>> seq, Function<? super T,? extends R> fn);
 	<T1>  AnyM<ListX<T1>> sequence(Collection<? extends AnyM<T1>> seq);
-	<T1>  AnyM<ReactiveSeq<T1>> sequence(Stream<? extends AnyM<T1>> seq);
+	<T1>  AnyM<ListX<T1>> sequence(Stream<? extends AnyM<T1>> seq);
 }
