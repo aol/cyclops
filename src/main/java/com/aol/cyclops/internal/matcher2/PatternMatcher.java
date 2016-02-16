@@ -115,27 +115,6 @@ public class PatternMatcher implements Function{
 
 	
 	
-	private Object extractIfType(Object t, Extractor extractor) {
-		try {
-			MethodType type = extractor.getType();
-			if (type.parameterCount() == 0)
-				return t; // can't get parameter types for MethodReferences
-			return type.parameterType(type.parameterCount() - 1).isAssignableFrom(t.getClass()) ? extractor.apply(t)
-					: t;
-
-		} catch (ClassCastException e) { // MethodReferences will result in
-											// ClassCastExceptions
-
-		}
-		return t;
-	}
-
-	private Predicate extractorPredicate(Extractor extractor, Predicate p) {
-		if (extractor == null)
-			return p;
-
-		return t -> p.test(extractIfType(t, extractor));
-	}
 
 	private Function extractorAction(Extractor extractor, Function action) {
 		if (extractor == null)
@@ -149,7 +128,9 @@ public class PatternMatcher implements Function{
 		ReactiveSeq<Predicate<V>> pred = ReactiveSeq.of(predicates);
 
 		return inCaseOf(it -> master.test(it)
-				&& seq(Extractors.decompose().apply(it)).zip(pred, (a1, b1) -> Tuple.tuple(a1, b1))
+				&& seq(Extractors.decompose().apply(it))
+											.zip(pred, (a1, b1) -> Tuple.tuple(a1, b1))
+											.peek(System.out::println)
 						.map(t -> t.v2.test((V) t.v1)).allMatch(v -> v == true),
 				a);
 

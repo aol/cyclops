@@ -147,6 +147,11 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>,  Applicativa
 			return Objects.equals(get(), ((Eval)obj).get());
 		}
 		
+		@Override
+		public String toString(){
+			return mkString();
+		}
+		
 	}
 	
 	public static class Later<T> implements Eval<T>{
@@ -196,7 +201,10 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>,  Applicativa
 				return false;
 			return Objects.equals(get(), ((Eval)obj).get());
 		}
-		
+		@Override
+		public String toString(){
+			return mkString();
+		}
 		
 		
 		
@@ -244,6 +252,10 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>,  Applicativa
 			if(!(obj instanceof Eval))
 				return false;
 			return Objects.equals(get(), ((Eval)obj).get());
+		}
+		@Override
+		public String toString(){
+			return mkString();
 		}
 		
 	}

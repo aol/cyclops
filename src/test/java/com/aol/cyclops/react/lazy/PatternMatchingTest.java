@@ -43,10 +43,10 @@ public class PatternMatchingTest {
 		List<String> result = LazyFutureStream.of(new MyCase(1,2),new MyCase(3,4))
 											  .capture(e->e.printStackTrace())
 											  .patternMatch("n/a",
-													  c->c.is( when(Predicates.type(MyCase.class).is(1,2)), then("one") )
-													   	   .is(when(Predicates.type(MyCase.class).is(3,4)),then(()->"two"))
-													   	   .is(when(Predicates.type(MyCase.class).is(1,4)),then(()->"three"))
-													   	   .is(when(Predicates.type(MyCase.class).is(2,4)),then(()->"four"))
+													  c->c.is( when(Predicates.type(MyCase.class).isGuard(1,2)), then("one") )
+													   	   .is(when(Predicates.type(MyCase.class).isGuard(3,4)),then(()->"two"))
+													   	   .is(when(Predicates.type(MyCase.class).isGuard(1,4)),then(()->"three"))
+													   	   .is(when(Predicates.type(MyCase.class).isGuard(2,4)),then(()->"four"))
 													  )
 											  .toList();
 		assertThat(result,equalTo(Arrays.asList("one","two")));
@@ -57,9 +57,9 @@ public class PatternMatchingTest {
 		List<String> result = LazyFutureStream.of(new MyCase2(1,2),new MyCase2(3,4))
 											  .capture(e->e.printStackTrace())
 											  .patternMatch("n/a",
-													  c->c.is(when(Predicates.type(MyCase.class).is(1,2)), then("one") )
-													  	  .is(when(Predicates.type(MyCase.class).is(3,4)),then(()->"two"))
-													  	  .is(when(Predicates.type(MyCase.class).is(5,6)),then(()->"three"))
+													  c->c.is(when(Predicates.type(MyCase.class).isGuard(1,2)), then("one") )
+													  	  .is(when(Predicates.type(MyCase.class).isGuard(3,4)),then(()->"two"))
+													  	  .is(when(Predicates.type(MyCase.class).isGuard(5,6)),then(()->"three"))
 													  )
 											  .toList();
 		assertThat(result,equalTo(Arrays.asList("one","two")));

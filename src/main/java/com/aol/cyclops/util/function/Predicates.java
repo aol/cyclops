@@ -88,7 +88,7 @@ public class Predicates {
 	 */
 	@SafeVarargs
 	public	static<V> Predicate<V> has(V... values){
-		return new ADTPredicateBuilder<Object>(Object.class).has(values);
+		return new ADTPredicateBuilder<Object>(Object.class).hasGuard(values);
 	}
 	@SafeVarargs
 	public	static<V> Predicate<V> hasWhere(Predicate<V>... values){
@@ -100,7 +100,7 @@ public class Predicates {
 	}
 	@SafeVarargs
 	public	static<V> Predicate<V> is(V... values){
-		return new ADTPredicateBuilder<Object>(Object.class).<V>is(values);
+		return new ADTPredicateBuilder<Object>(Object.class).<V>isGuard(values);
 	}
 	@SafeVarargs
 	public	static<V> Predicate<V> isWhere(Predicate<V>... values){

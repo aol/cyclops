@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -57,6 +58,8 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>{
 	default <R> R visit(Function<? super T,? extends R> present,Supplier<? extends R> absent){
 		return Maybe.ofNullable(get()).visit(present, absent);
 	}
+	
+	
 	default T orElseGet(Supplier<? extends T> value){
 		return toOptional().orElseGet(value);
 		

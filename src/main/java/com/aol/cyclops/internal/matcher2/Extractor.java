@@ -14,7 +14,7 @@ import java.util.function.Function;
  * @param <T> Input type
  * @param <R> Return type
  */
-public interface Extractor<T,R> extends Function<T,R>, Serializable {
+public interface Extractor<T,R> extends Function<T,R>{
 	
 	/* 
 	 * @see java.util.function.Function#apply(java.lang.Object)
@@ -22,10 +22,5 @@ public interface Extractor<T,R> extends Function<T,R>, Serializable {
 	@Override
 	public R apply(T t);
 	
-	/**
-	 * @return MethodType info for the Lambda expression that implements this interface
-	 */
-	default MethodType getType(){
-		return LambdaTypeExtractor.extractType(this);
-	}
+	
 }

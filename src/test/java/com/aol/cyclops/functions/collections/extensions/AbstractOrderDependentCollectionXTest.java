@@ -94,9 +94,9 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 		
 		List<String> result = of(new MyCase2(1,2),new MyCase2(3,4))
 											  .patternMatch("n/a",
-													  c->c.is( when(Predicates.type(MyCase.class).is(1,2)),then("one"))
-													       .is(when(Predicates.type(MyCase.class).is(3,4)),then(()->"two"))
-													       .is(when(Predicates.type(MyCase.class).is(5,6)),then(()->"three"))
+													  c->c.is( when(Predicates.type(MyCase.class).isGuard(1,2)),then("one"))
+													       .is(when(Predicates.type(MyCase.class).isGuard(3,4)),then(()->"two"))
+													       .is(when(Predicates.type(MyCase.class).isGuard(5,6)),then(()->"three"))
 													  )
 											  .toListX();
 		assertThat(result,equalTo(Arrays.asList("one","two")));
@@ -133,10 +133,10 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 		List<String> result = of(new MyCase(1,2),new MyCase(3,4))
 											
 											  .patternMatch("n/a",
-													  c->c.is(when(Predicates.type(MyCase.class).is(1,2)),then("one"))
-													      .is(when(Predicates.type(MyCase.class).is(3,4)),then("two"))
-													      .is(when(Predicates.type(MyCase.class).is(1,4)),then("three"))
-													      .is(when(Predicates.type(MyCase.class).is(2,3)),then("four"))													  												  
+													  c->c.is(when(Predicates.type(MyCase.class).isGuard(1,2)),then("one"))
+													      .is(when(Predicates.type(MyCase.class).isGuard(3,4)),then("two"))
+													      .is(when(Predicates.type(MyCase.class).isGuard(1,4)),then("three"))
+													      .is(when(Predicates.type(MyCase.class).isGuard(2,3)),then("four"))													  												  
 													  )
 											  .toListX();
 		assertThat(result,equalTo(Arrays.asList("one","two")));
@@ -203,7 +203,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 		List<String> result = of(1,2,3,4)
 								         .patternMatch("",
 								        		 	c->c.is(when((Integer i)->i%2==0), then("even"))
-								        		 		.is(when((Integer i)->i%2!=0), i->"odd")
+								        		 		.is(when((Integer i)->i%2!=0), then("odd"))
 													  )
 											  .toListX();
 		assertThat(result,equalTo(Arrays.asList("odd","even","odd","even")));

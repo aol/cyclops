@@ -82,7 +82,7 @@ public class ADTPredicateBuilder<T>{
 		}
 		
 		final public<V> Predicate<V> anyValues(){
-			return has();
+			return hasGuard();
 		}
 		/**
 		 * Generate a predicate that determines the provided values hold.
@@ -101,7 +101,7 @@ public class ADTPredicateBuilder<T>{
 		 * @return A single Predicate encompassing supplied rules
 		 */
 		@SafeVarargs
-		final public<V> Predicate<V> has(V... values){
+		final public<V> Predicate<V> hasGuard(V... values){
 			ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values).map(nextValue->convertToPredicate(nextValue));
 			
 			return t -> toPredicate().test(t) 
@@ -112,7 +112,7 @@ public class ADTPredicateBuilder<T>{
 		
 		
 		@SafeVarargs
-		final  public<V> Predicate<V> is(V... values){
+		final  public<V> Predicate<V> isGuard(V... values){
 			Predicate p = test->SeqUtils.EMPTY==test;
 			ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values)
 														   .map(nextValue->convertToPredicate(nextValue))
