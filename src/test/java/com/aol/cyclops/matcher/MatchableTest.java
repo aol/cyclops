@@ -177,19 +177,19 @@ public class MatchableTest {
 	public void testMatch(){
 		
 		Matchable.of(new NestedCase(1,2,new NestedCase(3,4,null))) 
-		 			.matches(c->c.is(whenGuard(1,__,has(3,4,__)),then("2")),otherwise(4))
+		 			.matches(cases->cases.is(whenGuard(1,__,has(3,4,__)),then("2")),otherwise("4"))
 		 			.get();
 		Matchable.of(new NestedCase(1,2,new NestedCase(3,4,null)))
-			.matches(c->c.is(whenGuard(1,__,type(NestedCase.class).hasGuard(3,4,__)),then("2")),otherwise(-1))
+			.matches(c->c.is(whenGuard(1,__,type(NestedCase.class).hasGuard(3,4,__)),then("2")),otherwise("-1"))
 			.get();
 		Matchable.of(Arrays.asList(1,2,3))
-					.matches(c->c.is(whenGuard(1,__,3),then("2")),otherwise(2));
+					.matches(c->c.is(whenGuard(1,__,3),then("2")),otherwise("2"));
 		Matchable.of(Arrays.asList(1,2,3))
 					
-					.matches(c->c.is(whenGuard(t->t.equals(1),Predicates.__,t->t.equals(3)),then("2")),otherwise(-2));
+					.matches(c->c.is(whenGuard(t->t.equals(1),Predicates.__,t->t.equals(3)),then("2")),otherwise("-2"));
 		
 		Matchable.of(Arrays.asList(1,2,3))
-					.matches(c->c.is(when(equalTo(1),any(Integer.class),equalTo(4)),then("2")),otherwise(45));
+					.matches(c->c.is(when(equalTo(1),any(Integer.class),equalTo(4)),then("2")),otherwise("45"));
 		
 		
 		

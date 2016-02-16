@@ -682,10 +682,10 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#patternMatch(java.lang.Object, java.util.function.Function)
 	 */
 	@Override
-	default <R> PVectorX<R> patternMatch(R defaultValue,
-			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
+	default <R> PVectorX<R> patternMatch(
+			Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
 		
-		return (PVectorX<R>)PersistentCollectionX.super.patternMatch(defaultValue, case1);
+		return (PVectorX<R>)PersistentCollectionX.super.patternMatch(case1,otherwise);
 	}
 	
 }

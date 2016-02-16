@@ -130,7 +130,6 @@ public class PatternMatcher implements Function{
 		return inCaseOf(it -> master.test(it)
 				&& seq(Extractors.decompose().apply(it))
 											.zip(pred, (a1, b1) -> Tuple.tuple(a1, b1))
-											.peek(System.out::println)
 						.map(t -> t.v2.test((V) t.v1)).allMatch(v -> v == true),
 				a);
 

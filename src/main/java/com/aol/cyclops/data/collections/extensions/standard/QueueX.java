@@ -294,11 +294,10 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function)
 	 */
 	@Override
-	default <R> QueueX<R> patternMatch(R defaultValue,
-			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
-		return (QueueX<R>)MutableCollectionX.super.patternMatch(defaultValue, case1);
-	}
-
+    default <R> QueueX<R> patternMatch(
+            Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
+        return (QueueX<R>)MutableCollectionX.super.patternMatch(case1,otherwise);
+    }
 	
 	
 	/* (non-Javadoc)

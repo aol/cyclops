@@ -12,6 +12,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
@@ -560,10 +561,10 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function)
 	 */
 	@Override
-	default <R> CollectionX<R> patternMatch(R defaultValue,
-			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
+	default <R> CollectionX<R> patternMatch(
+			Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
 		
-		return (CollectionX<R>)ZippingApplicativable.super.patternMatch(defaultValue, case1);
+		return (CollectionX<R>)ZippingApplicativable.super.patternMatch( case1,otherwise);
 	}
 	
 	

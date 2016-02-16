@@ -6,6 +6,7 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
@@ -47,10 +48,10 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 		return new FutureW<R>(future.thenApply(fn));
 	}
 	@Override
-	public <R> FutureW<R> patternMatch(R defaultValue,
-			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
+	public <R> FutureW<R> patternMatch(
+			Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
 		
-		return (FutureW<R>)Applicativable.super.patternMatch(defaultValue, case1);
+		return (FutureW<R>)Applicativable.super.patternMatch(case1,otherwise);
 	}
 
 	@Override

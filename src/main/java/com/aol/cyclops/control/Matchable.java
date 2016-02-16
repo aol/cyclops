@@ -26,7 +26,6 @@ import com.aol.cyclops.internal.matcher2.MatchableCase;
 import com.aol.cyclops.internal.matcher2.MatchingInstance;
 import com.aol.cyclops.internal.matcher2.PatternMatcher;
 import com.aol.cyclops.internal.matcher2.SeqUtils;
-import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.Decomposable;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.util.function.QuadFunction;
@@ -35,6 +34,7 @@ import com.aol.cyclops.util.function.TriFunction;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * Matchable
@@ -52,11 +52,11 @@ public interface Matchable<TYPE>{
 	public static <T,R> Supplier<? extends R> then(Supplier<? extends R> fn){
 		return fn;
 	}
-	public static <R> Supplier<? extends R> otherwise(R value){
+	public static <R> Supplier< R> otherwise(R value){
 		return ()-> value;
 	}
-	public static <R> Supplier<? extends R> otherwise(Supplier<? extends R> s){
-		return  s;
+	public static <R> Supplier<R> otherwise(Supplier<? extends R> s){
+		return  (Supplier<R>)s;
 	}
 	@SafeVarargs
 	public static <T,V>  Iterable<Predicate<? super T>> whenGuard(V... values){
@@ -294,8 +294,25 @@ public interface Matchable<TYPE>{
 		return ()-> it;
 	}
 	
+	@AllArgsConstructor
+	public static class AutoCloseableMatchableIterable<TYPE> implements MatchableIterable<TYPE>,AutoCloseable{
+		private final AutoCloseable closeable;
+		@Getter
+		private final Iterable<TYPE> matchable;
+		@Override
+		public void close() throws Exception {
+			closeable.close();
+			
+		}
+		
+	}
+	@FunctionalInterface
 	public static interface MatchableIterable<TYPE> extends Matchable<TYPE>{
 		
+		 
+		 
+		
+
 		default <R> Eval<R> visitSeq(BiFunction<? super Maybe<TYPE>,? super ReactiveSeq<TYPE>,? extends R> match ){
 			@SuppressWarnings("unchecked")
 			Iterable<TYPE> it = (Iterable<TYPE>)getMatchable();
@@ -950,8 +967,8 @@ public interface Matchable<TYPE>{
 
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		public final CheckValue1<T,R> is(Tuple1<Predicate<? super T>> values,Supplier<? extends R> result) {		
-			return isWhere(result,values.v1);
+		public final CheckValue1<T,R> is(Tuple1<Predicate<? super T>> when,Supplier<? extends R> then) {		
+			return isWhere(then,when.v1);
 		}
 		
 		 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -973,7 +990,7 @@ public interface Matchable<TYPE>{
 		
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		public final <V> CheckValue1<T,R> isEmpty(Supplier<? extends R> result) {
+		public final <V> CheckValue1<T,R> isEmpty(Supplier<? extends R> then) {
 
 			Predicate predicate = it -> Maybe.ofNullable(it)
 					.map(v -> v.getClass().isAssignableFrom(clazz))
@@ -982,7 +999,7 @@ public interface Matchable<TYPE>{
 			
 			Predicate<V>[] predicates = new Predicate[]{i->i==SeqUtils.EMPTY};
 
-			return new CheckValue1(clazz,new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,i->result.get(),
+			return new CheckValue1(clazz,new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,i->then.get(),
 					predicates)));
 		}
 
@@ -998,8 +1015,8 @@ public interface Matchable<TYPE>{
 
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		public final CheckValue2<T1,T2,R> is(MTuple2<Predicate<? super T1>,Predicate<? super T2>> values,Supplier<? extends R> result) {		
-			return isWhere(result,values.v1(),values.v2());
+		public final CheckValue2<T1,T2,R> is(MTuple2<Predicate<? super T1>,Predicate<? super T2>> when,Supplier<? extends R> then) {		
+			return isWhere(then,when.v1(),when.v2());
 		}
 		
 		 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -1021,7 +1038,7 @@ public interface Matchable<TYPE>{
 		
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		public final CheckValue2<T1,T2,R> isEmpty(Supplier<? extends R> result) {
+		public final CheckValue2<T1,T2,R> isEmpty(Supplier<? extends R> then) {
 
 			Predicate predicate = it -> Maybe.ofNullable(it)
 					.map(v -> v.getClass().isAssignableFrom(clazz))
@@ -1030,7 +1047,7 @@ public interface Matchable<TYPE>{
 			
 			Predicate[] predicates = new Predicate[]{i->i==SeqUtils.EMPTY};
 
-			return new CheckValue2(clazz,new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,i->result.get(),
+			return new CheckValue2(clazz,new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,i->then.get(),
 					predicates)));
 		}
 
@@ -1045,8 +1062,8 @@ public interface Matchable<TYPE>{
 		protected final MatchableCase<R> simplerCase;
 
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		public final CheckValue3<T1,T2,T3,R> is(MTuple3<Predicate<? super T1>,Predicate<? super T2>,Predicate<? super T3>> values,Supplier<? extends R> result) {		
-			return isWhere(result,values.v1(),values.v2(),values.v3());
+		public final CheckValue3<T1,T2,T3,R> is(MTuple3<Predicate<? super T1>,Predicate<? super T2>,Predicate<? super T3>> when,Supplier<? extends R> then) {		
+			return isWhere(then,when.v1(),when.v2(),when.v3());
 		}
 		
 		 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -1066,7 +1083,7 @@ public interface Matchable<TYPE>{
 		}
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		public final CheckValue3<T1,T2,T3,R> isEmpty(Supplier<? extends R> result) {
+		public final CheckValue3<T1,T2,T3,R> isEmpty(Supplier<? extends R> then) {
 
 			Predicate predicate = it -> Maybe.ofNullable(it)
 					.map(v -> v.getClass().isAssignableFrom(clazz))
@@ -1075,7 +1092,7 @@ public interface Matchable<TYPE>{
 			
 			Predicate[] predicates = new Predicate[]{i->i==SeqUtils.EMPTY};
 
-			return new CheckValue3(clazz,new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,i->result.get(),
+			return new CheckValue3(clazz,new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,i->then.get(),
 					predicates)));
 		}
 
@@ -1091,8 +1108,8 @@ public interface Matchable<TYPE>{
 
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		public final CheckValue4<T1,T2,T3,T4,R> is(Tuple4<Predicate<? super T1>,Predicate<? super T2>,Predicate<? super T3>,Predicate<? super T4>> values,Supplier<? extends R> result) {		
-			return isWhere(result,values.v1,values.v2,values.v3,values.v4);
+		public final CheckValue4<T1,T2,T3,T4,R> is(Tuple4<Predicate<? super T1>,Predicate<? super T2>,Predicate<? super T3>,Predicate<? super T4>> when,Supplier<? extends R> then) {		
+			return isWhere(then,when.v1,when.v2,when.v3,when.v4);
 		}
 		 @SuppressWarnings({ "rawtypes", "unchecked" })
 		private final  CheckValue4<T1,T2,T3,T4,R> isWhere(Supplier<? extends R> result,Predicate<? super T1> value1,
@@ -1115,7 +1132,7 @@ public interface Matchable<TYPE>{
 		
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		public final CheckValue4<T1,T2,T3,T4,R> isEmpty(Supplier<? extends R> result) {
+		public final CheckValue4<T1,T2,T3,T4,R> isEmpty(Supplier<? extends R> then) {
 
 			Predicate predicate = it -> Maybe.ofNullable(it)
 					.map(v -> v.getClass().isAssignableFrom(clazz))
@@ -1124,7 +1141,7 @@ public interface Matchable<TYPE>{
 			
 			Predicate[] predicates = new Predicate[]{i->i==SeqUtils.EMPTY};
 
-			return new CheckValue4(clazz,new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,i->result.get(),
+			return new CheckValue4(clazz,new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,i->then.get(),
 					predicates)));
 		}
 
@@ -1142,8 +1159,8 @@ public interface Matchable<TYPE>{
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		public final CheckValue5<T1,T2,T3,T4,T5,R> is(Tuple5<Predicate<? super T1>,Predicate<? super T2>,
 																Predicate<? super T3>,Predicate<? super T4>,
-																Predicate<? super T5>> values,Supplier<? extends R> result) {		
-			return isWhere(result,values.v1,values.v2,values.v3,values.v4,values.v5);
+																Predicate<? super T5>> when,Supplier<? extends R> then) {		
+			return isWhere(then,when.v1,when.v2,when.v3,when.v4,when.v5);
 		}
 		 @SuppressWarnings({ "rawtypes", "unchecked" })
 		private final  CheckValue5<T1,T2,T3,T4,T5,R> isWhere(Supplier<? extends R> result,Predicate<? super T1> value1,
@@ -1167,7 +1184,7 @@ public interface Matchable<TYPE>{
 		
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		public final CheckValue4<T1,T2,T3,T4,R> isEmpty(Supplier<? extends R> result) {
+		public final CheckValue4<T1,T2,T3,T4,R> isEmpty(Supplier<? extends R> then) {
 
 			Predicate predicate = it -> Maybe.ofNullable(it)
 					.map(v -> v.getClass().isAssignableFrom(clazz))
@@ -1176,7 +1193,7 @@ public interface Matchable<TYPE>{
 			
 			Predicate[] predicates = new Predicate[]{i->i==SeqUtils.EMPTY};
 
-			return new CheckValue4(clazz,new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,i->result.get(),
+			return new CheckValue4(clazz,new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,i->then.get(),
 					predicates)));
 		}
 
@@ -1192,42 +1209,42 @@ public interface Matchable<TYPE>{
 
 		
 		
-		public final CheckValues<T,R> is(Iterable<Predicate<? super T>> values,Supplier<? extends R> result) {		
-			return isWhere(result,values);
+		public final CheckValues<T,R> is(Iterable<Predicate<? super T>> when,Supplier<? extends R> then) {		
+			return isWhere(then,when);
 		}
-		public final CheckValues<T,R> is(MTuple1<Predicate<? super T>> values,Supplier<? extends R> result) {		
-			return isWhere(result,(Iterable)values);
+		public final CheckValues<T,R> is(MTuple1<Predicate<? super T>> when,Supplier<? extends R> then) {		
+			return isWhere(then,(Iterable)when);
 		}
-		public final CheckValues<T,R> is(MTuple2<Predicate<? super T>,Predicate<? super T>> values,Supplier<? extends R> result) {		
-			return isWhere(result,(Iterable)values);
+		public final CheckValues<T,R> is(MTuple2<Predicate<? super T>,Predicate<? super T>> when,Supplier<? extends R> then) {		
+			return isWhere(then,(Iterable)when);
 		}
-		public final CheckValues<T,R> is(MTuple3<Predicate<? super T>,Predicate<? super T>,Predicate<? super T>> values,Supplier<? extends R> result) {		
-			return isWhere(result,(Iterable)values);
+		public final CheckValues<T,R> is(MTuple3<Predicate<? super T>,Predicate<? super T>,Predicate<? super T>> when,Supplier<? extends R> then) {		
+			return isWhere(then,(Iterable)when);
 		}
-		public final CheckValues<T,R> is(MTuple4<Predicate<? super T>,Predicate<? super T>,Predicate<? super T>,Predicate<? super T>> values,Supplier<? extends R> result) {		
-			return isWhere(result,(Iterable)values);
+		public final CheckValues<T,R> is(MTuple4<Predicate<? super T>,Predicate<? super T>,Predicate<? super T>,Predicate<? super T>> when,Supplier<? extends R> then) {		
+			return isWhere(then,(Iterable)when);
 		}
-		public final CheckValues<T,R> is(MTuple5<Predicate<? super T>,Predicate<? super T>,Predicate<? super T>,Predicate<? super T>,Predicate<? super T>> values,Supplier<? extends R> result) {		
-			return isWhere(result,(Iterable)values);
+		public final CheckValues<T,R> is(MTuple5<Predicate<? super T>,Predicate<? super T>,Predicate<? super T>,Predicate<? super T>,Predicate<? super T>> when,Supplier<? extends R> then) {		
+			return isWhere(then,(Iterable)when);
 		}
 		
-		public final CheckValues<T,R> has(Iterable<Predicate<? super T>> values,Supplier<? extends R> result) {		
-			return hasWhere(result,values);
+		public final CheckValues<T,R> has(Iterable<Predicate<? super T>> when,Supplier<? extends R> then) {		
+			return hasWhere(then,when);
 		}
-		public final CheckValues<T,R> has(MTuple1<Predicate<? super T>> values,Supplier<? extends R> result) {		
-			return hasWhere(result,(Iterable)values);
+		public final CheckValues<T,R> has(MTuple1<Predicate<? super T>> when,Supplier<? extends R> then) {		
+			return hasWhere(then,(Iterable)when);
 		}
-		public final CheckValues<T,R> has(MTuple2<Predicate<? super T>,Predicate<? super T>> values,Supplier<? extends R> result) {		
-			return hasWhere(result,(Iterable)values);
+		public final CheckValues<T,R> has(MTuple2<Predicate<? super T>,Predicate<? super T>> when,Supplier<? extends R> then) {		
+			return hasWhere(then,(Iterable)when);
 		}
-		public final CheckValues<T,R> has(MTuple3<Predicate<? super T>,Predicate<? super T>,Predicate<? super T>> values,Supplier<? extends R> result) {		
-			return hasWhere(result,(Iterable)values);
+		public final CheckValues<T,R> has(MTuple3<Predicate<? super T>,Predicate<? super T>,Predicate<? super T>> when,Supplier<? extends R> then) {		
+			return hasWhere(then,(Iterable)when);
 		}
-		public final CheckValues<T,R> has(MTuple4<Predicate<? super T>,Predicate<? super T>,Predicate<? super T>,Predicate<? super T>> values,Supplier<? extends R> result) {		
-			return hasWhere(result,(Iterable)values);
+		public final CheckValues<T,R> has(MTuple4<Predicate<? super T>,Predicate<? super T>,Predicate<? super T>,Predicate<? super T>> when,Supplier<? extends R> then) {		
+			return hasWhere(then,(Iterable)when);
 		}
-		public final CheckValues<T,R> has(MTuple5<Predicate<? super T>,Predicate<? super T>,Predicate<? super T>,Predicate<? super T>,Predicate<? super T>> values,Supplier<? extends R> result) {		
-			return hasWhere(result,(Iterable)values);
+		public final CheckValues<T,R> has(MTuple5<Predicate<? super T>,Predicate<? super T>,Predicate<? super T>,Predicate<? super T>,Predicate<? super T>> when,Supplier<? extends R> then) {		
+			return hasWhere(then,(Iterable)when);
 		}
 		
 		
@@ -1247,7 +1264,7 @@ public interface Matchable<TYPE>{
 					predicates)).withType(clazz);
 		}
 		 @SuppressWarnings({ "rawtypes", "unchecked" })
-		public final <V> CheckValues<T,R> hasWhere(Supplier<? extends R> result,Iterable<Predicate<? super T>> values) {
+		private final <V> CheckValues<T,R> hasWhere(Supplier<? extends R> result,Iterable<Predicate<? super T>> values) {
 		
 			Predicate predicate = it -> Optional.of(it)
 					.map(v -> v.getClass().isAssignableFrom(clazz))
@@ -1263,7 +1280,7 @@ public interface Matchable<TYPE>{
 		}
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		public final <V> CheckValues<T,R> isEmpty(Supplier<? extends R> result) {
+		public final <V> CheckValues<T,R> isEmpty(Supplier<? extends R> then) {
 
 			Predicate predicate = it -> Maybe.ofNullable(it)
 					.map(v -> v.getClass().isAssignableFrom(clazz))
@@ -1272,7 +1289,7 @@ public interface Matchable<TYPE>{
 			
 			Predicate<V>[] predicates = new Predicate[]{i->i==SeqUtils.EMPTY};
 
-			return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate, i->result.get(),
+			return new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate, i->then.get(),
 					predicates)).withType(clazz);
 		}
 

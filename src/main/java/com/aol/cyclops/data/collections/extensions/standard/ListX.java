@@ -25,6 +25,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.control.Matchable.CheckValues;
 import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
@@ -92,7 +93,11 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 		return fromIterable(()->it);
 	}
 	
-	
+	@Override
+    default <R> ListX<R> patternMatch(
+            Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
+        return (ListX<R>)MutableCollectionX.super.patternMatch(case1,otherwise);
+    }
 	@Override
 	default ReactiveSeq<T> stream(){
 		

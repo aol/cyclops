@@ -510,10 +510,10 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function)
 	 */
 	@Override
-	default <R> MutableCollectionX<R> patternMatch(R defaultValue,
-			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
+	default <R> MutableCollectionX<R> patternMatch(
+			Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
 		
-		return (MutableCollectionX)FluentCollectionX.super.patternMatch(defaultValue, case1);
+		return (MutableCollectionX)FluentCollectionX.super.patternMatch(case1,otherwise);
 	}
 
 	

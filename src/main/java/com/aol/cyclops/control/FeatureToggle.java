@@ -33,10 +33,10 @@ public interface FeatureToggle<F> extends Supplier<F>, Value<F>, Applicativable<
 			Function<? super F, ? extends R> disabled);
 	
 	@Override
-	default <R> FeatureToggle<R> patternMatch(R defaultValue,
-			Function<CheckValues<F, R>, CheckValues<F, R>> case1) {
+	default <R> FeatureToggle<R> patternMatch(
+			Function<CheckValues<F, R>, CheckValues<F, R>> case1, Supplier<? extends R> otherwise) {
 		
-		return (FeatureToggle<R>)Applicativable.super.patternMatch(defaultValue, case1);
+		return (FeatureToggle<R>)Applicativable.super.patternMatch(case1,otherwise);
 	}
 	/**
 	 * @return This monad, wrapped as AnyM

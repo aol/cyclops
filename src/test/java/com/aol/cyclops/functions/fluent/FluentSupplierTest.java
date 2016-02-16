@@ -1,5 +1,6 @@
 package com.aol.cyclops.functions.fluent;
 
+import static com.aol.cyclops.control.Matchable.otherwise;
 import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
 import static org.hamcrest.Matchers.equalTo;
@@ -171,29 +172,29 @@ public class FluentSupplierTest {
 	@Test
 	public void testMatches1(){
 		assertThat(FluentFunctions.of(this::getOne)	
-					   .matches(-1,c->c.is(when(1),then(()->4)))
+					   .matches(c->c.is(when(1),then(()->4)),otherwise(-1))
 					   .get(),equalTo(4));
 	}
 
 	@Test
 	public void testMatches1Default(){
 		assertThat(FluentFunctions.of(this::getOne)	
-					   .matches(-1,c->c.is(when(4),then(()->4)))
+					   .matches(c->c.is(when(4),then(()->4)),otherwise(-1))
 					   .get(),equalTo(-1));
 	}
 	@Test
 	public void testMatches2(){
 		assertThat(FluentFunctions.of(this::getOne)	
-					   .matches(-1,c->c.is(when(1),then(()->5))
-							   			.is(when(2),then(()->4)))
+					   .matches(c->c.is(when(1),then(()->5))
+							   			.is(when(2),then(()->4)),otherwise(-1))
 					   .get(),equalTo(5));
 	}
 
 	@Test
 	public void testMatches2Default(){
 		assertThat(FluentFunctions.of(this::getOne)	
-					   .matches(-1,c->c.is(when(100),then(()->5))
-					   				.is(when(200),then(()->4)))
+					   .matches(c->c.is(when(100),then(()->5))
+					   				.is(when(200),then(()->4)),otherwise(-1))
 					   .get(),equalTo(-1));
 	}
 	

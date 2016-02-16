@@ -161,10 +161,10 @@ public interface Maybe<T> extends Value<T>,
 		return (Maybe<R>)Applicativable.super.trampoline(mapper);
 	}
 	@Override
-	default <R> Maybe<R> patternMatch(R defaultValue,
-			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
+	default <R> Maybe<R> patternMatch(
+			Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
 		
-		return (Maybe<R>)Applicativable.super.patternMatch(defaultValue, case1);
+		return (Maybe<R>)Applicativable.super.patternMatch(case1,otherwise);
 	}
 
 

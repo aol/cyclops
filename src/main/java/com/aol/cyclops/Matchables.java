@@ -2,6 +2,7 @@ package com.aol.cyclops;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
@@ -13,10 +14,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.MTuple2;
 import com.aol.cyclops.control.Matchable.MTuple3;
+import com.aol.cyclops.control.Matchable.MTuple4;
+import com.aol.cyclops.control.Matchable.MTuple5;
 import com.aol.cyclops.control.Matchable.MatchableIterable;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
@@ -27,16 +31,41 @@ import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.util.ExceptionSoftener;
 
 public class Matchables {
-	public static MatchableIterable<String> lines(URL url){
-		//need to add autoclose
+	public static<X extends Throwable> MTuple4<Class<X>,String,Throwable,MatchableIterable<StackTraceElement>> throwable(X t){
+		return Matchable.from(()->(Class)t.getClass(),
+							  ()->t.getMessage(),
+							  ()->t.getCause(),
+							  ()->Matchable.fromIterable(Arrays.asList(t.getStackTrace())));
+	}
+	
+	/**
+	 * Break an URL down into
+	 * protocol, host, port, path, query
+	 * 
+	 * @param url
+	 * @return
+	 */
+	public static MTuple5<String,String,Integer,String,String> url(URL url){
+		return Matchable.from(()->url.getProtocol(),
+							  ()->url.getHost(),
+							  ()->url.getPort(),
+							  ()->url.getPath(),
+							  ()->url.getQuery());
+	}
+	public static Matchable.AutoCloseableMatchableIterable<String> lines(BufferedReader in){
+	
+		return new Matchable.AutoCloseableMatchableIterable<>(in,()->in.lines().iterator());	
+	}
+	public static Matchable.AutoCloseableMatchableIterable<String> lines(URL url){
+		
 		BufferedReader in = ExceptionSoftener.softenSupplier(()->new BufferedReader(
 															new InputStreamReader(
 															url.openStream()))).get();
-		return Matchable.fromIterable(()->in.lines().iterator());	
+		return new Matchable.AutoCloseableMatchableIterable<>(in,()->in.lines().iterator());	
 	}
-	public static MatchableIterable<String> lines(File f){
-		//need to add autoclose
-		return Matchable.fromIterable(()->ExceptionSoftener.softenSupplier(()->Files.lines(Paths.get( ((File)f).getAbsolutePath()))).get().iterator());	
+	public static Matchable.AutoCloseableMatchableIterable<String> lines(File f){
+			Stream<String> stream = ExceptionSoftener.softenSupplier(()->Files.lines(Paths.get( ((File)f).getAbsolutePath()))).get();
+		return new Matchable.AutoCloseableMatchableIterable<>(stream ,()->stream.iterator() );	
 	}
 	public static MatchableIterable<String> words(CharSequence seq){
 		return Matchable.fromIterable(Arrays.asList(seq.toString().split(" ")));

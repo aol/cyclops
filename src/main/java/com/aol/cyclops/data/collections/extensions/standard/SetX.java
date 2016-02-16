@@ -580,11 +580,10 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#patternMatch(java.lang.Object, java.util.function.Function)
 	 */
 	@Override
-	default <R> SetX<R> patternMatch(R defaultValue,
-			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
-		
-		return (SetX<R>)MutableCollectionX.super.patternMatch(defaultValue, case1);
-	}
+    default <R> SetX<R> patternMatch(
+            Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
+        return (SetX<R>)MutableCollectionX.super.patternMatch(case1,otherwise);
+    }
 	
 	
 }

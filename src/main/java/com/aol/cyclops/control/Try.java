@@ -77,10 +77,10 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 		return success(value);
 	}
 	@Override
-	default <R> Try<R,X> patternMatch(R defaultValue,
-			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
+	default <R> Try<R,X> patternMatch(
+			Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
 		
-		return (Try<R,X>)Applicativable.super.patternMatch(defaultValue, case1);
+		return (Try<R,X>)Applicativable.super.patternMatch(case1,otherwise);
 	}
 	
 	public <R> R visit(Function<? super T, ? extends R> success, Function<? super X, ? extends R> failure);

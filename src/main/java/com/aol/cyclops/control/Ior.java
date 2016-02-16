@@ -78,10 +78,10 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 		return ()->both();
 	}
 	@Override
-	default <R> Xor<ST,R> patternMatch(R defaultValue,
-			Function<CheckValues<PT, R>, CheckValues<PT, R>> case1) {
+	default <R> Xor<ST,R> patternMatch(
+			Function<CheckValues<PT, R>, CheckValues<PT, R>> case1,Supplier<? extends R> otherwise) {
 		
-		return (Xor<ST,R>)Applicativable.super.patternMatch(defaultValue, case1);
+		return (Xor<ST,R>)Applicativable.super.patternMatch(case1,otherwise);
 	}
 	default <R1,R2> Ior<R1,R2>  bimap(Function<? super ST,? extends R1> fn1,Function<? super PT,? extends R2> fn2){
 		Eval<Ior<R1,R2>> ptMap = (Eval)Eval.later(()->this.map(fn2)); //force unused secondary to required

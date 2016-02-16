@@ -581,11 +581,10 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#patternMatch(java.lang.Object, java.util.function.Function)
 	 */
 	@Override
-	default <R> SortedSetX<R> patternMatch(R defaultValue,
-			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
-		
-		return (SortedSetX<R>)MutableCollectionX.super.patternMatch(defaultValue, case1);
-	}
+    default <R> SortedSetX<R> patternMatch(
+            Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
+        return (SortedSetX<R>)MutableCollectionX.super.patternMatch(case1,otherwise);
+    }
 	
 	
 	

@@ -294,9 +294,9 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function)
 	 */
 	@Override
-	default <R> DequeX<R> patternMatch(R defaultValue,
-			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
-		return (DequeX<R>)MutableCollectionX.super.patternMatch(defaultValue, case1);
+	default <R> DequeX<R> patternMatch(
+			Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
+		return (DequeX<R>)MutableCollectionX.super.patternMatch(case1,otherwise);
 	}
 
 	

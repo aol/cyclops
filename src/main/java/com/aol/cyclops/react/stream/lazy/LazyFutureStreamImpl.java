@@ -311,7 +311,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 
 	@Override
 	public U foldRight(U identity, BinaryOperator<U> accumulator) {
-		return Seq.seq(this).foldRight(identity,accumulator);
+		return reverse().foldLeft(identity, accumulator);
 	}
 	@Override
 	public  boolean allMatch(Predicate<? super U> c) {

@@ -496,10 +496,10 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function)
 	 */
 	@Override
-	default <R> PersistentCollectionX<R> patternMatch(R defaultValue,
-			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
+	default <R> PersistentCollectionX<R> patternMatch(
+			Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
 		
-		return (PersistentCollectionX)FluentCollectionX.super.patternMatch(defaultValue, case1);
+		return (PersistentCollectionX)FluentCollectionX.super.patternMatch(case1,otherwise);
 	}
 	
 	

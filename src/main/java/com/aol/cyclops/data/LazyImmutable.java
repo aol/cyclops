@@ -96,10 +96,10 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Value<T>, Fun
 			return LazyImmutable.of(fn.apply(val));
 	}
 	@Override
-	public <R> LazyImmutable<R> patternMatch(R defaultValue,
-			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
+	public <R> LazyImmutable<R> patternMatch(
+			Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
 		
-		return (com.aol.cyclops.data.LazyImmutable<R>)Applicativable.super.patternMatch(defaultValue, case1);
+		return (com.aol.cyclops.data.LazyImmutable<R>)Applicativable.super.patternMatch(case1,otherwise);
 	}
 	
 	/**

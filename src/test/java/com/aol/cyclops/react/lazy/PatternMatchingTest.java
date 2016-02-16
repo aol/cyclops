@@ -1,5 +1,6 @@
 
 package com.aol.cyclops.react.lazy;
+import static com.aol.cyclops.control.Matchable.otherwise;
 import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
 import static org.hamcrest.Matchers.equalTo;
@@ -23,10 +24,10 @@ public class PatternMatchingTest {
 	public void test(){
 		List<String> result = LazyFutureStream.of(1,2,3,4)
 											  .capture(e->e.printStackTrace())
-											  .patternMatch("",
+											  .patternMatch(
 													  	c->c.is(when((Integer i)->i%2==0 ),then("even"))
 													  		.is(when((Integer i)->i%2!=0 ),then("odd"))
-													  )
+													  ,Matchable.otherwise(""))
 											  .toList();
 		assertThat(result,equalTo(Arrays.asList("odd","even","odd","even")));
 	}
@@ -34,7 +35,7 @@ public class PatternMatchingTest {
 	public void test2(){
 		List<String> result = LazyFutureStream.of(1,2,3,4)
 											  .capture(e->e.printStackTrace())
-											  .patternMatch("n/a",c->c.is(when(1),then("one")))
+											  .patternMatch(c->c.is(when(1),then("one")),otherwise("n/a"))
 											  .toList();
 		assertThat(result,equalTo(Arrays.asList("one","n/a","n/a","n/a")));
 	}
@@ -42,12 +43,12 @@ public class PatternMatchingTest {
 	public void decomposable(){
 		List<String> result = LazyFutureStream.of(new MyCase(1,2),new MyCase(3,4))
 											  .capture(e->e.printStackTrace())
-											  .patternMatch("n/a",
+											  .patternMatch(
 													  c->c.is( when(Predicates.type(MyCase.class).isGuard(1,2)), then("one") )
 													   	   .is(when(Predicates.type(MyCase.class).isGuard(3,4)),then(()->"two"))
 													   	   .is(when(Predicates.type(MyCase.class).isGuard(1,4)),then(()->"three"))
 													   	   .is(when(Predicates.type(MyCase.class).isGuard(2,4)),then(()->"four"))
-													  )
+													   	,otherwise(""))
 											  .toList();
 		assertThat(result,equalTo(Arrays.asList("one","two")));
 	}
@@ -56,10 +57,11 @@ public class PatternMatchingTest {
 		
 		List<String> result = LazyFutureStream.of(new MyCase2(1,2),new MyCase2(3,4))
 											  .capture(e->e.printStackTrace())
-											  .patternMatch("n/a",
+											  .patternMatch(
 													  c->c.is(when(Predicates.type(MyCase.class).isGuard(1,2)), then("one") )
 													  	  .is(when(Predicates.type(MyCase.class).isGuard(3,4)),then(()->"two"))
 													  	  .is(when(Predicates.type(MyCase.class).isGuard(5,6)),then(()->"three"))
+													  	,otherwise("n/a")
 													  )
 											  .toList();
 		assertThat(result,equalTo(Arrays.asList("one","two")));

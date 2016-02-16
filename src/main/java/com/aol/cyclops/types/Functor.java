@@ -2,6 +2,7 @@ package com.aol.cyclops.types;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.CheckValues;
@@ -91,9 +92,9 @@ public interface Functor<T> {
      * @param case1 Function to generate a case (or chain of cases as a single case)
      * @return CollectionX where elements are transformed by pattern matching
      */
-    default <R> Functor<R> patternMatch(R defaultValue,Function<CheckValues<T,R>,CheckValues<T,R>> case1){
+    default <R> Functor<R> patternMatch(Function<CheckValues<T,R>,CheckValues<T,R>> case1,Supplier<? extends R> otherwise){
 
-        return  map(u-> Matchable.of(u).mayMatch(case1).orElse(defaultValue));
+        return  map(u-> Matchable.of(u).mayMatch(case1).orElseGet(otherwise));
     }
 
 	

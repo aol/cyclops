@@ -607,10 +607,10 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#patternMatch(java.lang.Object, java.util.function.Function)
 	 */
 	@Override
-	default <R> PQueueX<R> patternMatch(R defaultValue,
-			Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
+	default <R> PQueueX<R> patternMatch(
+			Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
 		
-		return (PQueueX<R>)PersistentCollectionX.super.patternMatch(defaultValue, case1);
+		return (PQueueX<R>)PersistentCollectionX.super.patternMatch(case1,otherwise);
 	}
 	
 }

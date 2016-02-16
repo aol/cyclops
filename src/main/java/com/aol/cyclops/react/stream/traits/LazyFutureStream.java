@@ -313,9 +313,10 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      * @param case1 Function to generate a case (or chain of cases as a single case)
      * @return LazyFutureStream where elements are transformed by pattern matching
      */
-    default <R> LazyFutureStream<R> patternMatch(R defaultValue,Function<CheckValues<U,R>,CheckValues< U,R>> case1){
+    @Override
+    default <R> LazyFutureStream<R> patternMatch(Function<CheckValues<U,R>,CheckValues< U,R>> case1,Supplier<? extends R> otherwise){
 
-        return  map(u-> Matchable.of(u).mayMatch(case1).orElse(defaultValue));
+        return  map(u-> Matchable.of(u).mayMatch(case1).orElseGet(otherwise));
     }
 
     /**
@@ -1974,7 +1975,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /**
-     * Reverse a stream. - careful with infinite streams!
+     * Reverse a stream. - eager operation that materializes the Stream into a list - careful with infinite streams!
      *
      *
      * // (3, 2, 1) LazyFutureStream.of(1, 2, 3).reverse()
@@ -1982,7 +1983,9 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      */
     @Override
     default LazyFutureStream<U> reverse() {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).reverse());
+    	//reverse using LazyFutureStream semantics to ensure concurrency / parallelism
+    	return fromStream(fromStream(toQueue().stream(getSubscription())).block().reverse().stream());
+      
 
     }
 
