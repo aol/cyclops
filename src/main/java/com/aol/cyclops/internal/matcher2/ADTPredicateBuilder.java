@@ -78,7 +78,7 @@ public class ADTPredicateBuilder<T>{
 		
 		Predicate toPredicate(){
 			
-			return t ->  Optional.of(t).map(v->type.isAssignableFrom(v.getClass())).orElse(false);
+			return t ->  Optional.ofNullable(t).map(v->type.isAssignableFrom(v.getClass())).orElse(false);
 		}
 		
 		final public<V> Predicate<V> anyValues(){
@@ -123,8 +123,11 @@ public class ADTPredicateBuilder<T>{
 			
 			return t -> toPredicate().test(t) 
 					  	&& SeqUtils.seq(Extractors.decomposeCoerced().apply(t))
-							.zip(predicates,(a,b)->Tuple.tuple(a, b)).map(tuple -> tuple.v2.test(tuple.v1))
+					  	    .peek(System.out::println)
+							.zip(predicates,(a,b)->Tuple.tuple(a, b))
+							.map(tuple -> tuple.v2.test(tuple.v1))
 							.allMatch(v->v==true);
+			
 		}
 		
 		
@@ -155,7 +158,10 @@ public class ADTPredicateBuilder<T>{
 			if(o instanceof Matcher)
 				return test -> ((Matcher)o).matches(test);
 				
-			return test -> Objects.equals(test,o);
+			return test -> {
+			    System.out.println("does "+ test + " = " + o);;
+			    return Objects.equals(test,o);
+			};
 		}
 
 	

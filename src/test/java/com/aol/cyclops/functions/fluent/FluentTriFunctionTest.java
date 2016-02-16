@@ -202,7 +202,7 @@ public class FluentTriFunctionTest {
 	public void testMatches2(){
 		assertThat(FluentFunctions.of(this::add)	
 					   .matches(c->c.is(when(1),then(()->5))
-					   			.is(when(2),then(()->4)),otherwise(-1))
+					   			.is(when(3),then(()->4)),otherwise(-1))
 					   .apply(1,1,1),equalTo(4));
 	}
 

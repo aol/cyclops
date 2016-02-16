@@ -112,10 +112,6 @@ public class PatternMatcher implements Function{
 		
 	}
 
-
-	
-	
-
 	private Function extractorAction(Extractor extractor, Function action) {
 		if (extractor == null)
 			return action;

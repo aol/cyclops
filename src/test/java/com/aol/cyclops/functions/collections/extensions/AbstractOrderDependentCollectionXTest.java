@@ -95,23 +95,37 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 		
 		List<String> result = of(new MyCase2(1,2),new MyCase2(3,4))
 											  .patternMatch(
-													  c->c.is( when(Predicates.type(MyCase.class).isGuard(1,2)),then("one"))
-													       .is(when(Predicates.type(MyCase.class).isGuard(3,4)),then(()->"two"))
-													       .is(when(Predicates.type(MyCase.class).isGuard(5,6)),then(()->"three"))
+													  c->c.is( when(Predicates.type(MyCase2.class).isGuard(1,2)),then("one"))
+													       .is(when(Predicates.type(MyCase2.class).isGuard(3,4)),then(()->"two"))
+													       .is(when(Predicates.type(MyCase2.class).isGuard(5,6)),then(()->"three"))
 													       ,Matchable.otherwise("n/a")
 													  )
 											  .toListX();
 		assertThat(result,equalTo(Arrays.asList("one","two")));
 	}
+	@Test
+    public void patternTestPojo2(){
+        
+        List<String> result = of(new MyCase2(1,2),new MyCase2(3,4))
+                                              .patternMatch(
+                                                      c->c.is(when(new MyCase2(1,2)),then("one"))
+                                                           .is(when(new MyCase2(3,4)),then("two"))
+                                                           .is(when(new MyCase2(3,5)),then("three"))
+                                                           .is(when(Predicates.type(MyCase.class).isGuard(3,4)),then(()->"two"))
+                                                           ,Matchable.otherwise("n/a")
+                                                      )
+                                              .toListX();
+        assertThat(result,equalTo(Arrays.asList("one","two")));
+    }
 	@AllArgsConstructor
 	@EqualsAndHashCode
-	static class MyCase implements Decomposable{
+	static class MyCase{
 		int first;
 		int second;
 	}
 	@AllArgsConstructor
 	@EqualsAndHashCode
-	static class MyCase2 implements Decomposable{
+	static class MyCase2{
 		int first;
 		int second;
 	}

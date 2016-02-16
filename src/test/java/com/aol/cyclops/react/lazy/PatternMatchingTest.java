@@ -48,7 +48,7 @@ public class PatternMatchingTest {
 													   	   .is(when(Predicates.type(MyCase.class).isGuard(3,4)),then(()->"two"))
 													   	   .is(when(Predicates.type(MyCase.class).isGuard(1,4)),then(()->"three"))
 													   	   .is(when(Predicates.type(MyCase.class).isGuard(2,4)),then(()->"four"))
-													   	,otherwise(""))
+													   	,otherwise("n/a"))
 											  .toList();
 		assertThat(result,equalTo(Arrays.asList("one","two")));
 	}
