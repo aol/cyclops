@@ -31,14 +31,15 @@ public class ForEachTest {
 
 	@Test
 	public void forEachX(){
-		Subscription s = StreamUtils.forEachX(LazyFutureStream.of(1,2,3), 2, System.out::println);
+		
+		Subscription s = LazyFutureStream.of(1,2,3).forEachX( 2, System.out::println);
 		System.out.println("first batch");
 		s.request(1);
 	}
 	@Test
 	public void forEachXTest(){
 		List<Integer> list = new ArrayList<>();
-		Subscription s = StreamUtils.forEachX(LazyFutureStream.of(1,2,3), 2,  i->list.add(i));
+		Subscription s = LazyFutureStream.of(1,2,3).forEachX( 2,  i->list.add(i));
 		assertThat(list,hasItems(1,2));
 		assertThat(list.size(),equalTo(2));
 		s.request(1);
@@ -51,8 +52,8 @@ public class ForEachTest {
 	
 		List<Integer> list = new ArrayList<>();
 		
-		Stream<Integer> stream = LazyFutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();},()->4).map(Supplier::get);
-		Subscription s = StreamUtils.forEachXWithError(stream, 2, i->list.add(i),
+		LazyFutureStream<Integer> stream = LazyFutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();},()->4).map(Supplier::get);
+		Subscription s = stream.forEachXWithError( 2, i->list.add(i),
 								e->error=e);
 		
 		assertThat(list,hasItems(1,2));
@@ -70,8 +71,8 @@ public class ForEachTest {
 	
 		List<Integer> list = new ArrayList<>();
 		
-		Stream<Integer> stream = LazyFutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
-		Subscription s = StreamUtils.forEachXEvents(stream, 2, i->list.add(i),
+		LazyFutureStream<Integer> stream =  LazyFutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
+		Subscription s = stream.forEachXEvents( 2, i->list.add(i),
 								e->error=e,()->complete=true);
 		
 		assertThat(list,hasItems(1,2));
@@ -94,8 +95,8 @@ public class ForEachTest {
 	
 		List<Integer> list = new ArrayList<>();
 		assertThat(error,nullValue());
-		Stream<Integer> stream = LazyFutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
-		StreamUtils.forEachWithError(stream,  i->list.add(i),
+		LazyFutureStream<Integer> stream = LazyFutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
+		stream.forEachWithError( i->list.add(i),
 								e->error=e);
 		
 		assertThat(list,hasItems(1,2,3));
@@ -112,11 +113,11 @@ public class ForEachTest {
 	
 		List<Integer> list = new ArrayList<>();
 		assertThat(error,nullValue());
-		Stream<Integer> stream = LazyFutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();},()->4,()->5)
+		LazyFutureStream<Integer> stream = LazyFutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();},()->4,()->5)
 													.withPublisherExecutor(new ForkJoinPool(1))
 													.async()
 													.map(Supplier::get);
-		StreamUtils.forEachWithError(stream,  i->list.add(i),
+		stream.forEachWithError( i->list.add(i),
 								e->error=e);
 		
 		ExceptionSoftener.softenRunnable(()->Thread.sleep(100)).run();
@@ -135,8 +136,8 @@ public class ForEachTest {
 		List<Integer> list = new ArrayList<>();
 		assertFalse(complete);
 		assertThat(error,nullValue());
-		Stream<Integer> stream = LazyFutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
-		StreamUtils.forEachEvent(stream,  i->list.add(i),e->error=e,()->complete=true);
+		LazyFutureStream<Integer> stream = LazyFutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
+		stream.forEachEvent( i->list.add(i),e->error=e,()->complete=true);
 		
 		
 		

@@ -47,6 +47,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
@@ -58,7 +59,8 @@ import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
-import com.aol.cyclops.internal.stream.FutureOperationsImpl;
+import com.aol.cyclops.internal.stream.FutureStreamUtils;
+import com.aol.cyclops.internal.stream.LazyFutureStreamFutureOpterationsImpl;
 import com.aol.cyclops.react.RetryBuilder;
 import com.aol.cyclops.react.async.Queue;
 import com.aol.cyclops.react.async.Queue.ClosedQueueException;
@@ -77,6 +79,7 @@ import com.aol.cyclops.react.stream.LazyStreamWrapper;
 import com.aol.cyclops.react.stream.ThreadPools;
 import com.aol.cyclops.react.stream.lazy.LazyFutureStreamImpl;
 import com.aol.cyclops.react.stream.lazy.ParallelReductionConfig;
+import com.aol.cyclops.react.stream.traits.future.operators.LazyFutureStreamUtils;
 import com.aol.cyclops.react.stream.traits.future.operators.OperationsOnFutures;
 import com.aol.cyclops.react.stream.traits.future.operators.OperationsOnFuturesImpl;
 import com.aol.cyclops.react.stream.traits.operators.BatchByTime;
@@ -87,6 +90,8 @@ import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
+
+import lombok.val;
 
 /**
  * Lazy Stream Factory methods
@@ -104,6 +109,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
      LazyFutureStream<U> withPublisherExecutor(Executor ex);
 
+     
      @Override
  	default <R>  LazyFutureStream<R> filterMap(Function<CheckValues<U, R>, CheckValues<U, R>> case1) {
  		
@@ -2939,7 +2945,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      * @return access to asynchronous terminal operations
      */
     default FutureOperations<U> futureOperations() {
-        return new FutureOperationsImpl<>(getTaskExecutor(), this);
+        return new LazyFutureStreamFutureOpterationsImpl<>(getTaskExecutor(), this);
 
     }
     /*
@@ -2947,7 +2953,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      */
     @Override
     default FutureOperations<U> futureOperations(Executor exec) {
-        return new FutureOperationsImpl<>(exec, this);
+        return new LazyFutureStreamFutureOpterationsImpl<>(exec, this);
 
     }
 
@@ -3138,7 +3144,188 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
         return this.onFail(exceptionClass,e->fn.apply((EX)e.getCause()));
     }
 
-
+    /**
+	 * Perform a forEach operation over the Stream, without closing it, consuming only the specified number of elements from
+	 * the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription
+	 * 
+	 * e.g.
+	 * <pre>
+	 * @{code
+	 *     Subscription next = ReactiveSeq.of(1,2,3,4)
+	 *          					    .forEachX(2,System.out::println);
+	 *          
+	 *     System.out.println("First batch processed!");
+	 *     
+	 *     next.request(2);
+	 *     
+	 *      System.out.println("Second batch processed!");
+	 *      
+	 *     //prints
+	 *     1
+	 *     2
+	 *     First batch processed!
+	 *     3
+	 *     4 
+	 *     Second batch processed!
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param numberOfElements To consume from the Stream at this time
+	 * @param consumer To accept incoming events from the Stream
+	 * @return Subscription so that further processing can be continued or cancelled.
+	 */
+	default <X extends Throwable> Subscription forEachX(long numberOfElements,Consumer<? super U> consumer){
+		val t2 = LazyFutureStreamUtils.forEachX(this, numberOfElements, consumer);
+		t2.v2.run();
+		return t2.v1.join();
+	}
+	
+	/**
+	 * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
+	 * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription 
+	 * <pre>
+	 * @{code
+	 *     Subscription next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+	 *                                  .map(Supplier::get)
+	 *          					    .forEachXWithError(2,System.out::println, e->e.printStackTrace());
+	 *          
+	 *     System.out.println("First batch processed!");
+	 *     
+	 *     next.request(2);
+	 *     
+	 *      System.out.println("Second batch processed!");
+	 *      
+	 *     //prints
+	 *     1
+	 *     2
+	 *     First batch processed!
+	 *     
+	 *     RuntimeException Stack Trace on System.err
+	 *     
+	 *     4 
+	 *     Second batch processed!
+	 * }
+	 * </pre>	 
+	 * 
+	 * 
+	 * @param numberOfElements To consume from the Stream at this time
+	 * @param consumer To accept incoming elements from the Stream
+	 * @param consumerError To accept incoming processing errors from the Stream
+	 * @param onComplete To run after an onComplete event
+	 * @return Subscription so that further processing can be continued or cancelled.
+	 */
+	default <X extends Throwable> Subscription forEachXWithError(long numberOfElements,Consumer<? super U> consumer,Consumer<? super Throwable> consumerError){
+		val t2 =LazyFutureStreamUtils.forEachXWithError(this, numberOfElements, consumer,consumerError);
+		t2.v2.run();
+		return t2.v1.join();
+	}
+	/**
+	 * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
+	 * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription,
+	 * when the entire Stream has been processed an onComplete event will be recieved.
+	 * 
+	 * <pre>
+	 * @{code
+	 *     Subscription next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+	 *                                  .map(Supplier::get)
+	 *          					    .forEachXEvents(2,System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
+	 *          
+	 *     System.out.println("First batch processed!");
+	 *     
+	 *     next.request(2);
+	 *     
+	 *      System.out.println("Second batch processed!");
+	 *      
+	 *     //prints
+	 *     1
+	 *     2
+	 *     First batch processed!
+	 *     
+	 *     RuntimeException Stack Trace on System.err
+	 *     
+	 *     4 
+	 *     Second batch processed!
+	 *     The end!
+	 * }
+	 * </pre>	 
+	 * @param numberOfElements To consume from the Stream at this time
+	 * @param consumer To accept incoming elements from the Stream
+	 * @param consumerError To accept incoming processing errors from the Stream
+	 * @param onComplete To run after an onComplete event
+	 * @return Subscription so that further processing can be continued or cancelled.
+	 */
+	default <X extends Throwable> Subscription forEachXEvents(long numberOfElements,Consumer<? super U> consumer,Consumer<? super Throwable> consumerError, Runnable onComplete){
+		val t2 = LazyFutureStreamUtils.forEachXEvents(this, numberOfElements, consumer,consumerError,onComplete);
+		t2.v2.run();
+		return t2.v1.join();
+	}
+	
+	/**
+	 *  Perform a forEach operation over the Stream    capturing any elements and errors in the supplied consumers,  
+	 * <pre>
+	 * @{code
+	 *     Subscription next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+	 *                                  .map(Supplier::get)
+	 *          					    .forEachWithError(System.out::println, e->e.printStackTrace());
+	 *          
+	 *     System.out.println("processed!");
+	 *     
+	 *    
+	 *      
+	 *     //prints
+	 *     1
+	 *     2
+	 *     RuntimeException Stack Trace on System.err
+	 *     4
+	 *     processed!
+	 *     
+	 * }
+	 * </pre>	 
+	 * @param consumer To accept incoming elements from the Stream
+	 * @param consumerError To accept incoming processing errors from the Stream
+	 * @return Subscription so that further processing can be continued or cancelled.
+	 */
+	default <X extends Throwable> void forEachWithError(Consumer<? super U> consumerElement,
+			Consumer<? super Throwable> consumerError){
+		val t2 =LazyFutureStreamUtils.forEachWithError(this, consumerElement,consumerError);
+		t2.v2.run();
+	}
+	
+	/**
+	 * Perform a forEach operation over the Stream  capturing any elements and errors in the supplied consumers
+	 * when the entire Stream has been processed an onComplete event will be recieved.
+	 * 
+	 * <pre>
+	 * @{code
+	 *     Subscription next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+	 *                                  .map(Supplier::get)
+	 *          					    .forEachEvents(System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
+	 *          
+	 *     System.out.println("processed!");
+	 *     
+	 *      
+	 *     //prints
+	 *     1
+	 *     2
+	 *     RuntimeException Stack Trace on System.err
+	 *      4 
+	 *     processed!
+	 *     
+	 *     
+	 * }
+	 * </pre>	
+	 * @param consumer To accept incoming elements from the Stream
+	 * @param consumerError To accept incoming processing errors from the Stream
+	 * @param onComplete To run after an onComplete event
+	 * @return Subscription so that further processing can be continued or cancelled.
+	 */
+	default <X extends Throwable> void forEachEvent(Consumer<? super U> consumerElement,
+			Consumer<? super Throwable> consumerError,
+			Runnable onComplete){
+		val t2 =LazyFutureStreamUtils.forEachEvent(this, consumerElement,consumerError,onComplete);
+		t2.v2.run();
+	}
 
     
      

@@ -43,7 +43,7 @@ import lombok.Getter;
 
 
 @AllArgsConstructor
-public class FutureOperationsImpl<T> implements  DoubleOperatorsMixin<T>, 
+public abstract class BaseFutureOperationsImpl<T> implements  DoubleOperatorsMixin<T>, 
 						IntOperatorsMixin<T>, LongOperatorsMixin<T>,FutureOperations<T>{
 
 	@Getter
@@ -328,38 +328,7 @@ public class FutureOperationsImpl<T> implements  DoubleOperatorsMixin<T>,
 	}
 	
 	
-	@Override
-	public <X extends Throwable> ReactiveTask forEachX(long numberOfElements, Consumer<? super T> consumer) {
-		return new ReactiveTask( exec,FutureStreamUtils.forEachX(stream,numberOfElements, consumer)
-								.map2(r->CompletableFuture.runAsync(r,exec)));
-	}
-	@Override
-	public <X extends Throwable> ReactiveTask forEachXWithError(long numberOfElements, Consumer<? super T> consumer,
-			Consumer<? super Throwable> consumerError) {
-		return new ReactiveTask(exec,FutureStreamUtils.forEachXWithError(stream,numberOfElements, consumer, consumerError)
-								.map2(r->CompletableFuture.runAsync(r,exec)));
-
-		
-	}
-	@Override
-	public <X extends Throwable> ReactiveTask forEachXEvents(long numberOfElements, Consumer<? super T> consumer,
-			Consumer<? super Throwable> consumerError, Runnable onComplete) {
-		return new ReactiveTask(exec,FutureStreamUtils.forEachXEvents(stream,numberOfElements, consumer, consumerError, onComplete)
-								.map2(r->CompletableFuture.runAsync(r,exec)));
-		
-	}
-	@Override
-	public <X extends Throwable> ReactiveTask forEachWithError(Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError) {
-		
-		return new ReactiveTask( exec,FutureStreamUtils.forEachWithError(stream,consumerElement, consumerError)
-							.map2(r->CompletableFuture.runAsync(r,exec)));
-	}
-	@Override
-	public <X extends Throwable> ReactiveTask forEachEvent(Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError,
-			Runnable onComplete) {
-		return new ReactiveTask(exec,FutureStreamUtils.forEachEvent(stream,consumerElement, consumerError,onComplete)
-									.map2(r->CompletableFuture.runAsync(r,exec)));
-	}
+	
 	@Override
 	public CompletableFuture<T> single(Predicate<T> predicate) {
 		return CompletableFuture.supplyAsync(()-> stream.filter(predicate).single(),exec);

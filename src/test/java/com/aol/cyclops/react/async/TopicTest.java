@@ -79,7 +79,7 @@ public class TopicTest {
 		topic.close();
 		
 		List<Collection<String>> result = stage.block();
-		assertThat(result.get(0),instanceOf(ArrayList.class));
+		assertThat(result.get(0),instanceOf(List.class));
 		assertThat(result.get(0),hasItem("hello*"));
 		assertThat(result.get(0),hasItem("world*"));
 

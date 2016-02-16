@@ -207,39 +207,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	public HotStream<U> scheduleFixedRate(long rate, ScheduledExecutorService ex) {
 		return ReactiveSeq.<U>fromStream(this.toStream()).scheduleFixedRate(rate, ex);
 	}
-	@Override
-	public <X extends Throwable> org.reactivestreams.Subscription forEachX(
-			long numberOfElements, Consumer<? super U> consumer) {
-		return StreamUtils.forEachX(this, numberOfElements,consumer);
-	}
-	@Override
-	public <X extends Throwable> org.reactivestreams.Subscription forEachXWithError(
-			long numberOfElements, Consumer<? super U> consumer,
-			Consumer<? super Throwable> consumerError) {
-		return StreamUtils.forEachXWithError(this, numberOfElements,consumer, consumerError);
-		
-	}
-	@Override
-	public <X extends Throwable> org.reactivestreams.Subscription forEachXEvents(
-			long numberOfElements, Consumer<? super U> consumer,
-			Consumer<? super Throwable> consumerError, Runnable onComplete) {
-		return StreamUtils.forEachXEvents(this, numberOfElements,consumer, consumerError,onComplete);
-	}
-	@Override
-	public <X extends Throwable> void forEachWithError(
-			Consumer<? super U> consumerElement,
-			Consumer<? super Throwable> consumerError) {
-			StreamUtils.forEachWithError(this, consumerElement, consumerError);
-	}
-	@Override
-	public <X extends Throwable> void forEachEvent(
-			Consumer<? super U> consumerElement,
-			Consumer<? super Throwable> consumerError, Runnable onComplete) {
-		
-		StreamUtils.forEachEvent(this,consumerElement,
-				consumerError,onComplete);
-		
-	}
+	
 	@Override
 	public <T> LazyFutureStream<T> unitIterator(Iterator<T> it){
 		return simpleReact.from(it);

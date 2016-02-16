@@ -49,9 +49,10 @@ import com.aol.cyclops.data.collections.CyclopsCollectors;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.MonadWrapper;
-import com.aol.cyclops.internal.stream.FutureOperationsImpl;
+import com.aol.cyclops.internal.stream.BaseFutureOperationsImpl;
 import com.aol.cyclops.internal.stream.FutureStreamUtils;
 import com.aol.cyclops.internal.stream.PausableHotStreamImpl;
+import com.aol.cyclops.internal.stream.ReactiveSeqFutureOpterationsImpl;
 import com.aol.cyclops.internal.stream.ReversedIterator;
 import com.aol.cyclops.internal.stream.SequenceMImpl;
 import com.aol.cyclops.internal.stream.operators.BatchBySizeOperator;
@@ -924,7 +925,7 @@ public class StreamUtils{
 		return it.entrySet().stream();
 	}
 	public final static <T> FutureOperations<T> futureOperations(Stream<T> stream,Executor exec){
-		return new FutureOperationsImpl<T>(exec,sequenceM(stream,Optional.empty()));
+		return new ReactiveSeqFutureOpterationsImpl<T>(exec,sequenceM(stream,Optional.empty()));
 	}
 	public final static <T> T firstValue(Stream<T> stream){
 		return stream.findAny().get();
